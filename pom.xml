@@ -13,6 +13,7 @@
         <module>ScenamaticaPlugin</module>
         <module>ScenamaticaEngine</module>
         <module>ScenamaticaModels</module>
+        <module>ScenamaticaScenarioFile</module>
     </modules>
 
     <name>Scenamatica</name>
