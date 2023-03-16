@@ -1,0 +1,9 @@
+name: ScenamaticaPlugin
+version: '${project.version}'
+main: net.kunmc.lab.scenamatica.ScenamaticaPlugin
+api-version: 1.13
+prefix: Scenamatica
+load: STARTUP
+authors: [Peyang]
+description: A plugin that provides advanced assistance by automating scenario testing for the PaperMC plugin
+website: https://kunmc.net/
