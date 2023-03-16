@@ -12,6 +12,7 @@
     <modules>
         <module>ScenamaticaPlugin</module>
         <module>ScenamaticaEngine</module>
+        <module>ScenamaticaModels</module>
     </modules>
 
     <name>Scenamatica</name>
