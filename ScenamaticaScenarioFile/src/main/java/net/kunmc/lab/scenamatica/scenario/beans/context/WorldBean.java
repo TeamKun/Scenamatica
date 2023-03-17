@@ -1,7 +1,5 @@
 package net.kunmc.lab.scenamatica.scenario.beans.context;
 
-import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import lombok.Value;
 import net.kunmc.lab.scenamatica.commons.utils.MapUtils;
 import org.bukkit.World;
@@ -17,8 +15,6 @@ import java.util.Map;
  * ワールドの情報を表すクラスです。
  */
 @Value
-@AllArgsConstructor
-@RequiredArgsConstructor
 public class WorldBean implements Serializable
 {
     /**
@@ -65,14 +61,56 @@ public class WorldBean implements Serializable
     @Nullable
     Boolean hardcore;
 
-    public WorldBean(String name)
+    /**
+     * ワールドの情報をMapにシリアライズします。
+     * @param bean ワールドの情報
+     * @return シリアライズされたMap
+     */
+    @NotNull
+    public static Map<String, Object> serialize(WorldBean bean)
     {
-        this.name = name;
-        this.type = WorldType.NORMAL;
-        this.seed = null;
-        this.generateStructures = null;
-        this.environment = World.Environment.NORMAL;
-        this.hardcore = false;
+        Map<String, Object> result = new HashMap<>();
+
+        // 必須項目
+        result.put("name", bean.name);
+
+        // オプション項目
+        MapUtils.putPrimitiveOrStrIfNotNull(result, "type", bean.type);
+        MapUtils.putPrimitiveOrStrIfNotNull(result, "seed", bean.seed);
+        MapUtils.putPrimitiveOrStrIfNotNull(result, "structures", bean.generateStructures);
+        MapUtils.putPrimitiveOrStrIfNotNull(result, "env", bean.environment);
+        MapUtils.putPrimitiveOrStrIfNotNull(result, "hardcore", bean.hardcore);
+
+        return result;
+    }
+    public static void validateMap(Map<String, Object> map)
+    {
+        MapUtils.checkContainsKey(map, "name");
+        MapUtils.checkType(map, "name", String.class);
+        MapUtils.checkType(map, "seed", Number.class);
+        MapUtils.checkType(map, "structures", Boolean.class);
+        MapUtils.checkType(map, "env", String.class);
+        MapUtils.checkType(map, "hardcore", Boolean.class);
+    }
+
+    /**
+     * シリアライズされたMapからワールドの情報をデシリアライズします。
+     * @param map シリアライズされたMap
+     * @return ワールドの情報
+     */
+    @NotNull
+    public static WorldBean deserialize(@NotNull Map<String, Object> map)
+    {
+        validateMap(map);
+
+        return new WorldBean(
+                (String) map.get("name"),
+                MapUtils.getAsEnumOrNull(map, "type", WorldType.class),
+                MapUtils.getOrNull(map, "seed"),
+                MapUtils.getOrNull(map, "structures"),
+                MapUtils.getAsEnumOrNull(map, "env", World.Environment.class),
+                MapUtils.getOrNull(map, "hardcore")
+        );
     }
 
 }
