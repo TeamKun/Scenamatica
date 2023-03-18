@@ -566,6 +566,52 @@ public class ItemStackBean implements Serializable
         );
     }
 
+    /**
+     * {@link ItemStack} に変換します。
+     *
+     * @return 変換されたもの
+     */
+    @SuppressWarnings("deprecation")
+    public ItemStack toItemStack()
+    {
+        ItemStack stack = new ItemStack(this.type, this.amount);
+        ItemMeta meta = stack.getItemMeta();
+
+        if (this.displayName != null)
+            meta.setDisplayName(this.displayName);
+        if (this.localizedName != null)
+            meta.setLocalizedName(this.localizedName);
+        if (!this.lore.isEmpty())
+            meta.setLore(this.lore);
+        if (this.customModelData != null)
+            meta.setCustomModelData(this.customModelData);
+        if (!this.enchantments.isEmpty())
+            stack.addUnsafeEnchantments(this.enchantments);
+        if (!this.itemFlags.isEmpty())
+            meta.addItemFlags(this.itemFlags.toArray(new ItemFlag[0]));
+        meta.setUnbreakable(this.unbreakable);
+        if (!this.attributeModifiers.isEmpty())
+        {
+            for (Attribute attribute : this.attributeModifiers.keySet())
+            {
+                for (AttributeModifier modifier : this.attributeModifiers.get(attribute))
+                {
+                    meta.addAttributeModifier(attribute, modifier);
+                }
+            }
+        }
+        if (!this.placeableKeys.isEmpty())
+            meta.setPlaceableKeys(this.placeableKeys);
+        if (!this.destroyableKeys.isEmpty())
+            meta.setDestroyableKeys(this.destroyableKeys);
+        if (this.damage != null && meta instanceof Damageable)
+            ((Damageable) meta).setDamage(this.damage);
+
+        stack.setItemMeta(meta);
+
+        return stack;
+    }
+
     @Override
     public int hashCode()
     {
