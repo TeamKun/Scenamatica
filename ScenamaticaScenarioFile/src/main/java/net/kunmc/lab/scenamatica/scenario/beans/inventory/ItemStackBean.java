@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -46,6 +47,7 @@ public class ItemStackBean implements Serializable
     private static final String KEY_DAMAGE = "damage";
 
     private static final String KEY_ATTRIBUTE_MODIFIERS = "attributes";
+    private static final String KEY_ATTRIBUTE_MODIFIER_NAME = "name";
     private static final String KEY_ATTRIBUTE_MODIFIER_AMOUNT = "amount";
     private static final String KEY_ATTRIBUTE_MODIFIER_OPERATION = "operation";
     private static final String KEY_ATTRIBUTE_MODIFIER_SLOT = "slot";
@@ -166,20 +168,17 @@ public class ItemStackBean implements Serializable
     {
         Map<String, Object> result = new HashMap<>();
         if (!bean.enchantments.isEmpty())
-        {
-            Map<String, Object> enchantments = new HashMap<>();
             for (Map.Entry<Enchantment, Integer> entry : bean.enchantments.entrySet())
             {
                 String key = NamespaceUtils.toString(entry.getKey().getKey());
                 Integer value = entry.getValue();
-                enchantments.put(key, value);
+                result.put(key, value);
             }
-            result.put(KEY_ENCHANTMENTS, enchantments);
-        }
 
         return result;
     }
 
+    @SuppressWarnings("deprecation")
     private static void validateEnchantments(Map<String, Object> map)
     {
         if (map.containsKey(KEY_ENCHANTMENTS))
@@ -191,7 +190,8 @@ public class ItemStackBean implements Serializable
 
             for (Map.Entry<String, Object> entry : enchtansMap.entrySet())
             {
-                if (Enchantment.getByKey(NamespaceUtils.fromString(entry.getKey())) == null)
+                if (Enchantment.getByKey(NamespaceUtils.fromString(entry.getKey())) == null
+                    && Enchantment.getByName(entry.getKey()) == null)
                     throw new IllegalArgumentException("Invalid enchantment key: " + entry.getKey());
                 if (!(entry.getValue() instanceof Integer))
                     throw new IllegalArgumentException("Invalid enchantment value: " + entry.getValue());
@@ -199,6 +199,7 @@ public class ItemStackBean implements Serializable
         }
     }
 
+    @SuppressWarnings("deprecation")
     private static Map<Enchantment, Integer> deserializeEnchantments(Map<String, Object> map)
     {
         Map<Enchantment, Integer> result = new HashMap<>();
@@ -206,6 +207,9 @@ public class ItemStackBean implements Serializable
                         Collections.<String, Object>emptyMap()).entrySet())
         {
             Enchantment enchantment = Enchantment.getByKey(NamespaceUtils.fromString(entry.getKey()));
+            if (enchantment == null)
+                enchantment = Enchantment.getByName(entry.getKey());
+
             int level = (int) entry.getValue();
             result.put(enchantment, level);
         }
@@ -218,22 +222,22 @@ public class ItemStackBean implements Serializable
         Map<String, Object> result = new HashMap<>();
         if (!bean.attributeModifiers.isEmpty())
         {
-            Map<String, Object> attributeModifiers = new HashMap<>();
             for (Map.Entry<Attribute, AttributeModifier> entry : bean.attributeModifiers.entrySet())
             {
                 Map<String, Object> attrs =  new HashMap<>();
                 AttributeModifier value = entry.getValue();
 
-                attributeModifiers.put(KEY_ATTRIBUTE_MODIFIER_AMOUNT, value.getAmount());
-                attributeModifiers.put(KEY_ATTRIBUTE_MODIFIER_OPERATION, value.getOperation().name());
-                MapUtils.putAsStrIfNotNull(attributeModifiers, KEY_ATTRIBUTE_MODIFIER_SLOT, value.getSlot());
+                attrs.put(KEY_ATTRIBUTE_MODIFIER_NAME, value.getName());
+                attrs.put(KEY_ATTRIBUTE_MODIFIER_AMOUNT, value.getAmount());
+                attrs.put(KEY_ATTRIBUTE_MODIFIER_OPERATION, value.getOperation().name());
+                MapUtils.putAsStrIfNotNull(attrs, KEY_ATTRIBUTE_MODIFIER_SLOT, value.getSlot());
 
                 String key = NamespaceUtils.toString(entry.getKey().getKey())
+                        .replace("generic.", "")
                         .toLowerCase(Locale.ROOT);
 
-                attributeModifiers.put(key, attrs);
+                result.put(key, attrs);
             }
-            result.put(KEY_ATTRIBUTE_MODIFIERS, attributeModifiers);
         }
 
         return result;
@@ -260,9 +264,7 @@ public class ItemStackBean implements Serializable
                 MapUtils.checkTypeIfContains(valuesMap, KEY_ATTRIBUTE_MODIFIER_OPERATION, String.class);
                 MapUtils.checkTypeIfContains(valuesMap, KEY_ATTRIBUTE_MODIFIER_SLOT, String.class);
 
-                Attribute.valueOf(name.toUpperCase(Locale.ROOT)
-                        .replace(".", "_")
-                        .replace("GENERIC_", ""));  // GENERIC_ は省略できる
+                ItemStackBean.getAttributeFromString(name);
             }
         }
     }
@@ -283,11 +285,11 @@ public class ItemStackBean implements Serializable
             double attrAmount = MapUtils.getOrDefault(valuesMap, KEY_ATTRIBUTE_MODIFIER_AMOUNT, 0.0);
             AttributeModifier.Operation attrOperation =
                     MapUtils.getAsEnum(valuesMap, KEY_ATTRIBUTE_MODIFIER_OPERATION, AttributeModifier.Operation.class);
-            EquipmentSlot slot = MapUtils.getAsEnum(valuesMap, KEY_ATTRIBUTE_MODIFIER_SLOT, EquipmentSlot.class);
+            EquipmentSlot slot = MapUtils.getAsEnumOrNull(valuesMap, KEY_ATTRIBUTE_MODIFIER_SLOT, EquipmentSlot.class);
 
             AttributeModifier modifier = new AttributeModifier(
                     UUID.randomUUID(),
-                    attrName,
+                    valuesMap.get(KEY_ATTRIBUTE_MODIFIER_NAME).toString(),
                     attrAmount,
                     attrOperation,
                     slot
@@ -304,11 +306,11 @@ public class ItemStackBean implements Serializable
         Map<String, Object> map = new HashMap<>();
 
         // 必須項目
-        map.put("type", bean.type.name());
+        map.put(KEY_TYPE, bean.type.name());
 
         // オプション項目
         if (bean.amount != 1)  // 1個の場合は省略できる。
-            map.put("amount", bean.amount);
+            map.put(KEY_AMOUNT, bean.amount);
         MapUtils.putPrimitiveOrStrIfNotNull(map, KEY_DISPLAY_NAME, bean.displayName);
         MapUtils.putPrimitiveOrStrIfNotNull(map, KEY_LOCALIZED_NAME, bean.localizedName);
         MapUtils.putPrimitiveOrStrIfNotNull(map, KEY_CUSTOM_MODEL_DATA, bean.customModelData);
@@ -316,12 +318,12 @@ public class ItemStackBean implements Serializable
         MapUtils.putPrimitiveOrStrIfNotNull(map, KEY_DAMAGE, bean.damage);
 
         MapUtils.putListIfNotEmpty(map, KEY_LORE, bean.lore);
-        MapUtils.putPrimitiveOrStrIfNotEmpty(map, KEY_PLACEABLES, bean.placeableKeys);
-        MapUtils.putPrimitiveOrStrIfNotEmpty(map, KEY_DESTROYABLES, bean.destroyableKeys);
-        MapUtils.putPrimitiveOrStrIfNotEmpty(map, KEY_ITEM_FLAGS, bean.itemFlags);
+        MapUtils.putPrimitiveOrStrListIfNotEmpty(map, KEY_PLACEABLES, bean.placeableKeys);
+        MapUtils.putPrimitiveOrStrListIfNotEmpty(map, KEY_DESTROYABLES, bean.destroyableKeys);
+        MapUtils.putPrimitiveOrStrListIfNotEmpty(map, KEY_ITEM_FLAGS, bean.itemFlags);
 
         MapUtils.putIfNotNull(map, KEY_ENCHANTMENTS, serializeEnchantments(bean));
-        MapUtils.putIfNotNull(map, KEY_ATTRIBUTE_MODIFIER_SLOT, serializeAttributeModifiers(bean));
+        MapUtils.putIfNotNull(map, KEY_ATTRIBUTE_MODIFIERS, serializeAttributeModifiers(bean));
 
         return map;
     }
@@ -355,7 +357,7 @@ public class ItemStackBean implements Serializable
         }
         catch (IllegalArgumentException e)
         {
-            return Attribute.valueOf("GENERIC_" + maybeGeneric);
+            return Attribute.valueOf("GENERIC_" + maybeGeneric);  // GENERIC_ は省略できる
         }
     }
 
@@ -374,7 +376,7 @@ public class ItemStackBean implements Serializable
         List<String> lore = MapUtils.getOrDefault(map, KEY_LORE, Collections.emptyList());
         Integer customModelData = MapUtils.getOrNull(map, KEY_CUSTOM_MODEL_DATA);
         List<ItemFlag> flags = MapUtils.getAsEnumOrEmptyList(map, KEY_ITEM_FLAGS, ItemFlag.class);
-        boolean unbreakable = Boolean.parseBoolean(MapUtils.getOrDefault(map, KEY_UNBREAKABLE, "false"));
+        boolean unbreakable = MapUtils.getOrDefault(map, KEY_UNBREAKABLE, false);
         Integer damage = MapUtils.getOrNull(map, KEY_DAMAGE);
 
         List<Namespaced> placeableKeys = new ArrayList<>();
@@ -402,5 +404,88 @@ public class ItemStackBean implements Serializable
                 destroyableKeys,
                 damage
         );
+    }
+
+    @Override
+    public String toString()
+    {
+        return "ItemStackBean{" +
+                "type=" + this.type +
+                ", amount=" + this.amount +
+                ", displayName='" + this.displayName + '\'' +
+                ", localizedName='" + this.localizedName + '\'' +
+                ", lore=" + this.lore +
+                ", customModelData=" + this.customModelData +
+                ", enchantments=" + this.enchantments +
+                ", itemFlags=" + this.itemFlags +
+                ", unbreakable=" + this.unbreakable +
+                ", attributeModifiers=" + this.attributeModifiers +
+                ", placeableKeys=" + this.placeableKeys +
+                ", destroyableKeys=" + this.destroyableKeys +
+                ", damage=" + this.damage +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o)
+    {
+        if (this == o) return true;
+        if (!(o instanceof ItemStackBean)) return false;
+
+        ItemStackBean that = (ItemStackBean) o;
+
+        if (this.amount != that.amount) return false;
+        if (this.unbreakable != that.unbreakable) return false;
+        if (this.type != that.type) return false;
+        if (!Objects.equals(this.displayName, that.displayName)) return false;
+        if (!Objects.equals(this.localizedName, that.localizedName)) return false;
+        if (!Objects.equals(this.lore, that.lore)) return false;
+        if (!Objects.equals(this.customModelData, that.customModelData))
+            return false;
+        if (!this.enchantments.equals(that.enchantments)) return false;
+        if (!this.itemFlags.equals(that.itemFlags)) return false;
+        if (!this.placeableKeys.equals(that.placeableKeys)) return false;
+        if (!this.destroyableKeys.equals(that.destroyableKeys)) return false;
+
+        Map<Attribute, AttributeModifier> thisModifiers = this.attributeModifiers;
+        Map<Attribute, AttributeModifier> thatModifiers = that.attributeModifiers;
+
+        for (Attribute attribute : thisModifiers.keySet())
+        {
+            if (!thatModifiers.containsKey(attribute))
+                return false;
+
+            AttributeModifier thisModifier = thisModifiers.get(attribute);
+            AttributeModifier thatModifier = thatModifiers.get(attribute);
+
+            // Check except UUID
+            if (thisModifier.getAmount() != thatModifier.getAmount() ||
+                    thisModifier.getOperation() != thatModifier.getOperation() ||
+                    thisModifier.getSlot() != thatModifier.getSlot())
+                return false;
+            if (!Objects.equals(thisModifier.getName(), thatModifier.getName()))
+                return false;
+        }
+
+        return Objects.equals(this.damage, that.damage);
+    }
+
+    @Override
+    public int hashCode()
+    {
+        int result = this.type.hashCode();
+        result = 31 * result + this.amount;
+        result = 31 * result + (this.displayName != null ? this.displayName.hashCode(): 0);
+        result = 31 * result + (this.localizedName != null ? this.localizedName.hashCode(): 0);
+        result = 31 * result + (this.lore != null ? this.lore.hashCode(): 0);
+        result = 31 * result + (this.customModelData != null ? this.customModelData.hashCode(): 0);
+        result = 31 * result + this.enchantments.hashCode();
+        result = 31 * result + this.itemFlags.hashCode();
+        result = 31 * result + (this.unbreakable ? 1: 0);
+        result = 31 * result + this.attributeModifiers.hashCode();
+        result = 31 * result + this.placeableKeys.hashCode();
+        result = 31 * result + this.destroyableKeys.hashCode();
+        result = 31 * result + (this.damage != null ? this.damage.hashCode(): 0);
+        return result;
     }
 }
