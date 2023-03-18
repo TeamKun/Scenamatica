@@ -341,6 +341,12 @@ public class ItemStackBean implements Serializable
         );
     }
 
+    /**
+     * アイテムスタックの情報をMapにシリアライズします。
+     *
+     * @param bean アイテムスタックの情報
+     * @return シリアライズされたMap
+     */
     public static Map<String, Object> serialize(ItemStackBean bean)
     {
         Map<String, Object> map = new HashMap<>();
@@ -369,6 +375,12 @@ public class ItemStackBean implements Serializable
         return map;
     }
 
+    /**
+     * Mapがアイテムスタックの情報を表すMapかどうかを検証します。
+     *
+     * @param map 検証するMap
+     * @throws IllegalArgumentException 必須項目が含まれていない場合か, 型が不正な場合
+     */
     public static void validateMap(Map<String, Object> map)
     {
         MapUtils.checkEnumName(map, KEY_TYPE, Material.class);
@@ -402,7 +414,12 @@ public class ItemStackBean implements Serializable
         }
     }
 
-
+    /**
+     * Mapからアイテムスタックの情報をデシリアライズします。
+     *
+     * @param map デシリアライズするMap
+     * @return デシリアライズされたアイテムスタックの情報
+     */
     public static ItemStackBean deserialize(@NotNull Map<String, Object> map)
     {
         validateMap(map);
