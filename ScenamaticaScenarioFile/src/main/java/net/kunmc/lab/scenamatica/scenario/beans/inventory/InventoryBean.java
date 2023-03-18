@@ -24,6 +24,6 @@ public class InventoryBean implements Serializable
      * インベントリのアイテムです。
      */
     @NotNull
-    Map<Integer, itemStackBean> mainContents;
+    Map<Integer, ItemStackBean> mainContents;
 
 }

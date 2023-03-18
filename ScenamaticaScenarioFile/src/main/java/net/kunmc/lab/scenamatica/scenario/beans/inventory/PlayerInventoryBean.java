@@ -22,13 +22,13 @@ public class PlayerInventoryBean implements Serializable
      * オフハンドの定義を表すクラスです。
      */
     @Nullable
-    itemStackBean offHand;
+    ItemStackBean offHand;
 
     /**
      * アーマーの定義を表すクラスです。
      */
     @NotNull
-    itemStackBean[] armorContents;
+    ItemStackBean[] armorContents;
 
 
 }

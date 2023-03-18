@@ -83,14 +83,21 @@ public class WorldBean implements Serializable
 
         return result;
     }
+
+    /**
+     * Mapがワールドの情報を表すMapかどうかを検証します。
+     * @param map 検証するMap
+     *
+     * @throws IllegalArgumentException 必須項目が含まれていない場合か, 型が不正な場合
+     */
     public static void validateMap(Map<String, Object> map)
     {
         MapUtils.checkContainsKey(map, "name");
-        MapUtils.checkType(map, "name", String.class);
-        MapUtils.checkType(map, "seed", Number.class);
-        MapUtils.checkType(map, "structures", Boolean.class);
-        MapUtils.checkType(map, "env", String.class);
-        MapUtils.checkType(map, "hardcore", Boolean.class);
+        MapUtils.checkTypeIfContains(map, "name", String.class);
+        MapUtils.checkTypeIfContains(map, "seed", Number.class);
+        MapUtils.checkTypeIfContains(map, "structures", Boolean.class);
+        MapUtils.checkTypeIfContains(map, "env", String.class);
+        MapUtils.checkTypeIfContains(map, "hardcore", Boolean.class);
     }
 
     /**
