@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import java.util.HashMap;
 import java.util.Map;
 
-public class InventoryBeanTest
+public class InventoryBeanSerializeTest
 {
     private final InventoryBean fulfilledBean = new InventoryBean(
             30,
