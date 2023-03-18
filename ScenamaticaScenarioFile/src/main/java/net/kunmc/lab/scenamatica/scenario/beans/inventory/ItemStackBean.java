@@ -13,6 +13,7 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -27,6 +28,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * インベントリのアイテムを表すクラスです。
@@ -137,7 +139,7 @@ public class ItemStackBean implements Serializable
      * @see ItemMeta#setAttributeModifiers(Multimap)
      */
     @NotNull
-    Map<Attribute, AttributeModifier> attributeModifiers;
+    Map<Attribute, List<AttributeModifier>> attributeModifiers;
 
     /**
      * アイテムをおける場所です。
@@ -224,41 +226,50 @@ public class ItemStackBean implements Serializable
         Map<String, Object> result = new HashMap<>();
         if (!bean.attributeModifiers.isEmpty())
         {
-            for (Map.Entry<Attribute, AttributeModifier> entry : bean.attributeModifiers.entrySet())
+            for (Map.Entry<Attribute, List<AttributeModifier>> entry : bean.attributeModifiers.entrySet())
             {
-                Map<String, Object> attrs =  new HashMap<>();
-                AttributeModifier value = entry.getValue();
+                List<Map<String, Object>> list = new ArrayList<>();
+                for (AttributeModifier modifier : entry.getValue())
+                {
+                    Map<String, Object> attrs = new HashMap<>();
 
-                attrs.put(KEY_ATTRIBUTE_MODIFIER_NAME, value.getName());
-                attrs.put(KEY_ATTRIBUTE_MODIFIER_AMOUNT, value.getAmount());
-                attrs.put(KEY_ATTRIBUTE_MODIFIER_OPERATION, value.getOperation().name());
-                MapUtils.putAsStrIfNotNull(attrs, KEY_ATTRIBUTE_MODIFIER_SLOT, value.getSlot());
+                    attrs.put(KEY_ATTRIBUTE_MODIFIER_NAME, modifier.getName());
+                    attrs.put(KEY_ATTRIBUTE_MODIFIER_AMOUNT, modifier.getAmount());
+                    attrs.put(KEY_ATTRIBUTE_MODIFIER_OPERATION, modifier.getOperation().name());
+                    MapUtils.putAsStrIfNotNull(attrs, KEY_ATTRIBUTE_MODIFIER_SLOT, modifier.getSlot());
+
+                    list.add(attrs);
+                }
 
                 String key = NamespaceUtils.toString(entry.getKey().getKey())
                         .replace("generic.", "")
                         .toLowerCase(Locale.ROOT);
 
-                result.put(key, attrs);
+                result.put(key, list);
             }
         }
 
         return result;
     }
 
-    private static void validateAttributeModifiers(Map<String, Object> map)
+    @SuppressWarnings("rawtypes")
+    private static void validateAttributeModifiersMap(Map<String, Object> map)
     {
-        if (map.containsKey(KEY_ATTRIBUTE_MODIFIERS))
-        {
-            Map<String, Object> attributesMap = MapUtils.checkAndCastMap(
-                    map.get(KEY_ATTRIBUTE_MODIFIERS),
-                    String.class, Object.class
-            );
+        if (!map.containsKey(KEY_ATTRIBUTE_MODIFIERS))
+            return;
 
-            for (Map.Entry<String, Object> entry : attributesMap.entrySet())
+        Map<String, List> attributesMap = MapUtils.checkAndCastMap(
+                map.get(KEY_ATTRIBUTE_MODIFIERS),
+                String.class, List.class
+        );
+
+        for (Map.Entry<String, List> entry : attributesMap.entrySet())
+        {
+            String name = entry.getKey();
+            for (Object obj : entry.getValue())
             {
-                String name = entry.getKey();
                 Map<String, Object> valuesMap = MapUtils.checkAndCastMap(
-                        entry.getValue(),
+                        obj,
                         String.class, Object.class
                 );
 
@@ -269,35 +280,37 @@ public class ItemStackBean implements Serializable
                 ItemStackBean.getAttributeFromString(name);
             }
         }
+
     }
 
-    private static Map<Attribute, AttributeModifier> deserializeAttributeModifiers(Map<String, Object> map)
+    private static Map<Attribute, List<AttributeModifier>> deserializeAttributeModifiers(Map<String, Object> map)
     {
-        Map<Attribute, AttributeModifier> result = new HashMap<>();
+        Map<Attribute, List<AttributeModifier>> result = new HashMap<>();
 
-        for (Map.Entry<String, Object> entry : MapUtils.getOrDefault(map, KEY_ATTRIBUTE_MODIFIERS, Collections.<String, Object>emptyMap()).entrySet())
+        for (Map.Entry<String, List<Map<String, Object>>> entry :
+                MapUtils.getOrDefault(map, KEY_ATTRIBUTE_MODIFIERS, Collections.<String, List<Map<String, Object>>>emptyMap()).entrySet())
         {
             String attrName = entry.getKey().toUpperCase(Locale.ROOT)
                     .replace(".", "_");
-            Map<String, Object> valuesMap = MapUtils.checkAndCastMap(
-                    entry.getValue(),
-                    String.class, Object.class
-            );
 
-            double attrAmount = MapUtils.getOrDefault(valuesMap, KEY_ATTRIBUTE_MODIFIER_AMOUNT, 0.0);
-            AttributeModifier.Operation attrOperation =
-                    MapUtils.getAsEnum(valuesMap, KEY_ATTRIBUTE_MODIFIER_OPERATION, AttributeModifier.Operation.class);
-            EquipmentSlot slot = MapUtils.getAsEnumOrNull(valuesMap, KEY_ATTRIBUTE_MODIFIER_SLOT, EquipmentSlot.class);
+            List<AttributeModifier> modifiers = new ArrayList<>();
+            for (Map<String, Object> attrs : entry.getValue())
+            {
+                double attrAmount = MapUtils.getOrDefault(attrs, KEY_ATTRIBUTE_MODIFIER_AMOUNT, 0.0);
+                AttributeModifier.Operation attrOperation =
+                        MapUtils.getAsEnum(attrs, KEY_ATTRIBUTE_MODIFIER_OPERATION, AttributeModifier.Operation.class);
+                EquipmentSlot slot = MapUtils.getAsEnumOrNull(attrs, KEY_ATTRIBUTE_MODIFIER_SLOT, EquipmentSlot.class);
 
-            AttributeModifier modifier = new AttributeModifier(
-                    UUID.randomUUID(),
-                    valuesMap.get(KEY_ATTRIBUTE_MODIFIER_NAME).toString(),
-                    attrAmount,
-                    attrOperation,
-                    slot
-            );
+                modifiers.add(new AttributeModifier(
+                        UUID.randomUUID(),
+                        attrs.get(KEY_ATTRIBUTE_MODIFIER_NAME).toString(),
+                        attrAmount,
+                        attrOperation,
+                        slot
+                ));
+            }
 
-            result.put(getAttributeFromString(attrName), modifier);
+            result.put(getAttributeFromString(attrName), modifiers);
         }
 
         return result;
@@ -397,7 +410,7 @@ public class ItemStackBean implements Serializable
         MapUtils.checkTypeIfContains(map, KEY_DESTROYABLES, List.class);
 
         validateEnchantments(map);
-        validateAttributeModifiers(map);
+        validateAttributeModifiersMap(map);
     }
 
     private static Attribute getAttributeFromString(String name)
@@ -446,7 +459,7 @@ public class ItemStackBean implements Serializable
             destroyableKeys.add(NamespaceUtils.fromString(key));
 
         Map<Enchantment, Integer> enchantments = deserializeEnchantments(map);
-        Map<Attribute, AttributeModifier> attributeModifiers = deserializeAttributeModifiers(map);
+        Map<Attribute, List<AttributeModifier>> attributeModifiers = deserializeAttributeModifiers(map);
 
         return new ItemStackBean(type,
                 amount,
@@ -484,6 +497,94 @@ public class ItemStackBean implements Serializable
                 '}';
     }
 
+    private static boolean isAttributeModifiersEquals(Map<Attribute, ? extends List<AttributeModifier>> thisModifiersMap, Map<Attribute, ? extends List<AttributeModifier>> thatModifiersMap)
+    {
+        for (Attribute attribute : thisModifiersMap.keySet())
+        {
+            if (!thatModifiersMap.containsKey(attribute))
+                return true;
+
+            List<AttributeModifier> thisModifiers = thisModifiersMap.get(attribute);
+            List<AttributeModifier> thatModifiers = thatModifiersMap.get(attribute);
+
+            if (isAttributeModifierEquals(thisModifiers, thatModifiers)) return true;
+        }
+        return false;
+    }
+
+    private static boolean isAttributeModifierEquals(List<? extends AttributeModifier> thisModifiers, List<? extends AttributeModifier> thatModifiers)
+    {
+        for (AttributeModifier thisModifier : thisModifiers)
+        {
+            for (AttributeModifier thatModifier : thatModifiers)
+            {
+                // Check except UUID
+                if (thisModifier.getAmount() != thatModifier.getAmount() ||
+                        thisModifier.getOperation() != thatModifier.getOperation() ||
+                        thisModifier.getSlot() != thatModifier.getSlot())
+                    return true;
+                if (!Objects.equals(thisModifier.getName(), thatModifier.getName()))
+                    return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * {@link ItemStack} を 変換します。
+     *
+     * @param stack 変換する {@link ItemStack}
+     * @return 変換されたもの
+     */
+    @SuppressWarnings("deprecation")
+    public static ItemStackBean fromItemStack(@NotNull ItemStack stack)
+    {
+        ItemMeta meta = stack.getItemMeta();
+
+        Integer damage = null;
+        if (meta instanceof Damageable)
+            damage = ((Damageable) stack).getDamage();
+
+        //noinspection DataFlowIssue
+        return new ItemStackBean(
+                stack.getType(),
+                stack.getAmount(),
+                meta.hasDisplayName() ? meta.getDisplayName(): null,
+                meta.hasLocalizedName() ? meta.getLocalizedName(): null,
+                meta.hasLore() ? meta.getLore(): null,
+                meta.hasCustomModelData() ? meta.getCustomModelData(): null,
+                stack.getEnchantments(),
+                new ArrayList<>(meta.getItemFlags()),
+                meta.isUnbreakable(),
+                meta.getAttributeModifiers().asMap().entrySet().stream().collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        entry -> new ArrayList<>(entry.getValue())
+                )),
+                new ArrayList<>(meta.getPlaceableKeys()),
+                new ArrayList<>(meta.getDestroyableKeys()),
+                damage
+        );
+    }
+
+    @Override
+    public int hashCode()
+    {
+        int result = this.type.hashCode();
+        result = 31 * result + this.amount;
+        result = 31 * result + (this.displayName != null ? this.displayName.hashCode(): 0);
+        result = 31 * result + (this.localizedName != null ? this.localizedName.hashCode(): 0);
+        result = 31 * result + this.lore.hashCode();
+        result = 31 * result + (this.customModelData != null ? this.customModelData.hashCode(): 0);
+        result = 31 * result + this.enchantments.hashCode();
+        result = 31 * result + this.itemFlags.hashCode();
+        result = 31 * result + (this.unbreakable ? 1: 0);
+        result = 31 * result + this.attributeModifiers.hashCode();
+        result = 31 * result + this.placeableKeys.hashCode();
+        result = 31 * result + this.destroyableKeys.hashCode();
+        result = 31 * result + (this.damage != null ? this.damage.hashCode(): 0);
+        return result;
+    }
+
     @Override
     public boolean equals(Object o)
     {
@@ -505,45 +606,8 @@ public class ItemStackBean implements Serializable
         if (!this.placeableKeys.equals(that.placeableKeys)) return false;
         if (!this.destroyableKeys.equals(that.destroyableKeys)) return false;
 
-        Map<Attribute, AttributeModifier> thisModifiers = this.attributeModifiers;
-        Map<Attribute, AttributeModifier> thatModifiers = that.attributeModifiers;
-
-        for (Attribute attribute : thisModifiers.keySet())
-        {
-            if (!thatModifiers.containsKey(attribute))
-                return false;
-
-            AttributeModifier thisModifier = thisModifiers.get(attribute);
-            AttributeModifier thatModifier = thatModifiers.get(attribute);
-
-            // Check except UUID
-            if (thisModifier.getAmount() != thatModifier.getAmount() ||
-                    thisModifier.getOperation() != thatModifier.getOperation() ||
-                    thisModifier.getSlot() != thatModifier.getSlot())
-                return false;
-            if (!Objects.equals(thisModifier.getName(), thatModifier.getName()))
-                return false;
-        }
+        if (isAttributeModifiersEquals(this.attributeModifiers, that.attributeModifiers)) return false;
 
         return Objects.equals(this.damage, that.damage);
-    }
-
-    @Override
-    public int hashCode()
-    {
-        int result = this.type.hashCode();
-        result = 31 * result + this.amount;
-        result = 31 * result + (this.displayName != null ? this.displayName.hashCode(): 0);
-        result = 31 * result + (this.localizedName != null ? this.localizedName.hashCode(): 0);
-        result = 31 * result + this.lore.hashCode();
-        result = 31 * result + (this.customModelData != null ? this.customModelData.hashCode(): 0);
-        result = 31 * result + this.enchantments.hashCode();
-        result = 31 * result + this.itemFlags.hashCode();
-        result = 31 * result + (this.unbreakable ? 1: 0);
-        result = 31 * result + this.attributeModifiers.hashCode();
-        result = 31 * result + this.placeableKeys.hashCode();
-        result = 31 * result + this.destroyableKeys.hashCode();
-        result = 31 * result + (this.damage != null ? this.damage.hashCode(): 0);
-        return result;
     }
 }

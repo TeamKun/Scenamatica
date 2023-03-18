@@ -15,6 +15,7 @@ import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -53,15 +54,15 @@ public class ItemStackBeanSerializeTest
                     ItemFlag.HIDE_DYE
             ),
             true,
-            new HashMap<Attribute, AttributeModifier>()
+            new HashMap<Attribute, List<AttributeModifier>>()
             {{
                 this.put(
                         Attribute.GENERIC_ATTACK_DAMAGE,
-                        new AttributeModifier(
+                        Collections.singletonList(new AttributeModifier(
                                 "generic.attackDamage",
                                 1,
                                 AttributeModifier.Operation.ADD_NUMBER
-                        )
+                        ))
                 );
             }},
             Arrays.asList(new NamespacedKey("test", "test"), new NamespacedKey("test", "test2")),
@@ -102,14 +103,16 @@ public class ItemStackBeanSerializeTest
                 "HIDE_DYE"
         ));
         this.put("unbreakable", true);
-        this.put("attributes", new HashMap<String, Map<String, Object>>()
+        this.put("attributes", new HashMap<String, List<Map<String, Object>>>()
         {{
-            this.put("attack_damage", new HashMap<String, Object>()
-            {{
-                this.put("name", "generic.attackDamage");
-                this.put("amount", 1.0);
-                this.put("operation", "ADD_NUMBER");
-            }});
+            this.put("attack_damage", Collections.singletonList(
+                    new HashMap<String, Object>()
+                    {{
+                        this.put("name", "generic.attackDamage");
+                        this.put("amount", 1.0);
+                        this.put("operation", "ADD_NUMBER");
+                    }}
+            ));
         }});
         this.put("placeables", Arrays.asList("test:test", "test:test2"));
         this.put("destroyables", Arrays.asList("test:test", "test:test2"));
@@ -190,14 +193,15 @@ public class ItemStackBeanSerializeTest
                 Collections.emptyMap(),
                 Collections.emptyList(),
                 false,
-                new HashMap<Attribute, AttributeModifier>()
+                new HashMap<Attribute, List<AttributeModifier>>()
                 {{
                     this.put(
                             Attribute.GENERIC_ATTACK_DAMAGE,
-                            new AttributeModifier(
-                                    "generic.attackDamage",
-                                    1,
-                                    AttributeModifier.Operation.ADD_NUMBER
+                            Collections.singletonList(new AttributeModifier(
+                                            "generic.attackDamage",
+                                            1,
+                                            AttributeModifier.Operation.ADD_NUMBER
+                                    )
                             )
                     );
                 }},
@@ -209,14 +213,16 @@ public class ItemStackBeanSerializeTest
         Map<String, Object> map = new HashMap<String, Object>()
         {{
             this.put("type", "DIAMOND_HOE");
-            this.put("attributes", new HashMap<String, Map<String, Object>>()
+            this.put("attributes", new HashMap<String, List<Map<String, Object>>>()
             {{
-                this.put("attack_damage", new HashMap<String, Object>()
-                {{
-                    this.put("name", "generic.attackDamage");
-                    this.put("amount", 1.0);
-                    this.put("operation", "ADD_NUMBER");
-                }});
+                this.put("attack_damage", Collections.singletonList(
+                        new HashMap<String, Object>()
+                        {{
+                            this.put("name", "generic.attackDamage");
+                            this.put("amount", 1.0);
+                            this.put("operation", "ADD_NUMBER");
+                        }})
+                );
             }});
         }};
 
