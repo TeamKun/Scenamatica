@@ -92,7 +92,7 @@ public class ItemStackBean implements Serializable
      * @see ItemMeta#lore()
      * @see ItemMeta#lore(java.util.List)
      */
-    @Nullable
+    @NotNull
     List<String> lore;
 
     /**
@@ -310,7 +310,7 @@ public class ItemStackBean implements Serializable
                 1,
                 null,
                 null,
-                null,
+                Collections.emptyList(),
                 null,
                 Collections.emptyMap(),
                 Collections.emptyList(),
@@ -329,7 +329,7 @@ public class ItemStackBean implements Serializable
                 amount,
                 null,
                 null,
-                null,
+                Collections.emptyList(),
                 null,
                 Collections.emptyMap(),
                 Collections.emptyList(),
@@ -518,7 +518,7 @@ public class ItemStackBean implements Serializable
         result = 31 * result + this.amount;
         result = 31 * result + (this.displayName != null ? this.displayName.hashCode(): 0);
         result = 31 * result + (this.localizedName != null ? this.localizedName.hashCode(): 0);
-        result = 31 * result + (this.lore != null ? this.lore.hashCode(): 0);
+        result = 31 * result + this.lore.hashCode();
         result = 31 * result + (this.customModelData != null ? this.customModelData.hashCode(): 0);
         result = 31 * result + this.enchantments.hashCode();
         result = 31 * result + this.itemFlags.hashCode();
