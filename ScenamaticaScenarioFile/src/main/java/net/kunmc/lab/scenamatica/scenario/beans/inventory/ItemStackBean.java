@@ -2,6 +2,7 @@ package net.kunmc.lab.scenamatica.scenario.beans.inventory;
 
 import com.destroystokyo.paper.Namespaced;
 import com.google.common.collect.Multimap;
+import lombok.AllArgsConstructor;
 import lombok.Value;
 import net.kunmc.lab.scenamatica.commons.utils.MapUtils;
 import net.kunmc.lab.scenamatica.commons.utils.NamespaceUtils;
@@ -31,6 +32,7 @@ import java.util.UUID;
  * インベントリのアイテムを表すクラスです。
  */
 @Value
+@AllArgsConstructor
 public class ItemStackBean implements Serializable
 {
     private static final String KEY_TYPE = "type";
@@ -301,6 +303,44 @@ public class ItemStackBean implements Serializable
         return result;
     }
 
+    public ItemStackBean(Material material)
+    {
+        this(
+                material,
+                1,
+                null,
+                null,
+                null,
+                null,
+                Collections.emptyMap(),
+                Collections.emptyList(),
+                false,
+                Collections.emptyMap(),
+                Collections.emptyList(),
+                Collections.emptyList(),
+                null
+        );
+    }
+
+    public ItemStackBean(Material material, int amount)
+    {
+        this(
+                material,
+                amount,
+                null,
+                null,
+                null,
+                null,
+                Collections.emptyMap(),
+                Collections.emptyList(),
+                false,
+                Collections.emptyMap(),
+                Collections.emptyList(),
+                Collections.emptyList(),
+                null
+        );
+    }
+
     public static Map<String, Object> serialize(ItemStackBean bean)
     {
         Map<String, Object> map = new HashMap<>();
@@ -311,10 +351,11 @@ public class ItemStackBean implements Serializable
         // オプション項目
         if (bean.amount != 1)  // 1個の場合は省略できる。
             map.put(KEY_AMOUNT, bean.amount);
+        if (bean.unbreakable)
+            map.put(KEY_UNBREAKABLE, true);
         MapUtils.putPrimitiveOrStrIfNotNull(map, KEY_DISPLAY_NAME, bean.displayName);
         MapUtils.putPrimitiveOrStrIfNotNull(map, KEY_LOCALIZED_NAME, bean.localizedName);
         MapUtils.putPrimitiveOrStrIfNotNull(map, KEY_CUSTOM_MODEL_DATA, bean.customModelData);
-        MapUtils.putPrimitiveOrStrIfNotNull(map, KEY_UNBREAKABLE, bean.unbreakable);
         MapUtils.putPrimitiveOrStrIfNotNull(map, KEY_DAMAGE, bean.damage);
 
         MapUtils.putListIfNotEmpty(map, KEY_LORE, bean.lore);
@@ -322,8 +363,8 @@ public class ItemStackBean implements Serializable
         MapUtils.putPrimitiveOrStrListIfNotEmpty(map, KEY_DESTROYABLES, bean.destroyableKeys);
         MapUtils.putPrimitiveOrStrListIfNotEmpty(map, KEY_ITEM_FLAGS, bean.itemFlags);
 
-        MapUtils.putIfNotNull(map, KEY_ENCHANTMENTS, serializeEnchantments(bean));
-        MapUtils.putIfNotNull(map, KEY_ATTRIBUTE_MODIFIERS, serializeAttributeModifiers(bean));
+        MapUtils.putMapIfNotEmpty(map, KEY_ENCHANTMENTS, serializeEnchantments(bean));
+        MapUtils.putMapIfNotEmpty(map, KEY_ATTRIBUTE_MODIFIERS, serializeAttributeModifiers(bean));
 
         return map;
     }

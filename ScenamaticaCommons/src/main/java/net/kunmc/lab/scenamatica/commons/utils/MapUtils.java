@@ -18,6 +18,7 @@ public class MapUtils
             map.put(key, value);
     }
 
+    @SuppressWarnings("unchecked")
     public static <K, V> void putAsStrIfNotNull(Map<K, V> map, K key, V value)
     {
         if (value != null)
@@ -44,6 +45,12 @@ public class MapUtils
     }
 
     public static <K> void putListIfNotEmpty(Map<K, Object> map, K key, @Nullable Collection<?> value)
+    {
+        if (!(value == null || value.isEmpty()))
+            map.put(key, value);
+    }
+
+    public static <K> void putMapIfNotEmpty(Map<K, Object> map, K key, @Nullable Map<?, ?> value)
     {
         if (!(value == null || value.isEmpty()))
             map.put(key, value);
@@ -112,7 +119,6 @@ public class MapUtils
         return (Map<K, V>) map;
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
     public static <T extends Enum<T>> void checkEnumName(Map<String, Object> map, String key, Class<T> enumType)
     {
         MapUtils.checkContainsKey(map, key);
