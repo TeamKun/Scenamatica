@@ -217,7 +217,7 @@ public class EntityBean
      * @param map 検証するMap
      * @throws IllegalArgumentException Mapが正しいエンティティ情報ではない場合
      */
-    public static void validateMap(@NotNull Map<String, Object> map)
+    public static void validate(@NotNull Map<String, Object> map)
     {
         if (map.containsKey(KEY_UUID))
             try
@@ -254,7 +254,7 @@ public class EntityBean
      */
     public static EntityBean deserialize(@NotNull Map<String, Object> map)
     {
-        validateMap(map);
+        validate(map);
 
         Location loc = MapUtils.getAsLocationOrNull(map, KEY_LOCATION);
         String customName = MapUtils.getOrNull(map, KEY_CUSTOM_NAME);

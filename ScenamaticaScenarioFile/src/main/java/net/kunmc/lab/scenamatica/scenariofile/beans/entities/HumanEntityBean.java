@@ -153,18 +153,18 @@ public class HumanEntityBean extends EntityBean
      * @param map 判定するMap
      * @throws IllegalArgumentException Mapがシリアライズされた人形エンティティの情報でない場合
      */
-    public static void validateMap(@NotNull Map<String, Object> map)
+    public static void validate(@NotNull Map<String, Object> map)
     {
-        EntityBean.validateMap(map);
+        EntityBean.validate(map);
 
         if (map.containsKey(KEY_INVENTORY))
-            PlayerInventoryBean.validateMap(MapUtils.checkAndCastMap(
+            PlayerInventoryBean.validate(MapUtils.checkAndCastMap(
                     map.get(KEY_INVENTORY),
                     String.class,
                     Object.class
             ));
         if (map.containsKey(KEY_ENDER_CHEST))
-            InventoryBean.validateMap(MapUtils.checkAndCastMap(
+            InventoryBean.validate(MapUtils.checkAndCastMap(
                     map.get(KEY_ENDER_CHEST),
                     String.class,
                     Object.class
@@ -179,7 +179,7 @@ public class HumanEntityBean extends EntityBean
      */
     public static HumanEntityBean deserialize(@NotNull Map<String, Object> map)
     {
-        validateMap(map);
+        validate(map);
 
         EntityBean entityBean = EntityBean.deserialize(map);
 

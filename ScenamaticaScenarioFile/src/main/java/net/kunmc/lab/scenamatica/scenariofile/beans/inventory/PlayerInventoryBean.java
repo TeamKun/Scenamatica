@@ -128,7 +128,7 @@ public class PlayerInventoryBean extends InventoryBean implements Serializable
      * @param map 検証するMap
      * @throws IllegalArgumentException 必須項目が含まれていない場合か, 型が不正な場合
      */
-    public static void validateMap(Map<String, Object> map)
+    public static void validate(Map<String, Object> map)
     {
         if (map.containsKey(KEY_MAIN_INVENTORY))
         {
@@ -143,15 +143,15 @@ public class PlayerInventoryBean extends InventoryBean implements Serializable
                     (Integer) mainInventory.get(KEY_SIZE) != 9 * 4))
                 throw new IllegalArgumentException(KEY_SIZE + " must be 36 slots in player inventory.");
 
-            InventoryBean.validateMap(mainInventory);
+            InventoryBean.validate(mainInventory);
         }
         if (map.containsKey(KEY_MAIN_HAND))
-            ItemStackBean.validateMap(MapUtils.checkAndCastMap(
+            ItemStackBean.validate(MapUtils.checkAndCastMap(
                     map.get(KEY_MAIN_HAND),
                     String.class, Object.class
             ));
         if (map.containsKey(KEY_OFF_HAND))
-            ItemStackBean.validateMap(MapUtils.checkAndCastMap(
+            ItemStackBean.validate(MapUtils.checkAndCastMap(
                     map.get(KEY_OFF_HAND),
                     String.class, Object.class
             ));
@@ -169,7 +169,7 @@ public class PlayerInventoryBean extends InventoryBean implements Serializable
             if (armorContent == null)
                 continue;
 
-            ItemStackBean.validateMap(MapUtils.checkAndCastMap(
+            ItemStackBean.validate(MapUtils.checkAndCastMap(
                             armorContent,
                             String.class, Object.class
                     )
@@ -185,7 +185,7 @@ public class PlayerInventoryBean extends InventoryBean implements Serializable
      */
     public static PlayerInventoryBean deserialize(Map<String, Object> map)
     {
-        validateMap(map);
+        validate(map);
 
         ItemStackBean[] armorContents;
         if (map.containsKey(KEY_ARMOR_CONTENTS))

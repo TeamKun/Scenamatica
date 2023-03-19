@@ -71,7 +71,7 @@ public class InventoryBean implements Serializable
      * @param map 検証するMap
      * @throws IllegalArgumentException 必須項目が含まれていない場合か, 型が不正な場合
      */
-    public static void validateMap(Map<String, Object> map)
+    public static void validate(Map<String, Object> map)
     {
         MapUtils.checkType(map, KEY_SIZE, Integer.class);
         MapUtils.checkTypeIfContains(map, KEY_TITLE, String.class);
@@ -86,7 +86,7 @@ public class InventoryBean implements Serializable
         );
 
         for (Map.Entry<Integer, Object> entry : contents.entrySet())
-            ItemStackBean.validateMap(MapUtils.checkAndCastMap(
+            ItemStackBean.validate(MapUtils.checkAndCastMap(
                     entry.getValue(),
                     String.class,
                     Object.class
@@ -101,7 +101,7 @@ public class InventoryBean implements Serializable
      */
     public static InventoryBean deserialize(Map<String, Object> map)
     {
-        validateMap(map);
+        validate(map);
 
         Map<Integer, ItemStackBean> mainContents = new HashMap<>();
         if (map.containsKey(KEY_MAIN_CONTENTS))

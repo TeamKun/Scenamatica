@@ -394,7 +394,7 @@ public class ItemStackBean implements Serializable
      * @param map 検証するMap
      * @throws IllegalArgumentException 必須項目が含まれていない場合か, 型が不正な場合
      */
-    public static void validateMap(Map<String, Object> map)
+    public static void validate(Map<String, Object> map)
     {
         MapUtils.checkEnumName(map, KEY_TYPE, Material.class);
 
@@ -435,7 +435,7 @@ public class ItemStackBean implements Serializable
      */
     public static ItemStackBean deserialize(@NotNull Map<String, Object> map)
     {
-        validateMap(map);
+        validate(map);
 
         // 必須項目
         Material type = Material.valueOf((String) map.get(KEY_TYPE));

@@ -86,11 +86,11 @@ public class WorldBean implements Serializable
 
     /**
      * Mapがワールドの情報を表すMapかどうかを検証します。
-     * @param map 検証するMap
      *
+     * @param map 検証するMap
      * @throws IllegalArgumentException 必須項目が含まれていない場合か, 型が不正な場合
      */
-    public static void validateMap(Map<String, Object> map)
+    public static void validate(Map<String, Object> map)
     {
         MapUtils.checkContainsKey(map, KEY_NAME);
         MapUtils.checkTypeIfContains(map, KEY_NAME, String.class);
@@ -108,7 +108,7 @@ public class WorldBean implements Serializable
     @NotNull
     public static WorldBean deserialize(@NotNull Map<String, Object> map)
     {
-        validateMap(map);
+        validate(map);
 
         return new WorldBean(
                 (String) map.get(KEY_NAME),

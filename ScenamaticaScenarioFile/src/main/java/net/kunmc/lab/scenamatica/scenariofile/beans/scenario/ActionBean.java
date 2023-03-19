@@ -51,7 +51,7 @@ public class ActionBean implements TriggerArgument
      * @param map 検証するMap
      * @throws IllegalArgumentException Mapがシリアライズされたシナリオの動作の定義でない場合
      */
-    public static void validateMap(Map<String, Object> map)
+    public static void validate(Map<String, Object> map)
     {
         MapUtils.checkType(map, KEY_TYPE, String.class);
 
@@ -72,7 +72,7 @@ public class ActionBean implements TriggerArgument
      */
     public static ActionBean deserialize(Map<String, Object> map)
     {
-        validateMap(map);
+        validate(map);
 
         String actionType = (String) map.get(KEY_TYPE);
 

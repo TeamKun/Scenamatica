@@ -90,7 +90,7 @@ public class TriggerBean implements Serializable
      * @param map 検証する Map
      * @throws IllegalArgumentException 検証に失敗した場合
      */
-    public static void validateMap(@NotNull Map<String, Object> map)
+    public static void validate(@NotNull Map<String, Object> map)
     {
         MapUtils.checkType(map, KEY_TYPE, String.class);
         if (TriggerType.fromKey((String) map.get(KEY_TYPE)) == null)
@@ -100,7 +100,7 @@ public class TriggerBean implements Serializable
         {
             MapUtils.checkType(map, KEY_BEFORE_THAT, List.class);
             for (Object obj : (List<?>) map.get(KEY_BEFORE_THAT))
-                ScenarioBean.validateMap(MapUtils.checkAndCastMap(
+                ScenarioBean.validate(MapUtils.checkAndCastMap(
                         obj,
                         String.class,
                         Object.class
@@ -110,7 +110,7 @@ public class TriggerBean implements Serializable
         {
             MapUtils.checkType(map, KEY_AFTER_THAT, List.class);
             for (Object obj : (List<?>) map.get(KEY_AFTER_THAT))
-                ScenarioBean.validateMap(MapUtils.checkAndCastMap(
+                ScenarioBean.validate(MapUtils.checkAndCastMap(
                         obj,
                         String.class,
                         Object.class
@@ -131,7 +131,7 @@ public class TriggerBean implements Serializable
     @NotNull
     public static TriggerBean deserialize(@NotNull Map<String, Object> map)
     {
-        validateMap(map);
+        validate(map);
 
         TriggerType type = TriggerType.fromKey((String) map.get(KEY_TYPE));
 

@@ -192,9 +192,9 @@ public class PlayerBean extends HumanEntityBean implements Serializable
      * @param map 検証するMap
      * @throws IllegalArgumentException Mapがシリアライズされたプレイヤーの情報でない場合
      */
-    public static void validateMap(@NotNull Map<String, Object> map)
+    public static void validate(@NotNull Map<String, Object> map)
     {
-        HumanEntityBean.validateMap(map);
+        HumanEntityBean.validate(map);
         MapUtils.checkType(map, KEY_NAME, String.class);
         MapUtils.checkTypeIfContains(map, KEY_DISPLAY_NAME, String.class);
         MapUtils.checkLocationIfContains(map, KEY_COMPASS_TARGET);
@@ -214,7 +214,7 @@ public class PlayerBean extends HumanEntityBean implements Serializable
      */
     public static PlayerBean deserialize(@NotNull Map<String, Object> map)
     {
-        validateMap(map);
+        validate(map);
 
         HumanEntityBean human = HumanEntityBean.deserialize(map);
 

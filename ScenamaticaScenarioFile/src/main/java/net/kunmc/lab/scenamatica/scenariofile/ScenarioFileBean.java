@@ -83,26 +83,26 @@ public class ScenarioFileBean implements Serializable
      * @param map 検証する Map
      * @throws IllegalArgumentException 検証に失敗した場合
      */
-    public static void validateMap(@NotNull Map<String, Object> map)
+    public static void validate(@NotNull Map<String, Object> map)
     {
         MapUtils.checkType(map, KEY_NAME, String.class);
 
         if (map.containsKey(KEY_CONTEXT))
-            ContextBean.validateMap(MapUtils.checkAndCastMap(
+            ContextBean.validate(MapUtils.checkAndCastMap(
                     map.get(KEY_CONTEXT),
                     String.class,
                     Object.class
             ));
 
         MapUtils.checkType(map, KEY_TRIGGERS, List.class);
-        ((List<?>) map.get(KEY_TRIGGERS)).forEach(o -> TriggerBean.validateMap(MapUtils.checkAndCastMap(
+        ((List<?>) map.get(KEY_TRIGGERS)).forEach(o -> TriggerBean.validate(MapUtils.checkAndCastMap(
                 o,
                 String.class,
                 Object.class
         )));
 
         MapUtils.checkType(map, KEY_SCENARIO, List.class);
-        ((List<?>) map.get(KEY_SCENARIO)).forEach(o -> ScenarioBean.validateMap(MapUtils.checkAndCastMap(
+        ((List<?>) map.get(KEY_SCENARIO)).forEach(o -> ScenarioBean.validate(MapUtils.checkAndCastMap(
                 o,
                 String.class,
                 Object.class
@@ -118,7 +118,7 @@ public class ScenarioFileBean implements Serializable
     @NotNull
     public static ScenarioFileBean deserialize(@NotNull Map<String, Object> map)
     {
-        validateMap(map);
+        validate(map);
 
         String name = (String) map.get(KEY_NAME);
         List<TriggerBean> triggers = ((List<?>) map.get(KEY_TRIGGERS)).stream()

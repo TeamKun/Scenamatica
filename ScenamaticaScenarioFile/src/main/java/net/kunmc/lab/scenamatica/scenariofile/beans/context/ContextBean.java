@@ -60,7 +60,7 @@ public class ContextBean
      * @param map 検証するMap
      * @throws IllegalArgumentException シナリオの実行に必要な情報を表していない場合
      */
-    public static void validateMap(Map<String, Object> map)
+    public static void validate(Map<String, Object> map)
     {
         if (map.containsKey(KEY_PSEUDO_PLAYERS))
         {
@@ -69,7 +69,7 @@ public class ContextBean
                 throw new IllegalArgumentException("pseudoPlayers must be List");
 
             for (Object player : (List<?>) pseudoPlayers)
-                PlayerBean.validateMap(MapUtils.checkAndCastMap(
+                PlayerBean.validate(MapUtils.checkAndCastMap(
                         player,
                         String.class,
                         Object.class
@@ -77,7 +77,7 @@ public class ContextBean
         }
 
         if (map.containsKey(KEY_WORLD))
-            WorldBean.validateMap(MapUtils.checkAndCastMap(
+            WorldBean.validate(MapUtils.checkAndCastMap(
                     map.get(KEY_WORLD),
                     String.class,
                     Object.class

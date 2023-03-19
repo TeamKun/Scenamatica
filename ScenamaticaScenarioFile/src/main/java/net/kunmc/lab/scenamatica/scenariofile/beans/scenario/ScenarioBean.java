@@ -56,7 +56,7 @@ public class ScenarioBean implements Serializable
      * @param map 検証するMap
      * @throws IllegalArgumentException Mapがシリアライズされたシナリオでない場合
      */
-    public static void validateMap(Map<String, Object> map)
+    public static void validate(Map<String, Object> map)
     {
         MapUtils.checkType(map, KEY_SCENARIO_TYPE, String.class);
         if (ScenarioType.fromKey((String) map.get(KEY_SCENARIO_TYPE)) == null)
@@ -64,7 +64,7 @@ public class ScenarioBean implements Serializable
 
         MapUtils.checkTypeIfContains(map, KEY_TIMEOUT, Long.class);
 
-        ActionBean.validateMap(map);
+        ActionBean.validate(map);
     }
 
     /**
@@ -75,7 +75,7 @@ public class ScenarioBean implements Serializable
      */
     public static ScenarioBean deserialize(Map<String, Object> map)
     {
-        validateMap(map);
+        validate(map);
 
         ScenarioType type = ScenarioType.fromKey((String) map.get(KEY_SCENARIO_TYPE));
         long timeout = MapUtils.getOrDefault(map, KEY_TIMEOUT, -1L);
