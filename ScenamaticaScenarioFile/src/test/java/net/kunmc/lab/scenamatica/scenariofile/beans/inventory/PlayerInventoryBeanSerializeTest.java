@@ -54,12 +54,12 @@ public class PlayerInventoryBeanSerializeTest
                 }});
             }});
         }});
-        this.put("mainHand", new HashMap<String, Object>()
+        this.put("mainHandItem", new HashMap<String, Object>()
         {{
             this.put("type", "DIAMOND");
             this.put("amount", 3);
         }});
-        this.put("offHand", new HashMap<String, Object>()
+        this.put("offHandItem", new HashMap<String, Object>()
         {{
             this.put("type", "DIAMOND");
             this.put("amount", 3);
@@ -84,6 +84,20 @@ public class PlayerInventoryBeanSerializeTest
         ));
     }};
 
+    public static final PlayerInventoryBean EMPTY = new PlayerInventoryBean(
+            InventoryBeanSerializeTest.EMPTY,
+            null,
+            null,
+            new ItemStackBean[]{
+                    null,
+                    null,
+                    null,
+                    null,
+            }
+    );
+
+    public static final Map<String, Object> EMPTY_MAP = new HashMap<>();
+
     @Test
     void 正常シリアライズできるか()
     {
@@ -98,6 +112,22 @@ public class PlayerInventoryBeanSerializeTest
         PlayerInventoryBean actual = PlayerInventoryBean.deserialize(FULFILLED_MAP);
 
         assertEquals(FULFILLED, actual);
+    }
+
+    @Test
+    void 必須項目のみでシリアライズできるか()
+    {
+        Map<String, Object> actual = PlayerInventoryBean.serialize(EMPTY);
+
+        MapTestUtil.assertEqual(EMPTY_MAP, actual);
+    }
+
+    @Test
+    void 必須項目のみでデシリアライズできるか()
+    {
+        PlayerInventoryBean actual = PlayerInventoryBean.deserialize(EMPTY_MAP);
+
+        assertEquals(EMPTY, actual);
     }
 
     @Test

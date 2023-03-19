@@ -30,6 +30,17 @@ public class ContextBeanSerializeTest
         put("world", WorldBeanSerializeTest.FULFILLED_MAP);
     }};
 
+    public static final ContextBean EMPTY = new ContextBean(
+            null,
+            null
+    );
+
+    public static final Map<String, Object> EMPTY_MAP = new HashMap<String, Object>()
+    {{
+        put("pseudoPlayers", null);
+        put("world", null);
+    }};
+
     @Test
     void 正常にシリアライズできるか()
     {
@@ -44,5 +55,19 @@ public class ContextBeanSerializeTest
         ContextBean bean = ContextBean.deserialize(FULFILLED_MAP);
 
         assertEquals(FULFILLED, bean);
+    }
+
+    @Test
+    void 必須項目のみでシリアライズできるか()
+    {
+        Map<String, Object> map = ContextBean.serialize(EMPTY);
+        MapTestUtil.assertEqual(EMPTY_MAP, map);
+    }
+
+    @Test
+    void 必須項目のみでデシリアライズできるか()
+    {
+        ContextBean bean = ContextBean.deserialize(EMPTY_MAP);
+        assertEquals(EMPTY, bean);
     }
 }

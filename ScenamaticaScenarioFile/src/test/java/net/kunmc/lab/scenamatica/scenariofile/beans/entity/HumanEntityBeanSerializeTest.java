@@ -33,6 +33,18 @@ public class HumanEntityBeanSerializeTest
         put("food", 20);
     }};
 
+    public static final HumanEntityBean EMPTY = new HumanEntityBean(
+            EntityBeanSerializeTest.EMPTY,
+            null,
+            null,
+            MainHand.RIGHT,
+            GameMode.SURVIVAL,
+            null
+    );
+
+    public static final Map<String, Object> EMPTY_MAP =
+            new HashMap<>(EntityBeanSerializeTest.EMPTY_MAP);
+
     @Test
     void 正常にシリアライズできるか()
     {
@@ -47,5 +59,21 @@ public class HumanEntityBeanSerializeTest
         HumanEntityBean bean = HumanEntityBean.deserialize(FULFILLED_MAP);
 
         assertEquals(FULFILLED, bean);
+    }
+
+    @Test
+    void 必須項目のみでシリアライズできるか()
+    {
+        Map<String, Object> map = HumanEntityBean.serialize(EMPTY);
+
+        MapTestUtil.assertEqual(EMPTY_MAP, map);
+    }
+
+    @Test
+    void 必須項目のみでデシリアライズできるか()
+    {
+        HumanEntityBean bean = HumanEntityBean.deserialize(EMPTY_MAP);
+
+        assertEquals(EMPTY, bean);
     }
 }

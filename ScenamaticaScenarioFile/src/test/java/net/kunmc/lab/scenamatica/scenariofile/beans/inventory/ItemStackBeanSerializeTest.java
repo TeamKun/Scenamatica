@@ -119,6 +119,48 @@ public class ItemStackBeanSerializeTest
         this.put("damage", 100);
     }};
 
+    public static final ItemStackBean EMPTY = new ItemStackBean(
+            Material.AIR,
+            1,
+            null,
+            null,
+            Collections.emptyList(),
+            null,
+            Collections.emptyMap(),
+            Collections.emptyList(),
+            false,
+            Collections.emptyMap(),
+            Collections.emptyList(),
+            Collections.emptyList(),
+            null
+    );
+
+    public static final Map<String, Object> EMPTY_MAP = new HashMap<String, Object>()
+    {{
+        this.put("type", "AIR");
+    }};
+
+    private static final ItemStackBean ONLY_ONE_ITEM = new ItemStackBean(
+            Material.DIAMOND_HOE,
+            1,
+            null,
+            null,
+            Collections.emptyList(),
+            null,
+            Collections.emptyMap(),
+            Collections.emptyList(),
+            false,
+            Collections.emptyMap(),
+            Collections.emptyList(),
+            Collections.emptyList(),
+            null
+    );
+
+    private static final Map<String, Object> ONLY_ONE_ITEM_MAP = new HashMap<String, Object>()
+    {{
+        this.put("type", "DIAMOND_HOE");
+    }};
+
     @BeforeAll
     @SuppressWarnings("unchecked")
     @SneakyThrows({NoSuchFieldException.class, IllegalAccessException.class})
@@ -169,15 +211,33 @@ public class ItemStackBeanSerializeTest
     @Test
     void 必須項目のみでシリアライズできるか()
     {
-        ItemStackBean bean = new ItemStackBean(Material.DIAMOND_HOE);
-        Map<String, Object> actual = ItemStackBean.serialize(bean);
+        Map<String, Object> actual = ItemStackBean.serialize(EMPTY);
 
-        Map<String, Object> expected = new HashMap<String, Object>()
-        {{
-            this.put("type", "DIAMOND_HOE");
-        }};
+        MapTestUtil.assertEqual(EMPTY_MAP, actual);
+    }
 
-        MapTestUtil.assertEqual(expected, actual);
+    @Test
+    void 必須項目のみでデシリアライズできるか()
+    {
+        ItemStackBean actual = ItemStackBean.deserialize(EMPTY_MAP);
+
+        assertEquals(EMPTY, actual);
+    }
+
+    @Test
+    void 個数が1のときに省略してシリアライズできるか()
+    {
+        Map<String, Object> actual = ItemStackBean.serialize(ONLY_ONE_ITEM);
+
+        MapTestUtil.assertEqual(ONLY_ONE_ITEM_MAP, actual);
+    }
+
+    @Test
+    void 個数が1のときに省略してデシリアライズできるか()
+    {
+        ItemStackBean actual = ItemStackBean.deserialize(ONLY_ONE_ITEM_MAP);
+
+        assertEquals(ONLY_ONE_ITEM, actual);
     }
 
     @Test
@@ -276,4 +336,6 @@ public class ItemStackBeanSerializeTest
 
         assertEquals(bean, actual);
     }
+
+
 }

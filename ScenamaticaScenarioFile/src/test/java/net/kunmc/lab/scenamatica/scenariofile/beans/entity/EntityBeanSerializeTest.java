@@ -47,6 +47,10 @@ public class EntityBeanSerializeTest
         this.put("lastDamage", DamageBeanSerializeTest.FULFILLED_MAP);
     }};
 
+    public static final EntityBean EMPTY = new EntityBean();
+
+    public static final Map<String, Object> EMPTY_MAP = new HashMap<>();
+
     @Test
     void 正常にシリアライズできるか()
     {
@@ -61,5 +65,21 @@ public class EntityBeanSerializeTest
         EntityBean entity = EntityBean.deserialize(FULFILLED_MAP);
 
         assertEquals(FULFILLED, entity);
+    }
+
+    @Test
+    void 必須項目のみでシリアライズできるか()
+    {
+        Map<String, Object> map = EntityBean.serialize(EMPTY);
+
+        MapTestUtil.assertEqual(EMPTY_MAP, map);
+    }
+
+    @Test
+    void 必須項目のみでデシリアライズできるか()
+    {
+        EntityBean entity = EntityBean.deserialize(EMPTY_MAP);
+
+        assertEquals(EMPTY, entity);
     }
 }

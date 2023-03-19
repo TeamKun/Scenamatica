@@ -22,6 +22,18 @@ public class ScenarioBeanSerializeTest
         this.put("timeout", 114514L);
     }};
 
+    public static final ScenarioBean EMPTY = new ScenarioBean(
+            ScenarioType.ACTION_EXECUTE,
+            ActionBeanSerializeTest.EMPTY,
+            -1L
+    );
+
+    public static final Map<String, Object> EMPTY_MAP = new HashMap<String, Object>(ActionBeanSerializeTest.FULFILLED_MAP)
+    {{
+        this.put("type", "execute");
+        this.put("action", ActionBeanSerializeTest.EMPTY_MAP);
+    }};
+
     @Test
     void 正常にシリアライズできるか()
     {
@@ -36,5 +48,21 @@ public class ScenarioBeanSerializeTest
         ScenarioBean bean = ScenarioBean.deserialize(FULFILLED_MAP);
 
         assertEquals(FULFILLED, bean);
+    }
+
+    @Test
+    void 必須項目のみでシリアライズできるか()
+    {
+        Map<String, Object> map = ScenarioBean.serialize(EMPTY);
+
+        MapTestUtil.assertEqual(EMPTY_MAP, map);
+    }
+
+    @Test
+    void 必須項目のみでデシリアライズできるか()
+    {
+        ScenarioBean bean = ScenarioBean.deserialize(EMPTY_MAP);
+
+        assertEquals(EMPTY, bean);
     }
 }

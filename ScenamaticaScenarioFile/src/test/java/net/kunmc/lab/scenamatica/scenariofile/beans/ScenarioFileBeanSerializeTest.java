@@ -8,6 +8,7 @@ import net.kunmc.lab.scenamatica.scenariofile.beans.utils.MapTestUtil;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,17 +32,31 @@ public class ScenarioFileBeanSerializeTest
 
     public static final Map<String, Object> FULFILLED_MAP = new HashMap<String, Object>()
     {{
-        put("name", "A scenario that does everything");
-        put("on", Arrays.asList(
+        this.put("name", "A scenario that does everything");
+        this.put("on", Arrays.asList(
                 TriggerBeanSerializeTest.FULFILLED_MAP,
                 TriggerBeanSerializeTest.FULFILLED_MAP,
                 TriggerBeanSerializeTest.FULFILLED_MAP
         ));
-        put("context", ContextBeanSerializeTest.FULFILLED_MAP);
-        put("scenario", Arrays.asList(
+        this.put("context", ContextBeanSerializeTest.FULFILLED_MAP);
+        this.put("scenario", Arrays.asList(
                 ScenarioBeanSerializeTest.FULFILLED_MAP,
                 ScenarioBeanSerializeTest.FULFILLED_MAP
         ));
+    }};
+
+    public static final ScenarioFileBean EMPTY = new ScenarioFileBean(
+            "A scenario that does nothing",
+            Collections.emptyList(),
+            null,
+            Collections.emptyList()
+    );
+
+    public static final Map<String, Object> EMPTY_MAP = new HashMap<String, Object>()
+    {{
+        this.put("name", "A scenario that does nothing");
+        this.put("on", Collections.emptyList());
+        this.put("scenario", Collections.emptyList());
     }};
 
     @Test
@@ -60,4 +75,19 @@ public class ScenarioFileBeanSerializeTest
         assertEquals(FULFILLED, bean);
     }
 
+    @Test
+    void 必須項目のみでシリアライズできるか()
+    {
+        Map<String, Object> map = ScenarioFileBean.serialize(EMPTY);
+
+        MapTestUtil.assertEqual(EMPTY_MAP, map);
+    }
+
+    @Test
+    void 必須項目のみでデシリアライズできるか()
+    {
+        ScenarioFileBean bean = ScenarioFileBean.deserialize(EMPTY_MAP);
+
+        assertEquals(EMPTY, bean);
+    }
 }

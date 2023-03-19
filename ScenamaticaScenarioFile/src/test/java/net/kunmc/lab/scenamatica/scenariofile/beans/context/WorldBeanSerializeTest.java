@@ -33,6 +33,17 @@ public class WorldBeanSerializeTest
         put("hardcore", true);
     }};
 
+    public static final WorldBean EMPTY = new WorldBean(
+            null,
+            null,
+            null,
+            null,
+            null,
+            false
+    );
+
+    public static final Map<String, Object> EMPTY_MAP = new HashMap<>();
+
     @Test
     void 正常シリアライズできるか()
     {
@@ -75,5 +86,21 @@ public class WorldBeanSerializeTest
                 IllegalArgumentException.class,
                 () -> WorldBean.deserialize(map)
         );
+    }
+
+    @Test
+    void 必須項目のみでシリアライズできるか()
+    {
+        Map<String, Object> actual = WorldBean.serialize(EMPTY);
+
+        MapTestUtil.assertEqual(EMPTY_MAP, actual);
+    }
+
+    @Test
+    void 必須項目のみでデシリアライズできるか()
+    {
+        WorldBean actual = WorldBean.deserialize(EMPTY_MAP);
+
+        assertEquals(EMPTY, actual);
     }
 }

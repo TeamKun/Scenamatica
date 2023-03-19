@@ -61,6 +61,29 @@ public class PlayerBeanSerializeTest
         this.put("flySpeed", 514f);
     }};
 
+    public static final PlayerBean EMPTY = new PlayerBean(
+            HumanEntityBeanSerializeTest.EMPTY,
+            "YajuSNPI",
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            false,
+            false,
+            null,
+            null
+    );
+
+    public static final Map<String, Object> EMPTY_MAP = new HashMap<String, Object>()
+    {{
+        this.put("name", "YajuSNPI");
+    }};
+
     @Test
     void 正常にシリアライズできるか()
     {
@@ -75,5 +98,21 @@ public class PlayerBeanSerializeTest
         PlayerBean bean = PlayerBean.deserialize(FULFILLED_MAP);
 
         assertEquals(FULFILLED, bean);
+    }
+
+    @Test
+    void 必須項目のみでシリアライズできるか()
+    {
+        Map<String, Object> map = PlayerBean.serialize(EMPTY);
+
+        MapTestUtil.assertEqual(EMPTY_MAP, map);
+    }
+
+    @Test
+    void 必須項目のみでデシリアライズできるか()
+    {
+        PlayerBean bean = PlayerBean.deserialize(EMPTY_MAP);
+
+        assertEquals(EMPTY, bean);
     }
 }

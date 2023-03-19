@@ -4,6 +4,7 @@ import net.kunmc.lab.scenamatica.scenariofile.beans.utils.MapTestUtil;
 import org.bukkit.Material;
 import org.junit.jupiter.api.Test;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,6 +33,17 @@ public class InventoryBeanSerializeTest
         }});
     }};
 
+    public static final InventoryBean EMPTY = new InventoryBean(
+            1,
+            null,
+            Collections.emptyMap()
+    );
+
+    public static final Map<String, Object> EMPTY_MAP = new HashMap<String, Object>()
+    {{
+        this.put("size", 1);
+    }};
+
     @Test
     void 正常シリアライズできるか()
     {
@@ -46,5 +58,21 @@ public class InventoryBeanSerializeTest
         InventoryBean actual = InventoryBean.deserialize(FULFILLED_MAP);
 
         assert FULFILLED.equals(actual);
+    }
+
+    @Test
+    void 必須項目のみでシリアライズできるか()
+    {
+        Map<String, Object> actual = InventoryBean.serialize(EMPTY);
+
+        MapTestUtil.assertEqual(EMPTY_MAP, actual);
+    }
+
+    @Test
+    void 必須項目のみでデシリアライズできるか()
+    {
+        InventoryBean actual = InventoryBean.deserialize(EMPTY_MAP);
+
+        assert EMPTY.equals(actual);
     }
 }

@@ -6,6 +6,7 @@ import net.kunmc.lab.scenamatica.scenariofile.beans.utils.MapTestUtil;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,6 +28,18 @@ public class TriggerBeanSerializeTest
         this.put("after", Arrays.asList(ScenarioBeanSerializeTest.FULFILLED_MAP, ScenarioBeanSerializeTest.FULFILLED_MAP));
     }};
 
+    public static final TriggerBean EMPTY = new TriggerBean(
+            TriggerType.ON_ACTION,
+            ActionBeanSerializeTest.EMPTY,
+            Collections.emptyList(),
+            Collections.emptyList()
+    );
+
+    public static final Map<String, Object> EMPTY_MAP = new HashMap<String, Object>(ActionBeanSerializeTest.EMPTY_MAP)
+    {{
+        this.put("type", "action");
+    }};
+
     @Test
     void 正常にシリアライズできるか()
     {
@@ -41,5 +54,21 @@ public class TriggerBeanSerializeTest
         TriggerBean bean = TriggerBean.deserialize(FULFILLED_MAP);
 
         assertEquals(FULFILLED, bean);
+    }
+
+    @Test
+    void 必須項目のみでシリアライズできるか()
+    {
+        Map<String, Object> map = TriggerBean.serialize(EMPTY);
+
+        MapTestUtil.assertEqual(EMPTY_MAP, map);
+    }
+
+    @Test
+    void 必須項目のみでデシリアライズできるか()
+    {
+        TriggerBean bean = TriggerBean.deserialize(EMPTY_MAP);
+
+        assertEquals(EMPTY, bean);
     }
 }

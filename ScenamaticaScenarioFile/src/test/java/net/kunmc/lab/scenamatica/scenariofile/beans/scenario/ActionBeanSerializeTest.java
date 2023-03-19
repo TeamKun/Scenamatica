@@ -27,6 +27,16 @@ public class ActionBeanSerializeTest
         }});
     }};
 
+    public static final ActionBean EMPTY = new ActionBean(
+            "action",
+            null
+    );
+
+    public static final HashMap<String, Object> EMPTY_MAP = new HashMap<String, Object>()
+    {{
+        this.put("action", "action");
+    }};
+
     @Test
     void 正常にシリアライズできるか()
     {
@@ -41,5 +51,21 @@ public class ActionBeanSerializeTest
         ActionBean bean = ActionBean.deserialize(FULFILLED_MAP);
 
         assertEquals(FULFILLED, bean);
+    }
+
+    @Test
+    void 必須項目のみでシリアライズできるか()
+    {
+        Map<String, Object> map = ActionBean.serialize(EMPTY);
+
+        MapTestUtil.assertEqual(EMPTY_MAP, map);
+    }
+
+    @Test
+    void 必須項目のみでデシリアライズできるか()
+    {
+        ActionBean bean = ActionBean.deserialize(EMPTY_MAP);
+
+        assertEquals(EMPTY, bean);
     }
 }
