@@ -76,6 +76,9 @@ public class InventoryBean implements Serializable
         MapUtils.checkType(map, KEY_SIZE, Integer.class);
         MapUtils.checkTypeIfContains(map, KEY_TITLE, String.class);
 
+        if (!map.containsKey(KEY_MAIN_CONTENTS))
+            return;
+
         Map<Integer, Object> contents = MapUtils.checkAndCastMap(
                 map.get(KEY_MAIN_CONTENTS),
                 Integer.class,
@@ -100,22 +103,26 @@ public class InventoryBean implements Serializable
     {
         validateMap(map);
 
-        Map<Integer, Object> contents = MapUtils.checkAndCastMap(
-                map.get(KEY_MAIN_CONTENTS),
-                Integer.class,
-                Object.class
-
-        );
         Map<Integer, ItemStackBean> mainContents = new HashMap<>();
-        for (Map.Entry<Integer, Object> entry : contents.entrySet())
-            mainContents.put(
-                    entry.getKey(),
-                    ItemStackBean.deserialize(MapUtils.checkAndCastMap(
-                            entry.getValue(),
-                            String.class,
-                            Object.class
-                    ))
+        if (map.containsKey(KEY_MAIN_CONTENTS))
+        {
+            Map<Integer, Object> contents = MapUtils.checkAndCastMap(
+                    map.get(KEY_MAIN_CONTENTS),
+                    Integer.class,
+                    Object.class
+
             );
+
+            for (Map.Entry<Integer, Object> entry : contents.entrySet())
+                mainContents.put(
+                        entry.getKey(),
+                        ItemStackBean.deserialize(MapUtils.checkAndCastMap(
+                                entry.getValue(),
+                                String.class,
+                                Object.class
+                        ))
+                );
+        }
 
         return new InventoryBean(
                 (int) map.get(KEY_SIZE),
