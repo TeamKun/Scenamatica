@@ -37,6 +37,8 @@ public class PlayerBean extends HumanEntityBean implements Serializable
     public static final String KEY_FLY_SPEED = "flySpeed";
     public static final String KEY_WALK_SPEED = "walkSpeed";
 
+    private static final float SPEED_DEFAULT = 0.2f;
+
     /**
      * プレイヤーの名前です。
      */
@@ -167,8 +169,10 @@ public class PlayerBean extends HumanEntityBean implements Serializable
         else if (isFlyableGamemode)
             map.put(KEY_FLYING, false);
 
-        MapUtils.putIfNotNull(map, KEY_FLY_SPEED, bean.flySpeed);
-        MapUtils.putIfNotNull(map, KEY_WALK_SPEED, bean.walkSpeed);
+        if (bean.walkSpeed != null && bean.walkSpeed != SPEED_DEFAULT)
+            MapUtils.putIfNotNull(map, KEY_WALK_SPEED, bean.walkSpeed);
+        if (bean.flySpeed != null && bean.flySpeed != SPEED_DEFAULT)
+            MapUtils.putIfNotNull(map, KEY_FLY_SPEED, bean.flySpeed);
 
         if (!(bean.playerListName == null && bean.playerListHeader == null && bean.playerListFooter == null))
         {

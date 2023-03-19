@@ -98,8 +98,9 @@ public class EntityBean
     {
         Map<String, Object> map = new HashMap<>();
         MapUtils.putLocationIfNotNull(map, KEY_LOCATION, entity.getLocation());
-        MapUtils.putIfNotNull(map, KEY_UUID, String.valueOf(entity.getUuid()));
         MapUtils.putIfNotNull(map, KEY_CUSTOM_NAME, entity.getCustomName());
+        if (entity.getUuid() != null)
+            map.put(KEY_UUID, entity.getUuid().toString());
         if (entity.isGlowing())
             map.put(KEY_GLOWING, true);
         if (!entity.isGravity())
