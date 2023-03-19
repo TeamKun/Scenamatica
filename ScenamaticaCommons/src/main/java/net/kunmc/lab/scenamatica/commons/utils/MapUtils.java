@@ -1,11 +1,16 @@
 package net.kunmc.lab.scenamatica.commons.utils;
 
 import lombok.experimental.UtilityClass;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -140,6 +145,41 @@ public class MapUtils
         return (T) map.get(key);
     }
 
+    @SuppressWarnings("unchecked")
+    public static <T> List<T> getAsList(@NotNull Map<String, Object> map, @NotNull String key)
+    {
+        MapUtils.checkContainsKey(map, key);
+        MapUtils.checkType(map, key, List.class);
+        return (List<T>) map.get(key);
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T> List<T> getAsListOrEmpty(@NotNull Map<String, Object> map, @NotNull String key)
+    {
+        if (!map.containsKey(key))
+            return Collections.emptyList();
+        MapUtils.checkType(map, key, List.class);
+        return (List<T>) map.get(key);
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T> List<T> getAsListOrDefault(@NotNull Map<String, Object> map, @NotNull String key, @Nullable List<T> defaultValue)
+    {
+        if (!map.containsKey(key))
+            return defaultValue;
+        MapUtils.checkType(map, key, List.class);
+        return (List<T>) map.get(key);
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T> List<T> getAsListOrNull(@NotNull Map<String, Object> map, @NotNull String key)
+    {
+        if (!map.containsKey(key))
+            return null;
+        MapUtils.checkType(map, key, List.class);
+        return (List<T>) map.get(key);
+    }
+
     @Nullable
     @SuppressWarnings("unchecked")
     public static <T> T getOrNull(@NotNull Map<String, Object> map, @NotNull String key)
@@ -166,6 +206,15 @@ public class MapUtils
     }
 
     @NotNull
+    public static <T extends Enum<T>> T getAsEnumOrDefault(@NotNull Map<String, Object> map, @NotNull String key, @NotNull Class<T> enumType, @NotNull T defaultValue)
+    {
+        if (!map.containsKey(key))
+            return defaultValue;
+
+        return Enum.valueOf(enumType, (String) map.get(key));
+    }
+
+    @NotNull
     public static <T extends Enum<T>> List<T> getAsEnumOrEmptyList(@NotNull Map<String, Object> map, @NotNull String key, @NotNull Class<T> enumType)
     {
         if (!map.containsKey(key))
@@ -180,5 +229,80 @@ public class MapUtils
     {
         if (map.containsKey(key))
             MapUtils.checkEnumName(map, key, enumClass);
+    }
+
+    public static Map<String, Object> locationToMap(Location loc)
+    {
+        Map<String, Object> map = new HashMap<>();
+        map.put("x", loc.getX());
+        map.put("y", loc.getY());
+        map.put("z", loc.getZ());
+
+        if (!(loc.getWorld() == null || loc.getWorld().getName().equals("world")))
+            map.put("world", loc.getWorld().getName());
+
+        if (loc.getYaw() != 0)
+            map.put("yaw", loc.getYaw());
+        if (loc.getPitch() != 0)
+            map.put("pitch", loc.getPitch());
+
+        return map;
+    }
+
+    public static Location fromMap(Map<String, Object> map)
+    {
+        MapUtils.checkContainsKey(map, "x", "y", "z");
+        MapUtils.checkType(map, "x", Number.class);
+        MapUtils.checkType(map, "y", Number.class);
+        MapUtils.checkType(map, "z", Number.class);
+
+        World world = null;
+        if (map.containsKey("world"))
+        {
+            MapUtils.checkType(map, "world", String.class);
+            world = Bukkit.getWorld((String) map.get("world"));
+            if (world == null)
+                throw new IllegalArgumentException("World not found: " + map.get("world"));
+        }
+
+        double x = ((Number) map.get("x")).doubleValue();
+        double y = ((Number) map.get("y")).doubleValue();
+        double z = ((Number) map.get("z")).doubleValue();
+        float yaw = MapUtils.getOrDefault(map, "yaw", 0f);
+        float pitch = MapUtils.getOrDefault(map, "pitch", 0f);
+
+        return new Location(world, x, y, z, yaw, pitch);
+    }
+
+    public static void checkLocation(Map<String, Object> map)
+    {
+        MapUtils.checkContainsKey(map, "x", "y", "z");
+        MapUtils.checkType(map, "x", Number.class);
+        MapUtils.checkType(map, "y", Number.class);
+        MapUtils.checkType(map, "z", Number.class);
+    }
+
+    public static void checkLocationIfContains(Map<String, Object> map, String key)
+    {
+        if (map.containsKey(key))
+            checkLocation(MapUtils.checkAndCastMap(map.get(key), String.class, Object.class));
+    }
+
+    public static Location getAsLocation(Map<String, Object> map, String key)
+    {
+        return fromMap(MapUtils.checkAndCastMap(map.get(key), String.class, Object.class));
+    }
+
+    public static Location getAsLocationOrNull(Map<String, Object> map, String key)
+    {
+        if (!map.containsKey(key))
+            return null;
+        return fromMap(MapUtils.checkAndCastMap(map.get(key), String.class, Object.class));
+    }
+
+    public static void putLocationIfNotNull(Map<? super String, Object> map, String key, Location loc)
+    {
+        if (loc != null)
+            map.put(key, locationToMap(loc));
     }
 }
