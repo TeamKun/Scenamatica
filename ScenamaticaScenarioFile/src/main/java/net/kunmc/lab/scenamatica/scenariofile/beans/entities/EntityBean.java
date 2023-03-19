@@ -4,9 +4,13 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import net.kunmc.lab.scenamatica.commons.utils.MapUtils;
 import org.bukkit.Location;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +30,14 @@ public class EntityBean
     public static final String KEY_LAST_DAMAGE = "lastDamage";
     public static final String KEY_MAX_HEALTH = "maxHealth";
     public static final String KEY_HEALTH = "health";
+
+    public static final String KEY_POTION_EFFECTS = "potion";
+    public static final String KEY_POTION_EFFECTS_AMBIENT = "ambient";
+    public static final String KEY_POTION_EFFECTS_AMPLIFIER = "amplifier";
+    public static final String KEY_POTION_EFFECTS_DURATION = "duration";
+    public static final String KEY_POTION_EFFECTS_TYPE = "type";
+    public static final String KEY_POTION_EFFECTS_SHOW_PARTICLES = "particle";
+    public static final String KEY_POTION_EFFECTS_SHOW_ICON = "icon";
 
     /**
      * エンティティの座標です。
@@ -56,7 +68,7 @@ public class EntityBean
     /**
      * スコアボードのタグです。
      */
-    @Nullable
+    @NotNull
     private final List<String> tags;
     /**
      * 最大体力です。
@@ -74,6 +86,12 @@ public class EntityBean
     @Nullable
     DamageBean lastDamageCause;
 
+    /**
+     * ポーションエフェクトのリストです。
+     */
+    @NotNull
+    private final List<PotionEffect> potionEffects;
+
     public EntityBean()
     {
         this(
@@ -82,10 +100,11 @@ public class EntityBean
                 null,
                 false,
                 true,
+                Collections.emptyList(),
                 null,
                 null,
                 null,
-                null
+                Collections.emptyList()
         );
     }
 
@@ -113,7 +132,83 @@ public class EntityBean
         MapUtils.putIfNotNull(map, KEY_MAX_HEALTH, entity.getMaxHealth());
         MapUtils.putIfNotNull(map, KEY_HEALTH, entity.getHealth());
 
+        if (!entity.getPotionEffects().isEmpty())
+            map.put(KEY_POTION_EFFECTS, serializePotionEffects(entity.getPotionEffects()));
+
+
         return map;
+    }
+
+    private static List<Map<String, Object>> serializePotionEffects(@NotNull List<? extends PotionEffect> potionEffects)
+    {
+        List<Map<String, Object>> list = new ArrayList<>();
+        for (PotionEffect potionEffect : potionEffects)
+        {
+            Map<String, Object> potionEffectMap = new HashMap<>();
+
+            if (!potionEffect.isAmbient())
+                potionEffectMap.put(KEY_POTION_EFFECTS_AMBIENT, false);
+            if (potionEffect.getAmplifier() != 0)
+                potionEffectMap.put(KEY_POTION_EFFECTS_AMPLIFIER, potionEffect.getAmplifier());
+            if (!potionEffect.hasParticles())
+                potionEffectMap.put(KEY_POTION_EFFECTS_SHOW_PARTICLES, false);
+            if (!potionEffect.hasIcon())
+                potionEffectMap.put(KEY_POTION_EFFECTS_SHOW_ICON, false);
+            if (potionEffect.getDuration() != 0)
+                potionEffectMap.put(KEY_POTION_EFFECTS_DURATION, potionEffect.getDuration());
+            potionEffectMap.put(KEY_POTION_EFFECTS_TYPE, potionEffect.getType().getName());
+
+            list.add(potionEffectMap);
+        }
+
+        return list;
+    }
+
+    private static void validatePotionEffectMap(@NotNull List<Map<String, Object>> map)
+    {
+        if (map.isEmpty())
+            return;
+
+        for (Object o : map)
+        {
+            Map<String, Object> effectMap = MapUtils.checkAndCastMap(
+                    o,
+                    String.class,
+                    Object.class
+            );
+            MapUtils.checkType(effectMap, KEY_POTION_EFFECTS_TYPE, String.class);
+            if (PotionEffectType.getByName((String) effectMap.get(KEY_POTION_EFFECTS_TYPE)) == null)
+                throw new IllegalArgumentException("Invalid potion effect type.");
+
+            MapUtils.checkTypeIfContains(effectMap, KEY_POTION_EFFECTS_AMBIENT, Boolean.class);
+            MapUtils.checkTypeIfContains(effectMap, KEY_POTION_EFFECTS_AMPLIFIER, Integer.class);
+            MapUtils.checkTypeIfContains(effectMap, KEY_POTION_EFFECTS_DURATION, Integer.class);
+            MapUtils.checkTypeIfContains(effectMap, KEY_POTION_EFFECTS_SHOW_ICON, Boolean.class);
+            MapUtils.checkTypeIfContains(effectMap, KEY_POTION_EFFECTS_SHOW_PARTICLES, Boolean.class);
+        }
+    }
+
+    private static List<PotionEffect> deserializePotionEffects(@NotNull List<? extends Map<String, Object>> map)
+    {
+        List<PotionEffect> list = new ArrayList<>();
+        for (Map<String, Object> effectMap : map)
+        {
+            PotionEffectType type =
+                    PotionEffectType.getByName((String) effectMap.get(KEY_POTION_EFFECTS_TYPE));
+
+            long duration = 0L;
+            if (effectMap.containsKey(KEY_POTION_EFFECTS_DURATION))
+                duration = Long.parseLong(effectMap.get(KEY_POTION_EFFECTS_DURATION).toString());
+            int amplifier = MapUtils.getOrDefault(effectMap, KEY_POTION_EFFECTS_AMPLIFIER, 0);
+            boolean ambient = MapUtils.getOrDefault(effectMap, KEY_POTION_EFFECTS_AMBIENT, false);
+            boolean particles = MapUtils.getOrDefault(effectMap, KEY_POTION_EFFECTS_SHOW_PARTICLES, true);
+            boolean icon = MapUtils.getOrDefault(effectMap, KEY_POTION_EFFECTS_SHOW_ICON, true);
+
+            assert type != null;  // validatePotionEffectMapで検証済み
+            list.add(new PotionEffect(type, (int) duration, amplifier, ambient, particles, icon));
+        }
+
+        return list;
     }
 
     /**
@@ -143,6 +238,12 @@ public class EntityBean
         MapUtils.checkTypeIfContains(map, KEY_LAST_DAMAGE, Map.class);
         MapUtils.checkTypeIfContains(map, KEY_MAX_HEALTH, Integer.class);
         MapUtils.checkTypeIfContains(map, KEY_HEALTH, Integer.class);
+
+        if (map.containsKey(KEY_POTION_EFFECTS))
+        {
+            MapUtils.checkType(map, KEY_POTION_EFFECTS, List.class);
+            validatePotionEffectMap(MapUtils.getAsList(map, KEY_POTION_EFFECTS));
+        }
     }
 
     /**
@@ -165,17 +266,20 @@ public class EntityBean
 
         boolean glowing = MapUtils.getOrDefault(map, KEY_GLOWING, false);
         boolean gravity = MapUtils.getOrDefault(map, KEY_GRAVITY, true);
-        List<String> tags = MapUtils.getAsListOrNull(map, KEY_TAGS);
+        List<String> tags = MapUtils.getAsListOrEmpty(map, KEY_TAGS);
 
         DamageBean lastDamageCause = null;
         if (map.containsKey(KEY_LAST_DAMAGE))
             lastDamageCause = DamageBean.deserialize(MapUtils.checkAndCastMap(map.get(KEY_LAST_DAMAGE),
-                            String.class, Object.class
-                    )
-            );
+                    String.class, Object.class
+            ));
 
         Integer maxHealth = MapUtils.getOrNull(map, KEY_MAX_HEALTH);
         Integer health = MapUtils.getOrNull(map, KEY_HEALTH);
+
+        List<PotionEffect> potionEffects = new ArrayList<>();
+        if (map.containsKey(KEY_POTION_EFFECTS))
+            potionEffects = deserializePotionEffects(MapUtils.getAsList(map, KEY_POTION_EFFECTS));
 
         return new EntityBean(
                 loc,
@@ -186,7 +290,8 @@ public class EntityBean
                 tags,
                 maxHealth,
                 health,
-                lastDamageCause
+                lastDamageCause,
+                potionEffects
         );
     }
 

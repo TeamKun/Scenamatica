@@ -8,9 +8,11 @@ import net.kunmc.lab.scenamatica.scenariofile.beans.inventory.PlayerInventoryBea
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.inventory.MainHand;
+import org.bukkit.potion.PotionEffect;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -62,17 +64,18 @@ public class HumanEntityBean extends EntityBean
             @Nullable UUID uuid,
             boolean glowing,
             boolean gravity,
-            @Nullable List<String> tags,
+            @NotNull List<String> tags,
             @Nullable DamageBean lastDamage,
             @Nullable Integer maxHealth,
             @Nullable Integer health,
+            @NotNull List<PotionEffect> potionEffects,
             @Nullable PlayerInventoryBean inventory,
             @Nullable InventoryBean enderChest,
             @NotNull MainHand mainHand,
             @NotNull GameMode gamemode,
             @Nullable Integer foodLevel)
     {
-        super(location, customName, uuid, glowing, gravity, tags, maxHealth, health, lastDamage);
+        super(location, customName, uuid, glowing, gravity, tags, maxHealth, health, lastDamage, potionEffects);
         this.inventory = inventory;
         this.enderChest = enderChest;
         this.mainHand = mainHand;
@@ -89,7 +92,8 @@ public class HumanEntityBean extends EntityBean
             @Nullable Integer foodLevel)
     {
         super(entityBean.getLocation(), entityBean.getCustomName(), entityBean.getUuid(), entityBean.isGlowing(),
-                entityBean.isGravity(), entityBean.getTags(), entityBean.getMaxHealth(), entityBean.getHealth(), entityBean.getLastDamageCause()
+                entityBean.isGravity(), entityBean.getTags(), entityBean.getMaxHealth(), entityBean.getHealth(), entityBean.getLastDamageCause(),
+                entityBean.getPotionEffects()
         );
         this.inventory = inventory;
         this.enderChest = enderChest;
@@ -106,10 +110,11 @@ public class HumanEntityBean extends EntityBean
                 null,
                 false,
                 true,
+                Collections.emptyList(),
                 null,
                 null,
                 null,
-                null,
+                Collections.emptyList(),
                 null,
                 null,
                 MainHand.RIGHT,

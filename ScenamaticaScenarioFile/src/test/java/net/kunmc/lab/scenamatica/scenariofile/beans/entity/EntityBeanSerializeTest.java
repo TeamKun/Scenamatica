@@ -1,11 +1,16 @@
 package net.kunmc.lab.scenamatica.scenariofile.beans.entity;
 
+import lombok.SneakyThrows;
 import net.kunmc.lab.scenamatica.scenariofile.beans.entities.EntityBean;
 import net.kunmc.lab.scenamatica.scenariofile.beans.utils.MapTestUtil;
 import org.bukkit.Location;
+import org.bukkit.potion.PotionEffectType;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import java.lang.reflect.Field;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -23,7 +28,21 @@ public class EntityBeanSerializeTest
             Arrays.asList("tagTest", "tagTest2"),
             22,
             20,
-            DamageBeanSerializeTest.FULFILLED
+            DamageBeanSerializeTest.FULFILLED,
+            Collections.emptyList()
+            /*
+            Collections.singletonList(
+                    new PotionEffect(
+                            PotionEffectType.BAD_OMEN,
+                            100,
+                            1,
+                            false,
+                            false,
+                            false
+                    )
+            )
+             */
+            // ↑は, Bukkit が必要なので単体テストできない。
     );
 
     public static final Map<String, Object> FULFILLED_MAP = new HashMap<String, Object>()
@@ -44,12 +63,42 @@ public class EntityBeanSerializeTest
         this.put("tags", Arrays.asList("tagTest", "tagTest2"));
         this.put("maxHealth", 22);
         this.put("health", 20);
-        this.put("lastDamage", DamageBeanSerializeTest.FULFILLED_MAP);
+        this.put("lastDamage", DamageBeanSerializeTest.FULFILLED_MAP);/*
+        this.put("potion", Collections.singletonList(new HashMap<String, Object>()
+        {{
+            this.put("type", "BAD_OMEN");
+            this.put("duration", 100);
+            this.put("amplifier", 1);
+            this.put("ambient", false);
+            this.put("particle", false);
+            this.put("icon", false);
+        }}));*/
+        // ↑は, Bukkit が必要なので単体テストできない。
     }};
 
     public static final EntityBean EMPTY = new EntityBean();
 
     public static final Map<String, Object> EMPTY_MAP = new HashMap<>();
+
+    @BeforeAll
+    @SuppressWarnings("unchecked")
+    @SneakyThrows({NoSuchFieldException.class, IllegalAccessException.class})
+    static void initPotionType()
+    {
+        Map<String, PotionEffectType> byName;
+        PotionEffectType[] byID;
+
+        Field fByName = PotionEffectType.class.getDeclaredField("byName");
+        Field fByID = PotionEffectType.class.getDeclaredField("byId");
+        fByName.setAccessible(true);
+        fByID.setAccessible(true);
+
+        byName = (Map<String, PotionEffectType>) fByName.get(null);
+        byID = (PotionEffectType[]) fByID.get(null);
+
+        byName.put("bad_omen", PotionEffectType.BAD_OMEN);
+        byID[31] = PotionEffectType.BAD_OMEN;
+    }
 
     @Test
     void 正常にシリアライズできるか()
