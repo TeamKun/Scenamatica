@@ -2,7 +2,6 @@ package net.kunmc.lab.scenamatica.scenariofile.beans.trigger;
 
 import lombok.Value;
 import net.kunmc.lab.scenamatica.commons.utils.MapUtils;
-import net.kunmc.lab.scenamatica.scenariofile.beans.scenario.ActionBean;
 import net.kunmc.lab.scenamatica.scenariofile.beans.scenario.ScenarioBean;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -30,10 +29,10 @@ public class TriggerBean implements Serializable
     TriggerType type;
 
     /**
-     * 種類が {@link TriggerType#ON_ACTION} だった場合に, 動作を格納します。
+     * トリガの引数です。トリガーの種類によっては null になります。
      */
     @Nullable
-    ActionBean action;
+    TriggerArgument argument;
 
     /**
      * 本シナリオを実行する前に実行するシナリオを格納します。
@@ -60,8 +59,13 @@ public class TriggerBean implements Serializable
 
         map.put(KEY_TYPE, bean.type.getKey());
 
-        if (bean.action != null)
-            map.putAll(ActionBean.serialize(bean.action));
+        if (bean.argument != null)
+        {
+            Map<String, Object> arguments = bean.type.serializeArgument(bean.argument);
+            if (arguments != null)
+                map.putAll(arguments);
+        }
+
         if (!bean.beforeThat.isEmpty())
         {
             List<Map<String, Object>> list = new LinkedList<>();
@@ -113,7 +117,9 @@ public class TriggerBean implements Serializable
                 ));
         }
 
-        ActionBean.validateMap(map);
+        TriggerType type = TriggerType.fromKey((String) map.get(KEY_TYPE));
+        if (type != null)
+            type.validateArguments(map);
     }
 
     /**
@@ -129,9 +135,9 @@ public class TriggerBean implements Serializable
 
         TriggerType type = TriggerType.fromKey((String) map.get(KEY_TYPE));
 
-        ActionBean action = null;
-        if (type == TriggerType.ON_ACTION)
-            action = ActionBean.deserialize(map);
+        TriggerArgument argument = null;
+        if (type != null)
+            argument = type.deserialize(map);
 
         List<ScenarioBean> beforeThat = new LinkedList<>();
         if (map.containsKey(KEY_BEFORE_THAT))
@@ -154,7 +160,7 @@ public class TriggerBean implements Serializable
         assert type != null;  // validate() で検証済み
         return new TriggerBean(
                 type,
-                action,
+                argument,
                 beforeThat,
                 afterThat
         );

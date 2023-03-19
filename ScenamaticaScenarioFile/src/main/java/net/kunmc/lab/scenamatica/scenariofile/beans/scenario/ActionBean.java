@@ -2,6 +2,7 @@ package net.kunmc.lab.scenamatica.scenariofile.beans.scenario;
 
 import lombok.Value;
 import net.kunmc.lab.scenamatica.commons.utils.MapUtils;
+import net.kunmc.lab.scenamatica.scenariofile.beans.trigger.TriggerArgument;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -12,7 +13,7 @@ import java.util.Map;
  * シナリオの動作の定義を表すクラスです。
  */
 @Value
-public class ActionBean
+public class ActionBean implements TriggerArgument
 {
     public static final String KEY_TYPE = "action";
     public static final String KEY_ARGUMENTS = "with";
