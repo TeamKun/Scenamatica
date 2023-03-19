@@ -28,10 +28,9 @@ public class ScenarioBeanSerializeTest
             -1L
     );
 
-    public static final Map<String, Object> EMPTY_MAP = new HashMap<String, Object>(ActionBeanSerializeTest.FULFILLED_MAP)
+    public static final Map<String, Object> EMPTY_MAP = new HashMap<String, Object>(ActionBeanSerializeTest.EMPTY_MAP)
     {{
         this.put("type", "execute");
-        this.put("action", ActionBeanSerializeTest.EMPTY_MAP);
     }};
 
     @Test

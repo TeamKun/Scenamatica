@@ -27,11 +27,13 @@ public class WorldBean implements Serializable
     /**
      * ワールド名を定義します。
      */
+    @NotNull
     String name;
 
     /**
      * ワールドの種類を定義します。
      */
+    @NotNull
     WorldType type;
 
     /**
@@ -71,7 +73,8 @@ public class WorldBean implements Serializable
         result.put(KEY_NAME, bean.name);
 
         // オプション項目
-        MapUtils.putPrimitiveOrStrIfNotNull(result, KEY_TYPE, bean.type);
+        if (bean.type != WorldType.NORMAL)
+            MapUtils.putIfNotNull(result, KEY_TYPE, bean.type.name());
         MapUtils.putPrimitiveOrStrIfNotNull(result, KEY_SEED, bean.seed);
         MapUtils.putPrimitiveOrStrIfNotNull(result, KEY_GENERATE_STRUCTURES, bean.generateStructures);
         MapUtils.putPrimitiveOrStrIfNotNull(result, KEY_ENVIRONMENT, bean.environment);
@@ -109,7 +112,7 @@ public class WorldBean implements Serializable
 
         return new WorldBean(
                 (String) map.get(KEY_NAME),
-                MapUtils.getAsEnumOrNull(map, KEY_TYPE, WorldType.class),
+                MapUtils.getAsEnumOrDefault(map, KEY_TYPE, WorldType.class, WorldType.NORMAL),
                 MapUtils.getOrNull(map, KEY_SEED),
                 MapUtils.getOrNull(map, KEY_GENERATE_STRUCTURES),
                 MapUtils.getAsEnumOrNull(map, KEY_ENVIRONMENT, World.Environment.class),

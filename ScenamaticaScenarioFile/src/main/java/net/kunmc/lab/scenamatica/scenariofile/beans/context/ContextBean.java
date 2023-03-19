@@ -93,7 +93,7 @@ public class ContextBean
     public static ContextBean deserialize(Map<String, Object> map)
     {
         List<PlayerBean> pseudoPlayerslist = null;
-        if (map.containsKey(KEY_PSEUDO_PLAYERS))
+        if (map.containsKey(KEY_PSEUDO_PLAYERS) && map.get(KEY_PSEUDO_PLAYERS) != null)
         {
             pseudoPlayerslist = new ArrayList<>();
             for (Object player : (List<?>) map.get(KEY_PSEUDO_PLAYERS))

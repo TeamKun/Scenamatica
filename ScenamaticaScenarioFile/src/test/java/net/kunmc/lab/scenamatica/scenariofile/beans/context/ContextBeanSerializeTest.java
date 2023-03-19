@@ -35,11 +35,7 @@ public class ContextBeanSerializeTest
             null
     );
 
-    public static final Map<String, Object> EMPTY_MAP = new HashMap<String, Object>()
-    {{
-        put("pseudoPlayers", null);
-        put("world", null);
-    }};
+    public static final Map<String, Object> EMPTY_MAP = new HashMap<>();
 
     @Test
     void 正常にシリアライズできるか()

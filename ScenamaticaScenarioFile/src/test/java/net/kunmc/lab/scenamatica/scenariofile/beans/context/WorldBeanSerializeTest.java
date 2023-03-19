@@ -34,15 +34,18 @@ public class WorldBeanSerializeTest
     }};
 
     public static final WorldBean EMPTY = new WorldBean(
-            null,
-            null,
+            "world",
+            WorldType.NORMAL,
             null,
             null,
             null,
             false
     );
 
-    public static final Map<String, Object> EMPTY_MAP = new HashMap<>();
+    public static final Map<String, Object> EMPTY_MAP = new HashMap<String, Object>()
+    {{
+        put("name", "world");
+    }};
 
     @Test
     void 正常シリアライズできるか()
