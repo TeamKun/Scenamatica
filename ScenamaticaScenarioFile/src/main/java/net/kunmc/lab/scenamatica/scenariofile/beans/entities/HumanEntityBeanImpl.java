@@ -3,8 +3,12 @@ package net.kunmc.lab.scenamatica.scenariofile.beans.entities;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import net.kunmc.lab.scenamatica.commons.utils.MapUtils;
-import net.kunmc.lab.scenamatica.scenariofile.beans.inventory.InventoryBean;
-import net.kunmc.lab.scenamatica.scenariofile.beans.inventory.PlayerInventoryBean;
+import net.kunmc.lab.scenamatica.scenariofile.beans.inventory.InventoryBeanImpl;
+import net.kunmc.lab.scenamatica.scenariofile.beans.inventory.PlayerInventoryBeanImpl;
+import net.kunmc.lab.scenamatica.scenariofile.interfaces.entities.EntityBean;
+import net.kunmc.lab.scenamatica.scenariofile.interfaces.entities.HumanEntityBean;
+import net.kunmc.lab.scenamatica.scenariofile.interfaces.inventory.InventoryBean;
+import net.kunmc.lab.scenamatica.scenariofile.interfaces.inventory.PlayerInventoryBean;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.inventory.MainHand;
@@ -18,54 +22,29 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 
-/**
- * 人形エンティティを表すクラスです。
- */
 @Data
 @AllArgsConstructor
-public class HumanEntityBean extends EntityBean
+public class HumanEntityBeanImpl extends EntityBeanImpl implements HumanEntityBean
 {
-    public static final String KEY_INVENTORY = "inventory";
-    public static final String KEY_ENDER_CHEST = "enderChest";
-    public static final String KEY_MAIN_HAND = "mainHand";
-    public static final String KEY_GAMEMODE = "gamemode";
-    public static final String KEY_FOOD_LEVEL = "food";
-
-    /**
-     * プレイヤーのインベントリです。
-     */
     @Nullable
     private final PlayerInventoryBean inventory;
-
-    /**
-     * エンダーチェストの定義を表すクラスです。
-     */
     @Nullable
     private final InventoryBean enderChest;
-    /**
-     * プレイヤーの利き手です。
-     */
     @NotNull
     private final MainHand mainHand;
-    /**
-     * プレイヤーのゲームモードです。
-     */
     @NotNull
     private final GameMode gamemode;
-    /**
-     * プレイヤーの食料レベルです。
-     */
     @Nullable
     private final Integer foodLevel;
 
-    public HumanEntityBean(
+    public HumanEntityBeanImpl(
             @Nullable Location location,
             @Nullable String customName,
             @Nullable UUID uuid,
             boolean glowing,
             boolean gravity,
             @NotNull List<String> tags,
-            @Nullable DamageBean lastDamage,
+            @Nullable DamageBeanImpl lastDamage,
             @Nullable Integer maxHealth,
             @Nullable Integer health,
             @NotNull List<PotionEffect> potionEffects,
@@ -83,7 +62,7 @@ public class HumanEntityBean extends EntityBean
         this.foodLevel = foodLevel;
     }
 
-    public HumanEntityBean(
+    public HumanEntityBeanImpl(
             @NotNull EntityBean entityBean,
             @Nullable PlayerInventoryBean inventory,
             @Nullable InventoryBean enderChest,
@@ -102,7 +81,7 @@ public class HumanEntityBean extends EntityBean
         this.foodLevel = foodLevel;
     }
 
-    public HumanEntityBean()
+    public HumanEntityBeanImpl()
     {
         this(
                 null,
@@ -130,12 +109,12 @@ public class HumanEntityBean extends EntityBean
      */
     public static Map<String, Object> serialize(HumanEntityBean bean)
     {
-        Map<String, Object> map = EntityBean.serialize(bean);
+        Map<String, Object> map = EntityBeanImpl.serialize(bean);
 
         if (bean.getInventory() != null)
-            map.put(KEY_INVENTORY, PlayerInventoryBean.serialize(bean.getInventory()));
+            map.put(KEY_INVENTORY, PlayerInventoryBeanImpl.serialize(bean.getInventory()));
         if (bean.getEnderChest() != null)
-            map.put(KEY_ENDER_CHEST, InventoryBean.serialize(bean.getEnderChest()));
+            map.put(KEY_ENDER_CHEST, InventoryBeanImpl.serialize(bean.getEnderChest()));
 
         if (bean.getMainHand() != MainHand.RIGHT)
             map.put(KEY_MAIN_HAND, bean.getMainHand().name());
@@ -155,16 +134,16 @@ public class HumanEntityBean extends EntityBean
      */
     public static void validate(@NotNull Map<String, Object> map)
     {
-        EntityBean.validate(map);
+        EntityBeanImpl.validate(map);
 
         if (map.containsKey(KEY_INVENTORY))
-            PlayerInventoryBean.validate(MapUtils.checkAndCastMap(
+            PlayerInventoryBeanImpl.validate(MapUtils.checkAndCastMap(
                     map.get(KEY_INVENTORY),
                     String.class,
                     Object.class
             ));
         if (map.containsKey(KEY_ENDER_CHEST))
-            InventoryBean.validate(MapUtils.checkAndCastMap(
+            InventoryBeanImpl.validate(MapUtils.checkAndCastMap(
                     map.get(KEY_ENDER_CHEST),
                     String.class,
                     Object.class
@@ -181,11 +160,11 @@ public class HumanEntityBean extends EntityBean
     {
         validate(map);
 
-        EntityBean entityBean = EntityBean.deserialize(map);
+        EntityBean entityBean = EntityBeanImpl.deserialize(map);
 
         PlayerInventoryBean inventory = null;
         if (map.containsKey(KEY_INVENTORY))
-            inventory = PlayerInventoryBean.deserialize(MapUtils.checkAndCastMap(
+            inventory = PlayerInventoryBeanImpl.deserialize(MapUtils.checkAndCastMap(
                     map.get(KEY_INVENTORY),
                     String.class,
                     Object.class
@@ -193,7 +172,7 @@ public class HumanEntityBean extends EntityBean
 
         InventoryBean enderChest = null;
         if (map.containsKey(KEY_ENDER_CHEST))
-            enderChest = InventoryBean.deserialize(MapUtils.checkAndCastMap(
+            enderChest = InventoryBeanImpl.deserialize(MapUtils.checkAndCastMap(
                     map.get(KEY_ENDER_CHEST),
                     String.class,
                     Object.class
@@ -214,7 +193,7 @@ public class HumanEntityBean extends EntityBean
 
         Integer foodLevel = MapUtils.getOrNull(map, KEY_FOOD_LEVEL);
 
-        return new HumanEntityBean(
+        return new HumanEntityBeanImpl(
                 entityBean,
                 inventory,
                 enderChest,
@@ -228,9 +207,9 @@ public class HumanEntityBean extends EntityBean
     public boolean equals(Object o)
     {
         if (this == o) return true;
-        if (!(o instanceof HumanEntityBean)) return false;
+        if (!(o instanceof HumanEntityBeanImpl)) return false;
         if (!super.equals(o)) return false;
-        HumanEntityBean that = (HumanEntityBean) o;
+        HumanEntityBeanImpl that = (HumanEntityBeanImpl) o;
         return Objects.equals(this.inventory, that.inventory)
                 && Objects.equals(this.enderChest, that.enderChest)
                 && this.mainHand == that.mainHand

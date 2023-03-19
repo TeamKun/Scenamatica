@@ -1,6 +1,8 @@
 package net.kunmc.lab.scenamatica.scenariofile.beans.inventory;
 
 import net.kunmc.lab.scenamatica.scenariofile.beans.utils.MapTestUtil;
+import net.kunmc.lab.scenamatica.scenariofile.interfaces.inventory.InventoryBean;
+import net.kunmc.lab.scenamatica.scenariofile.interfaces.inventory.ItemStackBean;
 import org.bukkit.Material;
 import org.junit.jupiter.api.Test;
 
@@ -10,14 +12,14 @@ import java.util.Map;
 
 public class InventoryBeanSerializeTest
 {
-    public static final InventoryBean FULFILLED = new InventoryBean(
+    public static final InventoryBean FULFILLED = new InventoryBeanImpl(
             30,
             "This is literally an inventory",
             new HashMap<Integer, ItemStackBean>()
             {{
-                this.put(1, new ItemStackBean(Material.DIAMOND, 1));
-                this.put(2, new ItemStackBean(Material.DIAMOND_BOOTS, 2));
-                this.put(3, new ItemStackBean(Material.DIAMOND_CHESTPLATE, 3));
+                this.put(1, new ItemStackBeanImpl(Material.DIAMOND, 1));
+                this.put(2, new ItemStackBeanImpl(Material.DIAMOND_BOOTS, 2));
+                this.put(3, new ItemStackBeanImpl(Material.DIAMOND_CHESTPLATE, 3));
             }}
     );
 
@@ -27,13 +29,13 @@ public class InventoryBeanSerializeTest
         this.put("title", "This is literally an inventory");
         this.put("items", new HashMap<Integer, Map<String, Object>>()
         {{
-            this.put(1, ItemStackBean.serialize(new ItemStackBean(Material.DIAMOND, 1)));
-            this.put(2, ItemStackBean.serialize(new ItemStackBean(Material.DIAMOND_BOOTS, 2)));
-            this.put(3, ItemStackBean.serialize(new ItemStackBean(Material.DIAMOND_CHESTPLATE, 3)));
+            this.put(1, ItemStackBeanImpl.serialize(new ItemStackBeanImpl(Material.DIAMOND, 1)));
+            this.put(2, ItemStackBeanImpl.serialize(new ItemStackBeanImpl(Material.DIAMOND_BOOTS, 2)));
+            this.put(3, ItemStackBeanImpl.serialize(new ItemStackBeanImpl(Material.DIAMOND_CHESTPLATE, 3)));
         }});
     }};
 
-    public static final InventoryBean EMPTY = new InventoryBean(
+    public static final InventoryBean EMPTY = new InventoryBeanImpl(
             1,
             null,
             Collections.emptyMap()
@@ -47,7 +49,7 @@ public class InventoryBeanSerializeTest
     @Test
     void 正常シリアライズできるか()
     {
-        Map<String, Object> actual = InventoryBean.serialize(FULFILLED);
+        Map<String, Object> actual = InventoryBeanImpl.serialize(FULFILLED);
 
         MapTestUtil.assertEqual(FULFILLED_MAP, actual);
     }
@@ -55,7 +57,7 @@ public class InventoryBeanSerializeTest
     @Test
     void 正常デシリアライズできるか()
     {
-        InventoryBean actual = InventoryBean.deserialize(FULFILLED_MAP);
+        InventoryBean actual = InventoryBeanImpl.deserialize(FULFILLED_MAP);
 
         assert FULFILLED.equals(actual);
     }
@@ -63,7 +65,7 @@ public class InventoryBeanSerializeTest
     @Test
     void 必須項目のみでシリアライズできるか()
     {
-        Map<String, Object> actual = InventoryBean.serialize(EMPTY);
+        Map<String, Object> actual = InventoryBeanImpl.serialize(EMPTY);
 
         MapTestUtil.assertEqual(EMPTY_MAP, actual);
     }
@@ -71,7 +73,7 @@ public class InventoryBeanSerializeTest
     @Test
     void 必須項目のみでデシリアライズできるか()
     {
-        InventoryBean actual = InventoryBean.deserialize(EMPTY_MAP);
+        InventoryBean actual = InventoryBeanImpl.deserialize(EMPTY_MAP);
 
         assert EMPTY.equals(actual);
     }

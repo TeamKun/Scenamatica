@@ -1,4 +1,4 @@
-package net.kunmc.lab.scenamatica.scenariofile.beans.trigger;
+package net.kunmc.lab.scenamatica.scenariofile.interfaces.trigger;
 
 /**
  * トリガーの引数を表すインターフェースです。

@@ -3,118 +3,58 @@ package net.kunmc.lab.scenamatica.scenariofile.beans.context;
 import lombok.AllArgsConstructor;
 import lombok.Value;
 import net.kunmc.lab.scenamatica.commons.utils.MapUtils;
-import net.kunmc.lab.scenamatica.scenariofile.beans.entities.HumanEntityBean;
+import net.kunmc.lab.scenamatica.scenariofile.beans.entities.HumanEntityBeanImpl;
+import net.kunmc.lab.scenamatica.scenariofile.interfaces.context.PlayerBean;
+import net.kunmc.lab.scenamatica.scenariofile.interfaces.entities.HumanEntityBean;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-/**
- * 疑似プレイヤーを表すクラスです。
- */
 @Value
 @AllArgsConstructor
-public class PlayerBean extends HumanEntityBean implements Serializable
+public class PlayerBeanImpl extends HumanEntityBeanImpl implements PlayerBean
 {
-    public static final String KEY_NAME = "name";
-    public static final String KEY_DISPLAY_NAME = "display";
-    public static final String KEY_PLAYER_LIST = "playerList";
-    public static final String KEY_PLAYER_LIST_NAME = "name";  // Inner of playerList
-    public static final String KEY_PLAYER_LIST_HEADER = "header"; // Inner of playerList
-    public static final String KEY_PLAYER_LIST_FOOTER = "footer"; // Inner of playerList
-    public static final String KEY_COMPASS_TARGET = "compass";
-    public static final String KEY_BED_SPAWN_LOCATION = "bedLocation";
-    public static final String KEY_EXP = "exp";
-    public static final String KEY_LEVEL = "level";
-    public static final String KEY_TOTAL_EXPERIENCE = "totalExp";
-    public static final String KEY_ALLOW_FLIGHT = "flyable";
-    public static final String KEY_FLYING = "flying";
-    public static final String KEY_FLY_SPEED = "flySpeed";
-    public static final String KEY_WALK_SPEED = "walkSpeed";
-
     private static final float SPEED_DEFAULT = 0.2f;
 
-    /**
-     * プレイヤーの名前です。
-     */
     @NotNull
     String name;
-    /**
-     * プレイヤーの表示名前です。
-     */
     @Nullable
     String displayName;
-    /**
-     * プレイヤーリストに表示される名前です。
-     */
     @Nullable
     String playerListName;
-    /**
-     * プレイヤーリストのヘッダーです。
-     */
     @Nullable
     String playerListHeader;
-    /**
-     * プレイヤーリストのフッターです。
-     */
     @Nullable
     String playerListFooter;
-    /**
-     * コンパスのターゲットを設定します。
-     */
     @Nullable
     Location compassTarget;
-    /**
-     * プレイヤーのベッドのスポーン位置です。
-     */
     @Nullable
     Location bedSpawnLocation;
-    /**
-     * プレイヤーの経験値です。
-     */
     @Nullable
     Integer exp;
-    /**
-     * プレイヤーのレベルです。
-     */
     @Nullable
     Integer level;
-    /**
-     * プレイヤーの経験値の総量です。
-     */
     @Nullable
     Integer totalExperience;
-    /**
-     * プレイヤーが飛べるかどうかです。
-     */
     boolean allowFlight;
-    /**
-     * プレイヤーが飛んでいるかどうかです。
-     */
     boolean flying;
-    /**
-     * プレイヤーの歩く速度です。
-     */
     @Nullable
     Float walkSpeed;
-    /**
-     * プレイヤーの走る速度です。
-     */
     @Nullable
     Float flySpeed;
 
-    public PlayerBean(@NotNull HumanEntityBean human, @NotNull String name, @Nullable String displayName,
-                      @Nullable String playerListName, @Nullable String playerListHeader,
-                      @Nullable String playerListFooter, @Nullable Location compassTarget,
-                      @Nullable Location bedSpawnLocation, @Nullable Integer exp,
-                      @Nullable Integer level, @Nullable Integer totalExperience,
-                      boolean allowFlight, boolean flying,
-                      @Nullable Float walkSpeed, @Nullable Float flySpeed)
+    public PlayerBeanImpl(@NotNull HumanEntityBean human, @NotNull String name, @Nullable String displayName,
+                          @Nullable String playerListName, @Nullable String playerListHeader,
+                          @Nullable String playerListFooter, @Nullable Location compassTarget,
+                          @Nullable Location bedSpawnLocation, @Nullable Integer exp,
+                          @Nullable Integer level, @Nullable Integer totalExperience,
+                          boolean allowFlight, boolean flying,
+                          @Nullable Float walkSpeed, @Nullable Float flySpeed)
     {
         super(human, human.getInventory(), human.getEnderChest(),
                 human.getMainHand(), human.getGamemode(), human.getFoodLevel()
@@ -135,25 +75,20 @@ public class PlayerBean extends HumanEntityBean implements Serializable
         this.flySpeed = flySpeed;
     }
 
-    /**
-     * プレイヤーの情報をMapにシリアライズします。
-     *
-     * @return シリアライズされたMap
-     */
     public static Map<String, Object> serialize(PlayerBean bean)
     {
-        Map<String, Object> map = HumanEntityBean.serialize(bean);
-        map.put(KEY_NAME, bean.name);
+        Map<String, Object> map = HumanEntityBeanImpl.serialize(bean);
+        map.put(KEY_NAME, bean.getName());
 
-        MapUtils.putIfNotNull(map, KEY_DISPLAY_NAME, bean.displayName);
-        MapUtils.putLocationIfNotNull(map, KEY_COMPASS_TARGET, bean.compassTarget);
-        MapUtils.putLocationIfNotNull(map, KEY_BED_SPAWN_LOCATION, bean.bedSpawnLocation);
-        MapUtils.putIfNotNull(map, KEY_EXP, bean.exp);
-        MapUtils.putIfNotNull(map, KEY_LEVEL, bean.level);
-        MapUtils.putIfNotNull(map, KEY_TOTAL_EXPERIENCE, bean.totalExperience);
+        MapUtils.putIfNotNull(map, KEY_DISPLAY_NAME, bean.getDisplayName());
+        MapUtils.putLocationIfNotNull(map, KEY_COMPASS_TARGET, bean.getCompassTarget());
+        MapUtils.putLocationIfNotNull(map, KEY_BED_SPAWN_LOCATION, bean.getBedSpawnLocation());
+        MapUtils.putIfNotNull(map, KEY_EXP, bean.getExp());
+        MapUtils.putIfNotNull(map, KEY_LEVEL, bean.getLevel());
+        MapUtils.putIfNotNull(map, KEY_TOTAL_EXPERIENCE, bean.getTotalExperience());
 
         boolean isFlyableGamemode = bean.getGamemode() == GameMode.CREATIVE || bean.getGamemode() == GameMode.SPECTATOR;
-        if (bean.allowFlight)
+        if (bean.isAllowFlight())
         {
             if (!isFlyableGamemode)
                 map.put(KEY_ALLOW_FLIGHT, true);
@@ -161,7 +96,7 @@ public class PlayerBean extends HumanEntityBean implements Serializable
         else if (isFlyableGamemode)
             map.put(KEY_ALLOW_FLIGHT, false);
 
-        if (bean.flying)
+        if (bean.isFlying())
         {
             if (!isFlyableGamemode)
                 map.put(KEY_FLYING, true);
@@ -169,32 +104,26 @@ public class PlayerBean extends HumanEntityBean implements Serializable
         else if (isFlyableGamemode)
             map.put(KEY_FLYING, false);
 
-        if (bean.walkSpeed != null && bean.walkSpeed != SPEED_DEFAULT)
-            MapUtils.putIfNotNull(map, KEY_WALK_SPEED, bean.walkSpeed);
-        if (bean.flySpeed != null && bean.flySpeed != SPEED_DEFAULT)
-            MapUtils.putIfNotNull(map, KEY_FLY_SPEED, bean.flySpeed);
+        if (bean.getFlySpeed() != null && bean.getFlySpeed() != SPEED_DEFAULT)
+            MapUtils.putIfNotNull(map, KEY_WALK_SPEED, bean.getWalkSpeed());
+        if (bean.getPlayerListFooter() != null && bean.getWalkSpeed() != SPEED_DEFAULT)
+            MapUtils.putIfNotNull(map, KEY_FLY_SPEED, bean.getFlySpeed());
 
-        if (!(bean.playerListName == null && bean.playerListHeader == null && bean.playerListFooter == null))
+        if (!(bean.getPlayerListName() == null && bean.getPlayerListHeader() == null && bean.getPlayerListFooter() == null))
         {
             Map<String, Object> playerList = new HashMap<>();
-            MapUtils.putIfNotNull(playerList, KEY_PLAYER_LIST_NAME, bean.playerListName);
-            MapUtils.putIfNotNull(playerList, KEY_PLAYER_LIST_HEADER, bean.playerListHeader);
-            MapUtils.putIfNotNull(playerList, KEY_PLAYER_LIST_FOOTER, bean.playerListFooter);
+            MapUtils.putIfNotNull(playerList, KEY_PLAYER_LIST_NAME, bean.getPlayerListName());
+            MapUtils.putIfNotNull(playerList, KEY_PLAYER_LIST_HEADER, bean.getPlayerListHeader());
+            MapUtils.putIfNotNull(playerList, KEY_PLAYER_LIST_FOOTER, bean.getPlayerListFooter());
             map.put(KEY_PLAYER_LIST, playerList);
         }
 
         return map;
     }
 
-    /**
-     * Mapがシリアライズされたプレイヤーの情報かどうかを検証します。
-     *
-     * @param map 検証するMap
-     * @throws IllegalArgumentException Mapがシリアライズされたプレイヤーの情報でない場合
-     */
     public static void validate(@NotNull Map<String, Object> map)
     {
-        HumanEntityBean.validate(map);
+        HumanEntityBeanImpl.validate(map);
         MapUtils.checkType(map, KEY_NAME, String.class);
         MapUtils.checkTypeIfContains(map, KEY_DISPLAY_NAME, String.class);
         MapUtils.checkLocationIfContains(map, KEY_COMPASS_TARGET);
@@ -205,18 +134,11 @@ public class PlayerBean extends HumanEntityBean implements Serializable
         MapUtils.checkTypeIfContains(map, KEY_ALLOW_FLIGHT, Boolean.class);
     }
 
-    /**
-     * Mapからプレイヤーのデシリアライズします。
-     *
-     * @param map デシリアライズするMap
-     * @return デシリアライズされたプレイヤーの情報
-     * @throws IllegalArgumentException Mapがシリアライズされたプレイヤーの情報でない場合
-     */
     public static PlayerBean deserialize(@NotNull Map<String, Object> map)
     {
         validate(map);
 
-        HumanEntityBean human = HumanEntityBean.deserialize(map);
+        HumanEntityBean human = HumanEntityBeanImpl.deserialize(map);
 
         String name = (String) map.get(KEY_NAME);
 
@@ -246,7 +168,7 @@ public class PlayerBean extends HumanEntityBean implements Serializable
             playerListFooter = MapUtils.getOrNull(playerList, KEY_PLAYER_LIST_FOOTER);
         }
 
-        return new PlayerBean(
+        return new PlayerBeanImpl(
                 human,
                 name,
                 displayName,
@@ -269,9 +191,9 @@ public class PlayerBean extends HumanEntityBean implements Serializable
     public boolean equals(Object o)
     {
         if (this == o) return true;
-        if (!(o instanceof PlayerBean)) return false;
+        if (!(o instanceof PlayerBeanImpl)) return false;
         if (!super.equals(o)) return false;
-        PlayerBean that = (PlayerBean) o;
+        PlayerBeanImpl that = (PlayerBeanImpl) o;
         return this.allowFlight == that.allowFlight
                 && this.flying == that.flying
                 && this.name.equals(that.name)

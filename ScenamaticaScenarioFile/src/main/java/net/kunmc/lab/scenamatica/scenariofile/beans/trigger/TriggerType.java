@@ -2,7 +2,9 @@ package net.kunmc.lab.scenamatica.scenariofile.beans.trigger;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import net.kunmc.lab.scenamatica.scenariofile.beans.scenario.ActionBean;
+import net.kunmc.lab.scenamatica.scenariofile.beans.scenario.ActionBeanImpl;
+import net.kunmc.lab.scenamatica.scenariofile.interfaces.trigger.KeyedTriggerType;
+import net.kunmc.lab.scenamatica.scenariofile.interfaces.trigger.TriggerArgument;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
@@ -12,10 +14,10 @@ import java.util.Map;
  */
 @Getter
 @AllArgsConstructor
-public enum TriggerType
+public enum TriggerType implements KeyedTriggerType
 {
     MANUAL_DISPATCH("manual_dispatch", null),
-    ON_ACTION("action", ActionBean.class),
+    ON_ACTION("action", ActionBeanImpl.class),
     SCHEDULE("schedule", null),
 
     ;
@@ -37,6 +39,7 @@ public enum TriggerType
         return null;
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public Map<String, Object> serializeArgument(TriggerArgument argument)
     {
@@ -46,7 +49,7 @@ public enum TriggerType
         try
         {
             return (Map<String, Object>) this.argumentType.getMethod(
-                            BEAN_SERIALIZER_METHOD, this.argumentType)
+                            BEAN_SERIALIZER_METHOD, this.argumentType.getInterfaces()[0])
                     .invoke(null, argument);
         }
         catch (Exception e)
@@ -55,6 +58,7 @@ public enum TriggerType
         }
     }
 
+    @Override
     public void validateArguments(Map<String, Object> argument)
     {
         if (this.argumentType == null)
@@ -71,6 +75,7 @@ public enum TriggerType
         }
     }
 
+    @Override
     public TriggerArgument deserialize(Map<String, Object> map)
     {
         if (this.argumentType == null)

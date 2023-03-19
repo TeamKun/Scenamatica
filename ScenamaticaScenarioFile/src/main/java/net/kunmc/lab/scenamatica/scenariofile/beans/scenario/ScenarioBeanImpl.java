@@ -2,9 +2,11 @@ package net.kunmc.lab.scenamatica.scenariofile.beans.scenario;
 
 import lombok.Value;
 import net.kunmc.lab.scenamatica.commons.utils.MapUtils;
+import net.kunmc.lab.scenamatica.scenariofile.interfaces.scenario.ActionBean;
+import net.kunmc.lab.scenamatica.scenariofile.interfaces.scenario.ScenarioBean;
+import net.kunmc.lab.scenamatica.scenariofile.interfaces.scenario.ScenarioType;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,9 +14,8 @@ import java.util.Map;
  * シナリオの流れを定義します。
  */
 @Value
-public class ScenarioBean implements Serializable
+public class ScenarioBeanImpl implements ScenarioBean
 {
-    public static final String KEY_TIMEOUT = "timeout";
     private static final String KEY_SCENARIO_TYPE = "type";
     /**
      * シナリオの種類を記述します。
@@ -45,7 +46,7 @@ public class ScenarioBean implements Serializable
         if (bean.getTimeout() != -1)
             map.put(KEY_TIMEOUT, bean.getTimeout());
 
-        map.putAll(ActionBean.serialize(bean.getAction()));
+        map.putAll(ActionBeanImpl.serialize(bean.getAction()));
 
         return map;
     }
@@ -64,7 +65,7 @@ public class ScenarioBean implements Serializable
 
         MapUtils.checkTypeIfContains(map, KEY_TIMEOUT, Long.class);
 
-        ActionBean.validate(map);
+        ActionBeanImpl.validate(map);
     }
 
     /**
@@ -81,9 +82,9 @@ public class ScenarioBean implements Serializable
         long timeout = MapUtils.getOrDefault(map, KEY_TIMEOUT, -1L);
 
         assert type != null;
-        return new ScenarioBean(
+        return new ScenarioBeanImpl(
                 type,
-                ActionBean.deserialize(map),
+                ActionBeanImpl.deserialize(map),
                 timeout
         );
     }

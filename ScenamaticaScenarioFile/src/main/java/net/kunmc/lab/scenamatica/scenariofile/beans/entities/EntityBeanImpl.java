@@ -3,6 +3,8 @@ package net.kunmc.lab.scenamatica.scenariofile.beans.entities;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import net.kunmc.lab.scenamatica.commons.utils.MapUtils;
+import net.kunmc.lab.scenamatica.scenariofile.interfaces.entities.DamageBean;
+import net.kunmc.lab.scenamatica.scenariofile.interfaces.entities.EntityBean;
 import org.bukkit.Location;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -19,25 +21,8 @@ import java.util.UUID;
 
 @Data
 @AllArgsConstructor
-public class EntityBean
+public class EntityBeanImpl implements EntityBean
 {
-    public static final String KEY_LOCATION = "loc";
-    public static final String KEY_CUSTOM_NAME = "customName";
-    public static final String KEY_UUID = "uuid";
-    public static final String KEY_GLOWING = "glowing";
-    public static final String KEY_GRAVITY = "gravity";
-    public static final String KEY_TAGS = "tags";
-    public static final String KEY_LAST_DAMAGE = "lastDamage";
-    public static final String KEY_MAX_HEALTH = "maxHealth";
-    public static final String KEY_HEALTH = "health";
-
-    public static final String KEY_POTION_EFFECTS = "potion";
-    public static final String KEY_POTION_EFFECTS_AMBIENT = "ambient";
-    public static final String KEY_POTION_EFFECTS_AMPLIFIER = "amplifier";
-    public static final String KEY_POTION_EFFECTS_DURATION = "duration";
-    public static final String KEY_POTION_EFFECTS_TYPE = "type";
-    public static final String KEY_POTION_EFFECTS_SHOW_PARTICLES = "particle";
-    public static final String KEY_POTION_EFFECTS_SHOW_ICON = "icon";
 
     /**
      * エンティティの座標です。
@@ -84,7 +69,7 @@ public class EntityBean
      * 最後のダメージの原因です。
      */
     @Nullable
-    DamageBean lastDamageCause;
+    private final DamageBean lastDamageCause;
 
     /**
      * ポーションエフェクトのリストです。
@@ -92,7 +77,7 @@ public class EntityBean
     @NotNull
     private final List<PotionEffect> potionEffects;
 
-    public EntityBean()
+    public EntityBeanImpl()
     {
         this(
                 null,
@@ -125,7 +110,7 @@ public class EntityBean
         if (!entity.isGravity())
             map.put(KEY_GRAVITY, false);
         if (entity.getLastDamageCause() != null)
-            map.put(EntityBean.KEY_LAST_DAMAGE, DamageBean.serialize(entity.getLastDamageCause()));
+            map.put(EntityBean.KEY_LAST_DAMAGE, DamageBeanImpl.serialize(entity.getLastDamageCause()));
 
         MapUtils.putListIfNotEmpty(map, KEY_TAGS, entity.getTags());
 
@@ -268,9 +253,9 @@ public class EntityBean
         boolean gravity = MapUtils.getOrDefault(map, KEY_GRAVITY, true);
         List<String> tags = MapUtils.getAsListOrEmpty(map, KEY_TAGS);
 
-        DamageBean lastDamageCause = null;
+        DamageBeanImpl lastDamageCause = null;
         if (map.containsKey(KEY_LAST_DAMAGE))
-            lastDamageCause = DamageBean.deserialize(MapUtils.checkAndCastMap(map.get(KEY_LAST_DAMAGE),
+            lastDamageCause = DamageBeanImpl.deserialize(MapUtils.checkAndCastMap(map.get(KEY_LAST_DAMAGE),
                     String.class, Object.class
             ));
 
@@ -281,7 +266,7 @@ public class EntityBean
         if (map.containsKey(KEY_POTION_EFFECTS))
             potionEffects = deserializePotionEffects(MapUtils.getAsList(map, KEY_POTION_EFFECTS));
 
-        return new EntityBean(
+        return new EntityBeanImpl(
                 loc,
                 customName,
                 uuid,
@@ -299,8 +284,8 @@ public class EntityBean
     public boolean equals(Object o)
     {
         if (this == o) return true;
-        if (!(o instanceof EntityBean)) return false;
-        EntityBean that = (EntityBean) o;
+        if (!(o instanceof EntityBeanImpl)) return false;
+        EntityBeanImpl that = (EntityBeanImpl) o;
         return this.glowing == that.glowing
                 && this.gravity == that.gravity
                 && Objects.equals(this.location, that.location)

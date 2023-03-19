@@ -2,6 +2,7 @@ package net.kunmc.lab.scenamatica.scenariofile.beans.inventory;
 
 import lombok.SneakyThrows;
 import net.kunmc.lab.scenamatica.scenariofile.beans.utils.MapTestUtil;
+import net.kunmc.lab.scenamatica.scenariofile.interfaces.inventory.ItemStackBean;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
@@ -23,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class ItemStackBeanSerializeTest
 {
     @SuppressWarnings("deprecation")
-    public static final ItemStackBean FULFILLED = new ItemStackBean(
+    public static final ItemStackBean FULFILLED = new ItemStackBeanImpl(
             Material.DIAMOND_HOE,
             2,
             "The test legendary diamond hoe",
@@ -119,7 +120,7 @@ public class ItemStackBeanSerializeTest
         this.put("damage", 100);
     }};
 
-    public static final ItemStackBean EMPTY = new ItemStackBean(
+    public static final ItemStackBean EMPTY = new ItemStackBeanImpl(
             Material.AIR,
             1,
             null,
@@ -140,7 +141,7 @@ public class ItemStackBeanSerializeTest
         this.put("type", "AIR");
     }};
 
-    private static final ItemStackBean ONLY_ONE_ITEM = new ItemStackBean(
+    private static final ItemStackBeanImpl ONLY_ONE_ITEM = new ItemStackBeanImpl(
             Material.DIAMOND_HOE,
             1,
             null,
@@ -195,7 +196,7 @@ public class ItemStackBeanSerializeTest
     @Test
     void 正常シリアライズできるか()
     {
-        Map<String, Object> actual = ItemStackBean.serialize(FULFILLED);
+        Map<String, Object> actual = ItemStackBeanImpl.serialize(FULFILLED);
 
         MapTestUtil.assertEqual(FULFILLED_MAP, actual);
     }
@@ -203,7 +204,7 @@ public class ItemStackBeanSerializeTest
     @Test
     void 正常デシリアライズできるか()
     {
-        ItemStackBean actual = ItemStackBean.deserialize(FULFILLED_MAP);
+        ItemStackBean actual = ItemStackBeanImpl.deserialize(FULFILLED_MAP);
 
         assertEquals(FULFILLED, actual);
     }
@@ -211,7 +212,7 @@ public class ItemStackBeanSerializeTest
     @Test
     void 必須項目のみでシリアライズできるか()
     {
-        Map<String, Object> actual = ItemStackBean.serialize(EMPTY);
+        Map<String, Object> actual = ItemStackBeanImpl.serialize(EMPTY);
 
         MapTestUtil.assertEqual(EMPTY_MAP, actual);
     }
@@ -219,7 +220,7 @@ public class ItemStackBeanSerializeTest
     @Test
     void 必須項目のみでデシリアライズできるか()
     {
-        ItemStackBean actual = ItemStackBean.deserialize(EMPTY_MAP);
+        ItemStackBean actual = ItemStackBeanImpl.deserialize(EMPTY_MAP);
 
         assertEquals(EMPTY, actual);
     }
@@ -227,7 +228,7 @@ public class ItemStackBeanSerializeTest
     @Test
     void 個数が1のときに省略してシリアライズできるか()
     {
-        Map<String, Object> actual = ItemStackBean.serialize(ONLY_ONE_ITEM);
+        Map<String, Object> actual = ItemStackBeanImpl.serialize(ONLY_ONE_ITEM);
 
         MapTestUtil.assertEqual(ONLY_ONE_ITEM_MAP, actual);
     }
@@ -235,7 +236,7 @@ public class ItemStackBeanSerializeTest
     @Test
     void 個数が1のときに省略してデシリアライズできるか()
     {
-        ItemStackBean actual = ItemStackBean.deserialize(ONLY_ONE_ITEM_MAP);
+        ItemStackBean actual = ItemStackBeanImpl.deserialize(ONLY_ONE_ITEM_MAP);
 
         assertEquals(ONLY_ONE_ITEM, actual);
     }
@@ -243,7 +244,7 @@ public class ItemStackBeanSerializeTest
     @Test
     void 属性のgenericを省略してデシアライズできるか()
     {
-        ItemStackBean bean = new ItemStackBean(
+        ItemStackBean bean = new ItemStackBeanImpl(
                 Material.DIAMOND_HOE,
                 1,
                 null,
@@ -286,7 +287,7 @@ public class ItemStackBeanSerializeTest
             }});
         }};
 
-        ItemStackBean actual = ItemStackBean.deserialize(map);
+        ItemStackBean actual = ItemStackBeanImpl.deserialize(map);
 
         assertEquals(bean, actual);
     }
@@ -294,7 +295,7 @@ public class ItemStackBeanSerializeTest
     @Test
     void エンチャントがキーでもデシリアライズできるか()
     {
-        ItemStackBean bean = new ItemStackBean(
+        ItemStackBean bean = new ItemStackBeanImpl(
                 Material.DIAMOND_HOE,
                 1,
                 null,
@@ -332,7 +333,7 @@ public class ItemStackBeanSerializeTest
             }});
         }};
 
-        ItemStackBean actual = ItemStackBean.deserialize(map);
+        ItemStackBean actual = ItemStackBeanImpl.deserialize(map);
 
         assertEquals(bean, actual);
     }

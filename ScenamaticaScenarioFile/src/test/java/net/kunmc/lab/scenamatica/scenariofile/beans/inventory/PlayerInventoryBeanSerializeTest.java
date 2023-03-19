@@ -1,6 +1,8 @@
 package net.kunmc.lab.scenamatica.scenariofile.beans.inventory;
 
 import net.kunmc.lab.scenamatica.scenariofile.beans.utils.MapTestUtil;
+import net.kunmc.lab.scenamatica.scenariofile.interfaces.inventory.ItemStackBean;
+import net.kunmc.lab.scenamatica.scenariofile.interfaces.inventory.PlayerInventoryBean;
 import org.bukkit.Material;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -16,23 +18,23 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class PlayerInventoryBeanSerializeTest
 {
-    public static final PlayerInventoryBean FULFILLED = new PlayerInventoryBean(
-            new InventoryBean(
+    public static final PlayerInventoryBean FULFILLED = new PlayerInventoryBeanImpl(
+            new InventoryBeanImpl(
                     36,
                     "This is main inventory",
                     new HashMap<Integer, ItemStackBean>()
                     {{
-                        this.put(0, new ItemStackBean(Material.STONE, 1));
-                        this.put(1, new ItemStackBean(Material.DIRT, 2));
+                        this.put(0, new ItemStackBeanImpl(Material.STONE, 1));
+                        this.put(1, new ItemStackBeanImpl(Material.DIRT, 2));
                     }}
             ),
-            new ItemStackBean(Material.DIAMOND, 3),
-            new ItemStackBean(Material.DIAMOND, 3),
-            new ItemStackBean[]{
-                    new ItemStackBean(Material.GOLDEN_APPLE, 4),
-                    new ItemStackBean(Material.GOLDEN_CARROT, 5),
+            new ItemStackBeanImpl(Material.DIAMOND, 3),
+            new ItemStackBeanImpl(Material.DIAMOND, 3),
+            new ItemStackBeanImpl[]{
+                    new ItemStackBeanImpl(Material.GOLDEN_APPLE, 4),
+                    new ItemStackBeanImpl(Material.GOLDEN_CARROT, 5),
                     null,
-                    new ItemStackBean(Material.GOLDEN_HELMET, 7),
+                    new ItemStackBeanImpl(Material.GOLDEN_HELMET, 7),
             }
     );
 
@@ -84,11 +86,11 @@ public class PlayerInventoryBeanSerializeTest
         ));
     }};
 
-    public static final PlayerInventoryBean EMPTY = new PlayerInventoryBean(
+    public static final PlayerInventoryBeanImpl EMPTY = new PlayerInventoryBeanImpl(
             InventoryBeanSerializeTest.EMPTY,
             null,
             null,
-            new ItemStackBean[]{
+            new ItemStackBeanImpl[]{
                     null,
                     null,
                     null,
@@ -101,7 +103,7 @@ public class PlayerInventoryBeanSerializeTest
     @Test
     void 正常シリアライズできるか()
     {
-        Map<String, Object> actual = PlayerInventoryBean.serialize(FULFILLED);
+        Map<String, Object> actual = PlayerInventoryBeanImpl.serialize(FULFILLED);
 
         MapTestUtil.assertEqual(FULFILLED_MAP, actual);
     }
@@ -109,7 +111,7 @@ public class PlayerInventoryBeanSerializeTest
     @Test
     void 正常デシリアライズできるか()
     {
-        PlayerInventoryBean actual = PlayerInventoryBean.deserialize(FULFILLED_MAP);
+        PlayerInventoryBean actual = PlayerInventoryBeanImpl.deserialize(FULFILLED_MAP);
 
         assertEquals(FULFILLED, actual);
     }
@@ -117,7 +119,7 @@ public class PlayerInventoryBeanSerializeTest
     @Test
     void 必須項目のみでシリアライズできるか()
     {
-        Map<String, Object> actual = PlayerInventoryBean.serialize(EMPTY);
+        Map<String, Object> actual = PlayerInventoryBeanImpl.serialize(EMPTY);
 
         MapTestUtil.assertEqual(EMPTY_MAP, actual);
     }
@@ -125,7 +127,7 @@ public class PlayerInventoryBeanSerializeTest
     @Test
     void 必須項目のみでデシリアライズできるか()
     {
-        PlayerInventoryBean actual = PlayerInventoryBean.deserialize(EMPTY_MAP);
+        PlayerInventoryBean actual = PlayerInventoryBeanImpl.deserialize(EMPTY_MAP);
 
         assertEquals(EMPTY, actual);
     }
@@ -164,7 +166,7 @@ public class PlayerInventoryBeanSerializeTest
 
         Assertions.assertThrows(
                 IllegalArgumentException.class,
-                () -> PlayerInventoryBean.deserialize(map)
+                () -> PlayerInventoryBeanImpl.deserialize(map)
         );
 
         // noinspection unchecked
@@ -175,7 +177,7 @@ public class PlayerInventoryBeanSerializeTest
 
         Assertions.assertThrows(
                 IllegalArgumentException.class,
-                () -> PlayerInventoryBean.deserialize(map)
+                () -> PlayerInventoryBeanImpl.deserialize(map)
         );
     }
 }

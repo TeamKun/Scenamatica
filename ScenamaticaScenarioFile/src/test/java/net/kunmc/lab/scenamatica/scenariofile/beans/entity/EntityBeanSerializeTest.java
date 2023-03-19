@@ -1,8 +1,9 @@
 package net.kunmc.lab.scenamatica.scenariofile.beans.entity;
 
 import lombok.SneakyThrows;
-import net.kunmc.lab.scenamatica.scenariofile.beans.entities.EntityBean;
+import net.kunmc.lab.scenamatica.scenariofile.beans.entities.EntityBeanImpl;
 import net.kunmc.lab.scenamatica.scenariofile.beans.utils.MapTestUtil;
+import net.kunmc.lab.scenamatica.scenariofile.interfaces.entities.EntityBean;
 import org.bukkit.Location;
 import org.bukkit.potion.PotionEffectType;
 import org.junit.jupiter.api.BeforeAll;
@@ -19,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class EntityBeanSerializeTest
 {
-    public static final EntityBean FULFILLED = new EntityBean(
+    public static final EntityBean FULFILLED = new EntityBeanImpl(
             new Location(null, 1145, 1419, 19, 8, 10),
             "YajuSNPI",
             UUID.fromString("a1b1c4d5-e1f4-a1b9-c1d9-e8f1a0bcdef1"),
@@ -76,7 +77,7 @@ public class EntityBeanSerializeTest
         // ↑は, Bukkit が必要なので単体テストできない。
     }};
 
-    public static final EntityBean EMPTY = new EntityBean();
+    public static final EntityBean EMPTY = new EntityBeanImpl();
 
     public static final Map<String, Object> EMPTY_MAP = new HashMap<>();
 
@@ -103,7 +104,7 @@ public class EntityBeanSerializeTest
     @Test
     void 正常にシリアライズできるか()
     {
-        Map<String, Object> map = EntityBean.serialize(FULFILLED);
+        Map<String, Object> map = EntityBeanImpl.serialize(FULFILLED);
 
         MapTestUtil.assertEqual(FULFILLED_MAP, map);
     }
@@ -111,7 +112,7 @@ public class EntityBeanSerializeTest
     @Test
     void 正常にデシリアライズできるか()
     {
-        EntityBean entity = EntityBean.deserialize(FULFILLED_MAP);
+        EntityBean entity = EntityBeanImpl.deserialize(FULFILLED_MAP);
 
         assertEquals(FULFILLED, entity);
     }
@@ -119,7 +120,7 @@ public class EntityBeanSerializeTest
     @Test
     void 必須項目のみでシリアライズできるか()
     {
-        Map<String, Object> map = EntityBean.serialize(EMPTY);
+        Map<String, Object> map = EntityBeanImpl.serialize(EMPTY);
 
         MapTestUtil.assertEqual(EMPTY_MAP, map);
     }
@@ -127,7 +128,7 @@ public class EntityBeanSerializeTest
     @Test
     void 必須項目のみでデシリアライズできるか()
     {
-        EntityBean entity = EntityBean.deserialize(EMPTY_MAP);
+        EntityBean entity = EntityBeanImpl.deserialize(EMPTY_MAP);
 
         assertEquals(EMPTY, entity);
     }

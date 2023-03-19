@@ -3,6 +3,7 @@ package net.kunmc.lab.scenamatica.scenariofile.beans.trigger;
 import net.kunmc.lab.scenamatica.scenariofile.beans.scenario.ActionBeanSerializeTest;
 import net.kunmc.lab.scenamatica.scenariofile.beans.scenario.ScenarioBeanSerializeTest;
 import net.kunmc.lab.scenamatica.scenariofile.beans.utils.MapTestUtil;
+import net.kunmc.lab.scenamatica.scenariofile.interfaces.trigger.TriggerBean;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -14,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TriggerBeanSerializeTest
 {
-    public static final TriggerBean FULFILLED = new TriggerBean(
+    public static final TriggerBean FULFILLED = new TriggerBeanImpl(
             TriggerType.ON_ACTION,
             ActionBeanSerializeTest.FULFILLED,
             Arrays.asList(ScenarioBeanSerializeTest.FULFILLED, ScenarioBeanSerializeTest.FULFILLED),
@@ -28,7 +29,7 @@ public class TriggerBeanSerializeTest
         this.put("after", Arrays.asList(ScenarioBeanSerializeTest.FULFILLED_MAP, ScenarioBeanSerializeTest.FULFILLED_MAP));
     }};
 
-    public static final TriggerBean EMPTY = new TriggerBean(
+    public static final TriggerBean EMPTY = new TriggerBeanImpl(
             TriggerType.ON_ACTION,
             ActionBeanSerializeTest.EMPTY,
             Collections.emptyList(),
@@ -43,7 +44,7 @@ public class TriggerBeanSerializeTest
     @Test
     void 正常にシリアライズできるか()
     {
-        Map<String, Object> map = TriggerBean.serialize(FULFILLED);
+        Map<String, Object> map = TriggerBeanImpl.serialize(FULFILLED);
 
         MapTestUtil.assertEqual(FULFILLED_MAP, map);
     }
@@ -51,7 +52,7 @@ public class TriggerBeanSerializeTest
     @Test
     void 正常にデシリアライズできるか()
     {
-        TriggerBean bean = TriggerBean.deserialize(FULFILLED_MAP);
+        TriggerBean bean = TriggerBeanImpl.deserialize(FULFILLED_MAP);
 
         assertEquals(FULFILLED, bean);
     }
@@ -59,7 +60,7 @@ public class TriggerBeanSerializeTest
     @Test
     void 必須項目のみでシリアライズできるか()
     {
-        Map<String, Object> map = TriggerBean.serialize(EMPTY);
+        Map<String, Object> map = TriggerBeanImpl.serialize(EMPTY);
 
         MapTestUtil.assertEqual(EMPTY_MAP, map);
     }
@@ -67,7 +68,7 @@ public class TriggerBeanSerializeTest
     @Test
     void 必須項目のみでデシリアライズできるか()
     {
-        TriggerBean bean = TriggerBean.deserialize(EMPTY_MAP);
+        TriggerBean bean = TriggerBeanImpl.deserialize(EMPTY_MAP);
 
         assertEquals(EMPTY, bean);
     }

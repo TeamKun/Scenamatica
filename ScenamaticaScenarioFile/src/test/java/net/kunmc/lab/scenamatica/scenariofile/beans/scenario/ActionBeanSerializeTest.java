@@ -1,6 +1,7 @@
 package net.kunmc.lab.scenamatica.scenariofile.beans.scenario;
 
 import net.kunmc.lab.scenamatica.scenariofile.beans.utils.MapTestUtil;
+import net.kunmc.lab.scenamatica.scenariofile.interfaces.scenario.ActionBean;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
@@ -10,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ActionBeanSerializeTest
 {
-    public static final ActionBean FULFILLED = new ActionBean(
+    public static final ActionBean FULFILLED = new ActionBeanImpl(
             "action",
             new HashMap<String, Object>()
             {{
@@ -27,7 +28,7 @@ public class ActionBeanSerializeTest
         }});
     }};
 
-    public static final ActionBean EMPTY = new ActionBean(
+    public static final ActionBean EMPTY = new ActionBeanImpl(
             "action",
             null
     );
@@ -40,7 +41,7 @@ public class ActionBeanSerializeTest
     @Test
     void 正常にシリアライズできるか()
     {
-        Map<String, Object> map = ActionBean.serialize(FULFILLED);
+        Map<String, Object> map = ActionBeanImpl.serialize(FULFILLED);
 
         MapTestUtil.assertEqual(FULFILLED_MAP, map);
     }
@@ -48,7 +49,7 @@ public class ActionBeanSerializeTest
     @Test
     void 正常にデシリアライズできるか()
     {
-        ActionBean bean = ActionBean.deserialize(FULFILLED_MAP);
+        ActionBean bean = ActionBeanImpl.deserialize(FULFILLED_MAP);
 
         assertEquals(FULFILLED, bean);
     }
@@ -56,7 +57,7 @@ public class ActionBeanSerializeTest
     @Test
     void 必須項目のみでシリアライズできるか()
     {
-        Map<String, Object> map = ActionBean.serialize(EMPTY);
+        Map<String, Object> map = ActionBeanImpl.serialize(EMPTY);
 
         MapTestUtil.assertEqual(EMPTY_MAP, map);
     }
@@ -64,7 +65,7 @@ public class ActionBeanSerializeTest
     @Test
     void 必須項目のみでデシリアライズできるか()
     {
-        ActionBean bean = ActionBean.deserialize(EMPTY_MAP);
+        ActionBean bean = ActionBeanImpl.deserialize(EMPTY_MAP);
 
         assertEquals(EMPTY, bean);
     }

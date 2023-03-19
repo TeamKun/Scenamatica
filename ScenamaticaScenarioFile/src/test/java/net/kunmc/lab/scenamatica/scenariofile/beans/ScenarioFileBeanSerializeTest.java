@@ -1,6 +1,7 @@
 package net.kunmc.lab.scenamatica.scenariofile.beans;
 
 import net.kunmc.lab.scenamatica.scenariofile.ScenarioFileBean;
+import net.kunmc.lab.scenamatica.scenariofile.ScenarioFileBeanImpl;
 import net.kunmc.lab.scenamatica.scenariofile.beans.context.ContextBeanSerializeTest;
 import net.kunmc.lab.scenamatica.scenariofile.beans.scenario.ScenarioBeanSerializeTest;
 import net.kunmc.lab.scenamatica.scenariofile.beans.trigger.TriggerBeanSerializeTest;
@@ -16,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ScenarioFileBeanSerializeTest
 {
-    public static final ScenarioFileBean FULFILLED = new ScenarioFileBean(
+    public static final ScenarioFileBean FULFILLED = new ScenarioFileBeanImpl(
             "A scenario that does everything",
             Arrays.asList(
                     TriggerBeanSerializeTest.FULFILLED,
@@ -45,7 +46,7 @@ public class ScenarioFileBeanSerializeTest
         ));
     }};
 
-    public static final ScenarioFileBean EMPTY = new ScenarioFileBean(
+    public static final ScenarioFileBeanImpl EMPTY = new ScenarioFileBeanImpl(
             "A scenario that does nothing",
             Collections.emptyList(),
             null,
@@ -62,7 +63,7 @@ public class ScenarioFileBeanSerializeTest
     @Test
     void 正常にシリアライズできるか()
     {
-        Map<String, Object> map = ScenarioFileBean.serialize(FULFILLED);
+        Map<String, Object> map = ScenarioFileBeanImpl.serialize(FULFILLED);
 
         MapTestUtil.assertEqual(FULFILLED_MAP, map);
     }
@@ -70,7 +71,7 @@ public class ScenarioFileBeanSerializeTest
     @Test
     void 正常にデシリアライズできるか()
     {
-        ScenarioFileBean bean = ScenarioFileBean.deserialize(FULFILLED_MAP);
+        ScenarioFileBean bean = ScenarioFileBeanImpl.deserialize(FULFILLED_MAP);
 
         assertEquals(FULFILLED, bean);
     }
@@ -78,7 +79,7 @@ public class ScenarioFileBeanSerializeTest
     @Test
     void 必須項目のみでシリアライズできるか()
     {
-        Map<String, Object> map = ScenarioFileBean.serialize(EMPTY);
+        Map<String, Object> map = ScenarioFileBeanImpl.serialize(EMPTY);
 
         MapTestUtil.assertEqual(EMPTY_MAP, map);
     }
@@ -86,7 +87,7 @@ public class ScenarioFileBeanSerializeTest
     @Test
     void 必須項目のみでデシリアライズできるか()
     {
-        ScenarioFileBean bean = ScenarioFileBean.deserialize(EMPTY_MAP);
+        ScenarioFileBean bean = ScenarioFileBeanImpl.deserialize(EMPTY_MAP);
 
         assertEquals(EMPTY, bean);
     }

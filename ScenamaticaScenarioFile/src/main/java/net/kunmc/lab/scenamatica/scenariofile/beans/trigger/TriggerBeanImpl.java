@@ -2,94 +2,67 @@ package net.kunmc.lab.scenamatica.scenariofile.beans.trigger;
 
 import lombok.Value;
 import net.kunmc.lab.scenamatica.commons.utils.MapUtils;
-import net.kunmc.lab.scenamatica.scenariofile.beans.scenario.ScenarioBean;
+import net.kunmc.lab.scenamatica.scenariofile.beans.scenario.ScenarioBeanImpl;
+import net.kunmc.lab.scenamatica.scenariofile.interfaces.scenario.ScenarioBean;
+import net.kunmc.lab.scenamatica.scenariofile.interfaces.trigger.KeyedTriggerType;
+import net.kunmc.lab.scenamatica.scenariofile.interfaces.trigger.TriggerArgument;
+import net.kunmc.lab.scenamatica.scenariofile.interfaces.trigger.TriggerBean;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-/**
- * シナリオがトリガーされるタイミングを表すクラスです。
- */
 @Value
-public class TriggerBean implements Serializable
+public class TriggerBeanImpl implements TriggerBean
 {
     private static final String KEY_TYPE = "type";
     private static final String KEY_BEFORE_THAT = "before";
     private static final String KEY_AFTER_THAT = "after";
 
-    /**
-     * トリガーの種類です。殆どの場合は {@link TriggerType#ON_ACTION} です。
-     */
     @NotNull
     TriggerType type;
-
-    /**
-     * トリガの引数です。トリガーの種類によっては null になります。
-     */
     @Nullable
     TriggerArgument argument;
-
-    /**
-     * 本シナリオを実行する前に実行するシナリオを格納します。
-     */
     @NotNull
     List<ScenarioBean> beforeThat;
-
-    /**
-     * 本シナリオを実行した後に実行するシナリオを格納します。
-     */
     @NotNull
     List<ScenarioBean> afterThat;
 
-    /**
-     * シナリオのトリガーを Map にシリアライズします。*
-     *
-     * @param bean シナリオのトリガーの Bean
-     * @return シリアライズされた Map
-     */
     @NotNull
     public static Map<String, Object> serialize(@NotNull TriggerBean bean)
     {
         Map<String, Object> map = new HashMap<>();
 
-        map.put(KEY_TYPE, bean.type.getKey());
+        map.put(KEY_TYPE, bean.getType().getKey());
 
-        if (bean.argument != null)
+        if (bean.getArgument() != null)
         {
-            Map<String, Object> arguments = bean.type.serializeArgument(bean.argument);
+            Map<String, Object> arguments = bean.getType().serializeArgument(bean.getArgument());
             if (arguments != null)
                 map.putAll(arguments);
         }
 
-        if (!bean.beforeThat.isEmpty())
+        if (!bean.getBeforeThat().isEmpty())
         {
             List<Map<String, Object>> list = new LinkedList<>();
-            for (ScenarioBean scenario : bean.beforeThat)
-                list.add(ScenarioBean.serialize(scenario));
+            for (ScenarioBean scenario : bean.getBeforeThat())
+                list.add(ScenarioBeanImpl.serialize(scenario));
             map.put(KEY_BEFORE_THAT, list);
         }
-        if (!bean.afterThat.isEmpty())
+        if (!bean.getAfterThat().isEmpty())
         {
             List<Map<String, Object>> list = new LinkedList<>();
-            for (ScenarioBean scenario : bean.afterThat)
-                list.add(ScenarioBean.serialize(scenario));
+            for (ScenarioBean scenario : bean.getAfterThat())
+                list.add(ScenarioBeanImpl.serialize(scenario));
             map.put(KEY_AFTER_THAT, list);
         }
 
         return map;
     }
 
-    /**
-     * Map がシリアライズされたシナリオのトリガーであるかを検証します。
-     *
-     * @param map 検証する Map
-     * @throws IllegalArgumentException 検証に失敗した場合
-     */
     public static void validate(@NotNull Map<String, Object> map)
     {
         MapUtils.checkType(map, KEY_TYPE, String.class);
@@ -100,7 +73,7 @@ public class TriggerBean implements Serializable
         {
             MapUtils.checkType(map, KEY_BEFORE_THAT, List.class);
             for (Object obj : (List<?>) map.get(KEY_BEFORE_THAT))
-                ScenarioBean.validate(MapUtils.checkAndCastMap(
+                ScenarioBeanImpl.validate(MapUtils.checkAndCastMap(
                         obj,
                         String.class,
                         Object.class
@@ -110,24 +83,18 @@ public class TriggerBean implements Serializable
         {
             MapUtils.checkType(map, KEY_AFTER_THAT, List.class);
             for (Object obj : (List<?>) map.get(KEY_AFTER_THAT))
-                ScenarioBean.validate(MapUtils.checkAndCastMap(
+                ScenarioBeanImpl.validate(MapUtils.checkAndCastMap(
                         obj,
                         String.class,
                         Object.class
                 ));
         }
 
-        TriggerType type = TriggerType.fromKey((String) map.get(KEY_TYPE));
+        KeyedTriggerType type = TriggerType.fromKey((String) map.get(KEY_TYPE));
         if (type != null)
             type.validateArguments(map);
     }
 
-    /**
-     * シナリオのトリガーを Map からデシリアライズします。
-     *
-     * @param map シリアライズされた Map
-     * @return デシリアライズされたシナリオのトリガー
-     */
     @NotNull
     public static TriggerBean deserialize(@NotNull Map<String, Object> map)
     {
@@ -142,7 +109,7 @@ public class TriggerBean implements Serializable
         List<ScenarioBean> beforeThat = new LinkedList<>();
         if (map.containsKey(KEY_BEFORE_THAT))
             for (Object obj : (List<?>) map.get(KEY_BEFORE_THAT))
-                beforeThat.add(ScenarioBean.deserialize(MapUtils.checkAndCastMap(
+                beforeThat.add(ScenarioBeanImpl.deserialize(MapUtils.checkAndCastMap(
                         obj,
                         String.class,
                         Object.class
@@ -151,14 +118,14 @@ public class TriggerBean implements Serializable
         List<ScenarioBean> afterThat = new LinkedList<>();
         if (map.containsKey(KEY_AFTER_THAT))
             for (Object obj : (List<?>) map.get(KEY_AFTER_THAT))
-                afterThat.add(ScenarioBean.deserialize(MapUtils.checkAndCastMap(
+                afterThat.add(ScenarioBeanImpl.deserialize(MapUtils.checkAndCastMap(
                         obj,
                         String.class,
                         Object.class
                 )));
 
         assert type != null;  // validate() で検証済み
-        return new TriggerBean(
+        return new TriggerBeanImpl(
                 type,
                 argument,
                 beforeThat,

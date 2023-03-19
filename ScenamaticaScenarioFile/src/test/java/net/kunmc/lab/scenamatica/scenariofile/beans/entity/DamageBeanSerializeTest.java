@@ -1,7 +1,8 @@
 package net.kunmc.lab.scenamatica.scenariofile.beans.entity;
 
-import net.kunmc.lab.scenamatica.scenariofile.beans.entities.DamageBean;
+import net.kunmc.lab.scenamatica.scenariofile.beans.entities.DamageBeanImpl;
 import net.kunmc.lab.scenamatica.scenariofile.beans.utils.MapTestUtil;
+import net.kunmc.lab.scenamatica.scenariofile.interfaces.entities.DamageBean;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.junit.jupiter.api.Test;
 
@@ -13,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @SuppressWarnings("deprecation")
 public class DamageBeanSerializeTest
 {
-    public static final DamageBean FULFILLED = new DamageBean(
+    public static final DamageBean FULFILLED = new DamageBeanImpl(
             EntityDamageEvent.DamageModifier.BLOCKING,
             EntityDamageEvent
                     .DamageCause.CRAMMING,
@@ -30,7 +31,7 @@ public class DamageBeanSerializeTest
     @Test
     void 正常にシリアライズできるか()
     {
-        Map<String, Object> map = DamageBean.serialize(FULFILLED);
+        Map<String, Object> map = DamageBeanImpl.serialize(FULFILLED);
 
         MapTestUtil.assertEqual(FULFILLED_MAP, map);
     }
@@ -38,7 +39,7 @@ public class DamageBeanSerializeTest
     @Test
     void 正常にデシリアライズできるか()
     {
-        DamageBean bean = DamageBean.deserialize(FULFILLED_MAP);
+        DamageBean bean = DamageBeanImpl.deserialize(FULFILLED_MAP);
 
         assertEquals(FULFILLED, bean);
     }

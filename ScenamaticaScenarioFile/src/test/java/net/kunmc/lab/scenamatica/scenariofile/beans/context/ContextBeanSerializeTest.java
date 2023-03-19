@@ -1,6 +1,7 @@
 package net.kunmc.lab.scenamatica.scenariofile.beans.context;
 
 import net.kunmc.lab.scenamatica.scenariofile.beans.utils.MapTestUtil;
+import net.kunmc.lab.scenamatica.scenariofile.interfaces.context.ContextBean;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -11,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ContextBeanSerializeTest
 {
-    public static final ContextBean FULFILLED = new ContextBean(
+    public static final ContextBeanImpl FULFILLED = new ContextBeanImpl(
             Arrays.asList(
                     PlayerBeanSerializeTest.FULFILLED,
                     PlayerBeanSerializeTest.FULFILLED,
@@ -30,7 +31,7 @@ public class ContextBeanSerializeTest
         put("world", WorldBeanSerializeTest.FULFILLED_MAP);
     }};
 
-    public static final ContextBean EMPTY = new ContextBean(
+    public static final ContextBeanImpl EMPTY = new ContextBeanImpl(
             null,
             null
     );
@@ -40,7 +41,7 @@ public class ContextBeanSerializeTest
     @Test
     void 正常にシリアライズできるか()
     {
-        Map<String, Object> map = ContextBean.serialize(FULFILLED);
+        Map<String, Object> map = ContextBeanImpl.serialize(FULFILLED);
 
         MapTestUtil.assertEqual(FULFILLED_MAP, map);
     }
@@ -48,7 +49,7 @@ public class ContextBeanSerializeTest
     @Test
     void 正常にデシリアライズできるか()
     {
-        ContextBean bean = ContextBean.deserialize(FULFILLED_MAP);
+        ContextBean bean = ContextBeanImpl.deserialize(FULFILLED_MAP);
 
         assertEquals(FULFILLED, bean);
     }
@@ -56,14 +57,14 @@ public class ContextBeanSerializeTest
     @Test
     void 必須項目のみでシリアライズできるか()
     {
-        Map<String, Object> map = ContextBean.serialize(EMPTY);
+        Map<String, Object> map = ContextBeanImpl.serialize(EMPTY);
         MapTestUtil.assertEqual(EMPTY_MAP, map);
     }
 
     @Test
     void 必須項目のみでデシリアライズできるか()
     {
-        ContextBean bean = ContextBean.deserialize(EMPTY_MAP);
+        ContextBean bean = ContextBeanImpl.deserialize(EMPTY_MAP);
         assertEquals(EMPTY, bean);
     }
 }

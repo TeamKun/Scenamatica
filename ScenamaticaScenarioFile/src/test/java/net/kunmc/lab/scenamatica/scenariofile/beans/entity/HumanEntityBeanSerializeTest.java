@@ -1,9 +1,10 @@
 package net.kunmc.lab.scenamatica.scenariofile.beans.entity;
 
-import net.kunmc.lab.scenamatica.scenariofile.beans.entities.HumanEntityBean;
+import net.kunmc.lab.scenamatica.scenariofile.beans.entities.HumanEntityBeanImpl;
 import net.kunmc.lab.scenamatica.scenariofile.beans.inventory.InventoryBeanSerializeTest;
 import net.kunmc.lab.scenamatica.scenariofile.beans.inventory.PlayerInventoryBeanSerializeTest;
 import net.kunmc.lab.scenamatica.scenariofile.beans.utils.MapTestUtil;
+import net.kunmc.lab.scenamatica.scenariofile.interfaces.entities.HumanEntityBean;
 import org.bukkit.GameMode;
 import org.bukkit.inventory.MainHand;
 import org.junit.jupiter.api.Test;
@@ -15,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class HumanEntityBeanSerializeTest
 {
-    public static final HumanEntityBean FULFILLED = new HumanEntityBean(
+    public static final HumanEntityBean FULFILLED = new HumanEntityBeanImpl(
             EntityBeanSerializeTest.FULFILLED,
             PlayerInventoryBeanSerializeTest.FULFILLED,
             InventoryBeanSerializeTest.FULFILLED,
@@ -33,7 +34,7 @@ public class HumanEntityBeanSerializeTest
         put("food", 20);
     }};
 
-    public static final HumanEntityBean EMPTY = new HumanEntityBean(
+    public static final HumanEntityBean EMPTY = new HumanEntityBeanImpl(
             EntityBeanSerializeTest.EMPTY,
             null,
             null,
@@ -48,7 +49,7 @@ public class HumanEntityBeanSerializeTest
     @Test
     void 正常にシリアライズできるか()
     {
-        Map<String, Object> map = HumanEntityBean.serialize(FULFILLED);
+        Map<String, Object> map = HumanEntityBeanImpl.serialize(FULFILLED);
 
         MapTestUtil.assertEqual(FULFILLED_MAP, map);
     }
@@ -56,7 +57,7 @@ public class HumanEntityBeanSerializeTest
     @Test
     void 正常にデシリアライズできるか()
     {
-        HumanEntityBean bean = HumanEntityBean.deserialize(FULFILLED_MAP);
+        HumanEntityBean bean = HumanEntityBeanImpl.deserialize(FULFILLED_MAP);
 
         assertEquals(FULFILLED, bean);
     }
@@ -64,7 +65,7 @@ public class HumanEntityBeanSerializeTest
     @Test
     void 必須項目のみでシリアライズできるか()
     {
-        Map<String, Object> map = HumanEntityBean.serialize(EMPTY);
+        Map<String, Object> map = HumanEntityBeanImpl.serialize(EMPTY);
 
         MapTestUtil.assertEqual(EMPTY_MAP, map);
     }
@@ -72,7 +73,7 @@ public class HumanEntityBeanSerializeTest
     @Test
     void 必須項目のみでデシリアライズできるか()
     {
-        HumanEntityBean bean = HumanEntityBean.deserialize(EMPTY_MAP);
+        HumanEntityBean bean = HumanEntityBeanImpl.deserialize(EMPTY_MAP);
 
         assertEquals(EMPTY, bean);
     }

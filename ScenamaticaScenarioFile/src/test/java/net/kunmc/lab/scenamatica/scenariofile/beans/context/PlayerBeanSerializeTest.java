@@ -2,6 +2,7 @@ package net.kunmc.lab.scenamatica.scenariofile.beans.context;
 
 import net.kunmc.lab.scenamatica.scenariofile.beans.entity.HumanEntityBeanSerializeTest;
 import net.kunmc.lab.scenamatica.scenariofile.beans.utils.MapTestUtil;
+import net.kunmc.lab.scenamatica.scenariofile.interfaces.context.PlayerBean;
 import org.bukkit.Location;
 import org.junit.jupiter.api.Test;
 
@@ -12,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class PlayerBeanSerializeTest
 {
-    public static final PlayerBean FULFILLED = new PlayerBean(
+    public static final PlayerBean FULFILLED = new PlayerBeanImpl(
             HumanEntityBeanSerializeTest.FULFILLED,
             "YajuSNPIName",
             "YajuSNPIDisplay",
@@ -61,7 +62,7 @@ public class PlayerBeanSerializeTest
         this.put("flySpeed", 514f);
     }};
 
-    public static final PlayerBean EMPTY = new PlayerBean(
+    public static final PlayerBean EMPTY = new PlayerBeanImpl(
             HumanEntityBeanSerializeTest.EMPTY,
             "YajuSNPI",
             null,
@@ -87,7 +88,7 @@ public class PlayerBeanSerializeTest
     @Test
     void 正常にシリアライズできるか()
     {
-        Map<String, Object> map = PlayerBean.serialize(FULFILLED);
+        Map<String, Object> map = PlayerBeanImpl.serialize(FULFILLED);
 
         MapTestUtil.assertEqual(FULFILLED_MAP, map);
     }
@@ -95,7 +96,7 @@ public class PlayerBeanSerializeTest
     @Test
     void 正常にデシリアライズできるか()
     {
-        PlayerBean bean = PlayerBean.deserialize(FULFILLED_MAP);
+        PlayerBean bean = PlayerBeanImpl.deserialize(FULFILLED_MAP);
 
         assertEquals(FULFILLED, bean);
     }
@@ -103,7 +104,7 @@ public class PlayerBeanSerializeTest
     @Test
     void 必須項目のみでシリアライズできるか()
     {
-        Map<String, Object> map = PlayerBean.serialize(EMPTY);
+        Map<String, Object> map = PlayerBeanImpl.serialize(EMPTY);
 
         MapTestUtil.assertEqual(EMPTY_MAP, map);
     }
@@ -111,7 +112,7 @@ public class PlayerBeanSerializeTest
     @Test
     void 必須項目のみでデシリアライズできるか()
     {
-        PlayerBean bean = PlayerBean.deserialize(EMPTY_MAP);
+        PlayerBean bean = PlayerBeanImpl.deserialize(EMPTY_MAP);
 
         assertEquals(EMPTY, bean);
     }

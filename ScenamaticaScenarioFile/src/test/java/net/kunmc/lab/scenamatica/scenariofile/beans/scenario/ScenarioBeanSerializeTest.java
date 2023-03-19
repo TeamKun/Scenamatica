@@ -1,6 +1,8 @@
 package net.kunmc.lab.scenamatica.scenariofile.beans.scenario;
 
 import net.kunmc.lab.scenamatica.scenariofile.beans.utils.MapTestUtil;
+import net.kunmc.lab.scenamatica.scenariofile.interfaces.scenario.ScenarioBean;
+import net.kunmc.lab.scenamatica.scenariofile.interfaces.scenario.ScenarioType;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
@@ -10,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ScenarioBeanSerializeTest
 {
-    public static final ScenarioBean FULFILLED = new ScenarioBean(
+    public static final ScenarioBean FULFILLED = new ScenarioBeanImpl(
             ScenarioType.ACTION_EXECUTE,
             ActionBeanSerializeTest.FULFILLED,
             114514L
@@ -22,7 +24,7 @@ public class ScenarioBeanSerializeTest
         this.put("timeout", 114514L);
     }};
 
-    public static final ScenarioBean EMPTY = new ScenarioBean(
+    public static final ScenarioBean EMPTY = new ScenarioBeanImpl(
             ScenarioType.ACTION_EXECUTE,
             ActionBeanSerializeTest.EMPTY,
             -1L
@@ -36,7 +38,7 @@ public class ScenarioBeanSerializeTest
     @Test
     void 正常にシリアライズできるか()
     {
-        Map<String, Object> map = ScenarioBean.serialize(FULFILLED);
+        Map<String, Object> map = ScenarioBeanImpl.serialize(FULFILLED);
 
         MapTestUtil.assertEqual(FULFILLED_MAP, map);
     }
@@ -44,7 +46,7 @@ public class ScenarioBeanSerializeTest
     @Test
     void 正常にデシリアライズできるか()
     {
-        ScenarioBean bean = ScenarioBean.deserialize(FULFILLED_MAP);
+        ScenarioBean bean = ScenarioBeanImpl.deserialize(FULFILLED_MAP);
 
         assertEquals(FULFILLED, bean);
     }
@@ -52,7 +54,7 @@ public class ScenarioBeanSerializeTest
     @Test
     void 必須項目のみでシリアライズできるか()
     {
-        Map<String, Object> map = ScenarioBean.serialize(EMPTY);
+        Map<String, Object> map = ScenarioBeanImpl.serialize(EMPTY);
 
         MapTestUtil.assertEqual(EMPTY_MAP, map);
     }
@@ -60,7 +62,7 @@ public class ScenarioBeanSerializeTest
     @Test
     void 必須項目のみでデシリアライズできるか()
     {
-        ScenarioBean bean = ScenarioBean.deserialize(EMPTY_MAP);
+        ScenarioBean bean = ScenarioBeanImpl.deserialize(EMPTY_MAP);
 
         assertEquals(EMPTY, bean);
     }
