@@ -7,3 +7,14 @@ load: STARTUP
 authors: [Peyang]
 description: A plugin that provides advanced assistance by automating scenario testing for the PaperMC plugin
 website: https://kunmc.net/
+
+commands:
+  scenamatica:
+    aliases: [scenario, scena, scen]
+    description: "A command that provides advanced assistance by automating scenario testing for the PaperMC plugin"
+    permission: scenamatica.use
+
+permissions:
+  scenamatica.use:
+    description: "Allows you to use the scenamatica commands."
+    default: op
