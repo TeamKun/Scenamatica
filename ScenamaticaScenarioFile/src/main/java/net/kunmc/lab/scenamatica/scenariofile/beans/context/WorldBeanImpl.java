@@ -57,7 +57,7 @@ public class WorldBeanImpl implements WorldBean
     }
 
     @NotNull
-    public static WorldBeanImpl deserialize(@NotNull Map<String, Object> map)
+    public static WorldBean deserialize(@NotNull Map<String, Object> map)
     {
         validate(map);
 

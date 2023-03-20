@@ -40,7 +40,7 @@ public class ActionBeanImpl implements ActionBean
 
     }
 
-    public static ActionBeanImpl deserialize(Map<String, Object> map)
+    public static ActionBean deserialize(Map<String, Object> map)
     {
         validate(map);
 

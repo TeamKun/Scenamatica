@@ -67,7 +67,7 @@ public class ContextBeanImpl implements ContextBean
             ));
     }
 
-    public static ContextBeanImpl deserialize(Map<String, Object> map)
+    public static ContextBean deserialize(Map<String, Object> map)
     {
         List<PlayerBean> pseudoPlayerslist = null;
         if (map.containsKey(KEY_PSEUDO_PLAYERS) && map.get(KEY_PSEUDO_PLAYERS) != null)

@@ -40,7 +40,7 @@ public class DamageBeanImpl implements DamageBean
         return true;
     }
 
-    public static DamageBeanImpl deserialize(@NotNull Map<String, Object> map)
+    public static DamageBean deserialize(@NotNull Map<String, Object> map)
     {
         validate(map);
         return new DamageBeanImpl(
