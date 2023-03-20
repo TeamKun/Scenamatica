@@ -253,7 +253,7 @@ public class EntityBeanImpl implements EntityBean
         boolean gravity = MapUtils.getOrDefault(map, KEY_GRAVITY, true);
         List<String> tags = MapUtils.getAsListOrEmpty(map, KEY_TAGS);
 
-        DamageBeanImpl lastDamageCause = null;
+        DamageBean lastDamageCause = null;
         if (map.containsKey(KEY_LAST_DAMAGE))
             lastDamageCause = DamageBeanImpl.deserialize(MapUtils.checkAndCastMap(map.get(KEY_LAST_DAMAGE),
                     String.class, Object.class
