@@ -3,11 +3,12 @@ package net.kunmc.lab.scenamatica.scenariofile;
 import lombok.Value;
 import net.kunmc.lab.scenamatica.commons.utils.MapUtils;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
+import net.kunmc.lab.scenamatica.interfaces.scenariofile.context.ContextBean;
+import net.kunmc.lab.scenamatica.interfaces.scenariofile.scenario.ScenarioBean;
+import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerBean;
 import net.kunmc.lab.scenamatica.scenariofile.beans.context.ContextBeanImpl;
 import net.kunmc.lab.scenamatica.scenariofile.beans.scenario.ScenarioBeanImpl;
 import net.kunmc.lab.scenamatica.scenariofile.beans.trigger.TriggerBeanImpl;
-import net.kunmc.lab.scenamatica.interfaces.scenariofile.scenario.ScenarioBean;
-import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerBean;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -20,6 +21,7 @@ import java.util.stream.Collectors;
 public class ScenarioFileBeanImpl implements ScenarioFileBean
 {
     private static final String KEY_NAME = "name";
+    private static final String KEY_DESCRIPTION = "description";
     private static final String KEY_TRIGGERS = "on";
     private static final String KEY_CONTEXT = "context";
     private static final String KEY_SCENARIO = "scenario";
@@ -27,9 +29,11 @@ public class ScenarioFileBeanImpl implements ScenarioFileBean
     @NotNull
     String name;
     @NotNull
+    String description;
+    @NotNull
     List<TriggerBean> triggers;
     @Nullable
-    ContextBeanImpl context;
+    ContextBean context;
     @NotNull
     List<ScenarioBean> scenario;
 
@@ -39,6 +43,7 @@ public class ScenarioFileBeanImpl implements ScenarioFileBean
         Map<String, Object> map = new HashMap<>();
 
         map.put(KEY_NAME, bean.getName());
+        map.put(KEY_DESCRIPTION, bean.getDescription());
         map.put(KEY_TRIGGERS, bean.getTriggers().stream()
                 .map(TriggerBeanImpl::serialize)
                 .collect(Collectors.toList())
@@ -57,6 +62,7 @@ public class ScenarioFileBeanImpl implements ScenarioFileBean
     public static void validate(@NotNull Map<String, Object> map)
     {
         MapUtils.checkType(map, KEY_NAME, String.class);
+        MapUtils.checkType(map, KEY_DESCRIPTION, String.class);
 
         if (map.containsKey(KEY_CONTEXT))
             ContextBeanImpl.validate(MapUtils.checkAndCastMap(
@@ -86,6 +92,7 @@ public class ScenarioFileBeanImpl implements ScenarioFileBean
         validate(map);
 
         String name = (String) map.get(KEY_NAME);
+        String description = (String) map.get(KEY_DESCRIPTION);
         List<TriggerBean> triggers = ((List<?>) map.get(KEY_TRIGGERS)).stream()
                 .map(o -> TriggerBeanImpl.deserialize(MapUtils.checkAndCastMap(
                         o,
@@ -101,7 +108,7 @@ public class ScenarioFileBeanImpl implements ScenarioFileBean
                 )))
                 .collect(Collectors.toList());
 
-        ContextBeanImpl context = null;
+        ContextBean context = null;
         if (map.containsKey(KEY_CONTEXT))
             context = ContextBeanImpl.deserialize(MapUtils.checkAndCastMap(
                     map.get(KEY_CONTEXT),
@@ -109,6 +116,12 @@ public class ScenarioFileBeanImpl implements ScenarioFileBean
                     Object.class
             ));
 
-        return new ScenarioFileBeanImpl(name, triggers, context, scenario);
+        return new ScenarioFileBeanImpl(
+                name,
+                description,
+                triggers,
+                context,
+                scenario
+        );
     }
 }

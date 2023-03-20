@@ -14,11 +14,19 @@ public interface ScenarioFileBean extends Serializable
 {
     /**
      * このシナリオの名前を取得します。
-     * 人間でも読みやすい名前が望ましいです。
+     * 対象プラグインで一意である必要があります。
+     * キャメルケースが推奨されています。
      *
      * @return 名前
      */
     String getName();
+
+    /**
+     * このシナリオの説明を取得します。
+     *
+     * @return 説明
+     */
+    String getDescription();
 
     /**
      * このシナリオの実行タイミングを取得します。

@@ -18,6 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class ScenarioFileBeanSerializeTest
 {
     public static final ScenarioFileBean FULFILLED = new ScenarioFileBeanImpl(
+            "eveything",
             "A scenario that does everything",
             Arrays.asList(
                     TriggerBeanSerializeTest.FULFILLED,
@@ -33,7 +34,8 @@ public class ScenarioFileBeanSerializeTest
 
     public static final Map<String, Object> FULFILLED_MAP = new HashMap<String, Object>()
     {{
-        this.put("name", "A scenario that does everything");
+        this.put("name", "eveything");
+        this.put("description", "A scenario that does everything");
         this.put("on", Arrays.asList(
                 TriggerBeanSerializeTest.FULFILLED_MAP,
                 TriggerBeanSerializeTest.FULFILLED_MAP,
@@ -47,6 +49,7 @@ public class ScenarioFileBeanSerializeTest
     }};
 
     public static final ScenarioFileBeanImpl EMPTY = new ScenarioFileBeanImpl(
+            "nothing",
             "A scenario that does nothing",
             Collections.emptyList(),
             null,
@@ -55,7 +58,8 @@ public class ScenarioFileBeanSerializeTest
 
     public static final Map<String, Object> EMPTY_MAP = new HashMap<String, Object>()
     {{
-        this.put("name", "A scenario that does nothing");
+        this.put("name", "nothing");
+        this.put("description", "A scenario that does nothing");
         this.put("on", Collections.emptyList());
         this.put("scenario", Collections.emptyList());
     }};
