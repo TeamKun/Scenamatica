@@ -1,6 +1,6 @@
 package net.kunmc.lab.scenamatica.scenariofile.beans;
 
-import net.kunmc.lab.scenamatica.scenariofile.ScenarioFileBean;
+import net.kunmc.lab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
 import net.kunmc.lab.scenamatica.scenariofile.ScenarioFileBeanImpl;
 import net.kunmc.lab.scenamatica.scenariofile.beans.context.ContextBeanSerializeTest;
 import net.kunmc.lab.scenamatica.scenariofile.beans.scenario.ScenarioBeanSerializeTest;

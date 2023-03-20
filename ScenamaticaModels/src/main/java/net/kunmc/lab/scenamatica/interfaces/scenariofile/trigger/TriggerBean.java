@@ -1,6 +1,6 @@
-package net.kunmc.lab.scenamatica.scenariofile.interfaces.trigger;
+package net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger;
 
-import net.kunmc.lab.scenamatica.scenariofile.interfaces.scenario.ScenarioBean;
+import net.kunmc.lab.scenamatica.interfaces.scenariofile.scenario.ScenarioBean;
 
 import java.io.Serializable;
 import java.util.List;

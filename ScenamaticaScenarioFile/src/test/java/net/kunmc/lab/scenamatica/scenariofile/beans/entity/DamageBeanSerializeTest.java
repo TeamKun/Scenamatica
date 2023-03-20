@@ -2,7 +2,7 @@ package net.kunmc.lab.scenamatica.scenariofile.beans.entity;
 
 import net.kunmc.lab.scenamatica.scenariofile.beans.entities.DamageBeanImpl;
 import net.kunmc.lab.scenamatica.scenariofile.beans.utils.MapTestUtil;
-import net.kunmc.lab.scenamatica.scenariofile.interfaces.entities.DamageBean;
+import net.kunmc.lab.scenamatica.interfaces.scenariofile.entities.DamageBean;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.junit.jupiter.api.Test;
 

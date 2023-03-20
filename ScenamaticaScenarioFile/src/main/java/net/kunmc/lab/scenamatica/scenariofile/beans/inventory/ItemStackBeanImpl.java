@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Value;
 import net.kunmc.lab.scenamatica.commons.utils.MapUtils;
 import net.kunmc.lab.scenamatica.commons.utils.NamespaceUtils;
-import net.kunmc.lab.scenamatica.scenariofile.interfaces.inventory.ItemStackBean;
+import net.kunmc.lab.scenamatica.interfaces.scenariofile.inventory.ItemStackBean;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;

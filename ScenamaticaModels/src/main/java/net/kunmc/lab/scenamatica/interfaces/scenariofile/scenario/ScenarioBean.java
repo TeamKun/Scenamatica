@@ -1,4 +1,4 @@
-package net.kunmc.lab.scenamatica.scenariofile.interfaces.scenario;
+package net.kunmc.lab.scenamatica.interfaces.scenariofile.scenario;
 
 import java.io.Serializable;
 

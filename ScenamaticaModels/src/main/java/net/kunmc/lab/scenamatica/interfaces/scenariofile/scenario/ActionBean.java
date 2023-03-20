@@ -1,6 +1,6 @@
-package net.kunmc.lab.scenamatica.scenariofile.interfaces.scenario;
+package net.kunmc.lab.scenamatica.interfaces.scenariofile.scenario;
 
-import net.kunmc.lab.scenamatica.scenariofile.interfaces.trigger.TriggerArgument;
+import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Map;
 

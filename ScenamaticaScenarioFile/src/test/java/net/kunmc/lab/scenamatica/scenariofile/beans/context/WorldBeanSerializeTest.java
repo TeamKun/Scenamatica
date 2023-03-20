@@ -1,7 +1,7 @@
 package net.kunmc.lab.scenamatica.scenariofile.beans.context;
 
 import net.kunmc.lab.scenamatica.scenariofile.beans.utils.MapTestUtil;
-import net.kunmc.lab.scenamatica.scenariofile.interfaces.context.WorldBean;
+import net.kunmc.lab.scenamatica.interfaces.scenariofile.context.WorldBean;
 import org.bukkit.World;
 import org.bukkit.WorldType;
 import org.junit.jupiter.api.Test;

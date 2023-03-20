@@ -2,7 +2,7 @@ package net.kunmc.lab.scenamatica.scenariofile.beans.scenario;
 
 import lombok.Value;
 import net.kunmc.lab.scenamatica.commons.utils.MapUtils;
-import net.kunmc.lab.scenamatica.scenariofile.interfaces.scenario.ActionBean;
+import net.kunmc.lab.scenamatica.interfaces.scenariofile.scenario.ActionBean;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

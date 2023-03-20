@@ -2,7 +2,7 @@ package net.kunmc.lab.scenamatica.scenariofile.beans.entities;
 
 import lombok.Value;
 import net.kunmc.lab.scenamatica.commons.utils.MapUtils;
-import net.kunmc.lab.scenamatica.scenariofile.interfaces.entities.DamageBean;
+import net.kunmc.lab.scenamatica.interfaces.scenariofile.entities.DamageBean;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.jetbrains.annotations.NotNull;
 

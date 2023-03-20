@@ -3,8 +3,8 @@ package net.kunmc.lab.scenamatica.scenariofile.beans.inventory;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import net.kunmc.lab.scenamatica.commons.utils.MapUtils;
-import net.kunmc.lab.scenamatica.scenariofile.interfaces.inventory.InventoryBean;
-import net.kunmc.lab.scenamatica.scenariofile.interfaces.inventory.ItemStackBean;
+import net.kunmc.lab.scenamatica.interfaces.scenariofile.inventory.InventoryBean;
+import net.kunmc.lab.scenamatica.interfaces.scenariofile.inventory.ItemStackBean;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

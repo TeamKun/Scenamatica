@@ -1,4 +1,4 @@
-package net.kunmc.lab.scenamatica.scenariofile.interfaces.entities;
+package net.kunmc.lab.scenamatica.interfaces.scenariofile.entities;
 
 import org.bukkit.event.entity.EntityDamageEvent;
 

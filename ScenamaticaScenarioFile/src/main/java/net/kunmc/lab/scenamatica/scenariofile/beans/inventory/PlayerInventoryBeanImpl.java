@@ -4,9 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import net.kunmc.lab.scenamatica.commons.utils.MapUtils;
-import net.kunmc.lab.scenamatica.scenariofile.interfaces.inventory.InventoryBean;
-import net.kunmc.lab.scenamatica.scenariofile.interfaces.inventory.ItemStackBean;
-import net.kunmc.lab.scenamatica.scenariofile.interfaces.inventory.PlayerInventoryBean;
+import net.kunmc.lab.scenamatica.interfaces.scenariofile.inventory.InventoryBean;
+import net.kunmc.lab.scenamatica.interfaces.scenariofile.inventory.ItemStackBean;
+import net.kunmc.lab.scenamatica.interfaces.scenariofile.inventory.PlayerInventoryBean;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

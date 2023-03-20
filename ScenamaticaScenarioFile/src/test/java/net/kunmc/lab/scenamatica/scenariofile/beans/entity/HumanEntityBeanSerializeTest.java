@@ -4,7 +4,7 @@ import net.kunmc.lab.scenamatica.scenariofile.beans.entities.HumanEntityBeanImpl
 import net.kunmc.lab.scenamatica.scenariofile.beans.inventory.InventoryBeanSerializeTest;
 import net.kunmc.lab.scenamatica.scenariofile.beans.inventory.PlayerInventoryBeanSerializeTest;
 import net.kunmc.lab.scenamatica.scenariofile.beans.utils.MapTestUtil;
-import net.kunmc.lab.scenamatica.scenariofile.interfaces.entities.HumanEntityBean;
+import net.kunmc.lab.scenamatica.interfaces.scenariofile.entities.HumanEntityBean;
 import org.bukkit.GameMode;
 import org.bukkit.inventory.MainHand;
 import org.junit.jupiter.api.Test;

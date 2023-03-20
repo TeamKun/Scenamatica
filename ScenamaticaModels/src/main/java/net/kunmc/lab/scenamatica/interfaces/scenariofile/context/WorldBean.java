@@ -1,4 +1,4 @@
-package net.kunmc.lab.scenamatica.scenariofile.interfaces.context;
+package net.kunmc.lab.scenamatica.interfaces.scenariofile.context;
 
 import org.bukkit.World;
 import org.bukkit.WorldType;

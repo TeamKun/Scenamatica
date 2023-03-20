@@ -2,7 +2,7 @@ package net.kunmc.lab.scenamatica.scenariofile.beans.context;
 
 import net.kunmc.lab.scenamatica.scenariofile.beans.entity.HumanEntityBeanSerializeTest;
 import net.kunmc.lab.scenamatica.scenariofile.beans.utils.MapTestUtil;
-import net.kunmc.lab.scenamatica.scenariofile.interfaces.context.PlayerBean;
+import net.kunmc.lab.scenamatica.interfaces.scenariofile.context.PlayerBean;
 import org.bukkit.Location;
 import org.junit.jupiter.api.Test;
 

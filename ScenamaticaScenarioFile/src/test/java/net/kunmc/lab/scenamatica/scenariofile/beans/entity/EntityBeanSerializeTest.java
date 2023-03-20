@@ -3,7 +3,7 @@ package net.kunmc.lab.scenamatica.scenariofile.beans.entity;
 import lombok.SneakyThrows;
 import net.kunmc.lab.scenamatica.scenariofile.beans.entities.EntityBeanImpl;
 import net.kunmc.lab.scenamatica.scenariofile.beans.utils.MapTestUtil;
-import net.kunmc.lab.scenamatica.scenariofile.interfaces.entities.EntityBean;
+import net.kunmc.lab.scenamatica.interfaces.scenariofile.entities.EntityBean;
 import org.bukkit.Location;
 import org.bukkit.potion.PotionEffectType;
 import org.junit.jupiter.api.BeforeAll;

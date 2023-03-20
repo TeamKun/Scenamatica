@@ -2,9 +2,9 @@ package net.kunmc.lab.scenamatica.scenariofile.beans.scenario;
 
 import lombok.Value;
 import net.kunmc.lab.scenamatica.commons.utils.MapUtils;
-import net.kunmc.lab.scenamatica.scenariofile.interfaces.scenario.ActionBean;
-import net.kunmc.lab.scenamatica.scenariofile.interfaces.scenario.ScenarioBean;
-import net.kunmc.lab.scenamatica.scenariofile.interfaces.scenario.ScenarioType;
+import net.kunmc.lab.scenamatica.interfaces.scenariofile.scenario.ActionBean;
+import net.kunmc.lab.scenamatica.interfaces.scenariofile.scenario.ScenarioBean;
+import net.kunmc.lab.scenamatica.interfaces.scenariofile.scenario.ScenarioType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;

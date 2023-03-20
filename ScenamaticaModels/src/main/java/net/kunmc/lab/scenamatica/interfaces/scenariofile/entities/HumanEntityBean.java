@@ -1,7 +1,7 @@
-package net.kunmc.lab.scenamatica.scenariofile.interfaces.entities;
+package net.kunmc.lab.scenamatica.interfaces.scenariofile.entities;
 
-import net.kunmc.lab.scenamatica.scenariofile.interfaces.inventory.InventoryBean;
-import net.kunmc.lab.scenamatica.scenariofile.interfaces.inventory.PlayerInventoryBean;
+import net.kunmc.lab.scenamatica.interfaces.scenariofile.inventory.InventoryBean;
+import net.kunmc.lab.scenamatica.interfaces.scenariofile.inventory.PlayerInventoryBean;
 import org.bukkit.GameMode;
 import org.bukkit.inventory.MainHand;
 

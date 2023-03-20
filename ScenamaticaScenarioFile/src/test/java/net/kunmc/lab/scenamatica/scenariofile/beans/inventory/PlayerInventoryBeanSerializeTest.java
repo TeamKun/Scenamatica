@@ -1,8 +1,8 @@
 package net.kunmc.lab.scenamatica.scenariofile.beans.inventory;
 
 import net.kunmc.lab.scenamatica.scenariofile.beans.utils.MapTestUtil;
-import net.kunmc.lab.scenamatica.scenariofile.interfaces.inventory.ItemStackBean;
-import net.kunmc.lab.scenamatica.scenariofile.interfaces.inventory.PlayerInventoryBean;
+import net.kunmc.lab.scenamatica.interfaces.scenariofile.inventory.ItemStackBean;
+import net.kunmc.lab.scenamatica.interfaces.scenariofile.inventory.PlayerInventoryBean;
 import org.bukkit.Material;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

@@ -1,7 +1,7 @@
-package net.kunmc.lab.scenamatica.scenariofile.interfaces.context;
+package net.kunmc.lab.scenamatica.interfaces.scenariofile.context;
 
-import net.kunmc.lab.scenamatica.scenariofile.interfaces.entities.EntityBean;
-import net.kunmc.lab.scenamatica.scenariofile.interfaces.entities.HumanEntityBean;
+import net.kunmc.lab.scenamatica.interfaces.scenariofile.entities.EntityBean;
+import net.kunmc.lab.scenamatica.interfaces.scenariofile.entities.HumanEntityBean;
 import org.bukkit.Location;
 
 import java.io.Serializable;

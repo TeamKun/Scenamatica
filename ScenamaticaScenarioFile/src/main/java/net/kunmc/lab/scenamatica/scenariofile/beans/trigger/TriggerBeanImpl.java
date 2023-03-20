@@ -3,10 +3,10 @@ package net.kunmc.lab.scenamatica.scenariofile.beans.trigger;
 import lombok.Value;
 import net.kunmc.lab.scenamatica.commons.utils.MapUtils;
 import net.kunmc.lab.scenamatica.scenariofile.beans.scenario.ScenarioBeanImpl;
-import net.kunmc.lab.scenamatica.scenariofile.interfaces.scenario.ScenarioBean;
-import net.kunmc.lab.scenamatica.scenariofile.interfaces.trigger.KeyedTriggerType;
-import net.kunmc.lab.scenamatica.scenariofile.interfaces.trigger.TriggerArgument;
-import net.kunmc.lab.scenamatica.scenariofile.interfaces.trigger.TriggerBean;
+import net.kunmc.lab.scenamatica.interfaces.scenariofile.scenario.ScenarioBean;
+import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.KeyedTriggerType;
+import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
+import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerBean;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
