@@ -12,7 +12,7 @@ public interface ContextBean
      *
      * @return 仮想プレイヤー
      */
-    List<PlayerBean> getPseudoPlayers();
+    List<PlayerBean> getActors();
 
     /**
      * ワールドを定義します。

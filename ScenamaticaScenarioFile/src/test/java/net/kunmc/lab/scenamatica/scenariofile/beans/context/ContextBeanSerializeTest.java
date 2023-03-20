@@ -1,7 +1,7 @@
 package net.kunmc.lab.scenamatica.scenariofile.beans.context;
 
-import net.kunmc.lab.scenamatica.scenariofile.beans.utils.MapTestUtil;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.context.ContextBean;
+import net.kunmc.lab.scenamatica.scenariofile.beans.utils.MapTestUtil;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -23,7 +23,7 @@ public class ContextBeanSerializeTest
 
     public static final Map<String, Object> FULFILLED_MAP = new HashMap<String, Object>()
     {{
-        put("pseudoPlayers", Arrays.asList(
+        put("actors", Arrays.asList(
                 PlayerBeanSerializeTest.FULFILLED_MAP,
                 PlayerBeanSerializeTest.FULFILLED_MAP,
                 PlayerBeanSerializeTest.FULFILLED_MAP

@@ -15,11 +15,11 @@ import java.util.Map;
 @Value
 public class ContextBeanImpl implements ContextBean
 {
-    private static final String KEY_PSEUDO_PLAYERS = "pseudoPlayers";
+    private static final String KEY_ACTORS = "actors";
     private static final String KEY_WORLD = "world";
 
     @Nullable
-    List<PlayerBean> pseudoPlayers;
+    List<PlayerBean> actors;
 
     @Nullable
     WorldBean world;
@@ -28,13 +28,13 @@ public class ContextBeanImpl implements ContextBean
     {
         Map<String, Object> map = new HashMap<>();
 
-        if (bean.getPseudoPlayers() != null)
+        if (bean.getActors() != null)
         {
-            List<Map<String, Object>> pseudoPlayers = new ArrayList<>();
-            for (PlayerBean player : bean.getPseudoPlayers())
-                pseudoPlayers.add(PlayerBeanImpl.serialize(player));
+            List<Map<String, Object>> actors = new ArrayList<>();
+            for (PlayerBean player : bean.getActors())
+                actors.add(PlayerBeanImpl.serialize(player));
 
-            map.put(KEY_PSEUDO_PLAYERS, pseudoPlayers);
+            map.put(KEY_ACTORS, actors);
         }
 
         if (bean.getWorld() != null)
@@ -45,13 +45,13 @@ public class ContextBeanImpl implements ContextBean
 
     public static void validate(Map<String, Object> map)
     {
-        if (map.containsKey(KEY_PSEUDO_PLAYERS))
+        if (map.containsKey(KEY_ACTORS))
         {
-            Object pseudoPlayers = map.get(KEY_PSEUDO_PLAYERS);
-            if (!(pseudoPlayers instanceof List))
-                throw new IllegalArgumentException("pseudoPlayers must be List");
+            Object actors = map.get(KEY_ACTORS);
+            if (!(actors instanceof List))
+                throw new IllegalArgumentException("actors must be List");
 
-            for (Object player : (List<?>) pseudoPlayers)
+            for (Object player : (List<?>) actors)
                 PlayerBeanImpl.validate(MapUtils.checkAndCastMap(
                         player,
                         String.class,
@@ -69,12 +69,12 @@ public class ContextBeanImpl implements ContextBean
 
     public static ContextBean deserialize(Map<String, Object> map)
     {
-        List<PlayerBean> pseudoPlayerslist = null;
-        if (map.containsKey(KEY_PSEUDO_PLAYERS) && map.get(KEY_PSEUDO_PLAYERS) != null)
+        List<PlayerBean> actorList = null;
+        if (map.containsKey(KEY_ACTORS) && map.get(KEY_ACTORS) != null)
         {
-            pseudoPlayerslist = new ArrayList<>();
-            for (Object player : (List<?>) map.get(KEY_PSEUDO_PLAYERS))
-                pseudoPlayerslist.add(PlayerBeanImpl.deserialize(MapUtils.checkAndCastMap(
+            actorList = new ArrayList<>();
+            for (Object player : (List<?>) map.get(KEY_ACTORS))
+                actorList.add(PlayerBeanImpl.deserialize(MapUtils.checkAndCastMap(
                         player,
                         String.class,
                         Object.class
@@ -90,7 +90,7 @@ public class ContextBeanImpl implements ContextBean
             ));
 
         return new ContextBeanImpl(
-                pseudoPlayerslist,
+                actorList,
                 world
         );
     }
