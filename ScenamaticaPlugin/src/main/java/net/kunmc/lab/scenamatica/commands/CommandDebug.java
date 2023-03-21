@@ -2,6 +2,8 @@ package net.kunmc.lab.scenamatica.commands;
 
 import net.kunmc.lab.peyangpaperutils.lib.command.CommandBase;
 import net.kunmc.lab.peyangpaperutils.lib.command.SubCommandWith;
+import net.kunmc.lab.scenamatica.commands.debug.CommandSummonActor;
+import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
 import net.kyori.adventure.text.TextComponent;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
@@ -12,11 +14,12 @@ import java.util.Map;
 
 public class CommandDebug extends SubCommandWith
 {
-    private static final Map<String, CommandBase> COMMANDS;
+    private static Map<String, CommandBase> commands;
 
-    static
+    public CommandDebug(ScenamaticaRegistry registory)
     {
-        COMMANDS = new HashMap<>();
+        commands = new HashMap<>();
+        commands.put("summonActor", new CommandSummonActor(registory));
     }
 
     @Override
@@ -28,7 +31,7 @@ public class CommandDebug extends SubCommandWith
     @Override
     protected Map<String, CommandBase> getSubCommands(@NotNull CommandSender sender)
     {
-        return COMMANDS;
+        return commands;
     }
 
     @Override

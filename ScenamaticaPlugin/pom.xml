@@ -23,6 +23,7 @@
     <url>https://kunmc.net/</url>
 
     <build>
+        <finalName>${project.parent.artifactId}-${project.version}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -44,7 +45,34 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
+                            <minimizeJar>true</minimizeJar>
                             <createDependencyReducedPom>false</createDependencyReducedPom>
+                            <relocations>
+                                <relocation>
+                                    <pattern>net.kunmc.lab.peyangpaperutils</pattern>
+                                    <shadedPattern>net.kunmc.lab.scenamatica.pyglib</shadedPattern>
+                                </relocation>
+                            </relocations>
+                            <artifactSet>
+                                <excludes>
+                                    <exclude>org.slf4j:*</exclude>
+                                    <exclude>com.zaxxer.hikari:*</exclude>
+                                </excludes>
+                            </artifactSet>
+                            <filters>
+                                <filter>
+                                    <artifact>commons-io</artifact>
+                                    <excludes>
+                                        <exclude>META-INF/*.txt</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
+                            <transformers>
+                                <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.DontIncludeResourceTransformer">
+                                    <resource>MANIFEST.MF</resource>
+                                </transformer>
+                            </transformers>
                         </configuration>
                     </execution>
                 </executions>
