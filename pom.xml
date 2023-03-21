@@ -14,6 +14,8 @@
         <module>ScenamaticaModels</module>
         <module>ScenamaticaScenarioFile</module>
         <module>ScenamaticaCommons</module>
+        <module>ScenamaticaContextEngine</module>
+        <module>ScenamaticaDaemon</module>
     </modules>
 
     <name>Scenamatica</name>
@@ -42,6 +44,12 @@
         <dependency>
             <groupId>com.destroystokyo.paper</groupId>
             <artifactId>paper-api</artifactId>
+            <version>1.16.5-R0.1-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot</artifactId>
             <version>1.16.5-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>

@@ -1,12 +1,27 @@
 package net.kunmc.lab.scenamatica.interfaces;
 
+import net.kunmc.lab.scenamatica.interfaces.context.interfaces.PlayerMockManager;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.ScenarioFileManager;
+
+import java.util.logging.Logger;
 
 /**
  * このプラグインのアプリケーションサービスをまとめるインターフェースです。
  */
 public interface ScenamaticaRegistry
 {
+    /**
+     * ロガーを取得します。
+     *
+     * @return ロガー
+     */
+    Logger getLogger();
+
+    /**
+     * Scenamatica 環境を取得します。
+     */
+    ScenamaticaEnvironment getEnvironment();
+
     /**
      * 例外ハンドラーを取得します。
      *
@@ -20,4 +35,16 @@ public interface ScenamaticaRegistry
      * @return シナリオファイルマネージャー
      */
     ScenarioFileManager getScenarioFileManager();
+
+    /**
+     * プレイヤーモックマネージャーを取得します。
+     *
+     * @return プレイヤーモックマネージャー
+     */
+    PlayerMockManager getPlayerMockManager();
+
+    /**
+     * このデーモンをシャットダウンします。
+     */
+    void shutdown();
 }
