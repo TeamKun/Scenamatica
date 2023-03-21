@@ -34,7 +34,7 @@ public class PlayerMockManagerImpl implements PlayerMockManager
     }
 
     @Override
-    public Player mockPlayer(PlayerBean bean)
+    public Player mock(PlayerBean bean)
     {
         Player player = this.mocker.mock(bean);
         this.mockedPlayers.add(player);

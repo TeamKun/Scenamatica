@@ -5,7 +5,7 @@ import org.bukkit.entity.Player;
 
 public interface PlayerMockManager
 {
-    Player mockPlayer(PlayerBean bean);
+    Player mock(PlayerBean bean);
 
     void unmock(Player player);
 
