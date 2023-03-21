@@ -1,4 +1,4 @@
-name: ScenamaticaPlugin
+name: Scenamatica
 version: '${project.version}'
 main: net.kunmc.lab.scenamatica.Scenamatica
 api-version: 1.13
