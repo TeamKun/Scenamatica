@@ -51,6 +51,7 @@ public class PlayerMockManagerImpl implements PlayerMockManager
     @Override
     public void shutdown()
     {
-        this.mockedPlayers.forEach(this::unmock);
+        new ArrayList<>(this.mockedPlayers)  //   回避
+                .forEach(this::unmock);
     }
 }
