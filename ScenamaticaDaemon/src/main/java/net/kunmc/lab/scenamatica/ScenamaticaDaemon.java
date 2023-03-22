@@ -32,5 +32,6 @@ public class ScenamaticaDaemon implements ScenamaticaRegistry
     @Override
     public void shutdown()
     {
+        this.contextManager.shutdown();
     }
 }
