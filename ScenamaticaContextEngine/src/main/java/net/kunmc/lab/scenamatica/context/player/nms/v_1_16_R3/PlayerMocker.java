@@ -34,10 +34,10 @@ public class PlayerMocker extends PlayerMockerBase
         this.registry = registry;
     }
 
-    private static void registerPlayer(MinecraftServer server, EntityPlayer player)
+    private void registerPlayer(MinecraftServer server, MockedPlayer player)
     {
         PlayerList list = server.getPlayerList();
-        NetworkManager mockedNetworkManager = new MockedNetworkManager(server);
+        NetworkManager mockedNetworkManager = new MockedNetworkManager(this, player, server);
         list.a(mockedNetworkManager, player);
         sendSettings(player);
 
@@ -81,7 +81,7 @@ public class PlayerMocker extends PlayerMockerBase
         if (!dispatchLoginEvent(player.getBukkitEntity()))
             return null;
 
-        registerPlayer(server, player);
+        this.registerPlayer(server, player);
 
         return player.getBukkitEntity();
     }
@@ -93,11 +93,19 @@ public class PlayerMocker extends PlayerMockerBase
             return;
 
         MockedPlayer mockedPlayer = (MockedPlayer) player;
+
         MinecraftServer server = mockedPlayer.getMinecraftServer();
         assert server != null;
         PlayerList list = server.getPlayerList();
 
-        list.disconnect(mockedPlayer);
+        if (!mockedPlayer.playerConnection.isDisconnected())
+            list.disconnect(mockedPlayer);
+
+        this.onDisconnect(list, mockedPlayer);
+    }
+
+    void onDisconnect(PlayerList list, MockedPlayer mockedPlayer)
+    {
         this.wipePlayerData(list, mockedPlayer.getUniqueID());
     }
 

@@ -39,12 +39,18 @@ class MockedNetworkManager extends NetworkManager
         }
     }
 
+    private final PlayerMocker mocker;
+    private final MockedPlayer player;
+
     private boolean alive;
 
     @SneakyThrows(UnknownHostException.class)
-    public MockedNetworkManager(MinecraftServer server)
+    public MockedNetworkManager(PlayerMocker mocker, MockedPlayer player, MinecraftServer server)
     {
         super(EnumProtocolDirection.SERVERBOUND);
+
+        this.mocker = mocker;
+        this.player = player;
 
         this.alive = true;
 
@@ -137,8 +143,12 @@ class MockedNetworkManager extends NetworkManager
     @Override
     public void handleDisconnection()
     {
+        this.mocker.unmock(this.player.getBukkitEntity());
+
         super.handleDisconnection();
         this.alive = false;
+
+        this.mocker.onDisconnect(this.player.server.getPlayerList(), this.player);
     }
 
     @Override
