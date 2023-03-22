@@ -29,7 +29,7 @@ public abstract class PlayerMockerBase
     protected static GameProfile createGameProfile(PlayerBean bean)
     {
         UUID uuid = bean.getUuid() == null ? UUID.randomUUID(): bean.getUuid();
-        String name = bean.getName() == null ? "Player_" + uuid.toString().substring(0, 8): bean.getName();
+        String name = bean.getName();
 
         return new GameProfile(uuid, name);
     }
