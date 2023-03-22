@@ -1,7 +1,7 @@
 package net.kunmc.lab.scenamatica.context.actor;
 
 import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
-import net.kunmc.lab.scenamatica.interfaces.context.interfaces.ActorMockManager;
+import net.kunmc.lab.scenamatica.interfaces.context.interfaces.ActorManager;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.context.PlayerBean;
 import org.bukkit.entity.Player;
 import org.kunlab.kpm.utils.ReflectionUtils;
@@ -9,7 +9,7 @@ import org.kunlab.kpm.utils.ReflectionUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ActorManagerImpl implements ActorMockManager
+public class ActorManagerImpl implements ActorManager
 {
     private final List<Player> mockedPlayers;
     private final PlayerMockerBase mocker;

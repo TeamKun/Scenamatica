@@ -5,7 +5,7 @@ import net.kunmc.lab.scenamatica.context.actor.ActorManagerImpl;
 import net.kunmc.lab.scenamatica.interfaces.ExceptionHandler;
 import net.kunmc.lab.scenamatica.interfaces.ScenamaticaEnvironment;
 import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
-import net.kunmc.lab.scenamatica.interfaces.context.interfaces.ActorMockManager;
+import net.kunmc.lab.scenamatica.interfaces.context.interfaces.ActorManager;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.ScenarioFileManager;
 import net.kunmc.lab.scenamatica.scenariofile.ScenarioFileManagerImpl;
 
@@ -18,7 +18,7 @@ public class ScenamaticaDaemon implements ScenamaticaRegistry
     private final ScenamaticaEnvironment environment;
     private final ExceptionHandler exceptionHandler;
     private final ScenarioFileManager scenarioFileManager;
-    private final ActorMockManager actorManager;
+    private final ActorManager actorManager;
 
     public ScenamaticaDaemon(ScenamaticaEnvironment env)
     {
