@@ -6,6 +6,7 @@ import net.kunmc.lab.peyangpaperutils.lib.terminal.Terminal;
 import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
 import net.kunmc.lab.scenamatica.scenariofile.beans.context.PlayerBeanImpl;
 import net.kyori.adventure.text.TextComponent;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -25,7 +26,7 @@ public class CommandSummonActor extends CommandBase
 
         String name = args[0];
 
-        this.registry.getActorManager().mock(new PlayerBeanImpl(
+        this.registry.getContextManager().getActorManager().mock(Bukkit.getWorlds().get(0), new PlayerBeanImpl(
                 name,
                 null,
                 null,

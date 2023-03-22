@@ -33,6 +33,8 @@ import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.potion.PotionEffect;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.Locale;
@@ -203,17 +205,20 @@ public class PlayerMocker extends PlayerMockerBase
     }
 
     @Override
-    public Player mock(PlayerBean bean)
+    @NotNull
+    public Player mock(@Nullable World world, @NotNull PlayerBean bean)
     {
         MinecraftServer server = ((CraftServer) Bukkit.getServer()).getServer();
-        WorldServer worldServer = server.E(); // Get overworld(world) server.
+        WorldServer worldServer = world == null ?
+                server.E():  // 通常ワールドを取得する。
+                ((CraftWorld) world).getHandle();
         GameProfile profile = createGameProfile(bean);
 
         MockedPlayer player = new MockedPlayer(server, worldServer, profile);
         initializePlayer(player, bean);
 
         if (!dispatchLoginEvent(player.getBukkitEntity()))
-            return null;
+            throw new IllegalStateException("Login for " + player.getName() + " was denied.");
 
         this.registerPlayer(server, player);
 

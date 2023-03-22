@@ -1,8 +1,9 @@
 package net.kunmc.lab.scenamatica.context.actor;
 
 import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
-import net.kunmc.lab.scenamatica.interfaces.context.interfaces.ActorManager;
+import net.kunmc.lab.scenamatica.interfaces.context.ActorManager;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.context.PlayerBean;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.kunlab.kpm.utils.ReflectionUtils;
 
@@ -34,12 +35,12 @@ public class ActorManagerImpl implements ActorManager
     }
 
     @Override
-    public Player mock(PlayerBean bean)
+    public Player mock(World stage, PlayerBean bean)
     {
         if (this.mockedPlayers.stream().anyMatch(p -> p.getName().equalsIgnoreCase(bean.getName())))
             throw new IllegalArgumentException("Player " + bean.getName() + " is already mocked.");
 
-        Player player = this.mocker.mock(bean);
+        Player player = this.mocker.mock(stage, bean);
         this.mockedPlayers.add(player);
         return player;
     }

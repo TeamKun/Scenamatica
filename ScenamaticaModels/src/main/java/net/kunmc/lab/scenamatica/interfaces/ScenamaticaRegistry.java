@@ -1,6 +1,6 @@
 package net.kunmc.lab.scenamatica.interfaces;
 
-import net.kunmc.lab.scenamatica.interfaces.context.interfaces.ActorManager;
+import net.kunmc.lab.scenamatica.interfaces.context.ContextManager;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.ScenarioFileManager;
 
 import java.util.logging.Logger;
@@ -37,11 +37,11 @@ public interface ScenamaticaRegistry
     ScenarioFileManager getScenarioFileManager();
 
     /**
-     * プレイヤーモックマネージャーを取得します。
+     * コンテキストマネージャーを取得します。
      *
-     * @return プレイヤーモックマネージャー
+     * @return コンテキストマネージャー
      */
-    ActorManager getActorManager();
+    ContextManager getContextManager();
 
     /**
      * このデーモンをシャットダウンします。

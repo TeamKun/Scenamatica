@@ -9,6 +9,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerLoginEvent;
+import org.jetbrains.annotations.NotNull;
 
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -34,7 +35,7 @@ public abstract class PlayerMockerBase
         return new GameProfile(uuid, name);
     }
 
-    public abstract Player mock(PlayerBean bean);
+    public abstract Player mock(@NotNull World world, @NotNull PlayerBean bean);
 
     public abstract void unmock(Player player);
 
