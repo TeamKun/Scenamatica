@@ -18,17 +18,17 @@ public class ActorManagerImpl implements ActorManager
     public ActorManagerImpl(ScenamaticaRegistry registry)
     {
         this.mockedPlayers = new ArrayList<>();
-        this.mocker = getMocker(registry);
+        this.mocker = getMocker(registry, this);
     }
 
-    private static PlayerMockerBase getMocker(ScenamaticaRegistry registry)
+    private static PlayerMockerBase getMocker(ScenamaticaRegistry registry, ActorManager manager)
     {
         String version = ReflectionUtils.PackageType.getServerVersion();
         //noinspection SwitchStatementWithTooFewBranches
         switch (version)  // TODO: Support other versions.
         {
             case "v1_16_R3":
-                return new net.kunmc.lab.scenamatica.context.actor.nms.v_1_16_R3.PlayerMocker(registry);
+                return new net.kunmc.lab.scenamatica.context.actor.nms.v_1_16_R3.PlayerMocker(registry, manager);
             default:
                 throw new UnsupportedOperationException("Unsupported version: " + version);
         }
@@ -49,6 +49,11 @@ public class ActorManagerImpl implements ActorManager
     public void destroyActor(Player player)
     {
         this.mocker.unmock(player);
+    }
+
+    @Override
+    public void onDestroyActor(Player player)
+    {
         this.mockedPlayers.remove(player);
     }
 

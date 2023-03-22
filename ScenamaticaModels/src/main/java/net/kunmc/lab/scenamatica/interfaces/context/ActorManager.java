@@ -26,6 +26,13 @@ public interface ActorManager
     void destroyActor(Player player);
 
     /**
+     * 役者が廃棄されたときに呼び出されるメソッドです。
+     *
+     * @param player 役者
+     */
+    void onDestroyActor(Player player);
+
+    /**
      * 生成された役者を全て解除し、インスタンスを破棄します。
      */
     void shutdown();

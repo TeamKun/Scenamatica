@@ -6,6 +6,7 @@ import lombok.SneakyThrows;
 import net.kunmc.lab.peyangpaperutils.lib.utils.Runner;
 import net.kunmc.lab.scenamatica.context.actor.PlayerMockerBase;
 import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
+import net.kunmc.lab.scenamatica.interfaces.context.ActorManager;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.context.PlayerBean;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.inventory.ItemStackBean;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.inventory.PlayerInventoryBean;
@@ -32,6 +33,7 @@ import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.potion.PotionEffect;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -43,9 +45,9 @@ import java.util.Objects;
 
 public class PlayerMocker extends PlayerMockerBase
 {
-    public PlayerMocker(ScenamaticaRegistry registry)
+    public PlayerMocker(ScenamaticaRegistry registry, ActorManager manager)
     {
-        super(registry);
+        super(registry, manager);
     }
 
     private void registerPlayer(MinecraftServer server, MockedPlayer player, WorldServer worldServer)
@@ -55,9 +57,17 @@ public class PlayerMocker extends PlayerMockerBase
         list.a(mockedNetworkManager, player);
         sendSettings(player);
 
-        player.teleportTo(worldServer, worldServer.getSpawn());
+        Runner.runLater(() -> {
+            player.playerConnection = new MockedPlayerConnection(server, mockedNetworkManager, player);
 
-        Runner.runLater(() -> player.playerConnection = new MockedPlayerConnection(server, mockedNetworkManager, player), 20);
+            if (!Bukkit.getWorlds().get(0).getUID().equals(worldServer.getWorld().getUID()))
+            {
+                double x = player.locX();
+                double y = player.locY();
+                double z = player.locZ();
+                player.a(worldServer, x, y, z, player.yaw, player.pitch, PlayerTeleportEvent.TeleportCause.PLUGIN);
+            }
+        }, 20);
     }
 
     @SneakyThrows(IOException.class)
@@ -211,9 +221,7 @@ public class PlayerMocker extends PlayerMockerBase
     public Player mock(@Nullable World world, @NotNull PlayerBean bean)
     {
         MinecraftServer server = ((CraftServer) Bukkit.getServer()).getServer();
-        WorldServer worldServer = world == null ?
-                server.E():  // 通常ワールドを取得する。
-                ((CraftWorld) world).getHandle();
+        WorldServer worldServer = server.E();
         GameProfile profile = createGameProfile(bean);
 
         MockedPlayer player = new MockedPlayer(server, worldServer, profile);
@@ -222,7 +230,7 @@ public class PlayerMocker extends PlayerMockerBase
         if (!dispatchLoginEvent(player.getBukkitEntity()))
             throw new IllegalStateException("Login for " + player.getName() + " was denied.");
 
-        this.registerPlayer(server, player, worldServer);
+        this.registerPlayer(server, player, world != null ? ((CraftWorld) world).getHandle(): worldServer);
 
         return player.getBukkitEntity();
     }
@@ -242,8 +250,6 @@ public class PlayerMocker extends PlayerMockerBase
         assert server != null;
 
         mockedPlayer.playerConnection.disconnect("Unmocked");
-
-        this.wipePlayerData(mockedPlayer.getUniqueID());
     }
 
     @Override

@@ -3,6 +3,7 @@ package net.kunmc.lab.scenamatica.context.actor;
 import com.mojang.authlib.GameProfile;
 import lombok.SneakyThrows;
 import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
+import net.kunmc.lab.scenamatica.interfaces.context.ActorManager;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.context.PlayerBean;
 import org.apache.logging.log4j.LogManager;
 import org.bukkit.Bukkit;
@@ -21,10 +22,12 @@ import java.util.UUID;
 public abstract class PlayerMockerBase
 {
     private final ScenamaticaRegistry registry;
+    private final ActorManager manager;
 
-    public PlayerMockerBase(ScenamaticaRegistry registry)
+    public PlayerMockerBase(ScenamaticaRegistry registry, ActorManager manager)
     {
         this.registry = registry;
+        this.manager = manager;
     }
 
     protected static GameProfile createGameProfile(PlayerBean bean)
@@ -58,6 +61,12 @@ public abstract class PlayerMockerBase
         }
 
         return event.getResult() == PlayerLoginEvent.Result.ALLOWED;
+    }
+
+    public void onDestroyActor(Player player)
+    {
+        this.manager.onDestroyActor(player);
+        this.wipePlayerData(player.getUniqueId());
     }
 
     public void wipePlayerData(UUID uuid)
