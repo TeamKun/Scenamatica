@@ -58,6 +58,7 @@ class MockedNetworkManager extends NetworkManager
         this.channel = new MockedChannel();
 
         registerToMinecraft(server, this);
+        this.preparing = false;  // ディスコネ時に, iterator から削除されるように。
     }
 
     private static void registerToMinecraft(MinecraftServer server, NetworkManager networkManager)
@@ -99,7 +100,6 @@ class MockedNetworkManager extends NetworkManager
     @Override
     public void channelActive(ChannelHandlerContext channelhandlercontext)
     {
-        this.preparing = false;  // ディスコネ時に, iterator から削除されるように。(super 準拠)
     }
 
     @Override
@@ -143,8 +143,6 @@ class MockedNetworkManager extends NetworkManager
     @Override
     public void handleDisconnection()
     {
-        this.mocker.unmock(this.player.getBukkitEntity());
-
         super.handleDisconnection();
         this.alive = false;
 

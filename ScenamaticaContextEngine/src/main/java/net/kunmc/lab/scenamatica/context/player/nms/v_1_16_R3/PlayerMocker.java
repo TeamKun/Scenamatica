@@ -17,6 +17,7 @@ import net.minecraft.server.v1_16_R3.PlayerList;
 import net.minecraft.server.v1_16_R3.WorldServer;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_16_R3.CraftServer;
+import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
 import java.io.IOException;
@@ -83,17 +84,18 @@ public class PlayerMocker extends PlayerMockerBase
     @Override
     public void unmock(Player player)
     {
-        if (!(player instanceof MockedPlayer))
+        CraftPlayer craftPlayer = (CraftPlayer) player;
+        EntityPlayer entityPlayer = craftPlayer.getHandle();
+
+        if (!(entityPlayer instanceof MockedPlayer))
             return;
 
-        MockedPlayer mockedPlayer = (MockedPlayer) player;
+        MockedPlayer mockedPlayer = (MockedPlayer) entityPlayer;
 
         MinecraftServer server = mockedPlayer.getMinecraftServer();
         assert server != null;
-        PlayerList list = server.getPlayerList();
 
-        if (mockedPlayer.playerConnection.isDisconnected())
-            list.disconnect(mockedPlayer);
+        mockedPlayer.playerConnection.disconnect("Unmocked");
 
         this.wipePlayerData(mockedPlayer.getUniqueID());
     }
