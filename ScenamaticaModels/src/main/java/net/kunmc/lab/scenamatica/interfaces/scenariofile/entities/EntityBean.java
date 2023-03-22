@@ -2,6 +2,8 @@ package net.kunmc.lab.scenamatica.interfaces.scenariofile.entities;
 
 import org.bukkit.Location;
 import org.bukkit.potion.PotionEffect;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.UUID;
@@ -33,6 +35,7 @@ public interface EntityBean
      *
      * @return 位置
      */
+    @Nullable
     Location getLocation();
 
     /**
@@ -40,6 +43,7 @@ public interface EntityBean
      *
      * @return カスタム名
      */
+    @Nullable
     String getCustomName();
 
     /**
@@ -47,6 +51,7 @@ public interface EntityBean
      *
      * @return UUID
      */
+    @Nullable
     UUID getUuid();
 
     /**
@@ -68,6 +73,7 @@ public interface EntityBean
      *
      * @return タグ
      */
+    @NotNull
     List<String> getTags();
 
     /**
@@ -75,6 +81,7 @@ public interface EntityBean
      *
      * @return 最大体力
      */
+    @Nullable
     Integer getMaxHealth();
 
     /**
@@ -82,6 +89,7 @@ public interface EntityBean
      *
      * @return 体力
      */
+    @Nullable
     Integer getHealth();
 
     /**
@@ -89,6 +97,7 @@ public interface EntityBean
      *
      * @return ポーションエフェクト
      */
+    @NotNull
     List<PotionEffect> getPotionEffects();
 
     /**
@@ -96,5 +105,6 @@ public interface EntityBean
      *
      * @return ダメージ
      */
+    @Nullable
     DamageBean getLastDamageCause();
 }

@@ -1,6 +1,7 @@
 package net.kunmc.lab.scenamatica.interfaces.scenariofile.entities;
 
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * ダメージを表すインターフェースです。
@@ -16,6 +17,7 @@ public interface DamageBean
      *
      * @return ダメージの修飾子
      */
+    @NotNull
     @SuppressWarnings("deprecation")
     EntityDamageEvent.DamageModifier getModifier();
 
@@ -24,6 +26,7 @@ public interface DamageBean
      *
      * @return ダメージの原因
      */
+    @NotNull
     EntityDamageEvent.DamageCause getCause();
 
     /**

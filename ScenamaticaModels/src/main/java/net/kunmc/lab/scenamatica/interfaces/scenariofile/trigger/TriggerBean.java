@@ -1,6 +1,8 @@
 package net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger;
 
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.scenario.ScenarioBean;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.Serializable;
 import java.util.List;
@@ -15,6 +17,7 @@ public interface TriggerBean extends Serializable
      *
      * @return タイプ
      */
+    @Nullable
     KeyedTriggerType getType();
 
     /**
@@ -22,6 +25,7 @@ public interface TriggerBean extends Serializable
      *
      * @return 引数
      */
+    @Nullable
     TriggerArgument getArgument();
 
     /**
@@ -29,6 +33,7 @@ public interface TriggerBean extends Serializable
      *
      * @return シナリオ
      */
+    @NotNull
     List<ScenarioBean> getBeforeThat();
 
     /**
@@ -36,5 +41,6 @@ public interface TriggerBean extends Serializable
      *
      * @return シナリオ
      */
+    @NotNull
     List<ScenarioBean> getAfterThat();
 }

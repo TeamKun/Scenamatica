@@ -1,5 +1,7 @@
 package net.kunmc.lab.scenamatica.interfaces.scenariofile.inventory;
 
+import org.jetbrains.annotations.Nullable;
+
 import java.io.Serializable;
 
 /**
@@ -17,6 +19,7 @@ public interface PlayerInventoryBean extends InventoryBean, Serializable
      *
      * @return メインハンドのアイテム
      */
+    @Nullable
     ItemStackBean getMainHand();
 
     /**
@@ -24,6 +27,7 @@ public interface PlayerInventoryBean extends InventoryBean, Serializable
      *
      * @return オフハンドのアイテム
      */
+    @Nullable
     ItemStackBean getOffHand();
 
     /**
@@ -38,5 +42,6 @@ public interface PlayerInventoryBean extends InventoryBean, Serializable
      *
      * @return 防具
      */
+    @Nullable
     ItemStackBean[] getArmorContents();
 }

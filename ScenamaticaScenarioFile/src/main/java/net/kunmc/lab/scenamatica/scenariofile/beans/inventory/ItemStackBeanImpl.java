@@ -433,6 +433,7 @@ public class ItemStackBeanImpl implements ItemStackBean
     }
 
     @Override
+    @NotNull
     @SuppressWarnings("deprecation")
     public ItemStack toItemStack()
     {

@@ -4,6 +4,8 @@ import net.kunmc.lab.scenamatica.interfaces.scenariofile.inventory.InventoryBean
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.inventory.PlayerInventoryBean;
 import org.bukkit.GameMode;
 import org.bukkit.inventory.MainHand;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * 人型エンティティを表すインターフェースです。
@@ -21,6 +23,7 @@ public interface HumanEntityBean extends EntityBean
      *
      * @return インベントリ
      */
+    @Nullable
     PlayerInventoryBean getInventory();
 
     /**
@@ -28,6 +31,7 @@ public interface HumanEntityBean extends EntityBean
      *
      * @return エンダーチェスト
      */
+    @Nullable
     InventoryBean getEnderChest();
 
     /**
@@ -36,6 +40,7 @@ public interface HumanEntityBean extends EntityBean
      *
      * @return メインハンド
      */
+    @NotNull
     MainHand getMainHand();
 
     /**
@@ -44,6 +49,7 @@ public interface HumanEntityBean extends EntityBean
      *
      * @return ゲームモード
      */
+    @NotNull
     GameMode getGamemode();
 
     /**
@@ -51,5 +57,6 @@ public interface HumanEntityBean extends EntityBean
      *
      * @return 食料レベル
      */
+    @Nullable
     Integer getFoodLevel();
 }

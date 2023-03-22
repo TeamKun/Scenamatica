@@ -10,27 +10,15 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * シナリオの流れを定義します。
- */
 @Value
 public class ScenarioBeanImpl implements ScenarioBean
 {
     private static final String KEY_SCENARIO_TYPE = "type";
-    /**
-     * シナリオの種類を記述します。
-     */
+
     @NotNull
     ScenarioType type;
-    /**
-     * シナリオの動作を記述します。
-     */
     @NotNull
     ActionBean action;
-    /**
-     * タイムアウトの時間を**チック**で定義します。
-     * {@code -1} は無限に待つことを意味します。
-     */
     long timeout;
 
     /**

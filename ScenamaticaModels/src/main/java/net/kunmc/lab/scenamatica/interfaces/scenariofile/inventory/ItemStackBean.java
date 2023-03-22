@@ -7,6 +7,8 @@ import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.Serializable;
 import java.util.List;
@@ -40,6 +42,7 @@ public interface ItemStackBean extends Serializable
      *
      * @return 変換された{@link ItemStack}
      */
+    @NotNull
     ItemStack toItemStack();
 
     /**
@@ -47,6 +50,7 @@ public interface ItemStackBean extends Serializable
      *
      * @return アイテムの種類
      */
+    @NotNull
     Material getType();
 
     /**
@@ -63,6 +67,7 @@ public interface ItemStackBean extends Serializable
      *
      * @return アイテムの表示名
      */
+    @Nullable
     String getDisplayName();
 
     /**
@@ -70,6 +75,7 @@ public interface ItemStackBean extends Serializable
      *
      * @return アイテムのローカライズされた名前
      */
+    @Nullable
     String getLocalizedName();
 
     /**
@@ -77,6 +83,7 @@ public interface ItemStackBean extends Serializable
      *
      * @return アイテムの説明文
      */
+    @NotNull
     List<String> getLore();
 
     /**
@@ -84,6 +91,7 @@ public interface ItemStackBean extends Serializable
      *
      * @return アイテムのカスタムモデルデータ
      */
+    @Nullable
     Integer getCustomModelData();
 
     /**
@@ -91,6 +99,7 @@ public interface ItemStackBean extends Serializable
      *
      * @return アイテムに付与されているエンチャント
      */
+    @NotNull
     Map<Enchantment, Integer> getEnchantments();
 
     /**
@@ -98,6 +107,7 @@ public interface ItemStackBean extends Serializable
      *
      * @return アイテムに付与されているアイテムフラグ
      */
+    @NotNull
     List<ItemFlag> getItemFlags();
 
     /**
@@ -112,6 +122,7 @@ public interface ItemStackBean extends Serializable
      *
      * @return アイテムに付与されている属性修飾
      */
+    @NotNull
     Map<Attribute, List<AttributeModifier>> getAttributeModifiers();
 
     /**
@@ -119,6 +130,7 @@ public interface ItemStackBean extends Serializable
      *
      * @return 設置可能なブロック
      */
+    @NotNull
     List<Namespaced> getPlaceableKeys();
 
     /**
@@ -126,6 +138,7 @@ public interface ItemStackBean extends Serializable
      *
      * @return 破壊可能なブロック
      */
+    @NotNull
     List<Namespaced> getDestroyableKeys();
 
     /**
@@ -133,5 +146,6 @@ public interface ItemStackBean extends Serializable
      *
      * @return ダメージ値
      */
+    @Nullable
     Integer getDamage();
 }

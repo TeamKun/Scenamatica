@@ -1,5 +1,8 @@
 package net.kunmc.lab.scenamatica.interfaces.scenariofile.inventory;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.io.Serializable;
 import java.util.Map;
 
@@ -24,6 +27,7 @@ public interface InventoryBean extends Serializable
      *
      * @return タイトル
      */
+    @Nullable
     String getTitle();
 
     /**
@@ -31,5 +35,6 @@ public interface InventoryBean extends Serializable
      *
      * @return メインコンテンツ
      */
+    @NotNull
     Map<Integer, ItemStackBean> getMainContents();
 }

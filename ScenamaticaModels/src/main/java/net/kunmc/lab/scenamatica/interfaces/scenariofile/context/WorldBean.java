@@ -2,6 +2,8 @@ package net.kunmc.lab.scenamatica.interfaces.scenariofile.context;
 
 import org.bukkit.World;
 import org.bukkit.WorldType;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.Serializable;
 
@@ -22,6 +24,7 @@ public interface WorldBean extends Serializable
      *
      * @return ワールド名
      */
+    @NotNull
     String getName();
 
     /**
@@ -29,6 +32,7 @@ public interface WorldBean extends Serializable
      *
      * @return ワールドの種類
      */
+    @NotNull
     WorldType getType();
 
     /**
@@ -36,6 +40,7 @@ public interface WorldBean extends Serializable
      *
      * @return ワールドのシード値
      */
+    @Nullable
     Long getSeed();
 
     /**
@@ -43,6 +48,7 @@ public interface WorldBean extends Serializable
      *
      * @return 構造物を生成するかどうか
      */
+    @Nullable
     Boolean getGenerateStructures();
 
     /**
@@ -50,6 +56,7 @@ public interface WorldBean extends Serializable
      *
      * @return ワールドの環境
      */
+    @Nullable
     World.Environment getEnvironment();
 
     /**
