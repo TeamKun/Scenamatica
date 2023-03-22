@@ -1,49 +1,41 @@
 package net.kunmc.lab.scenamatica.commands.debug;
 
-import lombok.AllArgsConstructor;
 import net.kunmc.lab.peyangpaperutils.lib.command.CommandBase;
 import net.kunmc.lab.peyangpaperutils.lib.terminal.Terminal;
 import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
-import net.kunmc.lab.scenamatica.scenariofile.beans.context.PlayerBeanImpl;
+import net.kunmc.lab.scenamatica.scenariofile.beans.context.WorldBeanImpl;
 import net.kyori.adventure.text.TextComponent;
-import org.bukkit.Bukkit;
-import org.bukkit.World;
+import org.bukkit.WorldType;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-@AllArgsConstructor
-public class CommandSummonActor extends CommandBase
+public class CommandCreateStage extends CommandBase
 {
     private final ScenamaticaRegistry registry;
+
+    public CommandCreateStage(ScenamaticaRegistry registry)
+    {
+        this.registry = registry;
+    }
 
     @Override
     public void onCommand(@NotNull CommandSender sender, @NotNull Terminal terminal, String[] args)
     {
-        if (indicateArgsLengthInvalid(terminal, args, 1, 2))
+        if (indicateArgsLengthInvalid(terminal, args, 1))
             return;
 
         String name = args[0];
-        String worldName = args.length == 2 ? args[1]: Bukkit.getWorlds().get(0).getName();
-        World world = Bukkit.getWorld(worldName);
 
-        this.registry.getContextManager().getActorManager().createActor(world, new PlayerBeanImpl(
+        this.registry.getContextManager().getStageManager().createStage(new WorldBeanImpl(
                 name,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
+                WorldType.NORMAL,
                 null,
                 false,
-                false,
                 null,
-                null
+                false
         ));
     }
 
@@ -62,7 +54,7 @@ public class CommandSummonActor extends CommandBase
     @Override
     public TextComponent getHelpOneLine()
     {
-        return of("Summon actor for debug");
+        return of("Create a stage");
     }
 
     @Override
@@ -70,7 +62,6 @@ public class CommandSummonActor extends CommandBase
     {
         return new String[]{
                 required("name", "string"),
-                optional("world", "stirng")
         };
     }
 }

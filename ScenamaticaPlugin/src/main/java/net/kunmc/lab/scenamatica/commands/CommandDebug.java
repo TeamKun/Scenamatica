@@ -2,6 +2,7 @@ package net.kunmc.lab.scenamatica.commands;
 
 import net.kunmc.lab.peyangpaperutils.lib.command.CommandBase;
 import net.kunmc.lab.peyangpaperutils.lib.command.SubCommandWith;
+import net.kunmc.lab.scenamatica.commands.debug.CommandCreateStage;
 import net.kunmc.lab.scenamatica.commands.debug.CommandSummonActor;
 import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
 import net.kyori.adventure.text.TextComponent;
@@ -20,6 +21,8 @@ public class CommandDebug extends SubCommandWith
     {
         commands = new HashMap<>();
         commands.put("summonActor", new CommandSummonActor(registory));
+        commands.put("createStage", new CommandCreateStage(registory));
+
     }
 
     @Override
