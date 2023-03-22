@@ -35,7 +35,7 @@ public class ActorManagerImpl implements ActorManager
     }
 
     @Override
-    public Player mock(World stage, PlayerBean bean)
+    public Player createActor(World stage, PlayerBean bean)
     {
         if (this.mockedPlayers.stream().anyMatch(p -> p.getName().equalsIgnoreCase(bean.getName())))
             throw new IllegalArgumentException("Player " + bean.getName() + " is already mocked.");
@@ -46,7 +46,7 @@ public class ActorManagerImpl implements ActorManager
     }
 
     @Override
-    public void unmock(Player player)
+    public void destroyActor(Player player)
     {
         this.mocker.unmock(player);
         this.mockedPlayers.remove(player);
@@ -56,6 +56,6 @@ public class ActorManagerImpl implements ActorManager
     public void shutdown()
     {
         new ArrayList<>(this.mockedPlayers)  //   回避
-                .forEach(this::unmock);
+                .forEach(this::destroyActor);
     }
 }

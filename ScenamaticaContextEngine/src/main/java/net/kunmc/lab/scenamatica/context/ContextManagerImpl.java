@@ -57,7 +57,7 @@ public class ContextManagerImpl implements ContextManager
             try
             {
                 for (PlayerBean actor : context.getActors())
-                    this.actorManager.mock(stage, actor);
+                    this.actorManager.createActor(stage, actor);
             }
             catch (Exception e)
             {

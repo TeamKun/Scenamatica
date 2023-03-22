@@ -10,23 +10,23 @@ import org.bukkit.entity.Player;
 public interface ActorManager
 {
     /**
-     * プレイヤーをモックします。
+     * 役者を生成します。
      *
      * @param stage ステージ
      * @param bean  プレイヤー情報
-     * @return モックプレイヤー
+     * @return 生成した役者
      */
-    Player mock(World stage, PlayerBean bean);
+    Player createActor(World stage, PlayerBean bean);
 
     /**
-     * プレイヤーのモックを解除します。
+     * 役者を破棄します。
      *
-     * @param player プレイヤー
+     * @param player 役者
      */
-    void unmock(Player player);
+    void destroyActor(Player player);
 
     /**
-     * モックプレイヤーを全て解除し、インスタンスを破棄します。
+     * 生成された役者を全て解除し、インスタンスを破棄します。
      */
     void shutdown();
 }

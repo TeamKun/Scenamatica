@@ -26,7 +26,7 @@ public class CommandSummonActor extends CommandBase
 
         String name = args[0];
 
-        this.registry.getContextManager().getActorManager().mock(Bukkit.getWorlds().get(0), new PlayerBeanImpl(
+        this.registry.getContextManager().getActorManager().createActor(Bukkit.getWorlds().get(0), new PlayerBeanImpl(
                 name,
                 null,
                 null,
