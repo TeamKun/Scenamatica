@@ -36,6 +36,9 @@ public class PlayerMockManagerImpl implements PlayerMockManager
     @Override
     public Player mock(PlayerBean bean)
     {
+        if (this.mockedPlayers.stream().anyMatch(p -> p.getName().equalsIgnoreCase(bean.getName())))
+            throw new IllegalArgumentException("Player " + bean.getName() + " is already mocked.");
+
         Player player = this.mocker.mock(bean);
         this.mockedPlayers.add(player);
         return player;

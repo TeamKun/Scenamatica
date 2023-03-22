@@ -92,7 +92,7 @@ public class PlayerMocker extends PlayerMockerBase
         assert server != null;
         PlayerList list = server.getPlayerList();
 
-        if (!mockedPlayer.playerConnection.isDisconnected())
+        if (mockedPlayer.playerConnection.isDisconnected())
             list.disconnect(mockedPlayer);
 
         this.wipePlayerData(mockedPlayer.getUniqueID());
