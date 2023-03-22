@@ -1,6 +1,6 @@
 package net.kunmc.lab.scenamatica.interfaces;
 
-import net.kunmc.lab.scenamatica.interfaces.context.interfaces.PlayerMockManager;
+import net.kunmc.lab.scenamatica.interfaces.context.interfaces.ActorMockManager;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.ScenarioFileManager;
 
 import java.util.logging.Logger;
@@ -41,7 +41,7 @@ public interface ScenamaticaRegistry
      *
      * @return プレイヤーモックマネージャー
      */
-    PlayerMockManager getPlayerMockManager();
+    ActorMockManager getActorManager();
 
     /**
      * このデーモンをシャットダウンします。

@@ -1,7 +1,7 @@
-package net.kunmc.lab.scenamatica.context.player;
+package net.kunmc.lab.scenamatica.context.actor;
 
 import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
-import net.kunmc.lab.scenamatica.interfaces.context.interfaces.PlayerMockManager;
+import net.kunmc.lab.scenamatica.interfaces.context.interfaces.ActorMockManager;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.context.PlayerBean;
 import org.bukkit.entity.Player;
 import org.kunlab.kpm.utils.ReflectionUtils;
@@ -9,12 +9,12 @@ import org.kunlab.kpm.utils.ReflectionUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PlayerMockManagerImpl implements PlayerMockManager
+public class ActorManagerImpl implements ActorMockManager
 {
     private final List<Player> mockedPlayers;
     private final PlayerMockerBase mocker;
 
-    public PlayerMockManagerImpl(ScenamaticaRegistry registry)
+    public ActorManagerImpl(ScenamaticaRegistry registry)
     {
         this.mockedPlayers = new ArrayList<>();
         this.mocker = getMocker(registry);
@@ -27,7 +27,7 @@ public class PlayerMockManagerImpl implements PlayerMockManager
         switch (version)  // TODO: Support other versions.
         {
             case "v1_16_R3":
-                return new net.kunmc.lab.scenamatica.context.player.nms.v_1_16_R3.PlayerMocker(registry);
+                return new net.kunmc.lab.scenamatica.context.actor.nms.v_1_16_R3.PlayerMocker(registry);
             default:
                 throw new UnsupportedOperationException("Unsupported version: " + version);
         }

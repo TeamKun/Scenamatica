@@ -25,7 +25,7 @@ public class CommandSummonActor extends CommandBase
 
         String name = args[0];
 
-        this.registry.getPlayerMockManager().mock(new PlayerBeanImpl(
+        this.registry.getActorManager().mock(new PlayerBeanImpl(
                 name,
                 null,
                 null,

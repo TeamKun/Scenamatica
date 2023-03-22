@@ -1,10 +1,10 @@
-package net.kunmc.lab.scenamatica.context.player.nms.v_1_16_R3;
+package net.kunmc.lab.scenamatica.context.actor.nms.v_1_16_R3;
 
 import com.mojang.authlib.GameProfile;
 import io.netty.buffer.ByteBufAllocator;
 import lombok.SneakyThrows;
 import net.kunmc.lab.peyangpaperutils.lib.utils.Runner;
-import net.kunmc.lab.scenamatica.context.player.PlayerMockerBase;
+import net.kunmc.lab.scenamatica.context.actor.PlayerMockerBase;
 import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.context.PlayerBean;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.inventory.ItemStackBean;

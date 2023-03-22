@@ -1,11 +1,11 @@
 package net.kunmc.lab.scenamatica;
 
 import lombok.Getter;
-import net.kunmc.lab.scenamatica.context.player.PlayerMockManagerImpl;
+import net.kunmc.lab.scenamatica.context.actor.ActorManagerImpl;
 import net.kunmc.lab.scenamatica.interfaces.ExceptionHandler;
 import net.kunmc.lab.scenamatica.interfaces.ScenamaticaEnvironment;
 import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
-import net.kunmc.lab.scenamatica.interfaces.context.interfaces.PlayerMockManager;
+import net.kunmc.lab.scenamatica.interfaces.context.interfaces.ActorMockManager;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.ScenarioFileManager;
 import net.kunmc.lab.scenamatica.scenariofile.ScenarioFileManagerImpl;
 
@@ -18,7 +18,7 @@ public class ScenamaticaDaemon implements ScenamaticaRegistry
     private final ScenamaticaEnvironment environment;
     private final ExceptionHandler exceptionHandler;
     private final ScenarioFileManager scenarioFileManager;
-    private final PlayerMockManager playerMockManager;
+    private final ActorMockManager actorManager;
 
     public ScenamaticaDaemon(ScenamaticaEnvironment env)
     {
@@ -26,12 +26,12 @@ public class ScenamaticaDaemon implements ScenamaticaRegistry
         this.environment = env;
         this.exceptionHandler = env.getExceptionHandler();
         this.scenarioFileManager = new ScenarioFileManagerImpl(this);
-        this.playerMockManager = new PlayerMockManagerImpl(this);
+        this.actorManager = new ActorManagerImpl(this);
     }
 
     @Override
     public void shutdown()
     {
-        this.playerMockManager.shutdown();
+        this.actorManager.shutdown();
     }
 }

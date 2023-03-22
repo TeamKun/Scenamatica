@@ -1,4 +1,4 @@
-package net.kunmc.lab.scenamatica.context.player;
+package net.kunmc.lab.scenamatica.context.actor;
 
 import com.mojang.authlib.GameProfile;
 import lombok.SneakyThrows;

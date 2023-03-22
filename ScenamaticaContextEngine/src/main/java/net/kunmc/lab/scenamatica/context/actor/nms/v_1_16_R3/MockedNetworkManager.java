@@ -1,10 +1,10 @@
-package net.kunmc.lab.scenamatica.context.player.nms.v_1_16_R3;
+package net.kunmc.lab.scenamatica.context.actor.nms.v_1_16_R3;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
 import lombok.SneakyThrows;
-import net.kunmc.lab.scenamatica.context.player.MockedChannel;
+import net.kunmc.lab.scenamatica.context.actor.MockedChannel;
 import net.minecraft.server.v1_16_R3.EnumProtocol;
 import net.minecraft.server.v1_16_R3.EnumProtocolDirection;
 import net.minecraft.server.v1_16_R3.IChatBaseComponent;

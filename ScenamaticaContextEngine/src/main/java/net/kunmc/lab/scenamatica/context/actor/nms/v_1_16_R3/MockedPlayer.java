@@ -1,4 +1,4 @@
-package net.kunmc.lab.scenamatica.context.player.nms.v_1_16_R3;
+package net.kunmc.lab.scenamatica.context.actor.nms.v_1_16_R3;
 
 import com.mojang.authlib.GameProfile;
 import net.kunmc.lab.peyangpaperutils.lib.utils.Runner;
