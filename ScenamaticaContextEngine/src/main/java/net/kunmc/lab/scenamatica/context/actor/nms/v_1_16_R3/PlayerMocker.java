@@ -48,12 +48,14 @@ public class PlayerMocker extends PlayerMockerBase
         super(registry);
     }
 
-    private void registerPlayer(MinecraftServer server, MockedPlayer player)
+    private void registerPlayer(MinecraftServer server, MockedPlayer player, WorldServer worldServer)
     {
         PlayerList list = server.getPlayerList();
         NetworkManager mockedNetworkManager = new MockedNetworkManager(this, player, server);
         list.a(mockedNetworkManager, player);
         sendSettings(player);
+
+        player.teleportTo(worldServer, worldServer.getSpawn());
 
         Runner.runLater(() -> player.playerConnection = new MockedPlayerConnection(server, mockedNetworkManager, player), 20);
     }
@@ -220,7 +222,7 @@ public class PlayerMocker extends PlayerMockerBase
         if (!dispatchLoginEvent(player.getBukkitEntity()))
             throw new IllegalStateException("Login for " + player.getName() + " was denied.");
 
-        this.registerPlayer(server, player);
+        this.registerPlayer(server, player, worldServer);
 
         return player.getBukkitEntity();
     }
