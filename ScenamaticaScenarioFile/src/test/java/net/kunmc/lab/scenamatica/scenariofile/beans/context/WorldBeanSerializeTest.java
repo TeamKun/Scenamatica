@@ -1,7 +1,7 @@
 package net.kunmc.lab.scenamatica.scenariofile.beans.context;
 
-import net.kunmc.lab.scenamatica.scenariofile.beans.utils.MapTestUtil;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.context.WorldBean;
+import net.kunmc.lab.scenamatica.scenariofile.beans.utils.MapTestUtil;
 import org.bukkit.World;
 import org.bukkit.WorldType;
 import org.junit.jupiter.api.Test;
@@ -19,7 +19,7 @@ public class WorldBeanSerializeTest
             "test",
             WorldType.AMPLIFIED,
             1145141919810L,
-            true,
+            false,
             World.Environment.NORMAL,
             true
     );
@@ -29,7 +29,7 @@ public class WorldBeanSerializeTest
         put("name", "test");
         put("type", "AMPLIFIED");
         put("seed", 1145141919810L);
-        put("structures", true);
+        put("structures", false);
         put("env", "NORMAL");
         put("hardcore", true);
     }};
@@ -38,7 +38,7 @@ public class WorldBeanSerializeTest
             "world",
             WorldType.NORMAL,
             null,
-            null,
+            true,
             null,
             false
     );

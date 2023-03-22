@@ -20,8 +20,7 @@ public class WorldBeanImpl implements WorldBean
     WorldType type;
     @Nullable
     Long seed;
-    @Nullable
-    Boolean generateStructures;
+    boolean generateStructures;
     @Nullable
     World.Environment environment;
     boolean hardcore;
@@ -38,7 +37,8 @@ public class WorldBeanImpl implements WorldBean
         if (bean.getType() != WorldType.NORMAL)
             MapUtils.putIfNotNull(result, KEY_TYPE, bean.getType().name());
         MapUtils.putPrimitiveOrStrIfNotNull(result, KEY_SEED, bean.getSeed());
-        MapUtils.putPrimitiveOrStrIfNotNull(result, KEY_GENERATE_STRUCTURES, bean.getGenerateStructures());
+        if (!bean.isGenerateStructures())
+            result.put(KEY_GENERATE_STRUCTURES, false);
         MapUtils.putPrimitiveOrStrIfNotNull(result, KEY_ENVIRONMENT, bean.getEnvironment());
         if (bean.isHardcore())
             result.put(KEY_HARDCORE, true);
@@ -65,7 +65,7 @@ public class WorldBeanImpl implements WorldBean
                 (String) map.get(KEY_NAME),
                 MapUtils.getAsEnumOrDefault(map, KEY_TYPE, WorldType.class, WorldType.NORMAL),
                 MapUtils.getOrNull(map, KEY_SEED),
-                MapUtils.getOrNull(map, KEY_GENERATE_STRUCTURES),
+                MapUtils.getOrDefault(map, KEY_GENERATE_STRUCTURES, true),
                 MapUtils.getAsEnumOrNull(map, KEY_ENVIRONMENT, World.Environment.class),
                 MapUtils.getOrDefault(map, KEY_HARDCORE, false)
         );

@@ -48,8 +48,7 @@ public interface WorldBean extends Serializable
      *
      * @return 構造物を生成するかどうか
      */
-    @Nullable
-    Boolean getGenerateStructures();
+    boolean isGenerateStructures();
 
     /**
      * ワールドの環境を取得します（e.g. ネザー、エンド）。
