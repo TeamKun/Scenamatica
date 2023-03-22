@@ -30,7 +30,7 @@ public class ContextManagerImpl implements ContextManager
     {
         this.registry = registry;
         this.actorManager = new ActorManagerImpl(registry);
-        this.stageManager = new StageManagerImpl();
+        this.stageManager = new StageManagerImpl(registry);
     }
 
     @Override

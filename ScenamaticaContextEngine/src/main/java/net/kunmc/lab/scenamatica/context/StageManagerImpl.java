@@ -1,5 +1,6 @@
 package net.kunmc.lab.scenamatica.context;
 
+import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
 import net.kunmc.lab.scenamatica.interfaces.context.StageManager;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.context.WorldBean;
 import org.bukkit.Bukkit;
@@ -7,9 +8,23 @@ import org.bukkit.World;
 import org.bukkit.WorldCreator;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Comparator;
+import java.util.stream.Stream;
+
 public class StageManagerImpl implements StageManager
 {
+    private final ScenamaticaRegistry registry;
+
     private World world;
+
+    public StageManagerImpl(ScenamaticaRegistry registry)
+    {
+        this.registry = registry;
+    }
 
     @Override
     @NotNull
@@ -47,7 +62,26 @@ public class StageManagerImpl implements StageManager
         this.world.getPlayers().forEach(p -> p.teleport(Bukkit.getWorlds().get(0).getSpawnLocation()));
 
         Bukkit.unloadWorld(this.world, false);
+
+        Path worldPath = this.world.getWorldFolder().toPath();
+        this.deleteDirector(worldPath);
+
         this.world = null;
+    }
+
+    private void deleteDirector(@NotNull Path path)
+    {
+        try (Stream<Path> walker = Files.walk(path))
+        {
+            walker
+                    .map(Path::toFile)
+                    .sorted(Comparator.reverseOrder())
+                    .forEach(File::delete);
+        }
+        catch (IOException e)
+        {
+            this.registry.getExceptionHandler().report(e);
+        }
     }
 
     @Override
