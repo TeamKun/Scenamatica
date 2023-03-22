@@ -14,24 +14,18 @@ import net.minecraft.server.v1_16_R3.NetworkManager;
 import net.minecraft.server.v1_16_R3.PacketDataSerializer;
 import net.minecraft.server.v1_16_R3.PacketPlayInSettings;
 import net.minecraft.server.v1_16_R3.PlayerList;
-import net.minecraft.server.v1_16_R3.WorldNBTStorage;
 import net.minecraft.server.v1_16_R3.WorldServer;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_16_R3.CraftServer;
 import org.bukkit.entity.Player;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.UUID;
 
 public class PlayerMocker extends PlayerMockerBase
 {
-    private final ScenamaticaRegistry registry;
-
     public PlayerMocker(ScenamaticaRegistry registry)
     {
-        this.registry = registry;
+        super(registry);
     }
 
     private void registerPlayer(MinecraftServer server, MockedPlayer player)
@@ -101,12 +95,7 @@ public class PlayerMocker extends PlayerMockerBase
         if (!mockedPlayer.playerConnection.isDisconnected())
             list.disconnect(mockedPlayer);
 
-        this.onDisconnect(list, mockedPlayer);
-    }
-
-    void onDisconnect(PlayerList list, MockedPlayer mockedPlayer)
-    {
-        this.wipePlayerData(list, mockedPlayer.getUniqueID());
+        this.wipePlayerData(mockedPlayer.getUniqueID());
     }
 
     @Override
@@ -115,22 +104,4 @@ public class PlayerMocker extends PlayerMockerBase
         return LoginListener.class;
     }
 
-    private void wipePlayerData(PlayerList list, UUID uuid)
-    {
-        WorldNBTStorage storage = list.playerFileData;
-        Path baseDir = storage.getPlayerDir().toPath();
-
-        Path playerData = baseDir.resolve(uuid.toString() + ".dat");
-        Path playerDataOld = baseDir.resolve(uuid + ".dat_old");
-
-        try
-        {
-            Files.deleteIfExists(playerData);
-            Files.deleteIfExists(playerDataOld);
-        }
-        catch (Exception e)
-        {
-            this.registry.getExceptionHandler().report(e);
-        }
-    }
 }

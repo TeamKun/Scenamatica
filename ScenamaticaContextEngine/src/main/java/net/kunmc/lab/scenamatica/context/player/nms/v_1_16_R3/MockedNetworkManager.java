@@ -148,7 +148,7 @@ class MockedNetworkManager extends NetworkManager
         super.handleDisconnection();
         this.alive = false;
 
-        this.mocker.onDisconnect(this.player.server.getPlayerList(), this.player);
+        this.mocker.wipePlayerData(this.player.getUniqueID());
     }
 
     @Override

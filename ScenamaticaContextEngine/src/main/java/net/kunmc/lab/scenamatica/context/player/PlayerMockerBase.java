@@ -2,19 +2,30 @@ package net.kunmc.lab.scenamatica.context.player;
 
 import com.mojang.authlib.GameProfile;
 import lombok.SneakyThrows;
+import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.context.PlayerBean;
 import org.apache.logging.log4j.LogManager;
 import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerLoginEvent;
 
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.UUID;
 
 public abstract class PlayerMockerBase
 {
+    private final ScenamaticaRegistry registry;
+
+    public PlayerMockerBase(ScenamaticaRegistry registry)
+    {
+        this.registry = registry;
+    }
+
     protected static GameProfile createGameProfile(PlayerBean bean)
     {
         UUID uuid = bean.getUuid() == null ? UUID.randomUUID(): bean.getUuid();
@@ -46,5 +57,29 @@ public abstract class PlayerMockerBase
         }
 
         return event.getResult() == PlayerLoginEvent.Result.ALLOWED;
+    }
+
+    public void wipePlayerData(UUID uuid)
+    {
+        try
+        {
+            for (World world : Bukkit.getWorlds())
+            {
+                Path worldDir = world.getWorldFolder().toPath().resolve("playerdata");
+                Path playerDataInWorld = worldDir.resolve(uuid + ".dat");
+                Path playerDataOldInWorld = worldDir.resolve(uuid + ".dat_old");
+                Files.deleteIfExists(playerDataInWorld);
+                Files.deleteIfExists(playerDataOldInWorld);
+
+                Path advancementsDir = world.getWorldFolder().toPath().resolve("advancements");
+                Path advancementsInWorld = advancementsDir.resolve(uuid + ".json");
+
+                Files.deleteIfExists(advancementsInWorld);
+            }
+        }
+        catch (Exception e)
+        {
+            this.registry.getExceptionHandler().report(e);
+        }
     }
 }
