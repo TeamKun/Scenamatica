@@ -4,28 +4,68 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
 import lombok.SneakyThrows;
+import net.kunmc.lab.scenamatica.context.player.MockedChannel;
 import net.minecraft.server.v1_16_R3.EnumProtocol;
 import net.minecraft.server.v1_16_R3.EnumProtocolDirection;
 import net.minecraft.server.v1_16_R3.IChatBaseComponent;
+import net.minecraft.server.v1_16_R3.MinecraftServer;
 import net.minecraft.server.v1_16_R3.NetworkManager;
 import net.minecraft.server.v1_16_R3.Packet;
+import net.minecraft.server.v1_16_R3.ServerConnection;
 
 import javax.annotation.Nullable;
 import javax.crypto.Cipher;
+import java.lang.reflect.Field;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.net.UnknownHostException;
+import java.util.List;
 
 class MockedNetworkManager extends NetworkManager
 {
+    private static final Field fConnectedChannels;  // Lnet/minecraft/server/NetworkManager;f:Ljava/util/List<Lnet.minecraft.server.NetworkManager;>;
+
+    static
+    {
+        try
+        {
+            fConnectedChannels = ServerConnection.class.getDeclaredField("connectedChannels");
+            fConnectedChannels.setAccessible(true);
+        }
+        catch (NoSuchFieldException e)
+        {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private boolean alive;
+
     @SneakyThrows(UnknownHostException.class)
-    public MockedNetworkManager()
+    public MockedNetworkManager(MinecraftServer server)
     {
         super(EnumProtocolDirection.SERVERBOUND);
 
+        this.alive = true;
+
         this.socketAddress = new InetSocketAddress(InetAddress.getByName("191.9.81.0"), 1919);
-        this.channel = null;  // 多分 null 許容
+        this.channel = new MockedChannel();
+
+        registerToMinecraft(server, this);
+    }
+
+    private static void registerToMinecraft(MinecraftServer server, NetworkManager networkManager)
+    {
+        try
+        {
+            @SuppressWarnings("unchecked")
+            List<NetworkManager> connectedChannels = (List<NetworkManager>) fConnectedChannels.get(server.getServerConnection());
+            connectedChannels.add(networkManager);
+        }
+        catch (IllegalAccessException e)
+        {
+            throw new RuntimeException(e);
+        }
     }
 
     // これ以下は, パケットの送受信を握りつぶし, 余計な例外を抑制する。
@@ -53,7 +93,7 @@ class MockedNetworkManager extends NetworkManager
     @Override
     public void channelActive(ChannelHandlerContext channelhandlercontext)
     {
-
+        this.preparing = false;  // ディスコネ時に, iterator から削除されるように。(super 準拠)
     }
 
     @Override
@@ -75,7 +115,7 @@ class MockedNetworkManager extends NetworkManager
     @Override
     public boolean isConnected()
     {
-        return true;
+        return this.alive;
     }
 
     @Override
@@ -97,6 +137,8 @@ class MockedNetworkManager extends NetworkManager
     @Override
     public void handleDisconnection()
     {
+        super.handleDisconnection();
+        this.alive = false;
     }
 
     @Override

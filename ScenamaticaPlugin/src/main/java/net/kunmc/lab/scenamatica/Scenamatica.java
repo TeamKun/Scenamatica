@@ -3,9 +3,10 @@ package net.kunmc.lab.scenamatica;
 import net.kunmc.lab.peyangpaperutils.lib.command.CommandManager;
 import net.kunmc.lab.scenamatica.commands.CommandDebug;
 import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
+import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public final class Scenamatica extends JavaPlugin
+public final class Scenamatica extends JavaPlugin implements Listener
 {
     private final ScenamaticaRegistry registry;
 
@@ -32,6 +33,8 @@ public final class Scenamatica extends JavaPlugin
         );
 
         this.commandManager.registerCommand("debug", new CommandDebug(this.registry));
+
+        this.getServer().getPluginManager().registerEvents(this, this);
     }
 
     @Override
