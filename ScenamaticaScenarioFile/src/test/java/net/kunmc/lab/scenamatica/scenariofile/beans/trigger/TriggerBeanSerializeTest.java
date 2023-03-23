@@ -1,9 +1,12 @@
 package net.kunmc.lab.scenamatica.scenariofile.beans.trigger;
 
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerBean;
+import net.kunmc.lab.scenamatica.scenariofile.beans.scenario.ActionBeanImpl;
 import net.kunmc.lab.scenamatica.scenariofile.beans.scenario.ActionBeanSerializeTest;
 import net.kunmc.lab.scenamatica.scenariofile.beans.scenario.ScenarioBeanSerializeTest;
 import net.kunmc.lab.scenamatica.scenariofile.beans.utils.MapTestUtil;
+import net.kunmc.lab.scenamatica.trigger.EnumTriggerType;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -40,6 +43,12 @@ public class TriggerBeanSerializeTest
     {{
         this.put("type", "action");
     }};
+
+    @BeforeAll
+    static void init()
+    {
+        EnumTriggerType.ON_ACTION.setArgumentType(ActionBeanImpl.class);
+    }
 
     @Test
     void 正常にシリアライズできるか()

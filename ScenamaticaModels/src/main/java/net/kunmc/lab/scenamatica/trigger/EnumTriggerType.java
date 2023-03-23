@@ -1,10 +1,8 @@
-package net.kunmc.lab.scenamatica.scenariofile.beans.trigger;
+package net.kunmc.lab.scenamatica.trigger;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerType;
-import net.kunmc.lab.scenamatica.scenariofile.beans.scenario.ActionBeanImpl;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
@@ -13,12 +11,11 @@ import java.util.Map;
  * シナリオのトリガーの種類を表す列挙型です。
  */
 @Getter
-@AllArgsConstructor
 public enum EnumTriggerType implements TriggerType
 {
-    MANUAL_DISPATCH("manual_dispatch", null),
-    ON_ACTION("action", ActionBeanImpl.class),
-    SCHEDULE("schedule", null),
+    MANUAL_DISPATCH("manual_dispatch"),
+    ON_ACTION("action"),
+    SCHEDULE("schedule"),
 
     ;
 
@@ -28,7 +25,20 @@ public enum EnumTriggerType implements TriggerType
 
     private final String key;
     @Nullable
-    private final Class<? extends TriggerArgument> argumentType;
+    private Class<? extends TriggerArgument> argumentType;
+
+    EnumTriggerType(String key)
+    {
+        this.key = key;
+    }
+
+    public void setArgumentType(Class<? extends TriggerArgument> argumentType)
+    {
+        if (this.argumentType != null)
+            throw new IllegalStateException("Argument type is already set.");
+
+        this.argumentType = argumentType;
+    }
 
     public static EnumTriggerType fromKey(String key)
     {
