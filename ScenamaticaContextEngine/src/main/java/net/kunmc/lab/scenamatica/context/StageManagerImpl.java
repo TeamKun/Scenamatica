@@ -45,7 +45,7 @@ public class StageManagerImpl implements StageManager
 
         if (bean.getOriginalName() != null)
         {
-            World copied = WorldUtils.copyWorld(bean.getOriginalName(), key);
+            World copied = this.stage = WorldUtils.copyWorld(bean.getOriginalName(), key);
             this.hasCopied = true;
             return copied;
         }
