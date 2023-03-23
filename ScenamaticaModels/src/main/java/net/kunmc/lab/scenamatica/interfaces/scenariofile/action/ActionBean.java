@@ -1,10 +1,10 @@
 package net.kunmc.lab.scenamatica.interfaces.scenariofile.action;
 
+import net.kunmc.lab.scenamatica.interfaces.action.ActionArgument;
+import net.kunmc.lab.scenamatica.interfaces.action.ActionType;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Map;
 
 /**
  * シナリオの動作の定義を表すインターフェースです。
@@ -20,7 +20,7 @@ public interface ActionBean extends TriggerArgument
      * @return 動作の種類
      */
     @NotNull
-    String getType();
+    ActionType getType();
 
     /**
      * 動作に必要な引数を定義します。
@@ -28,5 +28,5 @@ public interface ActionBean extends TriggerArgument
      * @return 動作に必要な引数
      */
     @Nullable
-    Map<String, Object> getArguments();
+    ActionArgument getArgument();
 }

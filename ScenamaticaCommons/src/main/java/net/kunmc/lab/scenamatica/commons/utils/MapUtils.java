@@ -12,6 +12,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 @UtilityClass
@@ -129,7 +130,7 @@ public class MapUtils
         MapUtils.checkContainsKey(map, key);
         try
         {
-            Enum.valueOf(enumType, (String) map.get(key));
+            Enum.valueOf(enumType, ((String) map.get(key)).toUpperCase(Locale.ROOT));
         }
         catch (IllegalArgumentException e)
         {
@@ -194,7 +195,7 @@ public class MapUtils
     {
         if (!map.containsKey(key))
             return null;
-        return Enum.valueOf(enumType, (String) map.get(key));
+        return Enum.valueOf(enumType, ((String) map.get(key)).toUpperCase(Locale.ROOT));
     }
 
     @NotNull
@@ -202,7 +203,7 @@ public class MapUtils
     {
         if (!map.containsKey(key))
             throw new IllegalArgumentException("Map does not contain key: " + key);
-        return Enum.valueOf(enumType, (String) map.get(key));
+        return Enum.valueOf(enumType, ((String) map.get(key)).toUpperCase(Locale.ROOT));
     }
 
     @NotNull
@@ -211,7 +212,7 @@ public class MapUtils
         if (!map.containsKey(key))
             return defaultValue;
 
-        return Enum.valueOf(enumType, (String) map.get(key));
+        return Enum.valueOf(enumType, ((String) map.get(key)).toUpperCase(Locale.ROOT));
     }
 
     @NotNull
@@ -221,7 +222,7 @@ public class MapUtils
             return new ArrayList<>();
         List<T> list = new ArrayList<>();
         for (Object o : (List<?>) map.get(key))
-            list.add(Enum.valueOf(enumType, (String) o));
+            list.add(Enum.valueOf(enumType, ((String) o).toUpperCase(Locale.ROOT)));
         return list;
     }
 

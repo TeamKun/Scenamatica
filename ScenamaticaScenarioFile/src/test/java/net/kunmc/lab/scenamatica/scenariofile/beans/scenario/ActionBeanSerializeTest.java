@@ -1,5 +1,6 @@
 package net.kunmc.lab.scenamatica.scenariofile.beans.scenario;
 
+import net.kunmc.lab.scenamatica.action.EnumActionType;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.action.ActionBean;
 import net.kunmc.lab.scenamatica.scenariofile.beans.utils.MapTestUtil;
 import org.junit.jupiter.api.Test;
@@ -12,30 +13,23 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class ActionBeanSerializeTest
 {
     public static final ActionBean FULFILLED = new ActionBeanImpl(
-            "action",
-            new HashMap<String, Object>()
-            {{
-                this.put("action", "action123");
-            }}
+            EnumActionType.NONE,
+            null
     );
 
     public static final HashMap<String, Object> FULFILLED_MAP = new HashMap<String, Object>()
     {{
-        this.put("action", "action");
-        this.put("with", new HashMap<String, Object>()
-        {{
-            this.put("action", "action123");
-        }});
+        this.put("action", "none");
     }};
 
     public static final ActionBean EMPTY = new ActionBeanImpl(
-            "action",
+            EnumActionType.NONE,
             null
     );
 
     public static final HashMap<String, Object> EMPTY_MAP = new HashMap<String, Object>()
     {{
-        this.put("action", "action");
+        this.put("action", "none");
     }};
 
     @Test

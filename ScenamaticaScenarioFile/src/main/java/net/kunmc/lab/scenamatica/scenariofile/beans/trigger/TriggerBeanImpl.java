@@ -92,7 +92,7 @@ public class TriggerBeanImpl implements TriggerBean
         }
 
         TriggerType type = EnumTriggerType.fromKey((String) map.get(KEY_TYPE));
-        if (type != null)
+        if (type != null && type.getArgumentType() != null)
             type.validateArguments(map);
     }
 

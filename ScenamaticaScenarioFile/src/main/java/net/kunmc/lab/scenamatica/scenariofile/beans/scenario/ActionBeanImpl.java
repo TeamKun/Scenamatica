@@ -1,7 +1,10 @@
 package net.kunmc.lab.scenamatica.scenariofile.beans.scenario;
 
 import lombok.Value;
+import net.kunmc.lab.scenamatica.action.EnumActionType;
 import net.kunmc.lab.scenamatica.commons.utils.MapUtils;
+import net.kunmc.lab.scenamatica.interfaces.action.ActionArgument;
+import net.kunmc.lab.scenamatica.interfaces.action.ActionType;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.action.ActionBean;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -13,23 +16,23 @@ import java.util.Map;
 public class ActionBeanImpl implements ActionBean
 {
     @NotNull
-    String type;
+    ActionType type;
     @Nullable
-    Map<String, Object> arguments;
+    ActionArgument argument;
 
     public static Map<String, Object> serialize(ActionBean bean)
     {
         Map<String, Object> map = new HashMap<>();
-        map.put(KEY_TYPE, bean.getType());
+        map.put(KEY_TYPE, bean.getType().getKey());
 
-        MapUtils.putIfNotNull(map, KEY_ARGUMENTS, bean.getArguments());
+        MapUtils.putIfNotNull(map, KEY_ARGUMENTS, bean.getArgument());
 
         return map;
     }
 
     public static void validate(Map<String, Object> map)
     {
-        MapUtils.checkType(map, KEY_TYPE, String.class);
+        MapUtils.checkEnumName(map, KEY_TYPE, EnumActionType.class);
 
         if (map.containsKey(KEY_ARGUMENTS))
             MapUtils.checkAndCastMap(
@@ -44,19 +47,29 @@ public class ActionBeanImpl implements ActionBean
     {
         validate(map);
 
-        String actionType = (String) map.get(KEY_TYPE);
+        ActionType actionType = MapUtils.getAsEnum(
+                map,
+                KEY_TYPE,
+                EnumActionType.class
+        );
 
-        Map<String, Object> arguments = null;
+        ActionArgument argument;
         if (map.containsKey(KEY_ARGUMENTS))
-            arguments = MapUtils.checkAndCastMap(
+        {
+            Map<String, Object> argumentsMap = MapUtils.checkAndCastMap(
                     map.get(KEY_ARGUMENTS),
                     String.class,
                     Object.class
             );
 
+            argument = actionType.deserialize(argumentsMap);
+        }
+        else
+            argument = null;
+
         return new ActionBeanImpl(
                 actionType,
-                arguments
+                argument
         );
     }
 
