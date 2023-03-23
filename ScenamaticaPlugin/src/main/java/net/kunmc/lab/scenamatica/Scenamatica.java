@@ -15,8 +15,7 @@ public final class Scenamatica extends JavaPlugin implements Listener
 
     public Scenamatica()
     {
-        this.registry = new ScenamaticaDaemon(Environment.builder()
-                .logger(this.getLogger())
+        this.registry = new ScenamaticaDaemon(Environment.builder(this)
                 .exceptionHandler(new SimpleExceptionHandler(this.getLogger()))
                 .build()
         );

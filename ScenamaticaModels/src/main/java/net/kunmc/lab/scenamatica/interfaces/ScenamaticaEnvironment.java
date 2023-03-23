@@ -1,5 +1,7 @@
 package net.kunmc.lab.scenamatica.interfaces;
 
+import org.bukkit.plugin.Plugin;
+
 import java.util.logging.Logger;
 
 /**
@@ -7,6 +9,13 @@ import java.util.logging.Logger;
  */
 public interface ScenamaticaEnvironment
 {
+    /**
+     * Scenamatica デーモンを使用するプラグインを取得します。
+     *
+     * @return プラグイン
+     */
+    Plugin getPlugin();
+
     /**
      * ロガーを取得します。
      *

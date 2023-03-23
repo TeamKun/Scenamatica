@@ -8,6 +8,7 @@ import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
 import net.kunmc.lab.scenamatica.interfaces.context.ContextManager;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.ScenarioFileManager;
 import net.kunmc.lab.scenamatica.scenariofile.ScenarioFileManagerImpl;
+import org.bukkit.plugin.Plugin;
 
 import java.util.logging.Logger;
 
@@ -15,6 +16,7 @@ import java.util.logging.Logger;
 public class ScenamaticaDaemon implements ScenamaticaRegistry
 {
     private final Logger logger;
+    private final Plugin plugin;
     private final ScenamaticaEnvironment environment;
     private final ExceptionHandler exceptionHandler;
     private final ScenarioFileManager scenarioFileManager;
@@ -23,6 +25,7 @@ public class ScenamaticaDaemon implements ScenamaticaRegistry
     public ScenamaticaDaemon(ScenamaticaEnvironment env)
     {
         this.logger = env.getLogger();
+        this.plugin = env.getPlugin();
         this.environment = env;
         this.exceptionHandler = env.getExceptionHandler();
         this.scenarioFileManager = new ScenarioFileManagerImpl(this);
