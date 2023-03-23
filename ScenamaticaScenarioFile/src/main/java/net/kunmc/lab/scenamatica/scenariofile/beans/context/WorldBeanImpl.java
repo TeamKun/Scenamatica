@@ -14,8 +14,8 @@ import java.util.Map;
 @Value
 public class WorldBeanImpl implements WorldBean
 {
-    @NotNull
-    String name;
+    @Nullable
+    String originalName;
     @NotNull
     WorldType type;
     @Nullable
@@ -30,10 +30,9 @@ public class WorldBeanImpl implements WorldBean
     {
         Map<String, Object> result = new HashMap<>();
 
-        // 必須項目
-        result.put(KEY_NAME, bean.getName());
-
         // オプション項目
+        if (bean.getOriginalName() != null)
+            result.put(KEY_ORIGINAL_NAME, bean.getOriginalName());
         if (bean.getType() != WorldType.NORMAL)
             MapUtils.putIfNotNull(result, KEY_TYPE, bean.getType().name());
         MapUtils.putPrimitiveOrStrIfNotNull(result, KEY_SEED, bean.getSeed());
@@ -48,8 +47,8 @@ public class WorldBeanImpl implements WorldBean
 
     public static void validate(Map<String, Object> map)
     {
-        MapUtils.checkContainsKey(map, KEY_NAME);
-        MapUtils.checkTypeIfContains(map, KEY_NAME, String.class);
+        MapUtils.checkTypeIfContains(map, KEY_ORIGINAL_NAME, String.class);
+        MapUtils.checkEnumNameIfContains(map, KEY_TYPE, WorldType.class);
         MapUtils.checkTypeIfContains(map, KEY_SEED, Number.class);
         MapUtils.checkTypeIfContains(map, KEY_GENERATE_STRUCTURES, Boolean.class);
         MapUtils.checkTypeIfContains(map, KEY_ENVIRONMENT, String.class);
@@ -62,7 +61,7 @@ public class WorldBeanImpl implements WorldBean
         validate(map);
 
         return new WorldBeanImpl(
-                (String) map.get(KEY_NAME),
+                MapUtils.getOrDefault(map, KEY_ORIGINAL_NAME, "world"),
                 MapUtils.getAsEnumOrDefault(map, KEY_TYPE, WorldType.class, WorldType.NORMAL),
                 MapUtils.getOrNull(map, KEY_SEED),
                 MapUtils.getOrDefault(map, KEY_GENERATE_STRUCTURES, true),

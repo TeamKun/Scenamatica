@@ -37,10 +37,9 @@ public interface StageManager
     boolean isStageCreated();
 
     /**
-     * ステージがデフォルトのワールドかどうかを取得します。
-     * デフォルトと判断されるワールドには, 次の３つが含まれます： {@code world}, {@code world_nether}, {@code world_the_end}。
+     * ステージが既存のワールドからコピーされたものかどうかを取得します。
      *
-     * @return デフォルトのワールドの場合は true
+     * @return コピーされたものの場合は true
      */
-    boolean isDefaultWorld();
+    boolean hasCopied();
 }

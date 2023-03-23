@@ -45,7 +45,7 @@ public class WorldBeanSerializeTest
 
     public static final Map<String, Object> EMPTY_MAP = new HashMap<String, Object>()
     {{
-        put("name", "world");
+        put("copyOf", "world");
     }};
 
     @Test

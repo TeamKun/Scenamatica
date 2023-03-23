@@ -1,9 +1,12 @@
 package net.kunmc.lab.scenamatica.context;
 
+import lombok.Getter;
+import net.kunmc.lab.scenamatica.context.utils.WorldUtils;
 import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
 import net.kunmc.lab.scenamatica.interfaces.context.StageManager;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.context.WorldBean;
 import org.bukkit.Bukkit;
+import org.bukkit.NamespacedKey;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
 import org.jetbrains.annotations.NotNull;
@@ -13,13 +16,16 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Comparator;
+import java.util.UUID;
 import java.util.stream.Stream;
 
 public class StageManagerImpl implements StageManager
 {
     private final ScenamaticaRegistry registry;
 
-    private World world;
+    @Getter
+    private World stage;
+    private boolean hasCopied;
 
     public StageManagerImpl(ScenamaticaRegistry registry)
     {
@@ -30,10 +36,21 @@ public class StageManagerImpl implements StageManager
     @NotNull
     public World createStage(WorldBean bean)
     {
-        if (this.world != null)
-            return this.world;
+        if (this.stage != null)
+            return this.stage;
 
-        WorldCreator creator = new WorldCreator(bean.getName());
+        String stageName = "stage_" + UUID.randomUUID().toString().substring(0, 8);
+        NamespacedKey key = NamespacedKey.fromString("scenamatica:" + stageName);
+        assert key != null;
+
+        if (bean.getOriginalName() != null)
+        {
+            World copied = WorldUtils.copyWorld(bean.getOriginalName(), key);
+            this.hasCopied = true;
+            return copied;
+        }
+
+        WorldCreator creator = new WorldCreator(key);
         if (bean.getEnvironment() != null)
             creator.environment(bean.getEnvironment());
         else
@@ -44,43 +61,31 @@ public class StageManagerImpl implements StageManager
         creator.generateStructures(bean.isGenerateStructures());
         creator.hardcore(bean.isHardcore());
 
-        this.world = creator.createWorld();
-        if (this.world == null)
-            throw new IllegalStateException("Failed to create a stage: " + bean.getName());
+        this.stage = creator.createWorld();
+        if (this.stage == null)
+            throw new IllegalStateException("Failed to create a stage: " + bean.getOriginalName());
 
-        this.world.setAutoSave(false);
+        this.stage.setAutoSave(false);
 
-        return this.world;
-    }
-
-    private static boolean isDefaultWorld(World world)
-    {
-        return world.getName().equals("world") || world.getName().equals("world_nether") || world.getName().equals("world_the_end");
+        return this.stage;
     }
 
     @Override
     public void destroyStage()
     {
-        if (this.world == null)
+        if (this.stage == null)
             return;
-        else if (isDefaultWorld(this.world))
-            throw new IllegalStateException("Cannot destroy the default world.");
 
-        this.world.getPlayers().forEach(p -> p.teleport(Bukkit.getWorlds().get(0).getSpawnLocation()));
+        this.stage.getPlayers().forEach(p -> p.teleport(Bukkit.getWorlds().get(0).getSpawnLocation()));
 
-        Bukkit.unloadWorld(this.world, false);
+        Bukkit.unloadWorld(this.stage, false);
 
-        Path worldPath = this.world.getWorldFolder().toPath();
+        Path worldPath = this.stage.getWorldFolder().toPath();
         this.deleteDirectory(worldPath);
 
-        this.world = null;
+        this.stage = null;
     }
 
-    @Override
-    public boolean isDefaultWorld()
-    {
-        return isDefaultWorld(this.world);
-    }
 
     private void deleteDirectory(@NotNull Path path)
     {
@@ -98,14 +103,13 @@ public class StageManagerImpl implements StageManager
     }
 
     @Override
-    public World getStage()
-    {
-        return this.world;
-    }
-
-    @Override
     public boolean isStageCreated()
     {
-        return this.world != null;
+        return this.stage != null;
+    }
+
+    public boolean hasCopied()
+    {
+        return this.hasCopied;
     }
 }

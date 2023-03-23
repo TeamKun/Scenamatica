@@ -12,7 +12,7 @@ import java.io.Serializable;
  */
 public interface WorldBean extends Serializable
 {
-    String KEY_NAME = "name";
+    String KEY_ORIGINAL_NAME = "copyOf";
     String KEY_TYPE = "type";
     String KEY_SEED = "seed";
     String KEY_GENERATE_STRUCTURES = "structures";
@@ -20,12 +20,12 @@ public interface WorldBean extends Serializable
     String KEY_HARDCORE = "hardcore";
 
     /**
-     * ワールド名を取得します。
+     * オリジナルのワールド名を取得します。
      *
      * @return ワールド名
      */
-    @NotNull
-    String getName();
+    @Nullable
+    String getOriginalName();
 
     /**
      * ワールドの種類を取得します。

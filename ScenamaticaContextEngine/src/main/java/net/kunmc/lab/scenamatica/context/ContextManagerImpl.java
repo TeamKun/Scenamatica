@@ -50,19 +50,19 @@ public class ContextManagerImpl implements ContextManager
         Logger logger = this.registry.getLogger();
         logger.log(Level.INFO, "[TEST-{}] Preparing context for scenario: {}", scenarioName);
 
-        World stage;  // TODO: コピーするシステムをつくる。
+        World stage;
         if (context.getWorld() != null)
-            if (Bukkit.getWorld(context.getWorld().getName()) != null)  // 既存だったら再利用する。
+        {
+            if (context.getWorld().getOriginalName() != null
+                    && Bukkit.getWorld(context.getWorld().getOriginalName()) != null)  // 既存だったら再利用する。
             {
-                logger.log(Level.INFO, "[TEST-{}] Found the stage with named {}.", context.getWorld().getName());
-                stage = Bukkit.getWorld(context.getWorld().getName());
+                logger.log(Level.INFO, "[TEST-{}] Found the stage with named {}.", context.getWorld().getOriginalName());
+                logger.log(Level.INFO, "[TEST-{}] Cloning the stage...", scenarioName);
             }
-            else
-            {
 
-                logger.log(Level.INFO, "[TEST-{}] Creating stage...", scenarioName);
-                stage = this.stageManager.createStage(context.getWorld());
-            }
+            logger.log(Level.INFO, "[TEST-{}] Creating stage...", scenarioName);
+            stage = this.stageManager.createStage(context.getWorld());
+        }
         else
             stage = Bukkit.getWorlds().get(0);  // 通常ワールドを取得する。
 
@@ -96,7 +96,7 @@ public class ContextManagerImpl implements ContextManager
     @Override
     public void destroyContext()
     {
-        if (!this.isWorldPrepared && this.stageManager.isDefaultWorld())  // TODO: 関連：コピーするシステムをつくる。
+        if (!this.isWorldPrepared)
             this.stageManager.destroyStage();
 
         if (this.isActorPrepared)
