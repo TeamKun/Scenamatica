@@ -1,17 +1,18 @@
 package net.kunmc.lab.scenamatica.trigger;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
-import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerType;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 
 /**
- * シナリオのトリガーの種類を表す列挙型です。
+ * シナリオのトリガの種類を表す列挙型です。
  */
 @Getter
-public enum EnumTriggerType implements TriggerType
+@RequiredArgsConstructor
+public enum TriggerType
 {
     MANUAL_DISPATCH("manual_dispatch"),
     ON_ACTION("action"),
@@ -23,14 +24,15 @@ public enum EnumTriggerType implements TriggerType
     private static final String BEAN_VALIDATOR_METHOD = "validate";
     private static final String BEAN_DESERIALIZER_METHOD = "deserialize";
 
+    /**
+     * トリガのキーです。
+     */
     private final String key;
+    /**
+     * トリガの引数の型です。
+     */
     @Nullable
     private Class<? extends TriggerArgument> argumentType;
-
-    EnumTriggerType(String key)
-    {
-        this.key = key;
-    }
 
     public void setArgumentType(Class<? extends TriggerArgument> argumentType)
     {
@@ -40,16 +42,21 @@ public enum EnumTriggerType implements TriggerType
         this.argumentType = argumentType;
     }
 
-    public static EnumTriggerType fromKey(String key)
+    public static TriggerType fromKey(String key)
     {
-        for (EnumTriggerType type : values())
+        for (TriggerType type : values())
             if (type.getKey().equals(key))
                 return type;
 
         return null;
     }
 
-    @Override
+    /**
+     * トリガの引数をシリアライズします。
+     *
+     * @param argument 引数
+     * @return シリアライズされた引数
+     */
     @SuppressWarnings("unchecked")
     public Map<String, Object> serializeArgument(TriggerArgument argument)
     {
@@ -68,7 +75,12 @@ public enum EnumTriggerType implements TriggerType
         }
     }
 
-    @Override
+    /**
+     * Mapが引数として正しいか検証します。
+     *
+     * @param argument 引数
+     * @throws IllegalArgumentException 引数が不正な場合
+     */
     public void validateArguments(Map<String, Object> argument)
     {
         if (this.argumentType == null)
@@ -85,7 +97,12 @@ public enum EnumTriggerType implements TriggerType
         }
     }
 
-    @Override
+    /**
+     * トリガの引数をデシリアライズします。
+     *
+     * @param map シリアライズされた引数
+     * @return デシリアライズされた引数
+     */
     public TriggerArgument deserialize(Map<String, Object> map)
     {
         if (this.argumentType == null)

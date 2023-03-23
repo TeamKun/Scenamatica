@@ -3,13 +3,15 @@ package net.kunmc.lab.scenamatica.action;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.kunmc.lab.scenamatica.interfaces.action.ActionArgument;
-import net.kunmc.lab.scenamatica.interfaces.action.ActionType;
 
 import java.util.Map;
 
+/**
+ * アクションのタイプを表す列挙型です。
+ */
 @Getter
 @RequiredArgsConstructor
-public enum EnumActionType implements ActionType
+public enum ActionType
 {
     NONE("none");
 
@@ -17,6 +19,9 @@ public enum EnumActionType implements ActionType
     private static final String BEAN_VALIDATOR_METHOD = "validate";
     private static final String BEAN_DESERIALIZER_METHOD = "deserialize";
 
+    /**
+     * アクションのキーです。
+     */
     private final String key;
 
     private Class<ActionArgument> argumentType;
@@ -29,7 +34,12 @@ public enum EnumActionType implements ActionType
         this.argumentType = argumentType;
     }
 
-    @Override
+    /**
+     * アクションの引数をシリアライズします。
+     *
+     * @param argument 引数
+     * @return シリアライズされた引数
+     */
     @SuppressWarnings("unchecked")
     public Map<String, Object> serializeArgument(ActionArgument argument)
     {
@@ -47,7 +57,12 @@ public enum EnumActionType implements ActionType
         }
     }
 
-    @Override
+    /**
+     * Mapが引数として正しいか検証します。
+     *
+     * @param argument 引数
+     * @throws IllegalArgumentException 引数が不正な場合
+     */
     public void validateArguments(Map<String, Object> argument)
     {
         if (this.argumentType == null)
@@ -64,7 +79,12 @@ public enum EnumActionType implements ActionType
         }
     }
 
-    @Override
+    /**
+     * アクションの引数をデシリアライズします。
+     *
+     * @param map シリアライズされた引数
+     * @return デシリアライズされた引数
+     */
     public ActionArgument deserialize(Map<String, Object> map)
     {
         if (this.argumentType == null)

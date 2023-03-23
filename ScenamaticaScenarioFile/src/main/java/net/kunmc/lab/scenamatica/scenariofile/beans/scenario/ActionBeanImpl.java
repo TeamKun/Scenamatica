@@ -1,10 +1,9 @@
 package net.kunmc.lab.scenamatica.scenariofile.beans.scenario;
 
 import lombok.Value;
-import net.kunmc.lab.scenamatica.action.EnumActionType;
+import net.kunmc.lab.scenamatica.action.ActionType;
 import net.kunmc.lab.scenamatica.commons.utils.MapUtils;
 import net.kunmc.lab.scenamatica.interfaces.action.ActionArgument;
-import net.kunmc.lab.scenamatica.interfaces.action.ActionType;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.action.ActionBean;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -32,7 +31,7 @@ public class ActionBeanImpl implements ActionBean
 
     public static void validate(Map<String, Object> map)
     {
-        MapUtils.checkEnumName(map, KEY_TYPE, EnumActionType.class);
+        MapUtils.checkEnumName(map, KEY_TYPE, ActionType.class);
 
         if (map.containsKey(KEY_ARGUMENTS))
             MapUtils.checkAndCastMap(
@@ -50,7 +49,7 @@ public class ActionBeanImpl implements ActionBean
         ActionType actionType = MapUtils.getAsEnum(
                 map,
                 KEY_TYPE,
-                EnumActionType.class
+                ActionType.class
         );
 
         ActionArgument argument;

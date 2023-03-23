@@ -1,6 +1,6 @@
 package net.kunmc.lab.scenamatica.scenariofile.beans.scenario;
 
-import net.kunmc.lab.scenamatica.action.EnumActionType;
+import net.kunmc.lab.scenamatica.action.ActionType;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.action.ActionBean;
 import net.kunmc.lab.scenamatica.scenariofile.beans.utils.MapTestUtil;
 import org.junit.jupiter.api.Test;
@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class ActionBeanSerializeTest
 {
     public static final ActionBean FULFILLED = new ActionBeanImpl(
-            EnumActionType.NONE,
+            ActionType.NONE,
             null
     );
 
@@ -23,7 +23,7 @@ public class ActionBeanSerializeTest
     }};
 
     public static final ActionBean EMPTY = new ActionBeanImpl(
-            EnumActionType.NONE,
+            ActionType.NONE,
             null
     );
 

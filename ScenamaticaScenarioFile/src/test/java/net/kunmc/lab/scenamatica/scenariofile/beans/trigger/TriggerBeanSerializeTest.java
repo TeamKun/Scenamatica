@@ -5,7 +5,7 @@ import net.kunmc.lab.scenamatica.scenariofile.beans.scenario.ActionBeanImpl;
 import net.kunmc.lab.scenamatica.scenariofile.beans.scenario.ActionBeanSerializeTest;
 import net.kunmc.lab.scenamatica.scenariofile.beans.scenario.ScenarioBeanSerializeTest;
 import net.kunmc.lab.scenamatica.scenariofile.beans.utils.MapTestUtil;
-import net.kunmc.lab.scenamatica.trigger.EnumTriggerType;
+import net.kunmc.lab.scenamatica.trigger.TriggerType;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class TriggerBeanSerializeTest
 {
     public static final TriggerBean FULFILLED = new TriggerBeanImpl(
-            EnumTriggerType.ON_ACTION,
+            TriggerType.ON_ACTION,
             ActionBeanSerializeTest.FULFILLED,
             Arrays.asList(ScenarioBeanSerializeTest.FULFILLED, ScenarioBeanSerializeTest.FULFILLED),
             Arrays.asList(ScenarioBeanSerializeTest.FULFILLED, ScenarioBeanSerializeTest.FULFILLED)
@@ -33,7 +33,7 @@ public class TriggerBeanSerializeTest
     }};
 
     public static final TriggerBean EMPTY = new TriggerBeanImpl(
-            EnumTriggerType.ON_ACTION,
+            TriggerType.ON_ACTION,
             ActionBeanSerializeTest.EMPTY,
             Collections.emptyList(),
             Collections.emptyList()
@@ -47,7 +47,7 @@ public class TriggerBeanSerializeTest
     @BeforeAll
     static void init()
     {
-        EnumTriggerType.ON_ACTION.setArgumentType(ActionBeanImpl.class);
+        TriggerType.ON_ACTION.setArgumentType(ActionBeanImpl.class);
     }
 
     @Test
