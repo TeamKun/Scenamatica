@@ -1,8 +1,8 @@
 package net.kunmc.lab.scenamatica.scenariofile.beans.scenario;
 
 import lombok.Value;
-import net.kunmc.lab.scenamatica.action.ActionType;
 import net.kunmc.lab.scenamatica.commons.utils.MapUtils;
+import net.kunmc.lab.scenamatica.enums.ActionType;
 import net.kunmc.lab.scenamatica.interfaces.action.ActionArgument;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.action.ActionBean;
 import org.jetbrains.annotations.NotNull;

@@ -15,6 +15,7 @@
         <module>ScenamaticaScenarioFile</module>
         <module>ScenamaticaCommons</module>
         <module>ScenamaticaContextEngine</module>
+        <module>ScenamaticaTriggerEngine</module>
         <module>ScenamaticaDaemon</module>
     </modules>
 

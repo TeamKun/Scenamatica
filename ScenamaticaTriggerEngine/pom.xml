@@ -1,16 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>net.kunmc.lab</groupId>
         <artifactId>Scenamatica</artifactId>
         <version>1.0.0</version>
-        <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>ScenamaticaScenarioFile</artifactId>
+    <artifactId>ScenamaticaTriggerEngine</artifactId>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
@@ -31,18 +30,5 @@
             <version>1.0.0</version>
             <scope>compile</scope>
         </dependency>
-        <dependency>
-            <groupId>net.kunmc.lab</groupId>
-            <artifactId>ScenamaticaTriggerEngine</artifactId>
-            <version>1.0.0</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.github.TeamKun.TeamKUNPluginManager</groupId>
-            <artifactId>KPMCommon</artifactId>
-            <version>v3.0.3</version>
-            <scope>compile</scope>
-        </dependency>
     </dependencies>
-
 </project>

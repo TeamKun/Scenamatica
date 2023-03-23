@@ -1,6 +1,6 @@
 package net.kunmc.lab.scenamatica.interfaces.scenariofile.action;
 
-import net.kunmc.lab.scenamatica.action.ActionType;
+import net.kunmc.lab.scenamatica.enums.ActionType;
 import net.kunmc.lab.scenamatica.interfaces.action.ActionArgument;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 import org.jetbrains.annotations.NotNull;

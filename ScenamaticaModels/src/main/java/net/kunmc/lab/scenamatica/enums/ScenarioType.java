@@ -1,4 +1,4 @@
-package net.kunmc.lab.scenamatica.scenario;
+package net.kunmc.lab.scenamatica.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

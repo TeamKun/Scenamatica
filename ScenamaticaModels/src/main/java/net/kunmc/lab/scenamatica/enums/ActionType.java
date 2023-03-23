@@ -1,4 +1,4 @@
-package net.kunmc.lab.scenamatica.action;
+package net.kunmc.lab.scenamatica.enums;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

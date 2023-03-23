@@ -1,11 +1,11 @@
 package net.kunmc.lab.scenamatica.scenariofile.beans.trigger;
 
+import net.kunmc.lab.scenamatica.enums.TriggerType;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerBean;
 import net.kunmc.lab.scenamatica.scenariofile.beans.scenario.ActionBeanImpl;
 import net.kunmc.lab.scenamatica.scenariofile.beans.scenario.ActionBeanSerializeTest;
 import net.kunmc.lab.scenamatica.scenariofile.beans.scenario.ScenarioBeanSerializeTest;
 import net.kunmc.lab.scenamatica.scenariofile.beans.utils.MapTestUtil;
-import net.kunmc.lab.scenamatica.trigger.TriggerType;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 

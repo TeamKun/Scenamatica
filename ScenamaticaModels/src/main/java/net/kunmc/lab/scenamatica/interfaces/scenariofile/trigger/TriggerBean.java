@@ -1,7 +1,7 @@
 package net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger;
 
+import net.kunmc.lab.scenamatica.enums.TriggerType;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.scenario.ScenarioBean;
-import net.kunmc.lab.scenamatica.trigger.TriggerType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
