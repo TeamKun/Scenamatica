@@ -4,6 +4,8 @@ import net.kunmc.lab.scenamatica.interfaces.scenariofile.context.PlayerBean;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
+import java.util.List;
+
 /**
  * シナリオを実行する役者を管理するインターフェースです。
  */
@@ -31,6 +33,13 @@ public interface ActorManager
      * @param player 役者
      */
     void onDestroyActor(Player player);
+
+    /**
+     * 登録されている役者をすべて取得します。
+     *
+     * @return 役者
+     */
+    List<Player> getActors();
 
     /**
      * 生成された役者を全て解除し、インスタンスを破棄します。

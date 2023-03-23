@@ -1,5 +1,6 @@
 package net.kunmc.lab.scenamatica.context.actor;
 
+import lombok.Getter;
 import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
 import net.kunmc.lab.scenamatica.interfaces.context.ActorManager;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.context.PlayerBean;
@@ -12,13 +13,14 @@ import java.util.List;
 
 public class ActorManagerImpl implements ActorManager
 {
-    private final List<Player> mockedPlayers;
-    private final PlayerMockerBase mocker;
+    @Getter
+    private final List<Player> actors;
+    private final PlayerMockerBase actorGenerator;
 
     public ActorManagerImpl(ScenamaticaRegistry registry)
     {
-        this.mockedPlayers = new ArrayList<>();
-        this.mocker = getMocker(registry, this);
+        this.actors = new ArrayList<>();
+        this.actorGenerator = getMocker(registry, this);
     }
 
     private static PlayerMockerBase getMocker(ScenamaticaRegistry registry, ActorManager manager)
@@ -37,30 +39,30 @@ public class ActorManagerImpl implements ActorManager
     @Override
     public Player createActor(World stage, PlayerBean bean)
     {
-        if (this.mockedPlayers.stream().anyMatch(p -> p.getName().equalsIgnoreCase(bean.getName())))
+        if (this.actors.stream().anyMatch(p -> p.getName().equalsIgnoreCase(bean.getName())))
             throw new IllegalArgumentException("Player " + bean.getName() + " is already mocked.");
 
-        Player player = this.mocker.mock(stage, bean);
-        this.mockedPlayers.add(player);
+        Player player = this.actorGenerator.mock(stage, bean);
+        this.actors.add(player);
         return player;
     }
 
     @Override
     public void destroyActor(Player player)
     {
-        this.mocker.unmock(player);
+        this.actorGenerator.unmock(player);
     }
 
     @Override
     public void onDestroyActor(Player player)
     {
-        this.mockedPlayers.remove(player);
+        this.actors.remove(player);
     }
 
     @Override
     public void shutdown()
     {
-        new ArrayList<>(this.mockedPlayers)  //   回避
+        new ArrayList<>(this.actors)  //   回避
                 .forEach(this::destroyActor);
     }
 }

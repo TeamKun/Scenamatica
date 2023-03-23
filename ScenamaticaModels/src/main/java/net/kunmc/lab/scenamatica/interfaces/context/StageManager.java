@@ -35,4 +35,12 @@ public interface StageManager
      * @return 生成されている場合は true
      */
     boolean isStageCreated();
+
+    /**
+     * ステージがデフォルトのワールドかどうかを取得します。
+     * デフォルトと判断されるワールドには, 次の３つが含まれます： {@code world}, {@code world_nether}, {@code world_the_end}。
+     *
+     * @return デフォルトのワールドの場合は true
+     */
+    boolean isDefaultWorld();
 }

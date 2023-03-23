@@ -11,6 +11,7 @@ import net.kunmc.lab.scenamatica.interfaces.scenariofile.context.ContextBean;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.context.PlayerBean;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.logging.Level;
@@ -26,12 +27,19 @@ public class ContextManagerImpl implements ContextManager
     @NotNull
     private final StageManager stageManager;
 
+    private boolean isWorldPrepared;
+    private boolean isActorPrepared;
+
     public ContextManagerImpl(@NotNull ScenamaticaRegistry registry)
     {
         this.registry = registry;
         this.actorManager = new ActorManagerImpl(registry);
         this.stageManager = new StageManagerImpl(registry);
+
+        this.isWorldPrepared = false;
+        this.isActorPrepared = false;
     }
+
 
     @Override
     public boolean prepareContext(ScenarioFileBean scenario)
@@ -42,14 +50,23 @@ public class ContextManagerImpl implements ContextManager
         Logger logger = this.registry.getLogger();
         logger.log(Level.INFO, "[TEST-{}] Preparing context for scenario: {}", scenarioName);
 
-        World stage;
+        World stage;  // TODO: コピーするシステムをつくる。
         if (context.getWorld() != null)
-        {
-            logger.log(Level.INFO, "[TEST-{}] Creating stage...", scenarioName);
-            stage = this.stageManager.createStage(context.getWorld());
-        }
+            if (Bukkit.getWorld(context.getWorld().getName()) != null)  // 既存だったら再利用する。
+            {
+                logger.log(Level.INFO, "[TEST-{}] Found the stage with named {}.", context.getWorld().getName());
+                stage = Bukkit.getWorld(context.getWorld().getName());
+            }
+            else
+            {
+
+                logger.log(Level.INFO, "[TEST-{}] Creating stage...", scenarioName);
+                stage = this.stageManager.createStage(context.getWorld());
+            }
         else
             stage = Bukkit.getWorlds().get(0);  // 通常ワールドを取得する。
+
+        this.isWorldPrepared = true;
 
         if (context.getActors() != null && !context.getActors().isEmpty())
         {
@@ -57,17 +74,35 @@ public class ContextManagerImpl implements ContextManager
             try
             {
                 for (PlayerBean actor : context.getActors())
+                {
                     this.actorManager.createActor(stage, actor);
+                    this.isActorPrepared = true;
+                }
             }
             catch (Exception e)
             {
+                this.registry.getExceptionHandler().report(e);
                 logger.log(Level.SEVERE, "[TEST-{}] Failed to generate actor.", e);
+
+                this.stageManager.destroyStage();
                 return false;
             }
         }
 
         logger.log(Level.INFO, "[TEST-{}] Context has been prepared.", scenarioName);
         return true;
+    }
+
+    @Override
+    public void destroyContext()
+    {
+        if (!this.isWorldPrepared && this.stageManager.isDefaultWorld())  // TODO: 関連：コピーするシステムをつくる。
+            this.stageManager.destroyStage();
+
+        if (this.isActorPrepared)
+            for (Player actor : this.actorManager.getActors())
+                this.actorManager.destroyActor(actor);
+
     }
 
     @Override

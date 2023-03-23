@@ -18,6 +18,11 @@ public interface ContextManager
     /**
      * 環境を破棄します。
      */
+    void destroyContext();
+
+    /**
+     * 環境を破棄します。
+     */
     void shutdown();
 
     /**

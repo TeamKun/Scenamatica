@@ -53,23 +53,36 @@ public class StageManagerImpl implements StageManager
         return this.world;
     }
 
+    private static boolean isDefaultWorld(World world)
+    {
+        return world.getName().equals("world") || world.getName().equals("world_nether") || world.getName().equals("world_the_end");
+    }
+
     @Override
     public void destroyStage()
     {
         if (this.world == null)
             return;
+        else if (isDefaultWorld(this.world))
+            throw new IllegalStateException("Cannot destroy the default world.");
 
         this.world.getPlayers().forEach(p -> p.teleport(Bukkit.getWorlds().get(0).getSpawnLocation()));
 
         Bukkit.unloadWorld(this.world, false);
 
         Path worldPath = this.world.getWorldFolder().toPath();
-        this.deleteDirector(worldPath);
+        this.deleteDirectory(worldPath);
 
         this.world = null;
     }
 
-    private void deleteDirector(@NotNull Path path)
+    @Override
+    public boolean isDefaultWorld()
+    {
+        return isDefaultWorld(this.world);
+    }
+
+    private void deleteDirectory(@NotNull Path path)
     {
         try (Stream<Path> walker = Files.walk(path))
         {
