@@ -1,7 +1,6 @@
 package net.kunmc.lab.scenamatica.interfaces.context;
 
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.context.PlayerBean;
-import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import java.util.List;
@@ -14,11 +13,10 @@ public interface ActorManager
     /**
      * 役者を生成します。
      *
-     * @param stage ステージ
-     * @param bean  プレイヤー情報
+     * @param bean プレイヤー情報
      * @return 生成した役者
      */
-    Player createActor(World stage, PlayerBean bean);
+    Player createActor(PlayerBean bean);
 
     /**
      * 役者を破棄します。

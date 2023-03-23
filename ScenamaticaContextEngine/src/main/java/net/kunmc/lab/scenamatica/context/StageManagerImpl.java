@@ -32,6 +32,15 @@ public class StageManagerImpl implements StageManager
         this.registry = registry;
     }
 
+    @NotNull
+    private static NamespacedKey generateStageKey()
+    {
+        String stageName = "stage_" + UUID.randomUUID().toString().substring(0, 8);
+        NamespacedKey key = NamespacedKey.fromString("scenamatica:" + stageName);
+        assert key != null;
+        return key;
+    }
+
     @Override
     @NotNull
     public World createStage(WorldBean bean)
@@ -39,16 +48,10 @@ public class StageManagerImpl implements StageManager
         if (this.stage != null)
             return this.stage;
 
-        String stageName = "stage_" + UUID.randomUUID().toString().substring(0, 8);
-        NamespacedKey key = NamespacedKey.fromString("scenamatica:" + stageName);
-        assert key != null;
+        NamespacedKey key = generateStageKey();
 
         if (bean.getOriginalName() != null)
-        {
-            World copied = this.stage = WorldUtils.copyWorld(bean.getOriginalName(), key);
-            this.hasCopied = true;
-            return copied;
-        }
+            return this.createStage(bean.getOriginalName());
 
         WorldCreator creator = new WorldCreator(key);
         if (bean.getEnvironment() != null)
@@ -68,6 +71,14 @@ public class StageManagerImpl implements StageManager
         this.stage.setAutoSave(false);
 
         return this.stage;
+    }
+
+    @Override
+    public @NotNull World createStage(String originalName)
+    {
+        World copied = this.stage = WorldUtils.copyWorld(originalName, generateStageKey());
+        this.hasCopied = true;
+        return copied;
     }
 
     @Override

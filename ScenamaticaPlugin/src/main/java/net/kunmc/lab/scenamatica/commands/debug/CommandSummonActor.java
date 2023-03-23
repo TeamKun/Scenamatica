@@ -6,8 +6,6 @@ import net.kunmc.lab.peyangpaperutils.lib.terminal.Terminal;
 import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
 import net.kunmc.lab.scenamatica.scenariofile.beans.context.PlayerBeanImpl;
 import net.kyori.adventure.text.TextComponent;
-import org.bukkit.Bukkit;
-import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -22,14 +20,11 @@ public class CommandSummonActor extends CommandBase
     @Override
     public void onCommand(@NotNull CommandSender sender, @NotNull Terminal terminal, String[] args)
     {
-        if (indicateArgsLengthInvalid(terminal, args, 1, 2))
+        if (indicateArgsLengthInvalid(terminal, args, 1))
             return;
 
         String name = args[0];
-        String worldName = args.length == 2 ? args[1]: Bukkit.getWorlds().get(0).getName();
-        World world = Bukkit.getWorld(worldName);
-
-        this.registry.getContextManager().getActorManager().createActor(world, new PlayerBeanImpl(
+        this.registry.getContextManager().getActorManager().createActor(new PlayerBeanImpl(
                 name,
                 null,
                 null,
@@ -69,8 +64,7 @@ public class CommandSummonActor extends CommandBase
     public String[] getArguments()
     {
         return new String[]{
-                required("name", "string"),
-                optional("world", "stirng")
+                required("name", "string")
         };
     }
 }

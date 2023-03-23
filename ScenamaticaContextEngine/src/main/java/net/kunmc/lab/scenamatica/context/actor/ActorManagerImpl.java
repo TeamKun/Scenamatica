@@ -3,8 +3,8 @@ package net.kunmc.lab.scenamatica.context.actor;
 import lombok.Getter;
 import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
 import net.kunmc.lab.scenamatica.interfaces.context.ActorManager;
+import net.kunmc.lab.scenamatica.interfaces.context.ContextManager;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.context.PlayerBean;
-import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.kunlab.kpm.utils.ReflectionUtils;
 
@@ -13,12 +13,14 @@ import java.util.List;
 
 public class ActorManagerImpl implements ActorManager
 {
+    private final ContextManager contextManager;
     @Getter
     private final List<Player> actors;
     private final PlayerMockerBase actorGenerator;
 
-    public ActorManagerImpl(ScenamaticaRegistry registry)
+    public ActorManagerImpl(ScenamaticaRegistry registry, ContextManager contextManager)
     {
+        this.contextManager = contextManager;
         this.actors = new ArrayList<>();
         this.actorGenerator = getMocker(registry, this);
     }
@@ -37,12 +39,14 @@ public class ActorManagerImpl implements ActorManager
     }
 
     @Override
-    public Player createActor(World stage, PlayerBean bean)
+    public Player createActor(PlayerBean bean)
     {
         if (this.actors.stream().anyMatch(p -> p.getName().equalsIgnoreCase(bean.getName())))
             throw new IllegalArgumentException("Player " + bean.getName() + " is already mocked.");
+        else if (!this.contextManager.getStageManager().isStageCreated())
+            throw new IllegalStateException("Please create a stage first.");
 
-        Player player = this.actorGenerator.mock(stage, bean);
+        Player player = this.actorGenerator.mock(this.contextManager.getStageManager().getStage(), bean);
         this.actors.add(player);
         return player;
     }

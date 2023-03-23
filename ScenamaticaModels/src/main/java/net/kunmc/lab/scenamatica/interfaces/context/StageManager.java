@@ -18,6 +18,14 @@ public interface StageManager
     @NotNull World createStage(WorldBean bean);
 
     /**
+     * ステージをコピーします。
+     *
+     * @param originalName コピー元のワールド名
+     * @return 生成したステージ
+     */
+    @NotNull World createStage(String originalName);
+
+    /**
      * ステージを破棄します。
      */
     void destroyStage();

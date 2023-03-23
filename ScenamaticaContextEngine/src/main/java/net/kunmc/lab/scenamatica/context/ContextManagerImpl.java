@@ -10,7 +10,6 @@ import net.kunmc.lab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.context.ContextBean;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.context.PlayerBean;
 import org.bukkit.Bukkit;
-import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -19,6 +18,8 @@ import java.util.logging.Logger;
 
 public class ContextManagerImpl implements ContextManager
 {
+    private static final String DEFAULT_ORIGINAL_WORLD_NAME = "world";
+
     private final ScenamaticaRegistry registry;
     @Getter
     @NotNull
@@ -33,7 +34,7 @@ public class ContextManagerImpl implements ContextManager
     public ContextManagerImpl(@NotNull ScenamaticaRegistry registry)
     {
         this.registry = registry;
-        this.actorManager = new ActorManagerImpl(registry);
+        this.actorManager = new ActorManagerImpl(registry, this);
         this.stageManager = new StageManagerImpl(registry);
 
         this.isWorldPrepared = false;
@@ -50,21 +51,18 @@ public class ContextManagerImpl implements ContextManager
         Logger logger = this.registry.getLogger();
         logger.log(Level.INFO, "[TEST-{}] Preparing context for scenario: {}", scenarioName);
 
-        World stage;
-        if (context.getWorld() != null)
+        if (context.getWorld() != null && context.getWorld().getOriginalName() != null
+                && Bukkit.getWorld(context.getWorld().getOriginalName()) != null)  // 既存だったら再利用する。
         {
-            if (context.getWorld().getOriginalName() != null
-                    && Bukkit.getWorld(context.getWorld().getOriginalName()) != null)  // 既存だったら再利用する。
-            {
-                logger.log(Level.INFO, "[TEST-{}] Found the stage with named {}.", context.getWorld().getOriginalName());
-                logger.log(Level.INFO, "[TEST-{}] Cloning the stage...", scenarioName);
-            }
-
-            logger.log(Level.INFO, "[TEST-{}] Creating stage...", scenarioName);
-            stage = this.stageManager.createStage(context.getWorld());
+            logger.log(Level.INFO, "[TEST-{}] Found the stage with named {}.", context.getWorld().getOriginalName());
+            logger.log(Level.INFO, "[TEST-{}] Cloning the stage...", scenarioName);
         }
+
+        logger.log(Level.INFO, "[TEST-{}] Creating stage...", scenarioName);
+        if (context.getWorld() != null)
+            this.stageManager.createStage(context.getWorld());
         else
-            stage = Bukkit.getWorlds().get(0);  // 通常ワールドを取得する。
+            this.stageManager.createStage(DEFAULT_ORIGINAL_WORLD_NAME);  // TODO: コンフィグにする。
 
         this.isWorldPrepared = true;
 
@@ -75,7 +73,7 @@ public class ContextManagerImpl implements ContextManager
             {
                 for (PlayerBean actor : context.getActors())
                 {
-                    this.actorManager.createActor(stage, actor);
+                    this.actorManager.createActor(actor);
                     this.isActorPrepared = true;
                 }
             }
