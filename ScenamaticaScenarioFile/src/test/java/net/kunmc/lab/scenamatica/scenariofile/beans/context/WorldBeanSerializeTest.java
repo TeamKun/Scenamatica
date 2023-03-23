@@ -16,7 +16,7 @@ public class WorldBeanSerializeTest
 {
 
     public static final WorldBean FULFILLED = new WorldBeanImpl(
-            "test",
+            "world",
             WorldType.AMPLIFIED,
             1145141919810L,
             false,
@@ -26,7 +26,7 @@ public class WorldBeanSerializeTest
 
     public static final Map<String, Object> FULFILLED_MAP = new HashMap<String, Object>()
     {{
-        put("name", "test");
+        put("copyOf", "world");
         put("type", "AMPLIFIED");
         put("seed", 1145141919810L);
         put("structures", false);
@@ -65,22 +65,10 @@ public class WorldBeanSerializeTest
     }
 
     @Test
-    void 必須項目なしがデシリアライズできないか()
-    {
-        Map<String, Object> map = new HashMap<>(FULFILLED_MAP);
-        map.remove("name");
-
-        assertThrows(
-                IllegalArgumentException.class,
-                () -> WorldBeanImpl.deserialize(map)
-        );
-    }
-
-    @Test
     void 不正な型があるとデシリアライズできないか()
     {
         Map<String, Object> map = new HashMap<>(FULFILLED_MAP);
-        map.put("name", 114514L);
+        map.put("copyOf", 114514L);
         map.put("type", 1919810L);
         map.put("seed", "1145141919810");
         map.put("structures", "foobar");
