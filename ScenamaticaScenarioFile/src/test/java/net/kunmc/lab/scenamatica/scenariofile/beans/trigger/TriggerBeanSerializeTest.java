@@ -1,9 +1,9 @@
 package net.kunmc.lab.scenamatica.scenariofile.beans.trigger;
 
+import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerBean;
 import net.kunmc.lab.scenamatica.scenariofile.beans.scenario.ActionBeanSerializeTest;
 import net.kunmc.lab.scenamatica.scenariofile.beans.scenario.ScenarioBeanSerializeTest;
 import net.kunmc.lab.scenamatica.scenariofile.beans.utils.MapTestUtil;
-import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerBean;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class TriggerBeanSerializeTest
 {
     public static final TriggerBean FULFILLED = new TriggerBeanImpl(
-            TriggerType.ON_ACTION,
+            EnumTriggerType.ON_ACTION,
             ActionBeanSerializeTest.FULFILLED,
             Arrays.asList(ScenarioBeanSerializeTest.FULFILLED, ScenarioBeanSerializeTest.FULFILLED),
             Arrays.asList(ScenarioBeanSerializeTest.FULFILLED, ScenarioBeanSerializeTest.FULFILLED)
@@ -30,7 +30,7 @@ public class TriggerBeanSerializeTest
     }};
 
     public static final TriggerBean EMPTY = new TriggerBeanImpl(
-            TriggerType.ON_ACTION,
+            EnumTriggerType.ON_ACTION,
             ActionBeanSerializeTest.EMPTY,
             Collections.emptyList(),
             Collections.emptyList()

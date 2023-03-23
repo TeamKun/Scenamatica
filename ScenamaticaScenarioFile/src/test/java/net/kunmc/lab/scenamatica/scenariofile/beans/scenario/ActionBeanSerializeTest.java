@@ -1,7 +1,7 @@
 package net.kunmc.lab.scenamatica.scenariofile.beans.scenario;
 
+import net.kunmc.lab.scenamatica.interfaces.scenariofile.action.ActionBean;
 import net.kunmc.lab.scenamatica.scenariofile.beans.utils.MapTestUtil;
-import net.kunmc.lab.scenamatica.interfaces.scenariofile.scenario.ActionBean;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;

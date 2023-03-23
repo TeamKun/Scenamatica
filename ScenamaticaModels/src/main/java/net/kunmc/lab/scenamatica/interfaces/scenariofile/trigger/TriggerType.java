@@ -5,7 +5,7 @@ import java.util.Map;
 /**
  * トリガーのタイプを表す列挙型です。
  */
-public interface KeyedTriggerType
+public interface TriggerType
 {
     /**
      * トリガーの引数をシリアライズします。

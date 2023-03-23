@@ -2,11 +2,11 @@ package net.kunmc.lab.scenamatica.scenariofile.beans.trigger;
 
 import lombok.Value;
 import net.kunmc.lab.scenamatica.commons.utils.MapUtils;
-import net.kunmc.lab.scenamatica.scenariofile.beans.scenario.ScenarioBeanImpl;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.scenario.ScenarioBean;
-import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.KeyedTriggerType;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerBean;
+import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerType;
+import net.kunmc.lab.scenamatica.scenariofile.beans.scenario.ScenarioBeanImpl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -23,7 +23,7 @@ public class TriggerBeanImpl implements TriggerBean
     private static final String KEY_AFTER_THAT = "after";
 
     @NotNull
-    TriggerType type;
+    EnumTriggerType type;
     @Nullable
     TriggerArgument argument;
     @NotNull
@@ -66,7 +66,7 @@ public class TriggerBeanImpl implements TriggerBean
     public static void validate(@NotNull Map<String, Object> map)
     {
         MapUtils.checkType(map, KEY_TYPE, String.class);
-        if (TriggerType.fromKey((String) map.get(KEY_TYPE)) == null)
+        if (EnumTriggerType.fromKey((String) map.get(KEY_TYPE)) == null)
             throw new IllegalArgumentException("Invalid trigger type: " + map.get(KEY_TYPE));
 
         if (map.containsKey(KEY_BEFORE_THAT))
@@ -90,7 +90,7 @@ public class TriggerBeanImpl implements TriggerBean
                 ));
         }
 
-        KeyedTriggerType type = TriggerType.fromKey((String) map.get(KEY_TYPE));
+        TriggerType type = EnumTriggerType.fromKey((String) map.get(KEY_TYPE));
         if (type != null)
             type.validateArguments(map);
     }
@@ -100,7 +100,7 @@ public class TriggerBeanImpl implements TriggerBean
     {
         validate(map);
 
-        TriggerType type = TriggerType.fromKey((String) map.get(KEY_TYPE));
+        EnumTriggerType type = EnumTriggerType.fromKey((String) map.get(KEY_TYPE));
 
         TriggerArgument argument = null;
         if (type != null)

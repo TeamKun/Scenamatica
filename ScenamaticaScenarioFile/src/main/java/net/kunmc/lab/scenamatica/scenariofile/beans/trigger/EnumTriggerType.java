@@ -2,9 +2,9 @@ package net.kunmc.lab.scenamatica.scenariofile.beans.trigger;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import net.kunmc.lab.scenamatica.scenariofile.beans.scenario.ActionBeanImpl;
-import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.KeyedTriggerType;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
+import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerType;
+import net.kunmc.lab.scenamatica.scenariofile.beans.scenario.ActionBeanImpl;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
@@ -14,7 +14,7 @@ import java.util.Map;
  */
 @Getter
 @AllArgsConstructor
-public enum TriggerType implements KeyedTriggerType
+public enum EnumTriggerType implements TriggerType
 {
     MANUAL_DISPATCH("manual_dispatch", null),
     ON_ACTION("action", ActionBeanImpl.class),
@@ -30,9 +30,9 @@ public enum TriggerType implements KeyedTriggerType
     @Nullable
     private final Class<? extends TriggerArgument> argumentType;
 
-    public static TriggerType fromKey(String key)
+    public static EnumTriggerType fromKey(String key)
     {
-        for (TriggerType type : values())
+        for (EnumTriggerType type : values())
             if (type.getKey().equals(key))
                 return type;
 

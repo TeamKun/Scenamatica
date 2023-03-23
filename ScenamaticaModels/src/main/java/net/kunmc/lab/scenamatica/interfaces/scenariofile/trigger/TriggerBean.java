@@ -17,8 +17,8 @@ public interface TriggerBean extends Serializable
      *
      * @return タイプ
      */
-    @Nullable
-    KeyedTriggerType getType();
+    @NotNull
+    TriggerType getType();
 
     /**
      * このトリガーの引数を取得します。

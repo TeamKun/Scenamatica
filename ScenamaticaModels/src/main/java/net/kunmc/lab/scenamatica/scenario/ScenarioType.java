@@ -1,4 +1,4 @@
-package net.kunmc.lab.scenamatica.interfaces.scenariofile.scenario;
+package net.kunmc.lab.scenamatica.scenario;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
