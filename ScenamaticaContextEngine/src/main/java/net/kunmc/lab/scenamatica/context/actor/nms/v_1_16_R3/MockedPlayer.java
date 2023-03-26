@@ -9,7 +9,6 @@ import net.minecraft.server.v1_16_R3.EnumMoveType;
 import net.minecraft.server.v1_16_R3.MinecraftServer;
 import net.minecraft.server.v1_16_R3.Vec3D;
 import net.minecraft.server.v1_16_R3.WorldServer;
-import org.bukkit.util.Vector;
 
 class MockedPlayer extends EntityPlayer
 {
@@ -69,19 +68,11 @@ class MockedPlayer extends EntityPlayer
         if (this.dead)
             return;
 
-        float force = 3.55f;
+        float vecX = -1f * (float) Math.sin(damager.yaw * Math.PI / 180.0F) * 0.5F;
+        float vecY = 0.1F;
+        float vecZ = (float) Math.cos(damager.yaw * Math.PI / 180.0F) * 0.5F;
 
-        Vector direction = this.getBukkitEntity().getLocation().toVector()
-                .subtract(damager.getBukkitEntity().getLocation().toVector())
-                .normalize();
-        Vector relVec = direction.clone().setY(1.7);
-        relVec.multiply(0.5 / Math.max(1.0, relVec.length()))
-                .setX(relVec.getX() * force)
-                .setZ(relVec.getZ() * force)
-                .multiply(1.2).add(relVec);
-
-        Vec3D vec = new Vec3D(relVec.getX(), relVec.getY(), relVec.getZ());
-
-        this.move(EnumMoveType.SELF, vec);
+        this.f(vecX, vecY, vecZ);
+        this.setMot(damager.getMot().d(0.6, 1, 0.6));
     }
 }
