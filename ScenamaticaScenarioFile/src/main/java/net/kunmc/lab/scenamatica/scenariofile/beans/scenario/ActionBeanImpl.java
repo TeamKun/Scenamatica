@@ -3,7 +3,6 @@ package net.kunmc.lab.scenamatica.scenariofile.beans.scenario;
 import lombok.Value;
 import net.kunmc.lab.scenamatica.commons.utils.MapUtils;
 import net.kunmc.lab.scenamatica.enums.ActionType;
-import net.kunmc.lab.scenamatica.interfaces.action.ActionArgument;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.action.ActionBean;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -17,14 +16,14 @@ public class ActionBeanImpl implements ActionBean
     @NotNull
     ActionType type;
     @Nullable
-    ActionArgument argument;
+    Map<String, Object> arguments;
 
     public static Map<String, Object> serialize(ActionBean bean)
     {
         Map<String, Object> map = new HashMap<>();
         map.put(KEY_TYPE, bean.getType().getKey());
 
-        MapUtils.putIfNotNull(map, KEY_ARGUMENTS, bean.getArgument());
+        MapUtils.putIfNotNull(map, KEY_ARGUMENTS, bean.getArguments());
 
         return map;
     }
@@ -52,23 +51,19 @@ public class ActionBeanImpl implements ActionBean
                 ActionType.class
         );
 
-        ActionArgument argument;
+        Map<String, Object> argumentsMap;
         if (map.containsKey(KEY_ARGUMENTS))
-        {
-            Map<String, Object> argumentsMap = MapUtils.checkAndCastMap(
+            argumentsMap = MapUtils.checkAndCastMap(
                     map.get(KEY_ARGUMENTS),
                     String.class,
                     Object.class
             );
-
-            argument = actionType.deserialize(argumentsMap);
-        }
         else
-            argument = null;
+            argumentsMap = null;
 
         return new ActionBeanImpl(
                 actionType,
-                argument
+                argumentsMap
         );
     }
 

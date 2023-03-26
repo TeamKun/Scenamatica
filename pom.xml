@@ -15,8 +15,10 @@
         <module>ScenamaticaScenarioFile</module>
         <module>ScenamaticaCommons</module>
         <module>ScenamaticaContextEngine</module>
-        <module>ScenamaticaTriggerEngine</module>
+        <module>ScenamaticaActionEngine</module>
         <module>ScenamaticaDaemon</module>
+        <module>ScenamaticaTriggerEngine</module>
+        <module>ScenamaticaScenarioEngine</module>
     </modules>
 
     <name>Scenamatica</name>
@@ -59,6 +61,12 @@
             <artifactId>lombok</artifactId>
             <version>1.18.26</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.github.TeamKUN</groupId>
+            <artifactId>PeyangPaperUtils</artifactId>
+            <version>2.0.7</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>

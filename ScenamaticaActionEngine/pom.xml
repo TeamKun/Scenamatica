@@ -7,10 +7,9 @@
         <groupId>net.kunmc.lab</groupId>
         <artifactId>Scenamatica</artifactId>
         <version>1.0.0</version>
-        <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>ScenamaticaTriggerEngine</artifactId>
+    <artifactId>ScenamaticaActionEngine</artifactId>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>

@@ -32,12 +32,6 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>net.kunmc.lab</groupId>
-            <artifactId>ScenamaticaTriggerEngine</artifactId>
-            <version>1.0.0</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
             <groupId>com.github.TeamKun.TeamKUNPluginManager</groupId>
             <artifactId>KPMCommon</artifactId>
             <version>v3.0.3</version>

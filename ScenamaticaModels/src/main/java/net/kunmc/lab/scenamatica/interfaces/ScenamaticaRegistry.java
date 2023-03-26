@@ -1,7 +1,10 @@
 package net.kunmc.lab.scenamatica.interfaces;
 
+import net.kunmc.lab.scenamatica.interfaces.action.ActionManager;
 import net.kunmc.lab.scenamatica.interfaces.context.ContextManager;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.ScenarioFileManager;
+import net.kunmc.lab.scenamatica.interfaces.trigger.TriggerManager;
+import org.bukkit.plugin.Plugin;
 
 import java.util.logging.Logger;
 
@@ -16,6 +19,13 @@ public interface ScenamaticaRegistry
      * @return ロガー
      */
     Logger getLogger();
+
+    /**
+     * Scenamatica デーモンを利用するプラグインを取得します。
+     *
+     * @return プラグイン
+     */
+    Plugin getPlugin();
 
     /**
      * Scenamatica 環境を取得します。
@@ -42,6 +52,20 @@ public interface ScenamaticaRegistry
      * @return コンテキストマネージャー
      */
     ContextManager getContextManager();
+
+    /**
+     * 動作マネージャーを取得します。
+     *
+     * @return 動作マネージャー
+     */
+    ActionManager getActionManager();
+
+    /**
+     * トリガマネージャーを取得します。
+     *
+     * @return トリガマネージャー
+     */
+    TriggerManager getTriggerManager();
 
     /**
      * このデーモンをシャットダウンします。

@@ -35,11 +35,25 @@
             <groupId>net.kunmc.lab</groupId>
             <artifactId>ScenamaticaContextEngine</artifactId>
             <version>1.0.0</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>net.kunmc.lab</groupId>
             <artifactId>ScenamaticaScenarioFile</artifactId>
             <version>1.0.0</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.kunmc.lab</groupId>
+            <artifactId>ScenamaticaActionEngine</artifactId>
+            <version>1.0.0</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.kunmc.lab</groupId>
+            <artifactId>ScenamaticaTriggerEngine</artifactId>
+            <version>1.0.0</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 </project>
