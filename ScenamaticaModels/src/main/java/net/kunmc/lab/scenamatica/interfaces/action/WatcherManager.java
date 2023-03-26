@@ -49,6 +49,13 @@ public interface WatcherManager
     void unregisterWatchers(@NotNull Plugin plugin);
 
     /**
+     * 監視を解除します。
+     *
+     * @param entry 監視を解除する登録情報
+     */
+    void unregisterWatcher(@NotNull WatchingEntry<?> entry);
+
+    /**
      * 動作が実行されたときに呼び出されるメソッドです。
      */
     void onActionFired(@NotNull WatchingEntry<?> entry);

@@ -101,21 +101,27 @@ public class WatcherManagerImpl implements WatcherManager
     }
 
     @Override
+    public void unregisterWatcher(@NotNull WatchingEntry<?> entry)
+    {
+        if (!this.actionWatchers.containsValue(entry))
+            throw new IllegalStateException("The entry is not registered.");
+
+        entry.unregister();
+        this.actionWatchers.remove(entry.getPlugin(), entry);
+    }
+
+    @Override
     public void onActionFired(@NotNull WatchingEntry<?> entry)
     {
         if (!this.actionWatchers.containsValue(entry))
             throw new IllegalStateException("The entry is not registered.");
 
-        // アクションが「シナリオ」タイプだったら, そのアクションを登録解除する。(「トリガ」は次も行われる可能性がある。)
         if (entry.getType() == WatchType.SCENARIO)
-        {
-            this.unregisterWatchers(entry.getPlugin());
             this.registry.getTriggerManager().performTriggerFire(
                     entry.getScenario().getName(),
                     TriggerType.ON_ACTION,
                     entry.getArgument()
             );
-        }
         else
         {
             // TODO: アクションの実行をキューに入れる
