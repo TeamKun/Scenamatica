@@ -11,7 +11,8 @@ import java.util.List;
 /**
  * シナリオが実行されるタイミングを表すインターフェースです。
  */
-public interface TriggerBean extends Serializable
+public interface
+TriggerBean extends Serializable
 {
     /**
      * このトリガーのタイプを取得します。

@@ -23,8 +23,8 @@ public interface ActionCompiler
      * @param <A>           アクションの引数の型
      * @return コンパイルされたアクション
      */
-    <A extends ActionArgument> ActionQueueEntry<A> compile(@NotNull ScenamaticaRegistry registry,
-                                                           @NotNull ActionBean bean,
-                                                           @Nullable BiConsumer<ActionQueueEntry<A>, Throwable> reportErrorTo,
-                                                           @Nullable Consumer<ActionQueueEntry<A>> onSuccess);
+    <A extends ActionArgument> CompiledAction<A> compile(@NotNull ScenamaticaRegistry registry,
+                                                         @NotNull ActionBean bean,
+                                                         @Nullable BiConsumer<CompiledAction<A>, Throwable> reportErrorTo,
+                                                         @Nullable Consumer<CompiledAction<A>> onSuccess);
 }

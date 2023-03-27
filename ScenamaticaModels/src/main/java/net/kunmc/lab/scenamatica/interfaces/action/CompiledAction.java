@@ -5,11 +5,11 @@ import org.apache.logging.log4j.util.BiConsumer;
 import java.util.function.Consumer;
 
 /**
- * アクションのキューに入れるためのエントリーです。
+ * アクションをコンパイルした結果を表します。
  *
  * @param <A> アクションの引数の型
  */
-public interface ActionQueueEntry<A extends ActionArgument>
+public interface CompiledAction<A extends ActionArgument>
 {
     /**
      * アクションを取得します。
@@ -30,14 +30,14 @@ public interface ActionQueueEntry<A extends ActionArgument>
      *
      * @return エラーハンドラー
      */
-    BiConsumer<ActionQueueEntry<A>, Throwable> getErrorHandler();
+    BiConsumer<CompiledAction<A>, Throwable> getErrorHandler();
 
     /**
      * アクションが実行されたときに呼び出されるコールバックを取得します。
      *
      * @return コールバック
      */
-    Consumer<ActionQueueEntry<A>> getOnExecute();
+    Consumer<CompiledAction<A>> getOnExecute();
 
     /**
      * アクションを実行します。

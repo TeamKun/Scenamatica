@@ -8,7 +8,7 @@ import net.kunmc.lab.scenamatica.interfaces.action.Action;
 import net.kunmc.lab.scenamatica.interfaces.action.ActionArgument;
 import net.kunmc.lab.scenamatica.interfaces.action.ActionCompiler;
 import net.kunmc.lab.scenamatica.interfaces.action.ActionManager;
-import net.kunmc.lab.scenamatica.interfaces.action.ActionQueueEntry;
+import net.kunmc.lab.scenamatica.interfaces.action.CompiledAction;
 import net.kunmc.lab.scenamatica.interfaces.action.WatcherManager;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
 import org.apache.logging.log4j.util.BiConsumer;
@@ -28,7 +28,7 @@ public class ActionManagerImpl implements ActionManager
     private final ActionCompiler compiler;
     @Getter
     private final WatcherManager watcherManager;
-    private final Deque<ActionQueueEntry<?>> actionQueue;
+    private final Deque<CompiledAction<?>> actionQueue;
 
     private BukkitTask runner;
 
@@ -49,18 +49,18 @@ public class ActionManagerImpl implements ActionManager
             if (this.actionQueue.isEmpty())
                 return;
 
-            ActionQueueEntry<?> entry = this.actionQueue.pop();
+            CompiledAction<?> entry = this.actionQueue.pop();
             entry.execute();
         }, 0, 1);
     }
 
     @Override
-    public <A extends ActionArgument> ActionQueueEntry<A> queueExecute(@NotNull Action<A> action,
-                                                                       @Nullable A argument,
-                                                                       @Nullable BiConsumer<ActionQueueEntry<A>, Throwable> onEexception,
-                                                                       @Nullable Consumer<ActionQueueEntry<A>> onSuccess)
+    public <A extends ActionArgument> CompiledAction<A> queueExecute(@NotNull Action<A> action,
+                                                                     @Nullable A argument,
+                                                                     @Nullable BiConsumer<CompiledAction<A>, Throwable> onEexception,
+                                                                     @Nullable Consumer<CompiledAction<A>> onSuccess)
     {
-        ActionQueueEntry<A> entry = new ActionQueueEntryImpl<>(action, argument, onEexception, onSuccess);
+        CompiledAction<A> entry = new CompiledActionImpl<>(action, argument, onEexception, onSuccess);
         this.actionQueue.add(entry);
         return entry;
     }

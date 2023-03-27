@@ -35,10 +35,10 @@ public interface ActionManager
      * @param onSuccess   動作の実行に成功したときに呼び出されるコールバック
      * @param <A>         動作の引数の型
      */
-    <A extends ActionArgument> ActionQueueEntry<A> queueExecute(@NotNull Action<A> action,
-                                                                @Nullable A argument,
-                                                                @NotNull BiConsumer<ActionQueueEntry<A>, Throwable> onException,
-                                                                @Nullable Consumer<ActionQueueEntry<A>> onSuccess);
+    <A extends ActionArgument> CompiledAction<A> queueExecute(@NotNull Action<A> action,
+                                                              @Nullable A argument,
+                                                              @NotNull BiConsumer<CompiledAction<A>, Throwable> onException,
+                                                              @Nullable Consumer<CompiledAction<A>> onSuccess);
 
     /**
      * 動作の監視を追加します。
