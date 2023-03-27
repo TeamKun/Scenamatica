@@ -23,6 +23,7 @@ import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+@Getter
 public class ScenarioEngine
 {
     private final ScenamaticaRegistry registry;
@@ -33,17 +34,12 @@ public class ScenarioEngine
     private final List<CompiledScenarioAction<?>> actions;
     private final List<CompiledTriggerAction> triggerActions;
 
-    @Getter
     private TriggerBean ranBy;
-    @Getter
     private UUID testID;
     private long startedAt;
     private String logPrefix;
-    @Getter
     private boolean isAutoRun;
-    @Getter
     private TestState state;
-    @Getter
     private ScenarioBean currentScenario;
 
     public ScenarioEngine(@NotNull ScenamaticaRegistry registry,
