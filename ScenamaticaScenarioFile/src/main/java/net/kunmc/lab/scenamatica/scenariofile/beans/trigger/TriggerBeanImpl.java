@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 @Value
 public class TriggerBeanImpl implements TriggerBean
@@ -131,5 +132,20 @@ public class TriggerBeanImpl implements TriggerBean
                 beforeThat,
                 afterThat
         );
+    }
+
+    @Override
+    public boolean equals(Object o)
+    {
+        if (this == o) return true;
+        if (!(o instanceof TriggerBeanImpl)) return false;
+        TriggerBeanImpl that = (TriggerBeanImpl) o;
+        return this.type == that.type;
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash(this.type);
     }
 }
