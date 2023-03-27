@@ -4,13 +4,19 @@ import net.kunmc.lab.scenamatica.enums.ActionType;
 import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
 import net.kunmc.lab.scenamatica.interfaces.action.Action;
 import net.kunmc.lab.scenamatica.interfaces.action.ActionArgument;
+import net.kunmc.lab.scenamatica.interfaces.action.ActionCompiler;
+import net.kunmc.lab.scenamatica.interfaces.action.ActionQueueEntry;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.action.ActionBean;
+import org.apache.logging.log4j.util.BiConsumer;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Consumer;
 
-public class ActionCompiler
+public class ActionCompilerImpl implements ActionCompiler
 {
     private static final Map<ActionType, Class<? extends Action<? extends ActionArgument>>> BY_NAME;
 
@@ -21,7 +27,11 @@ public class ActionCompiler
         // TODO: アクションを登録する。
     }
 
-    public static <A extends ActionArgument> ActionQueueEntry<A> compile(ScenamaticaRegistry registry, ActionBean bean)
+    @Override
+    public <A extends ActionArgument> ActionQueueEntry<A> compile(@NotNull ScenamaticaRegistry registry,
+                                                                  @NotNull ActionBean bean,
+                                                                  @Nullable BiConsumer<ActionQueueEntry<A>, Throwable> reportErrorTo,
+                                                                  @Nullable Consumer<ActionQueueEntry<A>> onSuccess)
     {
         Class<? extends Action<A>> actionClass;
         try
@@ -45,7 +55,7 @@ public class ActionCompiler
         if (bean.getArguments() != null)
             argument = action.deserializeArgument(bean.getArguments());
 
-        return new ActionQueueEntry<>(action, argument);
+        return new ActionQueueEntryImpl<>(action, argument, reportErrorTo, onSuccess);
     }
 
     private static <A extends ActionArgument> Constructor<? extends Action<A>> getActionConstructor(ScenamaticaRegistry registry, Class<? extends Action<A>> actionClass)

@@ -6,10 +6,12 @@ import net.kunmc.lab.scenamatica.enums.WatchType;
 import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
 import net.kunmc.lab.scenamatica.interfaces.action.Action;
 import net.kunmc.lab.scenamatica.interfaces.action.ActionArgument;
+import net.kunmc.lab.scenamatica.interfaces.action.ActionCompiler;
 import net.kunmc.lab.scenamatica.interfaces.action.ActionManager;
+import net.kunmc.lab.scenamatica.interfaces.action.ActionQueueEntry;
 import net.kunmc.lab.scenamatica.interfaces.action.WatcherManager;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
-import net.kunmc.lab.scenamatica.interfaces.scenariofile.scenario.ScenarioBean;
+import org.apache.logging.log4j.util.BiConsumer;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
@@ -17,10 +19,13 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.function.Consumer;
 
 public class ActionManagerImpl implements ActionManager
 {
     private final ScenamaticaRegistry registry;
+    @Getter
+    private final ActionCompiler compiler;
     @Getter
     private final WatcherManager watcherManager;
     private final Deque<ActionQueueEntry<?>> actionQueue;
@@ -30,6 +35,7 @@ public class ActionManagerImpl implements ActionManager
     public ActionManagerImpl(@NotNull ScenamaticaRegistry registry)
     {
         this.registry = registry;
+        this.compiler = new ActionCompilerImpl();
         this.watcherManager = new WatcherManagerImpl(registry);
         this.actionQueue = new ArrayDeque<>();
 
@@ -49,9 +55,14 @@ public class ActionManagerImpl implements ActionManager
     }
 
     @Override
-    public <A extends ActionArgument> void queueExecute(@NotNull Action<A> action, @Nullable A argument)
+    public <A extends ActionArgument> ActionQueueEntry<A> queueExecute(@NotNull Action<A> action,
+                                                                       @Nullable A argument,
+                                                                       @Nullable BiConsumer<ActionQueueEntry<A>, Throwable> onEexception,
+                                                                       @Nullable Consumer<ActionQueueEntry<A>> onSuccess)
     {
-        this.actionQueue.add(new ActionQueueEntry<>(action, argument));
+        ActionQueueEntry<A> entry = new ActionQueueEntryImpl<>(action, argument, onEexception, onSuccess);
+        this.actionQueue.add(entry);
+        return entry;
     }
 
     @Override
@@ -63,17 +74,6 @@ public class ActionManagerImpl implements ActionManager
     {
         this.watcherManager.registerWatcher(action, argument, scenario, plugin, watchType);
     }
-
-    @Override
-    public void startScenario(@NotNull ScenarioFileBean scenario)
-    {
-        for (ScenarioBean oneScenario : scenario.getScenario())
-        {
-            ActionQueueEntry<?> entry = ActionCompiler.compile(this.registry, oneScenario.getAction());
-            this.actionQueue.add(entry);
-        }
-    }
-
     @Override
     public void shutdown()
     {

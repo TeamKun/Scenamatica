@@ -40,6 +40,12 @@ public class ScenamaticaDaemon implements ScenamaticaRegistry
         this.triggerManager = new TriggerManagerImpl(this);
     }
 
+    public void init()
+    {
+        this.actionManager.init();
+
+    }
+
     @Override
     public void shutdown()
     {

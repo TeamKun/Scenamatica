@@ -45,19 +45,4 @@ public interface Action<A extends ActionArgument>
      * @return デシリアライズされた引数
      */
     A deserializeArgument(@NotNull Map<String, Object> map);
-
-    /**
-     * この動作が同じものかどうかを返します。
-     *
-     * @param obj 比較対象のオブジェクト
-     * @return 同じものであればtrue、そうでなければfalse
-     */
-    @Override
-    boolean equals(Object obj);
-
-    /**
-     * この動作のハッシュコードを返します。
-     */
-    @Override
-    int hashCode();
 }
