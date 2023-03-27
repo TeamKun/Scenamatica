@@ -4,15 +4,21 @@ import lombok.Getter;
 import net.kunmc.lab.scenamatica.context.actor.ActorManagerImpl;
 import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
 import net.kunmc.lab.scenamatica.interfaces.context.ActorManager;
+import net.kunmc.lab.scenamatica.interfaces.context.Context;
 import net.kunmc.lab.scenamatica.interfaces.context.ContextManager;
 import net.kunmc.lab.scenamatica.interfaces.context.StageManager;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.context.ContextBean;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.context.PlayerBean;
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -41,54 +47,57 @@ public class ContextManagerImpl implements ContextManager
         this.isActorPrepared = false;
     }
 
-
     @Override
-    public boolean prepareContext(ScenarioFileBean scenario)
+    public Context prepareContext(@NotNull ScenarioFileBean scenario, @NotNull UUID testID)
     {
-        String scenarioName = scenario.getName();
+        String logPrefix = "TEST-" + StringUtils.substring(scenario.getName(), 0, 8) +
+                "/" + testID.toString().substring(0, 8);
         ContextBean context = scenario.getContext();
 
         Logger logger = this.registry.getLogger();
-        logger.log(Level.INFO, "[TEST-{}] Preparing context for scenario: {}", scenarioName);
+        logger.log(Level.INFO, "[{}] Preparing context for scenario: {}", logPrefix);
 
         if (context.getWorld() != null && context.getWorld().getOriginalName() != null
                 && Bukkit.getWorld(context.getWorld().getOriginalName()) != null)  // 既存だったら再利用する。
         {
-            logger.log(Level.INFO, "[TEST-{}] Found the stage with named {}.", context.getWorld().getOriginalName());
-            logger.log(Level.INFO, "[TEST-{}] Cloning the stage...", scenarioName);
+            logger.log(Level.INFO, "[{}] Found the stage with named {}.", context.getWorld().getOriginalName());
+            logger.log(Level.INFO, "[{}] Cloning the stage...", logPrefix);
         }
 
-        logger.log(Level.INFO, "[TEST-{}] Creating stage...", scenarioName);
+        logger.log(Level.INFO, "[{}] Creating stage...", logPrefix);
+
+        World stage;
         if (context.getWorld() != null)
-            this.stageManager.createStage(context.getWorld());
+            stage = this.stageManager.createStage(context.getWorld());
         else
-            this.stageManager.createStage(DEFAULT_ORIGINAL_WORLD_NAME);  // TODO: コンフィグにする。
+            stage = this.stageManager.createStage(DEFAULT_ORIGINAL_WORLD_NAME);  // TODO: コンフィグにする。
 
         this.isWorldPrepared = true;
 
+        List<Player> actors = new ArrayList<>();
         if (context.getActors() != null && !context.getActors().isEmpty())
         {
-            logger.log(Level.INFO, "[TEST-{}] Generating actors...", scenarioName);
+            logger.log(Level.INFO, "[{}] Generating actors...", logPrefix);
             try
             {
                 for (PlayerBean actor : context.getActors())
                 {
-                    this.actorManager.createActor(actor);
+                    actors.add(this.actorManager.createActor(actor));
                     this.isActorPrepared = true;
                 }
             }
             catch (Exception e)
             {
                 this.registry.getExceptionHandler().report(e);
-                logger.log(Level.SEVERE, "[TEST-{}] Failed to generate actor.", e);
+                logger.log(Level.SEVERE, "[{}] Failed to generate actor.", e);
 
                 this.stageManager.destroyStage();
-                return false;
+                return null;
             }
         }
 
-        logger.log(Level.INFO, "[TEST-{}] Context has been prepared.", scenarioName);
-        return true;
+        logger.log(Level.INFO, "[{}] Context has been prepared.", logPrefix);
+        return new ContextImpl(stage, actors);
     }
 
     @Override
