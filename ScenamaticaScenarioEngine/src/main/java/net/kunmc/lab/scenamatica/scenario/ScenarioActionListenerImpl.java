@@ -3,6 +3,7 @@ package net.kunmc.lab.scenamatica.scenario;
 import lombok.Getter;
 import lombok.Setter;
 import net.kunmc.lab.scenamatica.enums.TestResultCause;
+import net.kunmc.lab.scenamatica.interfaces.action.Action;
 import net.kunmc.lab.scenamatica.interfaces.action.ActionArgument;
 import net.kunmc.lab.scenamatica.interfaces.action.CompiledAction;
 import net.kunmc.lab.scenamatica.interfaces.action.WatchingEntry;
@@ -30,13 +31,13 @@ public class ScenarioActionListenerImpl implements ScenarioActionListener
     @Override
     public <A extends ActionArgument> void onActionError(@NotNull CompiledAction<A> action, @NotNull Throwable error)
     {
-        this.setResult(TestResultCause.ACTION_EXECUTION_FAILED, error.getMessage());
+        this.setResult(TestResultCause.ACTION_EXECUTION_FAILED, error.getMessage(), action.getAction());
     }
 
     @Override
     public <A extends ActionArgument> void onActionExecuted(@NotNull CompiledAction<A> action)
     {
-        this.setResult(TestResultCause.PASSED, "Passed.");
+        this.setPassed();
     }
 
     @Override
@@ -45,19 +46,28 @@ public class ScenarioActionListenerImpl implements ScenarioActionListener
         if (this.waitingFor != null
                 && entry.getAction().getClass() == this.waitingFor.getAction().getClass()
                 && entry.getArgument().isSame(this.waitingFor.getArgument()))
-            this.setResult(TestResultCause.PASSED, "Passed.");
+            this.setPassed();
         else  // 他のアクションが実行された。
-            this.setResult(TestResultCause.ACTION_EXPECTATION_JUMPED, "Action expectation jump detected.");
+            this.setResult(TestResultCause.ACTION_EXPECTATION_JUMPED, "Action expectation jump detected.",
+                    entry.getAction()
+            );
     }
 
-    private void setResult(TestResultCause cause, String message)
+    private void setResult(TestResultCause cause, String message, @Nullable Action<?> failedAction)
     {
         this.engine.getDeliverer().setResult(new TestResultImpl(
                 this.engine.getTestID(),
                 this.engine.getState(),
                 cause,
                 message,
-                this.engine.getStartedAt()
+                this.engine.getStartedAt(),
+                System.currentTimeMillis(),
+                failedAction
         ));
+    }
+
+    private void setPassed()
+    {
+        this.setResult(TestResultCause.PASSED, "Passed.", null);
     }
 }
