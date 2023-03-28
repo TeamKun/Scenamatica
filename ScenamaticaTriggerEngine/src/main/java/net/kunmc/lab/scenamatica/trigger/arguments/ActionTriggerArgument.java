@@ -2,15 +2,15 @@ package net.kunmc.lab.scenamatica.trigger.arguments;
 
 import lombok.Value;
 import net.kunmc.lab.scenamatica.commons.utils.MapUtils;
-import net.kunmc.lab.scenamatica.enums.ActionType;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 
 /**
- * {@link net.kunmc.lab.scenamatica.enums.TriggerType#ON_ACTION} トリガーの引数を表すインターフェースです。
+ * アクショントリガーの引数を表すインターフェースです。
  */
 @Value
 public class ActionTriggerArgument implements TriggerArgument
@@ -18,13 +18,13 @@ public class ActionTriggerArgument implements TriggerArgument
     private static final String KEY_ACTION_TYPE = "action";
     private static final String KEY_ACTION_ARGS = "with";
 
-    ActionType actionType;
+    String actionType;
     Map<String, Object> actionArguments;
 
     public static Map<String, Object> serialize(ActionTriggerArgument argument)
     {
         Map<String, Object> result = new HashMap<>();
-        result.put(KEY_ACTION_TYPE, argument.actionType.name().toLowerCase(Locale.ROOT));
+        result.put(KEY_ACTION_TYPE, argument.actionType.toLowerCase(Locale.ROOT));
         MapUtils.putIfNotNull(result, KEY_ACTION_ARGS, argument.actionArguments);
 
         return result;
@@ -32,7 +32,7 @@ public class ActionTriggerArgument implements TriggerArgument
 
     public static void validate(Map<String, Object> map)
     {
-        MapUtils.checkEnumName(map, KEY_ACTION_TYPE, ActionType.class);
+        MapUtils.checkContainsKey(map, KEY_ACTION_TYPE);
         if (map.containsKey(KEY_ACTION_ARGS))
             MapUtils.checkAndCastMap(map.get(KEY_ACTION_ARGS), String.class, Object.class);
     }
@@ -41,7 +41,7 @@ public class ActionTriggerArgument implements TriggerArgument
     {
         validate(map);
 
-        ActionType type = MapUtils.getAsEnum(map, KEY_ACTION_TYPE, ActionType.class);
+        String type = map.get(KEY_ACTION_TYPE).toString().toLowerCase(Locale.ROOT);
         Map<String, Object> actionArguments;
         if (map.containsKey(KEY_ACTION_ARGS))
             actionArguments = MapUtils.checkAndCastMap(map.get(KEY_ACTION_ARGS), String.class, Object.class);
@@ -58,7 +58,7 @@ public class ActionTriggerArgument implements TriggerArgument
     public boolean isSame(TriggerArgument argument)
     {
         return argument instanceof ActionTriggerArgument
-                && this.actionType == ((ActionTriggerArgument) argument).actionType
+                && Objects.equals(this.actionType, ((ActionTriggerArgument) argument).actionType)
                 && this.actionArguments.equals(((ActionTriggerArgument) argument).actionArguments);
     }
 }

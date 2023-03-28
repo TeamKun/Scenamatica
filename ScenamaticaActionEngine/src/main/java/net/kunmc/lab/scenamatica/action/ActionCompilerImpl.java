@@ -1,6 +1,5 @@
 package net.kunmc.lab.scenamatica.action;
 
-import net.kunmc.lab.scenamatica.enums.ActionType;
 import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
 import net.kunmc.lab.scenamatica.interfaces.action.Action;
 import net.kunmc.lab.scenamatica.interfaces.action.ActionArgument;
@@ -18,7 +17,7 @@ import java.util.function.Consumer;
 
 public class ActionCompilerImpl implements ActionCompiler
 {
-    private static final Map<ActionType, Class<? extends Action<? extends ActionArgument>>> BY_NAME;
+    private static final Map<String, Class<? extends Action<? extends ActionArgument>>> BY_NAME;
 
     static
     {

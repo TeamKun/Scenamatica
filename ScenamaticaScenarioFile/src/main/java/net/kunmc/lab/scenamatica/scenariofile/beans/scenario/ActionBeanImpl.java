@@ -2,7 +2,6 @@ package net.kunmc.lab.scenamatica.scenariofile.beans.scenario;
 
 import lombok.Value;
 import net.kunmc.lab.scenamatica.commons.utils.MapUtils;
-import net.kunmc.lab.scenamatica.enums.ActionType;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.action.ActionBean;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -14,14 +13,14 @@ import java.util.Map;
 public class ActionBeanImpl implements ActionBean
 {
     @NotNull
-    ActionType type;
+    String type;
     @Nullable
     Map<String, Object> arguments;
 
     public static Map<String, Object> serialize(ActionBean bean)
     {
         Map<String, Object> map = new HashMap<>();
-        map.put(KEY_TYPE, bean.getType().getKey());
+        map.put(KEY_TYPE, bean.getType());
 
         MapUtils.putIfNotNull(map, KEY_ARGUMENTS, bean.getArguments());
 
@@ -30,7 +29,7 @@ public class ActionBeanImpl implements ActionBean
 
     public static void validate(Map<String, Object> map)
     {
-        MapUtils.checkEnumName(map, KEY_TYPE, ActionType.class);
+        MapUtils.checkContainsKey(map, KEY_TYPE);
 
         if (map.containsKey(KEY_ARGUMENTS))
             MapUtils.checkAndCastMap(
@@ -45,11 +44,7 @@ public class ActionBeanImpl implements ActionBean
     {
         validate(map);
 
-        ActionType actionType = MapUtils.getAsEnum(
-                map,
-                KEY_TYPE,
-                ActionType.class
-        );
+        String actionType = String.valueOf(map.get(KEY_TYPE));
 
         Map<String, Object> argumentsMap;
         if (map.containsKey(KEY_ARGUMENTS))

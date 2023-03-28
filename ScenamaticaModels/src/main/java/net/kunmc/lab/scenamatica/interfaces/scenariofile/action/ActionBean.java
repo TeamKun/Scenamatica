@@ -1,6 +1,5 @@
 package net.kunmc.lab.scenamatica.interfaces.scenariofile.action;
 
-import net.kunmc.lab.scenamatica.enums.ActionType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -20,7 +19,7 @@ public interface ActionBean
      * @return 動作の種類
      */
     @NotNull
-    ActionType getType();
+    String getType();
 
     /**
      * 動作に必要な引数を定義します。

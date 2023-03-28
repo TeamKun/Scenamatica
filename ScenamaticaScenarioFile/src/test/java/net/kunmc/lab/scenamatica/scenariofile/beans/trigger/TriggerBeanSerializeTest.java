@@ -2,11 +2,8 @@ package net.kunmc.lab.scenamatica.scenariofile.beans.trigger;
 
 import net.kunmc.lab.scenamatica.enums.TriggerType;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerBean;
-import net.kunmc.lab.scenamatica.scenariofile.beans.scenario.ActionBeanImpl;
-import net.kunmc.lab.scenamatica.scenariofile.beans.scenario.ActionBeanSerializeTest;
 import net.kunmc.lab.scenamatica.scenariofile.beans.scenario.ScenarioBeanSerializeTest;
 import net.kunmc.lab.scenamatica.scenariofile.beans.utils.MapTestUtil;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -20,12 +17,12 @@ public class TriggerBeanSerializeTest
 {
     public static final TriggerBean FULFILLED = new TriggerBeanImpl(
             TriggerType.ON_ACTION,
-            ActionBeanSerializeTest.FULFILLED,
+            null,
             Arrays.asList(ScenarioBeanSerializeTest.FULFILLED, ScenarioBeanSerializeTest.FULFILLED),
             Arrays.asList(ScenarioBeanSerializeTest.FULFILLED, ScenarioBeanSerializeTest.FULFILLED)
     );
 
-    public static final Map<String, Object> FULFILLED_MAP = new HashMap<String, Object>(ActionBeanSerializeTest.FULFILLED_MAP)
+    public static final Map<String, Object> FULFILLED_MAP = new HashMap<String, Object>()
     {{
         this.put("type", "action");
         this.put("before", Arrays.asList(ScenarioBeanSerializeTest.FULFILLED_MAP, ScenarioBeanSerializeTest.FULFILLED_MAP));
@@ -34,21 +31,15 @@ public class TriggerBeanSerializeTest
 
     public static final TriggerBean EMPTY = new TriggerBeanImpl(
             TriggerType.ON_ACTION,
-            ActionBeanSerializeTest.EMPTY,
+            null,
             Collections.emptyList(),
             Collections.emptyList()
     );
 
-    public static final Map<String, Object> EMPTY_MAP = new HashMap<String, Object>(ActionBeanSerializeTest.EMPTY_MAP)
+    public static final Map<String, Object> EMPTY_MAP = new HashMap<String, Object>()
     {{
         this.put("type", "action");
     }};
-
-    @BeforeAll
-    static void init()
-    {
-        TriggerType.ON_ACTION.setArgumentType(ActionBeanImpl.class);
-    }
 
     @Test
     void 正常にシリアライズできるか()
