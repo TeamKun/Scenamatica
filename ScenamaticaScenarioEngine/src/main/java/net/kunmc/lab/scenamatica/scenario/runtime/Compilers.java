@@ -4,8 +4,9 @@ import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
 import net.kunmc.lab.scenamatica.interfaces.action.ActionArgument;
 import net.kunmc.lab.scenamatica.interfaces.action.ActionCompiler;
 import net.kunmc.lab.scenamatica.interfaces.action.CompiledAction;
+import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioActionListener;
+import net.kunmc.lab.scenamatica.interfaces.scenario.runtime.CompiledScenarioAction;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.scenario.ScenarioBean;
-import net.kunmc.lab.scenamatica.scenario.ScenarioActionListener;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -39,7 +40,7 @@ public class Compilers
                 listener::onActionExecuted
         );
 
-        return new CompiledScenarioAction<>(
+        return new CompiledScenarioActionImpl<>(
                 scenario,
                 scenario.getType(),
                 action.getAction(),

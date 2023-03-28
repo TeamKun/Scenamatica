@@ -2,7 +2,10 @@ package net.kunmc.lab.scenamatica.scenario;
 
 import lombok.AllArgsConstructor;
 import lombok.Value;
+import net.kunmc.lab.scenamatica.enums.TestResultCause;
+import net.kunmc.lab.scenamatica.enums.TestState;
 import net.kunmc.lab.scenamatica.interfaces.action.Action;
+import net.kunmc.lab.scenamatica.interfaces.scenario.TestResult;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -10,14 +13,14 @@ import java.util.UUID;
 
 @Value
 @AllArgsConstructor
-public class TestResult
+public class TestResultImpl implements TestResult
 {
     @NotNull
     UUID testID;
     @NotNull
     TestState state;
     @NotNull
-    ResultType resultType;
+    TestResultCause testResultCause;
     @NotNull
     String message;
     long startedAt;
@@ -26,44 +29,35 @@ public class TestResult
     @Nullable
     Action<?> failedAction;
 
-    public TestResult(@NotNull UUID testID,
-                      @NotNull TestState state,
-                      @NotNull ResultType resultType,
-                      @NotNull String message,
-                      long startedAt)
+    public TestResultImpl(@NotNull UUID testID,
+                          @NotNull TestState state,
+                          @NotNull TestResultCause resultType,
+                          @NotNull String message,
+                          long startedAt)
     {
         this.testID = testID;
         this.state = state;
-        this.resultType = resultType;
+        this.testResultCause = resultType;
         this.message = message;
         this.startedAt = startedAt;
         this.finishedAt = System.currentTimeMillis();
         this.failedAction = null;
     }
 
-    public TestResult(@NotNull UUID testID,
-                      @NotNull TestState state,
-                      @NotNull ResultType resultType,
-                      @NotNull String message,
-                      long startedAt,
-                      @NotNull Action<?> failedAction)
+    public TestResultImpl(@NotNull UUID testID,
+                          @NotNull TestState state,
+                          @NotNull TestResultCause resultType,
+                          @NotNull String message,
+                          long startedAt,
+                          @NotNull Action<?> failedAction)
     {
         this.testID = testID;
         this.state = state;
-        this.resultType = resultType;
+        this.testResultCause = resultType;
         this.message = message;
         this.startedAt = startedAt;
         this.finishedAt = System.currentTimeMillis();
         this.failedAction = failedAction;
     }
 
-    enum ResultType
-    {
-        PASSED,
-
-        CONTEXT_PREPARATION_FAILED,
-        ACTION_EXECUTION_FAILED,
-        ACTION_EXPECTATION_TIMED_OUT,
-        ILLEGAL_CONDITION,
-    }
 }

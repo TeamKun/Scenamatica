@@ -10,6 +10,7 @@ import net.kunmc.lab.scenamatica.interfaces.action.Action;
 import net.kunmc.lab.scenamatica.interfaces.action.ActionArgument;
 import net.kunmc.lab.scenamatica.interfaces.action.WatcherManager;
 import net.kunmc.lab.scenamatica.interfaces.action.WatchingEntry;
+import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioEngine;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
 import org.bukkit.event.Event;
 import org.bukkit.plugin.Plugin;
@@ -34,6 +35,7 @@ public class WatcherManagerImpl implements WatcherManager
 
     @Override
     public List<WatchingEntry<?>> registerWatchers(@NotNull Plugin plugin,
+                                                   @NotNull ScenarioEngine engine,
                                                    @NotNull ScenarioFileBean scenario,
                                                    @NotNull List<? extends Pair<Action<?>, ActionArgument>> watchers,
                                                    @NotNull WatchType type)
@@ -42,6 +44,7 @@ public class WatcherManagerImpl implements WatcherManager
         for (Pair<Action<?>, ActionArgument> watcher : watchers)
             //noinspection unchecked
             entries.add(this.createWatchingEntry(
+                            engine,
                             (Action<ActionArgument>) watcher.getLeft(),
                             watcher.getRight(),
                             scenario,
@@ -55,18 +58,20 @@ public class WatcherManagerImpl implements WatcherManager
     }
 
     @Override
-    public <A extends ActionArgument> WatchingEntry<A> registerWatcher(@NotNull Action<A> watcher,
+    public <A extends ActionArgument> WatchingEntry<A> registerWatcher(@NotNull ScenarioEngine engine,
+                                                                       @NotNull Action<A> watcher,
                                                                        @Nullable A argument,
                                                                        @NotNull ScenarioFileBean scenario,
                                                                        @NotNull Plugin plugin,
                                                                        @NotNull WatchType type)
     {
-        WatchingEntry<A> entry = this.createWatchingEntry(watcher, argument, scenario, plugin, type);
+        WatchingEntry<A> entry = this.createWatchingEntry(engine, watcher, argument, scenario, plugin, type);
         this.actionWatchers.put(plugin, entry);
         return entry;
     }
 
-    private <A extends ActionArgument> WatchingEntry<A> createWatchingEntry(@NotNull Action<A> watcher,
+    private <A extends ActionArgument> WatchingEntry<A> createWatchingEntry(@NotNull ScenarioEngine engine,
+                                                                            @NotNull Action<A> watcher,
                                                                             @Nullable A argument,
                                                                             @NotNull ScenarioFileBean scenario,
                                                                             @NotNull Plugin plugin,
@@ -75,6 +80,7 @@ public class WatcherManagerImpl implements WatcherManager
         List<Pair<Class<? extends Event>, RegisteredListener>> listeners = new ArrayList<>();
         WatchingEntryImpl<A> watchingEntry = new WatchingEntryImpl<>(
                 this,
+                engine,
                 plugin,
                 scenario,
                 watcher,
@@ -111,7 +117,7 @@ public class WatcherManagerImpl implements WatcherManager
     }
 
     @Override
-    public void onActionFired(@NotNull WatchingEntry<?> entry)
+    public void onActionFired(@NotNull WatchingEntry<?> entry, @NotNull Event event)
     {
         if (!this.actionWatchers.containsValue(entry))
             throw new IllegalStateException("The entry is not registered.");
@@ -123,8 +129,6 @@ public class WatcherManagerImpl implements WatcherManager
                     entry.getArgument()
             );
         else
-        {
-            // TODO: アクションの実行をキューに入れる
-        }
+            entry.getEngine().getListener().onActionFired(entry, event);
     }
 }

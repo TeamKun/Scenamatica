@@ -8,6 +8,7 @@ import net.kunmc.lab.scenamatica.interfaces.action.Action;
 import net.kunmc.lab.scenamatica.interfaces.action.ActionArgument;
 import net.kunmc.lab.scenamatica.interfaces.action.WatcherManager;
 import net.kunmc.lab.scenamatica.interfaces.action.WatchingEntry;
+import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioEngine;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventPriority;
@@ -22,6 +23,7 @@ import java.util.List;
 public class WatchingEntryImpl<A extends ActionArgument> implements WatchingEntry<A>
 {
     WatcherManager manager;
+    ScenarioEngine engine;
     Plugin plugin;
     ScenarioFileBean scenario;
     Action<A> action;
@@ -40,7 +42,7 @@ public class WatchingEntryImpl<A extends ActionArgument> implements WatchingEntr
 
         EventExecutor executor = (listener1, event) -> {
             if (watcher.isFired(WatchingEntryImpl.this.plugin, event))
-                this.manager.onActionFired(WatchingEntryImpl.this);
+                this.manager.onActionFired(WatchingEntryImpl.this, event);
         };
 
         RegisteredListener registeredListener = new RegisteredListener(
@@ -61,6 +63,5 @@ public class WatchingEntryImpl<A extends ActionArgument> implements WatchingEntr
     {
         for (Pair<Class<? extends Event>, RegisteredListener> listenerPair : this.getListeners())
             EventListenerUtils.getListeners(listenerPair.getLeft()).unregister(listenerPair.getRight());
-
     }
 }

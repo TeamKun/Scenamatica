@@ -2,6 +2,7 @@ package net.kunmc.lab.scenamatica.interfaces.action;
 
 import net.kunmc.lab.peyangpaperutils.lib.utils.Pair;
 import net.kunmc.lab.scenamatica.enums.WatchType;
+import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioEngine;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
 import org.bukkit.event.Event;
 import org.bukkit.plugin.Plugin;
@@ -20,6 +21,13 @@ public interface WatchingEntry<A extends ActionArgument>
      * @return 監視を管理するマネージャー
      */
     WatcherManager getManager();
+
+    /**
+     * シナリオエンジンを取得します。
+     *
+     * @return シナリオエンジン
+     */
+    ScenarioEngine getEngine();
 
     /**
      * 監視を行うプラグインを取得します。
@@ -70,5 +78,10 @@ public interface WatchingEntry<A extends ActionArgument>
      */
     RegisteredListener register(Action<?> watcher, Class<? extends Event> eventType);
 
+    /**
+     * 監視を解除します。
+     */
     void unregister();
+
+
 }

@@ -5,17 +5,19 @@ import net.kunmc.lab.scenamatica.enums.ScenarioType;
 import net.kunmc.lab.scenamatica.interfaces.action.Action;
 import net.kunmc.lab.scenamatica.interfaces.action.ActionArgument;
 import net.kunmc.lab.scenamatica.interfaces.action.ActionManager;
+import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioActionListener;
+import net.kunmc.lab.scenamatica.interfaces.scenario.runtime.CompiledScenarioAction;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.scenario.ScenarioBean;
-import net.kunmc.lab.scenamatica.scenario.ScenarioActionListener;
 
 @Value
-public class CompiledScenarioAction<A extends ActionArgument>
+public class CompiledScenarioActionImpl<A extends ActionArgument> implements CompiledScenarioAction<A>
 {
     ScenarioBean bean;
     ScenarioType type;
     Action<A> action;
     A argument;
 
+    @Override
     public void execute(ActionManager manager, ScenarioActionListener listener)
     {
         manager.queueExecute(
