@@ -3,6 +3,7 @@ package net.kunmc.lab.scenamatica.interfaces.trigger;
 import net.kunmc.lab.scenamatica.enums.TriggerType;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerBean;
+import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -24,9 +25,14 @@ public interface TriggerManager
     /**
      * トリガを実行します。
      *
+     * @param plugin       プラグイン
      * @param scenarioName シナリオ名
      * @param type         トリガタイプ
      * @param argument     トリガ引数
      */
-    void performTriggerFire(@NotNull String scenarioName, @NotNull TriggerType type, @Nullable TriggerArgument argument);
+    void performTriggerFire(@NotNull Plugin plugin,
+                            @NotNull String scenarioName,
+                            @NotNull TriggerType type,
+                            @Nullable TriggerArgument argument
+    );
 }

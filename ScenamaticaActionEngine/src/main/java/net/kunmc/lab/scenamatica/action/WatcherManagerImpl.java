@@ -124,6 +124,7 @@ public class WatcherManagerImpl implements WatcherManager
 
         if (entry.getType() == WatchType.SCENARIO)
             this.registry.getTriggerManager().performTriggerFire(
+                    entry.getPlugin(),
                     entry.getScenario().getName(),
                     TriggerType.ON_ACTION,
                     entry.getArgument()

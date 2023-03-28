@@ -7,6 +7,7 @@ import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerBean;
 import net.kunmc.lab.scenamatica.interfaces.trigger.TriggerManager;
+import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -35,7 +36,10 @@ public class TriggerManagerImpl implements TriggerManager
     }
 
     @Override
-    public void performTriggerFire(@NotNull String scenarioName, @NotNull TriggerType type, @Nullable TriggerArgument argument)
+    public void performTriggerFire(@NotNull Plugin plugin,
+                                   @NotNull String scenarioName,
+                                   @NotNull TriggerType type,
+                                   @Nullable TriggerArgument argument)
     {
         String key = scenarioName.toLowerCase(Locale.ROOT);
         if (!this.triggers.containsKey(key))
@@ -49,7 +53,7 @@ public class TriggerManagerImpl implements TriggerManager
             if (trigger.getArgument() != null && !trigger.getArgument().isSame(argument))
                 continue;
 
-            // TODO: シナリオを実行する。
+            this.registry.getScenarioManager().startScenario(plugin, scenarioName, trigger.getType());
         }
     }
 }
