@@ -3,7 +3,7 @@ package net.kunmc.lab.scenamatica.scenario;
 import net.kunmc.lab.scenamatica.enums.TestResultCause;
 import net.kunmc.lab.scenamatica.enums.TestState;
 import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
-import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioResultDelivererImpl;
+import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioResultDeliverer;
 import net.kunmc.lab.scenamatica.interfaces.scenario.TestResult;
 import org.jetbrains.annotations.NotNull;
 
@@ -11,7 +11,7 @@ import java.util.UUID;
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
 
-public class ScenarioResultDeliverer implements ScenarioResultDelivererImpl
+public class ScenarioResultDelivererImpl implements ScenarioResultDeliverer
 {
     private final CyclicBarrier barrier;
     private final ScenamaticaRegistry registry;
@@ -21,9 +21,9 @@ public class ScenarioResultDeliverer implements ScenarioResultDelivererImpl
     private TestResult result;
     private boolean killed;
 
-    public ScenarioResultDeliverer(@NotNull ScenamaticaRegistry registry,
-                                   @NotNull UUID testID,
-                                   long startedAt)
+    public ScenarioResultDelivererImpl(@NotNull ScenamaticaRegistry registry,
+                                       @NotNull UUID testID,
+                                       long startedAt)
 
     {
         this.barrier = new CyclicBarrier(2);

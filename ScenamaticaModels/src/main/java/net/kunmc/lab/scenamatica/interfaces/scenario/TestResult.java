@@ -4,9 +4,11 @@ import net.kunmc.lab.scenamatica.enums.TestResultCause;
 import net.kunmc.lab.scenamatica.enums.TestState;
 import net.kunmc.lab.scenamatica.interfaces.action.Action;
 
+import java.util.UUID;
+
 public interface TestResult
 {
-    java.util.UUID getTestID();
+    UUID getTestID();
 
     TestState getState();
 

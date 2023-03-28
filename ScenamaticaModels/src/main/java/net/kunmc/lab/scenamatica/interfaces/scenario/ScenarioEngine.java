@@ -38,7 +38,7 @@ public interface ScenarioEngine
 
     CompiledScenarioAction<?> getCurrentScenario();
 
-    ScenarioResultDelivererImpl getDeliverer();
+    ScenarioResultDeliverer getDeliverer();
 
     List<CompiledScenarioAction<?>> getActions();
 

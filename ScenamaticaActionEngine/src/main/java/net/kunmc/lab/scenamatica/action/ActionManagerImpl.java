@@ -10,6 +10,7 @@ import net.kunmc.lab.scenamatica.interfaces.action.ActionCompiler;
 import net.kunmc.lab.scenamatica.interfaces.action.ActionManager;
 import net.kunmc.lab.scenamatica.interfaces.action.CompiledAction;
 import net.kunmc.lab.scenamatica.interfaces.action.WatcherManager;
+import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioEngine;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
 import org.apache.logging.log4j.util.BiConsumer;
 import org.bukkit.plugin.Plugin;
@@ -67,12 +68,13 @@ public class ActionManagerImpl implements ActionManager
 
     @Override
     public <A extends ActionArgument> void queueWatch(@NotNull Plugin plugin,
+                                                      @NotNull ScenarioEngine engine,
                                                       @NotNull ScenarioFileBean scenario,
                                                       @NotNull Action<A> action,
                                                       @NotNull WatchType watchType,
                                                       @Nullable A argument)
     {
-        this.watcherManager.registerWatcher(action, argument, scenario, plugin, watchType);
+        this.watcherManager.registerWatcher(engine, action, argument, scenario, plugin, watchType);
     }
     @Override
     public void shutdown()

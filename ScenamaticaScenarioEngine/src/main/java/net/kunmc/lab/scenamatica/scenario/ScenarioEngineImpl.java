@@ -52,7 +52,7 @@ public class ScenarioEngineImpl implements ScenarioEngine
     private boolean isAutoRun;
     private TestState state;
     private CompiledScenarioAction<?> currentScenario;
-    private ScenarioResultDeliverer deliverer;
+    private ScenarioResultDelivererImpl deliverer;
 
     public ScenarioEngineImpl(@NotNull ScenamaticaRegistry registry,
                               @NotNull ActionManager actionManager,
@@ -273,10 +273,8 @@ public class ScenarioEngineImpl implements ScenarioEngine
     {
         this.currentScenario = scenario;
         ScenarioType type = scenario.getType();
-        if (Objects.requireNonNull(type) == ScenarioType.ACTION_EXECUTE)
-        {
+        if (type == ScenarioType.ACTION_EXECUTE)
             scenario.execute(this.actionManager, this.listener);
-        }
 
         return this.deliverer.waitResult(this.state);
     }
@@ -298,7 +296,7 @@ public class ScenarioEngineImpl implements ScenarioEngine
                 "/" + this.testID.toString().substring(0, 8);
         if (!(this.isAutoRun = trigger.getType() != TriggerType.MANUAL_DISPATCH))
             this.log(Level.INFO, "The scenario \"{}\" dispatched manually.", this.scenario.getName());
-        this.deliverer = new ScenarioResultDeliverer(this.registry, this.testID, this.startedAt);
+        this.deliverer = new ScenarioResultDelivererImpl(this.registry, this.testID, this.startedAt);
     }
 
     void log(Level level, String message, Object... args)
