@@ -55,6 +55,7 @@ public class ScenarioResultDelivererImpl implements ScenarioResultDeliverer
     }
 
     @Override
+    @NotNull
     public TestResult waitResult(@NotNull TestState state)
     {
         try

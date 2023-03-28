@@ -1,10 +1,36 @@
 package net.kunmc.lab.scenamatica.interfaces.scenario.runtime;
 
+import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerBean;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
+
+/**
+ * コンパイルされたトリガアクションを表すインターフェースです。
+ */
 public interface CompiledTriggerAction
 {
-    net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerBean getTrigger();
+    /**
+     * トリガを取得します。
+     *
+     * @return トリガ
+     */
+    @NotNull
+    TriggerBean getTrigger();
 
-    java.util.List<CompiledScenarioAction<?>> getBeforeActions();
+    /**
+     * 本シナリオの実行前に実行するシナリオを取得します。
+     *
+     * @return 実行前に実行するシナリオ
+     */
+    @NotNull
+    List<CompiledScenarioAction<?>> getBeforeActions();
 
-    java.util.List<CompiledScenarioAction<?>> getAfterActions();
+    /**
+     * 本シナリオの実行後に実行するシナリオを取得します。
+     *
+     * @return 実行後に実行するシナリオ
+     */
+    @NotNull
+    List<CompiledScenarioAction<?>> getAfterActions();
 }

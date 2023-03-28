@@ -41,13 +41,15 @@ public class ScenarioManagerImpl implements ScenarioManager
     }
 
     @Override
+    @NotNull
     public TestResult startScenario(@NotNull Plugin plugin, @NotNull String scenarioName)
     {
         return this.startScenario(plugin, scenarioName, TriggerType.MANUAL_DISPATCH);
     }
 
     @Override
-    public TestResult startScenario(@NotNull Plugin plugin, @NotNull String scenarioName, @NotNull TriggerType triggertype)
+    @NotNull
+    public TestResult startScenario(@NotNull Plugin plugin, @NotNull String scenarioName, @NotNull TriggerType triggerType)
     {
         if (this.isRunning())
             throw new IllegalStateException("Scenario is already running.");
@@ -58,7 +60,7 @@ public class ScenarioManagerImpl implements ScenarioManager
                 .orElseThrow(() -> new IllegalArgumentException("Scenario not found."));
         TriggerBean manualDispatchTrigger = engine.getTriggerActions().stream().parallel()
                 .map(CompiledTriggerAction::getTrigger)
-                .filter(t -> t.getType() == triggertype)
+                .filter(t -> t.getType() == triggerType)
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("The scenario does not have a trigger of the specified type."));
 

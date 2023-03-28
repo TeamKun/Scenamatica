@@ -8,17 +8,23 @@ import net.kunmc.lab.scenamatica.interfaces.action.ActionManager;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioActionListener;
 import net.kunmc.lab.scenamatica.interfaces.scenario.runtime.CompiledScenarioAction;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.scenario.ScenarioBean;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 @Value
 public class CompiledScenarioActionImpl<A extends ActionArgument> implements CompiledScenarioAction<A>
 {
+    @NotNull
     ScenarioBean bean;
+    @NotNull
     ScenarioType type;
+    @NotNull
     Action<A> action;
+    @Nullable
     A argument;
 
     @Override
-    public void execute(ActionManager manager, ScenarioActionListener listener)
+    public void execute(@NotNull ActionManager manager, @NotNull ScenarioActionListener listener)
     {
         manager.queueExecute(
                 this.getAction(),

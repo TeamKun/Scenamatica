@@ -11,6 +11,7 @@ import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioEngine;
 import net.kunmc.lab.scenamatica.interfaces.scenario.runtime.CompiledScenarioAction;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class ScenarioActionListenerImpl implements ScenarioActionListener
 {
@@ -18,6 +19,7 @@ public class ScenarioActionListenerImpl implements ScenarioActionListener
 
     @Getter
     @Setter
+    @Nullable
     private CompiledScenarioAction<?> waitingFor;
 
     public ScenarioActionListenerImpl(ScenarioEngine engine)
@@ -40,7 +42,8 @@ public class ScenarioActionListenerImpl implements ScenarioActionListener
     @Override
     public <A extends ActionArgument> void onActionFired(@NotNull WatchingEntry<A> entry, @NotNull Event event)
     {
-        if (entry.getAction().getClass() == this.waitingFor.getAction().getClass()
+        if (this.waitingFor != null
+                && entry.getAction().getClass() == this.waitingFor.getAction().getClass()
                 && entry.getArgument().isSame(this.waitingFor.getArgument()))
             this.setResult(TestResultCause.PASSED, "Passed.");
         else  // 他のアクションが実行された。

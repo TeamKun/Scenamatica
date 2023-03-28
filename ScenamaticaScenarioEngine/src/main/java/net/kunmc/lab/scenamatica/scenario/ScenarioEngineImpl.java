@@ -155,7 +155,8 @@ public class ScenarioEngineImpl implements ScenarioEngine
     }
 
     @Override
-    public TestResult start(TriggerBean trigger)
+    @NotNull
+    public TestResult start(@NotNull TriggerBean trigger)
     {
         this.setRunInfo(trigger);
         CompiledTriggerAction compiledTrigger = this.triggerActions.parallelStream()
