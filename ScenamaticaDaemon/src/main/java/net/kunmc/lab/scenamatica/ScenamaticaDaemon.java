@@ -8,8 +8,10 @@ import net.kunmc.lab.scenamatica.interfaces.ScenamaticaEnvironment;
 import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
 import net.kunmc.lab.scenamatica.interfaces.action.ActionManager;
 import net.kunmc.lab.scenamatica.interfaces.context.ContextManager;
+import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioManager;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.ScenarioFileManager;
 import net.kunmc.lab.scenamatica.interfaces.trigger.TriggerManager;
+import net.kunmc.lab.scenamatica.scenario.ScenarioManagerImpl;
 import net.kunmc.lab.scenamatica.scenariofile.ScenarioFileManagerImpl;
 import net.kunmc.lab.scenamatica.trigger.TriggerManagerImpl;
 import org.bukkit.plugin.Plugin;
@@ -27,6 +29,7 @@ public class ScenamaticaDaemon implements ScenamaticaRegistry
     private final ContextManager contextManager;
     private final ActionManager actionManager;
     private final TriggerManager triggerManager;
+    private final ScenarioManager scenarioManager;
 
     public ScenamaticaDaemon(ScenamaticaEnvironment env)
     {
@@ -38,8 +41,10 @@ public class ScenamaticaDaemon implements ScenamaticaRegistry
         this.contextManager = new ContextManagerImpl(this);
         this.actionManager = new ActionManagerImpl(this);
         this.triggerManager = new TriggerManagerImpl(this);
+        this.scenarioManager = new ScenarioManagerImpl(this);
     }
 
+    @Override
     public void init()
     {
         this.actionManager.init();
@@ -50,5 +55,8 @@ public class ScenamaticaDaemon implements ScenamaticaRegistry
     public void shutdown()
     {
         this.contextManager.shutdown();
+        this.actionManager.shutdown();
+        this.scenarioManager.shutdown();
+
     }
 }

@@ -18,4 +18,6 @@ public interface ScenarioManager
     void reloadPluginScenarios(@NotNull Plugin plugin);
 
     ScenarioEngine getCurrentScenario();
+
+    void shutdown();
 }

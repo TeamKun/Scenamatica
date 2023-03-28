@@ -67,8 +67,12 @@ public interface ScenamaticaRegistry
      */
     TriggerManager getTriggerManager();
 
+    void init();
+
     /**
      * このデーモンをシャットダウンします。
      */
     void shutdown();
+
+    net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioManager getScenarioManager();
 }

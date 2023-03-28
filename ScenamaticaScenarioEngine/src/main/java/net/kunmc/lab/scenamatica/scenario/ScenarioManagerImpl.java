@@ -101,4 +101,13 @@ public class ScenarioManagerImpl implements ScenarioManager
         this.unloadPluginScenarios(plugin);
         this.loadPluginScenarios(plugin);
     }
+
+    @Override
+    public void shutdown()
+    {
+        if (this.isRunning())
+            this.cancel();
+
+        this.engines.clear();
+    }
 }
