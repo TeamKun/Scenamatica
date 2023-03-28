@@ -130,8 +130,8 @@ public class ScenarioEngineImpl implements ScenarioEngine
             TriggerType type = trigger.getType();
             if (!trigger.getBeforeThat().isEmpty())
             {
-                this.log(Level.INFO, "[{}/{}] Compiling scenario {}:BEFORE of scenario \"{}\" ..."
-                        , ++compiled, compileNeeded, type, this.scenario.getName()
+                this.log(Level.INFO, "[{}/{}] Compiling scenario {}:BEFORE of scenario \"{}\" ...",
+                        ++compiled, compileNeeded, type, this.scenario.getName()
                 );
                 beforeActions = this.runCompiler(trigger.getBeforeThat());
             }
