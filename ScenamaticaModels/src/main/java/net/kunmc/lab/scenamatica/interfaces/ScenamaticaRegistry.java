@@ -2,6 +2,7 @@ package net.kunmc.lab.scenamatica.interfaces;
 
 import net.kunmc.lab.scenamatica.interfaces.action.ActionManager;
 import net.kunmc.lab.scenamatica.interfaces.context.ContextManager;
+import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioManager;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.ScenarioFileManager;
 import net.kunmc.lab.scenamatica.interfaces.trigger.TriggerManager;
 import org.bukkit.plugin.Plugin;
@@ -74,5 +75,10 @@ public interface ScenamaticaRegistry
      */
     void shutdown();
 
-    net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioManager getScenarioManager();
+    /**
+     * シナリオマネージャーを取得します。
+     *
+     * @return シナリオマネージャー
+     */
+    ScenarioManager getScenarioManager();
 }
