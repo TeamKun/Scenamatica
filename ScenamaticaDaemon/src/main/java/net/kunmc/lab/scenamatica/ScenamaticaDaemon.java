@@ -3,6 +3,7 @@ package net.kunmc.lab.scenamatica;
 import lombok.Getter;
 import net.kunmc.lab.scenamatica.action.ActionManagerImpl;
 import net.kunmc.lab.scenamatica.context.ContextManagerImpl;
+import net.kunmc.lab.scenamatica.exceptions.context.actor.VersionNotSupportedException;
 import net.kunmc.lab.scenamatica.interfaces.ExceptionHandler;
 import net.kunmc.lab.scenamatica.interfaces.ScenamaticaEnvironment;
 import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
@@ -16,6 +17,7 @@ import net.kunmc.lab.scenamatica.scenariofile.ScenarioFileManagerImpl;
 import net.kunmc.lab.scenamatica.trigger.TriggerManagerImpl;
 import org.bukkit.plugin.Plugin;
 
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @Getter
@@ -38,10 +40,19 @@ public class ScenamaticaDaemon implements ScenamaticaRegistry
         this.environment = env;
         this.exceptionHandler = env.getExceptionHandler();
         this.scenarioFileManager = new ScenarioFileManagerImpl(this);
-        this.contextManager = new ContextManagerImpl(this);
         this.actionManager = new ActionManagerImpl(this);
         this.triggerManager = new TriggerManagerImpl(this);
         this.scenarioManager = new ScenarioManagerImpl(this);
+
+        try
+        {
+            this.contextManager = new ContextManagerImpl(this);
+        }
+        catch (VersionNotSupportedException e)
+        {
+            this.logger.log(Level.SEVERE, "Bukkit " + e.getVersion() + " is not supported yet.");
+            throw new IllegalStateException(e);
+        }
     }
 
     @Override

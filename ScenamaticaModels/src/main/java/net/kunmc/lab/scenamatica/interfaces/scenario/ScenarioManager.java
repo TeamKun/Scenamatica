@@ -1,6 +1,9 @@
 package net.kunmc.lab.scenamatica.interfaces.scenario;
 
 import net.kunmc.lab.scenamatica.enums.TriggerType;
+import net.kunmc.lab.scenamatica.exceptions.scenario.ScenarioAlreadyRunningException;
+import net.kunmc.lab.scenamatica.exceptions.scenario.ScenarioNotFoundException;
+import net.kunmc.lab.scenamatica.exceptions.scenario.ScenarioNotRunningException;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -28,7 +31,7 @@ public interface ScenarioManager
      * @throws IllegalArgumentException シナリオが手動実行できない場合
      */
     @NotNull
-    TestResult startScenario(@NotNull Plugin plugin, @NotNull String scenarioName);
+    TestResult startScenario(@NotNull Plugin plugin, @NotNull String scenarioName) throws ScenarioAlreadyRunningException, ScenarioNotFoundException;
 
     /**
      * シナリオを実行します。
@@ -41,13 +44,13 @@ public interface ScenarioManager
      * @throws IllegalArgumentException シナリオが指定されたトリガで実行できない場合
      */
     @NotNull
-    TestResult startScenario(@NotNull Plugin plugin, @NotNull String scenarioName, @NotNull TriggerType triggerType);
+    TestResult startScenario(@NotNull Plugin plugin, @NotNull String scenarioName, @NotNull TriggerType triggerType) throws ScenarioAlreadyRunningException, ScenarioNotFoundException;
 
     /**
      * シナリオの実行をキャンセルします。
      * キャンセルしたシナリオは, {@link net.kunmc.lab.scenamatica.enums.TestResultCause#CANCELLED} で終了します。
      */
-    void cancel();
+    void cancel() throws ScenarioNotRunningException;
 
     /**
      * プラグインのシナリオをアンロードします。

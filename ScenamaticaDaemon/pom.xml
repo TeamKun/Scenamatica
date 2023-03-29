@@ -18,6 +18,57 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.polago.maven.plugins</groupId>
+                <artifactId>merge-properties-maven-plugin</artifactId>
+                <version>1.2</version>
+                <configuration>
+                    <outputDirectory>${project.build.directory}/generated-resources</outputDirectory>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>merge-en</id>
+                        <goals>
+                            <goal>merge</goal>
+                        </goals>
+                        <configuration>
+                            <outputFile>lang/en.lang</outputFile>
+                            <resources>
+                                <resource>
+                                    <directory>src/main/resources/lang</directory>
+                                    <filtering>true</filtering>
+                                    <includes>
+                                        <include>en.lang</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>merge-ja</id>
+                        <goals>
+                            <goal>merge</goal>
+                        </goals>
+                        <configuration>
+                            <outputFile>lang/ja.lang</outputFile>
+                            <resources>
+                                <resource>
+                                    <directory>src/main/resources/lang</directory>
+                                    <filtering>true</filtering>
+                                    <includes>
+                                        <include>ja.lang</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
     <dependencies>
         <dependency>
             <groupId>net.kunmc.lab</groupId>

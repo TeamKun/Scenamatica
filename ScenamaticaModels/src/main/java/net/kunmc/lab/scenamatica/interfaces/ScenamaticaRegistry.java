@@ -11,6 +11,8 @@ import java.util.logging.Logger;
 
 /**
  * このプラグインのアプリケーションサービスをまとめるインターフェースです。
+ * <p>
+ * これの使用前に, {@link net.kunmc.lab.peyangpaperutils.lang.LangProvider} を初期化してください。
  */
 public interface ScenamaticaRegistry
 {

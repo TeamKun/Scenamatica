@@ -1,5 +1,7 @@
 package net.kunmc.lab.scenamatica.interfaces.context;
 
+import net.kunmc.lab.scenamatica.exceptions.context.actor.ActorAlreadyExistsException;
+import net.kunmc.lab.scenamatica.exceptions.context.stage.StageNotCreatedException;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.context.PlayerBean;
 import org.bukkit.entity.Player;
 
@@ -16,7 +18,7 @@ public interface ActorManager
      * @param bean プレイヤー情報
      * @return 生成した役者
      */
-    Player createActor(PlayerBean bean);
+    Player createActor(PlayerBean bean) throws ActorAlreadyExistsException, StageNotCreatedException;
 
     /**
      * 役者を破棄します。

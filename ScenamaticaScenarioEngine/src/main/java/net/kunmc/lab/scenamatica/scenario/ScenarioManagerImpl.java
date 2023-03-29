@@ -3,7 +3,11 @@ package net.kunmc.lab.scenamatica.scenario;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import lombok.Getter;
+import lombok.SneakyThrows;
 import net.kunmc.lab.scenamatica.enums.TriggerType;
+import net.kunmc.lab.scenamatica.exceptions.scenario.ScenarioAlreadyRunningException;
+import net.kunmc.lab.scenamatica.exceptions.scenario.ScenarioNotFoundException;
+import net.kunmc.lab.scenamatica.exceptions.scenario.ScenarioNotRunningException;
 import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
 import net.kunmc.lab.scenamatica.interfaces.action.ActionManager;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioEngine;
@@ -42,7 +46,7 @@ public class ScenarioManagerImpl implements ScenarioManager
 
     @Override
     @NotNull
-    public TestResult startScenario(@NotNull Plugin plugin, @NotNull String scenarioName)
+    public TestResult startScenario(@NotNull Plugin plugin, @NotNull String scenarioName) throws ScenarioAlreadyRunningException, ScenarioNotFoundException
     {
         return this.startScenario(plugin, scenarioName, TriggerType.MANUAL_DISPATCH);
     }
@@ -50,14 +54,18 @@ public class ScenarioManagerImpl implements ScenarioManager
     @Override
     @NotNull
     public TestResult startScenario(@NotNull Plugin plugin, @NotNull String scenarioName, @NotNull TriggerType triggerType)
+            throws ScenarioAlreadyRunningException, ScenarioNotFoundException
     {
         if (this.isRunning())
-            throw new IllegalStateException("Scenario is already running.");
+        {
+            assert this.currentScenario != null;
+            throw new ScenarioAlreadyRunningException(scenarioName, this.currentScenario.getScenario().getName());
+        }
 
         ScenarioEngine engine = this.engines.get(plugin).stream().parallel()
                 .filter(e -> e.getScenario().getName().equals(scenarioName))
                 .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("Scenario not found."));
+                .orElseThrow(() -> new ScenarioNotFoundException(scenarioName));
         TriggerBean manualDispatchTrigger = engine.getTriggerActions().stream().parallel()
                 .map(CompiledTriggerAction::getTrigger)
                 .filter(t -> t.getType() == triggerType)
@@ -65,19 +73,27 @@ public class ScenarioManagerImpl implements ScenarioManager
                 .orElseThrow(() -> new IllegalArgumentException("The scenario does not have a trigger of the specified type."));
 
         this.currentScenario = engine;
-        TestResult result = engine.start(manualDispatchTrigger);
+        TestResult result = null;
+        try
+        {
+            result = engine.start(manualDispatchTrigger);
+        }
+        catch (net.kunmc.lab.scenamatica.exceptions.context.ContextPreparationException e)
+        {
+            throw new RuntimeException(e);
+        }
         this.currentScenario = null;
 
         return result;
     }
 
     @Override
-    public void cancel()
+    public void cancel() throws ScenarioNotRunningException
     {
         if (this.currentScenario == null)
-            throw new IllegalStateException("Scenario is not running.");
+            throw new ScenarioNotRunningException();
         else if (!this.currentScenario.isRunning())
-            throw new IllegalStateException("Scenario is not running.");
+            throw new ScenarioNotRunningException(this.currentScenario.getScenario().getName());
 
         this.currentScenario.cancel();
     }
@@ -110,6 +126,7 @@ public class ScenarioManagerImpl implements ScenarioManager
         this.loadPluginScenarios(plugin);
     }
 
+    @SneakyThrows(ScenarioNotRunningException.class)
     @Override
     public void shutdown()
     {

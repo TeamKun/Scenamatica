@@ -7,6 +7,7 @@ import net.kunmc.lab.scenamatica.enums.TestResultCause;
 import net.kunmc.lab.scenamatica.enums.TestState;
 import net.kunmc.lab.scenamatica.enums.TriggerType;
 import net.kunmc.lab.scenamatica.enums.WatchType;
+import net.kunmc.lab.scenamatica.exceptions.context.ContextPreparationException;
 import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
 import net.kunmc.lab.scenamatica.interfaces.action.Action;
 import net.kunmc.lab.scenamatica.interfaces.action.ActionArgument;
@@ -156,7 +157,7 @@ public class ScenarioEngineImpl implements ScenarioEngine
 
     @Override
     @NotNull
-    public TestResult start(@NotNull TriggerBean trigger)
+    public TestResult start(@NotNull TriggerBean trigger) throws ContextPreparationException
     {
         this.setRunInfo(trigger);
         CompiledTriggerAction compiledTrigger = this.triggerActions.parallelStream()

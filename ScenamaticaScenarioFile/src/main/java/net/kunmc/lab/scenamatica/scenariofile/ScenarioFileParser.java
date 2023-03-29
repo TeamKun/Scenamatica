@@ -1,9 +1,12 @@
 package net.kunmc.lab.scenamatica.scenariofile;
 
 import lombok.AllArgsConstructor;
+import net.kunmc.lab.scenamatica.exceptions.scenariofile.InvalidScenarioFileException;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
 import org.yaml.snakeyaml.Yaml;
 
+import javax.annotation.Nullable;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
@@ -17,35 +20,48 @@ import java.util.zip.ZipFile;
 public class ScenarioFileParser
 {
 
-    public static ScenarioFileBean fromMap(Map<String, Object> map)
+    public static ScenarioFileBean fromMap(Map<String, Object> map, @Nullable String fileName)
+            throws InvalidScenarioFileException
     {
-        SchemaReplacer.resolveSchemaMap(map);
-        return ScenarioFileBeanImpl.deserialize(map);
+        try
+        {
+            SchemaReplacer.resolveSchemaMap(map);
+            return ScenarioFileBeanImpl.deserialize(map);
+        }
+        catch (IllegalArgumentException e)
+        {
+            String fileNameStr = fileName == null ? "": " in file " + fileName;
+
+            throw new InvalidScenarioFileException("Invalid scenario syntax: " + e.getMessage() + fileNameStr, e);
+        }
     }
 
-    public static ScenarioFileBean fromInputStream(InputStream inputStream)
+    public static ScenarioFileBean fromInputStream(InputStream inputStream, @Nullable String fileName)
+            throws InvalidScenarioFileException
     {
         Yaml sYaml = new Yaml();
         Map<String, Object> map = sYaml.load(inputStream);
-        return fromMap(map);
+        return fromMap(map, fileName);
     }
 
-    public static ScenarioFileBean fromJar(Path jarPath, Path scenarioFilePath) throws IOException
+    public static ScenarioFileBean fromJar(Path jarPath, Path scenarioFilePath)
+            throws IOException, InvalidScenarioFileException
     {
         try (ZipFile zip = new ZipFile(jarPath.toFile()))  // .jar を .zip としてみなす。
         {
             ZipEntry entry = zip.getEntry(scenarioFilePath.toString());
             if (entry == null)
-                throw new IllegalArgumentException("Scenario file not found in jar: " + scenarioFilePath);
+                throw new FileNotFoundException("Scenario file not found in jar: " + scenarioFilePath);
 
             try (InputStream zis = zip.getInputStream(entry))
             {
-                return fromInputStream(zis);
+                return fromInputStream(zis, scenarioFilePath.toString());
             }
         }
     }
 
-    public static Map<String, ScenarioFileBean> loadAllFromJar(Path jarPath) throws IOException
+    public static Map<String, ScenarioFileBean> loadAllFromJar(Path jarPath)
+            throws IOException, InvalidScenarioFileException
     {
         Map<String, ScenarioFileBean> map = new HashMap<>();
 
@@ -65,12 +81,9 @@ public class ScenarioFileParser
 
                 try (InputStream zis = zip.getInputStream(entry))
                 {
-                    ScenarioFileBean scenario = fromInputStream(zis);
+                    ScenarioFileBean scenario = fromInputStream(zis, fileName);
                     map.put(scenario.getName(), scenario);
                 }
-                catch (IllegalArgumentException ignored)
-                {
-                }  // シナリオファイルではないときに発生するので, 握りつぶして良い。
             }
         }
 

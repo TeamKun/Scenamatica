@@ -1,5 +1,7 @@
 package net.kunmc.lab.scenamatica.interfaces.context;
 
+import net.kunmc.lab.scenamatica.exceptions.context.stage.StageCreateFailedException;
+import net.kunmc.lab.scenamatica.exceptions.context.stage.StageNotCreatedException;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.context.WorldBean;
 import org.bukkit.World;
 import org.jetbrains.annotations.NotNull;
@@ -15,7 +17,7 @@ public interface StageManager
      * @param bean ステージ情報
      * @return 生成したステージ
      */
-    @NotNull World createStage(WorldBean bean);
+    @NotNull World createStage(WorldBean bean) throws StageCreateFailedException;
 
     /**
      * ステージをコピーします。
@@ -23,12 +25,12 @@ public interface StageManager
      * @param originalName コピー元のワールド名
      * @return 生成したステージ
      */
-    @NotNull World createStage(String originalName);
+    @NotNull World createStage(String originalName) throws StageCreateFailedException;
 
     /**
      * ステージを破棄します。
      */
-    void destroyStage();
+    void destroyStage() throws StageNotCreatedException;
 
     /**
      * ステージを取得します。

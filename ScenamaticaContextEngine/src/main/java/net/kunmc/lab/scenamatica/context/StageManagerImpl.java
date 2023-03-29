@@ -2,6 +2,8 @@ package net.kunmc.lab.scenamatica.context;
 
 import lombok.Getter;
 import net.kunmc.lab.scenamatica.context.utils.WorldUtils;
+import net.kunmc.lab.scenamatica.exceptions.context.stage.StageCreateFailedException;
+import net.kunmc.lab.scenamatica.exceptions.context.stage.StageNotCreatedException;
 import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
 import net.kunmc.lab.scenamatica.interfaces.context.StageManager;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.context.WorldBean;
@@ -43,7 +45,7 @@ public class StageManagerImpl implements StageManager
 
     @Override
     @NotNull
-    public World createStage(WorldBean bean)
+    public World createStage(WorldBean bean) throws StageCreateFailedException
     {
         if (this.stage != null)
             return this.stage;
@@ -66,7 +68,7 @@ public class StageManagerImpl implements StageManager
 
         this.stage = creator.createWorld();
         if (this.stage == null)
-            throw new IllegalStateException("Failed to create a stage: " + bean.getOriginalName());
+            throw new StageCreateFailedException(key.toString());
 
         this.stage.setAutoSave(false);
 
@@ -74,18 +76,26 @@ public class StageManagerImpl implements StageManager
     }
 
     @Override
-    public @NotNull World createStage(String originalName)
+    public @NotNull World createStage(String originalName) throws StageCreateFailedException
     {
-        World copied = this.stage = WorldUtils.copyWorld(originalName, generateStageKey());
+        World copied;
+        try
+        {
+            copied = this.stage = WorldUtils.copyWorld(originalName, generateStageKey());
+        }
+        catch (IllegalArgumentException e)
+        {
+            throw new StageCreateFailedException(originalName, e);
+        }
         this.hasCopied = true;
         return copied;
     }
 
     @Override
-    public void destroyStage()
+    public void destroyStage() throws StageNotCreatedException
     {
         if (this.stage == null)
-            return;
+            throw new StageNotCreatedException();
 
         this.stage.getPlayers().forEach(p -> p.teleport(Bukkit.getWorlds().get(0).getSpawnLocation()));
 

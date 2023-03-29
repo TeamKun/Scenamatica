@@ -1,8 +1,10 @@
 package net.kunmc.lab.scenamatica.context;
 
 import lombok.Getter;
+import lombok.SneakyThrows;
 import net.kunmc.lab.peyangpaperutils.lang.MsgArgs;
 import net.kunmc.lab.scenamatica.context.actor.ActorManagerImpl;
+import net.kunmc.lab.scenamatica.exceptions.context.actor.VersionNotSupportedException;
 import net.kunmc.lab.scenamatica.exceptions.context.stage.StageCreateFailedException;
 import net.kunmc.lab.scenamatica.exceptions.context.stage.StageNotCreatedException;
 import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
@@ -41,7 +43,7 @@ public class ContextManagerImpl implements ContextManager
     private boolean isWorldPrepared;
     private boolean isActorPrepared;
 
-    public ContextManagerImpl(@NotNull ScenamaticaRegistry registry)
+    public ContextManagerImpl(@NotNull ScenamaticaRegistry registry) throws VersionNotSupportedException
     {
         this.registry = registry;
         this.actorManager = new ActorManagerImpl(registry, this);
@@ -50,12 +52,6 @@ public class ContextManagerImpl implements ContextManager
 
         this.isWorldPrepared = false;
         this.isActorPrepared = false;
-    }
-
-    private static MsgArgs getArgs(ScenarioFileBean scenario, UUID testID)
-    {
-        return MsgArgs.of("scenarioName", "TEST-" + StringUtils.substring(scenario.getName(), 0, 8) +
-                "/" + testID.toString().substring(0, 8));
     }
 
     @Override
@@ -128,23 +124,31 @@ public class ContextManagerImpl implements ContextManager
         this.logger.log(Level.WARNING, "context.actor.failed", getArgs(scenario, testID));
     }
 
+    private static MsgArgs getArgs(ScenarioFileBean scenario, UUID testID)
+    {
+        return MsgArgs.of("scenarioName", "TEST-" + StringUtils.substring(scenario.getName(), 0, 8) +
+                "/" + testID.toString().substring(0, 8));
+    }
+
+    @SneakyThrows(StageNotCreatedException.class)
     @Override
     public void destroyContext()
     {
         if (!this.isWorldPrepared)
-            this.stageManager.destroyStage();
+            this.stageManager.destroyStage();  // StageNotCreatedException はチェック済み。
 
         if (this.isActorPrepared)
             for (Player actor : this.actorManager.getActors())
                 this.actorManager.destroyActor(actor);
 
     }
-^
+
+    @SneakyThrows(StageNotCreatedException.class)
     @Override
     public void shutdown()
     {
         this.actorManager.shutdown();
         if (this.stageManager.isStageCreated())
-            this.stageManager.destroyStage();
+            this.stageManager.destroyStage();  // StageNotCreatedException はチェック済み。
     }
 }

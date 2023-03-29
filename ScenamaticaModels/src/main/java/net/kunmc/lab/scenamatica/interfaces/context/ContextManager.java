@@ -1,5 +1,8 @@
 package net.kunmc.lab.scenamatica.interfaces.context;
 
+import net.kunmc.lab.scenamatica.exceptions.context.actor.VersionNotSupportedException;
+import net.kunmc.lab.scenamatica.exceptions.context.stage.StageCreateFailedException;
+import net.kunmc.lab.scenamatica.exceptions.context.stage.StageNotCreatedException;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
 import org.jetbrains.annotations.NotNull;
 
@@ -16,7 +19,7 @@ public interface ContextManager
      * @param scenario シナリオファイル
      * @return 成功した場合は true
      */
-    Context prepareContext(@NotNull ScenarioFileBean scenario, @NotNull UUID testID);
+    Context prepareContext(@NotNull ScenarioFileBean scenario, @NotNull UUID testID) throws StageCreateFailedException, VersionNotSupportedException, StageNotCreatedException;
 
     /**
      * 環境を破棄します。
