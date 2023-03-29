@@ -1,7 +1,10 @@
 package net.kunmc.lab.scenamatica.context;
 
 import lombok.Getter;
+import net.kunmc.lab.peyangpaperutils.lang.MsgArgs;
 import net.kunmc.lab.scenamatica.context.actor.ActorManagerImpl;
+import net.kunmc.lab.scenamatica.exceptions.context.stage.StageCreateFailedException;
+import net.kunmc.lab.scenamatica.exceptions.context.stage.StageNotCreatedException;
 import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
 import net.kunmc.lab.scenamatica.interfaces.context.ActorManager;
 import net.kunmc.lab.scenamatica.interfaces.context.Context;
@@ -33,6 +36,7 @@ public class ContextManagerImpl implements ContextManager
     @Getter
     @NotNull
     private final StageManager stageManager;
+    private final Logger logger;
 
     private boolean isWorldPrepared;
     private boolean isActorPrepared;
@@ -42,29 +46,38 @@ public class ContextManagerImpl implements ContextManager
         this.registry = registry;
         this.actorManager = new ActorManagerImpl(registry, this);
         this.stageManager = new StageManagerImpl(registry);
+        this.logger = registry.getLogger();
 
         this.isWorldPrepared = false;
         this.isActorPrepared = false;
     }
 
+    private static MsgArgs getArgs(ScenarioFileBean scenario, UUID testID)
+    {
+        return MsgArgs.of("scenarioName", "TEST-" + StringUtils.substring(scenario.getName(), 0, 8) +
+                "/" + testID.toString().substring(0, 8));
+    }
+
     @Override
     public Context prepareContext(@NotNull ScenarioFileBean scenario, @NotNull UUID testID)
+            throws StageCreateFailedException, StageNotCreatedException
     {
-        String logPrefix = "TEST-" + StringUtils.substring(scenario.getName(), 0, 8) +
-                "/" + testID.toString().substring(0, 8);
         ContextBean context = scenario.getContext();
 
-        Logger logger = this.registry.getLogger();
-        logger.log(Level.INFO, "[{}] Preparing context for scenario: {}", logPrefix);
+        this.log(scenario, "context.creating", testID);
 
         if (context.getWorld() != null && context.getWorld().getOriginalName() != null
                 && Bukkit.getWorld(context.getWorld().getOriginalName()) != null)  // 既存だったら再利用する。
         {
-            logger.log(Level.INFO, "[{}] Found the stage with named {}.", context.getWorld().getOriginalName());
-            logger.log(Level.INFO, "[{}] Cloning the stage...", logPrefix);
+            this.log(scenario, "context.stage.clone.found",
+                    MsgArgs.of("stageName", context.getWorld().getOriginalName()), testID
+            );
+            this.log(scenario, "context.stage.clone.cloning",
+                    MsgArgs.of("stageName", context.getWorld().getOriginalName()), testID
+            );
         }
 
-        logger.log(Level.INFO, "[{}] Creating stage...", logPrefix);
+        this.log(scenario, "context.stage.generating", testID);
 
         World stage;
         if (context.getWorld() != null)
@@ -77,7 +90,7 @@ public class ContextManagerImpl implements ContextManager
         List<Player> actors = new ArrayList<>();
         if (context.getActors() != null && !context.getActors().isEmpty())
         {
-            logger.log(Level.INFO, "[{}] Generating actors...", logPrefix);
+            this.log(scenario, "context.actor.generating", testID);
             try
             {
                 for (PlayerBean actor : context.getActors())
@@ -89,15 +102,30 @@ public class ContextManagerImpl implements ContextManager
             catch (Exception e)
             {
                 this.registry.getExceptionHandler().report(e);
-                logger.log(Level.SEVERE, "[{}] Failed to generate actor.", e);
+                this.logActorGenFail(scenario, testID);
 
                 this.stageManager.destroyStage();
                 return null;
             }
         }
 
-        logger.log(Level.INFO, "[{}] Context has been prepared.", logPrefix);
+        this.log(scenario, "context.created", testID);
         return new ContextImpl(stage, actors);
+    }
+
+    private void log(ScenarioFileBean scenario, String message, MsgArgs args, UUID testID)
+    {
+        this.logger.log(Level.INFO, message, getArgs(scenario, testID).add(args));
+    }
+
+    private void log(ScenarioFileBean scenario, String message, UUID testID)
+    {
+        this.logger.log(Level.INFO, message, getArgs(scenario, testID));
+    }
+
+    private void logActorGenFail(ScenarioFileBean scenario, UUID testID)
+    {
+        this.logger.log(Level.WARNING, "context.actor.failed", getArgs(scenario, testID));
     }
 
     @Override
@@ -111,7 +139,7 @@ public class ContextManagerImpl implements ContextManager
                 this.actorManager.destroyActor(actor);
 
     }
-
+^
     @Override
     public void shutdown()
     {

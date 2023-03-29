@@ -1,6 +1,9 @@
 package net.kunmc.lab.scenamatica.context.actor;
 
 import lombok.Getter;
+import net.kunmc.lab.scenamatica.exceptions.context.actor.ActorAlreadyExistsException;
+import net.kunmc.lab.scenamatica.exceptions.context.actor.VersionNotSupportedException;
+import net.kunmc.lab.scenamatica.exceptions.context.stage.StageNotCreatedException;
 import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
 import net.kunmc.lab.scenamatica.interfaces.context.ActorManager;
 import net.kunmc.lab.scenamatica.interfaces.context.ContextManager;
@@ -18,7 +21,7 @@ public class ActorManagerImpl implements ActorManager
     private final List<Player> actors;
     private final PlayerMockerBase actorGenerator;
 
-    public ActorManagerImpl(ScenamaticaRegistry registry, ContextManager contextManager)
+    public ActorManagerImpl(ScenamaticaRegistry registry, ContextManager contextManager) throws VersionNotSupportedException
     {
         this.contextManager = contextManager;
         this.actors = new ArrayList<>();
@@ -26,6 +29,7 @@ public class ActorManagerImpl implements ActorManager
     }
 
     private static PlayerMockerBase getMocker(ScenamaticaRegistry registry, ActorManager manager)
+            throws VersionNotSupportedException
     {
         String version = ReflectionUtils.PackageType.getServerVersion();
         //noinspection SwitchStatementWithTooFewBranches
@@ -34,17 +38,17 @@ public class ActorManagerImpl implements ActorManager
             case "v1_16_R3":
                 return new net.kunmc.lab.scenamatica.context.actor.nms.v_1_16_R3.PlayerMocker(registry, manager);
             default:
-                throw new UnsupportedOperationException("Unsupported version: " + version);
+                throw new VersionNotSupportedException(version);
         }
     }
 
     @Override
-    public Player createActor(PlayerBean bean)
+    public Player createActor(PlayerBean bean) throws ActorAlreadyExistsException, StageNotCreatedException
     {
         if (this.actors.stream().anyMatch(p -> p.getName().equalsIgnoreCase(bean.getName())))
-            throw new IllegalArgumentException("Player " + bean.getName() + " is already mocked.");
+            throw new ActorAlreadyExistsException(bean.getName());
         else if (!this.contextManager.getStageManager().isStageCreated())
-            throw new IllegalStateException("Please create a stage first.");
+            throw new StageNotCreatedException();
 
         Player player = this.actorGenerator.mock(this.contextManager.getStageManager().getStage(), bean);
         this.actors.add(player);
