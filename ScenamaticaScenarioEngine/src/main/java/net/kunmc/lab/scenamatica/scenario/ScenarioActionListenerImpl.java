@@ -2,8 +2,6 @@ package net.kunmc.lab.scenamatica.scenario;
 
 import lombok.Getter;
 import lombok.Setter;
-import net.kunmc.lab.peyangpaperutils.lang.LangProvider;
-import net.kunmc.lab.peyangpaperutils.lang.MsgArgs;
 import net.kunmc.lab.scenamatica.enums.TestResultCause;
 import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
 import net.kunmc.lab.scenamatica.interfaces.action.Action;
@@ -12,17 +10,16 @@ import net.kunmc.lab.scenamatica.interfaces.action.CompiledAction;
 import net.kunmc.lab.scenamatica.interfaces.action.WatchingEntry;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioActionListener;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioEngine;
+import net.kunmc.lab.scenamatica.interfaces.scenario.TestReporter;
 import net.kunmc.lab.scenamatica.interfaces.scenario.runtime.CompiledScenarioAction;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.logging.Level;
-
 public class ScenarioActionListenerImpl implements ScenarioActionListener
 {
     private final ScenarioEngine engine;
-    private final ScenamaticaRegistry registry;
+    private final TestReporter reporter;
 
     @Getter
     @Setter
@@ -32,20 +29,20 @@ public class ScenarioActionListenerImpl implements ScenarioActionListener
     public ScenarioActionListenerImpl(ScenarioEngine engine, ScenamaticaRegistry registry)
     {
         this.engine = engine;
-        this.registry = registry;
+        this.reporter = registry.getTestReporter();
     }
 
     @Override
     public <A extends ActionArgument> void onActionError(@NotNull CompiledAction<A> action, @NotNull Throwable error)
     {
-        this.log(Level.WARNING, "scenario.result.action.error", action.getAction());
+        this.reporter.onActionExecuteFailed(this.engine.getScenario(), action, error);
         this.setResult(TestResultCause.ACTION_EXECUTION_FAILED, action.getAction());
     }
 
     @Override
     public <A extends ActionArgument> void onActionExecuted(@NotNull CompiledAction<A> action)
     {
-        this.log(Level.INFO, "scenario.result.action.passed", action.getAction());
+        this.reporter.onActionSuccess(this.engine.getScenario(), action);
         this.setPassed();
     }
 
@@ -56,12 +53,12 @@ public class ScenarioActionListenerImpl implements ScenarioActionListener
                 && entry.getAction().getClass() == this.waitingFor.getAction().getClass()
                 && entry.getArgument().isSame(this.waitingFor.getArgument()))
         {
-            this.log(Level.INFO, "scenario.result.watch.passed", entry.getAction());
+            this.reporter.onWatchingActionExecuted(this.engine.getScenario(), entry.getAction());
             this.setPassed();
         }
         else  // 他のアクションが実行された。
         {
-            this.log(Level.INFO, "scenario.result.action.jumped", entry.getAction());
+            this.reporter.onActionJumped(this.engine.getScenario(), entry.getAction(), this.waitingFor);
             this.setResult(
                     TestResultCause.ACTION_EXPECTATION_JUMPED,
                     entry.getAction()
@@ -84,17 +81,5 @@ public class ScenarioActionListenerImpl implements ScenarioActionListener
     private void setPassed()
     {
         this.setResult(TestResultCause.PASSED, null);
-    }
-
-    private void log(Level level, String key, Action<?> action)
-    {
-        this.registry.getLogger().log(
-                level,
-                LangProvider.get(
-                        key,
-                        MsgArgs.of("scenarioName", this.engine.getScenario().getName())
-                                .add("actionName", action.getClass().getSimpleName())
-                )
-        );
     }
 }

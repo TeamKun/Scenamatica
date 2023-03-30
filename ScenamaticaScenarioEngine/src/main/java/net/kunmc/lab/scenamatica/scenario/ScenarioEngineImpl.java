@@ -19,6 +19,7 @@ import net.kunmc.lab.scenamatica.interfaces.context.Context;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioActionListener;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioEngine;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioResultDeliverer;
+import net.kunmc.lab.scenamatica.interfaces.scenario.TestReporter;
 import net.kunmc.lab.scenamatica.interfaces.scenario.TestResult;
 import net.kunmc.lab.scenamatica.interfaces.scenario.runtime.CompiledScenarioAction;
 import net.kunmc.lab.scenamatica.interfaces.scenario.runtime.CompiledTriggerAction;
@@ -43,6 +44,7 @@ public class ScenarioEngineImpl implements ScenarioEngine
 {
     private final ScenamaticaRegistry registry;
     private final ActionManager actionManager;
+    private final TestReporter testReporter;
     private final Plugin plugin;
     private final ScenarioFileBean scenario;
     private final ScenarioActionListener listener;
@@ -61,11 +63,13 @@ public class ScenarioEngineImpl implements ScenarioEngine
 
     public ScenarioEngineImpl(@NotNull ScenamaticaRegistry registry,
                               @NotNull ActionManager actionManager,
+                              @NotNull TestReporter testReporter,
                               @NotNull Plugin plugin,
                               @NotNull ScenarioFileBean scenario)
     {
         this.registry = registry;
         this.actionManager = actionManager;
+        this.testReporter = testReporter;
         this.plugin = plugin;
         this.scenario = scenario;
         this.state = TestState.STAND_BY;

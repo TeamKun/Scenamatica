@@ -1,0 +1,35 @@
+command.enable.help=Scenamaticaのシナリオ実行をオン/オフできるで。
+command.enable.invalidState=%%red%%オン/オフの値がアカンわ。
+command.enable.current=%%aqua%%Scenamaticaのシナリオ実行は、今 %%state%%%%aqua%% やで。
+command.enable.enable=%%green%%オン
+command.enable.disable=%%red%%オフ
+
+test.start=シナリオ「%%scenario%%」のテストが「%%trigger%%」で始まったぽいわ。
+test.action.run=予定されたアクション「%%action%%」を実行するで。
+test.action.run.fail=%%bold%%❌%%reset%% 予定されたアクション「%%action%%」の実行に失敗したっぽいわ。「%%cause%%」が原因らしいわ。
+test.action.run.success=%%bold%%✔%%reset%% 予定されたアクション「%%action%%」の実行に成功したで。
+test.action.watch=予期されたアクション「%%action%%」が実行されるまで監視するで。
+test.action.watch.done=%%bold%%✔%%reset%% 監視していたアクション「%%action%%」がプラグインによって実行されたっぽいわ。
+test.action.jumped=%%bold%%⚠%%reset%% シナリオ「%%scenarioName%%」のアクション「%%actionName%%」が、予想よりも先に実行されてしもたぽいわ。
+
+test.result=テスト結果: %%result%% %%white%%- %%message%%
+test.result.passed=%%green%%✔ うまく行ったで
+test.result.failed=%%red%%❌ だめやったで
+test.result.cancelled=%%yellow%%⚠ キャンセルされたで
+test.result.unknown=%%gray%%❓ わからんわ
+
+test.result.message.passed=%%green%%テストは成功したで。
+test.result.message.context_preparation_failed=%%red%%テストの実行に必要なコンテキストの準備に失敗したで。
+test.result.message.action_execution_failed=%%red%%予定されたアクションの実行に失敗したわ。
+test.result.message.action_expectation_jumped=%%red%%期待されたアクションよりも先に他のアクションが実行されてしもたっぽいわ。
+test.result.message.action_expectation_timed_out=%%red%%指定された時間内に期待されたアクションが実行されへんかったわ。
+test.result.message.illegal_condition=%%red%%コンディションチェック時にへんな値が見つかったで。
+test.result.message.internal_error=%%red%%しらん内部エラーが起きたっぽいわ。
+test.result.message.cancelled=%%yellow%%テストキャンセルされたぽいわ。
+test.result.message.skipped=%%gray%%テストスキップされたぽいわ。
+
+test.result.detail=詳細情報：
+test.result.detail.id=- テストID： %%id%% やで
+test.result.detail.state=- テスト状態： %%state%% やで
+test.result.detail.elapsed=- 開始時刻： %%startedAt%%、終了時刻： %%finishedAt%%、経過時間： %%elapsed%%
+test.result.detail.failed=- アカンかったアクション： %%action%%

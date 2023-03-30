@@ -10,6 +10,7 @@ import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
 import net.kunmc.lab.scenamatica.interfaces.action.ActionManager;
 import net.kunmc.lab.scenamatica.interfaces.context.ContextManager;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioManager;
+import net.kunmc.lab.scenamatica.interfaces.scenario.TestReporter;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.ScenarioFileManager;
 import net.kunmc.lab.scenamatica.interfaces.trigger.TriggerManager;
 import net.kunmc.lab.scenamatica.scenario.ScenarioManagerImpl;
@@ -25,6 +26,7 @@ public class ScenamaticaDaemon implements ScenamaticaRegistry
 {
     private final Logger logger;
     private final Plugin plugin;
+    private final TestReporter testReporter;
     private final ScenamaticaEnvironment environment;
     private final ExceptionHandler exceptionHandler;
     private final ScenarioFileManager scenarioFileManager;
@@ -37,8 +39,9 @@ public class ScenamaticaDaemon implements ScenamaticaRegistry
     {
         this.logger = env.getLogger();
         this.plugin = env.getPlugin();
-        this.environment = env;
+        this.testReporter = env.getTestReporter();
         this.exceptionHandler = env.getExceptionHandler();
+        this.environment = env;
         this.scenarioFileManager = new ScenarioFileManagerImpl(this);
         this.actionManager = new ActionManagerImpl(this);
         this.triggerManager = new TriggerManagerImpl(this);

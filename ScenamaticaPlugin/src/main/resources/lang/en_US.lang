@@ -1,0 +1,41 @@
+# Plugin
+
+general.yes=%%green%%Yes
+general.no=%%red%%No
+general.cancel=%%red%%Cancel
+general.pending=%%yellow%%Pending
+
+command.enable.help=Enable/disable Scenamatica scenario execution.
+command.enable.invalidState=%%red%%Invalid value for enable/disable.
+command.enable.current=%%aqua%%Scenamatica scenario execution is currently set to %%state%%%%aqua%%.
+command.enable.enable=%%green%%Enabled
+command.enable.disable=%%red%%Disabled
+
+test.start=Starting test of scenario %%scenario%% by %%trigger%%.
+test.action.run=A scheduled action %%name%% is being executed.
+test.action.run.fail=%%bold%%❌%%reset%% The scheduled action %%action%% failed to execute due to %%cause%%.
+test.action.run.success=%%bold%%✔%%reset%% The scheduled action %%action%% has been executed successfully.
+test.action.watch=The expected action %%action%% is being watched.
+test.action.watch.done=%%bold%%✔%%reset%% The action %%action%% of the scenario %%scenarioName%% has been executed by the plugin.
+test.action.jumped=%%bold%%⚠%%reset%% The action %%actionName%% of the scenario %%scenarioName%% has been executed before the expected action.
+
+test.result=Test result: %%result%% %%white%%- %%message%%
+test.result.passed=%%green%%✔ Passed
+test.result.failed=%%red%%❌ Failure
+test.result.cancelled=%%yellow%%⚠ Cancelled
+test.result.unknown=%%gray%%❓ Unknown
+
+test.result.message.passed=%%green%%The test has been completed successfully.
+test.result.message.context_preparation_failed=%%red%%Failed to prepare the context required for the test.
+test.result.message.action_execution_failed=%%red%%Failed to execute the scheduled action.
+test.result.message.action_expectation_jumped=%%red%%Another action has been executed before the expected action.
+test.result.message.action_expectation_timed_out=%%red%%The expected action has not been executed within the specified time.
+test.result.message.illegal_condition=%%red%%An illegal value was detected during the condition check.
+test.result.message.internal_error=%%red%%An unexpected internal error has occurred.
+test.result.message.cancelled=%%yellow%%The test has been cancelled.
+test.result.message.skipped=%%gray%%The test has been skipped.
+
+test.result.detail.id=-   Test ID: %%id%%
+test.result.detail.state=-   Test state: %%state%%
+test.result.detail.elapsed=-   Started at: %%startedAt%%, Finished at: %%finishedAt%%, Elapsed: %%elapsed%%
+test.result.detail.failed=-   Failed action: %%action%%

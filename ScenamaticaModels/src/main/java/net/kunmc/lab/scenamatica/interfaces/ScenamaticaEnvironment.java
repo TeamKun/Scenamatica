@@ -1,6 +1,8 @@
 package net.kunmc.lab.scenamatica.interfaces;
 
+import net.kunmc.lab.scenamatica.interfaces.scenario.TestReporter;
 import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.logging.Logger;
 
@@ -30,4 +32,11 @@ public interface ScenamaticaEnvironment
      */
     ExceptionHandler getExceptionHandler();
 
+    /**
+     * テストレポーターを返します。
+     *
+     * @return テストレポーター
+     */
+    @NotNull
+    TestReporter getTestReporter();
 }

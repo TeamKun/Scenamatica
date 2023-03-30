@@ -15,6 +15,7 @@ import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
 import net.kunmc.lab.scenamatica.interfaces.action.ActionManager;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioEngine;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioManager;
+import net.kunmc.lab.scenamatica.interfaces.scenario.TestReporter;
 import net.kunmc.lab.scenamatica.interfaces.scenario.TestResult;
 import net.kunmc.lab.scenamatica.interfaces.scenario.runtime.CompiledTriggerAction;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
@@ -30,6 +31,8 @@ public class ScenarioManagerImpl implements ScenarioManager
     private final ScenamaticaRegistry registry;
     private final ActionManager actionManager;
     private final Multimap<Plugin, ScenarioEngine> engines;
+    @NotNull
+    private final TestReporter testReporter;
     @Getter
     @Nullable
     private ScenarioEngine currentScenario;
@@ -40,6 +43,7 @@ public class ScenarioManagerImpl implements ScenarioManager
     {
         this.registry = registry;
         this.actionManager = registry.getActionManager();
+        this.testReporter = registry.getTestReporter();
         this.engines = ArrayListMultimap.create();
         this.currentScenario = null;
         this.enabled = true;
@@ -76,15 +80,17 @@ public class ScenarioManagerImpl implements ScenarioManager
                 .filter(e -> e.getScenario().getName().equals(scenarioName))
                 .findFirst()
                 .orElseThrow(() -> new ScenarioNotFoundException(scenarioName));
-        TriggerBean manualDispatchTrigger = engine.getTriggerActions().stream().parallel()
+        TriggerBean trigger = engine.getTriggerActions().stream().parallel()
                 .map(CompiledTriggerAction::getTrigger)
                 .filter(t -> t.getType() == triggerType)
                 .findFirst()
                 .orElseThrow(() -> new TriggerNotFoundException(triggerType));
 
+        this.testReporter.onTestStart(engine.getScenario(), trigger);
         this.currentScenario = engine;
-        TestResult result = engine.start(manualDispatchTrigger);
+        TestResult result = engine.start(trigger);
         this.currentScenario = null;
+        this.testReporter.onTestEnd(engine.getScenario(), result);
 
         return result;
     }
@@ -117,7 +123,7 @@ public class ScenarioManagerImpl implements ScenarioManager
         assert scenarios != null;
 
         scenarios.values().stream()
-                .map(scenario -> new ScenarioEngineImpl(this.registry, this.actionManager, plugin, scenario))
+                .map(scenario -> new ScenarioEngineImpl(this.registry, this.actionManager, this.testReporter, plugin, scenario))
                 .forEach(engine -> this.engines.put(plugin, engine));
     }
 

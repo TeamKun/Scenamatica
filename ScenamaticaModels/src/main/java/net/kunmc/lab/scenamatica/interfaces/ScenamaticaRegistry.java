@@ -3,9 +3,11 @@ package net.kunmc.lab.scenamatica.interfaces;
 import net.kunmc.lab.scenamatica.interfaces.action.ActionManager;
 import net.kunmc.lab.scenamatica.interfaces.context.ContextManager;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioManager;
+import net.kunmc.lab.scenamatica.interfaces.scenario.TestReporter;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.ScenarioFileManager;
 import net.kunmc.lab.scenamatica.interfaces.trigger.TriggerManager;
 import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.logging.Logger;
 
@@ -83,4 +85,12 @@ public interface ScenamaticaRegistry
      * @return シナリオマネージャー
      */
     ScenarioManager getScenarioManager();
+
+    /**
+     * テストレポーターを返します。
+     *
+     * @return テストレポーター
+     */
+    @NotNull
+    TestReporter getTestReporter();
 }
