@@ -44,7 +44,7 @@ public class CommandEnable extends CommandBase
     private String getCurrentCause()
     {
         return LangProvider.get("command.enable.current", MsgArgs.of(
-                "state", this.registry.getScenarioManager().isEnabled() ? "general.yes": "general.no"
+                "state", this.registry.getScenarioManager().isEnabled() ? "command.enable.enable": "command.enable.disable"
         ));
     }
 
