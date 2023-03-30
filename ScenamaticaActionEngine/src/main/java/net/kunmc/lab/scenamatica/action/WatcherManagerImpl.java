@@ -5,6 +5,8 @@ import com.google.common.collect.Multimap;
 import net.kunmc.lab.peyangpaperutils.lib.utils.Pair;
 import net.kunmc.lab.scenamatica.enums.TriggerType;
 import net.kunmc.lab.scenamatica.enums.WatchType;
+import net.kunmc.lab.scenamatica.exceptions.context.ContextPreparationException;
+import net.kunmc.lab.scenamatica.exceptions.scenario.ScenarioException;
 import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
 import net.kunmc.lab.scenamatica.interfaces.action.Action;
 import net.kunmc.lab.scenamatica.interfaces.action.ActionArgument;
@@ -123,12 +125,21 @@ public class WatcherManagerImpl implements WatcherManager
             throw new IllegalStateException("The entry is not registered.");
 
         if (entry.getType() == WatchType.SCENARIO)
-            this.registry.getTriggerManager().performTriggerFire(
-                    entry.getPlugin(),
-                    entry.getScenario().getName(),
-                    TriggerType.ON_ACTION,
-                    entry.getArgument()
-            );
+        {
+            try
+            {
+                this.registry.getTriggerManager().performTriggerFire(
+                        entry.getPlugin(),
+                        entry.getScenario().getName(),
+                        TriggerType.ON_ACTION,
+                        entry.getArgument()
+                );
+            }
+            catch (ContextPreparationException | ScenarioException e)
+            {
+                this.registry.getExceptionHandler().report(e);
+            }
+        }
         else
             entry.getEngine().getListener().onActionFired(entry, event);
     }
