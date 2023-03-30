@@ -89,4 +89,18 @@ public interface ScenarioManager
      * 実行中のシナリオを停止し, このインスタンスを破棄します。
      */
     void shutdown();
+
+    /**
+     * シナリオの実行が有効かどうかを返します。
+     *
+     * @return 有効なら {@code true}
+     */
+    boolean isEnabled();
+
+    /**
+     * シナリオの実行を有効にします。
+     *
+     * @param enabled 有効にするなら {@code true}
+     */
+    void setEnabled(boolean enabled);
 }

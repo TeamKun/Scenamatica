@@ -33,12 +33,16 @@ public class ScenarioManagerImpl implements ScenarioManager
     @Getter
     @Nullable
     private ScenarioEngine currentScenario;
+    @Getter
+    private boolean enabled;
 
     public ScenarioManagerImpl(@NotNull ScenamaticaRegistry registry)
     {
         this.registry = registry;
         this.actionManager = registry.getActionManager();
         this.engines = ArrayListMultimap.create();
+        this.currentScenario = null;
+        this.enabled = true;
     }
 
     @Override
@@ -65,6 +69,8 @@ public class ScenarioManagerImpl implements ScenarioManager
             assert this.currentScenario != null;
             throw new ScenarioAlreadyRunningException(scenarioName, this.currentScenario.getScenario().getName());
         }
+        else if (!this.enabled)
+            throw new ScenarioException("Scenamatica is disabled.");
 
         ScenarioEngine engine = this.engines.get(plugin).stream().parallel()
                 .filter(e -> e.getScenario().getName().equals(scenarioName))
@@ -130,5 +136,17 @@ public class ScenarioManagerImpl implements ScenarioManager
             this.cancel();
 
         this.engines.clear();
+    }
+
+    @Override
+    @SneakyThrows(ScenarioNotRunningException.class)
+    public void setEnabled(boolean enabled)
+    {
+        if (this.enabled == enabled)
+            return;
+        else if (!enabled && this.isRunning())
+            this.cancel();
+
+        this.enabled = enabled;
     }
 }

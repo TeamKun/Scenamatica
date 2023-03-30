@@ -1,0 +1,10 @@
+# @project      Scenamatica ${project.version}
+# @author       Peyang <https://peya.tokyo>
+# @license      The MIT License (MIT) <https://opensource.org/licenses/MIT>
+
+# ----------------------------[ シナリオ設定 ]----------------------------
+scenario:
+  # シナリオを実行するかどうかを設定します。
+  # この設定が有効の場合, シナリオはスケジュールされず, 自動実行はできなくなります。
+  # また, 手動実行はエラーを出力します。
+  enabled: true
