@@ -21,50 +21,34 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.polago.maven.plugins</groupId>
-                <artifactId>merge-properties-maven-plugin</artifactId>
-                <version>1.2</version>
-                <configuration>
-                    <outputDirectory>${project.build.directory}/generated-resources</outputDirectory>
-                </configuration>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.2.4</version>
                 <executions>
                     <execution>
-                        <id>merge-en</id>
+                        <phase>package</phase>
                         <goals>
-                            <goal>merge</goal>
+                            <goal>shade</goal>
                         </goals>
-                        <configuration>
-                            <outputFile>lang/en.lang</outputFile>
-                            <resources>
-                                <resource>
-                                    <directory>src/main/resources/lang</directory>
-                                    <filtering>true</filtering>
-                                    <includes>
-                                        <include>en.lang</include>
-                                    </includes>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>merge-ja</id>
-                        <goals>
-                            <goal>merge</goal>
-                        </goals>
-                        <configuration>
-                            <outputFile>lang/ja.lang</outputFile>
-                            <resources>
-                                <resource>
-                                    <directory>src/main/resources/lang</directory>
-                                    <filtering>true</filtering>
-                                    <includes>
-                                        <include>ja.lang</include>
-                                    </includes>
-                                </resource>
-                            </resources>
-                        </configuration>
                     </execution>
                 </executions>
+                <configuration>
+                    <shadedArtifactAttached>true</shadedArtifactAttached>
+                    <transformers>
+                        <transformer
+                                implementation="org.apache.maven.plugins.shade.resource.properties.PropertiesTransformer">
+                            <resource>lang/ja_JP.lang</resource>
+                        </transformer>
+                        <transformer
+                                implementation="org.apache.maven.plugins.shade.resource.properties.PropertiesTransformer">
+                            <resource>lang/en_US.lang</resource>
+                        </transformer>
+                        <transformer
+                                implementation="org.apache.maven.plugins.shade.resource.properties.PropertiesTransformer">
+                            <resource>lang/ja_KS.lang</resource>
+                        </transformer>
+                    </transformers>
+                </configuration>
             </plugin>
         </plugins>
     </build>

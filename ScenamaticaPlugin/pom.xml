@@ -72,6 +72,18 @@
                                         implementation="org.apache.maven.plugins.shade.resource.DontIncludeResourceTransformer">
                                     <resource>MANIFEST.MF</resource>
                                 </transformer>
+                                <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.properties.PropertiesTransformer">
+                                    <resource>lang/ja_JP.lang</resource>
+                                </transformer>
+                                <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.properties.PropertiesTransformer">
+                                    <resource>lang/en_US.lang</resource>
+                                </transformer>
+                                <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.properties.PropertiesTransformer">
+                                    <resource>lang/ja_KS.lang</resource>
+                                </transformer>
                             </transformers>
                         </configuration>
                     </execution>
