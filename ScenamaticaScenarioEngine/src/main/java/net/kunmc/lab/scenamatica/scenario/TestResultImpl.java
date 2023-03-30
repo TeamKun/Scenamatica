@@ -21,8 +21,6 @@ public class TestResultImpl implements TestResult
     TestState state;
     @NotNull
     TestResultCause testResultCause;
-    @NotNull
-    String message;
     long startedAt;
     long finishedAt;
 
@@ -32,32 +30,13 @@ public class TestResultImpl implements TestResult
     public TestResultImpl(@NotNull UUID testID,
                           @NotNull TestState state,
                           @NotNull TestResultCause resultType,
-                          @NotNull String message,
                           long startedAt)
     {
         this.testID = testID;
         this.state = state;
         this.testResultCause = resultType;
-        this.message = message;
         this.startedAt = startedAt;
         this.finishedAt = System.currentTimeMillis();
         this.failedAction = null;
     }
-
-    public TestResultImpl(@NotNull UUID testID,
-                          @NotNull TestState state,
-                          @NotNull TestResultCause resultType,
-                          @NotNull String message,
-                          long startedAt,
-                          @NotNull Action<?> failedAction)
-    {
-        this.testID = testID;
-        this.state = state;
-        this.testResultCause = resultType;
-        this.message = message;
-        this.startedAt = startedAt;
-        this.finishedAt = System.currentTimeMillis();
-        this.failedAction = failedAction;
-    }
-
 }

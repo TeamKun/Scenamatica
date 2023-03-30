@@ -5,9 +5,12 @@ import com.google.common.collect.Multimap;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import net.kunmc.lab.scenamatica.enums.TriggerType;
+import net.kunmc.lab.scenamatica.exceptions.context.ContextPreparationException;
 import net.kunmc.lab.scenamatica.exceptions.scenario.ScenarioAlreadyRunningException;
+import net.kunmc.lab.scenamatica.exceptions.scenario.ScenarioException;
 import net.kunmc.lab.scenamatica.exceptions.scenario.ScenarioNotFoundException;
 import net.kunmc.lab.scenamatica.exceptions.scenario.ScenarioNotRunningException;
+import net.kunmc.lab.scenamatica.exceptions.scenario.TriggerNotFoundException;
 import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
 import net.kunmc.lab.scenamatica.interfaces.action.ActionManager;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioEngine;
@@ -46,7 +49,8 @@ public class ScenarioManagerImpl implements ScenarioManager
 
     @Override
     @NotNull
-    public TestResult startScenario(@NotNull Plugin plugin, @NotNull String scenarioName) throws ScenarioAlreadyRunningException, ScenarioNotFoundException
+    public TestResult startScenario(@NotNull Plugin plugin, @NotNull String scenarioName)
+            throws ScenarioException, ContextPreparationException
     {
         return this.startScenario(plugin, scenarioName, TriggerType.MANUAL_DISPATCH);
     }
@@ -54,7 +58,7 @@ public class ScenarioManagerImpl implements ScenarioManager
     @Override
     @NotNull
     public TestResult startScenario(@NotNull Plugin plugin, @NotNull String scenarioName, @NotNull TriggerType triggerType)
-            throws ScenarioAlreadyRunningException, ScenarioNotFoundException
+            throws ScenarioException, ContextPreparationException
     {
         if (this.isRunning())
         {
@@ -70,18 +74,10 @@ public class ScenarioManagerImpl implements ScenarioManager
                 .map(CompiledTriggerAction::getTrigger)
                 .filter(t -> t.getType() == triggerType)
                 .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("The scenario does not have a trigger of the specified type."));
+                .orElseThrow(() -> new TriggerNotFoundException(triggerType));
 
         this.currentScenario = engine;
-        TestResult result = null;
-        try
-        {
-            result = engine.start(manualDispatchTrigger);
-        }
-        catch (net.kunmc.lab.scenamatica.exceptions.context.ContextPreparationException e)
-        {
-            throw new RuntimeException(e);
-        }
+        TestResult result = engine.start(manualDispatchTrigger);
         this.currentScenario = null;
 
         return result;

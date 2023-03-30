@@ -1,8 +1,8 @@
 package net.kunmc.lab.scenamatica.interfaces.scenario;
 
 import net.kunmc.lab.scenamatica.enums.TriggerType;
-import net.kunmc.lab.scenamatica.exceptions.scenario.ScenarioAlreadyRunningException;
-import net.kunmc.lab.scenamatica.exceptions.scenario.ScenarioNotFoundException;
+import net.kunmc.lab.scenamatica.exceptions.context.ContextPreparationException;
+import net.kunmc.lab.scenamatica.exceptions.scenario.ScenarioException;
 import net.kunmc.lab.scenamatica.exceptions.scenario.ScenarioNotRunningException;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
@@ -31,7 +31,7 @@ public interface ScenarioManager
      * @throws IllegalArgumentException シナリオが手動実行できない場合
      */
     @NotNull
-    TestResult startScenario(@NotNull Plugin plugin, @NotNull String scenarioName) throws ScenarioAlreadyRunningException, ScenarioNotFoundException;
+    TestResult startScenario(@NotNull Plugin plugin, @NotNull String scenarioName) throws ContextPreparationException, ScenarioException;
 
     /**
      * シナリオを実行します。
@@ -44,7 +44,7 @@ public interface ScenarioManager
      * @throws IllegalArgumentException シナリオが指定されたトリガで実行できない場合
      */
     @NotNull
-    TestResult startScenario(@NotNull Plugin plugin, @NotNull String scenarioName, @NotNull TriggerType triggerType) throws ScenarioAlreadyRunningException, ScenarioNotFoundException;
+    TestResult startScenario(@NotNull Plugin plugin, @NotNull String scenarioName, @NotNull TriggerType triggerType) throws ContextPreparationException, ScenarioException;
 
     /**
      * シナリオの実行をキャンセルします。

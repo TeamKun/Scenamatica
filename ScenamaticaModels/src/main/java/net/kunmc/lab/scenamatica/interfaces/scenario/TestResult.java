@@ -38,14 +38,6 @@ public interface TestResult
     TestResultCause getTestResultCause();
 
     /**
-     * テストの結果メッセージを取得します。
-     *
-     * @return テストの結果メッセージ
-     */
-    @NotNull
-    String getMessage();
-
-    /**
      * テストが開始された時間を取得します。
      *
      * @return テストが開始された時間

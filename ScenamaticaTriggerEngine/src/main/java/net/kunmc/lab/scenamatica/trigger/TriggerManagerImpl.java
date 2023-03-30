@@ -3,6 +3,8 @@ package net.kunmc.lab.scenamatica.trigger;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import net.kunmc.lab.scenamatica.enums.TriggerType;
+import net.kunmc.lab.scenamatica.exceptions.context.ContextPreparationException;
+import net.kunmc.lab.scenamatica.exceptions.scenario.ScenarioException;
 import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerBean;
@@ -39,7 +41,7 @@ public class TriggerManagerImpl implements TriggerManager
     public void performTriggerFire(@NotNull Plugin plugin,
                                    @NotNull String scenarioName,
                                    @NotNull TriggerType type,
-                                   @Nullable TriggerArgument argument)
+                                   @Nullable TriggerArgument argument) throws ContextPreparationException, ScenarioException
     {
         String key = scenarioName.toLowerCase(Locale.ROOT);
         if (!this.triggers.containsKey(key))

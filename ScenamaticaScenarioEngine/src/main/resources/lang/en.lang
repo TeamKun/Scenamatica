@@ -1,0 +1,17 @@
+# Scenario
+
+scenario.compile.start=Starting scenario compilation for scenario %%scenarioName%%
+scenario.compile.child=[%%compiled%%/%%total%%] Compiling %%triggerType%%:%%type%% scenario %%scenarioName%%
+scenario.compile.main=[%%compiled%%/%%total%%] Compiling main scenario %%scenarioName%%
+
+scenario.run.manually=Scenario %%scenarioName%% has been manually dispatched.
+scenario.run.prepare.fail=Failed to prepare a context for scenario %%scenarioName%%.
+scenario.run.engine.starting=Starting scenario engine for scenario %%scenarioName%% ...
+
+scenario.run.starting.main=Starting scenario %%scenarioName%% ...
+scenario.run.starting.before=Starting the before scenario of %%scenarioName%% ...
+scenario.run.starting.after=Starting the after scenario of %%scenarioName%% ...
+
+scenario.result.action.error=%%red%%❌An exception occurred while executing the action %%actionName%% of the scenario %%scenarioName%%.
+scenario.result.action.passed=%%green%%✔ Action %%actionName%% of scenario %%scenarioName%% has been executed.
+scenario.result.action.jumped=%%yellow%%⚠ The action %%actionName%% of the scenario %%scenarioName%% has been executed before the expected action.

@@ -69,7 +69,6 @@ public class ScenarioResultDelivererImpl implements ScenarioResultDeliverer
                     this.testID,
                     state,
                     TestResultCause.INTERNAL_ERROR,
-                    "An internal error occurred while waiting for the result: " + e.getMessage(),
                     this.startedAt
             );
         }
@@ -81,7 +80,6 @@ public class ScenarioResultDelivererImpl implements ScenarioResultDeliverer
                     this.testID,
                     state,
                     TestResultCause.CANCELLED,
-                    "An internal error occurred while waiting for the result: " + e.getMessage(),
                     this.startedAt
             );
         }

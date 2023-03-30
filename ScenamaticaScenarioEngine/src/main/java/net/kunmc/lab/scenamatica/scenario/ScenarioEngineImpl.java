@@ -1,6 +1,8 @@
 package net.kunmc.lab.scenamatica.scenario;
 
 import lombok.Getter;
+import net.kunmc.lab.peyangpaperutils.lang.LangProvider;
+import net.kunmc.lab.peyangpaperutils.lang.MsgArgs;
 import net.kunmc.lab.peyangpaperutils.lib.utils.Pair;
 import net.kunmc.lab.scenamatica.enums.ScenarioType;
 import net.kunmc.lab.scenamatica.enums.TestResultCause;
@@ -8,6 +10,7 @@ import net.kunmc.lab.scenamatica.enums.TestState;
 import net.kunmc.lab.scenamatica.enums.TriggerType;
 import net.kunmc.lab.scenamatica.enums.WatchType;
 import net.kunmc.lab.scenamatica.exceptions.context.ContextPreparationException;
+import net.kunmc.lab.scenamatica.exceptions.scenario.TriggerNotFoundException;
 import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
 import net.kunmc.lab.scenamatica.interfaces.action.Action;
 import net.kunmc.lab.scenamatica.interfaces.action.ActionArgument;
@@ -65,19 +68,23 @@ public class ScenarioEngineImpl implements ScenarioEngine
         this.plugin = plugin;
         this.scenario = scenario;
         this.state = TestState.STAND_BY;
-        this.listener = new ScenarioActionListenerImpl(this);
+        this.listener = new ScenarioActionListenerImpl(this, registry);
+
+        String scenarioName = this.scenario.getName();
 
         // アクションをコンパイルしてキャッシュしておく。
 
-        this.log(Level.INFO, "Starting scenario compilation for scenario \"{}\" ...", this.scenario.getName());
+        this.logWithScenarioName(
+                Level.INFO,
+                LangProvider.get("scenario.compile.start", MsgArgs.of("scenarioName", scenarioName))
+        );
 
         int compileNeeded = getCompileNeeded(this.scenario.getTriggers());
         int compiled = 0;
 
         // 本シナリオのコンパイル
-        this.log(Level.INFO, "[{}/{}] Compiling scenario MAIN of scenario \"{}\" ...",
-                ++compiled, compileNeeded, this.scenario.getName()
-        );
+        this.logCompilingMain(++compiled, compileNeeded);
+
         this.actions = this.runCompiler(this.scenario.getScenario());
 
         // トリガの before/after のコンパイル
@@ -128,12 +135,10 @@ public class ScenarioEngineImpl implements ScenarioEngine
             List<CompiledScenarioAction<?>> beforeActions;
             List<CompiledScenarioAction<?>> afterActions;
 
-            TriggerType type = trigger.getType();
+            TriggerType triggerType = trigger.getType();
             if (!trigger.getBeforeThat().isEmpty())
             {
-                this.log(Level.INFO, "[{}/{}] Compiling scenario {}:BEFORE of scenario \"{}\" ...",
-                        ++compiled, compileNeeded, type, this.scenario.getName()
-                );
+                this.logCompiling(++compiled, compileNeeded, "BEFORE", triggerType);
                 beforeActions = this.runCompiler(trigger.getBeforeThat());
             }
             else
@@ -141,9 +146,7 @@ public class ScenarioEngineImpl implements ScenarioEngine
 
             if (!trigger.getAfterThat().isEmpty())
             {
-                this.log(Level.INFO, "[{}/{}] Compiling scenario {}:AFTER of scenario \"{}\" ...",
-                        ++compiled, compileNeeded, type, this.scenario.getName()
-                );
+                this.logCompiling(++compiled, compileNeeded, "AFTER", triggerType);
                 afterActions = this.runCompiler(trigger.getAfterThat());
             }
             else
@@ -157,30 +160,29 @@ public class ScenarioEngineImpl implements ScenarioEngine
 
     @Override
     @NotNull
-    public TestResult start(@NotNull TriggerBean trigger) throws ContextPreparationException
+    public TestResult start(@NotNull TriggerBean trigger) throws ContextPreparationException, TriggerNotFoundException
     {
         this.setRunInfo(trigger);
         CompiledTriggerAction compiledTrigger = this.triggerActions.parallelStream()
                 .filter(t -> t.getTrigger().getType() == trigger.getType())
                 .filter(t -> Objects.equals(t.getTrigger().getArgument(), trigger.getArgument()))
-                .findFirst().orElseThrow(() -> new IllegalStateException("Invalid trigger: " + trigger));
+                .findFirst().orElseThrow(() -> new TriggerNotFoundException(trigger.getType()));
 
         this.state = TestState.CONTEXT_PREPARING;
         Context context = this.registry.getContextManager().prepareContext(this.scenario, this.testID);
         if (context == null)
         {
-            this.log(Level.WARNING, "Failed to prepare context.");
+            this.logWithScenarioName(Level.WARNING, LangProvider.get("scenario.run.prepare.fail"));
             this.isRunning = false;
             return new TestResultImpl(
                     this.testID,
                     this.state,
                     TestResultCause.CONTEXT_PREPARATION_FAILED,
-                    "Failed to prepare context.",
                     this.startedAt
             );
         }
 
-        this.log(Level.INFO, "Starting scenario engine for scenario \"{}\" ...", this.scenario.getName());
+        this.logWithScenarioName(Level.INFO, LangProvider.get("scenario.run.engine.starting"));
         this.state = TestState.STARTING;
 
         TestResult mayResult = this.runBeforeIfPresent(compiledTrigger);
@@ -191,7 +193,7 @@ public class ScenarioEngineImpl implements ScenarioEngine
         }
 
         this.state = TestState.RUNNING_MAIN;
-        this.log(Level.INFO, "Running scenario \"{}\" ...", this.scenario.getName());
+        this.logWithScenarioName(Level.INFO, LangProvider.get("scenario.run.starting.main"));
         mayResult = this.runScenario(this.actions);
         if (mayResult != null)
         {
@@ -211,7 +213,6 @@ public class ScenarioEngineImpl implements ScenarioEngine
                 this.testID,
                 this.state = TestState.FINISHED,
                 TestResultCause.PASSED,
-                "Scenario finished successfully.",
                 this.startedAt
         );
     }
@@ -221,7 +222,7 @@ public class ScenarioEngineImpl implements ScenarioEngine
         if (!trigger.getTrigger().getBeforeThat().isEmpty())
         {
             this.state = TestState.RUNNING_BEFORE;
-            this.log(Level.INFO, "Running before scenarios ...", this.scenario.getName());
+            this.logWithScenarioName(Level.INFO, LangProvider.get("scenario.run.starting.before"));
             return this.runScenario(trigger.getBeforeActions());
         }
 
@@ -233,7 +234,7 @@ public class ScenarioEngineImpl implements ScenarioEngine
         if (!trigger.getTrigger().getAfterThat().isEmpty())
         {
             this.state = TestState.RUNNING_AFTER;
-            this.log(Level.INFO, "Running after scenarios ...", this.scenario.getName());
+            this.logWithScenarioName(Level.INFO, LangProvider.get("scenario.run.starting.after"));
             return this.runScenario(trigger.getAfterActions());
         }
 
@@ -259,7 +260,6 @@ public class ScenarioEngineImpl implements ScenarioEngine
                         this.testID,
                         this.state,
                         TestResultCause.CANCELLED,
-                        "Scenario cancelled.",
                         this.startedAt
                 );
 
@@ -297,17 +297,33 @@ public class ScenarioEngineImpl implements ScenarioEngine
         this.logPrefix = "TEST-" + StringUtils.substring(this.scenario.getName(), 0, 8) +
                 "/" + this.testID.toString().substring(0, 8);
         if (!(this.isAutoRun = trigger.getType() != TriggerType.MANUAL_DISPATCH))
-            this.log(Level.INFO, "The scenario \"{}\" dispatched manually.", this.scenario.getName());
+            this.logWithScenarioName(Level.INFO, LangProvider.get("scenario.run.manually"));
         this.deliverer = new ScenarioResultDelivererImpl(this.registry, this.testID, this.startedAt);
     }
 
-    void log(Level level, String message, Object... args)
+    private void logCompiling(int compiled, int total, String type, TriggerType triggerType)
     {
-        Object[] newArgs = new Object[args.length + 1];
-        newArgs[0] = this.logPrefix;
-        System.arraycopy(args, 0, newArgs, 1, args.length);
+        MsgArgs newArgs = MsgArgs.of("compiled", compiled)
+                .add("total", total)
+                .add("type", type)
+                .add("triggerType", triggerType.name());
+        this.logWithScenarioName(Level.INFO, LangProvider.get("scenario.compile.child", newArgs));
+    }
 
-        this.registry.getLogger().log(level, "[{}] " + message, newArgs);
+    private void logCompilingMain(int compiled, int total)
+    {
+        MsgArgs newArgs = MsgArgs.of("compiled", compiled)
+                .add("total", total);
+        this.logWithScenarioName(Level.INFO, LangProvider.get("scenario.compile.main", newArgs));
+    }
+
+    private void logWithScenarioName(Level level, String message)
+    {
+        this.registry.getLogger().log(
+                level,
+                "[{}] " + LangProvider.get(message, MsgArgs.of("scenarioName", this.scenario.getName())),
+                this.logPrefix
+        );
     }
 
     @Override
