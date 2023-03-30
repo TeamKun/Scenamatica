@@ -18,6 +18,7 @@ import net.kunmc.lab.scenamatica.interfaces.action.ActionManager;
 import net.kunmc.lab.scenamatica.interfaces.context.Context;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioActionListener;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioEngine;
+import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioResultDeliverer;
 import net.kunmc.lab.scenamatica.interfaces.scenario.TestResult;
 import net.kunmc.lab.scenamatica.interfaces.scenario.runtime.CompiledScenarioAction;
 import net.kunmc.lab.scenamatica.interfaces.scenario.runtime.CompiledTriggerAction;
@@ -56,7 +57,7 @@ public class ScenarioEngineImpl implements ScenarioEngine
     private boolean isAutoRun;
     private TestState state;
     private CompiledScenarioAction<?> currentScenario;
-    private ScenarioResultDelivererImpl deliverer;
+    private ScenarioResultDeliverer deliverer;
 
     public ScenarioEngineImpl(@NotNull ScenamaticaRegistry registry,
                               @NotNull ActionManager actionManager,
