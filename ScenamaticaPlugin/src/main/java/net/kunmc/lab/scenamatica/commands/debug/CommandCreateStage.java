@@ -2,6 +2,7 @@ package net.kunmc.lab.scenamatica.commands.debug;
 
 import net.kunmc.lab.peyangpaperutils.lib.command.CommandBase;
 import net.kunmc.lab.peyangpaperutils.lib.terminal.Terminal;
+import net.kunmc.lab.scenamatica.exceptions.context.stage.StageCreateFailedException;
 import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
 import net.kunmc.lab.scenamatica.scenariofile.beans.context.WorldBeanImpl;
 import net.kyori.adventure.text.TextComponent;
@@ -29,14 +30,21 @@ public class CommandCreateStage extends CommandBase
 
         String name = args[0];
 
-        this.registry.getContextManager().getStageManager().createStage(new WorldBeanImpl(
-                name,
-                WorldType.NORMAL,
-                null,
-                false,
-                null,
-                false
-        ));
+        try
+        {
+            this.registry.getContextManager().getStageManager().createStage(new WorldBeanImpl(
+                    name,
+                    WorldType.NORMAL,
+                    null,
+                    false,
+                    null,
+                    false
+            ));
+        }
+        catch (StageCreateFailedException e)
+        {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override

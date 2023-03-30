@@ -2,6 +2,7 @@ package net.kunmc.lab.scenamatica.commands.debug;
 
 import net.kunmc.lab.peyangpaperutils.lib.command.CommandBase;
 import net.kunmc.lab.peyangpaperutils.lib.terminal.Terminal;
+import net.kunmc.lab.scenamatica.exceptions.context.stage.StageNotCreatedException;
 import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
 import net.kyori.adventure.text.TextComponent;
 import org.bukkit.command.CommandSender;
@@ -22,7 +23,14 @@ public class CommandDestroyStage extends CommandBase
     @Override
     public void onCommand(@NotNull CommandSender sender, @NotNull Terminal terminal, String[] args)
     {
-        this.registry.getContextManager().getStageManager().destroyStage();
+        try
+        {
+            this.registry.getContextManager().getStageManager().destroyStage();
+        }
+        catch (StageNotCreatedException e)
+        {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override

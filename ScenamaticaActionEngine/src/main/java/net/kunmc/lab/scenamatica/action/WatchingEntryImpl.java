@@ -27,7 +27,7 @@ public class WatchingEntryImpl<A extends ActionArgument> implements WatchingEntr
     Plugin plugin;
     ScenarioFileBean scenario;
     Action<A> action;
-    ActionArgument argument;
+    A argument;
     WatchType type;
     List<Pair<Class<? extends Event>, RegisteredListener>> listeners;
 

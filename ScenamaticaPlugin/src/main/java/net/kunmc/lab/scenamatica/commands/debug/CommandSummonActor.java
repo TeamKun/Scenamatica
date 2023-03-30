@@ -3,6 +3,8 @@ package net.kunmc.lab.scenamatica.commands.debug;
 import lombok.AllArgsConstructor;
 import net.kunmc.lab.peyangpaperutils.lib.command.CommandBase;
 import net.kunmc.lab.peyangpaperutils.lib.terminal.Terminal;
+import net.kunmc.lab.scenamatica.exceptions.context.actor.ActorAlreadyExistsException;
+import net.kunmc.lab.scenamatica.exceptions.context.stage.StageNotCreatedException;
 import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
 import net.kunmc.lab.scenamatica.scenariofile.beans.context.PlayerBeanImpl;
 import net.kyori.adventure.text.TextComponent;
@@ -24,22 +26,29 @@ public class CommandSummonActor extends CommandBase
             return;
 
         String name = args[0];
-        this.registry.getContextManager().getActorManager().createActor(new PlayerBeanImpl(
-                name,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                false,
-                false,
-                null,
-                null
-        ));
+        try
+        {
+            this.registry.getContextManager().getActorManager().createActor(new PlayerBeanImpl(
+                    name,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    false,
+                    false,
+                    null,
+                    null
+            ));
+        }
+        catch (ActorAlreadyExistsException | StageNotCreatedException e)
+        {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
