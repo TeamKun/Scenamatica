@@ -17,4 +17,11 @@ public class ScenarioAlreadyRunningException extends ScenarioException
         this.scenarioName = scenarioName;
         this.runningScenarioName = runningScenarioName;
     }
+
+    public ScenarioAlreadyRunningException(String message)
+    {
+        super(message);
+        this.scenarioName = null;
+        this.runningScenarioName = null;
+    }
 }

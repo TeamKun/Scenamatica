@@ -4,6 +4,7 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import lombok.Getter;
 import lombok.SneakyThrows;
+import net.kunmc.lab.peyangpaperutils.lib.utils.Pair;
 import net.kunmc.lab.scenamatica.enums.TriggerType;
 import net.kunmc.lab.scenamatica.exceptions.context.ContextPreparationException;
 import net.kunmc.lab.scenamatica.exceptions.scenario.ScenarioAlreadyRunningException;
@@ -25,15 +26,20 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
+import java.util.concurrent.CyclicBarrier;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
 
 public class ScenarioManagerImpl implements ScenarioManager
 {
     private final ScenamaticaRegistry registry;
     private final ActionManager actionManager;
     private final Multimap<Plugin, ScenarioEngine> engines;
+    private final ScenarioQueue queue;
     @NotNull
     private final TestReporter testReporter;
     private final TickListener tickListener;
+
     @Getter
     @Nullable
     private ScenarioEngine currentScenario;
@@ -47,6 +53,7 @@ public class ScenarioManagerImpl implements ScenarioManager
         this.testReporter = registry.getTestReporter();
         this.engines = ArrayListMultimap.create();
         this.tickListener = new TickListener(registry, this);
+        this.queue = new ScenarioQueue(registry, this);
         this.currentScenario = null;
         this.enabled = true;
     }
@@ -55,6 +62,7 @@ public class ScenarioManagerImpl implements ScenarioManager
     public void init()
     {
         this.tickListener.init();
+        this.queue.start();
     }
 
     @Override
@@ -65,34 +73,90 @@ public class ScenarioManagerImpl implements ScenarioManager
 
     @Override
     @NotNull
-    public TestResult startScenario(@NotNull Plugin plugin, @NotNull String scenarioName)
-            throws ScenarioException, ContextPreparationException
+    public TestResult startScenarioInterrupt(@NotNull Plugin plugin, @NotNull String scenarioName, boolean cancelRunning)
+            throws ScenarioException
     {
-        return this.startScenario(plugin, scenarioName, TriggerType.MANUAL_DISPATCH);
+        return this.startScenarioInterrupt(plugin, scenarioName, TriggerType.MANUAL_DISPATCH, cancelRunning);
     }
 
     @Override
     @NotNull
-    public TestResult startScenario(@NotNull Plugin plugin, @NotNull String scenarioName, @NotNull TriggerType triggerType)
-            throws ScenarioException, ContextPreparationException
+    public TestResult startScenarioInterrupt(@NotNull Plugin plugin, @NotNull String scenarioName, @NotNull TriggerType triggerType, boolean cancelRunning)
+            throws ScenarioException
     {
-        if (this.isRunning())
-        {
-            assert this.currentScenario != null;
-            throw new ScenarioAlreadyRunningException(scenarioName, this.currentScenario.getScenario().getName());
-        }
-        else if (!this.enabled)
+        if (!this.enabled)
             throw new ScenarioException("Scenamatica is disabled.");
+        else if (this.isRunning() && !cancelRunning)
+            throw new ScenarioAlreadyRunningException("Another scenario is running.");
 
+        AtomicReference<TestResult> result = new AtomicReference<>();
+        CyclicBarrier barrier = new CyclicBarrier(2);
+        Consumer<TestResult> callback = r -> {
+            result.set(r);
+            try
+            {
+                barrier.await();
+            }
+            catch (Exception e)
+            {
+                this.registry.getExceptionHandler().report(e);
+            }
+        };
+
+        Pair<ScenarioEngine, TriggerBean> runInfo = this.getRunInfoOrThrow(plugin, scenarioName, triggerType);
+        ScenarioEngine engine = runInfo.getLeft();
+        TriggerBean trigger = runInfo.getRight();
+
+        this.queue.addInterrupt(engine, trigger, callback);
+        if (this.isRunning())  // cancelRunning == true
+            this.cancel();
+
+        try
+        {
+            barrier.await();
+        }
+        catch (Exception e)
+        {
+            this.registry.getExceptionHandler().report(e);
+        }
+
+        return result.get();
+    }
+
+    @Override
+    public void queueScenario(@NotNull Plugin plugin, @NotNull String scenarioName, @NotNull TriggerType triggerType)
+            throws ScenarioNotFoundException, TriggerNotFoundException
+    {
+        Pair<ScenarioEngine, TriggerBean> runInfo = this.getRunInfoOrThrow(plugin, scenarioName, triggerType);
+        ScenarioEngine engine = runInfo.getLeft();
+        TriggerBean trigger = runInfo.getRight();
+
+        this.queue.add(engine, trigger, null);
+    }
+
+    private Pair<ScenarioEngine, TriggerBean> getRunInfoOrThrow(Plugin plugin, String scenarioName, TriggerType trigger)
+            throws ScenarioNotFoundException, TriggerNotFoundException
+    {
         ScenarioEngine engine = this.engines.get(plugin).stream().parallel()
                 .filter(e -> e.getScenario().getName().equals(scenarioName))
                 .findFirst()
                 .orElseThrow(() -> new ScenarioNotFoundException(scenarioName));
-        TriggerBean trigger = engine.getTriggerActions().stream().parallel()
+        TriggerBean triggerBean = engine.getTriggerActions().stream().parallel()
                 .map(CompiledTriggerAction::getTrigger)
-                .filter(t -> t.getType() == triggerType)
+                .filter(t -> t.getType() == trigger)
                 .findFirst()
-                .orElseThrow(() -> new TriggerNotFoundException(triggerType));
+                .orElseThrow(() -> new TriggerNotFoundException(trigger));
+
+        return Pair.of(engine, triggerBean);
+    }
+
+    /* non-public */ TestResult runScenario(ScenarioEngine engine, TriggerBean trigger)
+            throws ScenarioException, ContextPreparationException
+    {
+        if (!engine.getPlugin().isEnabled())
+            throw new ScenarioException("Plugin is disabled.");
+        else if (!this.enabled)
+            throw new ScenarioException("Scenamatica is disabled.");
 
         this.testReporter.onTestStart(engine.getScenario(), trigger);
         this.currentScenario = engine;
