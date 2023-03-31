@@ -23,5 +23,5 @@ public interface ContextBean
      * @return ワールド
      */
     @Nullable
-    WorldBean getWorld();
+    StageBean getWorld();
 }

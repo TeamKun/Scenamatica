@@ -18,7 +18,7 @@ public class ContextBeanSerializeTest
                     PlayerBeanSerializeTest.FULFILLED,
                     PlayerBeanSerializeTest.FULFILLED
             ),
-            WorldBeanSerializeTest.FULFILLED
+            StageBeanSerializeTest.FULFILLED
     );
 
     public static final Map<String, Object> FULFILLED_MAP = new HashMap<String, Object>()
@@ -28,7 +28,7 @@ public class ContextBeanSerializeTest
                 PlayerBeanSerializeTest.FULFILLED_MAP,
                 PlayerBeanSerializeTest.FULFILLED_MAP
         ));
-        put("world", WorldBeanSerializeTest.FULFILLED_MAP);
+        put("world", StageBeanSerializeTest.FULFILLED_MAP);
     }};
 
     public static final ContextBeanImpl EMPTY = new ContextBeanImpl(

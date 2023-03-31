@@ -2,7 +2,7 @@ package net.kunmc.lab.scenamatica.scenariofile.beans.context;
 
 import lombok.Value;
 import net.kunmc.lab.scenamatica.commons.utils.MapUtils;
-import net.kunmc.lab.scenamatica.interfaces.scenariofile.context.WorldBean;
+import net.kunmc.lab.scenamatica.interfaces.scenariofile.context.StageBean;
 import org.bukkit.World;
 import org.bukkit.WorldType;
 import org.jetbrains.annotations.NotNull;
@@ -12,10 +12,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Value
-public class WorldBeanImpl implements WorldBean
+public class StageBeanImpl implements StageBean
 {
     @Nullable
-    String originalName;
+    String originalWorldName;
     @NotNull
     WorldType type;
     @Nullable
@@ -26,13 +26,13 @@ public class WorldBeanImpl implements WorldBean
     boolean hardcore;
 
     @NotNull
-    public static Map<String, Object> serialize(WorldBean bean)
+    public static Map<String, Object> serialize(StageBean bean)
     {
         Map<String, Object> result = new HashMap<>();
 
         // オプション項目
-        if (bean.getOriginalName() != null)
-            result.put(KEY_ORIGINAL_NAME, bean.getOriginalName());
+        if (bean.getOriginalWorldName() != null)
+            result.put(KEY_ORIGINAL_WORLD_NAME, bean.getOriginalWorldName());
         if (bean.getType() != WorldType.NORMAL)
             MapUtils.putIfNotNull(result, KEY_TYPE, bean.getType().name());
         MapUtils.putPrimitiveOrStrIfNotNull(result, KEY_SEED, bean.getSeed());
@@ -47,7 +47,7 @@ public class WorldBeanImpl implements WorldBean
 
     public static void validate(Map<String, Object> map)
     {
-        MapUtils.checkTypeIfContains(map, KEY_ORIGINAL_NAME, String.class);
+        MapUtils.checkTypeIfContains(map, KEY_ORIGINAL_WORLD_NAME, String.class);
         MapUtils.checkEnumNameIfContains(map, KEY_TYPE, WorldType.class);
         MapUtils.checkTypeIfContains(map, KEY_SEED, Number.class);
         MapUtils.checkTypeIfContains(map, KEY_GENERATE_STRUCTURES, Boolean.class);
@@ -56,12 +56,12 @@ public class WorldBeanImpl implements WorldBean
     }
 
     @NotNull
-    public static WorldBean deserialize(@NotNull Map<String, Object> map)
+    public static StageBean deserialize(@NotNull Map<String, Object> map)
     {
         validate(map);
 
-        return new WorldBeanImpl(
-                MapUtils.getOrDefault(map, KEY_ORIGINAL_NAME, "world"),
+        return new StageBeanImpl(
+                MapUtils.getOrDefault(map, KEY_ORIGINAL_WORLD_NAME, "world"),
                 MapUtils.getAsEnumOrDefault(map, KEY_TYPE, WorldType.class, WorldType.NORMAL),
                 MapUtils.getOrNull(map, KEY_SEED),
                 MapUtils.getOrDefault(map, KEY_GENERATE_STRUCTURES, true),

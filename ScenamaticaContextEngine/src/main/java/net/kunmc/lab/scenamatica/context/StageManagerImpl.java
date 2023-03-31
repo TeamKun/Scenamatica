@@ -6,7 +6,7 @@ import net.kunmc.lab.scenamatica.exceptions.context.stage.StageCreateFailedExcep
 import net.kunmc.lab.scenamatica.exceptions.context.stage.StageNotCreatedException;
 import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
 import net.kunmc.lab.scenamatica.interfaces.context.StageManager;
-import net.kunmc.lab.scenamatica.interfaces.scenariofile.context.WorldBean;
+import net.kunmc.lab.scenamatica.interfaces.scenariofile.context.StageBean;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.World;
@@ -46,15 +46,15 @@ public class StageManagerImpl implements StageManager
 
     @Override
     @NotNull
-    public World createStage(WorldBean bean) throws StageCreateFailedException
+    public World createStage(StageBean bean) throws StageCreateFailedException
     {
         if (this.stage != null)
             return this.stage;
 
         NamespacedKey key = generateStageKey();
 
-        if (bean.getOriginalName() != null)
-            return this.createStage(bean.getOriginalName());
+        if (bean.getOriginalWorldName() != null)
+            return this.createStage(bean.getOriginalWorldName());
 
         WorldCreator creator = new WorldCreator(key);
         if (bean.getEnvironment() != null)

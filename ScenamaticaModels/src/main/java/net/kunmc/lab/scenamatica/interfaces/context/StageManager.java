@@ -2,7 +2,7 @@ package net.kunmc.lab.scenamatica.interfaces.context;
 
 import net.kunmc.lab.scenamatica.exceptions.context.stage.StageCreateFailedException;
 import net.kunmc.lab.scenamatica.exceptions.context.stage.StageNotCreatedException;
-import net.kunmc.lab.scenamatica.interfaces.scenariofile.context.WorldBean;
+import net.kunmc.lab.scenamatica.interfaces.scenariofile.context.StageBean;
 import org.bukkit.World;
 import org.jetbrains.annotations.NotNull;
 
@@ -17,7 +17,7 @@ public interface StageManager
      * @param bean ステージ情報
      * @return 生成したステージ
      */
-    @NotNull World createStage(WorldBean bean) throws StageCreateFailedException;
+    @NotNull World createStage(StageBean bean) throws StageCreateFailedException;
 
     /**
      * ステージをコピーします。

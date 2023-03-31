@@ -4,7 +4,7 @@ import net.kunmc.lab.peyangpaperutils.lib.command.CommandBase;
 import net.kunmc.lab.peyangpaperutils.lib.terminal.Terminal;
 import net.kunmc.lab.scenamatica.exceptions.context.stage.StageCreateFailedException;
 import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
-import net.kunmc.lab.scenamatica.scenariofile.beans.context.WorldBeanImpl;
+import net.kunmc.lab.scenamatica.scenariofile.beans.context.StageBeanImpl;
 import net.kyori.adventure.text.TextComponent;
 import org.bukkit.WorldType;
 import org.bukkit.command.CommandSender;
@@ -32,7 +32,7 @@ public class CommandCreateStage extends CommandBase
 
         try
         {
-            this.registry.getContextManager().getStageManager().createStage(new WorldBeanImpl(
+            this.registry.getContextManager().getStageManager().createStage(new StageBeanImpl(
                     name,
                     WorldType.NORMAL,
                     null,

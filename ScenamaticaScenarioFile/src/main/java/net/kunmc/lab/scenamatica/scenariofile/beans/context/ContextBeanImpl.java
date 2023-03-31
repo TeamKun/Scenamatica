@@ -4,7 +4,7 @@ import lombok.Value;
 import net.kunmc.lab.scenamatica.commons.utils.MapUtils;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.context.ContextBean;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.context.PlayerBean;
-import net.kunmc.lab.scenamatica.interfaces.scenariofile.context.WorldBean;
+import net.kunmc.lab.scenamatica.interfaces.scenariofile.context.StageBean;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -16,13 +16,13 @@ import java.util.Map;
 public class ContextBeanImpl implements ContextBean
 {
     private static final String KEY_ACTORS = "actors";
-    private static final String KEY_WORLD = "world";
+    private static final String KEY_STAGE = "stage";
 
     @Nullable
     List<PlayerBean> actors;
 
     @Nullable
-    WorldBean world;
+    StageBean world;
 
     public static Map<String, Object> serialize(ContextBean bean)
     {
@@ -38,7 +38,7 @@ public class ContextBeanImpl implements ContextBean
         }
 
         if (bean.getWorld() != null)
-            map.put(KEY_WORLD, WorldBeanImpl.serialize(bean.getWorld()));
+            map.put(KEY_STAGE, StageBeanImpl.serialize(bean.getWorld()));
 
         return map;
     }
@@ -59,9 +59,9 @@ public class ContextBeanImpl implements ContextBean
                 ));
         }
 
-        if (map.containsKey(KEY_WORLD))
-            WorldBeanImpl.validate(MapUtils.checkAndCastMap(
-                    map.get(KEY_WORLD),
+        if (map.containsKey(KEY_STAGE))
+            StageBeanImpl.validate(MapUtils.checkAndCastMap(
+                    map.get(KEY_STAGE),
                     String.class,
                     Object.class
             ));
@@ -81,10 +81,10 @@ public class ContextBeanImpl implements ContextBean
                 )));
         }
 
-        WorldBean world = null;
-        if (map.containsKey(KEY_WORLD))
-            world = WorldBeanImpl.deserialize(MapUtils.checkAndCastMap(
-                    map.get(KEY_WORLD),
+        StageBean world = null;
+        if (map.containsKey(KEY_STAGE))
+            world = StageBeanImpl.deserialize(MapUtils.checkAndCastMap(
+                    map.get(KEY_STAGE),
                     String.class,
                     Object.class
             ));

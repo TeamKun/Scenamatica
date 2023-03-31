@@ -10,12 +10,12 @@ import java.io.Serializable;
 /**
  * ワールドの情報を表すインターフェースです。
  */
-public interface WorldBean extends Serializable
+public interface StageBean extends Serializable
 {
-    String KEY_ORIGINAL_NAME = "copyOf";
+    String KEY_ORIGINAL_WORLD_NAME = "copyOf";
     String KEY_TYPE = "type";
     String KEY_SEED = "seed";
-    String KEY_GENERATE_STRUCTURES = "structures";
+    String KEY_GENERATE_STRUCTURES = " ";
     String KEY_ENVIRONMENT = "env";
     String KEY_HARDCORE = "hardcore";
 
@@ -25,7 +25,7 @@ public interface WorldBean extends Serializable
      * @return ワールド名
      */
     @Nullable
-    String getOriginalName();
+    String getOriginalWorldName();
 
     /**
      * ワールドの種類を取得します。

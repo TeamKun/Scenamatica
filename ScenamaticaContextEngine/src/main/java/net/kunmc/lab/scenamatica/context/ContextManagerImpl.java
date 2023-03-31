@@ -62,14 +62,14 @@ public class ContextManagerImpl implements ContextManager
 
         this.log(scenario, "context.creating", testID);
 
-        if (context.getWorld() != null && context.getWorld().getOriginalName() != null
-                && Bukkit.getWorld(context.getWorld().getOriginalName()) != null)  // 既存だったら再利用する。
+        if (context.getWorld() != null && context.getWorld().getOriginalWorldName() != null
+                && Bukkit.getWorld(context.getWorld().getOriginalWorldName()) != null)  // 既存だったら再利用する。
         {
             this.log(scenario, "context.stage.clone.found",
-                    MsgArgs.of("stageName", context.getWorld().getOriginalName()), testID
+                    MsgArgs.of("stageName", context.getWorld().getOriginalWorldName()), testID
             );
             this.log(scenario, "context.stage.clone.cloning",
-                    MsgArgs.of("stageName", context.getWorld().getOriginalName()), testID
+                    MsgArgs.of("stageName", context.getWorld().getOriginalWorldName()), testID
             );
         }
 

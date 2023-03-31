@@ -1,6 +1,6 @@
 package net.kunmc.lab.scenamatica.scenariofile.beans.context;
 
-import net.kunmc.lab.scenamatica.interfaces.scenariofile.context.WorldBean;
+import net.kunmc.lab.scenamatica.interfaces.scenariofile.context.StageBean;
 import net.kunmc.lab.scenamatica.scenariofile.beans.utils.MapTestUtil;
 import org.bukkit.World;
 import org.bukkit.WorldType;
@@ -12,10 +12,10 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class WorldBeanSerializeTest
+public class StageBeanSerializeTest
 {
 
-    public static final WorldBean FULFILLED = new WorldBeanImpl(
+    public static final StageBean FULFILLED = new StageBeanImpl(
             "world",
             WorldType.AMPLIFIED,
             1145141919810L,
@@ -34,7 +34,7 @@ public class WorldBeanSerializeTest
         put("hardcore", true);
     }};
 
-    public static final WorldBean EMPTY = new WorldBeanImpl(
+    public static final StageBean EMPTY = new StageBeanImpl(
             "world",
             WorldType.NORMAL,
             null,
@@ -51,7 +51,7 @@ public class WorldBeanSerializeTest
     @Test
     void 正常シリアライズできるか()
     {
-        Map<String, Object> actual = WorldBeanImpl.serialize(FULFILLED);
+        Map<String, Object> actual = StageBeanImpl.serialize(FULFILLED);
 
         MapTestUtil.assertEqual(FULFILLED_MAP, actual);
     }
@@ -59,7 +59,7 @@ public class WorldBeanSerializeTest
     @Test
     void 正常デシリアライズできるか()
     {
-        WorldBean actual = WorldBeanImpl.deserialize(FULFILLED_MAP);
+        StageBean actual = StageBeanImpl.deserialize(FULFILLED_MAP);
 
         assertEquals(FULFILLED, actual);
     }
@@ -76,14 +76,14 @@ public class WorldBeanSerializeTest
 
         assertThrows(
                 IllegalArgumentException.class,
-                () -> WorldBeanImpl.deserialize(map)
+                () -> StageBeanImpl.deserialize(map)
         );
     }
 
     @Test
     void 必須項目のみでシリアライズできるか()
     {
-        Map<String, Object> actual = WorldBeanImpl.serialize(EMPTY);
+        Map<String, Object> actual = StageBeanImpl.serialize(EMPTY);
 
         MapTestUtil.assertEqual(EMPTY_MAP, actual);
     }
@@ -91,7 +91,7 @@ public class WorldBeanSerializeTest
     @Test
     void 必須項目のみでデシリアライズできるか()
     {
-        WorldBean actual = WorldBeanImpl.deserialize(EMPTY_MAP);
+        StageBean actual = StageBeanImpl.deserialize(EMPTY_MAP);
 
         assertEquals(EMPTY, actual);
     }
