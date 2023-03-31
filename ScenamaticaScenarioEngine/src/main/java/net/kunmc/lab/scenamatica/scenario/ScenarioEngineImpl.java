@@ -165,7 +165,7 @@ public class ScenarioEngineImpl implements ScenarioEngine
 
     @Override
     @NotNull
-    public TestResult start(@NotNull TriggerBean trigger) throws ContextPreparationException, TriggerNotFoundException
+    public TestResult start(@NotNull TriggerBean trigger) throws TriggerNotFoundException
     {
         this.setRunInfo(trigger);
         CompiledTriggerAction compiledTrigger = this.triggerActions.parallelStream()
@@ -174,8 +174,14 @@ public class ScenarioEngineImpl implements ScenarioEngine
                 .findFirst().orElseThrow(() -> new TriggerNotFoundException(trigger.getType()));
 
         this.state = TestState.CONTEXT_PREPARING;
-        Context context = this.registry.getContextManager().prepareContext(this.scenario, this.testID);
-        if (context == null)
+        Context context;
+        try
+        {
+            context = this.registry.getContextManager().prepareContext(this.scenario, this.testID);
+            if (context == null)
+                throw new ContextPreparationException(""); // だみー
+        }
+        catch (ContextPreparationException ignored)
         {
             this.logWithScenarioName(Level.WARNING, LangProvider.get("scenario.run.prepare.fail"));
             this.isRunning = false;

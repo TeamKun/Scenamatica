@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.SneakyThrows;
 import net.kunmc.lab.peyangpaperutils.lib.utils.Pair;
 import net.kunmc.lab.scenamatica.enums.TriggerType;
-import net.kunmc.lab.scenamatica.exceptions.context.ContextPreparationException;
 import net.kunmc.lab.scenamatica.exceptions.scenario.ScenarioAlreadyRunningException;
 import net.kunmc.lab.scenamatica.exceptions.scenario.ScenarioException;
 import net.kunmc.lab.scenamatica.exceptions.scenario.ScenarioNotFoundException;
@@ -151,7 +150,7 @@ public class ScenarioManagerImpl implements ScenarioManager
     }
 
     /* non-public */ TestResult runScenario(ScenarioEngine engine, TriggerBean trigger)
-            throws ScenarioException, ContextPreparationException
+            throws ScenarioException
     {
         if (!engine.getPlugin().isEnabled())
             throw new ScenarioException("Plugin is disabled.");
@@ -213,6 +212,7 @@ public class ScenarioManagerImpl implements ScenarioManager
         if (this.isRunning())
             this.cancel();
 
+        this.queue.cancel();
         this.engines.clear();
     }
 

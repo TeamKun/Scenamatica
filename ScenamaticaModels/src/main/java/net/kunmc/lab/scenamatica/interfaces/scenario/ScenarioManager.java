@@ -1,7 +1,7 @@
 package net.kunmc.lab.scenamatica.interfaces.scenario;
 
 import net.kunmc.lab.scenamatica.enums.TriggerType;
-import net.kunmc.lab.scenamatica.exceptions.context.ContextPreparationException;
+import net.kunmc.lab.scenamatica.exceptions.scenario.ScenarioAlreadyRunningException;
 import net.kunmc.lab.scenamatica.exceptions.scenario.ScenarioException;
 import net.kunmc.lab.scenamatica.exceptions.scenario.ScenarioNotFoundException;
 import net.kunmc.lab.scenamatica.exceptions.scenario.ScenarioNotRunningException;
@@ -35,13 +35,13 @@ public interface ScenarioManager
      * @param scenarioName  シナリオ名
      * @param cancelRunning 実行中の他のシナリオをキャンセルして実行するかどうか
      * @return シナリオの実行結果
-     * @throws IllegalArgumentException シナリオが存在しない場合
-     * @throws IllegalArgumentException シナリオが手動実行できない場合
+     * @throws ScenarioAlreadyRunningException 他のシナリオが実行中で、{@code cancelRunning} が {@code false} の場合
+     * @throws IllegalArgumentException        シナリオが手動実行できない場合
      */
     @NotNull
     TestResult startScenarioInterrupt(@NotNull Plugin plugin,
                                       @NotNull String scenarioName,
-                                      boolean cancelRunning) throws ContextPreparationException, ScenarioException;
+                                      boolean cancelRunning) throws ScenarioException;
 
     /**
      * シナリオを割り込み実行します。
@@ -51,14 +51,15 @@ public interface ScenarioManager
      * @param triggerType   トリガの種類
      * @param cancelRunning 実行中の他のシナリオをキャンセルして実行するかどうか
      * @return シナリオの実行結果
-     * @throws IllegalArgumentException シナリオが存在しない場合
-     * @throws IllegalArgumentException シナリオが指定されたトリガで実行できない場合
+     * @throws ScenarioAlreadyRunningException 他のシナリオが実行中で、{@code cancelRunning} が {@code false} の場合
+     * @throws ScenarioNotFoundException       シナリオが存在しない場合
+     * @throws TriggerNotFoundException        シナリオが指定されたトリガで実行できない場合
      */
     @NotNull
     TestResult startScenarioInterrupt(@NotNull Plugin plugin,
                                       @NotNull String scenarioName,
                                       @NotNull TriggerType triggerType,
-                                      boolean cancelRunning) throws ContextPreparationException, ScenarioException;
+                                      boolean cancelRunning) throws ScenarioException;
 
     /**
      * シナリオを割り込み手動実行します。
@@ -68,13 +69,14 @@ public interface ScenarioManager
      * @param plugin       シナリオを実行するプラグイン
      * @param scenarioName シナリオ名
      * @return シナリオの実行結果
-     * @throws IllegalArgumentException シナリオが存在しない場合
-     * @throws IllegalArgumentException シナリオが手動実行できない場合
+     * @throws ScenarioAlreadyRunningException 他のシナリオが実行中の場合
+     * @throws ScenarioNotFoundException       シナリオが存在しない場合
+     * @throws TriggerNotFoundException        シナリオが手動実行できない場合
      * @see #startScenarioInterrupt(Plugin, String, TriggerType, boolean)
      */
     @NotNull
     default TestResult startScenarioInterrupt(@NotNull Plugin plugin,
-                                              @NotNull String scenarioName) throws ContextPreparationException, ScenarioException
+                                              @NotNull String scenarioName) throws ScenarioException
     {
         return startScenarioInterrupt(plugin, scenarioName, false);
     }
@@ -87,16 +89,16 @@ public interface ScenarioManager
      * @param scenarioName シナリオ名
      * @param triggerType  トリガの種類
      * @return シナリオの実行結果
-     * @throws ScenarioNotFoundException   シナリオが存在しない場合
-     * @throws TriggerNotFoundException    シナリオが指定されたトリガで実行できない場合
-     * @throws ContextPreparationException コンテキストの準備に失敗した場合
-     * @throws ScenarioException           シナリオの実行に失敗した場合
+     * @throws ScenarioAlreadyRunningException 他のシナリオが実行中の場合
+     * @throws ScenarioNotFoundException       シナリオが存在しない場合
+     * @throws TriggerNotFoundException        シナリオが指定されたトリガで実行できない場合
+     * @see #startScenarioInterrupt(Plugin, String, boolean)
      * @see #startScenarioInterrupt(Plugin, String, TriggerType, boolean)
      */
     @NotNull
     default TestResult startScenarioInterrupt(@NotNull Plugin plugin,
                                               @NotNull String scenarioName,
-                                              @NotNull TriggerType triggerType) throws ContextPreparationException, ScenarioException
+                                              @NotNull TriggerType triggerType) throws ScenarioException
     {
         return startScenarioInterrupt(plugin, scenarioName, triggerType, false);
     }

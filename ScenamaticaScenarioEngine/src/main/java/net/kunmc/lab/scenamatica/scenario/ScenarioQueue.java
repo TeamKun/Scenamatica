@@ -2,7 +2,6 @@ package net.kunmc.lab.scenamatica.scenario;
 
 import lombok.AllArgsConstructor;
 import lombok.Value;
-import net.kunmc.lab.scenamatica.exceptions.context.ContextPreparationException;
 import net.kunmc.lab.scenamatica.exceptions.scenario.ScenarioException;
 import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioEngine;
@@ -45,6 +44,13 @@ import java.util.function.Consumer;
     }
 
     @Override
+    public synchronized void cancel() throws IllegalStateException
+    {
+        this.scenarioRunQueue.clear();
+        super.cancel();
+    }
+
+    @Override
     public void run()
     {
         if (!this.manager.isEnabled() || this.scenarioRunQueue.isEmpty())
@@ -59,10 +65,6 @@ import java.util.function.Consumer;
                 entry.getCallback().accept(result);
         }
         catch (ScenarioException e)
-        {
-            this.registry.getExceptionHandler().report(e);
-        }
-        catch (ContextPreparationException e)
         {
             this.registry.getExceptionHandler().report(e);
         }
