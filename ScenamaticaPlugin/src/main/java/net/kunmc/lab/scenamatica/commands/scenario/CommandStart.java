@@ -2,6 +2,7 @@ package net.kunmc.lab.scenamatica.commands.scenario;
 
 import lombok.AllArgsConstructor;
 import net.kunmc.lab.peyangpaperutils.lang.LangProvider;
+import net.kunmc.lab.peyangpaperutils.lang.MsgArgs;
 import net.kunmc.lab.peyangpaperutils.lib.command.CommandBase;
 import net.kunmc.lab.peyangpaperutils.lib.terminal.Terminal;
 import net.kunmc.lab.scenamatica.enums.TriggerType;
@@ -39,7 +40,10 @@ public class CommandStart extends CommandBase
         Plugin plugin;
         if ((plugin = Bukkit.getPluginManager().getPlugin(pluginName)) == null)
         {
-            terminal.error(LangProvider.get("command.scenario.start.errors.noPlugin"));
+            terminal.error(LangProvider.get(
+                    "command.scenario.start.errors.noPlugin",
+                    MsgArgs.of("plugin", pluginName)
+            ));
             return;
         }
 
@@ -50,11 +54,17 @@ public class CommandStart extends CommandBase
         }
         catch (ScenarioNotFoundException e)
         {
-            terminal.error(LangProvider.get("command.scenario.start.errors.noScenario"));
+            terminal.error(LangProvider.get(
+                    "command.scenario.start.errors.noScenario",
+                    MsgArgs.of("scenario", scenarioName)
+            ));
         }
         catch (TriggerNotFoundException e)
         {
-            terminal.error(LangProvider.get("command.scenario.start.errors.noManually"));
+            terminal.error(LangProvider.get(
+                    "command.scenario.start.errors.noManually",
+                    MsgArgs.of("scenario", scenarioName)
+            ));
         }
     }
 

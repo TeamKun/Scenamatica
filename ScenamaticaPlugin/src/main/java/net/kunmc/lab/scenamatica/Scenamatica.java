@@ -32,9 +32,13 @@ public final class Scenamatica extends JavaPlugin implements Listener
     @Override
     public void onEnable()
     {
+        this.saveDefaultConfig();
+        this.reloadConfig();
+
         try
         {
             LangProvider.init(this);
+            LangProvider.setLanguage(this.getConfig().getString("interfaces.lang", "ja_JP"));
         }
         catch (IOException e)
         {

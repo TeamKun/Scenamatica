@@ -41,7 +41,7 @@ public class CommandCancel extends CommandBase
         ));
 
         QuestionResult result = terminal.getInput().showYNQuestion(
-                LangProvider.get("command.scenario.cancel.confirm")
+                LangProvider.get("command.scenario.cancel.confirm", MsgArgs.of("scenario", current.getScenario().getName()))
         ).waitAndGetResult();
 
         if (result.test(QuestionAttribute.YES))
