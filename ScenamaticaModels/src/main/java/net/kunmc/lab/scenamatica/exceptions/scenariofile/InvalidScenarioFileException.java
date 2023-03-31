@@ -10,4 +10,9 @@ public class InvalidScenarioFileException extends Exception
     {
         super("Invalid scenario file syntax: " + message);
     }
+
+    public InvalidScenarioFileException(String message)
+    {
+        super(message);
+    }
 }
