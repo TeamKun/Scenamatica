@@ -20,6 +20,12 @@ command.scenario.cancel.errors.notRunning=シナリオは実行されてない�
 command.scenario.cancel.errors.cancel=シナリオ %%scenario%% のキャンセルは取り消されたで。
 command.scenario.cancel.success=シナリオ %%scenario%% の実行をキャンセルしたで。
 
+command.scenario.status.help=現在実行されているシナリオの状態を表示するで。
+command.scenario.status.notRunning=シナリオは実行されてないで。
+command.scenario.status.running=現在 プラグイン %%plugin%% の シナリオ %%scenario%% が実行されてるで。
+command.scenario.status.details.id=テストID：%%id%%
+command.scenario.status.details.time=開始時刻：%%startedAt%%
+
 test.start=シナリオ「%%scenario%%」のテストが「%%trigger%%」で始まったぽいわ。
 test.action.run=予定されたアクション「%%action%%」を実行するで。
 test.action.run.fail=%%bold%%❌%%reset%% 予定されたアクション「%%action%%」の実行に失敗したっぽいわ。「%%cause%%」が原因らしいわ。
