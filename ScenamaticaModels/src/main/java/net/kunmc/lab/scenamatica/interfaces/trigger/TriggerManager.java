@@ -1,7 +1,6 @@
 package net.kunmc.lab.scenamatica.interfaces.trigger;
 
 import net.kunmc.lab.scenamatica.enums.TriggerType;
-import net.kunmc.lab.scenamatica.exceptions.context.ContextPreparationException;
 import net.kunmc.lab.scenamatica.exceptions.scenario.ScenarioException;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerBean;
@@ -36,5 +35,5 @@ public interface TriggerManager
                             @NotNull String scenarioName,
                             @NotNull TriggerType type,
                             @Nullable TriggerArgument argument
-    ) throws ContextPreparationException, ScenarioException;
+    ) throws ScenarioException;
 }

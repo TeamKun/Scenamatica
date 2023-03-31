@@ -5,7 +5,6 @@ import com.google.common.collect.Multimap;
 import net.kunmc.lab.peyangpaperutils.lib.utils.Pair;
 import net.kunmc.lab.scenamatica.enums.TriggerType;
 import net.kunmc.lab.scenamatica.enums.WatchType;
-import net.kunmc.lab.scenamatica.exceptions.context.ContextPreparationException;
 import net.kunmc.lab.scenamatica.exceptions.scenario.ScenarioException;
 import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
 import net.kunmc.lab.scenamatica.interfaces.action.Action;
@@ -135,7 +134,7 @@ public class WatcherManagerImpl implements WatcherManager
                         entry.getArgument()
                 );
             }
-            catch (ContextPreparationException | ScenarioException e)
+            catch (ScenarioException e)
             {
                 this.registry.getExceptionHandler().report(e);
             }
