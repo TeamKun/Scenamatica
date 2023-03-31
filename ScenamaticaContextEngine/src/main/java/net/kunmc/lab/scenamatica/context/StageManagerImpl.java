@@ -28,6 +28,7 @@ public class StageManagerImpl implements StageManager
     @Getter
     private World stage;
     private boolean hasCopied;
+    private boolean isShared;
 
     public StageManagerImpl(ScenamaticaRegistry registry)
     {
@@ -92,10 +93,26 @@ public class StageManagerImpl implements StageManager
     }
 
     @Override
+    public @NotNull World shared(@NotNull String name)
+    {
+        World stage;
+        if ((stage = Bukkit.getWorld(name)) == null)
+            throw new IllegalArgumentException("World " + name + " is not loaded.");
+
+        this.isShared = true;
+        return this.stage = stage;
+    }
+
+    @Override
     public void destroyStage() throws StageNotCreatedException
     {
         if (this.stage == null)
             throw new StageNotCreatedException();
+        else if (this.isShared)  // 共有ステージの場合は壊すと大変なことになる。
+        {
+            this.stage = null;
+            return;
+        }
 
         this.stage.getPlayers().forEach(p -> p.teleport(Bukkit.getWorlds().get(0).getSpawnLocation()));
 

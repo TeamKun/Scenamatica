@@ -79,7 +79,7 @@ public class ContextManagerImpl implements ContextManager
         if (context.getWorld() != null)
             stage = this.stageManager.createStage(context.getWorld());
         else
-            stage = this.stageManager.createStage(DEFAULT_ORIGINAL_WORLD_NAME);  // TODO: コンフィグにする。
+            stage = this.stageManager.shared(DEFAULT_ORIGINAL_WORLD_NAME);
 
         this.isWorldPrepared = true;
 

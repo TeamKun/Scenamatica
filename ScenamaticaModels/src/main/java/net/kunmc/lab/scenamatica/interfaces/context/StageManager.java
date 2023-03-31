@@ -28,7 +28,16 @@ public interface StageManager
     @NotNull World createStage(String originalName) throws StageCreateFailedException;
 
     /**
+     * 共有ステージを設定します。
+     *
+     * @param name 名前
+     */
+    @NotNull
+    World shared(@NotNull String name);
+
+    /**
      * ステージを破棄します。
+     * 共有ステージの場合は破棄されません。
      */
     void destroyStage() throws StageNotCreatedException;
 
