@@ -1,5 +1,6 @@
 package net.kunmc.lab.scenamatica.scenariofile.beans;
 
+import net.kunmc.lab.peyangpaperutils.versioning.Version;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
 import net.kunmc.lab.scenamatica.scenariofile.ScenarioFileBeanImpl;
 import net.kunmc.lab.scenamatica.scenariofile.beans.context.ContextBeanSerializeTest;
@@ -14,10 +15,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ScenarioFileBeanSerializeTest
 {
     public static final ScenarioFileBean FULFILLED = new ScenarioFileBeanImpl(
+            Version.of("1.0.0"),
             "eveything",
             "A scenario that does everything",
             Arrays.asList(
@@ -34,6 +37,7 @@ public class ScenarioFileBeanSerializeTest
 
     public static final Map<String, Object> FULFILLED_MAP = new HashMap<String, Object>()
     {{
+        this.put("scenamatica", "1.0.0");
         this.put("name", "eveything");
         this.put("description", "A scenario that does everything");
         this.put("on", Arrays.asList(
@@ -49,6 +53,7 @@ public class ScenarioFileBeanSerializeTest
     }};
 
     public static final ScenarioFileBeanImpl EMPTY = new ScenarioFileBeanImpl(
+            Version.of("1.0.0"),
             "nothing",
             "A scenario that does nothing",
             Collections.emptyList(),
@@ -58,6 +63,7 @@ public class ScenarioFileBeanSerializeTest
 
     public static final Map<String, Object> EMPTY_MAP = new HashMap<String, Object>()
     {{
+        this.put("scenamatica", "1.0.0");
         this.put("name", "nothing");
         this.put("description", "A scenario that does nothing");
         this.put("on", Collections.emptyList());
@@ -94,5 +100,14 @@ public class ScenarioFileBeanSerializeTest
         ScenarioFileBean bean = ScenarioFileBeanImpl.deserialize(EMPTY_MAP);
 
         assertEquals(EMPTY, bean);
+    }
+
+    @Test
+    void バージョンが不正な場合は例外が発生するか()
+    {
+        Map<String, Object> map = new HashMap<>(FULFILLED_MAP);
+        map.put("scenamatica", "awdawdawd");
+
+        assertThrows(IllegalArgumentException.class, () -> ScenarioFileBeanImpl.deserialize(map));
     }
 }

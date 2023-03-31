@@ -1,6 +1,7 @@
 package net.kunmc.lab.scenamatica.scenariofile;
 
 import lombok.Value;
+import net.kunmc.lab.peyangpaperutils.versioning.Version;
 import net.kunmc.lab.scenamatica.commons.utils.MapUtils;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.context.ContextBean;
@@ -20,12 +21,15 @@ import java.util.stream.Collectors;
 @Value
 public class ScenarioFileBeanImpl implements ScenarioFileBean
 {
+    private static final String KEY_SCENAMATICA_VERSION = "scenamatica";
     private static final String KEY_NAME = "name";
     private static final String KEY_DESCRIPTION = "description";
     private static final String KEY_TRIGGERS = "on";
     private static final String KEY_CONTEXT = "context";
     private static final String KEY_SCENARIO = "scenario";
 
+    @NotNull
+    Version scenamaticaVersion;
     @NotNull
     String name;
     @NotNull
@@ -42,6 +46,7 @@ public class ScenarioFileBeanImpl implements ScenarioFileBean
     {
         Map<String, Object> map = new HashMap<>();
 
+        map.put(KEY_SCENAMATICA_VERSION, bean.getScenamaticaVersion().toString());
         map.put(KEY_NAME, bean.getName());
         map.put(KEY_DESCRIPTION, bean.getDescription());
         map.put(KEY_TRIGGERS, bean.getTriggers().stream()
@@ -61,6 +66,10 @@ public class ScenarioFileBeanImpl implements ScenarioFileBean
 
     public static void validate(@NotNull Map<String, Object> map)
     {
+        MapUtils.checkType(map, KEY_SCENAMATICA_VERSION, String.class);
+        if (!Version.isValidVersionString((String) map.get(KEY_SCENAMATICA_VERSION)))
+            throw new IllegalArgumentException("Invalid version string: " + map.get(KEY_SCENAMATICA_VERSION));
+
         MapUtils.checkType(map, KEY_NAME, String.class);
         MapUtils.checkType(map, KEY_DESCRIPTION, String.class);
 
@@ -91,6 +100,7 @@ public class ScenarioFileBeanImpl implements ScenarioFileBean
     {
         validate(map);
 
+        Version scenamatica = Version.of((String) map.get(KEY_SCENAMATICA_VERSION));
         String name = (String) map.get(KEY_NAME);
         String description = (String) map.get(KEY_DESCRIPTION);
         List<TriggerBean> triggers = ((List<?>) map.get(KEY_TRIGGERS)).stream()
@@ -117,6 +127,7 @@ public class ScenarioFileBeanImpl implements ScenarioFileBean
             ));
 
         return new ScenarioFileBeanImpl(
+                scenamatica,
                 name,
                 description,
                 triggers,

@@ -1,5 +1,6 @@
 package net.kunmc.lab.scenamatica.interfaces.scenariofile;
 
+import net.kunmc.lab.peyangpaperutils.versioning.Version;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.context.ContextBean;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.scenario.ScenarioBean;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerBean;
@@ -12,6 +13,13 @@ import java.util.List;
  */
 public interface ScenarioFileBean extends Serializable
 {
+    /**
+     * 対応する Scenamatica のバージョンを取得します。
+     *
+     * @return Scenamatica のバージョン
+     */
+    Version getScenamaticaVersion();
+
     /**
      * このシナリオの名前を取得します。
      * 対象プラグインで一意である必要があります。
