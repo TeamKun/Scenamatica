@@ -4,6 +4,12 @@ command.enable.current=%%aqua%%Scenamaticaのシナリオ実行は、今 %%state
 command.enable.enable=%%green%%オン
 command.enable.disable=%%red%%オフ
 
+command.scenario.help=シナリオを管理または実行するで。
+command.scenario.start.help=シナリオを実行するで。
+command.scenario.start.errors.noPlugin=指定されたプラグイン「%%plugin%%」が見つからんわ。
+command.scenario.start.errors.noScenario=指定されたシナリオ「%%scenario%%」が見つからんわ。
+command.scenario.start.success=シナリオ「%%scenario%%」がそのうち実行されるようにしたで。
+
 test.start=シナリオ「%%scenario%%」のテストが「%%trigger%%」で始まったぽいわ。
 test.action.run=予定されたアクション「%%action%%」を実行するで。
 test.action.run.fail=%%bold%%❌%%reset%% 予定されたアクション「%%action%%」の実行に失敗したっぽいわ。「%%cause%%」が原因らしいわ。

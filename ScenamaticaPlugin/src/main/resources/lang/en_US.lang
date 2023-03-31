@@ -1,15 +1,17 @@
 # Plugin
 
-general.yes=%%green%%Yes
-general.no=%%red%%No
-general.cancel=%%red%%Cancel
-general.pending=%%yellow%%Pending
-
 command.enable.help=Enable/disable Scenamatica scenario execution.
 command.enable.invalidState=%%red%%Invalid value for enable/disable.
 command.enable.current=%%aqua%%Scenamatica scenario execution is currently set to %%state%%%%aqua%%.
 command.enable.enable=%%green%%Enabled
 command.enable.disable=%%red%%Disabled
+
+command.scenario.help=Mange or execute scenarios.
+command.scenario.start.help=Start a scenario.
+command.scenario.start.errors.noPlugin=The specified plugin %%plugin%% was not found.
+command.scenario.start.errors.noScenario=The specified scenario %%scenario%% was not found.
+command.scenario.start.success=The scenario %%scenario%% has been added to the queue.
+
 
 test.start=Starting test of scenario %%scenario%% by %%trigger%%.
 test.action.run=A scheduled action %%name%% is being executed.
