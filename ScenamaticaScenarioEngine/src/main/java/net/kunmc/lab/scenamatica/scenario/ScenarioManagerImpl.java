@@ -78,13 +78,14 @@ public class ScenarioManagerImpl implements ScenarioManager
         return this.startScenarioInterrupt(plugin, scenarioName, TriggerType.MANUAL_DISPATCH, cancelRunning);
     }
 
+    @SneakyThrows(ScenarioNotRunningException.class)
     @Override
     @NotNull
     public TestResult startScenarioInterrupt(@NotNull Plugin plugin, @NotNull String scenarioName, @NotNull TriggerType triggerType, boolean cancelRunning)
-            throws ScenarioException
+            throws ScenarioAlreadyRunningException, TriggerNotFoundException, ScenarioNotFoundException
     {
         if (!this.enabled)
-            throw new ScenarioException("Scenamatica is disabled.");
+            throw new IllegalStateException("Scenamatica is disabled.");
         else if (this.isRunning() && !cancelRunning)
             throw new ScenarioAlreadyRunningException("Another scenario is running.");
 
@@ -150,12 +151,12 @@ public class ScenarioManagerImpl implements ScenarioManager
     }
 
     /* non-public */ TestResult runScenario(ScenarioEngine engine, TriggerBean trigger)
-            throws ScenarioException
+            throws TriggerNotFoundException
     {
         if (!engine.getPlugin().isEnabled())
-            throw new ScenarioException("Plugin is disabled.");
+            throw new IllegalStateException("Plugin is disabled.");
         else if (!this.enabled)
-            throw new ScenarioException("Scenamatica is disabled.");
+            throw new IllegalStateException("Scenamatica is disabled.");
 
         this.testReporter.onTestStart(engine.getScenario(), trigger);
         this.currentScenario = engine;

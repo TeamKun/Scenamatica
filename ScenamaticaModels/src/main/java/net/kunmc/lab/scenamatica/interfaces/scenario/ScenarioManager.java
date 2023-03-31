@@ -35,6 +35,7 @@ public interface ScenarioManager
      * @param scenarioName  シナリオ名
      * @param cancelRunning 実行中の他のシナリオをキャンセルして実行するかどうか
      * @return シナリオの実行結果
+     * @throws IllegalStateException           シナリオ実行が有効でない場合
      * @throws ScenarioAlreadyRunningException 他のシナリオが実行中で、{@code cancelRunning} が {@code false} の場合
      * @throws IllegalArgumentException        シナリオが手動実行できない場合
      */
@@ -51,6 +52,7 @@ public interface ScenarioManager
      * @param triggerType   トリガの種類
      * @param cancelRunning 実行中の他のシナリオをキャンセルして実行するかどうか
      * @return シナリオの実行結果
+     * @throws IllegalStateException           シナリオ実行が有効でない場合
      * @throws ScenarioAlreadyRunningException 他のシナリオが実行中で、{@code cancelRunning} が {@code false} の場合
      * @throws ScenarioNotFoundException       シナリオが存在しない場合
      * @throws TriggerNotFoundException        シナリオが指定されたトリガで実行できない場合
@@ -69,6 +71,7 @@ public interface ScenarioManager
      * @param plugin       シナリオを実行するプラグイン
      * @param scenarioName シナリオ名
      * @return シナリオの実行結果
+     * @throws IllegalStateException           シナリオ実行が有効でない場合
      * @throws ScenarioAlreadyRunningException 他のシナリオが実行中の場合
      * @throws ScenarioNotFoundException       シナリオが存在しない場合
      * @throws TriggerNotFoundException        シナリオが手動実行できない場合
@@ -89,6 +92,7 @@ public interface ScenarioManager
      * @param scenarioName シナリオ名
      * @param triggerType  トリガの種類
      * @return シナリオの実行結果
+     * @throws IllegalStateException           シナリオ実行が有効でない場合
      * @throws ScenarioAlreadyRunningException 他のシナリオが実行中の場合
      * @throws ScenarioNotFoundException       シナリオが存在しない場合
      * @throws TriggerNotFoundException        シナリオが指定されたトリガで実行できない場合

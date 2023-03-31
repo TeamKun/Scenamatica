@@ -2,7 +2,7 @@ package net.kunmc.lab.scenamatica.scenario;
 
 import lombok.AllArgsConstructor;
 import lombok.Value;
-import net.kunmc.lab.scenamatica.exceptions.scenario.ScenarioException;
+import net.kunmc.lab.scenamatica.exceptions.scenario.TriggerNotFoundException;
 import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioEngine;
 import net.kunmc.lab.scenamatica.interfaces.scenario.TestResult;
@@ -64,7 +64,7 @@ import java.util.function.Consumer;
             if (entry.getCallback() != null)
                 entry.getCallback().accept(result);
         }
-        catch (ScenarioException e)
+        catch (TriggerNotFoundException e)  // マトモな使い方したら発生しないはず。
         {
             this.registry.getExceptionHandler().report(e);
         }
