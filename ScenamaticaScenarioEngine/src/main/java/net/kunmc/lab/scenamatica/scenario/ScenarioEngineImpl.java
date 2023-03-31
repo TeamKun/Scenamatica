@@ -281,9 +281,12 @@ public class ScenarioEngineImpl implements ScenarioEngine
         this.currentScenario = scenario;
         ScenarioType type = scenario.getType();
         if (type == ScenarioType.ACTION_EXECUTE)
+        {
+            this.testReporter.onActionStart(this.scenario, scenario);
             scenario.execute(this.actionManager, this.listener);
+        }
 
-        return this.deliverer.waitResult(this.state);
+        return this.deliverer.waitResult(scenario.getBean().getTimeout(), this.state);
     }
 
     @Override

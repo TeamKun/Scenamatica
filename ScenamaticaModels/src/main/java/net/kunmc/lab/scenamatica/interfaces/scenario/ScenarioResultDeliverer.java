@@ -19,11 +19,18 @@ public interface ScenarioResultDeliverer
     /**
      * テスト結果を取得します。
      *
-     * @param state テストの状態
+     * @param timeout タイムアウト時間(tick)
+     *                0以下の場合は無限に待ちます。
+     * @param state   テストの状態
      * @return テスト結果
      */
     @NotNull
-    TestResult waitResult(@NotNull TestState state);
+    TestResult waitResult(long timeout, @NotNull TestState state);
+
+    /**
+     * サーバのチックが経過したときに呼び出されます。
+     */
+    void onTick();
 
     /**
      * このインスタンスを破棄します。

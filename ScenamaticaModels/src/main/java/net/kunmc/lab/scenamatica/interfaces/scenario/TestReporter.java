@@ -26,7 +26,7 @@ public interface TestReporter
      * @param scenario シナリオ
      * @param action   アクション
      */
-    void onActionStart(@NotNull ScenarioFileBean scenario, @NotNull CompiledAction<?> action);
+    void onActionStart(@NotNull ScenarioFileBean scenario, @NotNull CompiledScenarioAction<?> action);
 
     /**
      * シナリオのアクションの監視の開始をレポートします。

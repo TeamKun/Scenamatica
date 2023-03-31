@@ -14,6 +14,11 @@ import org.jetbrains.annotations.Nullable;
 public interface ScenarioManager
 {
     /**
+     * このシナリオマネージャーを初期化します。
+     */
+    void init();
+
+    /**
      * シナリオが実行中かどうかを返します。
      *
      * @return 実行中なら {@code true}

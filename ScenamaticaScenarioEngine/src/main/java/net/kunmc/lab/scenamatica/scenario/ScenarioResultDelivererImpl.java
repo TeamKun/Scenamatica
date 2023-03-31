@@ -18,8 +18,13 @@ public class ScenarioResultDelivererImpl implements ScenarioResultDeliverer
     private final UUID testID;
     private final long startedAt;
 
-    private TestResult result;
-    private boolean killed;
+    private TestResult result;  // 受け渡し用
+    private boolean killed;  // シャットダウンされたら true
+
+    private TestState state;  // wait されたら入る。終わったら消す
+    private boolean waiting;  // wait されているかどうか
+    private long waitTimeout;
+    private long elapsedTick;
 
     public ScenarioResultDelivererImpl(@NotNull ScenamaticaRegistry registry,
                                        @NotNull UUID testID,
@@ -41,6 +46,14 @@ public class ScenarioResultDelivererImpl implements ScenarioResultDeliverer
         this.result = result;
         try
         {
+            if (!this.waiting)
+                return;
+
+            this.waiting = false;
+            this.state = null;
+            this.waitTimeout = -1L;
+            this.elapsedTick = 0;
+
             this.barrier.await();
         }
         catch (InterruptedException e)
@@ -56,8 +69,15 @@ public class ScenarioResultDelivererImpl implements ScenarioResultDeliverer
 
     @Override
     @NotNull
-    public TestResult waitResult(@NotNull TestState state)
+    public TestResult waitResult(long timeout, @NotNull TestState state)
     {
+        if (timeout > 0)
+            this.waitTimeout = timeout;
+
+        this.state = state;
+        this.waiting = true;
+        this.elapsedTick = 0;
+
         try
         {
             this.barrier.await();
@@ -85,6 +105,26 @@ public class ScenarioResultDelivererImpl implements ScenarioResultDeliverer
         }
 
         return this.result;
+    }
+
+    @Override
+    public void onTick()
+    {
+        if (!this.waiting || this.waitTimeout <= 0)
+            return;
+
+        this.elapsedTick++;
+
+        if (this.elapsedTick >= this.waitTimeout)
+        {
+            this.waitTimeout = -1L;
+            this.setResult(new TestResultImpl(
+                    this.testID,
+                    this.state,
+                    TestResultCause.SCENARIO_TIMED_OUT,
+                    this.startedAt
+            ));
+        }
     }
 
     @Override

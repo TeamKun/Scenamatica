@@ -33,6 +33,7 @@ public class ScenarioManagerImpl implements ScenarioManager
     private final Multimap<Plugin, ScenarioEngine> engines;
     @NotNull
     private final TestReporter testReporter;
+    private final TickListener tickListener;
     @Getter
     @Nullable
     private ScenarioEngine currentScenario;
@@ -45,8 +46,15 @@ public class ScenarioManagerImpl implements ScenarioManager
         this.actionManager = registry.getActionManager();
         this.testReporter = registry.getTestReporter();
         this.engines = ArrayListMultimap.create();
+        this.tickListener = new TickListener(registry, this);
         this.currentScenario = null;
         this.enabled = true;
+    }
+
+    @Override
+    public void init()
+    {
+        this.tickListener.init();
     }
 
     @Override

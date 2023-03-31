@@ -78,7 +78,7 @@ public class TestReportRecipient implements TestReporter
     }
 
     @Override
-    public void onActionStart(@NotNull ScenarioFileBean scenario, @NotNull CompiledAction<?> action)
+    public void onActionStart(@NotNull ScenarioFileBean scenario, @NotNull CompiledScenarioAction<?> action)
     {
         this.terminals.forEach(t -> t.info(withPrefix(scenario, LangProvider.get(
                 "test.action.run",
