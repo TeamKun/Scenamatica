@@ -22,7 +22,7 @@ public interface EntityBean
     String KEY_LAST_DAMAGE = "lastDamage";
     String KEY_MAX_HEALTH = "maxHealth";
     String KEY_HEALTH = "health";
-    String KEY_POTION_EFFECTS = "potion";
+    String KEY_POTION_EFFECTS = "potions";
     String KEY_POTION_EFFECTS_AMBIENT = "ambient";
     String KEY_POTION_EFFECTS_AMPLIFIER = "amplifier";
     String KEY_POTION_EFFECTS_DURATION = "duration";

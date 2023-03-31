@@ -1,9 +1,9 @@
 package net.kunmc.lab.scenamatica.scenariofile.beans.entity;
 
 import lombok.SneakyThrows;
+import net.kunmc.lab.scenamatica.interfaces.scenariofile.entities.EntityBean;
 import net.kunmc.lab.scenamatica.scenariofile.beans.entities.EntityBeanImpl;
 import net.kunmc.lab.scenamatica.scenariofile.beans.utils.MapTestUtil;
-import net.kunmc.lab.scenamatica.interfaces.scenariofile.entities.EntityBean;
 import org.bukkit.Location;
 import org.bukkit.potion.PotionEffectType;
 import org.junit.jupiter.api.BeforeAll;
@@ -65,7 +65,7 @@ public class EntityBeanSerializeTest
         this.put("maxHealth", 22);
         this.put("health", 20);
         this.put("lastDamage", DamageBeanSerializeTest.FULFILLED_MAP);/*
-        this.put("potion", Collections.singletonList(new HashMap<String, Object>()
+        this.put("potions", Collections.singletonList(new HashMap<String, Object>()
         {{
             this.put("type", "BAD_OMEN");
             this.put("duration", 100);
