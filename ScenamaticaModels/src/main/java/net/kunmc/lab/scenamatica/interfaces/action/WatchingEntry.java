@@ -72,11 +72,10 @@ public interface WatchingEntry<A extends ActionArgument>
     /**
      * 監視を登録します。
      *
-     * @param watcher   監視する動作
      * @param eventType 監視するイベントのクラス
      * @return 監視に登録されたリスナー
      */
-    RegisteredListener register(Action<?> watcher, Class<? extends Event> eventType);
+    RegisteredListener register(Class<? extends Event> eventType);
 
     /**
      * 監視を解除します。

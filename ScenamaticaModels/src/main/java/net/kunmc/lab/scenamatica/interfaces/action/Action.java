@@ -31,7 +31,7 @@ public interface Action<A extends ActionArgument>
     /**
      * 動作が実行されたかどうかを返します。
      */
-    boolean isFired(@NotNull Plugin plugin, @NotNull Event event);
+    boolean isFired(@NotNull A argument, @NotNull Plugin plugin, @NotNull Event event);
 
     /**
      * アタッチす るイベントのクラスを返します。

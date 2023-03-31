@@ -32,16 +32,16 @@ public class WatchingEntryImpl<A extends ActionArgument> implements WatchingEntr
     List<Pair<Class<? extends Event>, RegisteredListener>> listeners;
 
     @Override
-    public RegisteredListener register(Action<?> watcher, Class<? extends Event> eventType)
+    public RegisteredListener register(Class<? extends Event> eventType)
     {
         //noinspection unused
         Listener dummyListener = new Listener()
         {
-            private final String name = "DummyListener for " + watcher.getClass().getName();
+            private final String name = "DummyListener for " + WatchingEntryImpl.this.action.getClass().getName();
         };
 
         EventExecutor executor = (listener1, event) -> {
-            if (watcher.isFired(WatchingEntryImpl.this.plugin, event))
+            if (this.action.isFired(this.argument, WatchingEntryImpl.this.plugin, event))
                 this.manager.onActionFired(WatchingEntryImpl.this, event);
         };
 
