@@ -1,6 +1,5 @@
 package net.kunmc.lab.scenamatica.scenariofile.beans.inventory;
 
-import net.kunmc.lab.scenamatica.exceptions.scenariofile.InvalidScenarioFileException;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.inventory.ItemStackBean;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.inventory.PlayerInventoryBean;
 import net.kunmc.lab.scenamatica.scenariofile.beans.utils.MapTestUtil;
@@ -166,7 +165,7 @@ public class PlayerInventoryBeanSerializeTest
         }};
 
         Assertions.assertThrows(
-                InvalidScenarioFileException.class,
+                IllegalArgumentException.class,
                 () -> PlayerInventoryBeanImpl.deserialize(map)
         );
 
@@ -177,7 +176,7 @@ public class PlayerInventoryBeanSerializeTest
         map.put("armors", armors);
 
         Assertions.assertThrows(
-                InvalidScenarioFileException.class,
+                IllegalArgumentException.class,
                 () -> PlayerInventoryBeanImpl.deserialize(map)
         );
     }

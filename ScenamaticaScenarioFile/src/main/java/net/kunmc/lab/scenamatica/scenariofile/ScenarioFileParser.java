@@ -32,7 +32,7 @@ public class ScenarioFileParser
         {
             String fileNameStr = fileName == null ? "": " in file " + fileName;
 
-            throw new InvalidScenarioFileException("Invalid scenario syntax: " + e.getMessage() + fileNameStr, e);
+            throw new InvalidScenarioFileException(e.getMessage() + fileNameStr, e);
         }
     }
 

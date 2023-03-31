@@ -1,6 +1,5 @@
 package net.kunmc.lab.scenamatica.scenariofile.beans.context;
 
-import net.kunmc.lab.scenamatica.exceptions.scenariofile.InvalidScenarioFileException;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.context.WorldBean;
 import net.kunmc.lab.scenamatica.scenariofile.beans.utils.MapTestUtil;
 import org.bukkit.World;
@@ -76,7 +75,7 @@ public class WorldBeanSerializeTest
         map.put("env", 1145141919810L);
 
         assertThrows(
-                InvalidScenarioFileException.class,
+                IllegalArgumentException.class,
                 () -> WorldBeanImpl.deserialize(map)
         );
     }
