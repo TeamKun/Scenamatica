@@ -12,6 +12,12 @@ command.scenario.start.errors.noPlugin=The specified plugin %%plugin%% was not f
 command.scenario.start.errors.noScenario=The specified scenario %%scenario%% was not found.
 command.scenario.start.success=The scenario %%scenario%% has been added to the queue.
 
+command.scenario.cancel.help=Cancel the currently running scenario.
+command.scenario.cancel.running=The scenario %%scenario%% of the plugin %%plugin%% is currently running.
+command.scenario.cancel.confirm=Are you sure you want to cancel the scenario %%scenario%%?
+command.scenario.cancel.errors.notRunning=The scenario is not running.
+command.scenario.cancel.errors.cancel=The cancellation of the scenario %%scenario%% was not performed by the user.
+command.scenario.cancel.success=The scenario %%scenario%% has been cancelled.
 
 test.start=Starting test of scenario %%scenario%% by %%trigger%%.
 test.action.run=A scheduled action %%name%% is being executed.

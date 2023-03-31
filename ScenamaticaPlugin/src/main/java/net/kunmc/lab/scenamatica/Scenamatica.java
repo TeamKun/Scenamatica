@@ -4,6 +4,7 @@ import net.kunmc.lab.peyangpaperutils.lang.LangProvider;
 import net.kunmc.lab.peyangpaperutils.lib.command.CommandManager;
 import net.kunmc.lab.scenamatica.commands.CommandDebug;
 import net.kunmc.lab.scenamatica.commands.CommandEnable;
+import net.kunmc.lab.scenamatica.commands.CommandScenario;
 import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
@@ -51,6 +52,7 @@ public final class Scenamatica extends JavaPlugin implements Listener
 
         this.commandManager.registerCommand("debug", new CommandDebug(this.registry));
         this.commandManager.registerCommand("enable", new CommandEnable(this.registry));
+        this.commandManager.registerCommand("scenario", new CommandScenario(this.registry));
 
         this.getServer().getPluginManager().registerEvents(this, this);
 

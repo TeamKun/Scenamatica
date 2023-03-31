@@ -3,6 +3,7 @@ package net.kunmc.lab.scenamatica.commands;
 import net.kunmc.lab.peyangpaperutils.lang.LangProvider;
 import net.kunmc.lab.peyangpaperutils.lib.command.CommandBase;
 import net.kunmc.lab.peyangpaperutils.lib.command.SubCommandWith;
+import net.kunmc.lab.scenamatica.commands.scenario.CommandCancel;
 import net.kunmc.lab.scenamatica.commands.scenario.CommandStart;
 import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
 import net.kyori.adventure.text.TextComponent;
@@ -22,6 +23,7 @@ public class CommandScenario extends SubCommandWith
         this.commands = new HashMap<>();
 
         this.commands.put("start", new CommandStart(registry));
+        this.commands.put("cancel", new CommandCancel(registry));
     }
 
     @Override
