@@ -10,6 +10,7 @@ command.scenario.help=Mange or execute scenarios.
 command.scenario.start.help=Start a scenario.
 command.scenario.start.errors.noPlugin=The specified plugin %%plugin%% was not found.
 command.scenario.start.errors.noScenario=The specified scenario %%scenario%% was not found.
+command.scenario.start.errors.noManually=The scenario %%scenario%% is not manually executable.
 command.scenario.start.success=The scenario %%scenario%% has been added to the queue.
 
 command.scenario.cancel.help=Cancel the currently running scenario.

@@ -1,7 +1,6 @@
 package net.kunmc.lab.scenamatica.commands.scenario;
 
 import lombok.AllArgsConstructor;
-import lombok.SneakyThrows;
 import net.kunmc.lab.peyangpaperutils.lang.LangProvider;
 import net.kunmc.lab.peyangpaperutils.lib.command.CommandBase;
 import net.kunmc.lab.peyangpaperutils.lib.terminal.Terminal;
@@ -28,7 +27,6 @@ public class CommandStart extends CommandBase
 {
     private final ScenamaticaRegistry registry;
 
-    @SneakyThrows(TriggerNotFoundException.class)
     @Override
     public void onCommand(@NotNull CommandSender commandSender, @NotNull Terminal terminal, String[] strings)
     {
@@ -53,6 +51,10 @@ public class CommandStart extends CommandBase
         catch (ScenarioNotFoundException e)
         {
             terminal.error(LangProvider.get("command.scenario.start.errors.noScenario"));
+        }
+        catch (TriggerNotFoundException e)
+        {
+            terminal.error(LangProvider.get("command.scenario.start.errors.noManually"));
         }
     }
 
