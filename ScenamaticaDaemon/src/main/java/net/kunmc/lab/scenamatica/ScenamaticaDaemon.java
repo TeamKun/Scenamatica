@@ -62,7 +62,7 @@ public class ScenamaticaDaemon implements ScenamaticaRegistry
     public void init()
     {
         this.actionManager.init();
-
+        this.scenarioManager.init();
     }
 
     @Override
