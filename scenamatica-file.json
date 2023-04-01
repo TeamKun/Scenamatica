@@ -79,7 +79,7 @@
             "message_send"
           ]
         },
-        "argument": {
+        "with": {
           "type": "object",
           "description": "アクションの種類によっては, このプロパティにアクションの引数を指定します。",
           "additionalProperties": true
@@ -101,7 +101,7 @@
           },
           "then": {
             "properties": {
-              "argument": {
+              "with": {
                 "$ref": "#/definitions/action/definitions/message_send"
               }
             },
