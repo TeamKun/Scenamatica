@@ -231,6 +231,9 @@ public class ScenarioEngineImpl implements ScenarioEngine
             return mayResult;
         }
 
+        // あとかたづけ
+        this.cleanUp();
+
         this.isRunning = false;
         this.logPrefix = LogUtils.gerScenarioPrefix(null, this.scenario);
         return new TestResultImpl(
@@ -239,6 +242,16 @@ public class ScenarioEngineImpl implements ScenarioEngine
                 TestResultCause.PASSED,
                 this.startedAt
         );
+    }
+
+    private void cleanUp()
+    {
+        this.state = TestState.CLEANING_UP;
+        this.logWithPrefix(Level.INFO, LangProvider.get(
+                "scenario.run.prepare.destroy",
+                MsgArgs.of("scenarioName", this.scenario.getName())
+        ));
+        this.registry.getContextManager().destroyContext();
     }
 
     private TestResult runBeforeIfPresent(CompiledTriggerAction trigger)
@@ -317,8 +330,10 @@ public class ScenarioEngineImpl implements ScenarioEngine
     @Override
     public void cancel()
     {
+        this.cleanUp();
         this.isRunning = false;
         this.deliverer.kill();
+        this.state = TestState.STAND_BY;
     }
 
     private void setRunInfo(TriggerBean trigger)
