@@ -61,7 +61,7 @@ import java.util.stream.Collectors;
     @Override
     public void run()
     {
-        if (!this.manager.isEnabled() || this.scenarioRunQueue.isEmpty())
+        if (!this.manager.isEnabled() || this.scenarioRunQueue.isEmpty() || this.manager.isRunning())
             return;
         else if (this.sessionStartedAt == 0)
             this.startSession();
