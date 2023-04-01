@@ -7,6 +7,7 @@ import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.minecraft.server.v1_16_R3.ChatMessageType;
 import net.minecraft.server.v1_16_R3.EntityPlayer;
+import net.minecraft.server.v1_16_R3.IChatBaseComponent;
 import net.minecraft.server.v1_16_R3.MinecraftServer;
 import net.minecraft.server.v1_16_R3.NetworkManager;
 import net.minecraft.server.v1_16_R3.Packet;
@@ -17,9 +18,25 @@ import net.minecraft.server.v1_16_R3.PacketPlayOutKeepAlive;
 import net.minecraft.server.v1_16_R3.PlayerConnection;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 
 class MockedPlayerConnection extends PlayerConnection
 {
+    private static final Field fChatComponent; // Lnet/minecraft/server/v1_16_R3/PacketPlayOutChat;a:Lnet/minecraft/network/chat/IChatBaseComponent;
+
+    static
+    {
+        try
+        {
+            fChatComponent = PacketPlayOutChat.class.getDeclaredField("a");
+            fChatComponent.setAccessible(true);
+        }
+        catch (NoSuchFieldException e)
+        {
+            throw new RuntimeException(e);
+        }
+    }
+
     public MockedPlayerConnection(MinecraftServer minecraftserver, NetworkManager networkmanager, EntityPlayer entityplayer)
     {
         super(minecraftserver, networkmanager, entityplayer);
@@ -71,6 +88,21 @@ class MockedPlayerConnection extends PlayerConnection
     {
         ChatMessageType type = packet.d();
         BaseComponent[] components = packet.components;
+        if (components == null)
+        {
+            try
+            {
+                components = TextComponent.fromLegacyText(((IChatBaseComponent) fChatComponent.get(packet)).getText());
+            }
+            catch (IllegalAccessException e)
+            {
+                throw new RuntimeException(e);
+            }
+
+            if (components[0] == null)
+                return;
+        }
+
         TextComponent textComponent = new TextComponent(components);
 
         ActorMessageReceiveEvent event = new ActorMessageReceiveEvent(
