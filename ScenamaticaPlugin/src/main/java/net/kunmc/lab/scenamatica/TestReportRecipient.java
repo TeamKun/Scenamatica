@@ -57,7 +57,7 @@ public class TestReportRecipient implements TestReporter
     {
         this.terminals.forEach(t -> {
             printSeparator(t, scenario);
-            t.writeLine(withPrefix(scenario, ChatColor.AQUA + " T E S T"));
+            t.info(withPrefix(scenario, ChatColor.AQUA + " T E S T"));
             printSeparator(t, scenario);
 
             t.info(withPrefix(scenario, LangProvider.get(
@@ -149,7 +149,10 @@ public class TestReportRecipient implements TestReporter
             resultKey = "test.result.failed";
         String messageKey = "test.result.message." + result.getTestResultCause().name().toLowerCase();
 
-        String summary = LangProvider.get(resultKey, MsgArgs.of("result", resultKey).add("message", messageKey));
+        String summary = LangProvider.get(
+                "test.result",
+                MsgArgs.of("result", LangProvider.get(resultKey)).add("message", "%%" + messageKey + "%%")
+        );
         if (passed)
             terminal.success(withPrefix(scenario, summary));
         else
@@ -163,7 +166,7 @@ public class TestReportRecipient implements TestReporter
         terminal.info(withPrefix(scenario, LangProvider.get("test.result.detail")));
         terminal.info(withPrefix(scenario, LangProvider.get(
                 "test.result.detail.id",
-                MsgArgs.of("id", result.getTestID())
+                MsgArgs.of("id", result.getTestID().toString().substring(0, 8))
         )));
         if (cause != TestResultCause.PASSED)
             terminal.info(withPrefix(scenario, LangProvider.get(
@@ -212,7 +215,7 @@ public class TestReportRecipient implements TestReporter
 
         String line = center + separator;
 
-        terminal.writeLine(withPrefix(scenario, ChatColor.BLUE + ChatColor.STRIKETHROUGH.toString() + line));
+        terminal.info(withPrefix(scenario, ChatColor.BLUE + ChatColor.STRIKETHROUGH.toString() + line));
     }
 
     private String withPrefix(ScenarioFileBean scenario, String message)

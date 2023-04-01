@@ -28,17 +28,17 @@ command.scenario.status.details.time=開始時刻：%%startedAt%%
 
 test.start=シナリオ「%%scenario%%」のテストが「%%trigger%%」で始まったぽいわ。
 test.action.run=予定されたアクション「%%action%%」を実行するで。
-test.action.run.fail=%%bold%%❌%%reset%% 予定されたアクション「%%action%%」の実行に失敗したっぽいわ。「%%cause%%」が原因らしいわ。
-test.action.run.success=%%bold%%✔%%reset%% 予定されたアクション「%%action%%」の実行に成功したで。
+test.action.run.fail=%%bold%%❌%%reset%%  予定されたアクション「%%action%%」の実行に失敗したっぽいわ。「%%cause%%」が原因らしいわ。
+test.action.run.success=%%bold%%✔%%reset%%  予定されたアクション「%%action%%」の実行に成功したで。
 test.action.watch=予期されたアクション「%%action%%」が実行されるまで監視するで。
-test.action.watch.done=%%bold%%✔%%reset%% 監視していたアクション「%%action%%」がプラグインによって実行されたっぽいわ。
+test.action.watch.done=%%bold%%✔%%reset%%  監視していたアクション「%%action%%」がプラグインによって実行されたっぽいわ。
 test.action.jumped=%%bold%%⚠%%reset%% シナリオ「%%scenarioName%%」のアクション「%%actionName%%」が、予想よりも先に実行されてしもたぽいわ。
 
-test.result=テスト結果: %%result%% %%white%%- %%message%%
-test.result.passed=%%green%%✔ うまく行ったで
-test.result.failed=%%red%%❌ だめやったで
-test.result.cancelled=%%yellow%%⚠ キャンセルされたで
-test.result.unknown=%%gray%%❓ わからんわ
+test.result=%%green%%テスト結果: %%result%% %%gray%%- %%message%%
+test.result.passed=%%green%%✔  うまく行ったで
+test.result.failed=%%red%%❌  だめやったで
+test.result.cancelled=%%yellow%%⚠  キャンセルされたで
+test.result.unknown=%%gray%%❓  わからんわ
 
 test.result.message.passed=%%green%%テストは成功したで。
 test.result.message.context_preparation_failed=%%red%%テストの実行に必要なコンテキストの準備に失敗したで。

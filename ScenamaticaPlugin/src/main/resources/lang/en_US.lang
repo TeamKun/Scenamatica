@@ -28,17 +28,17 @@ command.scenario.status.details.time=Started at: %%startedAt%%
 
 test.start=Starting test of scenario %%scenario%% by %%trigger%%.
 test.action.run=A scheduled action %%name%% is being executed.
-test.action.run.fail=%%bold%%❌%%reset%% The scheduled action %%action%% failed to execute due to %%cause%%.
-test.action.run.success=%%bold%%✔%%reset%% The scheduled action %%action%% has been executed successfully.
+test.action.run.fail=%%bold%%❌%%reset%%  The scheduled action %%action%% failed to execute due to %%cause%%.
+test.action.run.success=%%bold%%✔%%reset%%  The scheduled action %%action%% has been executed successfully.
 test.action.watch=The expected action %%action%% is being watched.
-test.action.watch.done=%%bold%%✔%%reset%% The action %%action%% of the scenario %%scenarioName%% has been executed by the plugin.
+test.action.watch.done=%%bold%%✔%%reset%%  The action %%action%% of the scenario %%scenarioName%% has been executed by the plugin.
 test.action.jumped=%%bold%%⚠%%reset%% The action %%actionName%% of the scenario %%scenarioName%% has been executed before the expected action.
 
-test.result=Test result: %%result%% %%white%%- %%message%%
-test.result.passed=%%green%%✔ Passed
-test.result.failed=%%red%%❌ Failure
-test.result.cancelled=%%yellow%%⚠ Cancelled
-test.result.unknown=%%gray%%❓ Unknown
+test.result=%%green%%Test result: %%result%% %%gray%%- %%message%%
+test.result.passed=%%green%%✔  Passed
+test.result.failed=%%red%%❌  Failure
+test.result.cancelled=%%yellow%%⚠  Cancelled
+test.result.unknown=%%gray%%❓  Unknown
 
 test.result.message.passed=%%green%%The test has been completed successfully.
 test.result.message.context_preparation_failed=%%red%%Failed to prepare the context required for the test.
