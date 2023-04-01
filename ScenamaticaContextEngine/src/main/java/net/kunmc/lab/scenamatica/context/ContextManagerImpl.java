@@ -104,18 +104,19 @@ public class ContextManagerImpl implements ContextManager
             this.log(scenario, "context.actor.generating", testID);
             try
             {
-                ThreadingUtil.waitFor(this.registry.getPlugin(), () -> {
+                this.isActorPrepared = ThreadingUtil.waitFor(this.registry.getPlugin(), () -> {
                     try
                     {
                         for (PlayerBean actor : context.getActors())
                             actors.add(this.actorManager.createActor(actor));
+                        return true;
                     }
                     catch (ActorAlreadyExistsException | StageNotCreatedException e)
                     {
                         throw new IllegalStateException(e);
                     }
                 });
-                this.isActorPrepared = true;
+                Thread.sleep(500); // ちょっと待たないと, 最適化に殺される。
             }
             catch (Exception e)
             {
