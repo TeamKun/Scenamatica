@@ -43,7 +43,7 @@ public class CommandStatus extends CommandBase
 
         terminal.info(LangProvider.get(
                         "command.scenario.status.details.id",
-                        MsgArgs.of("id", engine.getTestID())
+                        MsgArgs.of("id", engine.getTestID().toString().substring(0, 8))
                 )
         );
 
@@ -52,7 +52,7 @@ public class CommandStatus extends CommandBase
 
         terminal.info(LangProvider.get(
                         "command.scenario.status.details.time",
-                        MsgArgs.of("time", sAtStr)
+                MsgArgs.of("startedAt", sAtStr)
                 )
         );
     }

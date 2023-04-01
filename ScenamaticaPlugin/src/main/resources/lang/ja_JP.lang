@@ -23,7 +23,7 @@ command.scenario.cancel.success=シナリオ %%scenario%% の実行をキャン�
 command.scenario.status.help=現在実行されているシナリオの状態を表示します。
 command.scenario.status.notRunning=シナリオは実行されていません。
 command.scenario.status.running=現在 プラグイン %%plugin%% の シナリオ %%scenario%% が実行中です。
-command.scenario.status.details.id=テスト ID：%%id%%
+command.scenario.status.details.id=テスト ID： %%id%%
 command.scenario.status.details.time=開始時刻：%%startedAt%%
 
 test.start=シナリオ %%scenario%% のテストが %%trigger%% により開始されました。

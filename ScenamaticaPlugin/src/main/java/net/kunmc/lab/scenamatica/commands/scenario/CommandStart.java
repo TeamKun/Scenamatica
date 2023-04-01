@@ -50,7 +50,10 @@ public class CommandStart extends CommandBase
         try
         {
             this.registry.getScenarioManager().queueScenario(plugin, scenarioName, TriggerType.MANUAL_DISPATCH);
-            terminal.success(LangProvider.get("command.scenario.start.success"));
+            terminal.success(LangProvider.get(
+                    "command.scenario.start.success",
+                    MsgArgs.of("scenario", scenarioName)
+            ));
         }
         catch (ScenarioNotFoundException e)
         {
