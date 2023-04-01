@@ -3,7 +3,6 @@ package net.kunmc.lab.scenamatica.interfaces.scenario;
 import net.kunmc.lab.scenamatica.interfaces.action.Action;
 import net.kunmc.lab.scenamatica.interfaces.action.CompiledAction;
 import net.kunmc.lab.scenamatica.interfaces.scenario.runtime.CompiledScenarioAction;
-import net.kunmc.lab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerBean;
 import org.jetbrains.annotations.NotNull;
 
@@ -15,66 +14,66 @@ public interface TestReporter
     /**
      * シナリオのテストの開始をレポートします。
      *
-     * @param scenario シナリオ
-     * @param trigger  シナリオのトリガ
+     * @param engine  エンジン
+     * @param trigger シナリオのトリガ
      */
-    void onTestStart(@NotNull ScenarioFileBean scenario, @NotNull TriggerBean trigger);
+    void onTestStart(@NotNull ScenarioEngine engine, @NotNull TriggerBean trigger);
 
     /**
      * シナリオのアクションの開始をレポートします。
      *
-     * @param scenario シナリオ
+     * @param engine  エンジン
      * @param action   アクション
      */
-    void onActionStart(@NotNull ScenarioFileBean scenario, @NotNull CompiledScenarioAction<?> action);
+    void onActionStart(@NotNull ScenarioEngine engine, @NotNull CompiledScenarioAction<?> action);
 
     /**
      * シナリオのアクションの監視の開始をレポートします。
      *
-     * @param scenario シナリオ
+     * @param engine  エンジン
      * @param action   アクション
      */
-    void onActionWatchStart(@NotNull ScenarioFileBean scenario, @NotNull CompiledAction<?> action);
+    void onActionWatchStart(@NotNull ScenarioEngine engine, @NotNull CompiledAction<?> action);
 
     /**
      * シナリオのアクションが正常に実行されたことをレポートします。
      *
-     * @param scenario シナリオ
+     * @param engine  エンジン
      * @param action   アクション
      */
-    void onActionSuccess(@NotNull ScenarioFileBean scenario, @NotNull CompiledAction<?> action);
+    void onActionSuccess(@NotNull ScenarioEngine engine, @NotNull CompiledAction<?> action);
 
     /**
      * 監視していたアクションが正常に実行されたことをレポートします。
      *
-     * @param scenario シナリオ
+     * @param engine  エンジン
      * @param action   アクション
      */
-    void onWatchingActionExecuted(@NotNull ScenarioFileBean scenario, @NotNull Action<?> action);
+    void onWatchingActionExecuted(@NotNull ScenarioEngine engine, @NotNull Action<?> action);
 
     /**
      * 監視していたアクションがジャンプして実行されたことをレポートします。
      *
-     * @param scenario シナリオ
+     * @param engine  エンジン
      * @param action   アクション
      * @param expected 期待されるアクション
      */
-    void onActionJumped(@NotNull ScenarioFileBean scenario, @NotNull Action<?> action, @NotNull CompiledScenarioAction<?> expected);
+    void onActionJumped(@NotNull ScenarioEngine engine, @NotNull Action<?> action, @NotNull CompiledScenarioAction<?> expected);
 
     /**
      * アクションの実行に失敗したことをレポートします。
      *
-     * @param scenario シナリオ
+     * @param engine  エンジン
      * @param action   アクション
      */
-    void onActionExecuteFailed(@NotNull ScenarioFileBean scenario, @NotNull CompiledAction<?> action, @NotNull Throwable error);
+    void onActionExecuteFailed(@NotNull ScenarioEngine engine, @NotNull CompiledAction<?> action, @NotNull Throwable error);
 
     /**
      * テストが終了したことをレポートします。
      *
-     * @param scenario シナリオ
+     * @param engine  エンジン
      * @param result   テスト結果
      */
-    void onTestEnd(@NotNull ScenarioFileBean scenario, @NotNull TestResult result);
+    void onTestEnd(@NotNull ScenarioEngine engine, @NotNull TestResult result);
 
 }

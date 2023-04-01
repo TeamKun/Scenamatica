@@ -29,6 +29,7 @@ import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerBean;
 import net.kunmc.lab.scenamatica.scenario.runtime.CompiledTriggerActionImpl;
 import net.kunmc.lab.scenamatica.scenario.runtime.Compilers;
 import org.apache.commons.lang.StringUtils;
+import org.bukkit.ChatColor;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -307,7 +308,7 @@ public class ScenarioEngineImpl implements ScenarioEngine
         ScenarioType type = scenario.getType();
         if (type == ScenarioType.ACTION_EXECUTE)
         {
-            this.testReporter.onActionStart(this.scenario, scenario);
+            this.testReporter.onActionStart(this, scenario);
             scenario.execute(this.actionManager, this.listener);
         }
 
@@ -327,8 +328,10 @@ public class ScenarioEngineImpl implements ScenarioEngine
         this.ranBy = trigger;
         this.testID = UUID.randomUUID();
         this.startedAt = System.currentTimeMillis();
-        this.logPrefix = "[" + "TEST-" + StringUtils.substring(this.scenario.getName(), 0, 8) +
-                "/" + this.testID.toString().substring(0, 8) + "] ";
+        this.logPrefix = "[" +
+                ChatColor.BOLD + ChatColor.YELLOW + "TEST-" + StringUtils.substring(this.scenario.getName(), 0, 8) +
+                ChatColor.RESET + "/" + ChatColor.GRAY + this.testID.toString().substring(0, 8) +
+                ChatColor.WHITE + "] ";
         if (!(this.isAutoRun = trigger.getType() != TriggerType.MANUAL_DISPATCH))
             this.logWithPrefix(Level.INFO, LangProvider.get(
                     "scenario.run.manually",

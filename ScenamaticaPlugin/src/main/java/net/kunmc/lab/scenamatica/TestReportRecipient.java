@@ -7,6 +7,7 @@ import net.kunmc.lab.peyangpaperutils.lib.terminal.Terminals;
 import net.kunmc.lab.scenamatica.enums.TestResultCause;
 import net.kunmc.lab.scenamatica.interfaces.action.Action;
 import net.kunmc.lab.scenamatica.interfaces.action.CompiledAction;
+import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioEngine;
 import net.kunmc.lab.scenamatica.interfaces.scenario.TestReporter;
 import net.kunmc.lab.scenamatica.interfaces.scenario.TestResult;
 import net.kunmc.lab.scenamatica.interfaces.scenario.runtime.CompiledScenarioAction;
@@ -20,6 +21,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 public class TestReportRecipient implements TestReporter
 {
@@ -53,14 +55,16 @@ public class TestReportRecipient implements TestReporter
     }
 
     @Override
-    public void onTestStart(@NotNull ScenarioFileBean scenario, @NotNull TriggerBean trigger)
+    public void onTestStart(@NotNull ScenarioEngine engine, @NotNull TriggerBean trigger)
     {
-        this.terminals.forEach(t -> {
-            printSeparator(t, scenario);
-            t.info(withPrefix(scenario, ChatColor.AQUA + " T E S T"));
-            printSeparator(t, scenario);
+        ScenarioFileBean scenario = engine.getScenario();
 
-            t.info(withPrefix(scenario, LangProvider.get(
+        this.terminals.forEach(t -> {
+            printSeparator(engine.getTestID(), t, scenario);
+            t.info(withPrefix(engine.getTestID(), scenario, ChatColor.AQUA + " T E S T"));
+            printSeparator(engine.getTestID(), t, scenario);
+
+            t.info(withPrefix(engine.getTestID(), scenario, LangProvider.get(
                     "test.start",
                     MsgArgs.of("scenario", scenario.getName())
                             .add("trigger", trigger.getType().name())
@@ -69,36 +73,44 @@ public class TestReportRecipient implements TestReporter
     }
 
     @Override
-    public void onActionWatchStart(@NotNull ScenarioFileBean scenario, @NotNull CompiledAction<?> action)
+    public void onActionWatchStart(@NotNull ScenarioEngine engine, @NotNull CompiledAction<?> action)
     {
-        this.terminals.forEach(t -> t.info(withPrefix(scenario, LangProvider.get(
+        ScenarioFileBean scenario = engine.getScenario();
+
+        this.terminals.forEach(t -> t.info(withPrefix(engine.getTestID(), scenario, LangProvider.get(
                 "test.action.watch",
                 MsgArgs.of("action", action.getAction().getClass().getSimpleName())
         ))));
     }
 
     @Override
-    public void onActionStart(@NotNull ScenarioFileBean scenario, @NotNull CompiledScenarioAction<?> action)
+    public void onActionStart(@NotNull ScenarioEngine engine, @NotNull CompiledScenarioAction<?> action)
     {
-        this.terminals.forEach(t -> t.info(withPrefix(scenario, LangProvider.get(
+        ScenarioFileBean scenario = engine.getScenario();
+
+        this.terminals.forEach(t -> t.info(withPrefix(engine.getTestID(), scenario, LangProvider.get(
                 "test.action.run",
                 MsgArgs.of("action", action.getAction().getClass().getSimpleName())
         ))));
     }
 
     @Override
-    public void onActionSuccess(@NotNull ScenarioFileBean scenario, @NotNull CompiledAction<?> action)
+    public void onActionSuccess(@NotNull ScenarioEngine engine, @NotNull CompiledAction<?> action)
     {
-        this.terminals.forEach(t -> t.success(withPrefix(scenario, LangProvider.get(
+        ScenarioFileBean scenario = engine.getScenario();
+
+        this.terminals.forEach(t -> t.success(withPrefix(engine.getTestID(), scenario, LangProvider.get(
                 "test.action.run.success",
                 MsgArgs.of("action", action.getAction().getClass().getSimpleName())
         ))));
     }
 
     @Override
-    public void onWatchingActionExecuted(@NotNull ScenarioFileBean scenario, @NotNull Action<?> action)
+    public void onWatchingActionExecuted(@NotNull ScenarioEngine engine, @NotNull Action<?> action)
     {
-        this.terminals.forEach(t -> t.success(withPrefix(scenario, LangProvider.get(
+        ScenarioFileBean scenario = engine.getScenario();
+
+        this.terminals.forEach(t -> t.success(withPrefix(engine.getTestID(), scenario, LangProvider.get(
                 "test.action.watch.done",
                 MsgArgs.of("action", action.getClass().getSimpleName())
         ))));
@@ -106,18 +118,22 @@ public class TestReportRecipient implements TestReporter
     }
 
     @Override
-    public void onActionJumped(@NotNull ScenarioFileBean scenario, @NotNull Action<?> action, @NotNull CompiledScenarioAction<?> expected)
+    public void onActionJumped(@NotNull ScenarioEngine engine, @NotNull Action<?> action, @NotNull CompiledScenarioAction<?> expected)
     {
-        this.terminals.forEach(t -> t.warn(withPrefix(scenario, LangProvider.get(
+        ScenarioFileBean scenario = engine.getScenario();
+
+        this.terminals.forEach(t -> t.warn(withPrefix(engine.getTestID(), scenario, LangProvider.get(
                 "test.action.jumped",
                 MsgArgs.of("action", action.getClass().getSimpleName())
         ))));
     }
 
     @Override
-    public void onActionExecuteFailed(@NotNull ScenarioFileBean scenario, @NotNull CompiledAction<?> action, @NotNull Throwable error)
+    public void onActionExecuteFailed(@NotNull ScenarioEngine engine, @NotNull CompiledAction<?> action, @NotNull Throwable error)
     {
-        this.terminals.forEach(t -> t.info(withPrefix(scenario, LangProvider.get(
+        ScenarioFileBean scenario = engine.getScenario();
+
+        this.terminals.forEach(t -> t.info(withPrefix(engine.getTestID(), scenario, LangProvider.get(
                 "test.action.run.fail",
                 MsgArgs.of("action", action.getAction().getClass().getSimpleName())
                         .add("cause", error.getClass().getSimpleName() + ": " + error.getMessage())
@@ -125,20 +141,23 @@ public class TestReportRecipient implements TestReporter
     }
 
     @Override
-    public void onTestEnd(@NotNull ScenarioFileBean scenario, @NotNull TestResult result)
+    public void onTestEnd(@NotNull ScenarioEngine engine, @NotNull TestResult result)
     {
+        ScenarioFileBean scenario = engine.getScenario();
+
         this.terminals.forEach(t -> {
-            printTestSummary(t, scenario, result);
-            printSeparator(t, scenario, 26);
-            printDetails(t, scenario, result);
-            printSeparator(t, scenario, 26);
+            UUID testID = engine.getTestID();
+            printTestSummary(engine, t, scenario, result);
+            printSeparator(testID, t, scenario, 26);
+            printDetails(engine, t, scenario, result);
+            printSeparator(testID, t, scenario, 26);
         });
     }
 
-    private void printTestSummary(Terminal terminal, ScenarioFileBean scenario, TestResult result)
+    private void printTestSummary(ScenarioEngine engine, Terminal terminal, ScenarioFileBean scenario, TestResult result)
     {
         boolean passed = result.getTestResultCause() == TestResultCause.PASSED;
-        printSeparator(terminal, scenario, 26);
+        printSeparator(engine.getTestID(), terminal, scenario, 26);
 
         String resultKey;
         if (passed)
@@ -154,22 +173,22 @@ public class TestReportRecipient implements TestReporter
                 MsgArgs.of("result", LangProvider.get(resultKey)).add("message", "%%" + messageKey + "%%")
         );
         if (passed)
-            terminal.success(withPrefix(scenario, summary));
+            terminal.success(withPrefix(engine.getTestID(), scenario, summary));
         else
-            terminal.error(withPrefix(scenario, summary));
+            terminal.error(withPrefix(engine.getTestID(), scenario, summary));
     }
 
-    private void printDetails(Terminal terminal, ScenarioFileBean scenario, TestResult result)
+    private void printDetails(ScenarioEngine engine, Terminal terminal, ScenarioFileBean scenario, TestResult result)
     {
         TestResultCause cause = result.getTestResultCause();
 
-        terminal.info(withPrefix(scenario, LangProvider.get("test.result.detail")));
-        terminal.info(withPrefix(scenario, LangProvider.get(
+        terminal.info(withPrefix(engine.getTestID(), scenario, LangProvider.get("test.result.detail")));
+        terminal.info(withPrefix(engine.getTestID(), scenario, LangProvider.get(
                 "test.result.detail.id",
                 MsgArgs.of("id", result.getTestID().toString().substring(0, 8))
         )));
         if (cause != TestResultCause.PASSED)
-            terminal.info(withPrefix(scenario, LangProvider.get(
+            terminal.info(withPrefix(engine.getTestID(), scenario, LangProvider.get(
                     "test.result.detail.state",
                     MsgArgs.of("state", result.getState()
                     )
@@ -181,7 +200,7 @@ public class TestReportRecipient implements TestReporter
         String finishedAt = formatDateTime(fAt);
         String elapsed = formatTime(fAt - sAt);
 
-        terminal.info(withPrefix(scenario, LangProvider.get(
+        terminal.info(withPrefix(engine.getTestID(), scenario, LangProvider.get(
                 "test.result.detail.elapsed",
                 MsgArgs.of("startedAt", startedAt)
                         .add("finishedAt", finishedAt)
@@ -192,18 +211,18 @@ public class TestReportRecipient implements TestReporter
                 || result.getFailedAction() == null)
             return;
 
-        terminal.info(withPrefix(scenario, LangProvider.get(
+        terminal.info(withPrefix(engine.getTestID(), scenario, LangProvider.get(
                 "test.result.detail.failed",
                 MsgArgs.of("action", result.getFailedAction().getClass().getSimpleName())
         )));
     }
 
-    private void printSeparator(Terminal terminal, ScenarioFileBean scenario)
+    private void printSeparator(UUID testID, Terminal terminal, ScenarioFileBean scenario)
     {
-        printSeparator(terminal, scenario, 53);
+        printSeparator(testID, terminal, scenario, 53);
     }
 
-    private void printSeparator(Terminal terminal, ScenarioFileBean scenario, int size)
+    private void printSeparator(UUID testID, Terminal terminal, ScenarioFileBean scenario, int size)
     {
         int maxSize = 53;
         if (size > maxSize)
@@ -215,15 +234,15 @@ public class TestReportRecipient implements TestReporter
 
         String line = center + separator;
 
-        terminal.info(withPrefix(scenario, ChatColor.BLUE + ChatColor.STRIKETHROUGH.toString() + line));
+        terminal.info(withPrefix(testID, scenario, ChatColor.BLUE + ChatColor.STRIKETHROUGH.toString() + line));
     }
 
-    private String withPrefix(ScenarioFileBean scenario, String message)
+    private String withPrefix(UUID testID, ScenarioFileBean scenario, String message)
     {
-        return ChatColor.WHITE + "[" +
-                ChatColor.BOLD + ChatColor.YELLOW + scenario.getName() + ChatColor.RESET +
-                ChatColor.WHITE + "] " + ChatColor.RESET +
-                message;
+        return "[" +
+                ChatColor.BOLD + ChatColor.YELLOW + "TEST-" + StringUtils.substring(scenario.getName(), 0, 8) +
+                ChatColor.RESET + "/" + ChatColor.GRAY + testID.toString().substring(0, 8) +
+                ChatColor.WHITE + "] " + message;
     }
 
 }

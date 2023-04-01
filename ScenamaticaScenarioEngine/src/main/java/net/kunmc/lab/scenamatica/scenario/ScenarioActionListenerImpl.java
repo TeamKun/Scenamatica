@@ -35,14 +35,14 @@ public class ScenarioActionListenerImpl implements ScenarioActionListener
     @Override
     public <A extends ActionArgument> void onActionError(@NotNull CompiledAction<A> action, @NotNull Throwable error)
     {
-        this.reporter.onActionExecuteFailed(this.engine.getScenario(), action, error);
+        this.reporter.onActionExecuteFailed(this.engine, action, error);
         this.setResult(TestResultCause.ACTION_EXECUTION_FAILED, action.getAction());
     }
 
     @Override
     public <A extends ActionArgument> void onActionExecuted(@NotNull CompiledAction<A> action)
     {
-        this.reporter.onActionSuccess(this.engine.getScenario(), action);
+        this.reporter.onActionSuccess(this.engine, action);
         this.setPassed();
     }
 
@@ -53,12 +53,12 @@ public class ScenarioActionListenerImpl implements ScenarioActionListener
                 && entry.getAction().getClass() == this.waitingFor.getAction().getClass()
                 && entry.getArgument().isSame(this.waitingFor.getArgument()))
         {
-            this.reporter.onWatchingActionExecuted(this.engine.getScenario(), entry.getAction());
+            this.reporter.onWatchingActionExecuted(this.engine, entry.getAction());
             this.setPassed();
         }
         else  // 他のアクションが実行された。
         {
-            this.reporter.onActionJumped(this.engine.getScenario(), entry.getAction(), this.waitingFor);
+            this.reporter.onActionJumped(this.engine, entry.getAction(), this.waitingFor);
             this.setResult(
                     TestResultCause.ACTION_EXPECTATION_JUMPED,
                     entry.getAction()
