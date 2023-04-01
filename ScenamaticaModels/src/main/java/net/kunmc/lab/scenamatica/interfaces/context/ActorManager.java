@@ -45,4 +45,12 @@ public interface ActorManager
      * 生成された役者を全て解除し、インスタンスを破棄します。
      */
     void shutdown();
+
+    /**
+     * 指定したプレイヤーが役者かどうかを返します。
+     *
+     * @param player プレイヤー
+     * @return 役者かどうか
+     */
+    boolean isActor(Player player);
 }

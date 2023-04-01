@@ -86,7 +86,7 @@ public class ContextManagerImpl implements ContextManager
         this.isWorldPrepared = true;
 
         List<Player> actors = new ArrayList<>();
-        if (context != null && context.getActors() != null && !context.getActors().isEmpty())
+        if (context != null && !context.getActors().isEmpty())
         {
             this.log(scenario, "context.actor.generating", testID);
             try

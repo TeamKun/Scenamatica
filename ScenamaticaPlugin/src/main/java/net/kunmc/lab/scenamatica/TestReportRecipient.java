@@ -148,16 +148,16 @@ public class TestReportRecipient implements TestReporter
         this.terminals.forEach(t -> {
             UUID testID = engine.getTestID();
             printTestSummary(engine, t, scenario, result);
-            printSeparator(testID, t, scenario, 26);
+            printSeparator(testID, t, scenario, 12);
             printDetails(engine, t, scenario, result);
-            printSeparator(testID, t, scenario, 26);
+            printSeparator(testID, t, scenario, 12);
         });
     }
 
     private void printTestSummary(ScenarioEngine engine, Terminal terminal, ScenarioFileBean scenario, TestResult result)
     {
         boolean passed = result.getTestResultCause() == TestResultCause.PASSED;
-        printSeparator(engine.getTestID(), terminal, scenario, 26);
+        printSeparator(engine.getTestID(), terminal, scenario, 12);
 
         String resultKey;
         if (passed)
@@ -217,9 +217,13 @@ public class TestReportRecipient implements TestReporter
         )));
     }
 
+
     private void printSeparator(UUID testID, Terminal terminal, ScenarioFileBean scenario)
     {
-        printSeparator(testID, terminal, scenario, 53);
+        if (terminal.isPlayer())
+            printSeparator(testID, terminal, scenario, 25);
+        else
+            printSeparator(testID, terminal, scenario, 53);
     }
 
     private void printSeparator(UUID testID, Terminal terminal, ScenarioFileBean scenario, int size)
@@ -239,10 +243,14 @@ public class TestReportRecipient implements TestReporter
 
     private String withPrefix(UUID testID, ScenarioFileBean scenario, String message)
     {
-        return "[" +
-                ChatColor.BOLD + ChatColor.YELLOW + "TEST-" + StringUtils.substring(scenario.getName(), 0, 8) +
-                ChatColor.RESET + "/" + ChatColor.GRAY + testID.toString().substring(0, 8) +
-                ChatColor.WHITE + "] " + message;
+        String withTestID = testID == null ? "":
+                ChatColor.RESET.toString() + ChatColor.WHITE + "/" + ChatColor.GRAY + testID.toString().substring(0, 4);
+
+        return ChatColor.WHITE + "[" +
+                ChatColor.BOLD + ChatColor.AQUA + "TEST-" + StringUtils.substring(scenario.getName(), 0, 8) +
+                withTestID +
+                ChatColor.WHITE + "] " +
+                ChatColor.RESET + message;
     }
 
 }

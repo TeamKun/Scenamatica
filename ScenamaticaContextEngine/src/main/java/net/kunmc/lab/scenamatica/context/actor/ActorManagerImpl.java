@@ -73,4 +73,11 @@ public class ActorManagerImpl implements ActorManager
         new ArrayList<>(this.actors)  //   回避
                 .forEach(this::destroyActor);
     }
+
+    @Override
+    public boolean isActor(Player player)
+    {
+        return this.actors.stream().parallel()
+                .anyMatch(p -> p.getUniqueId().equals(player.getUniqueId()));
+    }
 }
