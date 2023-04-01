@@ -63,7 +63,7 @@ public class StageBeanImpl implements StageBean
         return new StageBeanImpl(
                 MapUtils.getOrDefault(map, KEY_ORIGINAL_WORLD_NAME, "world"),
                 MapUtils.getAsEnumOrDefault(map, KEY_TYPE, WorldType.class, WorldType.NORMAL),
-                MapUtils.getOrNull(map, KEY_SEED),
+                MapUtils.getAsLongOrNull(map, KEY_SEED),
                 MapUtils.getOrDefault(map, KEY_GENERATE_STRUCTURES, true),
                 MapUtils.getAsEnumOrNull(map, KEY_ENVIRONMENT, World.Environment.class),
                 MapUtils.getOrDefault(map, KEY_HARDCORE, false)

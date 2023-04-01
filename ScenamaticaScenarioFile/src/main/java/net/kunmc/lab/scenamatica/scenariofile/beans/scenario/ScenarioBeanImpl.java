@@ -67,7 +67,7 @@ public class ScenarioBeanImpl implements ScenarioBean
         validate(map);
 
         ScenarioType type = ScenarioType.fromKey((String) map.get(KEY_SCENARIO_TYPE));
-        long timeout = MapUtils.getOrDefault(map, KEY_TIMEOUT, -1L);
+        long timeout = MapUtils.getAsLongOrDefault(map, KEY_TIMEOUT, -1L);
 
         assert type != null;
         return new ScenarioBeanImpl(

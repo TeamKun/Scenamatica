@@ -306,4 +306,18 @@ public class MapUtils
         if (loc != null)
             map.put(key, locationToMap(loc));
     }
+
+    public static Long getAsLongOrNull(Map<String, Object> map, String key)
+    {
+        if (!map.containsKey(key))
+            return null;
+        return ((Number) map.get(key)).longValue();
+    }
+
+    public static long getAsLongOrDefault(Map<String, Object> map, String key, long defaultValue)
+    {
+        if (!map.containsKey(key))
+            return defaultValue;
+        return ((Number) map.get(key)).longValue();
+    }
 }
