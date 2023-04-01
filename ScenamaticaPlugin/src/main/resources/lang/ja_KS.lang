@@ -30,7 +30,7 @@ test.action.run.fail=%%bold%%❌%%reset%%  予定されたアクション「%%ac
 test.action.run.success=%%bold%%✔%%reset%%  予定されたアクション「%%action%%」の実行に成功したで。
 test.action.watch=予期されたアクション「%%action%%」が実行されるまで監視するで。
 test.action.watch.done=%%bold%%✔%%reset%%  監視していたアクション「%%action%%」がプラグインによって実行されたっぽいわ。
-test.action.jumped=%%bold%%⚠%%reset%% シナリオ「%%scenarioName%%」のアクション「%%actionName%%」が、予想よりも先に実行されてしもたぽいわ。
+test.action.jumped=%%bold%%⚠%%reset%% シナリオ「%%scenario%%」のアクション「%%action%%」が、予想よりも先に実行されてしもたぽいわ。
 
 test.result=%%green%%テスト結果: %%result%% %%gray%%- %%message%%
 test.result.passed=%%green%%✔  うまく行ったで

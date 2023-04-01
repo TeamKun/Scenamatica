@@ -122,6 +122,7 @@ public class TestReportRecipient implements TestReporter
         this.terminals.forEach(t -> t.warn(withPrefix(engine.getTestID(), scenario, LangProvider.get(
                 "test.action.jumped",
                 MsgArgs.of("action", action.getClass().getSimpleName())
+                        .add("scenario", engine.getScenario().getName())
         ))));
     }
 

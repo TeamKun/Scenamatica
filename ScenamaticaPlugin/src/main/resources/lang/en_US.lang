@@ -30,7 +30,7 @@ test.action.run.fail=%%bold%%❌%%reset%%  The scheduled action %%action%% faile
 test.action.run.success=%%bold%%✔%%reset%%  The scheduled action %%action%% has been executed successfully.
 test.action.watch=The expected action %%action%% is being watched.
 test.action.watch.done=%%bold%%✔%%reset%%  The action %%action%% of the scenario %%scenarioName%% has been executed by the plugin.
-test.action.jumped=%%bold%%⚠%%reset%% The action %%actionName%% of the scenario %%scenarioName%% has been executed before the expected action.
+test.action.jumped=%%bold%%⚠%%reset%% The action %%action%% of the scenario %%scenario%% has been executed before the expected action.
 
 test.result=%%green%%Test result: %%result%% %%gray%%- %%message%%
 test.result.passed=%%green%%✔  Passed
