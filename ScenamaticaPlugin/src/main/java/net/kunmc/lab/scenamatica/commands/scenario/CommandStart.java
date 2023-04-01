@@ -31,11 +31,10 @@ public class CommandStart extends CommandBase
     @Override
     public void onCommand(@NotNull CommandSender commandSender, @NotNull Terminal terminal, String[] strings)
     {
-        if (indicateArgsLengthInvalid(terminal, strings, 2))
+        if (indicateArgsLengthInvalid(terminal, strings, 1))
             return;
 
         String pluginName = strings[0];
-        String scenarioName = strings[1];
 
         Plugin plugin;
         if ((plugin = Bukkit.getPluginManager().getPlugin(pluginName)) == null)
@@ -46,6 +45,36 @@ public class CommandStart extends CommandBase
             ));
             return;
         }
+
+        if (strings.length < 2)
+        {
+            Map<String, ScenarioFileBean> scenarioMap = this.registry.getScenarioFileManager().getPluginScenarios(plugin);
+            if (scenarioMap == null)
+            {
+                terminal.error(LangProvider.get(
+                        "command.scenario.start.errors.noPlugin",
+                        MsgArgs.of("plugin", pluginName)
+                ));
+                return;
+            }
+
+            scenarioMap.entrySet().stream()
+                    .filter(entry -> entry.getValue().getTriggers().stream().parallel()
+                            .anyMatch(trigger -> trigger.getType() == TriggerType.MANUAL_DISPATCH))
+                    .forEach(entry -> {
+                        String scenarioName = entry.getKey();
+                        this.queueScenarioRun(terminal, plugin, scenarioName);
+                    });
+        }
+        else
+        {
+            String scenarioName = strings[1];
+            this.queueScenarioRun(terminal, plugin, scenarioName);
+        }
+    }
+
+    private void queueScenarioRun(Terminal terminal, Plugin plugin, String scenarioName)
+    {
 
         try
         {
