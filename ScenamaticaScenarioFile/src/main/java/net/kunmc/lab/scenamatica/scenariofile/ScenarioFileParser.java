@@ -43,7 +43,7 @@ public class ScenarioFileParser
     public static ScenarioFileBean fromInputStream(InputStream inputStream, @Nullable String fileName)
             throws InvalidScenarioFileException
     {
-        Yaml sYaml = new Yaml();
+        Yaml sYaml = new Yaml(new SimpleYamlConstructor());
         Map<String, Object> map = sYaml.load(inputStream);
         return fromMap(map, fileName);
     }
