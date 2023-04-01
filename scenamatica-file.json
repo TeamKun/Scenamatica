@@ -37,6 +37,7 @@
     },
     "scenario": {
       "type": "object",
+      "$ref": "#/definitions/action",
       "properties": {
         "type": {
           "type": "string",
@@ -56,11 +57,6 @@
             }
           ]
         },
-        "action": {
-          "type": "object",
-          "description": "シナリオに割り当てるアクションです。",
-          "$ref": "#/definitions/action"
-        },
         "timeout": {
           "type": "integer",
           "description": "シナリオのタイムアウト時間を**チック**で指定します。動作の実行に時間がかかったり, いつまで経ってもアクションが起こされなかったときに, テストを失敗にして切り上げます。 0以下の値を指定すると, タイムアウトは無効になります。",
@@ -76,7 +72,7 @@
     "action": {
       "type": "object",
       "properties": {
-        "type": {
+        "action": {
           "type": "string",
           "description": "アクションの種類です。 ",
           "enum": [
@@ -97,7 +93,7 @@
         {
           "if": {
             "properties": {
-              "type": {
+              "action": {
                 "const": "message_send",
                 "description": "プレイヤーにメッセージを送信します。"
               }
