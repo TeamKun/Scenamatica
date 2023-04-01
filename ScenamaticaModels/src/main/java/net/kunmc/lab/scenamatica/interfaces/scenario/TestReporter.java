@@ -32,10 +32,10 @@ public interface TestReporter
     /**
      * シナリオのアクションの監視の開始をレポートします。
      *
-     * @param engine  エンジン
-     * @param action   アクション
+     * @param engine エンジン
+     * @param action アクション
      */
-    void onActionWatchStart(@NotNull ScenarioEngine engine, @NotNull CompiledAction<?> action);
+    void onActionWatchStart(@NotNull ScenarioEngine engine, @NotNull CompiledScenarioAction<?> action);
 
     /**
      * シナリオのアクションが正常に実行されたことをレポートします。

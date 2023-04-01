@@ -323,6 +323,11 @@ public class ScenarioEngineImpl implements ScenarioEngine
             this.testReporter.onActionStart(this, scenario);
             scenario.execute(this.actionManager, this.listener);
         }
+        else if (type == ScenarioType.ACTION_EXPECT)
+        {
+            this.testReporter.onActionWatchStart(this, scenario);
+            this.listener.setWaitingFor(scenario);
+        }
 
         return this.deliverer.waitResult(scenario.getBean().getTimeout(), this.state);
     }

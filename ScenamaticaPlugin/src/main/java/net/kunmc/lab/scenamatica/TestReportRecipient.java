@@ -70,7 +70,7 @@ public class TestReportRecipient implements TestReporter
     }
 
     @Override
-    public void onActionWatchStart(@NotNull ScenarioEngine engine, @NotNull CompiledAction<?> action)
+    public void onActionWatchStart(@NotNull ScenarioEngine engine, @NotNull CompiledScenarioAction<?> action)
     {
         ScenarioFileBean scenario = engine.getScenario();
 
