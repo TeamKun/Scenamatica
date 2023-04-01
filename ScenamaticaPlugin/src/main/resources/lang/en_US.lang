@@ -54,3 +54,8 @@ test.result.detail.id=-   Test ID: %%id%%
 test.result.detail.state=-   Test state: %%state%%
 test.result.detail.elapsed=-   Started at: %%startedAt%%, Finished at: %%finishedAt%%, Elapsed: %%elapsed%%
 test.result.detail.failed=-   Failed action: %%action%%
+
+test.session.result.stats=%%green%%Executed tests: %%white%%%%total%%, %%dark_green%%Passed: %%white%%%%passed%%, %%red%%Failure: %%white%%%%failed%%, %%yellow%%Cancelled: %%white%%%%cancelled%%, %%gray%%Skipped: %%white%%%%skipped%%, %%green%%Elapsed time: %%white%%%%elapsed%%
+test.session.result.message.passed=%%green%%All tests completed successfully.
+test.session.result.message.failed=%%red%%Some tests failed.
+test.session.result.message.noTests=%%yellow%%No tests were executed.

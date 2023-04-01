@@ -192,7 +192,8 @@ public class TestReportRecipient implements TestReporter
         boolean noTests = cancelled + skipped == total;
 
         printSeparator(null, terminal, null, 50);
-        terminal.info(LangProvider.get("test.session.end"));
+
+        terminal.writeLine("");
 
         terminal.info(LangProvider.get(
                 "test.session.result.stats",
@@ -203,6 +204,8 @@ public class TestReportRecipient implements TestReporter
                         .add("skipped", skipped)
                         .add("elapsed", elapsedStr)
         ));
+
+        terminal.writeLine("");
 
         String resultKey = null;
         String messageKey = null;
@@ -235,6 +238,8 @@ public class TestReportRecipient implements TestReporter
             else
                 terminal.error(summary);
         }
+
+        terminal.writeLine("");
 
         printSeparator(null, terminal, null, 50);
     }
