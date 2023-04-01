@@ -2,7 +2,7 @@
 
 command.enable.help=Enable/disable Scenamatica scenario execution.
 command.enable.invalidState=%%red%%Invalid value for enable/disable.
-command.enable.current=%%aqua%%Scenamatica scenario execution is currently set to %%state%%%%aqua%%.
+command.enable.current=Scenamatica scenario execution is currently set to %%state%%%%reset%%.
 command.enable.enable=%%green%%Enabled
 command.enable.disable=%%red%%Disabled
 

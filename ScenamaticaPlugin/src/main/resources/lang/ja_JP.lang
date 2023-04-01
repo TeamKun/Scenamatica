@@ -2,7 +2,7 @@
 
 command.enable.help=Scenamatica のシナリオ実行を有効/無効にします。
 command.enable.invalidState=%%red%%有効/無効の値が不正です。
-command.enable.current=%%aqua%%Scenamatica のシナリオ実行は現在 %%state%%%%aqua%% です。
+command.enable.current=Scenamatica のシナリオ実行は現在 %%state%%%%reset%% です。
 command.enable.enable=%%green%%有効
 command.enable.disable=%%red%%無効
 

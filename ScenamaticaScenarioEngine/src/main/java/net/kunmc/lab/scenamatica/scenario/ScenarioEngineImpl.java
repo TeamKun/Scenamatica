@@ -331,7 +331,7 @@ public class ScenarioEngineImpl implements ScenarioEngine
         this.logPrefix = "[" +
                 ChatColor.BOLD + ChatColor.YELLOW + "TEST-" + StringUtils.substring(this.scenario.getName(), 0, 8) +
                 ChatColor.RESET + "/" + ChatColor.GRAY + this.testID.toString().substring(0, 8) +
-                ChatColor.WHITE + "] ";
+                ChatColor.WHITE + "] " + ChatColor.RESET;
         if (!(this.isAutoRun = trigger.getType() != TriggerType.MANUAL_DISPATCH))
             this.logWithPrefix(Level.INFO, LangProvider.get(
                     "scenario.run.manually",
