@@ -2,6 +2,7 @@ package net.kunmc.lab.scenamatica.scenariofile;
 
 import lombok.AllArgsConstructor;
 import net.kunmc.lab.scenamatica.exceptions.scenariofile.InvalidScenarioFileException;
+import net.kunmc.lab.scenamatica.exceptions.scenariofile.NotAScenarioFileException;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
 import org.yaml.snakeyaml.Yaml;
 
@@ -26,6 +27,9 @@ public class ScenarioFileParser
         try
         {
             SchemaReplacer.resolveSchemaMap(map);
+            if (!map.containsKey("scenamatica"))
+                throw new NotAScenarioFileException(fileName);
+
             return ScenarioFileBeanImpl.deserialize(map);
         }
         catch (IllegalArgumentException e)
@@ -84,6 +88,9 @@ public class ScenarioFileParser
                     ScenarioFileBean scenario = fromInputStream(zis, fileName);
                     map.put(scenario.getName(), scenario);
                 }
+                catch (NotAScenarioFileException ignored)
+                {
+                } // plugin.yml などのファイルが混じっているので無視する。
             }
         }
 
