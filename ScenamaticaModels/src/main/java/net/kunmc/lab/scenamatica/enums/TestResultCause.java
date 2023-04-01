@@ -12,5 +12,20 @@ public enum TestResultCause
 
     INTERNAL_ERROR,
     CANCELLED,
-    SKIPPED
+    SKIPPED;
+
+    public boolean isFailure()
+    {
+        return this != PASSED && this != SKIPPED && this != CANCELLED;
+    }
+
+    public boolean isSkipped()
+    {
+        return this == SKIPPED;
+    }
+
+    public boolean isCancelled()
+    {
+        return this == CANCELLED;
+    }
 }

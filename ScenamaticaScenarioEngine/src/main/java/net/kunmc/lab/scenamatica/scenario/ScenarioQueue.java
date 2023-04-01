@@ -11,8 +11,11 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import javax.annotation.Nullable;
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Deque;
+import java.util.List;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
         /* non-public */ class ScenarioQueue extends BukkitRunnable
@@ -21,11 +24,16 @@ import java.util.function.Consumer;
     private final ScenarioManagerImpl manager;
     private final Deque<QueueEntry> scenarioRunQueue;
 
+    private List<TestResult> sessionResults;
+    private long sessionStartedAt;
+
     public ScenarioQueue(ScenamaticaRegistry registry, ScenarioManagerImpl manager)
     {
         this.registry = registry;
         this.manager = manager;
         this.scenarioRunQueue = new ArrayDeque<>();
+        this.sessionResults = new ArrayList<>();
+        this.sessionStartedAt = 0;
     }
 
     /* non-public */ void add(ScenarioEngine engine, TriggerBean trigger, Consumer<TestResult> callback)
@@ -55,12 +63,15 @@ import java.util.function.Consumer;
     {
         if (!this.manager.isEnabled() || this.scenarioRunQueue.isEmpty())
             return;
-
+        else if (this.sessionStartedAt == 0)
+            this.startSession();
 
         QueueEntry entry = this.scenarioRunQueue.pop();
         try
         {
             TestResult result = this.manager.runScenario(entry.getEngine(), entry.getTrigger());
+            this.sessionResults.add(result);
+
             if (entry.getCallback() != null)
                 entry.getCallback().accept(result);
         }
@@ -68,6 +79,29 @@ import java.util.function.Consumer;
         {
             this.registry.getExceptionHandler().report(e);
         }
+
+        if (this.scenarioRunQueue.isEmpty())
+            this.endSession();
+    }
+
+    private void startSession()
+    {
+        this.manager.getTestReporter().onTestSessionStart(
+                this.scenarioRunQueue.stream()
+                        .map(QueueEntry::getEngine)
+                        .collect(Collectors.toList())
+        );
+
+        this.sessionResults.clear();
+        this.sessionStartedAt = System.currentTimeMillis();
+    }
+
+    private void endSession()
+    {
+        this.manager.getTestReporter().onTestSessionEnd(this.sessionResults, this.sessionStartedAt);
+
+        this.sessionResults.clear();
+        this.sessionStartedAt = 0;
     }
 
     @Value

@@ -6,6 +6,8 @@ import net.kunmc.lab.scenamatica.interfaces.scenario.runtime.CompiledScenarioAct
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerBean;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+
 /**
  * シナリオのテストの実行と結果を報告するためのインターフェースです。
  */
@@ -71,9 +73,23 @@ public interface TestReporter
     /**
      * テストが終了したことをレポートします。
      *
-     * @param engine  エンジン
-     * @param result   テスト結果
+     * @param engine エンジン
+     * @param result テスト結果
      */
     void onTestEnd(@NotNull ScenarioEngine engine, @NotNull TestResult result);
 
+    /**
+     * テストセッションの開始をレポートします。
+     *
+     * @param engines エンジン
+     */
+    void onTestSessionStart(@NotNull List<? extends ScenarioEngine> engines);
+
+    /**
+     * キュー内の全てのテストが終了し, セッションが終了したことをレポートします。
+     *
+     * @param results   テスト結果
+     * @param startedAt テスト開始時刻
+     */
+    void onTestSessionEnd(@NotNull List<? extends TestResult> results, long startedAt);
 }

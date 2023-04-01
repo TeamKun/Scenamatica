@@ -2,6 +2,7 @@ package net.kunmc.lab.scenamatica.scenario;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import net.kunmc.lab.peyangpaperutils.lib.utils.Pair;
@@ -36,6 +37,7 @@ public class ScenarioManagerImpl implements ScenarioManager
     private final Multimap<Plugin, ScenarioEngine> engines;
     private final ScenarioQueue queue;
     @NotNull
+    @Getter(AccessLevel.PACKAGE)
     private final TestReporter testReporter;
     private final TickListener tickListener;
 

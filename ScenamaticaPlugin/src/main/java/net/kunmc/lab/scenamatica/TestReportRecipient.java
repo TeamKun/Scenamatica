@@ -60,10 +60,6 @@ public class TestReportRecipient implements TestReporter
         ScenarioFileBean scenario = engine.getScenario();
 
         this.terminals.forEach(t -> {
-            printSeparator(engine.getTestID(), t, scenario);
-            t.info(withPrefix(engine.getTestID(), scenario, ChatColor.AQUA + " T E S T"));
-            printSeparator(engine.getTestID(), t, scenario);
-
             t.info(withPrefix(engine.getTestID(), scenario, LangProvider.get(
                     "test.start",
                     MsgArgs.of("scenario", scenario.getName())
@@ -152,6 +148,94 @@ public class TestReportRecipient implements TestReporter
             printDetails(engine, t, scenario, result);
             printSeparator(testID, t, scenario, 12);
         });
+    }
+
+    @Override
+    public void onTestSessionStart(@NotNull List<? extends ScenarioEngine> engines)
+    {
+        this.terminals.forEach(t -> {
+            printSeparator(null, t, null, 50);
+            t.info(ChatColor.AQUA + " T E S T S");
+            printSeparator(null, t, null, 50);
+
+        });
+    }
+
+    @Override
+    public void onTestSessionEnd(@NotNull List<? extends TestResult> results, long startedAt)
+    {
+        long endedAt = System.currentTimeMillis();
+        long elapsed = endedAt - startedAt;
+        String elapsedStr = formatTime(elapsed);
+
+        int total = results.size();
+        int passed = (int) results.stream().parallel()
+                .filter(r -> r.getTestResultCause() == TestResultCause.PASSED).count();
+        int failed = (int) results.stream().parallel()
+                .map(TestResult::getTestResultCause)
+                .filter(TestResultCause::isFailure)
+                .count();
+        int cancelled = (int) results.stream().parallel()
+                .filter(r -> r.getTestResultCause() == TestResultCause.CANCELLED).count();
+        int skipped = (int) results.stream().parallel()
+                .filter(r -> r.getTestResultCause() == TestResultCause.SKIPPED).count();
+
+        this.terminals.forEach(t -> printSessionSummary(t, results, elapsedStr, total, passed, failed, cancelled, skipped));
+    }
+
+    private void printSessionSummary(@NotNull Terminal terminal, List<? extends TestResult> results,
+                                     String elapsedStr, int total, int passed, int failed, int cancelled, int skipped)
+    {
+        boolean allPassed = passed == total;
+        boolean someFails = failed > 0;
+        boolean noTests = cancelled + skipped == total;
+
+        printSeparator(null, terminal, null, 50);
+        terminal.info(LangProvider.get("test.session.end"));
+
+        terminal.info(LangProvider.get(
+                "test.session.result.stats",
+                MsgArgs.of("total", total)
+                        .add("passed", passed)
+                        .add("failed", failed)
+                        .add("cancelled", cancelled)
+                        .add("skipped", skipped)
+                        .add("elapsed", elapsedStr)
+        ));
+
+        String resultKey = null;
+        String messageKey = null;
+        if (allPassed)
+        {
+            resultKey = "test.result.passed";
+            messageKey = "test.session.result.message.passed";
+        }
+        else if (someFails)
+        {
+            resultKey = "test.result.failed";
+            messageKey = "test.session.result.message.failed";
+        }
+        else if (noTests)
+        {
+            resultKey = "test.result.unknown";
+            messageKey = "test.session.result.message.noTests";
+        }
+
+        if (resultKey != null)
+        {
+            String summary = LangProvider.get(
+                    "test.result",
+                    MsgArgs.of("result", LangProvider.get(resultKey))
+                            .add("message", "%%" + messageKey + "%%")
+            );
+
+            if (allPassed)
+                terminal.success(summary);
+            else
+                terminal.error(summary);
+        }
+
+        printSeparator(null, terminal, null, 50);
     }
 
     private void printTestSummary(ScenarioEngine engine, Terminal terminal, ScenarioFileBean scenario, TestResult result)
@@ -243,14 +327,17 @@ public class TestReportRecipient implements TestReporter
 
     private String withPrefix(UUID testID, ScenarioFileBean scenario, String message)
     {
+        String withScenarioName = scenario == null ? "":
+                ChatColor.BOLD.toString() + ChatColor.AQUA + "TEST-" + StringUtils.substring(scenario.getName(), 0, 8);
         String withTestID = testID == null ? "":
                 ChatColor.RESET.toString() + ChatColor.WHITE + "/" + ChatColor.GRAY + testID.toString().substring(0, 4);
 
-        return ChatColor.WHITE + "[" +
-                ChatColor.BOLD + ChatColor.AQUA + "TEST-" + StringUtils.substring(scenario.getName(), 0, 8) +
+        String withPrefix = withScenarioName.isEmpty() && withTestID.isEmpty() ? "": ChatColor.WHITE + "[" +
+                withScenarioName +
                 withTestID +
-                ChatColor.WHITE + "] " +
-                ChatColor.RESET + message;
+                ChatColor.WHITE + "] ";
+
+        return withPrefix + ChatColor.RESET + message;
     }
 
 }
