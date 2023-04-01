@@ -96,7 +96,42 @@
             },
             "required": [
                 "type"
-            ]
+            ],
+            "$comment": "以下はアクションの引数をひたすら記述する。",
+            "allOf": [
+                {
+                    "if": {
+                        "properties": {
+                            "type": {
+                                "const": "message_send",
+                                "description": "プレイヤーにメッセージを送信します。"
+                            }
+                        }
+                    },
+                    "then": {
+                        "properties": {
+                            "argument": {
+                                "$ref": "#/definitions/action/definitions/message_send"
+                            }
+                        }
+                    }
+                }
+            ],
+            "definitions": {
+                "message_send": {
+                    "properties": {
+                        "content": {
+                            "type": "string",
+                            "description": "メッセージの内容です。",
+                            "maxLength": 32768
+                        },
+                        "recipient": {
+                            "type": "string",
+                            "description": "メッセージを受け取るプレイヤーの名前または UUID です。"
+                        }
+                    }
+                }
+            }
         },
         "location": {
             "type": "object",
