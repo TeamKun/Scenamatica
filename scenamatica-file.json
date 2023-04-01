@@ -829,7 +829,7 @@
         "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
       ]
     },
-    "triggers": {
+    "on": {
       "type": "array",
       "description": "シナリオの実行条件を定義します。シナリオは, この配列の要素のいずれかに一致するときに実行されます。何も指定しない場合、そのシナリオは一生実行されません。",
       "items": {
@@ -864,7 +864,7 @@
   "required": [
     "scenamatica",
     "name",
-    "triggers",
+    "on",
     "scenario"
   ],
   "additionalProperties": true
