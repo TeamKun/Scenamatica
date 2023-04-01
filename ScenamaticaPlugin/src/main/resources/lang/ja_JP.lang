@@ -15,9 +15,7 @@ command.scenario.start.success=シナリオ %%scenario%% の実行をキュー�
 
 command.scenario.cancel.help=現在実行されているシナリオをキャンセルします。
 command.scenario.cancel.running=現在 プラグイン %%plugin%% の シナリオ %%scenario%% が実行されています。
-command.scenario.cancel.confirm=本当にシナリオ %%scenario%% の実行をキャンセルしますか？
 command.scenario.cancel.errors.notRunning=シナリオは実行されていません。
-command.scenario.cancel.errors.cancel=シナリオ %%scenario%% のキャンセルはユーザによって取り消されました。
 command.scenario.cancel.success=シナリオ %%scenario%% の実行をキャンセルしました。
 
 command.scenario.status.help=現在実行されているシナリオの状態を表示します。

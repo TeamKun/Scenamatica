@@ -15,9 +15,7 @@ command.scenario.start.success=The scenario %%scenario%% has been added to the q
 
 command.scenario.cancel.help=Cancel the currently running scenario.
 command.scenario.cancel.running=The scenario %%scenario%% of the plugin %%plugin%% is currently running.
-command.scenario.cancel.confirm=Are you sure you want to cancel the scenario %%scenario%%?
 command.scenario.cancel.errors.notRunning=The scenario is not running.
-command.scenario.cancel.errors.cancel=The cancellation of the scenario %%scenario%% was not performed by the user.
 command.scenario.cancel.success=The scenario %%scenario%% has been cancelled.
 
 command.scenario.status.help=Show the status of the currently running scenario.

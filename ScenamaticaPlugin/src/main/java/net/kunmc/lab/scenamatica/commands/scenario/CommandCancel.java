@@ -5,8 +5,6 @@ import lombok.SneakyThrows;
 import net.kunmc.lab.peyangpaperutils.lang.LangProvider;
 import net.kunmc.lab.peyangpaperutils.lang.MsgArgs;
 import net.kunmc.lab.peyangpaperutils.lib.command.CommandBase;
-import net.kunmc.lab.peyangpaperutils.lib.terminal.QuestionAttribute;
-import net.kunmc.lab.peyangpaperutils.lib.terminal.QuestionResult;
 import net.kunmc.lab.peyangpaperutils.lib.terminal.Terminal;
 import net.kunmc.lab.scenamatica.exceptions.scenario.ScenarioNotRunningException;
 import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
@@ -24,7 +22,7 @@ public class CommandCancel extends CommandBase
     private final ScenamaticaRegistry registry;
 
     @Override
-    @SneakyThrows({InterruptedException.class, ScenarioNotRunningException.class})
+    @SneakyThrows(ScenarioNotRunningException.class)
     public void onCommand(@NotNull CommandSender commandSender, @NotNull Terminal terminal, String[] strings)
     {
         ScenarioEngine current = this.registry.getScenarioManager().getCurrentScenario();
@@ -40,23 +38,8 @@ public class CommandCancel extends CommandBase
                         .add("plugin", current.getPlugin())
         ));
 
-        QuestionResult result = terminal.getInput().showYNQuestion(
-                LangProvider.get("command.scenario.cancel.confirm", MsgArgs.of("scenario", current.getScenario().getName()))
-        ).waitAndGetResult();
-
-        if (result.test(QuestionAttribute.YES))
-        {
-            if (!this.registry.getScenarioManager().isRunning())
-            {
-                terminal.error(LangProvider.get("command.scenario.cancel.errors.notRunning"));
-                return;
-            }
-
-            this.registry.getScenarioManager().cancel();
-            terminal.info(LangProvider.get("command.scenario.cancel.success"));
-        }
-        else
-            terminal.info(LangProvider.get("command.scenario.cancel.errors.cancel"));
+        this.registry.getScenarioManager().cancel();
+        terminal.info(LangProvider.get("command.scenario.cancel.success"));
     }
 
     @Override
