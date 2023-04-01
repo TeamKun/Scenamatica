@@ -86,7 +86,10 @@
             "properties": {
                 "type": {
                     "type": "string",
-                    "description": "アクションの種類です。 "
+                    "description": "アクションの種類です。 ",
+                    "enum": [
+                        "message_send"
+                    ]
                 },
                 "argument": {
                     "type": "object",
@@ -113,7 +116,10 @@
                             "argument": {
                                 "$ref": "#/definitions/action/definitions/message_send"
                             }
-                        }
+                        },
+                        "required": [
+                            "argument"
+                        ]
                     }
                 }
             ],
@@ -129,7 +135,11 @@
                             "type": "string",
                             "description": "メッセージを受け取るプレイヤーの名前または UUID です。"
                         }
-                    }
+                    },
+                    "required": [
+                        "content",
+                        "recipient"
+                    ]
                 }
             }
         },
