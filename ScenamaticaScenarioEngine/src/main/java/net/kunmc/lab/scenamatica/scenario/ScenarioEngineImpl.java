@@ -326,8 +326,8 @@ public class ScenarioEngineImpl implements ScenarioEngine
         this.ranBy = trigger;
         this.testID = UUID.randomUUID();
         this.startedAt = System.currentTimeMillis();
-        this.logPrefix = "TEST-" + StringUtils.substring(this.scenario.getName(), 0, 8) +
-                "/" + this.testID.toString().substring(0, 8);
+        this.logPrefix = "[" + "TEST-" + StringUtils.substring(this.scenario.getName(), 0, 8) +
+                "/" + this.testID.toString().substring(0, 8) + "] ";
         if (!(this.isAutoRun = trigger.getType() != TriggerType.MANUAL_DISPATCH))
             this.logWithPrefix(Level.INFO, LangProvider.get(
                     "scenario.run.manually",
