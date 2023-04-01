@@ -341,9 +341,9 @@ public class ScenarioEngineImpl implements ScenarioEngine
     public void cancel()
     {
         this.cleanUp();
-        this.isRunning = false;
         this.deliverer.kill();
         this.state = TestState.STAND_BY;
+        this.isRunning = false;
     }
 
     private void setRunInfo(TriggerBean trigger)

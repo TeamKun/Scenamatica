@@ -22,7 +22,7 @@ import java.util.Objects;
 /**
  * プレイヤにメッセージを送信する/送信されることを監視するアクション。
  */
-public class PlayerMessageSendAction implements Action<PlayerMessageSendAction.PlayerMessageSendActionArgument>
+public class MessageSendAction implements Action<MessageSendAction.PlayerMessageSendActionArgument>
 {
     @Override
     public void execute(@Nullable PlayerMessageSendActionArgument argument)

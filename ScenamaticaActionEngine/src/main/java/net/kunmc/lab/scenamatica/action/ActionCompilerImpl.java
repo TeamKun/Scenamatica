@@ -1,6 +1,6 @@
 package net.kunmc.lab.scenamatica.action;
 
-import net.kunmc.lab.scenamatica.action.actions.chat.PlayerMessageSendAction;
+import net.kunmc.lab.scenamatica.action.actions.chat.MessageSendAction;
 import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
 import net.kunmc.lab.scenamatica.interfaces.action.Action;
 import net.kunmc.lab.scenamatica.interfaces.action.ActionArgument;
@@ -23,7 +23,7 @@ public class ActionCompilerImpl implements ActionCompiler
     static
     {
         BY_NAME = new HashMap<>();
-        BY_NAME.put("message_send", PlayerMessageSendAction.class);
+        BY_NAME.put("message_send", MessageSendAction.class);
         // TODO: アクションを登録する。
     }
 
