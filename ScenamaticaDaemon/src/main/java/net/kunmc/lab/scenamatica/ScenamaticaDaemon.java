@@ -3,6 +3,7 @@ package net.kunmc.lab.scenamatica;
 import lombok.Getter;
 import net.kunmc.lab.scenamatica.action.ActionManagerImpl;
 import net.kunmc.lab.scenamatica.context.ContextManagerImpl;
+import net.kunmc.lab.scenamatica.events.PluginEventListener;
 import net.kunmc.lab.scenamatica.exceptions.context.actor.VersionNotSupportedException;
 import net.kunmc.lab.scenamatica.interfaces.ExceptionHandler;
 import net.kunmc.lab.scenamatica.interfaces.ScenamaticaEnvironment;
@@ -16,6 +17,7 @@ import net.kunmc.lab.scenamatica.interfaces.trigger.TriggerManager;
 import net.kunmc.lab.scenamatica.scenario.ScenarioManagerImpl;
 import net.kunmc.lab.scenamatica.scenariofile.ScenarioFileManagerImpl;
 import net.kunmc.lab.scenamatica.trigger.TriggerManagerImpl;
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 
 import java.util.logging.Level;
@@ -63,6 +65,8 @@ public class ScenamaticaDaemon implements ScenamaticaRegistry
     {
         this.actionManager.init();
         this.scenarioManager.init();
+
+        Bukkit.getPluginManager().registerEvents(new PluginEventListener(this), this.plugin);
     }
 
     @Override
