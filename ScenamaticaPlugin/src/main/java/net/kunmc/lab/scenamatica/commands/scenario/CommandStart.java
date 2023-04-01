@@ -61,6 +61,7 @@ public class CommandStart extends CommandBase
             scenarioMap.entrySet().stream()
                     .filter(entry -> entry.getValue().getTriggers().stream().parallel()
                             .anyMatch(trigger -> trigger.getType() == TriggerType.MANUAL_DISPATCH))
+                    .sorted(Map.Entry.comparingByKey())
                     .forEach(entry -> {
                         String scenarioName = entry.getKey();
                         this.queueScenarioRun(terminal, plugin, scenarioName);
