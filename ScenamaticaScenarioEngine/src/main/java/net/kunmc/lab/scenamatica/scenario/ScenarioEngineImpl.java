@@ -76,6 +76,7 @@ public class ScenarioEngineImpl implements ScenarioEngine
         this.listener = new ScenarioActionListenerImpl(this, registry);
 
         String scenarioName = this.scenario.getName();
+        this.logPrefix = "[" + scenarioName + "] ";  // テスト前のてんぷ。
 
         // アクションをコンパイルしてキャッシュしておく。
 
@@ -230,6 +231,7 @@ public class ScenarioEngineImpl implements ScenarioEngine
         }
 
         this.isRunning = false;
+        this.logPrefix = "[ " + this.scenario.getName() + " ] ";  // テスト後のてんぷ。(初期化)
         return new TestResultImpl(
                 this.testID,
                 this.state = TestState.FINISHED,
@@ -357,7 +359,7 @@ public class ScenarioEngineImpl implements ScenarioEngine
     {
         this.registry.getLogger().log(
                 level,
-                this.logPrefix + LangProvider.get(message)
+                this.logPrefix + message
         );
     }
 
