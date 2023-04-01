@@ -54,7 +54,7 @@ public class TriggerManagerImpl implements TriggerManager
             if (trigger.getArgument() != null && !trigger.getArgument().isSame(argument))
                 continue;
 
-            this.registry.getScenarioManager().startScenarioInterrupt(plugin, scenarioName, trigger.getType());
+            this.registry.getScenarioManager().queueScenario(plugin, scenarioName, trigger.getType());
         }
     }
 }

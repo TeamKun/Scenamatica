@@ -123,7 +123,7 @@ public class WatcherManagerImpl implements WatcherManager
         if (!this.actionWatchers.containsValue(entry))
             throw new IllegalStateException("The entry is not registered.");
 
-        if (entry.getType() == WatchType.SCENARIO)
+        if (entry.getType() == WatchType.TRIGGER)
         {
             try
             {
