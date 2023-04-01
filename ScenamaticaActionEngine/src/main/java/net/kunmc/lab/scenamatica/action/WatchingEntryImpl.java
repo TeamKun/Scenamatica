@@ -42,7 +42,10 @@ public class WatchingEntryImpl<A extends ActionArgument> implements WatchingEntr
 
         EventExecutor executor = (listener1, event) -> {
             if (this.action.isFired(this.argument, WatchingEntryImpl.this.plugin, event))
+            {
                 this.manager.onActionFired(WatchingEntryImpl.this, event);
+                WatchingEntryImpl.this.unregister();  // 実行回数分受け取ってしまうため。
+            }
         };
 
         RegisteredListener registeredListener = new RegisteredListener(
