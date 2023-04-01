@@ -1,7 +1,6 @@
 package net.kunmc.lab.scenamatica.interfaces.action;
 
-import org.apache.logging.log4j.util.BiConsumer;
-
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 /**
