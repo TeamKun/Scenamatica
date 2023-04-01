@@ -114,7 +114,10 @@ public class StageManagerImpl implements StageManager
             return;
         }
 
-        this.stage.getPlayers().forEach(p -> p.teleport(Bukkit.getWorlds().get(0).getSpawnLocation()));
+        Bukkit.getOnlinePlayers()
+                .stream()
+                .filter(p -> p.getLocation().getWorld().equals(this.stage))
+                .forEach(p -> p.teleport(Bukkit.getWorlds().get(0).getSpawnLocation()));
 
         Bukkit.unloadWorld(this.stage, false);
 

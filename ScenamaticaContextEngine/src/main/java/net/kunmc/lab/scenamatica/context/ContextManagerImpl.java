@@ -59,7 +59,7 @@ public class ContextManagerImpl implements ContextManager
 
     @Override
     public Context prepareContext(@NotNull ScenarioFileBean scenario, @NotNull UUID testID)
-            throws StageCreateFailedException, StageNotCreatedException
+            throws StageNotCreatedException
     {
         ContextBean context = scenario.getContext();
 
