@@ -79,7 +79,7 @@ public class ScenarioEngineImpl implements ScenarioEngine
 
         // アクションをコンパイルしてキャッシュしておく。
 
-        this.logWithScenarioName(
+        this.logWithPrefix(
                 Level.INFO,
                 LangProvider.get("scenario.compile.start", MsgArgs.of("scenarioName", scenarioName))
         );
@@ -183,7 +183,10 @@ public class ScenarioEngineImpl implements ScenarioEngine
         }
         catch (ContextPreparationException ignored)
         {
-            this.logWithScenarioName(Level.WARNING, LangProvider.get("scenario.run.prepare.fail"));
+            this.logWithPrefix(Level.WARNING, LangProvider.get(
+                    "scenario.run.prepare.fail",
+                    MsgArgs.of("scenarioName", this.scenario.getName())
+            ));
             this.isRunning = false;
             return new TestResultImpl(
                     this.testID,
@@ -193,7 +196,10 @@ public class ScenarioEngineImpl implements ScenarioEngine
             );
         }
 
-        this.logWithScenarioName(Level.INFO, LangProvider.get("scenario.run.engine.starting"));
+        this.logWithPrefix(Level.INFO, LangProvider.get(
+                "scenario.run.engine.starting",
+                MsgArgs.of("scenarioName", this.scenario.getName())
+        ));
         this.state = TestState.STARTING;
 
         TestResult mayResult = this.runBeforeIfPresent(compiledTrigger);
@@ -204,7 +210,11 @@ public class ScenarioEngineImpl implements ScenarioEngine
         }
 
         this.state = TestState.RUNNING_MAIN;
-        this.logWithScenarioName(Level.INFO, LangProvider.get("scenario.run.starting.main"));
+        this.logWithPrefix(Level.INFO, LangProvider.get(
+
+                "scenario.run.starting.main",
+                MsgArgs.of("scenarioName", this.scenario.getName())
+        ));
         mayResult = this.runScenario(this.actions);
         if (mayResult != null)
         {
@@ -233,7 +243,10 @@ public class ScenarioEngineImpl implements ScenarioEngine
         if (!trigger.getTrigger().getBeforeThat().isEmpty())
         {
             this.state = TestState.RUNNING_BEFORE;
-            this.logWithScenarioName(Level.INFO, LangProvider.get("scenario.run.starting.before"));
+            this.logWithPrefix(Level.INFO, LangProvider.get(
+                    "scenario.run.starting.before",
+                    MsgArgs.of("scenarioName", this.scenario.getName())
+            ));
             return this.runScenario(trigger.getBeforeActions());
         }
 
@@ -245,7 +258,10 @@ public class ScenarioEngineImpl implements ScenarioEngine
         if (!trigger.getTrigger().getAfterThat().isEmpty())
         {
             this.state = TestState.RUNNING_AFTER;
-            this.logWithScenarioName(Level.INFO, LangProvider.get("scenario.run.starting.after"));
+            this.logWithPrefix(Level.INFO, LangProvider.get(
+                    "scenario.run.starting.after",
+                    MsgArgs.of("scenarioName", this.scenario.getName())
+            ));
             return this.runScenario(trigger.getAfterActions());
         }
 
@@ -311,7 +327,10 @@ public class ScenarioEngineImpl implements ScenarioEngine
         this.logPrefix = "TEST-" + StringUtils.substring(this.scenario.getName(), 0, 8) +
                 "/" + this.testID.toString().substring(0, 8);
         if (!(this.isAutoRun = trigger.getType() != TriggerType.MANUAL_DISPATCH))
-            this.logWithScenarioName(Level.INFO, LangProvider.get("scenario.run.manually"));
+            this.logWithPrefix(Level.INFO, LangProvider.get(
+                    "scenario.run.manually",
+                    MsgArgs.of("scenarioName", this.scenario.getName())
+            ));
         this.deliverer = new ScenarioResultDelivererImpl(this.registry, this.testID, this.startedAt);
     }
 
@@ -320,23 +339,25 @@ public class ScenarioEngineImpl implements ScenarioEngine
         MsgArgs newArgs = MsgArgs.of("compiled", compiled)
                 .add("total", total)
                 .add("type", type)
-                .add("triggerType", triggerType.name());
-        this.logWithScenarioName(Level.INFO, LangProvider.get("scenario.compile.child", newArgs));
+                .add("triggerType", triggerType.name())
+                .add("scenarioName", this.scenario.getName());
+        this.logWithPrefix(Level.INFO, LangProvider.get("scenario.compile.child", newArgs));
     }
 
     private void logCompilingMain(int compiled, int total)
     {
         MsgArgs newArgs = MsgArgs.of("compiled", compiled)
-                .add("total", total);
-        this.logWithScenarioName(Level.INFO, LangProvider.get("scenario.compile.main", newArgs));
+                .add("total", total)
+                .add("type", "main")
+                .add("scenarioName", this.scenario.getName());
+        this.logWithPrefix(Level.INFO, LangProvider.get("scenario.compile.main", newArgs));
     }
 
-    private void logWithScenarioName(Level level, String message)
+    private void logWithPrefix(Level level, String message)
     {
         this.registry.getLogger().log(
                 level,
-                "[{}] " + LangProvider.get(message, MsgArgs.of("scenarioName", this.scenario.getName())),
-                this.logPrefix
+                this.logPrefix + LangProvider.get(message)
         );
     }
 
