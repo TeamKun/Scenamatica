@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.SneakyThrows;
 import net.kunmc.lab.peyangpaperutils.lang.LangProvider;
 import net.kunmc.lab.peyangpaperutils.lang.MsgArgs;
+import net.kunmc.lab.scenamatica.commons.utils.LogUtils;
 import net.kunmc.lab.scenamatica.context.actor.ActorManagerImpl;
 import net.kunmc.lab.scenamatica.exceptions.context.actor.VersionNotSupportedException;
 import net.kunmc.lab.scenamatica.exceptions.context.stage.StageCreateFailedException;
@@ -16,7 +17,6 @@ import net.kunmc.lab.scenamatica.interfaces.context.StageManager;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.context.ContextBean;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.context.PlayerBean;
-import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -128,8 +128,7 @@ public class ContextManagerImpl implements ContextManager
 
     private static MsgArgs getArgs(ScenarioFileBean scenario, UUID testID)
     {
-        return MsgArgs.of("scenarioName", "TEST-" + StringUtils.substring(scenario.getName(), 0, 8) +
-                "/" + testID.toString().substring(0, 8));
+        return MsgArgs.of("prefix", LogUtils.gerScenarioPrefix(testID, scenario));
     }
 
     @SneakyThrows(StageNotCreatedException.class)

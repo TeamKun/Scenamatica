@@ -4,6 +4,7 @@ import net.kunmc.lab.peyangpaperutils.lang.LangProvider;
 import net.kunmc.lab.peyangpaperutils.lang.MsgArgs;
 import net.kunmc.lab.peyangpaperutils.lib.terminal.Terminal;
 import net.kunmc.lab.peyangpaperutils.lib.terminal.Terminals;
+import net.kunmc.lab.scenamatica.commons.utils.LogUtils;
 import net.kunmc.lab.scenamatica.enums.TestResultCause;
 import net.kunmc.lab.scenamatica.interfaces.action.Action;
 import net.kunmc.lab.scenamatica.interfaces.action.CompiledAction;
@@ -327,17 +328,7 @@ public class TestReportRecipient implements TestReporter
 
     private String withPrefix(UUID testID, ScenarioFileBean scenario, String message)
     {
-        String withScenarioName = scenario == null ? "":
-                ChatColor.BOLD.toString() + ChatColor.AQUA + "TEST-" + StringUtils.substring(scenario.getName(), 0, 8);
-        String withTestID = testID == null ? "":
-                ChatColor.RESET.toString() + ChatColor.WHITE + "/" + ChatColor.GRAY + testID.toString().substring(0, 4);
-
-        String withPrefix = withScenarioName.isEmpty() && withTestID.isEmpty() ? "": ChatColor.WHITE + "[" +
-                withScenarioName +
-                withTestID +
-                ChatColor.WHITE + "] ";
-
-        return withPrefix + ChatColor.RESET + message;
+        return LogUtils.gerScenarioPrefix(testID, scenario) + message;
     }
 
 }

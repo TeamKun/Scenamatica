@@ -4,6 +4,7 @@ import lombok.Getter;
 import net.kunmc.lab.peyangpaperutils.lang.LangProvider;
 import net.kunmc.lab.peyangpaperutils.lang.MsgArgs;
 import net.kunmc.lab.peyangpaperutils.lib.utils.Pair;
+import net.kunmc.lab.scenamatica.commons.utils.LogUtils;
 import net.kunmc.lab.scenamatica.enums.ScenarioType;
 import net.kunmc.lab.scenamatica.enums.TestResultCause;
 import net.kunmc.lab.scenamatica.enums.TestState;
@@ -28,8 +29,6 @@ import net.kunmc.lab.scenamatica.interfaces.scenariofile.scenario.ScenarioBean;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerBean;
 import net.kunmc.lab.scenamatica.scenario.runtime.CompiledTriggerActionImpl;
 import net.kunmc.lab.scenamatica.scenario.runtime.Compilers;
-import org.apache.commons.lang.StringUtils;
-import org.bukkit.ChatColor;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -77,7 +76,7 @@ public class ScenarioEngineImpl implements ScenarioEngine
         this.listener = new ScenarioActionListenerImpl(this, registry);
 
         String scenarioName = this.scenario.getName();
-        this.logPrefix = "[" + scenarioName + "] ";  // テスト前のてんぷ。
+        this.logPrefix = LogUtils.gerScenarioPrefix(null, this.scenario);
 
         // アクションをコンパイルしてキャッシュしておく。
 
@@ -233,7 +232,7 @@ public class ScenarioEngineImpl implements ScenarioEngine
         }
 
         this.isRunning = false;
-        this.logPrefix = "[ " + this.scenario.getName() + " ] ";  // テスト後のてんぷ。(初期化)
+        this.logPrefix = LogUtils.gerScenarioPrefix(null, this.scenario);
         return new TestResultImpl(
                 this.testID,
                 this.state = TestState.FINISHED,
@@ -328,10 +327,7 @@ public class ScenarioEngineImpl implements ScenarioEngine
         this.ranBy = trigger;
         this.testID = UUID.randomUUID();
         this.startedAt = System.currentTimeMillis();
-        this.logPrefix = "[" +
-                ChatColor.BOLD + ChatColor.YELLOW + "TEST-" + StringUtils.substring(this.scenario.getName(), 0, 8) +
-                ChatColor.RESET + "/" + ChatColor.GRAY + this.testID.toString().substring(0, 8) +
-                ChatColor.WHITE + "] " + ChatColor.RESET;
+        this.logPrefix = LogUtils.gerScenarioPrefix(null, this.scenario);
         if (!(this.isAutoRun = trigger.getType() != TriggerType.MANUAL_DISPATCH))
             this.logWithPrefix(Level.INFO, LangProvider.get(
                     "scenario.run.manually",

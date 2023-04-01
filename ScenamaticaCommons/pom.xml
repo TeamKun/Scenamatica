@@ -19,5 +19,10 @@
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>net.kunmc.lab</groupId>
+            <artifactId>ScenamaticaModels</artifactId>
+            <version>1.0.0</version>
+        </dependency>
     </dependencies>
 </project>
