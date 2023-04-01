@@ -10,6 +10,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.UUID;
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 public class ScenarioResultDelivererImpl implements ScenarioResultDeliverer
 {
@@ -132,5 +134,13 @@ public class ScenarioResultDelivererImpl implements ScenarioResultDeliverer
     {
         this.killed = true;
         this.barrier.reset();
+        try
+        {
+            this.barrier.await(1, TimeUnit.MILLISECONDS);
+        }
+        catch (InterruptedException | BrokenBarrierException | TimeoutException ignored)
+        {
+            // BrokenBarrierException を上で起こさせるだけなので, 握りつぶす
+        }
     }
 }
