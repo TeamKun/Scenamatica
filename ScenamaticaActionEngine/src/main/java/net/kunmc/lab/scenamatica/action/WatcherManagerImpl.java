@@ -140,6 +140,9 @@ public class WatcherManagerImpl implements WatcherManager
             }
         }
         else
+        {
             entry.getEngine().getListener().onActionFired(entry, event);
+            this.actionWatchers.remove(entry.getPlugin(), entry);
+        }
     }
 }

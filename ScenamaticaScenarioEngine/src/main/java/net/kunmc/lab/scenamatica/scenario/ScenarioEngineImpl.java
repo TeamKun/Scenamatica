@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 
 @Getter
 public class ScenarioEngineImpl implements ScenarioEngine
@@ -289,11 +290,14 @@ public class ScenarioEngineImpl implements ScenarioEngine
     private TestResult runScenario(List<? extends CompiledScenarioAction<?>> scenario)
     {
         // 飛び判定用に, 予めすべてのアクションを監視対象にしておく。
+        List<CompiledScenarioAction<?>> watches = scenario.stream()
+                .filter(a -> a.getType() == ScenarioType.ACTION_EXPECT)
+                .collect(Collectors.toList());
         this.actionManager.getWatcherManager().registerWatchers(
                 this.plugin,
                 this,
                 this.scenario,
-                toActions(scenario),
+                toActions(watches),  // 同じ Stream にすると, 型の関係で可読性が低下する。パフォーマンス影響は軽微なので無視。
                 WatchType.SCENARIO
         );
 

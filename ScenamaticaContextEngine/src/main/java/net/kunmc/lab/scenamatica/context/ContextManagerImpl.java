@@ -80,7 +80,18 @@ public class ContextManagerImpl implements ContextManager
                         MsgArgs.of("stageName", context.getWorld().getOriginalWorldName()), testID
                 );
             }
-            stage = this.stageManager.createStage(context.getWorld());
+
+            stage = ThreadingUtil.waitFor(this.registry.getPlugin(), () ->
+            {
+                try
+                {
+                    return this.stageManager.createStage(context.getWorld());
+                }
+                catch (StageCreateFailedException e)
+                {
+                    throw new RuntimeException(e);
+                }
+            });
         }
         else
             stage = this.stageManager.shared(DEFAULT_ORIGINAL_WORLD_NAME);
