@@ -63,29 +63,30 @@ public class ContextManagerImpl implements ContextManager
 
         this.log(scenario, "context.creating", testID);
 
-        if (context.getWorld() != null && context.getWorld().getOriginalWorldName() != null
-                && Bukkit.getWorld(context.getWorld().getOriginalWorldName()) != null)  // 既存だったら再利用する。
-        {
-            this.log(scenario, "context.stage.clone.found",
-                    MsgArgs.of("stageName", context.getWorld().getOriginalWorldName()), testID
-            );
-            this.log(scenario, "context.stage.clone.cloning",
-                    MsgArgs.of("stageName", context.getWorld().getOriginalWorldName()), testID
-            );
-        }
-
         this.log(scenario, "context.stage.generating", testID);
 
         World stage;
-        if (context.getWorld() != null)
+        if (context != null && context.getWorld() != null)
+        {
+            if (context.getWorld().getOriginalWorldName() != null
+                    && Bukkit.getWorld(context.getWorld().getOriginalWorldName()) != null)  // 既存だったら再利用する。
+            {
+                this.log(scenario, "context.stage.clone.found",
+                        MsgArgs.of("stageName", context.getWorld().getOriginalWorldName()), testID
+                );
+                this.log(scenario, "context.stage.clone.cloning",
+                        MsgArgs.of("stageName", context.getWorld().getOriginalWorldName()), testID
+                );
+            }
             stage = this.stageManager.createStage(context.getWorld());
+        }
         else
             stage = this.stageManager.shared(DEFAULT_ORIGINAL_WORLD_NAME);
 
         this.isWorldPrepared = true;
 
         List<Player> actors = new ArrayList<>();
-        if (context.getActors() != null && !context.getActors().isEmpty())
+        if (context != null && context.getActors() != null && !context.getActors().isEmpty())
         {
             this.log(scenario, "context.actor.generating", testID);
             try

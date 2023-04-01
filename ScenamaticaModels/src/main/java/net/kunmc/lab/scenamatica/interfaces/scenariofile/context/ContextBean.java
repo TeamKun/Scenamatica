@@ -1,5 +1,6 @@
 package net.kunmc.lab.scenamatica.interfaces.scenariofile.context;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -14,7 +15,7 @@ public interface ContextBean
      *
      * @return 仮想プレイヤー
      */
-    @Nullable
+    @NotNull
     List<PlayerBean> getActors();
 
     /**

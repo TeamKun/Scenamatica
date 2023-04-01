@@ -5,6 +5,7 @@ import net.kunmc.lab.scenamatica.commons.utils.MapUtils;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.context.ContextBean;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.context.PlayerBean;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.context.StageBean;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -18,7 +19,7 @@ public class ContextBeanImpl implements ContextBean
     private static final String KEY_ACTORS = "actors";
     private static final String KEY_STAGE = "stage";
 
-    @Nullable
+    @NotNull
     List<PlayerBean> actors;
 
     @Nullable
@@ -28,7 +29,7 @@ public class ContextBeanImpl implements ContextBean
     {
         Map<String, Object> map = new HashMap<>();
 
-        if (bean.getActors() != null)
+        if (!bean.getActors().isEmpty())
         {
             List<Map<String, Object>> actors = new ArrayList<>();
             for (PlayerBean player : bean.getActors())
@@ -69,10 +70,9 @@ public class ContextBeanImpl implements ContextBean
 
     public static ContextBean deserialize(Map<String, Object> map)
     {
-        List<PlayerBean> actorList = null;
+        List<PlayerBean> actorList = new ArrayList<>();
         if (map.containsKey(KEY_ACTORS) && map.get(KEY_ACTORS) != null)
         {
-            actorList = new ArrayList<>();
             for (Object player : (List<?>) map.get(KEY_ACTORS))
                 actorList.add(PlayerBeanImpl.deserialize(MapUtils.checkAndCastMap(
                         player,
