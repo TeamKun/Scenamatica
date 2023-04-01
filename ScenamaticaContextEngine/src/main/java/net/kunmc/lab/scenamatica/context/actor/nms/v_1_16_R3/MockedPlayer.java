@@ -52,7 +52,6 @@ class MockedPlayer extends EntityPlayer
     @Override
     public boolean damageEntity(DamageSource damageSource, float f)
     {
-        System.out.println("damageEntity");
         Entity damager = damageSource.getEntity();
 
         boolean damaged = super.damageEntity(damageSource, f);

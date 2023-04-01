@@ -12,7 +12,6 @@ import net.kunmc.lab.scenamatica.interfaces.action.CompiledAction;
 import net.kunmc.lab.scenamatica.interfaces.action.WatcherManager;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioEngine;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
-import org.apache.logging.log4j.util.BiConsumer;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
@@ -20,6 +19,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 public class ActionManagerImpl implements ActionManager

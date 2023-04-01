@@ -2,10 +2,10 @@ package net.kunmc.lab.scenamatica.interfaces.action;
 
 import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.action.ActionBean;
-import org.apache.logging.log4j.util.BiConsumer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 /**

@@ -1,18 +1,19 @@
 package net.kunmc.lab.scenamatica.action;
 
+import net.kunmc.lab.scenamatica.action.actions.chat.PlayerMessageSendAction;
 import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
 import net.kunmc.lab.scenamatica.interfaces.action.Action;
 import net.kunmc.lab.scenamatica.interfaces.action.ActionArgument;
 import net.kunmc.lab.scenamatica.interfaces.action.ActionCompiler;
 import net.kunmc.lab.scenamatica.interfaces.action.CompiledAction;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.action.ActionBean;
-import org.apache.logging.log4j.util.BiConsumer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 public class ActionCompilerImpl implements ActionCompiler
@@ -22,7 +23,7 @@ public class ActionCompilerImpl implements ActionCompiler
     static
     {
         BY_NAME = new HashMap<>();
-
+        BY_NAME.put("message_send", PlayerMessageSendAction.class);
         // TODO: アクションを登録する。
     }
 

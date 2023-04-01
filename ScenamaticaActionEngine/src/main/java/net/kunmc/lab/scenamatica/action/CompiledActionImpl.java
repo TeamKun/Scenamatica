@@ -4,8 +4,8 @@ import lombok.Value;
 import net.kunmc.lab.scenamatica.interfaces.action.Action;
 import net.kunmc.lab.scenamatica.interfaces.action.ActionArgument;
 import net.kunmc.lab.scenamatica.interfaces.action.CompiledAction;
-import org.apache.logging.log4j.util.BiConsumer;
 
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 @Value

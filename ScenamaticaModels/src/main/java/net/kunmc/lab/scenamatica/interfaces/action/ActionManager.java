@@ -3,11 +3,11 @@ package net.kunmc.lab.scenamatica.interfaces.action;
 import net.kunmc.lab.scenamatica.enums.WatchType;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioEngine;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
-import org.apache.logging.log4j.util.BiConsumer;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 /**
