@@ -2,6 +2,7 @@ package net.kunmc.lab.scenamatica.context;
 
 import lombok.Getter;
 import lombok.SneakyThrows;
+import net.kunmc.lab.peyangpaperutils.lang.LangProvider;
 import net.kunmc.lab.peyangpaperutils.lang.MsgArgs;
 import net.kunmc.lab.scenamatica.context.actor.ActorManagerImpl;
 import net.kunmc.lab.scenamatica.exceptions.context.actor.VersionNotSupportedException;
@@ -111,17 +112,17 @@ public class ContextManagerImpl implements ContextManager
 
     private void log(ScenarioFileBean scenario, String message, MsgArgs args, UUID testID)
     {
-        this.logger.log(Level.INFO, message, getArgs(scenario, testID).add(args));
+        this.logger.log(Level.INFO, LangProvider.get(message, getArgs(scenario, testID).add(args)));
     }
 
     private void log(ScenarioFileBean scenario, String message, UUID testID)
     {
-        this.logger.log(Level.INFO, message, getArgs(scenario, testID));
+        this.logger.log(Level.INFO, LangProvider.get(message, getArgs(scenario, testID)));
     }
 
     private void logActorGenFail(ScenarioFileBean scenario, UUID testID)
     {
-        this.logger.log(Level.WARNING, "context.actor.failed", getArgs(scenario, testID));
+        this.logger.log(Level.WARNING, LangProvider.get("context.actor.failed", getArgs(scenario, testID)));
     }
 
     private static MsgArgs getArgs(ScenarioFileBean scenario, UUID testID)

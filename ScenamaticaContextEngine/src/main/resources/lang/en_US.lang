@@ -1,5 +1,5 @@
 # Context Settings
-context.prefix=%%context.prefix%%
+context.prefix=[%%scenarioName%%]
 context.creating=%%context.prefix%% Preparing context for scenario %%scenarioName%% ...
 context.created=%%context.prefix%% context has been prepared.
 
