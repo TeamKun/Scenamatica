@@ -3,3 +3,6 @@ daemon.plugin.disabled=プラグイン %%plugin%% の無効化を検知しまし
 
 daemon.plugin.scenario.scanning=プラグイン %%plugin%% のシナリオをスキャンしています …
 daemon.plugin.scenario.unloading=プラグイン %%plugin%% のシナリオをアンロードしています …
+
+daemon.plugin.scenario.load.failed=プラグイン %%plugin%% のシナリオのロードに失敗しました。
+daemon.plugin.scenario.load.success=プラグイン %%plugin%% のシナリオのロードに成功しました。

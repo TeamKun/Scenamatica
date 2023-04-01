@@ -38,7 +38,17 @@ public class PluginEventListener implements Listener
         this.logger.info(LangProvider.get("daemon.plugin.enabled", msgArgs));
         this.logger.info(LangProvider.get("daemon.plugin.scenario.scanning", msgArgs));
 
-        this.registry.getScenarioManager().loadPluginScenarios(event.getPlugin());
+        try
+        {
+            this.registry.getScenarioManager().loadPluginScenarios(event.getPlugin());
+            this.logger.info(LangProvider.get("daemon.plugin.scenario.load.success", msgArgs));
+        }
+        catch (Exception e)
+        {
+            this.logger.warning(LangProvider.get("daemon.plugin.scenario.load.failed", msgArgs));
+            this.registry.getExceptionHandler().report(e);
+        }
+
     }
 
     @EventHandler

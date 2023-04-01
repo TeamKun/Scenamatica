@@ -3,3 +3,6 @@ daemon.plugin.disabled=Detected plugin %%plugin%% disabled.
 
 daemon.plugin.scenario.scanning=Scanning scenarios for plugin %%plugin%%...
 daemon.plugin.scenario.unloading=Unloading scenarios for plugin %%plugin%%...
+
+daemon.plugin.scenario.load.failed=Failed to load scenarios for plugin %%plugin%%.
+daemon.plugin.scenario.load.success=Scenarios for plugin %%plugin%% loaded.
