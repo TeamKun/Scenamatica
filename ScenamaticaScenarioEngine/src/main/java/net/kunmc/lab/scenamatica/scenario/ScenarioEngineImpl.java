@@ -182,7 +182,7 @@ public class ScenarioEngineImpl implements ScenarioEngine
             if (context == null)
                 throw new ContextPreparationException(""); // だみー
         }
-        catch (ContextPreparationException ignored)
+        catch (Exception ignored)
         {
             this.logWithPrefix(Level.WARNING, LangProvider.get(
                     "scenario.run.prepare.fail",
