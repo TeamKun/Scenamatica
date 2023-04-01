@@ -5,6 +5,7 @@ import net.kunmc.lab.peyangpaperutils.lang.LangProvider;
 import net.kunmc.lab.peyangpaperutils.lang.MsgArgs;
 import net.kunmc.lab.peyangpaperutils.lib.utils.Pair;
 import net.kunmc.lab.scenamatica.commons.utils.LogUtils;
+import net.kunmc.lab.scenamatica.commons.utils.ThreadingUtil;
 import net.kunmc.lab.scenamatica.enums.ScenarioType;
 import net.kunmc.lab.scenamatica.enums.TestResultCause;
 import net.kunmc.lab.scenamatica.enums.TestState;
@@ -232,7 +233,7 @@ public class ScenarioEngineImpl implements ScenarioEngine
         }
 
         // あとかたづけ
-        this.cleanUp();
+        ThreadingUtil.waitFor(this.registry.getPlugin(), this::cleanUp);
 
         this.isRunning = false;
         this.logPrefix = LogUtils.gerScenarioPrefix(null, this.scenario);

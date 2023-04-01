@@ -4,9 +4,10 @@ import lombok.Getter;
 import lombok.SneakyThrows;
 import net.kunmc.lab.peyangpaperutils.lang.LangProvider;
 import net.kunmc.lab.peyangpaperutils.lang.MsgArgs;
-import net.kunmc.lab.peyangpaperutils.lib.utils.Runner;
 import net.kunmc.lab.scenamatica.commons.utils.LogUtils;
+import net.kunmc.lab.scenamatica.commons.utils.ThreadingUtil;
 import net.kunmc.lab.scenamatica.context.actor.ActorManagerImpl;
+import net.kunmc.lab.scenamatica.exceptions.context.actor.ActorAlreadyExistsException;
 import net.kunmc.lab.scenamatica.exceptions.context.actor.VersionNotSupportedException;
 import net.kunmc.lab.scenamatica.exceptions.context.stage.StageCreateFailedException;
 import net.kunmc.lab.scenamatica.exceptions.context.stage.StageNotCreatedException;
@@ -26,7 +27,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.CyclicBarrier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -91,26 +91,19 @@ public class ContextManagerImpl implements ContextManager
         if (context != null && !context.getActors().isEmpty())
         {
             this.log(scenario, "context.actor.generating", testID);
-            CyclicBarrier barrier = new CyclicBarrier(2);
             try
             {
-                Runner.run(this.registry.getPlugin(), () -> {
-                    for (PlayerBean actor : context.getActors())
-                    {
-                        actors.add(this.actorManager.createActor(actor));
-                    }
-
+                ThreadingUtil.waitFor(this.registry.getPlugin(), () -> {
                     try
                     {
-                        barrier.await();
+                        for (PlayerBean actor : context.getActors())
+                            actors.add(this.actorManager.createActor(actor));
                     }
-                    catch (Exception e)
+                    catch (ActorAlreadyExistsException | StageNotCreatedException e)
                     {
-                        this.registry.getExceptionHandler().report(e);
+                        throw new IllegalStateException(e);
                     }
                 });
-
-                barrier.await();
                 this.isActorPrepared = true;
             }
             catch (Exception e)
