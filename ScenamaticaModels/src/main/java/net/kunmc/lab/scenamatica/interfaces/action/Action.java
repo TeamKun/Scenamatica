@@ -14,6 +14,13 @@ import java.util.Map;
 public interface Action<A extends ActionArgument>
 {
     /**
+     * 動作のシリアライズ名を返します。
+     *
+     * @return 動作のシリアライズ名
+     */
+    String getName();
+
+    /**
      * 動作を実行します。
      *
      * @param argument 動作の引数

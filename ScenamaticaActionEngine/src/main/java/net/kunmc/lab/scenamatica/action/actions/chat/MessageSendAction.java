@@ -25,6 +25,12 @@ import java.util.Objects;
 public class MessageSendAction implements Action<MessageSendAction.PlayerMessageSendActionArgument>
 {
     @Override
+    public String getName()
+    {
+        return "message_send";
+    }
+
+    @Override
     public void execute(@Nullable PlayerMessageSendActionArgument argument)
     {
         if (argument == null)
