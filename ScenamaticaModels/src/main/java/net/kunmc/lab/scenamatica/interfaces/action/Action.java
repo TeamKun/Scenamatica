@@ -5,6 +5,7 @@ import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -36,7 +37,7 @@ public interface Action<A extends ActionArgument>
     /**
      * アタッチす るイベントのクラスを返します。
      */
-    Class<? extends Event>[] getAttachingEvents();
+    List<Class<? extends Event>> getAttachingEvents();
 
     /**
      * 引数をデシリアライズします。

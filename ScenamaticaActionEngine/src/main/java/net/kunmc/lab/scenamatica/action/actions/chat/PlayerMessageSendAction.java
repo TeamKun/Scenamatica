@@ -14,6 +14,8 @@ import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -54,11 +56,11 @@ public class PlayerMessageSendAction implements Action<PlayerMessageSendAction.P
     }
 
     @Override
-    public Class<? extends Event>[] getAttachingEvents()
+    public List<Class<? extends Event>> getAttachingEvents()
     {
-        return new Class[]{
+        return Collections.singletonList(
                 ActorMessageReceiveEvent.class
-        };
+        );
     }
 
     @Override
