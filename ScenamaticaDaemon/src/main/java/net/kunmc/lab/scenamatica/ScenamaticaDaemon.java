@@ -76,5 +76,10 @@ public class ScenamaticaDaemon implements ScenamaticaRegistry
         this.actionManager.shutdown();
         this.scenarioManager.shutdown();
 
+        Bukkit.getScheduler().getActiveWorkers().forEach((worker) ->
+        {
+            if (worker.getOwner().equals(this.plugin))
+                worker.getThread().interrupt();
+        });
     }
 }
