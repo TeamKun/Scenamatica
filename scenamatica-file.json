@@ -48,11 +48,20 @@
             "properties": {
                 "type": {
                     "type": "string",
-                    "description": "シナリオの種類です。 Scenamatica には, 次の 3 つの種類のシナリオがあります。 1. ACTION_EXPECT(expect) - アクションがプラグインによって実行されるか監視します。 2. ACTION_EXECUTE(execute) - アクションを実行します。 3. CONDITION_REQUIRE(require) - 条件が満たされるかチェックします。",
-                    "enum": [
-                        "expect",
-                        "execute",
-                        "require"
+                    "description": "シナリオの種類です。",
+                    "oneOf": [
+                        {
+                            "const": "expect",
+                            "description": "アクションがプラグインによって実行されるか監視します。"
+                        },
+                        {
+                            "const": "execute",
+                            "description": "アクションを実行します。"
+                        },
+                        {
+                            "const": "require",
+                            "description": "条件が満たされているかチェックします。"
+                        }
                     ]
                 },
                 "action": {
