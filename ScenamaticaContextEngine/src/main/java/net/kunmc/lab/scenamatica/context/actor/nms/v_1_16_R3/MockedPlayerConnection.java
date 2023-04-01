@@ -4,7 +4,9 @@ import io.netty.buffer.ByteBufAllocator;
 import lombok.SneakyThrows;
 import net.kunmc.lab.scenamatica.events.actor.ActorMessageReceiveEvent;
 import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.TextComponent;
+import net.minecraft.server.v1_16_R3.ChatComponentText;
 import net.minecraft.server.v1_16_R3.ChatMessageType;
 import net.minecraft.server.v1_16_R3.EntityPlayer;
 import net.minecraft.server.v1_16_R3.IChatBaseComponent;
@@ -16,6 +18,7 @@ import net.minecraft.server.v1_16_R3.PacketPlayInKeepAlive;
 import net.minecraft.server.v1_16_R3.PacketPlayOutChat;
 import net.minecraft.server.v1_16_R3.PacketPlayOutKeepAlive;
 import net.minecraft.server.v1_16_R3.PlayerConnection;
+import org.bukkit.craftbukkit.v1_16_R3.util.CraftChatMessage;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -92,7 +95,18 @@ class MockedPlayerConnection extends PlayerConnection
         {
             try
             {
-                components = TextComponent.fromLegacyText(((IChatBaseComponent) fChatComponent.get(packet)).getText());
+                IChatBaseComponent component = (IChatBaseComponent) fChatComponent.get(packet);
+
+                if (component instanceof ChatComponentText)
+                {
+                    ComponentBuilder builder = new ComponentBuilder(CraftChatMessage.fromComponent(component));
+                    for (IChatBaseComponent sibling : component.getSiblings())
+                        builder.append(CraftChatMessage.fromComponent(sibling));
+
+                    components = builder.create();
+                }
+                else
+                    components = new BaseComponent[]{new TextComponent(component.getText())};
             }
             catch (IllegalAccessException e)
             {
