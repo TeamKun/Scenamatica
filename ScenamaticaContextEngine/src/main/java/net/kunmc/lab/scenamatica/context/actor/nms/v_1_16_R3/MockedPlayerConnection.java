@@ -6,7 +6,6 @@ import net.kunmc.lab.scenamatica.events.actor.ActorMessageReceiveEvent;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.TextComponent;
-import net.minecraft.server.v1_16_R3.ChatComponentText;
 import net.minecraft.server.v1_16_R3.ChatMessageType;
 import net.minecraft.server.v1_16_R3.EntityPlayer;
 import net.minecraft.server.v1_16_R3.IChatBaseComponent;
@@ -96,17 +95,7 @@ class MockedPlayerConnection extends PlayerConnection
             try
             {
                 IChatBaseComponent component = (IChatBaseComponent) fChatComponent.get(packet);
-
-                if (component instanceof ChatComponentText)
-                {
-                    ComponentBuilder builder = new ComponentBuilder(CraftChatMessage.fromComponent(component));
-                    for (IChatBaseComponent sibling : component.getSiblings())
-                        builder.append(CraftChatMessage.fromComponent(sibling));
-
-                    components = builder.create();
-                }
-                else
-                    components = new BaseComponent[]{new TextComponent(component.getText())};
+                components = new ComponentBuilder(CraftChatMessage.fromComponent(component)).create();
             }
             catch (IllegalAccessException e)
             {
