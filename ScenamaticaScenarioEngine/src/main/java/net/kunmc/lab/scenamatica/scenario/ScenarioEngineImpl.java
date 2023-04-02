@@ -259,8 +259,6 @@ public class ScenarioEngineImpl implements ScenarioEngine
     {
         this.state = TestState.CLEANING_UP;
 
-        this.isRunning = false;
-
         this.logPrefix = LogUtils.gerScenarioPrefix(null, this.scenario);
         this.watchedActions.clear();
         this.logWithPrefix(Level.INFO, LangProvider.get(
@@ -268,6 +266,8 @@ public class ScenarioEngineImpl implements ScenarioEngine
                 MsgArgs.of("scenarioName", this.scenario.getName())
         ));
         this.registry.getContextManager().destroyContext();
+
+        this.isRunning = false;  // これの位置を変えると, 排他の問題でバグる
     }
 
     private TestResult runBeforeIfPresent(CompiledTriggerAction trigger)
@@ -374,8 +374,8 @@ public class ScenarioEngineImpl implements ScenarioEngine
     @Override
     public void cancel()
     {
-        this.cleanUp();
         this.deliverer.kill();
+        this.cleanUp();  // これの位置を変えると, 排他の問題でバグる
         this.state = TestState.STAND_BY;
     }
 
