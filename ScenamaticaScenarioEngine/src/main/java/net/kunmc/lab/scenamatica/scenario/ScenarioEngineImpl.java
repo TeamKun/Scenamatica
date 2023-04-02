@@ -63,6 +63,7 @@ public class ScenarioEngineImpl implements ScenarioEngine
     private TestState state;
     private CompiledScenarioAction<?> currentScenario;
     private ScenarioResultDeliverer deliverer;
+    private List<CompiledScenarioAction<?>> watchedActions;  // 監視対象になったアクション
 
     public ScenarioEngineImpl(@NotNull ScenamaticaRegistry registry,
                               @NotNull ActionManager actionManager,
@@ -193,7 +194,10 @@ public class ScenarioEngineImpl implements ScenarioEngine
                     "scenario.run.prepare.fail",
                     MsgArgs.of("scenarioName", this.scenario.getName())
             ));
-            this.isRunning = false;
+
+            // あとかたづけ
+            ThreadingUtil.waitFor(this.registry.getPlugin(), this::cleanUp);
+
             return new TestResultImpl(
                     this.testID,
                     this.state,
@@ -202,18 +206,19 @@ public class ScenarioEngineImpl implements ScenarioEngine
             );
         }
 
-        Thread.sleep(1000); // アクションとの排他制御のためにちょっと待つ。
 
         this.logWithPrefix(Level.INFO, LangProvider.get(
                 "scenario.run.engine.starting",
                 MsgArgs.of("scenarioName", this.scenario.getName())
         ));
         this.state = TestState.STARTING;
+        Thread.sleep(500); // アクションとの排他制御のためにちょっと待つ。ロードしてる風でごめんね ><
 
         TestResult mayResult = this.runBeforeIfPresent(compiledTrigger);
         if (mayResult != null)
         {
-            this.isRunning = false;
+            // あとかたづけ
+            ThreadingUtil.waitFor(this.registry.getPlugin(), this::cleanUp);
             return mayResult;
         }
 
@@ -226,22 +231,22 @@ public class ScenarioEngineImpl implements ScenarioEngine
         mayResult = this.runScenario(this.actions);
         if (mayResult != null)
         {
-            this.isRunning = false;
+            // あとかたづけ
+            ThreadingUtil.waitFor(this.registry.getPlugin(), this::cleanUp);
             return mayResult;
         }
 
         mayResult = this.runAfterIfPresent(compiledTrigger);
         if (mayResult != null)
         {
-            this.isRunning = false;
+            // あとかたづけ
+            ThreadingUtil.waitFor(this.registry.getPlugin(), this::cleanUp);
             return mayResult;
         }
 
         // あとかたづけ
         ThreadingUtil.waitFor(this.registry.getPlugin(), this::cleanUp);
 
-        this.isRunning = false;
-        this.logPrefix = LogUtils.gerScenarioPrefix(null, this.scenario);
         return new TestResultImpl(
                 this.testID,
                 this.state = TestState.FINISHED,
@@ -253,6 +258,11 @@ public class ScenarioEngineImpl implements ScenarioEngine
     private void cleanUp()
     {
         this.state = TestState.CLEANING_UP;
+
+        this.isRunning = false;
+
+        this.logPrefix = LogUtils.gerScenarioPrefix(null, this.scenario);
+        this.watchedActions.clear();
         this.logWithPrefix(Level.INFO, LangProvider.get(
                 "scenario.run.prepare.destroy",
                 MsgArgs.of("scenarioName", this.scenario.getName())
@@ -305,7 +315,7 @@ public class ScenarioEngineImpl implements ScenarioEngine
                 WatchType.SCENARIO
         );
 
-        for (CompiledScenarioAction<?> scenarioBean : scenario)
+        for (int i = 0; i < scenario.size(); i++)
         {
             if (!this.isRunning)
                 return new TestResultImpl(
@@ -315,7 +325,10 @@ public class ScenarioEngineImpl implements ScenarioEngine
                         this.startedAt
                 );
 
-            TestResult result = this.runScenario(scenarioBean);
+            CompiledScenarioAction<?> scenarioBean = scenario.get(i);
+            CompiledScenarioAction<?> next = i + 1 < scenario.size() ? scenario.get(i + 1): null;
+
+            TestResult result = this.runScenario(scenarioBean, next);
             if (result.getTestResultCause() != TestResultCause.PASSED)
                 return result;
         }
@@ -323,22 +336,39 @@ public class ScenarioEngineImpl implements ScenarioEngine
         return null;
     }
 
-    private TestResult runScenario(CompiledScenarioAction<?> scenario)
+    private TestResult runScenario(CompiledScenarioAction<?> scenario, CompiledScenarioAction<?> next)
     {
         this.currentScenario = scenario;
         ScenarioType type = scenario.getType();
+
         if (type == ScenarioType.ACTION_EXECUTE)
         {
             this.testReporter.onActionStart(this, scenario);
+
+            // このアクションにより, 次のアクションが起きるかもしれないので、次が EXPECT なら監視対象にする。
+            if (next != null && next.getType() == ScenarioType.ACTION_EXPECT)
+                this.addWatch(next);
+
             scenario.execute(this.actionManager, this.listener);
         }
         else if (type == ScenarioType.ACTION_EXPECT)
-        {
-            this.testReporter.onActionWatchStart(this, scenario);
-            this.listener.setWaitingFor(scenario);
-        }
+            this.addWatch(scenario);
 
         return this.deliverer.waitResult(scenario.getBean().getTimeout(), this.state);
+    }
+
+    @SuppressWarnings({"rawtypes", "unchecked"})  // 型は上流で保証されている。
+    private void addWatch(CompiledScenarioAction/*<?>*/ scenario)
+    {
+        if (scenario.getType() != ScenarioType.ACTION_EXPECT)
+            throw new IllegalArgumentException("Scenario type must be ACTION_EXPECT.");
+        else if (this.watchedActions.contains(scenario))
+            return;
+        this.watchedActions.add(scenario);
+
+        this.testReporter.onActionWatchStart(this, scenario);
+        scenario.getAction().onStartWatching(scenario.getArgument(), this.plugin, null);
+        this.listener.setWaitingFor(scenario);
     }
 
     @Override
@@ -347,7 +377,6 @@ public class ScenarioEngineImpl implements ScenarioEngine
         this.cleanUp();
         this.deliverer.kill();
         this.state = TestState.STAND_BY;
-        this.isRunning = false;
     }
 
     private void setRunInfo(TriggerBean trigger)
@@ -362,6 +391,7 @@ public class ScenarioEngineImpl implements ScenarioEngine
                     MsgArgs.of("scenarioName", this.scenario.getName())
             ));
         this.deliverer = new ScenarioResultDelivererImpl(this.registry, this.testID, this.startedAt);
+        this.watchedActions = new ArrayList<>();
 
         this.isRunning = true;
     }
