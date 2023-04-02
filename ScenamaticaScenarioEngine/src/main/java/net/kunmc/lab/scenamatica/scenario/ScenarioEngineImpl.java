@@ -348,7 +348,6 @@ public class ScenarioEngineImpl implements ScenarioEngine
 
     private void setRunInfo(TriggerBean trigger)
     {
-        this.isRunning = true;
         this.ranBy = trigger;
         this.testID = UUID.randomUUID();
         this.startedAt = System.currentTimeMillis();
@@ -359,6 +358,8 @@ public class ScenarioEngineImpl implements ScenarioEngine
                     MsgArgs.of("scenarioName", this.scenario.getName())
             ));
         this.deliverer = new ScenarioResultDelivererImpl(this.registry, this.testID, this.startedAt);
+
+        this.isRunning = true;
     }
 
     private void logCompiling(int compiled, int total, String type, TriggerType triggerType)
