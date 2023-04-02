@@ -2,6 +2,7 @@ package net.kunmc.lab.scenamatica.context.actor.nms.v_1_16_R3;
 
 import io.netty.buffer.ByteBufAllocator;
 import lombok.SneakyThrows;
+import net.kunmc.lab.peyangpaperutils.lib.utils.Runner;
 import net.kunmc.lab.scenamatica.events.actor.ActorMessageReceiveEvent;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -115,6 +116,19 @@ class MockedPlayerConnection extends PlayerConnection
         );
 
         assert this.player.getMinecraftServer() != null;
-        this.player.getMinecraftServer().server.getPluginManager().callEvent(event);
+
+        // Event は async で呼び出すと、Bukkit の内部でエラーが発生する。
+        // それだけなら良いが, Bukkit はチャット処理時のエラーは完全に握りつぶす仕様になっている。
+        // そのため, これらの問題に幾らかのコストがかかる。
+        // そもそも例外を握りつぶすとかいう行為は愚の骨頂というか, 現代のプログラミングの基本的な考え方とは反すると思う。
+        // なぜこういう仕様になっているのかはわからないが, MC に30000行のパッチを1ファイルで送りつける気など
+        // 毛頭ないのでここではこのままにしておく所存である。
+        // というかせめて, 例外を握りつぶすときはログに出力してくれると嬉しい。
+        // というか例外握りつぶすなよ。まじで。頼むから！！！
+        // n 年前の, プレイヤのチャットをasyncで処理するとかいうコンセプトは大変よろしいと思うのだが,
+        // そのへんで発生するイベントだけ async 許容するとかいうのはどうなんだと思う。
+        // 実際こういうことが起きているわけで, せめてDocs書いてくれ...
+        // NMS いじっている身で言えたことではないと思うけど。(´・ω・`)
+        Runner.run(() -> this.player.getMinecraftServer().server.getPluginManager().callEvent(event));
     }
 }
