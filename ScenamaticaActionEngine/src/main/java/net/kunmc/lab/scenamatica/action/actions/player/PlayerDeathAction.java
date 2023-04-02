@@ -2,9 +2,9 @@ package net.kunmc.lab.scenamatica.action.actions.player;
 
 import lombok.AllArgsConstructor;
 import lombok.Value;
+import net.kunmc.lab.scenamatica.action.actions.AbstractAction;
 import net.kunmc.lab.scenamatica.action.utils.PlayerUtils;
 import net.kunmc.lab.scenamatica.commons.utils.MapUtils;
-import net.kunmc.lab.scenamatica.interfaces.action.Action;
 import net.kunmc.lab.scenamatica.interfaces.action.ActionArgument;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 import org.bukkit.entity.Player;
@@ -20,7 +20,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 
-public class PlayerDeathAction implements Action<PlayerDeathAction.DeathArgument>
+public class PlayerDeathAction extends AbstractAction<PlayerDeathAction.DeathArgument>
 {
     @Override
     public String getName()
@@ -31,8 +31,7 @@ public class PlayerDeathAction implements Action<PlayerDeathAction.DeathArgument
     @Override
     public void execute(@Nullable DeathArgument argument)
     {
-        if (argument == null)
-            throw new IllegalArgumentException("Cannot execute action without argument.");
+        argument = this.requireArgsNonNull(argument);
 
         Player target = PlayerUtils.getPlayerOrThrow(argument.getTarget());
         String killer = argument.getKiller();
@@ -43,12 +42,6 @@ public class PlayerDeathAction implements Action<PlayerDeathAction.DeathArgument
         }
 
         target.setHealth(0);
-    }
-
-    @Override
-    public void onStartWatching(@Nullable DeathArgument argument, @NotNull Plugin plugin, @Nullable Event event)
-    {
-
     }
 
     @Override

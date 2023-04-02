@@ -1,10 +1,11 @@
 package net.kunmc.lab.scenamatica.action.actions.chat;
 
 import lombok.Value;
+import net.kunmc.lab.scenamatica.action.actions.AbstractAction;
 import net.kunmc.lab.scenamatica.action.utils.PlayerUtils;
+import net.kunmc.lab.scenamatica.action.utils.TextUtil;
 import net.kunmc.lab.scenamatica.commons.utils.MapUtils;
 import net.kunmc.lab.scenamatica.events.actor.ActorMessageReceiveEvent;
-import net.kunmc.lab.scenamatica.interfaces.action.Action;
 import net.kunmc.lab.scenamatica.interfaces.action.ActionArgument;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -22,7 +23,7 @@ import java.util.Objects;
 /**
  * プレイヤにメッセージを送信する/送信されることを監視するアクション。
  */
-public class MessageSendAction implements Action<MessageSendAction.PlayerMessageSendActionArgument>
+public class MessageSendAction extends AbstractAction<MessageSendAction.PlayerMessageSendActionArgument>
 {
     @Override
     public String getName()
@@ -33,18 +34,12 @@ public class MessageSendAction implements Action<MessageSendAction.PlayerMessage
     @Override
     public void execute(@Nullable PlayerMessageSendActionArgument argument)
     {
-        if (argument == null)
-            throw new IllegalArgumentException("Cannot execute action without argument.");
+        argument = this.requireArgsNonNull(argument);
 
         Player recipient = PlayerUtils.getPlayerOrThrow(argument.getRecipient());
         String content = argument.getContent();
 
         recipient.sendMessage(content);
-    }
-
-    @Override
-    public void onStartWatching(@Nullable PlayerMessageSendActionArgument argument, @NotNull Plugin plugin, @Nullable Event event)
-    {
     }
 
     @Override
@@ -57,7 +52,7 @@ public class MessageSendAction implements Action<MessageSendAction.PlayerMessage
         ActorMessageReceiveEvent e = (ActorMessageReceiveEvent) event;
 
         TextComponent message = e.getMessage();
-        return (message.toPlainText().equals(content) || message.toLegacyText().equals(content))
+        return TextUtil.isSameContent(message, content)
                 && e.getPlayer().getUniqueId().equals(recipient.getUniqueId());
     }
 
