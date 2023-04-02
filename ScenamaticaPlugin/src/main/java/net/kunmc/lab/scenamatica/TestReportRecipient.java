@@ -238,9 +238,10 @@ public class TestReportRecipient implements TestReporter
                 terminal.success(summary);
             else
                 terminal.error(summary);
+
+            terminal.writeLine("");
         }
 
-        terminal.writeLine("");
 
         printSeparator(null, terminal, null, 50);
     }
