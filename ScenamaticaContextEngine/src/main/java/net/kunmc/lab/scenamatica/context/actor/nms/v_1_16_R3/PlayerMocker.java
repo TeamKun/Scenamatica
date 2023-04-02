@@ -249,6 +249,7 @@ public class PlayerMocker extends PlayerMockerBase
         MinecraftServer server = mockedPlayer.getMinecraftServer();
         assert server != null;
 
+        ((MockedPlayerConnection) mockedPlayer.playerConnection).shutdown();
         mockedPlayer.playerConnection.disconnect("Unmocked");
     }
 

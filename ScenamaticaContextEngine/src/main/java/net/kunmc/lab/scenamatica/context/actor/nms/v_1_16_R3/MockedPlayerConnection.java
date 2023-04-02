@@ -2,7 +2,6 @@ package net.kunmc.lab.scenamatica.context.actor.nms.v_1_16_R3;
 
 import io.netty.buffer.ByteBufAllocator;
 import lombok.SneakyThrows;
-import net.kunmc.lab.peyangpaperutils.lib.utils.Runner;
 import net.kunmc.lab.scenamatica.events.actor.ActorMessageReceiveEvent;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -40,9 +39,12 @@ class MockedPlayerConnection extends PlayerConnection
         }
     }
 
+    private boolean running;
+
     public MockedPlayerConnection(MinecraftServer minecraftserver, NetworkManager networkmanager, EntityPlayer entityplayer)
     {
         super(minecraftserver, networkmanager, entityplayer);
+        this.running = true;
     }
 
     @Override
@@ -68,6 +70,10 @@ class MockedPlayerConnection extends PlayerConnection
     @Override
     public void sendPacket(Packet<?> packet)
     {
+        if (!this.running)
+            return;
+
+
         if (packet instanceof PacketPlayOutKeepAlive)
             this.handleKeepAlive((PacketPlayOutKeepAlive) packet);
         else if (packet instanceof PacketPlayOutChat)
@@ -129,6 +135,13 @@ class MockedPlayerConnection extends PlayerConnection
         // そのへんで発生するイベントだけ async 許容するとかいうのはどうなんだと思う。
         // 実際こういうことが起きているわけで, せめてDocs書いてくれ...
         // NMS いじっている身で言えたことではないと思うけど。(´・ω・`)
-        Runner.run(() -> this.player.getMinecraftServer().server.getPluginManager().callEvent(event));
+        this.player.server.postToMainThread(() ->
+                this.player.getMinecraftServer().server.getPluginManager().callEvent(event)
+        );
+    }
+
+    public void shutdown()
+    {
+        this.running = false;
     }
 }
