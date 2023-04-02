@@ -3,7 +3,7 @@ package net.kunmc.lab.scenamatica.action.actions.chat;
 import lombok.Value;
 import net.kunmc.lab.scenamatica.action.actions.AbstractAction;
 import net.kunmc.lab.scenamatica.action.utils.PlayerUtils;
-import net.kunmc.lab.scenamatica.action.utils.TextUtil;
+import net.kunmc.lab.scenamatica.action.utils.TextUtils;
 import net.kunmc.lab.scenamatica.commons.utils.MapUtils;
 import net.kunmc.lab.scenamatica.events.actor.ActorMessageReceiveEvent;
 import net.kunmc.lab.scenamatica.interfaces.action.ActionArgument;
@@ -52,7 +52,7 @@ public class MessageSendAction extends AbstractAction<MessageSendAction.PlayerMe
         ActorMessageReceiveEvent e = (ActorMessageReceiveEvent) event;
 
         TextComponent message = e.getMessage();
-        return TextUtil.isSameContent(message, content)
+        return TextUtils.isSameContent(message, content)
                 && e.getPlayer().getUniqueId().equals(recipient.getUniqueId());
     }
 

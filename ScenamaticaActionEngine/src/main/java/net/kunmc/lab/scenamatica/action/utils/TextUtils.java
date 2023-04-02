@@ -1,8 +1,10 @@
 package net.kunmc.lab.scenamatica.action.utils;
 
+import lombok.experimental.UtilityClass;
 import net.md_5.bungee.api.chat.TextComponent;
 
-public class TextUtil
+@UtilityClass
+public class TextUtils
 {
     public static boolean isSameContent(TextComponent bungeeComponent, String content)
     {

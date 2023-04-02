@@ -2,6 +2,7 @@ package net.kunmc.lab.scenamatica.action;
 
 import net.kunmc.lab.scenamatica.action.actions.chat.MessageSendAction;
 import net.kunmc.lab.scenamatica.action.actions.player.PlayerDeathAction;
+import net.kunmc.lab.scenamatica.action.actions.player.PlayerGameModeChangeAction;
 import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
 import net.kunmc.lab.scenamatica.interfaces.action.Action;
 import net.kunmc.lab.scenamatica.interfaces.action.ActionArgument;
@@ -24,7 +25,12 @@ public class ActionCompilerImpl implements ActionCompiler
     {
         ACTIONS = new ArrayList<>();
         ACTIONS.add(new MessageSendAction());
-        ACTIONS.add(new PlayerDeathAction());
+
+        // プレイヤーのアクション
+        {
+            ACTIONS.add(new PlayerDeathAction());
+            ACTIONS.add(new PlayerGameModeChangeAction());
+        }
     }
 
     @Override
