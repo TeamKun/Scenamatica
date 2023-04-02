@@ -22,10 +22,12 @@ import java.util.UUID;
 
 public class PlayerDeathAction extends AbstractAction<PlayerDeathAction.DeathArgument>
 {
+    public static final String KEY_ACTION_NAME = "player_death";
+
     @Override
     public String getName()
     {
-        return "player_death";
+        return KEY_ACTION_NAME;
     }
 
     @Override
@@ -176,8 +178,8 @@ public class PlayerDeathAction extends AbstractAction<PlayerDeathAction.DeathArg
                 doExpDrop
         );
     }
-
     @Value
+
     @AllArgsConstructor
     public static class DeathArgument implements ActionArgument
     {

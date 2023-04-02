@@ -18,15 +18,16 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class PlayerGameModeChangeAction extends AbstractAction<PlayerGameModeChangeAction.GameModeChangeArgument>
 {
+    public static final String KEY_ACTION_NAME = "player_gamemode_change";
 
     @Override
     public String getName()
     {
-        //noinspection SpellCheckingInspection
-        return "player_gamemode_change";
+        return KEY_ACTION_NAME;
     }
 
     @Override
@@ -76,15 +77,15 @@ public class PlayerGameModeChangeAction extends AbstractAction<PlayerGameModeCha
     @Override
     public GameModeChangeArgument deserializeArgument(@NotNull Map<String, Object> map)
     {
-        MapUtils.checkType(map, "target", String.class);
-        MapUtils.checkEnumName(map, "gameMode", GameMode.class);
-        MapUtils.checkEnumNameIfContains(map, "cause", PlayerGameModeChangeEvent.Cause.class);
-        MapUtils.checkTypeIfContains(map, "cancelMessage", String.class);
+        MapUtils.checkType(map, GameModeChangeArgument.KEY_TARGET, String.class);
+        MapUtils.checkEnumName(map, GameModeChangeArgument.KEY_GAME_MODE, GameMode.class);
+        MapUtils.checkEnumNameIfContains(map, GameModeChangeArgument.KEY_CANCEL_MESSAGE, PlayerGameModeChangeEvent.Cause.class);
+        MapUtils.checkTypeIfContains(map, GameModeChangeArgument.KEY_CANCEL_MESSAGE, String.class);
 
-        String target = (String) map.get("target");
-        GameMode gameMode = MapUtils.getAsEnum(map, "gameMode", GameMode.class);
-        PlayerGameModeChangeEvent.Cause cause = MapUtils.getAsEnumOrNull(map, "cause", PlayerGameModeChangeEvent.Cause.class);
-        String cancelMessage = MapUtils.getOrNull(map, "cancelMessage");
+        String target = (String) map.get(GameModeChangeArgument.KEY_TARGET);
+        GameMode gameMode = MapUtils.getAsEnum(map, GameModeChangeArgument.KEY_GAME_MODE, GameMode.class);
+        PlayerGameModeChangeEvent.Cause cause = MapUtils.getAsEnum(map, GameModeChangeArgument.KEY_CAUSE, PlayerGameModeChangeEvent.Cause.class);
+        String cancelMessage = (String) map.get(GameModeChangeArgument.KEY_CANCEL_MESSAGE);
 
         return new GameModeChangeArgument(
                 target,
@@ -97,6 +98,11 @@ public class PlayerGameModeChangeAction extends AbstractAction<PlayerGameModeCha
     @Value
     public static class GameModeChangeArgument implements ActionArgument
     {
+        public static final String KEY_TARGET = "target";
+        public static final String KEY_GAME_MODE = "gameMode";
+        public static final String KEY_CAUSE = "cause";
+        public static final String KEY_CANCEL_MESSAGE = "cancelMessage";
+
         @NotNull
         String target;
         @NotNull
@@ -117,7 +123,7 @@ public class PlayerGameModeChangeAction extends AbstractAction<PlayerGameModeCha
             return this.target.equals(arg.target) &&
                     this.gameMode == arg.gameMode &&
                     this.cause == arg.cause &&
-                    this.cancelMessage == arg.cancelMessage;
+                    Objects.equals(this.cancelMessage, arg.cancelMessage);
         }
     }
 }

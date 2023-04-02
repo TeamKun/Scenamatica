@@ -25,10 +25,12 @@ import java.util.Objects;
  */
 public class MessageSendAction extends AbstractAction<MessageSendAction.PlayerMessageSendActionArgument>
 {
+    public static final String KEY_ACTION_NAME = "message_send";
+
     @Override
     public String getName()
     {
-        return "message_send";
+        return KEY_ACTION_NAME;
     }
 
     @Override
@@ -67,18 +69,21 @@ public class MessageSendAction extends AbstractAction<MessageSendAction.PlayerMe
     @Override
     public PlayerMessageSendActionArgument deserializeArgument(@NotNull Map<String, Object> map)
     {
-        MapUtils.checkType(map, "content", String.class);
-        MapUtils.checkType(map, "recipient", String.class);
+        MapUtils.checkType(map, PlayerMessageSendActionArgument.KEY_CONTENT, String.class);
+        MapUtils.checkType(map, PlayerMessageSendActionArgument.KEY_RECIPIENT, String.class);
 
         return new PlayerMessageSendActionArgument(
-                (String) map.get("content"),
-                (String) map.get("recipient")
+                (String) map.get(PlayerMessageSendActionArgument.KEY_CONTENT),
+                (String) map.get(PlayerMessageSendActionArgument.KEY_RECIPIENT)
         );
     }
 
     @Value
     public static class PlayerMessageSendActionArgument implements ActionArgument
     {
+        public static final String KEY_CONTENT = "content";
+        public static final String KEY_RECIPIENT = "recipient";
+
         @NotNull
         String content;
         @NotNull
