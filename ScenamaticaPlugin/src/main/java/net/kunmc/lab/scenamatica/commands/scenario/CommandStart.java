@@ -105,7 +105,14 @@ public class CommandStart extends CommandBase
     public @Nullable List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Terminal terminal, String[] strings)
     {
         if (strings.length == 1)
+            // プラグインのシナリオで, 手動実行できるシナリオを持つプラグインをフィルタ。
             return Arrays.stream(Bukkit.getPluginManager().getPlugins()).parallel()
+                    .filter(plugin -> {
+                        Map<String, ScenarioFileBean> scenarios = this.registry.getScenarioFileManager().getPluginScenarios(plugin);
+                        return scenarios != null && scenarios.values().stream().parallel()
+                                .anyMatch(scenario -> scenario.getTriggers().stream().parallel()
+                                        .anyMatch(trigger -> trigger.getType() == TriggerType.MANUAL_DISPATCH));
+                    })
                     .map(Plugin::getName)
                     .collect(Collectors.toList());
         else if (strings.length == 2)
