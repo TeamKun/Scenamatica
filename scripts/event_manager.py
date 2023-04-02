@@ -19,15 +19,6 @@ class MainWindow(QMainWindow):
         self.tableLayout = QHBoxLayout()
         self.buttonLayout = QHBoxLayout()
 
-        self.searchLineEdit = QLineEdit()
-        self.searchLineEdit.setPlaceholderText("検索する文字を入力してね！")
-        self.searchButton = QPushButton("検索する！")
-        self.searchButton.clicked.connect(self.search)
-        self.searchLayout = QHBoxLayout()
-        self.searchLayout.addWidget(self.searchLineEdit)
-        self.searchLayout.addWidget(self.searchButton)
-
-        self.mainLayout.addLayout(self.searchLayout)
 
         self.tableWidget = QTableWidget()
         self.tableWidget.setColumnCount(3)
@@ -53,22 +44,63 @@ class MainWindow(QMainWindow):
         self.unimpleOnlyAction.setCheckable(True)
         self.unimpleOnlyAction.triggered.connect(lambda: self.populateTable())
 
-        self.viewMenu = self.menuBar.addMenu("View")
+        self.viewMenu = self.menuBar.addMenu("表示 (&V)")
         self.viewMenu.addAction(self.impleOnlyAction)
         self.viewMenu.addAction(self.unimpleOnlyAction)
 
-        self.applyButton = QPushButton("Apply")
+        self.applyButton = QPushButton("Apply (&A)")
         self.applyButton.clicked.connect(self.applyChanges)
         self.applyButton.setEnabled(False)
         self.buttonLayout.addStretch()
         self.buttonLayout.addWidget(self.applyButton)
 
+        self.loadAction = QAction("いまの情報", self)
+        self.loadAction.triggered.connect(self.showSummary)
+        self.helpMenu = self.menuBar.addMenu("ヘルプ (&H)")
+        self.helpMenu.addAction(self.loadAction)
+
+        self.searchLineEdit = QLineEdit()
+        self.searchLineEdit.setPlaceholderText("検索する文字を入力してね！")
+        self.searchButton = QPushButton("検索する！")
+        self.searchButton.clicked.connect(self.search)
+        self.searchLayout = QHBoxLayout()
+        self.searchLayout.addWidget(self.searchLineEdit)
+        self.searchLayout.addWidget(self.searchButton)
+
+        self.mainLayout.addLayout(self.searchLayout)
         self.mainLayout.addLayout(self.tableLayout)
         self.mainLayout.addLayout(self.buttonLayout)
         self.tableLayout.addWidget(self.tableWidget)
         self.tableWidget.itemChanged.connect(self.enableApplyButton)
 
         self.eventsData = []
+
+    def showSummary(self):
+        summary = f"イベント数：{len(self.eventsData)}\n"
+        implemented = 0
+        for event in self.eventsData:
+            if event["implemented"]:
+                implemented += 1
+        summary += f"実装済み：{implemented}\n"
+        summary += f"してない奴：{len(self.eventsData) - implemented}\n"
+
+        if len(self.eventsData) > 0:
+            summary += "\n\n"
+            percent = implemented / len(self.eventsData) * 100
+            if implemented == len(self.eventsData):
+                summary += "おめでとう！全部実装したね！頑張ったなお前！"
+            elif implemented == 0:
+                summary += "働けニート！"
+            elif percent > 80:
+                summary += "あとちょっとだな！頑張れ！"
+            elif percent > 50:
+                summary += "折返し地点だな！もっと仕事しろ！"
+            elif percent > 20:
+                summary += "まだまだだな！もっと頑張れ！"
+            else:
+                summary += "働け～！！！"
+
+        QMessageBox.information(self, "いまの情報", summary)
 
     def search(self):
         search_text = self.searchLineEdit.text()
