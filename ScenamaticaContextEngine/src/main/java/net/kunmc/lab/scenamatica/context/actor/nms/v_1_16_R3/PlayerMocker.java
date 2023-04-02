@@ -67,7 +67,7 @@ public class PlayerMocker extends PlayerMockerBase
                 double z = player.locZ();
                 player.a(worldServer, x, y, z, player.yaw, player.pitch, PlayerTeleportEvent.TeleportCause.PLUGIN);
             }
-        }, 20);
+        }, 1);
     }
 
     @SneakyThrows(IOException.class)

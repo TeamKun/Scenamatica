@@ -17,6 +17,7 @@ import net.minecraft.server.v1_16_R3.PacketPlayInKeepAlive;
 import net.minecraft.server.v1_16_R3.PacketPlayOutChat;
 import net.minecraft.server.v1_16_R3.PacketPlayOutKeepAlive;
 import net.minecraft.server.v1_16_R3.PlayerConnection;
+import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_16_R3.util.CraftChatMessage;
 
 import java.io.IOException;
@@ -135,9 +136,12 @@ class MockedPlayerConnection extends PlayerConnection
         // そのへんで発生するイベントだけ async 許容するとかいうのはどうなんだと思う。
         // 実際こういうことが起きているわけで, せめてDocs書いてくれ...
         // NMS いじっている身で言えたことではないと思うけど。(´・ω・`)
-        this.player.server.postToMainThread(() ->
-                this.player.getMinecraftServer().server.getPluginManager().callEvent(event)
-        );
+        if (Bukkit.getServer().isPrimaryThread())
+            this.player.getMinecraftServer().server.getPluginManager().callEvent(event);
+        else
+            this.player.server.postToMainThread(() ->
+                    this.player.getMinecraftServer().server.getPluginManager().callEvent(event)
+            );
     }
 
     public void shutdown()
