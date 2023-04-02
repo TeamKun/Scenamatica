@@ -76,7 +76,8 @@
           "type": "string",
           "description": "アクションの種類です。 ",
           "enum": [
-            "message_send"
+            "message_send",
+            "player_death"
           ]
         },
         "with": {
@@ -95,14 +96,34 @@
             "properties": {
               "action": {
                 "const": "message_send",
-                "description": "プレイヤーにメッセージを送信します。"
+                "description": "プレイヤーにメッセージを送信したり, 送信されたことを検知します。"
               }
             }
           },
           "then": {
             "properties": {
               "with": {
-                "$ref": "#/definitions/action/definitions/message_send"
+                "$ref": "#/definitions/action/definitions/chat/message_send"
+              }
+            },
+            "required": [
+              "with"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "player_death",
+                "description": "プレイヤーを殺したり, 殺されたことを検知します。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/player/death"
               }
             },
             "required": [
@@ -111,23 +132,76 @@
           }
         }
       ],
+
       "definitions": {
-        "message_send": {
-          "properties": {
-            "content": {
-              "type": "string",
-              "description": "メッセージの内容です。",
-              "maxLength": 32768
+        "chat": {
+          "message_send": {
+            "properties": {
+              "content": {
+                "type": "string",
+                "description": "メッセージの内容です。",
+                "maxLength": 32768
+              },
+              "recipient": {
+                "type": "string",
+                "description": "メッセージを受け取るプレイヤーの名前または UUID です。"
+              }
             },
-            "recipient": {
-              "type": "string",
-              "description": "メッセージを受け取るプレイヤーの名前または UUID です。"
-            }
-          },
-          "required": [
-            "content",
-            "recipient"
-          ]
+            "required": [
+              "content",
+              "recipient"
+            ]
+          }
+        },
+        "player": {
+          "death": {
+            "properties": {
+              "target": {
+                "type": "string",
+                "description": "死ぬターゲットです。",
+                "maxLength": 16
+              },
+              "killer": {
+                "type": "string",
+                "description": "ターゲットを殺すプレイヤーです。",
+                "maxLength": 16
+              },
+              "deathMessage": {
+                "type": "string",
+                "description": "死亡メッセージです。"
+              },
+              "exp": {
+                "type": "integer",
+                "description": "死亡時したプレイヤの新しい経験値です。",
+                "minimum": 0
+              },
+              "level": {
+                "type": "integer",
+                "description": "死亡時したプレイヤの新しいレベルです。",
+                "minimum": 0
+              },
+              "totalExp": {
+                "type": "integer",
+                "description": "死亡時したプレイヤの新しい総経験値です。",
+                "minimum": 0
+              },
+              "keepLevel": {
+                "type": "boolean",
+                "description": "死亡時したプレイヤのレベルを保持するかどうかです。"
+              },
+              "keepInventory": {
+                "type": "boolean",
+                "description": "死亡時したプレイヤのインベントリを保持するかどうかです。"
+              },
+              "doExpDrop": {
+                "type": "boolean",
+                "description": "死亡時したプレイヤの経験値ドロップをするかどうかです。"
+              }
+            },
+            "required": [
+              "target"
+            ]
+          }
         }
       }
     },

@@ -14,15 +14,9 @@ public class PlayerUtils
     @NotNull
     public static Player getPlayerOrThrow(@NotNull String name)
     {
-        Player player = Bukkit.getPlayerExact(name);
+        Player player = getPlayerOrNull(name);
         if (player == null)
-        {
-            UUID mayUUID = toUUIDOrNull(name);
-            if (mayUUID != null)
-                player = Bukkit.getPlayer(mayUUID);
-            if (player == null)
-                throw new IllegalArgumentException("Player not found: " + name);
-        }
+            throw new IllegalArgumentException("Player " + name + " is not found.");
         return player;
     }
 
@@ -37,5 +31,21 @@ public class PlayerUtils
         {
             return null;
         }
+    }
+
+    @Nullable
+    public static Player getPlayerOrNull(@Nullable String name)
+    {
+        if (name == null)
+            return null;
+
+        Player player = Bukkit.getPlayerExact(name);
+        if (player == null)
+        {
+            UUID mayUUID = toUUIDOrNull(name);
+            if (mayUUID != null)
+                player = Bukkit.getPlayer(mayUUID);
+        }
+        return player;
     }
 }
