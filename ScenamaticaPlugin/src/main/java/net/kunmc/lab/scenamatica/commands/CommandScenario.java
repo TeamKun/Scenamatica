@@ -4,6 +4,7 @@ import net.kunmc.lab.peyangpaperutils.lang.LangProvider;
 import net.kunmc.lab.peyangpaperutils.lib.command.CommandBase;
 import net.kunmc.lab.peyangpaperutils.lib.command.SubCommandWith;
 import net.kunmc.lab.scenamatica.commands.scenario.CommandCancel;
+import net.kunmc.lab.scenamatica.commands.scenario.CommandList;
 import net.kunmc.lab.scenamatica.commands.scenario.CommandStart;
 import net.kunmc.lab.scenamatica.commands.scenario.CommandStatus;
 import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
@@ -26,6 +27,7 @@ public class CommandScenario extends SubCommandWith
         this.commands.put("start", new CommandStart(registry));
         this.commands.put("cancel", new CommandCancel(registry));
         this.commands.put("status", new CommandStatus(registry));
+        this.commands.put("list", new CommandList(registry));
     }
 
     @Override

@@ -18,6 +18,12 @@ command.scenario.cancel.running=The scenario %%scenario%% of the plugin %%plugin
 command.scenario.cancel.errors.notRunning=The scenario is not running.
 command.scenario.cancel.success=The scenario %%scenario%% has been cancelled.
 
+command.scenario.list.help=Displays a list of scenarios for the plugin.
+command.scenario.list.header=%%green%%Scenario List for Plugin %%plugin%%:
+command.scenario.list.entry=%%bold%%%%white%%◎ %%reset%%%%green%%%%scenario%% - %%aqua%%%%description%% %%white%% | %%gray%%Manual Execution: %%manually%%
+command.scenario.list.suggest=%%yellow%%Click here to autocomplete scenario execution command!
+command.scenario.list.noPlugin=Plugin %%plugin%% not found.
+
 command.scenario.status.help=Show the status of the currently running scenario.
 command.scenario.status.notRunning=No scenario is currently running.
 command.scenario.status.running=The scenario %%scenario%% of the plugin %%plugin%% is currently running.

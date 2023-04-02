@@ -18,6 +18,12 @@ command.scenario.cancel.running=現在 プラグイン %%plugin%% の シナリ�
 command.scenario.cancel.errors.notRunning=シナリオは実行されてないで。
 command.scenario.cancel.success=シナリオ %%scenario%% の実行をキャンセルしたで。
 
+command.scenario.list.help=プラグインのシナリオ一覧を表示するで。
+command.scenario.list.header=%%green%%プラグイン %%plugin%% のシナリオ一覧：
+command.scenario.list.entry=%%bold%%%%white%%◎  %%reset%%%%green%%%%scenario%% - %%aqua%%%%description%% %%white%% | %%gray%%手動実行： %%manually%%
+command.scenario.list.suggest=%%yellow%%ここをクリックしてシナリオ実行コマンドを補完するで！
+command.scenario.list.noPlugin=指定されたプラグイン %%plugin%% が見つからんかったわ。
+
 command.scenario.status.help=現在実行されているシナリオの状態を表示するで。
 command.scenario.status.notRunning=シナリオは実行されてないで。
 command.scenario.status.running=現在 プラグイン %%plugin%% の シナリオ %%scenario%% が実行されてるで。
