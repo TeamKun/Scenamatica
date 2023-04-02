@@ -1,7 +1,8 @@
 import json
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QTableWidget, \
-    QTableWidgetItem, QHeaderView, QPushButton, QMessageBox, QFileDialog, QAction, QMenuBar
+    QTableWidgetItem, QHeaderView, QPushButton, QFileDialog, QAction, QMenuBar, \
+    QLineEdit, QMessageBox
 
 
 class MainWindow(QMainWindow):
@@ -9,12 +10,24 @@ class MainWindow(QMainWindow):
         super().__init__(parent)
         self.setWindowTitle("Events JSON Editor")
 
+        self.resize(800, 600)
+
         self.centralWidget = QWidget()
         self.setCentralWidget(self.centralWidget)
 
         self.mainLayout = QVBoxLayout(self.centralWidget)
         self.tableLayout = QHBoxLayout()
         self.buttonLayout = QHBoxLayout()
+
+        self.searchLineEdit = QLineEdit()
+        self.searchLineEdit.setPlaceholderText("検索する文字を入力してね！")
+        self.searchButton = QPushButton("検索する！")
+        self.searchButton.clicked.connect(self.search)
+        self.searchLayout = QHBoxLayout()
+        self.searchLayout.addWidget(self.searchLineEdit)
+        self.searchLayout.addWidget(self.searchButton)
+
+        self.mainLayout.addLayout(self.searchLayout)
 
         self.tableWidget = QTableWidget()
         self.tableWidget.setColumnCount(3)
@@ -31,7 +44,6 @@ class MainWindow(QMainWindow):
         self.fileMenu = self.menuBar.addMenu("ファイル (&F)")
         self.fileMenu.addAction(self.loadAction)
         self.fileMenu.addAction(self.saveAction)
-        self.fileMenu.addShortcut("Ctrl+F")
         self.setMenuBar(self.menuBar)
 
         self.impleOnlyAction = QAction("実装したやつのみ", self)
@@ -54,10 +66,25 @@ class MainWindow(QMainWindow):
         self.mainLayout.addLayout(self.tableLayout)
         self.mainLayout.addLayout(self.buttonLayout)
         self.tableLayout.addWidget(self.tableWidget)
-
         self.tableWidget.itemChanged.connect(self.enableApplyButton)
 
         self.eventsData = []
+
+    def search(self):
+        search_text = self.searchLineEdit.text()
+        if not search_text:
+            QMessageBox.information(self, "検索する文字を入力してね！", "検索する文字を入力してね！")
+            return
+
+        rowCount = self.tableWidget.rowCount()
+        found = False
+        for i in range(rowCount):
+            name = self.tableWidget.item(i, 1)
+            if search_text.lower() in name.text().lower():
+                self.tableWidget.selectRow(i)
+                found = True
+        if not found:
+            QMessageBox.critical(self, "見つからなかったよ！", "お前が指定した名前のイベントは見つからなかったよ！")
 
     def applyChanges(self):
         rowCount = self.tableWidget.rowCount()
@@ -75,6 +102,7 @@ class MainWindow(QMainWindow):
                     self.eventsData = json.load(file)
                     self.populateTable()
                     self.saveAction.setEnabled(False)
+                    self.applyButton.setEnabled(False)
             except Exception as e:
                 QMessageBox.critical(self, "Error", f"JSON を開けなかったみたい！ごめんね>< :\n{e}")
 
@@ -109,6 +137,9 @@ class MainWindow(QMainWindow):
             self.tableWidget.setItem(i, 0, checkbox)
             self.tableWidget.setItem(i, 1, QTableWidgetItem(item["name"]))
             self.tableWidget.setItem(i, 2, QTableWidgetItem(item["description"]))
+
+        self.tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
+        self.tableWidget.resizeColumnsToContents()
 
     def saveJson(self):
         fileName, _ = QFileDialog.getSaveFileName(self, "JSON に保存するよ！", "", "JSON ふぁいる (*.json)")
