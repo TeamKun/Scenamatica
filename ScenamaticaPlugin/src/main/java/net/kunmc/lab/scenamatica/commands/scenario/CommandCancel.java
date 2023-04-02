@@ -39,7 +39,7 @@ public class CommandCancel extends CommandBase
         ));
 
         this.registry.getScenarioManager().cancel();
-        terminal.info(LangProvider.get("command.scenario.cancel.success"));
+        terminal.info(LangProvider.get("command.scenario.cancel.success", MsgArgs.of("scenario", current.getScenario().getName())));
     }
 
     @Override
