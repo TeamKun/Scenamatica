@@ -20,9 +20,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-public class PlayerGameModeChangeAction extends AbstractAction<PlayerGameModeChangeAction.GameModeChangeArgument>
+public class GameModeAction extends AbstractAction<GameModeAction.GameModeChangeArgument>
 {
-    public static final String KEY_ACTION_NAME = "player_gamemode_change";
+    public static final String KEY_ACTION_NAME = "player_gamemode";
 
     @Override
     public String getName()
