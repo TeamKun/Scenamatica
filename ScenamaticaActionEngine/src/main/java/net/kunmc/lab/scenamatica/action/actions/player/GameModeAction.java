@@ -6,6 +6,7 @@ import net.kunmc.lab.scenamatica.action.utils.PlayerUtils;
 import net.kunmc.lab.scenamatica.action.utils.TextUtils;
 import net.kunmc.lab.scenamatica.commons.utils.MapUtils;
 import net.kunmc.lab.scenamatica.interfaces.action.ActionArgument;
+import net.kunmc.lab.scenamatica.interfaces.action.Requireable;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
@@ -20,7 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-public class GameModeAction extends AbstractAction<GameModeAction.GameModeChangeArgument>
+public class GameModeAction extends AbstractAction<GameModeAction.GameModeChangeArgument> implements Requireable<GameModeAction.GameModeChangeArgument>
 {
     public static final String KEY_ACTION_NAME = "player_gamemode";
 
@@ -93,6 +94,24 @@ public class GameModeAction extends AbstractAction<GameModeAction.GameModeChange
                 cause,
                 cancelMessage
         );
+    }
+
+    @Override
+    public boolean isConditionFulfilled(@NotNull GameModeChangeArgument argument, @NotNull Plugin plugin)
+    {
+        String target = argument.getTarget();
+        GameMode gameMode = argument.getGameMode();
+
+        Player targetPlayer = PlayerUtils.getPlayerOrThrow(target);
+
+        return targetPlayer.getGameMode() == gameMode;
+    }
+
+    @Override
+    public void validateArgument(@NotNull GameModeChangeArgument argument)
+    {
+        this.throwIfPresent(GameModeChangeArgument.KEY_CAUSE, argument.getCause());
+        this.throwIfPresent(GameModeChangeArgument.KEY_CANCEL_MESSAGE, argument.getCancelMessage());
     }
 
     @Value
