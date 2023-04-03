@@ -1,9 +1,11 @@
 package net.kunmc.lab.scenamatica.scenario.runtime;
 
+import net.kunmc.lab.scenamatica.enums.ScenarioType;
 import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
 import net.kunmc.lab.scenamatica.interfaces.action.ActionArgument;
 import net.kunmc.lab.scenamatica.interfaces.action.ActionCompiler;
 import net.kunmc.lab.scenamatica.interfaces.action.CompiledAction;
+import net.kunmc.lab.scenamatica.interfaces.action.Requireable;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioActionListener;
 import net.kunmc.lab.scenamatica.interfaces.scenario.runtime.CompiledScenarioAction;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.scenario.ScenarioBean;
@@ -39,6 +41,16 @@ public class Compilers
                 listener::onActionError,
                 listener::onActionExecuted
         );
+
+        if (scenario.getType() == ScenarioType.CONDITION_REQUIRE)
+            if (!(action.getAction() instanceof Requireable<?>))
+                throw new IllegalArgumentException("Action " + scenario.getAction().getType() + " is not requireable.");
+            else if (action.getArgument() != null)
+            {
+                /* assert action instanceof Requireable<A>;*/
+                // noinspection unchecked
+                ((Requireable<A>) action.getAction()).validateArgument(action.getArgument());
+            }
 
         return new CompiledScenarioActionImpl<>(
                 scenario,

@@ -97,8 +97,10 @@ public class GameModeAction extends AbstractAction<GameModeAction.GameModeChange
     }
 
     @Override
-    public boolean isConditionFulfilled(@NotNull GameModeChangeArgument argument, @NotNull Plugin plugin)
+    public boolean isConditionFulfilled(@Nullable GameModeChangeArgument argument, @NotNull Plugin plugin)
     {
+        argument = this.requireArgsNonNull(argument);
+
         String target = argument.getTarget();
         GameMode gameMode = argument.getGameMode();
 
@@ -108,8 +110,10 @@ public class GameModeAction extends AbstractAction<GameModeAction.GameModeChange
     }
 
     @Override
-    public void validateArgument(@NotNull GameModeChangeArgument argument)
+    public void validateArgument(@Nullable GameModeChangeArgument argument)
     {
+        argument = this.requireArgsNonNull(argument);
+
         this.throwIfPresent(GameModeChangeArgument.KEY_CAUSE, argument.getCause());
         this.throwIfPresent(GameModeChangeArgument.KEY_CANCEL_MESSAGE, argument.getCancelMessage());
     }

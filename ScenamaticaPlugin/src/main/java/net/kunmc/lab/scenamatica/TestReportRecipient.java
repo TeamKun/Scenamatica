@@ -138,6 +138,48 @@ public class TestReportRecipient implements TestReporter
         ))));
     }
 
+    private static String getConditionString(@NotNull CompiledScenarioAction<?> action)
+    {
+        String condition = action.getAction().getClass().getSimpleName();
+        if (action.getArgument() != null)
+            condition += " - " + action.getArgument();
+
+        return condition;
+    }
+
+    @Override
+    public void onConditionCheckStart(@NotNull ScenarioEngine engine, @NotNull CompiledScenarioAction<?> action)
+    {
+        ScenarioFileBean scenario = engine.getScenario();
+
+        this.terminals.forEach(t -> t.info(withPrefix(engine.getTestID(), scenario, LangProvider.get(
+                "test.action.require.start",
+                MsgArgs.of("condition", getConditionString(action))
+        ))));
+    }
+
+    @Override
+    public void onConditionCheckSuccess(@NotNull ScenarioEngine engine, @NotNull CompiledScenarioAction<?> action)
+    {
+        ScenarioFileBean scenario = engine.getScenario();
+
+        this.terminals.forEach(t -> t.success(withPrefix(engine.getTestID(), scenario, LangProvider.get(
+                "test.action.require.success",
+                MsgArgs.of("condition", getConditionString(action))
+        ))));
+    }
+
+    @Override
+    public void onConditionCheckFailed(@NotNull ScenarioEngine engine, @NotNull CompiledScenarioAction<?> action)
+    {
+        ScenarioFileBean scenario = engine.getScenario();
+
+        this.terminals.forEach(t -> t.error(withPrefix(engine.getTestID(), scenario, LangProvider.get(
+                "test.action.require.fail",
+                MsgArgs.of("condition", getConditionString(action))
+        ))));
+    }
+
     @Override
     public void onTestEnd(@NotNull ScenarioEngine engine, @NotNull TestResult result)
     {

@@ -18,6 +18,7 @@ import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
 import net.kunmc.lab.scenamatica.interfaces.action.Action;
 import net.kunmc.lab.scenamatica.interfaces.action.ActionArgument;
 import net.kunmc.lab.scenamatica.interfaces.action.ActionManager;
+import net.kunmc.lab.scenamatica.interfaces.action.Requireable;
 import net.kunmc.lab.scenamatica.interfaces.context.Context;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioActionListener;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioEngine;
@@ -341,20 +342,74 @@ public class ScenarioEngineImpl implements ScenarioEngine
         this.currentScenario = scenario;
         ScenarioType type = scenario.getType();
 
-        if (type == ScenarioType.ACTION_EXECUTE)
+        switch (type)
         {
-            this.testReporter.onActionStart(this, scenario);
+            case ACTION_EXECUTE:
+                this.testReporter.onActionStart(this, scenario);
 
-            // このアクションにより, 次のアクションが起きるかもしれないので、次が EXPECT なら監視対象にする。
-            if (next != null && next.getType() == ScenarioType.ACTION_EXPECT)
-                this.addWatch(next);
+                // このアクションにより, 次のアクションが起きるかもしれないので、次が EXPECT なら監視対象にする。
+                if (next != null && next.getType() == ScenarioType.ACTION_EXPECT)
+                    this.addWatch(next);
 
-            scenario.execute(this.actionManager, this.listener);
+                scenario.execute(this.actionManager, this.listener);
+                break;
+            case ACTION_EXPECT:
+                this.addWatch(scenario);
+                break;
+            case CONDITION_REQUIRE:
+                return this.testCondition(scenario);
         }
-        else if (type == ScenarioType.ACTION_EXPECT)
-            this.addWatch(scenario);
 
         return this.deliverer.waitResult(scenario.getBean().getTimeout(), this.state);
+    }
+
+    private <T extends ActionArgument> TestResult testCondition(CompiledScenarioAction<T> scenario)
+    {
+        this.testReporter.onConditionCheckStart(this, scenario);
+
+        assert scenario instanceof Requireable;
+
+        boolean result;
+        try
+        {
+            //noinspection unchecked,rawtypes
+            result = ((Requireable) scenario).isConditionFulfilled(scenario.getArgument(), this.plugin);
+        }
+        catch (Throwable e)
+        {
+            this.registry.getExceptionHandler().report(e);
+            this.testReporter.onConditionCheckFailed(this, scenario);
+            return new TestResultImpl(
+                    this.testID,
+                    this.state,
+                    TestResultCause.INTERNAL_ERROR,
+                    this.startedAt
+            );
+        }
+
+        TestResult testResult;
+        if (result)
+        {
+            this.testReporter.onConditionCheckSuccess(this, scenario);
+            testResult = new TestResultImpl(
+                    this.testID,
+                    this.state,
+                    TestResultCause.PASSED,
+                    this.startedAt
+            );
+        }
+        else
+        {
+            this.testReporter.onConditionCheckFailed(this, scenario);
+            testResult = new TestResultImpl(
+                    this.testID,
+                    this.state,
+                    TestResultCause.ILLEGAL_CONDITION,
+                    this.startedAt
+            );
+        }
+
+        return testResult;
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})  // 型は上流で保証されている。

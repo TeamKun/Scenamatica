@@ -65,10 +65,34 @@ public interface TestReporter
     /**
      * アクションの実行に失敗したことをレポートします。
      *
-     * @param engine  エンジン
-     * @param action   アクション
+     * @param engine エンジン
+     * @param action アクション
      */
     void onActionExecuteFailed(@NotNull ScenarioEngine engine, @NotNull CompiledAction<?> action, @NotNull Throwable error);
+
+    /**
+     * コンディションのチェックが始まったことをレポートします。
+     *
+     * @param engine エンジン
+     * @param action アクション
+     */
+    void onConditionCheckStart(@NotNull ScenarioEngine engine, @NotNull CompiledScenarioAction<?> action);
+
+    /**
+     * コンディションのチェックが成功したことをレポートします。
+     *
+     * @param engine エンジン
+     * @param action アクション
+     */
+    void onConditionCheckSuccess(@NotNull ScenarioEngine engine, @NotNull CompiledScenarioAction<?> action);
+
+    /**
+     * コンディションのチェックが失敗したことをレポートします。
+     *
+     * @param engine エンジン
+     * @param action アクション
+     */
+    void onConditionCheckFailed(@NotNull ScenarioEngine engine, @NotNull CompiledScenarioAction<?> action);
 
     /**
      * テストが終了したことをレポートします。

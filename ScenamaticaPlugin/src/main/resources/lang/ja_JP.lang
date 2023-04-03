@@ -37,6 +37,10 @@ test.action.run.success=%%bold%%✔%%reset%%  スケジュールされたアク�
 test.action.watch=予期されたアクション %%action%% が実行されるか監視します。
 test.action.watch.done=%%bold%%✔%%reset%% 監視されたアクション %%action%% がプラグインにより実行されました。
 test.action.jumped=%%bold%%⚠%%reset%% シナリオ %%scenario%% のアクション %%action%% が期待されるアクションよりも先に実行されました。
+test.action.require.start=シナリオの続行に必要な条件 %%condition%% を満たしているか確認します。
+test.action.require.success=%%bold%%✔%%reset%% シナリオの続行に必要な条件 %%condition%% を満たしています。
+test.action.require.fail=%%bold%%❌%%reset%% シナリオの続行に必要な条件 %%condition%% を満たしていません。
+
 
 test.result=%%green%%テスト結果: %%result%% %%gray%%- %%message%%
 test.result.passed=%%green%%✔  成功
@@ -49,7 +53,7 @@ test.result.message.context_preparation_failed=%%red%%テストの実行に必�
 test.result.message.action_execution_failed=%%red%%スケジュールされたアクションの実行に失敗しました。
 test.result.message.action_expectation_jumped=%%red%%期待されたアクションよりも先に他のアクションが実行されました。
 test.result.message.scenario_timed_out=%%red%%シナリオが指定された時間内に実行されませんでした。
-test.result.message.illegal_condition=%%red%%コンディションチェック時に不正な値が検出されました。
+test.result.message.illegal_condition=%%red%%必要な条件が満たされていませんでした。
 test.result.message.internal_error=%%red%%予期しない内部エラーが発生しました。
 test.result.message.cancelled=%%yellow%%テストはキャンセルされました。
 test.result.message.skipped=%%gray%%テストはスキップされました。

@@ -16,14 +16,14 @@ public interface Requireable<A extends ActionArgument>
      * @param plugin   プラグイン
      * @return 条件を満たしている場合はtrue
      */
-    boolean isConditionFulfilled(@NotNull A argument, @NotNull Plugin plugin);
+    boolean isConditionFulfilled(@Nullable A argument, @NotNull Plugin plugin);
 
     /**
      * 引数が正しいかチェックします。
      *
      * @param argument 引数
      */
-    void validateArgument(@NotNull A argument);
+    void validateArgument(@Nullable A argument);
 
     /**
      * 対応していない引数を指定した場合に例外を投げます。
