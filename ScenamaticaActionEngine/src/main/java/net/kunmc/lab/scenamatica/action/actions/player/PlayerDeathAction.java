@@ -6,6 +6,7 @@ import net.kunmc.lab.scenamatica.action.actions.AbstractAction;
 import net.kunmc.lab.scenamatica.action.utils.PlayerUtils;
 import net.kunmc.lab.scenamatica.commons.utils.MapUtils;
 import net.kunmc.lab.scenamatica.interfaces.action.ActionArgument;
+import net.kunmc.lab.scenamatica.interfaces.action.Requireable;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -20,7 +21,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 
-public class PlayerDeathAction extends AbstractAction<PlayerDeathAction.DeathArgument>
+public class PlayerDeathAction extends AbstractAction<PlayerDeathAction.DeathArgument> implements Requireable<PlayerDeathAction.DeathArgument>
 {
     public static final String KEY_ACTION_NAME = "player_death";
 
@@ -178,8 +179,40 @@ public class PlayerDeathAction extends AbstractAction<PlayerDeathAction.DeathArg
                 doExpDrop
         );
     }
-    @Value
 
+    @Override
+    public boolean isConditionFulfilled(@Nullable DeathArgument argument, @NotNull Plugin plugin)
+    {
+        argument = this.requireArgsNonNull(argument);
+
+        String target = argument.getTarget();
+        String killer = argument.getKiller();
+
+        Player targetPlayer = PlayerUtils.getPlayerOrThrow(target);
+        Player killerPlayer = PlayerUtils.getPlayerOrNull(killer);
+
+        return targetPlayer.isDead() &&
+                (killerPlayer == null ||
+                        (targetPlayer.getKiller() != null && targetPlayer.getKiller().getUniqueId()
+                                .equals(killerPlayer.getUniqueId()))
+                );
+    }
+
+    @Override
+    public void validateArgument(@Nullable DeathArgument argument)
+    {
+        argument = this.requireArgsNonNull(argument);
+        this.throwIfPresent(DeathArgument.KEY_DEATH_MESSAGE, argument.getDeathMessage());
+        this.throwIfPresent(DeathArgument.KEY_NEW_EXP, argument.getNewExp());
+        this.throwIfPresent(DeathArgument.KEY_NEW_LEVEL, argument.getNewLevel());
+        this.throwIfPresent(DeathArgument.KEY_NEW_TOTAL_EXP, argument.getNewTotalExp());
+        this.throwIfPresent(DeathArgument.KEY_KEEP_LEVEL, argument.getKeepLevel());
+        this.throwIfPresent(DeathArgument.KEY_KEEP_INVENTORY, argument.getKeepInventory());
+        this.throwIfPresent(DeathArgument.KEY_DO_EXP_DROP, argument.getDoExpDrop());
+
+    }
+
+    @Value
     @AllArgsConstructor
     public static class DeathArgument implements ActionArgument
     {
