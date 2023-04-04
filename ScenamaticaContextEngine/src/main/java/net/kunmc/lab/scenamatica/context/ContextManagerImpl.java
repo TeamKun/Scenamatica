@@ -7,7 +7,7 @@ import net.kunmc.lab.peyangpaperutils.lang.MsgArgs;
 import net.kunmc.lab.scenamatica.commons.utils.LogUtils;
 import net.kunmc.lab.scenamatica.commons.utils.ThreadingUtil;
 import net.kunmc.lab.scenamatica.context.actor.ActorManagerImpl;
-import net.kunmc.lab.scenamatica.exceptions.context.actor.ActorAlreadyExistsException;
+import net.kunmc.lab.scenamatica.exceptions.context.ContextPreparationException;
 import net.kunmc.lab.scenamatica.exceptions.context.actor.VersionNotSupportedException;
 import net.kunmc.lab.scenamatica.exceptions.context.stage.StageCreateFailedException;
 import net.kunmc.lab.scenamatica.exceptions.context.stage.StageNotCreatedException;
@@ -111,7 +111,7 @@ public class ContextManagerImpl implements ContextManager
                             actors.add(this.actorManager.createActor(actor));
                         return true;
                     }
-                    catch (ActorAlreadyExistsException | StageNotCreatedException e)
+                    catch (ContextPreparationException e)
                     {
                         throw new IllegalStateException(e);
                     }

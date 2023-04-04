@@ -125,7 +125,7 @@ public class PlayerBeanImpl extends HumanEntityBeanImpl implements PlayerBean
             map.put(KEY_PLAYER_LIST, playerList);
         }
 
-        if (bean.getOpLevel() != 0)
+        if (bean.getOpLevel() != -1)
             map.put(KEY_OP_LEVEL, bean.getOpLevel());
 
         if (!bean.getActivePermissions().isEmpty())
@@ -192,7 +192,7 @@ public class PlayerBeanImpl extends HumanEntityBeanImpl implements PlayerBean
             playerListFooter = MapUtils.getOrNull(playerList, KEY_PLAYER_LIST_FOOTER);
         }
 
-        int opLevel = 0;
+        int opLevel = -1;
         if (map.containsKey(KEY_OP_LEVEL))
         {
             Object opLevelObj = map.get(KEY_OP_LEVEL);

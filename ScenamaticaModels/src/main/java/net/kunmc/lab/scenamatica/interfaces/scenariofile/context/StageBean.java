@@ -15,7 +15,7 @@ public interface StageBean extends Serializable
     String KEY_ORIGINAL_WORLD_NAME = "copyOf";
     String KEY_TYPE = "type";
     String KEY_SEED = "seed";
-    String KEY_GENERATE_STRUCTURES = " ";
+    String KEY_GENERATE_STRUCTURES = "structures";
     String KEY_ENVIRONMENT = "env";
     String KEY_HARDCORE = "hardcore";
 

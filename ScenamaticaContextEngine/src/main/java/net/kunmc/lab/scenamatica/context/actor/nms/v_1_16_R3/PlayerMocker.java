@@ -10,6 +10,7 @@ import net.kunmc.lab.scenamatica.interfaces.context.ActorManager;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.context.PlayerBean;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.inventory.ItemStackBean;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.inventory.PlayerInventoryBean;
+import net.kunmc.lab.scenamatica.settings.ActorSettings;
 import net.minecraft.server.v1_16_R3.BlockPosition;
 import net.minecraft.server.v1_16_R3.ChatComponentText;
 import net.minecraft.server.v1_16_R3.EntityPlayer;
@@ -40,18 +41,22 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Stream;
 
 public class PlayerMocker extends PlayerMockerBase
 {
     private final ScenamaticaRegistry registry;
+    private final ActorSettings settings;
 
     public PlayerMocker(ScenamaticaRegistry registry, ActorManager manager)
     {
         super(registry, manager);
         this.registry = registry;
+        this.settings = registry.getEnvironment().getActorSettings();
     }
 
     private void registerPlayer(MinecraftServer server, MockedPlayer player, WorldServer worldServer)
@@ -148,7 +153,7 @@ public class PlayerMocker extends PlayerMockerBase
         if (bean.getFlySpeed() != null)
             player.abilities.flySpeed = bean.getFlySpeed();
 
-        int opLevel = bean.getOpLevel();
+        int opLevel = bean.getOpLevel() == -1 ? this.settings.getDefaultOPLevel(): bean.getOpLevel();
         boolean isOP = opLevel > 0;
         if (isOP)
         {
@@ -163,8 +168,10 @@ public class PlayerMocker extends PlayerMockerBase
 
         // permissions
 
-        for (String permission : bean.getActivePermissions())
-            player.getBukkitEntity().addAttachment(this.registry.getPlugin(), permission, true);
+        Stream.of(bean.getActivePermissions(), this.settings.getDefaultPermissions())
+                .flatMap(List::stream)
+                .distinct()
+                .forEach(permission -> player.getBukkitEntity().addAttachment(this.registry.getPlugin(), permission, true));
     }
 
     @SuppressWarnings("deprecation")
@@ -188,7 +195,12 @@ public class PlayerMocker extends PlayerMockerBase
             player.glowing = true;
         if (!bean.isGravity())  // 自動で true にされてる
             player.setNoGravity(true);
-        bean.getTags().forEach(player::addScoreboardTag);
+
+        Stream.of(bean.getTags(), this.settings.getDefaultScoreboardTags())
+                .flatMap(List::stream)
+                .distinct()
+                .forEach(player::addScoreboardTag);
+
         if (bean.getMaxHealth() != null)
             Objects.requireNonNull(player.getAttributeInstance(GenericAttributes.MAX_HEALTH))
                     .setValue(bean.getMaxHealth());

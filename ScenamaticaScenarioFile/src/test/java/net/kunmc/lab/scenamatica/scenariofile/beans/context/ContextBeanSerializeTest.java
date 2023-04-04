@@ -5,6 +5,7 @@ import net.kunmc.lab.scenamatica.scenariofile.beans.utils.MapTestUtil;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,11 +29,11 @@ public class ContextBeanSerializeTest
                 PlayerBeanSerializeTest.FULFILLED_MAP,
                 PlayerBeanSerializeTest.FULFILLED_MAP
         ));
-        put("world", StageBeanSerializeTest.FULFILLED_MAP);
+        put("stage", StageBeanSerializeTest.FULFILLED_MAP);
     }};
 
     public static final ContextBeanImpl EMPTY = new ContextBeanImpl(
-            null,
+            Collections.emptyList(),
             null
     );
 

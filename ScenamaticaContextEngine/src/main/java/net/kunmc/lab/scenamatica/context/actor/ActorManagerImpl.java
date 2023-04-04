@@ -1,6 +1,7 @@
 package net.kunmc.lab.scenamatica.context.actor;
 
 import lombok.Getter;
+import net.kunmc.lab.scenamatica.exceptions.context.ContextPreparationException;
 import net.kunmc.lab.scenamatica.exceptions.context.actor.ActorAlreadyExistsException;
 import net.kunmc.lab.scenamatica.exceptions.context.actor.VersionNotSupportedException;
 import net.kunmc.lab.scenamatica.exceptions.context.stage.StageNotCreatedException;
@@ -8,6 +9,7 @@ import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
 import net.kunmc.lab.scenamatica.interfaces.context.ActorManager;
 import net.kunmc.lab.scenamatica.interfaces.context.ContextManager;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.context.PlayerBean;
+import net.kunmc.lab.scenamatica.settings.ActorSettings;
 import org.bukkit.entity.Player;
 import org.kunlab.kpm.utils.ReflectionUtils;
 
@@ -20,10 +22,12 @@ public class ActorManagerImpl implements ActorManager
     @Getter
     private final List<Player> actors;
     private final PlayerMockerBase actorGenerator;
+    private final ActorSettings settings;
 
     public ActorManagerImpl(ScenamaticaRegistry registry, ContextManager contextManager) throws VersionNotSupportedException
     {
         this.contextManager = contextManager;
+        this.settings = registry.getEnvironment().getActorSettings();
         this.actors = new ArrayList<>();
         this.actorGenerator = getMocker(registry, this);
     }
@@ -43,12 +47,14 @@ public class ActorManagerImpl implements ActorManager
     }
 
     @Override
-    public Player createActor(PlayerBean bean) throws ActorAlreadyExistsException, StageNotCreatedException
+    public Player createActor(PlayerBean bean) throws ContextPreparationException
     {
         if (this.actors.stream().anyMatch(p -> p.getName().equalsIgnoreCase(bean.getName())))
             throw new ActorAlreadyExistsException(bean.getName());
         else if (!this.contextManager.getStageManager().isStageCreated())
             throw new StageNotCreatedException();
+        else if (this.actors.size() + 1 > this.settings.getMaxActors())
+            throw new ContextPreparationException("Too many actors on this server (max: " + this.settings.getMaxActors() + ")");
 
         Player player = this.actorGenerator.mock(this.contextManager.getStageManager().getStage(), bean);
         this.actors.add(player);

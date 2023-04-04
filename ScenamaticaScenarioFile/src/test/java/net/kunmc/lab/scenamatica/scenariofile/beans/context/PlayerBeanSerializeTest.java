@@ -1,11 +1,12 @@
 package net.kunmc.lab.scenamatica.scenariofile.beans.context;
 
+import net.kunmc.lab.scenamatica.interfaces.scenariofile.context.PlayerBean;
 import net.kunmc.lab.scenamatica.scenariofile.beans.entity.HumanEntityBeanSerializeTest;
 import net.kunmc.lab.scenamatica.scenariofile.beans.utils.MapTestUtil;
-import net.kunmc.lab.scenamatica.interfaces.scenariofile.context.PlayerBean;
 import org.bukkit.Location;
 import org.junit.jupiter.api.Test;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,7 +29,9 @@ public class PlayerBeanSerializeTest
             true,
             true,
             114f,
-            514f
+            514f,
+            4,
+            Collections.emptyList()
     );
 
     public static final Map<String, Object> FULFILLED_MAP = new HashMap<String, Object>(HumanEntityBeanSerializeTest.FULFILLED_MAP)
@@ -60,6 +63,7 @@ public class PlayerBeanSerializeTest
         this.put("flying", true);
         this.put("walkSpeed", 114f);
         this.put("flySpeed", 514f);
+        this.put("op", 4);
     }};
 
     public static final PlayerBean EMPTY = new PlayerBeanImpl(
@@ -77,7 +81,9 @@ public class PlayerBeanSerializeTest
             false,
             false,
             null,
-            null
+            null,
+            -1,
+            Collections.emptyList()
     );
 
     public static final Map<String, Object> EMPTY_MAP = new HashMap<String, Object>()

@@ -1,6 +1,7 @@
 package net.kunmc.lab.scenamatica.interfaces;
 
 import net.kunmc.lab.scenamatica.interfaces.scenario.TestReporter;
+import net.kunmc.lab.scenamatica.settings.ActorSettings;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
@@ -39,4 +40,12 @@ public interface ScenamaticaEnvironment
      */
     @NotNull
     TestReporter getTestReporter();
+
+    /**
+     * アクターの設定を取得します。
+     *
+     * @return アクターの設定
+     */
+    @NotNull
+    ActorSettings getActorSettings();
 }

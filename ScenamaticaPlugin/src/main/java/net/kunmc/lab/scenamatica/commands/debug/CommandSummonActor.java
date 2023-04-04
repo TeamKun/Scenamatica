@@ -3,8 +3,7 @@ package net.kunmc.lab.scenamatica.commands.debug;
 import lombok.AllArgsConstructor;
 import net.kunmc.lab.peyangpaperutils.lib.command.CommandBase;
 import net.kunmc.lab.peyangpaperutils.lib.terminal.Terminal;
-import net.kunmc.lab.scenamatica.exceptions.context.actor.ActorAlreadyExistsException;
-import net.kunmc.lab.scenamatica.exceptions.context.stage.StageNotCreatedException;
+import net.kunmc.lab.scenamatica.exceptions.context.ContextPreparationException;
 import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
 import net.kunmc.lab.scenamatica.scenariofile.beans.context.PlayerBeanImpl;
 import net.kyori.adventure.text.TextComponent;
@@ -42,10 +41,12 @@ public class CommandSummonActor extends CommandBase
                     false,
                     false,
                     null,
+                    null,
+                    4,
                     null
             ));
         }
-        catch (ActorAlreadyExistsException | StageNotCreatedException e)
+        catch (ContextPreparationException e)
         {
             throw new RuntimeException(e);
         }
