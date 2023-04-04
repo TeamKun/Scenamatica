@@ -77,7 +77,8 @@
           "description": "アクションの種類です。 ",
           "enum": [
             "message_send",
-            "player_death"
+            "player_death",
+            "player_gamemode"
           ]
         },
         "with": {
