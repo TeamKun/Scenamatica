@@ -113,7 +113,7 @@ public class PlayerBeanImpl extends HumanEntityBeanImpl implements PlayerBean
 
         if (bean.getFlySpeed() != null && bean.getFlySpeed() != SPEED_DEFAULT)
             MapUtils.putIfNotNull(map, KEY_WALK_SPEED, bean.getWalkSpeed());
-        if (bean.getPlayerListFooter() != null && bean.getWalkSpeed() != SPEED_DEFAULT)
+        if (bean.getWalkSpeed() != null && bean.getWalkSpeed() != SPEED_DEFAULT)
             MapUtils.putIfNotNull(map, KEY_FLY_SPEED, bean.getFlySpeed());
 
         if (!(bean.getPlayerListName() == null && bean.getPlayerListHeader() == null && bean.getPlayerListFooter() == null))
