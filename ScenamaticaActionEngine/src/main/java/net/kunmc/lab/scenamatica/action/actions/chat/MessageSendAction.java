@@ -98,5 +98,15 @@ public class MessageSendAction extends AbstractAction<MessageSendAction.PlayerMe
             PlayerMessageSendActionArgument a = (PlayerMessageSendActionArgument) argument;
             return Objects.equals(this.content, a.content) && Objects.equals(this.recipient, a.recipient);
         }
+
+        @Override
+        public String toString()
+        {
+
+            return "MessageSendActionArgument{" +
+                    "content='" + this.content + "', " +
+                    "recipient=" + this.recipient +
+                    '}';
+        }
     }
 }

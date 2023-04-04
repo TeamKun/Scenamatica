@@ -148,5 +148,20 @@ public class GameModeAction extends AbstractAction<GameModeAction.GameModeChange
                     this.cause == arg.cause &&
                     Objects.equals(this.cancelMessage, arg.cancelMessage);
         }
+
+        @Override
+        public String toString()
+        {
+            StringBuilder builder = new StringBuilder("GameModeChangeArgument{");
+
+            builder.append("target=").append(this.target);
+            builder.append(", gameMode=").append(this.gameMode);
+            if (this.cause != null)
+                builder.append(", cause=").append(this.cause);
+            if (this.cancelMessage != null)
+                builder.append(", cancelMessage=").append(this.cancelMessage);
+
+            return builder.append('}').toString();
+        }
     }
 }

@@ -203,13 +203,12 @@ public class PlayerDeathAction extends AbstractAction<PlayerDeathAction.DeathArg
     {
         argument = this.requireArgsNonNull(argument);
         this.throwIfPresent(DeathArgument.KEY_DEATH_MESSAGE, argument.getDeathMessage());
-        this.throwIfPresent(DeathArgument.KEY_NEW_EXP, argument.getNewExp());
-        this.throwIfPresent(DeathArgument.KEY_NEW_LEVEL, argument.getNewLevel());
-        this.throwIfPresent(DeathArgument.KEY_NEW_TOTAL_EXP, argument.getNewTotalExp());
+        this.throwIfNotEquals(DeathArgument.KEY_NEW_EXP, argument.getNewExp(), -1);
+        this.throwIfNotEquals(DeathArgument.KEY_NEW_LEVEL, argument.getNewLevel(), -1);
+        this.throwIfNotEquals(DeathArgument.KEY_NEW_TOTAL_EXP, argument.getNewTotalExp(), -1);
         this.throwIfPresent(DeathArgument.KEY_KEEP_LEVEL, argument.getKeepLevel());
         this.throwIfPresent(DeathArgument.KEY_KEEP_INVENTORY, argument.getKeepInventory());
         this.throwIfPresent(DeathArgument.KEY_DO_EXP_DROP, argument.getDoExpDrop());
-
     }
 
     @Value
@@ -290,5 +289,29 @@ public class PlayerDeathAction extends AbstractAction<PlayerDeathAction.DeathArg
             return this.keepInventory == argument.keepInventory;
         }
 
+        @Override
+        public String toString()
+        {
+            StringBuilder builder = new StringBuilder("DeathArgument{");
+            builder.append("target=").append(this.target);
+            if (this.killer != null)
+                builder.append(", killer=").append(this.killer);
+            if (this.deathMessage != null)
+                builder.append(", deathMessage='").append(this.deathMessage).append('\'');
+            if (this.newExp != -1)
+                builder.append(", newExp=").append(this.newExp);
+            if (this.newLevel != -1)
+                builder.append(", newLevel=").append(this.newLevel);
+            if (this.newTotalExp != -1)
+                builder.append(", newTotalExp=").append(this.newTotalExp);
+            if (this.keepLevel != null)
+                builder.append(", keepLevel=").append(this.keepLevel);
+            if (this.keepInventory != null)
+                builder.append(", keepInventory=").append(this.keepInventory);
+            if (this.doExpDrop != null)
+                builder.append(", doExpDrop=").append(this.doExpDrop);
+
+            return builder.append('}').toString();
+        }
     }
 }

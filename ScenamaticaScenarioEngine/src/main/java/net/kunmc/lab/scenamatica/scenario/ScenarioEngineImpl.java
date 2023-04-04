@@ -367,13 +367,15 @@ public class ScenarioEngineImpl implements ScenarioEngine
     {
         this.testReporter.onConditionCheckStart(this, scenario);
 
-        assert scenario instanceof Requireable;
+        assert scenario.getAction() instanceof Requireable;
+        //noinspection rawtypes
+        Requireable requireable = (Requireable) scenario.getAction();
 
         boolean result;
         try
         {
-            //noinspection unchecked,rawtypes
-            result = ((Requireable) scenario).isConditionFulfilled(scenario.getArgument(), this.plugin);
+            //noinspection unchecked
+            result = requireable.isConditionFulfilled(scenario.getArgument(), this.plugin);
         }
         catch (Throwable e)
         {
