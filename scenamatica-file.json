@@ -153,7 +153,6 @@
           }
         }
       ],
-
       "definitions": {
         "chat": {
           "message_send": {
@@ -271,7 +270,6 @@
             ]
           }
         }
-      }
       }
     },
     "location": {
