@@ -78,7 +78,8 @@
           "enum": [
             "message_send",
             "player_death",
-            "player_gamemode"
+            "player_gamemode",
+            "command_dispatch"
           ]
         },
         "with": {
@@ -145,6 +146,26 @@
             "properties": {
               "with": {
                 "$ref": "#/definitions/action/definitions/player/gamemode"
+              }
+            },
+            "required": [
+              "with"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "command_dispatch",
+                "description": "コマンドを実行したり, 実行されたことを検知します。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/server/command_dispatch"
               }
             },
             "required": [
@@ -267,6 +288,23 @@
             "required": [
               "target",
               "gamemode"
+            ]
+          }
+        },
+        "server": {
+          "command_dispatch": {
+            "properties": {
+              "command": {
+                "type": "string",
+                "description": "実行されるコマンドです。実行を検知する場合は正規表現を使用できます。引数にいくつかのプレースホルダーがあります。"
+              },
+              "sender": {
+                "type": "string",
+                "description": "実行するプレイヤーです。省略した場合はコンソールです。"
+              }
+            },
+            "required": [
+              "command"
             ]
           }
         }
