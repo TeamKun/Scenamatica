@@ -3,15 +3,16 @@ package net.kunmc.lab.scenamatica.scenariofile.beans.context;
 import lombok.AllArgsConstructor;
 import lombok.Value;
 import net.kunmc.lab.scenamatica.commons.utils.MapUtils;
-import net.kunmc.lab.scenamatica.scenariofile.beans.entities.HumanEntityBeanImpl;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.context.PlayerBean;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.entities.HumanEntityBean;
+import net.kunmc.lab.scenamatica.scenariofile.beans.entities.HumanEntityBeanImpl;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -48,13 +49,16 @@ public class PlayerBeanImpl extends HumanEntityBeanImpl implements PlayerBean
     @Nullable
     Float flySpeed;
 
+    int opLevel;
+    List<String> activePermissions;
+
     public PlayerBeanImpl(@NotNull HumanEntityBean human, @NotNull String name, @Nullable String displayName,
                           @Nullable String playerListName, @Nullable String playerListHeader,
                           @Nullable String playerListFooter, @Nullable Location compassTarget,
                           @Nullable Location bedSpawnLocation, @Nullable Integer exp,
                           @Nullable Integer level, @Nullable Integer totalExperience,
                           boolean allowFlight, boolean flying,
-                          @Nullable Float walkSpeed, @Nullable Float flySpeed)
+                          @Nullable Float walkSpeed, @Nullable Float flySpeed, int opLevel, List<String> activePermissions)
     {
         super(human, human.getInventory(), human.getEnderChest(),
                 human.getMainHand(), human.getGamemode(), human.getFoodLevel()
@@ -73,6 +77,8 @@ public class PlayerBeanImpl extends HumanEntityBeanImpl implements PlayerBean
         this.flying = flying;
         this.walkSpeed = walkSpeed;
         this.flySpeed = flySpeed;
+        this.opLevel = opLevel;
+        this.activePermissions = activePermissions;
     }
 
     public static Map<String, Object> serialize(PlayerBean bean)
@@ -86,6 +92,7 @@ public class PlayerBeanImpl extends HumanEntityBeanImpl implements PlayerBean
         MapUtils.putIfNotNull(map, KEY_EXP, bean.getExp());
         MapUtils.putIfNotNull(map, KEY_LEVEL, bean.getLevel());
         MapUtils.putIfNotNull(map, KEY_TOTAL_EXPERIENCE, bean.getTotalExperience());
+
 
         boolean isFlyableGamemode = bean.getGamemode() == GameMode.CREATIVE || bean.getGamemode() == GameMode.SPECTATOR;
         if (bean.isAllowFlight())
@@ -118,6 +125,12 @@ public class PlayerBeanImpl extends HumanEntityBeanImpl implements PlayerBean
             map.put(KEY_PLAYER_LIST, playerList);
         }
 
+        if (bean.getOpLevel() != 0)
+            map.put(KEY_OP_LEVEL, bean.getOpLevel());
+
+        if (!bean.getActivePermissions().isEmpty())
+            map.put(KEY_ACTIVE_PERMISSIONS, bean.getActivePermissions());
+
         return map;
     }
 
@@ -132,6 +145,17 @@ public class PlayerBeanImpl extends HumanEntityBeanImpl implements PlayerBean
         MapUtils.checkTypeIfContains(map, KEY_LEVEL, Integer.class);
         MapUtils.checkTypeIfContains(map, KEY_TOTAL_EXPERIENCE, Integer.class);
         MapUtils.checkTypeIfContains(map, KEY_ALLOW_FLIGHT, Boolean.class);
+        MapUtils.checkTypeIfContains(map, KEY_FLYING, Boolean.class);
+        MapUtils.checkTypeIfContains(map, KEY_WALK_SPEED, Number.class);
+        MapUtils.checkTypeIfContains(map, KEY_FLY_SPEED, Number.class);
+        MapUtils.checkTypeIfContains(map, KEY_ACTIVE_PERMISSIONS, List.class);
+
+        Object opLevel = map.get(KEY_OP_LEVEL);
+        if (opLevel != null)
+            if (!(opLevel instanceof Integer || opLevel instanceof Boolean))
+                throw new IllegalArgumentException("opLevel must be an Integer or a Boolean");
+            else if (opLevel instanceof Integer && ((Integer) opLevel) > 4)
+                throw new IllegalArgumentException("opLevel must be between 0 and 4");
     }
 
     public static PlayerBean deserialize(@NotNull Map<String, Object> map)
@@ -168,6 +192,18 @@ public class PlayerBeanImpl extends HumanEntityBeanImpl implements PlayerBean
             playerListFooter = MapUtils.getOrNull(playerList, KEY_PLAYER_LIST_FOOTER);
         }
 
+        int opLevel = 0;
+        if (map.containsKey(KEY_OP_LEVEL))
+        {
+            Object opLevelObj = map.get(KEY_OP_LEVEL);
+            if (opLevelObj instanceof Boolean)
+                opLevel = (Boolean) opLevelObj ? 4: 0;
+            else if (opLevelObj instanceof Integer)
+                opLevel = (Integer) opLevelObj;
+        }
+
+        List<String> activePermissions = MapUtils.getAsListOrEmpty(map, KEY_ACTIVE_PERMISSIONS);
+
         return new PlayerBeanImpl(
                 human,
                 name,
@@ -183,7 +219,9 @@ public class PlayerBeanImpl extends HumanEntityBeanImpl implements PlayerBean
                 allowFlight,
                 flying,
                 walkSpeed,
-                flySpeed
+                flySpeed,
+                opLevel,
+                activePermissions
         );
     }
 

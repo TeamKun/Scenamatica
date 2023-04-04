@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * プレイヤーを表すインターフェースです。
@@ -28,6 +29,9 @@ public interface PlayerBean extends EntityBean, HumanEntityBean, Serializable
     String KEY_FLYING = "flying";
     String KEY_FLY_SPEED = "flySpeed";
     String KEY_WALK_SPEED = "walkSpeed";
+
+    String KEY_OP_LEVEL = "op";
+    String KEY_ACTIVE_PERMISSIONS = "permissions";
 
     /**
      * プレイヤーの名前を取得します。
@@ -138,4 +142,18 @@ public interface PlayerBean extends EntityBean, HumanEntityBean, Serializable
      */
     @Nullable
     Float getFlySpeed();
+
+    /**
+     * プレイヤの OP レベルを取得します。
+     *
+     * @return OP レベル
+     */
+    int getOpLevel();
+
+    /**
+     * プレイヤーが持っている権限を取得します。
+     *
+     * @return 権限のリスト
+     */
+    List<String> getActivePermissions();
 }

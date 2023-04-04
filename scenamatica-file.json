@@ -874,6 +874,22 @@
           "minimum": 0,
           "maximum": 20,
           "default": 20
+        },
+        "op": {
+          "type": [
+            "boolean",
+            "integer"
+          ],
+          "minimum": 0,
+          "maximum": 4,
+          "description": "アクターの OP レベルです。 0 は OP ではないことを意味します。"
+        },
+        "permissions": {
+          "type": "array",
+          "description": "アクターに与える権限です。",
+          "items": {
+            "type": "string"
+          }
         }
       },
       "required": [

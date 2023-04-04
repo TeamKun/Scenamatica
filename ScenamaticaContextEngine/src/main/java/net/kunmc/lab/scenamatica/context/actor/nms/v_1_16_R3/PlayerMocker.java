@@ -20,6 +20,7 @@ import net.minecraft.server.v1_16_R3.MinecraftServer;
 import net.minecraft.server.v1_16_R3.MobEffect;
 import net.minecraft.server.v1_16_R3.MobEffectList;
 import net.minecraft.server.v1_16_R3.NetworkManager;
+import net.minecraft.server.v1_16_R3.OpListEntry;
 import net.minecraft.server.v1_16_R3.PacketDataSerializer;
 import net.minecraft.server.v1_16_R3.PacketPlayInSettings;
 import net.minecraft.server.v1_16_R3.PlayerList;
@@ -45,9 +46,12 @@ import java.util.Objects;
 
 public class PlayerMocker extends PlayerMockerBase
 {
+    private final ScenamaticaRegistry registry;
+
     public PlayerMocker(ScenamaticaRegistry registry, ActorManager manager)
     {
         super(registry, manager);
+        this.registry = registry;
     }
 
     private void registerPlayer(MinecraftServer server, MockedPlayer player, WorldServer worldServer)
@@ -96,14 +100,14 @@ public class PlayerMocker extends PlayerMockerBase
         player.a(packet);
     }
 
-    private static void initializePlayer(MockedPlayer player, PlayerBean bean)
+    private void initializePlayer(MockedPlayer player, PlayerBean bean)
     {
-        initHumanEntity(player, bean);
-        initBasePlayer(player, bean);
-        initEntity(player, bean);
+        this.initHumanEntity(player, bean);
+        this.initBasePlayer(player, bean);
+        this.initEntity(player, bean);
     }
 
-    private static void initBasePlayer(MockedPlayer player, PlayerBean bean)
+    private void initBasePlayer(MockedPlayer player, PlayerBean bean)
     {
         if (bean.getDisplayName() != null)
             player.displayName = bean.getDisplayName();
@@ -143,10 +147,28 @@ public class PlayerMocker extends PlayerMockerBase
             player.abilities.walkSpeed = bean.getWalkSpeed();
         if (bean.getFlySpeed() != null)
             player.abilities.flySpeed = bean.getFlySpeed();
+
+        int opLevel = bean.getOpLevel();
+        boolean isOP = opLevel > 0;
+        if (isOP)
+        {
+            OpListEntry entry = new OpListEntry(
+                    player.getProfile(),
+                    opLevel,
+                    true  //
+            );
+
+            player.server.getPlayerList().getOPs().add(entry);
+        }
+
+        // permissions
+
+        for (String permission : bean.getActivePermissions())
+            player.getBukkitEntity().addAttachment(this.registry.getPlugin(), permission, true);
     }
 
     @SuppressWarnings("deprecation")
-    private static void initEntity(MockedPlayer player, PlayerBean bean)
+    private void initEntity(MockedPlayer player, PlayerBean bean)
     {
         if (bean.getLocation() != null)
         {
@@ -189,7 +211,7 @@ public class PlayerMocker extends PlayerMockerBase
             ));
     }
 
-    private static void initHumanEntity(MockedPlayer player, PlayerBean bean)
+    private void initHumanEntity(MockedPlayer player, PlayerBean bean)
     {
         if (bean.getInventory() != null)
         {
@@ -225,7 +247,7 @@ public class PlayerMocker extends PlayerMockerBase
         GameProfile profile = createGameProfile(bean);
 
         MockedPlayer player = new MockedPlayer(server, worldServer, profile);
-        initializePlayer(player, bean);
+        this.initializePlayer(player, bean);
 
         if (!dispatchLoginEvent(player.getBukkitEntity()))
             throw new IllegalStateException("Login for " + player.getName() + " was denied.");
@@ -248,6 +270,13 @@ public class PlayerMocker extends PlayerMockerBase
 
         MinecraftServer server = mockedPlayer.getMinecraftServer();
         assert server != null;
+
+        if (server.getPlayerList().isOp(mockedPlayer.getProfile()))
+            server.getPlayerList().removeOp(mockedPlayer.getProfile());
+        player.getEffectivePermissions().forEach(permissionAttachmentInfo -> {
+            if (permissionAttachmentInfo.getAttachment() != null)
+                player.removeAttachment(permissionAttachmentInfo.getAttachment());
+        });
 
         ((MockedPlayerConnection) mockedPlayer.playerConnection).shutdown();
         mockedPlayer.playerConnection.disconnect("Unmocked");
