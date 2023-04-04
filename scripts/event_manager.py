@@ -74,6 +74,7 @@ class MainWindow(QMainWindow):
         self.tableWidget.itemChanged.connect(self.enableApplyButton)
 
         self.eventsData = []
+        self.eventsPath = None
 
     def showSummary(self):
         summary = f"イベント数：{len(self.eventsData)}\n"
@@ -132,6 +133,7 @@ class MainWindow(QMainWindow):
             try:
                 with open(fileName, 'r', encoding='utf-8') as file:
                     self.eventsData = json.load(file)
+                    self.eventsPath = fileName
                     self.populateTable()
                     self.saveAction.setEnabled(False)
                     self.applyButton.setEnabled(False)
@@ -174,13 +176,17 @@ class MainWindow(QMainWindow):
         self.tableWidget.resizeColumnsToContents()
 
     def saveJson(self):
-        fileName, _ = QFileDialog.getSaveFileName(self, "JSON に保存するよ！", "", "JSON ふぁいる (*.json)")
+        fileName = self.eventsPath
+        if not fileName:
+            fileName, _ = QFileDialog.getSaveFileName(self, "JSON に保存するよ！", "", "JSON ふぁいる (*.json)")
         if fileName:
             try:
                 data = self.eventsData  # 読み込んだデータを参照
                 with open(fileName, 'w', encoding='utf-8') as file:
                     json.dump(data, file, ensure_ascii=False)
                     self.saveAction.setEnabled(False)
+                    QMessageBox.show(self, "保存完了！", "保存完了したよ！", QMessageBox.Ok)
+                    self.showSummary()
             except Exception as e:
                 QMessageBox.critical(self, "Error", f"JSON を保存できなかったみたい！ごめんね>< :\n{e}")
 

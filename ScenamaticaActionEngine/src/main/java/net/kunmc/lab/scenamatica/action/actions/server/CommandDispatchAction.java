@@ -20,6 +20,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class CommandDispatchAction extends AbstractAction<CommandDispatchAction.CommandDispatchActionArgument>
 {
@@ -62,9 +64,12 @@ public class CommandDispatchAction extends AbstractAction<CommandDispatchAction.
             sender = ((PlayerCommandPreprocessEvent) event).getPlayer();
         }
         else
-
             return false;
-        return Objects.equals(command, argument.command)
+
+        Pattern pattern = Pattern.compile(argument.command);
+        Matcher matcher = pattern.matcher(command);
+
+        return matcher.matches()
                 && (argument.sender == null || sender != null && StringUtils.equalsIgnoreCase(argument.sender, sender.getName()));
     }
 
