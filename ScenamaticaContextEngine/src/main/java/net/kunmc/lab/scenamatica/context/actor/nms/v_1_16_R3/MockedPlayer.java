@@ -18,6 +18,7 @@ class MockedPlayer extends EntityPlayer
     {
         super(minecraftserver, worldserver, gameprofile, new MocketPlayerInteractManager(worldserver));
         this.setNoGravity(false);
+        this.G = 0.5f; // ブロックのぼれるたかさ
     }
 
     @Override
@@ -27,10 +28,18 @@ class MockedPlayer extends EntityPlayer
     }
 
     @Override
+    public void playerTick()
+    {
+        super.entityBaseTick();
+        super.playerTick();
+        this.noclip = this.isSpectator();
+
+    }
+
+    @Override
     public void tick()
     {
         super.tick();
-
         this.processGravity();
     }
 
@@ -55,23 +64,32 @@ class MockedPlayer extends EntityPlayer
         Entity damager = damageSource.getEntity();
 
         boolean damaged = super.damageEntity(damageSource, f);
-
         if (damaged && damager != null)
-            Runner.run(() -> applyKnockBack(damager));
+            processKnockBack(damager);
 
         return damaged;
     }
 
-    private void applyKnockBack(Entity damager)
+    private void processKnockBack(Entity damager)
+    {
+        float knockbackDepth = 1.2F;
+
+        Runner.run(() -> this.setMot(new Vec3D(
+                        -Math.sin(damager.yaw * Math.PI / 180.0F) * knockbackDepth * 0.5F,
+                        0.8F,
+                        Math.cos(damager.yaw * Math.PI / 180.0F) * knockbackDepth * 0.5F
+                )
+        ));
+    }
+
+    @Override
+    public void die(DamageSource damagesource)
     {
         if (this.dead)
             return;
 
-        float vecX = -1f * (float) Math.sin(damager.yaw * Math.PI / 180.0F) * 0.5F;
-        float vecY = 0.1F;
-        float vecZ = (float) Math.cos(damager.yaw * Math.PI / 180.0F) * 0.5F;
-
-        this.f(vecX, vecY, vecZ);
-        this.setMot(damager.getMot().d(0.6, 1, 0.6));
+        super.die(damagesource);
+        Runner.runLater(() -> getWorldServer().removeEntity(this), 15L);
+        // 15L 遅らせるのは, アニメーションのため
     }
 }
