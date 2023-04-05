@@ -1,0 +1,94 @@
+# Scenamatica を設定する
+
+Scenamatica を設定してあなたに最適化します。
+
+---
+
+## 概要 {#overview}
+
+Scenamatica では、設定ファイルによる細かいカスタマイズができます。
+
+## Scenamatica の設定ファイル {#configuration-file}
+
+Scenamatica の設定ファイルは、`plugins/Scenamatica/config.yml` の１つのみです。シンプル！✨
+
+---
+
+## 設定一覧 {#config-list}
+
+### \[インタフェース] インタフェースの設定 {#interface}
+
+プラグインのインタフェースをカスタマイズします。
+
+#### `interfacce`.`lang` {#interface-lang}
+
+Scenamatica の全ての出力の言語を設定します。 対応している言語は以下の通りです：
+
+* `ja_JP` - 日本語（日本）
+* `ja_KS` - 関西弁（大阪らへん）
+* `en_US` - English（United States）
+
++ デフォルト値： `ja_JP`
++ 型： `Enum{ja_JP, en_US, ja_KS}`
+
+
+### \[[シナリオ](/docs/expresssions#scenario)] [シナリオ](/docs/expresssions#scenario)の設定 {#scenario}
+
+[シナリオ](/docs/expresssions#scenario)の実行に関する設定を行います。
+
+#### `scenario`.`enabled` {#scenario-enabled}
+
+シナリオの実行を行うかどうかを設定します。`true` に設定すると、シナリオの実行が可能になります。
+この設定が `false` の場合、シナリオはスケジュールされず、また自動実行も行われず、手動実行はエラーを出力します。
+
+:::tip
+この設定は、ゲーム内コマンドの `/scenamatica enable` コマンドによってオーバーライドされる可能性があります。
+その場合はこの設定ファイルの内容は書き換えられず、再起動時に元に戻ります。
+:::
+
++ デフォルト値： `true`
++ 型： `Boolean`
+
+### \[[アクター](/docs/expresssions#actor)] [アクター](/docs/expresssions#actor)の設定 {#actor}
+
+[シナリオ](/docs/expresssions#scenario)の[アクター](/docs/expresssions#actor)に関する設定を行います。
+
+#### `actor`.`maxActors` {#actor-maxActors}
+
+同時に実行できる[アクター](/docs/expresssions#actor)の最大数を設定します。
+この設定はサーバ全体に適用されます。
+サーバ全体でアクターの数がこの値を超えると、新しいアクターは実行されず、シナリオはエラーで終了します。
+
++ デフォルト値： `100`
++ 型： `Integer`
++ 最小値： `1`
+
+#### `actor`.`defaultOP` {#actor-defaultOP}
+
+[アクター](/docs/expresssions#actor)のデフォルトの OP 権限を設定します。
+この値は数値で、大きくなるほどできることが増えます。
+
+- `0` - OP 権限なし
+- `1` - OP 権限あり。スポーン範囲制限を無視できる。
+- `2` -    〃     ちょと多くのコマンドを使用できる。コマンドブロックを使用できる。
+- `3` -    〃     もっといっぱいコマンドを使える。
+- `4` -    〃     ほぼ全てのコマンドを使える。
+
++ デフォルト値： `4`
++ 型： `Integer`
++ 最小値： `0`
++ 最大値： `4`
+
+#### `actor`.`permissions` {#actor-permissions}
+
+[アクター](/docs/expresssions#actor)に与える権限を設定します。
+
++ デフォルト値： `[]`
++ 型： `String[]`
+
+#### `actor`.`scoreboardTags` {#actor-scoreboardTags}
+
+[アクター](/docs/expresssions#actor)に与えるスコアボードタグを設定します。
+
++ デフォルト値： `[]`
++ 型： `String[]`

@@ -1,0 +1,70 @@
+---
+sidebar_position: 1
+---
+
+import Requirements from "/src/components/Requirements";
+import BelowDocument from "/src/components/BelowDocument";
+
+# Scenamatica をインストールする
+
+Scenamatica をサーバにインストールする方法を説明しています。
+
+---
+
+## このページの前提条件 {#prerequisites}
+
+Scenamatica を使用するには、以下の条件を満たす必要があります。
+
+<Requirements requirements={[
+    {
+        name: "Java",
+        version: "1.8 以上"
+    },
+    {
+        name: "PaperMC",
+        version: "1.16.5",
+        link: "https://papermc.io/downloads",
+        description: "プレーンの Bukkit/SpigotMC は対応していません。"
+    }
+]} />
+
+:::warning
+Scenamatica は、Bukkit/SpigotMC では動作しません。[PaperMC](https://papermc.io/) を使用してください。
+:::
+
+## Scenamatica プラグインをインストールする {#install}
+
+### ステップ1. 最新のプラグイン・アーティファクトをダウンロードする
+
+1. [こちら](https://github.com/TeamKUN/Scenamatica/releases)にアクセスし、最新のリリースを確認します。
+2. Assets の下の `Scenamatica-<version>.jar` をクリックしてプラグインをダウンロードします。
+3. 任意の場所に保存してください。
+
+![Download#500x](images/installation/download.png)
+
+:::tip
+✨ このドキュメントの画像はクリックして拡大できます！ ✨
+:::
+
+### ステップ2. プラグインをサーバに配置する
+
+あなたが普段プラグインをサーバに追加するように、サーバのプラグインフォルダ（e.g. `plugins/`）に, ダウンロードした Scenamatica を配置します。
+
+### ステップ3. サーバを再起動する
+
+サーバを再起動またはリロードし、Scenamatica を有効化します。
+サーバが再起動されたら、Scenamatica が正常に動作していることを確認してください。
+
+---
+
+## 終わりに
+
+お疲れ様でした。
+次のチュートリアルでは、 Scenamatica の設定について説明しています。
+
+<BelowDocument docId={"getting-started/configuration"}
+               label={"Scenamatica を設定する"} />
+
+<br />
+
+また、分からない用語があれば、[こちらの用語集](/docs/expressions)を参照してください。

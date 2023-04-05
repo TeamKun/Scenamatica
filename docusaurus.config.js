@@ -85,7 +85,7 @@ const config = {
           title: "Scenamatica",
           logo: {
             alt: "Scenamatica Logo",
-            src: "img/logo.svg",
+            src: "img/logo.png",
           },
           items: [
             {
