@@ -32,9 +32,9 @@ Scenamatica の全ての出力の言語を設定します。 対応している�
 + 型： `Enum{ja_JP, en_US, ja_KS}`
 
 
-### \[[シナリオ](/docs/expresssions#scenario)] [シナリオ](/docs/expresssions#scenario)の設定 {#scenario}
+### \[[シナリオ](/docs/expressions#scenario)] [シナリオ](/docs/expressions#scenario)の設定 {#scenario}
 
-[シナリオ](/docs/expresssions#scenario)の実行に関する設定を行います。
+[シナリオ](/docs/expressions#scenario)の実行に関する設定を行います。
 
 #### `scenario`.`enabled` {#scenario-enabled}
 
@@ -49,13 +49,13 @@ Scenamatica の全ての出力の言語を設定します。 対応している�
 + デフォルト値： `true`
 + 型： `Boolean`
 
-### \[[アクター](/docs/expresssions#actor)] [アクター](/docs/expresssions#actor)の設定 {#actor}
+### \[[アクター](/docs/expressions#actor)] [アクター](/docs/expressions#actor)の設定 {#actor}
 
-[シナリオ](/docs/expresssions#scenario)の[アクター](/docs/expresssions#actor)に関する設定を行います。
+[シナリオ](/docs/expressions#scenario)の[アクター](/docs/expressions#actor)に関する設定を行います。
 
 #### `actor`.`maxActors` {#actor-maxActors}
 
-同時に実行できる[アクター](/docs/expresssions#actor)の最大数を設定します。
+同時に実行できる[アクター](/docs/expressions#actor)の最大数を設定します。
 この設定はサーバ全体に適用されます。
 サーバ全体でアクターの数がこの値を超えると、新しいアクターは実行されず、シナリオはエラーで終了します。
 
@@ -65,7 +65,7 @@ Scenamatica の全ての出力の言語を設定します。 対応している�
 
 #### `actor`.`defaultOP` {#actor-defaultOP}
 
-[アクター](/docs/expresssions#actor)のデフォルトの OP 権限を設定します。
+[アクター](/docs/expressions#actor)のデフォルトの OP 権限を設定します。
 この値は数値で、大きくなるほどできることが増えます。
 
 - `0` - OP 権限なし
@@ -81,14 +81,14 @@ Scenamatica の全ての出力の言語を設定します。 対応している�
 
 #### `actor`.`permissions` {#actor-permissions}
 
-[アクター](/docs/expresssions#actor)に与える権限を設定します。
+[アクター](/docs/expressions#actor)に与える権限を設定します。
 
 + デフォルト値： `[]`
 + 型： `String[]`
 
 #### `actor`.`scoreboardTags` {#actor-scoreboardTags}
 
-[アクター](/docs/expresssions#actor)に与えるスコアボードタグを設定します。
+[アクター](/docs/expressions#actor)に与えるスコアボードタグを設定します。
 
 + デフォルト値： `[]`
 + 型： `String[]`
