@@ -136,6 +136,18 @@ public class ScenarioManagerImpl implements ScenarioManager
         this.queue.add(engine, trigger, null);
     }
 
+    @Override
+    public void dequeueScenarios(@NotNull Plugin plugin)
+    {
+        this.queue.removeAll(plugin);
+    }
+
+    @Override
+    public void dequeueScenario(@NotNull Plugin plugin, @NotNull String scenarioName)
+    {
+        this.queue.remove(plugin, scenarioName);
+    }
+
     private Pair<ScenarioEngine, TriggerBean> getRunInfoOrThrow(Plugin plugin, String scenarioName, TriggerType trigger)
             throws ScenarioNotFoundException, TriggerNotFoundException
     {

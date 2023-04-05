@@ -7,6 +7,7 @@ import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioEngine;
 import net.kunmc.lab.scenamatica.interfaces.scenario.TestResult;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerBean;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import javax.annotation.Nullable;
@@ -44,6 +45,17 @@ import java.util.stream.Collectors;
     /* non-public */ void addInterrupt(ScenarioEngine engine, TriggerBean trigger, Consumer<TestResult> callback)
     {
         this.scenarioRunQueue.addFirst(new QueueEntry(engine, trigger, callback));
+    }
+
+    /* non-public */ void remove(Plugin plugin, String name)
+    {
+        this.scenarioRunQueue.removeIf(entry -> entry.getEngine().getPlugin().equals(plugin) &&
+                entry.getEngine().getScenario().getName().equals(name));
+    }
+
+    /* non-public */ void removeAll(Plugin plugin)
+    {
+        this.scenarioRunQueue.removeIf(entry -> entry.getEngine().getPlugin().equals(plugin));
     }
 
     /* non-public */ void start()

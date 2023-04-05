@@ -121,6 +121,21 @@ public interface ScenarioManager
                        @NotNull TriggerType triggerType) throws ScenarioNotFoundException, TriggerNotFoundException;
 
     /**
+     * プラグインのシナリオをキューから削除します。
+     *
+     * @param plugin 削除するプラグイン
+     */
+    void dequeueScenarios(@NotNull Plugin plugin);
+
+    /**
+     * シナリオをキューから削除します。
+     *
+     * @param plugin       削除するプラグイン
+     * @param scenarioName 削除するシナリオ名
+     */
+    void dequeueScenario(@NotNull Plugin plugin, @NotNull String scenarioName);
+
+    /**
      * シナリオの実行をキャンセルします。
      * キャンセルしたシナリオは, {@link net.kunmc.lab.scenamatica.enums.TestResultCause#CANCELLED} で終了します。
      */

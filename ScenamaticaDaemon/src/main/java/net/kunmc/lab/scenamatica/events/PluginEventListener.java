@@ -22,18 +22,9 @@ public class PluginEventListener implements Listener
         this.logger = registry.getLogger();
     }
 
-    private static boolean shouldNotLoad(Plugin plugin)
-    {
-        String name = plugin.getName();
-        return name.equals("Scenamatica");
-    }
-
     @EventHandler
     public void onPluginEnabled(PluginEnableEvent event)
     {
-        if (shouldNotLoad(event.getPlugin()))
-            return;
-
         MsgArgs msgArgs = MsgArgs.of("plugin", event.getPlugin().getName());
         this.logger.info(LangProvider.get("daemon.plugin.enabled", msgArgs));
         this.logger.info(LangProvider.get("daemon.plugin.scenario.scanning", msgArgs));
@@ -54,13 +45,16 @@ public class PluginEventListener implements Listener
     @EventHandler
     public void onPluginDisabled(PluginDisableEvent event)
     {
-        if (shouldNotLoad(event.getPlugin()))
-            return;
-
+        this.safePluginShutdown(event.getPlugin());
         MsgArgs msgArgs = MsgArgs.of("plugin", event.getPlugin().getName());
         this.logger.info(LangProvider.get("daemon.plugin.disabled", msgArgs));
         this.logger.info(LangProvider.get("daemon.plugin.scenario.unloading", msgArgs));
 
         this.registry.getScenarioManager().unloadPluginScenarios(event.getPlugin());
+    }
+
+    private void safePluginShutdown(Plugin plugin)
+    {
+        this.registry.getScenarioManager().dequeueScenarios(plugin);
     }
 }
