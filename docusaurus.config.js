@@ -94,6 +94,16 @@ const config = {
               label: "ホーム",
             },
             {
+              to: "/docs/getting-started",
+              position: "left",
+              label: "使い始める",
+            },
+            {
+              to: "/docs/expressions",
+              position: "left",
+              label: "用語集",
+            },
+            {
               type: "docsVersionDropdown",
               position: "right",
               dropdownActiveClassDisabled: true,
@@ -119,6 +129,14 @@ const config = {
                 {
                   label: "ホーム",
                   to: "/docs/home",
+                },
+                {
+                  label: "使い始める",
+                  to: "/docs/getting-started",
+                },
+                {
+                  label: "用語集",
+                  to: "/docs/expressions",
                 },
               ],
             },
