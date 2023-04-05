@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class ScenarioFileBeanSerializeTest
 {
     public static final ScenarioFileBean FULFILLED = new ScenarioFileBeanImpl(
-            Version.of("1.0.0"),
+            Version.of("0.1.0"),
             "eveything",
             "A scenario that does everything",
             Arrays.asList(
@@ -37,7 +37,7 @@ public class ScenarioFileBeanSerializeTest
 
     public static final Map<String, Object> FULFILLED_MAP = new HashMap<String, Object>()
     {{
-        this.put("scenamatica", "1.0.0");
+        this.put("scenamatica", "0.1.0");
         this.put("name", "eveything");
         this.put("description", "A scenario that does everything");
         this.put("on", Arrays.asList(
@@ -53,7 +53,7 @@ public class ScenarioFileBeanSerializeTest
     }};
 
     public static final ScenarioFileBeanImpl EMPTY = new ScenarioFileBeanImpl(
-            Version.of("1.0.0"),
+            Version.of("0.1.0"),
             "nothing",
             "A scenario that does nothing",
             Collections.emptyList(),
@@ -63,7 +63,7 @@ public class ScenarioFileBeanSerializeTest
 
     public static final Map<String, Object> EMPTY_MAP = new HashMap<String, Object>()
     {{
-        this.put("scenamatica", "1.0.0");
+        this.put("scenamatica", "0.1.0");
         this.put("name", "nothing");
         this.put("description", "A scenario that does nothing");
         this.put("on", Collections.emptyList());
