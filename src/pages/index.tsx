@@ -29,6 +29,19 @@ export default function Home(): JSX.Element {
         <Layout title={siteConfig.title} description="Scenamatica - 世界初の PaperMC プラグインのシナリオテスト自動化ツール">
             <Header />
             <main>
+                <div className={styles.container}>
+                    <h2>概要</h2>
+                    <p className={styles.description}>
+                        <span>Scenamatica は, PaperMC プラグイン開発者向けのシナリオテスト自動化フレームワークです。</span>
+                    </p>
+                    <p className={styles.description}>
+                        <span>あなたの PaperMC プラグインが正常に動作しているか,</span>
+                        <span>あるいはデグレードしていないかを自動でチェックできます。</span>
+                    </p>
+                    <p className={styles.description}>
+                        <span>シナリオを YAML で事前に定義しておき任意のタイミングで実行します。</span>
+                    </p>
+                </div>
             </main>
         </Layout>
     )
