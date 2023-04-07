@@ -1,0 +1,37 @@
+import BelowDocument from "/src/components/BelowDocument";
+import Requirements from "/src/components/Requirements";
+
+# Scenamatica を使う
+
+Scenamatica を使う方法について説明しています。
+
+---
+
+## このページの前提条件 {#requisites}
+
+<Requirements requirements={[
+    {
+        name: "Scenamatica",
+        version: "0.1.0 以上",
+        link: "/docs/getting-started/installation"
+    }
+]} />
+
+:::info
+Scenamatica をまだインストールしていない場合は、[こちら](/docs/getting-started/installation)のドキュメントを参照してインストールしてください。
+:::
+
+## はじめに {#introduction}
+
+Scenamatica は、 PaperMC プラグインの開発でリグレッションを防ぎ、開発体験を向上させるために設計されました。
+そのため、毎回のリリース前に Scenamatica を使用して、プラグインの動作を確認することをお勧めします。
+
+また、 Scenamatica は Junit 等のユニットテストフレームワークと一緒に使用することを想定しています。
+
+## Scenamatica のシナリオ {#writing-scenario-file}
+
+Scenamatica は、プラグインの動作のフローを記述した [シナリオファイル](/docs/scenario/#scenario-file) をしてプラグインの動作をテストします。
+このファイルは、プラグイン開発者が記述する必要があります。
+
+<BelowDocument docId={"use/scenario/README"}
+               label={"シナリオ"} />
