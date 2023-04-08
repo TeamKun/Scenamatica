@@ -1,0 +1,172 @@
+# 最初のシナリオを書いてみる
+
+あなたの最初のシナリオを書いてみましょう。
+
+---
+
+## 注意事項 {#writing-scenario}
+
+:::tip
+
+シナリオやシナリオファイルの概念が初めての方は[こちら](/docs/use/scenario)を参照して先に理解しておくと便利です(SHOULD)。
+
+:::
+
+この項目では、シナリオファイルを書く方法について説明します。  
+ここにないオプションの機能等や、その他の完全な構文については[以下](.)を参照してください。
+
+### ステップ１. ファイルを作成する
+
+まずは、シナリオファイルを作成します。  
+ファイル名に関しては技術的な制約等はありませんが、 Scenamatica では、
+
++ 拡張子は `.yml`
++ ASCII の小文字のみ
++ ケバブケース（単語をハイフンでつなぐ）
++ 推奨フォーマット： `test-<機能名>-<success|failure-with-[失敗内容]>.yml`  
+先頭を `test-機能名` にすることで、機能のテストということが分かりやすくなります。  
+また、正常に成功することを確認するテストの場合は `success`、
+異常入力等で失敗することを確認するテストの場合は `failure-with-<失敗内容>` というようにするとわかりやすいです。
+
+例： `test-hoge-success.yml` 、 `test-hoge-failure-with-no-argument.yml`
+
+:::tip
+
+名前等の識別子のフォーマットは統一することが重要なので、 Scenamatica の推奨するフォーマットに従わなくても問題はありません。
+
+:::
+
+この例では、 `test-hoge-success.yml` というファイル名で作成します。
+また、今回の例で想定されたプラグインは、以下の動作をします：
+
++ コマンド `/hoge` を実行すると、 `fuga` というメッセージが表示され、実行者 が死ぬ
+
+### ステップ２. Scenamatica バージョンを記述する
+
+シナリオファイルの先頭には、対応している Scenamatica のバージョンを記述します。  
+これは、プラグインが対応している Scenamatica がサーバのものよりも古い場合に、存在しない機能を参照しないようにするためです。
+
+基本的には検証サーバの Scenamatica のバージョンを記述します。
+
+```yml {1}
+scenamatica: "0.0.1"
+```
+
+### ステップ３. 名前＆説明を記述する
+
+シナリオファイルの次に、シナリオの名前と説明を記述します。
+
+名前(`name`) は、シナリオの一意な識別子として使用されます。そのため、被った場合はエラーとなります。  
+説明(`description`) は、人間が読みやすいような説明文を記述します。
+
+```yaml {2-3}
+scenamatica: "0.0.1"
+name: "test-hoge-success"
+description: "hoge 機能の正常系テスト"
+```
+
+### ステップ4. コンテキストを記述する
+
+コンテキストは、シナリオの実行に必要な環境を記述します。  
+今回のテストでは、プレイヤー `Actor1` がいることを想定しているので、以下のように記述します。また、ネザーで実行するようにしてみましょう。
+
+```yaml {5-}
+scenamatica: "0.0.1"
+name: "test-hoge-success"
+description: "hoge 機能の正常系テスト"
+
+context:
+  actors:
+  - name: Actor1
+  stage:
+    env: NETHER
+```
+
+### ステップ４. トリガを記述する
+
+シナリオの実行には、発火元となるトリガが必要です。  
+トリガは、 `triggers` というキーでオブジェクトのリストの如く記述します。
+
+今回は手動実行のみを想定しているので、 `manual_dispatch` というトリガを記述します。
+
+```yaml {11-}
+scenamatica: "0.0.1"
+name: "test-hoge-success"
+description: "hoge 機能の正常系テスト"
+
+context:
+  actors:
+  - name: Actor1
+  stage:
+    env: NETHER
+
+triggers:
+- type: manual_dispatch
+```
+
+:::tip
+
+今回は上記のトリガのみ実装しましたが、ほかにもいろいろなトリガがあります。
+
+<!-- TODO: トリガの説明 -->
+
+:::
+
+### ステップ５. シナリオを記述する
+
+プラグインの入力と出力をおおまかに抽出し、シナリオ化して記述します。
+
+今回のプラグインの例の機能を箇条書きにすると、以下のようになります。
+
++ コマンド `/hoge` で機能が開始する。
++ `fuga` というメッセージが表示される。
++ 実行者 が死ぬ。
+
+また、今回のシナリオの登場人物として、 `Actor1` が居ます。
+そのため、 Actor01 がコマンド `/hoge` を実行すると、 `fuga` というメッセージが表示され、Actor1 が死ぬ、というシナリオになります。
+
+これらをシナリオ化すると、以下のようになります。
+
+```yaml {14-}
+scenamatica: "0.0.1"
+name: "test-hoge-success"
+description: "hoge 機能の正常系テスト"
+
+context:
+  actors:
+  - name: Actor1
+  stage:
+    env: NETHER
+
+triggers:
+- type: manual_dispatch
+
+scenario:
+- type: command_dispatch
+  command: "/hoge"
+  sender: Actor1
+- type: message_send
+  content: "fuga"
+  recipient: Actor1
+- type: player_death
+  target: Actor1
+```
+
+### ステップ６. シナリオを実行する
+
+シナリオを記述したら、実行してみましょう。
+
+今回の例では、手動実行のトリガを使用するので、 <kbd>/scenamatica run <プラグイン名> test-hoge-success</kbd> と実行します。
+
+:::caution
+
+シナリオが手動実行に対応するには、 `triggers` に `manual_dispatch` が含まれている必要があります。
+
+:::
+
+### ステップ7. 糸冬 了
+
+シナリオが正常に実行されたら、シナリオの記述は完了です。  
+以上でチュートリアルは終了です。お疲れ様でした。
+
+シナリオファイルの完全な構文については[こちら](/docs/use/scenario/file-syntax)を参照してください。
