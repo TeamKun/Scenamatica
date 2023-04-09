@@ -963,11 +963,6 @@
             "on_action"
           ]
         },
-        "argument": {
-          "type": "object",
-          "description": "トリガの種類によっては, このプロパティにトリガの引数を指定します。",
-          "additionalProperties": true
-        },
         "before": {
           "$ref": "#/definitions/scenarios",
           "description": "シナリオがこのトリガによって実行される場合, 本シナリオの実行前に実行するシナリオを定義します。"
@@ -990,11 +985,19 @@
             }
           },
           "then": {
+            "additionalProperties": false
+          }
+        },
+        {
+          "if": {
             "properties": {
-              "argument": {
-                "additionalProperties": false
+              "type": {
+                "const": "on_action"
               }
             }
+          },
+          "then": {
+            "$ref": "#/definitions/action"
           }
         }
       ]
