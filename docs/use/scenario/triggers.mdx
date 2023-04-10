@@ -1,0 +1,43 @@
+import BelowDocument from "/src/components/BelowDocument";
+import { Object, ObjectType } from '/src/components/Object'
+
+# トリガ
+
+シナリオの有効なトリガの種類及びその引数について説明しています。
+
+---
+
+## 概要 {#overview}
+
+:::tip
+
+**シナリオやシナリオファイルの概念が初めての方は[こちら](.)を参照して先に理解しておいてください。**
+
+:::
+
+トリガは、シナリオを実行するための条件を設定するための機能です。  
+
+<BelowDocument docId={"use/scenario/elements"}
+               anchor="trigger"
+               label={"シナリオを構成する要素 | トリガ"}
+/>
+
+## トリガの種類 {#triggers}
+
+トリガは、以下の種類があります。
+
+  * [アクション実行 (`on_action`)](#on_action)
+
+### アクション実行 (`on_action`) トリガ {#on_action}
+
+このトリガは、引数に指定されたアクションが実行されたときにシナリオを実行します。  
+
+:::tip
+
+内部的には、[こちら](/docs/use/scenario/elements#scenario-type-action-execution-expect)のシナリオのアクション実行期待機能と同じです。
+
+:::
+
+#### トリガの引数 {#on_action-arguments}
+
+

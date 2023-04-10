@@ -1,0 +1,29 @@
+.object {
+    border-collapse: collapse;
+    margin: 0 0 1em 0;
+}
+
+.object.header {
+    text-align: center;
+    font-weight: bold;
+    border: 1px solid #ccc;
+    padding: 0.5em;
+}
+
+.object.body {
+    border: 1px solid #ccc;
+    padding: 0.5em;
+}
+
+.header th {
+    padding-left: 50px;
+    padding-right: 50px;
+}
+
+[data-theme="dark"] .required {
+    color: #bfbf00;
+}
+
+[data-theme="light"] .required {
+    color: #404000;
+}
