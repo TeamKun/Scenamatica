@@ -34,9 +34,9 @@ Scenamatica の全ての出力の言語を設定します。 対応している�
 + 型： `Enum{ja_JP, en_US, ja_KS}`
 
 
-### \[[シナリオ](/docs/expressions#scenario)] [シナリオ](/docs/expressions#scenario)の設定 {#scenario}
+### \[シナリオ\] シナリオの設定 {#scenario}
 
-[シナリオ](/docs/expressions#scenario)の実行に関する設定を行います。
+シナリオの実行に関する設定を行います。
 
 #### `scenario`.`enabled` {#scenario-enabled}
 
@@ -51,13 +51,13 @@ Scenamatica の全ての出力の言語を設定します。 対応している�
 + デフォルト値： `true`
 + 型： `Boolean`
 
-### \[[アクター](/docs/expressions#actor)] [アクター](/docs/expressions#actor)の設定 {#actor}
+### [アクター] アクターの設定 {#actor}
 
-[シナリオ](/docs/expressions#scenario)の[アクター](/docs/expressions#actor)に関する設定を行います。
+シナリオのアクター (NPC) に関する設定を行います。
 
 #### `actor`.`maxActors` {#actor-maxActors}
 
-同時に実行できる[アクター](/docs/expressions#actor)の最大数を設定します。
+同時に実行できるアクターの最大数を設定します。
 この設定はサーバ全体に適用されます。
 サーバ全体でアクターの数がこの値を超えると、新しいアクターは実行されず、シナリオはエラーで終了します。
 
@@ -67,14 +67,14 @@ Scenamatica の全ての出力の言語を設定します。 対応している�
 
 #### `actor`.`defaultOP` {#actor-defaultOP}
 
-[アクター](/docs/expressions#actor)のデフォルトの OP 権限を設定します。
+アクターのデフォルトの OP 権限を設定します。
 この値は数値で、大きくなるほどできることが増えます。
 
 - `0` - OP 権限なし
 - `1` - OP 権限あり。スポーン範囲制限を無視できる。
-- `2` -    〃     ちょと多くのコマンドを使用できる。コマンドブロックを使用できる。
-- `3` -    〃     もっといっぱいコマンドを使える。
-- `4` -    〃     ほぼ全てのコマンドを使える。
+- `2` -    〃      ちょと多くのコマンドを使える。コマンドブロックを使える。
+- `3` -    〃      もっといっぱいコマンドを使える。
+- `4` -    〃      ほぼ全てのコマンドを使える。
 
 + デフォルト値： `4`
 + 型： `Integer`
@@ -83,14 +83,14 @@ Scenamatica の全ての出力の言語を設定します。 対応している�
 
 #### `actor`.`permissions` {#actor-permissions}
 
-[アクター](/docs/expressions#actor)に与える権限を設定します。
+アクターに与える権限を設定します。
 
 + デフォルト値： `[]`
 + 型： `String[]`
 
 #### `actor`.`scoreboardTags` {#actor-scoreboardTags}
 
-[アクター](/docs/expressions#actor)に与えるスコアボードタグを設定します。
+アクターに与えるスコアボードタグを設定します。
 
 + デフォルト値： `[]`
 + 型： `String[]`
