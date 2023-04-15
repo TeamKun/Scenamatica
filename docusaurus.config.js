@@ -99,9 +99,14 @@ const config = {
               label: "使い始める",
             },
             {
-              to: "/docs/expressions",
+              to: "/docs/use/scenario",
               position: "left",
-              label: "用語集",
+              label: "シナリオ",
+            },
+            {
+              to: "/docs/use/scenario/file-syntax",
+              position: "left",
+              label: "シナリオの構文",
             },
             {
               type: "docsVersionDropdown",
@@ -135,9 +140,13 @@ const config = {
                   to: "/docs/getting-started",
                 },
                 {
-                  label: "用語集",
-                  to: "/docs/expressions",
+                  label: "シナリオ",
+                  to: "/docs/use/scenario",
                 },
+                {
+                  label: "シナリオの構文",
+                  to: "/docs/use/scenario/file-syntax",
+                }
               ],
             },
             {

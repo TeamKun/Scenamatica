@@ -18,6 +18,7 @@
 .header th {
     padding-left: 50px;
     padding-right: 50px;
+    white-space: nowrap;
 }
 
 [data-theme="dark"] .required {
