@@ -1,11 +1,9 @@
 package net.kunmc.lab.scenamatica.action.actions.player;
 
+import lombok.EqualsAndHashCode;
 import lombok.Value;
-import net.kunmc.lab.scenamatica.action.actions.AbstractAction;
-import net.kunmc.lab.scenamatica.action.utils.PlayerUtils;
 import net.kunmc.lab.scenamatica.action.utils.TextUtils;
 import net.kunmc.lab.scenamatica.commons.utils.MapUtils;
-import net.kunmc.lab.scenamatica.interfaces.action.ActionArgument;
 import net.kunmc.lab.scenamatica.interfaces.action.Requireable;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 import org.bukkit.GameMode;
@@ -21,7 +19,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-public class GameModeAction extends AbstractAction<GameModeAction.GameModeChangeArgument> implements Requireable<GameModeAction.GameModeChangeArgument>
+public class GameModeAction extends AbstractPlayerAction<GameModeAction.GameModeChangeArgument>
+        implements Requireable<GameModeAction.GameModeChangeArgument>
 {
     public static final String KEY_ACTION_NAME = "player_gamemode";
 
@@ -36,12 +35,10 @@ public class GameModeAction extends AbstractAction<GameModeAction.GameModeChange
     {
         argument = this.requireArgsNonNull(argument);
 
-        String target = argument.getTarget();
+        Player targetPlayer = argument.getTarget();
         GameMode gameMode = argument.getGameMode();
         // PlayerGameModeChangeEvent.Cause cause = argument.getCause();  <= EXECUTE では使用不可。
         // String cancelMessage = argument.getCancelMessage(); <= EXECUTE では使用不可。
-
-        Player targetPlayer = PlayerUtils.getPlayerOrThrow(target);
 
         targetPlayer.setGameMode(gameMode);
     }
@@ -49,19 +46,19 @@ public class GameModeAction extends AbstractAction<GameModeAction.GameModeChange
     @Override
     public boolean isFired(@NotNull GameModeChangeArgument argument, @NotNull Plugin plugin, @NotNull Event event)
     {
-        if (!(event instanceof PlayerGameModeChangeEvent))
+        if (!super.isFired(argument, plugin, event))
             return false;
+
+        assert event instanceof PlayerGameModeChangeEvent;
 
         PlayerGameModeChangeEvent e = (PlayerGameModeChangeEvent) event;
 
-        String target = argument.getTarget();
         GameMode gameMode = argument.getGameMode();
         PlayerGameModeChangeEvent.Cause cause = argument.getCause();
         String cancelMessage = argument.getCancelMessage();
 
-        Player targetPlayer = PlayerUtils.getPlayerOrThrow(target);
 
-        return e.getPlayer().equals(targetPlayer) &&
+        return e.getPlayer().getUniqueId().equals(argument.getTarget().getUniqueId()) &&
                 e.getNewGameMode() == gameMode &&
                 e.getCause() == cause &&
                 TextUtils.isSameContent(e.cancelMessage(), cancelMessage);
@@ -78,18 +75,16 @@ public class GameModeAction extends AbstractAction<GameModeAction.GameModeChange
     @Override
     public GameModeChangeArgument deserializeArgument(@NotNull Map<String, Object> map)
     {
-        MapUtils.checkType(map, GameModeChangeArgument.KEY_TARGET, String.class);
         MapUtils.checkEnumName(map, GameModeChangeArgument.KEY_GAME_MODE, GameMode.class);
         MapUtils.checkEnumNameIfContains(map, GameModeChangeArgument.KEY_CANCEL_MESSAGE, PlayerGameModeChangeEvent.Cause.class);
         MapUtils.checkTypeIfContains(map, GameModeChangeArgument.KEY_CANCEL_MESSAGE, String.class);
 
-        String target = (String) map.get(GameModeChangeArgument.KEY_TARGET);
         GameMode gameMode = MapUtils.getAsEnum(map, GameModeChangeArgument.KEY_GAME_MODE, GameMode.class);
         PlayerGameModeChangeEvent.Cause cause = MapUtils.getAsEnum(map, GameModeChangeArgument.KEY_CAUSE, PlayerGameModeChangeEvent.Cause.class);
         String cancelMessage = (String) map.get(GameModeChangeArgument.KEY_CANCEL_MESSAGE);
 
         return new GameModeChangeArgument(
-                target,
+                super.deserializeTarget(map),
                 gameMode,
                 cause,
                 cancelMessage
@@ -101,12 +96,9 @@ public class GameModeAction extends AbstractAction<GameModeAction.GameModeChange
     {
         argument = this.requireArgsNonNull(argument);
 
-        String target = argument.getTarget();
         GameMode gameMode = argument.getGameMode();
 
-        Player targetPlayer = PlayerUtils.getPlayerOrThrow(target);
-
-        return targetPlayer.getGameMode() == gameMode;
+        return argument.getTarget().getGameMode() == gameMode;
     }
 
     @Override
@@ -119,15 +111,21 @@ public class GameModeAction extends AbstractAction<GameModeAction.GameModeChange
     }
 
     @Value
-    public static class GameModeChangeArgument implements ActionArgument
+    @EqualsAndHashCode(callSuper = true)
+    public static class GameModeChangeArgument extends AbstractPlayerActionArgument
     {
-        public static final String KEY_TARGET = "target";
         public static final String KEY_GAME_MODE = "gameMode";
         public static final String KEY_CAUSE = "cause";
         public static final String KEY_CANCEL_MESSAGE = "cancelMessage";
 
-        @NotNull
-        String target;
+        public GameModeChangeArgument(String target, @NotNull GameMode gameMode, @Nullable PlayerGameModeChangeEvent.Cause cause, @Nullable String cancelMessage)
+        {
+            super(target);
+            this.gameMode = gameMode;
+            this.cause = cause;
+            this.cancelMessage = cancelMessage;
+        }
+
         @NotNull
         GameMode gameMode;
         @Nullable
@@ -143,7 +141,7 @@ public class GameModeAction extends AbstractAction<GameModeAction.GameModeChange
 
             GameModeChangeArgument arg = (GameModeChangeArgument) argument;
 
-            return this.target.equals(arg.target) &&
+            return super.isSame(arg) &&
                     this.gameMode == arg.gameMode &&
                     this.cause == arg.cause &&
                     Objects.equals(this.cancelMessage, arg.cancelMessage);
@@ -154,7 +152,7 @@ public class GameModeAction extends AbstractAction<GameModeAction.GameModeChange
         {
             StringBuilder builder = new StringBuilder("GameModeChangeArgument{");
 
-            builder.append("target=").append(this.target);
+            builder.append(super.toString());
             builder.append(", gameMode=").append(this.gameMode);
             if (this.cause != null)
                 builder.append(", cause=").append(this.cause);

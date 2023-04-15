@@ -1,11 +1,9 @@
 package net.kunmc.lab.scenamatica.action.actions.player;
 
-import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Value;
-import net.kunmc.lab.scenamatica.action.actions.AbstractAction;
 import net.kunmc.lab.scenamatica.action.utils.PlayerUtils;
 import net.kunmc.lab.scenamatica.commons.utils.MapUtils;
-import net.kunmc.lab.scenamatica.interfaces.action.ActionArgument;
 import net.kunmc.lab.scenamatica.interfaces.action.Requireable;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 import org.bukkit.entity.Player;
@@ -21,7 +19,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 
-public class PlayerDeathAction extends AbstractAction<PlayerDeathAction.DeathArgument> implements Requireable<PlayerDeathAction.DeathArgument>
+public class PlayerDeathAction extends AbstractPlayerAction<PlayerDeathAction.DeathArgument> implements Requireable<PlayerDeathAction.DeathArgument>
 {
     public static final String KEY_ACTION_NAME = "player_death";
 
@@ -36,11 +34,11 @@ public class PlayerDeathAction extends AbstractAction<PlayerDeathAction.DeathArg
     {
         argument = this.requireArgsNonNull(argument);
 
-        Player target = PlayerUtils.getPlayerOrThrow(argument.getTarget());
-        String killer = argument.getKiller();
-        if (killer != null)
+        Player target = argument.getTarget();
+        String killerName = argument.getKiller();
+        if (killerName != null)
         {
-            Player killerPlayer = PlayerUtils.getPlayerOrThrow(killer);
+            Player killerPlayer = PlayerUtils.getPlayerOrThrow(killerName);
             target.setKiller(killerPlayer);
         }
 
@@ -50,6 +48,9 @@ public class PlayerDeathAction extends AbstractAction<PlayerDeathAction.DeathArg
     @Override
     public boolean isFired(@NotNull DeathArgument argument, @NotNull Plugin plugin, @NotNull Event event)
     {
+        if (!super.isFired(argument, plugin, event))
+            return false;
+
         assert event instanceof PlayerDeathEvent;
         PlayerDeathEvent e = (PlayerDeathEvent) event;
 
@@ -65,7 +66,7 @@ public class PlayerDeathAction extends AbstractAction<PlayerDeathAction.DeathArg
 
     private boolean checkTargetAndKiller(@NotNull DeathArgument argument, @NotNull PlayerDeathEvent event)
     {
-        Player target = PlayerUtils.getPlayerOrThrow(argument.getTarget());
+        Player target = argument.getTarget();
         Player killer = PlayerUtils.getPlayerOrNull(argument.getKiller());
 
         UUID targetUUID = target.getUniqueId();
@@ -145,7 +146,6 @@ public class PlayerDeathAction extends AbstractAction<PlayerDeathAction.DeathArg
     @Override
     public DeathArgument deserializeArgument(@NotNull Map<String, Object> map)
     {
-        MapUtils.checkType(map, DeathArgument.KEY_TARGET, String.class);
         MapUtils.checkTypeIfContains(map, DeathArgument.KEY_KILLER, String.class);
         MapUtils.checkTypeIfContains(map, DeathArgument.KEY_DEATH_MESSAGE, String.class);
         MapUtils.checkTypeIfContains(map, DeathArgument.KEY_NEW_EXP, Integer.class);
@@ -155,7 +155,6 @@ public class PlayerDeathAction extends AbstractAction<PlayerDeathAction.DeathArg
         MapUtils.checkTypeIfContains(map, DeathArgument.KEY_KEEP_INVENTORY, Boolean.class);
         MapUtils.checkTypeIfContains(map, DeathArgument.KEY_DO_EXP_DROP, Boolean.class);
 
-        String target = (String) map.get("target");
         String killer = MapUtils.getOrNull(map, "killer");
 
         String deathMessage = MapUtils.getOrNull(map, "deathMessage");
@@ -168,7 +167,7 @@ public class PlayerDeathAction extends AbstractAction<PlayerDeathAction.DeathArg
         Boolean doExpDrop = MapUtils.getOrNull(map, "doExpDrop");
 
         return new DeathArgument(
-                target,
+                super.deserializeTarget(map),
                 killer,
                 deathMessage,
                 newExp,
@@ -185,10 +184,9 @@ public class PlayerDeathAction extends AbstractAction<PlayerDeathAction.DeathArg
     {
         argument = this.requireArgsNonNull(argument);
 
-        String target = argument.getTarget();
         String killer = argument.getKiller();
 
-        Player targetPlayer = PlayerUtils.getPlayerOrThrow(target);
+        Player targetPlayer = argument.getTarget();
         Player killerPlayer = PlayerUtils.getPlayerOrNull(killer);
 
         return targetPlayer.isDead() &&
@@ -212,10 +210,9 @@ public class PlayerDeathAction extends AbstractAction<PlayerDeathAction.DeathArg
     }
 
     @Value
-    @AllArgsConstructor
-    public static class DeathArgument implements ActionArgument
+    @EqualsAndHashCode(callSuper = true)
+    public static class DeathArgument extends AbstractPlayerActionArgument
     {
-        public static final String KEY_TARGET = "target";
         public static final String KEY_KILLER = "killer";
         public static final String KEY_DEATH_MESSAGE = "deathMessage";
         public static final String KEY_NEW_EXP = "exp";
@@ -225,8 +222,6 @@ public class PlayerDeathAction extends AbstractAction<PlayerDeathAction.DeathArg
         public static final String KEY_KEEP_INVENTORY = "keepInventory";
         public static final String KEY_DO_EXP_DROP = "doExpDrop";
 
-        @NotNull
-        String target;
         @Nullable
         String killer;
         @Nullable
@@ -238,18 +233,17 @@ public class PlayerDeathAction extends AbstractAction<PlayerDeathAction.DeathArg
         Boolean keepInventory;
         Boolean doExpDrop;
 
-        public DeathArgument(@NotNull String target, @Nullable String killer)
+        public DeathArgument(@NotNull String target, @Nullable String killer, @Nullable String deathMessage, int newExp, int newLevel, int newTotalExp, Boolean keepLevel, Boolean keepInventory, Boolean doExpDrop)
         {
-            this.target = target;
+            super(target);
             this.killer = killer;
-            this.deathMessage = null;
-            this.newExp = -1;
-            this.newLevel = -1;
-            this.newTotalExp = -1;
-            this.keepLevel = null;
-            this.keepInventory = null;
-            this.doExpDrop = null;
-
+            this.deathMessage = deathMessage;
+            this.newExp = newExp;
+            this.newLevel = newLevel;
+            this.newTotalExp = newTotalExp;
+            this.keepLevel = keepLevel;
+            this.keepInventory = keepInventory;
+            this.doExpDrop = doExpDrop;
         }
 
         @Override
@@ -267,7 +261,8 @@ public class PlayerDeathAction extends AbstractAction<PlayerDeathAction.DeathArg
 
         private boolean checkTargetAndKiller(@NotNull DeathArgument argument)
         {
-            return this.target.equals(argument.target) && Objects.equals(this.killer, argument.killer);
+            return this.isSameTarget(argument) &&
+                    Objects.equals(this.killer, argument.killer);
         }
 
         private boolean checkDeathMessage(@NotNull DeathArgument argument)
@@ -293,7 +288,7 @@ public class PlayerDeathAction extends AbstractAction<PlayerDeathAction.DeathArg
         public String toString()
         {
             StringBuilder builder = new StringBuilder("DeathArgument{");
-            builder.append("target=").append(this.target);
+            builder.append(super.toString());
             if (this.killer != null)
                 builder.append(", killer=").append(this.killer);
             if (this.deathMessage != null)

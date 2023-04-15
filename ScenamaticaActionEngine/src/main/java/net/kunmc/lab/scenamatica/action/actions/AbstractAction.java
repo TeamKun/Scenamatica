@@ -22,4 +22,5 @@ public abstract class AbstractAction<A extends ActionArgument> implements Action
 
         return argument;
     }
+
 }
