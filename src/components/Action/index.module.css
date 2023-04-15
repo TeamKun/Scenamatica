@@ -1,0 +1,26 @@
+.action {
+    border-collapse: collapse;
+    margin: 0 0 1em 0;
+}
+
+td.name {
+    text-align: center;
+    font-weight: bold;
+    font-size: 1.2em;
+}
+
+[data-theme="dark"] .able {
+    color: #70b870;
+}
+
+[data-theme="light"] .able {
+    color: #008000;
+}
+
+[data-theme="dark"] .unable {
+    color: #b87070;
+}
+
+[data-theme="light"] .unable {
+    color: #8d1a1a;
+}

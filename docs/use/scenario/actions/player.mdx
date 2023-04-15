@@ -1,0 +1,158 @@
+import Action from "/src/components/Action";
+import BelowDocument from "/src/components/BelowDocument";
+import {ObjectType} from "/src/components/Object";
+
+# プレイヤに関連するアクション
+
+プレイヤに関連するアクションを列挙しています。
+
+---
+
+## 記述する際の注意 {#notes}
+
+:::tip
+
+**シナリオやシナリオファイルの概念が初めての方は、先に[こちら](..)を参照して理解しておいてください。**
+
+:::
+
+<BelowDocument docId="use/scenario/file-syntax"
+               label="シナリオファイルを記述する際の注意"
+               anchor="notes"
+/>
+
+## ゲームモード {#gamemode}
+
+<Action name="ゲームモード"
+        description="プレイヤのゲームモードに関するアクションです。"
+        id="player_gamemode"
+        args={[
+          {
+            name: "target",
+            anchor: "target",
+            description: "ゲームモードを変更するプレイヤーです。",
+            type: "プレイヤ",
+            required: true
+          },
+          {
+            name: "gamemode",
+            anchor: "gamemode-gamemode",
+            description: "ゲームモードです。",
+            type: "列挙型{SURVIVAL, CREATIVE, ADVENTURE, SPECTATOR}",
+            required: true,
+          },
+          {
+            name: "cancelMessage",
+            anchor: "gamemode-cancel-message",
+            description: "変更がキャンセルされた場合に表示するメッセージです（Paper)。",
+            type: ObjectType.STRING,
+          }
+        ]}
+        executable requireable watchable
+/>
+
+### `gamemode` {#gamemode-gamemode}
+
+ゲームモードを指定します。  
+
+:::warning
+
+`gamemode` は上記に示す列挙型のみ指定できます。  
+Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `0` 〜 `3`)は指定できません。
+
+:::
+
+### `cancelMessage` {#gamemode-cancel-message}
+
+変更がキャンセルされた場合に表示するメッセージを指定します。
+
+:::tip
+
+この項目は PaperMC による変更で追加された項目です。  
+詳しい動作は各ドキュメントを参照してください。
+
+:::
+
+## プレイヤの死亡およびキル {#death}
+
+<Action name="プレイヤの死亡およびキル"
+        description="プレイヤの死亡およびキルに関するアクションです。"
+        id="player_death"
+        args={[
+          {
+            name: "target",
+            anchor: "target",
+            description: "死亡するプレイヤーです。",
+            type: "プレイヤ",
+            required: true
+          },
+          {
+            name: "killer",
+            description: "殺したプレイヤーです。",
+            type: ObjectType.STRING,
+          },
+          {
+            name: "deathMessage",
+            description: "死亡メッセージです。",
+            type: ObjectType.STRING,
+          },
+          {
+            name: "exp",
+            description: "死亡したプレイヤーの新しい経験値です。",
+            type: ObjectType.INTEGER,
+            default: "(ゲームルールによる)"
+          },
+          {
+            name: "totalExp",
+            description: "死亡したプレイヤーの新しい総経験値です。",
+            type: ObjectType.INTEGER,
+            default: "(ゲームルールによる)"
+            
+          },
+          {
+            name: "keepLevel",
+            description: "死亡したプレイヤーのレベルを保持するかどうかです。",
+            type: ObjectType.BOOLEAN,
+            default: "(ゲームルールによる)"
+          },
+          {
+            name: "keepInventory",
+            description: "死亡したプレイヤーのインベントリ内容を保持するかどうかです。",
+            type: ObjectType.BOOLEAN,
+            default: "(ゲームルールによる)"
+          },
+          {
+            name: "keepExperience",
+            description: "死亡したプレイヤーの経験値を保持するかどうかです。",
+            type: ObjectType.BOOLEAN,
+            default: "(ゲームルールによる)"
+          },
+          {
+            name: "doExpDrop",
+            description: "死亡したプレイヤーの経験値ドロップを行うかどうかです。",
+            type: ObjectType.BOOLEAN,
+            default: "(ゲームルールによる)"
+          }
+        ]}
+        executable requireable watchable
+/>
+
+:::warning コンディションチェック時における注意
+
+`deathMessage`, `exp`, `totalExp`, `keepLevel`, `keepInventory`, `keepExperience`  
+および `doExpDrop` はコンディションチェック時には無視されます。
+
+:::
+
+## 基本引数 {#general-arguments}
+
+### `target` {#target}
+
+対象のプレイヤの名前を指定するには、一律で `target` というキーの引数を使用します。
+
+:::tip
+
+`target` の指定は大文字小文字を区別しません。  
+また、 **UUID でも指定できます**。
+
+:::

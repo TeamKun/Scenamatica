@@ -11,7 +11,7 @@ import { Object, ObjectType } from '/src/components/Object'
 
 :::tip
 
-**シナリオやシナリオファイルの概念が初めての方は[こちら](.)を参照して先に理解しておいてください。**
+**シナリオやシナリオファイルの概念が初めての方は、先に[こちら](..)を参照して理解しておいてください。**
 
 :::
 
@@ -30,14 +30,33 @@ import { Object, ObjectType } from '/src/components/Object'
 
 ### アクション実行 (`on_action`) トリガ {#on_action}
 
-このトリガは、引数に指定されたアクションが実行されたときにシナリオを実行します。  
+引数に指定されたアクションが実行されたときにシナリオを実行します。  
 
 :::tip
 
-内部的には、[こちら](/docs/use/scenario/elements#scenario-type-action-execution-expect)のシナリオのアクション実行期待機能と同じです。
+内部的には、[こちら](/docs/use/scenario/elements#scenario-type-action-execution-expect)
+のシナリオのアクション実行期待機能を~~使いまわし~~利用しています。
 
 :::
 
-#### トリガの引数 {#on_action-arguments}
+引数は以下のとおりです。
 
+<Object objects={[
+  {
+    name: "action",
+    type: ObjectType.STRING,
+    description: "アクションの名前です。",
+  },
+  {
+    name: "with",
+    anchor: "action-with",
+    type: ObjectType.OBJECT,
+    description: "アクションのパラメータです。"
+  },
+]} />
 
+:::tip
+
+アクションのパラメータは、各アクションのドキュメントを参照してください。
+
+:::

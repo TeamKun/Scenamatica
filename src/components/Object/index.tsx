@@ -1,23 +1,26 @@
 import React from "react"
 import styles from "./index.module.css"
 
-type ObjectElement = {
+export type ObjectElement = {
     name: string
     anchor?: string
-    required: boolean
+    required?: boolean
     type: string | ObjectType
     type_anchor?: string
     description?: string
-    default?: string
+    default?: any
 }
 
 export enum ObjectType {
     OBJECT = "オブジェクト",
     ARRAY = "配列",
     STRING = "文字列",
-    NUMBER = "数値",
+    INTEGER = "整数値 (int)",
+    LONG = "整数値 (long)",
+    FLOAT = "単精度浮動小数点数",
+    DOUBLE = "倍精度浮動小数点数",
     BOOLEAN = "真偽値",
-    NULL = "null"
+    NULL = "null",
 }
 
 type ObjectsProps = {
@@ -51,7 +54,7 @@ export const Object: React.FC<ObjectsProps> = ({ objects }) => {
                 <thead>
                 <tr className={styles.objects + " " + styles.header}>
                     <th>キー</th>
-                    <th>タイプ</th>
+                    <th>型</th>
                     <th>必須？</th>
                     <th>説明</th>
                     <th>デフォルト</th>

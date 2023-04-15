@@ -1,0 +1,56 @@
+import Action from "/src/components/Action";
+import BelowDocument from "/src/components/BelowDocument";
+import {ObjectType} from "/src/components/Object";
+
+# チャットに関連するアクション
+
+チャットに関連するアクションを列挙しています。
+
+---
+
+## 記述する際の注意 {#notes}
+
+:::tip
+
+**シナリオやシナリオファイルの概念が初めての方は、先に[こちら](..)を参照して理解しておいてください。**
+
+:::
+
+<BelowDocument docId="use/scenario/file-syntax"
+               label="シナリオファイルを記述する際の注意"
+               anchor="notes"
+/>
+
+## メッセージの送信 {#message}
+
+<Action name="メッセージの送信"
+        description="エンティティにメッセージを送信します。"
+        id="message_send"
+        args={[
+          {
+            name: "content",
+            anchor: "message-content",
+            type: ObjectType.STRING,
+            description: "メッセージの内容",
+            required: true,
+          },
+          {
+            name: "recipient",
+            type: "プレイヤ",
+            description: "メッセージの受信者",
+            required: true
+          }
+        ]}
+        executable requireable watchable
+/>
+
+### `content` {#message-content}
+
+メッセージの内容を文字列で指定します。  
+メッセージの色及び書式は 接頭辞 `§` に続けて[特定の文字](https://minecraft.fandom.com/ja/wiki/Formatting_codes)を指定してください。
+
+:::warning
+
+クリックイベントやホバーイベント等には対応していません。
+
+:::

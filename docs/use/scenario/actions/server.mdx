@@ -1,0 +1,60 @@
+import Action from "/src/components/Action";
+import BelowDocument from "/src/components/BelowDocument";
+import {ObjectType} from "/src/components/Object";
+
+# サーバに関連するアクション
+
+サーバに関連するアクションを列挙しています。
+
+---
+
+## 記述する際の注意 {#notes}
+
+:::tip
+
+**シナリオやシナリオファイルの概念が初めての方は、先に[こちら](..)を参照して理解しておいてください。**
+
+:::
+
+<BelowDocument docId="use/scenario/file-syntax"
+               label="シナリオファイルを記述する際の注意"
+               anchor="notes"
+/>
+
+## コマンドの実行 {#command-dispatch}
+
+<Action name="コマンドの実行"
+        description="コマンドをサーバに送信します。"
+        id="command_dispatch"
+        args={[
+          {
+            name: "command",
+            anchor: "command-dispatch-command",
+            type: "string",
+            description: "実行するコマンドを指定します。",
+            required: true
+          },
+          {
+            name: "sender",
+            anchor: "command-dispatch-sender",
+            type: "プレイヤ",
+            description: "コマンドの実行者を指定します。",
+            default: "<コンソール>"
+          }
+        ]}
+        executable requireable
+/>
+
+### `command` {#command-dispatch-command}
+
+実行するコマンドを指定します。
+
+:::tip
+
+**コマンドの指定には、`/`を付ける必要はありません。**（指定した場合は自動的に除去されます）
+
+:::
+
+### `sender` {#command-dispatch-sender}
+
+コマンドの実行者を指定します。省略した場合は、コンソールが実行者になります。
