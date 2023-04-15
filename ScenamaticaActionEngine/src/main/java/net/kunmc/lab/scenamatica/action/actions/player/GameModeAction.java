@@ -114,7 +114,7 @@ public class GameModeAction extends AbstractPlayerAction<GameModeAction.GameMode
     @EqualsAndHashCode(callSuper = true)
     public static class GameModeChangeArgument extends AbstractPlayerActionArgument
     {
-        public static final String KEY_GAME_MODE = "gameMode";
+        public static final String KEY_GAME_MODE = "gamemode";
         public static final String KEY_CAUSE = "cause";
         public static final String KEY_CANCEL_MESSAGE = "cancelMessage";
 
