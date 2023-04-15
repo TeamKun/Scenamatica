@@ -42,6 +42,11 @@ import {ObjectType} from "/src/components/Object";
             required: true,
           },
           {
+            name: "cause",
+            description: "ゲームモード変更の原因です。",
+            type: "列挙型{PLUGIN, COMMAND, DEFAULT_GAMEMODE, HARDCORE_DEATH, UNKNOWN}"
+          },
+          {
             name: "cancelMessage",
             anchor: "gamemode-cancel-message",
             description: "変更がキャンセルされた場合に表示するメッセージです（Paper)。",
