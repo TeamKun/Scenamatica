@@ -10,7 +10,7 @@ website: https://kunmc.net/
 
 commands:
   scenamatica:
-    aliases: [scenario, scena, scen]
+    aliases: [scenario, scena, scen, sc]
     description: "A command that provides advanced assistance by automating scenario testing for the PaperMC plugin"
     permission: scenamatica.use
 
