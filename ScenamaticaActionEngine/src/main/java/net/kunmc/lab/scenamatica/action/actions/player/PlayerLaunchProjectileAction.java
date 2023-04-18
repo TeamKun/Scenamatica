@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Value;
+import net.kunmc.lab.scenamatica.action.utils.Utils;
 import net.kunmc.lab.scenamatica.commons.utils.MapUtils;
 import net.kunmc.lab.scenamatica.interfaces.action.ActionArgument;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
@@ -72,7 +73,7 @@ public class PlayerLaunchProjectileAction extends AbstractPlayerAction<PlayerLau
         // TODO: Check shooter item
         return /* BeanUtils.isSame(argument.getShooterItem(), e.getItemStack(), false)
                 &&*/ argument.getProjectileType() == projectileType
-                && (argument.getVelocity() == null || argument.getVelocity().normalize().equals(velocity));
+                && (argument.getVelocity() == null || Utils.vectorEquals(argument.getVelocity(), velocity, argument.getEpsilon()));
     }
 
     @Override
