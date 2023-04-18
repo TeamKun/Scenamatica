@@ -161,3 +161,66 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
 また、 **UUID でも指定できます**。
 
 :::
+
+## プレイヤの投げ物の発射 {#projectile-launch}
+
+<Action name="プレイヤの投げ物の発射"
+        description="プレイヤの投げ物の発射に関するアクションです。"
+        id="player_projectile_launch"
+        args={[
+          {
+            name: "target",
+            anchor: "target",
+            description: "投げ物を発射するプレイヤーです。",
+            type: "プレイヤ",
+            required: true
+          },
+          {
+            name: "type",
+            anchor: "projectile-type",
+            description: "発射される投げ物の種類です。",
+            type: "Enum{...}",
+            required: true
+          },
+          {
+            name: "epsilon",
+            anchor: "projectile-epsilon",
+            description: "投げ物の発射ベクトルの誤差です。",
+            type: ObjectType.DOUBLE,
+            default: "0.001"
+          }
+        ]}
+        executable requireable watchable
+/>
+
+### `type` {#projectile-type}
+
+発射される投げ物の種類を指定します。以下の種類が指定できます。
+
+|         種類          | 説明         |
+|:-------------------:|:-----------|
+|       `ARROW`       | 矢          |
+|     `SNOWBALL`      | 雪玉         |
+|        `EGG`        | 卵          |
+|     `FIREBALL`      | ファイアーチャージ  |
+|  `SMALL_FIREBALL`   | 小型の火球      |
+|    `ENDER_PEARL`    | エンダーパール    |
+|   `WITHER_SKULL`    | ウィザーの頭     |
+|  `SHULKER_BULLET`   | シュルカーの弾丸   |
+|  `DRAGON_FIREBALL`  | エンドドラゴンの火球 |
+|      `POTION`       | ポーション      |
+| `EXPERIENCE_BOTTLE` | 経験値ボトル     |
+|       `ITEM`        | アイテム       |
+|     `FIREWORK`      | 花火         |
+|      `TRIDENT`      | トライデント     |
+  
+
+### `epsilon` {#projectile-epsilon}
+
+投げ物をアクションで比較すする際に許容される誤差を指定します。
+
+:::tip
+
+この設定は、 `expect` アクションのみで有効です。
+
+:::
