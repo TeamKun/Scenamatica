@@ -36,7 +36,7 @@ import java.util.Map;
 
 public class PlayerLaunchProjectileAction extends AbstractPlayerAction<PlayerLaunchProjectileAction.PlayerLaunchProjectileActionArgument>
 {
-    public static final String KEY_ACTION_NAME = "player_launch_projectile";
+    public static final String KEY_ACTION_NAME = "player_projectile_launch";
 
     @Override
     public String getName()
