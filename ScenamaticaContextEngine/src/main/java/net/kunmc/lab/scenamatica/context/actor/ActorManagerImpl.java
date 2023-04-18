@@ -11,13 +11,17 @@ import net.kunmc.lab.scenamatica.interfaces.context.ContextManager;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.context.PlayerBean;
 import net.kunmc.lab.scenamatica.settings.ActorSettings;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.kunlab.kpm.utils.ReflectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ActorManagerImpl implements ActorManager
+public class ActorManagerImpl implements ActorManager, Listener
 {
+    private final ScenamaticaRegistry registry;
     private final ContextManager contextManager;
     @Getter
     private final List<Player> actors;
@@ -26,10 +30,18 @@ public class ActorManagerImpl implements ActorManager
 
     public ActorManagerImpl(ScenamaticaRegistry registry, ContextManager contextManager) throws VersionNotSupportedException
     {
+        this.registry = registry;
         this.contextManager = contextManager;
         this.settings = registry.getEnvironment().getActorSettings();
         this.actors = new ArrayList<>();
         this.actorGenerator = getMocker(registry, this);
+
+        this.init();
+    }
+
+    private void init()
+    {
+        this.registry.getPlugin().getServer().getPluginManager().registerEvents(this, this.registry.getPlugin());
     }
 
     private static PlayerMockerBase getMocker(ScenamaticaRegistry registry, ActorManager manager)
@@ -86,4 +98,12 @@ public class ActorManagerImpl implements ActorManager
         return this.actors.stream().parallel()
                 .anyMatch(p -> p.getUniqueId().equals(player.getUniqueId()));
     }
+
+    @EventHandler
+    public void onActorJoin(PlayerJoinEvent e)
+    {
+        if (this.isActor(e.getPlayer()))
+            this.actorGenerator.postActorLogin(e.getPlayer());
+    }
+
 }

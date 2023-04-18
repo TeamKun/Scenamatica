@@ -3,7 +3,6 @@ package net.kunmc.lab.scenamatica.context.actor.nms.v_1_16_R3;
 import com.mojang.authlib.GameProfile;
 import io.netty.buffer.ByteBufAllocator;
 import lombok.SneakyThrows;
-import net.kunmc.lab.peyangpaperutils.lib.utils.Runner;
 import net.kunmc.lab.scenamatica.context.actor.PlayerMockerBase;
 import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
 import net.kunmc.lab.scenamatica.interfaces.context.ActorManager;
@@ -59,24 +58,12 @@ public class PlayerMocker extends PlayerMockerBase
         this.settings = registry.getEnvironment().getActorSettings();
     }
 
-    private void registerPlayer(MinecraftServer server, MockedPlayer player, WorldServer worldServer)
+    private void registerPlayer(MinecraftServer server, MockedPlayer player)
     {
         PlayerList list = server.getPlayerList();
         NetworkManager mockedNetworkManager = new MockedNetworkManager(this, player, server);
         list.a(mockedNetworkManager, player);
         sendSettings(player);
-
-        Runner.runLater(() -> {
-            player.playerConnection = new MockedPlayerConnection(server, mockedNetworkManager, player);
-
-            if (!Bukkit.getWorlds().get(0).getUID().equals(worldServer.getWorld().getUID()))
-            {
-                double x = player.locX();
-                double y = player.locY();
-                double z = player.locZ();
-                player.a(worldServer, x, y, z, player.yaw, player.pitch, PlayerTeleportEvent.TeleportCause.PLUGIN);
-            }
-        }, 1);
     }
 
     @SneakyThrows(IOException.class)
@@ -264,7 +251,7 @@ public class PlayerMocker extends PlayerMockerBase
         if (!dispatchLoginEvent(player.getBukkitEntity()))
             throw new IllegalStateException("Login for " + player.getName() + " was denied.");
 
-        this.registerPlayer(server, player, world != null ? ((CraftWorld) world).getHandle(): worldServer);
+        this.registerPlayer(server, player);
 
         return player.getBukkitEntity();
     }
@@ -298,6 +285,28 @@ public class PlayerMocker extends PlayerMockerBase
     protected Class<?> getLoginListenerClass()
     {
         return LoginListener.class;
+    }
+
+    @Override
+    public void postActorLogin(Player player)
+    {
+        EntityPlayer entityPlayer = ((CraftPlayer) player).getHandle();
+        assert entityPlayer instanceof MockedPlayer;
+        MockedPlayer mockedPlayer = (MockedPlayer) entityPlayer;
+
+        mockedPlayer.playerConnection = new MockedPlayerConnection(
+                mockedPlayer.server,
+                mockedPlayer.playerConnection.networkManager,
+                mockedPlayer
+        );
+
+        WorldServer worldServer = mockedPlayer.getWorldServer();
+        double x = mockedPlayer.locX();
+        double y = mockedPlayer.locY();
+        double z = mockedPlayer.locZ();
+        float yaw = mockedPlayer.yaw;
+        float pitch = mockedPlayer.pitch;
+        mockedPlayer.a(worldServer, x, y, z, yaw, pitch, PlayerTeleportEvent.TeleportCause.PLUGIN);
     }
 
 }

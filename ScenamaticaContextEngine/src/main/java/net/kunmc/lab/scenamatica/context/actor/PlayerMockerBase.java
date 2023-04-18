@@ -44,6 +44,8 @@ public abstract class PlayerMockerBase
 
     protected abstract Class<?> getLoginListenerClass();
 
+    public abstract void postActorLogin(Player player);
+
     @SneakyThrows(UnknownHostException.class)
     protected boolean dispatchLoginEvent(Player player)
     {

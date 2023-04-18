@@ -44,8 +44,8 @@ public class BeanUtils
             List<String> expected = bean.getLore();
             List<Component> actual = meta == null ? null: meta.lore();
 
-            if (actual == null || (strict && actual.size() != expected.size())
-            return false;
+            if (actual == null || (strict && actual.size() != expected.size()))
+                return false;
 
             // Lore を文字列に変換して比較する
             if (expected.stream().anyMatch(s -> actual.stream().noneMatch(c -> TextUtils.isSameContent(c, s))))
@@ -74,8 +74,8 @@ public class BeanUtils
             List<ItemFlag> expected = bean.getItemFlags();
             Set<ItemFlag> actual = meta == null ? null: meta.getItemFlags();
 
-            if (actual == null || (strict && actual.size() != expected.size())
-            return false;
+            if (actual == null || (strict && actual.size() != expected.size()))
+                return false;
 
             if (expected.stream().anyMatch(f -> actual.stream().noneMatch(f::equals)))
                 return false;
