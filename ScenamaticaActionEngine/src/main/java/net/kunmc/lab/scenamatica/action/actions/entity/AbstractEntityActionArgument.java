@@ -10,7 +10,6 @@ import org.jetbrains.annotations.NotNull;
 @AllArgsConstructor
 public abstract class AbstractEntityActionArgument implements ActionArgument
 {
-
     public static final String KEY_TARGET_ENTITY = "target";
 
     @NotNull
