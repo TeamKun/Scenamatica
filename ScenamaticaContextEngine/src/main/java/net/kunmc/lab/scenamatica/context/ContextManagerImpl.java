@@ -23,6 +23,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.spigotmc.SpigotConfig;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,6 +56,10 @@ public class ContextManagerImpl implements ContextManager
 
         this.isWorldPrepared = false;
         this.isActorPrepared = false;
+
+        // ゴミを残さないように
+        SpigotConfig.disablePlayerDataSaving = true;
+        SpigotConfig.userCacheCap = 0;
     }
 
     @Override
@@ -172,5 +177,9 @@ public class ContextManagerImpl implements ContextManager
         this.actorManager.shutdown();
         if (this.stageManager.isStageCreated())
             this.stageManager.destroyStage();  // StageNotCreatedException はチェック済み。
+
+
+        SpigotConfig.disablePlayerDataSaving = false;
+        SpigotConfig.userCacheCap = 1000;  // デフォルト
     }
 }
