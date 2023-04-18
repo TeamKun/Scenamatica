@@ -9,7 +9,7 @@ const config = {
   title: "Scenamatica",
   tagline: "世界初のプラグインのシナリオテスト自動化ツール",
   favicon: "img/favicon.ico",
-  url: "https://teamkun.github.io/ScenamaticaDocs/",
+  url: "https://teamkun.github.io/",
   baseUrl: "/ScenamaticaDocs/",
 
   clientModules: [
