@@ -9,8 +9,8 @@ const config = {
   title: "Scenamatica",
   tagline: "世界初のプラグインのシナリオテスト自動化ツール",
   favicon: "img/favicon.ico",
-  url: "https://scenamatica.kunlab.org/",
-  baseUrl: "/",
+  url: "https://teamkun.github.io/ScenamaticaDocs/",
+  baseUrl: "/ScenamaticaDocs/",
 
   clientModules: [
     require.resolve("@fontsource/jetbrains-mono/index.css"),
