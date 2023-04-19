@@ -397,7 +397,7 @@
               "command"
             ]
           },
-          "server_log": {
+          "log": {
             "properties": {
               "message": {
                 "type": "string",
@@ -1115,6 +1115,18 @@
         "type"
       ],
       "allOf": [
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "manual_dispatch"
+              }
+            }
+          },
+          "then": {
+            "additionalProperties": false
+          }
+        },
         {
           "if": {
             "properties": {
