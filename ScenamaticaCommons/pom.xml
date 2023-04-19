@@ -6,7 +6,7 @@
     <parent>
         <groupId>net.kunmc.lab</groupId>
         <artifactId>Scenamatica</artifactId>
-        <version>0.1.1</version>
+        <version>0.1.2</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -22,7 +22,7 @@
         <dependency>
             <groupId>net.kunmc.lab</groupId>
             <artifactId>ScenamaticaModels</artifactId>
-            <version>0.1.1</version>
+            <version>0.1.2</version>
         </dependency>
     </dependencies>
 </project>
