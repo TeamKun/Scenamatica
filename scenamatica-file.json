@@ -1119,18 +1119,6 @@
           "if": {
             "properties": {
               "type": {
-                "const": "manual_dispatch"
-              }
-            }
-          },
-          "then": {
-            "additionalProperties": false
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "type": {
                 "const": "on_action"
               }
             }
