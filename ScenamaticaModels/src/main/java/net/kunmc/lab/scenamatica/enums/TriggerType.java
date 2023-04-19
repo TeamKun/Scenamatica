@@ -15,7 +15,7 @@ import java.util.Map;
 public enum TriggerType
 {
     MANUAL_DISPATCH("manual_dispatch"),
-    ON_ACTION("action"),
+    ON_ACTION("on_action"),
     SCHEDULE("schedule"),
 
     ;
