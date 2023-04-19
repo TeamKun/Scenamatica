@@ -106,7 +106,7 @@ const config = {
             {
               label: "コマンド",
               position: "left",
-              to: "/docs/use/command",
+              to: "/docs/use/commandS",
             },
             {
               type: "docsVersionDropdown",
@@ -141,7 +141,7 @@ const config = {
                 },
                 {
                   label: "コマンド",
-                  to: "/docs/use/command",
+                  to: "/docs/use/commandS",
                 },
                 {
                   label: "シナリオ",
