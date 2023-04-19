@@ -80,6 +80,7 @@
             "player_gamemode",
             "player_death",
             "player_launch_projectile",
+            "server_log",
             "command_dispatch"
           ]
         },
@@ -1124,6 +1125,11 @@
             }
           },
           "then": {
+            "properties": {
+              "type": {
+                "const": "manual_dispatch"
+              }
+            },
             "additionalProperties": false
           }
         },
