@@ -77,8 +77,9 @@
           "description": "アクションの種類です。 ",
           "enum": [
             "message_send",
-            "player_death",
             "player_gamemode",
+            "player_death",
+            "player_launch_projectile",
             "command_dispatch"
           ]
         },
@@ -117,6 +118,26 @@
           "if": {
             "properties": {
               "action": {
+                "const": "player_gamemode",
+                "description": "プレイヤーのゲームモードを変更したり, 変更されたことを検知, またはゲームモードを判定します。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/player/gamemode"
+              }
+            },
+            "required": [
+              "with"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
                 "const": "player_death",
                 "description": "プレイヤーを殺したり, 殺されたことを検知します。"
               }
@@ -137,15 +158,15 @@
           "if": {
             "properties": {
               "action": {
-                "const": "player_gamemode",
-                "description": "プレイヤーのゲームモードを変更したり, 変更されたことを検知, またはゲームモードを判定します。"
+                "const": "player_projectile_launch",
+                "description": "プレイヤーが投げ物を発射したり, 発射されたことを検知します。"
               }
             }
           },
           "then": {
             "properties": {
               "with": {
-                "$ref": "#/definitions/action/definitions/player/gamemode"
+                "$ref": "#/definitions/action/definitions/player/launch_projectile"
               }
             },
             "required": [
@@ -289,6 +310,55 @@
               "target",
               "gamemode"
             ]
+          },
+          "launch_projectile": {
+            "properties": {
+              "type": {
+                "type": "string",
+                "description": "投げ物の種類です。",
+                "enum": [
+                  "arrow",
+                  "snowball",
+                  "egg",
+                  "fireball",
+                  "small_fireball",
+                  "ender_pearl",
+                  "wither_skull",
+                  "shulker_bullet",
+                  "dragon_fireball",
+                  "potion",
+                  "experience_bottle",
+                  "item",
+                  "firework",
+                  "trident",
+                  "ARROW",
+                  "SNOWBALL",
+                  "EGG",
+                  "FIREBALL",
+                  "SMALL_FIREBALL",
+                  "ENDER_PEARL",
+                  "WITHER_SKULL",
+                  "SHULKER_BULLET",
+                  "DRAGON_FIREBALL",
+                  "POTION",
+                  "EXPERIENCE_BOTTLE",
+                  "ITEM",
+                  "FIREWORK",
+                  "TRIDENT"
+                ]
+              },
+              "velocity": {
+                "description": "投げ物の速度や向きです。",
+                "$ref": "#/definitions/vector"
+              },
+              "epsilon": {
+                "description": "投げ物の速度や向きを比較する際に許容する誤差です。",
+                "$ref": "#/definitions/vector"
+              }
+            },
+            "required": [
+              "type"
+            ]
           }
         },
         "server": {
@@ -345,6 +415,10 @@
         "y",
         "z"
       ]
+    },
+    "vector": {
+      "description": "ベクトルです。",
+      "$ref": "#/definitions/location"
     },
     "entity": {
       "type": "object",
