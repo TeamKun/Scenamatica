@@ -32,8 +32,6 @@ export const Object: React.FC<ObjectsProps> = ({ objects }) => {
         const name = element.anchor ? <a href={"#" + element.anchor}>{element.name}</a>: element.name
         const required = element.required ? <span className={styles.required}>必須</span>: "任意"
 
-        console.log(typeof element.type_anchor, element.type_anchor)
-
         const typeNameStr = typeof element.type === "string" ? element.type : (element.type as ObjectType)
         const typeName = element.type_anchor ? <a href={"#" + element.type_anchor}>{typeNameStr}</a>: typeNameStr
 
