@@ -2,6 +2,7 @@ package net.kunmc.lab.scenamatica.action;
 
 import lombok.Getter;
 import net.kunmc.lab.peyangpaperutils.lib.utils.Runner;
+import net.kunmc.lab.scenamatica.action.actions.server.log.ServerLogHandler;
 import net.kunmc.lab.scenamatica.enums.WatchType;
 import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
 import net.kunmc.lab.scenamatica.interfaces.action.Action;
@@ -30,6 +31,7 @@ public class ActionManagerImpl implements ActionManager
     @Getter
     private final WatcherManager watcherManager;
     private final Deque<CompiledAction<?>> actionQueue;
+    private final ServerLogHandler serverLogHandler;
 
     private BukkitTask runner;
 
@@ -39,6 +41,7 @@ public class ActionManagerImpl implements ActionManager
         this.compiler = new ActionCompilerImpl();
         this.watcherManager = new WatcherManagerImpl(registry);
         this.actionQueue = new ArrayDeque<>();
+        this.serverLogHandler = new ServerLogHandler(registry.getPlugin().getServer());
 
         this.runner = null;
     }
@@ -46,6 +49,8 @@ public class ActionManagerImpl implements ActionManager
     @Override
     public void init()
     {
+        this.serverLogHandler.init();
+
         this.runner = Runner.runTimer(this.registry.getPlugin(), () -> {
             if (this.actionQueue.isEmpty())
                 return;
@@ -79,6 +84,7 @@ public class ActionManagerImpl implements ActionManager
     @Override
     public void shutdown()
     {
+        this.serverLogHandler.shutdown();
         this.actionQueue.clear();
         if (this.runner != null)
             this.runner.cancel();

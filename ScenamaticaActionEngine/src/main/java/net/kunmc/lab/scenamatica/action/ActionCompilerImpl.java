@@ -5,6 +5,7 @@ import net.kunmc.lab.scenamatica.action.actions.player.GameModeAction;
 import net.kunmc.lab.scenamatica.action.actions.player.PlayerDeathAction;
 import net.kunmc.lab.scenamatica.action.actions.player.PlayerLaunchProjectileAction;
 import net.kunmc.lab.scenamatica.action.actions.server.CommandDispatchAction;
+import net.kunmc.lab.scenamatica.action.actions.server.log.ServerLogAction;
 import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
 import net.kunmc.lab.scenamatica.interfaces.action.Action;
 import net.kunmc.lab.scenamatica.interfaces.action.ActionArgument;
@@ -37,6 +38,7 @@ public class ActionCompilerImpl implements ActionCompiler
 
         // サーバーのアクション
         {
+            ACTIONS.add(new ServerLogAction());
             ACTIONS.add(new CommandDispatchAction());
         }
     }
