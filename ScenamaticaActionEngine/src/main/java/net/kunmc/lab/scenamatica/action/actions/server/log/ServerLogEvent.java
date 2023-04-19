@@ -1,18 +1,15 @@
 package net.kunmc.lab.scenamatica.action.actions.server.log;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.apache.logging.log4j.Level;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.logging.Level;
 
 /**
  * サーバのログが出力されたときに呼び出されるイベントです。
  */
 @Getter
-@AllArgsConstructor
 public class ServerLogEvent extends Event
 {
     private static final HandlerList HANDLER_LIST = new HandlerList();
@@ -31,6 +28,14 @@ public class ServerLogEvent extends Event
      */
     @NotNull
     private final Level level;
+
+    public ServerLogEvent(@NotNull String sender, @NotNull String message, @NotNull Level level)
+    {
+        super(true);
+        this.sender = sender;
+        this.message = message;
+        this.level = level;
+    }
 
     @NotNull
     public static HandlerList getHandlerList()

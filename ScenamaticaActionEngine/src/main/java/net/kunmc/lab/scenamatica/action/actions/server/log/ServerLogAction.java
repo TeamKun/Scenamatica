@@ -5,7 +5,9 @@ import net.kunmc.lab.scenamatica.action.actions.AbstractAction;
 import net.kunmc.lab.scenamatica.commons.utils.MapUtils;
 import net.kunmc.lab.scenamatica.interfaces.action.ActionArgument;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
-import org.bukkit.Bukkit;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.bukkit.event.Event;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
@@ -15,8 +17,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.logging.Level;
-import java.util.logging.LogRecord;
 
 public class ServerLogAction extends AbstractAction<ServerLogAction.ServerLogActionArgument>
 {
@@ -33,16 +33,10 @@ public class ServerLogAction extends AbstractAction<ServerLogAction.ServerLogAct
     {
         argument = this.requireArgsNonNull(argument);
 
-        LogRecord record = new LogRecord(
-                argument.getLevel() == null ? Level.INFO: argument.getLevel(),
-                argument.getMessage()
-        );
+        Logger logger = argument.getSource() == null ? LogManager.getRootLogger(): LogManager.getLogger(argument.getSource());
+        Level level = argument.getLevel() == null ? Level.INFO: argument.getLevel();
 
-        record.setSourceClassName("net.kunmc.lab.scenamatica.action.actions.server.log.ServerLogAction");
-        record.setSourceMethodName("execute");
-        record.setLoggerName(argument.getSource() == null ? "ScenarioEngine": argument.getSource());
-
-        Bukkit.getLogger().log(record);
+        logger.log(level, argument.getMessage());
     }
 
     @Override
@@ -58,7 +52,7 @@ public class ServerLogAction extends AbstractAction<ServerLogAction.ServerLogAct
         if (argument.getSource() != null && !argument.getSource().equalsIgnoreCase(sender))
             return false;
 
-        if (argument.getLevel() != null && !argument.getLevel().getName().equalsIgnoreCase(serverLogEvent.getLevel().getName()))
+        if (argument.getLevel() != null && !argument.getLevel().equals(serverLogEvent.getLevel()))
             return false;
 
         return message.matches(argument.getMessage());
@@ -80,9 +74,6 @@ public class ServerLogAction extends AbstractAction<ServerLogAction.ServerLogAct
 
         result = result.toUpperCase();
 
-        if (result.equals("WARN"))
-            result = "WARNING";
-
         if (result.equals("OFF") || result.equals("ALL"))
             throw new IllegalArgumentException("Illegal log level: " + original + " is not allowed here.");
 
@@ -92,6 +83,7 @@ public class ServerLogAction extends AbstractAction<ServerLogAction.ServerLogAct
     @Override
     public ServerLogActionArgument deserializeArgument(@NotNull Map<String, Object> map)
     {
+
         MapUtils.checkType(map, ServerLogActionArgument.KEY_MESSAGE, String.class);
 
         String source = String.valueOf(map.get(ServerLogActionArgument.KEY_SOURCE));
@@ -99,14 +91,11 @@ public class ServerLogAction extends AbstractAction<ServerLogAction.ServerLogAct
 
         Level level = null;
         if (map.containsKey(ServerLogActionArgument.KEY_LEVEL))
-            try
-            {
-                level = Level.parse(normalizeLevelName(String.valueOf(map.get(ServerLogActionArgument.KEY_LEVEL))));
-            }
-            catch (IllegalArgumentException e)
-            {
-                throw new IllegalArgumentException("Invalid log level: " + map.get(ServerLogActionArgument.KEY_LEVEL));
-            }
+        {
+            level = Level.getLevel(normalizeLevelName(String.valueOf(map.get(ServerLogActionArgument.KEY_LEVEL))));
+            if (level == null)
+                throw new IllegalArgumentException("Illegal log level: " + map.get(ServerLogActionArgument.KEY_LEVEL));
+        }
 
         return new ServerLogActionArgument(source, level, message);
     }
