@@ -46,12 +46,12 @@ public class MilestoneReachedEvent extends Event implements Cancellable
     @Override
     public boolean isCancelled()
     {
-        return this.milestone.isReached();
+        return this.cancelled;
     }
 
     @Override
     public void setCancelled(boolean cancel)
     {
-        this.milestone.setReached(cancel);
+        this.cancelled = cancel;
     }
 }
