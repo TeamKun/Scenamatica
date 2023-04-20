@@ -100,6 +100,8 @@ public class ScenarioEngineImpl implements ScenarioEngine
 
         // トリガの before/after のコンパイル
         this.triggerActions = this.compileTriggerActions(scenario.getTriggers(), compileNeeded);
+
+        this.registry.getTriggerManager().bakeTriggers(this);
     }
 
     private static List<Pair<Action<?>, ActionArgument>> toActions(List<? extends CompiledScenarioAction<?>> actions)

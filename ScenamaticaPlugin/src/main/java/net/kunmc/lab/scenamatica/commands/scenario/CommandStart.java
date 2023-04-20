@@ -6,6 +6,7 @@ import net.kunmc.lab.peyangpaperutils.lang.MsgArgs;
 import net.kunmc.lab.peyangpaperutils.lib.command.CommandBase;
 import net.kunmc.lab.peyangpaperutils.lib.terminal.Terminal;
 import net.kunmc.lab.scenamatica.enums.TriggerType;
+import net.kunmc.lab.scenamatica.exceptions.scenario.ScenarioException;
 import net.kunmc.lab.scenamatica.exceptions.scenario.ScenarioNotFoundException;
 import net.kunmc.lab.scenamatica.exceptions.scenario.TriggerNotFoundException;
 import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
@@ -58,13 +59,21 @@ public class CommandStart extends CommandBase
                 return;
             }
 
-            scenarioMap.entrySet().stream()
-                    .filter(entry -> entry.getValue().getTriggers().stream().parallel()
-                            .anyMatch(trigger -> trigger.getType() == TriggerType.MANUAL_DISPATCH))
-                    .sorted(Map.Entry.comparingByKey())
-                    .forEach(entry -> {
-                        String scenarioName = entry.getKey();
-                        this.queueScenarioRun(terminal, plugin, scenarioName);
+            scenarioMap.values()
+                    .forEach(s -> {
+                        try
+                        {
+                            this.registry.getTriggerManager().performTriggerFire(
+                                    plugin,
+                                    s.getName(),
+                                    TriggerType.MANUAL_DISPATCH,
+                                    null
+                            );
+                        }
+                        catch (ScenarioException e)
+                        {
+                            throw new RuntimeException(e);
+                        }
                     });
         }
         else

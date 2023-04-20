@@ -86,8 +86,8 @@ public class ServerLogAction extends AbstractAction<ServerLogAction.ServerLogAct
 
         MapUtils.checkType(map, ServerLogActionArgument.KEY_MESSAGE, String.class);
 
-        String source = String.valueOf(map.get(ServerLogActionArgument.KEY_SOURCE));
-        String message = String.valueOf(map.get(ServerLogActionArgument.KEY_MESSAGE));
+        String source = (String) map.get(ServerLogActionArgument.KEY_SOURCE);
+        String message = (String) map.get(ServerLogActionArgument.KEY_MESSAGE);
 
         Level level = null;
         if (map.containsKey(ServerLogActionArgument.KEY_LEVEL))

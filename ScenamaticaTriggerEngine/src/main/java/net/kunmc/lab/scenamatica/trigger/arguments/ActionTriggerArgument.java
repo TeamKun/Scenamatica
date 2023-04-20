@@ -2,6 +2,7 @@ package net.kunmc.lab.scenamatica.trigger.arguments;
 
 import lombok.Value;
 import net.kunmc.lab.scenamatica.commons.utils.MapUtils;
+import net.kunmc.lab.scenamatica.interfaces.scenariofile.action.ActionBean;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.HashMap;
@@ -13,19 +14,19 @@ import java.util.Objects;
  * アクショントリガーの引数を表すインターフェースです。
  */
 @Value
-public class ActionTriggerArgument implements TriggerArgument
+public class ActionTriggerArgument implements TriggerArgument, ActionBean
 {
     private static final String KEY_ACTION_TYPE = "action";
     private static final String KEY_ACTION_ARGS = "with";
 
-    String actionType;
-    Map<String, Object> actionArguments;
+    String type;
+    Map<String, Object> arguments;
 
     public static Map<String, Object> serialize(ActionTriggerArgument argument)
     {
         Map<String, Object> result = new HashMap<>();
-        result.put(KEY_ACTION_TYPE, argument.actionType.toLowerCase(Locale.ROOT));
-        MapUtils.putIfNotNull(result, KEY_ACTION_ARGS, argument.actionArguments);
+        result.put(KEY_ACTION_TYPE, argument.type.toLowerCase(Locale.ROOT));
+        MapUtils.putIfNotNull(result, KEY_ACTION_ARGS, argument.arguments);
 
         return result;
     }
@@ -58,7 +59,7 @@ public class ActionTriggerArgument implements TriggerArgument
     public boolean isSame(TriggerArgument argument)
     {
         return argument instanceof ActionTriggerArgument
-                && Objects.equals(this.actionType, ((ActionTriggerArgument) argument).actionType)
-                && this.actionArguments.equals(((ActionTriggerArgument) argument).actionArguments);
+                && Objects.equals(this.type, ((ActionTriggerArgument) argument).type)
+                && this.arguments.equals(((ActionTriggerArgument) argument).arguments);
     }
 }

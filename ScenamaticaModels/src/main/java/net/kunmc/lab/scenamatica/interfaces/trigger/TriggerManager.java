@@ -2,13 +2,11 @@ package net.kunmc.lab.scenamatica.interfaces.trigger;
 
 import net.kunmc.lab.scenamatica.enums.TriggerType;
 import net.kunmc.lab.scenamatica.exceptions.scenario.ScenarioException;
+import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioEngine;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
-import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerBean;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
 
 /**
  * トリガを管理するインタフェースです。
@@ -16,12 +14,11 @@ import java.util.List;
 public interface TriggerManager
 {
     /**
-     * トリガを追加します。
+     * シナリオのトリガを登録します。
      *
-     * @param scenarioName シナリオ名
-     * @param trigger      トリガ
+     * @param engine エンジン
      */
-    void addTrigger(@NotNull String scenarioName, List<? extends TriggerBean> trigger);
+    void bakeTriggers(@NotNull ScenarioEngine engine);
 
     /**
      * トリガを実行します。
