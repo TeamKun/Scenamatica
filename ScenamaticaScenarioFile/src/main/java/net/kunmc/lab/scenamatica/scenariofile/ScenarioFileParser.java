@@ -86,6 +86,14 @@ public class ScenarioFileParser
                 try (InputStream zis = zip.getInputStream(entry))
                 {
                     ScenarioFileBean scenario = fromInputStream(zis, fileName);
+                    if (map.containsKey(scenario.getName()))
+                        throw new IllegalStateException(String.format(
+                                "Duplicated scenario name: %s(%s, %s)",
+                                scenario.getName(),
+                                map.get(scenario.getName()).getDescription(),
+                                scenario.getDescription()
+                        ));
+
                     map.put(scenario.getName(), scenario);
                 }
                 catch (NotAScenarioFileException ignored)

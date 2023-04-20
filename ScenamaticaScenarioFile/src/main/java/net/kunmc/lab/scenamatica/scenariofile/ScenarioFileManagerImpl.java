@@ -64,7 +64,7 @@ public class ScenarioFileManagerImpl implements ScenarioFileManager
             Version fileVersion = scenario.getScenamaticaVersion();
 
             // このScenamatica より新しいバージョンのファイルは読み込まない
-            if (baseVersion.isNewerThan(fileVersion))
+            if (fileVersion.isNewerThan(baseVersion))
                 throw new InvalidScenarioFileException(
                         "The scenario file " + scenario.getName() + " is newer than running Scenamatica daemon version." +
                                 " (File version: " + fileVersion + ", Scenamatica version: " + baseVersion + ")");
