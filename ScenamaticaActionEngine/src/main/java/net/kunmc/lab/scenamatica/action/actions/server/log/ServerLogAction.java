@@ -3,6 +3,7 @@ package net.kunmc.lab.scenamatica.action.actions.server.log;
 import lombok.Value;
 import net.kunmc.lab.scenamatica.action.actions.AbstractAction;
 import net.kunmc.lab.scenamatica.commons.utils.MapUtils;
+import net.kunmc.lab.scenamatica.events.actions.server.ServerLogEvent;
 import net.kunmc.lab.scenamatica.interfaces.action.ActionArgument;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 import org.apache.logging.log4j.Level;

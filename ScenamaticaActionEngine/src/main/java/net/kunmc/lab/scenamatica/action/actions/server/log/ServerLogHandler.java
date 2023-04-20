@@ -1,5 +1,6 @@
 package net.kunmc.lab.scenamatica.action.actions.server.log;
 
+import net.kunmc.lab.scenamatica.events.actions.server.ServerLogEvent;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.LogEvent;

@@ -1,4 +1,4 @@
-package net.kunmc.lab.scenamatica.action.actions.server.log;
+package net.kunmc.lab.scenamatica.events.actions.server;
 
 import lombok.Getter;
 import org.apache.logging.log4j.Level;
