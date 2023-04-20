@@ -28,7 +28,7 @@ public class MilestoneManagerImpl implements MilestoneManager
     @Override
     public boolean reachMilestone(@NotNull ScenarioEngine engine, @NotNull String name)
     {
-        return this.reachMilestone(engine, name, MilestoneScope.SCENARIO_GLOBAL);
+        return this.reachMilestone(engine, name, MilestoneScope.fromState(engine.getState()));
     }
 
     @Override
