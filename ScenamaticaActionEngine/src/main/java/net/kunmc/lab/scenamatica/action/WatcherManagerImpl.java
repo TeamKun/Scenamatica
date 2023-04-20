@@ -21,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 public class WatcherManagerImpl implements WatcherManager
@@ -105,6 +106,24 @@ public class WatcherManagerImpl implements WatcherManager
         for (WatchingEntry<?> entry : entries)
             entry.unregister();
         this.actionWatchers.removeAll(plugin);
+    }
+
+    @Override
+    public void unregisterWatchers(@NotNull Plugin plugin, @NotNull WatchType type)
+    {
+        if (!this.actionWatchers.containsKey(plugin))
+            throw new IllegalStateException("The plugin " + plugin.getName() + " is not registered.");
+
+        Iterator<WatchingEntry<?>> iterator = this.actionWatchers.get(plugin).iterator();
+        while (iterator.hasNext())
+        {
+            WatchingEntry<?> entry = iterator.next();
+            if (entry.getType() != type)
+                continue;
+
+            entry.unregister();
+            iterator.remove();
+        }
     }
 
     @Override

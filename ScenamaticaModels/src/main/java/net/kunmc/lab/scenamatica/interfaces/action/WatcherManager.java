@@ -53,6 +53,14 @@ public interface WatcherManager
     void unregisterWatchers(@NotNull Plugin plugin);
 
     /**
+     * プラグインの指定された種類の監視を解除します。
+     *
+     * @param plugin 監視を解除するプラグイン
+     * @param type   監視を解除する種類
+     */
+    void unregisterWatchers(@NotNull Plugin plugin, @NotNull WatchType type);
+
+    /**
      * 監視を解除します。
      *
      * @param entry 監視を解除する登録情報

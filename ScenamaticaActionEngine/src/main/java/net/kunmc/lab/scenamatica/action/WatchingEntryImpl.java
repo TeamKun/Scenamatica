@@ -44,6 +44,8 @@ public class WatchingEntryImpl<A extends ActionArgument> implements WatchingEntr
             if (this.action.isFired(this.argument, WatchingEntryImpl.this.engine, event))
             {
                 this.manager.onActionFired(WatchingEntryImpl.this, event);
+                if (this.type == WatchType.SCENARIO)
+                    WatchingEntryImpl.this.unregister();  // シナリオのアクションは一度だけ実行するようにする。(トリガは複数)
             }
         };
 

@@ -132,8 +132,8 @@ public class MilestoneManagerImpl implements MilestoneManager
                     this,
                     name,
                     engine.getPlugin(),
-                    scope,
-                    engine
+                    engine,
+                    scope
             );
             this.milestones.put(engine, entry);
         }
