@@ -1,3 +1,8 @@
+import Action from "/src/components/Action";
+import BelowDocument from "/src/components/BelowDocument";
+import {ObjectType} from "/src/components/Object";
+
+
 # アクション
 
 シナリオの有効なアクションの一覧です。
@@ -26,3 +31,37 @@
   チャットメッセージの送信など
 + [サーバ関連](server)  
   コマンドの送信など
+
+## 特にページを分ける程でもないアクション {#general-actions}
+
+### マイルストーンの達成 {#milestone}
+
+:::tip
+
+マイルストーンシステムの概要と詳しい使い方は以下のページを参照してください。
+
+<BelowDocument docId="use/scenario/milestone"
+               label="マイルストーンシステムの概要"
+/>
+
+:::
+
+<Action name="マイルストーンの達成"
+        description="Scenamatica マイルストーンを達成したことを検知/設定します。"
+        id="milestone"
+        args={[
+          {
+            name: "name",
+            description: "マイルストーンの名前です。",
+            type: ObjectType.STRING,
+            required: true
+          },
+          {
+            name: "reached",
+            description: "マイルストーンを達成したかどうかを設定します。"
+            type: ObjectType.BOOLEAN,
+            default: true
+          }
+        ]}
+        executable requireable watchable
+/>
