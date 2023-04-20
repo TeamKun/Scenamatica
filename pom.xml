@@ -19,6 +19,7 @@
         <module>ScenamaticaDaemon</module>
         <module>ScenamaticaTriggerEngine</module>
         <module>ScenamaticaScenarioEngine</module>
+        <module>ScenamaticaAPI</module>
     </modules>
 
     <name>Scenamatica</name>
