@@ -61,12 +61,19 @@ public class ActionManagerImpl implements ActionManager
     }
 
     @Override
-    public <A extends ActionArgument> CompiledAction<A> queueExecute(@NotNull Action<A> action,
+    public <A extends ActionArgument> CompiledAction<A> queueExecute(@NotNull ScenarioEngine engine,
+                                                                     @NotNull Action<A> action,
                                                                      @Nullable A argument,
                                                                      @Nullable BiConsumer<CompiledAction<A>, Throwable> onEexception,
                                                                      @Nullable Consumer<CompiledAction<A>> onSuccess)
     {
-        CompiledAction<A> entry = new CompiledActionImpl<>(action, argument, onEexception, onSuccess);
+        CompiledAction<A> entry = new CompiledActionImpl<>(
+                engine,
+                action,
+                argument,
+                onEexception,
+                onSuccess
+        );
         this.actionQueue.add(entry);
         return entry;
     }

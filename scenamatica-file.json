@@ -81,7 +81,8 @@
             "player_death",
             "player_launch_projectile",
             "server_log",
-            "command_dispatch"
+            "command_dispatch",
+            "milestone"
           ]
         },
         "with": {
@@ -208,6 +209,26 @@
             "properties": {
               "with": {
                 "$ref": "#/definitions/action/definitions/server/log"
+              }
+            },
+            "required": [
+              "with"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "milestone",
+                "description": "マイルストーンを達成したり, 達成されたことを検知します。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/scenamatica/milestone"
               }
             },
             "required": [
@@ -441,6 +462,23 @@
             },
             "required": [
               "message"
+            ]
+          }
+        },
+        "scenamatica": {
+          "milestone": {
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "マイルストーンの名前です。"
+              },
+              "reached": {
+                "type": "boolean",
+                "description": "マイルストーンに到達したかどうかです。検証時はこれと比較します。"
+              }
+            },
+            "required": [
+              "name"
             ]
           }
         }

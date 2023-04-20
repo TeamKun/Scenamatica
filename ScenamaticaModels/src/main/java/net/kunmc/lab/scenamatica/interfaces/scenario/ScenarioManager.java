@@ -16,10 +16,17 @@ import org.jetbrains.annotations.Nullable;
 public interface ScenarioManager
 {
     /**
+     * マイルストーンマネージャーを取得します。
+     */
+    @NotNull
+    MilestoneManager getMilestoneManager();
+
+    /**
      * このシナリオマネージャーを初期化します。
      */
 
     void init();
+
     /**
      * シナリオが実行中かどうかを返します。
      *
