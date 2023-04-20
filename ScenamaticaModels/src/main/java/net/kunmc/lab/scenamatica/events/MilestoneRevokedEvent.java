@@ -3,6 +3,7 @@ package net.kunmc.lab.scenamatica.events;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import net.kunmc.lab.scenamatica.interfaces.scenario.MilestoneEntry;
+import org.bukkit.Bukkit;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
@@ -19,7 +20,14 @@ public class MilestoneRevokedEvent extends Event
     /**
      * 取り消しされるマイルストーンです。
      */
+    @NotNull
     MilestoneEntry entry;
+
+    public MilestoneRevokedEvent(@NotNull MilestoneEntry entry)
+    {
+        super(!Bukkit.isPrimaryThread());  // これをしないとエラーが出る
+        this.entry = entry;
+    }
 
     @NotNull
     public static HandlerList getHandlerList()

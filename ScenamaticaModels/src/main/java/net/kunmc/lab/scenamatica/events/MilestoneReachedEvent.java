@@ -2,6 +2,7 @@ package net.kunmc.lab.scenamatica.events;
 
 import lombok.Getter;
 import net.kunmc.lab.scenamatica.interfaces.scenario.MilestoneEntry;
+import org.bukkit.Bukkit;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
@@ -26,7 +27,7 @@ public class MilestoneReachedEvent extends Event implements Cancellable
 
     public MilestoneReachedEvent(@NotNull MilestoneEntry milestone)
     {
-        super(/* isAsync: */ true);
+        super(!Bukkit.isPrimaryThread());  // これをしないとエラーが出る
         this.milestone = milestone;
     }
 

@@ -2,6 +2,7 @@ package net.kunmc.lab.scenamatica.events.actions.server;
 
 import lombok.Getter;
 import org.apache.logging.log4j.Level;
+import org.bukkit.Bukkit;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
@@ -31,7 +32,7 @@ public class ServerLogEvent extends Event
 
     public ServerLogEvent(@NotNull String sender, @NotNull String message, @NotNull Level level)
     {
-        super(true);
+        super(!Bukkit.isPrimaryThread());  // これをしないとエラーが出る
         this.sender = sender;
         this.message = message;
         this.level = level;
