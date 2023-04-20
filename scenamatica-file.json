@@ -1153,6 +1153,7 @@
       "required": [
         "type"
       ],
+      "additionalProperties": false,
       "allOf": [
         {
           "if": {
@@ -1167,8 +1168,7 @@
               "type": {
                 "const": "manual_dispatch"
               }
-            },
-            "additionalProperties": false
+            }
           }
         },
         {
