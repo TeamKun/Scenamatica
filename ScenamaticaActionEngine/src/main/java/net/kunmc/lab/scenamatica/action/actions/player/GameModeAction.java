@@ -5,12 +5,12 @@ import lombok.Value;
 import net.kunmc.lab.scenamatica.action.utils.TextUtils;
 import net.kunmc.lab.scenamatica.commons.utils.MapUtils;
 import net.kunmc.lab.scenamatica.interfaces.action.Requireable;
+import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioEngine;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
-import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -31,7 +31,7 @@ public class GameModeAction extends AbstractPlayerAction<GameModeAction.GameMode
     }
 
     @Override
-    public void execute(@Nullable GameModeChangeArgument argument)
+    public void execute(@NotNull ScenarioEngine engine, @Nullable GameModeChangeArgument argument)
     {
         argument = this.requireArgsNonNull(argument);
 
@@ -44,9 +44,9 @@ public class GameModeAction extends AbstractPlayerAction<GameModeAction.GameMode
     }
 
     @Override
-    public boolean isFired(@NotNull GameModeChangeArgument argument, @NotNull Plugin plugin, @NotNull Event event)
+    public boolean isFired(@NotNull GameModeChangeArgument argument, @NotNull ScenarioEngine engine, @NotNull Event event)
     {
-        if (!super.isFired(argument, plugin, event))
+        if (!super.isFired(argument, engine, event))
             return false;
 
         assert event instanceof PlayerGameModeChangeEvent;
@@ -92,7 +92,7 @@ public class GameModeAction extends AbstractPlayerAction<GameModeAction.GameMode
     }
 
     @Override
-    public boolean isConditionFulfilled(@Nullable GameModeChangeArgument argument, @NotNull Plugin plugin)
+    public boolean isConditionFulfilled(@Nullable GameModeChangeArgument argument, @NotNull ScenarioEngine engine)
     {
         argument = this.requireArgsNonNull(argument);
 

@@ -7,6 +7,7 @@ import net.kunmc.lab.peyangpaperutils.lang.MsgArgs;
 import net.kunmc.lab.peyangpaperutils.lib.utils.Pair;
 import net.kunmc.lab.scenamatica.commons.utils.LogUtils;
 import net.kunmc.lab.scenamatica.commons.utils.ThreadingUtil;
+import net.kunmc.lab.scenamatica.enums.MilestoneScope;
 import net.kunmc.lab.scenamatica.enums.ScenarioType;
 import net.kunmc.lab.scenamatica.enums.TestResultCause;
 import net.kunmc.lab.scenamatica.enums.TestState;
@@ -22,6 +23,7 @@ import net.kunmc.lab.scenamatica.interfaces.action.Requireable;
 import net.kunmc.lab.scenamatica.interfaces.context.Context;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioActionListener;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioEngine;
+import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioManager;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioResultDeliverer;
 import net.kunmc.lab.scenamatica.interfaces.scenario.TestReporter;
 import net.kunmc.lab.scenamatica.interfaces.scenario.TestResult;
@@ -47,6 +49,7 @@ import java.util.stream.Collectors;
 public class ScenarioEngineImpl implements ScenarioEngine
 {
     private final ScenamaticaRegistry registry;
+    private final ScenarioManager manager;
     private final ActionManager actionManager;
     private final TestReporter testReporter;
     private final Plugin plugin;
@@ -67,12 +70,14 @@ public class ScenarioEngineImpl implements ScenarioEngine
     private List<CompiledScenarioAction<?>> watchedActions;  // 監視対象になったアクション
 
     public ScenarioEngineImpl(@NotNull ScenamaticaRegistry registry,
+                              @NotNull ScenarioManager manager,
                               @NotNull ActionManager actionManager,
                               @NotNull TestReporter testReporter,
                               @NotNull Plugin plugin,
                               @NotNull ScenarioFileBean scenario)
     {
         this.registry = registry;
+        this.manager = manager;
         this.actionManager = actionManager;
         this.testReporter = testReporter;
         this.plugin = plugin;
@@ -117,6 +122,7 @@ public class ScenarioEngineImpl implements ScenarioEngine
     {
         return Compilers.compileActions(
                 this.registry,
+                this,
                 this.actionManager.getCompiler(),
                 this.listener,
                 scenarios
@@ -353,7 +359,7 @@ public class ScenarioEngineImpl implements ScenarioEngine
                 if (next != null && next.getType() == ScenarioType.ACTION_EXPECT)
                     this.addWatch(next);
 
-                scenario.execute(this.actionManager, this.listener);
+                scenario.execute(this, this.actionManager, this.listener);
                 break;
             case ACTION_EXPECT:
                 this.addWatch(scenario);
@@ -377,7 +383,7 @@ public class ScenarioEngineImpl implements ScenarioEngine
         try
         {
             //noinspection unchecked
-            result = requireable.isConditionFulfilled(scenario.getArgument(), this.plugin);
+            result = requireable.isConditionFulfilled(scenario.getArgument(), this);
         }
         catch (Throwable e)
         {
@@ -436,6 +442,14 @@ public class ScenarioEngineImpl implements ScenarioEngine
         this.deliverer.kill();
         this.cleanUp();  // これの位置を変えると, 排他の問題でバグる
         this.state = TestState.STAND_BY;
+    }
+
+    public void setState(TestState state)
+    {
+        this.state = state;
+
+        // マイルストーンをリセットする。
+        this.manager.getMilestoneManager().revokeAllMilestones(this, MilestoneScope.fromState(state));
     }
 
     private void setRunInfo(TriggerBean trigger)

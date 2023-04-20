@@ -1,6 +1,7 @@
 package net.kunmc.lab.scenamatica.interfaces.action;
 
 import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
+import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioEngine;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.action.ActionBean;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -17,6 +18,7 @@ public interface ActionCompiler
      * アクションをコンパイルします。
      *
      * @param registry      コンパイルに必要な情報を持つレジストリ
+     * @param engine        コンパイルに必要な情報を持つシナリオエンジン
      * @param bean          アクションの情報
      * @param reportErrorTo コンパイルに失敗したときに呼び出されるコールバック
      * @param onSuccess     コンパイルに成功したときに呼び出されるコールバック
@@ -24,6 +26,7 @@ public interface ActionCompiler
      * @return コンパイルされたアクション
      */
     <A extends ActionArgument> CompiledAction<A> compile(@NotNull ScenamaticaRegistry registry,
+                                                         @NotNull ScenarioEngine engine,
                                                          @NotNull ActionBean bean,
                                                          @Nullable BiConsumer<CompiledAction<A>, Throwable> reportErrorTo,
                                                          @Nullable Consumer<CompiledAction<A>> onSuccess);

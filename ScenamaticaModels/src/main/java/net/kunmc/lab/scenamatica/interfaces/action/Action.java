@@ -1,5 +1,6 @@
 package net.kunmc.lab.scenamatica.interfaces.action;
 
+import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.bukkit.event.Event;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
@@ -23,9 +24,10 @@ public interface Action<A extends ActionArgument>
     /**
      * 動作を実行します。
      *
+     * @param engine   シナリオエンジン
      * @param argument 動作の引数
      */
-    void execute(@Nullable A argument);
+    void execute(@NotNull ScenarioEngine engine, @Nullable A argument);
 
     /**
      * 動作が実行されたかチェックするバスに登録されたときに呼び出されます。
@@ -38,8 +40,13 @@ public interface Action<A extends ActionArgument>
 
     /**
      * 動作が実行されたかどうかを返します。
+     *
+     * @param argument 動作の引数
+     * @param engine   シナリオエンジン
+     * @param event    これに関連するイベント
+     * @return 動作が実行されたかどうか
      */
-    boolean isFired(@NotNull A argument, @NotNull Plugin plugin, @NotNull Event event);
+    boolean isFired(@NotNull A argument, @NotNull ScenarioEngine engine, @NotNull Event event);
 
     /**
      * アタッチす るイベントのクラスを返します。

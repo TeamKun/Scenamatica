@@ -11,6 +11,7 @@ import net.kunmc.lab.scenamatica.interfaces.action.Action;
 import net.kunmc.lab.scenamatica.interfaces.action.ActionArgument;
 import net.kunmc.lab.scenamatica.interfaces.action.ActionCompiler;
 import net.kunmc.lab.scenamatica.interfaces.action.CompiledAction;
+import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioEngine;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.action.ActionBean;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -45,6 +46,7 @@ public class ActionCompilerImpl implements ActionCompiler
 
     @Override
     public <A extends ActionArgument> CompiledAction<A> compile(@NotNull ScenamaticaRegistry registry,
+                                                                @NotNull ScenarioEngine engine,
                                                                 @NotNull ActionBean bean,
                                                                 @Nullable BiConsumer<CompiledAction<A>, Throwable> reportErrorTo,
                                                                 @Nullable Consumer<CompiledAction<A>> onSuccess)
@@ -67,6 +69,6 @@ public class ActionCompilerImpl implements ActionCompiler
         if (bean.getArguments() != null)
             argument = action.deserializeArgument(bean.getArguments());
 
-        return new CompiledActionImpl<>(action, argument, reportErrorTo, onSuccess);
+        return new CompiledActionImpl<>(engine, action, argument, reportErrorTo, onSuccess);
     }
 }

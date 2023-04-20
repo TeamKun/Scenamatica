@@ -92,6 +92,7 @@ public class TriggerManagerImpl implements TriggerManager
 
         CompiledAction<?> action = this.actionManager.getCompiler().compile(
                 this.registry,
+                engine,
                 argument,
                 null,  /* reportErrorTo */
                 null  /* onSuccess */

@@ -1,6 +1,6 @@
 package net.kunmc.lab.scenamatica.interfaces.action;
 
-import org.bukkit.plugin.Plugin;
+import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -15,10 +15,10 @@ public interface Requireable<A extends ActionArgument>
      * 条件を満たしているかチェックします。
      *
      * @param argument 引数
-     * @param plugin   プラグイン
+     * @param engine   エンジン
      * @return 条件を満たしている場合はtrue
      */
-    boolean isConditionFulfilled(@Nullable A argument, @NotNull Plugin plugin);
+    boolean isConditionFulfilled(@Nullable A argument, @NotNull ScenarioEngine engine);
 
     /**
      * 引数が正しいかチェックします。

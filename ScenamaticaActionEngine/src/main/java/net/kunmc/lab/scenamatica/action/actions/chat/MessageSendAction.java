@@ -7,11 +7,11 @@ import net.kunmc.lab.scenamatica.action.utils.TextUtils;
 import net.kunmc.lab.scenamatica.commons.utils.MapUtils;
 import net.kunmc.lab.scenamatica.events.actor.ActorMessageReceiveEvent;
 import net.kunmc.lab.scenamatica.interfaces.action.ActionArgument;
+import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioEngine;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
-import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -34,7 +34,7 @@ public class MessageSendAction extends AbstractAction<MessageSendAction.PlayerMe
     }
 
     @Override
-    public void execute(@Nullable PlayerMessageSendActionArgument argument)
+    public void execute(@NotNull ScenarioEngine engine, @Nullable PlayerMessageSendActionArgument argument)
     {
         argument = this.requireArgsNonNull(argument);
 
@@ -45,7 +45,7 @@ public class MessageSendAction extends AbstractAction<MessageSendAction.PlayerMe
     }
 
     @Override
-    public boolean isFired(@NotNull PlayerMessageSendActionArgument argument, @NotNull Plugin plugin, @NotNull Event event)
+    public boolean isFired(@NotNull PlayerMessageSendActionArgument argument, @NotNull ScenarioEngine engine, @NotNull Event event)
     {
         Player recipient = PlayerUtils.getPlayerOrThrow(argument.getRecipient());
         String content = argument.getContent();

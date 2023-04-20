@@ -7,6 +7,7 @@ import net.kunmc.lab.scenamatica.interfaces.action.ActionCompiler;
 import net.kunmc.lab.scenamatica.interfaces.action.CompiledAction;
 import net.kunmc.lab.scenamatica.interfaces.action.Requireable;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioActionListener;
+import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioEngine;
 import net.kunmc.lab.scenamatica.interfaces.scenario.runtime.CompiledScenarioAction;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.scenario.ScenarioBean;
 import org.jetbrains.annotations.NotNull;
@@ -18,25 +19,28 @@ public class Compilers
 {
     public static List<CompiledScenarioAction<?>> compileActions(
             @NotNull ScenamaticaRegistry registry,
+            @NotNull ScenarioEngine engine,
             @NotNull ActionCompiler compiler,
             @NotNull ScenarioActionListener listener,
             @NotNull List<? extends ScenarioBean> scenarios)
     {
         List<CompiledScenarioAction<?>> compiled = new ArrayList<>();
         for (ScenarioBean scenario : scenarios)
-            compiled.add(compileAction(registry, compiler, listener, scenario));
+            compiled.add(compileAction(registry, engine, compiler, listener, scenario));
 
         return compiled;
     }
 
     private static <A extends ActionArgument> CompiledScenarioAction<A> compileAction(
             @NotNull ScenamaticaRegistry registry,
+            @NotNull ScenarioEngine engine,
             @NotNull ActionCompiler compiler,
             @NotNull ScenarioActionListener listener,
             @NotNull ScenarioBean scenario)
     {
         CompiledAction<A> action = compiler.compile(
                 registry,
+                engine,
                 scenario.getAction(),
                 listener::onActionError,
                 listener::onActionExecuted

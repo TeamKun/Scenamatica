@@ -5,6 +5,7 @@ import net.kunmc.lab.scenamatica.action.actions.AbstractAction;
 import net.kunmc.lab.scenamatica.action.utils.PlayerUtils;
 import net.kunmc.lab.scenamatica.commons.utils.MapUtils;
 import net.kunmc.lab.scenamatica.interfaces.action.ActionArgument;
+import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioEngine;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
@@ -12,7 +13,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.server.ServerCommandEvent;
-import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -34,7 +34,7 @@ public class CommandDispatchAction extends AbstractAction<CommandDispatchAction.
     }
 
     @Override
-    public void execute(@Nullable CommandDispatchActionArgument argument)
+    public void execute(@NotNull ScenarioEngine engine, @Nullable CommandDispatchActionArgument argument)
     {
         argument = this.requireArgsNonNull(argument);
 
@@ -52,7 +52,7 @@ public class CommandDispatchAction extends AbstractAction<CommandDispatchAction.
     }
 
     @Override
-    public boolean isFired(@NotNull CommandDispatchActionArgument argument, @NotNull Plugin plugin, @NotNull Event event)
+    public boolean isFired(@NotNull CommandDispatchActionArgument argument, @NotNull ScenarioEngine engine, @NotNull Event event)
     {
         String command;
         CommandSender sender = null;

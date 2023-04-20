@@ -18,6 +18,14 @@ import java.util.UUID;
 public interface ScenarioEngine
 {
     /**
+     * シナリオエンジンのマネージャを取得します。
+     *
+     * @return シナリオエンジンのマネージャ
+     */
+    @NotNull
+    ScenarioManager getManager();
+
+    /**
      * シナリオを開始します。
      *
      * @param trigger シナリオを開始したトリガー

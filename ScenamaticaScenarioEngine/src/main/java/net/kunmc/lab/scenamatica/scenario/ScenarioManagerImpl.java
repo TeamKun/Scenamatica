@@ -14,6 +14,7 @@ import net.kunmc.lab.scenamatica.exceptions.scenario.ScenarioNotRunningException
 import net.kunmc.lab.scenamatica.exceptions.scenario.TriggerNotFoundException;
 import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
 import net.kunmc.lab.scenamatica.interfaces.action.ActionManager;
+import net.kunmc.lab.scenamatica.interfaces.scenario.MilestoneManager;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioEngine;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioManager;
 import net.kunmc.lab.scenamatica.interfaces.scenario.TestReporter;
@@ -34,6 +35,8 @@ public class ScenarioManagerImpl implements ScenarioManager
 {
     private final ScenamaticaRegistry registry;
     private final ActionManager actionManager;
+    @Getter
+    private final MilestoneManager milestoneManager;
     private final Multimap<Plugin, ScenarioEngine> engines;
     private final ScenarioQueue queue;
     @NotNull
@@ -52,6 +55,7 @@ public class ScenarioManagerImpl implements ScenarioManager
         this.registry = registry;
         this.actionManager = registry.getActionManager();
         this.testReporter = registry.getTestReporter();
+        this.milestoneManager = new MilestoneManagerImpl();
         this.engines = ArrayListMultimap.create();
         this.tickListener = new TickListener(registry, this);
         this.queue = new ScenarioQueue(registry, this);
@@ -195,6 +199,7 @@ public class ScenarioManagerImpl implements ScenarioManager
     @Override
     public void unloadPluginScenarios(@NotNull Plugin plugin)
     {
+        this.milestoneManager.revokeAllMilestones(plugin);
         this.engines.removeAll(plugin);
         this.registry.getScenarioFileManager().unloadPluginScenarios(plugin);
     }
@@ -209,7 +214,15 @@ public class ScenarioManagerImpl implements ScenarioManager
         assert scenarios != null;
 
         scenarios.values().stream()
-                .map(scenario -> new ScenarioEngineImpl(this.registry, this.actionManager, this.testReporter, plugin, scenario))
+                .map(scenario -> new ScenarioEngineImpl(
+                                this.registry,
+                                this,
+                                this.actionManager,
+                                this.testReporter,
+                                plugin,
+                                scenario
+                        )
+                )
                 .forEach(engine -> this.engines.put(plugin, engine));
     }
 

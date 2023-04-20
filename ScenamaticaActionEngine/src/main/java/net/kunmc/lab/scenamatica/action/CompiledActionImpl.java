@@ -4,6 +4,7 @@ import lombok.Value;
 import net.kunmc.lab.scenamatica.interfaces.action.Action;
 import net.kunmc.lab.scenamatica.interfaces.action.ActionArgument;
 import net.kunmc.lab.scenamatica.interfaces.action.CompiledAction;
+import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioEngine;
 
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -11,6 +12,7 @@ import java.util.function.Consumer;
 @Value
 public class CompiledActionImpl<A extends ActionArgument> implements CompiledAction<A>
 {
+    ScenarioEngine engine;
     Action<A> action;
     A argument;
     BiConsumer<CompiledAction<A>, Throwable> errorHandler;
@@ -21,7 +23,7 @@ public class CompiledActionImpl<A extends ActionArgument> implements CompiledAct
     {
         try
         {
-            this.action.execute(this.argument);
+            this.action.execute(this.engine, this.argument);
             this.onExecute.accept(this);
         }
         catch (Throwable e)

@@ -30,13 +30,15 @@ public interface ActionManager
     /**
      * 動作の実行をキューに追加します。
      *
+     * @param engine      シナリオエンジン
      * @param action      動作
      * @param argument    動作の引数
      * @param onException 動作の実行に失敗したときに呼び出されるコールバック
      * @param onSuccess   動作の実行に成功したときに呼び出されるコールバック
      * @param <A>         動作の引数の型
      */
-    <A extends ActionArgument> CompiledAction<A> queueExecute(@NotNull Action<A> action,
+    <A extends ActionArgument> CompiledAction<A> queueExecute(@NotNull ScenarioEngine engine,
+                                                              @NotNull Action<A> action,
                                                               @Nullable A argument,
                                                               @NotNull BiConsumer<CompiledAction<A>, Throwable> onException,
                                                               @Nullable Consumer<CompiledAction<A>> onSuccess);

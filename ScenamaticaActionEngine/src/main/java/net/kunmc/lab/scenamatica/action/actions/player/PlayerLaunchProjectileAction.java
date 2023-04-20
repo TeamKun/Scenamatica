@@ -8,6 +8,7 @@ import lombok.Value;
 import net.kunmc.lab.scenamatica.action.utils.Utils;
 import net.kunmc.lab.scenamatica.commons.utils.MapUtils;
 import net.kunmc.lab.scenamatica.interfaces.action.ActionArgument;
+import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioEngine;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.DragonFireball;
@@ -25,7 +26,6 @@ import org.bukkit.entity.ThrownPotion;
 import org.bukkit.entity.Trident;
 import org.bukkit.entity.WitherSkull;
 import org.bukkit.event.Event;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -45,7 +45,7 @@ public class PlayerLaunchProjectileAction extends AbstractPlayerAction<PlayerLau
     }
 
     @Override
-    public void execute(@Nullable PlayerLaunchProjectileActionArgument argument)
+    public void execute(@NotNull ScenarioEngine engine, @Nullable PlayerLaunchProjectileActionArgument argument)
     {
         argument = this.requireArgsNonNull(argument);
 
@@ -57,9 +57,9 @@ public class PlayerLaunchProjectileAction extends AbstractPlayerAction<PlayerLau
     }
 
     @Override
-    public boolean isFired(@NotNull PlayerLaunchProjectileActionArgument argument, @NotNull Plugin plugin, @NotNull Event event)
+    public boolean isFired(@NotNull PlayerLaunchProjectileActionArgument argument, @NotNull ScenarioEngine engine, @NotNull Event event)
     {
-        if (!super.isFired(argument, plugin, event))
+        if (!super.isFired(argument, engine, event))
             return false;
 
         assert event instanceof PlayerLaunchProjectileEvent;

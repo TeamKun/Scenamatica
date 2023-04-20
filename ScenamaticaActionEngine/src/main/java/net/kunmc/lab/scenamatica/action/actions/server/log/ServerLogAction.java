@@ -5,12 +5,12 @@ import net.kunmc.lab.scenamatica.action.actions.AbstractAction;
 import net.kunmc.lab.scenamatica.commons.utils.MapUtils;
 import net.kunmc.lab.scenamatica.events.actions.server.ServerLogEvent;
 import net.kunmc.lab.scenamatica.interfaces.action.ActionArgument;
+import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioEngine;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bukkit.event.Event;
-import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -30,7 +30,7 @@ public class ServerLogAction extends AbstractAction<ServerLogAction.ServerLogAct
     }
 
     @Override
-    public void execute(@Nullable ServerLogActionArgument argument)
+    public void execute(@NotNull ScenarioEngine engine, @Nullable ServerLogActionArgument argument)
     {
         argument = this.requireArgsNonNull(argument);
 
@@ -41,7 +41,7 @@ public class ServerLogAction extends AbstractAction<ServerLogAction.ServerLogAct
     }
 
     @Override
-    public boolean isFired(@NotNull ServerLogActionArgument argument, @NotNull Plugin plugin, @NotNull Event event)
+    public boolean isFired(@NotNull ServerLogActionArgument argument, @NotNull ScenarioEngine engine, @NotNull Event event)
     {
         assert event instanceof ServerLogEvent;
 

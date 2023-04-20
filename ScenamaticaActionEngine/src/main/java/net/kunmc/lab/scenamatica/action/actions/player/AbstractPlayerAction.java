@@ -2,10 +2,10 @@ package net.kunmc.lab.scenamatica.action.actions.player;
 
 import net.kunmc.lab.scenamatica.action.actions.AbstractAction;
 import net.kunmc.lab.scenamatica.commons.utils.MapUtils;
+import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerEvent;
-import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -14,7 +14,7 @@ import java.util.Objects;
 public abstract class AbstractPlayerAction<A extends AbstractPlayerActionArgument> extends AbstractAction<A>
 {
     @Override
-    public boolean isFired(@NotNull A argument, @NotNull Plugin plugin, @NotNull Event event)
+    public boolean isFired(@NotNull A argument, @NotNull ScenarioEngine engine, @NotNull Event event)
     {
         if (!(event instanceof PlayerEvent))
             return false;

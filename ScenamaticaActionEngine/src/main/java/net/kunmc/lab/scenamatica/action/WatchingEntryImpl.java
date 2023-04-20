@@ -41,7 +41,7 @@ public class WatchingEntryImpl<A extends ActionArgument> implements WatchingEntr
         };
 
         EventExecutor executor = (listener1, event) -> {
-            if (this.action.isFired(this.argument, WatchingEntryImpl.this.plugin, event))
+            if (this.action.isFired(this.argument, WatchingEntryImpl.this.engine, event))
             {
                 this.manager.onActionFired(WatchingEntryImpl.this, event);
             }
