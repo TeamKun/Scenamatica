@@ -305,7 +305,7 @@ public class PlayerDeathAction extends AbstractPlayerAction<PlayerDeathAction.De
             if (this.doExpDrop != null)
                 builder.append(", doExpDrop=").append(this.doExpDrop);
 
-
+            return builder.toString();
         }
     }
 }
