@@ -16,6 +16,7 @@ public enum TriggerType
 {
     MANUAL_DISPATCH("manual_dispatch"),
     ON_ACTION("on_action"),
+    ON_LOAD("on_load"),
     SCHEDULE("schedule"),
 
     ;

@@ -1138,7 +1138,8 @@
           "enum": [
             "manual_dispatch",
             "schedule",
-            "on_action"
+            "on_action",
+            "on_load"
           ]
         },
         "before": {
@@ -1153,24 +1154,7 @@
       "required": [
         "type"
       ],
-      "additionalProperties": false,
       "allOf": [
-        {
-          "if": {
-            "properties": {
-              "type": {
-                "const": "manual_dispatch"
-              }
-            }
-          },
-          "then": {
-            "properties": {
-              "type": {
-                "const": "manual_dispatch"
-              }
-            }
-          }
-        },
         {
           "if": {
             "properties": {

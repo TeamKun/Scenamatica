@@ -26,6 +26,8 @@ import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.atomic.AtomicReference;
@@ -137,6 +139,11 @@ public class ScenarioManagerImpl implements ScenarioManager
         ScenarioEngine engine = runInfo.getLeft();
         TriggerBean trigger = runInfo.getRight();
 
+        this.queueScenario(engine, trigger);
+    }
+
+    private void queueScenario(@NotNull ScenarioEngine engine, @NotNull TriggerBean trigger)
+    {
         this.queue.add(engine, trigger, null);
     }
 
@@ -213,6 +220,7 @@ public class ScenarioManagerImpl implements ScenarioManager
         Map<String, ScenarioFileBean> scenarios = this.registry.getScenarioFileManager().getPluginScenarios(plugin);
         assert scenarios != null;
 
+        List<ScenarioEngine> engines = new ArrayList<>(scenarios.size());
         scenarios.values().stream()
                 .map(scenario -> new ScenarioEngineImpl(
                                 this.registry,
@@ -223,7 +231,10 @@ public class ScenarioManagerImpl implements ScenarioManager
                                 scenario
                         )
                 )
-                .forEach(engine -> this.engines.put(plugin, engine));
+                .forEach(engines::add);
+
+        this.engines.putAll(plugin, engines);
+        this.runOnLoadScenarios(engines);
     }
 
     @Override
@@ -254,5 +265,20 @@ public class ScenarioManagerImpl implements ScenarioManager
             this.cancel();
 
         this.enabled = enabled;
+    }
+
+    private void runOnLoadScenarios(List<? extends ScenarioEngine> scenarios)
+    {
+        for (ScenarioEngine engine : scenarios)
+        {
+            for (CompiledTriggerAction action : engine.getTriggerActions())
+            {
+                if (action.getTrigger().getType() == TriggerType.ON_LOAD)
+                {
+                    this.queueScenario(engine, action.getTrigger());
+                    break;
+                }
+            }
+        }
     }
 }
