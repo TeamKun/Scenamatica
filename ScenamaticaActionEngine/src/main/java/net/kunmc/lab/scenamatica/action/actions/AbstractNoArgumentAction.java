@@ -40,5 +40,11 @@ public abstract class AbstractNoArgumentAction extends AbstractAction<AbstractNo
         {
             return argument instanceof NoArgument;
         }
+
+        @Override
+        public String getArgumentString()
+        {
+            return "";
+        }
     }
 }
