@@ -142,7 +142,7 @@ public class TestReportRecipient implements TestReporter
     {
         String condition = action.getAction().getClass().getSimpleName();
         if (action.getArgument() != null)
-            condition += " - " + action.getArgument();
+            condition += " - " + action.getArgument().getArgumentString();
 
         return condition;
     }

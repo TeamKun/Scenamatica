@@ -127,5 +127,11 @@ public class ServerLogAction extends AbstractAction<ServerLogAction.ServerLogAct
                     this.level == other.level &&
                     Objects.equals(this.message, other.message);
         }
+
+        @Override
+        public String getArgumentString()
+        {
+            return "source=" + this.source + ", level=" + this.level + ", message=" + this.message;
+        }
     }
 }

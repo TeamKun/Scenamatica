@@ -203,7 +203,17 @@ public class PlayerLaunchProjectileAction extends AbstractPlayerAction<PlayerLau
             PlayerLaunchProjectileActionArgument a = (PlayerLaunchProjectileActionArgument) argument;
 
             return this.projectileType == a.projectileType /* && this.shooterItem.isSame(a.shooterItem) */;
+        }
 
+        @Override
+        public String getArgumentString()
+        {
+            return String.format(
+                    "type=%s, velocity=%s, epsilon=%s",
+                    this.projectileType.name(),
+                    this.velocity == null ? "null": this.velocity.toString(),
+                    this.epsilon
+            );
         }
     }
 }

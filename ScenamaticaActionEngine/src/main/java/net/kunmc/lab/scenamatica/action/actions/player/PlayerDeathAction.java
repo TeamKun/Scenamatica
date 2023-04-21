@@ -285,10 +285,9 @@ public class PlayerDeathAction extends AbstractPlayerAction<PlayerDeathAction.De
         }
 
         @Override
-        public String toString()
+        public String getArgumentString()
         {
-            StringBuilder builder = new StringBuilder("DeathArgument{");
-            builder.append(super.toString());
+            StringBuilder builder = new StringBuilder(super.toString());
             if (this.killer != null)
                 builder.append(", killer=").append(this.killer);
             if (this.deathMessage != null)
@@ -306,7 +305,7 @@ public class PlayerDeathAction extends AbstractPlayerAction<PlayerDeathAction.De
             if (this.doExpDrop != null)
                 builder.append(", doExpDrop=").append(this.doExpDrop);
 
-            return builder.append('}').toString();
+
         }
     }
 }

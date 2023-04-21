@@ -49,9 +49,8 @@ public abstract class AbstractPluginActionArgument implements ActionArgument
         return plugin;
     }
 
-    @Override
-    public String toString()
+    public String getPluginName()
     {
-        return "plugin=" + this.plugin;
+        return this.plugin;
     }
 }

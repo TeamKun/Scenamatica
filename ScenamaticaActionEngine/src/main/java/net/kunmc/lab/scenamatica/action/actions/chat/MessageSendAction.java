@@ -100,13 +100,9 @@ public class MessageSendAction extends AbstractAction<MessageSendAction.PlayerMe
         }
 
         @Override
-        public String toString()
+        public String getArgumentString()
         {
-
-            return "MessageSendActionArgument{" +
-                    "content='" + this.content + "', " +
-                    "recipient=" + this.recipient +
-                    '}';
+            return String.format("content=%s, recipient=%s", this.content, this.recipient);
         }
     }
 }

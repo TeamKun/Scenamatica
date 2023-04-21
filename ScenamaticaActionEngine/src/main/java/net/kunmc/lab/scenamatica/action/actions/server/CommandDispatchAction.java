@@ -111,5 +111,11 @@ public class CommandDispatchAction extends AbstractAction<CommandDispatchAction.
                     && Objects.equals(this.command, ((CommandDispatchActionArgument) argument).command)
                     && Objects.equals(this.sender, ((CommandDispatchActionArgument) argument).sender);
         }
+
+        @Override
+        public String getArgumentString()
+        {
+            return String.format("command=%s, sender=%s", this.command, this.sender);
+        }
     }
 }

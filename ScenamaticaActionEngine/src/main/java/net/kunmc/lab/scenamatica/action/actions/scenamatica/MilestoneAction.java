@@ -106,5 +106,11 @@ public class MilestoneAction extends AbstractAction<MilestoneAction.MilestoneAct
         {
             return false;
         }
+
+        @Override
+        public String getArgumentString()
+        {
+            return "milestone=" + this.name + ", reached=" + this.reached;
+        }
     }
 }
