@@ -1,4 +1,4 @@
-package net.kunmc.lab.scenamatica.action.actions.scenamatica.plugin;
+package net.kunmc.lab.scenamatica.action.actions.server.plugin;
 
 import net.kunmc.lab.scenamatica.interfaces.action.Requireable;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioEngine;
@@ -14,7 +14,7 @@ import java.util.Map;
 
 public class PluginEnableAction extends AbstractPluginAction<PluginEnableAction.PluginEnableActionArgument> implements Requireable<PluginEnableAction.PluginEnableActionArgument>
 {
-    public static final String KEY_ACTION_NAME = "plugin_enable";
+    public static final String KEY_ACTION_NAME = KEY_PREFIX + "enable";
 
     @Override
     public String getName()

@@ -1,4 +1,4 @@
-package net.kunmc.lab.scenamatica.action.actions.scenamatica.plugin;
+package net.kunmc.lab.scenamatica.action.actions.server.plugin;
 
 import lombok.AllArgsConstructor;
 import net.kunmc.lab.scenamatica.interfaces.action.ActionArgument;

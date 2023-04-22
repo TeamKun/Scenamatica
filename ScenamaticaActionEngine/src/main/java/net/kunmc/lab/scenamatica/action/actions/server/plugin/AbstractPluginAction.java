@@ -1,4 +1,4 @@
-package net.kunmc.lab.scenamatica.action.actions.scenamatica.plugin;
+package net.kunmc.lab.scenamatica.action.actions.server.plugin;
 
 import net.kunmc.lab.scenamatica.action.actions.AbstractAction;
 import net.kunmc.lab.scenamatica.commons.utils.MapUtils;
@@ -12,6 +12,8 @@ import java.util.Objects;
 
 public abstract class AbstractPluginAction<A extends AbstractPluginActionArgument> extends AbstractAction<A>
 {
+    protected static final String KEY_PREFIX = "server_plugin_";
+
     @Override
     public boolean isFired(@NotNull A argument, @NotNull ScenarioEngine engine, @NotNull Event event)
     {
