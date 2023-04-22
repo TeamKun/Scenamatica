@@ -7,6 +7,8 @@ import net.kunmc.lab.scenamatica.action.actions.player.PlayerLaunchProjectileAct
 import net.kunmc.lab.scenamatica.action.actions.scenamatica.MilestoneAction;
 import net.kunmc.lab.scenamatica.action.actions.server.CommandDispatchAction;
 import net.kunmc.lab.scenamatica.action.actions.server.log.ServerLogAction;
+import net.kunmc.lab.scenamatica.action.actions.server.plugin.PluginDisableAction;
+import net.kunmc.lab.scenamatica.action.actions.server.plugin.PluginEnableAction;
 import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
 import net.kunmc.lab.scenamatica.interfaces.action.Action;
 import net.kunmc.lab.scenamatica.interfaces.action.ActionArgument;
@@ -41,6 +43,8 @@ public class ActionCompilerImpl implements ActionCompiler
         // サーバーのアクション
         {
             ACTIONS.add(new ServerLogAction());
+            ACTIONS.add(new PluginDisableAction());
+            ACTIONS.add(new PluginEnableAction());
             ACTIONS.add(new CommandDispatchAction());
         }
 
