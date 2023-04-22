@@ -71,7 +71,7 @@ public class ScenarioResultDelivererImpl implements ScenarioResultDeliverer
 
     @Override
     @NotNull
-    public TestResult waitResult(long timeout, @NotNull TestState state)
+    public synchronized TestResult waitResult(long timeout, @NotNull TestState state)
     {
         if (timeout > 0)
             this.waitTimeout = timeout;

@@ -1,6 +1,7 @@
 package net.kunmc.lab.scenamatica.scenario;
 
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.Value;
 import net.kunmc.lab.scenamatica.exceptions.scenario.TriggerNotFoundException;
 import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
@@ -9,8 +10,8 @@ import net.kunmc.lab.scenamatica.interfaces.scenario.TestResult;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerBean;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
@@ -19,7 +20,7 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 @AllArgsConstructor
-        /* non-public */ class ScenarioQueue extends BukkitRunnable
+        /* non-public */ class ScenarioQueue
 {
     private final ScenamaticaRegistry registry;
     private final ScenarioManagerImpl manager;
@@ -27,6 +28,7 @@ import java.util.stream.Collectors;
 
     private List<TestResult> sessionResults;
     private long sessionStartedAt;
+    private SessionRunner runner;
 
     public ScenarioQueue(ScenamaticaRegistry registry, ScenarioManagerImpl manager)
     {
@@ -60,40 +62,18 @@ import java.util.stream.Collectors;
 
     /* non-public */ void start()
     {
-        this.runTaskTimerAsynchronously(this.registry.getPlugin(), 0L, 1L);
+        if (this.runner != null && this.runner.isRunning())
+            throw new IllegalStateException("ScenarioQueue is already running.");
+
+        this.runner = new SessionRunner();
+        this.runner.runTaskAsynchronously(this.registry.getPlugin());
     }
 
-    @Override
-    public synchronized void cancel() throws IllegalStateException
+    public void shutdown() throws IllegalStateException
     {
         this.scenarioRunQueue.clear();
-        super.cancel();
-    }
-
-    @Override
-    public void run()
-    {
-        if (!this.manager.isEnabled() || this.scenarioRunQueue.isEmpty() || this.manager.isRunning())
-            return;
-        else if (this.sessionStartedAt == 0)
-            this.startSession();
-
-        QueueEntry entry = this.scenarioRunQueue.pop();
-        try
-        {
-            TestResult result = this.manager.runScenario(entry.getEngine(), entry.getTrigger());
-            this.sessionResults.add(result);
-
-            if (entry.getCallback() != null)
-                entry.getCallback().accept(result);
-        }
-        catch (TriggerNotFoundException e)  // マトモな使い方したら発生しないはず。
-        {
-            this.registry.getExceptionHandler().report(e);
-        }
-
-        if (this.scenarioRunQueue.isEmpty())
-            this.endSession();
+        if (this.runner.isRunning())
+            this.runner.cancel();
     }
 
     private void startSession()
@@ -124,5 +104,66 @@ import java.util.stream.Collectors;
         @Nullable
         Consumer<TestResult> callback;
 
+    }
+
+    private class SessionRunner extends BukkitRunnable
+    {
+        @Getter
+        private boolean running;
+
+        @Override
+        public void run()
+        {
+            this.running = true;
+
+            while (ScenarioQueue.this.manager.isEnabled() && this.running)
+                if (!this.runOne())
+                    return;
+
+            this.running = false;
+        }
+
+        private boolean runOne()
+        {
+
+            if (ScenarioQueue.this.scenarioRunQueue.isEmpty() || ScenarioQueue.this.manager.isRunning())
+                try
+                {
+                    Thread.sleep(500);
+                    return true;
+                }
+                catch (InterruptedException ignored)
+                {
+                    return false;
+                }
+            else if (ScenarioQueue.this.sessionStartedAt == 0)  // 0 ならまだセッションが開始されていない。
+                ScenarioQueue.this.startSession();
+
+            QueueEntry entry = ScenarioQueue.this.scenarioRunQueue.pop();
+            try
+            {
+                TestResult result = ScenarioQueue.this.manager.runScenario(entry.getEngine(), entry.getTrigger());
+                ScenarioQueue.this.sessionResults.add(result);
+
+                if (entry.getCallback() != null)
+                    entry.getCallback().accept(result);
+            }
+            catch (TriggerNotFoundException e)  // マトモな使い方したら発生しないはず。
+            {
+                ScenarioQueue.this.registry.getExceptionHandler().report(e);
+            }
+
+            if (ScenarioQueue.this.scenarioRunQueue.isEmpty())
+                ScenarioQueue.this.endSession();
+
+            return true;
+        }
+
+        @Override
+        public synchronized void cancel() throws IllegalStateException
+        {
+            this.running = false;
+            super.cancel();
+        }
     }
 }

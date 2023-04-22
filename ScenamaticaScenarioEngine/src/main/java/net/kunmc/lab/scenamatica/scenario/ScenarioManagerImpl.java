@@ -263,7 +263,7 @@ public class ScenarioManagerImpl implements ScenarioManager
         if (this.isRunning())
             this.cancel();
 
-        this.queue.cancel();
+        this.queue.shutdown();
         this.engines.clear();
     }
 
