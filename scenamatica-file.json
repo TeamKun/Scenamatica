@@ -81,6 +81,8 @@
             "player_death",
             "player_launch_projectile",
             "server_log",
+            "server_plugin_enable",
+            "server_plugin_disable",
             "command_dispatch",
             "milestone"
           ]
@@ -209,6 +211,46 @@
             "properties": {
               "with": {
                 "$ref": "#/definitions/action/definitions/server/log"
+              }
+            },
+            "required": [
+              "with"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "server_plugin_disable",
+                "description": "プラグインが無効化されたり, 無効化されたことを検知します。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/server/plugin_disable"
+              }
+            },
+            "required": [
+              "with"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "server_plugin_enable",
+                "description": "プラグインが有効化されたり, 有効化されたことを検知します。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/server/plugin_enable"
               }
             },
             "required": [
@@ -404,21 +446,6 @@
           }
         },
         "server": {
-          "command_dispatch": {
-            "properties": {
-              "command": {
-                "type": "string",
-                "description": "実行されるコマンドです。実行を検知する場合は正規表現を使用できます。"
-              },
-              "sender": {
-                "type": "string",
-                "description": "実行するプレイヤーです。省略した場合はコンソールです。"
-              }
-            },
-            "required": [
-              "command"
-            ]
-          },
           "log": {
             "properties": {
               "message": {
@@ -462,6 +489,43 @@
             },
             "required": [
               "message"
+            ]
+          },
+          "plugin_disable": {
+            "properties": {
+              "plugin": {
+                "type": "string",
+                "description": "無効化されるプラグインです。"
+              }
+            },
+            "required": [
+              "plugin"
+            ]
+          },
+          "plugin_enable": {
+            "properties": {
+              "plugin": {
+                "type": "string",
+                "description": "有効化されるプラグインです。"
+              }
+            },
+            "required": [
+              "plugin"
+            ]
+          },
+          "command_dispatch": {
+            "properties": {
+              "command": {
+                "type": "string",
+                "description": "実行されるコマンドです。実行を検知する場合は正規表現を使用できます。"
+              },
+              "sender": {
+                "type": "string",
+                "description": "実行するプレイヤーです。省略した場合はコンソールです。"
+              }
+            },
+            "required": [
+              "command"
             ]
           }
         },
