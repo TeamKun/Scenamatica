@@ -110,17 +110,21 @@ import java.util.logging.Level;
             else
                 afterActions = new ArrayList<>();
 
+            CompiledScenarioAction<?> runIf = null;
+            if (trigger.getRunIf() != null)
+                runIf = InternalCompiler.compileConditionAction(
+                        this.registry,
+                        this.engine,
+                        this.actionManager.getCompiler(),
+                        this.listener,
+                        trigger.getRunIf()
+                );
+
             triggerActions.add(new CompiledTriggerActionImpl(
                     trigger,
                     beforeActions,
                     afterActions,
-                    InternalCompiler.compileConditionAction(
-                            this.registry,
-                            this.engine,
-                            this.actionManager.getCompiler(),
-                            this.listener,
-                            trigger.getRunIf()
-                    )
+                    runIf
             ));
         }
 
