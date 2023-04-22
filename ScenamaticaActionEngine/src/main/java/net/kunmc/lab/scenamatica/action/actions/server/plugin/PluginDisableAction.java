@@ -28,7 +28,7 @@ public class PluginDisableAction extends AbstractPluginAction<PluginDisableActio
         if (argument == null)
             return;
 
-        Bukkit.getPluginManager().disablePlugin(argument.getPlugin(engine));
+        Bukkit.getPluginManager().disablePlugin(argument.getPlugin());
     }
 
     @Override
@@ -52,11 +52,7 @@ public class PluginDisableAction extends AbstractPluginAction<PluginDisableActio
         return !argument.getPlugin().isEnabled();
     }
 
-    @Override
-    public void validateArgument(@Nullable PluginDisableAction.PluginDisableActionArgument argument)
-    {
 
-    }
 
     public static class PluginDisableActionArgument extends AbstractPluginActionArgument
     {

@@ -21,13 +21,6 @@ public interface Requireable<A extends ActionArgument>
     boolean isConditionFulfilled(@Nullable A argument, @NotNull ScenarioEngine engine);
 
     /**
-     * 引数が正しいかチェックします。
-     *
-     * @param argument 引数
-     */
-    void validateArgument(@Nullable A argument);
-
-    /**
      * 対応していない引数を指定した場合に例外を投げます。
      *
      * @param fieldName フィールド名

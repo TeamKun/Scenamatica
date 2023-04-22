@@ -49,12 +49,9 @@ public class Compilers
         if (scenario.getType() == ScenarioType.CONDITION_REQUIRE)
             if (!(action.getAction() instanceof Requireable<?>))
                 throw new IllegalArgumentException("Action " + scenario.getAction().getType() + " is not requireable.");
-            else if (action.getArgument() != null)
-            {
-                /* assert action instanceof Requireable<A>;*/
-                // noinspection unchecked
-                ((Requireable<A>) action.getAction()).validateArgument(action.getArgument());
-            }
+
+        action.getAction().validateArgument(engine, scenario.getType(), action.getArgument());
+
 
         return new CompiledScenarioActionImpl<>(
                 scenario,

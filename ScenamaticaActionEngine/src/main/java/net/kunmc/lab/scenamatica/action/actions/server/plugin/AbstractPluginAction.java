@@ -2,10 +2,12 @@ package net.kunmc.lab.scenamatica.action.actions.server.plugin;
 
 import net.kunmc.lab.scenamatica.action.actions.AbstractAction;
 import net.kunmc.lab.scenamatica.commons.utils.MapUtils;
+import net.kunmc.lab.scenamatica.enums.ScenarioType;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.bukkit.event.Event;
 import org.bukkit.event.server.PluginEvent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 
@@ -31,4 +33,12 @@ public abstract class AbstractPluginAction<A extends AbstractPluginActionArgumen
         return map.get(AbstractPluginActionArgument.KEY_PLUGIN).toString();
     }
 
+    @Override
+    public void validateArgument(@NotNull ScenarioEngine engine, @NotNull ScenarioType type, @Nullable A argument)
+    {
+        argument = this.requireArgsNonNull(argument);
+
+        if (engine.getPlugin().getName().equalsIgnoreCase(argument.getPlugin().getName()))
+            throw new IllegalArgumentException("Cannot disable the plugin itself.");
+    }
 }

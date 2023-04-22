@@ -78,12 +78,6 @@ public class MilestoneAction extends AbstractAction<MilestoneAction.MilestoneAct
         return isMilestoneReached == argument.isReached();
     }
 
-    @Override
-    public void validateArgument(@Nullable MilestoneActionArgument argument)
-    {
-
-    }
-
     @Value
     @AllArgsConstructor
     public static class MilestoneActionArgument implements ActionArgument

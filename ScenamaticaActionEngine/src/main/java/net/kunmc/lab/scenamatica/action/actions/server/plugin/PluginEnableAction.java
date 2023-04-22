@@ -52,12 +52,6 @@ public class PluginEnableAction extends AbstractPluginAction<PluginEnableAction.
         return argument.getPlugin().isEnabled();
     }
 
-    @Override
-    public void validateArgument(@Nullable PluginEnableActionArgument argument)
-    {
-
-    }
-
     public static class PluginEnableActionArgument extends AbstractPluginActionArgument
     {
         public PluginEnableActionArgument(String plugin)

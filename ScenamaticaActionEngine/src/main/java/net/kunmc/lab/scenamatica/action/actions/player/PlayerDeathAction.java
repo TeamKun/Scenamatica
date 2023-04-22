@@ -4,6 +4,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Value;
 import net.kunmc.lab.scenamatica.action.utils.PlayerUtils;
 import net.kunmc.lab.scenamatica.commons.utils.MapUtils;
+import net.kunmc.lab.scenamatica.enums.ScenarioType;
 import net.kunmc.lab.scenamatica.interfaces.action.Requireable;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioEngine;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
@@ -197,9 +198,13 @@ public class PlayerDeathAction extends AbstractPlayerAction<PlayerDeathAction.De
     }
 
     @Override
-    public void validateArgument(@Nullable DeathArgument argument)
+    public void validateArgument(@NotNull ScenarioEngine engine, @NotNull ScenarioType type, @Nullable DeathArgument argument)
     {
         argument = this.requireArgsNonNull(argument);
+
+        if (type != ScenarioType.CONDITION_REQUIRE)
+            return;
+
         this.throwIfPresent(DeathArgument.KEY_DEATH_MESSAGE, argument.getDeathMessage());
         this.throwIfNotEquals(DeathArgument.KEY_NEW_EXP, argument.getNewExp(), -1);
         this.throwIfNotEquals(DeathArgument.KEY_NEW_LEVEL, argument.getNewLevel(), -1);

@@ -1,5 +1,6 @@
 package net.kunmc.lab.scenamatica.interfaces.action;
 
+import net.kunmc.lab.scenamatica.enums.ScenarioType;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.bukkit.event.Event;
 import org.bukkit.plugin.Plugin;
@@ -60,4 +61,13 @@ public interface Action<A extends ActionArgument>
      * @return デシリアライズされた引数
      */
     A deserializeArgument(@NotNull Map<String, Object> map);
+
+    /**
+     * 引数が正しいかチェックします。
+     *
+     * @param engine   シナリオエンジン
+     * @param type     シナリオの種類
+     * @param argument 引数
+     */
+    void validateArgument(@NotNull ScenarioEngine engine, @NotNull ScenarioType type, @Nullable A argument);
 }

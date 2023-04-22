@@ -4,6 +4,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Value;
 import net.kunmc.lab.scenamatica.action.utils.TextUtils;
 import net.kunmc.lab.scenamatica.commons.utils.MapUtils;
+import net.kunmc.lab.scenamatica.enums.ScenarioType;
 import net.kunmc.lab.scenamatica.interfaces.action.Requireable;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioEngine;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
@@ -102,9 +103,12 @@ public class GameModeAction extends AbstractPlayerAction<GameModeAction.GameMode
     }
 
     @Override
-    public void validateArgument(@Nullable GameModeChangeArgument argument)
+    public void validateArgument(@NotNull ScenarioEngine engine, @NotNull ScenarioType type, @Nullable GameModeChangeArgument argument)
     {
         argument = this.requireArgsNonNull(argument);
+
+        if (type != ScenarioType.CONDITION_REQUIRE)
+            return;
 
         this.throwIfPresent(GameModeChangeArgument.KEY_CAUSE, argument.getCause());
         this.throwIfPresent(GameModeChangeArgument.KEY_CANCEL_MESSAGE, argument.getCancelMessage());
