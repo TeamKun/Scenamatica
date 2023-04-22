@@ -33,4 +33,11 @@ public interface TriggerManager
                             @NotNull TriggerType type,
                             @Nullable TriggerArgument argument
     ) throws ScenarioException;
+
+    /**
+     * トリガを登録解除します。
+     *
+     * @param engine シナリオエンジン
+     */
+    void unregisterTrigger(@NotNull ScenarioEngine engine);
 }

@@ -27,6 +27,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CyclicBarrier;
@@ -207,7 +208,18 @@ public class ScenarioManagerImpl implements ScenarioManager
     public void unloadPluginScenarios(@NotNull Plugin plugin)
     {
         this.milestoneManager.revokeAllMilestones(plugin);
-        this.engines.removeAll(plugin);
+        Iterator<ScenarioEngine> iterator = this.engines.get(plugin).iterator();
+        while (iterator.hasNext())
+        {
+            ScenarioEngine engine = iterator.next();
+            if (engine.isRunning())
+                engine.cancel();
+
+            this.registry.getTriggerManager().unregisterTrigger(engine);
+
+            iterator.remove();
+        }
+
         this.registry.getScenarioFileManager().unloadPluginScenarios(plugin);
     }
 

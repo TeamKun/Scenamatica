@@ -109,4 +109,10 @@ public class TriggerManagerImpl implements TriggerManager
                 action.getArgument() // warn: unchecked,rawtypes
         );
     }
+
+    @Override
+    public void unregisterTrigger(@NotNull ScenarioEngine engine)
+    {
+        this.triggers.removeAll(engine.getScenario().getName());
+    }
 }
