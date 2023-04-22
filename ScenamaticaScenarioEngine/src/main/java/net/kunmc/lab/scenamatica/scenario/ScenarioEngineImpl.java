@@ -30,11 +30,7 @@ import net.kunmc.lab.scenamatica.interfaces.scenario.TestResult;
 import net.kunmc.lab.scenamatica.interfaces.scenario.runtime.CompiledScenarioAction;
 import net.kunmc.lab.scenamatica.interfaces.scenario.runtime.CompiledTriggerAction;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
-import net.kunmc.lab.scenamatica.interfaces.scenariofile.action.ActionBean;
-import net.kunmc.lab.scenamatica.interfaces.scenariofile.scenario.ScenarioBean;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerBean;
-import net.kunmc.lab.scenamatica.scenario.runtime.CompiledTriggerActionImpl;
-import net.kunmc.lab.scenamatica.scenario.runtime.Compilers;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -55,6 +51,7 @@ public class ScenarioEngineImpl implements ScenarioEngine
     private final TestReporter testReporter;
     private final Plugin plugin;
     private final ScenarioFileBean scenario;
+    private final ScenarioCompiler compiler;
     private final ScenarioActionListener listener;
     private final List<CompiledScenarioAction<?>> actions;
     private final List<CompiledTriggerAction> triggerActions;
@@ -84,133 +81,31 @@ public class ScenarioEngineImpl implements ScenarioEngine
         this.testReporter = testReporter;
         this.plugin = plugin;
         this.scenario = scenario;
+        this.compiler = new ScenarioCompiler(this, registry, actionManager);
         this.state = TestState.STAND_BY;
         this.listener = new ScenarioActionListenerImpl(this, registry);
 
-        String scenarioName = this.scenario.getName();
         this.logPrefix = LogUtils.gerScenarioPrefix(null, this.scenario);
 
-        // アクションをコンパイルしてキャッシュしておく。
-
-        this.logWithPrefix(
-                Level.INFO,
-                LangProvider.get("scenario.compile.start", MsgArgs.of("scenarioName", scenarioName))
-        );
-
-        int compileNeeded = this.calcCompileNeeded();
-        int compiled = 0;
+        // 以下、 アクションをコンパイルしてキャッシュしておく。
+        this.compiler.notifyCompileStart();
 
         // 本シナリオのコンパイル
-        this.logCompilingMain(++compiled, compileNeeded);
-
-        this.actions = this.runCompiler(this.scenario.getScenario());
+        this.actions = this.compiler.compileMain(this.scenario.getScenario());
 
         // トリガの before/after のコンパイル
-        this.triggerActions = this.compileTriggerActions(scenario.getTriggers(), compileNeeded);
+        this.triggerActions = this.compiler.compileTriggerActions(scenario.getTriggers());
 
         // runIf のコンパイル
         if (scenario.getRunIf() != null)
-            this.runIf = this.compileRunIf(scenario.getRunIf(), compiled, compileNeeded);
+            this.runIf = this.compiler.compileRunIf(scenario.getRunIf());
         else
             this.runIf = null;
 
+        // トリガのコンパイル
         this.registry.getTriggerManager().bakeTriggers(this);
     }
 
-    private CompiledScenarioAction<?> compileRunIf(ActionBean runIf, int compiled, int compileNeeded)
-    {
-        this.logCompiling(++compiled, compileNeeded, "RUN_IF");
-
-        return Compilers.compileConditionAction(
-                this.registry,
-                this,
-                this.actionManager.getCompiler(),
-                this.listener,
-                runIf
-        );
-    }
-
-    private static List<Pair<Action<?>, ActionArgument>> toActions(List<? extends CompiledScenarioAction<?>> actions)
-    {
-        ArrayList<Pair<Action<?>, ActionArgument>> list = new ArrayList<>(actions.size());
-        for (CompiledScenarioAction<?> action : actions)
-            list.add(new Pair<>(action.getAction(), action.getArgument()));
-
-        return list;
-    }
-
-    private List<CompiledScenarioAction<?>> runCompiler(List<? extends ScenarioBean> scenarios)
-    {
-        return Compilers.compileActions(
-                this.registry,
-                this,
-                this.actionManager.getCompiler(),
-                this.listener,
-                scenarios
-        );
-    }
-
-    private int calcCompileNeeded()
-    {
-        int compileNeeded = 1; // 本シナリオの分。
-
-        for (TriggerBean trigger : this.scenario.getTriggers())
-        {
-            if (!trigger.getBeforeThat().isEmpty())
-                compileNeeded++;
-            if (!trigger.getAfterThat().isEmpty())
-                compileNeeded++;
-        }
-
-        if (this.scenario.getRunIf() != null)
-            compileNeeded++;
-
-        return compileNeeded;
-    }
-
-    private List<CompiledTriggerAction> compileTriggerActions(List<? extends TriggerBean> triggers, int compileNeeded)
-    {
-        int compiled = 1; // 本シナリオの分。
-
-        List<CompiledTriggerAction> triggerActions = new ArrayList<>();
-        for (TriggerBean trigger : triggers)
-        {
-            List<CompiledScenarioAction<?>> beforeActions;
-            List<CompiledScenarioAction<?>> afterActions;
-
-            TriggerType triggerType = trigger.getType();
-            if (!trigger.getBeforeThat().isEmpty())
-            {
-                this.logCompiling(++compiled, compileNeeded, "BEFORE", triggerType);
-                beforeActions = this.runCompiler(trigger.getBeforeThat());
-            }
-            else
-                beforeActions = new ArrayList<>();
-
-            if (!trigger.getAfterThat().isEmpty())
-            {
-                this.logCompiling(++compiled, compileNeeded, "AFTER", triggerType);
-                afterActions = this.runCompiler(trigger.getAfterThat());
-            }
-            else
-                afterActions = new ArrayList<>();
-
-            triggerActions.add(new CompiledTriggerActionImpl(
-                    trigger,
-                    beforeActions,
-                    afterActions,
-                    Compilers.compileConditionAction(
-                            this.registry,
-                            this,
-                            this.actionManager.getCompiler(),
-                            this.listener,
-                            trigger.getRunIf()
-                    )
-            ));
-        }
-
-        return triggerActions;
-    }
 
     @Override
     @NotNull
@@ -418,6 +313,15 @@ public class ScenarioEngineImpl implements ScenarioEngine
         return null;
     }
 
+    private static List<Pair<Action<?>, ActionArgument>> toActions(List<? extends CompiledScenarioAction<?>> actions)
+    {
+        ArrayList<Pair<Action<?>, ActionArgument>> list = new ArrayList<>(actions.size());
+        for (CompiledScenarioAction<?> action : actions)
+            list.add(new Pair<>(action.getAction(), action.getArgument()));
+
+        return list;
+    }
+
     private TestResult runScenario(CompiledScenarioAction<?> scenario, CompiledScenarioAction<?> next)
     {
         if (scenario.getRunIf() != null)
@@ -553,35 +457,6 @@ public class ScenarioEngineImpl implements ScenarioEngine
         this.watchedActions = new ArrayList<>();
 
         this.isRunning = true;
-    }
-
-    private void logCompiling(int compiled, int total, String type, TriggerType triggerType)
-    {
-        MsgArgs newArgs = MsgArgs.of("compiled", compiled)
-                .add("total", total)
-                .add("type", type)
-                .add("triggerType", triggerType.name())
-                .add("scenarioName", this.scenario.getName());
-        this.logWithPrefix(Level.INFO, LangProvider.get("scenario.compile.child", newArgs));
-    }
-
-    private void logCompiling(int compiled, int total, String type)
-    {
-        MsgArgs newArgs = MsgArgs.of("compiled", compiled)
-                .add("total", total)
-                .add("type", type)
-                .add("triggerType", "MAIN")
-                .add("scenarioName", this.scenario.getName());
-        this.logWithPrefix(Level.INFO, LangProvider.get("scenario.compile.child", newArgs));
-    }
-
-    private void logCompilingMain(int compiled, int total)
-    {
-        MsgArgs newArgs = MsgArgs.of("compiled", compiled)
-                .add("total", total)
-                .add("type", "main")
-                .add("scenarioName", this.scenario.getName());
-        this.logWithPrefix(Level.INFO, LangProvider.get("scenario.compile.main", newArgs));
     }
 
     private void logWithPrefix(Level level, String message)

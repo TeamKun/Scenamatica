@@ -9,14 +9,16 @@ import net.kunmc.lab.scenamatica.interfaces.action.Requireable;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioActionListener;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioEngine;
 import net.kunmc.lab.scenamatica.interfaces.scenario.runtime.CompiledScenarioAction;
+import net.kunmc.lab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.action.ActionBean;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.scenario.ScenarioBean;
+import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerBean;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Compilers
+public class InternalCompiler
 {
     public static List<CompiledScenarioAction<?>> compileActions(
             @NotNull ScenamaticaRegistry registry,
@@ -112,5 +114,23 @@ public class Compilers
                 action.getArgument(),
                 null
         );
+    }
+
+    public static int calcCompileNeeded(ScenarioFileBean scenario)
+    {
+        int compileNeeded = 1; // 本シナリオの分。
+
+        for (TriggerBean trigger : scenario.getTriggers())
+        {
+            if (!trigger.getBeforeThat().isEmpty())
+                compileNeeded++;
+            if (!trigger.getAfterThat().isEmpty())
+                compileNeeded++;
+        }
+
+        if (scenario.getRunIf() != null)
+            compileNeeded++;
+
+        return compileNeeded;
     }
 }
