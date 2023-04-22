@@ -7,6 +7,7 @@ import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioResultDeliverer;
 import net.kunmc.lab.scenamatica.interfaces.scenario.TestResult;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayDeque;
 import java.util.UUID;
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
@@ -15,16 +16,17 @@ import java.util.concurrent.TimeoutException;
 
 public class ScenarioResultDelivererImpl implements ScenarioResultDeliverer
 {
+    private final Object lock = new Object();
     private final CyclicBarrier barrier;
     private final ScenamaticaRegistry registry;
     private final UUID testID;
     private final long startedAt;
+    private final ArrayDeque<TestResult> results;  // 受け渡し用
 
-    private TestResult result;  // 受け渡し用
     private boolean killed;  // シャットダウンされたら true
 
     private TestState state;  // wait されたら入る。終わったら消す
-    private boolean waiting;  // wait されているかどうか
+    private boolean waiting;  // wait されているかどうか。タイムアウト制御用。
     private long waitTimeout;
     private long elapsedTick;
 
@@ -38,24 +40,24 @@ public class ScenarioResultDelivererImpl implements ScenarioResultDeliverer
         this.testID = testID;
         this.startedAt = startedAt;
 
-        this.result = null;
+        this.results = new ArrayDeque<>();
         this.killed = false;
     }
 
     @Override
-    public void setResult(TestResult result)
+    public synchronized void setResult(TestResult result)
     {
-        this.result = result;
-        try
+        synchronized (this.lock)
         {
-            if (!this.waiting)
-                return;
+            this.results.add(result);
 
-            this.waiting = false;
             this.state = null;
             this.waitTimeout = -1L;
             this.elapsedTick = 0;
+        }
 
+        try
+        {
             this.barrier.await();
         }
         catch (InterruptedException e)
@@ -71,13 +73,13 @@ public class ScenarioResultDelivererImpl implements ScenarioResultDeliverer
 
     @Override
     @NotNull
-    public synchronized TestResult waitResult(long timeout, @NotNull TestState state)
+    public TestResult waitResult(long timeout, @NotNull TestState state)
     {
         if (timeout > 0)
             this.waitTimeout = timeout;
 
         this.state = state;
-        this.waiting = true;
+        this.waiting = true;  // タイムアウト制御用
         this.elapsedTick = 0;
 
         try
@@ -106,7 +108,11 @@ public class ScenarioResultDelivererImpl implements ScenarioResultDeliverer
             );
         }
 
-        return this.result;
+        synchronized (this.lock)
+        {
+            this.waiting = false;
+            return this.results.pop();
+        }
     }
 
     @Override
