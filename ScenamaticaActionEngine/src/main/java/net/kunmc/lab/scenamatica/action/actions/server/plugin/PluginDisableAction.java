@@ -49,7 +49,7 @@ public class PluginDisableAction extends AbstractPluginAction<PluginDisableActio
     public boolean isConditionFulfilled(@Nullable PluginDisableAction.PluginDisableActionArgument argument, @NotNull ScenarioEngine engine)
     {
         argument = super.requireArgsNonNull(argument);
-        return !argument.getPlugin(engine).isEnabled();
+        return !argument.getPlugin().isEnabled();
     }
 
     @Override

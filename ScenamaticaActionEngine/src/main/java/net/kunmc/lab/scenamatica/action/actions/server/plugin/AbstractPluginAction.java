@@ -8,7 +8,6 @@ import org.bukkit.event.server.PluginEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
-import java.util.Objects;
 
 public abstract class AbstractPluginAction<A extends AbstractPluginActionArgument> extends AbstractAction<A>
 {
@@ -22,7 +21,7 @@ public abstract class AbstractPluginAction<A extends AbstractPluginActionArgumen
 
         PluginEvent e = (PluginEvent) event;
 
-        return Objects.equals(e.getPlugin().getName(), argument.getPlugin(engine).getName());
+        return e.getPlugin().getName().equalsIgnoreCase(argument.getPluginName());
     }
 
     protected String deserializePlugin(Map<String, Object> map)

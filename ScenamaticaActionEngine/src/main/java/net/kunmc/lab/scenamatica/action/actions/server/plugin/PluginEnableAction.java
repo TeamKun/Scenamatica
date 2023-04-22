@@ -28,7 +28,7 @@ public class PluginEnableAction extends AbstractPluginAction<PluginEnableAction.
         if (argument == null)
             return;
 
-        Bukkit.getPluginManager().enablePlugin(argument.getPlugin(engine));
+        Bukkit.getPluginManager().enablePlugin(argument.getPlugin());
     }
 
     @Override
@@ -49,7 +49,7 @@ public class PluginEnableAction extends AbstractPluginAction<PluginEnableAction.
     public boolean isConditionFulfilled(@Nullable PluginEnableActionArgument argument, @NotNull ScenarioEngine engine)
     {
         argument = super.requireArgsNonNull(argument);
-        return argument.getPlugin(engine).isEnabled();
+        return argument.getPlugin().isEnabled();
     }
 
     @Override
