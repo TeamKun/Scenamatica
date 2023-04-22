@@ -28,6 +28,7 @@ public class ScenarioFileBeanSerializeTest
                     TriggerBeanSerializeTest.FULFILLED,
                     TriggerBeanSerializeTest.FULFILLED
             ),
+            null,
             ContextBeanSerializeTest.FULFILLED,
             Arrays.asList(
                     ScenarioBeanSerializeTest.FULFILLED,
@@ -57,6 +58,7 @@ public class ScenarioFileBeanSerializeTest
             "nothing",
             "A scenario that does nothing",
             Collections.emptyList(),
+            null,
             null,
             Collections.emptyList()
     );

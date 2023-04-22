@@ -3,10 +3,13 @@ package net.kunmc.lab.scenamatica.scenariofile.beans.trigger;
 import lombok.Value;
 import net.kunmc.lab.scenamatica.commons.utils.MapUtils;
 import net.kunmc.lab.scenamatica.enums.TriggerType;
+import net.kunmc.lab.scenamatica.interfaces.scenariofile.action.ActionBean;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.scenario.ScenarioBean;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerBean;
+import net.kunmc.lab.scenamatica.scenariofile.beans.scenario.ActionBeanImpl;
 import net.kunmc.lab.scenamatica.scenariofile.beans.scenario.ScenarioBeanImpl;
+import net.kunmc.lab.scenamatica.scenariofile.utils.ScenarioConditionUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -22,6 +25,7 @@ public class TriggerBeanImpl implements TriggerBean
     private static final String KEY_TYPE = "type";
     private static final String KEY_BEFORE_THAT = "before";
     private static final String KEY_AFTER_THAT = "after";
+    private static final String KEY_RUN_IF = "runif";
 
     @NotNull
     TriggerType type;
@@ -31,6 +35,8 @@ public class TriggerBeanImpl implements TriggerBean
     List<ScenarioBean> beforeThat;
     @NotNull
     List<ScenarioBean> afterThat;
+    @Nullable
+    ActionBean runIf;
 
     @NotNull
     public static Map<String, Object> serialize(@NotNull TriggerBean bean)
@@ -60,6 +66,9 @@ public class TriggerBeanImpl implements TriggerBean
                 list.add(ScenarioBeanImpl.serialize(scenario));
             map.put(KEY_AFTER_THAT, list);
         }
+
+        if (bean.getRunIf() != null)
+            map.put(KEY_RUN_IF, ActionBeanImpl.serialize(bean.getRunIf()));
 
         return map;
     }
@@ -94,6 +103,9 @@ public class TriggerBeanImpl implements TriggerBean
         TriggerType type = TriggerType.fromKey((String) map.get(KEY_TYPE));
         if (type != null && type.getArgumentType() != null)
             type.validateArguments(map);
+
+        if (map.containsKey(KEY_RUN_IF))
+            MapUtils.checkType(map, KEY_RUN_IF, Map.class);
     }
 
     @NotNull
@@ -125,12 +137,21 @@ public class TriggerBeanImpl implements TriggerBean
                         Object.class
                 )));
 
+        ActionBean runIf = null;
+        if (map.containsKey(KEY_RUN_IF))
+            runIf = ScenarioConditionUtils.parse(MapUtils.checkAndCastMap(
+                    map.get(KEY_RUN_IF),
+                    String.class,
+                    Object.class
+            ));
+
         assert type != null;  // validate() で検証済み
         return new TriggerBeanImpl(
                 type,
                 argument,
                 beforeThat,
-                afterThat
+                afterThat,
+                runIf
         );
     }
 

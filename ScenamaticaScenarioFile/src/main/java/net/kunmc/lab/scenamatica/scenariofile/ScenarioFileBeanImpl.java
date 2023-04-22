@@ -4,12 +4,15 @@ import lombok.Value;
 import net.kunmc.lab.peyangpaperutils.versioning.Version;
 import net.kunmc.lab.scenamatica.commons.utils.MapUtils;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
+import net.kunmc.lab.scenamatica.interfaces.scenariofile.action.ActionBean;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.context.ContextBean;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.scenario.ScenarioBean;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerBean;
 import net.kunmc.lab.scenamatica.scenariofile.beans.context.ContextBeanImpl;
+import net.kunmc.lab.scenamatica.scenariofile.beans.scenario.ActionBeanImpl;
 import net.kunmc.lab.scenamatica.scenariofile.beans.scenario.ScenarioBeanImpl;
 import net.kunmc.lab.scenamatica.scenariofile.beans.trigger.TriggerBeanImpl;
+import net.kunmc.lab.scenamatica.scenariofile.utils.ScenarioConditionUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -25,6 +28,7 @@ public class ScenarioFileBeanImpl implements ScenarioFileBean
     private static final String KEY_NAME = "name";
     private static final String KEY_DESCRIPTION = "description";
     private static final String KEY_TRIGGERS = "on";
+    private static final String KEY_RUN_IF = "runif";
     private static final String KEY_CONTEXT = "context";
     private static final String KEY_SCENARIO = "scenario";
 
@@ -36,6 +40,8 @@ public class ScenarioFileBeanImpl implements ScenarioFileBean
     String description;
     @NotNull
     List<TriggerBean> triggers;
+    @Nullable
+    ActionBean runIf;
     @Nullable
     ContextBean context;
     @NotNull
@@ -60,6 +66,8 @@ public class ScenarioFileBeanImpl implements ScenarioFileBean
 
         if (bean.getContext() != null)
             map.put(KEY_CONTEXT, ContextBeanImpl.serialize(bean.getContext()));
+        if (bean.getRunIf() != null)
+            map.put(KEY_RUN_IF, ActionBeanImpl.serialize(bean.getRunIf()));
 
         return map;
     }
@@ -126,11 +134,20 @@ public class ScenarioFileBeanImpl implements ScenarioFileBean
                     Object.class
             ));
 
+        ActionBean runIf = null;
+        if (map.containsKey(KEY_RUN_IF))
+            runIf = ScenarioConditionUtils.parse(MapUtils.checkAndCastMap(
+                    map.get(KEY_RUN_IF),
+                    String.class,
+                    Object.class
+            ));
+
         return new ScenarioFileBeanImpl(
                 scenamatica,
                 name,
                 description,
                 triggers,
+                runIf,
                 context,
                 scenario
         );

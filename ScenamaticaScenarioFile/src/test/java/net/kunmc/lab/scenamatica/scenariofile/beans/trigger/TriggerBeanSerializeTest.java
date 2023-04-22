@@ -19,7 +19,8 @@ public class TriggerBeanSerializeTest
             TriggerType.ON_ACTION,
             null,
             Arrays.asList(ScenarioBeanSerializeTest.FULFILLED, ScenarioBeanSerializeTest.FULFILLED),
-            Arrays.asList(ScenarioBeanSerializeTest.FULFILLED, ScenarioBeanSerializeTest.FULFILLED)
+            Arrays.asList(ScenarioBeanSerializeTest.FULFILLED, ScenarioBeanSerializeTest.FULFILLED),
+            null
     );
 
     public static final Map<String, Object> FULFILLED_MAP = new HashMap<String, Object>()
@@ -33,7 +34,8 @@ public class TriggerBeanSerializeTest
             TriggerType.ON_ACTION,
             null,
             Collections.emptyList(),
-            Collections.emptyList()
+            Collections.emptyList(),
+            null
     );
 
     public static final Map<String, Object> EMPTY_MAP = new HashMap<String, Object>()

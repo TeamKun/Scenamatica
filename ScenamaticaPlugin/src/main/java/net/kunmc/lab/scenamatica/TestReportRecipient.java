@@ -70,6 +70,18 @@ public class TestReportRecipient implements TestReporter
     }
 
     @Override
+    public void onTestSkipped(@NotNull ScenarioEngine engine, @NotNull CompiledScenarioAction<?> action)
+    {
+        ScenarioFileBean scenario = engine.getScenario();
+
+        this.terminals.forEach(t -> t.info(withPrefix(engine.getTestID(), scenario, LangProvider.get(
+                "test.skip",
+                MsgArgs.of("scenario", scenario.getName())
+                        .add("condition", getConditionString(action))
+        ))));
+    }
+
+    @Override
     public void onActionWatchStart(@NotNull ScenarioEngine engine, @NotNull CompiledScenarioAction<?> action)
     {
         ScenarioFileBean scenario = engine.getScenario();

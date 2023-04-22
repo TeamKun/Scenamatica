@@ -5,7 +5,9 @@ import net.kunmc.lab.scenamatica.commons.utils.MapUtils;
 import net.kunmc.lab.scenamatica.enums.ScenarioType;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.action.ActionBean;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.scenario.ScenarioBean;
+import net.kunmc.lab.scenamatica.scenariofile.utils.ScenarioConditionUtils;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -14,11 +16,14 @@ import java.util.Map;
 public class ScenarioBeanImpl implements ScenarioBean
 {
     private static final String KEY_SCENARIO_TYPE = "type";
+    private static final String KEY_RUN_IF = "runif";
 
     @NotNull
     ScenarioType type;
     @NotNull
     ActionBean action;
+    @Nullable
+    ActionBean runIf;
     long timeout;
 
     /**
@@ -35,6 +40,9 @@ public class ScenarioBeanImpl implements ScenarioBean
             map.put(KEY_TIMEOUT, bean.getTimeout());
 
         map.putAll(ActionBeanImpl.serialize(bean.getAction()));
+
+        if (bean.getRunIf() != null)
+            map.put(KEY_RUN_IF, ActionBeanImpl.serialize(bean.getRunIf()));
 
         return map;
     }
@@ -69,10 +77,19 @@ public class ScenarioBeanImpl implements ScenarioBean
         ScenarioType type = ScenarioType.fromKey((String) map.get(KEY_SCENARIO_TYPE));
         long timeout = MapUtils.getAsLongOrDefault(map, KEY_TIMEOUT, -1L);
 
+        ActionBean runIf = null;
+        if (map.containsKey(KEY_RUN_IF))
+            runIf = ScenarioConditionUtils.parse(MapUtils.checkAndCastMap(
+                    map.get(KEY_RUN_IF),
+                    String.class,
+                    Object.class
+            ));
+
         assert type != null;
         return new ScenarioBeanImpl(
                 type,
                 ActionBeanImpl.deserialize(map),
+                runIf,
                 timeout
         );
     }

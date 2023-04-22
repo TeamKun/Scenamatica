@@ -57,4 +57,12 @@ public interface CompiledScenarioAction<A extends ActionArgument>
      */
     @Nullable
     A getArgument();
+
+    /**
+     * アクションの実行条件を取得します。
+     *
+     * @return アクションの実行条件
+     */
+    @Nullable
+    CompiledScenarioAction<?> getRunIf();
 }

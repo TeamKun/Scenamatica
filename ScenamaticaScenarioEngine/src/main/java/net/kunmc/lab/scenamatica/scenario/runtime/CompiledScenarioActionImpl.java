@@ -23,6 +23,8 @@ public class CompiledScenarioActionImpl<A extends ActionArgument> implements Com
     Action<A> action;
     @Nullable
     A argument;
+    @Nullable
+    CompiledScenarioAction<?> runIf;
 
     @Override
     public void execute(@NotNull ScenarioEngine engine, @NotNull ActionManager manager, @NotNull ScenarioActionListener listener)

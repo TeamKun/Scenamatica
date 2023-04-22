@@ -30,6 +30,7 @@ import net.kunmc.lab.scenamatica.interfaces.scenario.TestResult;
 import net.kunmc.lab.scenamatica.interfaces.scenario.runtime.CompiledScenarioAction;
 import net.kunmc.lab.scenamatica.interfaces.scenario.runtime.CompiledTriggerAction;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
+import net.kunmc.lab.scenamatica.interfaces.scenariofile.action.ActionBean;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.scenario.ScenarioBean;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerBean;
 import net.kunmc.lab.scenamatica.scenario.runtime.CompiledTriggerActionImpl;
@@ -57,6 +58,7 @@ public class ScenarioEngineImpl implements ScenarioEngine
     private final ScenarioActionListener listener;
     private final List<CompiledScenarioAction<?>> actions;
     private final List<CompiledTriggerAction> triggerActions;
+    private final CompiledScenarioAction<?> runIf;
 
     private boolean isRunning;
     private TriggerBean ranBy;
@@ -95,7 +97,7 @@ public class ScenarioEngineImpl implements ScenarioEngine
                 LangProvider.get("scenario.compile.start", MsgArgs.of("scenarioName", scenarioName))
         );
 
-        int compileNeeded = getCompileNeeded(this.scenario.getTriggers());
+        int compileNeeded = this.calcCompileNeeded();
         int compiled = 0;
 
         // 本シナリオのコンパイル
@@ -106,7 +108,26 @@ public class ScenarioEngineImpl implements ScenarioEngine
         // トリガの before/after のコンパイル
         this.triggerActions = this.compileTriggerActions(scenario.getTriggers(), compileNeeded);
 
+        // runIf のコンパイル
+        if (scenario.getRunIf() != null)
+            this.runIf = this.compileRunIf(scenario.getRunIf(), compiled, compileNeeded);
+        else
+            this.runIf = null;
+
         this.registry.getTriggerManager().bakeTriggers(this);
+    }
+
+    private CompiledScenarioAction<?> compileRunIf(ActionBean runIf, int compiled, int compileNeeded)
+    {
+        this.logCompiling(++compiled, compileNeeded, "RUN_IF");
+
+        return Compilers.compileConditionAction(
+                this.registry,
+                this,
+                this.actionManager.getCompiler(),
+                this.listener,
+                runIf
+        );
     }
 
     private static List<Pair<Action<?>, ActionArgument>> toActions(List<? extends CompiledScenarioAction<?>> actions)
@@ -129,17 +150,20 @@ public class ScenarioEngineImpl implements ScenarioEngine
         );
     }
 
-    private int getCompileNeeded(List<? extends TriggerBean> triggers)
+    private int calcCompileNeeded()
     {
         int compileNeeded = 1; // 本シナリオの分。
 
-        for (TriggerBean trigger : triggers)
+        for (TriggerBean trigger : this.scenario.getTriggers())
         {
             if (!trigger.getBeforeThat().isEmpty())
                 compileNeeded++;
             if (!trigger.getAfterThat().isEmpty())
                 compileNeeded++;
         }
+
+        if (this.scenario.getRunIf() != null)
+            compileNeeded++;
 
         return compileNeeded;
     }
@@ -171,7 +195,18 @@ public class ScenarioEngineImpl implements ScenarioEngine
             else
                 afterActions = new ArrayList<>();
 
-            triggerActions.add(new CompiledTriggerActionImpl(trigger, beforeActions, afterActions));
+            triggerActions.add(new CompiledTriggerActionImpl(
+                    trigger,
+                    beforeActions,
+                    afterActions,
+                    Compilers.compileConditionAction(
+                            this.registry,
+                            this,
+                            this.actionManager.getCompiler(),
+                            this.listener,
+                            trigger.getRunIf()
+                    )
+            ));
         }
 
         return triggerActions;
@@ -222,6 +257,42 @@ public class ScenarioEngineImpl implements ScenarioEngine
         ));
         this.state = TestState.STARTING;
         Thread.sleep(200); // アクションとの排他制御のためにちょっと待つ。ロードしてる風でごめんね ><
+
+
+        if (this.runIf != null)
+        {
+            TestResult conditionResult = this.testCondition(this.runIf);
+            // コンディションチェックに失敗した(満たしていない)場合は(エラーにはせずに)スキップする。
+            if (conditionResult.getTestResultCause() != TestResultCause.PASSED)
+            {
+                // あとかたづけ
+                ThreadingUtil.waitFor(this.registry.getPlugin(), this::cleanUp);
+                this.testReporter.onTestSkipped(this, this.runIf);
+                return new TestResultImpl(
+                        this.testID,
+                        this.state,
+                        TestResultCause.SKIPPED, // 実質的にはエラーではないので、スキップする。
+                        this.startedAt
+                );
+            }
+        }
+        if (compiledTrigger.getRunIf() != null)
+        {
+            TestResult conditionResult = this.testCondition(compiledTrigger.getRunIf());
+            // コンディションチェックに失敗した(満たしていない)場合は(エラーにはせずに)スキップする。
+            if (conditionResult.getTestResultCause() != TestResultCause.PASSED)
+            {
+                // あとかたづけ
+                ThreadingUtil.waitFor(this.registry.getPlugin(), this::cleanUp);
+                this.testReporter.onTestSkipped(this, compiledTrigger.getRunIf());
+                return new TestResultImpl(
+                        this.testID,
+                        this.state,
+                        TestResultCause.SKIPPED, // 実質的にはエラーではないので、スキップする。
+                        this.startedAt
+                );
+            }
+        }
 
         TestResult mayResult = this.runBeforeIfPresent(compiledTrigger);
         if (mayResult != null)
@@ -279,6 +350,7 @@ public class ScenarioEngineImpl implements ScenarioEngine
 
         this.isRunning = false;  // これの位置を変えると, 排他の問題でバグる
     }
+
 
     private TestResult runBeforeIfPresent(CompiledTriggerAction trigger)
     {
@@ -339,7 +411,7 @@ public class ScenarioEngineImpl implements ScenarioEngine
             CompiledScenarioAction<?> next = i + 1 < scenario.size() ? scenario.get(i + 1): null;
 
             TestResult result = this.runScenario(scenarioBean, next);
-            if (result.getTestResultCause() != TestResultCause.PASSED)
+            if (!(result.getTestResultCause() == TestResultCause.PASSED || result.getTestResultCause() == TestResultCause.SKIPPED))
                 return result;
         }
 
@@ -348,6 +420,19 @@ public class ScenarioEngineImpl implements ScenarioEngine
 
     private TestResult runScenario(CompiledScenarioAction<?> scenario, CompiledScenarioAction<?> next)
     {
+        if (scenario.getRunIf() != null)
+        {
+            TestResult result = this.testCondition(scenario.getRunIf());
+            if (result.getTestResultCause() != TestResultCause.PASSED)
+
+                return new TestResultImpl(
+                        this.testID,
+                        this.state,
+                        TestResultCause.SKIPPED,
+                        this.startedAt
+                );
+        }
+
         this.currentScenario = scenario;
         ScenarioType type = scenario.getType();
 
@@ -476,6 +561,16 @@ public class ScenarioEngineImpl implements ScenarioEngine
                 .add("total", total)
                 .add("type", type)
                 .add("triggerType", triggerType.name())
+                .add("scenarioName", this.scenario.getName());
+        this.logWithPrefix(Level.INFO, LangProvider.get("scenario.compile.child", newArgs));
+    }
+
+    private void logCompiling(int compiled, int total, String type)
+    {
+        MsgArgs newArgs = MsgArgs.of("compiled", compiled)
+                .add("total", total)
+                .add("type", type)
+                .add("triggerType", "MAIN")
                 .add("scenarioName", this.scenario.getName());
         this.logWithPrefix(Level.INFO, LangProvider.get("scenario.compile.child", newArgs));
     }

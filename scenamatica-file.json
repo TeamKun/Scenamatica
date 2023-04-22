@@ -62,6 +62,11 @@
           "description": "シナリオのタイムアウト時間を**チック**で指定します。動作の実行に時間がかかったり, いつまで経ってもアクションが起こされなかったときに, テストを失敗にして切り上げます。 0以下の値を指定すると, タイムアウトは無効になります。",
           "minimum": -1,
           "default": -1
+        },
+        "runif": {
+          "type": "object",
+          "description": "シナリオの実行条件を定義します。アクションで定義します。満たしていない場合はスキップされます。",
+          "$ref": "#/definitions/action"
         }
       },
       "required": [
@@ -1213,6 +1218,11 @@
         "after": {
           "$ref": "#/definitions/scenarios",
           "description": "シナリオがこのトリガによって実行される場合, 本シナリオの実行後に実行するシナリオを定義します。"
+        },
+        "runif": {
+          "type": "object",
+          "description": "シナリオの実行条件を定義します。アクションで定義します。満たしていない場合はスキップされます。",
+          "$ref": "#/definitions/action"
         }
       },
       "required": [
@@ -1279,6 +1289,11 @@
         }
       },
       "additionalProperties": false
+    },
+    "runif": {
+      "type": "object",
+      "description": "シナリオの実行条件を定義します。アクションで定義します。満たしていない場合はスキップされます。",
+      "$ref": "#/definitions/action"
     },
     "scenario": {
       "$ref": "#/definitions/scenarios",

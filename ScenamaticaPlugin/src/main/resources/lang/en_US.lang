@@ -31,6 +31,7 @@ command.scenario.status.details.id=Test ID: %%id%%
 command.scenario.status.details.time=Started at: %%startedAt%%
 
 test.start=Starting test of scenario %%scenario%% by %%trigger%%.
+test.skip=%%bold%%→%%reset%% The test of the scenario %%scenario%% has been skipped because %%condition%% is not met.
 test.action.run=A scheduled action %%name%% is being executed.
 test.action.run.fail=%%bold%%❌%%reset%%  The scheduled action %%action%% failed to execute due to %%cause%%.
 test.action.run.success=%%bold%%✔%%reset%%  The scheduled action %%action%% has been executed successfully.

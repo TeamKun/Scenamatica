@@ -30,6 +30,13 @@ public interface ScenarioBean extends Serializable
     ActionBean getAction();
 
     /**
+     * このシナリオの実行条件を取得します。
+     *
+     * @return 実行条件
+     */
+    ActionBean getRunIf();
+
+    /**
      * タイムアウトの時間を**チック**で定義します。
      * {@code -1} は無限に待つことを意味します。
      *

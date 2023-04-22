@@ -1,6 +1,7 @@
 package net.kunmc.lab.scenamatica.interfaces.scenariofile;
 
 import net.kunmc.lab.peyangpaperutils.versioning.Version;
+import net.kunmc.lab.scenamatica.interfaces.scenariofile.action.ActionBean;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.context.ContextBean;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.scenario.ScenarioBean;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerBean;
@@ -35,6 +36,13 @@ public interface ScenarioFileBean extends Serializable
      * @return 説明
      */
     String getDescription();
+
+    /**
+     * このシナリオの実行条件を取得します。
+     *
+     * @return 実行条件
+     */
+    ActionBean getRunIf();
 
     /**
      * このシナリオの実行タイミングを取得します。

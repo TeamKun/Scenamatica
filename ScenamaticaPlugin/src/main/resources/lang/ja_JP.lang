@@ -31,6 +31,7 @@ command.scenario.status.details.id=テスト ID： %%id%%
 command.scenario.status.details.time=開始時刻：%%startedAt%%
 
 test.start=シナリオ %%scenario%% のテストが %%trigger%% により開始されました。
+test.skip=%%bold%%→%%reset%% シナリオ %%scenario%% のテストは %%condition%% を満たしていないためスキップされました。
 test.action.run=スケジュールされたアクション %%action%% を実行します。
 test.action.run.fail=%%bold%%❌%%reset%%  スケジュールされたアクション %%action%% の実行は %%cause%% により失敗しました。
 test.action.run.success=%%bold%%✔%%reset%%  スケジュールされたアクション %%action%% の実行に成功しました。

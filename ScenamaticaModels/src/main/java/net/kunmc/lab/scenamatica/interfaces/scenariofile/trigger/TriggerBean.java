@@ -1,6 +1,7 @@
 package net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger;
 
 import net.kunmc.lab.scenamatica.enums.TriggerType;
+import net.kunmc.lab.scenamatica.interfaces.scenariofile.action.ActionBean;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.scenario.ScenarioBean;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -45,4 +46,12 @@ TriggerBean extends Serializable
      */
     @NotNull
     List<ScenarioBean> getAfterThat();
+
+    /**
+     * このシナリオの実行条件を取得します。
+     *
+     * @return 実行条件
+     */
+    ActionBean getRunIf();
+
 }

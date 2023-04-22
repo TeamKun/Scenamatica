@@ -22,10 +22,18 @@ public interface TestReporter
     void onTestStart(@NotNull ScenarioEngine engine, @NotNull TriggerBean trigger);
 
     /**
+     * シナリオの実行が（条件を満たしていない等で）スキップされたことをレポートします。
+     *
+     * @param engine エンジン
+     * @param action スキップの要因となったアクション
+     */
+    void onTestSkipped(@NotNull ScenarioEngine engine, @NotNull CompiledScenarioAction<?> action);
+
+    /**
      * シナリオのアクションの開始をレポートします。
      *
-     * @param engine  エンジン
-     * @param action   アクション
+     * @param engine エンジン
+     * @param action アクション
      */
     void onActionStart(@NotNull ScenarioEngine engine, @NotNull CompiledScenarioAction<?> action);
 

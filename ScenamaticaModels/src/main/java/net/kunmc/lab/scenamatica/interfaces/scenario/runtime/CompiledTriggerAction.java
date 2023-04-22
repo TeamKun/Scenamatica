@@ -2,6 +2,7 @@ package net.kunmc.lab.scenamatica.interfaces.scenario.runtime;
 
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerBean;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -33,4 +34,12 @@ public interface CompiledTriggerAction
      */
     @NotNull
     List<CompiledScenarioAction<?>> getAfterActions();
+
+    /**
+     * 本シナリオの実行条件を取得します。
+     *
+     * @return 実行条件
+     */
+    @Nullable
+    CompiledScenarioAction<?> getRunIf();
 }

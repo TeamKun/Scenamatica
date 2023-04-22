@@ -9,6 +9,7 @@ import net.kunmc.lab.scenamatica.interfaces.action.Requireable;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioActionListener;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioEngine;
 import net.kunmc.lab.scenamatica.interfaces.scenario.runtime.CompiledScenarioAction;
+import net.kunmc.lab.scenamatica.interfaces.scenariofile.action.ActionBean;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.scenario.ScenarioBean;
 import org.jetbrains.annotations.NotNull;
 
@@ -31,7 +32,7 @@ public class Compilers
         return compiled;
     }
 
-    private static <A extends ActionArgument> CompiledScenarioAction<A> compileAction(
+    public static <A extends ActionArgument> CompiledScenarioAction<A> compileAction(
             @NotNull ScenamaticaRegistry registry,
             @NotNull ScenarioEngine engine,
             @NotNull ActionCompiler compiler,
@@ -57,7 +58,59 @@ public class Compilers
                 scenario,
                 scenario.getType(),
                 action.getAction(),
-                action.getArgument()
+                action.getArgument(),
+                scenario.getRunIf() == null ? null: compileConditionAction(registry, engine, compiler, listener, scenario.getRunIf())
+        );
+    }
+
+    public static <A extends ActionArgument> CompiledScenarioAction<A> compileConditionAction(
+            @NotNull ScenamaticaRegistry registry,
+            @NotNull ScenarioEngine engine,
+            @NotNull ActionCompiler compiler,
+            @NotNull ScenarioActionListener listener,
+            @NotNull ActionBean bean)
+    {  // RunIF 用に偽装する。
+        CompiledAction<A> action = compiler.compile(
+                registry,
+                engine,
+                bean,
+                listener::onActionError,
+                listener::onActionExecuted
+        );
+
+        action.getAction().validateArgument(engine, ScenarioType.CONDITION_REQUIRE, action.getArgument());
+
+        return new CompiledScenarioActionImpl<>(
+                new ScenarioBean()
+                {
+                    @Override
+                    public @NotNull ScenarioType getType()
+                    {
+                        return ScenarioType.CONDITION_REQUIRE;
+                    }
+
+                    @Override
+                    public @NotNull ActionBean getAction()
+                    {
+                        return bean;
+                    }
+
+                    @Override
+                    public ActionBean getRunIf()
+                    {
+                        return null;
+                    }
+
+                    @Override
+                    public long getTimeout()
+                    {
+                        return -1;
+                    }
+                },
+                ScenarioType.CONDITION_REQUIRE,
+                action.getAction(),
+                action.getArgument(),
+                null
         );
     }
 }

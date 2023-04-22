@@ -5,6 +5,7 @@ import net.kunmc.lab.scenamatica.interfaces.scenario.runtime.CompiledScenarioAct
 import net.kunmc.lab.scenamatica.interfaces.scenario.runtime.CompiledTriggerAction;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerBean;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -17,5 +18,6 @@ public class CompiledTriggerActionImpl implements CompiledTriggerAction
     List<CompiledScenarioAction<?>> beforeActions;
     @NotNull
     List<CompiledScenarioAction<?>> afterActions;
-
+    @Nullable
+    CompiledScenarioAction<?> runIf;
 }
