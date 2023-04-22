@@ -15,6 +15,7 @@ public class ScenarioBeanSerializeTest
     public static final ScenarioBean FULFILLED = new ScenarioBeanImpl(
             ScenarioType.ACTION_EXECUTE,
             ActionBeanSerializeTest.FULFILLED,
+            null,
             114514L
     );
 
@@ -27,6 +28,7 @@ public class ScenarioBeanSerializeTest
     public static final ScenarioBean EMPTY = new ScenarioBeanImpl(
             ScenarioType.ACTION_EXECUTE,
             ActionBeanSerializeTest.EMPTY,
+            null,
             -1L
     );
 

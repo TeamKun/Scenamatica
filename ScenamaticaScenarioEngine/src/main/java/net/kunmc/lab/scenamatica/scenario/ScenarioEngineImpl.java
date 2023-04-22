@@ -13,7 +13,6 @@ import net.kunmc.lab.scenamatica.enums.TestResultCause;
 import net.kunmc.lab.scenamatica.enums.TestState;
 import net.kunmc.lab.scenamatica.enums.TriggerType;
 import net.kunmc.lab.scenamatica.enums.WatchType;
-import net.kunmc.lab.scenamatica.exceptions.context.ContextPreparationException;
 import net.kunmc.lab.scenamatica.exceptions.scenario.TriggerNotFoundException;
 import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
 import net.kunmc.lab.scenamatica.interfaces.action.Action;
@@ -81,9 +80,9 @@ public class ScenarioEngineImpl implements ScenarioEngine
         this.testReporter = testReporter;
         this.plugin = plugin;
         this.scenario = scenario;
+        this.listener = new ScenarioActionListenerImpl(this, registry);
         this.compiler = new ScenarioCompiler(this, registry, actionManager);
         this.state = TestState.STAND_BY;
-        this.listener = new ScenarioActionListenerImpl(this, registry);
 
         this.logPrefix = LogUtils.gerScenarioPrefix(null, this.scenario);
 
@@ -113,38 +112,17 @@ public class ScenarioEngineImpl implements ScenarioEngine
     public TestResult start(@NotNull TriggerBean trigger) throws TriggerNotFoundException
     {
         this.setRunInfo(trigger);
-        CompiledTriggerAction compiledTrigger = this.triggerActions.parallelStream()
-                .filter(t -> t.getTrigger().getType() == trigger.getType())
-                .filter(t -> Objects.equals(t.getTrigger().getArgument(), trigger.getArgument()))
-                .findFirst().orElseThrow(() -> new TriggerNotFoundException(trigger.getType()));
+        CompiledTriggerAction compiledTrigger = this.findTriggerOrThrow(trigger);
 
-        this.state = TestState.CONTEXT_PREPARING;
-        Context context;
-        try
-        {
-            context = this.registry.getContextManager().prepareContext(this.scenario, this.testID);
-            if (context == null)
-                throw new ContextPreparationException(""); // だみー
-        }
-        catch (Exception e)
-        {
-            this.registry.getExceptionHandler().report(e);
-            this.logWithPrefix(Level.WARNING, LangProvider.get(
-                    "scenario.run.prepare.fail",
-                    MsgArgs.of("scenarioName", this.scenario.getName())
-            ));
+        // あとかたづけ は、できるだけ明瞭にしたいのでこのメソッド内で完結する。
 
+        Context context = this.prepareContext();  // State 変更: CONTEXT_PREPARING
+        if (context == null)
+        {
             // あとかたづけ
             ThreadingUtil.waitFor(this.registry.getPlugin(), this::cleanUp);
-
-            return new TestResultImpl(
-                    this.testID,
-                    this.state,
-                    TestResultCause.CONTEXT_PREPARATION_FAILED,
-                    this.startedAt
-            );
+            this.genResult(TestResultCause.CONTEXT_PREPARATION_FAILED);
         }
-
 
         this.logWithPrefix(Level.INFO, LangProvider.get(
                 "scenario.run.engine.starting",
@@ -153,43 +131,23 @@ public class ScenarioEngineImpl implements ScenarioEngine
         this.state = TestState.STARTING;
         Thread.sleep(200); // アクションとの排他制御のためにちょっと待つ。ロードしてる風でごめんね ><
 
+        TestResult result = this.startScenarioRun(compiledTrigger);
+        this.state = TestState.FINISHED;
 
-        if (this.runIf != null)
-        {
-            TestResult conditionResult = this.testCondition(this.runIf);
-            // コンディションチェックに失敗した(満たしていない)場合は(エラーにはせずに)スキップする。
-            if (conditionResult.getTestResultCause() != TestResultCause.PASSED)
-            {
-                // あとかたづけ
-                ThreadingUtil.waitFor(this.registry.getPlugin(), this::cleanUp);
-                this.testReporter.onTestSkipped(this, this.runIf);
-                return new TestResultImpl(
-                        this.testID,
-                        this.state,
-                        TestResultCause.SKIPPED, // 実質的にはエラーではないので、スキップする。
-                        this.startedAt
-                );
-            }
-        }
-        if (compiledTrigger.getRunIf() != null)
-        {
-            TestResult conditionResult = this.testCondition(compiledTrigger.getRunIf());
-            // コンディションチェックに失敗した(満たしていない)場合は(エラーにはせずに)スキップする。
-            if (conditionResult.getTestResultCause() != TestResultCause.PASSED)
-            {
-                // あとかたづけ
-                ThreadingUtil.waitFor(this.registry.getPlugin(), this::cleanUp);
-                this.testReporter.onTestSkipped(this, compiledTrigger.getRunIf());
-                return new TestResultImpl(
-                        this.testID,
-                        this.state,
-                        TestResultCause.SKIPPED, // 実質的にはエラーではないので、スキップする。
-                        this.startedAt
-                );
-            }
-        }
+        return result;
+    }
 
-        TestResult mayResult = this.runBeforeIfPresent(compiledTrigger);
+    private TestResult startScenarioRun(@NotNull CompiledTriggerAction compiledTrigger)
+    {
+        TestResult mayResult = this.testRunConditionIfExists(this.runIf);
+        if (mayResult != null)
+            return mayResult;  // あとかたづけは上に包含されている。
+
+        mayResult = this.testRunConditionIfExists(compiledTrigger.getRunIf());
+        if (mayResult != null)
+            return mayResult;  // あとかたづけは上に包含されている。
+
+        mayResult = this.runBeforeIfPresent(compiledTrigger);
         if (mayResult != null)
         {
             // あとかたづけ
@@ -222,12 +180,56 @@ public class ScenarioEngineImpl implements ScenarioEngine
         // あとかたづけ
         ThreadingUtil.waitFor(this.registry.getPlugin(), this::cleanUp);
 
-        return new TestResultImpl(
-                this.testID,
-                this.state = TestState.FINISHED,
-                TestResultCause.PASSED,
-                this.startedAt
-        );
+        return this.genResult(TestResultCause.PASSED);
+    }
+
+    private TestResult testRunConditionIfExists(@Nullable CompiledScenarioAction<?> runIf)
+    {
+        if (runIf != null)
+        {
+            TestResult conditionResult = this.testCondition(runIf);
+            // コンディションチェックに失敗した(満たしていない)場合は(エラーにはせずに)スキップする。
+            if (conditionResult.getTestResultCause() != TestResultCause.PASSED)
+            {
+                this.testReporter.onTestSkipped(this, this.runIf);
+
+                // あとかたづけ
+                ThreadingUtil.waitFor(this.registry.getPlugin(), this::cleanUp);
+                return this.genResult(TestResultCause.SKIPPED); // 実質的にはエラーではないので、スキップする。
+            }
+        }
+
+        return null;
+    }
+
+    @NotNull
+    private CompiledTriggerAction findTriggerOrThrow(TriggerBean trigger) throws TriggerNotFoundException
+    {
+        return this.triggerActions.parallelStream()
+                .filter(t -> t.getTrigger().getType() == trigger.getType())
+                .filter(t -> Objects.equals(t.getTrigger().getArgument(), trigger.getArgument()))
+                .findFirst().orElseThrow(() -> new TriggerNotFoundException(trigger.getType()));
+    }
+
+    @Nullable
+    private Context prepareContext()
+    {
+        this.state = TestState.CONTEXT_PREPARING;
+
+        try
+        {
+            return this.registry.getContextManager().prepareContext(this.scenario, this.testID);
+        }
+        catch (Exception e)
+        {
+            this.registry.getExceptionHandler().report(e);
+            this.logWithPrefix(Level.WARNING, LangProvider.get(
+                    "scenario.run.prepare.fail",
+                    MsgArgs.of("scenarioName", this.scenario.getName())
+            ));
+
+            return null;
+        }
     }
 
     private void cleanUp()
@@ -245,7 +247,6 @@ public class ScenarioEngineImpl implements ScenarioEngine
 
         this.isRunning = false;  // これの位置を変えると, 排他の問題でバグる
     }
-
 
     private TestResult runBeforeIfPresent(CompiledTriggerAction trigger)
     {
@@ -295,12 +296,7 @@ public class ScenarioEngineImpl implements ScenarioEngine
         for (int i = 0; i < scenario.size(); i++)
         {
             if (!this.isRunning)
-                return new TestResultImpl(
-                        this.testID,
-                        this.state,
-                        TestResultCause.CANCELLED,
-                        this.startedAt
-                );
+                return this.genResult(TestResultCause.CANCELLED);
 
             CompiledScenarioAction<?> scenarioBean = scenario.get(i);
             CompiledScenarioAction<?> next = i + 1 < scenario.size() ? scenario.get(i + 1): null;
@@ -328,13 +324,7 @@ public class ScenarioEngineImpl implements ScenarioEngine
         {
             TestResult result = this.testCondition(scenario.getRunIf());
             if (result.getTestResultCause() != TestResultCause.PASSED)
-
-                return new TestResultImpl(
-                        this.testID,
-                        this.state,
-                        TestResultCause.SKIPPED,
-                        this.startedAt
-                );
+                return this.genResult(TestResultCause.SKIPPED);
         }
 
         this.currentScenario = scenario;
@@ -379,34 +369,19 @@ public class ScenarioEngineImpl implements ScenarioEngine
         {
             this.registry.getExceptionHandler().report(e);
             this.testReporter.onConditionCheckFailed(this, scenario);
-            return new TestResultImpl(
-                    this.testID,
-                    this.state,
-                    TestResultCause.INTERNAL_ERROR,
-                    this.startedAt
-            );
+            return this.genResult(TestResultCause.INTERNAL_ERROR);
         }
 
         TestResult testResult;
         if (result)
         {
             this.testReporter.onConditionCheckSuccess(this, scenario);
-            testResult = new TestResultImpl(
-                    this.testID,
-                    this.state,
-                    TestResultCause.PASSED,
-                    this.startedAt
-            );
+            testResult = this.genResult(TestResultCause.PASSED);
         }
         else
         {
             this.testReporter.onConditionCheckFailed(this, scenario);
-            testResult = new TestResultImpl(
-                    this.testID,
-                    this.state,
-                    TestResultCause.ILLEGAL_CONDITION,
-                    this.startedAt
-            );
+            testResult = this.genResult(TestResultCause.ILLEGAL_CONDITION);
         }
 
         return testResult;
@@ -464,6 +439,16 @@ public class ScenarioEngineImpl implements ScenarioEngine
         this.registry.getLogger().log(
                 level,
                 this.logPrefix + message
+        );
+    }
+
+    private TestResult genResult(TestResultCause cause)
+    {
+        return new TestResultImpl(
+                this.testID,
+                this.state,
+                cause,
+                this.startedAt
         );
     }
 
