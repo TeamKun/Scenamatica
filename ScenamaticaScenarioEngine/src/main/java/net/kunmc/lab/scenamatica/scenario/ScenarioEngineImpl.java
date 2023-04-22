@@ -221,7 +221,7 @@ public class ScenarioEngineImpl implements ScenarioEngine
                 MsgArgs.of("scenarioName", this.scenario.getName())
         ));
         this.state = TestState.STARTING;
-        Thread.sleep(500); // アクションとの排他制御のためにちょっと待つ。ロードしてる風でごめんね ><
+        Thread.sleep(200); // アクションとの排他制御のためにちょっと待つ。ロードしてる風でごめんね ><
 
         TestResult mayResult = this.runBeforeIfPresent(compiledTrigger);
         if (mayResult != null)
