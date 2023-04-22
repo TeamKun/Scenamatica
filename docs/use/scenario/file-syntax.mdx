@@ -72,6 +72,13 @@ JSON スキーマは[こちら](https://raw.githubusercontent.com/TeamKun/Scenam
     required: true
   },
   {
+    name: "runif",
+    anchor: "apex-runif",
+    type: "Action(type:require)",
+    type_anchor: "action-structure",
+    description: "シナリオを実行する条件です。"
+  },
+  {
     name: "scenario",
     anchor: "apex-scenario",
     type: "Scenario[]",
@@ -141,6 +148,16 @@ Scenamatica のバージョンは、 `x.y.z` の形式で指定します。
 
 シナリオはトリガーの発火によって実行されます。手動実行する場合もこれは例外ではなく、それに対応したトリガが必要です。
 
+### `runif` {#apex-runif}
+
+シナリオを実行する条件をアクションで定義します。
+
+:::info
+
+条件に一致しなかった場合、テストは `SKIPPED` で終了します（エラーにはなりません）。
+
+:::
+
 ### `scenario` {#apex-scenario}
 
 シナリオファイルの本シナリオです。シナリオを定義するのに使用します。
@@ -205,6 +222,13 @@ Scenamatica のバージョンは、 `x.y.z` の形式で指定します。
     description: "本シナリオの実行後に実行するシナリオの定義です。"
   },
   {
+    name: "runif",
+    anchor: "trigger-runif",
+    type: "Action(type:require)",
+    type_anchor: "action-structure",
+    description: "本シナリオの実行条件をアクションで定義します。"
+  },
+  {
     name: "...",
     type: "...",
     description: "トリガの引数を指定します。",
@@ -254,6 +278,11 @@ Scenamatica のバージョンは、 `x.y.z` の形式で指定します。
 事後シナリオは、本シナリオのコンテキストと同じコンテキストで実行されます。
 
 :::
+
+### `runif` {#trigger-runif}
+
+トリガごとに、シナリオの実行条件をアクションで定義します。  
+シナリオのルートで定義されている場合、両方の条件が満たされた場合に実行されます。
 
 ## ステージ型 {#stage-structure}
 
@@ -380,6 +409,13 @@ Bukkit でロード済みの既存のワールドの構造、建築物、アイ�
     description: "シナリオのタイムアウト時間のチック数です。",
     default: -1
   },
+  {
+    name: "runif",
+    anchor: "scenario-runif",
+    type: "Action(type: require)",
+    typeLink: "action-structure",
+    description: "シナリオの実行条件です。"
+  }
 ]} />
 
 ### `type` {#scenario-type}
@@ -420,6 +456,11 @@ Bukkit でロード済みの既存のワールドの構造、建築物、アイ�
 `-1` を指定すると、タイムアウトは無効になり、無限に待機します。
 
 :::
+
+### `runif` {#scenario-runif}
+
+このシナリオが実行される前に、このシナリオのアクションと紐づいているコンディションが満たされているかどうかを確認します。  
+満たされていない場合は、このシナリオはスキップされます。
 
 ## アクション型 {#action-structure}
 
