@@ -121,7 +121,6 @@ public class ContextManagerImpl implements ContextManager
                         throw new IllegalStateException(e);
                     }
                 });
-                Thread.sleep(500); // ちょっと待たないと, 最適化に殺される。
             }
             catch (Exception e)
             {
