@@ -1021,10 +1021,7 @@
             }
           }
         }
-      },
-      "required": [
-        "size"
-      ]
+      }
     },
     "playerInventory": {
       "description": "プレイヤーのインベントリを表します。",
