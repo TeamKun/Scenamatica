@@ -4,7 +4,6 @@ import lombok.EqualsAndHashCode;
 import lombok.Value;
 import net.kunmc.lab.scenamatica.action.utils.BeanUtils;
 import net.kunmc.lab.scenamatica.commons.utils.MapUtils;
-import net.kunmc.lab.scenamatica.enums.ScenarioType;
 import net.kunmc.lab.scenamatica.interfaces.action.Requireable;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioEngine;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.inventory.ItemStackBean;
@@ -46,18 +45,6 @@ public class PlayerHotbarSlotAction extends AbstractPlayerAction<PlayerHotbarSlo
     }
 
     @Override
-    public void validateArgument(@NotNull ScenarioEngine engine, @NotNull ScenarioType type, @Nullable PlayerHotbarSlotActionArgument argument)
-    {
-        argument = super.requireArgsNonNull(argument);
-
-        if (type != ScenarioType.ACTION_EXECUTE)
-            return;
-
-        if (argument.getPreviousSlot() != -1)
-            throw new IllegalArgumentException("previous_slot cannot be specified in execute mode.");
-    }
-
-    @Override
     public boolean isFired(@NotNull PlayerHotbarSlotActionArgument argument, @NotNull ScenarioEngine engine, @NotNull Event event)
     {
         assert event instanceof PlayerItemHeldEvent;
@@ -68,13 +55,10 @@ public class PlayerHotbarSlotAction extends AbstractPlayerAction<PlayerHotbarSlo
 
         int currentSlot = e.getNewSlot();
         int expectedCurrentSlot = argument.getCurrentSlot();
-        int previousSlot = e.getPreviousSlot();
-        int expectedPreviousSlot = argument.getPreviousSlot();
         ItemStack currentItem = e.getPlayer().getInventory().getItem(currentSlot);
         ItemStackBean expectedCurrentItem = argument.getCurrentItem();
 
         return currentSlot == expectedCurrentSlot
-                && (expectedPreviousSlot == -1 || previousSlot == expectedPreviousSlot)
                 && (expectedCurrentItem == null || BeanUtils.isSame(expectedCurrentItem, currentItem, false));
     }
 
@@ -148,7 +132,6 @@ public class PlayerHotbarSlotAction extends AbstractPlayerAction<PlayerHotbarSlo
         public static final String KEY_CURRENT_ITEM = "item";
 
         int currentSlot;
-        int previousSlot;
         @Nullable
         ItemStackBean currentItem;
 
@@ -156,7 +139,6 @@ public class PlayerHotbarSlotAction extends AbstractPlayerAction<PlayerHotbarSlo
         {
             super(target);
             this.currentSlot = currentSlot;
-            this.previousSlot = previousSlot;
             this.currentItem = currentItem;
         }
 
@@ -171,9 +153,6 @@ public class PlayerHotbarSlotAction extends AbstractPlayerAction<PlayerHotbarSlo
         {
             StringBuilder sb = new StringBuilder("slot=")
                     .append(this.currentSlot);
-
-            if (this.previousSlot != -1)
-                sb.append(", previous=").append(this.previousSlot);
 
             if (this.currentItem != null)
                 sb.append(", item=").append(this.currentItem);

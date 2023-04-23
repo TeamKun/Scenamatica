@@ -13,12 +13,14 @@ import net.minecraft.server.v1_16_R3.MinecraftServer;
 import net.minecraft.server.v1_16_R3.NetworkManager;
 import net.minecraft.server.v1_16_R3.Packet;
 import net.minecraft.server.v1_16_R3.PacketDataSerializer;
+import net.minecraft.server.v1_16_R3.PacketPlayInHeldItemSlot;
 import net.minecraft.server.v1_16_R3.PacketPlayInKeepAlive;
 import net.minecraft.server.v1_16_R3.PacketPlayOutChat;
 import net.minecraft.server.v1_16_R3.PacketPlayOutKeepAlive;
 import net.minecraft.server.v1_16_R3.PlayerConnection;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_16_R3.util.CraftChatMessage;
+import org.bukkit.event.player.PlayerItemHeldEvent;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -142,6 +144,18 @@ class MockedPlayerConnection extends PlayerConnection
             this.player.server.postToMainThread(() ->
                     this.player.getMinecraftServer().server.getPluginManager().callEvent(event)
             );
+    }
+
+    @Override
+    public void a(PacketPlayInHeldItemSlot packetplayinhelditemslot)
+    {
+        PlayerItemHeldEvent event = new PlayerItemHeldEvent(
+                this.player.getBukkitEntity(),
+                packetplayinhelditemslot.b(),  // previous は技術的に取得できないので, とりあえず現在のスロットを入れておく。
+                packetplayinhelditemslot.b()
+        );
+
+        Bukkit.getPluginManager().callEvent(event);
     }
 
     public void shutdown()
