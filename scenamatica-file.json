@@ -1013,15 +1013,11 @@
           "maxLength": 32
         },
         "items": {
-          "type": "array",
-          "description": "インベントリのアイテムです。",
-          "items": {
-            "type": "object",
-            "description": "キーがスロット番号で、値がアイテムスタックです。",
-            "patternProperties": {
-              "^\\d+$": {
-                "$ref": "#/definitions/itemStack"
-              }
+          "type": "object",
+          "description": "インベントリのアイテムです。キーがスロット番号で、値がアイテムスタックです。",
+          "patternProperties": {
+            "^\\d+$": {
+              "$ref": "#/definitions/itemStack"
             }
           }
         }
