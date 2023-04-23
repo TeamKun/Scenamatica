@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.kpm.utils.PluginUtil;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.HashMap;
@@ -47,7 +48,7 @@ public class ScenarioFileManagerImpl implements ScenarioFileManager
             this.registry.getLogger().warning("The plugin " + plugin.getName() + " has invalid scenario files: " + e.getMessage());
             return false;
         }
-        catch (Exception e)
+        catch (IOException e)
         {
             this.registry.getExceptionHandler().report(e);
             return false;
