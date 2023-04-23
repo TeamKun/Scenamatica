@@ -84,6 +84,7 @@
             "player_gamemode",
             "message_send",
             "player_death",
+            "player_hotbar",
             "player_launch_projectile",
             "server_log",
             "server_plugin_enable",
