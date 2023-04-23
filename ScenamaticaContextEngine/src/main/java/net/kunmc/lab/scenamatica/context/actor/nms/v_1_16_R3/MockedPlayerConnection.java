@@ -13,9 +13,9 @@ import net.minecraft.server.v1_16_R3.MinecraftServer;
 import net.minecraft.server.v1_16_R3.NetworkManager;
 import net.minecraft.server.v1_16_R3.Packet;
 import net.minecraft.server.v1_16_R3.PacketDataSerializer;
-import net.minecraft.server.v1_16_R3.PacketPlayInHeldItemSlot;
 import net.minecraft.server.v1_16_R3.PacketPlayInKeepAlive;
 import net.minecraft.server.v1_16_R3.PacketPlayOutChat;
+import net.minecraft.server.v1_16_R3.PacketPlayOutHeldItemSlot;
 import net.minecraft.server.v1_16_R3.PacketPlayOutKeepAlive;
 import net.minecraft.server.v1_16_R3.PlayerConnection;
 import org.bukkit.Bukkit;
@@ -81,8 +81,22 @@ class MockedPlayerConnection extends PlayerConnection
             this.handleKeepAlive((PacketPlayOutKeepAlive) packet);
         else if (packet instanceof PacketPlayOutChat)
             this.handleChat((PacketPlayOutChat) packet);
+        else if (packet instanceof PacketPlayOutHeldItemSlot)
+            this.handleHeldItemSlot();
         else
             super.sendPacket(packet);
+    }
+
+    private void handleHeldItemSlot()
+    {
+        int slot = this.player.inventory.itemInHandIndex;
+        PlayerItemHeldEvent event = new PlayerItemHeldEvent(
+                this.player.getBukkitEntity(),
+                slot,
+                slot
+        );
+
+        Bukkit.getPluginManager().callEvent(event);
     }
 
     @SneakyThrows(IOException.class)
@@ -144,18 +158,6 @@ class MockedPlayerConnection extends PlayerConnection
             this.player.server.postToMainThread(() ->
                     this.player.getMinecraftServer().server.getPluginManager().callEvent(event)
             );
-    }
-
-    @Override
-    public void a(PacketPlayInHeldItemSlot packetplayinhelditemslot)
-    {
-        PlayerItemHeldEvent event = new PlayerItemHeldEvent(
-                this.player.getBukkitEntity(),
-                packetplayinhelditemslot.b(),  // previous は技術的に取得できないので, とりあえず現在のスロットを入れておく。
-                packetplayinhelditemslot.b()
-        );
-
-        Bukkit.getPluginManager().callEvent(event);
     }
 
     public void shutdown()
