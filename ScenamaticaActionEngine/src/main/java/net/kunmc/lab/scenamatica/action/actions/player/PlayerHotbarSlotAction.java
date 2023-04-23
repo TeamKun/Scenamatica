@@ -5,6 +5,7 @@ import lombok.Value;
 import net.kunmc.lab.scenamatica.action.utils.BeanUtils;
 import net.kunmc.lab.scenamatica.commons.utils.MapUtils;
 import net.kunmc.lab.scenamatica.enums.ScenarioType;
+import net.kunmc.lab.scenamatica.interfaces.action.Requireable;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioEngine;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.inventory.ItemStackBean;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
@@ -20,7 +21,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-public class PlayerHotbarSlotAction extends AbstractPlayerAction<PlayerHotbarSlotAction.PlayerHotbarSlotActionArgument>
+public class PlayerHotbarSlotAction extends AbstractPlayerAction<PlayerHotbarSlotAction.PlayerHotbarSlotActionArgument> implements Requireable<PlayerHotbarSlotAction.PlayerHotbarSlotActionArgument>
 {
     public static final String KEY_ACTION_NAME = "player_hotbar";
 
@@ -123,6 +124,19 @@ public class PlayerHotbarSlotAction extends AbstractPlayerAction<PlayerHotbarSlo
                 previousSlot,
                 item
         );
+    }
+
+    @Override
+    public boolean isConditionFulfilled(@Nullable PlayerHotbarSlotActionArgument argument, @NotNull ScenarioEngine engine)
+    {
+        argument = super.requireArgsNonNull(argument);
+
+        Player p = argument.getTarget();
+        int currentSlot = argument.getCurrentSlot();
+        ItemStackBean currentItem = argument.getCurrentItem();
+
+        return p.getInventory().getHeldItemSlot() == currentSlot
+                && (currentItem == null || BeanUtils.isSame(currentItem, p.getInventory().getItemInMainHand(), false));
     }
 
     @Value
