@@ -191,7 +191,7 @@ public class ScenarioEngineImpl implements ScenarioEngine
             // コンディションチェックに失敗した(満たしていない)場合は(エラーにはせずに)スキップする。
             if (conditionResult.getTestResultCause() != TestResultCause.PASSED)
             {
-                this.testReporter.onTestSkipped(this, this.runIf);
+                this.testReporter.onTestSkipped(this, runIf);
 
                 // あとかたづけ
                 ThreadingUtil.waitFor(this.registry.getPlugin(), this::cleanUp);
