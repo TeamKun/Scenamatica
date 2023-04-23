@@ -1,6 +1,5 @@
 package net.kunmc.lab.scenamatica.interfaces.scenario;
 
-import net.kunmc.lab.scenamatica.interfaces.action.Action;
 import net.kunmc.lab.scenamatica.interfaces.action.CompiledAction;
 import net.kunmc.lab.scenamatica.interfaces.scenario.runtime.CompiledScenarioAction;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerBean;
@@ -48,10 +47,10 @@ public interface TestReporter
     /**
      * 監視していたアクションが正常に実行されたことをレポートします。
      *
-     * @param engine  エンジン
-     * @param action   アクション
+     * @param engine エンジン
+     * @param action アクション
      */
-    void onWatchingActionExecuted(@NotNull ScenarioEngine engine, @NotNull Action<?> action);
+    void onWatchingActionExecuted(@NotNull ScenarioEngine engine, @NotNull CompiledAction<?> action);
 
     /**
      * 監視していたアクションがジャンプして実行されたことをレポートします。
@@ -60,7 +59,7 @@ public interface TestReporter
      * @param action   アクション
      * @param expected 期待されるアクション
      */
-    void onActionJumped(@NotNull ScenarioEngine engine, @NotNull Action<?> action, @NotNull CompiledScenarioAction<?> expected);
+    void onActionJumped(@NotNull ScenarioEngine engine, @NotNull CompiledAction<?> action, @NotNull CompiledAction<?> expected);
 
     /**
      * アクションの実行に失敗したことをレポートします。

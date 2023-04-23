@@ -46,14 +46,7 @@ public interface WatchingEntry<A extends ActionArgument>
      *
      * @return 監視する動作
      */
-    Action<A> getAction();
-
-    /**
-     * 監視する動作の引数を取得します。
-     *
-     * @return 監視する動作の引数
-     */
-    A getArgument();
+    CompiledAction<A> getAction();
 
     /**
      * 監視の種類を取得します。

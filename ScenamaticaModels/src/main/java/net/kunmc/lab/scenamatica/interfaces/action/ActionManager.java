@@ -5,10 +5,6 @@ import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioEngine;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
 /**
  * 動作の実行と監視を管理するクラスのインターフェースです。
@@ -30,18 +26,10 @@ public interface ActionManager
     /**
      * 動作の実行をキューに追加します。
      *
-     * @param engine      シナリオエンジン
-     * @param action      動作
-     * @param argument    動作の引数
-     * @param onException 動作の実行に失敗したときに呼び出されるコールバック
-     * @param onSuccess   動作の実行に成功したときに呼び出されるコールバック
-     * @param <A>         動作の引数の型
+     * @param action 動作
+     * @param <A>    動作の引数の型
      */
-    <A extends ActionArgument> CompiledAction<A> queueExecute(@NotNull ScenarioEngine engine,
-                                                              @NotNull Action<A> action,
-                                                              @Nullable A argument,
-                                                              @NotNull BiConsumer<CompiledAction<A>, Throwable> onException,
-                                                              @Nullable Consumer<CompiledAction<A>> onSuccess);
+    <A extends ActionArgument> void queueExecute(@NotNull CompiledAction<A> action);
 
     /**
      * 動作の監視を追加します。
@@ -49,15 +37,13 @@ public interface ActionManager
      * @param plugin    監視するプラグイン
      * @param action    監視する動作
      * @param watchType 監視の種類です。
-     * @param argument  動作の引数
      * @param <A>       動作の引数の型
      */
     <A extends ActionArgument> void queueWatch(@NotNull Plugin plugin,
                                                @NotNull ScenarioEngine engine,
                                                @NotNull ScenarioFileBean scenario,
-                                               @NotNull Action<A> action,
-                                               @NotNull WatchType watchType,
-                                               @Nullable A argument);
+                                               @NotNull CompiledAction<A> action,
+                                               @NotNull WatchType watchType);
 
     /**
      * シャットダウンします。

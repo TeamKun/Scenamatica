@@ -49,19 +49,24 @@ public class ScenarioActionListenerImpl implements ScenarioActionListener
     @Override
     public <A extends ActionArgument> void onActionFired(@NotNull WatchingEntry<A> entry, @NotNull Event event)
     {
-        if (this.waitingFor != null
-                && entry.getAction().getClass() == this.waitingFor.getAction().getClass()
-                && entry.getArgument().isSame(this.waitingFor.getArgument()))
+        CompiledAction<A> action = entry.getAction();
+        Action<A> executor = action.getAction();
+
+        if (this.waitingFor == null)
+            return;
+
+        if (executor.getClass() == this.waitingFor.getAction().getAction().getClass()
+                && action.getArgument().isSame(this.waitingFor.getAction().getArgument()))
         {
             this.reporter.onWatchingActionExecuted(this.engine, entry.getAction());
             this.setPassed();
         }
         else  // 他のアクションが実行された。
         {
-            this.reporter.onActionJumped(this.engine, entry.getAction(), this.waitingFor);
+            this.reporter.onActionJumped(this.engine, action, this.waitingFor.getAction());
             this.setResult(
                     TestResultCause.ACTION_EXPECTATION_JUMPED,
-                    entry.getAction()
+                    executor
             );
         }
     }

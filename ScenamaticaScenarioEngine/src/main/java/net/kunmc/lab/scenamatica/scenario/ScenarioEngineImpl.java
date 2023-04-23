@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.SneakyThrows;
 import net.kunmc.lab.peyangpaperutils.lang.LangProvider;
 import net.kunmc.lab.peyangpaperutils.lang.MsgArgs;
-import net.kunmc.lab.peyangpaperutils.lib.utils.Pair;
 import net.kunmc.lab.scenamatica.commons.utils.LogUtils;
 import net.kunmc.lab.scenamatica.commons.utils.ThreadingUtil;
 import net.kunmc.lab.scenamatica.enums.MilestoneScope;
@@ -15,9 +14,9 @@ import net.kunmc.lab.scenamatica.enums.TriggerType;
 import net.kunmc.lab.scenamatica.enums.WatchType;
 import net.kunmc.lab.scenamatica.exceptions.scenario.TriggerNotFoundException;
 import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
-import net.kunmc.lab.scenamatica.interfaces.action.Action;
 import net.kunmc.lab.scenamatica.interfaces.action.ActionArgument;
 import net.kunmc.lab.scenamatica.interfaces.action.ActionManager;
+import net.kunmc.lab.scenamatica.interfaces.action.CompiledAction;
 import net.kunmc.lab.scenamatica.interfaces.action.Requireable;
 import net.kunmc.lab.scenamatica.interfaces.context.Context;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioActionListener;
@@ -283,14 +282,15 @@ public class ScenarioEngineImpl implements ScenarioEngine
     private TestResult runScenario(List<? extends CompiledScenarioAction<?>> scenario)
     {
         // 飛び判定用に, 予めすべてのアクションを監視対象にしておく。
-        List<CompiledScenarioAction<?>> watches = scenario.stream()
+        List<CompiledAction<?>> watches = scenario.stream()
                 .filter(a -> a.getType() == ScenarioType.ACTION_EXPECT)
+                .map(CompiledScenarioAction::getAction)
                 .collect(Collectors.toList());
         this.actionManager.getWatcherManager().registerWatchers(
                 this.plugin,
                 this,
                 this.scenario,
-                toActions(watches),  // 同じ Stream にすると, 型の関係で可読性が低下する。パフォーマンス影響は軽微なので無視。
+                watches,
                 WatchType.SCENARIO
         );
 
@@ -308,15 +308,6 @@ public class ScenarioEngineImpl implements ScenarioEngine
         }
 
         return null;
-    }
-
-    private static List<Pair<Action<?>, ActionArgument>> toActions(List<? extends CompiledScenarioAction<?>> actions)
-    {
-        ArrayList<Pair<Action<?>, ActionArgument>> list = new ArrayList<>(actions.size());
-        for (CompiledScenarioAction<?> action : actions)
-            list.add(new Pair<>(action.getAction(), action.getArgument()));
-
-        return list;
     }
 
     private TestResult runScenario(CompiledScenarioAction<?> scenario, CompiledScenarioAction<?> next)
@@ -354,7 +345,7 @@ public class ScenarioEngineImpl implements ScenarioEngine
         if (next != null && next.getType() == ScenarioType.ACTION_EXPECT)
             this.addWatch(next);
 
-        scenario.execute(this, this.actionManager, this.listener);
+        this.actionManager.queueExecute(scenario.getAction());
     }
 
     private <T extends ActionArgument> TestResult testCondition(CompiledScenarioAction<T> scenario)
@@ -369,7 +360,7 @@ public class ScenarioEngineImpl implements ScenarioEngine
         try
         {
             //noinspection unchecked
-            result = requireable.isConditionFulfilled(scenario.getArgument(), this);
+            result = requireable.isConditionFulfilled(scenario.getAction().getArgument(), this);
         }
         catch (Throwable e)
         {
@@ -403,7 +394,7 @@ public class ScenarioEngineImpl implements ScenarioEngine
         this.watchedActions.add(scenario);
 
         this.testReporter.onActionStart(this, scenario);
-        scenario.getAction().onStartWatching(scenario.getArgument(), this.plugin, null);
+        scenario.getAction().getAction().onStartWatching(scenario.getAction().getArgument(), this.plugin, null);
         this.listener.setWaitingFor(scenario);
     }
 

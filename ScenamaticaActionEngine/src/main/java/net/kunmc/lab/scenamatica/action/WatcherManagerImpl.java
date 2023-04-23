@@ -7,8 +7,8 @@ import net.kunmc.lab.scenamatica.enums.TriggerType;
 import net.kunmc.lab.scenamatica.enums.WatchType;
 import net.kunmc.lab.scenamatica.exceptions.scenario.ScenarioException;
 import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
-import net.kunmc.lab.scenamatica.interfaces.action.Action;
 import net.kunmc.lab.scenamatica.interfaces.action.ActionArgument;
+import net.kunmc.lab.scenamatica.interfaces.action.CompiledAction;
 import net.kunmc.lab.scenamatica.interfaces.action.WatcherManager;
 import net.kunmc.lab.scenamatica.interfaces.action.WatchingEntry;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioEngine;
@@ -17,7 +17,6 @@ import org.bukkit.event.Event;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredListener;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -39,16 +38,14 @@ public class WatcherManagerImpl implements WatcherManager
     public List<WatchingEntry<?>> registerWatchers(@NotNull Plugin plugin,
                                                    @NotNull ScenarioEngine engine,
                                                    @NotNull ScenarioFileBean scenario,
-                                                   @NotNull List<? extends Pair<Action<?>, ActionArgument>> watchers,
+                                                   @NotNull List<? extends CompiledAction<?>> watchers,
                                                    @NotNull WatchType type)
     {
         List<WatchingEntry<?>> entries = new ArrayList<>();
-        for (Pair<Action<?>, ActionArgument> watcher : watchers)
-            //noinspection unchecked
+        for (CompiledAction<?> watcher : watchers)
             entries.add(this.createWatchingEntry(
                             engine,
-                            (Action<ActionArgument>) watcher.getLeft(),
-                            watcher.getRight(),
+                            watcher,
                             scenario,
                             plugin,
                             type
@@ -61,36 +58,39 @@ public class WatcherManagerImpl implements WatcherManager
 
     @Override
     public <A extends ActionArgument> WatchingEntry<A> registerWatcher(@NotNull ScenarioEngine engine,
-                                                                       @NotNull Action<A> watcher,
-                                                                       @Nullable A argument,
+                                                                       @NotNull CompiledAction<A> watcher,
                                                                        @NotNull ScenarioFileBean scenario,
                                                                        @NotNull Plugin plugin,
                                                                        @NotNull WatchType type)
     {
-        WatchingEntry<A> entry = this.createWatchingEntry(engine, watcher, argument, scenario, plugin, type);
+        WatchingEntry<A> entry = this.createWatchingEntry(
+                engine,
+                watcher,
+                scenario,
+                plugin,
+                type
+        );
         this.actionWatchers.put(plugin, entry);
         return entry;
     }
 
     private <A extends ActionArgument> WatchingEntry<A> createWatchingEntry(@NotNull ScenarioEngine engine,
-                                                                            @NotNull Action<A> watcher,
-                                                                            @Nullable A argument,
+                                                                            @NotNull CompiledAction<A> action,
                                                                             @NotNull ScenarioFileBean scenario,
                                                                             @NotNull Plugin plugin,
                                                                             @NotNull WatchType type)
     {
         List<Pair<Class<? extends Event>, RegisteredListener>> listeners = new ArrayList<>();
-        WatchingEntryImpl<A> watchingEntry = new WatchingEntryImpl<>(
+        WatchingEntry<A> watchingEntry = new WatchingEntryImpl<>(
                 this,
                 engine,
                 plugin,
                 scenario,
-                watcher,
-                argument,
+                action,
                 type,
                 listeners
         );
-        for (Class<? extends Event> eventType : watcher.getAttachingEvents())
+        for (Class<? extends Event> eventType : action.getAction().getAttachingEvents())
             listeners.add(Pair.of(eventType, watchingEntry.register(eventType)));
 
         return watchingEntry;
@@ -150,7 +150,7 @@ public class WatcherManagerImpl implements WatcherManager
                         entry.getPlugin(),
                         entry.getScenario().getName(),
                         TriggerType.ON_ACTION,
-                        entry.getArgument()
+                        entry.getAction().getArgument()
                 );
             }
             catch (ScenarioException e)

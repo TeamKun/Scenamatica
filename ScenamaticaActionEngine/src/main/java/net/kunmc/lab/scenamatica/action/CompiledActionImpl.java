@@ -5,6 +5,7 @@ import net.kunmc.lab.scenamatica.interfaces.action.Action;
 import net.kunmc.lab.scenamatica.interfaces.action.ActionArgument;
 import net.kunmc.lab.scenamatica.interfaces.action.CompiledAction;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioEngine;
+import net.kunmc.lab.scenamatica.interfaces.scenariofile.action.ActionBean;
 
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -17,6 +18,7 @@ public class CompiledActionImpl<A extends ActionArgument> implements CompiledAct
     A argument;
     BiConsumer<CompiledAction<A>, Throwable> errorHandler;
     Consumer<CompiledAction<A>> onExecute;
+    ActionBean bean;
 
     @Override
     public void execute()

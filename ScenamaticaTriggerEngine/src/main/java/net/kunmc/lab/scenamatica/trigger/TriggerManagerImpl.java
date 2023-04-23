@@ -6,7 +6,6 @@ import net.kunmc.lab.scenamatica.enums.TriggerType;
 import net.kunmc.lab.scenamatica.enums.WatchType;
 import net.kunmc.lab.scenamatica.exceptions.scenario.ScenarioException;
 import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
-import net.kunmc.lab.scenamatica.interfaces.action.Action;
 import net.kunmc.lab.scenamatica.interfaces.action.ActionManager;
 import net.kunmc.lab.scenamatica.interfaces.action.CompiledAction;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioEngine;
@@ -99,14 +98,12 @@ public class TriggerManagerImpl implements TriggerManager
         );
 
         // 型はコンパイラでチェック済みなのでキャストしておく。
-        //noinspection unchecked,rawtypes
         this.actionManager.queueWatch(
                 plugin,
                 engine,
                 scenario,
-                (Action) action.getAction(),
-                WatchType.TRIGGER,
-                action.getArgument() // warn: unchecked,rawtypes
+                action,
+                WatchType.TRIGGER
         );
     }
 

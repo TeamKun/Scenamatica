@@ -6,7 +6,6 @@ import net.kunmc.lab.peyangpaperutils.lib.terminal.Terminal;
 import net.kunmc.lab.peyangpaperutils.lib.terminal.Terminals;
 import net.kunmc.lab.scenamatica.commons.utils.LogUtils;
 import net.kunmc.lab.scenamatica.enums.TestResultCause;
-import net.kunmc.lab.scenamatica.interfaces.action.Action;
 import net.kunmc.lab.scenamatica.interfaces.action.CompiledAction;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioEngine;
 import net.kunmc.lab.scenamatica.interfaces.scenario.TestResult;
@@ -118,28 +117,25 @@ public class BukkitTestReporter implements net.kunmc.lab.scenamatica.interfaces.
         ))));
     }
 
+    private static String getConditionString(@NotNull CompiledScenarioAction<?> action)
+    {
+        String condition = action.getAction().getClass().getSimpleName();
+        if (action.getAction().getArgument() != null)
+            condition += " - " + action.getAction().getArgument().getArgumentString();
+
+        return condition;
+    }
+
     @Override
-    public void onWatchingActionExecuted(@NotNull ScenarioEngine engine, @NotNull Action<?> action)
+    public void onWatchingActionExecuted(@NotNull ScenarioEngine engine, @NotNull CompiledAction<?> action)
     {
         ScenarioFileBean scenario = engine.getScenario();
 
         this.terminals.forEach(t -> t.success(withPrefix(engine.getTestID(), scenario, LangProvider.get(
                 "test.action.watch.done",
-                MsgArgs.of("action", action.getClass().getSimpleName())
+                MsgArgs.of("action", action.getAction().getClass().getSimpleName())
         ))));
 
-    }
-
-    @Override
-    public void onActionJumped(@NotNull ScenarioEngine engine, @NotNull Action<?> action, @NotNull CompiledScenarioAction<?> expected)
-    {
-        ScenarioFileBean scenario = engine.getScenario();
-
-        this.terminals.forEach(t -> t.warn(withPrefix(engine.getTestID(), scenario, LangProvider.get(
-                "test.action.jumped",
-                MsgArgs.of("action", action.getClass().getSimpleName())
-                        .add("scenario", engine.getScenario().getName())
-        ))));
     }
 
     @Override
@@ -154,13 +150,16 @@ public class BukkitTestReporter implements net.kunmc.lab.scenamatica.interfaces.
         ))));
     }
 
-    private static String getConditionString(@NotNull CompiledScenarioAction<?> action)
+    @Override
+    public void onActionJumped(@NotNull ScenarioEngine engine, @NotNull CompiledAction<?> action, @NotNull CompiledAction<?> expected)
     {
-        String condition = action.getAction().getClass().getSimpleName();
-        if (action.getArgument() != null)
-            condition += " - " + action.getArgument().getArgumentString();
+        ScenarioFileBean scenario = engine.getScenario();
 
-        return condition;
+        this.terminals.forEach(t -> t.warn(withPrefix(engine.getTestID(), scenario, LangProvider.get(
+                "test.action.jumped",
+                MsgArgs.of("action", action.getAction().getClass().getSimpleName())
+                        .add("scenario", engine.getScenario().getName())
+        ))));
     }
 
     @Override

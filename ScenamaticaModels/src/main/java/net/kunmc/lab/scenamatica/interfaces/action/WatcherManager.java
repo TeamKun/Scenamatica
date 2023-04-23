@@ -1,13 +1,11 @@
 package net.kunmc.lab.scenamatica.interfaces.action;
 
-import net.kunmc.lab.peyangpaperutils.lib.utils.Pair;
 import net.kunmc.lab.scenamatica.enums.WatchType;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioEngine;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
 import org.bukkit.event.Event;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -27,7 +25,7 @@ public interface WatcherManager
     List<WatchingEntry<?>> registerWatchers(@NotNull Plugin plugin,
                                             @NotNull ScenarioEngine engine,
                                             @NotNull ScenarioFileBean scenario,
-                                            @NotNull List<? extends Pair<Action<?>, ActionArgument>> watchers,
+                                            @NotNull List<? extends CompiledAction<?>> watchers,
                                             @NotNull WatchType type);
 
     /**
@@ -39,8 +37,7 @@ public interface WatcherManager
      * @return 監視の登録情報
      */
     <A extends ActionArgument> WatchingEntry<A> registerWatcher(@NotNull ScenarioEngine engine,
-                                                                @NotNull Action<A> watcher,
-                                                                @Nullable A argument,
+                                                                @NotNull CompiledAction<A> watcher,
                                                                 @NotNull ScenarioFileBean scenario,
                                                                 @NotNull Plugin plugin,
                                                                 @NotNull WatchType type);

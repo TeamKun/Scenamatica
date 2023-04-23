@@ -4,8 +4,8 @@ import lombok.Value;
 import net.kunmc.lab.peyangpaperutils.lib.utils.Pair;
 import net.kunmc.lab.scenamatica.action.utils.EventListenerUtils;
 import net.kunmc.lab.scenamatica.enums.WatchType;
-import net.kunmc.lab.scenamatica.interfaces.action.Action;
 import net.kunmc.lab.scenamatica.interfaces.action.ActionArgument;
+import net.kunmc.lab.scenamatica.interfaces.action.CompiledAction;
 import net.kunmc.lab.scenamatica.interfaces.action.WatcherManager;
 import net.kunmc.lab.scenamatica.interfaces.action.WatchingEntry;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioEngine;
@@ -26,8 +26,7 @@ public class WatchingEntryImpl<A extends ActionArgument> implements WatchingEntr
     ScenarioEngine engine;
     Plugin plugin;
     ScenarioFileBean scenario;
-    Action<A> action;
-    A argument;
+    CompiledAction<A> action;
     WatchType type;
     List<Pair<Class<? extends Event>, RegisteredListener>> listeners;
 
@@ -41,7 +40,7 @@ public class WatchingEntryImpl<A extends ActionArgument> implements WatchingEntr
         };
 
         EventExecutor executor = (listener1, event) -> {
-            if (this.action.isFired(this.argument, WatchingEntryImpl.this.engine, event))
+            if (this.action.getAction().isFired(this.action.getArgument(), WatchingEntryImpl.this.engine, event))
             {
                 this.manager.onActionFired(WatchingEntryImpl.this, event);
                 if (this.type == WatchType.SCENARIO)

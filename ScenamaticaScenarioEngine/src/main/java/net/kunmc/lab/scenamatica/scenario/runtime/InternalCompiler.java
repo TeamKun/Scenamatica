@@ -59,8 +59,7 @@ public class InternalCompiler
         return new CompiledScenarioActionImpl<>(
                 scenario,
                 scenario.getType(),
-                action.getAction(),
-                action.getArgument(),
+                action,
                 scenario.getRunIf() == null ? null: compileConditionAction(registry, engine, compiler, listener, scenario.getRunIf())
         );
     }
@@ -110,8 +109,7 @@ public class InternalCompiler
                     }
                 },
                 ScenarioType.CONDITION_REQUIRE,
-                action.getAction(),
-                action.getArgument(),
+                action,
                 null
         );
     }

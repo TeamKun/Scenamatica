@@ -5,7 +5,6 @@ import net.kunmc.lab.peyangpaperutils.lib.utils.Runner;
 import net.kunmc.lab.scenamatica.action.actions.server.log.ServerLogHandler;
 import net.kunmc.lab.scenamatica.enums.WatchType;
 import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
-import net.kunmc.lab.scenamatica.interfaces.action.Action;
 import net.kunmc.lab.scenamatica.interfaces.action.ActionArgument;
 import net.kunmc.lab.scenamatica.interfaces.action.ActionCompiler;
 import net.kunmc.lab.scenamatica.interfaces.action.ActionManager;
@@ -16,12 +15,9 @@ import net.kunmc.lab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
 public class ActionManagerImpl implements ActionManager
 {
@@ -61,32 +57,19 @@ public class ActionManagerImpl implements ActionManager
     }
 
     @Override
-    public <A extends ActionArgument> CompiledAction<A> queueExecute(@NotNull ScenarioEngine engine,
-                                                                     @NotNull Action<A> action,
-                                                                     @Nullable A argument,
-                                                                     @Nullable BiConsumer<CompiledAction<A>, Throwable> onEexception,
-                                                                     @Nullable Consumer<CompiledAction<A>> onSuccess)
+    public <A extends ActionArgument> void queueExecute(@NotNull CompiledAction<A> entry)
     {
-        CompiledAction<A> entry = new CompiledActionImpl<>(
-                engine,
-                action,
-                argument,
-                onEexception,
-                onSuccess
-        );
         this.actionQueue.add(entry);
-        return entry;
     }
 
     @Override
     public <A extends ActionArgument> void queueWatch(@NotNull Plugin plugin,
                                                       @NotNull ScenarioEngine engine,
                                                       @NotNull ScenarioFileBean scenario,
-                                                      @NotNull Action<A> action,
-                                                      @NotNull WatchType watchType,
-                                                      @Nullable A argument)
+                                                      @NotNull CompiledAction<A> action,
+                                                      @NotNull WatchType watchType)
     {
-        this.watcherManager.registerWatcher(engine, action, argument, scenario, plugin, watchType);
+        this.watcherManager.registerWatcher(engine, action, scenario, plugin, watchType);
     }
     @Override
     public void shutdown()

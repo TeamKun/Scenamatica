@@ -1,7 +1,6 @@
 package net.kunmc.lab.scenamatica.reporter;
 
 import com.google.gson.Gson;
-import net.kunmc.lab.scenamatica.interfaces.action.Action;
 import net.kunmc.lab.scenamatica.interfaces.action.CompiledAction;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioEngine;
 import net.kunmc.lab.scenamatica.interfaces.scenario.TestReporter;
@@ -68,13 +67,13 @@ public class RawTestReporter implements TestReporter
     }
 
     @Override
-    public void onWatchingActionExecuted(@NotNull ScenarioEngine engine, @NotNull Action<?> action)
+    public void onWatchingActionExecuted(@NotNull ScenarioEngine engine, @NotNull CompiledAction<?> action)
     {
         this.printJSON(new PacketActionExpectSuccess(engine, action));
     }
 
     @Override
-    public void onActionJumped(@NotNull ScenarioEngine engine, @NotNull Action<?> action, @NotNull CompiledScenarioAction<?> expected)
+    public void onActionJumped(@NotNull ScenarioEngine engine, @NotNull CompiledAction<?> action, @NotNull CompiledAction<?> expected)
     {
         this.printJSON(new PacketActionJumped(engine, action, expected));
     }
