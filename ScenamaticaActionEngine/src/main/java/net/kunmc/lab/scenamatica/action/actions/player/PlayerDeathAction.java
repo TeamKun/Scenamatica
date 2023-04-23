@@ -49,8 +49,7 @@ public class PlayerDeathAction extends AbstractPlayerAction<PlayerDeathAction.De
     @Override
     public boolean isFired(@NotNull DeathArgument argument, @NotNull ScenarioEngine engine, @NotNull Event event)
     {
-        if (!super.isFired(argument, engine, event))
-            return false;
+        // PlayerDeathEvent はプレイヤが死んだ時に発生するイベントであるが, PlayerEvent を継承していないため, super でのチェックができない
 
         assert event instanceof PlayerDeathEvent;
         PlayerDeathEvent e = (PlayerDeathEvent) event;
@@ -76,7 +75,8 @@ public class PlayerDeathAction extends AbstractPlayerAction<PlayerDeathAction.De
         UUID eventDeathUUID = event.getEntity().getUniqueId();
         UUID eventKillerUUID = event.getEntity().getKiller() == null ? null: event.getEntity().getKiller().getUniqueId();
 
-        return eventDeathUUID.equals(targetUUID) && Objects.equals(killerUUID, eventKillerUUID);
+        return eventDeathUUID.equals(targetUUID) &&
+                (killerUUID == null || killerUUID.equals(eventKillerUUID));
     }
 
     private boolean checkDeathMessage(@NotNull DeathArgument argument, @NotNull PlayerDeathEvent event)
