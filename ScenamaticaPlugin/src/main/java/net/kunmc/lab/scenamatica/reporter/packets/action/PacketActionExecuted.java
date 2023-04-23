@@ -10,6 +10,6 @@ public class PacketActionExecuted extends AbstractActionPacket
 
     public PacketActionExecuted(@NotNull ScenarioEngine scenario, @NotNull CompiledAction<?> action)
     {
-        super(TYPE, scenario.getTestID(), action.getBean());
+        super(TYPE, scenario.getTestID(), action);
     }
 }

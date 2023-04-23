@@ -10,6 +10,6 @@ public class PacketActionConditionCheckFailed extends AbstractActionPacket
 
     public PacketActionConditionCheckFailed(@NotNull ScenarioEngine scenario, @NotNull CompiledScenarioAction<?> action)
     {
-        super(TYPE, scenario.getTestID(), action.getBean().getAction());
+        super(TYPE, scenario.getTestID(), action.getAction());
     }
 }

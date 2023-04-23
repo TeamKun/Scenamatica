@@ -10,6 +10,6 @@ public class PacketActionExpectSuccess extends AbstractActionPacket
 
     public PacketActionExpectSuccess(@NotNull ScenarioEngine scenario, @NotNull CompiledAction<?> action)
     {
-        super(TYPE, scenario.getTestID(), action.getBean());
+        super(TYPE, scenario.getTestID(), action);
     }
 }

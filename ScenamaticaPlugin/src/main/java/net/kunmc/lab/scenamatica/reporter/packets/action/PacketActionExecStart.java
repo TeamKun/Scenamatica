@@ -16,7 +16,7 @@ public class PacketActionExecStart extends AbstractActionPacket
 
     public PacketActionExecStart(@NotNull ScenarioEngine scenario, @NotNull CompiledScenarioAction<?> action)
     {
-        super(TYPE, scenario.getTestID(), action.getBean().getAction());
+        super(TYPE, scenario.getTestID(), action.getAction());
 
         this.timeout = action.getBean().getTimeout();
     }
