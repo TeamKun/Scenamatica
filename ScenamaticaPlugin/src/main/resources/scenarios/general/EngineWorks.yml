@@ -1,0 +1,8 @@
+scenamatica: ${project.version}
+
+name: general_engine
+description: Testing scenario engine works or not
+on:
+  - type: manual_dispatch
+
+scenario: []

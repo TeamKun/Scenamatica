@@ -1,0 +1,20 @@
+scenamatica: ${project.version}
+
+name: actions_server_log
+description: Testing server_log action works or not
+on:
+  - type: manual_dispatch
+  - type: on_action
+    action: server_log
+    with:
+      message: "LogTest_1145141919810"
+
+scenario:
+  - type: execute
+    action: server_log
+    with:
+      message: "PONG"
+  - type: expect
+    action: server_log
+    with:
+      message: "PONG"

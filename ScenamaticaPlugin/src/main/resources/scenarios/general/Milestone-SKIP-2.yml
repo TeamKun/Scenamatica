@@ -1,0 +1,24 @@
+scenamatica: ${project.version}
+
+name: general_milestone_sk_2
+description: Testing milestone action test skips or not
+on:
+  - type: manual_dispatch
+    runif:
+      action: milestone
+      with:
+        name: hogehoge  # The milestone is not reached, so this scenario will be skipped.
+
+scenario:
+  - type: execute
+    action: server_log
+    with:
+      message: "Milestone hogehoge has already been reached."
+    runif:
+      action: milestone
+      with:
+        name: hogehoge
+  - type: expect
+    action: server_log
+    with:
+      message: "Milestone hogehoge has already been reached."

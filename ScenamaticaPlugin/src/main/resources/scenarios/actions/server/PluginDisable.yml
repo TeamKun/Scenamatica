@@ -1,0 +1,21 @@
+scenamatica: ${project.version}
+
+name: sc040
+description: L6C1 in scenarios.xlsx
+on:
+  - type: manual_dispatch
+    after:
+      - type: execute
+        action: server_plugin_enable
+        with:
+          plugin: "LightHeadPlugin"
+
+scenario:
+  - type: execute
+    action: server_plugin_disable
+    with:
+      plugin: "LightHeadPlugin"
+  - type: require
+    action: server_plugin_disable
+    with:
+      plugin: "LightHeadPlugin"

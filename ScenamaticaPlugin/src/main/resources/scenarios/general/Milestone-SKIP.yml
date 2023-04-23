@@ -1,0 +1,17 @@
+scenamatica: ${project.version}
+
+name: general_milestone_sk
+description: Testing milestone action test skips or not
+on:
+  - type: manual_dispatch
+
+runif:
+  action: milestone
+  with:
+    name: hogehoge  # The milestone is not reached, so this scenario will be skipped.
+
+scenario:
+  - type: execute
+    action: server_log
+    with:
+      message: "Illegal construction."

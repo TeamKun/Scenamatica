@@ -1,0 +1,29 @@
+scenamatica: ${project.version}
+
+name: server_command_dispatch
+description: Testing command_dispatch action works or not
+on:
+  - type: manual_dispatch
+
+context:
+  actors:
+    - name: Actor001
+      gamemode: SURVIVAL
+      displayName: §c§lActor001
+    - name: Actor002
+      gamemode: SURVIVAL
+      customName: §c§lActor002
+
+
+scenario:
+  - type: execute
+    action: command_dispatch
+    with:
+      command: say Hello World!
+      sender: Actor001
+  - type: expect
+    action: message_send
+    with:
+      content: "[Actor001] Hello World!"
+      recipient: Actor002
+

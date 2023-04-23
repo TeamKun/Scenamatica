@@ -1,0 +1,25 @@
+scenamatica: ${project.version}
+
+name: general_milestone
+description: Testing milestone action works or not
+on:
+  - type: manual_dispatch
+    before:
+      - type: execute
+        action: milestone
+        with:
+          name: hogehoge
+
+scenario:
+  - type: execute
+    action: server_log
+    with:
+      message: "Milestone hogehoge has already been reached."
+    runif:
+      action: milestone
+      with:
+        name: hogehoge
+  - type: expect
+    action: server_log
+    with:
+      message: "Milestone hogehoge has already been reached."
