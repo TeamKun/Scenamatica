@@ -43,7 +43,7 @@ const Action: React.FC<ActionProps> = ({name, description, id, executable, watch
                 </tr>
             </tbody>
         </table>
-        <h3>{args ? name + " の引数は以下の通りです。" : "このアクションは引数を取りません。"}</h3>
+        <h4>{args ? name + " の引数は以下の通りです。" : "このアクションは引数を取りません。"}</h4>
 
         {args ? <Object objects={args} /> : <></>}
     </>)
