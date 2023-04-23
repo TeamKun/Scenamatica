@@ -67,6 +67,9 @@ public final class Scenamatica extends JavaPlugin
 
     private void initTestRecipient()
     {
+        if (!(this.registry.getTestReporter() instanceof BukkitTestReporter))
+            return;
+
         PlayerJoinEventListener listener = new PlayerJoinEventListener(this.registry);
         this.getServer().getPluginManager().registerEvents(listener, this);
 
