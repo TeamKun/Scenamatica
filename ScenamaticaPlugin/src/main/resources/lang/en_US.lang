@@ -43,6 +43,7 @@ test.result=%%green%%Test result: %%result%% %%gray%%- %%message%%
 test.result.passed=%%green%%✔  Passed
 test.result.failed=%%red%%❌  Failure
 test.result.cancelled=%%yellow%%⚠  Cancelled
+test.result.skipped=%%yellow%%→  Skipped
 test.result.unknown=%%gray%%❓  Unknown
 
 test.result.message.passed=%%green%%The test has been completed successfully.

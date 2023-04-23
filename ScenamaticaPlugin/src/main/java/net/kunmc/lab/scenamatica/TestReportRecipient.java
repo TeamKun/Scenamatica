@@ -74,7 +74,7 @@ public class TestReportRecipient implements TestReporter
     {
         ScenarioFileBean scenario = engine.getScenario();
 
-        this.terminals.forEach(t -> t.info(withPrefix(engine.getTestID(), scenario, LangProvider.get(
+        this.terminals.forEach(t -> t.warn(withPrefix(engine.getTestID(), scenario, LangProvider.get(
                 "test.skip",
                 MsgArgs.of("scenario", scenario.getName())
                         .add("condition", getConditionString(action))
@@ -310,6 +310,8 @@ public class TestReportRecipient implements TestReporter
             resultKey = "test.result.passed";
         else if (result.getTestResultCause() == TestResultCause.CANCELLED)
             resultKey = "test.result.cancelled";
+        else if (result.getTestResultCause() == TestResultCause.SKIPPED)
+            resultKey = "test.result.skipped";
         else
             resultKey = "test.result.failed";
         String messageKey = "test.result.message." + result.getTestResultCause().name().toLowerCase();

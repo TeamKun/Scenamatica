@@ -46,6 +46,7 @@ test.result=%%green%%テスト結果: %%result%% %%gray%%- %%message%%
 test.result.passed=%%green%%✔  うまく行ったで
 test.result.failed=%%red%%❌  だめやったで
 test.result.cancelled=%%yellow%%⚠  キャンセルされたで
+test.result.skipped=%%yellow%%→  スキップされたで
 test.result.unknown=%%gray%%❓  わからんわ
 
 test.result.message.passed=%%green%%テストは成功したで。

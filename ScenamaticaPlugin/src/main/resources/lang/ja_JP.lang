@@ -47,7 +47,8 @@ test.result=%%green%%テスト結果: %%result%% %%gray%%- %%message%%
 test.result.passed=%%green%%✔  成功
 test.result.failed=%%red%%❌  失敗
 test.result.cancelled=%%yellow%%⚠  キャンセル
-test.result.unknown=%%gray%%❓  不明
+test.result.skipped=%%yellow%%→  スキップ
+test.result.unknown=%%dark_gray%%❓  不明
 
 test.result.message.passed=%%green%%テストは正常に完了しました。
 test.result.message.context_preparation_failed=%%red%%テストの実行に必要なコンテキストの準備に失敗しました。
