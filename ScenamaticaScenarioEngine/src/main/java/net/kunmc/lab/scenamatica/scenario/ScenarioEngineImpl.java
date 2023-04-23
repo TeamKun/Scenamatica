@@ -234,8 +234,6 @@ public class ScenarioEngineImpl implements ScenarioEngine
 
     private void cleanUp()
     {
-        this.state = TestState.CLEANING_UP;
-
         this.logPrefix = LogUtils.gerScenarioPrefix(null, this.scenario);
         // シナリオのアクションの監視を全て解除しておく。
         this.actionManager.getWatcherManager().unregisterWatchers(this.plugin, WatchType.SCENARIO);

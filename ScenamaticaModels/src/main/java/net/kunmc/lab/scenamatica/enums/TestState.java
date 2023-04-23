@@ -8,7 +8,6 @@ public enum TestState
     RUNNING_BEFORE,
     RUNNING_MAIN,
     RUNNING_AFTER,
-    CLEANING_UP,
     FINISHED,
 
 }
