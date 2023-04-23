@@ -81,8 +81,8 @@
           "type": "string",
           "description": "アクションの種類です。 ",
           "enum": [
-            "message_send",
             "player_gamemode",
+            "message_send",
             "player_death",
             "player_launch_projectile",
             "server_log",
@@ -156,6 +156,26 @@
             "properties": {
               "with": {
                 "$ref": "#/definitions/action/definitions/player/death"
+              }
+            },
+            "required": [
+              "with"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "player_hotbar",
+                "description": "プレイヤーが手荷物アイテムを変更したり, 変更されたことを検知します。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/player/hotbar"
               }
             },
             "required": [
@@ -398,6 +418,35 @@
             "required": [
               "target",
               "gamemode"
+            ]
+          },
+          "hotbar": {
+            "properties": {
+              "target": {
+                "type": "string",
+                "description": "ホットバーを変更するプレイヤーです。",
+                "maxLength": 16
+              },
+              "slot": {
+                "type": "integer",
+                "description": "ホットバーのスロットです。",
+                "minimum": 0,
+                "maximum": 8
+              },
+              "previous_slot": {
+                "type": "integer",
+                "description": "ホットバーのスロットが変更される前のスロットです。",
+                "minimum": 0,
+                "maximum": 8
+              },
+              "item": {
+                "description": "ホットバーのスロットに入っているアイテムです。",
+                "$ref": "#/definitions/itemStack"
+              }
+            },
+            "required": [
+              "target",
+              "slot"
             ]
           },
           "launch_projectile": {
