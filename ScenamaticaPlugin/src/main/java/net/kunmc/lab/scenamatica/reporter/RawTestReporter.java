@@ -24,12 +24,16 @@ import net.kunmc.lab.scenamatica.reporter.packets.test.PacketTestSkip;
 import net.kunmc.lab.scenamatica.reporter.packets.test.PacketTestStart;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.FileDescriptor;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
 import java.util.List;
 import java.util.Map;
 
 public class RawTestReporter implements TestReporter
 {
     private static final Gson GSON = new Gson();
+    private static final PrintStream OUT = new PrintStream(new FileOutputStream(FileDescriptor.out));
 
     @Override
     public void onTestStart(@NotNull ScenarioEngine engine, @NotNull TriggerBean trigger)
@@ -117,6 +121,7 @@ public class RawTestReporter implements TestReporter
     private void printJSON(@NotNull AbstractRawPacket packet)
     {
         Map<String, Object> map = packet.serialize();
-        System.out.println(GSON.toJson(map));
+        String json = GSON.toJson(map);
+        OUT.println(json);
     }
 }
