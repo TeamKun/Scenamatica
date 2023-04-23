@@ -1,9 +1,9 @@
 package net.kunmc.lab.scenamatica.events;
 
 import net.kunmc.lab.peyangpaperutils.lib.terminal.Terminals;
-import net.kunmc.lab.scenamatica.TestReportRecipient;
 import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
 import net.kunmc.lab.scenamatica.interfaces.context.ActorManager;
+import net.kunmc.lab.scenamatica.reporter.BukkitTestReporter;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -11,13 +11,13 @@ import org.bukkit.event.player.PlayerJoinEvent;
 public class PlayerJoinEventListener implements Listener
 {
     private final ActorManager actorManager;
-    private final TestReportRecipient testReporter;
+    private final BukkitTestReporter testReporter;
 
     public PlayerJoinEventListener(ScenamaticaRegistry registry)
     {
         this.actorManager = registry.getContextManager().getActorManager();
-        assert registry.getTestReporter() instanceof TestReportRecipient;
-        this.testReporter = (TestReportRecipient) registry.getTestReporter();
+        assert registry.getTestReporter() instanceof BukkitTestReporter;
+        this.testReporter = (BukkitTestReporter) registry.getTestReporter();
     }
 
     @EventHandler

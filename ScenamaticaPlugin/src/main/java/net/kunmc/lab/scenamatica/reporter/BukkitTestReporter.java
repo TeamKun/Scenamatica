@@ -1,4 +1,4 @@
-package net.kunmc.lab.scenamatica;
+package net.kunmc.lab.scenamatica.reporter;
 
 import net.kunmc.lab.peyangpaperutils.lang.LangProvider;
 import net.kunmc.lab.peyangpaperutils.lang.MsgArgs;
@@ -9,7 +9,6 @@ import net.kunmc.lab.scenamatica.enums.TestResultCause;
 import net.kunmc.lab.scenamatica.interfaces.action.Action;
 import net.kunmc.lab.scenamatica.interfaces.action.CompiledAction;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioEngine;
-import net.kunmc.lab.scenamatica.interfaces.scenario.TestReporter;
 import net.kunmc.lab.scenamatica.interfaces.scenario.TestResult;
 import net.kunmc.lab.scenamatica.interfaces.scenario.runtime.CompiledScenarioAction;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
@@ -24,11 +23,11 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-public class TestReportRecipient implements TestReporter
+public class BukkitTestReporter implements net.kunmc.lab.scenamatica.interfaces.scenario.TestReporter
 {
     private final List<Terminal> terminals;
 
-    public TestReportRecipient()
+    public BukkitTestReporter()
     {
         this.terminals = new ArrayList<>();
 
@@ -82,25 +81,30 @@ public class TestReportRecipient implements TestReporter
     }
 
     @Override
-    public void onActionWatchStart(@NotNull ScenarioEngine engine, @NotNull CompiledScenarioAction<?> action)
-    {
-        ScenarioFileBean scenario = engine.getScenario();
-
-        this.terminals.forEach(t -> t.info(withPrefix(engine.getTestID(), scenario, LangProvider.get(
-                "test.action.watch",
-                MsgArgs.of("action", action.getAction().getClass().getSimpleName())
-        ))));
-    }
-
-    @Override
     public void onActionStart(@NotNull ScenarioEngine engine, @NotNull CompiledScenarioAction<?> action)
     {
         ScenarioFileBean scenario = engine.getScenario();
 
-        this.terminals.forEach(t -> t.info(withPrefix(engine.getTestID(), scenario, LangProvider.get(
-                "test.action.run",
-                MsgArgs.of("action", action.getAction().getClass().getSimpleName())
-        ))));
+        switch (action.getType())
+        {
+            case ACTION_EXECUTE:
+                this.terminals.forEach(t -> t.info(withPrefix(engine.getTestID(), scenario, LangProvider.get(
+                        "test.action.run",
+                        MsgArgs.of("action", action.getAction().getClass().getSimpleName())
+                ))));
+                break;
+            case ACTION_EXPECT:
+                this.terminals.forEach(t -> t.info(withPrefix(engine.getTestID(), scenario, LangProvider.get(
+                        "test.action.watch",
+                        MsgArgs.of("action", action.getAction().getClass().getSimpleName())
+                ))));
+                break;
+            case CONDITION_REQUIRE:
+                this.terminals.forEach(t -> t.info(withPrefix(engine.getTestID(), scenario, LangProvider.get(
+                        "test.action.require.start",
+                        MsgArgs.of("condition", getConditionString(action))
+                ))));
+        }
     }
 
     @Override
@@ -157,17 +161,6 @@ public class TestReportRecipient implements TestReporter
             condition += " - " + action.getArgument().getArgumentString();
 
         return condition;
-    }
-
-    @Override
-    public void onConditionCheckStart(@NotNull ScenarioEngine engine, @NotNull CompiledScenarioAction<?> action)
-    {
-        ScenarioFileBean scenario = engine.getScenario();
-
-        this.terminals.forEach(t -> t.info(withPrefix(engine.getTestID(), scenario, LangProvider.get(
-                "test.action.require.start",
-                MsgArgs.of("condition", getConditionString(action))
-        ))));
     }
 
     @Override

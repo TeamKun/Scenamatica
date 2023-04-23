@@ -184,7 +184,6 @@ public class ScenarioManagerImpl implements ScenarioManager
         else if (!this.enabled)
             throw new IllegalStateException("Scenamatica is disabled.");
 
-        this.testReporter.onTestStart(engine, trigger);
         this.currentScenario = engine;
         TestResult result = engine.start(trigger);
         this.currentScenario = null;

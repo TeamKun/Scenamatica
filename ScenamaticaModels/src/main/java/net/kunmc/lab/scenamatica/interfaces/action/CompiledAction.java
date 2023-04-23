@@ -1,5 +1,7 @@
 package net.kunmc.lab.scenamatica.interfaces.action;
 
+import net.kunmc.lab.scenamatica.interfaces.scenariofile.action.ActionBean;
+
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
@@ -10,6 +12,13 @@ import java.util.function.Consumer;
  */
 public interface CompiledAction<A extends ActionArgument>
 {
+    /**
+     * アクションの Bean を取得します。
+     *
+     * @return アクションの Bean
+     */
+    ActionBean getBean();
+
     /**
      * アクションを取得します。
      *

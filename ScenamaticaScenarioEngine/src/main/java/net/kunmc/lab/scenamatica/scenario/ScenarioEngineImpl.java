@@ -112,6 +112,7 @@ public class ScenarioEngineImpl implements ScenarioEngine
     public TestResult start(@NotNull TriggerBean trigger) throws TriggerNotFoundException
     {
         this.setRunInfo(trigger);
+        this.testReporter.onTestStart(this, trigger);
         CompiledTriggerAction compiledTrigger = this.findTriggerOrThrow(trigger);
 
         // あとかたづけ は、できるだけ明瞭にしたいのでこのメソッド内で完結する。
@@ -333,13 +334,7 @@ public class ScenarioEngineImpl implements ScenarioEngine
         switch (type)
         {
             case ACTION_EXECUTE:
-                this.testReporter.onActionStart(this, scenario);
-
-                // このアクションにより, 次のアクションが起きるかもしれないので、次が EXPECT なら監視対象にする。
-                if (next != null && next.getType() == ScenarioType.ACTION_EXPECT)
-                    this.addWatch(next);
-
-                scenario.execute(this, this.actionManager, this.listener);
+                this.doAction(scenario, next);
                 break;
             case ACTION_EXPECT:
                 this.addWatch(scenario);
@@ -351,9 +346,20 @@ public class ScenarioEngineImpl implements ScenarioEngine
         return this.deliverer.waitResult(scenario.getBean().getTimeout(), this.state);
     }
 
+    private <T extends ActionArgument> void doAction(CompiledScenarioAction<T> scenario, CompiledScenarioAction<?> next)
+    {
+        this.testReporter.onActionStart(this, scenario);
+
+        // このアクションにより, 次のアクションが起きるかもしれないので、次が EXPECT なら監視対象にする。
+        if (next != null && next.getType() == ScenarioType.ACTION_EXPECT)
+            this.addWatch(next);
+
+        scenario.execute(this, this.actionManager, this.listener);
+    }
+
     private <T extends ActionArgument> TestResult testCondition(CompiledScenarioAction<T> scenario)
     {
-        this.testReporter.onConditionCheckStart(this, scenario);
+        this.testReporter.onActionStart(this, scenario);
 
         assert scenario.getAction() instanceof Requireable;
         //noinspection rawtypes
@@ -396,7 +402,7 @@ public class ScenarioEngineImpl implements ScenarioEngine
             return;
         this.watchedActions.add(scenario);
 
-        this.testReporter.onActionWatchStart(this, scenario);
+        this.testReporter.onActionStart(this, scenario);
         scenario.getAction().onStartWatching(scenario.getArgument(), this.plugin, null);
         this.listener.setWaitingFor(scenario);
     }

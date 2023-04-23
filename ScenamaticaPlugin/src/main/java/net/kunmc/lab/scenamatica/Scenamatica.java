@@ -8,6 +8,9 @@ import net.kunmc.lab.scenamatica.commands.CommandEnable;
 import net.kunmc.lab.scenamatica.commands.CommandScenario;
 import net.kunmc.lab.scenamatica.events.PlayerJoinEventListener;
 import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
+import net.kunmc.lab.scenamatica.interfaces.scenario.TestReporter;
+import net.kunmc.lab.scenamatica.reporter.BukkitTestReporter;
+import net.kunmc.lab.scenamatica.reporter.RawTestReporter;
 import net.kunmc.lab.scenamatica.settings.ActorSettingsImpl;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
@@ -37,7 +40,7 @@ public final class Scenamatica extends JavaPlugin
 
         this.registry = new ScenamaticaDaemon(Environment.builder(this)
                 .exceptionHandler(new SimpleExceptionHandler(this.getLogger()))
-                .testReporter(new TestReportRecipient())
+                .testReporter(this.getTestReporter())
                 .actorSettings(ActorSettingsImpl.fromConfig(this.getConfig()))
                 .build()
         );
@@ -53,6 +56,15 @@ public final class Scenamatica extends JavaPlugin
 
         this.initCommands();
         this.initTestRecipient();
+    }
+
+    private TestReporter getTestReporter()
+    {
+        boolean isRaw = this.fileConfiguration.getBoolean("interfaces.raw", false);
+        if (isRaw)
+            return new RawTestReporter();
+        else
+            return new BukkitTestReporter();
     }
 
     private void initTestRecipient()

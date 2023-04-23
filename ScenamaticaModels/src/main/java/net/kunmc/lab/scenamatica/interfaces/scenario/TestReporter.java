@@ -38,14 +38,6 @@ public interface TestReporter
     void onActionStart(@NotNull ScenarioEngine engine, @NotNull CompiledScenarioAction<?> action);
 
     /**
-     * シナリオのアクションの監視の開始をレポートします。
-     *
-     * @param engine エンジン
-     * @param action アクション
-     */
-    void onActionWatchStart(@NotNull ScenarioEngine engine, @NotNull CompiledScenarioAction<?> action);
-
-    /**
      * シナリオのアクションが正常に実行されたことをレポートします。
      *
      * @param engine  エンジン
@@ -77,14 +69,6 @@ public interface TestReporter
      * @param action アクション
      */
     void onActionExecuteFailed(@NotNull ScenarioEngine engine, @NotNull CompiledAction<?> action, @NotNull Throwable error);
-
-    /**
-     * コンディションのチェックが始まったことをレポートします。
-     *
-     * @param engine エンジン
-     * @param action アクション
-     */
-    void onConditionCheckStart(@NotNull ScenarioEngine engine, @NotNull CompiledScenarioAction<?> action);
 
     /**
      * コンディションのチェックが成功したことをレポートします。
