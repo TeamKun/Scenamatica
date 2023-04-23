@@ -21,6 +21,21 @@ import {ObjectType} from "/src/components/Object";
                anchor="notes"
 />
 
+
+## 基本引数 {#general-arguments}
+
+### `target` {#target}
+
+対象のプレイヤの名前を指定するには、一律で `target` というキーの引数を使用します。
+
+:::tip
+
+`target` の指定は大文字小文字を区別しません。  
+また、 **UUID でも指定できます**。
+
+:::
+
+
 ## ゲームモード {#gamemode}
 
 <Action name="ゲームモード"
@@ -149,18 +164,49 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
 
 :::
 
-## 基本引数 {#general-arguments}
+## ホットバーのスロットの変更 {#hotbar}
 
-### `target` {#target}
+<Action name="ホットバーのスロットの変更"
+        description="ホットバーのスロットの変更に関するアクションです。"
+        id="player_hotbar"
+        args={[
+          {
+            name: "target",
+            description: "ホットバーのスロットを変更するプレイヤーです。",
+            type: "プレイヤ",
+            required: true
+          },
+          {
+            name: "slot",
+            anchor: "hotbar-slots",
+            description: "ホットバーのスロットです。",
+            type: ObjectType.INTEGER,
+            required: true
+          },
+          {
+            name: "previous_slot",
+            anchor: "hotbar-slots",
+            description: "変更前のホットバーのスロットです。",
+            type: ObjectType.INTEGER,
+            default: "null"
+          },
+          {
+            name: "item",
+            anchor: "hotbar-item",
+            description: "ホットバーのスロットにあるアイテムです。",
+            type: "ItemStack",
+          },
+        ]}
+        executable requireable watchable
+/>
 
-対象のプレイヤの名前を指定するには、一律で `target` というキーの引数を使用します。
+### ホットバーのスロット {#hotbar-slots}
 
-:::tip
+ホットバーのスロットは `0` から `8` の整数で指定します。
 
-`target` の指定は大文字小文字を区別しません。  
-また、 **UUID でも指定できます**。
+### ホットバーのアイテム {#hotbar-item}
 
-:::
+この型は[こちら](../file-syntax/#item-stack-structure)を参照してください。
 
 ## プレイヤの投げ物の発射 {#projectile-launch}
 
