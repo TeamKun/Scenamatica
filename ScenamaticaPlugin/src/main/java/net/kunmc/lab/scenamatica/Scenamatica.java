@@ -14,7 +14,6 @@ import net.kunmc.lab.scenamatica.reporter.RawTestReporter;
 import net.kunmc.lab.scenamatica.settings.ActorSettingsImpl;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -23,7 +22,6 @@ import java.io.IOException;
 public final class Scenamatica extends JavaPlugin
 {
     private ScenamaticaRegistry registry;
-    private FileConfiguration fileConfiguration;
     @SuppressWarnings("FieldCanBeLocal")  // 参照を維持する必要がある。
     private CommandManager commandManager;
 
@@ -60,7 +58,7 @@ public final class Scenamatica extends JavaPlugin
 
     private TestReporter getTestReporter()
     {
-        boolean isRaw = this.fileConfiguration.getBoolean("interfaces.raw", false);
+        boolean isRaw = this.getConfig().getBoolean("interfaces.raw", false);
         if (isRaw)
             return new RawTestReporter();
         else
