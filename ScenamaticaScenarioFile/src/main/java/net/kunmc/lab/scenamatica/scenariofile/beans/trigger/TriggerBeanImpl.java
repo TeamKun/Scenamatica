@@ -9,7 +9,6 @@ import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerBean;
 import net.kunmc.lab.scenamatica.scenariofile.beans.scenario.ActionBeanImpl;
 import net.kunmc.lab.scenamatica.scenariofile.beans.scenario.ScenarioBeanImpl;
-import net.kunmc.lab.scenamatica.scenariofile.utils.ScenarioConditionUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -139,7 +138,7 @@ public class TriggerBeanImpl implements TriggerBean
 
         ActionBean runIf = null;
         if (map.containsKey(KEY_RUN_IF))
-            runIf = ScenarioConditionUtils.parse(MapUtils.checkAndCastMap(
+            runIf = ActionBeanImpl.deserialize(MapUtils.checkAndCastMap(
                     map.get(KEY_RUN_IF),
                     String.class,
                     Object.class

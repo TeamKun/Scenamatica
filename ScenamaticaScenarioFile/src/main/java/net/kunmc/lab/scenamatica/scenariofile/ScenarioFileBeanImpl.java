@@ -12,7 +12,6 @@ import net.kunmc.lab.scenamatica.scenariofile.beans.context.ContextBeanImpl;
 import net.kunmc.lab.scenamatica.scenariofile.beans.scenario.ActionBeanImpl;
 import net.kunmc.lab.scenamatica.scenariofile.beans.scenario.ScenarioBeanImpl;
 import net.kunmc.lab.scenamatica.scenariofile.beans.trigger.TriggerBeanImpl;
-import net.kunmc.lab.scenamatica.scenariofile.utils.ScenarioConditionUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -136,7 +135,7 @@ public class ScenarioFileBeanImpl implements ScenarioFileBean
 
         ActionBean runIf = null;
         if (map.containsKey(KEY_RUN_IF))
-            runIf = ScenarioConditionUtils.parse(MapUtils.checkAndCastMap(
+            runIf = ActionBeanImpl.deserialize(MapUtils.checkAndCastMap(
                     map.get(KEY_RUN_IF),
                     String.class,
                     Object.class
