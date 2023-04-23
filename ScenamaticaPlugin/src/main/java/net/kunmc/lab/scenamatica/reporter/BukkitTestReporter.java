@@ -89,13 +89,13 @@ public class BukkitTestReporter implements net.kunmc.lab.scenamatica.interfaces.
             case ACTION_EXECUTE:
                 this.terminals.forEach(t -> t.info(withPrefix(engine.getTestID(), scenario, LangProvider.get(
                         "test.action.run",
-                        MsgArgs.of("action", action.getAction().getClass().getSimpleName())
+                        MsgArgs.of("action", action.getAction().getExecutor().getClass().getSimpleName())
                 ))));
                 break;
             case ACTION_EXPECT:
                 this.terminals.forEach(t -> t.info(withPrefix(engine.getTestID(), scenario, LangProvider.get(
                         "test.action.watch",
-                        MsgArgs.of("action", action.getAction().getClass().getSimpleName())
+                        MsgArgs.of("action", action.getAction().getExecutor().getClass().getSimpleName())
                 ))));
                 break;
             case CONDITION_REQUIRE:
@@ -119,7 +119,7 @@ public class BukkitTestReporter implements net.kunmc.lab.scenamatica.interfaces.
 
     private static String getConditionString(@NotNull CompiledScenarioAction<?> action)
     {
-        String condition = action.getAction().getClass().getSimpleName();
+        String condition = action.getAction().getExecutor().getClass().getSimpleName();
         if (action.getAction().getArgument() != null)
             condition += " - " + action.getAction().getArgument().getArgumentString();
 
