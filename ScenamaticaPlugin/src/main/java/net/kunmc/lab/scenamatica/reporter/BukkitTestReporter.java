@@ -113,7 +113,7 @@ public class BukkitTestReporter implements net.kunmc.lab.scenamatica.interfaces.
 
         this.terminals.forEach(t -> t.success(withPrefix(engine.getTestID(), scenario, LangProvider.get(
                 "test.action.run.success",
-                MsgArgs.of("action", action.getAction().getClass().getSimpleName())
+                MsgArgs.of("action", action.getExecutor().getClass().getSimpleName())
         ))));
     }
 
@@ -133,7 +133,7 @@ public class BukkitTestReporter implements net.kunmc.lab.scenamatica.interfaces.
 
         this.terminals.forEach(t -> t.success(withPrefix(engine.getTestID(), scenario, LangProvider.get(
                 "test.action.watch.done",
-                MsgArgs.of("action", action.getAction().getClass().getSimpleName())
+                MsgArgs.of("action", action.getExecutor().getClass().getSimpleName())
         ))));
 
     }
@@ -145,7 +145,7 @@ public class BukkitTestReporter implements net.kunmc.lab.scenamatica.interfaces.
 
         this.terminals.forEach(t -> t.info(withPrefix(engine.getTestID(), scenario, LangProvider.get(
                 "test.action.run.fail",
-                MsgArgs.of("action", action.getAction().getClass().getSimpleName())
+                MsgArgs.of("action", action.getExecutor().getClass().getSimpleName())
                         .add("cause", error.getClass().getSimpleName() + ": " + error.getMessage())
         ))));
     }
@@ -157,7 +157,7 @@ public class BukkitTestReporter implements net.kunmc.lab.scenamatica.interfaces.
 
         this.terminals.forEach(t -> t.warn(withPrefix(engine.getTestID(), scenario, LangProvider.get(
                 "test.action.jumped",
-                MsgArgs.of("action", action.getAction().getClass().getSimpleName())
+                MsgArgs.of("action", action.getExecutor().getClass().getSimpleName())
                         .add("scenario", engine.getScenario().getName())
         ))));
     }

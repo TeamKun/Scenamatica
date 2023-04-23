@@ -394,7 +394,7 @@ public class ScenarioEngineImpl implements ScenarioEngine
         this.watchedActions.add(scenario);
 
         this.testReporter.onActionStart(this, scenario);
-        scenario.getAction().getAction().onStartWatching(scenario.getAction().getArgument(), this.plugin, null);
+        scenario.getAction().getExecutor().onStartWatching(scenario.getAction().getArgument(), this.plugin, null);
         this.listener.setWaitingFor(scenario);
     }
 

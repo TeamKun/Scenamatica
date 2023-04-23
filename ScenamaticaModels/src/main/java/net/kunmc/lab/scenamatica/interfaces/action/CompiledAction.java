@@ -20,11 +20,11 @@ public interface CompiledAction<A extends ActionArgument>
     ActionBean getBean();
 
     /**
-     * アクションを取得します。
+     * アクションの実行を取得します。
      *
-     * @return アクション
+     * @return アクションの実行
      */
-    Action<A> getAction();
+    Action<A> getExecutor();
 
     /**
      * アクションの引数を取得します。

@@ -40,7 +40,7 @@ public class WatchingEntryImpl<A extends ActionArgument> implements WatchingEntr
         };
 
         EventExecutor executor = (listener1, event) -> {
-            if (this.action.getAction().isFired(this.action.getArgument(), WatchingEntryImpl.this.engine, event))
+            if (this.action.getExecutor().isFired(this.action.getArgument(), WatchingEntryImpl.this.engine, event))
             {
                 this.manager.onActionFired(WatchingEntryImpl.this, event);
                 if (this.type == WatchType.SCENARIO)

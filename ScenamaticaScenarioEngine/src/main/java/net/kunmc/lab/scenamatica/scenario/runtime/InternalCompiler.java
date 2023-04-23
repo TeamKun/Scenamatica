@@ -50,10 +50,10 @@ public class InternalCompiler
         );
 
         if (scenario.getType() == ScenarioType.CONDITION_REQUIRE)
-            if (!(action.getAction() instanceof Requireable<?>))
+            if (!(action.getExecutor() instanceof Requireable<?>))
                 throw new IllegalArgumentException("Action " + scenario.getAction().getType() + " is not requireable.");
 
-        action.getAction().validateArgument(engine, scenario.getType(), action.getArgument());
+        action.getExecutor().validateArgument(engine, scenario.getType(), action.getArgument());
 
 
         return new CompiledScenarioActionImpl<>(
@@ -79,7 +79,7 @@ public class InternalCompiler
                 listener::onActionExecuted
         );
 
-        action.getAction().validateArgument(engine, ScenarioType.CONDITION_REQUIRE, action.getArgument());
+        action.getExecutor().validateArgument(engine, ScenarioType.CONDITION_REQUIRE, action.getArgument());
 
         return new CompiledScenarioActionImpl<>(
                 new ScenarioBean()

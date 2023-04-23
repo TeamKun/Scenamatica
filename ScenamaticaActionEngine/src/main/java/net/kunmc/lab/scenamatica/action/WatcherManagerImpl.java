@@ -90,7 +90,7 @@ public class WatcherManagerImpl implements WatcherManager
                 type,
                 listeners
         );
-        for (Class<? extends Event> eventType : action.getAction().getAttachingEvents())
+        for (Class<? extends Event> eventType : action.getExecutor().getAttachingEvents())
             listeners.add(Pair.of(eventType, watchingEntry.register(eventType)));
 
         return watchingEntry;

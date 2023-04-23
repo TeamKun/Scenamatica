@@ -36,7 +36,7 @@ public class ScenarioActionListenerImpl implements ScenarioActionListener
     public <A extends ActionArgument> void onActionError(@NotNull CompiledAction<A> action, @NotNull Throwable error)
     {
         this.reporter.onActionExecuteFailed(this.engine, action, error);
-        this.setResult(TestResultCause.ACTION_EXECUTION_FAILED, action.getAction());
+        this.setResult(TestResultCause.ACTION_EXECUTION_FAILED, action.getExecutor());
     }
 
     @Override
@@ -50,12 +50,12 @@ public class ScenarioActionListenerImpl implements ScenarioActionListener
     public <A extends ActionArgument> void onActionFired(@NotNull WatchingEntry<A> entry, @NotNull Event event)
     {
         CompiledAction<A> action = entry.getAction();
-        Action<A> executor = action.getAction();
+        Action<A> executor = action.getExecutor();
 
         if (this.waitingFor == null)
             return;
 
-        if (executor.getClass() == this.waitingFor.getAction().getAction().getClass()
+        if (executor.getClass() == this.waitingFor.getAction().getExecutor().getClass()
                 && action.getArgument().isSame(this.waitingFor.getAction().getArgument()))
         {
             this.reporter.onWatchingActionExecuted(this.engine, entry.getAction());

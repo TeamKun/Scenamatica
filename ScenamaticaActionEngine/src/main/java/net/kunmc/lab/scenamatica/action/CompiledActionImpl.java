@@ -14,7 +14,7 @@ import java.util.function.Consumer;
 public class CompiledActionImpl<A extends ActionArgument> implements CompiledAction<A>
 {
     ScenarioEngine engine;
-    Action<A> action;
+    Action<A> executor;
     A argument;
     BiConsumer<CompiledAction<A>, Throwable> errorHandler;
     Consumer<CompiledAction<A>> onExecute;
@@ -25,7 +25,7 @@ public class CompiledActionImpl<A extends ActionArgument> implements CompiledAct
     {
         try
         {
-            this.action.execute(this.engine, this.argument);
+            this.executor.execute(this.engine, this.argument);
             this.onExecute.accept(this);
         }
         catch (Throwable e)
