@@ -67,7 +67,7 @@ public enum TriggerType
         try
         {
             return (Map<String, Object>) this.argumentType.getMethod(
-                            BEAN_SERIALIZER_METHOD, this.argumentType.getInterfaces()[1])
+                            BEAN_SERIALIZER_METHOD, this.argumentType)
                     .invoke(null, argument);
         }
         catch (Exception e)

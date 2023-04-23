@@ -352,9 +352,9 @@ public class ScenarioEngineImpl implements ScenarioEngine
     {
         this.testReporter.onActionStart(this, scenario);
 
-        assert scenario.getAction() instanceof Requireable;
+        assert scenario.getAction().getExecutor() instanceof Requireable;
         //noinspection rawtypes
-        Requireable requireable = (Requireable) scenario.getAction();
+        Requireable requireable = (Requireable) scenario.getAction().getExecutor();
 
         boolean result;
         try
