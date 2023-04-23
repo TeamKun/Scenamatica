@@ -58,13 +58,13 @@ public class BukkitTestReporter implements net.kunmc.lab.scenamatica.interfaces.
     {
         ScenarioFileBean scenario = engine.getScenario();
 
-        this.terminals.forEach(t -> {
-            t.info(withPrefix(engine.getTestID(), scenario, LangProvider.get(
-                    "test.start",
-                    MsgArgs.of("scenario", scenario.getName())
-                            .add("trigger", trigger.getType().name())
-            )));
-        });
+        this.terminals.forEach(t ->
+                t.info(withPrefix(engine.getTestID(), scenario, LangProvider.get(
+                        "test.start",
+                        MsgArgs.of("scenario", scenario.getName())
+                                .add("trigger", trigger.getType().name())
+                )))
+        );
     }
 
     @Override
