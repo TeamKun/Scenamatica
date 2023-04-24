@@ -185,7 +185,7 @@ class MainWindow(QMainWindow):
                 with open(fileName, 'w', encoding='utf-8') as file:
                     json.dump(data, file, ensure_ascii=False)
                     self.saveAction.setEnabled(False)
-                    QMessageBox.show(self, "保存完了！", "保存したよ！")
+                    QMessageBox.information(self, "保存完了！", "保存したよ！")
                     self.showSummary()
             except Exception as e:
                 QMessageBox.critical(self, "Error", f"JSON を保存できなかったみたい！ごめんね>< :\n{e}")
