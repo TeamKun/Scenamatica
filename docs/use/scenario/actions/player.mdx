@@ -164,6 +164,57 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
 
 :::
 
+## 進捗の達成と達成度 {#advancement}
+
+<Action name="進捗の達成と達成度"
+        description="進捗の達成と達成度に関するアクションです。"
+        id="player_advancement"
+        args={[
+          {
+            name: "target",
+            anchor: "target",
+            description: "進捗を達成するプレイヤーです。",
+            type: "プレイヤ",
+            required: true
+          },
+          {
+            name: "advancement",
+            anchor: "advancement-advancement",
+            description: "進捗です。",
+            type: "NamespacedKey",
+            required: true
+          },
+          {
+            name: "criterion",
+            anchor: "advancement-criterion",
+            description: "進捗の達成条件です。",
+            type: ObjectType.STRING,
+          }
+        ]}
+        executable requireable watchable
+/>
+
+:::info
+
+このアクションは進捗自体を達成する機能と、進捗の達成度を変更する機能を包含しています。  
+`criterion` を指定せずに実行すると、**残っている達成条件を全て達成**します。一方で指定した場合は、指定した達成条件のみを達成します。
+
+実行期待機能においても、 `criterion` を指定せずに実行すると、進捗自体を達成しているか判定します。  
+一方で指定した場合は、指定した進捗の指定した達成条件を達成しているか判定します。
+
+
+:::
+
+### `advancement` {#advancement-advancement}
+
+進捗を [`NamespacedKey`](../file-syntax#namespaced-key-structure) で指定します。
+
+### `criterion` {#advancement-criterion}
+
+進捗の達成条件を指定します。
+
+アクション実行機能において省略した場合、指定された進捗の**全ての達成条件を達成**します。
+
 ## ホットバーのスロットの変更 {#hotbar}
 
 <Action name="ホットバーのスロットの変更"
