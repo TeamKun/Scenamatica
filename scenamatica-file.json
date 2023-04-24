@@ -21,7 +21,7 @@
     },
     "namespacedKey": {
       "type": "string",
-      "pattern": "^([a-z0-9_]+:)?[a-z0-9_]+$",
+      "pattern": "^([a-z0-9_/]+:)?[a-z0-9_/]+$",
       "description": "名前空間付きキーです。 名前空間を指定しない場合は, minecraft: が暗黙的に指定されます。",
       "examples": [
         "minecraft:stone",
@@ -81,8 +81,9 @@
           "type": "string",
           "description": "アクションの種類です。 ",
           "enum": [
-            "player_gamemode",
             "message_send",
+            "player_gamemode",
+            "player_advancement",
             "player_death",
             "player_hotbar",
             "player_launch_projectile",
@@ -137,6 +138,26 @@
             "properties": {
               "with": {
                 "$ref": "#/definitions/action/definitions/player/gamemode"
+              }
+            },
+            "required": [
+              "with"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "player_advancement",
+                "description": "プレイヤーの進捗の達成や達成度を検知します。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/player/advancement"
               }
             },
             "required": [
@@ -326,6 +347,78 @@
           }
         },
         "player": {
+          "gamemode": {
+            "properties": {
+              "target": {
+                "type": "string",
+                "description": "ゲームモードを変更するプレイヤーです。",
+                "maxLength": 16
+              },
+              "gamemode": {
+                "type": "string",
+                "description": "ゲームモードです。",
+                "enum": [
+                  "survival",
+                  "creative",
+                  "adventure",
+                  "spectator",
+                  "SURVIVAL",
+                  "CREATIVE",
+                  "ADVENTURE",
+                  "SPECTATOR"
+                ]
+              },
+              "cause": {
+                "type": "string",
+                "description": "ゲームモードを変更した原因です。",
+                "enum": [
+                  "command",
+                  "plugin",
+                  "default_gamemode",
+                  "hardcore_death",
+                  "unknown",
+                  "COMMAND",
+                  "PLUGIN",
+                  "DEFAULT_GAMEMODE",
+                  "HARDCORE_DEATH",
+                  "UNKNOWN"
+                ]
+              },
+              "cancelMessage": {
+                "type": "string",
+                "description": "ゲームモード変更をキャンセルされたときに表示するメッセージです。PaperMC の改造の一部で、通常は使用しません。"
+              }
+            },
+            "required": [
+              "target",
+              "gamemode"
+            ]
+          },
+          "advancement": {
+            "properties": {
+              "target": {
+                "type": "string",
+                "description": "進捗を達成するプレイヤーです。",
+                "maxLength": 16
+              },
+              "advancement": {
+                "type": "string",
+                "description": "達成する進捗です。",
+                "maxLength": 32767,
+                "$ref": "#/definitions/namespacedKey"
+              },
+              "criterion": {
+                "type": "string",
+                "description": "達成する条件です。省略した場合は全ての条件を達成します。",
+                "maxLength": 32767,
+                "$ref": "#/definitions/namespacedKey"
+              }
+            },
+            "required": [
+              "target",
+              "advancement"
+            ]
+          },
           "death": {
             "properties": {
               "target": {
@@ -372,53 +465,6 @@
             },
             "required": [
               "target"
-            ]
-          },
-          "gamemode": {
-            "properties": {
-              "target": {
-                "type": "string",
-                "description": "ゲームモードを変更するプレイヤーです。",
-                "maxLength": 16
-              },
-              "gamemode": {
-                "type": "string",
-                "description": "ゲームモードです。",
-                "enum": [
-                  "survival",
-                  "creative",
-                  "adventure",
-                  "spectator",
-                  "SURVIVAL",
-                  "CREATIVE",
-                  "ADVENTURE",
-                  "SPECTATOR"
-                ]
-              },
-              "cause": {
-                "type": "string",
-                "description": "ゲームモードを変更した原因です。",
-                "enum": [
-                  "command",
-                  "plugin",
-                  "default_gamemode",
-                  "hardcore_death",
-                  "unknown",
-                  "COMMAND",
-                  "PLUGIN",
-                  "DEFAULT_GAMEMODE",
-                  "HARDCORE_DEATH",
-                  "UNKNOWN"
-                ]
-              },
-              "cancelMessage": {
-                "type": "string",
-                "description": "ゲームモード変更をキャンセルされたときに表示するメッセージです。PaperMC の改造の一部で、通常は使用しません。"
-              }
-            },
-            "required": [
-              "target",
-              "gamemode"
             ]
           },
           "hotbar": {
