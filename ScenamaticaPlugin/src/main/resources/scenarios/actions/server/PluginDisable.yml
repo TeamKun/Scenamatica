@@ -15,6 +15,10 @@ scenario:
     action: server_plugin_disable
     with:
       plugin: "LightHeadPlugin"
+  - type: expect
+    action: server_plugin_disable
+    with:
+      plugin: "LightHeadPlugin"
   - type: require
     action: server_plugin_disable
     with:

@@ -31,3 +31,10 @@ scenario:
       slot: 1
       item:
         type: DIAMOND_PICKAXE
+  - type: require
+    action: player_hotbar
+    with:
+      target: Actor001
+      slot: 1
+      item:
+        type: DIAMOND_PICKAXE
