@@ -19,6 +19,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class PlayerHotbarSlotAction extends AbstractPlayerAction<PlayerHotbarSlotAction.PlayerHotbarSlotActionArgument> implements Requireable<PlayerHotbarSlotAction.PlayerHotbarSlotActionArgument>
 {
@@ -145,7 +146,14 @@ public class PlayerHotbarSlotAction extends AbstractPlayerAction<PlayerHotbarSlo
         @Override
         public boolean isSame(TriggerArgument argument)
         {
-            return super.isSame(argument);
+            if (!(argument instanceof PlayerHotbarSlotActionArgument))
+                return false;
+
+            PlayerHotbarSlotActionArgument arg = (PlayerHotbarSlotActionArgument) argument;
+
+            return super.isSame(argument)
+                    && this.currentSlot == arg.currentSlot
+                    && Objects.equals(this.currentItem, arg.currentItem);
         }
 
         @Override
