@@ -38,8 +38,6 @@ public class GameModeAction extends AbstractPlayerAction<GameModeAction.GameMode
 
         Player targetPlayer = argument.getTarget();
         GameMode gameMode = argument.getGameMode();
-        // PlayerGameModeChangeEvent.Cause cause = argument.getCause();  <= EXECUTE では使用不可。
-        // String cancelMessage = argument.getCancelMessage(); <= EXECUTE では使用不可。
 
         targetPlayer.setGameMode(gameMode);
     }
@@ -107,11 +105,15 @@ public class GameModeAction extends AbstractPlayerAction<GameModeAction.GameMode
     {
         argument = this.requireArgsNonNull(argument);
 
-        if (type != ScenarioType.CONDITION_REQUIRE)
-            return;
+        switch (type)
+        {
+            case CONDITION_REQUIRE:
+            case ACTION_EXECUTE:
+                this.throwIfPresent(GameModeChangeArgument.KEY_CAUSE, argument.getCause());
+                this.throwIfPresent(GameModeChangeArgument.KEY_CANCEL_MESSAGE, argument.getCancelMessage());
+                break;
 
-        this.throwIfPresent(GameModeChangeArgument.KEY_CAUSE, argument.getCause());
-        this.throwIfPresent(GameModeChangeArgument.KEY_CANCEL_MESSAGE, argument.getCancelMessage());
+        }
     }
 
     @Value
