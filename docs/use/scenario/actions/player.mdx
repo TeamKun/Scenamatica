@@ -35,64 +35,6 @@ import {ObjectType} from "/src/components/Object";
 
 :::
 
-
-## ゲームモード {#gamemode}
-
-<Action name="ゲームモード"
-        description="プレイヤのゲームモードに関するアクションです。"
-        id="player_gamemode"
-        args={[
-          {
-            name: "target",
-            anchor: "target",
-            description: "ゲームモードを変更するプレイヤーです。",
-            type: "プレイヤ",
-            required: true
-          },
-          {
-            name: "gamemode",
-            anchor: "gamemode-gamemode",
-            description: "ゲームモードです。",
-            type: "列挙型{SURVIVAL, CREATIVE, ADVENTURE, SPECTATOR}",
-            required: true,
-          },
-          {
-            name: "cause",
-            description: "ゲームモード変更の原因です。",
-            type: "列挙型{PLUGIN, COMMAND, DEFAULT_GAMEMODE, HARDCORE_DEATH, UNKNOWN}"
-          },
-          {
-            name: "cancelMessage",
-            anchor: "gamemode-cancel-message",
-            description: "変更がキャンセルされた場合に表示するメッセージです（Paper)。",
-            type: ObjectType.STRING,
-          }
-        ]}
-        executable requireable watchable
-/>
-
-### `gamemode` {#gamemode-gamemode}
-
-ゲームモードを指定します。  
-
-:::warning
-
-`gamemode` は上記に示す列挙型のみ指定できます。  
-Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `0` 〜 `3`)は指定できません。
-
-:::
-
-### `cancelMessage` {#gamemode-cancel-message}
-
-変更がキャンセルされた場合に表示するメッセージを指定します。
-
-:::tip
-
-この項目は PaperMC による変更で追加された項目です。  
-詳しい動作は各ドキュメントを参照してください。
-
-:::
-
 ## プレイヤの死亡およびキル {#death}
 
 <Action name="プレイヤの死亡およびキル"
@@ -214,6 +156,64 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
 進捗の達成条件を指定します。
 
 アクション実行機能において省略した場合、指定された進捗の**全ての達成条件を達成**します。
+
+
+## ゲームモード {#gamemode}
+
+<Action name="ゲームモード"
+        description="プレイヤのゲームモードに関するアクションです。"
+        id="player_gamemode"
+        args={[
+          {
+            name: "target",
+            anchor: "target",
+            description: "ゲームモードを変更するプレイヤーです。",
+            type: "プレイヤ",
+            required: true
+          },
+          {
+            name: "gamemode",
+            anchor: "gamemode-gamemode",
+            description: "ゲームモードです。",
+            type: "列挙型{SURVIVAL, CREATIVE, ADVENTURE, SPECTATOR}",
+            required: true,
+          },
+          {
+            name: "cause",
+            description: "ゲームモード変更の原因です。",
+            type: "列挙型{PLUGIN, COMMAND, DEFAULT_GAMEMODE, HARDCORE_DEATH, UNKNOWN}"
+          },
+          {
+            name: "cancelMessage",
+            anchor: "gamemode-cancel-message",
+            description: "変更がキャンセルされた場合に表示するメッセージです（Paper)。",
+            type: ObjectType.STRING,
+          }
+        ]}
+        executable requireable watchable
+/>
+
+### `gamemode` {#gamemode-gamemode}
+
+ゲームモードを指定します。
+
+:::warning
+
+`gamemode` は上記に示す列挙型のみ指定できます。  
+Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `0` 〜 `3`)は指定できません。
+
+:::
+
+### `cancelMessage` {#gamemode-cancel-message}
+
+変更がキャンセルされた場合に表示するメッセージを指定します。
+
+:::tip
+
+この項目は PaperMC による変更で追加された項目です。  
+詳しい動作は各ドキュメントを参照してください。
+
+:::
 
 ## ホットバーのスロットの変更 {#hotbar}
 
