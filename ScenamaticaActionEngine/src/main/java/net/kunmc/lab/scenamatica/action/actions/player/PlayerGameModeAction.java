@@ -20,8 +20,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-public class GameModeAction extends AbstractPlayerAction<GameModeAction.GameModeChangeArgument>
-        implements Requireable<GameModeAction.GameModeChangeArgument>
+public class PlayerGameModeAction extends AbstractPlayerAction<PlayerGameModeAction.GameModeChangeArgument>
+        implements Requireable<PlayerGameModeAction.GameModeChangeArgument>
 {
     public static final String KEY_ACTION_NAME = "player_gamemode";
 
