@@ -1,6 +1,6 @@
 scenamatica: ${project.version}
 
-name: server_command_dispatch
+name: actions_server_command_dispatch
 description: Testing command_dispatch action works or not
 on:
   - type: manual_dispatch

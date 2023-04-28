@@ -1,6 +1,6 @@
 scenamatica: ${project.version}
 
-name: player_death
+name: actions_player_death
 description: Testing player_death action works or not
 on:
   - type: manual_dispatch

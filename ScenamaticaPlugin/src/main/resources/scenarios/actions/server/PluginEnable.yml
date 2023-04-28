@@ -1,6 +1,6 @@
 scenamatica: ${project.version}
 
-name: sc041
+name: actions_server_plugin_enable
 description: L6C2 in scenarios.xlsx
 on:
   - type: manual_dispatch
