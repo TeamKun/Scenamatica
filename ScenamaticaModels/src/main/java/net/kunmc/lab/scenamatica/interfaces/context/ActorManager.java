@@ -3,8 +3,11 @@ package net.kunmc.lab.scenamatica.interfaces.context;
 import net.kunmc.lab.scenamatica.exceptions.context.ContextPreparationException;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.context.PlayerBean;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.UUID;
 
 /**
  * シナリオを実行する役者を管理するインターフェースです。
@@ -17,28 +20,28 @@ public interface ActorManager
      * @param bean プレイヤー情報
      * @return 生成した役者
      */
-    Player createActor(PlayerBean bean) throws ContextPreparationException;
+    Actor createActor(PlayerBean bean) throws ContextPreparationException;
 
     /**
      * 役者を破棄します。
      *
      * @param player 役者
      */
-    void destroyActor(Player player);
+    void destroyActor(Actor player);
 
     /**
      * 役者が廃棄されたときに呼び出されるメソッドです。
      *
      * @param player 役者
      */
-    void onDestroyActor(Player player);
+    void onDestroyActor(Actor player);
 
     /**
      * 登録されている役者をすべて取得します。
      *
      * @return 役者
      */
-    List<Player> getActors();
+    List<Actor> getActors();
 
     /**
      * 生成された役者を全て解除し、インスタンスを破棄します。
@@ -51,5 +54,13 @@ public interface ActorManager
      * @param player プレイヤー
      * @return 役者かどうか
      */
-    boolean isActor(Player player);
+    boolean isActor(@NotNull Player player);
+
+    /**
+     * {@link java.util.UUID} から アクターを取得します。
+     *
+     * @param uuid プレイヤーのUUID
+     */
+    @Nullable
+    Actor getByUUID(@NotNull UUID uuid);
 }

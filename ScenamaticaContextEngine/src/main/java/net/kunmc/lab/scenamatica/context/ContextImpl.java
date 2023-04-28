@@ -1,9 +1,9 @@
 package net.kunmc.lab.scenamatica.context;
 
 import lombok.Value;
+import net.kunmc.lab.scenamatica.interfaces.context.Actor;
 import net.kunmc.lab.scenamatica.interfaces.context.Context;
 import org.bukkit.World;
-import org.bukkit.entity.Player;
 
 import java.util.List;
 
@@ -20,5 +20,5 @@ public class ContextImpl implements Context
     /**
      * アクターです。
      */
-    List<Player> actors;
+    List<Actor> actors;
 }

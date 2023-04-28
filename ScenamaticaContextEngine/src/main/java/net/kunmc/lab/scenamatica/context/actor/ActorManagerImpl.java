@@ -6,6 +6,7 @@ import net.kunmc.lab.scenamatica.exceptions.context.actor.ActorAlreadyExistsExce
 import net.kunmc.lab.scenamatica.exceptions.context.actor.VersionNotSupportedException;
 import net.kunmc.lab.scenamatica.exceptions.context.stage.StageNotCreatedException;
 import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
+import net.kunmc.lab.scenamatica.interfaces.context.Actor;
 import net.kunmc.lab.scenamatica.interfaces.context.ActorManager;
 import net.kunmc.lab.scenamatica.interfaces.context.ContextManager;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.context.PlayerBean;
@@ -14,17 +15,19 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.jetbrains.annotations.NotNull;
 import org.kunlab.kpm.utils.ReflectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class ActorManagerImpl implements ActorManager, Listener
 {
     private final ScenamaticaRegistry registry;
     private final ContextManager contextManager;
     @Getter
-    private final List<Player> actors;
+    private final List<Actor> actors;
     private final PlayerMockerBase actorGenerator;
     private final ActorSettings settings;
 
@@ -59,7 +62,7 @@ public class ActorManagerImpl implements ActorManager, Listener
     }
 
     @Override
-    public Player createActor(PlayerBean bean) throws ContextPreparationException
+    public Actor createActor(PlayerBean bean) throws ContextPreparationException
     {
         if (this.actors.stream().anyMatch(p -> p.getName().equalsIgnoreCase(bean.getName())))
             throw new ActorAlreadyExistsException(bean.getName());
@@ -68,19 +71,19 @@ public class ActorManagerImpl implements ActorManager, Listener
         else if (this.actors.size() + 1 > this.settings.getMaxActors())
             throw new ContextPreparationException("Too many actors on this server (max: " + this.settings.getMaxActors() + ")");
 
-        Player player = this.actorGenerator.mock(this.contextManager.getStageManager().getStage(), bean);
-        this.actors.add(player);
-        return player;
+        Actor actor = this.actorGenerator.mock(this.contextManager.getStageManager().getStage(), bean);
+        this.actors.add(actor);
+        return actor;
     }
 
     @Override
-    public void destroyActor(Player player)
+    public void destroyActor(Actor player)
     {
         this.actorGenerator.unmock(player);
     }
 
     @Override
-    public void onDestroyActor(Player player)
+    public void onDestroyActor(Actor player)
     {
         this.actors.remove(player);
     }
@@ -93,10 +96,19 @@ public class ActorManagerImpl implements ActorManager, Listener
     }
 
     @Override
-    public boolean isActor(Player player)
+    public boolean isActor(@NotNull Player player)
     {
         return this.actors.stream().parallel()
-                .anyMatch(p -> p.getUniqueId().equals(player.getUniqueId()));
+                .anyMatch(p -> p.getUUID().equals(player.getUniqueId()));
+    }
+
+    @Override
+    public Actor getByUUID(@NotNull UUID uuid)
+    {
+        return this.actors.stream().parallel()
+                .filter(p -> p.getUUID().equals(uuid))
+                .findFirst()
+                .orElse(null);
     }
 
     @EventHandler

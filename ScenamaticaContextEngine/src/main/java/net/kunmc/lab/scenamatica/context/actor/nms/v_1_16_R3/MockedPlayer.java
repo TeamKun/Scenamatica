@@ -2,6 +2,8 @@ package net.kunmc.lab.scenamatica.context.actor.nms.v_1_16_R3;
 
 import com.mojang.authlib.GameProfile;
 import net.kunmc.lab.peyangpaperutils.lib.utils.Runner;
+import net.kunmc.lab.scenamatica.interfaces.context.Actor;
+import net.kunmc.lab.scenamatica.interfaces.context.ActorManager;
 import net.minecraft.server.v1_16_R3.DamageSource;
 import net.minecraft.server.v1_16_R3.Entity;
 import net.minecraft.server.v1_16_R3.EntityPlayer;
@@ -9,16 +11,57 @@ import net.minecraft.server.v1_16_R3.EnumMoveType;
 import net.minecraft.server.v1_16_R3.MinecraftServer;
 import net.minecraft.server.v1_16_R3.Vec3D;
 import net.minecraft.server.v1_16_R3.WorldServer;
+import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerAnimationType;
+import org.jetbrains.annotations.NotNull;
 
-class MockedPlayer extends EntityPlayer
+import java.util.UUID;
+
+class MockedPlayer extends EntityPlayer implements Actor
 {
-    public MockedPlayer(MinecraftServer minecraftserver,
-                        WorldServer worldserver,
-                        GameProfile gameprofile)
+    private final ActorManager manager;
+
+    public MockedPlayer(
+            ActorManager manager,
+            MinecraftServer minecraftserver,
+            WorldServer worldserver,
+            GameProfile gameprofile)
     {
         super(minecraftserver, worldserver, gameprofile, new MocketPlayerInteractManager(worldserver));
+        this.manager = manager;
+
         this.setNoGravity(false);
         this.G = 0.5f; // ブロックのぼれるたかさ
+    }
+
+    @Override
+    public @NotNull ActorManager getManager()
+    {
+        return this.manager;
+    }
+
+    @Override
+    public void playAnimation(@NotNull PlayerAnimationType animation)
+    {
+    }
+
+    @Override
+    public @NotNull Player getPlayer()
+    {
+        return this.getBukkitEntity();
+    }
+
+    @Override
+    public @NotNull UUID getUUID()
+    {
+        return this.getUniqueID();
+    }
+
+    @Override
+    @NotNull
+    public String getName()
+    {
+        return super.getName();
     }
 
     @Override
@@ -92,4 +135,5 @@ class MockedPlayer extends EntityPlayer
         Runner.runLater(() -> getWorldServer().removeEntity(this), 15L);
         // 15L 遅らせるのは, アニメーションのため
     }
+
 }

@@ -36,6 +36,7 @@ import java.util.function.Consumer;
 
 public class ScenarioManagerImpl implements ScenarioManager
 {
+    @Getter
     private final ScenamaticaRegistry registry;
     private final ActionManager actionManager;
     @Getter

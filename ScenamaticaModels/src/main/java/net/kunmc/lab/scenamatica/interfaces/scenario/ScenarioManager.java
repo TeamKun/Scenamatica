@@ -6,6 +6,7 @@ import net.kunmc.lab.scenamatica.exceptions.scenario.ScenarioException;
 import net.kunmc.lab.scenamatica.exceptions.scenario.ScenarioNotFoundException;
 import net.kunmc.lab.scenamatica.exceptions.scenario.ScenarioNotRunningException;
 import net.kunmc.lab.scenamatica.exceptions.scenario.TriggerNotFoundException;
+import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -15,6 +16,15 @@ import org.jetbrains.annotations.Nullable;
  */
 public interface ScenarioManager
 {
+
+    /**
+     * レジストリを取得します。
+     *
+     * @return レジストリ
+     */
+    @NotNull
+    ScenamaticaRegistry getRegistry();
+
     /**
      * マイルストーンマネージャーを取得します。
      */

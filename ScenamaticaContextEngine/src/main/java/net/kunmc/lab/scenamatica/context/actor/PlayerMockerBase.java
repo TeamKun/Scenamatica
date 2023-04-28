@@ -3,6 +3,7 @@ package net.kunmc.lab.scenamatica.context.actor;
 import com.mojang.authlib.GameProfile;
 import lombok.SneakyThrows;
 import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
+import net.kunmc.lab.scenamatica.interfaces.context.Actor;
 import net.kunmc.lab.scenamatica.interfaces.context.ActorManager;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.context.PlayerBean;
 import org.apache.logging.log4j.LogManager;
@@ -38,9 +39,9 @@ public abstract class PlayerMockerBase
         return new GameProfile(uuid, name);
     }
 
-    public abstract Player mock(@NotNull World world, @NotNull PlayerBean bean);
+    public abstract Actor mock(@NotNull World world, @NotNull PlayerBean bean);
 
-    public abstract void unmock(Player player);
+    public abstract void unmock(Actor player);
 
     protected abstract Class<?> getLoginListenerClass();
 
@@ -65,10 +66,10 @@ public abstract class PlayerMockerBase
         return event.getResult() == PlayerLoginEvent.Result.ALLOWED;
     }
 
-    public void onDestroyActor(Player player)
+    public void onDestroyActor(Actor actor)
     {
-        this.manager.onDestroyActor(player);
-        this.wipePlayerData(player.getUniqueId());
+        this.manager.onDestroyActor(actor);
+        this.wipePlayerData(actor.getPlayer().getUniqueId());
     }
 
     public void wipePlayerData(UUID uuid)

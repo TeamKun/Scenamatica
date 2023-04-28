@@ -146,7 +146,7 @@ class MockedNetworkManager extends NetworkManager
         super.handleDisconnection();
         this.alive = false;
 
-        this.mocker.onDestroyActor(this.player.getBukkitEntity());
+        this.mocker.onDestroyActor(this.player);
     }
 
     @Override

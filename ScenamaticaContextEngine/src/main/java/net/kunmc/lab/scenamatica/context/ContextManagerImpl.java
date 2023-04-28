@@ -12,6 +12,7 @@ import net.kunmc.lab.scenamatica.exceptions.context.actor.VersionNotSupportedExc
 import net.kunmc.lab.scenamatica.exceptions.context.stage.StageCreateFailedException;
 import net.kunmc.lab.scenamatica.exceptions.context.stage.StageNotCreatedException;
 import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
+import net.kunmc.lab.scenamatica.interfaces.context.Actor;
 import net.kunmc.lab.scenamatica.interfaces.context.ActorManager;
 import net.kunmc.lab.scenamatica.interfaces.context.Context;
 import net.kunmc.lab.scenamatica.interfaces.context.ContextManager;
@@ -21,7 +22,6 @@ import net.kunmc.lab.scenamatica.interfaces.scenariofile.context.ContextBean;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.context.PlayerBean;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.spigotmc.SpigotConfig;
 
@@ -103,7 +103,7 @@ public class ContextManagerImpl implements ContextManager
 
         this.isWorldPrepared = true;
 
-        List<Player> actors = new ArrayList<>();
+        List<Actor> actors = new ArrayList<>();
         if (context != null && !context.getActors().isEmpty())
         {
             this.log(scenario, "context.actor.generating", testID);
@@ -164,7 +164,7 @@ public class ContextManagerImpl implements ContextManager
             this.stageManager.destroyStage();  // StageNotCreatedException はチェック済み。
 
         if (this.isActorPrepared)
-            for (Player actor : this.actorManager.getActors())
+            for (Actor actor : this.actorManager.getActors())
                 this.actorManager.destroyActor(actor);
 
     }

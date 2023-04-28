@@ -5,6 +5,7 @@ import io.netty.buffer.ByteBufAllocator;
 import lombok.SneakyThrows;
 import net.kunmc.lab.scenamatica.context.actor.PlayerMockerBase;
 import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
+import net.kunmc.lab.scenamatica.interfaces.context.Actor;
 import net.kunmc.lab.scenamatica.interfaces.context.ActorManager;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.context.PlayerBean;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.inventory.ItemStackBean;
@@ -49,12 +50,15 @@ import java.util.stream.Stream;
 public class PlayerMocker extends PlayerMockerBase
 {
     private final ScenamaticaRegistry registry;
+    private final ActorManager manager;
     private final ActorSettings settings;
 
     public PlayerMocker(ScenamaticaRegistry registry, ActorManager manager)
     {
         super(registry, manager);
         this.registry = registry;
+        this.manager = manager;
+
         this.settings = registry.getEnvironment().getActorSettings();
     }
 
@@ -239,13 +243,13 @@ public class PlayerMocker extends PlayerMockerBase
 
     @Override
     @NotNull
-    public Player mock(@Nullable World world, @NotNull PlayerBean bean)
+    public Actor mock(@Nullable World world, @NotNull PlayerBean bean)
     {
         MinecraftServer server = ((CraftServer) Bukkit.getServer()).getServer();
         WorldServer worldServer = server.E();
         GameProfile profile = createGameProfile(bean);
 
-        MockedPlayer player = new MockedPlayer(server, worldServer, profile);
+        MockedPlayer player = new MockedPlayer(this.manager, server, worldServer, profile);
         this.initializePlayer(player, bean);
 
         if (!dispatchLoginEvent(player.getBukkitEntity()))
@@ -253,12 +257,13 @@ public class PlayerMocker extends PlayerMockerBase
 
         this.registerPlayer(server, player);
 
-        return player.getBukkitEntity();
+        return player;
     }
 
     @Override
-    public void unmock(Player player)
+    public void unmock(Actor actor)
     {
+        Player player = actor.getPlayer();
         CraftPlayer craftPlayer = (CraftPlayer) player;
         EntityPlayer entityPlayer = craftPlayer.getHandle();
 
