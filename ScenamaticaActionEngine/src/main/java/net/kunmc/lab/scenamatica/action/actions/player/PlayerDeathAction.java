@@ -20,7 +20,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 
-public class PlayerDeathAction extends AbstractPlayerAction<PlayerDeathAction.DeathArgument> implements Requireable<PlayerDeathAction.DeathArgument>
+public class PlayerDeathAction extends AbstractPlayerAction<PlayerDeathAction.Argument> implements Requireable<PlayerDeathAction.Argument>
 {
     public static final String KEY_ACTION_NAME = "player_death";
 
@@ -31,7 +31,7 @@ public class PlayerDeathAction extends AbstractPlayerAction<PlayerDeathAction.De
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @Nullable DeathArgument argument)
+    public void execute(@NotNull ScenarioEngine engine, @Nullable PlayerDeathAction.Argument argument)
     {
         argument = this.requireArgsNonNull(argument);
 
@@ -47,7 +47,7 @@ public class PlayerDeathAction extends AbstractPlayerAction<PlayerDeathAction.De
     }
 
     @Override
-    public boolean isFired(@NotNull DeathArgument argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public boolean isFired(@NotNull PlayerDeathAction.Argument argument, @NotNull ScenarioEngine engine, @NotNull Event event)
     {
         // PlayerDeathEvent はプレイヤが死んだ時に発生するイベントであるが, PlayerEvent を継承していないため, super でのチェックができない
 
@@ -64,7 +64,7 @@ public class PlayerDeathAction extends AbstractPlayerAction<PlayerDeathAction.De
                 && checkDoExpDrop(argument, e);
     }
 
-    private boolean checkTargetAndKiller(@NotNull DeathArgument argument, @NotNull PlayerDeathEvent event)
+    private boolean checkTargetAndKiller(@NotNull PlayerDeathAction.Argument argument, @NotNull PlayerDeathEvent event)
     {
         Player target = argument.getTarget();
         Player killer = PlayerUtils.getPlayerOrNull(argument.getKiller());
@@ -79,7 +79,7 @@ public class PlayerDeathAction extends AbstractPlayerAction<PlayerDeathAction.De
                 (killerUUID == null || killerUUID.equals(eventKillerUUID));
     }
 
-    private boolean checkDeathMessage(@NotNull DeathArgument argument, @NotNull PlayerDeathEvent event)
+    private boolean checkDeathMessage(@NotNull PlayerDeathAction.Argument argument, @NotNull PlayerDeathEvent event)
     {
         String deathMessage = argument.getDeathMessage();
         if (deathMessage == null)
@@ -88,7 +88,7 @@ public class PlayerDeathAction extends AbstractPlayerAction<PlayerDeathAction.De
         return Objects.equals(deathMessage, event.getDeathMessage());
     }
 
-    private boolean checkExp(@NotNull DeathArgument argument, @NotNull PlayerDeathEvent event)
+    private boolean checkExp(@NotNull PlayerDeathAction.Argument argument, @NotNull PlayerDeathEvent event)
     {
         int exp = argument.getNewExp();
         if (exp == -1)
@@ -96,7 +96,7 @@ public class PlayerDeathAction extends AbstractPlayerAction<PlayerDeathAction.De
         return exp == event.getNewExp();
     }
 
-    private boolean checkLevel(@NotNull DeathArgument argument, @NotNull PlayerDeathEvent event)
+    private boolean checkLevel(@NotNull PlayerDeathAction.Argument argument, @NotNull PlayerDeathEvent event)
     {
         int level = argument.getNewLevel();
         if (level == -1)
@@ -104,7 +104,7 @@ public class PlayerDeathAction extends AbstractPlayerAction<PlayerDeathAction.De
         return level == event.getNewLevel();
     }
 
-    private boolean checkTotalExp(@NotNull DeathArgument argument, @NotNull PlayerDeathEvent event)
+    private boolean checkTotalExp(@NotNull PlayerDeathAction.Argument argument, @NotNull PlayerDeathEvent event)
     {
         int totalExp = argument.getNewTotalExp();
         if (totalExp == -1)
@@ -112,7 +112,7 @@ public class PlayerDeathAction extends AbstractPlayerAction<PlayerDeathAction.De
         return totalExp == event.getNewTotalExp();
     }
 
-    private boolean checkKeepLevel(@NotNull DeathArgument argument, @NotNull PlayerDeathEvent event)
+    private boolean checkKeepLevel(@NotNull PlayerDeathAction.Argument argument, @NotNull PlayerDeathEvent event)
     {
         Boolean keepLevel = argument.getKeepLevel();
         if (keepLevel == null)
@@ -120,7 +120,7 @@ public class PlayerDeathAction extends AbstractPlayerAction<PlayerDeathAction.De
         return keepLevel == event.getKeepLevel();
     }
 
-    private boolean checkKeepInventory(@NotNull DeathArgument argument, @NotNull PlayerDeathEvent event)
+    private boolean checkKeepInventory(@NotNull PlayerDeathAction.Argument argument, @NotNull PlayerDeathEvent event)
     {
         Boolean keepInventory = argument.getKeepInventory();
         if (keepInventory == null)
@@ -128,7 +128,7 @@ public class PlayerDeathAction extends AbstractPlayerAction<PlayerDeathAction.De
         return keepInventory == event.getKeepInventory();
     }
 
-    private boolean checkDoExpDrop(@NotNull DeathArgument argument, @NotNull PlayerDeathEvent event)
+    private boolean checkDoExpDrop(@NotNull PlayerDeathAction.Argument argument, @NotNull PlayerDeathEvent event)
     {
         Boolean doExpDrop = argument.getDoExpDrop();
         if (doExpDrop == null)
@@ -145,16 +145,16 @@ public class PlayerDeathAction extends AbstractPlayerAction<PlayerDeathAction.De
     }
 
     @Override
-    public DeathArgument deserializeArgument(@NotNull Map<String, Object> map)
+    public Argument deserializeArgument(@NotNull Map<String, Object> map)
     {
-        MapUtils.checkTypeIfContains(map, DeathArgument.KEY_KILLER, String.class);
-        MapUtils.checkTypeIfContains(map, DeathArgument.KEY_DEATH_MESSAGE, String.class);
-        MapUtils.checkTypeIfContains(map, DeathArgument.KEY_NEW_EXP, Integer.class);
-        MapUtils.checkTypeIfContains(map, DeathArgument.KEY_NEW_LEVEL, Integer.class);
-        MapUtils.checkTypeIfContains(map, DeathArgument.KEY_NEW_TOTAL_EXP, Integer.class);
-        MapUtils.checkTypeIfContains(map, DeathArgument.KEY_KEEP_LEVEL, Boolean.class);
-        MapUtils.checkTypeIfContains(map, DeathArgument.KEY_KEEP_INVENTORY, Boolean.class);
-        MapUtils.checkTypeIfContains(map, DeathArgument.KEY_DO_EXP_DROP, Boolean.class);
+        MapUtils.checkTypeIfContains(map, Argument.KEY_KILLER, String.class);
+        MapUtils.checkTypeIfContains(map, Argument.KEY_DEATH_MESSAGE, String.class);
+        MapUtils.checkTypeIfContains(map, Argument.KEY_NEW_EXP, Integer.class);
+        MapUtils.checkTypeIfContains(map, Argument.KEY_NEW_LEVEL, Integer.class);
+        MapUtils.checkTypeIfContains(map, Argument.KEY_NEW_TOTAL_EXP, Integer.class);
+        MapUtils.checkTypeIfContains(map, Argument.KEY_KEEP_LEVEL, Boolean.class);
+        MapUtils.checkTypeIfContains(map, Argument.KEY_KEEP_INVENTORY, Boolean.class);
+        MapUtils.checkTypeIfContains(map, Argument.KEY_DO_EXP_DROP, Boolean.class);
 
         String killer = MapUtils.getOrNull(map, "killer");
 
@@ -167,7 +167,7 @@ public class PlayerDeathAction extends AbstractPlayerAction<PlayerDeathAction.De
         Boolean keepInventory = MapUtils.getOrNull(map, "keepInventory");
         Boolean doExpDrop = MapUtils.getOrNull(map, "doExpDrop");
 
-        return new DeathArgument(
+        return new Argument(
                 super.deserializeTarget(map),
                 killer,
                 deathMessage,
@@ -181,7 +181,7 @@ public class PlayerDeathAction extends AbstractPlayerAction<PlayerDeathAction.De
     }
 
     @Override
-    public boolean isConditionFulfilled(@Nullable DeathArgument argument, @NotNull ScenarioEngine engine)
+    public boolean isConditionFulfilled(@Nullable PlayerDeathAction.Argument argument, @NotNull ScenarioEngine engine)
     {
         argument = this.requireArgsNonNull(argument);
 
@@ -198,25 +198,25 @@ public class PlayerDeathAction extends AbstractPlayerAction<PlayerDeathAction.De
     }
 
     @Override
-    public void validateArgument(@NotNull ScenarioEngine engine, @NotNull ScenarioType type, @Nullable DeathArgument argument)
+    public void validateArgument(@NotNull ScenarioEngine engine, @NotNull ScenarioType type, @Nullable PlayerDeathAction.Argument argument)
     {
         argument = this.requireArgsNonNull(argument);
 
         if (type != ScenarioType.CONDITION_REQUIRE)
             return;
 
-        this.throwIfPresent(DeathArgument.KEY_DEATH_MESSAGE, argument.getDeathMessage());
-        this.throwIfNotEquals(DeathArgument.KEY_NEW_EXP, argument.getNewExp(), -1);
-        this.throwIfNotEquals(DeathArgument.KEY_NEW_LEVEL, argument.getNewLevel(), -1);
-        this.throwIfNotEquals(DeathArgument.KEY_NEW_TOTAL_EXP, argument.getNewTotalExp(), -1);
-        this.throwIfPresent(DeathArgument.KEY_KEEP_LEVEL, argument.getKeepLevel());
-        this.throwIfPresent(DeathArgument.KEY_KEEP_INVENTORY, argument.getKeepInventory());
-        this.throwIfPresent(DeathArgument.KEY_DO_EXP_DROP, argument.getDoExpDrop());
+        this.throwIfPresent(Argument.KEY_DEATH_MESSAGE, argument.getDeathMessage());
+        this.throwIfNotEquals(Argument.KEY_NEW_EXP, argument.getNewExp(), -1);
+        this.throwIfNotEquals(Argument.KEY_NEW_LEVEL, argument.getNewLevel(), -1);
+        this.throwIfNotEquals(Argument.KEY_NEW_TOTAL_EXP, argument.getNewTotalExp(), -1);
+        this.throwIfPresent(Argument.KEY_KEEP_LEVEL, argument.getKeepLevel());
+        this.throwIfPresent(Argument.KEY_KEEP_INVENTORY, argument.getKeepInventory());
+        this.throwIfPresent(Argument.KEY_DO_EXP_DROP, argument.getDoExpDrop());
     }
 
     @Value
     @EqualsAndHashCode(callSuper = true)
-    public static class DeathArgument extends AbstractPlayerActionArgument
+    public static class Argument extends AbstractPlayerActionArgument
     {
         public static final String KEY_KILLER = "killer";
         public static final String KEY_DEATH_MESSAGE = "deathMessage";
@@ -238,7 +238,7 @@ public class PlayerDeathAction extends AbstractPlayerAction<PlayerDeathAction.De
         Boolean keepInventory;
         Boolean doExpDrop;
 
-        public DeathArgument(@NotNull String target, @Nullable String killer, @Nullable String deathMessage, int newExp, int newLevel, int newTotalExp, Boolean keepLevel, Boolean keepInventory, Boolean doExpDrop)
+        public Argument(@NotNull String target, @Nullable String killer, @Nullable String deathMessage, int newExp, int newLevel, int newTotalExp, Boolean keepLevel, Boolean keepInventory, Boolean doExpDrop)
         {
             super(target);
             this.killer = killer;
@@ -254,9 +254,9 @@ public class PlayerDeathAction extends AbstractPlayerAction<PlayerDeathAction.De
         @Override
         public boolean isSame(TriggerArgument argument)
         {
-            if (!(argument instanceof DeathArgument))
+            if (!(argument instanceof Argument))
                 return false;
-            DeathArgument a = (DeathArgument) argument;
+            Argument a = (Argument) argument;
 
             return this.checkTargetAndKiller(a)
                     && this.checkDeathMessage(a)
@@ -264,18 +264,18 @@ public class PlayerDeathAction extends AbstractPlayerAction<PlayerDeathAction.De
                     && this.checkInventory(a);
         }
 
-        private boolean checkTargetAndKiller(@NotNull DeathArgument argument)
+        private boolean checkTargetAndKiller(@NotNull PlayerDeathAction.Argument argument)
         {
             return this.isSameTarget(argument) &&
                     Objects.equals(this.killer, argument.killer);
         }
 
-        private boolean checkDeathMessage(@NotNull DeathArgument argument)
+        private boolean checkDeathMessage(@NotNull PlayerDeathAction.Argument argument)
         {
             return Objects.equals(this.deathMessage, argument.deathMessage);
         }
 
-        private boolean checkExpAndLevel(@NotNull DeathArgument argument)
+        private boolean checkExpAndLevel(@NotNull PlayerDeathAction.Argument argument)
         {
             return this.newExp == argument.newExp
                     && this.newLevel == argument.newLevel
@@ -284,7 +284,7 @@ public class PlayerDeathAction extends AbstractPlayerAction<PlayerDeathAction.De
                     && this.doExpDrop == argument.doExpDrop;
         }
 
-        private boolean checkInventory(@NotNull DeathArgument argument)
+        private boolean checkInventory(@NotNull PlayerDeathAction.Argument argument)
         {
             return this.keepInventory == argument.keepInventory;
         }

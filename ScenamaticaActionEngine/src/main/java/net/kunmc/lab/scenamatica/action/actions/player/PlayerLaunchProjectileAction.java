@@ -34,7 +34,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-public class PlayerLaunchProjectileAction extends AbstractPlayerAction<PlayerLaunchProjectileAction.PlayerLaunchProjectileActionArgument>
+public class PlayerLaunchProjectileAction extends AbstractPlayerAction<PlayerLaunchProjectileAction.Argument>
 {
     public static final String KEY_ACTION_NAME = "player_projectile_launch";
 
@@ -45,7 +45,7 @@ public class PlayerLaunchProjectileAction extends AbstractPlayerAction<PlayerLau
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @Nullable PlayerLaunchProjectileActionArgument argument)
+    public void execute(@NotNull ScenarioEngine engine, @Nullable PlayerLaunchProjectileAction.Argument argument)
     {
         argument = this.requireArgsNonNull(argument);
 
@@ -57,7 +57,7 @@ public class PlayerLaunchProjectileAction extends AbstractPlayerAction<PlayerLau
     }
 
     @Override
-    public boolean isFired(@NotNull PlayerLaunchProjectileActionArgument argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public boolean isFired(@NotNull PlayerLaunchProjectileAction.Argument argument, @NotNull ScenarioEngine engine, @NotNull Event event)
     {
         if (!super.isFired(argument, engine, event))
             return false;
@@ -85,25 +85,25 @@ public class PlayerLaunchProjectileAction extends AbstractPlayerAction<PlayerLau
     }
 
     @Override
-    public PlayerLaunchProjectileActionArgument deserializeArgument(@NotNull Map<String, Object> map)
+    public Argument deserializeArgument(@NotNull Map<String, Object> map)
     {
-        MapUtils.checkEnumName(map, PlayerLaunchProjectileActionArgument.KEY_PROJECTILE_TYPE, ProjectileType.class);
-        MapUtils.checkTypeIfContains(map, PlayerLaunchProjectileActionArgument.KEY_PROJECTILE_EPSILON, Double.class);
+        MapUtils.checkEnumName(map, Argument.KEY_PROJECTILE_TYPE, ProjectileType.class);
+        MapUtils.checkTypeIfContains(map, Argument.KEY_PROJECTILE_EPSILON, Double.class);
         // ItemStackBeanImpl.checkMap(map, PlayerLaunchProjectileActionArgument.KEY_PROJECTILE_SHOOTER);
 
-        Map<String, Object> velocityMap = MapUtils.checkAndCastMap(map.get(PlayerLaunchProjectileActionArgument.KEY_PROJECTILE_VELOCITY),
+        Map<String, Object> velocityMap = MapUtils.checkAndCastMap(map.get(Argument.KEY_PROJECTILE_VELOCITY),
                 String.class, Object.class
         );
 
         double epsilon;
-        if (map.containsKey(PlayerLaunchProjectileActionArgument.KEY_PROJECTILE_EPSILON) && map.get(PlayerLaunchProjectileActionArgument.KEY_PROJECTILE_EPSILON) != null)
-            epsilon = (double) map.get(PlayerLaunchProjectileActionArgument.KEY_PROJECTILE_EPSILON);
+        if (map.containsKey(Argument.KEY_PROJECTILE_EPSILON) && map.get(Argument.KEY_PROJECTILE_EPSILON) != null)
+            epsilon = (double) map.get(Argument.KEY_PROJECTILE_EPSILON);
         else
-            epsilon = PlayerLaunchProjectileActionArgument.DEFAULT_EPSILON;
+            epsilon = Argument.DEFAULT_EPSILON;
 
-        return new PlayerLaunchProjectileActionArgument(
+        return new Argument(
                 super.deserializeTarget(map),
-                MapUtils.getAsEnum(map, PlayerLaunchProjectileActionArgument.KEY_PROJECTILE_TYPE, ProjectileType.class),
+                MapUtils.getAsEnum(map, Argument.KEY_PROJECTILE_TYPE, ProjectileType.class),
                 /* ItemStackBeanImpl.deserialize(map, PlayerLaunchProjectileActionArgument.KEY_PROJECTILE_SHOOTER) */
                 Vector.deserialize(velocityMap),
                 epsilon
@@ -149,7 +149,7 @@ public class PlayerLaunchProjectileAction extends AbstractPlayerAction<PlayerLau
 
     @Value
     @EqualsAndHashCode(callSuper = true)
-    public static class PlayerLaunchProjectileActionArgument extends AbstractPlayerActionArgument
+    public static class Argument extends AbstractPlayerActionArgument
     {
         public static final String KEY_PROJECTILE_TYPE = "type";
         public static final String KEY_PROJECTILE_VELOCITY = "velocity";
@@ -167,7 +167,7 @@ public class PlayerLaunchProjectileAction extends AbstractPlayerAction<PlayerLau
 
         double epsilon;
 
-        public PlayerLaunchProjectileActionArgument(@NotNull String target, @NotNull ProjectileType projectileType)
+        public Argument(@NotNull String target, @NotNull ProjectileType projectileType)
         {
             super(target);
             this.projectileType = projectileType;
@@ -175,7 +175,7 @@ public class PlayerLaunchProjectileAction extends AbstractPlayerAction<PlayerLau
             this.epsilon = DEFAULT_EPSILON;
         }
 
-        public PlayerLaunchProjectileActionArgument(@NotNull String target, @NotNull ProjectileType projectileType, @Nullable Vector velocity)
+        public Argument(@NotNull String target, @NotNull ProjectileType projectileType, @Nullable Vector velocity)
         {
             super(target);
             this.projectileType = projectileType;
@@ -183,7 +183,7 @@ public class PlayerLaunchProjectileAction extends AbstractPlayerAction<PlayerLau
             this.epsilon = DEFAULT_EPSILON;
         }
 
-        public PlayerLaunchProjectileActionArgument(@NotNull String target, @NotNull ProjectileType projectileType, @Nullable Vector velocity, double epsilon)
+        public Argument(@NotNull String target, @NotNull ProjectileType projectileType, @Nullable Vector velocity, double epsilon)
         {
             super(target);
             this.projectileType = projectileType;
@@ -197,10 +197,10 @@ public class PlayerLaunchProjectileAction extends AbstractPlayerAction<PlayerLau
             if (!(argument instanceof ActionArgument))
                 return false;
 
-            if (!PlayerLaunchProjectileActionArgument.class.isAssignableFrom(argument.getClass()))
+            if (!Argument.class.isAssignableFrom(argument.getClass()))
                 return false;
 
-            PlayerLaunchProjectileActionArgument a = (PlayerLaunchProjectileActionArgument) argument;
+            Argument a = (Argument) argument;
 
             return this.projectileType == a.projectileType /* && this.shooterItem.isSame(a.shooterItem) */;
         }

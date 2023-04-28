@@ -20,8 +20,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-public class PlayerGameModeAction extends AbstractPlayerAction<PlayerGameModeAction.GameModeChangeArgument>
-        implements Requireable<PlayerGameModeAction.GameModeChangeArgument>
+public class PlayerGameModeAction extends AbstractPlayerAction<PlayerGameModeAction.Argument>
+        implements Requireable<PlayerGameModeAction.Argument>
 {
     public static final String KEY_ACTION_NAME = "player_gamemode";
 
@@ -32,7 +32,7 @@ public class PlayerGameModeAction extends AbstractPlayerAction<PlayerGameModeAct
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @Nullable GameModeChangeArgument argument)
+    public void execute(@NotNull ScenarioEngine engine, @Nullable PlayerGameModeAction.Argument argument)
     {
         argument = this.requireArgsNonNull(argument);
 
@@ -43,7 +43,7 @@ public class PlayerGameModeAction extends AbstractPlayerAction<PlayerGameModeAct
     }
 
     @Override
-    public boolean isFired(@NotNull GameModeChangeArgument argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public boolean isFired(@NotNull PlayerGameModeAction.Argument argument, @NotNull ScenarioEngine engine, @NotNull Event event)
     {
         if (!super.isFired(argument, engine, event))
             return false;
@@ -72,17 +72,17 @@ public class PlayerGameModeAction extends AbstractPlayerAction<PlayerGameModeAct
     }
 
     @Override
-    public GameModeChangeArgument deserializeArgument(@NotNull Map<String, Object> map)
+    public Argument deserializeArgument(@NotNull Map<String, Object> map)
     {
-        MapUtils.checkEnumName(map, GameModeChangeArgument.KEY_GAME_MODE, GameMode.class);
-        MapUtils.checkEnumNameIfContains(map, GameModeChangeArgument.KEY_CANCEL_MESSAGE, PlayerGameModeChangeEvent.Cause.class);
-        MapUtils.checkTypeIfContains(map, GameModeChangeArgument.KEY_CANCEL_MESSAGE, String.class);
+        MapUtils.checkEnumName(map, Argument.KEY_GAME_MODE, GameMode.class);
+        MapUtils.checkEnumNameIfContains(map, Argument.KEY_CANCEL_MESSAGE, PlayerGameModeChangeEvent.Cause.class);
+        MapUtils.checkTypeIfContains(map, Argument.KEY_CANCEL_MESSAGE, String.class);
 
-        GameMode gameMode = MapUtils.getAsEnum(map, GameModeChangeArgument.KEY_GAME_MODE, GameMode.class);
-        PlayerGameModeChangeEvent.Cause cause = MapUtils.getAsEnum(map, GameModeChangeArgument.KEY_CAUSE, PlayerGameModeChangeEvent.Cause.class);
-        String cancelMessage = (String) map.get(GameModeChangeArgument.KEY_CANCEL_MESSAGE);
+        GameMode gameMode = MapUtils.getAsEnum(map, Argument.KEY_GAME_MODE, GameMode.class);
+        PlayerGameModeChangeEvent.Cause cause = MapUtils.getAsEnum(map, Argument.KEY_CAUSE, PlayerGameModeChangeEvent.Cause.class);
+        String cancelMessage = (String) map.get(Argument.KEY_CANCEL_MESSAGE);
 
-        return new GameModeChangeArgument(
+        return new Argument(
                 super.deserializeTarget(map),
                 gameMode,
                 cause,
@@ -91,7 +91,7 @@ public class PlayerGameModeAction extends AbstractPlayerAction<PlayerGameModeAct
     }
 
     @Override
-    public boolean isConditionFulfilled(@Nullable GameModeChangeArgument argument, @NotNull ScenarioEngine engine)
+    public boolean isConditionFulfilled(@Nullable PlayerGameModeAction.Argument argument, @NotNull ScenarioEngine engine)
     {
         argument = this.requireArgsNonNull(argument);
 
@@ -101,7 +101,7 @@ public class PlayerGameModeAction extends AbstractPlayerAction<PlayerGameModeAct
     }
 
     @Override
-    public void validateArgument(@NotNull ScenarioEngine engine, @NotNull ScenarioType type, @Nullable GameModeChangeArgument argument)
+    public void validateArgument(@NotNull ScenarioEngine engine, @NotNull ScenarioType type, @Nullable PlayerGameModeAction.Argument argument)
     {
         argument = this.requireArgsNonNull(argument);
 
@@ -109,8 +109,8 @@ public class PlayerGameModeAction extends AbstractPlayerAction<PlayerGameModeAct
         {
             case CONDITION_REQUIRE:
             case ACTION_EXECUTE:
-                this.throwIfPresent(GameModeChangeArgument.KEY_CAUSE, argument.getCause());
-                this.throwIfPresent(GameModeChangeArgument.KEY_CANCEL_MESSAGE, argument.getCancelMessage());
+                this.throwIfPresent(Argument.KEY_CAUSE, argument.getCause());
+                this.throwIfPresent(Argument.KEY_CANCEL_MESSAGE, argument.getCancelMessage());
                 break;
 
         }
@@ -118,13 +118,13 @@ public class PlayerGameModeAction extends AbstractPlayerAction<PlayerGameModeAct
 
     @Value
     @EqualsAndHashCode(callSuper = true)
-    public static class GameModeChangeArgument extends AbstractPlayerActionArgument
+    public static class Argument extends AbstractPlayerActionArgument
     {
         public static final String KEY_GAME_MODE = "gamemode";
         public static final String KEY_CAUSE = "cause";
         public static final String KEY_CANCEL_MESSAGE = "cancelMessage";
 
-        public GameModeChangeArgument(String target, @NotNull GameMode gameMode, @Nullable PlayerGameModeChangeEvent.Cause cause, @Nullable String cancelMessage)
+        public Argument(String target, @NotNull GameMode gameMode, @Nullable PlayerGameModeChangeEvent.Cause cause, @Nullable String cancelMessage)
         {
             super(target);
             this.gameMode = gameMode;
@@ -142,10 +142,10 @@ public class PlayerGameModeAction extends AbstractPlayerAction<PlayerGameModeAct
         @Override
         public boolean isSame(TriggerArgument argument)
         {
-            if (!(argument instanceof GameModeChangeArgument))
+            if (!(argument instanceof Argument))
                 return false;
 
-            GameModeChangeArgument arg = (GameModeChangeArgument) argument;
+            Argument arg = (Argument) argument;
 
             return super.isSame(arg) &&
                     this.gameMode == arg.gameMode &&

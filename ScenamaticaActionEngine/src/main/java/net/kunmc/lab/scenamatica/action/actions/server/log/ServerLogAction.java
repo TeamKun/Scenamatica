@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-public class ServerLogAction extends AbstractAction<ServerLogAction.ServerLogActionArgument>
+public class ServerLogAction extends AbstractAction<ServerLogAction.Argument>
 {
     public static final String KEY_ACTION_NAME = "server_log";
 
@@ -30,7 +30,7 @@ public class ServerLogAction extends AbstractAction<ServerLogAction.ServerLogAct
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @Nullable ServerLogActionArgument argument)
+    public void execute(@NotNull ScenarioEngine engine, @Nullable ServerLogAction.Argument argument)
     {
         argument = this.requireArgsNonNull(argument);
 
@@ -41,7 +41,7 @@ public class ServerLogAction extends AbstractAction<ServerLogAction.ServerLogAct
     }
 
     @Override
-    public boolean isFired(@NotNull ServerLogActionArgument argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public boolean isFired(@NotNull ServerLogAction.Argument argument, @NotNull ScenarioEngine engine, @NotNull Event event)
     {
         assert event instanceof ServerLogEvent;
 
@@ -82,27 +82,27 @@ public class ServerLogAction extends AbstractAction<ServerLogAction.ServerLogAct
     }
 
     @Override
-    public ServerLogActionArgument deserializeArgument(@NotNull Map<String, Object> map)
+    public Argument deserializeArgument(@NotNull Map<String, Object> map)
     {
 
-        MapUtils.checkType(map, ServerLogActionArgument.KEY_MESSAGE, String.class);
+        MapUtils.checkType(map, Argument.KEY_MESSAGE, String.class);
 
-        String source = (String) map.get(ServerLogActionArgument.KEY_SOURCE);
-        String message = (String) map.get(ServerLogActionArgument.KEY_MESSAGE);
+        String source = (String) map.get(Argument.KEY_SOURCE);
+        String message = (String) map.get(Argument.KEY_MESSAGE);
 
         Level level = null;
-        if (map.containsKey(ServerLogActionArgument.KEY_LEVEL))
+        if (map.containsKey(Argument.KEY_LEVEL))
         {
-            level = Level.getLevel(normalizeLevelName(String.valueOf(map.get(ServerLogActionArgument.KEY_LEVEL))));
+            level = Level.getLevel(normalizeLevelName(String.valueOf(map.get(Argument.KEY_LEVEL))));
             if (level == null)
-                throw new IllegalArgumentException("Illegal log level: " + map.get(ServerLogActionArgument.KEY_LEVEL));
+                throw new IllegalArgumentException("Illegal log level: " + map.get(Argument.KEY_LEVEL));
         }
 
-        return new ServerLogActionArgument(source, level, message);
+        return new Argument(source, level, message);
     }
 
     @Value
-    public static class ServerLogActionArgument implements ActionArgument
+    public static class Argument implements ActionArgument
     {
         public static final String KEY_SOURCE = "source";
         public static final String KEY_LEVEL = "level";
@@ -118,10 +118,10 @@ public class ServerLogAction extends AbstractAction<ServerLogAction.ServerLogAct
         @Override
         public boolean isSame(TriggerArgument argument)
         {
-            if (!(argument instanceof ServerLogActionArgument))
+            if (!(argument instanceof Argument))
                 return false;
 
-            ServerLogActionArgument other = (ServerLogActionArgument) argument;
+            Argument other = (Argument) argument;
 
             return Objects.equals(this.source, other.source) &&
                     this.level == other.level &&

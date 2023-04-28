@@ -17,7 +17,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-public class MilestoneAction extends AbstractAction<MilestoneAction.MilestoneActionArgument> implements Requireable<MilestoneAction.MilestoneActionArgument>
+public class MilestoneAction extends AbstractAction<MilestoneAction.Argument> implements Requireable<MilestoneAction.Argument>
 {
     public static final String KEY_ACTION_NAME = "milestone";
 
@@ -28,7 +28,7 @@ public class MilestoneAction extends AbstractAction<MilestoneAction.MilestoneAct
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @Nullable MilestoneActionArgument argument)
+    public void execute(@NotNull ScenarioEngine engine, @Nullable MilestoneAction.Argument argument)
     {
         argument = this.requireArgsNonNull(argument);
 
@@ -36,7 +36,7 @@ public class MilestoneAction extends AbstractAction<MilestoneAction.MilestoneAct
     }
 
     @Override
-    public boolean isFired(@NotNull MilestoneActionArgument argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public boolean isFired(@NotNull MilestoneAction.Argument argument, @NotNull ScenarioEngine engine, @NotNull Event event)
     {
         assert event instanceof MilestoneReachedEvent;
 
@@ -57,19 +57,19 @@ public class MilestoneAction extends AbstractAction<MilestoneAction.MilestoneAct
     }
 
     @Override
-    public MilestoneActionArgument deserializeArgument(@NotNull Map<String, Object> map)
+    public Argument deserializeArgument(@NotNull Map<String, Object> map)
     {
-        MapUtils.checkContainsKey(map, MilestoneActionArgument.KEY_NAME);
-        MapUtils.checkTypeIfContains(map, MilestoneActionArgument.KEY_REACHED, Boolean.class);
+        MapUtils.checkContainsKey(map, Argument.KEY_NAME);
+        MapUtils.checkTypeIfContains(map, Argument.KEY_REACHED, Boolean.class);
 
-        String name = (String) map.get(MilestoneActionArgument.KEY_NAME);
-        boolean reached = MapUtils.getOrDefault(map, MilestoneActionArgument.KEY_REACHED, true);
+        String name = (String) map.get(Argument.KEY_NAME);
+        boolean reached = MapUtils.getOrDefault(map, Argument.KEY_REACHED, true);
 
-        return new MilestoneActionArgument(name, reached);
+        return new Argument(name, reached);
     }
 
     @Override
-    public boolean isConditionFulfilled(@Nullable MilestoneActionArgument argument, @NotNull ScenarioEngine engine)
+    public boolean isConditionFulfilled(@Nullable MilestoneAction.Argument argument, @NotNull ScenarioEngine engine)
     {
         argument = this.requireArgsNonNull(argument);
 
@@ -80,7 +80,7 @@ public class MilestoneAction extends AbstractAction<MilestoneAction.MilestoneAct
 
     @Value
     @AllArgsConstructor
-    public static class MilestoneActionArgument implements ActionArgument
+    public static class Argument implements ActionArgument
     {
         private static final String KEY_NAME = "name";
         private static final String KEY_REACHED = "reached";
@@ -89,7 +89,7 @@ public class MilestoneAction extends AbstractAction<MilestoneAction.MilestoneAct
         String name;
         boolean reached;
 
-        public MilestoneActionArgument(@NotNull String name)
+        public Argument(@NotNull String name)
         {
             this.name = name;
             this.reached = true;

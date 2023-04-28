@@ -23,8 +23,8 @@ import java.util.List;
 import java.util.Map;
 
 public class PlayerAdvancementAction
-        extends AbstractPlayerAction<PlayerAdvancementAction.PlayerAdvancementActionArgument>
-        implements Requireable<PlayerAdvancementAction.PlayerAdvancementActionArgument>
+        extends AbstractPlayerAction<PlayerAdvancementAction.Argument>
+        implements Requireable<PlayerAdvancementAction.Argument>
 {
     public static final String KEY_ACTION_NAME = "player_advancement";
 
@@ -38,7 +38,7 @@ public class PlayerAdvancementAction
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @Nullable PlayerAdvancementAction.PlayerAdvancementActionArgument argument)
+    public void execute(@NotNull ScenarioEngine engine, @Nullable PlayerAdvancementAction.Argument argument)
     {
         argument = this.requireArgsNonNull(argument);
 
@@ -56,7 +56,7 @@ public class PlayerAdvancementAction
     }
 
     @Override
-    public boolean isFired(@NotNull PlayerAdvancementAction.PlayerAdvancementActionArgument argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public boolean isFired(@NotNull PlayerAdvancementAction.Argument argument, @NotNull ScenarioEngine engine, @NotNull Event event)
     {
         argument = this.requireArgsNonNull(argument);
 
@@ -91,17 +91,17 @@ public class PlayerAdvancementAction
     }
 
     @Override
-    public PlayerAdvancementActionArgument deserializeArgument(@NotNull Map<String, Object> map)
+    public Argument deserializeArgument(@NotNull Map<String, Object> map)
     {
-        MapUtils.checkContainsKey(map, PlayerAdvancementActionArgument.KEY_ADVANCEMENT);
+        MapUtils.checkContainsKey(map, Argument.KEY_ADVANCEMENT);
 
-        NamespacedKey advancement = NamespaceUtils.fromString((String) map.get(PlayerAdvancementActionArgument.KEY_ADVANCEMENT));
+        NamespacedKey advancement = NamespaceUtils.fromString((String) map.get(Argument.KEY_ADVANCEMENT));
 
         String criteria = null;
-        if (map.containsKey(PlayerAdvancementActionArgument.KEY_CRITERIA))
-            criteria = (String) map.get(PlayerAdvancementActionArgument.KEY_CRITERIA);
+        if (map.containsKey(Argument.KEY_CRITERIA))
+            criteria = (String) map.get(Argument.KEY_CRITERIA);
 
-        return new PlayerAdvancementActionArgument(
+        return new Argument(
                 super.deserializeTarget(map),
                 advancement,
                 criteria
@@ -109,7 +109,7 @@ public class PlayerAdvancementAction
     }
 
     @Override
-    public boolean isConditionFulfilled(@Nullable PlayerAdvancementAction.PlayerAdvancementActionArgument argument, @NotNull ScenarioEngine engine)
+    public boolean isConditionFulfilled(@Nullable PlayerAdvancementAction.Argument argument, @NotNull ScenarioEngine engine)
     {
         argument = this.requireArgsNonNull(argument);
 
@@ -127,7 +127,7 @@ public class PlayerAdvancementAction
 
     @Value
     @EqualsAndHashCode(callSuper = true)
-    public static class PlayerAdvancementActionArgument extends AbstractPlayerActionArgument
+    public static class Argument extends AbstractPlayerActionArgument
     {
         public static final String KEY_ADVANCEMENT = "advancement";
         public static final String KEY_CRITERIA = "criteria";
@@ -137,7 +137,7 @@ public class PlayerAdvancementAction
         @Nullable
         String criterion;
 
-        public PlayerAdvancementActionArgument(@NotNull String target, @NotNull NamespacedKey advancement, @Nullable String criterion)
+        public Argument(@NotNull String target, @NotNull NamespacedKey advancement, @Nullable String criterion)
         {
             super(target);
             this.advancement = advancement;
@@ -147,10 +147,10 @@ public class PlayerAdvancementAction
         @Override
         public boolean isSame(TriggerArgument argument)
         {
-            if (!(argument instanceof PlayerAdvancementActionArgument))
+            if (!(argument instanceof Argument))
                 return false;
 
-            PlayerAdvancementActionArgument casted = (PlayerAdvancementActionArgument) argument;
+            Argument casted = (Argument) argument;
 
             return this.advancement.equals(casted.advancement);
         }

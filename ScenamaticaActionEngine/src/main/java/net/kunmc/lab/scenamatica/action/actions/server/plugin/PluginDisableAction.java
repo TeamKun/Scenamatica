@@ -12,7 +12,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-public class PluginDisableAction extends AbstractPluginAction<PluginDisableAction.PluginDisableActionArgument> implements Requireable<PluginDisableAction.PluginDisableActionArgument>
+public class PluginDisableAction extends AbstractPluginAction<PluginDisableAction.Argument> implements Requireable<PluginDisableAction.Argument>
 {
     public static final String KEY_ACTION_NAME = KEY_PREFIX + "disable";
 
@@ -23,7 +23,7 @@ public class PluginDisableAction extends AbstractPluginAction<PluginDisableActio
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @Nullable PluginDisableAction.PluginDisableActionArgument argument)
+    public void execute(@NotNull ScenarioEngine engine, @Nullable PluginDisableAction.Argument argument)
     {
         if (argument == null)
             return;
@@ -40,23 +40,21 @@ public class PluginDisableAction extends AbstractPluginAction<PluginDisableActio
     }
 
     @Override
-    public PluginDisableActionArgument deserializeArgument(@NotNull Map<String, Object> map)
+    public Argument deserializeArgument(@NotNull Map<String, Object> map)
     {
-        return new PluginDisableActionArgument(super.deserializePlugin(map));
+        return new Argument(super.deserializePlugin(map));
     }
 
     @Override
-    public boolean isConditionFulfilled(@Nullable PluginDisableAction.PluginDisableActionArgument argument, @NotNull ScenarioEngine engine)
+    public boolean isConditionFulfilled(@Nullable PluginDisableAction.Argument argument, @NotNull ScenarioEngine engine)
     {
         argument = super.requireArgsNonNull(argument);
         return !argument.getPlugin().isEnabled();
     }
 
-
-
-    public static class PluginDisableActionArgument extends AbstractPluginActionArgument
+    public static class Argument extends AbstractPluginActionArgument
     {
-        public PluginDisableActionArgument(String plugin)
+        public Argument(String plugin)
         {
             super(plugin);
         }

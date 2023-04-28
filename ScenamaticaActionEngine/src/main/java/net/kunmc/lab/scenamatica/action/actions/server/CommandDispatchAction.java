@@ -23,7 +23,7 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class CommandDispatchAction extends AbstractAction<CommandDispatchAction.CommandDispatchActionArgument>
+public class CommandDispatchAction extends AbstractAction<CommandDispatchAction.Argument>
 {
     public static final String KEY_ACTION_NAME = "command_dispatch";
 
@@ -34,7 +34,7 @@ public class CommandDispatchAction extends AbstractAction<CommandDispatchAction.
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @Nullable CommandDispatchActionArgument argument)
+    public void execute(@NotNull ScenarioEngine engine, @Nullable CommandDispatchAction.Argument argument)
     {
         argument = this.requireArgsNonNull(argument);
 
@@ -52,7 +52,7 @@ public class CommandDispatchAction extends AbstractAction<CommandDispatchAction.
     }
 
     @Override
-    public boolean isFired(@NotNull CommandDispatchActionArgument argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public boolean isFired(@NotNull CommandDispatchAction.Argument argument, @NotNull ScenarioEngine engine, @NotNull Event event)
     {
         String command;
         CommandSender sender = null;
@@ -83,19 +83,19 @@ public class CommandDispatchAction extends AbstractAction<CommandDispatchAction.
     }
 
     @Override
-    public CommandDispatchActionArgument deserializeArgument(@NotNull Map<String, Object> map)
+    public Argument deserializeArgument(@NotNull Map<String, Object> map)
     {
-        MapUtils.checkType(map, CommandDispatchActionArgument.KEY_COMMAND, String.class);
-        MapUtils.checkTypeIfContains(map, CommandDispatchActionArgument.KEY_SENDER, String.class);
+        MapUtils.checkType(map, Argument.KEY_COMMAND, String.class);
+        MapUtils.checkTypeIfContains(map, Argument.KEY_SENDER, String.class);
 
-        String command = (String) map.get(CommandDispatchActionArgument.KEY_COMMAND);
-        String sender = MapUtils.getOrNull(map, CommandDispatchActionArgument.KEY_SENDER);
+        String command = (String) map.get(Argument.KEY_COMMAND);
+        String sender = MapUtils.getOrNull(map, Argument.KEY_SENDER);
 
-        return new CommandDispatchActionArgument(command, sender);
+        return new Argument(command, sender);
     }
 
     @Value
-    public static class CommandDispatchActionArgument implements ActionArgument
+    public static class Argument implements ActionArgument
     {
         public static final String KEY_COMMAND = "command";
         public static final String KEY_SENDER = "sender";
@@ -107,9 +107,9 @@ public class CommandDispatchAction extends AbstractAction<CommandDispatchAction.
         @Override
         public boolean isSame(TriggerArgument argument)
         {
-            return argument instanceof CommandDispatchActionArgument
-                    && Objects.equals(this.command, ((CommandDispatchActionArgument) argument).command)
-                    && Objects.equals(this.sender, ((CommandDispatchActionArgument) argument).sender);
+            return argument instanceof Argument
+                    && Objects.equals(this.command, ((Argument) argument).command)
+                    && Objects.equals(this.sender, ((Argument) argument).sender);
         }
 
         @Override

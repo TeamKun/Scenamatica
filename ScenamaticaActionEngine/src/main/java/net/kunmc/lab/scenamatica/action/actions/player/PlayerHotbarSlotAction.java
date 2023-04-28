@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-public class PlayerHotbarSlotAction extends AbstractPlayerAction<PlayerHotbarSlotAction.PlayerHotbarSlotActionArgument> implements Requireable<PlayerHotbarSlotAction.PlayerHotbarSlotActionArgument>
+public class PlayerHotbarSlotAction extends AbstractPlayerAction<PlayerHotbarSlotAction.Argument> implements Requireable<PlayerHotbarSlotAction.Argument>
 {
     public static final String KEY_ACTION_NAME = "player_hotbar";
 
@@ -32,7 +32,7 @@ public class PlayerHotbarSlotAction extends AbstractPlayerAction<PlayerHotbarSlo
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @Nullable PlayerHotbarSlotActionArgument argument)
+    public void execute(@NotNull ScenarioEngine engine, @Nullable PlayerHotbarSlotAction.Argument argument)
     {
         argument = super.requireArgsNonNull(argument);
 
@@ -46,7 +46,7 @@ public class PlayerHotbarSlotAction extends AbstractPlayerAction<PlayerHotbarSlo
     }
 
     @Override
-    public boolean isFired(@NotNull PlayerHotbarSlotActionArgument argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public boolean isFired(@NotNull PlayerHotbarSlotAction.Argument argument, @NotNull ScenarioEngine engine, @NotNull Event event)
     {
         assert event instanceof PlayerItemHeldEvent;
         PlayerItemHeldEvent e = (PlayerItemHeldEvent) event;
@@ -72,28 +72,28 @@ public class PlayerHotbarSlotAction extends AbstractPlayerAction<PlayerHotbarSlo
     }
 
     @Override
-    public PlayerHotbarSlotActionArgument deserializeArgument(@NotNull Map<String, Object> map)
+    public Argument deserializeArgument(@NotNull Map<String, Object> map)
     {
-        MapUtils.checkType(map, PlayerHotbarSlotActionArgument.KEY_CURRENT_SLOT, Integer.class);
+        MapUtils.checkType(map, Argument.KEY_CURRENT_SLOT, Integer.class);
 
-        int currentSlot = (int) map.get(PlayerHotbarSlotActionArgument.KEY_CURRENT_SLOT);
+        int currentSlot = (int) map.get(Argument.KEY_CURRENT_SLOT);
         if (currentSlot < 0 || currentSlot > 8)
             throw new IllegalArgumentException("currentSlot must be between 0 and 8");
 
         int previousSlot = -1;
-        if (map.containsKey(PlayerHotbarSlotActionArgument.KEY_PREVIOUS_SLOT))
+        if (map.containsKey(Argument.KEY_PREVIOUS_SLOT))
         {
-            MapUtils.checkType(map, PlayerHotbarSlotActionArgument.KEY_PREVIOUS_SLOT, Integer.class);
-            previousSlot = (int) map.get(PlayerHotbarSlotActionArgument.KEY_PREVIOUS_SLOT);
+            MapUtils.checkType(map, Argument.KEY_PREVIOUS_SLOT, Integer.class);
+            previousSlot = (int) map.get(Argument.KEY_PREVIOUS_SLOT);
             if (previousSlot < 0 || previousSlot > 8)
                 throw new IllegalArgumentException("previousSlot must be between 0 and 8");
         }
 
         ItemStackBean item = null;
-        if (map.containsKey(PlayerHotbarSlotActionArgument.KEY_CURRENT_ITEM))
+        if (map.containsKey(Argument.KEY_CURRENT_ITEM))
         {
             Map<String, Object> itemMap = MapUtils.checkAndCastMap(
-                    map.get(PlayerHotbarSlotActionArgument.KEY_CURRENT_ITEM),
+                    map.get(Argument.KEY_CURRENT_ITEM),
                     String.class,
                     Object.class
             );
@@ -103,7 +103,7 @@ public class PlayerHotbarSlotAction extends AbstractPlayerAction<PlayerHotbarSlo
             item = ItemStackBeanImpl.deserialize(itemMap);
         }
 
-        return new PlayerHotbarSlotActionArgument(
+        return new Argument(
                 super.deserializeTarget(map),
                 currentSlot,
                 previousSlot,
@@ -112,7 +112,7 @@ public class PlayerHotbarSlotAction extends AbstractPlayerAction<PlayerHotbarSlo
     }
 
     @Override
-    public boolean isConditionFulfilled(@Nullable PlayerHotbarSlotActionArgument argument, @NotNull ScenarioEngine engine)
+    public boolean isConditionFulfilled(@Nullable PlayerHotbarSlotAction.Argument argument, @NotNull ScenarioEngine engine)
     {
         argument = super.requireArgsNonNull(argument);
 
@@ -126,7 +126,7 @@ public class PlayerHotbarSlotAction extends AbstractPlayerAction<PlayerHotbarSlo
 
     @Value
     @EqualsAndHashCode(callSuper = true)
-    public static class PlayerHotbarSlotActionArgument extends AbstractPlayerActionArgument
+    public static class Argument extends AbstractPlayerActionArgument
     {
         public static final String KEY_CURRENT_SLOT = "slot";
         public static final String KEY_PREVIOUS_SLOT = "previous";
@@ -136,7 +136,7 @@ public class PlayerHotbarSlotAction extends AbstractPlayerAction<PlayerHotbarSlo
         @Nullable
         ItemStackBean currentItem;
 
-        public PlayerHotbarSlotActionArgument(@NotNull String target, int currentSlot, int previousSlot, @Nullable ItemStackBean currentItem)
+        public Argument(@NotNull String target, int currentSlot, int previousSlot, @Nullable ItemStackBean currentItem)
         {
             super(target);
             this.currentSlot = currentSlot;
@@ -146,10 +146,10 @@ public class PlayerHotbarSlotAction extends AbstractPlayerAction<PlayerHotbarSlo
         @Override
         public boolean isSame(TriggerArgument argument)
         {
-            if (!(argument instanceof PlayerHotbarSlotActionArgument))
+            if (!(argument instanceof Argument))
                 return false;
 
-            PlayerHotbarSlotActionArgument arg = (PlayerHotbarSlotActionArgument) argument;
+            Argument arg = (Argument) argument;
 
             return super.isSame(argument)
                     && this.currentSlot == arg.currentSlot

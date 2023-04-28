@@ -12,7 +12,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-public class PluginEnableAction extends AbstractPluginAction<PluginEnableAction.PluginEnableActionArgument> implements Requireable<PluginEnableAction.PluginEnableActionArgument>
+public class PluginEnableAction extends AbstractPluginAction<PluginEnableAction.Argument> implements Requireable<PluginEnableAction.Argument>
 {
     public static final String KEY_ACTION_NAME = KEY_PREFIX + "enable";
 
@@ -23,7 +23,7 @@ public class PluginEnableAction extends AbstractPluginAction<PluginEnableAction.
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @Nullable PluginEnableAction.PluginEnableActionArgument argument)
+    public void execute(@NotNull ScenarioEngine engine, @Nullable PluginEnableAction.Argument argument)
     {
         if (argument == null)
             return;
@@ -40,21 +40,21 @@ public class PluginEnableAction extends AbstractPluginAction<PluginEnableAction.
     }
 
     @Override
-    public PluginEnableActionArgument deserializeArgument(@NotNull Map<String, Object> map)
+    public Argument deserializeArgument(@NotNull Map<String, Object> map)
     {
-        return new PluginEnableActionArgument(super.deserializePlugin(map));
+        return new Argument(super.deserializePlugin(map));
     }
 
     @Override
-    public boolean isConditionFulfilled(@Nullable PluginEnableActionArgument argument, @NotNull ScenarioEngine engine)
+    public boolean isConditionFulfilled(@Nullable PluginEnableAction.Argument argument, @NotNull ScenarioEngine engine)
     {
         argument = super.requireArgsNonNull(argument);
         return argument.getPlugin().isEnabled();
     }
 
-    public static class PluginEnableActionArgument extends AbstractPluginActionArgument
+    public static class Argument extends AbstractPluginActionArgument
     {
-        public PluginEnableActionArgument(String plugin)
+        public Argument(String plugin)
         {
             super(plugin);
         }

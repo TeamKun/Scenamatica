@@ -23,7 +23,7 @@ import java.util.Objects;
 /**
  * プレイヤにメッセージを送信する/送信されることを監視するアクション。
  */
-public class MessageSendAction extends AbstractAction<MessageSendAction.PlayerMessageSendActionArgument>
+public class MessageSendAction extends AbstractAction<MessageSendAction.Argument>
 {
     public static final String KEY_ACTION_NAME = "message_send";
 
@@ -34,7 +34,7 @@ public class MessageSendAction extends AbstractAction<MessageSendAction.PlayerMe
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @Nullable PlayerMessageSendActionArgument argument)
+    public void execute(@NotNull ScenarioEngine engine, @Nullable MessageSendAction.Argument argument)
     {
         argument = this.requireArgsNonNull(argument);
 
@@ -45,7 +45,7 @@ public class MessageSendAction extends AbstractAction<MessageSendAction.PlayerMe
     }
 
     @Override
-    public boolean isFired(@NotNull PlayerMessageSendActionArgument argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public boolean isFired(@NotNull MessageSendAction.Argument argument, @NotNull ScenarioEngine engine, @NotNull Event event)
     {
         Player recipient = PlayerUtils.getPlayerOrThrow(argument.getRecipient());
         String content = argument.getContent();
@@ -67,19 +67,19 @@ public class MessageSendAction extends AbstractAction<MessageSendAction.PlayerMe
     }
 
     @Override
-    public PlayerMessageSendActionArgument deserializeArgument(@NotNull Map<String, Object> map)
+    public Argument deserializeArgument(@NotNull Map<String, Object> map)
     {
-        MapUtils.checkType(map, PlayerMessageSendActionArgument.KEY_CONTENT, String.class);
-        MapUtils.checkType(map, PlayerMessageSendActionArgument.KEY_RECIPIENT, String.class);
+        MapUtils.checkType(map, Argument.KEY_CONTENT, String.class);
+        MapUtils.checkType(map, Argument.KEY_RECIPIENT, String.class);
 
-        return new PlayerMessageSendActionArgument(
-                (String) map.get(PlayerMessageSendActionArgument.KEY_CONTENT),
-                (String) map.get(PlayerMessageSendActionArgument.KEY_RECIPIENT)
+        return new Argument(
+                (String) map.get(Argument.KEY_CONTENT),
+                (String) map.get(Argument.KEY_RECIPIENT)
         );
     }
 
     @Value
-    public static class PlayerMessageSendActionArgument implements ActionArgument
+    public static class Argument implements ActionArgument
     {
         public static final String KEY_CONTENT = "content";
         public static final String KEY_RECIPIENT = "recipient";
@@ -92,10 +92,10 @@ public class MessageSendAction extends AbstractAction<MessageSendAction.PlayerMe
         @Override
         public boolean isSame(TriggerArgument argument)
         {
-            if (!(argument instanceof PlayerMessageSendActionArgument))
+            if (!(argument instanceof Argument))
                 return false;
 
-            PlayerMessageSendActionArgument a = (PlayerMessageSendActionArgument) argument;
+            Argument a = (Argument) argument;
             return Objects.equals(this.content, a.content) && Objects.equals(this.recipient, a.recipient);
         }
 
