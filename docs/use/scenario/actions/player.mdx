@@ -157,6 +157,40 @@ import {ObjectType} from "/src/components/Object";
 
 アクション実行機能において省略した場合、指定された進捗の**全ての達成条件を達成**します。
 
+## プレイヤのアニメーション {#animation}
+
+<Action name="プレイヤのアニメーション"
+        description="プレイヤのアニメーションに関するアクションです。"
+        id="player_animation"
+        args={[
+          {
+            name: "target",
+            anchor: "target",
+            description: "アニメーションを実行するプレイヤーです。",
+            type: "プレイヤ",
+            required: true
+          },
+          {
+            name: "type",
+            anchor: "animation-type",
+            description: "実行するアニメーションの種類です。",
+            type: "列挙型{ARM_SWING}",
+            required: true
+          }
+        ]}
+        executable watchable
+/>
+
+### `type` {#animation-type}
+
+実行するアニメーションの種類を指定します。  
+
+:::caution
+
+Bukkit の仕様により、現在は `ARM_SWING` のみが指定可能です。  
+また、将来の互換性を維持するために、この引数の省略はできません。
+
+:::
 
 ## ゲームモード {#gamemode}
 
