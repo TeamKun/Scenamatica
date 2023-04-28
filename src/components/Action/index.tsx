@@ -50,15 +50,15 @@ const Action: React.FC<ActionProps> = ({name, description, id, events, executabl
                     <td><kbd><code>{id}</code></kbd></td>
                 </tr>
                 <tr>
-                    <td>実行可能</td>
+                    <td>実行可能 (<kbd>execute</kbd>)</td>
                     {able(executable)}
                 </tr>
                 <tr>
-                    <td>監視可能</td>
+                    <td>監視可能 (<kbd>expect</kbd>)</td>
                     {able(watchable)}
                 </tr>
                 <tr>
-                    <td>コンディションチェック可能</td>
+                    <td>要求可能 (<kbd>require</kbd>)</td>
                     {able(requireable)}
                 </tr>
             </tbody>
