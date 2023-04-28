@@ -24,3 +24,8 @@ td.name {
 [data-theme="light"] .unable {
     color: #8d1a1a;
 }
+
+ .bigger {
+    font-size: 1.25em;
+    font-weight: bold;
+}

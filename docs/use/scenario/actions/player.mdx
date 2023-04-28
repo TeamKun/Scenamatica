@@ -40,6 +40,12 @@ import {ObjectType} from "/src/components/Object";
 <Action name="プレイヤの死亡およびキル"
         description="プレイヤの死亡およびキルに関するアクションです。"
         id="player_death"
+        events={
+          {
+            name: "PlayerDeathEvent",
+            package: "org.bukkit.event.player"
+          }
+        }
         args={[
           {
             name: "target",
@@ -111,6 +117,16 @@ import {ObjectType} from "/src/components/Object";
 <Action name="進捗の達成と達成度"
         description="進捗の達成と達成度に関するアクションです。"
         id="player_advancement"
+        events={[
+          {
+            name: "PlayerAdvancementDoneEvent",
+            package: "org.bukkit.event.player"
+          },
+          {
+            name: "PlayerAdvancementCriterionGrantEvent",
+            package: "org.bukkit.event.player"
+          }
+        ]}
         args={[
           {
             name: "target",
@@ -162,6 +178,12 @@ import {ObjectType} from "/src/components/Object";
 <Action name="プレイヤのアニメーション"
         description="プレイヤのアニメーションに関するアクションです。"
         id="player_animation"
+        events={
+          {
+            name: "PlayerAnimationEvent",
+            package: "org.bukkit.event.player",
+          }
+        }
         args={[
           {
             name: "target",
@@ -197,6 +219,12 @@ Bukkit の仕様により、現在は `ARM_SWING` のみが指定可能です。
 <Action name="ゲームモード"
         description="プレイヤのゲームモードに関するアクションです。"
         id="player_gamemode"
+        events={
+          {
+            name: "PlayerGameModeChangeEvent",
+            package: "org.bukkit.event.player",
+          }
+        }
         args={[
           {
             name: "target",
@@ -254,6 +282,12 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
 <Action name="ホットバーのスロットの変更"
         description="ホットバーのスロットの変更に関するアクションです。"
         id="player_hotbar"
+        events={
+          {
+            name: "PlayerItemHeldEvent",
+            package: "org.bukkit.event.player",
+          }
+        }
         args={[
           {
             name: "target",
@@ -291,6 +325,12 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
 <Action name="プレイヤの投げ物の発射"
         description="プレイヤの投げ物の発射に関するアクションです。"
         id="player_projectile_launch"
+        events={
+          {
+            name: "ProjectileLaunchEvent",
+            package: "org.bukkit.event.entity",
+          }
+        }
         args={[
           {
             name: "target",

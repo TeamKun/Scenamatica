@@ -2,10 +2,16 @@ import React from "react"
 import styles from "./index.module.css"
 import {Object, ObjectElement} from "@site/src/components/Object";
 
+type BukkitEvent = {
+    name: string
+    package: string
+}
+
 type ActionProps = {
     name: string
     description: string
     id: string
+    events?: BukkitEvent | BukkitEvent[]
     executable?: boolean
     watchable?: boolean
     requireable?: boolean
@@ -13,10 +19,24 @@ type ActionProps = {
     args?: ObjectElement[]
 }
 
-const Action: React.FC<ActionProps> = ({name, description, id, executable, watchable, requireable, args}) => {
+const EVENT_JAVADOC_LINK_BASE =  "https://jd.papermc.io/paper/1.16/"
+
+const Action: React.FC<ActionProps> = ({name, description, id, events, executable, watchable, requireable, args}) => {
     const able = (value: boolean) => (
         <td className={value ? styles.able : styles.unable}>{value ? "はい" : "いいえ"}</td>
     )
+
+    const createEventLink = (event: BukkitEvent) => (
+        <a href={EVENT_JAVADOC_LINK_BASE + event.package.replace(/\./g, "/") + "/" + event.name + ".html"}>{event.name}</a>
+    )
+
+    const buildEventsComponent = () => <>
+        <p className={styles.bigger}>このアクションは以下のイベントで呼び出されます。</p>
+        <ul>
+            {Array.isArray(events) ? events.map(event => <li key={event.name}>{createEventLink(event)}</li>) :
+                <li>{createEventLink(events)}</li>}
+        </ul>
+    </>
 
     return (<>
         <p>{description}</p>
@@ -43,7 +63,9 @@ const Action: React.FC<ActionProps> = ({name, description, id, executable, watch
                 </tr>
             </tbody>
         </table>
-        <h4>{args ? name + " の引数は以下の通りです。" : "このアクションは引数を取りません。"}</h4>
+        {events ? buildEventsComponent() : <></>}
+
+        <p className={styles.bigger}>{args ? name + " の引数は以下の通りです。" : "このアクションは引数を取りません。"}</p>
 
         {args ? <Object objects={args} /> : <></>}
     </>)
