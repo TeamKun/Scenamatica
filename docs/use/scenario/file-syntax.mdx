@@ -150,7 +150,7 @@ Scenamatica のバージョンは、 `x.y.z` の形式で指定します。
 
 ### `runif` {#apex-runif}
 
-シナリオを実行する条件をアクションで定義します。
+シナリオを実行する条件をアクションで定義します。詳しくは[こちら](#conditional-execution)を参照してください。
 
 :::info
 
@@ -197,14 +197,14 @@ Scenamatica のバージョンは、 `x.y.z` の形式で指定します。
 
 ## トリガ型 {#trigger-structure}
 
-トリガーは、以下の構造を持ちます。
+トリガは、以下の構造を持ちます。
 
 <Object objects={[
   {
     name: "type",
     anchor: "trigger-type",
     type: "string",
-    description: "トリガーの種類です。",
+    description: "トリガの種類です。",
     required: true
   },
   {
@@ -239,10 +239,14 @@ Scenamatica のバージョンは、 `x.y.z` の形式で指定します。
 :::caution
 
 トリガにおける引数の概念は一見無いように見えますが、実際には存在します。  
-トリガーの種類によっては必要になるものがありますので、それぞれのトリガーの説明を参照してください。
+トリガの種類によっては必要になるものがありますので、それぞれのトリガーの説明を参照してください。
 
 また、引数の指定用のキー等はないので、このトリガの構造に直に追記してください。
 
+<BelowDocument
+  docId="use/scenario/triggers"
+  label="トリガ"
+/>
 :::
 
 ### `type` {#trigger-type}
@@ -281,8 +285,9 @@ Scenamatica のバージョンは、 `x.y.z` の形式で指定します。
 
 ### `runif` {#trigger-runif}
 
-トリガごとに、シナリオの実行条件をアクションで定義します。  
-シナリオのルートで定義されている場合、両方の条件が満たされた場合に実行されます。
+トリガごとに、シナリオの実行条件をアクションで定義します。
+シナリオのルートで定義されている場合、両方の条件が満たされた場合に実行されます。  
+詳しくは[こちら](#conditional-execution)を参照してください。
 
 ## ステージ型 {#stage-structure}
 
@@ -461,6 +466,8 @@ Bukkit でロード済みの既存のワールドの構造、建築物、アイ�
 
 このシナリオが実行される前に、このシナリオのアクションと紐づいているコンディションが満たされているかどうかを確認します。  
 満たされていない場合は、このシナリオはスキップされます。
+
+詳しくは[こちら](#conditional-execution)を参照してください。
 
 ## アクション型 {#action-structure}
 
@@ -950,6 +957,13 @@ NamespacedKey 型は、名前空間を持つキーです。
 
 省略した場合は、暗黙的に `minecraft:` が指定されます。
 :::
+
+## 条件付き実行の記述 {#conditional-execution}
+
+Scenamatica では、条件付きでアクション/トリガ/シナリオを実行できます。  
+指定は全て `runif` キーで行い、値には[コンディション要求タイプ(`require`)](elements/#scenario-type-condition-require)に対応した[アクション](#action-structure)を記述します。
+
+詳しくは[コンディション要求タイプ(`require`)](elements/#scenario-type-condition-require)および[アクション](#action-structure)の項目を参照してください。
 
 ## シナリオファイルを記述する際の注意 {#notes}
 
