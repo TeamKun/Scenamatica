@@ -84,6 +84,7 @@
             "message_send",
             "player_gamemode",
             "player_advancement",
+            "player_animation",
             "player_death",
             "player_hotbar",
             "player_launch_projectile",
@@ -158,6 +159,26 @@
             "properties": {
               "with": {
                 "$ref": "#/definitions/action/definitions/player/advancement"
+              }
+            },
+            "required": [
+              "with"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "player_animation",
+                "description": "プレイヤーのアニメーションを検知します。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/player/animation"
               }
             },
             "required": [
@@ -417,6 +438,27 @@
             "required": [
               "target",
               "advancement"
+            ]
+          },
+          "animation": {
+            "properties": {
+              "target": {
+                "type": "string",
+                "description": "アニメーションを再生するプレイヤーです。",
+                "maxLength": 16
+              },
+              "type": {
+                "type": "string",
+                "description": "再生するアニメーションの種類です。",
+                "enum": [
+                  "arm_swing",
+                  "ARM_SWING"
+                ]
+              }
+            },
+            "required": [
+              "target",
+              "type"
             ]
           },
           "death": {

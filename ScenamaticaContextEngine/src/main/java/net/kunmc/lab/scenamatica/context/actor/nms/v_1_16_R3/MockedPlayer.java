@@ -7,8 +7,10 @@ import net.kunmc.lab.scenamatica.interfaces.context.ActorManager;
 import net.minecraft.server.v1_16_R3.DamageSource;
 import net.minecraft.server.v1_16_R3.Entity;
 import net.minecraft.server.v1_16_R3.EntityPlayer;
+import net.minecraft.server.v1_16_R3.EnumHand;
 import net.minecraft.server.v1_16_R3.EnumMoveType;
 import net.minecraft.server.v1_16_R3.MinecraftServer;
+import net.minecraft.server.v1_16_R3.PacketPlayInArmAnimation;
 import net.minecraft.server.v1_16_R3.Vec3D;
 import net.minecraft.server.v1_16_R3.WorldServer;
 import org.bukkit.entity.Player;
@@ -43,6 +45,11 @@ class MockedPlayer extends EntityPlayer implements Actor
     @Override
     public void playAnimation(@NotNull PlayerAnimationType animation)
     {
+        assert animation == PlayerAnimationType.ARM_SWING;  // Bukkit はこれしかない。
+
+        PacketPlayInArmAnimation packet = new PacketPlayInArmAnimation(EnumHand.MAIN_HAND);
+
+        this.playerConnection.a(packet);
     }
 
     @Override
