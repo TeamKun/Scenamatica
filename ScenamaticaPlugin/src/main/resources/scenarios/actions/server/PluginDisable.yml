@@ -5,10 +5,14 @@ description: L6C1 in scenarios.xlsx
 on:
   - type: manual_dispatch
     after:
-      - type: execute
+      - type: execute # Enable LightHeadPlugin if it is disabled
         action: server_plugin_enable
         with:
           plugin: "LightHeadPlugin"
+        runif:
+          action: server_plugin_disable
+          with:
+            plugin: "LightHeadPlugin"
 
 scenario:
   - type: execute

@@ -4,6 +4,15 @@ name: actions_server_plugin_enable
 description: L6C2 in scenarios.xlsx
 on:
   - type: manual_dispatch
+    before:
+      - type: execute
+        action: server_plugin_disable
+        with:
+          plugin: "LightHeadPlugin"
+        runif:
+          action: server_plugin_enable
+          with:
+            plugin: "LightHeadPlugin"
 scenario:
   - type: execute
     action: server_plugin_enable
