@@ -24,7 +24,7 @@ public class BlockBeanImpl implements BlockBean
     int z;
     @NotNull
     Map<String, Object> metadata;
-    byte lightLevel;  // 0-15
+    int lightLevel;  // 0-15
     @Nullable
     Biome biome;
 
@@ -49,7 +49,8 @@ public class BlockBeanImpl implements BlockBean
         map.put(KEY_BLOCK_X, blockBean.getX());
         map.put(KEY_BLOCK_Y, blockBean.getY());
         map.put(KEY_BLOCK_Z, blockBean.getZ());
-        map.put(KEY_BIOME, blockBean.getBiome().name());
+        if (blockBean.getBiome() != null)
+            map.put(KEY_BIOME, blockBean.getBiome().name());
 
         if (!blockBean.getMetadata().isEmpty())
             map.put(KEY_METADATA, blockBean.getMetadata());

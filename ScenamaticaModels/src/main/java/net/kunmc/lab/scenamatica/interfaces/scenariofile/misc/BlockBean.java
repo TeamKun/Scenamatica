@@ -58,7 +58,7 @@ public interface BlockBean
      *
      * @return ブロックの明るさ
      */
-    byte getLightLevel();
+    int getLightLevel();
 
     /**
      * ブロックのバイオームを取得します。
