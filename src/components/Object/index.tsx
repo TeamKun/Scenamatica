@@ -28,6 +28,8 @@ type ObjectsProps = {
 }
 
 export const Object: React.FC<ObjectsProps> = ({ objects }) => {
+    const shouldShowDefaultValue = objects.some((element) => element.default)
+
     const elements = objects.map((element) =>{
         const name = element.anchor ? <a href={"#" + element.anchor}>{element.name}</a>: element.name
         const required = element.required ? <span className={styles.required}>必須</span>: "任意"
@@ -41,7 +43,7 @@ export const Object: React.FC<ObjectsProps> = ({ objects }) => {
                 <td><code>{typeName}</code></td>
                 <td>{required}</td>
                 <td>{element.description}</td>
-                <td>{element.default ? <code>{element.default}</code> : "N/A"}</td>
+                {shouldShowDefaultValue ? <td>{element.default ? <code>{element.default}</code> : "N/A"}</td> : null}
             </tr>
         )
     })
@@ -55,7 +57,7 @@ export const Object: React.FC<ObjectsProps> = ({ objects }) => {
                     <th>型</th>
                     <th>必須？</th>
                     <th>説明</th>
-                    <th>デフォルト</th>
+                    {shouldShowDefaultValue ? <th>デフォルト</th> : null}
                 </tr>
                 </thead>
                 <tbody>

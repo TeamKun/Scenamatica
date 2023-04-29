@@ -1,16 +1,17 @@
-.object {
+.objects {
     border-collapse: collapse;
     margin: 0 0 1em 0;
+    width: 100%;
 }
 
-.object.header {
+.objects.header {
     text-align: center;
     font-weight: bold;
     border: 1px solid #ccc;
     padding: 0.5em;
 }
 
-.object.body {
+.objects.body {
     border: 1px solid #ccc;
     padding: 0.5em;
 }
