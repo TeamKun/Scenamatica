@@ -4,16 +4,21 @@ import com.mojang.authlib.GameProfile;
 import net.kunmc.lab.peyangpaperutils.lib.utils.Runner;
 import net.kunmc.lab.scenamatica.interfaces.context.Actor;
 import net.kunmc.lab.scenamatica.interfaces.context.ActorManager;
+import net.minecraft.server.v1_16_R3.BlockPosition;
 import net.minecraft.server.v1_16_R3.DamageSource;
 import net.minecraft.server.v1_16_R3.Entity;
 import net.minecraft.server.v1_16_R3.EntityPlayer;
+import net.minecraft.server.v1_16_R3.EnumDirection;
 import net.minecraft.server.v1_16_R3.EnumHand;
 import net.minecraft.server.v1_16_R3.EnumMoveType;
 import net.minecraft.server.v1_16_R3.MinecraftServer;
 import net.minecraft.server.v1_16_R3.PacketPlayInArmAnimation;
 import net.minecraft.server.v1_16_R3.Vec3D;
 import net.minecraft.server.v1_16_R3.WorldServer;
+import org.bukkit.block.Block;
+import org.bukkit.craftbukkit.v1_16_R3.event.CraftEventFactory;
 import org.bukkit.entity.Player;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerAnimationType;
 import org.jetbrains.annotations.NotNull;
 
@@ -50,6 +55,34 @@ class MockedPlayer extends EntityPlayer implements Actor
         PacketPlayInArmAnimation packet = new PacketPlayInArmAnimation(EnumHand.MAIN_HAND);
 
         this.playerConnection.a(packet);
+    }
+
+    @Override
+    public void interactAt(@NotNull Action action, Block block)
+    {
+        switch (action)
+        {
+            case LEFT_CLICK_AIR:
+            case RIGHT_CLICK_AIR:
+                CraftEventFactory.callPlayerInteractEvent(
+                        this,
+                        action,
+                        this.getItemInMainHand(),
+                        EnumHand.MAIN_HAND
+                );
+                break;
+            case LEFT_CLICK_BLOCK:
+            case RIGHT_CLICK_BLOCK:
+                CraftEventFactory.callPlayerInteractEvent(
+                        this,
+                        action,
+                        new BlockPosition(block.getX(), block.getY(), block.getZ()),
+                        EnumDirection.NORTH,
+                        this.getItemInMainHand(),
+                        EnumHand.MAIN_HAND
+                );
+                break;
+        }
     }
 
     @Override

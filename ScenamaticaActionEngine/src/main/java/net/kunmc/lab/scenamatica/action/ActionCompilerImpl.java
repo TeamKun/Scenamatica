@@ -6,6 +6,7 @@ import net.kunmc.lab.scenamatica.action.actions.player.PlayerAnimationAction;
 import net.kunmc.lab.scenamatica.action.actions.player.PlayerDeathAction;
 import net.kunmc.lab.scenamatica.action.actions.player.PlayerGameModeAction;
 import net.kunmc.lab.scenamatica.action.actions.player.PlayerHotbarSlotAction;
+import net.kunmc.lab.scenamatica.action.actions.player.PlayerInteractBlockAction;
 import net.kunmc.lab.scenamatica.action.actions.player.PlayerLaunchProjectileAction;
 import net.kunmc.lab.scenamatica.action.actions.scenamatica.MilestoneAction;
 import net.kunmc.lab.scenamatica.action.actions.server.CommandDispatchAction;
@@ -43,6 +44,7 @@ public class ActionCompilerImpl implements ActionCompiler
             ACTIONS.add(new PlayerAnimationAction());
             ACTIONS.add(new PlayerDeathAction());
             ACTIONS.add(new PlayerHotbarSlotAction());
+            ACTIONS.add(new PlayerInteractBlockAction());
             ACTIONS.add(new PlayerLaunchProjectileAction());
         }
 

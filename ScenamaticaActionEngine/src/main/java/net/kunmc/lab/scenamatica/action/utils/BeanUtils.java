@@ -4,13 +4,16 @@ import com.destroystokyo.paper.Namespaced;
 import com.google.common.collect.Multimap;
 import lombok.experimental.UtilityClass;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.inventory.ItemStackBean;
+import net.kunmc.lab.scenamatica.interfaces.scenariofile.misc.BlockBean;
 import net.kyori.adventure.text.Component;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
+import org.bukkit.block.Block;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.metadata.MetadataValue;
 
 import java.util.List;
 import java.util.Map;
@@ -21,10 +24,8 @@ public class BeanUtils
 {
     public static boolean isSame(ItemStackBean bean, ItemStack stack, boolean strict)
     {
-        if (bean == null)
-            return stack == null;
-        else if (stack == null)
-            return false;
+        if (bean == null || stack == null)
+            return bean == null && stack == null;
 
         if (!(bean.getType() == stack.getType() && bean.getAmount() == stack.getAmount()))
             return false;
@@ -131,6 +132,37 @@ public class BeanUtils
         if (bean.getDamage() != null)
             // noinspection deprecation
             return stack.getDurability() == bean.getDamage();
+
+        return true;
+    }
+
+    public static boolean isSame(BlockBean blockBean, Block block)
+    {
+        if (blockBean == null || block == null)
+            return blockBean == null && block == null;
+
+        if (blockBean.getType() != block.getType())
+            return false;
+
+        if (blockBean.getX() != block.getX() || blockBean.getY() != block.getY() || blockBean.getZ() != block.getZ())
+            return false;
+
+        if (blockBean.getBiome() != null && blockBean.getBiome() != block.getBiome())
+            return false;
+
+        if (!blockBean.getMetadata().isEmpty())
+        {
+            Map<String, Object> expected = blockBean.getMetadata();
+            for (Map.Entry<String, Object> entry : expected.entrySet())
+            {
+                List<MetadataValue> actual = block.getMetadata(entry.getKey());
+                if (actual.isEmpty())
+                    return false;
+
+                if (actual.stream().noneMatch(v -> v.asString().equals(entry.getValue().toString())))
+                    return false;
+            }
+        }
 
         return true;
     }

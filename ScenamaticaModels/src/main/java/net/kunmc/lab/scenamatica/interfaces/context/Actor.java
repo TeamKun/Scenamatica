@@ -1,6 +1,8 @@
 package net.kunmc.lab.scenamatica.interfaces.context;
 
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerAnimationType;
 import org.jetbrains.annotations.NotNull;
 
@@ -25,6 +27,14 @@ public interface Actor
      * @param animation 再生するアニメーション
      */
     void playAnimation(@NotNull PlayerAnimationType animation);
+
+    /**
+     * ブロックまたは空中をクリックします。
+     *
+     * @param action クリックするアクション
+     * @param block  クリックするブロック
+     */
+    void interactAt(@NotNull Action action, Block block);
 
     /**
      * Bukkit の {@link Player} を取得します。
