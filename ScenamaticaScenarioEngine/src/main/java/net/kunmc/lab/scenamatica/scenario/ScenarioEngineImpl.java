@@ -423,7 +423,7 @@ public class ScenarioEngineImpl implements ScenarioEngine
                     "scenario.run.manually",
                     MsgArgs.of("scenarioName", this.scenario.getName())
             ));
-        this.deliverer = new ScenarioResultDelivererImpl(this.registry, this.testID, this.startedAt);
+        this.deliverer = new ScenarioResultDelivererImpl(this.registry, this.scenario, this.testID, this.startedAt);
         this.watchedActions = new ArrayList<>();
 
         this.isRunning = true;
@@ -440,6 +440,7 @@ public class ScenarioEngineImpl implements ScenarioEngine
     private TestResult genResult(TestResultCause cause)
     {
         return new TestResultImpl(
+                this.getScenario(),
                 this.testID,
                 this.state,
                 cause,

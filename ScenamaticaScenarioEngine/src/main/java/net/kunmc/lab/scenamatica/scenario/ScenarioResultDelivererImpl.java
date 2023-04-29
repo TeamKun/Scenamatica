@@ -5,6 +5,7 @@ import net.kunmc.lab.scenamatica.enums.TestState;
 import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioResultDeliverer;
 import net.kunmc.lab.scenamatica.interfaces.scenario.TestResult;
+import net.kunmc.lab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayDeque;
@@ -19,6 +20,7 @@ public class ScenarioResultDelivererImpl implements ScenarioResultDeliverer
     private final Object lock = new Object();
     private final CyclicBarrier barrier;
     private final ScenamaticaRegistry registry;
+    private final ScenarioFileBean scenario;
     private final UUID testID;
     private final long startedAt;
     private final ArrayDeque<TestResult> results;  // 受け渡し用
@@ -31,6 +33,7 @@ public class ScenarioResultDelivererImpl implements ScenarioResultDeliverer
     private long elapsedTick;
 
     public ScenarioResultDelivererImpl(@NotNull ScenamaticaRegistry registry,
+                                       @NotNull ScenarioFileBean scenario,
                                        @NotNull UUID testID,
                                        long startedAt)
 
@@ -38,6 +41,7 @@ public class ScenarioResultDelivererImpl implements ScenarioResultDeliverer
         this.barrier = new CyclicBarrier(2);
         this.registry = registry;
         this.testID = testID;
+        this.scenario = scenario;
         this.startedAt = startedAt;
 
         this.results = new ArrayDeque<>();
@@ -90,6 +94,7 @@ public class ScenarioResultDelivererImpl implements ScenarioResultDeliverer
         {
             this.registry.getExceptionHandler().report(e);
             return new TestResultImpl(
+                    this.scenario,
                     this.testID,
                     state,
                     TestResultCause.INTERNAL_ERROR,
@@ -101,6 +106,7 @@ public class ScenarioResultDelivererImpl implements ScenarioResultDeliverer
             if (!this.killed)
                 this.registry.getExceptionHandler().report(e);
             return new TestResultImpl(
+                    this.scenario,
                     this.testID,
                     state,
                     TestResultCause.CANCELLED,
@@ -127,6 +133,7 @@ public class ScenarioResultDelivererImpl implements ScenarioResultDeliverer
         {
             this.waitTimeout = -1L;
             this.setResult(new TestResultImpl(
+                    this.scenario,
                     this.testID,
                     this.state,
                     TestResultCause.SCENARIO_TIMED_OUT,

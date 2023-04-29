@@ -74,6 +74,7 @@ public class ScenarioActionListenerImpl implements ScenarioActionListener
     private void setResult(TestResultCause cause, @Nullable Action<?> failedAction)
     {
         this.engine.getDeliverer().setResult(new TestResultImpl(
+                this.engine.getScenario(),
                 this.engine.getTestID(),
                 this.engine.getState(),
                 cause,

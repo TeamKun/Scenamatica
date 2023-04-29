@@ -6,6 +6,7 @@ import net.kunmc.lab.scenamatica.enums.TestResultCause;
 import net.kunmc.lab.scenamatica.enums.TestState;
 import net.kunmc.lab.scenamatica.interfaces.action.Action;
 import net.kunmc.lab.scenamatica.interfaces.scenario.TestResult;
+import net.kunmc.lab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -15,6 +16,8 @@ import java.util.UUID;
 @AllArgsConstructor
 public class TestResultImpl implements TestResult
 {
+    @NotNull
+    ScenarioFileBean scenario;
     @NotNull
     UUID testID;
     @NotNull
@@ -27,11 +30,13 @@ public class TestResultImpl implements TestResult
     @Nullable
     Action<?> failedAction;
 
-    public TestResultImpl(@NotNull UUID testID,
+    public TestResultImpl(@NotNull ScenarioFileBean scenario,
+                          @NotNull UUID testID,
                           @NotNull TestState state,
                           @NotNull TestResultCause resultType,
                           long startedAt)
     {
+        this.scenario = scenario;
         this.testID = testID;
         this.state = state;
         this.testResultCause = resultType;

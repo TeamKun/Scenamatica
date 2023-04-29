@@ -5,6 +5,8 @@ import lombok.Value;
 import net.kunmc.lab.scenamatica.enums.TestResultCause;
 import net.kunmc.lab.scenamatica.enums.TestState;
 import net.kunmc.lab.scenamatica.interfaces.scenario.TestResult;
+import net.kunmc.lab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
+import net.kunmc.lab.scenamatica.scenariofile.ScenarioFileBeanImpl;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -13,6 +15,7 @@ import java.util.Map;
 @EqualsAndHashCode(callSuper = true)
 public class PacketTestEnd extends AbstractTestPacket
 {
+    private static final String KEY_SCENARIO = "scenario";
     private static final String KEY_STATE = "state";
     private static final String KEY_CAUSE = "cause";
     private static final String KEY_STARTED_AT = "startedAt";
@@ -20,6 +23,8 @@ public class PacketTestEnd extends AbstractTestPacket
 
     private static final String TYPE = "end";
 
+    @NotNull
+    ScenarioFileBean scenario;
     @NotNull
     TestState state;
     @NotNull
@@ -31,6 +36,7 @@ public class PacketTestEnd extends AbstractTestPacket
     {
         super(TYPE, result.getTestID());
 
+        this.scenario = result.getScenario();
         this.state = result.getState();
         this.cause = result.getTestResultCause();
         this.startedAt = result.getStartedAt();
@@ -51,6 +57,7 @@ public class PacketTestEnd extends AbstractTestPacket
     {
         Map<String, Object> result = super.serialize();
 
+        result.put(KEY_SCENARIO, ScenarioFileBeanImpl.serialize(this.scenario));
         result.put(KEY_STATE, this.state.name());
         result.put(KEY_CAUSE, this.cause.name());
         result.put(KEY_STARTED_AT, this.startedAt);

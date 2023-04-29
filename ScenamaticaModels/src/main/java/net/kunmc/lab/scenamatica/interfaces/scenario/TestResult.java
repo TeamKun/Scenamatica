@@ -3,6 +3,7 @@ package net.kunmc.lab.scenamatica.interfaces.scenario;
 import net.kunmc.lab.scenamatica.enums.TestResultCause;
 import net.kunmc.lab.scenamatica.enums.TestState;
 import net.kunmc.lab.scenamatica.interfaces.action.Action;
+import net.kunmc.lab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -20,6 +21,14 @@ public interface TestResult
      */
     @NotNull
     UUID getTestID();
+
+    /**
+     * テストのシナリオを取得します。
+     *
+     * @return テストのシナリオ
+     */
+    @NotNull
+    ScenarioFileBean getScenario();
 
     /**
      * テストの状態を取得します。
