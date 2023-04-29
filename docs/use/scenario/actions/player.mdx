@@ -320,6 +320,58 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
 
 この型は[こちら](../file-syntax/#item-stack-structure)を参照してください。
 
+## プレイヤのブロックのクリック {#interact-block}
+
+<Action name="プレイヤのブロックのクリック"
+        description="プレイヤのブロックのクリックに関するアクションです。"
+        id="player_interact_block"
+        events={
+          {
+            name: "PlayerInteractEvent",
+            package: "org.bukkit.event.player",
+          }
+        }
+        args={[
+          {
+            name: "target",
+            anchor: "target",
+            description: "ブロックをクリックするプレイヤーです。",
+            type: "プレイヤ",
+            required: true
+          },
+          {
+            name: "block",
+            anchor: "block",
+            description: "クリックされたブロックです。",
+            type: "Block",
+            type_anchor: "interact-block-block",
+            required: true
+          },
+          {
+            name: "hand",
+            anchor: "hand",
+            description: "クリックされた手です。",
+            type: "列挙型{HAND, OFF_HAND}",
+            required: true
+          },
+          {
+            name: "action",
+            anchor: "action",
+            description: "クリックの種類です。",
+            type: "列挙型{LEFT_CLICK_BLOCK, RIGHT_CLICK_BLOCK, LEFT_CLICK_AIR, RIGHT_CLICK_AIR}",
+            required: true
+          }
+        ]}
+        executable watchable
+/>
+
+### `block` {#interact-block-block}
+
+<BelowDocument docId="use/scenario/file-syntax"
+               anchor="block-structure"
+               label="Block 型"
+/>
+
 ## プレイヤの投げ物の発射 {#projectile-launch}
 
 <Action name="プレイヤの投げ物の発射"

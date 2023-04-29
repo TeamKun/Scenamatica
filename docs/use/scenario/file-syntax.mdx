@@ -948,6 +948,49 @@ ItemStack 型は、以下の構造を持ちます。
   }
 ]} />
 
+## Block 型 {#block-structure}
+
+Block 型は、以下の構造を持ちます。
+
+<Object objects={[
+  {
+    name: "type",
+    type: "Enum{...Material}",
+    description: "ブロックの種類です。",
+    required: true
+  },
+  {
+    name: "x",
+    type: ObjectType.INTEGER,
+    description: "ブロックの X 座標です。",
+  },
+  {
+    name: "y",
+    type: ObjectType.INTEGER,
+    description: "ブロックの Y 座標です。",
+  },
+  {
+    name: "z",
+    type: ObjectType.INTEGER,
+    description: "ブロックの Z 座標です。",
+  },
+  {
+    name: "metadata",
+    type: ObjectType.OBJECT,
+    description: "ブロックのメタデータです。",
+  },
+  {
+    name: "light",
+    type: ObjectType.INTEGER,
+    description: "ブロックの明るさです（0-15）。",
+  },
+  {
+    name: "biome",
+    type: "Enum{...Biome}",
+    description: "ブロックのバイオームです。",
+  }
+]} />
+
 ## NamespacedKey 型 {#namespaced-key-structure}
 
 NamespacedKey 型は、名前空間を持つキーです。  
