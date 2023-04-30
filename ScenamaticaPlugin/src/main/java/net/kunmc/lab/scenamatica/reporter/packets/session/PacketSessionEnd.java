@@ -12,7 +12,7 @@ public class PacketSessionEnd extends AbstractSessionPacket
 {
     private static final String KEY_RESULTS = "results";
     private static final String KEY_STARTED_AT = "startedAt";
-    private static final String TYPE = "start";
+    private static final String TYPE = "end";
 
     @NotNull
     private final List<PacketTestEnd> tests;
