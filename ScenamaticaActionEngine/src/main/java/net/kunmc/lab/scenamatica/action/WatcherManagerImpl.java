@@ -112,7 +112,7 @@ public class WatcherManagerImpl implements WatcherManager
     public void unregisterWatchers(@NotNull Plugin plugin, @NotNull WatchType type)
     {
         if (!this.actionWatchers.containsKey(plugin))
-            throw new IllegalStateException("The plugin " + plugin.getName() + " is not registered.");
+            return;
 
         Iterator<WatchingEntry<?>> iterator = this.actionWatchers.get(plugin).iterator();
         while (iterator.hasNext())
