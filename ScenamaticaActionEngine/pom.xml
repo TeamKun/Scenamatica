@@ -6,7 +6,7 @@
     <parent>
         <groupId>net.kunmc.lab</groupId>
         <artifactId>Scenamatica</artifactId>
-        <version>0.5.0</version>
+        <version>0.5.1</version>
     </parent>
 
     <artifactId>ScenamaticaActionEngine</artifactId>
@@ -21,19 +21,19 @@
         <dependency>
             <groupId>net.kunmc.lab</groupId>
             <artifactId>ScenamaticaModels</artifactId>
-            <version>0.5.0</version>
+            <version>0.5.1</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>net.kunmc.lab</groupId>
             <artifactId>ScenamaticaCommons</artifactId>
-            <version>0.5.0</version>
+            <version>0.5.1</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>net.kunmc.lab</groupId>
             <artifactId>ScenamaticaScenarioFile</artifactId>
-            <version>0.5.0</version>
+            <version>0.5.1</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
