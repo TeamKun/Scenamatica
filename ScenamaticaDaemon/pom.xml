@@ -6,7 +6,7 @@
     <parent>
         <groupId>net.kunmc.lab</groupId>
         <artifactId>Scenamatica</artifactId>
-        <version>0.5.3</version>
+        <version>0.5.4</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -62,43 +62,43 @@
         <dependency>
             <groupId>net.kunmc.lab</groupId>
             <artifactId>ScenamaticaCommons</artifactId>
-            <version>0.5.3</version>
+            <version>0.5.4</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>net.kunmc.lab</groupId>
             <artifactId>ScenamaticaModels</artifactId>
-            <version>0.5.3</version>
+            <version>0.5.4</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>net.kunmc.lab</groupId>
             <artifactId>ScenamaticaContextEngine</artifactId>
-            <version>0.5.3</version>
+            <version>0.5.4</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>net.kunmc.lab</groupId>
             <artifactId>ScenamaticaScenarioFile</artifactId>
-            <version>0.5.3</version>
+            <version>0.5.4</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>net.kunmc.lab</groupId>
             <artifactId>ScenamaticaActionEngine</artifactId>
-            <version>0.5.3</version>
+            <version>0.5.4</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>net.kunmc.lab</groupId>
             <artifactId>ScenamaticaTriggerEngine</artifactId>
-            <version>0.5.3</version>
+            <version>0.5.4</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>net.kunmc.lab</groupId>
             <artifactId>ScenamaticaScenarioEngine</artifactId>
-            <version>0.5.3</version>
+            <version>0.5.4</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>
