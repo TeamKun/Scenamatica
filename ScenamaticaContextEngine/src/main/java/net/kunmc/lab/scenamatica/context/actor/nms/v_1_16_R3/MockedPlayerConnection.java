@@ -160,6 +160,16 @@ class MockedPlayerConnection extends PlayerConnection
             );
     }
 
+    @Override
+    public void disconnect(String s)
+    {
+        assert this.player instanceof MockedPlayer;
+        MockedPlayer player = (MockedPlayer) this.player;
+        player.getManager().onDestroyActor(player);
+
+        super.disconnect(s);
+    }
+
     public void shutdown()
     {
         this.running = false;
