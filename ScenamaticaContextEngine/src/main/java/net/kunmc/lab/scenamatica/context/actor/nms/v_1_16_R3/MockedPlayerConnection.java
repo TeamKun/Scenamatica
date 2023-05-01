@@ -42,12 +42,9 @@ class MockedPlayerConnection extends PlayerConnection
         }
     }
 
-    private boolean running;
-
     public MockedPlayerConnection(MinecraftServer minecraftserver, NetworkManager networkmanager, EntityPlayer entityplayer)
     {
         super(minecraftserver, networkmanager, entityplayer);
-        this.running = true;
     }
 
     @Override
@@ -73,10 +70,6 @@ class MockedPlayerConnection extends PlayerConnection
     @Override
     public void sendPacket(Packet<?> packet)
     {
-        if (!this.running)
-            return;
-
-
         if (packet instanceof PacketPlayOutKeepAlive)
             this.handleKeepAlive((PacketPlayOutKeepAlive) packet);
         else if (packet instanceof PacketPlayOutChat)
@@ -168,10 +161,5 @@ class MockedPlayerConnection extends PlayerConnection
         player.getManager().onDestroyActor(player);
 
         super.disconnect(s);
-    }
-
-    public void shutdown()
-    {
-        this.running = false;
     }
 }

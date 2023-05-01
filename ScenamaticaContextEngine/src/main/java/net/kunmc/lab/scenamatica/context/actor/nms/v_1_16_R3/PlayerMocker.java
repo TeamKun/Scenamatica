@@ -282,7 +282,6 @@ public class PlayerMocker extends PlayerMockerBase
                 player.removeAttachment(permissionAttachmentInfo.getAttachment());
         });
 
-        ((MockedPlayerConnection) mockedPlayer.playerConnection).shutdown();
         mockedPlayer.playerConnection.disconnect("Unmocked");
     }
 
