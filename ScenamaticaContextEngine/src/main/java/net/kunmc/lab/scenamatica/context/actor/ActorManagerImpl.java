@@ -1,6 +1,8 @@
 package net.kunmc.lab.scenamatica.context.actor;
 
 import lombok.Getter;
+import lombok.SneakyThrows;
+import net.kunmc.lab.scenamatica.commons.utils.ThreadingUtil;
 import net.kunmc.lab.scenamatica.exceptions.context.ContextPreparationException;
 import net.kunmc.lab.scenamatica.exceptions.context.actor.ActorAlreadyExistsException;
 import net.kunmc.lab.scenamatica.exceptions.context.actor.VersionNotSupportedException;
@@ -11,6 +13,7 @@ import net.kunmc.lab.scenamatica.interfaces.context.ActorManager;
 import net.kunmc.lab.scenamatica.interfaces.context.ContextManager;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.context.PlayerBean;
 import net.kunmc.lab.scenamatica.settings.ActorSettings;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -20,7 +23,9 @@ import org.kunlab.kpm.utils.ReflectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class ActorManagerImpl implements ActorManager, Listener
 {
@@ -31,6 +36,8 @@ public class ActorManagerImpl implements ActorManager, Listener
     private final PlayerMockerBase actorGenerator;
     private final ActorSettings settings;
 
+    private final ConcurrentHashMap<UUID, Object> waitingForLogin;
+
     public ActorManagerImpl(ScenamaticaRegistry registry, ContextManager contextManager) throws VersionNotSupportedException
     {
         this.registry = registry;
@@ -40,6 +47,7 @@ public class ActorManagerImpl implements ActorManager, Listener
         this.actorGenerator = getMocker(registry, this);
 
         this.init();
+        this.waitingForLogin = new ConcurrentHashMap<>();
     }
 
     private void init()
@@ -62,6 +70,7 @@ public class ActorManagerImpl implements ActorManager, Listener
     }
 
     @Override
+    @SneakyThrows(InterruptedException.class)
     public Actor createActor(PlayerBean bean) throws ContextPreparationException
     {
         if (this.actors.stream().anyMatch(p -> p.getName().equalsIgnoreCase(bean.getName())))
@@ -71,8 +80,20 @@ public class ActorManagerImpl implements ActorManager, Listener
         else if (this.actors.size() + 1 > this.settings.getMaxActors())
             throw new ContextPreparationException("Too many actors on this server (max: " + this.settings.getMaxActors() + ")");
 
-        Actor actor = this.actorGenerator.mock(this.contextManager.getStageManager().getStage(), bean);
+        Actor actor;
+        if (Bukkit.getServer().isPrimaryThread())
+            actor = this.actorGenerator.mock(this.contextManager.getStageManager().getStage(), bean);
+        else
+            actor = ThreadingUtil.waitFor(this.registry, () -> this.actorGenerator.mock(this.contextManager.getStageManager().getStage(), bean));
+
         this.actors.add(actor);
+
+        this.waitingForLogin.put(actor.getUUID(), actor);
+        synchronized (actor)
+        {
+            actor.wait();
+        }
+
         return actor;
     }
 
@@ -115,7 +136,17 @@ public class ActorManagerImpl implements ActorManager, Listener
     public void onActorJoin(PlayerJoinEvent e)
     {
         if (this.isActor(e.getPlayer()))
+        {
             this.actorGenerator.postActorLogin(e.getPlayer());
+            Object actor = this.waitingForLogin.remove(e.getPlayer().getUniqueId());
+            if (Objects.nonNull(actor))
+            {
+                synchronized (actor)
+                {
+                    actor.notify();
+                }
+            }
+        }
     }
 
 }

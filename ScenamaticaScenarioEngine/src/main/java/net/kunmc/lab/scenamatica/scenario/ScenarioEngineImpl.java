@@ -1,7 +1,6 @@
 package net.kunmc.lab.scenamatica.scenario;
 
 import lombok.Getter;
-import lombok.SneakyThrows;
 import net.kunmc.lab.peyangpaperutils.lang.LangProvider;
 import net.kunmc.lab.peyangpaperutils.lang.MsgArgs;
 import net.kunmc.lab.scenamatica.commons.utils.LogUtils;
@@ -107,7 +106,6 @@ public class ScenarioEngineImpl implements ScenarioEngine
 
     @Override
     @NotNull
-    @SneakyThrows(InterruptedException.class)
     public TestResult start(@NotNull TriggerBean trigger) throws TriggerNotFoundException
     {
         this.setRunInfo(trigger);
@@ -129,7 +127,6 @@ public class ScenarioEngineImpl implements ScenarioEngine
                 MsgArgs.of("scenarioName", this.scenario.getName())
         ));
         this.state = TestState.STARTING;
-        Thread.sleep(150); // アクションとの排他制御のためにちょっと待つ。ロードしてる風でごめんね ><
 
         TestResult result = this.startScenarioRun(compiledTrigger);
         this.state = TestState.FINISHED;

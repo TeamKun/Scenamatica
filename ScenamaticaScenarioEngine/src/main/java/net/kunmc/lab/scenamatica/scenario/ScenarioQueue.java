@@ -43,11 +43,13 @@ import java.util.stream.Collectors;
     /* non-public */ void add(ScenarioEngine engine, TriggerBean trigger, Consumer<TestResult> callback)
     {
         this.scenarioRunQueue.add(new QueueEntry(engine, trigger, callback));
+        this.runner.resume();
     }
 
     /* non-public */ void addInterrupt(ScenarioEngine engine, TriggerBean trigger, Consumer<TestResult> callback)
     {
         this.scenarioRunQueue.addFirst(new QueueEntry(engine, trigger, callback));
+        this.runner.resume();
     }
 
     /* non-public */ void remove(Plugin plugin, String name)
@@ -111,6 +113,19 @@ import java.util.stream.Collectors;
     {
         @Getter
         private boolean running;
+        private final Object lock = new Object();
+        private boolean paused;
+
+        public void resume()
+        {
+            synchronized (this.lock)
+            {
+                if (this.paused)
+                    this.lock.notify();
+
+                this.paused = false;
+            }
+        }
 
         @Override
         public void run()
@@ -134,12 +149,15 @@ import java.util.stream.Collectors;
         @SneakyThrows(TriggerNotFoundException.class)
         private boolean runOne()
         {
-
             if (ScenarioQueue.this.scenarioRunQueue.isEmpty() || ScenarioQueue.this.manager.isRunning())
                 try
                 {
-                    Thread.sleep(500);
-                    return true;
+                    synchronized (this.lock)
+                    {
+                        this.paused = true;
+                        this.lock.wait();
+                        return true;
+                    }
                 }
                 catch (InterruptedException ignored)
                 {

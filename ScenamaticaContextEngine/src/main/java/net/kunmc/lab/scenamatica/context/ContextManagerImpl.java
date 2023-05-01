@@ -7,7 +7,6 @@ import net.kunmc.lab.peyangpaperutils.lang.MsgArgs;
 import net.kunmc.lab.scenamatica.commons.utils.LogUtils;
 import net.kunmc.lab.scenamatica.commons.utils.ThreadingUtil;
 import net.kunmc.lab.scenamatica.context.actor.ActorManagerImpl;
-import net.kunmc.lab.scenamatica.exceptions.context.ContextPreparationException;
 import net.kunmc.lab.scenamatica.exceptions.context.actor.VersionNotSupportedException;
 import net.kunmc.lab.scenamatica.exceptions.context.stage.StageCreateFailedException;
 import net.kunmc.lab.scenamatica.exceptions.context.stage.StageNotCreatedException;
@@ -109,18 +108,9 @@ public class ContextManagerImpl implements ContextManager
             this.log(scenario, "context.actor.generating", testID);
             try
             {
-                this.isActorPrepared = ThreadingUtil.waitFor(this.registry, () -> {
-                    try
-                    {
-                        for (PlayerBean actor : context.getActors())
-                            actors.add(this.actorManager.createActor(actor));
-                        return true;
-                    }
-                    catch (ContextPreparationException e)
-                    {
-                        throw new IllegalStateException(e);
-                    }
-                });
+                for (PlayerBean actor : context.getActors())
+                    actors.add(this.actorManager.createActor(actor));
+                this.isActorPrepared = true;
             }
             catch (Exception e)
             {
