@@ -112,11 +112,12 @@ public class ContextManagerImpl implements ContextManager
                 this.isActorPrepared = ThreadingUtil.waitFor(this.registry.getPlugin(), () -> {
                     try
                     {
+                        Thread.sleep(300); // アクションとの排他制御のためにちょっと待つ。
                         for (PlayerBean actor : context.getActors())
                             actors.add(this.actorManager.createActor(actor));
                         return true;
                     }
-                    catch (ContextPreparationException e)
+                    catch (ContextPreparationException | InterruptedException e)
                     {
                         throw new IllegalStateException(e);
                     }
