@@ -164,9 +164,11 @@ public class ContextManagerImpl implements ContextManager
             this.stageManager.destroyStage();  // StageNotCreatedException はチェック済み。
 
         if (this.isActorPrepared)
-            for (Actor actor : this.actorManager.getActors())
+        {
+            List<Actor> actors = new ArrayList<>(this.actorManager.getActors());  // ConcurrentModificationException 対策
+            for (Actor actor : actors)
                 this.actorManager.destroyActor(actor);
-
+        }
     }
 
     @SneakyThrows(StageNotCreatedException.class)
