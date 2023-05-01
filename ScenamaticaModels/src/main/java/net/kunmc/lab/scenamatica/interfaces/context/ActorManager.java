@@ -16,6 +16,7 @@ public interface ActorManager
 {
     /**
      * 役者を生成します。
+     * このメソッドは非同期で実行する必要があります。
      *
      * @param bean プレイヤー情報
      * @return 生成した役者

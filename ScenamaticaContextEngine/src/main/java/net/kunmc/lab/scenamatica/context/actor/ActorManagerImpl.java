@@ -73,23 +73,25 @@ public class ActorManagerImpl implements ActorManager, Listener
     @SneakyThrows(InterruptedException.class)
     public Actor createActor(PlayerBean bean) throws ContextPreparationException
     {
-        if (this.actors.stream().anyMatch(p -> p.getName().equalsIgnoreCase(bean.getName())))
+        if (Bukkit.getServer().isPrimaryThread())
+            throw new ContextPreparationException("This method must be called from another thread.");
+        else if (this.actors.stream().anyMatch(p -> p.getName().equalsIgnoreCase(bean.getName())))
             throw new ActorAlreadyExistsException(bean.getName());
         else if (!this.contextManager.getStageManager().isStageCreated())
             throw new StageNotCreatedException();
         else if (this.actors.size() + 1 > this.settings.getMaxActors())
             throw new ContextPreparationException("Too many actors on this server (max: " + this.settings.getMaxActors() + ")");
 
-        Actor actor;
-        if (Bukkit.getServer().isPrimaryThread())
-            actor = this.actorGenerator.mock(this.contextManager.getStageManager().getStage(), bean);
-        else
-            actor = ThreadingUtil.waitFor(this.registry, () -> this.actorGenerator.mock(this.contextManager.getStageManager().getStage(), bean));
+        Actor actor = ThreadingUtil.waitFor(this.registry, () -> this.actorGenerator.mock(this.contextManager.getStageManager().getStage(), bean));
 
         this.actors.add(actor);
 
-        this.waitingForLogin.put(actor.getUUID(), actor);
-        synchronized (actor)
+        // ログイン処理は, Bukkit がメインスレッドで行う必要があるため, ここでは帰ってこない。
+        // イベントをリッスンして, ログインしたら待機しているスレッドを起こす必要がある。
+        Object locker = new Object();
+        this.waitingForLogin.put(actor.getUUID(), locker);
+        //noinspection SynchronizationOnLocalVariableOrMethodParameter
+        synchronized (locker)
         {
             actor.wait();
         }
@@ -135,18 +137,20 @@ public class ActorManagerImpl implements ActorManager, Listener
     @EventHandler
     public void onActorJoin(PlayerJoinEvent e)
     {
-        if (this.isActor(e.getPlayer()))
+        if (!this.isActor(e.getPlayer()))
+            return;
+
+        this.actorGenerator.postActorLogin(e.getPlayer());
+        Object locker = this.waitingForLogin.remove(e.getPlayer().getUniqueId());
+
+        if (!Objects.nonNull(locker))
+            return;
+        //noinspection SynchronizationOnLocalVariableOrMethodParameter
+        synchronized (locker)
         {
-            this.actorGenerator.postActorLogin(e.getPlayer());
-            Object actor = this.waitingForLogin.remove(e.getPlayer().getUniqueId());
-            if (Objects.nonNull(actor))
-            {
-                synchronized (actor)
-                {
-                    actor.notify();
-                }
-            }
+            locker.notify();
         }
+
     }
 
 }
