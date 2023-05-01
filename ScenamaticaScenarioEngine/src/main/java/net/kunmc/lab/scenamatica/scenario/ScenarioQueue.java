@@ -2,6 +2,7 @@ package net.kunmc.lab.scenamatica.scenario;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.SneakyThrows;
 import lombok.Value;
 import net.kunmc.lab.scenamatica.exceptions.scenario.TriggerNotFoundException;
 import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
@@ -116,13 +117,21 @@ import java.util.stream.Collectors;
         {
             this.running = true;
 
-            while (ScenarioQueue.this.manager.isEnabled() && this.running)
-                if (!this.runOne())
-                    return;
+            try
+            {
+                while (ScenarioQueue.this.manager.isEnabled() && this.running)
+                    if (!this.runOne())
+                        return;
+            }
+            catch (Exception e)
+            {
+                ScenarioQueue.this.registry.getExceptionHandler().report(e);
+            }
 
             this.running = false;
         }
 
+        @SneakyThrows(TriggerNotFoundException.class)
         private boolean runOne()
         {
 
@@ -140,18 +149,13 @@ import java.util.stream.Collectors;
                 ScenarioQueue.this.startSession();
 
             QueueEntry entry = ScenarioQueue.this.scenarioRunQueue.pop();
-            try
-            {
-                TestResult result = ScenarioQueue.this.manager.runScenario(entry.getEngine(), entry.getTrigger());
-                ScenarioQueue.this.sessionResults.add(result);
 
-                if (entry.getCallback() != null)
-                    entry.getCallback().accept(result);
-            }
-            catch (TriggerNotFoundException e)  // マトモな使い方したら発生しないはず。
-            {
-                ScenarioQueue.this.registry.getExceptionHandler().report(e);
-            }
+            TestResult result = ScenarioQueue.this.manager.runScenario(entry.getEngine(), entry.getTrigger());
+            ScenarioQueue.this.sessionResults.add(result);
+
+            if (entry.getCallback() != null)
+                entry.getCallback().accept(result);
+
 
             if (ScenarioQueue.this.scenarioRunQueue.isEmpty())
                 ScenarioQueue.this.endSession();

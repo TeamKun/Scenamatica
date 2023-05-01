@@ -36,9 +36,11 @@ public final class Scenamatica extends JavaPlugin
         this.getConfig();
         PeyangPaperUtils.init(this);
 
+        boolean isRaw = this.getConfig().getBoolean("interfaces.raw", false);
+
         this.registry = new ScenamaticaDaemon(Environment.builder(this)
-                .exceptionHandler(new SimpleExceptionHandler(this.getLogger()))
-                .testReporter(this.getTestReporter())
+                .exceptionHandler(new SimpleExceptionHandler(this.getLogger(), isRaw))
+                .testReporter(this.getTestReporter(isRaw))
                 .actorSettings(ActorSettingsImpl.fromConfig(this.getConfig()))
                 .build()
         );
@@ -56,9 +58,8 @@ public final class Scenamatica extends JavaPlugin
         this.initTestRecipient();
     }
 
-    private TestReporter getTestReporter()
+    private TestReporter getTestReporter(boolean isRaw)
     {
-        boolean isRaw = this.getConfig().getBoolean("interfaces.raw", false);
         if (isRaw)
             return new RawTestReporter();
         else
