@@ -93,7 +93,7 @@ public class ActorManagerImpl implements ActorManager, Listener
         //noinspection SynchronizationOnLocalVariableOrMethodParameter
         synchronized (locker)
         {
-            actor.wait();
+            locker.wait();
         }
 
         return actor;
