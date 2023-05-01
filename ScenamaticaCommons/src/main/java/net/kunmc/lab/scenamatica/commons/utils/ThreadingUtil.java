@@ -3,7 +3,7 @@ package net.kunmc.lab.scenamatica.commons.utils;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import net.kunmc.lab.peyangpaperutils.lib.utils.Runner;
-import org.bukkit.plugin.Plugin;
+import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
 
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
@@ -14,27 +14,49 @@ import java.util.function.Supplier;
 public class ThreadingUtil
 {
     @SneakyThrows({BrokenBarrierException.class, InterruptedException.class})
-    public static void waitFor(Plugin plugin, Runnable runnable)
+    public static void waitFor(ScenamaticaRegistry registry, Runnable runnable)
     {
         CyclicBarrier barrier = new CyclicBarrier(2);
-        Runner.run(plugin, () ->
+        Runner.run(registry.getPlugin(), () ->
         {
-            runnable.run();
-            barrier.await();
+            try
+            {
+                runnable.run();
+                barrier.await();
+            }
+            catch (InterruptedException | BrokenBarrierException e)
+            {
+                throw e;  // リスロー
+            }
+            catch (Exception e)
+            {
+                registry.getExceptionHandler().report(e);
+            }
         });
 
         barrier.await();
     }
 
     @SneakyThrows({BrokenBarrierException.class, InterruptedException.class})
-    public <T> T waitFor(Plugin plugin, Supplier<T> supplier)
+    public <T> T waitFor(ScenamaticaRegistry registry, Supplier<T> supplier)
     {
         CyclicBarrier barrier = new CyclicBarrier(2);
         AtomicReference<T> result = new AtomicReference<>();
-        Runner.run(plugin, () ->
+        Runner.run(registry.getPlugin(), () ->
         {
-            result.set(supplier.get());
-            barrier.await();
+            try
+            {
+                result.set(supplier.get());
+                barrier.await();
+            }
+            catch (InterruptedException | BrokenBarrierException e)
+            {
+                throw e;  // リスロー
+            }
+            catch (Exception e)
+            {
+                registry.getExceptionHandler().report(e);
+            }
         });
 
         barrier.await();

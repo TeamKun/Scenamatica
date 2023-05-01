@@ -120,7 +120,7 @@ public class ScenarioEngineImpl implements ScenarioEngine
         if (context == null)
         {
             // あとかたづけ
-            ThreadingUtil.waitFor(this.registry.getPlugin(), this::cleanUp);
+            ThreadingUtil.waitFor(this.registry, this::cleanUp);
             this.genResult(TestResultCause.CONTEXT_PREPARATION_FAILED);
         }
 
@@ -151,7 +151,7 @@ public class ScenarioEngineImpl implements ScenarioEngine
         if (mayResult != null)
         {
             // あとかたづけ
-            ThreadingUtil.waitFor(this.registry.getPlugin(), this::cleanUp);
+            ThreadingUtil.waitFor(this.registry, this::cleanUp);
             return mayResult;
         }
 
@@ -165,7 +165,7 @@ public class ScenarioEngineImpl implements ScenarioEngine
         if (mayResult != null)
         {
             // あとかたづけ
-            ThreadingUtil.waitFor(this.registry.getPlugin(), this::cleanUp);
+            ThreadingUtil.waitFor(this.registry, this::cleanUp);
             return mayResult;
         }
 
@@ -173,12 +173,12 @@ public class ScenarioEngineImpl implements ScenarioEngine
         if (mayResult != null)
         {
             // あとかたづけ
-            ThreadingUtil.waitFor(this.registry.getPlugin(), this::cleanUp);
+            ThreadingUtil.waitFor(this.registry, this::cleanUp);
             return mayResult;
         }
 
         // あとかたづけ
-        ThreadingUtil.waitFor(this.registry.getPlugin(), this::cleanUp);
+        ThreadingUtil.waitFor(this.registry, this::cleanUp);
 
         return this.genResult(TestResultCause.PASSED);
     }
@@ -194,7 +194,7 @@ public class ScenarioEngineImpl implements ScenarioEngine
                 this.testReporter.onTestSkipped(this, runIf);
 
                 // あとかたづけ
-                ThreadingUtil.waitFor(this.registry.getPlugin(), this::cleanUp);
+                ThreadingUtil.waitFor(this.registry, this::cleanUp);
                 return this.genResult(TestResultCause.SKIPPED); // 実質的にはエラーではないので、スキップする。
             }
         }

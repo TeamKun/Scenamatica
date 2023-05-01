@@ -86,7 +86,7 @@ public class ContextManagerImpl implements ContextManager
                 );
             }
 
-            stage = ThreadingUtil.waitFor(this.registry.getPlugin(), () ->
+            stage = ThreadingUtil.waitFor(this.registry, () ->
             {
                 try
                 {
@@ -109,7 +109,7 @@ public class ContextManagerImpl implements ContextManager
             this.log(scenario, "context.actor.generating", testID);
             try
             {
-                this.isActorPrepared = ThreadingUtil.waitFor(this.registry.getPlugin(), () -> {
+                this.isActorPrepared = ThreadingUtil.waitFor(this.registry, () -> {
                     try
                     {
                         for (PlayerBean actor : context.getActors())
