@@ -207,6 +207,13 @@ const config = {
             hideable: true,
           },
         },
+        algolia: {
+          appId: "QWWI0CDV6V",
+          apiKey: "cc1542c44da9a2e9d96d7d681ea7ee04",
+          indexName: "scenamatica-kunlab",
+          contextualSearch: true,
+          searchPagePath: "search",
+        }
       }),
 };
 
