@@ -56,6 +56,7 @@ public class ScenarioEngineImpl implements ScenarioEngine
     private final CompiledScenarioAction<?> runIf;
 
     private boolean isRunning;
+    private long elapsedTicks;
     private TriggerBean ranBy;
     private UUID testID;
     private long startedAt;
@@ -294,7 +295,10 @@ public class ScenarioEngineImpl implements ScenarioEngine
         for (int i = 0; i < scenario.size(); i++)
         {
             if (!this.isRunning)
-                return this.genResult(TestResultCause.CANCELLED);
+                if (this.isTimedOut())
+                    return this.genResult(TestResultCause.RUN_TIMED_OUT);
+                else
+                    return this.genResult(TestResultCause.CANCELLED);
 
             CompiledScenarioAction<?> scenarioBean = scenario.get(i);
             CompiledScenarioAction<?> next = i + 1 < scenario.size() ? scenario.get(i + 1): null;
@@ -411,9 +415,32 @@ public class ScenarioEngineImpl implements ScenarioEngine
         this.manager.getMilestoneManager().revokeAllMilestones(this, MilestoneScope.fromState(state));
     }
 
+    @Override
+    public void onTick()
+    {
+        this.elapsedTicks++;
+
+        this.getDeliverer().onTick();
+
+        if (!this.isTimedOut())
+            return;
+
+        // タイムアウト処理。
+        if (this.deliverer.isWaiting())
+            this.deliverer.setResult(this.genResult(TestResultCause.RUN_TIMED_OUT));
+        else
+            this.cancel();  // RUN_TIMED_OUT の指定は上流の runScenario で行われる。
+    }
+
+    private boolean isTimedOut()
+    {
+        return this.scenario.getTimeout() != -1 && this.elapsedTicks >= this.scenario.getTimeout();
+    }
+
     private void setRunInfo(TriggerBean trigger)
     {
         this.ranBy = trigger;
+        this.elapsedTicks = 0;
         this.testID = UUID.randomUUID();
         this.startedAt = System.currentTimeMillis();
         this.logPrefix = LogUtils.gerScenarioPrefix(null, this.scenario);

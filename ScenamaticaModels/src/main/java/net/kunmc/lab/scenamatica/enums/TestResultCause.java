@@ -10,6 +10,7 @@ public enum TestResultCause
     SCENARIO_TIMED_OUT,
     ILLEGAL_CONDITION,
 
+    RUN_TIMED_OUT,
     INTERNAL_ERROR,
     CANCELLED,
     SKIPPED;

@@ -68,6 +68,11 @@ public interface ScenarioEngine
     boolean isRunning();
 
     /**
+     * サーバのチックごとに呼び出されます。
+     */
+    void onTick();
+
+    /**
      * シナリオを実行したトリガを取得します。
      *
      * @return トリガ

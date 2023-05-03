@@ -28,6 +28,13 @@ public interface ScenarioResultDeliverer
     TestResult waitResult(long timeout, @NotNull TestState state);
 
     /**
+     * テスト結果を待っているかどうかを取得します。
+     *
+     * @return テスト結果を待っているかどうか
+     */
+    boolean isWaiting();
+
+    /**
      * サーバのチックが経過したときに呼び出されます。
      */
     void onTick();

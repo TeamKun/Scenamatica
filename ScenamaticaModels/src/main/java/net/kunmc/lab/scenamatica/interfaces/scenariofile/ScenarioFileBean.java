@@ -38,6 +38,13 @@ public interface ScenarioFileBean extends Serializable
     String getDescription();
 
     /**
+     * シナリオ全体のタイムアウトの時間を**チック**で定義します。
+     *
+     * @return タイムアウトの時間
+     */
+    long getTimeout();
+
+    /**
      * このシナリオの実行条件を取得します。
      *
      * @return 実行条件

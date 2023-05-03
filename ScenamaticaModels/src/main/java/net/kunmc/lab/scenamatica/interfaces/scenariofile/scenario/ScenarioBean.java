@@ -11,7 +11,6 @@ import java.io.Serializable;
  */
 public interface ScenarioBean extends Serializable
 {
-    String KEY_TIMEOUT = "timeout";
 
     /**
      * このシナリオのタイプを取得します。

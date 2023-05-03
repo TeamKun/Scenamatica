@@ -23,9 +23,12 @@ import java.util.stream.Collectors;
 @Value
 public class ScenarioFileBeanImpl implements ScenarioFileBean
 {
+    private static final long DEFAULT_TIMEOUT_TICK = 20L * 60L * 5L;
+
     private static final String KEY_SCENAMATICA_VERSION = "scenamatica";
     private static final String KEY_NAME = "name";
     private static final String KEY_DESCRIPTION = "description";
+    private static final String KEY_TIMEOUT = "timeout";
     private static final String KEY_TRIGGERS = "on";
     private static final String KEY_RUN_IF = "runif";
     private static final String KEY_CONTEXT = "context";
@@ -37,6 +40,7 @@ public class ScenarioFileBeanImpl implements ScenarioFileBean
     String name;
     @NotNull
     String description;
+    long timeout;
     @NotNull
     List<TriggerBean> triggers;
     @Nullable
@@ -54,6 +58,10 @@ public class ScenarioFileBeanImpl implements ScenarioFileBean
         map.put(KEY_SCENAMATICA_VERSION, bean.getScenamaticaVersion().toString());
         map.put(KEY_NAME, bean.getName());
         map.put(KEY_DESCRIPTION, bean.getDescription());
+
+        if (bean.getTimeout() != -1)
+            map.put(KEY_TIMEOUT, bean.getTimeout());
+
         map.put(KEY_TRIGGERS, bean.getTriggers().stream()
                 .map(TriggerBeanImpl::serialize)
                 .collect(Collectors.toList())
@@ -79,6 +87,7 @@ public class ScenarioFileBeanImpl implements ScenarioFileBean
 
         MapUtils.checkType(map, KEY_NAME, String.class);
         MapUtils.checkType(map, KEY_DESCRIPTION, String.class);
+        MapUtils.checkNumberIfContains(map, KEY_TIMEOUT);
 
         if (map.containsKey(KEY_CONTEXT))
             ContextBeanImpl.validate(MapUtils.checkAndCastMap(
@@ -110,6 +119,8 @@ public class ScenarioFileBeanImpl implements ScenarioFileBean
         Version scenamatica = Version.of((String) map.get(KEY_SCENAMATICA_VERSION));
         String name = (String) map.get(KEY_NAME);
         String description = (String) map.get(KEY_DESCRIPTION);
+        long timeout = MapUtils.getAsLongOrDefault(map, KEY_TIMEOUT, DEFAULT_TIMEOUT_TICK);
+
         List<TriggerBean> triggers = ((List<?>) map.get(KEY_TRIGGERS)).stream()
                 .map(o -> TriggerBeanImpl.deserialize(MapUtils.checkAndCastMap(
                         o,
@@ -145,6 +156,7 @@ public class ScenarioFileBeanImpl implements ScenarioFileBean
                 scenamatica,
                 name,
                 description,
+                timeout,
                 triggers,
                 runIf,
                 context,

@@ -59,9 +59,9 @@
         },
         "timeout": {
           "type": "integer",
-          "description": "シナリオのタイムアウト時間を**チック**で指定します。動作の実行に時間がかかったり, いつまで経ってもアクションが起こされなかったときに, テストを失敗にして切り上げます。 0以下の値を指定すると, タイムアウトは無効になります。",
+          "description": "シナリオのタイムアウト時間を**チック**で指定します。-1 で無効化します。",
           "minimum": -1,
-          "default": -1
+          "default": 100
         },
         "runif": {
           "type": "object",
@@ -1572,6 +1572,12 @@
       "examples": [
         "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
       ]
+    },
+    "timeout": {
+      "type": "integer",
+      "description": "全体のタイムアウト時間を**チック**で指定します。-1 で無効化します。",
+      "minimum": -1,
+      "default": 6000
     },
     "on": {
       "type": "array",

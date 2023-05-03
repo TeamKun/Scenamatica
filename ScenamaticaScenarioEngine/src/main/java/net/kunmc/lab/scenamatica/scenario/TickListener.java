@@ -26,7 +26,7 @@ import org.bukkit.event.Listener;
         {
             ScenarioEngine currentEngine = this.manager.getCurrentScenario();
             assert currentEngine != null;
-            currentEngine.getDeliverer().onTick();
+            currentEngine.onTick();
         }
     }
 }

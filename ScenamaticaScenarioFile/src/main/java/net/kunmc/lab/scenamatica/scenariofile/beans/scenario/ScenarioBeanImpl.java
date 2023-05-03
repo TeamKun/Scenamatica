@@ -14,8 +14,11 @@ import java.util.Map;
 @Value
 public class ScenarioBeanImpl implements ScenarioBean
 {
+    private static final long DEFAULT_TIMEOUT_TICK = 20L * 5L;
+
     private static final String KEY_SCENARIO_TYPE = "type";
     private static final String KEY_RUN_IF = "runif";
+    private static final String KEY_TIMEOUT = "timeout";
 
     @NotNull
     ScenarioType type;
@@ -74,7 +77,7 @@ public class ScenarioBeanImpl implements ScenarioBean
         validate(map);
 
         ScenarioType type = ScenarioType.fromKey((String) map.get(KEY_SCENARIO_TYPE));
-        long timeout = MapUtils.getAsLongOrDefault(map, KEY_TIMEOUT, -1L);
+        long timeout = MapUtils.getAsLongOrDefault(map, KEY_TIMEOUT, DEFAULT_TIMEOUT_TICK);
 
         ActionBean runIf = null;
         if (map.containsKey(KEY_RUN_IF))

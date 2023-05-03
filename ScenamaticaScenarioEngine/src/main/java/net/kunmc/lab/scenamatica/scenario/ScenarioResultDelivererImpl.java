@@ -1,5 +1,6 @@
 package net.kunmc.lab.scenamatica.scenario;
 
+import lombok.Getter;
 import net.kunmc.lab.scenamatica.enums.TestResultCause;
 import net.kunmc.lab.scenamatica.enums.TestState;
 import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
@@ -28,6 +29,7 @@ public class ScenarioResultDelivererImpl implements ScenarioResultDeliverer
     private boolean killed;  // シャットダウンされたら true
 
     private TestState state;  // wait されたら入る。終わったら消す
+    @Getter
     private boolean waiting;  // wait されているかどうか。タイムアウト制御用。
     private long waitTimeout;
     private long elapsedTick;
