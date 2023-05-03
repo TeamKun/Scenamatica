@@ -1,0 +1,63 @@
+name: Labeler
+
+on:
+  issues:
+    types: [opened, labeled, closed]
+  pull_request:
+    types: [opened, labeled, closed]
+
+jobs:
+  change-status-label:
+    name: Change status of issue or pull request on its status change
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Add denied label when closed if it has pending label"
+        if: "contains(github.event.issue.labels.*.name, 'Status: Pending') && github.event.action == 'closed'"
+        uses: andymckay/labeler@master
+        with:
+          add-labels: "Status: Denied"
+          remove-labels: "Status: Pending"
+      - name: "Add resolved label when closed if it has accepted label"
+        if: "contains(github.event.issue.labels.*.name, 'Status: Accepted') && github.event.action == 'closed'"
+        uses: andymckay/labeler@master
+        with:
+          add-labels: "Status: Resolved"
+          remove-labels: "Status: Accepted"
+      - name: "Add default label when opened if it has no pending label"
+        if: "github.event.action == 'opened' && !contains(github.event.issue.labels.*.name, 'Status: Pending')"
+        uses: andymckay/labeler@master
+        with:
+          add-labels: "Status: Pending"
+  change-label-by-triage:
+    name: Change label by triage with label
+    runs-on: ubuntu-latest
+    if: "github.event.action == 'labeled'"
+    steps:
+      - name: "Remove pending and denied label when triaged"
+        if: "contains(github.event.issue.labels.*.name, 'Status: Pending') && github.event.label.name == 'Status: Accepted'"
+        uses: andymckay/labeler@master
+        with:
+          remove-labels: "Status: Pending, Status: Denied"
+      - name: "Change labels when Duplicated"
+        if: "github.event.label.name == 'Status: Duplicated'"
+        uses: andymckay/labeler@master
+        with:
+          add-labels: "Status: Denied"
+      - name: "Change labels when add Resolved label"
+        if: "github.event.label.name == 'Status: Resolved'"
+        uses: andymckay/labeler@master
+        with:
+          remove-labels: "Status: Accepted"
+  close-issue-by-label:
+    name: Close issue by label
+    if: "github.event.action == 'labeled' && (github.event.label.name == 'Status: Duplicated' || github.event.label.name == 'Status: Resolved')"
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ GITHUB_TOKEN }}
+    steps:
+      - name: "Close pull request"
+        if: "${{ github.event.issue.pull_request }}"
+        run: "gh pr close ${github.event.issue.number} -R ${github.repository}"
+      - name: "Close issue"
+        if: "${{ !github.event.issue.pull_request }}"
+        run: "gh issue close ${github.event.issue.number} -R ${github.repository}"
