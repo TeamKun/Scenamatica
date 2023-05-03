@@ -12,12 +12,12 @@ context:
 
 scenario:
   - type: execute
-    action: message_send
+    action: message
     with:
       content: "Hello, World!"
       recipient: Actor001
   - type: expect
-    action: message_send
+    action: message
     with:
       content: "Hello, World!"
       recipient: Actor001

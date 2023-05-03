@@ -81,7 +81,7 @@
           "type": "string",
           "description": "アクションの種類です。 ",
           "enum": [
-            "message_send",
+            "message",
             "player_advancement",
             "player_animation",
             "player_death",
@@ -111,7 +111,7 @@
           "if": {
             "properties": {
               "action": {
-                "const": "message_send",
+                "const": "message",
                 "description": "プレイヤーにメッセージを送信したり, 送信されたことを検知します。"
               }
             }
@@ -119,7 +119,7 @@
           "then": {
             "properties": {
               "with": {
-                "$ref": "#/definitions/action/definitions/chat/message_send"
+                "$ref": "#/definitions/action/definitions/scenamatica/message"
               }
             },
             "required": [
@@ -369,25 +369,6 @@
         }
       ],
       "definitions": {
-        "chat": {
-          "message_send": {
-            "properties": {
-              "content": {
-                "type": "string",
-                "description": "メッセージの内容です。",
-                "maxLength": 32768
-              },
-              "recipient": {
-                "type": "string",
-                "description": "メッセージを受け取るプレイヤーの名前または UUID です。"
-              }
-            },
-            "required": [
-              "content",
-              "recipient"
-            ]
-          }
-        },
         "player": {
           "advancement": {
             "properties": {
@@ -731,6 +712,23 @@
           }
         },
         "scenamatica": {
+          "message": {
+            "properties": {
+              "content": {
+                "type": "string",
+                "description": "メッセージの内容です。",
+                "maxLength": 32768
+              },
+              "recipient": {
+                "type": "string",
+                "description": "メッセージを受け取るプレイヤーの名前または UUID です。"
+              }
+            },
+            "required": [
+              "content",
+              "recipient"
+            ]
+          },
           "milestone": {
             "properties": {
               "name": {
