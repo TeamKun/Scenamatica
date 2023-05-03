@@ -23,6 +23,7 @@ scenario:
       target: Actor001
       advancement: minecraft:adventure/sleep_in_bed
       criterion: slept_in_bed
+    timeout: 20
   - type: require
     action: player_advancement
     with:

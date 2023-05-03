@@ -2,6 +2,7 @@ package net.kunmc.lab.scenamatica.context.actor.nms.v_1_16_R3;
 
 import com.mojang.authlib.GameProfile;
 import net.kunmc.lab.peyangpaperutils.lib.utils.Runner;
+import net.kunmc.lab.scenamatica.events.actor.ActorPostJoinEvent;
 import net.kunmc.lab.scenamatica.interfaces.context.Actor;
 import net.kunmc.lab.scenamatica.interfaces.context.ActorManager;
 import net.minecraft.server.v1_16_R3.BlockPosition;
@@ -16,6 +17,7 @@ import net.minecraft.server.v1_16_R3.PacketPlayInArmAnimation;
 import net.minecraft.server.v1_16_R3.PlayerInteractManager;
 import net.minecraft.server.v1_16_R3.Vec3D;
 import net.minecraft.server.v1_16_R3.WorldServer;
+import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_16_R3.event.CraftEventFactory;
 import org.bukkit.entity.Player;
@@ -123,6 +125,9 @@ class MockedPlayer extends EntityPlayer implements Actor
     @Override
     public void tick()
     {
+        if (this.joining)  // 以下の tick によって false になるので, 1 回のみ実行される。
+            Bukkit.getPluginManager().callEvent(new ActorPostJoinEvent(this));
+
         super.tick();
         this.processGravity();
     }

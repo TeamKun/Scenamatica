@@ -22,3 +22,4 @@ scenario:
     with:
       target: Actor001
       type: arm_swing
+    timeout: 20

@@ -27,4 +27,5 @@ scenario:
     with:
       content: "[Actor001] Hello World!"
       recipient: Actor002
+    timeout: 20
 

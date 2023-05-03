@@ -23,6 +23,7 @@ scenario:
     with:
       target: Actor001
       killer: Actor002
+    timeout: 20
   - type: require
     action: player_death
     with:

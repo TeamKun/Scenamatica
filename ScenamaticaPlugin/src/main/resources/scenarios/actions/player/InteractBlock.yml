@@ -31,3 +31,4 @@ scenario:
         y: 20
         z: 0
       action: RIGHT_CLICK_BLOCK
+    timeout: 20

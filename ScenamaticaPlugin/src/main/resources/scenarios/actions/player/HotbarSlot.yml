@@ -32,6 +32,7 @@ scenario:
       slot: 1
       item:
         type: DIAMOND_PICKAXE
+    timeout: 20
   - type: require
     action: player_hotbar
     with:

@@ -19,3 +19,4 @@ scenario:
     action: server_log
     with:
       message: "PONG"
+    timeout: 20

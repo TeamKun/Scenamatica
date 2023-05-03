@@ -21,6 +21,7 @@ scenario:
     with:
       target: Actor001
       advancement: minecraft:nether/distract_piglin
+    timeout: 20
   - type: require
     action: player_advancement
     with:

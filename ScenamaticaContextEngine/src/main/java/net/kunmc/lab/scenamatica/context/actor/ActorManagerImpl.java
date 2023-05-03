@@ -3,6 +3,7 @@ package net.kunmc.lab.scenamatica.context.actor;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import net.kunmc.lab.scenamatica.commons.utils.ThreadingUtil;
+import net.kunmc.lab.scenamatica.events.actor.ActorPostJoinEvent;
 import net.kunmc.lab.scenamatica.exceptions.context.ContextPreparationException;
 import net.kunmc.lab.scenamatica.exceptions.context.actor.ActorAlreadyExistsException;
 import net.kunmc.lab.scenamatica.exceptions.context.actor.VersionNotSupportedException;
@@ -16,8 +17,8 @@ import net.kunmc.lab.scenamatica.settings.ActorSettings;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.kpm.utils.ReflectionUtils;
 
@@ -134,14 +135,13 @@ public class ActorManagerImpl implements ActorManager, Listener
                 .orElse(null);
     }
 
-    @EventHandler
-    public void onActorJoin(PlayerJoinEvent e)
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void onActorJoin(ActorPostJoinEvent e)
     {
-        if (!this.isActor(e.getPlayer()))
-            return;
-
-        this.actorGenerator.postActorLogin(e.getPlayer());
-        Object locker = this.waitingForLogin.remove(e.getPlayer().getUniqueId());
+        Actor actor = e.getActor();
+        Player player = actor.getPlayer();
+        this.actorGenerator.postActorLogin(player);
+        Object locker = this.waitingForLogin.remove(player.getUniqueId());
 
         if (!Objects.nonNull(locker))
             return;
