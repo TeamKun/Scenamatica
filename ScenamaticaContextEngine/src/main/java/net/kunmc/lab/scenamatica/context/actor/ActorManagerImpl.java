@@ -86,7 +86,7 @@ public class ActorManagerImpl implements ActorManager, Listener
 
         this.actors.add(actor);
 
-        // ログイン処理は, Bukkit がメインスレッドで行う必要があるため, ここでは帰ってこない。
+        // ログイン処理は Bukkit がメインスレッドで行う必要があるため, ここでは帰ってこない。
         // イベントをリッスンして, ログインしたら待機しているスレッドを起こす必要がある。
         Object locker = new Object();
         this.waitingForLogin.put(actor.getUUID(), locker);
