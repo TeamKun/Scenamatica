@@ -3,6 +3,7 @@ scenamatica: ${project.version}
 name: actions_server_log
 description: Testing server_log action works or not
 on:
+  - type: on_load
   - type: manual_dispatch
   - type: on_action
     action: server_log

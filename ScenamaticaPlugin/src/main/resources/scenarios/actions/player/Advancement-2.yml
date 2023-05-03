@@ -3,6 +3,7 @@ scenamatica: ${project.version}
 name: actions_player_advancement_2
 description: Testing PlayerAdvancementAction works with criterion or not
 on:
+  - type: on_load
   - type: manual_dispatch
 
 context:

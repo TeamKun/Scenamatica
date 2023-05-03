@@ -8,7 +8,11 @@ on:
       action: milestone
       with:
         name: hogehoge  # The milestone is not reached, so this scenario will be skipped.
-
+  - type: on_load
+    runif:
+      action: milestone
+      with:
+        name: hogehoge  # The milestone is not reached, so this scenario will be skipped.
 scenario:
   - type: execute
     action: server_log

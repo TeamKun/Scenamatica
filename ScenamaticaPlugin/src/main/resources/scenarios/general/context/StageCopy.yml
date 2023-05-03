@@ -4,6 +4,7 @@ name: general_context_stage_copy
 description: Testing stage copy works or not
 on:
   - type: manual_dispatch
+  - type: on_load
 
 context:
   actors:

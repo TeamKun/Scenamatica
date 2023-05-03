@@ -3,6 +3,7 @@ scenamatica: ${project.version}
 name: actions_player_animation
 description: Testing player_animation action works or not
 on:
+  - type: on_load
   - type: manual_dispatch
 
 context:

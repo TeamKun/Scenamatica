@@ -4,6 +4,7 @@ name: general_context_stage_gen
 description: Testing stage generation works or not
 on:
   - type: manual_dispatch
+  - type: on_load
 
 context:
   stage:

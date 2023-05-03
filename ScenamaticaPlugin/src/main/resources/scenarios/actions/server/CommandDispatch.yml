@@ -3,6 +3,7 @@ scenamatica: ${project.version}
 name: actions_server_command_dispatch
 description: Testing command_dispatch action works or not
 on:
+  - type: on_load
   - type: manual_dispatch
 
 context:

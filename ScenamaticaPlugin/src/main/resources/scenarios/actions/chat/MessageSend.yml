@@ -3,6 +3,7 @@ scenamatica: ${project.version}
 name: actions_chat_message_send
 description: Testing message_send action works or not
 on:
+  - type: on_load
   - type: manual_dispatch
 
 context:

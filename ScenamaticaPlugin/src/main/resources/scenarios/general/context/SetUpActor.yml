@@ -4,6 +4,7 @@ name: general_context_actor
 description: Testing actor generation works or not
 on:
   - type: manual_dispatch
+  - type: on_load
 
 context:
   actors:

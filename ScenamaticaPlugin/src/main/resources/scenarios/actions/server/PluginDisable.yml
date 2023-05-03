@@ -3,6 +3,7 @@ scenamatica: ${project.version}
 name: actions_server_plugin_disable
 description: L6C1 in scenarios.xlsx
 on:
+  # - type: on_load  # LightHeadPlugin is not loaded yet, so this test will be skipped.
   - type: manual_dispatch
     after:
       - type: execute # Enable LightHeadPlugin if it is disabled
