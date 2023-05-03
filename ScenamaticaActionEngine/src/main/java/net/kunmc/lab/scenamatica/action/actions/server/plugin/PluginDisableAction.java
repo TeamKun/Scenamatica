@@ -27,6 +27,8 @@ public class PluginDisableAction extends AbstractPluginAction<PluginDisableActio
     {
         if (argument == null)
             return;
+        else if (engine.getPlugin().getName().equalsIgnoreCase(argument.getPlugin().getName()))
+            throw new IllegalArgumentException("Cannot disable the plugin itself.");
 
         Bukkit.getPluginManager().disablePlugin(argument.getPlugin());
     }
