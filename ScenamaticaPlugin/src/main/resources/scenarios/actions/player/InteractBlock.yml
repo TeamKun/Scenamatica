@@ -3,7 +3,7 @@ scenamatica: ${project.version}
 name: actions_player_interact_block
 description: Testing PlayerInteractBlockAction works or not
 on:
-  - type: on_load
+  # - type: on_load  # no ci
   - type: manual_dispatch
 
 context:
