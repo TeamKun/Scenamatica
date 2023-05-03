@@ -124,8 +124,6 @@ public class ScenarioEngineImpl implements ScenarioEngine
             this.genResult(TestResultCause.CONTEXT_PREPARATION_FAILED);
         }
 
-        Thread.sleep(300);  // GitHub Actions の CPU はこれを無視するのが好き。
-
         this.logWithPrefix(Level.INFO, LangProvider.get(
                 "scenario.run.engine.starting",
                 MsgArgs.of("scenarioName", this.scenario.getName())
