@@ -13,6 +13,7 @@ import net.minecraft.server.v1_16_R3.EnumHand;
 import net.minecraft.server.v1_16_R3.EnumMoveType;
 import net.minecraft.server.v1_16_R3.MinecraftServer;
 import net.minecraft.server.v1_16_R3.PacketPlayInArmAnimation;
+import net.minecraft.server.v1_16_R3.PlayerInteractManager;
 import net.minecraft.server.v1_16_R3.Vec3D;
 import net.minecraft.server.v1_16_R3.WorldServer;
 import org.bukkit.block.Block;
@@ -34,7 +35,7 @@ class MockedPlayer extends EntityPlayer implements Actor
             WorldServer worldserver,
             GameProfile gameprofile)
     {
-        super(minecraftserver, worldserver, gameprofile, new MocketPlayerInteractManager(worldserver));
+        super(minecraftserver, worldserver, gameprofile, new PlayerInteractManager(worldserver));
         this.manager = manager;
 
         this.setNoGravity(false);
