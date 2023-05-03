@@ -714,7 +714,7 @@
         "scenamatica": {
           "message": {
             "properties": {
-              "content": {
+              "message": {
                 "type": "string",
                 "description": "メッセージの内容です。",
                 "maxLength": 32768
@@ -725,7 +725,7 @@
               }
             },
             "required": [
-              "content",
+              "message",
               "recipient"
             ]
           },

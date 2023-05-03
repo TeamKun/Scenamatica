@@ -23,9 +23,9 @@ scenario:
       command: say Hello World!
       sender: Actor001
   - type: expect
-    action: message_send
+    action: message
     with:
-      content: "[Actor001] Hello World!"
+      message: "[Actor001] Hello World!"
       recipient: Actor002
     timeout: 20
 

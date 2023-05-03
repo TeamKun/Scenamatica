@@ -14,11 +14,11 @@ scenario:
   - type: execute
     action: message
     with:
-      content: "Hello, World!"
+      message: "Hello, World!"
       recipient: Actor001
   - type: expect
     action: message
     with:
-      content: "Hello, World!"
+      message: "Hello, World!"
       recipient: Actor001
     timeout: 20
