@@ -1,4 +1,4 @@
-package net.kunmc.lab.scenamatica.action.actions.chat;
+package net.kunmc.lab.scenamatica.action.actions.scenamatica;
 
 import lombok.Value;
 import net.kunmc.lab.scenamatica.action.actions.AbstractAction;
@@ -23,9 +23,9 @@ import java.util.Objects;
 /**
  * プレイヤにメッセージを送信する/送信されることを監視するアクション。
  */
-public class MessageSendAction extends AbstractAction<MessageSendAction.Argument>
+public class MessageAction extends AbstractAction<MessageAction.Argument>
 {
-    public static final String KEY_ACTION_NAME = "message_send";
+    public static final String KEY_ACTION_NAME = "message";
 
     @Override
     public String getName()
@@ -34,21 +34,21 @@ public class MessageSendAction extends AbstractAction<MessageSendAction.Argument
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @Nullable MessageSendAction.Argument argument)
+    public void execute(@NotNull ScenarioEngine engine, @Nullable MessageAction.Argument argument)
     {
         argument = this.requireArgsNonNull(argument);
 
         Player recipient = PlayerUtils.getPlayerOrThrow(argument.getRecipient());
-        String content = argument.getContent();
+        String content = argument.getMessage();
 
         recipient.sendMessage(content);
     }
 
     @Override
-    public boolean isFired(@NotNull MessageSendAction.Argument argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public boolean isFired(@NotNull MessageAction.Argument argument, @NotNull ScenarioEngine engine, @NotNull Event event)
     {
         Player recipient = PlayerUtils.getPlayerOrThrow(argument.getRecipient());
-        String content = argument.getContent();
+        String content = argument.getMessage();
 
         assert event instanceof ActorMessageReceiveEvent;
         ActorMessageReceiveEvent e = (ActorMessageReceiveEvent) event;
@@ -69,11 +69,11 @@ public class MessageSendAction extends AbstractAction<MessageSendAction.Argument
     @Override
     public Argument deserializeArgument(@NotNull Map<String, Object> map)
     {
-        MapUtils.checkType(map, Argument.KEY_CONTENT, String.class);
+        MapUtils.checkType(map, Argument.KEY_MESSAGE, String.class);
         MapUtils.checkType(map, Argument.KEY_RECIPIENT, String.class);
 
         return new Argument(
-                (String) map.get(Argument.KEY_CONTENT),
+                (String) map.get(Argument.KEY_MESSAGE),
                 (String) map.get(Argument.KEY_RECIPIENT)
         );
     }
@@ -81,11 +81,11 @@ public class MessageSendAction extends AbstractAction<MessageSendAction.Argument
     @Value
     public static class Argument implements ActionArgument
     {
-        public static final String KEY_CONTENT = "content";
+        public static final String KEY_MESSAGE = "message";
         public static final String KEY_RECIPIENT = "recipient";
 
         @NotNull
-        String content;
+        String message;
         @NotNull
         String recipient;
 
@@ -96,13 +96,13 @@ public class MessageSendAction extends AbstractAction<MessageSendAction.Argument
                 return false;
 
             Argument a = (Argument) argument;
-            return Objects.equals(this.content, a.content) && Objects.equals(this.recipient, a.recipient);
+            return Objects.equals(this.message, a.message) && Objects.equals(this.recipient, a.recipient);
         }
 
         @Override
         public String getArgumentString()
         {
-            return String.format("content=%s, recipient=%s", this.content, this.recipient);
+            return String.format("content=%s, recipient=%s", this.message, this.recipient);
         }
     }
 }
