@@ -50,6 +50,8 @@ jobs:
         with:
           name: scenamatica
       - name: Run Scenamatica tests
-        uses: teamkun/scenamatica-action@v1
+        uses: teamkun/scenamatica-action@v1.1.0
         with:
           plugin: Scenamatica.jar
+        env:
+          NO_SCENAMATICA: true  # Because the test is running scenamatica itself, we don't need the daemon.
