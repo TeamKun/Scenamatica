@@ -57,6 +57,13 @@ JSON スキーマは[こちら](https://raw.githubusercontent.com/TeamKun/Scenam
     required: true
   },
   {
+    name: "timeout",
+    anchor: "apex-timeout",
+    type: ObjectType.LONG,
+    description: "シナリオのタイムアウト時間です。",
+    default: 20 * 60 * 5 // チック指定
+  },
+  {
     name: "context",
     anchor: "apex-context",
     type: "Context",
@@ -130,6 +137,19 @@ Scenamatica のバージョンは、 `x.y.z` の形式で指定します。
 ### `description` {#apex-description}
 
 シナリオの人間が読みやすい説明です。
+
+### `timeout` {#apex-timeout}
+
+シナリオ全体のタイムアウトを**チック**で指定します。
+デフォルトは `20 * 60 * 5` = `6000` チック（５分）です。
+
+実行時間内に終了しなかった場合、  `RUN_TIMED_OUT` というエラーで終了します。
+
+:::tip
+
+`-1` を指定すると、タイムアウトは無効になり、無限に実行します。
+
+:::
 
 ### `context` {#apex-context}
 
@@ -412,7 +432,7 @@ Bukkit でロード済みの既存のワールドの構造、建築物、アイ�
     anchor: "scenario-timeout",
     type: "number",
     description: "シナリオのタイムアウト時間のチック数です。",
-    default: -1
+    default: 20 * 5
   },
   {
     name: "runif",
@@ -454,7 +474,8 @@ Bukkit でロード済みの既存のワールドの構造、建築物、アイ�
 
 ### `timeout` {#scenario-timeout}
 
-シナリオのタイムアウト時間のチック数です。
+シナリオのタイムアウト時間のチック数です。  
+デフォルトは `20 * 5` = `100` チック（５秒）です。
 
 :::tip
 
