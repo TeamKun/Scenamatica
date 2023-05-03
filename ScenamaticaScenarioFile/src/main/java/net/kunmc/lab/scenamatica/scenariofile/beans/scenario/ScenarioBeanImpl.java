@@ -58,7 +58,7 @@ public class ScenarioBeanImpl implements ScenarioBean
         if (ScenarioType.fromKey((String) map.get(KEY_SCENARIO_TYPE)) == null)
             throw new IllegalArgumentException("Invalid scenario type");
 
-        MapUtils.checkTypeIfContains(map, KEY_TIMEOUT, Long.class);
+        MapUtils.checkNumberIfContains(map, KEY_TIMEOUT);
 
         ActionBeanImpl.validate(map);
     }

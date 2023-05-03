@@ -102,6 +102,19 @@ public class MapUtils
             throw new IllegalArgumentException("Unexpected type of key: " + key + " (expected: " + type.getSimpleName() + ")");
     }
 
+    public static void checkNumber(Map<String, Object> map, String key)
+    {
+        MapUtils.checkContainsKey(map, key);
+        if (!(map.get(key) instanceof Number))
+            throw new IllegalArgumentException("Unexpected type of key: " + key + " (expected: Number)");
+    }
+
+    public static void checkNumberIfContains(Map<String, Object> map, String key)
+    {
+        if (map.containsKey(key) && !(map.get(key) instanceof Number))
+            throw new IllegalArgumentException("Unexpected type of key: " + key + " (expected: Number)");
+    }
+
     public static void checkMapType(Map<?, ?> map, Class<?> keyType, Class<?> valueType)
     {
         for (Map.Entry<?, ?> entry : map.entrySet())
