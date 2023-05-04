@@ -50,7 +50,7 @@ jobs:
         with:
           name: scenamatica
       - name: Run Scenamatica tests
-        uses: teamkun/scenamatica-action@v1.2.1
+        uses: teamkun/scenamatica-action@v1.2.2
         with:
           plugin: Scenamatica.jar
         env:
