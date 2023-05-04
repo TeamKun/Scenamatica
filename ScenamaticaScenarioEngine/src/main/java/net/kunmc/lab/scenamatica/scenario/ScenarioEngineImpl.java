@@ -129,10 +129,7 @@ public class ScenarioEngineImpl implements ScenarioEngine
         ));
         this.state = TestState.STARTING;
 
-        TestResult result = this.startScenarioRun(compiledTrigger);
-        this.state = TestState.FINISHED;
-
-        return result;
+        return this.startScenarioRun(compiledTrigger);
     }
 
     private TestResult startScenarioRun(@NotNull CompiledTriggerAction compiledTrigger)
@@ -175,10 +172,14 @@ public class ScenarioEngineImpl implements ScenarioEngine
             return mayResult;
         }
 
+        this.state = TestState.FINISHED;
+        TestResult result = this.genResult(TestResultCause.PASSED);
+        // genResult は, state を参照するので以下と順番を変えると最終的な state がおかしくなる。
+
         // あとかたづけ
         ThreadingUtil.waitFor(this.registry, this::cleanUp);
 
-        return this.genResult(TestResultCause.PASSED);
+        return result;
     }
 
     private TestResult testRunConditionIfExists(@Nullable CompiledScenarioAction<?> runIf)
@@ -232,6 +233,7 @@ public class ScenarioEngineImpl implements ScenarioEngine
 
     private void cleanUp()
     {
+        this.state = TestState.CLEANING_UP;
         this.logPrefix = LogUtils.gerScenarioPrefix(null, this.scenario);
         // シナリオのアクションの監視を全て解除しておく。
         this.actionManager.getWatcherManager().unregisterWatchers(this.plugin, WatchType.SCENARIO);
@@ -241,6 +243,7 @@ public class ScenarioEngineImpl implements ScenarioEngine
         ));
         this.registry.getContextManager().destroyContext();
 
+        this.state = TestState.STAND_BY;
         this.isRunning = false;  // これの位置を変えると, 排他の問題でバグる
     }
 
