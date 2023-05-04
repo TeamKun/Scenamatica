@@ -1,0 +1,36 @@
+name: Qodana
+on:
+  workflow_dispatch:
+  pull_request:
+  push:
+    branches:
+      - main
+      - develop
+
+jobs:
+  qodana:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Set up JDK 8
+        uses: actions/setup-java@v3
+        id: sj
+        with:
+          java-version: 8
+          distribution: zulu
+          cache: maven
+      - uses: derongan/nmsaction@v1
+        if: "steps.sj.outputs.cache-hit != 'true'"
+        with:
+          rev: 1.16.5
+      - name: Install nms into m2
+        if: "steps.sj.outputs.cache-hit != 'true'"
+        run: |
+          mkdir -p $HOME/.m2/repository
+          cp -a nms-build/.m2/repository/. $HOME/.m2/repository
+      - name: 'Qodana Scan'
+        uses: JetBrains/qodana-action@main
+        env:
+          QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }}
