@@ -107,11 +107,11 @@ public final class Scenamatica extends JavaPlugin
                 "scenamatica.use"
         );
 
-        this.commandManager.registerCommand("debug", new CommandDebug(this.registry));
         this.commandManager.registerCommand("enable", new CommandEnable(this.registry));
         this.commandManager.registerCommand("scenario", new CommandScenario(this.registry));
 
-
+        if (Constants.DEBUG_BUILD)
+            this.commandManager.registerCommand("debug", new CommandDebug(this.registry));
     }
 
     @Override

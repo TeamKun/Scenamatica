@@ -25,6 +25,9 @@
     <profiles>
         <profile>
             <id>debug</id>
+            <properties>
+                <project.debug>true</project.debug>
+            </properties>
             <build>
                 <resources>
                     <resource>
@@ -32,6 +35,21 @@
                         <filtering>true</filtering>
                     </resource>
                 </resources>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>templating-maven-plugin</artifactId>
+                        <version>1.0.0</version>
+                        <executions>
+                            <execution>
+                                <id>filter</id>
+                                <goals>
+                                    <goal>filter-sources</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
             </build>
         </profile>
         <profile>
