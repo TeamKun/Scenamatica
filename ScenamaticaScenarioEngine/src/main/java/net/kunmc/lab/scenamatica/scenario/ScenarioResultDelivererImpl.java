@@ -1,11 +1,11 @@
 package net.kunmc.lab.scenamatica.scenario;
 
 import lombok.Getter;
-import net.kunmc.lab.scenamatica.enums.TestResultCause;
-import net.kunmc.lab.scenamatica.enums.TestState;
+import net.kunmc.lab.scenamatica.enums.ScenarioResultCause;
+import net.kunmc.lab.scenamatica.enums.ScenarioState;
 import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
+import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioResult;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioResultDeliverer;
-import net.kunmc.lab.scenamatica.interfaces.scenario.TestResult;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
 import org.jetbrains.annotations.NotNull;
 
@@ -24,11 +24,11 @@ public class ScenarioResultDelivererImpl implements ScenarioResultDeliverer
     private final ScenarioFileBean scenario;
     private final UUID testID;
     private final long startedAt;
-    private final ArrayDeque<TestResult> results;  // 受け渡し用
+    private final ArrayDeque<ScenarioResult> results;  // 受け渡し用
 
     private boolean killed;  // シャットダウンされたら true
 
-    private TestState state;  // wait されたら入る。終わったら消す
+    private ScenarioState state;  // wait されたら入る。終わったら消す
     @Getter
     private boolean waiting;  // wait されているかどうか。タイムアウト制御用。
     private long waitTimeout;
@@ -51,7 +51,7 @@ public class ScenarioResultDelivererImpl implements ScenarioResultDeliverer
     }
 
     @Override
-    public synchronized void setResult(TestResult result)
+    public synchronized void setResult(ScenarioResult result)
     {
         synchronized (this.lock)
         {
@@ -79,7 +79,7 @@ public class ScenarioResultDelivererImpl implements ScenarioResultDeliverer
 
     @Override
     @NotNull
-    public TestResult waitResult(long timeout, @NotNull TestState state)
+    public ScenarioResult waitResult(long timeout, @NotNull ScenarioState state)
     {
         if (timeout > 0)
             this.waitTimeout = timeout;
@@ -95,11 +95,11 @@ public class ScenarioResultDelivererImpl implements ScenarioResultDeliverer
         catch (InterruptedException e)
         {
             this.registry.getExceptionHandler().report(e);
-            return new TestResultImpl(
+            return new ScenarioResultImpl(
                     this.scenario,
                     this.testID,
                     state,
-                    TestResultCause.INTERNAL_ERROR,
+                    ScenarioResultCause.INTERNAL_ERROR,
                     this.startedAt
             );
         }
@@ -107,11 +107,11 @@ public class ScenarioResultDelivererImpl implements ScenarioResultDeliverer
         {
             if (!this.killed)
                 this.registry.getExceptionHandler().report(e);
-            return new TestResultImpl(
+            return new ScenarioResultImpl(
                     this.scenario,
                     this.testID,
                     state,
-                    TestResultCause.CANCELLED,
+                    ScenarioResultCause.CANCELLED,
                     this.startedAt
             );
         }
@@ -134,11 +134,11 @@ public class ScenarioResultDelivererImpl implements ScenarioResultDeliverer
         if (this.elapsedTick >= this.waitTimeout)
         {
             this.waitTimeout = -1L;
-            this.setResult(new TestResultImpl(
+            this.setResult(new ScenarioResultImpl(
                     this.scenario,
                     this.testID,
                     this.state,
-                    TestResultCause.SCENARIO_TIMED_OUT,
+                    ScenarioResultCause.SCENARIO_TIMED_OUT,
                     this.startedAt
             ));
         }

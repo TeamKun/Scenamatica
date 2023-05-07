@@ -5,10 +5,10 @@ import net.kunmc.lab.peyangpaperutils.lang.MsgArgs;
 import net.kunmc.lab.peyangpaperutils.lib.terminal.Terminal;
 import net.kunmc.lab.peyangpaperutils.lib.terminal.Terminals;
 import net.kunmc.lab.scenamatica.commons.utils.LogUtils;
-import net.kunmc.lab.scenamatica.enums.TestResultCause;
+import net.kunmc.lab.scenamatica.enums.ScenarioResultCause;
 import net.kunmc.lab.scenamatica.interfaces.action.CompiledAction;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioEngine;
-import net.kunmc.lab.scenamatica.interfaces.scenario.TestResult;
+import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioResult;
 import net.kunmc.lab.scenamatica.interfaces.scenario.runtime.CompiledScenarioAction;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerBean;
@@ -185,7 +185,7 @@ public class BukkitTestReporter implements net.kunmc.lab.scenamatica.interfaces.
     }
 
     @Override
-    public void onTestEnd(@NotNull ScenarioEngine engine, @NotNull TestResult result)
+    public void onTestEnd(@NotNull ScenarioEngine engine, @NotNull ScenarioResult result)
     {
         ScenarioFileBean scenario = engine.getScenario();
 
@@ -210,7 +210,7 @@ public class BukkitTestReporter implements net.kunmc.lab.scenamatica.interfaces.
     }
 
     @Override
-    public void onTestSessionEnd(@NotNull List<? extends TestResult> results, long startedAt)
+    public void onTestSessionEnd(@NotNull List<? extends ScenarioResult> results, long startedAt)
     {
         long endedAt = System.currentTimeMillis();
         long elapsed = endedAt - startedAt;
@@ -218,20 +218,20 @@ public class BukkitTestReporter implements net.kunmc.lab.scenamatica.interfaces.
 
         int total = results.size();
         int passed = (int) results.stream().parallel()
-                .filter(r -> r.getTestResultCause() == TestResultCause.PASSED).count();
+                .filter(r -> r.getScenarioResultCause() == ScenarioResultCause.PASSED).count();
         int failed = (int) results.stream().parallel()
-                .map(TestResult::getTestResultCause)
-                .filter(TestResultCause::isFailure)
+                .map(ScenarioResult::getScenarioResultCause)
+                .filter(ScenarioResultCause::isFailure)
                 .count();
         int cancelled = (int) results.stream().parallel()
-                .filter(r -> r.getTestResultCause() == TestResultCause.CANCELLED).count();
+                .filter(r -> r.getScenarioResultCause() == ScenarioResultCause.CANCELLED).count();
         int skipped = (int) results.stream().parallel()
-                .filter(r -> r.getTestResultCause() == TestResultCause.SKIPPED).count();
+                .filter(r -> r.getScenarioResultCause() == ScenarioResultCause.SKIPPED).count();
 
         this.terminals.forEach(t -> printSessionSummary(t, results, elapsedStr, total, passed, failed, cancelled, skipped));
     }
 
-    private void printSessionSummary(@NotNull Terminal terminal, List<? extends TestResult> results,
+    private void printSessionSummary(@NotNull Terminal terminal, List<? extends ScenarioResult> results,
                                      String elapsedStr, int total, int passed, int failed, int cancelled, int skipped)
     {
         boolean allPassed = passed == total;
@@ -292,21 +292,21 @@ public class BukkitTestReporter implements net.kunmc.lab.scenamatica.interfaces.
         printSeparator(null, terminal, null, 50);
     }
 
-    private void printTestSummary(ScenarioEngine engine, Terminal terminal, ScenarioFileBean scenario, TestResult result)
+    private void printTestSummary(ScenarioEngine engine, Terminal terminal, ScenarioFileBean scenario, ScenarioResult result)
     {
-        boolean passed = result.getTestResultCause() == TestResultCause.PASSED;
+        boolean passed = result.getScenarioResultCause() == ScenarioResultCause.PASSED;
         printSeparator(engine.getTestID(), terminal, scenario, 12);
 
         String resultKey;
         if (passed)
             resultKey = "test.result.passed";
-        else if (result.getTestResultCause() == TestResultCause.CANCELLED)
+        else if (result.getScenarioResultCause() == ScenarioResultCause.CANCELLED)
             resultKey = "test.result.cancelled";
-        else if (result.getTestResultCause() == TestResultCause.SKIPPED)
+        else if (result.getScenarioResultCause() == ScenarioResultCause.SKIPPED)
             resultKey = "test.result.skipped";
         else
             resultKey = "test.result.failed";
-        String messageKey = "test.result.message." + result.getTestResultCause().name().toLowerCase();
+        String messageKey = "test.result.message." + result.getScenarioResultCause().name().toLowerCase();
 
         String summary = LangProvider.get(
                 "test.result",
@@ -318,16 +318,16 @@ public class BukkitTestReporter implements net.kunmc.lab.scenamatica.interfaces.
             terminal.error(withPrefix(engine.getTestID(), scenario, summary));
     }
 
-    private void printDetails(ScenarioEngine engine, Terminal terminal, ScenarioFileBean scenario, TestResult result)
+    private void printDetails(ScenarioEngine engine, Terminal terminal, ScenarioFileBean scenario, ScenarioResult result)
     {
-        TestResultCause cause = result.getTestResultCause();
+        ScenarioResultCause cause = result.getScenarioResultCause();
 
         terminal.info(withPrefix(engine.getTestID(), scenario, LangProvider.get("test.result.detail")));
         terminal.info(withPrefix(engine.getTestID(), scenario, LangProvider.get(
                 "test.result.detail.id",
                 MsgArgs.of("id", result.getTestID().toString().substring(0, 8))
         )));
-        if (cause != TestResultCause.PASSED)
+        if (cause != ScenarioResultCause.PASSED)
             terminal.info(withPrefix(engine.getTestID(), scenario, LangProvider.get(
                     "test.result.detail.state",
                     MsgArgs.of("state", result.getState()
@@ -347,7 +347,7 @@ public class BukkitTestReporter implements net.kunmc.lab.scenamatica.interfaces.
                         .add("elapsed", elapsed)
         )));
 
-        if (cause == TestResultCause.PASSED || cause == TestResultCause.CANCELLED || cause == TestResultCause.SKIPPED
+        if (cause == ScenarioResultCause.PASSED || cause == ScenarioResultCause.CANCELLED || cause == ScenarioResultCause.SKIPPED
                 || result.getFailedAction() == null)
             return;
 

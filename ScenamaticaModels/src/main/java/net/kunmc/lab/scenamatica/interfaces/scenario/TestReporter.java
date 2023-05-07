@@ -91,7 +91,7 @@ public interface TestReporter
      * @param engine エンジン
      * @param result テスト結果
      */
-    void onTestEnd(@NotNull ScenarioEngine engine, @NotNull TestResult result);
+    void onTestEnd(@NotNull ScenarioEngine engine, @NotNull ScenarioResult result);
 
     /**
      * テストセッションの開始をレポートします。
@@ -106,5 +106,5 @@ public interface TestReporter
      * @param results   テスト結果
      * @param startedAt テスト開始時刻
      */
-    void onTestSessionEnd(@NotNull List<? extends TestResult> results, long startedAt);
+    void onTestSessionEnd(@NotNull List<? extends ScenarioResult> results, long startedAt);
 }

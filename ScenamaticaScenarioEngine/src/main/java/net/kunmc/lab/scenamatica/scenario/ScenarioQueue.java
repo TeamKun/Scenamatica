@@ -7,7 +7,7 @@ import lombok.Value;
 import net.kunmc.lab.scenamatica.exceptions.scenario.TriggerNotFoundException;
 import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioEngine;
-import net.kunmc.lab.scenamatica.interfaces.scenario.TestResult;
+import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioResult;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerBean;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
     private final ScenarioManagerImpl manager;
     private final Deque<QueueEntry> scenarioRunQueue;
 
-    private List<TestResult> sessionResults;
+    private List<ScenarioResult> sessionResults;
     private long sessionStartedAt;
     private SessionRunner runner;
 
@@ -40,13 +40,13 @@ import java.util.stream.Collectors;
         this.sessionStartedAt = 0;
     }
 
-    /* non-public */ void add(ScenarioEngine engine, TriggerBean trigger, Consumer<TestResult> callback)
+    /* non-public */ void add(ScenarioEngine engine, TriggerBean trigger, Consumer<ScenarioResult> callback)
     {
         this.scenarioRunQueue.add(new QueueEntry(engine, trigger, callback));
         this.runner.resume();
     }
 
-    /* non-public */ void addInterrupt(ScenarioEngine engine, TriggerBean trigger, Consumer<TestResult> callback)
+    /* non-public */ void addInterrupt(ScenarioEngine engine, TriggerBean trigger, Consumer<ScenarioResult> callback)
     {
         this.scenarioRunQueue.addFirst(new QueueEntry(engine, trigger, callback));
         this.runner.resume();
@@ -105,7 +105,7 @@ import java.util.stream.Collectors;
         ScenarioEngine engine;
         TriggerBean trigger;
         @Nullable
-        Consumer<TestResult> callback;
+        Consumer<ScenarioResult> callback;
 
     }
 
@@ -168,7 +168,7 @@ import java.util.stream.Collectors;
 
             QueueEntry entry = ScenarioQueue.this.scenarioRunQueue.pop();
 
-            TestResult result = ScenarioQueue.this.manager.runScenario(entry.getEngine(), entry.getTrigger());
+            ScenarioResult result = ScenarioQueue.this.manager.runScenario(entry.getEngine(), entry.getTrigger());
             ScenarioQueue.this.sessionResults.add(result);
 
             if (entry.getCallback() != null)

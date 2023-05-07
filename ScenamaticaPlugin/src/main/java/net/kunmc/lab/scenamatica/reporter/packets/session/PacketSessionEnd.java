@@ -1,6 +1,6 @@
 package net.kunmc.lab.scenamatica.reporter.packets.session;
 
-import net.kunmc.lab.scenamatica.interfaces.scenario.TestResult;
+import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioResult;
 import net.kunmc.lab.scenamatica.reporter.packets.test.PacketTestEnd;
 import org.jetbrains.annotations.NotNull;
 
@@ -18,7 +18,7 @@ public class PacketSessionEnd extends AbstractSessionPacket
     private final List<PacketTestEnd> tests;
     private final long startedAt;
 
-    public PacketSessionEnd(@NotNull List<? extends TestResult> tests, long startedAt)
+    public PacketSessionEnd(@NotNull List<? extends ScenarioResult> tests, long startedAt)
     {
         super(TYPE);
         this.tests = tests.stream()

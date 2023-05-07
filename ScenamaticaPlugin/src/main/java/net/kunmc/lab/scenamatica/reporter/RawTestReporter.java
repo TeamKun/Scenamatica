@@ -3,8 +3,8 @@ package net.kunmc.lab.scenamatica.reporter;
 import com.google.gson.Gson;
 import net.kunmc.lab.scenamatica.interfaces.action.CompiledAction;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioEngine;
+import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioResult;
 import net.kunmc.lab.scenamatica.interfaces.scenario.TestReporter;
-import net.kunmc.lab.scenamatica.interfaces.scenario.TestResult;
 import net.kunmc.lab.scenamatica.interfaces.scenario.runtime.CompiledScenarioAction;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerBean;
 import net.kunmc.lab.scenamatica.reporter.packets.AbstractRawPacket;
@@ -101,7 +101,7 @@ public class RawTestReporter implements TestReporter
     }
 
     @Override
-    public void onTestEnd(@NotNull ScenarioEngine engine, @NotNull TestResult result)
+    public void onTestEnd(@NotNull ScenarioEngine engine, @NotNull ScenarioResult result)
     {
         this.printJSON(new PacketTestEnd(result));
     }
@@ -113,7 +113,7 @@ public class RawTestReporter implements TestReporter
     }
 
     @Override
-    public void onTestSessionEnd(@NotNull List<? extends TestResult> results, long startedAt)
+    public void onTestSessionEnd(@NotNull List<? extends ScenarioResult> results, long startedAt)
     {
         this.printJSON(new PacketSessionEnd(results, startedAt));
     }

@@ -17,8 +17,8 @@ import net.kunmc.lab.scenamatica.interfaces.action.ActionManager;
 import net.kunmc.lab.scenamatica.interfaces.scenario.MilestoneManager;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioEngine;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioManager;
+import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioResult;
 import net.kunmc.lab.scenamatica.interfaces.scenario.TestReporter;
-import net.kunmc.lab.scenamatica.interfaces.scenario.TestResult;
 import net.kunmc.lab.scenamatica.interfaces.scenario.runtime.CompiledTriggerAction;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerBean;
@@ -82,7 +82,7 @@ public class ScenarioManagerImpl implements ScenarioManager
 
     @Override
     @NotNull
-    public TestResult startScenarioInterrupt(@NotNull Plugin plugin, @NotNull String scenarioName, boolean cancelRunning)
+    public ScenarioResult startScenarioInterrupt(@NotNull Plugin plugin, @NotNull String scenarioName, boolean cancelRunning)
             throws ScenarioException
     {
         return this.startScenarioInterrupt(plugin, scenarioName, TriggerType.MANUAL_DISPATCH, cancelRunning);
@@ -91,7 +91,7 @@ public class ScenarioManagerImpl implements ScenarioManager
     @SneakyThrows(ScenarioNotRunningException.class)
     @Override
     @NotNull
-    public TestResult startScenarioInterrupt(@NotNull Plugin plugin, @NotNull String scenarioName, @NotNull TriggerType triggerType, boolean cancelRunning)
+    public ScenarioResult startScenarioInterrupt(@NotNull Plugin plugin, @NotNull String scenarioName, @NotNull TriggerType triggerType, boolean cancelRunning)
             throws ScenarioAlreadyRunningException, TriggerNotFoundException, ScenarioNotFoundException
     {
         if (!this.enabled)
@@ -99,9 +99,9 @@ public class ScenarioManagerImpl implements ScenarioManager
         else if (this.isRunning() && !cancelRunning)
             throw new ScenarioAlreadyRunningException("Another scenario is running.");
 
-        AtomicReference<TestResult> result = new AtomicReference<>();
+        AtomicReference<ScenarioResult> result = new AtomicReference<>();
         CyclicBarrier barrier = new CyclicBarrier(2);
-        Consumer<TestResult> callback = r -> {
+        Consumer<ScenarioResult> callback = r -> {
             result.set(r);
             try
             {
@@ -177,7 +177,7 @@ public class ScenarioManagerImpl implements ScenarioManager
         return Pair.of(engine, triggerBean);
     }
 
-    /* non-public */ TestResult runScenario(ScenarioEngine engine, TriggerBean trigger)
+    /* non-public */ ScenarioResult runScenario(ScenarioEngine engine, TriggerBean trigger)
             throws TriggerNotFoundException
     {
         if (!engine.getPlugin().isEnabled())
@@ -186,7 +186,7 @@ public class ScenarioManagerImpl implements ScenarioManager
             throw new IllegalStateException("Scenamatica is disabled.");
 
         this.currentScenario = engine;
-        TestResult result = engine.start(trigger);
+        ScenarioResult result = engine.start(trigger);
         this.currentScenario = null;
         this.testReporter.onTestEnd(engine, result);
 

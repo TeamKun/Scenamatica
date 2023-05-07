@@ -2,9 +2,9 @@ package net.kunmc.lab.scenamatica.reporter.packets.test;
 
 import lombok.EqualsAndHashCode;
 import lombok.Value;
-import net.kunmc.lab.scenamatica.enums.TestResultCause;
-import net.kunmc.lab.scenamatica.enums.TestState;
-import net.kunmc.lab.scenamatica.interfaces.scenario.TestResult;
+import net.kunmc.lab.scenamatica.enums.ScenarioResultCause;
+import net.kunmc.lab.scenamatica.enums.ScenarioState;
+import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioResult;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
 import net.kunmc.lab.scenamatica.scenariofile.ScenarioFileBeanImpl;
 import org.jetbrains.annotations.NotNull;
@@ -26,19 +26,19 @@ public class PacketTestEnd extends AbstractTestPacket
     @NotNull
     ScenarioFileBean scenario;
     @NotNull
-    TestState state;
+    ScenarioState state;
     @NotNull
-    TestResultCause cause;
+    ScenarioResultCause cause;
     long startedAt;
     long finishedAt;
 
-    public PacketTestEnd(@NotNull TestResult result)
+    public PacketTestEnd(@NotNull ScenarioResult result)
     {
         super(TYPE, result.getTestID());
 
         this.scenario = result.getScenario();
         this.state = result.getState();
-        this.cause = result.getTestResultCause();
+        this.cause = result.getScenarioResultCause();
         this.startedAt = result.getStartedAt();
         this.finishedAt = result.getFinishedAt();
     }

@@ -1,7 +1,7 @@
 package net.kunmc.lab.scenamatica.interfaces.scenario;
 
-import net.kunmc.lab.scenamatica.enums.TestResultCause;
-import net.kunmc.lab.scenamatica.enums.TestState;
+import net.kunmc.lab.scenamatica.enums.ScenarioResultCause;
+import net.kunmc.lab.scenamatica.enums.ScenarioState;
 import net.kunmc.lab.scenamatica.interfaces.action.Action;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
 import org.jetbrains.annotations.NotNull;
@@ -12,7 +12,7 @@ import java.util.UUID;
 /**
  * テスト結果を表すインターフェースです。
  */
-public interface TestResult
+public interface ScenarioResult
 {
     /**
      * テスト ID を取得します。
@@ -36,7 +36,7 @@ public interface TestResult
      * @return テストの状態
      */
     @NotNull
-    TestState getState();
+    ScenarioState getState();
 
     /**
      * テストの結果を取得します。
@@ -44,7 +44,7 @@ public interface TestResult
      * @return テストの結果
      */
     @NotNull
-    TestResultCause getTestResultCause();
+    ScenarioResultCause getScenarioResultCause();
 
     /**
      * テストが開始された時間を取得します。

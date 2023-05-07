@@ -1,5 +1,6 @@
 package net.kunmc.lab.scenamatica.interfaces.scenario;
 
+import net.kunmc.lab.scenamatica.enums.ScenarioResultCause;
 import net.kunmc.lab.scenamatica.enums.TriggerType;
 import net.kunmc.lab.scenamatica.exceptions.scenario.ScenarioAlreadyRunningException;
 import net.kunmc.lab.scenamatica.exceptions.scenario.ScenarioException;
@@ -57,9 +58,9 @@ public interface ScenarioManager
      * @throws IllegalArgumentException        シナリオが手動実行できない場合
      */
     @NotNull
-    TestResult startScenarioInterrupt(@NotNull Plugin plugin,
-                                      @NotNull String scenarioName,
-                                      boolean cancelRunning) throws ScenarioException;
+    ScenarioResult startScenarioInterrupt(@NotNull Plugin plugin,
+                                          @NotNull String scenarioName,
+                                          boolean cancelRunning) throws ScenarioException;
 
     /**
      * シナリオを割り込み実行します。
@@ -75,10 +76,10 @@ public interface ScenarioManager
      * @throws TriggerNotFoundException        シナリオが指定されたトリガで実行できない場合
      */
     @NotNull
-    TestResult startScenarioInterrupt(@NotNull Plugin plugin,
-                                      @NotNull String scenarioName,
-                                      @NotNull TriggerType triggerType,
-                                      boolean cancelRunning) throws ScenarioException;
+    ScenarioResult startScenarioInterrupt(@NotNull Plugin plugin,
+                                          @NotNull String scenarioName,
+                                          @NotNull TriggerType triggerType,
+                                          boolean cancelRunning) throws ScenarioException;
 
     /**
      * シナリオを割り込み手動実行します。
@@ -95,8 +96,8 @@ public interface ScenarioManager
      * @see #startScenarioInterrupt(Plugin, String, TriggerType, boolean)
      */
     @NotNull
-    default TestResult startScenarioInterrupt(@NotNull Plugin plugin,
-                                              @NotNull String scenarioName) throws ScenarioException
+    default ScenarioResult startScenarioInterrupt(@NotNull Plugin plugin,
+                                                  @NotNull String scenarioName) throws ScenarioException
     {
         return startScenarioInterrupt(plugin, scenarioName, false);
     }
@@ -117,9 +118,9 @@ public interface ScenarioManager
      * @see #startScenarioInterrupt(Plugin, String, TriggerType, boolean)
      */
     @NotNull
-    default TestResult startScenarioInterrupt(@NotNull Plugin plugin,
-                                              @NotNull String scenarioName,
-                                              @NotNull TriggerType triggerType) throws ScenarioException
+    default ScenarioResult startScenarioInterrupt(@NotNull Plugin plugin,
+                                                  @NotNull String scenarioName,
+                                                  @NotNull TriggerType triggerType) throws ScenarioException
     {
         return startScenarioInterrupt(plugin, scenarioName, triggerType, false);
     }
@@ -154,7 +155,7 @@ public interface ScenarioManager
 
     /**
      * シナリオの実行をキャンセルします。
-     * キャンセルしたシナリオは, {@link net.kunmc.lab.scenamatica.enums.TestResultCause#CANCELLED} で終了します。
+     * キャンセルしたシナリオは, {@link ScenarioResultCause#CANCELLED} で終了します。
      */
     void cancel() throws ScenarioNotRunningException;
 

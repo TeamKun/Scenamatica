@@ -1,6 +1,6 @@
 package net.kunmc.lab.scenamatica.enums;
 
-public enum TestState
+public enum ScenarioState
 {
     STAND_BY,
     CONTEXT_PREPARING,

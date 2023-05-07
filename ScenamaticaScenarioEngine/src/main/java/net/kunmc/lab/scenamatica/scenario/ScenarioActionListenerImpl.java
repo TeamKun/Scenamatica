@@ -2,7 +2,7 @@ package net.kunmc.lab.scenamatica.scenario;
 
 import lombok.Getter;
 import lombok.Setter;
-import net.kunmc.lab.scenamatica.enums.TestResultCause;
+import net.kunmc.lab.scenamatica.enums.ScenarioResultCause;
 import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
 import net.kunmc.lab.scenamatica.interfaces.action.Action;
 import net.kunmc.lab.scenamatica.interfaces.action.ActionArgument;
@@ -36,7 +36,7 @@ public class ScenarioActionListenerImpl implements ScenarioActionListener
     public <A extends ActionArgument> void onActionError(@NotNull CompiledAction<A> action, @NotNull Throwable error)
     {
         this.reporter.onActionExecuteFailed(this.engine, action, error);
-        this.setResult(TestResultCause.ACTION_EXECUTION_FAILED, action.getExecutor());
+        this.setResult(ScenarioResultCause.ACTION_EXECUTION_FAILED, action.getExecutor());
     }
 
     @Override
@@ -65,15 +65,15 @@ public class ScenarioActionListenerImpl implements ScenarioActionListener
         {
             this.reporter.onActionJumped(this.engine, action, this.waitingFor.getAction());
             this.setResult(
-                    TestResultCause.ACTION_EXPECTATION_JUMPED,
+                    ScenarioResultCause.ACTION_EXPECTATION_JUMPED,
                     executor
             );
         }
     }
 
-    private void setResult(TestResultCause cause, @Nullable Action<?> failedAction)
+    private void setResult(ScenarioResultCause cause, @Nullable Action<?> failedAction)
     {
-        this.engine.getDeliverer().setResult(new TestResultImpl(
+        this.engine.getDeliverer().setResult(new ScenarioResultImpl(
                 this.engine.getScenario(),
                 this.engine.getTestID(),
                 this.engine.getState(),
@@ -86,6 +86,6 @@ public class ScenarioActionListenerImpl implements ScenarioActionListener
 
     private void setPassed()
     {
-        this.setResult(TestResultCause.PASSED, null);
+        this.setResult(ScenarioResultCause.PASSED, null);
     }
 }

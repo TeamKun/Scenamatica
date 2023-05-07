@@ -1,6 +1,6 @@
 package net.kunmc.lab.scenamatica.interfaces.scenario;
 
-import net.kunmc.lab.scenamatica.enums.TestState;
+import net.kunmc.lab.scenamatica.enums.ScenarioState;
 import net.kunmc.lab.scenamatica.exceptions.scenario.TriggerNotFoundException;
 import net.kunmc.lab.scenamatica.interfaces.scenario.runtime.CompiledScenarioAction;
 import net.kunmc.lab.scenamatica.interfaces.scenario.runtime.CompiledTriggerAction;
@@ -32,7 +32,7 @@ public interface ScenarioEngine
      * @return テスト結果
      */
     @NotNull
-    TestResult start(@NotNull TriggerBean trigger) throws TriggerNotFoundException;
+    ScenarioResult start(@NotNull TriggerBean trigger) throws TriggerNotFoundException;
 
     /**
      * シナリオの実行をキャンセルします。
@@ -112,7 +112,7 @@ public interface ScenarioEngine
      *
      * @return シナリオの状態
      */
-    TestState getState();
+    ScenarioState getState();
 
     /**
      * コンパイルされたシナリオを取得します。

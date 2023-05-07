@@ -1,6 +1,6 @@
 package net.kunmc.lab.scenamatica.interfaces.scenario;
 
-import net.kunmc.lab.scenamatica.enums.TestState;
+import net.kunmc.lab.scenamatica.enums.ScenarioState;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -14,7 +14,7 @@ public interface ScenarioResultDeliverer
      *
      * @param result テスト結果
      */
-    void setResult(TestResult result);
+    void setResult(ScenarioResult result);
 
     /**
      * テスト結果を取得します。
@@ -25,7 +25,7 @@ public interface ScenarioResultDeliverer
      * @return テスト結果
      */
     @NotNull
-    TestResult waitResult(long timeout, @NotNull TestState state);
+    ScenarioResult waitResult(long timeout, @NotNull ScenarioState state);
 
     /**
      * テスト結果を待っているかどうかを取得します。

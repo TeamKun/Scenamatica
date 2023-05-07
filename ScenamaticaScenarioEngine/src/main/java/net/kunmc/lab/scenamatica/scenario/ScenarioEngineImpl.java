@@ -6,9 +6,9 @@ import net.kunmc.lab.peyangpaperutils.lang.MsgArgs;
 import net.kunmc.lab.scenamatica.commons.utils.LogUtils;
 import net.kunmc.lab.scenamatica.commons.utils.ThreadingUtil;
 import net.kunmc.lab.scenamatica.enums.MilestoneScope;
+import net.kunmc.lab.scenamatica.enums.ScenarioResultCause;
+import net.kunmc.lab.scenamatica.enums.ScenarioState;
 import net.kunmc.lab.scenamatica.enums.ScenarioType;
-import net.kunmc.lab.scenamatica.enums.TestResultCause;
-import net.kunmc.lab.scenamatica.enums.TestState;
 import net.kunmc.lab.scenamatica.enums.TriggerType;
 import net.kunmc.lab.scenamatica.enums.WatchType;
 import net.kunmc.lab.scenamatica.exceptions.scenario.TriggerNotFoundException;
@@ -21,9 +21,9 @@ import net.kunmc.lab.scenamatica.interfaces.context.Context;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioActionListener;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioEngine;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioManager;
+import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioResult;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioResultDeliverer;
 import net.kunmc.lab.scenamatica.interfaces.scenario.TestReporter;
-import net.kunmc.lab.scenamatica.interfaces.scenario.TestResult;
 import net.kunmc.lab.scenamatica.interfaces.scenario.runtime.CompiledScenarioAction;
 import net.kunmc.lab.scenamatica.interfaces.scenario.runtime.CompiledTriggerAction;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
@@ -61,7 +61,7 @@ public class ScenarioEngineImpl implements ScenarioEngine
     private long startedAt;
     private String logPrefix;
     private boolean isAutoRun;
-    private TestState state;
+    private ScenarioState state;
     private CompiledScenarioAction<?> currentScenario;
     private ScenarioResultDeliverer deliverer;
     private List<CompiledScenarioAction<?>> watchedActions;  // 監視対象になったアクション
@@ -81,7 +81,7 @@ public class ScenarioEngineImpl implements ScenarioEngine
         this.scenario = scenario;
         this.listener = new ScenarioActionListenerImpl(this, registry);
         this.compiler = new ScenarioCompiler(this, registry, actionManager);
-        this.state = TestState.STAND_BY;
+        this.state = ScenarioState.STAND_BY;
 
         this.logPrefix = LogUtils.gerScenarioPrefix(null, this.scenario);
 
@@ -104,10 +104,9 @@ public class ScenarioEngineImpl implements ScenarioEngine
         this.registry.getTriggerManager().bakeTriggers(this);
     }
 
-
     @Override
     @NotNull
-    public TestResult start(@NotNull TriggerBean trigger) throws TriggerNotFoundException
+    public ScenarioResult start(@NotNull TriggerBean trigger) throws TriggerNotFoundException
     {
         this.setRunInfo(trigger);
         this.testReporter.onTestStart(this, trigger);
@@ -120,21 +119,21 @@ public class ScenarioEngineImpl implements ScenarioEngine
         {
             // あとかたづけ
             ThreadingUtil.waitFor(this.registry, this::cleanUp);
-            this.genResult(TestResultCause.CONTEXT_PREPARATION_FAILED);
+            this.genResult(ScenarioResultCause.CONTEXT_PREPARATION_FAILED);
         }
 
         this.logWithPrefix(Level.INFO, LangProvider.get(
                 "scenario.run.engine.starting",
                 MsgArgs.of("scenarioName", this.scenario.getName())
         ));
-        this.state = TestState.STARTING;
+        this.state = ScenarioState.STARTING;
 
         return this.startScenarioRun(compiledTrigger);
     }
 
-    private TestResult startScenarioRun(@NotNull CompiledTriggerAction compiledTrigger)
+    private ScenarioResult startScenarioRun(@NotNull CompiledTriggerAction compiledTrigger)
     {
-        TestResult mayResult = this.testRunConditionIfExists(this.runIf);
+        ScenarioResult mayResult = this.testRunConditionIfExists(this.runIf);
         if (mayResult != null)
             return mayResult;  // あとかたづけは上に包含されている。
 
@@ -150,7 +149,7 @@ public class ScenarioEngineImpl implements ScenarioEngine
             return mayResult;
         }
 
-        this.state = TestState.RUNNING_MAIN;
+        this.state = ScenarioState.RUNNING_MAIN;
         this.logWithPrefix(Level.INFO, LangProvider.get(
 
                 "scenario.run.starting.main",
@@ -172,8 +171,8 @@ public class ScenarioEngineImpl implements ScenarioEngine
             return mayResult;
         }
 
-        this.state = TestState.FINISHED;
-        TestResult result = this.genResult(TestResultCause.PASSED);
+        this.state = ScenarioState.FINISHED;
+        ScenarioResult result = this.genResult(ScenarioResultCause.PASSED);
         // genResult は, state を参照するので以下と順番を変えると最終的な state がおかしくなる。
 
         // あとかたづけ
@@ -182,19 +181,19 @@ public class ScenarioEngineImpl implements ScenarioEngine
         return result;
     }
 
-    private TestResult testRunConditionIfExists(@Nullable CompiledScenarioAction<?> runIf)
+    private ScenarioResult testRunConditionIfExists(@Nullable CompiledScenarioAction<?> runIf)
     {
         if (runIf != null)
         {
-            TestResult conditionResult = this.testCondition(runIf);
+            ScenarioResult conditionResult = this.testCondition(runIf);
             // コンディションチェックに失敗した(満たしていない)場合は(エラーにはせずに)スキップする。
-            if (conditionResult.getTestResultCause() != TestResultCause.PASSED)
+            if (conditionResult.getScenarioResultCause() != ScenarioResultCause.PASSED)
             {
                 this.testReporter.onTestSkipped(this, runIf);
 
                 // あとかたづけ
                 ThreadingUtil.waitFor(this.registry, this::cleanUp);
-                return this.genResult(TestResultCause.SKIPPED); // 実質的にはエラーではないので、スキップする。
+                return this.genResult(ScenarioResultCause.SKIPPED); // 実質的にはエラーではないので、スキップする。
             }
         }
 
@@ -213,7 +212,7 @@ public class ScenarioEngineImpl implements ScenarioEngine
     @Nullable
     private Context prepareContext()
     {
-        this.state = TestState.CONTEXT_PREPARING;
+        this.state = ScenarioState.CONTEXT_PREPARING;
 
         try
         {
@@ -233,7 +232,7 @@ public class ScenarioEngineImpl implements ScenarioEngine
 
     private void cleanUp()
     {
-        this.state = TestState.CLEANING_UP;
+        this.state = ScenarioState.CLEANING_UP;
         this.logPrefix = LogUtils.gerScenarioPrefix(null, this.scenario);
         // シナリオのアクションの監視を全て解除しておく。
         this.actionManager.getWatcherManager().unregisterWatchers(this.plugin, WatchType.SCENARIO);
@@ -243,15 +242,15 @@ public class ScenarioEngineImpl implements ScenarioEngine
         ));
         this.registry.getContextManager().destroyContext();
 
-        this.state = TestState.STAND_BY;
+        this.state = ScenarioState.STAND_BY;
         this.isRunning = false;  // これの位置を変えると, 排他の問題でバグる
     }
 
-    private TestResult runBeforeIfPresent(CompiledTriggerAction trigger)
+    private ScenarioResult runBeforeIfPresent(CompiledTriggerAction trigger)
     {
         if (!trigger.getTrigger().getBeforeThat().isEmpty())
         {
-            this.state = TestState.RUNNING_BEFORE;
+            this.state = ScenarioState.RUNNING_BEFORE;
             this.logWithPrefix(Level.INFO, LangProvider.get(
                     "scenario.run.starting.before",
                     MsgArgs.of("scenarioName", this.scenario.getName())
@@ -262,11 +261,11 @@ public class ScenarioEngineImpl implements ScenarioEngine
         return null;
     }
 
-    private TestResult runAfterIfPresent(CompiledTriggerAction trigger)
+    private ScenarioResult runAfterIfPresent(CompiledTriggerAction trigger)
     {
         if (!trigger.getTrigger().getAfterThat().isEmpty())
         {
-            this.state = TestState.RUNNING_AFTER;
+            this.state = ScenarioState.RUNNING_AFTER;
             this.logWithPrefix(Level.INFO, LangProvider.get(
                     "scenario.run.starting.after",
                     MsgArgs.of("scenarioName", this.scenario.getName())
@@ -278,7 +277,7 @@ public class ScenarioEngineImpl implements ScenarioEngine
     }
 
     @Nullable
-    private TestResult runScenario(List<? extends CompiledScenarioAction<?>> scenario)
+    private ScenarioResult runScenario(List<? extends CompiledScenarioAction<?>> scenario)
     {
         // 飛び判定用に, 予めすべてのアクションを監視対象にしておく。
         List<CompiledAction<?>> watches = scenario.stream()
@@ -297,28 +296,28 @@ public class ScenarioEngineImpl implements ScenarioEngine
         {
             if (!this.isRunning)
                 if (this.isTimedOut())
-                    return this.genResult(TestResultCause.RUN_TIMED_OUT);
+                    return this.genResult(ScenarioResultCause.RUN_TIMED_OUT);
                 else
-                    return this.genResult(TestResultCause.CANCELLED);
+                    return this.genResult(ScenarioResultCause.CANCELLED);
 
             CompiledScenarioAction<?> scenarioBean = scenario.get(i);
             CompiledScenarioAction<?> next = i + 1 < scenario.size() ? scenario.get(i + 1): null;
 
-            TestResult result = this.runScenario(scenarioBean, next);
-            if (!(result.getTestResultCause() == TestResultCause.PASSED || result.getTestResultCause() == TestResultCause.SKIPPED))
+            ScenarioResult result = this.runScenario(scenarioBean, next);
+            if (!(result.getScenarioResultCause() == ScenarioResultCause.PASSED || result.getScenarioResultCause() == ScenarioResultCause.SKIPPED))
                 return result;
         }
 
         return null;
     }
 
-    private TestResult runScenario(CompiledScenarioAction<?> scenario, CompiledScenarioAction<?> next)
+    private ScenarioResult runScenario(CompiledScenarioAction<?> scenario, CompiledScenarioAction<?> next)
     {
         if (scenario.getRunIf() != null)
         {
-            TestResult result = this.testCondition(scenario.getRunIf());
-            if (result.getTestResultCause() != TestResultCause.PASSED)
-                return this.genResult(TestResultCause.SKIPPED);
+            ScenarioResult result = this.testCondition(scenario.getRunIf());
+            if (result.getScenarioResultCause() != ScenarioResultCause.PASSED)
+                return this.genResult(ScenarioResultCause.SKIPPED);
         }
 
         this.currentScenario = scenario;
@@ -350,7 +349,7 @@ public class ScenarioEngineImpl implements ScenarioEngine
         this.actionManager.queueExecute(scenario.getAction());
     }
 
-    private <T extends ActionArgument> TestResult testCondition(CompiledScenarioAction<T> scenario)
+    private <T extends ActionArgument> ScenarioResult testCondition(CompiledScenarioAction<T> scenario)
     {
         this.testReporter.onActionStart(this, scenario);
 
@@ -368,22 +367,22 @@ public class ScenarioEngineImpl implements ScenarioEngine
         {
             this.registry.getExceptionHandler().report(e);
             this.testReporter.onConditionCheckFailed(this, scenario);
-            return this.genResult(TestResultCause.INTERNAL_ERROR);
+            return this.genResult(ScenarioResultCause.INTERNAL_ERROR);
         }
 
-        TestResult testResult;
+        ScenarioResult scenarioResult;
         if (result)
         {
             this.testReporter.onConditionCheckSuccess(this, scenario);
-            testResult = this.genResult(TestResultCause.PASSED);
+            scenarioResult = this.genResult(ScenarioResultCause.PASSED);
         }
         else
         {
             this.testReporter.onConditionCheckFailed(this, scenario);
-            testResult = this.genResult(TestResultCause.ILLEGAL_CONDITION);
+            scenarioResult = this.genResult(ScenarioResultCause.ILLEGAL_CONDITION);
         }
 
-        return testResult;
+        return scenarioResult;
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})  // 型は上流で保証されている。
@@ -405,10 +404,10 @@ public class ScenarioEngineImpl implements ScenarioEngine
     {
         this.deliverer.kill();
         this.cleanUp();  // これの位置を変えると, 排他の問題でバグる
-        this.state = TestState.STAND_BY;
+        this.state = ScenarioState.STAND_BY;
     }
 
-    public void setState(TestState state)
+    public void setState(ScenarioState state)
     {
         this.state = state;
 
@@ -428,7 +427,7 @@ public class ScenarioEngineImpl implements ScenarioEngine
 
         // タイムアウト処理。
         if (this.deliverer.isWaiting())
-            this.deliverer.setResult(this.genResult(TestResultCause.RUN_TIMED_OUT));
+            this.deliverer.setResult(this.genResult(ScenarioResultCause.RUN_TIMED_OUT));
         else
             this.cancel();  // RUN_TIMED_OUT の指定は上流の runScenario で行われる。
     }
@@ -464,9 +463,9 @@ public class ScenarioEngineImpl implements ScenarioEngine
         );
     }
 
-    private TestResult genResult(TestResultCause cause)
+    private ScenarioResult genResult(ScenarioResultCause cause)
     {
-        return new TestResultImpl(
+        return new ScenarioResultImpl(
                 this.getScenario(),
                 this.testID,
                 this.state,

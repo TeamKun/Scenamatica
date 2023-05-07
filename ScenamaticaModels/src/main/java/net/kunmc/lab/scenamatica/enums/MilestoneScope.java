@@ -12,7 +12,7 @@ public enum MilestoneScope
 
     MAIN_SCENARIO;
 
-    public static MilestoneScope fromState(TestState state)
+    public static MilestoneScope fromState(ScenarioState state)
     {
         switch (state)
         {

@@ -1,6 +1,6 @@
 package net.kunmc.lab.scenamatica.enums;
 
-public enum TestResultCause
+public enum ScenarioResultCause
 {
     PASSED,
 
