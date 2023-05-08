@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 
 public class BukkitTestReporter implements net.kunmc.lab.scenamatica.interfaces.scenario.TestReporter
 {
-    private final List<Terminal> terminals;
+    protected final List<Terminal> terminals;
 
     public BukkitTestReporter()
     {
@@ -194,6 +194,7 @@ public class BukkitTestReporter implements net.kunmc.lab.scenamatica.interfaces.
 
         this.terminals.forEach(t -> {
             UUID testID = engine.getTestID();
+            printSeparator(engine.getTestID(), t, scenario, 12);
             printTestSummary(engine, t, scenario, result);
             printSeparator(testID, t, scenario, 12);
             printDetails(engine, t, scenario, result);
@@ -237,8 +238,8 @@ public class BukkitTestReporter implements net.kunmc.lab.scenamatica.interfaces.
         this.terminals.forEach(t -> printSessionSummary(t, results, elapsedStr, total, passed, failed, cancelled, skipped));
     }
 
-    private void printSessionSummary(@NotNull Terminal terminal, List<? extends ScenarioResult> results,
-                                     String elapsedStr, int total, int passed, int failed, int cancelled, int skipped)
+    protected void printSessionSummary(@NotNull Terminal terminal, List<? extends ScenarioResult> results,
+                                       String elapsedStr, int total, int passed, int failed, int cancelled, int skipped)
     {
         boolean allPassed = passed == total;
         boolean someFails = failed > 0;
@@ -298,10 +299,9 @@ public class BukkitTestReporter implements net.kunmc.lab.scenamatica.interfaces.
         printSeparator(null, terminal, null, 50);
     }
 
-    private void printTestSummary(ScenarioEngine engine, Terminal terminal, ScenarioFileBean scenario, ScenarioResult result)
+    protected void printTestSummary(ScenarioEngine engine, Terminal terminal, ScenarioFileBean scenario, ScenarioResult result)
     {
         boolean passed = result.getScenarioResultCause() == ScenarioResultCause.PASSED;
-        printSeparator(engine.getTestID(), terminal, scenario, 12);
 
         String resultKey;
         if (passed)
@@ -324,7 +324,7 @@ public class BukkitTestReporter implements net.kunmc.lab.scenamatica.interfaces.
             terminal.error(withPrefix(engine.getTestID(), scenario, summary));
     }
 
-    private void printDetails(ScenarioEngine engine, Terminal terminal, ScenarioFileBean scenario, ScenarioResult result)
+    protected void printDetails(ScenarioEngine engine, Terminal terminal, ScenarioFileBean scenario, ScenarioResult result)
     {
         ScenarioResultCause cause = result.getScenarioResultCause();
 
@@ -363,8 +363,7 @@ public class BukkitTestReporter implements net.kunmc.lab.scenamatica.interfaces.
         )));
     }
 
-
-    private void printSeparator(UUID testID, Terminal terminal, ScenarioFileBean scenario)
+    protected void printSeparator(UUID testID, Terminal terminal, ScenarioFileBean scenario)
     {
         if (terminal.isPlayer())
             printSeparator(testID, terminal, scenario, 25);
@@ -372,7 +371,7 @@ public class BukkitTestReporter implements net.kunmc.lab.scenamatica.interfaces.
             printSeparator(testID, terminal, scenario, 53);
     }
 
-    private void printSeparator(UUID testID, Terminal terminal, ScenarioFileBean scenario, int size)
+    protected void printSeparator(UUID testID, Terminal terminal, ScenarioFileBean scenario, int size)
     {
         int maxSize = 53;
         if (size > maxSize)
@@ -387,7 +386,7 @@ public class BukkitTestReporter implements net.kunmc.lab.scenamatica.interfaces.
         terminal.info(withPrefix(testID, scenario, ChatColor.BLUE + ChatColor.STRIKETHROUGH.toString() + line));
     }
 
-    private String withPrefix(UUID testID, ScenarioFileBean scenario, String message)
+    protected String withPrefix(UUID testID, ScenarioFileBean scenario, String message)
     {
         return LogUtils.gerScenarioPrefix(testID, scenario) + message;
     }

@@ -10,6 +10,7 @@ import net.kunmc.lab.scenamatica.events.PlayerJoinEventListener;
 import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
 import net.kunmc.lab.scenamatica.interfaces.scenario.TestReporter;
 import net.kunmc.lab.scenamatica.reporter.BukkitTestReporter;
+import net.kunmc.lab.scenamatica.reporter.CompactBukkitTestReporter;
 import net.kunmc.lab.scenamatica.reporter.RawTestReporter;
 import net.kunmc.lab.scenamatica.settings.ActorSettingsImpl;
 import net.kyori.adventure.text.Component;
@@ -37,11 +38,13 @@ public final class Scenamatica extends JavaPlugin
         PeyangPaperUtils.init(this);
 
         boolean isRaw = this.getConfig().getBoolean("interfaces.raw", false);
+        boolean isVerbose = this.getConfig().getBoolean("interfaces.verbose", true);
 
         this.registry = new ScenamaticaDaemon(Environment.builder(this)
                 .exceptionHandler(new SimpleExceptionHandler(this.getLogger(), isRaw))
-                .testReporter(this.getTestReporter(isRaw))
+                .testReporter(this.getTestReporter(isRaw, isVerbose))
                 .actorSettings(ActorSettingsImpl.fromConfig(this.getConfig()))
+                .verbose(isVerbose)
                 .build()
         );
 
@@ -58,12 +61,14 @@ public final class Scenamatica extends JavaPlugin
         this.initTestRecipient();
     }
 
-    private TestReporter getTestReporter(boolean isRaw)
+    private TestReporter getTestReporter(boolean isRaw, boolean isVerbose)
     {
         if (isRaw)
             return new RawTestReporter();
-        else
+        else if (isVerbose)
             return new BukkitTestReporter();
+        else
+            return new CompactBukkitTestReporter();
     }
 
     private void initTestRecipient()

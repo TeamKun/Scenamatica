@@ -19,6 +19,7 @@ public class Environment implements ScenamaticaEnvironment
     private final ExceptionHandler exceptionHandler;
     private final TestReporter testReporter;
     private final ActorSettings actorSettings;
+    private final boolean verbose;
 
     public static Environment.EnvironmentBuilder builder(Plugin plugin)
     {

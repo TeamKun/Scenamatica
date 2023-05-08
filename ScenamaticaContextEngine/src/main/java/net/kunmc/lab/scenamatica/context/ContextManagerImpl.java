@@ -35,6 +35,7 @@ public class ContextManagerImpl implements ContextManager
     private static final String DEFAULT_ORIGINAL_WORLD_NAME = "world";
 
     private final ScenamaticaRegistry registry;
+    private final boolean verbose;
     @Getter
     @NotNull
     private final ActorManager actorManager;
@@ -49,6 +50,7 @@ public class ContextManagerImpl implements ContextManager
     public ContextManagerImpl(@NotNull ScenamaticaRegistry registry) throws VersionNotSupportedException
     {
         this.registry = registry;
+        this.verbose = registry.getEnvironment().isVerbose();
         this.actorManager = new ActorManagerImpl(registry, this);
         this.stageManager = new StageManagerImpl(registry);
         this.logger = registry.getLogger();
@@ -67,9 +69,9 @@ public class ContextManagerImpl implements ContextManager
     {
         ContextBean context = scenario.getContext();
 
-        this.log(scenario, "context.creating", testID);
+        this.log(scenario, "context.creating", testID, true);
 
-        this.log(scenario, "context.stage.generating", testID);
+        this.log(scenario, "context.stage.generating", testID, true);
 
         World stage;
         if (context != null && context.getWorld() != null)
@@ -78,10 +80,14 @@ public class ContextManagerImpl implements ContextManager
                     && Bukkit.getWorld(context.getWorld().getOriginalWorldName()) != null)  // 既存だったら再利用する。
             {
                 this.log(scenario, "context.stage.clone.found",
-                        MsgArgs.of("stageName", context.getWorld().getOriginalWorldName()), testID
+                        MsgArgs.of("stageName", context.getWorld().getOriginalWorldName()),
+                        testID,
+                        true
                 );
                 this.log(scenario, "context.stage.clone.cloning",
-                        MsgArgs.of("stageName", context.getWorld().getOriginalWorldName()), testID
+                        MsgArgs.of("stageName", context.getWorld().getOriginalWorldName()),
+                        testID,
+                        true
                 );
             }
 
@@ -105,7 +111,7 @@ public class ContextManagerImpl implements ContextManager
         List<Actor> actors = new ArrayList<>();
         if (context != null && !context.getActors().isEmpty())
         {
-            this.log(scenario, "context.actor.generating", testID);
+            this.log(scenario, "context.actor.generating", testID, true);
             try
             {
                 for (PlayerBean actor : context.getActors())
@@ -122,17 +128,21 @@ public class ContextManagerImpl implements ContextManager
             }
         }
 
-        this.log(scenario, "context.created", testID);
+        this.log(scenario, "context.created", testID, true);
         return new ContextImpl(stage, actors);
     }
 
-    private void log(ScenarioFileBean scenario, String message, MsgArgs args, UUID testID)
+    private void log(ScenarioFileBean scenario, String message, MsgArgs args, UUID testID, boolean verboseOnly)
     {
+        if (!this.verbose && verboseOnly)
+            return;
         this.logger.log(Level.INFO, LangProvider.get(message, getArgs(scenario, testID).add(args)));
     }
 
-    private void log(ScenarioFileBean scenario, String message, UUID testID)
+    private void log(ScenarioFileBean scenario, String message, UUID testID, boolean verboseOnly)
     {
+        if (!this.verbose && verboseOnly)
+            return;
         this.logger.log(Level.INFO, LangProvider.get(message, getArgs(scenario, testID)));
     }
 

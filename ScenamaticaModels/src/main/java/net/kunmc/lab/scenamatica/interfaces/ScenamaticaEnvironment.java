@@ -48,4 +48,9 @@ public interface ScenamaticaEnvironment
      */
     @NotNull
     ActorSettings getActorSettings();
+
+    /**
+     * 詳細なログを出力するかどうかを取得します。
+     */
+    boolean isVerbose();
 }

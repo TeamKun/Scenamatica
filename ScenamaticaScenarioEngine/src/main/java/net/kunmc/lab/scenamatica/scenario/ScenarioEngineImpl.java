@@ -43,6 +43,7 @@ import java.util.stream.Collectors;
 public class ScenarioEngineImpl implements ScenarioEngine
 {
     private final ScenamaticaRegistry registry;
+    private final boolean verbose;
     private final ScenarioManager manager;
     private final ActionManager actionManager;
     private final TestReporter testReporter;
@@ -74,6 +75,7 @@ public class ScenarioEngineImpl implements ScenarioEngine
                               @NotNull ScenarioFileBean scenario)
     {
         this.registry = registry;
+        this.verbose = registry.getEnvironment().isVerbose();
         this.manager = manager;
         this.actionManager = actionManager;
         this.testReporter = testReporter;
@@ -123,9 +125,12 @@ public class ScenarioEngineImpl implements ScenarioEngine
         }
 
         this.logWithPrefix(Level.INFO, LangProvider.get(
-                "scenario.run.engine.starting",
-                MsgArgs.of("scenarioName", this.scenario.getName())
-        ));
+                        "scenario.run.engine.starting",
+                        MsgArgs.of("scenarioName", this.scenario.getName())
+                ),
+                true
+        );
+
         this.state = ScenarioState.STARTING;
 
         return this.startScenarioRun(compiledTrigger);
@@ -151,10 +156,11 @@ public class ScenarioEngineImpl implements ScenarioEngine
 
         this.state = ScenarioState.RUNNING_MAIN;
         this.logWithPrefix(Level.INFO, LangProvider.get(
-
-                "scenario.run.starting.main",
-                MsgArgs.of("scenarioName", this.scenario.getName())
-        ));
+                        "scenario.run.starting.main",
+                        MsgArgs.of("scenarioName", this.scenario.getName())
+                ),
+                true
+        );
         mayResult = this.runScenario(this.actions);
         if (mayResult != null)
         {
@@ -222,9 +228,11 @@ public class ScenarioEngineImpl implements ScenarioEngine
         {
             this.registry.getExceptionHandler().report(e);
             this.logWithPrefix(Level.WARNING, LangProvider.get(
-                    "scenario.run.prepare.fail",
-                    MsgArgs.of("scenarioName", this.scenario.getName())
-            ));
+                            "scenario.run.prepare.fail",
+                            MsgArgs.of("scenarioName", this.scenario.getName())
+                    ),
+                    false
+            );
 
             return null;
         }
@@ -237,9 +245,11 @@ public class ScenarioEngineImpl implements ScenarioEngine
         // シナリオのアクションの監視を全て解除しておく。
         this.actionManager.getWatcherManager().unregisterWatchers(this.plugin, WatchType.SCENARIO);
         this.logWithPrefix(Level.INFO, LangProvider.get(
-                "scenario.run.prepare.destroy",
-                MsgArgs.of("scenarioName", this.scenario.getName())
-        ));
+                        "scenario.run.prepare.destroy",
+                        MsgArgs.of("scenarioName", this.scenario.getName())
+                ),
+                true
+        );
         this.registry.getContextManager().destroyContext();
 
         this.state = ScenarioState.STAND_BY;
@@ -252,9 +262,11 @@ public class ScenarioEngineImpl implements ScenarioEngine
         {
             this.state = ScenarioState.RUNNING_BEFORE;
             this.logWithPrefix(Level.INFO, LangProvider.get(
-                    "scenario.run.starting.before",
-                    MsgArgs.of("scenarioName", this.scenario.getName())
-            ));
+                            "scenario.run.starting.before",
+                            MsgArgs.of("scenarioName", this.scenario.getName())
+                    ),
+                    true
+            );
             return this.runScenario(trigger.getBeforeActions());
         }
 
@@ -267,9 +279,11 @@ public class ScenarioEngineImpl implements ScenarioEngine
         {
             this.state = ScenarioState.RUNNING_AFTER;
             this.logWithPrefix(Level.INFO, LangProvider.get(
-                    "scenario.run.starting.after",
-                    MsgArgs.of("scenarioName", this.scenario.getName())
-            ));
+                            "scenario.run.starting.after",
+                            MsgArgs.of("scenarioName", this.scenario.getName())
+                    ),
+                    true
+            );
             return this.runScenario(trigger.getAfterActions());
         }
 
@@ -446,17 +460,21 @@ public class ScenarioEngineImpl implements ScenarioEngine
         this.logPrefix = LogUtils.gerScenarioPrefix(null, this.scenario);
         if (!(this.isAutoRun = trigger.getType() != TriggerType.MANUAL_DISPATCH))
             this.logWithPrefix(Level.INFO, LangProvider.get(
-                    "scenario.run.manually",
-                    MsgArgs.of("scenarioName", this.scenario.getName())
-            ));
+                            "scenario.run.manually",
+                            MsgArgs.of("scenarioName", this.scenario.getName())
+                    ),
+                    true
+            );
         this.deliverer = new ScenarioResultDelivererImpl(this.registry, this.scenario, this.testID, this.startedAt);
         this.watchedActions = new ArrayList<>();
 
         this.isRunning = true;
     }
 
-    private void logWithPrefix(Level level, String message)
+    private void logWithPrefix(Level level, String message, boolean onlyVerbose)
     {
+        if (onlyVerbose && !this.verbose)
+            return;
         this.registry.getLogger().log(
                 level,
                 this.logPrefix + message
