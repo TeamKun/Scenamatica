@@ -55,3 +55,8 @@ jobs:
           plugin: Scenamatica.jar
         env:
           NO_SCENAMATICA: true  # Because the test is running scenamatica itself, we don't need the daemon.
+      - name: Clean up temporary artifacts
+        uses: jimschubert/delete-artifacts-action@v1
+        with:
+          artifact_name: scenamatica
+          run_id: "${{ github.event.client_payload.run_id }}"
