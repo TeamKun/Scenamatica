@@ -32,7 +32,7 @@ public class ScenarioSessionImpl implements ScenarioSession
     {
         this.manager = manager;
         this.createdAt = System.currentTimeMillis();
-        this.scenarios = scenarios;
+        this.scenarios = new ArrayList<>(scenarios);  // 内部で変更するため, 不変リストとかを入れないように。
     }
 
     public ScenarioSessionImpl(ScenarioManagerImpl manager)
