@@ -24,6 +24,7 @@ public class ScenarioFileBeanSerializeTest
             "eveything",
             "A scenario that does everything",
             114514L,
+            0,
             Arrays.asList(
                     TriggerBeanSerializeTest.FULFILLED,
                     TriggerBeanSerializeTest.FULFILLED,
@@ -42,7 +43,8 @@ public class ScenarioFileBeanSerializeTest
         this.put("scenamatica", "0.1.0");
         this.put("name", "eveything");
         this.put("description", "A scenario that does everything");
-        this.put("timeuot", 114514L);
+        this.put("timeout", 114514L);
+        this.put("order", 0);
         this.put("on", Arrays.asList(
                 TriggerBeanSerializeTest.FULFILLED_MAP,
                 TriggerBeanSerializeTest.FULFILLED_MAP,
@@ -59,7 +61,8 @@ public class ScenarioFileBeanSerializeTest
             Version.of("0.1.0"),
             "nothing",
             "A scenario that does nothing",
-            -1L,
+            ScenarioFileBeanImpl.DEFAULT_TIMEOUT_TICK,
+            ScenarioFileBeanImpl.DEFAULT_ORDER,
             Collections.emptyList(),
             null,
             null,

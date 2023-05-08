@@ -23,12 +23,14 @@ import java.util.stream.Collectors;
 @Value
 public class ScenarioFileBeanImpl implements ScenarioFileBean
 {
-    private static final long DEFAULT_TIMEOUT_TICK = 20L * 60L * 5L;
+    public static final long DEFAULT_TIMEOUT_TICK = 20L * 60L * 5L;
+    public static final int DEFAULT_ORDER = Integer.MAX_VALUE;
 
     private static final String KEY_SCENAMATICA_VERSION = "scenamatica";
     private static final String KEY_NAME = "name";
     private static final String KEY_DESCRIPTION = "description";
     private static final String KEY_TIMEOUT = "timeout";
+    private static final String KEY_ORDER = "order";
     private static final String KEY_TRIGGERS = "on";
     private static final String KEY_RUN_IF = "runif";
     private static final String KEY_CONTEXT = "context";
@@ -41,6 +43,7 @@ public class ScenarioFileBeanImpl implements ScenarioFileBean
     @NotNull
     String description;
     long timeout;
+    int order;
     @NotNull
     List<TriggerBean> triggers;
     @Nullable
@@ -59,8 +62,10 @@ public class ScenarioFileBeanImpl implements ScenarioFileBean
         map.put(KEY_NAME, bean.getName());
         map.put(KEY_DESCRIPTION, bean.getDescription());
 
-        if (bean.getTimeout() != -1)
+        if (bean.getTimeout() != DEFAULT_TIMEOUT_TICK)
             map.put(KEY_TIMEOUT, bean.getTimeout());
+        if (bean.getOrder() != DEFAULT_ORDER)
+            map.put(KEY_ORDER, bean.getOrder());
 
         map.put(KEY_TRIGGERS, bean.getTriggers().stream()
                 .map(TriggerBeanImpl::serialize)
@@ -88,6 +93,7 @@ public class ScenarioFileBeanImpl implements ScenarioFileBean
         MapUtils.checkType(map, KEY_NAME, String.class);
         MapUtils.checkType(map, KEY_DESCRIPTION, String.class);
         MapUtils.checkNumberIfContains(map, KEY_TIMEOUT);
+        MapUtils.checkNumberIfContains(map, KEY_ORDER);
 
         if (map.containsKey(KEY_CONTEXT))
             ContextBeanImpl.validate(MapUtils.checkAndCastMap(
@@ -120,6 +126,7 @@ public class ScenarioFileBeanImpl implements ScenarioFileBean
         String name = (String) map.get(KEY_NAME);
         String description = (String) map.get(KEY_DESCRIPTION);
         long timeout = MapUtils.getAsLongOrDefault(map, KEY_TIMEOUT, DEFAULT_TIMEOUT_TICK);
+        int order = MapUtils.getAsIntOrDefault(map, KEY_ORDER, DEFAULT_ORDER);
 
         List<TriggerBean> triggers = ((List<?>) map.get(KEY_TRIGGERS)).stream()
                 .map(o -> TriggerBeanImpl.deserialize(MapUtils.checkAndCastMap(
@@ -157,6 +164,7 @@ public class ScenarioFileBeanImpl implements ScenarioFileBean
                 name,
                 description,
                 timeout,
+                order,
                 triggers,
                 runIf,
                 context,

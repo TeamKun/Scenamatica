@@ -45,6 +45,15 @@ public interface ScenarioFileBean extends Serializable
     long getTimeout();
 
     /**
+     * 同一セッションでのシナリオの実行順序を定義します。
+     * 値が小さいほど先に実行されます。
+     * デフォルトでは {@link Integer#MAX_VALUE} が設定されています。
+     *
+     * @return 実行順序
+     */
+    int getOrder();
+
+    /**
      * このシナリオの実行条件を取得します。
      *
      * @return 実行条件

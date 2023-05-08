@@ -1,4 +1,4 @@
-package net.kunmc.lab.scenamatica.commons.utils;
+ package net.kunmc.lab.scenamatica.commons.utils;
 
 import lombok.experimental.UtilityClass;
 import org.bukkit.Bukkit;
@@ -332,5 +332,12 @@ public class MapUtils
         if (!map.containsKey(key))
             return defaultValue;
         return ((Number) map.get(key)).longValue();
+    }
+
+    public static int getAsIntOrDefault(Map<String, Object> map, String key, int defaultValue)
+    {
+        if (!map.containsKey(key))
+            return defaultValue;
+        return ((Number) map.get(key)).intValue();
     }
 }
