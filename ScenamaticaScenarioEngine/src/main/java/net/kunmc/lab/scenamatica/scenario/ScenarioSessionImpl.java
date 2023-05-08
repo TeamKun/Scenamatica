@@ -33,6 +33,16 @@ public class ScenarioSessionImpl implements ScenarioSession
         this.manager = manager;
         this.createdAt = System.currentTimeMillis();
         this.scenarios = new ArrayList<>(scenarios);  // 内部で変更するため, 不変リストとかを入れないように。
+        this.sort();
+    }
+
+    private void sort()
+    {
+        this.scenarios.sort((a, b) -> {
+            int orderA = a.getEngine().getScenario().getOrder();
+            int orderB = b.getEngine().getScenario().getOrder();
+            return Integer.compare(orderA, orderB);
+        });
     }
 
     public ScenarioSessionImpl(ScenarioManagerImpl manager)
@@ -44,6 +54,7 @@ public class ScenarioSessionImpl implements ScenarioSession
     public void add(@NotNull ScenarioEngine engine, @NotNull TriggerBean trigger, @Nullable Consumer<? super ScenarioResult> callback)
     {
         this.scenarios.add(new QueuedScenarioImpl(this.manager, engine, trigger, callback));
+        this.sort();
     }
 
     @Override
