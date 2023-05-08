@@ -50,4 +50,9 @@ public class SessionCreatorImpl implements SessionCreator
         return Collections.unmodifiableList(this.sessions);
     }
 
+    @Override
+    public boolean isEmpty()
+    {
+        return this.sessions.isEmpty();
+    }
 }

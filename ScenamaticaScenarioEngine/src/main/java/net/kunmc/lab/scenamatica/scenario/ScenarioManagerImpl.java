@@ -310,6 +310,9 @@ public class ScenarioManagerImpl implements ScenarioManager
         for (ScenarioEngine engine : scenarios)
             creator.add(engine, TriggerType.ON_LOAD);
 
+        if (creator.isEmpty())
+            return;
+
         this.queue.addAll(creator);
     }
 }

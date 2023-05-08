@@ -22,6 +22,8 @@ public interface SessionCreator
 
     void queueAll() throws TriggerNotFoundException, ScenarioNotFoundException;
 
+    boolean isEmpty();
+
     @Value
     @AllArgsConstructor
     class SessionElement
