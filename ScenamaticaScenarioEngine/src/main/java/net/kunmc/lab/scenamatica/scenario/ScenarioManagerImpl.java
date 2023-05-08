@@ -280,6 +280,12 @@ public class ScenarioManagerImpl implements ScenarioManager
         this.loadPluginScenarios(plugin);
     }
 
+    @Override
+    public @NotNull List<ScenarioEngine> getEnginesFor(@NotNull Plugin plugin)
+    {
+        return new ArrayList<>(this.engines.get(plugin));
+    }
+
     @SneakyThrows(ScenarioNotRunningException.class)
     @Override
     public void shutdown()

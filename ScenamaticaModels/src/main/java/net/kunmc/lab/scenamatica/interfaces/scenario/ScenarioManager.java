@@ -12,6 +12,8 @@ import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+
 /**
  * シナリオを管理するインターフェースです。
  */
@@ -207,6 +209,15 @@ public interface ScenarioManager
      */
     @Nullable
     ScenarioEngine getCurrentScenario();
+
+    /**
+     * プラグインのシナリオを返します。
+     *
+     * @param plugin プラグイン
+     * @return シナリオ
+     */
+    @NotNull
+    List<ScenarioEngine> getEnginesFor(@NotNull Plugin plugin);
 
     /**
      * 実行中のシナリオを停止し, このインスタンスを破棄します。

@@ -1,15 +1,17 @@
 package net.kunmc.lab.scenamatica.commands.scenario;
 
 import lombok.AllArgsConstructor;
+import lombok.SneakyThrows;
 import net.kunmc.lab.peyangpaperutils.lang.LangProvider;
 import net.kunmc.lab.peyangpaperutils.lang.MsgArgs;
 import net.kunmc.lab.peyangpaperutils.lib.command.CommandBase;
 import net.kunmc.lab.peyangpaperutils.lib.terminal.Terminal;
 import net.kunmc.lab.scenamatica.enums.TriggerType;
-import net.kunmc.lab.scenamatica.exceptions.scenario.ScenarioException;
 import net.kunmc.lab.scenamatica.exceptions.scenario.ScenarioNotFoundException;
 import net.kunmc.lab.scenamatica.exceptions.scenario.TriggerNotFoundException;
 import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
+import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioEngine;
+import net.kunmc.lab.scenamatica.interfaces.scenario.SessionCreator;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
 import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Bukkit;
@@ -30,6 +32,7 @@ public class CommandStart extends CommandBase
     private final ScenamaticaRegistry registry;
 
     @Override
+    @SneakyThrows({ScenarioNotFoundException.class, TriggerNotFoundException.class})
     public void onCommand(@NotNull CommandSender commandSender, @NotNull Terminal terminal, String[] strings)
     {
         if (indicateArgsLengthInvalid(terminal, strings, 1))
@@ -49,32 +52,13 @@ public class CommandStart extends CommandBase
 
         if (strings.length < 2)
         {
-            Map<String, ScenarioFileBean> scenarioMap = this.registry.getScenarioFileManager().getPluginScenarios(plugin);
-            if (scenarioMap == null)
-            {
-                terminal.error(LangProvider.get(
-                        "command.scenario.start.errors.noPlugin",
-                        MsgArgs.of("plugin", pluginName)
-                ));
-                return;
-            }
+            List<ScenarioEngine> engines = this.registry.getScenarioManager().getEnginesFor(plugin);
 
-            scenarioMap.values()
-                    .forEach(s -> {
-                        try
-                        {
-                            this.registry.getTriggerManager().performTriggerFire(
-                                    plugin,
-                                    s.getName(),
-                                    TriggerType.MANUAL_DISPATCH,
-                                    null
-                            );
-                        }
-                        catch (ScenarioException e)
-                        {
-                            throw new RuntimeException(e);
-                        }
-                    });
+            SessionCreator creator = this.registry.getScenarioManager().newSession();
+            for (ScenarioEngine engine : engines)
+                creator.add(engine, TriggerType.MANUAL_DISPATCH);
+
+            this.registry.getScenarioManager().queueScenario(creator);
         }
         else
         {
