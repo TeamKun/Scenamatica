@@ -12,16 +12,50 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.function.Consumer;
 
+/**
+ * シナリオを実行するためのセッションを作成するクラスです。
+ */
 public interface SessionCreator
 {
+    /**
+     * セッション定義にシナリオを追加します。
+     *
+     * @param plugin  シナリオを実行するプラグイン
+     * @param trigger シナリオを実行するトリガー
+     * @param name    シナリオの名前
+     * @return セッション定義
+     */
     SessionCreator add(@NotNull Plugin plugin, @NotNull TriggerType trigger, @NotNull String name);
 
+    /**
+     * セッション定義にシナリオを追加します。
+     *
+     * @param engine  シナリオを実行するエンジン
+     * @param trigger シナリオを実行するトリガー
+     * @return セッション定義
+     */
     SessionCreator add(@NotNull ScenarioEngine engine, @NotNull TriggerType trigger);
 
+    /**
+     * セッション定義にシナリオを追加します。
+     *
+     * @return セッション定義
+     */
     List<SessionElement> getSessions();
 
+    /**
+     * セッション定義に追加されたシナリオを実行します。
+     *
+     * @throws TriggerNotFoundException  トリガーが見つからない場合
+     * @throws ScenarioNotFoundException シナリオが見つからない場合
+     */
     void queueAll() throws TriggerNotFoundException, ScenarioNotFoundException;
 
+    /**
+     * セッション定義に追加されたシナリオが空かどうかを返します。
+     *
+     * @return セッション定義に追加されたシナリオが空かどうか
+     */
     boolean isEmpty();
 
     @Value
