@@ -7,8 +7,10 @@ import net.kunmc.lab.peyangpaperutils.lib.terminal.Terminals;
 import net.kunmc.lab.scenamatica.commons.utils.LogUtils;
 import net.kunmc.lab.scenamatica.enums.ScenarioResultCause;
 import net.kunmc.lab.scenamatica.interfaces.action.CompiledAction;
+import net.kunmc.lab.scenamatica.interfaces.scenario.QueuedScenario;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioEngine;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioResult;
+import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioSession;
 import net.kunmc.lab.scenamatica.interfaces.scenario.runtime.CompiledScenarioAction;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerBean;
@@ -21,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class BukkitTestReporter implements net.kunmc.lab.scenamatica.interfaces.scenario.TestReporter
 {
@@ -199,7 +202,7 @@ public class BukkitTestReporter implements net.kunmc.lab.scenamatica.interfaces.
     }
 
     @Override
-    public void onTestSessionStart(@NotNull List<? extends ScenarioEngine> engines)
+    public void onTestSessionStart(@NotNull ScenarioSession session)
     {
         this.terminals.forEach(t -> {
             printSeparator(null, t, null, 50);
@@ -210,11 +213,14 @@ public class BukkitTestReporter implements net.kunmc.lab.scenamatica.interfaces.
     }
 
     @Override
-    public void onTestSessionEnd(@NotNull List<? extends ScenarioResult> results, long startedAt)
+    public void onTestSessionEnd(@NotNull ScenarioSession session)
     {
         long endedAt = System.currentTimeMillis();
-        long elapsed = endedAt - startedAt;
+        long elapsed = endedAt - session.getStartedAt();
         String elapsedStr = formatTime(elapsed);
+        List<ScenarioResult> results = session.getScenarios().stream()
+                .map(QueuedScenario::getResult)
+                .collect(Collectors.toList());
 
         int total = results.size();
         int passed = (int) results.stream().parallel()

@@ -1,6 +1,7 @@
 package net.kunmc.lab.scenamatica.reporter.packets.session;
 
-import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioEngine;
+import net.kunmc.lab.scenamatica.interfaces.scenario.QueuedScenario;
+import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioSession;
 import net.kunmc.lab.scenamatica.reporter.packets.test.PacketTestStart;
 import org.jetbrains.annotations.NotNull;
 
@@ -17,10 +18,11 @@ public class PacketSessionStart extends AbstractSessionPacket
     @NotNull
     private final List<PacketTestStart> tests;
 
-    public PacketSessionStart(@NotNull List<? extends ScenarioEngine> tests)
+    public PacketSessionStart(@NotNull ScenarioSession session)
     {
         super(TYPE);
-        this.tests = tests.stream()
+        this.tests = session.getScenarios().stream()
+                .map(QueuedScenario::getEngine)
                 .map(PacketTestStart::new)
                 .collect(Collectors.toList());
     }

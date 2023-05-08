@@ -2,65 +2,80 @@ package net.kunmc.lab.scenamatica.scenario;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import lombok.Value;
 import net.kunmc.lab.scenamatica.exceptions.scenario.TriggerNotFoundException;
 import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
+import net.kunmc.lab.scenamatica.interfaces.scenario.QueuedScenario;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioEngine;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioResult;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerBean;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Deque;
-import java.util.List;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 @AllArgsConstructor
         /* non-public */ class ScenarioQueue
 {
     private final ScenamaticaRegistry registry;
     private final ScenarioManagerImpl manager;
-    private final Deque<QueueEntry> scenarioRunQueue;
+    private final Deque<ScenarioSessionImpl> scenarioQueue;
 
-    private List<ScenarioResult> sessionResults;
-    private long sessionStartedAt;
+    private ScenarioSessionImpl current;
     private SessionRunner runner;
 
     public ScenarioQueue(ScenamaticaRegistry registry, ScenarioManagerImpl manager)
     {
         this.registry = registry;
         this.manager = manager;
-        this.scenarioRunQueue = new ArrayDeque<>();
-        this.sessionResults = new ArrayList<>();
-        this.sessionStartedAt = 0;
+        this.scenarioQueue = new ArrayDeque<>();
     }
 
-    /* non-public */ void add(ScenarioEngine engine, TriggerBean trigger, Consumer<ScenarioResult> callback)
+    /* non-public */ void add(ScenarioEngine engine, TriggerBean trigger, Consumer<? super ScenarioResult> callback)
     {
-        this.scenarioRunQueue.add(new QueueEntry(engine, trigger, callback));
+        this.scenarioQueue.add(new ScenarioSessionImpl(this.manager, Collections.singletonList(
+                new QueuedScenarioImpl(this.manager, engine, trigger, callback)
+        )));
         this.runner.resume();
     }
 
-    /* non-public */ void addInterrupt(ScenarioEngine engine, TriggerBean trigger, Consumer<ScenarioResult> callback)
+    /* non-public */ void addInterrupt(ScenarioEngine engine, TriggerBean trigger, Consumer<? super ScenarioResult> callback)
     {
-        this.scenarioRunQueue.addFirst(new QueueEntry(engine, trigger, callback));
+        if (this.current != null)  // バックアップを取っておく。
+            this.scenarioQueue.add(this.current);
+
+        this.current = new ScenarioSessionImpl(this.manager, new ArrayList<>());
+
+        this.current.add(engine, trigger, callback);
+
         this.runner.resume();
     }
 
     /* non-public */ void remove(Plugin plugin, String name)
     {
-        this.scenarioRunQueue.removeIf(entry -> entry.getEngine().getPlugin().equals(plugin) &&
-                entry.getEngine().getScenario().getName().equals(name));
+        if (this.current != null)
+            this.current.remove(plugin, name);
+
+        this.scenarioQueue.forEach(session -> session.remove(plugin, name));
+
+        // ↑の操作で session が空になったら削除する
+        this.scenarioQueue.removeIf(session -> session.getScenarios().isEmpty());
     }
 
     /* non-public */ void removeAll(Plugin plugin)
     {
-        this.scenarioRunQueue.removeIf(entry -> entry.getEngine().getPlugin().equals(plugin));
+        if (this.current != null)
+            this.current.remove(plugin);
+
+        this.scenarioQueue.forEach(session -> session.remove(plugin));
+
+        // ↑の操作で session が空になったら削除する
+        this.scenarioQueue.removeIf(session -> session.getScenarios().isEmpty());
     }
 
     /* non-public */ void start()
@@ -68,64 +83,26 @@ import java.util.stream.Collectors;
         if (this.runner != null && this.runner.isRunning())
             throw new IllegalStateException("ScenarioQueue is already running.");
 
-        this.runner = new SessionRunner();
+        this.runner = new SessionRunner(this.manager);
         this.runner.runTaskAsynchronously(this.registry.getPlugin());
     }
 
     public void shutdown() throws IllegalStateException
     {
-        this.scenarioRunQueue.clear();
+        this.scenarioQueue.clear();
         if (this.runner.isRunning())
             this.runner.cancel();
     }
 
-    private void startSession()
-    {
-        this.manager.getTestReporter().onTestSessionStart(
-                this.scenarioRunQueue.stream()
-                        .map(QueueEntry::getEngine)
-                        .collect(Collectors.toList())
-        );
-
-        this.sessionResults.clear();
-        this.sessionStartedAt = System.currentTimeMillis();
-    }
-
-    private void endSession()
-    {
-        this.manager.getTestReporter().onTestSessionEnd(this.sessionResults, this.sessionStartedAt);
-
-        this.sessionResults.clear();
-        this.sessionStartedAt = 0;
-    }
-
-    @Value
-    /* non-public */ static class QueueEntry
-    {
-        ScenarioEngine engine;
-        TriggerBean trigger;
-        @Nullable
-        Consumer<ScenarioResult> callback;
-
-    }
-
+    @RequiredArgsConstructor
     private class SessionRunner extends BukkitRunnable
     {
+        private final ScenarioManagerImpl manager;
+
         @Getter
         private boolean running;
         private final Object lock = new Object();
         private boolean paused;
-
-        public void resume()
-        {
-            synchronized (this.lock)
-            {
-                if (this.paused)
-                    this.lock.notify();
-
-                this.paused = false;
-            }
-        }
 
         @Override
         public void run()
@@ -134,7 +111,7 @@ import java.util.stream.Collectors;
 
             try
             {
-                while (ScenarioQueue.this.manager.isEnabled() && this.running)
+                while (this.manager.isEnabled() && this.running)
                     if (!this.runOne())
                         return;
             }
@@ -149,34 +126,20 @@ import java.util.stream.Collectors;
         @SneakyThrows(TriggerNotFoundException.class)
         private boolean runOne()
         {
-            if (ScenarioQueue.this.scenarioRunQueue.isEmpty() || ScenarioQueue.this.manager.isRunning())
-                try
-                {
-                    synchronized (this.lock)
-                    {
-                        this.paused = true;
-                        this.lock.wait();
-                        return true;
-                    }
-                }
-                catch (InterruptedException ignored)
-                {
-                    return false;
-                }
-            else if (ScenarioQueue.this.sessionStartedAt == 0)  // 0 ならまだセッションが開始されていない。
-                ScenarioQueue.this.startSession();
+            if (!this.manager.isRunning())  // Scenamatica 自体の実行が停止している場合は待機。
+                return this.pause();
 
-            QueueEntry entry = ScenarioQueue.this.scenarioRunQueue.pop();
+            if (ScenarioQueue.this.current == null && !this.pickNextSession())
+                return this.pause();  // 次のセッションがない場合は待機。
 
-            ScenarioResult result = ScenarioQueue.this.manager.runScenario(entry.getEngine(), entry.getTrigger());
-            ScenarioQueue.this.sessionResults.add(result);
+            QueuedScenario next;
+            if ((next = ScenarioQueue.this.current.getNext()) == null)
+            {
+                this.endSession();
+                return true;
+            }
 
-            if (entry.getCallback() != null)
-                entry.getCallback().accept(result);
-
-
-            if (ScenarioQueue.this.scenarioRunQueue.isEmpty())
-                ScenarioQueue.this.endSession();
+            next.run();  // onStart() => run => onFinished => callback 処理までやる。
 
             return true;
         }
@@ -186,6 +149,56 @@ import java.util.stream.Collectors;
         {
             this.running = false;
             super.cancel();
+        }
+
+        private boolean pickNextSession()
+        {
+            if (ScenarioQueue.this.scenarioQueue.isEmpty())
+                return false;
+
+            ScenarioSessionImpl session = ScenarioQueue.this.scenarioQueue.pop();
+            session.onStart();
+            this.manager.getTestReporter().onTestSessionStart(session);
+
+            ScenarioQueue.this.current = session;
+
+            return true;
+        }
+
+        private void endSession()
+        {
+            ScenarioQueue.this.current.onFinished();
+            this.manager.getTestReporter().onTestSessionEnd(ScenarioQueue.this.current);
+
+            ScenarioQueue.this.current = null;
+        }
+
+        private boolean pause()
+        {
+            try
+            {
+                synchronized (this.lock)
+                {
+                    this.paused = true;
+                    this.lock.wait();
+                    return true; // 実行を再開する。
+                }
+            }
+            catch (InterruptedException ignored)
+            {
+                return false; // 実行を終了する。
+            }
+        }
+
+        public void resume()
+        {
+            synchronized (this.lock)
+            {
+                if (this.paused)
+                    this.lock.notify();
+
+                this.paused = false;
+            }
         }
     }
 }

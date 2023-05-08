@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import net.kunmc.lab.scenamatica.interfaces.action.CompiledAction;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioEngine;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioResult;
+import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioSession;
 import net.kunmc.lab.scenamatica.interfaces.scenario.TestReporter;
 import net.kunmc.lab.scenamatica.interfaces.scenario.runtime.CompiledScenarioAction;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerBean;
@@ -27,7 +28,6 @@ import org.jetbrains.annotations.NotNull;
 import java.io.FileDescriptor;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
-import java.util.List;
 import java.util.Map;
 
 public class RawTestReporter implements TestReporter
@@ -107,15 +107,15 @@ public class RawTestReporter implements TestReporter
     }
 
     @Override
-    public void onTestSessionStart(@NotNull List<? extends ScenarioEngine> engines)
+    public void onTestSessionStart(@NotNull ScenarioSession session)
     {
-        this.printJSON(new PacketSessionStart(engines));
+        this.printJSON(new PacketSessionStart(session));
     }
 
     @Override
-    public void onTestSessionEnd(@NotNull List<? extends ScenarioResult> results, long startedAt)
+    public void onTestSessionEnd(@NotNull ScenarioSession session)
     {
-        this.printJSON(new PacketSessionEnd(results, startedAt));
+        this.printJSON(new PacketSessionEnd(session));
     }
 
     private void printJSON(@NotNull AbstractRawPacket packet)
