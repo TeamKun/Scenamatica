@@ -64,12 +64,15 @@ class ScenarioQueue
             }
 
             if (trigger == null)
-                trigger = this.manager.getTriggerFromType(engine, elm.getType());
+                trigger = this.manager.getTriggerOrNull(engine, elm.getType());
+            if (trigger == null)
+                continue;  // addAll では, トリガーが見つからなかったら無視する。
 
             session.add(engine, trigger, elm.getCallback());
         }
 
         this.scenarioQueue.add(session);
+        this.runner.resume();
     }
 
     /* non-public */ void addInterrupt(ScenarioEngine engine, TriggerBean trigger, Consumer<? super ScenarioResult> callback)
@@ -154,9 +157,6 @@ class ScenarioQueue
         @SneakyThrows(TriggerNotFoundException.class)
         private boolean runOne()
         {
-            if (!this.manager.isRunning())  // Scenamatica 自体の実行が停止している場合は待機。
-                return this.pause();
-
             if (ScenarioQueue.this.current == null && !this.pickNextSession())
                 return this.pause();  // 次のセッションがない場合は待機。
 

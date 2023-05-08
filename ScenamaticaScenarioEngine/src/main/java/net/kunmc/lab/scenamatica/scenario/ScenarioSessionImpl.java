@@ -81,16 +81,16 @@ public class ScenarioSessionImpl implements ScenarioSession
     @Override
     public long getStartedAt()
     {
-        if (!this.running)
-            throw new IllegalStateException("Scenario is not running.");
+        if (!this.hasRan())
+            throw new IllegalStateException("This scenario has not started yet.");
         return this.startedAt;
     }
 
     @Override
     public long getFinishedAt()
     {
-        if (this.running)
-            throw new IllegalStateException("Scenario is still running.");
+        if (!this.hasRan())
+            throw new IllegalStateException("This scenario has not finished yet.");
         return this.finishedAt;
     }
 

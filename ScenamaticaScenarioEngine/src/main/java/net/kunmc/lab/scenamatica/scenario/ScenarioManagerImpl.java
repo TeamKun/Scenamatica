@@ -178,16 +178,26 @@ public class ScenarioManagerImpl implements ScenarioManager
                 .orElseThrow(() -> new ScenarioNotFoundException(scenarioName));
 
 
-        return Pair.of(engine, this.getTriggerFromType(engine, trigger));
+        return Pair.of(engine, this.getTriggerOrThrow(engine, trigger));
     }
 
-    /* non-pubic */ TriggerBean getTriggerFromType(@NotNull ScenarioEngine engine, TriggerType type) throws TriggerNotFoundException
+    /* non-pubic */ TriggerBean getTriggerOrThrow(@NotNull ScenarioEngine engine, TriggerType type) throws TriggerNotFoundException
+    {
+        TriggerBean trigger = this.getTriggerOrNull(engine, type);
+        if (trigger == null)
+            throw new TriggerNotFoundException(type);
+        else
+            return trigger;
+    }
+
+    @Nullable
+        /* non-pubic */ TriggerBean getTriggerOrNull(@NotNull ScenarioEngine engine, TriggerType type)
     {
         return engine.getTriggerActions().stream().parallel()
                 .map(CompiledTriggerAction::getTrigger)
                 .filter(t -> t.getType() == type)
                 .findFirst()
-                .orElseThrow(() -> new TriggerNotFoundException(type));
+                .orElse(null);
     }
 
     /* non-public */ ScenarioResult runScenario(ScenarioEngine engine, TriggerBean trigger)
