@@ -6,7 +6,7 @@
 
     <groupId>net.kunmc.lab</groupId>
     <artifactId>Scenamatica</artifactId>
-    <version>0.5.8</version>
+    <version>0.6.0</version>
     <packaging>pom</packaging>
 
     <modules>
