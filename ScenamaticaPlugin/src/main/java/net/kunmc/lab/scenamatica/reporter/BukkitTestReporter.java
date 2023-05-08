@@ -235,10 +235,10 @@ public class BukkitTestReporter implements net.kunmc.lab.scenamatica.interfaces.
         int skipped = (int) results.stream().parallel()
                 .filter(r -> r.getScenarioResultCause() == ScenarioResultCause.SKIPPED).count();
 
-        this.terminals.forEach(t -> printSessionSummary(t, results, elapsedStr, total, passed, failed, cancelled, skipped));
+        this.terminals.forEach(t -> printSessionSummary(t, elapsedStr, total, passed, failed, cancelled, skipped));
     }
 
-    protected void printSessionSummary(@NotNull Terminal terminal, List<? extends ScenarioResult> results,
+    protected void printSessionSummary(@NotNull Terminal terminal,
                                        String elapsedStr, int total, int passed, int failed, int cancelled, int skipped)
     {
         boolean allPassed = passed == total;
