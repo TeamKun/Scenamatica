@@ -23,9 +23,6 @@ import java.util.stream.Collectors;
 @Value
 public class ScenarioFileBeanImpl implements ScenarioFileBean
 {
-    public static final long DEFAULT_TIMEOUT_TICK = 20L * 60L * 5L;
-    public static final int DEFAULT_ORDER = Integer.MAX_VALUE;
-
     private static final String KEY_SCENAMATICA_VERSION = "scenamatica";
     private static final String KEY_NAME = "name";
     private static final String KEY_DESCRIPTION = "description";

@@ -14,6 +14,9 @@ import java.util.List;
  */
 public interface ScenarioFileBean extends Serializable
 {
+    long DEFAULT_TIMEOUT_TICK = 20L * 60L * 5L;
+    int DEFAULT_ORDER = Integer.MAX_VALUE;
+
     /**
      * 対応する Scenamatica のバージョンを取得します。
      *

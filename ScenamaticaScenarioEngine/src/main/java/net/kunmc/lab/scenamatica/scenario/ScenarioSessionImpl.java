@@ -5,6 +5,7 @@ import net.kunmc.lab.scenamatica.interfaces.scenario.QueuedScenario;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioEngine;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioResult;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioSession;
+import net.kunmc.lab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerBean;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
@@ -41,6 +42,14 @@ public class ScenarioSessionImpl implements ScenarioSession
         this.scenarios.sort((a, b) -> {
             int orderA = a.getEngine().getScenario().getOrder();
             int orderB = b.getEngine().getScenario().getOrder();
+            if (orderA == ScenarioFileBean.DEFAULT_ORDER && orderB == ScenarioFileBean.DEFAULT_ORDER)
+            {  // 両方ともデフォルト値の場合はシナリオ名でソート。
+                String nameA = a.getEngine().getPlugin().getName();
+                String nameB = b.getEngine().getPlugin().getName();
+
+                return nameA.compareTo(nameB);
+            }
+
             return Integer.compare(orderA, orderB);
         });
     }
