@@ -18,6 +18,7 @@ import net.kunmc.lab.scenamatica.interfaces.scenario.MilestoneManager;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioEngine;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioManager;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioResult;
+import net.kunmc.lab.scenamatica.interfaces.scenario.SessionCreator;
 import net.kunmc.lab.scenamatica.interfaces.scenario.TestReporter;
 import net.kunmc.lab.scenamatica.interfaces.scenario.runtime.CompiledTriggerAction;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
@@ -141,12 +142,19 @@ public class ScenarioManagerImpl implements ScenarioManager
         ScenarioEngine engine = runInfo.getLeft();
         TriggerBean trigger = runInfo.getRight();
 
-        this.queueScenario(engine, trigger);
+        this.queue.add(engine, trigger, null);
     }
 
-    private void queueScenario(@NotNull ScenarioEngine engine, @NotNull TriggerBean trigger)
+    @Override
+    public void queueScenario(SessionCreator sessionDefinition) throws ScenarioNotFoundException, TriggerNotFoundException
     {
-        this.queue.add(engine, trigger, null);
+        this.queue.addAll(sessionDefinition);
+    }
+
+    @Override
+    public SessionCreator newSession()
+    {
+        return new SessionCreatorImpl(this);
     }
 
     @Override
@@ -161,20 +169,25 @@ public class ScenarioManagerImpl implements ScenarioManager
         this.queue.remove(plugin, scenarioName);
     }
 
-    private Pair<ScenarioEngine, TriggerBean> getRunInfoOrThrow(Plugin plugin, String scenarioName, TriggerType trigger)
+    /* non-public */ Pair<ScenarioEngine, TriggerBean> getRunInfoOrThrow(Plugin plugin, String scenarioName, TriggerType trigger)
             throws ScenarioNotFoundException, TriggerNotFoundException
     {
         ScenarioEngine engine = this.engines.get(plugin).stream().parallel()
                 .filter(e -> e.getScenario().getName().equals(scenarioName))
                 .findFirst()
                 .orElseThrow(() -> new ScenarioNotFoundException(scenarioName));
-        TriggerBean triggerBean = engine.getTriggerActions().stream().parallel()
-                .map(CompiledTriggerAction::getTrigger)
-                .filter(t -> t.getType() == trigger)
-                .findFirst()
-                .orElseThrow(() -> new TriggerNotFoundException(trigger));
 
-        return Pair.of(engine, triggerBean);
+
+        return Pair.of(engine, this.getTriggerFromType(engine, trigger));
+    }
+
+    /* non-pubic */ TriggerBean getTriggerFromType(@NotNull ScenarioEngine engine, TriggerType type) throws TriggerNotFoundException
+    {
+        return engine.getTriggerActions().stream().parallel()
+                .map(CompiledTriggerAction::getTrigger)
+                .filter(t -> t.getType() == type)
+                .findFirst()
+                .orElseThrow(() -> new TriggerNotFoundException(type));
     }
 
     /* non-public */ ScenarioResult runScenario(ScenarioEngine engine, TriggerBean trigger)
@@ -246,6 +259,7 @@ public class ScenarioManagerImpl implements ScenarioManager
                 .forEach(engines::add);
 
         this.engines.putAll(plugin, engines);
+
         this.runOnLoadScenarios(engines);
     }
 
@@ -279,18 +293,13 @@ public class ScenarioManagerImpl implements ScenarioManager
         this.enabled = enabled;
     }
 
+    @SneakyThrows({TriggerNotFoundException.class, ScenarioNotFoundException.class})
     private void runOnLoadScenarios(List<? extends ScenarioEngine> scenarios)
     {
+        SessionCreator creator = this.newSession();
         for (ScenarioEngine engine : scenarios)
-        {
-            for (CompiledTriggerAction action : engine.getTriggerActions())
-            {
-                if (action.getTrigger().getType() == TriggerType.ON_LOAD)
-                {
-                    this.queueScenario(engine, action.getTrigger());
-                    break;
-                }
-            }
-        }
+            creator.add(engine, TriggerType.ON_LOAD);
+
+        this.queue.addAll(creator);
     }
 }

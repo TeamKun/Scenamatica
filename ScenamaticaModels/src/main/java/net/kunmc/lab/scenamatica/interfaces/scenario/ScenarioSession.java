@@ -59,14 +59,14 @@ public interface ScenarioSession
     List<QueuedScenario> getScenarios();
 
     /**
-     * セッションが開始された時刻を取得します。
+     * セッションが差k末井された時刻を取得します。
      *
-     * @return 開始時刻
+     * @return 作成時刻
      */
-    long getQueuedAt();
+    long getCreatedAt();
 
     /**
-     * セッションが開始された時刻を取得します。]
+     * セッションが開始された時刻を取得します。
      *
      * @return 開始時刻
      * @throws IllegalStateException セッションが開始されていない場合

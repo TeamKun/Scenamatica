@@ -20,7 +20,7 @@ import java.util.function.Consumer;
 public class ScenarioSessionImpl implements ScenarioSession
 {
     private final ScenarioManagerImpl manager;
-    private final long queuedAt;
+    private final long createdAt;
     private final List<QueuedScenario> scenarios;
 
     private ArrayDeque<QueuedScenario> queue;
@@ -31,8 +31,13 @@ public class ScenarioSessionImpl implements ScenarioSession
     public ScenarioSessionImpl(ScenarioManagerImpl manager, @NotNull List<QueuedScenario> scenarios)
     {
         this.manager = manager;
-        this.queuedAt = System.currentTimeMillis();
+        this.createdAt = System.currentTimeMillis();
         this.scenarios = scenarios;
+    }
+
+    public ScenarioSessionImpl(ScenarioManagerImpl manager)
+    {
+        this(manager, new ArrayList<>());
     }
 
     @Override

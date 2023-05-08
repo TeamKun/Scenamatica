@@ -4,11 +4,14 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import net.kunmc.lab.peyangpaperutils.lib.utils.Pair;
+import net.kunmc.lab.scenamatica.exceptions.scenario.ScenarioNotFoundException;
 import net.kunmc.lab.scenamatica.exceptions.scenario.TriggerNotFoundException;
 import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
 import net.kunmc.lab.scenamatica.interfaces.scenario.QueuedScenario;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioEngine;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioResult;
+import net.kunmc.lab.scenamatica.interfaces.scenario.SessionCreator;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerBean;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -20,7 +23,8 @@ import java.util.Deque;
 import java.util.function.Consumer;
 
 @AllArgsConstructor
-        /* non-public */ class ScenarioQueue
+        /* non-public */
+class ScenarioQueue
 {
     private final ScenamaticaRegistry registry;
     private final ScenarioManagerImpl manager;
@@ -42,6 +46,30 @@ import java.util.function.Consumer;
                 new QueuedScenarioImpl(this.manager, engine, trigger, callback)
         )));
         this.runner.resume();
+    }
+
+    /* non-public */ void addAll(SessionCreator creator) throws TriggerNotFoundException, ScenarioNotFoundException
+    {
+        ScenarioSessionImpl session = new ScenarioSessionImpl(this.manager);
+        for (SessionCreator.SessionElement elm : creator.getSessions())
+        {
+            ScenarioEngine engine = elm.getEngine();
+            TriggerBean trigger = null;
+            if (engine == null)
+            {
+                Pair<ScenarioEngine, TriggerBean> info =
+                        this.manager.getRunInfoOrThrow(elm.getPlugin(), elm.getName(), elm.getType());
+                engine = info.getLeft();
+                trigger = info.getRight();
+            }
+
+            if (trigger == null)
+                trigger = this.manager.getTriggerFromType(engine, elm.getType());
+
+            session.add(engine, trigger, elm.getCallback());
+        }
+
+        this.scenarioQueue.add(session);
     }
 
     /* non-public */ void addInterrupt(ScenarioEngine engine, TriggerBean trigger, Consumer<? super ScenarioResult> callback)

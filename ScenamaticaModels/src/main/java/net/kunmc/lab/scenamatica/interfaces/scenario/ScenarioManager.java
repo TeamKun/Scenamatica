@@ -139,6 +139,22 @@ public interface ScenarioManager
                        @NotNull TriggerType triggerType) throws ScenarioNotFoundException, TriggerNotFoundException;
 
     /**
+     * セッションをキューに追加します。
+     *
+     * @param sessionDefinition セッションの定義
+     * @throws ScenarioNotFoundException シナリオが存在しない場合
+     * @throws TriggerNotFoundException  指定されたトリガが存在しない場合
+     */
+    void queueScenario(SessionCreator sessionDefinition) throws ScenarioNotFoundException, TriggerNotFoundException;
+
+    /**
+     * セッションを作成します。
+     *
+     * @return セッション
+     */
+    SessionCreator newSession();
+
+    /**
      * プラグインのシナリオをキューから削除します。
      *
      * @param plugin 削除するプラグイン
