@@ -44,8 +44,8 @@ public class ScenarioSessionImpl implements ScenarioSession
             int orderB = b.getEngine().getScenario().getOrder();
             if (orderA == ScenarioFileBean.DEFAULT_ORDER && orderB == ScenarioFileBean.DEFAULT_ORDER)
             {  // 両方ともデフォルト値の場合はシナリオ名でソート。
-                String nameA = a.getEngine().getPlugin().getName();
-                String nameB = b.getEngine().getPlugin().getName();
+                String nameA = a.getEngine().getScenario().getName();
+                String nameB = b.getEngine().getScenario().getName();
 
                 return nameA.compareTo(nameB);
             }
