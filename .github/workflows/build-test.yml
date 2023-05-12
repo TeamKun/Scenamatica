@@ -8,6 +8,10 @@ on:
     branches:
       - main
       - develop
+
+permissions:
+  pull-requests: write
+
 jobs:
   build:
     name: Build with Maven
@@ -50,7 +54,7 @@ jobs:
         with:
           name: scenamatica
       - name: Run Scenamatica tests
-        uses: teamkun/scenamatica-action@v1.2.2
+        uses: teamkun/scenamatica-action@v1.3.0
         with:
           plugin: Scenamatica.jar
         env:
