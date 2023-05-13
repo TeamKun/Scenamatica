@@ -1,41 +1,75 @@
-/**
- * CSS files with the .module.css suffix will be treated as CSS modules
- * and scoped locally.
- */
-
+/* Hero banner */
 .heroBanner {
-  padding: 4rem 0;
-  text-align: center;
-  position: relative;
-  overflow: hidden;
+    padding: 4rem 0;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
 }
 
-@media screen and (max-width: 996px) {
-  .heroBanner {
-    padding: 2rem;
-  }
+.subtitle {
+    font-size: 1.25rem;
+    font-weight: 400;
+    margin: 0;
 }
 
+@media (max-width: 996px) {
+    .heroBanner {
+        padding: 2rem;
+    }
+}
+
+/* Buttons */
 .buttons {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
+/* Tagline */
+.tagline {
+    margin: 20px;
+    text-align: center;
+}
+
+.tagline p {
+    font-size: 1.25rem;
+    font-weight: 400;
+    margin: 0;
+}
+
+/* Container */
 .container {
-  margin: 20px auto;
-  max-width: 1000px;
-  text-align: center;
+    text-align: center;
 }
 
-.container h2 {
+/* Features */
+.features {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin: 20px auto;
+    max-width: 1000px;
+}
+
+.features .feature {
+    flex: 1 1 300px;
+    margin: 10px;
+}
+
+.features .feature h3 {
+    width: max-content;
+    margin: auto auto 15px;
+}
+
+.features .description {
+    max-width: 300px;
+    margin: 0 auto;
+}
+
+/* Topic */
+h2.topic {
     font-size: 2rem;
     font-weight: 700;
     margin: 10px;
-    padding: 0;
-}
-
-.container p.description {
-    font-weight: 400;
-    margin: 0;
 }

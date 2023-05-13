@@ -7,7 +7,7 @@ const darkCodeTheme = require("prism-react-renderer/themes/dracula");
 /** @type {import("@docusaurus/types").Config} */
 const config = {
   title: "Scenamatica",
-  tagline: "世界初のプラグインのシナリオテスト自動化ツール",
+  tagline: "Enhance PaperMC plugin quality with its automated testing framework: YAML-defined scenarios, CI/CD integration.",
   favicon: "img/favicon.ico",
   url: "https://scenamatica.kunlab.org/",
   baseUrl: "/",
