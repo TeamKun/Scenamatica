@@ -1,0 +1,40 @@
+scenamatica: ${project.version}
+
+name: actions_world_border_world_border
+description: Testing WorldBorderAction works or not
+on:
+  - type: on_load
+  - type: manual_dispatch
+
+scenario:
+  - type: execute
+    action: world_border
+    with:
+      size: 200
+      center:
+        x: 1
+        y: 0
+        z: 3
+      duration: 0
+  - type: execute
+    action: world_border
+    with:
+      size: 20
+      center:
+        x: 1
+        y: 0
+        z: 3
+      duration: 1
+  - type: expect
+    action: world_border_changed
+    with:
+      size: 20
+      center:
+        x: 1
+        y: 0
+        z: 3
+      size_old: 200
+  - type: require
+    action: world_border
+    with:
+      size: 20

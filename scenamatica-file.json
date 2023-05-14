@@ -82,6 +82,7 @@
           "description": "アクションの種類です。 ",
           "enum": [
             "message",
+            "milestone",
             "player_advancement",
             "player_animation",
             "player_death",
@@ -92,14 +93,19 @@
             "server_log",
             "server_plugin_enable",
             "server_plugin_disable",
-            "command_dispatch",
-            "milestone"
+            "world_border",
+            "world_border_changed",
+            "world_game_rule",
+            "world_init",
+            "world_load",
+            "world_save",
+            "world_unload",
+            "command_dispatch"
           ]
         },
         "with": {
           "type": "object",
-          "description": "アクションの種類によっては, このプロパティにアクションの引数を指定します。",
-          "additionalProperties": true
+          "description": "アクションの種類によっては, このプロパティにアクションの引数を指定します。"
         }
       },
       "required": [
@@ -120,6 +126,26 @@
             "properties": {
               "with": {
                 "$ref": "#/definitions/action/definitions/scenamatica/message"
+              }
+            },
+            "required": [
+              "with"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "milestone",
+                "description": "マイルストーンを達成したり, 達成されたことを検知します。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/scenamatica/milestone"
               }
             },
             "required": [
@@ -351,20 +377,119 @@
           "if": {
             "properties": {
               "action": {
-                "const": "milestone",
-                "description": "マイルストーンを達成したり, 達成されたことを検知します。"
+                "const": "world_border",
+                "description": "ワールドボーダの変更を検知します。"
               }
             }
           },
           "then": {
             "properties": {
               "with": {
-                "$ref": "#/definitions/action/definitions/scenamatica/milestone"
+                "$ref": "#/definitions/action/definitions/world/border/world_border"
               }
-            },
-            "required": [
-              "with"
-            ]
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "world_border_changed",
+                "description": "ワールドボーダの変更が完了したことを検知します。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/world/border/world_border_changed"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "world_game_rule",
+                "description": "ワールドのゲームルールを変更したり, 変更されたことを検知します。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/world/game_rule"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "world_init",
+                "description": "ワールドの初期化を検知します。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/world/init"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "world_load",
+                "description": "ワールドの読み込みを検知します。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/world/load"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "world_save",
+                "description": "ワールドの保存を検知したり, 保存します。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/world/save"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "world_unload",
+                "description": "ワールドのアンロードを検知します。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/world/unload"
+              }
+            }
           }
         }
       ],
@@ -627,6 +752,40 @@
             ]
           }
         },
+        "scenamatica": {
+          "message": {
+            "properties": {
+              "message": {
+                "type": "string",
+                "description": "メッセージの内容です。",
+                "maxLength": 32768
+              },
+              "recipient": {
+                "type": "string",
+                "description": "メッセージを受け取るプレイヤーの名前または UUID です。"
+              }
+            },
+            "required": [
+              "message",
+              "recipient"
+            ]
+          },
+          "milestone": {
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "マイルストーンの名前です。"
+              },
+              "reached": {
+                "type": "boolean",
+                "description": "マイルストーンに到達したかどうかです。検証時はこれと比較します。"
+              }
+            },
+            "required": [
+              "name"
+            ]
+          }
+        },
         "server": {
           "log": {
             "properties": {
@@ -711,38 +870,162 @@
             ]
           }
         },
-        "scenamatica": {
-          "message": {
+        "world": {
+          "properties": {
+            "world": {
+              "description": "ワールドの名前の名前空間付きキーです。",
+              "$ref": "#/definitions/namespacedKey"
+            }
+          },
+          "border": {
+            "world_border": {
+              "$ref": "#/definitions/action/definitions/world",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "description": "ワールドボーダの変更の種類です。",
+                  "enum": [
+                    "STARTED_MOVE",
+                    "INSTANT_MOVE",
+                    "started_move",
+                    "instant_move"
+                  ]
+                },
+                "size": {
+                  "type": "number",
+                  "description": "ワールドボーダのサイズです。"
+                },
+                "size_old": {
+                  "type": "number",
+                  "description": "ワールドボーダのサイズの変更前の値です。"
+                },
+                "duration": {
+                  "type": "number",
+                  "description": "ワールドボーダの変更にかかる時間です。"
+                },
+                "center": {
+                  "type": "object",
+                  "description": "ワールドボーダの中心座標です。",
+                  "$ref": "#/definitions/location"
+                },
+                "center_old": {
+                  "type": "object",
+                  "description": "ワールドボーダの中心座標の変更前の値です。",
+                  "$ref": "#/definitions/location"
+                }
+              }
+            },
+            "world_border_changed": {
+              "$ref": "#/definitions/action/definitions/world",
+              "properties": {
+                "size": {
+                  "type": "number",
+                  "description": "ワールドボーダのサイズです。"
+                },
+                "size_old": {
+                  "type": "number",
+                  "description": "ワールドボーダのサイズの変更前の値です。"
+                },
+                "duration": {
+                  "type": "number",
+                  "description": "ワールドボーダの変更にかかる時間です。"
+                }
+              }
+            }
+          },
+          "game_rule": {
             "properties": {
-              "message": {
+              "$ref": "#/definitions/action/definitions/world",
+              "rule": {
                 "type": "string",
-                "description": "メッセージの内容です。",
-                "maxLength": 32768
+                "description": "ゲームルールの名前です。",
+                "enum": [
+                  "announceAdvancements",
+                  "commandBlockOutput",
+                  "disableElytraMovementCheck",
+                  "disableRaids",
+                  "doDaylightCycle",
+                  "doEntityDrops",
+                  "doFireTick",
+                  "doImmediateRespawn",
+                  "doInsomnia",
+                  "doLimitedCrafting",
+                  "doMobLoot",
+                  "doMobSpawning",
+                  "doPatrolSpawning",
+                  "doTileDrops",
+                  "doTraderSpawning",
+                  "doWeatherCycle",
+                  "drowningDamage",
+                  "fallDamage",
+                  "fireDamage",
+                  "forgiveDeadPlayers",
+                  "keepInventory",
+                  "logAdminCommands",
+                  "maxCommandChainLength",
+                  "maxEntityCramming",
+                  "mobGriefing",
+                  "naturalRegeneration",
+                  "playersSleepingPercentage",
+                  "randomTickSpeed",
+                  "reducedDebugInfo",
+                  "sendCommandFeedback",
+                  "showDeathMessages",
+                  "spawnRadius",
+                  "spectatorsGenerateChunks",
+                  "universalAnger",
+                  "disableRaids",
+                  "doImmediateRespawn",
+                  "doPatrolSpawning",
+                  "doTraderSpawning",
+                  "forgiveDeadPlayers",
+                  "keepInventory",
+                  "logAdminCommands",
+                  "maxCommandChainLength",
+                  "maxEntityCramming",
+                  "mobGriefing",
+                  "naturalRegeneration",
+                  "playersSleepingPercentage",
+                  "randomTickSpeed",
+                  "reducedDebugInfo",
+                  "sendCommandFeedback",
+                  "showDeathMessages",
+                  "spawnRadius",
+                  "spectatorsGenerateChunks",
+                  "universalAnger"
+                ]
               },
-              "recipient": {
-                "type": "string",
-                "description": "メッセージを受け取るプレイヤーの名前または UUID です。"
+              "value": {
+                "type": [
+                  "boolean",
+                  "number"
+                ],
+                "description": "ゲームルールの値です。"
               }
             },
             "required": [
-              "message",
-              "recipient"
+              "rule"
             ]
           },
-          "milestone": {
+          "init": {
             "properties": {
-              "name": {
-                "type": "string",
-                "description": "マイルストーンの名前です。"
-              },
-              "reached": {
-                "type": "boolean",
-                "description": "マイルストーンに到達したかどうかです。検証時はこれと比較します。"
-              }
-            },
-            "required": [
-              "name"
-            ]
+              "$ref": "#/definitions/action/definitions/world"
+            }
+          },
+          "load": {
+            "properties": {
+              "$ref": "#/definitions/action/definitions/world"
+            }
+          },
+          "save": {
+            "properties": {
+              "$ref": "#/definitions/action/definitions/world"
+            }
+          },
+          "unload": {
+            "properties": {
+              "$ref": "#/definitions/action/definitions/world"
+            }
           }
         }
       }

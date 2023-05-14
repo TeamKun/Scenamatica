@@ -320,6 +320,20 @@ public class MapUtils
             map.put(key, locationToMap(loc));
     }
 
+    public static Number getAsNumberOrNull(Map<String, Object> map, String key)
+    {
+        if (!map.containsKey(key))
+            return null;
+        return (Number) map.get(key);
+    }
+
+    public static Number getAsNumberSafe(Map<String, Object> map, String key)
+    {
+        if (!map.containsKey(key))
+            return -1;
+        return (Number) map.get(key);
+    }
+
     public static Long getAsLongOrNull(Map<String, Object> map, String key)
     {
         if (!map.containsKey(key))

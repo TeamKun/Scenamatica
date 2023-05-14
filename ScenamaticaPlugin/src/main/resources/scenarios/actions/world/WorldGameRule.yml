@@ -1,0 +1,24 @@
+scenamatica: ${project.version}
+
+name: actions_world_game_rule
+description: Testing WorldGameRuleAction with integer value works or not
+on:
+  - type: on_load
+  - type: manual_dispatch
+
+scenario:
+  - type: execute
+    action: world_game_rule
+    with:
+      rule: spawnRadius
+      value: 810
+  - type: expect
+    action: world_game_rule
+    with:
+      rule: spawnRadius
+      value: 810
+  - type: require
+    action: world_game_rule
+    with:
+      rule: spawnRadius
+      value: 810

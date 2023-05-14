@@ -13,6 +13,13 @@ import net.kunmc.lab.scenamatica.action.actions.server.CommandDispatchAction;
 import net.kunmc.lab.scenamatica.action.actions.server.log.ServerLogAction;
 import net.kunmc.lab.scenamatica.action.actions.server.plugin.PluginDisableAction;
 import net.kunmc.lab.scenamatica.action.actions.server.plugin.PluginEnableAction;
+import net.kunmc.lab.scenamatica.action.actions.world.WorldGameRuleAction;
+import net.kunmc.lab.scenamatica.action.actions.world.WorldInitAction;
+import net.kunmc.lab.scenamatica.action.actions.world.WorldLoadAction;
+import net.kunmc.lab.scenamatica.action.actions.world.WorldSaveAction;
+import net.kunmc.lab.scenamatica.action.actions.world.WorldUnloadAction;
+import net.kunmc.lab.scenamatica.action.actions.world.border.WorldBorderAction;
+import net.kunmc.lab.scenamatica.action.actions.world.border.WorldBorderChangedAction;
 import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
 import net.kunmc.lab.scenamatica.interfaces.action.Action;
 import net.kunmc.lab.scenamatica.interfaces.action.ActionArgument;
@@ -53,6 +60,17 @@ public class ActionCompilerImpl implements ActionCompiler
             ACTIONS.add(new PluginDisableAction());
             ACTIONS.add(new PluginEnableAction());
             ACTIONS.add(new CommandDispatchAction());
+        }
+
+        // ワールドのアクション
+        {
+            ACTIONS.add(new WorldBorderAction());
+            ACTIONS.add(new WorldBorderChangedAction());
+            ACTIONS.add(new WorldGameRuleAction());
+            ACTIONS.add(new WorldInitAction());
+            ACTIONS.add(new WorldLoadAction());
+            ACTIONS.add(new WorldSaveAction());
+            ACTIONS.add(new WorldUnloadAction());
         }
 
         // Scenamatica 内部
