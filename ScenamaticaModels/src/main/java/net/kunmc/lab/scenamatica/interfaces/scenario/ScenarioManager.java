@@ -220,6 +220,16 @@ public interface ScenarioManager
     List<ScenarioEngine> getEnginesFor(@NotNull Plugin plugin);
 
     /**
+     * プラグインのシナリオを返します。
+     *
+     * @param plugin プラグイン
+     * @param name   シナリオ名
+     * @return シナリオ
+     */
+    @Nullable
+    ScenarioEngine getEngine(@NotNull Plugin plugin, @NotNull String name);
+
+    /**
      * 実行中のシナリオを停止し, このインスタンスを破棄します。
      */
     void shutdown();

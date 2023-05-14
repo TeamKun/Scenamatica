@@ -286,6 +286,15 @@ public class ScenarioManagerImpl implements ScenarioManager
         return new ArrayList<>(this.engines.get(plugin));
     }
 
+    @Override
+    public @Nullable ScenarioEngine getEngine(@NotNull Plugin plugin, @NotNull String scenarioName)
+    {
+        return this.engines.get(plugin).stream().parallel()
+                .filter(e -> e.getScenario().getName().equals(scenarioName))
+                .findFirst()
+                .orElse(null);
+    }
+
     @SneakyThrows(ScenarioNotRunningException.class)
     @Override
     public void shutdown()

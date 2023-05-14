@@ -9,6 +9,7 @@ import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
 import net.kunmc.lab.scenamatica.interfaces.action.ActionManager;
 import net.kunmc.lab.scenamatica.interfaces.action.CompiledAction;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioEngine;
+import net.kunmc.lab.scenamatica.interfaces.scenario.SessionCreator;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.action.ActionBean;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
@@ -30,7 +31,7 @@ public class TriggerManagerImpl implements TriggerManager
 
     private final ScenamaticaRegistry registry;
     private final ActionManager actionManager;
-    private final Multimap<String, TriggerBean> triggers;  // シナリオ名 / トリガー
+    private final Multimap<ScenarioEngine, TriggerBean> triggers;  // シナリオ名 / トリガー
 
     public TriggerManagerImpl(@NotNull ScenamaticaRegistry registry)
     {
@@ -45,12 +46,12 @@ public class TriggerManagerImpl implements TriggerManager
         ScenarioFileBean scenario = engine.getScenario();
 
         String scenarioName = scenario.getName().toLowerCase(Locale.ROOT);
-        if (this.triggers.containsKey(scenarioName))
-            throw new IllegalArgumentException("The scenario " + scenarioName + " is already baked.");
+        if (this.triggers.containsKey(engine))
+            throw new IllegalArgumentException("The engine is already baked: " + scenarioName);
 
-        this.triggers.putAll(scenarioName, scenario.getTriggers());
+        this.triggers.putAll(engine, scenario.getTriggers());
 
-        // トリガのアクションを登録する。
+        // ON_ACTION なトリガを監視対象に。
         scenario.getTriggers().forEach(t -> {
             TriggerType type = t.getType();
             if (type == TriggerType.ON_ACTION)
@@ -64,17 +65,19 @@ public class TriggerManagerImpl implements TriggerManager
                                    @NotNull TriggerType type,
                                    @Nullable TriggerArgument argument) throws ScenarioException
     {
-        String key = scenarioName.toLowerCase(Locale.ROOT);
-        if (!this.triggers.containsKey(key))
-            throw new IllegalArgumentException("The scenario " + scenarioName + " is not baked.");
+        ScenarioEngine engine = this.registry.getScenarioManager().getEngine(plugin, scenarioName);
 
-        for (TriggerBean trigger : this.triggers.get(key))
-        {
-            if (trigger.getType() != type)
-                continue;
+        if (engine == null)
+            throw new ScenarioException("Scenario " + scenarioName + " is not loaded.");
+        else if (!this.triggers.containsKey(engine))
+            throw new ScenarioException("Scenario " + scenarioName + " is not baked.");
 
-            this.registry.getScenarioManager().queueScenario(plugin, scenarioName, trigger.getType());
-        }
+        SessionCreator creator = this.registry.getScenarioManager().newSession();
+        engine.getScenario().getTriggers().stream()
+                .filter(t -> t.getType() == type)
+                .forEach(t -> creator.add(engine, t.getType()));
+
+        this.registry.getScenarioManager().queueScenario(creator);
     }
 
     private void registerActionTrigger(ScenarioEngine engine, TriggerBean actionTrigger)
@@ -83,11 +86,10 @@ public class TriggerManagerImpl implements TriggerManager
         Plugin plugin = engine.getPlugin();
 
         TriggerArgument triggerArgument = actionTrigger.getArgument();
-        if (!(triggerArgument == null || triggerArgument instanceof ActionBean))
-            throw new IllegalArgumentException("Action trigger argument must be ActionArgument.");
+        if (!(triggerArgument instanceof ActionBean))
+            throw new IllegalArgumentException("Action trigger argument required");
 
         ActionBean argument = (ActionBean) triggerArgument;
-        assert argument != null;
 
         CompiledAction<?> action = this.actionManager.getCompiler().compile(
                 this.registry,
@@ -110,6 +112,6 @@ public class TriggerManagerImpl implements TriggerManager
     @Override
     public void unregisterTrigger(@NotNull ScenarioEngine engine)
     {
-        this.triggers.removeAll(engine.getScenario().getName());
+        this.triggers.removeAll(engine);
     }
 }
