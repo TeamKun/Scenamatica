@@ -1,0 +1,26 @@
+scenamatica: ${project.version}
+
+name: actions_world_load
+description: Testing WorldLoadAction works or not
+on:
+  - type: on_load
+  - type: manual_dispatch
+
+scenario:
+  # Implicitly unload the world
+  - type: execute
+    action: world_unload
+    with:
+      world: world_the_end
+    runif:
+      action: world_load
+      with:
+        world: world_the_end
+  - type: execute
+    action: world_load
+    with:
+      world: world_the_end
+  - type: require
+    action: world_load
+    with:
+      world: world_the_end
