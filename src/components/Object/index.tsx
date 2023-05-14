@@ -7,6 +7,7 @@ export type ObjectElement = {
     required?: boolean
     type: string | ObjectType
     type_anchor?: string
+    type_link?: string
     description?: string
     default?: any
 }
@@ -35,7 +36,11 @@ export const Object: React.FC<ObjectsProps> = ({ objects }) => {
         const required = element.required ? <span className={styles.required}>必須</span>: "任意"
 
         const typeNameStr = typeof element.type === "string" ? element.type : (element.type as ObjectType)
-        const typeName = element.type_anchor ? <a href={"#" + element.type_anchor}>{typeNameStr}</a>: typeNameStr
+        let typeName: string | JSX.Element = typeNameStr
+        if (element.type_anchor)
+            typeName = <a href={"#" + element.type_anchor}>{typeNameStr}</a>
+        else if (element.type_link)
+            typeName = <a href={element.type_link}>{typeNameStr}</a>
 
         return (
             <tr className={styles.objects} key={element.name}>
