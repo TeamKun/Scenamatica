@@ -93,14 +93,15 @@
             "server_log",
             "server_plugin_enable",
             "server_plugin_disable",
+            "command_dispatch",
+            "whitelist_toggle",
             "world_border",
             "world_border_changed",
             "world_game_rule",
             "world_init",
             "world_load",
             "world_save",
-            "world_unload",
-            "command_dispatch"
+            "world_unload"
           ]
         },
         "with": {
@@ -297,26 +298,6 @@
           "if": {
             "properties": {
               "action": {
-                "const": "command_dispatch",
-                "description": "コマンドを実行したり, 実行されたことを検知します。"
-              }
-            }
-          },
-          "then": {
-            "properties": {
-              "with": {
-                "$ref": "#/definitions/action/definitions/server/command_dispatch"
-              }
-            },
-            "required": [
-              "with"
-            ]
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "action": {
                 "const": "server_log",
                 "description": "サーバのログを検知したり, ログを送信します。"
               }
@@ -366,6 +347,46 @@
             "properties": {
               "with": {
                 "$ref": "#/definitions/action/definitions/server/plugin_enable"
+              }
+            },
+            "required": [
+              "with"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "command_dispatch",
+                "description": "コマンドを実行したり, 実行されたことを検知します。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/server/command_dispatch"
+              }
+            },
+            "required": [
+              "with"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "whitelist_toggle",
+                "description": "ホワイトリストが有効化されたり, 有効化されたことを検知します。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/server/whitelist_toggle"
               }
             },
             "required": [
@@ -867,6 +888,17 @@
             },
             "required": [
               "command"
+            ]
+          },
+          "whitelist_toggle": {
+            "properties": {
+              "enabled": {
+                "type": "boolean",
+                "description": "ホワイトリストが有効かどうかです。"
+              }
+            },
+            "required": [
+              "enabled"
             ]
           }
         },

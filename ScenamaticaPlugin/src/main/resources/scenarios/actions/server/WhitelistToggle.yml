@@ -1,0 +1,34 @@
+scenamatica: ${project.version}
+
+name: actions_server_whitelist_toggle
+description: Testing whitelist_toggle action works or not
+on:
+  - type: on_load
+  - type: manual_dispatch
+
+scenario:
+  - type: execute
+    action: whitelist_toggle
+    with:
+      enabled: true
+  - type: expect
+    action: whitelist_toggle
+    with:
+      enabled: true
+  - type: require
+    action: whitelist_toggle
+    with:
+      enabled: true
+
+  - type: execute
+    action: whitelist_toggle
+    with:
+      enabled: false
+  - type: expect
+    action: whitelist_toggle
+    with:
+      enabled: false
+  - type: require
+    action: whitelist_toggle
+    with:
+      enabled: false
