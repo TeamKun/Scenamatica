@@ -176,3 +176,24 @@ Java の標準的なレベルを指定できます。詳しくは以下のリス
 ### `sender` {#command-dispatch-sender}
 
 コマンドの実行者を指定します。省略した場合は、コンソールが実行者になります。
+
+## ホワイトリストのトグル {#whitelist}
+
+<Action name="ホワイトリストのトグル"
+        description="ホワイトリストを有効化・無効化します。"
+        id="whitelist_toggle"
+        events={
+          {
+            name: "WhitelistToggleEvent",
+            package: "com.destroystokyo.paper.event.server",
+          }
+        }
+        args={[
+          {
+            name: "enabled",
+            type: ObjectType.BOOLEAN,
+            description: "ホワイトリストを有効化するかどうかを指定します。"
+          }
+        ]}
+        executable watchable requireable
+/>
