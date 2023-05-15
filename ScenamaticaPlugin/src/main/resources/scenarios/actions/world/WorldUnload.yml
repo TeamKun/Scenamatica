@@ -9,14 +9,6 @@ on:
 scenario:
   # Implicitly load the world
   - type: execute
-    action: world_load
-    with:
-      world: the_end
-    runif:
-      action: world_unload
-      with:
-        world: the_end
-  - type: execute
     action: world_unload
     with:
       world: the_end

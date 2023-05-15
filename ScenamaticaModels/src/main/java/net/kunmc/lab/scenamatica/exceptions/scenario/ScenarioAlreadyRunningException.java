@@ -1,6 +1,6 @@
 package net.kunmc.lab.scenamatica.exceptions.scenario;
 
-import lombok.Getter;
+import lombok.*;
 
 /**
  * シナリオが既に実行中であることを表す例外です。
@@ -8,20 +8,17 @@ import lombok.Getter;
 @Getter
 public class ScenarioAlreadyRunningException extends ScenarioException
 {
-    private final String scenarioName;
     private final String runningScenarioName;
 
     public ScenarioAlreadyRunningException(String scenarioName, String runningScenarioName)
     {
-        super("Scenario " + scenarioName + " is already running.");
-        this.scenarioName = scenarioName;
+        super(scenarioName, "Scenario " + scenarioName + " is already running.");
         this.runningScenarioName = runningScenarioName;
     }
 
     public ScenarioAlreadyRunningException(String message)
     {
-        super(message);
-        this.scenarioName = null;
+        super(null, message);
         this.runningScenarioName = null;
     }
 }

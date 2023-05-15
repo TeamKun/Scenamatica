@@ -11,7 +11,7 @@ command.scenario.start.help=シナリオを実行するで。
 command.scenario.start.errors.noPlugin=指定されたプラグイン「%%plugin%%」が見つからんわ。
 command.scenario.start.errors.noScenario=指定されたシナリオ「%%scenario%%」が見つからんわ。
 command.scenario.start.errors.noManually=指定されたシナリオ「%%scenario%%」は手動で動かせんやつっぽいわ。
-command.scenario.start.success=シナリオ「%%scenario%%」
+command.scenario.start.success=シナリオの実行をキューに追加したで。
 
 command.scenario.cancel.help=現在実行されているシナリオをキャンセルするで。
 command.scenario.cancel.running=現在 プラグイン %%plugin%% の シナリオ %%scenario%% が実行されてるで。

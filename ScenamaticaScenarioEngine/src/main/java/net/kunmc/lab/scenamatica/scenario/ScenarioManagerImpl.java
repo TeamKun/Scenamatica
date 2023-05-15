@@ -1,39 +1,23 @@
 package net.kunmc.lab.scenamatica.scenario;
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.SneakyThrows;
-import net.kunmc.lab.peyangpaperutils.lib.utils.Pair;
-import net.kunmc.lab.scenamatica.enums.TriggerType;
-import net.kunmc.lab.scenamatica.exceptions.scenario.ScenarioAlreadyRunningException;
-import net.kunmc.lab.scenamatica.exceptions.scenario.ScenarioException;
-import net.kunmc.lab.scenamatica.exceptions.scenario.ScenarioNotFoundException;
-import net.kunmc.lab.scenamatica.exceptions.scenario.ScenarioNotRunningException;
-import net.kunmc.lab.scenamatica.exceptions.scenario.TriggerNotFoundException;
-import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
-import net.kunmc.lab.scenamatica.interfaces.action.ActionManager;
-import net.kunmc.lab.scenamatica.interfaces.scenario.MilestoneManager;
-import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioEngine;
-import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioManager;
-import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioResult;
-import net.kunmc.lab.scenamatica.interfaces.scenario.SessionCreator;
-import net.kunmc.lab.scenamatica.interfaces.scenario.TestReporter;
-import net.kunmc.lab.scenamatica.interfaces.scenario.runtime.CompiledTriggerAction;
-import net.kunmc.lab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
-import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerBean;
-import org.bukkit.plugin.Plugin;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.google.common.collect.*;
+import lombok.*;
+import net.kunmc.lab.peyangpaperutils.lib.utils.*;
+import net.kunmc.lab.scenamatica.enums.*;
+import net.kunmc.lab.scenamatica.exceptions.scenario.*;
+import net.kunmc.lab.scenamatica.interfaces.*;
+import net.kunmc.lab.scenamatica.interfaces.action.*;
+import net.kunmc.lab.scenamatica.interfaces.scenario.*;
+import net.kunmc.lab.scenamatica.interfaces.scenario.runtime.*;
+import net.kunmc.lab.scenamatica.interfaces.scenariofile.*;
+import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.*;
+import org.bukkit.plugin.*;
+import org.jetbrains.annotations.*;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.CyclicBarrier;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Consumer;
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.*;
+import java.util.function.*;
 
 public class ScenarioManagerImpl implements ScenarioManager
 {
@@ -185,7 +169,7 @@ public class ScenarioManagerImpl implements ScenarioManager
     {
         TriggerBean trigger = this.getTriggerOrNull(engine, type);
         if (trigger == null)
-            throw new TriggerNotFoundException(type);
+            throw new TriggerNotFoundException(engine.getScenario().getName(), type);
         else
             return trigger;
     }

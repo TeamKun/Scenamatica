@@ -1,43 +1,23 @@
 package net.kunmc.lab.scenamatica.scenario;
 
-import lombok.Getter;
-import net.kunmc.lab.peyangpaperutils.lang.LangProvider;
-import net.kunmc.lab.peyangpaperutils.lang.MsgArgs;
-import net.kunmc.lab.scenamatica.commons.utils.LogUtils;
-import net.kunmc.lab.scenamatica.commons.utils.ThreadingUtil;
-import net.kunmc.lab.scenamatica.enums.MilestoneScope;
-import net.kunmc.lab.scenamatica.enums.ScenarioResultCause;
-import net.kunmc.lab.scenamatica.enums.ScenarioState;
-import net.kunmc.lab.scenamatica.enums.ScenarioType;
-import net.kunmc.lab.scenamatica.enums.TriggerType;
-import net.kunmc.lab.scenamatica.enums.WatchType;
-import net.kunmc.lab.scenamatica.exceptions.scenario.TriggerNotFoundException;
-import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
-import net.kunmc.lab.scenamatica.interfaces.action.ActionArgument;
-import net.kunmc.lab.scenamatica.interfaces.action.ActionManager;
-import net.kunmc.lab.scenamatica.interfaces.action.CompiledAction;
-import net.kunmc.lab.scenamatica.interfaces.action.Requireable;
-import net.kunmc.lab.scenamatica.interfaces.context.Context;
-import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioActionListener;
-import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioEngine;
-import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioManager;
-import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioResult;
-import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioResultDeliverer;
-import net.kunmc.lab.scenamatica.interfaces.scenario.TestReporter;
-import net.kunmc.lab.scenamatica.interfaces.scenario.runtime.CompiledScenarioAction;
-import net.kunmc.lab.scenamatica.interfaces.scenario.runtime.CompiledTriggerAction;
-import net.kunmc.lab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
-import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerBean;
-import org.bukkit.plugin.Plugin;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import lombok.*;
+import net.kunmc.lab.peyangpaperutils.lang.*;
+import net.kunmc.lab.scenamatica.commons.utils.*;
+import net.kunmc.lab.scenamatica.enums.*;
+import net.kunmc.lab.scenamatica.exceptions.scenario.*;
+import net.kunmc.lab.scenamatica.interfaces.*;
+import net.kunmc.lab.scenamatica.interfaces.action.*;
+import net.kunmc.lab.scenamatica.interfaces.context.*;
+import net.kunmc.lab.scenamatica.interfaces.scenario.*;
+import net.kunmc.lab.scenamatica.interfaces.scenario.runtime.*;
+import net.kunmc.lab.scenamatica.interfaces.scenariofile.*;
+import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.*;
+import org.bukkit.plugin.*;
+import org.jetbrains.annotations.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
-import java.util.logging.Level;
-import java.util.stream.Collectors;
+import java.util.*;
+import java.util.logging.*;
+import java.util.stream.*;
 
 @Getter
 public class ScenarioEngineImpl implements ScenarioEngine
@@ -212,7 +192,7 @@ public class ScenarioEngineImpl implements ScenarioEngine
         return this.triggerActions.parallelStream()
                 .filter(t -> t.getTrigger().getType() == trigger.getType())
                 .filter(t -> Objects.equals(t.getTrigger().getArgument(), trigger.getArgument()))
-                .findFirst().orElseThrow(() -> new TriggerNotFoundException(trigger.getType()));
+                .findFirst().orElseThrow(() -> new TriggerNotFoundException(this.scenario.getName(), trigger.getType()));
     }
 
     @Nullable

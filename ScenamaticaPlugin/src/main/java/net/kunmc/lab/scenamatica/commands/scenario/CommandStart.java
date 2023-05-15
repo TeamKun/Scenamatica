@@ -1,30 +1,22 @@
 package net.kunmc.lab.scenamatica.commands.scenario;
 
-import lombok.AllArgsConstructor;
-import lombok.SneakyThrows;
-import net.kunmc.lab.peyangpaperutils.lang.LangProvider;
-import net.kunmc.lab.peyangpaperutils.lang.MsgArgs;
-import net.kunmc.lab.peyangpaperutils.lib.command.CommandBase;
-import net.kunmc.lab.peyangpaperutils.lib.terminal.Terminal;
-import net.kunmc.lab.scenamatica.enums.TriggerType;
-import net.kunmc.lab.scenamatica.exceptions.scenario.ScenarioNotFoundException;
-import net.kunmc.lab.scenamatica.exceptions.scenario.TriggerNotFoundException;
-import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
-import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioEngine;
-import net.kunmc.lab.scenamatica.interfaces.scenario.SessionCreator;
-import net.kunmc.lab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
-import net.kyori.adventure.text.TextComponent;
-import org.bukkit.Bukkit;
-import org.bukkit.command.CommandSender;
-import org.bukkit.plugin.Plugin;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import lombok.*;
+import net.kunmc.lab.peyangpaperutils.lang.*;
+import net.kunmc.lab.peyangpaperutils.lib.command.*;
+import net.kunmc.lab.peyangpaperutils.lib.terminal.*;
+import net.kunmc.lab.scenamatica.enums.*;
+import net.kunmc.lab.scenamatica.exceptions.scenario.*;
+import net.kunmc.lab.scenamatica.interfaces.*;
+import net.kunmc.lab.scenamatica.interfaces.scenario.*;
+import net.kunmc.lab.scenamatica.interfaces.scenariofile.*;
+import net.kyori.adventure.text.*;
+import org.bukkit.*;
+import org.bukkit.command.*;
+import org.bukkit.plugin.*;
+import org.jetbrains.annotations.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.*;
+import java.util.stream.*;
 
 @AllArgsConstructor
 public class CommandStart extends CommandBase
@@ -62,34 +54,35 @@ public class CommandStart extends CommandBase
         }
         else
         {
-            String scenarioName = strings[1];
-            this.queueScenarioRun(terminal, plugin, scenarioName);
+            String[] scenarioNames = Arrays.copyOfRange(strings, 1, strings.length);
+            queueAll(plugin, terminal, scenarioNames);
         }
     }
 
-    private void queueScenarioRun(Terminal terminal, Plugin plugin, String scenarioName)
+    private void queueAll(Plugin plugin, Terminal terminal, String[] scenarioNames)
     {
+        SessionCreator creator = this.registry.getScenarioManager().newSession();
+        for (String scenarioName : scenarioNames)
+            creator.add(plugin, TriggerType.MANUAL_DISPATCH, scenarioName);
 
         try
         {
-            this.registry.getScenarioManager().queueScenario(plugin, scenarioName, TriggerType.MANUAL_DISPATCH);
-            terminal.success(LangProvider.get(
-                    "command.scenario.start.success",
-                    MsgArgs.of("scenario", scenarioName)
-            ));
+            this.registry.getScenarioManager().queueScenario(creator);
+
+            terminal.success(LangProvider.get("command.scenario.start.success"));
         }
         catch (ScenarioNotFoundException e)
         {
             terminal.error(LangProvider.get(
                     "command.scenario.start.errors.noScenario",
-                    MsgArgs.of("scenario", scenarioName)
+                    MsgArgs.of("scenario", e.getScenarioName())
             ));
         }
         catch (TriggerNotFoundException e)
         {
             terminal.error(LangProvider.get(
                     "command.scenario.start.errors.noManually",
-                    MsgArgs.of("scenario", scenarioName)
+                    MsgArgs.of("scenario", e.getScenarioName())
             ));
         }
     }

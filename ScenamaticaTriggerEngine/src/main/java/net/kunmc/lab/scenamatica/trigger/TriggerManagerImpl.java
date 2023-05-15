@@ -1,26 +1,20 @@
 package net.kunmc.lab.scenamatica.trigger;
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
-import net.kunmc.lab.scenamatica.enums.TriggerType;
-import net.kunmc.lab.scenamatica.enums.WatchType;
-import net.kunmc.lab.scenamatica.exceptions.scenario.ScenarioException;
-import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
-import net.kunmc.lab.scenamatica.interfaces.action.ActionManager;
-import net.kunmc.lab.scenamatica.interfaces.action.CompiledAction;
-import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioEngine;
-import net.kunmc.lab.scenamatica.interfaces.scenario.SessionCreator;
-import net.kunmc.lab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
-import net.kunmc.lab.scenamatica.interfaces.scenariofile.action.ActionBean;
-import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
-import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerBean;
-import net.kunmc.lab.scenamatica.interfaces.trigger.TriggerManager;
-import net.kunmc.lab.scenamatica.trigger.arguments.ActionTriggerArgument;
-import org.bukkit.plugin.Plugin;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.google.common.collect.*;
+import net.kunmc.lab.scenamatica.enums.*;
+import net.kunmc.lab.scenamatica.exceptions.scenario.*;
+import net.kunmc.lab.scenamatica.interfaces.*;
+import net.kunmc.lab.scenamatica.interfaces.action.*;
+import net.kunmc.lab.scenamatica.interfaces.scenario.*;
+import net.kunmc.lab.scenamatica.interfaces.scenariofile.*;
+import net.kunmc.lab.scenamatica.interfaces.scenariofile.action.*;
+import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.*;
+import net.kunmc.lab.scenamatica.interfaces.trigger.*;
+import net.kunmc.lab.scenamatica.trigger.arguments.*;
+import org.bukkit.plugin.*;
+import org.jetbrains.annotations.*;
 
-import java.util.Locale;
+import java.util.*;
 
 public class TriggerManagerImpl implements TriggerManager
 {
@@ -68,9 +62,9 @@ public class TriggerManagerImpl implements TriggerManager
         ScenarioEngine engine = this.registry.getScenarioManager().getEngine(plugin, scenarioName);
 
         if (engine == null)
-            throw new ScenarioException("Scenario " + scenarioName + " is not loaded.");
+            throw new ScenarioException(scenarioName, "Scenario " + scenarioName + " is not loaded.");
         else if (!this.triggers.containsKey(engine))
-            throw new ScenarioException("Scenario " + scenarioName + " is not baked.");
+            throw new ScenarioException(scenarioName, "Scenario " + scenarioName + " is not baked.");
 
         SessionCreator creator = this.registry.getScenarioManager().newSession();
         engine.getScenario().getTriggers().stream()
