@@ -1,20 +1,17 @@
 package net.kunmc.lab.scenamatica.scenariofile;
 
-import net.kunmc.lab.scenamatica.commons.utils.MapUtils;
+import net.kunmc.lab.scenamatica.commons.utils.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.*;
+import java.util.regex.*;
 
 public class SchemaReplacer
 {
-    private static final String SCHEMA_KEY = "schema";
+    private static final String SCHEMA_KEY = "definitions";
     private static final String SCHEMA_REF = "$ref";
-    private static final Pattern SCHEMA_REF_EMBED = Pattern.compile("\\$\\{\\w+}");
+    private static final Pattern SCHEMA_REF_EMBED = Pattern.compile("\\$\\{(\\w+)}");
 
-    public static void resolveSchemaMap(Map<String, Object> map)
+    public static void resolveDefinitionMap(Map<String, Object> map)
     {
         if (!map.containsKey(SCHEMA_KEY))
             return;
@@ -25,15 +22,15 @@ public class SchemaReplacer
                 Object.class
         );
 
-        processSchemaSet(map, schema);
+        processDefSet(map, schema);
     }
 
-    public static Object resolveSchemaMap(Map<String, Object> map, Map<String, Object> schema)
+    public static Object resolveDefinitionMap(Map<String, Object> map, Map<String, Object> schema)
     {
-        return processSchemaSet(map, schema);
+        return processDefSet(map, schema);
     }
 
-    private static Object processSchemaSet(Object obj, Map<String, Object> schema)
+    private static Object processDefSet(Object obj, Map<String, Object> schema)
     {
         if (obj instanceof Map)
         {
@@ -56,7 +53,7 @@ public class SchemaReplacer
             else
             {
                 for (Map.Entry<String, Object> entry : value.entrySet())
-                    entry.setValue(processSchemaSet(entry.getValue(), schema));
+                    entry.setValue(processDefSet(entry.getValue(), schema));
                 return value;
             }
         }
@@ -65,7 +62,7 @@ public class SchemaReplacer
             List<Object> result = new ArrayList<>();
             List<?> value = (List<?>) obj;
             for (Object o : value)
-                result.add(processSchemaSet(o, schema));  // chu! 再帰関数でごめん♥
+                result.add(processDefSet(o, schema));  // chu! 再帰関数でごめん♥
             return result;
         }
 
@@ -73,10 +70,10 @@ public class SchemaReplacer
             return obj;
 
         String value = (String) obj;
-        return processSchemaRef(value, schema);   // ${ref} とかの処理
+        return processRef(value, schema);   // ${ref} とかの処理
     }
 
-    private static Object processSchemaRef(String value, Map<String, Object> schema)
+    private static Object processRef(String value, Map<String, Object> schema)
     {
         Matcher matcher = SCHEMA_REF_EMBED.matcher(value);
 
@@ -87,10 +84,10 @@ public class SchemaReplacer
         boolean looped = false;
         for (int i = 0; matcher.find(i); i = matcher.end(), looped = true)
         {
-            String ref = matcher.group();
+            String ref = matcher.group(1);
             Object schemaRef = schema.get(ref);
             if (schemaRef == null)
-                throw new IllegalArgumentException("Schema reference not found: " + ref);
+                throw new IllegalArgumentException("Definitions reference not found: " + ref);
 
             if (!(schemaRef instanceof Integer || schemaRef instanceof Long))
                 isIntOrLong = false;

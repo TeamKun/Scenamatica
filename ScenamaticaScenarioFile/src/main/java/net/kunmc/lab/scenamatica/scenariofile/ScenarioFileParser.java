@@ -1,21 +1,15 @@
 package net.kunmc.lab.scenamatica.scenariofile;
 
-import lombok.AllArgsConstructor;
-import net.kunmc.lab.scenamatica.exceptions.scenariofile.InvalidScenarioFileException;
-import net.kunmc.lab.scenamatica.exceptions.scenariofile.NotAScenarioFileException;
-import net.kunmc.lab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
-import org.yaml.snakeyaml.Yaml;
+import lombok.*;
+import net.kunmc.lab.scenamatica.exceptions.scenariofile.*;
+import net.kunmc.lab.scenamatica.interfaces.scenariofile.*;
+import org.yaml.snakeyaml.*;
 
-import javax.annotation.Nullable;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
+import javax.annotation.*;
+import java.io.*;
+import java.nio.file.*;
+import java.util.*;
+import java.util.zip.*;
 
 @AllArgsConstructor
 public class ScenarioFileParser
@@ -26,7 +20,7 @@ public class ScenarioFileParser
     {
         try
         {
-            SchemaReplacer.resolveSchemaMap(map);
+            SchemaReplacer.resolveDefinitionMap(map);
             if (!map.containsKey("scenamatica"))
                 throw new NotAScenarioFileException(fileName);
 

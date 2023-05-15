@@ -1,13 +1,9 @@
 package net.kunmc.lab.scenamatica.scenariofile;
 
-import net.kunmc.lab.scenamatica.scenariofile.beans.utils.MapTestUtil;
-import org.junit.jupiter.api.Test;
+import net.kunmc.lab.scenamatica.scenariofile.beans.utils.*;
+import org.junit.jupiter.api.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @SuppressWarnings("unchecked")
 public class SchemaReplacerTest
@@ -37,7 +33,7 @@ public class SchemaReplacerTest
         // noinspection unchecked
         Map<String, Object> expected = new HashMap<>((Map<String, Object>) SCHEMA_DEF.get("deepy"));
 
-        SchemaReplacer.resolveSchemaMap(target, SCHEMA_DEF);
+        SchemaReplacer.resolveDefinitionMap(target, SCHEMA_DEF);
         MapTestUtil.assertEqual(target, expected);
     }
 
@@ -50,7 +46,7 @@ public class SchemaReplacerTest
         }};
         List<Map<String, Object>> expected = new ArrayList<>((List<Map<String, Object>>) SCHEMA_DEF.get("list"));
 
-        List<Map<String, Object>> value = (List<Map<String, Object>>) SchemaReplacer.resolveSchemaMap(target, SCHEMA_DEF);
+        List<Map<String, Object>> value = (List<Map<String, Object>>) SchemaReplacer.resolveDefinitionMap(target, SCHEMA_DEF);
 
         MapTestUtil.assertEqual(value, expected);
     }
@@ -77,7 +73,7 @@ public class SchemaReplacerTest
             }});
         }};
 
-        SchemaReplacer.resolveSchemaMap(target, SCHEMA_DEF);
+        SchemaReplacer.resolveDefinitionMap(target, SCHEMA_DEF);
         MapTestUtil.assertEqual(expected, target);
     }
 
