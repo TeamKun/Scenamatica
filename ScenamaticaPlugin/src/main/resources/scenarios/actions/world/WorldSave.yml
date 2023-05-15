@@ -11,17 +11,17 @@ scenario:
   - type: execute
     action: world_load
     with:
-      world: world_the_end
+      world: the_end
     runif:
       action: world_unload
       with:
-        world: world_the_end
+        world: the_end
   - type: execute
     action: world_unload
     with:
-      world: world_the_end
+      world: the_end
       save: true
   - type: expect
     action: world_save
     with:
-      world: world_the_end
+      world: the_end
