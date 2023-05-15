@@ -2,9 +2,11 @@ package net.kunmc.lab.scenamatica.action.actions.world;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import net.kunmc.lab.scenamatica.commons.utils.NamespaceUtils;
 import net.kunmc.lab.scenamatica.interfaces.action.ActionArgument;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioEngine;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
+import org.apache.commons.lang.ArrayUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.World;
@@ -13,8 +15,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Objects;
 
 @AllArgsConstructor
-public abstract class AbstractWorldActionArgument implements ActionArgument
-{
+public abstract class AbstractWorldActionArgument implements ActionArgument {
+    private static final String[] PADDING_TARGET = {"the_end", "nether"};
+
     public static final String KEY_WORLD = "world";
 
     @Nullable
@@ -22,8 +25,7 @@ public abstract class AbstractWorldActionArgument implements ActionArgument
     private final NamespacedKey worldRef;
 
     @Override
-    public boolean isSame(TriggerArgument argument)
-    {
+    public boolean isSame(TriggerArgument argument) {
         if (!(argument instanceof ActionArgument))
             return false;
 
@@ -35,22 +37,31 @@ public abstract class AbstractWorldActionArgument implements ActionArgument
         return this.isSameWorld(a);
     }
 
-    protected boolean isSameWorld(AbstractWorldActionArgument argument)
-    {
+    protected boolean isSameWorld(AbstractWorldActionArgument argument) {
         return Objects.equals(this.worldRef, argument.worldRef);
     }
 
-    public World getWorld(ScenarioEngine engine)
-    {
+    public World getWorld() {
+        NamespacedKey key = this.worldRef;
+        World world;
+        if ((world = Bukkit.getWorld(key)) != null)
+            return world;
+
+        if (ArrayUtils.contains(PADDING_TARGET, key.getKey()))
+            return Bukkit.getWorld(NamespaceUtils.fromString(key.getNamespace() + ":" + "world_" + key.getKey()));
+
+        return null;
+    }
+
+    public World getWorldNonNull(ScenarioEngine engine) {
         if (this.worldRef == null)
             return engine.getManager().getRegistry().getContextManager().getStageManager().getStage();
-        else
-            return Bukkit.getWorld(this.worldRef);
+
+        return getWorld();
     }
 
     @Override
-    public String getArgumentString()
-    {
+    public String getArgumentString() {
         return "world=" + this.worldRef;
     }
 }

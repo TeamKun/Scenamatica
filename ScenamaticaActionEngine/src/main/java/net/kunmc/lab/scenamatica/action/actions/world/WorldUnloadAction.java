@@ -33,7 +33,7 @@ public class WorldUnloadAction extends AbstractWorldAction<WorldUnloadAction.Arg
     public void execute(@NotNull ScenarioEngine engine, @Nullable Argument argument)
     {
         argument = super.requireArgsNonNull(argument);
-        World world = argument.getWorld(engine);
+        World world = argument.getWorldNonNull(engine);
 
         Bukkit.getServer().unloadWorld(world, !Boolean.FALSE.equals(argument.getSave()));  // ぬるぽ回避 && デフォは true
     }

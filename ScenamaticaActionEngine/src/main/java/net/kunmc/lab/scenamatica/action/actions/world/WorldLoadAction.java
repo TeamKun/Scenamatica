@@ -38,9 +38,13 @@ public class WorldLoadAction extends AbstractWorldAction<WorldLoadAction.Argumen
         NamespacedKey key = argument.getWorldRef();
         assert key != null;
 
-        Path worldDir = Bukkit.getWorldContainer().toPath().resolve(key.getKey());
-        if (!Files.exists(worldDir))
-            throw new IllegalArgumentException("World '" + key + "' does not exist.");
+        Path worldDir = Bukkit.getWorldContainer().toPath();
+        if (!Files.exists(worldDir.resolve(key.getKey())))
+            if (Files.exists(worldDir.resolve("world_" + key.getKey())))
+                key = NamespacedKey.fromString(key.getNamespace() + ":world_" + key.getKey());
+            else
+                throw new IllegalArgumentException("World '" + key.getKey() + "' does not exist.");
+        assert key != null;
 
         // createWorld は, ワールドが存在する場合は読み込むだけ。
         Bukkit.createWorld(new WorldCreator(key.getKey()));
@@ -56,11 +60,7 @@ public class WorldLoadAction extends AbstractWorldAction<WorldLoadAction.Argumen
     public boolean isConditionFulfilled(@Nullable Argument argument, @NotNull ScenarioEngine engine)
     {
         argument = super.requireArgsNonNull(argument);
-
-        NamespacedKey key = argument.getWorldRef();
-        assert key != null;
-
-        return Bukkit.getWorld(key) != null;
+        return argument.getWorld() != null;
     }
 
     @Override

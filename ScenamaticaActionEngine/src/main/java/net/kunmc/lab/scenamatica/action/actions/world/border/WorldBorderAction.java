@@ -40,7 +40,7 @@ public class WorldBorderAction extends AbstractWorldAction<WorldBorderAction.Arg
     {
         argument = this.requireArgsNonNull(argument);
 
-        WorldBorder border = argument.getWorld(engine).getWorldBorder();
+        WorldBorder border = argument.getWorldNonNull(engine).getWorldBorder();
 
         if (argument.getSize() != -1)
             border.setSize(argument.getSize(), argument.getDuration());
@@ -143,7 +143,7 @@ public class WorldBorderAction extends AbstractWorldAction<WorldBorderAction.Arg
     {
         argument = this.requireArgsNonNull(argument);
 
-        WorldBorder border = argument.getWorld(engine).getWorldBorder();
+        WorldBorder border = argument.getWorldNonNull(engine).getWorldBorder();
 
         return (argument.getSize() == -1 || argument.getSize() == border.getSize())
                 && (argument.getDuration() == -1 || argument.getDuration() == border.getSize())

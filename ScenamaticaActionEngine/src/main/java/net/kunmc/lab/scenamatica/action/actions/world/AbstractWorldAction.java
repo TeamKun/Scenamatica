@@ -20,7 +20,7 @@ public abstract class AbstractWorldAction<A extends AbstractWorldActionArgument>
 
         WorldEvent e = (WorldEvent) event;
 
-        return e.getWorld().getKey().equals(argument.getWorld(engine).getKey());
+        return e.getWorld().getKey().equals(argument.getWorldNonNull(engine).getKey());
     }
 
     protected NamespacedKey deserializeWorld(Map<String, Object> map)

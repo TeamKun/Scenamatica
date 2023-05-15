@@ -34,7 +34,7 @@ public class WorldGameRuleAction extends AbstractWorldAction<WorldGameRuleAction
     {
         argument = this.requireArgsNonNull(argument);
 
-        World world = argument.getWorld(engine);
+        World world = argument.getWorldNonNull(engine);
         GameRule<?> rule = argument.getGameRule();
         String value = argument.getValue();
         assert value != null;
@@ -120,7 +120,7 @@ public class WorldGameRuleAction extends AbstractWorldAction<WorldGameRuleAction
     {
         argument = this.requireArgsNonNull(argument);
 
-        World world = argument.getWorld(engine);
+        World world = argument.getWorldNonNull(engine);
         GameRule<?> rule = argument.getGameRule();
         Class<?> type = rule.getType();
         String expectedValue = argument.getValue();
