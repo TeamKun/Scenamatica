@@ -1,0 +1,34 @@
+scenamatica: ${project.version}
+
+name: general_definition_2
+description: Testing definition works or not
+
+definitions:
+  milestone_name: hogehoge
+  earn_hoge:
+    type: execute
+    action: milestone
+    with:
+      name: ${milestone_name}
+
+on:
+  - type: on_load
+    before:
+      - $ref: earn_hoge
+  - type: manual_dispatch
+    before:
+      - $ref: earn_hoge
+
+scenario:
+  - type: execute
+    action: server_log
+    with:
+      message: "Milestone ${milestone_name} with reference has already been reached."
+    runif:
+      action: milestone
+      with:
+        name: ${milestone_name}
+  - type: expect
+    action: server_log
+    with:
+      message: "Milestone ${milestone_name} with reference has already been reached."

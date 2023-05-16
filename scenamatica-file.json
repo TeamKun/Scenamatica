@@ -1888,6 +1888,11 @@
         "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
       ]
     },
+    "definitions": {
+      "type": "object",
+      "description": "シナリオ内で再利用できる定義を作成します。",
+      "additionalProperties": true
+    },
     "timeout": {
       "type": "integer",
       "description": "全体のタイムアウト時間を**チック**で指定します。-1 で無効化します。",

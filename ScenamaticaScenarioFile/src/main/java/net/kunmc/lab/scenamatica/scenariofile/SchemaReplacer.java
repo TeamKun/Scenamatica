@@ -85,6 +85,7 @@ public class SchemaReplacer
         for (int i = 0; matcher.find(i); i = matcher.end(), looped = true)
         {
             String ref = matcher.group(1);
+            String refFull = matcher.group(0);
             Object schemaRef = schema.get(ref);
             if (schemaRef == null)
                 throw new IllegalArgumentException("Definitions reference not found: " + ref);
@@ -98,7 +99,7 @@ public class SchemaReplacer
             if (!(schemaRef instanceof Boolean))
                 isBoolean = false;
 
-            value = value.replace(ref, schemaRef.toString());
+            value = value.replace(refFull, schemaRef.toString());
         }
 
         if (!looped)
@@ -114,7 +115,7 @@ public class SchemaReplacer
             return Boolean.parseBoolean(value);
 
         // 脱落形式なので, ここに来るのは String だけ。
-        return value;
+        return processRef(value, schema);
     }
 
 }
