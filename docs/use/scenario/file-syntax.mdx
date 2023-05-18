@@ -64,6 +64,13 @@ JSON スキーマは[こちら](https://raw.githubusercontent.com/TeamKun/Scenam
     default: 20 * 60 * 5 // チック指定
   },
   {
+    name: "order",
+    anchor: "apex-order",
+    type: ObjectType.INTEGER,
+    description: "シナリオの実行順序です。",
+    default: 2147483647
+  },
+  {
     name: "context",
     anchor: "apex-context",
     type: "Context",
@@ -150,6 +157,25 @@ Scenamatica のバージョンは、 `x.y.z` の形式で指定します。
 `-1` を指定すると、タイムアウトは無効になり、無限に実行します。
 
 :::
+
+### `order` {#apex-order}
+
+シナリオの**同一[セッション内](./#scenario-session)での**実行順序を制御します。   
+[セッション](./#scenario-session)とは、同じトリガの種類を持つシナリオが同時に発火した場合に、それらをグループ化するためのものです。 
+
+実行順序は、数値が低いものから順に実行されます。未設定の場合は自動的に名前順でソートされ、セッションの末尾に追加されます。
+
+<BelowDocument docId="use/scenario/README"
+               anchor={"scenario-session"}
+               label={"シナリオ - シナリオセッション"}
+/>
+
+
+<BelowDocument docId="use/scenario/README"
+               anchor={"scenario-ordering"}
+               label={"シナリオ - シナリオの実行順序の制御"}
+               message={""}
+/>
 
 ### `context` {#apex-context}
 
