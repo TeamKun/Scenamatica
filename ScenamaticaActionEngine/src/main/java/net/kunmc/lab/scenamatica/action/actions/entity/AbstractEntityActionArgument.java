@@ -1,11 +1,11 @@
 package net.kunmc.lab.scenamatica.action.actions.entity;
 
-import lombok.AllArgsConstructor;
-import net.kunmc.lab.scenamatica.action.utils.EntityUtils;
-import net.kunmc.lab.scenamatica.interfaces.action.ActionArgument;
-import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
-import org.bukkit.entity.Entity;
-import org.jetbrains.annotations.NotNull;
+import lombok.*;
+import net.kunmc.lab.scenamatica.action.utils.*;
+import net.kunmc.lab.scenamatica.interfaces.action.*;
+import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.*;
+import org.bukkit.entity.*;
+import org.jetbrains.annotations.*;
 
 @AllArgsConstructor
 public abstract class AbstractEntityActionArgument implements ActionArgument
@@ -39,7 +39,7 @@ public abstract class AbstractEntityActionArgument implements ActionArgument
     }
 
     @Override
-    public String toString()
+    public String getArgumentString()
     {
         return "target=" + this.target;
     }
