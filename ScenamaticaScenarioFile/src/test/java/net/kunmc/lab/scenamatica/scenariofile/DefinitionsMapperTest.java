@@ -6,7 +6,7 @@ import org.junit.jupiter.api.*;
 import java.util.*;
 
 @SuppressWarnings("unchecked")
-public class SchemaReplacerTest
+public class DefinitionsMapperTest
 {
     private static final Map<String, Object> SCHEMA_DEF = new HashMap<String, Object>()
     {{
@@ -33,7 +33,7 @@ public class SchemaReplacerTest
         // noinspection unchecked
         Map<String, Object> expected = new HashMap<>((Map<String, Object>) SCHEMA_DEF.get("deepy"));
 
-        SchemaReplacer.resolveDefinitionMap(target, SCHEMA_DEF);
+        DefinitionsMapper.resolveReferences(target, SCHEMA_DEF);
         MapTestUtil.assertEqual(target, expected);
     }
 
@@ -46,7 +46,7 @@ public class SchemaReplacerTest
         }};
         List<Map<String, Object>> expected = new ArrayList<>((List<Map<String, Object>>) SCHEMA_DEF.get("list"));
 
-        List<Map<String, Object>> value = (List<Map<String, Object>>) SchemaReplacer.resolveDefinitionMap(target, SCHEMA_DEF);
+        List<Map<String, Object>> value = (List<Map<String, Object>>) DefinitionsMapper.resolveReferences(target, SCHEMA_DEF);
 
         MapTestUtil.assertEqual(value, expected);
     }
@@ -73,7 +73,7 @@ public class SchemaReplacerTest
             }});
         }};
 
-        SchemaReplacer.resolveDefinitionMap(target, SCHEMA_DEF);
+        DefinitionsMapper.resolveReferences(target, SCHEMA_DEF);
         MapTestUtil.assertEqual(expected, target);
     }
 

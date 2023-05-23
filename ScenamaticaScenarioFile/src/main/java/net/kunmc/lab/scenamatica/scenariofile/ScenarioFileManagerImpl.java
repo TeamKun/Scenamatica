@@ -1,20 +1,16 @@
 package net.kunmc.lab.scenamatica.scenariofile;
 
-import net.kunmc.lab.peyangpaperutils.versioning.Version;
-import net.kunmc.lab.scenamatica.exceptions.scenariofile.InvalidScenarioFileException;
-import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
-import net.kunmc.lab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
-import net.kunmc.lab.scenamatica.interfaces.scenariofile.ScenarioFileManager;
-import org.bukkit.plugin.Plugin;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.kunlab.kpm.utils.PluginUtil;
+import net.kunmc.lab.peyangpaperutils.versioning.*;
+import net.kunmc.lab.scenamatica.exceptions.scenariofile.*;
+import net.kunmc.lab.scenamatica.interfaces.*;
+import net.kunmc.lab.scenamatica.interfaces.scenariofile.*;
+import org.bukkit.plugin.*;
+import org.jetbrains.annotations.*;
+import org.kunlab.kpm.utils.*;
 
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.io.*;
+import java.nio.file.*;
+import java.util.*;
 
 public class ScenarioFileManagerImpl implements ScenarioFileManager
 {
@@ -64,7 +60,7 @@ public class ScenarioFileManagerImpl implements ScenarioFileManager
         {
             Version fileVersion = scenario.getScenamaticaVersion();
 
-            // このScenamatica より新しいバージョンのファイルは読み込まない
+            // この Scenamatica より新しいバージョンのファイルは読み込まない
             if (fileVersion.isNewerThan(baseVersion))
                 throw new InvalidScenarioFileException(
                         "The scenario file " + scenario.getName() + " is newer than running Scenamatica daemon version." +
