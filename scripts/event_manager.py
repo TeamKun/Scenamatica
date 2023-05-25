@@ -163,9 +163,13 @@ class MainWindow(QMainWindow):
     def showSummary(self):
         summary = f"イベント数：{len(self.eventsData)}\n"
         implemented = 0
+        notImplemented = 0
         for event in self.eventsData:
             if event["implemented"]:
                 implemented += 1
+            else:
+                notImplemented += 1
+        implPercentage = implemented / notImplemented * 100
 
         groupedEvents = self.groupByPriority()
         notImplementedFL = 0
@@ -173,16 +177,20 @@ class MainWindow(QMainWindow):
             if not fl["implemented"]:
                 notImplementedFL += 1
 
-        summary += f"実装したやつ：{implemented}\n"
-        summary += f"してないやつ：{len(self.eventsData) - implemented - 1}\n"
+        summary += f"実装じょうきょう：{implemented}/{notImplemented - implemented} ({round(implPercentage, 2)}%)\n"
 
         summary += f"    うち\n"
         for name, priority in groupedEvents.items():
             notImplSum = 0
+            implSum = 0
             for gEvt in groupedEvents[name]:
-                if not gEvt["implemented"]:
+                if gEvt["implemented"]:
+                    implSum += 1
+                else:
                     notImplSum += 1
-            summary += f"    - {PRIORITIES[name]['displayName']}： {notImplSum}\n"
+
+            implPercent = implSum / notImplSum * 100
+            summary += f"    - {PRIORITIES[name]['displayName']}： {implSum}/{notImplSum} ({round(implPercent, 2)}%)\n"
 
         if len(self.eventsData) > 0:
             percent = implemented / len(self.eventsData) * 100
@@ -210,7 +218,6 @@ class MainWindow(QMainWindow):
             result[priorityKey] = []
 
             for event in self.eventsData:
-                print(event["priority"], value["value"])
                 if priorityKey == event["priority"]:
                     result[priorityKey].append(event)
         return result
