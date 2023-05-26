@@ -1,13 +1,9 @@
 package net.kunmc.lab.scenamatica.scenariofile;
 
-import org.yaml.snakeyaml.constructor.AbstractConstruct;
-import org.yaml.snakeyaml.constructor.SafeConstructor;
-import org.yaml.snakeyaml.nodes.Node;
-import org.yaml.snakeyaml.nodes.ScalarNode;
-import org.yaml.snakeyaml.nodes.Tag;
+import org.yaml.snakeyaml.constructor.*;
+import org.yaml.snakeyaml.nodes.*;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @SuppressWarnings("VulnerableCodeUsages")
 public class SimpleYamlConstructor extends SafeConstructor
@@ -33,13 +29,6 @@ public class SimpleYamlConstructor extends SafeConstructor
 
     public class CustomBooleanConstruct extends AbstractConstruct
     {
-        private final ConstructYamlMap map;
-
-        public CustomBooleanConstruct()
-        {
-            this.map = new ConstructYamlMap();
-        }
-
         @Override
         public Object construct(Node node)
         {
