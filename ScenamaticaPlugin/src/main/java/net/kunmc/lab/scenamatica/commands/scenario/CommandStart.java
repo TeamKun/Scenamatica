@@ -9,6 +9,7 @@ import net.kunmc.lab.scenamatica.exceptions.scenario.*;
 import net.kunmc.lab.scenamatica.interfaces.*;
 import net.kunmc.lab.scenamatica.interfaces.scenario.*;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.*;
+import net.kunmc.lab.scenamatica.utils.*;
 import net.kyori.adventure.text.*;
 import org.bukkit.*;
 import org.bukkit.command.*;
@@ -16,7 +17,6 @@ import org.bukkit.plugin.*;
 import org.jetbrains.annotations.*;
 
 import java.util.*;
-import java.util.stream.*;
 
 @AllArgsConstructor
 public class CommandStart extends CommandBase
@@ -91,16 +91,8 @@ public class CommandStart extends CommandBase
     public @Nullable List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Terminal terminal, String[] strings)
     {
         if (strings.length == 1)
-            // プラグインのシナリオで, 手動実行できるシナリオを持つプラグインをフィルタ。
-            return Arrays.stream(Bukkit.getPluginManager().getPlugins()).parallel()
-                    .filter(plugin -> {
-                        Map<String, ScenarioFileBean> scenarios = this.registry.getScenarioFileManager().getPluginScenarios(plugin);
-                        return scenarios != null && scenarios.values().stream().parallel()
-                                .anyMatch(scenario -> scenario.getTriggers().stream().parallel()
-                                        .anyMatch(trigger -> trigger.getType() == TriggerType.MANUAL_DISPATCH));
-                    })
-                    .map(Plugin::getName)
-                    .collect(Collectors.toList());
+            // プラグインのシナリオで, 手動実行できるシナリオを持つプラグインを選択。
+            return CommandUtils.getScenariosByTrigger(this.registry, TriggerType.MANUAL_DISPATCH);
         else if (strings.length == 2)
         {
             String pluginName = strings[0];

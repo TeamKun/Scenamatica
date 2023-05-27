@@ -1,28 +1,21 @@
 package net.kunmc.lab.scenamatica.commands.scenario;
 
-import lombok.AllArgsConstructor;
-import net.kunmc.lab.peyangpaperutils.lang.LangProvider;
-import net.kunmc.lab.peyangpaperutils.lang.MsgArgs;
-import net.kunmc.lab.peyangpaperutils.lib.command.CommandBase;
-import net.kunmc.lab.peyangpaperutils.lib.terminal.Terminal;
-import net.kunmc.lab.scenamatica.enums.TriggerType;
-import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
-import net.kunmc.lab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextComponent;
-import net.kyori.adventure.text.event.ClickEvent;
-import net.kyori.adventure.text.event.HoverEvent;
-import org.bukkit.Bukkit;
-import org.bukkit.command.CommandSender;
-import org.bukkit.plugin.Plugin;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import lombok.*;
+import net.kunmc.lab.peyangpaperutils.lang.*;
+import net.kunmc.lab.peyangpaperutils.lib.command.*;
+import net.kunmc.lab.peyangpaperutils.lib.terminal.*;
+import net.kunmc.lab.scenamatica.enums.*;
+import net.kunmc.lab.scenamatica.interfaces.*;
+import net.kunmc.lab.scenamatica.interfaces.scenariofile.*;
+import net.kunmc.lab.scenamatica.utils.*;
+import net.kyori.adventure.text.*;
+import net.kyori.adventure.text.event.*;
+import org.bukkit.*;
+import org.bukkit.command.*;
+import org.bukkit.plugin.*;
+import org.jetbrains.annotations.*;
 
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.*;
 
 @AllArgsConstructor
 public class CommandList extends CommandBase
@@ -90,16 +83,7 @@ public class CommandList extends CommandBase
     @Override
     public @Nullable List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Terminal terminal, String[] strings)
     {
-        //noinspection DuplicatedCode
-        return Arrays.stream(Bukkit.getPluginManager().getPlugins()).parallel()
-                .filter(plugin -> {
-                    Map<String, ScenarioFileBean> scenarios = this.registry.getScenarioFileManager().getPluginScenarios(plugin);
-                    return scenarios != null && scenarios.values().stream().parallel()
-                            .anyMatch(scenario -> scenario.getTriggers().stream().parallel()
-                                    .anyMatch(trigger -> trigger.getType() == TriggerType.MANUAL_DISPATCH));
-                })
-                .map(Plugin::getName)
-                .collect(Collectors.toList());
+        return CommandUtils.getScenariosByTrigger(this.registry, TriggerType.MANUAL_DISPATCH);
     }
 
     @Override
