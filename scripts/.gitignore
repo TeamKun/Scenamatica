@@ -1,2 +1,4 @@
 events.json
 .venv
+build
+dist
