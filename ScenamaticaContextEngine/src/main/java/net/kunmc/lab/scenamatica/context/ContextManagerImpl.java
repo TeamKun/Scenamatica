@@ -74,9 +74,9 @@ public class ContextManagerImpl implements ContextManager
     {
         ContextBean context = scenario.getContext();
 
-        this.log(scenario, "context.creating", testID, true);
+        this.logIfVerbose(scenario, "context.creating", testID);
 
-        this.log(scenario, "context.stage.generating", testID, true);
+        this.logIfVerbose(scenario, "context.stage.generating", testID);
 
         World stage;
         if (context != null && context.getWorld() != null)
@@ -84,15 +84,13 @@ public class ContextManagerImpl implements ContextManager
             if (context.getWorld().getOriginalWorldName() != null
                     && Bukkit.getWorld(context.getWorld().getOriginalWorldName()) != null)  // 既存だったら再利用する。
             {
-                this.log(scenario, "context.stage.clone.found",
+                this.logIfVerbose(scenario, "context.stage.clone.found",
                         MsgArgs.of("stageName", context.getWorld().getOriginalWorldName()),
-                        testID,
-                        true
+                        testID
                 );
-                this.log(scenario, "context.stage.clone.cloning",
+                this.logIfVerbose(scenario, "context.stage.clone.cloning",
                         MsgArgs.of("stageName", context.getWorld().getOriginalWorldName()),
-                        testID,
-                        true
+                        testID
                 );
             }
 
@@ -107,7 +105,7 @@ public class ContextManagerImpl implements ContextManager
         List<Actor> actors = new ArrayList<>();
         if (context != null && !context.getActors().isEmpty())
         {
-            this.log(scenario, "context.actor.generating", testID, true);
+            this.logIfVerbose(scenario, "context.actor.generating", testID);
             try
             {
                 for (PlayerBean actor : context.getActors())
@@ -124,20 +122,20 @@ public class ContextManagerImpl implements ContextManager
             }
         }
 
-        this.log(scenario, "context.created", testID, true);
+        this.logIfVerbose(scenario, "context.created", testID);
         return new ContextImpl(stage, actors);
     }
 
-    private void log(ScenarioFileBean scenario, String message, MsgArgs args, UUID testID, boolean verboseOnly)
+    private void logIfVerbose(ScenarioFileBean scenario, String message, MsgArgs args, UUID testID)
     {
-        if (!this.verbose && verboseOnly)
+        if (!this.verbose)
             return;
         this.logger.log(Level.INFO, LangProvider.get(message, getArgs(scenario, testID).add(args)));
     }
 
-    private void log(ScenarioFileBean scenario, String message, UUID testID, boolean verboseOnly)
+    private void logIfVerbose(ScenarioFileBean scenario, String message, UUID testID)
     {
-        if (!this.verbose && verboseOnly)
+        if (!this.verbose)
             return;
         this.logger.log(Level.INFO, LangProvider.get(message, getArgs(scenario, testID)));
     }
