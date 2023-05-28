@@ -1475,10 +1475,10 @@
           "description": "属性の変更設定の操作です。",
           "enum": [
             "add_number",
-            "add_scaler",
+            "add_scalar",
             "multiply_scalar_1",
             "ADD_NUMBER",
-            "ADD_SCALER",
+            "ADD_SCALAR",
             "MULTIPLY_SCALAR_1"
           ]
         }
