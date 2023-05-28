@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="ScenamaticaDaemon" />
+        <module name="ScenamaticaScenarioEngine" />
+        <module name="ScenamaticaCommons" />
+        <module name="ScenamaticaContextEngine" />
+        <module name="ScenamaticaModels" />
+        <module name="ScenamaticaAPI" />
+        <module name="ScenamaticaActionEngine" />
+        <module name="ScenamaticaScenarioFile" />
+        <module name="ScenamaticaPlugin" />
+        <module name="ScenamaticaTriggerEngine" />
+      </profile>
+    </annotationProcessing>
+  </component>
+</project>
