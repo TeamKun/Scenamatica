@@ -18,12 +18,12 @@ public class CommandDebug extends SubCommandWith
 {
     private static Map<String, CommandBase> commands;
 
-    public CommandDebug(ScenamaticaRegistry registory)
+    public CommandDebug(ScenamaticaRegistry registry)
     {
         commands = new HashMap<>();
-        commands.put("summonActor", new CommandSummonActor(registory));
-        commands.put("createStage", new CommandCreateStage(registory));
-        commands.put("destroyStage", new CommandDestroyStage(registory));
+        commands.put("summonActor", new CommandSummonActor(registry));
+        commands.put("createStage", new CommandCreateStage(registry));
+        commands.put("destroyStage", new CommandDestroyStage(registry));
 
     }
 
