@@ -1,3 +1,4 @@
+# noinspection YAMLSchemaValidation
 scenamatica: ${project.version}
 
 name: general_engine

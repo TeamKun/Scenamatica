@@ -1,3 +1,4 @@
+# noinspection YAMLSchemaValidation
 scenamatica: ${project.version}
 
 name: actions_player_advancement_2
