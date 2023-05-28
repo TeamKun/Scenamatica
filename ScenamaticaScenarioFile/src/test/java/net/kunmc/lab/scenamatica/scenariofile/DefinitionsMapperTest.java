@@ -22,7 +22,7 @@ public class DefinitionsMapperTest
         dataTypes.put("long", 0L);
         dataTypes.put("float", 0.0f);
 
-        this.put("deepy", dataTypes);
+        this.put("deeps", dataTypes);
         this.put("list", Arrays.asList(dataTypes, dataTypes, dataTypes));
 
     }};
@@ -32,10 +32,10 @@ public class DefinitionsMapperTest
     {
         Map<String, Object> target = new HashMap<String, Object>()
         {{
-            this.put("$ref", "deepy");
+            this.put("$ref", "deeps");
         }};
         // noinspection unchecked
-        Map<String, Object> expected = new HashMap<>((Map<String, Object>) SCHEMA_DEF.get("deepy"));
+        Map<String, Object> expected = new HashMap<>((Map<String, Object>) SCHEMA_DEF.get("deeps"));
 
         DefinitionsMapper.resolveReferences(target, SCHEMA_DEF);
         MapTestUtil.assertEqual(target, expected);
@@ -60,20 +60,20 @@ public class DefinitionsMapperTest
     {
         Map<String, Object> target = new HashMap<String, Object>()
         {{
-            this.put("deepy", new HashMap<String, Object>()
+            this.put("deeps", new HashMap<String, Object>()
             {{
                 this.put("more", new HashMap<String, Object>()
                 {{
-                    this.put("$ref", "deepy");
+                    this.put("$ref", "deeps");
                 }});
             }});
         }};
 
         Map<String, Object> expected = new HashMap<String, Object>()
         {{
-            this.put("deepy", new HashMap<String, Object>()
+            this.put("deeps", new HashMap<String, Object>()
             {{
-                this.put("more", new HashMap<>((Map<String, Object>) SCHEMA_DEF.get("deepy")));
+                this.put("more", new HashMap<>((Map<String, Object>) SCHEMA_DEF.get("deeps")));
             }});
         }};
 
