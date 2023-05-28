@@ -42,7 +42,7 @@ class MockedNetworkManager extends NetworkManager
     private boolean alive;
 
     @SneakyThrows(UnknownHostException.class)
-    public MockedNetworkManager(PlayerMocker mocker, MockedPlayer player, MinecraftServer server)
+    public MockedNetworkManager(MinecraftServer server)
     {
         super(EnumProtocolDirection.SERVERBOUND);
 

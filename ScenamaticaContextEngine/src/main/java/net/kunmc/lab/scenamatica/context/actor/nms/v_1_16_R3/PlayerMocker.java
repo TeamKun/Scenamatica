@@ -91,7 +91,7 @@ public class PlayerMocker extends PlayerMockerBase
     private void registerPlayer(MinecraftServer server, MockedPlayer player)
     {
         PlayerList list = server.getPlayerList();
-        NetworkManager mockedNetworkManager = new MockedNetworkManager(this, player, server);
+        NetworkManager mockedNetworkManager = new MockedNetworkManager(server);
         list.a(mockedNetworkManager, player);
         sendSettings(player);
     }
