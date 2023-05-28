@@ -45,8 +45,8 @@ public abstract class AbstractWorldActionArgument implements ActionArgument
     public World getWorld()
     {
         NamespacedKey key = this.worldRef;
-        World world;
-        if ((world = Bukkit.getWorld(key)) != null)
+        World world = null;
+        if (key == null || (world = Bukkit.getWorld(key)) != null)
             return world;
 
         if (ArrayUtils.contains(PADDING_TARGET, key.getKey()))
