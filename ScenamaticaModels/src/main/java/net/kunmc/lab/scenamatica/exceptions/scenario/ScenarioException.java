@@ -1,7 +1,7 @@
 package net.kunmc.lab.scenamatica.exceptions.scenario;
 
-import lombok.*;
-import org.jetbrains.annotations.*;
+import lombok.Getter;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * シナリオに関する例外を表すクラスです。

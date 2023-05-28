@@ -1,16 +1,20 @@
 package net.kunmc.lab.scenamatica.scenariofile;
 
-import net.kunmc.lab.peyangpaperutils.versioning.*;
-import net.kunmc.lab.scenamatica.exceptions.scenariofile.*;
-import net.kunmc.lab.scenamatica.interfaces.*;
-import net.kunmc.lab.scenamatica.interfaces.scenariofile.*;
-import org.bukkit.plugin.*;
-import org.jetbrains.annotations.*;
-import org.kunlab.kpm.utils.*;
+import net.kunmc.lab.peyangpaperutils.versioning.Version;
+import net.kunmc.lab.scenamatica.exceptions.scenariofile.InvalidScenarioFileException;
+import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
+import net.kunmc.lab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
+import net.kunmc.lab.scenamatica.interfaces.scenariofile.ScenarioFileManager;
+import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.kunlab.kpm.utils.PluginUtil;
 
-import java.io.*;
-import java.nio.file.*;
-import java.util.*;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ScenarioFileManagerImpl implements ScenarioFileManager
 {

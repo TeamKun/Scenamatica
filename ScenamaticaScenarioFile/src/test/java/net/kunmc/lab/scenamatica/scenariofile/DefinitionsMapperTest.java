@@ -1,9 +1,13 @@
 package net.kunmc.lab.scenamatica.scenariofile;
 
-import net.kunmc.lab.scenamatica.scenariofile.beans.utils.*;
-import org.junit.jupiter.api.*;
+import net.kunmc.lab.scenamatica.scenariofile.beans.utils.MapTestUtil;
+import org.junit.jupiter.api.Test;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @SuppressWarnings("unchecked")
 public class DefinitionsMapperTest

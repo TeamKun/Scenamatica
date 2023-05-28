@@ -35,14 +35,6 @@ public enum TriggerType
     @Nullable
     private Class<? extends TriggerArgument> argumentType;
 
-    public void setArgumentType(Class<? extends TriggerArgument> argumentType)
-    {
-        if (this.argumentType != null)
-            throw new IllegalStateException("Argument type is already set.");
-
-        this.argumentType = argumentType;
-    }
-
     public static TriggerType fromKey(String key)
     {
         for (TriggerType type : values())
@@ -50,6 +42,14 @@ public enum TriggerType
                 return type;
 
         return null;
+    }
+
+    public void setArgumentType(Class<? extends TriggerArgument> argumentType)
+    {
+        if (this.argumentType != null)
+            throw new IllegalStateException("Argument type is already set.");
+
+        this.argumentType = argumentType;
     }
 
     /**

@@ -1,7 +1,7 @@
 package net.kunmc.lab.scenamatica.exceptions.scenario;
 
-import lombok.*;
-import org.jetbrains.annotations.*;
+import lombok.Getter;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * シナリオが実行中でないことを表す例外です。

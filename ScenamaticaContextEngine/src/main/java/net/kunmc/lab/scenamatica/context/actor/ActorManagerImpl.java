@@ -51,11 +51,6 @@ public class ActorManagerImpl implements ActorManager, Listener
         this.waitingForLogin = new ConcurrentHashMap<>();
     }
 
-    private void init()
-    {
-        this.registry.getPlugin().getServer().getPluginManager().registerEvents(this, this.registry.getPlugin());
-    }
-
     private static PlayerMockerBase getMocker(ScenamaticaRegistry registry, ActorManager manager)
             throws VersionNotSupportedException
     {
@@ -68,6 +63,11 @@ public class ActorManagerImpl implements ActorManager, Listener
             default:
                 throw new VersionNotSupportedException(version);
         }
+    }
+
+    private void init()
+    {
+        this.registry.getPlugin().getServer().getPluginManager().registerEvents(this, this.registry.getPlugin());
     }
 
     @Override

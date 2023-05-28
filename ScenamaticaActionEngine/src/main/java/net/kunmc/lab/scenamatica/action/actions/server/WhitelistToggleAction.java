@@ -1,17 +1,21 @@
 package net.kunmc.lab.scenamatica.action.actions.server;
 
-import com.destroystokyo.paper.event.server.*;
-import lombok.*;
-import net.kunmc.lab.scenamatica.action.actions.*;
-import net.kunmc.lab.scenamatica.commons.utils.*;
-import net.kunmc.lab.scenamatica.interfaces.action.*;
-import net.kunmc.lab.scenamatica.interfaces.scenario.*;
-import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.*;
-import org.bukkit.*;
-import org.bukkit.event.*;
-import org.jetbrains.annotations.*;
+import com.destroystokyo.paper.event.server.WhitelistToggleEvent;
+import lombok.Value;
+import net.kunmc.lab.scenamatica.action.actions.AbstractAction;
+import net.kunmc.lab.scenamatica.commons.utils.MapUtils;
+import net.kunmc.lab.scenamatica.interfaces.action.ActionArgument;
+import net.kunmc.lab.scenamatica.interfaces.action.Requireable;
+import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioEngine;
+import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
+import org.bukkit.Bukkit;
+import org.bukkit.event.Event;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 public class WhitelistToggleAction extends AbstractAction<WhitelistToggleAction.Argument> implements Requireable<WhitelistToggleAction.Argument>
 {

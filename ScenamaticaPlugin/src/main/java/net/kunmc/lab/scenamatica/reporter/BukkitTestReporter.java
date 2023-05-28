@@ -46,6 +46,15 @@ public class BukkitTestReporter implements net.kunmc.lab.scenamatica.interfaces.
         return new SimpleDateFormat("HH:mm:ss").format(new Date(time));
     }
 
+    private static String getConditionString(@NotNull CompiledScenarioAction<?> action)
+    {
+        String condition = action.getAction().getExecutor().getClass().getSimpleName();
+        if (action.getAction().getArgument() != null)
+            condition += " - " + action.getAction().getArgument().getArgumentString();
+
+        return condition;
+    }
+
     public void addRecipient(Terminal terminal)
     {
         this.terminals.add(terminal);
@@ -62,7 +71,7 @@ public class BukkitTestReporter implements net.kunmc.lab.scenamatica.interfaces.
         ScenarioFileBean scenario = engine.getScenario();
 
         this.terminals.forEach(t ->
-                t.info(withPrefix(engine.getTestID(), scenario, LangProvider.get(
+                t.info(this.withPrefix(engine.getTestID(), scenario, LangProvider.get(
                         "test.start",
                         MsgArgs.of("scenario", scenario.getName())
                                 .add("trigger", trigger.getType().name())
@@ -75,7 +84,7 @@ public class BukkitTestReporter implements net.kunmc.lab.scenamatica.interfaces.
     {
         ScenarioFileBean scenario = engine.getScenario();
 
-        this.terminals.forEach(t -> t.warn(withPrefix(engine.getTestID(), scenario, LangProvider.get(
+        this.terminals.forEach(t -> t.warn(this.withPrefix(engine.getTestID(), scenario, LangProvider.get(
                 "test.skip",
                 MsgArgs.of("scenario", scenario.getName())
                         .add("condition", getConditionString(action))
@@ -90,19 +99,19 @@ public class BukkitTestReporter implements net.kunmc.lab.scenamatica.interfaces.
         switch (action.getType())
         {
             case ACTION_EXECUTE:
-                this.terminals.forEach(t -> t.info(withPrefix(engine.getTestID(), scenario, LangProvider.get(
+                this.terminals.forEach(t -> t.info(this.withPrefix(engine.getTestID(), scenario, LangProvider.get(
                         "test.action.run",
                         MsgArgs.of("action", action.getAction().getExecutor().getClass().getSimpleName())
                 ))));
                 break;
             case ACTION_EXPECT:
-                this.terminals.forEach(t -> t.info(withPrefix(engine.getTestID(), scenario, LangProvider.get(
+                this.terminals.forEach(t -> t.info(this.withPrefix(engine.getTestID(), scenario, LangProvider.get(
                         "test.action.watch",
                         MsgArgs.of("action", action.getAction().getExecutor().getClass().getSimpleName())
                 ))));
                 break;
             case CONDITION_REQUIRE:
-                this.terminals.forEach(t -> t.info(withPrefix(engine.getTestID(), scenario, LangProvider.get(
+                this.terminals.forEach(t -> t.info(this.withPrefix(engine.getTestID(), scenario, LangProvider.get(
                         "test.action.require.start",
                         MsgArgs.of("condition", getConditionString(action))
                 ))));
@@ -114,19 +123,10 @@ public class BukkitTestReporter implements net.kunmc.lab.scenamatica.interfaces.
     {
         ScenarioFileBean scenario = engine.getScenario();
 
-        this.terminals.forEach(t -> t.success(withPrefix(engine.getTestID(), scenario, LangProvider.get(
+        this.terminals.forEach(t -> t.success(this.withPrefix(engine.getTestID(), scenario, LangProvider.get(
                 "test.action.run.success",
                 MsgArgs.of("action", action.getExecutor().getClass().getSimpleName())
         ))));
-    }
-
-    private static String getConditionString(@NotNull CompiledScenarioAction<?> action)
-    {
-        String condition = action.getAction().getExecutor().getClass().getSimpleName();
-        if (action.getAction().getArgument() != null)
-            condition += " - " + action.getAction().getArgument().getArgumentString();
-
-        return condition;
     }
 
     @Override
@@ -134,7 +134,7 @@ public class BukkitTestReporter implements net.kunmc.lab.scenamatica.interfaces.
     {
         ScenarioFileBean scenario = engine.getScenario();
 
-        this.terminals.forEach(t -> t.success(withPrefix(engine.getTestID(), scenario, LangProvider.get(
+        this.terminals.forEach(t -> t.success(this.withPrefix(engine.getTestID(), scenario, LangProvider.get(
                 "test.action.watch.done",
                 MsgArgs.of("action", action.getExecutor().getClass().getSimpleName())
         ))));
@@ -146,7 +146,7 @@ public class BukkitTestReporter implements net.kunmc.lab.scenamatica.interfaces.
     {
         ScenarioFileBean scenario = engine.getScenario();
 
-        this.terminals.forEach(t -> t.info(withPrefix(engine.getTestID(), scenario, LangProvider.get(
+        this.terminals.forEach(t -> t.info(this.withPrefix(engine.getTestID(), scenario, LangProvider.get(
                 "test.action.run.fail",
                 MsgArgs.of("action", action.getExecutor().getClass().getSimpleName())
                         .add("cause", error.getClass().getSimpleName() + ": " + error.getMessage())
@@ -158,7 +158,7 @@ public class BukkitTestReporter implements net.kunmc.lab.scenamatica.interfaces.
     {
         ScenarioFileBean scenario = engine.getScenario();
 
-        this.terminals.forEach(t -> t.warn(withPrefix(engine.getTestID(), scenario, LangProvider.get(
+        this.terminals.forEach(t -> t.warn(this.withPrefix(engine.getTestID(), scenario, LangProvider.get(
                 "test.action.jumped",
                 MsgArgs.of("action", action.getExecutor().getClass().getSimpleName())
                         .add("scenario", engine.getScenario().getName())
@@ -170,7 +170,7 @@ public class BukkitTestReporter implements net.kunmc.lab.scenamatica.interfaces.
     {
         ScenarioFileBean scenario = engine.getScenario();
 
-        this.terminals.forEach(t -> t.success(withPrefix(engine.getTestID(), scenario, LangProvider.get(
+        this.terminals.forEach(t -> t.success(this.withPrefix(engine.getTestID(), scenario, LangProvider.get(
                 "test.action.require.success",
                 MsgArgs.of("condition", getConditionString(action))
         ))));
@@ -181,7 +181,7 @@ public class BukkitTestReporter implements net.kunmc.lab.scenamatica.interfaces.
     {
         ScenarioFileBean scenario = engine.getScenario();
 
-        this.terminals.forEach(t -> t.error(withPrefix(engine.getTestID(), scenario, LangProvider.get(
+        this.terminals.forEach(t -> t.error(this.withPrefix(engine.getTestID(), scenario, LangProvider.get(
                 "test.action.require.fail",
                 MsgArgs.of("condition", getConditionString(action))
         ))));
@@ -194,11 +194,11 @@ public class BukkitTestReporter implements net.kunmc.lab.scenamatica.interfaces.
 
         this.terminals.forEach(t -> {
             UUID testID = engine.getTestID();
-            printSeparator(engine.getTestID(), t, scenario, 12);
-            printTestSummary(engine, t, scenario, result);
-            printSeparator(testID, t, scenario, 12);
-            printDetails(engine, t, scenario, result);
-            printSeparator(testID, t, scenario, 12);
+            this.printSeparator(engine.getTestID(), t, scenario, 12);
+            this.printTestSummary(engine, t, scenario, result);
+            this.printSeparator(testID, t, scenario, 12);
+            this.printDetails(engine, t, scenario, result);
+            this.printSeparator(testID, t, scenario, 12);
         });
     }
 
@@ -206,9 +206,9 @@ public class BukkitTestReporter implements net.kunmc.lab.scenamatica.interfaces.
     public void onTestSessionStart(@NotNull ScenarioSession session)
     {
         this.terminals.forEach(t -> {
-            printSeparator(null, t, null, 50);
+            this.printSeparator(null, t, null, 50);
             t.info(ChatColor.AQUA + " T E S T S");
-            printSeparator(null, t, null, 50);
+            this.printSeparator(null, t, null, 50);
 
         });
     }
@@ -235,7 +235,7 @@ public class BukkitTestReporter implements net.kunmc.lab.scenamatica.interfaces.
         int skipped = (int) results.stream().parallel()
                 .filter(r -> r.getScenarioResultCause() == ScenarioResultCause.SKIPPED).count();
 
-        this.terminals.forEach(t -> printSessionSummary(t, elapsedStr, total, passed, failed, cancelled, skipped));
+        this.terminals.forEach(t -> this.printSessionSummary(t, elapsedStr, total, passed, failed, cancelled, skipped));
     }
 
     protected void printSessionSummary(@NotNull Terminal terminal,
@@ -245,7 +245,7 @@ public class BukkitTestReporter implements net.kunmc.lab.scenamatica.interfaces.
         boolean someFails = failed > 0;
         boolean noTests = cancelled + skipped == total;
 
-        printSeparator(null, terminal, null, 50);
+        this.printSeparator(null, terminal, null, 50);
 
         terminal.writeLine("");
 
@@ -296,7 +296,7 @@ public class BukkitTestReporter implements net.kunmc.lab.scenamatica.interfaces.
         }
 
 
-        printSeparator(null, terminal, null, 50);
+        this.printSeparator(null, terminal, null, 50);
     }
 
     protected void printTestSummary(ScenarioEngine engine, Terminal terminal, ScenarioFileBean scenario, ScenarioResult result)
@@ -319,22 +319,22 @@ public class BukkitTestReporter implements net.kunmc.lab.scenamatica.interfaces.
                 MsgArgs.of("result", LangProvider.get(resultKey)).add("message", "%%" + messageKey + "%%")
         );
         if (passed)
-            terminal.success(withPrefix(engine.getTestID(), scenario, summary));
+            terminal.success(this.withPrefix(engine.getTestID(), scenario, summary));
         else
-            terminal.error(withPrefix(engine.getTestID(), scenario, summary));
+            terminal.error(this.withPrefix(engine.getTestID(), scenario, summary));
     }
 
     protected void printDetails(ScenarioEngine engine, Terminal terminal, ScenarioFileBean scenario, ScenarioResult result)
     {
         ScenarioResultCause cause = result.getScenarioResultCause();
 
-        terminal.info(withPrefix(engine.getTestID(), scenario, LangProvider.get("test.result.detail")));
-        terminal.info(withPrefix(engine.getTestID(), scenario, LangProvider.get(
+        terminal.info(this.withPrefix(engine.getTestID(), scenario, LangProvider.get("test.result.detail")));
+        terminal.info(this.withPrefix(engine.getTestID(), scenario, LangProvider.get(
                 "test.result.detail.id",
                 MsgArgs.of("id", result.getTestID().toString().substring(0, 8))
         )));
         if (cause != ScenarioResultCause.PASSED)
-            terminal.info(withPrefix(engine.getTestID(), scenario, LangProvider.get(
+            terminal.info(this.withPrefix(engine.getTestID(), scenario, LangProvider.get(
                     "test.result.detail.state",
                     MsgArgs.of("state", result.getState()
                     )
@@ -346,7 +346,7 @@ public class BukkitTestReporter implements net.kunmc.lab.scenamatica.interfaces.
         String finishedAt = formatDateTime(fAt);
         String elapsed = formatTime(fAt - sAt);
 
-        terminal.info(withPrefix(engine.getTestID(), scenario, LangProvider.get(
+        terminal.info(this.withPrefix(engine.getTestID(), scenario, LangProvider.get(
                 "test.result.detail.elapsed",
                 MsgArgs.of("startedAt", startedAt)
                         .add("finishedAt", finishedAt)
@@ -357,7 +357,7 @@ public class BukkitTestReporter implements net.kunmc.lab.scenamatica.interfaces.
                 || result.getFailedAction() == null)
             return;
 
-        terminal.info(withPrefix(engine.getTestID(), scenario, LangProvider.get(
+        terminal.info(this.withPrefix(engine.getTestID(), scenario, LangProvider.get(
                 "test.result.detail.failed",
                 MsgArgs.of("action", result.getFailedAction().getClass().getSimpleName())
         )));
@@ -366,9 +366,9 @@ public class BukkitTestReporter implements net.kunmc.lab.scenamatica.interfaces.
     protected void printSeparator(UUID testID, Terminal terminal, ScenarioFileBean scenario)
     {
         if (terminal.isPlayer())
-            printSeparator(testID, terminal, scenario, 25);
+            this.printSeparator(testID, terminal, scenario, 25);
         else
-            printSeparator(testID, terminal, scenario, 53);
+            this.printSeparator(testID, terminal, scenario, 53);
     }
 
     protected void printSeparator(UUID testID, Terminal terminal, ScenarioFileBean scenario, int size)
@@ -383,7 +383,7 @@ public class BukkitTestReporter implements net.kunmc.lab.scenamatica.interfaces.
 
         String line = center + separator;
 
-        terminal.info(withPrefix(testID, scenario, ChatColor.BLUE + ChatColor.STRIKETHROUGH.toString() + line));
+        terminal.info(this.withPrefix(testID, scenario, ChatColor.BLUE + ChatColor.STRIKETHROUGH.toString() + line));
     }
 
     protected String withPrefix(UUID testID, ScenarioFileBean scenario, String message)

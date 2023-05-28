@@ -1,8 +1,8 @@
 package net.kunmc.lab.scenamatica.scenariofile.beans.inventory;
 
 import lombok.SneakyThrows;
-import net.kunmc.lab.scenamatica.scenariofile.beans.utils.MapTestUtil;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.inventory.ItemStackBean;
+import net.kunmc.lab.scenamatica.scenariofile.beans.utils.MapTestUtil;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;

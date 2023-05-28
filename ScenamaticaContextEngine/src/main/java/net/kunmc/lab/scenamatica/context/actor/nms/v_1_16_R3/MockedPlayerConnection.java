@@ -47,12 +47,6 @@ class MockedPlayerConnection extends PlayerConnection
         super(minecraftserver, networkmanager, entityplayer);
     }
 
-    @Override
-    public void tick()
-    {
-        super.tick();
-    }
-
     private static ActorMessageReceiveEvent.Type getEventType(ChatMessageType type)
     {
         switch (type)
@@ -65,6 +59,12 @@ class MockedPlayerConnection extends PlayerConnection
             default:
                 return ActorMessageReceiveEvent.Type.SYSTEM;
         }
+    }
+
+    @Override
+    public void tick()
+    {
+        super.tick();
     }
 
     @Override

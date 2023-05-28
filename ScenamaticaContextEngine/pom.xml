@@ -7,7 +7,7 @@
         <groupId>net.kunmc.lab</groupId>
         <artifactId>Scenamatica</artifactId>
         <version>0.6.0</version>
-          <relativePath>../pom.xml</relativePath>
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>ScenamaticaContextEngine</artifactId>

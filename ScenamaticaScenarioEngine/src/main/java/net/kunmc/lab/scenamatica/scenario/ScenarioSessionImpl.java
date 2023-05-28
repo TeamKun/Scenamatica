@@ -37,6 +37,11 @@ public class ScenarioSessionImpl implements ScenarioSession
         this.sort();
     }
 
+    public ScenarioSessionImpl(ScenarioManagerImpl manager)
+    {
+        this(manager, new ArrayList<>());
+    }
+
     private void sort()
     {
         this.scenarios.sort((a, b) -> {
@@ -52,11 +57,6 @@ public class ScenarioSessionImpl implements ScenarioSession
 
             return Integer.compare(orderA, orderB);
         });
-    }
-
-    public ScenarioSessionImpl(ScenarioManagerImpl manager)
-    {
-        this(manager, new ArrayList<>());
     }
 
     @Override

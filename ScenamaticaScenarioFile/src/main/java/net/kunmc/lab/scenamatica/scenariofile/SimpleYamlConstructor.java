@@ -1,9 +1,13 @@
 package net.kunmc.lab.scenamatica.scenariofile;
 
-import org.yaml.snakeyaml.constructor.*;
-import org.yaml.snakeyaml.nodes.*;
+import org.yaml.snakeyaml.constructor.AbstractConstruct;
+import org.yaml.snakeyaml.constructor.SafeConstructor;
+import org.yaml.snakeyaml.nodes.Node;
+import org.yaml.snakeyaml.nodes.ScalarNode;
+import org.yaml.snakeyaml.nodes.Tag;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 @SuppressWarnings("VulnerableCodeUsages")
 public class SimpleYamlConstructor extends SafeConstructor

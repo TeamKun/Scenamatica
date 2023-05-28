@@ -1,4 +1,4 @@
- package net.kunmc.lab.scenamatica.commons.utils;
+package net.kunmc.lab.scenamatica.commons.utils;
 
 import lombok.experimental.UtilityClass;
 import org.bukkit.Bukkit;

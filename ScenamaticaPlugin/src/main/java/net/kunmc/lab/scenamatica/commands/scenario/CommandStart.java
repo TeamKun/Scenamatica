@@ -1,22 +1,30 @@
 package net.kunmc.lab.scenamatica.commands.scenario;
 
-import lombok.*;
-import net.kunmc.lab.peyangpaperutils.lang.*;
-import net.kunmc.lab.peyangpaperutils.lib.command.*;
-import net.kunmc.lab.peyangpaperutils.lib.terminal.*;
-import net.kunmc.lab.scenamatica.enums.*;
-import net.kunmc.lab.scenamatica.exceptions.scenario.*;
-import net.kunmc.lab.scenamatica.interfaces.*;
-import net.kunmc.lab.scenamatica.interfaces.scenario.*;
-import net.kunmc.lab.scenamatica.interfaces.scenariofile.*;
-import net.kunmc.lab.scenamatica.utils.*;
-import net.kyori.adventure.text.*;
-import org.bukkit.*;
-import org.bukkit.command.*;
-import org.bukkit.plugin.*;
-import org.jetbrains.annotations.*;
+import lombok.AllArgsConstructor;
+import lombok.SneakyThrows;
+import net.kunmc.lab.peyangpaperutils.lang.LangProvider;
+import net.kunmc.lab.peyangpaperutils.lang.MsgArgs;
+import net.kunmc.lab.peyangpaperutils.lib.command.CommandBase;
+import net.kunmc.lab.peyangpaperutils.lib.terminal.Terminal;
+import net.kunmc.lab.scenamatica.enums.TriggerType;
+import net.kunmc.lab.scenamatica.exceptions.scenario.ScenarioNotFoundException;
+import net.kunmc.lab.scenamatica.exceptions.scenario.TriggerNotFoundException;
+import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
+import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioEngine;
+import net.kunmc.lab.scenamatica.interfaces.scenario.SessionCreator;
+import net.kunmc.lab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
+import net.kunmc.lab.scenamatica.utils.CommandUtils;
+import net.kyori.adventure.text.TextComponent;
+import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
+import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 @AllArgsConstructor
 public class CommandStart extends CommandBase
@@ -55,7 +63,7 @@ public class CommandStart extends CommandBase
         else
         {
             String[] scenarioNames = Arrays.copyOfRange(strings, 1, strings.length);
-            queueAll(plugin, terminal, scenarioNames);
+            this.queueAll(plugin, terminal, scenarioNames);
         }
     }
 

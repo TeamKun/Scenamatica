@@ -71,6 +71,7 @@ public class ActionManagerImpl implements ActionManager
     {
         this.watcherManager.registerWatcher(engine, action, scenario, plugin, watchType);
     }
+
     @Override
     public void shutdown()
     {

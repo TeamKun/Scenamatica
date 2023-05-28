@@ -1,23 +1,24 @@
 package net.kunmc.lab.scenamatica.action.actions.world;
 
-import lombok.*;
-import net.kunmc.lab.scenamatica.commons.utils.*;
-import net.kunmc.lab.scenamatica.interfaces.action.*;
-import net.kunmc.lab.scenamatica.interfaces.scenario.*;
-import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.*;
-import org.apache.commons.lang.*;
-import org.bukkit.*;
-import org.jetbrains.annotations.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import net.kunmc.lab.scenamatica.commons.utils.NamespaceUtils;
+import net.kunmc.lab.scenamatica.interfaces.action.ActionArgument;
+import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioEngine;
+import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
+import org.apache.commons.lang.ArrayUtils;
+import org.bukkit.Bukkit;
+import org.bukkit.NamespacedKey;
+import org.bukkit.World;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.Objects;
 
 @AllArgsConstructor
 public abstract class AbstractWorldActionArgument implements ActionArgument
 {
-    private static final String[] PADDING_TARGET = {"the_end", "nether"};
-
     public static final String KEY_WORLD = "world";
-
+    private static final String[] PADDING_TARGET = {"the_end", "nether"};
     @Nullable
     @Getter
     private final NamespacedKey worldRef;
@@ -59,7 +60,7 @@ public abstract class AbstractWorldActionArgument implements ActionArgument
         if (this.worldRef == null)
             return engine.getManager().getRegistry().getContextManager().getStageManager().getStage();
 
-        return getWorld();
+        return this.getWorld();
     }
 
     @Override

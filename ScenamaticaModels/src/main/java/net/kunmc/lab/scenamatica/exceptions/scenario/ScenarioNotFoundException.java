@@ -1,6 +1,6 @@
 package net.kunmc.lab.scenamatica.exceptions.scenario;
 
-import lombok.*;
+import lombok.Getter;
 
 /**
  * シナリオが見つからないことを表す例外です。

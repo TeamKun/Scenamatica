@@ -18,6 +18,9 @@
         </value>
       </option>
     </JavaCodeStyleSettings>
+    <Properties>
+      <option name="KEEP_BLANK_LINES" value="true" />
+    </Properties>
     <yaml>
       <option name="SEQUENCE_ON_NEW_LINE" value="true" />
     </yaml>

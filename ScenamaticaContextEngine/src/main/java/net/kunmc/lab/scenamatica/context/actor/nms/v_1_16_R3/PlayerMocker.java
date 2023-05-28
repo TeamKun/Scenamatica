@@ -62,14 +62,6 @@ public class PlayerMocker extends PlayerMockerBase
         this.settings = registry.getEnvironment().getActorSettings();
     }
 
-    private void registerPlayer(MinecraftServer server, MockedPlayer player)
-    {
-        PlayerList list = server.getPlayerList();
-        NetworkManager mockedNetworkManager = new MockedNetworkManager(this, player, server);
-        list.a(mockedNetworkManager, player);
-        sendSettings(player);
-    }
-
     @SneakyThrows(IOException.class)
     private static void sendSettings(EntityPlayer player)
     {
@@ -94,6 +86,14 @@ public class PlayerMocker extends PlayerMockerBase
         packet.a(serializer);
 
         player.a(packet);
+    }
+
+    private void registerPlayer(MinecraftServer server, MockedPlayer player)
+    {
+        PlayerList list = server.getPlayerList();
+        NetworkManager mockedNetworkManager = new MockedNetworkManager(this, player, server);
+        list.a(mockedNetworkManager, player);
+        sendSettings(player);
     }
 
     private void initializePlayer(MockedPlayer player, PlayerBean bean)
@@ -252,7 +252,7 @@ public class PlayerMocker extends PlayerMockerBase
         MockedPlayer player = new MockedPlayer(this.manager, server, worldServer, profile);
         this.initializePlayer(player, bean);
 
-        if (!dispatchLoginEvent(player.getBukkitEntity()))
+        if (!this.dispatchLoginEvent(player.getBukkitEntity()))
             throw new IllegalStateException("Login for " + player.getName() + " was denied.");
 
         this.registerPlayer(server, player);

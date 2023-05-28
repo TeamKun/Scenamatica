@@ -1,13 +1,13 @@
 package net.kunmc.lab.scenamatica.action.actions.player;
 
-import lombok.*;
-import net.kunmc.lab.scenamatica.action.utils.*;
-import net.kunmc.lab.scenamatica.interfaces.action.*;
-import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.*;
-import org.bukkit.entity.*;
-import org.jetbrains.annotations.*;
+import lombok.AllArgsConstructor;
+import net.kunmc.lab.scenamatica.action.utils.PlayerUtils;
+import net.kunmc.lab.scenamatica.interfaces.action.ActionArgument;
+import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
+import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.Objects;
 
 @AllArgsConstructor
 public abstract class AbstractPlayerActionArgument implements ActionArgument

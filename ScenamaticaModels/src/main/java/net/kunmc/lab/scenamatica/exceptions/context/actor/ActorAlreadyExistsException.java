@@ -1,6 +1,6 @@
 package net.kunmc.lab.scenamatica.exceptions.context.actor;
 
-import net.kunmc.lab.scenamatica.exceptions.context.*;
+import net.kunmc.lab.scenamatica.exceptions.context.ContextPreparationException;
 
 public class ActorAlreadyExistsException extends ContextPreparationException
 {

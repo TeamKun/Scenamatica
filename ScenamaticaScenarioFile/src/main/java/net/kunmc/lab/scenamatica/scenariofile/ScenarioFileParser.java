@@ -1,16 +1,23 @@
 package net.kunmc.lab.scenamatica.scenariofile;
 
-import lombok.*;
-import net.kunmc.lab.scenamatica.exceptions.scenariofile.*;
-import net.kunmc.lab.scenamatica.interfaces.scenariofile.*;
-import org.apache.commons.lang.*;
-import org.yaml.snakeyaml.*;
+import javax.annotation.Nullable;
+import lombok.AllArgsConstructor;
+import net.kunmc.lab.scenamatica.exceptions.scenariofile.InvalidScenarioFileException;
+import net.kunmc.lab.scenamatica.exceptions.scenariofile.NotAScenarioFileException;
+import net.kunmc.lab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
+import org.apache.commons.lang.StringUtils;
+import org.yaml.snakeyaml.Yaml;
 
-import javax.annotation.*;
-import java.io.*;
-import java.nio.file.*;
-import java.util.*;
-import java.util.zip.*;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 @AllArgsConstructor
 public class ScenarioFileParser

@@ -23,6 +23,20 @@ public class ServerLogAction extends AbstractAction<ServerLogAction.Argument>
 {
     public static final String KEY_ACTION_NAME = "server_log";
 
+    private static String normalizeLevelName(String original)
+    {
+        String result = original;
+        if (original == null)
+            return null;
+
+        result = result.toUpperCase();
+
+        if (result.equals("OFF") || result.equals("ALL"))
+            throw new IllegalArgumentException("Illegal log level: " + original + " is not allowed here.");
+
+        return result;
+    }
+
     @Override
     public String getName()
     {
@@ -65,20 +79,6 @@ public class ServerLogAction extends AbstractAction<ServerLogAction.Argument>
         return Collections.singletonList(
                 ServerLogEvent.class
         );
-    }
-
-    private static String normalizeLevelName(String original)
-    {
-        String result = original;
-        if (original == null)
-            return null;
-
-        result = result.toUpperCase();
-
-        if (result.equals("OFF") || result.equals("ALL"))
-            throw new IllegalArgumentException("Illegal log level: " + original + " is not allowed here.");
-
-        return result;
     }
 
     @Override

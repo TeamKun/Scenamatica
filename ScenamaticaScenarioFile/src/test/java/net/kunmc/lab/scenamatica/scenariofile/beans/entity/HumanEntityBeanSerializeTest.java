@@ -1,10 +1,10 @@
 package net.kunmc.lab.scenamatica.scenariofile.beans.entity;
 
+import net.kunmc.lab.scenamatica.interfaces.scenariofile.entities.HumanEntityBean;
 import net.kunmc.lab.scenamatica.scenariofile.beans.entities.HumanEntityBeanImpl;
 import net.kunmc.lab.scenamatica.scenariofile.beans.inventory.InventoryBeanSerializeTest;
 import net.kunmc.lab.scenamatica.scenariofile.beans.inventory.PlayerInventoryBeanSerializeTest;
 import net.kunmc.lab.scenamatica.scenariofile.beans.utils.MapTestUtil;
-import net.kunmc.lab.scenamatica.interfaces.scenariofile.entities.HumanEntityBean;
 import org.bukkit.GameMode;
 import org.bukkit.inventory.MainHand;
 import org.junit.jupiter.api.Test;
@@ -27,11 +27,11 @@ public class HumanEntityBeanSerializeTest
 
     public static final Map<String, Object> FULFILLED_MAP = new HashMap<String, Object>(EntityBeanSerializeTest.FULFILLED_MAP)
     {{
-        put("inventory", PlayerInventoryBeanSerializeTest.FULFILLED_MAP);
-        put("enderChest", InventoryBeanSerializeTest.FULFILLED_MAP);
-        put("mainHand", "LEFT");
-        put("gamemode", "ADVENTURE");
-        put("food", 20);
+        this.put("inventory", PlayerInventoryBeanSerializeTest.FULFILLED_MAP);
+        this.put("enderChest", InventoryBeanSerializeTest.FULFILLED_MAP);
+        this.put("mainHand", "LEFT");
+        this.put("gamemode", "ADVENTURE");
+        this.put("food", 20);
     }};
 
     public static final HumanEntityBean EMPTY = new HumanEntityBeanImpl(

@@ -1,6 +1,6 @@
 package net.kunmc.lab.scenamatica.exceptions.scenario;
 
-import lombok.*;
+import lombok.Getter;
 
 /**
  * シナリオが既に実行中であることを表す例外です。

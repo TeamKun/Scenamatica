@@ -52,7 +52,7 @@ public class CommandStatus extends CommandBase
 
         terminal.info(LangProvider.get(
                         "command.scenario.status.details.time",
-                MsgArgs.of("startedAt", sAtStr)
+                        MsgArgs.of("startedAt", sAtStr)
                 )
         );
     }

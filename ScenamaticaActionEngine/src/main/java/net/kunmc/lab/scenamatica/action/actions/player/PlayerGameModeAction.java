@@ -123,6 +123,12 @@ public class PlayerGameModeAction extends AbstractPlayerAction<PlayerGameModeAct
         public static final String KEY_GAME_MODE = "gamemode";
         public static final String KEY_CAUSE = "cause";
         public static final String KEY_CANCEL_MESSAGE = "cancelMessage";
+        @NotNull
+        GameMode gameMode;
+        @Nullable
+        PlayerGameModeChangeEvent.Cause cause;
+        @Nullable
+        String cancelMessage;
 
         public Argument(String target, @NotNull GameMode gameMode, @Nullable PlayerGameModeChangeEvent.Cause cause, @Nullable String cancelMessage)
         {
@@ -131,13 +137,6 @@ public class PlayerGameModeAction extends AbstractPlayerAction<PlayerGameModeAct
             this.cause = cause;
             this.cancelMessage = cancelMessage;
         }
-
-        @NotNull
-        GameMode gameMode;
-        @Nullable
-        PlayerGameModeChangeEvent.Cause cause;
-        @Nullable
-        String cancelMessage;
 
         @Override
         public boolean isSame(TriggerArgument argument)

@@ -76,45 +76,6 @@ public class ItemStackBeanImpl implements ItemStackBean
         );
     }
 
-    @SuppressWarnings("deprecation")
-    private static void validateEnchantments(Map<String, Object> map)
-    {
-        if (map.containsKey(KEY_ENCHANTMENTS))
-        {
-            Map<String, Object> enchtansMap = MapUtils.checkAndCastMap(
-                    map.get(KEY_ENCHANTMENTS),
-                    String.class, Object.class
-            );
-
-            for (Map.Entry<String, Object> entry : enchtansMap.entrySet())
-            {
-                if (Enchantment.getByKey(NamespaceUtils.fromString(entry.getKey())) == null
-                    && Enchantment.getByName(entry.getKey()) == null)
-                    throw new IllegalArgumentException("Invalid enchantment key: " + entry.getKey());
-                if (!(entry.getValue() instanceof Integer))
-                    throw new IllegalArgumentException("Invalid enchantment value: " + entry.getValue());
-            }
-        }
-    }
-
-    @SuppressWarnings("deprecation")
-    private static Map<Enchantment, Integer> deserializeEnchantments(Map<String, Object> map)
-    {
-        Map<Enchantment, Integer> result = new HashMap<>();
-        for (Map.Entry<String, Object> entry : MapUtils.getOrDefault(map, KEY_ENCHANTMENTS,
-                        Collections.<String, Object>emptyMap()).entrySet())
-        {
-            Enchantment enchantment = Enchantment.getByKey(NamespaceUtils.fromString(entry.getKey()));
-            if (enchantment == null)
-                enchantment = Enchantment.getByName(entry.getKey());
-
-            int level = (int) entry.getValue();
-            result.put(enchantment, level);
-        }
-
-        return result;
-    }
-
     public ItemStackBeanImpl(Material material, int amount)
     {
         this(
@@ -132,6 +93,46 @@ public class ItemStackBeanImpl implements ItemStackBean
                 Collections.emptyList(),
                 null
         );
+    }
+
+    @SuppressWarnings("deprecation")
+    private static void validateEnchantments(Map<String, Object> map)
+    {
+        if (map.containsKey(KEY_ENCHANTMENTS))
+        {
+            Map<String, Object> enchtansMap = MapUtils.checkAndCastMap(
+                    map.get(KEY_ENCHANTMENTS),
+                    String.class, Object.class
+            );
+
+            for (Map.Entry<String, Object> entry : enchtansMap.entrySet())
+            {
+                if (Enchantment.getByKey(NamespaceUtils.fromString(entry.getKey())) == null
+                        && Enchantment.getByName(entry.getKey()) == null)
+                    throw new IllegalArgumentException("Invalid enchantment key: " + entry.getKey());
+                if (!(entry.getValue() instanceof Integer))
+                    throw new IllegalArgumentException("Invalid enchantment value: " + entry.getValue());
+            }
+        }
+    }
+
+    @SuppressWarnings("deprecation")
+    private static Map<Enchantment, Integer> deserializeEnchantments(Map<String, Object> map)
+    {
+        Map<Enchantment, Integer> result = new HashMap<>();
+        for (Map.Entry<String, Object> entry : MapUtils.getOrDefault(map, KEY_ENCHANTMENTS,
+                Collections.<String, Object>emptyMap()
+        ).entrySet())
+        {
+            Enchantment enchantment = Enchantment.getByKey(NamespaceUtils.fromString(entry.getKey()));
+            if (enchantment == null)
+                enchantment = Enchantment.getByName(entry.getKey());
+
+            int level = (int) entry.getValue();
+            result.put(enchantment, level);
+        }
+
+        return result;
     }
 
     private static Map<String, Object> serializeEnchantments(ItemStackBean bean)
@@ -349,26 +350,6 @@ public class ItemStackBeanImpl implements ItemStackBean
         );
     }
 
-    @Override
-    public String toString()
-    {
-        return "ItemStackBean{" +
-                "type=" + this.type +
-                ", amount=" + this.amount +
-                ", displayName='" + this.displayName + '\'' +
-                ", localizedName='" + this.localizedName + '\'' +
-                ", lore=" + this.lore +
-                ", customModelData=" + this.customModelData +
-                ", enchantments=" + this.enchantments +
-                ", itemFlags=" + this.itemFlags +
-                ", unbreakable=" + this.unbreakable +
-                ", attributeModifiers=" + this.attributeModifiers +
-                ", placeableKeys=" + this.placeableKeys +
-                ", destroyableKeys=" + this.destroyableKeys +
-                ", damage=" + this.damage +
-                '}';
-    }
-
     private static boolean isAttributeModifiersEquals(Map<Attribute, ? extends List<AttributeModifier>> thisModifiersMap, Map<Attribute, ? extends List<AttributeModifier>> thatModifiersMap)
     {
         for (Attribute attribute : thisModifiersMap.keySet())
@@ -430,6 +411,26 @@ public class ItemStackBeanImpl implements ItemStackBean
                 new ArrayList<>(meta.getDestroyableKeys()),
                 damage
         );
+    }
+
+    @Override
+    public String toString()
+    {
+        return "ItemStackBean{" +
+                "type=" + this.type +
+                ", amount=" + this.amount +
+                ", displayName='" + this.displayName + '\'' +
+                ", localizedName='" + this.localizedName + '\'' +
+                ", lore=" + this.lore +
+                ", customModelData=" + this.customModelData +
+                ", enchantments=" + this.enchantments +
+                ", itemFlags=" + this.itemFlags +
+                ", unbreakable=" + this.unbreakable +
+                ", attributeModifiers=" + this.attributeModifiers +
+                ", placeableKeys=" + this.placeableKeys +
+                ", destroyableKeys=" + this.destroyableKeys +
+                ", damage=" + this.damage +
+                '}';
     }
 
     @Override

@@ -37,8 +37,8 @@ public interface TestReporter
     /**
      * シナリオのアクションが正常に実行されたことをレポートします。
      *
-     * @param engine  エンジン
-     * @param action   アクション
+     * @param engine エンジン
+     * @param action アクション
      */
     void onActionSuccess(@NotNull ScenarioEngine engine, @NotNull CompiledAction<?> action);
 
@@ -53,7 +53,7 @@ public interface TestReporter
     /**
      * 監視していたアクションがジャンプして実行されたことをレポートします。
      *
-     * @param engine  エンジン
+     * @param engine   エンジン
      * @param action   アクション
      * @param expected 期待されるアクション
      */

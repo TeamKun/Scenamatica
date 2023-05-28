@@ -63,6 +63,11 @@ public class ContextManagerImpl implements ContextManager
         SpigotConfig.userCacheCap = 0;
     }
 
+    private static MsgArgs getArgs(ScenarioFileBean scenario, UUID testID)
+    {
+        return MsgArgs.of("prefix", LogUtils.gerScenarioPrefix(testID, scenario));
+    }
+
     @Override
     public Context prepareContext(@NotNull ScenarioFileBean scenario, @NotNull UUID testID)
             throws StageNotCreatedException, StageCreateFailedException
@@ -140,11 +145,6 @@ public class ContextManagerImpl implements ContextManager
     private void logActorGenFail(ScenarioFileBean scenario, UUID testID)
     {
         this.logger.log(Level.WARNING, LangProvider.get("context.actor.failed", getArgs(scenario, testID)));
-    }
-
-    private static MsgArgs getArgs(ScenarioFileBean scenario, UUID testID)
-    {
-        return MsgArgs.of("prefix", LogUtils.gerScenarioPrefix(testID, scenario));
     }
 
     @SneakyThrows(StageNotCreatedException.class)

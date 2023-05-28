@@ -127,7 +127,6 @@ public class StageManagerImpl implements StageManager
         this.stage = null;
     }
 
-
     private void deleteDirectory(@NotNull Path path)
     {
         try (Stream<Path> walker = Files.walk(path))

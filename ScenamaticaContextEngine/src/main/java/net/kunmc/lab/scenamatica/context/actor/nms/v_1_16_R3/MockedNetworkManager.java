@@ -1,16 +1,26 @@
 package net.kunmc.lab.scenamatica.context.actor.nms.v_1_16_R3;
 
-import io.netty.channel.*;
-import io.netty.util.concurrent.*;
-import lombok.*;
-import net.kunmc.lab.scenamatica.context.actor.*;
-import net.minecraft.server.v1_16_R3.*;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.util.concurrent.Future;
+import io.netty.util.concurrent.GenericFutureListener;
+import javax.annotation.Nullable;
+import javax.crypto.Cipher;
+import lombok.SneakyThrows;
+import net.kunmc.lab.scenamatica.context.actor.MockedChannel;
+import net.minecraft.server.v1_16_R3.EnumProtocol;
+import net.minecraft.server.v1_16_R3.EnumProtocolDirection;
+import net.minecraft.server.v1_16_R3.IChatBaseComponent;
+import net.minecraft.server.v1_16_R3.MinecraftServer;
+import net.minecraft.server.v1_16_R3.NetworkManager;
+import net.minecraft.server.v1_16_R3.Packet;
+import net.minecraft.server.v1_16_R3.ServerConnection;
 
-import javax.annotation.*;
-import javax.crypto.*;
-import java.lang.reflect.*;
-import java.net.*;
-import java.util.*;
+import java.lang.reflect.Field;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.SocketAddress;
+import java.net.UnknownHostException;
+import java.util.List;
 
 class MockedNetworkManager extends NetworkManager
 {

@@ -129,10 +129,9 @@ class ScenarioQueue
     private class SessionRunner extends BukkitRunnable
     {
         private final ScenarioManagerImpl manager;
-
+        private final Object lock = new Object();
         @Getter
         private boolean running;
-        private final Object lock = new Object();
         private boolean paused;
 
         @Override

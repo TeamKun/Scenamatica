@@ -1,7 +1,7 @@
 package net.kunmc.lab.scenamatica.exceptions.scenario;
 
-import lombok.*;
-import net.kunmc.lab.scenamatica.enums.*;
+import lombok.Getter;
+import net.kunmc.lab.scenamatica.enums.TriggerType;
 
 /**
  * 指定されたシナリオのトリガが見つかれない場合にスローされる例外です。

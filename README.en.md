@@ -14,14 +14,16 @@
 
 Scenamatica is an end-to-end automation framework for PaperMC plugins, which is the world's first.
 It automatically verifies the functionality and abnormality of the plugin through multi-scenario tests defined in YAML.
-By utilizing Scenamatica, regression tests can be conducted quickly, allowing engineers to focus on developing PaperMC plugins.
+By utilizing Scenamatica, regression tests can be conducted quickly, allowing engineers to focus on developing PaperMC
+plugins.
 This process improves the quality of plugins and provides a better experience for both users and developers.
 Additionally, by integrating it into existing CI/CD pipelines, plugin quality can be continuously monitored.
 
 ## Features
 
 + Automated scenario testing for PaperMC plugins
-  Scenario testing is a test to check if the plugin operates and outputs as expected by scenario-izing plugin operation and output.
+  Scenario testing is a test to check if the plugin operates and outputs as expected by scenario-izing plugin operation
+  and output.
   Scenamatica realized the automation of scenario testing for PaperMC plugins, which is the world's first.
 + YAML scenario definition
   By defining scenarios in YAML, the readability of scenarios is improved and adding/changing scenarios becomes easy.

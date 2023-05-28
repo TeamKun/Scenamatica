@@ -1,21 +1,27 @@
 package net.kunmc.lab.scenamatica.commands.scenario;
 
-import lombok.*;
-import net.kunmc.lab.peyangpaperutils.lang.*;
-import net.kunmc.lab.peyangpaperutils.lib.command.*;
-import net.kunmc.lab.peyangpaperutils.lib.terminal.*;
-import net.kunmc.lab.scenamatica.enums.*;
-import net.kunmc.lab.scenamatica.interfaces.*;
-import net.kunmc.lab.scenamatica.interfaces.scenariofile.*;
-import net.kunmc.lab.scenamatica.utils.*;
-import net.kyori.adventure.text.*;
-import net.kyori.adventure.text.event.*;
-import org.bukkit.*;
-import org.bukkit.command.*;
-import org.bukkit.plugin.*;
-import org.jetbrains.annotations.*;
+import lombok.AllArgsConstructor;
+import net.kunmc.lab.peyangpaperutils.lang.LangProvider;
+import net.kunmc.lab.peyangpaperutils.lang.MsgArgs;
+import net.kunmc.lab.peyangpaperutils.lib.command.CommandBase;
+import net.kunmc.lab.peyangpaperutils.lib.terminal.Terminal;
+import net.kunmc.lab.scenamatica.enums.TriggerType;
+import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
+import net.kunmc.lab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
+import net.kunmc.lab.scenamatica.utils.CommandUtils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.event.HoverEvent;
+import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
+import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 
 @AllArgsConstructor
 public class CommandList extends CommandBase
@@ -52,7 +58,7 @@ public class CommandList extends CommandBase
 
         scenarioMap.values().stream().parallel()
                 .sorted(Comparator.comparing(ScenarioFileBean::getName))
-                .forEachOrdered(scenario -> printScenario(terminal, plugin, scenario));
+                .forEachOrdered(scenario -> this.printScenario(terminal, plugin, scenario));
     }
 
     private void printScenario(Terminal terminal, Plugin plugin, ScenarioFileBean scenario)
