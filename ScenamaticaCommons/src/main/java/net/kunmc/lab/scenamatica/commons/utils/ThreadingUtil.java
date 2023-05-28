@@ -62,4 +62,40 @@ public class ThreadingUtil
         barrier.await();
         return result.get();
     }
+
+    @SneakyThrows({BrokenBarrierException.class, InterruptedException.class})
+    public <T, E extends Exception> T waitForOrThrow(ScenamaticaRegistry registry, ThrowableSupplier<T, E> supplier) throws E
+    {
+        CyclicBarrier barrier = new CyclicBarrier(2);
+        AtomicReference<T> result = new AtomicReference<>();
+        AtomicReference<E> exception = new AtomicReference<>();
+        Runner.run(registry.getPlugin(), () ->
+        {
+            try
+            {
+                result.set(supplier.get());
+                barrier.await();
+            }
+            catch (InterruptedException | BrokenBarrierException e)
+            {
+                throw e;  // リスロー
+            }
+            catch (Exception e)
+            {
+                exception.set((E) e);
+                barrier.await();
+            }
+        });
+
+        barrier.await();
+        if (exception.get() != null)
+            throw exception.get();
+        return result.get();
+    }
+
+    @FunctionalInterface
+    public interface ThrowableSupplier<T, E extends Exception>
+    {
+        T get() throws E;
+    }
 }

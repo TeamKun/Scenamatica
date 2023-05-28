@@ -65,7 +65,7 @@ public class ContextManagerImpl implements ContextManager
 
     @Override
     public Context prepareContext(@NotNull ScenarioFileBean scenario, @NotNull UUID testID)
-            throws StageNotCreatedException
+            throws StageNotCreatedException, StageCreateFailedException
     {
         ContextBean context = scenario.getContext();
 
@@ -91,17 +91,8 @@ public class ContextManagerImpl implements ContextManager
                 );
             }
 
-            stage = ThreadingUtil.waitFor(this.registry, () ->
-            {
-                try
-                {
-                    return this.stageManager.createStage(context.getWorld());
-                }
-                catch (StageCreateFailedException e)
-                {
-                    throw new RuntimeException(e);
-                }
-            });
+            stage = ThreadingUtil.waitForOrThrow(this.registry, () ->
+                    this.stageManager.createStage(context.getWorld()));
         }
         else
             stage = this.stageManager.shared(DEFAULT_ORIGINAL_WORLD_NAME);
