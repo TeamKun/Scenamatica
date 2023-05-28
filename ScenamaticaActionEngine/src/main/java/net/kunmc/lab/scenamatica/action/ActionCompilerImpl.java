@@ -1,26 +1,6 @@
 package net.kunmc.lab.scenamatica.action;
 
-import net.kunmc.lab.scenamatica.action.actions.player.PlayerAdvancementAction;
-import net.kunmc.lab.scenamatica.action.actions.player.PlayerAnimationAction;
-import net.kunmc.lab.scenamatica.action.actions.player.PlayerDeathAction;
-import net.kunmc.lab.scenamatica.action.actions.player.PlayerGameModeAction;
-import net.kunmc.lab.scenamatica.action.actions.player.PlayerHotbarSlotAction;
-import net.kunmc.lab.scenamatica.action.actions.player.PlayerInteractBlockAction;
-import net.kunmc.lab.scenamatica.action.actions.player.PlayerLaunchProjectileAction;
-import net.kunmc.lab.scenamatica.action.actions.scenamatica.MessageAction;
-import net.kunmc.lab.scenamatica.action.actions.scenamatica.MilestoneAction;
-import net.kunmc.lab.scenamatica.action.actions.server.CommandDispatchAction;
-import net.kunmc.lab.scenamatica.action.actions.server.WhitelistToggleAction;
-import net.kunmc.lab.scenamatica.action.actions.server.log.ServerLogAction;
-import net.kunmc.lab.scenamatica.action.actions.server.plugin.PluginDisableAction;
-import net.kunmc.lab.scenamatica.action.actions.server.plugin.PluginEnableAction;
-import net.kunmc.lab.scenamatica.action.actions.world.WorldGameRuleAction;
-import net.kunmc.lab.scenamatica.action.actions.world.WorldInitAction;
-import net.kunmc.lab.scenamatica.action.actions.world.WorldLoadAction;
-import net.kunmc.lab.scenamatica.action.actions.world.WorldSaveAction;
-import net.kunmc.lab.scenamatica.action.actions.world.WorldUnloadAction;
-import net.kunmc.lab.scenamatica.action.actions.world.border.WorldBorderAction;
-import net.kunmc.lab.scenamatica.action.actions.world.border.WorldBorderChangedAction;
+import net.kunmc.lab.scenamatica.action.actions.AbstractAction;
 import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
 import net.kunmc.lab.scenamatica.interfaces.action.Action;
 import net.kunmc.lab.scenamatica.interfaces.action.ActionArgument;
@@ -31,55 +11,19 @@ import net.kunmc.lab.scenamatica.interfaces.scenariofile.action.ActionBean;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 public class ActionCompilerImpl implements ActionCompiler
 {
-    private static final List<Action<?>> ACTIONS;
+    public static final List<Action<?>> ACTIONS;
 
     static
     {
-        ACTIONS = new ArrayList<>();
-
-        // プレイヤーのアクション
-        {
-            ACTIONS.add(new PlayerGameModeAction());
-            ACTIONS.add(new PlayerAdvancementAction());
-            ACTIONS.add(new PlayerAnimationAction());
-            ACTIONS.add(new PlayerDeathAction());
-            ACTIONS.add(new PlayerHotbarSlotAction());
-            ACTIONS.add(new PlayerInteractBlockAction());
-            ACTIONS.add(new PlayerLaunchProjectileAction());
-        }
-
-        // サーバーのアクション
-        {
-            ACTIONS.add(new ServerLogAction());
-            ACTIONS.add(new PluginDisableAction());
-            ACTIONS.add(new PluginEnableAction());
-            ACTIONS.add(new CommandDispatchAction());
-            ACTIONS.add(new WhitelistToggleAction());
-        }
-
-        // ワールドのアクション
-        {
-            ACTIONS.add(new WorldBorderAction());
-            ACTIONS.add(new WorldBorderChangedAction());
-            ACTIONS.add(new WorldGameRuleAction());
-            ACTIONS.add(new WorldInitAction());
-            ACTIONS.add(new WorldLoadAction());
-            ACTIONS.add(new WorldSaveAction());
-            ACTIONS.add(new WorldUnloadAction());
-        }
-
-        // Scenamatica 内部
-        {
-            ACTIONS.add(new MessageAction());
-            ACTIONS.add(new MilestoneAction());
-        }
+        // 全部の Action を登録する
+        ACTIONS = Collections.unmodifiableList(AbstractAction.getActions());
     }
 
     @Override

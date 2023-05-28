@@ -1,7 +1,6 @@
 package net.kunmc.lab.scenamatica.action.actions.server;
 
 import lombok.Value;
-import net.kunmc.lab.scenamatica.action.actions.AbstractAction;
 import net.kunmc.lab.scenamatica.action.utils.PlayerUtils;
 import net.kunmc.lab.scenamatica.commons.utils.MapUtils;
 import net.kunmc.lab.scenamatica.interfaces.action.ActionArgument;
@@ -23,7 +22,7 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class CommandDispatchAction extends AbstractAction<CommandDispatchAction.Argument>
+public class CommandDispatchAction extends AbstractServerAction<CommandDispatchAction.Argument>
 {
     public static final String KEY_ACTION_NAME = "command_dispatch";
 

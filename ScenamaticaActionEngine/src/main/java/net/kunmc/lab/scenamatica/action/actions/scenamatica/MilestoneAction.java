@@ -2,7 +2,6 @@ package net.kunmc.lab.scenamatica.action.actions.scenamatica;
 
 import lombok.AllArgsConstructor;
 import lombok.Value;
-import net.kunmc.lab.scenamatica.action.actions.AbstractAction;
 import net.kunmc.lab.scenamatica.commons.utils.MapUtils;
 import net.kunmc.lab.scenamatica.events.MilestoneReachedEvent;
 import net.kunmc.lab.scenamatica.interfaces.action.ActionArgument;
@@ -17,7 +16,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-public class MilestoneAction extends AbstractAction<MilestoneAction.Argument> implements Requireable<MilestoneAction.Argument>
+public class MilestoneAction extends AbstractScenamaticaAction<MilestoneAction.Argument> implements Requireable<MilestoneAction.Argument>
 {
     public static final String KEY_ACTION_NAME = "milestone";
 

@@ -1,7 +1,6 @@
 package net.kunmc.lab.scenamatica.action.actions.scenamatica;
 
 import lombok.Value;
-import net.kunmc.lab.scenamatica.action.actions.AbstractAction;
 import net.kunmc.lab.scenamatica.action.utils.PlayerUtils;
 import net.kunmc.lab.scenamatica.action.utils.TextUtils;
 import net.kunmc.lab.scenamatica.commons.utils.MapUtils;
@@ -23,7 +22,7 @@ import java.util.Objects;
 /**
  * プレイヤにメッセージを送信する/送信されることを監視するアクション。
  */
-public class MessageAction extends AbstractAction<MessageAction.Argument>
+public class MessageAction extends AbstractScenamaticaAction<MessageAction.Argument>
 {
     public static final String KEY_ACTION_NAME = "message";
 

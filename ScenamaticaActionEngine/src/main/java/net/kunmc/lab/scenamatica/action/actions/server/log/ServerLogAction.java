@@ -1,7 +1,7 @@
 package net.kunmc.lab.scenamatica.action.actions.server.log;
 
 import lombok.Value;
-import net.kunmc.lab.scenamatica.action.actions.AbstractAction;
+import net.kunmc.lab.scenamatica.action.actions.server.AbstractServerAction;
 import net.kunmc.lab.scenamatica.commons.utils.MapUtils;
 import net.kunmc.lab.scenamatica.events.actions.server.ServerLogEvent;
 import net.kunmc.lab.scenamatica.interfaces.action.ActionArgument;
@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-public class ServerLogAction extends AbstractAction<ServerLogAction.Argument>
+public class ServerLogAction extends AbstractServerAction<ServerLogAction.Argument>
 {
     public static final String KEY_ACTION_NAME = "server_log";
 

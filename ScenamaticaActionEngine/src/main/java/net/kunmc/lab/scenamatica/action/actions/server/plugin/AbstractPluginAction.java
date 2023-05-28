@@ -1,6 +1,6 @@
 package net.kunmc.lab.scenamatica.action.actions.server.plugin;
 
-import net.kunmc.lab.scenamatica.action.actions.AbstractAction;
+import net.kunmc.lab.scenamatica.action.actions.server.AbstractServerAction;
 import net.kunmc.lab.scenamatica.commons.utils.MapUtils;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.bukkit.event.Event;
@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
-public abstract class AbstractPluginAction<A extends AbstractPluginActionArgument> extends AbstractAction<A>
+public abstract class AbstractPluginAction<A extends AbstractPluginActionArgument> extends AbstractServerAction<A>
 {
     protected static final String KEY_PREFIX = "server_plugin_";
 

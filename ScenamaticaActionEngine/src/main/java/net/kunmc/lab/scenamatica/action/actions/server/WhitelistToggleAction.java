@@ -2,7 +2,6 @@ package net.kunmc.lab.scenamatica.action.actions.server;
 
 import com.destroystokyo.paper.event.server.WhitelistToggleEvent;
 import lombok.Value;
-import net.kunmc.lab.scenamatica.action.actions.AbstractAction;
 import net.kunmc.lab.scenamatica.commons.utils.MapUtils;
 import net.kunmc.lab.scenamatica.interfaces.action.ActionArgument;
 import net.kunmc.lab.scenamatica.interfaces.action.Requireable;
@@ -17,7 +16,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-public class WhitelistToggleAction extends AbstractAction<WhitelistToggleAction.Argument> implements Requireable<WhitelistToggleAction.Argument>
+public class WhitelistToggleAction extends AbstractServerAction<WhitelistToggleAction.Argument> implements Requireable<WhitelistToggleAction.Argument>
 {
     public static final String KEY_ACTION_NAME = "whitelist_toggle";
 

@@ -1,5 +1,9 @@
 package net.kunmc.lab.scenamatica.action.actions;
 
+import net.kunmc.lab.scenamatica.action.actions.player.AbstractPlayerAction;
+import net.kunmc.lab.scenamatica.action.actions.scenamatica.AbstractScenamaticaAction;
+import net.kunmc.lab.scenamatica.action.actions.server.AbstractServerAction;
+import net.kunmc.lab.scenamatica.action.actions.world.AbstractWorldAction;
 import net.kunmc.lab.scenamatica.enums.ScenarioType;
 import net.kunmc.lab.scenamatica.interfaces.action.Action;
 import net.kunmc.lab.scenamatica.interfaces.action.ActionArgument;
@@ -9,10 +13,24 @@ import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public abstract class AbstractAction<A extends ActionArgument> implements Action<A>
 {
+    public static List<? extends AbstractAction<?>> getActions()
+    {
+        List<AbstractAction<?>> actions = new ArrayList<>();
+
+        actions.addAll(AbstractPlayerAction.getActions());
+        actions.addAll(AbstractServerAction.getActions());
+        actions.addAll(AbstractWorldAction.getActions());
+        actions.addAll(AbstractScenamaticaAction.getActions());
+
+        return actions;
+    }
+
     @Override
     public void onStartWatching(@Nullable A argument, @NotNull Plugin plugin, @Nullable Event event)
     {

@@ -8,11 +8,28 @@ import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerEvent;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
 public abstract class AbstractPlayerAction<A extends AbstractPlayerActionArgument> extends AbstractAction<A>
 {
+    public static List<? extends AbstractPlayerAction<?>> getActions()
+    {
+        List<AbstractPlayerAction<?>> actions = new ArrayList<>();
+
+        actions.add(new PlayerGameModeAction());
+        actions.add(new PlayerAdvancementAction());
+        actions.add(new PlayerAnimationAction());
+        actions.add(new PlayerDeathAction());
+        actions.add(new PlayerHotbarSlotAction());
+        actions.add(new PlayerInteractBlockAction());
+        actions.add(new PlayerLaunchProjectileAction());
+
+        return actions;
+    }
+
     @Override
     public boolean isFired(@NotNull A argument, @NotNull ScenarioEngine engine, @NotNull Event event)
     {
