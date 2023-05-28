@@ -45,6 +45,7 @@
     </repositories>
 
     <dependencies>
+        <!--suppress MavenDuplicateDependenciesInspection due to dependency order injection -->
         <dependency>
             <groupId>com.destroystokyo.paper</groupId>
             <artifactId>paper-api</artifactId>
