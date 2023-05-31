@@ -24,12 +24,12 @@ public class ContextBeanSerializeTest
 
     public static final Map<String, Object> FULFILLED_MAP = new HashMap<String, Object>()
     {{
-        put("actors", Arrays.asList(
+        this.put("actors", Arrays.asList(
                 PlayerBeanSerializeTest.FULFILLED_MAP,
                 PlayerBeanSerializeTest.FULFILLED_MAP,
                 PlayerBeanSerializeTest.FULFILLED_MAP
         ));
-        put("stage", StageBeanSerializeTest.FULFILLED_MAP);
+        this.put("stage", StageBeanSerializeTest.FULFILLED_MAP);
     }};
 
     public static final ContextBeanImpl EMPTY = new ContextBeanImpl(

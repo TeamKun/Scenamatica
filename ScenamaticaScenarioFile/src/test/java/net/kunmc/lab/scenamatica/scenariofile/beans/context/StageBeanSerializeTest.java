@@ -26,12 +26,12 @@ public class StageBeanSerializeTest
 
     public static final Map<String, Object> FULFILLED_MAP = new HashMap<String, Object>()
     {{
-        put("copyOf", "world");
-        put("type", "AMPLIFIED");
-        put("seed", 1145141919810L);
-        put("structures", false);
-        put("env", "NORMAL");
-        put("hardcore", true);
+        this.put("copyOf", "world");
+        this.put("type", "AMPLIFIED");
+        this.put("seed", 1145141919810L);
+        this.put("structures", false);
+        this.put("env", "NORMAL");
+        this.put("hardcore", true);
     }};
 
     public static final StageBean EMPTY = new StageBeanImpl(
@@ -45,7 +45,7 @@ public class StageBeanSerializeTest
 
     public static final Map<String, Object> EMPTY_MAP = new HashMap<String, Object>()
     {{
-        put("copyOf", "world");
+        this.put("copyOf", "world");
     }};
 
     @Test

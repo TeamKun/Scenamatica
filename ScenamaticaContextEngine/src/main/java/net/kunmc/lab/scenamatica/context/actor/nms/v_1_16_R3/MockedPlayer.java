@@ -134,7 +134,7 @@ class MockedPlayer extends EntityPlayer implements Actor
 
     private void processGravity()
     {
-        Vec3D vec = getMot();
+        Vec3D vec = this.getMot();
 
         if (!this.onGround)
         {
@@ -154,7 +154,7 @@ class MockedPlayer extends EntityPlayer implements Actor
 
         boolean damaged = super.damageEntity(damageSource, f);
         if (damaged && damager != null)
-            processKnockBack(damager);
+            this.processKnockBack(damager);
 
         return damaged;
     }
@@ -178,7 +178,7 @@ class MockedPlayer extends EntityPlayer implements Actor
             return;
 
         super.die(damagesource);
-        Runner.runLater(() -> getWorldServer().removeEntity(this), 15L);
+        Runner.runLater(() -> this.getWorldServer().removeEntity(this), 15L);
         // 15L 遅らせるのは, アニメーションのため
     }
 

@@ -14,7 +14,7 @@ public class CompactBukkitTestReporter extends BukkitTestReporter
     {
         ScenarioFileBean scenario = engine.getScenario();
 
-        this.terminals.forEach(t -> printTestSummary(engine, t, scenario, result));
+        this.terminals.forEach(t -> this.printTestSummary(engine, t, scenario, result));
     }
 
     @Override

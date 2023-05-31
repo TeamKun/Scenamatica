@@ -59,7 +59,7 @@ public abstract class PlayerMockerBase
         if (event.getResult() != PlayerLoginEvent.Result.ALLOWED)
         {
             // LoginListener 名義のログを偽装
-            LogManager.getLogger(getLoginListenerClass())
+            LogManager.getLogger(this.getLoginListenerClass())
                     .info("Disconnecting {}: {}", socketAddr, event.kickMessage());
         }
 

@@ -101,7 +101,7 @@ public interface ScenarioManager
     default ScenarioResult startScenarioInterrupt(@NotNull Plugin plugin,
                                                   @NotNull String scenarioName) throws ScenarioException
     {
-        return startScenarioInterrupt(plugin, scenarioName, false);
+        return this.startScenarioInterrupt(plugin, scenarioName, false);
     }
 
     /**
@@ -124,7 +124,7 @@ public interface ScenarioManager
                                                   @NotNull String scenarioName,
                                                   @NotNull TriggerType triggerType) throws ScenarioException
     {
-        return startScenarioInterrupt(plugin, scenarioName, triggerType, false);
+        return this.startScenarioInterrupt(plugin, scenarioName, triggerType, false);
     }
 
     /**

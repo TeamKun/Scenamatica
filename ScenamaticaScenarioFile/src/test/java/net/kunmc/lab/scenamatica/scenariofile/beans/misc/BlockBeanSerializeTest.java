@@ -21,7 +21,7 @@ public class BlockBeanSerializeTest
             19,
             new HashMap<String, Object>()
             {{
-                put("key", "value");
+                this.put("key", "value");
             }},
             15,
             Biome.BADLANDS
@@ -29,16 +29,16 @@ public class BlockBeanSerializeTest
 
     public static final Map<String, Object> FULFILLED_MAP = new HashMap<String, Object>()
     {{
-        put("type", "ACACIA_SIGN");
-        put("x", 114);
-        put("y", 514);
-        put("z", 19);
-        put("metadata", new HashMap<String, Object>()
+        this.put("type", "ACACIA_SIGN");
+        this.put("x", 114);
+        this.put("y", 514);
+        this.put("z", 19);
+        this.put("metadata", new HashMap<String, Object>()
         {{
-            put("key", "value");
+            this.put("key", "value");
         }});
-        put("light", 15);
-        put("biome", "BADLANDS");
+        this.put("light", 15);
+        this.put("biome", "BADLANDS");
     }};
 
     public static final BlockBean EMPTY = new BlockBeanImpl(
@@ -53,10 +53,10 @@ public class BlockBeanSerializeTest
 
     public static final Map<String, Object> EMPTY_MAP = new HashMap<String, Object>()
     {{
-        put("type", "AIR");
-        put("x", 0);
-        put("y", 0);
-        put("z", 0);
+        this.put("type", "AIR");
+        this.put("x", 0);
+        this.put("y", 0);
+        this.put("z", 0);
     }};
 
     @Test

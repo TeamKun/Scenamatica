@@ -54,14 +54,14 @@ public class PlayerDeathAction extends AbstractPlayerAction<PlayerDeathAction.Ar
         assert event instanceof PlayerDeathEvent;
         PlayerDeathEvent e = (PlayerDeathEvent) event;
 
-        return checkTargetAndKiller(argument, e)
-                && checkDeathMessage(argument, e)
-                && checkExp(argument, e)
-                && checkLevel(argument, e)
-                && checkTotalExp(argument, e)
-                && checkKeepLevel(argument, e)
-                && checkKeepInventory(argument, e)
-                && checkDoExpDrop(argument, e);
+        return this.checkTargetAndKiller(argument, e)
+                && this.checkDeathMessage(argument, e)
+                && this.checkExp(argument, e)
+                && this.checkLevel(argument, e)
+                && this.checkTotalExp(argument, e)
+                && this.checkKeepLevel(argument, e)
+                && this.checkKeepInventory(argument, e)
+                && this.checkDoExpDrop(argument, e);
     }
 
     private boolean checkTargetAndKiller(@NotNull PlayerDeathAction.Argument argument, @NotNull PlayerDeathEvent event)

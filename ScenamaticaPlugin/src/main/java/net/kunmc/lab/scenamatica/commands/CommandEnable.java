@@ -24,7 +24,7 @@ public class CommandEnable extends CommandBase
     {
         if (args.length == 0)
         {
-            terminal.info(getCurrentCause());
+            terminal.info(this.getCurrentCause());
             return;
         }
 
@@ -38,7 +38,7 @@ public class CommandEnable extends CommandBase
         boolean state = Boolean.parseBoolean(stateStr);
 
         this.registry.getScenarioManager().setEnabled(state);
-        terminal.success(getCurrentCause());
+        terminal.success(this.getCurrentCause());
     }
 
     private String getCurrentCause()
