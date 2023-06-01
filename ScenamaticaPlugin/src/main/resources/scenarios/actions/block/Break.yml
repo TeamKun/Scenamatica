@@ -1,0 +1,34 @@
+# noinspection YAMLSchemaValidation
+scenamatica: ${project.version}
+
+name: actions_block_break
+description: Testing block_break action works or not
+on:
+  - type: on_load
+  - type: manual_dispatch
+
+context:
+  actors:
+    - name: Actor001
+
+
+scenario:
+  - type: execute
+    action: block_break
+    with:
+      actor: Actor001
+      block:
+        location:
+          x: 0
+          y: 0
+          z: 0
+  - type: expect
+    action: block_break
+    with:
+      actor: Actor001
+      block:
+        location:
+          x: 0
+          y: 0
+          z: 0
+    timeout: 20

@@ -540,7 +540,6 @@
           "$base": {
             "properties": {
               "block": {
-                "type": "string",
                 "description": "対象のブロックです。",
                 "$ref": "#/definitions/block"
               }
