@@ -2,6 +2,7 @@ package net.kunmc.lab.scenamatica.scenariofile.beans.entity;
 
 import lombok.SneakyThrows;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.entities.EntityBean;
+import net.kunmc.lab.scenamatica.scenariofile.BeanSerializerImpl;
 import net.kunmc.lab.scenamatica.scenariofile.beans.entities.EntityBeanImpl;
 import net.kunmc.lab.scenamatica.scenariofile.beans.utils.MapTestUtil;
 import org.bukkit.Location;
@@ -104,7 +105,7 @@ public class EntityBeanSerializeTest
     @Test
     void 正常にシリアライズできるか()
     {
-        Map<String, Object> map = EntityBeanImpl.serialize(FULFILLED);
+        Map<String, Object> map = EntityBeanImpl.serialize(FULFILLED, BeanSerializerImpl.getInstance());
 
         MapTestUtil.assertEqual(FULFILLED_MAP, map);
     }
@@ -112,7 +113,7 @@ public class EntityBeanSerializeTest
     @Test
     void 正常にデシリアライズできるか()
     {
-        EntityBean entity = EntityBeanImpl.deserialize(FULFILLED_MAP);
+        EntityBean entity = EntityBeanImpl.deserialize(FULFILLED_MAP, BeanSerializerImpl.getInstance());
 
         assertEquals(FULFILLED, entity);
     }
@@ -120,7 +121,7 @@ public class EntityBeanSerializeTest
     @Test
     void 必須項目のみでシリアライズできるか()
     {
-        Map<String, Object> map = EntityBeanImpl.serialize(EMPTY);
+        Map<String, Object> map = EntityBeanImpl.serialize(EMPTY, BeanSerializerImpl.getInstance());
 
         MapTestUtil.assertEqual(EMPTY_MAP, map);
     }
@@ -128,7 +129,7 @@ public class EntityBeanSerializeTest
     @Test
     void 必須項目のみでデシリアライズできるか()
     {
-        EntityBean entity = EntityBeanImpl.deserialize(EMPTY_MAP);
+        EntityBean entity = EntityBeanImpl.deserialize(EMPTY_MAP, BeanSerializerImpl.getInstance());
 
         assertEquals(EMPTY, entity);
     }

@@ -26,7 +26,7 @@ public class StageBeanImpl implements StageBean
     boolean hardcore;
 
     @NotNull
-    public static Map<String, Object> serialize(StageBean bean)
+    public static Map<String, Object> serialize(@NotNull StageBean bean)
     {
         Map<String, Object> result = new HashMap<>();
 
@@ -45,7 +45,7 @@ public class StageBeanImpl implements StageBean
         return result;
     }
 
-    public static void validate(Map<String, Object> map)
+    public static void validate(@NotNull Map<String, Object> map)
     {
         MapUtils.checkTypeIfContains(map, KEY_ORIGINAL_WORLD_NAME, String.class);
         MapUtils.checkEnumNameIfContains(map, KEY_TYPE, WorldType.class);

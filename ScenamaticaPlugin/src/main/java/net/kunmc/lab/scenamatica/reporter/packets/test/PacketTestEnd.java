@@ -6,7 +6,7 @@ import net.kunmc.lab.scenamatica.enums.ScenarioResultCause;
 import net.kunmc.lab.scenamatica.enums.ScenarioState;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioResult;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
-import net.kunmc.lab.scenamatica.scenariofile.ScenarioFileBeanImpl;
+import net.kunmc.lab.scenamatica.scenariofile.BeanSerializerImpl;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -57,7 +57,8 @@ public class PacketTestEnd extends AbstractTestPacket
     {
         Map<String, Object> result = super.serialize();
 
-        result.put(KEY_SCENARIO, ScenarioFileBeanImpl.serialize(this.scenario));
+
+        result.put(KEY_SCENARIO, BeanSerializerImpl.getInstance().serializeScenarioFile(this.scenario));
         result.put(KEY_STATE, this.state.name());
         result.put(KEY_CAUSE, this.cause.name());
         result.put(KEY_STARTED_AT, this.startedAt);

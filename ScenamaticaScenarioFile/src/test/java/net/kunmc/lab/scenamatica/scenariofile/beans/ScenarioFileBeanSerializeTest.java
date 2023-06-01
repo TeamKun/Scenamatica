@@ -2,7 +2,7 @@ package net.kunmc.lab.scenamatica.scenariofile.beans;
 
 import net.kunmc.lab.peyangpaperutils.versioning.Version;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
-import net.kunmc.lab.scenamatica.scenariofile.ScenarioFileBeanImpl;
+import net.kunmc.lab.scenamatica.scenariofile.BeanSerializerImpl;
 import net.kunmc.lab.scenamatica.scenariofile.beans.context.ContextBeanSerializeTest;
 import net.kunmc.lab.scenamatica.scenariofile.beans.scenario.ScenarioBeanSerializeTest;
 import net.kunmc.lab.scenamatica.scenariofile.beans.trigger.TriggerBeanSerializeTest;
@@ -81,7 +81,7 @@ public class ScenarioFileBeanSerializeTest
     @Test
     void 正常にシリアライズできるか()
     {
-        Map<String, Object> map = ScenarioFileBeanImpl.serialize(FULFILLED);
+        Map<String, Object> map = ScenarioFileBeanImpl.serialize(FULFILLED, BeanSerializerImpl.getInstance());
 
         MapTestUtil.assertEqual(FULFILLED_MAP, map);
     }
@@ -89,7 +89,7 @@ public class ScenarioFileBeanSerializeTest
     @Test
     void 正常にデシリアライズできるか()
     {
-        ScenarioFileBean bean = ScenarioFileBeanImpl.deserialize(FULFILLED_MAP);
+        ScenarioFileBean bean = ScenarioFileBeanImpl.deserialize(FULFILLED_MAP, BeanSerializerImpl.getInstance());
 
         assertEquals(FULFILLED, bean);
     }
@@ -97,7 +97,7 @@ public class ScenarioFileBeanSerializeTest
     @Test
     void 必須項目のみでシリアライズできるか()
     {
-        Map<String, Object> map = ScenarioFileBeanImpl.serialize(EMPTY);
+        Map<String, Object> map = ScenarioFileBeanImpl.serialize(EMPTY, BeanSerializerImpl.getInstance());
 
         MapTestUtil.assertEqual(EMPTY_MAP, map);
     }
@@ -105,7 +105,7 @@ public class ScenarioFileBeanSerializeTest
     @Test
     void 必須項目のみでデシリアライズできるか()
     {
-        ScenarioFileBean bean = ScenarioFileBeanImpl.deserialize(EMPTY_MAP);
+        ScenarioFileBean bean = ScenarioFileBeanImpl.deserialize(EMPTY_MAP, BeanSerializerImpl.getInstance());
 
         assertEquals(EMPTY, bean);
     }
@@ -116,6 +116,6 @@ public class ScenarioFileBeanSerializeTest
         Map<String, Object> map = new HashMap<>(FULFILLED_MAP);
         map.put("scenamatica", "awdawdawd");
 
-        assertThrows(IllegalArgumentException.class, () -> ScenarioFileBeanImpl.deserialize(map));
+        assertThrows(IllegalArgumentException.class, () -> ScenarioFileBeanImpl.deserialize(map, BeanSerializerImpl.getInstance()));
     }
 }

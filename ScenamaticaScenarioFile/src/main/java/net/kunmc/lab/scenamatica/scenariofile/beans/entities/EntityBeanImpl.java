@@ -3,6 +3,7 @@ package net.kunmc.lab.scenamatica.scenariofile.beans.entities;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import net.kunmc.lab.scenamatica.commons.utils.MapUtils;
+import net.kunmc.lab.scenamatica.interfaces.scenariofile.BeanSerializer;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.entities.DamageBean;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.entities.EntityBean;
 import org.bukkit.Location;
@@ -96,9 +97,12 @@ public class EntityBeanImpl implements EntityBean
     /**
      * エンティティ情報をMapにシリアライズします。
      *
+     * @param entity     エンティティ情報
+     * @param serializer シリアライザ
      * @return エンティティ情報をシリアライズしたMap
      */
-    public static Map<String, Object> serialize(@NotNull EntityBean entity)
+    @NotNull
+    public static Map<String, Object> serialize(@NotNull EntityBean entity, @NotNull BeanSerializer serializer)
     {
         Map<String, Object> map = new HashMap<>();
         MapUtils.putLocationIfNotNull(map, KEY_LOCATION, entity.getLocation());
@@ -110,7 +114,7 @@ public class EntityBeanImpl implements EntityBean
         if (!entity.isGravity())
             map.put(KEY_GRAVITY, false);
         if (entity.getLastDamageCause() != null)
-            map.put(EntityBean.KEY_LAST_DAMAGE, DamageBeanImpl.serialize(entity.getLastDamageCause()));
+            map.put(EntityBean.KEY_LAST_DAMAGE, serializer.serializeDamage(entity.getLastDamageCause()));
 
         MapUtils.putListIfNotEmpty(map, KEY_TAGS, entity.getTags());
 
@@ -237,7 +241,8 @@ public class EntityBeanImpl implements EntityBean
      * @param map デシリアライズするMap
      * @return デシリアライズしたエンティティ情報
      */
-    public static EntityBean deserialize(@NotNull Map<String, Object> map)
+    @NotNull
+    public static EntityBean deserialize(@NotNull Map<String, Object> map, @NotNull BeanSerializer serializer)
     {
         validate(map);
 
@@ -255,7 +260,7 @@ public class EntityBeanImpl implements EntityBean
 
         DamageBean lastDamageCause = null;
         if (map.containsKey(KEY_LAST_DAMAGE))
-            lastDamageCause = DamageBeanImpl.deserialize(MapUtils.checkAndCastMap(map.get(KEY_LAST_DAMAGE),
+            lastDamageCause = serializer.deserializeDamage(MapUtils.checkAndCastMap(map.get(KEY_LAST_DAMAGE),
                     String.class, Object.class
             ));
 

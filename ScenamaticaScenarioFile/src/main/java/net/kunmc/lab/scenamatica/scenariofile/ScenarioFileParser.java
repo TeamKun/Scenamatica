@@ -36,7 +36,7 @@ public class ScenarioFileParser
             if (!map.containsKey("scenamatica"))  // シナリオファイルには scenamatica キーが最上位に必須。
                 throw new NotAScenarioFileException(fileName);
 
-            return ScenarioFileBeanImpl.deserialize(map);
+            return BeanSerializerImpl.getInstance().deserializeScenarioFile(map);
         }
         catch (IllegalArgumentException e)
         {

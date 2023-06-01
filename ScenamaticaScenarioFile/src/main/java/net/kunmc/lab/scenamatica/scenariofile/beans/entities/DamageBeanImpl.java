@@ -19,6 +19,7 @@ public class DamageBeanImpl implements DamageBean
     EntityDamageEvent.DamageCause cause;
     double damage;
 
+    @NotNull
     public static Map<String, Object> serialize(@NotNull DamageBean bean)
     {
         Map<String, Object> map = new HashMap<>();
@@ -40,6 +41,7 @@ public class DamageBeanImpl implements DamageBean
         return true;
     }
 
+    @NotNull
     public static DamageBean deserialize(@NotNull Map<String, Object> map)
     {
         validate(map);

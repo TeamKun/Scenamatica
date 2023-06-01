@@ -2,6 +2,7 @@ package net.kunmc.lab.scenamatica.scenariofile.beans.inventory;
 
 import lombok.SneakyThrows;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.inventory.ItemStackBean;
+import net.kunmc.lab.scenamatica.scenariofile.BeanSerializerImpl;
 import net.kunmc.lab.scenamatica.scenariofile.beans.utils.MapTestUtil;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -196,7 +197,7 @@ public class ItemStackBeanSerializeTest
     @Test
     void 正常シリアライズできるか()
     {
-        Map<String, Object> actual = ItemStackBeanImpl.serialize(FULFILLED);
+        Map<String, Object> actual = ItemStackBeanImpl.serialize(FULFILLED, BeanSerializerImpl.getInstance());
 
         MapTestUtil.assertEqual(FULFILLED_MAP, actual);
     }
@@ -212,7 +213,7 @@ public class ItemStackBeanSerializeTest
     @Test
     void 必須項目のみでシリアライズできるか()
     {
-        Map<String, Object> actual = ItemStackBeanImpl.serialize(EMPTY);
+        Map<String, Object> actual = ItemStackBeanImpl.serialize(EMPTY, BeanSerializerImpl.getInstance());
 
         MapTestUtil.assertEqual(EMPTY_MAP, actual);
     }
@@ -228,7 +229,7 @@ public class ItemStackBeanSerializeTest
     @Test
     void 個数が1のときに省略してシリアライズできるか()
     {
-        Map<String, Object> actual = ItemStackBeanImpl.serialize(ONLY_ONE_ITEM);
+        Map<String, Object> actual = ItemStackBeanImpl.serialize(ONLY_ONE_ITEM, BeanSerializerImpl.getInstance());
 
         MapTestUtil.assertEqual(ONLY_ONE_ITEM_MAP, actual);
     }

@@ -3,6 +3,7 @@ package net.kunmc.lab.scenamatica.scenariofile;
 import net.kunmc.lab.peyangpaperutils.versioning.Version;
 import net.kunmc.lab.scenamatica.exceptions.scenariofile.InvalidScenarioFileException;
 import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
+import net.kunmc.lab.scenamatica.interfaces.scenariofile.BeanSerializer;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.ScenarioFileManager;
 import org.bukkit.plugin.Plugin;
@@ -27,6 +28,12 @@ public class ScenarioFileManagerImpl implements ScenarioFileManager
     {
         this.registry = registry;
         this.scenarios = new HashMap<>();
+    }
+
+    @Override
+    public @NotNull BeanSerializer getSerializer()
+    {
+        return BeanSerializerImpl.getInstance();
     }
 
     @Override

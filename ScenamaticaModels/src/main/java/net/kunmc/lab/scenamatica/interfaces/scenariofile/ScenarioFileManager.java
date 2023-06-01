@@ -12,6 +12,11 @@ import java.util.Map;
 public interface ScenarioFileManager
 {
     /**
+     * シリアライザを取得します。
+     */
+    @NotNull BeanSerializer getSerializer();
+
+    /**
      * プラグインのシナリオを読み込みます。
      *
      * @param plugin プラグイン

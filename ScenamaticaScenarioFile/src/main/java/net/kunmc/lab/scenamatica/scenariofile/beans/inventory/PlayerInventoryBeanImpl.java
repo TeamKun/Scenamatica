@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import net.kunmc.lab.scenamatica.commons.utils.MapUtils;
+import net.kunmc.lab.scenamatica.interfaces.scenariofile.BeanSerializer;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.inventory.InventoryBean;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.inventory.ItemStackBean;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.inventory.PlayerInventoryBean;
@@ -66,10 +67,12 @@ public class PlayerInventoryBeanImpl extends InventoryBeanImpl implements Player
     /**
      * プレイヤーインベントリの情報をMapにシリアライズします。
      *
-     * @param bean プレイヤーインベントリの情報
+     * @param bean       プレイヤーインベントリの情報
+     * @param serializer ItemStack のシリアライザ
      * @return シリアライズされたMap
      */
-    public static Map<String, Object> serialize(PlayerInventoryBean bean)
+    @NotNull
+    public static Map<String, Object> serialize(@NotNull PlayerInventoryBean bean, @NotNull BeanSerializer serializer)
     {
         boolean noArmor = true;
         List<Map<String, Object>> armorContents = new ArrayList<>();
@@ -79,7 +82,7 @@ public class PlayerInventoryBeanImpl extends InventoryBeanImpl implements Player
                 armorContents.add(null);
             else
             {
-                armorContents.add(ItemStackBeanImpl.serialize(armorContent));
+                armorContents.add(serializer.serializeItemStack(armorContent));
                 noArmor = false;
             }
         }
@@ -91,7 +94,7 @@ public class PlayerInventoryBeanImpl extends InventoryBeanImpl implements Player
 
         if (!bean.getMainContents().isEmpty())
         {
-            Map<String, Object> mainContents = InventoryBeanImpl.serialize(bean);
+            Map<String, Object> mainContents = serializer.serializeInventory(bean);
             mainContents.remove(KEY_SIZE);  // Playerのインベントリサイズは36固定なので冗長
 
             map.put(KEY_MAIN_INVENTORY, mainContents);
@@ -100,14 +103,14 @@ public class PlayerInventoryBeanImpl extends InventoryBeanImpl implements Player
         MapUtils.putIfNotNull(map, KEY_ARMOR_CONTENTS, armorContents);
 
         if (bean.getMainHand() != null)
-            map.put(KEY_MAIN_HAND, ItemStackBeanImpl.serialize(bean.getMainHand()));
+            map.put(KEY_MAIN_HAND, serializer.serializeItemStack(bean.getMainHand()));
         if (bean.getOffHand() != null)
-            map.put(KEY_OFF_HAND, ItemStackBeanImpl.serialize(bean.getOffHand()));
+            map.put(KEY_OFF_HAND, serializer.serializeItemStack(bean.getOffHand()));
 
         return map;
     }
 
-    public static void validate(Map<String, Object> map)
+    public static void validate(@NotNull Map<String, Object> map, @NotNull BeanSerializer serializer)
     {
         if (map.containsKey(KEY_MAIN_INVENTORY))
         {
@@ -122,15 +125,15 @@ public class PlayerInventoryBeanImpl extends InventoryBeanImpl implements Player
                     (Integer) mainInventory.get(KEY_SIZE) != 9 * 4))
                 throw new IllegalArgumentException(KEY_SIZE + " must be 36 slots in player inventory.");
 
-            InventoryBeanImpl.validate(mainInventory);
+            serializer.validateInventory(mainInventory);
         }
         if (map.containsKey(KEY_MAIN_HAND))
-            ItemStackBeanImpl.validate(MapUtils.checkAndCastMap(
+            serializer.validateItemStack(MapUtils.checkAndCastMap(
                     map.get(KEY_MAIN_HAND),
                     String.class, Object.class
             ));
         if (map.containsKey(KEY_OFF_HAND))
-            ItemStackBeanImpl.validate(MapUtils.checkAndCastMap(
+            serializer.validateItemStack(MapUtils.checkAndCastMap(
                     map.get(KEY_OFF_HAND),
                     String.class, Object.class
             ));
@@ -148,7 +151,7 @@ public class PlayerInventoryBeanImpl extends InventoryBeanImpl implements Player
             if (armorContent == null)
                 continue;
 
-            ItemStackBeanImpl.validate(MapUtils.checkAndCastMap(
+            serializer.validateItemStack(MapUtils.checkAndCastMap(
                             armorContent,
                             String.class, Object.class
                     )
@@ -156,9 +159,10 @@ public class PlayerInventoryBeanImpl extends InventoryBeanImpl implements Player
         }
     }
 
-    public static PlayerInventoryBean deserialize(Map<String, Object> map)
+    @NotNull
+    public static PlayerInventoryBean deserialize(@NotNull Map<String, Object> map, @NotNull BeanSerializer serializer)
     {
-        validate(map);
+        validate(map, serializer);
 
         ItemStackBean[] armorContents;
         if (map.containsKey(KEY_ARMOR_CONTENTS))
@@ -169,7 +173,7 @@ public class PlayerInventoryBeanImpl extends InventoryBeanImpl implements Player
                 if (armorContent == null)
                     armorContentsList.add(null);
                 else
-                    armorContentsList.add(ItemStackBeanImpl.deserialize(MapUtils.checkAndCastMap(
+                    armorContentsList.add(serializer.deserializeItemStack(MapUtils.checkAndCastMap(
                             armorContent,
                             String.class, Object.class
                     )));
@@ -191,22 +195,34 @@ public class PlayerInventoryBeanImpl extends InventoryBeanImpl implements Player
             if (!mainInventory.containsKey(KEY_SIZE))
                 mainInventory.put(KEY_SIZE, 9 * 4);
 
-            mainInventoryBean = InventoryBeanImpl.deserialize(mainInventory);
+            mainInventoryBean = serializer.deserializeInventory(mainInventory);
         }
         else
             mainInventoryBean = new InventoryBeanImpl(9 * 4, null, Collections.emptyMap());
 
 
+        ItemStackBean mainHandItem;
+        if (map.containsKey(KEY_MAIN_HAND))
+            mainHandItem = serializer.deserializeItemStack(MapUtils.checkAndCastMap(
+                    map.get(KEY_MAIN_HAND),
+                    String.class, Object.class
+            ));
+        else
+            mainHandItem = null;
+
+        ItemStackBean offHandItem;
+        if (map.containsKey(KEY_OFF_HAND))
+            offHandItem = serializer.deserializeItemStack(MapUtils.checkAndCastMap(
+                    map.get(KEY_OFF_HAND),
+                    String.class, Object.class
+            ));
+        else
+            offHandItem = null;
+
         return new PlayerInventoryBeanImpl(
                 mainInventoryBean,
-                map.containsKey(KEY_MAIN_HAND) ? ItemStackBeanImpl.deserialize(MapUtils.checkAndCastMap(
-                        map.get(KEY_MAIN_HAND),
-                        String.class, Object.class
-                )): null,
-                map.containsKey(KEY_OFF_HAND) ? ItemStackBeanImpl.deserialize(MapUtils.checkAndCastMap(
-                        map.get(KEY_OFF_HAND),
-                        String.class, Object.class
-                )): null,
+                mainHandItem,
+                offHandItem,
                 armorContents
         );
     }

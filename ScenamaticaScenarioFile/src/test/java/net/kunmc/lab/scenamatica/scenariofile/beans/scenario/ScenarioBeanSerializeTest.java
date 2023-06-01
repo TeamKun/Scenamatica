@@ -2,6 +2,7 @@ package net.kunmc.lab.scenamatica.scenariofile.beans.scenario;
 
 import net.kunmc.lab.scenamatica.enums.ScenarioType;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.scenario.ScenarioBean;
+import net.kunmc.lab.scenamatica.scenariofile.BeanSerializerImpl;
 import net.kunmc.lab.scenamatica.scenariofile.beans.utils.MapTestUtil;
 import org.junit.jupiter.api.Test;
 
@@ -40,7 +41,7 @@ public class ScenarioBeanSerializeTest
     @Test
     void 正常にシリアライズできるか()
     {
-        Map<String, Object> map = ScenarioBeanImpl.serialize(FULFILLED);
+        Map<String, Object> map = ScenarioBeanImpl.serialize(FULFILLED, BeanSerializerImpl.getInstance());
 
         MapTestUtil.assertEqual(FULFILLED_MAP, map);
     }
@@ -48,7 +49,7 @@ public class ScenarioBeanSerializeTest
     @Test
     void 正常にデシリアライズできるか()
     {
-        ScenarioBean bean = ScenarioBeanImpl.deserialize(FULFILLED_MAP);
+        ScenarioBean bean = ScenarioBeanImpl.deserialize(FULFILLED_MAP, BeanSerializerImpl.getInstance());
 
         assertEquals(FULFILLED, bean);
     }
@@ -56,7 +57,7 @@ public class ScenarioBeanSerializeTest
     @Test
     void 必須項目のみでシリアライズできるか()
     {
-        Map<String, Object> map = ScenarioBeanImpl.serialize(EMPTY);
+        Map<String, Object> map = ScenarioBeanImpl.serialize(EMPTY, BeanSerializerImpl.getInstance());
 
         MapTestUtil.assertEqual(EMPTY_MAP, map);
     }
@@ -64,7 +65,7 @@ public class ScenarioBeanSerializeTest
     @Test
     void 必須項目のみでデシリアライズできるか()
     {
-        ScenarioBean bean = ScenarioBeanImpl.deserialize(EMPTY_MAP);
+        ScenarioBean bean = ScenarioBeanImpl.deserialize(EMPTY_MAP, BeanSerializerImpl.getInstance());
 
         assertEquals(EMPTY, bean);
     }

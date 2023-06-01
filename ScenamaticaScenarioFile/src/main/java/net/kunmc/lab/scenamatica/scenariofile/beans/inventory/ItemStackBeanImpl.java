@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Value;
 import net.kunmc.lab.scenamatica.commons.utils.MapUtils;
 import net.kunmc.lab.scenamatica.commons.utils.NamespaceUtils;
+import net.kunmc.lab.scenamatica.interfaces.scenariofile.BeanSerializer;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.inventory.ItemStackBean;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
@@ -244,7 +245,8 @@ public class ItemStackBeanImpl implements ItemStackBean
 
     }
 
-    public static Map<String, Object> serialize(ItemStackBean bean)
+    @NotNull
+    public static Map<String, Object> serialize(@NotNull ItemStackBean bean, @NotNull BeanSerializer serializer)
     {
         Map<String, Object> map = new HashMap<>();
 
@@ -272,7 +274,7 @@ public class ItemStackBeanImpl implements ItemStackBean
         return map;
     }
 
-    public static void validate(Map<String, Object> map)
+    public static void validate(@NotNull Map<String, Object> map)
     {
         MapUtils.checkEnumName(map, KEY_TYPE, Material.class);
 
@@ -305,6 +307,7 @@ public class ItemStackBeanImpl implements ItemStackBean
         }
     }
 
+    @NotNull
     public static ItemStackBean deserialize(@NotNull Map<String, Object> map)
     {
         validate(map);

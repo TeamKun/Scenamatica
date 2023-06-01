@@ -3,12 +3,11 @@ package net.kunmc.lab.scenamatica.scenariofile.beans.entities;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import net.kunmc.lab.scenamatica.commons.utils.MapUtils;
+import net.kunmc.lab.scenamatica.interfaces.scenariofile.BeanSerializer;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.entities.EntityBean;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.entities.HumanEntityBean;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.inventory.InventoryBean;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.inventory.PlayerInventoryBean;
-import net.kunmc.lab.scenamatica.scenariofile.beans.inventory.InventoryBeanImpl;
-import net.kunmc.lab.scenamatica.scenariofile.beans.inventory.PlayerInventoryBeanImpl;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.inventory.MainHand;
@@ -107,14 +106,15 @@ public class HumanEntityBeanImpl extends EntityBeanImpl implements HumanEntityBe
      *
      * @return シリアライズされたMap
      */
-    public static Map<String, Object> serialize(HumanEntityBean bean)
+    @NotNull
+    public static Map<String, Object> serialize(@NotNull HumanEntityBean bean, @NotNull BeanSerializer serializer)
     {
-        Map<String, Object> map = EntityBeanImpl.serialize(bean);
+        Map<String, Object> map = serializer.serializeHumanEntity(bean);
 
         if (bean.getInventory() != null)
-            map.put(KEY_INVENTORY, PlayerInventoryBeanImpl.serialize(bean.getInventory()));
+            map.put(KEY_INVENTORY, serializer.serializePlayerInventory(bean.getInventory()));
         if (bean.getEnderChest() != null)
-            map.put(KEY_ENDER_CHEST, InventoryBeanImpl.serialize(bean.getEnderChest()));
+            map.put(KEY_ENDER_CHEST, serializer.serializeInventory(bean.getEnderChest()));
 
         if (bean.getMainHand() != MainHand.RIGHT)
             map.put(KEY_MAIN_HAND, bean.getMainHand().name());
@@ -129,21 +129,22 @@ public class HumanEntityBeanImpl extends EntityBeanImpl implements HumanEntityBe
     /**
      * Mapがシリアライズされた人形エンティティの情報かどうかを判定します。
      *
-     * @param map 判定するMap
+     * @param map        判定するMap
+     * @param serializer シリアライザ
      * @throws IllegalArgumentException Mapがシリアライズされた人形エンティティの情報でない場合
      */
-    public static void validate(@NotNull Map<String, Object> map)
+    public static void validate(@NotNull Map<String, Object> map, @NotNull BeanSerializer serializer)
     {
         EntityBeanImpl.validate(map);
 
         if (map.containsKey(KEY_INVENTORY))
-            PlayerInventoryBeanImpl.validate(MapUtils.checkAndCastMap(
+            serializer.validatePlayerInventory(MapUtils.checkAndCastMap(
                     map.get(KEY_INVENTORY),
                     String.class,
                     Object.class
             ));
         if (map.containsKey(KEY_ENDER_CHEST))
-            InventoryBeanImpl.validate(MapUtils.checkAndCastMap(
+            serializer.validateInventory(MapUtils.checkAndCastMap(
                     map.get(KEY_ENDER_CHEST),
                     String.class,
                     Object.class
@@ -156,15 +157,16 @@ public class HumanEntityBeanImpl extends EntityBeanImpl implements HumanEntityBe
      * @param map デシリアライズするMap
      * @return デシリアライズされた人形エンティティの情報
      */
-    public static HumanEntityBean deserialize(@NotNull Map<String, Object> map)
+    @NotNull
+    public static HumanEntityBean deserialize(@NotNull Map<String, Object> map, @NotNull BeanSerializer serializer)
     {
         validate(map);
 
-        EntityBean entityBean = EntityBeanImpl.deserialize(map);
+        EntityBean entityBean = serializer.deserializeEntity(map);
 
         PlayerInventoryBean inventory = null;
         if (map.containsKey(KEY_INVENTORY))
-            inventory = PlayerInventoryBeanImpl.deserialize(MapUtils.checkAndCastMap(
+            inventory = serializer.deserializePlayerInventory(MapUtils.checkAndCastMap(
                     map.get(KEY_INVENTORY),
                     String.class,
                     Object.class
@@ -172,7 +174,7 @@ public class HumanEntityBeanImpl extends EntityBeanImpl implements HumanEntityBe
 
         InventoryBean enderChest = null;
         if (map.containsKey(KEY_ENDER_CHEST))
-            enderChest = InventoryBeanImpl.deserialize(MapUtils.checkAndCastMap(
+            enderChest = serializer.deserializeInventory(MapUtils.checkAndCastMap(
                     map.get(KEY_ENDER_CHEST),
                     String.class,
                     Object.class

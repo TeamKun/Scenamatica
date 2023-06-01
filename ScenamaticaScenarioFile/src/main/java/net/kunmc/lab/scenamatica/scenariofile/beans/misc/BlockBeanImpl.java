@@ -41,7 +41,8 @@ public class BlockBeanImpl implements BlockBean
         );
     }
 
-    public static Map<String, Object> serialize(BlockBean blockBean)
+    @NotNull
+    public static Map<String, Object> serialize(@NotNull BlockBean blockBean)
     {
         Map<String, Object> map = new HashMap<>();
 
@@ -60,7 +61,7 @@ public class BlockBeanImpl implements BlockBean
         return map;
     }
 
-    public static void validate(Map<String, Object> map)
+    public static void validate(@NotNull Map<String, Object> map)
     {
         MapUtils.checkEnumName(map, KEY_BLOCK_TYPE, Material.class);
         MapUtils.checkType(map, KEY_BLOCK_X, Integer.class);
@@ -85,7 +86,8 @@ public class BlockBeanImpl implements BlockBean
             );
     }
 
-    public static BlockBean deserialize(Map<String, Object> map)
+    @NotNull
+    public static BlockBean deserialize(@NotNull Map<String, Object> map)
     {
         validate(map);
 

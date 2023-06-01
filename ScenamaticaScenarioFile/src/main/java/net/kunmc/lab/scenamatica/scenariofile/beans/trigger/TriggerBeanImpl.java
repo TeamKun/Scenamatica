@@ -3,12 +3,11 @@ package net.kunmc.lab.scenamatica.scenariofile.beans.trigger;
 import lombok.Value;
 import net.kunmc.lab.scenamatica.commons.utils.MapUtils;
 import net.kunmc.lab.scenamatica.enums.TriggerType;
+import net.kunmc.lab.scenamatica.interfaces.scenariofile.BeanSerializer;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.action.ActionBean;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.scenario.ScenarioBean;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerBean;
-import net.kunmc.lab.scenamatica.scenariofile.beans.scenario.ActionBeanImpl;
-import net.kunmc.lab.scenamatica.scenariofile.beans.scenario.ScenarioBeanImpl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -38,7 +37,7 @@ public class TriggerBeanImpl implements TriggerBean
     ActionBean runIf;
 
     @NotNull
-    public static Map<String, Object> serialize(@NotNull TriggerBean bean)
+    public static Map<String, Object> serialize(@NotNull TriggerBean bean, @NotNull BeanSerializer serializer)
     {
         Map<String, Object> map = new HashMap<>();
 
@@ -55,24 +54,24 @@ public class TriggerBeanImpl implements TriggerBean
         {
             List<Map<String, Object>> list = new LinkedList<>();
             for (ScenarioBean scenario : bean.getBeforeThat())
-                list.add(ScenarioBeanImpl.serialize(scenario));
+                list.add(serializer.serializeScenario(scenario));
             map.put(KEY_BEFORE_THAT, list);
         }
         if (!bean.getAfterThat().isEmpty())
         {
             List<Map<String, Object>> list = new LinkedList<>();
             for (ScenarioBean scenario : bean.getAfterThat())
-                list.add(ScenarioBeanImpl.serialize(scenario));
+                list.add(serializer.serializeScenario(scenario));
             map.put(KEY_AFTER_THAT, list);
         }
 
         if (bean.getRunIf() != null)
-            map.put(KEY_RUN_IF, ActionBeanImpl.serialize(bean.getRunIf()));
+            map.put(KEY_RUN_IF, serializer.serializeAction(bean.getRunIf()));
 
         return map;
     }
 
-    public static void validate(@NotNull Map<String, Object> map)
+    public static void validate(@NotNull Map<String, Object> map, @NotNull BeanSerializer serializer)
     {
         MapUtils.checkType(map, KEY_TYPE, String.class);
         if (TriggerType.fromKey((String) map.get(KEY_TYPE)) == null)
@@ -82,7 +81,7 @@ public class TriggerBeanImpl implements TriggerBean
         {
             MapUtils.checkType(map, KEY_BEFORE_THAT, List.class);
             for (Object obj : (List<?>) map.get(KEY_BEFORE_THAT))
-                ScenarioBeanImpl.validate(MapUtils.checkAndCastMap(
+                serializer.validateScenario(MapUtils.checkAndCastMap(
                         obj,
                         String.class,
                         Object.class
@@ -92,7 +91,7 @@ public class TriggerBeanImpl implements TriggerBean
         {
             MapUtils.checkType(map, KEY_AFTER_THAT, List.class);
             for (Object obj : (List<?>) map.get(KEY_AFTER_THAT))
-                ScenarioBeanImpl.validate(MapUtils.checkAndCastMap(
+                serializer.validateScenario(MapUtils.checkAndCastMap(
                         obj,
                         String.class,
                         Object.class
@@ -108,9 +107,9 @@ public class TriggerBeanImpl implements TriggerBean
     }
 
     @NotNull
-    public static TriggerBean deserialize(@NotNull Map<String, Object> map)
+    public static TriggerBean deserialize(@NotNull Map<String, Object> map, @NotNull BeanSerializer serializer)
     {
-        validate(map);
+        validate(map, serializer);
 
         TriggerType type = TriggerType.fromKey((String) map.get(KEY_TYPE));
 
@@ -121,7 +120,7 @@ public class TriggerBeanImpl implements TriggerBean
         List<ScenarioBean> beforeThat = new LinkedList<>();
         if (map.containsKey(KEY_BEFORE_THAT))
             for (Object obj : (List<?>) map.get(KEY_BEFORE_THAT))
-                beforeThat.add(ScenarioBeanImpl.deserialize(MapUtils.checkAndCastMap(
+                beforeThat.add(serializer.deserializeScenario(MapUtils.checkAndCastMap(
                         obj,
                         String.class,
                         Object.class
@@ -130,7 +129,7 @@ public class TriggerBeanImpl implements TriggerBean
         List<ScenarioBean> afterThat = new LinkedList<>();
         if (map.containsKey(KEY_AFTER_THAT))
             for (Object obj : (List<?>) map.get(KEY_AFTER_THAT))
-                afterThat.add(ScenarioBeanImpl.deserialize(MapUtils.checkAndCastMap(
+                afterThat.add(serializer.deserializeScenario(MapUtils.checkAndCastMap(
                         obj,
                         String.class,
                         Object.class
@@ -138,7 +137,7 @@ public class TriggerBeanImpl implements TriggerBean
 
         ActionBean runIf = null;
         if (map.containsKey(KEY_RUN_IF))
-            runIf = ActionBeanImpl.deserialize(MapUtils.checkAndCastMap(
+            runIf = serializer.deserializeAction(MapUtils.checkAndCastMap(
                     map.get(KEY_RUN_IF),
                     String.class,
                     Object.class

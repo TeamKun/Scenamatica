@@ -3,6 +3,7 @@ package net.kunmc.lab.scenamatica.scenariofile.beans.scenario;
 import lombok.Value;
 import net.kunmc.lab.scenamatica.commons.utils.MapUtils;
 import net.kunmc.lab.scenamatica.enums.ScenarioType;
+import net.kunmc.lab.scenamatica.interfaces.scenariofile.BeanSerializer;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.action.ActionBean;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.scenario.ScenarioBean;
 import org.jetbrains.annotations.NotNull;
@@ -33,7 +34,8 @@ public class ScenarioBeanImpl implements ScenarioBean
      *
      * @return シナリオをMapにシリアライズしたもの
      */
-    public static Map<String, Object> serialize(ScenarioBean bean)
+    @NotNull
+    public static Map<String, Object> serialize(@NotNull ScenarioBean bean, @NotNull BeanSerializer serializer)
     {
         Map<String, Object> map = new HashMap<>();
         map.put(KEY_SCENARIO_TYPE, bean.getType().getKey());
@@ -41,10 +43,10 @@ public class ScenarioBeanImpl implements ScenarioBean
         if (bean.getTimeout() != -1)
             map.put(KEY_TIMEOUT, bean.getTimeout());
 
-        map.putAll(ActionBeanImpl.serialize(bean.getAction()));
+        map.putAll(serializer.serializeAction(bean.getAction()));
 
         if (bean.getRunIf() != null)
-            map.put(KEY_RUN_IF, ActionBeanImpl.serialize(bean.getRunIf()));
+            map.put(KEY_RUN_IF, serializer.serializeAction(bean.getRunIf()));
 
         return map;
     }
@@ -52,10 +54,11 @@ public class ScenarioBeanImpl implements ScenarioBean
     /**
      * Mapがシリアライズされたシナリオであるかを検証します。
      *
-     * @param map 検証するMap
+     * @param map        検証する Map
+     * @param serializer シリアライザ
      * @throws IllegalArgumentException Mapがシリアライズされたシナリオでない場合
      */
-    public static void validate(Map<String, Object> map)
+    public static void validate(@NotNull Map<String, Object> map, @NotNull BeanSerializer serializer)
     {
         MapUtils.checkType(map, KEY_SCENARIO_TYPE, String.class);
         if (ScenarioType.fromKey((String) map.get(KEY_SCENARIO_TYPE)) == null)
@@ -63,7 +66,7 @@ public class ScenarioBeanImpl implements ScenarioBean
 
         MapUtils.checkNumberIfContains(map, KEY_TIMEOUT);
 
-        ActionBeanImpl.validate(map);
+        serializer.validateAction(map);
     }
 
     /**
@@ -72,16 +75,17 @@ public class ScenarioBeanImpl implements ScenarioBean
      * @param map シリアライズされたシナリオ
      * @return デシリアライズされたシナリオ
      */
-    public static ScenarioBean deserialize(Map<String, Object> map)
+    @NotNull
+    public static ScenarioBean deserialize(@NotNull Map<String, Object> map, @NotNull BeanSerializer serializer)
     {
-        validate(map);
+        validate(map, serializer);
 
         ScenarioType type = ScenarioType.fromKey((String) map.get(KEY_SCENARIO_TYPE));
         long timeout = MapUtils.getAsLongOrDefault(map, KEY_TIMEOUT, DEFAULT_TIMEOUT_TICK);
 
         ActionBean runIf = null;
         if (map.containsKey(KEY_RUN_IF))
-            runIf = ActionBeanImpl.deserialize(MapUtils.checkAndCastMap(
+            runIf = serializer.deserializeAction(MapUtils.checkAndCastMap(
                     map.get(KEY_RUN_IF),
                     String.class,
                     Object.class
@@ -90,7 +94,7 @@ public class ScenarioBeanImpl implements ScenarioBean
         assert type != null;
         return new ScenarioBeanImpl(
                 type,
-                ActionBeanImpl.deserialize(map),
+                serializer.deserializeAction(map),
                 runIf,
                 timeout
         );

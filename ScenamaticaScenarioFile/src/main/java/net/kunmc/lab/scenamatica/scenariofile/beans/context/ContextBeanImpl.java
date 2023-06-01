@@ -2,6 +2,7 @@ package net.kunmc.lab.scenamatica.scenariofile.beans.context;
 
 import lombok.Value;
 import net.kunmc.lab.scenamatica.commons.utils.MapUtils;
+import net.kunmc.lab.scenamatica.interfaces.scenariofile.BeanSerializer;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.context.ContextBean;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.context.PlayerBean;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.context.StageBean;
@@ -25,7 +26,8 @@ public class ContextBeanImpl implements ContextBean
     @Nullable
     StageBean world;
 
-    public static Map<String, Object> serialize(ContextBean bean)
+    @NotNull
+    public static Map<String, Object> serialize(@NotNull ContextBean bean, @NotNull BeanSerializer serializer)
     {
         Map<String, Object> map = new HashMap<>();
 
@@ -33,18 +35,18 @@ public class ContextBeanImpl implements ContextBean
         {
             List<Map<String, Object>> actors = new ArrayList<>();
             for (PlayerBean player : bean.getActors())
-                actors.add(PlayerBeanImpl.serialize(player));
+                actors.add(serializer.serializePlayer(player));
 
             map.put(KEY_ACTORS, actors);
         }
 
         if (bean.getWorld() != null)
-            map.put(KEY_STAGE, StageBeanImpl.serialize(bean.getWorld()));
+            map.put(KEY_STAGE, serializer.serializeStage(bean.getWorld()));
 
         return map;
     }
 
-    public static void validate(Map<String, Object> map)
+    public static void validate(@NotNull Map<String, Object> map, @NotNull BeanSerializer serializer)
     {
         if (map.containsKey(KEY_ACTORS))
         {
@@ -53,7 +55,7 @@ public class ContextBeanImpl implements ContextBean
                 throw new IllegalArgumentException("actors must be List");
 
             for (Object player : (List<?>) actors)
-                PlayerBeanImpl.validate(MapUtils.checkAndCastMap(
+                serializer.validatePlayer(MapUtils.checkAndCastMap(
                         player,
                         String.class,
                         Object.class
@@ -61,20 +63,21 @@ public class ContextBeanImpl implements ContextBean
         }
 
         if (map.containsKey(KEY_STAGE))
-            StageBeanImpl.validate(MapUtils.checkAndCastMap(
+            serializer.validateStage(MapUtils.checkAndCastMap(
                     map.get(KEY_STAGE),
                     String.class,
                     Object.class
             ));
     }
 
-    public static ContextBean deserialize(Map<String, Object> map)
+    @NotNull
+    public static ContextBean deserialize(@NotNull Map<String, Object> map, @NotNull BeanSerializer serializer)
     {
         List<PlayerBean> actorList = new ArrayList<>();
         if (map.containsKey(KEY_ACTORS) && map.get(KEY_ACTORS) != null)
         {
             for (Object player : (List<?>) map.get(KEY_ACTORS))
-                actorList.add(PlayerBeanImpl.deserialize(MapUtils.checkAndCastMap(
+                actorList.add(serializer.deserializePlayer(MapUtils.checkAndCastMap(
                         player,
                         String.class,
                         Object.class
@@ -83,7 +86,7 @@ public class ContextBeanImpl implements ContextBean
 
         StageBean world = null;
         if (map.containsKey(KEY_STAGE))
-            world = StageBeanImpl.deserialize(MapUtils.checkAndCastMap(
+            world = serializer.deserializeStage(MapUtils.checkAndCastMap(
                     map.get(KEY_STAGE),
                     String.class,
                     Object.class

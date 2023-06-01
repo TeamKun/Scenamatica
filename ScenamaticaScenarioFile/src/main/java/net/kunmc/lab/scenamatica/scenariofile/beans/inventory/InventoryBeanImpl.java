@@ -3,6 +3,7 @@ package net.kunmc.lab.scenamatica.scenariofile.beans.inventory;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import net.kunmc.lab.scenamatica.commons.utils.MapUtils;
+import net.kunmc.lab.scenamatica.interfaces.scenariofile.BeanSerializer;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.inventory.InventoryBean;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.inventory.ItemStackBean;
 import org.jetbrains.annotations.NotNull;
@@ -31,11 +32,12 @@ public class InventoryBeanImpl implements InventoryBean
         );
     }
 
-    public static Map<String, Object> serialize(InventoryBean bean)
+    @NotNull
+    public static Map<String, Object> serialize(@NotNull InventoryBean bean, @NotNull BeanSerializer serializer)
     {
         Map<Integer, Object> contents = new HashMap<>();
         for (Map.Entry<Integer, ItemStackBean> entry : bean.getMainContents().entrySet())
-            contents.put(entry.getKey(), ItemStackBeanImpl.serialize(entry.getValue()));
+            contents.put(entry.getKey(), serializer.serializeItemStack(entry.getValue()));
 
         Map<String, Object> map = new HashMap<>();
         map.put(KEY_SIZE, bean.getSize());
@@ -44,7 +46,7 @@ public class InventoryBeanImpl implements InventoryBean
         return map;
     }
 
-    public static void validate(Map<String, Object> map)
+    public static void validate(@NotNull Map<String, Object> map, @NotNull BeanSerializer serializer)
     {
         MapUtils.checkType(map, KEY_SIZE, Integer.class);
         MapUtils.checkTypeIfContains(map, KEY_TITLE, String.class);
@@ -59,16 +61,17 @@ public class InventoryBeanImpl implements InventoryBean
         );
 
         for (Map.Entry<Integer, Object> entry : contents.entrySet())
-            ItemStackBeanImpl.validate(MapUtils.checkAndCastMap(
+            serializer.validateItemStack(MapUtils.checkAndCastMap(
                     entry.getValue(),
                     String.class,
                     Object.class
             ));
     }
 
-    public static InventoryBean deserialize(Map<String, Object> map)
+    @NotNull
+    public static InventoryBean deserialize(@NotNull Map<String, Object> map, @NotNull BeanSerializer serializer)
     {
-        validate(map);
+        validate(map, serializer);
 
         Map<Integer, ItemStackBean> mainContents = new HashMap<>();
         if (map.containsKey(KEY_MAIN_CONTENTS))
@@ -83,7 +86,7 @@ public class InventoryBeanImpl implements InventoryBean
             for (Map.Entry<Integer, Object> entry : contents.entrySet())
                 mainContents.put(
                         entry.getKey(),
-                        ItemStackBeanImpl.deserialize(MapUtils.checkAndCastMap(
+                        serializer.deserializeItemStack(MapUtils.checkAndCastMap(
                                 entry.getValue(),
                                 String.class,
                                 Object.class

@@ -2,6 +2,7 @@ package net.kunmc.lab.scenamatica.scenariofile.beans.trigger;
 
 import net.kunmc.lab.scenamatica.enums.TriggerType;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerBean;
+import net.kunmc.lab.scenamatica.scenariofile.BeanSerializerImpl;
 import net.kunmc.lab.scenamatica.scenariofile.beans.scenario.ScenarioBeanSerializeTest;
 import net.kunmc.lab.scenamatica.scenariofile.beans.utils.MapTestUtil;
 import org.junit.jupiter.api.Test;
@@ -46,7 +47,7 @@ public class TriggerBeanSerializeTest
     @Test
     void 正常にシリアライズできるか()
     {
-        Map<String, Object> map = TriggerBeanImpl.serialize(FULFILLED);
+        Map<String, Object> map = TriggerBeanImpl.serialize(FULFILLED, BeanSerializerImpl.getInstance());
 
         MapTestUtil.assertEqual(FULFILLED_MAP, map);
     }
@@ -54,7 +55,7 @@ public class TriggerBeanSerializeTest
     @Test
     void 正常にデシリアライズできるか()
     {
-        TriggerBean bean = TriggerBeanImpl.deserialize(FULFILLED_MAP);
+        TriggerBean bean = TriggerBeanImpl.deserialize(FULFILLED_MAP, BeanSerializerImpl.getInstance());
 
         assertEquals(FULFILLED, bean);
     }
@@ -62,7 +63,7 @@ public class TriggerBeanSerializeTest
     @Test
     void 必須項目のみでシリアライズできるか()
     {
-        Map<String, Object> map = TriggerBeanImpl.serialize(EMPTY);
+        Map<String, Object> map = TriggerBeanImpl.serialize(EMPTY, BeanSerializerImpl.getInstance());
 
         MapTestUtil.assertEqual(EMPTY_MAP, map);
     }
@@ -70,7 +71,7 @@ public class TriggerBeanSerializeTest
     @Test
     void 必須項目のみでデシリアライズできるか()
     {
-        TriggerBean bean = TriggerBeanImpl.deserialize(EMPTY_MAP);
+        TriggerBean bean = TriggerBeanImpl.deserialize(EMPTY_MAP, BeanSerializerImpl.getInstance());
 
         assertEquals(EMPTY, bean);
     }

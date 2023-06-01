@@ -17,7 +17,8 @@ public class ActionBeanImpl implements ActionBean
     @Nullable
     Map<String, Object> arguments;
 
-    public static Map<String, Object> serialize(ActionBean bean)
+    @NotNull
+    public static Map<String, Object> serialize(@NotNull ActionBean bean)
     {
         Map<String, Object> map = new HashMap<>();
         map.put(KEY_TYPE, bean.getType());
@@ -27,7 +28,7 @@ public class ActionBeanImpl implements ActionBean
         return map;
     }
 
-    public static void validate(Map<String, Object> map)
+    public static void validate(@NotNull Map<String, Object> map)
     {
         MapUtils.checkContainsKey(map, KEY_TYPE);
 

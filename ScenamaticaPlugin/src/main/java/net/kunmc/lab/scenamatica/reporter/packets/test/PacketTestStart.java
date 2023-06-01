@@ -1,10 +1,11 @@
 package net.kunmc.lab.scenamatica.reporter.packets.test;
 
+import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.Value;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioEngine;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
-import net.kunmc.lab.scenamatica.scenariofile.ScenarioFileBeanImpl;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -20,6 +21,9 @@ public class PacketTestStart extends AbstractTestPacket
 
     private static final String TYPE = "start";
 
+    @Getter(AccessLevel.NONE)
+    ScenarioEngine engine;
+
     @NotNull
     ScenarioFileBean scenario;
     boolean isAutoStart;
@@ -28,6 +32,7 @@ public class PacketTestStart extends AbstractTestPacket
     public PacketTestStart(@NotNull ScenarioEngine engine)
     {
         super(TYPE, engine.getTestID());
+        this.engine = engine;
         this.scenario = engine.getScenario();
         this.isAutoStart = engine.isAutoRun();
         this.startedAt = engine.getStartedAt();
@@ -47,7 +52,8 @@ public class PacketTestStart extends AbstractTestPacket
     {
         Map<String, Object> result = new HashMap<>();
 
-        result.put(KEY_SCENARIO, ScenarioFileBeanImpl.serialize(this.scenario));
+        result.put(KEY_SCENARIO, this.engine.getManager().getRegistry().getScenarioFileManager().getSerializer()
+                .serializeScenarioFile(this.scenario));
         result.put(KEY_AUTO_START, this.isAutoStart);
         result.put(KEY_STARTED_AT, this.startedAt);
 

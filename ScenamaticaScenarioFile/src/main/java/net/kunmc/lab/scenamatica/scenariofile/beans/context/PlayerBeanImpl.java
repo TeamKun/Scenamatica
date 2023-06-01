@@ -3,6 +3,7 @@ package net.kunmc.lab.scenamatica.scenariofile.beans.context;
 import lombok.AllArgsConstructor;
 import lombok.Value;
 import net.kunmc.lab.scenamatica.commons.utils.MapUtils;
+import net.kunmc.lab.scenamatica.interfaces.scenariofile.BeanSerializer;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.context.PlayerBean;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.entities.HumanEntityBean;
 import net.kunmc.lab.scenamatica.scenariofile.beans.entities.HumanEntityBeanImpl;
@@ -81,9 +82,10 @@ public class PlayerBeanImpl extends HumanEntityBeanImpl implements PlayerBean
         this.activePermissions = activePermissions;
     }
 
-    public static Map<String, Object> serialize(PlayerBean bean)
+    @NotNull
+    public static Map<String, Object> serialize(@NotNull PlayerBean bean, @NotNull BeanSerializer serializer)
     {
-        Map<String, Object> map = HumanEntityBeanImpl.serialize(bean);
+        Map<String, Object> map = serializer.serializeHumanEntity(bean);
         map.put(KEY_NAME, bean.getName());
 
         MapUtils.putIfNotNull(map, KEY_DISPLAY_NAME, bean.getDisplayName());
@@ -134,9 +136,9 @@ public class PlayerBeanImpl extends HumanEntityBeanImpl implements PlayerBean
         return map;
     }
 
-    public static void validate(@NotNull Map<String, Object> map)
+    public static void validate(@NotNull Map<String, Object> map, @NotNull BeanSerializer serializer)
     {
-        HumanEntityBeanImpl.validate(map);
+        serializer.validateHumanEntity(map);
         MapUtils.checkType(map, KEY_NAME, String.class);
         MapUtils.checkTypeIfContains(map, KEY_DISPLAY_NAME, String.class);
         MapUtils.checkLocationIfContains(map, KEY_COMPASS_TARGET);
@@ -158,11 +160,12 @@ public class PlayerBeanImpl extends HumanEntityBeanImpl implements PlayerBean
                 throw new IllegalArgumentException("opLevel must be between 0 and 4");
     }
 
-    public static PlayerBean deserialize(@NotNull Map<String, Object> map)
+    @NotNull
+    public static PlayerBean deserialize(@NotNull Map<String, Object> map, @NotNull BeanSerializer serializer)
     {
         validate(map);
 
-        HumanEntityBean human = HumanEntityBeanImpl.deserialize(map);
+        HumanEntityBean human = serializer.deserializeHumanEntity(map);
 
         String name = (String) map.get(KEY_NAME);
 
