@@ -109,7 +109,7 @@ public class HumanEntityBeanImpl extends EntityBeanImpl implements HumanEntityBe
     @NotNull
     public static Map<String, Object> serialize(@NotNull HumanEntityBean bean, @NotNull BeanSerializer serializer)
     {
-        Map<String, Object> map = serializer.serializeHumanEntity(bean);
+        Map<String, Object> map = serializer.serializeEntity(bean);
 
         if (bean.getInventory() != null)
             map.put(KEY_INVENTORY, serializer.serializePlayerInventory(bean.getInventory()));
