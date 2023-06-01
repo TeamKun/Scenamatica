@@ -537,15 +537,23 @@
       ],
       "definitions": {
         "block": {
-          "break": {
-            "type": "object",
-            "description": "ブロックが破壊されたことを検知します。",
+          "$base": {
             "properties": {
               "block": {
                 "type": "string",
-                "description": "破壊されたブロックです。",
+                "description": "対象のブロックです。",
                 "$ref": "#/definitions/block"
-              },
+              }
+            },
+            "required": [
+              "block"
+            ]
+          },
+          "break": {
+            "type": "object",
+            "description": "ブロックが破壊されたことを検知します。",
+            "$ref": "#/definitions/action/definitions/block/$base",
+            "properties": {
               "actor": {
                 "type": "string",
                 "description": "ブロックを破壊したアクタの名前です。",
@@ -555,20 +563,25 @@
                 "type": "boolean",
                 "description": "ブロックがドロップするアイテムをドロップするかどうかです。"
               }
-            },
-            "required": [
-              "block"
-            ]
+            }
           }
         },
         "player": {
-          "advancement": {
+          "$base": {
             "properties": {
               "target": {
                 "type": "string",
-                "description": "進捗を達成するプレイヤーです。",
+                "description": "対象のプレイヤーです。",
                 "maxLength": 16
-              },
+              }
+            },
+            "required": [
+              "target"
+            ]
+          },
+          "advancement": {
+            "$ref": "#/definitions/action/definitions/player/$base",
+            "properties": {
               "advancement": {
                 "type": "string",
                 "description": "達成する進捗です。",
@@ -583,17 +596,12 @@
               }
             },
             "required": [
-              "target",
               "advancement"
             ]
           },
           "animation": {
+            "$ref": "#/definitions/action/definitions/player/$base",
             "properties": {
-              "target": {
-                "type": "string",
-                "description": "アニメーションを再生するプレイヤーです。",
-                "maxLength": 16
-              },
               "type": {
                 "type": "string",
                 "description": "再生するアニメーションの種類です。",
@@ -604,17 +612,12 @@
               }
             },
             "required": [
-              "target",
               "type"
             ]
           },
           "death": {
+            "$ref": "#/definitions/action/definitions/player/$base",
             "properties": {
-              "target": {
-                "type": "string",
-                "description": "死ぬターゲットです。",
-                "maxLength": 16
-              },
               "killer": {
                 "type": "string",
                 "description": "ターゲットを殺すプレイヤーです。",
@@ -651,18 +654,11 @@
                 "type": "boolean",
                 "description": "死亡時したプレイヤの経験値ドロップをするかどうかです。"
               }
-            },
-            "required": [
-              "target"
-            ]
+            }
           },
           "gamemode": {
+            "$ref": "#/definitions/action/definitions/player/$base",
             "properties": {
-              "target": {
-                "type": "string",
-                "description": "ゲームモードを変更するプレイヤーです。",
-                "maxLength": 16
-              },
               "gamemode": {
                 "type": "string",
                 "description": "ゲームモードです。",
@@ -699,17 +695,12 @@
               }
             },
             "required": [
-              "target",
               "gamemode"
             ]
           },
           "hotbar": {
+            "$ref": "#/definitions/action/definitions/player/$base",
             "properties": {
-              "target": {
-                "type": "string",
-                "description": "ホットバーを変更するプレイヤーです。",
-                "maxLength": 16
-              },
               "slot": {
                 "type": "integer",
                 "description": "ホットバーのスロットです。",
@@ -728,17 +719,12 @@
               }
             },
             "required": [
-              "target",
               "slot"
             ]
           },
           "interact_block": {
+            "$ref": "#/definitions/action/definitions/player/$base",
             "properties": {
-              "target": {
-                "type": "string",
-                "description": "ブロックをクリックするプレイヤーです。",
-                "maxLength": 16
-              },
               "action": {
                 "type": "string",
                 "description": "プレイヤーが行ったアクションです。",
@@ -770,6 +756,7 @@
             }
           },
           "launch_projectile": {
+            "$ref": "#/definitions/action/definitions/player/$base",
             "properties": {
               "type": {
                 "type": "string",
