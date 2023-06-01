@@ -94,6 +94,7 @@
             "server_log",
             "server_plugin_enable",
             "server_plugin_disable",
+            "broadcast",
             "command_dispatch",
             "whitelist_toggle",
             "world_border",
@@ -368,6 +369,26 @@
             "properties": {
               "with": {
                 "$ref": "#/definitions/action/definitions/server/plugin_enable"
+              }
+            },
+            "required": [
+              "with"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "broadcast",
+                "description": "サーバにブロードキャストメッセージを送信します。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/server/broadcast"
               }
             },
             "required": [
@@ -905,6 +926,32 @@
             },
             "required": [
               "plugin"
+            ]
+          },
+          "broadcast": {
+            "properties": {
+              "message": {
+                "type": "string",
+                "description": "送信するメッセージかその判定用の正規表現です。"
+              },
+              "recipients": {
+                "type": "array",
+                "description": "メッセージを受け取るプレイヤーの名前です。",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "permission": {
+                "type": "string",
+                "description": "メッセージを受け取るために必要な権限です。"
+              },
+              "strictRecipients": {
+                "type": "boolean",
+                "description": "有効な場合、余計なプレイヤがメッセージを受け取ると失敗します。"
+              }
+            },
+            "required": [
+              "message"
             ]
           },
           "command_dispatch": {
