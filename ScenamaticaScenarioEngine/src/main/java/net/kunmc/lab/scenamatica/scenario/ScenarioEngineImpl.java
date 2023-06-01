@@ -66,6 +66,7 @@ public class ScenarioEngineImpl implements ScenarioEngine
     private CompiledScenarioAction<?> currentScenario;
     private ScenarioResultDeliverer deliverer;
     private List<CompiledScenarioAction<?>> watchedActions;  // 監視対象になったアクション
+    private Context context;
 
     public ScenarioEngineImpl(@NotNull ScenamaticaRegistry registry,
                               @NotNull ScenarioManager manager,
@@ -117,12 +118,15 @@ public class ScenarioEngineImpl implements ScenarioEngine
         // あとかたづけ は、できるだけ明瞭にしたいのでこのメソッド内で完結する。
 
         Context context = this.prepareContext();  // State 変更: CONTEXT_PREPARING
-        if (context == null)
+        if (context != null)
+            this.context = context;
+        else
         {
             // あとかたづけ
             ThreadingUtil.waitFor(this.registry, this::cleanUp);
-            this.genResult(ScenarioResultCause.CONTEXT_PREPARATION_FAILED);
+            return this.genResult(ScenarioResultCause.CONTEXT_PREPARATION_FAILED);
         }
+
 
         this.logWithPrefix(Level.INFO, LangProvider.get(
                         "scenario.run.engine.starting",

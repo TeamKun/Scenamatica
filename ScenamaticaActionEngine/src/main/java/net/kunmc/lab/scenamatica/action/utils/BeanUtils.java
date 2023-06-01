@@ -3,9 +3,12 @@ package net.kunmc.lab.scenamatica.action.utils;
 import com.destroystokyo.paper.Namespaced;
 import com.google.common.collect.Multimap;
 import lombok.experimental.UtilityClass;
+import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioEngine;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.inventory.ItemStackBean;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.misc.BlockBean;
 import net.kyori.adventure.text.Component;
+import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.block.Block;
@@ -14,6 +17,7 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.metadata.MetadataValue;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Map;
@@ -136,15 +140,20 @@ public class BeanUtils
         return true;
     }
 
-    public static boolean isSame(BlockBean blockBean, Block block)
+    public static boolean isSame(BlockBean blockBean, Block block, World world)
     {
         if (blockBean == null || block == null)
             return blockBean == null && block == null;
 
-        if (blockBean.getType() != block.getType())
+        if (blockBean.getType() != null && blockBean.getType() != block.getType())
             return false;
 
-        if (blockBean.getX() != block.getX() || blockBean.getY() != block.getY() || blockBean.getZ() != block.getZ())
+        Location expectedLoc = blockBean.getLocation().clone();
+        Location actualLoc = block.getLocation();
+        if (expectedLoc.getWorld() == null)
+            expectedLoc.setWorld(world);
+
+        if (!expectedLoc.equals(actualLoc))
             return false;
 
         if (blockBean.getBiome() != null && blockBean.getBiome() != block.getBiome())
@@ -156,14 +165,17 @@ public class BeanUtils
             for (Map.Entry<String, Object> entry : expected.entrySet())
             {
                 List<MetadataValue> actual = block.getMetadata(entry.getKey());
-                if (actual.isEmpty())
-                    return false;
-
-                if (actual.stream().noneMatch(v -> v.asString().equals(entry.getValue().toString())))
+                if (actual.isEmpty()
+                        || actual.stream().noneMatch(v -> v.asString().equals(entry.getValue().toString())))
                     return false;
             }
         }
 
         return true;
+    }
+
+    public static boolean isSame(@NotNull BlockBean blockBean, @NotNull Block block, @NotNull ScenarioEngine engine)
+    {
+        return isSame(blockBean, block, engine.getContext().getStage());
     }
 }

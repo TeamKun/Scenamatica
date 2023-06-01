@@ -2,6 +2,7 @@ package net.kunmc.lab.scenamatica.interfaces.scenario;
 
 import net.kunmc.lab.scenamatica.enums.ScenarioState;
 import net.kunmc.lab.scenamatica.exceptions.scenario.TriggerNotFoundException;
+import net.kunmc.lab.scenamatica.interfaces.context.Context;
 import net.kunmc.lab.scenamatica.interfaces.scenario.runtime.CompiledScenarioAction;
 import net.kunmc.lab.scenamatica.interfaces.scenario.runtime.CompiledTriggerAction;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
@@ -24,6 +25,14 @@ public interface ScenarioEngine
      */
     @NotNull
     ScenarioManager getManager();
+
+    /**
+     * コンテキストを取得します。
+     *
+     * @return ステージ
+     */
+    @NotNull
+    Context getContext();
 
     /**
      * シナリオを開始します。
