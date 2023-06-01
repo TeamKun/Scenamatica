@@ -10,11 +10,22 @@ import org.bukkit.event.Event;
 import org.bukkit.event.block.BlockEvent;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public abstract class AbstractBlockAction<A extends AbstractBlockActionArgument>
         extends AbstractAction<A>
 {
+    public static List<? extends AbstractBlockAction<?>> getActions()
+    {
+        List<AbstractBlockAction<?>> actions = new ArrayList<>();
+
+        actions.add(new BlockBreakAction());
+
+        return actions;
+    }
+
     @Override
     public boolean isFired(@NotNull A argument, @NotNull ScenarioEngine engine, @NotNull Event event)
     {

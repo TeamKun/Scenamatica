@@ -1,5 +1,6 @@
 package net.kunmc.lab.scenamatica.action.actions;
 
+import net.kunmc.lab.scenamatica.action.actions.block.AbstractBlockAction;
 import net.kunmc.lab.scenamatica.action.actions.player.AbstractPlayerAction;
 import net.kunmc.lab.scenamatica.action.actions.scenamatica.AbstractScenamaticaAction;
 import net.kunmc.lab.scenamatica.action.actions.server.AbstractServerAction;
@@ -23,6 +24,7 @@ public abstract class AbstractAction<A extends ActionArgument> implements Action
     {
         List<AbstractAction<?>> actions = new ArrayList<>();
 
+        actions.addAll(AbstractBlockAction.getActions());
         actions.addAll(AbstractPlayerAction.getActions());
         actions.addAll(AbstractServerAction.getActions());
         actions.addAll(AbstractWorldAction.getActions());
