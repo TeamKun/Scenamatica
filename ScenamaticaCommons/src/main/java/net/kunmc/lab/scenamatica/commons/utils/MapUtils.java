@@ -14,10 +14,66 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 
 @UtilityClass
 public class MapUtils
 {
+    public static boolean equals(Map<?, ?> expected, Map<?, ?> actual)
+    {
+        if (expected.size() != actual.size())
+            return false;
+
+        for (Map.Entry<?, ?> entry : expected.entrySet())
+        {
+            if (!actual.containsKey(entry.getKey()))
+                return false;
+
+            if (entry.getValue() instanceof Map)
+            {
+                equals((Map<?, ?>) entry.getValue(), (Map<?, ?>) actual.get(entry.getKey()));
+                continue;
+            }
+            else if (entry.getValue() instanceof List)
+            {
+                equals((List<?>) entry.getValue(), (List<?>) actual.get(entry.getKey()));
+                continue;
+            }
+
+            if (!Objects.equals(entry.getValue(), actual.get(entry.getKey())))
+                return false;
+        }
+
+        return true;
+    }
+
+    public static boolean equals(List<?> expected, List<?> actual)
+    {
+        if (expected.size() != actual.size())
+            return false;
+        for (int i = 0; i < expected.size(); i++)
+        {
+            if (expected.get(i) instanceof Map)
+            {
+                equals((Map<?, ?>) expected.get(i), (Map<?, ?>) actual.get(i));
+                continue;
+            }
+            else if (expected.get(i) instanceof List)
+            {
+                equals((List<?>) expected.get(i), (List<?>) actual.get(i));
+                continue;
+            }
+
+            Object expectedValue = expected.get(i);
+            Object actualValue = actual.get(i);
+
+            if (!Objects.equals(expectedValue, actualValue))
+                return false;
+        }
+
+        return true;
+    }
+
     public static <K, V> void putIfNotNull(Map<K, V> map, K key, V value)
     {
         if (value != null)
