@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Value;
 import net.kunmc.lab.scenamatica.commons.utils.MapUtils;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.misc.BlockBean;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
@@ -12,16 +13,16 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 @Value
 @AllArgsConstructor
 public class BlockBeanImpl implements BlockBean
 {
-    @NotNull
+    @Nullable
     Material type;
-    int x;
-    int y;
-    int z;
+    @Nullable
+    Location location;
     @NotNull
     Map<String, Object> metadata;
     int lightLevel;  // 0-15
@@ -32,9 +33,7 @@ public class BlockBeanImpl implements BlockBean
     {
         return new BlockBeanImpl(
                 block.getType(),
-                block.getX(),
-                block.getY(),
-                block.getZ(),
+                block.getLocation(),
                 new HashMap<>(),
                 block.getLightLevel(),
                 block.getBiome()
@@ -46,10 +45,10 @@ public class BlockBeanImpl implements BlockBean
     {
         Map<String, Object> map = new HashMap<>();
 
-        map.put(KEY_BLOCK_TYPE, blockBean.getType().name());
-        map.put(KEY_BLOCK_X, blockBean.getX());
-        map.put(KEY_BLOCK_Y, blockBean.getY());
-        map.put(KEY_BLOCK_Z, blockBean.getZ());
+        if (blockBean.getType() != null)
+            map.put(KEY_BLOCK_TYPE, blockBean.getType().name());
+        MapUtils.putLocationIfNotNull(map, KEY_BLOCK_LOCATION, blockBean.getLocation());
+
         if (blockBean.getBiome() != null)
             map.put(KEY_BIOME, blockBean.getBiome().name());
 
@@ -63,10 +62,8 @@ public class BlockBeanImpl implements BlockBean
 
     public static void validate(@NotNull Map<String, Object> map)
     {
-        MapUtils.checkEnumName(map, KEY_BLOCK_TYPE, Material.class);
-        MapUtils.checkType(map, KEY_BLOCK_X, Integer.class);
-        MapUtils.checkType(map, KEY_BLOCK_Y, Integer.class);
-        MapUtils.checkType(map, KEY_BLOCK_Z, Integer.class);
+        MapUtils.checkEnumNameIfContains(map, KEY_BLOCK_TYPE, Material.class);
+        MapUtils.checkLocationIfContains(map, KEY_BLOCK_LOCATION);
 
         if (map.containsKey(KEY_LIGHT_LEVEL))
         {
@@ -91,11 +88,15 @@ public class BlockBeanImpl implements BlockBean
     {
         validate(map);
 
+        Material material;
+        if (map.containsKey(KEY_BLOCK_TYPE))
+            material = Material.valueOf((String) map.get(KEY_BLOCK_TYPE));
+        else
+            material = null;
+
         return new BlockBeanImpl(
-                Material.valueOf((String) map.get(KEY_BLOCK_TYPE)),
-                (int) map.get(KEY_BLOCK_X),
-                (int) map.get(KEY_BLOCK_Y),
-                (int) map.get(KEY_BLOCK_Z),
+                material,
+                MapUtils.getAsLocationOrNull(map, KEY_BLOCK_LOCATION),
                 map.containsKey(KEY_METADATA) ? MapUtils.checkAndCastMap(
                         map.get(KEY_METADATA),
                         String.class,
@@ -106,4 +107,49 @@ public class BlockBeanImpl implements BlockBean
         );
     }
 
+    @Override
+    public boolean equals(Object o)
+    {
+        if (this == o)
+            return true;
+        if (!(o instanceof BlockBeanImpl))
+            return false;
+        BlockBeanImpl blockBean = (BlockBeanImpl) o;
+
+        boolean locationEquals = false;
+        if (this.getLocation() != null && blockBean.getLocation() != null)
+            locationEquals = this.getLocation().equals(blockBean.getLocation());
+        else if (this.getLocation() == null && blockBean.getLocation() == null)
+            locationEquals = true;
+
+        return (this.getType() == null && blockBean.getType() == null)
+                && locationEquals
+                && MapUtils.equals(this.getMetadata(), blockBean.getMetadata())
+                && this.getLightLevel() == blockBean.getLightLevel()
+                && this.getBiome() == blockBean.getBiome();
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash(
+                this.getType(),
+                this.getLocation(),
+                this.getMetadata(),
+                this.getLightLevel(),
+                this.getBiome()
+        );
+    }
+
+    @Override
+    public String toString()
+    {
+        return "Block{" +
+                "type=" + this.type +
+                ", location=" + this.location +
+                ", metadata=" + this.metadata +
+                ", lightLevel=" + this.lightLevel +
+                ", biome=" + this.biome +
+                '}';
+    }
 }

@@ -1,5 +1,6 @@
 package net.kunmc.lab.scenamatica.interfaces.scenariofile.misc;
 
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Biome;
 
@@ -11,9 +12,7 @@ import java.util.Map;
 public interface BlockBean
 {
     String KEY_BLOCK_TYPE = "type";
-    String KEY_BLOCK_X = "x";
-    String KEY_BLOCK_Y = "y";
-    String KEY_BLOCK_Z = "z";
+    String KEY_BLOCK_LOCATION = "location";
     String KEY_METADATA = "metadata";
     String KEY_LIGHT_LEVEL = "light";
     String KEY_BIOME = "biome";
@@ -26,25 +25,11 @@ public interface BlockBean
     Material getType();
 
     /**
-     * ブロックのX座標を取得します。
+     * ブロックの場所を取得します。
      *
-     * @return ブロックのX座標
+     * @return ブロックの場所
      */
-    int getX();
-
-    /**
-     * ブロックのY座標を取得します。
-     *
-     * @return ブロックのY座標
-     */
-    int getY();
-
-    /**
-     * ブロックのZ座標を取得します。
-     *
-     * @return ブロックのZ座標
-     */
-    int getZ();
+    Location getLocation();
 
     /**
      * ブロックのメタデータを取得します。

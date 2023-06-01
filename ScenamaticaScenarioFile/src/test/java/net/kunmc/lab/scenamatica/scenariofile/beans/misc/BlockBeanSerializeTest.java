@@ -2,6 +2,7 @@ package net.kunmc.lab.scenamatica.scenariofile.beans.misc;
 
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.misc.BlockBean;
 import net.kunmc.lab.scenamatica.scenariofile.beans.utils.MapTestUtil;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Biome;
 import org.junit.jupiter.api.Test;
@@ -16,9 +17,7 @@ public class BlockBeanSerializeTest
 {
     public static final BlockBean FULFILLED = new BlockBeanImpl(
             Material.ACACIA_SIGN,
-            114,
-            514,
-            19,
+            new Location(null, 114, 514, 19),
             new HashMap<String, Object>()
             {{
                 this.put("key", "value");
@@ -30,9 +29,13 @@ public class BlockBeanSerializeTest
     public static final Map<String, Object> FULFILLED_MAP = new HashMap<String, Object>()
     {{
         this.put("type", "ACACIA_SIGN");
-        this.put("x", 114);
-        this.put("y", 514);
-        this.put("z", 19);
+        this.put("location", new HashMap<String, Object>()
+        {{
+            this.put("world", null);
+            this.put("x", 114);
+            this.put("y", 514);
+            this.put("z", 19);
+        }});
         this.put("metadata", new HashMap<String, Object>()
         {{
             this.put("key", "value");
@@ -43,9 +46,7 @@ public class BlockBeanSerializeTest
 
     public static final BlockBean EMPTY = new BlockBeanImpl(
             Material.AIR,
-            0,
-            0,
-            0,
+            null,
             Collections.emptyMap(),
             0,
             null
@@ -54,9 +55,6 @@ public class BlockBeanSerializeTest
     public static final Map<String, Object> EMPTY_MAP = new HashMap<String, Object>()
     {{
         this.put("type", "AIR");
-        this.put("x", 0);
-        this.put("y", 0);
-        this.put("z", 0);
     }};
 
     @Test
