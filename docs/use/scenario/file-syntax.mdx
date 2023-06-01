@@ -1004,22 +1004,12 @@ Block 型は、以下の構造を持ちます。
     name: "type",
     type: "Enum{...Material}",
     description: "ブロックの種類です。",
-    required: true
   },
   {
-    name: "x",
-    type: ObjectType.INTEGER,
-    description: "ブロックの X 座標です。",
-  },
-  {
-    name: "y",
-    type: ObjectType.INTEGER,
-    description: "ブロックの Y 座標です。",
-  },
-  {
-    name: "z",
-    type: ObjectType.INTEGER,
-    description: "ブロックの Z 座標です。",
+    name: "location",
+    type: "Location",
+    type_anchor: "location-structure",
+    description: "ブロックの位置です。",
   },
   {
     name: "metadata",
