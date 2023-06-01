@@ -81,8 +81,7 @@
           "type": "string",
           "description": "アクションの種類です。 ",
           "enum": [
-            "message",
-            "milestone",
+            "block_break",
             "player_advancement",
             "player_animation",
             "player_death",
@@ -90,6 +89,8 @@
             "player_hotbar",
             "player_interact_block",
             "player_launch_projectile",
+            "message",
+            "milestone",
             "server_log",
             "server_plugin_enable",
             "server_plugin_disable",
@@ -118,35 +119,15 @@
           "if": {
             "properties": {
               "action": {
-                "const": "message",
-                "description": "プレイヤーにメッセージを送信したり, 送信されたことを検知します。"
+                "const": "block_break",
+                "description": "ブロックの破壊を検知します。"
               }
             }
           },
           "then": {
             "properties": {
               "with": {
-                "$ref": "#/definitions/action/definitions/scenamatica/message"
-              }
-            },
-            "required": [
-              "with"
-            ]
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "action": {
-                "const": "milestone",
-                "description": "マイルストーンを達成したり, 達成されたことを検知します。"
-              }
-            }
-          },
-          "then": {
-            "properties": {
-              "with": {
-                "$ref": "#/definitions/action/definitions/scenamatica/milestone"
+                "$ref": "#/definitions/action/definitions/block/break"
               }
             },
             "required": [
@@ -287,6 +268,46 @@
             "properties": {
               "with": {
                 "$ref": "#/definitions/action/definitions/player/launch_projectile"
+              }
+            },
+            "required": [
+              "with"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "message",
+                "description": "プレイヤーにメッセージを送信したり, 送信されたことを検知します。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/scenamatica/message"
+              }
+            },
+            "required": [
+              "with"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "milestone",
+                "description": "マイルストーンを達成したり, 達成されたことを検知します。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/scenamatica/milestone"
               }
             },
             "required": [
@@ -515,6 +536,31 @@
         }
       ],
       "definitions": {
+        "block": {
+          "break": {
+            "type": "object",
+            "description": "ブロックが破壊されたことを検知します。",
+            "properties": {
+              "block": {
+                "type": "string",
+                "description": "破壊されたブロックです。",
+                "$ref": "#/definitions/block"
+              },
+              "actor": {
+                "type": "string",
+                "description": "ブロックを破壊したアクタの名前です。",
+                "maxLength": 16
+              },
+              "dropItems": {
+                "type": "boolean",
+                "description": "ブロックがドロップするアイテムをドロップするかどうかです。"
+              }
+            },
+            "required": [
+              "block"
+            ]
+          }
+        },
         "player": {
           "advancement": {
             "properties": {
@@ -1106,17 +1152,10 @@
           "type": "string",
           "description": "ブロックの種類です。"
         },
-        "x": {
-          "type": "number",
-          "description": "X 座標です。"
-        },
-        "y": {
-          "type": "number",
-          "description": "Y 座標です。"
-        },
-        "z": {
-          "type": "number",
-          "description": "Z 座標です。"
+        "location": {
+          "type": "object",
+          "description": "ブロックの座標です。",
+          "$ref": "#/definitions/location"
         },
         "metadata": {
           "type": "object",

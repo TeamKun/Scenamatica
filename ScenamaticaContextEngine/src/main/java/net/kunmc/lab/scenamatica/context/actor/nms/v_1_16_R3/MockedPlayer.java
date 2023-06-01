@@ -89,6 +89,12 @@ class MockedPlayer extends EntityPlayer implements Actor
     }
 
     @Override
+    public void breakBlock(Block block)
+    {
+        this.playerInteractManager.breakBlock(new BlockPosition(block.getX(), block.getY(), block.getZ()));
+    }
+
+    @Override
     public @NotNull Player getPlayer()
     {
         return this.getBukkitEntity();

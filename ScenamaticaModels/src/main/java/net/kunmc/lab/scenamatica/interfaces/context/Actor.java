@@ -37,6 +37,13 @@ public interface Actor
     void interactAt(@NotNull Action action, Block block);
 
     /**
+     * ブロックを破壊します。
+     *
+     * @param block 破壊するブロック
+     */
+    void breakBlock(Block block);
+
+    /**
      * Bukkit の {@link Player} を取得します。
      *
      * @return プレイヤー
