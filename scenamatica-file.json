@@ -999,8 +999,8 @@
             }
           },
           "game_rule": {
+            "$ref": "#/definitions/action/definitions/world",
             "properties": {
-              "$ref": "#/definitions/action/definitions/world",
               "rule": {
                 "type": "string",
                 "description": "ゲームルールの名前です。",
@@ -1073,24 +1073,16 @@
             ]
           },
           "init": {
-            "properties": {
-              "$ref": "#/definitions/action/definitions/world"
-            }
+            "$ref": "#/definitions/action/definitions/world"
           },
           "load": {
-            "properties": {
-              "$ref": "#/definitions/action/definitions/world"
-            }
+            "$ref": "#/definitions/action/definitions/world"
           },
           "save": {
-            "properties": {
-              "$ref": "#/definitions/action/definitions/world"
-            }
+            "$ref": "#/definitions/action/definitions/world"
           },
           "unload": {
-            "properties": {
-              "$ref": "#/definitions/action/definitions/world"
-            }
+            "$ref": "#/definitions/action/definitions/world"
           }
         }
       }
@@ -1241,10 +1233,7 @@
             "CUSTOM"
           ]
         }
-      },
-      "required": [
-        "type"
-      ]
+      }
     },
     "vector": {
       "description": "ベクトルです。",
