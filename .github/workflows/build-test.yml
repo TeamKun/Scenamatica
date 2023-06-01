@@ -60,6 +60,7 @@ jobs:
         env:
           NO_SCENAMATICA: true  # Because the test is running scenamatica itself, we don't need the daemon.
       - name: Clean artifacts
+        if: always()
         uses: geekyeggo/delete-artifact@v2
         with:
           name: scenamatica
