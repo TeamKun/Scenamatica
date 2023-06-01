@@ -2,6 +2,7 @@ package net.kunmc.lab.scenamatica.action.actions.server.plugin;
 
 import net.kunmc.lab.scenamatica.interfaces.action.Requireable;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioEngine;
+import net.kunmc.lab.scenamatica.interfaces.scenariofile.BeanSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Event;
 import org.bukkit.event.server.PluginEnableEvent;
@@ -40,7 +41,7 @@ public class PluginEnableAction extends AbstractPluginAction<PluginEnableAction.
     }
 
     @Override
-    public Argument deserializeArgument(@NotNull Map<String, Object> map)
+    public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull BeanSerializer serializer)
     {
         return new Argument(super.deserializePlugin(map));
     }

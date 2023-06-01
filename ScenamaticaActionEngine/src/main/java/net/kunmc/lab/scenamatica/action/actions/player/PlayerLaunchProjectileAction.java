@@ -9,6 +9,7 @@ import net.kunmc.lab.scenamatica.action.utils.Utils;
 import net.kunmc.lab.scenamatica.commons.utils.MapUtils;
 import net.kunmc.lab.scenamatica.interfaces.action.ActionArgument;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioEngine;
+import net.kunmc.lab.scenamatica.interfaces.scenariofile.BeanSerializer;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.DragonFireball;
@@ -85,7 +86,7 @@ public class PlayerLaunchProjectileAction extends AbstractPlayerAction<PlayerLau
     }
 
     @Override
-    public Argument deserializeArgument(@NotNull Map<String, Object> map)
+    public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull BeanSerializer serializer)
     {
         MapUtils.checkEnumName(map, Argument.KEY_PROJECTILE_TYPE, ProjectileType.class);
         MapUtils.checkTypeIfContains(map, Argument.KEY_PROJECTILE_EPSILON, Double.class);

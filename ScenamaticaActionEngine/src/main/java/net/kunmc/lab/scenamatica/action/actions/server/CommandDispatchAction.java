@@ -5,6 +5,7 @@ import net.kunmc.lab.scenamatica.action.utils.PlayerUtils;
 import net.kunmc.lab.scenamatica.commons.utils.MapUtils;
 import net.kunmc.lab.scenamatica.interfaces.action.ActionArgument;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioEngine;
+import net.kunmc.lab.scenamatica.interfaces.scenariofile.BeanSerializer;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
@@ -82,7 +83,7 @@ public class CommandDispatchAction extends AbstractServerAction<CommandDispatchA
     }
 
     @Override
-    public Argument deserializeArgument(@NotNull Map<String, Object> map)
+    public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull BeanSerializer serializer)
     {
         MapUtils.checkType(map, Argument.KEY_COMMAND, String.class);
         MapUtils.checkTypeIfContains(map, Argument.KEY_SENDER, String.class);

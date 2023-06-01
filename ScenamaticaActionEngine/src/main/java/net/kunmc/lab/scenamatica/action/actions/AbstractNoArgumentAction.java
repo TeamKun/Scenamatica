@@ -2,6 +2,7 @@ package net.kunmc.lab.scenamatica.action.actions;
 
 import net.kunmc.lab.scenamatica.interfaces.action.ActionArgument;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioEngine;
+import net.kunmc.lab.scenamatica.interfaces.scenariofile.BeanSerializer;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
@@ -28,7 +29,7 @@ public abstract class AbstractNoArgumentAction extends AbstractAction<AbstractNo
     }
 
     @Override
-    public NoArgument deserializeArgument(@NotNull Map<String, Object> map)
+    public NoArgument deserializeArgument(@NotNull Map<String, Object> map, @NotNull BeanSerializer serializer)
     {
         return null;
     }

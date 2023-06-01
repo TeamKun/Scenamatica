@@ -7,6 +7,7 @@ import net.kunmc.lab.scenamatica.commons.utils.MapUtils;
 import net.kunmc.lab.scenamatica.events.actor.ActorMessageReceiveEvent;
 import net.kunmc.lab.scenamatica.interfaces.action.ActionArgument;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioEngine;
+import net.kunmc.lab.scenamatica.interfaces.scenariofile.BeanSerializer;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.entity.Player;
@@ -66,7 +67,7 @@ public class MessageAction extends AbstractScenamaticaAction<MessageAction.Argum
     }
 
     @Override
-    public Argument deserializeArgument(@NotNull Map<String, Object> map)
+    public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull BeanSerializer serializer)
     {
         MapUtils.checkType(map, Argument.KEY_MESSAGE, String.class);
         MapUtils.checkType(map, Argument.KEY_RECIPIENT, String.class);

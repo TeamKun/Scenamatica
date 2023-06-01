@@ -7,9 +7,9 @@ import net.kunmc.lab.scenamatica.action.utils.EntityUtils;
 import net.kunmc.lab.scenamatica.commons.utils.MapUtils;
 import net.kunmc.lab.scenamatica.enums.ScenarioType;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioEngine;
+import net.kunmc.lab.scenamatica.interfaces.scenariofile.BeanSerializer;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.misc.BlockBean;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
-import net.kunmc.lab.scenamatica.scenariofile.beans.misc.BlockBeanImpl;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -106,7 +106,7 @@ public class PlayerInteractBlockAction extends AbstractPlayerAction<PlayerIntera
     }
 
     @Override
-    public Argument deserializeArgument(@NotNull Map<String, Object> map)
+    public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull BeanSerializer serializer)
     {
         Action action = null;
         if (map.containsKey(Argument.KEY_ACTION))
@@ -118,7 +118,7 @@ public class PlayerInteractBlockAction extends AbstractPlayerAction<PlayerIntera
 
         BlockBean block = null;
         if (map.containsKey(Argument.KEY_BLOCK))
-            block = BlockBeanImpl.deserialize(MapUtils.checkAndCastMap(
+            block = serializer.deserializeBlock(MapUtils.checkAndCastMap(
                     map.get(Argument.KEY_BLOCK),
                     String.class,
                     Object.class

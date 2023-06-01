@@ -6,9 +6,9 @@ import net.kunmc.lab.scenamatica.action.utils.BeanUtils;
 import net.kunmc.lab.scenamatica.commons.utils.MapUtils;
 import net.kunmc.lab.scenamatica.interfaces.action.Requireable;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioEngine;
+import net.kunmc.lab.scenamatica.interfaces.scenariofile.BeanSerializer;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.inventory.ItemStackBean;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
-import net.kunmc.lab.scenamatica.scenariofile.beans.inventory.ItemStackBeanImpl;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerItemHeldEvent;
@@ -72,7 +72,7 @@ public class PlayerHotbarSlotAction extends AbstractPlayerAction<PlayerHotbarSlo
     }
 
     @Override
-    public Argument deserializeArgument(@NotNull Map<String, Object> map)
+    public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull BeanSerializer serializer)
     {
         MapUtils.checkType(map, Argument.KEY_CURRENT_SLOT, Integer.class);
 
@@ -98,9 +98,9 @@ public class PlayerHotbarSlotAction extends AbstractPlayerAction<PlayerHotbarSlo
                     Object.class
             );
 
-            ItemStackBeanImpl.validate(itemMap);
+            serializer.validateItemStack(itemMap);
 
-            item = ItemStackBeanImpl.deserialize(itemMap);
+            item = serializer.deserializeItemStack(itemMap);
         }
 
         return new Argument(

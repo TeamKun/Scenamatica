@@ -2,6 +2,7 @@ package net.kunmc.lab.scenamatica.interfaces.action;
 
 import net.kunmc.lab.scenamatica.enums.ScenarioType;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioEngine;
+import net.kunmc.lab.scenamatica.interfaces.scenariofile.BeanSerializer;
 import org.bukkit.event.Event;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
@@ -57,10 +58,11 @@ public interface Action<A extends ActionArgument>
     /**
      * 引数をデシリアライズします。
      *
-     * @param map デシリアライズするマップ
+     * @param map        デシリアライズするマップ
+     * @param serializer シリアライザ
      * @return デシリアライズされた引数
      */
-    A deserializeArgument(@NotNull Map<String, Object> map);
+    A deserializeArgument(@NotNull Map<String, Object> map, @NotNull BeanSerializer serializer);
 
     /**
      * 引数が正しいかチェックします。

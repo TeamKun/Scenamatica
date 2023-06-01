@@ -7,6 +7,7 @@ import net.kunmc.lab.scenamatica.commons.utils.MapUtils;
 import net.kunmc.lab.scenamatica.enums.ScenarioType;
 import net.kunmc.lab.scenamatica.interfaces.action.Requireable;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioEngine;
+import net.kunmc.lab.scenamatica.interfaces.scenariofile.BeanSerializer;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -145,7 +146,7 @@ public class PlayerDeathAction extends AbstractPlayerAction<PlayerDeathAction.Ar
     }
 
     @Override
-    public Argument deserializeArgument(@NotNull Map<String, Object> map)
+    public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull BeanSerializer serializer)
     {
         MapUtils.checkTypeIfContains(map, Argument.KEY_KILLER, String.class);
         MapUtils.checkTypeIfContains(map, Argument.KEY_DEATH_MESSAGE, String.class);

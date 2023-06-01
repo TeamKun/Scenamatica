@@ -3,6 +3,7 @@ package net.kunmc.lab.scenamatica.action.actions.world;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioEngine;
+import net.kunmc.lab.scenamatica.interfaces.scenariofile.BeanSerializer;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 import org.bukkit.NamespacedKey;
 import org.bukkit.event.Event;
@@ -45,7 +46,7 @@ public class WorldInitAction extends AbstractWorldAction<WorldInitAction.Argumen
     }
 
     @Override
-    public Argument deserializeArgument(@NotNull Map<String, Object> map)
+    public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull BeanSerializer serializer)
     {
         return new Argument(
                 super.deserializeWorld(map)
