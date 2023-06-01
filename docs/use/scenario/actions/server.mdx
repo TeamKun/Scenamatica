@@ -129,6 +129,82 @@ Java の標準的なレベルを指定できます。詳しくは以下のリス
         executable watchable requireable
 />
 
+## メッセージのブロードキャスト {#broadcast}
+
+<Action name="メッセージのブロードキャスト"
+        description="メッセージをサーバ全体にブロードキャストします。"
+        id="broadcast"
+        events={
+          {
+            name: "BroadcastMessageEvent",
+            package: "org.bukkit.event.server",
+          }
+        }
+        args={[
+          {
+            name: "message",
+            type: ObjectType.STRING,
+            anchor: "broadcast-message",
+            description: "送信するメッセージまたは判定用の正規表現を指定します。",
+            required: true
+          },
+          {
+            name: "permission",
+            type: ObjectType.STRING,
+            anchor: "broadcast-permission",
+            description: "メッセージの受信者に必要な権限を指定します。"
+          },
+          {
+            name: "recipients",
+            type: ObjectType.STRING + "[]",
+            anchor: "broadcast-recipients",
+            description: "メッセージの受信者を指定します。"
+          },
+          {
+            name: "strictRecipients",
+            type: ObjectType.BOOLEAN,
+            anchor: "broadcast-strict-recipients",
+            description: "メッセージの受信者を厳密に判定するかを指定します。",
+            default: "false"
+          }
+        ]}
+        executable watchable
+/>
+
+### `message` {#broadcast-message}
+
++ シナリオの種類が `execute` の場合、この引数の値がそのまま送信されます。
++ シナリオの種類が `except`  の場合、この引数の値が正規表現として扱われ、マッチしているか検証されます。
+
+### `permission` {#broadcast-permission}
+
+メッセージの受信者に必要な権限を指定します。指定しなかった場合、全てのプレイヤーが受信者となります。
+
+:::caution
+`except` モードではこの引数は使用できません。設定した場合、エラーが発生します。
+:::
+
+### `recipients` {#broadcast-recipients}
+
+指定しなかった場合、全てのプレイヤーが受信者となります。   
+
+:::tip
+
+`<CONSOLE>` を指定すると、コンソールが受信者となります。
+
+:::
+
+### `strictRecipients` {#broadcast-strict-recipients}
+
+これを設定すると、`recipients` で指定したプレイヤがメッセージの受信者か判定するのに加え、
+指定されていないプレイヤが受信者に含まれていないかも判定します。
+
+:::tip
+
+この項目は、`except` モードでのみ有効です。
+
+:::
+
 ## コマンドの実行 {#command-dispatch}
 
 <Action name="コマンドの実行"
