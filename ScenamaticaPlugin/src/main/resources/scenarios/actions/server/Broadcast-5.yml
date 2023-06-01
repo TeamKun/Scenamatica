@@ -23,8 +23,7 @@ scenario:
     action: broadcast
     with:
       message: "Hello world!"
-      permissions:
-        - "scenamatica.actions.server.broadcast"
+      permission: "scenamatica.actions.server.broadcast"
   - type: expect
     action: broadcast
     with:
