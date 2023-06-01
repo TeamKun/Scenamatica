@@ -158,7 +158,11 @@ class MainWindow(QMainWindow):
         if len(self.filters) == 0:
             self.filters.append(FILTERS["ALL"])
 
-        self.populateTable()
+        for i, event in enumerate(self.eventsData):
+            if all(f["filter"](event) for f in self.filters):
+                self.tableWidget.setRowHidden(i, False)
+            else:
+                self.tableWidget.setRowHidden(i, True)
 
     def showSummary(self):
         summary = f"イベント数：{len(self.eventsData)}\n"
@@ -305,15 +309,15 @@ class MainWindow(QMainWindow):
         self.updateWindowTitle()
 
     def populateTable(self):
-        filtered = self.selectAll(*self.filters)
+        events = self.eventsData
 
         while self.tableWidget.rowCount() > 0:
             self.tableWidget.removeRow(0)
 
-        rowCount = len(filtered)
+        rowCount = len(events)
         self.tableWidget.setRowCount(rowCount)
 
-        for count, item in enumerate(filtered):
+        for count, item in enumerate(events):
             checkbox = QTableWidgetItem()
             checkbox.setFlags(Qt.ItemIsUserCheckable | Qt.ItemIsEnabled)
             checkbox.setCheckState(Qt.Checked if item["implemented"] else Qt.Unchecked)
@@ -341,13 +345,6 @@ class MainWindow(QMainWindow):
         comboBox.setCurrentText(PRIORITIES[currentPriority]["displayName"])
         comboBox.currentIndexChanged.connect(self.onChange)
         return comboBox
-
-    def selectAll(self, *filters):
-        result = []
-        for item in self.eventsData:
-            if all(f["filter"](item) for f in filters):
-                result.append(item)
-        return result
 
     def saveJson(self):
         if self.modified:
