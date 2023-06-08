@@ -3,6 +3,8 @@ package net.kunmc.lab.scenamatica.scenariofile;
 import net.kunmc.lab.scenamatica.commons.utils.MapUtils;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -12,7 +14,18 @@ public class DefinitionsMapper
 {
     private static final String KEY_DEFINITIONS = "definitions";
     private static final String KEY_REFERENCE = "$ref";
-    private static final Pattern PATTERN_REFERENCE_EMBED = Pattern.compile("\\$\\{(\\w+)}");
+    private static final Pattern PATTERN_REFERENCE_EMBED = Pattern.compile("\\$\\{([\\w|{}]+)}");
+    private static final Map<String, Object> BASE_EMBED_DEFINITIONS;
+
+    static
+    {
+        Map<String, Object> baseEmbedDefinitions = new HashMap<>();
+
+        baseEmbedDefinitions.put("{", "{");  // ${{} で, { をエスケ－プできるように。
+        baseEmbedDefinitions.put("}", "}");
+
+        BASE_EMBED_DEFINITIONS = Collections.unmodifiableMap(baseEmbedDefinitions);
+    }
 
     public static void resolveReferences(Map<String, Object> map)
     {
@@ -50,7 +63,7 @@ public class DefinitionsMapper
             return obj;
 
         String value = (String) obj;
-        return processEmbeddedRef(value, defs);   // ${ref} とかの処理
+        return processEmbeddedRef(value, createEmbedDef(defs));   // ${ref} とかの処理
     }
 
     private static Object processDefsSetOfMap(Map<String, Object> map, Map<String, Object> defs)
@@ -135,4 +148,10 @@ public class DefinitionsMapper
         return processEmbeddedRef(value, defs);  // Chu!❤ 再帰関数でごめん
     }
 
+    private static Map<String, Object> createEmbedDef(Map<String, Object> defs)
+    {
+        Map<String, Object> embedDefs = new HashMap<>(BASE_EMBED_DEFINITIONS);
+        embedDefs.putAll(defs);
+        return embedDefs;
+    }
 }
