@@ -12,18 +12,25 @@ import { Object, ObjectType } from "/src/components/Object";
 
 :::tip
 
-**シナリオやシナリオファイルの概念が初めての方は、先に[こちら](..)を参照して理解しておいてください。**
+**シナリオやシナリオファイルの概念が初めての方は、先に[こちら](..)を参照して理解しておいてください。**  
+また, 慣れている方でも以下の[シナリオファイルを記述する際の注意](#notes)を読んでおくことをおすすめします。
 
 :::
 
-シナリオファイルは、 `.yml` もしくは `.yaml` の拡張子を持つ YAML ファイルです。プラグインの .jar 内であれば場所は任意です。
-
-１つのシナリオに付き１つのシナリオファイルが必要です。  
-そのため、シナリオ用ディレクトリを作成し、その中にシナリオファイルを配置するのが一般的です。
+シナリオファイルは、 `.yml` もしくは `.yaml` の拡張子を持つ YAML ファイルです。プラグインの .jar 内であれば、任意の場所に配置できます。  
+１つのシナリオ/テストにつき１つのシナリオファイルが必要です。  
+そのため、各テスト対象機能用のシナリオを格納するディレクトリを作成し、その中に個別のシナリオファイルを配置するのが一般的です。
 
 ## シナリオファイルの例 {#example}
 
-シナリオファイルの例は
+シナリオファイルの記述例は[こちら](https://github.com/TeamKun/Scenamatica/tree/main/ScenamaticaPlugin/src/main/resources/scenarios)
+を参照してください。
+
+:::tip ✨ Scenamatica では自己テストをしています！✨
+上記の例は、 Scenamatica 自体のデバッグとデグレードの監視に使用されます。   
+Scenamatica のソースコードを GitHub にプッシュすると、 CI によって自動的に Scenamatica のテストが実行されます。
+
+:::
 
 ## JSON スキーマ {#json-schema}
 
@@ -51,10 +58,15 @@ JSON スキーマは[こちら](https://raw.githubusercontent.com/TeamKun/Scenam
   },
   {
     name: "description",
-    anchor: "apex-description",
     type: ObjectType.STRING,
     description: "シナリオの人間が読みやすい説明です。",
     required: true
+  },
+  {
+    name: "definitions",
+    "anchor": "apex-definitions",
+    type: "Any",
+    description: "シナリオで使用する定義です。",
   },
   {
     name: "timeout",
@@ -137,13 +149,13 @@ Scenamatica のバージョンは、 `x.y.z` の形式で指定します。
 
 :::tip
 
-名前等の識別子のフォーマットは統一することが重要なので、 Scenamatica の推奨するフォーマットに従わなくても問題はありません。
+名前等の識別子のフォーマットは統一することが重要なので、 Scenamatica が推奨するフォーマットに従わなくても問題はありません。
 
 :::
 
-### `description` {#apex-description}
+### `definitions` {#apex-definitions}
 
-シナリオの人間が読みやすい説明です。
+定義機能に関しては、[定義と参照 機能の概要](variables-and-definitions#definition) を参照してください。
 
 ### `timeout` {#apex-timeout}
 
@@ -1047,17 +1059,13 @@ Scenamatica では、条件付きでアクション/トリガ/シナリオを実
 
 ## シナリオファイルを記述する際の注意 {#notes}
 
-### YAML のキーの命名規則 {#yaml-key-naming-rules}
+### Scenamatica が採用している YAML のキーの命名規則 {#yaml-key-naming-rules}
 
 Scenamatica のシナリオファイルにおける YAML のキーは、原則として以下の命名規則に従います。
 
 + `camelCase` で記述します。
 + Minecraft 固有の単語は区切らずに記述します。  
-  例： `gamemode`, `minecraft` など
-+ プレイヤ系アクションにおける、対象のターゲットは全て キー `target` で指定します。  
-  例： ゲームモードを変更するアクションの場合、 `target` に対象のプレイヤを指定します。
-
-Scenamatica のシナリオファイルにおける YAML のキーは、原則
+  例： `game mode` => `gamemode`, `mine craft` => `minecraft` など
 
 ### 列挙値におけるシンタックスシュガー {#syntax-sugar-on-enum-values}
 
@@ -1065,8 +1073,8 @@ Scenamatica のシナリオファイルにおける YAML のキーは、原則
 Scenamatica では、これらの記述のシンタックスシュガーとして、列挙値の名前の大小文字を無視します。
 
 例：
-+ `gamemode: SURVIVAL` は `gamemode: survival` と同じ意味です。
-+ `material: STONE` は `material: Stone` と同じ意味です。
++ `gamemode: survival` は `gamemode: SURVIVAL` と同じ意味です。
++ `material: sToNe` は `material: STONE` と同じ意味です。
 
 ### プレイヤの指定におけるシンタックスシュガー {#syntax-sugar-on-player}
 
@@ -1077,3 +1085,13 @@ Scenamatica では、これらの記述のシンタックスシュガーとし�
 例（サーバに Player1(00000000-1111-2222-3333-444444444444) というプレイヤが参加している場合）：
 + `player: player1` は `player: Player1` と同じ意味です。
 + `player: 00000000-1111-2222-3333-444444444444` は内部的に `player: Player1` と同じ意味です。
+
+### 定義と参照の利用 {#definition-and-reference}
+
+同じ YAML 内で任意の値を、「定義」として記述し、任意の場所から参照できます。
+複数回使用する値を定義しておき、参照することで、シナリオファイルの冗長性を減らして可読性と保守性を向上させます。
+
+<BelowDocument docId={"use/scenario/variables-and-definitions"}
+               anchor={"definition"} 
+               label="定義と参照 機能の概要"
+/> 
