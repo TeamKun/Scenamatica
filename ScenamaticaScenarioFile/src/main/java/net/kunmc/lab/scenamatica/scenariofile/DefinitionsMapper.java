@@ -115,7 +115,7 @@ public class DefinitionsMapper
             String refFull = matcher.group(0);
             Object schemaRef = defs.get(ref);
             if (schemaRef == null)
-                throw new IllegalArgumentException("Definitions reference not found: " + ref);
+                continue;
 
             if (!(schemaRef instanceof Integer || schemaRef instanceof Long))
                 isIntOrLong = false;

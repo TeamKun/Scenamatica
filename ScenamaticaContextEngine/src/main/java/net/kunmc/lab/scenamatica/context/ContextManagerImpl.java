@@ -123,7 +123,7 @@ public class ContextManagerImpl implements ContextManager
         }
 
         this.logIfVerbose(scenario, "context.created", testID);
-        return new ContextImpl(stage, actors);
+        return new ContextImpl(stage, actors, context);
     }
 
     private void logIfVerbose(ScenarioFileBean scenario, String message, MsgArgs args, UUID testID)

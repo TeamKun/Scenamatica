@@ -10,14 +10,27 @@ import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerBean;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 /**
  * シナリオエンジンのインターフェースです。
  */
-public interface ScenarioEngine
+public interface ScenarioEngine extends Serializable
 {
+    String KEY_IS_RUNNING = "isRunning";
+    String KEY_ELAPSED_TICKS = "elapsedTicks";
+    String KEY_RAN_BY = "ranBy";
+    String KEY_TEST_ID = "testID";
+    String KEY_STARTED_AT = "startedAt";
+    String KEY_LOG_PREFIX = "logPrefix";
+    String KEY_IS_AUTO_RUN = "autoRun";
+    String KEY_STATE = "state";
+    String KEY_CURRENT_SCENARIO = "current";
+    String KEY_CONTEXT = "context";
+
     /**
      * シナリオエンジンのマネージャを取得します。
      *
@@ -150,4 +163,11 @@ public interface ScenarioEngine
      * @return コンパイルされたトリガのアクション
      */
     List<CompiledTriggerAction> getTriggerActions();
+
+    /**
+     * シナリオエンジンをシリアライズします。
+     *
+     * @return シリアライズされたシナリオエンジン
+     */
+    Map<String, Object> serialize();
 }

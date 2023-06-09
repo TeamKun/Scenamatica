@@ -26,6 +26,7 @@ import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioResultDeliverer;
 import net.kunmc.lab.scenamatica.interfaces.scenario.TestReporter;
 import net.kunmc.lab.scenamatica.interfaces.scenario.runtime.CompiledScenarioAction;
 import net.kunmc.lab.scenamatica.interfaces.scenario.runtime.CompiledTriggerAction;
+import net.kunmc.lab.scenamatica.interfaces.scenariofile.BeanSerializer;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerBean;
 import org.bukkit.plugin.Plugin;
@@ -33,7 +34,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.logging.Level;
@@ -448,6 +451,26 @@ public class ScenarioEngineImpl implements ScenarioEngine
             this.deliverer.setResult(this.genResult(ScenarioResultCause.RUN_TIMED_OUT));
         else
             this.cancel();  // RUN_TIMED_OUT の指定は上流の runScenario で行われる。
+    }
+
+    @Override
+    public Map<String, Object> serialize()
+    {
+        Map<String, Object> map = new HashMap<>();
+        BeanSerializer serializer = this.registry.getScenarioFileManager().getSerializer();
+
+        map.put(ScenarioEngine.KEY_IS_RUNNING, this.isRunning);
+        map.put(ScenarioEngine.KEY_ELAPSED_TICKS, this.elapsedTicks);
+        map.put(ScenarioEngine.KEY_RAN_BY, serializer.serializeTrigger(this.ranBy));
+        map.put(ScenarioEngine.KEY_STARTED_AT, this.startedAt);
+        map.put(ScenarioEngine.KEY_TEST_ID, this.testID);
+        map.put(ScenarioEngine.KEY_IS_AUTO_RUN, this.isAutoRun);
+        map.put(ScenarioEngine.KEY_LOG_PREFIX, this.logPrefix);
+        map.put(ScenarioEngine.KEY_CURRENT_SCENARIO, serializer.serializeScenario(this.currentScenario.getBean()));
+        map.put(ScenarioEngine.KEY_STATE, this.state);
+        map.put(ScenarioEngine.KEY_CONTEXT, serializer.serializeContext(this.context.getBean()));
+
+        return map;
     }
 
     private boolean isTimedOut()
