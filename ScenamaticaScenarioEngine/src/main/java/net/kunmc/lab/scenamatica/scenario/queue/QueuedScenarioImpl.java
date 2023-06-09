@@ -1,4 +1,4 @@
-package net.kunmc.lab.scenamatica.scenario;
+package net.kunmc.lab.scenamatica.scenario.queue;
 
 import lombok.Getter;
 import net.kunmc.lab.scenamatica.exceptions.scenario.TriggerNotFoundException;
@@ -6,6 +6,7 @@ import net.kunmc.lab.scenamatica.interfaces.scenario.QueuedScenario;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioEngine;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioResult;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerBean;
+import net.kunmc.lab.scenamatica.scenario.ScenarioManagerImpl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

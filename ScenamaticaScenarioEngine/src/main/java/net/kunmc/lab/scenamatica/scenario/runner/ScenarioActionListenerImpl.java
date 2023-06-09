@@ -1,4 +1,4 @@
-package net.kunmc.lab.scenamatica.scenario;
+package net.kunmc.lab.scenamatica.scenario.runner;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -12,6 +12,7 @@ import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioActionListener;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioEngine;
 import net.kunmc.lab.scenamatica.interfaces.scenario.TestReporter;
 import net.kunmc.lab.scenamatica.interfaces.scenario.runtime.CompiledScenarioAction;
+import net.kunmc.lab.scenamatica.scenario.ScenarioResultImpl;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

@@ -1,4 +1,4 @@
-package net.kunmc.lab.scenamatica.scenario;
+package net.kunmc.lab.scenamatica.scenario.runner;
 
 import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioEngine;

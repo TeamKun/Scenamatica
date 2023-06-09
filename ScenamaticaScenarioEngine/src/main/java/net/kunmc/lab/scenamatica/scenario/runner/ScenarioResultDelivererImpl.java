@@ -1,4 +1,4 @@
-package net.kunmc.lab.scenamatica.scenario;
+package net.kunmc.lab.scenamatica.scenario.runner;
 
 import lombok.Getter;
 import net.kunmc.lab.scenamatica.enums.ScenarioResultCause;
@@ -7,6 +7,7 @@ import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioResult;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioResultDeliverer;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
+import net.kunmc.lab.scenamatica.scenario.ScenarioResultImpl;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayDeque;

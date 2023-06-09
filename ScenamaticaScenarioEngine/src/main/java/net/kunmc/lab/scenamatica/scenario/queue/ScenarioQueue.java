@@ -1,4 +1,4 @@
-package net.kunmc.lab.scenamatica.scenario;
+package net.kunmc.lab.scenamatica.scenario.queue;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -13,6 +13,7 @@ import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioEngine;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioResult;
 import net.kunmc.lab.scenamatica.interfaces.scenario.SessionCreator;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerBean;
+import net.kunmc.lab.scenamatica.scenario.ScenarioManagerImpl;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -23,7 +24,7 @@ import java.util.Deque;
 import java.util.function.Consumer;
 
 @AllArgsConstructor
-        /* non-public */
+public
 class ScenarioQueue
 {
     private final ScenamaticaRegistry registry;
@@ -40,7 +41,7 @@ class ScenarioQueue
         this.scenarioQueue = new ArrayDeque<>();
     }
 
-    /* non-public */ void add(ScenarioEngine engine, TriggerBean trigger, Consumer<? super ScenarioResult> callback)
+    public void add(ScenarioEngine engine, TriggerBean trigger, Consumer<? super ScenarioResult> callback)
     {
         this.scenarioQueue.add(new ScenarioSessionImpl(this.manager, Collections.singletonList(
                 new QueuedScenarioImpl(this.manager, engine, trigger, callback)
@@ -48,7 +49,7 @@ class ScenarioQueue
         this.runner.resume();
     }
 
-    /* non-public */ void addAll(SessionCreator creator) throws TriggerNotFoundException, ScenarioNotFoundException
+    public void addAll(SessionCreator creator) throws TriggerNotFoundException, ScenarioNotFoundException
     {
         ScenarioSessionImpl session = new ScenarioSessionImpl(this.manager);
         for (SessionCreator.SessionElement elm : creator.getSessions())
@@ -75,7 +76,7 @@ class ScenarioQueue
         this.runner.resume();
     }
 
-    /* non-public */ void addInterrupt(ScenarioEngine engine, TriggerBean trigger, Consumer<? super ScenarioResult> callback)
+    public void addInterrupt(ScenarioEngine engine, TriggerBean trigger, Consumer<? super ScenarioResult> callback)
     {
         if (this.current != null)  // バックアップを取っておく。
             this.scenarioQueue.add(this.current);
@@ -87,7 +88,7 @@ class ScenarioQueue
         this.runner.resume();
     }
 
-    /* non-public */ void remove(Plugin plugin, String name)
+    public void remove(Plugin plugin, String name)
     {
         if (this.current != null)
             this.current.remove(plugin, name);
@@ -98,7 +99,7 @@ class ScenarioQueue
         this.scenarioQueue.removeIf(session -> session.getScenarios().isEmpty());
     }
 
-    /* non-public */ void removeAll(Plugin plugin)
+    public void removeAll(Plugin plugin)
     {
         if (this.current != null)
             this.current.remove(plugin);
@@ -109,7 +110,7 @@ class ScenarioQueue
         this.scenarioQueue.removeIf(session -> session.getScenarios().isEmpty());
     }
 
-    /* non-public */ void start()
+    public void start()
     {
         if (this.runner != null && this.runner.isRunning())
             throw new IllegalStateException("ScenarioQueue is already running.");

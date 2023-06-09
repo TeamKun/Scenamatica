@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 
-/* non-public */ class ScenarioCompiler
+public class ScenarioCompiler
 {
     private final ScenamaticaRegistry registry;
     private final ScenarioEngine engine;
@@ -34,7 +34,7 @@ import java.util.logging.Level;
 
     private int compiled;
 
-    /* non-public */ ScenarioCompiler(ScenarioEngine engine, ScenamaticaRegistry registry, ActionManager actionManager)
+    public ScenarioCompiler(ScenarioEngine engine, ScenamaticaRegistry registry, ActionManager actionManager)
     {
         this.engine = engine;
         this.registry = registry;
@@ -47,7 +47,7 @@ import java.util.logging.Level;
         this.compiled = 0;
     }
 
-    /* non-public */ void notifyCompileStart()
+    public void notifyCompileStart()
     {
         this.logWithPrefix(
                 Level.INFO,
@@ -58,7 +58,7 @@ import java.util.logging.Level;
         );
     }
 
-    /* non-public */ CompiledScenarioAction<?> compileRunIf(ActionBean runIf)
+    public CompiledScenarioAction<?> compileRunIf(ActionBean runIf)
     {
         this.logCompiling(++this.compiled, this.compileNeeded, "RUN_IF");
 
@@ -71,7 +71,7 @@ import java.util.logging.Level;
         );
     }
 
-    /* non-public */ List<CompiledScenarioAction<?>> compileMain(List<? extends ScenarioBean> scenarios)
+    public List<CompiledScenarioAction<?>> compileMain(List<? extends ScenarioBean> scenarios)
     {
         this.logCompilingMain(++this.compiled, this.compileNeeded);
         return InternalCompiler.compileActions(
@@ -83,7 +83,7 @@ import java.util.logging.Level;
         );
     }
 
-    /* non-public */ List<CompiledTriggerAction> compileTriggerActions(List<? extends TriggerBean> triggers)
+    public List<CompiledTriggerAction> compileTriggerActions(List<? extends TriggerBean> triggers)
     {
         int compiled = 1; // 本シナリオの分。
 

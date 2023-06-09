@@ -1,4 +1,4 @@
-package net.kunmc.lab.scenamatica.scenario;
+package net.kunmc.lab.scenamatica.scenario.runner;
 
 import lombok.Getter;
 import net.kunmc.lab.peyangpaperutils.lang.LangProvider;
@@ -29,6 +29,8 @@ import net.kunmc.lab.scenamatica.interfaces.scenario.runtime.CompiledTriggerActi
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.BeanSerializer;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerBean;
+import net.kunmc.lab.scenamatica.scenario.ScenarioCompiler;
+import net.kunmc.lab.scenamatica.scenario.ScenarioResultImpl;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

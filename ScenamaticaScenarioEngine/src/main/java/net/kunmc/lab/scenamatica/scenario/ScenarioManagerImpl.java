@@ -23,6 +23,9 @@ import net.kunmc.lab.scenamatica.interfaces.scenario.TestReporter;
 import net.kunmc.lab.scenamatica.interfaces.scenario.runtime.CompiledTriggerAction;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerBean;
+import net.kunmc.lab.scenamatica.scenario.queue.ScenarioQueue;
+import net.kunmc.lab.scenamatica.scenario.queue.SessionCreatorImpl;
+import net.kunmc.lab.scenamatica.scenario.runner.ScenarioEngineImpl;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -169,7 +172,7 @@ public class ScenarioManagerImpl implements ScenarioManager
         this.queue.remove(plugin, scenarioName);
     }
 
-    /* non-public */ Pair<ScenarioEngine, TriggerBean> getRunInfoOrThrow(Plugin plugin, String scenarioName, TriggerType trigger)
+    public Pair<ScenarioEngine, TriggerBean> getRunInfoOrThrow(Plugin plugin, String scenarioName, TriggerType trigger)
             throws ScenarioNotFoundException, TriggerNotFoundException
     {
         ScenarioEngine engine = this.engines.get(plugin).stream().parallel()
@@ -181,7 +184,7 @@ public class ScenarioManagerImpl implements ScenarioManager
         return Pair.of(engine, this.getTriggerOrThrow(engine, trigger));
     }
 
-    /* non-pubic */ TriggerBean getTriggerOrThrow(@NotNull ScenarioEngine engine, TriggerType type) throws TriggerNotFoundException
+    private TriggerBean getTriggerOrThrow(@NotNull ScenarioEngine engine, TriggerType type) throws TriggerNotFoundException
     {
         TriggerBean trigger = this.getTriggerOrNull(engine, type);
         if (trigger == null)
@@ -191,7 +194,7 @@ public class ScenarioManagerImpl implements ScenarioManager
     }
 
     @Nullable
-        /* non-pubic */ TriggerBean getTriggerOrNull(@NotNull ScenarioEngine engine, TriggerType type)
+    public TriggerBean getTriggerOrNull(@NotNull ScenarioEngine engine, TriggerType type)
     {
         return engine.getTriggerActions().stream().parallel()
                 .map(CompiledTriggerAction::getTrigger)
@@ -200,7 +203,7 @@ public class ScenarioManagerImpl implements ScenarioManager
                 .orElse(null);
     }
 
-    /* non-public */ ScenarioResult runScenario(ScenarioEngine engine, TriggerBean trigger)
+    public ScenarioResult runScenario(ScenarioEngine engine, TriggerBean trigger)
             throws TriggerNotFoundException
     {
         if (!engine.getPlugin().isEnabled())
