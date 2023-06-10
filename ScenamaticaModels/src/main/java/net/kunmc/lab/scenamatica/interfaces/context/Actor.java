@@ -1,9 +1,13 @@
 package net.kunmc.lab.scenamatica.interfaces.context;
 
+import org.bukkit.Location;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerAnimationType;
+import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
@@ -42,6 +46,16 @@ public interface Actor
      * @param block 破壊するブロック
      */
     void breakBlock(Block block);
+
+    /**
+     * ブロックを設置します。
+     *
+     * @param location  設置するブロックの位置
+     * @param stack     設置するブロックのアイテム
+     * @param slot      プレイヤの手( {@link EquipmentSlot#HAND} または {@link EquipmentSlot#OFF_HAND} )
+     * @param direction プレイヤの向き
+     */
+    void placeBlock(@NotNull Location location, @NotNull ItemStack stack, @NotNull EquipmentSlot slot, @NotNull BlockFace direction);
 
     /**
      * Bukkit の {@link Player} を取得します。

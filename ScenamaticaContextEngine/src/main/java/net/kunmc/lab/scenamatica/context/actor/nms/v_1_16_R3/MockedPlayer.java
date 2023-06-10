@@ -13,16 +13,24 @@ import net.minecraft.server.v1_16_R3.EnumDirection;
 import net.minecraft.server.v1_16_R3.EnumHand;
 import net.minecraft.server.v1_16_R3.EnumMoveType;
 import net.minecraft.server.v1_16_R3.MinecraftServer;
+import net.minecraft.server.v1_16_R3.MovingObjectPositionBlock;
 import net.minecraft.server.v1_16_R3.PacketPlayInArmAnimation;
 import net.minecraft.server.v1_16_R3.PlayerInteractManager;
 import net.minecraft.server.v1_16_R3.Vec3D;
 import net.minecraft.server.v1_16_R3.WorldServer;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.craftbukkit.v1_16_R3.event.CraftEventFactory;
+import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerAnimationType;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
@@ -92,6 +100,38 @@ class MockedPlayer extends EntityPlayer implements Actor
     public void breakBlock(Block block)
     {
         this.playerInteractManager.breakBlock(new BlockPosition(block.getX(), block.getY(), block.getZ()));
+    }
+
+    @Override
+    public void placeBlock(@NotNull Location location, @NotNull ItemStack stack, @NotNull EquipmentSlot slot, @NotNull BlockFace direction)
+    {
+        net.minecraft.server.v1_16_R3.ItemStack nmsTack = CraftItemStack.asNMSCopy(stack);
+        EnumHand hand = slot == EquipmentSlot.HAND ? EnumHand.MAIN_HAND: EnumHand.OFF_HAND;
+        MovingObjectPositionBlock position = new MovingObjectPositionBlock(
+                /* vec3D: */ new Vec3D(location.getX(), location.getY(), location.getZ()),
+                /* enumDirection: */ EnumDirection.valueOf(direction.name()),  // 互換性あり
+                /* blockPosition: */ new BlockPosition(location.getBlockX(), location.getBlockY(), location.getBlockZ()),
+                /* inside: */ false
+        );
+
+        PlayerInteractEvent event = CraftEventFactory.callPlayerInteractEvent(this, Action.RIGHT_CLICK_BLOCK,
+                position.getBlockPosition(),
+                position.getDirection(),
+                nmsTack,
+                true,
+                hand
+        );
+        boolean cancelled = event.useItemInHand() == Event.Result.DENY;
+        if (cancelled)
+            return;
+
+        this.playerInteractManager.a(
+                /* entityPlayer: */ this,
+                /* world: */ this.world,
+                /* itemStack: */ CraftItemStack.asNMSCopy(stack),
+                /* enumHand: */ hand,
+                /* movingObjectPositionBlock: */ position
+        );
     }
 
     @Override

@@ -23,6 +23,7 @@ public abstract class AbstractBlockAction<A extends AbstractBlockActionArgument>
         List<AbstractBlockAction<?>> actions = new ArrayList<>();
 
         actions.add(new BlockBreakAction());
+        actions.add(new BlockPlaceAction());
 
         return actions;
     }

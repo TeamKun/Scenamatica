@@ -132,7 +132,9 @@ public class BlockBreakAction extends AbstractBlockAction<BlockBreakAction.Argum
         this.throwIfPresent(Argument.KEY_BLOCK + "." + BlockBean.KEY_BLOCK_TYPE, block.getType());
         this.throwIfPresent(Argument.KEY_BLOCK + "." + BlockBean.KEY_BIOME, block.getBiome());
         this.throwIfNotEquals(Argument.KEY_BLOCK + "." + BlockBean.KEY_LIGHT_LEVEL, block.getLightLevel(), 0);
-        this.throwIfPresent(Argument.KEY_BLOCK + "." + BlockBean.KEY_METADATA, block.getMetadata());
+
+        if (!block.getMetadata().isEmpty())
+            throw new IllegalArgumentException("The block metadata must be empty.");
     }
 
     @Override
