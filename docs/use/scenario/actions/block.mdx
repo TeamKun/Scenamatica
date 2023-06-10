@@ -65,7 +65,59 @@ import {ObjectType} from "/src/components/Object";
 
 :::warning
 
-アクタではない通常のプレイヤは指定できません。  
+アクタではない、通常のプレイヤは指定できません。  
 これは、 NMS との相互作用による制限です。
 
 :::
+
+## ブロックの設置 {#place}
+
+<Action name="ブロックの設置"
+        description="ブロックを設置します。"
+        id="block_place"
+        args={[
+          {
+            name: "actor",
+            type: ObjectType.STRING,
+            anchor: "place-actor",
+            description: "ブロックを設置するアクタの ID です。",
+          },
+          {
+            name: "block",
+            type: "Block",
+            type_link: "../file-syntax#block-structure",
+            description: "設置するブロックです。",
+          },
+          {
+            name: "direction",
+            type: "BlockFace{UP, DOWN, NORTH, EAST, SOUTH, WEST}",
+            description: "設置するブロックの向きです。",
+          },
+          {
+            name: "hand",
+            type: "EquipmentSlot{HAND, OFF_HAND}",
+            description: "設置するブロックを持っている手です。",
+          }
+        ]}
+        executable watchable requireable
+/>
+
+ブロックの設置をテストします。
+
+コンディション要求シナリオでこれを使用した場合、指定された場所のブロックの種類が指定されたブロックと一致するかどうかをテストします。  
+
+:::caution
+実行シナリオでは、 `block`の[`type`](../file-syntax#block-structure) を空にできません。
+:::
+
+### `actor` {#place-actor}
+
+アクタを省略した場合、サーバがブロックを設置します。
+
+:::warning
+
+アクタではない、通常のプレイヤは指定できません。  
+これは、 NMS との相互作用による制限です。
+
+:::
+
