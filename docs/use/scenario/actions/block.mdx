@@ -45,10 +45,21 @@ import {ObjectType} from "/src/components/Object";
             description: "ブロックを破壊した際にアイテムをドロップするかどうかです。"
           }
         ]}
-        executable watchable
+        executable watchable requireable
 />
 
-## `actor` {#break-actor}
+ブロックの破壊をテストします。
+
+コンディション要求シナリオでこれを使用した場合、指定された場所のブロックの種類が空気ブロックかどうかをテストします。  
+
+:::caution
+コンディション要求シナリオでは、以下の引数は使用できません。
++ `actor`
++ `dropItems`
++ [Block 型](../file-syntax#block-structure) の `location` 以外
+:::
+
+### `actor` {#break-actor}
 
 アクタは省略可能です。省略した場合は、自然破壊として扱われます。
 
