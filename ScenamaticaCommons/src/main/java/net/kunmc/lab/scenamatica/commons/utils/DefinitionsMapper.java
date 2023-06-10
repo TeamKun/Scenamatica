@@ -1,12 +1,12 @@
-package net.kunmc.lab.scenamatica.scenariofile;
-
-import net.kunmc.lab.scenamatica.commons.utils.MapUtils;
+package net.kunmc.lab.scenamatica.commons.utils;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -16,6 +16,7 @@ public class DefinitionsMapper
     private static final String KEY_REFERENCE = "$ref";
     private static final Pattern PATTERN_REFERENCE_EMBED = Pattern.compile("\\$\\{([\\w|{}]+)}");
     private static final Map<String, Object> BASE_EMBED_DEFINITIONS;
+    private static final Map<Class<?>, Function<String, ?>> CAST_METHODS;
 
     static
     {
@@ -25,6 +26,30 @@ public class DefinitionsMapper
         baseEmbedDefinitions.put("}", "}");
 
         BASE_EMBED_DEFINITIONS = Collections.unmodifiableMap(baseEmbedDefinitions);
+
+        CAST_METHODS = getCastMethods();
+    }
+
+    private static Map<Class<?>, Function<String, ?>> getCastMethods()
+    {
+        Map<Class<?>, Function<String, ?>> castMethods = new HashMap<>();
+
+        // プリミティブ
+        castMethods.put(Integer.class, Integer::parseInt);
+        castMethods.put(Long.class, Long::parseLong);
+        castMethods.put(Double.class, Double::parseDouble);
+        castMethods.put(Float.class, Float::parseFloat);
+        castMethods.put(Boolean.class, Boolean::parseBoolean);
+        castMethods.put(Byte.class, Byte::parseByte);
+
+        // 準プリミティブ
+        castMethods.put(String.class, Object::toString);
+
+        // ユーティリティ
+        castMethods.put(UUID.class, UUID::fromString);
+
+
+        return castMethods;
     }
 
     public static void resolveReferences(Map<String, Object> map)
@@ -44,6 +69,11 @@ public class DefinitionsMapper
     public static Object resolveReferences(Map<String, Object> map, Map<String, Object> schema)
     {
         return processDefSet(map, schema);
+    }
+
+    public static Object resolveReference(Object obj, Map<String, Object> schema)
+    {
+        return processDefSet(obj, schema);
     }
 
     private static Object processDefSet(Object obj, Map<String, Object> defs)
@@ -104,10 +134,8 @@ public class DefinitionsMapper
         Matcher matcher = PATTERN_REFERENCE_EMBED.matcher(value);
 
         // SnakeYAML が勝手に型推論してしまうので, 文字列として参照を置換した後に, キャストし直す必要があるため。
-        boolean isIntOrLong = true;
-        boolean isDouble = true;
-        boolean isFloat = true;
-        boolean isBoolean = true;
+        Map<Class<?>, Function<String, ?>> casters = new HashMap<>(getCastMethods());
+
         boolean replaced = false;
         for (int i = 0; matcher.find(i); i = matcher.end(), replaced = true)
         {
@@ -117,14 +145,7 @@ public class DefinitionsMapper
             if (schemaRef == null)
                 continue;
 
-            if (!(schemaRef instanceof Integer || schemaRef instanceof Long))
-                isIntOrLong = false;
-            if (!(schemaRef instanceof Double))
-                isDouble = false;
-            if (!(schemaRef instanceof Float))
-                isFloat = false;
-            if (!(schemaRef instanceof Boolean))
-                isBoolean = false;
+            removeInvalidTypesFromCastMethods(casters, schemaRef.getClass());
 
             value = value.replace(refFull, schemaRef.toString());
         }
@@ -133,14 +154,9 @@ public class DefinitionsMapper
         if (!replaced)
             return value;
 
-        if (isIntOrLong)
-            return Long.parseLong(value);
-        if (isDouble)
-            return Double.parseDouble(value);
-        if (isFloat)
-            return Float.parseFloat(value);
-        if (isBoolean)
-            return Boolean.parseBoolean(value);
+        // キャストできる場合は最初の候補でキャストする。
+        if (!casters.isEmpty())
+            return castTo(value, casters.keySet().iterator().next());
 
         // 全部の方を網羅しているので, 順に脱落していく。 ここに来るのは String だけ。
         // assert value instanceof String;
@@ -153,5 +169,19 @@ public class DefinitionsMapper
         Map<String, Object> embedDefs = new HashMap<>(BASE_EMBED_DEFINITIONS);
         embedDefs.putAll(defs);
         return embedDefs;
+    }
+
+    private static void removeInvalidTypesFromCastMethods(Map<Class<?>, Function<String, ?>> castMethods, Object obj)
+    {
+        castMethods.entrySet().removeIf(entry -> !entry.getKey().isInstance(obj));
+    }
+
+    private static Object castTo(Object obj, Class<?> clazz)
+    {
+        Function<String, ?> caster = CAST_METHODS.get(clazz);
+        if (caster == null)
+            throw new IllegalArgumentException("Unsupported type: " + clazz.getName());
+
+        return caster.apply(obj.toString());
     }
 }

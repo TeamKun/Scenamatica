@@ -1,5 +1,6 @@
 package net.kunmc.lab.scenamatica.scenariofile;
 
+import net.kunmc.lab.scenamatica.commons.utils.DefinitionsMapper;
 import net.kunmc.lab.scenamatica.scenariofile.beans.utils.MapTestUtil;
 import org.junit.jupiter.api.Test;
 

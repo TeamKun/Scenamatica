@@ -2,6 +2,7 @@ package net.kunmc.lab.scenamatica.scenariofile;
 
 import javax.annotation.Nullable;
 import lombok.AllArgsConstructor;
+import net.kunmc.lab.scenamatica.commons.utils.DefinitionsMapper;
 import net.kunmc.lab.scenamatica.exceptions.scenariofile.InvalidScenarioFileException;
 import net.kunmc.lab.scenamatica.exceptions.scenariofile.NotAScenarioFileException;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.ScenarioFileBean;

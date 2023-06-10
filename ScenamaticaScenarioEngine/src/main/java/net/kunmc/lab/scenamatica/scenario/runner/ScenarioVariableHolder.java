@@ -1,5 +1,6 @@
 package net.kunmc.lab.scenamatica.scenario.runner;
 
+import net.kunmc.lab.scenamatica.commons.utils.DefinitionsMapper;
 import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioEngine;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.BeanSerializer;
@@ -22,6 +23,8 @@ public class ScenarioVariableHolder
         this.serializer = this.registry.getScenarioFileManager().getSerializer();
 
         this.values = new HashMap<>();
+
+        this.put("", engine);
     }
 
     private Map<String, Object> selectMap(String path)
@@ -91,5 +94,15 @@ public class ScenarioVariableHolder
         // 末尾以外のキーより、親のMapを取得して、末尾のキーと値を追加
         Map<String, Object> parent = this.selectMap(parentPath);
         parent.put(paths[paths.length - 1], value);
+    }
+
+    public <T> T tryReplace(String target)
+    {
+        return (T) DefinitionsMapper.resolveReference(target, this.values);
+    }
+
+    public void clean()
+    {
+        this.values.clear();
     }
 }

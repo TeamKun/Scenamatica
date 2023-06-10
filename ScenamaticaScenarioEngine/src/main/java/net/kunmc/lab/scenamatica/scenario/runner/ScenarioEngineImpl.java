@@ -59,6 +59,7 @@ public class ScenarioEngineImpl implements ScenarioEngine
     private final List<CompiledScenarioAction<?>> actions;
     private final List<CompiledTriggerAction> triggerActions;
     private final CompiledScenarioAction<?> runIf;
+    private final ScenarioVariableHolder variables;
 
     private boolean isRunning;
     private long elapsedTicks;
@@ -89,6 +90,8 @@ public class ScenarioEngineImpl implements ScenarioEngine
         this.scenario = scenario;
         this.listener = new ScenarioActionListenerImpl(this, registry);
         this.compiler = new ScenarioCompiler(this, registry, actionManager);
+        this.variables = new ScenarioVariableHolder(this);
+
         this.state = ScenarioState.STAND_BY;
 
         this.logPrefix = LogUtils.gerScenarioPrefix(null, this.scenario);
@@ -443,6 +446,7 @@ public class ScenarioEngineImpl implements ScenarioEngine
     {
         this.elapsedTicks++;
 
+        this.variables.put("", this);
         this.getDeliverer().onTick();
 
         if (!this.isTimedOut())
