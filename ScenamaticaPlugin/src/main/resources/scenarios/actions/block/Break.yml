@@ -32,3 +32,11 @@ scenario:
           y: 0
           z: 0
     timeout: 20
+  - type: require
+    action: block_break
+    with:
+      block:
+        location:
+          x: 0
+          y: 0
+          z: 0

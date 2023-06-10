@@ -6,12 +6,15 @@ import net.kunmc.lab.scenamatica.action.utils.BeanUtils;
 import net.kunmc.lab.scenamatica.action.utils.EntityUtils;
 import net.kunmc.lab.scenamatica.action.utils.PlayerUtils;
 import net.kunmc.lab.scenamatica.commons.utils.MapUtils;
+import net.kunmc.lab.scenamatica.enums.ScenarioType;
+import net.kunmc.lab.scenamatica.interfaces.action.Requireable;
 import net.kunmc.lab.scenamatica.interfaces.context.Actor;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioEngine;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.BeanSerializer;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.misc.BlockBean;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -25,7 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-public class BlockBreakAction extends AbstractBlockAction<BlockBreakAction.Argument>
+public class BlockBreakAction extends AbstractBlockAction<BlockBreakAction.Argument> implements Requireable<BlockBreakAction.Argument>
 {
     public static final String KEY_ACTION_NAME = "block_break";
 
@@ -41,9 +44,7 @@ public class BlockBreakAction extends AbstractBlockAction<BlockBreakAction.Argum
         argument = this.requireArgsNonNull(argument);
 
         BlockBean blockDef = argument.getBlock();
-        Location location = blockDef.getLocation().clone();
-        this.setWorldIfNull(location, engine.getContext().getStage());
-
+        Location location = this.getBlockLocationWithWorld(blockDef, engine);
         Block block = location.getBlock();
 
         Player player = argument.getActor();
@@ -98,14 +99,6 @@ public class BlockBreakAction extends AbstractBlockAction<BlockBreakAction.Argum
         return true;
     }
 
-    private void setWorldIfNull(@NotNull Location location, @NotNull World world)
-    {
-        if (location.getWorld() != null)
-            return;
-
-        location.setWorld(world);
-    }
-
     @Override
     public List<Class<? extends Event>> getAttachingEvents()
     {
@@ -122,6 +115,34 @@ public class BlockBreakAction extends AbstractBlockAction<BlockBreakAction.Argum
                 map.containsKey(Argument.KEY_ACTOR) ? (String) map.get(Argument.KEY_ACTOR): null,
                 MapUtils.getOrNull(map, Argument.KEY_DROP_ITEMS)
         );
+    }
+
+    @Override
+    public void validateArgument(@NotNull ScenarioEngine engine, @NotNull ScenarioType type, @Nullable Argument argument)
+    {
+        argument = this.requireArgsNonNull(argument);
+
+        if (type != ScenarioType.CONDITION_REQUIRE)
+            return;
+
+        this.throwIfPresent(Argument.KEY_ACTOR, argument.getActor());
+        this.throwIfPresent(Argument.KEY_DROP_ITEMS, argument.getDropItems());
+
+        BlockBean block = argument.getBlock();
+        this.throwIfPresent(Argument.KEY_BLOCK + "." + BlockBean.KEY_BLOCK_TYPE, block.getType());
+        this.throwIfPresent(Argument.KEY_BLOCK + "." + BlockBean.KEY_BIOME, block.getBiome());
+        this.throwIfNotEquals(Argument.KEY_BLOCK + "." + BlockBean.KEY_LIGHT_LEVEL, block.getLightLevel(), 0);
+        this.throwIfPresent(Argument.KEY_BLOCK + "." + BlockBean.KEY_METADATA, block.getMetadata());
+    }
+
+    @Override
+    public boolean isConditionFulfilled(@Nullable Argument argument, @NotNull ScenarioEngine engine)
+    {
+        argument = this.requireArgsNonNull(argument);
+
+        Location loc = this.getBlockLocationWithWorld(argument.getBlock(), engine);
+
+        return loc.getBlock().getType() == Material.AIR;
     }
 
     @Value
