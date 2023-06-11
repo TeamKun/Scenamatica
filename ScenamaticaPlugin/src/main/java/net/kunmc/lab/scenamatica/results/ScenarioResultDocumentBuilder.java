@@ -1,13 +1,13 @@
 package net.kunmc.lab.scenamatica.results;
 
-import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import net.kunmc.lab.peyangpaperutils.lib.utils.Pair;
 import net.kunmc.lab.scenamatica.Constants;
 import net.kunmc.lab.scenamatica.enums.ScenarioResultCause;
 import net.kunmc.lab.scenamatica.interfaces.action.Action;
+import net.kunmc.lab.scenamatica.interfaces.scenario.QueuedScenario;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioResult;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioSession;
 import org.bukkit.plugin.Plugin;
@@ -39,7 +39,7 @@ public class ScenarioResultDocumentBuilder
         Element scenamaticaElement = document.createElementNS(ResultKeys.SCENAMATICA_NAMESPACE, ResultKeys.KEY_SCENAMATICA);
         scenamaticaElement.setAttribute("xmlns:" + ResultKeys.SCENAMATICA_NAMESPACE_ID, ResultKeys.SCENAMATICA_NAMESPACE);
 
-        buildSoftwareInfo(document, scenamatica, session);
+        buildSoftwareInfo(scenamaticaElement, document, scenamatica);
         buildPluginsInfo(document, session);
     }
 
@@ -173,12 +173,12 @@ public class ScenarioResultDocumentBuilder
         document.appendChild(pluginsElement);
     }
 
-    private static void buildSoftwareInfo(@NotNull Document document, Plugin scenamatica, @NotNull ScenarioSession session)
+    private static void buildSoftwareInfo(@NotNull Element parent, @NotNull Document document, Plugin scenamatica)
     {
-        document.appendChild(document.createElement(ResultKeys.KEY_SCENAMATICA_VERSION))
+        parent.appendChild(document.createElement(ResultKeys.KEY_SCENAMATICA_VERSION))
                 .setTextContent(scenamatica.getDescription().getVersion());
 
-        document.appendChild(document.createElement(ResultKeys.KEY_SCENAMATICA_BUILD))
+        parent.appendChild(document.createElement(ResultKeys.KEY_SCENAMATICA_BUILD))
                 .setTextContent(Constants.DEBUG_BUILD ? "Debug": "Release");
     }
 
@@ -211,15 +211,16 @@ public class ScenarioResultDocumentBuilder
 
     private static Multimap<Plugin, ScenarioResult> groupingResultsByPlugin(@NotNull ScenarioSession session)
     {
-        return session.getScenarios().stream().parallel()
-                .map(scenario -> Pair.of(scenario.getEngine().getPlugin(), scenario.getResult()))
-                .reduce(ArrayListMultimap.create(), (map, pair) -> {
-                    map.put(pair.getLeft(), pair.getRight());
-                    return map;
-                }, (map1, map2) -> {
-                    map1.putAll(map2);
-                    return map1;
-                });
+        Multimap<Plugin, ScenarioResult> results = HashMultimap.create();
+
+        for (QueuedScenario scenario : session.getScenarios())
+        {
+            ScenarioResult result = scenario.getResult();
+            if (result != null)
+                results.put(scenario.getEngine().getPlugin(), result);
+        }
+
+        return results;
     }
 
     private static long summingResultsTime(@NotNull List<? extends ScenarioResult> results)
