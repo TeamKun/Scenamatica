@@ -22,7 +22,7 @@ public class JUnitReporter implements TestReporter
     @Override
     public void onTestStart(@NotNull ScenarioEngine engine, @NotNull TriggerBean trigger)
     {
-
+        this.writer.getLogCapture().startCapture(engine.getTestID());
     }
 
     @Override
@@ -76,7 +76,7 @@ public class JUnitReporter implements TestReporter
     @Override
     public void onTestEnd(@NotNull ScenarioEngine engine, @NotNull ScenarioResult result)
     {
-
+        this.writer.getLogCapture().endCapture();
     }
 
     @Override
@@ -89,5 +89,6 @@ public class JUnitReporter implements TestReporter
     public void onTestSessionEnd(@NotNull ScenarioSession session)
     {
         this.writer.write(session);
+        this.writer.getLogCapture().clear();
     }
 }

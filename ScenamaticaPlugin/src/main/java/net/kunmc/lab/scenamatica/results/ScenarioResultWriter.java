@@ -6,9 +6,11 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import lombok.Getter;
 import lombok.SneakyThrows;
 import net.kunmc.lab.scenamatica.interfaces.ExceptionHandler;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioSession;
+import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.w3c.dom.Document;
@@ -29,12 +31,22 @@ public class ScenarioResultWriter
     private final Path directory;
     @NotNull
     private final String fileNamePattern;
+    @NotNull
+    @Getter
+    private final LogCapture logCapture;
 
     public ScenarioResultWriter(@NotNull Path directory, @NotNull ExceptionHandler exceptionHandler, @NotNull String fileNamePattern)
     {
         this.directory = directory;
         this.exceptionHandler = exceptionHandler;
         this.fileNamePattern = fileNamePattern;
+
+        this.logCapture = new LogCapture();
+    }
+
+    public void init(@NotNull Plugin scenamatica)
+    {
+        this.logCapture.init(scenamatica);
     }
 
     public Path write(@NotNull ScenarioSession session)
@@ -50,7 +62,9 @@ public class ScenarioResultWriter
 
         Path dest = this.composeDistPath(file);
 
-        Document document = ScenarioResultDocumentBuilder.build(session);
+        ScenarioResultDocumentBuilder builder = new ScenarioResultDocumentBuilder(this);
+
+        Document document = builder.build(session);
         if (!Files.exists(dest.getParent()))
             Files.createDirectories(dest.getParent());
         try (FileOutputStream stream = new FileOutputStream(dest.toFile()))

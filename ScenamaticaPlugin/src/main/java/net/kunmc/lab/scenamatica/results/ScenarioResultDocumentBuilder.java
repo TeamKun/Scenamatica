@@ -14,6 +14,7 @@ import org.bukkit.plugin.PluginDescriptionFile;
 import org.jetbrains.annotations.NotNull;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,39 +23,45 @@ import java.util.regex.Pattern;
 
 public class ScenarioResultDocumentBuilder
 {
+    private final ScenarioResultWriter writer;
 
-    public static Document build(@NotNull ScenarioSession session)
+    public ScenarioResultDocumentBuilder(ScenarioResultWriter writer)
     {
-        Document document = createBase();
-        buildTestSuites(document, session);
+        this.writer = writer;
+    }
+
+    public Document build(@NotNull ScenarioSession session)
+    {
+        Document document = this.createBase();
+        this.buildTestSuites(document, session);
 
         return document;
     }
 
-    private static void buildTestSuites(@NotNull Document document, @NotNull ScenarioSession session)
+    private void buildTestSuites(@NotNull Document document, @NotNull ScenarioSession session)
     {
         Element testSuites = document.createElement(ResultKeys.KEY_TEST_SUITES);
         testSuites.setAttribute(ResultKeys.KEY_SUITES_TIME, String.valueOf(
-                unixToISO8601(session.getStartedAt(), session.getFinishedAt()))
+                this.unixToISO8601(session.getStartedAt(), session.getFinishedAt()))
         );
 
-        Multimap<Plugin, ScenarioResult> results = groupingResultsByPlugin(session);
+        Multimap<Plugin, ScenarioResult> results = this.groupingResultsByPlugin(session);
 
         for (Plugin plugin : results.keySet())
-            testSuites.appendChild(buildSuite(document, plugin, new ArrayList<>(results.get(plugin))));
+            testSuites.appendChild(this.buildSuite(document, plugin, new ArrayList<>(results.get(plugin))));
 
         document.appendChild(testSuites);
     }
 
-    private static Element buildSuite(@NotNull Document document, @NotNull Plugin plugin, @NotNull List<? extends ScenarioResult> results)
+    private Element buildSuite(@NotNull Document document, @NotNull Plugin plugin, @NotNull List<? extends ScenarioResult> results)
     {
 
         Element testSuite = document.createElement(ResultKeys.KEY_TEST_SUITE);
-        buildPluginInfo(testSuite, plugin);
-        testSuite.setAttribute(ResultKeys.KEY_SUITE_ID, toPluginID(plugin));
+        this.buildPluginInfo(testSuite, plugin);
+        testSuite.setAttribute(ResultKeys.KEY_SUITE_ID, this.toPluginID(plugin));
         testSuite.setAttribute(ResultKeys.KEY_SUITE_NAME, plugin.getName() + "-" + plugin.getDescription().getVersion());
         testSuite.setAttribute(ResultKeys.KEY_SUITE_TIME, String.valueOf(
-                unixToISO8601(summingResultsTime(results))
+                this.unixToISO8601(this.summingResultsTime(results))
         ));
         testSuite.setAttribute(ResultKeys.KEY_SUITE_TESTS, String.valueOf(results.size()));
 
@@ -73,36 +80,60 @@ public class ScenarioResultDocumentBuilder
             else if (cause.isError())
                 errors++;
 
-            testSuite.appendChild(buildTestCase(document, result));
+            testSuite.appendChild(this.buildTestCase(document, result));
         }
 
         testSuite.setAttribute(ResultKeys.KEY_SUITE_FAILURES, String.valueOf(failures));
         testSuite.setAttribute(ResultKeys.KEY_SUITE_SKIPPED, String.valueOf(skipped));
         testSuite.setAttribute(ResultKeys.KEY_SUITE_ERRORS, String.valueOf(errors));
 
+        // stdout を追加
+        String completeLog = this.writer.getLogCapture().getFinalEntries()
+                .stream()
+                .map(LogCapture.TestLogs::getEntries)
+                .flatMap(List::stream)
+                .map(LogCapture.LogEntry::toString)
+                .reduce("", (a, b) -> a + b + "\n");
+
+        Node stdoutCData = document.createCDATASection(completeLog);
+        Element stdout = document.createElement(ResultKeys.KEY_SUITE_STDOUT);
+        stdout.appendChild(stdoutCData);
+        testSuite.appendChild(stdout);
+
+
         return testSuite;
     }
 
-    private static Element buildTestCase(@NotNull Document document, @NotNull ScenarioResult result)
+    private Element buildTestCase(@NotNull Document document, @NotNull ScenarioResult result)
     {
         Element testCase = document.createElement(ResultKeys.KEY_TEST_CASE);
         testCase.setAttribute(ResultKeys.KEY_CASE_NAME, result.getScenario().getName());
         testCase.setAttribute(ResultKeys.KEY_CASE_TIME, String.valueOf(
-                unixToISO8601(result.getStartedAt(), result.getFinishedAt()))
+                this.unixToISO8601(result.getStartedAt(), result.getFinishedAt()))
         );
         testCase.setAttribute(ResultKeys.KEY_CASE_STATUS, result.getState().name());
 
         if (result.getScenarioResultCause().isFailure())
-            testCase.appendChild(buildCauseFailure(document, result));
+            testCase.appendChild(this.buildCauseFailure(document, result));
         else if (result.getScenarioResultCause().isSkipped() || result.getScenarioResultCause().isCancelled())
             testCase.appendChild(document.createElement(ResultKeys.KEY_CASE_SKIPPED));
         else if (result.getScenarioResultCause().isError())
             testCase.appendChild(document.createElement(ResultKeys.KEY_CASE_ERROR));
 
+        // stdout を追加 (ケースごと)
+        String completeLog = this.writer.getLogCapture().getEntries(result.getTestID()).stream()
+                .map(LogCapture.LogEntry::toString)
+                .reduce("", (a, b) -> a + b + "\n");
+
+        Node stdoutCData = document.createCDATASection(completeLog);
+        Element stdout = document.createElement(ResultKeys.KEY_CASE_STDOUT);
+        stdout.appendChild(stdoutCData);
+        testCase.appendChild(stdout);
+
         return testCase;
     }
 
-    private static Element buildCauseError(@NotNull Document document, @NotNull ScenarioResult result)
+    private Element buildCauseError(@NotNull Document document, @NotNull ScenarioResult result)
     {
         Element error = document.createElement(ResultKeys.KEY_CASE_ERROR);
         error.setAttribute(ResultKeys.KEY_CASE_ERROR_TYPE, result.getScenarioResultCause().name());
@@ -114,7 +145,7 @@ public class ScenarioResultDocumentBuilder
         return error;
     }
 
-    private static Element buildCauseFailure(@NotNull Document document, @NotNull ScenarioResult result)
+    private Element buildCauseFailure(@NotNull Document document, @NotNull ScenarioResult result)
     {
         Element failure = document.createElement(ResultKeys.KEY_CASE_FAILURE);
         failure.setAttribute(ResultKeys.KEY_CASE_FAILURE_TYPE, result.getScenarioResultCause().name());
@@ -126,11 +157,11 @@ public class ScenarioResultDocumentBuilder
         return failure;
     }
 
-    private static void buildPluginInfo(@NotNull Element parent, @NotNull Plugin plugin)
+    private void buildPluginInfo(@NotNull Element parent, @NotNull Plugin plugin)
     {
         Document document = parent.getOwnerDocument();
         Element pluginElement = document.createElement(ResultKeys.KEY_PLUGIN);
-        pluginElement.setAttribute(ResultKeys.KEY_ID, toPluginID(plugin));
+        pluginElement.setAttribute(ResultKeys.KEY_ID, this.toPluginID(plugin));
 
         PluginDescriptionFile description = plugin.getDescription();
 
@@ -155,7 +186,7 @@ public class ScenarioResultDocumentBuilder
         parent.appendChild(pluginElement);
     }
 
-    private static Document createBase()
+    private Document createBase()
     {
         try
         {
@@ -172,7 +203,7 @@ public class ScenarioResultDocumentBuilder
         }
     }
 
-    private static String toPluginID(Plugin plugin)
+    private String toPluginID(Plugin plugin)
     {
         Pattern pattern = Pattern.compile("[^a-z0-9-]");
         String pluginName = plugin.getName()
@@ -182,7 +213,7 @@ public class ScenarioResultDocumentBuilder
         return pattern.matcher(pluginName).replaceAll("");
     }
 
-    private static Multimap<Plugin, ScenarioResult> groupingResultsByPlugin(@NotNull ScenarioSession session)
+    private Multimap<Plugin, ScenarioResult> groupingResultsByPlugin(@NotNull ScenarioSession session)
     {
         Multimap<Plugin, ScenarioResult> results = HashMultimap.create();
 
@@ -196,20 +227,20 @@ public class ScenarioResultDocumentBuilder
         return results;
     }
 
-    private static long summingResultsTime(@NotNull List<? extends ScenarioResult> results)
+    private long summingResultsTime(@NotNull List<? extends ScenarioResult> results)
     {
         return results.stream().parallel()
                 .mapToLong(result -> result.getFinishedAt() - result.getStartedAt())
                 .sum();
     }
 
-    private static double unixToISO8601(long unix)
+    private double unixToISO8601(long unix)
     {
         return unix / 1000.0d;
     }
 
-    private static double unixToISO8601(long startUnix, long endUnix)
+    private double unixToISO8601(long startUnix, long endUnix)
     {
-        return unixToISO8601(endUnix - startUnix);
+        return this.unixToISO8601(endUnix - startUnix);
     }
 }

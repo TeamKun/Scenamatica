@@ -23,11 +23,13 @@ public class ResultKeys
     public static final String KEY_SUITE_SKIPPED = "skipped";
     public static final String KEY_SUITE_TIME = "time";
     public static final String KEY_SUITE_ID = "id";
+    public static final String KEY_SUITE_STDOUT = "system-out";
 
     public static final String KEY_TEST_CASE = "testcase";
     public static final String KEY_CASE_NAME = "name";
     public static final String KEY_CASE_TIME = "time";
     public static final String KEY_CASE_STATUS = "status";
+    public static final String KEY_CASE_STDOUT = "system-out";
 
     public static final String KEY_CASE_FAILURE = "failure";
     public static final String KEY_CASE_FAILURE_TYPE = "type";

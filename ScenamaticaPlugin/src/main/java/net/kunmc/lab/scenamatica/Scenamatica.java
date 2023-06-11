@@ -80,6 +80,7 @@ public final class Scenamatica extends JavaPlugin
         String fileNamePattern = config.getString("reporting.junit.filePattern", "yyyy-MM-dd-HH-mm-ss.xml");
 
         this.resultWriter = new ScenarioResultWriter(directory, exceptionHandler, fileNamePattern);
+        this.resultWriter.init(this);
     }
 
     private TestReporter getTestReporter(boolean isRaw, boolean isVerbose, boolean isJunitReportingEnabled)

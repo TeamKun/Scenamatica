@@ -44,6 +44,16 @@ public class ServerLogEvent extends Event
         return HANDLER_LIST;
     }
 
+    /**
+     * ログのレベルの名前を取得します。
+     *
+     * @return ログのレベルの名前
+     */
+    public String getLevelName()
+    {
+        return this.level.name();
+    }
+
     @Override
     public @NotNull HandlerList getHandlers()
     {
