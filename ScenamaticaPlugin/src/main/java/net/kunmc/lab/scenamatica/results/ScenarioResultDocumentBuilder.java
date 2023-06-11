@@ -7,7 +7,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import net.kunmc.lab.peyangpaperutils.lib.utils.Pair;
 import net.kunmc.lab.scenamatica.Constants;
 import net.kunmc.lab.scenamatica.enums.ScenarioResultCause;
-import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
 import net.kunmc.lab.scenamatica.interfaces.action.Action;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioResult;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioSession;
@@ -25,26 +24,26 @@ import java.util.stream.Collectors;
 public class ScenarioResultDocumentBuilder
 {
 
-    public static Document build(@NotNull ScenamaticaRegistry registry, @NotNull ScenarioSession session)
+    public static Document build(@NotNull Plugin scenamatica, @NotNull ScenarioSession session)
     {
         Document document = createBase();
 
-        buildScenamatica(document, registry, session);
-        buildTestSuites(document, registry, session);
+        buildScenamatica(document, scenamatica, session);
+        buildTestSuites(document, session);
 
         return document;
     }
 
-    private static void buildScenamatica(@NotNull Document document, @NotNull ScenamaticaRegistry registry, @NotNull ScenarioSession session)
+    private static void buildScenamatica(@NotNull Document document, @NotNull Plugin scenamatica, @NotNull ScenarioSession session)
     {
-        Element scenamatica = document.createElementNS(ResultKeys.SCENAMATICA_NAMESPACE, ResultKeys.KEY_SCENAMATICA);
-        scenamatica.setAttribute("xmlns:" + ResultKeys.SCENAMATICA_NAMESPACE_ID, ResultKeys.SCENAMATICA_NAMESPACE);
+        Element scenamaticaElement = document.createElementNS(ResultKeys.SCENAMATICA_NAMESPACE, ResultKeys.KEY_SCENAMATICA);
+        scenamaticaElement.setAttribute("xmlns:" + ResultKeys.SCENAMATICA_NAMESPACE_ID, ResultKeys.SCENAMATICA_NAMESPACE);
 
-        buildSoftwareInfo(document, registry, session);
-        buildPluginsInfo(document, registry, session);
+        buildSoftwareInfo(document, scenamatica, session);
+        buildPluginsInfo(document, session);
     }
 
-    private static void buildTestSuites(@NotNull Document document, @NotNull ScenamaticaRegistry registry, @NotNull ScenarioSession session)
+    private static void buildTestSuites(@NotNull Document document, @NotNull ScenarioSession session)
     {
         Element testSuites = document.createElement(ResultKeys.KEY_TEST_SUITES);
         testSuites.setAttribute(ResultKeys.KEY_SUITES_TIME, String.valueOf(
@@ -135,7 +134,7 @@ public class ScenarioResultDocumentBuilder
         return failure;
     }
 
-    private static void buildPluginsInfo(@NotNull Document document, @NotNull ScenamaticaRegistry registry, @NotNull ScenarioSession session)
+    private static void buildPluginsInfo(@NotNull Document document, @NotNull ScenarioSession session)
     {
         Element pluginsElement = document.createElement(ResultKeys.KEY_PLUGINS);
         List<Plugin> plugins = session.getScenarios().stream().parallel()
@@ -174,10 +173,10 @@ public class ScenarioResultDocumentBuilder
         document.appendChild(pluginsElement);
     }
 
-    private static void buildSoftwareInfo(@NotNull Document document, @NotNull ScenamaticaRegistry registry, @NotNull ScenarioSession session)
+    private static void buildSoftwareInfo(@NotNull Document document, Plugin scenamatica, @NotNull ScenarioSession session)
     {
         document.appendChild(document.createElement(ResultKeys.KEY_SCENAMATICA_VERSION))
-                .setTextContent(registry.getPlugin().getDescription().getVersion());
+                .setTextContent(scenamatica.getDescription().getVersion());
 
         document.appendChild(document.createElement(ResultKeys.KEY_SCENAMATICA_BUILD))
                 .setTextContent(Constants.DEBUG_BUILD ? "Debug": "Release");

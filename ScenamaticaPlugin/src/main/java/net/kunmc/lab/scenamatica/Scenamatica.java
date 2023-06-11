@@ -1,12 +1,12 @@
 package net.kunmc.lab.scenamatica;
 
-import net.kunmc.lab.peyangpaperutils.PeyangPaperUtils;
 import net.kunmc.lab.peyangpaperutils.lang.LangProvider;
 import net.kunmc.lab.peyangpaperutils.lib.command.CommandManager;
 import net.kunmc.lab.scenamatica.commands.CommandDebug;
 import net.kunmc.lab.scenamatica.commands.CommandEnable;
 import net.kunmc.lab.scenamatica.commands.CommandScenario;
 import net.kunmc.lab.scenamatica.events.PlayerJoinEventListener;
+import net.kunmc.lab.scenamatica.interfaces.ExceptionHandler;
 import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
 import net.kunmc.lab.scenamatica.interfaces.scenario.TestReporter;
 import net.kunmc.lab.scenamatica.reporter.BukkitTestReporter;
@@ -43,15 +43,16 @@ public final class Scenamatica extends JavaPlugin
     {
         this.saveDefaultConfig();
         this.getConfig();
-        PeyangPaperUtils.init(this);
-        this.initJUnitReporter();
 
         boolean isRaw = this.getConfig().getBoolean("reporting.raw", false);
         boolean isVerbose = this.getConfig().getBoolean("reporting.verbose", true);
         boolean isJunitReportingEnabled = this.getConfig().getBoolean("reporting.junit.enabled", true);
 
+        ExceptionHandler exceptionHandler = new SimpleExceptionHandler(this.getLogger(), isRaw);
+        this.initJUnitReporter(exceptionHandler);
+
         this.registry = new ScenamaticaDaemon(Environment.builder(this)
-                .exceptionHandler(new SimpleExceptionHandler(this.getLogger(), isRaw))
+                .exceptionHandler(exceptionHandler)
                 .testReporter(this.getTestReporter(isRaw, isVerbose, isJunitReportingEnabled))
                 .actorSettings(ActorSettingsImpl.fromConfig(this.getConfig()))
                 .verbose(isVerbose)
@@ -71,14 +72,14 @@ public final class Scenamatica extends JavaPlugin
         this.initTestRecipient();
     }
 
-    private void initJUnitReporter()
+    private void initJUnitReporter(ExceptionHandler exceptionHandler)
     {
         FileConfiguration config = this.getConfig();
         Path directory = this.getDataFolder().toPath()
                 .resolve(config.getString("reporting.junit.directory", "reports"));
         String fileNamePattern = config.getString("reporting.junit.filePattern", "yyyy-MM-dd-HH-mm-ss.xml");
 
-        this.resultWriter = new ScenarioResultWriter(directory, this.registry, fileNamePattern);
+        this.resultWriter = new ScenarioResultWriter(this, directory, exceptionHandler, fileNamePattern);
     }
 
     private TestReporter getTestReporter(boolean isRaw, boolean isVerbose, boolean isJunitReportingEnabled)

@@ -6,9 +6,10 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import net.kunmc.lab.scenamatica.Scenamatica;
 import net.kunmc.lab.scenamatica.interfaces.ExceptionHandler;
-import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioSession;
+import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.w3c.dom.Document;
@@ -24,7 +25,7 @@ import java.time.format.DateTimeFormatter;
 public class ScenarioResultWriter
 {
     @NotNull
-    private final ScenamaticaRegistry registry;
+    private final Plugin scenamatica;
     @NotNull
     private final ExceptionHandler exceptionHandler;
     @NotNull
@@ -32,11 +33,11 @@ public class ScenarioResultWriter
     @NotNull
     private final String fileNamePattern;
 
-    public ScenarioResultWriter(@NotNull Path directory, @NotNull ScenamaticaRegistry registry, @NotNull String fileNamePattern)
+    public ScenarioResultWriter(@NotNull Scenamatica scenamatica, @NotNull Path directory, @NotNull ExceptionHandler exceptionHandler, @NotNull String fileNamePattern)
     {
+        this.scenamatica = scenamatica;
         this.directory = directory;
-        this.registry = registry;
-        this.exceptionHandler = registry.getExceptionHandler();
+        this.exceptionHandler = exceptionHandler;
         this.fileNamePattern = fileNamePattern;
     }
 
@@ -52,7 +53,7 @@ public class ScenarioResultWriter
 
         Path dest = this.composeDistPath(file);
 
-        Document document = ScenarioResultDocumentBuilder.build(this.registry, session);
+        Document document = ScenarioResultDocumentBuilder.build(this.scenamatica, session);
         try (FileOutputStream stream = new FileOutputStream(dest.toFile()))
         {
             if (!Files.exists(dest.getParent()))
