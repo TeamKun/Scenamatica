@@ -3,6 +3,7 @@ package net.kunmc.lab.scenamatica.results;
 import lombok.Value;
 import net.kunmc.lab.scenamatica.events.actions.server.ServerLogEvent;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
@@ -93,11 +94,13 @@ public class LogCapture implements Listener
         @Override
         public String toString()
         {
+            String unstyledLog = ChatColor.stripColor(this.line);
+
             return String.format(
                     LOG_FORMAT,
                     DT_FORMATTER.format(new Date(this.time)),
                     this.level,
-                    this.line
+                    unstyledLog
             );
         }
     }
