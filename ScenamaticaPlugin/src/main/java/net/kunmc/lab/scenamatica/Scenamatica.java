@@ -11,17 +11,25 @@ import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
 import net.kunmc.lab.scenamatica.interfaces.scenario.TestReporter;
 import net.kunmc.lab.scenamatica.reporter.BukkitTestReporter;
 import net.kunmc.lab.scenamatica.reporter.CompactBukkitTestReporter;
+import net.kunmc.lab.scenamatica.reporter.JUnitReporter;
 import net.kunmc.lab.scenamatica.reporter.RawTestReporter;
+import net.kunmc.lab.scenamatica.reporter.ReporterSBridge;
+import net.kunmc.lab.scenamatica.results.ScenarioResultWriter;
 import net.kunmc.lab.scenamatica.settings.ActorSettingsImpl;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.IOException;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 
 public final class Scenamatica extends JavaPlugin
 {
+    private ScenarioResultWriter resultWriter;
     private ScenamaticaRegistry registry;
     @SuppressWarnings("FieldCanBeLocal")  // 参照を維持する必要がある。
     private CommandManager commandManager;
@@ -36,13 +44,15 @@ public final class Scenamatica extends JavaPlugin
         this.saveDefaultConfig();
         this.getConfig();
         PeyangPaperUtils.init(this);
+        this.initJUnitReporter();
 
         boolean isRaw = this.getConfig().getBoolean("interfaces.raw", false);
         boolean isVerbose = this.getConfig().getBoolean("interfaces.verbose", true);
+        boolean isJunitReportingEnabled = this.getConfig().getBoolean("reporting.junit.enabled", true);
 
         this.registry = new ScenamaticaDaemon(Environment.builder(this)
                 .exceptionHandler(new SimpleExceptionHandler(this.getLogger(), isRaw))
-                .testReporter(this.getTestReporter(isRaw, isVerbose))
+                .testReporter(this.getTestReporter(isRaw, isVerbose, isJunitReportingEnabled))
                 .actorSettings(ActorSettingsImpl.fromConfig(this.getConfig()))
                 .verbose(isVerbose)
                 .build()
@@ -61,14 +71,32 @@ public final class Scenamatica extends JavaPlugin
         this.initTestRecipient();
     }
 
-    private TestReporter getTestReporter(boolean isRaw, boolean isVerbose)
+    private void initJUnitReporter()
     {
+        FileConfiguration config = this.getConfig();
+        Path directory = this.getDataFolder().toPath()
+                .resolve(config.getString("reporting.junit.directory", "reports"));
+        String fileNamePattern = config.getString("reporting.junit.filePattern", "yyyy-MM-dd-HH-mm-ss.xml");
+
+        this.resultWriter = new ScenarioResultWriter(directory, this.registry, fileNamePattern);
+    }
+
+    private TestReporter getTestReporter(boolean isRaw, boolean isVerbose, boolean isJunitReportingEnabled)
+    {
+        List<TestReporter> reporters = new ArrayList<>();
+
         if (isRaw)
-            return new RawTestReporter();
+            reporters.add(new RawTestReporter());
         else if (isVerbose)
-            return new BukkitTestReporter();
+            reporters.add(new BukkitTestReporter());
         else
-            return new CompactBukkitTestReporter();
+            reporters.add(new CompactBukkitTestReporter());
+
+
+        if (isJunitReportingEnabled)
+            reporters.add(new JUnitReporter(this.resultWriter));
+
+        return new ReporterSBridge(reporters);
     }
 
     private void initTestRecipient()

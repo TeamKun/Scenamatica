@@ -56,3 +56,19 @@ actor:
   # アクターに与えるスコアボードのタグを設定します。
   # これはシナリオファイルによって上書きされることがあります。
   scoreboardTags:
+
+# ---------------[ レポート設定 ]---------------
+# レポートの設定を定義します。
+# --------------------------------------------
+reporting:
+  # JUnit Result XML と呼ばれるデファクトスタンダードのテスト結果フォーマットで出力します。
+  junit:
+    # JUnit レポートを出力するかどうかを設定します。
+    enabled: true
+    # レポートの出力先を設定します。
+    # Scenamatica のデータフォルダ(e.g. `plugins/Scenamatica`) からの相対パスで指定します。
+    directory: "reports/"
+    # レポートのファイル名のパターンを設定します。
+    # 以下のプレースホルダを使用できます。
+    # - {dateTime} - レポートを生成した日時。 (YYYY-MM-DD-hh-mm-ss)
+    filePattern: "scenamatica-test-report-{dateTime}.xml"

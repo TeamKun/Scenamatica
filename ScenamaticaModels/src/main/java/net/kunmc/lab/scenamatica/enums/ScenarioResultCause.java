@@ -29,4 +29,9 @@ public enum ScenarioResultCause
     {
         return this == CANCELLED;
     }
+
+    public boolean isError()
+    {
+        return this == INTERNAL_ERROR;
+    }
 }

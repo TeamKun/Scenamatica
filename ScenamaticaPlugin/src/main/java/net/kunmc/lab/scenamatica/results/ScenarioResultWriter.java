@@ -1,0 +1,88 @@
+package net.kunmc.lab.scenamatica.results;
+
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import net.kunmc.lab.scenamatica.interfaces.ExceptionHandler;
+import net.kunmc.lab.scenamatica.interfaces.ScenamaticaRegistry;
+import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioSession;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.w3c.dom.Document;
+
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
+public class ScenarioResultWriter
+{
+    @NotNull
+    private final ScenamaticaRegistry registry;
+    @NotNull
+    private final ExceptionHandler exceptionHandler;
+    @NotNull
+    private final Path directory;
+    @NotNull
+    private final String fileNamePattern;
+
+    public ScenarioResultWriter(@NotNull Path directory, @NotNull ScenamaticaRegistry registry, @NotNull String fileNamePattern)
+    {
+        this.directory = directory;
+        this.registry = registry;
+        this.exceptionHandler = registry.getExceptionHandler();
+        this.fileNamePattern = fileNamePattern;
+    }
+
+    public Path write(@NotNull ScenarioSession session)
+    {
+        return this.write(session, null);
+    }
+
+    public Path write(@NotNull ScenarioSession session, @Nullable Path file)
+    {
+        if (session.isRunning())
+            throw new IllegalStateException("Scenario session is running.");
+
+        Path dist = this.composeDistPath(file);
+        Document document = ScenarioResultDocumentBuilder.build(this.registry, session);
+
+        try (FileOutputStream stream = new FileOutputStream(dist.toFile()))
+        {
+            Transformer transformer = TransformerFactory.newInstance().newTransformer();
+            transformer.setOutputProperty(OutputKeys.ENCODING, StandardCharsets.UTF_8.name());
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+            transformer.setOutputProperty(OutputKeys.METHOD, "xml");
+            transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
+
+            transformer.transform(new DOMSource(document), new StreamResult(stream));
+
+            return dist;
+        }
+        catch (TransformerException | IOException e)
+        {
+            this.exceptionHandler.report(e);
+            return null;
+        }
+
+    }
+
+    private Path composeDistPath(@Nullable Path file)
+    {
+        if (file != null)
+            return this.directory.resolve(file);
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm");
+        LocalDateTime dateTime = LocalDateTime.now();
+        String dateTimeString = dateTime.format(formatter);
+
+        return this.directory.resolve(this.fileNamePattern
+                .replace("{dateTime}", dateTimeString)
+        );
+    }
+}
