@@ -46,8 +46,8 @@ public final class Scenamatica extends JavaPlugin
         PeyangPaperUtils.init(this);
         this.initJUnitReporter();
 
-        boolean isRaw = this.getConfig().getBoolean("interfaces.raw", false);
-        boolean isVerbose = this.getConfig().getBoolean("interfaces.verbose", true);
+        boolean isRaw = this.getConfig().getBoolean("reporting.raw", false);
+        boolean isVerbose = this.getConfig().getBoolean("reporting.verbose", true);
         boolean isJunitReportingEnabled = this.getConfig().getBoolean("reporting.junit.enabled", true);
 
         this.registry = new ScenamaticaDaemon(Environment.builder(this)
@@ -87,11 +87,11 @@ public final class Scenamatica extends JavaPlugin
 
         if (isRaw)
             reporters.add(new RawTestReporter());
-        else if (isVerbose)
+
+        if (isVerbose)
             reporters.add(new BukkitTestReporter());
         else
             reporters.add(new CompactBukkitTestReporter());
-
 
         if (isJunitReportingEnabled)
             reporters.add(new JUnitReporter(this.resultWriter));
