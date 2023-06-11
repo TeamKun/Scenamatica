@@ -6,10 +6,9 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import net.kunmc.lab.scenamatica.Scenamatica;
+import lombok.SneakyThrows;
 import net.kunmc.lab.scenamatica.interfaces.ExceptionHandler;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioSession;
-import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.w3c.dom.Document;
@@ -25,17 +24,14 @@ import java.time.format.DateTimeFormatter;
 public class ScenarioResultWriter
 {
     @NotNull
-    private final Plugin scenamatica;
-    @NotNull
     private final ExceptionHandler exceptionHandler;
     @NotNull
     private final Path directory;
     @NotNull
     private final String fileNamePattern;
 
-    public ScenarioResultWriter(@NotNull Scenamatica scenamatica, @NotNull Path directory, @NotNull ExceptionHandler exceptionHandler, @NotNull String fileNamePattern)
+    public ScenarioResultWriter(@NotNull Path directory, @NotNull ExceptionHandler exceptionHandler, @NotNull String fileNamePattern)
     {
-        this.scenamatica = scenamatica;
         this.directory = directory;
         this.exceptionHandler = exceptionHandler;
         this.fileNamePattern = fileNamePattern;
@@ -46,6 +42,7 @@ public class ScenarioResultWriter
         return this.write(session, null);
     }
 
+    @SneakyThrows(IOException.class)  // Files.createDirectories
     public Path write(@NotNull ScenarioSession session, @Nullable Path file)
     {
         if (session.isRunning())
@@ -53,11 +50,11 @@ public class ScenarioResultWriter
 
         Path dest = this.composeDistPath(file);
 
-        Document document = ScenarioResultDocumentBuilder.build(this.scenamatica, session);
+        Document document = ScenarioResultDocumentBuilder.build(session);
+        if (!Files.exists(dest.getParent()))
+            Files.createDirectories(dest.getParent());
         try (FileOutputStream stream = new FileOutputStream(dest.toFile()))
         {
-            if (!Files.exists(dest.getParent()))
-                Files.createDirectories(dest.getParent());
 
             Transformer transformer = TransformerFactory.newInstance().newTransformer();
             transformer.setOutputProperty(OutputKeys.ENCODING, StandardCharsets.UTF_8.name());

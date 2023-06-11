@@ -4,7 +4,6 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import net.kunmc.lab.scenamatica.Constants;
 import net.kunmc.lab.scenamatica.enums.ScenarioResultCause;
 import net.kunmc.lab.scenamatica.interfaces.action.Action;
 import net.kunmc.lab.scenamatica.interfaces.scenario.QueuedScenario;
@@ -18,29 +17,18 @@ import org.w3c.dom.Element;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 public class ScenarioResultDocumentBuilder
 {
 
-    public static Document build(@NotNull Plugin scenamatica, @NotNull ScenarioSession session)
+    public static Document build(@NotNull ScenarioSession session)
     {
         Document document = createBase();
-
-        buildScenamatica(document, scenamatica, session);
         buildTestSuites(document, session);
 
         return document;
-    }
-
-    private static void buildScenamatica(@NotNull Document document, @NotNull Plugin scenamatica, @NotNull ScenarioSession session)
-    {
-        Element scenamaticaElement = document.createElementNS(ResultKeys.SCENAMATICA_NAMESPACE, ResultKeys.KEY_SCENAMATICA);
-        scenamaticaElement.setAttribute("xmlns:" + ResultKeys.SCENAMATICA_NAMESPACE_ID, ResultKeys.SCENAMATICA_NAMESPACE);
-
-        buildSoftwareInfo(scenamaticaElement, document, scenamatica);
-        buildPluginsInfo(document, session);
     }
 
     private static void buildTestSuites(@NotNull Document document, @NotNull ScenarioSession session)
@@ -54,11 +42,15 @@ public class ScenarioResultDocumentBuilder
 
         for (Plugin plugin : results.keySet())
             testSuites.appendChild(buildSuite(document, plugin, new ArrayList<>(results.get(plugin))));
+
+        document.appendChild(testSuites);
     }
 
     private static Element buildSuite(@NotNull Document document, @NotNull Plugin plugin, @NotNull List<? extends ScenarioResult> results)
     {
+
         Element testSuite = document.createElement(ResultKeys.KEY_TEST_SUITE);
+        buildPluginInfo(testSuite, plugin);
         testSuite.setAttribute(ResultKeys.KEY_SUITE_ID, toPluginID(plugin));
         testSuite.setAttribute(ResultKeys.KEY_SUITE_NAME, plugin.getName() + "-" + plugin.getDescription().getVersion());
         testSuite.setAttribute(ResultKeys.KEY_SUITE_TIME, String.valueOf(
@@ -134,52 +126,33 @@ public class ScenarioResultDocumentBuilder
         return failure;
     }
 
-    private static void buildPluginsInfo(@NotNull Document document, @NotNull ScenarioSession session)
+    private static void buildPluginInfo(@NotNull Element parent, @NotNull Plugin plugin)
     {
-        Element pluginsElement = document.createElement(ResultKeys.KEY_PLUGINS);
-        List<Plugin> plugins = session.getScenarios().stream().parallel()
-                .map(scenario -> scenario.getEngine().getPlugin())
-                .distinct()
-                .collect(Collectors.toList());
+        Document document = parent.getOwnerDocument();
+        Element pluginElement = document.createElement(ResultKeys.KEY_PLUGIN);
+        pluginElement.setAttribute(ResultKeys.KEY_ID, toPluginID(plugin));
 
-        for (Plugin plugin : plugins)
-        {
-            Element pluginElement = document.createElement(ResultKeys.KEY_PLUGIN);
-            pluginElement.setAttribute(ResultKeys.KEY_ID, toPluginID(plugin));
+        PluginDescriptionFile description = plugin.getDescription();
 
-            PluginDescriptionFile description = plugin.getDescription();
+        pluginElement.appendChild(document.createElement(ResultKeys.KEY_PLUGIN_NAME))
+                .setTextContent(description.getName());
+        pluginElement.appendChild(document.createElement(ResultKeys.KEY_PLUGIN_VERSION))
+                .setTextContent(description.getVersion());
+        pluginElement.appendChild(document.createElement(ResultKeys.KEY_PLUGIN_DESCRIPTION))
+                .setTextContent(description.getDescription());
+        pluginElement.appendChild(document.createElement(ResultKeys.KEY_PLUGIN_URL))
+                .setTextContent(description.getWebsite());
+        pluginElement.appendChild(document.createElement(ResultKeys.KEY_PLUGIN_WEBSITE))
+                .setTextContent(description.getWebsite());
 
-            pluginElement.appendChild(document.createElement(ResultKeys.KEY_PLUGIN_NAME))
-                    .setTextContent(description.getName());
-            pluginElement.appendChild(document.createElement(ResultKeys.KEY_PLUGIN_VERSION))
-                    .setTextContent(description.getVersion());
-            pluginElement.appendChild(document.createElement(ResultKeys.KEY_PLUGIN_DESCRIPTION))
-                    .setTextContent(description.getDescription());
-            pluginElement.appendChild(document.createElement(ResultKeys.KEY_PLUGIN_URL))
-                    .setTextContent(description.getWebsite());
-            pluginElement.appendChild(document.createElement(ResultKeys.KEY_PLUGIN_WEBSITE))
-                    .setTextContent(description.getWebsite());
+        Element authorsElement = document.createElement(ResultKeys.KEY_PLUGIN_AUTHORS);
+        for (String author : description.getAuthors())
+            authorsElement.appendChild(document.createElement(ResultKeys.KEY_PLUGIN_AUTHOR))
+                    .setTextContent(author);
 
-            Element authorsElement = document.createElement(ResultKeys.KEY_PLUGIN_AUTHORS);
-            for (String author : description.getAuthors())
-                authorsElement.appendChild(document.createElement(ResultKeys.KEY_PLUGIN_AUTHOR))
-                        .setTextContent(author);
+        pluginElement.appendChild(authorsElement);
 
-            pluginElement.appendChild(authorsElement);
-
-            pluginsElement.appendChild(pluginElement);
-        }
-
-        document.appendChild(pluginsElement);
-    }
-
-    private static void buildSoftwareInfo(@NotNull Element parent, @NotNull Document document, Plugin scenamatica)
-    {
-        parent.appendChild(document.createElement(ResultKeys.KEY_SCENAMATICA_VERSION))
-                .setTextContent(scenamatica.getDescription().getVersion());
-
-        parent.appendChild(document.createElement(ResultKeys.KEY_SCENAMATICA_BUILD))
-                .setTextContent(Constants.DEBUG_BUILD ? "Debug": "Release");
+        parent.appendChild(pluginElement);
     }
 
     private static Document createBase()
@@ -191,7 +164,6 @@ public class ScenarioResultDocumentBuilder
 
             Document document = factory.newDocumentBuilder().newDocument();
             document.setXmlStandalone(true);
-
             return document;
         }
         catch (ParserConfigurationException e)
@@ -204,7 +176,8 @@ public class ScenarioResultDocumentBuilder
     {
         Pattern pattern = Pattern.compile("[^a-z0-9-]");
         String pluginName = plugin.getName()
-                .replace(" ", "-");
+                .replace(" ", "-")
+                .toLowerCase(Locale.ENGLISH);
 
         return pattern.matcher(pluginName).replaceAll("");
     }
