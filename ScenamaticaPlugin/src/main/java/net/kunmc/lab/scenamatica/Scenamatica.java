@@ -13,7 +13,7 @@ import net.kunmc.lab.scenamatica.reporter.BukkitTestReporter;
 import net.kunmc.lab.scenamatica.reporter.CompactBukkitTestReporter;
 import net.kunmc.lab.scenamatica.reporter.JUnitReporter;
 import net.kunmc.lab.scenamatica.reporter.RawTestReporter;
-import net.kunmc.lab.scenamatica.reporter.ReporterSBridge;
+import net.kunmc.lab.scenamatica.reporter.ReportersBridge;
 import net.kunmc.lab.scenamatica.results.ScenarioResultWriter;
 import net.kunmc.lab.scenamatica.settings.ActorSettingsImpl;
 import net.kyori.adventure.text.Component;
@@ -97,7 +97,7 @@ public final class Scenamatica extends JavaPlugin
         if (isJunitReportingEnabled)
             reporters.add(new JUnitReporter(this.resultWriter));
 
-        return new ReporterSBridge(reporters);
+        return new ReportersBridge(reporters);
     }
 
     private void initTestRecipient()

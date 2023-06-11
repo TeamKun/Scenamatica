@@ -11,11 +11,11 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class ReporterSBridge implements TestReporter
+public class ReportersBridge implements TestReporter
 {
     private final List<? extends TestReporter> reporters;
 
-    public ReporterSBridge(List<? extends TestReporter> reporters)
+    public ReportersBridge(List<? extends TestReporter> reporters)
     {
         this.reporters = reporters;
     }
