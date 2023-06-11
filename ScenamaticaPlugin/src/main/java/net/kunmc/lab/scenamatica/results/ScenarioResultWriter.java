@@ -16,6 +16,7 @@ import org.w3c.dom.Document;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -49,11 +50,14 @@ public class ScenarioResultWriter
         if (session.isRunning())
             throw new IllegalStateException("Scenario session is running.");
 
-        Path dist = this.composeDistPath(file);
-        Document document = ScenarioResultDocumentBuilder.build(this.registry, session);
+        Path dest = this.composeDistPath(file);
 
-        try (FileOutputStream stream = new FileOutputStream(dist.toFile()))
+        Document document = ScenarioResultDocumentBuilder.build(this.registry, session);
+        try (FileOutputStream stream = new FileOutputStream(dest.toFile()))
         {
+            if (!Files.exists(dest.getParent()))
+                Files.createDirectories(dest.getParent());
+
             Transformer transformer = TransformerFactory.newInstance().newTransformer();
             transformer.setOutputProperty(OutputKeys.ENCODING, StandardCharsets.UTF_8.name());
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
@@ -62,7 +66,7 @@ public class ScenarioResultWriter
 
             transformer.transform(new DOMSource(document), new StreamResult(stream));
 
-            return dist;
+            return dest;
         }
         catch (TransformerException | IOException e)
         {
