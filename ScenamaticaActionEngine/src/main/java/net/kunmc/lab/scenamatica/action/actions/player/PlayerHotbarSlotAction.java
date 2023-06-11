@@ -56,10 +56,13 @@ public class PlayerHotbarSlotAction extends AbstractPlayerAction<PlayerHotbarSlo
 
         int currentSlot = e.getNewSlot();
         int expectedCurrentSlot = argument.getCurrentSlot();
+        int previousSlot = e.getPreviousSlot();
+        int expectedPreviousSlot = argument.getPreviousSlot();
         ItemStack currentItem = e.getPlayer().getInventory().getItem(currentSlot);
         ItemStackBean expectedCurrentItem = argument.getCurrentItem();
 
         return currentSlot == expectedCurrentSlot
+                && previousSlot == expectedPreviousSlot
                 && (expectedCurrentItem == null || BeanUtils.isSame(expectedCurrentItem, currentItem, false));
     }
 
@@ -133,6 +136,7 @@ public class PlayerHotbarSlotAction extends AbstractPlayerAction<PlayerHotbarSlo
         public static final String KEY_CURRENT_ITEM = "item";
 
         int currentSlot;
+        int previousSlot;
         @Nullable
         ItemStackBean currentItem;
 
@@ -140,6 +144,7 @@ public class PlayerHotbarSlotAction extends AbstractPlayerAction<PlayerHotbarSlo
         {
             super(target);
             this.currentSlot = currentSlot;
+            this.previousSlot = previousSlot;
             this.currentItem = currentItem;
         }
 
