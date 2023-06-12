@@ -33,20 +33,7 @@ Scenamatica の全ての出力の言語を設定します。 対応している�
 + デフォルト値： `ja_JP`
 + 型： `Enum{ja_JP, en_US, ja_KS}`
 
-
-#### `interface`.`raw` {#interface-raw}
-
-テストの実行結果を JSON 形式で出力するかどうかを設定します。  
-外部のツールでテスト結果を解析する場合に有効にしてください。  
-(JSON は標準出力に出力されます)
-
-:::warning
-
-これが有効な場合、人間でも読みやすい形式の出力は行われません。
-
-:::
-
-### \[シナリオ\] シナリオの設定 {#scenario}
+### \[シナリオ] シナリオの設定 {#scenario}
 
 シナリオの実行に関する設定を行います。
 
@@ -63,9 +50,9 @@ Scenamatica の全ての出力の言語を設定します。 対応している�
 + デフォルト値： `true`
 + 型： `Boolean`
 
-### [アクター] アクターの設定 {#actor}
+### \[アクター] アクターの設定 {#actor}
 
-シナリオのアクター (NPC) に関する設定を行います。
+シナリオのアクター \(NPC) に関する設定を行います。
 
 #### `actor`.`maxActors` {#actor-maxActors}
 
@@ -106,6 +93,70 @@ Scenamatica の全ての出力の言語を設定します。 対応している�
 
 + デフォルト値： `[]`
 + 型： `String[]`
+
+### \[レポート] レポートの設定 {#reporting}
+
+プラグインのテスト結果のレポートに関する設定を行います。
+
+#### `reporting`.`raw` {#reporting-raw}
+
+テストの実行結果を JSON 形式で出力するかどうかを設定します。  
+外部のツールでテスト結果を解析する場合に有効にしてください。  
+\(JSON は標準出力に出力されます)
+
+:::caution
+
+この機能は、[CI/CD 連携機能](/docs/use/integration/ci-cd)用に作成されており、これによって出力される JSON のフォーマットは
+明文化されていません。  
+そのため、フォーマットは予告なく変更される可能性があります。
+
+:::
+
++ デフォルト値： `false`
++ 型： `Boolean`
+
+#### `reporting`.`verbose` {#reporting-verbose}
+
+冗長なコンソールログ出力を行うかどうかを設定します。  
+この設定を有効にすると、主に以下のような情報が追加で出力されます：
++ コンテキストの準備情報
++ シナリオ実行時の詳細情報
+  この設定が無効の場合、検証に失敗した場合にのみ詳細情報が出力されます。
++ 単一シナリオのテストサマリ
+
++ デフォルト値： `true`
++ 型： `Boolean`
+
+#### `reporting`.`junit` {#reporting-junit}
+
+[JUnit XML](https://www.ibm.com/docs/ja/developer-for-zos/9.1.1?topic=formats-junit-xml-format) 形式による結果出力に関する設定です。
+
+この機能の使い方は[こちら](/docs/use/integration/other-tools#junit-xml)を参照してください。
+
+##### `reporting`.`junit`.`enabled` {#reporting-junit-enabled}
+
+JUnit XML 形式による結果出力を有効にするかどうかを設定します。
+
++ デフォルト値： `true`
++ 型： `Boolean`
+
+##### `reporting`.`junit`.`directory` {#reporting-junit-directory}
+
+JUnit XML ファイルを出力するディレクトリを設定します。  
+Scenamatica のデータフォルダ（ e.g. `plugins/Scenamatica` ） からの相対パスで指定します。
+
++ デフォルト値： `reports/`
++ 型： `Path-like String`
+
+##### `reporting`.`junit`.`filePattern` {#reporting-junit-filePattern}
+
+出力される JUnit XML ファイルのファイル名のパターンを設定します。
+
+以下のプレースホルダを使用できます：
++ `{dateTime}` - テストの実行日時\(`yyyy-MM-dd-hh-mm-ss`)
+
++ デフォルト値： `scenamatica-test-report-{dateTime}.xml`
++ 型： `String`
 
 ## 終わりに
 
