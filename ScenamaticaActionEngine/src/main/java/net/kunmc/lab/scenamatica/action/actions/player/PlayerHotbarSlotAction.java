@@ -62,7 +62,7 @@ public class PlayerHotbarSlotAction extends AbstractPlayerAction<PlayerHotbarSlo
         ItemStackBean expectedCurrentItem = argument.getCurrentItem();
 
         return currentSlot == expectedCurrentSlot
-                && previousSlot == expectedPreviousSlot
+                && (expectedPreviousSlot == -1 || previousSlot == expectedPreviousSlot)
                 && (expectedCurrentItem == null || BeanUtils.isSame(expectedCurrentItem, currentItem, false));
     }
 
