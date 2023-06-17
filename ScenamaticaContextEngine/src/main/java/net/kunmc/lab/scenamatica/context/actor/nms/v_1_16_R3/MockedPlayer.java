@@ -146,7 +146,7 @@ class MockedPlayer extends EntityPlayer implements Actor
     @Override
     public void leaveServer()
     {
-        this.playerConnection.networkManager.handleDisconnection();
+        this.playerConnection.disconnect("Disconnected");
     }
 
     @Override
