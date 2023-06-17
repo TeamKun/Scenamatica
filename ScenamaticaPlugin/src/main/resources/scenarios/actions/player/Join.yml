@@ -23,7 +23,7 @@ scenario:
     with:
       target: Actor001
   - type: require
-    action: player_death
+    action: player_join
     with:
       target: Actor001
 

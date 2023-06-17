@@ -68,7 +68,6 @@ public abstract class PlayerMockerBase
 
     public void onDestroyActor(Actor actor)
     {
-        this.manager.onDestroyActor(actor);
         this.wipePlayerData(actor.getPlayer().getUniqueId());
     }
 

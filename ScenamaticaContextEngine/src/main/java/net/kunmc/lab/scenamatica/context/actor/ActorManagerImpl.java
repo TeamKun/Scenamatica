@@ -111,12 +111,13 @@ public class ActorManagerImpl implements ActorManager, Listener
     public void destroyActor(Actor player)
     {
         this.actorGenerator.unmock(player);
+        this.actors.remove(player);
     }
 
     @Override
     public void onDestroyActor(Actor player)
     {
-        this.actors.remove(player);
+        this.actorGenerator.onDestroyActor(player);
     }
 
     @Override
