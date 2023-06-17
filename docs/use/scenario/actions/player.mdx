@@ -372,6 +372,31 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
                label="Block 型"
 />
 
+## プレイヤの参加 {#join}
+
+<Action name="プレイヤの参加"
+        description="プレイヤの参加に関するアクションです。"
+        id="player_join"
+        events={
+          {
+            name: "PlayerJoinEvent",
+            package: "org.bukkit.event.player",
+          }
+        }
+        args={[
+          {
+            name: "target",
+            anchor: "target",
+            description: "参加するプレイヤーです。",
+            type: "プレイヤ",
+            required: true
+          }
+        ]}
+        executable requireable watchable
+/>
+
+コンディション要求シナリオでこれを使用した場合、プレイヤがオンラインかどうかを判定します。
+
 ## プレイヤの投げ物の発射 {#projectile-launch}
 
 <Action name="プレイヤの投げ物の発射"
