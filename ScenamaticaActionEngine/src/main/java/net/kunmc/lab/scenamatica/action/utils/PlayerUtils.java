@@ -42,7 +42,7 @@ public class PlayerUtils
             BigInteger leastSigBits = new BigInteger(uuid.substring(16, 32), 16);
             return new UUID(mostSigBits.longValue(), leastSigBits.longValue());
         }
-        catch (NumberFormatException ignored)
+        catch (NumberFormatException | StringIndexOutOfBoundsException ignored)
         {
             return null;
         }
