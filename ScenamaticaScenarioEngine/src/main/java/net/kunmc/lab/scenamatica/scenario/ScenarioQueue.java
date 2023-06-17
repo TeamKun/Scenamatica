@@ -121,8 +121,10 @@ class ScenarioQueue
     public void shutdown() throws IllegalStateException
     {
         this.scenarioQueue.clear();
-        if (this.runner.isRunning())
+        if (this.runner != null && this.runner.isRunning())
             this.runner.cancel();
+
+        this.runner = null;
     }
 
     @RequiredArgsConstructor

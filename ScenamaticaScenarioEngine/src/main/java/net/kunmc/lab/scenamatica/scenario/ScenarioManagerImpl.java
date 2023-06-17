@@ -312,8 +312,15 @@ public class ScenarioManagerImpl implements ScenarioManager
     {
         if (this.enabled == enabled)
             return;
-        else if (!enabled && this.isRunning())
-            this.cancel();
+        else if (!enabled)
+        {
+            if (this.isRunning())
+                this.cancel();
+
+            this.queue.shutdown();
+        }
+        else
+            this.queue.start();
 
         this.enabled = enabled;
     }
