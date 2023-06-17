@@ -6,6 +6,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.math.BigInteger;
 import java.util.UUID;
 
 @UtilityClass
@@ -28,6 +29,20 @@ public class PlayerUtils
             return UUID.fromString(name);
         }
         catch (IllegalArgumentException ignored)
+        {
+            return noDashesStringToUUIDOrNull(name);
+        }
+    }
+
+    private static UUID noDashesStringToUUIDOrNull(@NotNull String uuid)
+    {
+        try
+        {
+            BigInteger mostSigBits = new BigInteger(uuid.substring(0, 16), 16);
+            BigInteger leastSigBits = new BigInteger(uuid.substring(16, 32), 16);
+            return new UUID(mostSigBits.longValue(), leastSigBits.longValue());
+        }
+        catch (NumberFormatException ignored)
         {
             return null;
         }

@@ -35,6 +35,11 @@ public abstract class AbstractPlayerActionArgument implements ActionArgument
         return this.target.equalsIgnoreCase(argument.target);
     }
 
+    public String getTargetSpecifier()
+    {
+        return this.target;
+    }
+
     public Player getTarget()
     {
         return PlayerUtils.getPlayerOrThrow(this.target);

@@ -62,11 +62,28 @@ public class EntityUtils
         if (actor == null)
             throw new IllegalArgumentException("No actor found: " + bukkitEntity.getName());
 
+
         return actor;
     }
 
     public static Actor getActorOrThrow(ScenarioEngine engine, Player bukkitEntity)
     {
         return getActorOrThrow(engine.getManager().getRegistry().getContextManager().getActorManager(), bukkitEntity);
+    }
+
+    public static Actor getActorByStringOrThrow(ScenarioEngine engine, String target)
+    {
+        Actor actor = engine.getManager().getRegistry().getContextManager().getActorManager().getByName(target);
+        if (actor == null)
+        {
+            UUID mayUUID = PlayerUtils.toUUIDOrNull(target);
+            if (mayUUID != null)
+                actor = engine.getManager().getRegistry().getContextManager().getActorManager().getByUUID(mayUUID);
+        }
+
+        if (actor == null)
+            throw new IllegalArgumentException("Invalid target: " + target);
+
+        return actor;
     }
 }

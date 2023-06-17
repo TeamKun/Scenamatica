@@ -89,6 +89,7 @@
             "player_gamemode",
             "player_hotbar",
             "player_interact_block",
+            "player_join",
             "player_launch_projectile",
             "message",
             "milestone",
@@ -277,6 +278,25 @@
             ]
           }
         },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "player_join",
+                "description": "プレイヤーがサーバに参加したり, 参加したことを検知します。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/player/join"
+              }
+            },
+            "required": [
+              "with"
+            ]
+          },
         {
           "if": {
             "properties": {
@@ -835,6 +855,9 @@
                 ]
               }
             }
+          },
+          "join": {
+            "$ref": "#/definitions/action/definitions/player/$base"
           },
           "launch_projectile": {
             "$ref": "#/definitions/action/definitions/player/$base",

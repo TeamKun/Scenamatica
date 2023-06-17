@@ -64,4 +64,12 @@ public interface ActorManager
      */
     @Nullable
     Actor getByUUID(@NotNull UUID uuid);
+
+    /**
+     * 名前からアクターを取得します。
+     *
+     * @param name プレイヤーの名前
+     */
+    @Nullable
+    Actor getByName(@NotNull String name);
 }

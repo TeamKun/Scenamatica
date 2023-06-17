@@ -20,6 +20,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.kunlab.kpm.utils.ReflectionUtils;
 
 import java.util.ArrayList;
@@ -137,6 +138,15 @@ public class ActorManagerImpl implements ActorManager, Listener
     {
         return this.actors.stream().parallel()
                 .filter(p -> p.getUUID().equals(uuid))
+                .findFirst()
+                .orElse(null);
+    }
+
+    @Override
+    public @Nullable Actor getByName(@NotNull String name)
+    {
+        return this.actors.stream().parallel()
+                .filter(p -> p.getName().equalsIgnoreCase(name))
                 .findFirst()
                 .orElse(null);
     }

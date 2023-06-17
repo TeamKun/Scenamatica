@@ -26,6 +26,7 @@ public abstract class AbstractPlayerAction<A extends AbstractPlayerActionArgumen
         actions.add(new PlayerHotbarSlotAction());
         actions.add(new PlayerInteractBlockAction());
         actions.add(new PlayerLaunchProjectileAction());
+        actions.add(new PlayerJoinAction());
 
         return actions;
     }
@@ -47,5 +48,16 @@ public abstract class AbstractPlayerAction<A extends AbstractPlayerActionArgumen
         MapUtils.checkContainsKey(map, AbstractPlayerActionArgument.KEY_TARGET_PLAYER);
 
         return map.get(AbstractPlayerActionArgument.KEY_TARGET_PLAYER).toString();
+    }
+
+    protected boolean isSameUUIDString(String uuid1, String uuid2)
+    {
+        if (uuid1 == null || uuid2 == null)
+            return uuid1 == null && uuid2 == null;
+
+        String normalizedUUID1 = uuid1.replace("-", "").toLowerCase();
+        String normalizedUUID2 = uuid2.replace("-", "").toLowerCase();
+
+        return normalizedUUID1.equals(normalizedUUID2);
     }
 }

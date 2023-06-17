@@ -144,7 +144,7 @@ public class PlayerBeanImpl extends HumanEntityBeanImpl implements PlayerBean
     {
         serializer.validateHumanEntity(map);
         MapUtils.checkType(map, KEY_NAME, String.class);
-        MapUtils.checkType(map, KEY_ONLINE, Boolean.class);
+        MapUtils.checkTypeIfContains(map, KEY_ONLINE, Boolean.class);
         MapUtils.checkTypeIfContains(map, KEY_DISPLAY_NAME, String.class);
         MapUtils.checkLocationIfContains(map, KEY_COMPASS_TARGET);
         MapUtils.checkLocationIfContains(map, KEY_BED_SPAWN_LOCATION);
