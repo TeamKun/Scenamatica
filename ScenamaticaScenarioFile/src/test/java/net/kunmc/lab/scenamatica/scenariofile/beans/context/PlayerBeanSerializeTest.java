@@ -18,6 +18,7 @@ public class PlayerBeanSerializeTest
     public static final PlayerBean FULFILLED = new PlayerBeanImpl(
             HumanEntityBeanSerializeTest.FULFILLED,
             "YajuSNPIName",
+            false,
             "YajuSNPIDisplay",
             "YajuSenpaiList",
             "YajuListHeader",
@@ -38,6 +39,7 @@ public class PlayerBeanSerializeTest
     public static final Map<String, Object> FULFILLED_MAP = new HashMap<String, Object>(HumanEntityBeanSerializeTest.FULFILLED_MAP)
     {{
         this.put("name", "YajuSNPIName");
+        this.put("online", false);
         this.put("display", "YajuSNPIDisplay");
         this.put("playerList", new HashMap<String, Object>()
         {{
@@ -70,6 +72,7 @@ public class PlayerBeanSerializeTest
     public static final PlayerBean EMPTY = new PlayerBeanImpl(
             HumanEntityBeanSerializeTest.EMPTY,
             "YajuSNPI",
+            true,
             null,
             null,
             null,

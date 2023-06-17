@@ -15,6 +15,7 @@ import java.util.List;
 public interface PlayerBean extends EntityBean, HumanEntityBean, Serializable
 {
     String KEY_NAME = "name";
+    String KEY_ONLINE = "online";
     String KEY_DISPLAY_NAME = "display";
     String KEY_PLAYER_LIST = "playerList";
     String KEY_PLAYER_LIST_NAME = "name";
@@ -40,6 +41,13 @@ public interface PlayerBean extends EntityBean, HumanEntityBean, Serializable
      */
     @NotNull
     String getName();
+
+    /**
+     * プレイヤーがオンラインかどうかを取得します。
+     *
+     * @return プレイヤーがオンラインかどうか
+     */
+    boolean isOnline();
 
     /**
      * プレイヤーの表示名を取得します。

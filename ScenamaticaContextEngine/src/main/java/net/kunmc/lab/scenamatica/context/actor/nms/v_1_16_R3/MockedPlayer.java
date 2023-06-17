@@ -38,15 +38,18 @@ import java.util.UUID;
 class MockedPlayer extends EntityPlayer implements Actor
 {
     private final ActorManager manager;
+    private final PlayerMocker mocker;
 
     public MockedPlayer(
             ActorManager manager,
+            PlayerMocker mocker,
             MinecraftServer minecraftserver,
             WorldServer worldserver,
             GameProfile gameprofile)
     {
         super(minecraftserver, worldserver, gameprofile, new PlayerInteractManager(worldserver));
         this.manager = manager;
+        this.mocker = mocker;
 
         this.setNoGravity(false);
         this.G = 0.5f; // ブロックのぼれるたかさ
@@ -132,6 +135,18 @@ class MockedPlayer extends EntityPlayer implements Actor
                 /* enumHand: */ hand,
                 /* movingObjectPositionBlock: */ position
         );
+    }
+
+    @Override
+    public void joinServer()
+    {
+        this.mocker.doLogin(this.server, this);
+    }
+
+    @Override
+    public void leaveServer()
+    {
+        this.playerConnection.networkManager.handleDisconnection();
     }
 
     @Override

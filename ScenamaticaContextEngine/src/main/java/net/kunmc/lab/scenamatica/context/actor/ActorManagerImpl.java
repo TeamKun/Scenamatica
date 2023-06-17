@@ -71,7 +71,6 @@ public class ActorManagerImpl implements ActorManager, Listener
     }
 
     @Override
-    @SneakyThrows(InterruptedException.class)
     public Actor createActor(PlayerBean bean) throws ContextPreparationException
     {
         if (Bukkit.getServer().isPrimaryThread())
@@ -87,6 +86,15 @@ public class ActorManagerImpl implements ActorManager, Listener
 
         this.actors.add(actor);
 
+        if (bean.isOnline())  // オンラインモードはログインするの待つ。
+            this.waitForJoin(actor);
+
+        return actor;
+    }
+
+    @SneakyThrows(InterruptedException.class)
+    private void waitForJoin(Actor actor)
+    {
         // ログイン処理は Bukkit がメインスレッドで行う必要があるため, ここでは帰ってこない。
         // イベントをリッスンして, ログインしたら待機しているスレッドを起こす必要がある。
         Object locker = new Object();
@@ -96,8 +104,6 @@ public class ActorManagerImpl implements ActorManager, Listener
         {
             locker.wait();
         }
-
-        return actor;
     }
 
     @Override

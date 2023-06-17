@@ -25,6 +25,7 @@ public class PlayerBeanImpl extends HumanEntityBeanImpl implements PlayerBean
 
     @NotNull
     String name;
+    boolean online;
     @Nullable
     String displayName;
     @Nullable
@@ -53,7 +54,7 @@ public class PlayerBeanImpl extends HumanEntityBeanImpl implements PlayerBean
     int opLevel;
     List<String> activePermissions;
 
-    public PlayerBeanImpl(@NotNull HumanEntityBean human, @NotNull String name, @Nullable String displayName,
+    public PlayerBeanImpl(@NotNull HumanEntityBean human, @NotNull String name, boolean online, @Nullable String displayName,
                           @Nullable String playerListName, @Nullable String playerListHeader,
                           @Nullable String playerListFooter, @Nullable Location compassTarget,
                           @Nullable Location bedSpawnLocation, @Nullable Integer exp,
@@ -65,6 +66,7 @@ public class PlayerBeanImpl extends HumanEntityBeanImpl implements PlayerBean
                 human.getMainHand(), human.getGamemode(), human.getFoodLevel()
         );
         this.name = name;
+        this.online = online;
         this.displayName = displayName;
         this.playerListName = playerListName;
         this.playerListHeader = playerListHeader;
@@ -95,6 +97,8 @@ public class PlayerBeanImpl extends HumanEntityBeanImpl implements PlayerBean
         MapUtils.putIfNotNull(map, KEY_LEVEL, bean.getLevel());
         MapUtils.putIfNotNull(map, KEY_TOTAL_EXPERIENCE, bean.getTotalExperience());
 
+        if (!bean.isOnline())
+            map.put(KEY_ONLINE, false);
 
         boolean isFlyableGamemode = bean.getGamemode() == GameMode.CREATIVE || bean.getGamemode() == GameMode.SPECTATOR;
         if (bean.isAllowFlight())
@@ -140,6 +144,7 @@ public class PlayerBeanImpl extends HumanEntityBeanImpl implements PlayerBean
     {
         serializer.validateHumanEntity(map);
         MapUtils.checkType(map, KEY_NAME, String.class);
+        MapUtils.checkType(map, KEY_ONLINE, Boolean.class);
         MapUtils.checkTypeIfContains(map, KEY_DISPLAY_NAME, String.class);
         MapUtils.checkLocationIfContains(map, KEY_COMPASS_TARGET);
         MapUtils.checkLocationIfContains(map, KEY_BED_SPAWN_LOCATION);
@@ -169,6 +174,7 @@ public class PlayerBeanImpl extends HumanEntityBeanImpl implements PlayerBean
 
         String name = (String) map.get(KEY_NAME);
 
+        boolean online = MapUtils.getOrDefault(map, KEY_ONLINE, true);
         String displayName = MapUtils.getOrNull(map, KEY_DISPLAY_NAME);
         Location compassTarget = MapUtils.getAsLocationOrNull(map, KEY_COMPASS_TARGET);
         Location bedSpawnLocation = MapUtils.getAsLocationOrNull(map, KEY_BED_SPAWN_LOCATION);
@@ -210,6 +216,7 @@ public class PlayerBeanImpl extends HumanEntityBeanImpl implements PlayerBean
         return new PlayerBeanImpl(
                 human,
                 name,
+                online,
                 displayName,
                 playerListName,
                 playerListHeader,

@@ -1769,6 +1769,11 @@
           "description": "アクターの名前です。",
           "maxLength": 16
         },
+        "online": {
+          "type": "boolean",
+          "description": "アクターがオンラインかどうかです。",
+          "default": true
+        },
         "displayName": {
           "type": "string",
           "description": "アクターの表示名です。"

@@ -29,6 +29,7 @@ public class CommandSummonActor extends CommandBase
         {
             this.registry.getContextManager().getActorManager().createActor(new PlayerBeanImpl(
                     name,
+                    true,
                     null,
                     null,
                     null,

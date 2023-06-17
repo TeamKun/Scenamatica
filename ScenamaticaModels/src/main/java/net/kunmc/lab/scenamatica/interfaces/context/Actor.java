@@ -58,6 +58,22 @@ public interface Actor
     void placeBlock(@NotNull Location location, @NotNull ItemStack stack, @NotNull EquipmentSlot slot, @NotNull BlockFace direction);
 
     /**
+     * サーバに参加します。
+     *
+     * @throws IllegalStateException すでに参加している場合
+     * @see Player#isOnline()
+     */
+    void joinServer();
+
+    /**
+     * サーバから退出します。
+     *
+     * @throws IllegalStateException 参加していない場合
+     * @see Player#isOnline()
+     */
+    void leaveServer();
+
+    /**
      * Bukkit の {@link Player} を取得します。
      *
      * @return プレイヤー

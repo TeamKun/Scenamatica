@@ -248,16 +248,23 @@ public class PlayerMocker extends PlayerMockerBase
         MinecraftServer server = ((CraftServer) Bukkit.getServer()).getServer();
         WorldServer worldServer = server.E();
         GameProfile profile = createGameProfile(bean);
+        boolean doLogin = bean.isOnline();
 
-        MockedPlayer player = new MockedPlayer(this.manager, server, worldServer, profile);
+        MockedPlayer player = new MockedPlayer(this.manager, this, server, worldServer, profile);
         this.initializePlayer(player, bean);
 
+        if (doLogin)
+            this.doLogin(server, player);
+
+        return player;
+    }
+
+    /* non-public */ void doLogin(MinecraftServer server, MockedPlayer player)
+    {
         if (!this.dispatchLoginEvent(player.getBukkitEntity()))
             throw new IllegalStateException("Login for " + player.getName() + " was denied.");
 
         this.registerPlayer(server, player);
-
-        return player;
     }
 
     @Override
