@@ -1,6 +1,7 @@
 package net.kunmc.lab.scenamatica.context.actor.nms.v_1_16_R3;
 
 import com.mojang.authlib.GameProfile;
+import io.netty.handler.timeout.TimeoutException;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import net.kunmc.lab.peyangpaperutils.lib.utils.Runner;
@@ -37,8 +38,8 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+import java.lang.reflect.Constructor;
 import java.util.UUID;
-import java.util.concurrent.TimeoutException;
 
 class MockedPlayer extends EntityPlayer implements Actor
 {
@@ -62,6 +63,20 @@ class MockedPlayer extends EntityPlayer implements Actor
 
         this.setNoGravity(false);
         this.G = 0.5f; // ブロックのぼれるたかさ
+    }
+
+    private static TimeoutException createNIOTimeoutException()
+    {
+        try
+        {
+            Constructor<TimeoutException> constructor = TimeoutException.class.getDeclaredConstructor();
+            constructor.setAccessible(true);
+            return constructor.newInstance();
+        }
+        catch (ReflectiveOperationException e)
+        {
+            throw new IllegalStateException(e);
+        }
     }
 
     @Override
@@ -172,7 +187,7 @@ class MockedPlayer extends EntityPlayer implements Actor
     {
         this.networkManager.exceptionCaught(
                 /* channelhandlercontext: */ null,  // なんでもいい。
-                /* throwable: */ new TimeoutException("Timeout packet for " + this.getName() + " [E]!")
+                /* throwable: */ createNIOTimeoutException()
         );
         this.actualLeave("Timed out");
     }
@@ -280,5 +295,4 @@ class MockedPlayer extends EntityPlayer implements Actor
         Runner.runLater(() -> this.getWorldServer().removeEntity(this), 15L);
         // 15L 遅らせるのは, アニメーションのため
     }
-
 }
