@@ -465,3 +465,65 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
 この設定は、 `expect` アクションのみで有効です。
 
 :::
+
+## プレイヤの退出 {#quit}
+
+<Action name="プレイヤの退出"
+        description="プレイヤの退出に関するアクションです。"
+        id="player_quit"
+        events={
+          {
+            name: "PlayerQuitEvent",
+            package: "org.bukkit.event.player",
+          }
+        }
+        args={[
+          {
+            name: "target",
+            anchor: "target",
+            description: "退出するプレイヤーです。",
+            type: "プレイヤ",
+            required: true
+          },
+          {
+            name: "message",
+            anchor: "quit-message",
+            description: "退出時のメッセージです。",
+            type: "文字列"
+          },
+          {
+            name: "reason",
+            anchor: "quit-reason",
+            description: "退出の理由です。",
+            type: "列挙型{DISCONNECTED, KICKED, TIMED_OUT, ERRONEOUS_STATE}",
+            default: "シナリオのタイプによる"
+          }
+        ]}
+        executable requireable watchable
+/>
+
+プレイヤの一般的な退出に関するアクションです。
+
+:::tip
+キックされた理由等などを使用したシナリオを作成する場合は, [プレイヤのキック](#kick) アクションを使用してください。
+:::
+
+
+### `message` {#quit-message}
+
+退出時のメッセージを指定します。
+
+:::caution
+コンディション要求シナリオでは使用できません。
+:::
+
+### `reason` {#quit-reason}
+
+以下の理由が使用できます：
+
+| 種類                | 説明                      |
+|:------------------|:------------------------|
+| `DISCONNECTED`    | プレイヤが自らサーバから退出した場合      |
+| `KICKED`          | プレイヤがキックされた場合           |
+| `TIMED_OUT`       | プレイヤがタイムアウトした場合         |
+| `ERRONEOUS_STATE` | パケットハンドラ内などで例外が発生した場合など |
