@@ -1,6 +1,7 @@
 package net.kunmc.lab.scenamatica.context.actor.nms.v_1_16_R3;
 
 import com.mojang.authlib.GameProfile;
+import lombok.Getter;
 import net.kunmc.lab.peyangpaperutils.lib.utils.Runner;
 import net.kunmc.lab.scenamatica.events.actor.ActorPostJoinEvent;
 import net.kunmc.lab.scenamatica.interfaces.context.Actor;
@@ -14,6 +15,7 @@ import net.minecraft.server.v1_16_R3.EnumHand;
 import net.minecraft.server.v1_16_R3.EnumMoveType;
 import net.minecraft.server.v1_16_R3.MinecraftServer;
 import net.minecraft.server.v1_16_R3.MovingObjectPositionBlock;
+import net.minecraft.server.v1_16_R3.NetworkManager;
 import net.minecraft.server.v1_16_R3.PacketPlayInArmAnimation;
 import net.minecraft.server.v1_16_R3.PlayerInteractManager;
 import net.minecraft.server.v1_16_R3.Vec3D;
@@ -34,15 +36,19 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
+import java.util.concurrent.TimeoutException;
 
 class MockedPlayer extends EntityPlayer implements Actor
 {
     private final ActorManager manager;
     private final PlayerMocker mocker;
+    @Getter
+    private final NetworkManager networkManager;
 
     public MockedPlayer(
             ActorManager manager,
             PlayerMocker mocker,
+            NetworkManager networkManager,
             MinecraftServer minecraftserver,
             WorldServer worldserver,
             GameProfile gameprofile)
@@ -50,6 +56,7 @@ class MockedPlayer extends EntityPlayer implements Actor
         super(minecraftserver, worldserver, gameprofile, new PlayerInteractManager(worldserver));
         this.manager = manager;
         this.mocker = mocker;
+        this.networkManager = networkManager;
 
         this.setNoGravity(false);
         this.G = 0.5f; // ブロックのぼれるたかさ
@@ -147,6 +154,24 @@ class MockedPlayer extends EntityPlayer implements Actor
     public void leaveServer()
     {
         this.playerConnection.disconnect("Disconnected");
+    }
+
+    @Override
+    public void kickTimeout()
+    {
+        this.networkManager.exceptionCaught(
+                /* channelhandlercontext: */ null,  // なんでもいい。
+                /* throwable: */ new TimeoutException("Timeout packet for " + this.getName() + " [E]!")
+        );
+    }
+
+    @Override
+    public void kickErroneous()
+    {
+        this.networkManager.exceptionCaught(
+                /* channelhandlercontext: */ null,  // なんでもいい。
+                /* throwable: */ new IllegalStateException("Erroneous packet for " + this.getName() + " [E]!")
+        );
     }
 
     @Override

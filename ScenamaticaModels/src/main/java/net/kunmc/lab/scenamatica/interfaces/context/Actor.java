@@ -74,6 +74,16 @@ public interface Actor
     void leaveServer();
 
     /**
+     * サーバからタイムアウトしてキックされます。
+     */
+    void kickTimeout();
+
+    /**
+     * サーバからエラーでキックされます。
+     */
+    void kickErroneous();
+
+    /**
      * Bukkit の {@link Player} を取得します。
      *
      * @return プレイヤー

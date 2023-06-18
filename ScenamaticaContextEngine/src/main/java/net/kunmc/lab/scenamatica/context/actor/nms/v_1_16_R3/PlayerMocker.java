@@ -91,8 +91,7 @@ public class PlayerMocker extends PlayerMockerBase
     private void registerPlayer(MinecraftServer server, MockedPlayer player)
     {
         PlayerList list = server.getPlayerList();
-        NetworkManager mockedNetworkManager = new MockedNetworkManager(server);
-        list.a(mockedNetworkManager, player);
+        list.a(player.getNetworkManager(), player);
         sendSettings(player);
     }
 
@@ -246,11 +245,12 @@ public class PlayerMocker extends PlayerMockerBase
     public Actor mock(@Nullable World world, @NotNull PlayerBean bean)
     {
         MinecraftServer server = ((CraftServer) Bukkit.getServer()).getServer();
+        NetworkManager mockedNetworkManager = new MockedNetworkManager(server);
         WorldServer worldServer = server.E();
         GameProfile profile = createGameProfile(bean);
         boolean doLogin = bean.isOnline();
 
-        MockedPlayer player = new MockedPlayer(this.manager, this, server, worldServer, profile);
+        MockedPlayer player = new MockedPlayer(this.manager, this, mockedNetworkManager, server, worldServer, profile);
         this.initializePlayer(player, bean);
 
         if (doLogin)

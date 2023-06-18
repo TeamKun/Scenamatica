@@ -91,6 +91,7 @@
             "player_interact_block",
             "player_join",
             "player_launch_projectile",
+            "player_quit",
             "message",
             "milestone",
             "server_log",
@@ -311,6 +312,26 @@
             "properties": {
               "with": {
                 "$ref": "#/definitions/action/definitions/player/launch_projectile"
+              }
+            },
+            "required": [
+              "with"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "player_quit",
+                "description": "プレイヤーがサーバから退出したり, 退出したことを検知します。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/player/quit"
               }
             },
             "required": [
@@ -863,6 +884,29 @@
               "message": {
                 "type": "string",
                 "description": "プレイヤーがサーバーに参加したときに表示するメッセージです。"
+              }
+            }
+          },
+          "quit": {
+            "$ref": "#/definitions/action/definitions/player/$base",
+            "properties": {
+              "message": {
+                "type": "string",
+                "description": "プレイヤーがサーバーから退出したときに表示するメッセージです。"
+              },
+              "reason": {
+                "type": "string",
+                "description": "プレイヤーがサーバーから退出した原因です。",
+                "enum": [
+                  "disconnected",
+                  "kicked",
+                  "timed_out",
+                  "erroneous_state",
+                  "DISCONNECTED",
+                  "KICKED",
+                  "TIMED_OUT",
+                  "ERRONEOUS_STATE"
+                ]
               }
             }
           },

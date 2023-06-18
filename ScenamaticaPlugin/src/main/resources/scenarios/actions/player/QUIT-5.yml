@@ -1,0 +1,31 @@
+# noinspection YAMLSchemaValidation
+scenamatica: ${project.version}
+
+name: actions_player_quit_5
+description: Testing player_quit action with message works or not
+on:
+  - type: on_load
+  - type: manual_dispatch
+
+context:
+  actors:
+    - name: Actor001
+
+scenario:
+  - type: execute
+    action: player_quit
+    with:
+      target: Actor001
+      message: "You looks like YajuSNPI!"
+  - type: expect
+    action: player_quit
+    with:
+      target: Actor001
+      reason: DISCONNECTED
+      message: "You looks like YajuSNPI!"
+  - type: require
+    action: player_quit
+    with:
+      target: Actor001
+      reason: DISCONNECTED
+
