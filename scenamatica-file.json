@@ -90,6 +90,7 @@
             "player_hotbar",
             "player_interact_block",
             "player_join",
+            "player_kick",
             "player_launch_projectile",
             "player_quit",
             "message",
@@ -292,6 +293,26 @@
             "properties": {
               "with": {
                 "$ref": "#/definitions/action/definitions/player/join"
+              }
+            },
+            "required": [
+              "with"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "player_kick",
+                "description": "プレイヤーがサーバからキックされたり, キックされたことを検知します。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/player/kick"
               }
             },
             "required": [
@@ -887,25 +908,61 @@
               }
             }
           },
-          "quit": {
+          "kick": {
             "$ref": "#/definitions/action/definitions/player/$base",
             "properties": {
-              "message": {
+              "leaveMessage": {
                 "type": "string",
                 "description": "プレイヤーがサーバーから退出したときに表示するメッセージです。"
               },
-              "reason": {
+              "message": {
                 "type": "string",
-                "description": "プレイヤーがサーバーから退出した原因です。",
+                "description": "プレイヤーがサーバーからキックされたときに表示するメッセージです。"
+              },
+              "cause": {
+                "type": "string",
+                "description": "プレイヤーがサーバーからキックされた原因です。",
                 "enum": [
-                  "disconnected",
-                  "kicked",
-                  "timed_out",
-                  "erroneous_state",
-                  "DISCONNECTED",
-                  "KICKED",
-                  "TIMED_OUT",
-                  "ERRONEOUS_STATE"
+                  "plugin",
+                  "whitelist",
+                  "banned",
+                  "ip_banned",
+                  "kick_command",
+                  "flying_player",
+                  "flying_vehicle",
+                  "timeout",
+                  "idling",
+                  "invalid_vehicle_movement",
+                  "invalid_player_movement",
+                  "invalid_entity_attacked",
+                  "invalid_payload",
+                  "spam",
+                  "illegal_action",
+                  "illegal_characters",
+                  "self_interaction",
+                  "duplicate_login",
+                  "restart_command",
+                  "unknown",
+                  "PLUGIN",
+                  "WHITELIST",
+                  "BANNED",
+                  "IP_BANNED",
+                  "KICK_COMMAND",
+                  "FLYING_PLAYER",
+                  "FLYING_VEHICLE",
+                  "TIMEOUT",
+                  "IDLING",
+                  "INVALID_VEHICLE_MOVEMENT",
+                  "INVALID_PLAYER_MOVEMENT",
+                  "INVALID_ENTITY_ATTACKED",
+                  "INVALID_PAYLOAD",
+                  "SPAM",
+                  "ILLEGAL_ACTION",
+                  "ILLEGAL_CHARACTERS",
+                  "SELF_INTERACTION",
+                  "DUPLICATE_LOGIN",
+                  "RESTART_COMMAND",
+                  "UNKNOWN"
                 ]
               }
             }
@@ -959,6 +1016,29 @@
             "required": [
               "type"
             ]
+          },
+          "quit": {
+            "$ref": "#/definitions/action/definitions/player/$base",
+            "properties": {
+              "message": {
+                "type": "string",
+                "description": "プレイヤーがサーバーから退出したときに表示するメッセージです。"
+              },
+              "reason": {
+                "type": "string",
+                "description": "プレイヤーがサーバーから退出した原因です。",
+                "enum": [
+                  "disconnected",
+                  "kicked",
+                  "timed_out",
+                  "erroneous_state",
+                  "DISCONNECTED",
+                  "KICKED",
+                  "TIMED_OUT",
+                  "ERRONEOUS_STATE"
+                ]
+              }
+            }
           }
         },
         "scenamatica": {

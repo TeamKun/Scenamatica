@@ -1,0 +1,27 @@
+# noinspection YAMLSchemaValidation
+scenamatica: ${project.version}
+
+name: actions_player_kick_4
+description: Testing player_kick action with its cause and kick message works or not
+on:
+  - type: on_load
+  - type: manual_dispatch
+
+context:
+  actors:
+    - name: Actor001
+
+
+scenario:
+  - type: execute
+    action: player_kick
+    with:
+      target: Actor001
+      kick_message: "You are kicked due to YajuSNPI"
+      cause: INVALID_PLAYER_MOVEMENT
+  - type: expect
+    action: player_kick
+    with:
+      target: Actor001
+      kick_message: "You are kicked due to YajuSNPI"
+      cause: INVALID_PLAYER_MOVEMENT

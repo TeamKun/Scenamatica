@@ -26,6 +26,7 @@ public abstract class AbstractPlayerAction<A extends AbstractPlayerActionArgumen
         actions.add(new PlayerHotbarSlotAction());
         actions.add(new PlayerInteractBlockAction());
         actions.add(new PlayerJoinAction());
+        actions.add(new PlayerKickAction());
         actions.add(new PlayerLaunchProjectileAction());
         actions.add(new PlayerQuitAction());
 
