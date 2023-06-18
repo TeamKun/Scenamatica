@@ -397,6 +397,78 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
 
 コンディション要求シナリオでこれを使用した場合、プレイヤがオンラインかどうかを判定します。
 
+## プレイヤのキック {#kick}
+
+<Action name="プレイヤのキック"
+        description="プレイヤのキックに関するアクションです。"
+        id="player_kick"
+        events={
+          {
+            name: "PlayerKickEvent",
+            package: "org.bukkit.event.player",
+          }
+        }
+        args={[
+          {
+            name: "target",
+            anchor: "target",
+            description: "キックされるプレイヤーです。",
+            type: "プレイヤ",
+            required: true
+          },
+          {
+            name: "leave_message",
+            anchor: "kick-leave-message",
+            description: "コンソールとサーバ上のプレイヤ全員に表示されるメッセージです。",
+            type: ObjectType.STRING
+          },
+          {
+            name: "kick_message",
+            description: "キックされたプレイヤーに表示されるメッセージです。",
+            type: ObjectType.STRING
+          },
+          {
+            name: "cause",
+            anchor: "kick-cause",
+            description: "キックの理由です。",
+            type: "列挙型{...}",
+            type_anchor: "kick-cause-enum"
+          }
+        ]}
+        executable watchable
+/>
+
+### `leave_message` {#kick-leave-message}
+
+:::caution
+アクション実行期待モードでは使用できません。
+:::
+
+### KickCause {#kick-cause-enum}
+| 列挙型名                       | 説明                 |
+|:---------------------------|:-------------------|
+| `PLUGIN`                   | プラグインによるキック        |
+| `WHITELIST`                | ホワイトリストに存在しないプレイヤ  |
+| `BANNED`                   | 追放されたプレイヤ          |
+| `IP_BANNED`                | IPアドレスが追放されたプレイヤ   |
+| `KICK_COMMAND`             | `/kick` コマンドによるキック |
+| `FLYING_PLAYER`            | 飛行したプレイヤ           |
+| `FLYING_VEHICLE`           | 乗り物が飛行した           |
+| `TIMEOUT`                  | タイムアウト             |
+| `IDLING`                   | 放置                 |
+| `INVALID_VEHICLE_MOVEMENT` | 不正な乗り物の動き          |
+| `INVALID_PLAYER_MOVEMENT`  | 不正なプレイヤの動き         |
+| `INVALID_ENTITY_ATTACKED`  | 不正な攻撃              |
+| `INVALID_PAYLOAD`          | 不正なペイロード           |
+| `SPAM`                     | スパム                |
+| `ILLEGAL_ACTION`           | 不正な行動              |
+| `ILLEGAL_CHARACTERS`       | 不正な文字              |
+| `SELF_INTERACTION`         | 自分自身とのやり取り         |
+| `DUPLICATE_LOGIN`          | 重複ログイン             |
+| `RESTART_COMMAND`          | Spigotの再起動コマンド     |
+| `UNKNOWN`                  | 不明                 |
+
+
 ## プレイヤの投げ物の発射 {#projectile-launch}
 
 <Action name="プレイヤの投げ物の発射"
