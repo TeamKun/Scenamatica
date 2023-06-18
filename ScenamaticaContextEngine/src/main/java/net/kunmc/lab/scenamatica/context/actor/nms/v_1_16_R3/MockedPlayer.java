@@ -2,11 +2,13 @@ package net.kunmc.lab.scenamatica.context.actor.nms.v_1_16_R3;
 
 import com.mojang.authlib.GameProfile;
 import lombok.Getter;
+import lombok.SneakyThrows;
 import net.kunmc.lab.peyangpaperutils.lib.utils.Runner;
 import net.kunmc.lab.scenamatica.events.actor.ActorPostJoinEvent;
 import net.kunmc.lab.scenamatica.interfaces.context.Actor;
 import net.kunmc.lab.scenamatica.interfaces.context.ActorManager;
 import net.minecraft.server.v1_16_R3.BlockPosition;
+import net.minecraft.server.v1_16_R3.ChatComponentText;
 import net.minecraft.server.v1_16_R3.DamageSource;
 import net.minecraft.server.v1_16_R3.Entity;
 import net.minecraft.server.v1_16_R3.EntityPlayer;
@@ -150,10 +152,19 @@ class MockedPlayer extends EntityPlayer implements Actor
         this.mocker.doLogin(this.server, this);
     }
 
+    private void actualLeave(String message)
+    {
+        // this.server.getPlayerList().disconnect(this);
+        // ↑は, PaperMC の改悪により使用できない（定義の変更： String disconnectMessage -> advanture.Component disconnectMessage）
+
+        this.playerConnection.a(new ChatComponentText(message));
+    }
+
     @Override
+    @SneakyThrows
     public void leaveServer()
     {
-        this.playerConnection.disconnect("Disconnected");
+        this.actualLeave("Disconnected");
     }
 
     @Override
@@ -163,6 +174,7 @@ class MockedPlayer extends EntityPlayer implements Actor
                 /* channelhandlercontext: */ null,  // なんでもいい。
                 /* throwable: */ new TimeoutException("Timeout packet for " + this.getName() + " [E]!")
         );
+        this.actualLeave("Timed out");
     }
 
     @Override
@@ -172,6 +184,7 @@ class MockedPlayer extends EntityPlayer implements Actor
                 /* channelhandlercontext: */ null,  // なんでもいい。
                 /* throwable: */ new IllegalStateException("Erroneous packet for " + this.getName() + " [E]!")
         );
+        this.actualLeave("Internal server error");
     }
 
     @Override

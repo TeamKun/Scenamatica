@@ -9,7 +9,6 @@ import lombok.SneakyThrows;
 import net.kunmc.lab.scenamatica.context.actor.MockedChannel;
 import net.minecraft.server.v1_16_R3.EnumProtocol;
 import net.minecraft.server.v1_16_R3.EnumProtocolDirection;
-import net.minecraft.server.v1_16_R3.IChatBaseComponent;
 import net.minecraft.server.v1_16_R3.MinecraftServer;
 import net.minecraft.server.v1_16_R3.NetworkManager;
 import net.minecraft.server.v1_16_R3.Packet;
@@ -87,17 +86,7 @@ class MockedNetworkManager extends NetworkManager
     }
 
     @Override
-    public void close(IChatBaseComponent ichatbasecomponent)
-    {
-    }
-
-    @Override
     public void channelActive(ChannelHandlerContext channelhandlercontext)
-    {
-    }
-
-    @Override
-    public void channelInactive(ChannelHandlerContext channelhandlercontext)
     {
     }
 
