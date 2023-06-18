@@ -3,7 +3,6 @@ package net.kunmc.lab.scenamatica.action.actions.block;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import net.kunmc.lab.scenamatica.action.utils.BeanUtils;
-import net.kunmc.lab.scenamatica.action.utils.EntityUtils;
 import net.kunmc.lab.scenamatica.action.utils.PlayerUtils;
 import net.kunmc.lab.scenamatica.commons.utils.MapUtils;
 import net.kunmc.lab.scenamatica.enums.ScenarioType;
@@ -56,7 +55,7 @@ public class BlockBreakAction extends AbstractBlockAction<BlockBreakAction.Argum
 
         this.validateBreakable(block, player);
 
-        Actor actor = EntityUtils.getActorOrThrow(engine, player); // アクタ以外は破壊シミュレートできない。
+        Actor actor = PlayerUtils.getActorOrThrow(engine, player); // アクタ以外は破壊シミュレートできない。
         actor.breakBlock(block);
     }
 

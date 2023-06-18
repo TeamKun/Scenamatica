@@ -2,7 +2,7 @@ package net.kunmc.lab.scenamatica.action.actions.player;
 
 import lombok.EqualsAndHashCode;
 import lombok.Value;
-import net.kunmc.lab.scenamatica.action.utils.EntityUtils;
+import net.kunmc.lab.scenamatica.action.utils.PlayerUtils;
 import net.kunmc.lab.scenamatica.commons.utils.MapUtils;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioEngine;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.BeanSerializer;
@@ -35,7 +35,7 @@ public class PlayerAnimationAction extends AbstractPlayerAction<PlayerAnimationA
 
         Player player = argument.getTarget();
 
-        EntityUtils.getActorOrThrow(engine, player)
+        PlayerUtils.getActorOrThrow(engine, player)
                 .playAnimation(argument.type);
     }
 

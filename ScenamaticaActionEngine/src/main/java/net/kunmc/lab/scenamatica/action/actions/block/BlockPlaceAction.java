@@ -3,7 +3,6 @@ package net.kunmc.lab.scenamatica.action.actions.block;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import net.kunmc.lab.scenamatica.action.utils.BeanUtils;
-import net.kunmc.lab.scenamatica.action.utils.EntityUtils;
 import net.kunmc.lab.scenamatica.action.utils.PlayerUtils;
 import net.kunmc.lab.scenamatica.commons.utils.MapUtils;
 import net.kunmc.lab.scenamatica.enums.ScenarioType;
@@ -68,7 +67,7 @@ public class BlockPlaceAction extends AbstractBlockAction<BlockPlaceAction.Argum
             BlockFace direction = argument.getDirection() == null ? BlockFace.EAST: argument.getDirection();
             EquipmentSlot hand = argument.getHand() == null ? EquipmentSlot.HAND: argument.getHand();
 
-            Actor scenarioActor = EntityUtils.getActorOrThrow(engine, actor);
+            Actor scenarioActor = PlayerUtils.getActorOrThrow(engine, actor);
             scenarioActor.placeBlock(
                     location,
                     new ItemStack(blockDef.getType()),  // assert blockDef.getType() != null

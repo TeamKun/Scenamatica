@@ -3,7 +3,7 @@ package net.kunmc.lab.scenamatica.action.actions.player;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import net.kunmc.lab.scenamatica.action.utils.BeanUtils;
-import net.kunmc.lab.scenamatica.action.utils.EntityUtils;
+import net.kunmc.lab.scenamatica.action.utils.PlayerUtils;
 import net.kunmc.lab.scenamatica.commons.utils.MapUtils;
 import net.kunmc.lab.scenamatica.enums.ScenarioType;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioEngine;
@@ -66,7 +66,7 @@ public class PlayerInteractBlockAction extends AbstractPlayerAction<PlayerIntera
             throw new IllegalArgumentException("Argument action is not allowed to be LEFT_CLICK_BLOCK or RIGHT_CLICK_BLOCK when the target block is air");
 
 
-        EntityUtils.getActorOrThrow(engine, argument.getTarget()).interactAt(
+        PlayerUtils.getActorOrThrow(engine, argument.getTarget()).interactAt(
                 action,
                 getClickBlock(engine, argument)
         );
