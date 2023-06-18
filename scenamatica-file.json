@@ -296,7 +296,8 @@
             "required": [
               "with"
             ]
-          },
+          }
+        },
         {
           "if": {
             "properties": {
@@ -857,7 +858,13 @@
             }
           },
           "join": {
-            "$ref": "#/definitions/action/definitions/player/$base"
+            "$ref": "#/definitions/action/definitions/player/$base",
+            "properties": {
+              "message": {
+                "type": "string",
+                "description": "プレイヤーがサーバーに参加したときに表示するメッセージです。"
+              }
+            }
           },
           "launch_projectile": {
             "$ref": "#/definitions/action/definitions/player/$base",

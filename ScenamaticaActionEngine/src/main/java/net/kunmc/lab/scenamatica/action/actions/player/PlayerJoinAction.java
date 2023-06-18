@@ -2,13 +2,15 @@ package net.kunmc.lab.scenamatica.action.actions.player;
 
 import lombok.EqualsAndHashCode;
 import lombok.Value;
-import net.kunmc.lab.scenamatica.action.utils.EntityUtils;
 import net.kunmc.lab.scenamatica.action.utils.PlayerUtils;
+import net.kunmc.lab.scenamatica.action.utils.TextUtils;
+import net.kunmc.lab.scenamatica.commons.utils.MapUtils;
 import net.kunmc.lab.scenamatica.interfaces.action.Requireable;
 import net.kunmc.lab.scenamatica.interfaces.context.Actor;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioEngine;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.BeanSerializer;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
+import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -18,6 +20,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class PlayerJoinAction extends AbstractPlayerAction<PlayerJoinAction.Argument> implements Requireable<PlayerJoinAction.Argument>
 {
@@ -41,7 +44,7 @@ public class PlayerJoinAction extends AbstractPlayerAction<PlayerJoinAction.Argu
         if (PlayerUtils.getPlayerOrNull(targetSpecifier) != null)
             throw new IllegalArgumentException("Cannot execute player join action because player is already online.");
 
-        Actor actor = EntityUtils.getActorByStringOrThrow(engine, targetSpecifier);
+        Actor actor = PlayerUtils.getActorByStringOrThrow(engine, targetSpecifier);
 
         actor.joinServer();
     }
@@ -52,11 +55,16 @@ public class PlayerJoinAction extends AbstractPlayerAction<PlayerJoinAction.Argu
         assert event instanceof PlayerJoinEvent;
         PlayerJoinEvent e = (PlayerJoinEvent) event;
         Player player = e.getPlayer();
+        Component message = e.joinMessage();
 
+        // ターゲットが存在するか。 UUID と Player#getName() で判定する。
         String targetSpecifier = argument.getTargetSpecifier();
+        if (!(player.getName().equalsIgnoreCase(targetSpecifier)
+                && this.isSameUUIDString(player.getUniqueId().toString(), targetSpecifier)))
+            return false;
 
-        return player.getName().equalsIgnoreCase(targetSpecifier)
-                || this.isSameUUIDString(player.getUniqueId().toString(), targetSpecifier);
+        String expectedJoinMessage = argument.getJoinMessage();
+        return expectedJoinMessage == null || TextUtils.isSameContent(message, expectedJoinMessage);
     }
 
     @Override
@@ -70,7 +78,10 @@ public class PlayerJoinAction extends AbstractPlayerAction<PlayerJoinAction.Argu
     @Override
     public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull BeanSerializer serializer)
     {
-        return new Argument(super.deserializeTarget(map));
+        return new Argument(
+                super.deserializeTarget(map),
+                MapUtils.getOrNull(map, Argument.KEY_JOIN_MESSAGE)
+        );
     }
 
     @Override
@@ -84,28 +95,36 @@ public class PlayerJoinAction extends AbstractPlayerAction<PlayerJoinAction.Argu
     @EqualsAndHashCode(callSuper = true)
     public static class Argument extends AbstractPlayerActionArgument
     {
-        public Argument(@NotNull String target)
+        private static String KEY_JOIN_MESSAGE = "message";
+
+        @Nullable
+        String joinMessage;
+
+        public Argument(@NotNull String target, @Nullable String joinMessage)
         {
             super(target);
+            this.joinMessage = joinMessage;
         }
 
         @Override
         public boolean isSame(TriggerArgument argument)
         {
-            return super.isSame(argument);
+            if (!(argument instanceof Argument))
+                return false;
+            Argument arg = (Argument) argument;
+
+            return super.isSame(argument)
+                    && Objects.equals(this.joinMessage, arg.joinMessage);
         }
 
         @Override
         public String getArgumentString()
         {
-            return super.getArgumentString();
-        }
+            StringBuilder builder = new StringBuilder(super.getArgumentString());
+            if (this.joinMessage != null)
+                builder.append(", ").append(KEY_JOIN_MESSAGE).append("=\"").append(this.joinMessage).append("\"");
 
-        @Override
-        @Nullable
-        public Player getTarget()
-        {
-            return PlayerUtils.getPlayerOrNull(this.getTargetSpecifier());
+            return builder.toString();
         }
     }
 }
