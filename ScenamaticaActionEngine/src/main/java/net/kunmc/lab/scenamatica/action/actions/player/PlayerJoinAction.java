@@ -60,7 +60,7 @@ public class PlayerJoinAction extends AbstractPlayerAction<PlayerJoinAction.Argu
         // ターゲットが存在するか。 UUID と Player#getName() で判定する。
         String targetSpecifier = argument.getTargetSpecifier();
         if (!(player.getName().equalsIgnoreCase(targetSpecifier)
-                && this.isSameUUIDString(player.getUniqueId().toString(), targetSpecifier)))
+                || this.isSameUUIDString(player.getUniqueId().toString(), targetSpecifier)))
             return false;
 
         String expectedJoinMessage = argument.getJoinMessage();
