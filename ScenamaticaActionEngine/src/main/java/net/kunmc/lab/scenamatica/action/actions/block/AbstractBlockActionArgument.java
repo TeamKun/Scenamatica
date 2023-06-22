@@ -1,12 +1,12 @@
 package net.kunmc.lab.scenamatica.action.actions.block;
 
 import lombok.Getter;
-import net.kunmc.lab.scenamatica.interfaces.action.ActionArgument;
+import net.kunmc.lab.scenamatica.action.actions.AbstractActionArgument;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.misc.BlockBean;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class AbstractBlockActionArgument implements ActionArgument
+public abstract class AbstractBlockActionArgument extends AbstractActionArgument
 {
     public static final String KEY_BLOCK = "block";
 
@@ -33,6 +33,8 @@ public abstract class AbstractBlockActionArgument implements ActionArgument
     @Override
     public String getArgumentString()
     {
-        return String.format("block=%s", this.block);
+        return buildArgumentString(
+                KEY_BLOCK, this.block
+        );
     }
 }

@@ -1,9 +1,10 @@
 package net.kunmc.lab.scenamatica.action.actions.server;
 
+import lombok.EqualsAndHashCode;
 import lombok.Value;
+import net.kunmc.lab.scenamatica.action.actions.AbstractActionArgument;
 import net.kunmc.lab.scenamatica.commons.utils.MapUtils;
 import net.kunmc.lab.scenamatica.enums.ScenarioType;
-import net.kunmc.lab.scenamatica.interfaces.action.ActionArgument;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioEngine;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.BeanSerializer;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
@@ -124,7 +125,8 @@ public class BroadcastMessageAction extends AbstractServerAction<BroadcastMessag
     }
 
     @Value
-    public static class Argument implements ActionArgument
+    @EqualsAndHashCode(callSuper = true)
+    public static class Argument extends AbstractActionArgument
     {
         public static final String KEY_MESSAGE = "message";
         public static final String KEY_RECIPIENTS = "recipients";
@@ -161,27 +163,12 @@ public class BroadcastMessageAction extends AbstractServerAction<BroadcastMessag
         @Override
         public String getArgumentString()
         {
-            StringBuilder builder = new StringBuilder(KEY_MESSAGE)
-                    .append("=")
-                    .append(this.message)
-                    .append(", ")
-                    .append(KEY_RECIPIENTS)
-                    .append("=");
-
-            for (String recipient : this.recipients)
-                builder.append(recipient).append(", ");
-
-            if (this.permission != null)
-                builder.append(KEY_PERMISSION)
-                        .append("=")
-                        .append(this.permission);
-
-            if (this.strictRecipients)
-                builder.append(", ")
-                        .append(KEY_STRICT_RECIPIENTS)
-                        .append("=true");
-
-            return builder.toString();
+            return buildArgumentString(
+                    KEY_MESSAGE, this.message,
+                    KEY_RECIPIENTS, this.recipients,
+                    KEY_PERMISSION, this.permission,
+                    KEY_STRICT_RECIPIENTS, this.strictRecipients
+            );
         }
 
         public List<CommandSender> getRecipients()

@@ -1,10 +1,11 @@
 package net.kunmc.lab.scenamatica.action.actions.server.log;
 
+import lombok.EqualsAndHashCode;
 import lombok.Value;
+import net.kunmc.lab.scenamatica.action.actions.AbstractActionArgument;
 import net.kunmc.lab.scenamatica.action.actions.server.AbstractServerAction;
 import net.kunmc.lab.scenamatica.commons.utils.MapUtils;
 import net.kunmc.lab.scenamatica.events.actions.server.ServerLogEvent;
-import net.kunmc.lab.scenamatica.interfaces.action.ActionArgument;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioEngine;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.BeanSerializer;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
@@ -103,7 +104,8 @@ public class ServerLogAction extends AbstractServerAction<ServerLogAction.Argume
     }
 
     @Value
-    public static class Argument implements ActionArgument
+    @EqualsAndHashCode(callSuper = true)
+    public static class Argument extends AbstractActionArgument
     {
         public static final String KEY_SOURCE = "source";
         public static final String KEY_LEVEL = "level";
@@ -132,7 +134,11 @@ public class ServerLogAction extends AbstractServerAction<ServerLogAction.Argume
         @Override
         public String getArgumentString()
         {
-            return "source=" + this.source + ", level=" + this.level + ", message=" + this.message;
+            return buildArgumentString(
+                    KEY_SOURCE, this.source,
+                    KEY_LEVEL, this.level,
+                    KEY_MESSAGE, this.message
+            );
         }
     }
 }

@@ -159,14 +159,11 @@ public class PlayerAdvancementAction
         @Override
         public String getArgumentString()
         {
-            StringBuilder builder = new StringBuilder("advancement='")
-                    .append(this.advancement)
-                    .append("'");
-
-            if (this.criterion != null)
-                builder.append(", criteria='").append(this.criterion).append("'");
-
-            return builder.toString();
+            return buildArgumentString(
+                    super.getArgumentString(),
+                    KEY_ADVANCEMENT, this.advancement,
+                    KEY_CRITERIA, this.criterion
+            );
         }
     }
 }

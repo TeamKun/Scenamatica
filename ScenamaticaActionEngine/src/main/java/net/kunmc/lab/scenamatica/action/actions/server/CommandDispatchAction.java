@@ -1,9 +1,10 @@
 package net.kunmc.lab.scenamatica.action.actions.server;
 
+import lombok.EqualsAndHashCode;
 import lombok.Value;
+import net.kunmc.lab.scenamatica.action.actions.AbstractActionArgument;
 import net.kunmc.lab.scenamatica.action.utils.PlayerUtils;
 import net.kunmc.lab.scenamatica.commons.utils.MapUtils;
-import net.kunmc.lab.scenamatica.interfaces.action.ActionArgument;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioEngine;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.BeanSerializer;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
@@ -95,7 +96,8 @@ public class CommandDispatchAction extends AbstractServerAction<CommandDispatchA
     }
 
     @Value
-    public static class Argument implements ActionArgument
+    @EqualsAndHashCode(callSuper = true)
+    public static class Argument extends AbstractActionArgument
     {
         public static final String KEY_COMMAND = "command";
         public static final String KEY_SENDER = "sender";
@@ -115,7 +117,10 @@ public class CommandDispatchAction extends AbstractServerAction<CommandDispatchA
         @Override
         public String getArgumentString()
         {
-            return String.format("command=%s, sender=%s", this.command, this.sender);
+            return buildArgumentString(
+                    KEY_COMMAND, this.command,
+                    KEY_SENDER, this.sender
+            );
         }
     }
 }

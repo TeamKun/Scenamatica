@@ -108,16 +108,12 @@ public class WorldBorderChangedAction extends AbstractWorldAction<WorldBorderCha
         @Override
         public String getArgumentString()
         {
-            StringBuilder builder = new StringBuilder();
-
-            if (this.size != -1)
-                builder.append("size=").append(this.size).append(", ");
-            if (this.oldSize != -1)
-                builder.append("oldSize=").append(this.oldSize).append(", ");
-            if (this.duration != -1)
-                builder.append("duration=").append(this.duration).append(", ");
-
-            return builder.toString();
+            return buildArgumentString(
+                    super.getArgumentString(),
+                    KEY_SIZE, this.size,
+                    KEY_SIZE_OLD, this.oldSize,
+                    KEY_DURATION, this.duration
+            );
         }
     }
 }

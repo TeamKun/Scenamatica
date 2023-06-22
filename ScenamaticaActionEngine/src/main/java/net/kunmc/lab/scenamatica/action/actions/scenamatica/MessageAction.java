@@ -1,11 +1,12 @@
 package net.kunmc.lab.scenamatica.action.actions.scenamatica;
 
+import lombok.EqualsAndHashCode;
 import lombok.Value;
+import net.kunmc.lab.scenamatica.action.actions.AbstractActionArgument;
 import net.kunmc.lab.scenamatica.action.utils.PlayerUtils;
 import net.kunmc.lab.scenamatica.action.utils.TextUtils;
 import net.kunmc.lab.scenamatica.commons.utils.MapUtils;
 import net.kunmc.lab.scenamatica.events.actor.ActorMessageReceiveEvent;
-import net.kunmc.lab.scenamatica.interfaces.action.ActionArgument;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioEngine;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.BeanSerializer;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
@@ -78,8 +79,9 @@ public class MessageAction extends AbstractScenamaticaAction<MessageAction.Argum
         );
     }
 
+    @EqualsAndHashCode(callSuper = true)
     @Value
-    public static class Argument implements ActionArgument
+    public static class Argument extends AbstractActionArgument
     {
         public static final String KEY_MESSAGE = "message";
         public static final String KEY_RECIPIENT = "recipient";
@@ -102,7 +104,10 @@ public class MessageAction extends AbstractScenamaticaAction<MessageAction.Argum
         @Override
         public String getArgumentString()
         {
-            return String.format("content=%s, recipient=%s", this.message, this.recipient);
+            return buildArgumentString(
+                    KEY_MESSAGE, this.message,
+                    KEY_RECIPIENT, this.recipient
+            );
         }
     }
 }

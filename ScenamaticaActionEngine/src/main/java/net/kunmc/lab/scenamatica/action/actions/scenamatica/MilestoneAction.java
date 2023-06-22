@@ -1,10 +1,11 @@
 package net.kunmc.lab.scenamatica.action.actions.scenamatica;
 
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Value;
+import net.kunmc.lab.scenamatica.action.actions.AbstractActionArgument;
 import net.kunmc.lab.scenamatica.commons.utils.MapUtils;
 import net.kunmc.lab.scenamatica.events.MilestoneReachedEvent;
-import net.kunmc.lab.scenamatica.interfaces.action.ActionArgument;
 import net.kunmc.lab.scenamatica.interfaces.action.Requireable;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioEngine;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.BeanSerializer;
@@ -80,7 +81,8 @@ public class MilestoneAction extends AbstractScenamaticaAction<MilestoneAction.A
 
     @Value
     @AllArgsConstructor
-    public static class Argument implements ActionArgument
+    @EqualsAndHashCode(callSuper = true)
+    public static class Argument extends AbstractActionArgument
     {
         private static final String KEY_NAME = "name";
         private static final String KEY_REACHED = "reached";
@@ -104,7 +106,10 @@ public class MilestoneAction extends AbstractScenamaticaAction<MilestoneAction.A
         @Override
         public String getArgumentString()
         {
-            return "milestone=" + this.name + ", reached=" + this.reached;
+            return buildArgumentString(
+                    KEY_NAME, this.name,
+                    KEY_REACHED, this.reached
+            );
         }
     }
 }

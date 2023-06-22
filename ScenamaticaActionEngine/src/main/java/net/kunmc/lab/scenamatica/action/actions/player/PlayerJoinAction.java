@@ -120,11 +120,10 @@ public class PlayerJoinAction extends AbstractPlayerAction<PlayerJoinAction.Argu
         @Override
         public String getArgumentString()
         {
-            StringBuilder builder = new StringBuilder(super.getArgumentString());
-            if (this.joinMessage != null)
-                builder.append(", ").append(KEY_JOIN_MESSAGE).append("=\"").append(this.joinMessage).append("\"");
-
-            return builder.toString();
+            return buildArgumentString(
+                    super.getArgumentString(),
+                    KEY_JOIN_MESSAGE, this.joinMessage
+            );
         }
     }
 }

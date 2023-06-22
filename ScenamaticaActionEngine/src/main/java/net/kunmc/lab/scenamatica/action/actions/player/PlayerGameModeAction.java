@@ -156,14 +156,12 @@ public class PlayerGameModeAction extends AbstractPlayerAction<PlayerGameModeAct
         @Override
         public String getArgumentString()
         {
-            StringBuilder builder = new StringBuilder(super.toString());
-            builder.append(", gameMode=").append(this.gameMode);
-            if (this.cause != null)
-                builder.append(", cause=").append(this.cause);
-            if (this.cancelMessage != null)
-                builder.append(", cancelMessage=").append(this.cancelMessage);
-
-            return builder.toString();
+            return buildArgumentString(
+                    super.getArgumentString(),
+                    KEY_GAME_MODE, this.gameMode,
+                    KEY_CAUSE, this.cause,
+                    KEY_CANCEL_MESSAGE, this.cancelMessage
+            );
         }
     }
 }

@@ -135,17 +135,12 @@ public class PlayerKickAction extends AbstractPlayerAction<PlayerKickAction.Argu
         @Override
         public String getArgumentString()
         {
-            StringBuilder builder = new StringBuilder(super.getArgumentString());
-            if (this.leaveMessage != null)
-                builder.append(", ").append(KEY_LEAVE_MESSAGE).append("=\"").append(this.leaveMessage).append("\"");
-            if (this.kickMessage != null)
-                builder.append(", ").append(KEY_KICK_MESSAGE).append("=\"").append(this.kickMessage).append("\"");
-            if (this.cause != null)
-                builder.append(", ").append(KEY_CAUSE).append("=").append(this.cause.name());
-
-            return builder.toString();
-
-
+            return buildArgumentString(
+                    super.getArgumentString(),
+                    KEY_LEAVE_MESSAGE, this.leaveMessage,
+                    KEY_KICK_MESSAGE, this.kickMessage,
+                    KEY_CAUSE, this.cause
+            );
         }
     }
 }

@@ -101,7 +101,10 @@ public class PlayerAnimationAction extends AbstractPlayerAction<PlayerAnimationA
         @Override
         public String getArgumentString()
         {
-            return "type=" + this.type;
+            return buildArgumentString(
+                    KEY_TARGET_PLAYER, this.getTargetSpecifier(),
+                    KEY_ACTION_TYPE, this.type
+            );
         }
     }
 }

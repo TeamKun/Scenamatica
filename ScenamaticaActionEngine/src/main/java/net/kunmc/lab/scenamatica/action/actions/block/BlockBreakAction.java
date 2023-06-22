@@ -190,12 +190,10 @@ public class BlockBreakAction extends AbstractBlockAction<BlockBreakAction.Argum
         @Override
         public String getArgumentString()
         {
-            StringBuilder builder = new StringBuilder(super.getArgumentString());
-
-            if (this.actor != null)
-                builder.append(", ").append(KEY_ACTOR).append("=").append(this.actor);
-
-            return builder.toString();
+            return buildArgumentString(
+                    super.getArgumentString(),
+                    KEY_ACTOR, this.actor
+            );
         }
     }
 }

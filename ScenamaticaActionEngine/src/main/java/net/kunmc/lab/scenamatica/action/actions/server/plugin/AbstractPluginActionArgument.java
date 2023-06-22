@@ -1,6 +1,7 @@
 package net.kunmc.lab.scenamatica.action.actions.server.plugin;
 
 import lombok.AllArgsConstructor;
+import net.kunmc.lab.scenamatica.action.actions.AbstractActionArgument;
 import net.kunmc.lab.scenamatica.interfaces.action.ActionArgument;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 import org.bukkit.Bukkit;
@@ -8,7 +9,7 @@ import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
 @AllArgsConstructor
-public abstract class AbstractPluginActionArgument implements ActionArgument
+public abstract class AbstractPluginActionArgument extends AbstractActionArgument
 {
     public static final String KEY_PLUGIN = "plugin";
 

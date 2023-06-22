@@ -209,11 +209,11 @@ public class PlayerLaunchProjectileAction extends AbstractPlayerAction<PlayerLau
         @Override
         public String getArgumentString()
         {
-            return String.format(
-                    "type=%s, velocity=%s, epsilon=%s",
-                    this.projectileType.name(),
-                    this.velocity == null ? "null": this.velocity.toString(),
-                    this.epsilon
+            return buildArgumentString(
+                    super.getArgumentString(),
+                    KEY_PROJECTILE_TYPE, this.projectileType,
+                    KEY_PROJECTILE_VELOCITY, this.velocity,
+                    KEY_PROJECTILE_EPSILON, this.epsilon
             );
         }
     }

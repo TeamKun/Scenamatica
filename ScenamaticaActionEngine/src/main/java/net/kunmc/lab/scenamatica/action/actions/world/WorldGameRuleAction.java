@@ -179,13 +179,11 @@ public class WorldGameRuleAction extends AbstractWorldAction<WorldGameRuleAction
         @Override
         public String getArgumentString()
         {
-            StringBuilder builder = new StringBuilder(super.getArgumentString())
-                    .append(", ").append(KEY_GAME_RULE).append("=").append(this.gameRule.getName());
-
-            if (this.value != null)
-                builder.append(", ").append(KEY_VALUE).append("=").append(this.value);
-
-            return builder.toString();
+            return buildArgumentString(
+                    super.getArgumentString(),
+                    KEY_GAME_RULE, this.gameRule.getName(),
+                    KEY_VALUE, this.value
+            );
         }
     }
 }

@@ -204,21 +204,15 @@ public class WorldBorderAction extends AbstractWorldAction<WorldBorderAction.Arg
         @Override
         public String getArgumentString()
         {
-            StringBuilder builder = new StringBuilder();
-            if (this.type != null)
-                builder.append("type=").append(this.type).append(", ");
-            if (this.size != -1)
-                builder.append("size=").append(this.size).append(", ");
-            if (this.oldSize != -1)
-                builder.append("oldSize=").append(this.oldSize).append(", ");
-            if (this.duration != -1)
-                builder.append("duration=").append(this.duration).append(", ");
-            if (this.center != null)
-                builder.append("center=").append(this.center).append(", ");
-            if (this.oldCenter != null)
-                builder.append("oldCenter=").append(this.oldCenter).append(", ");
-
-            return builder.toString();
+            return buildArgumentString(
+                    super.getArgumentString(),
+                    KEY_TYPE, this.type,
+                    KEY_SIZE, this.size,
+                    KEY_SIZE_OLD, this.oldSize,
+                    KEY_DURATION, this.duration,
+                    KEY_CENTER, this.center,
+                    KEY_CENTER_OLD, this.oldCenter
+            );
         }
     }
 }

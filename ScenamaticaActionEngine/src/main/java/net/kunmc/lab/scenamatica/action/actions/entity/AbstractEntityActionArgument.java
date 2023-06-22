@@ -1,6 +1,7 @@
 package net.kunmc.lab.scenamatica.action.actions.entity;
 
 import lombok.AllArgsConstructor;
+import net.kunmc.lab.scenamatica.action.actions.AbstractActionArgument;
 import net.kunmc.lab.scenamatica.action.utils.EntityUtils;
 import net.kunmc.lab.scenamatica.interfaces.action.ActionArgument;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
@@ -8,7 +9,7 @@ import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 
 @AllArgsConstructor
-public abstract class AbstractEntityActionArgument implements ActionArgument
+public abstract class AbstractEntityActionArgument extends AbstractActionArgument
 {
     public static final String KEY_TARGET_ENTITY = "target";
 

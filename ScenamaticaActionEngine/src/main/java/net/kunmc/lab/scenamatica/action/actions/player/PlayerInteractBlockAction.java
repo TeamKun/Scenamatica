@@ -205,17 +205,13 @@ public class PlayerInteractBlockAction extends AbstractPlayerAction<PlayerIntera
         @Override
         public String getArgumentString()
         {
-            StringBuilder builder = new StringBuilder();
-            if (this.action != null)
-                builder.append(", ").append(KEY_ACTION).append("=").append(this.action);
-            if (this.hand != null)
-                builder.append(", ").append(KEY_HAND).append("=").append(this.hand);
-            if (this.block != null)
-                builder.append(", ").append(KEY_BLOCK).append("=").append(this.block);
-            if (this.blockFace != null)
-                builder.append(", ").append(KEY_BLOCK_FACE).append("=").append(this.blockFace);
-
-            return builder.toString();
+            return buildArgumentString(
+                    super.getArgumentString(),
+                    KEY_ACTION, this.action,
+                    KEY_HAND, this.hand,
+                    KEY_BLOCK, this.block,
+                    KEY_BLOCK_FACE, this.blockFace
+            );
         }
     }
 }

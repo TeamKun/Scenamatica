@@ -1,6 +1,5 @@
 package net.kunmc.lab.scenamatica.action.actions;
 
-import net.kunmc.lab.scenamatica.interfaces.action.ActionArgument;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioEngine;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.BeanSerializer;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
@@ -34,7 +33,7 @@ public abstract class AbstractNoArgumentAction extends AbstractAction<AbstractNo
         return null;
     }
 
-    public static class NoArgument implements ActionArgument
+    public static class NoArgument extends AbstractActionArgument
     {
         @Override
         public boolean isSame(TriggerArgument argument)

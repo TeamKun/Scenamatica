@@ -1,6 +1,7 @@
 package net.kunmc.lab.scenamatica.action.actions.player;
 
 import lombok.AllArgsConstructor;
+import net.kunmc.lab.scenamatica.action.actions.AbstractActionArgument;
 import net.kunmc.lab.scenamatica.action.utils.PlayerUtils;
 import net.kunmc.lab.scenamatica.interfaces.action.ActionArgument;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
@@ -10,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Objects;
 
 @AllArgsConstructor
-public abstract class AbstractPlayerActionArgument implements ActionArgument
+public abstract class AbstractPlayerActionArgument extends AbstractActionArgument
 {
     public static final String KEY_TARGET_PLAYER = "target";
 
@@ -48,6 +49,8 @@ public abstract class AbstractPlayerActionArgument implements ActionArgument
     @Override
     public String getArgumentString()
     {
-        return "target=" + this.target;
+        return buildArgumentString(
+                KEY_TARGET_PLAYER, this.target
+        );
     }
 }

@@ -2,6 +2,7 @@ package net.kunmc.lab.scenamatica.action.actions.world;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import net.kunmc.lab.scenamatica.action.actions.AbstractActionArgument;
 import net.kunmc.lab.scenamatica.commons.utils.NamespaceUtils;
 import net.kunmc.lab.scenamatica.interfaces.action.ActionArgument;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioEngine;
@@ -15,7 +16,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Objects;
 
 @AllArgsConstructor
-public abstract class AbstractWorldActionArgument implements ActionArgument
+public abstract class AbstractWorldActionArgument extends AbstractActionArgument
 {
     public static final String KEY_WORLD = "world";
     private static final String[] PADDING_TARGET = {"the_end", "nether"};
@@ -66,6 +67,8 @@ public abstract class AbstractWorldActionArgument implements ActionArgument
     @Override
     public String getArgumentString()
     {
-        return "world=" + this.worldRef;
+        return buildArgumentString(
+                KEY_WORLD, this.worldRef
+        );
     }
 }

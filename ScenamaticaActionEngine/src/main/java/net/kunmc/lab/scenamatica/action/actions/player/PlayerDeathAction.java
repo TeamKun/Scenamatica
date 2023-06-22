@@ -293,25 +293,17 @@ public class PlayerDeathAction extends AbstractPlayerAction<PlayerDeathAction.Ar
         @Override
         public String getArgumentString()
         {
-            StringBuilder builder = new StringBuilder(super.toString());
-            if (this.killer != null)
-                builder.append(", killer=").append(this.killer);
-            if (this.deathMessage != null)
-                builder.append(", deathMessage='").append(this.deathMessage).append('\'');
-            if (this.newExp != -1)
-                builder.append(", newExp=").append(this.newExp);
-            if (this.newLevel != -1)
-                builder.append(", newLevel=").append(this.newLevel);
-            if (this.newTotalExp != -1)
-                builder.append(", newTotalExp=").append(this.newTotalExp);
-            if (this.keepLevel != null)
-                builder.append(", keepLevel=").append(this.keepLevel);
-            if (this.keepInventory != null)
-                builder.append(", keepInventory=").append(this.keepInventory);
-            if (this.doExpDrop != null)
-                builder.append(", doExpDrop=").append(this.doExpDrop);
-
-            return builder.toString();
+            return buildArgumentString(
+                    super.getArgumentString(),
+                    KEY_KILLER, this.killer,
+                    KEY_DEATH_MESSAGE, this.deathMessage,
+                    KEY_NEW_EXP, this.newExp,
+                    KEY_NEW_LEVEL, this.newLevel,
+                    KEY_NEW_TOTAL_EXP, this.newTotalExp,
+                    KEY_KEEP_LEVEL, this.keepLevel,
+                    KEY_KEEP_INVENTORY, this.keepInventory,
+                    KEY_DO_EXP_DROP, this.doExpDrop
+            );
         }
     }
 }

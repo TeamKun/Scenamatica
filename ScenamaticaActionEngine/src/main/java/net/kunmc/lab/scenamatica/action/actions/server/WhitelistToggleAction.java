@@ -1,9 +1,10 @@
 package net.kunmc.lab.scenamatica.action.actions.server;
 
 import com.destroystokyo.paper.event.server.WhitelistToggleEvent;
+import lombok.EqualsAndHashCode;
 import lombok.Value;
+import net.kunmc.lab.scenamatica.action.actions.AbstractActionArgument;
 import net.kunmc.lab.scenamatica.commons.utils.MapUtils;
-import net.kunmc.lab.scenamatica.interfaces.action.ActionArgument;
 import net.kunmc.lab.scenamatica.interfaces.action.Requireable;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioEngine;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.BeanSerializer;
@@ -73,7 +74,8 @@ public class WhitelistToggleAction extends AbstractServerAction<WhitelistToggleA
     }
 
     @Value
-    public static class Argument implements ActionArgument
+    @EqualsAndHashCode(callSuper = true)
+    public static class Argument extends AbstractActionArgument
     {
         public static final String KEY_ENABLED = "enabled";
 
@@ -93,7 +95,9 @@ public class WhitelistToggleAction extends AbstractServerAction<WhitelistToggleA
         @Override
         public String getArgumentString()
         {
-            return this.enabled ? "enabled": "disabled";
+            return buildArgumentString(
+                    KEY_ENABLED, this.enabled
+            );
         }
     }
 }

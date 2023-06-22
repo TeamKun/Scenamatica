@@ -164,13 +164,11 @@ public class PlayerHotbarSlotAction extends AbstractPlayerAction<PlayerHotbarSlo
         @Override
         public String getArgumentString()
         {
-            StringBuilder sb = new StringBuilder("slot=")
-                    .append(this.currentSlot);
-
-            if (this.currentItem != null)
-                sb.append(", item=").append(this.currentItem);
-
-            return sb.toString();
+            return buildArgumentString(
+                    KEY_CURRENT_SLOT, this.currentSlot,
+                    KEY_PREVIOUS_SLOT, this.previousSlot,
+                    KEY_CURRENT_ITEM, this.currentItem
+            );
         }
     }
 }

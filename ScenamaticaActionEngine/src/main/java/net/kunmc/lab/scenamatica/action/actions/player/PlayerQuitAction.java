@@ -172,13 +172,11 @@ public class PlayerQuitAction extends AbstractPlayerAction<PlayerQuitAction.Argu
         @Override
         public String getArgumentString()
         {
-            StringBuilder builder = new StringBuilder(super.getArgumentString());
-            if (this.quitMessage != null)
-                builder.append(", ").append(KEY_QUIT_MESSAGE).append("=\"").append(this.quitMessage).append("\"");
-            if (this.reason != null)
-                builder.append(", ").append(KEY_QUIT_REASON).append("=").append(this.reason);
-
-            return builder.toString();
+            return buildArgumentString(
+                    super.getArgumentString(),
+                    KEY_QUIT_MESSAGE, this.quitMessage,
+                    KEY_QUIT_REASON, this.reason
+            );
         }
     }
 }

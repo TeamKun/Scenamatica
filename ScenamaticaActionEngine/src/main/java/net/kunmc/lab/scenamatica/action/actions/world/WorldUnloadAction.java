@@ -110,7 +110,10 @@ public class WorldUnloadAction extends AbstractWorldAction<WorldUnloadAction.Arg
         @Override
         public String getArgumentString()
         {
-            return super.getArgumentString();
+            return buildArgumentString(
+                    super.getArgumentString(),
+                    KEY_SAVE, this.save
+            );
         }
     }
 }

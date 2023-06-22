@@ -217,7 +217,12 @@ public class BlockPlaceAction extends AbstractBlockAction<BlockPlaceAction.Argum
             if (this.direction != null)
                 builder.append("direction=").append(this.direction).append(",");
 
-            return builder.toString();
+            return buildArgumentString(
+                    builder,
+                    KEY_ACTOR, this.actor,
+                    KEY_HAND, this.hand,
+                    KEY_DIRECTION, this.direction
+            );
         }
     }
 }

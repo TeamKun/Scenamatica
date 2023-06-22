@@ -65,7 +65,9 @@ public class PluginDisableAction extends AbstractPluginAction<PluginDisableActio
         @Override
         public String getArgumentString()
         {
-            return "plugin=" + this.getPluginName();
+            return buildArgumentString(
+                    KEY_PLUGIN, this.getPluginName()
+            );
         }
     }
 
