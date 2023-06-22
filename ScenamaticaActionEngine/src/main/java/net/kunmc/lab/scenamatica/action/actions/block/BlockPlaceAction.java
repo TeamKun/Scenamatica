@@ -208,17 +208,7 @@ public class BlockPlaceAction extends AbstractBlockAction<BlockPlaceAction.Argum
         @Override
         public String getArgumentString()
         {
-            StringBuilder builder = new StringBuilder(super.getArgumentString());
-
-            if (this.actor != null)
-                builder.append(KEY_ACTOR).append("=").append(this.actor).append(",");
-            if (this.hand != null)
-                builder.append("hand=").append(this.hand).append(",");
-            if (this.direction != null)
-                builder.append("direction=").append(this.direction).append(",");
-
             return buildArgumentString(
-                    builder,
                     KEY_ACTOR, this.actor,
                     KEY_HAND, this.hand,
                     KEY_DIRECTION, this.direction
