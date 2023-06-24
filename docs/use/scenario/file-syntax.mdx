@@ -1007,6 +1007,43 @@ ItemStack 型は、以下の構造を持ちます。
   }
 ]} />
 
+## EntityItem 型 {#entity-item-structure}
+
+EntityItem 型は、以下の親構造を持ちます。
+
++ [Entity 型](#entity-structure)
++ [ItemStack 型](#item-stack-structure)
+
+EntityItem 型は、以下の構造を持ちます。
+
+<Object objects={[
+  {
+    name: "canMobPickup",
+    type: ObjectType.BOOLEAN,
+    description: "モブがアイテムを拾えるかどうかです。",
+  },
+  {
+    name: "pickupDelay",
+    type: ObjectType.INTEGER,
+    description: "アイテムを拾えるまでの遅延時間です。",
+  },
+  {
+    name: "willAge",
+    type: ObjectType.BOOLEAN,
+    description: "アイテムが時間経過で消滅するかどうかです。",
+  },
+  {
+    name: "owner",
+    type: ObjectType.STRING,
+    description: "アイテムの所有者の UUID です。",
+  },
+  {
+    name: "thrower",
+    type: ObjectType.STRING,
+    description: "アイテムを投げたプレイヤーの UUID です。",
+  }
+]} />
+
 ## Block 型 {#block-structure}
 
 Block 型は、以下の構造を持ちます。
