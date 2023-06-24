@@ -179,7 +179,7 @@ public class WorldGameRuleAction extends AbstractWorldAction<WorldGameRuleAction
         @Override
         public String getArgumentString()
         {
-            return buildArgumentString(
+            return appendArgumentString(
                     super.getArgumentString(),
                     KEY_GAME_RULE, this.gameRule.getName(),
                     KEY_VALUE, this.value

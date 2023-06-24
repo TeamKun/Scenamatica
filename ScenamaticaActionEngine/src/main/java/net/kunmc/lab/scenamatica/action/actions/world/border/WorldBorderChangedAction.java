@@ -108,7 +108,7 @@ public class WorldBorderChangedAction extends AbstractWorldAction<WorldBorderCha
         @Override
         public String getArgumentString()
         {
-            return buildArgumentString(
+            return appendArgumentString(
                     super.getArgumentString(),
                     KEY_SIZE, this.size,
                     KEY_SIZE_OLD, this.oldSize,

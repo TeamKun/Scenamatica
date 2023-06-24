@@ -209,7 +209,7 @@ public class PlayerLaunchProjectileAction extends AbstractPlayerAction<PlayerLau
         @Override
         public String getArgumentString()
         {
-            return buildArgumentString(
+            return appendArgumentString(
                     super.getArgumentString(),
                     KEY_PROJECTILE_TYPE, this.projectileType,
                     KEY_PROJECTILE_VELOCITY, this.velocity,

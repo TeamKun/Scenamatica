@@ -156,7 +156,7 @@ public class PlayerGameModeAction extends AbstractPlayerAction<PlayerGameModeAct
         @Override
         public String getArgumentString()
         {
-            return buildArgumentString(
+            return appendArgumentString(
                     super.getArgumentString(),
                     KEY_GAME_MODE, this.gameMode,
                     KEY_CAUSE, this.cause,

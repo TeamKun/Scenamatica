@@ -190,7 +190,7 @@ public class BlockBreakAction extends AbstractBlockAction<BlockBreakAction.Argum
         @Override
         public String getArgumentString()
         {
-            return buildArgumentString(
+            return appendArgumentString(
                     super.getArgumentString(),
                     KEY_ACTOR, this.actor
             );

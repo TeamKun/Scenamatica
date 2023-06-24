@@ -205,7 +205,7 @@ public class PlayerInteractBlockAction extends AbstractPlayerAction<PlayerIntera
         @Override
         public String getArgumentString()
         {
-            return buildArgumentString(
+            return appendArgumentString(
                     super.getArgumentString(),
                     KEY_ACTION, this.action,
                     KEY_HAND, this.hand,

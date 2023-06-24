@@ -293,7 +293,7 @@ public class PlayerDeathAction extends AbstractPlayerAction<PlayerDeathAction.Ar
         @Override
         public String getArgumentString()
         {
-            return buildArgumentString(
+            return appendArgumentString(
                     super.getArgumentString(),
                     KEY_KILLER, this.killer,
                     KEY_DEATH_MESSAGE, this.deathMessage,

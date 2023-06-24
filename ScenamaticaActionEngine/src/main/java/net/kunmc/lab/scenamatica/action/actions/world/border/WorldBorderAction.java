@@ -204,7 +204,7 @@ public class WorldBorderAction extends AbstractWorldAction<WorldBorderAction.Arg
         @Override
         public String getArgumentString()
         {
-            return buildArgumentString(
+            return appendArgumentString(
                     super.getArgumentString(),
                     KEY_TYPE, this.type,
                     KEY_SIZE, this.size,

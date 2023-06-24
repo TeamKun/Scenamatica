@@ -172,7 +172,7 @@ public class PlayerQuitAction extends AbstractPlayerAction<PlayerQuitAction.Argu
         @Override
         public String getArgumentString()
         {
-            return buildArgumentString(
+            return appendArgumentString(
                     super.getArgumentString(),
                     KEY_QUIT_MESSAGE, this.quitMessage,
                     KEY_QUIT_REASON, this.reason

@@ -120,7 +120,7 @@ public class PlayerJoinAction extends AbstractPlayerAction<PlayerJoinAction.Argu
         @Override
         public String getArgumentString()
         {
-            return buildArgumentString(
+            return appendArgumentString(
                     super.getArgumentString(),
                     KEY_JOIN_MESSAGE, this.joinMessage
             );

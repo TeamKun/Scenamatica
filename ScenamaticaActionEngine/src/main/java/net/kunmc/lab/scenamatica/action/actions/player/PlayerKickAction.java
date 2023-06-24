@@ -135,7 +135,7 @@ public class PlayerKickAction extends AbstractPlayerAction<PlayerKickAction.Argu
         @Override
         public String getArgumentString()
         {
-            return buildArgumentString(
+            return appendArgumentString(
                     super.getArgumentString(),
                     KEY_LEAVE_MESSAGE, this.leaveMessage,
                     KEY_KICK_MESSAGE, this.kickMessage,

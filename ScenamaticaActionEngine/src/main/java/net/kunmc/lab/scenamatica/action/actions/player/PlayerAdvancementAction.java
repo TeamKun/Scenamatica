@@ -159,7 +159,7 @@ public class PlayerAdvancementAction
         @Override
         public String getArgumentString()
         {
-            return buildArgumentString(
+            return appendArgumentString(
                     super.getArgumentString(),
                     KEY_ADVANCEMENT, this.advancement,
                     KEY_CRITERIA, this.criterion
