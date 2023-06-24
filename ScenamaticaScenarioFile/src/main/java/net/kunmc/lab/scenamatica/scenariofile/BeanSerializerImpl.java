@@ -8,6 +8,7 @@ import net.kunmc.lab.scenamatica.interfaces.scenariofile.context.PlayerBean;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.context.StageBean;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.entities.DamageBean;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.entities.EntityBean;
+import net.kunmc.lab.scenamatica.interfaces.scenariofile.entities.EntityItemBean;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.entities.HumanEntityBean;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.inventory.InventoryBean;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.inventory.ItemStackBean;
@@ -21,6 +22,7 @@ import net.kunmc.lab.scenamatica.scenariofile.beans.context.PlayerBeanImpl;
 import net.kunmc.lab.scenamatica.scenariofile.beans.context.StageBeanImpl;
 import net.kunmc.lab.scenamatica.scenariofile.beans.entities.DamageBeanImpl;
 import net.kunmc.lab.scenamatica.scenariofile.beans.entities.EntityBeanImpl;
+import net.kunmc.lab.scenamatica.scenariofile.beans.entities.EntityItemBeanImpl;
 import net.kunmc.lab.scenamatica.scenariofile.beans.entities.HumanEntityBeanImpl;
 import net.kunmc.lab.scenamatica.scenariofile.beans.inventory.InventoryBeanImpl;
 import net.kunmc.lab.scenamatica.scenariofile.beans.inventory.ItemStackBeanImpl;
@@ -87,6 +89,12 @@ public class BeanSerializerImpl implements BeanSerializer
     public Map<String, Object> serializeEntity(@NotNull EntityBean entityBean)
     {
         return EntityBeanImpl.serialize(entityBean, this);
+    }
+
+    @Override
+    public @NotNull Map<String, Object> serializeEntityItem(@NotNull EntityItemBean entityItemBean)
+    {
+        return EntityItemBeanImpl.serialize(entityItemBean, this);
     }
 
     @Override
@@ -184,6 +192,12 @@ public class BeanSerializerImpl implements BeanSerializer
     }
 
     @Override
+    public void validateEntityItem(@NotNull Map<String, Object> entityItem)
+    {
+        EntityItemBeanImpl.validate(entityItem, this);
+    }
+
+    @Override
     public void validateHumanEntity(@NotNull Map<String, Object> humanEntity)
     {
         HumanEntityBeanImpl.validate(humanEntity);
@@ -272,6 +286,12 @@ public class BeanSerializerImpl implements BeanSerializer
     public EntityBean deserializeEntity(@NotNull Map<String, Object> entity)
     {
         return EntityBeanImpl.deserialize(entity, this);
+    }
+
+    @Override
+    public @NotNull EntityItemBean deserializeEntityItem(@NotNull Map<String, Object> entityItem)
+    {
+        return EntityItemBeanImpl.deserialize(entityItem, this);
     }
 
     @Override

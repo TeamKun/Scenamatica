@@ -6,6 +6,7 @@ import net.kunmc.lab.scenamatica.interfaces.scenariofile.context.PlayerBean;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.context.StageBean;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.entities.DamageBean;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.entities.EntityBean;
+import net.kunmc.lab.scenamatica.interfaces.scenariofile.entities.EntityItemBean;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.entities.HumanEntityBean;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.inventory.InventoryBean;
 import net.kunmc.lab.scenamatica.interfaces.scenariofile.inventory.ItemStackBean;
@@ -34,6 +35,8 @@ public interface BeanSerializer
     @NotNull Map<String, Object> serializeDamage(@NotNull DamageBean damageBean);
 
     @NotNull Map<String, Object> serializeEntity(@NotNull EntityBean entityBean);
+
+    @NotNull Map<String, Object> serializeEntityItem(@NotNull EntityItemBean entityItemBean);
 
     @NotNull Map<String, Object> serializeHumanEntity(@NotNull HumanEntityBean humanEntityBean);
 
@@ -64,6 +67,8 @@ public interface BeanSerializer
 
     void validateEntity(@NotNull Map<String, Object> entity);
 
+    void validateEntityItem(@NotNull Map<String, Object> entityItem);
+
     void validateHumanEntity(@NotNull Map<String, Object> humanEntity);
 
     void validateInventory(@NotNull Map<String, Object> inventory);
@@ -91,6 +96,8 @@ public interface BeanSerializer
     @NotNull DamageBean deserializeDamage(@NotNull Map<String, Object> damage);
 
     @NotNull EntityBean deserializeEntity(@NotNull Map<String, Object> entity);
+
+    @NotNull EntityItemBean deserializeEntityItem(@NotNull Map<String, Object> entityItem);
 
     @NotNull HumanEntityBean deserializeHumanEntity(@NotNull Map<String, Object> humanEntity);
 

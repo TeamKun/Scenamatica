@@ -21,6 +21,15 @@ public class UUIDUtil
         }
     }
 
+    @NotNull
+    public static UUID toUUIDOrThrow(@NotNull String name)
+    {
+        UUID uuid = toUUIDOrNull(name);
+        if (uuid == null)
+            throw new IllegalArgumentException("Invalid UUID: " + name);
+        return uuid;
+    }
+
     private static UUID noDashesStringToUUIDOrNull(@NotNull String uuid)
     {
         if (uuid.contains("-"))
