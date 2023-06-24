@@ -1,6 +1,7 @@
 package net.kunmc.lab.scenamatica.action.utils;
 
 import lombok.experimental.UtilityClass;
+import net.kunmc.lab.scenamatica.commons.utils.UUIDUtil;
 import net.kunmc.lab.scenamatica.interfaces.context.Actor;
 import net.kunmc.lab.scenamatica.interfaces.context.ActorManager;
 import net.kunmc.lab.scenamatica.interfaces.scenario.ScenarioEngine;
@@ -9,7 +10,6 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.math.BigInteger;
 import java.util.UUID;
 
 @UtilityClass
@@ -25,33 +25,6 @@ public class PlayerUtils
     }
 
     @Nullable
-    public static UUID toUUIDOrNull(@NotNull String name)
-    {
-        try
-        {
-            return UUID.fromString(name);
-        }
-        catch (IllegalArgumentException ignored)
-        {
-            return noDashesStringToUUIDOrNull(name);
-        }
-    }
-
-    private static UUID noDashesStringToUUIDOrNull(@NotNull String uuid)
-    {
-        try
-        {
-            BigInteger mostSigBits = new BigInteger(uuid.substring(0, 16), 16);
-            BigInteger leastSigBits = new BigInteger(uuid.substring(16, 32), 16);
-            return new UUID(mostSigBits.longValue(), leastSigBits.longValue());
-        }
-        catch (NumberFormatException | StringIndexOutOfBoundsException ignored)
-        {
-            return null;
-        }
-    }
-
-    @Nullable
     public static Player getPlayerOrNull(@Nullable String name)
     {
         if (name == null)
@@ -60,7 +33,7 @@ public class PlayerUtils
         Player player = Bukkit.getPlayerExact(name);
         if (player == null)
         {
-            UUID mayUUID = toUUIDOrNull(name);
+            UUID mayUUID = UUIDUtil.toUUIDOrNull(name);
             if (mayUUID != null)
                 player = Bukkit.getPlayer(mayUUID);
         }
@@ -90,7 +63,7 @@ public class PlayerUtils
         Actor actor = engine.getManager().getRegistry().getContextManager().getActorManager().getByName(target);
         if (actor == null)
         {
-            UUID mayUUID = toUUIDOrNull(target);
+            UUID mayUUID = UUIDUtil.toUUIDOrNull(target);
             if (mayUUID != null)
                 actor = engine.getManager().getRegistry().getContextManager().getActorManager().getByUUID(mayUUID);
         }
