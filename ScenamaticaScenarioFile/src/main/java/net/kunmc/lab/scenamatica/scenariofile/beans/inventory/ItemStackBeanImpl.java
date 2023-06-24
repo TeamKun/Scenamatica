@@ -313,7 +313,7 @@ public class ItemStackBeanImpl implements ItemStackBean
         validate(map);
 
         // 必須項目
-        Material type = Material.valueOf((String) map.get(KEY_TYPE));
+        Material type = MapUtils.getAsEnum(map, KEY_TYPE, Material.class);
 
         // オプション項目
         int amount = MapUtils.getOrDefault(map, KEY_AMOUNT, 1);
