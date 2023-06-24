@@ -86,6 +86,7 @@
             "player_advancement",
             "player_animation",
             "player_death",
+            "player_drop_item",
             "player_gamemode",
             "player_hotbar",
             "player_interact_block",
@@ -213,6 +214,26 @@
             "properties": {
               "with": {
                 "$ref": "#/definitions/action/definitions/player/death"
+              }
+            },
+            "required": [
+              "with"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "player_drop_item",
+                "description": "プレイヤーを殺したり, 殺されたことを検知します。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/player/drop_item"
               }
             },
             "required": [
@@ -841,6 +862,15 @@
             "required": [
               "gamemode"
             ]
+          },
+          "drop_item": {
+            "$ref": "#/definitions/action/definitions/player/$base",
+            "properties": {
+              "item": {
+                "description": "ドロップするアイテムです。",
+                "$ref": "#/definitions/entityItem"
+              }
+            }
           },
           "hotbar": {
             "$ref": "#/definitions/action/definitions/player/$base",
@@ -1726,6 +1756,36 @@
               }
             }
           }
+        }
+      }
+    },
+    "entityItem": {
+      "type": "object",
+      "description": "アイテムのエンティティを表します。",
+      "$ref": "#/definitions/entity",
+      "properties": {
+        "$ref": "#/definitions/itemStack/properties",
+        "pickupDelay": {
+          "type": "number",
+          "description": "アイテムを拾えるようになるまでの時間です。"
+        },
+        "owner": {
+          "type": "string",
+          "format": "uuid",
+          "description": "アイテムの所有者のUUIDです。"
+        },
+        "thrower": {
+          "type": "string",
+          "format": "uuid",
+          "description": "アイテムを投げたプレイヤーのUUIDです。"
+        },
+        "canMobPickup": {
+          "type": "boolean",
+          "description": "モブがアイテムを拾えるかどうかです。"
+        },
+        "canPlayerPickup": {
+          "type": "boolean",
+          "description": "プレイヤーがアイテムを拾えるかどうかです。"
         }
       }
     },

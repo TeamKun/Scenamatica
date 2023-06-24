@@ -77,6 +77,18 @@ public abstract class AbstractAction<A extends ActionArgument> implements Action
     }
 
     /**
+     * 引数が足りない場合に例外を投げます。
+     *
+     * @param fieldName フィールド名
+     * @param value     値
+     */
+    protected void throwIfNotPresent(@NotNull String fieldName, @Nullable Object value)
+    {
+        if (value == null)
+            throw new IllegalArgumentException(String.format("The argument '%s' is required.", fieldName));
+    }
+
+    /**
      * 期待値と異なる引数を指定した場合に例外を投げます。
      *
      * @param fieldName フィールド名
