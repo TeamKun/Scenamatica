@@ -90,6 +90,7 @@
             "player_gamemode",
             "player_hotbar",
             "player_interact_block",
+            "player_item_consume",
             "player_join",
             "player_kick",
             "player_launch_projectile",
@@ -294,6 +295,26 @@
             "properties": {
               "with": {
                 "$ref": "#/definitions/action/definitions/player/interact_block"
+              }
+            },
+            "required": [
+              "with"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "player_item_consume",
+                "description": "プレイヤーがアイテムを消費したり, 消費されたことを検知します。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/player/item_consume"
               }
             },
             "required": [
@@ -926,6 +947,19 @@
                   "hand",
                   "off_hand"
                 ]
+              }
+            }
+          },
+          "item_consume": {
+            "$ref": "#/definitions/action/definitions/player/$base",
+            "properties": {
+              "item": {
+                "description": "消費するアイテムです。",
+                "$ref": "#/definitions/itemStack"
+              },
+              "replacement": {
+                "description": "消費後にプレイヤーに与えるアイテムです。",
+                "$ref": "#/definitions/itemStack"
               }
             }
           },

@@ -203,6 +203,21 @@ class MockedPlayer extends EntityPlayer implements Actor
     }
 
     @Override
+    public void consume(@NotNull EquipmentSlot slot)
+    {
+        if (!(slot == EquipmentSlot.HAND || slot == EquipmentSlot.OFF_HAND))
+            throw new IllegalArgumentException("slot must be HAND or OFF_HAND");
+
+        EnumHand hand = slot == EquipmentSlot.HAND ? EnumHand.MAIN_HAND: EnumHand.OFF_HAND;
+
+        net.minecraft.server.v1_16_R3.ItemStack nmsStack = this.b(hand);
+        if (!(nmsStack == null || nmsStack.getItem().isFood()))
+            throw new IllegalStateException("Item in " + slot.name() + " is not food");
+
+        this.c(hand);
+    }
+
+    @Override
     public @NotNull Player getPlayer()
     {
         return this.getBukkitEntity();

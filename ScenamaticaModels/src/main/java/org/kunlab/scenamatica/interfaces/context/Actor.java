@@ -84,6 +84,14 @@ public interface Actor
     void kickErroneous();
 
     /**
+     * アイテムを食べます。
+     *
+     * @param slot 食べるアイテムの手( {@link EquipmentSlot#HAND} または {@link EquipmentSlot#OFF_HAND} )
+     * @throws IllegalStateException アイテムを持っていない場合/アイテムが食べられない場合
+     */
+    void consume(@NotNull EquipmentSlot slot);
+
+    /**
      * Bukkit の {@link Player} を取得します。
      *
      * @return プレイヤー
