@@ -3,18 +3,18 @@ package org.kunlab.scenamatica.action.actions.world;
 import io.papermc.paper.event.world.WorldGameRuleChangeEvent;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
-import org.kunlab.scenamatica.commons.utils.MapUtils;
-import org.kunlab.scenamatica.enums.ScenarioType;
-import org.kunlab.scenamatica.interfaces.action.Requireable;
-import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.BeanSerializer;
-import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 import org.bukkit.GameRule;
 import org.bukkit.NamespacedKey;
 import org.bukkit.World;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.kunlab.scenamatica.commons.utils.MapUtils;
+import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.Requireable;
+import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
+import org.kunlab.scenamatica.interfaces.scenariofile.BeanSerializer;
+import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Collections;
 import java.util.List;
@@ -47,13 +47,13 @@ public class WorldGameRuleAction extends AbstractWorldAction<WorldGameRuleAction
         if (type == Boolean.class)
         {
             //noinspection unchecked - type is checked above
-            GameRule<Boolean> booleanRule = rule;
+            GameRule<Boolean> booleanRule = (GameRule<Boolean>) rule;
             success = world.setGameRule(booleanRule, Boolean.parseBoolean(value));
         }
         else
         {
             //noinspection unchecked - type is checked above
-            GameRule<Integer> integerRule = rule;
+            GameRule<Integer> integerRule = (GameRule<Integer>) rule;
             success = world.setGameRule(integerRule, Integer.parseInt(value));
         }
 
@@ -131,14 +131,14 @@ public class WorldGameRuleAction extends AbstractWorldAction<WorldGameRuleAction
         if (type == Boolean.class)
         {
             //noinspection unchecked - type is checked above
-            GameRule<Boolean> booleanRule = rule;
+            GameRule<Boolean> booleanRule = (GameRule<Boolean>) rule;
             Boolean value = world.getGameRuleValue(booleanRule);
             return value != null && Boolean.parseBoolean(expectedValue) == value;
         }
         else
         {
             //noinspection unchecked - type is checked above
-            GameRule<Integer> integerRule = rule;
+            GameRule<Integer> integerRule = (GameRule<Integer>) rule;
             Integer value = world.getGameRuleValue(integerRule);
             return value != null && Integer.parseInt(expectedValue) == value;
         }
