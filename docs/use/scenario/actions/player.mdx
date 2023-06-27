@@ -401,6 +401,51 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
                label="Block 型"
 />
 
+## プレイヤのアイテムの消費 {#item-consume}
+
+<Action name="プレイヤのアイテムの消費"
+        description="プレイヤのアイテムの消費に関するアクションです。"
+        id="player_item_consume"
+        events={
+          {
+            name: "PlayerItemConsumeEvent",
+            package: "org.bukkit.event.player",
+          }
+        }
+        args={[
+          {
+            name: "target",
+            anchor: "target",
+            description: "アイテムを消費するプレイヤーです。",
+            type: "プレイヤ",
+            required: true
+          },
+          {
+            name: "item",
+            anchor: "item",
+            description: "消費されるアイテムです。",
+            type: "ItemStack",
+            type_link: "../file-syntax#item-stack-structure",
+          },
+          {
+            name: "replacement",
+            description: "消費されるアイテムの代わりに与えられるアイテムです。",
+            type: "ItemStack",
+            type_link: "../file-syntax#item-stack-structure",
+          }
+        ]}
+        executable watchable 
+/>
+
+### シナリオ実行アクションでの使用 {#item-consume-usage-in-execution}
+
+プレイヤの利き手にあるアイテムを消費します。  
+
+`item` に消費するアイテムを指定した場合、消費の開始前にアイテムが**利き手に設定**されます。
+その場合、 `item` には有効な食料アイテムか、ミルクバケツ、またはポーションである必要があります。
+
+`replacement` は使用**できません**。
+
 ## プレイヤの参加 {#join}
 
 <Action name="プレイヤの参加"
