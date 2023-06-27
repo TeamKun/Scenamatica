@@ -40,7 +40,7 @@ public class ActionCompilerImpl implements ActionCompiler
             if (a.getName().equals(bean.getType()))
             {
                 //noinspection unchecked
-                action = a;
+                action = (Action<A>) a;
                 break;
             }
         }
