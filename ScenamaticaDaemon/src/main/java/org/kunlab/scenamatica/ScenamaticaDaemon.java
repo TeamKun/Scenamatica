@@ -1,7 +1,9 @@
 package org.kunlab.scenamatica;
 
 import lombok.Getter;
-import net.kunmc.lab.scenamatica.action.ActionManagerImpl;
+import org.bukkit.Bukkit;
+import org.bukkit.plugin.Plugin;
+import org.kunlab.scenamatica.action.ActionManagerImpl;
 import org.kunlab.scenamatica.context.ContextManagerImpl;
 import org.kunlab.scenamatica.events.PluginEventListener;
 import org.kunlab.scenamatica.exceptions.context.actor.VersionNotSupportedException;
@@ -17,8 +19,6 @@ import org.kunlab.scenamatica.interfaces.trigger.TriggerManager;
 import org.kunlab.scenamatica.scenario.ScenarioManagerImpl;
 import org.kunlab.scenamatica.scenariofile.ScenarioFileManagerImpl;
 import org.kunlab.scenamatica.trigger.TriggerManagerImpl;
-import org.bukkit.Bukkit;
-import org.bukkit.plugin.Plugin;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
