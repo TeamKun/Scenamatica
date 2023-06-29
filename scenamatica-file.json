@@ -28,6 +28,23 @@
         "stone"
       ]
     },
+    "itemSlot": {
+      "type": "string",
+      "enum": [
+        "HAND",
+        "OFF_HAND",
+        "FEET",
+        "LEGS",
+        "CHEST",
+        "HEAD",
+        "hand",
+        "off_hand",
+        "feet",
+        "legs",
+        "chest",
+        "head"
+      ]
+    },
     "scenarios": {
       "type": "array",
       "items": {
@@ -90,6 +107,7 @@
             "player_gamemode",
             "player_hotbar",
             "player_interact_block",
+            "player_item_break",
             "player_item_consume",
             "player_join",
             "player_kick",
@@ -315,6 +333,26 @@
             "properties": {
               "with": {
                 "$ref": "#/definitions/action/definitions/player/item_consume"
+              }
+            },
+            "required": [
+              "with"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "player_item_break",
+                "description": "プレイヤーがアイテムを破壊したり, 破壊したことを検知します。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/player/item_break"
               }
             },
             "required": [
@@ -947,6 +985,19 @@
                   "hand",
                   "off_hand"
                 ]
+              }
+            }
+          },
+          "item_break": {
+            "$ref": "#/definitions/action/definitions/player/$base",
+            "properties": {
+              "item": {
+                "description": "壊れたアイテムです。",
+                "$ref": "#/definitions/itemStack"
+              },
+              "slot": {
+                "description": "壊れたアイテムが入っていたスロットです。",
+                "$ref": "#/definitions/itemSlot"
               }
             }
           },

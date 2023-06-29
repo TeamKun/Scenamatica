@@ -12,7 +12,9 @@ import net.minecraft.server.v1_16_R3.Entity;
 import net.minecraft.server.v1_16_R3.EntityPlayer;
 import net.minecraft.server.v1_16_R3.EnumDirection;
 import net.minecraft.server.v1_16_R3.EnumHand;
+import net.minecraft.server.v1_16_R3.EnumItemSlot;
 import net.minecraft.server.v1_16_R3.EnumMoveType;
+import net.minecraft.server.v1_16_R3.Item;
 import net.minecraft.server.v1_16_R3.MinecraftServer;
 import net.minecraft.server.v1_16_R3.MovingObjectPositionBlock;
 import net.minecraft.server.v1_16_R3.NetworkManager;
@@ -24,6 +26,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.craftbukkit.v1_16_R3.CraftEquipmentSlot;
 import org.bukkit.craftbukkit.v1_16_R3.event.CraftEventFactory;
 import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
@@ -185,6 +188,7 @@ class MockedPlayer extends EntityPlayer implements Actor
     @Override
     public void kickTimeout()
     {
+
         this.networkManager.exceptionCaught(
                 /* channelhandlercontext: */ null,  // なんでもいい。
                 /* throwable: */ createNIOTimeoutException()
@@ -215,6 +219,16 @@ class MockedPlayer extends EntityPlayer implements Actor
             throw new IllegalStateException("Item in " + slot.name() + " is not food");
 
         this.c(hand);
+    }
+
+    @Override
+    public void breakItem(@NotNull EquipmentSlot slot)
+    {
+        EnumItemSlot nmsSlot = CraftEquipmentSlot.getNMS(slot);
+        net.minecraft.server.v1_16_R3.ItemStack st = this.getEquipment(nmsSlot);
+        Item item = st.getItem();
+
+        st.damage(item.getMaxDurability() - st.getDamage(), this, (entity) -> entity.broadcastItemBreak(nmsSlot));
     }
 
     @Override

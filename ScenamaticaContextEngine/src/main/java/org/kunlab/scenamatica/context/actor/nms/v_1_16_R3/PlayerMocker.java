@@ -3,14 +3,6 @@ package org.kunlab.scenamatica.context.actor.nms.v_1_16_R3;
 import com.mojang.authlib.GameProfile;
 import io.netty.buffer.ByteBufAllocator;
 import lombok.SneakyThrows;
-import org.kunlab.scenamatica.context.actor.PlayerMockerBase;
-import org.kunlab.scenamatica.interfaces.ScenamaticaRegistry;
-import org.kunlab.scenamatica.interfaces.context.Actor;
-import org.kunlab.scenamatica.interfaces.context.ActorManager;
-import org.kunlab.scenamatica.interfaces.scenariofile.context.PlayerBean;
-import org.kunlab.scenamatica.interfaces.scenariofile.inventory.ItemStackBean;
-import org.kunlab.scenamatica.interfaces.scenariofile.inventory.PlayerInventoryBean;
-import org.kunlab.scenamatica.settings.ActorSettings;
 import net.minecraft.server.v1_16_R3.BlockPosition;
 import net.minecraft.server.v1_16_R3.ChatComponentText;
 import net.minecraft.server.v1_16_R3.EntityPlayer;
@@ -39,6 +31,14 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.potion.PotionEffect;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.kunlab.scenamatica.context.actor.PlayerMockerBase;
+import org.kunlab.scenamatica.interfaces.ScenamaticaRegistry;
+import org.kunlab.scenamatica.interfaces.context.Actor;
+import org.kunlab.scenamatica.interfaces.context.ActorManager;
+import org.kunlab.scenamatica.interfaces.scenariofile.context.PlayerBean;
+import org.kunlab.scenamatica.interfaces.scenariofile.inventory.ItemStackBean;
+import org.kunlab.scenamatica.interfaces.scenariofile.inventory.PlayerInventoryBean;
+import org.kunlab.scenamatica.settings.ActorSettings;
 
 import java.io.IOException;
 import java.util.List;
@@ -226,7 +226,10 @@ public class PlayerMocker extends PlayerMockerBase
                 {
                     ItemStackBean item = inventory.getArmorContents()[i];
                     if (item != null)
-                        player.inventory.armor.set(i, CraftItemStack.asNMSCopy(item.toItemStack()));
+                    {
+                        int slot = 3 - i;  // 直感的に, 0 がヘルメットになるように逆順にする。
+                        player.inventory.armor.set(slot, CraftItemStack.asNMSCopy(item.toItemStack()));
+                    }
                 }
 
             if (inventory.getOffHand() != null)

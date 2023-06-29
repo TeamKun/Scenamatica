@@ -92,6 +92,13 @@ public interface Actor
     void consume(@NotNull EquipmentSlot slot);
 
     /**
+     * 持ってるツールを壊します。
+     *
+     * @param slot 壊すツールの手( {@link EquipmentSlot#HAND} または {@link EquipmentSlot#OFF_HAND} )
+     */
+    void breakItem(@NotNull EquipmentSlot slot);
+
+    /**
      * Bukkit の {@link Player} を取得します。
      *
      * @return プレイヤー

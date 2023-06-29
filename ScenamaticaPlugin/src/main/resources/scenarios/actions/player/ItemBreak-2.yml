@@ -1,0 +1,30 @@
+# noinspection YAMLSchemaValidation
+scenamatica: ${project.version}
+
+name: actions_player_item_break_2
+description: Testing player_item_break action with armor works or not
+on:
+  - type: on_load
+  - type: manual_dispatch
+
+context:
+  actors:
+    - name: Actor001
+      inventory:
+        armors:
+          - null
+          - null
+          - null
+          - type: diamond_boots
+
+scenario:
+  - type: execute
+    action: player_item_break
+    with:
+      target: Actor001
+      slot: FEET
+  - type: expect
+    action: player_item_break
+    with:
+      target: Actor001
+      slot: FEET
