@@ -113,6 +113,7 @@
             "player_kick",
             "player_launch_projectile",
             "player_quit",
+            "player_respawn",
             "message",
             "milestone",
             "server_log",
@@ -426,6 +427,26 @@
               "action": {
                 "const": "player_quit",
                 "description": "プレイヤーがサーバから退出したり, 退出したことを検知します。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/player/quit"
+              }
+            },
+            "required": [
+              "with"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "player_respawn",
+                "description": "プレイヤーがリスポーンしたり, リスポーンしたことを検知します。"
               }
             }
           },
@@ -1153,6 +1174,21 @@
                   "ERRONEOUS_STATE"
                 ]
               }
+            }
+          },
+          "respawn": {
+            "$ref": "#/definitions/action/definitions/player/$base",
+            "properties": {
+              "isBed": "boolean",
+              "description": "プレイヤーがベッドでスポーンするかどうかです。"
+            },
+            "isAnchor": {
+              "type": "boolean",
+              "description": "プレイヤーが錨でスポーンするかどうかです。"
+            },
+            "location": {
+              "description": "プレイヤーがスポーンする場所です。",
+              "$ref": "#/definitions/location"
             }
           }
         },

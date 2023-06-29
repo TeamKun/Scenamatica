@@ -432,13 +432,13 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
             anchor: "slot",
             description: "破壊されるアイテムがあるスロットです。",
             type: "列挙型{HAND, OFF_HAND, HEAD, CHEST, LEGS, FEET}",
-            default: "シナリオ実行モードの場合は HAND"
+            default: "アクション実行モードの場合は HAND"
           }
         ]}
         executable watchable
 />
 
-### シナリオ実行アクションでの使用 {#item-break-usage-in-execution}
+### アクション実行シナリオでの使用 {#item-break-usage-in-execution}
 
 `item` が設定されていた場合、破壊する前にそのアイテムを `slot` に設定します。
 `slot` はこのモードではデフォルトで `HAND` になります。
@@ -481,7 +481,7 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
         executable watchable 
 />
 
-### シナリオ実行アクションでの使用 {#item-consume-usage-in-execution}
+### アクション実行シナリオでの使用 {#item-consume-usage-in-execution}
 
 プレイヤの利き手にあるアイテムを消費します。  
 
@@ -724,3 +724,79 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
 | `KICKED`          | プレイヤがキックされた場合           |
 | `TIMED_OUT`       | プレイヤがタイムアウトした場合         |
 | `ERRONEOUS_STATE` | パケットハンドラ内などで例外が発生した場合など |
+
+## プレイヤのリスポーン {#respawn}
+
+<Action name="プレイヤのリスポーン"
+        description="プレイヤのリスポーンに関するアクションです。"
+        id="player_respawn"
+        events={[
+          {
+            name: "PlayerRespawnEvent",
+            package: "org.bukkit.event.player",
+          },
+          {
+            name: "PlayerPostRespawnEvent",
+            package: "io.papermc.paper.event.player",
+          }
+        ]}
+        args={[
+          {
+            name: "target",
+            anchor: "target",
+            description: "リスポーンするプレイヤです。",
+            type: "プレイヤ",
+            required: true
+          },
+          {
+            name: "isBed",
+            anchor: "respawn-is-bed",
+            description: "ベッドでリスポーンするかどうかです。",
+            type: ObjectType.BOOLEAN
+          },
+          {
+            name: "location",
+            anchor: "respawn-location",
+            description: "リスポーンする場所です。",
+            type: "Location"
+            type_link: "../file-syntax#location-structure",
+          },
+          {
+            name: "isAnchor",
+            anchor: "respawn-is-anchor",
+            description: "アンカでリスポーンするかどうかです。",
+            type: ObjectType.BOOLEAN,
+          }
+        ]}
+        executable watchable
+/>
+
+### `isBed` {#respawn-is-bed}
+
+ベッドでリスポーンするかどうかを指定します。  
+
+:::warning
+
+アクション実行シナリオでは使用できません。
+
+:::
+
+### `location` {#respawn-location}
+
+リスポーンする場所を指定します。  
+
+:::tip
+
+アクション実行シナリオで使用した場合、リスポーンの実行前にベッドスポーン位置を変更します。
+
+:::
+
+### `isAnchor` {#respawn-is-anchor}
+
+アンカでリスポーンするかどうかを指定します。
+
+:::warning
+
+アクション実行シナリオでは使用できません。
+
+:::
