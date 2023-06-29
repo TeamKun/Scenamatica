@@ -6,6 +6,7 @@ import org.bukkit.event.block.BlockEvent;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.action.actions.AbstractAction;
 import org.kunlab.scenamatica.action.utils.BeanUtils;
+import org.kunlab.scenamatica.action.utils.Utils;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.BeanSerializer;
@@ -49,14 +50,8 @@ public abstract class AbstractBlockAction<A extends AbstractBlockActionArgument>
         );
     }
 
-    protected Location getBlockLocationWithWorld(@NotNull BlockBean block, @NotNull ScenarioEngine engnie)
+    protected Location getBlockLocationWithWorld(@NotNull BlockBean block, @NotNull ScenarioEngine engine)
     {
-        Location location = block.getLocation().clone();
-        if (location.getWorld() != null)
-            return location;
-
-        location.setWorld(engnie.getContext().getStage());
-
-        return location;
+        return Utils.assignWorldToLocation(block.getLocation().clone(), engine);
     }
 }

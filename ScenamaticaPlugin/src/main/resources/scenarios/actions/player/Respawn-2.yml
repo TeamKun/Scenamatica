@@ -1,0 +1,44 @@
+# noinspection YAMLSchemaValidation
+scenamatica: ${project.version}
+
+name: actions_player_respawn_2
+description: Testing player_respawn (post) works or not
+on:
+  - type: on_load
+    before:
+      - type: execute
+        action: player_death
+        with:
+          target: Actor001
+
+  - type: manual_dispatch
+    before:
+      - type: execute
+        action: player_death
+        with:
+          target: Actor001
+
+
+context:
+  actors:
+    - name: Actor001
+
+
+scenario:
+  - type: execute
+    action: player_respawn
+    with:
+      target: Actor001
+      location:
+        x: 0
+        y: 0
+        z: 0
+  - type: expect
+    action: player_respawn
+    with:
+      target: Actor001
+      location:
+        x: 0
+        y: 0
+        z: 0
+
