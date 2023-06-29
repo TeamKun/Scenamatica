@@ -401,6 +401,50 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
                label="Block 型"
 />
 
+## プレイヤのアイテムの破壊 {#item-break}
+
+<Action name="プレイヤのアイテムの破壊"
+        description="プレイヤのアイテムの破壊に関するアクションです。"
+        id="player_item_break"
+        events={
+          {
+            name: "PlayerItemBreakEvent",
+            package: "org.bukkit.event.player",
+          }
+        }
+        args={[
+          {
+            name: "target",
+            anchor: "target",
+            description: "破壊されるアイテムを持っているプレイヤーです。",
+            type: "プレイヤ",
+            required: true
+          },
+          {
+            name: "item",
+            anchor: "item",
+            description: "破壊されるアイテムです。",
+            type: "ItemStack",
+            type_link: "../file-syntax#item-stack-structure",
+          },
+          {
+            name: "slot",
+            anchor: "slot",
+            description: "破壊されるアイテムがあるスロットです。",
+            type: "列挙型{HAND, OFF_HAND, HEAD, CHEST, LEGS, FEET}",
+            default: "シナリオ実行モードの場合は HAND"
+          }
+        ]}
+        executable watchable
+/>
+
+### シナリオ実行アクションでの使用 {#item-break-usage-in-execution}
+
+`item` が設定されていた場合、破壊する前にそのアイテムを `slot` に設定します。
+`slot` はこのモードではデフォルトで `HAND` になります。
+
+
+
 ## プレイヤのアイテムの消費 {#item-consume}
 
 <Action name="プレイヤのアイテムの消費"
