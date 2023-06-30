@@ -114,6 +114,7 @@
             "player_launch_projectile",
             "player_quit",
             "player_respawn",
+            "player_sneak",
             "message",
             "milestone",
             "server_log",
@@ -454,6 +455,26 @@
             "properties": {
               "with": {
                 "$ref": "#/definitions/action/definitions/player/quit"
+              }
+            },
+            "required": [
+              "with"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "player_sneak",
+                "description": "プレイヤーがスニークしたり, スニークしたことを検知します。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/player/sneak"
               }
             },
             "required": [
@@ -1189,6 +1210,15 @@
             "location": {
               "description": "プレイヤーがスポーンする場所です。",
               "$ref": "#/definitions/location"
+            }
+          },
+          "sneak": {
+            "$ref": "#/definitions/action/definitions/player/$base",
+            "properties": {
+              "sneaking": {
+                "type": "boolean",
+                "description": "プレイヤーがスニークしているかどうかです。"
+              }
             }
           }
         },

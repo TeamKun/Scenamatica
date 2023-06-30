@@ -800,3 +800,40 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
 アクション実行シナリオでは使用できません。
 
 :::
+
+## プレイヤのスニーク {#sneak}
+
+<Action name="プレイヤのスニーク"
+        description="プレイヤのスニークに関するアクションです。"
+        id="player_sneak"
+        events={[
+          {
+            name: "PlayerToggleSneakEvent",
+            package: "org.bukkit.event.player",
+          }
+        ]}
+        args={[
+          {
+            name: "target",
+            anchor: "target",
+            description: "スニークするプレイヤーです。",
+            type: "プレイヤ",
+            required: true
+          },
+          {
+            name: "sneaking",
+            anchor: "sneak-sneaking",
+            description: "スニークするかどうかです。",
+            type: ObjectType.BOOLEAN
+          }
+        ]}
+        executable requireable watchable
+/>
+
+### `sneaking` {#sneak-sneaking}
+
+スニークするか（している）どうかを指定します。  
+
+:::info
+アクション実行シナリオおよびコンディション要求シナリオでは必須です。
+:::
