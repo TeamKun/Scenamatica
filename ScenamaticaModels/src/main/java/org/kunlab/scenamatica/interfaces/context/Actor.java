@@ -99,6 +99,13 @@ public interface Actor
     void breakItem(@NotNull EquipmentSlot slot);
 
     /**
+     * プレイヤのスニーク状態を設定します。
+     *
+     * @param sneaking スニーク状態
+     */
+    void sneak(boolean sneaking);
+
+    /**
      * Bukkit の {@link Player} を取得します。
      *
      * @return プレイヤー
