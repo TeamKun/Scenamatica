@@ -104,6 +104,7 @@
             "player_animation",
             "player_death",
             "player_drop_item",
+            "player_flight",
             "player_gamemode",
             "player_hotbar",
             "player_interact_block",
@@ -255,6 +256,26 @@
             "properties": {
               "with": {
                 "$ref": "#/definitions/action/definitions/player/drop_item"
+              }
+            },
+            "required": [
+              "with"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "player_flight",
+                "description": "プレイヤーの飛行状態を変更したり, 変更されたことを検知, または飛行状態を判定します。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/player/flight"
               }
             },
             "required": [
@@ -970,6 +991,15 @@
               "item": {
                 "description": "ドロップするアイテムです。",
                 "$ref": "#/definitions/entityItem"
+              }
+            }
+          },
+          "flight": {
+            "$ref": "#/definitions/action/definitions/player/$base",
+            "properties": {
+              "flying": {
+                "type": "boolean",
+                "description": "プレイヤーが飛行中かどうかです。"
               }
             }
           },

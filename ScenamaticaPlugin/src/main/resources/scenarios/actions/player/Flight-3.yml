@@ -1,0 +1,37 @@
+# noinspection YAMLSchemaValidation
+scenamatica: ${project.version}
+
+name: actions_player_flight_3
+description: Testing player_flight action with joining state managing works or not.
+on:
+  - type: on_load
+  - type: manual_dispatch
+
+context:
+  actors:
+    - name: Actor001
+
+
+scenario:
+  - type: execute
+    action: player_flight
+    with:
+      target: Actor001
+      flying: true
+  - type: expect
+    action: player_flight
+    with:
+      target: Actor001
+      flying: true
+  - type: execute
+    action: player_flight
+    with:
+      target: Actor001
+      flying: false
+  - type: expect
+    action: player_flight
+    with:
+      target: Actor001
+      flying: false
+
+
