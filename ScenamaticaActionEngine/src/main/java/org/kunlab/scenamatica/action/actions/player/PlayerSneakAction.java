@@ -2,11 +2,12 @@ package org.kunlab.scenamatica.action.actions.player;
 
 import lombok.EqualsAndHashCode;
 import lombok.Value;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.kunlab.scenamatica.action.utils.PlayerUtils;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.Requireable;
@@ -35,7 +36,14 @@ public class PlayerSneakAction extends AbstractPlayerAction<PlayerSneakAction.Ar
         assert argument.sneaking != null;
 
         boolean sneaking = argument.sneaking;
-        PlayerUtils.getActorOrThrow(engine, argument.getTarget()).sneak(sneaking);
+
+        Player player = argument.getTarget();
+        PlayerToggleSneakEvent event = new PlayerToggleSneakEvent(player, sneaking);
+        Bukkit.getPluginManager().callEvent(event);
+        if (event.isCancelled())
+            return;
+
+        player.setSneaking(sneaking);
     }
 
     @Override

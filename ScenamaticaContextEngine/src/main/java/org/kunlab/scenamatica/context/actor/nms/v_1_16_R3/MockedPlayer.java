@@ -34,7 +34,6 @@ import org.bukkit.event.Event;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerAnimationType;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -230,17 +229,6 @@ class MockedPlayer extends EntityPlayer implements Actor
         Item item = st.getItem();
 
         st.damage(item.getMaxDurability() - st.getDamage(), this, (entity) -> entity.broadcastItemBreak(nmsSlot));
-    }
-
-    @Override
-    public void sneak(boolean sneaking)
-    {
-        PlayerToggleSneakEvent event = new PlayerToggleSneakEvent(this.getPlayer(), sneaking);
-        this.server.server.getPluginManager().callEvent(event);
-        if (event.isCancelled())
-            return;
-
-        this.setSneaking(sneaking);
     }
 
     @Override
