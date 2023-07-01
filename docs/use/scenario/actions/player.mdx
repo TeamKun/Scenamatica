@@ -141,6 +141,43 @@ import {ObjectType} from "/src/components/Object";
         executable watchable
 />
 
+## プレイヤの飛行 {#flight}
+
+<Action name="プレイヤの飛行"
+        description="プレイヤの飛行に関するアクションです。"
+        id="player_sneak"
+        events={[
+          {
+            name: "PlayerToggleSneakEvent",
+            package: "org.bukkit.event.player",
+          }
+        ]}
+        args={[
+          {
+            name: "target",
+            anchor: "target",
+            description: "スニークするプレイヤーです。",
+            type: "プレイヤ",
+            required: true
+          },
+          {
+            name: "flying",
+            anchor: "flight-flying",
+            description: "飛行中かどうかです。",
+            type: ObjectType.BOOLEAN
+          }
+        ]}
+        executable requireable watchable
+/>
+
+### `flying` {#flight-flying}
+
+飛行するか（している）どうかを指定します。
+
+:::info
+アクション実行シナリオおよびコンディション要求シナリオでは必須です。
+:::
+
 ## 進捗の達成と達成度 {#advancement}
 
 <Action name="進捗の達成と達成度"
