@@ -35,6 +35,7 @@ public abstract class AbstractPlayerAction<A extends AbstractPlayerActionArgumen
         actions.add(new PlayerQuitAction());
         actions.add(new PlayerRespawnAction());
         actions.add(new PlayerSneakAction());
+        actions.add(new PlayerSprintAction());
 
         return actions;
     }

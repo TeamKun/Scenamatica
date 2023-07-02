@@ -116,6 +116,7 @@
             "player_quit",
             "player_respawn",
             "player_sneak",
+            "player_sprint",
             "message",
             "milestone",
             "server_log",
@@ -496,6 +497,26 @@
             "properties": {
               "with": {
                 "$ref": "#/definitions/action/definitions/player/sneak"
+              }
+            },
+            "required": [
+              "with"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "player_sprint",
+                "description": "プレイヤーが走ったり, 走ったことを検知します。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/player/sprint"
               }
             },
             "required": [
@@ -1245,9 +1266,18 @@
           "sneak": {
             "$ref": "#/definitions/action/definitions/player/$base",
             "properties": {
+              "type": "boolean",
+              "sneaking": {
+                "description": "プレイヤーがスニークしているかどうかです。"
+              }
+            }
+          },
+          "sprint": {
+            "$ref": "#/definitions/action/definitions/player/$base",
+            "properties": {
               "sneaking": {
                 "type": "boolean",
-                "description": "プレイヤーがスニークしているかどうかです。"
+                "description": "プレイヤーが走っているかどうかです。"
               }
             }
           }
