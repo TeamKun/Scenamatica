@@ -874,3 +874,40 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
 :::info
 アクション実行シナリオおよびコンディション要求シナリオでは必須です。
 :::
+
+## プレイヤの走り {#sprint}
+
+<Action name="プレイヤの走り"
+        description="プレイヤの走りに関するアクションです。"
+        id="player_sprint"
+        events={[
+          {
+            name: "PlayerToggleSprintEvent",
+            package: "org.bukkit.event.player",
+          }
+        ]}
+        args={[
+          {
+            name: "target",
+            anchor: "target",
+            description: "走るプレイヤーです。",
+            type: "プレイヤ",
+            required: true
+          },
+          {
+            name: "sprinting",
+            anchor: "sprint-sprinting",
+            description: "飛行中かどうかです。",
+            type: ObjectType.BOOLEAN
+          }
+        ]}
+        executable requireable watchable
+/>
+
+### `sprinting` {#sprint-sprinting}
+
+走っているか（走っている）どうかを指定します。
+
+:::info
+アクション実行シナリオおよびコンディション要求シナリオでは必須です。
+:::
