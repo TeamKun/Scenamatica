@@ -9,19 +9,19 @@ td.name {
     font-size: 1.2em;
 }
 
-[data-theme="dark"] .able {
+[data-theme="dark"] .able .label {
     color: #70b870;
 }
 
-[data-theme="light"] .able {
+[data-theme="light"] .able .label {
     color: #008000;
 }
 
-[data-theme="dark"] .unable {
+[data-theme="dark"] .unable .label {
     color: #b87070;
 }
 
-[data-theme="light"] .unable {
+[data-theme="light"] .unable .label {
     color: #8d1a1a;
 }
 

@@ -12,9 +12,9 @@ type ActionProps = {
     description: string
     id: string
     events?: BukkitEvent | BukkitEvent[]
-    executable?: boolean
-    watchable?: boolean
-    requireable?: boolean
+    executable?: boolean | string
+    watchable?: boolean | string
+    requireable?: boolean | string
 
     args?: ObjectElement[]
 }
@@ -22,9 +22,13 @@ type ActionProps = {
 const EVENT_JAVADOC_LINK_BASE =  "https://jd.papermc.io/paper/1.16/"
 
 const Action: React.FC<ActionProps> = ({name, description, id, events, executable, watchable, requireable, args}) => {
-    const able = (value: boolean) => (
-        <td className={value ? styles.able : styles.unable}>{value ? "はい" : "いいえ"}</td>
-    )
+    const able = (value: boolean | string) => {
+        if (typeof value === "boolean" || value === undefined) {
+            return <td className={value ? styles.able : styles.unable}><span className={styles.label}>{value ? "はい" : "いいえ"}</span></td>
+        } else {
+            return <td className={styles.able}><span className={styles.label}>はい</span>：{value}</td>
+        }
+    }
 
     const createEventLink = (event: BukkitEvent) => (
         <a href={EVENT_JAVADOC_LINK_BASE + event.package.replace(/\./g, "/") + "/" + event.name + ".html"}>{event.name}</a>

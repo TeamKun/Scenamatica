@@ -102,7 +102,9 @@ import {ObjectType} from "/src/components/Object";
             default: "(ゲームルールによる)"
           }
         ]}
-        executable requireable watchable
+        executable={"プレイヤを殺害します。"}
+        requireable
+        watchable
 />
 
 :::warning コンディションチェック時における注意
@@ -547,10 +549,10 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
             required: true
           }
         ]}
-        executable requireable watchable
+        executable
+        requireable={"プレイヤがオンラインかどうか判定します。"}
+        watchable
 />
-
-コンディション要求シナリオでこれを使用した場合、プレイヤがオンラインかどうかを判定します。
 
 ## プレイヤのキック {#kick}
 
@@ -599,7 +601,7 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
 アクション実行期待モードでは使用できません。
 :::
 
-### KickCause {#kick-cause-enum}
+### 列挙型： KickCause {#kick-cause-enum}
 | 列挙型名                       | 説明                 |
 |:---------------------------|:-------------------|
 | `PLUGIN`                   | プラグインによるキック        |
@@ -726,7 +728,9 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
             default: "シナリオのタイプによる"
           }
         ]}
-        executable requireable watchable
+        executable 
+        requireable={"プレイヤがオフラインかどうか判定します。"}
+        watchable
 />
 
 プレイヤの一般的な退出に関するアクションです。
