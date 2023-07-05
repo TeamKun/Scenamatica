@@ -136,21 +136,21 @@ public class PlayerMocker extends PlayerMockerBase
             player.expLevel = bean.getLevel();
         if (bean.getTotalExperience() != null)
             player.expTotal = bean.getTotalExperience();
-        if (bean.isFlying())
-            player.abilities.isFlying = bean.isFlying();
+        if (Boolean.TRUE.equals(bean.getFlying()))
+            player.abilities.isFlying = bean.getFlying();
         if (bean.getWalkSpeed() != null)
             player.abilities.walkSpeed = bean.getWalkSpeed();
         if (bean.getFlySpeed() != null)
             player.abilities.flySpeed = bean.getFlySpeed();
 
-        int opLevel = bean.getOpLevel() == -1 ? this.settings.getDefaultOPLevel(): bean.getOpLevel();
+        int opLevel = bean.getOpLevel() == null ? this.settings.getDefaultOPLevel(): bean.getOpLevel();
         boolean isOP = opLevel > 0;
         if (isOP)
         {
             OpListEntry entry = new OpListEntry(
                     player.getProfile(),
                     opLevel,
-                    true  //
+                    true  // bypassPlayerLimit
             );
 
             player.server.getPlayerList().getOPs().add(entry);
@@ -181,10 +181,10 @@ public class PlayerMocker extends PlayerMockerBase
         }
         if (bean.getCustomName() != null)
             player.setCustomName(new ChatComponentText(bean.getCustomName()));
-        if (bean.isGlowing())
+        if (Boolean.TRUE.equals(bean.getGlowing()))
             player.glowing = true;
-        if (!bean.isGravity())  // 自動で true にされてる
-            player.setNoGravity(true);
+        if (Boolean.TRUE.equals(bean.getGravity()))
+            player.setNoGravity(false);
 
         Stream.of(bean.getTags(), this.settings.getDefaultScoreboardTags())
                 .flatMap(List::stream)
@@ -251,7 +251,7 @@ public class PlayerMocker extends PlayerMockerBase
         NetworkManager mockedNetworkManager = new MockedNetworkManager(server);
         WorldServer worldServer = server.E();
         GameProfile profile = createGameProfile(bean);
-        boolean doLogin = bean.isOnline();
+        boolean doLogin = bean.getOnline();
 
         MockedPlayer player = new MockedPlayer(this.manager, this, mockedNetworkManager, server, worldServer, profile);
         this.initializePlayer(player, bean);

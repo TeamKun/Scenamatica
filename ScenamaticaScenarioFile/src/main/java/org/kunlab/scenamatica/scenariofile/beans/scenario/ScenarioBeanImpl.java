@@ -1,13 +1,12 @@
 package org.kunlab.scenamatica.scenariofile.beans.scenario;
 
 import lombok.Value;
+import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.scenariofile.BeanSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.action.ActionBean;
 import org.kunlab.scenamatica.interfaces.scenariofile.scenario.ScenarioBean;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,7 +24,7 @@ public class ScenarioBeanImpl implements ScenarioBean
     ScenarioType type;
     @NotNull
     ActionBean action;
-    @Nullable
+
     ActionBean runIf;
     long timeout;
 

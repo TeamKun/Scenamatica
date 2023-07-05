@@ -1,8 +1,8 @@
 package org.kunlab.scenamatica.interfaces.scenariofile.scenario;
 
+import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.scenariofile.action.ActionBean;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
 

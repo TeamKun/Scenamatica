@@ -1,10 +1,10 @@
 package org.kunlab.scenamatica.interfaces.scenariofile.trigger;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.enums.TriggerType;
 import org.kunlab.scenamatica.interfaces.scenariofile.action.ActionBean;
 import org.kunlab.scenamatica.interfaces.scenariofile.scenario.ScenarioBean;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.Serializable;
 import java.util.List;

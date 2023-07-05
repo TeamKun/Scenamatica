@@ -1,12 +1,12 @@
 package org.kunlab.scenamatica.scenariofile.beans.context;
 
 import lombok.Value;
-import org.kunlab.scenamatica.commons.utils.MapUtils;
-import org.kunlab.scenamatica.interfaces.scenariofile.context.StageBean;
 import org.bukkit.World;
 import org.bukkit.WorldType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.kunlab.scenamatica.commons.utils.MapUtils;
+import org.kunlab.scenamatica.interfaces.scenariofile.context.StageBean;
 
 import java.util.HashMap;
 import java.util.Map;

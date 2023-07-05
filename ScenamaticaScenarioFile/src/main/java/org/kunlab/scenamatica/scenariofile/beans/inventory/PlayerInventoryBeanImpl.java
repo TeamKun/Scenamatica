@@ -3,13 +3,13 @@ package org.kunlab.scenamatica.scenariofile.beans.inventory;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.interfaces.scenariofile.BeanSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.InventoryBean;
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.ItemStackBean;
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.PlayerInventoryBean;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -22,18 +22,14 @@ import java.util.Map;
 @EqualsAndHashCode(callSuper = true)
 public class PlayerInventoryBeanImpl extends InventoryBeanImpl implements PlayerInventoryBean
 {
-    @Nullable
     ItemStackBean mainHand;
-    @Nullable
     ItemStackBean offHand;
-
-    @Nullable
     ItemStackBean[] armorContents;
 
     public PlayerInventoryBeanImpl()
     {
         super(
-                0,
+                null,
                 null,
                 Collections.emptyMap()
         );
@@ -41,19 +37,6 @@ public class PlayerInventoryBeanImpl extends InventoryBeanImpl implements Player
         this.mainHand = null;
         this.offHand = null;
         this.armorContents = null;
-    }
-
-    public PlayerInventoryBeanImpl(@Nullable String title,
-                                   @NotNull Map<Integer, ItemStackBean> mainContents,
-                                   @Nullable ItemStackBean mainHand,
-                                   @Nullable ItemStackBean offHand,
-                                   @Nullable ItemStackBean[] armorContents
-    )
-    {
-        super(9 * 4, title, mainContents);
-        this.mainHand = mainHand;
-        this.offHand = offHand;
-        this.armorContents = armorContents;
     }
 
     public PlayerInventoryBeanImpl(@NotNull InventoryBean main, @Nullable ItemStackBean mainHand, @Nullable ItemStackBean offHand, @Nullable ItemStackBean[] armorContents)
@@ -192,13 +175,10 @@ public class PlayerInventoryBeanImpl extends InventoryBeanImpl implements Player
                     String.class, Object.class
             ));
 
-            if (!mainInventory.containsKey(KEY_SIZE))
-                mainInventory.put(KEY_SIZE, 9 * 4);
-
             mainInventoryBean = serializer.deserializeInventory(mainInventory);
         }
         else
-            mainInventoryBean = new InventoryBeanImpl(9 * 4, null, Collections.emptyMap());
+            mainInventoryBean = new InventoryBeanImpl(null, null, Collections.emptyMap());
 
 
         ItemStackBean mainHandItem;

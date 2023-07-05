@@ -7,7 +7,6 @@ import org.bukkit.Material;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.interfaces.scenariofile.misc.BlockBean;
 
@@ -19,14 +18,12 @@ import java.util.Objects;
 @AllArgsConstructor
 public class BlockBeanImpl implements BlockBean
 {
-    @Nullable
     Material type;
-    @Nullable
     Location location;
     @NotNull
     Map<String, Object> metadata;
-    int lightLevel;  // 0-15
-    @Nullable
+    Integer lightLevel;  // 0-15
+
     Biome biome;
 
     public static BlockBean fromBlock(Block block)
@@ -35,7 +32,7 @@ public class BlockBeanImpl implements BlockBean
                 block.getType(),
                 block.getLocation(),
                 new HashMap<>(),
-                block.getLightLevel(),
+                (int) block.getLightLevel(),
                 block.getBiome()
         );
     }
@@ -54,7 +51,7 @@ public class BlockBeanImpl implements BlockBean
 
         if (!blockBean.getMetadata().isEmpty())
             map.put(KEY_METADATA, blockBean.getMetadata());
-        if (blockBean.getLightLevel() != 0)
+        if (blockBean.getLightLevel() != null)
             map.put(KEY_LIGHT_LEVEL, blockBean.getLightLevel());
 
         return map;
@@ -102,7 +99,7 @@ public class BlockBeanImpl implements BlockBean
                         String.class,
                         Object.class
                 ): new HashMap<>(),
-                (byte) (int) MapUtils.getOrDefault(map, KEY_LIGHT_LEVEL, 0),
+                MapUtils.getOrNull(map, KEY_LIGHT_LEVEL),
                 MapUtils.getAsEnumOrNull(map, KEY_BIOME, Biome.class)
         );
     }

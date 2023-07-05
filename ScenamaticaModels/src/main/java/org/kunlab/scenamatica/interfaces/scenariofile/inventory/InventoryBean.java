@@ -1,7 +1,6 @@
 package org.kunlab.scenamatica.interfaces.scenariofile.inventory;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.Serializable;
 import java.util.Map;
@@ -20,14 +19,13 @@ public interface InventoryBean extends Serializable
      *
      * @return サイズ
      */
-    int getSize();
+    Integer getSize();
 
     /**
      * このインベントリのタイトルを取得します。
      *
      * @return タイトル
      */
-    @Nullable
     String getTitle();
 
     /**

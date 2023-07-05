@@ -1,6 +1,8 @@
 package org.kunlab.scenamatica.interfaces.scenariofile;
 
 import net.kunmc.lab.peyangpaperutils.versioning.Version;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.interfaces.scenariofile.action.ActionBean;
 import org.kunlab.scenamatica.interfaces.scenariofile.context.ContextBean;
 import org.kunlab.scenamatica.interfaces.scenariofile.scenario.ScenarioBean;
@@ -22,6 +24,7 @@ public interface ScenarioFileBean extends Serializable
      *
      * @return Scenamatica のバージョン
      */
+    @NotNull
     Version getScenamaticaVersion();
 
     /**
@@ -31,6 +34,7 @@ public interface ScenarioFileBean extends Serializable
      *
      * @return 名前
      */
+    @NotNull
     String getName();
 
     /**
@@ -38,6 +42,7 @@ public interface ScenarioFileBean extends Serializable
      *
      * @return 説明
      */
+    @NotNull
     String getDescription();
 
     /**
@@ -61,6 +66,7 @@ public interface ScenarioFileBean extends Serializable
      *
      * @return 実行条件
      */
+    @Nullable
     ActionBean getRunIf();
 
     /**
@@ -68,6 +74,7 @@ public interface ScenarioFileBean extends Serializable
      *
      * @return 実行タイミング
      */
+    @NotNull
     List<TriggerBean> getTriggers();
 
     /**
@@ -75,6 +82,7 @@ public interface ScenarioFileBean extends Serializable
      *
      * @return 実行に必要な情報
      */
+    @Nullable
     ContextBean getContext();
 
     /**
@@ -82,5 +90,6 @@ public interface ScenarioFileBean extends Serializable
      *
      * @return シナリオ
      */
+    @NotNull
     List<ScenarioBean> getScenario();
 }

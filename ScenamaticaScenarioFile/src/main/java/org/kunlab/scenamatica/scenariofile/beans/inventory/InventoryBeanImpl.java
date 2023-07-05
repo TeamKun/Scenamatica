@@ -3,7 +3,6 @@ package org.kunlab.scenamatica.scenariofile.beans.inventory;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.interfaces.scenariofile.BeanSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.InventoryBean;
@@ -17,8 +16,7 @@ import java.util.Map;
 @AllArgsConstructor
 public class InventoryBeanImpl implements InventoryBean
 {
-    private final int size;
-    @Nullable
+    private final Integer size;
     private final String title;
     @NotNull
     private final Map<Integer, ItemStackBean> mainContents;
@@ -26,7 +24,7 @@ public class InventoryBeanImpl implements InventoryBean
     public InventoryBeanImpl()
     {
         this(
-                0,
+                null,
                 null,
                 Collections.emptyMap()
         );
@@ -40,7 +38,7 @@ public class InventoryBeanImpl implements InventoryBean
             contents.put(entry.getKey(), serializer.serializeItemStack(entry.getValue()));
 
         Map<String, Object> map = new HashMap<>();
-        map.put(KEY_SIZE, bean.getSize());
+        MapUtils.putIfNotNull(map, KEY_SIZE, bean.getSize());
         MapUtils.putIfNotNull(map, KEY_TITLE, bean.getTitle());
         MapUtils.putMapIfNotEmpty(map, KEY_MAIN_CONTENTS, contents);
         return map;
@@ -48,7 +46,7 @@ public class InventoryBeanImpl implements InventoryBean
 
     public static void validate(@NotNull Map<String, Object> map, @NotNull BeanSerializer serializer)
     {
-        MapUtils.checkType(map, KEY_SIZE, Integer.class);
+        MapUtils.checkTypeIfContains(map, KEY_SIZE, Integer.class);
         MapUtils.checkTypeIfContains(map, KEY_TITLE, String.class);
 
         if (!map.containsKey(KEY_MAIN_CONTENTS))
@@ -95,7 +93,7 @@ public class InventoryBeanImpl implements InventoryBean
         }
 
         return new InventoryBeanImpl(
-                (int) map.get(KEY_SIZE),
+                MapUtils.getOrNull(map, KEY_SIZE),
                 MapUtils.getOrNull(map, KEY_TITLE),
                 mainContents
         );

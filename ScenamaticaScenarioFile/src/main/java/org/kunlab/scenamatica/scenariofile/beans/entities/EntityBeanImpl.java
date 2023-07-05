@@ -6,7 +6,6 @@ import org.bukkit.Location;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.interfaces.scenariofile.BeanSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.entities.DamageBean;
@@ -28,28 +27,25 @@ public class EntityBeanImpl implements EntityBean
     /**
      * エンティティの座標です。
      */
-    @Nullable
     private final Location location;
     /**
      * エンティティのカスタム名です。
      */
-    @Nullable
     private final String customName;
     /**
      * エンティティのUUIDです。
      */
-    @Nullable
     private final UUID uuid;
 
     /**
      * エンティティが光っているかどうかです。
      */
-    private final boolean glowing;
+    private final Boolean glowing;
 
     /**
      * エンティティが重力を持っているかどうかです。
      */
-    private final boolean gravity;
+    private final Boolean gravity;
 
     /**
      * スコアボードのタグです。
@@ -59,17 +55,14 @@ public class EntityBeanImpl implements EntityBean
     /**
      * 最大体力です。
      */
-    @Nullable
     private final Integer maxHealth;
     /**
      * 体力です。
      */
-    @Nullable
     private final Integer health;
     /**
      * 最後のダメージの原因です。
      */
-    @Nullable
     private final DamageBean lastDamageCause;
 
     /**
@@ -84,8 +77,8 @@ public class EntityBeanImpl implements EntityBean
                 null,
                 null,
                 null,
-                false,
-                true,
+                null,
+                null,
                 Collections.emptyList(),
                 null,
                 null,
@@ -107,12 +100,10 @@ public class EntityBeanImpl implements EntityBean
         Map<String, Object> map = new HashMap<>();
         MapUtils.putLocationIfNotNull(map, KEY_LOCATION, entity.getLocation());
         MapUtils.putIfNotNull(map, KEY_CUSTOM_NAME, entity.getCustomName());
+        MapUtils.putIfNotNull(map, KEY_GLOWING, entity.getGlowing());
+        MapUtils.putIfNotNull(map, KEY_GRAVITY, entity.getGravity());
         if (entity.getUuid() != null)
             map.put(KEY_UUID, entity.getUuid().toString());
-        if (entity.isGlowing())
-            map.put(KEY_GLOWING, true);
-        if (!entity.isGravity())
-            map.put(KEY_GRAVITY, false);
         if (entity.getLastDamageCause() != null)
             map.put(EntityBean.KEY_LAST_DAMAGE, serializer.serializeDamage(entity.getLastDamageCause()));
 
@@ -254,8 +245,8 @@ public class EntityBeanImpl implements EntityBean
         else
             uuid = null;
 
-        boolean glowing = MapUtils.getOrDefault(map, KEY_GLOWING, false);
-        boolean gravity = MapUtils.getOrDefault(map, KEY_GRAVITY, true);
+        Boolean glowing = MapUtils.getOrNull(map, KEY_GLOWING);
+        Boolean gravity = MapUtils.getOrNull(map, KEY_GRAVITY);
         List<String> tags = MapUtils.getAsListOrEmpty(map, KEY_TAGS);
 
         DamageBean lastDamageCause = null;

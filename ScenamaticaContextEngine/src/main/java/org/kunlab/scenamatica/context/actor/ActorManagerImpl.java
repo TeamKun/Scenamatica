@@ -75,6 +75,8 @@ public class ActorManagerImpl implements ActorManager, Listener
     @Override
     public Actor createActor(PlayerBean bean) throws ContextPreparationException
     {
+        Objects.requireNonNull(bean.getName(), "Unable to create actor: name is null.");
+
         if (Bukkit.getServer().isPrimaryThread())
             throw new ContextPreparationException("This method must be called from another thread.");
         else if (this.actors.stream().anyMatch(p -> p.getName().equalsIgnoreCase(bean.getName())))
@@ -88,7 +90,7 @@ public class ActorManagerImpl implements ActorManager, Listener
 
         this.actors.add(actor);
 
-        if (bean.isOnline())  // オンラインモードはログインするの待つ。
+        if (Boolean.TRUE.equals(bean.getOnline()))  // オンラインモードはログインするの待つ。
             this.waitForJoin(actor);
 
         return actor;

@@ -8,7 +8,6 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.Serializable;
 import java.util.List;
@@ -40,7 +39,8 @@ public interface ItemStackBean extends Serializable
     /**
      * このインスタンスを{@link ItemStack}に変換します。
      *
-     * @return 変換された{@link ItemStack}
+     * @return 変換された{@link ItemStack
+     * @throws IllegalStateException アイテムの種類が設定されていない場合
      */
     @NotNull
     ItemStack toItemStack();
@@ -50,7 +50,6 @@ public interface ItemStackBean extends Serializable
      *
      * @return アイテムの種類
      */
-    @NotNull
     Material getType();
 
     /**
@@ -60,14 +59,13 @@ public interface ItemStackBean extends Serializable
      *
      * @return アイテムの個数
      */
-    int getAmount();
+    Integer getAmount();
 
     /**
      * このアイテムの表示名を取得します。
      *
      * @return アイテムの表示名
      */
-    @Nullable
     String getDisplayName();
 
     /**
@@ -75,7 +73,6 @@ public interface ItemStackBean extends Serializable
      *
      * @return アイテムのローカライズされた名前
      */
-    @Nullable
     String getLocalizedName();
 
     /**
@@ -91,7 +88,6 @@ public interface ItemStackBean extends Serializable
      *
      * @return アイテムのカスタムモデルデータ
      */
-    @Nullable
     Integer getCustomModelData();
 
     /**
@@ -115,7 +111,7 @@ public interface ItemStackBean extends Serializable
      *
      * @return 耐久無限かどうか
      */
-    boolean isUnbreakable();
+    Boolean getUnbreakable();
 
     /**
      * このアイテムに付与されている属性修飾を取得します。
@@ -146,6 +142,5 @@ public interface ItemStackBean extends Serializable
      *
      * @return ダメージ値
      */
-    @Nullable
     Integer getDamage();
 }

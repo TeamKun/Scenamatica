@@ -1,10 +1,8 @@
 package org.kunlab.scenamatica.interfaces.scenariofile.context;
 
+import org.bukkit.Location;
 import org.kunlab.scenamatica.interfaces.scenariofile.entities.EntityBean;
 import org.kunlab.scenamatica.interfaces.scenariofile.entities.HumanEntityBean;
-import org.bukkit.Location;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.Serializable;
 import java.util.List;
@@ -39,7 +37,6 @@ public interface PlayerBean extends EntityBean, HumanEntityBean, Serializable
      *
      * @return プレイヤーの名前
      */
-    @NotNull
     String getName();
 
     /**
@@ -47,14 +44,13 @@ public interface PlayerBean extends EntityBean, HumanEntityBean, Serializable
      *
      * @return プレイヤーがオンラインかどうか
      */
-    boolean isOnline();
+    Boolean getOnline();
 
     /**
      * プレイヤーの表示名を取得します。
      *
      * @return プレイヤーの表示名
      */
-    @Nullable
     String getDisplayName();
 
     /**
@@ -62,7 +58,6 @@ public interface PlayerBean extends EntityBean, HumanEntityBean, Serializable
      *
      * @return プレイヤーリストに表示される名前
      */
-    @Nullable
     String getPlayerListName();
 
     /**
@@ -70,7 +65,6 @@ public interface PlayerBean extends EntityBean, HumanEntityBean, Serializable
      *
      * @return プレイヤーリストのヘッダー
      */
-    @Nullable
     String getPlayerListHeader();
 
     /**
@@ -78,7 +72,6 @@ public interface PlayerBean extends EntityBean, HumanEntityBean, Serializable
      *
      * @return プレイヤーリストのフッター
      */
-    @Nullable
     String getPlayerListFooter();
 
     /**
@@ -86,7 +79,6 @@ public interface PlayerBean extends EntityBean, HumanEntityBean, Serializable
      *
      * @return コンパスのターゲット
      */
-    @Nullable
     Location getCompassTarget();
 
     /**
@@ -94,7 +86,6 @@ public interface PlayerBean extends EntityBean, HumanEntityBean, Serializable
      *
      * @return ベッドのスポーン地点
      */
-    @Nullable
     Location getBedSpawnLocation();
 
     /**
@@ -102,7 +93,6 @@ public interface PlayerBean extends EntityBean, HumanEntityBean, Serializable
      *
      * @return 経験値
      */
-    @Nullable
     Integer getExp();
 
     /**
@@ -110,7 +100,6 @@ public interface PlayerBean extends EntityBean, HumanEntityBean, Serializable
      *
      * @return レベル
      */
-    @Nullable
     Integer getLevel();
 
     /**
@@ -118,7 +107,6 @@ public interface PlayerBean extends EntityBean, HumanEntityBean, Serializable
      *
      * @return 総経験値
      */
-    @Nullable
     Integer getTotalExperience();
 
     /**
@@ -126,21 +114,20 @@ public interface PlayerBean extends EntityBean, HumanEntityBean, Serializable
      *
      * @return 飛べるかどうか
      */
-    boolean isAllowFlight();
+    Boolean getAllowFlight();
 
     /**
      * 飛んでいるかどうかを取得します。
      *
      * @return 飛んでいるかどうか
      */
-    boolean isFlying();
+    Boolean getFlying();
 
     /**
      * 歩行速度を取得します。
      *
      * @return 歩行速度
      */
-    @Nullable
     Float getWalkSpeed();
 
     /**
@@ -148,7 +135,6 @@ public interface PlayerBean extends EntityBean, HumanEntityBean, Serializable
      *
      * @return 飛行速度
      */
-    @Nullable
     Float getFlySpeed();
 
     /**
@@ -156,7 +142,7 @@ public interface PlayerBean extends EntityBean, HumanEntityBean, Serializable
      *
      * @return OP レベル
      */
-    int getOpLevel();
+    Integer getOpLevel();
 
     /**
      * プレイヤーが持っている権限を取得します。

@@ -1,6 +1,8 @@
 package org.kunlab.scenamatica.scenariofile.beans.trigger;
 
 import lombok.Value;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.enums.TriggerType;
 import org.kunlab.scenamatica.interfaces.scenariofile.BeanSerializer;
@@ -8,8 +10,6 @@ import org.kunlab.scenamatica.interfaces.scenariofile.action.ActionBean;
 import org.kunlab.scenamatica.interfaces.scenariofile.scenario.ScenarioBean;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerBean;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.LinkedList;

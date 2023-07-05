@@ -70,9 +70,9 @@ public abstract class AbstractAction<A extends ActionArgument> implements Action
      * @param fieldName フィールド名
      * @param value     値
      */
-    protected void throwIfPresent(@NotNull String fieldName, @NotNull Number value)
+    protected void throwIfPresent(@NotNull String fieldName, @Nullable Number value)
     {
-        if (value.doubleValue() != -1)
+        if (value != null && value.doubleValue() != -1)
             throw new IllegalArgumentException(String.format("The argument '%s' is not supported.", fieldName));
     }
 

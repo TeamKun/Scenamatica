@@ -13,7 +13,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.commons.utils.NamespaceUtils;
 import org.kunlab.scenamatica.interfaces.scenariofile.BeanSerializer;
@@ -33,49 +32,25 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class ItemStackBeanImpl implements ItemStackBean
 {
-    @NotNull
     Material type;
-    int amount;
-    @Nullable
+    Integer amount;
     String displayName;
-    @Nullable
     String localizedName;
     @NotNull
     List<String> lore;
-    @Nullable
     Integer customModelData;
     @NotNull
     Map<Enchantment, Integer> enchantments;
     @NotNull
     List<ItemFlag> itemFlags;
-    boolean unbreakable;
+    Boolean unbreakable;
     @NotNull
     Map<Attribute, List<AttributeModifier>> attributeModifiers;
     @NotNull
     List<Namespaced> placeableKeys;
     @NotNull
     List<Namespaced> destroyableKeys;
-    @Nullable
     Integer damage;
-
-    public ItemStackBeanImpl(Material material)
-    {
-        this(
-                material,
-                1,
-                null,
-                null,
-                Collections.emptyList(),
-                null,
-                Collections.emptyMap(),
-                Collections.emptyList(),
-                false,
-                Collections.emptyMap(),
-                Collections.emptyList(),
-                Collections.emptyList(),
-                null
-        );
-    }
 
     public ItemStackBeanImpl(Material material, int amount)
     {
@@ -250,14 +225,9 @@ public class ItemStackBeanImpl implements ItemStackBean
     {
         Map<String, Object> map = new HashMap<>();
 
-        // 必須項目
-        map.put(KEY_TYPE, bean.getType().name());
+        MapUtils.putPrimitiveOrStrIfNotNull(map, KEY_UNBREAKABLE, bean.getUnbreakable());
+        MapUtils.putPrimitiveOrStrIfNotNull(map, KEY_AMOUNT, bean.getAmount());
 
-        // オプション項目
-        if (bean.getAmount() != 1)  // 1個の場合は省略できる。
-            map.put(KEY_AMOUNT, bean.getAmount());
-        if (bean.isUnbreakable())
-            map.put(KEY_UNBREAKABLE, true);
         MapUtils.putPrimitiveOrStrIfNotNull(map, KEY_DISPLAY_NAME, bean.getDisplayName());
         MapUtils.putPrimitiveOrStrIfNotNull(map, KEY_LOCALIZED_NAME, bean.getLocalizedName());
         MapUtils.putPrimitiveOrStrIfNotNull(map, KEY_CUSTOM_MODEL_DATA, bean.getCustomModelData());
@@ -271,13 +241,13 @@ public class ItemStackBeanImpl implements ItemStackBean
         MapUtils.putMapIfNotEmpty(map, KEY_ENCHANTMENTS, serializeEnchantments(bean));
         MapUtils.putMapIfNotEmpty(map, KEY_ATTRIBUTE_MODIFIERS, serializeAttributeModifiers(bean));
 
+
         return map;
     }
 
     public static void validate(@NotNull Map<String, Object> map)
     {
-        MapUtils.checkEnumName(map, KEY_TYPE, Material.class);
-
+        MapUtils.checkEnumNameIfContains(map, KEY_TYPE, Material.class);
         MapUtils.checkTypeIfContains(map, KEY_AMOUNT, Integer.class);
         MapUtils.checkTypeIfContains(map, KEY_DISPLAY_NAME, String.class);
         MapUtils.checkTypeIfContains(map, KEY_LOCALIZED_NAME, String.class);
@@ -312,17 +282,14 @@ public class ItemStackBeanImpl implements ItemStackBean
     {
         validate(map);
 
-        // 必須項目
-        Material type = MapUtils.getAsEnum(map, KEY_TYPE, Material.class);
-
-        // オプション項目
-        int amount = MapUtils.getOrDefault(map, KEY_AMOUNT, 1);
+        Material type = MapUtils.getAsEnumOrNull(map, KEY_TYPE, Material.class);
+        Integer amount = MapUtils.getOrNull(map, KEY_AMOUNT);
         String name = MapUtils.getOrNull(map, KEY_DISPLAY_NAME);
         String localizedName = MapUtils.getOrNull(map, KEY_LOCALIZED_NAME);
         List<String> lore = MapUtils.getOrDefault(map, KEY_LORE, Collections.emptyList());
         Integer customModelData = MapUtils.getOrNull(map, KEY_CUSTOM_MODEL_DATA);
         List<ItemFlag> flags = MapUtils.getAsEnumOrEmptyList(map, KEY_ITEM_FLAGS, ItemFlag.class);
-        boolean unbreakable = MapUtils.getOrDefault(map, KEY_UNBREAKABLE, false);
+        Boolean unbreakable = MapUtils.getOrNull(map, KEY_UNBREAKABLE);
         Integer damage = MapUtils.getOrNull(map, KEY_DAMAGE);
 
         List<Namespaced> placeableKeys = new ArrayList<>();
@@ -441,7 +408,12 @@ public class ItemStackBeanImpl implements ItemStackBean
     @SuppressWarnings("deprecation")
     public ItemStack toItemStack()
     {
-        ItemStack stack = new ItemStack(this.type, this.amount);
+        if (this.type == null)
+            throw new IllegalStateException("Unable to create ItemStack from ItemStackBean: type is null");
+
+        int amount = this.amount != null ? this.amount: 1;
+
+        ItemStack stack = new ItemStack(this.type, amount);
         ItemMeta meta = stack.getItemMeta();
 
         if (this.displayName != null)
@@ -456,7 +428,8 @@ public class ItemStackBeanImpl implements ItemStackBean
             stack.addUnsafeEnchantments(this.enchantments);
         if (!this.itemFlags.isEmpty())
             meta.addItemFlags(this.itemFlags.toArray(new ItemFlag[0]));
-        meta.setUnbreakable(this.unbreakable);
+        if (this.unbreakable != null)
+            meta.setUnbreakable(this.unbreakable);
         if (!this.attributeModifiers.isEmpty())
             for (Attribute attribute : this.attributeModifiers.keySet())
                 for (AttributeModifier modifier : this.attributeModifiers.get(attribute))
@@ -485,7 +458,7 @@ public class ItemStackBeanImpl implements ItemStackBean
         result = 31 * result + (this.customModelData != null ? this.customModelData.hashCode(): 0);
         result = 31 * result + this.enchantments.hashCode();
         result = 31 * result + this.itemFlags.hashCode();
-        result = 31 * result + (this.unbreakable ? 1: 0);
+        result = 31 * result + (this.unbreakable != null ? this.unbreakable.hashCode(): 0);
         result = 31 * result + this.attributeModifiers.hashCode();
         result = 31 * result + this.placeableKeys.hashCode();
         result = 31 * result + this.destroyableKeys.hashCode();
@@ -501,8 +474,8 @@ public class ItemStackBeanImpl implements ItemStackBean
 
         ItemStackBean that = (ItemStackBean) o;
 
-        if (this.amount != that.getAmount()) return false;
-        if (this.unbreakable != that.isUnbreakable()) return false;
+        if (!Objects.equals(this.amount, that.getAmount())) return false;
+        if (this.unbreakable != that.getUnbreakable()) return false;
         if (this.type != that.getType()) return false;
         if (!Objects.equals(this.displayName, that.getDisplayName())) return false;
         if (!Objects.equals(this.localizedName, that.getLocalizedName())) return false;

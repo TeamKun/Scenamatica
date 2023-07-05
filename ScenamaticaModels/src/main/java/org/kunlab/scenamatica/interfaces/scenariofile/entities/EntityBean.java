@@ -59,14 +59,14 @@ public interface EntityBean
      *
      * @return 光っているかどうか
      */
-    boolean isGlowing();
+    Boolean getGlowing();
 
     /**
      * このエンティティが重力を受けるかどうかを取得します。
      *
      * @return 重力を受けるかどうか
      */
-    boolean isGravity();
+    Boolean getGravity();
 
     /**
      * このエンティティに付与されているタグを取得します。

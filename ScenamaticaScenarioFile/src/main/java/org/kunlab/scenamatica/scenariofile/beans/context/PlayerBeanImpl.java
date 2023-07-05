@@ -1,16 +1,14 @@
 package org.kunlab.scenamatica.scenariofile.beans.context;
 
-import lombok.AllArgsConstructor;
 import lombok.Value;
+import org.bukkit.Location;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.interfaces.scenariofile.BeanSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.context.PlayerBean;
 import org.kunlab.scenamatica.interfaces.scenariofile.entities.HumanEntityBean;
 import org.kunlab.scenamatica.scenariofile.beans.entities.HumanEntityBeanImpl;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.List;
@@ -18,49 +16,36 @@ import java.util.Map;
 import java.util.Objects;
 
 @Value
-@AllArgsConstructor
 public class PlayerBeanImpl extends HumanEntityBeanImpl implements PlayerBean
 {
     private static final float SPEED_DEFAULT = 0.2f;
 
-    @NotNull
     String name;
-    boolean online;
-    @Nullable
+    Boolean online;
     String displayName;
-    @Nullable
     String playerListName;
-    @Nullable
     String playerListHeader;
-    @Nullable
     String playerListFooter;
-    @Nullable
     Location compassTarget;
-    @Nullable
     Location bedSpawnLocation;
-    @Nullable
     Integer exp;
-    @Nullable
     Integer level;
-    @Nullable
     Integer totalExperience;
-    boolean allowFlight;
-    boolean flying;
-    @Nullable
+    Boolean allowFlight;
+    Boolean flying;
     Float walkSpeed;
-    @Nullable
     Float flySpeed;
 
-    int opLevel;
+    Integer opLevel;
     List<String> activePermissions;
 
-    public PlayerBeanImpl(@NotNull HumanEntityBean human, @NotNull String name, boolean online, @Nullable String displayName,
-                          @Nullable String playerListName, @Nullable String playerListHeader,
-                          @Nullable String playerListFooter, @Nullable Location compassTarget,
-                          @Nullable Location bedSpawnLocation, @Nullable Integer exp,
-                          @Nullable Integer level, @Nullable Integer totalExperience,
-                          boolean allowFlight, boolean flying,
-                          @Nullable Float walkSpeed, @Nullable Float flySpeed, int opLevel, List<String> activePermissions)
+    public PlayerBeanImpl(@NotNull HumanEntityBean human, @Nullable String name, Boolean online, String displayName,
+                          String playerListName, String playerListHeader,
+                          String playerListFooter, Location compassTarget,
+                          Location bedSpawnLocation, Integer exp,
+                          Integer level, Integer totalExperience,
+                          Boolean allowFlight, Boolean flying,
+                          Float walkSpeed, Float flySpeed, Integer opLevel, List<String> activePermissions)
     {
         super(human, human.getInventory(), human.getEnderChest(),
                 human.getMainHand(), human.getGamemode(), human.getFoodLevel()
@@ -84,11 +69,36 @@ public class PlayerBeanImpl extends HumanEntityBeanImpl implements PlayerBean
         this.activePermissions = activePermissions;
     }
 
+    public PlayerBeanImpl(String name, Boolean online, String displayName, String playerListName,
+                          String playerListHeader, String playerListFooter, Location compassTarget,
+                          Location bedSpawnLocation, Integer exp, Integer level, Integer totalExperience,
+                          Boolean allowFlight, Boolean flying, Float walkSpeed, Float flySpeed, Integer opLevel,
+                          List<String> activePermissions)
+    {
+        this.name = name;
+        this.online = online;
+        this.displayName = displayName;
+        this.playerListName = playerListName;
+        this.playerListHeader = playerListHeader;
+        this.playerListFooter = playerListFooter;
+        this.compassTarget = compassTarget;
+        this.bedSpawnLocation = bedSpawnLocation;
+        this.exp = exp;
+        this.level = level;
+        this.totalExperience = totalExperience;
+        this.allowFlight = allowFlight;
+        this.flying = flying;
+        this.walkSpeed = walkSpeed;
+        this.flySpeed = flySpeed;
+        this.opLevel = opLevel;
+        this.activePermissions = activePermissions;
+    }
+
     @NotNull
     public static Map<String, Object> serialize(@NotNull PlayerBean bean, @NotNull BeanSerializer serializer)
     {
         Map<String, Object> map = serializer.serializeHumanEntity(bean);
-        map.put(KEY_NAME, bean.getName());
+        MapUtils.putIfNotNull(map, KEY_NAME, bean.getName());
 
         MapUtils.putIfNotNull(map, KEY_DISPLAY_NAME, bean.getDisplayName());
         MapUtils.putLocationIfNotNull(map, KEY_COMPASS_TARGET, bean.getCompassTarget());
@@ -96,26 +106,10 @@ public class PlayerBeanImpl extends HumanEntityBeanImpl implements PlayerBean
         MapUtils.putIfNotNull(map, KEY_EXP, bean.getExp());
         MapUtils.putIfNotNull(map, KEY_LEVEL, bean.getLevel());
         MapUtils.putIfNotNull(map, KEY_TOTAL_EXPERIENCE, bean.getTotalExperience());
+        MapUtils.putIfNotNull(map, KEY_OP_LEVEL, bean.getOpLevel());
+        MapUtils.putIfNotNull(map, KEY_FLYING, bean.getFlying());
+        MapUtils.putIfNotNull(map, KEY_ALLOW_FLIGHT, bean.getAllowFlight());
 
-        if (!bean.isOnline())
-            map.put(KEY_ONLINE, false);
-
-        boolean isFlyableGamemode = bean.getGamemode() == GameMode.CREATIVE || bean.getGamemode() == GameMode.SPECTATOR;
-        if (bean.isAllowFlight())
-        {
-            if (!isFlyableGamemode)
-                map.put(KEY_ALLOW_FLIGHT, true);
-        }
-        else if (isFlyableGamemode)
-            map.put(KEY_ALLOW_FLIGHT, false);
-
-        if (bean.isFlying())
-        {
-            if (!isFlyableGamemode)
-                map.put(KEY_FLYING, true);
-        }
-        else if (isFlyableGamemode)
-            map.put(KEY_FLYING, false);
 
         if (bean.getFlySpeed() != null && bean.getFlySpeed() != SPEED_DEFAULT)
             MapUtils.putIfNotNull(map, KEY_WALK_SPEED, bean.getWalkSpeed());
@@ -131,9 +125,6 @@ public class PlayerBeanImpl extends HumanEntityBeanImpl implements PlayerBean
             map.put(KEY_PLAYER_LIST, playerList);
         }
 
-        if (bean.getOpLevel() != -1)
-            map.put(KEY_OP_LEVEL, bean.getOpLevel());
-
         if (!bean.getActivePermissions().isEmpty())
             map.put(KEY_ACTIVE_PERMISSIONS, bean.getActivePermissions());
 
@@ -143,7 +134,7 @@ public class PlayerBeanImpl extends HumanEntityBeanImpl implements PlayerBean
     public static void validate(@NotNull Map<String, Object> map, @NotNull BeanSerializer serializer)
     {
         serializer.validateHumanEntity(map);
-        MapUtils.checkType(map, KEY_NAME, String.class);
+        MapUtils.checkTypeIfContains(map, KEY_NAME, String.class);
         MapUtils.checkTypeIfContains(map, KEY_ONLINE, Boolean.class);
         MapUtils.checkTypeIfContains(map, KEY_DISPLAY_NAME, String.class);
         MapUtils.checkLocationIfContains(map, KEY_COMPASS_TARGET);
@@ -174,15 +165,15 @@ public class PlayerBeanImpl extends HumanEntityBeanImpl implements PlayerBean
 
         String name = (String) map.get(KEY_NAME);
 
-        boolean online = MapUtils.getOrDefault(map, KEY_ONLINE, true);
+        Boolean online = MapUtils.getOrDefault(map, KEY_ONLINE, true);
         String displayName = MapUtils.getOrNull(map, KEY_DISPLAY_NAME);
         Location compassTarget = MapUtils.getAsLocationOrNull(map, KEY_COMPASS_TARGET);
         Location bedSpawnLocation = MapUtils.getAsLocationOrNull(map, KEY_BED_SPAWN_LOCATION);
         Integer exp = MapUtils.getOrNull(map, KEY_EXP);
         Integer level = MapUtils.getOrNull(map, KEY_LEVEL);
         Integer totalExperience = MapUtils.getOrNull(map, KEY_TOTAL_EXPERIENCE);
-        boolean allowFlight = MapUtils.getOrDefault(map, KEY_ALLOW_FLIGHT, false);
-        boolean flying = MapUtils.getOrDefault(map, KEY_FLYING, false);
+        Boolean allowFlight = MapUtils.getOrDefault(map, KEY_ALLOW_FLIGHT, false);
+        Boolean flying = MapUtils.getOrDefault(map, KEY_FLYING, false);
         Float walkSpeed = MapUtils.getOrNull(map, KEY_WALK_SPEED);
         Float flySpeed = MapUtils.getOrNull(map, KEY_FLY_SPEED);
 
@@ -201,7 +192,7 @@ public class PlayerBeanImpl extends HumanEntityBeanImpl implements PlayerBean
             playerListFooter = MapUtils.getOrNull(playerList, KEY_PLAYER_LIST_FOOTER);
         }
 
-        int opLevel = -1;
+        Integer opLevel = null;
         if (map.containsKey(KEY_OP_LEVEL))
         {
             Object opLevelObj = map.get(KEY_OP_LEVEL);
@@ -242,9 +233,10 @@ public class PlayerBeanImpl extends HumanEntityBeanImpl implements PlayerBean
         if (!(o instanceof PlayerBeanImpl)) return false;
         if (!super.equals(o)) return false;
         PlayerBeanImpl that = (PlayerBeanImpl) o;
-        return this.allowFlight == that.allowFlight
-                && this.flying == that.flying
-                && this.name.equals(that.name)
+        return Objects.equals(this.opLevel, that.opLevel)
+                && Objects.equals(this.allowFlight, that.allowFlight)
+                && Objects.equals(this.flying, that.flying)
+                && Objects.equals(this.name, that.name)
                 && Objects.equals(this.displayName, that.displayName)
                 && Objects.equals(this.playerListName, that.playerListName)
                 && Objects.equals(this.playerListHeader, that.playerListHeader)

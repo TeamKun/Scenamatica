@@ -7,7 +7,6 @@ import org.bukkit.Location;
 import org.bukkit.inventory.MainHand;
 import org.bukkit.potion.PotionEffect;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.interfaces.scenariofile.BeanSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.entities.EntityBean;
@@ -15,7 +14,6 @@ import org.kunlab.scenamatica.interfaces.scenariofile.entities.HumanEntityBean;
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.InventoryBean;
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.PlayerInventoryBean;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -25,33 +23,28 @@ import java.util.UUID;
 @AllArgsConstructor
 public class HumanEntityBeanImpl extends EntityBeanImpl implements HumanEntityBean
 {
-    @Nullable
     private final PlayerInventoryBean inventory;
-    @Nullable
     private final InventoryBean enderChest;
-    @NotNull
     private final MainHand mainHand;
-    @NotNull
     private final GameMode gamemode;
-    @Nullable
     private final Integer foodLevel;
 
     public HumanEntityBeanImpl(
-            @Nullable Location location,
-            @Nullable String customName,
-            @Nullable UUID uuid,
-            boolean glowing,
-            boolean gravity,
+            Location location,
+            String customName,
+            UUID uuid,
+            Boolean glowing,
+            Boolean gravity,
             @NotNull List<String> tags,
-            @Nullable DamageBeanImpl lastDamage,
-            @Nullable Integer maxHealth,
-            @Nullable Integer health,
+            DamageBeanImpl lastDamage,
+            Integer maxHealth,
+            Integer health,
             @NotNull List<PotionEffect> potionEffects,
-            @Nullable PlayerInventoryBean inventory,
-            @Nullable InventoryBean enderChest,
-            @NotNull MainHand mainHand,
-            @NotNull GameMode gamemode,
-            @Nullable Integer foodLevel)
+            PlayerInventoryBean inventory,
+            InventoryBean enderChest,
+            MainHand mainHand,
+            GameMode gamemode,
+            Integer foodLevel)
     {
         super(location, customName, uuid, glowing, gravity, tags, maxHealth, health, lastDamage, potionEffects);
         this.inventory = inventory;
@@ -62,15 +55,15 @@ public class HumanEntityBeanImpl extends EntityBeanImpl implements HumanEntityBe
     }
 
     public HumanEntityBeanImpl(
-            @NotNull EntityBean entityBean,
-            @Nullable PlayerInventoryBean inventory,
-            @Nullable InventoryBean enderChest,
-            @NotNull MainHand mainHand,
-            @NotNull GameMode gamemode,
-            @Nullable Integer foodLevel)
+            EntityBean entityBean,
+            PlayerInventoryBean inventory,
+            InventoryBean enderChest,
+            MainHand mainHand,
+            GameMode gamemode,
+            Integer foodLevel)
     {
-        super(entityBean.getLocation(), entityBean.getCustomName(), entityBean.getUuid(), entityBean.isGlowing(),
-                entityBean.isGravity(), entityBean.getTags(), entityBean.getMaxHealth(), entityBean.getHealth(), entityBean.getLastDamageCause(),
+        super(entityBean.getLocation(), entityBean.getCustomName(), entityBean.getUuid(), entityBean.getGlowing(),
+                entityBean.getGravity(), entityBean.getTags(), entityBean.getMaxHealth(), entityBean.getHealth(), entityBean.getLastDamageCause(),
                 entityBean.getPotionEffects()
         );
         this.inventory = inventory;
@@ -82,23 +75,12 @@ public class HumanEntityBeanImpl extends EntityBeanImpl implements HumanEntityBe
 
     public HumanEntityBeanImpl()
     {
-        this(
-                null,
-                null,
-                null,
-                false,
-                true,
-                Collections.emptyList(),
-                null,
-                null,
-                null,
-                Collections.emptyList(),
-                null,
-                null,
-                MainHand.RIGHT,
-                GameMode.SURVIVAL,
-                null
-        );
+        super();
+        this.inventory = null;
+        this.enderChest = null;
+        this.mainHand = null;
+        this.gamemode = null;
+        this.foodLevel = null;
     }
 
     /**
@@ -116,11 +98,8 @@ public class HumanEntityBeanImpl extends EntityBeanImpl implements HumanEntityBe
         if (bean.getEnderChest() != null)
             map.put(KEY_ENDER_CHEST, serializer.serializeInventory(bean.getEnderChest()));
 
-        if (bean.getMainHand() != MainHand.RIGHT)
-            map.put(KEY_MAIN_HAND, bean.getMainHand().name());
-        if (bean.getGamemode() != GameMode.SURVIVAL)
-            map.put(KEY_GAMEMODE, bean.getGamemode().name());
-
+        MapUtils.putIfNotNull(map, KEY_MAIN_HAND, bean.getMainHand());
+        MapUtils.putIfNotNull(map, KEY_GAMEMODE, bean.getGamemode());
         MapUtils.putIfNotNull(map, KEY_FOOD_LEVEL, bean.getFoodLevel());
 
         return map;
@@ -180,17 +159,15 @@ public class HumanEntityBeanImpl extends EntityBeanImpl implements HumanEntityBe
                     Object.class
             ));
 
-        MainHand mainHand = MapUtils.getAsEnumOrDefault(
+        MainHand mainHand = MapUtils.getAsEnumOrNull(
                 map,
                 KEY_MAIN_HAND,
-                MainHand.class,
-                MainHand.RIGHT
+                MainHand.class
         );
-        GameMode gamemode = MapUtils.getAsEnumOrDefault(
+        GameMode gamemode = MapUtils.getAsEnumOrNull(
                 map,
                 KEY_GAMEMODE,
-                GameMode.class,
-                GameMode.SURVIVAL
+                GameMode.class
         );
 
         Integer foodLevel = MapUtils.getOrNull(map, KEY_FOOD_LEVEL);

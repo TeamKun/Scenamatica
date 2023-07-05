@@ -31,8 +31,13 @@ public class BeanUtils
         if (bean == null || stack == null)
             return bean == null && stack == null;
 
-        if (!(bean.getType() == stack.getType() && bean.getAmount() == stack.getAmount()))
-            return false;
+        if (bean.getType() != null)
+            if (stack.getType() != bean.getType())
+                return false;
+
+        if (bean.getAmount() != null)
+            if (stack.getAmount() != bean.getAmount())
+                return false;
 
         ItemMeta meta = stack.getItemMeta();
 
@@ -86,7 +91,7 @@ public class BeanUtils
                 return false;
         }
 
-        if (bean.isUnbreakable())
+        if (Boolean.TRUE.equals(bean.getUnbreakable()))
             if (meta == null || !meta.isUnbreakable())
                 return false;
 

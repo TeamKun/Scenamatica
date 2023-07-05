@@ -36,7 +36,7 @@ public class EntityItemBeanImpl extends EntityBeanImpl implements EntityItemBean
     public EntityItemBeanImpl(@NotNull EntityBean bean, @NotNull ItemStackBean itemStack, @Nullable Integer pickupDelay,
                               @Nullable UUID owner, @Nullable UUID thrower, boolean canMobPickup, boolean willAge)
     {
-        super(bean.getLocation(), bean.getCustomName(), bean.getUuid(), bean.isGlowing(), bean.isGravity(),
+        super(bean.getLocation(), bean.getCustomName(), bean.getUuid(), bean.getGlowing(), bean.getGravity(),
                 bean.getTags(), bean.getMaxHealth(), bean.getHealth(), bean.getLastDamageCause(), bean.getPotionEffects()
         );
         this.itemStack = itemStack;

@@ -122,8 +122,8 @@ public class ItemStackBeanSerializeTest
     }};
 
     public static final ItemStackBean EMPTY = new ItemStackBeanImpl(
-            Material.AIR,
-            1,
+            null,
+            null,
             null,
             null,
             Collections.emptyList(),
@@ -137,14 +137,11 @@ public class ItemStackBeanSerializeTest
             null
     );
 
-    public static final Map<String, Object> EMPTY_MAP = new HashMap<String, Object>()
-    {{
-        this.put("type", "AIR");
-    }};
+    public static final Map<String, Object> EMPTY_MAP = new HashMap<>();
 
     private static final ItemStackBeanImpl ONLY_ONE_ITEM = new ItemStackBeanImpl(
             Material.DIAMOND_HOE,
-            1,
+            null,
             null,
             null,
             Collections.emptyList(),

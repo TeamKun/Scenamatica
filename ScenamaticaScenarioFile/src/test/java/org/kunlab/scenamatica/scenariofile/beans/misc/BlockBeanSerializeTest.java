@@ -45,17 +45,14 @@ public class BlockBeanSerializeTest
     }};
 
     public static final BlockBean EMPTY = new BlockBeanImpl(
-            Material.AIR,
+            null,
             null,
             Collections.emptyMap(),
             0,
             null
     );
 
-    public static final Map<String, Object> EMPTY_MAP = new HashMap<String, Object>()
-    {{
-        this.put("type", "AIR");
-    }};
+    public static final Map<String, Object> EMPTY_MAP = new HashMap<>();
 
     @Test
     void 正常にシリアライズできるか()
