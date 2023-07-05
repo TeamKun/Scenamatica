@@ -574,7 +574,7 @@ Bukkit でロード済みの既存のワールドの構造、建築物、アイ�
     name: "name",
     type: "string",
     description: "アクターの名前です。",
-    required: true
+    
   },
   {
     name: "displayName",
@@ -792,7 +792,6 @@ Inventory 型は、以下の構造を持ちます。
     anchor: "inventory-size",
     type: ObjectType.INTEGER,
     description: "インベントリのサイズです。 9 の倍数でなければなりません。",
-    required: true,
     default: 36
   },
   {
@@ -800,7 +799,6 @@ Inventory 型は、以下の構造を持ちます。
     anchor: "inventory-title",
     type: "string",
     description: "インベントリのタイトルです。32 文字以内でなければなりません。",
-    required: true,
     default: "Inventory"
   },
   {
@@ -891,7 +889,6 @@ ItemStack 型は、以下の構造を持ちます。
     name: "type",
     type: ObjectType.STRING,
     description: "アイテムの種類です。",
-    required: true
   },
   {
     name: "amount",
