@@ -13,8 +13,7 @@ public abstract class AbstractPluginAction<A extends AbstractPluginActionArgumen
 {
     protected static final String KEY_PREFIX = "server_plugin_";
 
-    @Override
-    public boolean isFired(@NotNull A argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public boolean checkMatchedPluginEvent(@NotNull A argument, @NotNull ScenarioEngine engine, @NotNull Event event)
     {
         if (!(event instanceof PluginEvent))
             return false;

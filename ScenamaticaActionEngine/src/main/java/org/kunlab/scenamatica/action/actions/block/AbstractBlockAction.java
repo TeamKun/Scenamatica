@@ -29,8 +29,7 @@ public abstract class AbstractBlockAction<A extends AbstractBlockActionArgument>
         return actions;
     }
 
-    @Override
-    public boolean isFired(@NotNull A argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public boolean checkMatchedBlockEvent(@NotNull A argument, @NotNull ScenarioEngine engine, @NotNull Event event)
     {
         if (!(event instanceof BlockEvent))
             return false;

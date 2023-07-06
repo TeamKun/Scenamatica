@@ -26,7 +26,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class CommandDispatchAction extends AbstractServerAction<CommandDispatchAction.Argument>
-        implements Watchable<CommandDispatchAction.Argument
+        implements Watchable<CommandDispatchAction.Argument>
 {
     public static final String KEY_ACTION_NAME = "command_dispatch";
 

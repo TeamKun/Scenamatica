@@ -6,11 +6,13 @@ import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.action.actions.AbstractAction;
 import org.kunlab.scenamatica.action.utils.BeanUtils;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
+import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 
 import java.util.Map;
 
 public abstract class AbstractInventoryAction<A extends AbstractInventoryArgument> extends AbstractAction<A>
+        implements Watchable<A>
 {
     @Override
     public boolean isFired(@NotNull A argument, @NotNull ScenarioEngine engine, @NotNull Event event)

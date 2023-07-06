@@ -53,7 +53,7 @@ public class PlayerHotbarSlotAction extends AbstractPlayerAction<PlayerHotbarSlo
         assert event instanceof PlayerItemHeldEvent;
         PlayerItemHeldEvent e = (PlayerItemHeldEvent) event;
 
-        if (!super.isFired(argument, engine, event))
+        if (!super.checkMatchedPlayerEvent(argument, engine, event))
             return false;
 
         int currentSlot = e.getNewSlot();

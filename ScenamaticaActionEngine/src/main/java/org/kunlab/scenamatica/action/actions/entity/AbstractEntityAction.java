@@ -12,8 +12,7 @@ import java.util.Objects;
 
 public abstract class AbstractEntityAction<A extends AbstractEntityActionArgument> extends AbstractAction<A>
 {
-    @Override
-    public boolean isFired(@NotNull A argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public boolean checkMatchedEntityEvent(@NotNull A argument, @NotNull ScenarioEngine engine, @NotNull Event event)
     {
         if (!(event instanceof EntityEvent))
             return false;

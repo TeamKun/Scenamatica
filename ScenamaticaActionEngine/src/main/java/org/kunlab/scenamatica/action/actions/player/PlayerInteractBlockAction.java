@@ -77,7 +77,7 @@ public class PlayerInteractBlockAction extends AbstractPlayerAction<PlayerIntera
     @Override
     public boolean isFired(@NotNull Argument argument, @NotNull ScenarioEngine engine, @NotNull Event event)
     {
-        if (!super.isFired(argument, engine, event))
+        if (!super.checkMatchedPlayerEvent(argument, engine, event))
             return false;
 
         assert event instanceof PlayerInteractEvent;

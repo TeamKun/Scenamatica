@@ -35,6 +35,12 @@ public class PluginEnableAction extends AbstractPluginAction<PluginEnableAction.
     }
 
     @Override
+    public boolean isFired(Argument argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    {
+        return this.checkMatchedPluginEvent(argument, engine, event);
+    }
+
+    @Override
     public List<Class<? extends Event>> getAttachingEvents()
     {
         return Collections.singletonList(

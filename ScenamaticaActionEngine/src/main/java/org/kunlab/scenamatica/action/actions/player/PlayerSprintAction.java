@@ -51,7 +51,7 @@ public class PlayerSprintAction extends AbstractPlayerAction<PlayerSprintAction.
     @Override
     public boolean isFired(@NotNull Argument argument, @NotNull ScenarioEngine engine, @NotNull Event event)
     {
-        if (!super.isFired(argument, engine, event))
+        if (!super.checkMatchedPlayerEvent(argument, engine, event))
             return false;
 
         assert event instanceof PlayerToggleSprintEvent;

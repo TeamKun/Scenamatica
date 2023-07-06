@@ -40,8 +40,7 @@ public abstract class AbstractPlayerAction<A extends AbstractPlayerActionArgumen
         return actions;
     }
 
-    @Override
-    public boolean isFired(@NotNull A argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public boolean checkMatchedPlayerEvent(@NotNull A argument, @NotNull ScenarioEngine engine, @NotNull Event event)
     {
         if (!(event instanceof PlayerEvent))
             return false;

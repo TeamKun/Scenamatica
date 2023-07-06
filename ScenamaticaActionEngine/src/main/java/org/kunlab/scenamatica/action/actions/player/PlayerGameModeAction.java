@@ -47,7 +47,7 @@ public class PlayerGameModeAction extends AbstractPlayerAction<PlayerGameModeAct
     @Override
     public boolean isFired(@NotNull PlayerGameModeAction.Argument argument, @NotNull ScenarioEngine engine, @NotNull Event event)
     {
-        if (!super.isFired(argument, engine, event))
+        if (!super.checkMatchedPlayerEvent(argument, engine, event))
             return false;
 
         assert event instanceof PlayerGameModeChangeEvent;

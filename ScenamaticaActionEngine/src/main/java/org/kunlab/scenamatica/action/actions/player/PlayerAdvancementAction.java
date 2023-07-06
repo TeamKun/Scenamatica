@@ -62,7 +62,7 @@ public class PlayerAdvancementAction
     {
         argument = this.requireArgsNonNull(argument);
 
-        if (!super.isFired(argument, engine, event))
+        if (!super.checkMatchedPlayerEvent(argument, engine, event))
             return false;
 
         if (event instanceof PlayerAdvancementDoneEvent)  // 進捗を完了させるアクションの場合

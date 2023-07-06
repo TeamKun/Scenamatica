@@ -50,7 +50,7 @@ public class PlayerRespawnAction extends AbstractPlayerAction<PlayerRespawnActio
     @Override
     public boolean isFired(@NotNull Argument argument, @NotNull ScenarioEngine engine, @NotNull Event event)
     {
-        if (!(event instanceof PlayerRespawnEvent || super.isFired(argument, engine, event)))
+        if (!(event instanceof PlayerRespawnEvent || super.checkMatchedPlayerEvent(argument, engine, event)))
             return false;
 
         if (event instanceof PlayerRespawnEvent)

@@ -87,7 +87,7 @@ public class BlockPlaceAction extends AbstractBlockAction<BlockPlaceAction.Argum
     @Override
     public boolean isFired(@NotNull Argument argument, @NotNull ScenarioEngine engine, @NotNull Event event)
     {
-        if (!super.isFired(argument, engine, event))
+        if (!super.checkMatchedBlockEvent(argument, engine, event))
             return false;
 
         BlockPlaceEvent e = (BlockPlaceEvent) event;

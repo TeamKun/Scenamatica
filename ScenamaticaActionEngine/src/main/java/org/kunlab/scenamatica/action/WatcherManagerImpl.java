@@ -3,20 +3,22 @@ package org.kunlab.scenamatica.action;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import net.kunmc.lab.peyangpaperutils.lib.utils.Pair;
-import org.kunlab.scenamatica.enums.TriggerType;
-import org.kunlab.scenamatica.enums.WatchType;
-import org.kunlab.scenamatica.exceptions.scenario.ScenarioException;
-import org.kunlab.scenamatica.interfaces.ScenamaticaRegistry;
-import org.kunlab.scenamatica.interfaces.action.ActionArgument;
-import org.kunlab.scenamatica.interfaces.action.CompiledAction;
-import org.kunlab.scenamatica.interfaces.action.WatcherManager;
-import org.kunlab.scenamatica.interfaces.action.WatchingEntry;
-import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
 import org.bukkit.event.Event;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredListener;
 import org.jetbrains.annotations.NotNull;
+import org.kunlab.scenamatica.enums.TriggerType;
+import org.kunlab.scenamatica.enums.WatchType;
+import org.kunlab.scenamatica.exceptions.scenario.ScenarioException;
+import org.kunlab.scenamatica.interfaces.ScenamaticaRegistry;
+import org.kunlab.scenamatica.interfaces.action.Action;
+import org.kunlab.scenamatica.interfaces.action.ActionArgument;
+import org.kunlab.scenamatica.interfaces.action.CompiledAction;
+import org.kunlab.scenamatica.interfaces.action.WatcherManager;
+import org.kunlab.scenamatica.interfaces.action.WatchingEntry;
+import org.kunlab.scenamatica.interfaces.action.types.Watchable;
+import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
+import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -80,6 +82,10 @@ public class WatcherManagerImpl implements WatcherManager
                                                                             @NotNull Plugin plugin,
                                                                             @NotNull WatchType type)
     {
+        Action<A> actionExecutor = action.getExecutor();
+        if (!(actionExecutor instanceof Watchable))
+            throw new IllegalStateException("The action " + actionExecutor.getName() + " is not watchable.");
+
         List<Pair<Class<? extends Event>, RegisteredListener>> listeners = new ArrayList<>();
         WatchingEntry<A> watchingEntry = new WatchingEntryImpl<>(
                 this,
@@ -90,7 +96,10 @@ public class WatcherManagerImpl implements WatcherManager
                 type,
                 listeners
         );
-        for (Class<? extends Event> eventType : action.getExecutor().getAttachingEvents())
+
+        Watchable<?> watchable = (Watchable<?>) actionExecutor;
+
+        for (Class<? extends Event> eventType : watchable.getAttachingEvents())
             listeners.add(Pair.of(eventType, watchingEntry.register(eventType)));
 
         return watchingEntry;
