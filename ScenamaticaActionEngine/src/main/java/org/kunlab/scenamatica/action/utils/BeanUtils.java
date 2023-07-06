@@ -10,13 +10,17 @@ import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.block.Block;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.metadata.MetadataValue;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
+import org.kunlab.scenamatica.interfaces.scenariofile.inventory.InventoryBean;
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.ItemStackBean;
+import org.kunlab.scenamatica.interfaces.scenariofile.inventory.PlayerInventoryBean;
 import org.kunlab.scenamatica.interfaces.scenariofile.misc.BlockBean;
 
 import java.util.List;
@@ -182,5 +186,59 @@ public class BeanUtils
     public static boolean isSame(@NotNull BlockBean blockBean, @NotNull Block block, @NotNull ScenarioEngine engine)
     {
         return isSame(blockBean, block, engine.getContext().getStage());
+    }
+
+    public static boolean isSame(@NotNull InventoryBean inventoryBean, @NotNull Inventory inventory, boolean strict)
+    {
+        if (strict && !(inventoryBean.getSize() == null || inventoryBean.getSize() == inventory.getSize()))
+            return false;
+
+
+        for (int i = 0; i < inventory.getSize(); i++)
+        {
+            ItemStackBean expected = inventoryBean.getMainContents().get(i);
+            ItemStack actual = inventory.getItem(i);
+
+            if (!isSame(expected, actual, strict))
+                return false;
+        }
+
+        if (inventory instanceof PlayerInventory && inventoryBean instanceof PlayerInventoryBean)
+        {
+            PlayerInventoryBean playerInventoryBean = (PlayerInventoryBean) inventoryBean;
+            PlayerInventory playerInventory = (PlayerInventory) inventory;
+            return isSame(playerInventoryBean, playerInventory, strict);
+        }
+
+        return true;
+    }
+
+    public static boolean isSame(@NotNull PlayerInventoryBean playerInventoryBean, @NotNull PlayerInventory playerInventory)
+    {
+        return isSame(playerInventoryBean, playerInventory, true);
+    }
+
+    private static boolean isSame(@NotNull PlayerInventoryBean playerInventoryBean,
+                                  @NotNull PlayerInventory playerInventory, boolean checkInventory)
+    {
+        ItemStackBean[] expectedArmors = playerInventoryBean.getArmorContents();
+        ItemStack[] actualArmors = playerInventory.getArmorContents();
+
+        if (expectedArmors != null)
+            for (int i = 0; i < expectedArmors.length; i++)
+                if (!isSame(expectedArmors[i], actualArmors[i], true))
+                    return false;
+
+        ItemStackBean expectedMainHand = playerInventoryBean.getMainHand();
+        ItemStack actualMainHand = playerInventory.getItemInMainHand();
+        if (expectedMainHand != null && !isSame(expectedMainHand, actualMainHand, true))
+            return false;
+
+        ItemStackBean expectedOffHand = playerInventoryBean.getOffHand();
+        ItemStack actualOffHand = playerInventory.getItemInOffHand();
+        if (expectedOffHand != null && !isSame(expectedOffHand, actualOffHand, true))
+            return false;
+
+        return !checkInventory || isSame(playerInventoryBean, playerInventory, true);
     }
 }
