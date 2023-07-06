@@ -6,7 +6,9 @@ import org.kunlab.scenamatica.interfaces.action.ActionArgument;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 
 /**
- * コンディションを満たすかチェックできるアクションのインターフェースです。
+ * コンディションのチェックが可能な動作を表すインターフェースです。
+ *
+ * @param <A> 動作の引数の型
  */
 public interface Requireable<A extends ActionArgument>
 {
