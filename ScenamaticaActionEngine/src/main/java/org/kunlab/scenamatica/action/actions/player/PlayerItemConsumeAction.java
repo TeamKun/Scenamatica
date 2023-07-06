@@ -13,7 +13,7 @@ import org.kunlab.scenamatica.action.utils.BeanUtils;
 import org.kunlab.scenamatica.action.utils.PlayerUtils;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
-import org.kunlab.scenamatica.interfaces.action.Watchable;
+import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.context.Actor;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.BeanSerializer;

@@ -6,7 +6,7 @@ import org.kunlab.scenamatica.interfaces.ScenamaticaRegistry;
 import org.kunlab.scenamatica.interfaces.action.ActionArgument;
 import org.kunlab.scenamatica.interfaces.action.ActionCompiler;
 import org.kunlab.scenamatica.interfaces.action.CompiledAction;
-import org.kunlab.scenamatica.interfaces.action.Requireable;
+import org.kunlab.scenamatica.interfaces.action.types.Requireable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioActionListener;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenario.runtime.CompiledScenarioAction;

@@ -1,9 +1,10 @@
-package org.kunlab.scenamatica.interfaces.action;
+package org.kunlab.scenamatica.interfaces.action.types;
 
 import org.bukkit.event.Event;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.kunlab.scenamatica.interfaces.action.ActionArgument;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 
 import java.util.List;

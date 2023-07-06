@@ -5,8 +5,8 @@ import org.bukkit.event.Event;
 import org.bukkit.event.server.PluginEnableEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.kunlab.scenamatica.interfaces.action.Requireable;
-import org.kunlab.scenamatica.interfaces.action.Watchable;
+import org.kunlab.scenamatica.interfaces.action.types.Requireable;
+import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.BeanSerializer;
 
