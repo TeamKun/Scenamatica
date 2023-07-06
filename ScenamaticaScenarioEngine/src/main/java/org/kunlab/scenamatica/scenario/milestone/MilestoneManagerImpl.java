@@ -1,4 +1,4 @@
-package org.kunlab.scenamatica.scenario;
+package org.kunlab.scenamatica.scenario.milestone;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;

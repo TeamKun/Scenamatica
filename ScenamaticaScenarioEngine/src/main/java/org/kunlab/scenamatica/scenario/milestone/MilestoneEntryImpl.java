@@ -1,4 +1,4 @@
-package org.kunlab.scenamatica.scenario;
+package org.kunlab.scenamatica.scenario.milestone;
 
 import lombok.AccessLevel;
 import lombok.Data;
