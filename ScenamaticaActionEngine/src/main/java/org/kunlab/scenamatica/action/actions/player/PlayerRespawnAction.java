@@ -12,6 +12,7 @@ import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.utils.Utils;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.Watchable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.BeanSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
@@ -21,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 public class PlayerRespawnAction extends AbstractPlayerAction<PlayerRespawnAction.Argument>
+        implements Watchable<PlayerRespawnAction.Argument>
 {
     public static final String KEY_ACTION_NAME = "player_respawn";
 

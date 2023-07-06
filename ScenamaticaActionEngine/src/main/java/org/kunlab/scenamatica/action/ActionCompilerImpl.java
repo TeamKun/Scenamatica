@@ -19,7 +19,7 @@ import java.util.function.Consumer;
 
 public class ActionCompilerImpl implements ActionCompiler
 {
-    public static final List<Action<?>> ACTIONS;
+    public static final List<Action<? extends ActionArgument>> ACTIONS;
 
     static
     {

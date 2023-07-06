@@ -5,11 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Value;
-import org.kunlab.scenamatica.commons.utils.MapUtils;
-import org.kunlab.scenamatica.interfaces.action.ActionArgument;
-import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.BeanSerializer;
-import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.DragonFireball;
 import org.bukkit.entity.Egg;
@@ -30,12 +25,19 @@ import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.utils.Utils;
+import org.kunlab.scenamatica.commons.utils.MapUtils;
+import org.kunlab.scenamatica.interfaces.action.ActionArgument;
+import org.kunlab.scenamatica.interfaces.action.Watchable;
+import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
+import org.kunlab.scenamatica.interfaces.scenariofile.BeanSerializer;
+import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 public class PlayerLaunchProjectileAction extends AbstractPlayerAction<PlayerLaunchProjectileAction.Argument>
+        implements Watchable<PlayerLaunchProjectileAction.Argument>
 {
     public static final String KEY_ACTION_NAME = "player_projectile_launch";
 

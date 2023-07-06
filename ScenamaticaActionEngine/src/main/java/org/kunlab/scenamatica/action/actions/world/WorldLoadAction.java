@@ -2,11 +2,6 @@ package org.kunlab.scenamatica.action.actions.world;
 
 import lombok.EqualsAndHashCode;
 import lombok.Value;
-import org.kunlab.scenamatica.enums.ScenarioType;
-import org.kunlab.scenamatica.interfaces.action.Requireable;
-import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.BeanSerializer;
-import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.WorldCreator;
@@ -14,6 +9,11 @@ import org.bukkit.event.Event;
 import org.bukkit.event.world.WorldLoadEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.Requireable;
+import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
+import org.kunlab.scenamatica.interfaces.scenariofile.BeanSerializer;
+import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -49,12 +49,6 @@ public class WorldLoadAction extends AbstractWorldAction<WorldLoadAction.Argumen
 
         // createWorld は, ワールドが存在する場合は読み込むだけ。
         Bukkit.createWorld(new WorldCreator(key.getKey()));
-    }
-
-    @Override
-    public boolean isFired(@NotNull Argument argument, @NotNull ScenarioEngine engine, @NotNull Event event)
-    {
-        return super.isFired(argument, engine, event);
     }
 
     @Override

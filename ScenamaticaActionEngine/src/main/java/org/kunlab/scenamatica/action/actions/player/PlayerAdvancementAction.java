@@ -3,12 +3,6 @@ package org.kunlab.scenamatica.action.actions.player;
 import com.destroystokyo.paper.event.player.PlayerAdvancementCriterionGrantEvent;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
-import org.kunlab.scenamatica.commons.utils.MapUtils;
-import org.kunlab.scenamatica.commons.utils.NamespaceUtils;
-import org.kunlab.scenamatica.interfaces.action.Requireable;
-import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.BeanSerializer;
-import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.advancement.Advancement;
@@ -18,6 +12,13 @@ import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerAdvancementDoneEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.kunlab.scenamatica.commons.utils.MapUtils;
+import org.kunlab.scenamatica.commons.utils.NamespaceUtils;
+import org.kunlab.scenamatica.interfaces.action.Requireable;
+import org.kunlab.scenamatica.interfaces.action.Watchable;
+import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
+import org.kunlab.scenamatica.interfaces.scenariofile.BeanSerializer;
+import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Arrays;
 import java.util.List;
@@ -25,7 +26,7 @@ import java.util.Map;
 
 public class PlayerAdvancementAction
         extends AbstractPlayerAction<PlayerAdvancementAction.Argument>
-        implements Requireable<PlayerAdvancementAction.Argument>
+        implements Requireable<PlayerAdvancementAction.Argument>, Watchable<PlayerAdvancementAction.Argument>
 {
     public static final String KEY_ACTION_NAME = "player_advancement";
 

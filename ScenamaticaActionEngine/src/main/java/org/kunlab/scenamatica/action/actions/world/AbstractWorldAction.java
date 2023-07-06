@@ -8,13 +8,16 @@ import org.kunlab.scenamatica.action.actions.AbstractAction;
 import org.kunlab.scenamatica.action.actions.world.border.WorldBorderAction;
 import org.kunlab.scenamatica.action.actions.world.border.WorldBorderChangedAction;
 import org.kunlab.scenamatica.commons.utils.NamespaceUtils;
+import org.kunlab.scenamatica.interfaces.action.Watchable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public abstract class AbstractWorldAction<A extends AbstractWorldActionArgument> extends AbstractAction<A>
+public abstract class AbstractWorldAction<A extends AbstractWorldActionArgument>
+        extends AbstractAction<A>
+        implements Watchable<A>
 {
     public static List<? extends AbstractWorldAction<?>> getActions()
     {

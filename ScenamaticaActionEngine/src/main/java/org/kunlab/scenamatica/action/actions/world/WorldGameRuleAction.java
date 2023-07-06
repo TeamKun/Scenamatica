@@ -20,7 +20,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-public class WorldGameRuleAction extends AbstractWorldAction<WorldGameRuleAction.Argument> implements Requireable<WorldGameRuleAction.Argument>
+public class WorldGameRuleAction extends AbstractWorldAction<WorldGameRuleAction.Argument>
+        implements Requireable<WorldGameRuleAction.Argument>
 {
     public static final String KEY_ACTION_NAME = "world_game_rule";
 

@@ -13,6 +13,7 @@ import org.kunlab.scenamatica.action.utils.BeanUtils;
 import org.kunlab.scenamatica.action.utils.PlayerUtils;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.Watchable;
 import org.kunlab.scenamatica.interfaces.context.Actor;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.BeanSerializer;
@@ -25,6 +26,7 @@ import java.util.Map;
 import java.util.Objects;
 
 public class PlayerItemConsumeAction extends AbstractPlayerAction<PlayerItemConsumeAction.Argument>
+        implements Watchable<PlayerItemConsumeAction.Argument>
 {
     public static final String KEY_ACTION_NAME = "player_item_consume";
 

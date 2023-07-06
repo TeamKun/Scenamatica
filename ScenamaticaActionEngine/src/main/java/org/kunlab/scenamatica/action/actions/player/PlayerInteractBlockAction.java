@@ -2,12 +2,6 @@ package org.kunlab.scenamatica.action.actions.player;
 
 import lombok.EqualsAndHashCode;
 import lombok.Value;
-import org.kunlab.scenamatica.commons.utils.MapUtils;
-import org.kunlab.scenamatica.enums.ScenarioType;
-import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.BeanSerializer;
-import org.kunlab.scenamatica.interfaces.scenariofile.misc.BlockBean;
-import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -20,6 +14,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.utils.BeanUtils;
 import org.kunlab.scenamatica.action.utils.PlayerUtils;
+import org.kunlab.scenamatica.commons.utils.MapUtils;
+import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.Watchable;
+import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
+import org.kunlab.scenamatica.interfaces.scenariofile.BeanSerializer;
+import org.kunlab.scenamatica.interfaces.scenariofile.misc.BlockBean;
+import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Collections;
 import java.util.List;
@@ -27,6 +28,7 @@ import java.util.Map;
 import java.util.Objects;
 
 public class PlayerInteractBlockAction extends AbstractPlayerAction<PlayerInteractBlockAction.Argument>
+        implements Watchable<PlayerInteractBlockAction.Argument>
 {
     public static final String KEY_ACTION_NAME = "player_interact_block";
 

@@ -1,7 +1,5 @@
 package org.kunlab.scenamatica.action.actions;
 
-import org.bukkit.event.Event;
-import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.actions.block.AbstractBlockAction;
@@ -31,11 +29,6 @@ public abstract class AbstractAction<A extends ActionArgument> implements Action
         actions.addAll(AbstractScenamaticaAction.getActions());
 
         return actions;
-    }
-
-    @Override
-    public void onStartWatching(@Nullable A argument, @NotNull Plugin plugin, @Nullable Event event)
-    {
     }
 
     @Override

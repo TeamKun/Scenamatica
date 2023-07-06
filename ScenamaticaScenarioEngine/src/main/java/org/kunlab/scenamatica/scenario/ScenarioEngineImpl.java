@@ -3,6 +3,9 @@ package org.kunlab.scenamatica.scenario;
 import lombok.Getter;
 import net.kunmc.lab.peyangpaperutils.lang.LangProvider;
 import net.kunmc.lab.peyangpaperutils.lang.MsgArgs;
+import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.commons.utils.LogUtils;
 import org.kunlab.scenamatica.commons.utils.ThreadingUtil;
 import org.kunlab.scenamatica.enums.MilestoneScope;
@@ -17,6 +20,7 @@ import org.kunlab.scenamatica.interfaces.action.ActionArgument;
 import org.kunlab.scenamatica.interfaces.action.ActionManager;
 import org.kunlab.scenamatica.interfaces.action.CompiledAction;
 import org.kunlab.scenamatica.interfaces.action.Requireable;
+import org.kunlab.scenamatica.interfaces.action.Watchable;
 import org.kunlab.scenamatica.interfaces.context.Context;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioActionListener;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
@@ -28,9 +32,6 @@ import org.kunlab.scenamatica.interfaces.scenario.runtime.CompiledScenarioAction
 import org.kunlab.scenamatica.interfaces.scenario.runtime.CompiledTriggerAction;
 import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerBean;
-import org.bukkit.plugin.Plugin;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -406,14 +407,16 @@ public class ScenarioEngineImpl implements ScenarioEngine
     @SuppressWarnings({"rawtypes", "unchecked"})  // 型は上流で保証されている。
     private void addWatch(CompiledScenarioAction/*<?>*/ scenario)
     {
-        if (scenario.getType() != ScenarioType.ACTION_EXPECT)
-            throw new IllegalArgumentException("Scenario type must be ACTION_EXPECT.");
-        else if (this.watchedActions.contains(scenario))
+        if (this.watchedActions.contains(scenario))
             return;
+
+        assert scenario.getAction().getExecutor() instanceof Watchable;
+        Watchable requireable = (Watchable) scenario.getAction().getExecutor();  // suppresses unchecked, rawtypes
+
         this.watchedActions.add(scenario);
 
         this.testReporter.onActionStart(this, scenario);
-        scenario.getAction().getExecutor().onStartWatching(scenario.getAction().getArgument(), this.plugin, null);
+        requireable.onStartWatching(scenario.getAction().getArgument(), this.plugin, null);  // suppresses unchecked
         this.listener.setWaitingFor(scenario);
     }
 

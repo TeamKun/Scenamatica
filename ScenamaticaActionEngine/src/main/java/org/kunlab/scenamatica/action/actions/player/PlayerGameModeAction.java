@@ -2,12 +2,6 @@ package org.kunlab.scenamatica.action.actions.player;
 
 import lombok.EqualsAndHashCode;
 import lombok.Value;
-import org.kunlab.scenamatica.commons.utils.MapUtils;
-import org.kunlab.scenamatica.enums.ScenarioType;
-import org.kunlab.scenamatica.interfaces.action.Requireable;
-import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.BeanSerializer;
-import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -15,6 +9,13 @@ import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.utils.TextUtils;
+import org.kunlab.scenamatica.commons.utils.MapUtils;
+import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.Requireable;
+import org.kunlab.scenamatica.interfaces.action.Watchable;
+import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
+import org.kunlab.scenamatica.interfaces.scenariofile.BeanSerializer;
+import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Collections;
 import java.util.List;
@@ -22,7 +23,7 @@ import java.util.Map;
 import java.util.Objects;
 
 public class PlayerGameModeAction extends AbstractPlayerAction<PlayerGameModeAction.Argument>
-        implements Requireable<PlayerGameModeAction.Argument>
+        implements Requireable<PlayerGameModeAction.Argument>, Watchable<PlayerGameModeAction.Argument>
 {
     public static final String KEY_ACTION_NAME = "player_gamemode";
 

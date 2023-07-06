@@ -1,19 +1,21 @@
 package org.kunlab.scenamatica.action.actions.server.plugin;
 
-import org.kunlab.scenamatica.interfaces.action.Requireable;
-import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.BeanSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Event;
 import org.bukkit.event.server.PluginDisableEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.kunlab.scenamatica.interfaces.action.Requireable;
+import org.kunlab.scenamatica.interfaces.action.Watchable;
+import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
+import org.kunlab.scenamatica.interfaces.scenariofile.BeanSerializer;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-public class PluginDisableAction extends AbstractPluginAction<PluginDisableAction.Argument> implements Requireable<PluginDisableAction.Argument>
+public class PluginDisableAction extends AbstractPluginAction<PluginDisableAction.Argument>
+        implements Requireable<PluginDisableAction.Argument>, Watchable<PluginDisableAction.Argument>
 {
     public static final String KEY_ACTION_NAME = KEY_PREFIX + "disable";
 

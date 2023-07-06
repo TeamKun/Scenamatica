@@ -2,15 +2,15 @@ package org.kunlab.scenamatica.action.actions.world;
 
 import lombok.EqualsAndHashCode;
 import lombok.Value;
-import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.BeanSerializer;
-import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 import org.bukkit.NamespacedKey;
 import org.bukkit.World;
 import org.bukkit.event.Event;
 import org.bukkit.event.world.WorldSaveEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
+import org.kunlab.scenamatica.interfaces.scenariofile.BeanSerializer;
+import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Collections;
 import java.util.List;
@@ -32,12 +32,6 @@ public class WorldSaveAction extends AbstractWorldAction<WorldSaveAction.Argumen
         argument = super.requireArgsNonNull(argument);
         World world = argument.getWorldNonNull(engine);
         world.save();
-    }
-
-    @Override
-    public boolean isFired(@NotNull Argument argument, @NotNull ScenarioEngine engine, @NotNull Event event)
-    {
-        return super.isFired(argument, engine, event);
     }
 
     @Override

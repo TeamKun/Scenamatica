@@ -2,12 +2,6 @@ package org.kunlab.scenamatica.action.actions.world;
 
 import lombok.EqualsAndHashCode;
 import lombok.Value;
-import org.kunlab.scenamatica.commons.utils.MapUtils;
-import org.kunlab.scenamatica.enums.ScenarioType;
-import org.kunlab.scenamatica.interfaces.action.Requireable;
-import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.BeanSerializer;
-import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.World;
@@ -15,12 +9,19 @@ import org.bukkit.event.Event;
 import org.bukkit.event.world.WorldUnloadEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.kunlab.scenamatica.commons.utils.MapUtils;
+import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.Requireable;
+import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
+import org.kunlab.scenamatica.interfaces.scenariofile.BeanSerializer;
+import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-public class WorldUnloadAction extends AbstractWorldAction<WorldUnloadAction.Argument> implements Requireable<WorldUnloadAction.Argument>
+public class WorldUnloadAction extends AbstractWorldAction<WorldUnloadAction.Argument>
+        implements Requireable<WorldUnloadAction.Argument>
 {
     public static final String KEY_ACTION_NAME = "world_unload";
 
@@ -37,12 +38,6 @@ public class WorldUnloadAction extends AbstractWorldAction<WorldUnloadAction.Arg
         World world = argument.getWorldNonNull(engine);
 
         Bukkit.getServer().unloadWorld(world, !Boolean.FALSE.equals(argument.getSave()));  // ぬるぽ回避 && デフォは true
-    }
-
-    @Override
-    public boolean isFired(@NotNull Argument argument, @NotNull ScenarioEngine engine, @NotNull Event event)
-    {
-        return super.isFired(argument, engine, event);
     }
 
     @Override

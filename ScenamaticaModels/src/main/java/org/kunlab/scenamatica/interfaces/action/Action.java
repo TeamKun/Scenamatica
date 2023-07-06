@@ -1,14 +1,11 @@
 package org.kunlab.scenamatica.interfaces.action;
 
-import org.bukkit.event.Event;
-import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.BeanSerializer;
 
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -30,30 +27,6 @@ public interface Action<A extends ActionArgument>
      * @param argument 動作の引数
      */
     void execute(@NotNull ScenarioEngine engine, @Nullable A argument);
-
-    /**
-     * 動作が実行されたかチェックするバスに登録されたときに呼び出されます。
-     *
-     * @param argument 動作の引数
-     * @param plugin   プラグイン
-     * @param event    これに関連するイベント
-     */
-    void onStartWatching(@Nullable A argument, @NotNull Plugin plugin, @Nullable Event event);
-
-    /**
-     * 動作が実行されたかどうかを返します。
-     *
-     * @param argument 動作の引数
-     * @param engine   シナリオエンジン
-     * @param event    これに関連するイベント
-     * @return 動作が実行されたかどうか
-     */
-    boolean isFired(@NotNull A argument, @NotNull ScenarioEngine engine, @NotNull Event event);
-
-    /**
-     * アタッチす るイベントのクラスを返します。
-     */
-    List<Class<? extends Event>> getAttachingEvents();
 
     /**
      * 引数をデシリアライズします。

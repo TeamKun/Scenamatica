@@ -13,6 +13,7 @@ import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.actions.AbstractActionArgument;
 import org.kunlab.scenamatica.action.utils.PlayerUtils;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
+import org.kunlab.scenamatica.interfaces.action.Watchable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.BeanSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
@@ -25,6 +26,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class CommandDispatchAction extends AbstractServerAction<CommandDispatchAction.Argument>
+        implements Watchable<CommandDispatchAction.Argument
 {
     public static final String KEY_ACTION_NAME = "command_dispatch";
 

@@ -11,6 +11,7 @@ import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.Requireable;
+import org.kunlab.scenamatica.interfaces.action.Watchable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.BeanSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
@@ -19,7 +20,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-public class PlayerFlightAction extends AbstractPlayerAction<PlayerFlightAction.Argument> implements Requireable<PlayerFlightAction.Argument>
+public class PlayerFlightAction extends AbstractPlayerAction<PlayerFlightAction.Argument>
+        implements Requireable<PlayerFlightAction.Argument>, Watchable<PlayerFlightAction.Argument>
 {
     public static final String KEY_ACTION_NAME = "player_flight";
 
