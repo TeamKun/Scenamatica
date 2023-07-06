@@ -194,11 +194,11 @@ public class BukkitTestReporter implements TestReporter
         ScenarioFileBean scenario = engine.getScenario();
 
         this.terminals.forEach(t -> {
-            UUID testID = engine.getTestID();
-            this.printSeparator(engine.getTestID(), t, scenario, 12);
-            this.printTestSummary(engine, t, scenario, result);
+            UUID testID = result.getTestID();
+            this.printSeparator(result.getTestID(), t, scenario, 12);
+            this.printTestSummary(t, scenario, result);
             this.printSeparator(testID, t, scenario, 12);
-            this.printDetails(engine, t, scenario, result);
+            this.printDetails(t, scenario, result);
             this.printSeparator(testID, t, scenario, 12);
         });
     }
@@ -300,7 +300,7 @@ public class BukkitTestReporter implements TestReporter
         this.printSeparator(null, terminal, null, 50);
     }
 
-    protected void printTestSummary(ScenarioEngine engine, Terminal terminal, ScenarioFileBean scenario, ScenarioResult result)
+    protected void printTestSummary(Terminal terminal, ScenarioFileBean scenario, ScenarioResult result)
     {
         boolean passed = result.getScenarioResultCause() == ScenarioResultCause.PASSED;
 
@@ -320,22 +320,22 @@ public class BukkitTestReporter implements TestReporter
                 MsgArgs.of("result", LangProvider.get(resultKey)).add("message", "%%" + messageKey + "%%")
         );
         if (passed)
-            terminal.success(this.withPrefix(engine.getTestID(), scenario, summary));
+            terminal.success(this.withPrefix(result.getTestID(), scenario, summary));
         else
-            terminal.error(this.withPrefix(engine.getTestID(), scenario, summary));
+            terminal.error(this.withPrefix(result.getTestID(), scenario, summary));
     }
 
-    protected void printDetails(ScenarioEngine engine, Terminal terminal, ScenarioFileBean scenario, ScenarioResult result)
+    protected void printDetails(Terminal terminal, ScenarioFileBean scenario, ScenarioResult result)
     {
         ScenarioResultCause cause = result.getScenarioResultCause();
 
-        terminal.info(this.withPrefix(engine.getTestID(), scenario, LangProvider.get("test.result.detail")));
-        terminal.info(this.withPrefix(engine.getTestID(), scenario, LangProvider.get(
+        terminal.info(this.withPrefix(result.getTestID(), scenario, LangProvider.get("test.result.detail")));
+        terminal.info(this.withPrefix(result.getTestID(), scenario, LangProvider.get(
                 "test.result.detail.id",
                 MsgArgs.of("id", result.getTestID().toString().substring(0, 8))
         )));
         if (cause != ScenarioResultCause.PASSED)
-            terminal.info(this.withPrefix(engine.getTestID(), scenario, LangProvider.get(
+            terminal.info(this.withPrefix(result.getTestID(), scenario, LangProvider.get(
                     "test.result.detail.state",
                     MsgArgs.of("state", result.getState()
                     )
@@ -347,7 +347,7 @@ public class BukkitTestReporter implements TestReporter
         String finishedAt = formatDateTime(fAt);
         String elapsed = formatTime(fAt - sAt);
 
-        terminal.info(this.withPrefix(engine.getTestID(), scenario, LangProvider.get(
+        terminal.info(this.withPrefix(result.getTestID(), scenario, LangProvider.get(
                 "test.result.detail.elapsed",
                 MsgArgs.of("startedAt", startedAt)
                         .add("finishedAt", finishedAt)
@@ -358,7 +358,7 @@ public class BukkitTestReporter implements TestReporter
                 || result.getFailedAction() == null)
             return;
 
-        terminal.info(this.withPrefix(engine.getTestID(), scenario, LangProvider.get(
+        terminal.info(this.withPrefix(result.getTestID(), scenario, LangProvider.get(
                 "test.result.detail.failed",
                 MsgArgs.of("action", result.getFailedAction().getClass().getSimpleName())
         )));

@@ -1,5 +1,7 @@
 package org.kunlab.scenamatica.interfaces.scenario;
 
+import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.enums.ScenarioState;
 import org.kunlab.scenamatica.exceptions.scenario.TriggerNotFoundException;
 import org.kunlab.scenamatica.interfaces.context.Context;
@@ -7,8 +9,6 @@ import org.kunlab.scenamatica.interfaces.scenario.runtime.CompiledScenarioAction
 import org.kunlab.scenamatica.interfaces.scenario.runtime.CompiledTriggerAction;
 import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerBean;
-import org.bukkit.plugin.Plugin;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.UUID;
@@ -142,12 +142,12 @@ public interface ScenarioEngine
      *
      * @return コンパイルされたシナリオのアクション
      */
-    List<CompiledScenarioAction<?>> getActions();
+    List<? extends CompiledScenarioAction<?>> getActions();
 
     /**
      * コンパイルされたトリガのアクションを取得します。
      *
      * @return コンパイルされたトリガのアクション
      */
-    List<CompiledTriggerAction> getTriggerActions();
+    List<? extends CompiledTriggerAction> getTriggerActions();
 }

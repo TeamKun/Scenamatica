@@ -26,6 +26,7 @@ import org.kunlab.scenamatica.interfaces.scenario.TestReporter;
 import org.kunlab.scenamatica.interfaces.scenario.runtime.CompiledTriggerAction;
 import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerBean;
+import org.kunlab.scenamatica.scenario.engine.ScenarioEngineImpl;
 import org.kunlab.scenamatica.scenario.milestone.MilestoneManagerImpl;
 
 import java.util.ArrayList;
