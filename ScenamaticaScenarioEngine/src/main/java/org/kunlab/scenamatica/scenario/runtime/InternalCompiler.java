@@ -6,7 +6,6 @@ import org.kunlab.scenamatica.interfaces.ScenamaticaRegistry;
 import org.kunlab.scenamatica.interfaces.action.ActionArgument;
 import org.kunlab.scenamatica.interfaces.action.ActionCompiler;
 import org.kunlab.scenamatica.interfaces.action.CompiledAction;
-import org.kunlab.scenamatica.interfaces.action.types.Requireable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioActionListener;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenario.runtime.CompiledScenarioAction;
@@ -41,27 +40,31 @@ public class InternalCompiler
             @NotNull ScenarioActionListener listener,
             @NotNull ScenarioBean scenario)
     {
-        CompiledAction<A> action = compiler.compile(
-                registry,
-                engine,
-                scenario.getAction(),
-                listener::onActionError,
-                listener::onActionExecuted
-        );
+        try
+        {
+            CompiledAction<A> action = compiler.compile(
+                    registry,
+                    engine,
+                    scenario.getAction(),
+                    listener::onActionError,
+                    listener::onActionExecuted
+            );
 
-        if (scenario.getType() == ScenarioType.CONDITION_REQUIRE)
-            if (!(action.getExecutor() instanceof Requireable<?>))
-                throw new IllegalArgumentException("Action " + scenario.getAction().getType() + " is not requireable.");
+            scenario.getType().validatePerformableActionType(action.getExecutor().getClass());
+            action.getExecutor().validateArgument(engine, scenario.getType(), action.getArgument());
 
-        action.getExecutor().validateArgument(engine, scenario.getType(), action.getArgument());
-
-
-        return new CompiledScenarioActionImpl<>(
-                scenario,
-                scenario.getType(),
-                action,
-                scenario.getRunIf() == null ? null: compileConditionAction(registry, engine, compiler, listener, scenario.getRunIf())
-        );
+            return new CompiledScenarioActionImpl<>(
+                    scenario,
+                    scenario.getType(),
+                    action,
+                    scenario.getRunIf() == null ? null:
+                            compileConditionAction(registry, engine, compiler, listener, scenario.getRunIf())
+            );
+        }
+        catch (Throwable e)
+        {
+            throw new ScenarioCompilationErrorException(e, engine.getScenario().getName(), scenario.getAction().getType());
+        }
     }
 
     public static <A extends ActionArgument> CompiledScenarioAction<A> compileConditionAction(
@@ -78,8 +81,6 @@ public class InternalCompiler
                 listener::onActionError,
                 listener::onActionExecuted
         );
-
-        action.getExecutor().validateArgument(engine, ScenarioType.CONDITION_REQUIRE, action.getArgument());
 
         return new CompiledScenarioActionImpl<>(
                 new ScenarioBean()
