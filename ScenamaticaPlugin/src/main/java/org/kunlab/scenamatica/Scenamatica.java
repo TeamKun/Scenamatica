@@ -1,5 +1,6 @@
 package org.kunlab.scenamatica;
 
+import lombok.NoArgsConstructor;
 import net.kunmc.lab.peyangpaperutils.lang.LangProvider;
 import net.kunmc.lab.peyangpaperutils.lib.command.CommandManager;
 import net.kyori.adventure.text.Component;
@@ -29,16 +30,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+@NoArgsConstructor
 public final class Scenamatica extends JavaPlugin
 {
     private ScenarioResultWriter resultWriter;
     private ScenamaticaRegistry registry;
     @SuppressWarnings("FieldCanBeLocal")  // 参照を維持する必要がある。
     private CommandManager commandManager;
-
-    public Scenamatica()
-    {
-    }
 
     @Override
     public void onEnable()
