@@ -2,9 +2,15 @@ package org.kunlab.scenamatica;
 
 import net.kunmc.lab.peyangpaperutils.lang.LangProvider;
 import net.kunmc.lab.peyangpaperutils.lib.command.CommandManager;
+import net.kyori.adventure.text.Component;
+import org.bukkit.Bukkit;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.kunlab.scenamatica.commands.CommandDebug;
 import org.kunlab.scenamatica.commands.CommandEnable;
 import org.kunlab.scenamatica.commands.CommandScenario;
+import org.kunlab.scenamatica.enums.TriggerType;
 import org.kunlab.scenamatica.events.PlayerJoinEventListener;
 import org.kunlab.scenamatica.interfaces.ExceptionHandler;
 import org.kunlab.scenamatica.interfaces.ScenamaticaRegistry;
@@ -16,15 +22,11 @@ import org.kunlab.scenamatica.reporter.RawTestReporter;
 import org.kunlab.scenamatica.reporter.ReportersBridge;
 import org.kunlab.scenamatica.results.ScenarioResultWriter;
 import org.kunlab.scenamatica.settings.ActorSettingsImpl;
-import net.kyori.adventure.text.Component;
-import org.bukkit.Bukkit;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public final class Scenamatica extends JavaPlugin
@@ -45,20 +47,9 @@ public final class Scenamatica extends JavaPlugin
         this.getConfig();
 
         boolean isRaw = this.getConfig().getBoolean("reporting.raw", false);
-        boolean isVerbose = this.getConfig().getBoolean("reporting.verbose", true);
-        boolean isJunitReportingEnabled = this.getConfig().getBoolean("reporting.junit.enabled", true);
-
         ExceptionHandler exceptionHandler = new SimpleExceptionHandler(this.getLogger(), isRaw);
         this.initJUnitReporter(exceptionHandler);
-
-        this.registry = new ScenamaticaDaemon(Environment.builder(this)
-                .exceptionHandler(exceptionHandler)
-                .testReporter(this.getTestReporter(isRaw, isVerbose, isJunitReportingEnabled))
-                .actorSettings(ActorSettingsImpl.fromConfig(this.getConfig()))
-                .verbose(isVerbose)
-                .build()
-        );
-
+        this.registry = this.getRegistry(exceptionHandler, isRaw);
 
         if (!this.initLangProvider())
             return;
@@ -70,6 +61,47 @@ public final class Scenamatica extends JavaPlugin
 
         this.initCommands();
         this.initTestRecipient();
+    }
+
+    private ScenamaticaRegistry getRegistry(ExceptionHandler exceptionHandler, boolean isRaw)
+    {
+        boolean isVerbose = this.getConfig().getBoolean("reporting.verbose", true);
+        boolean isJunitReportingEnabled = this.getConfig().getBoolean("reporting.junit.enabled", true);
+
+        return new ScenamaticaDaemon(Environment.builder(this)
+                .exceptionHandler(exceptionHandler)
+                .testReporter(this.getTestReporter(isRaw, isVerbose, isJunitReportingEnabled))
+                .actorSettings(ActorSettingsImpl.fromConfig(this.getConfig()))
+                .verbose(isVerbose)
+                .ignoreTriggerTypes(this.getIgnoreTriggerTypes())
+                .build()
+        );
+    }
+
+    private List<TriggerType> getIgnoreTriggerTypes()
+    {
+        String[] byConfig = this.getConfig().getStringList("ignoreTriggerTypes").toArray(new String[0]);
+        String[] byJVMArg = JVMArguments.getIgnoreTriggerTypes();
+
+        String[] merged = Arrays.stream(new String[][]{byConfig, byJVMArg})
+                .flatMap(Arrays::stream)
+                .distinct()  // 重複排除
+                .toArray(String[]::new);
+
+        List<TriggerType> result = new ArrayList<>();
+        for (String s : merged)
+        {
+            try
+            {
+                result.add(TriggerType.valueOf(s));
+            }
+            catch (IllegalArgumentException e)
+            {
+                this.getLogger().warning("Unknown trigger type: " + s);
+            }
+        }
+
+        return result;
     }
 
     private void initJUnitReporter(ExceptionHandler exceptionHandler)

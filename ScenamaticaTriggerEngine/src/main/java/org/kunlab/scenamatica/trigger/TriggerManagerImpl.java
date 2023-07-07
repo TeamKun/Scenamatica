@@ -35,11 +35,14 @@ public class TriggerManagerImpl implements TriggerManager
     private final ActionManager actionManager;
     private final Multimap<ScenarioEngine, TriggerBean> triggers;  // シナリオ名 / トリガー
 
+    private final List<TriggerType> ignoreTypes;
+
     public TriggerManagerImpl(@NotNull ScenamaticaRegistry registry)
     {
         this.registry = registry;
         this.actionManager = registry.getActionManager();
         this.triggers = ArrayListMultimap.create();
+        this.ignoreTypes = registry.getEnvironment().getIgnoreTriggerTypes();
     }
 
     @Override
@@ -67,6 +70,9 @@ public class TriggerManagerImpl implements TriggerManager
                                    @NotNull TriggerType type,
                                    @Nullable TriggerArgument argument) throws ScenarioException
     {
+        if (this.shouldIgnore(type, argument))
+            return;
+
         ScenarioEngine engine = this.registry.getScenarioManager().getEngine(plugin, scenarioName);
 
         if (engine == null)
@@ -97,6 +103,9 @@ public class TriggerManagerImpl implements TriggerManager
     @SneakyThrows(ScenarioException.class)
     public void performTriggerFire(@NotNull List<? extends ScenarioEngine> engines, @NotNull TriggerType type)
     {
+        if (this.shouldIgnore(type, null))
+            return;
+
         SessionCreator creator = this.registry.getScenarioManager().newSession();
         for (ScenarioEngine engine : engines)
             creator.add(engine, type);
@@ -105,6 +114,14 @@ public class TriggerManagerImpl implements TriggerManager
             return;
 
         this.registry.getScenarioManager().queueScenario(creator);
+    }
+
+    private boolean shouldIgnore(@NotNull TriggerType type, @Nullable TriggerArgument argument)
+    {
+        if (this.ignoreTypes.contains(type))
+            return true;
+
+        return type.getArgumentType() != null && argument == null;  // 引数が必要なのにない場合は無視。
     }
 
     private void registerActionTrigger(ScenarioEngine engine, TriggerBean actionTrigger)
