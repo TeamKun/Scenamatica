@@ -236,9 +236,7 @@ public class BukkitTestReporter implements TestReporter
         int skipped = (int) results.stream().parallel()
                 .filter(r -> r.getScenarioResultCause() == ScenarioResultCause.SKIPPED).count();
 
-        this.terminals.forEach(t -> {
-            this.printSessionSummary(t, results, elapsedStr, total, passed, failed, cancelled, skipped);
-        });
+        this.terminals.forEach(t -> this.printSessionSummary(t, results, elapsedStr, total, passed, failed, cancelled, skipped));
     }
 
     protected void printSessionSummary(@NotNull Terminal terminal, List<? extends ScenarioResult> results,
