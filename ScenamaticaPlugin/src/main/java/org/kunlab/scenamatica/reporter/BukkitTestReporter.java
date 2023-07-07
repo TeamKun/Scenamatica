@@ -236,10 +236,12 @@ public class BukkitTestReporter implements TestReporter
         int skipped = (int) results.stream().parallel()
                 .filter(r -> r.getScenarioResultCause() == ScenarioResultCause.SKIPPED).count();
 
-        this.terminals.forEach(t -> this.printSessionSummary(t, elapsedStr, total, passed, failed, cancelled, skipped));
+        this.terminals.forEach(t -> {
+            this.printSessionSummary(t, results, elapsedStr, total, passed, failed, cancelled, skipped);
+        });
     }
 
-    protected void printSessionSummary(@NotNull Terminal terminal,
+    protected void printSessionSummary(@NotNull Terminal terminal, List<? extends ScenarioResult> results,
                                        String elapsedStr, int total, int passed, int failed, int cancelled, int skipped)
     {
         boolean allPassed = passed == total;
@@ -296,6 +298,28 @@ public class BukkitTestReporter implements TestReporter
             terminal.writeLine("");
         }
 
+        if (failed != 0)
+        {
+            terminal.info(LangProvider.get(
+                    "test.session.result.failures",
+                    MsgArgs.of("count", failed)
+            ));
+
+            results.stream()
+                    .filter(r -> r.getScenarioResultCause().isFailure())
+                    .map(r -> {
+                        String scenario = r.getScenario().getName();
+                        String cause = r.getScenarioResultCause().name();
+                        String action = r.getFailedAction() == null ? "???": r.getFailedAction().getName();
+                        return LangProvider.get(
+                                "test.session.result.failures.entry",
+                                MsgArgs.of("scenario", scenario)
+                                        .add("action", action)
+                                        .add("cause", cause)
+                        );
+                    })
+                    .forEach(terminal::writeLine);
+        }
 
         this.printSeparator(null, terminal, null, 50);
     }

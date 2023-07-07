@@ -69,3 +69,5 @@ test.session.result.stats=%%green%%やったテスト数： %%white%%%%total%%�
 test.session.result.message.passed=%%green%%全部のテストがうまくいってんで。
 test.session.result.message.failed=%%red%%何個かのテストがちょんぼしはったみたいやわ。
 test.session.result.message.noTests=%%yellow%%実行できたテストがあらへんかったわ。
+test.session.result.failures=%%red%%あかんかったテスト（%%count%%個）：
+test.session.result.failures.entry=-  %%bold%%%%red%%%%scenario%%%%reset%%%%italic%%%%gray%%(%%action%% - %%cause%%)

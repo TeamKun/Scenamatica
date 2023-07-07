@@ -65,3 +65,5 @@ test.session.result.stats=%%green%%Executed tests: %%white%%%%total%%, %%dark_gr
 test.session.result.message.passed=%%green%%All tests completed successfully.
 test.session.result.message.failed=%%red%%Some tests failed.
 test.session.result.message.noTests=%%yellow%%No tests were executed.
+test.session.result.failures=%%red%%Failed tests(%%count%%):
+test.session.result.failures.entry=-  %%bold%%%%red%%%%scenario%%%%reset%%%%italic%%%%gray%%(%%action%% - %%cause%%)

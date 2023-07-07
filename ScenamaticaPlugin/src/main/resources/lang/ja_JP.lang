@@ -70,3 +70,5 @@ test.session.result.stats=%%green%%実行されたテスト： %%white%%%%total%
 test.session.result.message.passed=%%green%%すべてのテストが正常に完了しました。
 test.session.result.message.failed=%%red%%いくつかのテストに失敗しました。
 test.session.result.message.noTests=%%yellow%%実行するテストがありませんでした。
+test.session.result.failures=%%red%%失敗したテスト（%%count%%）：
+test.session.result.failures.entry=-  %%bold%%%%red%%%%scenario%%%%reset%%%%italic%%%%gray%%(%%action%% - %%cause%%)
