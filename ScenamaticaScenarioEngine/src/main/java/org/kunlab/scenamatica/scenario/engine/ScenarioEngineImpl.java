@@ -53,7 +53,7 @@ public class ScenarioEngineImpl implements ScenarioEngine
     private final CompiledScenarioAction<?> runIf;
 
     private ScenarioExecutor executor;
-    private boolean isRunning; // #start(@NotNull TriggerBean trigger) 内でのみ書き換えられる
+    private volatile boolean isRunning; // #start(@NotNull TriggerBean trigger) 内でのみ書き換えられる
     private ScenarioState state;
     private TriggerBean ranBy;
     private Context context;

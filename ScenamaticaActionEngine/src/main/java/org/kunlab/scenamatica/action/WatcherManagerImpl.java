@@ -22,7 +22,6 @@ import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
 public class WatcherManagerImpl implements WatcherManager
@@ -123,15 +122,14 @@ public class WatcherManagerImpl implements WatcherManager
         if (!this.actionWatchers.containsKey(plugin))
             return;
 
-        Iterator<WatchingEntry<?>> iterator = this.actionWatchers.get(plugin).iterator();
-        while (iterator.hasNext())
+        List<WatchingEntry<?>> entries = new ArrayList<>(this.actionWatchers.get(plugin));  // ConcurrentModificationException
+        for (WatchingEntry<?> entry : entries)
         {
-            WatchingEntry<?> entry = iterator.next();
             if (entry.getType() != type)
                 continue;
 
             entry.unregister();
-            iterator.remove();
+            this.actionWatchers.remove(plugin, entry);
         }
     }
 
