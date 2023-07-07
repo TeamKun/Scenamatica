@@ -1,4 +1,4 @@
-package org.kunlab.scenamatica.action.actions.inventory.players;
+package org.kunlab.scenamatica.action.actions.inventory.interact;
 
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -9,14 +9,14 @@ import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Objects;
 
-public abstract class AbstractInventoryActionByPlayerArgument extends AbstractInventoryArgument
+public abstract class AbstractInventoryInteractArgument extends AbstractInventoryArgument
 {
     public static final String KEY_TARGET_PLAYER = "target";
 
     @NotNull
     private final String target;
 
-    public AbstractInventoryActionByPlayerArgument(@NotNull InventoryBean inventory, @NotNull String target)
+    public AbstractInventoryInteractArgument(@NotNull InventoryBean inventory, @NotNull String target)
     {
         super(inventory);
         this.target = target;
@@ -28,11 +28,11 @@ public abstract class AbstractInventoryActionByPlayerArgument extends AbstractIn
         if (!super.isSame(argument))
             return false;
 
-        if (!AbstractInventoryActionByPlayerArgument.class.isAssignableFrom(argument.getClass()))
+        if (!AbstractInventoryInteractArgument.class.isAssignableFrom(argument.getClass()))
             return false;
 
-        AbstractInventoryActionByPlayerArgument a = (AbstractInventoryActionByPlayerArgument) argument;
-        return Objects.equals(this.target, a.target);
+        AbstractInventoryInteractArgument a = (AbstractInventoryInteractArgument) argument;
+        return Objects.equals(a.target, this.target);
     }
 
     public String getTargetSpecifier()
