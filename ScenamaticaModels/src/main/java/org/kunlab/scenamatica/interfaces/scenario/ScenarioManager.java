@@ -1,5 +1,8 @@
 package org.kunlab.scenamatica.interfaces.scenario;
 
+import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.enums.ScenarioResultCause;
 import org.kunlab.scenamatica.enums.TriggerType;
 import org.kunlab.scenamatica.exceptions.scenario.ScenarioAlreadyRunningException;
@@ -8,9 +11,6 @@ import org.kunlab.scenamatica.exceptions.scenario.ScenarioNotFoundException;
 import org.kunlab.scenamatica.exceptions.scenario.ScenarioNotRunningException;
 import org.kunlab.scenamatica.exceptions.scenario.TriggerNotFoundException;
 import org.kunlab.scenamatica.interfaces.ScenamaticaRegistry;
-import org.bukkit.plugin.Plugin;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -211,13 +211,21 @@ public interface ScenarioManager
     ScenarioEngine getCurrentScenario();
 
     /**
-     * プラグインのシナリオを返します。
+     * プラグインのシナリオのエンジンを返します。
      *
      * @param plugin プラグイン
      * @return シナリオ
      */
     @NotNull
     List<ScenarioEngine> getEnginesFor(@NotNull Plugin plugin);
+
+    /**
+     * すべてのエンジンを返します。
+     *
+     * @return シナリオ
+     */
+    @NotNull
+    List<ScenarioEngine> getEngines();
 
     /**
      * プラグインのシナリオを返します。

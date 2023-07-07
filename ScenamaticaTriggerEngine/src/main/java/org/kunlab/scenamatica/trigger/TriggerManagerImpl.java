@@ -2,6 +2,10 @@ package org.kunlab.scenamatica.trigger;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
+import lombok.SneakyThrows;
+import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.enums.TriggerType;
 import org.kunlab.scenamatica.enums.WatchType;
 import org.kunlab.scenamatica.exceptions.scenario.ScenarioException;
@@ -16,10 +20,8 @@ import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerBean;
 import org.kunlab.scenamatica.interfaces.trigger.TriggerManager;
 import org.kunlab.scenamatica.trigger.arguments.ActionTriggerArgument;
-import org.bukkit.plugin.Plugin;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.Locale;
 
 public class TriggerManagerImpl implements TriggerManager
@@ -76,6 +78,31 @@ public class TriggerManagerImpl implements TriggerManager
         engine.getScenario().getTriggers().stream()
                 .filter(t -> t.getType() == type)
                 .forEach(t -> creator.add(engine, t.getType()));
+
+        this.registry.getScenarioManager().queueScenario(creator);
+    }
+
+    /**
+     * トリガを実行します。
+     *
+     * @param type トリガタイプ
+     */
+    @Override
+    public void performTriggerFire(@NotNull TriggerType type)
+    {
+        this.performTriggerFire(this.registry.getScenarioManager().getEngines(), type);
+    }
+
+    @Override
+    @SneakyThrows(ScenarioException.class)
+    public void performTriggerFire(@NotNull List<? extends ScenarioEngine> engines, @NotNull TriggerType type)
+    {
+        SessionCreator creator = this.registry.getScenarioManager().newSession();
+        for (ScenarioEngine engine : engines)
+            creator.add(engine, type);
+
+        if (creator.isEmpty())
+            return;
 
         this.registry.getScenarioManager().queueScenario(creator);
     }

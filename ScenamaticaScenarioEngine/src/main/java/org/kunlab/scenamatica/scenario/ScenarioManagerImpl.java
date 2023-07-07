@@ -272,7 +272,7 @@ public class ScenarioManagerImpl implements ScenarioManager
 
         this.engines.putAll(plugin, engines);
 
-        this.runOnLoadScenarios(engines);
+        this.registry.getTriggerManager().performTriggerFire(engines, TriggerType.ON_LOAD);
     }
 
     @Override
@@ -286,6 +286,17 @@ public class ScenarioManagerImpl implements ScenarioManager
     public @NotNull List<ScenarioEngine> getEnginesFor(@NotNull Plugin plugin)
     {
         return new ArrayList<>(this.engines.get(plugin));
+    }
+
+    /**
+     * すべてのエンジンを返します。
+     *
+     * @return シナリオ
+     */
+    @Override
+    public @NotNull List<ScenarioEngine> getEngines()
+    {
+        return new ArrayList<>(this.engines.values());
     }
 
     @Override
@@ -325,18 +336,5 @@ public class ScenarioManagerImpl implements ScenarioManager
             this.queue.start();
 
         this.enabled = enabled;
-    }
-
-    @SneakyThrows({TriggerNotFoundException.class, ScenarioNotFoundException.class})
-    private void runOnLoadScenarios(List<? extends ScenarioEngine> scenarios)
-    {
-        SessionCreator creator = this.newSession();
-        for (ScenarioEngine engine : scenarios)
-            creator.add(engine, TriggerType.ON_LOAD);
-
-        if (creator.isEmpty())
-            return;
-
-        this.queue.addAll(creator);
     }
 }

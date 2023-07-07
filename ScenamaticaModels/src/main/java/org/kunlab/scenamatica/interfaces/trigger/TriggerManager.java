@@ -1,12 +1,14 @@
 package org.kunlab.scenamatica.interfaces.trigger;
 
+import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.enums.TriggerType;
 import org.kunlab.scenamatica.exceptions.scenario.ScenarioException;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
-import org.bukkit.plugin.Plugin;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 /**
  * トリガを管理するインタフェースです。
@@ -33,6 +35,21 @@ public interface TriggerManager
                             @NotNull TriggerType type,
                             @Nullable TriggerArgument argument
     ) throws ScenarioException;
+
+    /**
+     * トリガを実行します。
+     *
+     * @param type トリガタイプ
+     */
+    void performTriggerFire(@NotNull TriggerType type);
+
+    /**
+     * トリガを実行します。
+     *
+     * @param engines シナリオエンジン
+     * @param type    トリガタイプ
+     */
+    void performTriggerFire(@NotNull List<? extends ScenarioEngine> engines, @NotNull TriggerType type);
 
     /**
      * トリガを登録解除します。

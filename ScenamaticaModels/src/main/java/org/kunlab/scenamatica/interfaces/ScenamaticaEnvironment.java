@@ -1,10 +1,12 @@
 package org.kunlab.scenamatica.interfaces;
 
-import org.kunlab.scenamatica.interfaces.scenario.TestReporter;
-import org.kunlab.scenamatica.settings.ActorSettings;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
+import org.kunlab.scenamatica.enums.TriggerType;
+import org.kunlab.scenamatica.interfaces.scenario.TestReporter;
+import org.kunlab.scenamatica.settings.ActorSettings;
 
+import java.util.List;
 import java.util.logging.Logger;
 
 /**
@@ -53,4 +55,12 @@ public interface ScenamaticaEnvironment
      * 詳細なログを出力するかどうかを取得します。
      */
     boolean isVerbose();
+
+    /**
+     * 実行をスキップするトリガの種類を取得します。
+     *
+     * @return トリガの種類
+     */
+    @NotNull
+    List<TriggerType> getIgnoreTriggerTypes();
 }
