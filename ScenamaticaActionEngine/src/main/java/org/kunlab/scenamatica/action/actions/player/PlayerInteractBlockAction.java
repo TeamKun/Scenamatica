@@ -38,7 +38,7 @@ public class PlayerInteractBlockAction extends AbstractPlayerAction<PlayerIntera
 
         Location clickPos;
         BlockBean blockBean = argument.getBlock();
-        if (blockBean != null)
+        if (!(blockBean == null || blockBean.getLocation() == null))
             clickPos = blockBean.getLocation().toBlockLocation();
         else  // 指定がなかったら自身の位置をクリックする(しかない)
             clickPos = argument.getTarget().getLocation().toBlockLocation();
