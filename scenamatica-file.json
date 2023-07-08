@@ -100,6 +100,7 @@
           "enum": [
             "block_break",
             "block_place",
+            "inventory_click",
             "player_advancement",
             "player_animation",
             "player_death",
@@ -177,6 +178,26 @@
             "properties": {
               "with": {
                 "$ref": "#/definitions/action/definitions/block/place"
+              }
+            },
+            "required": [
+              "with"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "inventory_click",
+                "description": "インベントリのクリックを検知します。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/inventory/interact/click"
               }
             },
             "required": [
@@ -870,6 +891,169 @@
                   "west",
                   "east"
                 ]
+              }
+            }
+          }
+        },
+        "inventory": {
+          "$base": {
+            "properties": {
+              "inventory": {
+                "description": "対象のインベントリです。",
+                "$ref": "#/definitions/inventory"
+              }
+            }
+          },
+          "$definitions": {
+            "clickType": {
+              "type": "string",
+              "description": "クリックの種類です。",
+              "enum": [
+                "LEFT",
+                "SHIFT_LEFT",
+                "RIGHT",
+                "SHIFT_RIGHT",
+                "WINDOW_BORDER_LEFT",
+                "WINDOW_BORDER_RIGHT",
+                "MIDDLE",
+                "NUMBER_KEY",
+                "DOUBLE_CLICK",
+                "DROP",
+                "CONTROL_DROP",
+                "CREATIVE",
+                "SWAP_OFFHAND",
+                "UNKNOWN",
+                "left",
+                "shift_left",
+                "right",
+                "shift_right",
+                "window_border_left",
+                "window_border_right",
+                "middle",
+                "number_key",
+                "double_click",
+                "drop",
+                "control_drop",
+                "creative",
+                "swap_offhand",
+                "unknown"
+              ]
+            },
+            "inventoryAction": {
+              "type": "string",
+              "description": "インベントリのアクションです。",
+              "enum": [
+                "NOTHING",
+                "PICKUP_ALL",
+                "PICKUP_SOME",
+                "PICKUP_HALF",
+                "PICKUP_ONE",
+                "PLACE_ALL",
+                "PLACE_SOME",
+                "PLACE_ONE",
+                "SWAP_WITH_CURSOR",
+                "DROP_ALL_CURSOR",
+                "DROP_ONE_CURSOR",
+                "DROP_ALL_SLOT",
+                "DROP_ONE_SLOT",
+                "MOVE_TO_OTHER_INVENTORY",
+                "HOTBAR_MOVE_AND_REA",
+                "HOTBAR_SWAP",
+                "CLONE_STACK",
+                "COLLECT_TO_CURSOR",
+                "UNKNOWN",
+                "nothing",
+                "pickup_all",
+                "pickup_some",
+                "pickup_half",
+                "pickup_one",
+                "place_all",
+                "place_some",
+                "place_one",
+                "swap_with_cursor",
+                "drop_all_cursor",
+                "drop_one_cursor",
+                "drop_all_slot",
+                "drop_one_slot",
+                "move_to_other_inventory",
+                "hotbar_move_and_readd",
+                "hotbar_swap",
+                "clone_stack",
+                "collect_to_cursor",
+                "unknown"
+              ]
+            },
+            "slotType": {
+              "type": "string",
+              "description": "スロットの種類です。",
+              "enum": [
+                "RESULT",
+                "CRAFTING",
+                "ARMOR",
+                "CONTAINER",
+                "QUICKBAR",
+                "OUTSIDE",
+                "FUEL",
+                "result",
+                "crafting",
+                "armor",
+                "container",
+                "quickbar",
+                "outside",
+                "fuel"
+              ]
+            }
+          },
+          "interact": {
+            "$base": {
+              "$ref": "#/definitions/action/definitions/inventory/$base",
+              "properties": {
+                "target": {
+                  "type": "string",
+                  "description": "対象のプレイヤーです。",
+                  "maxLength": 16
+                }
+              },
+              "required": [
+                "target"
+              ]
+            },
+            "click": {
+              "$base": "#/definitions/action/definitions/inventory/interact",
+              "properties": {
+                "type": {
+                  "$ref": "#/definitions/action/definitions/inventory/$definitions/clickType"
+                },
+                "action": {
+                  "$ref": "#/definitions/action/definitions/inventory/$definitions/inventoryAction"
+                },
+                "slotType": {
+                  "$ref": "#/definitions/action/definitions/inventory/$definitions/slotType"
+                },
+                "slot": {
+                  "type": "integer",
+                  "description": "スロット番号です。",
+                  "minimum": 0,
+                  "maximum": 40
+                },
+                "rawSlot": {
+                  "type": "integer",
+                  "description": "スロット番号です。",
+                  "minimum": 0
+                },
+                "clickedItem": {
+                  "description": "クリックされたアイテムです。",
+                  "$ref": "#/definitions/itemStack"
+                },
+                "button": {
+                  "type": "integer",
+                  "description": "ボタンの番号です。",
+                  "minimum": 0
+                },
+                "cursorItem": {
+                  "description": "カーソルにあるアイテムです。",
+                  "$ref": "#/definitions/itemStack"
+                }
               }
             }
           }

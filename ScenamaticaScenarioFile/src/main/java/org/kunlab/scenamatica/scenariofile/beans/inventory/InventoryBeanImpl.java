@@ -2,6 +2,9 @@ package org.kunlab.scenamatica.scenariofile.beans.inventory;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import net.kyori.adventure.text.Component;
+import org.bukkit.Bukkit;
+import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.interfaces.scenariofile.BeanSerializer;
@@ -97,5 +100,26 @@ public class InventoryBeanImpl implements InventoryBean
                 MapUtils.getOrNull(map, KEY_TITLE),
                 mainContents
         );
+    }
+
+    @Override
+    public Inventory createInventory()
+    {
+        Integer size = this.size;
+        if (size == null)
+            size = 9 * 4; // プレイヤインベントリのサイズ
+
+        Component title;
+        if (this.title == null)
+            title = Component.empty();
+        else
+            title = Component.text(this.title);
+
+        Inventory inventory = Bukkit.createInventory(null, size, title);
+
+        for (Map.Entry<Integer, ItemStackBean> entry : this.mainContents.entrySet())
+            inventory.setItem(entry.getKey(), entry.getValue().toItemStack());
+
+        return inventory;
     }
 }

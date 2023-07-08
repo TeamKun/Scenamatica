@@ -1,5 +1,6 @@
 package org.kunlab.scenamatica.interfaces.scenariofile.inventory;
 
+import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
@@ -35,4 +36,11 @@ public interface InventoryBean extends Serializable
      */
     @NotNull
     Map<Integer, ItemStackBean> getMainContents();
+
+    /**
+     * このインベントリのインスタンスを生成します。
+     *
+     * @return インベントリ
+     */
+    Inventory createInventory();
 }

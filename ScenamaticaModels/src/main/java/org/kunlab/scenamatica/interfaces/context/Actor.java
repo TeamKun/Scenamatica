@@ -5,10 +5,12 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.player.PlayerAnimationType;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
@@ -121,4 +123,9 @@ public interface Actor
      */
     @NotNull
     String getName();
+
+    void clickInventory(@NotNull ClickType type,
+                        int slot,
+                        int button,
+                        @Nullable ItemStack clickedItem);
 }

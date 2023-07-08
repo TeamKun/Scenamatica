@@ -7,15 +7,25 @@ import org.kunlab.scenamatica.action.actions.inventory.AbstractInventoryAction;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public abstract class AbstractInventoryInteractAction<A extends AbstractInventoryInteractArgument>
         extends AbstractInventoryAction<A>
 {
-    @Override
-    public boolean isFired(@NotNull A argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public static List<? extends AbstractInventoryInteractAction<?>> getActions()
     {
-        if (!super.isFired(argument, engine, event))
+        List<AbstractInventoryInteractAction<?>> actions = new ArrayList<>();
+
+        actions.add(new InventoryClickAction());
+
+        return actions;
+    }
+
+    public boolean checkMatchedInventoryInteractEvent(@NotNull A argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    {
+        if (!super.checkMatchedInventoryEvent(argument, engine, event))
             return false;
         else if (!(event instanceof InventoryInteractEvent))
             return false;

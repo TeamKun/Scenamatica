@@ -1,6 +1,7 @@
 package org.kunlab.scenamatica.context.actor.nms.v_1_16_R3;
 
 import com.mojang.authlib.GameProfile;
+import io.netty.buffer.Unpooled;
 import io.netty.handler.timeout.TimeoutException;
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -14,11 +15,14 @@ import net.minecraft.server.v1_16_R3.EnumDirection;
 import net.minecraft.server.v1_16_R3.EnumHand;
 import net.minecraft.server.v1_16_R3.EnumItemSlot;
 import net.minecraft.server.v1_16_R3.EnumMoveType;
+import net.minecraft.server.v1_16_R3.InventoryClickType;
 import net.minecraft.server.v1_16_R3.Item;
 import net.minecraft.server.v1_16_R3.MinecraftServer;
 import net.minecraft.server.v1_16_R3.MovingObjectPositionBlock;
 import net.minecraft.server.v1_16_R3.NetworkManager;
+import net.minecraft.server.v1_16_R3.PacketDataSerializer;
 import net.minecraft.server.v1_16_R3.PacketPlayInArmAnimation;
+import net.minecraft.server.v1_16_R3.PacketPlayInWindowClick;
 import net.minecraft.server.v1_16_R3.PlayerInteractManager;
 import net.minecraft.server.v1_16_R3.Vec3D;
 import net.minecraft.server.v1_16_R3.WorldServer;
@@ -32,16 +36,20 @@ import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.player.PlayerAnimationType;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.events.actor.ActorPostJoinEvent;
 import org.kunlab.scenamatica.interfaces.context.Actor;
 import org.kunlab.scenamatica.interfaces.context.ActorManager;
 
+import java.io.IOException;
 import java.lang.reflect.Constructor;
+import java.util.Random;
 import java.util.UUID;
 
 class MockedPlayer extends EntityPlayer implements Actor
@@ -248,6 +256,56 @@ class MockedPlayer extends EntityPlayer implements Actor
     public String getName()
     {
         return super.getName();
+    }
+
+    @Override
+    @SneakyThrows(IOException.class)
+    public void clickInventory(@NotNull ClickType type,
+                               int slot,
+                               int button,
+                               @Nullable ItemStack itemStack)
+    {
+        InventoryClickType nmsType;
+        switch (type)
+        {
+            case LEFT:
+            case RIGHT:
+                nmsType = InventoryClickType.PICKUP;
+                break;
+            case SHIFT_LEFT:
+            case SHIFT_RIGHT:
+                nmsType = InventoryClickType.QUICK_MOVE;
+                break;
+            case NUMBER_KEY:
+                nmsType = InventoryClickType.SWAP;
+                break;
+            case MIDDLE:
+                nmsType = InventoryClickType.CLONE;
+                break;
+            case DROP:
+            case CONTROL_DROP:
+                nmsType = InventoryClickType.THROW;
+                break;
+            case DOUBLE_CLICK:
+                nmsType = InventoryClickType.PICKUP_ALL;
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown ClickType: " + type.name());
+        }
+
+        PacketDataSerializer serializer = new PacketDataSerializer(Unpooled.buffer());
+
+        serializer.writeByte(this.activeContainer.windowId);
+        serializer.writeShort(slot);
+        serializer.writeByte(button);
+        serializer.writeShort(new Random().nextInt());  // 使わないトランザクション ID (重複するとヤバい)
+        serializer.a(nmsType);
+        serializer.a(CraftItemStack.asNMSCopy(itemStack));
+
+        PacketPlayInWindowClick windowClick = new PacketPlayInWindowClick();
+        windowClick.a(serializer);
+
+        this.playerConnection.a(windowClick);
     }
 
     @Override

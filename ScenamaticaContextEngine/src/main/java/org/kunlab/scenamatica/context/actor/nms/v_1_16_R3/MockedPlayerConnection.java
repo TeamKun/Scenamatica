@@ -13,9 +13,11 @@ import net.minecraft.server.v1_16_R3.NetworkManager;
 import net.minecraft.server.v1_16_R3.Packet;
 import net.minecraft.server.v1_16_R3.PacketDataSerializer;
 import net.minecraft.server.v1_16_R3.PacketPlayInKeepAlive;
+import net.minecraft.server.v1_16_R3.PacketPlayInTransaction;
 import net.minecraft.server.v1_16_R3.PacketPlayOutChat;
 import net.minecraft.server.v1_16_R3.PacketPlayOutHeldItemSlot;
 import net.minecraft.server.v1_16_R3.PacketPlayOutKeepAlive;
+import net.minecraft.server.v1_16_R3.PacketPlayOutTransaction;
 import net.minecraft.server.v1_16_R3.PlayerConnection;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_16_R3.util.CraftChatMessage;
@@ -76,8 +78,22 @@ class MockedPlayerConnection extends PlayerConnection
             this.handleChat((PacketPlayOutChat) packet);
         else if (packet instanceof PacketPlayOutHeldItemSlot)
             this.handleHeldItemSlot();
+        else if (packet instanceof PacketPlayOutTransaction)
+            this.handleTransaction((PacketPlayOutTransaction) packet);
         else
             super.sendPacket(packet);
+    }
+
+    @SneakyThrows(IOException.class)
+    private void handleTransaction(PacketPlayOutTransaction packet)
+    {
+        PacketDataSerializer buf = new PacketDataSerializer(ByteBufAllocator.DEFAULT.buffer());
+        packet.b(buf);
+
+        PacketPlayInTransaction packetPlayInTransaction = new PacketPlayInTransaction();
+        packetPlayInTransaction.a(buf);
+
+        this.a(packetPlayInTransaction);
     }
 
     private void handleHeldItemSlot()
