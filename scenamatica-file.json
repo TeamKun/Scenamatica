@@ -1450,8 +1450,8 @@
           "sneak": {
             "$ref": "#/definitions/action/definitions/player/$base",
             "properties": {
-              "type": "boolean",
               "sneaking": {
+                "type": "boolean",
                 "description": "プレイヤーがスニークしているかどうかです。"
               }
             }
@@ -2159,7 +2159,6 @@
       "description": "アイテムのエンティティを表します。",
       "$ref": "#/definitions/entity",
       "properties": {
-        "$ref": "#/definitions/itemStack/properties",
         "pickupDelay": {
           "type": "number",
           "description": "アイテムを拾えるようになるまでの時間です。"
@@ -2181,6 +2180,29 @@
         "canPlayerPickup": {
           "type": "boolean",
           "description": "プレイヤーがアイテムを拾えるかどうかです。"
+        },
+        "type": {
+          "type": "string",
+          "description": "アイテムの種類です。"
+        },
+        "amount": {
+          "type": "integer",
+          "description": "アイテムの個数です。省略時は 1 です。"
+        },
+        "name": {
+          "type": "string",
+          "description": "アイテムの名前です。 一般に displayName と同じです。"
+        },
+        "localizedName": {
+          "type": "string",
+          "description": "アイテムの多言語化された名前です。"
+        },
+        "lores": {
+          "type": "array",
+          "description": "アイテムの説明文です。",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },
