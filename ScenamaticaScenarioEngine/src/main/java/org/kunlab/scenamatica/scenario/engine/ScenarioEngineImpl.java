@@ -225,7 +225,10 @@ public class ScenarioEngineImpl implements ScenarioEngine
     @Override
     public UUID getTestID()
     {
-        return this.executor.getTestID();
+        if (this.executor == null)
+            return null;
+        else
+            return this.executor.getTestID();
     }
 
     /**
