@@ -239,7 +239,10 @@ public class ScenarioEngineImpl implements ScenarioEngine
     @Override
     public long getStartedAt()
     {
-        return this.executor.getStartedAt();
+        if (this.executor == null)
+            return -1;
+        else
+            return this.executor.getStartedAt();
     }
 
     /**
