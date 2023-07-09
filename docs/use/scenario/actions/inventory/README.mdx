@@ -1,0 +1,83 @@
+import Action from "/src/components/Action";
+import BelowDocument from "/src/components/BelowDocument";
+import {ObjectType} from "/src/components/Object";
+
+# インベントリに関連するアクション
+
+インベントリに関連するアクションを列挙しています。
+
+---
+
+## 記述する際の注意 {#notes}
+
+:::tip
+
+**シナリオやシナリオファイルの概念が初めての方は、先に[こちら](..)を参照して理解しておいてください。**
+
+:::
+
+<BelowDocument docId="use/scenario/file-syntax"
+               label="シナリオファイルを記述する際の注意"
+               anchor="notes"
+/>
+
+## 型 {#types}
+
+### ClickType 列挙型 {#type-click-type}
+
+インベントリのクリックの種類です。
+
++ `LEFT` 左クリック
++ `SHIFT_LEFT` 左シフトクリック
++ `RIGHT` 右クリック
++ `SHIFT_RIGHT` 右シフトクリック
++ `WINDOW_BORDER_LEFT` ウィンドウの左端をクリック
++ `WINDOW_BORDER_RIGHT` ウィンドウの右端をクリック
++ `MIDDLE` マウスホイールクリック
++ `NUMBER_KEY` 数字キーをクリック
++ `DOUBLE_CLICK` ダブルクリック
++ `DROP` アイテムをドロップ
++ `CONTROL_DROP` コントロールキーを押しながらアイテムをドロップ
++ `CREATIVE` クリエイティブモードでアイテムをドロップ
++ `SWAP_OFFHAND` オフハンドのアイテムと入れ替え
++ `UNKNOWN` 不明
+
+## InventoryAction 列挙型 {#type-inventory-action}
+
++ `NOTHING`  何もしない
++ `PICKUP_ALL` アイテムをすべて拾う
++ `PICKUP_SOME` アイテムをいくつか拾う
++ `PICKUP_HALF` アイテムを半分拾う
++ `PICKUP_ONE` アイテムを1つ拾う
++ `PLACE_ALL` アイテムをすべて置く
++ `PLACE_SOME` アイテムをいくつか置く
++ `PLACE_ONE` アイテムを1つ置く
++ `SWAP_WITH_CURSOR` カーソルのアイテムと入れ替える
++ `DROP_ALL_CURSOR` カーソルのアイテムをすべてドロップ
++ `DROP_ONE_CURSOR` カーソルのアイテムを1つドロップ
++ `DROP_ALL_SLOT` スロットのアイテムをすべてドロップ
++ `DROP_ONE_SLOT` スロットのアイテムを1つドロップ
++ `MOVE_TO_OTHER_INVENTORY` 別のインベントリに移動
++ `HOTBAR_MOVE_AND_REA` クイックスロットに移動
++ `HOTBAR_SWAP` クイックスロットと入れ替え
++ `CLONE_STACK` スタックを複製
++ `COLLECT_TO_CURSOR` カーソルに集める
++ `UNKNOWN` 不明
+
+## SlotType 列挙型 {#type-slot-type}
+
++ `RESULT` クラフト結果
++ `CRAFTING` クラフト
++ `ARMOR` 防具
++ `CONTAINER` コンテナ
++ `QUICKBAR` ホットバー
++ `OUTSIDE` インベントリ外
++ `FUEL` 燃料
+
+## インベントリ操作系 {#inventory-interaction}
+
+プレイヤによるインベントリの操作に関するアクションです。
+
+<BelowDocument docId={"use/scenario/actions/inventory/interaction"}
+                label={"インベントリ操作系のシナリオ"}
+/>

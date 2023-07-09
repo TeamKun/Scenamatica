@@ -1,0 +1,129 @@
+import Action from "/src/components/Action";
+import BelowDocument from "/src/components/BelowDocument";
+import {ObjectType} from "/src/components/Object";
+
+
+# プレイヤによるインベントリの操作
+
+プレイヤによるインベントリの操作に関連するイベント列挙しています。
+
+---
+
+## 記述する際の注意 {#notes}
+
+:::tip
+
+**シナリオやシナリオファイルの概念が初めての方は、先に[こちら](..)を参照して理解しておいてください。**
+
+:::
+
+<BelowDocument docId="use/scenario/file-syntax"
+               label="シナリオファイルを記述する際の注意"
+               anchor="notes"
+/>
+
+## インベントリのクリック {#click}
+
+
+<Action name="インベントリのクリック"
+        description="インベントリをクリックします。"
+        id="inventory_click"
+        args={[
+          {
+            name: "target",
+            type: ObjectType.STRING,
+            anchor: "click-target",
+            description: "インベントリをクリックするプレイヤの ID です。",
+            required: true
+          },
+          {
+            name: "inventory",
+            type: "Inventory",
+            type_link: "../../file-syntax#inventory-structure",
+            anchor: "click-inventory",
+            description: "クリックするインベントリです。",
+          },
+          {
+            name: "slot",
+            type: ObjectType.INTEGER,
+            anchor: "click-slots",
+            description: "クリックするスロットの番号です。",
+          },
+          {
+            name: "rawSlot",
+            type: ObjectType.INTEGER,
+            anchor: "click-slots",
+            description: "クリックするスロットの生の番号です。",
+          },
+          {
+            name: "slotType",
+            type: "SlotType",
+            type_link: "../../file-syntax#type-slot-type",
+            anchor: "click-slot-type",
+            description: "クリックするスロットの種類です。",
+          },
+          {
+            name: "clickedItem",
+            type: "ItemStack",
+            type_link: "../../file-syntax#item-stack-structure",
+            description: "クリックされたスロットのアイテムです。",
+          },
+          {
+            name: "button",
+            type: ObjectType.INTEGER,
+            anchor: "click-button",
+            description: "クリックされたボタンの番号です。",
+          },
+          {
+            name: "cursorItem",
+            type: "ItemStack",
+            type_link: "../../file-syntax#item-stack-structure",
+            description: "カーソルにあるアイテムです。"
+          }
+        ]}
+        executable watchable
+/>
+
+### `inventory` {#click-inventory}
+
+`inventory` はクリックするインベントリを指定します。  
+省略した場合は、現在プレイヤが開いているインベントリが対象になります。
+
+:::tip
+
+この項目を省略し、かつ、プレイヤがインベントリを開いていない場合は、何も起きずエラーにもなりません。  
+これは、 Bukkit の開いているインベントリをトラッキングしないためです。
+
+:::
+
+### `slot` および `rawSlot` {#click-slots}
+
+`slot` は開いているインベントリの相対的なスロット番号を指定します。  
+`rawSlot` は開いているインベントリの絶対的なスロット番号を指定します。
+
+:::warning
+
+`slot` と `rawSlot` を両方指定した場合、一致の有無に関わらずエラーになります。
+
+:::
+
+### `slotType` {#click-slot-type}
+
+クリックの種類を指定します。
+
+:::warning
+
+アクション実行シナリオでは使用できません。
+
+:::
+
+### `button` {#click-button}
+
+クリックされたボタンの番号を指定します。
+`0` が左クリック、`1` が右クリック、`2` が中クリック（マウスホイールのクリック）です。
+
+その他のキーおよびマウス入力は、 [GLFW](https://glfw.org)の仕様に従ってください。
+マウスの入力は[こちら](https://www.glfw.org/docs/3.3/group__keys.html)を、
+キーボードの入力は[こちら](https://www.glfw.org/docs/3.3/group__keys.html)を
+参照してください。
+
