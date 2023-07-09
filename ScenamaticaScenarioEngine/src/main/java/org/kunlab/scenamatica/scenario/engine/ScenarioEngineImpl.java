@@ -250,7 +250,10 @@ public class ScenarioEngineImpl implements ScenarioEngine
     @Override
     public boolean isAutoRun()
     {
-        return this.ranBy.getType() != TriggerType.MANUAL_DISPATCH;
+        if (this.ranBy == null)
+            return true;
+        else
+            return this.ranBy.getType() != TriggerType.MANUAL_DISPATCH;
     }
 
     public ScenarioState getState()
