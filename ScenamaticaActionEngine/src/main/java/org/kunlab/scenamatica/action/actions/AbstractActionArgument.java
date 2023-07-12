@@ -3,6 +3,7 @@ package org.kunlab.scenamatica.action.actions;
 import org.kunlab.scenamatica.interfaces.action.ActionArgument;
 
 import java.util.Collection;
+import java.util.Map;
 
 public abstract class AbstractActionArgument implements ActionArgument
 {
@@ -53,6 +54,20 @@ public abstract class AbstractActionArgument implements ActionArgument
             return "\"" + obj + "\"";
         else if (obj instanceof Enum<?>)
             return ((Enum<?>) obj).name();
+        else if (obj instanceof Map<?, ?>)
+        {
+            StringBuilder builder = new StringBuilder();
+            builder.append("{");
+            for (Map.Entry<?, ?> entry : ((Map<?, ?>) obj).entrySet())
+            {
+                if (builder.length() > 1)
+                    builder.append(", ");
+                builder.append(valueOf(entry.getKey())).append("=").append(valueOf(entry.getValue()));
+            }
+
+            builder.append("}");
+            return builder.toString();
+        }
         else if (obj instanceof Collection<?>)
         {
             StringBuilder builder = new StringBuilder();
