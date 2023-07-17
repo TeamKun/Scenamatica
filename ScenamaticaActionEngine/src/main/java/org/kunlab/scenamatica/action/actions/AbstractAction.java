@@ -3,6 +3,7 @@ package org.kunlab.scenamatica.action.actions;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.actions.block.AbstractBlockAction;
+import org.kunlab.scenamatica.action.actions.entity.AbstractEntityAction;
 import org.kunlab.scenamatica.action.actions.inventory.AbstractInventoryAction;
 import org.kunlab.scenamatica.action.actions.player.AbstractPlayerAction;
 import org.kunlab.scenamatica.action.actions.scenamatica.AbstractScenamaticaAction;
@@ -23,8 +24,9 @@ public abstract class AbstractAction<A extends ActionArgument> implements Action
     {
         List<AbstractAction<?>> actions = new ArrayList<>();
 
-        actions.addAll(AbstractInventoryAction.getActions());
         actions.addAll(AbstractBlockAction.getActions());
+        actions.addAll(AbstractEntityAction.getActions());
+        actions.addAll(AbstractInventoryAction.getActions());
         actions.addAll(AbstractPlayerAction.getActions());
         actions.addAll(AbstractServerAction.getActions());
         actions.addAll(AbstractWorldAction.getActions());
