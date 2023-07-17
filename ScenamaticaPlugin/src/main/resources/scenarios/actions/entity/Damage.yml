@@ -1,0 +1,25 @@
+# noinspection YAMLSchemaValidation
+scenamatica: ${project.version}
+
+name: actions_entity_damage
+description: Testing entity_damage action works or not
+on:
+  - type: on_load
+  - type: manual_dispatch
+
+context:
+  actors:
+    - name: Actor001
+
+
+scenario:
+  - type: execute
+    action: entity_damage
+    with:
+      entity: @e
+  - type: expect
+    action: entity_damage
+    with:
+      entity: @e
+    timeout: 20
+

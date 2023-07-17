@@ -39,6 +39,11 @@ public abstract class AbstractEntityActionArgument extends AbstractActionArgumen
         return EntityUtils.getPlayerOrEntityOrThrow(this.target);
     }
 
+    public String getTargetString()
+    {
+        return this.target;
+    }
+
     @Override
     public String getArgumentString()
     {

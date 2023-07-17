@@ -100,6 +100,7 @@
           "enum": [
             "block_break",
             "block_place",
+            "entity_damage",
             "inventory_click",
             "player_advancement",
             "player_animation",
@@ -178,6 +179,26 @@
             "properties": {
               "with": {
                 "$ref": "#/definitions/action/definitions/block/place"
+              }
+            },
+            "required": [
+              "with"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "entity_damage",
+                "description": "エンティティのダメージを検知します。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/entity/damage"
               }
             },
             "required": [
@@ -891,6 +912,72 @@
                   "west",
                   "east"
                 ]
+              }
+            }
+          }
+        },
+        "entity": {
+          "$base": {
+            "properties": {
+              "entity": {
+                "description": "対象のエンティティのUUIDまたはセレクタです。",
+                "type": "string"
+              }
+            },
+            "required": [
+              "entity"
+            ]
+          },
+          "damage": {
+            "$ref": "#/definitions/action/definitions/entity/$base",
+            "properties": {
+              "cause": {
+                "type": "string",
+                "description": "ダメージの種類です。",
+                "enum": [
+                  "CONTACT",
+                  "ENTITY_ATTACK",
+                  "ENTITY_SWEEP_ATTACK",
+                  "PROJECTILE",
+                  "SUFFOCATION",
+                  "FALL",
+                  "FIRE",
+                  "FIRE_TICK",
+                  "MELTING",
+                  "LAVA",
+                  "DROWNING",
+                  "BLOCK_EXPLOSION",
+                  "ENTITY_EXPLOSION",
+                  "VOID",
+                  "LIGHTNING",
+                  "SUICIDE",
+                  "STARVATION",
+                  "POTION",
+                  "MAGIC",
+                  "WITHER",
+                  "FALLING_BLOCK",
+                  "THORNS",
+                  "DRAGON_BREATH",
+                  "CUSTOM",
+                  "FLY_INTO_WALL",
+                  "HOT_FLOOR",
+                  "CRAMMING",
+                  "DRYOUT"
+                ]
+              },
+              "amount": {
+                "type": "number",
+                "description": "与えるダメージの量(float)です。",
+                "min": 0
+              },
+              "modifiers": {
+                "type": "object",
+                "patternProperties": {
+                  "^\\w+$": {
+                    "type": "number",
+                    "min": 0
+                  }
+                }
               }
             }
           }
