@@ -919,7 +919,7 @@
         "entity": {
           "$base": {
             "properties": {
-              "entity": {
+              "target": {
                 "description": "対象のエンティティのUUIDまたはセレクタです。",
                 "type": "string"
               }

@@ -16,10 +16,10 @@ scenario:
   - type: execute
     action: entity_damage
     with:
-      entity: "@e"
+      target: "@e"
   - type: expect
     action: entity_damage
     with:
-      entity: "@e"
+      target: "@e"
     timeout: 20
 
