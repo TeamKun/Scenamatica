@@ -76,9 +76,7 @@ public class EntityDamageAction extends AbstractEntityAction<EntityDamageAction.
     {
         argument = this.requireArgsNonNull(argument);
 
-        if (type == ScenarioType.ACTION_EXPECT)
-            this.throwIfNotPresent(Argument.KEY_AMOUNT, argument.getAmount());
-        else if (type == ScenarioType.ACTION_EXECUTE)
+        if (type == ScenarioType.ACTION_EXECUTE)
             if (argument.getCause() != null)
                 throw new IllegalArgumentException("Use entity_damage_by_entity or entity_damage_by_block action instead.");
     }
