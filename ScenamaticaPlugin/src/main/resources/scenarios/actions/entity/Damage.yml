@@ -5,22 +5,36 @@ name: actions_entity_damage
 description: Testing entity_damage action works or not
 on:
   - type: on_load
+    before:
+      - action: command_dispatch
+        type: execute
+        with:
+          command: 'summon minecraft:parrot 0 155 0 {Tags:["810snpi"]}'
+    after:
+      - action: command_dispatch
+        type: execute
+        with:
+          command: 'kill @e[type=minecraft:parrot,tag=810snpi]'
   - type: manual_dispatch
-
-context:
-  actors:
-    - name: Actor001
-
-
+    before:
+      - action: command_dispatch
+        type: execute
+        with:
+          command: 'summon minecraft:parrot 0 155 0 {Tags:["810snpi"]}'
+    after:
+      - action: command_dispatch
+        type: execute
+        with:
+          command: 'kill @e[type=minecraft:parrot,tag=810snpi]'
 scenario:
   - type: execute
     action: entity_damage
     with:
       amount: 3
-      target: "@e"
+      target: "@e[type=minecraft:parrot,tag=810snpi]"
   - type: expect
     action: entity_damage
     with:
-      target: "@e"
+      target: "@e[type=minecraft:parrot,tag=810snpi]"
     timeout: 20
 
