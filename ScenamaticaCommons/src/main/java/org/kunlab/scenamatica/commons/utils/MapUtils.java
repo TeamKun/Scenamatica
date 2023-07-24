@@ -21,6 +21,9 @@ public class MapUtils
 {
     public static boolean equals(Map<?, ?> expected, Map<?, ?> actual)
     {
+        if (expected == null || actual == null)
+            return expected == actual;
+
         if (expected.size() != actual.size())
             return false;
 
