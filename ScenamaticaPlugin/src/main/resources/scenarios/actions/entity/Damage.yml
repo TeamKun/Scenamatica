@@ -16,6 +16,7 @@ scenario:
   - type: execute
     action: entity_damage
     with:
+      amount: 3
       target: "@e"
   - type: expect
     action: entity_damage
