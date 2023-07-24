@@ -451,7 +451,7 @@ public class ItemStackBeanImpl implements ItemStackBean
     public int hashCode()
     {
         int result = this.type.hashCode();
-        result = 31 * result + this.amount;
+        result = 31 * result + (this.amount != null ? this.amount.hashCode(): 0);
         result = 31 * result + (this.displayName != null ? this.displayName.hashCode(): 0);
         result = 31 * result + (this.localizedName != null ? this.localizedName.hashCode(): 0);
         result = 31 * result + this.lore.hashCode();
