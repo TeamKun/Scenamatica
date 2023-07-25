@@ -1,10 +1,10 @@
 package org.kunlab.scenamatica.action.actions.entity;
 
-import org.bukkit.Bukkit;
 import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityEvent;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.action.actions.AbstractAction;
+import org.kunlab.scenamatica.action.utils.EntityUtils;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 
@@ -31,7 +31,7 @@ public abstract class AbstractEntityAction<A extends AbstractEntityActionArgumen
 
         EntityEvent e = (EntityEvent) event;
 
-        return Bukkit.selectEntities(Bukkit.getConsoleSender(), argument.getTargetString())
+        return EntityUtils.selectEntities(argument.getTargetString())
                 .stream().parallel()
                 .anyMatch(entity -> Objects.equals(entity.getUniqueId(), e.getEntity().getUniqueId()));
     }
