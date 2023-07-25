@@ -1,0 +1,162 @@
+import Action from "/src/components/Action";
+import BelowDocument from "/src/components/BelowDocument";
+import {ObjectType} from "/src/components/Object";
+
+# エンティティに関連するアクション
+
+エンティティに関連するアクションを列挙しています。
+
+---
+
+## 記述する際の注意 {#notes}
+
+:::tip
+
+**シナリオやシナリオファイルの概念が初めての方は、先に[こちら](..)を参照して理解しておいてください。**
+
+:::
+
+<BelowDocument docId="use/scenario/file-syntax"
+               label="シナリオファイルを記述する際の注意"
+               anchor="notes"
+/>
+
+## 基本引数 {#general-arguments}
+
+### `entity` {#general-entity}
+
+対象のエンティティを指定します。以下の書式が有効です：
+
++ プレイヤの名前 （例：`entity: "Player1"` ）
++ プレイヤまたはエンティティの UUID （例：`entity: "00000000-0000-0000-0000-000000000000"` ）
++ プレイヤまたはエンティティのセレクタおよびその省略書式 （例：`entity: "@e[team=Red,tags=MyTag]"` ）
+  - 省略： `@e` は省略できます （例：`entity: "[team=Red,tags=MyTag]"` ）。
+  - 省略： `@e[...]` はできます （例：`entity: "team=Red,tags=MyTag"` ）。
+
+:::info シナリオの種類での振る舞いの違い
+
++ アクション実行シナリオでは、単一のエンティティを指します。
+  `@e` 等で複数のエンティティを指定した場合、最初に見つかったエンティティが使用されます。
++ アクション実行期待シナリオでは、該当する**複数のエンティティのどれか**を指します。
+  複数のエンティティを指定した（が見つかった）場合、そのうちのどれか一体が条件を満たしていたらパスされます。  
+  単一のエンティティを指定した場合はそのエンティティが条件を満たしているかどうかが判定されます。
+
+例：
+``` yaml
+
+# 中略
+- type: execute
+  action: entity_...
+  with:
+    entity: "@e[team=Red]"  # チームが Red のエンティティのうち、最初に見つかったものが使用される
+# 中略
+- type: expect
+  action: entity_...
+  with:
+    entity: "@e[team=Red]"  # チームが Red のエンティティのうち、どれか一体が条件を満たしていればパスされる
+```
+
+
+:::
+
+## エンティティのダメージ {#damage}
+
+<Action name="エンティティのダメージ"
+        description="エンティティにダメージを与えます。"
+        id="entity_damage"
+        events={[
+          {
+            name: "EntityDamageEvent",
+            package: "org.bukkit.event.entity",
+          }
+        ]}
+        args={[
+          {
+            name: "entity",
+            type: ObjectType.STRING,
+            anchor: "general-entity",
+            description: "ダメージを与える対象のエンティティです。",
+          },
+          {
+            name: "cause",
+            type: "EntityDamageCause",
+            type_anchor: "damage-enum-entity-damage-cause",
+            description: "ダメージの種類です。",
+          },
+          {
+            name: "amount",
+            anchor: "damage-amount",
+            type: ObjectType.FLOAT,
+            description: "ダメージの量です。",
+          },
+          {
+            name: "modifiers",
+            anchor: "damage-modifiers",
+            type: ObjectType.OBJECT,
+            description: "ダメージの Modifier です。",
+          }
+        ]}
+        executable watchable
+/>
+
+### `amount` {#damage-amount}
+
+いわゆる `EntityDamageEvent#getFinalDamage()` に相当します。
+
+:::caution
+
+アクション実行シナリオでは必須です。
+
+:::
+
+### `modifiers` {#damage-modifiers}
+
+ダメージを計算するときに加味するべき重みをオブジェクトで指定します。  
+キーには以下の値を、値には重みを倍精度浮動小数点数 (`double`) で指定します。
+
++ `BASE` 基本のダメージ。 `amount` で指定した値が使用されます。
++ `HARD_HAT` ヘルメットなどによる防御
++ `BLOCKING` シールドによる防御
++ `ARMOR` 防具による防御
++ `RESISTANCE` エンチャント「耐性」による防御
++ `MAGIC` ウィッチのポーション効果や防具のエンチャントによる防御
++ `ABSORPTION` エンチャント「ダメージ軽減」による防御
+
+:::caution
+
+アクション実行シナリオでは**使えません**。
+
+:::
+
+### `EntityDamageCause` {#damage-enum-entity-damage-cause}
+
+ダメージの種類を指定します。以下の値が有効です：
+
++ `CONTACT` エンティティ同士の接触
++ `ENTITY_ATTACK` エンティティによる攻撃
++ `ENTITY_SWEEP_ATTACK` エンティティによる攻撃（範囲攻撃）
++ `PROJECTILE` 射撃
++ `SUFFOCATION` ブロックへのめり込み 
++ `FALL` 落下
++ `FIRE` 炎
++ `FIRE_TICK` 炎の延焼
++ `MELTING` スノーゴーレムの溶解
++ `LAVA` 溶岩
++ `DROWNING` 溺れ
++ `BLOCK_EXPLOSION` 爆発
++ `ENTITY_EXPLOSION` エンティティの爆発
++ `VOID` 奈落への落下
++ `LIGHTNING` 雷
++ `SUICIDE` `/kill` コマンドによる自殺
++ `STARVATION` 飢餓
++ `POTION` ポーション効果
++ `MAGIC` 魔法
++ `WITHER` ウィザーの効果
++ `FALLING_BLOCK` 金床などの落下するブロック
++ `THORNS` エンチャント「棘」によるカウンター
++ `DRAGON_BREATH` エンダードラゴンのドラゴンブレス
++ `CUSTOM` カスタムダメージ
++ `FLY_INTO_WALL` エリトラなどによる壁への衝突
++ `HOT_FLOOR` マグマブロックなどの熱いブロック
++ `CRAMMING` エンティティの密集
++ `DRYOUT` 乾燥
