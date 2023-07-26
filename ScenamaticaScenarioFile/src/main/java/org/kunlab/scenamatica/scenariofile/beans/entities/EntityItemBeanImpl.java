@@ -2,6 +2,7 @@ package org.kunlab.scenamatica.scenariofile.beans.entities;
 
 import lombok.EqualsAndHashCode;
 import lombok.Value;
+import org.bukkit.entity.EntityType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
@@ -36,8 +37,13 @@ public class EntityItemBeanImpl extends EntityBeanImpl implements EntityItemBean
     public EntityItemBeanImpl(@NotNull EntityBean bean, @NotNull ItemStackBean itemStack, @Nullable Integer pickupDelay,
                               @Nullable UUID owner, @Nullable UUID thrower, boolean canMobPickup, boolean willAge)
     {
-        super(bean.getLocation(), bean.getCustomName(), bean.getUuid(), bean.getGlowing(), bean.getGravity(),
-                bean.getTags(), bean.getMaxHealth(), bean.getHealth(), bean.getLastDamageCause(), bean.getPotionEffects()
+        super(
+                EntityType.DROPPED_ITEM,
+                bean.getLocation(), bean.getVelocity(), bean.getCustomName(), bean.getUuid(),
+                bean.getGlowing(), bean.getGravity(), bean.getSilent(), bean.getCustomNameVisible(),
+                bean.getInvulnerable(), bean.getTags(), bean.getMaxHealth(), bean.getHealth(),
+                bean.getLastDamageCause(), bean.getPotionEffects(), bean.getFireTicks(), bean.getTicksLived(),
+                bean.getPortalCooldown(), bean.getPersistent(), bean.getFallDistance()
         );
         this.itemStack = itemStack;
         this.pickupDelay = pickupDelay;

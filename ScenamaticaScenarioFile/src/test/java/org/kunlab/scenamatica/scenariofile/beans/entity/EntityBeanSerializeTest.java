@@ -2,7 +2,9 @@ package org.kunlab.scenamatica.scenariofile.beans.entity;
 
 import lombok.SneakyThrows;
 import org.bukkit.Location;
+import org.bukkit.entity.EntityType;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.util.Vector;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.kunlab.scenamatica.interfaces.scenariofile.entities.EntityBean;
@@ -22,16 +24,21 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class EntityBeanSerializeTest
 {
     public static final EntityBean FULFILLED = new EntityBeanImpl(
+            EntityType.DROPPED_ITEM,
             new Location(null, 1145, 1419, 19, 8, 10),
+            new Vector(11, 45, 14),
             "YajuSNPI",
             UUID.fromString("a1b1c4d5-e1f4-a1b9-c1d9-e8f1a0bcdef1"),
             true,
             false,
+            true,
+            true,
+            true,
             Arrays.asList("tagTest", "tagTest2"),
             22,
             20,
             DamageBeanSerializeTest.FULFILLED,
-            Collections.emptyList()
+            Collections.emptyList(),
             /*
             Collections.singletonList(
                     new PotionEffect(
@@ -42,13 +49,19 @@ public class EntityBeanSerializeTest
                             false,
                             false
                     )
-            )
+            ),
              */
             // ↑は, Bukkit が必要なので単体テストできない。
+            1,
+            1,
+            4,
+            true,
+            81.0f
     );
 
     public static final Map<String, Object> FULFILLED_MAP = new HashMap<String, Object>()
     {{
+        this.put("type", "DROPPED_ITEM");
         this.put("loc", new HashMap<String, Object>()
         {{
             this.put("x", 1145.0);
@@ -57,11 +70,21 @@ public class EntityBeanSerializeTest
             this.put("yaw", 8.0f);
             this.put("pitch", 10.0f);
         }});
+        this.put("velocity", new HashMap<String, Object>()
+        {{
+            this.put("x", 11.0);
+            this.put("y", 45.0);
+            this.put("z", 14.0);
+        }});
         this.put("customName", "YajuSNPI");
 
         this.put("uuid", "a1b1c4d5-e1f4-a1b9-c1d9-e8f1a0bcdef1");
         this.put("glowing", true);
         this.put("gravity", false);
+        this.put("silent", true);
+        this.put("customNameVisible", true);
+
+        this.put("invulnerable", true);
         this.put("tags", Arrays.asList("tagTest", "tagTest2"));
         this.put("maxHealth", 22);
         this.put("health", 20);
@@ -76,6 +99,11 @@ public class EntityBeanSerializeTest
             this.put("icon", false);
         }}));*/
         // ↑は, Bukkit が必要なので単体テストできない。
+        this.put("fireTicks", 1);
+        this.put("ticksLived", 1);
+        this.put("portalCooldown", 4);
+        this.put("persistent", true);
+        this.put("fallDistance", 81.0);
     }};
 
     public static final EntityBean EMPTY = new EntityBeanImpl();

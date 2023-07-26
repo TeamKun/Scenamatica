@@ -4,11 +4,14 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.MainHand;
 import org.bukkit.potion.PotionEffect;
+import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.interfaces.scenariofile.BeanSerializer;
+import org.kunlab.scenamatica.interfaces.scenariofile.entities.DamageBean;
 import org.kunlab.scenamatica.interfaces.scenariofile.entities.EntityBean;
 import org.kunlab.scenamatica.interfaces.scenariofile.entities.HumanEntityBean;
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.InventoryBean;
@@ -29,24 +32,15 @@ public class HumanEntityBeanImpl extends EntityBeanImpl implements HumanEntityBe
     private final GameMode gamemode;
     private final Integer foodLevel;
 
-    public HumanEntityBeanImpl(
-            Location location,
-            String customName,
-            UUID uuid,
-            Boolean glowing,
-            Boolean gravity,
-            @NotNull List<String> tags,
-            DamageBeanImpl lastDamage,
-            Integer maxHealth,
-            Integer health,
-            @NotNull List<PotionEffect> potionEffects,
-            PlayerInventoryBean inventory,
-            InventoryBean enderChest,
-            MainHand mainHand,
-            GameMode gamemode,
-            Integer foodLevel)
+    public HumanEntityBeanImpl(Location location, Vector velocity, String customName, UUID uuid, Boolean glowing,
+                               Boolean gravity, Boolean silent, Boolean customNameVisible, Boolean invulnerable,
+                               @NotNull List<String> tags, Integer maxHealth, Integer health,
+                               DamageBean lastDamageCause, @NotNull List<PotionEffect> potionEffects, Integer fireTicks,
+                               Integer ticksLived, Integer portalCooldown, Boolean persistent, Float fallDistance,
+                               PlayerInventoryBean inventory, InventoryBean enderChest, MainHand mainHand,
+                               GameMode gamemode, Integer foodLevel)
     {
-        super(location, customName, uuid, glowing, gravity, tags, maxHealth, health, lastDamage, potionEffects);
+        super(EntityType.PLAYER, location, velocity, customName, uuid, glowing, gravity, silent, customNameVisible, invulnerable, tags, maxHealth, health, lastDamageCause, potionEffects, fireTicks, ticksLived, portalCooldown, persistent, fallDistance);
         this.inventory = inventory;
         this.enderChest = enderChest;
         this.mainHand = mainHand;
@@ -62,9 +56,12 @@ public class HumanEntityBeanImpl extends EntityBeanImpl implements HumanEntityBe
             GameMode gamemode,
             Integer foodLevel)
     {
-        super(entityBean.getLocation(), entityBean.getCustomName(), entityBean.getUuid(), entityBean.getGlowing(),
-                entityBean.getGravity(), entityBean.getTags(), entityBean.getMaxHealth(), entityBean.getHealth(), entityBean.getLastDamageCause(),
-                entityBean.getPotionEffects()
+        super(EntityType.PLAYER,
+                entityBean.getLocation(), entityBean.getVelocity(), entityBean.getCustomName(), entityBean.getUuid(),
+                entityBean.getGlowing(), entityBean.getGravity(), entityBean.getSilent(), entityBean.getCustomNameVisible(),
+                entityBean.getInvulnerable(), entityBean.getTags(), entityBean.getMaxHealth(), entityBean.getHealth(),
+                entityBean.getLastDamageCause(), entityBean.getPotionEffects(), entityBean.getFireTicks(),
+                entityBean.getTicksLived(), entityBean.getPortalCooldown(), entityBean.getPersistent(), entityBean.getFallDistance()
         );
         this.inventory = inventory;
         this.enderChest = enderChest;

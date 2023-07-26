@@ -3,8 +3,10 @@ package org.kunlab.scenamatica.scenariofile.beans.entities;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.bukkit.Location;
+import org.bukkit.entity.EntityType;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.interfaces.scenariofile.BeanSerializer;
@@ -23,53 +25,29 @@ import java.util.UUID;
 @AllArgsConstructor
 public class EntityBeanImpl implements EntityBean
 {
-
-    /**
-     * エンティティの座標です。
-     */
+    private final EntityType type;
     private final Location location;
-    /**
-     * エンティティのカスタム名です。
-     */
+
+    private final Vector velocity;
     private final String customName;
-    /**
-     * エンティティのUUIDです。
-     */
     private final UUID uuid;
-
-    /**
-     * エンティティが光っているかどうかです。
-     */
     private final Boolean glowing;
-
-    /**
-     * エンティティが重力を持っているかどうかです。
-     */
     private final Boolean gravity;
-
-    /**
-     * スコアボードのタグです。
-     */
+    private final Boolean silent;
+    private final Boolean customNameVisible;
+    private final Boolean invulnerable;
     @NotNull
     private final List<String> tags;
-    /**
-     * 最大体力です。
-     */
     private final Integer maxHealth;
-    /**
-     * 体力です。
-     */
     private final Integer health;
-    /**
-     * 最後のダメージの原因です。
-     */
     private final DamageBean lastDamageCause;
-
-    /**
-     * ポーションエフェクトのリストです。
-     */
     @NotNull
     private final List<PotionEffect> potionEffects;
+    private final Integer fireTicks;
+    private final Integer ticksLived;
+    private final Integer portalCooldown;
+    private final Boolean persistent;
+    private final Float fallDistance;
 
     public EntityBeanImpl()
     {
@@ -79,11 +57,21 @@ public class EntityBeanImpl implements EntityBean
                 null,
                 null,
                 null,
+                null,
+                null,
+                null,
+                null,
+                null,
                 Collections.emptyList(),
                 null,
                 null,
                 null,
-                Collections.emptyList()
+                Collections.emptyList(),
+                null,
+                null,
+                null,
+                null,
+                null
         );
     }
 
@@ -98,10 +86,15 @@ public class EntityBeanImpl implements EntityBean
     public static Map<String, Object> serialize(@NotNull EntityBean entity, @NotNull BeanSerializer serializer)
     {
         Map<String, Object> map = new HashMap<>();
+        MapUtils.putIfNotNull(map, KEY_TYPE, entity.getType());
         MapUtils.putLocationIfNotNull(map, KEY_LOCATION, entity.getLocation());
+        MapUtils.putIfNotNull(map, KEY_VELOCITY, entity.getVelocity());
         MapUtils.putIfNotNull(map, KEY_CUSTOM_NAME, entity.getCustomName());
         MapUtils.putIfNotNull(map, KEY_GLOWING, entity.getGlowing());
         MapUtils.putIfNotNull(map, KEY_GRAVITY, entity.getGravity());
+        MapUtils.putIfNotNull(map, KEY_SILENT, entity.getSilent());
+        MapUtils.putIfNotNull(map, KEY_CUSTOM_NAME_VISIBLE, entity.getCustomNameVisible());
+        MapUtils.putIfNotNull(map, KEY_INVULNERABLE, entity.getInvulnerable());
         if (entity.getUuid() != null)
             map.put(KEY_UUID, entity.getUuid().toString());
         if (entity.getLastDamageCause() != null)
@@ -115,6 +108,11 @@ public class EntityBeanImpl implements EntityBean
         if (!entity.getPotionEffects().isEmpty())
             map.put(KEY_POTION_EFFECTS, serializePotionEffects(entity.getPotionEffects()));
 
+        MapUtils.putIfNotNull(map, KEY_FIRE_TICKS, entity.getFireTicks());
+        MapUtils.putIfNotNull(map, KEY_TICKS_LIVED, entity.getTicksLived());
+        MapUtils.putIfNotNull(map, KEY_PORTAL_COOLDOWN, entity.getPortalCooldown());
+        MapUtils.putIfNotNull(map, KEY_PERSISTENT, entity.getPersistent());
+        MapUtils.putIfNotNull(map, KEY_FALL_DISTANCE, entity.getFallDistance());
 
         return map;
     }
@@ -237,7 +235,19 @@ public class EntityBeanImpl implements EntityBean
     {
         validate(map);
 
+        EntityType type = MapUtils.getAsEnumOrNull(map, KEY_TYPE, EntityType.class);
         Location loc = MapUtils.getAsLocationOrNull(map, KEY_LOCATION);
+        if (loc == null)
+            loc = MapUtils.getAsLocationOrNull(map, KEY_LOCATION_2);
+
+        Vector velocity = null;
+        if (map.containsKey(KEY_VELOCITY))
+            velocity = Vector.deserialize(MapUtils.checkAndCastMap(
+                    map.get(KEY_VELOCITY),
+                    String.class,
+                    Object.class
+            ));
+
         String customName = MapUtils.getOrNull(map, KEY_CUSTOM_NAME);
         UUID uuid;
         if (map.containsKey(KEY_UUID))
@@ -247,8 +257,11 @@ public class EntityBeanImpl implements EntityBean
 
         Boolean glowing = MapUtils.getOrNull(map, KEY_GLOWING);
         Boolean gravity = MapUtils.getOrNull(map, KEY_GRAVITY);
-        List<String> tags = MapUtils.getAsListOrEmpty(map, KEY_TAGS);
+        Boolean silent = MapUtils.getOrNull(map, KEY_SILENT);
+        Boolean customNameVisible = MapUtils.getOrNull(map, KEY_CUSTOM_NAME_VISIBLE);
+        Boolean invulnerable = MapUtils.getOrNull(map, KEY_INVULNERABLE);
 
+        List<String> tags = MapUtils.getAsListOrEmpty(map, KEY_TAGS);
         DamageBean lastDamageCause = null;
         if (map.containsKey(KEY_LAST_DAMAGE))
             lastDamageCause = serializer.deserializeDamage(MapUtils.checkAndCastMap(map.get(KEY_LAST_DAMAGE),
@@ -262,17 +275,33 @@ public class EntityBeanImpl implements EntityBean
         if (map.containsKey(KEY_POTION_EFFECTS))
             potionEffects = deserializePotionEffects(MapUtils.getAsList(map, KEY_POTION_EFFECTS));
 
+        Integer fireTicks = MapUtils.getOrNull(map, KEY_FIRE_TICKS);
+        Integer ticksLived = MapUtils.getOrNull(map, KEY_TICKS_LIVED);
+        Integer portalCooldown = MapUtils.getOrNull(map, KEY_PORTAL_COOLDOWN);
+        Boolean persistent = MapUtils.getOrNull(map, KEY_PERSISTENT);
+        Float fallDistance = MapUtils.getOrNull(map, KEY_FALL_DISTANCE);
+
         return new EntityBeanImpl(
+                type,
                 loc,
+                velocity,
                 customName,
                 uuid,
                 glowing,
                 gravity,
+                silent,
+                customNameVisible,
+                invulnerable,
                 tags,
                 maxHealth,
                 health,
                 lastDamageCause,
-                potionEffects
+                potionEffects,
+                fireTicks,
+                ticksLived,
+                portalCooldown,
+                persistent,
+                fallDistance
         );
     }
 
@@ -284,6 +313,7 @@ public class EntityBeanImpl implements EntityBean
         EntityBeanImpl that = (EntityBeanImpl) o;
         return this.glowing == that.glowing
                 && this.gravity == that.gravity
+                && this.type == that.type
                 && Objects.equals(this.location, that.location)
                 && Objects.equals(this.customName, that.customName)
                 && Objects.equals(this.uuid, that.uuid)
@@ -296,7 +326,7 @@ public class EntityBeanImpl implements EntityBean
     @Override
     public int hashCode()
     {
-        return Objects.hash(this.location, this.customName, this.uuid, this.glowing, this.gravity,
+        return Objects.hash(this.type, this.location, this.customName, this.uuid, this.glowing, this.gravity,
                 this.tags, this.lastDamageCause, this.maxHealth, this.health
         );
     }
