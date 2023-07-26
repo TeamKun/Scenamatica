@@ -1,0 +1,33 @@
+# noinspection YAMLSchemaValidation
+scenamatica: ${project.version}
+
+name: actions_entity_spawn
+description: Testing entity_spawn action works or not
+on:
+  - type: on_load
+  - type: manual_dispatch
+
+scenario:
+  - type: execute
+    action: entity_spawn
+    with:
+      entity:
+        type: minecraft:parrot
+        tags:
+          - 810snpi
+        location:
+          x: 0
+          y: 155
+          z: 0
+  - type: expect
+    action: entity_spawn
+    with:
+      entity:
+        type: minecraft:parrot
+        tags:
+          - 810snpi
+        location:
+          x: 0
+          y: 155
+          z: 0
+    timeout: 20

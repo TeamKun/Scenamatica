@@ -231,11 +231,37 @@ public class EntityBeanImpl implements EntityBean
      * @return デシリアライズしたエンティティ情報
      */
     @NotNull
+    @SuppressWarnings("deprecation")
     public static EntityBean deserialize(@NotNull Map<String, Object> map, @NotNull BeanSerializer serializer)
     {
         validate(map);
 
-        EntityType type = MapUtils.getAsEnumOrNull(map, KEY_TYPE, EntityType.class);
+        EntityType type = null;
+        if (map.containsKey(KEY_TYPE))
+        {
+            String key = (String) map.get(KEY_TYPE);
+            if (key.contains(":"))
+                key = key.split(":")[1];
+
+            type = EntityType.fromName(key);
+            if (type == null)
+                try
+                {
+                    type = EntityType.fromId(Integer.parseInt(key));
+                }
+                catch (NumberFormatException ignored)
+                {
+                }
+            if (type == null)
+                try
+                {
+                    type = EntityType.valueOf(key);
+                }
+                catch (IllegalArgumentException ignored)
+                {
+                    throw new IllegalArgumentException("Invalid entity type: " + key);
+                }
+        }
         Location loc = MapUtils.getAsLocationOrNull(map, KEY_LOCATION);
         if (loc == null)
             loc = MapUtils.getAsLocationOrNull(map, KEY_LOCATION_2);

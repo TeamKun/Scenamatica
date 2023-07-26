@@ -98,9 +98,15 @@ public class EntityItemBeanImpl extends EntityBeanImpl implements EntityItemBean
         if (map.containsKey(KEY_THROWER))
             throwerUUID = UUIDUtil.toUUIDOrThrow((String) map.get(KEY_THROWER));
 
+        ItemStackBean itemStack = serializer.deserializeItemStack(map);
+
+        // Entity と EntityItem で `type` がかぶる。
+        if (map.containsKey(KEY_TYPE))
+            map.put(KEY_TYPE, EntityType.DROPPED_ITEM.name());
+
         return new EntityItemBeanImpl(
                 serializer.deserializeEntity(map),
-                serializer.deserializeItemStack(map),
+                itemStack,
                 pickupDelay,
                 ownerUUID,
                 throwerUUID,

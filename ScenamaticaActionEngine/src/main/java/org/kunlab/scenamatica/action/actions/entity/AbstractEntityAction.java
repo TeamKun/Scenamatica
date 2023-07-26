@@ -15,11 +15,12 @@ import java.util.Objects;
 
 public abstract class AbstractEntityAction<A extends AbstractEntityActionArgument> extends AbstractAction<A>
 {
-    public static List<? extends AbstractEntityAction<?>> getActions()
+    public static List<? extends AbstractAction<?>> getActions()
     {
-        List<AbstractEntityAction<?>> actions = new ArrayList<>();
+        List<AbstractAction<?>> actions = new ArrayList<>();
 
         actions.add(new EntityDamageAction());
+        actions.add(new EntitySpawnAction());  // AbstractEntityAction を継承してない(引数都合)
 
         return actions;
     }

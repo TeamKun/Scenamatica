@@ -101,6 +101,7 @@
             "block_break",
             "block_place",
             "entity_damage",
+            "entity_spawn",
             "inventory_click",
             "player_advancement",
             "player_animation",
@@ -199,6 +200,26 @@
             "properties": {
               "with": {
                 "$ref": "#/definitions/action/definitions/entity/damage"
+              }
+            },
+            "required": [
+              "with"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "entity_spawn",
+                "description": "エンティティのスポーンを検知します。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/entity/spawn"
               }
             },
             "required": [
@@ -978,6 +999,13 @@
                     "min": 0
                   }
                 }
+              }
+            }
+          },
+          "spawn": {
+            "properties": {
+              "entity": {
+                "$ref": "#/definitions/entity"
               }
             }
           }
@@ -2770,7 +2798,7 @@
       "type": "string",
       "description": "人間が読みやすいシナリオの説明です。シナリオの概要を記述してください。",
       "examples": [
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+        "あのイーハトーヴォのすきとおった風、夏でも底に冷たさをもつ青いそら、うつくしい森で飾られたモーリオ市、郊外のぎらぎらひかる草の波。"
       ]
     },
     "definitions": {

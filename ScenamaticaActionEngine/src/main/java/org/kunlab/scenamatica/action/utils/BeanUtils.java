@@ -10,21 +10,29 @@ import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.block.Block;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Damageable;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.metadata.MetadataValue;
+import org.bukkit.potion.PotionEffect;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
+import org.kunlab.scenamatica.interfaces.scenariofile.entities.EntityBean;
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.InventoryBean;
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.ItemStackBean;
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.PlayerInventoryBean;
 import org.kunlab.scenamatica.interfaces.scenariofile.misc.BlockBean;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 @UtilityClass
@@ -240,5 +248,177 @@ public class BeanUtils
             return false;
 
         return !checkInventory || isSame(playerInventoryBean, playerInventory, true);
+    }
+
+    public static void applyEntityBeanData(@NotNull EntityBean bean, @NotNull Entity entity)
+    {
+        if (bean.getCustomName() != null)
+            entity.setCustomName(bean.getCustomName());
+        if (bean.getVelocity() != null)
+            entity.setVelocity(bean.getVelocity());
+        if (bean.getCustomNameVisible() != null)
+            entity.setCustomNameVisible(bean.getCustomNameVisible());
+        if (bean.getGlowing() != null)
+            entity.setGlowing(bean.getGlowing());
+        if (bean.getGravity() != null)
+            entity.setGravity(bean.getGravity());
+        if (bean.getSilent() != null)
+            entity.setSilent(bean.getSilent());
+        if (bean.getInvulnerable() != null)
+            entity.setInvulnerable(bean.getInvulnerable());
+        if (bean.getCustomNameVisible() != null)
+            entity.setCustomNameVisible(bean.getCustomNameVisible());
+        if (bean.getInvulnerable() != null)
+            entity.setInvulnerable(bean.getInvulnerable());
+        if (!bean.getTags().isEmpty())
+        {
+            entity.getScoreboardTags().clear();
+            entity.getScoreboardTags().addAll(bean.getTags());
+        }
+        if (bean.getLastDamageCause() != null)
+            entity.setLastDamageCause(new EntityDamageEvent(
+                            entity,
+                            bean.getLastDamageCause().getCause(),
+                            bean.getLastDamageCause().getDamage()
+                    )
+            );
+        if (entity instanceof Damageable)
+        {
+            if (bean.getMaxHealth() != null)
+                // noinspection deprecation
+                ((Damageable) entity).setMaxHealth(bean.getMaxHealth());
+            if (bean.getHealth() != null)
+                ((Damageable) entity).setHealth(bean.getHealth());
+        }
+        if (entity instanceof LivingEntity)
+        {
+            if (!bean.getPotionEffects().isEmpty())
+            {
+                new ArrayList<>(((LivingEntity) entity).getActivePotionEffects()).stream()
+                        .map(PotionEffect::getType)
+                        .forEach(((LivingEntity) entity)::removePotionEffect);
+
+                bean.getPotionEffects().stream()
+                        .map(b -> new PotionEffect(
+                                        b.getType(),
+                                        b.getDuration(),
+                                        b.getAmplifier(),
+                                        b.isAmbient(),
+                                        b.hasParticles(),
+                                        b.hasIcon()
+                                )
+                        )
+                        .forEach(((LivingEntity) entity)::addPotionEffect);
+            }
+            if (bean.getFireTicks() != null)
+                entity.setFireTicks(bean.getFireTicks());
+            if (bean.getTicksLived() != null)
+                entity.setTicksLived(bean.getTicksLived());
+            if (bean.getPortalCooldown() != null)
+                entity.setPortalCooldown(bean.getPortalCooldown());
+            if (bean.getPersistent() != null)
+            {
+                entity.setPersistent(bean.getPersistent());
+                if (bean.getFallDistance() != null)
+                    entity.setFallDistance(bean.getFallDistance());
+            }
+        }
+    }
+
+    public static boolean isSame(@NotNull EntityBean entityBean, @NotNull Entity entity, boolean strict)
+    {
+        if (entityBean.getType() != null)
+            if (entity.getType() != entityBean.getType())
+                return false;
+        if (entityBean.getCustomName() != null)
+            if (!Objects.equals(entity.getCustomName(), entityBean.getCustomName()))
+                return false;
+        if (entityBean.getVelocity() != null)
+            if (!entity.getVelocity().equals(entityBean.getVelocity()))
+                return false;
+        if (entityBean.getCustomNameVisible() != null)
+            if (entity.isCustomNameVisible() != entityBean.getCustomNameVisible())
+                return false;
+        if (entityBean.getGlowing() != null)
+            if (entity.isGlowing() != entityBean.getGlowing())
+                return false;
+        if (entityBean.getGravity() != null)
+            if (entity.hasGravity() != entityBean.getGravity())
+                return false;
+        if (entityBean.getSilent() != null)
+            if (entity.isSilent() != entityBean.getSilent())
+                return false;
+        if (entityBean.getInvulnerable() != null)
+            if (entity.isInvulnerable() != entityBean.getInvulnerable())
+                return false;
+        if (entityBean.getCustomNameVisible() != null)
+            if (entity.isCustomNameVisible() != entityBean.getCustomNameVisible())
+                return false;
+        if (entityBean.getInvulnerable() != null)
+            if (entity.isInvulnerable() != entityBean.getInvulnerable())
+                return false;
+        if (!entityBean.getTags().isEmpty())
+        {
+            ArrayList<String> tags = new ArrayList<>(entity.getScoreboardTags());
+            if (strict && tags.size() != entityBean.getTags().size())
+                return false;
+            if (!tags.containsAll(entityBean.getTags()))
+                return false;
+        }
+
+        if (entityBean.getLastDamageCause() != null)
+        {
+            EntityDamageEvent lastDamageCause = entity.getLastDamageCause();
+            if (lastDamageCause == null)
+                return false;
+            if (lastDamageCause.getCause() != entityBean.getLastDamageCause().getCause())
+                return false;
+            if (lastDamageCause.getDamage() != entityBean.getLastDamageCause().getDamage())
+                return false;
+        }
+
+        if (entity instanceof Damageable)
+        {
+            if (entityBean.getMaxHealth() != null)
+                // noinspection deprecation
+                if (((Damageable) entity).getMaxHealth() != entityBean.getMaxHealth())
+                    return false;
+            if (entityBean.getHealth() != null)
+                if (((Damageable) entity).getHealth() != entityBean.getHealth())
+                    return false;
+        }
+
+        if (entity instanceof LivingEntity)
+            if (!entityBean.getPotionEffects().isEmpty())
+            {
+                List<PotionEffect> potionEffects = new ArrayList<>(((LivingEntity) entity).getActivePotionEffects());
+                if (strict && potionEffects.size() != entityBean.getPotionEffects().size())
+                    return false;
+
+                for (PotionEffect effects : entityBean.getPotionEffects())
+                    if (!potionEffects.contains(effects))
+                        return false;
+            }
+
+        if (entityBean.getFireTicks() != null)
+            if (entity.getFireTicks() != entityBean.getFireTicks())
+                return false;
+        if (entityBean.getTicksLived() != null)
+            if (entity.getTicksLived() != entityBean.getTicksLived())
+                return false;
+        if (entityBean.getPortalCooldown() != null)
+            if (entity.getPortalCooldown() != entityBean.getPortalCooldown())
+                return false;
+        if (entityBean.getPersistent() != null)
+        {
+            if (entity.isPersistent() != entityBean.getPersistent())
+                return false;
+            if (entityBean.getFallDistance() != null)
+                // noinspection RedundantIfStatement
+                if (entity.getFallDistance() != entityBean.getFallDistance())
+                    return false;
+        }
+
+        return true;
     }
 }
