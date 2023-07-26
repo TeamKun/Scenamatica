@@ -160,3 +160,30 @@ import {ObjectType} from "/src/components/Object";
 + `HOT_FLOOR` マグマブロックなどの熱いブロック
 + `CRAMMING` エンティティの密集
 + `DRYOUT` 乾燥
+
+## エンティティのスポーン {#spawn}
+
+<Action name="エンティティのスポーン"
+        description="エンティティをスポーンさせます。"
+        id="entity_spawn"
+        events={[
+          {
+            name: "EntitySpawnEvent",
+            package: "org.bukkit.event.entity",
+          }
+        ]}
+        args={[
+          {
+            name: "entity",
+            type: "Entity",
+            type_link: "../file-syntax#entity-structure"
+          }
+        ]}
+        executable watchable
+/>
+
+### `entity` {#spawn-entity}
+
+:::caution
+
+アクション実行シナリオでは, Entity オブジェクトの `type` が必須です。
