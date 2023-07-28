@@ -100,6 +100,7 @@
           "enum": [
             "block_break",
             "block_place",
+            "entity",
             "entity_damage",
             "entity_spawn",
             "inventory_click",
@@ -180,6 +181,26 @@
             "properties": {
               "with": {
                 "$ref": "#/definitions/action/definitions/block/place"
+              }
+            },
+            "required": [
+              "with"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "entity",
+                "description": "エンティティの状態を変更します。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/entity/entity"
               }
             },
             "required": [
@@ -948,6 +969,15 @@
             "required": [
               "target"
             ]
+          },
+          "entity": {
+            "$ref": "#/definitions/action/definitions/entity/$base",
+            "properties": {
+              "entity": {
+                "$ref": "#/definitions/entity",
+                "description": "変更する値です。"
+              }
+            }
           },
           "damage": {
             "$ref": "#/definitions/action/definitions/entity/$base",
