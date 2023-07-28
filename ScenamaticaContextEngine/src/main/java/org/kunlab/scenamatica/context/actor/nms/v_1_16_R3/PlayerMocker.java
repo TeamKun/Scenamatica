@@ -251,7 +251,7 @@ public class PlayerMocker extends PlayerMockerBase
         NetworkManager mockedNetworkManager = new MockedNetworkManager(server);
         WorldServer worldServer = server.E();
         GameProfile profile = createGameProfile(bean);
-        boolean doLogin = bean.getOnline();
+        boolean doLogin = Boolean.TRUE.equals(bean.getOnline());
 
         MockedPlayer player = new MockedPlayer(this.manager, this, mockedNetworkManager, server, worldServer, profile);
         this.initializePlayer(player, bean);
@@ -292,7 +292,8 @@ public class PlayerMocker extends PlayerMockerBase
                 player.removeAttachment(permissionAttachmentInfo.getAttachment());
         });
 
-        mockedPlayer.playerConnection.disconnect("Unmocked");
+        if (mockedPlayer.playerConnection != null)
+            mockedPlayer.playerConnection.disconnect("Unmocked");
     }
 
     @Override
