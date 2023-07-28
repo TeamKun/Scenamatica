@@ -125,7 +125,7 @@ public class ScenarioEngineImpl implements ScenarioEngine
         this.isRunning = true;
         ScenarioResult result = this.start$1(trigger);
         this.isRunning = false;  // これの位置を変えると, 排他の問題でバグる
-        this.cleanUp();
+        ThreadingUtil.waitFor(this.registry, this::cleanUp);
 
         return result;
     }
@@ -138,9 +138,6 @@ public class ScenarioEngineImpl implements ScenarioEngine
 
         this.context = this.prepareContext();  // State 変更: CONTEXT_PREPARING
         if (this.context == null)
-        {
-            // あとかたづけ
-            ThreadingUtil.waitFor(this.registry, this::cleanUp);
             return new ScenarioResultImpl(
                     this.scenario,
                     this.executor.getTestID(),
@@ -148,7 +145,6 @@ public class ScenarioEngineImpl implements ScenarioEngine
                     ScenarioResultCause.CONTEXT_PREPARATION_FAILED,
                     this.executor.getStartedAt()
             );
-        }
 
         this.logWithPrefix(Level.INFO, LangProvider.get(
                         "scenario.run.engine.starting",
@@ -159,9 +155,7 @@ public class ScenarioEngineImpl implements ScenarioEngine
 
         this.state = ScenarioState.STARTING;
 
-        ScenarioResult result = this.executor.start(trigger);
-        ThreadingUtil.waitFor(this.registry, this::cleanUp);
-        return result;
+        return this.executor.start(trigger);
     }
 
     @Nullable

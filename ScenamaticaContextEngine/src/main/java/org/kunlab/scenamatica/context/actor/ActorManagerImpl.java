@@ -90,7 +90,7 @@ public class ActorManagerImpl implements ActorManager, Listener
 
         this.actors.add(actor);
 
-        if (Boolean.TRUE.equals(bean.getOnline()))  // オンラインモードはログインするの待つ。
+        if (bean.getOnline() == null || bean.getOnline())  // オンラインモードはログインするの待つ。
             this.waitForJoin(actor);
 
         return actor;

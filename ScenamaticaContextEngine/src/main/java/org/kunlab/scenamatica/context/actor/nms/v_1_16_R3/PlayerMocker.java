@@ -251,7 +251,7 @@ public class PlayerMocker extends PlayerMockerBase
         NetworkManager mockedNetworkManager = new MockedNetworkManager(server);
         WorldServer worldServer = server.E();
         GameProfile profile = createGameProfile(bean);
-        boolean doLogin = Boolean.TRUE.equals(bean.getOnline());
+        boolean doLogin = bean.getOnline() == null || bean.getOnline();
 
         MockedPlayer player = new MockedPlayer(this.manager, this, mockedNetworkManager, server, worldServer, profile);
         this.initializePlayer(player, bean);
