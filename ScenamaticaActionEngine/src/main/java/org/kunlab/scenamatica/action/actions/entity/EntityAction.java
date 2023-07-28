@@ -53,13 +53,16 @@ public class EntityAction extends AbstractEntityAction<EntityAction.Argument> im
         if (map.containsKey(Argument.KEY_ENTITY))
             throw new IllegalArgumentException("Argument map contains invalid key: " + Argument.KEY_ENTITY);
 
-        return new Argument(serializer.deserializeEntity(
-                MapUtils.checkAndCastMap(
-                        map.get(Argument.KEY_ENTITY),
-                        String.class,
-                        Object.class
+        return new Argument(
+                super.deserializeTarget(map),
+                serializer.deserializeEntity(
+                        MapUtils.checkAndCastMap(
+                                map.get(Argument.KEY_ENTITY),
+                                String.class,
+                                Object.class
+                        )
                 )
-        ));
+        );
     }
 
     @Value
@@ -70,6 +73,12 @@ public class EntityAction extends AbstractEntityAction<EntityAction.Argument> im
 
         @NotNull
         EntityBean entity;
+
+        public Argument(@NotNull String target, @NotNull EntityBean entity)
+        {
+            super(target);
+            this.entity = entity;
+        }
 
         @Override
         public boolean isSame(TriggerArgument argument)
