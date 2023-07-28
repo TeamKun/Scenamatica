@@ -410,14 +410,13 @@ public class BeanUtils
             if (entity.getPortalCooldown() != entityBean.getPortalCooldown())
                 return false;
         if (entityBean.getPersistent() != null)
-        {
             if (entity.isPersistent() != entityBean.getPersistent())
                 return false;
-            if (entityBean.getFallDistance() != null)
-                // noinspection RedundantIfStatement
-                if (entity.getFallDistance() != entityBean.getFallDistance())
-                    return false;
-        }
+
+        if (entityBean.getFallDistance() != null)
+            // noinspection RedundantIfStatement
+            if (entity.getFallDistance() != entityBean.getFallDistance())
+                return false;
 
         return true;
     }
