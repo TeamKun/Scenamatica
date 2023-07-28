@@ -165,7 +165,6 @@ public class ActorManagerImpl implements ActorManager, Listener
 
         if (!Objects.nonNull(locker))
             return;
-        //noinspection SynchronizationOnLocalVariableOrMethodParameter
         synchronized (locker)
         {
             locker.notify();
