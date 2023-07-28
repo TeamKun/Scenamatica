@@ -583,6 +583,13 @@ Bukkit でロード済みの既存のワールドの構造、建築物、アイ�
     description: "アクターの表示名です。",
   },
   {
+    name: "online",
+    anchor: "actor-online",
+    type: "boolean",
+    description: "アクターがオンラインかどうかを設定します。",
+    default: true
+  },
+  {
     name: "playerList",
     type: "ActorPlayerList",
     type_anchor: "actor-player-list-structure",
@@ -693,6 +700,14 @@ Bukkit でロード済みの既存のワールドの構造、建築物、アイ�
 必ずしも表示名として使用されるわけではありません。
 
 :::
+
+### `online` {#actor-online}
+
+アクターがオンラインかどうかを真偽値で設定します。  
+`false` の場合、アクターは準備されますがログイン処理は行われません。
+
+[`PlayerJoinEvent`](actions/player#join) をテストする場合、この値を `false` に設定することで
+余計な発火を防止できます。
 
 ### `op` {#actor-op}
 
