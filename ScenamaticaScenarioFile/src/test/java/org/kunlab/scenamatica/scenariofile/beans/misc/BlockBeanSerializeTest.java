@@ -31,10 +31,9 @@ public class BlockBeanSerializeTest
         this.put("type", "ACACIA_SIGN");
         this.put("location", new HashMap<String, Object>()
         {{
-            this.put("world", null);
-            this.put("x", 114);
-            this.put("y", 514);
-            this.put("z", 19);
+            this.put("x", 114.0);
+            this.put("y", 514.0);
+            this.put("z", 19.0);
         }});
         this.put("metadata", new HashMap<String, Object>()
         {{
@@ -48,7 +47,7 @@ public class BlockBeanSerializeTest
             null,
             null,
             Collections.emptyMap(),
-            0,
+            null,
             null
     );
 
@@ -67,7 +66,7 @@ public class BlockBeanSerializeTest
     {
         BlockBean bean = BlockBeanImpl.deserialize(FULFILLED_MAP);
 
-        assertEquals(FULFILLED, bean);
+        assertEquals(bean, FULFILLED);
     }
 
     @Test

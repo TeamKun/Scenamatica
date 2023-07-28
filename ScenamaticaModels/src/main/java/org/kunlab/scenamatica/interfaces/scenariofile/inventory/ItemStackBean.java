@@ -32,6 +32,7 @@ public interface ItemStackBean extends Serializable
     String KEY_DAMAGE = "damage";
     String KEY_ATTRIBUTE_MODIFIERS = "attributes";
     String KEY_ATTRIBUTE_MODIFIER_NAME = "name";
+    String KEY_ATTRIBUTE_MODIFIER_UUID = "uuid";
     String KEY_ATTRIBUTE_MODIFIER_AMOUNT = "amount";
     String KEY_ATTRIBUTE_MODIFIER_OPERATION = "operation";
     String KEY_ATTRIBUTE_MODIFIER_SLOT = "slot";

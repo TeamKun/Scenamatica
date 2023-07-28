@@ -3,6 +3,7 @@ package org.kunlab.scenamatica.scenariofile.beans.entity;
 import org.bukkit.GameMode;
 import org.bukkit.inventory.MainHand;
 import org.junit.jupiter.api.Test;
+import org.kunlab.scenamatica.interfaces.scenariofile.entities.EntityBean;
 import org.kunlab.scenamatica.interfaces.scenariofile.entities.HumanEntityBean;
 import org.kunlab.scenamatica.scenariofile.BeanSerializerImpl;
 import org.kunlab.scenamatica.scenariofile.beans.entities.HumanEntityBeanImpl;
@@ -28,6 +29,7 @@ public class HumanEntityBeanSerializeTest
 
     public static final Map<String, Object> FULFILLED_MAP = new HashMap<String, Object>(EntityBeanSerializeTest.FULFILLED_MAP)
     {{
+        this.remove(EntityBean.KEY_TYPE);
         this.put("inventory", PlayerInventoryBeanSerializeTest.FULFILLED_MAP);
         this.put("enderChest", InventoryBeanSerializeTest.FULFILLED_MAP);
         this.put("mainHand", "LEFT");
@@ -39,8 +41,8 @@ public class HumanEntityBeanSerializeTest
             EntityBeanSerializeTest.EMPTY,
             null,
             null,
-            MainHand.RIGHT,
-            GameMode.SURVIVAL,
+            null,
+            null,
             null
     );
 

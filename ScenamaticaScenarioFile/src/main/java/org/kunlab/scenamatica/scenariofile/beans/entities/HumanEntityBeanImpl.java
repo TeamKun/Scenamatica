@@ -89,14 +89,15 @@ public class HumanEntityBeanImpl extends EntityBeanImpl implements HumanEntityBe
     public static Map<String, Object> serialize(@NotNull HumanEntityBean bean, @NotNull BeanSerializer serializer)
     {
         Map<String, Object> map = serializer.serializeEntity(bean);
+        map.remove(EntityBean.KEY_TYPE);
 
         if (bean.getInventory() != null)
             map.put(KEY_INVENTORY, serializer.serializePlayerInventory(bean.getInventory()));
         if (bean.getEnderChest() != null)
             map.put(KEY_ENDER_CHEST, serializer.serializeInventory(bean.getEnderChest()));
 
-        MapUtils.putIfNotNull(map, KEY_MAIN_HAND, bean.getMainHand());
-        MapUtils.putIfNotNull(map, KEY_GAMEMODE, bean.getGamemode());
+        MapUtils.putAsStrIfNotNull(map, KEY_MAIN_HAND, bean.getMainHand());
+        MapUtils.putAsStrIfNotNull(map, KEY_GAMEMODE, bean.getGamemode());
         MapUtils.putIfNotNull(map, KEY_FOOD_LEVEL, bean.getFoodLevel());
 
         return map;

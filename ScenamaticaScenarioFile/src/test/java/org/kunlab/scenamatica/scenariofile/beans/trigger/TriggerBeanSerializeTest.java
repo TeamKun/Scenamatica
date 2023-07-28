@@ -1,11 +1,11 @@
 package org.kunlab.scenamatica.scenariofile.beans.trigger;
 
+import org.junit.jupiter.api.Test;
 import org.kunlab.scenamatica.enums.TriggerType;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerBean;
 import org.kunlab.scenamatica.scenariofile.BeanSerializerImpl;
 import org.kunlab.scenamatica.scenariofile.beans.scenario.ScenarioBeanSerializeTest;
 import org.kunlab.scenamatica.scenariofile.beans.utils.MapTestUtil;
-import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -26,7 +26,7 @@ public class TriggerBeanSerializeTest
 
     public static final Map<String, Object> FULFILLED_MAP = new HashMap<String, Object>()
     {{
-        this.put("type", "action");
+        this.put("type", "on_action");
         this.put("before", Arrays.asList(ScenarioBeanSerializeTest.FULFILLED_MAP, ScenarioBeanSerializeTest.FULFILLED_MAP));
         this.put("after", Arrays.asList(ScenarioBeanSerializeTest.FULFILLED_MAP, ScenarioBeanSerializeTest.FULFILLED_MAP));
     }};
@@ -41,7 +41,7 @@ public class TriggerBeanSerializeTest
 
     public static final Map<String, Object> EMPTY_MAP = new HashMap<String, Object>()
     {{
-        this.put("type", "action");
+        this.put("type", "on_action");
     }};
 
     @Test

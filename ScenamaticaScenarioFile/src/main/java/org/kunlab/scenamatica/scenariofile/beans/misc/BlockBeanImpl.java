@@ -109,20 +109,15 @@ public class BlockBeanImpl implements BlockBean
     {
         if (this == o)
             return true;
+
         if (!(o instanceof BlockBeanImpl))
             return false;
+
         BlockBeanImpl blockBean = (BlockBeanImpl) o;
-
-        boolean locationEquals = false;
-        if (this.getLocation() != null && blockBean.getLocation() != null)
-            locationEquals = this.getLocation().equals(blockBean.getLocation());
-        else if (this.getLocation() == null && blockBean.getLocation() == null)
-            locationEquals = true;
-
-        return (this.getType() == null && blockBean.getType() == null)
-                && locationEquals
-                && MapUtils.equals(this.getMetadata(), blockBean.getMetadata())
-                && this.getLightLevel() == blockBean.getLightLevel()
+        return this.getType() == blockBean.getType()
+                && Objects.equals(this.getLocation(), blockBean.getLocation())
+                && Objects.equals(this.getMetadata(), blockBean.getMetadata())
+                && Objects.equals(this.getLightLevel(), blockBean.getLightLevel())
                 && this.getBiome() == blockBean.getBiome();
     }
 

@@ -103,7 +103,7 @@ public class EntityBeanSerializeTest
         this.put("ticksLived", 1);
         this.put("portalCooldown", 4);
         this.put("persistent", true);
-        this.put("fallDistance", 81.0);
+        this.put("fallDistance", 81.0f);
     }};
 
     public static final EntityBean EMPTY = new EntityBeanImpl();

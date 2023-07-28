@@ -86,9 +86,10 @@ public class EntityBeanImpl implements EntityBean
     public static Map<String, Object> serialize(@NotNull EntityBean entity, @NotNull BeanSerializer serializer)
     {
         Map<String, Object> map = new HashMap<>();
-        MapUtils.putIfNotNull(map, KEY_TYPE, entity.getType());
+        MapUtils.putAsStrIfNotNull(map, KEY_TYPE, entity.getType());
         MapUtils.putLocationIfNotNull(map, KEY_LOCATION, entity.getLocation());
-        MapUtils.putIfNotNull(map, KEY_VELOCITY, entity.getVelocity());
+        if (entity.getVelocity() != null)
+            MapUtils.putIfNotNull(map, KEY_VELOCITY, entity.getVelocity().serialize());
         MapUtils.putIfNotNull(map, KEY_CUSTOM_NAME, entity.getCustomName());
         MapUtils.putIfNotNull(map, KEY_GLOWING, entity.getGlowing());
         MapUtils.putIfNotNull(map, KEY_GRAVITY, entity.getGravity());
@@ -305,7 +306,10 @@ public class EntityBeanImpl implements EntityBean
         Integer ticksLived = MapUtils.getOrNull(map, KEY_TICKS_LIVED);
         Integer portalCooldown = MapUtils.getOrNull(map, KEY_PORTAL_COOLDOWN);
         Boolean persistent = MapUtils.getOrNull(map, KEY_PERSISTENT);
-        Float fallDistance = MapUtils.getOrNull(map, KEY_FALL_DISTANCE);
+        Number fallDistanceNumber = MapUtils.getAsNumberOrNull(map, KEY_FALL_DISTANCE);
+        Float fallDistance = null;
+        if (fallDistanceNumber != null)
+            fallDistance = fallDistanceNumber.floatValue();
 
         return new EntityBeanImpl(
                 type,

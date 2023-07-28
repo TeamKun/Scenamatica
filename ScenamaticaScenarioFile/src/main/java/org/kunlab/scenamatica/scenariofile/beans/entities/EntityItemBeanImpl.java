@@ -56,6 +56,7 @@ public class EntityItemBeanImpl extends EntityBeanImpl implements EntityItemBean
     public static Map<String, Object> serialize(@NotNull EntityItemBean bean, @NotNull BeanSerializer serializer)
     {
         Map<String, Object> map = serializer.serializeEntity(bean);
+        map.remove(EntityBean.KEY_TYPE);
         map.putAll(serializer.serializeItemStack(bean.getItemStack()));
 
         if (bean.getPickupDelay() != null)

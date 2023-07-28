@@ -1,12 +1,12 @@
 package org.kunlab.scenamatica.scenariofile.beans.inventory;
 
+import org.bukkit.Material;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.ItemStackBean;
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.PlayerInventoryBean;
 import org.kunlab.scenamatica.scenariofile.BeanSerializerImpl;
 import org.kunlab.scenamatica.scenariofile.beans.utils.MapTestUtil;
-import org.bukkit.Material;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -48,6 +48,7 @@ public class PlayerInventoryBeanSerializeTest
             {{
                 this.put(0, new HashMap<String, Object>()
                 {{
+                    this.put("amount", 1);
                     this.put("type", "STONE");
                 }});
                 this.put(1, new HashMap<String, Object>()

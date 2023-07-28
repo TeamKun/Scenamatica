@@ -63,7 +63,7 @@ public class ItemStackBeanImpl implements ItemStackBean
                 null,
                 Collections.emptyMap(),
                 Collections.emptyList(),
-                false,
+                null,
                 Collections.emptyMap(),
                 Collections.emptyList(),
                 Collections.emptyList(),
@@ -138,13 +138,18 @@ public class ItemStackBeanImpl implements ItemStackBean
             List<AttributeModifier> modifiers = new ArrayList<>();
             for (Map<String, Object> attrs : entry.getValue())
             {
+                UUID uuid;
+                if (attrs.containsKey(KEY_ATTRIBUTE_MODIFIER_UUID))
+                    uuid = UUID.fromString(attrs.get(KEY_ATTRIBUTE_MODIFIER_UUID).toString());
+                else
+                    uuid = UUID.randomUUID();
                 double attrAmount = MapUtils.getOrDefault(attrs, KEY_ATTRIBUTE_MODIFIER_AMOUNT, 0.0);
                 AttributeModifier.Operation attrOperation =
                         MapUtils.getAsEnum(attrs, KEY_ATTRIBUTE_MODIFIER_OPERATION, AttributeModifier.Operation.class);
                 EquipmentSlot slot = MapUtils.getAsEnumOrNull(attrs, KEY_ATTRIBUTE_MODIFIER_SLOT, EquipmentSlot.class);
 
                 modifiers.add(new AttributeModifier(
-                        UUID.randomUUID(),
+                        uuid,
                         attrs.get(KEY_ATTRIBUTE_MODIFIER_NAME).toString(),
                         attrAmount,
                         attrOperation,
@@ -225,6 +230,7 @@ public class ItemStackBeanImpl implements ItemStackBean
     {
         Map<String, Object> map = new HashMap<>();
 
+        MapUtils.putPrimitiveOrStrIfNotNull(map, KEY_TYPE, bean.getType());
         MapUtils.putPrimitiveOrStrIfNotNull(map, KEY_UNBREAKABLE, bean.getUnbreakable());
         MapUtils.putPrimitiveOrStrIfNotNull(map, KEY_AMOUNT, bean.getAmount());
 
@@ -491,4 +497,6 @@ public class ItemStackBeanImpl implements ItemStackBean
 
         return Objects.equals(this.damage, that.getDamage());
     }
+
+
 }

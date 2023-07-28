@@ -1,10 +1,10 @@
 package org.kunlab.scenamatica.scenariofile.beans.scenario;
 
+import org.junit.jupiter.api.Test;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.scenariofile.scenario.ScenarioBean;
 import org.kunlab.scenamatica.scenariofile.BeanSerializerImpl;
 import org.kunlab.scenamatica.scenariofile.beans.utils.MapTestUtil;
-import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -30,7 +30,7 @@ public class ScenarioBeanSerializeTest
             ScenarioType.ACTION_EXECUTE,
             ActionBeanSerializeTest.EMPTY,
             null,
-            -1L
+            -1
     );
 
     public static final Map<String, Object> EMPTY_MAP = new HashMap<String, Object>(ActionBeanSerializeTest.EMPTY_MAP)
@@ -67,6 +67,13 @@ public class ScenarioBeanSerializeTest
     {
         ScenarioBean bean = ScenarioBeanImpl.deserialize(EMPTY_MAP, BeanSerializerImpl.getInstance());
 
-        assertEquals(EMPTY, bean);
+        ScenarioBean expected = new ScenarioBeanImpl(
+                ScenarioType.ACTION_EXECUTE,
+                ActionBeanSerializeTest.EMPTY,
+                null,
+                100  // デフォルト値で補完される
+        );
+
+        assertEquals(expected, bean);
     }
 }

@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 @UtilityClass
 public class MapUtils
@@ -377,6 +378,13 @@ public class MapUtils
     {
         if (loc != null)
             map.put(key, locationToMap(loc));
+    }
+
+    public static Optional<Number> getAsNumber(Map<String, Object> map, String key)
+    {
+        if (!map.containsKey(key))
+            return Optional.empty();
+        return Optional.of((Number) map.get(key));
     }
 
     public static Number getAsNumberOrNull(Map<String, Object> map, String key)

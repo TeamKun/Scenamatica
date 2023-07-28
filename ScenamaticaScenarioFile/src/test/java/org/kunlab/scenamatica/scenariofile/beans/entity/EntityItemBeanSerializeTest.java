@@ -34,7 +34,7 @@ public class EntityItemBeanSerializeTest
     private static final UUID FULLFILLED_THROWER_UUID = UUID.fromString("4e11d4a6-4624-475f-8be0-d9e984b047f4");
     public static final EntityItemBean FULFILLED = new EntityItemBeanImpl(
             EntityBeanSerializeTest.FULFILLED,
-            ItemStackBeanSerializeTest.EMPTY,
+            ItemStackBeanSerializeTest.FULFILLED,
             1,
             FULLFILLED_OWNER_UUID,
             FULLFILLED_THROWER_UUID,
@@ -44,7 +44,7 @@ public class EntityItemBeanSerializeTest
     public static final Map<String, Object> FULFILLED_MAP = new HashMap<String, Object>()
     {{
         this.putAll(EntityBeanSerializeTest.FULFILLED_MAP);
-        this.putAll(ItemStackBeanSerializeTest.EMPTY_MAP);
+        this.putAll(ItemStackBeanSerializeTest.FULFILLED_MAP);
 
         this.put(EntityItemBean.KEY_PICKUP_DELAY, 1);
         this.put(EntityItemBean.KEY_OWNER, FULLFILLED_OWNER_UUID.toString());

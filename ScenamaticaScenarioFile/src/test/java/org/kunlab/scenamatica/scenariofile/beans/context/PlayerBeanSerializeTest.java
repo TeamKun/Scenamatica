@@ -1,11 +1,11 @@
 package org.kunlab.scenamatica.scenariofile.beans.context;
 
+import org.bukkit.Location;
+import org.junit.jupiter.api.Test;
 import org.kunlab.scenamatica.interfaces.scenariofile.context.PlayerBean;
 import org.kunlab.scenamatica.scenariofile.BeanSerializerImpl;
 import org.kunlab.scenamatica.scenariofile.beans.entity.HumanEntityBeanSerializeTest;
 import org.kunlab.scenamatica.scenariofile.beans.utils.MapTestUtil;
-import org.bukkit.Location;
-import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -71,8 +71,6 @@ public class PlayerBeanSerializeTest
 
     public static final PlayerBean EMPTY = new PlayerBeanImpl(
             HumanEntityBeanSerializeTest.EMPTY,
-            "YajuSNPI",
-            true,
             null,
             null,
             null,
@@ -82,18 +80,17 @@ public class PlayerBeanSerializeTest
             null,
             null,
             null,
-            false,
-            false,
             null,
             null,
-            -1,
+            null,
+            null,
+            null,
+            null,
+            null,
             Collections.emptyList()
     );
 
-    public static final Map<String, Object> EMPTY_MAP = new HashMap<String, Object>()
-    {{
-        this.put("name", "YajuSNPI");
-    }};
+    public static final Map<String, Object> EMPTY_MAP = new HashMap<>();
 
     @Test
     void 正常にシリアライズできるか()

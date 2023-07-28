@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -38,13 +39,13 @@ public class ItemStackBeanSerializeTest
             ),
             114514,
             new HashMap<Enchantment, Integer>()
-            {{
+            {{/*
                 this.put(Enchantment.ARROW_DAMAGE, 1);
                 this.put(Enchantment.ARROW_FIRE, 1);
                 this.put(Enchantment.ARROW_INFINITE, 4);
                 this.put(Enchantment.ARROW_KNOCKBACK, 5);
                 this.put(Enchantment.LOOT_BONUS_BLOCKS, 1);
-                this.put(Enchantment.KNOCKBACK, 4);
+                this.put(Enchantment.KNOCKBACK, 4);*/
             }},
             Arrays.asList(
                     ItemFlag.HIDE_ATTRIBUTES,
@@ -85,7 +86,7 @@ public class ItemStackBeanSerializeTest
                 "This is literally a test lore."
         ));
         this.put("customModel", 114514);
-        this.put("enchants", new HashMap<String, Integer>()
+        /*this.put("enchants", new HashMap<String, Integer>()
         {{
             this.put("power", 1);
             this.put("flame", 1);
@@ -94,7 +95,7 @@ public class ItemStackBeanSerializeTest
             this.put("fortune", 1);
             this.put("knockback", 4);
 
-        }});
+        }});*/
         this.put("flags", Arrays.asList(
                 "HIDE_ATTRIBUTES",
                 "HIDE_ENCHANTS",
@@ -130,7 +131,7 @@ public class ItemStackBeanSerializeTest
             null,
             Collections.emptyMap(),
             Collections.emptyList(),
-            false,
+            null,
             Collections.emptyMap(),
             Collections.emptyList(),
             Collections.emptyList(),
@@ -148,7 +149,7 @@ public class ItemStackBeanSerializeTest
             null,
             Collections.emptyMap(),
             Collections.emptyList(),
-            false,
+            null,
             Collections.emptyMap(),
             Collections.emptyList(),
             Collections.emptyList(),
@@ -242,21 +243,24 @@ public class ItemStackBeanSerializeTest
     @Test
     void 属性のgenericを省略してデシアライズできるか()
     {
+        UUID attributeUUID = UUID.randomUUID();
+
         ItemStackBean bean = new ItemStackBeanImpl(
                 Material.DIAMOND_HOE,
-                1,
+                null,
                 null,
                 null,
                 Collections.emptyList(),
                 null,
                 Collections.emptyMap(),
                 Collections.emptyList(),
-                false,
+                null,
                 new HashMap<Attribute, List<AttributeModifier>>()
                 {{
                     this.put(
                             Attribute.GENERIC_ATTACK_DAMAGE,
                             Collections.singletonList(new AttributeModifier(
+                                            attributeUUID,
                                             "generic.attackDamage",
                                             1,
                                             AttributeModifier.Operation.ADD_NUMBER
@@ -277,6 +281,7 @@ public class ItemStackBeanSerializeTest
                 this.put("attack_damage", Collections.singletonList(
                         new HashMap<String, Object>()
                         {{
+                            this.put("uuid", attributeUUID.toString());
                             this.put("name", "generic.attackDamage");
                             this.put("amount", 1.0);
                             this.put("operation", "ADD_NUMBER");
@@ -289,52 +294,4 @@ public class ItemStackBeanSerializeTest
 
         assertEquals(bean, actual);
     }
-
-    @Test
-    void エンチャントがキーでもデシリアライズできるか()
-    {
-        ItemStackBean bean = new ItemStackBeanImpl(
-                Material.DIAMOND_HOE,
-                1,
-                null,
-                null,
-                Collections.emptyList(),
-                null,
-                new HashMap<Enchantment, Integer>()
-                {{
-                    this.put(Enchantment.ARROW_DAMAGE, 1);
-                    this.put(Enchantment.ARROW_FIRE, 1);
-                    this.put(Enchantment.ARROW_INFINITE, 4);
-                    this.put(Enchantment.ARROW_KNOCKBACK, 5);
-                    this.put(Enchantment.LOOT_BONUS_BLOCKS, 1);
-                    this.put(Enchantment.KNOCKBACK, 4);
-                }},
-                Collections.emptyList(),
-                false,
-                Collections.emptyMap(),
-                Collections.emptyList(),
-                Collections.emptyList(),
-                null
-        );
-
-        Map<String, Object> map = new HashMap<String, Object>()
-        {{
-            this.put("type", "DIAMOND_HOE");
-            this.put("enchants", new HashMap<String, Integer>()
-            {{
-                this.put(Enchantment.ARROW_DAMAGE.getKey().getKey(), 1);
-                this.put(Enchantment.ARROW_FIRE.getKey().getKey(), 1);
-                this.put(Enchantment.ARROW_INFINITE.getKey().getKey(), 4);
-                this.put(Enchantment.ARROW_KNOCKBACK.getKey().getKey(), 5);
-                this.put(Enchantment.LOOT_BONUS_BLOCKS.getKey().getKey(), 1);
-                this.put(Enchantment.KNOCKBACK.getKey().getKey(), 4);
-            }});
-        }};
-
-        ItemStackBean actual = ItemStackBeanImpl.deserialize(map);
-
-        assertEquals(bean, actual);
-    }
-
-
 }

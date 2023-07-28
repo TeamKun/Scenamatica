@@ -26,7 +26,7 @@ public class ScenarioBeanImpl implements ScenarioBean
     ActionBean action;
 
     ActionBean runIf;
-    long timeout;
+    long timeout;  // Scenario は 他で使わないので NotNull(primitive).
 
     /**
      * シナリオをMapにシリアライズします。

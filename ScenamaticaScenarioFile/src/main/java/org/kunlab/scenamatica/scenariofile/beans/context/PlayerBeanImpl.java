@@ -99,6 +99,7 @@ public class PlayerBeanImpl extends HumanEntityBeanImpl implements PlayerBean
     {
         Map<String, Object> map = serializer.serializeHumanEntity(bean);
         MapUtils.putIfNotNull(map, KEY_NAME, bean.getName());
+        MapUtils.putIfNotNull(map, KEY_ONLINE, bean.getOnline());
 
         MapUtils.putIfNotNull(map, KEY_DISPLAY_NAME, bean.getDisplayName());
         MapUtils.putLocationIfNotNull(map, KEY_COMPASS_TARGET, bean.getCompassTarget());
@@ -165,15 +166,15 @@ public class PlayerBeanImpl extends HumanEntityBeanImpl implements PlayerBean
 
         String name = (String) map.get(KEY_NAME);
 
-        Boolean online = MapUtils.getOrDefault(map, KEY_ONLINE, true);
+        Boolean online = MapUtils.getOrNull(map, KEY_ONLINE);
         String displayName = MapUtils.getOrNull(map, KEY_DISPLAY_NAME);
         Location compassTarget = MapUtils.getAsLocationOrNull(map, KEY_COMPASS_TARGET);
         Location bedSpawnLocation = MapUtils.getAsLocationOrNull(map, KEY_BED_SPAWN_LOCATION);
         Integer exp = MapUtils.getOrNull(map, KEY_EXP);
         Integer level = MapUtils.getOrNull(map, KEY_LEVEL);
         Integer totalExperience = MapUtils.getOrNull(map, KEY_TOTAL_EXPERIENCE);
-        Boolean allowFlight = MapUtils.getOrDefault(map, KEY_ALLOW_FLIGHT, false);
-        Boolean flying = MapUtils.getOrDefault(map, KEY_FLYING, false);
+        Boolean allowFlight = MapUtils.getOrNull(map, KEY_ALLOW_FLIGHT);
+        Boolean flying = MapUtils.getOrNull(map, KEY_FLYING);
         Float walkSpeed = MapUtils.getOrNull(map, KEY_WALK_SPEED);
         Float flySpeed = MapUtils.getOrNull(map, KEY_FLY_SPEED);
 
