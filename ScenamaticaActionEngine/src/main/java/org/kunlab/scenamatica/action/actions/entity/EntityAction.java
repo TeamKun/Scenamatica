@@ -54,8 +54,8 @@ public class EntityAction extends AbstractEntityAction<EntityAction.Argument> im
         else if (target == null)
             return false;
 
-        return entityInfo != null
-                && BeanUtils.isSame(entityInfo, target, false);
+        return entityInfo == null
+                || BeanUtils.isSame(entityInfo, target, false);
     }
 
     @Override
