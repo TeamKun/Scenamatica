@@ -6,10 +6,14 @@ description: Testing entity_damage action works or not
 on:
   - type: on_load
     before:
-      - action: command_dispatch
-        type: execute
+      - type: execute
+        action: entity_spawn
         with:
-          command: 'summon minecraft:parrot 0 155 0 {Tags:["810snpi"]}'
+          entity:
+            type: minecraft:parrot
+            tags:
+              - 810snpi
+
     after:
       - action: command_dispatch
         type: execute
@@ -17,10 +21,13 @@ on:
           command: 'kill @e[type=minecraft:parrot,tag=810snpi]'
   - type: manual_dispatch
     before:
-      - action: command_dispatch
-        type: execute
+      - type: execute
+        action: entity_spawn
         with:
-          command: 'summon minecraft:parrot 0 155 0 {Tags:["810snpi"]}'
+          entity:
+            type: minecraft:parrot
+            tags:
+              - 810snpi
     after:
       - action: command_dispatch
         type: execute
