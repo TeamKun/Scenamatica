@@ -74,13 +74,23 @@ public class InternalCompiler
             @NotNull ScenarioActionListener listener,
             @NotNull ActionBean bean)
     {  // RunIF 用に偽装する。
-        CompiledAction<A> action = compiler.compile(
-                registry,
-                engine,
-                bean,
-                listener::onActionError,
-                listener::onActionExecuted
-        );
+        CompiledAction<A> action;
+        try
+        {
+
+            action = compiler.compile(
+                    registry,
+                    engine,
+                    bean,
+                    listener::onActionError,
+                    listener::onActionExecuted
+            );
+        }
+
+        catch (Throwable e)
+        {
+            throw new ScenarioCompilationErrorException(e, engine.getScenario().getName(), bean.getType());
+        }
 
         return new CompiledScenarioActionImpl<>(
                 new ScenarioBean()

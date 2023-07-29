@@ -3,6 +3,7 @@ package org.kunlab.scenamatica.reporter.packets;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -17,6 +18,7 @@ public class PacketScenamaticaError extends AbstractRawPacket
     private static final String KEY_EXCEPTION = "exception";
     private static final String KEY_MESSAGE = "message";
     private static final String KEY_STACK_TRACE = "stackTrace";
+    private static final String KEY_CAUSED_BY = "causedBy";
 
     @NotNull
     String exception;
@@ -24,6 +26,8 @@ public class PacketScenamaticaError extends AbstractRawPacket
     String message;
     @NotNull
     String[] stackTrace;
+    @Nullable
+    PacketScenamaticaError causedBy;
 
     public PacketScenamaticaError(@NotNull Throwable throwable)
     {
@@ -35,6 +39,11 @@ public class PacketScenamaticaError extends AbstractRawPacket
         this.stackTrace = Arrays.stream(throwable.getStackTrace())
                 .map(StackTraceElement::toString)
                 .toArray(String[]::new);
+
+        if (throwable.getCause() != null)
+            this.causedBy = new PacketScenamaticaError(throwable.getCause());
+        else
+            this.causedBy = null;
     }
 
     @Override
@@ -45,6 +54,10 @@ public class PacketScenamaticaError extends AbstractRawPacket
         result.put(KEY_EXCEPTION, this.exception);
         result.put(KEY_MESSAGE, this.message);
         result.put(KEY_STACK_TRACE, this.stackTrace);
+        if (this.causedBy != null)
+            result.put(KEY_CAUSED_BY, this.causedBy.serialize());
+        else
+            result.put(KEY_CAUSED_BY, null);
 
         return result;
     }
