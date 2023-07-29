@@ -23,7 +23,7 @@ import {ObjectType} from "/src/components/Object";
 
 ## 基本引数 {#general-arguments}
 
-### `entity` {#general-entity}
+### `target` {#general-target}
 
 対象のエンティティを指定します。以下の書式が有効です：
 
@@ -48,16 +48,40 @@ import {ObjectType} from "/src/components/Object";
 - type: execute
   action: entity_...
   with:
-    entity: "@e[team=Red]"  # チームが Red のエンティティのうち、最初に見つかったものが使用される
+    targe: "@e[team=Red]"  # チームが Red のエンティティのうち、最初に見つかったものが使用される
 # 中略
 - type: expect
   action: entity_...
   with:
-    entity: "@e[team=Red]"  # チームが Red のエンティティのうち、どれか一体が条件を満たしていればパスされる
+    target: "@e[team=Red]"  # チームが Red のエンティティのうち、どれか一体が条件を満たしていればパスされる
 ```
 
 
 :::
+
+## 特別：エンティティ {#entity}
+
+<Action name="エンティティ"
+        description="エンティティの状態や振る舞い、属性を変更します。"
+        id="entity"
+        args={[
+          {
+            name: "target",
+            type: ObjectType.STRING,
+            anchor: "general-entity",
+            description: "ダメージを与える対象のエンティティです。",
+          },
+          {
+            name: "entity",
+            type: "Entity",
+            type_link: "../file-syntax#entity-structure",
+            description: "書き換えるエンティティの状態です。",
+          },
+        ]}
+        executable requireable
+/>
+
+コンディション要求シナリオで使用すると、エンティティの属性や状態（例：体力、位置、速度など）を確認できます。
 
 ## エンティティのダメージ {#damage}
 
@@ -72,7 +96,7 @@ import {ObjectType} from "/src/components/Object";
         ]}
         args={[
           {
-            name: "entity",
+            name: "target",
             type: ObjectType.STRING,
             anchor: "general-entity",
             description: "ダメージを与える対象のエンティティです。",
