@@ -185,6 +185,58 @@ import {ObjectType} from "/src/components/Object";
 + `CRAMMING` エンティティの密集
 + `DRYOUT` 乾燥
 
+## エンティティによるダメージ {#damage-by-entity}
+
+<Action name="エンティティによるダメージ"
+        description="エンティティによるダメージをエンティティに与えます。"
+        id="entity_damage_by_entity"
+        events={[
+          {
+            name: "EntityDamageByEntityEvent",
+            package: "org.bukkit.event.entity",
+          }
+        ]}
+        args={[
+          {
+            name: "damager",
+            type: ObjectType.STRING,
+            anchor: "general-entity",
+            description: "ダメージ元のエンティティです。",
+          },
+          {
+            name: "target",
+            type: ObjectType.STRING,
+            anchor: "general-entity",
+            description: "ダメージを受けるエンティティです。",
+          },
+          {
+            name: "cause",
+            type: "EntityDamageEvent",
+            type_anchor: "damage-enum-entity-damage-cause",
+            description: "ダメージの種類です。",
+          },
+          {
+            name: "amount",
+            anchor: "damage-amount",
+            type: ObjectType.FLOAT,
+            description: "ダメージの量です。",
+          },
+          {
+            name: "modifiers",
+            anchor: "damage-modifiers",
+            type: ObjectType.OBJECT,
+            description: "ダメージの Modifier です。",
+          }
+        ]}
+        executable watchable 
+/>
+
+:::info
+
+このアクションは[エンティティのダメージ](#damage) をベースにしており、内部のロジックもほとんど同じです。  
+
+:::
+
 ## エンティティのスポーン {#spawn}
 
 <Action name="エンティティのスポーン"
