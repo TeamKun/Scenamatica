@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "Scenamatica ScenarioFile",
+  "title": "Scenamatica Scenario File",
   "type": "object",
   "definitions": {
     "version": {
@@ -100,6 +100,10 @@
           "enum": [
             "block_break",
             "block_place",
+            "entity",
+            "entity_damage",
+            "entity_damage_by_entity",
+            "entity_spawn",
             "inventory_click",
             "player_advancement",
             "player_animation",
@@ -178,6 +182,86 @@
             "properties": {
               "with": {
                 "$ref": "#/definitions/action/definitions/block/place"
+              }
+            },
+            "required": [
+              "with"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "entity",
+                "description": "エンティティの状態を変更します。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/entity/entity"
+              }
+            },
+            "required": [
+              "with"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "entity_damage",
+                "description": "エンティティのダメージを検知します。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/entity/damage"
+              }
+            },
+            "required": [
+              "with"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "entity_damage_by_entity",
+                "description": "エンティティによるエンティティのダメージを検知します。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/entity/damageByEntity"
+              }
+            },
+            "required": [
+              "with"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "entity_spawn",
+                "description": "エンティティのスポーンを検知します。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/entity/spawn"
               }
             },
             "required": [
@@ -891,6 +975,97 @@
                   "west",
                   "east"
                 ]
+              }
+            }
+          }
+        },
+        "entity": {
+          "$base": {
+            "properties": {
+              "target": {
+                "description": "対象のエンティティのUUIDまたはセレクタです。",
+                "type": "string"
+              }
+            },
+            "required": [
+              "target"
+            ]
+          },
+          "entity": {
+            "$ref": "#/definitions/action/definitions/entity/$base",
+            "properties": {
+              "entity": {
+                "$ref": "#/definitions/entity",
+                "description": "変更する値です。"
+              }
+            }
+          },
+          "damage": {
+            "$ref": "#/definitions/action/definitions/entity/$base",
+            "properties": {
+              "cause": {
+                "type": "string",
+                "description": "ダメージの種類です。",
+                "enum": [
+                  "CONTACT",
+                  "ENTITY_ATTACK",
+                  "ENTITY_SWEEP_ATTACK",
+                  "PROJECTILE",
+                  "SUFFOCATION",
+                  "FALL",
+                  "FIRE",
+                  "FIRE_TICK",
+                  "MELTING",
+                  "LAVA",
+                  "DROWNING",
+                  "BLOCK_EXPLOSION",
+                  "ENTITY_EXPLOSION",
+                  "VOID",
+                  "LIGHTNING",
+                  "SUICIDE",
+                  "STARVATION",
+                  "POTION",
+                  "MAGIC",
+                  "WITHER",
+                  "FALLING_BLOCK",
+                  "THORNS",
+                  "DRAGON_BREATH",
+                  "CUSTOM",
+                  "FLY_INTO_WALL",
+                  "HOT_FLOOR",
+                  "CRAMMING",
+                  "DRYOUT"
+                ]
+              },
+              "amount": {
+                "type": "number",
+                "description": "与えるダメージの量(float)です。",
+                "min": 0
+              },
+              "modifiers": {
+                "type": "object",
+                "patternProperties": {
+                  "^\\w+$": {
+                    "type": "number",
+                    "min": 0
+                  }
+                }
+              }
+            }
+          },
+          "damageByEntity": {
+            "$ref": "#/definitions/action/definitions/entity/damage",
+            "properties": {
+              "damager": {
+                "description": "ダメージ元のエンティティのUUIDまたはセレクタです。",
+                "type": "string"
+              }
+            }
+          },
+          "spawn": {
+            "properties": {
+              "entity": {
+                "$ref": "#/definitions/entity"
               }
             }
           }
@@ -1928,9 +2103,17 @@
     "entity": {
       "type": "object",
       "properties": {
+        "type": {
+          "type": "string",
+          "description": "エンティティの種類です。"
+        },
         "location": {
           "$ref": "#/definitions/location",
           "description": "エンティティの位置です。"
+        },
+        "velocity": {
+          "$ref": "#/definitions/vector",
+          "description": "エンティティの速度です。"
         },
         "customName": {
           "type": "string",
@@ -1950,20 +2133,24 @@
           "type": "boolean",
           "description": "エンティティが重力を受けているかどうかです。"
         },
+        "silent": {
+          "type": "boolean",
+          "description": "エンティティが音を発するかどうかです。"
+        },
+        "customNameVisible": {
+          "type": "boolean",
+          "description": "エンティティのカスタム名が表示されるかどうかです。"
+        },
+        "invulnerable": {
+          "type": "boolean",
+          "description": "エンティティが無敵かどうかです。"
+        },
         "tags": {
           "type": "array",
           "items": {
             "type": "string"
           },
           "description": "エンティティに付与されているスコアボードのタグです。"
-        },
-        "maxHealth": {
-          "type": "number",
-          "description": "エンティティの最大体力です。"
-        },
-        "health": {
-          "type": "number",
-          "description": "エンティティの体力です。"
         },
         "lastDamage": {
           "type": "object",
@@ -2052,6 +2239,14 @@
             "cause",
             "modifier"
           ]
+        },
+        "maxHealth": {
+          "type": "number",
+          "description": "エンティティの最大体力です。"
+        },
+        "health": {
+          "type": "number",
+          "description": "エンティティの体力です。"
         },
         "potions": {
           "type": "array",
@@ -2151,6 +2346,26 @@
               }
             }
           }
+        },
+        "fireTicks": {
+          "type": "number",
+          "description": "エンティティが燃えている時間です。"
+        },
+        "ticksLived": {
+          "type": "number",
+          "description": "エンティティが生きている時間です。"
+        },
+        "portalCooldown": {
+          "type": "number",
+          "description": "エンティティがポータルに入れるようになるまでの時間です。"
+        },
+        "persistent": {
+          "type": "boolean",
+          "description": "エンティティが永続的かどうかです。"
+        },
+        "fallDistance": {
+          "type": "number",
+          "description": "エンティティが落下した距離です。"
         }
       }
     },
@@ -2643,7 +2858,7 @@
       "type": "string",
       "description": "人間が読みやすいシナリオの説明です。シナリオの概要を記述してください。",
       "examples": [
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+        "あのイーハトーヴォのすきとおった風、夏でも底に冷たさをもつ青いそら、うつくしい森で飾られたモーリオ市、郊外のぎらぎらひかる草の波。"
       ]
     },
     "definitions": {
