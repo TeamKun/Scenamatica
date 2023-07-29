@@ -1,7 +1,7 @@
 package org.kunlab.scenamatica.action.actions.entity;
 
 import lombok.EqualsAndHashCode;
-import lombok.Value;
+import lombok.Getter;
 import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.Event;
@@ -22,7 +22,7 @@ import java.util.Map;
 import java.util.Objects;
 
 @SuppressWarnings("deprecation")  // DamageModifier <- very soon で消えるらしい。 1.8 の頃から言ってる。 <- 石油かよ！！？
-public class EntityDamageAction extends AbstractEntityAction<EntityDamageAction.Argument> implements Watchable<EntityDamageAction.Argument>
+public class EntityDamageAction<A extends EntityDamageAction.Argument> extends AbstractEntityAction<A> implements Watchable<A>
 {
     public static final String KEY_ACTION_NAME = "entity_damage";
 
@@ -33,7 +33,7 @@ public class EntityDamageAction extends AbstractEntityAction<EntityDamageAction.
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @Nullable Argument argument)
+    public void execute(@NotNull ScenarioEngine engine, @Nullable A argument)
     {
         argument = this.requireArgsNonNull(argument);
 
@@ -46,7 +46,7 @@ public class EntityDamageAction extends AbstractEntityAction<EntityDamageAction.
     }
 
     @Override
-    public boolean isFired(@NotNull Argument argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public boolean isFired(@NotNull A argument, @NotNull ScenarioEngine engine, @NotNull Event event)
     {
         if (!super.checkMatchedEntityEvent(argument, engine, event))
             return false;
@@ -85,7 +85,7 @@ public class EntityDamageAction extends AbstractEntityAction<EntityDamageAction.
     }
 
     @Override
-    public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull BeanSerializer serializer)
+    public A deserializeArgument(@NotNull Map<String, Object> map, @NotNull BeanSerializer serializer)
     {
         Number amountNum = MapUtils.getAsNumberOrNull(map, Argument.KEY_AMOUNT);
         Double amount;
@@ -112,7 +112,8 @@ public class EntityDamageAction extends AbstractEntityAction<EntityDamageAction.
         else
             modifiersMap = null;
 
-        return new Argument(
+        // noinspection unchecked  A は Argument であることが保証されている
+        return (A) new Argument(
                 super.deserializeTarget(map),
                 MapUtils.getAsEnumOrNull(map, Argument.KEY_DAMAGE_CAUSE, EntityDamageEvent.DamageCause.class),
                 amount,
@@ -120,7 +121,7 @@ public class EntityDamageAction extends AbstractEntityAction<EntityDamageAction.
         );
     }
 
-    @Value
+    @Getter
     @EqualsAndHashCode(callSuper = true)
     public static class Argument extends AbstractEntityActionArgument
     {
@@ -128,9 +129,9 @@ public class EntityDamageAction extends AbstractEntityAction<EntityDamageAction.
         public static final String KEY_AMOUNT = "amount";  // 最終ダメージ
         public static final String KEY_DAMAGE_MODIFIERS = "modifiers";
 
-        EntityDamageEvent.DamageCause cause;
-        Double amount;
-        Map<EntityDamageEvent.DamageModifier, @NotNull Double> modifiers;
+        private final EntityDamageEvent.DamageCause cause;
+        private final Double amount;
+        private final Map<EntityDamageEvent.DamageModifier, @NotNull Double> modifiers;
 
         public Argument(@NotNull String target, EntityDamageEvent.DamageCause cause, Double amount, Map<EntityDamageEvent.DamageModifier, @NotNull Double> modifiers)
         {

@@ -1,0 +1,52 @@
+# noinspection YAMLSchemaValidation
+scenamatica: ${project.version}
+
+name: actions_entity_damage_by_entity
+description: Testing entity_damage_by_entity action works or not
+on:
+  - type: on_load
+    before:
+      - type: execute
+        action: entity_spawn
+        with:
+          entity:
+            type: minecraft:parrot
+            tags:
+              - 810snpi
+    after:
+      - action: command_dispatch
+        type: execute
+        with:
+          command: 'kill @e[type=minecraft:parrot,tag=810snpi]'
+  - type: manual_dispatch
+    before:
+      - type: execute
+        action: entity_spawn
+        with:
+          entity:
+            type: minecraft:parrot
+            tags:
+              - 810snpi
+    after:
+      - action: command_dispatch
+        type: execute
+        with:
+          command: 'kill @e[type=minecraft:parrot,tag=810snpi]'
+
+context:
+  actors:
+    - name: Actor01
+scenario:
+  - type: execute
+    action: entity_damage_by_entity
+    with:
+      amount: 3
+      target: "@e[type=minecraft:parrot,tag=810snpi]"
+      damager: Actor01
+  - type: expect
+    action: entity_damage
+    with:
+      target: "@e[type=minecraft:parrot,tag=810snpi]"
+      damager: Actor01
+    timeout: 20
+

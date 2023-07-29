@@ -1,5 +1,6 @@
 package org.kunlab.scenamatica.action.actions.entity;
 
+import org.bukkit.entity.Entity;
 import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityEvent;
 import org.jetbrains.annotations.NotNull;
@@ -20,22 +21,28 @@ public abstract class AbstractEntityAction<A extends AbstractEntityActionArgumen
         List<AbstractAction<?>> actions = new ArrayList<>();
 
         actions.add(new EntityAction());
-        actions.add(new EntityDamageAction());
+        actions.add(new EntityDamageAction<>());
+        actions.add(new EntityDamageByEntityAction());
         actions.add(new EntitySpawnAction());  // AbstractEntityAction を継承してない(引数都合)
 
         return actions;
     }
 
-    public boolean checkMatchedEntityEvent(@NotNull A argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    protected boolean checkMatchedEntityEvent(@NotNull A argument, @NotNull ScenarioEngine engine, @NotNull Event event)
     {
         if (!(event instanceof EntityEvent))
             return false;
 
         EntityEvent e = (EntityEvent) event;
 
-        return EntityUtils.selectEntities(argument.getTargetString())
-                .stream().parallel()
-                .anyMatch(entity -> Objects.equals(entity.getUniqueId(), e.getEntity().getUniqueId()));
+        return this.checkMatchedEntity(argument.getTargetString(), e.getEntity());
+    }
+
+    protected boolean checkMatchedEntity(String specifier, @NotNull Entity actualEntity)
+    {
+        return EntityUtils.selectEntities(specifier)
+                .stream()
+                .anyMatch(entity -> Objects.equals(entity.getUniqueId(), actualEntity.getUniqueId()));
     }
 
     protected String deserializeTarget(Map<String, Object> map)

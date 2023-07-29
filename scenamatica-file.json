@@ -102,6 +102,7 @@
             "block_place",
             "entity",
             "entity_damage",
+            "entity_damage_by_entity",
             "entity_spawn",
             "inventory_click",
             "player_advancement",
@@ -221,6 +222,26 @@
             "properties": {
               "with": {
                 "$ref": "#/definitions/action/definitions/entity/damage"
+              }
+            },
+            "required": [
+              "with"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "entity_damage_by_entity",
+                "description": "エンティティによるエンティティのダメージを検知します。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/entity/damageByEntity"
               }
             },
             "required": [
@@ -1029,6 +1050,15 @@
                     "min": 0
                   }
                 }
+              }
+            }
+          },
+          "damageByEntity": {
+            "$ref": "#/definitions/action/definitions/entity/damage",
+            "properties": {
+              "damager": {
+                "description": "ダメージ元のエンティティのUUIDまたはセレクタです。",
+                "type": "string"
               }
             }
           },

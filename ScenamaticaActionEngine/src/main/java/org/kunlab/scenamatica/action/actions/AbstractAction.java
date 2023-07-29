@@ -41,7 +41,7 @@ public abstract class AbstractAction<A extends ActionArgument> implements Action
     }
 
     @NotNull
-    protected A requireArgsNonNull(@Nullable A argument)
+    protected <T> T requireArgsNonNull(@Nullable T argument)
     {
         if (argument == null)
             throw new IllegalArgumentException("Cannot execute action without argument.");
