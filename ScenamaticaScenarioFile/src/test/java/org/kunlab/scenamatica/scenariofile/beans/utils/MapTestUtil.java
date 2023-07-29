@@ -3,6 +3,7 @@ package org.kunlab.scenamatica.scenariofile.beans.utils;
 import lombok.experimental.UtilityClass;
 import org.junit.jupiter.api.Assertions;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -73,7 +74,9 @@ public class MapTestUtil
     public void dumpMap(String name, Map<?, ?> map, int depth)
     {
         int indents = depth * 2;
-        String indent = " ".repeat(indents);
+        char[] indentChars = new char[indents];
+        Arrays.fill(indentChars, ' ');
+        String indent = new String(indentChars);
 
         if (name != null)
             System.out.println(indent + name + ":");
@@ -99,7 +102,9 @@ public class MapTestUtil
     public void dumpList(String name, List<?> list, int depth)
     {
         int indents = depth * 2;
-        String indent = " ".repeat(indents);
+        char[] indentChars = new char[indents];
+        Arrays.fill(indentChars, ' ');
+        String indent = new String(indentChars);
 
         if (name != null)
             System.out.println(indent + name + ":");
