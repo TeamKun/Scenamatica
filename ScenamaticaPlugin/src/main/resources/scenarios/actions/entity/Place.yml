@@ -1,0 +1,40 @@
+# noinspection YAMLSchemaValidation
+scenamatica: ${project.version}
+
+name: actions_entity_place
+description: Testing entity_place action works or not
+on:
+  - type: on_load
+  - type: manual_dispatch
+
+context:
+  actors:
+    - name: Actor01
+  stage:
+    type: FLAT
+
+scenario:
+  - type: execute
+    action: entity_place
+    with:
+      target: "OAK_BOAT"
+      block:
+        location:
+          x: 0
+          y: 4 # 岩盤/土/土/草/空気 <- HERE!
+          z: 0
+      player: Actor01
+      direction: "DOWN"
+  - type: expect
+    action: entity_place
+    with:
+      target: "@e[type=minecraft:boat]"
+      block:
+        location:
+          x: 0
+          y: 4
+          z: 0
+      direction: "DOWN"
+      player: Actor01
+    timeout: 20
+

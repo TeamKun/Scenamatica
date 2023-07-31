@@ -19,9 +19,13 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.java.PluginClassLoader;
 import org.bukkit.potion.PotionEffect;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.entities.EntityBean;
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.InventoryBean;
@@ -323,6 +327,37 @@ public class BeanUtils
                     entity.setFallDistance(bean.getFallDistance());
             }
         }
+    }
+
+    public static void applyBlockBeanData(@NotNull BlockBean blockBean, @Nullable Location location, @NotNull World world)
+    {
+        Location targetLoc = location == null ? blockBean.getLocation(): location;
+        if (targetLoc == null)
+            return;
+
+        Block block = targetLoc.getBlock();
+        if (blockBean.getType() != null)
+            block.setType(blockBean.getType(), true);
+        if (blockBean.getBiome() != null)
+            world.setBiome(targetLoc.getBlockX(), targetLoc.getBlockY(), targetLoc.getBlockZ(), blockBean.getBiome());
+        if (blockBean.getMetadata() != null)
+        {
+            ClassLoader classLoader = BeanUtils.class.getClassLoader();
+            if (!(classLoader instanceof PluginClassLoader))
+                throw new IllegalStateException("ClassLoader is not PluginClassLoader");
+            Plugin owningPlugin = ((PluginClassLoader) classLoader).getPlugin();
+
+            for (Map.Entry<String, Object> entry : blockBean.getMetadata().entrySet())
+                block.setMetadata(
+                        entry.getKey(),
+                        new FixedMetadataValue(owningPlugin, entry.getValue())
+                );
+        }
+    }
+
+    public static void applyBlockBeanData(@NotNull BlockBean blockBean, @Nullable Location location, @NotNull ScenarioEngine engine)
+    {
+        applyBlockBeanData(blockBean, location, engine.getContext().getStage());
     }
 
     public static boolean isSame(@NotNull EntityBean entityBean, @NotNull Entity entity, boolean strict)

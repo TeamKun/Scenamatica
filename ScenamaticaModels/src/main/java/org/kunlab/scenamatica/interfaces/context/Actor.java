@@ -43,6 +43,22 @@ public interface Actor
     void interactAt(@NotNull Action action, Block block);
 
     /**
+     * エンティティのアイテムを設置します。
+     *
+     * @param location 設置するアイテムの位置
+     * @param item     設置するアイテム
+     */
+    void placeItem(@NotNull Location location, @NotNull ItemStack item);
+
+    /**
+     * エンティティのアイテムを設置します。
+     *
+     * @param location 設置するアイテムの位置
+     * @param item     設置するアイテム
+     */
+    void placeItem(@NotNull Location location, @NotNull ItemStack item, @Nullable BlockFace face);
+
+    /**
      * ブロックを破壊します。
      *
      * @param block 破壊するブロック

@@ -103,6 +103,7 @@
             "entity",
             "entity_damage",
             "entity_damage_by_entity",
+            "entity_place",
             "entity_spawn",
             "inventory_click",
             "player_advancement",
@@ -242,6 +243,26 @@
             "properties": {
               "with": {
                 "$ref": "#/definitions/action/definitions/entity/damageByEntity"
+              }
+            },
+            "required": [
+              "with"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "entity_place",
+                "description": "エンティティの設置を検知します。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/entity/place"
               }
             },
             "required": [
@@ -1059,6 +1080,44 @@
               "damager": {
                 "description": "ダメージ元のエンティティのUUIDまたはセレクタです。",
                 "type": "string"
+              }
+            }
+          },
+          "place": {
+            "properties": {
+              "target": {
+                "description": "設置するエンティティのセレクタか素材です。",
+                "type": "string",
+                "example": [
+                  "@e[type=armor_stand]",
+                  "minecraft:armor_stand"
+                ]
+              },
+              "player": {
+                "description": "設置するプレイヤーの名前または UUID です。",
+                "type": "string"
+              },
+              "block": {
+                "description": "設置場所のブロックです。",
+                "$ref": "#/definitions/block"
+              },
+              "direction": {
+                "description": "設置する方向です。",
+                "type": "string",
+                "enum": [
+                  "UP",
+                  "DOWN",
+                  "NORTH",
+                  "SOUTH",
+                  "WEST",
+                  "EAST",
+                  "up",
+                  "down",
+                  "north",
+                  "south",
+                  "west",
+                  "east"
+                ]
               }
             }
           },

@@ -17,6 +17,7 @@ import net.minecraft.server.v1_16_R3.EnumItemSlot;
 import net.minecraft.server.v1_16_R3.EnumMoveType;
 import net.minecraft.server.v1_16_R3.InventoryClickType;
 import net.minecraft.server.v1_16_R3.Item;
+import net.minecraft.server.v1_16_R3.ItemActionContext;
 import net.minecraft.server.v1_16_R3.MinecraftServer;
 import net.minecraft.server.v1_16_R3.MovingObjectPositionBlock;
 import net.minecraft.server.v1_16_R3.NetworkManager;
@@ -132,6 +133,44 @@ class MockedPlayer extends EntityPlayer implements Actor
                 );
                 break;
         }
+    }
+
+    @Override
+    public void placeItem(@NotNull Location location, @NotNull ItemStack item)
+    {
+        this.placeItem(location, item, null);
+    }
+
+    @Override
+    public void placeItem(@NotNull Location location, @NotNull ItemStack item, @Nullable BlockFace face)
+    {
+        final EnumHand HAND = EnumHand.MAIN_HAND;
+
+        net.minecraft.server.v1_16_R3.ItemStack nmsItem = CraftItemStack.asNMSCopy(item);
+
+        EnumDirection direction;
+        if (face == null)
+            direction = Utils.getDirection(location, this.getPlayer().getLocation());
+        else
+            direction = Utils.toNMSDirection(face);
+
+        MovingObjectPositionBlock position = new MovingObjectPositionBlock(
+                /* vec3D: */ new Vec3D(location.getX(), location.getY(), location.getZ()),
+                /* enumDirection: */ direction,
+                /* blockPosition: */ new BlockPosition(location.getBlockX(), location.getBlockY(), location.getBlockZ()),
+                /* flag: */ false
+        );
+
+        ItemActionContext ctx = new ItemActionContext(
+                /* world: */ this.world,
+                /* player: */ this,
+                /* enumHand: */ HAND,
+                /* itemStack: */ nmsItem,
+                /* movingObjectPositionBlock: */ position
+        );
+
+
+        nmsItem.placeItem(ctx, HAND);
     }
 
     @Override

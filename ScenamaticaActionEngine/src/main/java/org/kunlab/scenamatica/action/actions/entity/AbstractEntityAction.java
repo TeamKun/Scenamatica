@@ -23,6 +23,7 @@ public abstract class AbstractEntityAction<A extends AbstractEntityActionArgumen
         actions.add(new EntityAction());
         actions.add(new EntityDamageAction<>());
         actions.add(new EntityDamageByEntityAction());
+        actions.add(new EntityPlaceAction());
         actions.add(new EntitySpawnAction());  // AbstractEntityAction を継承してない(引数都合)
 
         return actions;
