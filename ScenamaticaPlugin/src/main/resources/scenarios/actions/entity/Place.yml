@@ -17,7 +17,7 @@ scenario:
   - type: execute
     action: entity_place
     with:
-      target: "OAK_BOAT"
+      target: "ARMOR_STAND"
       block:
         location:
           x: 0
@@ -28,7 +28,7 @@ scenario:
   - type: expect
     action: entity_place
     with:
-      target: "@e[type=minecraft:boat]"
+      target: "@e[type=minecraft:armor_stand]"
       block:
         location:
           x: 0

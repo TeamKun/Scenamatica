@@ -97,9 +97,6 @@ public class EntityPlaceAction extends AbstractEntityAction<EntityPlaceAction.Ar
         if (location.getWorld() == null)
             location.setWorld(actor.getPlayer().getWorld());  // Engine による推定はしない(Actor のワールド依存のアクションなため)
 
-        if (argument.getBlockFace() != null)
-            location = location.getBlock().getRelative(argument.getBlockFace()).getLocation();
-
         if (isNotOnlyLocationAvailable(argument.getBlock()))
             BeanUtils.applyBlockBeanData(argument.getBlock(), location, engine);
 
