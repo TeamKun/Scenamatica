@@ -202,6 +202,7 @@ public class ScenarioEngineImpl implements ScenarioEngine
     {
         this.executor.cancel();
         this.cleanUp();  // これの位置を変えると, 排他の問題でバグる
+        this.isRunning = false;
         this.state = ScenarioState.STAND_BY;
     }
 
