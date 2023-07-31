@@ -61,7 +61,7 @@ public class StageBeanImpl implements StageBean
         validate(map);
 
         return new StageBeanImpl(
-                MapUtils.getOrDefault(map, KEY_ORIGINAL_WORLD_NAME, "world"),
+                MapUtils.getOrNull(map, KEY_ORIGINAL_WORLD_NAME),
                 MapUtils.getAsEnumOrDefault(map, KEY_TYPE, WorldType.class, WorldType.NORMAL),
                 MapUtils.getAsLongOrNull(map, KEY_SEED),
                 MapUtils.getOrDefault(map, KEY_GENERATE_STRUCTURES, true),
