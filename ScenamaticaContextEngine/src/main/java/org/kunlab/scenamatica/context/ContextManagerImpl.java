@@ -149,7 +149,7 @@ public class ContextManagerImpl implements ContextManager
     @Override
     public void destroyContext()
     {
-        if (!this.isWorldPrepared)
+        if (this.isWorldPrepared)
             this.stageManager.destroyStage();  // StageNotCreatedException はチェック済み。
 
         if (this.isActorPrepared)

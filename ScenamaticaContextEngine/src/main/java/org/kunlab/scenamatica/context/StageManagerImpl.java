@@ -1,17 +1,17 @@
 package org.kunlab.scenamatica.context;
 
 import lombok.Getter;
+import org.bukkit.Bukkit;
+import org.bukkit.NamespacedKey;
+import org.bukkit.World;
+import org.bukkit.WorldCreator;
+import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.context.utils.WorldUtils;
 import org.kunlab.scenamatica.exceptions.context.stage.StageCreateFailedException;
 import org.kunlab.scenamatica.exceptions.context.stage.StageNotCreatedException;
 import org.kunlab.scenamatica.interfaces.ScenamaticaRegistry;
 import org.kunlab.scenamatica.interfaces.context.StageManager;
 import org.kunlab.scenamatica.interfaces.scenariofile.context.StageBean;
-import org.bukkit.Bukkit;
-import org.bukkit.NamespacedKey;
-import org.bukkit.World;
-import org.bukkit.WorldCreator;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -111,6 +111,7 @@ public class StageManagerImpl implements StageManager
         else if (this.isShared)  // 共有ステージの場合は壊すと大変なことになる。
         {
             this.stage = null;
+            this.isShared = false;
             return;
         }
 
