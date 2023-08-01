@@ -37,7 +37,7 @@ public class EntityDamageAction<A extends EntityDamageAction.Argument> extends A
     {
         argument = this.requireArgsNonNull(argument);
 
-        Entity target = argument.getTarget();
+        Entity target = argument.selectTarget();
 
         if (!(target instanceof Damageable))
             throw new IllegalArgumentException("Target is not damageable");
@@ -78,6 +78,8 @@ public class EntityDamageAction<A extends EntityDamageAction.Argument> extends A
 
         if (type == ScenarioType.ACTION_EXECUTE)
         {
+            if (!argument.isSelectable())
+                throw new IllegalArgumentException("Cannot select target for this action, please specify target with valid selector.");
             this.throwIfNotPresent(Argument.KEY_AMOUNT, argument.getAmount());
             if (argument.getCause() != null)
                 throw new IllegalArgumentException("Use entity_damage_by_entity or entity_damage_by_block action instead.");
@@ -114,7 +116,7 @@ public class EntityDamageAction<A extends EntityDamageAction.Argument> extends A
 
         // noinspection unchecked  A は Argument であることが保証されている
         return (A) new Argument(
-                super.deserializeTarget(map),
+                super.deserializeTarget(map, serializer),
                 MapUtils.getAsEnumOrNull(map, Argument.KEY_DAMAGE_CAUSE, EntityDamageEvent.DamageCause.class),
                 amount,
                 modifiersMap
@@ -133,7 +135,7 @@ public class EntityDamageAction<A extends EntityDamageAction.Argument> extends A
         private final Double amount;
         private final Map<EntityDamageEvent.DamageModifier, @NotNull Double> modifiers;
 
-        public Argument(@NotNull String target, EntityDamageEvent.DamageCause cause, Double amount, Map<EntityDamageEvent.DamageModifier, @NotNull Double> modifiers)
+        public Argument(@NotNull Object target, EntityDamageEvent.DamageCause cause, Double amount, Map<EntityDamageEvent.DamageModifier, @NotNull Double> modifiers)
         {
             super(target);
             this.cause = cause;

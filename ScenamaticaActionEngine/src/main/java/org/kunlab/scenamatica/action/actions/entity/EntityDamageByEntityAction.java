@@ -36,7 +36,7 @@ public class EntityDamageByEntityAction extends EntityDamageAction<EntityDamageB
     {
         argument = this.requireArgsNonNull(argument);
 
-        Entity target = argument.getTarget();
+        Entity target = argument.selectTarget();
 
         if (!(target instanceof Damageable))
             throw new IllegalArgumentException("Target is not damageable");
@@ -50,8 +50,13 @@ public class EntityDamageByEntityAction extends EntityDamageAction<EntityDamageB
         super.validateArgument(engine, type, argument);
 
         assert argument != null;
-        if (type == ScenarioType.ACTION_EXECUTE && argument.getDamagerString() == null)
-            throw new IllegalArgumentException("Cannot execute this action without damager");
+        if (type == ScenarioType.ACTION_EXECUTE)
+        {
+            if (!argument.isSelectable())
+                throw new IllegalArgumentException("Cannot select target for this action, please specify target with valid selector.");
+            if (argument.getDamagerString() == null)
+                throw new IllegalArgumentException("Cannot execute this action without damager");
+        }
     }
 
     @Override
@@ -82,7 +87,7 @@ public class EntityDamageByEntityAction extends EntityDamageAction<EntityDamageB
         String damager = MapUtils.getOrNull(map, Argument.KEY_DAMAGER);
 
         return new Argument(
-                base.getTargetString(),
+                base.getTargetRaw(),
                 base.getCause(),
                 base.getAmount(),
                 base.getModifiers(),
@@ -99,7 +104,7 @@ public class EntityDamageByEntityAction extends EntityDamageAction<EntityDamageB
         String damager;
 
         @SuppressWarnings("deprecation")  // DamageModifier は消えるとか言ってるけど多分きえない。たぶん。というかまだある。
-        public Argument(@NotNull String target, EntityDamageEvent.DamageCause cause, Double amount, Map<EntityDamageEvent.DamageModifier, @NotNull Double> modifiers, String damager)
+        public Argument(@NotNull Object target, EntityDamageEvent.DamageCause cause, Double amount, Map<EntityDamageEvent.DamageModifier, @NotNull Double> modifiers, String damager)
         {
             super(target, cause, amount, modifiers);
             this.damager = damager;

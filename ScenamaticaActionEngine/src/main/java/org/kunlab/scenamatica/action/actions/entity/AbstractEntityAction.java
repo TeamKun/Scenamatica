@@ -5,9 +5,11 @@ import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityEvent;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.action.actions.AbstractAction;
+import org.kunlab.scenamatica.action.utils.BeanUtils;
 import org.kunlab.scenamatica.action.utils.EntityUtils;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
+import org.kunlab.scenamatica.interfaces.scenariofile.BeanSerializer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +38,13 @@ public abstract class AbstractEntityAction<A extends AbstractEntityActionArgumen
 
         EntityEvent e = (EntityEvent) event;
 
-        return this.checkMatchedEntity(argument.getTargetString(), e.getEntity());
+        if (argument.isSelectable())
+            return this.checkMatchedEntity(argument.getTargetString(), e.getEntity());
+        else
+        {
+            assert argument.getTargetBean() != null;
+            return BeanUtils.isSame(argument.getTargetBean(), e.getEntity(), /* strict */ false);
+        }
     }
 
     protected boolean checkMatchedEntity(String specifier, @NotNull Entity actualEntity)
@@ -46,10 +54,19 @@ public abstract class AbstractEntityAction<A extends AbstractEntityActionArgumen
                 .anyMatch(entity -> Objects.equals(entity.getUniqueId(), actualEntity.getUniqueId()));
     }
 
-    protected String deserializeTarget(Map<String, Object> map)
+    protected Object deserializeTarget(Map<String, Object> map, BeanSerializer serializer)
     {
         MapUtils.checkContainsKey(map, AbstractEntityActionArgument.KEY_TARGET_ENTITY);
 
-        return map.get(AbstractEntityActionArgument.KEY_TARGET_ENTITY).toString();
+        Object targetLike = map.get(AbstractEntityActionArgument.KEY_TARGET_ENTITY);
+
+        if (targetLike instanceof Map)
+            return serializer.deserializeEntity(MapUtils.checkAndCastMap(
+                    targetLike,
+                    String.class,
+                    Object.class
+            ));
+        else
+            return targetLike;
     }
 }

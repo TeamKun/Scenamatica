@@ -95,11 +95,15 @@ public class EntityPlaceAction extends AbstractEntityAction<EntityPlaceAction.Ar
         Location location = argument.getBlock().getLocation();
         Actor actor = PlayerUtils.getActorByStringOrThrow(engine, argument.getPlayerSpecifier());
         if (location.getWorld() == null)
+        {
+            location = location.clone();
             location.setWorld(actor.getPlayer().getWorld());  // Engine による推定はしない(Actor のワールド依存のアクションなため)
+        }
 
         if (isNotOnlyLocationAvailable(argument.getBlock()))
             BeanUtils.applyBlockBeanData(argument.getBlock(), location, engine);
 
+        assert argument.getTargetString() != null;  // EXECUTE は, validateArgument でチェック済み
         Material material = Utils.searchMaterial(argument.getTargetString());
         if (material == null)
             throw new IllegalArgumentException("Material is not specified.");
@@ -116,6 +120,9 @@ public class EntityPlaceAction extends AbstractEntityAction<EntityPlaceAction.Ar
         argument = this.requireArgsNonNull(argument);
         if (type != ScenarioType.ACTION_EXECUTE)
             return;
+
+        if (!argument.isSelectable())
+            throw new IllegalArgumentException("Cannot select target for this action, please specify target with valid selector.");
 
         if (argument.getBlock() == null)
             throw new IllegalArgumentException("Block is not specified.");
@@ -185,7 +192,7 @@ public class EntityPlaceAction extends AbstractEntityAction<EntityPlaceAction.Ar
             );
 
         return new Argument(
-                super.deserializeTarget(map),
+                super.deserializeTarget(map, serializer),
                 MapUtils.getOrNull(map, Argument.KEY_PLAYER),
                 blockBean,
                 MapUtils.getAsEnumOrNull(map, Argument.KEY_BLOCK_FACE, BlockFace.class)
@@ -204,7 +211,7 @@ public class EntityPlaceAction extends AbstractEntityAction<EntityPlaceAction.Ar
         BlockBean block;
         BlockFace blockFace;
 
-        public Argument(@NotNull String target, String playerSpecifier, BlockBean block, BlockFace blockFace)
+        public Argument(@NotNull Object target, String playerSpecifier, BlockBean block, BlockFace blockFace)
         {
             super(target);
             this.playerSpecifier = playerSpecifier;

@@ -1004,8 +1004,16 @@
           "$base": {
             "properties": {
               "target": {
-                "description": "対象のエンティティのUUIDまたはセレクタです。",
-                "type": "string"
+                "description": "対象のエンティティです。",
+                "oneOf": [
+                  {
+                    "type": "string",
+                    "description": "エンティティの UUID またはセレクタです。"
+                  },
+                  {
+                    "$ref": "#/definitions/entity"
+                  }
+                ]
               }
             },
             "required": [
@@ -1085,13 +1093,9 @@
           },
           "place": {
             "properties": {
+              "$ref": "#/definitions/action/definitions/entity/damage",
               "target": {
-                "description": "設置するエンティティのセレクタか素材です。",
-                "type": "string",
-                "example": [
-                  "@e[type=armor_stand]",
-                  "minecraft:armor_stand"
-                ]
+                "description": "設置するエンティティの UUID, セレクタ, 実体, または Material です。"
               },
               "player": {
                 "description": "設置するプレイヤーの名前または UUID です。",

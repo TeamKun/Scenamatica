@@ -33,7 +33,7 @@ public class EntityAction extends AbstractEntityAction<EntityAction.Argument> im
     {
         argument = this.requireArgsNonNull(argument);
 
-        Entity target = argument.getTarget();
+        Entity target = argument.selectTarget();
         EntityBean entityInfo = argument.getEntity();
 
         assert entityInfo != null;
@@ -63,6 +63,9 @@ public class EntityAction extends AbstractEntityAction<EntityAction.Argument> im
     {
         argument = this.requireArgsNonNull(argument);
 
+        if (!argument.isSelectable())
+            throw new IllegalArgumentException("Cannot select target for this action, please specify target with valid selector.");
+
         if (type == ScenarioType.ACTION_EXECUTE && argument.getEntity() == null)
             throw new IllegalArgumentException("Cannot execute action without entity argument.");
     }
@@ -83,7 +86,7 @@ public class EntityAction extends AbstractEntityAction<EntityAction.Argument> im
             bean = null;
 
         return new Argument(
-                super.deserializeTarget(map),
+                super.deserializeTarget(map, serializer),
                 bean
         );
     }
@@ -97,7 +100,7 @@ public class EntityAction extends AbstractEntityAction<EntityAction.Argument> im
         @Nullable
         EntityBean entity;
 
-        public Argument(@NotNull String target, @Nullable EntityBean entity)
+        public Argument(@NotNull Object target, @Nullable EntityBean entity)
         {
             super(target);
             this.entity = entity;
