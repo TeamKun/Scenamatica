@@ -21,20 +21,21 @@ scenario:
       block:
         location:
           x: 0
-          y: 4 # 岩盤/土/土/草/空気 <- HERE!
+          y: 350
           z: 0
       player: Actor01
-      direction: "DOWN"
+      direction: "UP"
   - type: expect
     action: entity_place
     with:
-      target: "@e[type=minecraft:armor_stand]"
+      target:
+        type: "ARMOR_STAND"
       block:
         location:
           x: 0
-          y: 4
+          y: 350
           z: 0
-      direction: "DOWN"
+      direction: "UP"
       player: Actor01
     timeout: 20
 
