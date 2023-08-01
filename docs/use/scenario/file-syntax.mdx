@@ -1116,6 +1116,15 @@ Scenamatica のシナリオファイルにおける YAML のキーは、原則�
 + Minecraft 固有の単語は区切らずに記述します。  
   例： `game mode` => `gamemode`, `mine craft` => `minecraft` など
 
+:::info
+
+例外として、アクションの名前が挙げられます。これらは, `snake_case` で定義されるため、利用する際も `snake_case` で記述する必要があります。
+
+- ❌ `action: setBlock`
+- ✅ `action: set_block`
+
+:::
+
 ### 列挙値におけるシンタックスシュガー {#syntax-sugar-on-enum-values}
 
 一部のアクションの引数には、 Minecraft/Bukkit 固有の列挙値（例： `GameMode`, `Material` など）が指定できます。  

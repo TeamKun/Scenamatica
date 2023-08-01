@@ -32,6 +32,9 @@ import {ObjectType} from "/src/components/Object";
 + プレイヤまたはエンティティのセレクタおよびその省略書式 （例：`entity: "@e[team=Red,tags=MyTag]"` ）
   - 省略： `@e` は省略できます （例：`entity: "[team=Red,tags=MyTag]"` ）。
   - 省略： `@e[...]` はできます （例：`entity: "team=Red,tags=MyTag"` ）。
++ [Entity 型](../file-types#entity-structure) のオブジェクト  
+  特に記述がない限り アクション実行期待シナリオの引数 `target` として使用できます。これを使用すれば、セレクタを使用せずに
+  高度な条件を指定できます。
 
 :::info シナリオの種類での振る舞いの違い
 
@@ -55,7 +58,6 @@ import {ObjectType} from "/src/components/Object";
   with:
     target: "@e[team=Red]"  # チームが Red のエンティティのうち、どれか一体が条件を満たしていればパスされる
 ```
-
 
 :::
 
@@ -237,6 +239,95 @@ import {ObjectType} from "/src/components/Object";
 
 :::
 
+## エンティティの設置 {#place}
+
+<Action name="エンティティの設置"
+        description="エンティティを設置します。"
+        id="entity_place"
+        events={[
+          {
+            name: "EntityPlaceEvent",
+            package: "org.bukkit.event.entity",
+          }
+        ]}
+        args={[
+          {
+            name: "entity",
+            anchor: "place-entity",
+            type: "Entity",
+            type_link: "../file-syntax#entity-structure"
+          },
+          {
+            name: "player",
+            type: ObjectType.STRING,
+            description: "エンティティを設置するプレイヤーです。",
+          },
+          {
+            name: "block",
+            anchor: "place-block",
+            type: "Block",
+            type_link: "../file-syntax#block-structure",
+            description: "エンティティを設置するブロックです。",
+          },
+          {
+            name: "direction",
+            anchor: "place-direction",
+            type: "BlockFace{UP, DOWN, NORTH, EAST, SOUTH, WEST}",
+            type_link: "../file-syntax#block-face-enum",
+            description: "エンティティを設置する方向です。",
+          }
+        ]}
+        executable watchable
+/>
+
+### `block` {#place-block}
+
+:::caution 
+
+アクション実行シナリオの場合、この項目および [`Block#location`](../file-syntax#location-structure) は必須です。
+
+:::
+
+### `direction` {#place-direction}
+
+エンティティを設置する方向を指定します。
+
+:::info
+
+アクション実行シナリオで省略した場合、プレイヤの位置と対象の位置から推論されます。
+
+:::
+
+### `entity` {#place-entity}
+
+アクション実行シナリオの場合、設置するエンティティの UUID やセレクタ、または アイテム化したときの Material を指定します。  
+設置できるエンティティは、 Bukkit との相互作用のために以下のものに限られます。
+それら以外を設置・召喚する場合は [エンティティのスポーン](#spawn)アクション を使用してください。
+
++ `MINECART`
++ `CHEST_MINECART`
++ `FURNACE_MINECART`
++ `TNT_MINECART`
++ `HOPPER_MINECART`
++ `COMMAND_BLOCK_MINECART`
++ `ARMOR_STAND`
++ `LEGACY_ARMOR_STAND`
++ `ACACIA_BOAT`
++ `BIRCH_BOAT`
++ `DARK_OAK_BOAT`
++ `JUNGLE_BOAT`
++ `OAK_BOAT`
++ `LEGACY_BOAT`
++ `LEGACY_BOAT_ACACIA`
++ `LEGACY_BOAT_BIRCH`
++ `LEGACY_BOAT_DARK_OAK`
++ `LEGACY_BOAT_JUNGLE`
++ `LEGACY_BOAT_SPRUCE`
++ `SPRUCE_BOAT`
++ `END_CRYSTAL`
++ `LEGACY_END_CRYSTAL`
+
+
 ## エンティティのスポーン {#spawn}
 
 <Action name="エンティティのスポーン"
@@ -252,7 +343,8 @@ import {ObjectType} from "/src/components/Object";
           {
             name: "entity",
             type: "Entity",
-            type_link: "../file-syntax#entity-structure"
+            type_link: "../file-syntax#entity-structure",
+            description: "スポーンさせるエンティティの UUID やセレクタです。",
           }
         ]}
         executable watchable
@@ -262,4 +354,7 @@ import {ObjectType} from "/src/components/Object";
 
 :::caution
 
-アクション実行シナリオでは, Entity オブジェクトの `type` が必須です。
+アクション実行シナリオでは, Entity オブジェクトの `type` が必須です。  
+また, アクション実行期待シナリオでは, Entity 型の `target` 引数は使用できません。
+
+:::
