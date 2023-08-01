@@ -58,6 +58,8 @@ class MockedPlayer extends EntityPlayer implements Actor
     private final ActorManager manager;
     private final PlayerMocker mocker;
     @Getter
+    private final Location initialLocation;
+    @Getter
     private final NetworkManager networkManager;
 
     public MockedPlayer(
@@ -66,12 +68,14 @@ class MockedPlayer extends EntityPlayer implements Actor
             NetworkManager networkManager,
             MinecraftServer minecraftserver,
             WorldServer worldserver,
-            GameProfile gameprofile)
+            GameProfile gameprofile,
+            Location initialLocation)
     {
         super(minecraftserver, worldserver, gameprofile, new PlayerInteractManager(worldserver));
         this.manager = manager;
         this.mocker = mocker;
         this.networkManager = networkManager;
+        this.initialLocation = initialLocation;
 
         this.setNoGravity(false);
         this.G = 0.5f; // ブロックのぼれるたかさ

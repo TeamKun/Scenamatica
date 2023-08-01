@@ -3,6 +3,7 @@ package org.kunlab.scenamatica.context.actor.nms.v_1_16_R3;
 import com.mojang.authlib.GameProfile;
 import io.netty.buffer.ByteBufAllocator;
 import lombok.SneakyThrows;
+import net.kunmc.lab.peyangpaperutils.lib.utils.Runner;
 import net.minecraft.server.v1_16_R3.BlockPosition;
 import net.minecraft.server.v1_16_R3.ChatComponentText;
 import net.minecraft.server.v1_16_R3.EntityPlayer;
@@ -27,7 +28,6 @@ import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.potion.PotionEffect;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -249,11 +249,25 @@ public class PlayerMocker extends PlayerMockerBase
     {
         MinecraftServer server = ((CraftServer) Bukkit.getServer()).getServer();
         NetworkManager mockedNetworkManager = new MockedNetworkManager(server);
-        WorldServer worldServer = server.E();
+        WorldServer worldServer = world == null ? server.E(): ((CraftWorld) world).getHandle();
         GameProfile profile = createGameProfile(bean);
         boolean doLogin = bean.getOnline() == null || bean.getOnline();
 
-        MockedPlayer player = new MockedPlayer(this.manager, this, mockedNetworkManager, server, worldServer, profile);
+        Location initialLocation;
+        if (bean.getLocation() != null)
+            initialLocation = bean.getLocation().clone();
+        else if (world != null)
+            initialLocation = world.getSpawnLocation().clone();
+        else
+            initialLocation = server.E().getWorld().getSpawnLocation().clone();
+
+        if (bean.getLocation() != null && bean.getLocation().getWorld() == null)
+            initialLocation.setWorld(this.registry.getContextManager().getStageManager().getStage());
+
+        MockedPlayer player = new MockedPlayer(this.manager,
+                this, mockedNetworkManager, server, worldServer, profile,
+                initialLocation
+        );
         this.initializePlayer(player, bean);
 
         if (doLogin)
@@ -315,13 +329,30 @@ public class PlayerMocker extends PlayerMockerBase
                 mockedPlayer
         );
 
-        WorldServer worldServer = mockedPlayer.getWorldServer();
-        double x = mockedPlayer.locX();
-        double y = mockedPlayer.locY();
-        double z = mockedPlayer.locZ();
+        Location initialLocation = mockedPlayer.getInitialLocation();
+        WorldServer world = ((CraftWorld) initialLocation.getWorld()).getHandle();
         float yaw = mockedPlayer.yaw;
         float pitch = mockedPlayer.pitch;
-        mockedPlayer.a(worldServer, x, y, z, yaw, pitch, PlayerTeleportEvent.TeleportCause.PLUGIN);
+        double x = initialLocation.getX();
+        double y = initialLocation.getY();
+        double z = initialLocation.getZ();
+
+        if (world != mockedPlayer.getWorldServer())
+        {
+            PlayerList list = ((CraftServer) Bukkit.getServer()).getHandle();
+
+            Runner.run(() -> {  // Removing entity while ticking! 回避
+                list.moveToWorld(
+                        mockedPlayer,
+                        world,
+                        true,
+                        new Location(world.getWorld(), x, y, z, yaw, pitch),
+                        true
+                );
+            });
+        }
+        else
+            mockedPlayer.getPlayer().teleport(new Location(world.getWorld(), x, y, z, yaw, pitch));
     }
 
 }
