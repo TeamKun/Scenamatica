@@ -9,6 +9,7 @@ import net.kunmc.lab.peyangpaperutils.lib.utils.Pair;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.kunlab.scenamatica.enums.ScenarioResultCause;
 import org.kunlab.scenamatica.enums.TriggerType;
 import org.kunlab.scenamatica.exceptions.scenario.ScenarioAlreadyRunningException;
 import org.kunlab.scenamatica.exceptions.scenario.ScenarioException;
@@ -37,9 +38,9 @@ import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
+@Getter
 public class ScenarioManagerImpl implements ScenarioManager
 {
-    @Getter
     private final ScenamaticaRegistry registry;
     private final ActionManager actionManager;
     @Getter
@@ -211,7 +212,24 @@ public class ScenarioManagerImpl implements ScenarioManager
             throw new IllegalStateException("Scenamatica is disabled.");
 
         this.currentScenario = engine;
-        ScenarioResult result = engine.start(trigger);
+        ScenarioResult result;
+        try
+        {
+            result = engine.start(trigger);
+        }
+        catch (Throwable e)
+        {
+            this.registry.getExceptionHandler().report(e);
+            result = new ScenarioResultImpl(
+                    engine.getScenario(),
+                    engine.getTestID(),
+                    engine.getState(),
+                    ScenarioResultCause.INTERNAL_ERROR,
+                    engine.getStartedAt(),
+                    System.currentTimeMillis(),
+                    null
+            );
+        }
         this.currentScenario = null;
         this.testReporter.onTestEnd(engine, result);
 
