@@ -22,11 +22,13 @@ import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 public class WatcherManagerImpl implements WatcherManager
 {
     private final ScenamaticaRegistry registry;
+    private final Object lock = new Object();
     private final Multimap<Plugin, WatchingEntry<?>> actionWatchers;
 
     public WatcherManagerImpl(@NotNull ScenamaticaRegistry registry)
@@ -53,7 +55,11 @@ public class WatcherManagerImpl implements WatcherManager
                     )
             );
 
-        this.actionWatchers.putAll(plugin, entries);
+        synchronized (this.lock)
+        {
+            this.actionWatchers.putAll(plugin, entries);
+        }
+
         return entries;
     }
 
@@ -71,7 +77,12 @@ public class WatcherManagerImpl implements WatcherManager
                 plugin,
                 type
         );
-        this.actionWatchers.put(plugin, entry);
+
+        synchronized (this.lock)
+        {
+            this.actionWatchers.put(plugin, entry);
+        }
+
         return entry;
     }
 
@@ -110,44 +121,58 @@ public class WatcherManagerImpl implements WatcherManager
         if (!this.actionWatchers.containsKey(plugin))
             throw new IllegalStateException("The plugin " + plugin.getName() + " is not registered.");
 
-        Collection<WatchingEntry<?>> entries = this.actionWatchers.get(plugin);
-        for (WatchingEntry<?> entry : entries)
-            entry.unregister();
-        this.actionWatchers.removeAll(plugin);
+        synchronized (this.lock)
+        {
+            Collection<WatchingEntry<?>> entries = this.actionWatchers.get(plugin);
+            for (WatchingEntry<?> entry : entries)
+                entry.unregister();
+            this.actionWatchers.removeAll(plugin);
+        }
+
     }
 
     @Override
     public void unregisterWatchers(@NotNull Plugin plugin, @NotNull WatchType type)
     {
-        if (!this.actionWatchers.containsKey(plugin))
-            return;
-
-        List<WatchingEntry<?>> entries = new ArrayList<>(this.actionWatchers.get(plugin));  // ConcurrentModificationException
-        for (WatchingEntry<?> entry : entries)
+        synchronized (this.lock)
         {
-            if (entry.getType() != type)
-                continue;
+            if (!this.actionWatchers.containsKey(plugin))
+                return;
 
-            entry.unregister();
-            this.actionWatchers.remove(plugin, entry);
+            Iterator<WatchingEntry<?>> iterator = this.actionWatchers.get(plugin).iterator();
+            while (iterator.hasNext())
+            {
+                WatchingEntry<?> entry = iterator.next();
+                if (entry.getType() == type)
+                {
+                    entry.unregister();
+                    iterator.remove();
+                }
+            }
         }
     }
 
     @Override
     public void unregisterWatcher(@NotNull WatchingEntry<?> entry)
     {
-        if (!this.actionWatchers.containsValue(entry))
-            throw new IllegalStateException("The entry is not registered.");
+        synchronized (this.lock)
+        {
+            if (!this.actionWatchers.containsValue(entry))
+                throw new IllegalStateException("The entry is not registered.");
 
-        entry.unregister();
-        this.actionWatchers.remove(entry.getPlugin(), entry);
+            entry.unregister();
+            this.actionWatchers.remove(entry.getPlugin(), entry);
+        }
     }
 
     @Override
     public void onActionFired(@NotNull WatchingEntry<?> entry, @NotNull Event event)
     {
-        if (!this.actionWatchers.containsValue(entry))
-            throw new IllegalStateException("The entry is not registered.");
+        synchronized (this.lock)
+        {
+            if (!this.actionWatchers.containsValue(entry))
+                throw new IllegalStateException("Unrecognized entry.");
+        }
 
         if (entry.getType() == WatchType.TRIGGER)
         {
@@ -168,7 +193,10 @@ public class WatcherManagerImpl implements WatcherManager
         else
         {
             entry.getEngine().getListener().onActionFired(entry, event);
-            this.actionWatchers.remove(entry.getPlugin(), entry);
+            synchronized (this.lock)
+            {
+                this.actionWatchers.remove(entry.getPlugin(), entry);
+            }
         }
     }
 }
