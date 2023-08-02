@@ -32,20 +32,12 @@ public class EntityDropItemAction extends AbstractEntityAction<EntityDropItemAct
 
     private static void applyBean(EntityItemBean bean, Entity dropper, Item entity)
     {
-        try
+        EntityDropItemEvent event = new EntityDropItemEvent(dropper, entity);
+        Bukkit.getPluginManager().callEvent(event);
+        if (event.isCancelled())
         {
-
-            EntityDropItemEvent event = new EntityDropItemEvent(dropper, entity);
-            Bukkit.getPluginManager().callEvent(event);
-            if (event.isCancelled())
-            {
-                entity.remove();
-                return;
-            }
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
+            entity.remove();
+            return;
         }
 
         if (bean.getPickupDelay() != null)
