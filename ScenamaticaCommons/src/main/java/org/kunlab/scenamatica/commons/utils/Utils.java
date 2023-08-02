@@ -1,4 +1,4 @@
-package org.kunlab.scenamatica.action.utils;
+package org.kunlab.scenamatica.commons.utils;
 
 import lombok.experimental.UtilityClass;
 import org.bukkit.Location;
