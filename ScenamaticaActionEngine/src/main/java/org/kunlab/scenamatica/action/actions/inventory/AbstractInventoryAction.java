@@ -19,8 +19,9 @@ public abstract class AbstractInventoryAction<A extends AbstractInventoryArgumen
 {
     public static List<? extends AbstractInventoryAction<?>> getActions()
     {
-
         List<AbstractInventoryAction<?>> actions = new ArrayList<>(AbstractInventoryInteractAction.getActions());
+
+        actions.add(new InventoryOpenAction());
 
         return actions;
     }

@@ -1,0 +1,31 @@
+# noinspection YAMLSchemaValidation
+scenamatica: ${project.version}
+
+name: actions_inventory_open
+description: Testing inventory_open action works or not
+on:
+  - type: on_load
+  - type: manual_dispatch
+
+context:
+  actors:
+    - name: Actor001
+
+
+scenario:
+  - type: execute
+    action: inventory_open
+    with:
+      target: Actor001
+      inventory:
+        items:
+          2:
+            type: DIAMOND_SWORD
+  - type: expect
+    action: inventory_open
+    with:
+      target: Actor001
+      inventory:
+        items:
+          2:
+            type: DIAMOND_SWORD

@@ -107,6 +107,7 @@
             "entity_place",
             "entity_spawn",
             "inventory_click",
+            "inventory_open",
             "player_advancement",
             "player_animation",
             "player_death",
@@ -324,6 +325,26 @@
             "properties": {
               "with": {
                 "$ref": "#/definitions/action/definitions/inventory/interact/click"
+              }
+            },
+            "required": [
+              "with"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "inventory_open",
+                "description": "インベントリを開くことを検知します。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/inventory/open"
               }
             },
             "required": [
@@ -1322,6 +1343,15 @@
                   "description": "カーソルにあるアイテムです。",
                   "$ref": "#/definitions/itemStack"
                 }
+              }
+            }
+          },
+          "open": {
+            "$ref": "#/definitions/action/definitions/inventory/$base",
+            "properties": {
+              "inventory": {
+                "description": "開くインベントリです。",
+                "$ref": "#/definitions/inventory"
               }
             }
           }
