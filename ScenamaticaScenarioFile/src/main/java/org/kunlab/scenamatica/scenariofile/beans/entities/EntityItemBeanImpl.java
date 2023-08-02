@@ -30,12 +30,12 @@ public class EntityItemBeanImpl extends EntityBeanImpl implements EntityItemBean
     @Nullable
     UUID thrower;
 
-    boolean canMobPickup;
+    Boolean canMobPickup;
 
-    boolean willAge;
+    Boolean willAge;
 
     public EntityItemBeanImpl(@NotNull EntityBean bean, @NotNull ItemStackBean itemStack, @Nullable Integer pickupDelay,
-                              @Nullable UUID owner, @Nullable UUID thrower, boolean canMobPickup, boolean willAge)
+                              @Nullable UUID owner, @Nullable UUID thrower, Boolean canMobPickup, Boolean willAge)
     {
         super(
                 EntityType.DROPPED_ITEM,
@@ -65,10 +65,10 @@ public class EntityItemBeanImpl extends EntityBeanImpl implements EntityItemBean
             map.put(KEY_OWNER, bean.getOwner().toString());
         if (bean.getThrower() != null)
             map.put(KEY_THROWER, bean.getThrower().toString());
-        if (bean.isCanMobPickup() != DEFAULT_CAN_MOB_PICKUP)
-            map.put(KEY_CAN_MOB_PICKUP, bean.isCanMobPickup());
-        if (bean.isWillAge() != DEFAULT_WILL_AGE)
-            map.put(KEY_WILL_AGE, bean.isWillAge());
+        if (bean.getCanMobPickup() != null)
+            map.put(KEY_CAN_MOB_PICKUP, bean.getCanMobPickup());
+        if (bean.getWillAge() != null)
+            map.put(KEY_WILL_AGE, bean.getWillAge());
 
         return map;
     }
@@ -111,8 +111,8 @@ public class EntityItemBeanImpl extends EntityBeanImpl implements EntityItemBean
                 pickupDelay,
                 ownerUUID,
                 throwerUUID,
-                MapUtils.getOrDefault(map, KEY_CAN_MOB_PICKUP, DEFAULT_CAN_MOB_PICKUP),
-                MapUtils.getOrDefault(map, KEY_WILL_AGE, DEFAULT_WILL_AGE)
+                MapUtils.getOrNull(map, KEY_CAN_MOB_PICKUP),
+                MapUtils.getOrNull(map, KEY_WILL_AGE)
         );
     }
 }

@@ -15,6 +15,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.commons.utils.NamespaceUtils;
+import org.kunlab.scenamatica.commons.utils.Utils;
 import org.kunlab.scenamatica.interfaces.scenariofile.BeanSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.ItemStackBean;
 
@@ -253,7 +254,7 @@ public class ItemStackBeanImpl implements ItemStackBean
 
     public static void validate(@NotNull Map<String, Object> map)
     {
-        MapUtils.checkEnumNameIfContains(map, KEY_TYPE, Material.class);
+        MapUtils.checkMaterialNameIfContains(map, KEY_TYPE);
         MapUtils.checkTypeIfContains(map, KEY_AMOUNT, Integer.class);
         MapUtils.checkTypeIfContains(map, KEY_DISPLAY_NAME, String.class);
         MapUtils.checkTypeIfContains(map, KEY_LOCALIZED_NAME, String.class);
@@ -288,7 +289,7 @@ public class ItemStackBeanImpl implements ItemStackBean
     {
         validate(map);
 
-        Material type = MapUtils.getAsEnumOrNull(map, KEY_TYPE, Material.class);
+        Material type = Utils.searchMaterial(MapUtils.getOrNull(map, KEY_TYPE));
         Integer amount = MapUtils.getOrNull(map, KEY_AMOUNT);
         String name = MapUtils.getOrNull(map, KEY_DISPLAY_NAME);
         String localizedName = MapUtils.getOrNull(map, KEY_LOCALIZED_NAME);

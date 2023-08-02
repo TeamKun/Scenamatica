@@ -103,6 +103,7 @@
             "entity",
             "entity_damage",
             "entity_damage_by_entity",
+            "entity_drop_item",
             "entity_place",
             "entity_spawn",
             "inventory_click",
@@ -223,6 +224,26 @@
             "properties": {
               "with": {
                 "$ref": "#/definitions/action/definitions/entity/damage"
+              }
+            },
+            "required": [
+              "with"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "entity_drop_item",
+                "description": "エンティティのアイテムのドロップを検知します。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/entity/dropItem"
               }
             },
             "required": [
@@ -1088,6 +1109,15 @@
               "damager": {
                 "description": "ダメージ元のエンティティのUUIDまたはセレクタです。",
                 "type": "string"
+              }
+            }
+          },
+          "dropItem": {
+            "$ref": "#/definitions/action/definitions/entity/$base",
+            "properties": {
+              "item": {
+                "description": "ドロップするアイテムです。",
+                "$ref": "#/definitions/entityItem"
               }
             }
           },
@@ -2436,6 +2466,7 @@
       "type": "object",
       "description": "アイテムのエンティティを表します。",
       "$ref": "#/definitions/entity",
+      "$comment": "多重継承はできないので、 itemStack のプロパティをそっくりそのままコピーします。",
       "properties": {
         "pickupDelay": {
           "type": "number",

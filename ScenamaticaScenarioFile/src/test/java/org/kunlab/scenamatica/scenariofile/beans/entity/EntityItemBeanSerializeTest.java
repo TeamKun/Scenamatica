@@ -22,8 +22,8 @@ public class EntityItemBeanSerializeTest
             null,
             null,
             null,
-            EntityItemBean.DEFAULT_CAN_MOB_PICKUP,
-            EntityItemBean.DEFAULT_WILL_AGE
+            null,
+            null
     );
     public static final Map<String, Object> EMPTY_MAP = new HashMap<String, Object>()
     {{

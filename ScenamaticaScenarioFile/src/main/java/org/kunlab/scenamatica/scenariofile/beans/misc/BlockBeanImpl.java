@@ -8,6 +8,7 @@ import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
+import org.kunlab.scenamatica.commons.utils.Utils;
 import org.kunlab.scenamatica.interfaces.scenariofile.misc.BlockBean;
 
 import java.util.HashMap;
@@ -59,7 +60,7 @@ public class BlockBeanImpl implements BlockBean
 
     public static void validate(@NotNull Map<String, Object> map)
     {
-        MapUtils.checkEnumNameIfContains(map, KEY_BLOCK_TYPE, Material.class);
+        MapUtils.checkMaterialNameIfContains(map, KEY_BLOCK_TYPE);
         MapUtils.checkLocationIfContains(map, KEY_BLOCK_LOCATION);
 
         if (map.containsKey(KEY_LIGHT_LEVEL))
@@ -85,11 +86,7 @@ public class BlockBeanImpl implements BlockBean
     {
         validate(map);
 
-        Material material;
-        if (map.containsKey(KEY_BLOCK_TYPE))
-            material = Material.valueOf((String) map.get(KEY_BLOCK_TYPE));
-        else
-            material = null;
+        Material material = Utils.searchMaterial(MapUtils.getOrNull(map, KEY_BLOCK_TYPE));
 
         return new BlockBeanImpl(
                 material,

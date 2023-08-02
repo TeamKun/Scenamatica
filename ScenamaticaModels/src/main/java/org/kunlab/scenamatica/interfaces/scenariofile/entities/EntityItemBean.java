@@ -13,9 +13,6 @@ public interface EntityItemBean extends EntityBean
     String KEY_CAN_MOB_PICKUP = "canMobPickup";
     String KEY_WILL_AGE = "willAge";
 
-    boolean DEFAULT_CAN_MOB_PICKUP = true;
-    boolean DEFAULT_WILL_AGE = true;
-
     /**
      * アイテムのアイテムスタックです。
      */
@@ -39,10 +36,10 @@ public interface EntityItemBean extends EntityBean
     /**
      * アイテムをモブが拾えるかどうかです。
      */
-    boolean isCanMobPickup();
+    Boolean getCanMobPickup();
 
     /**
      * アイテムが時間経過で消滅するかどうかです。
      */
-    boolean isWillAge();
+    Boolean getWillAge();
 }

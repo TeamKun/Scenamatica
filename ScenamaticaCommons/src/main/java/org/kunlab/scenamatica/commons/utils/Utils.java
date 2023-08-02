@@ -5,6 +5,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 
 import java.util.Locale;
@@ -35,11 +36,16 @@ public class Utils
         return newLoc;
     }
 
-    public static Material searchMaterial(@NotNull String name)
+    public static Material searchMaterial(@Nullable String name)
     {
+        if (name == null)
+            return null;
+
         String nameLower = name.toLowerCase(Locale.ROOT);
         Material material;
         if ((material = Material.getMaterial(nameLower)) != null)
+            return material;
+        else if ((material = Material.matchMaterial(nameLower)) != null)
             return material;
 
         try
@@ -57,7 +63,7 @@ public class Utils
         }
 
         // Legacy は, サーバのオーバヘッドが走るので, できるだけ使いたくない。
-        if ((material = Material.getMaterial(nameLower, /* legacy: */ true)) != null)
+        if ((material = Material.matchMaterial(nameLower, /* legacy: */ true)) != null)
             return material;
         else
             return null;

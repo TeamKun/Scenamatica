@@ -3,6 +3,7 @@ package org.kunlab.scenamatica.commons.utils;
 import lombok.experimental.UtilityClass;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -303,6 +304,20 @@ public class MapUtils
     {
         if (map.containsKey(key))
             MapUtils.checkEnumName(map, key, enumClass);
+    }
+
+    public static void checkMaterialNameIfContains(Map<String, Object> map, String key)
+    {
+        if (map.containsKey(key))
+            MapUtils.checkMaterialName(map, key);
+    }
+
+    public static void checkMaterialName(Map<String, Object> map, String key)
+    {
+        MapUtils.checkContainsKey(map, key);
+        Material mat = Utils.searchMaterial((String) map.get(key));
+        if (mat == null)
+            throw new IllegalArgumentException("Unexpected value of key: " + key + " (expected: Material-like), actual: " + map.get(key));
     }
 
     public static Map<String, Object> locationToMap(Location loc)
