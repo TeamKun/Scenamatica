@@ -181,7 +181,7 @@ class MainWindow(QMainWindow):
             if not fl["implemented"]:
                 notImplementedFL += 1
 
-        summary += f"実装じょうきょう：{implemented}/{notImplemented - implemented} ({round(implPercentage, 2)}%)\n"
+        summary += f"実装状況：{implemented}/{notImplemented - implemented} ({round(implPercentage, 2)}%)\n"
 
         summary += f"    うち\n"
         for name, priority in groupedEvents.items():
@@ -193,8 +193,8 @@ class MainWindow(QMainWindow):
                 else:
                     notImplSum += 1
 
-            implPercent = implSum / notImplSum * 100
-            summary += f"    - {PRIORITIES[name]['displayName']}： {implSum}/{notImplSum} ({round(implPercent, 2)}%)\n"
+            implPercent = implSum / (implSum + notImplSum) * 100
+            summary += f"    - {PRIORITIES[name]['displayName']}： {implSum}/{(implSum + notImplSum)} ({round(implPercent, 2)}%)\n"
 
         if len(self.eventsData) > 0:
             percent = implemented / len(self.eventsData) * 100
@@ -349,8 +349,8 @@ class MainWindow(QMainWindow):
     def saveJson(self):
         if self.modified:
             reply = QMessageBox.information(self, "変更が適用されていません!", "適用する場合は「はい」を、"
-                                                                       "前回適用分までのみ保存する場合は「いいえ」を、"
-                                                                       "キャンセルする場合は「キャンセル」を押してください。",
+                                                                               "前回適用分までのみ保存する場合は「いいえ」を、"
+                                                                               "キャンセルする場合は「キャンセル」を押してください。",
                                             QMessageBox.Yes | QMessageBox.No | QMessageBox.Cancel)
             if reply == QMessageBox.Yes:
                 self.applyChanges()

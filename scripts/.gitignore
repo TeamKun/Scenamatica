@@ -2,3 +2,4 @@ events.json
 .venv
 build
 dist
+installer
