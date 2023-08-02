@@ -42,7 +42,8 @@ public abstract class AbstractInventoryAction<A extends AbstractInventoryArgumen
 
     protected InventoryBean deserializeInventoryIfContains(Map<String, Object> map, BeanSerializer serializer)
     {
-        MapUtils.checkContainsKey(map, AbstractInventoryArgument.KEY_INVENTORY);
+        if (!map.containsKey(AbstractInventoryArgument.KEY_INVENTORY))
+            return null;
 
         return serializer.deserializeInventory(MapUtils.checkAndCastMap(
                 map.get(AbstractInventoryArgument.KEY_INVENTORY),
