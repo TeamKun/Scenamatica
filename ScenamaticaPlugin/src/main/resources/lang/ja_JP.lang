@@ -66,7 +66,7 @@ test.result.detail.state=-   テスト状態： %%state%%
 test.result.detail.elapsed=-   開始時刻： %%startedAt%%、終了時刻： %%finishedAt%%、経過時間： %%elapsed%%
 test.result.detail.failed=-   失敗したアクション： %%action%%
 
-test.session.result.stats=%%green%%実行されたテスト： %%white%%%%total%%、%%dark_green%%成功： %%white%%%%passed%%、 %%red%%失敗： %%white%%%%failed%%、 %%yellow%%キャンセル： %%white%%%%cancelled%%、 %%gray%%スキップ： %%white%%%%skipped%%、 %%green%% 経過時間： %%white%%%%elapsed%%
+test.session.result.stats=%%green%%実行されたテスト： %%white%%%%totalRun%%、%%dark_green%%成功： %%white%%%%passed%%、 %%red%%失敗： %%white%%%%failed%%、 %%yellow%%キャンセル： %%white%%%%cancelled%%、 %%gray%%スキップ： %%white%%%%skipped%%、 %%green%% 経過時間： %%white%%%%elapsed%%
 test.session.result.message.passed=%%green%%すべてのテストが正常に完了しました。
 test.session.result.message.failed=%%red%%いくつかのテストに失敗しました。
 test.session.result.message.noTests=%%yellow%%実行するテストがありませんでした。

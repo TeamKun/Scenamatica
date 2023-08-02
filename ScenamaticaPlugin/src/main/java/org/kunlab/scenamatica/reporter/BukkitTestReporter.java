@@ -252,7 +252,7 @@ public class BukkitTestReporter implements TestReporter
 
         terminal.info(LangProvider.get(
                 "test.session.result.stats",
-                MsgArgs.of("total", total)
+                MsgArgs.of("totalRun", total - skipped - cancelled)
                         .add("passed", passed)
                         .add("failed", failed)
                         .add("cancelled", cancelled)

@@ -65,7 +65,7 @@ test.result.detail.state=- テスト状態： %%state%% やで
 test.result.detail.elapsed=- 開始時刻： %%startedAt%%、終了時刻： %%finishedAt%%、経過時間： %%elapsed%%
 test.result.detail.failed=- アカンかったアクション： %%action%%
 
-test.session.result.stats=%%green%%やったテスト数： %%white%%%%total%%、%%dark_green%%パスした： %%white%%%%passed%%、 %%red%%ボロタ： %%white%%%%failed%%、 %%yellow%%中止した： %%white%%%%cancelled%%、 %%gray%%スキップした： %%white%%%%skipped%%、 %%green%% 経過時間： %%white%%%%elapsed%%
+test.session.result.stats=%%green%%やったテスト数： %%white%%%%totalRun%%、%%dark_green%%パスした： %%white%%%%passed%%、 %%red%%ボロタ： %%white%%%%failed%%、 %%yellow%%中止した： %%white%%%%cancelled%%、 %%gray%%スキップした： %%white%%%%skipped%%、 %%green%% 経過時間： %%white%%%%elapsed%%
 test.session.result.message.passed=%%green%%全部のテストがうまくいってんで。
 test.session.result.message.failed=%%red%%何個かのテストがちょんぼしはったみたいやわ。
 test.session.result.message.noTests=%%yellow%%実行できたテストがあらへんかったわ。
