@@ -21,6 +21,7 @@ public abstract class AbstractInventoryAction<A extends AbstractInventoryArgumen
     {
         List<AbstractInventoryAction<?>> actions = new ArrayList<>(AbstractInventoryInteractAction.getActions());
 
+        actions.add(new InventoryCloseAction());
         actions.add(new InventoryOpenAction());
 
         return actions;

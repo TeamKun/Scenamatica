@@ -107,6 +107,7 @@
             "entity_place",
             "entity_spawn",
             "inventory_click",
+            "inventory_close",
             "inventory_open",
             "player_advancement",
             "player_animation",
@@ -325,6 +326,26 @@
             "properties": {
               "with": {
                 "$ref": "#/definitions/action/definitions/inventory/interact/click"
+              }
+            },
+            "required": [
+              "with"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "inventory_close",
+                "description": "インベントリを閉じることを検知します。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/inventory/interact/close"
               }
             },
             "required": [
@@ -1291,6 +1312,21 @@
                 "outside",
                 "fuel"
               ]
+            },
+            "closeReason": {
+              "type": "string",
+              "description": "インベントリを閉じた理由です。",
+              "enum": [
+                "UNKNOWN",
+                "TELEPORT",
+                "CANT_USE",
+                "UNLOADED",
+                "OPEN_NEW",
+                "PLAYER",
+                "DISCONNECT",
+                "DEATH",
+                "PLUGIN"
+              ]
             }
           },
           "interact": {
@@ -1299,8 +1335,7 @@
               "properties": {
                 "target": {
                   "type": "string",
-                  "description": "対象のプレイヤーです。",
-                  "maxLength": 16
+                  "description": "対象のプレイヤーです。"
                 }
               },
               "required": [
@@ -1346,6 +1381,23 @@
               }
             }
           },
+          "close": {
+            "$base": {
+              "$ref": "#/definitions/action/definitions/inventory/$base",
+              "properties": {
+                "target": {
+                  "type": "string",
+                  "description": "対象のプレイヤーです。"
+                },
+                "reason": {
+                  "$ref": "#/definitions/action/definitions/inventory/$definitions/closeReason"
+                }
+              },
+              "required": [
+                "reason"
+              ]
+            }
+          },
           "open": {
             "$ref": "#/definitions/action/definitions/inventory/$base",
             "properties": {
@@ -1361,8 +1413,7 @@
             "properties": {
               "target": {
                 "type": "string",
-                "description": "対象のプレイヤーです。",
-                "maxLength": 16
+                "description": "対象のプレイヤーです。"
               }
             },
             "required": [
@@ -1410,8 +1461,7 @@
             "properties": {
               "killer": {
                 "type": "string",
-                "description": "ターゲットを殺すプレイヤーです。",
-                "maxLength": 16
+                "description": "ターゲットを殺すプレイヤーです。"
               },
               "deathMessage": {
                 "type": "string",
