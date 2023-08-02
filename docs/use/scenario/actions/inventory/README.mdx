@@ -81,3 +81,38 @@ import {ObjectType} from "/src/components/Object";
 <BelowDocument docId={"use/scenario/actions/inventory/interaction"}
                 label={"インベントリ操作系のシナリオ"}
 />
+
+## インベントリを開く {#open}
+
+<Action name="インベントリを開く"
+        description="プレイヤのインベントリを開きます。"
+        id="inventory_open"
+        events={[
+          {
+            name: "InventoryOpenEvent",
+            package: "org.bukkit.event.inventory",
+          }
+        ]}
+        args={[
+          {
+            name: "target",
+            description: "インベントリを開く対象のプレイヤの名前または UUID です。",
+            type: ObjectType.STRING,
+          },
+          {
+            name: "inventory",
+            type: "Inventory",
+            type_link: "../file-syntax#inventory-structure",
+            description: "開くインベントリです。",
+          },
+        ]}
+        executable watchable
+/>
+
+:::warning
+
+プレイヤがインベントリを（既に・今まさに）開いているか確認するアクションはありません。  
+これは、 Bukkit がプレイヤのインベントリの状態を追跡していないためです。
+
+:::
+
