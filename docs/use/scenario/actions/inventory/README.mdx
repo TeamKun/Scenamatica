@@ -74,6 +74,18 @@ import {ObjectType} from "/src/components/Object";
 + `OUTSIDE` インベントリ外
 + `FUEL` 燃料
 
+## InventoryCloseReason 列挙型 {#type-inventory-close-reason}
+
++ `UNKNOWN` 不明
++ `TELEPORT` テレポートによる強制クローズ
++ `CANT_USE` プレイヤがインベントリにアクセスする権限を剥奪された
++ `UNLOADED` インベントリがアンロードされた
++ `OPEN_NEW` 他のインベントリを開いた
++ `PLAYER` 自発的にインベントリを閉じた
++ `DISCONNECT` プレイヤがサーバから切断したことによる強制クローズ
++ `DEATH` プレイヤが死亡したことによる強制クローズ
++ `PLUGIN` Bukkit API を介したプラグインによる操作
+
 ## インベントリ操作系 {#inventory-interaction}
 
 プレイヤによるインベントリの操作に関するアクションです。
@@ -81,6 +93,49 @@ import {ObjectType} from "/src/components/Object";
 <BelowDocument docId={"use/scenario/actions/inventory/interaction"}
                 label={"インベントリ操作系のシナリオ"}
 />
+
+## インベントリを閉じる {#close}
+
+<Action name="インベントリを閉じる"
+        description="プレイヤのインベントリを閉じます。"
+        id="inventory_close"
+        events={[
+          {
+            name: "InventoryCloseEvent",
+            package: "org.bukkit.event.inventory",
+          }
+        ]}
+        args={[
+          {
+            name: "target",
+            description: "インベントリを閉じる対象のプレイヤの名前または UUID です。",
+            type: ObjectType.STRING,
+          },
+          {
+            name: "inventory",
+            anchor: "inventory-close-inventory",
+            type: "Inventory",
+            type_link: "../file-syntax#inventory-structure",
+            description: "閉じるインベントリです。",
+          },
+          {
+            name: "reason",
+            type: "InventoryCloseReason",
+            type_anchor: "#type-inventory-close-reason",
+            description: "インベントリを閉じる理由です。",
+          }
+        ]}
+        executable watchable
+/>
+
+### `inventory` {#inventory-close-inventory}
+
+:::caution
+
+アクション実行シナリオでは使用できません。  
+これは、 Bukkit がプレイヤが開いたインベントリを追跡していないためです。
+
+:::
 
 ## インベントリを開く {#open}
 
