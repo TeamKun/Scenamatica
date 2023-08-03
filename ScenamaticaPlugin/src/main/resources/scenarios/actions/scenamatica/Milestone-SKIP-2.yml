@@ -1,7 +1,7 @@
 # noinspection YAMLSchemaValidation
 scenamatica: ${project.version}
 
-name: general_milestone_sk_2
+name: actions_scenamatica_milestone_2
 description: Testing milestone action test skips or not
 on:
   - type: manual_dispatch

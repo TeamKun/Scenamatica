@@ -1,7 +1,7 @@
 # noinspection YAMLSchemaValidation
 scenamatica: ${project.version}
 
-name: general_milestone
+name: actions_scenamatica_milestone
 description: Testing milestone action works or not
 on:
   - type: on_load

@@ -128,6 +128,7 @@
             "player_sprint",
             "message",
             "milestone",
+            "negate",
             "server_log",
             "server_plugin_enable",
             "server_plugin_disable",
@@ -746,6 +747,26 @@
             "properties": {
               "with": {
                 "$ref": "#/definitions/action/definitions/scenamatica/milestone"
+              }
+            },
+            "required": [
+              "with"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "negate",
+                "description": "コンディション要求アクションの判定結果を反転します。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/scenamatica/negate"
               }
             },
             "required": [
@@ -1846,6 +1867,9 @@
             "required": [
               "name"
             ]
+          },
+          "negate": {
+            "$ref": "#/definitions/action"
           }
         },
         "server": {

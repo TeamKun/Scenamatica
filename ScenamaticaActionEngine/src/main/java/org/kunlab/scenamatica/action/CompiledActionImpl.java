@@ -16,8 +16,8 @@ public class CompiledActionImpl<A extends ActionArgument> implements CompiledAct
     ScenarioEngine engine;
     Action<A> executor;
     A argument;
-    BiConsumer<CompiledAction<A>, Throwable> errorHandler;
-    Consumer<CompiledAction<A>> onExecute;
+    BiConsumer<CompiledAction<?>, Throwable> errorHandler;
+    Consumer<CompiledAction<?>> onExecute;
     ActionBean bean;
 
     @Override

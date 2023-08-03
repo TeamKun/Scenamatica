@@ -14,6 +14,7 @@ public abstract class AbstractScenamaticaAction<A extends ActionArgument> extend
 
         actions.add(new MessageAction());
         actions.add(new MilestoneAction());
+        actions.add(new NegateAction<>());
 
         return actions;
     }

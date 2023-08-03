@@ -28,6 +28,6 @@ public interface ActionCompiler
     <A extends ActionArgument> CompiledAction<A> compile(@NotNull ScenamaticaRegistry registry,
                                                          @NotNull ScenarioEngine engine,
                                                          @NotNull ActionBean bean,
-                                                         @Nullable BiConsumer<CompiledAction<A>, Throwable> reportErrorTo,
-                                                         @Nullable Consumer<CompiledAction<A>> onSuccess);
+                                                         @Nullable BiConsumer<CompiledAction<?>, Throwable> reportErrorTo,
+                                                         @Nullable Consumer<CompiledAction<?>> onSuccess);
 }

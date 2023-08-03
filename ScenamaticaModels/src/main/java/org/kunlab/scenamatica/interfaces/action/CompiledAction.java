@@ -38,14 +38,14 @@ public interface CompiledAction<A extends ActionArgument>
      *
      * @return エラーハンドラー
      */
-    BiConsumer<CompiledAction<A>, Throwable> getErrorHandler();
+    BiConsumer<CompiledAction<?>, Throwable> getErrorHandler();
 
     /**
      * アクションが実行されたときに呼び出されるコールバックを取得します。
      *
      * @return コールバック
      */
-    Consumer<CompiledAction<A>> getOnExecute();
+    Consumer<CompiledAction<?>> getOnExecute();
 
     /**
      * アクションを実行します。

@@ -1,0 +1,21 @@
+# noinspection YAMLSchemaValidation
+scenamatica: ${project.version}
+
+name: actions_scenamatica_negate
+description: Testing negate action works or not
+on:
+  - type: on_load
+  - type: manual_dispatch
+
+context:
+  actors:
+    - name: Actor001
+
+scenario:
+  - type: require
+    action: negate
+    with:
+      action: milestone
+      with:
+        name: MileStoneThatDoesNotExist
+    timeout: 20
