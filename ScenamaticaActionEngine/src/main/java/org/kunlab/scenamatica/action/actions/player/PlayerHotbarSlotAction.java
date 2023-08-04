@@ -138,7 +138,7 @@ public class PlayerHotbarSlotAction extends AbstractPlayerAction<PlayerHotbarSlo
         public static final String KEY_PREVIOUS_SLOT = "previous";
         public static final String KEY_CURRENT_ITEM = "item";
 
-        int currentSlot;
+        int currentSlot; // TODO: Make this Nullable
         int previousSlot;
         @Nullable
         ItemStackBean currentItem;

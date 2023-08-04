@@ -64,18 +64,6 @@ public class WorldGameRuleAction extends AbstractWorldAction<WorldGameRuleAction
     }
 
     @Override
-    public void validateArgument(@NotNull ScenarioEngine engine, @NotNull ScenarioType type, @Nullable Argument argument)
-    {
-        argument = this.requireArgsNonNull(argument);
-
-        if (type == ScenarioType.ACTION_EXPECT)
-            return;
-
-        if (argument.getValue() == null)
-            throw new IllegalArgumentException("The value of the game rule cannot be null.");
-    }
-
-    @Override
     public boolean isFired(@NotNull Argument argument, @NotNull ScenarioEngine engine, @NotNull Event event)
     {
         assert event instanceof WorldGameRuleChangeEvent;
@@ -153,7 +141,7 @@ public class WorldGameRuleAction extends AbstractWorldAction<WorldGameRuleAction
         public static final String KEY_GAME_RULE = "rule";
         public static final String KEY_VALUE = "value";
 
-        @NotNull
+        @NotNull // TODO: Make this Nullable
         GameRule<?> gameRule;
         @Nullable
         String value;
@@ -176,6 +164,15 @@ public class WorldGameRuleAction extends AbstractWorldAction<WorldGameRuleAction
             return super.isSameWorld(arg)
                     && this.gameRule.equals(arg.gameRule)
                     && (this.value == null || this.value.equals(arg.value));
+        }
+
+        @Override
+        public void validate(@NotNull ScenarioEngine engine, @NotNull ScenarioType type)
+        {
+            if (type == ScenarioType.ACTION_EXPECT)
+                return;
+
+            throwIfNotPresent(KEY_VALUE, this.value);
         }
 
         @Override

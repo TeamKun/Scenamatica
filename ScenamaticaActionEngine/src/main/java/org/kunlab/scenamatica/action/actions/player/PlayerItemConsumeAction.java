@@ -77,17 +77,6 @@ public class PlayerItemConsumeAction extends AbstractPlayerAction<PlayerItemCons
     }
 
     @Override
-    public void validateArgument(@NotNull ScenarioEngine engine, @NotNull ScenarioType type, @Nullable Argument argument)
-    {
-        argument = this.requireArgsNonNull(argument);
-
-        if (type != ScenarioType.ACTION_EXECUTE)
-            return;
-
-        this.throwIfPresent(Argument.KEY_REPLACEMENT, argument.getReplacement());
-    }
-
-    @Override
     public List<Class<? extends Event>> getAttachingEvents()
     {
         return Collections.singletonList(
@@ -150,6 +139,15 @@ public class PlayerItemConsumeAction extends AbstractPlayerAction<PlayerItemCons
             return super.isSame(arg)
                     && Objects.equals(this.item, arg.item)
                     && Objects.equals(this.replacement, arg.replacement);
+        }
+
+        @Override
+        public void validate(@NotNull ScenarioEngine engine, @NotNull ScenarioType type)
+        {
+            if (type != ScenarioType.ACTION_EXECUTE)
+                return;
+
+            throwIfPresent(Argument.KEY_REPLACEMENT, this.replacement);
         }
 
         @Override

@@ -16,7 +16,7 @@ public abstract class AbstractPlayerActionArgument extends AbstractActionArgumen
     public static final String KEY_TARGET_PLAYER = "target";
 
     @NotNull
-    private final String target;
+    private final String target;  // TODO: Make this Nullable
 
     @Override
     public boolean isSame(TriggerArgument argument)

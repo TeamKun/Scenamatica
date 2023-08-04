@@ -209,6 +209,7 @@ public class PlayerLaunchProjectileAction extends AbstractPlayerAction<PlayerLau
             return this.projectileType == a.projectileType /* && this.shooterItem.isSame(a.shooterItem) */;
         }
 
+        // TODO: Create validation for argument
         @Override
         public String getArgumentString()
         {

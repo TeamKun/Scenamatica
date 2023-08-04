@@ -85,28 +85,6 @@ public class InventoryClickAction extends AbstractInventoryInteractAction<Invent
     }
 
     @Override
-    public void validateArgument(@NotNull ScenarioEngine engine, @NotNull ScenarioType type, @Nullable Argument argument)
-    {
-        argument = this.requireArgsNonNull(argument);
-
-        if (argument.getSlot() == null && argument.getRawSlot() == null)
-            throw new IllegalArgumentException("slot and raw_slot cannot be null at the same time");
-
-        if (argument.getButton() == null
-                && !(argument.getType() == ClickType.LEFT
-                || argument.getType() == ClickType.RIGHT
-                || argument.getType() == ClickType.MIDDLE))
-            throw new IllegalArgumentException("button cannot be null when click type is not left, right or middle");
-
-        if (type == ScenarioType.ACTION_EXECUTE)
-        {
-            this.throwIfPresent(Argument.KEY_SLOT_TYPE, argument.getSlotType());
-            if (!(argument.getSlot() == null || argument.getRawSlot() == null))
-                throw new IllegalArgumentException("cannot specify both slot and raw_slot in action execute scenario");
-        }
-    }
-
-    @Override
     public boolean isFired(@NotNull Argument argument, @NotNull ScenarioEngine engine, @NotNull Event event)
     {
         if (!super.checkMatchedInventoryInteractEvent(argument, engine, event))
@@ -217,6 +195,26 @@ public class InventoryClickAction extends AbstractInventoryInteractAction<Invent
                     && Objects.equals(this.clickedItem, arg.clickedItem)
                     && Objects.equals(this.button, arg.button)
                     && Objects.equals(this.cursorItem, arg.cursorItem);
+        }
+
+        @Override
+        public void validate(@NotNull ScenarioEngine engine, @NotNull ScenarioType type)
+        {
+            if (this.slot == null && this.rawSlot == null)
+                throw new IllegalArgumentException("slot and raw_slot cannot be null at the same time");
+
+            if (this.button == null
+                    && !(this.type == ClickType.LEFT
+                    || this.type == ClickType.RIGHT
+                    || this.type == ClickType.MIDDLE))
+                throw new IllegalArgumentException("button cannot be null when click type is not left, right or middle");
+
+            if (type == ScenarioType.ACTION_EXECUTE)
+            {
+                throwIfPresent(Argument.KEY_SLOT_TYPE, this.slotType);
+                if (!(this.slot == null || this.rawSlot == null))
+                    throw new IllegalArgumentException("cannot specify both slot and raw_slot in action execute scenario");
+            }
         }
 
         @Override

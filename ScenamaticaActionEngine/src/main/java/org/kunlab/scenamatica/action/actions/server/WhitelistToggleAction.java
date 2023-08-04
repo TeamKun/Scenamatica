@@ -95,6 +95,7 @@ public class WhitelistToggleAction extends AbstractServerAction<WhitelistToggleA
             return this.enabled == arg.enabled;
         }
 
+        // TODO: Create validation for argument
         @Override
         public String getArgumentString()
         {

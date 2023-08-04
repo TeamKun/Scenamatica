@@ -15,14 +15,14 @@ import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Objects;
 
+@Getter
 @AllArgsConstructor
 public abstract class AbstractWorldActionArgument extends AbstractActionArgument
 {
     public static final String KEY_WORLD = "world";
     private static final String[] PADDING_TARGET = {"the_end", "nether"};
     @Nullable
-    @Getter
-    private final NamespacedKey worldRef;
+    protected final NamespacedKey worldRef;
 
     @Override
     public boolean isSame(TriggerArgument argument)

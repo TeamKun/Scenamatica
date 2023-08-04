@@ -61,15 +61,6 @@ public class WorldLoadAction extends AbstractWorldAction<WorldLoadAction.Argumen
     }
 
     @Override
-    public void validateArgument(@NotNull ScenarioEngine engine, @NotNull ScenarioType type, @Nullable Argument argument)
-    {
-        argument = super.requireArgsNonNull(argument);
-        if ((type == ScenarioType.ACTION_EXECUTE || type == ScenarioType.CONDITION_REQUIRE)
-                && argument.getWorldRef() == null)
-            throw new IllegalArgumentException("Argument 'world' is required in 'action_execute' type.");
-    }
-
-    @Override
     public List<Class<? extends Event>> getAttachingEvents()
     {
         return Collections.singletonList(
@@ -103,6 +94,14 @@ public class WorldLoadAction extends AbstractWorldAction<WorldLoadAction.Argumen
             Argument arg = (Argument) argument;
 
             return this.isSameWorld(arg);
+        }
+
+        @Override
+        public void validate(@NotNull ScenarioEngine engine, @NotNull ScenarioType type)
+        {
+            if ((type == ScenarioType.ACTION_EXECUTE || type == ScenarioType.CONDITION_REQUIRE)
+                    && this.worldRef == null)
+                throw new IllegalArgumentException("Argument 'world' is required in 'action_execute' type.");
         }
 
         @Override

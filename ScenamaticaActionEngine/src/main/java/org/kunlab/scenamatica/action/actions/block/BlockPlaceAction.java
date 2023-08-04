@@ -108,30 +108,6 @@ public class BlockPlaceAction extends AbstractBlockAction<BlockPlaceAction.Argum
     }
 
     @Override
-    public void validateArgument(@NotNull ScenarioEngine engine, @NotNull ScenarioType type, @Nullable Argument argument)
-    {
-        assert argument != null;
-
-        if (argument.getDirection() != null
-                // Direction が有効かどうかのチェック。(NMS との互換性)
-                && Arrays.stream(ALLOWED_FACES).parallel().noneMatch(face -> face == argument.getDirection()))
-            throw new IllegalArgumentException("Invalid direction: " + argument.getDirection() + ", allowed: " + Arrays.toString(ALLOWED_FACES));
-
-        EquipmentSlot hand = argument.getHand();
-        if (!(hand == null || hand == EquipmentSlot.OFF_HAND || hand == EquipmentSlot.HAND))
-            throw new IllegalArgumentException("Invalid hand: " + argument.getHand() + ", allowed: " + EquipmentSlot.HAND + ", " + EquipmentSlot.OFF_HAND);
-
-        if (type == ScenarioType.ACTION_EXECUTE)
-        {
-            BlockBean blockDef = argument.getBlock();
-            if (blockDef.getType() == null)
-                throw new IllegalArgumentException("Block type cannot be null");
-        }
-        else
-            this.throwIfPresent(Argument.KEY_DIRECTION, argument.getDirection());
-    }
-
-    @Override
     public List<Class<? extends Event>> getAttachingEvents()
     {
         return Collections.singletonList(
@@ -197,6 +173,28 @@ public class BlockPlaceAction extends AbstractBlockAction<BlockPlaceAction.Argum
                     && this.hand == arg.hand
                     && this.direction == arg.direction;
 
+        }
+
+        @Override
+        public void validate(@NotNull ScenarioEngine engine, @NotNull ScenarioType type)
+        {
+            if (this.direction != null
+                    // Direction が有効かどうかのチェック。(NMS との互換性)
+                    && Arrays.stream(ALLOWED_FACES).parallel().noneMatch(face -> face == this.direction))
+                throw new IllegalArgumentException("Invalid direction: " + this.direction + ", allowed: " + Arrays.toString(ALLOWED_FACES));
+
+            EquipmentSlot hand = this.hand;
+            if (!(hand == null || hand == EquipmentSlot.OFF_HAND || hand == EquipmentSlot.HAND))
+                throw new IllegalArgumentException("Invalid hand: " + this.hand + ", allowed: " + EquipmentSlot.HAND + ", " + EquipmentSlot.OFF_HAND);
+
+            if (type == ScenarioType.ACTION_EXECUTE)
+            {
+                BlockBean blockDef = this.block;
+                if (blockDef.getType() == null)
+                    throw new IllegalArgumentException("Block type cannot be null");
+            }
+            else
+                throwIfPresent(Argument.KEY_DIRECTION, this.direction);
         }
 
         @Nullable

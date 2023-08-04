@@ -201,23 +201,6 @@ public class PlayerDeathAction extends AbstractPlayerAction<PlayerDeathAction.Ar
                 );
     }
 
-    @Override
-    public void validateArgument(@NotNull ScenarioEngine engine, @NotNull ScenarioType type, @Nullable PlayerDeathAction.Argument argument)
-    {
-        argument = this.requireArgsNonNull(argument);
-
-        if (type != ScenarioType.CONDITION_REQUIRE)
-            return;
-
-        this.throwIfPresent(Argument.KEY_DEATH_MESSAGE, argument.getDeathMessage());
-        this.throwIfNotEquals(Argument.KEY_NEW_EXP, argument.getNewExp(), -1);
-        this.throwIfNotEquals(Argument.KEY_NEW_LEVEL, argument.getNewLevel(), -1);
-        this.throwIfNotEquals(Argument.KEY_NEW_TOTAL_EXP, argument.getNewTotalExp(), -1);
-        this.throwIfPresent(Argument.KEY_KEEP_LEVEL, argument.getKeepLevel());
-        this.throwIfPresent(Argument.KEY_KEEP_INVENTORY, argument.getKeepInventory());
-        this.throwIfPresent(Argument.KEY_DO_EXP_DROP, argument.getDoExpDrop());
-    }
-
     @Value
     @EqualsAndHashCode(callSuper = true)
     public static class Argument extends AbstractPlayerActionArgument
@@ -266,6 +249,21 @@ public class PlayerDeathAction extends AbstractPlayerAction<PlayerDeathAction.Ar
                     && this.checkDeathMessage(a)
                     && this.checkExpAndLevel(a)
                     && this.checkInventory(a);
+        }
+
+        @Override
+        public void validate(@NotNull ScenarioEngine engine, @NotNull ScenarioType type)
+        {
+            if (type != ScenarioType.CONDITION_REQUIRE)
+                return;
+
+            throwIfPresent(Argument.KEY_DEATH_MESSAGE, this.deathMessage);
+            throwIfNotEquals(Argument.KEY_NEW_EXP, this.newExp, -1);
+            throwIfNotEquals(Argument.KEY_NEW_LEVEL, this.newLevel, -1);
+            throwIfNotEquals(Argument.KEY_NEW_TOTAL_EXP, this.newTotalExp, -1);
+            throwIfPresent(Argument.KEY_KEEP_LEVEL, this.keepLevel);
+            throwIfPresent(Argument.KEY_KEEP_INVENTORY, this.keepInventory);
+            throwIfPresent(Argument.KEY_DO_EXP_DROP, this.doExpDrop);
         }
 
         private boolean checkTargetAndKiller(@NotNull PlayerDeathAction.Argument argument)

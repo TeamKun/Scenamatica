@@ -104,6 +104,8 @@ public class MessageAction extends AbstractScenamaticaAction<MessageAction.Argum
             return Objects.equals(this.message, a.message) && Objects.equals(this.recipient, a.recipient);
         }
 
+        // TODO: Create validation for argument
+
         @Override
         public String getArgumentString()
         {

@@ -51,7 +51,9 @@ public class InternalCompiler
             );
 
             scenario.getType().validatePerformableActionType(action.getExecutor().getClass());
-            action.getExecutor().validateArgument(engine, scenario.getType(), action.getArgument());
+            if (action.getArgument() != null)
+                action.getArgument().validate(engine, scenario.getType());
+
 
             return new CompiledScenarioActionImpl<>(
                     scenario,

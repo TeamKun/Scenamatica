@@ -1,5 +1,8 @@
 package org.kunlab.scenamatica.interfaces.action;
 
+import org.jetbrains.annotations.NotNull;
+import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 /**
@@ -14,4 +17,11 @@ public interface ActionArgument extends TriggerArgument
      */
     String getArgumentString();
 
+    /**
+     * 引数が正しいかチェックします。
+     *
+     * @param engine シナリオエンジン
+     * @param type   シナリオの種類
+     */
+    void validate(@NotNull ScenarioEngine engine, @NotNull ScenarioType type);
 }

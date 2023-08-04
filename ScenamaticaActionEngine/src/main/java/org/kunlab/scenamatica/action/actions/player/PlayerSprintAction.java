@@ -62,23 +62,6 @@ public class PlayerSprintAction extends AbstractPlayerAction<PlayerSprintAction.
     }
 
     @Override
-    public void validateArgument(@NotNull ScenarioEngine engine, @NotNull ScenarioType type, @Nullable Argument argument)
-    {
-        super.validateArgument(engine, type, argument);
-
-        if (argument == null)
-            return;
-
-        switch (type)
-        {
-            case ACTION_EXECUTE:
-            case CONDITION_REQUIRE:
-                this.throwIfNotPresent(Argument.KEY_SPRINTING, argument.sprinting);
-                break;
-        }
-    }
-
-    @Override
     public List<Class<? extends Event>> getAttachingEvents()
     {
         return Collections.singletonList(
@@ -131,6 +114,20 @@ public class PlayerSprintAction extends AbstractPlayerAction<PlayerSprintAction.
 
             return super.isSame(argument) &&
                     (this.sprinting == null || arg.sprinting == null || this.sprinting.equals(arg.sprinting));
+        }
+
+        @Override
+        public void validate(@NotNull ScenarioEngine engine, @NotNull ScenarioType type)
+        {
+            super.validate(engine, type);
+
+            switch (type)
+            {
+                case ACTION_EXECUTE:
+                case CONDITION_REQUIRE:
+                    throwIfNotPresent(Argument.KEY_SPRINTING, this.sprinting);
+                    break;
+            }
         }
 
         @Override

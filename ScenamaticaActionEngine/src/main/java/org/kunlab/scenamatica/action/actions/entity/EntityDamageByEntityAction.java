@@ -47,21 +47,6 @@ public class EntityDamageByEntityAction extends EntityDamageAction<EntityDamageB
     }
 
     @Override
-    public void validateArgument(@NotNull ScenarioEngine engine, @NotNull ScenarioType type, Argument argument)
-    {
-        super.validateArgument(engine, type, argument);
-
-        assert argument != null;
-        if (type == ScenarioType.ACTION_EXECUTE)
-        {
-            if (!argument.isSelectable())
-                throw new IllegalArgumentException("Cannot select target for this action, please specify target with valid selector.");
-            if (argument.getDamagerString() == null)
-                throw new IllegalArgumentException("Cannot execute this action without damager");
-        }
-    }
-
-    @Override
     public boolean isFired(@NotNull Argument argument, @NotNull ScenarioEngine engine, @NotNull Event event)
     {
         argument = this.requireArgsNonNull(argument);
@@ -133,6 +118,19 @@ public class EntityDamageByEntityAction extends EntityDamageAction<EntityDamageB
             Argument arg = (Argument) argument;
 
             return Objects.equals(this.damager, arg.damager);
+        }
+
+        @Override
+        public void validate(@NotNull ScenarioEngine engine, @NotNull ScenarioType type)
+        {
+            super.validate(engine, type);
+
+            if (type == ScenarioType.ACTION_EXECUTE)
+            {
+                if (!this.isSelectable())
+                    throw new IllegalArgumentException("Cannot select target for this action, please specify target with valid selector.");
+                throwIfNotPresent(KEY_DAMAGER, this.damager);
+            }
         }
 
         @Override

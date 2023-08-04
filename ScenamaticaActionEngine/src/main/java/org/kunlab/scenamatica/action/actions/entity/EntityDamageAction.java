@@ -74,21 +74,6 @@ public class EntityDamageAction<A extends EntityDamageAction.Argument> extends A
     }
 
     @Override
-    public void validateArgument(@NotNull ScenarioEngine engine, @NotNull ScenarioType type, @Nullable Argument argument)
-    {
-        argument = this.requireArgsNonNull(argument);
-
-        if (type == ScenarioType.ACTION_EXECUTE)
-        {
-            if (!argument.isSelectable())
-                throw new IllegalArgumentException("Cannot select target for this action, please specify target with valid selector.");
-            this.throwIfNotPresent(Argument.KEY_AMOUNT, argument.getAmount());
-            if (argument.getCause() != null)
-                throw new IllegalArgumentException("Use entity_damage_by_entity or entity_damage_by_block action instead.");
-        }
-    }
-
-    @Override
     public A deserializeArgument(@NotNull Map<String, Object> map, @NotNull BeanSerializer serializer)
     {
         Number amountNum = MapUtils.getAsNumberOrNull(map, Argument.KEY_AMOUNT);
@@ -156,6 +141,19 @@ public class EntityDamageAction<A extends EntityDamageAction.Argument> extends A
             return this.cause == arg.cause
                     && Objects.equals(this.amount, arg.amount)
                     && MapUtils.equals(this.modifiers, this.modifiers);
+        }
+
+        @Override
+        public void validate(@NotNull ScenarioEngine engine, @NotNull ScenarioType type)
+        {
+            if (type == ScenarioType.ACTION_EXECUTE)
+            {
+                if (!this.isSelectable())
+                    throw new IllegalArgumentException("Cannot select target for this action, please specify target with valid selector.");
+                throwIfNotPresent(Argument.KEY_AMOUNT, this.amount);
+                if (this.cause != null)
+                    throw new IllegalArgumentException("Use entity_damage_by_entity or entity_damage_by_block action instead.");
+            }
         }
 
         @Override

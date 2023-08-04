@@ -120,6 +120,8 @@ public class PlayerJoinAction extends AbstractPlayerAction<PlayerJoinAction.Argu
                     && Objects.equals(this.joinMessage, arg.joinMessage);
         }
 
+        // TODO: Create validation for argument
+
         @Override
         public String getArgumentString()
         {

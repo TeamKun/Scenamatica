@@ -135,7 +135,7 @@ public class PlayerAdvancementAction
         public static final String KEY_ADVANCEMENT = "advancement";
         public static final String KEY_CRITERIA = "criteria";
 
-        @NotNull
+        @NotNull  // TODO: Make this Nullable
         NamespacedKey advancement;
         @Nullable
         String criterion;

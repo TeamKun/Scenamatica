@@ -18,10 +18,10 @@ public abstract class AbstractEntityActionArgument extends AbstractActionArgumen
     public static final String KEY_TARGET_ENTITY = "target";
 
     @Nullable
-    private final String targetSpecifier;
+    protected final String targetSpecifier;
     @Getter
     @Nullable
-    private final EntityBean targetBean;
+    protected final EntityBean targetBean;
 
     public AbstractEntityActionArgument(@Nullable Object mayTarget)
     {

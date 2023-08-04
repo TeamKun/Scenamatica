@@ -80,7 +80,7 @@ public class PlayerAnimationAction extends AbstractPlayerAction<PlayerAnimationA
     {
         public static final String KEY_ACTION_TYPE = "type";
 
-        @NotNull
+        @NotNull  // TODO: Make this Nullable
         PlayerAnimationType type;
 
         public Argument(@NotNull String target, @NotNull PlayerAnimationType type)

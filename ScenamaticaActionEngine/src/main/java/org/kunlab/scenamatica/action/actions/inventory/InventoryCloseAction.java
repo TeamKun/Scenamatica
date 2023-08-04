@@ -66,17 +66,6 @@ public class InventoryCloseAction extends AbstractInventoryAction<InventoryClose
     }
 
     @Override
-    public void validateArgument(@NotNull ScenarioEngine engine, @NotNull ScenarioType type, @Nullable Argument argument)
-    {
-        argument = this.requireArgsNonNull(argument);
-        if (type == ScenarioType.ACTION_EXECUTE)
-        {
-            this.throwIfNotPresent(Argument.KEY_TARGET_PLAYER, argument.getTargetSpecifier());
-            this.throwIfPresent(Argument.KEY_INVENTORY, argument.getInventory());
-        }
-    }
-
-    @Override
     public List<Class<? extends Event>> getAttachingEvents()
     {
         return Collections.singletonList(
@@ -133,6 +122,16 @@ public class InventoryCloseAction extends AbstractInventoryAction<InventoryClose
 
             return Objects.equals(this.targetPlayer, arg.targetPlayer)
                     && this.reason == arg.reason;
+        }
+
+        @Override
+        public void validate(@NotNull ScenarioEngine engine, @NotNull ScenarioType type)
+        {
+            if (type == ScenarioType.ACTION_EXECUTE)
+            {
+                throwIfNotPresent(Argument.KEY_TARGET_PLAYER, this.targetPlayer);
+                throwIfPresent(Argument.KEY_INVENTORY, this.inventory);
+            }
         }
 
         @Override

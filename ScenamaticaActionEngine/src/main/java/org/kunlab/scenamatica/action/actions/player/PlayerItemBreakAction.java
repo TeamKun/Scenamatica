@@ -203,6 +203,8 @@ public class PlayerItemBreakAction extends AbstractPlayerAction<PlayerItemBreakA
                     && Objects.equals(this.item, arg.item);
         }
 
+        // TODO: Create validation for argument
+
         @Override
         public String getArgumentString()
         {

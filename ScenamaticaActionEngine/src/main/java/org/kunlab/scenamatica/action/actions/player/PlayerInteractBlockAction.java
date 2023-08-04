@@ -140,29 +140,6 @@ public class PlayerInteractBlockAction extends AbstractPlayerAction<PlayerIntera
         );
     }
 
-    @Override
-    public void validateArgument(@NotNull ScenarioEngine engine, @NotNull ScenarioType type, @Nullable Argument argument)
-    {
-        super.validateArgument(engine, type, argument);
-
-        if (argument == null)
-            return;
-
-        EquipmentSlot hand = argument.getHand();
-        if (!(hand == null || hand == EquipmentSlot.HAND || hand == EquipmentSlot.OFF_HAND))
-            throw new IllegalArgumentException("Argument hand must be either HAND or OFF_HAND");
-
-        if (type != ScenarioType.ACTION_EXECUTE)
-            return;
-
-        if (argument.getBlockFace() != null)
-            throw new IllegalArgumentException("Argument block_face is not allowed in action execute");
-
-        Action action = argument.getAction();
-        if (action == null)
-            throw new IllegalArgumentException("Argument action is not allowed to be null");
-    }
-
     @Value
     @EqualsAndHashCode(callSuper = true)
     public static class Argument extends AbstractPlayerActionArgument
@@ -202,7 +179,25 @@ public class PlayerInteractBlockAction extends AbstractPlayerAction<PlayerIntera
                     && this.hand == arg.hand
                     && Objects.equals(this.block, arg.block)
                     && this.blockFace == arg.blockFace;
+        }
 
+        @Override
+        public void validate(@NotNull ScenarioEngine engine, @NotNull ScenarioType type)
+        {
+            super.validate(engine, type);
+
+            EquipmentSlot hand = this.hand;
+            if (!(hand == null || hand == EquipmentSlot.HAND || hand == EquipmentSlot.OFF_HAND))
+                throw new IllegalArgumentException("Argument hand must be either HAND or OFF_HAND");
+
+            if (type != ScenarioType.ACTION_EXECUTE)
+                return;
+
+            throwIfPresent(KEY_BLOCK_FACE, this.blockFace);
+
+            Action action = this.action;
+            if (action == null)
+                throw new IllegalArgumentException("Argument action is not allowed to be null");
         }
 
         @Override

@@ -70,24 +70,6 @@ public class EntitySpawnAction extends AbstractAction<EntitySpawnAction.Argument
     }
 
     @Override
-    public void validateArgument(@NotNull ScenarioEngine engine, @NotNull ScenarioType type, @Nullable Argument argument)
-    {
-        argument = this.requireArgsNonNull(argument);
-
-        if (type == ScenarioType.ACTION_EXECUTE)
-        {
-            if (argument.getEntity() == null)
-                throw new IllegalArgumentException("Entity cannot be null");
-
-            EntityBean bean = argument.getEntity();
-            if (bean.getType() == null)
-                throw new IllegalArgumentException("Entity type cannot be null");
-            else if (bean.getType() == EntityType.UNKNOWN)
-                throw new IllegalArgumentException("Entity type cannot be UNKNOWN");
-        }
-    }
-
-    @Override
     public List<Class<? extends Event>> getAttachingEvents()
     {
         return Collections.singletonList(
@@ -129,6 +111,18 @@ public class EntitySpawnAction extends AbstractAction<EntitySpawnAction.Argument
             Argument arg = (Argument) argument;
 
             return Objects.equals(this.entity, arg.entity);
+        }
+
+        @Override
+        public void validate(@NotNull ScenarioEngine engine, @NotNull ScenarioType type)
+        {
+            if (type == ScenarioType.ACTION_EXECUTE)
+            {
+                throwIfNotPresent(KEY_ENTITY, this.entity);
+                EntityBean bean = this.entity;
+                throwIfNotPresent(KEY_ENTITY + "." + EntityBean.KEY_TYPE, bean.getType());
+                throwIfEquals(KEY_ENTITY + "." + EntityBean.KEY_TYPE, bean.getType(), EntityType.UNKNOWN);
+            }
         }
 
         @Override

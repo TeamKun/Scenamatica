@@ -1,9 +1,14 @@
 package org.kunlab.scenamatica.action.actions;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionArgument;
+import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.Objects;
 
 public abstract class AbstractActionArgument implements ActionArgument
 {
@@ -83,5 +88,85 @@ public abstract class AbstractActionArgument implements ActionArgument
         }
         else
             return obj.toString();
+    }
+
+    /**
+     * 対応していない引数を指定した場合に例外を投げます。
+     *
+     * @param fieldName フィールド名
+     * @param value     値
+     */
+    protected static void throwIfPresent(@NotNull String fieldName, @Nullable Object value)
+    {
+        if (value != null)
+            throw new IllegalArgumentException(String.format("The argument '%s' is not supported.", fieldName));
+    }
+
+    /**
+     * 対応していない引数を指定した場合に例外を投げます。
+     *
+     * @param fieldName フィールド名
+     * @param value     値
+     */
+    protected static void throwIfPresent(@NotNull String fieldName, @Nullable Number value)
+    {
+        if (value != null && value.doubleValue() != -1)
+            throw new IllegalArgumentException(String.format("The argument '%s' is not supported.", fieldName));
+    }
+
+    /**
+     * 引数が足りない場合に例外を投げます。
+     *
+     * @param fieldName フィールド名
+     * @param value     値
+     */
+    protected static void throwIfNotPresent(@NotNull String fieldName, @Nullable Object value)
+    {
+        if (value == null)
+            throw new IllegalArgumentException(String.format("The argument '%s' is required.", fieldName));
+    }
+
+    /**
+     * 期待値と異なる引数を指定した場合に例外を投げます。
+     *
+     * @param fieldName フィールド名
+     * @param value     値
+     * @param expected  期待値
+     */
+    protected static void throwIfNotEquals(@NotNull String fieldName, @Nullable Object value, @Nullable Object expected)
+    {
+        if (!Objects.equals(value, expected))
+            throw new IllegalArgumentException(String.format("The argument '%s' is not supported.", fieldName));
+    }
+
+    /**
+     * 期待値と同じ引数を指定した場合に例外を投げます。
+     *
+     * @param fieldName フィールド名
+     * @param value     値
+     * @param expected  期待値
+     */
+    protected static void throwIfEquals(@NotNull String fieldName, @Nullable Object value, @Nullable Object expected)
+    {
+        if (!Objects.equals(value, expected))
+            throw new IllegalArgumentException(String.format("The value of the argument '%s' must not be '%s'.", fieldName, expected));
+    }
+
+    /**
+     * trueを指定した場合に例外を投げます。
+     *
+     * @param fieldName フィールド名
+     * @param value     値
+     */
+
+    protected void throwIfTrue(@NotNull String fieldName, boolean value)
+    {
+        if (value)
+            throw new IllegalArgumentException(String.format("The argument '%s' is not supported.", fieldName));
+    }
+
+    @Override
+    public void validate(@NotNull ScenarioEngine engine, @NotNull ScenarioType type)
+    {
     }
 }

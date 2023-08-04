@@ -65,19 +65,6 @@ public class InventoryOpenAction extends AbstractInventoryAction<InventoryOpenAc
     }
 
     @Override
-    public void validateArgument(@NotNull ScenarioEngine engine, @NotNull ScenarioType type, @Nullable Argument argument)
-    {
-        argument = this.requireArgsNonNull(argument);
-        if (type == ScenarioType.ACTION_EXECUTE)
-        {
-            if (argument.getTargetSpecifier() == null)
-                throw new IllegalArgumentException("Cannot execute action without target specifier.");
-            else if (argument.getInventory() == null)
-                throw new IllegalArgumentException("Cannot execute action without inventory.");
-        }
-    }
-
-    @Override
     public List<Class<? extends Event>> getAttachingEvents()
     {
         return Collections.singletonList(
@@ -129,6 +116,16 @@ public class InventoryOpenAction extends AbstractInventoryAction<InventoryOpenAc
             Argument arg = (Argument) argument;
 
             return Objects.equals(this.targetPlayer, arg.targetPlayer);
+        }
+
+        @Override
+        public void validate(@NotNull ScenarioEngine engine, @NotNull ScenarioType type)
+        {
+            if (type == ScenarioType.ACTION_EXECUTE)
+            {
+                throwIfNotPresent(KEY_TARGET_PLAYER, this.targetPlayer);
+                throwIfNotPresent(KEY_INVENTORY, this.inventory);
+            }
         }
 
         @Override

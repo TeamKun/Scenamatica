@@ -42,14 +42,6 @@ public class WorldUnloadAction extends AbstractWorldAction<WorldUnloadAction.Arg
     }
 
     @Override
-    public void validateArgument(@NotNull ScenarioEngine engine, @NotNull ScenarioType type, @Nullable Argument argument)
-    {
-        argument = super.requireArgsNonNull(argument);
-        if (type != ScenarioType.ACTION_EXECUTE && argument.getSave() != null)
-            throw new IllegalArgumentException("Argument 'save' is only available in 'action_execute' type.");
-    }
-
-    @Override
     public List<Class<? extends Event>> getAttachingEvents()
     {
         return Collections.singletonList(
@@ -101,6 +93,13 @@ public class WorldUnloadAction extends AbstractWorldAction<WorldUnloadAction.Arg
             Argument arg = (Argument) argument;
 
             return this.isSameWorld(arg);
+        }
+
+        @Override
+        public void validate(@NotNull ScenarioEngine engine, @NotNull ScenarioType type)
+        {
+            if (!(type == ScenarioType.ACTION_EXECUTE || this.save == null))
+                throw new IllegalArgumentException("Argument 'save' is only available in 'action_execute' type.");
         }
 
         @Override

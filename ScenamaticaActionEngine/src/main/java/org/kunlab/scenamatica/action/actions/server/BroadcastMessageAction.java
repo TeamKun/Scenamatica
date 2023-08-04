@@ -100,15 +100,6 @@ public class BroadcastMessageAction extends AbstractServerAction<BroadcastMessag
     }
 
     @Override
-    public void validateArgument(@NotNull ScenarioEngine engine, @NotNull ScenarioType type, @Nullable Argument argument)
-    {
-        argument = this.requireArgsNonNull(argument);
-        if (type == ScenarioType.ACTION_EXPECT && argument.getPermission() != null)
-            throw new IllegalArgumentException("Permission is not supported in expect scenario.");
-
-    }
-
-    @Override
     public List<Class<? extends Event>> getAttachingEvents()
     {
         return Collections.singletonList(
@@ -161,6 +152,14 @@ public class BroadcastMessageAction extends AbstractServerAction<BroadcastMessag
                     )
                     && (this.permission == null || this.permission.equals(arg.permission))
                     && this.strictRecipients == arg.strictRecipients;
+        }
+
+        @Override
+        public void validate(@NotNull ScenarioEngine engine, @NotNull ScenarioType type)
+        {
+            if (type == ScenarioType.ACTION_EXPECT)
+                throwIfPresent(KEY_PERMISSION, this.permission);
+
         }
 
         @Override

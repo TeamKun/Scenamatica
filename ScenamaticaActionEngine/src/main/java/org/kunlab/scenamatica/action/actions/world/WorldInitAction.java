@@ -67,6 +67,7 @@ public class WorldInitAction extends AbstractWorldAction<WorldInitAction.Argumen
             return this.isSameWorld(arg);
         }
 
+        // TODO: Create validation for argument
         @Override
         public String getArgumentString()
         {

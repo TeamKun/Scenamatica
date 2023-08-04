@@ -17,7 +17,7 @@ public abstract class AbstractInventoryArgument extends AbstractActionArgument
     public static final String KEY_INVENTORY = "inventory";
 
     @Nullable
-    private final InventoryBean inventory;
+    protected final InventoryBean inventory;
 
     @Override
     public boolean isSame(TriggerArgument argument)

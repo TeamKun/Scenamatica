@@ -121,26 +121,6 @@ public class BlockBreakAction extends AbstractBlockAction<BlockBreakAction.Argum
     }
 
     @Override
-    public void validateArgument(@NotNull ScenarioEngine engine, @NotNull ScenarioType type, @Nullable Argument argument)
-    {
-        argument = this.requireArgsNonNull(argument);
-
-        if (type != ScenarioType.CONDITION_REQUIRE)
-            return;
-
-        this.throwIfPresent(Argument.KEY_ACTOR, argument.getActor());
-        this.throwIfPresent(Argument.KEY_DROP_ITEMS, argument.getDropItems());
-
-        BlockBean block = argument.getBlock();
-        this.throwIfPresent(Argument.KEY_BLOCK + "." + BlockBean.KEY_BLOCK_TYPE, block.getType());
-        this.throwIfPresent(Argument.KEY_BLOCK + "." + BlockBean.KEY_BIOME, block.getBiome());
-        this.throwIfPresent(Argument.KEY_BLOCK + "." + BlockBean.KEY_LIGHT_LEVEL, block.getLightLevel());
-
-        if (!block.getMetadata().isEmpty())
-            throw new IllegalArgumentException("The block metadata must be empty.");
-    }
-
-    @Override
     public boolean isConditionFulfilled(@Nullable Argument argument, @NotNull ScenarioEngine engine)
     {
         argument = this.requireArgsNonNull(argument);
@@ -180,6 +160,24 @@ public class BlockBreakAction extends AbstractBlockAction<BlockBreakAction.Argum
             return super.isSame(argument)
                     && Objects.equals(this.actor, arg.actor)
                     && Objects.equals(this.dropItems, arg.dropItems);
+        }
+
+        @Override
+        public void validate(@NotNull ScenarioEngine engine, @NotNull ScenarioType type)
+        {
+            if (type != ScenarioType.CONDITION_REQUIRE)
+                return;
+
+            throwIfPresent(Argument.KEY_ACTOR, this.actor);
+            throwIfPresent(Argument.KEY_DROP_ITEMS, this.dropItems);
+
+            BlockBean block = this.block;
+            throwIfPresent(Argument.KEY_BLOCK + "." + BlockBean.KEY_BLOCK_TYPE, block.getType());
+            throwIfPresent(Argument.KEY_BLOCK + "." + BlockBean.KEY_BIOME, block.getBiome());
+            throwIfPresent(Argument.KEY_BLOCK + "." + BlockBean.KEY_LIGHT_LEVEL, block.getLightLevel());
+
+            if (!block.getMetadata().isEmpty())
+                throw new IllegalArgumentException("The block metadata must be empty.");
         }
 
         @Nullable

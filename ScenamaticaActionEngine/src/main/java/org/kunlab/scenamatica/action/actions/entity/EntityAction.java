@@ -61,18 +61,6 @@ public class EntityAction extends AbstractEntityAction<EntityAction.Argument>
     }
 
     @Override
-    public void validateArgument(@NotNull ScenarioEngine engine, @NotNull ScenarioType type, @Nullable Argument argument)
-    {
-        argument = this.requireArgsNonNull(argument);
-
-        if (!argument.isSelectable())
-            throw new IllegalArgumentException("Cannot select target for this action, please specify target with valid selector.");
-
-        if (type == ScenarioType.ACTION_EXECUTE && argument.getEntity() == null)
-            throw new IllegalArgumentException("Cannot execute action without entity argument.");
-    }
-
-    @Override
     public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull BeanSerializer serializer)
     {
         EntityBean bean;
@@ -117,6 +105,16 @@ public class EntityAction extends AbstractEntityAction<EntityAction.Argument>
             Argument arg = (Argument) argument;
 
             return Objects.equals(this.entity, arg.entity);
+        }
+
+        @Override
+        public void validate(@NotNull ScenarioEngine engine, @NotNull ScenarioType type)
+        {
+            if (!this.isSelectable())
+                throw new IllegalArgumentException("Cannot select target for this action, please specify target with valid selector.");
+
+            if (type == ScenarioType.ACTION_EXECUTE && this.entity == null)
+                throw new IllegalArgumentException("Cannot execute action without entity argument.");
         }
 
         @Override

@@ -118,7 +118,7 @@ public class ServerLogAction extends AbstractServerAction<ServerLogAction.Argume
         String source;
         @Nullable
         Level level;
-        @NotNull
+        @NotNull  // TODO: Make this nullable
         String message; // 正規表現になるかもしれない
 
         @Override

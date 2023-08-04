@@ -99,6 +99,7 @@ public class WorldBorderChangedAction extends AbstractWorldAction<WorldBorderCha
                     && this.duration == arg.duration;
         }
 
+        // TODO: Create validation for argument
         @Override
         public String getArgumentString()
         {

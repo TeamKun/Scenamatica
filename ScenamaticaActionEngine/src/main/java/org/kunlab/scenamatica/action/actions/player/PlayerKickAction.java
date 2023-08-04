@@ -71,15 +71,6 @@ public class PlayerKickAction extends AbstractPlayerAction<PlayerKickAction.Argu
     }
 
     @Override
-    public void validateArgument(@NotNull ScenarioEngine engine, @NotNull ScenarioType type, @Nullable Argument argument)
-    {
-        argument = this.requireArgsNonNull(argument);
-
-        if (type == ScenarioType.ACTION_EXECUTE && argument.getLeaveMessage() != null)
-            throw new IllegalArgumentException("Leave message cannot be used in execute scenario.");
-    }
-
-    @Override
     public List<Class<? extends Event>> getAttachingEvents()
     {
         return Collections.singletonList(
@@ -133,6 +124,13 @@ public class PlayerKickAction extends AbstractPlayerAction<PlayerKickAction.Argu
                     && Objects.equals(this.leaveMessage, arg.leaveMessage)
                     && Objects.equals(this.kickMessage, arg.kickMessage)
                     && this.cause == arg.cause;
+        }
+
+        @Override
+        public void validate(@NotNull ScenarioEngine engine, @NotNull ScenarioType type)
+        {
+            if (type == ScenarioType.ACTION_EXECUTE)
+                throwIfPresent(KEY_LEAVE_MESSAGE, this.leaveMessage);
         }
 
         @Override

@@ -116,35 +116,6 @@ public class EntityPlaceAction extends AbstractEntityAction<EntityPlaceAction.Ar
     }
 
     @Override
-    public void validateArgument(@NotNull ScenarioEngine engine, @NotNull ScenarioType type, @Nullable Argument argument)
-    {
-        argument = this.requireArgsNonNull(argument);
-        if (type != ScenarioType.ACTION_EXECUTE)
-            return;
-
-        if (!argument.isSelectable())
-            throw new IllegalArgumentException("Cannot select target for this action, please specify target with valid selector.");
-
-        if (argument.getBlock() == null)
-            throw new IllegalArgumentException("Block is not specified.");
-        else if (argument.getBlock().getLocation() == null)
-            throw new IllegalArgumentException("Block location is not specified.");
-
-        if (argument.getPlayerSpecifier() == null)
-            throw new IllegalArgumentException("Player specifier is not specified.");
-
-        String entitySpecifier = argument.getTargetString();  // EXECUTE の場合は, 置く Material として扱う
-        if (entitySpecifier == null)
-            throw new IllegalArgumentException("Entity specifier is not specified.");
-
-        for (Material material : PLACEABLE_ITEMS)
-            if (material.name().equalsIgnoreCase(entitySpecifier) || material.name().equalsIgnoreCase("LEGACY_" + entitySpecifier))
-                return;
-
-        throw new IllegalArgumentException("Unknown entity type: " + entitySpecifier);
-    }
-
-    @Override
     public boolean isFired(@NotNull Argument argument, @NotNull ScenarioEngine engine, @NotNull Event event)
     {
         if (!super.checkMatchedEntityEvent(argument, engine, event))
@@ -232,6 +203,31 @@ public class EntityPlaceAction extends AbstractEntityAction<EntityPlaceAction.Ar
                     && Objects.equals(this.playerSpecifier, arg.playerSpecifier)
                     && Objects.equals(this.block, arg.block)
                     && this.blockFace == arg.blockFace;
+        }
+
+        @Override
+        public void validate(@NotNull ScenarioEngine engine, @NotNull ScenarioType type)
+        {
+            if (type != ScenarioType.ACTION_EXECUTE)
+                return;
+
+            if (!this.isSelectable())
+                throw new IllegalArgumentException("Cannot select target for this action, please specify target with valid selector.");
+
+            throwIfNotPresent(KEY_BLOCK, this.block);
+            if (this.block.getLocation() == null)
+                throw new IllegalArgumentException("Block location is not specified.");
+
+            throwIfNotPresent(KEY_PLAYER, this.playerSpecifier);
+
+            String entitySpecifier = this.targetSpecifier;  // EXECUTE の場合は, 置く Material として扱う
+            throwIfNotPresent(KEY_TARGET_ENTITY, entitySpecifier);
+
+            for (Material material : PLACEABLE_ITEMS)
+                if (material.name().equalsIgnoreCase(entitySpecifier) || material.name().equalsIgnoreCase("LEGACY_" + entitySpecifier))
+                    return;
+
+            throw new IllegalArgumentException("Unknown entity type: " + entitySpecifier);
         }
 
         @Override

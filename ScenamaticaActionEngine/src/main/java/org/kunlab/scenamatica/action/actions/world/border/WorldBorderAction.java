@@ -52,22 +52,6 @@ public class WorldBorderAction extends AbstractWorldAction<WorldBorderAction.Arg
     }
 
     @Override
-    public void validateArgument(@NotNull ScenarioEngine engine, @NotNull ScenarioType type, @Nullable Argument argument)
-    {
-        argument = this.requireArgsNonNull(argument);
-
-        switch (type)
-        {
-            case ACTION_EXECUTE:
-            case CONDITION_REQUIRE:
-                this.throwIfPresent(Argument.KEY_TYPE, argument.getType());
-                this.throwIfPresent(Argument.KEY_SIZE_OLD, argument.getOldSize());
-                this.throwIfPresent(Argument.KEY_CENTER_OLD, argument.getOldCenter());
-                break;
-        }
-    }
-
-    @Override
     public boolean isFired(@NotNull Argument argument, @NotNull ScenarioEngine engine, @NotNull Event event)
     {
         if (!super.isFired(argument, engine, event))
@@ -201,6 +185,20 @@ public class WorldBorderAction extends AbstractWorldAction<WorldBorderAction.Arg
                     && this.size == arg.size
                     && this.oldSize == arg.oldSize
                     && this.duration == arg.duration;
+        }
+
+        @Override
+        public void validate(@NotNull ScenarioEngine engine, @NotNull ScenarioType type)
+        {
+            switch (type)
+            {
+                case ACTION_EXECUTE:
+                case CONDITION_REQUIRE:
+                    throwIfPresent(Argument.KEY_TYPE, this.type);
+                    throwIfPresent(Argument.KEY_SIZE_OLD, this.oldSize);
+                    throwIfPresent(Argument.KEY_CENTER_OLD, this.oldCenter);
+                    break;
+            }
         }
 
         @Override

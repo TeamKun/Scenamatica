@@ -98,21 +98,6 @@ public class EntityDropItemAction extends AbstractEntityAction<EntityDropItemAct
     }
 
     @Override
-    public void validateArgument(@NotNull ScenarioEngine engine, @NotNull ScenarioType type, @Nullable Argument argument)
-    {
-        argument = this.requireArgsNonNull(argument);
-
-        if (type == ScenarioType.ACTION_EXECUTE)
-        {
-            if (!argument.isSelectable())
-                throw new IllegalArgumentException("Cannot select target for this action, please specify target with valid selector.");
-
-            if (argument.getItem() == null)
-                throw new IllegalArgumentException("Item is not specified.");
-        }
-    }
-
-    @Override
     public List<Class<? extends Event>> getAttachingEvents()
     {
         return Collections.singletonList(
@@ -168,6 +153,18 @@ public class EntityDropItemAction extends AbstractEntityAction<EntityDropItemAct
 
             return super.isSame(arg)
                     && Objects.equals(this.item, arg.item);
+        }
+
+        @Override
+        public void validate(@NotNull ScenarioEngine engine, @NotNull ScenarioType type)
+        {
+            if (type == ScenarioType.ACTION_EXECUTE)
+            {
+                if (!this.isSelectable())
+                    throw new IllegalArgumentException("Cannot select target for this action, please specify target with valid selector.");
+
+                throwIfNotPresent(KEY_DROP_ITEM, this.item);
+            }
         }
 
         @Override

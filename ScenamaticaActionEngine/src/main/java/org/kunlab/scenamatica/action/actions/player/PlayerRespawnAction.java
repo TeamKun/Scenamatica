@@ -72,18 +72,6 @@ public class PlayerRespawnAction extends AbstractPlayerAction<PlayerRespawnActio
     }
 
     @Override
-    public void validateArgument(@NotNull ScenarioEngine engine, @NotNull ScenarioType type, @Nullable Argument argument)
-    {
-        argument = this.requireArgsNonNull(argument);
-
-        if (type != ScenarioType.ACTION_EXECUTE)
-            return;
-
-        this.throwIfPresent(Argument.KEY_IS_BED, argument.getIsBed());
-        this.throwIfPresent(Argument.KEY_IS_ANCHOR, argument.getIsAnchor());
-    }
-
-    @Override
     public List<Class<? extends Event>> getAttachingEvents()
     {
         return Arrays.asList(
@@ -136,6 +124,16 @@ public class PlayerRespawnAction extends AbstractPlayerAction<PlayerRespawnActio
             return super.isSame(arg)
                     && this.isBed == arg.isBed
                     && this.isAnchor == arg.isAnchor;
+        }
+
+        @Override
+        public void validate(@NotNull ScenarioEngine engine, @NotNull ScenarioType type)
+        {
+            if (type != ScenarioType.ACTION_EXECUTE)
+                return;
+
+            throwIfPresent(Argument.KEY_IS_BED, this.isBed);
+            throwIfPresent(Argument.KEY_IS_ANCHOR, this.isAnchor);
         }
 
         @Override

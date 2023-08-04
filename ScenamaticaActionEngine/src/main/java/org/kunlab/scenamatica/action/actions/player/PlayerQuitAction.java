@@ -67,27 +67,6 @@ public class PlayerQuitAction extends AbstractPlayerAction<PlayerQuitAction.Argu
     }
 
     @Override
-    public void validateArgument(@NotNull ScenarioEngine engine, @NotNull ScenarioType type, @Nullable Argument argument)
-    {
-        argument = this.requireArgsNonNull(argument);
-
-        if (argument.getQuitMessage() == null)
-            return;
-
-
-        switch (type)
-        {
-            case ACTION_EXECUTE:
-                if (argument.getReason() == PlayerQuitEvent.QuitReason.DISCONNECTED)
-                    throw new IllegalArgumentException("Quit message is not allowed when executing player quitting by disconnection.");
-                break;
-            case CONDITION_REQUIRE:
-                throw new IllegalArgumentException("Quit message is not allowed in condition requiring scenario.");
-        }
-
-    }
-
-    @Override
     public boolean isConditionFulfilled(@Nullable PlayerQuitAction.Argument argument, @NotNull ScenarioEngine engine)
     {
         argument = this.requireArgsNonNull(argument);
@@ -170,6 +149,25 @@ public class PlayerQuitAction extends AbstractPlayerAction<PlayerQuitAction.Argu
             return super.isSame(arg)
                     && Objects.equals(this.quitMessage, arg.quitMessage)
                     && this.reason == arg.reason;
+        }
+
+        @Override
+        public void validate(@NotNull ScenarioEngine engine, @NotNull ScenarioType type)
+        {
+            if (this.quitMessage == null)
+                return;
+
+
+            switch (type)
+            {
+                case ACTION_EXECUTE:
+                    if (this.reason == PlayerQuitEvent.QuitReason.DISCONNECTED)
+                        throw new IllegalArgumentException("Quit message is not allowed when executing player quitting by disconnection.");
+                    break;
+                case CONDITION_REQUIRE:
+                    throw new IllegalArgumentException("Quit message is not allowed in condition requiring scenario.");
+            }
+
         }
 
         @Override

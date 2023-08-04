@@ -117,6 +117,7 @@ public class CommandDispatchAction extends AbstractServerAction<CommandDispatchA
                     && Objects.equals(this.sender, ((Argument) argument).sender);
         }
 
+        // TODO: Create validation for argument
         @Override
         public String getArgumentString()
         {

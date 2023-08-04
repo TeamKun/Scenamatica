@@ -62,23 +62,6 @@ public class PlayerSneakAction extends AbstractPlayerAction<PlayerSneakAction.Ar
     }
 
     @Override
-    public void validateArgument(@NotNull ScenarioEngine engine, @NotNull ScenarioType type, @Nullable Argument argument)
-    {
-        super.validateArgument(engine, type, argument);
-
-        if (argument == null)
-            return;
-
-        switch (type)
-        {
-            case ACTION_EXECUTE:
-            case CONDITION_REQUIRE:
-                this.throwIfNotPresent(Argument.KEY_SNEAKING, argument.sneaking);
-                break;
-        }
-    }
-
-    @Override
     public List<Class<? extends Event>> getAttachingEvents()
     {
         return Collections.singletonList(
@@ -131,6 +114,20 @@ public class PlayerSneakAction extends AbstractPlayerAction<PlayerSneakAction.Ar
 
             return super.isSame(argument) &&
                     (this.sneaking == null || arg.sneaking == null || this.sneaking.equals(arg.sneaking));
+        }
+
+        @Override
+        public void validate(@NotNull ScenarioEngine engine, @NotNull ScenarioType type)
+        {
+            super.validate(engine, type);
+
+            switch (type)
+            {
+                case ACTION_EXECUTE:
+                case CONDITION_REQUIRE:
+                    throwIfNotPresent(Argument.KEY_SNEAKING, this.sneaking);
+                    break;
+            }
         }
 
         @Override

@@ -75,6 +75,8 @@ public class NegateAction<T extends ActionArgument> extends AbstractScenamaticaA
             }
         }
 
+        // TODO: Create validation for argument
+
         @Override
         public String getArgumentString()
         {

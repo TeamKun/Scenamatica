@@ -106,6 +106,8 @@ public class MilestoneAction extends AbstractScenamaticaAction<MilestoneAction.A
             return false;
         }
 
+        // TODO: Create validation for argument
+
         @Override
         public String getArgumentString()
         {

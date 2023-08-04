@@ -103,22 +103,6 @@ public class PlayerGameModeAction extends AbstractPlayerAction<PlayerGameModeAct
         return argument.getTarget().getGameMode() == gameMode;
     }
 
-    @Override
-    public void validateArgument(@NotNull ScenarioEngine engine, @NotNull ScenarioType type, @Nullable PlayerGameModeAction.Argument argument)
-    {
-        argument = this.requireArgsNonNull(argument);
-
-        switch (type)
-        {
-            case CONDITION_REQUIRE:
-            case ACTION_EXECUTE:
-                this.throwIfPresent(Argument.KEY_CAUSE, argument.getCause());
-                this.throwIfPresent(Argument.KEY_CANCEL_MESSAGE, argument.getCancelMessage());
-                break;
-
-        }
-    }
-
     @Value
     @EqualsAndHashCode(callSuper = true)
     public static class Argument extends AbstractPlayerActionArgument
@@ -153,6 +137,20 @@ public class PlayerGameModeAction extends AbstractPlayerAction<PlayerGameModeAct
                     this.gameMode == arg.gameMode &&
                     this.cause == arg.cause &&
                     Objects.equals(this.cancelMessage, arg.cancelMessage);
+        }
+
+        @Override
+        public void validate(@NotNull ScenarioEngine engine, @NotNull ScenarioType type)
+        {
+            switch (type)
+            {
+                case CONDITION_REQUIRE:
+                case ACTION_EXECUTE:
+                    throwIfPresent(Argument.KEY_CAUSE, this.cause);
+                    throwIfPresent(Argument.KEY_CANCEL_MESSAGE, this.cancelMessage);
+                    break;
+
+            }
         }
 
         @Override
