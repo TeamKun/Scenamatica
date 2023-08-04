@@ -1,13 +1,13 @@
 package org.kunlab.scenamatica.interfaces;
 
-import org.kunlab.scenamatica.interfaces.action.ActionManager;
+import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.NotNull;
+import org.kunlab.scenamatica.interfaces.action.ActionRunManager;
 import org.kunlab.scenamatica.interfaces.context.ContextManager;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioManager;
 import org.kunlab.scenamatica.interfaces.scenario.TestReporter;
 import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileManager;
 import org.kunlab.scenamatica.interfaces.trigger.TriggerManager;
-import org.bukkit.plugin.Plugin;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.logging.Logger;
 
@@ -63,7 +63,7 @@ public interface ScenamaticaRegistry
      *
      * @return 動作マネージャー
      */
-    ActionManager getActionManager();
+    ActionRunManager getActionManager();
 
     /**
      * トリガマネージャーを取得します。

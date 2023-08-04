@@ -9,7 +9,7 @@ import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
 /**
  * 動作の実行と監視を管理するクラスのインターフェースです。
  */
-public interface ActionManager
+public interface ActionRunManager
 {
     /**
      * 初期化します。

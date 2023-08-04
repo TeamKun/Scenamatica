@@ -5,7 +5,7 @@ import net.kunmc.lab.peyangpaperutils.lang.MsgArgs;
 import org.kunlab.scenamatica.commons.utils.LogUtils;
 import org.kunlab.scenamatica.enums.TriggerType;
 import org.kunlab.scenamatica.interfaces.ScenamaticaRegistry;
-import org.kunlab.scenamatica.interfaces.action.ActionManager;
+import org.kunlab.scenamatica.interfaces.action.ActionRunManager;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioActionListener;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenario.runtime.CompiledScenarioAction;
@@ -27,14 +27,14 @@ public class ScenarioCompiler
     private final ScenarioEngine engine;
 
     private final ScenarioFileBean scenario;
-    private final ActionManager actionManager;
+    private final ActionRunManager actionManager;
     private final ScenarioActionListener listener;
     private final String logPrefix;
     private final int compileNeeded;
 
     private int compiled;
 
-    public ScenarioCompiler(ScenarioEngine engine, ScenamaticaRegistry registry, ActionManager actionManager)
+    public ScenarioCompiler(ScenarioEngine engine, ScenamaticaRegistry registry, ActionRunManager actionManager)
     {
         this.engine = engine;
         this.registry = registry;

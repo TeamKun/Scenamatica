@@ -10,7 +10,7 @@ import org.kunlab.scenamatica.enums.TriggerType;
 import org.kunlab.scenamatica.enums.WatchType;
 import org.kunlab.scenamatica.exceptions.scenario.ScenarioException;
 import org.kunlab.scenamatica.interfaces.ScenamaticaRegistry;
-import org.kunlab.scenamatica.interfaces.action.ActionManager;
+import org.kunlab.scenamatica.interfaces.action.ActionRunManager;
 import org.kunlab.scenamatica.interfaces.action.CompiledAction;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenario.SessionCreator;
@@ -32,7 +32,7 @@ public class TriggerManagerImpl implements TriggerManager
     }
 
     private final ScenamaticaRegistry registry;
-    private final ActionManager actionManager;
+    private final ActionRunManager actionManager;
     private final Multimap<ScenarioEngine, TriggerBean> triggers;  // シナリオ名 / トリガー
 
     private final List<TriggerType> ignoreTypes;

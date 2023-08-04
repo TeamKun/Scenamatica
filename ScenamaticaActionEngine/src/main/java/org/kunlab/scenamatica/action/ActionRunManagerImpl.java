@@ -10,16 +10,17 @@ import org.kunlab.scenamatica.enums.WatchType;
 import org.kunlab.scenamatica.interfaces.ScenamaticaRegistry;
 import org.kunlab.scenamatica.interfaces.action.ActionArgument;
 import org.kunlab.scenamatica.interfaces.action.ActionCompiler;
-import org.kunlab.scenamatica.interfaces.action.ActionManager;
+import org.kunlab.scenamatica.interfaces.action.ActionRunManager;
 import org.kunlab.scenamatica.interfaces.action.CompiledAction;
 import org.kunlab.scenamatica.interfaces.action.WatcherManager;
+import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
 
-public class ActionManagerImpl implements ActionManager
+public class ActionRunManagerImpl implements ActionRunManager
 {
     private final ScenamaticaRegistry registry;
     @Getter
@@ -31,7 +32,7 @@ public class ActionManagerImpl implements ActionManager
 
     private BukkitTask runner;
 
-    public ActionManagerImpl(@NotNull ScenamaticaRegistry registry)
+    public ActionRunManagerImpl(@NotNull ScenamaticaRegistry registry)
     {
         this.registry = registry;
         this.compiler = new ActionCompilerImpl();
@@ -47,13 +48,7 @@ public class ActionManagerImpl implements ActionManager
     {
         this.serverLogHandler.init();
 
-        this.runner = Runner.runTimer(this.registry.getPlugin(), () -> {
-            if (this.actionQueue.isEmpty())
-                return;
-
-            CompiledAction<?> entry = this.actionQueue.pop();
-            entry.execute();
-        }, 0, 1);
+        this.runner = Runner.runTimer(this.registry.getPlugin(), this::executeNext, 0, 1);
     }
 
     @Override
@@ -79,5 +74,26 @@ public class ActionManagerImpl implements ActionManager
         this.actionQueue.clear();
         if (this.runner != null)
             this.runner.cancel();
+    }
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    private void executeNext()
+    {
+        if (this.actionQueue.isEmpty())
+            return;
+
+        CompiledAction<?> entry = this.actionQueue.pop();
+        try
+        {
+            assert entry.getExecutor() instanceof Executable;
+
+            Executable executable = (Executable) entry.getExecutor();
+            executable.execute(entry.getEngine(), entry.getArgument());
+            entry.getOnExecute().accept(entry);
+        }
+        catch (Throwable e)
+        {
+            entry.getErrorHandler().accept(entry, e);
+        }
     }
 }

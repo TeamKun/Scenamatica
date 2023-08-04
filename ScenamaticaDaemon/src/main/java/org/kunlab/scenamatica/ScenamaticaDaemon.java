@@ -3,14 +3,14 @@ package org.kunlab.scenamatica;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
-import org.kunlab.scenamatica.action.ActionManagerImpl;
+import org.kunlab.scenamatica.action.ActionRunManagerImpl;
 import org.kunlab.scenamatica.context.ContextManagerImpl;
 import org.kunlab.scenamatica.events.PluginEventListener;
 import org.kunlab.scenamatica.exceptions.context.actor.VersionNotSupportedException;
 import org.kunlab.scenamatica.interfaces.ExceptionHandler;
 import org.kunlab.scenamatica.interfaces.ScenamaticaEnvironment;
 import org.kunlab.scenamatica.interfaces.ScenamaticaRegistry;
-import org.kunlab.scenamatica.interfaces.action.ActionManager;
+import org.kunlab.scenamatica.interfaces.action.ActionRunManager;
 import org.kunlab.scenamatica.interfaces.context.ContextManager;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioManager;
 import org.kunlab.scenamatica.interfaces.scenario.TestReporter;
@@ -33,7 +33,7 @@ public class ScenamaticaDaemon implements ScenamaticaRegistry
     private final ExceptionHandler exceptionHandler;
     private final ScenarioFileManager scenarioFileManager;
     private final ContextManager contextManager;
-    private final ActionManager actionManager;
+    private final ActionRunManager actionManager;
     private final TriggerManager triggerManager;
     private final ScenarioManager scenarioManager;
 
@@ -45,7 +45,7 @@ public class ScenamaticaDaemon implements ScenamaticaRegistry
         this.exceptionHandler = env.getExceptionHandler();
         this.environment = env;
         this.scenarioFileManager = new ScenarioFileManagerImpl(this);
-        this.actionManager = new ActionManagerImpl(this);
+        this.actionManager = new ActionRunManagerImpl(this);
         this.triggerManager = new TriggerManagerImpl(this);
         this.scenarioManager = new ScenarioManagerImpl(this);
 

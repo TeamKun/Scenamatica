@@ -1,5 +1,6 @@
 package org.kunlab.scenamatica.interfaces.action;
 
+import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.action.ActionBean;
 
 import java.util.function.BiConsumer;
@@ -12,6 +13,13 @@ import java.util.function.Consumer;
  */
 public interface CompiledAction<A extends ActionArgument>
 {
+    /**
+     * アクションに関連付けられた Engine を取得します。
+     *
+     * @return Engine
+     */
+    ScenarioEngine getEngine();
+
     /**
      * アクションの Bean を取得します。
      *
@@ -46,9 +54,4 @@ public interface CompiledAction<A extends ActionArgument>
      * @return コールバック
      */
     Consumer<CompiledAction<?>> getOnExecute();
-
-    /**
-     * アクションを実行します。
-     */
-    void execute();
 }

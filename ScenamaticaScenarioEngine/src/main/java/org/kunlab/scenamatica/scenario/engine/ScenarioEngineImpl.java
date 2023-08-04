@@ -14,7 +14,7 @@ import org.kunlab.scenamatica.enums.ScenarioState;
 import org.kunlab.scenamatica.enums.TriggerType;
 import org.kunlab.scenamatica.exceptions.scenario.TriggerNotFoundException;
 import org.kunlab.scenamatica.interfaces.ScenamaticaRegistry;
-import org.kunlab.scenamatica.interfaces.action.ActionManager;
+import org.kunlab.scenamatica.interfaces.action.ActionRunManager;
 import org.kunlab.scenamatica.interfaces.context.Context;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioActionListener;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
@@ -41,7 +41,7 @@ public class ScenarioEngineImpl implements ScenarioEngine
     private final ScenamaticaRegistry registry;
     private final boolean verbose;
     private final ScenarioManager manager;
-    private final ActionManager actionManager;
+    private final ActionRunManager actionRunManager;
     private final TestReporter testReporter;  // 一意
     private final Plugin plugin;
     private final ScenarioFileBean scenario;
@@ -60,14 +60,14 @@ public class ScenarioEngineImpl implements ScenarioEngine
 
     public ScenarioEngineImpl(@NotNull ScenamaticaRegistry registry,
                               @NotNull ScenarioManager manager,
-                              @NotNull ActionManager actionManager,
+                              @NotNull ActionRunManager actionRunManager,
                               @NotNull TestReporter testReporter,
                               @NotNull Plugin plugin,
                               @NotNull ScenarioFileBean scenario)
     {
         this.registry = registry;
         this.manager = manager;
-        this.actionManager = actionManager;
+        this.actionRunManager = actionRunManager;
         this.testReporter = testReporter;
         this.plugin = plugin;
         this.scenario = scenario;
@@ -79,7 +79,7 @@ public class ScenarioEngineImpl implements ScenarioEngine
         this.executor = null;
 
         // 以下、 アクションをコンパイルしてキャッシュしておく。
-        ScenarioCompiler compiler = this.compiler = new ScenarioCompiler(this, registry, actionManager);
+        ScenarioCompiler compiler = this.compiler = new ScenarioCompiler(this, registry, actionRunManager);
         compiler.notifyCompileStart();
 
         this.actions = compiler.compileMain(scenario.getScenario());
@@ -115,7 +115,7 @@ public class ScenarioEngineImpl implements ScenarioEngine
 
         this.executor = new ScenarioExecutor(
                 this,
-                this.actionManager,
+                this.actionRunManager,
                 this.listener,
                 this.actions,
                 this.triggerActions,

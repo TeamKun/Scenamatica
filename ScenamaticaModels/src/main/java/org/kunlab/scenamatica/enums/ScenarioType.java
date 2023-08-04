@@ -3,6 +3,7 @@ package org.kunlab.scenamatica.enums;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
+import org.kunlab.scenamatica.interfaces.action.Action;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
@@ -42,12 +43,12 @@ public enum ScenarioType
         return null;
     }
 
-    public boolean canPerformActionInType(@NotNull @SuppressWarnings("rawtypes") Class<? extends Executable> clazz)
+    public boolean canPerformActionInType(@NotNull @SuppressWarnings("rawtypes") Class<? extends Action> clazz)
     {
         return this.markerInterface.isAssignableFrom(clazz);
     }
 
-    public void validatePerformableActionType(@NotNull @SuppressWarnings("rawtypes") Class<? extends Executable> clazz)
+    public void validatePerformableActionType(@NotNull @SuppressWarnings("rawtypes") Class<? extends Action> clazz)
     {
         if (!this.canPerformActionInType(clazz))
             throw new IllegalArgumentException("Action type " + clazz.getName() + " cannot be performed in scenario type " + this.name());

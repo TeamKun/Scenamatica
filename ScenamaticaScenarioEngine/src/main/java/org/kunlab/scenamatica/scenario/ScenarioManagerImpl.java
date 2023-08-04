@@ -17,7 +17,7 @@ import org.kunlab.scenamatica.exceptions.scenario.ScenarioNotFoundException;
 import org.kunlab.scenamatica.exceptions.scenario.ScenarioNotRunningException;
 import org.kunlab.scenamatica.exceptions.scenario.TriggerNotFoundException;
 import org.kunlab.scenamatica.interfaces.ScenamaticaRegistry;
-import org.kunlab.scenamatica.interfaces.action.ActionManager;
+import org.kunlab.scenamatica.interfaces.action.ActionRunManager;
 import org.kunlab.scenamatica.interfaces.scenario.MilestoneManager;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioManager;
@@ -42,7 +42,7 @@ import java.util.function.Consumer;
 public class ScenarioManagerImpl implements ScenarioManager
 {
     private final ScenamaticaRegistry registry;
-    private final ActionManager actionManager;
+    private final ActionRunManager actionManager;
     @Getter
     private final MilestoneManager milestoneManager;
     private final Multimap<Plugin, ScenarioEngine> engines;

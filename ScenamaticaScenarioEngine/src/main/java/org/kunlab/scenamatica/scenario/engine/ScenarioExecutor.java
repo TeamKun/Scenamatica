@@ -14,7 +14,7 @@ import org.kunlab.scenamatica.enums.WatchType;
 import org.kunlab.scenamatica.exceptions.scenario.TriggerNotFoundException;
 import org.kunlab.scenamatica.interfaces.ScenamaticaRegistry;
 import org.kunlab.scenamatica.interfaces.action.ActionArgument;
-import org.kunlab.scenamatica.interfaces.action.ActionManager;
+import org.kunlab.scenamatica.interfaces.action.ActionRunManager;
 import org.kunlab.scenamatica.interfaces.action.CompiledAction;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
@@ -46,7 +46,7 @@ public class ScenarioExecutor
     private final List<? extends CompiledTriggerAction> triggerActions;
     private final CompiledScenarioAction<?> runIf;
     private final ScenarioFileBean scenario;
-    private final ActionManager actionManager;
+    private final ActionRunManager actionManager;
     private final ScenarioActionListener listener;
     private final ScenarioResultDeliverer deliverer;
     private final List<CompiledScenarioAction<?>> watchedActions;
@@ -60,7 +60,7 @@ public class ScenarioExecutor
     private CompiledScenarioAction<?> currentScenario;
 
     public ScenarioExecutor(ScenarioEngineImpl engine,
-                            ActionManager actionManager,
+                            ActionRunManager actionManager,
                             ScenarioActionListener listener,
                             List<? extends CompiledScenarioAction<?>> actions,
                             List<? extends CompiledTriggerAction> triggerActions,
