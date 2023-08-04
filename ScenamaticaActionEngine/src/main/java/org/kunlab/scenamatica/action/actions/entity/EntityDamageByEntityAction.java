@@ -12,6 +12,7 @@ import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.utils.EntityUtils;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.BeanSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
@@ -22,6 +23,7 @@ import java.util.Map;
 import java.util.Objects;
 
 public class EntityDamageByEntityAction extends EntityDamageAction<EntityDamageByEntityAction.Argument>
+        implements Executable<EntityDamageByEntityAction.Argument>
 {
     public static final String KEY_ACTION_NAME = "entity_damage_by_entity";
 

@@ -10,7 +10,9 @@ import org.kunlab.scenamatica.interfaces.action.Action;
 import org.kunlab.scenamatica.interfaces.action.ActionArgument;
 import org.kunlab.scenamatica.interfaces.action.ActionCompiler;
 import org.kunlab.scenamatica.interfaces.action.CompiledAction;
+import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
+import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.BeanSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.action.ActionBean;
@@ -27,8 +29,19 @@ public class ActionCompilerImpl implements ActionCompiler
 
     static
     {
-        // 全部の Action を登録する
         ACTIONS = Collections.unmodifiableList(AbstractAction.getActions());
+        validateActions(ACTIONS);
+    }
+
+    private static void validateActions(List<? extends Action<?>> actions)
+    {
+        for (Action<?> action : actions)
+        {
+            if (!(action.getClass().isAssignableFrom(Executable.class)
+                    || action.getClass().isAssignableFrom(Watchable.class)
+                    || action.getClass().isAssignableFrom(Requireable.class)))
+                throw new IllegalArgumentException("Action " + action.getClass().getName() + " is not executable, watchable, or requireable, cannot be used.");
+        }
     }
 
     private static <O extends ActionArgument> CompiledActionImpl<NegateAction.Argument<O>> processNegateAction(

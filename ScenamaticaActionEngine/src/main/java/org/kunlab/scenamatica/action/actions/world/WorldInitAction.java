@@ -26,12 +26,6 @@ public class WorldInitAction extends AbstractWorldAction<WorldInitAction.Argumen
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @Nullable Argument argument)
-    {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public boolean isFired(@NotNull Argument argument, @NotNull ScenarioEngine engine, @NotNull Event event)
     {
         return super.isFired(argument, engine, event);

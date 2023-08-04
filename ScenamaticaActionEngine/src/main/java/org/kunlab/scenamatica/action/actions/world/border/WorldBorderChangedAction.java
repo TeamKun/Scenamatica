@@ -3,16 +3,16 @@ package org.kunlab.scenamatica.action.actions.world.border;
 import io.papermc.paper.event.world.border.WorldBorderBoundsChangeFinishEvent;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
-import org.kunlab.scenamatica.commons.utils.MapUtils;
-import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.BeanSerializer;
-import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 import org.bukkit.NamespacedKey;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.actions.world.AbstractWorldAction;
 import org.kunlab.scenamatica.action.actions.world.AbstractWorldActionArgument;
+import org.kunlab.scenamatica.commons.utils.MapUtils;
+import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
+import org.kunlab.scenamatica.interfaces.scenariofile.BeanSerializer;
+import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Collections;
 import java.util.List;
@@ -26,12 +26,6 @@ public class WorldBorderChangedAction extends AbstractWorldAction<WorldBorderCha
     public String getName()
     {
         return KEY_ACTION_NAME;
-    }
-
-    @Override
-    public void execute(@NotNull ScenarioEngine engine, @Nullable Argument argument)
-    {
-        throw new UnsupportedOperationException();
     }
 
     @Override

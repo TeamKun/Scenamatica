@@ -11,6 +11,7 @@ import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.utils.PlayerUtils;
 import org.kunlab.scenamatica.action.utils.TextUtils;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
+import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.context.Actor;
@@ -24,7 +25,7 @@ import java.util.Map;
 import java.util.Objects;
 
 public class PlayerJoinAction extends AbstractPlayerAction<PlayerJoinAction.Argument>
-        implements Requireable<PlayerJoinAction.Argument>, Watchable<PlayerJoinAction.Argument>
+        implements Executable<PlayerJoinAction.Argument>, Watchable<PlayerJoinAction.Argument>, Requireable<PlayerJoinAction.Argument>
 {
     // OfflinePlayer を扱うため, 通常の PlayerAction とは違う実装をする。
 

@@ -14,6 +14,7 @@ import org.kunlab.scenamatica.action.utils.BeanUtils;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.commons.utils.Utils;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.BeanSerializer;
@@ -26,7 +27,7 @@ import java.util.Map;
 import java.util.Objects;
 
 public class EntitySpawnAction extends AbstractAction<EntitySpawnAction.Argument>
-        implements Watchable<EntitySpawnAction.Argument>
+        implements Executable<EntitySpawnAction.Argument>, Watchable<EntitySpawnAction.Argument>
 {
     public static final String KEY_ACTION_NAME = "entity_spawn";
 

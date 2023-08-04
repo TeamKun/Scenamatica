@@ -27,6 +27,7 @@ import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.commons.utils.Utils;
 import org.kunlab.scenamatica.interfaces.action.ActionArgument;
+import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.BeanSerializer;
@@ -37,7 +38,7 @@ import java.util.List;
 import java.util.Map;
 
 public class PlayerLaunchProjectileAction extends AbstractPlayerAction<PlayerLaunchProjectileAction.Argument>
-        implements Watchable<PlayerLaunchProjectileAction.Argument>
+        implements Executable<PlayerLaunchProjectileAction.Argument>, Watchable<PlayerLaunchProjectileAction.Argument>
 {
     public static final String KEY_ACTION_NAME = "player_projectile_launch";
 

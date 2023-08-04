@@ -16,6 +16,7 @@ import org.kunlab.scenamatica.action.utils.BeanUtils;
 import org.kunlab.scenamatica.action.utils.PlayerUtils;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.context.Actor;
@@ -30,7 +31,7 @@ import java.util.List;
 import java.util.Map;
 
 public class BlockPlaceAction extends AbstractBlockAction<BlockPlaceAction.Argument>
-        implements Requireable<BlockPlaceAction.Argument>, Watchable<BlockPlaceAction.Argument>
+        implements Executable<BlockPlaceAction.Argument>, Requireable<BlockPlaceAction.Argument>, Watchable<BlockPlaceAction.Argument>
 {
     public static final String KEY_ACTION_NAME = "block_place";
     private static final BlockFace[] ALLOWED_FACES = {

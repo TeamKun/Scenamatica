@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.utils.PlayerUtils;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
+import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.BeanSerializer;
@@ -20,7 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 public class PlayerAnimationAction extends AbstractPlayerAction<PlayerAnimationAction.Argument>
-        implements Watchable<PlayerAnimationAction.Argument>
+        implements Executable<PlayerAnimationAction.Argument>, Watchable<PlayerAnimationAction.Argument>
 {
     public static final String KEY_ACTION_NAME = "player_animation";
 

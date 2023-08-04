@@ -10,6 +10,7 @@ import org.bukkit.event.world.WorldLoadEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.BeanSerializer;
@@ -21,7 +22,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-public class WorldLoadAction extends AbstractWorldAction<WorldLoadAction.Argument> implements Requireable<WorldLoadAction.Argument>
+public class WorldLoadAction extends AbstractWorldAction<WorldLoadAction.Argument>
+        implements Executable<WorldLoadAction.Argument>, Requireable<WorldLoadAction.Argument>
 {
     public static final String KEY_ACTION_NAME = "world_load";
 

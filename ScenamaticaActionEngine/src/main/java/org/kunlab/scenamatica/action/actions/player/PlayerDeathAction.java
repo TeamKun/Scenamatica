@@ -10,6 +10,7 @@ import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.utils.PlayerUtils;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
@@ -23,7 +24,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 public class PlayerDeathAction extends AbstractPlayerAction<PlayerDeathAction.Argument>
-        implements Requireable<PlayerDeathAction.Argument>, Watchable<PlayerDeathAction.Argument>
+        implements Executable<PlayerDeathAction.Argument>, Requireable<PlayerDeathAction.Argument>, Watchable<PlayerDeathAction.Argument>
 {
     public static final String KEY_ACTION_NAME = "player_death";
 

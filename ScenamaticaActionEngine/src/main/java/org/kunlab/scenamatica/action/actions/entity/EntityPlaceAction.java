@@ -16,6 +16,7 @@ import org.kunlab.scenamatica.action.utils.PlayerUtils;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.commons.utils.Utils;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.context.Actor;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
@@ -29,7 +30,7 @@ import java.util.Map;
 import java.util.Objects;
 
 public class EntityPlaceAction extends AbstractEntityAction<EntityPlaceAction.Argument>
-        implements Watchable<EntityPlaceAction.Argument>
+        implements Executable<EntityPlaceAction.Argument>, Watchable<EntityPlaceAction.Argument>
 {
     public static final String KEY_ACTION_NAME = "entity_place";
 

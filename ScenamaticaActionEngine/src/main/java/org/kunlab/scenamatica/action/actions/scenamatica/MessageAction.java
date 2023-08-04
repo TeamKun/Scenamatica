@@ -12,6 +12,7 @@ import org.kunlab.scenamatica.action.utils.PlayerUtils;
 import org.kunlab.scenamatica.action.utils.TextUtils;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.events.actor.ActorMessageReceiveEvent;
+import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.BeanSerializer;
@@ -26,7 +27,7 @@ import java.util.Objects;
  * プレイヤにメッセージを送信する/送信されることを監視するアクション。
  */
 public class MessageAction extends AbstractScenamaticaAction<MessageAction.Argument>
-        implements Watchable<MessageAction.Argument>
+        implements Executable<MessageAction.Argument>, Watchable<MessageAction.Argument>
 {
     public static final String KEY_ACTION_NAME = "message";
 

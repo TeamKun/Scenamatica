@@ -12,6 +12,7 @@ import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.utils.BeanUtils;
 import org.kunlab.scenamatica.action.utils.PlayerUtils;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
+import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.context.Actor;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
@@ -25,7 +26,7 @@ import java.util.Map;
 import java.util.Objects;
 
 public class PlayerItemBreakAction extends AbstractPlayerAction<PlayerItemBreakAction.Argument>
-        implements Watchable<PlayerItemBreakAction.Argument>
+        implements Executable<PlayerItemBreakAction.Argument>, Watchable<PlayerItemBreakAction.Argument>
 {
     public static final String KEY_ACTION_NAME = "player_item_break";
 

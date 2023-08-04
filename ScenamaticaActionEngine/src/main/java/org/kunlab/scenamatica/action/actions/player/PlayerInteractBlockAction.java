@@ -16,6 +16,7 @@ import org.kunlab.scenamatica.action.utils.BeanUtils;
 import org.kunlab.scenamatica.action.utils.PlayerUtils;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.BeanSerializer;
@@ -28,7 +29,7 @@ import java.util.Map;
 import java.util.Objects;
 
 public class PlayerInteractBlockAction extends AbstractPlayerAction<PlayerInteractBlockAction.Argument>
-        implements Watchable<PlayerInteractBlockAction.Argument>
+        implements Executable<PlayerInteractBlockAction.Argument>, Watchable<PlayerInteractBlockAction.Argument>
 {
     public static final String KEY_ACTION_NAME = "player_interact_block";
 

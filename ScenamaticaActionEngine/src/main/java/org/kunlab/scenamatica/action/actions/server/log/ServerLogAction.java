@@ -12,6 +12,7 @@ import org.kunlab.scenamatica.action.actions.AbstractActionArgument;
 import org.kunlab.scenamatica.action.actions.server.AbstractServerAction;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.events.actions.server.ServerLogEvent;
+import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.BeanSerializer;
@@ -23,7 +24,7 @@ import java.util.Map;
 import java.util.Objects;
 
 public class ServerLogAction extends AbstractServerAction<ServerLogAction.Argument>
-        implements Watchable<ServerLogAction.Argument>
+        implements Executable<ServerLogAction.Argument>, Watchable<ServerLogAction.Argument>
 {
     public static final String KEY_ACTION_NAME = "server_log";
 

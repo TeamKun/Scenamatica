@@ -12,6 +12,7 @@ import org.kunlab.scenamatica.action.utils.PlayerUtils;
 import org.kunlab.scenamatica.action.utils.TextUtils;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.context.Actor;
@@ -25,7 +26,7 @@ import java.util.Map;
 import java.util.Objects;
 
 public class PlayerQuitAction extends AbstractPlayerAction<PlayerQuitAction.Argument>
-        implements Requireable<PlayerQuitAction.Argument>, Watchable<PlayerQuitAction.Argument>
+        implements Executable<PlayerQuitAction.Argument>, Watchable<PlayerQuitAction.Argument>, Requireable<PlayerQuitAction.Argument>
 {
     public static final String KEY_ACTION_NAME = "player_quit";
 

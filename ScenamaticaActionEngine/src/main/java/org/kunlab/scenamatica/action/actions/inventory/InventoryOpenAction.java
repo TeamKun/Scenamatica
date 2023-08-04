@@ -12,6 +12,7 @@ import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.utils.PlayerUtils;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.BeanSerializer;
@@ -24,7 +25,7 @@ import java.util.Map;
 import java.util.Objects;
 
 public class InventoryOpenAction extends AbstractInventoryAction<InventoryOpenAction.Argument>
-        implements Watchable<InventoryOpenAction.Argument>
+        implements Executable<InventoryOpenAction.Argument>, Watchable<InventoryOpenAction.Argument>
 {
     public static final String KEY_ACTION_NAME = "inventory_open";
 

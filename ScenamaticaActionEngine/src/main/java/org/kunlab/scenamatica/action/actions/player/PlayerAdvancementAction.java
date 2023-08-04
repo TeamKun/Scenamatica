@@ -14,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.commons.utils.NamespaceUtils;
+import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
@@ -26,7 +27,7 @@ import java.util.Map;
 
 public class PlayerAdvancementAction
         extends AbstractPlayerAction<PlayerAdvancementAction.Argument>
-        implements Requireable<PlayerAdvancementAction.Argument>, Watchable<PlayerAdvancementAction.Argument>
+        implements Executable<PlayerAdvancementAction.Argument>, Watchable<PlayerAdvancementAction.Argument>, Requireable<PlayerAdvancementAction.Argument>
 {
     public static final String KEY_ACTION_NAME = "player_advancement";
 

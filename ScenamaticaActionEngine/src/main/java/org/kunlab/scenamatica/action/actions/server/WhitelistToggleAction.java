@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.actions.AbstractActionArgument;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
+import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
@@ -20,7 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 public class WhitelistToggleAction extends AbstractServerAction<WhitelistToggleAction.Argument>
-        implements Requireable<WhitelistToggleAction.Argument>, Watchable<WhitelistToggleAction.Argument>
+        implements Executable<WhitelistToggleAction.Argument>, Watchable<WhitelistToggleAction.Argument>, Requireable<WhitelistToggleAction.Argument>
 {
     public static final String KEY_ACTION_NAME = "whitelist_toggle";
 

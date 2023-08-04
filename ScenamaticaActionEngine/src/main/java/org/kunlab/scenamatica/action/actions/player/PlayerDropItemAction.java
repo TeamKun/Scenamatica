@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.utils.BeanUtils;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
+import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.BeanSerializer;
@@ -20,7 +21,7 @@ import java.util.Map;
 import java.util.Objects;
 
 public class PlayerDropItemAction extends AbstractPlayerAction<PlayerDropItemAction.Argument>
-        implements Watchable<PlayerDropItemAction.Argument>
+        implements Executable<PlayerDropItemAction.Argument>, Watchable<PlayerDropItemAction.Argument>
 {
     public static final String KEY_ACTION_NAME = "player_drop_item";
 

@@ -9,6 +9,7 @@ import org.kunlab.scenamatica.action.utils.BeanUtils;
 import org.kunlab.scenamatica.action.utils.EntityUtils;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.BeanSerializer;
@@ -18,7 +19,8 @@ import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 import java.util.Map;
 import java.util.Objects;
 
-public class EntityAction extends AbstractEntityAction<EntityAction.Argument> implements Requireable<EntityAction.Argument>
+public class EntityAction extends AbstractEntityAction<EntityAction.Argument>
+        implements Executable<EntityAction.Argument>, Requireable<EntityAction.Argument>
 {
     public static final String KEY_ACTION_NAME = "entity";
 

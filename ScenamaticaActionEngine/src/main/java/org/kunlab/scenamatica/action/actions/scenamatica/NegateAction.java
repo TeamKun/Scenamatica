@@ -15,7 +15,8 @@ import java.util.Map;
 import java.util.Objects;
 
 // 特別：NegateActionは、 Scenamatica ネイティブなため, ほとんどの処理は Engine や InternalCompiler で行われる。（密結合）
-public class NegateAction<T extends ActionArgument> extends AbstractScenamaticaAction<NegateAction.Argument<T>> implements Requireable<NegateAction.Argument<T>>
+public class NegateAction<T extends ActionArgument> extends AbstractScenamaticaAction<NegateAction.Argument<T>>
+        implements Requireable<NegateAction.Argument<T>>
 {
     // ここを変える場合は, ScenarioEngine の ActionCompiler もかえること。
     public static final String KEY_ACTION_NAME = "negate";
@@ -24,12 +25,6 @@ public class NegateAction<T extends ActionArgument> extends AbstractScenamaticaA
     public String getName()
     {
         return KEY_ACTION_NAME;
-    }
-
-    @Override
-    public void execute(@NotNull ScenarioEngine engine, @Nullable Argument<T> argument)
-    {
-        throw new UnsupportedOperationException();
     }
 
     @Override

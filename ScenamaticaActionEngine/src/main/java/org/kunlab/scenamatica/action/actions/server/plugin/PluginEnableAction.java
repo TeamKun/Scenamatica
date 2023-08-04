@@ -5,6 +5,7 @@ import org.bukkit.event.Event;
 import org.bukkit.event.server.PluginEnableEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
@@ -15,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 public class PluginEnableAction extends AbstractPluginAction<PluginEnableAction.Argument>
-        implements Requireable<PluginEnableAction.Argument>, Watchable<PluginEnableAction.Argument>
+        implements Executable<PluginEnableAction.Argument>, Watchable<PluginEnableAction.Argument>, Requireable<PluginEnableAction.Argument>
 {
     public static final String KEY_ACTION_NAME = KEY_PREFIX + "enable";
 

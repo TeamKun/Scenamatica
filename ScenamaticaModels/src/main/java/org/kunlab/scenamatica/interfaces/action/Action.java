@@ -21,14 +21,6 @@ public interface Action<A extends ActionArgument>
     String getName();
 
     /**
-     * 動作を実行します。
-     *
-     * @param engine   シナリオエンジン
-     * @param argument 動作の引数
-     */
-    void execute(@NotNull ScenarioEngine engine, @Nullable A argument);
-
-    /**
      * 引数をデシリアライズします。
      *
      * @param map        デシリアライズするマップ

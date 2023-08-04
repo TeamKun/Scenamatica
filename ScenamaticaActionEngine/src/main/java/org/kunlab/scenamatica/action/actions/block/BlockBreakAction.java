@@ -16,6 +16,7 @@ import org.kunlab.scenamatica.action.utils.BeanUtils;
 import org.kunlab.scenamatica.action.utils.PlayerUtils;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.context.Actor;
@@ -30,7 +31,7 @@ import java.util.Map;
 import java.util.Objects;
 
 public class BlockBreakAction extends AbstractBlockAction<BlockBreakAction.Argument>
-        implements Requireable<BlockBreakAction.Argument>, Watchable<BlockBreakAction.Argument>
+        implements Executable<BlockBreakAction.Argument>, Requireable<BlockBreakAction.Argument>, Watchable<BlockBreakAction.Argument>
 {
     public static final String KEY_ACTION_NAME = "block_break";
 

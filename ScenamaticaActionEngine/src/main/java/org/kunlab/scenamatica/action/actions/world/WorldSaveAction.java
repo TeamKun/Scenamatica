@@ -8,6 +8,7 @@ import org.bukkit.event.Event;
 import org.bukkit.event.world.WorldSaveEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.BeanSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
@@ -17,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 public class WorldSaveAction extends AbstractWorldAction<WorldSaveAction.Argument>
+        implements Executable<WorldSaveAction.Argument>
 {
     public static final String KEY_ACTION_NAME = "world_save";
 

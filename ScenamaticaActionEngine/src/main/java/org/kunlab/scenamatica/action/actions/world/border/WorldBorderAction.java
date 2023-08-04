@@ -14,6 +14,7 @@ import org.kunlab.scenamatica.action.actions.world.AbstractWorldAction;
 import org.kunlab.scenamatica.action.actions.world.AbstractWorldActionArgument;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.BeanSerializer;
@@ -24,7 +25,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-public class WorldBorderAction extends AbstractWorldAction<WorldBorderAction.Argument> implements Requireable<WorldBorderAction.Argument>
+public class WorldBorderAction extends AbstractWorldAction<WorldBorderAction.Argument>
+        implements Executable<WorldBorderAction.Argument>, Requireable<WorldBorderAction.Argument>
 {
     // WorldBorderBoundsChangeEvent と WorldBorderCenterChangeEvent を処理する
 

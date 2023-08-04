@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.utils.BeanUtils;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
+import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
@@ -23,7 +24,7 @@ import java.util.Map;
 import java.util.Objects;
 
 public class PlayerHotbarSlotAction extends AbstractPlayerAction<PlayerHotbarSlotAction.Argument>
-        implements Requireable<PlayerHotbarSlotAction.Argument>, Watchable<PlayerHotbarSlotAction.Argument>
+        implements Executable<PlayerHotbarSlotAction.Argument>, Watchable<PlayerHotbarSlotAction.Argument>, Requireable<PlayerHotbarSlotAction.Argument>
 {
     public static final String KEY_ACTION_NAME = "player_hotbar";
 

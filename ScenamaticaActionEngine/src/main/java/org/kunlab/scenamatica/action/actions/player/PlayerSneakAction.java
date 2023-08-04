@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
@@ -21,7 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 public class PlayerSneakAction extends AbstractPlayerAction<PlayerSneakAction.Argument>
-        implements Requireable<PlayerSneakAction.Argument>, Watchable<PlayerSneakAction.Argument>
+        implements Executable<PlayerSneakAction.Argument>, Watchable<PlayerSneakAction.Argument>, Requireable<PlayerSneakAction.Argument>
 {
     public static final String KEY_ACTION_NAME = "player_sneak";
 

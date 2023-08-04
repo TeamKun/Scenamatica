@@ -11,6 +11,7 @@ import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.utils.TextUtils;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
@@ -23,7 +24,7 @@ import java.util.Map;
 import java.util.Objects;
 
 public class PlayerGameModeAction extends AbstractPlayerAction<PlayerGameModeAction.Argument>
-        implements Requireable<PlayerGameModeAction.Argument>, Watchable<PlayerGameModeAction.Argument>
+        implements Executable<PlayerGameModeAction.Argument>, Watchable<PlayerGameModeAction.Argument>, Requireable<PlayerGameModeAction.Argument>
 {
     public static final String KEY_ACTION_NAME = "player_gamemode";
 

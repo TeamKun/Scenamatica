@@ -5,6 +5,7 @@ import org.bukkit.event.Event;
 import org.bukkit.event.server.PluginDisableEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
@@ -15,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 public class PluginDisableAction extends AbstractPluginAction<PluginDisableAction.Argument>
-        implements Requireable<PluginDisableAction.Argument>, Watchable<PluginDisableAction.Argument>
+        implements Executable<PluginDisableAction.Argument>, Watchable<PluginDisableAction.Argument>, Requireable<PluginDisableAction.Argument>
 {
     public static final String KEY_ACTION_NAME = KEY_PREFIX + "disable";
 

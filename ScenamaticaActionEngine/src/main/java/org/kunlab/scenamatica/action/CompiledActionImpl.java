@@ -4,6 +4,7 @@ import lombok.Value;
 import org.kunlab.scenamatica.interfaces.action.Action;
 import org.kunlab.scenamatica.interfaces.action.ActionArgument;
 import org.kunlab.scenamatica.interfaces.action.CompiledAction;
+import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.action.ActionBean;
 
@@ -25,7 +26,7 @@ public class CompiledActionImpl<A extends ActionArgument> implements CompiledAct
     {
         try
         {
-            this.executor.execute(this.engine, this.argument);
+            ((Executable) this.executor).execute(this.engine, this.argument);
             this.onExecute.accept(this);
         }
         catch (Throwable e)
