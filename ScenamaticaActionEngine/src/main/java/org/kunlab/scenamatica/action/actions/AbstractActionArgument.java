@@ -148,7 +148,7 @@ public abstract class AbstractActionArgument implements ActionArgument
      */
     protected static void throwIfEquals(@NotNull String fieldName, @Nullable Object value, @Nullable Object expected)
     {
-        if (!Objects.equals(value, expected))
+        if (Objects.equals(value, expected))
             throw new IllegalArgumentException(String.format("The value of the argument '%s' must not be '%s'.", fieldName, expected));
     }
 
