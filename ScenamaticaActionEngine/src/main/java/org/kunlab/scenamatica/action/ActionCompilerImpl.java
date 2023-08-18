@@ -37,9 +37,7 @@ public class ActionCompilerImpl implements ActionCompiler
     {
         for (Action<?> action : actions)
         {
-            if (!(action.getClass().isAssignableFrom(Executable.class)
-                    || action.getClass().isAssignableFrom(Watchable.class)
-                    || action.getClass().isAssignableFrom(Requireable.class)))
+            if (!(action instanceof Executable) && !(action instanceof Watchable) && !(action instanceof Requireable))
                 throw new IllegalArgumentException("Action " + action.getClass().getName() + " is not executable, watchable, or requireable, cannot be used.");
         }
     }
