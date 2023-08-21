@@ -78,7 +78,7 @@ class MockedPlayer extends EntityPlayer implements Actor
         this.initialLocation = initialLocation;
 
         this.setNoGravity(false);
-        this.G = 0.5f; // ブロックのぼれるたかさ
+        this.G = 0.5f; // ブロックをのぼれるたかさ
     }
 
     private static TimeoutException createNIOTimeoutException()
