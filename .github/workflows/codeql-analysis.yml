@@ -43,7 +43,7 @@ jobs:
           java-version: 8
           distribution: zulu
           cache: maven
-      - uses: derongan/nmsaction@v1
+      - uses: PeyaPeyaPeyang/nmsaction@v2
         if: "steps.sj.outputs.cache-hit != 'true'"
         with:
           rev: 1.16.5
