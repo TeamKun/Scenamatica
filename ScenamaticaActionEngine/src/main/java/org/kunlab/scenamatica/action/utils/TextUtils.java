@@ -21,4 +21,15 @@ public class TextUtils
 
         return component.content().equals(content);
     }
+
+    public static boolean isContentMatches(net.kyori.adventure.text.Component component, String content)
+    {
+        net.kyori.adventure.text.TextComponent textComponent;
+        if (component instanceof net.kyori.adventure.text.TextComponent)
+            textComponent = (net.kyori.adventure.text.TextComponent) component;
+        else
+            textComponent = net.kyori.adventure.text.TextComponent.ofChildren(component);
+
+        return textComponent.content().matches(content);
+    }
 }

@@ -5,7 +5,9 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.action.actions.AbstractActionArgument;
 import org.kunlab.scenamatica.action.utils.PlayerUtils;
+import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionArgument;
+import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Objects;
@@ -44,6 +46,13 @@ public abstract class AbstractPlayerActionArgument extends AbstractActionArgumen
     public Player getTarget()
     {
         return PlayerUtils.getPlayerOrThrow(this.target);
+    }
+
+    @Override
+    public void validate(@NotNull ScenarioEngine engine, @NotNull ScenarioType type)
+    {
+        if (type == ScenarioType.ACTION_EXECUTE)
+            throwIfNotPresent(KEY_TARGET_PLAYER, this.target);
     }
 
     @Override

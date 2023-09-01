@@ -111,6 +111,7 @@
             "inventory_open",
             "player_advancement",
             "player_animation",
+            "player_chat",
             "player_death",
             "player_drop_item",
             "player_flight",
@@ -407,6 +408,26 @@
             "properties": {
               "with": {
                 "$ref": "#/definitions/action/definitions/player/animation"
+              }
+            },
+            "required": [
+              "with"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "player_chat",
+                "description": "プレイヤーのチャットを検知します。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/player/chat"
               }
             },
             "required": [
@@ -1476,6 +1497,20 @@
             "required": [
               "type"
             ]
+          },
+          "chat": {
+            "$ref": "#/definitions/action/definitions/player/$base",
+            "properties": {
+              "message": {
+                "type": "string",
+                "description": "送信するメッセージまたは判定用の正規表現です。"
+              },
+              "format": {
+                "type": "string",
+                "description": "メッセージのフォーマットです。",
+                "example": "<%1$s> %2$s"
+              }
+            }
           },
           "death": {
             "$ref": "#/definitions/action/definitions/player/$base",

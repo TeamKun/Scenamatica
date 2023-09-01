@@ -1,0 +1,24 @@
+# noinspection YAMLSchemaValidation
+scenamatica: ${project.version}
+
+name: actions_player_chat_2
+description: Testing PlayerChatAction detects the message with regex or not
+on:
+  - type: on_load
+  - type: manual_dispatch
+
+context:
+  actors:
+    - name: Actor001
+
+scenario:
+  - type: execute
+    action: player_chat
+    with:
+      target: Actor001
+      message: "1"
+  - type: execute
+    action: player_chat
+    with:
+      target: Actor001
+      message: "^\\d$"
