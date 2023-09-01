@@ -58,7 +58,7 @@ jobs:
         with:
           plugin: Scenamatica.jar
         env:
-          NO_SCENAMATICA: true  # Because the test is running scenamatica itself, we don't need the daemon.
+          NO_SCENAMATICA: true
       - name: Clean artifacts
         if: always()
         uses: geekyeggo/delete-artifact@v2
