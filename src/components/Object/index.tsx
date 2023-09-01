@@ -1,5 +1,6 @@
 import React from "react"
 import styles from "./index.module.css"
+import {ActionArgument} from "@site/src/components/Action";
 
 export type ObjectElement = {
     name: string
@@ -28,8 +29,13 @@ type ObjectsProps = {
     objects: ObjectElement[]
 }
 
+const isActionArgument = (element: ObjectElement): element is ActionArgument => {
+    return "available" in element
+}
+
 export const Object: React.FC<ObjectsProps> = ({ objects }) => {
     const shouldShowDefaultValue = objects.some((element) => element.default)
+    const shouldShowAvailableFor = objects.some((element) => isActionArgument(element) && element.available.length > 0)
 
     const elements = objects.map((element) =>{
         const name = element.anchor ? <a href={"#" + element.anchor}>{element.name}</a>: element.name
@@ -42,6 +48,16 @@ export const Object: React.FC<ObjectsProps> = ({ objects }) => {
         else if (element.type_link)
             typeName = <a href={element.type_link}>{typeNameStr}</a>
 
+        let availableFor: JSX.Element | null = null
+        if (isActionArgument(element) && element.available.length > 0) {
+            for (const type of element.available) {
+                if (availableFor)
+                    availableFor = <>{availableFor} | <code>{type}</code></>
+                else
+                    availableFor = <code>{type}</code>
+            }
+        }
+
         return (
             <tr className={styles.objects} key={element.name}>
                 <td><code>{name}</code></td>
@@ -49,6 +65,7 @@ export const Object: React.FC<ObjectsProps> = ({ objects }) => {
                 <td>{required}</td>
                 <td>{element.description}</td>
                 {shouldShowDefaultValue ? <td>{element.default ? <code>{element.default}</code> : "N/A"}</td> : null}
+                {shouldShowAvailableFor ? <td>{availableFor ? availableFor : "N/A"}</td> : null}
             </tr>
         )
     })
@@ -63,6 +80,7 @@ export const Object: React.FC<ObjectsProps> = ({ objects }) => {
                     <th>必須？</th>
                     <th>説明</th>
                     {shouldShowDefaultValue ? <th>デフォルト</th> : null}
+                    {shouldShowAvailableFor ? <th>利用可能</th> : null}
                 </tr>
                 </thead>
                 <tbody>

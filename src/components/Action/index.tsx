@@ -7,6 +7,16 @@ type BukkitEvent = {
     package: string
 }
 
+enum ScenarioType {
+    EXECUTE = "EXE",
+    EXPECT = "EXP",
+    REQUIRE = "REQ"
+}
+
+export interface ActionArgument extends ObjectElement {
+    available: ScenarioType[]
+}
+
 type ActionProps = {
     name: string
     description: string
@@ -16,7 +26,7 @@ type ActionProps = {
     watchable?: boolean | string
     requireable?: boolean | string
 
-    args?: ObjectElement[]
+    args?: ActionArgument[]
 }
 
 const EVENT_JAVADOC_LINK_BASE =  "https://jd.papermc.io/paper/1.16/"
