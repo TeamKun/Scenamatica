@@ -1,4 +1,4 @@
-import Action from "/src/components/Action";
+import Action, {ScenarioType} from "/src/components/Action";
 import BelowDocument from "/src/components/BelowDocument";
 import {ObjectType} from "/src/components/Object";
 
@@ -32,9 +32,11 @@ import {ObjectType} from "/src/components/Object";
             type: ObjectType.STRING,
             anchor: "break-actor",
             description: "ブロックを破壊するアクタの ID です。",
+            available: [ScenarioType.EXECUTE, ScenarioType.EXPECT]
           },
           {
             name: "block",
+            anchor: "break-block",
             type: "Block",
             type_link: "../file-syntax#block-structure",
             description: "破壊するブロックです。",
@@ -42,22 +44,14 @@ import {ObjectType} from "/src/components/Object";
           {
             name: "dropItems",
             type: ObjectType.BOOLEAN,
-            description: "ブロックを破壊した際にアイテムをドロップするかどうかです。"
+            description: "ブロックを破壊した際にアイテムをドロップするかどうかです。",
+            available: [ScenarioType.EXECUTE, ScenarioType.EXPECT]
           }
         ]}
         executable={"ステージ上のブロックを破壊します。"}
         watchable={"ステージ上のブロックが破壊されるまで待機します。"}
         requireable={"ステージ上のブロックが破壊されているか（空気かどうか）を判定します。"}
 />
-
-ブロックの破壊をテストします。
-
-:::caution
-コンディション要求シナリオでは、以下の引数は使用できません。
-+ `actor`
-+ `dropItems`
-+ [Block 型](../file-syntax#block-structure) の `location` 以外
-:::
 
 ### `actor` {#break-actor}
 
@@ -69,6 +63,11 @@ import {ObjectType} from "/src/components/Object";
 これは、 NMS との相互作用による制限です。
 
 :::
+
+### `block` {#break-block}
+
+ブロックの破壊を設定します。
+アクタを[`actor`](#break-actor) で指定する場合, ワールドが同一である必要があります。
 
 ## ブロックの設置 {#place}
 
@@ -87,11 +86,13 @@ import {ObjectType} from "/src/components/Object";
             type: "Block",
             type_link: "../file-syntax#block-structure",
             description: "設置するブロックです。",
+            required: [ScenarioType.EXECUTE]
           },
           {
             name: "direction",
             type: "BlockFace{UP, DOWN, NORTH, EAST, SOUTH, WEST}",
             description: "設置するブロックの向きです。",
+            available: [ScenarioType.EXECUTE]
           },
           {
             name: "hand",
