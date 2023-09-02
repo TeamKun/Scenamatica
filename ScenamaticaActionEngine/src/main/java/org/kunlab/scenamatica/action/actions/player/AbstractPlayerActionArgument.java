@@ -17,8 +17,7 @@ public abstract class AbstractPlayerActionArgument extends AbstractActionArgumen
 {
     public static final String KEY_TARGET_PLAYER = "target";
 
-    @NotNull
-    private final String target;  // TODO: Make this Nullable
+    private final String target;
 
     @Override
     public boolean isSame(TriggerArgument argument)
@@ -35,7 +34,7 @@ public abstract class AbstractPlayerActionArgument extends AbstractActionArgumen
 
     protected boolean isSameTarget(AbstractPlayerActionArgument argument)
     {
-        return this.target.equalsIgnoreCase(argument.target);
+        return Objects.equals(this.target, argument.target);
     }
 
     public String getTargetSpecifier()
@@ -45,6 +44,9 @@ public abstract class AbstractPlayerActionArgument extends AbstractActionArgumen
 
     public Player getTarget()
     {
+        if (this.target == null)
+            throw new IllegalStateException("Target is not specified");
+
         return PlayerUtils.getPlayerOrThrow(this.target);
     }
 

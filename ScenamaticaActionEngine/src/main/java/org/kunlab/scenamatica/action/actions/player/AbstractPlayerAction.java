@@ -45,6 +45,8 @@ public abstract class AbstractPlayerAction<A extends AbstractPlayerActionArgumen
     {
         if (!(event instanceof PlayerEvent))
             return false;
+        else if (argument.getTargetSpecifier() == null)
+            return true;
 
         PlayerEvent e = (PlayerEvent) event;
         Player target = argument.getTarget();
