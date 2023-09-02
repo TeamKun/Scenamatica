@@ -357,10 +357,7 @@
               "with": {
                 "$ref": "#/definitions/action/definitions/inventory/open"
               }
-            },
-            "required": [
-              "with"
-            ]
+            }
           }
         },
         {

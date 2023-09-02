@@ -55,9 +55,11 @@ public class InventoryOpenAction extends AbstractInventoryAction<InventoryOpenAc
         if (!super.checkMatchedInventoryEvent(argument, engine, event))
             return false;
 
-        assert event instanceof InventoryOpenEvent;
-        Player expectedPlayer = argument.getTarget();
+        Player expectedPlayer = null;
+        if (argument.getTargetSpecifier() != null)
+            expectedPlayer = argument.getTarget();
 
+        assert event instanceof InventoryOpenEvent;
         InventoryOpenEvent e = (InventoryOpenEvent) event;
         HumanEntity player = e.getPlayer();
 
