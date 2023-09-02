@@ -416,10 +416,7 @@
               "with": {
                 "$ref": "#/definitions/action/definitions/player/death"
               }
-            },
-            "required": [
-              "with"
-            ]
+            }
           }
         },
         {
