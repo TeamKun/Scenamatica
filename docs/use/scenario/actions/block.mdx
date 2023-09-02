@@ -40,12 +40,13 @@ import {ObjectType} from "/src/components/Object";
             type: "Block",
             type_link: "../file-syntax#block-structure",
             description: "破壊するブロックです。",
+            required: [ScenarioType.EXECUTE]
           },
           {
             name: "dropItems",
             type: ObjectType.BOOLEAN,
             description: "ブロックを破壊した際にアイテムをドロップするかどうかです。",
-            available: [ScenarioType.EXECUTE, ScenarioType.EXPECT]
+            available: [ScenarioType.EXPECT]
           }
         ]}
         executable={"ステージ上のブロックを破壊します。"}
