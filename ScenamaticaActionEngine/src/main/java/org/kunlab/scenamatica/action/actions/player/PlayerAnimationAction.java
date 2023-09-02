@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.utils.PlayerUtils;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
+import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
@@ -80,13 +81,20 @@ public class PlayerAnimationAction extends AbstractPlayerAction<PlayerAnimationA
     {
         public static final String KEY_ACTION_TYPE = "type";
 
-        @NotNull  // TODO: Make this Nullable
         PlayerAnimationType type;
 
-        public Argument(@NotNull String target, @NotNull PlayerAnimationType type)
+        public Argument(@NotNull String target, PlayerAnimationType type)
         {
             super(target);
             this.type = type;
+        }
+
+        @Override
+        public void validate(@NotNull ScenarioEngine engine, @NotNull ScenarioType type)
+        {
+            super.validate(engine, type);
+            if (type == ScenarioType.ACTION_EXECUTE)
+                throwIfNotPresent(KEY_ACTION_TYPE, this.type);
         }
 
         @Override

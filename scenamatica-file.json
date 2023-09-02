@@ -403,10 +403,7 @@
               "with": {
                 "$ref": "#/definitions/action/definitions/player/animation"
               }
-            },
-            "required": [
-              "with"
-            ]
+            }
           }
         },
         {
@@ -1448,10 +1445,7 @@
                 "type": "string",
                 "description": "対象のプレイヤーです。"
               }
-            },
-            "required": [
-              "target"
-            ]
+            }
           },
           "advancement": {
             "$ref": "#/definitions/action/definitions/player/$base",
@@ -1484,10 +1478,7 @@
                   "ARM_SWING"
                 ]
               }
-            },
-            "required": [
-              "type"
-            ]
+            }
           },
           "chat": {
             "$ref": "#/definitions/action/definitions/player/$base",

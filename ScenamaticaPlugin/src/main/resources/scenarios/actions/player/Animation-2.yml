@@ -1,0 +1,25 @@
+# noinspection YAMLSchemaValidation
+scenamatica: ${project.version}
+
+name: actions_player_animation_2
+description: Testing player_animation action works without target specifying or not
+on:
+  - type: on_load
+  - type: manual_dispatch
+
+context:
+  actors:
+    - name: Actor001
+
+
+scenario:
+  - type: execute
+    action: player_animation
+    with:
+      target: Actor001
+      type: arm_swing
+  - type: expect
+    action: player_animation
+    with:
+      type: arm_swing
+    timeout: 20
