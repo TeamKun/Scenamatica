@@ -169,10 +169,7 @@
               "with": {
                 "$ref": "#/definitions/action/definitions/block/break"
               }
-            },
-            "required": [
-              "with"
-            ]
+            }
           }
         },
         {
@@ -1019,10 +1016,7 @@
                 "description": "対象のブロックです。",
                 "$ref": "#/definitions/block"
               }
-            },
-            "required": [
-              "block"
-            ]
+            }
           },
           "break": {
             "type": "object",

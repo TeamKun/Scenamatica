@@ -6,12 +6,13 @@ import org.kunlab.scenamatica.action.actions.AbstractActionArgument;
 import org.kunlab.scenamatica.interfaces.scenariofile.misc.BlockBean;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
+import java.util.Objects;
+
 @Getter
 public abstract class AbstractBlockActionArgument extends AbstractActionArgument
 {
     public static final String KEY_BLOCK = "block";
 
-    @NotNull  // TODO: Make this Nullable
     BlockBean block;
 
     public AbstractBlockActionArgument(@NotNull BlockBean block)
@@ -27,7 +28,7 @@ public abstract class AbstractBlockActionArgument extends AbstractActionArgument
 
         AbstractBlockActionArgument arg = (AbstractBlockActionArgument) argument;
 
-        return arg.block.equals(this.block);
+        return Objects.equals(this.block, arg.block);
     }
 
     @Override

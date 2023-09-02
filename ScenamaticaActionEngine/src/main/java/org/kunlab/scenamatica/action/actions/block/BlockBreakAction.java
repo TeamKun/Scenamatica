@@ -13,7 +13,6 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.actions.AbstractActionArgument;
-import org.kunlab.scenamatica.action.utils.BeanUtils;
 import org.kunlab.scenamatica.action.utils.PlayerUtils;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
@@ -80,11 +79,6 @@ public class BlockBreakAction extends AbstractBlockAction<BlockBreakAction.Argum
             return false;
 
         BlockBreakEvent e = (BlockBreakEvent) event;
-        Block block = e.getBlock();
-
-        if (!BeanUtils.isSame(argument.getBlock(), block, engine))
-            return false;
-
         if (argument.getDropItems() != null)
         {
             boolean isDropItems = e.isDropItems();
@@ -115,7 +109,7 @@ public class BlockBreakAction extends AbstractBlockAction<BlockBreakAction.Argum
     public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull BeanSerializer serializer)
     {
         return new Argument(
-                super.deserializeBlock(map, serializer),
+                super.deserializeBlockOrNull(map, serializer),
                 map.containsKey(Argument.KEY_ACTOR) ? (String) map.get(Argument.KEY_ACTOR): null,
                 MapUtils.getOrNull(map, Argument.KEY_DROP_ITEMS)
         );
@@ -165,19 +159,24 @@ public class BlockBreakAction extends AbstractBlockAction<BlockBreakAction.Argum
         @Override
         public void validate(@NotNull ScenarioEngine engine, @NotNull ScenarioType type)
         {
-            if (type != ScenarioType.CONDITION_REQUIRE)
-                return;
+            switch (type)
+            {
+                case ACTION_EXECUTE:
+                    throwIfNotPresent(Argument.KEY_BLOCK, this.block);
+                    break;
+                case CONDITION_REQUIRE:
+                    throwIfPresent(Argument.KEY_ACTOR, this.actor);
+                    throwIfPresent(Argument.KEY_DROP_ITEMS, this.dropItems);
 
-            throwIfPresent(Argument.KEY_ACTOR, this.actor);
-            throwIfPresent(Argument.KEY_DROP_ITEMS, this.dropItems);
+                    BlockBean block = this.block;
+                    throwIfPresent(Argument.KEY_BLOCK + "." + BlockBean.KEY_BLOCK_TYPE, block.getType());
+                    throwIfPresent(Argument.KEY_BLOCK + "." + BlockBean.KEY_BIOME, block.getBiome());
+                    throwIfPresent(Argument.KEY_BLOCK + "." + BlockBean.KEY_LIGHT_LEVEL, block.getLightLevel());
 
-            BlockBean block = this.block;
-            throwIfPresent(Argument.KEY_BLOCK + "." + BlockBean.KEY_BLOCK_TYPE, block.getType());
-            throwIfPresent(Argument.KEY_BLOCK + "." + BlockBean.KEY_BIOME, block.getBiome());
-            throwIfPresent(Argument.KEY_BLOCK + "." + BlockBean.KEY_LIGHT_LEVEL, block.getLightLevel());
+                    if (!block.getMetadata().isEmpty())
+                        throw new IllegalArgumentException("The block metadata must be empty.");
+            }
 
-            if (!block.getMetadata().isEmpty())
-                throw new IllegalArgumentException("The block metadata must be empty.");
         }
 
         @Nullable

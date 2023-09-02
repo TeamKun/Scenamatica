@@ -36,11 +36,14 @@ public abstract class AbstractBlockAction<A extends AbstractBlockActionArgument>
 
         BlockEvent e = (BlockEvent) event;
 
-        return BeanUtils.isSame(argument.block, e.getBlock(), engine);
+        return argument.block == null || BeanUtils.isSame(argument.block, e.getBlock(), engine);
     }
 
-    public BlockBean deserializeBlock(@NotNull Map<String, Object> map, @NotNull BeanSerializer serializer)
+    public BlockBean deserializeBlockOrNull(@NotNull Map<String, Object> map, @NotNull BeanSerializer serializer)
     {
+        if (!map.containsKey(AbstractBlockActionArgument.KEY_BLOCK))
+            return null;
+
         return serializer.deserializeBlock(MapUtils.checkAndCastMap(
                         map.get(AbstractBlockActionArgument.KEY_BLOCK),
                         String.class,

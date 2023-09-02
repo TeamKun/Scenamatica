@@ -119,7 +119,7 @@ public class BlockPlaceAction extends AbstractBlockAction<BlockPlaceAction.Argum
     public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull BeanSerializer serializer)
     {
         return new Argument(
-                super.deserializeBlock(map, serializer),
+                super.deserializeBlockOrNull(map, serializer),
                 MapUtils.getOrNull(map, Argument.KEY_ACTOR),
                 MapUtils.getAsEnumOrNull(map, Argument.KEY_HAND, EquipmentSlot.class),
                 MapUtils.getAsEnumOrNull(map, Argument.KEY_DIRECTION, BlockFace.class)
