@@ -17,7 +17,7 @@ scenario:
     with:
       target: Actor001
       message: "Hello World!"
-  - type: execute
+  - type: expect
     action: player_chat
     with:
       target: Actor001

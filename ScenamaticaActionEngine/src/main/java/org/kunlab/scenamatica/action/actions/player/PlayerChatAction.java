@@ -17,6 +17,7 @@ import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class PlayerChatAction extends AbstractPlayerAction<PlayerChatAction.Argument>
         implements Executable<PlayerChatAction.Argument>, Watchable<PlayerChatAction.Argument>
@@ -47,8 +48,8 @@ public class PlayerChatAction extends AbstractPlayerAction<PlayerChatAction.Argu
         assert event instanceof PlayerChatEvent;
         PlayerChatEvent playerChatEvent = (PlayerChatEvent) event;
 
-        return playerChatEvent.getMessage().matches(argument.message)
-                && playerChatEvent.getFormat().matches(argument.format);
+        return (argument.message == null || playerChatEvent.getMessage().matches(argument.message))
+                && (argument.format == null || playerChatEvent.getFormat().matches(argument.format));
     }
 
     @Override
@@ -96,8 +97,8 @@ public class PlayerChatAction extends AbstractPlayerAction<PlayerChatAction.Argu
             Argument arg = (Argument) argument;
 
             return super.isSame(arg)
-                    && this.message.equals(arg.message)
-                    && this.format.equals(arg.format);
+                    && Objects.equals(this.message, arg.message)
+                    && Objects.equals(this.format, arg.format);
         }
 
         @Override

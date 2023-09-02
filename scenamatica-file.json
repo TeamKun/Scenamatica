@@ -417,10 +417,7 @@
               "with": {
                 "$ref": "#/definitions/action/definitions/player/chat"
               }
-            },
-            "required": [
-              "with"
-            ]
+            }
           }
         },
         {
