@@ -154,17 +154,20 @@ Bukkit の仕様により、現在は `ARM_SWING` のみが指定可能です。
             name: "target",
             anchor: "target",
             description: "チャットを送信するプレイヤーです。",
-            type: "プレイヤ"
+            type: "プレイヤ",
+            required: [ScenarioType.EXECUTE],
           },
           {
             name: "message",
             description: "送信するメッセージまたは検出用の正規表現です。",
-            type: ObjectType.STRING
+            type: ObjectType.STRING,
+            required: [ScenarioType.EXECUTE],
           },
           {
             name: "format",
             description: "チャットのフォーマットです。",
-            type: ObjectType.STRING
+            type: ObjectType.STRING,
+            required: [ScenarioType.EXECUTE],
           }
         ]}
         executable watchable

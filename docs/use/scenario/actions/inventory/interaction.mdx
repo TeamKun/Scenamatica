@@ -34,7 +34,7 @@ import {ObjectType} from "/src/components/Object";
             type: ObjectType.STRING,
             anchor: "click-target",
             description: "インベントリをクリックするプレイヤの ID です。",
-            required: true
+            required: [ScenarioType.EXECUTE]
           },
           {
             name: "inventory",
@@ -48,6 +48,7 @@ import {ObjectType} from "/src/components/Object";
             type: ObjectType.INTEGER,
             anchor: "click-slots",
             description: "クリックするスロットの番号です。",
+            available: [ScenarioType.EXPECT]
           },
           {
             name: "rawSlot",
