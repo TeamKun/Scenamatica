@@ -254,15 +254,9 @@ Bukkit の仕様により、現在は `ARM_SWING` のみが指定可能です。
         ]}
         executable={"プレイヤを殺害します。"}
         requireable
-        watchable
+        watchable={"プレイヤが死亡しているかどうか判定します。"}
 />
 
-:::warning コンディションチェック時における注意
-
-`deathMessage`, `exp`, `totalExp`, `keepLevel`, `keepInventory`, `keepExperience`  
-および `doExpDrop` はコンディションチェック時には無視されます。
-
-:::
 
 ## アイテムのドロップ {#drop-item}
 
