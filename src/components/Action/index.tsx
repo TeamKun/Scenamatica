@@ -8,9 +8,9 @@ type BukkitEvent = {
 }
 
 export class ScenarioType {
-    public readonly EXECUTE = new ScenarioType("実行", "#20a420")
-    public readonly EXPECT = new ScenarioType("監視", "#a42020")
-    public readonly REQUIRE = new ScenarioType("要求", "#a420a4")
+    public static readonly EXECUTE = new ScenarioType("実行", "#20a420")
+    public static readonly EXPECT = new ScenarioType("監視", "#a42020")
+    public static readonly REQUIRE = new ScenarioType("要求", "#a420a4")
 
     private readonly shortName: string
     private readonly color: string
