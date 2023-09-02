@@ -1,0 +1,55 @@
+# noinspection YAMLSchemaValidation
+scenamatica: ${project.version}
+
+name: actions_entity_drop_item_2
+description: Testing entity_drop_item action works without target specifying or not
+on:
+  - type: on_load
+    before:
+      - type: execute
+        action: entity_spawn
+        with:
+          entity:
+            type: minecraft:villager
+            tags:
+              - 810snpi
+
+    after:
+      - action: command_dispatch
+        type: execute
+        with:
+          command: 'kill @e[type=minecraft:villager,tag=810snpi]'
+  - type: manual_dispatch
+    before:
+      - type: execute
+        action: entity_spawn
+        with:
+          entity:
+            type: minecraft:villager
+            tags:
+              - 810snpi
+
+    after:
+      - action: command_dispatch
+        type: execute
+        with:
+          command: 'kill @e[type=minecraft:villager,tag=810snpi]'
+
+context:
+  stage:
+    type: FLAT
+
+scenario:
+  - type: execute
+    action: entity_drop_item
+    with:
+      target: "@e[type=minecraft:villager,tag=810snpi]"
+      item:
+        type: "minecraft:stone"
+  - type: expect
+    action: entity_drop_item
+    with:
+      item:
+        type: "minecraft:stone"
+    timeout: 20
+

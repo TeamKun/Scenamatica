@@ -58,8 +58,6 @@ public abstract class AbstractEntityAction<A extends AbstractEntityActionArgumen
 
     protected Object deserializeTarget(Map<String, Object> map, BeanSerializer serializer)
     {
-        MapUtils.checkContainsKey(map, AbstractEntityActionArgument.KEY_TARGET_ENTITY);
-
         Object targetLike = map.get(AbstractEntityActionArgument.KEY_TARGET_ENTITY);
 
         if (targetLike instanceof Map)

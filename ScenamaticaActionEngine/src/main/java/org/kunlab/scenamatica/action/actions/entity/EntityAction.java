@@ -89,7 +89,7 @@ public class EntityAction extends AbstractEntityAction<EntityAction.Argument>
 
         EntityBean entity;
 
-        public Argument(@NotNull Object target, @Nullable EntityBean entity)
+        public Argument(Object target, @Nullable EntityBean entity)
         {
             super(target);
             this.entity = entity;

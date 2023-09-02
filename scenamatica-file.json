@@ -229,10 +229,7 @@
               "with": {
                 "$ref": "#/definitions/action/definitions/entity/damage"
               }
-            },
-            "required": [
-              "with"
-            ]
+            }
           }
         },
         {
@@ -249,10 +246,7 @@
               "with": {
                 "$ref": "#/definitions/action/definitions/entity/dropItem"
               }
-            },
-            "required": [
-              "with"
-            ]
+            }
           }
         },
         {
@@ -1120,10 +1114,7 @@
                   }
                 ]
               }
-            },
-            "required": [
-              "target"
-            ]
+            }
           },
           "entity": {
             "$ref": "#/definitions/action/definitions/entity/$base",

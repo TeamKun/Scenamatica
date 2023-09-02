@@ -127,6 +127,8 @@ public class ActionCompilerImpl implements ActionCompiler
         A argument = null;
         if (bean.getArguments() != null)
             argument = action.deserializeArgument(bean.getArguments(), serializer);
+        else
+            argument = action.deserializeArgument(Collections.emptyMap(), serializer);
 
         return new CompiledActionImpl<>(engine, action, argument, reportErrorTo, onSuccess, bean);
     }

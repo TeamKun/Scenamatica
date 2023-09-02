@@ -32,7 +32,7 @@ public abstract class AbstractEntityActionArgument extends AbstractActionArgumen
         }
         else
         {
-            this.targetSpecifier = String.valueOf(mayTarget);
+            this.targetSpecifier = (String) mayTarget;
             this.targetBean = null;
         }
     }

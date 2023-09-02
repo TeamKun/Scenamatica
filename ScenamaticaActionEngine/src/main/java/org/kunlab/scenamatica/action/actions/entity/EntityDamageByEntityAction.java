@@ -91,7 +91,7 @@ public class EntityDamageByEntityAction extends EntityDamageAction<EntityDamageB
         String damager;
 
         @SuppressWarnings("deprecation")  // DamageModifier は消えるとか言ってるけど多分きえない。たぶん。というかまだある。
-        public Argument(@NotNull Object target, EntityDamageEvent.DamageCause cause, Double amount, Map<EntityDamageEvent.DamageModifier, @NotNull Double> modifiers, String damager)
+        public Argument(Object target, EntityDamageEvent.DamageCause cause, Double amount, Map<EntityDamageEvent.DamageModifier, @NotNull Double> modifiers, String damager)
         {
             super(target, cause, amount, modifiers);
             this.damager = damager;

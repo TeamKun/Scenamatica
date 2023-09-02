@@ -183,7 +183,7 @@ public class EntityPlaceAction extends AbstractEntityAction<EntityPlaceAction.Ar
         BlockBean block;
         BlockFace blockFace;
 
-        public Argument(@NotNull Object target, String playerSpecifier, BlockBean block, BlockFace blockFace)
+        public Argument(Object target, String playerSpecifier, BlockBean block, BlockFace blockFace)
         {
             super(target);
             this.playerSpecifier = playerSpecifier;
