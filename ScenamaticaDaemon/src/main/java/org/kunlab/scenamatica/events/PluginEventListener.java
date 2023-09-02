@@ -2,12 +2,12 @@ package org.kunlab.scenamatica.events;
 
 import net.kunmc.lab.peyangpaperutils.lang.LangProvider;
 import net.kunmc.lab.peyangpaperutils.lang.MsgArgs;
-import org.kunlab.scenamatica.interfaces.ScenamaticaRegistry;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.event.server.PluginEnableEvent;
 import org.bukkit.plugin.Plugin;
+import org.kunlab.scenamatica.interfaces.ScenamaticaRegistry;
 
 import java.util.logging.Logger;
 

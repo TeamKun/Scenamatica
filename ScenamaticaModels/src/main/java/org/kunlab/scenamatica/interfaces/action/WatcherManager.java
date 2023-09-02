@@ -1,11 +1,11 @@
 package org.kunlab.scenamatica.interfaces.action;
 
-import org.kunlab.scenamatica.enums.WatchType;
-import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
 import org.bukkit.event.Event;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
+import org.kunlab.scenamatica.enums.WatchType;
+import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
+import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
 
 import java.util.List;
 

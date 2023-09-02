@@ -1,13 +1,13 @@
 package org.kunlab.scenamatica.scenariofile.beans;
 
 import net.kunmc.lab.peyangpaperutils.versioning.Version;
+import org.junit.jupiter.api.Test;
 import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
 import org.kunlab.scenamatica.scenariofile.BeanSerializerImpl;
 import org.kunlab.scenamatica.scenariofile.beans.context.ContextBeanSerializeTest;
 import org.kunlab.scenamatica.scenariofile.beans.scenario.ScenarioBeanSerializeTest;
 import org.kunlab.scenamatica.scenariofile.beans.trigger.TriggerBeanSerializeTest;
 import org.kunlab.scenamatica.scenariofile.beans.utils.MapTestUtil;
-import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.Collections;

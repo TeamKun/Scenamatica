@@ -1,12 +1,12 @@
 package org.kunlab.scenamatica.interfaces.action;
 
 import net.kunmc.lab.peyangpaperutils.lib.utils.Pair;
-import org.kunlab.scenamatica.enums.WatchType;
-import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
 import org.bukkit.event.Event;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredListener;
+import org.kunlab.scenamatica.enums.WatchType;
+import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
+import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
 
 import java.util.List;
 

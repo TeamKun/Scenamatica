@@ -2,11 +2,11 @@ package org.kunlab.scenamatica.scenario;
 
 import com.destroystokyo.paper.event.server.ServerTickEndEvent;
 import lombok.AllArgsConstructor;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.kunlab.scenamatica.interfaces.ScenamaticaRegistry;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioManager;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 
 @AllArgsConstructor
         /* non-public */ class TickListener implements Listener

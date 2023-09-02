@@ -1,9 +1,9 @@
 package org.kunlab.scenamatica.interfaces.scenario;
 
-import org.kunlab.scenamatica.exceptions.scenario.TriggerNotFoundException;
-import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerBean;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.kunlab.scenamatica.exceptions.scenario.TriggerNotFoundException;
+import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerBean;
 
 import java.util.function.Consumer;
 

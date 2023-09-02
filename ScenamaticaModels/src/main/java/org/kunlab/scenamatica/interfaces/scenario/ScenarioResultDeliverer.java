@@ -1,7 +1,7 @@
 package org.kunlab.scenamatica.interfaces.scenario;
 
-import org.kunlab.scenamatica.enums.ScenarioState;
 import org.jetbrains.annotations.NotNull;
+import org.kunlab.scenamatica.enums.ScenarioState;
 
 /**
  * テスト結果を受け取るインターフェースです。

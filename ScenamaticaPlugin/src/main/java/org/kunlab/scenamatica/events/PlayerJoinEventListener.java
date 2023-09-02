@@ -1,12 +1,12 @@
 package org.kunlab.scenamatica.events;
 
 import net.kunmc.lab.peyangpaperutils.lib.terminal.Terminals;
-import org.kunlab.scenamatica.interfaces.ScenamaticaRegistry;
-import org.kunlab.scenamatica.interfaces.context.ActorManager;
-import org.kunlab.scenamatica.reporter.BukkitTestReporter;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.kunlab.scenamatica.interfaces.ScenamaticaRegistry;
+import org.kunlab.scenamatica.interfaces.context.ActorManager;
+import org.kunlab.scenamatica.reporter.BukkitTestReporter;
 
 public class PlayerJoinEventListener implements Listener
 {

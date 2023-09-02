@@ -1,8 +1,8 @@
 package org.kunlab.scenamatica;
 
-import org.kunlab.scenamatica.interfaces.ScenamaticaRegistry;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.Nullable;
+import org.kunlab.scenamatica.interfaces.ScenamaticaRegistry;
 
 import java.lang.reflect.Field;
 

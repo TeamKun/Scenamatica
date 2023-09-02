@@ -1,12 +1,12 @@
 package org.kunlab.scenamatica.interfaces.scenario;
 
+import org.bukkit.event.Event;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.interfaces.action.ActionArgument;
 import org.kunlab.scenamatica.interfaces.action.CompiledAction;
 import org.kunlab.scenamatica.interfaces.action.WatchingEntry;
 import org.kunlab.scenamatica.interfaces.scenario.runtime.CompiledScenarioAction;
-import org.bukkit.event.Event;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * シナリオの実行結果を受け取るインターフェースです。

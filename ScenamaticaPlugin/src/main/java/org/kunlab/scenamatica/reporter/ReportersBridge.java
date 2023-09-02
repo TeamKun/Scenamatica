@@ -1,5 +1,6 @@
 package org.kunlab.scenamatica.reporter;
 
+import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.interfaces.action.CompiledAction;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioResult;
@@ -7,7 +8,6 @@ import org.kunlab.scenamatica.interfaces.scenario.ScenarioSession;
 import org.kunlab.scenamatica.interfaces.scenario.TestReporter;
 import org.kunlab.scenamatica.interfaces.scenario.runtime.CompiledScenarioAction;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerBean;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 

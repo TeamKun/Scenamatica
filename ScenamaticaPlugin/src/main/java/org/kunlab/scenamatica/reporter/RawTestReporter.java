@@ -1,6 +1,7 @@
 package org.kunlab.scenamatica.reporter;
 
 import com.google.gson.Gson;
+import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.interfaces.action.CompiledAction;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioResult;
@@ -23,7 +24,6 @@ import org.kunlab.scenamatica.reporter.packets.session.PacketSessionStart;
 import org.kunlab.scenamatica.reporter.packets.test.PacketTestEnd;
 import org.kunlab.scenamatica.reporter.packets.test.PacketTestSkip;
 import org.kunlab.scenamatica.reporter.packets.test.PacketTestStart;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.FileDescriptor;
 import java.io.FileOutputStream;

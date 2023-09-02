@@ -1,13 +1,13 @@
 package org.kunlab.scenamatica.scenario;
 
+import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.enums.TriggerType;
 import org.kunlab.scenamatica.exceptions.scenario.ScenarioNotFoundException;
 import org.kunlab.scenamatica.exceptions.scenario.TriggerNotFoundException;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioManager;
 import org.kunlab.scenamatica.interfaces.scenario.SessionCreator;
-import org.bukkit.plugin.Plugin;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collections;

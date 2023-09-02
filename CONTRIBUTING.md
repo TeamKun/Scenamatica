@@ -1,6 +1,7 @@
 # Scenamatica への貢献
 
-まず初めに、Scenamatica への貢献に感謝します。Scenamatica は、 KUN Lab メンバと OSS コミュニティの協力によって開発されています。  
+まず初めに、Scenamatica への貢献に感謝します。Scenamatica は、 KUN Lab メンバと OSS
+コミュニティの協力によって開発されています。  
 貴重な時間を割いていただき、ありがとうございます。
 
 あらゆる種類の貢献が奨励され、歓迎されています。様々な貢献方法とメンテナの対応については、以下のガイドラインを参照してください。  
@@ -22,10 +23,12 @@
 
 > 質問をする場合は、 [Scenamatica ドキュメント](https://scenamatica.kunlab.org/)を参照したことを前提としています。
 
-質問をする前に、[既知の問題](https://github.com/TeamKun/Scenamatica/issues)を探すことをおすすめします。適切な問題を見つけ、コメントを残せます。  
+質問をする前に、[既知の問題](https://github.com/TeamKun/Scenamatica/issues)
+を探すことをおすすめします。適切な問題を見つけ、コメントを残せます。  
 また、最初にインターネットで検索することもおすすめします。
 
-それでも解決しない場合は、[こちら](https://github.com/TeamKun/Scenamatica/issues/new?template=question.yml)をクリックし、問題の作成を開始します。
+それでも解決しない場合は、[こちら](https://github.com/TeamKun/Scenamatica/issues/new?template=question.yml)
+をクリックし、問題の作成を開始します。
 ウィザードに従って、質問の内容を記入してください。
 
 また、あなたの行った質問はドキュメントに追加されたり、よくある質問に追加されることがあります。
@@ -51,7 +54,8 @@
   また、コードのインデントには４つのスペースを使用してください。  
   丸かっこの中の始まりと終わりの前にはスペースを**入れないで**ください。  
   `if` や `while` などの制御構文の後には、スペースを**入れて**ください。
-+ **プルリクエストのタイトル**及び**コミットメッセージ**は [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) に従ってください。  
++ **プルリクエストのタイトル**及び**コミットメッセージ**
+  は [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) に従ってください。  
   これにより、コミット/PR が行う変更が明確になり、スコープの調整が容易になります。
 
 ## プロジェクトの構成

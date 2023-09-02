@@ -2,10 +2,10 @@ package org.kunlab.scenamatica.scenariofile;
 
 import javax.annotation.Nullable;
 import lombok.AllArgsConstructor;
+import org.apache.commons.lang.StringUtils;
 import org.kunlab.scenamatica.exceptions.scenariofile.InvalidScenarioFileException;
 import org.kunlab.scenamatica.exceptions.scenariofile.NotAScenarioFileException;
 import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
-import org.apache.commons.lang.StringUtils;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.FileNotFoundException;

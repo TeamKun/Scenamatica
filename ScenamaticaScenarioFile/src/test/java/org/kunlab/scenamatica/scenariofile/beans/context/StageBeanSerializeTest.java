@@ -1,10 +1,10 @@
 package org.kunlab.scenamatica.scenariofile.beans.context;
 
-import org.kunlab.scenamatica.interfaces.scenariofile.context.StageBean;
-import org.kunlab.scenamatica.scenariofile.beans.utils.MapTestUtil;
 import org.bukkit.World;
 import org.bukkit.WorldType;
 import org.junit.jupiter.api.Test;
+import org.kunlab.scenamatica.interfaces.scenariofile.context.StageBean;
+import org.kunlab.scenamatica.scenariofile.beans.utils.MapTestUtil;
 
 import java.util.HashMap;
 import java.util.Map;

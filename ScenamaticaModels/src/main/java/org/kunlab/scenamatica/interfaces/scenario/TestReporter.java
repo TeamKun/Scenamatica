@@ -1,9 +1,9 @@
 package org.kunlab.scenamatica.interfaces.scenario;
 
+import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.interfaces.action.CompiledAction;
 import org.kunlab.scenamatica.interfaces.scenario.runtime.CompiledScenarioAction;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerBean;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * シナリオのテストの実行と結果を報告するためのインターフェースです。

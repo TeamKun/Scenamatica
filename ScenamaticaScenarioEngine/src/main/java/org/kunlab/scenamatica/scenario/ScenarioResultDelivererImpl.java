@@ -1,13 +1,13 @@
 package org.kunlab.scenamatica.scenario;
 
 import lombok.Getter;
+import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.enums.ScenarioResultCause;
 import org.kunlab.scenamatica.enums.ScenarioState;
 import org.kunlab.scenamatica.interfaces.ScenamaticaRegistry;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioResult;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioResultDeliverer;
 import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayDeque;
 import java.util.UUID;

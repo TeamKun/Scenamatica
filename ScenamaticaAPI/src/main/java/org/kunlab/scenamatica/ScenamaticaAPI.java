@@ -1,8 +1,8 @@
 package org.kunlab.scenamatica;
 
-import org.kunlab.scenamatica.interfaces.ScenamaticaRegistry;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
+import org.kunlab.scenamatica.interfaces.ScenamaticaRegistry;
 
 import java.util.function.Consumer;
 

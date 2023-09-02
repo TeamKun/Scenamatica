@@ -2,6 +2,8 @@ package org.kunlab.scenamatica.scenariofile.beans;
 
 import lombok.Value;
 import net.kunmc.lab.peyangpaperutils.versioning.Version;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.interfaces.scenariofile.BeanSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
@@ -9,8 +11,6 @@ import org.kunlab.scenamatica.interfaces.scenariofile.action.ActionBean;
 import org.kunlab.scenamatica.interfaces.scenariofile.context.ContextBean;
 import org.kunlab.scenamatica.interfaces.scenariofile.scenario.ScenarioBean;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerBean;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.List;

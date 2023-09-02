@@ -2,16 +2,16 @@ package org.kunlab.scenamatica.context.actor;
 
 import com.mojang.authlib.GameProfile;
 import lombok.SneakyThrows;
-import org.kunlab.scenamatica.interfaces.ScenamaticaRegistry;
-import org.kunlab.scenamatica.interfaces.context.Actor;
-import org.kunlab.scenamatica.interfaces.context.ActorManager;
-import org.kunlab.scenamatica.interfaces.scenariofile.context.PlayerBean;
 import org.apache.logging.log4j.LogManager;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.jetbrains.annotations.NotNull;
+import org.kunlab.scenamatica.interfaces.ScenamaticaRegistry;
+import org.kunlab.scenamatica.interfaces.context.Actor;
+import org.kunlab.scenamatica.interfaces.context.ActorManager;
+import org.kunlab.scenamatica.interfaces.scenariofile.context.PlayerBean;
 
 import java.net.InetAddress;
 import java.net.InetSocketAddress;

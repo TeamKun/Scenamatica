@@ -2,12 +2,12 @@ package org.kunlab.scenamatica.interfaces.scenario;
 
 import lombok.AllArgsConstructor;
 import lombok.Value;
-import org.kunlab.scenamatica.enums.TriggerType;
-import org.kunlab.scenamatica.exceptions.scenario.ScenarioNotFoundException;
-import org.kunlab.scenamatica.exceptions.scenario.TriggerNotFoundException;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.kunlab.scenamatica.enums.TriggerType;
+import org.kunlab.scenamatica.exceptions.scenario.ScenarioNotFoundException;
+import org.kunlab.scenamatica.exceptions.scenario.TriggerNotFoundException;
 
 import java.util.List;
 import java.util.function.Consumer;
