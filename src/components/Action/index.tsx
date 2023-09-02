@@ -7,14 +7,14 @@ type BukkitEvent = {
     package: string
 }
 
-enum ScenarioType {
+export enum ScenarioType {
     EXECUTE = "EXE",
     EXPECT = "EXP",
     REQUIRE = "REQ"
 }
 
-export interface ActionArgument extends ObjectElement {
-    available: ScenarioType[]
+export type ActionArgument = ObjectElement & {
+    available?: ScenarioType[]
 }
 
 type ActionProps = {

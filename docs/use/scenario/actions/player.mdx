@@ -1,4 +1,4 @@
-import Action from "/src/components/Action";
+import Action, {ScenarioType} from "/src/components/Action";
 import BelowDocument from "/src/components/BelowDocument";
 import {ObjectType} from "/src/components/Object";
 
@@ -57,14 +57,14 @@ import {ObjectType} from "/src/components/Object";
             anchor: "target",
             description: "進捗を達成するプレイヤーです。",
             type: "プレイヤ",
-            required: true
+            required: [ScenarioType.EXPECT, ScenarioType.REQUIRE]
           },
           {
             name: "advancement",
             anchor: "advancement-advancement",
             description: "進捗です。",
             type: "NamespacedKey",
-            required: true
+            required: [ScenarioType.EXPECT, ScenarioType.REQUIRE]
           },
           {
             name: "criterion",
@@ -114,14 +114,14 @@ import {ObjectType} from "/src/components/Object";
             anchor: "target",
             description: "アニメーションを実行するプレイヤーです。",
             type: "プレイヤ",
-            required: true
+            required: [ScenarioType.EXECUTE],
           },
           {
             name: "type",
             anchor: "animation-type",
             description: "実行するアニメーションの種類です。",
             type: "列挙型{ARM_SWING}",
-            required: true
+            required: [ScenarioType.EXECUTE],
           }
         ]}
         executable watchable

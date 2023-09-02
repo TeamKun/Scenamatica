@@ -1,11 +1,11 @@
 import React from "react"
 import styles from "./index.module.css"
-import {ActionArgument} from "@site/src/components/Action";
+import {ActionArgument, ScenarioType} from "@site/src/components/Action";
 
 export type ObjectElement = {
     name: string
     anchor?: string
-    required?: boolean
+    required?: boolean | ScenarioType[] | string
     type: string | ObjectType
     type_anchor?: string
     type_link?: string
@@ -39,7 +39,23 @@ export const Object: React.FC<ObjectsProps> = ({ objects }) => {
 
     const elements = objects.map((element) =>{
         const name = element.anchor ? <a href={"#" + element.anchor}>{element.name}</a>: element.name
-        const required = element.required ? <span className={styles.required}>必須</span>: "任意"
+        let required: JSX.Element | null = null
+        if (!element.required)
+            required = <span>任意</span>
+        else if (typeof element.required === "string")
+            required = <span className={styles.required}>{element.required}</span>
+        else if (Array.isArray(element.required)) {
+            required = <span className={styles.required}>
+                {element.required.map((type, index) => {
+                    if (index > 0)
+                        return <>{" | "}<code>{type}</code></>
+                    else
+                        return <code>{type}</code>
+                })}
+            </span>
+        }
+        else
+            required = <span className={styles.required}>必須</span>
 
         const typeNameStr = typeof element.type === "string" ? element.type : (element.type as ObjectType)
         let typeName: string | JSX.Element = typeNameStr
@@ -65,7 +81,7 @@ export const Object: React.FC<ObjectsProps> = ({ objects }) => {
                 <td>{required}</td>
                 <td>{element.description}</td>
                 {shouldShowDefaultValue ? <td>{element.default ? <code>{element.default}</code> : "N/A"}</td> : null}
-                {shouldShowAvailableFor ? <td>{availableFor ? availableFor : "N/A"}</td> : null}
+                {shouldShowAvailableFor ? <td>{availableFor ? availableFor : <code>ALL</code>}</td> : null}
             </tr>
         )
     })
