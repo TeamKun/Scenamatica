@@ -383,10 +383,7 @@
               "with": {
                 "$ref": "#/definitions/action/definitions/player/advancement"
               }
-            },
-            "required": [
-              "with"
-            ]
+            }
           }
         },
         {
@@ -1462,10 +1459,7 @@
                 "maxLength": 32767,
                 "$ref": "#/definitions/namespacedKey"
               }
-            },
-            "required": [
-              "advancement"
-            ]
+            }
           },
           "animation": {
             "$ref": "#/definitions/action/definitions/player/$base",

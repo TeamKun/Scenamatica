@@ -12,8 +12,8 @@ import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerAdvancementDoneEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.commons.utils.NamespaceUtils;
+import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
@@ -70,7 +70,8 @@ public class PlayerAdvancementAction
         {
             PlayerAdvancementDoneEvent e = (PlayerAdvancementDoneEvent) event;
 
-            return e.getAdvancement().getKey().equals(argument.getAdvancement());
+            NamespacedKey expectedAdv = argument.getAdvancement();
+            return expectedAdv == null || e.getAdvancement().getKey().equals(expectedAdv);
         }
         else  // 進捗の Criterion を付与するアクションの場合
         {
@@ -79,7 +80,8 @@ public class PlayerAdvancementAction
 
             String criteria = argument.getCriterion();
 
-            return e.getAdvancement().getKey().equals(argument.getAdvancement())
+            NamespacedKey expectedAdv = argument.getAdvancement();
+            return (expectedAdv == null || e.getAdvancement().getKey().equals(expectedAdv))
                     && (criteria == null || e.getCriterion().equals(criteria));
         }
     }
@@ -96,9 +98,9 @@ public class PlayerAdvancementAction
     @Override
     public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull BeanSerializer serializer)
     {
-        MapUtils.checkContainsKey(map, Argument.KEY_ADVANCEMENT);
-
-        NamespacedKey advancement = NamespaceUtils.fromString((String) map.get(Argument.KEY_ADVANCEMENT));
+        NamespacedKey advancement = null;
+        if (map.containsKey(Argument.KEY_ADVANCEMENT))
+            advancement = NamespaceUtils.fromString((String) map.get(Argument.KEY_ADVANCEMENT));
 
         String criteria = null;
         if (map.containsKey(Argument.KEY_CRITERIA))
@@ -135,12 +137,10 @@ public class PlayerAdvancementAction
         public static final String KEY_ADVANCEMENT = "advancement";
         public static final String KEY_CRITERIA = "criteria";
 
-        @NotNull  // TODO: Make this Nullable
         NamespacedKey advancement;
-        @Nullable
         String criterion;
 
-        public Argument(String target, @NotNull NamespacedKey advancement, @Nullable String criterion)
+        public Argument(String target, NamespacedKey advancement, String criterion)
         {
             super(target);
             this.advancement = advancement;
@@ -155,7 +155,25 @@ public class PlayerAdvancementAction
 
             Argument casted = (Argument) argument;
 
-            return this.advancement.equals(casted.advancement);
+            return super.isSame(argument)
+                    && (this.advancement == null || this.advancement.equals(casted.advancement))
+                    && (this.criterion == null || this.criterion.equals(casted.criterion));
+        }
+
+        @Override
+        public void validate(@NotNull ScenarioEngine engine, @NotNull ScenarioType type)
+        {
+            super.validate(engine, type);
+
+            switch (type)
+            {
+                case CONDITION_REQUIRE:
+                    /* fall through */
+                case ACTION_EXECUTE:
+                    throwIfNotPresent(KEY_TARGET_PLAYER, this.getTargetSpecifier());
+                    throwIfNotPresent(KEY_ADVANCEMENT, this.advancement);
+                    break;
+            }
         }
 
         @Override
