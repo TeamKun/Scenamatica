@@ -277,10 +277,7 @@
               "with": {
                 "$ref": "#/definitions/action/definitions/entity/place"
               }
-            },
-            "required": [
-              "with"
-            ]
+            }
           }
         },
         {

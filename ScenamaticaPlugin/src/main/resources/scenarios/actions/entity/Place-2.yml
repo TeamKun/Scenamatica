@@ -1,0 +1,40 @@
+# noinspection YAMLSchemaValidation
+scenamatica: ${project.version}
+
+name: actions_entity_place_2
+description: Testing entity_place action without placer works or not
+on:
+  - type: on_load
+  - type: manual_dispatch
+
+context:
+  actors:
+    - name: Actor01
+  stage:
+    type: FLAT
+
+scenario:
+  - type: execute
+    action: entity_place
+    with:
+      target: "ARMOR_STAND"
+      block:
+        location:
+          x: 0
+          y: 350
+          z: 0
+      player: Actor01
+      direction: "UP"
+  - type: expect
+    action: entity_place
+    with:
+      target:
+        type: "ARMOR_STAND"
+      block:
+        location:
+          x: 0
+          y: 350
+          z: 0
+      direction: "UP"
+    timeout: 20
+

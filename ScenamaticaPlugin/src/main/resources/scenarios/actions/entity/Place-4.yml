@@ -1,0 +1,30 @@
+# noinspection YAMLSchemaValidation
+scenamatica: ${project.version}
+
+name: actions_entity_place_4
+description: Testing entity_place action without argument works or not
+on:
+  - type: on_load
+  - type: manual_dispatch
+
+context:
+  actors:
+    - name: Actor01
+  stage:
+    type: FLAT
+
+scenario:
+  - type: execute
+    action: entity_place
+    with:
+      target: "ARMOR_STAND"
+      block:
+        location:
+          x: 0
+          y: 350
+          z: 0
+      player: Actor01
+      direction: "UP"
+  - type: expect
+    action: entity_place
+
