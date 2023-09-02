@@ -21,7 +21,7 @@ export class ScenarioType {
     }
 
     public toElement(): JSX.Element {
-        return <span color={this.color}>{this.shortName}</span>
+        return <code style={{color: this.color}}>{this.shortName}</code>
     }
 }
 
