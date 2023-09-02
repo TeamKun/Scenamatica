@@ -196,7 +196,7 @@ Bukkit の仕様により、現在は `ARM_SWING` のみが指定可能です。
             anchor: "target",
             description: "死亡するプレイヤーです。",
             type: "プレイヤ",
-            required: true
+            required: [ScenarioType.EXECUTE],
           },
           {
             name: "killer",
@@ -207,42 +207,49 @@ Bukkit の仕様により、現在は `ARM_SWING` のみが指定可能です。
             name: "deathMessage",
             description: "死亡メッセージです。",
             type: ObjectType.STRING,
+            available: [ScenarioType.EXECUTE, ScenarioType.EXPECT],
           },
           {
             name: "exp",
             description: "死亡したプレイヤーの新しい経験値です。",
             type: ObjectType.INTEGER,
-            default: "(ゲームルールによる)"
+            default: "(ゲームルールによる)",
+            available: [ScenarioType.EXECUTE, ScenarioType.EXPECT],
           },
           {
             name: "totalExp",
             description: "死亡したプレイヤーの新しい総経験値です。",
             type: ObjectType.INTEGER,
-            default: "(ゲームルールによる)"
+            default: "(ゲームルールによる)",
+            available: [ScenarioType.EXECUTE, ScenarioType.EXPECT],
           },
           {
             name: "keepLevel",
             description: "死亡したプレイヤーのレベルを保持するかどうかです。",
             type: ObjectType.BOOLEAN,
-            default: "(ゲームルールによる)"
+            default: "(ゲームルールによる)",
+            available: [ScenarioType.EXECUTE, ScenarioType.EXPECT],
           },
           {
             name: "keepInventory",
             description: "死亡したプレイヤーのインベントリ内容を保持するかどうかです。",
             type: ObjectType.BOOLEAN,
-            default: "(ゲームルールによる)"
+            default: "(ゲームルールによる)",
+            available: [ScenarioType.EXECUTE, ScenarioType.EXPECT],
           },
           {
             name: "keepExperience",
             description: "死亡したプレイヤーの経験値を保持するかどうかです。",
             type: ObjectType.BOOLEAN,
-            default: "(ゲームルールによる)"
+            default: "(ゲームルールによる)",
+            available: [ScenarioType.EXECUTE, ScenarioType.EXPECT],
           },
           {
             name: "doExpDrop",
             description: "死亡したプレイヤーの経験値ドロップを行うかどうかです。",
             type: ObjectType.BOOLEAN,
-            default: "(ゲームルールによる)"
+            default: "(ゲームルールによる)",
+            available: [ScenarioType.EXECUTE, ScenarioType.EXPECT],
           }
         ]}
         executable={"プレイヤを殺害します。"}
