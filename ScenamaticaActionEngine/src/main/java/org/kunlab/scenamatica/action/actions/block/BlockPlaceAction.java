@@ -145,14 +145,11 @@ public class BlockPlaceAction extends AbstractBlockAction<BlockPlaceAction.Argum
         public static final String KEY_HAND = "hand";
         public static final String KEY_DIRECTION = "direction";
 
-        @Nullable
         String actor;
-        @Nullable
         EquipmentSlot hand;  // HAND or OFF_HAND
-        @Nullable
         BlockFace direction;
 
-        public Argument(@NotNull BlockBean block, @Nullable String actor, @Nullable EquipmentSlot hand, @Nullable BlockFace direction)
+        public Argument(@NotNull BlockBean block, String actor, EquipmentSlot hand, BlockFace direction)
         {
             super(block);
             this.actor = actor;

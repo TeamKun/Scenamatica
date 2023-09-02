@@ -1,5 +1,6 @@
 package org.kunlab.scenamatica.action.actions.block;
 
+import javax.annotation.ParametersAreNullableByDefault;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.bukkit.Location;
@@ -131,18 +132,17 @@ public class BlockBreakAction extends AbstractBlockAction<BlockBreakAction.Argum
     }
 
     @Value
+    @ParametersAreNullableByDefault
     @EqualsAndHashCode(callSuper = true)
     public static class Argument extends AbstractBlockActionArgument
     {
         public static final String KEY_ACTOR = "actor";
         public static final String KEY_DROP_ITEMS = "drop_items";
 
-        @Nullable
         String actor;
-        @Nullable
         Boolean dropItems;
 
-        public Argument(@NotNull BlockBean block, @Nullable String actor, @Nullable Boolean dropItems)
+        public Argument(@NotNull BlockBean block, String actor, Boolean dropItems)
         {
             super(block);
             this.actor = actor;
