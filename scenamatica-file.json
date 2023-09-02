@@ -433,10 +433,7 @@
               "with": {
                 "$ref": "#/definitions/action/definitions/player/drop_item"
               }
-            },
-            "required": [
-              "with"
-            ]
+            }
           }
         },
         {
