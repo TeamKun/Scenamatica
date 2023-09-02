@@ -87,7 +87,6 @@ public class EntityAction extends AbstractEntityAction<EntityAction.Argument>
     {
         private static final String KEY_ENTITY = "entity";
 
-        @Nullable
         EntityBean entity;
 
         public Argument(@NotNull Object target, @Nullable EntityBean entity)

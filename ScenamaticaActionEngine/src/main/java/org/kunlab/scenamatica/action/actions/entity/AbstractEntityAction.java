@@ -43,7 +43,8 @@ public abstract class AbstractEntityAction<A extends AbstractEntityActionArgumen
             return this.checkMatchedEntity(argument.getTargetString(), e.getEntity());
         else
         {
-            assert argument.getTargetBean() != null;
+            if (argument.getTargetBean() == null)
+                return true;
             return BeanUtils.isSame(argument.getTargetBean(), e.getEntity(), /* strict */ false);
         }
     }
