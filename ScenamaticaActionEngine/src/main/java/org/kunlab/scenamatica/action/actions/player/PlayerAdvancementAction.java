@@ -140,7 +140,7 @@ public class PlayerAdvancementAction
         @Nullable
         String criterion;
 
-        public Argument(@NotNull String target, @NotNull NamespacedKey advancement, @Nullable String criterion)
+        public Argument(String target, @NotNull NamespacedKey advancement, @Nullable String criterion)
         {
             super(target);
             this.advancement = advancement;

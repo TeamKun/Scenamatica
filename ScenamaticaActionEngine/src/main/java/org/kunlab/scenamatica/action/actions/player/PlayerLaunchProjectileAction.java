@@ -171,7 +171,7 @@ public class PlayerLaunchProjectileAction extends AbstractPlayerAction<PlayerLau
 
         double epsilon;
 
-        public Argument(@NotNull String target, @NotNull ProjectileType projectileType)
+        public Argument(String target, @NotNull ProjectileType projectileType)
         {
             super(target);
             this.projectileType = projectileType;
@@ -179,7 +179,7 @@ public class PlayerLaunchProjectileAction extends AbstractPlayerAction<PlayerLau
             this.epsilon = DEFAULT_EPSILON;
         }
 
-        public Argument(@NotNull String target, @NotNull ProjectileType projectileType, @Nullable Vector velocity)
+        public Argument(String target, @NotNull ProjectileType projectileType, @Nullable Vector velocity)
         {
             super(target);
             this.projectileType = projectileType;
@@ -187,7 +187,7 @@ public class PlayerLaunchProjectileAction extends AbstractPlayerAction<PlayerLau
             this.epsilon = DEFAULT_EPSILON;
         }
 
-        public Argument(@NotNull String target, @NotNull ProjectileType projectileType, @Nullable Vector velocity, double epsilon)
+        public Argument(String target, @NotNull ProjectileType projectileType, @Nullable Vector velocity, double epsilon)
         {
             super(target);
             this.projectileType = projectileType;

@@ -5,7 +5,6 @@ import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerEvent;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.action.actions.AbstractAction;
-import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 
 import java.util.ArrayList;
@@ -56,9 +55,7 @@ public abstract class AbstractPlayerAction<A extends AbstractPlayerActionArgumen
 
     protected String deserializeTarget(Map<String, Object> map)
     {
-        MapUtils.checkContainsKey(map, AbstractPlayerActionArgument.KEY_TARGET_PLAYER);
-
-        return map.get(AbstractPlayerActionArgument.KEY_TARGET_PLAYER).toString();
+        return (String) map.get(AbstractPlayerActionArgument.KEY_TARGET_PLAYER);
     }
 
     protected boolean isSameUUIDString(String uuid1, String uuid2)

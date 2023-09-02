@@ -67,11 +67,9 @@ public class PlayerAnimationAction extends AbstractPlayerAction<PlayerAnimationA
     @Override
     public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull BeanSerializer serializer)
     {
-        MapUtils.checkEnumName(map, Argument.KEY_ACTION_TYPE, PlayerAnimationType.class);
-
         return new Argument(
                 super.deserializeTarget(map),
-                MapUtils.getAsEnum(map, Argument.KEY_ACTION_TYPE, PlayerAnimationType.class)
+                MapUtils.getAsEnumOrNull(map, Argument.KEY_ACTION_TYPE, PlayerAnimationType.class)
         );
     }
 
@@ -83,7 +81,7 @@ public class PlayerAnimationAction extends AbstractPlayerAction<PlayerAnimationA
 
         PlayerAnimationType type;
 
-        public Argument(@NotNull String target, PlayerAnimationType type)
+        public Argument(String target, PlayerAnimationType type)
         {
             super(target);
             this.type = type;

@@ -101,7 +101,7 @@ public class PlayerFlightAction extends AbstractPlayerAction<PlayerFlightAction.
         @Nullable
         Boolean flying;
 
-        public Argument(@NotNull String target, @Nullable Boolean flying)
+        public Argument(String target, @Nullable Boolean flying)
         {
             super(target);
             this.flying = flying;

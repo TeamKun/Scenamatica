@@ -104,7 +104,7 @@ public class PlayerKickAction extends AbstractPlayerAction<PlayerKickAction.Argu
         @Nullable
         PlayerKickEvent.Cause cause;
 
-        public Argument(@NotNull String target, @Nullable String leaveMessage, @Nullable String kickMessage, @Nullable PlayerKickEvent.Cause cause)
+        public Argument(String target, @Nullable String leaveMessage, @Nullable String kickMessage, @Nullable PlayerKickEvent.Cause cause)
         {
             super(target);
             this.leaveMessage = leaveMessage;

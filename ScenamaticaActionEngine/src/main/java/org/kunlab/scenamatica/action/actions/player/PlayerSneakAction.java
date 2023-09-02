@@ -98,7 +98,7 @@ public class PlayerSneakAction extends AbstractPlayerAction<PlayerSneakAction.Ar
         @Nullable
         Boolean sneaking;
 
-        public Argument(@NotNull String target, @Nullable Boolean sneaking)
+        public Argument(String target, @Nullable Boolean sneaking)
         {
             super(target);
             this.sneaking = sneaking;

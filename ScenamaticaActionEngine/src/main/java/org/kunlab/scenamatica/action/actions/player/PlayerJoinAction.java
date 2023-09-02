@@ -103,7 +103,7 @@ public class PlayerJoinAction extends AbstractPlayerAction<PlayerJoinAction.Argu
         @Nullable
         String joinMessage;
 
-        public Argument(@NotNull String target, @Nullable String joinMessage)
+        public Argument(String target, @Nullable String joinMessage)
         {
             super(target);
             this.joinMessage = joinMessage;

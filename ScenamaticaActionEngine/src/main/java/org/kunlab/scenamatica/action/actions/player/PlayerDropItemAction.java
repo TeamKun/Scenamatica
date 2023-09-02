@@ -95,7 +95,7 @@ public class PlayerDropItemAction extends AbstractPlayerAction<PlayerDropItemAct
         @Nullable
         EntityItemBean item;
 
-        public Argument(@NotNull String target, @Nullable EntityItemBean item)
+        public Argument(String target, @Nullable EntityItemBean item)
         {
             super(target);
             this.item = item;

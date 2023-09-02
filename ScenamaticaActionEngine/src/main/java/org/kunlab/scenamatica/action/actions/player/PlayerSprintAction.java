@@ -98,7 +98,7 @@ public class PlayerSprintAction extends AbstractPlayerAction<PlayerSprintAction.
         @Nullable
         Boolean sprinting;
 
-        public Argument(@NotNull String target, @Nullable Boolean sprinting)
+        public Argument(String target, @Nullable Boolean sprinting)
         {
             super(target);
             this.sprinting = sprinting;

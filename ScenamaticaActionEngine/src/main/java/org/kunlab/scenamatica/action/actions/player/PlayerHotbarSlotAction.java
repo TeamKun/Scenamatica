@@ -143,7 +143,7 @@ public class PlayerHotbarSlotAction extends AbstractPlayerAction<PlayerHotbarSlo
         @Nullable
         ItemStackBean currentItem;
 
-        public Argument(@NotNull String target, int currentSlot, int previousSlot, @Nullable ItemStackBean currentItem)
+        public Argument(String target, int currentSlot, int previousSlot, @Nullable ItemStackBean currentItem)
         {
             super(target);
             this.currentSlot = currentSlot;

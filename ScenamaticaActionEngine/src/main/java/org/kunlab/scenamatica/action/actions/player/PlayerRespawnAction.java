@@ -106,7 +106,7 @@ public class PlayerRespawnAction extends AbstractPlayerAction<PlayerRespawnActio
         @Nullable
         Location location;
 
-        public Argument(@NotNull String target, @Nullable Boolean isBed, @Nullable Boolean isAnchor, @Nullable Location location)
+        public Argument(String target, @Nullable Boolean isBed, @Nullable Boolean isAnchor, @Nullable Location location)
         {
             super(target);
             this.isBed = isBed;

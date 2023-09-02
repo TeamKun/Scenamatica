@@ -225,7 +225,7 @@ public class PlayerDeathAction extends AbstractPlayerAction<PlayerDeathAction.Ar
         Boolean keepInventory;
         Boolean doExpDrop;
 
-        public Argument(@NotNull String target, @Nullable String killer, @Nullable String deathMessage, int newExp, int newLevel, int newTotalExp, Boolean keepLevel, Boolean keepInventory, Boolean doExpDrop)
+        public Argument(String target, @Nullable String killer, @Nullable String deathMessage, int newExp, int newLevel, int newTotalExp, Boolean keepLevel, Boolean keepInventory, Boolean doExpDrop)
         {
             super(target);
             this.killer = killer;

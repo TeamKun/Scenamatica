@@ -80,7 +80,7 @@ public class PlayerChatAction extends AbstractPlayerAction<PlayerChatAction.Argu
         String message;
         String format;
 
-        public Argument(@NotNull String target, String message, String format)
+        public Argument(String target, String message, String format)
         {
             super(target);
             this.message = message;

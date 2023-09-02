@@ -122,7 +122,7 @@ public class PlayerItemConsumeAction extends AbstractPlayerAction<PlayerItemCons
         @Nullable
         ItemStackBean replacement;
 
-        public Argument(@NotNull String target, @Nullable ItemStackBean item, @Nullable ItemStackBean replacement)
+        public Argument(String target, @Nullable ItemStackBean item, @Nullable ItemStackBean replacement)
         {
             super(target);
             this.item = item;

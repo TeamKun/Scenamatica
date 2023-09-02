@@ -184,7 +184,7 @@ public class PlayerItemBreakAction extends AbstractPlayerAction<PlayerItemBreakA
         @Nullable
         EquipmentSlot slot;
 
-        public Argument(@NotNull String target, @Nullable ItemStackBean item, @Nullable EquipmentSlot slot)
+        public Argument(String target, @Nullable ItemStackBean item, @Nullable EquipmentSlot slot)
         {
             super(target);
             this.item = item;

@@ -157,7 +157,7 @@ public class PlayerInteractBlockAction extends AbstractPlayerAction<PlayerIntera
         @Nullable
         BlockFace blockFace;
 
-        public Argument(@NotNull String target, @Nullable Action action, @Nullable EquipmentSlot hand, @Nullable BlockBean block, @Nullable BlockFace blockFace)
+        public Argument(String target, @Nullable Action action, @Nullable EquipmentSlot hand, @Nullable BlockBean block, @Nullable BlockFace blockFace)
         {
             super(target);
             this.action = action;
