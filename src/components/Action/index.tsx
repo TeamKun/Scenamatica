@@ -7,10 +7,22 @@ type BukkitEvent = {
     package: string
 }
 
-export enum ScenarioType {
-    EXECUTE = "EXE",
-    EXPECT = "EXP",
-    REQUIRE = "REQ"
+export class ScenarioType {
+    public readonly EXECUTE = new ScenarioType("実行", "#20a420")
+    public readonly EXPECT = new ScenarioType("監視", "#a42020")
+    public readonly REQUIRE = new ScenarioType("要求", "#a420a4")
+
+    private readonly shortName: string
+    private readonly color: string
+
+    constructor(shortName: string, color: string) {
+        this.shortName = shortName
+        this.color = color
+    }
+
+    public toElement(): JSX.Element {
+        return <span color={this.color}>{this.shortName}</span>
+    }
 }
 
 export type ActionArgument = ObjectElement & {

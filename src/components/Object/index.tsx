@@ -48,9 +48,9 @@ export const Object: React.FC<ObjectsProps> = ({ objects }) => {
             required = <span className={styles.required}>
                 {element.required.map((type, index) => {
                     if (index > 0)
-                        return <>{" | "}<code>{type}</code></>
+                        return <>{" | "}{type.toElement()}</>
                     else
-                        return <code>{type}</code>
+                        return <>{type.toElement()}</>
                 })}
             </span>
         }
@@ -68,9 +68,9 @@ export const Object: React.FC<ObjectsProps> = ({ objects }) => {
         if (isActionArgument(element) && element.available.length > 0) {
             for (const type of element.available) {
                 if (availableFor)
-                    availableFor = <>{availableFor} | <code>{type}</code></>
+                    availableFor = <>{availableFor} | {type.toElement()}</>
                 else
-                    availableFor = <code>{type}</code>
+                    availableFor = <>{type.toElement()}</>
             }
         }
 
