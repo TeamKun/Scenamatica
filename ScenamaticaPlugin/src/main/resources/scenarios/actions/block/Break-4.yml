@@ -1,8 +1,8 @@
 # noinspection YAMLSchemaValidation
 scenamatica: ${project.version}
 
-name: actions_block_break_4
-description: Testing block_break action without block works or not
+name: actions_block_break_5
+description: Testing block_break action without argument works or not
 on:
   - type: on_load
   - type: manual_dispatch
@@ -24,6 +24,3 @@ scenario:
           z: 0
   - type: expect
     action: block_break
-    with:
-      actor: Actor001
-

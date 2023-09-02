@@ -136,7 +136,7 @@ public class BlockBreakAction extends AbstractBlockAction<BlockBreakAction.Argum
         String actor;
         Boolean dropItems;
 
-        public Argument(@NotNull BlockBean block, String actor, Boolean dropItems)
+        public Argument(@Nullable BlockBean block, String actor, Boolean dropItems)
         {
             super(block);
             this.actor = actor;

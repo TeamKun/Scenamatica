@@ -1,7 +1,7 @@
 package org.kunlab.scenamatica.action.actions.block;
 
 import lombok.Getter;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.actions.AbstractActionArgument;
 import org.kunlab.scenamatica.interfaces.scenariofile.misc.BlockBean;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
@@ -15,7 +15,7 @@ public abstract class AbstractBlockActionArgument extends AbstractActionArgument
 
     BlockBean block;
 
-    public AbstractBlockActionArgument(@NotNull BlockBean block)
+    public AbstractBlockActionArgument(@Nullable BlockBean block)
     {
         this.block = block;
     }

@@ -2,10 +2,10 @@
 scenamatica: ${project.version}
 
 name: actions_block_place_2
-description: Testing block_place action without actor works or not
 on:
   - type: on_load
   - type: manual_dispatch
+description: Testing block_place action without block works or not
 
 context:
   actors:
@@ -16,19 +16,15 @@ scenario:
   - type: execute
     action: block_place
     with:
+      actor: Actor001
       block:
-        type: DIRT
+        type: SAND
         location:
           x: 0
-          y: 0
+          y: 255
           z: 0
     timeout: 20
   - type: expect
     action: block_place
     with:
-      block:
-        type: DIRT
-        location:
-          x: 0
-          y: 0
-          z: 0
+      actor: Actor001

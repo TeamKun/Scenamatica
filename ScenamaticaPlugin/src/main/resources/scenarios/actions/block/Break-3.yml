@@ -2,7 +2,7 @@
 scenamatica: ${project.version}
 
 name: actions_block_break_3
-description: Testing block_break action without placer works or not
+description: Testing block_break action without block works or not
 on:
   - type: on_load
   - type: manual_dispatch
@@ -25,8 +25,5 @@ scenario:
   - type: expect
     action: block_break
     with:
-      block:
-        location:
-          x: 0
-          y: 0
-          z: 0
+      actor: Actor001
+

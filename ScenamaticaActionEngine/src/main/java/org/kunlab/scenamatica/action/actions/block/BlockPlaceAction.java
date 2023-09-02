@@ -102,10 +102,10 @@ public class BlockPlaceAction extends AbstractBlockAction<BlockPlaceAction.Argum
                 return false;
         }
 
-        if (e.getHand() != argument.getHand())
+        if (!(argument.getHand() == null || e.getHand() == argument.getHand()))
             return false;
 
-        return this.isConditionFulfilled(argument, engine);
+        return argument.getBlock() == null || this.isConditionFulfilled(argument, engine);
     }
 
     @Override
@@ -150,7 +150,7 @@ public class BlockPlaceAction extends AbstractBlockAction<BlockPlaceAction.Argum
         EquipmentSlot hand;  // HAND or OFF_HAND
         BlockFace direction;
 
-        public Argument(@NotNull BlockBean block, String actor, EquipmentSlot hand, BlockFace direction)
+        public Argument(@Nullable BlockBean block, String actor, EquipmentSlot hand, BlockFace direction)
         {
             super(block);
             this.actor = actor;
