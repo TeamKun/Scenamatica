@@ -281,7 +281,7 @@ Bukkit の仕様により、現在は `ARM_SWING` のみが指定可能です。
             anchor: "target",
             description: "アイテムをドロップするプレイヤーです。",
             type: "プレイヤ",
-            required: true
+            required: [ScenarioType.EXECUTE],
           },
           {
             name: "item",
@@ -308,9 +308,9 @@ Bukkit の仕様により、現在は `ARM_SWING` のみが指定可能です。
           {
             name: "target",
             anchor: "target",
-            description: "スニークするプレイヤーです。",
+            description: "飛ぶプレイヤーです。",
             type: "プレイヤ",
-            required: true
+            required: [ScenarioType.EXECUTE],
           },
           {
             name: "flying",
