@@ -91,6 +91,7 @@ public class BlockPlaceAction extends AbstractBlockAction<BlockPlaceAction.Argum
         if (!super.checkMatchedBlockEvent(argument, engine, event))
             return false;
 
+        assert event instanceof BlockPlaceEvent;
         BlockPlaceEvent e = (BlockPlaceEvent) event;
 
         Player actor;

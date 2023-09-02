@@ -186,10 +186,7 @@
               "with": {
                 "$ref": "#/definitions/action/definitions/block/place"
               }
-            },
-            "required": [
-              "with"
-            ]
+            }
           }
         },
         {
