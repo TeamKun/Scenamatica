@@ -55,7 +55,9 @@ public class InventoryCloseAction extends AbstractInventoryAction<InventoryClose
         if (!super.checkMatchedInventoryEvent(argument, engine, event))
             return false;
 
-        Player expectedPlayer = argument.getTarget();
+        Player expectedPlayer = null;
+        if (argument.getTargetSpecifier() != null)
+            expectedPlayer = argument.getTarget();
 
         assert event instanceof InventoryCloseEvent;
         InventoryCloseEvent e = (InventoryCloseEvent) event;

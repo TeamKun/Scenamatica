@@ -338,12 +338,9 @@
           "then": {
             "properties": {
               "with": {
-                "$ref": "#/definitions/action/definitions/inventory/interact/close"
+                "$ref": "#/definitions/action/definitions/inventory/close"
               }
-            },
-            "required": [
-              "with"
-            ]
+            }
           }
         },
         {
@@ -1413,10 +1410,7 @@
                 "reason": {
                   "$ref": "#/definitions/action/definitions/inventory/$definitions/closeReason"
                 }
-              },
-              "required": [
-                "reason"
-              ]
+              }
             }
           },
           "open": {

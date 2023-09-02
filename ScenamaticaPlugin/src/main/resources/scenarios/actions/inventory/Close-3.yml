@@ -1,0 +1,46 @@
+# noinspection YAMLSchemaValidation
+scenamatica: ${project.version}
+
+name: actions_inventory_close_3
+description: Testing inventory_close action without specifying target works or not
+on:
+  - type: on_load
+    before:
+      - type: execute
+        action: inventory_open
+        with:
+          target: Actor001
+          inventory:
+            items:
+              2:
+                type: DIAMOND_SWORD
+  - type: manual_dispatch
+    before:
+      - type: execute
+        action: inventory_open
+        with:
+          target: Actor001
+          inventory:
+            items:
+              2:
+                type: DIAMOND_SWORD
+
+context:
+  actors:
+    - name: Actor001
+
+
+scenario:
+  - type: execute
+    action: inventory_close
+    with:
+      target: Actor001
+      reason: CANT_USE
+  - type: expect
+    action: inventory_close
+    with:
+      reason: CANT_USE
+      inventory:
+        items:
+          2:
+            type: DIAMOND_SWORD
