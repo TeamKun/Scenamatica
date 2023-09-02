@@ -53,7 +53,7 @@ public class PlayerAnimationAction extends AbstractPlayerAction<PlayerAnimationA
 
         PlayerAnimationEvent e = (PlayerAnimationEvent) event;
 
-        return e.getAnimationType() == argument.type;
+        return argument.type == null || argument.type == e.getAnimationType();
     }
 
     @Override
