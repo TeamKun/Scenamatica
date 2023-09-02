@@ -200,17 +200,18 @@ public class InventoryClickAction extends AbstractInventoryInteractAction<Invent
         @Override
         public void validate(@NotNull ScenarioEngine engine, @NotNull ScenarioType type)
         {
-            if (this.slot == null && this.rawSlot == null)
-                throw new IllegalArgumentException("slot and raw_slot cannot be null at the same time");
-
-            if (this.button == null
-                    && !(this.type == ClickType.LEFT
-                    || this.type == ClickType.RIGHT
-                    || this.type == ClickType.MIDDLE))
-                throw new IllegalArgumentException("button cannot be null when click type is not left, right or middle");
-
             if (type == ScenarioType.ACTION_EXECUTE)
             {
+                if (this.slot == null && this.rawSlot == null)
+                    throw new IllegalArgumentException("slot and raw_slot cannot be null at the same time");
+
+                if (this.button == null
+                        && !(this.type == ClickType.LEFT
+                        || this.type == ClickType.RIGHT
+                        || this.type == ClickType.MIDDLE))
+                    throw new IllegalArgumentException("button cannot be null when click type is not left, right or middle");
+
+                throwIfNotPresent(Argument.KEY_TARGET_PLAYER, this.getTargetSpecifier());
                 throwIfPresent(Argument.KEY_SLOT_TYPE, this.slotType);
                 if (!(this.slot == null || this.rawSlot == null))
                     throw new IllegalArgumentException("cannot specify both slot and raw_slot in action execute scenario");

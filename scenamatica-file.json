@@ -323,10 +323,7 @@
               "with": {
                 "$ref": "#/definitions/action/definitions/inventory/interact/click"
               }
-            },
-            "required": [
-              "with"
-            ]
+            }
           }
         },
         {

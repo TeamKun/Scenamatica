@@ -4,7 +4,6 @@ import org.bukkit.event.Event;
 import org.bukkit.event.inventory.InventoryInteractEvent;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.action.actions.inventory.AbstractInventoryAction;
-import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 
 import java.util.ArrayList;
@@ -32,13 +31,12 @@ public abstract class AbstractInventoryInteractAction<A extends AbstractInventor
 
         InventoryInteractEvent e = (InventoryInteractEvent) event;
 
-        return e.getWhoClicked().getUniqueId().equals(argument.getTarget().getUniqueId());
+        return argument.getTargetSpecifier() == null
+                || e.getWhoClicked().getUniqueId().equals(argument.getTarget().getUniqueId());
     }
 
     protected String deserializeTarget(Map<String, Object> map)
     {
-        MapUtils.checkContainsKey(map, AbstractInventoryInteractArgument.KEY_TARGET_PLAYER);
-
-        return map.get(AbstractInventoryInteractArgument.KEY_TARGET_PLAYER).toString();
+        return (String) map.get(AbstractInventoryInteractArgument.KEY_TARGET_PLAYER);
     }
 }

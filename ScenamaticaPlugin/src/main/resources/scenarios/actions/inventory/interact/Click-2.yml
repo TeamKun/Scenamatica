@@ -1,0 +1,35 @@
+# noinspection YAMLSchemaValidation
+scenamatica: ${project.version}
+
+name: actions_inventory_click_2
+description: Testing inventory_click action without specifying target works or not
+on:
+  - type: on_load
+  - type: manual_dispatch
+
+context:
+  actors:
+    - name: Actor001
+
+
+scenario:
+  - type: execute
+    action: inventory_click
+    with:
+      target: Actor001
+      type: LEFT
+      slot: 2
+      inventory:
+        items:
+          2:
+            type: DIAMOND_SWORD
+  - type: expect
+    action: inventory_click
+    with:
+      type: LEFT
+      slot: 2
+      slotType: CONTAINER
+      inventory:
+        items:
+          2:
+            type: DIAMOND_SWORD
