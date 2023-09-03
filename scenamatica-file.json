@@ -467,10 +467,7 @@
               "with": {
                 "$ref": "#/definitions/action/definitions/player/gamemode"
               }
-            },
-            "required": [
-              "with"
-            ]
+            }
           }
         },
         {
@@ -1526,10 +1523,7 @@
                 "type": "string",
                 "description": "ゲームモード変更をキャンセルされたときに表示するメッセージです。PaperMC の改造の一部で、通常は使用しません。"
               }
-            },
-            "required": [
-              "gamemode"
-            ]
+            }
           },
           "drop_item": {
             "$ref": "#/definitions/action/definitions/player/$base",

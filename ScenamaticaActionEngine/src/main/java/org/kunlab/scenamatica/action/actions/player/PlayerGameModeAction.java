@@ -55,15 +55,15 @@ public class PlayerGameModeAction extends AbstractPlayerAction<PlayerGameModeAct
 
         PlayerGameModeChangeEvent e = (PlayerGameModeChangeEvent) event;
 
-        GameMode gameMode = argument.getGameMode();
-        PlayerGameModeChangeEvent.Cause cause = argument.getCause();
-        String cancelMessage = argument.getCancelMessage();
+        GameMode expectedMode = argument.getGameMode();
+        PlayerGameModeChangeEvent.Cause expectedCause = argument.getCause();
+        String expectedCancelMsg = argument.getCancelMessage();
 
 
-        return e.getPlayer().getUniqueId().equals(argument.getTarget().getUniqueId()) &&
-                e.getNewGameMode() == gameMode &&
-                e.getCause() == cause &&
-                TextUtils.isSameContent(e.cancelMessage(), cancelMessage);
+        return (argument.getTargetSpecifier() == null || e.getPlayer().getUniqueId().equals(argument.getTarget().getUniqueId()))
+                && (expectedMode == null || e.getNewGameMode() == expectedMode)
+                && (expectedCause == null || e.getCause() == expectedCause)
+                && (expectedCancelMsg == null || TextUtils.isSameContent(e.cancelMessage(), expectedCancelMsg));
     }
 
     @Override
@@ -77,19 +77,11 @@ public class PlayerGameModeAction extends AbstractPlayerAction<PlayerGameModeAct
     @Override
     public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull BeanSerializer serializer)
     {
-        MapUtils.checkEnumName(map, Argument.KEY_GAME_MODE, GameMode.class);
-        MapUtils.checkEnumNameIfContains(map, Argument.KEY_CANCEL_MESSAGE, PlayerGameModeChangeEvent.Cause.class);
-        MapUtils.checkTypeIfContains(map, Argument.KEY_CANCEL_MESSAGE, String.class);
-
-        GameMode gameMode = MapUtils.getAsEnum(map, Argument.KEY_GAME_MODE, GameMode.class);
-        PlayerGameModeChangeEvent.Cause cause = MapUtils.getAsEnum(map, Argument.KEY_CAUSE, PlayerGameModeChangeEvent.Cause.class);
-        String cancelMessage = (String) map.get(Argument.KEY_CANCEL_MESSAGE);
-
         return new Argument(
                 super.deserializeTarget(map),
-                gameMode,
-                cause,
-                cancelMessage
+                MapUtils.getAsEnumOrNull(map, Argument.KEY_GAME_MODE, GameMode.class),
+                MapUtils.getAsEnumOrNull(map, Argument.KEY_CAUSE, PlayerGameModeChangeEvent.Cause.class),
+                (String) map.get(Argument.KEY_CANCEL_MESSAGE)
         );
     }
 
@@ -110,14 +102,12 @@ public class PlayerGameModeAction extends AbstractPlayerAction<PlayerGameModeAct
         public static final String KEY_GAME_MODE = "gamemode";
         public static final String KEY_CAUSE = "cause";
         public static final String KEY_CANCEL_MESSAGE = "cancelMessage";
-        @NotNull
+
         GameMode gameMode;
-        @Nullable
         PlayerGameModeChangeEvent.Cause cause;
-        @Nullable
         String cancelMessage;
 
-        public Argument(String target, @NotNull GameMode gameMode, @Nullable PlayerGameModeChangeEvent.Cause cause, @Nullable String cancelMessage)
+        public Argument(String target, GameMode gameMode, PlayerGameModeChangeEvent.Cause cause, String cancelMessage)
         {
             super(target);
             this.gameMode = gameMode;
@@ -142,10 +132,14 @@ public class PlayerGameModeAction extends AbstractPlayerAction<PlayerGameModeAct
         @Override
         public void validate(@NotNull ScenarioEngine engine, @NotNull ScenarioType type)
         {
+            super.validate(engine, type);
             switch (type)
             {
-                case CONDITION_REQUIRE:
                 case ACTION_EXECUTE:
+                    throwIfNotPresent(KEY_GAME_MODE, this.gameMode);
+                    /* fall through */
+                case CONDITION_REQUIRE:
+                    throwIfNotPresent(KEY_TARGET_PLAYER, this.getTargetSpecifier());
                     throwIfPresent(Argument.KEY_CAUSE, this.cause);
                     throwIfPresent(Argument.KEY_CANCEL_MESSAGE, this.cancelMessage);
                     break;
