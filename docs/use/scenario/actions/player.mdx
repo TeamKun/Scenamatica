@@ -341,25 +341,27 @@ Bukkit の仕様により、現在は `ARM_SWING` のみが指定可能です。
             anchor: "target",
             description: "ゲームモードを変更するプレイヤーです。",
             type: "プレイヤ",
-            required: true
+            required: [ScenarioType.EXECUTE, ScenarioType.REQUIRE]
           },
           {
             name: "gamemode",
             anchor: "gamemode-gamemode",
             description: "ゲームモードです。",
             type: "列挙型{SURVIVAL, CREATIVE, ADVENTURE, SPECTATOR}",
-            required: true,
+            required: [ScenarioType.EXECUTE, ScenarioType.REQUIRE]
           },
           {
             name: "cause",
             description: "ゲームモード変更の原因です。",
-            type: "列挙型{PLUGIN, COMMAND, DEFAULT_GAMEMODE, HARDCORE_DEATH, UNKNOWN}"
+            type: "列挙型{PLUGIN, COMMAND, DEFAULT_GAMEMODE, HARDCORE_DEATH, UNKNOWN}",
+            available: [ScenarioType.EXECUTE, ScenarioType.EXPECT]
           },
           {
             name: "cancelMessage",
             anchor: "gamemode-cancel-message",
             description: "変更がキャンセルされた場合に表示するメッセージです（Paper)。",
             type: ObjectType.STRING,
+            available: [ScenarioType.EXPECT]
           }
         ]}
         executable requireable watchable
