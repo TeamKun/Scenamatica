@@ -403,28 +403,45 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
             name: "target",
             description: "ホットバーのスロットを変更するプレイヤーです。",
             type: "プレイヤ",
-            required: true
+            required: [ScenarioType.EXECUTE]
           },
           {
             name: "slot",
             anchor: "hotbar-slot",
             description: "ホットバーのスロットです。",
             type: ObjectType.INTEGER,
-            required: true
+            required: [ScenarioType.EXECUTE]
+          },
+          {
+            name: "previous",
+            anchor: "hotbar-slot",
+            description: "変更前のホットバーのスロットです。",
+            type: ObjectType.INTEGER,
+            available: [ScenarioType.EXECUTE, ScenarioType.EXPECT]
           },
           {
             name: "item",
             anchor: "hotbar-item",
             description: "ホットバーのスロットにあるアイテムです。",
-            type: "ItemStack",
+            type: "ItemStack"
           },
         ]}
         executable requireable watchable
 />
 
-### `slot` {#hotbar-slot}
+### `slot`, `previous` {#hotbar-slot}
 
 ホットバーのスロットは `0` から `8` の整数で指定します。
+
+:::tip スロットのナンバリングについて
+
+一見 1 ~ 9 ではなく, 0 ～ 8 で指定するのは不思議に思うかもしれませんが,
+これは Minecraft のインベントリのスロット ID 仕様によるものです。
+
+インベントリはホットバー#1 が 0, #2 が 1, ... となっています。  
+そのため, Scenamatica では統一性を保つためにホットバーのスロットも 0 ～ 8 で指定します。
+
+:::
 
 ### `item` {#hotbar-item}
 
