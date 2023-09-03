@@ -466,29 +466,26 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
             anchor: "target",
             description: "ブロックをクリックするプレイヤーです。",
             type: "プレイヤ",
-            required: true
+            required: [ScenarioType.EXECUTE]
           },
           {
             name: "block",
             anchor: "block",
             description: "クリックされたブロックです。",
             type: "Block",
-            type_anchor: "interact-block-block",
-            required: true
+            type_anchor: "interact-block-block"
           },
           {
             name: "hand",
             anchor: "hand",
             description: "クリックされた手です。",
-            type: "列挙型{HAND, OFF_HAND}",
-            required: true
+            type: "列挙型{HAND, OFF_HAND}"
           },
           {
             name: "action",
             anchor: "action",
             description: "クリックの種類です。",
-            type: "列挙型{LEFT_CLICK_BLOCK, RIGHT_CLICK_BLOCK, LEFT_CLICK_AIR, RIGHT_CLICK_AIR}",
-            required: true
+            type: "列挙型{LEFT_CLICK_BLOCK, RIGHT_CLICK_BLOCK, LEFT_CLICK_AIR, RIGHT_CLICK_AIR}"
           }
         ]}
         executable watchable
