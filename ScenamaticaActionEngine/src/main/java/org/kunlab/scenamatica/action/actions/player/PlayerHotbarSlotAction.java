@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.utils.BeanUtils;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
+import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
@@ -51,21 +52,21 @@ public class PlayerHotbarSlotAction extends AbstractPlayerAction<PlayerHotbarSlo
     @Override
     public boolean isFired(@NotNull PlayerHotbarSlotAction.Argument argument, @NotNull ScenarioEngine engine, @NotNull Event event)
     {
-        assert event instanceof PlayerItemHeldEvent;
-        PlayerItemHeldEvent e = (PlayerItemHeldEvent) event;
-
         if (!super.checkMatchedPlayerEvent(argument, engine, event))
             return false;
 
+        assert event instanceof PlayerItemHeldEvent;
+        PlayerItemHeldEvent e = (PlayerItemHeldEvent) event;
+
         int currentSlot = e.getNewSlot();
-        int expectedCurrentSlot = argument.getCurrentSlot();
+        Integer expectedCurrentSlot = argument.getCurrentSlot();
         int previousSlot = e.getPreviousSlot();
-        int expectedPreviousSlot = argument.getPreviousSlot();
+        Integer expectedPreviousSlot = argument.getPreviousSlot();
         ItemStack currentItem = e.getPlayer().getInventory().getItem(currentSlot);
         ItemStackBean expectedCurrentItem = argument.getCurrentItem();
 
-        return currentSlot == expectedCurrentSlot
-                && (expectedPreviousSlot == -1 || previousSlot == expectedPreviousSlot)
+        return (expectedCurrentSlot == null || currentSlot == expectedCurrentSlot)
+                && (expectedPreviousSlot == null || previousSlot == expectedPreviousSlot)
                 && (expectedCurrentItem == null || BeanUtils.isSame(expectedCurrentItem, currentItem, false));
     }
 
@@ -80,20 +81,8 @@ public class PlayerHotbarSlotAction extends AbstractPlayerAction<PlayerHotbarSlo
     @Override
     public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull BeanSerializer serializer)
     {
-        MapUtils.checkType(map, Argument.KEY_CURRENT_SLOT, Integer.class);
-
-        int currentSlot = (int) map.get(Argument.KEY_CURRENT_SLOT);
-        if (currentSlot < 0 || currentSlot > 8)
-            throw new IllegalArgumentException("currentSlot must be between 0 and 8");
-
-        int previousSlot = -1;
-        if (map.containsKey(Argument.KEY_PREVIOUS_SLOT))
-        {
-            MapUtils.checkType(map, Argument.KEY_PREVIOUS_SLOT, Integer.class);
-            previousSlot = (int) map.get(Argument.KEY_PREVIOUS_SLOT);
-            if (previousSlot < 0 || previousSlot > 8)
-                throw new IllegalArgumentException("previousSlot must be between 0 and 8");
-        }
+        Integer currentSlot = MapUtils.getAsNumberOrNull(map, Argument.KEY_CURRENT_SLOT, Number::intValue);
+        Integer previousSlot = MapUtils.getAsNumberOrNull(map, Argument.KEY_PREVIOUS_SLOT, Number::intValue);
 
         ItemStackBean item = null;
         if (map.containsKey(Argument.KEY_CURRENT_ITEM))
@@ -123,10 +112,10 @@ public class PlayerHotbarSlotAction extends AbstractPlayerAction<PlayerHotbarSlo
         argument = super.requireArgsNonNull(argument);
 
         Player p = argument.getTarget();
-        int currentSlot = argument.getCurrentSlot();
+        Integer currentSlot = argument.getCurrentSlot();
         ItemStackBean currentItem = argument.getCurrentItem();
 
-        return p.getInventory().getHeldItemSlot() == currentSlot
+        return (currentSlot == null || p.getInventory().getHeldItemSlot() == currentSlot)
                 && (currentItem == null || BeanUtils.isSame(currentItem, p.getInventory().getItemInMainHand(), false));
     }
 
@@ -138,12 +127,11 @@ public class PlayerHotbarSlotAction extends AbstractPlayerAction<PlayerHotbarSlo
         public static final String KEY_PREVIOUS_SLOT = "previous";
         public static final String KEY_CURRENT_ITEM = "item";
 
-        int currentSlot; // TODO: Make this Nullable
-        int previousSlot;
-        @Nullable
+        Integer currentSlot;
+        Integer previousSlot;
         ItemStackBean currentItem;
 
-        public Argument(String target, int currentSlot, int previousSlot, @Nullable ItemStackBean currentItem)
+        public Argument(String target, Integer currentSlot, Integer previousSlot, @Nullable ItemStackBean currentItem)
         {
             super(target);
             this.currentSlot = currentSlot;
@@ -160,8 +148,30 @@ public class PlayerHotbarSlotAction extends AbstractPlayerAction<PlayerHotbarSlo
             Argument arg = (Argument) argument;
 
             return super.isSame(argument)
-                    && this.currentSlot == arg.currentSlot
+                    && Objects.equals(this.currentSlot, arg.currentSlot)
                     && Objects.equals(this.currentItem, arg.currentItem);
+        }
+
+        @Override
+        public void validate(@NotNull ScenarioEngine engine, @NotNull ScenarioType type)
+        {
+            super.validate(engine, type);
+
+            switch (type)
+            {
+                case ACTION_EXECUTE:
+                    throwIfNotPresent(KEY_CURRENT_SLOT, this.currentSlot);
+                    throwIfPresent(KEY_CURRENT_ITEM, this.currentItem);
+                    /* fall through */
+                case CONDITION_REQUIRE:
+                    throwIfPresent(KEY_PREVIOUS_SLOT, this.previousSlot);
+                    break;
+            }
+
+            if (this.currentSlot != null && (this.currentSlot < 0 || this.currentSlot > 8))
+                throw new IllegalArgumentException("Slot must be between 0 and 8");
+            if (this.previousSlot != null && (this.previousSlot < 0 || this.previousSlot > 8))
+                throw new IllegalArgumentException("Previous slot must be between 0 and 8");
         }
 
         @Override

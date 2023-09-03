@@ -1,0 +1,30 @@
+# noinspection YAMLSchemaValidation
+scenamatica: ${project.version}
+
+name: actions_player_hotbar_4
+description: Testing PlayerHotbarAction without argument works or not
+on:
+  - type: on_load
+  - type: manual_dispatch
+
+context:
+  actors:
+    - name: Actor001
+      inventory:
+        main:
+          size: 36
+          items:
+            0:
+              type: DIAMOND_SWORD
+            1:
+              type: DIAMOND_PICKAXE
+
+
+scenario:
+  - type: execute
+    action: player_hotbar
+    with:
+      target: Actor001
+      slot: 1
+  - type: expect
+    action: player_hotbar

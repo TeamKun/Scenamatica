@@ -487,10 +487,7 @@
               "with": {
                 "$ref": "#/definitions/action/definitions/player/hotbar"
               }
-            },
-            "required": [
-              "with"
-            ]
+            }
           }
         },
         {
@@ -1571,10 +1568,7 @@
                 "description": "ホットバーのスロットに入っているアイテムです。",
                 "$ref": "#/definitions/itemStack"
               }
-            },
-            "required": [
-              "slot"
-            ]
+            }
           },
           "interact_block": {
             "$ref": "#/definitions/action/definitions/player/$base",

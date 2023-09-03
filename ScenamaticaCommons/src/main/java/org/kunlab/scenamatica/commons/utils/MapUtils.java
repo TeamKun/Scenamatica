@@ -17,6 +17,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Function;
 
 @UtilityClass
 public class MapUtils
@@ -407,6 +408,20 @@ public class MapUtils
         if (!map.containsKey(key))
             return null;
         return (Number) map.get(key);
+    }
+
+    public static <T extends Number> T getAsNumber(Map<String, Object> map, String key, Function<Number, T> converter)
+    {
+        if (!map.containsKey(key))
+            throw new IllegalArgumentException("Map does not contain key: " + key);
+        return converter.apply((Number) map.get(key));
+    }
+
+    public static <T extends Number> T getAsNumberOrNull(Map<String, Object> map, String key, Function<Number, T> converter)
+    {
+        if (!map.containsKey(key))
+            return null;
+        return converter.apply((Number) map.get(key));
     }
 
     public static Number getAsNumberSafe(Map<String, Object> map, String key)
