@@ -1,0 +1,25 @@
+# noinspection YAMLSchemaValidation
+scenamatica: ${project.version}
+
+name: actions_player_flight_5
+description: Testing player_flight action without state works or not
+on:
+  - type: on_load
+  - type: manual_dispatch
+
+context:
+  actors:
+    - name: Actor001
+
+
+scenario:
+  - type: execute
+    action: player_flight
+    with:
+      target: Actor001
+      flying: true
+  - type: expect
+    action: player_flight
+    with:
+      target: Actor001
+

@@ -450,10 +450,7 @@
               "with": {
                 "$ref": "#/definitions/action/definitions/player/flight"
               }
-            },
-            "required": [
-              "with"
-            ]
+            }
           }
         },
         {

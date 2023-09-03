@@ -70,17 +70,19 @@ public class PlayerDeathAction extends AbstractPlayerAction<PlayerDeathAction.Ar
 
     private boolean checkTargetAndKiller(@NotNull PlayerDeathAction.Argument argument, @NotNull PlayerDeathEvent event)
     {
-        Player target = argument.getTarget();
-        Player killer = PlayerUtils.getPlayerOrNull(argument.getKiller());
+        UUID targetUUID = null;
+        if (argument.getTargetSpecifier() != null)
+            targetUUID = argument.getTarget().getUniqueId();
 
-        UUID targetUUID = target.getUniqueId();
+        Player killer = PlayerUtils.getPlayerOrNull(argument.getKiller());
         UUID killerUUID = killer == null ? null: killer.getUniqueId();
+
 
         UUID eventDeathUUID = event.getEntity().getUniqueId();
         UUID eventKillerUUID = event.getEntity().getKiller() == null ? null: event.getEntity().getKiller().getUniqueId();
 
-        return eventDeathUUID.equals(targetUUID) &&
-                (killerUUID == null || killerUUID.equals(eventKillerUUID));
+        return (targetUUID == null || targetUUID.equals(eventDeathUUID))
+                && (killerUUID == null || killerUUID.equals(eventKillerUUID));
     }
 
     private boolean checkDeathMessage(@NotNull PlayerDeathAction.Argument argument, @NotNull PlayerDeathEvent event)
