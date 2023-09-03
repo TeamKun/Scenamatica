@@ -1,0 +1,30 @@
+# noinspection YAMLSchemaValidation
+scenamatica: ${project.version}
+
+name: actions_player_interact_block_3
+description: Testing PlayerInteractBlockAction without specifying block works or not
+on:
+  - type: on_load
+  - type: manual_dispatch
+
+context:
+  actors:
+    - name: Actor001
+
+scenario:
+  - type: execute
+    action: player_interact_block
+    with:
+      target: Actor001
+      block:
+        type: STONE
+        location:
+          x: 0
+          y: 20
+          z: 0
+      action: RIGHT_CLICK_BLOCK
+  - type: expect
+    action: player_interact_block
+    with:
+      target: Actor001
+      action: RIGHT_CLICK_BLOCK

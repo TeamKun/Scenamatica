@@ -501,10 +501,7 @@
               "with": {
                 "$ref": "#/definitions/action/definitions/player/interact_block"
               }
-            },
-            "required": [
-              "with"
-            ]
+            }
           }
         },
         {
