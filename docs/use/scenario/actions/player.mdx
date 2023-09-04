@@ -767,20 +767,20 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
             anchor: "target",
             description: "退出するプレイヤーです。",
             type: "プレイヤ",
-            required: true
+            required: [ScenarioType.EXECUTE]
           },
           {
             name: "message",
             anchor: "quit-message",
             description: "退出時のメッセージです。",
-            type: "文字列"
+            type: ObjectType.STRING
           },
           {
             name: "reason",
             anchor: "quit-reason",
             description: "退出の理由です。",
             type: "列挙型{DISCONNECTED, KICKED, TIMED_OUT, ERRONEOUS_STATE}",
-            default: "シナリオのタイプによる"
+            default: "アクション実行シナリオの場合は KICKED, 他は N/A "
           }
         ]}
         executable 
