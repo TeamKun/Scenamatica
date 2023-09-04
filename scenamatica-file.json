@@ -538,10 +538,7 @@
               "with": {
                 "$ref": "#/definitions/action/definitions/player/item_break"
               }
-            },
-            "required": [
-              "with"
-            ]
+            }
           }
         },
         {
