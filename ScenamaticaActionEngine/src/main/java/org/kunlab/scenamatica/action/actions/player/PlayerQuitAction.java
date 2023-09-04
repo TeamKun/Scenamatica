@@ -41,7 +41,7 @@ public class PlayerQuitAction extends AbstractPlayerAction<PlayerQuitAction.Argu
     {
         argument = this.requireArgsNonNull(argument);
 
-        PlayerQuitEvent.QuitReason reason = argument.getReason();
+        PlayerQuitEvent.QuitReason reason = argument.getExceptReason();
         Component quitMessage = argument.getQuitMessage() == null ? null: Component.text(argument.getQuitMessage());
 
         Player target = argument.getTarget();
@@ -121,19 +121,17 @@ public class PlayerQuitAction extends AbstractPlayerAction<PlayerQuitAction.Argu
         private static final PlayerQuitEvent.QuitReason DEFAULT_REASON_ON_EXPECT_MODE
                 = PlayerQuitEvent.QuitReason.KICKED;
 
-        @Nullable
         String quitMessage;
-        @Nullable
         PlayerQuitEvent.QuitReason reason;
 
-        public Argument(@NotNull String targetSpecifier, @Nullable String quitMessage, @Nullable PlayerQuitEvent.QuitReason reason)
+        public Argument(@NotNull String targetSpecifier, String quitMessage, PlayerQuitEvent.QuitReason reason)
         {
             super(targetSpecifier);
             this.quitMessage = quitMessage;
             this.reason = reason;
         }
 
-        public PlayerQuitEvent.QuitReason getReason()
+        public PlayerQuitEvent.QuitReason getExceptReason()
         {
             return this.reason == null ? DEFAULT_REASON_ON_EXPECT_MODE: this.reason;
         }
@@ -157,17 +155,8 @@ public class PlayerQuitAction extends AbstractPlayerAction<PlayerQuitAction.Argu
             if (this.quitMessage == null)
                 return;
 
-
-            switch (type)
-            {
-                case ACTION_EXECUTE:
-                    if (this.reason == PlayerQuitEvent.QuitReason.DISCONNECTED)
-                        throw new IllegalArgumentException("Quit message is not allowed when executing player quitting by disconnection.");
-                    break;
-                case CONDITION_REQUIRE:
-                    throw new IllegalArgumentException("Quit message is not allowed in condition requiring scenario.");
-            }
-
+            if (type == ScenarioType.ACTION_EXECUTE && this.reason == PlayerQuitEvent.QuitReason.DISCONNECTED)
+                throw new IllegalArgumentException("Quit message is not allowed when executing player quitting by disconnection.");
         }
 
         @Override
