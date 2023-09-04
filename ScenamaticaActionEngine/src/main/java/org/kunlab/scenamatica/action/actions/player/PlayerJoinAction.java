@@ -11,6 +11,7 @@ import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.utils.PlayerUtils;
 import org.kunlab.scenamatica.action.utils.TextUtils;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
+import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
@@ -62,7 +63,7 @@ public class PlayerJoinAction extends AbstractPlayerAction<PlayerJoinAction.Argu
 
         // ターゲットが存在するか。 UUID と Player#getName() で判定する。
         String targetSpecifier = argument.getTargetSpecifier();
-        if (!(player.getName().equalsIgnoreCase(targetSpecifier)
+        if (!(targetSpecifier == null || player.getName().equalsIgnoreCase(targetSpecifier)
                 || this.isSameUUIDString(player.getUniqueId().toString(), targetSpecifier)))
             return false;
 
@@ -100,10 +101,9 @@ public class PlayerJoinAction extends AbstractPlayerAction<PlayerJoinAction.Argu
     {
         private static final String KEY_JOIN_MESSAGE = "message";
 
-        @Nullable
         String joinMessage;
 
-        public Argument(String target, @Nullable String joinMessage)
+        public Argument(String target, String joinMessage)
         {
             super(target);
             this.joinMessage = joinMessage;
@@ -120,7 +120,11 @@ public class PlayerJoinAction extends AbstractPlayerAction<PlayerJoinAction.Argu
                     && Objects.equals(this.joinMessage, arg.joinMessage);
         }
 
-        // TODO: Create validation for argument
+        @Override
+        public void validate(@NotNull ScenarioEngine engine, @NotNull ScenarioType type)
+        {
+            super.validate(engine, type);
+        }
 
         @Override
         public String getArgumentString()

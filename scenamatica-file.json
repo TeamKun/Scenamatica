@@ -552,10 +552,7 @@
               "with": {
                 "$ref": "#/definitions/action/definitions/player/join"
               }
-            },
-            "required": [
-              "with"
-            ]
+            }
           }
         },
         {

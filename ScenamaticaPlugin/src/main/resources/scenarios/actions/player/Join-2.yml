@@ -1,0 +1,23 @@
+# noinspection YAMLSchemaValidation
+scenamatica: ${project.version}
+
+name: actions_player_join_2
+description: Testing player_join action without target works or not
+on:
+  - type: on_load
+  - type: manual_dispatch
+
+context:
+  actors:
+    - name: Actor001
+      online: false
+
+
+scenario:
+  - type: execute
+    action: player_join
+    with:
+      target: Actor001
+  - type: expect
+    action: player_join
+
