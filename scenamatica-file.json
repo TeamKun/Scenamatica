@@ -518,10 +518,7 @@
               "with": {
                 "$ref": "#/definitions/action/definitions/player/item_consume"
               }
-            },
-            "required": [
-              "with"
-            ]
+            }
           }
         },
         {
