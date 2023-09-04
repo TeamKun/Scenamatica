@@ -686,7 +686,7 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
 | `UNKNOWN`                  | 不明                 |
 
 
-## プレイヤの投げ物の発射 {#projectile-launch}
+## プレイヤの投げ物の発射 {#launch-projectile}
 
 <Action name="プレイヤの投げ物の発射"
         description="プレイヤの投げ物の発射に関するアクションです。"
@@ -703,24 +703,25 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
             anchor: "target",
             description: "投げ物を発射するプレイヤーです。",
             type: "プレイヤ",
-            required: true
+            required:[ScenarioType.EXECUTE, ScenarioType.EXPECT]
           },
           {
             name: "type",
             anchor: "projectile-type",
             description: "発射される投げ物の種類です。",
             type: "Enum{...}",
-            required: true
+            required: [ScenarioType.EXECUTE, ScenarioType.EXECUTE]
           },
           {
             name: "epsilon",
             anchor: "projectile-epsilon",
-            description: "投げ物の発射ベクトルの誤差です。",
+            description: "投げ物の発射ベクトルの有効数字です。",
             type: ObjectType.DOUBLE,
-            default: "0.001"
+            default: "0.001",
+            available: [ScenarioType.EXECUTE]
           }
         ]}
-        executable requireable watchable
+        executable watchable
 />
 
 ### `type` {#projectile-type}
@@ -748,12 +749,6 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
 ### `epsilon` {#projectile-epsilon}
 
 投げ物をアクションで比較すする際に許容される誤差を指定します。
-
-:::tip
-
-この設定は、 `expect` アクションのみで有効です。
-
-:::
 
 ## プレイヤの退出 {#quit}
 
