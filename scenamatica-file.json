@@ -569,10 +569,7 @@
               "with": {
                 "$ref": "#/definitions/action/definitions/player/kick"
               }
-            },
-            "required": [
-              "with"
-            ]
+            }
           }
         },
         {

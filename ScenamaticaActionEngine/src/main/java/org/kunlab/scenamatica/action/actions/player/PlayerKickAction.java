@@ -97,14 +97,11 @@ public class PlayerKickAction extends AbstractPlayerAction<PlayerKickAction.Argu
         private static final String KEY_KICK_MESSAGE = "message";
         private static final String KEY_CAUSE = "cause";
 
-        @Nullable
         String leaveMessage;
-        @Nullable
         String kickMessage;
-        @Nullable
         PlayerKickEvent.Cause cause;
 
-        public Argument(String target, @Nullable String leaveMessage, @Nullable String kickMessage, @Nullable PlayerKickEvent.Cause cause)
+        public Argument(String target, String leaveMessage, String kickMessage, PlayerKickEvent.Cause cause)
         {
             super(target);
             this.leaveMessage = leaveMessage;
