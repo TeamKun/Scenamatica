@@ -922,24 +922,17 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
           {
             name: "target",
             anchor: "target",
-            description: "走るプレイヤーです。",
+            description: "走らせるプレイヤーです。",
             type: "プレイヤ",
-            required: true
+            required: [ScenarioType.EXECUTE, ScenarioType.REQUIRE]
           },
           {
             name: "sprinting",
-            anchor: "sprint-sprinting",
-            description: "飛行中かどうかです。",
+            description: "走っているかどうかです。",
             type: ObjectType.BOOLEAN
           }
         ]}
-        executable requireable watchable
+        executable 
+        requireable={"プレイヤが走っているかどうか判定します。"}
+        watchable
 />
-
-### `sprinting` {#sprint-sprinting}
-
-走っているか（走っている）どうかを指定します。
-
-:::info
-アクション実行シナリオおよびコンディション要求シナリオでは必須です。
-:::
