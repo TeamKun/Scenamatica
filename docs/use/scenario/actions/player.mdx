@@ -842,13 +842,13 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
             anchor: "target",
             description: "リスポーンするプレイヤです。",
             type: "プレイヤ",
-            required: true
+            required: [ScenarioType.EXECUTE]
           },
           {
             name: "isBed",
-            anchor: "respawn-is-bed",
             description: "ベッドでリスポーンするかどうかです。",
-            type: ObjectType.BOOLEAN
+            type: ObjectType.BOOLEAN,
+            available: [ScenarioType.EXPECT]
           },
           {
             name: "location",
@@ -859,23 +859,13 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
           },
           {
             name: "isAnchor",
-            anchor: "respawn-is-anchor",
             description: "アンカでリスポーンするかどうかです。",
             type: ObjectType.BOOLEAN,
+            available: [ScenarioType.EXPECT]
           }
         ]}
         executable watchable
 />
-
-### `isBed` {#respawn-is-bed}
-
-ベッドでリスポーンするかどうかを指定します。  
-
-:::warning
-
-アクション実行シナリオでは使用できません。
-
-:::
 
 ### `location` {#respawn-location}
 
@@ -884,16 +874,6 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
 :::tip
 
 アクション実行シナリオで使用した場合、リスポーンの実行前にベッドスポーン位置を変更します。
-
-:::
-
-### `isAnchor` {#respawn-is-anchor}
-
-アンカでリスポーンするかどうかを指定します。
-
-:::warning
-
-アクション実行シナリオでは使用できません。
 
 :::
 
