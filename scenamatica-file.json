@@ -657,10 +657,7 @@
               "with": {
                 "$ref": "#/definitions/action/definitions/player/sprint"
               }
-            },
-            "required": [
-              "with"
-            ]
+            }
           }
         },
         {
