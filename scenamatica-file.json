@@ -640,10 +640,7 @@
               "with": {
                 "$ref": "#/definitions/action/definitions/player/sneak"
               }
-            },
-            "required": [
-              "with"
-            ]
+            }
           }
         },
         {
