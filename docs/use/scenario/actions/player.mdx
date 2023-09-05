@@ -894,25 +894,18 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
             anchor: "target",
             description: "スニークするプレイヤーです。",
             type: "プレイヤ",
-            required: true
+            required: [ScenarioType.EXECUTE, ScenarioType.REQUIRE]
           },
           {
             name: "sneaking",
-            anchor: "sneak-sneaking",
             description: "スニークするかどうかです。",
             type: ObjectType.BOOLEAN
           }
         ]}
-        executable requireable watchable
+        executable
+        requireable={"プレイヤがスニークしているかどうか判定します。"}
+        watchable
 />
-
-### `sneaking` {#sneak-sneaking}
-
-スニークするか（している）どうかを指定します。  
-
-:::info
-アクション実行シナリオおよびコンディション要求シナリオでは必須です。
-:::
 
 ## プレイヤの走り {#sprint}
 
