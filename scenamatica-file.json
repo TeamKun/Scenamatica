@@ -623,10 +623,7 @@
               "with": {
                 "$ref": "#/definitions/action/definitions/player/quit"
               }
-            },
-            "required": [
-              "with"
-            ]
+            }
           }
         },
         {

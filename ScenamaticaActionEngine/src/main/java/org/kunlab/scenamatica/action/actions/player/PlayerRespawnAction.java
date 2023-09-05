@@ -99,14 +99,11 @@ public class PlayerRespawnAction extends AbstractPlayerAction<PlayerRespawnActio
         public static final String KEY_IS_ANCHOR = "isAnchor";
         public static final String KEY_LOCATION = "location";
 
-        @Nullable
         Boolean isBed;
-        @Nullable
         Boolean isAnchor;
-        @Nullable
         Location location;
 
-        public Argument(String target, @Nullable Boolean isBed, @Nullable Boolean isAnchor, @Nullable Location location)
+        public Argument(String target, Boolean isBed, Boolean isAnchor, Location location)
         {
             super(target);
             this.isBed = isBed;
