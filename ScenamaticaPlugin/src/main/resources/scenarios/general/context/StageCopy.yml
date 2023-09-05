@@ -3,6 +3,7 @@ scenamatica: ${project.version}
 
 name: general_context_stage_copy
 description: Testing stage copy works or not
+order: -100
 on:
   - type: manual_dispatch
   - type: on_load

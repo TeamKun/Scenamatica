@@ -3,6 +3,7 @@ scenamatica: ${project.version}
 
 name: general_context_stage_gen_2
 description: Testing stage generation with flat works or not
+order: -100
 on:
   - type: manual_dispatch
   - type: on_load

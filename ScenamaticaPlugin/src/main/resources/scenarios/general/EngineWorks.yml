@@ -3,6 +3,7 @@ scenamatica: ${project.version}
 
 name: general_engine
 description: Testing scenario engine works or not
+order: -10000
 on:
   - type: manual_dispatch
   - type: on_load
