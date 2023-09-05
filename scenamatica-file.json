@@ -674,10 +674,7 @@
               "with": {
                 "$ref": "#/definitions/action/definitions/scenamatica/message"
               }
-            },
-            "required": [
-              "with"
-            ]
+            }
           }
         },
         {
@@ -1783,11 +1780,7 @@
                 "type": "string",
                 "description": "メッセージを受け取るプレイヤーの名前または UUID です。"
               }
-            },
-            "required": [
-              "message",
-              "recipient"
-            ]
+            }
           },
           "milestone": {
             "properties": {

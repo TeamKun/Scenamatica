@@ -10,7 +10,7 @@ import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.actions.AbstractActionArgument;
 import org.kunlab.scenamatica.action.utils.PlayerUtils;
 import org.kunlab.scenamatica.action.utils.TextUtils;
-import org.kunlab.scenamatica.commons.utils.MapUtils;
+import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.events.actor.ActorMessageReceiveEvent;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
@@ -51,15 +51,17 @@ public class MessageAction extends AbstractScenamaticaAction<MessageAction.Argum
     @Override
     public boolean isFired(@NotNull MessageAction.Argument argument, @NotNull ScenarioEngine engine, @NotNull Event event)
     {
-        Player recipient = PlayerUtils.getPlayerOrThrow(argument.getRecipient());
         String content = argument.getMessage();
+        Player recipient = null;
+        if (argument.getRecipient() != null)
+            recipient = PlayerUtils.getPlayerOrThrow(argument.getRecipient());
 
         assert event instanceof ActorMessageReceiveEvent;
         ActorMessageReceiveEvent e = (ActorMessageReceiveEvent) event;
 
         TextComponent message = e.getMessage();
-        return TextUtils.isSameContent(message, content)
-                && e.getPlayer().getUniqueId().equals(recipient.getUniqueId());
+        return (content == null || TextUtils.isSameContent(message, content))
+                && (recipient == null || e.getPlayer().getUniqueId().equals(recipient.getUniqueId()));
     }
 
     @Override
@@ -73,9 +75,6 @@ public class MessageAction extends AbstractScenamaticaAction<MessageAction.Argum
     @Override
     public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull BeanSerializer serializer)
     {
-        MapUtils.checkType(map, Argument.KEY_MESSAGE, String.class);
-        MapUtils.checkType(map, Argument.KEY_RECIPIENT, String.class);
-
         return new Argument(
                 (String) map.get(Argument.KEY_MESSAGE),
                 (String) map.get(Argument.KEY_RECIPIENT)
@@ -89,10 +88,14 @@ public class MessageAction extends AbstractScenamaticaAction<MessageAction.Argum
         public static final String KEY_MESSAGE = "message";
         public static final String KEY_RECIPIENT = "recipient";
 
-        @NotNull
         String message;
-        @NotNull
         String recipient;
+
+        public Argument(String message, String recipient)
+        {
+            this.message = message;
+            this.recipient = recipient;
+        }
 
         @Override
         public boolean isSame(TriggerArgument argument)
@@ -104,7 +107,15 @@ public class MessageAction extends AbstractScenamaticaAction<MessageAction.Argum
             return Objects.equals(this.message, a.message) && Objects.equals(this.recipient, a.recipient);
         }
 
-        // TODO: Create validation for argument
+        @Override
+        public void validate(@NotNull ScenarioEngine engine, @NotNull ScenarioType type)
+        {
+            if (type == ScenarioType.ACTION_EXECUTE)
+            {
+                throwIfNotPresent(KEY_MESSAGE, this.message);
+                throwIfNotPresent(KEY_RECIPIENT, this.recipient);
+            }
+        }
 
         @Override
         public String getArgumentString()
