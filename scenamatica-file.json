@@ -731,10 +731,7 @@
               "with": {
                 "$ref": "#/definitions/action/definitions/server/log"
               }
-            },
-            "required": [
-              "with"
-            ]
+            }
           }
         },
         {
@@ -1836,10 +1833,7 @@
                 "type": "string",
                 "description": "ログを送信したプラグインやロガーの名前です。"
               }
-            },
-            "required": [
-              "message"
-            ]
+            }
           },
           "plugin_disable": {
             "properties": {

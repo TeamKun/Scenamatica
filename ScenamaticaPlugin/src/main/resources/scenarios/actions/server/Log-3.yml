@@ -1,8 +1,8 @@
 # noinspection YAMLSchemaValidation
 scenamatica: ${project.version}
 
-name: actions_server_log
-description: Testing server_log action works or not
+name: actions_server_log_3
+description: Testing server_log action without level or not
 on:
   - type: on_load
   - type: manual_dispatch
@@ -12,10 +12,9 @@ scenario:
     action: server_log
     with:
       message: "PONG"
-      level: WARN
+      level: INFO
   - type: expect
     action: server_log
     with:
       message: "PONG"
-      level: WARN
     timeout: 20

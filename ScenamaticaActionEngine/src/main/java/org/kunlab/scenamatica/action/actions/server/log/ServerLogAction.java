@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.actions.AbstractActionArgument;
 import org.kunlab.scenamatica.action.actions.server.AbstractServerAction;
-import org.kunlab.scenamatica.commons.utils.MapUtils;
+import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.events.actions.server.ServerLogEvent;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
@@ -75,7 +75,7 @@ public class ServerLogAction extends AbstractServerAction<ServerLogAction.Argume
         if (argument.getLevel() != null && !argument.getLevel().equals(serverLogEvent.getLevel()))
             return false;
 
-        return message.matches(argument.getMessage());
+        return argument.getMessage() == null || message.matches(argument.getMessage());
     }
 
     @Override
@@ -89,9 +89,6 @@ public class ServerLogAction extends AbstractServerAction<ServerLogAction.Argume
     @Override
     public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull BeanSerializer serializer)
     {
-
-        MapUtils.checkType(map, Argument.KEY_MESSAGE, String.class);
-
         String source = (String) map.get(Argument.KEY_SOURCE);
         String message = (String) map.get(Argument.KEY_MESSAGE);
 
@@ -114,11 +111,8 @@ public class ServerLogAction extends AbstractServerAction<ServerLogAction.Argume
         public static final String KEY_LEVEL = "level";
         public static final String KEY_MESSAGE = "message";
 
-        @Nullable
         String source;
-        @Nullable
         Level level;
-        @NotNull  // TODO: Make this nullable
         String message; // 正規表現になるかもしれない
 
         @Override
@@ -129,9 +123,19 @@ public class ServerLogAction extends AbstractServerAction<ServerLogAction.Argume
 
             Argument other = (Argument) argument;
 
-            return Objects.equals(this.source, other.source) &&
-                    this.level == other.level &&
-                    Objects.equals(this.message, other.message);
+            return Objects.equals(this.source, other.source)
+                    && Objects.equals(this.level, other.level)
+                    && Objects.equals(this.message, other.message);
+        }
+
+        @Override
+        public void validate(@NotNull ScenarioEngine engine, @NotNull ScenarioType type)
+        {
+            if (type == ScenarioType.ACTION_EXECUTE)
+            {
+                throwIfPresent(KEY_SOURCE, this.source);
+                throwIfNotPresent(KEY_MESSAGE, this.message);
+            }
         }
 
         @Override
