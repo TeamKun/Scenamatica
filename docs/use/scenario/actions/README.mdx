@@ -52,7 +52,7 @@ import {ObjectType} from "/src/components/Object";
 
 ## 特にページを分ける程でもないアクション {#general-actions}
 
-### マイルストーンの達成 {#milestone}
+### 特別：マイルストーンの達成 {#milestone}
 
 :::tip
 
@@ -72,19 +72,19 @@ import {ObjectType} from "/src/components/Object";
             name: "name",
             description: "マイルストーンの名前です。",
             type: ObjectType.STRING,
-            required: true
+            required: [ScenarioType.EXECUTE, ScenarioType.REQUIRE]
           },
           {
             name: "reached",
             description: "マイルストーンを達成したかどうかを設定します。",
             type: ObjectType.BOOLEAN,
-            default: "true"
+            required: [ScenarioType.EXECUTE, ScenarioType.REQUIRE]
           }
         ]}
         executable requireable watchable
 />
 
-### チャットメッセージの送信 {#message}
+### 特別：チャットメッセージの送信 {#message}
 
 <Action name="メッセージの送信"
         description="エンティティにメッセージを送信します。"
