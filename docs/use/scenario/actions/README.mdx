@@ -110,3 +110,43 @@ import {ObjectType} from "/src/components/Object";
 #### `message` {#message-message}
 
 メッセージの色及び書式は 接頭辞 `§` に続けて[特定の文字](https://minecraft.fandom.com/ja/wiki/Formatting_codes)を指定します。
+
+### 特別：反転
+
+<Action name="反転"
+        description="コンディションの評価結果を反転します。"
+        id="negate"
+        args={[
+          {
+            name: "action",
+            type: "アクション",
+            description: "反転するアクション",
+            required: [ScenarioType.REQUIRE]
+          },
+          {
+            name: "with",
+            type: "オブジェクト",
+            description: "反転するアクションの引数",
+            required: [ScenarioType.REQUIRE]
+          }
+        ]}
+        requireable
+/>
+
+#### 例
+
+```yaml
+
+# プレイヤが死亡していない場合に, そのプレイヤをキルします。
+- type: execute
+  action: player_death
+  with:
+    target: Actor001
+  runif:
+    action: negate
+    with:
+      action: player_death
+      with:
+        target: Actor001
+
+```
