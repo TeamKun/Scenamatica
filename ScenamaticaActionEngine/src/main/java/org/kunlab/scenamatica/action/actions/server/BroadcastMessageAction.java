@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -49,7 +50,7 @@ public class BroadcastMessageAction extends AbstractServerAction<BroadcastMessag
         List<CommandSender> recipients = argument.getRecipients();
 
         if (permission == null)
-            if (recipients.isEmpty())
+            if (recipients == null || recipients.isEmpty())
                 Bukkit.broadcast(Component.text(message));
             else
                 this.simulateBukkitBroadcast(Component.text(message), recipients);
@@ -83,20 +84,28 @@ public class BroadcastMessageAction extends AbstractServerAction<BroadcastMessag
 
         BroadcastMessageEvent e = (BroadcastMessageEvent) event;
 
-        Pattern pattern = Pattern.compile(argument.getMessage());
-        Matcher matcher = pattern.matcher(((TextComponent) e.message()).content());
-        if (!matcher.find())
-            return false;
-
-        List<CommandSender> recipients = argument.getRecipients();
-        Set<CommandSender> actualRecipients = e.getRecipients();
-
-        for (CommandSender recipient : recipients)
-            if (!actualRecipients.contains(recipient))
+        if (argument.getMessage() != null)
+        {
+            Pattern pattern = Pattern.compile(argument.getMessage());
+            Matcher matcher = pattern.matcher(((TextComponent) e.message()).content());
+            if (!matcher.find())
                 return false;
+        }
 
-        // 存在することのチェックは終わったので, 存在しないこと(余分なプレイヤがいないこと)をチェックする
-        return !argument.isStrictRecipients() || recipients.size() == actualRecipients.size();
+        if (argument.getRecipients() != null)
+        {
+            List<CommandSender> recipients = argument.getRecipients();
+            Set<CommandSender> actualRecipients = e.getRecipients();
+
+            for (CommandSender recipient : recipients)
+                if (!actualRecipients.contains(recipient))
+                    return false;
+
+            // 存在することのチェックは終わったので, 存在しないこと(余分なプレイヤがいないこと)をチェックする
+            return !argument.getStrictRecipients() || recipients.size() == actualRecipients.size();
+        }
+
+        return true;
     }
 
     @Override
@@ -129,13 +138,10 @@ public class BroadcastMessageAction extends AbstractServerAction<BroadcastMessag
 
         private static final String CONSOLE_IDENTIFIER = "<CONSOLE>";
 
-        @NotNull
         String message;
-        @NotNull
         List<String> recipients;  // Console = <CONSOLE>
-        @Nullable
         String permission;
-        boolean strictRecipients;
+        Boolean strictRecipients;
 
         @Override
         public boolean isSame(TriggerArgument argument)
@@ -145,11 +151,11 @@ public class BroadcastMessageAction extends AbstractServerAction<BroadcastMessag
 
             Argument arg = (Argument) argument;
 
-            return arg.message.equals(this.message)
-                    && arg.recipients.stream().parallel()
+            return Objects.equals(this.message, arg.message)
+                    && (arg.recipients == null || arg.recipients.stream().parallel()
                     .allMatch(recipient -> this.recipients.stream().parallel()
                             .anyMatch(recipient::equals)
-                    )
+                    ))
                     && (this.permission == null || this.permission.equals(arg.permission))
                     && this.strictRecipients == arg.strictRecipients;
         }
@@ -157,9 +163,15 @@ public class BroadcastMessageAction extends AbstractServerAction<BroadcastMessag
         @Override
         public void validate(@NotNull ScenarioEngine engine, @NotNull ScenarioType type)
         {
-            if (type == ScenarioType.ACTION_EXPECT)
-                throwIfPresent(KEY_PERMISSION, this.permission);
-
+            switch (type)
+            {
+                case ACTION_EXPECT:
+                    throwIfPresent(KEY_PERMISSION, this.permission);
+                    break;
+                case ACTION_EXECUTE:
+                    throwIfNotPresent(KEY_MESSAGE, this.message);
+                    break;
+            }
         }
 
         @Override

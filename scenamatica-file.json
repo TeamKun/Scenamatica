@@ -791,10 +791,7 @@
               "with": {
                 "$ref": "#/definitions/action/definitions/server/broadcast"
               }
-            },
-            "required": [
-              "with"
-            ]
+            }
           }
         },
         {
@@ -1890,10 +1887,7 @@
                 "type": "boolean",
                 "description": "有効な場合、余計なプレイヤがメッセージを受け取ると失敗します。"
               }
-            },
-            "required": [
-              "message"
-            ]
+            }
           },
           "command_dispatch": {
             "properties": {

@@ -1,0 +1,21 @@
+# noinspection YAMLSchemaValidation
+scenamatica: ${project.version}
+
+name: actions_server_broadcast_6
+description: Testing broadcast action without argument works or not
+on:
+  - type: on_load
+  - type: manual_dispatch
+
+context:
+  actors:
+    - name: Actor001
+
+
+scenario:
+  - type: execute
+    action: broadcast
+    with:
+      message: "Hello world!"
+  - type: expect
+    action: broadcast
