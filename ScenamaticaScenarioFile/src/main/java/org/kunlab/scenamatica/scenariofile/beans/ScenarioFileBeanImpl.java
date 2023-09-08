@@ -5,6 +5,7 @@ import net.kunmc.lab.peyangpaperutils.versioning.Version;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
+import org.kunlab.scenamatica.enums.ScenarioOrder;
 import org.kunlab.scenamatica.interfaces.scenariofile.BeanSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
 import org.kunlab.scenamatica.interfaces.scenariofile.action.ActionBean;
@@ -58,7 +59,7 @@ public class ScenarioFileBeanImpl implements ScenarioFileBean
 
         if (bean.getTimeout() != DEFAULT_TIMEOUT_TICK)
             map.put(KEY_TIMEOUT, bean.getTimeout());
-        if (bean.getOrder() != DEFAULT_ORDER)
+        if (bean.getOrder() != ScenarioOrder.NORMAL.getOrder())
             map.put(KEY_ORDER, bean.getOrder());
 
         map.put(KEY_TRIGGERS, bean.getTriggers().stream()
@@ -120,7 +121,25 @@ public class ScenarioFileBeanImpl implements ScenarioFileBean
         String name = (String) map.get(KEY_NAME);
         String description = (String) map.get(KEY_DESCRIPTION);
         long timeout = MapUtils.getAsLongOrDefault(map, KEY_TIMEOUT, DEFAULT_TIMEOUT_TICK);
-        int order = MapUtils.getAsIntOrDefault(map, KEY_ORDER, DEFAULT_ORDER);
+
+        int order = ScenarioOrder.NORMAL.getOrder();
+        Object orderObject = map.get(KEY_ORDER);
+        if (orderObject != null)
+        {
+            String orderString = String.valueOf(orderObject);
+            ScenarioOrder enumOrder;
+            if ((enumOrder = ScenarioOrder.of(orderString)) != null)
+                order = enumOrder.getOrder();
+            else
+                try
+                {
+                    order = Integer.parseInt(orderString);
+                }
+                catch (NumberFormatException e)
+                {
+                    throw new IllegalArgumentException("Invalid order: " + orderString, e);
+                }
+        }
 
         List<TriggerBean> triggers = ((List<?>) map.get(KEY_TRIGGERS)).stream()
                 .map(o -> serializer.deserializeTrigger(MapUtils.checkAndCastMap(

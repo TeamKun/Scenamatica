@@ -2,6 +2,7 @@ package org.kunlab.scenamatica.scenariofile.beans;
 
 import net.kunmc.lab.peyangpaperutils.versioning.Version;
 import org.junit.jupiter.api.Test;
+import org.kunlab.scenamatica.enums.ScenarioOrder;
 import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
 import org.kunlab.scenamatica.scenariofile.BeanSerializerImpl;
 import org.kunlab.scenamatica.scenariofile.beans.context.ContextBeanSerializeTest;
@@ -24,7 +25,7 @@ public class ScenarioFileBeanSerializeTest
             "eveything",
             "A scenario that does everything",
             114514L,
-            0,
+            128,
             Arrays.asList(
                     TriggerBeanSerializeTest.FULFILLED,
                     TriggerBeanSerializeTest.FULFILLED,
@@ -44,7 +45,7 @@ public class ScenarioFileBeanSerializeTest
         this.put("name", "eveything");
         this.put("description", "A scenario that does everything");
         this.put("timeout", 114514L);
-        this.put("order", 0);
+        this.put("order", 128);
         this.put("on", Arrays.asList(
                 TriggerBeanSerializeTest.FULFILLED_MAP,
                 TriggerBeanSerializeTest.FULFILLED_MAP,
@@ -62,7 +63,7 @@ public class ScenarioFileBeanSerializeTest
             "nothing",
             "A scenario that does nothing",
             ScenarioFileBeanImpl.DEFAULT_TIMEOUT_TICK,
-            ScenarioFileBeanImpl.DEFAULT_ORDER,
+            ScenarioOrder.NORMAL.getOrder(),
             Collections.emptyList(),
             null,
             null,

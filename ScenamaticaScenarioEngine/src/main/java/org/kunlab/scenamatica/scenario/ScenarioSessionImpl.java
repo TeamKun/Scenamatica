@@ -4,11 +4,11 @@ import lombok.Data;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.kunlab.scenamatica.enums.ScenarioOrder;
 import org.kunlab.scenamatica.interfaces.scenario.QueuedScenario;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioResult;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioSession;
-import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerBean;
 
 import java.util.ArrayDeque;
@@ -47,7 +47,7 @@ public class ScenarioSessionImpl implements ScenarioSession
         this.scenarios.sort((a, b) -> {
             int orderA = a.getEngine().getScenario().getOrder();
             int orderB = b.getEngine().getScenario().getOrder();
-            if (orderA == ScenarioFileBean.DEFAULT_ORDER && orderB == ScenarioFileBean.DEFAULT_ORDER)
+            if (orderA == ScenarioOrder.NORMAL.getOrder() && orderB == ScenarioOrder.NORMAL.getOrder())
             {  // 両方ともデフォルト値の場合はシナリオ名でソート。
                 String nameA = a.getEngine().getScenario().getName();
                 String nameB = b.getEngine().getScenario().getName();
