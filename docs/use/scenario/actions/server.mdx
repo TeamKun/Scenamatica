@@ -102,7 +102,7 @@ Java の標準的なレベルを指定できます。詳しくは以下のリス
             name: "plugin",
             type: ObjectType.STRING,
             description: "有効化するプラグインを指定します。",
-            required: true
+          required: [ScenarioType.EXECUTE, ScenarioType.REQUIRE]
           }
         ]}
         executable watchable requireable
@@ -124,7 +124,7 @@ Java の標準的なレベルを指定できます。詳しくは以下のリス
             name: "plugin",
             type: ObjectType.STRING,
             description: "無効化するプラグインを指定します。",
-            required: true
+            required: [ScenarioType.EXECUTE, ScenarioType.REQUIRE]
           }
         ]}
         executable watchable requireable
