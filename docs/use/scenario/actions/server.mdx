@@ -39,13 +39,14 @@ import {ObjectType} from "/src/components/Object";
             anchor: "server-log-message",
             type: ObjectType.STRING,
             description: "ログの内容を**正規表現で**指定します。",
-            required: true
+            required: [ScenarioType.EXECUTE]
           },
           {
             name: "sender",
             anchor: "server-log-sender",
             type: ObjectType.STRING,
-            description: "ログの送信者を指定します。"
+            description: "ログの送信者を指定します。",
+            available: [ScenarioType.EXPECT]
           }
         ]}
         executable watchable 
