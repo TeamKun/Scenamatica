@@ -4,7 +4,6 @@ import org.bukkit.event.Event;
 import org.bukkit.event.server.PluginEvent;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.action.actions.server.AbstractServerAction;
-import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 
 import java.util.Map;
@@ -20,13 +19,11 @@ public abstract class AbstractPluginAction<A extends AbstractPluginActionArgumen
 
         PluginEvent e = (PluginEvent) event;
 
-        return e.getPlugin().getName().equalsIgnoreCase(argument.getPluginName());
+        return !argument.isPluginSet() || e.getPlugin().getName().equalsIgnoreCase(argument.getPluginName());
     }
 
     protected String deserializePlugin(Map<String, Object> map)
     {
-        MapUtils.checkContainsKey(map, AbstractPluginActionArgument.KEY_PLUGIN);
-
-        return map.get(AbstractPluginActionArgument.KEY_PLUGIN).toString();
+        return (String) map.get(AbstractPluginActionArgument.KEY_PLUGIN);
     }
 }

@@ -5,15 +5,18 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.action.actions.AbstractActionArgument;
+import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionArgument;
+import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
+
+import java.util.Objects;
 
 @AllArgsConstructor
 public abstract class AbstractPluginActionArgument extends AbstractActionArgument
 {
     public static final String KEY_PLUGIN = "plugin";
 
-    @NotNull
     private final String plugin;
 
     @Override
@@ -26,7 +29,7 @@ public abstract class AbstractPluginActionArgument extends AbstractActionArgumen
             return false;
 
         AbstractPluginActionArgument a = (AbstractPluginActionArgument) argument;
-        return this.plugin.equalsIgnoreCase(a.plugin);
+        return Objects.equals(this.plugin, a.plugin);
     }
 
     @NotNull
@@ -42,5 +45,17 @@ public abstract class AbstractPluginActionArgument extends AbstractActionArgumen
     public String getPluginName()
     {
         return this.plugin;
+    }
+
+    public boolean isPluginSet()
+    {
+        return this.plugin != null;
+    }
+
+    @Override
+    public void validate(@NotNull ScenarioEngine engine, @NotNull ScenarioType type)
+    {
+        if (type == ScenarioType.ACTION_EXECUTE || type == ScenarioType.CONDITION_REQUIRE)
+            throwIfNotPresent(KEY_PLUGIN, this.plugin);
     }
 }

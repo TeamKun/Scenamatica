@@ -69,7 +69,6 @@ public class PluginEnableAction extends AbstractPluginAction<PluginEnableAction.
             super(plugin);
         }
 
-        // TODO: Create validation for argument
         @Override
         public String getArgumentString()
         {

@@ -748,10 +748,7 @@
               "with": {
                 "$ref": "#/definitions/action/definitions/server/plugin_disable"
               }
-            },
-            "required": [
-              "with"
-            ]
+            }
           }
         },
         {
@@ -768,10 +765,7 @@
               "with": {
                 "$ref": "#/definitions/action/definitions/server/plugin_enable"
               }
-            },
-            "required": [
-              "with"
-            ]
+            }
           }
         },
         {
@@ -1841,10 +1835,7 @@
                 "type": "string",
                 "description": "無効化されるプラグインです。"
               }
-            },
-            "required": [
-              "plugin"
-            ]
+            }
           },
           "plugin_enable": {
             "properties": {
@@ -1852,10 +1843,7 @@
                 "type": "string",
                 "description": "有効化されるプラグインです。"
               }
-            },
-            "required": [
-              "plugin"
-            ]
+            }
           },
           "broadcast": {
             "properties": {

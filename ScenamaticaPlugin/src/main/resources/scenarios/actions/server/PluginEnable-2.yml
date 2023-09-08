@@ -2,7 +2,7 @@
 scenamatica: ${project.version}
 
 name: actions_server_plugin_enable
-description: Testing server_plugin_enable action works or not
+description: Testing server_plugin_enable action without plugin works or not
 on:
   # - type: on_load  # LightHeadPlugin is not loaded yet, so this test will be skipped.
   - type: manual_dispatch
@@ -23,8 +23,4 @@ scenario:
   - type: expect
     action: server_plugin_enable
     with:
-      plugin: "LightHeadPlugin"
-  - type: require
-    action: server_plugin_enable
-    with:
-      plugin: "LightHeadPlugin"
+      $ignored: Ignored
