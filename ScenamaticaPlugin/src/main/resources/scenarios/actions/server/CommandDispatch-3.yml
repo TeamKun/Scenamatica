@@ -1,8 +1,8 @@
 # noinspection YAMLSchemaValidation
 scenamatica: ${project.version}
 
-name: actions_server_command_dispatch
-description: Testing command_dispatch action works or not
+name: actions_server_command_dispatch_3
+description: Testing command_dispatch action without command works or not
 on:
   - type: on_load
   - type: manual_dispatch
@@ -10,11 +10,6 @@ on:
 context:
   actors:
     - name: Actor001
-      gamemode: SURVIVAL
-      displayName: §c§lActor001
-    - name: Actor002
-      gamemode: SURVIVAL
-      customName: §c§lActor002
 
 
 scenario:
@@ -26,6 +21,4 @@ scenario:
   - type: execute
     action: command_dispatch
     with:
-      command: say Hello World!
       sender: Actor001
-

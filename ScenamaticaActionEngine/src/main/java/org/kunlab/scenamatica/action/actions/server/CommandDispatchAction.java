@@ -13,6 +13,7 @@ import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.actions.AbstractActionArgument;
 import org.kunlab.scenamatica.action.utils.PlayerUtils;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
+import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
@@ -70,11 +71,15 @@ public class CommandDispatchAction extends AbstractServerAction<CommandDispatchA
         else
             return false;
 
-        Pattern pattern = Pattern.compile(argument.command);
-        Matcher matcher = pattern.matcher(command);
+        if (argument.getCommand() != null)
+        {
+            Pattern pattern = Pattern.compile(argument.command);
+            Matcher matcher = pattern.matcher(command);
+            if (!matcher.matches())
+                return false;
+        }
 
-        return matcher.matches()
-                && (argument.sender == null || sender != null && StringUtils.equalsIgnoreCase(argument.sender, sender.getName()));
+        return argument.sender == null || sender != null && StringUtils.equalsIgnoreCase(argument.sender, sender.getName());
     }
 
     @Override
@@ -106,7 +111,6 @@ public class CommandDispatchAction extends AbstractServerAction<CommandDispatchA
         public static final String KEY_SENDER = "sender";
 
         String command;
-        @Nullable
         String sender;
 
         @Override
@@ -117,7 +121,13 @@ public class CommandDispatchAction extends AbstractServerAction<CommandDispatchA
                     && Objects.equals(this.sender, ((Argument) argument).sender);
         }
 
-        // TODO: Create validation for argument
+        @Override
+        public void validate(@NotNull ScenarioEngine engine, @NotNull ScenarioType type)
+        {
+            if (type == ScenarioType.ACTION_EXECUTE)
+                throwIfNotPresent(KEY_COMMAND, this.command);
+        }
+
         @Override
         public String getArgumentString()
         {

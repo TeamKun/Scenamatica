@@ -808,10 +808,7 @@
               "with": {
                 "$ref": "#/definitions/action/definitions/server/command_dispatch"
               }
-            },
-            "required": [
-              "with"
-            ]
+            }
           }
         },
         {
@@ -1899,10 +1896,7 @@
                 "type": "string",
                 "description": "実行するプレイヤーです。省略した場合はコンソールです。"
               }
-            },
-            "required": [
-              "command"
-            ]
+            }
           },
           "whitelist_toggle": {
             "properties": {
