@@ -8,10 +8,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.actions.AbstractActionArgument;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
+import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.events.MilestoneReachedEvent;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
+import org.kunlab.scenamatica.interfaces.scenario.MilestoneEntry;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.BeanSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
@@ -19,6 +21,7 @@ import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class MilestoneAction extends AbstractScenamaticaAction<MilestoneAction.Argument>
         implements Executable<MilestoneAction.Argument>, Watchable<MilestoneAction.Argument>, Requireable<MilestoneAction.Argument>
@@ -43,13 +46,16 @@ public class MilestoneAction extends AbstractScenamaticaAction<MilestoneAction.A
     public boolean isFired(@NotNull MilestoneAction.Argument argument, @NotNull ScenarioEngine engine, @NotNull Event event)
     {
         assert event instanceof MilestoneReachedEvent;
-
         MilestoneReachedEvent e = (MilestoneReachedEvent) event;
 
-        boolean expectedCondition = argument.isReached();
-        boolean actualCondition = !e.isCancelled();
+        Boolean expectedCondition = argument.getReached();
+        boolean condition = !e.isCancelled();
 
-        return expectedCondition == actualCondition;
+        String expectedMilestoneName = argument.getName();
+        MilestoneEntry milestone = e.getMilestone();
+
+        return (expectedMilestoneName == null || expectedMilestoneName.equals(milestone.getName()))
+                && (expectedCondition == null || expectedCondition == condition);
     }
 
     @Override
@@ -63,13 +69,10 @@ public class MilestoneAction extends AbstractScenamaticaAction<MilestoneAction.A
     @Override
     public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull BeanSerializer serializer)
     {
-        MapUtils.checkContainsKey(map, Argument.KEY_NAME);
-        MapUtils.checkTypeIfContains(map, Argument.KEY_REACHED, Boolean.class);
-
-        String name = (String) map.get(Argument.KEY_NAME);
-        boolean reached = MapUtils.getOrDefault(map, Argument.KEY_REACHED, true);
-
-        return new Argument(name, reached);
+        return new Argument(
+                MapUtils.getOrNull(map, Argument.KEY_NAME),
+                MapUtils.getOrNull(map, Argument.KEY_REACHED)
+        );
     }
 
     @Override
@@ -78,8 +81,7 @@ public class MilestoneAction extends AbstractScenamaticaAction<MilestoneAction.A
         argument = this.requireArgsNonNull(argument);
 
         boolean isMilestoneReached = engine.getManager().getMilestoneManager().isReached(engine, argument.getName());
-
-        return isMilestoneReached == argument.isReached();
+        return isMilestoneReached == argument.getReached();
     }
 
     @Value
@@ -90,23 +92,32 @@ public class MilestoneAction extends AbstractScenamaticaAction<MilestoneAction.A
         private static final String KEY_NAME = "name";
         private static final String KEY_REACHED = "reached";
 
-        @NotNull
         String name;
-        boolean reached;
-
-        public Argument(@NotNull String name)
-        {
-            this.name = name;
-            this.reached = true;
-        }
+        Boolean reached;
 
         @Override
         public boolean isSame(TriggerArgument argument)
         {
-            return false;
+            if (!(argument instanceof Argument))
+                return false;
+
+            Argument arg = (Argument) argument;
+
+            return Objects.equals(this.name, arg.name)
+                    && Objects.equals(this.reached, arg.reached);
         }
 
-        // TODO: Create validation for argument
+        @Override
+        public void validate(@NotNull ScenarioEngine engine, @NotNull ScenarioType type)
+        {
+            switch (type)
+            {
+                case CONDITION_REQUIRE:
+                case ACTION_EXECUTE:
+                    throwIfNotPresent(KEY_NAME, this.name);
+                    throwIfNotPresent(KEY_REACHED, this.reached);
+            }
+        }
 
         @Override
         public String getArgumentString()
