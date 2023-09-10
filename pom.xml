@@ -59,9 +59,9 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.github.TeamKUN</groupId>
+            <groupId>net.kunmc.lab</groupId>
             <artifactId>PeyangPaperUtils</artifactId>
-            <version>2.2.0</version>
+            <version>2.2.1</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
