@@ -53,7 +53,7 @@ jobs:
     if: "github.event.action == 'labeled' && (github.event.label.name == 'Status: Duplicated' || github.event.label.name == 'Status: Resolved')"
     runs-on: ubuntu-latest
     env:
-      GH_TOKEN: ${{ GITHUB_TOKEN }}
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - name: "Close pull request"
         if: "${{ github.event.issue.pull_request }}"
