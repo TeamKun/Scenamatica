@@ -94,7 +94,7 @@ public class CommandDispatchAction extends AbstractServerAction<CommandDispatchA
     @Override
     public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull BeanSerializer serializer)
     {
-        MapUtils.checkType(map, Argument.KEY_COMMAND, String.class);
+        MapUtils.checkTypeIfContains(map, Argument.KEY_COMMAND, String.class);
         MapUtils.checkTypeIfContains(map, Argument.KEY_SENDER, String.class);
 
         String command = (String) map.get(Argument.KEY_COMMAND);
