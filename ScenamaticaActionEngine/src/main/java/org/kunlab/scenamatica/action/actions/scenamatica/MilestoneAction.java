@@ -8,7 +8,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.actions.AbstractActionArgument;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
-import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.events.MilestoneReachedEvent;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
@@ -39,7 +38,10 @@ public class MilestoneAction extends AbstractScenamaticaAction<MilestoneAction.A
     {
         argument = this.requireArgsNonNull(argument);
 
-        engine.getManager().getMilestoneManager().reachMilestone(engine, argument.getName());
+        if (argument.getReached() == null || argument.getReached())
+            engine.getManager().getMilestoneManager().reachMilestone(engine, argument.getName());
+        else
+            engine.getManager().getMilestoneManager().revokeMilestone(engine, argument.getName());
     }
 
     @Override
@@ -81,7 +83,7 @@ public class MilestoneAction extends AbstractScenamaticaAction<MilestoneAction.A
         argument = this.requireArgsNonNull(argument);
 
         boolean isMilestoneReached = engine.getManager().getMilestoneManager().isReached(engine, argument.getName());
-        return isMilestoneReached == argument.getReached();
+        return isMilestoneReached == (argument.getReached() == null || argument.getReached());
     }
 
     @Value
@@ -105,18 +107,6 @@ public class MilestoneAction extends AbstractScenamaticaAction<MilestoneAction.A
 
             return Objects.equals(this.name, arg.name)
                     && Objects.equals(this.reached, arg.reached);
-        }
-
-        @Override
-        public void validate(@NotNull ScenarioEngine engine, @NotNull ScenarioType type)
-        {
-            switch (type)
-            {
-                case CONDITION_REQUIRE:
-                case ACTION_EXECUTE:
-                    throwIfNotPresent(KEY_NAME, this.name);
-                    throwIfNotPresent(KEY_REACHED, this.reached);
-            }
         }
 
         @Override

@@ -18,7 +18,7 @@ scenario:
     with:
       command: say Hello World!
       sender: Actor001
-  - type: execute
+  - type: expect
     action: command_dispatch
     with:
       sender: Actor001
