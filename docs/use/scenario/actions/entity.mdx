@@ -245,6 +245,85 @@ import {ObjectType} from "/src/components/Object";
 
 :::
 
+## エンティティの死亡 {#death}
+
+<Action name="エンティティの死亡"
+        description="エンティティを死亡させます。"
+        id="entity_death"
+        events={[
+          {
+            name: "EntityDeathEvent",
+            package: "org.bukkit.event.entity",
+          }
+        ]}
+        args={[
+          {
+            name: "target",
+            type: ObjectType.STRING,
+            anchor: "general-entity",
+            description: "死亡させるエンティティです。",
+            required: [ScenarioType.EXECUTE]
+          },
+          {
+            name: "drops",
+            type: "ItemStack[]",          
+            type_link: "../file-syntax#item-stack-structure",
+            description: "ドロップするアイテムです。",
+            available: [ScenarioType.EXPECT]
+          },
+          {
+            name: "dropExp",
+            type: ObjectType.INTEGER,
+            description: "ドロップする経験値です。",
+            available: [ScenarioType.EXPECT]
+          },
+          {
+            name: "reviveHealth",
+            type: ObjectType.INTEGER,
+            description: "復活時の体力です。",
+            available: [ScenarioType.EXPECT]
+          },
+          {
+            name: "playDeathSound",
+            type: ObjectType.BOOLEAN,
+            description: "死亡時のサウンドを再生するかどうかです。",
+            available: [ScenarioType.EXPECT]
+          },
+          {
+            name: "sound",
+            type: "Sound",
+            description: "再生するサウンドです。",
+            available: [ScenarioType.EXPECT]
+          },
+          {
+            name: "soundCategory",
+            type: "SoundCategory",
+            description: "サウンドのカテゴリです。",
+            available: [ScenarioType.EXPECT]
+          },
+          {
+            name: "soundVolume",
+            type: ObjectType.FLOAT,
+            description: "サウンドの音量です。",
+            available: [ScenarioType.EXPECT]
+          },
+          {
+            name: "soundPitch",
+            type: ObjectType.FLOAT,
+            description: "サウンドのピッチです。",
+            available: [ScenarioType.EXPECT]
+          }
+        ]}
+        executable watchable
+/>
+
+:::caution 
+
+アクション実行シナリオにおいて, `target` はエンティティのオブジェクトである必要があります。セレクタは指定できません。
+これは, Bukkit が死亡したエンティティを即座に削除し, 追跡不能にするためです。
+
+:::
+
 ## エンティティによるアイテムのドロップ {#drop-item}
 
 <Action name="エンティティによるアイテムのドロップ"
