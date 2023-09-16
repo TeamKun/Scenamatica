@@ -20,6 +20,7 @@ import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class WorldGameRuleAction extends AbstractWorldAction<WorldGameRuleAction.Argument>
         implements Executable<WorldGameRuleAction.Argument>, Requireable<WorldGameRuleAction.Argument>
@@ -44,7 +45,7 @@ public class WorldGameRuleAction extends AbstractWorldAction<WorldGameRuleAction
 
         Class<?> type = rule.getType();
 
-        boolean success = false;
+        boolean success;
         assert type == Boolean.class || type == Integer.class;  // Bukkit API にはこれ以外の型は存在しない
         if (type == Boolean.class)
         {
@@ -72,7 +73,7 @@ public class WorldGameRuleAction extends AbstractWorldAction<WorldGameRuleAction
         if (!super.isFired(argument, engine, event))
             return false;
 
-        return e.getGameRule().getName().equals(argument.getGameRule().getName())
+        return (argument.getGameRule() == null || e.getGameRule().getName().equalsIgnoreCase(argument.getGameRule().getName()))
                 && (argument.getValue() == null || e.getValue().equalsIgnoreCase(argument.getValue()));
     }
 
@@ -141,9 +142,7 @@ public class WorldGameRuleAction extends AbstractWorldAction<WorldGameRuleAction
         public static final String KEY_GAME_RULE = "rule";
         public static final String KEY_VALUE = "value";
 
-        @NotNull // TODO: Make this Nullable
         GameRule<?> gameRule;
-        @Nullable
         String value;
 
         public Argument(@Nullable NamespacedKey worldRef, @NotNull GameRule<?> gameRule, @Nullable String value)
@@ -162,17 +161,24 @@ public class WorldGameRuleAction extends AbstractWorldAction<WorldGameRuleAction
             Argument arg = (Argument) argument;
 
             return super.isSameWorld(arg)
-                    && this.gameRule.equals(arg.gameRule)
-                    && (this.value == null || this.value.equals(arg.value));
+                    && Objects.equals(this.gameRule, arg.gameRule)
+                    && Objects.equals(this.value, arg.value);
         }
 
         @Override
         public void validate(@NotNull ScenarioEngine engine, @NotNull ScenarioType type)
         {
-            if (type == ScenarioType.ACTION_EXPECT)
-                return;
-
-            throwIfNotPresent(KEY_VALUE, this.value);
+            switch (type)
+            {
+                case ACTION_EXECUTE:
+                    /* fallthrough */
+                case CONDITION_REQUIRE:
+                    throwIfNotPresent(KEY_GAME_RULE, this.gameRule);
+                    break;
+                case ACTION_EXPECT:
+                    throwIfNotPresent(KEY_VALUE, this.value);
+                    break;
+            }
         }
 
         @Override
