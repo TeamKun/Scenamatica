@@ -1,0 +1,11 @@
+{
+  "name": "player_join",
+  "description": "プレイヤをサーバに参加させます。",
+  "base": "player_$base",
+  "arguments": {
+    "message": {
+      "type": "string",
+      "description": "プレイヤーがサーバーに参加したときに表示するメッセージです。"
+    }
+  }
+}

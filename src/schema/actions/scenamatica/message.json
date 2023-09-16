@@ -1,0 +1,15 @@
+{
+  "name": "message",
+  "description": "プレイヤにメッセージを送信します。",
+  "arguments": {
+    "message": {
+      "type": "string",
+      "description": "メッセージの内容です。",
+      "maxLength": 32768
+    },
+    "recipient": {
+      "type": "string",
+      "description": "メッセージを受け取るプレイヤーの名前または UUID です。"
+    }
+  }
+}

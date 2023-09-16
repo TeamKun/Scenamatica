@@ -1,0 +1,11 @@
+{
+  "name": "entity_drop_item",
+  "description": "エンティティにアイテムをドロップさせます。",
+  "base": "entity_$base",
+  "arguments": {
+    "item": {
+      "description": "ドロップするアイテムです。",
+      "$ref": "#/definitions/entityItem"
+    }
+  }
+}

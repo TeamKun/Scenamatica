@@ -1,0 +1,128 @@
+{
+  "attributeModifier": {
+    "type": "object",
+    "description": "属性の変更設定を表します。",
+    "properties": {
+      "uuid": {
+        "type": "string",
+        "format": "uuid",
+        "description": "属性の変更設定のUUIDです。"
+      },
+      "name": {
+        "type": "string",
+        "description": "属性の変更設定の名前です。"
+      },
+      "amount": {
+        "type": "number",
+        "description": "属性の変更設定の量です。"
+      },
+      "operation": {
+        "type": "string",
+        "description": "属性の変更設定の操作です。",
+        "enum": [
+          "add_number",
+          "add_scalar",
+          "multiply_scalar_1",
+          "ADD_NUMBER",
+          "ADD_SCALAR",
+          "MULTIPLY_SCALAR_1"
+        ]
+      }
+    }
+  },
+  "itemStack": {
+    "type": "object",
+    "description": "アイテムスタックを表します。",
+    "properties": {
+      "type": {
+        "type": "string",
+        "description": "アイテムの種類です。"
+      },
+      "amount": {
+        "type": "integer",
+        "description": "アイテムの個数です。省略時は 1 です。"
+      },
+      "name": {
+        "type": "string",
+        "description": "アイテムの名前です。 一般に displayName と同じです。"
+      },
+      "localizedName": {
+        "type": "string",
+        "description": "アイテムの多言語化された名前です。"
+      },
+      "lores": {
+        "type": "array",
+        "description": "アイテムの説明文です。",
+        "items": {
+          "type": "string"
+        }
+      },
+      "placeables": {
+        "type": "array",
+        "description": "アイテムの設置可能なブロックです。",
+        "items": {
+          "$ref": "#/definitions/namespacedKey"
+        }
+      },
+      "destroyables": {
+        "type": "array",
+        "description": "アイテムの破壊可能なブロックです。",
+        "items": {
+          "$ref": "#/definitions/namespacedKey"
+        }
+      },
+      "customModel": {
+        "type": "integer",
+        "description": "アイテムのカスタムモデルデータです。"
+      },
+      "enchants": {
+        "type": "object",
+        "description": "アイテムにかかっているエンチャントを設定します。オブジェクトのキーがエンチャントの種類、値がエンチャントのレベル(int)です。",
+        "additionalProperties": true
+      },
+      "flags": {
+        "type": "array",
+        "description": "アイテムのフラグを設定します。",
+        "items": {
+          "type": "string",
+          "enum": [
+            "HIDE_ENCHANTS",
+            "HIDE_ATTRIBUTES",
+            "HIDE_UNBREAKABLE",
+            "HIDE_DESTROYS",
+            "HIDE_PLACED_ON",
+            "HIDE_POTION_EFFECTS",
+            "HIDE_DYE",
+            "hide_enchants",
+            "hide_attributes",
+            "hide_unbreakable",
+            "hide_destroys",
+            "hide_placed_on",
+            "hide_potion_effects",
+            "hide_dye"
+          ]
+        }
+      },
+      "unbreakable": {
+        "type": "boolean",
+        "description": "アイテムが耐久無限かどうかです。"
+      },
+      "attributes": {
+        "type": "object",
+        "description": "アイテムにかかっている属性を設定します。",
+        "patternProperties": {
+          "^[a-zA-Z_]+$": {
+            "$ref": "#/definitions/attributeModifier"
+          }
+        }
+      },
+      "damage": {
+        "type": "integer",
+        "description": "アイテムの耐久値です。"
+      }
+    },
+    "required": [
+      "type"
+    ]
+  }
+}

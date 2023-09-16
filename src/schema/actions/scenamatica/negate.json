@@ -1,0 +1,6 @@
+{
+  "name": "negate",
+  "description": "コンディション要求アクションの判定結果を反転します。",
+  "base": "#/definitions/action",
+  "required": ["action"]
+}

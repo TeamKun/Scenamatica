@@ -1,0 +1,11 @@
+{
+  "name": "entity",
+  "description": "エンティティの状態を変更します。",
+  "base": "entity_$base",
+  "arguments": {
+    "entity": {
+      "$ref": "#/definitions/entity",
+      "description": "変更する値です。"
+    }
+  }
+}

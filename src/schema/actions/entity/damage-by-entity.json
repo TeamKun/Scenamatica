@@ -1,0 +1,11 @@
+{
+  "name": "entity_damage_by_entity",
+  "description": "エンティティ",
+  "base": "entity_damage",
+  "arguments": {
+    "damager": {
+      "description": "ダメージ元のエンティティのUUIDまたはセレクタです。",
+      "type": "string"
+    }
+  }
+}

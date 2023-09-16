@@ -1,0 +1,52 @@
+{
+  "itemSlot": {
+    "type": "string",
+    "enum": [
+      "HAND",
+      "OFF_HAND",
+      "FEET",
+      "LEGS",
+      "CHEST",
+      "HEAD",
+      "hand",
+      "off_hand",
+      "feet",
+      "legs",
+      "chest",
+      "head"
+    ]
+  },
+  "playerInventory": {
+    "description": "プレイヤーのインベントリを表します。",
+    "properties": {
+      "main": {
+        "$ref": "#/definitions/inventory",
+        "description": "インベントリのメインの部分です。"
+      },
+      "mainHandItem": {
+        "$ref": "#/definitions/itemStack",
+        "description": "インベントリのメインハンドのアイテムです。"
+      },
+      "offHandItem": {
+        "$ref": "#/definitions/itemStack",
+        "description": "インベントリのオフハンドのアイテムです。"
+      },
+      "armors": {
+        "type": "array",
+        "description": "インベントリのアーマーのアイテムです。上から順にヘルメット、チェストプレート、レギンス、ブーツです。どこかが空いている場合は null を格納します。",
+        "items": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/definitions/itemStack"
+            }
+          ]
+        },
+        "minItems": 4,
+        "maxItems": 4
+      }
+    }
+  }
+}

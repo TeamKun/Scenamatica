@@ -1,0 +1,40 @@
+{
+  "name": "inventory_click",
+  "description": "インベントリのクリックを検知します",
+  "base": "inventory_interact_$base",
+  "arguments": {
+    "type": {
+      "$ref": "#/definitions/action/definitions/inventory_$base/definitions/clickType"
+    },
+    "action": {
+      "$ref": "#/definitions/action/definitions/inventory_$base/definitions/inventoryAction"
+    },
+    "slotType": {
+      "$ref": "#/definitions/action/definitions/inventory_$base/definitions/slotType"
+    },
+    "slot": {
+      "type": "integer",
+      "description": "スロット番号です。",
+      "minimum": 0,
+      "maximum": 40
+    },
+    "rawSlot": {
+      "type": "integer",
+      "description": "スロット番号です。",
+      "minimum": 0
+    },
+    "clickedItem": {
+      "description": "クリックされたアイテムです。",
+      "$ref": "#/definitions/itemStack"
+    },
+    "button": {
+      "type": "integer",
+      "description": "ボタンの番号です。",
+      "minimum": 0
+    },
+    "cursorItem": {
+      "description": "カーソルにあるアイテムです。",
+      "$ref": "#/definitions/itemStack"
+    }
+  }
+}

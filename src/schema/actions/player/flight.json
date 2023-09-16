@@ -1,0 +1,11 @@
+{
+  "name": "player_flight",
+  "description": "プレイヤを飛行させます。",
+  "base": "player_$base",
+  "arguments": {
+    "flying": {
+      "type": "boolean",
+      "description": "プレイヤーが飛行中かどうかです。"
+    }
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "name": "player_respawn",
+  "description": "プレイヤをリスポーンさせます。",
+  "base": "player_$base",
+  "arguments": {
+    "isBed": {
+      "type": "boolean",
+      "description": "プレイヤーがベッドでスポーンするかどうかです。"
+    },
+    "isAnchor": {
+      "type": "boolean",
+      "description": "プレイヤーが錨でスポーンするかどうかです。"
+    },
+    "location": {
+      "description": "プレイヤーがスポーンする場所です。",
+      "$ref": "#/definitions/location"
+    }
+  }
+}

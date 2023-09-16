@@ -1,0 +1,29 @@
+{
+  "name": "player_interact_block",
+  "description": "プレイヤにブロックを操作させます。",
+  "base": "player_$base",
+  "arguments": {
+    "action": {
+      "type": "string",
+      "description": "プレイヤーが行ったアクションです。",
+      "enum": [
+        "RIGHT_CLICK_BLOCK",
+        "LEFT_CLICK_BLOCK",
+        "RIGHT_CLICK_AIR",
+        "LEFT_CLICK_AIR"
+      ]
+    },
+    "block": {
+      "description": "プレイヤーがクリックしたブロックです。",
+      "$ref": "#/definitions/block"
+    },
+    "hand": {
+      "type": "string",
+      "description": "プレイヤーがクリックした手です。",
+      "enum": [
+        "HAND",
+        "OFF_HAND"
+      ]
+    }
+  }
+}

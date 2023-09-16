@@ -1,0 +1,15 @@
+{
+  "name": "milestone",
+  "description": "マイルストーンを達成します。",
+  "arguments": {
+    "name": {
+      "type": "string",
+      "description": "マイルストーンの名前です。"
+    },
+    "reached": {
+      "type": "boolean",
+      "description": "マイルストーンに到達したかどうかです。検証時はこれと比較します。"
+    }
+  },
+  "required": ["name"]
+}

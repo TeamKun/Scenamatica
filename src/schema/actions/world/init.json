@@ -1,0 +1,5 @@
+{
+  "name": "world_init",
+  "description": "ワールドの初期化を検知します。",
+  "base": "world_$base"
+}

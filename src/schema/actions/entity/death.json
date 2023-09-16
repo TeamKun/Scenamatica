@@ -1,0 +1,58 @@
+{
+  "name": "entity_death",
+  "description": "エンティティをキルします。",
+  "base": "entity_$base",
+  "arguments": {
+    "drops": {
+      "description": "ドロップするアイテムです。",
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/itemStack"
+      }
+    },
+    "dropExp": {
+      "description": "ドロップする経験値です。",
+      "type": "integer",
+      "min": 0
+    },
+    "reviveHealth": {
+      "description": "復活時の体力です。",
+      "type": "number",
+      "min": 0
+    },
+    "playDeathSound": {
+      "description": "死亡時のサウンドを再生するかどうかです。",
+      "type": "boolean"
+    },
+    "sound": {
+      "description": "再生するサウンドです。",
+      "$ref": "#/definitions/sound"
+    },
+    "soundCategory": {
+      "description": "サウンドのカテゴリです。",
+      "type": "string",
+      "enum": [
+        "MASTER",
+        "MUSIC",
+        "RECORD",
+        "WEATHER",
+        "BLOCK",
+        "HOSTILE",
+        "NEUTRAL",
+        "PLAYER",
+        "AMBIENT",
+        "VOICE"
+      ]
+    },
+    "soundVolume": {
+      "description": "サウンドの音量です。",
+      "type": "number",
+      "min": 0
+    },
+    "soundPitch": {
+      "description": "サウンドのピッチです。",
+      "type": "number",
+      "min": 0
+    }
+  }
+}

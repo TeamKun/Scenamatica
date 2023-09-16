@@ -1,0 +1,41 @@
+{
+  "name": "player_kick",
+  "description": "プレイヤをサーバから強制退出させます。",
+  "base": "player_$base",
+  "arguments": {
+    "leaveMessage": {
+      "type": "string",
+      "description": "プレイヤーがサーバーから退出したときに表示するメッセージです。"
+    },
+    "message": {
+      "type": "string",
+      "description": "プレイヤーがサーバーからキックされたときに表示するメッセージです。"
+    },
+    "cause": {
+      "type": "string",
+      "description": "プレイヤーがサーバーからキックされた原因です。",
+      "enum": [
+        "PLUGIN",
+        "WHITELIST",
+        "BANNED",
+        "IP_BANNED",
+        "KICK_COMMAND",
+        "FLYING_PLAYER",
+        "FLYING_VEHICLE",
+        "TIMEOUT",
+        "IDLING",
+        "INVALID_VEHICLE_MOVEMENT",
+        "INVALID_PLAYER_MOVEMENT",
+        "INVALID_ENTITY_ATTACKED",
+        "INVALID_PAYLOAD",
+        "SPAM",
+        "ILLEGAL_ACTION",
+        "ILLEGAL_CHARACTERS",
+        "SELF_INTERACTION",
+        "DUPLICATE_LOGIN",
+        "RESTART_COMMAND",
+        "UNKNOWN"
+      ]
+    }
+  }
+}

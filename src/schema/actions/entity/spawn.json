@@ -1,0 +1,10 @@
+{
+  "name": "entity_spawn",
+  "description": "エンティティをスポーンさせます。",
+  "base": "entity_$base",
+  "arguments": {
+    "entity": {
+      "$ref": "#/definitions/entity"
+    }
+  }
+}

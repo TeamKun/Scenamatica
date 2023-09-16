@@ -1,0 +1,14 @@
+{
+  "name": "inventory_close",
+  "description": "インベントリを閉じます。",
+  "base": "inventory_$base",
+  "arguments": {
+    "target": {
+      "type": "string",
+      "description": "対象のプレイヤーです。"
+    },
+    "reason": {
+      "$ref": "#/definitions/action/definitions/inventory_$base/definitions/closeReason"
+    }
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "name": "player_advancement",
+  "description": "プレイヤに進捗を達成させます。",
+  "base": "player_$base",
+  "arguments": {
+    "advancement": {
+      "type": "string",
+      "description": "達成する進捗です。",
+      "maxLength": 32767,
+      "$ref": "#/definitions/namespacedKey"
+    },
+    "criterion": {
+      "type": "string",
+      "description": "達成する条件です。省略した場合は全ての条件を達成します。",
+      "maxLength": 32767,
+      "$ref": "#/definitions/namespacedKey"
+    }
+  }
+}

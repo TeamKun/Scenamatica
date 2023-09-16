@@ -1,0 +1,10 @@
+{
+  "name": "server_plugin_enable",
+  "description": "サーバのプラグインを有効化します。",
+  "arguments": {
+    "plugin": {
+      "type": "string",
+      "description": "有効化されるプラグインです。"
+    }
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "name": "player_projectile_launch",
+  "description": "プレイヤに投げ物を射出させます。",
+  "base": "player_$base",
+  "arguments": {
+    "type": {
+      "type": "string",
+      "description": "投げ物の種類です。",
+      "enum": [
+        "ARROW",
+        "SNOWBALL",
+        "EGG",
+        "FIREBALL",
+        "SMALL_FIREBALL",
+        "ENDER_PEARL",
+        "WITHER_SKULL",
+        "SHULKER_BULLET",
+        "DRAGON_FIREBALL",
+        "POTION",
+        "EXPERIENCE_BOTTLE",
+        "ITEM",
+        "FIREWORK",
+        "TRIDENT"
+      ]
+    },
+    "velocity": {
+      "description": "投げ物の速度や向きです。",
+      "$ref": "#/definitions/vector"
+    },
+    "epsilon": {
+      "description": "投げ物の速度や向きを比較する際に許容する誤差です。",
+      "$ref": "#/definitions/vector"
+    }
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "name": "player_drop_item",
+  "description": "プレイヤにアイテムをドロップさせます。",
+  "base": "player_$base",
+  "arguments": {
+    "item": {
+      "description": "ドロップするアイテムです。",
+      "$ref": "#/definitions/entityItem"
+    }
+  }
+}

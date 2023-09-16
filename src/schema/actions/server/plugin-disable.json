@@ -1,0 +1,10 @@
+{
+  "name": "server_plugin_disable",
+  "description": "サーバのプラグインを無効化します。",
+  "arguments": {
+    "plugin": {
+      "type": "string",
+      "description": "無効化されるプラグインです。"
+    }
+  }
+}

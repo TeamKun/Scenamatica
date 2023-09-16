@@ -1,0 +1,42 @@
+{
+  "name": "player_death",
+  "description": "プレイヤをキルします。",
+  "base": "player_$base",
+  "arguments": {
+    "killer": {
+      "type": "string",
+      "description": "ターゲットを殺すプレイヤーです。"
+    },
+    "deathMessage": {
+      "type": "string",
+      "description": "死亡メッセージです。"
+    },
+    "exp": {
+      "type": "integer",
+      "description": "死亡時したプレイヤの新しい経験値です。",
+      "minimum": 0
+    },
+    "level": {
+      "type": "integer",
+      "description": "死亡時したプレイヤの新しいレベルです。",
+      "minimum": 0
+    },
+    "totalExp": {
+      "type": "integer",
+      "description": "死亡時したプレイヤの新しい総経験値です。",
+      "minimum": 0
+    },
+    "keepLevel": {
+      "type": "boolean",
+      "description": "死亡時したプレイヤのレベルを保持するかどうかです。"
+    },
+    "keepInventory": {
+      "type": "boolean",
+      "description": "死亡時したプレイヤのインベントリを保持するかどうかです。"
+    },
+    "doExpDrop": {
+      "type": "boolean",
+      "description": "死亡時したプレイヤの経験値ドロップをするかどうかです。"
+    }
+  }
+}

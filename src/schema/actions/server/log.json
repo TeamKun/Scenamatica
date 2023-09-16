@@ -1,0 +1,32 @@
+{
+  "name": "server_log",
+  "description": "サーバにログを送信します。",
+  "arguments": {
+    "message": {
+      "type": "string",
+      "description": "対象のログを正規表現で記述します。"
+    },
+    "level": {
+      "type": "string",
+      "description": "ログのレベルです。",
+      "enum": [
+        "INFO",
+        "WARNING",
+        "WARN",
+        "ERROR",
+        "CONFIG",
+        "DEBUG",
+        "TRACE",
+        "FATAL",
+        "FINE",
+        "FINER",
+        "FINEST",
+        "SEVERE"
+      ]
+    },
+    "sender": {
+      "type": "string",
+      "description": "ログを送信したプラグインやロガーの名前です。"
+    }
+  }
+}

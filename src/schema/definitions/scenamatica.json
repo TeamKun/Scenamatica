@@ -1,0 +1,299 @@
+{
+  "scenario": {
+    "type": "object",
+    "$ref": "#/definitions/action",
+    "properties": {
+      "type": {
+        "type": "string",
+        "description": "シナリオの種類です。",
+        "oneOf": [
+          {
+            "const": "expect",
+            "description": "アクションがプラグインによって実行されるか監視します。"
+          },
+          {
+            "const": "execute",
+            "description": "アクションを実行します。"
+          },
+          {
+            "const": "require",
+            "description": "条件が満たされているかチェックします。"
+          }
+        ]
+      },
+      "timeout": {
+        "type": "integer",
+        "description": "シナリオのタイムアウト時間を**チック**で指定します。-1 で無効化します。",
+        "minimum": -1,
+        "default": 100
+      },
+      "runif": {
+        "type": "object",
+        "description": "シナリオの実行条件を定義します。アクションで定義します。満たしていない場合はスキップされます。",
+        "$ref": "#/definitions/action"
+      }
+    },
+    "required": [
+      "type",
+      "action"
+    ]
+  },
+  "action": {
+    "type": "object",
+    "properties": {
+      "action": {
+        "type": "string",
+        "description": "アクションの種類です。 ",
+        "enum": []
+      },
+      "with": {
+        "type": "object",
+        "description": "アクションの種類によっては, このプロパティにアクションの引数を指定します。"
+      }
+    },
+    "required": [
+      "action"
+    ]
+  },
+  "actor": {
+    "$ref": "#/definitions/entity",
+    "type": "object",
+    "properties": {
+      "name": {
+        "type": "string",
+        "description": "アクターの名前です。",
+        "maxLength": 16
+      },
+      "online": {
+        "type": "boolean",
+        "description": "アクターがオンラインかどうかです。",
+        "default": true
+      },
+      "displayName": {
+        "type": "string",
+        "description": "アクターの表示名です。"
+      },
+      "playerList": {
+        "type": "object",
+        "description": "アクターのプレイヤーリストにおける扱いです。",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "プレイヤーリストに表示される名前です。"
+          },
+          "header": {
+            "type": "string",
+            "description": "プレイヤーリストに表示されるヘッダーです。"
+          },
+          "footer": {
+            "type": "string",
+            "description": "プレイヤーリストに表示されるフッターです。"
+          }
+        }
+      },
+      "compass": {
+        "$ref": "#/definitions/location",
+        "description": "アクターのコンパスのターゲットです。"
+      },
+      "bedLocation": {
+        "$ref": "#/definitions/location",
+        "description": "アクターのベッドスポーンの位置です。"
+      },
+      "exp": {
+        "type": "integer",
+        "description": "アクターの経験値です。"
+      },
+      "level": {
+        "type": "integer",
+        "description": "アクターのレベルです。"
+      },
+      "totalExp": {
+        "type": "integer",
+        "description": "アクターの総経験値です。"
+      },
+      "flyable": {
+        "type": "boolean",
+        "description": "アクターが飛行できるかどうかです。ゲームモードがクリエイティブおよびスペクテイタの場合は, 暗黙的に true になります。"
+      },
+      "flying": {
+        "type": "boolean",
+        "description": "アクターが飛行中かどうかです。"
+      },
+      "walkSpeed": {
+        "type": "number",
+        "description": "アクターの歩行速度です。"
+      },
+      "flySpeed": {
+        "type": "number",
+        "description": "アクターの飛行速度です。"
+      },
+      "inventory": {
+        "$ref": "#/definitions/playerInventory",
+        "description": "アクターのインベントリです。"
+      },
+      "enderChest": {
+        "$ref": "#/definitions/inventory",
+        "description": "アクターのエンダーチェストです。"
+      },
+      "mainHand": {
+        "type": "string",
+        "description": "アクターの利き手です。",
+        "enum": [
+          "left",
+          "right",
+          "LEFT",
+          "RIGHT"
+        ],
+        "default": "right"
+      },
+      "gamemode": {
+        "type": "string",
+        "description": "アクターのゲームモードです。",
+        "enum": [
+          "survival",
+          "creative",
+          "adventure",
+          "spectator",
+          "SURVIVAL",
+          "CREATIVE",
+          "ADVENTURE",
+          "SPECTATOR"
+        ],
+        "default": "survival"
+      },
+      "foodLevel": {
+        "type": "integer",
+        "description": "アクターの食料レベルです。",
+        "minimum": 0,
+        "maximum": 20,
+        "default": 20
+      },
+      "op": {
+        "type": [
+          "boolean",
+          "integer"
+        ],
+        "minimum": 0,
+        "maximum": 4,
+        "description": "アクターの OP レベルです。 0 は OP ではないことを意味します。"
+      },
+      "permissions": {
+        "type": "array",
+        "description": "アクターに与える権限です。",
+        "items": {
+          "type": "string"
+        }
+      }
+    },
+    "required": [
+      "name"
+    ]
+  },
+  "stage": {
+    "type": "object",
+    "description": "シナリオを実行するステージです。",
+    "properties": {
+      "copyOf": {
+        "type": "string",
+        "description": "オリジナルのワールドの名前です。サーバ上に存在するワールドをもとに, 新しくステージを作成します。"
+      },
+      "type": {
+        "type": "string",
+        "description": "ステージとして使用するワールドの種類です。",
+        "enum": [
+          "normal",
+          "flat",
+          "large_biomes",
+          "amplified",
+          "NORMAL",
+          "FLAT",
+          "LARGE_BIOMES",
+          "AMPLIFIED"
+        ],
+        "default": "normal"
+      },
+      "seed": {
+        "type": "number",
+        "description": "ステージとして使用するワールドのシードです。"
+      },
+      "structures": {
+        "type": "boolean",
+        "description": "ステージとして使用するワールドに構造物を生成するかどうかです。",
+        "default": true
+      },
+      "env": {
+        "type": "string",
+        "description": "ステージとして使用するワールドの環境です。",
+        "enum": [
+          "normal",
+          "nether",
+          "end",
+          "custom",
+          "NORMAL",
+          "NETHER",
+          "END",
+          "CUSTOM"
+        ],
+        "default": "normal"
+      },
+      "hardcore": {
+        "type": "boolean",
+        "description": "ステージとして使用するワールドがハードコアかどうかです。",
+        "default": false
+      }
+    }
+  },
+  "trigger": {
+    "type": "object",
+    "description": "トリガとよばれる, シナリオの実行条件のオブジェクトです。",
+    "properties": {
+      "type": {
+        "type": "string",
+        "description": "トリガの種類です。",
+        "enum": [
+          "manual_dispatch",
+          "schedule",
+          "on_action",
+          "on_load"
+        ]
+      },
+      "before": {
+        "$ref": "#/definitions/scenarios",
+        "description": "シナリオがこのトリガによって実行される場合, 本シナリオの実行前に実行するシナリオを定義します。"
+      },
+      "after": {
+        "$ref": "#/definitions/scenarios",
+        "description": "シナリオがこのトリガによって実行される場合, 本シナリオの実行後に実行するシナリオを定義します。"
+      },
+      "runif": {
+        "type": "object",
+        "description": "シナリオの実行条件を定義します。アクションで定義します。満たしていない場合はスキップされます。",
+        "$ref": "#/definitions/action"
+      }
+    },
+    "required": [
+      "type"
+    ],
+    "allOf": [
+      {
+        "if": {
+          "properties": {
+            "type": {
+              "const": "on_action"
+            }
+          }
+        },
+        "then": {
+          "$ref": "#/definitions/action"
+        }
+      }
+    ]
+  },
+  "scenarios": {
+    "type": "array",
+    "items": {
+      "$ref": "#/definitions/scenario"
+    },
+    "maxProperties": 1
+  }
+}

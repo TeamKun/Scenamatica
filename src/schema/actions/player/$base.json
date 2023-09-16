@@ -1,0 +1,9 @@
+{
+  "name": "player_$base",
+  "arguments": {
+    "target": {
+      "type": "string",
+      "description": "対象のプレイヤーです。"
+    }
+  }
+}

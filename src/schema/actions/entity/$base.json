@@ -1,0 +1,17 @@
+{
+  "name": "entity_$base",
+  "arguments": {
+    "target": {
+      "description": "対象のエンティティです。",
+      "oneOf": [
+        {
+          "type": "string",
+          "description": "エンティティの UUID またはセレクタです。"
+        },
+        {
+          "$ref": "#/definitions/entity"
+        }
+      ]
+    }
+  }
+}

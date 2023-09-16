@@ -1,0 +1,21 @@
+{
+  "name": "player_quit",
+  "description": "プレイヤをサーバから退出させます。",
+  "base": "player_$base",
+  "arguments": {
+    "message": {
+      "type": "string",
+      "description": "プレイヤーがサーバーから退出したときに表示するメッセージです。"
+    },
+    "reason": {
+      "type": "string",
+      "description": "プレイヤーがサーバーから退出した原因です。",
+      "enum": [
+        "DISCONNECTED",
+        "KICKED",
+        "TIMED_OUT",
+        "ERRONEOUS_STATE"
+      ]
+    }
+  }
+}

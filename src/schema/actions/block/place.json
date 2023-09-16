@@ -1,0 +1,40 @@
+{
+  "name": "block_place",
+  "description": "ブロックの設置を検知します。",
+  "base": "block_$base",
+  "arguments": {
+    "actor": {
+      "type": "string",
+      "description": "ブロックを破壊したアクタの名前です。",
+      "maxLength": 16
+    },
+    "hand": {
+      "type": "string",
+      "description": "ブロックを設置した手です。",
+      "enum": [
+        "HAND",
+        "OFF_HAND",
+        "hand",
+        "off_hand"
+      ]
+    },
+    "direction": {
+      "type": "string",
+      "description": "ブロックを設置する方向です。",
+      "enum": [
+        "UP",
+        "DOWN",
+        "NORTH",
+        "SOUTH",
+        "WEST",
+        "EAST",
+        "up",
+        "down",
+        "north",
+        "south",
+        "west",
+        "east"
+      ]
+    }
+  }
+}

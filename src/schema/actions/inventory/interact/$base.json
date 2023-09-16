@@ -1,0 +1,11 @@
+{
+  "name": "inventory_interact_$base",
+  "base": "inventory_$base",
+  "arguments": {
+    "target": {
+      "type": "string",
+      "description": "対象のプレイヤーです。"
+    }
+  },
+  "required": ["target"]
+}

@@ -1,0 +1,14 @@
+{
+  "name": "command_dispatch",
+  "description": "コマンドを実行します。",
+  "arguments": {
+    "command": {
+      "type": "string",
+      "description": "実行されるコマンドです。実行を検知する場合は正規表現を使用できます。"
+    },
+    "sender": {
+      "type": "string",
+      "description": "実行するプレイヤーです。省略した場合はコンソールです。"
+    }
+  }
+}

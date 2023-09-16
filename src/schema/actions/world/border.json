@@ -1,0 +1,37 @@
+{
+  "name": "world_border",
+  "description": "ワールドのボーダを変更します。",
+  "base": "world_$base",
+  "arguments": {
+    "type": {
+      "type": "string",
+      "description": "ワールドボーダの変更の種類です。",
+      "enum": [
+        "STARTED_MOVE",
+        "INSTANT_MOVE"
+      ]
+    },
+    "size": {
+      "type": "number",
+      "description": "ワールドボーダのサイズです。"
+    },
+    "size_old": {
+      "type": "number",
+      "description": "ワールドボーダのサイズの変更前の値です。"
+    },
+    "duration": {
+      "type": "number",
+      "description": "ワールドボーダの変更にかかる時間です。"
+    },
+    "center": {
+      "type": "object",
+      "description": "ワールドボーダの中心座標です。",
+      "$ref": "#/definitions/location"
+    },
+    "center_old": {
+      "type": "object",
+      "description": "ワールドボーダの中心座標の変更前の値です。",
+      "$ref": "#/definitions/location"
+    }
+  }
+}

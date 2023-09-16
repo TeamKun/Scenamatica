@@ -1,0 +1,73 @@
+{
+  "name": "world_game_rule",
+  "description": "ワールドのゲームルールを設定します",
+  "base": "world_$base",
+  "arguments": {
+    "rule": {
+      "type": "string",
+      "description": "ゲームルールの名前です。",
+      "enum": [
+        "announceAdvancements",
+        "commandBlockOutput",
+        "disableElytraMovementCheck",
+        "disableRaids",
+        "doDaylightCycle",
+        "doEntityDrops",
+        "doFireTick",
+        "doImmediateRespawn",
+        "doInsomnia",
+        "doLimitedCrafting",
+        "doMobLoot",
+        "doMobSpawning",
+        "doPatrolSpawning",
+        "doTileDrops",
+        "doTraderSpawning",
+        "doWeatherCycle",
+        "drowningDamage",
+        "fallDamage",
+        "fireDamage",
+        "forgiveDeadPlayers",
+        "keepInventory",
+        "logAdminCommands",
+        "maxCommandChainLength",
+        "maxEntityCramming",
+        "mobGriefing",
+        "naturalRegeneration",
+        "playersSleepingPercentage",
+        "randomTickSpeed",
+        "reducedDebugInfo",
+        "sendCommandFeedback",
+        "showDeathMessages",
+        "spawnRadius",
+        "spectatorsGenerateChunks",
+        "universalAnger",
+        "disableRaids",
+        "doImmediateRespawn",
+        "doPatrolSpawning",
+        "doTraderSpawning",
+        "forgiveDeadPlayers",
+        "keepInventory",
+        "logAdminCommands",
+        "maxCommandChainLength",
+        "maxEntityCramming",
+        "mobGriefing",
+        "naturalRegeneration",
+        "playersSleepingPercentage",
+        "randomTickSpeed",
+        "reducedDebugInfo",
+        "sendCommandFeedback",
+        "showDeathMessages",
+        "spawnRadius",
+        "spectatorsGenerateChunks",
+        "universalAnger"
+      ]
+    },
+    "value": {
+      "type": [
+        "boolean",
+        "number"
+      ],
+      "description": "ゲームルールの値です。"
+    }
+  }
+}

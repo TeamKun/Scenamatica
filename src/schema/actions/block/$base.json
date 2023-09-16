@@ -1,0 +1,9 @@
+{
+  "name": "block_$base",
+  "arguments": {
+    "block": {
+      "description": "対象のブロックです。",
+      "$ref": "#/definitions/block"
+    }
+  }
+}

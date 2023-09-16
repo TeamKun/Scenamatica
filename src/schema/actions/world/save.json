@@ -1,0 +1,5 @@
+{
+  "name": "world_save",
+  "description": "ワールドを保存します。",
+  "base": "world_$base"
+}

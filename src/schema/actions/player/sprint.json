@@ -1,0 +1,11 @@
+{
+  "name": "player_sprint",
+  "description": "プレイヤを走らせます。",
+  "base": "player_$base",
+  "arguments": {
+    "sneaking": {
+      "type": "boolean",
+      "description": "プレイヤーが走っているかどうかです。"
+    }
+  }
+}

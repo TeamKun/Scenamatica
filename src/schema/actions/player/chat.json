@@ -1,0 +1,16 @@
+{
+  "name": "player_chat",
+  "description": "プレイヤにチャットをさせます。",
+  "base": "player_$base",
+  "arguments": {
+    "message": {
+      "type": "string",
+      "description": "送信するメッセージまたは判定用の正規表現です。"
+    },
+    "format": {
+      "type": "string",
+      "description": "メッセージのフォーマットです。",
+      "example": "<%1$s> %2$s"
+    }
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "name": "broadcast",
+  "description": "サーバにブロードキャストメッセージを送信します。",
+  "arguments": {
+    "message": {
+      "type": "string",
+      "description": "送信するメッセージかその判定用の正規表現です。"
+    },
+    "recipients": {
+      "type": "array",
+      "description": "メッセージを受け取るプレイヤーの名前です。",
+      "items": {
+        "type": "string"
+      }
+    },
+    "permission": {
+      "type": "string",
+      "description": "メッセージを受け取るために必要な権限です。"
+    },
+    "strictRecipients": {
+      "type": "boolean",
+      "description": "有効な場合、余計なプレイヤがメッセージを受け取ると失敗します。"
+    }
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "name": "player_sneak",
+  "description": "プレイヤをしゃがませます。",
+  "base": "player_$base",
+  "arguments": {
+    "sneaking": {
+      "type": "boolean",
+      "description": "プレイヤーがスニークしているかどうかです。"
+    }
+  }
+}

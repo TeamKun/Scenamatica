@@ -1,0 +1,350 @@
+{
+  "entity": {
+    "type": "object",
+    "properties": {
+      "type": {
+        "type": "string",
+        "description": "エンティティの種類です。"
+      },
+      "location": {
+        "$ref": "#/definitions/location",
+        "description": "エンティティの位置です。"
+      },
+      "velocity": {
+        "$ref": "#/definitions/vector",
+        "description": "エンティティの速度です。"
+      },
+      "customName": {
+        "type": "string",
+        "description": "エンティティのカスタム名です。",
+        "maxLength": 16
+      },
+      "uuid": {
+        "type": "string",
+        "format": "uuid",
+        "description": "エンティティの UUID です。"
+      },
+      "glowing": {
+        "type": "boolean",
+        "description": "エンティティが発光しているかどうかです。"
+      },
+      "gravity": {
+        "type": "boolean",
+        "description": "エンティティが重力を受けているかどうかです。"
+      },
+      "silent": {
+        "type": "boolean",
+        "description": "エンティティが音を発するかどうかです。"
+      },
+      "customNameVisible": {
+        "type": "boolean",
+        "description": "エンティティのカスタム名が表示されるかどうかです。"
+      },
+      "invulnerable": {
+        "type": "boolean",
+        "description": "エンティティが無敵かどうかです。"
+      },
+      "tags": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "description": "エンティティに付与されているスコアボードのタグです。"
+      },
+      "lastDamage": {
+        "type": "object",
+        "description": "エンティティが最後に受けたダメージです。",
+        "properties": {
+          "modifier": {
+            "type": "string",
+            "description": "ダメージの編集の種類です。",
+            "enum": [
+              "BASE",
+              "HARD_HAT",
+              "BLOCKING",
+              "ARMOR",
+              "RESISTANCE",
+              "MAGIC",
+              "ABSORPTION"
+            ]
+          },
+          "cause": {
+            "type": "string",
+            "description": "ダメージの原因です。",
+            "enum": [
+              "contact",
+              "entity_attack",
+              "projectile",
+              "suffocation",
+              "fall",
+              "fire",
+              "fire_tick",
+              "melting",
+              "lava",
+              "drowning",
+              "block_explosion",
+              "entity_explosion",
+              "void",
+              "lightning",
+              "suicide",
+              "starvation",
+              "poison",
+              "magic",
+              "water",
+              "falling_block",
+              "thorns",
+              "dragon_breath",
+              "custom",
+              "fly_into_wall",
+              "hot_floor",
+              "cramming",
+              "dryout",
+              "CONTACT",
+              "ENTITY_ATTACK",
+              "PROJECTILE",
+              "SUFFOCATION",
+              "FALL",
+              "FIRE",
+              "FIRE_TICK",
+              "MELTING",
+              "LAVA",
+              "DROWNING",
+              "BLOCK_EXPLOSION",
+              "ENTITY_EXPLOSION",
+              "VOID",
+              "LIGHTNING",
+              "SUICIDE",
+              "STARVATION",
+              "POISON",
+              "MAGIC",
+              "WATER",
+              "FALLING_BLOCK",
+              "THORNS",
+              "DRAGON_BREATH",
+              "CUSTOM",
+              "FLY_INTO_WALL",
+              "HOT_FLOOR",
+              "CRAMMING",
+              "DRYOUT"
+            ]
+          },
+          "amount": {
+            "type": "number",
+            "description": "ダメージの量です。小数点を含められます。"
+          }
+        },
+        "required": [
+          "amount",
+          "cause",
+          "modifier"
+        ]
+      },
+      "maxHealth": {
+        "type": "number",
+        "description": "エンティティの最大体力です。"
+      },
+      "health": {
+        "type": "number",
+        "description": "エンティティの体力です。"
+      },
+      "potions": {
+        "type": "array",
+        "description": "エンティティにかかっているポーション効果を設定します。",
+        "items": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "description": "ポーション効果の種類です。",
+              "enum": [
+                "speed",
+                "slow",
+                "fast_digging",
+                "slow_digging",
+                "increase_damage",
+                "heal",
+                "harm",
+                "jump",
+                "confusion",
+                "regeneration",
+                "damage_resistance",
+                "fire_resistance",
+                "water_breathing",
+                "invisibility",
+                "blindness",
+                "night_vision",
+                "hunger",
+                "weakness",
+                "poison",
+                "wither",
+                "health_boost",
+                "absorption",
+                "saturation",
+                "glowing",
+                "levitation",
+                "luck",
+                "unluck",
+                "slow_falling",
+                "conduit_power",
+                "dolphins_grace",
+                "bad_omen",
+                "hero_of_the_village",
+                "SPEED",
+                "SLOW",
+                "FAST_DIGGING",
+                "SLOW_DIGGING",
+                "INCREASE_DAMAGE",
+                "HEAL",
+                "HARM",
+                "JUMP",
+                "CONFUSION",
+                "REGENERATION",
+                "DAMAGE_RESISTANCE",
+                "FIRE_RESISTANCE",
+                "WATER_BREATHING",
+                "INVISIBILITY",
+                "BLINDNESS",
+                "NIGHT_VISION",
+                "HUNGER",
+                "WEAKNESS",
+                "POISON",
+                "WITHER",
+                "HEALTH_BOOST",
+                "ABSORPTION",
+                "SATURATION",
+                "GLOWING",
+                "LEVITATION",
+                "LUCK",
+                "UNLUCK",
+                "SLOW_FALLING",
+                "CONDUIT_POWER",
+                "DOLPHINS_GRACE",
+                "BAD_OMEN",
+                "HERO_OF_THE_VILLAGE"
+              ]
+            },
+            "duration": {
+              "type": "number",
+              "description": "ポーション効果の持続時間です。"
+            },
+            "amplifier": {
+              "type": "number",
+              "description": "ポーション効果の強さです。"
+            },
+            "ambient": {
+              "type": "boolean",
+              "description": "ポーション効果がアンビエントかどうかです。"
+            },
+            "particles": {
+              "type": "boolean",
+              "description": "ポーション効果がパーティクルを出すかどうかです。"
+            },
+            "icon": {
+              "type": "boolean",
+              "description": "ポーション効果のアイコンを表示するかどうかです。"
+            }
+          }
+        }
+      },
+      "fireTicks": {
+        "type": "number",
+        "description": "エンティティが燃えている時間です。"
+      },
+      "ticksLived": {
+        "type": "number",
+        "description": "エンティティが生きている時間です。"
+      },
+      "portalCooldown": {
+        "type": "number",
+        "description": "エンティティがポータルに入れるようになるまでの時間です。"
+      },
+      "persistent": {
+        "type": "boolean",
+        "description": "エンティティが永続的かどうかです。"
+      },
+      "fallDistance": {
+        "type": "number",
+        "description": "エンティティが落下した距離です。"
+      }
+    }
+  },
+  "inventory": {
+    "type": "object",
+    "description": "インベントリを表します。",
+    "properties": {
+      "size": {
+        "type": "integer",
+        "description": "インベントリのサイズです。",
+        "default": 36,
+        "multipleOf": 9
+      },
+      "title": {
+        "type": "string",
+        "description": "インベントリのタイトルです。",
+        "maxLength": 32
+      },
+      "items": {
+        "type": "object",
+        "description": "インベントリのアイテムです。キーがスロット番号で、値がアイテムスタックです。",
+        "patternProperties": {
+          "^\\d+$": {
+            "$ref": "#/definitions/itemStack"
+          }
+        }
+      }
+    }
+  },
+  "entityItem": {
+    "type": "object",
+    "description": "アイテムのエンティティを表します。",
+    "$ref": "#/definitions/entity",
+    "$comment": "多重継承はできないので、 itemStack のプロパティをそっくりそのままコピーします。",
+    "properties": {
+      "pickupDelay": {
+        "type": "number",
+        "description": "アイテムを拾えるようになるまでの時間です。"
+      },
+      "owner": {
+        "type": "string",
+        "format": "uuid",
+        "description": "アイテムの所有者のUUIDです。"
+      },
+      "thrower": {
+        "type": "string",
+        "format": "uuid",
+        "description": "アイテムを投げたプレイヤーのUUIDです。"
+      },
+      "canMobPickup": {
+        "type": "boolean",
+        "description": "モブがアイテムを拾えるかどうかです。"
+      },
+      "canPlayerPickup": {
+        "type": "boolean",
+        "description": "プレイヤーがアイテムを拾えるかどうかです。"
+      },
+      "type": {
+        "type": "string",
+        "description": "アイテムの種類です。"
+      },
+      "amount": {
+        "type": "integer",
+        "description": "アイテムの個数です。省略時は 1 です。"
+      },
+      "name": {
+        "type": "string",
+        "description": "アイテムの名前です。 一般に displayName と同じです。"
+      },
+      "localizedName": {
+        "type": "string",
+        "description": "アイテムの多言語化された名前です。"
+      },
+      "lores": {
+        "type": "array",
+        "description": "アイテムの説明文です。",
+        "items": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

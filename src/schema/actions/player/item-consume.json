@@ -1,0 +1,15 @@
+{
+  "name": "player_item_consume",
+  "description": "プレイヤ",
+  "base": "player_$base",
+  "arguments": {
+    "item": {
+      "description": "消費するアイテムです。",
+      "$ref": "#/definitions/itemStack"
+    },
+    "replacement": {
+      "description": "消費後にプレイヤーに与えるアイテムです。",
+      "$ref": "#/definitions/itemStack"
+    }
+  }
+}

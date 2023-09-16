@@ -1,0 +1,15 @@
+{
+  "name": "inventory_open",
+  "description": "インベントリを閉きます。",
+  "base": "inventory_$base",
+  "arguments": {
+    "target": {
+      "type": "string",
+      "description": "対象のプレイヤーです。"
+    },
+    "inventory": {
+      "description": "開くインベントリです。",
+      "$ref": "#/definitions/inventory"
+    }
+  }
+}

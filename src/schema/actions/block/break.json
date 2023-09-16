@@ -1,0 +1,16 @@
+{
+  "name": "block_break",
+  "description": "ブロックの破壊を検知します。",
+  "base": "block_$base",
+  "arguments": {
+    "actor": {
+      "type": "string",
+      "description": "ブロックを破壊したアクタの名前です。",
+      "maxLength": 16
+    },
+    "dropItems": {
+      "type": "boolean",
+      "description": "ブロックがドロップするアイテムをドロップするかどうかです。"
+    }
+  }
+}

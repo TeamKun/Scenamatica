@@ -1,0 +1,19 @@
+{
+  "name": "world_border_changed",
+  "description": "ワールドボーダの変更の完了を検知します。",
+  "base": "world_$base",
+  "arguments": {
+    "size": {
+      "type": "number",
+      "description": "ワールドボーダのサイズです。"
+    },
+    "size_old": {
+      "type": "number",
+      "description": "ワールドボーダのサイズの変更前の値です。"
+    },
+    "duration": {
+      "type": "number",
+      "description": "ワールドボーダの変更にかかる時間です。"
+    }
+  }
+}

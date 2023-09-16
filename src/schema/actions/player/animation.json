@@ -1,0 +1,14 @@
+{
+  "name": "player_animation",
+  "description": "プレイヤのアニメーションを再生します。",
+  "base": "player_$base",
+  "arguments": {
+    "type": {
+      "type": "string",
+      "description": "再生するアニメーションの種類です。",
+      "enum": [
+        "ARM_SWING"
+      ]
+    }
+  }
+}

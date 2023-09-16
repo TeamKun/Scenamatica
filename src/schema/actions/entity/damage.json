@@ -1,0 +1,55 @@
+{
+  "name": "entity_damage",
+  "description": "エンティティにダメージを与えます。",
+  "base": "entity_$base",
+  "arguments": {
+    "cause": {
+      "type": "string",
+      "description": "ダメージの種類です。",
+      "enum": [
+        "CONTACT",
+        "ENTITY_ATTACK",
+        "ENTITY_SWEEP_ATTACK",
+        "PROJECTILE",
+        "SUFFOCATION",
+        "FALL",
+        "FIRE",
+        "FIRE_TICK",
+        "MELTING",
+        "LAVA",
+        "DROWNING",
+        "BLOCK_EXPLOSION",
+        "ENTITY_EXPLOSION",
+        "VOID",
+        "LIGHTNING",
+        "SUICIDE",
+        "STARVATION",
+        "POTION",
+        "MAGIC",
+        "WITHER",
+        "FALLING_BLOCK",
+        "THORNS",
+        "DRAGON_BREATH",
+        "CUSTOM",
+        "FLY_INTO_WALL",
+        "HOT_FLOOR",
+        "CRAMMING",
+        "DRYOUT"
+      ]
+    },
+    "amount": {
+      "type": "number",
+      "description": "与えるダメージの量(float)です。",
+      "min": 0
+    },
+    "modifiers": {
+      "type": "object",
+      "patternProperties": {
+        "^\\w+$": {
+          "type": "number",
+          "min": 0
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "name": "world_$base",
+  "arguments": {
+    "world": {
+      "description": "ワールドの名前の名前空間付きキーです。",
+      "$ref": "#/definitions/namespacedKey"
+    }
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "whitelist_toggle",
+  "description": "サーバのホワイトリストを切り替えます。",
+  "arguments": {
+    "enabled": {
+      "type": "boolean",
+      "description": "ホワイトリストが有効かどうかです。"
+    }
+  }
+}

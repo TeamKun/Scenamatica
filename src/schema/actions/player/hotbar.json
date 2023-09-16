@@ -1,0 +1,23 @@
+{
+  "name": "player_hotbar",
+  "description": "プレイヤのホットバーのアイテムを変更します。",
+  "base": "player_$base",
+  "arguments": {
+    "slot": {
+      "type": "integer",
+      "description": "ホットバーのスロットです。",
+      "minimum": 0,
+      "maximum": 8
+    },
+    "previous_slot": {
+      "type": "integer",
+      "description": "ホットバーのスロットが変更される前のスロットです。",
+      "minimum": 0,
+      "maximum": 8
+    },
+    "item": {
+      "description": "ホットバーのスロットに入っているアイテムです。",
+      "$ref": "#/definitions/itemStack"
+    }
+  }
+}
