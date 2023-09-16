@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.actions.AbstractActionArgument;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
+import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
@@ -19,6 +20,7 @@ import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class WhitelistToggleAction extends AbstractServerAction<WhitelistToggleAction.Argument>
         implements Executable<WhitelistToggleAction.Argument>, Watchable<WhitelistToggleAction.Argument>, Requireable<WhitelistToggleAction.Argument>
@@ -48,7 +50,7 @@ public class WhitelistToggleAction extends AbstractServerAction<WhitelistToggleA
 
         WhitelistToggleEvent e = (WhitelistToggleEvent) event;
 
-        return e.isEnabled() == argument.enabled;
+        return argument.enabled == null || argument.enabled == e.isEnabled();
     }
 
     @Override
@@ -72,8 +74,8 @@ public class WhitelistToggleAction extends AbstractServerAction<WhitelistToggleA
     @Override
     public boolean isConditionFulfilled(@Nullable Argument argument, @NotNull ScenarioEngine engine)
     {
-        argument = this.requireArgsNonNull(argument);
-        return Bukkit.getServer().hasWhitelist() == argument.enabled;
+        return argument == null || argument.enabled == null
+                || Bukkit.getServer().hasWhitelist() == argument.enabled;
     }
 
     @Value
@@ -82,7 +84,7 @@ public class WhitelistToggleAction extends AbstractServerAction<WhitelistToggleA
     {
         public static final String KEY_ENABLED = "enabled";
 
-        boolean enabled;
+        Boolean enabled;
 
         @Override
         public boolean isSame(TriggerArgument argument)
@@ -92,10 +94,16 @@ public class WhitelistToggleAction extends AbstractServerAction<WhitelistToggleA
 
             Argument arg = (Argument) argument;
 
-            return this.enabled == arg.enabled;
+            return Objects.equals(this.enabled, arg.enabled);
         }
 
-        // TODO: Create validation for argument
+        @Override
+        public void validate(@NotNull ScenarioEngine engine, @NotNull ScenarioType type)
+        {
+            if (type == ScenarioType.ACTION_EXECUTE)
+                throwIfNotPresent(KEY_ENABLED, this.enabled);
+        }
+
         @Override
         public String getArgumentString()
         {
