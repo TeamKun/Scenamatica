@@ -27,36 +27,67 @@ import { Object, ObjectType } from '/src/components/Object'
 トリガは、以下の種類があります。
 
   * [アクション実行 (`on_action`)](#on_action)
+  * [プラグインのロード (`on_load`)](#on_load)
+  * [手動実行 (`manual_dispatch`)](#manual_dispatch)
+
 
 ### アクション実行 (`on_action`) トリガ {#on_action}
 
-引数に指定されたアクションが実行されたときにシナリオを実行します。  
+引数に指定されたアクション実行期待シナリオが実行されたときにシナリオを実行します。  
 
-:::tip
-
-内部的には、[こちら](/docs/use/scenario/elements#scenario-type-action-execution-expect)
-のシナリオのアクション実行期待機能を~~使いまわし~~利用しています。
-
-:::
-
-引数は以下のとおりです。
-
-<Object objects={[
-  {
-    name: "action",
-    type: ObjectType.STRING,
-    description: "アクションの名前です。",
-  },
-  {
-    name: "with",
-    anchor: "action-with",
-    type: ObjectType.OBJECT,
-    description: "アクションのパラメータです。"
-  },
-]} />
+引数はアクション実行期待シナリオの記述と同じです。詳細な構文に関しては[こちら](file-syntax/#action-structure)を参照してください。
 
 :::tip
 
 アクションのパラメータは、各アクションのドキュメントを参照してください。
 
 :::
+
+#### 例 {#on_action-example}
+
+```yaml
+
+# ...
+
+on:
+- type: on_action
+  action: "player_death"
+  with:
+    target: "Actor1"
+```
+
+### プラグインのロード (`on_load`) トリガ {#on_load}
+
+プラグインがロードされたときにシナリオを実行します。  
+これには、サーバのリロードや再起動も含みます。
+
+引数はありません。
+
+#### 例 {#on_load-example}
+
+```yaml
+
+# ...
+on:
+- type: on_load
+```
+
+### 手動実行 (`manual_dispatch`) トリガ {#manual_dispatch}
+
+Scenamatica のコマンドを用いて、手動でシナリオを実行します。
+
+引数は有りません。
+
+<BelowDocument docId={"use/commands/scenario"}
+               anchor="start"
+               label={<>コマンド | <kbd>/scenamatica scenario start</kbd></>}
+/>
+
+#### 例 {#manual_dispatch-example}
+
+```yaml
+
+# ...
+on:
+- type: manual_dispatch
+```

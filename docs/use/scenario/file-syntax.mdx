@@ -17,8 +17,8 @@ import { Object, ObjectType } from "/src/components/Object";
 
 :::
 
-シナリオファイルは、 `.yml` もしくは `.yaml` の拡張子を持つ YAML ファイルです。プラグインの .jar 内であれば、任意の場所に配置できます。  
-１つのシナリオ/テストにつき１つのシナリオファイルが必要です。  
+シナリオファイルは、 `.yml` もしくは `.yaml` の拡張子を持つ YAML ファイルです。プラグインの .jar 内であれば任意の場所に配置できます。  
+１つのシナリオ・テストにつき１つのシナリオファイルが必要です。  
 そのため、各テスト対象機能用のシナリオを格納するディレクトリを作成し、その中に個別のシナリオファイルを配置するのが一般的です。
 
 ## シナリオファイルの例 {#example}
@@ -35,7 +35,7 @@ Scenamatica のソースコードを GitHub にプッシュすると、 CI に�
 ## JSON スキーマ {#json-schema}
 
 シナリオファイルの完全な構文は、[JSON スキーマ](https://json-schema.org/)で定義されています。  
-JSON スキーマは[こちら](https://raw.githubusercontent.com/TeamKun/Scenamatica/main/scenamatica-file.json) からダウンロードできます。
+JSON スキーマは[こちら](https://scenamatica.kunlab.org/scenamatica-file.json) からダウンロードできます。
 
 ## シナリオファイルの構造 {#scenario-file-structure}
 
@@ -72,15 +72,16 @@ JSON スキーマは[こちら](https://raw.githubusercontent.com/TeamKun/Scenam
     name: "timeout",
     anchor: "apex-timeout",
     type: ObjectType.LONG,
-    description: "シナリオのタイムアウト時間です。",
+    description: "シナリオのタイムアウト時間（チック）です。",
     default: 20 * 60 * 5 // チック指定
   },
   {
     name: "order",
     anchor: "apex-order",
-    type: ObjectType.INTEGER,
-    description: "シナリオの実行順序です。",
-    default: 2147483647
+    type: ObjectType.INTEGER + " | Order",
+    type_anchor: "order-enum",
+    description: "シナリオの実行順序です。小さいほど先に実行されます。",
+    default: `NORMAL`
   },
   {
     name: "context",
@@ -116,17 +117,17 @@ JSON スキーマは[こちら](https://raw.githubusercontent.com/TeamKun/Scenam
 
 ### `scenamatica` {#apex-scenamatica}
 
+シナリオテスト時に使用できる**最も低い** Scenamatica のバージョンを指定します。  
+これは、 サーバの Scenamatica に存在しない未来の機能を使用している場合に検出するためです。
+
 全てのシナリオファイルには、 `scenamatica` という項目が必要です。これは技術的な制約によるものでもありますが、
 Scenamatica が 検出した YAML ファイルをシナリオファイルかどうか判別するためにも使用されます。
 
-この項目の値には、シナリオテスト時に使用できる**最も低い** Scenamatica のバージョンを指定します。  
-これは、 サーバの Scenamatica に存在しない未来の機能を使用している場合に検出するためです。
-
-通常は、検証サーバの Scenamatica のバージョンを指定すれば問題ありません。
+検証サーバの Scenamatica のバージョンを指定すれば通常は問題ありません。
 
 :::caution
 
-Scenamatica のバージョンは、 `x.y.z` の形式で指定します。  
+Scenamatica のバージョンは、`x.y.z` の形式で指定します。  
 また、指定されたバージョンよりも古いバージョンの Scenamatica ではシナリオファイルを読み込むことができません。
 
 :::
@@ -142,8 +143,8 @@ Scenamatica のバージョンは、 `x.y.z` の形式で指定します。
 + ケバブケース（単語をハイフンでつなぐ）
 + 推奨フォーマット： `test-<機能名>-<success|failure-with-[失敗内容]>.yml`  
   先頭を `test-機能名` にすることで、機能のテストということが分かりやすくなります。  
-  また、正常に成功することを確認するテストの場合は `success`、
-  異常入力等で失敗することを確認するテストの場合は `failure-with-<失敗内容>` というようにするとわかりやすいです。
+  また、正常に成功することを確認するテストの場合は `success-<機能名>`、  
+  異常入力等で失敗することを確認するテストの場合は `failure-<機能名>-with-<失敗理由>` というようにするとわかりやすいでしょう。
 
 例： `test-hoge-success.yml` 、 `test-hoge-failure-with-no-argument.yml`
 
@@ -166,22 +167,16 @@ Scenamatica のバージョンは、 `x.y.z` の形式で指定します。
 
 :::tip
 
-`-1` を指定すると、タイムアウトは無効になり、無限に実行します。
+`-1` を指定するとタイムアウトは無効になり、無限に実行されます。
 
 :::
 
 ### `order` {#apex-order}
 
 シナリオの**同一[セッション内](./#scenario-session)での**実行順序を制御します。   
-[セッション](./#scenario-session)とは、同じトリガの種類を持つシナリオが同時に発火した場合に、それらをグループ化するためのものです。 
+[セッション](./#scenario-session)とは、同じトリガの種類を持つシナリオが同時に発火した場合に、それらを一つのグループとみなしてシナリオを効率的に実行するためのものです。
 
 実行順序は、数値が低いものから順に実行されます。未設定の場合は自動的に名前順でソートされ、セッションの末尾に追加されます。
-
-<BelowDocument docId="use/scenario/README"
-               anchor={"scenario-session"}
-               label={"シナリオ - シナリオセッション"}
-/>
-
 
 <BelowDocument docId="use/scenario/README"
                anchor={"scenario-ordering"}
@@ -191,7 +186,8 @@ Scenamatica のバージョンは、 `x.y.z` の形式で指定します。
 
 ### `context` {#apex-context}
 
-シナリオの実行に必要な環境を定義します。
+シナリオの実行に必要な環境を定義します。  
+コンテキストの概念についての説明は[こちら](elements/#context)を、ファイルに記述する際の構文にについては[こちら](#context-structure)を参照してください。
 
 :::tip
 
@@ -220,9 +216,26 @@ Scenamatica のバージョンは、 `x.y.z` の形式で指定します。
 
 シナリオファイルの本シナリオです。シナリオを定義するのに使用します。
 
+## 列挙型：実行順序 {#order-enum}
+
+シナリオの実行順の列挙値です。
+
+| 名前      | 値           |
+|:--------|:------------|
+| FIRST   | -2147483648 |
+| HIGHEST | -10000      |
+| HIGHER  | -1000       |
+| HIGH    | -100        |
+| NORMAL  | 0           |
+| LOW     | 100         |
+| LOWER   | 1000        |
+| LOWEST  | 10000       |
+| LAST    | 2147483647  |
+
+
 ## コンテキスト型 {#context-structure}
 
-コンテキストは、以下の構造を持ちます。
+[コンテキスト](elements/#context)は、以下の構造を持ちます。
 
 <Object objects={[
   {
@@ -245,13 +258,13 @@ Scenamatica のバージョンは、 `x.y.z` の形式で指定します。
 
 シナリオの実行に必要なアクターを定義します。
 
-アクターに関しては、[こちら](elements/#actor-structure)を参照してください。
+アクターの概念についての説明は[こちら](elements/#actor-structure)を参照してください。
 
 ### `stage` {#context-stage}
 
 シナリオの実行に必要なステージを定義します。  
 
-ステージに関しては、[こちら](elements/#stage-structure)を参照してください。
+ステージの概念についての説明は[こちら](elements/#stage-structure)を参照してください。
 
 ## トリガ型 {#trigger-structure}
 
@@ -296,10 +309,8 @@ Scenamatica のバージョンは、 `x.y.z` の形式で指定します。
 
 :::caution
 
-トリガにおける引数の概念は一見無いように見えますが、実際には存在します。  
-トリガの種類によっては必要になるものがありますので、それぞれのトリガーの説明を参照してください。
-
-また、引数の指定用のキー等はないので、このトリガの構造に直に追記してください。
+トリガの種類によっては必要になるものがあります。  
+それぞれのトリガーの説明を参照してください。
 
 <BelowDocument
   docId="use/scenario/triggers"
