@@ -36,6 +36,14 @@ public class Utils
         return newLoc;
     }
 
+    public static boolean isEqualLocation(@NotNull Location loc1, @NotNull Location loc2)
+    {
+        return (loc1.getWorld() == null || loc2.getWorld() == null || loc1.getWorld().getUID().equals(loc2.getWorld().getUID()))
+                && loc1.getBlockX() == loc2.getBlockX()
+                && loc1.getBlockY() == loc2.getBlockY()
+                && loc1.getBlockZ() == loc2.getBlockZ();
+    }
+
     public static Material searchMaterial(@Nullable String name)
     {
         if (name == null)
