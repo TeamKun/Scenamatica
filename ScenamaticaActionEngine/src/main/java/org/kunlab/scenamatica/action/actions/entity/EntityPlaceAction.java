@@ -211,9 +211,7 @@ public class EntityPlaceAction extends AbstractEntityAction<EntityPlaceAction.Ar
             if (type != ScenarioType.ACTION_EXECUTE)
                 return;
 
-            if (!this.isSelectable())
-                throw new IllegalArgumentException("Cannot select target for this action, please specify target with valid selector.");
-
+            this.throwIfNotSelectable();
             throwIfNotPresent(KEY_BLOCK, this.block);
             if (this.block.getLocation() == null)
                 throw new IllegalArgumentException("Block location is not specified.");

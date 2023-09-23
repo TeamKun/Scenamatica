@@ -127,8 +127,7 @@ public class EntityDamageByEntityAction extends EntityDamageAction<EntityDamageB
 
             if (type == ScenarioType.ACTION_EXECUTE)
             {
-                if (!this.isSelectable())
-                    throw new IllegalArgumentException("Cannot select target for this action, please specify target with valid selector.");
+                this.throwIfNotSelectable();
                 throwIfNotPresent(KEY_DAMAGER, this.damager);
             }
         }

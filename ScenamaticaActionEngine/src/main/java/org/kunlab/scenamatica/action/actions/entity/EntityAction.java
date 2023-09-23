@@ -109,9 +109,7 @@ public class EntityAction extends AbstractEntityAction<EntityAction.Argument>
         @Override
         public void validate(@NotNull ScenarioEngine engine, @NotNull ScenarioType type)
         {
-            if (!this.isSelectable())
-                throw new IllegalArgumentException("Cannot select target for this action, please specify target with valid selector.");
-
+            this.throwIfNotSelectable();
             if (type == ScenarioType.ACTION_EXECUTE && this.entity == null)
                 throw new IllegalArgumentException("Cannot execute action without entity argument.");
         }

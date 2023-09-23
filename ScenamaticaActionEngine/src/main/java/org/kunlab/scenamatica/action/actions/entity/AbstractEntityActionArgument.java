@@ -86,4 +86,11 @@ public abstract class AbstractEntityActionArgument extends AbstractActionArgumen
             return "target=" + this.targetBean;
 
     }
+
+    public void throwIfNotSelectable()
+    {
+        if (!this.isSelectable())
+            throw new IllegalArgumentException("Cannot select target for this action, please specify target with valid selector.");
+
+    }
 }

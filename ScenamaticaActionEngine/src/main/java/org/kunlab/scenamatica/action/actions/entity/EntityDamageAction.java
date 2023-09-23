@@ -148,8 +148,7 @@ public class EntityDamageAction<A extends EntityDamageAction.Argument> extends A
         {
             if (type == ScenarioType.ACTION_EXECUTE)
             {
-                if (!this.isSelectable())
-                    throw new IllegalArgumentException("Cannot select target for this action, please specify target with valid selector.");
+                this.throwIfNotSelectable();
                 throwIfNotPresent(Argument.KEY_AMOUNT, this.amount);
                 if (this.cause != null)
                     throw new IllegalArgumentException("Use entity_damage_by_entity or entity_damage_by_block action instead.");

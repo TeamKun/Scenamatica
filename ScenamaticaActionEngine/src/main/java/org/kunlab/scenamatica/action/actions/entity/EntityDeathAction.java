@@ -176,9 +176,7 @@ public class EntityDeathAction extends AbstractEntityAction<EntityDeathAction.Ar
         {
             if (type == ScenarioType.ACTION_EXECUTE)
             {
-                if (!this.isSelectable())
-                    throw new IllegalArgumentException("Cannot select target for this action, please specify target with valid selector.");
-
+                this.throwIfNotSelectable();
                 throwIfPresent(KEY_DROPS, this.drops);
                 throwIfPresent(KEY_DROP_EXP, this.dropExp);
                 throwIfPresent(KEY_REVIVE_HEALTH, this.reviveHealth);

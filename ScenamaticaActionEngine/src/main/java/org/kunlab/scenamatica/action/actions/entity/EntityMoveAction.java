@@ -111,9 +111,7 @@ public class EntityMoveAction extends AbstractEntityAction<EntityMoveAction.Argu
         {
             if (type == ScenarioType.ACTION_EXECUTE)
             {
-                if (!this.isSelectable())
-                    throw new IllegalArgumentException("Cannot select target for this action, please specify target with valid selector.");
-
+                this.throwIfNotSelectable();
                 throwIfNotPresent(KEY_TARGET_ENTITY, this.getTargetString());
                 throwIfPresent(KEY_FROM, this.from);
                 throwIfNotPresent(KEY_TO, this.to);

@@ -160,9 +160,7 @@ public class EntityDropItemAction extends AbstractEntityAction<EntityDropItemAct
         {
             if (type == ScenarioType.ACTION_EXECUTE)
             {
-                if (!this.isSelectable())
-                    throw new IllegalArgumentException("Cannot select target for this action, please specify target with valid selector.");
-
+                this.throwIfNotSelectable();
                 throwIfNotPresent(KEY_DROP_ITEM, this.item);
             }
         }
