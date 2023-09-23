@@ -354,6 +354,43 @@ import {ObjectType} from "/src/components/Object";
         executable watchable
 />
 
+## エンティティの移動 {#move}
+
+<Action name="エンティティの移動"
+        description="エンティティを移動させます。"
+        id="entity_move"
+        events={[
+          {
+            name: "EntityMoveEvent",
+            package: "org.bukkit.event.entity",
+          }
+        ]}
+        args={[
+          {
+            name: "entity",
+            anchor: "general-entity",
+            type: ObjectType.STRING,
+            description: "移動させるエンティティです。",
+            required: [ScenarioType.EXECUTE]
+          },
+          {
+            name: "from",
+            type: "Location",
+            type_link: "../file-syntax#location-structure",
+            description: "移動前の位置です。",
+            available: [ScenarioType.EXPECT]
+          },
+          {
+            name: "to",
+            type: "Location",
+            type_link: "../file-syntax#location-structure",
+            description: "移動後の位置です。",
+            required: [ScenarioType.EXECUTE, ScenarioType.EXPECT]
+          }
+        ]}
+        executable watchable
+/>
+
 ## エンティティの設置 {#place}
 
 <Action name="エンティティの設置"

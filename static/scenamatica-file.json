@@ -684,6 +684,7 @@
             "entity_death",
             "entity_drop_item",
             "entity",
+            "entity_move",
             "entity_place",
             "entity_spawn",
             "inventory_close",
@@ -849,6 +850,23 @@
             "properties": {
               "with": {
                 "$ref": "#/definitions/action/definitions/entity"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "entity_move",
+                "description": "エンティティを移動させます。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/entity_move"
               }
             }
           }
@@ -1695,6 +1713,21 @@
             "entity": {
               "$ref": "#/definitions/entity",
               "description": "変更する値です。"
+            }
+          },
+          "$ref": "#/definitions/action/definitions/entity_$base"
+        },
+        "entity_move": {
+          "type": "object",
+          "description": "エンティティを移動させます。",
+          "properties": {
+            "from": {
+              "$ref": "#/definitions/location",
+              "description": "移動元の座標を指定します。"
+            },
+            "to": {
+              "$ref": "#/definitions/location",
+              "description": "移動先の座標を指定します。"
             }
           },
           "$ref": "#/definitions/action/definitions/entity_$base"

@@ -1,0 +1,15 @@
+{
+  "name": "entity_move",
+  "description": "エンティティを移動させます。",
+  "base": "entity_$base",
+  "arguments": {
+    "from": {
+      "$ref": "#/definitions/location",
+      "description": "移動元の座標を指定します。"
+    },
+    "to": {
+      "$ref": "#/definitions/location",
+      "description": "移動先の座標を指定します。"
+    }
+  }
+}
