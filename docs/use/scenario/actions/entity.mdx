@@ -386,10 +386,25 @@ import {ObjectType} from "/src/components/Object";
             type_link: "../file-syntax#location-structure",
             description: "移動後の位置です。",
             required: [ScenarioType.EXECUTE, ScenarioType.EXPECT]
+          },
+          {
+            name: "ai",
+            type: ObjectType.BOOLEAN,
+            description: "AI を有効にするかどうかです。",
+            available: [ScenarioType.EXECUTE],
+            anchor: "move-ai",
+            default: true
           }
         ]}
         executable watchable
 />
+
+### `ai` {#move-ai}
+
+AI を有効にした場合, エンティティは経路を探索し自発的に移動しようとします。  
+経路が見つからなかった場合や, その場所に到達できない場合は例外をスローし, シナリオの実行が**失敗します**。
+
+この引数を `false` にした場合, エンティティは移動先にテレポートします。
 
 ## エンティティの設置 {#place}
 
