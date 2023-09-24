@@ -4,6 +4,7 @@ import com.destroystokyo.paper.Namespaced;
 import com.google.common.collect.Multimap;
 import lombok.experimental.UtilityClass;
 import net.kyori.adventure.text.Component;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.attribute.Attribute;
@@ -12,8 +13,10 @@ import org.bukkit.block.Block;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDropItemEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -28,6 +31,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.entities.EntityBean;
+import org.kunlab.scenamatica.interfaces.scenariofile.entities.EntityItemBean;
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.InventoryBean;
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.ItemStackBean;
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.PlayerInventoryBean;
@@ -454,5 +458,29 @@ public class BeanUtils
                 return false;
 
         return true;
+    }
+
+    public static void applyItemBeanData(EntityItemBean bean, Entity dropper, Item entity)
+    {
+        EntityDropItemEvent event = new EntityDropItemEvent(dropper, entity);
+        Bukkit.getPluginManager().callEvent(event);
+        if (event.isCancelled())
+        {
+            entity.remove();
+            return;
+        }
+
+        if (bean.getPickupDelay() != null)
+            entity.setPickupDelay(bean.getPickupDelay());
+        if (bean.getOwner() != null)
+            entity.setOwner(bean.getOwner());
+        if (bean.getThrower() != null)
+            entity.setThrower(bean.getThrower());
+        if (bean.getVelocity() != null)
+            entity.setVelocity(bean.getVelocity());
+        if (bean.getCanMobPickup() != null)
+            entity.setCanMobPickup(bean.getCanMobPickup());
+        if (bean.getWillAge() != null)
+            entity.setWillAge(bean.getWillAge());
     }
 }

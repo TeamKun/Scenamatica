@@ -2,7 +2,6 @@ package org.kunlab.scenamatica.action.actions.entity;
 
 import lombok.EqualsAndHashCode;
 import lombok.Value;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.event.Event;
@@ -31,30 +30,6 @@ public class EntityDropItemAction extends AbstractEntityAction<EntityDropItemAct
 {
     public static final String KEY_ACTION_NAME = "entity_drop_item";
 
-    private static void applyBean(EntityItemBean bean, Entity dropper, Item entity)
-    {
-        EntityDropItemEvent event = new EntityDropItemEvent(dropper, entity);
-        Bukkit.getPluginManager().callEvent(event);
-        if (event.isCancelled())
-        {
-            entity.remove();
-            return;
-        }
-
-        if (bean.getPickupDelay() != null)
-            entity.setPickupDelay(bean.getPickupDelay());
-        if (bean.getOwner() != null)
-            entity.setOwner(bean.getOwner());
-        if (bean.getThrower() != null)
-            entity.setThrower(bean.getThrower());
-        if (bean.getVelocity() != null)
-            entity.setVelocity(bean.getVelocity());
-        if (bean.getCanMobPickup() != null)
-            entity.setCanMobPickup(bean.getCanMobPickup());
-        if (bean.getWillAge() != null)
-            entity.setWillAge(bean.getWillAge());
-    }
-
     @Override
     public String getName()
     {
@@ -72,7 +47,7 @@ public class EntityDropItemAction extends AbstractEntityAction<EntityDropItemAct
         target.getWorld().dropItemNaturally(
                 target.getLocation(),
                 argument.getItem().getItemStack().toItemStack(),
-                (entity) -> applyBean(argument.getItem(), target, entity)
+                (entity) -> BeanUtils.applyItemBeanData(argument.getItem(), target, entity)
         );
     }
 
