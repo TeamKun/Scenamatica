@@ -5,6 +5,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Mob;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -39,9 +40,17 @@ public class EntityMoveAction extends AbstractEntityAction<EntityMoveAction.Argu
         argument = this.requireArgsNonNull(argument);
 
         Location toLoc = Utils.assignWorldToLocation(argument.getTo(), engine);
-
         Entity entity = argument.selectTarget();
-        entity.teleport(toLoc);  // TODO: use AI instead of teleport
+
+        if (argument.isUseAI() && entity instanceof Mob)
+        {
+            Mob mob = (Mob) entity;
+            boolean success = mob.getPathfinder().moveTo(toLoc);
+            if (!success)
+                throw new IllegalStateException("Failed to find path from " + entity.getLocation() + " to " + toLoc);
+        }
+        else
+            entity.teleport(toLoc);
     }
 
     @Override
@@ -85,7 +94,8 @@ public class EntityMoveAction extends AbstractEntityAction<EntityMoveAction.Argu
         return new Argument(
                 super.deserializeTarget(map, serializer),
                 MapUtils.getAsLocationOrNull(map, Argument.KEY_FROM),
-                MapUtils.getAsLocationOrNull(map, Argument.KEY_TO)
+                MapUtils.getAsLocationOrNull(map, Argument.KEY_TO),
+                MapUtils.getOrDefault(map, Argument.KEY_USE_AI, true)
         );
     }
 
@@ -95,15 +105,19 @@ public class EntityMoveAction extends AbstractEntityAction<EntityMoveAction.Argu
     {
         private static final String KEY_FROM = "from";
         private static final String KEY_TO = "to";
+        private static final String KEY_USE_AI = "ai";
 
         Location from;
         Location to;
+        // Execute のときのみ. デフォは true -> テレポート.
+        boolean useAI;
 
-        public Argument(@Nullable Object mayTarget, Location from, Location to)
+        public Argument(@Nullable Object mayTarget, Location from, Location to, boolean useAI)
         {
             super(mayTarget);
             this.from = from;
             this.to = to;
+            this.useAI = useAI;
         }
 
         @Override

@@ -42,6 +42,7 @@ scenario:
         x: 0
         y: 255
         z: 0
+      ai: false
   - type: expect
     action: entity_move
     with:
