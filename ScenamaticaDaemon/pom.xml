@@ -101,5 +101,15 @@
             <version>0.8.0</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>org.kunlab.scenamatica.nms</groupId>
+            <artifactId>NMSCore</artifactId>
+            <version>0.8.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.kunlab.scenamatica.nms</groupId>
+            <artifactId>v1_16_R3</artifactId>
+            <version>0.8.0</version>
+        </dependency>
     </dependencies>
 </project>

@@ -50,5 +50,10 @@
             <version>1.16.5-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>org.kunlab.scenamatica.nms</groupId>
+            <artifactId>NMSTypes</artifactId>
+            <version>0.8.0</version>
+        </dependency>
     </dependencies>
 </project>

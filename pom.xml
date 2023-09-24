@@ -20,6 +20,7 @@
         <module>ScenamaticaTriggerEngine</module>
         <module>ScenamaticaScenarioEngine</module>
         <module>ScenamaticaAPI</module>
+        <module>NMSBridge</module>
     </modules>
 
     <name>Scenamatica</name>
