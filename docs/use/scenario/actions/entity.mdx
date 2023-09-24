@@ -406,6 +406,60 @@ AI を有効にした場合, エンティティは経路を探索し自発的に
 
 この引数を `false` にした場合, エンティティは移動先にテレポートします。
 
+## アイテムのピックアップ {#pickup-item}
+
+<Action name="アイテムのピックアップ"
+        description="エンティティがアイテムをピックアップします。"
+        id="entity_pickup_item"
+        events={[
+          {
+            name: "EntityPickupItemEvent",
+            package: "org.bukkit.event.entity",
+          }
+        ]}
+        args={[
+          {
+            name: "entity",
+            anchor: "general-entity",
+            type: ObjectType.STRING,
+            description: "アイテムをピックアップするエンティティです。",
+            required: [ScenarioType.EXECUTE]
+          },
+          {
+            name: "item",
+            type: "EntityItem | " + ObjectType.STRING,
+            type_link: "../file-syntax#entity-item-structure",
+            description: "ピックアップするアイテムです。",
+            anchor: "pickup-item-item",
+            required: [ScenarioType.EXECUTE]
+          },
+          {
+            name: "remaining",
+            type: ObjectType.INTEGER,
+            description: "残りのアイテムの数です。",
+            available: [ScenarioType.EXPECT]
+          }
+        ]}
+        executable watchable
+/>
+
+### アクション実行シナリオでの使用 {#pickup-item-execute}
+
+アイテムを拾うエンティティは, [LivingEntity](https://jd.papermc.io/paper/1.16/org/bukkit/entity/LivingEntity.html) かつ, 
+アイテムを拾える状態（[LivingEntity#canPickupItems()](https://jd.papermc.io/paper/1.16/org/bukkit/entity/LivingEntity.html#canPickupItems()) が `true`）である必要があります。
+
+さらに, アイテムが以下の状態である必要があります。
++ 拾うエンティティがモブの場合, [Item#canMobPickup()](https://jd.papermc.io/paper/1.16/org/bukkit/entity/Item.html#canMobPickup()) が `true` であること。
++ 拾うエンティティがプレイヤの場合, [Item#canPlayerPickup()](https://jd.papermc.io/paper/1.16/org/bukkit/entity/Item.html#canPlayerPickup()) が `true` であること。
+
+プレイヤがアイテムを拾った場合, そのアイテムはプレイヤのインベントリに移動されます。
+
+### `item` {#pickup-item-item}
+
+アクション実行シナリオの場合でも, [アイテムの構造体](../file-syntax#entity-item-structure)またはエンティティのセレクタを指定できます。
+アイテムの構造体を指定した場合, 事前にそのアイテムをワールドにスポーンさせます。
+
+
 ## エンティティの設置 {#place}
 
 <Action name="エンティティの設置"

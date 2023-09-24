@@ -1,0 +1,24 @@
+{
+  "name": "entity_pickup_item",
+  "description": "エンティティにアイテムを拾わせます。",
+  "base": "entity_$base",
+  "arguments": {
+    "remaining": {
+      "type": "number",
+      "description": "残りのアイテム数を指定します。"
+    },
+    "item": {
+      "description": "拾わせるアイテムを指定します。",
+      "oneOf": [
+        {
+          "$ref": "#/definitions/entityItem",
+          "description": "アイテムを指定します。"
+        },
+        {
+          "type": "string",
+          "description": "アイテムのセレクタを指定します。"
+        }
+      ]
+    }
+  }
+}
