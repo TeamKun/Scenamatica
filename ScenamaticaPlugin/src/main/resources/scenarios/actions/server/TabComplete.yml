@@ -1,0 +1,29 @@
+# noinspection YAMLSchemaValidation
+scenamatica: ${project.version}
+
+name: actions_server_tab_complete
+description: Testing tab_complete action works or not
+on:
+  - type: on_load
+  - type: manual_dispatch
+
+context:
+  actors:
+    - name: Actor001
+
+scenario:
+  - type: execute
+    action: tab_complete
+    with:
+      sender: Actor001
+      buffer: /say Hello
+      completions:
+        - World!
+  - type: expect
+    action: tab_complete
+    with:
+      sender: Actor001
+      buffer: /say Hello
+      completions:
+        - World!
+

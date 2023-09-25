@@ -20,6 +20,7 @@ public abstract class AbstractServerAction<A extends ActionArgument> extends Abs
         actions.add(new PluginEnableAction());
         actions.add(new BroadcastMessageAction());
         actions.add(new CommandDispatchAction());
+        actions.add(new TabCompleteAction());
         actions.add(new WhitelistToggleAction());
 
         return actions;

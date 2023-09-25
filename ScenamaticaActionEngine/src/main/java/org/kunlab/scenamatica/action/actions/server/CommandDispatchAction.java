@@ -2,7 +2,6 @@ package org.kunlab.scenamatica.action.actions.server;
 
 import lombok.EqualsAndHashCode;
 import lombok.Value;
-import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.Event;
@@ -11,7 +10,7 @@ import org.bukkit.event.server.ServerCommandEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.actions.AbstractActionArgument;
-import org.kunlab.scenamatica.action.utils.PlayerUtils;
+import org.kunlab.scenamatica.action.utils.CommandSenders;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
@@ -43,13 +42,9 @@ public class CommandDispatchAction extends AbstractServerAction<CommandDispatchA
     {
         argument = this.requireArgsNonNull(argument);
 
-        CommandSender sender;
-        if (argument.sender == null)
-            sender = Bukkit.getConsoleSender();
-        else
-            sender = PlayerUtils.getPlayerOrThrow(argument.sender);
+        CommandSender sender = CommandSenders.resolveSenderOrConsoleOrThrow(argument.getSender());
 
-        String command = argument.command;
+        String command = argument.getCommand();
         if (command.startsWith("/")) // シンタックスシュガーのために, / から始まるやつにも対応
             command = command.substring(1);
 
@@ -73,13 +68,13 @@ public class CommandDispatchAction extends AbstractServerAction<CommandDispatchA
 
         if (argument.getCommand() != null)
         {
-            Pattern pattern = Pattern.compile(argument.command);
+            Pattern pattern = Pattern.compile(argument.getCommand());
             Matcher matcher = pattern.matcher(command);
             if (!matcher.matches())
                 return false;
         }
 
-        return argument.sender == null || sender != null && StringUtils.equalsIgnoreCase(argument.sender, sender.getName());
+        return CommandSenders.isSpecifiedSender(sender, argument.getSender());
     }
 
     @Override

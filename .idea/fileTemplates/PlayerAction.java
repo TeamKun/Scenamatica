@@ -3,7 +3,6 @@ package org.kunlab.scenamatica.action.actions.player;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.kunlab.scenamatica.action.actions.AbstractAction;
-import org.kunlab.scenamatica.interfaces.action.ActionArgument;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.BeanSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;

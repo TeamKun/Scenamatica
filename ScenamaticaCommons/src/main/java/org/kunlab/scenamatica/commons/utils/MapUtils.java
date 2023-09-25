@@ -55,6 +55,9 @@ public class MapUtils
 
     public static boolean equals(List<?> expected, List<?> actual)
     {
+        if (expected == null || actual == null)
+            return expected == actual;
+
         if (expected.size() != actual.size())
             return false;
         for (int i = 0; i < expected.size(); i++)
