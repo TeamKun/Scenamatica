@@ -8,7 +8,7 @@
     },
     "sender": {
       "type": "string",
-      "description": "実行するプレイヤーです。省略した場合はコンソールです。"
+      "description": "実行するプレイヤーです。"
     }
   }
 }

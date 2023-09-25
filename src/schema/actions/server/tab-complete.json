@@ -1,0 +1,18 @@
+{
+  "name": "tab_complete",
+  "description": "コマンドをタブ補完します。",
+  "arguments": {
+    "sender": {
+      "type": "string",
+      "description": "実行するプレイヤーです。"
+    },
+    "buffer": {
+      "type": "string",
+      "description": "入力された不完全なコマンドです。補完を検知する場合は正規表現を使用できます。"
+    },
+    "completions": {
+      "type": "array",
+      "description": "補完候補の配列です。補完を検知する場合は正規表現を使用できます。"
+    }
+  }
+}

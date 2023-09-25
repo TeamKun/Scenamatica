@@ -717,6 +717,7 @@
             "server_log",
             "server_plugin_disable",
             "server_plugin_enable",
+            "tab_complete",
             "whitelist_toggle",
             "world_border_changed",
             "world_border",
@@ -1403,6 +1404,23 @@
           "if": {
             "properties": {
               "action": {
+                "const": "tab_complete",
+                "description": "コマンドをタブ補完します。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/tab_complete"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
                 "const": "whitelist_toggle",
                 "description": "サーバのホワイトリストを切り替えます。"
               }
@@ -1767,7 +1785,7 @@
               "description": "拾わせるアイテムを指定します。",
               "oneOf": [
                 {
-                  "type": "item",
+                  "$ref": "#/definitions/entityItem",
                   "description": "アイテムを指定します。"
                 },
                 {
@@ -2537,7 +2555,7 @@
             },
             "sender": {
               "type": "string",
-              "description": "実行するプレイヤーです。省略した場合はコンソールです。"
+              "description": "実行するプレイヤーです。"
             }
           }
         },
@@ -2602,6 +2620,24 @@
             "plugin": {
               "type": "string",
               "description": "有効化されるプラグインです。"
+            }
+          }
+        },
+        "tab_complete": {
+          "type": "object",
+          "description": "コマンドをタブ補完します。",
+          "properties": {
+            "sender": {
+              "type": "string",
+              "description": "実行するプレイヤーです。"
+            },
+            "buffer": {
+              "type": "string",
+              "description": "入力された不完全なコマンドです。補完を検知する場合は正規表現を使用できます。"
+            },
+            "completions": {
+              "type": "array",
+              "description": "補完候補の配列です。補完を検知する場合は正規表現を使用できます。"
             }
           }
         },

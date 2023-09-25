@@ -233,8 +233,7 @@ Java の標準的なレベルを指定できます。詳しくは以下のリス
             name: "sender",
             anchor: "command-dispatch-sender",
             type: "プレイヤ",
-            description: "コマンドの実行者を指定します。",
-            default: "<コンソール>"
+            description: "コマンドの実行者を指定します。"
           }
         ]}
         executable watchable
@@ -252,7 +251,64 @@ Java の標準的なレベルを指定できます。詳しくは以下のリス
 
 ### `sender` {#command-dispatch-sender}
 
-コマンドの実行者を指定します。省略した場合は、コンソールが実行者になります。
+コマンドの実行する実行者を指定します。実行者が存在しない場合、シナリオは失敗します。
+
+:::info
+
+`<CONSOLE>` を指定すると、コンソールが実行者になります。
+
+:::
+
+
+## コマンドのタブ補完 {#tab-complete}
+
+<Action name="コマンドのタブ補完"
+        description="コマンドのタブ補完を検知します。"
+        id="tab_complete"
+        events={
+          {
+            name: "TabCompleteEvent",
+            package: "org.bukkit.event.server",
+          }
+        }
+        args={[
+          {
+            name: "sender",
+            type: ObjectType.STRING,
+            anchor: "tab-complete-sender",
+            description: "タブ補完を実行したプレイヤーを指定します。"
+          },
+          {
+            name: "buffer",
+            type: ObjectType.STRING,
+            description: "途中まで入力された, 不完全なコマンドを指定します。",
+            required: [ScenarioType.EXECUTE]
+          },
+          {
+            name: "completions",
+            type: ObjectType.STRING + "[]",
+            description: "タブ補完の候補を指定します。",
+          }
+        ]}
+        executable watchable
+/>
+
+:::info
+
+アクション実行期待シナリオで使用する場合, `buffer` および `completion` は正規表現として扱われます。
+
+:::
+
+### `sender` {#tab-complete-sender}
+
+タブ補完を実行する実行者を指定します。実行者が存在しない場合、シナリオは失敗します。
+
+:::info
+
+`<CONSOLE>` を指定すると、コンソールが実行者になります。  
+アクション実行シナリオで使用した場合に省略した場合にも、コンソールが実行者になります。
+
+:::
 
 ## ホワイトリストのトグル {#whitelist}
 
