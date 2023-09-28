@@ -32,6 +32,7 @@ public abstract class AbstractPlayerAction<A extends AbstractPlayerActionArgumen
         actions.add(new PlayerJoinAction());
         actions.add(new PlayerKickAction());
         actions.add(new PlayerLaunchProjectileAction());
+        actions.add(new PlayerMoveAction());
         actions.add(new PlayerQuitAction());
         actions.add(new PlayerRespawnAction());
         actions.add(new PlayerSneakAction());

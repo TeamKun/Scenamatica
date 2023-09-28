@@ -1,12 +1,11 @@
-package org.kunlab.scenamatica.action.actions.entity;
+package org.kunlab.scenamatica.action.actions.player;
 
-import io.papermc.paper.event.entity.EntityMoveEvent;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.bukkit.Location;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Mob;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.utils.LocationComparator;
@@ -24,10 +23,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-public class EntityMoveAction extends AbstractEntityAction<EntityMoveAction.Argument>
-        implements Executable<EntityMoveAction.Argument>, Watchable<EntityMoveAction.Argument>
+public class PlayerMoveAction extends AbstractPlayerAction<PlayerMoveAction.Argument>
+        implements Executable<PlayerMoveAction.Argument>, Watchable<PlayerMoveAction.Argument>
 {
-    public static final String KEY_ACTION_NAME = "entity_move";
+    public static final String KEY_ACTION_NAME = "player_move";
 
     @Override
     public String getName()
@@ -41,27 +40,18 @@ public class EntityMoveAction extends AbstractEntityAction<EntityMoveAction.Argu
         argument = this.requireArgsNonNull(argument);
 
         Location toLoc = Utils.assignWorldToLocation(argument.getTo(), engine);
-        Entity entity = argument.selectTarget();
-
-        if (argument.isUseAI() && entity instanceof Mob)
-        {
-            Mob mob = (Mob) entity;
-            boolean success = mob.getPathfinder().moveTo(toLoc);
-            if (!success)
-                throw new IllegalStateException("Failed to find path from " + entity.getLocation() + " to " + toLoc);
-        }
-        else
-            entity.teleport(toLoc);
+        Player target = argument.getTarget();
+        target.teleport(toLoc);
     }
 
     @Override
     public boolean isFired(@NotNull Argument argument, @NotNull ScenarioEngine engine, @NotNull Event event)
     {
-        if (!super.checkMatchedEntityEvent(argument, engine, event))
+        if (!super.checkMatchedPlayerEvent(argument, engine, event))
             return false;
 
-        assert event instanceof EntityMoveEvent;
-        EntityMoveEvent e = (EntityMoveEvent) event;
+        assert event instanceof PlayerMoveEvent;
+        PlayerMoveEvent e = (PlayerMoveEvent) event;
 
         return LocationComparator.equals(argument.getFrom(), e.getFrom())
                 && LocationComparator.equals(argument.getTo(), e.getTo());
@@ -71,7 +61,7 @@ public class EntityMoveAction extends AbstractEntityAction<EntityMoveAction.Argu
     public List<Class<? extends Event>> getAttachingEvents()
     {
         return Collections.singletonList(
-                EntityMoveEvent.class
+                PlayerMoveEvent.class
         );
     }
 
@@ -79,44 +69,27 @@ public class EntityMoveAction extends AbstractEntityAction<EntityMoveAction.Argu
     public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull BeanSerializer serializer)
     {
         return new Argument(
-                super.deserializeTarget(map, serializer),
+                super.deserializeTarget(map),
                 MapUtils.getAsLocationOrNull(map, Argument.KEY_FROM),
-                MapUtils.getAsLocationOrNull(map, Argument.KEY_TO),
-                MapUtils.getOrDefault(map, Argument.KEY_USE_AI, true)
+                MapUtils.getAsLocationOrNull(map, Argument.KEY_TO)
         );
     }
 
     @Value
     @EqualsAndHashCode(callSuper = true)
-    public static class Argument extends AbstractEntityActionArgument
+    public static class Argument extends AbstractPlayerActionArgument
     {
-        private static final String KEY_FROM = "from";
-        private static final String KEY_TO = "to";
-        private static final String KEY_USE_AI = "ai";
+        public static final String KEY_FROM = "from";
+        public static final String KEY_TO = "to";
 
         Location from;
         Location to;
-        // Execute のときのみ. デフォは true -> テレポート.
-        boolean useAI;
 
-        public Argument(@Nullable Object mayTarget, Location from, Location to, boolean useAI)
+        public Argument(String target, Location from, Location to)
         {
-            super(mayTarget);
+            super(target);
             this.from = from;
             this.to = to;
-            this.useAI = useAI;
-        }
-
-        @Override
-        public void validate(@NotNull ScenarioEngine engine, @NotNull ScenarioType type)
-        {
-            if (type == ScenarioType.ACTION_EXECUTE)
-            {
-                this.throwIfNotSelectable();
-                throwIfNotPresent(KEY_TARGET_ENTITY, this.getTargetString());
-                throwIfPresent(KEY_FROM, this.from);
-                throwIfNotPresent(KEY_TO, this.to);
-            }
         }
 
         @Override
@@ -126,9 +99,20 @@ public class EntityMoveAction extends AbstractEntityAction<EntityMoveAction.Argu
                 return false;
 
             Argument arg = (Argument) argument;
+
             return super.isSame(arg)
                     && Objects.equals(this.from, arg.from)
                     && Objects.equals(this.to, arg.to);
+        }
+
+        @Override
+        public void validate(@NotNull ScenarioEngine engine, @NotNull ScenarioType type)
+        {
+            if (type == ScenarioType.ACTION_EXECUTE)
+            {
+                throwIfPresent(KEY_FROM, this.from);
+                throwIfNotPresent(KEY_TO, this.to);
+            }
         }
 
         @Override
