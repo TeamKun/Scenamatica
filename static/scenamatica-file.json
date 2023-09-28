@@ -631,6 +631,20 @@
         }
       }
     },
+    "teleportCause": {
+      "type": "string",
+      "enum": [
+        "COMMAND",
+        "DEATH",
+        "END_PORTAL",
+        "END_GATEWAY",
+        "CHORUS_FRUIT",
+        "SPECTATE",
+        "NETHER_PORTAL",
+        "ENDER_PEARL",
+        "UNKNOWN"
+      ]
+    },
     "scenario": {
       "type": "object",
       "$ref": "#/definitions/action",
@@ -710,6 +724,7 @@
             "player_respawn",
             "player_sneak",
             "player_sprint",
+            "player_teleport",
             "message",
             "milestone",
             "negate",
@@ -1295,6 +1310,23 @@
             "properties": {
               "with": {
                 "$ref": "#/definitions/action/definitions/player_sprint"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "player_teleport",
+                "description": "プレイヤをてレポートさせます。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/player_teleport"
               }
             }
           }
@@ -2520,6 +2552,17 @@
             }
           },
           "$ref": "#/definitions/action/definitions/player_$base"
+        },
+        "player_teleport": {
+          "type": "object",
+          "description": "プレイヤをてレポートさせます。",
+          "properties": {
+            "cause": {
+              "$ref": "#/definitions/teleportCause",
+              "description": "移動元の座標を指定します。"
+            }
+          },
+          "$ref": "#/definitions/action/definitions/player_move"
         },
         "message": {
           "type": "object",

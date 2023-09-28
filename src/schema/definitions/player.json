@@ -48,5 +48,19 @@
         "maxItems": 4
       }
     }
+  },
+  "teleportCause": {
+    "type": "string",
+    "enum": [
+      "COMMAND",
+      "DEATH",
+      "END_PORTAL",
+      "END_GATEWAY",
+      "CHORUS_FRUIT",
+      "SPECTATE",
+      "NETHER_PORTAL",
+      "ENDER_PEARL",
+      "UNKNOWN"
+    ]
   }
 }

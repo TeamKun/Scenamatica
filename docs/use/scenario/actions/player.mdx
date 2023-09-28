@@ -984,3 +984,50 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
         requireable={"プレイヤが走っているかどうか判定します。"}
         watchable
 />
+
+## プレイヤのテレポート {#teleport}
+
+<Action name="プレイヤのテレポート"
+        description="プレイヤのテレポートに関するアクションです。"
+        id="player_teleport"
+        events={
+          {
+            name: "PlayerTeleportEvent",
+            package: "org.bukkit.event.player",
+          }
+        }
+        args={[
+          {
+            name: "target",
+            anchor: "target",
+            description: "テレポートするプレイヤーです。",
+            type: "プレイヤ",
+            required: [ScenarioType.EXECUTE]
+          },
+          {
+            name: "from",
+            anchor: "teleport-location",
+            description: "テレポート前の座標です。",
+            type: "Location",
+            type_link: "../file-syntax#location-structure",
+            available: [ScenarioType.EXPECT]
+          },
+          {
+            name: "to",
+            anchor: "teleport-location",
+            description: "テレポート後の座標です。",
+            type: "Location",
+            type_link: "../file-syntax#location-structure",
+            required: [ScenarioType.EXECUTE]
+          },
+          {
+            name: "cause",
+            anchor: "teleport-cause",
+            description: "テレポートの原因です。",
+            type: "列挙型{COMMAND, PLUGIN, NETHER_PORTAL, END_PORTAL, END_GATEWAY, CHORUS_FRUIT, SPECTATE, ENDER_PEARL, UNKNOWN}",
+            default: "アクション実行シナリオの場合は PLUGIN, 他は N/A"
+          }
+        ]}
+        executable
+        watchable
+/>

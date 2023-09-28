@@ -1,0 +1,11 @@
+{
+  "name": "player_teleport",
+  "description": "プレイヤをてレポートさせます。",
+  "base": "player_move",
+  "arguments": {
+    "cause": {
+      "$ref": "#/definitions/teleportCause",
+      "description": "移動元の座標を指定します。"
+    }
+  }
+}
