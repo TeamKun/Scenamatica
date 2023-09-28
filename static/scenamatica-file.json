@@ -704,6 +704,7 @@
             "player_item_consume",
             "player_join",
             "player_kick",
+            "player_move",
             "player_projectile_launch",
             "player_quit",
             "player_respawn",
@@ -1192,6 +1193,23 @@
             "properties": {
               "with": {
                 "$ref": "#/definitions/action/definitions/player_kick"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "player_move",
+                "description": "プレイヤを移動させます。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/player_move"
               }
             }
           }
@@ -2369,6 +2387,21 @@
                 "restart_command",
                 "unknown"
               ]
+            }
+          },
+          "$ref": "#/definitions/action/definitions/player_$base"
+        },
+        "player_move": {
+          "type": "object",
+          "description": "プレイヤを移動させます。",
+          "properties": {
+            "from": {
+              "$ref": "#/definitions/location",
+              "description": "移動元の座標を指定します。"
+            },
+            "to": {
+              "$ref": "#/definitions/location",
+              "description": "移動先の座標を指定します。"
             }
           },
           "$ref": "#/definitions/action/definitions/player_$base"

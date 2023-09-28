@@ -750,6 +750,54 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
 
 投げ物をアクションで比較すする際に許容される誤差を指定します。
 
+## プレイヤの移動 {#move}
+
+<Action name="プレイヤの移動"
+        description="プレイヤの移動に関するアクションです。"
+        id="player_move"
+        events={
+          {
+            name: "PlayerMoveEvent",
+            package: "org.bukkit.event.player",
+          }
+        }
+        args={[
+          {
+            name: "target",
+            anchor: "target",
+            description: "移動するプレイヤーです。",
+            type: "プレイヤ",
+            required: [ScenarioType.EXECUTE]
+          },
+          {
+            name: "from",
+            anchor: "from",
+            description: "移動前の座標です。",
+            type: "Location",
+            type_link: "../file-syntax#location-structure",
+            required: [ScenarioType.EXECUTE]
+          },
+          {
+            name: "to",
+            anchor: "to",
+            description: "移動後の座標です。",
+            type: "Location",
+            type_link: "../file-syntax#location-structure",
+            available: [ScenarioType.EXECUTE]
+          }
+        ]}
+        executable={"プレイヤを指定された座標にテレポートさせます。"}
+        watchable
+/>
+
+:::tip
+
+アクション実行期待シナリオにおける座標の比較は、誤差 `0.01` まで許容されます。
+
+:::
+
+
+
 ## プレイヤの退出 {#quit}
 
 <Action name="プレイヤの退出"
