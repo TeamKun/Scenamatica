@@ -1,7 +1,7 @@
 package org.kunlab.scenamatica.action.actions.player;
 
 import lombok.EqualsAndHashCode;
-import lombok.Value;
+import lombok.Getter;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -23,8 +23,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-public class PlayerMoveAction extends AbstractPlayerAction<PlayerMoveAction.Argument>
-        implements Executable<PlayerMoveAction.Argument>, Watchable<PlayerMoveAction.Argument>
+public class PlayerMoveAction<T extends PlayerMoveAction.Argument> extends AbstractPlayerAction<T>
+        implements Executable<T>, Watchable<T>
 {
     public static final String KEY_ACTION_NAME = "player_move";
 
@@ -45,7 +45,7 @@ public class PlayerMoveAction extends AbstractPlayerAction<PlayerMoveAction.Argu
     }
 
     @Override
-    public boolean isFired(@NotNull Argument argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public boolean isFired(@NotNull T argument, @NotNull ScenarioEngine engine, @NotNull Event event)
     {
         if (!super.checkMatchedPlayerEvent(argument, engine, event))
             return false;
@@ -53,8 +53,8 @@ public class PlayerMoveAction extends AbstractPlayerAction<PlayerMoveAction.Argu
         assert event instanceof PlayerMoveEvent;
         PlayerMoveEvent e = (PlayerMoveEvent) event;
 
-        return LocationComparator.equals(argument.getFrom(), e.getFrom())
-                && LocationComparator.equals(argument.getTo(), e.getTo());
+        return (argument.getFrom() == null || LocationComparator.equals(argument.getFrom(), e.getFrom()))
+                && (argument.getTo() == null || LocationComparator.equals(argument.getTo(), e.getTo()));
     }
 
     @Override
@@ -66,24 +66,25 @@ public class PlayerMoveAction extends AbstractPlayerAction<PlayerMoveAction.Argu
     }
 
     @Override
-    public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull BeanSerializer serializer)
+    public T deserializeArgument(@NotNull Map<String, Object> map, @NotNull BeanSerializer serializer)
     {
-        return new Argument(
+        // noinspection unchecked
+        return (T) new Argument(
                 super.deserializeTarget(map),
                 MapUtils.getAsLocationOrNull(map, Argument.KEY_FROM),
                 MapUtils.getAsLocationOrNull(map, Argument.KEY_TO)
         );
     }
 
-    @Value
+    @Getter  // Value だと, TeleportAction が継承できない
     @EqualsAndHashCode(callSuper = true)
     public static class Argument extends AbstractPlayerActionArgument
     {
         public static final String KEY_FROM = "from";
         public static final String KEY_TO = "to";
 
-        Location from;
-        Location to;
+        private final Location from;
+        private final Location to;
 
         public Argument(String target, Location from, Location to)
         {

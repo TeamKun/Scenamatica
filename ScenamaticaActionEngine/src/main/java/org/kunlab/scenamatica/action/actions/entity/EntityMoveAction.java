@@ -63,8 +63,8 @@ public class EntityMoveAction extends AbstractEntityAction<EntityMoveAction.Argu
         assert event instanceof EntityMoveEvent;
         EntityMoveEvent e = (EntityMoveEvent) event;
 
-        return LocationComparator.equals(argument.getFrom(), e.getFrom())
-                && LocationComparator.equals(argument.getTo(), e.getTo());
+        return (argument.getFrom() == null || LocationComparator.equals(argument.getFrom(), e.getFrom()))
+                && (argument.getTo() == null || LocationComparator.equals(argument.getTo(), e.getTo()));
     }
 
     @Override

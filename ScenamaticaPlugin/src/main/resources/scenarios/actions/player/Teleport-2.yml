@@ -1,0 +1,31 @@
+# noinspection YAMLSchemaValidation
+scenamatica: ${project.version}
+
+name: actions_player_teleport_2
+description: Testing player_teleport action without target works or not
+on:
+  - type: on_load
+  - type: manual_dispatch
+
+context:
+  actors:
+    - name: Actor001
+
+scenario:
+  - type: execute
+    action: player_teleport
+    with:
+      target: Actor001
+      to:
+        x: 0
+        y: 0
+        z: 0
+      cause: SPECTATE
+  - type: expect
+    action: player_teleport
+    with:
+      to:
+        x: 0
+        y: 0
+        z: 0
+      cause: SPECTATE

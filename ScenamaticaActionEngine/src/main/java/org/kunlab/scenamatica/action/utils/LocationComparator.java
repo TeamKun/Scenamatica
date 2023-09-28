@@ -1,9 +1,8 @@
 package org.kunlab.scenamatica.action.utils;
 
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Objects;
 
 public class LocationComparator
 {
@@ -27,7 +26,9 @@ public class LocationComparator
         Location l1Clone = l1.clone();
         Location l2Clone = l2.clone();
 
-        if (!Objects.equals(l1.getWorld(), l2.getWorld()))
+        World l1World = l1Clone.getWorld();
+        World l2World = l2Clone.getWorld();
+        if (!(l1World == null || l2World == null) && !l1World.equals(l2World))
             return null;
 
         double x = l2Clone.getX() - l1Clone.getX();
