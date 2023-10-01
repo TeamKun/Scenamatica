@@ -54,7 +54,7 @@ jobs:
         with:
           name: scenamatica
       - name: Run Scenamatica tests
-        uses: teamkun/scenamatica-action@v1.3.1
+        uses: teamkun/scenamatica-action@v1.4.1
         with:
           plugin: Scenamatica.jar
         env:
