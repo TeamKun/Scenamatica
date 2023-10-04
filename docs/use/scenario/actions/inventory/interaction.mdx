@@ -123,3 +123,35 @@ import {ObjectType} from "/src/components/Object";
 キーボードの入力は[こちら](https://www.glfw.org/docs/3.3/group__keys.html)を
 参照してください。
 
+## クリエイティブインベントリのアイテムの配置 {#creative}
+
+このアクションは、以下の親アクションを継承しています。
+
+- [インベントリのクリック](#click)
+
+<Action name="クリエイティブインベントリのクリック"
+        description="クリエイティブインベントリをクリックします。"
+        id="creative_inventory_click"
+        args={[
+          {
+            name: "item",
+            anchor: "creative-item",
+            type: "ItemStack",
+            type_link: "../../file-syntax#item-stack-structure",
+            description: "配置するアイテムです。",
+          },
+          {
+            name: "slot",
+            type: ObjectType.INTEGER,
+            anchor: "click-slots",
+            description: "クリックするスロットの番号です。",
+            required: [ScenarioType.EXECUTE]
+          },
+        ]}
+        executable={"任意のスロットに任意のアイテムを配置します。"}
+        watchable
+/>
+
+### `item` {#creative-item}
+
+[親アクション](#creative)の `clickedItem` と同じで、内部的に値を共有しています。

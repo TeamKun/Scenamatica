@@ -6,6 +6,5 @@
       "type": "string",
       "description": "対象のプレイヤーです。"
     }
-  },
-  "required": ["target"]
+  }
 }

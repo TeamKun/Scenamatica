@@ -704,6 +704,7 @@
             "entity_spawn",
             "inventory_close",
             "inventory_click",
+            "inventory_creative",
             "inventory_open",
             "player_advancement",
             "player_animation",
@@ -970,6 +971,23 @@
             "properties": {
               "with": {
                 "$ref": "#/definitions/action/definitions/inventory_click"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "inventory_creative",
+                "description": "クリエイティブインベントリのアイテムをクリックしたときに実行されます。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/inventory_creative"
               }
             }
           }
@@ -2039,10 +2057,7 @@
               "description": "対象のプレイヤーです。"
             }
           },
-          "$ref": "#/definitions/action/definitions/inventory_$base",
-          "required": [
-            "target"
-          ]
+          "$ref": "#/definitions/action/definitions/inventory_$base"
         },
         "inventory_click": {
           "type": "object",
@@ -2083,6 +2098,17 @@
             }
           },
           "$ref": "#/definitions/action/definitions/inventory_interact_$base"
+        },
+        "inventory_creative": {
+          "type": "object",
+          "description": "クリエイティブインベントリのアイテムをクリックしたときに実行されます。",
+          "properties": {
+            "item": {
+              "description": "クリックされたアイテムです。",
+              "$ref": "#/definitions/itemStack"
+            }
+          },
+          "$ref": "#/definitions/action/definitions/inventory_click"
         },
         "inventory_open": {
           "type": "object",

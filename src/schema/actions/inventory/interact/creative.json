@@ -1,0 +1,11 @@
+{
+  "name": "inventory_creative",
+  "description": "クリエイティブインベントリのアイテムをクリックしたときに実行されます。",
+  "base": "inventory_click",
+  "arguments": {
+    "item": {
+      "description": "クリックされたアイテムです。",
+      "$ref": "#/definitions/itemStack"
+    }
+  }
+}
