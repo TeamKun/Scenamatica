@@ -17,7 +17,8 @@ public abstract class AbstractInventoryInteractAction<A extends AbstractInventor
     {
         List<AbstractInventoryInteractAction<?>> actions = new ArrayList<>();
 
-        actions.add(new InventoryClickAction());
+        actions.add(new InventoryClickAction<>());
+        actions.add(new InventoryCreativeAction());
 
         return actions;
     }

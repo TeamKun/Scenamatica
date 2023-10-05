@@ -1,0 +1,25 @@
+# noinspection YAMLSchemaValidation
+scenamatica: ${project.version}
+
+name: actions_inventory_creative_2
+description: Testing inventory_creative action without argument works or not
+on:
+  - type: on_load
+  - type: manual_dispatch
+
+context:
+  actors:
+    - name: Actor001
+      gamemode: CREATIVE
+
+
+scenario:
+  - type: execute
+    action: inventory_creative
+    with:
+      target: Actor001
+      slot: 1
+      item:
+        type: DIRT
+  - type: expect
+    action: inventory_creative

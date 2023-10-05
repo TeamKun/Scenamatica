@@ -116,6 +116,8 @@ public interface Actor
      */
     void breakItem(@NotNull EquipmentSlot slot);
 
+    void giveCreativeItem(int slot, @NotNull ItemStack item);
+
     /**
      * Bukkit の {@link Player} を取得します。
      *

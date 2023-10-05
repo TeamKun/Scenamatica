@@ -44,6 +44,7 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.kunlab.scenamatica.context.actor.nms.v_1_16_R3.packets.MockedPacketPlayInSetCreativeSlot;
 import org.kunlab.scenamatica.events.actor.ActorPostJoinEvent;
 import org.kunlab.scenamatica.interfaces.context.Actor;
 import org.kunlab.scenamatica.interfaces.context.ActorManager;
@@ -280,6 +281,11 @@ class MockedPlayer extends EntityPlayer implements Actor
         Item item = st.getItem();
 
         st.damage(item.getMaxDurability() - st.getDamage(), this, (entity) -> entity.broadcastItemBreak(nmsSlot));
+    }
+
+    public void giveCreativeItem(int slot, @NotNull ItemStack item)
+    {
+        this.playerConnection.a(new MockedPacketPlayInSetCreativeSlot(slot, item));
     }
 
     @Override

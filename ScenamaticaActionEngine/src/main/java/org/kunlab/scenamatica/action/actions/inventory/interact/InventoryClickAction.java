@@ -1,7 +1,7 @@
 package org.kunlab.scenamatica.action.actions.inventory.interact;
 
 import lombok.EqualsAndHashCode;
-import lombok.Value;
+import lombok.Getter;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.inventory.ClickType;
@@ -29,8 +29,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-public class InventoryClickAction extends AbstractInventoryInteractAction<InventoryClickAction.Argument>
-        implements Executable<InventoryClickAction.Argument>, Watchable<InventoryClickAction.Argument>
+public class InventoryClickAction<T extends InventoryClickAction.Argument> extends AbstractInventoryInteractAction<T>
+        implements Executable<T>, Watchable<T>
 {
     public static final String KEY_ACTION_NAME = "inventory_click";
 
@@ -85,7 +85,7 @@ public class InventoryClickAction extends AbstractInventoryInteractAction<Invent
     }
 
     @Override
-    public boolean isFired(@NotNull Argument argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public boolean isFired(@NotNull T argument, @NotNull ScenarioEngine engine, @NotNull Event event)
     {
         if (!super.checkMatchedInventoryInteractEvent(argument, engine, event))
             return false;
@@ -111,7 +111,7 @@ public class InventoryClickAction extends AbstractInventoryInteractAction<Invent
     }
 
     @Override
-    public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull BeanSerializer serializer)
+    public T deserializeArgument(@NotNull Map<String, Object> map, @NotNull BeanSerializer serializer)
     {
         ItemStackBean clickedItem = null;
         if (map.containsKey(Argument.KEY_CLICKED_ITEM))
@@ -129,7 +129,8 @@ public class InventoryClickAction extends AbstractInventoryInteractAction<Invent
                     Object.class
             ));
 
-        return new Argument(
+        // noinspection unchecked
+        return (T) new Argument(
                 super.deserializeInventoryIfContains(map, serializer),
                 super.deserializeTarget(map),
                 MapUtils.getAsEnumOrNull(map, Argument.KEY_CLICK_TYPE, ClickType.class),
@@ -143,7 +144,7 @@ public class InventoryClickAction extends AbstractInventoryInteractAction<Invent
         );
     }
 
-    @Value
+    @Getter // 継承用
     @EqualsAndHashCode(callSuper = true)
     public static class Argument extends AbstractInventoryInteractArgument
     {
