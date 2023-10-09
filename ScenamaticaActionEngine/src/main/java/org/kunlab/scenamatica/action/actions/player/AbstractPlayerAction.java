@@ -5,6 +5,7 @@ import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerEvent;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.action.actions.AbstractAction;
+import org.kunlab.scenamatica.action.actions.player.bucket.AbstractPlayerBucketAction;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 
 import java.util.ArrayList;
@@ -16,8 +17,7 @@ public abstract class AbstractPlayerAction<A extends AbstractPlayerActionArgumen
 {
     public static List<? extends AbstractPlayerAction<?>> getActions()
     {
-        List<AbstractPlayerAction<?>> actions = new ArrayList<>();
-
+        List<AbstractPlayerAction<?>> actions = new ArrayList<>(AbstractPlayerBucketAction.getActions());
         actions.add(new PlayerGameModeAction());
         actions.add(new PlayerAdvancementAction());
         actions.add(new PlayerAnimationAction());

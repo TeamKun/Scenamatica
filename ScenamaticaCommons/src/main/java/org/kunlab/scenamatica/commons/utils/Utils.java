@@ -7,6 +7,7 @@ import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
+import org.kunlab.scenamatica.interfaces.scenariofile.misc.BlockBean;
 
 import java.util.Locale;
 
@@ -34,6 +35,11 @@ public class Utils
         newLoc.setWorld(engine.getContext().getStage());
 
         return newLoc;
+    }
+
+    public static Location assignWorldToBlockLocation(@NotNull BlockBean block, @NotNull ScenarioEngine engine)
+    {
+        return assignWorldToLocation(block.getLocation(), engine);
     }
 
     public static boolean isEqualLocation(@NotNull Location loc1, @NotNull Location loc2)

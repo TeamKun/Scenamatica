@@ -333,7 +333,16 @@ public class BeanUtils
         }
     }
 
-    public static void applyBlockBeanData(@NotNull BlockBean blockBean, @Nullable Location location, @NotNull World world)
+    public static void applyBlockBeanData(@NotNull BlockBean bean)
+    {
+        Location loc = bean.getLocation();
+        if (loc == null)
+            throw new IllegalArgumentException("Location is null");
+
+        applyBlockBeanData(bean, loc);
+    }
+
+    public static void applyBlockBeanData(@NotNull BlockBean blockBean, @Nullable Location location)
     {
         Location targetLoc = location == null ? blockBean.getLocation(): location;
         if (targetLoc == null)
@@ -343,7 +352,7 @@ public class BeanUtils
         if (blockBean.getType() != null)
             block.setType(blockBean.getType(), true);
         if (blockBean.getBiome() != null)
-            world.setBiome(targetLoc.getBlockX(), targetLoc.getBlockY(), targetLoc.getBlockZ(), blockBean.getBiome());
+            block.getWorld().setBiome(targetLoc.getBlockX(), targetLoc.getBlockY(), targetLoc.getBlockZ(), blockBean.getBiome());
         if (blockBean.getMetadata() != null)
         {
             ClassLoader classLoader = BeanUtils.class.getClassLoader();
@@ -357,11 +366,6 @@ public class BeanUtils
                         new FixedMetadataValue(owningPlugin, entry.getValue())
                 );
         }
-    }
-
-    public static void applyBlockBeanData(@NotNull BlockBean blockBean, @Nullable Location location, @NotNull ScenarioEngine engine)
-    {
-        applyBlockBeanData(blockBean, location, engine.getContext().getStage());
     }
 
     public static boolean isSame(@NotNull EntityBean entityBean, @NotNull Entity entity, boolean strict)

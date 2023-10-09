@@ -102,7 +102,7 @@ public class EntityPlaceAction extends AbstractEntityAction<EntityPlaceAction.Ar
         }
 
         if (isNotOnlyLocationAvailable(argument.getBlock()))
-            BeanUtils.applyBlockBeanData(argument.getBlock(), location, engine);
+            BeanUtils.applyBlockBeanData(argument.getBlock(), location);
 
         assert argument.getTargetString() != null;  // EXECUTE は, validateArgument でチェック済み
         Material material = Utils.searchMaterial(argument.getTargetString());
