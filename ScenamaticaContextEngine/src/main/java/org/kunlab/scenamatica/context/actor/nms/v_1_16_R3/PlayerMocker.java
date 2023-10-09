@@ -170,14 +170,18 @@ public class PlayerMocker extends PlayerMockerBase
         if (bean.getLocation() != null)
         {
             Location loc = bean.getLocation();
-            World world = Bukkit.getWorld(loc.getWorld().getName());
-            if (world == null)
-                throw new IllegalArgumentException("World not found: " + loc.getWorld().getName());
-
             player.setLocation(
                     loc.getX(), loc.getY(), loc.getZ(),
                     loc.getYaw(), loc.getPitch()
             );
+            if (loc.getWorld() != null)
+            {
+                World world = Bukkit.getWorld(loc.getWorld().getName());
+                if (world == null)
+                    throw new IllegalArgumentException("World not found: " + loc.getWorld().getName());
+
+                player.spawnIn(((CraftWorld) world).getHandle());
+            }
         }
         if (bean.getCustomName() != null)
             player.setCustomName(new ChatComponentText(bean.getCustomName()));
