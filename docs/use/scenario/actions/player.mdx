@@ -35,6 +35,77 @@ import {ObjectType} from "/src/components/Object";
 
 :::
 
+## バケツの使用 {#bucket-empty}
+
+<Action name="バケツの使用"
+        description="バケツの使用に関するアクションです。"
+        id="player_bucket_empty"
+        events={
+          {
+            name: "PlayerBucketEmptyEvent",
+            package: "org.bukkit.event.player",
+          }
+        }
+        args={[
+          {
+            name: "target",
+            anchor: "target",
+            description: "バケツを使用するプレイヤーです。",
+            type: "プレイヤ",
+            required: [ScenarioType.EXECUTE]
+          },
+          {
+            name: "bucket",
+            anchor: "bucket",
+            description: "使用するバケツです。",
+            type: "ItemStack",
+            type_link: "../../file-syntax#item-stack-structure",
+          },
+          {
+            name: "block",
+            description: "バケツを使用するブロックです。",
+            type: "Block",
+            type_link: "../../file-syntax#block-structure",
+          },
+          {
+            name: "clickedBlock",
+            description: "バケツを使用するブロックです。",
+            type: "Block",
+            type_link: "../../file-syntax#block-structure",
+          },
+          {
+            name: "blockFace",
+            anchor: "block-face",
+            description: "ブロックの面です。",
+            type: "BlockFace{UP, DOWN, NORTH, EAST, SOUTH, WEST}"
+          },
+          {
+            name: "hand",
+            anchor: "hand",
+            description: "使用する手です。",
+            type: "列挙型{HAND, OFF_HAND}",
+            default: "HAND",
+            available: [ScenarioType.EXPECT]
+          }
+        ]}
+        executable={"バケツ内の液体をブロックに撒きます。"}
+        watchable
+/>
+
+## アクション実行シナリオでの使用 {#bucket-empty-usage-in-execution}
+
+:::caution
+
+`block` と `clickedBlock` のどちらか一方は必須です。
+
+:::
+
+:::warning
+
+NMS の仕様上の都合により、 `block` を用いて、液体の場所を直接指定することはできません。
+
+:::
+
 
 ## 進捗の達成と達成度 {#advancement}
 

@@ -1,0 +1,5 @@
+{
+  "name": "player_bucket_empty",
+  "description": "プレイヤにバケツを空にさせます。",
+  "base": "player_bucket_$base"
+}

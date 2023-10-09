@@ -1,0 +1,41 @@
+{
+  "name": "player_bucket_$base",
+  "base": "player_$base",
+  "arguments": {
+    "item": {
+      "$ref": "#/definitions/itemStack",
+      "description": "操作後にプレイヤーが持っているアイテムです。"
+    },
+    "block": {
+      "$ref": "#/definitions/block",
+      "description": "設置する液体のブロックです。"
+    },
+    "clickedBlock": {
+      "$ref": "#/definitions/block",
+      "description": "プレイヤがクリックしたブロックです。"
+    },
+    "blockFace": {
+      "$ref": "#/definitions/blockFace",
+      "description": "プレイヤーがクリックしたブロックの面です。",
+      "enum": [
+        "UP",
+        "DOWN",
+        "NORTH",
+        "SOUTH",
+        "WEST",
+        "EAST"
+      ]
+    },
+    "bucket": {
+      "$ref": "#/definitions/itemStack",
+      "description": "設置する液体のバケツです。"
+    },
+    "hand": {
+      "description": "バケツを使用する手です。",
+      "enum": [
+        "MAIN_HAND",
+        "OFF_HAND"
+      ]
+    }
+  }
+}

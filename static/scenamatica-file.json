@@ -708,6 +708,7 @@
             "inventory_open",
             "player_advancement",
             "player_animation",
+            "player_bucket_empty",
             "player_chat",
             "player_death",
             "player_drop_item",
@@ -2163,6 +2164,55 @@
               "enum": [
                 "ARM_SWING",
                 "arm_swing"
+              ]
+            }
+          },
+          "$ref": "#/definitions/action/definitions/player_$base"
+        },
+        "player_bucket_$base": {
+          "type": "object",
+          "properties": {
+            "item": {
+              "$ref": "#/definitions/itemStack",
+              "description": "操作後にプレイヤーが持っているアイテムです。"
+            },
+            "block": {
+              "$ref": "#/definitions/block",
+              "description": "設置する液体のブロックです。"
+            },
+            "clickedBlock": {
+              "$ref": "#/definitions/block",
+              "description": "プレイヤがクリックしたブロックです。"
+            },
+            "blockFace": {
+              "$ref": "#/definitions/blockFace",
+              "description": "プレイヤーがクリックしたブロックの面です。",
+              "enum": [
+                "UP",
+                "DOWN",
+                "NORTH",
+                "SOUTH",
+                "WEST",
+                "EAST",
+                "up",
+                "down",
+                "north",
+                "south",
+                "west",
+                "east"
+              ]
+            },
+            "bucket": {
+              "$ref": "#/definitions/itemStack",
+              "description": "設置する液体のバケツです。"
+            },
+            "hand": {
+              "description": "バケツを使用する手です。",
+              "enum": [
+                "MAIN_HAND",
+                "OFF_HAND",
+                "main_hand",
+                "off_hand"
               ]
             }
           },
