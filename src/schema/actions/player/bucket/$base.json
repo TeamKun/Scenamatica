@@ -15,7 +15,6 @@
       "description": "プレイヤがクリックしたブロックです。"
     },
     "blockFace": {
-      "$ref": "#/definitions/blockFace",
       "description": "プレイヤーがクリックしたブロックの面です。",
       "enum": [
         "UP",
