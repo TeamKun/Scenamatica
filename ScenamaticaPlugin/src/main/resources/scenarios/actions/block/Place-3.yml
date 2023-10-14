@@ -20,7 +20,7 @@ scenario:
       block:
         type: SAND
         location:
-          x: 1
+          x: 4578
           y: 255
           z: 0
     timeout: 20
