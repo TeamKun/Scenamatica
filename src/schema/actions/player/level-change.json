@@ -1,0 +1,15 @@
+{
+  "name": "player_level_change",
+  "description": "プレイヤの経験レベルを変更します。",
+  "base": "player_$base",
+  "arguments": {
+    "oldLevel": {
+      "type": "number",
+      "description": "変更前の経験レベルです。"
+    },
+    "level": {
+      "type": "number",
+      "description": "変更後の経験レベルです。"
+    }
+  }
+}

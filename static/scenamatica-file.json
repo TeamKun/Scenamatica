@@ -709,6 +709,7 @@
             "player_advancement",
             "player_animation",
             "player_bucket_empty",
+            "player_change_level",
             "player_chat",
             "player_death",
             "player_drop_item",
@@ -1040,6 +1041,23 @@
             "properties": {
               "with": {
                 "$ref": "#/definitions/action/definitions/player_animation"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "player_change_level",
+                "description": "プレイヤの経験レベルを変更します。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/player_change_level"
               }
             }
           }
@@ -2218,6 +2236,21 @@
           },
           "$ref": "#/definitions/action/definitions/player_$base"
         },
+        "player_change_level": {
+          "type": "object",
+          "description": "プレイヤの経験レベルを変更します。",
+          "properties": {
+            "oldLevel": {
+              "type": "number",
+              "description": "変更前の経験レベルです。"
+            },
+            "level": {
+              "type": "number",
+              "description": "変更後の経験レベルです。"
+            }
+          },
+          "$ref": "#/definitions/action/definitions/player_$base"
+        },
         "player_chat": {
           "type": "object",
           "description": "プレイヤにチャットをさせます。",
@@ -2881,36 +2914,18 @@
                 "announceAdvancements",
                 "commandBlockOutput",
                 "disableElytraMovementCheck",
-                "disableRaids",
                 "doDaylightCycle",
                 "doEntityDrops",
                 "doFireTick",
-                "doImmediateRespawn",
                 "doInsomnia",
                 "doLimitedCrafting",
                 "doMobLoot",
                 "doMobSpawning",
-                "doPatrolSpawning",
                 "doTileDrops",
-                "doTraderSpawning",
                 "doWeatherCycle",
                 "drowningDamage",
                 "fallDamage",
                 "fireDamage",
-                "forgiveDeadPlayers",
-                "keepInventory",
-                "logAdminCommands",
-                "maxCommandChainLength",
-                "maxEntityCramming",
-                "mobGriefing",
-                "naturalRegeneration",
-                "playersSleepingPercentage",
-                "randomTickSpeed",
-                "reducedDebugInfo",
-                "sendCommandFeedback",
-                "showDeathMessages",
-                "spawnRadius",
-                "spectatorsGenerateChunks",
                 "universalAnger",
                 "disableRaids",
                 "doImmediateRespawn",

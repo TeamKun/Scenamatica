@@ -821,6 +821,46 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
 
 投げ物をアクションで比較すする際に許容される誤差を指定します。
 
+## プレイヤの経験レベルの変更 {#level-change}
+
+<Action name="プレイヤの経験レベルの変更"
+        description="プレイヤの経験レベルの変更に関するアクションです。"
+        id="player_change_level"
+        events={
+          {
+            name: "PlayerLevelChangeEvent",
+            package: "org.bukkit.event.player",
+          }
+        }
+        args={[
+          {
+            name: "target",
+            anchor: "target",
+            description: "経験レベルを変更するプレイヤーです。",
+            type: "プレイヤ",
+            required: [ScenarioType.EXECUTE]
+          },
+          {
+            name: "level",
+            anchor: "level",
+            description: "新しい経験レベルです。",
+            type: ObjectType.INTEGER,
+            required: [ScenarioType.EXECUTE, ScenarioType.REQUIRE]
+          },
+          {
+            name: "oldLevel",
+            anchor: "old-level",
+            description: "変更前の経験レベルです。",
+            type: ObjectType.INTEGER,
+            available: [ScenarioType.EXPECT]
+          }
+        ]}
+        executable
+        requireable={"プレイヤの経験レベルが指定したに値なっているか判定します。"}
+        watchable
+/>
+
+
 ## プレイヤの移動 {#move}
 
 <Action name="プレイヤの移動"
