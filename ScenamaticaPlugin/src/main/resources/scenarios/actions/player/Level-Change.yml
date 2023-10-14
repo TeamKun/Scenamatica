@@ -1,0 +1,30 @@
+# noinspection YAMLSchemaValidation
+scenamatica: ${project.version}
+
+name: actions_player_level_change
+description: Testing PlayerChangeLevelAction works or not
+on:
+  - type: on_load
+  - type: manual_dispatch
+
+context:
+  actors:
+    - name: Actor001
+
+scenario:
+  - type: execute
+    action: player_advancement
+    with:
+      target: Actor001
+      advancement: minecraft:nether/distract_piglin
+  - type: expect
+    action: player_advancement
+    with:
+      target: Actor001
+      advancement: minecraft:nether/distract_piglin
+    timeout: 20
+  - type: require
+    action: player_advancement
+    with:
+      target: Actor001
+      advancement: minecraft:nether/distract_piglin
