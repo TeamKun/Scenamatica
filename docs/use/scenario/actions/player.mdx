@@ -520,6 +520,56 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
 
 この型は[こちら](../file-syntax/#item-stack-structure)を参照してください。
 
+## プレイヤのエンティティのクリック（作用） {#interact-at-entity}
+
+:::caution DEPRECATED!!!
+
+このアクションは、**アーマースタンドのクリックのみ**をサポートしています。  
+ほとんどの場合、 [プレイヤのエンティティのクリック](#interact-entity) を使用してください。
+
+:::
+
+
+<Action name="プレイヤのエンティティのクリック（作用）"
+        description="プレイヤのエンティティのクリック（作用）に関するアクションです。"
+        id="player_interact_at_entity"
+        events={
+          {
+            name: "PlayerInteractAtEntityEvent",
+            package: "org.bukkit.event.player",
+          }
+        }
+        args={[
+          {
+            name: "target",
+            type: ObjectType.STRING,
+            type_anchor: "entity/#general-entity",
+            description: "クリックする対象のエンティティです。",
+            required: [ScenarioType.EXECUTE]
+          },
+          {
+            name: "hand",
+            type: "列挙型{HAND, OFF_HAND}",
+            description: "クリックする手です。",
+          },
+          {
+            name: "position",
+            type: "Vector(Location)",
+            type_link: "../file-syntax#location-structure",
+            description: "クリックするエンティティの位置です。",
+            required: [ScenarioType.EXECUTE]
+          }
+        ]}
+        executable watchable
+/>
+
+:::info
+
+このアクションは、 [プレイヤのエンティティのクリック](#interact-entity) の子アクションで、
+諸々の仕様や引数を継承しています。
+
+:::
+
 ## プレイヤのブロックのクリック {#interact-block}
 
 <Action name="プレイヤのブロックのクリック"
@@ -592,6 +642,7 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
             name: "hand",
             type: "列挙型{HAND, OFF_HAND}",
             description: "クリックする手です。",
+            default: "HAND(on execute action)"
           }
         ]}
         executable watchable

@@ -1,0 +1,11 @@
+{
+  "name": "player_interact_at_entity",
+  "description": "プレイヤにエンティティをクリックさせます。",
+  "base": "player_interact_entity",
+  "arguments": {
+    "position": {
+      "description": "クリックするエンティティの場所です。",
+      "$ref": "#/definitions/location"
+    }
+  }
+}

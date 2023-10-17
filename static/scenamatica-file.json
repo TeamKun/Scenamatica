@@ -715,6 +715,7 @@
             "player_flight",
             "player_gamemode",
             "player_hotbar",
+            "player_interact_at_entity",
             "player_interact_block",
             "player_interact_entity",
             "player_item_break",
@@ -1144,6 +1145,23 @@
             "properties": {
               "with": {
                 "$ref": "#/definitions/action/definitions/player_hotbar"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "player_interact_at_entity",
+                "description": "プレイヤにエンティティをクリックさせます。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/player_interact_at_entity"
               }
             }
           }
@@ -2396,6 +2414,17 @@
             }
           },
           "$ref": "#/definitions/action/definitions/player_$base"
+        },
+        "player_interact_at_entity": {
+          "type": "object",
+          "description": "プレイヤにエンティティをクリックさせます。",
+          "properties": {
+            "position": {
+              "description": "クリックするエンティティの場所です。",
+              "$ref": "#/definitions/location"
+            }
+          },
+          "$ref": "#/definitions/action/definitions/player_interact_entity"
         },
         "player_interact_block": {
           "type": "object",
