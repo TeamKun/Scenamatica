@@ -14,7 +14,6 @@ import net.minecraft.server.v1_16_R3.Packet;
 import net.minecraft.server.v1_16_R3.PacketDataSerializer;
 import net.minecraft.server.v1_16_R3.PacketPlayInKeepAlive;
 import net.minecraft.server.v1_16_R3.PacketPlayInTransaction;
-import net.minecraft.server.v1_16_R3.PacketPlayInUseEntity;
 import net.minecraft.server.v1_16_R3.PacketPlayOutChat;
 import net.minecraft.server.v1_16_R3.PacketPlayOutHeldItemSlot;
 import net.minecraft.server.v1_16_R3.PacketPlayOutKeepAlive;
@@ -62,12 +61,6 @@ class MockedPlayerConnection extends PlayerConnection
             default:
                 return ActorMessageReceiveEvent.Type.SYSTEM;
         }
-    }
-
-    @Override
-    public void a(PacketPlayInUseEntity packetplayinuseentity)
-    {
-        super.a(packetplayinuseentity);
     }
 
     @Override
