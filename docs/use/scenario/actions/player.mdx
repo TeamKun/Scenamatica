@@ -569,6 +569,47 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
                label="Block 型"
 />
 
+## プレイヤのエンティティのクリック {#interact-entity}
+
+<Action name="プレイヤのエンティティのクリック"
+        description="プレイヤのエンティティのクリックに関するアクションです。"
+        id="player_interact_entity"
+        events={
+          {
+            name: "PlayerInteractEntityEvent",
+            package: "org.bukkit.event.player",
+          }
+        }
+        args={[
+          {
+            name: "target",
+            type: ObjectType.STRING,
+            type_anchor: "entity/#general-entity",
+            description: "クリックする対象のエンティティです。",
+            required: [ScenarioType.EXECUTE]
+          },
+          {
+            name: "hand",
+            type: "列挙型{HAND, OFF_HAND}",
+            description: "クリックする手です。",
+          }
+        ]}
+        executable watchable
+/>
+
+### アクション実行シナリオでの使用 {#interact-entity-usage-in-execution}
+
+プレイヤにエンティティをクリックさせます。
+
+:::warning
+
+プレイヤとエンティティの距離が `36.0` ブロックより離れている場合、 Scenamatica はイベントのみを発行します。
+通常はアクタから `PacketPlayInUseEntity` パケットが送信され、エンティティのクリックが再現されますが、
+Minecraft による仕様のために、距離が離れすぎている場合は意味をなさないからです。
+
+:::
+ 
+
 ## プレイヤのアイテムの破壊 {#item-break}
 
 <Action name="プレイヤのアイテムの破壊"

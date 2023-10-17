@@ -709,7 +709,6 @@
             "player_advancement",
             "player_animation",
             "player_bucket_empty",
-            "player_change_level",
             "player_chat",
             "player_death",
             "player_drop_item",
@@ -717,10 +716,12 @@
             "player_gamemode",
             "player_hotbar",
             "player_interact_block",
+            "player_interact_entity",
             "player_item_break",
             "player_item_consume",
             "player_join",
             "player_kick",
+            "player_level_change",
             "player_move",
             "player_projectile_launch",
             "player_quit",
@@ -1049,23 +1050,6 @@
           "if": {
             "properties": {
               "action": {
-                "const": "player_change_level",
-                "description": "プレイヤの経験レベルを変更します。"
-              }
-            }
-          },
-          "then": {
-            "properties": {
-              "with": {
-                "$ref": "#/definitions/action/definitions/player_change_level"
-              }
-            }
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "action": {
                 "const": "player_chat",
                 "description": "プレイヤにチャットをさせます。"
               }
@@ -1185,6 +1169,23 @@
           "if": {
             "properties": {
               "action": {
+                "const": "player_interact_entity",
+                "description": "プレイヤにエンティティをクリックさせます。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/player_interact_entity"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
                 "const": "player_item_break",
                 "description": "プレイヤにアイテムを破壊させます。"
               }
@@ -1245,6 +1246,23 @@
             "properties": {
               "with": {
                 "$ref": "#/definitions/action/definitions/player_kick"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "player_level_change",
+                "description": "プレイヤの経験レベルを変更します。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/player_level_change"
               }
             }
           }
@@ -2203,7 +2221,6 @@
               "description": "プレイヤがクリックしたブロックです。"
             },
             "blockFace": {
-              "$ref": "#/definitions/blockFace",
               "description": "プレイヤーがクリックしたブロックの面です。",
               "enum": [
                 "UP",
@@ -2232,21 +2249,6 @@
                 "main_hand",
                 "off_hand"
               ]
-            }
-          },
-          "$ref": "#/definitions/action/definitions/player_$base"
-        },
-        "player_change_level": {
-          "type": "object",
-          "description": "プレイヤの経験レベルを変更します。",
-          "properties": {
-            "oldLevel": {
-              "type": "number",
-              "description": "変更前の経験レベルです。"
-            },
-            "level": {
-              "type": "number",
-              "description": "変更後の経験レベルです。"
             }
           },
           "$ref": "#/definitions/action/definitions/player_$base"
@@ -2430,6 +2432,35 @@
           },
           "$ref": "#/definitions/action/definitions/player_$base"
         },
+        "player_interact_entity": {
+          "type": "object",
+          "description": "プレイヤにエンティティをクリックさせます。",
+          "properties": {
+            "entity": {
+              "description": "クリックするエンティティです。",
+              "oneOf": [
+                {
+                  "type": "string",
+                  "description": "エンティティの UUID またはセレクタです。"
+                },
+                {
+                  "$ref": "#/definitions/entity"
+                }
+              ]
+            },
+            "hand": {
+              "type": "string",
+              "description": "クリックする手です。",
+              "enum": [
+                "HAND",
+                "OFF_HAND",
+                "hand",
+                "off_hand"
+              ]
+            }
+          },
+          "$ref": "#/definitions/action/definitions/player_$base"
+        },
         "player_item_break": {
           "type": "object",
           "description": "プレイヤにアイテムを破壊させます。",
@@ -2528,6 +2559,21 @@
                 "restart_command",
                 "unknown"
               ]
+            }
+          },
+          "$ref": "#/definitions/action/definitions/player_$base"
+        },
+        "player_level_change": {
+          "type": "object",
+          "description": "プレイヤの経験レベルを変更します。",
+          "properties": {
+            "oldLevel": {
+              "type": "number",
+              "description": "変更前の経験レベルです。"
+            },
+            "level": {
+              "type": "number",
+              "description": "変更後の経験レベルです。"
             }
           },
           "$ref": "#/definitions/action/definitions/player_$base"

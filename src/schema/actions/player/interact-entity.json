@@ -1,0 +1,29 @@
+{
+  "name": "player_interact_entity",
+  "description": "プレイヤにエンティティをクリックさせます。",
+  "base": "player_$base",
+  "arguments": {
+    "entity": {
+      "description": "クリックするエンティティです。",
+      "oneOf": [
+        {
+          "type": "string",
+          "description": "エンティティの UUID またはセレクタです。"
+        },
+        {
+          "$ref": "#/definitions/entity"
+        }
+      ]
+    },
+    "hand": {
+      "type": "string",
+      "description": "クリックする手です。",
+      "enum": [
+        "HAND",
+        "OFF_HAND",
+        "hand",
+        "off_hand"
+      ]
+    }
+  }
+}
