@@ -100,8 +100,10 @@ class MockedPlayer extends EntityPlayer implements Actor
 
     private static EnumHand toHand(EquipmentSlot slot)
     {
+        final EnumHand DEFAULT_HAND = EnumHand.MAIN_HAND;
+
         if (slot == null)
-            return null;
+            return DEFAULT_HAND;
         else if (!(slot == EquipmentSlot.HAND || slot == EquipmentSlot.OFF_HAND))
             throw new IllegalArgumentException("slot must be HAND or OFF_HAND");
 

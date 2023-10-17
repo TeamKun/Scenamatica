@@ -1,0 +1,67 @@
+# noinspection YAMLSchemaValidation
+scenamatica: ${project.version}
+
+name: actions_player_interact_at_entity_5
+description: Testing PlayerInteractAtEntityAction without argument works or not
+on:
+  - type: on_load
+    before:
+      - type: execute
+        action: entity_spawn
+        with:
+          entity:
+            type: minecraft:armor_stand
+            tags:
+              - 810snpi
+            location:
+              x: 0
+              y: 255
+              z: 0
+
+    after:
+      - action: command_dispatch
+        type: execute
+        with:
+          command: 'kill @e[type=minecraft:armor_stand,tag=810snpi]'
+  - type: manual_dispatch
+    before:
+      - type: execute
+        action: entity_spawn
+        with:
+          entity:
+            type: minecraft:armor_stand
+            tags:
+              - 810snpi
+            location:
+              x: 0
+              y: 255
+              z: 0
+
+    after:
+      - action: command_dispatch
+        type: execute
+        with:
+          command: 'kill @e[type=minecraft:armor_stand,tag=810snpi]'
+
+context:
+  actors:
+    - name: Actor001
+      location:
+        x: 0
+        y: 255
+        z: 0
+      flyable: true
+      flying: true
+
+scenario:
+  - type: execute
+    action: player_interact_at_entity
+    with:
+      target: Actor001
+      entity: "@e[type=minecraft:armor_stand,tag=810snpi]"
+      position:
+        x: 0
+        y: 255
+        z: 0
+  - type: expect
+    action: player_interact_at_entity

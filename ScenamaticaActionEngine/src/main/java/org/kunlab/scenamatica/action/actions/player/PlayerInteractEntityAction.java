@@ -1,7 +1,7 @@
 package org.kunlab.scenamatica.action.actions.player;
 
 import lombok.EqualsAndHashCode;
-import lombok.Value;
+import lombok.Getter;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -26,8 +26,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-public class PlayerInteractEntityAction extends AbstractPlayerAction<PlayerInteractEntityAction.Argument>
-        implements Executable<PlayerInteractEntityAction.Argument>, Watchable<PlayerInteractEntityAction.Argument>
+public class PlayerInteractEntityAction<A extends PlayerInteractEntityAction.Argument> extends AbstractPlayerAction<A>
+        implements Executable<A>, Watchable<A>
 {
     public static final String KEY_ACTION_NAME = "player_interact_entity";
 
@@ -38,7 +38,7 @@ public class PlayerInteractEntityAction extends AbstractPlayerAction<PlayerInter
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @Nullable Argument argument)
+    public void execute(@NotNull ScenarioEngine engine, @Nullable A argument)
     {
         argument = this.requireArgsNonNull(argument);
 
@@ -56,15 +56,15 @@ public class PlayerInteractEntityAction extends AbstractPlayerAction<PlayerInter
         }
 
         Actor actor = PlayerUtils.getActorOrThrow(engine, player);
-        actor.interactEntity(
-                targetEntity,
-                NMSEntityUseAction.INTERACT,
-                EquipmentSlot.HAND,
-                null
-        );
+        this.doInteract(argument, targetEntity, actor);
     }
 
-    private void eventOnlyMode(@NotNull ScenarioEngine engine, @NotNull Argument argument, @NotNull Entity targetEntity)
+    protected void doInteract(A argument, Entity targeTentity, Actor actor)
+    {
+        actor.interactEntity(targeTentity, NMSEntityUseAction.INTERACT, argument.getHand(), actor.getPlayer().getLocation());
+    }
+
+    private void eventOnlyMode(@NotNull ScenarioEngine engine, @NotNull A argument, @NotNull Entity targetEntity)
     {
         PlayerInteractEntityEvent event = new PlayerInteractEntityEvent(
                 argument.getTarget(),
@@ -76,7 +76,7 @@ public class PlayerInteractEntityAction extends AbstractPlayerAction<PlayerInter
     }
 
     @Override
-    public boolean isFired(@NotNull Argument argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public boolean isFired(@NotNull A argument, @NotNull ScenarioEngine engine, @NotNull Event event)
     {
         if (!super.checkMatchedPlayerEvent(argument, engine, event))
             return false;
@@ -95,16 +95,17 @@ public class PlayerInteractEntityAction extends AbstractPlayerAction<PlayerInter
     }
 
     @Override
-    public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull BeanSerializer serializer)
+    public A deserializeArgument(@NotNull Map<String, Object> map, @NotNull BeanSerializer serializer)
     {
-        return new Argument(
+        // noinspection unchecked
+        return (A) new Argument(
                 super.deserializeTarget(map),
                 map.get(Argument.KEY_ENTITY),
                 MapUtils.getAsEnumOrNull(map, Argument.KEY_HAND, EquipmentSlot.class)
         );
     }
 
-    @Value
+    @Getter
     @EqualsAndHashCode(callSuper = true)
     public static class Argument extends AbstractPlayerActionArgument
     {
@@ -118,6 +119,13 @@ public class PlayerInteractEntityAction extends AbstractPlayerAction<PlayerInter
         {
             super(target);
             this.entity = new EntityArgumentHolder(mayTarget);
+            this.hand = hand;
+        }
+
+        public Argument(String target, EntityArgumentHolder entity, EquipmentSlot hand)
+        {
+            super(target);
+            this.entity = entity;
             this.hand = hand;
         }
 
