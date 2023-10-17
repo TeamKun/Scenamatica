@@ -23,6 +23,7 @@ import net.minecraft.server.v1_16_R3.MovingObjectPositionBlock;
 import net.minecraft.server.v1_16_R3.NetworkManager;
 import net.minecraft.server.v1_16_R3.PacketDataSerializer;
 import net.minecraft.server.v1_16_R3.PacketPlayInArmAnimation;
+import net.minecraft.server.v1_16_R3.PacketPlayInUseEntity;
 import net.minecraft.server.v1_16_R3.PacketPlayInWindowClick;
 import net.minecraft.server.v1_16_R3.PlayerInteractManager;
 import net.minecraft.server.v1_16_R3.Vec3D;
@@ -48,6 +49,7 @@ import org.kunlab.scenamatica.context.actor.nms.v_1_16_R3.packets.MockedPacketPl
 import org.kunlab.scenamatica.events.actor.ActorPostJoinEvent;
 import org.kunlab.scenamatica.interfaces.context.Actor;
 import org.kunlab.scenamatica.interfaces.context.ActorManager;
+import org.kunlab.scenamatica.nms.enums.entity.NMSEntityUseAction;
 
 import java.io.IOException;
 import java.lang.reflect.Constructor;
@@ -96,6 +98,16 @@ class MockedPlayer extends EntityPlayer implements Actor
         }
     }
 
+    private static EnumHand toHand(EquipmentSlot slot)
+    {
+        if (slot == null)
+            return null;
+        else if (!(slot == EquipmentSlot.HAND || slot == EquipmentSlot.OFF_HAND))
+            throw new IllegalArgumentException("slot must be HAND or OFF_HAND");
+
+        return slot == EquipmentSlot.HAND ? EnumHand.MAIN_HAND: EnumHand.OFF_HAND;
+    }
+
     @Override
     public @NotNull ActorManager getManager()
     {
@@ -138,6 +150,56 @@ class MockedPlayer extends EntityPlayer implements Actor
                 );
                 break;
         }
+    }
+
+    @SneakyThrows(IOException.class)
+    @Override
+    public void interactEntity(@NotNull org.bukkit.entity.Entity entity, @NotNull NMSEntityUseAction type,
+                               @Nullable EquipmentSlot hand, @Nullable Location location)
+    {
+        int entityId = entity.getEntityId();
+        EnumHand enumHand = toHand(hand);
+
+        PacketPlayInUseEntity.EnumEntityUseAction nmsType;
+        switch (type)
+        {
+            case ATTACK:
+                nmsType = PacketPlayInUseEntity.EnumEntityUseAction.ATTACK;
+                break;
+            case INTERACT:
+                nmsType = PacketPlayInUseEntity.EnumEntityUseAction.INTERACT;
+                break;
+            case INTERACT_AT:
+                nmsType = PacketPlayInUseEntity.EnumEntityUseAction.INTERACT_AT;
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown NMSEntityUseAction: " + type.name());
+        }
+
+        PacketDataSerializer serializer = new PacketDataSerializer(Unpooled.buffer());
+        serializer.d(entityId);
+        serializer.a(nmsType);
+        if (nmsType == PacketPlayInUseEntity.EnumEntityUseAction.INTERACT_AT)
+        {
+            if (location == null)
+                throw new IllegalArgumentException("location must not be null when type is INTERACT_AT");
+
+            serializer.writeFloat((float) location.getX());
+            serializer.writeFloat((float) location.getY());
+            serializer.writeFloat((float) location.getZ());
+        }
+
+        if (nmsType == PacketPlayInUseEntity.EnumEntityUseAction.INTERACT
+                || nmsType == PacketPlayInUseEntity.EnumEntityUseAction.INTERACT_AT)
+            serializer.a(enumHand);
+
+        boolean isSneaking = this.getBukkitEntity().isSneaking();
+        serializer.writeBoolean(isSneaking);
+
+        PacketPlayInUseEntity packet = new PacketPlayInUseEntity();
+        packet.a(serializer);
+
+        this.playerConnection.a(packet);
     }
 
     @Override
@@ -261,10 +323,7 @@ class MockedPlayer extends EntityPlayer implements Actor
     @Override
     public void consume(@NotNull EquipmentSlot slot)
     {
-        if (!(slot == EquipmentSlot.HAND || slot == EquipmentSlot.OFF_HAND))
-            throw new IllegalArgumentException("slot must be HAND or OFF_HAND");
-
-        EnumHand hand = slot == EquipmentSlot.HAND ? EnumHand.MAIN_HAND: EnumHand.OFF_HAND;
+        EnumHand hand = toHand(slot);
 
         net.minecraft.server.v1_16_R3.ItemStack nmsStack = this.b(hand);
         if (!(nmsStack == null || nmsStack.getItem().isFood()))

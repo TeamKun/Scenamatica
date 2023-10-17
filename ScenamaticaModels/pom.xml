@@ -25,5 +25,11 @@
             <version>2.20.0</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>org.kunlab.scenamatica.nms</groupId>
+            <artifactId>NMSTypes</artifactId>
+            <version>0.8.0</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 </project>

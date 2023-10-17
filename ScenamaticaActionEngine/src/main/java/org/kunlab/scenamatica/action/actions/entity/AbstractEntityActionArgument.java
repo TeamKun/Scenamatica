@@ -1,11 +1,9 @@
 package org.kunlab.scenamatica.action.actions.entity;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.actions.AbstractActionArgument;
-import org.kunlab.scenamatica.action.utils.EntityUtils;
 import org.kunlab.scenamatica.interfaces.action.ActionArgument;
 import org.kunlab.scenamatica.interfaces.scenariofile.entities.EntityBean;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
@@ -18,23 +16,11 @@ public abstract class AbstractEntityActionArgument extends AbstractActionArgumen
     public static final String KEY_TARGET_ENTITY = "target";
 
     @Nullable
-    protected final String targetSpecifier;
-    @Getter
-    @Nullable
-    protected final EntityBean targetBean;
+    private final EntityArgumentHolder entity;
 
     public AbstractEntityActionArgument(@Nullable Object mayTarget)
     {
-        if (mayTarget instanceof EntityBean)
-        {
-            this.targetSpecifier = null;
-            this.targetBean = (EntityBean) mayTarget;
-        }
-        else
-        {
-            this.targetSpecifier = (String) mayTarget;
-            this.targetBean = null;
-        }
+        this.entity = new EntityArgumentHolder(mayTarget);
     }
 
     @Override
@@ -46,45 +32,59 @@ public abstract class AbstractEntityActionArgument extends AbstractActionArgumen
         if (!AbstractEntityActionArgument.class.isAssignableFrom(argument.getClass()))
             return false;
 
-        AbstractEntityActionArgument a = (AbstractEntityActionArgument) argument;
-        return Objects.equals(this.targetSpecifier, a.targetSpecifier)
-                || Objects.equals(this.targetBean, a.targetBean);
+        return Objects.equals(this.entity, ((AbstractEntityActionArgument) argument).entity);
+    }
+
+    private void ensureTargetIsSet()
+    {
+        if (this.entity == null)
+            throw new IllegalStateException("Target is not set.");
     }
 
     public boolean isSelectable()
     {
-        return this.targetSpecifier != null;
+        return this.entity != null && this.entity.isSelectable();
     }
 
     public Entity selectTarget()
     {
-        if (this.targetSpecifier == null)
-            throw new IllegalStateException("Cannot select target from targetBean");
-
-        return EntityUtils.getPlayerOrEntityOrThrow(this.targetSpecifier);
+        this.ensureTargetIsSet();
+        assert this.entity != null;
+        return this.entity.selectTarget();
     }
 
     public String getTargetString()
     {
-        return this.targetSpecifier;
+        this.ensureTargetIsSet();
+        assert this.entity != null;
+        return this.entity.getTargetString();
     }
 
     public Object getTargetRaw()
     {
-        if (this.targetSpecifier != null)
-            return this.targetSpecifier;
-        else
-            return this.targetBean;
+        this.ensureTargetIsSet();
+        assert this.entity != null;
+        return this.entity.getTargetRaw();
     }
 
     @Override
     public String getArgumentString()
     {
-        if (this.targetSpecifier != null)
-            return "target=" + this.targetSpecifier;
-        else
-            return "target=" + this.targetBean;
+        this.ensureTargetIsSet();
+        assert this.entity != null;
+        return this.entity.getArgumentString();
+    }
 
+    public EntityBean getTargetBean()
+    {
+        return this.entity == null ? null: this.entity.getTargetBean();
+    }
+
+    public boolean checkMatchedEntity(Entity entity)
+    {
+        if (this.entity == null)
+            return true;
+        return this.entity.checkMatchedEntity(entity);
     }
 
     public void throwIfNotSelectable()

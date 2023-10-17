@@ -3,6 +3,7 @@ package org.kunlab.scenamatica.interfaces.context;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.inventory.ClickType;
@@ -11,6 +12,7 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.kunlab.scenamatica.nms.enums.entity.NMSEntityUseAction;
 
 import java.util.UUID;
 
@@ -41,6 +43,17 @@ public interface Actor
      * @param block  クリックするブロック
      */
     void interactAt(@NotNull Action action, Block block);
+
+    /**
+     * エンティティをクリックします。
+     *
+     * @param entity   クリックするエンティティ
+     * @param type     クリックするアクション
+     * @param hand     クリックする手
+     * @param location クリックする位置
+     */
+    void interactEntity(@NotNull Entity entity, @NotNull NMSEntityUseAction type, @Nullable EquipmentSlot hand,
+                        @Nullable Location location);
 
     /**
      * エンティティのアイテムを設置します。

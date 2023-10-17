@@ -1,0 +1,160 @@
+package org.kunlab.scenamatica.action.actions.player;
+
+import lombok.EqualsAndHashCode;
+import lombok.Value;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.inventory.EquipmentSlot;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.kunlab.scenamatica.action.actions.entity.EntityArgumentHolder;
+import org.kunlab.scenamatica.action.utils.PlayerUtils;
+import org.kunlab.scenamatica.commons.utils.MapUtils;
+import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.types.Executable;
+import org.kunlab.scenamatica.interfaces.action.types.Watchable;
+import org.kunlab.scenamatica.interfaces.context.Actor;
+import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
+import org.kunlab.scenamatica.interfaces.scenariofile.BeanSerializer;
+import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
+import org.kunlab.scenamatica.nms.enums.entity.NMSEntityUseAction;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
+public class PlayerInteractEntityAction extends AbstractPlayerAction<PlayerInteractEntityAction.Argument>
+        implements Executable<PlayerInteractEntityAction.Argument>, Watchable<PlayerInteractEntityAction.Argument>
+{
+    public static final String KEY_ACTION_NAME = "player_interact_entity";
+
+    @Override
+    public String getName()
+    {
+        return KEY_ACTION_NAME;
+    }
+
+    @Override
+    public void execute(@NotNull ScenarioEngine engine, @Nullable Argument argument)
+    {
+        argument = this.requireArgsNonNull(argument);
+
+        Player player = argument.getTarget();
+        Entity targetEntity = argument.getEntity().selectTarget();
+
+        int distanceFromEntity = (int) player.getLocation().distance(targetEntity.getLocation());
+        if (distanceFromEntity > 36)
+        {
+            engine.getPlugin().getLogger().warning(engine.getLogPrefix() + "The distance between player and entity is too far. ("
+                    + distanceFromEntity + " blocks), so the actual action will not be executed(only event will be fired).");
+
+            this.eventOnlyMode(engine, argument, targetEntity);
+            return;
+        }
+
+        Actor actor = PlayerUtils.getActorOrThrow(engine, player);
+        actor.interactEntity(
+                targetEntity,
+                NMSEntityUseAction.INTERACT,
+                EquipmentSlot.HAND,
+                null
+        );
+    }
+
+    private void eventOnlyMode(@NotNull ScenarioEngine engine, @NotNull Argument argument, @NotNull Entity targetEntity)
+    {
+        PlayerInteractEntityEvent event = new PlayerInteractEntityEvent(
+                argument.getTarget(),
+                targetEntity,
+                argument.getHand() == null ? EquipmentSlot.HAND: argument.getHand()
+        );
+
+        engine.getPlugin().getServer().getPluginManager().callEvent(event);
+    }
+
+    @Override
+    public boolean isFired(@NotNull Argument argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    {
+        if (!super.checkMatchedPlayerEvent(argument, engine, event))
+            return false;
+
+        PlayerInteractEntityEvent e = (PlayerInteractEntityEvent) event;
+        return (argument.getHand() == null || argument.getHand() == e.getHand())
+                && (argument.getEntity().isSelectable() || argument.getEntity().checkMatchedEntity(e.getRightClicked()));
+    }
+
+    @Override
+    public List<Class<? extends Event>> getAttachingEvents()
+    {
+        return Collections.singletonList(
+                PlayerInteractEntityEvent.class
+        );
+    }
+
+    @Override
+    public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull BeanSerializer serializer)
+    {
+        return new Argument(
+                super.deserializeTarget(map),
+                map.get(Argument.KEY_ENTITY),
+                MapUtils.getAsEnumOrNull(map, Argument.KEY_HAND, EquipmentSlot.class)
+        );
+    }
+
+    @Value
+    @EqualsAndHashCode(callSuper = true)
+    public static class Argument extends AbstractPlayerActionArgument
+    {
+        public static final String KEY_ENTITY = "entity";
+        public static final String KEY_HAND = "hand";
+
+        EntityArgumentHolder entity;
+        EquipmentSlot hand;
+
+        public Argument(String target, Object mayTarget, EquipmentSlot hand)
+        {
+            super(target);
+            this.entity = new EntityArgumentHolder(mayTarget);
+            this.hand = hand;
+        }
+
+        @Override
+        public void validate(@NotNull ScenarioEngine engine, @NotNull ScenarioType type)
+        {
+            super.validate(engine, type);
+            if (this.hand != null && !(this.hand == EquipmentSlot.HAND || this.hand == EquipmentSlot.OFF_HAND))
+                throw new IllegalStateException("Hand must be either HAND or OFF_HAND");
+
+            if (type == ScenarioType.ACTION_EXECUTE
+                    && !this.entity.isSelectable())
+                throw new IllegalStateException("Entity must be selectable on execute action");
+
+        }
+
+        @Override
+        public boolean isSame(TriggerArgument argument)
+        {
+            if (!(argument instanceof Argument))
+                return false;
+
+            Argument arg = (Argument) argument;
+
+            return super.isSame(argument)
+                    && Objects.equals(this.entity, arg.entity)
+                    && this.hand == arg.hand;
+        }
+
+        @Override
+        public String getArgumentString()
+        {
+            return appendArgumentString(
+                    super.getArgumentString(),
+                    KEY_ENTITY, this.entity,
+                    KEY_HAND, this.hand
+            );
+        }
+    }
+}

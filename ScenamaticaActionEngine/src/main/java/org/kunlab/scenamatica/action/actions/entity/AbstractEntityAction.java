@@ -5,7 +5,6 @@ import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityEvent;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.action.actions.AbstractAction;
-import org.kunlab.scenamatica.action.utils.BeanUtils;
 import org.kunlab.scenamatica.action.utils.EntityUtils;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
@@ -41,15 +40,7 @@ public abstract class AbstractEntityAction<A extends AbstractEntityActionArgumen
             return false;
 
         EntityEvent e = (EntityEvent) event;
-
-        if (argument.isSelectable())
-            return this.checkMatchedEntity(argument.getTargetString(), e.getEntity());
-        else
-        {
-            if (argument.getTargetBean() == null)
-                return true;
-            return BeanUtils.isSame(argument.getTargetBean(), e.getEntity(), /* strict */ false);
-        }
+        return argument.checkMatchedEntity(e.getEntity());
     }
 
     protected boolean checkMatchedEntity(String specifier, @NotNull Entity actualEntity)

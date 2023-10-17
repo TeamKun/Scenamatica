@@ -218,7 +218,7 @@ public class EntityPlaceAction extends AbstractEntityAction<EntityPlaceAction.Ar
 
             throwIfNotPresent(KEY_PLAYER, this.playerSpecifier);
 
-            String entitySpecifier = this.targetSpecifier;  // EXECUTE の場合は, 置く Material として扱う
+            String entitySpecifier = this.getTargetString();  // EXECUTE の場合は, 置く Material として扱う
             throwIfNotPresent(KEY_TARGET_ENTITY, entitySpecifier);
 
             for (Material material : PLACEABLE_ITEMS)
