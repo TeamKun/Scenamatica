@@ -720,6 +720,7 @@
             "player_interact_entity",
             "player_item_break",
             "player_item_consume",
+            "player_item_damage",
             "player_join",
             "player_kick",
             "player_level_change",
@@ -1222,7 +1223,7 @@
             "properties": {
               "action": {
                 "const": "player_item_consume",
-                "description": "プレイヤ"
+                "description": "プレイヤにアイテムを消費させます。"
               }
             }
           },
@@ -1230,6 +1231,23 @@
             "properties": {
               "with": {
                 "$ref": "#/definitions/action/definitions/player_item_consume"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "player_item_damage",
+                "description": "プレイヤが所持するアイテムにダメージを与えます。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/player_item_damage"
               }
             }
           }
@@ -2507,7 +2525,7 @@
         },
         "player_item_consume": {
           "type": "object",
-          "description": "プレイヤ",
+          "description": "プレイヤにアイテムを消費させます。",
           "properties": {
             "item": {
               "description": "消費するアイテムです。",
@@ -2516,6 +2534,27 @@
             "replacement": {
               "description": "消費後にプレイヤーに与えるアイテムです。",
               "$ref": "#/definitions/itemStack"
+            }
+          },
+          "$ref": "#/definitions/action/definitions/player_$base"
+        },
+        "player_item_damage": {
+          "type": "object",
+          "description": "プレイヤが所持するアイテムにダメージを与えます。",
+          "properties": {
+            "item": {
+              "description": "ダメージを与えるアイテムです。",
+              "$ref": "#/definitions/itemStack"
+            },
+            "damage": {
+              "description": "与えるダメージです。",
+              "type": "number",
+              "minimum": 0,
+              "maximum": 2147483647
+            },
+            "slot": {
+              "description": "ダメージを与えるアイテムのスロットです。",
+              "$ref": "#/definitions/itemSlot"
             }
           },
           "$ref": "#/definitions/action/definitions/player_$base"

@@ -682,14 +682,12 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
           },
           {
             name: "item",
-            anchor: "item",
             description: "破壊されるアイテムです。",
             type: "ItemStack",
             type_link: "../file-syntax#item-stack-structure",
           },
           {
             name: "slot",
-            anchor: "slot",
             description: "破壊されるアイテムがあるスロットです。",
             type: "列挙型{HAND, OFF_HAND, HEAD, CHEST, LEGS, FEET}",
             default: "アクション実行モードの場合は HAND"
@@ -726,7 +724,6 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
           },
           {
             name: "item",
-            anchor: "item",
             description: "消費されるアイテムです。",
             type: "ItemStack",
             type_link: "../file-syntax#item-stack-structure",
@@ -750,6 +747,68 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
 その場合、 `item` には有効な食料アイテムか、ミルクバケツ、またはポーションである必要があります。
 
 `replacement` は使用**できません**。
+
+## プレイヤのアイテムへのダメージ {#item-damage}
+
+<Action name="プレイヤのアイテムへのダメージ"
+        description="プレイヤのアイテムへのダメージに関するアクションです。"
+        id="player_item_damage"
+        events={
+          {
+            name: "PlayerItemDamageEvent",
+            package: "org.bukkit.event.player",
+          }
+        }
+        args={[
+          {
+            name: "target",
+            description: "ダメージを与えるプレイヤーです。",
+            type: "プレイヤ",
+            required: [ScenarioType.EXECUTE]
+          },
+          {
+            name: "item",
+            anchor: "item-damage-item",
+            description: "ダメージを与えられるアイテムです。",
+            type: "ItemStack",
+            type_link: "../file-syntax#item-stack-structure",
+            required: [ScenarioType.EXECUTE, ScenarioType.REQUIRE],
+            available: [ScenarioType.EXECUTE, ScenarioType.EXPECT]
+          },
+          {
+            name: "damage",
+            description: "与えるダメージです。",
+            type: ObjectType.INTEGER,
+            required : [ScenarioType.EXECUTE]
+          },
+          {
+            name: "slot",
+            description: "ダメージを与えられるアイテムがあるスロットです。",
+            type: "列挙型{HAND, OFF_HAND, HEAD, CHEST, LEGS, FEET}",
+            default: "アクション実行モードの場合は HAND"
+          }
+        ]}
+        executable watchable requireable={"装備スロットにあるアイテムのダメージが一致するか判定します。"}
+/>
+
+### アクション実行シナリオでの使用 {#item-damage-usage-in-execution}
+
+`item` が設定されていた場合、ダメージを与える前にそのアイテムを `slot` に設定します。  
+`slot` はこのモードでは デフォルトで `HAND` になります。
+
+### コンディション要求シナリオでの使用 {#item-damage-usage-in-requirement}
+
+`slot` を省略した場合、プレイヤの全ての装備スロットにあるアイテムのダメージが一致するか判定します。  
+`item` を指定した場合、そのアイテムのダメージが一致するか判定します（どれか一つでも一致する場合は真）。
+
+### `item` {#item-damage-item}
+
+:::warning
+
+`item` で指定できるアイテムは、その [ItemMeta](https://jd.papermc.io/paper/1.16/org/bukkit/inventory/meta/ItemMeta.html) が [Damageable](https://jd.papermc.io/paper/1.16/org/bukkit/inventory/meta/Damageable.html) 
+を実装しているアイテムのみです。
+
+:::
 
 ## プレイヤの参加 {#join}
 

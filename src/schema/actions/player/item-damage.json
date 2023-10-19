@@ -1,0 +1,21 @@
+{
+  "name": "player_item_damage",
+  "description": "プレイヤが所持するアイテムにダメージを与えます。",
+  "base": "player_$base",
+  "arguments": {
+    "item": {
+      "description": "ダメージを与えるアイテムです。",
+      "$ref": "#/definitions/itemStack"
+    },
+    "damage": {
+      "description": "与えるダメージです。",
+      "type": "number",
+      "minimum": 0,
+      "maximum": 2147483647
+    },
+    "slot": {
+      "description": "ダメージを与えるアイテムのスロットです。",
+      "$ref": "#/definitions/itemSlot"
+    }
+  }
+}
