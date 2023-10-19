@@ -5,6 +5,7 @@
       <excludeFolder url="file://$MODULE_DIR$/scripts/.venv" />
       <excludeFolder url="file://$MODULE_DIR$/scripts/build" />
       <excludeFolder url="file://$MODULE_DIR$/scripts/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/scripts/installer" />
     </content>
   </component>
   <component name="FacetManager">

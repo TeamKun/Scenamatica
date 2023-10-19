@@ -344,6 +344,16 @@ class MockedPlayer extends EntityPlayer implements Actor
         st.damage(item.getMaxDurability() - st.getDamage(), this, (entity) -> entity.broadcastItemBreak(nmsSlot));
     }
 
+    @Override
+    public void damageItem(@NotNull EquipmentSlot slot, int damage)
+    {
+        EnumItemSlot nmsSlot = CraftEquipmentSlot.getNMS(slot);
+        net.minecraft.server.v1_16_R3.ItemStack st = this.getEquipment(nmsSlot);
+
+        st.damage(damage, this, ignored -> {
+        });
+    }
+
     public void giveCreativeItem(int slot, @NotNull ItemStack item)
     {
         this.playerConnection.a(new MockedPacketPlayInSetCreativeSlot(slot, item));

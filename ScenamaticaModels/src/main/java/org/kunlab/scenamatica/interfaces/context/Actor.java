@@ -129,6 +129,14 @@ public interface Actor
      */
     void breakItem(@NotNull EquipmentSlot slot);
 
+    /**
+     * 持ってるアイテムにダメージを与えます。
+     *
+     * @param slot   手
+     * @param damage ダメージ
+     */
+    void damageItem(@NotNull EquipmentSlot slot, int damage);
+
     void giveCreativeItem(int slot, @NotNull ItemStack item);
 
     /**

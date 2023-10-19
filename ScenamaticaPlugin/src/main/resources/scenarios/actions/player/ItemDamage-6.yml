@@ -1,0 +1,24 @@
+# noinspection YAMLSchemaValidation
+scenamatica: ${project.version}
+
+name: actions_player_item_damage_6
+description: Testing player_item_damage action without slot on requiring mode works or not
+on:
+  - type: on_load
+  - type: manual_dispatch
+
+context:
+  actors:
+    - name: Actor001
+      inventory:
+        offHandItem:
+          type: DIAMOND_SWORD
+          damage: 10
+
+
+scenario:
+  - type: require
+    action: player_item_damage
+    with:
+      target: Actor001
+      damage: 10
