@@ -56,6 +56,13 @@
             "$ref": "#/definitions/actor"
           }
         },
+        "entities": {
+          "type": "array",
+          "description": "シナリオの実行に必要なエンティティを定義します。エンティティが指定されている場合, シナリオ開始時に自動的に生成されます。",
+          "items": {
+            "$ref": "#/definitions/entity"
+          }
+        },
         "stage": {
           "$ref": "#/definitions/stage",
           "description": "シナリオの実行に必要なステージを定義します。ステージが指定されている場合, シナリオ開始時に自動的に生成されます。"

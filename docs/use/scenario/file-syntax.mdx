@@ -246,12 +246,19 @@ Scenamatica のバージョンは、`x.y.z` の形式で指定します。
     description: "シナリオの実行に必要なアクターを定義します。"
   },
   {
+    name: "entities",
+    anchor: "context-entities",
+    type: "Entity[]",
+    type_anchor: "entity-structure",
+    description: "シナリオの実行に必要なエンティティを定義します。"
+  },
+  {
     name: "stage",
     anchor: "context-stage",
     type: "Stage",
     type_anchor: "stage-structure",
     description: "シナリオの実行に必要なステージを定義します。"
-  },
+  }
 ]} />
 
 ### `actors` {#context-actors}
@@ -259,6 +266,11 @@ Scenamatica のバージョンは、`x.y.z` の形式で指定します。
 シナリオの実行に必要なアクターを定義します。
 
 アクターの概念についての説明は[こちら](elements/#actor-structure)を参照してください。
+
+### `entities` {#context-entities}
+
+シナリオの実行に必要なエンティティを定義します。  
+これを設定すると、シナリオの実行前に[ステージ](elements/#stage-structure)内にエンティティが生成され、終了時に削除されます。
 
 ### `stage` {#context-stage}
 
