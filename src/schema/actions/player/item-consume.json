@@ -1,6 +1,6 @@
 {
   "name": "player_item_consume",
-  "description": "プレイヤ",
+  "description": "プレイヤにアイテムを消費させます。",
   "base": "player_$base",
   "arguments": {
     "item": {
