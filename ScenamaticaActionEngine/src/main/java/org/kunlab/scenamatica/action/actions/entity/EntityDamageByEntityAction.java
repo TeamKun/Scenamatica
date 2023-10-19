@@ -128,7 +128,7 @@ public class EntityDamageByEntityAction extends EntityDamageAction<EntityDamageB
             if (type == ScenarioType.ACTION_EXECUTE)
             {
                 this.throwIfNotSelectable();
-                throwIfNotPresent(KEY_DAMAGER, this.damager);
+                ensureNotPresent(KEY_DAMAGER, this.damager);
             }
         }
 

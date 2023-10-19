@@ -131,8 +131,8 @@ public class InventoryCloseAction extends AbstractInventoryAction<InventoryClose
         {
             if (type == ScenarioType.ACTION_EXECUTE)
             {
-                throwIfNotPresent(Argument.KEY_TARGET_PLAYER, this.targetPlayer);
-                throwIfPresent(Argument.KEY_INVENTORY, this.inventory);
+                ensureNotPresent(Argument.KEY_TARGET_PLAYER, this.targetPlayer);
+                ensurePresent(Argument.KEY_INVENTORY, this.inventory);
             }
         }
 

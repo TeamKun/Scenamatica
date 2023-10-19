@@ -133,8 +133,8 @@ public class ServerLogAction extends AbstractServerAction<ServerLogAction.Argume
         {
             if (type == ScenarioType.ACTION_EXECUTE)
             {
-                throwIfPresent(KEY_SOURCE, this.source);
-                throwIfNotPresent(KEY_MESSAGE, this.message);
+                ensurePresent(KEY_SOURCE, this.source);
+                ensureNotPresent(KEY_MESSAGE, this.message);
             }
         }
 

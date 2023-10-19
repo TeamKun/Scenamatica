@@ -125,7 +125,7 @@ public class PlayerSneakAction extends AbstractPlayerAction<PlayerSneakAction.Ar
             {
                 case ACTION_EXECUTE:
                 case CONDITION_REQUIRE:
-                    throwIfNotPresent(Argument.KEY_SNEAKING, this.sneaking);
+                    ensureNotPresent(Argument.KEY_SNEAKING, this.sneaking);
                     break;
             }
         }

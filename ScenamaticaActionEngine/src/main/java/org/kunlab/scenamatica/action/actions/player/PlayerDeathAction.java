@@ -259,16 +259,16 @@ public class PlayerDeathAction extends AbstractPlayerAction<PlayerDeathAction.Ar
             switch (type)
             {
                 case ACTION_EXECUTE:
-                    throwIfNotPresent(Argument.KEY_TARGET_PLAYER, this.getTargetSpecifier());
+                    ensureNotPresent(Argument.KEY_TARGET_PLAYER, this.getTargetSpecifier());
                     break;
                 case CONDITION_REQUIRE:
-                    throwIfPresent(Argument.KEY_DEATH_MESSAGE, this.deathMessage);
-                    throwIfNotEquals(Argument.KEY_NEW_EXP, this.newExp, -1);
-                    throwIfNotEquals(Argument.KEY_NEW_LEVEL, this.newLevel, -1);
-                    throwIfNotEquals(Argument.KEY_NEW_TOTAL_EXP, this.newTotalExp, -1);
-                    throwIfPresent(Argument.KEY_KEEP_LEVEL, this.keepLevel);
-                    throwIfPresent(Argument.KEY_KEEP_INVENTORY, this.keepInventory);
-                    throwIfPresent(Argument.KEY_DO_EXP_DROP, this.doExpDrop);
+                    ensurePresent(Argument.KEY_DEATH_MESSAGE, this.deathMessage);
+                    ensureNotEquals(Argument.KEY_NEW_EXP, this.newExp, -1);
+                    ensureNotEquals(Argument.KEY_NEW_LEVEL, this.newLevel, -1);
+                    ensureNotEquals(Argument.KEY_NEW_TOTAL_EXP, this.newTotalExp, -1);
+                    ensurePresent(Argument.KEY_KEEP_LEVEL, this.keepLevel);
+                    ensurePresent(Argument.KEY_KEEP_INVENTORY, this.keepInventory);
+                    ensurePresent(Argument.KEY_DO_EXP_DROP, this.doExpDrop);
                     break;
             }
         }

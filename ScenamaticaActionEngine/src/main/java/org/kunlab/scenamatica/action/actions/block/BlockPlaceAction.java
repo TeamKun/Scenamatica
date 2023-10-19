@@ -192,7 +192,7 @@ public class BlockPlaceAction extends AbstractBlockAction<BlockPlaceAction.Argum
                     throw new IllegalArgumentException("Block type cannot be null");
             }
             else
-                throwIfPresent(Argument.KEY_DIRECTION, this.direction);
+                ensurePresent(Argument.KEY_DIRECTION, this.direction);
         }
 
         @Nullable

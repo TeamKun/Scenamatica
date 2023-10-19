@@ -56,6 +56,6 @@ public abstract class AbstractPluginActionArgument extends AbstractActionArgumen
     public void validate(@NotNull ScenarioEngine engine, @NotNull ScenarioType type)
     {
         if (type == ScenarioType.ACTION_EXECUTE || type == ScenarioType.CONDITION_REQUIRE)
-            throwIfNotPresent(KEY_PLUGIN, this.plugin);
+            ensureNotPresent(KEY_PLUGIN, this.plugin);
     }
 }

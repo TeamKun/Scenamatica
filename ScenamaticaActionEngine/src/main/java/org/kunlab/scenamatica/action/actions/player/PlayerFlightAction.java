@@ -128,7 +128,7 @@ public class PlayerFlightAction extends AbstractPlayerAction<PlayerFlightAction.
             {
                 case ACTION_EXECUTE:
                 case CONDITION_REQUIRE:
-                    throwIfNotPresent(Argument.KEY_FLYING, this.flying);
+                    ensureNotPresent(Argument.KEY_FLYING, this.flying);
                     break;
             }
         }

@@ -170,8 +170,8 @@ public class PlayerAdvancementAction
                 case CONDITION_REQUIRE:
                     /* fall through */
                 case ACTION_EXECUTE:
-                    throwIfNotPresent(KEY_TARGET_PLAYER, this.getTargetSpecifier());
-                    throwIfNotPresent(KEY_ADVANCEMENT, this.advancement);
+                    ensureNotPresent(KEY_TARGET_PLAYER, this.getTargetSpecifier());
+                    ensureNotPresent(KEY_ADVANCEMENT, this.advancement);
                     break;
             }
         }

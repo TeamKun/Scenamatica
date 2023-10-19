@@ -112,8 +112,8 @@ public class MessageAction extends AbstractScenamaticaAction<MessageAction.Argum
         {
             if (type == ScenarioType.ACTION_EXECUTE)
             {
-                throwIfNotPresent(KEY_MESSAGE, this.message);
-                throwIfNotPresent(KEY_RECIPIENT, this.recipient);
+                ensureNotPresent(KEY_MESSAGE, this.message);
+                ensureNotPresent(KEY_RECIPIENT, this.recipient);
             }
         }
 

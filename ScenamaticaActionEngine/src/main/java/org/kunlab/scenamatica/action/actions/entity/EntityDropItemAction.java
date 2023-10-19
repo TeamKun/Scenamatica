@@ -136,7 +136,7 @@ public class EntityDropItemAction extends AbstractEntityAction<EntityDropItemAct
             if (type == ScenarioType.ACTION_EXECUTE)
             {
                 this.throwIfNotSelectable();
-                throwIfNotPresent(KEY_DROP_ITEM, this.item);
+                ensureNotPresent(KEY_DROP_ITEM, this.item);
             }
         }
 

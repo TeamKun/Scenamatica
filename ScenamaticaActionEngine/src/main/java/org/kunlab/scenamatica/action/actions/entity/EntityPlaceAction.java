@@ -212,14 +212,14 @@ public class EntityPlaceAction extends AbstractEntityAction<EntityPlaceAction.Ar
                 return;
 
             this.throwIfNotSelectable();
-            throwIfNotPresent(KEY_BLOCK, this.block);
+            ensureNotPresent(KEY_BLOCK, this.block);
             if (this.block.getLocation() == null)
                 throw new IllegalArgumentException("Block location is not specified.");
 
-            throwIfNotPresent(KEY_PLAYER, this.playerSpecifier);
+            ensureNotPresent(KEY_PLAYER, this.playerSpecifier);
 
             String entitySpecifier = this.getTargetString();  // EXECUTE の場合は, 置く Material として扱う
-            throwIfNotPresent(KEY_TARGET_ENTITY, entitySpecifier);
+            ensureNotPresent(KEY_TARGET_ENTITY, entitySpecifier);
 
             for (Material material : PLACEABLE_ITEMS)
                 if (material.name().equalsIgnoreCase(entitySpecifier) || material.name().equalsIgnoreCase("LEGACY_" + entitySpecifier))

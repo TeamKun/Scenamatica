@@ -118,10 +118,10 @@ public class EntitySpawnAction extends AbstractAction<EntitySpawnAction.Argument
         {
             if (type == ScenarioType.ACTION_EXECUTE)
             {
-                throwIfNotPresent(KEY_ENTITY, this.entity);
+                ensureNotPresent(KEY_ENTITY, this.entity);
                 EntityBean bean = this.entity;
-                throwIfNotPresent(KEY_ENTITY + "." + EntityBean.KEY_TYPE, bean.getType());
-                throwIfEquals(KEY_ENTITY + "." + EntityBean.KEY_TYPE, bean.getType(), EntityType.UNKNOWN);
+                ensureNotPresent(KEY_ENTITY + "." + EntityBean.KEY_TYPE, bean.getType());
+                ensureEquals(KEY_ENTITY + "." + EntityBean.KEY_TYPE, bean.getType(), EntityType.UNKNOWN);
             }
         }
 

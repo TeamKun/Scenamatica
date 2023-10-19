@@ -194,9 +194,9 @@ public class WorldBorderAction extends AbstractWorldAction<WorldBorderAction.Arg
             {
                 case ACTION_EXECUTE:
                 case CONDITION_REQUIRE:
-                    throwIfPresent(Argument.KEY_TYPE, this.type);
-                    throwIfPresent(Argument.KEY_SIZE_OLD, this.oldSize);
-                    throwIfPresent(Argument.KEY_CENTER_OLD, this.oldCenter);
+                    ensurePresent(Argument.KEY_TYPE, this.type);
+                    ensurePresent(Argument.KEY_SIZE_OLD, this.oldSize);
+                    ensurePresent(Argument.KEY_CENTER_OLD, this.oldCenter);
                     break;
             }
         }

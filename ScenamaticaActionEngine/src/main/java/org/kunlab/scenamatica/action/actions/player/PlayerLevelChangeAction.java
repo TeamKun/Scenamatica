@@ -103,7 +103,7 @@ public class PlayerLevelChangeAction extends AbstractPlayerAction<PlayerLevelCha
         {
             super.validate(engine, type);
             if (type == ScenarioType.ACTION_EXECUTE || type == ScenarioType.CONDITION_REQUIRE)
-                throwIfPresent(KEY_OLD_LEVEL, this.oldLevel);
+                ensurePresent(KEY_OLD_LEVEL, this.oldLevel);
         }
 
         @Override

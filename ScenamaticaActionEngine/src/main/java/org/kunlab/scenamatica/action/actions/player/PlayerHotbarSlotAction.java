@@ -160,11 +160,11 @@ public class PlayerHotbarSlotAction extends AbstractPlayerAction<PlayerHotbarSlo
             switch (type)
             {
                 case ACTION_EXECUTE:
-                    throwIfNotPresent(KEY_CURRENT_SLOT, this.currentSlot);
-                    throwIfPresent(KEY_CURRENT_ITEM, this.currentItem);
+                    ensureNotPresent(KEY_CURRENT_SLOT, this.currentSlot);
+                    ensurePresent(KEY_CURRENT_ITEM, this.currentItem);
                     /* fall through */
                 case CONDITION_REQUIRE:
-                    throwIfPresent(KEY_PREVIOUS_SLOT, this.previousSlot);
+                    ensurePresent(KEY_PREVIOUS_SLOT, this.previousSlot);
                     break;
             }
 

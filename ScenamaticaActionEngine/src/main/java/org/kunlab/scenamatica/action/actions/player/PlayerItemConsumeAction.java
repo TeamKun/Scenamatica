@@ -147,7 +147,7 @@ public class PlayerItemConsumeAction extends AbstractPlayerAction<PlayerItemCons
             if (type != ScenarioType.ACTION_EXECUTE)
                 return;
 
-            throwIfPresent(Argument.KEY_REPLACEMENT, this.replacement);
+            ensurePresent(Argument.KEY_REPLACEMENT, this.replacement);
         }
 
         @Override

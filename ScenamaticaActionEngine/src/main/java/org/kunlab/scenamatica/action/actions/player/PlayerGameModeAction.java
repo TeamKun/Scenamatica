@@ -136,12 +136,12 @@ public class PlayerGameModeAction extends AbstractPlayerAction<PlayerGameModeAct
             switch (type)
             {
                 case ACTION_EXECUTE:
-                    throwIfNotPresent(KEY_GAME_MODE, this.gameMode);
+                    ensureNotPresent(KEY_GAME_MODE, this.gameMode);
                     /* fall through */
                 case CONDITION_REQUIRE:
-                    throwIfNotPresent(KEY_TARGET_PLAYER, this.getTargetSpecifier());
-                    throwIfPresent(Argument.KEY_CAUSE, this.cause);
-                    throwIfPresent(Argument.KEY_CANCEL_MESSAGE, this.cancelMessage);
+                    ensureNotPresent(KEY_TARGET_PLAYER, this.getTargetSpecifier());
+                    ensurePresent(Argument.KEY_CAUSE, this.cause);
+                    ensurePresent(Argument.KEY_CANCEL_MESSAGE, this.cancelMessage);
                     break;
 
             }

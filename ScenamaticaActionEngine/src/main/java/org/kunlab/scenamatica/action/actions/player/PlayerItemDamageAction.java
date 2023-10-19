@@ -177,7 +177,7 @@ public class PlayerItemDamageAction extends AbstractPlayerAction<PlayerItemDamag
             {
                 case CONDITION_REQUIRE:
                 case ACTION_EXECUTE:
-                    throwIfNotPresent(KEY_DAMAGE, this.damage);
+                    ensureNotPresent(KEY_DAMAGE, this.damage);
             }
 
         }

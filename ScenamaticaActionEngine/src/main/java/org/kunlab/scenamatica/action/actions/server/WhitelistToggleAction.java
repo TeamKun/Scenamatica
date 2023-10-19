@@ -101,7 +101,7 @@ public class WhitelistToggleAction extends AbstractServerAction<WhitelistToggleA
         public void validate(@NotNull ScenarioEngine engine, @NotNull ScenarioType type)
         {
             if (type == ScenarioType.ACTION_EXECUTE)
-                throwIfNotPresent(KEY_ENABLED, this.enabled);
+                ensureNotPresent(KEY_ENABLED, this.enabled);
         }
 
         @Override

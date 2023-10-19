@@ -111,8 +111,8 @@ public class PlayerMoveAction<T extends PlayerMoveAction.Argument> extends Abstr
         {
             if (type == ScenarioType.ACTION_EXECUTE)
             {
-                throwIfPresent(KEY_FROM, this.from);
-                throwIfNotPresent(KEY_TO, this.to);
+                ensurePresent(KEY_FROM, this.from);
+                ensureNotPresent(KEY_TO, this.to);
             }
         }
 
