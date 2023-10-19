@@ -5,8 +5,13 @@ import lombok.SneakyThrows;
 import net.kunmc.lab.peyangpaperutils.lang.LangProvider;
 import net.kunmc.lab.peyangpaperutils.lang.MsgArgs;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.jetbrains.annotations.NotNull;
+import org.kunlab.scenamatica.commons.utils.BeanUtils;
 import org.kunlab.scenamatica.commons.utils.LogUtils;
 import org.kunlab.scenamatica.commons.utils.ThreadingUtil;
 import org.kunlab.scenamatica.context.actor.ActorManagerImpl;
@@ -23,6 +28,7 @@ import org.kunlab.scenamatica.interfaces.context.StageManager;
 import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
 import org.kunlab.scenamatica.interfaces.scenariofile.context.ContextBean;
 import org.kunlab.scenamatica.interfaces.scenariofile.context.PlayerBean;
+import org.kunlab.scenamatica.interfaces.scenariofile.entities.EntityBean;
 import org.spigotmc.SpigotConfig;
 
 import java.util.ArrayList;
@@ -30,6 +36,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 public class ContextManagerImpl implements ContextManager
 {
@@ -44,7 +51,7 @@ public class ContextManagerImpl implements ContextManager
     @NotNull
     private final StageManager stageManager;
     private final Logger logger;
-
+    List<UUID> generatedEntities;
     private boolean isWorldPrepared;
     private boolean isActorPrepared;
 
@@ -69,6 +76,99 @@ public class ContextManagerImpl implements ContextManager
         return MsgArgs.of("prefix", LogUtils.gerScenarioPrefix(testID, scenario));
     }
 
+    private World prepareWorld(ContextBean context, ScenarioFileBean scenario, UUID testID) throws StageCreateFailedException
+    {
+        if (context == null || context.getWorld() == null)
+            return this.stageManager.shared(DEFAULT_ORIGINAL_WORLD_NAME);
+
+        if (context.getWorld().getOriginalWorldName() != null
+                && Bukkit.getWorld(context.getWorld().getOriginalWorldName()) != null)  // 既存だったら再利用する。
+        {
+            this.logIfVerbose(scenario, "context.stage.clone.found",
+                    MsgArgs.of("stageName", context.getWorld().getOriginalWorldName()),
+                    testID
+            );
+            this.logIfVerbose(scenario, "context.stage.clone.cloning",
+                    MsgArgs.of("stageName", context.getWorld().getOriginalWorldName()),
+                    testID
+            );
+        }
+
+        return ThreadingUtil.waitForOrThrow(this.registry, () ->
+                this.stageManager.createStage(context.getWorld())
+        );
+    }
+
+    private List<Actor> prepareActors(ContextBean context, ScenarioFileBean scenario, UUID testID) throws StageCreateFailedException, StageNotCreatedException
+    {
+        try
+        {
+            List<Actor> actors = new ArrayList<>();
+            for (PlayerBean actor : context.getActors())
+                actors.add(this.actorManager.createActor(actor));
+
+            this.isActorPrepared = true;
+
+            return actors;
+        }
+        catch (Exception e)
+        {
+            this.registry.getExceptionHandler().report(e);
+            this.logActorGenFail(scenario, testID);
+
+            this.stageManager.destroyStage();
+            return null;
+        }
+
+    }
+
+    private Entity spawnEntity(World stage, EntityBean entity)
+    {
+        EntityType type = entity.getType();
+        if (type == null)
+            throw new IllegalArgumentException("Unable to spawn entity: type is null");
+
+        Location spawnLoc;
+        if (entity.getLocation() == null)
+        {
+            final int DEFAULT_LOC_X = 0;
+            final int DEFAULT_LOC_Z = 0;
+
+            int y = stage.getHighestBlockYAt(DEFAULT_LOC_X, DEFAULT_LOC_Z);
+
+            spawnLoc = new Location(stage, DEFAULT_LOC_X, y, DEFAULT_LOC_Z);
+        }
+        else
+            spawnLoc = entity.getLocation();
+
+        return ThreadingUtil.waitForOrThrow(this.registry, () -> {
+                    Entity e = stage.spawnEntity(spawnLoc, type, CreatureSpawnEvent.SpawnReason.CUSTOM,
+                            generatedEntity -> BeanUtils.applyEntityBeanData(entity, generatedEntity)
+                    );
+
+                    try
+                    {
+                        Thread.sleep(100);
+                    }
+                    catch (InterruptedException ignored)
+                    {
+                    }
+                    return e;
+                }
+        );
+    }
+
+    private List<Entity> prepareEntities(World stage, ContextBean context, ScenarioFileBean scenario, UUID testID) throws StageCreateFailedException, StageNotCreatedException
+    {
+        List<Entity> entities = new ArrayList<>();
+        for (EntityBean entity : context.getEntities())
+            entities.add(this.spawnEntity(stage, entity));
+
+        this.isActorPrepared = true;
+
+        return entities;
+    }
+
     @Override
     public Context prepareContext(@NotNull ScenarioFileBean scenario, @NotNull UUID testID)
             throws StageNotCreatedException, StageCreateFailedException
@@ -78,53 +178,30 @@ public class ContextManagerImpl implements ContextManager
         this.logIfVerbose(scenario, "context.creating", testID);
 
         this.logIfVerbose(scenario, "context.stage.generating", testID);
-
-        World stage;
-        if (context != null && context.getWorld() != null)
-        {
-            if (context.getWorld().getOriginalWorldName() != null
-                    && Bukkit.getWorld(context.getWorld().getOriginalWorldName()) != null)  // 既存だったら再利用する。
-            {
-                this.logIfVerbose(scenario, "context.stage.clone.found",
-                        MsgArgs.of("stageName", context.getWorld().getOriginalWorldName()),
-                        testID
-                );
-                this.logIfVerbose(scenario, "context.stage.clone.cloning",
-                        MsgArgs.of("stageName", context.getWorld().getOriginalWorldName()),
-                        testID
-                );
-            }
-
-            stage = ThreadingUtil.waitForOrThrow(this.registry, () ->
-                    this.stageManager.createStage(context.getWorld()));
-        }
-        else
-            stage = this.stageManager.shared(DEFAULT_ORIGINAL_WORLD_NAME);
-
+        World stage = this.prepareWorld(context, scenario, testID);
         this.isWorldPrepared = true;
 
-        List<Actor> actors = new ArrayList<>();
-        if (context != null && !context.getActors().isEmpty())
+        List<Actor> actors = null;
+        if (!(context == null || context.getActors().isEmpty()))
         {
             this.logIfVerbose(scenario, "context.actor.generating", testID);
-            try
-            {
-                for (PlayerBean actor : context.getActors())
-                    actors.add(this.actorManager.createActor(actor));
-                this.isActorPrepared = true;
-            }
-            catch (Exception e)
-            {
-                this.registry.getExceptionHandler().report(e);
-                this.logActorGenFail(scenario, testID);
-
-                this.stageManager.destroyStage();
-                return null;
-            }
+            actors = this.prepareActors(context, scenario, testID);
         }
 
+        List<Entity> generatedEntities = null;
+        if (!(context == null || context.getEntities().isEmpty()))
+        {
+            this.logIfVerbose(scenario, "context.entity.generating", testID);
+            generatedEntities = this.prepareEntities(stage, context, scenario, testID);
+
+            this.generatedEntities = generatedEntities.stream()
+                    .map(Entity::getUniqueId)
+                    .collect(Collectors.toList());
+        }
+
+
         this.logIfVerbose(scenario, "context.created", testID);
-        return new ContextImpl(stage, actors);
+        return new ContextImpl(stage, actors, generatedEntities);
     }
 
     private void logIfVerbose(ScenarioFileBean scenario, String message, MsgArgs args, UUID testID)
@@ -159,6 +236,21 @@ public class ContextManagerImpl implements ContextManager
             for (Actor actor : actors)
                 this.actorManager.destroyActor(actor);
         }
+
+        if (this.generatedEntities != null)
+        {
+            for (UUID uuid : this.generatedEntities)
+            {
+                Entity entity = Bukkit.getEntity(uuid);
+                if (entity != null)
+                    entity.remove();
+            }
+        }
+
+        this.isWorldPrepared = false;
+        this.isActorPrepared = false;
+        this.generatedEntities = null;
+
     }
 
     @SneakyThrows(StageNotCreatedException.class)

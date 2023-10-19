@@ -5,8 +5,8 @@ import lombok.Getter;
 import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.kunlab.scenamatica.action.utils.BeanUtils;
 import org.kunlab.scenamatica.action.utils.EntityUtils;
+import org.kunlab.scenamatica.commons.utils.BeanUtils;
 import org.kunlab.scenamatica.interfaces.scenariofile.entities.EntityBean;
 
 import java.util.Objects;

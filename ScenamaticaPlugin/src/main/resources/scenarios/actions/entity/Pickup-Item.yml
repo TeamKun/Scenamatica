@@ -5,19 +5,14 @@ name: actions_entity_pickup_item
 description: Testing entity_pickup_item action works or not
 on:
   - type: manual_dispatch
-    before:
-      - type: execute
-        action: entity_spawn
-        with:
-          entity:
-            type: minecraft:villager
-            tags:
-              - 810snpi
-    after:
-      - action: command_dispatch
-        type: execute
-        with:
-          command: 'kill @e[type=minecraft:villager,tag=810snpi]'
+
+context:
+  entities:
+    - type: minecraft:villager
+      tags:
+        - 810snpi
+
+
 scenario:
   - type: execute
     action: entity_pickup_item

@@ -5,37 +5,16 @@ name: actions_entity_damage_by_entity
 description: Testing entity_damage_by_entity action works or not
 on:
   - type: on_load
-    before:
-      - type: execute
-        action: entity_spawn
-        with:
-          entity:
-            type: minecraft:parrot
-            tags:
-              - 810snpi
-    after:
-      - action: command_dispatch
-        type: execute
-        with:
-          command: 'kill @e[type=minecraft:parrot,tag=810snpi]'
   - type: manual_dispatch
-    before:
-      - type: execute
-        action: entity_spawn
-        with:
-          entity:
-            type: minecraft:parrot
-            tags:
-              - 810snpi
-    after:
-      - action: command_dispatch
-        type: execute
-        with:
-          command: 'kill @e[type=minecraft:parrot,tag=810snpi]'
 
 context:
   actors:
     - name: Actor01
+  entities:
+    - type: minecraft:parrot
+      tags:
+        - 810snpi
+
 scenario:
   - type: execute
     action: entity_damage_by_entity

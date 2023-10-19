@@ -1,4 +1,4 @@
-package org.kunlab.scenamatica.action.utils;
+package org.kunlab.scenamatica.commons.utils;
 
 import com.destroystokyo.paper.Namespaced;
 import com.google.common.collect.Multimap;

@@ -3,6 +3,7 @@ package org.kunlab.scenamatica.scenariofile.beans.context;
 import org.junit.jupiter.api.Test;
 import org.kunlab.scenamatica.interfaces.scenariofile.context.ContextBean;
 import org.kunlab.scenamatica.scenariofile.BeanSerializerImpl;
+import org.kunlab.scenamatica.scenariofile.beans.entity.EntityBeanSerializeTest;
 import org.kunlab.scenamatica.scenariofile.beans.utils.MapTestUtil;
 
 import java.util.Arrays;
@@ -20,6 +21,11 @@ public class ContextBeanSerializeTest
                     PlayerBeanSerializeTest.FULFILLED,
                     PlayerBeanSerializeTest.FULFILLED
             ),
+            Arrays.asList(
+                    EntityBeanSerializeTest.FULFILLED,
+                    EntityBeanSerializeTest.FULFILLED,
+                    EntityBeanSerializeTest.FULFILLED
+            ),
             StageBeanSerializeTest.FULFILLED
     );
 
@@ -30,10 +36,16 @@ public class ContextBeanSerializeTest
                 PlayerBeanSerializeTest.FULFILLED_MAP,
                 PlayerBeanSerializeTest.FULFILLED_MAP
         ));
+        this.put("entities", Arrays.asList(
+                EntityBeanSerializeTest.FULFILLED_MAP,
+                EntityBeanSerializeTest.FULFILLED_MAP,
+                EntityBeanSerializeTest.FULFILLED_MAP
+        ));
         this.put("stage", StageBeanSerializeTest.FULFILLED_MAP);
     }};
 
     public static final ContextBeanImpl EMPTY = new ContextBeanImpl(
+            Collections.emptyList(),
             Collections.emptyList(),
             null
     );
