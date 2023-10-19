@@ -21,15 +21,15 @@ import java.util.stream.Collectors;
 @Value
 public class ScenarioFileBeanImpl implements ScenarioFileBean
 {
-    private static final String KEY_SCENAMATICA_VERSION = "scenamatica";
-    private static final String KEY_NAME = "name";
-    private static final String KEY_DESCRIPTION = "description";
-    private static final String KEY_TIMEOUT = "timeout";
-    private static final String KEY_ORDER = "order";
-    private static final String KEY_TRIGGERS = "on";
-    private static final String KEY_RUN_IF = "runif";
-    private static final String KEY_CONTEXT = "context";
-    private static final String KEY_SCENARIO = "scenario";
+    public static final String KEY_SCENAMATICA_VERSION = "scenamatica";
+    public static final String KEY_NAME = "name";
+    public static final String KEY_DESCRIPTION = "description";
+    public static final String KEY_TIMEOUT = "timeout";
+    public static final String KEY_ORDER = "order";
+    public static final String KEY_TRIGGERS = "on";
+    public static final String KEY_RUN_IF = "runif";
+    public static final String KEY_CONTEXT = "context";
+    public static final String KEY_SCENARIO = "scenario";
 
     @NotNull
     Version scenamaticaVersion;

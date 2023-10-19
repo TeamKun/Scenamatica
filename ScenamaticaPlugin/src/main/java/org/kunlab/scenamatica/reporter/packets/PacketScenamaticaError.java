@@ -12,14 +12,12 @@ import java.util.Map;
 @EqualsAndHashCode(callSuper = true)
 public class PacketScenamaticaError extends AbstractRawPacket
 {
+    public static final String KEY_EXCEPTION = "exception";
+    public static final String KEY_MESSAGE = "message";
+    public static final String KEY_STACK_TRACE = "stackTrace";
+    public static final String KEY_CAUSED_BY = "causedBy";
     private static final String GENRE = "general";
     private static final String TYPE = "error";
-
-    private static final String KEY_EXCEPTION = "exception";
-    private static final String KEY_MESSAGE = "message";
-    private static final String KEY_STACK_TRACE = "stackTrace";
-    private static final String KEY_CAUSED_BY = "causedBy";
-
     @NotNull
     String exception;
     @NotNull

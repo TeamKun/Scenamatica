@@ -6,7 +6,7 @@ import java.util.UUID;
 
 public interface EntityItemBean extends EntityBean
 {
-    // private static final String KEY_ITEM_STACK = "itemStack";    // トップレベルに ItemStackBean のキーを置くのでいらない。
+    // public static final String KEY_ITEM_STACK = "itemStack";    // トップレベルに ItemStackBean のキーを置くのでいらない。
     String KEY_PICKUP_DELAY = "pickupDelay";
     String KEY_OWNER = "owner";
     String KEY_THROWER = "thrower";

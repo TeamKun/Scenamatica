@@ -20,10 +20,10 @@ import java.util.Objects;
 @Value
 public class TriggerBeanImpl implements TriggerBean
 {
-    private static final String KEY_TYPE = "type";
-    private static final String KEY_BEFORE_THAT = "before";
-    private static final String KEY_AFTER_THAT = "after";
-    private static final String KEY_RUN_IF = "runif";
+    public static final String KEY_TYPE = "type";
+    public static final String KEY_BEFORE_THAT = "before";
+    public static final String KEY_AFTER_THAT = "after";
+    public static final String KEY_RUN_IF = "runif";
 
     @NotNull
     TriggerType type;

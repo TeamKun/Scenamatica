@@ -8,7 +8,7 @@ import java.util.Map;
 
 public class PacketActionJumped extends AbstractActionPacket
 {
-    private static final String KEY_EXPECTED = "expected";
+    public static final String KEY_EXPECTED = "expected";
 
     private static final String TYPE = "jumped";
 

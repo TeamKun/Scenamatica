@@ -93,9 +93,9 @@ public class PlayerKickAction extends AbstractPlayerAction<PlayerKickAction.Argu
     @EqualsAndHashCode(callSuper = true)
     public static class Argument extends AbstractPlayerActionArgument
     {
-        private static final String KEY_LEAVE_MESSAGE = "leave_message";
-        private static final String KEY_KICK_MESSAGE = "message";
-        private static final String KEY_CAUSE = "cause";
+        public static final String KEY_LEAVE_MESSAGE = "leave_message";
+        public static final String KEY_KICK_MESSAGE = "message";
+        public static final String KEY_CAUSE = "cause";
 
         String leaveMessage;
         String kickMessage;

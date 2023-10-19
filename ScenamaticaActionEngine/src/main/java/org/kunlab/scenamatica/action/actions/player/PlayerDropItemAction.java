@@ -90,7 +90,7 @@ public class PlayerDropItemAction extends AbstractPlayerAction<PlayerDropItemAct
     @EqualsAndHashCode(callSuper = true)
     public static class Argument extends AbstractPlayerActionArgument
     {
-        private static final String KEY_ITEM = "item";
+        public static final String KEY_ITEM = "item";
 
         @Nullable
         EntityItemBean item;

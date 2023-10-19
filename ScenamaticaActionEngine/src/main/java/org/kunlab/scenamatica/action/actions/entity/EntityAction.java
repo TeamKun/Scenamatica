@@ -85,7 +85,7 @@ public class EntityAction extends AbstractEntityAction<EntityAction.Argument>
     @EqualsAndHashCode(callSuper = true)
     public static class Argument extends AbstractEntityActionArgument
     {
-        private static final String KEY_ENTITY = "entity";
+        public static final String KEY_ENTITY = "entity";
 
         EntityBean entity;
 

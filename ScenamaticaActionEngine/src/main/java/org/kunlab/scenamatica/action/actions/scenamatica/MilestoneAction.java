@@ -91,8 +91,8 @@ public class MilestoneAction extends AbstractScenamaticaAction<MilestoneAction.A
     @EqualsAndHashCode(callSuper = true)
     public static class Argument extends AbstractActionArgument
     {
-        private static final String KEY_NAME = "name";
-        private static final String KEY_REACHED = "reached";
+        public static final String KEY_NAME = "name";
+        public static final String KEY_REACHED = "reached";
 
         String name;
         Boolean reached;

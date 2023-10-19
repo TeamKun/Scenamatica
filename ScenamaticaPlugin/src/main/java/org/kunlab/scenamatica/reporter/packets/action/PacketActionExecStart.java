@@ -8,7 +8,7 @@ import java.util.Map;
 
 public class PacketActionExecStart extends AbstractActionPacket
 {
-    private static final String KEY_TIMEOUT = "timeout";
+    public static final String KEY_TIMEOUT = "timeout";
 
     private static final String TYPE = "exec_start";
 

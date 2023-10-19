@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 
 public class PacketSessionStart extends AbstractSessionPacket
 {
-    private static final String KEY_TESTS = "tests";
+    public static final String KEY_TESTS = "tests";
 
     private static final String TYPE = "start";
 

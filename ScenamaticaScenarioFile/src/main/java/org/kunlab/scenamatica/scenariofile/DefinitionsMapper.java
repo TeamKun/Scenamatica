@@ -12,8 +12,8 @@ import java.util.regex.Pattern;
 
 public class DefinitionsMapper
 {
-    private static final String KEY_DEFINITIONS = "definitions";
-    private static final String KEY_REFERENCE = "$ref";
+    public static final String KEY_DEFINITIONS = "definitions";
+    public static final String KEY_REFERENCE = "$ref";
     private static final Pattern PATTERN_REFERENCE_EMBED = Pattern.compile("\\$\\{([\\w|{}]+)}");
     private static final Map<String, Object> BASE_EMBED_DEFINITIONS;
 

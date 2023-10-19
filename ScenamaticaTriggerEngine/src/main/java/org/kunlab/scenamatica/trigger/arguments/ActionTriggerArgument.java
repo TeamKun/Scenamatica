@@ -16,8 +16,8 @@ import java.util.Objects;
 @Value
 public class ActionTriggerArgument implements TriggerArgument, ActionBean
 {
-    private static final String KEY_ACTION_TYPE = "action";
-    private static final String KEY_ACTION_ARGS = "with";
+    public static final String KEY_ACTION_TYPE = "action";
+    public static final String KEY_ACTION_ARGS = "with";
 
     String type;
     Map<String, Object> arguments;

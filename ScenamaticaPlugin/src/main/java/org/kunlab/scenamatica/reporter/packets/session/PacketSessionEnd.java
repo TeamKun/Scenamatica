@@ -11,8 +11,8 @@ import java.util.stream.Collectors;
 
 public class PacketSessionEnd extends AbstractSessionPacket
 {
-    private static final String KEY_RESULTS = "results";
-    private static final String KEY_STARTED_AT = "startedAt";
+    public static final String KEY_RESULTS = "results";
+    public static final String KEY_STARTED_AT = "startedAt";
     private static final String TYPE = "end";
 
     @NotNull

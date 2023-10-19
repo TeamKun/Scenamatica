@@ -99,7 +99,7 @@ public class PlayerJoinAction extends AbstractPlayerAction<PlayerJoinAction.Argu
     @EqualsAndHashCode(callSuper = true)
     public static class Argument extends AbstractPlayerActionArgument
     {
-        private static final String KEY_JOIN_MESSAGE = "message";
+        public static final String KEY_JOIN_MESSAGE = "message";
 
         String joinMessage;
 

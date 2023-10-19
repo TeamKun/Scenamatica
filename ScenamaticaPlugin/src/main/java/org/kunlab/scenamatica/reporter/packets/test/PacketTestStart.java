@@ -15,9 +15,9 @@ import java.util.Map;
 @EqualsAndHashCode(callSuper = true)
 public class PacketTestStart extends AbstractTestPacket
 {
-    private static final String KEY_AUTO_START = "isAutoStart";
-    private static final String KEY_STARTED_AT = "startedAt";
-    private static final String KEY_SCENARIO = "scenario";
+    public static final String KEY_AUTO_START = "isAutoStart";
+    public static final String KEY_STARTED_AT = "startedAt";
+    public static final String KEY_SCENARIO = "scenario";
 
     private static final String TYPE = "start";
 

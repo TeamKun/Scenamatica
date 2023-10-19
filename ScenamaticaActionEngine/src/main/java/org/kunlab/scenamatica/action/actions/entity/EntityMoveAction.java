@@ -90,9 +90,9 @@ public class EntityMoveAction extends AbstractEntityAction<EntityMoveAction.Argu
     @EqualsAndHashCode(callSuper = true)
     public static class Argument extends AbstractEntityActionArgument
     {
-        private static final String KEY_FROM = "from";
-        private static final String KEY_TO = "to";
-        private static final String KEY_USE_AI = "ai";
+        public static final String KEY_FROM = "from";
+        public static final String KEY_TO = "to";
+        public static final String KEY_USE_AI = "ai";
 
         Location from;
         Location to;

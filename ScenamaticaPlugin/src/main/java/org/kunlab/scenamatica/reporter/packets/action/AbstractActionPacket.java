@@ -9,8 +9,8 @@ import java.util.UUID;
 
 public abstract class AbstractActionPacket extends AbstractTestPacket
 {
-    private static final String KEY_ACTION = "action";
-    private static final String KEY_ARGUMENT = "argument";
+    public static final String KEY_ACTION = "action";
+    public static final String KEY_ARGUMENT = "argument";
 
     private static final String GENRE = "action";
 

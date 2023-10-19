@@ -15,11 +15,11 @@ import java.util.Map;
 @EqualsAndHashCode(callSuper = true)
 public class PacketTestEnd extends AbstractTestPacket
 {
-    private static final String KEY_SCENARIO = "scenario";
-    private static final String KEY_STATE = "state";
-    private static final String KEY_CAUSE = "cause";
-    private static final String KEY_STARTED_AT = "startedAt";
-    private static final String KEY_FINISHED_AT = "finishedAt";
+    public static final String KEY_SCENARIO = "scenario";
+    public static final String KEY_STATE = "state";
+    public static final String KEY_CAUSE = "cause";
+    public static final String KEY_STARTED_AT = "startedAt";
+    public static final String KEY_FINISHED_AT = "finishedAt";
 
     private static final String TYPE = "end";
 

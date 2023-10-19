@@ -9,7 +9,7 @@ import java.util.UUID;
 
 public abstract class AbstractTestPacket extends AbstractRawPacket
 {
-    private static final String KEY_TEST_ID = "testID";
+    public static final String KEY_TEST_ID = "testID";
 
     private static final String GENRE = "test";
 

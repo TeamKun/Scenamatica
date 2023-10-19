@@ -115,8 +115,8 @@ public class PlayerQuitAction extends AbstractPlayerAction<PlayerQuitAction.Argu
     @EqualsAndHashCode(callSuper = true)
     public static class Argument extends AbstractPlayerActionArgument
     {
-        private static final String KEY_QUIT_MESSAGE = "message";
-        private static final String KEY_QUIT_REASON = "reason"; // Paper
+        public static final String KEY_QUIT_MESSAGE = "message";
+        public static final String KEY_QUIT_REASON = "reason"; // Paper
 
         private static final PlayerQuitEvent.QuitReason DEFAULT_REASON_ON_EXPECT_MODE
                 = PlayerQuitEvent.QuitReason.KICKED;

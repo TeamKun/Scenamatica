@@ -9,10 +9,10 @@ import java.util.Map;
 @AllArgsConstructor
 public abstract class AbstractRawPacket
 {
-    private static final String KEY_GENRE = "genre";
-    private static final String KEY_TYPE = "type";
+    public static final String KEY_GENRE = "genre";
+    public static final String KEY_TYPE = "type";
 
-    private static final String KEY_DATE = "date";
+    public static final String KEY_DATE = "date";
 
     @NotNull
     private final String genre;

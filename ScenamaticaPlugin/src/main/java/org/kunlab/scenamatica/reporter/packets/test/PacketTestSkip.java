@@ -8,10 +8,8 @@ import java.util.Map;
 
 public class PacketTestSkip extends AbstractTestPacket
 {
+    public static final String KEY_REASON_ACTION = "reason_action";
     private static final String TYPE = "skip";
-
-    private static final String KEY_REASON_ACTION = "reason_action";
-
     private final ScenarioEngine engine;
 
     @NotNull

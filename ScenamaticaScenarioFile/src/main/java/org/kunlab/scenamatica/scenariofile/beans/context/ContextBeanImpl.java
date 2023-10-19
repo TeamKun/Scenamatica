@@ -16,8 +16,8 @@ import java.util.Map;
 @Value
 public class ContextBeanImpl implements ContextBean
 {
-    private static final String KEY_ACTORS = "actors";
-    private static final String KEY_STAGE = "stage";
+    public static final String KEY_ACTORS = "actors";
+    public static final String KEY_STAGE = "stage";
 
     @NotNull
     List<PlayerBean> actors;
