@@ -1,5 +1,6 @@
 package org.kunlab.scenamatica.context;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import net.kunmc.lab.peyangpaperutils.lang.LangProvider;
@@ -50,7 +51,9 @@ public class ContextManagerImpl implements ContextManager
     @Getter
     @NotNull
     private final StageManager stageManager;
+    private final EntityChunkLoader chunkLoader;
     private final Logger logger;
+    @Getter(AccessLevel.PACKAGE)
     List<UUID> generatedEntities;
     private boolean isWorldPrepared;
     private boolean isActorPrepared;
@@ -62,6 +65,7 @@ public class ContextManagerImpl implements ContextManager
         this.actorManager = new ActorManagerImpl(registry, this);
         this.stageManager = new StageManagerImpl(registry);
         this.logger = registry.getLogger();
+        this.chunkLoader = new EntityChunkLoader(registry);
 
         this.isWorldPrepared = false;
         this.isActorPrepared = false;
@@ -122,7 +126,6 @@ public class ContextManagerImpl implements ContextManager
 
     }
 
-    @SneakyThrows(InterruptedException.class)
     private Entity spawnEntity(World stage, EntityBean entity)
     {
         EntityType type = entity.getType();
@@ -142,6 +145,7 @@ public class ContextManagerImpl implements ContextManager
         else
             spawnLoc = entity.getLocation();
 
+
         return ThreadingUtil.waitForOrThrow(this.registry, () -> {
                     UUID entityTag = UUID.randomUUID();
                     String tagName = "scenamatica-" + entityTag;
@@ -152,13 +156,7 @@ public class ContextManagerImpl implements ContextManager
                             }
                     );
 
-                    do
-                    {
-                        Thread.sleep(1000);
-                    }
-                    while (Bukkit.selectEntities(Bukkit.getConsoleSender(), "@e[tag=" + tagName + "]").isEmpty());
-
-                    e.removeScoreboardTag(tagName);
+                    this.chunkLoader.addEntity(e);
 
                     return e;
                 }
@@ -244,6 +242,7 @@ public class ContextManagerImpl implements ContextManager
                 this.actorManager.destroyActor(actor);
         }
 
+        this.chunkLoader.clear();
         if (this.generatedEntities != null)
         {
             for (UUID uuid : this.generatedEntities)
@@ -267,6 +266,7 @@ public class ContextManagerImpl implements ContextManager
         this.actorManager.shutdown();
         if (this.stageManager.isStageCreated())
             this.stageManager.destroyStage();  // StageNotCreatedException はチェック済み。
+        this.chunkLoader.clear();
 
 
         SpigotConfig.disablePlayerDataSaving = false;
