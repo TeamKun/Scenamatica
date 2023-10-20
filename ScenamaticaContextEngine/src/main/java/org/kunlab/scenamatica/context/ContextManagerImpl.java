@@ -122,6 +122,7 @@ public class ContextManagerImpl implements ContextManager
 
     }
 
+    @SneakyThrows(InterruptedException.class)
     private Entity spawnEntity(World stage, EntityBean entity)
     {
         EntityType type = entity.getType();
@@ -142,17 +143,23 @@ public class ContextManagerImpl implements ContextManager
             spawnLoc = entity.getLocation();
 
         return ThreadingUtil.waitForOrThrow(this.registry, () -> {
+                    UUID entityTag = UUID.randomUUID();
+                    String tagName = "scenamatica-" + entityTag;
                     Entity e = stage.spawnEntity(spawnLoc, type, CreatureSpawnEvent.SpawnReason.CUSTOM,
-                            generatedEntity -> BeanUtils.applyEntityBeanData(entity, generatedEntity)
+                            generatedEntity -> {
+                                BeanUtils.applyEntityBeanData(entity, generatedEntity);
+                                generatedEntity.addScoreboardTag(tagName);
+                            }
                     );
 
-                    try
+                    do
                     {
-                        Thread.sleep(100);
+                        Thread.sleep(1000);
                     }
-                    catch (InterruptedException ignored)
-                    {
-                    }
+                    while (Bukkit.selectEntities(Bukkit.getConsoleSender(), "@e[tag=" + tagName + "]").isEmpty());
+
+                    e.removeScoreboardTag(tagName);
+
                     return e;
                 }
         );

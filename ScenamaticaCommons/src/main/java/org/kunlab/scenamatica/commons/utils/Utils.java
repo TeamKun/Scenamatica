@@ -10,6 +10,7 @@ import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.misc.BlockBean;
 
 import java.util.Locale;
+import java.util.UUID;
 
 @UtilityClass
 public class Utils
@@ -81,5 +82,19 @@ public class Utils
             return material;
         else
             return null;
+    }
+
+    public static int[] convertUUIDToIntegers(UUID uuid)
+    {
+        int[] uuidIntegers = new int[4];
+        long mostSigBits = uuid.getMostSignificantBits();
+        long leastSigBits = uuid.getLeastSignificantBits();
+
+        uuidIntegers[0] = (int) (mostSigBits >> 32);
+        uuidIntegers[1] = (int) mostSigBits;
+        uuidIntegers[2] = (int) (leastSigBits >> 32);
+        uuidIntegers[3] = (int) leastSigBits;
+
+        return uuidIntegers;
     }
 }
