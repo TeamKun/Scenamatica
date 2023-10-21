@@ -18,11 +18,13 @@ public class EntityChunkLoader extends BukkitRunnable implements Listener
 {
     private final Map</* entity: */ ? super Entity, /* previousTickLocation: */ Location> entities;
     private final List<? super Chunk> loadedChunks;
+    private final List<? super Chunk> dontUnloadChunks;
 
     public EntityChunkLoader(ScenamaticaRegistry registry)
     {
         this.entities = new HashMap<>();
         this.loadedChunks = new LinkedList<>();
+        this.dontUnloadChunks = new ArrayList<>();
 
         this.runTaskTimer(registry.getPlugin(), 0, 1);
     }
@@ -36,7 +38,10 @@ public class EntityChunkLoader extends BukkitRunnable implements Listener
     private void loadChunkSafe(Chunk chunk)
     {
         if (chunk.isForceLoaded())
+        {
+            this.dontUnloadChunks.add(chunk);
             return;
+        }
 
         if (!this.loadedChunks.contains(chunk))
         {
@@ -50,6 +55,11 @@ public class EntityChunkLoader extends BukkitRunnable implements Listener
     {
         if (!(chunk.isForceLoaded() || this.canUnload(chunk)))
             return;
+        else if (this.dontUnloadChunks.contains(chunk))
+        {
+            this.dontUnloadChunks.remove(chunk);
+            return;
+        }
 
         Chunk worldSpawnChunk = chunk.getWorld().getSpawnLocation().getChunk();
         if (chunk.equals(worldSpawnChunk))
