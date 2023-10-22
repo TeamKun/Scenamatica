@@ -5,8 +5,11 @@ import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
 import org.bukkit.inventory.EquipmentSlot;
+import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.action.actions.player.AbstractPlayerActionArgument;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
+import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.BeanSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.ItemStackBean;
 import org.kunlab.scenamatica.interfaces.scenariofile.misc.BlockBean;
@@ -25,6 +28,7 @@ public class BucketActionArgument extends AbstractPlayerActionArgument
     public static final String KEY_BLOCK_FACE = "blockFace";
     public static final String KEY_BUCKET = "bucket";
     public static final String KEY_HAND = "hand";
+    public static final String KEY_EVENT_ONLY = "eventOnly";
 
     ItemStackBean itemStack;
     BlockBean block;
@@ -32,19 +36,14 @@ public class BucketActionArgument extends AbstractPlayerActionArgument
     BlockFace blockFace;
     Material bucket;
     EquipmentSlot hand;
+    boolean eventOnly;
 
     public BucketActionArgument(BucketActionArgument origin)
     {
-        super(origin.getTargetSpecifier());
-        this.itemStack = origin.itemStack;
-        this.block = origin.block;
-        this.blockClicked = origin.blockClicked;
-        this.blockFace = origin.blockFace;
-        this.bucket = origin.bucket;
-        this.hand = origin.hand;
+        this(origin.getTargetSpecifier(), origin.itemStack, origin.block, origin.blockClicked, origin.blockFace, origin.bucket, origin.hand, origin.eventOnly);
     }
 
-    public BucketActionArgument(String target, ItemStackBean itemStack, BlockBean block, BlockBean blockClicked, BlockFace blockFace, Material bucket, EquipmentSlot hand)
+    public BucketActionArgument(String target, ItemStackBean itemStack, BlockBean block, BlockBean blockClicked, BlockFace blockFace, Material bucket, EquipmentSlot hand, boolean eventOnly)
     {
         super(target);
         this.itemStack = itemStack;
@@ -53,6 +52,7 @@ public class BucketActionArgument extends AbstractPlayerActionArgument
         this.blockFace = blockFace;
         this.bucket = bucket;
         this.hand = hand;
+        this.eventOnly = eventOnly;
     }
 
     public static BucketActionArgument deserialize(Map<String, Object> map, BeanSerializer serializer)
@@ -88,7 +88,8 @@ public class BucketActionArgument extends AbstractPlayerActionArgument
                 blockClicked,
                 MapUtils.getAsEnumOrNull(map, BucketActionArgument.KEY_BLOCK_FACE, BlockFace.class),
                 MapUtils.getAsEnumOrNull(map, BucketActionArgument.KEY_BUCKET, Material.class),
-                MapUtils.getAsEnumOrNull(map, BucketActionArgument.KEY_HAND, EquipmentSlot.class)
+                MapUtils.getAsEnumOrNull(map, BucketActionArgument.KEY_HAND, EquipmentSlot.class),
+                MapUtils.getOrDefault(map, BucketActionArgument.KEY_EVENT_ONLY, false)
         );
     }
 
@@ -107,6 +108,15 @@ public class BucketActionArgument extends AbstractPlayerActionArgument
                 && this.blockFace == arg.blockFace
                 && this.bucket == arg.bucket
                 && this.hand == arg.hand;
+    }
+
+    @Override
+    public void validate(@NotNull ScenarioEngine engine, @NotNull ScenarioType type)
+    {
+        super.validate(engine, type);
+
+        if (!(this.block == null || this.blockClicked == null))
+            throw new IllegalArgumentException("Both " + KEY_BLOCK + " and " + KEY_BLOCK_CLICKED + " are specified.");
     }
 
     @Override

@@ -1,21 +1,19 @@
 package org.kunlab.scenamatica.action.actions.player.bucket;
 
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerBucketEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.actions.player.AbstractPlayerAction;
 import org.kunlab.scenamatica.action.utils.VoxelUtils;
 import org.kunlab.scenamatica.commons.utils.BeanUtils;
-import org.kunlab.scenamatica.commons.utils.Utils;
-import org.kunlab.scenamatica.interfaces.context.Actor;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.misc.BlockBean;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +33,43 @@ public abstract class AbstractPlayerBucketAction<A extends BucketActionArgument>
     {
         // noinspection deprecation
         return bucket == Material.BUCKET || bucket == Material.LEGACY_BUCKET;
+    }
+
+    @Nullable
+    protected static Material convertBucketToLiquid(Material bucket)
+    {
+        switch (bucket)
+        {
+            case COD_BUCKET:
+            case PUFFERFISH_BUCKET:
+            case SALMON_BUCKET:
+            case TROPICAL_FISH_BUCKET:
+            case WATER_BUCKET:
+                return Material.WATER;
+            case LAVA_BUCKET:
+            case LEGACY_LAVA_BUCKET:
+                return Material.LAVA;
+            default:
+                return null;
+        }
+    }
+
+    @Nullable
+    protected static EntityType convertBucketToEntity(Material bucket)
+    {
+        switch (bucket)
+        {
+            case COD_BUCKET:
+                return EntityType.COD;
+            case PUFFERFISH_BUCKET:
+                return EntityType.PUFFERFISH;
+            case SALMON_BUCKET:
+                return EntityType.SALMON;
+            case TROPICAL_FISH_BUCKET:
+                return EntityType.TROPICAL_FISH;
+            default:
+                return null;
+        }
     }
 
     @SuppressWarnings("deprecation")
@@ -61,21 +96,21 @@ public abstract class AbstractPlayerBucketAction<A extends BucketActionArgument>
         }
     }
 
-    protected static ItemStack getBucket(Actor actor, BucketActionArgument argument)
+    protected static ItemStack getBucket(Player player, BucketActionArgument argument)
     {
         ItemStack stack;
         if (argument.getBucket() == null)
         {
-            stack = actor.getPlayer().getInventory().getItemInMainHand();
+            stack = player.getInventory().getItemInMainHand();
             if (!isBucketMaterial(stack.getType()))
-                throw new IllegalArgumentException("No bucket in the main hand, " + "please specify the bucket item implicitly: " + actor.getPlayer().getName());
+                throw new IllegalArgumentException("No bucket in the main hand, " + "please specify the bucket item implicitly: " + player.getName());
         }
         else
         {
             stack = new ItemStack(argument.getBucket());
             if (!isBucketMaterial(stack.getType()))
                 throw new IllegalArgumentException("Item " + argument.getBucket() + " is not a bucket.");
-            actor.getPlayer().getInventory().setItemInMainHand(stack);
+            player.getInventory().setItemInMainHand(stack);
         }
 
         return stack;
@@ -83,19 +118,8 @@ public abstract class AbstractPlayerBucketAction<A extends BucketActionArgument>
 
     protected static Block getPlaceAt(Player player, BucketActionArgument argument, ScenarioEngine engine)
     {
-        BlockBean blockCandidate = null;
         if (argument.getBlockClicked() != null)
-            blockCandidate = argument.getBlockClicked();
-        else if (argument.getBlock() != null)
-            blockCandidate = argument.getBlock();
-
-        if (blockCandidate != null)
-        {
-            Location fixedLoc = Utils.assignWorldToBlockLocation(blockCandidate, engine);
-            BeanUtils.applyBlockBeanData(blockCandidate, fixedLoc);
-
-            return fixedLoc.getBlock();
-        }
+            return BeanUtils.applyBlockBeanData(engine, argument.getBlockClicked());
 
         Block block = player.getTargetBlockExact(4);
         if (block == null)
@@ -126,5 +150,4 @@ public abstract class AbstractPlayerBucketAction<A extends BucketActionArgument>
                 && (argument.getBucket() == null || argument.getBucket() == e.getBucket())
                 && (argument.getHand() == null || argument.getHand() == e.getHand());
     }
-
 }

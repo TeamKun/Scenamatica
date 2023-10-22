@@ -342,11 +342,11 @@ public class BeanUtils
         applyBlockBeanData(bean, loc);
     }
 
-    public static void applyBlockBeanData(@NotNull BlockBean blockBean, @Nullable Location location)
+    public static Block applyBlockBeanData(@NotNull BlockBean blockBean, @Nullable Location location)
     {
         Location targetLoc = location == null ? blockBean.getLocation(): location;
         if (targetLoc == null)
-            return;
+            return null;
 
         Block block = targetLoc.getBlock();
         if (blockBean.getType() != null)
@@ -366,6 +366,26 @@ public class BeanUtils
                         new FixedMetadataValue(owningPlugin, entry.getValue())
                 );
         }
+
+        return block;
+    }
+
+    public static Block applyBlockBeanData(@NotNull ScenarioEngine engine, @NotNull BlockBean block, @Nullable Location location)
+    {
+        Location targetLoc;
+        if (location != null)
+            targetLoc = Utils.assignWorldToLocation(location, engine);
+        else if (block.getLocation() != null)
+            targetLoc = Utils.assignWorldToLocation(block.getLocation(), engine);
+        else
+            return null;
+
+        return applyBlockBeanData(block, targetLoc);
+    }
+
+    public static Block applyBlockBeanData(@NotNull ScenarioEngine engine, @NotNull BlockBean block)
+    {
+        return applyBlockBeanData(engine, block, null);
     }
 
     public static boolean isSame(@NotNull EntityBean entityBean, @NotNull Entity entity, boolean strict)
