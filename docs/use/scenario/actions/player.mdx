@@ -49,14 +49,12 @@ import {ObjectType} from "/src/components/Object";
         args={[
           {
             name: "target",
-            anchor: "target",
             description: "バケツを使用するプレイヤーです。",
             type: "プレイヤ",
             required: [ScenarioType.EXECUTE]
           },
           {
             name: "bucket",
-            anchor: "bucket",
             description: "使用するバケツです。",
             type: "ItemStack",
             type_link: "../../file-syntax#item-stack-structure",
@@ -75,24 +73,30 @@ import {ObjectType} from "/src/components/Object";
           },
           {
             name: "blockFace",
-            anchor: "block-face",
             description: "ブロックの面です。",
             type: "BlockFace{UP, DOWN, NORTH, EAST, SOUTH, WEST}"
           },
           {
             name: "hand",
-            anchor: "hand",
             description: "使用する手です。",
             type: "列挙型{HAND, OFF_HAND}",
             default: "HAND",
             available: [ScenarioType.EXPECT]
+          },
+          {
+            name: "eventOnly",
+            anchor: "bucket-empty-event-only",
+            description: "イベントのみ発火させるかどうかです。",
+            type: ObjectType.BOOLEAN,
+            default: "false",
+            available: [ScenarioType.EXECUTE]
           }
         ]}
         executable={"バケツ内の液体をブロックに撒きます。"}
         watchable
 />
 
-## アクション実行シナリオでの使用 {#bucket-empty-usage-in-execution}
+### アクション実行シナリオでの使用 {#bucket-empty-usage-in-execution}
 
 :::caution
 
@@ -106,6 +110,17 @@ NMS の仕様上の都合により、 `block` を用いて、液体の場所を�
 
 :::
 
+### `eventOnly` {#bucket-empty-event-only}
+
+`eventOnly` を `true` に設定すると、引数に基づいてイベントのみを発火させ、バケツの中身を設置します。
+
+:::info
+通常はアクタに `PacketPlayInBlockPlace` パケットを送信させます。
+引数 `clickedBlock` と `blockFace` に基づいて設置位置を決定します。
+しかし、この指定方法は直感的でない上にプレイヤとブロックの位置に依存しているため、コストが高くなってしまいます。
+そのため、直接イベントを発火させることで、よりかんたんにバケツの中身を設置できます。
+
+:::
 
 ## 進捗の達成と達成度 {#advancement}
 
