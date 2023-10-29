@@ -56,8 +56,7 @@ import {ObjectType} from "/src/components/Object";
           {
             name: "bucket",
             description: "使用するバケツです。",
-            type: "ItemStack",
-            type_link: "../../file-syntax#item-stack-structure",
+            type: "Enum{...Material}"
           },
           {
             name: "block",
@@ -106,7 +105,7 @@ import {ObjectType} from "/src/components/Object";
 
 :::warning
 
-NMS の仕様上の都合により、 `block` を用いて、液体の場所を直接指定することはできません。
+NMS の仕様上の都合により、 `block` を用いた液体の場所は `eventOnly` が `true` の場合にのみ有効です。
 
 :::
 
