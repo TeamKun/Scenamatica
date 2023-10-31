@@ -100,7 +100,7 @@ public class PlayerInteractEntityAction<A extends PlayerInteractEntityAction.Arg
         // noinspection unchecked
         return (A) new Argument(
                 super.deserializeTarget(map),
-                map.get(Argument.KEY_ENTITY),
+                EntityArgumentHolder.tryDeserialize(map.get(Argument.KEY_ENTITY), serializer),
                 MapUtils.getAsEnumOrNull(map, Argument.KEY_HAND, EquipmentSlot.class)
         );
     }
@@ -114,13 +114,6 @@ public class PlayerInteractEntityAction<A extends PlayerInteractEntityAction.Arg
 
         EntityArgumentHolder entity;
         EquipmentSlot hand;
-
-        public Argument(String target, Object mayTarget, EquipmentSlot hand)
-        {
-            super(target);
-            this.entity = new EntityArgumentHolder(mayTarget);
-            this.hand = hand;
-        }
 
         public Argument(String target, EntityArgumentHolder entity, EquipmentSlot hand)
         {

@@ -1,0 +1,34 @@
+# noinspection YAMLSchemaValidation
+scenamatica: ${project.version}
+
+name: actions_player_bucket_entity_8
+description: Testing PlayerBucketEntityAction without specifying bucket works or not
+on:
+  - type: on_load
+  - type: manual_dispatch
+
+context:
+  actors:
+    - name: Actor001
+      inventory:
+        mainHandItem:
+          type: WATER_BUCKET
+
+scenario:
+  - type: execute
+    action: player_bucket_entity
+    with:
+      target: Actor001
+      bucket:
+        type: SALMON
+
+  - type: expect
+    action: player_bucket_entity
+    with:
+      target: Actor001
+      bucket:
+        type: WATER_BUCKET
+      entity:
+        type: SALMON
+      entityBucket:
+        type: SALMON_BUCKET

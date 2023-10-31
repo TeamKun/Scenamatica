@@ -1,0 +1,61 @@
+# noinspection YAMLSchemaValidation
+scenamatica: ${project.version}
+
+name: actions_player_bucket_entity_7
+description: Testing PlayerBucketEntityAction with selecting entity works or not
+on:
+  - type: on_load
+    before:
+      - type: execute
+        action: block_place
+        with:
+          block:
+            type: WATER
+            location:
+              x: 0
+              y: 4
+              z: 0
+
+  - type: manual_dispatch
+    before:
+      - type: execute
+        action: block_place
+        with:
+          block:
+            type: WATER
+            location:
+              x: 0
+              y: 4
+              z: 0
+
+context:
+  actors:
+    - name: Actor001
+  stage:
+    type: FLAT
+  entities:
+    - type: SALMON
+      tags:
+        - "810snpi"
+
+scenario:
+  - type: execute
+    action: player_bucket_entity
+    with:
+      target: Actor001
+      bucket:
+        type: WATER_BUCKET
+      entity: "@e[type=SALMON,tag=810snpi]"
+
+  - type: expect
+    action: player_bucket_entity
+    with:
+      target: Actor001
+      bucket:
+        type: WATER_BUCKET
+      entity:
+        type: SALMON
+        tags:
+          - "810snpi"
+      entityBucket:
+        type: SALMON_BUCKET

@@ -18,13 +18,14 @@ public abstract class AbstractPlayerAction<A extends AbstractPlayerActionArgumen
     public static List<? extends AbstractPlayerAction<?>> getActions()
     {
         List<AbstractPlayerAction<?>> actions = new ArrayList<>(AbstractPlayerBucketAction.getActions());
-        actions.add(new PlayerGameModeAction());
         actions.add(new PlayerAdvancementAction());
         actions.add(new PlayerAnimationAction());
+        actions.add(new PlayerBucketEntityAction());
         actions.add(new PlayerChatAction());
         actions.add(new PlayerDeathAction());
         actions.add(new PlayerDropItemAction());
         actions.add(new PlayerFlightAction());
+        actions.add(new PlayerGameModeAction());
         actions.add(new PlayerHotbarSlotAction());
         actions.add(new PlayerInteractAtEntityAction());
         actions.add(new PlayerInteractBlockAction());

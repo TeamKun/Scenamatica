@@ -3,6 +3,7 @@ package org.kunlab.scenamatica.action.actions.entity;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.bukkit.Location;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntitySpawnEvent;
@@ -31,6 +32,22 @@ public class EntitySpawnAction extends AbstractAction<EntitySpawnAction.Argument
 {
     public static final String KEY_ACTION_NAME = "entity_spawn";
 
+    public static Entity spawnEntity(EntityBean bean, @Nullable Location spawnLoc, ScenarioEngine engine)
+    {
+        if (spawnLoc == null)
+            spawnLoc = engine.getContext().getStage().getSpawnLocation();
+        // World が指定されていない場合は、ステージのワールドを使う。
+        spawnLoc = Utils.assignWorldToLocation(spawnLoc, engine);
+
+        assert bean.getType() != null;
+        assert bean.getType().getEntityClass() != null;  // null は EntityType.UNKNOWN なときなだけなのであり得ない。
+        return spawnLoc.getWorld().spawn(
+                spawnLoc,
+                bean.getType().getEntityClass(),
+                e -> BeanUtils.applyEntityBeanData(bean, e)
+        );
+    }
+
     @Override
     public String getName()
     {
@@ -44,19 +61,8 @@ public class EntitySpawnAction extends AbstractAction<EntitySpawnAction.Argument
 
         EntityBean bean = argument.getEntity();
         Location spawnLoc = bean.getLocation();
-        if (spawnLoc == null)
-            spawnLoc = engine.getContext().getStage().getSpawnLocation();
 
-        // World が指定されていない場合は、ステージのワールドを使う。
-        spawnLoc = Utils.assignWorldToLocation(spawnLoc, engine);
-
-        assert bean.getType() != null;
-        assert bean.getType().getEntityClass() != null;  // null は EntityType.UNKNOWN なときなだけなのであり得ない。
-        spawnLoc.getWorld().spawn(
-                spawnLoc,
-                bean.getType().getEntityClass(),
-                e -> BeanUtils.applyEntityBeanData(bean, e)
-        );
+        spawnEntity(bean, spawnLoc, engine);
     }
 
     @Override
