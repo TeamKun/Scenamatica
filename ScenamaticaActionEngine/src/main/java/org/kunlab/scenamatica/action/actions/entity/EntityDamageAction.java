@@ -149,7 +149,7 @@ public class EntityDamageAction<A extends EntityDamageAction.Argument> extends A
             if (type == ScenarioType.ACTION_EXECUTE)
             {
                 this.throwIfNotSelectable();
-                ensureNotPresent(Argument.KEY_AMOUNT, this.amount);
+                ensurePresent(Argument.KEY_AMOUNT, this.amount);
                 if (this.cause != null)
                     throw new IllegalArgumentException("Use entity_damage_by_entity or entity_damage_by_block action instead.");
             }

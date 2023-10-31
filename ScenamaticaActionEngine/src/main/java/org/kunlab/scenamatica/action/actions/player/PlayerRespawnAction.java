@@ -129,8 +129,8 @@ public class PlayerRespawnAction extends AbstractPlayerAction<PlayerRespawnActio
             if (type != ScenarioType.ACTION_EXECUTE)
                 return;
 
-            ensurePresent(Argument.KEY_IS_BED, this.isBed);
-            ensurePresent(Argument.KEY_IS_ANCHOR, this.isAnchor);
+            ensureNotPresent(Argument.KEY_IS_BED, this.isBed);
+            ensureNotPresent(Argument.KEY_IS_ANCHOR, this.isAnchor);
         }
 
         @Override

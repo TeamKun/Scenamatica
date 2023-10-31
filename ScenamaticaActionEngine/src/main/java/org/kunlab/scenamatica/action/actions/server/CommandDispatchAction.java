@@ -120,7 +120,7 @@ public class CommandDispatchAction extends AbstractServerAction<CommandDispatchA
         public void validate(@NotNull ScenarioEngine engine, @NotNull ScenarioType type)
         {
             if (type == ScenarioType.ACTION_EXECUTE)
-                ensureNotPresent(KEY_COMMAND, this.command);
+                ensurePresent(KEY_COMMAND, this.command);
         }
 
         @Override

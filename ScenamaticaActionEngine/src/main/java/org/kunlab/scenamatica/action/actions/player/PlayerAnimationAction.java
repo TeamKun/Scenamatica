@@ -92,7 +92,7 @@ public class PlayerAnimationAction extends AbstractPlayerAction<PlayerAnimationA
         {
             super.validate(engine, type);
             if (type == ScenarioType.ACTION_EXECUTE)
-                ensureNotPresent(KEY_ACTION_TYPE, this.type);
+                ensurePresent(KEY_ACTION_TYPE, this.type);
         }
 
         @Override

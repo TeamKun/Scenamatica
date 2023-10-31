@@ -125,8 +125,8 @@ public class InventoryOpenAction extends AbstractInventoryAction<InventoryOpenAc
         {
             if (type == ScenarioType.ACTION_EXECUTE)
             {
-                ensureNotPresent(KEY_TARGET_PLAYER, this.targetPlayer);
-                ensureNotPresent(KEY_INVENTORY, this.inventory);
+                ensurePresent(KEY_TARGET_PLAYER, this.targetPlayer);
+                ensurePresent(KEY_INVENTORY, this.inventory);
             }
         }
 

@@ -144,7 +144,7 @@ public class TabCompleteAction extends AbstractServerAction<TabCompleteAction.Ar
         public void validate(@NotNull ScenarioEngine engine, @NotNull ScenarioType type)
         {
             if (type == ScenarioType.ACTION_EXECUTE)
-                ensureNotPresent(KEY_BUFFER, this.buffer);
+                ensurePresent(KEY_BUFFER, this.buffer);
         }
 
         @Override

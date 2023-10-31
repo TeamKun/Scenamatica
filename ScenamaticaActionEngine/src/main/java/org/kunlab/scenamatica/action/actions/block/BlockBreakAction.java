@@ -162,16 +162,16 @@ public class BlockBreakAction extends AbstractBlockAction<BlockBreakAction.Argum
             switch (type)
             {
                 case ACTION_EXECUTE:
-                    ensureNotPresent(Argument.KEY_BLOCK, this.block);
+                    ensurePresent(Argument.KEY_BLOCK, this.block);
                     break;
                 case CONDITION_REQUIRE:
-                    ensurePresent(Argument.KEY_ACTOR, this.actor);
-                    ensurePresent(Argument.KEY_DROP_ITEMS, this.dropItems);
+                    ensureNotPresent(Argument.KEY_ACTOR, this.actor);
+                    ensureNotPresent(Argument.KEY_DROP_ITEMS, this.dropItems);
 
                     BlockBean block = this.block;
-                    ensurePresent(Argument.KEY_BLOCK + "." + BlockBean.KEY_BLOCK_TYPE, block.getType());
-                    ensurePresent(Argument.KEY_BLOCK + "." + BlockBean.KEY_BIOME, block.getBiome());
-                    ensurePresent(Argument.KEY_BLOCK + "." + BlockBean.KEY_LIGHT_LEVEL, block.getLightLevel());
+                    ensureNotPresent(Argument.KEY_BLOCK + "." + BlockBean.KEY_BLOCK_TYPE, block.getType());
+                    ensureNotPresent(Argument.KEY_BLOCK + "." + BlockBean.KEY_BIOME, block.getBiome());
+                    ensureNotPresent(Argument.KEY_BLOCK + "." + BlockBean.KEY_LIGHT_LEVEL, block.getLightLevel());
 
                     if (!block.getMetadata().isEmpty())
                         throw new IllegalArgumentException("The block metadata must be empty.");

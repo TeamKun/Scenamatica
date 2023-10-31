@@ -169,7 +169,7 @@ public class PlayerBucketEntityAction extends AbstractPlayerAction<PlayerBucketE
             {
                 if (!this.entity.hasTarget())
                     throw new IllegalStateException("Entity is not set.");
-                ensurePresent(KEY_ENTITY_BUCKET, this.entityBucket);
+                ensureNotPresent(KEY_ENTITY_BUCKET, this.entityBucket);
             }
 
             if (this.originalBucket != null)

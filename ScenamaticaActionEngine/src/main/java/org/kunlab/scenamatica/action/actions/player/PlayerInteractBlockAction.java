@@ -178,8 +178,8 @@ public class PlayerInteractBlockAction extends AbstractPlayerAction<PlayerIntera
             if (type != ScenarioType.ACTION_EXECUTE)
                 return;
 
-            ensurePresent(KEY_BLOCK_FACE, this.blockFace);
-            ensureNotPresent(KEY_ACTION, this.action);
+            ensureNotPresent(KEY_BLOCK_FACE, this.blockFace);
+            ensurePresent(KEY_ACTION, this.action);
         }
 
         @Override

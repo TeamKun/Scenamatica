@@ -124,7 +124,7 @@ public class PlayerBucketEmptyAction extends AbstractPlayerBucketAction<PlayerBu
         {
             if (type == ScenarioType.ACTION_EXECUTE)
             {
-                ensureNotPresent(Argument.KEY_TARGET_PLAYER, this.getTargetSpecifier());
+                ensurePresent(Argument.KEY_TARGET_PLAYER, this.getTargetSpecifier());
 
                 if (this.getBlockClicked() == null && this.getBlock() == null)
                     throw new IllegalArgumentException("No block to place specified(" + Argument.KEY_BLOCK + " or " + Argument.KEY_BLOCK_CLICKED + " is required).");

@@ -108,8 +108,8 @@ public class PlayerChatAction extends AbstractPlayerAction<PlayerChatAction.Argu
 
             if (type == ScenarioType.ACTION_EXECUTE)
             {
-                ensureNotPresent(KEY_MESSAGE, this.message);
-                ensurePresent(KEY_FORMAT, this.format);
+                ensurePresent(KEY_MESSAGE, this.message);
+                ensureNotPresent(KEY_FORMAT, this.format);
             }
         }
 

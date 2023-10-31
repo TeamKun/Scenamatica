@@ -212,8 +212,8 @@ public class InventoryClickAction<T extends InventoryClickAction.Argument> exten
                         || this.type == ClickType.MIDDLE))
                     throw new IllegalArgumentException("button cannot be null when click type is not left, right or middle");
 
-                ensureNotPresent(Argument.KEY_TARGET_PLAYER, this.getTargetSpecifier());
-                ensurePresent(Argument.KEY_SLOT_TYPE, this.slotType);
+                ensurePresent(Argument.KEY_TARGET_PLAYER, this.getTargetSpecifier());
+                ensureNotPresent(Argument.KEY_SLOT_TYPE, this.slotType);
                 if (!(this.slot == null || this.rawSlot == null))
                     throw new IllegalArgumentException("cannot specify both slot and raw_slot in action execute scenario");
             }

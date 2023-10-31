@@ -54,7 +54,7 @@ public abstract class AbstractPlayerActionArgument extends AbstractActionArgumen
     public void validate(@NotNull ScenarioEngine engine, @NotNull ScenarioType type)
     {
         if (type == ScenarioType.ACTION_EXECUTE)
-            ensureNotPresent(KEY_TARGET_PLAYER, this.target);
+            ensurePresent(KEY_TARGET_PLAYER, this.target);
     }
 
     @Override

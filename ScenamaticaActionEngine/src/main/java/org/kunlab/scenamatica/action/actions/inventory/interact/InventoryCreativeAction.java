@@ -111,8 +111,8 @@ public class InventoryCreativeAction extends InventoryClickAction<InventoryCreat
         {
             if (type == ScenarioType.ACTION_EXECUTE)
             {
-                ensureNotPresent(KEY_ITEM, this.item);
-                ensureNotPresent(KEY_SLOT, this.getSlot());
+                ensurePresent(KEY_ITEM, this.item);
+                ensurePresent(KEY_SLOT, this.getSlot());
             }
         }
 

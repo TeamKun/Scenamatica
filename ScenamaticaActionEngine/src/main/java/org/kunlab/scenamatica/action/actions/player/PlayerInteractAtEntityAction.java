@@ -109,7 +109,7 @@ public class PlayerInteractAtEntityAction extends PlayerInteractEntityAction<Pla
             super.validate(engine, type);
 
             if (type == ScenarioType.ACTION_EXECUTE)
-                ensureNotPresent(KEY_POSITION, this.position);
+                ensurePresent(KEY_POSITION, this.position);
         }
 
         @Override

@@ -166,10 +166,10 @@ public class BroadcastMessageAction extends AbstractServerAction<BroadcastMessag
             switch (type)
             {
                 case ACTION_EXPECT:
-                    ensurePresent(KEY_PERMISSION, this.permission);
+                    ensureNotPresent(KEY_PERMISSION, this.permission);
                     break;
                 case ACTION_EXECUTE:
-                    ensureNotPresent(KEY_MESSAGE, this.message);
+                    ensurePresent(KEY_MESSAGE, this.message);
                     break;
             }
         }

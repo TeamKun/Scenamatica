@@ -96,7 +96,7 @@ public abstract class AbstractActionArgument implements ActionArgument
      * @param fieldName フィールド名
      * @param value     値
      */
-    protected static void ensurePresent(@NotNull String fieldName, @Nullable Object value)
+    protected static void ensureNotPresent(@NotNull String fieldName, @Nullable Object value)
     {
         if (value != null)
             throw new IllegalArgumentException(String.format("The argument '%s' is not supported.", fieldName));
@@ -108,7 +108,7 @@ public abstract class AbstractActionArgument implements ActionArgument
      * @param fieldName フィールド名
      * @param value     値
      */
-    protected static void ensurePresent(@NotNull String fieldName, @Nullable Number value)
+    protected static void ensureNotPresent(@NotNull String fieldName, @Nullable Number value)
     {
         if (value != null && value.doubleValue() != -1)
             throw new IllegalArgumentException(String.format("The argument '%s' is not supported.", fieldName));
@@ -120,7 +120,7 @@ public abstract class AbstractActionArgument implements ActionArgument
      * @param fieldName フィールド名
      * @param value     値
      */
-    protected static void ensureNotPresent(@NotNull String fieldName, @Nullable Object value)
+    protected static void ensurePresent(@NotNull String fieldName, @Nullable Object value)
     {
         if (value == null)
             throw new IllegalArgumentException(String.format("The argument '%s' is required.", fieldName));

@@ -125,7 +125,7 @@ public class PlayerSprintAction extends AbstractPlayerAction<PlayerSprintAction.
             {
                 case ACTION_EXECUTE:
                 case CONDITION_REQUIRE:
-                    ensureNotPresent(Argument.KEY_SPRINTING, this.sprinting);
+                    ensurePresent(Argument.KEY_SPRINTING, this.sprinting);
                     break;
             }
         }

@@ -127,7 +127,7 @@ public class PlayerKickAction extends AbstractPlayerAction<PlayerKickAction.Argu
         public void validate(@NotNull ScenarioEngine engine, @NotNull ScenarioType type)
         {
             if (type == ScenarioType.ACTION_EXECUTE)
-                ensurePresent(KEY_LEAVE_MESSAGE, this.leaveMessage);
+                ensureNotPresent(KEY_LEAVE_MESSAGE, this.leaveMessage);
         }
 
         @Override

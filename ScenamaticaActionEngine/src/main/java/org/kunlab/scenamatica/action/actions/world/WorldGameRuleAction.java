@@ -173,10 +173,10 @@ public class WorldGameRuleAction extends AbstractWorldAction<WorldGameRuleAction
                 case ACTION_EXECUTE:
                     /* fallthrough */
                 case CONDITION_REQUIRE:
-                    ensureNotPresent(KEY_GAME_RULE, this.gameRule);
+                    ensurePresent(KEY_GAME_RULE, this.gameRule);
                     break;
                 case ACTION_EXPECT:
-                    ensureNotPresent(KEY_VALUE, this.value);
+                    ensurePresent(KEY_VALUE, this.value);
                     break;
             }
         }

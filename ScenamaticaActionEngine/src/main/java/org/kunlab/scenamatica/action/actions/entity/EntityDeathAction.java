@@ -177,14 +177,14 @@ public class EntityDeathAction extends AbstractEntityAction<EntityDeathAction.Ar
             if (type == ScenarioType.ACTION_EXECUTE)
             {
                 this.throwIfNotSelectable();
-                ensurePresent(KEY_DROPS, this.drops);
-                ensurePresent(KEY_DROP_EXP, this.dropExp);
-                ensurePresent(KEY_REVIVE_HEALTH, this.reviveHealth);
-                ensurePresent(KEY_SHOULD_PLAY_DEATH_SOUND, this.shouldPlayDeathSound);
-                ensurePresent(KEY_DEATH_SOUND, this.deathSound);
-                ensurePresent(KEY_DEATH_SOUND_CATEGORY, this.deathSoundCategory);
-                ensurePresent(KEY_DEATH_SOUND_VOLUME, this.deathSoundVolume);
-                ensurePresent(KEY_DEATH_SOUND_PITCH, this.deathSoundPitch);
+                ensureNotPresent(KEY_DROPS, this.drops);
+                ensureNotPresent(KEY_DROP_EXP, this.dropExp);
+                ensureNotPresent(KEY_REVIVE_HEALTH, this.reviveHealth);
+                ensureNotPresent(KEY_SHOULD_PLAY_DEATH_SOUND, this.shouldPlayDeathSound);
+                ensureNotPresent(KEY_DEATH_SOUND, this.deathSound);
+                ensureNotPresent(KEY_DEATH_SOUND_CATEGORY, this.deathSoundCategory);
+                ensureNotPresent(KEY_DEATH_SOUND_VOLUME, this.deathSoundVolume);
+                ensureNotPresent(KEY_DEATH_SOUND_PITCH, this.deathSoundPitch);
             }
         }
 
