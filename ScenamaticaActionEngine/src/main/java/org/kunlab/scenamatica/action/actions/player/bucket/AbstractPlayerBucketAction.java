@@ -14,6 +14,7 @@ import org.kunlab.scenamatica.action.actions.player.AbstractPlayerAction;
 import org.kunlab.scenamatica.action.utils.VoxelUtils;
 import org.kunlab.scenamatica.commons.utils.BeanUtils;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
+import org.kunlab.scenamatica.interfaces.scenariofile.misc.BlockBean;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -118,8 +119,16 @@ public abstract class AbstractPlayerBucketAction<A extends BucketActionArgument>
 
     protected static Block getPlaceAt(Player player, BucketActionArgument argument, ScenarioEngine engine)
     {
-        if (argument.getBlockClicked() != null)
-            return BeanUtils.applyBlockBeanData(engine, argument.getBlockClicked());
+        BlockBean candidate1 = argument.getBlockClicked();
+        BlockBean candidate2 = argument.getBlock();
+        Block applyBlock = null;
+        if (candidate1 != null)
+            applyBlock = BeanUtils.applyBlockBeanData(engine, candidate1);
+        if (candidate2 != null)
+            applyBlock = BeanUtils.applyBlockBeanData(engine, candidate2);
+
+        if (applyBlock != null)
+            return applyBlock;
 
         Block block = player.getTargetBlockExact(4);
         if (block == null)
