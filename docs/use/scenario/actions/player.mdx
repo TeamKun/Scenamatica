@@ -223,6 +223,68 @@ Bukkit の仕様により、現在は `ARM_SWING` のみが指定可能です。
 
 :::
 
+## プレイヤによるエンティティのバケツへの格納 {#bucket-entity}
+
+<Action name="プレイヤによるエンティティのバケツへの格納"
+        description="プレイヤによるエンティティのバケツへの格納に関するアクションです。"
+        id="player_bucket_entity"
+        events={
+          {
+            name: "PlayerBucketEntityEvent",
+            package: "org.bukkit.event.player",
+          }
+        }
+        args={[
+          {
+            name: "target",
+            description: "バケツに格納するエンティティを持っているプレイヤーです。",
+            type: "プレイヤ",
+            required: [ScenarioType.EXECUTE]
+          },
+          {
+            name: "entity",
+            description: "格納するエンティティです。",
+            type: "Entity",
+            type_link: "../../file-syntax#entity-structure",
+          },
+          {
+            name: "bucket",
+            description: "エンティティを入れるバケツです。",
+            type: "ItemStack",
+            type_link: "../../file-syntax#item-stack-structure",
+          },
+          {
+            name: "entityBucket",
+            description: "エンティティが入ったバケツです。",
+            type: "ItemStack",
+            type_link: "../../file-syntax#item-stack-structure",
+          },
+        ]}
+        executable watchable
+/>
+
+:::caution
+
+`bucket` に指定するアイテムは、エンティティを格納できるバケツである必要があります（参考：1.16.5 時点では `WATER_BUCKET` のいｍ）。
+`entityBucket` は、エンティティを格納した後のバケツを指定する必要があります。
+
+:::
+
+### アクション実行シナリオでの使用 {#bucket-entity-usage-in-execution}
+
+:::info
+
+`entity` を [Entity 型](../file-syntax/#entity-structure)で指定した場合、先にエンティティをスポーンさせます。
+
+:::
+
+:::info
+
+`bucket` を省略した場合、プレイヤの持っているバケツを使用します。バケツを持っていない場合や対応していないバケツの場合、アクションは失敗します。
+これを指定し、かつプレイヤの持っているアイテムと異なる場合、先にプレイヤのアイテムをこのバケツに置換します。
+
+:::
+
 ## プレイヤのチャット {#chat}
 
 <Action name="プレイヤのチャット"
