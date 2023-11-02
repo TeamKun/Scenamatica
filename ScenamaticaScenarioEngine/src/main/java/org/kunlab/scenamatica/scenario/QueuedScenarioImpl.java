@@ -50,17 +50,6 @@ public class QueuedScenarioImpl implements QueuedScenario
         this.result = result;
         this.finishedAt = System.currentTimeMillis();
         if (this.callback != null)
-            this.callback.accept(result);
-    }
-
-    @Override
-    public ScenarioResult run() throws TriggerNotFoundException
-    {
-        this.onStart();
-        ScenarioResult result = this.manager.runScenario(this.engine, this.trigger);
-        this.onFinished(result);
-
-        if (this.callback != null)
             try
             {
                 this.callback.accept(result);
@@ -69,6 +58,15 @@ public class QueuedScenarioImpl implements QueuedScenario
             {
                 this.manager.getRegistry().getExceptionHandler().report(e);
             }
+
+    }
+
+    @Override
+    public ScenarioResult run() throws TriggerNotFoundException
+    {
+        this.onStart();
+        ScenarioResult result = this.manager.runScenario(this.engine, this.trigger);
+        this.onFinished(result);
 
         return result;
     }
