@@ -1,0 +1,5 @@
+{
+  "name": "player_bucket_fill",
+  "description": "プレイヤのバケツを満たします。",
+  "base": "player_bucket_$base"
+}

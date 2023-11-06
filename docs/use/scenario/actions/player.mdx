@@ -121,6 +121,86 @@ NMS の仕様上の都合により、 `block` を用いた液体の場所は `ev
 
 :::
 
+## バケツでの液体の回収 {#bucket-fill}
+
+
+<Action name="バケツでの液体の回収"
+        description="バケツでの液体の回収に関するアクションです。"
+        id="player_bucket_fill"
+        events={
+          {
+            name: "PlayerBucketFillEvent",
+            package: "org.bukkit.event.player",
+          }
+        }
+        args={[
+          {
+            name: "target",
+            description: "バケツを使用するプレイヤーです。",
+            type: "プレイヤ",
+            required: [ScenarioType.EXECUTE]
+          },
+          {
+            name: "bucket",
+            description: "使用するバケツです。",
+            type: "Enum{...Material}"
+          },
+          {
+            name: "block",
+            description: "バケツを使用するブロックです。",
+            type: "Block",
+            type_link: "../../file-syntax#block-structure",
+          },
+          {
+            name: "clickedBlock",
+            description: "バケツを使用するブロックです。",
+            type: "Block",
+            type_link: "../../file-syntax#block-structure",
+          },
+          {
+            name: "blockFace",
+            description: "ブロックの面です。",
+            type: "BlockFace{UP, DOWN, NORTH, EAST, SOUTH, WEST}"
+          },
+          {
+            name: "hand",
+            description: "使用する手です。",
+            type: "列挙型{HAND, OFF_HAND}",
+            default: "HAND",
+            available: [ScenarioType.EXPECT]
+          },
+          {
+            name: "eventOnly",
+            anchor: "bucket-empty-event-only",
+            description: "イベントのみ発火させるかどうかです。",
+            type: ObjectType.BOOLEAN,
+            default: "false",
+            available: [ScenarioType.EXECUTE]
+          }
+        ]}
+        executable={"バケツ内の液体をブロックに撒きます。"}
+        watchable
+/>
+
+### アクション実行シナリオでの使用 {#bucket-empty-usage-in-execution}
+
+:::caution
+
+`block` と `clickedBlock` のどちらか一方は必須です。
+
+:::
+
+:::warning
+
+NMS の仕様上の都合により、 `block` を用いた液体の場所は `eventOnly` が `true` の場合にのみ有効です。
+
+:::
+
+### `eventOnly` {#bucket-fill-event-only}
+
+`eventOnly` を `true` に設定すると、引数に基づいてイベントのみを発火させ、液体を回収します。
+
+
 ## 進捗の達成と達成度 {#advancement}
 
 <Action name="進捗の達成と達成度"

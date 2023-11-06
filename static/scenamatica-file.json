@@ -716,6 +716,8 @@
             "player_advancement",
             "player_animation",
             "player_bucket_empty",
+            "player_bucket_fill",
+            "player_bucket_entity",
             "player_chat",
             "player_death",
             "player_drop_item",
@@ -1051,6 +1053,23 @@
             "properties": {
               "with": {
                 "$ref": "#/definitions/action/definitions/player_animation"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "player_bucket_entity",
+                "description": "プレイヤがバケツにエンティティを入れます。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/player_bucket_entity"
               }
             }
           }
@@ -2291,6 +2310,33 @@
                 "OFF_HAND",
                 "main_hand",
                 "off_hand"
+              ]
+            }
+          },
+          "$ref": "#/definitions/action/definitions/player_$base"
+        },
+        "player_bucket_entity": {
+          "type": "object",
+          "description": "プレイヤがバケツにエンティティを入れます。",
+          "properties": {
+            "bucket": {
+              "description": "エンティティをいれるバケツです。",
+              "$ref": "#/definitions/itemStack"
+            },
+            "entityBucket": {
+              "description": "エンティティが入ったバケツです。",
+              "$ref": "#/definitions/itemStack"
+            },
+            "entity": {
+              "description": "入れるエンティティです。",
+              "oneOf": [
+                {
+                  "type": "string",
+                  "description": "エンティティの UUID またはセレクタです。"
+                },
+                {
+                  "$ref": "#/definitions/entity"
+                }
               ]
             }
           },
