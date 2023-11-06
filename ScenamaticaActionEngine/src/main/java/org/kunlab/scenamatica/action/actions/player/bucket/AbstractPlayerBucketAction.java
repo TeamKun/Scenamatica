@@ -26,6 +26,7 @@ public abstract class AbstractPlayerBucketAction<A extends BucketActionArgument>
         List<AbstractPlayerBucketAction<?>> actions = new ArrayList<>();
 
         actions.add(new PlayerBucketEmptyAction());
+        actions.add(new PlayerBucketFillAction());
 
         return actions;
     }
@@ -34,6 +35,11 @@ public abstract class AbstractPlayerBucketAction<A extends BucketActionArgument>
     {
         // noinspection deprecation
         return bucket == Material.BUCKET || bucket == Material.LEGACY_BUCKET;
+    }
+
+    protected static boolean isFilledBucket(Material bucket)
+    {
+        return !isEmptyBucket(bucket);
     }
 
     @Nullable
@@ -68,6 +74,20 @@ public abstract class AbstractPlayerBucketAction<A extends BucketActionArgument>
                 return EntityType.SALMON;
             case TROPICAL_FISH_BUCKET:
                 return EntityType.TROPICAL_FISH;
+            default:
+                return null;
+        }
+    }
+
+    @Nullable
+    protected static Material convertLiquidToBucket(Material liquid)
+    {
+        switch (liquid)
+        {
+            case WATER:
+                return Material.WATER_BUCKET;
+            case LAVA:
+                return Material.LAVA_BUCKET;
             default:
                 return null;
         }
