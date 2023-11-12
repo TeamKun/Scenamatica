@@ -3,6 +3,7 @@ package org.kunlab.scenamatica.interfaces.scenariofile.misc;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Biome;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
@@ -16,6 +17,8 @@ public interface BlockBean
     String KEY_METADATA = "metadata";
     String KEY_LIGHT_LEVEL = "light";
     String KEY_BIOME = "biome";
+    String KEY_BLOCK_DATA = "blockData";
+    String KEY_BLOCK_STATE = "blockState";
 
     /**
      * ブロックの種類を取得します。
@@ -36,6 +39,7 @@ public interface BlockBean
      *
      * @return ブロックのメタデータ
      */
+    @NotNull
     Map<String, Object> getMetadata();
 
     /**
@@ -51,4 +55,19 @@ public interface BlockBean
      * @return ブロックのバイオーム
      */
     Biome getBiome();
+
+    /**
+     * ブロックのデータを取得します。
+     *
+     * @return ブロックのデータ
+     */
+    @NotNull
+    Map<String, Object> getBlockData();
+
+    /**
+     * ブロックの状態を取得します。
+     *
+     * @return ブロックの状態
+     */
+    Byte getBlockState();
 }

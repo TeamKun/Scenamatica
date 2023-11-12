@@ -6,6 +6,7 @@ import org.kunlab.scenamatica.interfaces.ScenamaticaRegistry;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.action.ActionBean;
 
+import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
@@ -30,4 +31,22 @@ public interface ActionCompiler
                                                          @NotNull ActionBean bean,
                                                          @Nullable BiConsumer<CompiledAction<?>, Throwable> reportErrorTo,
                                                          @Nullable Consumer<CompiledAction<?>> onSuccess);
+
+    /**
+     * 登録されたアクションのリストを取得します。
+     * 注：このリストは変更不可です。
+     *
+     * @return 登録されたアクションのリスト
+     */
+    @NotNull
+    List<? extends Action<?>> getRegisteredActions();
+
+    /**
+     * アクションのクラスからアクションのインスタンスを取得します。
+     *
+     * @param actionClass アクションのクラス
+     * @return アクションのインスタンス
+     * @throws IllegalArgumentException アクションが見つからない場合
+     */
+    @NotNull <T extends Action<?>> T findAction(@NotNull Class<? extends T> actionClass);
 }

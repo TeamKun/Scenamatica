@@ -30,27 +30,7 @@ public class MapUtils
         if (expected.size() != actual.size())
             return false;
 
-        for (Map.Entry<?, ?> entry : expected.entrySet())
-        {
-            if (!actual.containsKey(entry.getKey()))
-                return false;
-
-            if (entry.getValue() instanceof Map)
-            {
-                equals((Map<?, ?>) entry.getValue(), (Map<?, ?>) actual.get(entry.getKey()));
-                continue;
-            }
-            else if (entry.getValue() instanceof List)
-            {
-                equals((List<?>) entry.getValue(), (List<?>) actual.get(entry.getKey()));
-                continue;
-            }
-
-            if (!Objects.equals(entry.getValue(), actual.get(entry.getKey())))
-                return false;
-        }
-
-        return true;
+        return isAdequate(expected, actual);
     }
 
     public static boolean equals(List<?> expected, List<?> actual)
@@ -60,23 +40,64 @@ public class MapUtils
 
         if (expected.size() != actual.size())
             return false;
-        for (int i = 0; i < expected.size(); i++)
+
+        return isAdequate(expected, actual);
+    }
+
+    public static boolean isAdequate(Map<?, ?> required, Map<?, ?> target)
+    {
+        if (required == null || target == null)
+            return required == target;
+
+        for (Map.Entry<?, ?> entry : required.entrySet())
         {
-            if (expected.get(i) instanceof Map)
+            if (!target.containsKey(entry.getKey()))
+                return false;
+
+            if (entry.getValue() instanceof Map)
             {
-                equals((Map<?, ?>) expected.get(i), (Map<?, ?>) actual.get(i));
+                if (!isAdequate((Map<?, ?>) entry.getValue(), (Map<?, ?>) target.get(entry.getKey())))
+                    return false;
                 continue;
             }
-            else if (expected.get(i) instanceof List)
+            else if (entry.getValue() instanceof List)
             {
-                equals((List<?>) expected.get(i), (List<?>) actual.get(i));
+                if (!isAdequate((List<?>) entry.getValue(), (List<?>) target.get(entry.getKey())))
+                    return false;
                 continue;
             }
 
-            Object expectedValue = expected.get(i);
-            Object actualValue = actual.get(i);
+            if (!Objects.equals(entry.getValue(), target.get(entry.getKey())))
+                return false;
+        }
 
-            if (!Objects.equals(expectedValue, actualValue))
+        return true;
+    }
+
+    public static boolean isAdequate(List<?> required, List<?> target)
+    {
+        if (required == null || target == null)
+            return required == target;
+
+        for (int i = 0; i < required.size(); i++)
+        {
+            if (required.get(i) instanceof Map)
+            {
+                if (!isAdequate((Map<?, ?>) required.get(i), (Map<?, ?>) target.get(i)))
+                    return false;
+                continue;
+            }
+            else if (required.get(i) instanceof List)
+            {
+                if (!isAdequate((List<?>) required.get(i), (List<?>) target.get(i)))
+                    return false;
+                continue;
+            }
+
+            Object requiredValue = required.get(i);
+            Object targetValue = target.get(i);
+
+            if (!Objects.equals(requiredValue, targetValue))
                 return false;
         }
 

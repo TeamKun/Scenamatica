@@ -10,6 +10,7 @@ import org.bukkit.World;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
@@ -196,6 +197,23 @@ public class BeanUtils
             }
         }
 
+        if (!blockBean.getBlockData().isEmpty())
+        {
+            Map<String, Object> expected = blockBean.getBlockData();
+            Map<String, Object> actual = BlockDataParser.toMap(block.getBlockData());
+            if (!MapUtils.isAdequate(expected, actual))
+                return false;
+        }
+
+        if (blockBean.getBlockState() != null)
+        {
+            byte expected = blockBean.getBlockState();
+            // noinspection deprecation
+            byte actual = block.getState().getData().getData();
+
+            return expected == actual;
+        }
+
         return true;
     }
 
@@ -353,7 +371,7 @@ public class BeanUtils
             block.setType(blockBean.getType(), true);
         if (blockBean.getBiome() != null)
             block.getWorld().setBiome(targetLoc.getBlockX(), targetLoc.getBlockY(), targetLoc.getBlockZ(), blockBean.getBiome());
-        if (blockBean.getMetadata() != null)
+        if (!blockBean.getMetadata().isEmpty())
         {
             ClassLoader classLoader = BeanUtils.class.getClassLoader();
             if (!(classLoader instanceof PluginClassLoader))
@@ -365,6 +383,19 @@ public class BeanUtils
                         entry.getKey(),
                         new FixedMetadataValue(owningPlugin, entry.getValue())
                 );
+        }
+
+        if (!blockBean.getBlockData().isEmpty())
+        {
+            BlockData data = BlockDataParser.fromMap(block.getType(), blockBean.getBlockData());
+            block.setBlockData(block.getBlockData().merge(data), true);
+        }
+
+        if (blockBean.getBlockState() != null)
+        {
+            // noinspection deprecation
+            block.getState().getData().setData(blockBean.getBlockState());
+            block.getState().update(true, true);
         }
 
         return block;

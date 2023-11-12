@@ -124,12 +124,29 @@ public class ActionCompilerImpl implements ActionCompiler
 
         BeanSerializer serializer = engine.getManager().getRegistry().getScenarioFileManager().getSerializer();
 
-        A argument = null;
-        if (bean.getArguments() != null)
-            argument = action.deserializeArgument(bean.getArguments(), serializer);
-        else
+        A argument;
+        if (bean.getArguments() == null)
             argument = action.deserializeArgument(Collections.emptyMap(), serializer);
+        else
+            argument = action.deserializeArgument(bean.getArguments(), serializer);
 
         return new CompiledActionImpl<>(engine, action, argument, reportErrorTo, onSuccess, bean);
+    }
+
+    @Override
+    public @NotNull List<? extends Action<?>> getRegisteredActions()
+    {
+        return Collections.unmodifiableList(ACTIONS);
+    }
+
+    @Override
+    public @NotNull <T extends Action<?>> T findAction(@NotNull Class<? extends T> actionClass)
+    {
+        for (Action<?> action : ACTIONS)
+            if (action.getClass().equals(actionClass))
+                //noinspection unchecked
+                return (T) action;
+
+        throw new IllegalArgumentException("Action " + actionClass.getName() + " is not found.");
     }
 }

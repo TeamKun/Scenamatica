@@ -23,7 +23,12 @@ public class BlockBeanSerializeTest
                 this.put("key", "value");
             }},
             15,
-            Biome.BADLANDS
+            Biome.BADLANDS,
+            new HashMap<String, Object>()
+            {{
+                this.put("key", "value");
+            }},
+            (byte) 24
     );
 
     public static final Map<String, Object> FULFILLED_MAP = new HashMap<String, Object>()
@@ -41,6 +46,11 @@ public class BlockBeanSerializeTest
         }});
         this.put("light", 15);
         this.put("biome", "BADLANDS");
+        this.put("blockData", new HashMap<String, Object>()
+        {{
+            this.put("key", "value");
+        }});
+        this.put("blockState", (byte) 24);
     }};
 
     public static final BlockBean EMPTY = new BlockBeanImpl(
@@ -48,6 +58,8 @@ public class BlockBeanSerializeTest
             null,
             Collections.emptyMap(),
             null,
+            null,
+            Collections.emptyMap(),
             null
     );
 

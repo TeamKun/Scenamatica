@@ -7,10 +7,12 @@ import org.bukkit.Material;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.jetbrains.annotations.NotNull;
+import org.kunlab.scenamatica.commons.utils.BlockDataParser;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.commons.utils.Utils;
 import org.kunlab.scenamatica.interfaces.scenariofile.misc.BlockBean;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -24,17 +26,21 @@ public class BlockBeanImpl implements BlockBean
     @NotNull
     Map<String, Object> metadata;
     Integer lightLevel;  // 0-15
-
     Biome biome;
+    Map<String, Object> blockData;
+    Byte blockState;
 
     public static BlockBean fromBlock(Block block)
     {
+        // noinspection deprecation
         return new BlockBeanImpl(
                 block.getType(),
                 block.getLocation(),
                 new HashMap<>(),
                 (int) block.getLightLevel(),
-                block.getBiome()
+                block.getBiome(),
+                BlockDataParser.toMap(block.getBlockData()),
+                block.getState().getData().getData()
         );
     }
 
@@ -54,6 +60,12 @@ public class BlockBeanImpl implements BlockBean
             map.put(KEY_METADATA, blockBean.getMetadata());
         if (blockBean.getLightLevel() != null)
             map.put(KEY_LIGHT_LEVEL, blockBean.getLightLevel());
+
+        if (!blockBean.getBlockData().isEmpty())
+            map.put(KEY_BLOCK_DATA, blockBean.getBlockData());
+
+        if (blockBean.getBlockState() != null)
+            map.put(KEY_BLOCK_STATE, blockBean.getBlockState());
 
         return map;
     }
@@ -79,6 +91,15 @@ public class BlockBeanImpl implements BlockBean
                     String.class,
                     Object.class
             );
+
+        if (map.containsKey(KEY_BLOCK_DATA))
+            MapUtils.checkAndCastMap(
+                    map.get(KEY_BLOCK_DATA),
+                    String.class,
+                    Object.class
+            );
+
+        MapUtils.checkTypeIfContains(map, KEY_BLOCK_STATE, Byte.class);
     }
 
     @NotNull
@@ -95,9 +116,15 @@ public class BlockBeanImpl implements BlockBean
                         map.get(KEY_METADATA),
                         String.class,
                         Object.class
-                ): new HashMap<>(),
+                ): Collections.emptyMap(),
                 MapUtils.getOrNull(map, KEY_LIGHT_LEVEL),
-                MapUtils.getAsEnumOrNull(map, KEY_BIOME, Biome.class)
+                MapUtils.getAsEnumOrNull(map, KEY_BIOME, Biome.class),
+                map.containsKey(KEY_BLOCK_DATA) ? MapUtils.checkAndCastMap(
+                        map.get(KEY_BLOCK_DATA),
+                        String.class,
+                        Object.class
+                ): Collections.emptyMap(),
+                MapUtils.getOrNull(map, KEY_BLOCK_STATE)
         );
     }
 
@@ -115,7 +142,9 @@ public class BlockBeanImpl implements BlockBean
                 && Objects.equals(this.getLocation(), blockBean.getLocation())
                 && Objects.equals(this.getMetadata(), blockBean.getMetadata())
                 && Objects.equals(this.getLightLevel(), blockBean.getLightLevel())
-                && this.getBiome() == blockBean.getBiome();
+                && this.getBiome() == blockBean.getBiome()
+                && (this.getBlockData() == null || MapUtils.equals(this.getBlockData(), blockBean.getBlockData()))
+                && Objects.equals(this.getBlockState(), blockBean.getBlockState());
     }
 
     @Override
@@ -126,7 +155,9 @@ public class BlockBeanImpl implements BlockBean
                 this.getLocation(),
                 this.getMetadata(),
                 this.getLightLevel(),
-                this.getBiome()
+                this.getBiome(),
+                this.getBlockData(),
+                this.getBlockState()
         );
     }
 
@@ -139,6 +170,8 @@ public class BlockBeanImpl implements BlockBean
                 ", metadata=" + this.metadata +
                 ", lightLevel=" + this.lightLevel +
                 ", biome=" + this.biome +
+                ", blockData=" + this.blockData +
+                ", blockState=" + this.blockState +
                 '}';
     }
 }
