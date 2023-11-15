@@ -139,7 +139,7 @@ public class EntityDeathAction extends AbstractEntityAction<EntityDeathAction.Ar
         Float deathSoundVolume;
         Float deathSoundPitch;
 
-        public Argument(@Nullable Object mayTarget, List<ItemStackBean> drops, Integer dropExp, Double reviveHealth, Boolean shouldPlayDeathSound, Sound deathSound, SoundCategory deathSoundCategory, Float deathSoundVolume, Float deathSoundPitch)
+        public Argument(@Nullable EntityArgumentHolder mayTarget, List<ItemStackBean> drops, Integer dropExp, Double reviveHealth, Boolean shouldPlayDeathSound, Sound deathSound, SoundCategory deathSoundCategory, Float deathSoundVolume, Float deathSoundPitch)
         {
             super(mayTarget);
             this.drops = drops;

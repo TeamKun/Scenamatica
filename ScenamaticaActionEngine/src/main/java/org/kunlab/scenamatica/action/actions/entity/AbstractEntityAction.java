@@ -6,7 +6,6 @@ import org.bukkit.event.entity.EntityEvent;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.action.actions.AbstractAction;
 import org.kunlab.scenamatica.action.utils.EntityUtils;
-import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.BeanSerializer;
 
@@ -50,17 +49,11 @@ public abstract class AbstractEntityAction<A extends AbstractEntityActionArgumen
                 .anyMatch(entity -> Objects.equals(entity.getUniqueId(), actualEntity.getUniqueId()));
     }
 
-    protected Object deserializeTarget(Map<String, Object> map, BeanSerializer serializer)
+    protected EntityArgumentHolder deserializeTarget(Map<String, Object> map, BeanSerializer serializer)
     {
-        Object targetLike = map.get(AbstractEntityActionArgument.KEY_TARGET_ENTITY);
-
-        if (targetLike instanceof Map)
-            return serializer.deserializeEntity(MapUtils.checkAndCastMap(
-                    targetLike,
-                    String.class,
-                    Object.class
-            ));
-        else
-            return targetLike;
+        return EntityArgumentHolder.tryDeserialize(
+                map.get(AbstractEntityActionArgument.KEY_TARGET_ENTITY),
+                serializer
+        );
     }
 }

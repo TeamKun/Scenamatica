@@ -106,15 +106,9 @@ public class EntityDropItemAction extends AbstractEntityAction<EntityDropItemAct
 
         EntityItemBean item;
 
-        public Argument(@Nullable Object mayTarget, EntityItemBean item)
+        public Argument(@Nullable EntityArgumentHolder mayTarget, EntityItemBean item)
         {
             super(mayTarget);
-            this.item = item;
-        }
-
-        public Argument(@NotNull String target, EntityItemBean item)
-        {
-            super(target);
             this.item = item;
         }
 

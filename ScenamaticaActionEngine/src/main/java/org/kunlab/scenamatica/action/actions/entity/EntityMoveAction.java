@@ -99,7 +99,7 @@ public class EntityMoveAction extends AbstractEntityAction<EntityMoveAction.Argu
         // Execute のときのみ. デフォは true -> テレポート.
         boolean useAI;
 
-        public Argument(@Nullable Object mayTarget, Location from, Location to, boolean useAI)
+        public Argument(@Nullable EntityArgumentHolder mayTarget, Location from, Location to, boolean useAI)
         {
             super(mayTarget);
             this.from = from;

@@ -18,9 +18,9 @@ public abstract class AbstractEntityActionArgument extends AbstractActionArgumen
     @Nullable
     private final EntityArgumentHolder entity;
 
-    public AbstractEntityActionArgument(@Nullable Object mayTarget)
+    public AbstractEntityActionArgument(@Nullable EntityArgumentHolder target)
     {
-        this.entity = new EntityArgumentHolder(mayTarget);
+        this.entity = target;
     }
 
     @Override

@@ -122,7 +122,7 @@ public class EntityDamageAction<A extends EntityDamageAction.Argument> extends A
         private final Double amount;
         private final Map<EntityDamageEvent.DamageModifier, @NotNull Double> modifiers;
 
-        public Argument(Object target, EntityDamageEvent.DamageCause cause, Double amount, Map<EntityDamageEvent.DamageModifier, @NotNull Double> modifiers)
+        public Argument(EntityArgumentHolder target, EntityDamageEvent.DamageCause cause, Double amount, Map<EntityDamageEvent.DamageModifier, @NotNull Double> modifiers)
         {
             super(target);
             this.cause = cause;
