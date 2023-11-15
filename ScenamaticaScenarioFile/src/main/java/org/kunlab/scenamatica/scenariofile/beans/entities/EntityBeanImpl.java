@@ -75,6 +75,32 @@ public class EntityBeanImpl implements EntityBean
         );
     }
 
+    public EntityBeanImpl(EntityBean original)
+    {
+        this(
+                original.getType(),
+                original.getLocation(),
+                original.getVelocity(),
+                original.getCustomName(),
+                original.getUuid(),
+                original.getGlowing(),
+                original.getGravity(),
+                original.getSilent(),
+                original.getCustomNameVisible(),
+                original.getInvulnerable(),
+                new ArrayList<>(original.getTags()),
+                original.getMaxHealth(),
+                original.getHealth(),
+                original.getLastDamageCause(),
+                new ArrayList<>(original.getPotionEffects()),
+                original.getFireTicks(),
+                original.getTicksLived(),
+                original.getPortalCooldown(),
+                original.getPersistent(),
+                original.getFallDistance()
+        );
+    }
+
     /**
      * エンティティ情報をMapにシリアライズします。
      *
