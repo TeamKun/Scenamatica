@@ -56,9 +56,9 @@ public class EntityItemBeanImpl extends EntityBeanImpl implements EntityItemBean
 
     public static Map<String, Object> serialize(@NotNull EntityItemBean bean, @NotNull BeanSerializer serializer)
     {
-        Map<String, Object> map = serializer.serializeEntity(bean);
+        Map<String, Object> map = serializer.serialize(bean, EntityBean.class);
         map.remove(EntityBean.KEY_TYPE);
-        map.putAll(serializer.serializeItemStack(bean.getItemStack()));
+        map.putAll(serializer.serialize(bean.getItemStack(), ItemStackBean.class));
 
         if (bean.getPickupDelay() != null)
             map.put(KEY_PICKUP_DELAY, bean.getPickupDelay());
@@ -76,7 +76,7 @@ public class EntityItemBeanImpl extends EntityBeanImpl implements EntityItemBean
 
     public static void validate(@NotNull Map<String, Object> map, @NotNull BeanSerializer serializer)
     {
-        serializer.validateEntity(map);
+        serializer.validate(map, EntityBean.class);
 
         if (map.containsKey(KEY_OWNER) && UUIDUtil.toUUIDOrNull((String) map.get(KEY_OWNER)) == null)
             throw new IllegalArgumentException("owner must be UUID");
@@ -86,7 +86,7 @@ public class EntityItemBeanImpl extends EntityBeanImpl implements EntityItemBean
 
     public static EntityItemBean deserialize(@NotNull Map<String, Object> map, @NotNull BeanSerializer serializer)
     {
-        serializer.validateEntity(map);
+        serializer.validate(map, EntityBean.class);
         validate(map, serializer);
 
         Number pickupDelayNum = MapUtils.getAsNumberOrNull(map, KEY_PICKUP_DELAY);
@@ -100,14 +100,14 @@ public class EntityItemBeanImpl extends EntityBeanImpl implements EntityItemBean
         if (map.containsKey(KEY_THROWER))
             throwerUUID = UUIDUtil.toUUIDOrThrow((String) map.get(KEY_THROWER));
 
-        ItemStackBean itemStack = serializer.deserializeItemStack(map);
+        ItemStackBean itemStack = serializer.deserialize(map, ItemStackBean.class);
 
         // Entity と EntityItem で `type` がかぶる。
         if (map.containsKey(KEY_TYPE))
             map.put(KEY_TYPE, EntityType.DROPPED_ITEM.name());
 
         return new EntityItemBeanImpl(
-                serializer.deserializeEntity(map),
+                serializer.deserialize(map, EntityBean.class),
                 itemStack,
                 pickupDelay,
                 ownerUUID,

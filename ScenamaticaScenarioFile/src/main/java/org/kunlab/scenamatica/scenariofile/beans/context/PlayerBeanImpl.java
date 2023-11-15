@@ -97,7 +97,7 @@ public class PlayerBeanImpl extends HumanEntityBeanImpl implements PlayerBean
     @NotNull
     public static Map<String, Object> serialize(@NotNull PlayerBean bean, @NotNull BeanSerializer serializer)
     {
-        Map<String, Object> map = serializer.serializeHumanEntity(bean);
+        Map<String, Object> map = serializer.serialize(bean, HumanEntityBean.class);
         MapUtils.putIfNotNull(map, KEY_NAME, bean.getName());
         MapUtils.putIfNotNull(map, KEY_ONLINE, bean.getOnline());
 
@@ -134,7 +134,7 @@ public class PlayerBeanImpl extends HumanEntityBeanImpl implements PlayerBean
 
     public static void validate(@NotNull Map<String, Object> map, @NotNull BeanSerializer serializer)
     {
-        serializer.validateHumanEntity(map);
+        serializer.validate(map, HumanEntityBean.class);
         MapUtils.checkTypeIfContains(map, KEY_NAME, String.class);
         MapUtils.checkTypeIfContains(map, KEY_ONLINE, Boolean.class);
         MapUtils.checkTypeIfContains(map, KEY_DISPLAY_NAME, String.class);
@@ -162,7 +162,7 @@ public class PlayerBeanImpl extends HumanEntityBeanImpl implements PlayerBean
     {
         validate(map);
 
-        HumanEntityBean human = serializer.deserializeHumanEntity(map);
+        HumanEntityBean human = serializer.deserialize(map, HumanEntityBean.class);
 
         String name = (String) map.get(KEY_NAME);
 

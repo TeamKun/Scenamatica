@@ -2,12 +2,10 @@ package org.kunlab.scenamatica.interfaces.scenariofile.inventory;
 
 import org.jetbrains.annotations.Nullable;
 
-import java.io.Serializable;
-
 /**
  * プレイヤのインベントリの定義を表すインターフェースです。
  */
-public interface PlayerInventoryBean extends InventoryBean, Serializable
+public interface PlayerInventoryBean extends InventoryBean
 {
     String KEY_MAIN_INVENTORY = "main";
     String KEY_MAIN_HAND = "mainHandItem";

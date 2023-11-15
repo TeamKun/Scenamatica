@@ -89,13 +89,13 @@ public class HumanEntityBeanImpl extends EntityBeanImpl implements HumanEntityBe
     @NotNull
     public static Map<String, Object> serialize(@NotNull HumanEntityBean bean, @NotNull BeanSerializer serializer)
     {
-        Map<String, Object> map = serializer.serializeEntity(bean);
+        Map<String, Object> map = serializer.serialize(bean, EntityBean.class);
         map.remove(EntityBean.KEY_TYPE);
 
         if (bean.getInventory() != null)
-            map.put(KEY_INVENTORY, serializer.serializePlayerInventory(bean.getInventory()));
+            map.put(KEY_INVENTORY, serializer.serialize(bean.getInventory(), PlayerInventoryBean.class));
         if (bean.getEnderChest() != null)
-            map.put(KEY_ENDER_CHEST, serializer.serializeInventory(bean.getEnderChest()));
+            map.put(KEY_ENDER_CHEST, serializer.serialize(bean.getEnderChest(), InventoryBean.class));
 
         MapUtils.putAsStrIfNotNull(map, KEY_MAIN_HAND, bean.getMainHand());
         MapUtils.putAsStrIfNotNull(map, KEY_GAMEMODE, bean.getGamemode());
@@ -116,17 +116,17 @@ public class HumanEntityBeanImpl extends EntityBeanImpl implements HumanEntityBe
         validate(map);
 
         if (map.containsKey(KEY_INVENTORY))
-            serializer.validatePlayerInventory(MapUtils.checkAndCastMap(
+            serializer.validate(MapUtils.checkAndCastMap(
                     map.get(KEY_INVENTORY),
                     String.class,
                     Object.class
-            ));
+            ), PlayerInventoryBean.class);
         if (map.containsKey(KEY_ENDER_CHEST))
-            serializer.validateInventory(MapUtils.checkAndCastMap(
+            serializer.validate(MapUtils.checkAndCastMap(
                     map.get(KEY_ENDER_CHEST),
                     String.class,
                     Object.class
-            ));
+            ), InventoryBean.class);
     }
 
     /**
@@ -140,23 +140,23 @@ public class HumanEntityBeanImpl extends EntityBeanImpl implements HumanEntityBe
     {
         validate(map);
 
-        EntityBean entityBean = serializer.deserializeEntity(map);
+        EntityBean entityBean = serializer.deserialize(map, EntityBean.class);
 
         PlayerInventoryBean inventory = null;
         if (map.containsKey(KEY_INVENTORY))
-            inventory = serializer.deserializePlayerInventory(MapUtils.checkAndCastMap(
+            inventory = serializer.deserialize(MapUtils.checkAndCastMap(
                     map.get(KEY_INVENTORY),
                     String.class,
                     Object.class
-            ));
+            ), PlayerInventoryBean.class);
 
         InventoryBean enderChest = null;
         if (map.containsKey(KEY_ENDER_CHEST))
-            enderChest = serializer.deserializeInventory(MapUtils.checkAndCastMap(
+            enderChest = serializer.deserialize(MapUtils.checkAndCastMap(
                     map.get(KEY_ENDER_CHEST),
                     String.class,
                     Object.class
-            ));
+            ), InventoryBean.class);
 
         MainHand mainHand = MapUtils.getAsEnumOrNull(
                 map,

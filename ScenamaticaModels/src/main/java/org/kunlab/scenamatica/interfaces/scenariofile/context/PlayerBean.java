@@ -4,13 +4,12 @@ import org.bukkit.Location;
 import org.kunlab.scenamatica.interfaces.scenariofile.entity.EntityBean;
 import org.kunlab.scenamatica.interfaces.scenariofile.entity.entities.HumanEntityBean;
 
-import java.io.Serializable;
 import java.util.List;
 
 /**
  * プレイヤーを表すインターフェースです。
  */
-public interface PlayerBean extends EntityBean, HumanEntityBean, Serializable
+public interface PlayerBean extends EntityBean, HumanEntityBean
 {
     String KEY_NAME = "name";
     String KEY_ONLINE = "online";

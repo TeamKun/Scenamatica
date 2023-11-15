@@ -59,27 +59,36 @@ public class BucketActionArgument extends AbstractPlayerActionArgument
     {
         ItemStackBean itemStack = null;
         if (map.containsKey(BucketActionArgument.KEY_ITEM_STACK))
-            itemStack = serializer.deserializeItemStack(MapUtils.checkAndCastMap(
-                    map.get(BucketActionArgument.KEY_ITEM_STACK),
-                    String.class,
-                    Object.class
-            ));
+            itemStack = serializer.deserialize(
+                    MapUtils.checkAndCastMap(
+                            map.get(BucketActionArgument.KEY_ITEM_STACK),
+                            String.class,
+                            Object.class
+                    ),
+                    ItemStackBean.class
+            );
 
         BlockBean block = null;
         if (map.containsKey(BucketActionArgument.KEY_BLOCK))
-            block = serializer.deserializeBlock(MapUtils.checkAndCastMap(
-                    map.get(BucketActionArgument.KEY_BLOCK),
-                    String.class,
-                    Object.class
-            ));
+            block = serializer.deserialize(
+                    MapUtils.checkAndCastMap(
+                            map.get(BucketActionArgument.KEY_BLOCK),
+                            String.class,
+                            Object.class
+                    ),
+                    BlockBean.class
+            );
 
         BlockBean blockClicked = null;
         if (map.containsKey(BucketActionArgument.KEY_BLOCK_CLICKED))
-            blockClicked = serializer.deserializeBlock(MapUtils.checkAndCastMap(
-                    map.get(BucketActionArgument.KEY_BLOCK_CLICKED),
-                    String.class,
-                    Object.class
-            ));
+            blockClicked = serializer.deserialize(
+                    MapUtils.checkAndCastMap(
+                            map.get(BucketActionArgument.KEY_BLOCK_CLICKED),
+                            String.class,
+                            Object.class
+                    ),
+                    BlockBean.class
+            );
 
         return new BucketActionArgument(
                 (String) map.get(AbstractPlayerActionArgument.KEY_TARGET_PLAYER),

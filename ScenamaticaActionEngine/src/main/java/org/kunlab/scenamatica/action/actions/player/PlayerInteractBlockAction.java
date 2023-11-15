@@ -109,11 +109,14 @@ public class PlayerInteractBlockAction extends AbstractPlayerAction<PlayerIntera
     {
         BlockBean block = null;
         if (map.containsKey(Argument.KEY_BLOCK))
-            block = serializer.deserializeBlock(MapUtils.checkAndCastMap(
-                    map.get(Argument.KEY_BLOCK),
-                    String.class,
-                    Object.class
-            ));
+            block = serializer.deserialize(
+                    MapUtils.checkAndCastMap(
+                            map.get(Argument.KEY_BLOCK),
+                            String.class,
+                            Object.class
+                    ),
+                    BlockBean.class
+            );
 
         Action action = MapUtils.getAsEnumOrNull(map, Argument.KEY_ACTION, Action.class);
         EquipmentSlot hand = MapUtils.getAsEnumOrNull(map, Argument.KEY_HAND, EquipmentSlot.class);

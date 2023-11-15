@@ -1,6 +1,7 @@
 package org.kunlab.scenamatica.interfaces.scenariofile.context;
 
 import org.jetbrains.annotations.NotNull;
+import org.kunlab.scenamatica.interfaces.scenariofile.Bean;
 import org.kunlab.scenamatica.interfaces.scenariofile.entity.EntityBean;
 
 import java.util.List;
@@ -8,7 +9,7 @@ import java.util.List;
 /**
  * シナリオの実行に必要な情報を表すインターフェースです。
  */
-public interface ContextBean
+public interface ContextBean extends Bean
 {
     /**
      * 仮想プレイヤーを定義します。

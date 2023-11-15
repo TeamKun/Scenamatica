@@ -45,10 +45,13 @@ public abstract class AbstractInventoryAction<A extends AbstractInventoryArgumen
         if (!map.containsKey(AbstractInventoryArgument.KEY_INVENTORY))
             return null;
 
-        return serializer.deserializeInventory(MapUtils.checkAndCastMap(
-                map.get(AbstractInventoryArgument.KEY_INVENTORY),
-                String.class,
-                Object.class
-        ));
+        return serializer.deserialize(
+                MapUtils.checkAndCastMap(
+                        map.get(AbstractInventoryArgument.KEY_INVENTORY),
+                        String.class,
+                        Object.class
+                ),
+                InventoryBean.class
+        );
     }
 }

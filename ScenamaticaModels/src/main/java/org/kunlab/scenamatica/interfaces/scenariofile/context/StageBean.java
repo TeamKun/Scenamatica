@@ -4,13 +4,12 @@ import org.bukkit.World;
 import org.bukkit.WorldType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.io.Serializable;
+import org.kunlab.scenamatica.interfaces.scenariofile.Bean;
 
 /**
  * ワールドの情報を表すインターフェースです。
  */
-public interface StageBean extends Serializable
+public interface StageBean extends Bean
 {
     String KEY_ORIGINAL_WORLD_NAME = "copyOf";
     String KEY_TYPE = "type";

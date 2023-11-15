@@ -2,11 +2,12 @@ package org.kunlab.scenamatica.interfaces.scenariofile.entity;
 
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.jetbrains.annotations.NotNull;
+import org.kunlab.scenamatica.interfaces.scenariofile.Bean;
 
 /**
  * ダメージを表すインターフェースです。
  */
-public interface DamageBean
+public interface DamageBean extends Bean
 {
     String KEY_MODIFIER = "modifier";
     String KEY_CAUSE = "cause";

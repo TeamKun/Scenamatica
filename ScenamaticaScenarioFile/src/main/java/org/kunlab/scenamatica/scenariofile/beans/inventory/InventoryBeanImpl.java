@@ -38,7 +38,7 @@ public class InventoryBeanImpl implements InventoryBean
     {
         Map<Integer, Object> contents = new HashMap<>();
         for (Map.Entry<Integer, ItemStackBean> entry : bean.getMainContents().entrySet())
-            contents.put(entry.getKey(), serializer.serializeItemStack(entry.getValue()));
+            contents.put(entry.getKey(), serializer.serialize(entry.getValue(), ItemStackBean.class));
 
         Map<String, Object> map = new HashMap<>();
         MapUtils.putIfNotNull(map, KEY_SIZE, bean.getSize());
@@ -62,11 +62,11 @@ public class InventoryBeanImpl implements InventoryBean
         );
 
         for (Map.Entry<Integer, Object> entry : contents.entrySet())
-            serializer.validateItemStack(MapUtils.checkAndCastMap(
+            serializer.validate(MapUtils.checkAndCastMap(
                     entry.getValue(),
                     String.class,
                     Object.class
-            ));
+            ), ItemStackBean.class);
     }
 
     @NotNull
@@ -87,11 +87,11 @@ public class InventoryBeanImpl implements InventoryBean
             for (Map.Entry<Integer, Object> entry : contents.entrySet())
                 mainContents.put(
                         entry.getKey(),
-                        serializer.deserializeItemStack(MapUtils.checkAndCastMap(
+                        serializer.deserialize(MapUtils.checkAndCastMap(
                                 entry.getValue(),
                                 String.class,
                                 Object.class
-                        ))
+                        ), ItemStackBean.class)
                 );
         }
 

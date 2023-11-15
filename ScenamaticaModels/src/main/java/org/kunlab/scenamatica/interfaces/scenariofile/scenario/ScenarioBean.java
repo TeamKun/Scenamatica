@@ -2,14 +2,13 @@ package org.kunlab.scenamatica.interfaces.scenariofile.scenario;
 
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.scenariofile.Bean;
 import org.kunlab.scenamatica.interfaces.scenariofile.action.ActionBean;
-
-import java.io.Serializable;
 
 /**
  * シナリオの流れを定義します。
  */
-public interface ScenarioBean extends Serializable
+public interface ScenarioBean extends Bean
 {
 
     /**

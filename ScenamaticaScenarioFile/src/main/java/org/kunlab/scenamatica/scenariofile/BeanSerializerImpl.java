@@ -1,6 +1,8 @@
 package org.kunlab.scenamatica.scenariofile;
 
+import lombok.Value;
 import org.jetbrains.annotations.NotNull;
+import org.kunlab.scenamatica.interfaces.scenariofile.Bean;
 import org.kunlab.scenamatica.interfaces.scenariofile.BeanSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
 import org.kunlab.scenamatica.interfaces.scenariofile.action.ActionBean;
@@ -11,6 +13,7 @@ import org.kunlab.scenamatica.interfaces.scenariofile.entity.DamageBean;
 import org.kunlab.scenamatica.interfaces.scenariofile.entity.EntityBean;
 import org.kunlab.scenamatica.interfaces.scenariofile.entity.entities.EntityItemBean;
 import org.kunlab.scenamatica.interfaces.scenariofile.entity.entities.HumanEntityBean;
+import org.kunlab.scenamatica.interfaces.scenariofile.entity.entities.ProjectileBean;
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.InventoryBean;
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.ItemStackBean;
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.PlayerInventoryBean;
@@ -25,6 +28,7 @@ import org.kunlab.scenamatica.scenariofile.beans.entity.DamageBeanImpl;
 import org.kunlab.scenamatica.scenariofile.beans.entity.EntityBeanImpl;
 import org.kunlab.scenamatica.scenariofile.beans.entity.entities.EntityItemBeanImpl;
 import org.kunlab.scenamatica.scenariofile.beans.entity.entities.HumanEntityBeanImpl;
+import org.kunlab.scenamatica.scenariofile.beans.entity.entities.ProjectileBeanImpl;
 import org.kunlab.scenamatica.scenariofile.beans.inventory.InventoryBeanImpl;
 import org.kunlab.scenamatica.scenariofile.beans.inventory.ItemStackBeanImpl;
 import org.kunlab.scenamatica.scenariofile.beans.inventory.PlayerInventoryBeanImpl;
@@ -33,7 +37,13 @@ import org.kunlab.scenamatica.scenariofile.beans.scenario.ActionBeanImpl;
 import org.kunlab.scenamatica.scenariofile.beans.scenario.ScenarioBeanImpl;
 import org.kunlab.scenamatica.scenariofile.beans.trigger.TriggerBeanImpl;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 public class BeanSerializerImpl implements BeanSerializer
 {
@@ -44,8 +54,13 @@ public class BeanSerializerImpl implements BeanSerializer
         INSTANCE = new BeanSerializerImpl();  // シングルトン
     }
 
+    private final List<BeanEntry<?>> beanEntries;
+
     private BeanSerializerImpl()
     {
+        this.beanEntries = new ArrayList<>();
+
+        this.registerBeans();
     }
 
     @NotNull
@@ -54,306 +69,246 @@ public class BeanSerializerImpl implements BeanSerializer
         return BeanSerializerImpl.INSTANCE;
     }
 
-    // Serialize
+    @Override
+    public @NotNull <T extends Bean> Map<String, Object> serialize(@NotNull T bean, @NotNull Class<T> clazz)
+    {
+        return this.selectEntry(clazz).getSerializer().apply(bean, this);
+    }
 
     @Override
+    public <T extends Bean> @NotNull T deserialize(@NotNull Map<String, Object> map, @NotNull Class<T> clazz)
+    {
+        return this.selectEntry(clazz).getDeserializer().apply(map, this);
+    }
+
+    @Override
+    public <T extends Bean> void validate(@NotNull Map<String, Object> map, @NotNull Class<T> clazz)
+    {
+        this.selectEntry(clazz).getValidator().accept(map, this);
+    }
+
+    // <editor-fold desc="Bean 登録用のメソッド">
+
+    private <T extends Bean> void registerBean(@NotNull Class<T> clazz,
+                                               @NotNull BiFunction<T, BeanSerializer, Map<String, Object>> serializer,
+                                               @NotNull BiFunction<Map<String, Object>, BeanSerializer, T> deserializer,
+                                               @NotNull BiConsumer<Map<String, Object>, BeanSerializer> validator)
+    {
+        this.beanEntries.add(new BeanEntry<>(clazz, serializer, deserializer, validator));
+    }
+
+    @SuppressWarnings("SameParameterValue")
+    private <T extends Bean> void registerBean(@NotNull Class<T> clazz,
+                                               @NotNull BiFunction<T, BeanSerializer, Map<String, Object>> serializer,
+                                               @NotNull BiFunction<Map<String, Object>, BeanSerializer, T> deserializer,
+                                               @NotNull Consumer<? super Map<String, Object>> validator)
+    {
+        this.beanEntries.add(new BeanEntry<>(clazz, serializer, deserializer, (v, t) -> validator.accept(v)));
+    }
+
+    private <T extends Bean> void registerBean(@NotNull Class<T> clazz,
+                                               @NotNull Function<? super T, ? extends Map<String, Object>> serializer,
+                                               @NotNull BiFunction<Map<String, Object>, BeanSerializer, T> deserializer,
+                                               @NotNull BiConsumer<Map<String, Object>, BeanSerializer> validator)
+    {
+        this.beanEntries.add(new BeanEntry<>(clazz, (v, t) -> serializer.apply(v), deserializer, validator));
+    }
+
+    private <T extends Bean> void registerBean(@NotNull Class<T> clazz,
+                                               @NotNull Function<? super T, ? extends Map<String, Object>> serializer,
+                                               @NotNull BiFunction<Map<String, Object>, BeanSerializer, T> deserializer,
+                                               @NotNull Consumer<? super Map<String, Object>> validator)
+    {
+        this.beanEntries.add(new BeanEntry<>(clazz, (v, t) -> serializer.apply(v), deserializer, (v, t) -> validator.accept(v)));
+    }
+
+    private <T extends Bean> void registerBean(@NotNull Class<T> clazz,
+                                               @NotNull Function<? super T, ? extends Map<String, Object>> serializer,
+                                               @NotNull Function<? super Map<String, Object>, ? extends T> deserializer,
+                                               @NotNull BiConsumer<Map<String, Object>, BeanSerializer> validator)
+    {
+        this.beanEntries.add(new BeanEntry<>(clazz, (v, t) -> serializer.apply(v), (v, t) -> deserializer.apply(v), validator));
+    }
+
+    private <T extends Bean> void registerBean(@NotNull Class<T> clazz,
+                                               @NotNull Function<? super T, ? extends Map<String, Object>> serializer,
+                                               @NotNull Function<? super Map<String, Object>, ? extends T> deserializer,
+                                               @NotNull Consumer<? super Map<String, Object>> validator)
+    {
+        this.beanEntries.add(new BeanEntry<>(clazz, (v, t) -> serializer.apply(v), (v, t) -> deserializer.apply(v), (v, t) -> validator.accept(v)));
+    }
+
+    @SuppressWarnings("SameParameterValue")
+
+    private <T extends Bean> void registerBean(@NotNull Class<T> clazz,
+                                               @NotNull BiFunction<T, BeanSerializer, Map<String, Object>> serializer,
+                                               @NotNull Function<? super Map<String, Object>, ? extends T> deserializer,
+                                               @NotNull Consumer<? super Map<String, Object>> validator)
+    {
+        this.beanEntries.add(new BeanEntry<>(clazz, serializer, (v, t) -> deserializer.apply(v), (v, t) -> validator.accept(v)));
+    }
+
+    // </editor-fold>
+
+    private <T extends Bean> BeanEntry<T> selectEntry(@NotNull Class<T> clazz)
+    {
+        // noinspection unchecked
+        return (BeanEntry<T>) this.beanEntries.stream().parallel()
+                .filter(entry -> entry.getClazz().equals(clazz))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Unknown bean class: " + clazz.getName()));
+    }
+
+    // <editor-fold desc="すべての Bean を登録するメソッド">
+
+    private void registerBeans()
+    {
+        this.registerContextBeans();
+        this.registerEntityBeans();
+        this.registerInventoryBeans();
+        this.registerMiscBeans();
+        this.registerScenarioBeans();
+        this.registerTriggerBeans();
+
+        this.registerBean(
+                ScenarioFileBean.class,
+                ScenarioFileBeanImpl::serialize,
+                ScenarioFileBeanImpl::deserialize,
+                ScenarioFileBeanImpl::validate
+        );
+
+    }
+
+    private void registerContextBeans()
+    {
+        this.registerBean(
+                ContextBean.class,
+                ContextBeanImpl::serialize,
+                ContextBeanImpl::deserialize,
+                ContextBeanImpl::validate
+        );
+        this.registerBean(
+                PlayerBean.class,
+                PlayerBeanImpl::serialize,
+                PlayerBeanImpl::deserialize,
+                (BiConsumer<Map<String, Object>, BeanSerializer>) PlayerBeanImpl::validate
+        );
+        this.registerBean(
+                StageBean.class,
+                StageBeanImpl::serialize,
+                StageBeanImpl::deserialize,
+                StageBeanImpl::validate
+        );
+    }
+
+    private void registerEntityBeans()
+    {
+        this.registerEntityEntitiesBeans();
+
+        this.registerBean(
+                DamageBean.class,
+                DamageBeanImpl::serialize,
+                DamageBeanImpl::deserialize,
+                DamageBeanImpl::validate
+        );
+        this.registerBean(
+                EntityBean.class,
+                EntityBeanImpl::serialize,
+                EntityBeanImpl::deserialize,
+                EntityBeanImpl::validate
+        );
+    }
+
+    private void registerEntityEntitiesBeans()
+    {
+        this.registerBean(
+                EntityItemBean.class,
+                EntityItemBeanImpl::serialize,
+                EntityItemBeanImpl::deserialize,
+                (BiConsumer<Map<String, Object>, BeanSerializer>) EntityItemBeanImpl::validate
+        );
+        this.registerBean(
+                HumanEntityBean.class,
+                HumanEntityBeanImpl::serialize,
+                HumanEntityBeanImpl::deserialize,
+                (BiConsumer<Map<String, Object>, BeanSerializer>) HumanEntityBeanImpl::validate
+        );
+
+        this.registerBean(
+                ProjectileBean.class,
+                ProjectileBeanImpl::serialize,
+                ProjectileBeanImpl::deserialize,
+                (BiConsumer<Map<String, Object>, BeanSerializer>) ProjectileBeanImpl::validate
+        );
+    }
+
+    private void registerInventoryBeans()
+    {
+        this.registerBean(
+                InventoryBean.class,
+                InventoryBeanImpl::serialize,
+                InventoryBeanImpl::deserialize,
+                InventoryBeanImpl::validate
+        );
+        this.registerBean(
+                ItemStackBean.class,
+                ItemStackBeanImpl::serialize,
+                ItemStackBeanImpl::deserialize,
+                ItemStackBeanImpl::validate
+        );
+        this.registerBean(
+                PlayerInventoryBean.class,
+                PlayerInventoryBeanImpl::serialize,
+                PlayerInventoryBeanImpl::deserialize,
+                PlayerInventoryBeanImpl::validate
+        );
+    }
+
+    private void registerMiscBeans()
+    {
+        this.registerBean(
+                BlockBean.class,
+                BlockBeanImpl::serialize,
+                BlockBeanImpl::deserialize,
+                BlockBeanImpl::validate
+        );
+    }
+
+    private void registerScenarioBeans()
+    {
+        this.registerBean(
+                ActionBean.class,
+                ActionBeanImpl::serialize,
+                ActionBeanImpl::deserialize,
+                ActionBeanImpl::validate
+        );
+        this.registerBean(
+                ScenarioBean.class,
+                ScenarioBeanImpl::serialize,
+                ScenarioBeanImpl::deserialize,
+                ScenarioBeanImpl::validate
+        );
+    }
+
+    private void registerTriggerBeans()
+    {
+        this.registerBean(
+                TriggerBean.class,
+                TriggerBeanImpl::serialize,
+                TriggerBeanImpl::deserialize,
+                TriggerBeanImpl::validate
+        );
+    }
+
+    // </editor-fold>
+
+    @Value
     @NotNull
-    public Map<String, Object> serializeContext(@NotNull ContextBean contextBean)
+    private static class BeanEntry<T extends Bean>
     {
-        return ContextBeanImpl.serialize(contextBean, this);
-    }
-
-    @Override
-    @NotNull
-    public Map<String, Object> serializePlayer(@NotNull PlayerBean playerBean)
-    {
-        return PlayerBeanImpl.serialize(playerBean, this);
-    }
-
-    @Override
-    @NotNull
-    public Map<String, Object> serializeStage(@NotNull StageBean stageBean)
-    {
-        return StageBeanImpl.serialize(stageBean);
-    }
-
-    @Override
-    @NotNull
-    public Map<String, Object> serializeDamage(@NotNull DamageBean damageBean)
-    {
-        return DamageBeanImpl.serialize(damageBean);
-    }
-
-    @Override
-    @NotNull
-    public Map<String, Object> serializeEntity(@NotNull EntityBean entityBean)
-    {
-        return EntityBeanImpl.serialize(entityBean, this);
-    }
-
-    @Override
-    public @NotNull Map<String, Object> serializeEntityItem(@NotNull EntityItemBean entityItemBean)
-    {
-        return EntityItemBeanImpl.serialize(entityItemBean, this);
-    }
-
-    @Override
-    @NotNull
-    public Map<String, Object> serializeHumanEntity(@NotNull HumanEntityBean humanEntityBean)
-    {
-        return HumanEntityBeanImpl.serialize(humanEntityBean, this);
-    }
-
-    @Override
-    @NotNull
-    public Map<String, Object> serializeInventory(@NotNull InventoryBean inventoryBean)
-    {
-        return InventoryBeanImpl.serialize(inventoryBean, this);
-    }
-
-    @Override
-    @NotNull
-    public Map<String, Object> serializeItemStack(@NotNull ItemStackBean itemStackBean)
-    {
-        return ItemStackBeanImpl.serialize(itemStackBean, this);
-    }
-
-    @Override
-    @NotNull
-    public Map<String, Object> serializePlayerInventory(@NotNull PlayerInventoryBean playerInventoryBean)
-    {
-        return PlayerInventoryBeanImpl.serialize(playerInventoryBean, this);
-    }
-
-    @Override
-    @NotNull
-    public Map<String, Object> serializeBlock(@NotNull BlockBean blockBean)
-    {
-        return BlockBeanImpl.serialize(blockBean);
-    }
-
-    @Override
-    @NotNull
-    public Map<String, Object> serializeAction(@NotNull ActionBean actionBean)
-    {
-        return ActionBeanImpl.serialize(actionBean);
-    }
-
-    @Override
-    @NotNull
-    public Map<String, Object> serializeScenario(@NotNull ScenarioBean scenarioBean)
-    {
-        return ScenarioBeanImpl.serialize(scenarioBean, this);
-    }
-
-    @Override
-    @NotNull
-    public Map<String, Object> serializeTrigger(@NotNull TriggerBean trigger)
-    {
-        return TriggerBeanImpl.serialize(trigger, this);
-    }
-
-    @Override
-    @NotNull
-    public Map<String, Object> serializeScenarioFile(@NotNull ScenarioFileBean scenarioFileBean)
-    {
-        return ScenarioFileBeanImpl.serialize(scenarioFileBean, this);
-    }
-
-    // Validate
-    @Override
-    public void validateContext(@NotNull Map<String, Object> context)
-    {
-        ContextBeanImpl.validate(context, this);
-    }
-
-    @Override
-    public void validatePlayer(@NotNull Map<String, Object> player)
-    {
-        PlayerBeanImpl.validate(player, this);
-    }
-
-    @Override
-    public void validateStage(@NotNull Map<String, Object> stage)
-    {
-        StageBeanImpl.validate(stage);
-    }
-
-    @Override
-    public void validateDamage(@NotNull Map<String, Object> damage)
-    {
-        DamageBeanImpl.validate(damage);
-    }
-
-    @Override
-    public void validateEntity(@NotNull Map<String, Object> entity)
-    {
-        EntityBeanImpl.validate(entity);
-    }
-
-    @Override
-    public void validateEntityItem(@NotNull Map<String, Object> entityItem)
-    {
-        EntityItemBeanImpl.validate(entityItem, this);
-    }
-
-    @Override
-    public void validateHumanEntity(@NotNull Map<String, Object> humanEntity)
-    {
-        HumanEntityBeanImpl.validate(humanEntity);
-    }
-
-    @Override
-    public void validateInventory(@NotNull Map<String, Object> inventory)
-    {
-        InventoryBeanImpl.validate(inventory, this);
-    }
-
-    @Override
-    public void validateItemStack(@NotNull Map<String, Object> itemStack)
-    {
-        ItemStackBeanImpl.validate(itemStack);
-    }
-
-    @Override
-    public void validatePlayerInventory(@NotNull Map<String, Object> playerInventory)
-    {
-        PlayerInventoryBeanImpl.validate(playerInventory, this);
-    }
-
-    @Override
-    public void validateBlock(@NotNull Map<String, Object> block)
-    {
-        BlockBeanImpl.validate(block);
-    }
-
-    @Override
-    public void validateAction(@NotNull Map<String, Object> action)
-    {
-        ActionBeanImpl.validate(action);
-    }
-
-    @Override
-    public void validateScenario(@NotNull Map<String, Object> scenario)
-    {
-        ScenarioBeanImpl.validate(scenario, this);
-    }
-
-    @Override
-    public void validateTrigger(@NotNull Map<String, Object> trigger)
-    {
-        TriggerBeanImpl.validate(trigger, this);
-    }
-
-    @Override
-    public void validateScenarioFile(@NotNull Map<String, Object> scenarioFile)
-    {
-        ScenarioFileBeanImpl.validate(scenarioFile, this);
-    }
-
-    // Deserialize
-
-    @Override
-    @NotNull
-    public ContextBean deserializeContext(@NotNull Map<String, Object> context)
-    {
-        return ContextBeanImpl.deserialize(context, this);
-    }
-
-    @Override
-    @NotNull
-    public PlayerBean deserializePlayer(@NotNull Map<String, Object> player)
-    {
-        return PlayerBeanImpl.deserialize(player, this);
-    }
-
-    @Override
-    @NotNull
-    public StageBean deserializeStage(@NotNull Map<String, Object> stage)
-    {
-        return StageBeanImpl.deserialize(stage);
-    }
-
-    @Override
-    @NotNull
-    public DamageBean deserializeDamage(@NotNull Map<String, Object> damage)
-    {
-        return DamageBeanImpl.deserialize(damage);
-    }
-
-    @Override
-    @NotNull
-    public EntityBean deserializeEntity(@NotNull Map<String, Object> entity)
-    {
-        return EntityBeanImpl.deserialize(entity, this);
-    }
-
-    @Override
-    public @NotNull EntityItemBean deserializeEntityItem(@NotNull Map<String, Object> entityItem)
-    {
-        return EntityItemBeanImpl.deserialize(entityItem, this);
-    }
-
-    @Override
-    @NotNull
-    public HumanEntityBean deserializeHumanEntity(@NotNull Map<String, Object> humanEntity)
-    {
-        return HumanEntityBeanImpl.deserialize(humanEntity, this);
-    }
-
-    @Override
-    @NotNull
-    public InventoryBean deserializeInventory(@NotNull Map<String, Object> inventory)
-    {
-        return InventoryBeanImpl.deserialize(inventory, this);
-    }
-
-    @Override
-    @NotNull
-    public ItemStackBean deserializeItemStack(@NotNull Map<String, Object> itemStack)
-    {
-        return ItemStackBeanImpl.deserialize(itemStack);
-    }
-
-    @Override
-    @NotNull
-    public PlayerInventoryBean deserializePlayerInventory(@NotNull Map<String, Object> playerInventory)
-    {
-        return PlayerInventoryBeanImpl.deserialize(playerInventory, this);
-    }
-
-    @Override
-    @NotNull
-    public BlockBean deserializeBlock(@NotNull Map<String, Object> block)
-    {
-        return BlockBeanImpl.deserialize(block);
-    }
-
-    @Override
-    @NotNull
-    public ActionBean deserializeAction(@NotNull Map<String, Object> action)
-    {
-        return ActionBeanImpl.deserialize(action);
-    }
-
-    @Override
-    @NotNull
-    public ScenarioBean deserializeScenario(@NotNull Map<String, Object> scenario)
-    {
-        return ScenarioBeanImpl.deserialize(scenario, this);
-    }
-
-    @Override
-    @NotNull
-    public TriggerBean deserializeTrigger(@NotNull Map<String, Object> trigger)
-    {
-        return TriggerBeanImpl.deserialize(trigger, this);
-    }
-
-    @Override
-    @NotNull
-    public ScenarioFileBean deserializeScenarioFile(@NotNull Map<String, Object> scenarioFile)
-    {
-        return ScenarioFileBeanImpl.deserialize(scenarioFile, this);
+        Class<T> clazz;
+        BiFunction<T, BeanSerializer, Map<String, Object>> serializer;
+        BiFunction<Map<String, Object>, BeanSerializer, T> deserializer;
+        BiConsumer<Map<String, Object>, BeanSerializer> validator;
     }
 }

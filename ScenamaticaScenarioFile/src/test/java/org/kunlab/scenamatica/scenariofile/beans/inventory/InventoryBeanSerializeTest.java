@@ -33,9 +33,9 @@ public class InventoryBeanSerializeTest
         this.put("title", "This is literally an inventory");
         this.put("items", new HashMap<Integer, Map<String, Object>>()
         {{
-            this.put(1, serializer.serializeItemStack(new ItemStackBeanImpl(Material.DIAMOND, 1)));
-            this.put(2, serializer.serializeItemStack(new ItemStackBeanImpl(Material.DIAMOND_BOOTS, 2)));
-            this.put(3, serializer.serializeItemStack(new ItemStackBeanImpl(Material.DIAMOND_CHESTPLATE, 3)));
+            this.put(1, serializer.serialize(new ItemStackBeanImpl(Material.DIAMOND, 1), ItemStackBean.class));
+            this.put(2, serializer.serialize(new ItemStackBeanImpl(Material.DIAMOND_BOOTS, 2), ItemStackBean.class));
+            this.put(3, serializer.serialize(new ItemStackBeanImpl(Material.DIAMOND_CHESTPLATE, 3), ItemStackBean.class));
         }});
     }};
 

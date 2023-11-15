@@ -65,12 +65,13 @@ public class EntityAction extends AbstractEntityAction<EntityAction.Argument>
     {
         EntityBean bean;
         if (map.containsKey(Argument.KEY_ENTITY))
-            bean = serializer.deserializeEntity(
+            bean = serializer.deserialize(
                     MapUtils.checkAndCastMap(
                             map.get(Argument.KEY_ENTITY),
                             String.class,
                             Object.class
-                    )
+                    ),
+                    EntityBean.class
             );
         else
             bean = null;

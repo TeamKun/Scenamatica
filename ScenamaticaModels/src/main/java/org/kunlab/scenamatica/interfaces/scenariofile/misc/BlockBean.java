@@ -4,13 +4,14 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Biome;
 import org.jetbrains.annotations.NotNull;
+import org.kunlab.scenamatica.interfaces.scenariofile.Bean;
 
 import java.util.Map;
 
 /**
  * ブロックの情報を格納するクラスです。
  */
-public interface BlockBean
+public interface BlockBean extends Bean
 {
     String KEY_BLOCK_TYPE = "type";
     String KEY_BLOCK_LOCATION = "location";

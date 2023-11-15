@@ -93,9 +93,9 @@ public class PlayerHotbarSlotAction extends AbstractPlayerAction<PlayerHotbarSlo
                     Object.class
             );
 
-            serializer.validateItemStack(itemMap);
+            serializer.validate(itemMap, ItemStackBean.class);
 
-            item = serializer.deserializeItemStack(itemMap);
+            item = serializer.deserialize(itemMap, ItemStackBean.class);
         }
 
         return new Argument(

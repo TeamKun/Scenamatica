@@ -63,18 +63,18 @@ public class ScenarioFileBeanImpl implements ScenarioFileBean
             map.put(KEY_ORDER, bean.getOrder());
 
         map.put(KEY_TRIGGERS, bean.getTriggers().stream()
-                .map(serializer::serializeTrigger)
+                .map(trigger -> serializer.serialize(trigger, TriggerBean.class))
                 .collect(Collectors.toList())
         );
         map.put(KEY_SCENARIO, bean.getScenario().stream()
-                .map(serializer::serializeScenario)
+                .map(scenario -> serializer.serialize(scenario, ScenarioBean.class))
                 .collect(Collectors.toList())
         );
 
         if (bean.getContext() != null)
-            map.put(KEY_CONTEXT, serializer.serializeContext(bean.getContext()));
+            map.put(KEY_CONTEXT, serializer.serialize(bean.getContext(), ContextBean.class));
         if (bean.getRunIf() != null)
-            map.put(KEY_RUN_IF, serializer.serializeAction(bean.getRunIf()));
+            map.put(KEY_RUN_IF, serializer.serialize(bean.getRunIf(), ActionBean.class));
 
         return map;
     }
@@ -91,25 +91,29 @@ public class ScenarioFileBeanImpl implements ScenarioFileBean
         MapUtils.checkNumberIfContains(map, KEY_ORDER);
 
         if (map.containsKey(KEY_CONTEXT))
-            serializer.validateContext(MapUtils.checkAndCastMap(
-                    map.get(KEY_CONTEXT),
-                    String.class,
-                    Object.class
-            ));
+            serializer.validate(
+                    MapUtils.checkAndCastMap(
+                            map.get(KEY_CONTEXT),
+                            String.class,
+                            Object.class
+                    ),
+                    ContextBean.class
+            );
 
         MapUtils.checkType(map, KEY_TRIGGERS, List.class);
-        ((List<?>) map.get(KEY_TRIGGERS)).forEach(o -> serializer.validateTrigger(MapUtils.checkAndCastMap(
-                o,
-                String.class,
-                Object.class
-        )));
+        ((List<?>) map.get(KEY_TRIGGERS)).forEach(
+                o -> serializer.validate(MapUtils.checkAndCastMap(
+                        o,
+                        String.class,
+                        Object.class
+                ), TriggerBean.class));
 
         MapUtils.checkType(map, KEY_SCENARIO, List.class);
-        ((List<?>) map.get(KEY_SCENARIO)).forEach(o -> serializer.validateScenario(MapUtils.checkAndCastMap(
+        ((List<?>) map.get(KEY_SCENARIO)).forEach(o -> serializer.validate(MapUtils.checkAndCastMap(
                 o,
                 String.class,
                 Object.class
-        )));
+        ), ScenarioBean.class));
     }
 
     @NotNull
@@ -142,35 +146,35 @@ public class ScenarioFileBeanImpl implements ScenarioFileBean
         }
 
         List<TriggerBean> triggers = ((List<?>) map.get(KEY_TRIGGERS)).stream()
-                .map(o -> serializer.deserializeTrigger(MapUtils.checkAndCastMap(
+                .map(o -> serializer.deserialize(MapUtils.checkAndCastMap(
                         o,
                         String.class,
                         Object.class
-                )))
+                ), TriggerBean.class))
                 .collect(Collectors.toList());
         List<ScenarioBean> scenario = ((List<?>) map.get(KEY_SCENARIO)).stream()
-                .map(o -> serializer.deserializeScenario(MapUtils.checkAndCastMap(
+                .map(o -> serializer.deserialize(MapUtils.checkAndCastMap(
                         o,
                         String.class,
                         Object.class
-                )))
+                ), ScenarioBean.class))
                 .collect(Collectors.toList());
 
         ContextBean context = null;
         if (map.containsKey(KEY_CONTEXT))
-            context = serializer.deserializeContext(MapUtils.checkAndCastMap(
+            context = serializer.deserialize(MapUtils.checkAndCastMap(
                     map.get(KEY_CONTEXT),
                     String.class,
                     Object.class
-            ));
+            ), ContextBean.class);
 
         ActionBean runIf = null;
         if (map.containsKey(KEY_RUN_IF))
-            runIf = serializer.deserializeAction(MapUtils.checkAndCastMap(
+            runIf = serializer.deserialize(MapUtils.checkAndCastMap(
                     map.get(KEY_RUN_IF),
                     String.class,
                     Object.class
-            ));
+            ), ActionBean.class);
 
         return new ScenarioFileBeanImpl(
                 scenamatica,

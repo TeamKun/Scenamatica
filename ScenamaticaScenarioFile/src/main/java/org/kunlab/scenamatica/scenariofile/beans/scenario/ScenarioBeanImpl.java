@@ -40,10 +40,10 @@ public class ScenarioBeanImpl implements ScenarioBean
         if (bean.getTimeout() != -1)
             map.put(KEY_TIMEOUT, bean.getTimeout());
 
-        map.putAll(serializer.serializeAction(bean.getAction()));
+        map.putAll(serializer.serialize(bean.getAction(), ActionBean.class));
 
         if (bean.getRunIf() != null)
-            map.put(KEY_RUN_IF, serializer.serializeAction(bean.getRunIf()));
+            map.put(KEY_RUN_IF, serializer.serialize(bean.getRunIf(), ActionBean.class));
 
         return map;
     }
@@ -63,7 +63,7 @@ public class ScenarioBeanImpl implements ScenarioBean
 
         MapUtils.checkNumberIfContains(map, KEY_TIMEOUT);
 
-        serializer.validateAction(map);
+        serializer.validate(map, ActionBean.class);
     }
 
     /**
@@ -82,16 +82,19 @@ public class ScenarioBeanImpl implements ScenarioBean
 
         ActionBean runIf = null;
         if (map.containsKey(KEY_RUN_IF))
-            runIf = serializer.deserializeAction(MapUtils.checkAndCastMap(
-                    map.get(KEY_RUN_IF),
-                    String.class,
-                    Object.class
-            ));
+            runIf = serializer.deserialize(
+                    MapUtils.checkAndCastMap(
+                            map.get(KEY_RUN_IF),
+                            String.class,
+                            Object.class
+                    ),
+                    ActionBean.class
+            );
 
         assert type != null;
         return new ScenarioBeanImpl(
                 type,
-                serializer.deserializeAction(map),
+                serializer.deserialize(map, ActionBean.class),
                 runIf,
                 timeout
         );

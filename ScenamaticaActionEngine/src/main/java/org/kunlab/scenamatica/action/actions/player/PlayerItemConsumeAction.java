@@ -89,19 +89,25 @@ public class PlayerItemConsumeAction extends AbstractPlayerAction<PlayerItemCons
     {
         ItemStackBean item = null;
         if (map.containsKey(Argument.KEY_ITEM))
-            item = serializer.deserializeItemStack(MapUtils.checkAndCastMap(
-                    map.get(Argument.KEY_ITEM),
-                    String.class,
-                    Object.class
-            ));
+            item = serializer.deserialize(
+                    MapUtils.checkAndCastMap(
+                            map.get(Argument.KEY_ITEM),
+                            String.class,
+                            Object.class
+                    ),
+                    ItemStackBean.class
+            );
 
         ItemStackBean replacement = null;
         if (map.containsKey(Argument.KEY_REPLACEMENT))
-            replacement = serializer.deserializeItemStack(MapUtils.checkAndCastMap(
-                    map.get(Argument.KEY_REPLACEMENT),
-                    String.class,
-                    Object.class
-            ));
+            replacement = serializer.deserialize(
+                    MapUtils.checkAndCastMap(
+                            map.get(Argument.KEY_REPLACEMENT),
+                            String.class,
+                            Object.class
+                    ),
+                    ItemStackBean.class
+            );
 
         return new Argument(
                 super.deserializeTarget(map),

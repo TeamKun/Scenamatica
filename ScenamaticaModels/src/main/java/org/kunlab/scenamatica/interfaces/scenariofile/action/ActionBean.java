@@ -2,13 +2,14 @@ package org.kunlab.scenamatica.interfaces.scenariofile.action;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.kunlab.scenamatica.interfaces.scenariofile.Bean;
 
 import java.util.Map;
 
 /**
  * シナリオの動作の定義を表すインターフェースです。
  */
-public interface ActionBean
+public interface ActionBean extends Bean
 {
     String KEY_TYPE = "action";
     String KEY_ARGUMENTS = "with";

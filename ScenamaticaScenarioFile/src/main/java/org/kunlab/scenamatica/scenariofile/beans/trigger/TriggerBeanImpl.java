@@ -54,19 +54,19 @@ public class TriggerBeanImpl implements TriggerBean
         {
             List<Map<String, Object>> list = new LinkedList<>();
             for (ScenarioBean scenario : bean.getBeforeThat())
-                list.add(serializer.serializeScenario(scenario));
+                list.add(serializer.serialize(scenario, ScenarioBean.class));
             map.put(KEY_BEFORE_THAT, list);
         }
         if (!bean.getAfterThat().isEmpty())
         {
             List<Map<String, Object>> list = new LinkedList<>();
             for (ScenarioBean scenario : bean.getAfterThat())
-                list.add(serializer.serializeScenario(scenario));
+                list.add(serializer.serialize(scenario, ScenarioBean.class));
             map.put(KEY_AFTER_THAT, list);
         }
 
         if (bean.getRunIf() != null)
-            map.put(KEY_RUN_IF, serializer.serializeAction(bean.getRunIf()));
+            map.put(KEY_RUN_IF, serializer.serialize(bean.getRunIf(), ActionBean.class));
 
         return map;
     }
@@ -81,21 +81,27 @@ public class TriggerBeanImpl implements TriggerBean
         {
             MapUtils.checkType(map, KEY_BEFORE_THAT, List.class);
             for (Object obj : (List<?>) map.get(KEY_BEFORE_THAT))
-                serializer.validateScenario(MapUtils.checkAndCastMap(
-                        obj,
-                        String.class,
-                        Object.class
-                ));
+                serializer.validate(
+                        MapUtils.checkAndCastMap(
+                                obj,
+                                String.class,
+                                Object.class
+                        ),
+                        ScenarioBean.class
+                );
         }
         if (map.containsKey(KEY_AFTER_THAT))
         {
             MapUtils.checkType(map, KEY_AFTER_THAT, List.class);
             for (Object obj : (List<?>) map.get(KEY_AFTER_THAT))
-                serializer.validateScenario(MapUtils.checkAndCastMap(
-                        obj,
-                        String.class,
-                        Object.class
-                ));
+                serializer.validate(
+                        MapUtils.checkAndCastMap(
+                                obj,
+                                String.class,
+                                Object.class
+                        ),
+                        ScenarioBean.class
+                );
         }
 
         TriggerType type = TriggerType.fromKey((String) map.get(KEY_TYPE));
@@ -120,28 +126,28 @@ public class TriggerBeanImpl implements TriggerBean
         List<ScenarioBean> beforeThat = new LinkedList<>();
         if (map.containsKey(KEY_BEFORE_THAT))
             for (Object obj : (List<?>) map.get(KEY_BEFORE_THAT))
-                beforeThat.add(serializer.deserializeScenario(MapUtils.checkAndCastMap(
+                beforeThat.add(serializer.deserialize(MapUtils.checkAndCastMap(
                         obj,
                         String.class,
                         Object.class
-                )));
+                ), ScenarioBean.class));
 
         List<ScenarioBean> afterThat = new LinkedList<>();
         if (map.containsKey(KEY_AFTER_THAT))
             for (Object obj : (List<?>) map.get(KEY_AFTER_THAT))
-                afterThat.add(serializer.deserializeScenario(MapUtils.checkAndCastMap(
+                afterThat.add(serializer.deserialize(MapUtils.checkAndCastMap(
                         obj,
                         String.class,
                         Object.class
-                )));
+                ), ScenarioBean.class));
 
         ActionBean runIf = null;
         if (map.containsKey(KEY_RUN_IF))
-            runIf = serializer.deserializeAction(MapUtils.checkAndCastMap(
+            runIf = serializer.deserialize(MapUtils.checkAndCastMap(
                     map.get(KEY_RUN_IF),
                     String.class,
                     Object.class
-            ));
+            ), ActionBean.class);
 
         assert type != null;  // validate() で検証済み
         return new TriggerBeanImpl(

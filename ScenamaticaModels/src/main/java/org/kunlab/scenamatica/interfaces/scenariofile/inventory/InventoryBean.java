@@ -2,14 +2,14 @@ package org.kunlab.scenamatica.interfaces.scenariofile.inventory;
 
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
+import org.kunlab.scenamatica.interfaces.scenariofile.Bean;
 
-import java.io.Serializable;
 import java.util.Map;
 
 /**
  * インベントリの定義を表すインタフェースです。
  */
-public interface InventoryBean extends Serializable
+public interface InventoryBean extends Bean
 {
     String KEY_SIZE = "size";
     String KEY_TITLE = "title";

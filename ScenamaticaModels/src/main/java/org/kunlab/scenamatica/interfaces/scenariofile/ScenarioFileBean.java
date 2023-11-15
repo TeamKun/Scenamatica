@@ -8,13 +8,12 @@ import org.kunlab.scenamatica.interfaces.scenariofile.context.ContextBean;
 import org.kunlab.scenamatica.interfaces.scenariofile.scenario.ScenarioBean;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerBean;
 
-import java.io.Serializable;
 import java.util.List;
 
 /**
  * シナリオのファイルの情報を表すインターフェースです。
  */
-public interface ScenarioFileBean extends Serializable
+public interface ScenarioFileBean extends Bean
 {
     long DEFAULT_TIMEOUT_TICK = 20L * 60L * 5L;
 

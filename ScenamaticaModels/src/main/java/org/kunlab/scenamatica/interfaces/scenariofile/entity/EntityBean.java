@@ -5,6 +5,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
+import org.kunlab.scenamatica.interfaces.scenariofile.Bean;
 
 import java.util.List;
 import java.util.UUID;
@@ -12,7 +13,7 @@ import java.util.UUID;
 /**
  * エンティティのインターフェースです。
  */
-public interface EntityBean
+public interface EntityBean extends Bean
 {
     String KEY_TYPE = "type";
     String KEY_LOCATION = "loc";

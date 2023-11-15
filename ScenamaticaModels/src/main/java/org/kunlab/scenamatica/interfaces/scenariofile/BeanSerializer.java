@@ -1,119 +1,43 @@
 package org.kunlab.scenamatica.interfaces.scenariofile;
 
 import org.jetbrains.annotations.NotNull;
-import org.kunlab.scenamatica.interfaces.scenariofile.action.ActionBean;
-import org.kunlab.scenamatica.interfaces.scenariofile.context.ContextBean;
-import org.kunlab.scenamatica.interfaces.scenariofile.context.PlayerBean;
-import org.kunlab.scenamatica.interfaces.scenariofile.context.StageBean;
-import org.kunlab.scenamatica.interfaces.scenariofile.entity.DamageBean;
-import org.kunlab.scenamatica.interfaces.scenariofile.entity.EntityBean;
-import org.kunlab.scenamatica.interfaces.scenariofile.entity.entities.EntityItemBean;
-import org.kunlab.scenamatica.interfaces.scenariofile.entity.entities.HumanEntityBean;
-import org.kunlab.scenamatica.interfaces.scenariofile.inventory.InventoryBean;
-import org.kunlab.scenamatica.interfaces.scenariofile.inventory.ItemStackBean;
-import org.kunlab.scenamatica.interfaces.scenariofile.inventory.PlayerInventoryBean;
-import org.kunlab.scenamatica.interfaces.scenariofile.misc.BlockBean;
-import org.kunlab.scenamatica.interfaces.scenariofile.scenario.ScenarioBean;
-import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerBean;
 
 import java.util.Map;
 
 /**
- * シナリオの Bean をシリアライズ・デシリアライズおよびその Map を検証します。
- * <li>{@code serialize}~： 各 Bean を Map にシリアライズします。</li>
- * <li>{@code deserialize}~： Map を各 Bean にデシリアライズします。</li>
- * <li>{@code validate}~： Map がその Bean のパラメタを正しく持っているか検証します。不正な場合は {@link IllegalArgumentException} を投げます。</li>
+ * シナリオの Bean をシリアライズ、デシリアライズまたはその Map を検証します。
  */
 public interface BeanSerializer
 {
-    @NotNull Map<String, Object> serializeContext(@NotNull ContextBean contextBean);
+    /**
+     * Bean をシリアライズします。
+     *
+     * @param bean  シリアライズする Bean
+     * @param clazz シリアライズする Bean のクラス
+     * @param <T>   シリアライズする Bean の型
+     * @return シリアライズされた Bean の Map
+     * @throws IllegalArgumentException シリアライズに失敗した場合
+     */
+    @NotNull <T extends Bean> Map<String, Object> serialize(@NotNull T bean, @NotNull Class<T> clazz);
 
-    @NotNull Map<String, Object> serializePlayer(@NotNull PlayerBean playerBean);
+    /**
+     * Bean をデシリアライズします。
+     *
+     * @param map   デシリアライズする Bean の Map
+     * @param clazz デシリアライズする Bean のクラス
+     * @param <T>   デシリアライズする Bean の型
+     * @return デシリアライズされた Bean
+     * @throws IllegalArgumentException デシリアライズに失敗した場合
+     */
+    @NotNull <T extends Bean> T deserialize(@NotNull Map<String, Object> map, @NotNull Class<T> clazz);
 
-    @NotNull Map<String, Object> serializeStage(@NotNull StageBean stageBean);
-
-    @NotNull Map<String, Object> serializeDamage(@NotNull DamageBean damageBean);
-
-    @NotNull Map<String, Object> serializeEntity(@NotNull EntityBean entityBean);
-
-    @NotNull Map<String, Object> serializeEntityItem(@NotNull EntityItemBean entityItemBean);
-
-    @NotNull Map<String, Object> serializeHumanEntity(@NotNull HumanEntityBean humanEntityBean);
-
-    @NotNull Map<String, Object> serializeInventory(@NotNull InventoryBean inventoryBean);
-
-    @NotNull Map<String, Object> serializeItemStack(@NotNull ItemStackBean itemStackBean);
-
-    @NotNull Map<String, Object> serializePlayerInventory(@NotNull PlayerInventoryBean playerInventoryBean);
-
-    @NotNull Map<String, Object> serializeBlock(@NotNull BlockBean blockBean);
-
-    @NotNull Map<String, Object> serializeAction(@NotNull ActionBean actionBean);
-
-    @NotNull Map<String, Object> serializeScenario(@NotNull ScenarioBean scenarioBean);
-
-    @NotNull Map<String, Object> serializeTrigger(@NotNull TriggerBean trigger);
-
-    @NotNull Map<String, Object> serializeScenarioFile(@NotNull ScenarioFileBean scenarioFileBean);
-
-    // Validate
-    void validateContext(@NotNull Map<String, Object> context);
-
-    void validatePlayer(@NotNull Map<String, Object> player);
-
-    void validateStage(@NotNull Map<String, Object> stage);
-
-    void validateDamage(@NotNull Map<String, Object> damage);
-
-    void validateEntity(@NotNull Map<String, Object> entity);
-
-    void validateEntityItem(@NotNull Map<String, Object> entityItem);
-
-    void validateHumanEntity(@NotNull Map<String, Object> humanEntity);
-
-    void validateInventory(@NotNull Map<String, Object> inventory);
-
-    void validateItemStack(@NotNull Map<String, Object> itemStack);
-
-    void validatePlayerInventory(@NotNull Map<String, Object> playerInventory);
-
-    void validateBlock(@NotNull Map<String, Object> block);
-
-    void validateAction(@NotNull Map<String, Object> action);
-
-    void validateScenario(@NotNull Map<String, Object> scenario);
-
-    void validateTrigger(@NotNull Map<String, Object> trigger);
-
-    void validateScenarioFile(@NotNull Map<String, Object> scenarioFile);
-
-    @NotNull ContextBean deserializeContext(@NotNull Map<String, Object> context);
-
-    @NotNull PlayerBean deserializePlayer(@NotNull Map<String, Object> player);
-
-    @NotNull StageBean deserializeStage(@NotNull Map<String, Object> stage);
-
-    @NotNull DamageBean deserializeDamage(@NotNull Map<String, Object> damage);
-
-    @NotNull EntityBean deserializeEntity(@NotNull Map<String, Object> entity);
-
-    @NotNull EntityItemBean deserializeEntityItem(@NotNull Map<String, Object> entityItem);
-
-    @NotNull HumanEntityBean deserializeHumanEntity(@NotNull Map<String, Object> humanEntity);
-
-    @NotNull InventoryBean deserializeInventory(@NotNull Map<String, Object> inventory);
-
-    @NotNull ItemStackBean deserializeItemStack(@NotNull Map<String, Object> itemStack);
-
-    @NotNull PlayerInventoryBean deserializePlayerInventory(@NotNull Map<String, Object> playerInventory);
-
-    @NotNull BlockBean deserializeBlock(@NotNull Map<String, Object> block);
-
-    @NotNull ActionBean deserializeAction(@NotNull Map<String, Object> action);
-
-    @NotNull ScenarioBean deserializeScenario(@NotNull Map<String, Object> scenario);
-
-    @NotNull TriggerBean deserializeTrigger(@NotNull Map<String, Object> trigger);
-
-    @NotNull ScenarioFileBean deserializeScenarioFile(@NotNull Map<String, Object> scenarioFile);
+    /**
+     * Bean を検証します。
+     *
+     * @param map   検証する Bean の Map
+     * @param clazz 検証する Bean のクラス
+     * @param <T>   検証する Bean の型
+     * @throws IllegalArgumentException 検証に失敗した場合
+     */
+    <T extends Bean> void validate(@NotNull Map<String, Object> map, @NotNull Class<T> clazz);
 }

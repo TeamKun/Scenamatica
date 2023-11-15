@@ -69,11 +69,14 @@ public class InventoryCreativeAction extends InventoryClickAction<InventoryCreat
     {
         ItemStackBean stack = null;
         if (map.containsKey(Argument.KEY_ITEM))
-            stack = serializer.deserializeItemStack(MapUtils.checkAndCastMap(
-                    map.get(Argument.KEY_ITEM),
-                    String.class,
-                    Object.class
-            ));
+            stack = serializer.deserialize(
+                    MapUtils.checkAndCastMap(
+                            map.get(Argument.KEY_ITEM),
+                            String.class,
+                            Object.class
+                    ),
+                    ItemStackBean.class
+            );
 
         return new Argument(
                 super.deserializeArgument(map, serializer),

@@ -8,15 +8,15 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.kunlab.scenamatica.interfaces.scenariofile.Bean;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
 /**
  * インベントリのアイテムを表すインタフェースです。
  */
-public interface ItemStackBean extends Serializable
+public interface ItemStackBean extends Bean
 {
     String KEY_TYPE = "type";
     String KEY_AMOUNT = "amount";

@@ -125,7 +125,7 @@ public class EntityBeanImpl implements EntityBean
         if (entity.getUuid() != null)
             map.put(KEY_UUID, entity.getUuid().toString());
         if (entity.getLastDamageCause() != null)
-            map.put(EntityBean.KEY_LAST_DAMAGE, serializer.serializeDamage(entity.getLastDamageCause()));
+            map.put(EntityBean.KEY_LAST_DAMAGE, serializer.serialize(entity.getLastDamageCause(), DamageBean.class));
 
         MapUtils.putListIfNotEmpty(map, KEY_TAGS, entity.getTags());
 
@@ -317,9 +317,10 @@ public class EntityBeanImpl implements EntityBean
         List<String> tags = MapUtils.getAsListOrEmpty(map, KEY_TAGS);
         DamageBean lastDamageCause = null;
         if (map.containsKey(KEY_LAST_DAMAGE))
-            lastDamageCause = serializer.deserializeDamage(MapUtils.checkAndCastMap(map.get(KEY_LAST_DAMAGE),
+            lastDamageCause = serializer.deserialize(MapUtils.checkAndCastMap(
+                    map.get(KEY_LAST_DAMAGE),
                     String.class, Object.class
-            ));
+            ), DamageBean.class);
 
         Integer maxHealth = MapUtils.getOrNull(map, KEY_MAX_HEALTH);
         Integer health = MapUtils.getOrNull(map, KEY_HEALTH);

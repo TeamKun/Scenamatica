@@ -44,11 +44,13 @@ public abstract class AbstractBlockAction<A extends AbstractBlockActionArgument>
         if (!map.containsKey(AbstractBlockActionArgument.KEY_BLOCK))
             return null;
 
-        return serializer.deserializeBlock(MapUtils.checkAndCastMap(
+        return serializer.deserialize(
+                MapUtils.checkAndCastMap(
                         map.get(AbstractBlockActionArgument.KEY_BLOCK),
                         String.class,
                         Object.class
-                )
+                ),
+                BlockBean.class
         );
     }
 

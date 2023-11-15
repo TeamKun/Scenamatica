@@ -37,7 +37,7 @@ public class ContextBeanImpl implements ContextBean
         {
             List<Map<String, Object>> actors = new ArrayList<>();
             for (PlayerBean player : bean.getActors())
-                actors.add(serializer.serializePlayer(player));
+                actors.add(serializer.serialize(player, PlayerBean.class));
 
             map.put(KEY_ACTORS, actors);
         }
@@ -46,13 +46,13 @@ public class ContextBeanImpl implements ContextBean
         {
             List<Map<String, Object>> entities = new ArrayList<>();
             for (EntityBean entity : bean.getEntities())
-                entities.add(serializer.serializeEntity(entity));
+                entities.add(serializer.serialize(entity, EntityBean.class));
 
             map.put(KEY_ENTITIES, entities);
         }
 
         if (bean.getWorld() != null)
-            map.put(KEY_STAGE, serializer.serializeStage(bean.getWorld()));
+            map.put(KEY_STAGE, serializer.serialize(bean.getWorld(), StageBean.class));
 
         return map;
     }
@@ -66,11 +66,14 @@ public class ContextBeanImpl implements ContextBean
                 throw new IllegalArgumentException("actors must be List");
 
             for (Object player : (List<?>) actors)
-                serializer.validatePlayer(MapUtils.checkAndCastMap(
-                        player,
-                        String.class,
-                        Object.class
-                ));
+                serializer.validate(
+                        MapUtils.checkAndCastMap(
+                                player,
+                                String.class,
+                                Object.class
+                        ),
+                        PlayerBean.class
+                );
         }
 
         if (map.containsKey(KEY_ENTITIES))
@@ -80,19 +83,25 @@ public class ContextBeanImpl implements ContextBean
                 throw new IllegalArgumentException("entities must be List");
 
             for (Object entity : (List<?>) entities)
-                serializer.validateEntity(MapUtils.checkAndCastMap(
-                        entity,
-                        String.class,
-                        Object.class
-                ));
+                serializer.validate(
+                        MapUtils.checkAndCastMap(
+                                entity,
+                                String.class,
+                                Object.class
+                        ),
+                        EntityBean.class
+                );
         }
 
         if (map.containsKey(KEY_STAGE))
-            serializer.validateStage(MapUtils.checkAndCastMap(
-                    map.get(KEY_STAGE),
-                    String.class,
-                    Object.class
-            ));
+            serializer.validate(
+                    MapUtils.checkAndCastMap(
+                            map.get(KEY_STAGE),
+                            String.class,
+                            Object.class
+                    ),
+                    StageBean.class
+            );
     }
 
     @NotNull
@@ -102,31 +111,31 @@ public class ContextBeanImpl implements ContextBean
         if (map.containsKey(KEY_ACTORS) && map.get(KEY_ACTORS) != null)
         {
             for (Object player : (List<?>) map.get(KEY_ACTORS))
-                actorList.add(serializer.deserializePlayer(MapUtils.checkAndCastMap(
+                actorList.add(serializer.deserialize(MapUtils.checkAndCastMap(
                         player,
                         String.class,
                         Object.class
-                )));
+                ), PlayerBean.class));
         }
 
         List<EntityBean> entityList = new ArrayList<>();
         if (map.containsKey(KEY_ENTITIES) && map.get(KEY_ENTITIES) != null)
         {
             for (Object entity : (List<?>) map.get(KEY_ENTITIES))
-                entityList.add(serializer.deserializeEntity(MapUtils.checkAndCastMap(
+                entityList.add(serializer.deserialize(MapUtils.checkAndCastMap(
                         entity,
                         String.class,
                         Object.class
-                )));
+                ), EntityBean.class));
         }
 
         StageBean world = null;
         if (map.containsKey(KEY_STAGE))
-            world = serializer.deserializeStage(MapUtils.checkAndCastMap(
+            world = serializer.deserialize(MapUtils.checkAndCastMap(
                     map.get(KEY_STAGE),
                     String.class,
                     Object.class
-            ));
+            ), StageBean.class);
 
         return new ContextBeanImpl(
                 actorList,

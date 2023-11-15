@@ -85,12 +85,14 @@ public class EntityDropItemAction extends AbstractEntityAction<EntityDropItemAct
     {
         EntityItemBean item = null;
         if (map.containsKey(Argument.KEY_DROP_ITEM))
-            item = serializer.deserializeEntityItem(
+            item = serializer.deserialize(
                     MapUtils.checkAndCastMap(
                             map.get(Argument.KEY_DROP_ITEM),
                             String.class,
                             Object.class
-                    ));
+                    ),
+                    EntityItemBean.class
+            );
 
         return new Argument(
                 super.deserializeTarget(map, serializer),
