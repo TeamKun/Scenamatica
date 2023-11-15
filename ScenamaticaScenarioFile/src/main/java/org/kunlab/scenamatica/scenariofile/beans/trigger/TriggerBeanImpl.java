@@ -82,11 +82,7 @@ public class TriggerBeanImpl implements TriggerBean
             MapUtils.checkType(map, KEY_BEFORE_THAT, List.class);
             for (Object obj : (List<?>) map.get(KEY_BEFORE_THAT))
                 serializer.validate(
-                        MapUtils.checkAndCastMap(
-                                obj,
-                                String.class,
-                                Object.class
-                        ),
+                        MapUtils.checkAndCastMap(obj),
                         ScenarioBean.class
                 );
         }
@@ -95,11 +91,7 @@ public class TriggerBeanImpl implements TriggerBean
             MapUtils.checkType(map, KEY_AFTER_THAT, List.class);
             for (Object obj : (List<?>) map.get(KEY_AFTER_THAT))
                 serializer.validate(
-                        MapUtils.checkAndCastMap(
-                                obj,
-                                String.class,
-                                Object.class
-                        ),
+                        MapUtils.checkAndCastMap(obj),
                         ScenarioBean.class
                 );
         }
@@ -126,28 +118,19 @@ public class TriggerBeanImpl implements TriggerBean
         List<ScenarioBean> beforeThat = new LinkedList<>();
         if (map.containsKey(KEY_BEFORE_THAT))
             for (Object obj : (List<?>) map.get(KEY_BEFORE_THAT))
-                beforeThat.add(serializer.deserialize(MapUtils.checkAndCastMap(
-                        obj,
-                        String.class,
-                        Object.class
-                ), ScenarioBean.class));
+                beforeThat.add(serializer.deserialize(
+                        MapUtils.checkAndCastMap(obj), ScenarioBean.class));
 
         List<ScenarioBean> afterThat = new LinkedList<>();
         if (map.containsKey(KEY_AFTER_THAT))
             for (Object obj : (List<?>) map.get(KEY_AFTER_THAT))
-                afterThat.add(serializer.deserialize(MapUtils.checkAndCastMap(
-                        obj,
-                        String.class,
-                        Object.class
-                ), ScenarioBean.class));
+                afterThat.add(serializer.deserialize(
+                        MapUtils.checkAndCastMap(obj), ScenarioBean.class));
 
         ActionBean runIf = null;
         if (map.containsKey(KEY_RUN_IF))
-            runIf = serializer.deserialize(MapUtils.checkAndCastMap(
-                    map.get(KEY_RUN_IF),
-                    String.class,
-                    Object.class
-            ), ActionBean.class);
+            runIf = serializer.deserialize(
+                    MapUtils.checkAndCastMap(map.get(KEY_RUN_IF)), ActionBean.class);
 
         assert type != null;  // validate() で検証済み
         return new TriggerBeanImpl(

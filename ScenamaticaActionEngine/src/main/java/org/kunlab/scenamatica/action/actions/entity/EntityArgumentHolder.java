@@ -51,7 +51,7 @@ public class EntityArgumentHolder
             // noinspection unchecked
             Map<String, Object> map = (Map<String, Object>) obj;
 
-            return new EntityArgumentHolder(serializer.deserializeEntity(map));
+            return new EntityArgumentHolder(serializer.deserialize(map, EntityBean.class));
         }
 
         throw new IllegalArgumentException("Cannot deserialize EntityArgumentHolder from " + obj);

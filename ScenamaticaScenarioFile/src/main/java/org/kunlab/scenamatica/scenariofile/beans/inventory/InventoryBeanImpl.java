@@ -62,11 +62,7 @@ public class InventoryBeanImpl implements InventoryBean
         );
 
         for (Map.Entry<Integer, Object> entry : contents.entrySet())
-            serializer.validate(MapUtils.checkAndCastMap(
-                    entry.getValue(),
-                    String.class,
-                    Object.class
-            ), ItemStackBean.class);
+            serializer.validate(MapUtils.checkAndCastMap(entry.getValue()), ItemStackBean.class);
     }
 
     @NotNull
@@ -87,11 +83,7 @@ public class InventoryBeanImpl implements InventoryBean
             for (Map.Entry<Integer, Object> entry : contents.entrySet())
                 mainContents.put(
                         entry.getKey(),
-                        serializer.deserialize(MapUtils.checkAndCastMap(
-                                entry.getValue(),
-                                String.class,
-                                Object.class
-                        ), ItemStackBean.class)
+                        serializer.deserialize(MapUtils.checkAndCastMap(entry.getValue()), ItemStackBean.class)
                 );
         }
 

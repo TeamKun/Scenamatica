@@ -70,11 +70,7 @@ public class ActionCompilerImpl implements ActionCompiler
         {
 
             argument = actionToBeNegated.deserializeArgument(
-                    MapUtils.checkAndCastMap(
-                            arguments.get(NegateAction.Argument.KEY_ARGUMENTS),
-                            String.class,
-                            Object.class
-                    ),
+                    MapUtils.checkAndCastMap(NegateAction.Argument.KEY_ARGUMENTS),
                     engine.getManager().getRegistry().getScenarioFileManager().getSerializer()
             );
         }

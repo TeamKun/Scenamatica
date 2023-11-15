@@ -74,7 +74,7 @@ public class EntityDamageByEntityAction extends EntityDamageAction<EntityDamageB
         String damager = MapUtils.getOrNull(map, Argument.KEY_DAMAGER);
 
         return new Argument(
-                base.getTargetRaw(),
+                base.getTargetHolder(),
                 base.getCause(),
                 base.getAmount(),
                 base.getModifiers(),

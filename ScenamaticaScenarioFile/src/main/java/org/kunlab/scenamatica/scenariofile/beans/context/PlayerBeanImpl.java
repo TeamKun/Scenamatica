@@ -183,11 +183,8 @@ public class PlayerBeanImpl extends HumanEntityBeanImpl implements PlayerBean
         String playerListFooter = null;
         if (map.containsKey(KEY_PLAYER_LIST))
         {
-            Map<String, Object> playerList = MapUtils.checkAndCastMap(
-                    map.get(KEY_PLAYER_LIST),
-                    String.class,
-                    Object.class
-            );
+            Map<String, Object> playerList =
+                    MapUtils.checkAndCastMap(map.get(KEY_PLAYER_LIST));
             playerListName = MapUtils.getOrNull(playerList, KEY_PLAYER_LIST_NAME);
             playerListHeader = MapUtils.getOrNull(playerList, KEY_PLAYER_LIST_HEADER);
             playerListFooter = MapUtils.getOrNull(playerList, KEY_PLAYER_LIST_FOOTER);

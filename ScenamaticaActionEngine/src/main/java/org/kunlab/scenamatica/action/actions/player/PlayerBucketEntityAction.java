@@ -117,21 +117,17 @@ public class PlayerBucketEntityAction extends AbstractPlayerAction<PlayerBucketE
     {
         ItemStackBean originalBucket = null;
         if (map.containsKey(Argument.KEY_ORIGINAL_BUCKET))
-            originalBucket = serializer.deserializeItemStack(
-                    MapUtils.checkAndCastMap(
-                            map.get(Argument.KEY_ORIGINAL_BUCKET),
-                            String.class,
-                            Object.class
-                    ));
+            originalBucket = serializer.deserialize(
+                    MapUtils.checkAndCastMap(Argument.KEY_ORIGINAL_BUCKET),
+                    ItemStackBean.class
+            );
 
         ItemStackBean entityBucket = null;
         if (map.containsKey(Argument.KEY_ENTITY_BUCKET))
-            entityBucket = serializer.deserializeItemStack(
-                    MapUtils.checkAndCastMap(
-                            map.get(Argument.KEY_ENTITY_BUCKET),
-                            String.class,
-                            Object.class
-                    ));
+            entityBucket = serializer.deserialize(
+                    MapUtils.checkAndCastMap(Argument.KEY_ENTITY_BUCKET),
+                    ItemStackBean.class
+            );
 
         return new Argument(
                 super.deserializeTarget(map),

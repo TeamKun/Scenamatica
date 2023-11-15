@@ -70,11 +70,7 @@ public class InventoryCreativeAction extends InventoryClickAction<InventoryCreat
         ItemStackBean stack = null;
         if (map.containsKey(Argument.KEY_ITEM))
             stack = serializer.deserialize(
-                    MapUtils.checkAndCastMap(
-                            map.get(Argument.KEY_ITEM),
-                            String.class,
-                            Object.class
-                    ),
+                    MapUtils.checkAndCastMap(Argument.KEY_ITEM),
                     ItemStackBean.class
             );
 

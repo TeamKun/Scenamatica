@@ -18,11 +18,6 @@ public abstract class AbstractEntityActionArgument extends AbstractActionArgumen
     @Nullable
     private final EntityArgumentHolder entity;
 
-    public AbstractEntityActionArgument(@Nullable EntityArgumentHolder target)
-    {
-        this.entity = target;
-    }
-
     @Override
     public boolean isSame(TriggerArgument argument)
     {
@@ -75,6 +70,11 @@ public abstract class AbstractEntityActionArgument extends AbstractActionArgumen
         return this.entity.getArgumentString();
     }
 
+    public EntityArgumentHolder getTargetHolder()
+    {
+        return this.entity;
+    }
+
     public EntityBean getTargetBean()
     {
         return this.entity == null ? null: this.entity.getTargetBean();
@@ -91,6 +91,5 @@ public abstract class AbstractEntityActionArgument extends AbstractActionArgumen
     {
         if (!this.isSelectable())
             throw new IllegalArgumentException("Cannot select target for this action, please specify target with valid selector.");
-
     }
 }

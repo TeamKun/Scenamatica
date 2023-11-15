@@ -97,10 +97,7 @@ public class PlayerInventoryBeanImpl extends InventoryBeanImpl implements Player
     {
         if (map.containsKey(KEY_MAIN_INVENTORY))
         {
-            Map<String, Object> mainInventory = new HashMap<>(MapUtils.checkAndCastMap(
-                    map.get(KEY_MAIN_INVENTORY),
-                    String.class, Object.class
-            ));
+            Map<String, Object> mainInventory = new HashMap<>(MapUtils.checkAndCastMap(map.get(KEY_MAIN_INVENTORY)));
 
             if (!mainInventory.containsKey(KEY_SIZE))
                 mainInventory.put(KEY_SIZE, 9 * 4);
@@ -111,15 +108,9 @@ public class PlayerInventoryBeanImpl extends InventoryBeanImpl implements Player
             serializer.validate(mainInventory, InventoryBean.class);
         }
         if (map.containsKey(KEY_MAIN_HAND))
-            serializer.validate(MapUtils.checkAndCastMap(
-                    map.get(KEY_MAIN_HAND),
-                    String.class, Object.class
-            ), ItemStackBean.class);
+            serializer.validate(MapUtils.checkAndCastMap(map.get(KEY_MAIN_HAND)), ItemStackBean.class);
         if (map.containsKey(KEY_OFF_HAND))
-            serializer.validate(MapUtils.checkAndCastMap(
-                    map.get(KEY_OFF_HAND),
-                    String.class, Object.class
-            ), ItemStackBean.class);
+            serializer.validate(MapUtils.checkAndCastMap(map.get(KEY_OFF_HAND)), ItemStackBean.class);
 
         if (!map.containsKey(KEY_ARMOR_CONTENTS))
             return;
@@ -135,10 +126,7 @@ public class PlayerInventoryBeanImpl extends InventoryBeanImpl implements Player
                 continue;
 
             serializer.validate(
-                    MapUtils.checkAndCastMap(
-                            armorContent,
-                            String.class, Object.class
-                    ),
+                    MapUtils.checkAndCastMap(armorContent),
                     ItemStackBean.class
             );
         }
@@ -158,10 +146,7 @@ public class PlayerInventoryBeanImpl extends InventoryBeanImpl implements Player
                 if (armorContent == null)
                     armorContentsList.add(null);
                 else
-                    armorContentsList.add(serializer.deserialize(MapUtils.checkAndCastMap(
-                            armorContent,
-                            String.class, Object.class
-                    ), ItemStackBean.class));
+                    armorContentsList.add(serializer.deserialize(MapUtils.checkAndCastMap(armorContent), ItemStackBean.class));
             }
 
             armorContents = armorContentsList.toArray(new ItemStackBean[0]);
@@ -172,10 +157,7 @@ public class PlayerInventoryBeanImpl extends InventoryBeanImpl implements Player
         InventoryBean mainInventoryBean;
         if (map.containsKey(KEY_MAIN_INVENTORY))
         {
-            Map<String, Object> mainInventory = new HashMap<>(MapUtils.checkAndCastMap(
-                    map.get(KEY_MAIN_INVENTORY),
-                    String.class, Object.class
-            ));
+            Map<String, Object> mainInventory = new HashMap<>(MapUtils.checkAndCastMap(map.get(KEY_MAIN_INVENTORY)));
 
             mainInventoryBean = serializer.deserialize(mainInventory, InventoryBean.class);
         }
@@ -186,10 +168,7 @@ public class PlayerInventoryBeanImpl extends InventoryBeanImpl implements Player
         ItemStackBean mainHandItem;
         if (map.containsKey(KEY_MAIN_HAND))
             mainHandItem = serializer.deserialize(
-                    MapUtils.checkAndCastMap(
-                            map.get(KEY_MAIN_HAND),
-                            String.class, Object.class
-                    ),
+                    MapUtils.checkAndCastMap(map.get(KEY_MAIN_HAND)),
                     ItemStackBean.class
             );
         else
@@ -198,10 +177,7 @@ public class PlayerInventoryBeanImpl extends InventoryBeanImpl implements Player
         ItemStackBean offHandItem;
         if (map.containsKey(KEY_OFF_HAND))
             offHandItem = serializer.deserialize(
-                    MapUtils.checkAndCastMap(
-                            map.get(KEY_OFF_HAND),
-                            String.class, Object.class
-                    ),
+                    MapUtils.checkAndCastMap(map.get(KEY_OFF_HAND)),
                     ItemStackBean.class
             );
         else

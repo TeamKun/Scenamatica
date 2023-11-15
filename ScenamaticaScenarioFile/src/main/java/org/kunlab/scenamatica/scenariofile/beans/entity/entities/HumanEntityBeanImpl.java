@@ -116,17 +116,11 @@ public class HumanEntityBeanImpl extends EntityBeanImpl implements HumanEntityBe
         validate(map);
 
         if (map.containsKey(KEY_INVENTORY))
-            serializer.validate(MapUtils.checkAndCastMap(
-                    map.get(KEY_INVENTORY),
-                    String.class,
-                    Object.class
-            ), PlayerInventoryBean.class);
+            serializer.validate(
+                    MapUtils.checkAndCastMap(map.get(KEY_INVENTORY)), PlayerInventoryBean.class);
         if (map.containsKey(KEY_ENDER_CHEST))
-            serializer.validate(MapUtils.checkAndCastMap(
-                    map.get(KEY_ENDER_CHEST),
-                    String.class,
-                    Object.class
-            ), InventoryBean.class);
+            serializer.validate(
+                    MapUtils.checkAndCastMap(map.get(KEY_ENDER_CHEST)), InventoryBean.class);
     }
 
     /**
@@ -144,19 +138,13 @@ public class HumanEntityBeanImpl extends EntityBeanImpl implements HumanEntityBe
 
         PlayerInventoryBean inventory = null;
         if (map.containsKey(KEY_INVENTORY))
-            inventory = serializer.deserialize(MapUtils.checkAndCastMap(
-                    map.get(KEY_INVENTORY),
-                    String.class,
-                    Object.class
-            ), PlayerInventoryBean.class);
+            inventory = serializer.deserialize(
+                    MapUtils.checkAndCastMap(map.get(KEY_INVENTORY)), PlayerInventoryBean.class);
 
         InventoryBean enderChest = null;
         if (map.containsKey(KEY_ENDER_CHEST))
-            enderChest = serializer.deserialize(MapUtils.checkAndCastMap(
-                    map.get(KEY_ENDER_CHEST),
-                    String.class,
-                    Object.class
-            ), InventoryBean.class);
+            enderChest = serializer.deserialize(
+                    MapUtils.checkAndCastMap(map.get(KEY_ENDER_CHEST)), InventoryBean.class);
 
         MainHand mainHand = MapUtils.getAsEnumOrNull(
                 map,

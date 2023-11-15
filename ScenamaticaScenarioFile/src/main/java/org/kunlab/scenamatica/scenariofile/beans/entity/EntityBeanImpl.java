@@ -176,11 +176,8 @@ public class EntityBeanImpl implements EntityBean
 
         for (Object o : map)
         {
-            Map<String, Object> effectMap = MapUtils.checkAndCastMap(
-                    o,
-                    String.class,
-                    Object.class
-            );
+            Map<String, Object> effectMap =
+                    MapUtils.checkAndCastMap(o);
             MapUtils.checkType(effectMap, KEY_POTION_EFFECTS_TYPE, String.class);
             if (PotionEffectType.getByName((String) effectMap.get(KEY_POTION_EFFECTS_TYPE)) == null)
                 throw new IllegalArgumentException("Invalid potion effect type.");
@@ -295,11 +292,8 @@ public class EntityBeanImpl implements EntityBean
 
         Vector velocity = null;
         if (map.containsKey(KEY_VELOCITY))
-            velocity = Vector.deserialize(MapUtils.checkAndCastMap(
-                    map.get(KEY_VELOCITY),
-                    String.class,
-                    Object.class
-            ));
+            velocity = Vector.deserialize(
+                    MapUtils.checkAndCastMap(map.get(KEY_VELOCITY)));
 
         String customName = MapUtils.getOrNull(map, KEY_CUSTOM_NAME);
         UUID uuid;
@@ -317,10 +311,8 @@ public class EntityBeanImpl implements EntityBean
         List<String> tags = MapUtils.getAsListOrEmpty(map, KEY_TAGS);
         DamageBean lastDamageCause = null;
         if (map.containsKey(KEY_LAST_DAMAGE))
-            lastDamageCause = serializer.deserialize(MapUtils.checkAndCastMap(
-                    map.get(KEY_LAST_DAMAGE),
-                    String.class, Object.class
-            ), DamageBean.class);
+            lastDamageCause = serializer.deserialize(
+                    MapUtils.checkAndCastMap(map.get(KEY_LAST_DAMAGE)), DamageBean.class);
 
         Integer maxHealth = MapUtils.getOrNull(map, KEY_MAX_HEALTH);
         Integer health = MapUtils.getOrNull(map, KEY_HEALTH);

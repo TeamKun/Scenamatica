@@ -87,11 +87,8 @@ public class PlayerHotbarSlotAction extends AbstractPlayerAction<PlayerHotbarSlo
         ItemStackBean item = null;
         if (map.containsKey(Argument.KEY_CURRENT_ITEM))
         {
-            Map<String, Object> itemMap = MapUtils.checkAndCastMap(
-                    map.get(Argument.KEY_CURRENT_ITEM),
-                    String.class,
-                    Object.class
-            );
+            Map<String, Object> itemMap =
+                    MapUtils.checkAndCastMap(Argument.KEY_CURRENT_ITEM);
 
             serializer.validate(itemMap, ItemStackBean.class);
 

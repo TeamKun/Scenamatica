@@ -33,11 +33,7 @@ public class ActionBeanImpl implements ActionBean
         MapUtils.checkContainsKey(map, KEY_TYPE);
 
         if (map.containsKey(KEY_ARGUMENTS))
-            MapUtils.checkAndCastMap(
-                    map.get(KEY_ARGUMENTS),
-                    String.class,
-                    Object.class
-            );
+            MapUtils.checkAndCastMap(map.get(KEY_ARGUMENTS));
 
     }
 
@@ -49,11 +45,7 @@ public class ActionBeanImpl implements ActionBean
 
         Map<String, Object> argumentsMap;
         if (map.containsKey(KEY_ARGUMENTS))
-            argumentsMap = MapUtils.checkAndCastMap(
-                    map.get(KEY_ARGUMENTS),
-                    String.class,
-                    Object.class
-            );
+            argumentsMap = MapUtils.checkAndCastMap(map.get(KEY_ARGUMENTS));
         else
             argumentsMap = null;
 

@@ -60,33 +60,21 @@ public class BucketActionArgument extends AbstractPlayerActionArgument
         ItemStackBean itemStack = null;
         if (map.containsKey(BucketActionArgument.KEY_ITEM_STACK))
             itemStack = serializer.deserialize(
-                    MapUtils.checkAndCastMap(
-                            map.get(BucketActionArgument.KEY_ITEM_STACK),
-                            String.class,
-                            Object.class
-                    ),
+                    MapUtils.checkAndCastMap(BucketActionArgument.KEY_ITEM_STACK),
                     ItemStackBean.class
             );
 
         BlockBean block = null;
         if (map.containsKey(BucketActionArgument.KEY_BLOCK))
             block = serializer.deserialize(
-                    MapUtils.checkAndCastMap(
-                            map.get(BucketActionArgument.KEY_BLOCK),
-                            String.class,
-                            Object.class
-                    ),
+                    MapUtils.checkAndCastMap(BucketActionArgument.KEY_BLOCK),
                     BlockBean.class
             );
 
         BlockBean blockClicked = null;
         if (map.containsKey(BucketActionArgument.KEY_BLOCK_CLICKED))
             blockClicked = serializer.deserialize(
-                    MapUtils.checkAndCastMap(
-                            map.get(BucketActionArgument.KEY_BLOCK_CLICKED),
-                            String.class,
-                            Object.class
-                    ),
+                    MapUtils.checkAndCastMap(BucketActionArgument.KEY_BLOCK_CLICKED),
                     BlockBean.class
             );
 

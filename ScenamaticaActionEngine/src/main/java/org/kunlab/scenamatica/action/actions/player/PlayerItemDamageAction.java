@@ -88,12 +88,9 @@ public class PlayerItemDamageAction extends AbstractPlayerAction<PlayerItemDamag
     {
         ItemStackBean item = null;
         if (map.containsKey(Argument.KEY_ITEM))
-            item = serializer.deserializeItemStack(
-                    MapUtils.checkAndCastMap(
-                            map.get(Argument.KEY_ITEM),
-                            String.class,
-                            Object.class
-                    )
+            item = serializer.deserialize(
+                    MapUtils.checkAndCastMap(Argument.KEY_ITEM),
+                    ItemStackBean.class
             );
 
         return new Argument(

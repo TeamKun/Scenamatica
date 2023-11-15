@@ -32,11 +32,7 @@ public class DefinitionsMapper
         if (!map.containsKey(KEY_DEFINITIONS))
             return;
 
-        Map<String, Object> schema = MapUtils.checkAndCastMap(
-                map.get(KEY_DEFINITIONS),
-                String.class,
-                Object.class
-        );
+        Map<String, Object> schema = MapUtils.checkAndCastMap(map.get(KEY_DEFINITIONS));
 
         processDefSet(map, schema);
     }

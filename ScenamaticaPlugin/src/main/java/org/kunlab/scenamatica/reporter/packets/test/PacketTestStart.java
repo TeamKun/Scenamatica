@@ -53,7 +53,7 @@ public class PacketTestStart extends AbstractTestPacket
         Map<String, Object> result = new HashMap<>();
 
         result.put(KEY_SCENARIO, this.engine.getManager().getRegistry().getScenarioFileManager().getSerializer()
-                .serializeScenarioFile(this.scenario));
+                .serialize(this.scenario, ScenarioFileBean.class));
         result.put(KEY_AUTO_START, this.isAutoStart);
         result.put(KEY_STARTED_AT, this.startedAt);
 

@@ -27,21 +27,21 @@ public class ProjectileBeanImpl extends EntityBeanImpl implements ProjectileBean
 
     public static Map<String, Object> serialize(@NotNull ProjectileBean bean, @NotNull BeanSerializer serializer)
     {
-        Map<String, Object> map = serializer.serializeEntity(bean);
+        Map<String, Object> map = serializer.serialize(bean, EntityBean.class);
 
         if (bean.getShooter() != null)
-            MapUtils.putIfNotNull(map, KEY_SHOOTER, serializer.serializeEntity(bean.getShooter()));
+            MapUtils.putMapIfNotEmpty(map, KEY_SHOOTER, serializer.serialize(bean.getShooter(), EntityBean.class));
         return map;
     }
 
     public static void validate(@NotNull Map<String, Object> map, @NotNull BeanSerializer serializer)
     {
-        serializer.validateEntity(map);
+        serializer.validate(map, EntityBean.class);
 
         if (map.containsKey(KEY_SHOOTER))
         {
-            Map<String, Object> shooterMap = MapUtils.checkAndCastMap(map.get(KEY_SHOOTER), String.class, Object.class);
-            serializer.validateEntity(shooterMap);
+            Map<String, Object> shooterMap = MapUtils.checkAndCastMap(map.get(KEY_SHOOTER));
+            serializer.validate(shooterMap, EntityBean.class);
         }
     }
 
@@ -50,17 +50,13 @@ public class ProjectileBeanImpl extends EntityBeanImpl implements ProjectileBean
     {
         validate(map, serializer);
 
-        EntityBean entity = serializer.deserializeEntity(map);
+        EntityBean entity = serializer.deserialize(map, EntityBean.class);
 
         EntityBean shooter = null;
         if (map.containsKey(KEY_SHOOTER))
         {
-            Map<String, Object> shooterMap = MapUtils.checkAndCastMap(
-                    map.get(KEY_SHOOTER),
-                    String.class,
-                    Object.class
-            );
-            shooter = serializer.deserializeEntity(shooterMap);
+            Map<String, Object> shooterMap = MapUtils.checkAndCastMap(map.get(KEY_SHOOTER));
+            shooter = serializer.deserialize(shooterMap, EntityBean.class);
         }
 
         return new ProjectileBeanImpl(entity, shooter);

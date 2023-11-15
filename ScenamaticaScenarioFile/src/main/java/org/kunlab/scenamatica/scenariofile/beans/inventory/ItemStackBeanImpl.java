@@ -77,11 +77,7 @@ public class ItemStackBeanImpl implements ItemStackBean
     {
         if (map.containsKey(KEY_ENCHANTMENTS))
         {
-            Map<String, Object> enchtansMap = MapUtils.checkAndCastMap(
-                    map.get(KEY_ENCHANTMENTS),
-                    String.class, Object.class
-            );
-
+            Map<String, Object> enchtansMap = MapUtils.checkAndCastMap(map.get(KEY_ENCHANTMENTS));
             for (Map.Entry<String, Object> entry : enchtansMap.entrySet())
             {
                 if (Enchantment.getByKey(NamespaceUtils.fromString(entry.getKey())) == null
@@ -211,10 +207,7 @@ public class ItemStackBeanImpl implements ItemStackBean
             String name = entry.getKey();
             for (Object obj : entry.getValue())
             {
-                Map<String, Object> valuesMap = MapUtils.checkAndCastMap(
-                        obj,
-                        String.class, Object.class
-                );
+                Map<String, Object> valuesMap = MapUtils.checkAndCastMap(obj);
 
                 MapUtils.checkTypeIfContains(valuesMap, KEY_ATTRIBUTE_MODIFIER_AMOUNT, Number.class);   // double
                 MapUtils.checkTypeIfContains(valuesMap, KEY_ATTRIBUTE_MODIFIER_OPERATION, String.class);

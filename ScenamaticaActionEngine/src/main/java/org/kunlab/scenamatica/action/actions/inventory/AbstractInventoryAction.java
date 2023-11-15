@@ -46,11 +46,7 @@ public abstract class AbstractInventoryAction<A extends AbstractInventoryArgumen
             return null;
 
         return serializer.deserialize(
-                MapUtils.checkAndCastMap(
-                        map.get(AbstractInventoryArgument.KEY_INVENTORY),
-                        String.class,
-                        Object.class
-                ),
+                MapUtils.checkAndCastMap(AbstractInventoryArgument.KEY_INVENTORY),
                 InventoryBean.class
         );
     }

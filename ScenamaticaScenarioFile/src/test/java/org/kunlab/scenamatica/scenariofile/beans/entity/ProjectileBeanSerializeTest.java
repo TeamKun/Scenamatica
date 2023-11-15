@@ -26,7 +26,7 @@ public class ProjectileBeanSerializeTest
 
     public static final ProjectileBean EMPTY = new ProjectileBeanImpl(
             EntityBeanSerializeTest.EMPTY,
-            EntityBeanSerializeTest.EMPTY
+            null
     );
 
     public static final Map<String, Object> EMPTY_MAP = new HashMap<>(EntityBeanSerializeTest.EMPTY_MAP);

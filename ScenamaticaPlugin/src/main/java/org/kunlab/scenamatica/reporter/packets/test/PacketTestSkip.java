@@ -3,6 +3,7 @@ package org.kunlab.scenamatica.reporter.packets.test;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenario.runtime.CompiledScenarioAction;
+import org.kunlab.scenamatica.interfaces.scenariofile.scenario.ScenarioBean;
 
 import java.util.Map;
 
@@ -28,7 +29,7 @@ public class PacketTestSkip extends AbstractTestPacket
         Map<String, Object> result = super.serialize();
 
         result.put(KEY_REASON_ACTION, this.engine.getManager().getRegistry().getScenarioFileManager()
-                .getSerializer().serializeScenario(this.action.getBean()));
+                .getSerializer().serialize(this.action.getBean(), ScenarioBean.class));
 
         return result;
     }

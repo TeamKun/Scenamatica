@@ -91,12 +91,9 @@ public class PlayerHarvestBlockAction extends AbstractPlayerAction<PlayerHarvest
     {
         BlockBean block = null;
         if (map.containsKey(Argument.KEY_HARVESTED_BLOCK))
-            block = serializer.deserializeBlock(
-                    MapUtils.checkAndCastMap(
-                            map.get(Argument.KEY_HARVESTED_BLOCK),
-                            String.class,
-                            Object.class
-                    )
+            block = serializer.deserialize(
+                    MapUtils.checkAndCastMap(Argument.KEY_HARVESTED_BLOCK),
+                    BlockBean.class
             );
 
         List<ItemStackBean> items = new ArrayList<>();
@@ -104,7 +101,7 @@ public class PlayerHarvestBlockAction extends AbstractPlayerAction<PlayerHarvest
         {
             List<Map<String, Object>> itemMaps = MapUtils.getAsList(map, Argument.KEY_ITEMS_HARVESTED);
             for (Map<String, Object> itemMap : itemMaps)
-                items.add(serializer.deserializeItemStack(itemMap));
+                items.add(serializer.deserialize(itemMap, ItemStackBean.class));
         }
 
         return new Argument(

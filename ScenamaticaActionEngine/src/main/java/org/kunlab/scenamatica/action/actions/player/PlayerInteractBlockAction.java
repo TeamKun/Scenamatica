@@ -110,11 +110,7 @@ public class PlayerInteractBlockAction extends AbstractPlayerAction<PlayerIntera
         BlockBean block = null;
         if (map.containsKey(Argument.KEY_BLOCK))
             block = serializer.deserialize(
-                    MapUtils.checkAndCastMap(
-                            map.get(Argument.KEY_BLOCK),
-                            String.class,
-                            Object.class
-                    ),
+                    MapUtils.checkAndCastMap(Argument.KEY_BLOCK),
                     BlockBean.class
             );
 

@@ -58,7 +58,7 @@ public class PacketTestEnd extends AbstractTestPacket
         Map<String, Object> result = super.serialize();
 
 
-        result.put(KEY_SCENARIO, BeanSerializerImpl.getInstance().serializeScenarioFile(this.scenario));
+        result.put(KEY_SCENARIO, BeanSerializerImpl.getInstance().serialize(this.scenario, ScenarioFileBean.class));
         result.put(KEY_STATE, this.state.name());
         result.put(KEY_CAUSE, this.cause.name());
         result.put(KEY_STARTED_AT, this.startedAt);

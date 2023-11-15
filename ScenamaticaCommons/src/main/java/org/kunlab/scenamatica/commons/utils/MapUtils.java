@@ -224,6 +224,15 @@ public class MapUtils
         return (Map<K, V>) map;
     }
 
+    @SuppressWarnings("unchecked")
+    public static Map<String, Object> checkAndCastMap(Object mayMap)
+    {
+        if (!(mayMap instanceof Map))
+            throw new IllegalArgumentException("Unexpected type of value: " + mayMap + " (expected: Map)");
+
+        return (Map<String, Object>) mayMap;
+    }
+
     public static <T extends Enum<T>> void checkEnumName(Map<String, Object> map, String key, Class<T> enumType)
     {
         MapUtils.checkContainsKey(map, key);
@@ -287,6 +296,33 @@ public class MapUtils
         if (!map.containsKey(key))
             return null;
         return (T) map.get(key);
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T> List<T> getOrEmptyList(@NotNull Map<String, Object> map, @NotNull String key)
+    {
+        if (!map.containsKey(key))
+            return Collections.emptyList();
+
+        return (List<T>) map.get(key);
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <K, V> Map<K, V> getOrEmptyMap(@NotNull Map<String, Object> map, @NotNull String key)
+    {
+        if (!map.containsKey(key))
+            return Collections.emptyMap();
+
+        return (Map<K, V>) map.get(key);
+    }
+
+    @SuppressWarnings("unchecked")
+    public static Map<String, Object> getAndCastOrEmptyMap(@NotNull Map<String, Object> map, @NotNull String key)
+    {
+        if (!map.containsKey(key))
+            return Collections.emptyMap();
+
+        return checkAndCastMap(map.get(key));
     }
 
     @Nullable

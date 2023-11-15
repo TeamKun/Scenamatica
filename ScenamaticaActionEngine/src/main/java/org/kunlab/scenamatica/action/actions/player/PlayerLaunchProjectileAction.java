@@ -95,9 +95,7 @@ public class PlayerLaunchProjectileAction extends AbstractPlayerAction<PlayerLau
         MapUtils.checkTypeIfContains(map, Argument.KEY_PROJECTILE_EPSILON, Double.class);
         // ItemStackBeanImpl.checkMap(map, PlayerLaunchProjectileActionArgument.KEY_PROJECTILE_SHOOTER);
 
-        Map<String, Object> velocityMap = MapUtils.checkAndCastMap(map.get(Argument.KEY_PROJECTILE_VELOCITY),
-                String.class, Object.class
-        );
+        Map<String, Object> velocityMap = MapUtils.checkAndCastMap(map.get(Argument.KEY_PROJECTILE_VELOCITY));
 
         double epsilon;
         if (map.containsKey(Argument.KEY_PROJECTILE_EPSILON) && map.get(Argument.KEY_PROJECTILE_EPSILON) != null)

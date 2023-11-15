@@ -98,7 +98,7 @@ public class EntityDeathAction extends AbstractEntityAction<EntityDeathAction.Ar
             drops = new ArrayList<>();
             List<Map<String, Object>> dropMaps = MapUtils.getAsList(map, Argument.KEY_DROPS);
             for (Map<String, Object> dropMap : dropMaps)
-                drops.add(serializer.deserializeItemStack(dropMap));
+                drops.add(serializer.deserialize(dropMap, ItemStackBean.class));
         }
 
         return new Argument(

@@ -83,11 +83,7 @@ public class ScenarioBeanImpl implements ScenarioBean
         ActionBean runIf = null;
         if (map.containsKey(KEY_RUN_IF))
             runIf = serializer.deserialize(
-                    MapUtils.checkAndCastMap(
-                            map.get(KEY_RUN_IF),
-                            String.class,
-                            Object.class
-                    ),
+                    MapUtils.checkAndCastMap(map.get(KEY_RUN_IF)),
                     ActionBean.class
             );
 

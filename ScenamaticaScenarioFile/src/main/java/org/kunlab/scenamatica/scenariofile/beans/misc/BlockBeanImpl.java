@@ -12,7 +12,6 @@ import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.commons.utils.Utils;
 import org.kunlab.scenamatica.interfaces.scenariofile.misc.BlockBean;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -86,18 +85,10 @@ public class BlockBeanImpl implements BlockBean
         MapUtils.checkEnumNameIfContains(map, KEY_BIOME, Biome.class);
 
         if (map.containsKey(KEY_METADATA))
-            MapUtils.checkAndCastMap(
-                    map.get(KEY_METADATA),
-                    String.class,
-                    Object.class
-            );
+            MapUtils.checkAndCastMap(map.get(KEY_METADATA));
 
         if (map.containsKey(KEY_BLOCK_DATA))
-            MapUtils.checkAndCastMap(
-                    map.get(KEY_BLOCK_DATA),
-                    String.class,
-                    Object.class
-            );
+            MapUtils.checkAndCastMap(map.get(KEY_BLOCK_DATA));
 
         MapUtils.checkTypeIfContains(map, KEY_BLOCK_STATE, Byte.class);
     }
@@ -112,18 +103,10 @@ public class BlockBeanImpl implements BlockBean
         return new BlockBeanImpl(
                 material,
                 MapUtils.getAsLocationOrNull(map, KEY_BLOCK_LOCATION),
-                map.containsKey(KEY_METADATA) ? MapUtils.checkAndCastMap(
-                        map.get(KEY_METADATA),
-                        String.class,
-                        Object.class
-                ): Collections.emptyMap(),
+                MapUtils.getAndCastOrEmptyMap(map, KEY_METADATA),
                 MapUtils.getOrNull(map, KEY_LIGHT_LEVEL),
                 MapUtils.getAsEnumOrNull(map, KEY_BIOME, Biome.class),
-                map.containsKey(KEY_BLOCK_DATA) ? MapUtils.checkAndCastMap(
-                        map.get(KEY_BLOCK_DATA),
-                        String.class,
-                        Object.class
-                ): Collections.emptyMap(),
+                MapUtils.getAndCastOrEmptyMap(map, KEY_METADATA),
                 MapUtils.getOrNull(map, KEY_BLOCK_STATE)
         );
     }
@@ -139,11 +122,12 @@ public class BlockBeanImpl implements BlockBean
 
         BlockBeanImpl blockBean = (BlockBeanImpl) o;
         return this.getType() == blockBean.getType()
+
                 && Objects.equals(this.getLocation(), blockBean.getLocation())
                 && Objects.equals(this.getMetadata(), blockBean.getMetadata())
                 && Objects.equals(this.getLightLevel(), blockBean.getLightLevel())
                 && this.getBiome() == blockBean.getBiome()
-                && (this.getBlockData() == null || MapUtils.equals(this.getBlockData(), blockBean.getBlockData()))
+                && MapUtils.equals(this.getBlockData(), blockBean.getBlockData())
                 && Objects.equals(this.getBlockState(), blockBean.getBlockState());
     }
 
