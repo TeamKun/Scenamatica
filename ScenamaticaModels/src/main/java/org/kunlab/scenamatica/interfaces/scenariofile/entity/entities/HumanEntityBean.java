@@ -1,9 +1,10 @@
-package org.kunlab.scenamatica.interfaces.scenariofile.entities;
+package org.kunlab.scenamatica.interfaces.scenariofile.entity.entities;
 
 import org.bukkit.GameMode;
 import org.bukkit.inventory.MainHand;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.kunlab.scenamatica.interfaces.scenariofile.entity.EntityBean;
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.InventoryBean;
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.PlayerInventoryBean;
 

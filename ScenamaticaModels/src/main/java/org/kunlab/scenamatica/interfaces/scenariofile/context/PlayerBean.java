@@ -1,8 +1,8 @@
 package org.kunlab.scenamatica.interfaces.scenariofile.context;
 
 import org.bukkit.Location;
-import org.kunlab.scenamatica.interfaces.scenariofile.entities.EntityBean;
-import org.kunlab.scenamatica.interfaces.scenariofile.entities.HumanEntityBean;
+import org.kunlab.scenamatica.interfaces.scenariofile.entity.EntityBean;
+import org.kunlab.scenamatica.interfaces.scenariofile.entity.entities.HumanEntityBean;
 
 import java.io.Serializable;
 import java.util.List;

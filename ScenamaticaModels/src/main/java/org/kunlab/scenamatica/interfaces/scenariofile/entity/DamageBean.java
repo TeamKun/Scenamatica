@@ -1,4 +1,4 @@
-package org.kunlab.scenamatica.interfaces.scenariofile.entities;
+package org.kunlab.scenamatica.interfaces.scenariofile.entity;
 
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.jetbrains.annotations.NotNull;

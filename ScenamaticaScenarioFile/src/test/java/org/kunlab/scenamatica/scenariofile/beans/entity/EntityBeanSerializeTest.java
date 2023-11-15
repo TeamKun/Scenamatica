@@ -7,9 +7,8 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.kunlab.scenamatica.interfaces.scenariofile.entities.EntityBean;
+import org.kunlab.scenamatica.interfaces.scenariofile.entity.EntityBean;
 import org.kunlab.scenamatica.scenariofile.BeanSerializerImpl;
-import org.kunlab.scenamatica.scenariofile.beans.entities.EntityBeanImpl;
 import org.kunlab.scenamatica.scenariofile.beans.utils.MapTestUtil;
 
 import java.lang.reflect.Field;

@@ -1,4 +1,6 @@
-package org.kunlab.scenamatica.interfaces.scenariofile.entities;
+package org.kunlab.scenamatica.interfaces.scenariofile.entity.entities;
+
+import org.kunlab.scenamatica.interfaces.scenariofile.entity.EntityBean;
 
 /**
  * 投射物のインターフェースです。

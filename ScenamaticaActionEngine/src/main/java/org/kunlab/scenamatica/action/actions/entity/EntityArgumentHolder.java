@@ -8,7 +8,7 @@ import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.utils.EntityUtils;
 import org.kunlab.scenamatica.commons.utils.BeanUtils;
 import org.kunlab.scenamatica.interfaces.scenariofile.BeanSerializer;
-import org.kunlab.scenamatica.interfaces.scenariofile.entities.EntityBean;
+import org.kunlab.scenamatica.interfaces.scenariofile.entity.EntityBean;
 
 import java.util.Map;
 import java.util.Objects;

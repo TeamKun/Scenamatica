@@ -29,7 +29,7 @@ import org.kunlab.scenamatica.interfaces.context.StageManager;
 import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
 import org.kunlab.scenamatica.interfaces.scenariofile.context.ContextBean;
 import org.kunlab.scenamatica.interfaces.scenariofile.context.PlayerBean;
-import org.kunlab.scenamatica.interfaces.scenariofile.entities.EntityBean;
+import org.kunlab.scenamatica.interfaces.scenariofile.entity.EntityBean;
 import org.spigotmc.SpigotConfig;
 
 import java.util.ArrayList;

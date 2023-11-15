@@ -2,8 +2,7 @@ package org.kunlab.scenamatica.scenariofile.beans.entity;
 
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.junit.jupiter.api.Test;
-import org.kunlab.scenamatica.interfaces.scenariofile.entities.DamageBean;
-import org.kunlab.scenamatica.scenariofile.beans.entities.DamageBeanImpl;
+import org.kunlab.scenamatica.interfaces.scenariofile.entity.DamageBean;
 import org.kunlab.scenamatica.scenariofile.beans.utils.MapTestUtil;
 
 import java.util.HashMap;

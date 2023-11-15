@@ -1,10 +1,10 @@
 package org.kunlab.scenamatica.scenariofile.beans.entity;
 
 import org.junit.jupiter.api.Test;
-import org.kunlab.scenamatica.interfaces.scenariofile.entities.EntityBean;
-import org.kunlab.scenamatica.interfaces.scenariofile.entities.EntityItemBean;
+import org.kunlab.scenamatica.interfaces.scenariofile.entity.EntityBean;
+import org.kunlab.scenamatica.interfaces.scenariofile.entity.entities.EntityItemBean;
 import org.kunlab.scenamatica.scenariofile.BeanSerializerImpl;
-import org.kunlab.scenamatica.scenariofile.beans.entities.EntityItemBeanImpl;
+import org.kunlab.scenamatica.scenariofile.beans.entity.entities.EntityItemBeanImpl;
 import org.kunlab.scenamatica.scenariofile.beans.inventory.ItemStackBeanSerializeTest;
 import org.kunlab.scenamatica.scenariofile.beans.utils.MapTestUtil;
 

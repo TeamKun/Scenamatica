@@ -1,4 +1,4 @@
-package org.kunlab.scenamatica.scenariofile.beans.entities;
+package org.kunlab.scenamatica.scenariofile.beans.entity.entities;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -11,11 +11,12 @@ import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.interfaces.scenariofile.BeanSerializer;
-import org.kunlab.scenamatica.interfaces.scenariofile.entities.DamageBean;
-import org.kunlab.scenamatica.interfaces.scenariofile.entities.EntityBean;
-import org.kunlab.scenamatica.interfaces.scenariofile.entities.HumanEntityBean;
+import org.kunlab.scenamatica.interfaces.scenariofile.entity.DamageBean;
+import org.kunlab.scenamatica.interfaces.scenariofile.entity.EntityBean;
+import org.kunlab.scenamatica.interfaces.scenariofile.entity.entities.HumanEntityBean;
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.InventoryBean;
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.PlayerInventoryBean;
+import org.kunlab.scenamatica.scenariofile.beans.entity.EntityBeanImpl;
 
 import java.util.List;
 import java.util.Map;

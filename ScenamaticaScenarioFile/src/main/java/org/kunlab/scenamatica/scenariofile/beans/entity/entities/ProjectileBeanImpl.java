@@ -1,4 +1,4 @@
-package org.kunlab.scenamatica.scenariofile.beans.entities;
+package org.kunlab.scenamatica.scenariofile.beans.entity.entities;
 
 import lombok.EqualsAndHashCode;
 import lombok.Value;
@@ -6,8 +6,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.interfaces.scenariofile.BeanSerializer;
-import org.kunlab.scenamatica.interfaces.scenariofile.entities.EntityBean;
-import org.kunlab.scenamatica.interfaces.scenariofile.entities.ProjectileBean;
+import org.kunlab.scenamatica.interfaces.scenariofile.entity.EntityBean;
+import org.kunlab.scenamatica.interfaces.scenariofile.entity.entities.ProjectileBean;
+import org.kunlab.scenamatica.scenariofile.beans.entity.EntityBeanImpl;
 
 import java.util.Map;
 

@@ -1,9 +1,9 @@
 package org.kunlab.scenamatica.scenariofile.beans.entity;
 
 import org.junit.jupiter.api.Test;
-import org.kunlab.scenamatica.interfaces.scenariofile.entities.ProjectileBean;
+import org.kunlab.scenamatica.interfaces.scenariofile.entity.entities.ProjectileBean;
 import org.kunlab.scenamatica.scenariofile.BeanSerializerImpl;
-import org.kunlab.scenamatica.scenariofile.beans.entities.ProjectileBeanImpl;
+import org.kunlab.scenamatica.scenariofile.beans.entity.entities.ProjectileBeanImpl;
 import org.kunlab.scenamatica.scenariofile.beans.utils.MapTestUtil;
 
 import java.util.HashMap;

@@ -1,10 +1,10 @@
-package org.kunlab.scenamatica.scenariofile.beans.entities;
+package org.kunlab.scenamatica.scenariofile.beans.entity;
 
 import lombok.Value;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
-import org.kunlab.scenamatica.interfaces.scenariofile.entities.DamageBean;
+import org.kunlab.scenamatica.interfaces.scenariofile.entity.DamageBean;
 
 import java.util.HashMap;
 import java.util.Map;

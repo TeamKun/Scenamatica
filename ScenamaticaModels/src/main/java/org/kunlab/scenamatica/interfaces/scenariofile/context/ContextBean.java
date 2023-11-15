@@ -1,7 +1,7 @@
 package org.kunlab.scenamatica.interfaces.scenariofile.context;
 
 import org.jetbrains.annotations.NotNull;
-import org.kunlab.scenamatica.interfaces.scenariofile.entities.EntityBean;
+import org.kunlab.scenamatica.interfaces.scenariofile.entity.EntityBean;
 
 import java.util.List;
 

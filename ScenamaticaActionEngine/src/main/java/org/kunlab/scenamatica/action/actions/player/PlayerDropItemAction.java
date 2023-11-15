@@ -12,7 +12,7 @@ import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.BeanSerializer;
-import org.kunlab.scenamatica.interfaces.scenariofile.entities.EntityItemBean;
+import org.kunlab.scenamatica.interfaces.scenariofile.entity.entities.EntityItemBean;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Collections;

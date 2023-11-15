@@ -7,7 +7,7 @@ import org.kunlab.scenamatica.interfaces.scenariofile.BeanSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.context.ContextBean;
 import org.kunlab.scenamatica.interfaces.scenariofile.context.PlayerBean;
 import org.kunlab.scenamatica.interfaces.scenariofile.context.StageBean;
-import org.kunlab.scenamatica.interfaces.scenariofile.entities.EntityBean;
+import org.kunlab.scenamatica.interfaces.scenariofile.entity.EntityBean;
 
 import java.util.ArrayList;
 import java.util.HashMap;

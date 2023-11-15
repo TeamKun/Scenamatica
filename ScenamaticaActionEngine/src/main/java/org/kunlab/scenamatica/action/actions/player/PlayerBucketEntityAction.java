@@ -22,7 +22,7 @@ import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.context.Actor;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.BeanSerializer;
-import org.kunlab.scenamatica.interfaces.scenariofile.entities.EntityBean;
+import org.kunlab.scenamatica.interfaces.scenariofile.entity.EntityBean;
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.ItemStackBean;
 import org.kunlab.scenamatica.nms.enums.entity.NMSEntityUseAction;
 

@@ -5,7 +5,7 @@ import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.actions.AbstractActionArgument;
 import org.kunlab.scenamatica.interfaces.action.ActionArgument;
-import org.kunlab.scenamatica.interfaces.scenariofile.entities.EntityBean;
+import org.kunlab.scenamatica.interfaces.scenariofile.entity.EntityBean;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Objects;
