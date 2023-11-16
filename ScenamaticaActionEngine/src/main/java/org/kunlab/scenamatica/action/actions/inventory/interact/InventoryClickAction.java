@@ -116,14 +116,14 @@ public class InventoryClickAction<T extends InventoryClickAction.Argument> exten
         ItemStackBean clickedItem = null;
         if (map.containsKey(Argument.KEY_CLICKED_ITEM))
             clickedItem = serializer.deserialize(
-                    MapUtils.checkAndCastMap(Argument.KEY_CLICKED_ITEM),
+                    MapUtils.checkAndCastMap(map.get(Argument.KEY_CLICKED_ITEM)),
                     ItemStackBean.class
             );
 
         ItemStackBean cursorItem = null;
         if (map.containsKey(Argument.KEY_CURSOR_ITEM))
             cursorItem = serializer.deserialize(
-                    MapUtils.checkAndCastMap(Argument.KEY_CURSOR_ITEM),
+                    MapUtils.checkAndCastMap(map.get(Argument.KEY_CURSOR_ITEM)),
                     ItemStackBean.class
             );
 

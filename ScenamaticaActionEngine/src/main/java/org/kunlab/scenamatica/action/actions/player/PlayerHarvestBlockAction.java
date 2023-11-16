@@ -92,7 +92,7 @@ public class PlayerHarvestBlockAction extends AbstractPlayerAction<PlayerHarvest
         BlockBean block = null;
         if (map.containsKey(Argument.KEY_HARVESTED_BLOCK))
             block = serializer.deserialize(
-                    MapUtils.checkAndCastMap(Argument.KEY_HARVESTED_BLOCK),
+                    MapUtils.checkAndCastMap(map.get(Argument.KEY_HARVESTED_BLOCK)),
                     BlockBean.class
             );
 

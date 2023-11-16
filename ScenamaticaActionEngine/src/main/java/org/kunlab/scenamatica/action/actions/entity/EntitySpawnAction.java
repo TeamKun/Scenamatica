@@ -91,7 +91,7 @@ public class EntitySpawnAction extends AbstractAction<EntitySpawnAction.Argument
 
         return new Argument(
                 serializer.deserialize(
-                        MapUtils.checkAndCastMap(Argument.KEY_ENTITY),
+                        MapUtils.checkAndCastMap(map.get(Argument.KEY_ENTITY)),
                         EntityBean.class
                 ));
     }

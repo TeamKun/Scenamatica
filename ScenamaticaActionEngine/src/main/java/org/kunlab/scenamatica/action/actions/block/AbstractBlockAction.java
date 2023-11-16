@@ -45,7 +45,7 @@ public abstract class AbstractBlockAction<A extends AbstractBlockActionArgument>
             return null;
 
         return serializer.deserialize(
-                MapUtils.checkAndCastMap(AbstractBlockActionArgument.KEY_BLOCK),
+                MapUtils.checkAndCastMap(map.get(AbstractBlockActionArgument.KEY_BLOCK)),
                 BlockBean.class
         );
     }

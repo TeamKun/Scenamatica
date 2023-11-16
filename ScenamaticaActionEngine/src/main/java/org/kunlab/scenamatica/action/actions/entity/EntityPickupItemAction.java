@@ -139,7 +139,7 @@ public class EntityPickupItemAction extends AbstractEntityAction<EntityPickupIte
                     super.deserializeTarget(map, serializer),
                     remaining,
                     serializer.deserialize(
-                            MapUtils.checkAndCastMap(Argument.KEY_ITEM),
+                            MapUtils.checkAndCastMap(map.get(Argument.KEY_ITEM)),
                             EntityItemBean.class
                     )
             );

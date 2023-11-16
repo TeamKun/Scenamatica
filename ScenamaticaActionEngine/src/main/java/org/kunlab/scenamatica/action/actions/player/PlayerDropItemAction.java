@@ -75,7 +75,7 @@ public class PlayerDropItemAction extends AbstractPlayerAction<PlayerDropItemAct
         EntityItemBean item = null;
         if (map.containsKey(Argument.KEY_ITEM))
             item = serializer.deserialize(
-                    MapUtils.checkAndCastMap(Argument.KEY_ITEM),
+                    MapUtils.checkAndCastMap(map.get(Argument.KEY_ITEM)),
                     EntityItemBean.class
             );
 

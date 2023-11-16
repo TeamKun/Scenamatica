@@ -156,7 +156,7 @@ public class EntityPlaceAction extends AbstractEntityAction<EntityPlaceAction.Ar
         BlockBean blockBean = null;
         if (map.containsKey(Argument.KEY_BLOCK))
             blockBean = serializer.deserialize(
-                    MapUtils.checkAndCastMap(Argument.KEY_BLOCK),
+                    MapUtils.checkAndCastMap(map.get(Argument.KEY_BLOCK)),
                     BlockBean.class
             );
 
