@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 @NoArgsConstructor
@@ -115,18 +116,20 @@ public final class Scenamatica extends JavaPlugin
 
     private TestReporter getTestReporter(boolean isRaw, boolean isVerbose, boolean isJunitReportingEnabled)
     {
-        List<TestReporter> reporters = new ArrayList<>();
+        List<TestReporter> reporters = new LinkedList<>();
+        // 開始時 ＝＞ 昇順で実行される。
+        // 終了時 ＝＞ 降順で実行される。
+
+        if (isRaw)
+            reporters.add(new RawTestReporter());
+
+        if (isJunitReportingEnabled)
+            reporters.add(new JUnitReporter(this.resultWriter));
 
         if (isVerbose)
             reporters.add(new BukkitTestReporter());
         else
             reporters.add(new CompactBukkitTestReporter());
-
-        if (isJunitReportingEnabled)
-            reporters.add(new JUnitReporter(this.resultWriter));
-
-        if (isRaw)
-            reporters.add(new RawTestReporter());  // ログキャプチャの都合で最後に置く。
 
         return new ReportersBridge(reporters);
     }

@@ -9,15 +9,17 @@ import org.kunlab.scenamatica.interfaces.scenario.TestReporter;
 import org.kunlab.scenamatica.interfaces.scenario.runtime.CompiledScenarioAction;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerBean;
 
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 public class ReportersBridge implements TestReporter
 {
-    private final List<? extends TestReporter> reporters;
+    private final LinkedList<? extends TestReporter> reporters;
 
     public ReportersBridge(List<? extends TestReporter> reporters)
     {
-        this.reporters = reporters;
+        this.reporters = new LinkedList<>(reporters);
     }
 
     @Override
@@ -77,7 +79,12 @@ public class ReportersBridge implements TestReporter
     @Override
     public void onTestEnd(@NotNull ScenarioEngine engine, @NotNull ScenarioResult result)
     {
-        this.reporters.forEach(reporter -> reporter.onTestEnd(engine, result));
+        Iterator<? extends TestReporter> iterator = this.reporters.descendingIterator();
+        while (iterator.hasNext())
+        {
+            TestReporter reporter = iterator.next();
+            reporter.onTestEnd(engine, result);
+        }
     }
 
     @Override
