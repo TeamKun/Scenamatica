@@ -117,9 +117,6 @@ public final class Scenamatica extends JavaPlugin
     {
         List<TestReporter> reporters = new ArrayList<>();
 
-        if (isRaw)
-            reporters.add(new RawTestReporter());
-
         if (isVerbose)
             reporters.add(new BukkitTestReporter());
         else
@@ -127,6 +124,9 @@ public final class Scenamatica extends JavaPlugin
 
         if (isJunitReportingEnabled)
             reporters.add(new JUnitReporter(this.resultWriter));
+
+        if (isRaw)
+            reporters.add(new RawTestReporter());  // ログキャプチャの都合で最後に置く。
 
         return new ReportersBridge(reporters);
     }
