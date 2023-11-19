@@ -1,0 +1,18 @@
+{
+  "name": "player_harvest_block",
+  "description": "プレイヤに作物を収穫させます。",
+  "base": "player_$base",
+  "arguments": {
+    "block": {
+      "description": "対象の作物です。",
+      "$ref": "#/definitions/block"
+    },
+    "items": {
+      "type": "array",
+      "description": "収穫したアイテムです。",
+      "items": {
+        "$ref": "#/definitions/itemStack"
+      }
+    }
+  }
+}

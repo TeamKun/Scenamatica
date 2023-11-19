@@ -723,6 +723,7 @@
             "player_drop_item",
             "player_flight",
             "player_gamemode",
+            "player_harvest_block",
             "player_hotbar",
             "player_interact_at_entity",
             "player_interact_block",
@@ -1155,6 +1156,23 @@
             "properties": {
               "with": {
                 "$ref": "#/definitions/action/definitions/player_gamemode"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "player_harvest_block",
+                "description": "プレイヤに作物を収穫させます。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/player_harvest_block"
               }
             }
           }
@@ -2459,6 +2477,24 @@
             "cancelMessage": {
               "type": "string",
               "description": "ゲームモード変更をキャンセルされたときに表示するメッセージです。"
+            }
+          },
+          "$ref": "#/definitions/action/definitions/player_$base"
+        },
+        "player_harvest_block": {
+          "type": "object",
+          "description": "プレイヤに作物を収穫させます。",
+          "properties": {
+            "block": {
+              "description": "対象の作物です。",
+              "$ref": "#/definitions/block"
+            },
+            "items": {
+              "type": "array",
+              "description": "収穫したアイテムです。",
+              "items": {
+                "$ref": "#/definitions/itemStack"
+              }
             }
           },
           "$ref": "#/definitions/action/definitions/player_$base"

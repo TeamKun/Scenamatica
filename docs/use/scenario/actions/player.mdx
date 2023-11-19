@@ -616,6 +616,52 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
 
 :::
 
+## 作物の収穫 {#harvest-block}
+
+
+<Action name="作物の収穫"
+        description="プレイヤの作物の収穫に関するアクションです。"
+        id="player_harvest_block"
+        events={
+          {
+            name: "PlayerHarvestBlockEvent",
+            package: "org.bukkit.event.player",
+          }
+        }
+        args={[
+          {
+            name: "target",
+            anchor: "target",
+            description: "ゲームモードを変更するプレイヤーです。",
+            type: "プレイヤ",
+            required: [ScenarioType.EXECUTE]
+          },
+          {
+            name: "block",
+            description: "収穫するブロックです。",
+            type: "Block",
+            type_link: "../../file-syntax#block-structure",
+            required: [ScenarioType.EXECUTE]
+          },
+          {
+            name: "items",
+            description: "収穫したアイテムです。",
+            type: "ItemStack[]",
+            type_link: "../../file-syntax#item-stack-structure",
+            available: [ScenarioType.EXPECT]
+          }
+        ]}
+        executable watchable
+/>
+
+### アクション実行シナリオでの使用 {#harvest-block-usage-in-execution}
+
+:::tip
+このアクションは, 内部的に [`BlockBreakAction`](block#break) を呼び出しています。
+
+:::
+
+
 ## ホットバーのスロットの変更 {#hotbar}
 
 <Action name="ホットバーのスロットの変更"
