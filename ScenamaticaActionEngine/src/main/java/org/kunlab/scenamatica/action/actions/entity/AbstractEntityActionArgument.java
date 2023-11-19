@@ -11,12 +11,12 @@ import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 import java.util.Objects;
 
 @AllArgsConstructor
-public abstract class AbstractEntityActionArgument extends AbstractActionArgument
+public abstract class AbstractEntityActionArgument<E extends Entity> extends AbstractActionArgument
 {
     public static final String KEY_TARGET_ENTITY = "target";
 
     @Nullable
-    private final EntityArgumentHolder entity;
+    private final EntityArgumentHolder<E> entity;
 
     @Override
     public boolean isSame(TriggerArgument argument)
@@ -27,7 +27,7 @@ public abstract class AbstractEntityActionArgument extends AbstractActionArgumen
         if (!AbstractEntityActionArgument.class.isAssignableFrom(argument.getClass()))
             return false;
 
-        return Objects.equals(this.entity, ((AbstractEntityActionArgument) argument).entity);
+        return Objects.equals(this.entity, ((AbstractEntityActionArgument<?>) argument).entity);
     }
 
     private void ensureTargetIsSet()
@@ -70,7 +70,7 @@ public abstract class AbstractEntityActionArgument extends AbstractActionArgumen
         return this.entity.getArgumentString();
     }
 
-    public EntityArgumentHolder getTargetHolder()
+    public EntityArgumentHolder<E> getTargetHolder()
     {
         return this.entity;
     }

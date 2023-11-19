@@ -8,6 +8,7 @@ import org.kunlab.scenamatica.action.actions.AbstractAction;
 import org.kunlab.scenamatica.action.utils.EntityUtils;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.BeanSerializer;
+import org.kunlab.scenamatica.interfaces.scenariofile.entity.EntityBean;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,11 +50,24 @@ public abstract class AbstractEntityAction<A extends AbstractEntityActionArgumen
                 .anyMatch(entity -> Objects.equals(entity.getUniqueId(), actualEntity.getUniqueId()));
     }
 
-    protected EntityArgumentHolder deserializeTarget(Map<String, Object> map, BeanSerializer serializer)
+    protected EntityArgumentHolder<Entity> deserializeTarget(Map<String, Object> map, BeanSerializer serializer)
     {
         return EntityArgumentHolder.tryDeserialize(
                 map.get(AbstractEntityActionArgument.KEY_TARGET_ENTITY),
-                serializer
+                serializer,
+                EntityBean.class
+        );
+    }
+
+    protected <E extends Entity> EntityArgumentHolder<E> deserializeTarget(
+            Map<String, Object> map,
+            BeanSerializer serializer,
+            Class<? extends EntityBean> beanClass)
+    {
+        return EntityArgumentHolder.tryDeserialize(
+                map.get(AbstractEntityActionArgument.KEY_TARGET_ENTITY),
+                serializer,
+                beanClass
         );
     }
 }

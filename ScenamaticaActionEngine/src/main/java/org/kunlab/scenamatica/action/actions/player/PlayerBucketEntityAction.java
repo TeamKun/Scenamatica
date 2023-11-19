@@ -145,11 +145,11 @@ public class PlayerBucketEntityAction extends AbstractPlayerAction<PlayerBucketE
         public static final String KEY_ORIGINAL_BUCKET = "bucket";
         public static final String KEY_ENTITY_BUCKET = "entityBucket";
 
-        EntityArgumentHolder entity;
+        EntityArgumentHolder<?> entity;
         ItemStackBean originalBucket;
         ItemStackBean entityBucket;
 
-        public Argument(String target, EntityArgumentHolder entity, ItemStackBean originalBucket, ItemStackBean entityBucket)
+        public Argument(String target, EntityArgumentHolder<?> entity, ItemStackBean originalBucket, ItemStackBean entityBucket)
         {
             super(target);
             this.entity = entity;

@@ -5,6 +5,7 @@ import lombok.Value;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityPlaceEvent;
@@ -170,7 +171,7 @@ public class EntityPlaceAction extends AbstractEntityAction<EntityPlaceAction.Ar
 
     @Value
     @EqualsAndHashCode(callSuper = true)
-    public static class Argument extends AbstractEntityActionArgument
+    public static class Argument extends AbstractEntityActionArgument<Entity>
     {
         public static final String KEY_PLAYER = "player";
         public static final String KEY_BLOCK = "block";
@@ -180,7 +181,7 @@ public class EntityPlaceAction extends AbstractEntityAction<EntityPlaceAction.Ar
         BlockBean block;
         BlockFace blockFace;
 
-        public Argument(EntityArgumentHolder target, String playerSpecifier, BlockBean block, BlockFace blockFace)
+        public Argument(EntityArgumentHolder<Entity> target, String playerSpecifier, BlockBean block, BlockFace blockFace)
         {
             super(target);
             this.playerSpecifier = playerSpecifier;

@@ -98,13 +98,13 @@ public class EntityDropItemAction extends AbstractEntityAction<EntityDropItemAct
 
     @Value
     @EqualsAndHashCode(callSuper = true)
-    public static class Argument extends AbstractEntityActionArgument
+    public static class Argument extends AbstractEntityActionArgument<Entity>
     {
         public static final String KEY_DROP_ITEM = "item";
 
         EntityItemBean item;
 
-        public Argument(@Nullable EntityArgumentHolder mayTarget, EntityItemBean item)
+        public Argument(@Nullable EntityArgumentHolder<Entity> mayTarget, EntityItemBean item)
         {
             super(mayTarget);
             this.item = item;

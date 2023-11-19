@@ -80,13 +80,13 @@ public class EntityAction extends AbstractEntityAction<EntityAction.Argument>
 
     @Value
     @EqualsAndHashCode(callSuper = true)
-    public static class Argument extends AbstractEntityActionArgument
+    public static class Argument extends AbstractEntityActionArgument<Entity>
     {
         public static final String KEY_ENTITY = "entity";
 
         EntityBean entity;
 
-        public Argument(EntityArgumentHolder target, @Nullable EntityBean entity)
+        public Argument(EntityArgumentHolder<Entity> target, @Nullable EntityBean entity)
         {
             super(target);
             this.entity = entity;

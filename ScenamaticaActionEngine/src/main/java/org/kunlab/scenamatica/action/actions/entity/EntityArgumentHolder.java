@@ -15,9 +15,9 @@ import java.util.Objects;
 
 @Getter
 @EqualsAndHashCode
-public class EntityArgumentHolder
+public class EntityArgumentHolder<E extends Entity>
 {
-    public static final EntityArgumentHolder EMPTY = new EntityArgumentHolder(null);
+    public static final EntityArgumentHolder<?> EMPTY = new EntityArgumentHolder<>(null);
 
     @Nullable
     protected final String targetSpecifier;
@@ -38,23 +38,33 @@ public class EntityArgumentHolder
         }
     }
 
-    public static EntityArgumentHolder tryDeserialize(Object obj, BeanSerializer serializer)
+    public static <E extends Entity> EntityArgumentHolder<E> tryDeserialize(
+            Object obj,
+            BeanSerializer serializer,
+            Class<? extends EntityBean> beanClass
+    )
     {
         if (obj == null)
-            return EMPTY;
+            // noinspection unchecked
+            return (EntityArgumentHolder<E>) EMPTY;
 
         if (obj instanceof String || obj instanceof EntityBean)
-            return new EntityArgumentHolder(obj);
+            return new EntityArgumentHolder<>(obj);
 
         if (obj instanceof Map)
         {
             // noinspection unchecked
             Map<String, Object> map = (Map<String, Object>) obj;
 
-            return new EntityArgumentHolder(serializer.deserialize(map, EntityBean.class));
+            return new EntityArgumentHolder<>(serializer.deserialize(map, beanClass));
         }
 
         throw new IllegalArgumentException("Cannot deserialize EntityArgumentHolder from " + obj);
+    }
+
+    public static EntityArgumentHolder<?> tryDeserialize(Object obj, BeanSerializer serializer)
+    {
+        return tryDeserialize(obj, serializer, EntityBean.class);
     }
 
     public boolean isSelectable()
@@ -62,12 +72,13 @@ public class EntityArgumentHolder
         return this.targetSpecifier != null;
     }
 
-    public Entity selectTarget()
+    public E selectTarget()
     {
         if (this.targetSpecifier == null)
             throw new IllegalStateException("Cannot select target from targetBean");
 
-        return EntityUtils.getPlayerOrEntityOrThrow(this.targetSpecifier);
+        //noinspection unchecked
+        return (E) EntityUtils.getPlayerOrEntityOrThrow(this.targetSpecifier);
     }
 
     public String getTargetString()

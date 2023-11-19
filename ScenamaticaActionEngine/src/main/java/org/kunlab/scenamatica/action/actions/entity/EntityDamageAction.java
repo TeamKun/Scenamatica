@@ -112,7 +112,7 @@ public class EntityDamageAction<A extends EntityDamageAction.Argument> extends A
 
     @Getter
     @EqualsAndHashCode(callSuper = true)
-    public static class Argument extends AbstractEntityActionArgument
+    public static class Argument extends AbstractEntityActionArgument<Entity>
     {
         public static final String KEY_DAMAGE_CAUSE = "cause";
         public static final String KEY_AMOUNT = "amount";  // 最終ダメージ
@@ -122,7 +122,7 @@ public class EntityDamageAction<A extends EntityDamageAction.Argument> extends A
         private final Double amount;
         private final Map<EntityDamageEvent.DamageModifier, @NotNull Double> modifiers;
 
-        public Argument(EntityArgumentHolder target, EntityDamageEvent.DamageCause cause, Double amount, Map<EntityDamageEvent.DamageModifier, @NotNull Double> modifiers)
+        public Argument(EntityArgumentHolder<Entity> target, EntityDamageEvent.DamageCause cause, Double amount, Map<EntityDamageEvent.DamageModifier, @NotNull Double> modifiers)
         {
             super(target);
             this.cause = cause;

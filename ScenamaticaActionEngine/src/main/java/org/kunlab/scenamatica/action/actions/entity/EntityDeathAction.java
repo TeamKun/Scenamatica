@@ -117,7 +117,7 @@ public class EntityDeathAction extends AbstractEntityAction<EntityDeathAction.Ar
 
     @Value
     @EqualsAndHashCode(callSuper = true)
-    public static class Argument extends AbstractEntityActionArgument
+    public static class Argument extends AbstractEntityActionArgument<Entity>
     {
         public static final String KEY_DROPS = "drops";
         public static final String KEY_DROP_EXP = "dropExp";
@@ -139,7 +139,7 @@ public class EntityDeathAction extends AbstractEntityAction<EntityDeathAction.Ar
         Float deathSoundVolume;
         Float deathSoundPitch;
 
-        public Argument(@Nullable EntityArgumentHolder mayTarget, List<ItemStackBean> drops, Integer dropExp, Double reviveHealth, Boolean shouldPlayDeathSound, Sound deathSound, SoundCategory deathSoundCategory, Float deathSoundVolume, Float deathSoundPitch)
+        public Argument(@Nullable EntityArgumentHolder<Entity> mayTarget, List<ItemStackBean> drops, Integer dropExp, Double reviveHealth, Boolean shouldPlayDeathSound, Sound deathSound, SoundCategory deathSoundCategory, Float deathSoundVolume, Float deathSoundPitch)
         {
             super(mayTarget);
             this.drops = drops;

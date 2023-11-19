@@ -147,7 +147,7 @@ public class EntityPickupItemAction extends AbstractEntityAction<EntityPickupIte
 
     @Value
     @EqualsAndHashCode(callSuper = true)
-    public static class Argument extends AbstractEntityActionArgument
+    public static class Argument extends AbstractEntityActionArgument<Entity>
     {
         public static final String KEY_REMAINING = "remaining";
         public static final String KEY_ITEM = "item";
@@ -156,7 +156,7 @@ public class EntityPickupItemAction extends AbstractEntityAction<EntityPickupIte
         EntityItemBean item;
         String itemSelector;
 
-        public Argument(@Nullable EntityArgumentHolder mayTarget, Integer remaining, EntityItemBean item)
+        public Argument(@Nullable EntityArgumentHolder<Entity> mayTarget, Integer remaining, EntityItemBean item)
         {
             super(mayTarget);
             this.remaining = remaining;
@@ -164,7 +164,7 @@ public class EntityPickupItemAction extends AbstractEntityAction<EntityPickupIte
             this.itemSelector = null;
         }
 
-        public Argument(@Nullable EntityArgumentHolder mayTarget, Integer remaining, String itemSelector)
+        public Argument(@Nullable EntityArgumentHolder<Entity> mayTarget, Integer remaining, String itemSelector)
         {
             super(mayTarget);
             this.remaining = remaining;
@@ -182,7 +182,6 @@ public class EntityPickupItemAction extends AbstractEntityAction<EntityPickupIte
             if (!this.isItemSelectable())
                 throw new IllegalArgumentException("Item is not selectable.");
 
-            assert this.itemSelector != null;
             List<Entity> entities = EntityUtils.selectEntities(this.itemSelector);
             if (entities.isEmpty())
                 throw new IllegalStateException("No entity found: " + this.itemSelector);

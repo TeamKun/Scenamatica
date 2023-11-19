@@ -88,7 +88,7 @@ public class EntityMoveAction extends AbstractEntityAction<EntityMoveAction.Argu
 
     @Value
     @EqualsAndHashCode(callSuper = true)
-    public static class Argument extends AbstractEntityActionArgument
+    public static class Argument extends AbstractEntityActionArgument<Entity>
     {
         public static final String KEY_FROM = "from";
         public static final String KEY_TO = "to";
@@ -99,7 +99,7 @@ public class EntityMoveAction extends AbstractEntityAction<EntityMoveAction.Argu
         // Execute のときのみ. デフォは true -> テレポート.
         boolean useAI;
 
-        public Argument(@Nullable EntityArgumentHolder mayTarget, Location from, Location to, boolean useAI)
+        public Argument(@Nullable EntityArgumentHolder<Entity> mayTarget, Location from, Location to, boolean useAI)
         {
             super(mayTarget);
             this.from = from;

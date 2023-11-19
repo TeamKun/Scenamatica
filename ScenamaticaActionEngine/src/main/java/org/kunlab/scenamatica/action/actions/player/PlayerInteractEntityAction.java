@@ -112,10 +112,10 @@ public class PlayerInteractEntityAction<A extends PlayerInteractEntityAction.Arg
         public static final String KEY_ENTITY = "entity";
         public static final String KEY_HAND = "hand";
 
-        EntityArgumentHolder entity;
+        EntityArgumentHolder<?> entity;
         EquipmentSlot hand;
 
-        public Argument(String target, EntityArgumentHolder entity, EquipmentSlot hand)
+        public Argument(String target, EntityArgumentHolder<?> entity, EquipmentSlot hand)
         {
             super(target);
             this.entity = entity;
