@@ -10,7 +10,8 @@ public class VoxelUtils
     {
         Vector direction = target.toVector().subtract(viewer.toVector()).normalize();
 
-        return target.clone().add(direction.multiply(distance));
+        return target.clone()
+                .add(direction.multiply(distance));
     }
 
     public static BlockFace toFace(Location viewer, Location target)
