@@ -9,6 +9,12 @@ import org.yaml.snakeyaml.nodes.Tag;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * YAML のクソ構文を無理やりパースするクラス。
+ * <br>
+ * YAML では通常 "on" という文字列はキー内値内問わず boolean として扱いやがるが, <br>
+ * これにより ネストが 0 の キー "on" を文字列として扱い, それ以外は通常のふるまい（Boolean として扱う）をするようにする。
+ */
 @SuppressWarnings("VulnerableCodeUsages")
 public class SimpleYamlConstructor extends SafeConstructor
 {
