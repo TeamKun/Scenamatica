@@ -197,9 +197,8 @@ public class PlayerDeathAction extends AbstractPlayerAction<PlayerDeathAction.Ar
         Player killerPlayer = PlayerUtils.getPlayerOrNull(killer);
 
         return targetPlayer.isDead() &&
-                (killerPlayer == null ||
-                        (targetPlayer.getKiller() != null && targetPlayer.getKiller().getUniqueId()
-                                .equals(killerPlayer.getUniqueId()))
+                (killerPlayer == null || (targetPlayer.getKiller() != null
+                        && targetPlayer.getKiller().getUniqueId().equals(killerPlayer.getUniqueId()))
                 );
     }
 

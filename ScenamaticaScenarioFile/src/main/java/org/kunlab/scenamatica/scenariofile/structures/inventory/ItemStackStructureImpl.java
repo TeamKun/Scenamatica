@@ -342,9 +342,9 @@ public class ItemStackStructureImpl implements ItemStackStructure
             for (AttributeModifier thatModifier : thatModifiers)
             {
                 // Check except UUID
-                if (thisModifier.getAmount() != thatModifier.getAmount() ||
-                        thisModifier.getOperation() != thatModifier.getOperation() ||
-                        thisModifier.getSlot() != thatModifier.getSlot())
+                if (thisModifier.getAmount() != thatModifier.getAmount()
+                        || thisModifier.getOperation() != thatModifier.getOperation()
+                        || thisModifier.getSlot() != thatModifier.getSlot())
                     return true;
                 if (!Objects.equals(thisModifier.getName(), thatModifier.getName()))
                     return true;

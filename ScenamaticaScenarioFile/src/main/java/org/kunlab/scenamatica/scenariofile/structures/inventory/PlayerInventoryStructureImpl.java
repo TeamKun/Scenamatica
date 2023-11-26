@@ -101,8 +101,8 @@ public class PlayerInventoryStructureImpl extends InventoryStructureImpl impleme
 
             if (!mainInventory.containsKey(KEY_SIZE))
                 mainInventory.put(KEY_SIZE, 9 * 4);
-            else if (!(mainInventory.get(KEY_SIZE) instanceof Integer ||
-                    (Integer) mainInventory.get(KEY_SIZE) != 9 * 4))
+            else if (!(mainInventory.get(KEY_SIZE) instanceof Integer
+                    || (Integer) mainInventory.get(KEY_SIZE) != 9 * 4))
                 throw new IllegalArgumentException(KEY_SIZE + " must be 36 slots in player inventory.");
 
             serializer.validate(mainInventory, InventoryStructure.class);
