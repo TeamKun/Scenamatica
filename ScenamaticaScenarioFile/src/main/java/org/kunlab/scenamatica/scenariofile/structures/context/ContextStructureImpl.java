@@ -99,22 +99,19 @@ public class ContextStructureImpl implements ContextStructure
         if (map.containsKey(KEY_ACTORS) && map.get(KEY_ACTORS) != null)
         {
             for (Object player : (List<?>) map.get(KEY_ACTORS))
-                actorList.add(serializer.deserialize(
-                        MapUtils.checkAndCastMap(player), PlayerStructure.class));
+                actorList.add(serializer.deserialize(MapUtils.checkAndCastMap(player), PlayerStructure.class));
         }
 
         List<EntityStructure> entityList = new ArrayList<>();
         if (map.containsKey(KEY_ENTITIES) && map.get(KEY_ENTITIES) != null)
         {
             for (Object entity : (List<?>) map.get(KEY_ENTITIES))
-                entityList.add(serializer.deserialize(
-                        MapUtils.checkAndCastMap(entity), EntityStructure.class));
+                entityList.add(serializer.deserialize(MapUtils.checkAndCastMap(entity), EntityStructure.class));
         }
 
         StageStructure world = null;
         if (map.containsKey(KEY_STAGE))
-            world = serializer.deserialize(
-                    MapUtils.checkAndCastMap(map.get(KEY_STAGE)), StageStructure.class);
+            world = serializer.deserialize(MapUtils.checkAndCastMap(map.get(KEY_STAGE)), StageStructure.class);
 
         return new ContextStructureImpl(
                 actorList,

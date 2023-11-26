@@ -41,7 +41,7 @@ public class InventoryOpenAction extends AbstractInventoryAction<InventoryOpenAc
         argument = this.requireArgsNonNull(argument);
 
         Player player = argument.getTarget();
-        InventoryStructure inventoryStructure = argument.getInventory();
+        InventoryStructure<Inventory> inventoryStructure = argument.getInventory();
         assert inventoryStructure != null;
         Inventory inventory = inventoryStructure.create();
 

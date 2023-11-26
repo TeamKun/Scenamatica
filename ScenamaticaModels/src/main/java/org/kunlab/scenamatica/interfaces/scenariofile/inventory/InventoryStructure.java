@@ -11,7 +11,7 @@ import java.util.Map;
 /**
  * インベントリの定義を表すインタフェースです。
  */
-public interface InventoryStructure extends Structure, Mapped<Inventory>, Creatable<Inventory>
+public interface InventoryStructure<T extends Inventory> extends Structure, Mapped<T>, Creatable<T>
 {
     String KEY_SIZE = "size";
     String KEY_TITLE = "title";

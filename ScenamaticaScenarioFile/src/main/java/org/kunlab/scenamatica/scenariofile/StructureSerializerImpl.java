@@ -68,7 +68,7 @@ public class StructureSerializerImpl implements StructureSerializer
     public @NotNull <T extends Structure> Map<String, Object> serialize(@NotNull T structure, @NotNull Class<T> clazz)
     {
         // エンティティの場合は, さらに EntityType で分岐する
-        if (EntityStructure.class.isAssignableFrom(clazz))
+        if (!clazz.getName().equals(EntityStructure.class.getName()) && EntityStructure.class.isAssignableFrom(clazz))
             return SelectingEntityStructureSerializer.serialize((EntityStructure) structure, this);
 
         return this.selectEntry(clazz).getSerializer().apply(structure, this);
@@ -78,9 +78,9 @@ public class StructureSerializerImpl implements StructureSerializer
     public <T extends Structure> @NotNull T deserialize(@NotNull Map<String, Object> map, @NotNull Class<T> clazz)
     {
         // エンティティの場合は, さらに EntityType で分岐する
-        if (EntityStructure.class.isAssignableFrom(clazz))
+        if (!clazz.getName().equals(EntityStructure.class.getName()) && EntityStructure.class.isAssignableFrom(clazz))
             // noinspection unchecked
-            return SelectingEntityStructureSerializer.deserialize(map, this);
+            return (T) SelectingEntityStructureSerializer.deserialize((Class<? extends EntityStructure>) clazz, map, this);
 
         return this.selectEntry(clazz).getDeserializer().apply(map, this);
     }
@@ -89,9 +89,11 @@ public class StructureSerializerImpl implements StructureSerializer
     public <T extends Structure> void validate(@NotNull Map<String, Object> map, @NotNull Class<T> clazz)
     {
         // エンティティの場合は, さらに EntityType で分岐する
-        if (EntityStructure.class.isAssignableFrom(clazz))
+        if (!clazz.getName().equals(EntityStructure.class.getName()) && EntityStructure.class.isAssignableFrom(clazz))
+        {
             SelectingEntityStructureSerializer.validate(map, this);
-
+            return;
+        }
         this.selectEntry(clazz).getValidator().accept(map, this);
     }
 
@@ -164,7 +166,7 @@ public class StructureSerializerImpl implements StructureSerializer
         return (StructureEntry<T>) this.structureEntries.stream().parallel()
                 .filter(entry -> entry.getClazz().equals(clazz))
                 .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("Unknown structure class: " + clazz.getName()));
+                .orElseThrow(() -> new IllegalArgumentException("Unknown structure class: " + clazz));
     }
 
     // <editor-fold desc="すべての Structure を登録するメソッド">
@@ -241,8 +243,8 @@ public class StructureSerializerImpl implements StructureSerializer
         );
         this.registerStructure(
                 PlayerInventoryStructure.class,
-                PlayerInventoryStructureImpl::serialize,
-                PlayerInventoryStructureImpl::deserialize,
+                PlayerInventoryStructureImpl::serializePlayerInventory,
+                PlayerInventoryStructureImpl::deserializePlayerInventory,
                 PlayerInventoryStructureImpl::validate
         );
     }

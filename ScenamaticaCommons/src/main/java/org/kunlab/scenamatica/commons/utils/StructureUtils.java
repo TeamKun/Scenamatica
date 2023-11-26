@@ -9,15 +9,11 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDropItemEvent;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.potion.PotionEffect;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.interfaces.scenariofile.entity.EntityStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.entity.entities.EntityItemStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.entity.entities.ProjectileStructure;
-import org.kunlab.scenamatica.interfaces.scenariofile.inventory.ItemStackStructure;
-import org.kunlab.scenamatica.interfaces.scenariofile.inventory.PlayerInventoryStructure;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,35 +22,6 @@ import java.util.Objects;
 @UtilityClass
 public class StructureUtils
 {
-    public static boolean isSame(@NotNull PlayerInventoryStructure playerInventoryStructure, @NotNull PlayerInventory playerInventory)
-    {
-        return isSame(playerInventoryStructure, playerInventory, true);
-    }
-
-    private static boolean isSame(@NotNull PlayerInventoryStructure playerInventoryStructure,
-                                  @NotNull PlayerInventory playerInventory, boolean checkInventory)
-    {
-        ItemStackStructure[] expectedArmors = playerInventoryStructure.getArmorContents();
-        ItemStack[] actualArmors = playerInventory.getArmorContents();
-
-        if (expectedArmors != null)
-            for (int i = 0; i < expectedArmors.length; i++)
-                if (!(expectedArmors[i] == null || expectedArmors[i].isAdequate(actualArmors[i]))) // TODO: Impl strict
-                    return false;
-
-        ItemStackStructure expectedMainHand = playerInventoryStructure.getMainHand();
-        ItemStack actualMainHand = playerInventory.getItemInMainHand();
-        if (!(expectedMainHand == null || expectedMainHand.isAdequate(actualMainHand))) // TODO: Impl strict
-            return false;
-
-        ItemStackStructure expectedOffHand = playerInventoryStructure.getOffHand();
-        ItemStack actualOffHand = playerInventory.getItemInOffHand();
-        if (!(expectedOffHand == null || expectedOffHand.isAdequate(actualOffHand))) // TODO: Impl strict
-            return false;
-
-        return !checkInventory;
-    }
-
     public static void applyEntityStructureData(@NotNull EntityStructure structure, @NotNull Entity entity)
     {
         if (structure.getCustomName() != null)

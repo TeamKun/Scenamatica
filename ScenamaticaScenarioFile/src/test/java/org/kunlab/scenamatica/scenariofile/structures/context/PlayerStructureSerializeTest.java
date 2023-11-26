@@ -1,10 +1,16 @@
 package org.kunlab.scenamatica.scenariofile.structures.context;
 
+import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.inventory.MainHand;
 import org.junit.jupiter.api.Test;
 import org.kunlab.scenamatica.interfaces.scenariofile.context.PlayerStructure;
+import org.kunlab.scenamatica.interfaces.scenariofile.entity.EntityStructure;
 import org.kunlab.scenamatica.scenariofile.StructureSerializerImpl;
-import org.kunlab.scenamatica.scenariofile.structures.entity.HumanEntityStructureSerializeTest;
+import org.kunlab.scenamatica.scenariofile.structures.entity.EntityStructureSerializeTest;
+import org.kunlab.scenamatica.scenariofile.structures.entity.entities.HumanEntityStructureImpl;
+import org.kunlab.scenamatica.scenariofile.structures.inventory.InventoryStructureSerializeTest;
+import org.kunlab.scenamatica.scenariofile.structures.inventory.PlayerInventoryStructureSerializeTest;
 import org.kunlab.scenamatica.scenariofile.structures.utils.MapTestUtil;
 
 import java.util.Collections;
@@ -16,7 +22,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class PlayerStructureSerializeTest
 {
     public static final PlayerStructure FULFILLED = new PlayerStructureImpl(
-            HumanEntityStructureSerializeTest.FULFILLED,
+            new HumanEntityStructureImpl(
+                    EntityStructureSerializeTest.FULFILLED,
+                    PlayerInventoryStructureSerializeTest.FULFILLED,
+                    InventoryStructureSerializeTest.FULFILLED,
+                    MainHand.LEFT,
+                    GameMode.ADVENTURE,
+                    20
+            ),
             "YajuSNPIName",
             false,
             "YajuSNPIDisplay",
@@ -36,8 +49,15 @@ public class PlayerStructureSerializeTest
             Collections.emptyList()
     );
 
-    public static final Map<String, Object> FULFILLED_MAP = new HashMap<String, Object>(HumanEntityStructureSerializeTest.FULFILLED_MAP)
+    public static final Map<String, Object> FULFILLED_MAP = new HashMap<String, Object>(EntityStructureSerializeTest.FULFILLED_MAP)
     {{
+        this.remove(EntityStructure.KEY_TYPE);
+        this.put("inventory", PlayerInventoryStructureSerializeTest.FULFILLED_MAP);
+        this.put("enderChest", InventoryStructureSerializeTest.FULFILLED_MAP);
+        this.put("mainHand", "LEFT");
+        this.put("gamemode", "ADVENTURE");
+        this.put("food", 20);
+
         this.put("name", "YajuSNPIName");
         this.put("online", false);
         this.put("display", "YajuSNPIDisplay");
@@ -70,7 +90,14 @@ public class PlayerStructureSerializeTest
     }};
 
     public static final PlayerStructure EMPTY = new PlayerStructureImpl(
-            HumanEntityStructureSerializeTest.EMPTY,
+            new HumanEntityStructureImpl(
+                    EntityStructureSerializeTest.EMPTY,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null
+            ),
             null,
             null,
             null,

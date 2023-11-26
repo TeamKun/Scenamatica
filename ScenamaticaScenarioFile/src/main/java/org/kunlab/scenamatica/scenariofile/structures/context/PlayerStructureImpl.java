@@ -97,7 +97,7 @@ public class PlayerStructureImpl extends HumanEntityStructureImpl implements Pla
     @NotNull
     public static Map<String, Object> serialize(@NotNull PlayerStructure structure, @NotNull StructureSerializer serializer)
     {
-        Map<String, Object> map = serializer.serialize(structure, HumanEntityStructure.class);
+        Map<String, Object> map = serializeHuman(structure, serializer);
         MapUtils.putIfNotNull(map, KEY_NAME, structure.getName());
         MapUtils.putIfNotNull(map, KEY_ONLINE, structure.getOnline());
 
@@ -134,7 +134,7 @@ public class PlayerStructureImpl extends HumanEntityStructureImpl implements Pla
 
     public static void validate(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
     {
-        serializer.validate(map, HumanEntityStructure.class);
+        validateHuman(map, serializer);
         MapUtils.checkTypeIfContains(map, KEY_NAME, String.class);
         MapUtils.checkTypeIfContains(map, KEY_ONLINE, Boolean.class);
         MapUtils.checkTypeIfContains(map, KEY_DISPLAY_NAME, String.class);
@@ -162,7 +162,7 @@ public class PlayerStructureImpl extends HumanEntityStructureImpl implements Pla
     {
         validate(map);
 
-        HumanEntityStructure human = serializer.deserialize(map, HumanEntityStructure.class);
+        HumanEntityStructure human = deserializeHuman(map, serializer);
 
         String name = (String) map.get(KEY_NAME);
 

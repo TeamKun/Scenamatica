@@ -1,6 +1,7 @@
 package org.kunlab.scenamatica.scenariofile.structures.inventory;
 
 import org.bukkit.Material;
+import org.bukkit.inventory.Inventory;
 import org.junit.jupiter.api.Test;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.InventoryStructure;
@@ -14,7 +15,7 @@ import java.util.Map;
 
 public class InventoryStructureSerializeTest
 {
-    public static final InventoryStructure FULFILLED = new InventoryStructureImpl(
+    public static final InventoryStructure<Inventory> FULFILLED = new InventoryStructureImpl<>(
             30,
             "This is literally an inventory",
             new HashMap<Integer, ItemStackStructure>()
@@ -39,7 +40,7 @@ public class InventoryStructureSerializeTest
         }});
     }};
 
-    public static final InventoryStructure EMPTY = new InventoryStructureImpl(
+    public static final InventoryStructure<Inventory> EMPTY = new InventoryStructureImpl<>(
             1,
             null,
             Collections.emptyMap()

@@ -5,6 +5,7 @@ import lombok.Data;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.MainHand;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.util.Vector;
@@ -28,7 +29,7 @@ import java.util.UUID;
 public class HumanEntityStructureImpl extends EntityStructureImpl implements HumanEntityStructure
 {
     private final PlayerInventoryStructure inventory;
-    private final InventoryStructure enderChest;
+    private final InventoryStructure<Inventory> enderChest;
     private final MainHand mainHand;
     private final GameMode gamemode;
     private final Integer foodLevel;
@@ -38,7 +39,7 @@ public class HumanEntityStructureImpl extends EntityStructureImpl implements Hum
                                     @NotNull List<String> tags, Integer maxHealth, Integer health,
                                     DamageStructure lastDamageCause, @NotNull List<PotionEffect> potionEffects, Integer fireTicks,
                                     Integer ticksLived, Integer portalCooldown, Boolean persistent, Float fallDistance,
-                                    PlayerInventoryStructure inventory, InventoryStructure enderChest, MainHand mainHand,
+                                    PlayerInventoryStructure inventory, InventoryStructure<Inventory> enderChest, MainHand mainHand,
                                     GameMode gamemode, Integer foodLevel)
     {
         super(EntityType.PLAYER, location, velocity, customName, uuid, glowing, gravity, silent, customNameVisible, invulnerable, tags, maxHealth, health, lastDamageCause, potionEffects, fireTicks, ticksLived, portalCooldown, persistent, fallDistance);
@@ -52,7 +53,7 @@ public class HumanEntityStructureImpl extends EntityStructureImpl implements Hum
     public HumanEntityStructureImpl(
             EntityStructure entityStructure,
             PlayerInventoryStructure inventory,
-            InventoryStructure enderChest,
+            InventoryStructure<Inventory> enderChest,
             MainHand mainHand,
             GameMode gamemode,
             Integer foodLevel)
@@ -87,7 +88,7 @@ public class HumanEntityStructureImpl extends EntityStructureImpl implements Hum
      * @return シリアライズされたMap
      */
     @NotNull
-    public static Map<String, Object> serialize(@NotNull HumanEntityStructure structure, @NotNull StructureSerializer serializer)
+    public static Map<String, Object> serializeHuman(@NotNull HumanEntityStructure structure, @NotNull StructureSerializer serializer)
     {
         Map<String, Object> map = serializer.serialize(structure, EntityStructure.class);
         map.remove(EntityStructure.KEY_TYPE);
@@ -111,7 +112,7 @@ public class HumanEntityStructureImpl extends EntityStructureImpl implements Hum
      * @param serializer シリアライザ
      * @throws IllegalArgumentException Mapがシリアライズされた人形エンティティの情報でない場合
      */
-    public static void validate(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
+    public static void validateHuman(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
     {
         validate(map);
 
@@ -130,7 +131,7 @@ public class HumanEntityStructureImpl extends EntityStructureImpl implements Hum
      * @return デシリアライズされた人形エンティティの情報
      */
     @NotNull
-    public static HumanEntityStructure deserialize(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
+    public static HumanEntityStructure deserializeHuman(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
     {
         validate(map);
 
@@ -141,7 +142,7 @@ public class HumanEntityStructureImpl extends EntityStructureImpl implements Hum
             inventory = serializer.deserialize(
                     MapUtils.checkAndCastMap(map.get(KEY_INVENTORY)), PlayerInventoryStructure.class);
 
-        InventoryStructure enderChest = null;
+        InventoryStructure<Inventory> enderChest = null;
         if (map.containsKey(KEY_ENDER_CHEST))
             enderChest = serializer.deserialize(
                     MapUtils.checkAndCastMap(map.get(KEY_ENDER_CHEST)), InventoryStructure.class);

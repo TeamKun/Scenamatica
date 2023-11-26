@@ -2,6 +2,7 @@ package org.kunlab.scenamatica.action.actions.inventory;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.actions.AbstractActionArgument;
 import org.kunlab.scenamatica.interfaces.action.ActionArgument;
@@ -17,7 +18,7 @@ public abstract class AbstractInventoryArgument extends AbstractActionArgument
     public static final String KEY_INVENTORY = "inventory";
 
     @Nullable
-    protected final InventoryStructure inventory;
+    protected final InventoryStructure<Inventory> inventory;
 
     @Override
     public boolean isSame(TriggerArgument argument)

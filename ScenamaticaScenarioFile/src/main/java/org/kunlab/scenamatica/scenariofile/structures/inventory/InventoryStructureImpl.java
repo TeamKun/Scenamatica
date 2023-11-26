@@ -18,7 +18,7 @@ import java.util.Map;
 
 @Data
 @AllArgsConstructor
-public class InventoryStructureImpl implements InventoryStructure
+public class InventoryStructureImpl<T extends Inventory> implements InventoryStructure<T>
 {
     private final Integer size;
     private final String title;
@@ -35,7 +35,7 @@ public class InventoryStructureImpl implements InventoryStructure
     }
 
     @NotNull
-    public static Map<String, Object> serialize(@NotNull InventoryStructure structure, @NotNull StructureSerializer serializer)
+    public static Map<String, Object> serialize(@NotNull InventoryStructure<Inventory> structure, @NotNull StructureSerializer serializer)
     {
         Map<Integer, Object> contents = new HashMap<>();
         for (Map.Entry<Integer, ItemStackStructure> entry : structure.getMainContents().entrySet())
@@ -67,7 +67,7 @@ public class InventoryStructureImpl implements InventoryStructure
     }
 
     @NotNull
-    public static InventoryStructure deserialize(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
+    public static InventoryStructure<Inventory> deserialize(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
     {
         validate(map, serializer);
 
@@ -88,7 +88,7 @@ public class InventoryStructureImpl implements InventoryStructure
                 );
         }
 
-        return new InventoryStructureImpl(
+        return new InventoryStructureImpl<>(
                 MapUtils.getOrNull(map, KEY_SIZE),
                 MapUtils.getOrNull(map, KEY_TITLE),
                 mainContents
@@ -96,7 +96,7 @@ public class InventoryStructureImpl implements InventoryStructure
     }
 
     @Override
-    public Inventory create()
+    public T create()
     {
         Integer size = this.size;
         if (size == null)
@@ -113,7 +113,8 @@ public class InventoryStructureImpl implements InventoryStructure
         for (Map.Entry<Integer, ItemStackStructure> entry : this.mainContents.entrySet())
             inventory.setItem(entry.getKey(), entry.getValue().create());
 
-        return inventory;
+        // noinspection unchecked
+        return (T) inventory;
     }
 
     @Override
@@ -124,6 +125,11 @@ public class InventoryStructureImpl implements InventoryStructure
 
     @Override
     public boolean isAdequate(Inventory inventory, boolean strict)
+    {
+        return this.isAdequateInventory(inventory, strict);
+    }
+
+    protected boolean isAdequateInventory(Inventory inventory, boolean strict)
     {
         if (strict && !(this.size == null || this.size == inventory.getSize()))
             return false;

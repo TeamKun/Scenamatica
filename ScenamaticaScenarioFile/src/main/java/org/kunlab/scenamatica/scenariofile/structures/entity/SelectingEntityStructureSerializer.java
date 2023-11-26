@@ -5,12 +5,12 @@ import org.bukkit.entity.EntityType;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
+import org.kunlab.scenamatica.interfaces.scenariofile.context.PlayerStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.entity.EntityStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.entity.entities.EntityItemStructure;
-import org.kunlab.scenamatica.interfaces.scenariofile.entity.entities.HumanEntityStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.entity.entities.ProjectileStructure;
+import org.kunlab.scenamatica.scenariofile.structures.context.PlayerStructureImpl;
 import org.kunlab.scenamatica.scenariofile.structures.entity.entities.EntityItemStructureImpl;
-import org.kunlab.scenamatica.scenariofile.structures.entity.entities.HumanEntityStructureImpl;
 import org.kunlab.scenamatica.scenariofile.structures.entity.entities.ProjectileStructureImpl;
 
 import java.util.EnumMap;
@@ -22,9 +22,9 @@ public class SelectingEntityStructureSerializer
 {
     private static final EntityStructureEntry<EntityStructure> FALLBACK_ENTITY_STRUCTURE_ENTRY = new EntityStructureEntry<>(
             EntityStructure.class,
-            EntityItemStructureImpl::serialize,
-            EntityItemStructureImpl::deserialize,
-            EntityItemStructureImpl::validate
+            EntityStructureImpl::serialize,
+            EntityStructureImpl::deserialize,
+            (stringObjectMap, structureSerializer) -> EntityStructureImpl.validate(stringObjectMap)
     );
 
     private static final EnumMap<EntityType, EntityStructureEntry<? extends EntityStructure>> ENTITY_STRUCTURES;
@@ -45,13 +45,21 @@ public class SelectingEntityStructureSerializer
                 EntityItemStructureImpl::serialize,
                 EntityItemStructureImpl::deserialize,
                 EntityItemStructureImpl::validate
-        );
+        );/*
         registerStructure(
                 EntityType.PLAYER,
                 HumanEntityStructure.class,
                 HumanEntityStructureImpl::serialize,
                 HumanEntityStructureImpl::deserialize,
                 HumanEntityStructureImpl::validate
+        );*/
+
+        registerStructure(
+                EntityType.PLAYER,
+                PlayerStructure.class,
+                PlayerStructureImpl::serialize,
+                PlayerStructureImpl::deserialize,
+                PlayerStructureImpl::validate
         );
 
         registerProjectiles();
