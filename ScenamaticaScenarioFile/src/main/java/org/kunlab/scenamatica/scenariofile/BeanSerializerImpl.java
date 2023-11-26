@@ -11,9 +11,6 @@ import org.kunlab.scenamatica.interfaces.scenariofile.context.PlayerBean;
 import org.kunlab.scenamatica.interfaces.scenariofile.context.StageBean;
 import org.kunlab.scenamatica.interfaces.scenariofile.entity.DamageBean;
 import org.kunlab.scenamatica.interfaces.scenariofile.entity.EntityBean;
-import org.kunlab.scenamatica.interfaces.scenariofile.entity.entities.EntityItemBean;
-import org.kunlab.scenamatica.interfaces.scenariofile.entity.entities.HumanEntityBean;
-import org.kunlab.scenamatica.interfaces.scenariofile.entity.entities.ProjectileBean;
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.InventoryBean;
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.ItemStackBean;
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.PlayerInventoryBean;
@@ -26,9 +23,7 @@ import org.kunlab.scenamatica.scenariofile.beans.context.PlayerBeanImpl;
 import org.kunlab.scenamatica.scenariofile.beans.context.StageBeanImpl;
 import org.kunlab.scenamatica.scenariofile.beans.entity.DamageBeanImpl;
 import org.kunlab.scenamatica.scenariofile.beans.entity.EntityBeanImpl;
-import org.kunlab.scenamatica.scenariofile.beans.entity.entities.EntityItemBeanImpl;
-import org.kunlab.scenamatica.scenariofile.beans.entity.entities.HumanEntityBeanImpl;
-import org.kunlab.scenamatica.scenariofile.beans.entity.entities.ProjectileBeanImpl;
+import org.kunlab.scenamatica.scenariofile.beans.entity.SelectingEntityBeanSerializer;
 import org.kunlab.scenamatica.scenariofile.beans.inventory.InventoryBeanImpl;
 import org.kunlab.scenamatica.scenariofile.beans.inventory.ItemStackBeanImpl;
 import org.kunlab.scenamatica.scenariofile.beans.inventory.PlayerInventoryBeanImpl;
@@ -72,18 +67,31 @@ public class BeanSerializerImpl implements BeanSerializer
     @Override
     public @NotNull <T extends Bean> Map<String, Object> serialize(@NotNull T bean, @NotNull Class<T> clazz)
     {
+        // エンティティの場合は, さらに EntityType で分岐する
+        if (EntityBean.class.isAssignableFrom(clazz))
+            return SelectingEntityBeanSerializer.serialize((EntityBean) bean, this);
+
         return this.selectEntry(clazz).getSerializer().apply(bean, this);
     }
 
     @Override
     public <T extends Bean> @NotNull T deserialize(@NotNull Map<String, Object> map, @NotNull Class<T> clazz)
     {
+        // エンティティの場合は, さらに EntityType で分岐する
+        if (EntityBean.class.isAssignableFrom(clazz))
+            // noinspection unchecked
+            return SelectingEntityBeanSerializer.deserialize(map, this);
+
         return this.selectEntry(clazz).getDeserializer().apply(map, this);
     }
 
     @Override
     public <T extends Bean> void validate(@NotNull Map<String, Object> map, @NotNull Class<T> clazz)
     {
+        // エンティティの場合は, さらに EntityType で分岐する
+        if (EntityBean.class.isAssignableFrom(clazz))
+            SelectingEntityBeanSerializer.validate(map, this);
+
         this.selectEntry(clazz).getValidator().accept(map, this);
     }
 
@@ -203,8 +211,6 @@ public class BeanSerializerImpl implements BeanSerializer
 
     private void registerEntityBeans()
     {
-        this.registerEntityEntitiesBeans();
-
         this.registerBean(
                 DamageBean.class,
                 DamageBeanImpl::serialize,
@@ -216,29 +222,6 @@ public class BeanSerializerImpl implements BeanSerializer
                 EntityBeanImpl::serialize,
                 EntityBeanImpl::deserialize,
                 EntityBeanImpl::validate
-        );
-    }
-
-    private void registerEntityEntitiesBeans()
-    {
-        this.registerBean(
-                EntityItemBean.class,
-                EntityItemBeanImpl::serialize,
-                EntityItemBeanImpl::deserialize,
-                (BiConsumer<Map<String, Object>, BeanSerializer>) EntityItemBeanImpl::validate
-        );
-        this.registerBean(
-                HumanEntityBean.class,
-                HumanEntityBeanImpl::serialize,
-                HumanEntityBeanImpl::deserialize,
-                (BiConsumer<Map<String, Object>, BeanSerializer>) HumanEntityBeanImpl::validate
-        );
-
-        this.registerBean(
-                ProjectileBean.class,
-                ProjectileBeanImpl::serialize,
-                ProjectileBeanImpl::deserialize,
-                (BiConsumer<Map<String, Object>, BeanSerializer>) ProjectileBeanImpl::validate
         );
     }
 
@@ -304,7 +287,7 @@ public class BeanSerializerImpl implements BeanSerializer
 
     @Value
     @NotNull
-    private static class BeanEntry<T extends Bean>
+    public static class BeanEntry<T extends Bean>
     {
         Class<T> clazz;
         BiFunction<T, BeanSerializer, Map<String, Object>> serializer;

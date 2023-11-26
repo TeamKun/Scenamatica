@@ -18,11 +18,13 @@ public class ProjectileBeanImpl extends EntityBeanImpl implements ProjectileBean
 {
 
     EntityBean shooter;  // ProjectileSource だが, launchProjectile 以外存在しないので EntityBean で代用。
+    Boolean doesBounce;
 
-    public ProjectileBeanImpl(@NotNull EntityBean original, @Nullable EntityBean shooter)
+    public ProjectileBeanImpl(@NotNull EntityBean original, @Nullable EntityBean shooter, @Nullable Boolean doesBounce)
     {
         super(original);
         this.shooter = shooter;
+        this.doesBounce = doesBounce;
     }
 
     public static Map<String, Object> serialize(@NotNull ProjectileBean bean, @NotNull BeanSerializer serializer)
@@ -31,6 +33,9 @@ public class ProjectileBeanImpl extends EntityBeanImpl implements ProjectileBean
 
         if (bean.getShooter() != null)
             MapUtils.putMapIfNotEmpty(map, KEY_SHOOTER, serializer.serialize(bean.getShooter(), EntityBean.class));
+
+        MapUtils.putIfNotNull(map, KEY_DOES_BOUNCE, bean.getDoesBounce());
+
         return map;
     }
 
@@ -38,11 +43,14 @@ public class ProjectileBeanImpl extends EntityBeanImpl implements ProjectileBean
     {
         serializer.validate(map, EntityBean.class);
 
+        MapUtils.checkTypeIfContains(map, KEY_DOES_BOUNCE, Boolean.class);
+
         if (map.containsKey(KEY_SHOOTER))
         {
             Map<String, Object> shooterMap = MapUtils.checkAndCastMap(map.get(KEY_SHOOTER));
             serializer.validate(shooterMap, EntityBean.class);
         }
+
     }
 
     @NotNull
@@ -59,6 +67,10 @@ public class ProjectileBeanImpl extends EntityBeanImpl implements ProjectileBean
             shooter = serializer.deserialize(shooterMap, EntityBean.class);
         }
 
-        return new ProjectileBeanImpl(entity, shooter);
+        return new ProjectileBeanImpl(
+                entity,
+                shooter,
+                MapUtils.getOrNull(map, KEY_DOES_BOUNCE)
+        );
     }
 }

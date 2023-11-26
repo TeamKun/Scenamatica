@@ -16,6 +16,7 @@ import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDropItemEvent;
 import org.bukkit.inventory.Inventory;
@@ -33,6 +34,7 @@ import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.entity.EntityBean;
 import org.kunlab.scenamatica.interfaces.scenariofile.entity.entities.EntityItemBean;
+import org.kunlab.scenamatica.interfaces.scenariofile.entity.entities.ProjectileBean;
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.InventoryBean;
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.ItemStackBean;
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.PlayerInventoryBean;
@@ -513,6 +515,15 @@ public class BeanUtils
                 return false;
 
         return true;
+    }
+
+    public static boolean isSame(@NotNull ProjectileBean projectileBean, @NotNull Projectile projectile, boolean isStrict)
+    {
+        if (projectile.getType() != projectileBean.getType())
+            return false;
+
+        return isSame((EntityBean) projectileBean, projectile, isStrict)
+                && (projectileBean.getShooter() == null || (projectile.getShooter() != null && isSame(projectileBean.getShooter(), (Entity) projectile.getShooter(), isStrict)));
     }
 
     public static void applyItemBeanData(EntityItemBean bean, Entity dropper, Item entity)

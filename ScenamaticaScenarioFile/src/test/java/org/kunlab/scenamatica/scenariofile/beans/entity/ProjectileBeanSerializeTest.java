@@ -16,16 +16,19 @@ public class ProjectileBeanSerializeTest
 
     public static final ProjectileBean FULFILLED = new ProjectileBeanImpl(
             EntityBeanSerializeTest.FULFILLED,
-            EntityBeanSerializeTest.FULFILLED
+            EntityBeanSerializeTest.FULFILLED,
+            true
     );
 
     public static final Map<String, Object> FULFILLED_MAP = new HashMap<String, Object>(EntityBeanSerializeTest.FULFILLED_MAP)
     {{
         this.put(ProjectileBean.KEY_SHOOTER, EntityBeanSerializeTest.FULFILLED_MAP);
+        this.put(ProjectileBean.KEY_DOES_BOUNCE, true);
     }};
 
     public static final ProjectileBean EMPTY = new ProjectileBeanImpl(
             EntityBeanSerializeTest.EMPTY,
+            null,
             null
     );
 
