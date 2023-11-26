@@ -21,9 +21,9 @@ public enum TriggerType
 
     ;
 
-    private static final String BEAN_SERIALIZER_METHOD = "serialize";
-    private static final String BEAN_VALIDATOR_METHOD = "validate";
-    private static final String BEAN_DESERIALIZER_METHOD = "deserialize";
+    private static final String STRUCTURE_SERIALIZER_METHOD = "serialize";
+    private static final String STRUCTURE_VALIDATOR_METHOD = "validate";
+    private static final String STRUCTURE_DESERIALIZER_METHOD = "deserialize";
 
     /**
      * トリガのキーです。
@@ -67,7 +67,7 @@ public enum TriggerType
         try
         {
             return (Map<String, Object>) this.argumentType.getMethod(
-                            BEAN_SERIALIZER_METHOD, this.argumentType)
+                            STRUCTURE_SERIALIZER_METHOD, this.argumentType)
                     .invoke(null, argument);
         }
         catch (Exception e)
@@ -89,7 +89,7 @@ public enum TriggerType
 
         try
         {
-            this.argumentType.getMethod(BEAN_VALIDATOR_METHOD, Map.class)
+            this.argumentType.getMethod(STRUCTURE_VALIDATOR_METHOD, Map.class)
                     .invoke(null, argument);
         }
         catch (Exception e)
@@ -112,7 +112,7 @@ public enum TriggerType
         try
         {
             return (TriggerArgument) this.argumentType.getMethod(
-                            BEAN_DESERIALIZER_METHOD, Map.class)
+                            STRUCTURE_DESERIALIZER_METHOD, Map.class)
                     .invoke(null, map);
         }
         catch (Exception e)

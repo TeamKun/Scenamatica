@@ -5,7 +5,7 @@ import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.enums.TriggerType;
 import org.kunlab.scenamatica.interfaces.ScenamaticaRegistry;
-import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
+import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileStructure;
 
 import java.util.Arrays;
 import java.util.List;
@@ -19,7 +19,7 @@ public class CommandUtils
     {
         return Arrays.stream(Bukkit.getPluginManager().getPlugins()).parallel()
                 .filter(plugin -> {
-                    Map<String, ScenarioFileBean> scenarios = registry.getScenarioFileManager().getPluginScenarios(plugin);
+                    Map<String, ScenarioFileStructure> scenarios = registry.getScenarioFileManager().getPluginScenarios(plugin);
 
                     // MANUAL_DISPATCH トリガを持っているか確認する、
                     return scenarios != null && scenarios.values().stream().parallel()

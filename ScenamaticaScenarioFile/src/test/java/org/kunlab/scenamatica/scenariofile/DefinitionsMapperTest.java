@@ -1,7 +1,7 @@
 package org.kunlab.scenamatica.scenariofile;
 
 import org.junit.jupiter.api.Test;
-import org.kunlab.scenamatica.scenariofile.beans.utils.MapTestUtil;
+import org.kunlab.scenamatica.scenariofile.structures.utils.MapTestUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;

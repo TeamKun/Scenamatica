@@ -17,7 +17,7 @@ import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.BeanSerializer;
+import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Arrays;
@@ -104,7 +104,7 @@ public class WorldBorderAction extends AbstractWorldAction<WorldBorderAction.Arg
     }
 
     @Override
-    public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull BeanSerializer serializer)
+    public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
     {
         MapUtils.checkEnumNameIfContains(map, Argument.KEY_TYPE, WorldBorderBoundsChangeEvent.Type.class);
         MapUtils.checkNumberIfContains(map, Argument.KEY_SIZE);

@@ -15,7 +15,7 @@ import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.BeanSerializer;
+import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Collections;
@@ -66,7 +66,7 @@ public class PlayerMoveAction<T extends PlayerMoveAction.Argument> extends Abstr
     }
 
     @Override
-    public T deserializeArgument(@NotNull Map<String, Object> map, @NotNull BeanSerializer serializer)
+    public T deserializeArgument(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
     {
         // noinspection unchecked
         return (T) new Argument(

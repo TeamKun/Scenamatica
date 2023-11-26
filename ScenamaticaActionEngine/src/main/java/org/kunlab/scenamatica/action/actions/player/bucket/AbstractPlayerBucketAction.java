@@ -12,9 +12,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.actions.player.AbstractPlayerAction;
 import org.kunlab.scenamatica.action.utils.VoxelUtils;
-import org.kunlab.scenamatica.commons.utils.BeanUtils;
+import org.kunlab.scenamatica.commons.utils.StructureUtils;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.misc.BlockBean;
+import org.kunlab.scenamatica.interfaces.scenariofile.misc.BlockStructure;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -139,13 +139,13 @@ public abstract class AbstractPlayerBucketAction<A extends BucketActionArgument>
 
     protected static Block getPlaceAt(Player player, BucketActionArgument argument, ScenarioEngine engine)
     {
-        BlockBean candidate1 = argument.getBlockClicked();
-        BlockBean candidate2 = argument.getBlock();
+        BlockStructure candidate1 = argument.getBlockClicked();
+        BlockStructure candidate2 = argument.getBlock();
         Block applyBlock = null;
         if (candidate1 != null)
-            applyBlock = BeanUtils.applyBlockBeanData(engine, candidate1);
+            applyBlock = StructureUtils.applyBlockStructureData(engine, candidate1);
         if (candidate2 != null)
-            applyBlock = BeanUtils.applyBlockBeanData(engine, candidate2);
+            applyBlock = StructureUtils.applyBlockStructureData(engine, candidate2);
 
         if (applyBlock != null)
             return applyBlock;
@@ -172,9 +172,9 @@ public abstract class AbstractPlayerBucketAction<A extends BucketActionArgument>
 
         PlayerBucketEvent e = (PlayerBucketEvent) event;
 
-        return (argument.getItemStack() == null || BeanUtils.isSame(argument.getItemStack(), e.getItemStack(), true))
-                && (argument.getBlock() == null || BeanUtils.isSame(argument.getBlock(), e.getBlock(), engine))
-                && (argument.getBlockClicked() == null || BeanUtils.isSame(argument.getBlockClicked(), e.getBlockClicked(), engine))
+        return (argument.getItemStack() == null || StructureUtils.isSame(argument.getItemStack(), e.getItemStack(), true))
+                && (argument.getBlock() == null || StructureUtils.isSame(argument.getBlock(), e.getBlock(), engine))
+                && (argument.getBlockClicked() == null || StructureUtils.isSame(argument.getBlockClicked(), e.getBlockClicked(), engine))
                 && (argument.getBlockFace() == null || argument.getBlockFace() == e.getBlockFace())
                 && (argument.getBucket() == null || argument.getBucket() == e.getBucket())
                 && (argument.getHand() == null || argument.getHand() == e.getHand());

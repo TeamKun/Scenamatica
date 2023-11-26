@@ -14,8 +14,8 @@ import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.BeanSerializer;
-import org.kunlab.scenamatica.interfaces.scenariofile.action.ActionBean;
+import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
+import org.kunlab.scenamatica.interfaces.scenariofile.action.ActionStructure;
 
 import java.util.Collections;
 import java.util.List;
@@ -45,11 +45,11 @@ public class ActionCompilerImpl implements ActionCompiler
     private static <O extends ActionArgument> CompiledActionImpl<NegateAction.Argument<O>> processNegateAction(
             ScenarioEngine engine,
             NegateAction<O> action,
-            ActionBean bean,
+            ActionStructure structure,
             BiConsumer<CompiledAction<?>, Throwable> reportErrorTo,
             Consumer<CompiledAction<?>> onSuccess)
     {
-        Map<String, Object> arguments = bean.getArguments();
+        Map<String, Object> arguments = structure.getArguments();
         if (arguments == null)
             throw new IllegalArgumentException("NegateAction requires an argument.");
 
@@ -87,7 +87,7 @@ public class ActionCompilerImpl implements ActionCompiler
                 notArgument,
                 reportErrorTo,
                 onSuccess,
-                bean
+                structure
         );
     }
 
@@ -107,26 +107,26 @@ public class ActionCompilerImpl implements ActionCompiler
     @Override
     public <A extends ActionArgument> CompiledAction<A> compile(@NotNull ScenamaticaRegistry registry,
                                                                 @NotNull ScenarioEngine engine,
-                                                                @NotNull ActionBean bean,
+                                                                @NotNull ActionStructure structure,
                                                                 @Nullable BiConsumer<CompiledAction<?>, Throwable> reportErrorTo,
                                                                 @Nullable Consumer<CompiledAction<?>> onSuccess)
     {
-        Action<A> action = getActionByName(bean.getType());
+        Action<A> action = getActionByName(structure.getType());
         if (action == null)
-            throw new IllegalArgumentException("Action " + bean.getType() + " is not found.");
+            throw new IllegalArgumentException("Action " + structure.getType() + " is not found.");
         else if (action instanceof NegateAction)
             //noinspection unchecked
-            return (CompiledAction<A>) processNegateAction(engine, (NegateAction<A>) action, bean, reportErrorTo, onSuccess);
+            return (CompiledAction<A>) processNegateAction(engine, (NegateAction<A>) action, structure, reportErrorTo, onSuccess);
 
-        BeanSerializer serializer = engine.getManager().getRegistry().getScenarioFileManager().getSerializer();
+        StructureSerializer serializer = engine.getManager().getRegistry().getScenarioFileManager().getSerializer();
 
         A argument;
-        if (bean.getArguments() == null)
+        if (structure.getArguments() == null)
             argument = action.deserializeArgument(Collections.emptyMap(), serializer);
         else
-            argument = action.deserializeArgument(bean.getArguments(), serializer);
+            argument = action.deserializeArgument(structure.getArguments(), serializer);
 
-        return new CompiledActionImpl<>(engine, action, argument, reportErrorTo, onSuccess, bean);
+        return new CompiledActionImpl<>(engine, action, argument, reportErrorTo, onSuccess, structure);
     }
 
     @Override

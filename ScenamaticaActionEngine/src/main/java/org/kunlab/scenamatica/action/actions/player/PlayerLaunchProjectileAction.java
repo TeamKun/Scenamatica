@@ -30,7 +30,7 @@ import org.kunlab.scenamatica.interfaces.action.ActionArgument;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.BeanSerializer;
+import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Collections;
@@ -75,7 +75,7 @@ public class PlayerLaunchProjectileAction extends AbstractPlayerAction<PlayerLau
         Vector velocity = e.getProjectile().getVelocity().clone().normalize();
 
         // TODO: Check shooter item
-        return /* BeanUtils.isSame(argument.getShooterItem(), e.getItemStack(), false)
+        return /* StructureUtils.isSame(argument.getShooterItem(), e.getItemStack(), false)
                 &&*/ argument.getProjectileType() == projectileType
                 && (argument.getVelocity() == null || Utils.vectorEquals(argument.getVelocity(), velocity, argument.getEpsilon()));
     }
@@ -89,11 +89,11 @@ public class PlayerLaunchProjectileAction extends AbstractPlayerAction<PlayerLau
     }
 
     @Override
-    public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull BeanSerializer serializer)
+    public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
     {
         MapUtils.checkEnumName(map, Argument.KEY_PROJECTILE_TYPE, ProjectileType.class);
         MapUtils.checkTypeIfContains(map, Argument.KEY_PROJECTILE_EPSILON, Double.class);
-        // ItemStackBeanImpl.checkMap(map, PlayerLaunchProjectileActionArgument.KEY_PROJECTILE_SHOOTER);
+        // ItemStackStructureImpl.checkMap(map, PlayerLaunchProjectileActionArgument.KEY_PROJECTILE_SHOOTER);
 
         Map<String, Object> velocityMap = MapUtils.checkAndCastMap(map.get(Argument.KEY_PROJECTILE_VELOCITY));
 
@@ -106,7 +106,7 @@ public class PlayerLaunchProjectileAction extends AbstractPlayerAction<PlayerLau
         return new Argument(
                 super.deserializeTarget(map),
                 MapUtils.getAsEnum(map, Argument.KEY_PROJECTILE_TYPE, ProjectileType.class),
-                /* ItemStackBeanImpl.deserialize(map, PlayerLaunchProjectileActionArgument.KEY_PROJECTILE_SHOOTER) */
+                /* ItemStackStructureImpl.deserialize(map, PlayerLaunchProjectileActionArgument.KEY_PROJECTILE_SHOOTER) */
                 Vector.deserialize(velocityMap),
                 epsilon
         );
@@ -161,7 +161,7 @@ public class PlayerLaunchProjectileAction extends AbstractPlayerAction<PlayerLau
         public static final double DEFAULT_EPSILON = 0.01;
 
         // @NotNull
-        // ItemStackBean shooterItem;
+        // ItemStackStructure shooterItem;
         @NotNull
         ProjectileType projectileType;
         @Nullable

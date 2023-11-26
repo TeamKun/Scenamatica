@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.exceptions.context.stage.StageCreateFailedException;
 import org.kunlab.scenamatica.interfaces.ScenamaticaRegistry;
-import org.kunlab.scenamatica.scenariofile.beans.context.StageBeanImpl;
+import org.kunlab.scenamatica.scenariofile.structures.context.StageStructureImpl;
 
 import java.util.List;
 
@@ -32,7 +32,7 @@ public class CommandCreateStage extends CommandBase
 
         try
         {
-            this.registry.getContextManager().getStageManager().createStage(new StageBeanImpl(
+            this.registry.getContextManager().getStageManager().createStage(new StageStructureImpl(
                     name,
                     WorldType.NORMAL,
                     null,

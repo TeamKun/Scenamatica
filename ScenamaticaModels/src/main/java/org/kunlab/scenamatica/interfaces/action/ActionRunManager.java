@@ -4,7 +4,7 @@ import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.enums.WatchType;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
+import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileStructure;
 
 /**
  * 動作の実行と監視を管理するクラスのインターフェースです。
@@ -41,7 +41,7 @@ public interface ActionRunManager
      */
     <A extends ActionArgument> void queueWatch(@NotNull Plugin plugin,
                                                @NotNull ScenarioEngine engine,
-                                               @NotNull ScenarioFileBean scenario,
+                                               @NotNull ScenarioFileStructure scenario,
                                                @NotNull CompiledAction<A> action,
                                                @NotNull WatchType watchType);
 

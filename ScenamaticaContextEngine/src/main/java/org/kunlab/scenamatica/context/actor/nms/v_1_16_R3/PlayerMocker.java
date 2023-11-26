@@ -35,9 +35,9 @@ import org.kunlab.scenamatica.context.actor.PlayerMockerBase;
 import org.kunlab.scenamatica.interfaces.ScenamaticaRegistry;
 import org.kunlab.scenamatica.interfaces.context.Actor;
 import org.kunlab.scenamatica.interfaces.context.ActorManager;
-import org.kunlab.scenamatica.interfaces.scenariofile.context.PlayerBean;
-import org.kunlab.scenamatica.interfaces.scenariofile.inventory.ItemStackBean;
-import org.kunlab.scenamatica.interfaces.scenariofile.inventory.PlayerInventoryBean;
+import org.kunlab.scenamatica.interfaces.scenariofile.context.PlayerStructure;
+import org.kunlab.scenamatica.interfaces.scenariofile.inventory.ItemStackStructure;
+import org.kunlab.scenamatica.interfaces.scenariofile.inventory.PlayerInventoryStructure;
 import org.kunlab.scenamatica.settings.ActorSettings;
 
 import java.io.IOException;
@@ -95,28 +95,28 @@ public class PlayerMocker extends PlayerMockerBase
         sendSettings(player);
     }
 
-    private void initializePlayer(MockedPlayer player, PlayerBean bean)
+    private void initializePlayer(MockedPlayer player, PlayerStructure structure)
     {
-        this.initHumanEntity(player, bean);
-        this.initBasePlayer(player, bean);
-        this.initEntity(player, bean);
+        this.initHumanEntity(player, structure);
+        this.initBasePlayer(player, structure);
+        this.initEntity(player, structure);
     }
 
-    private void initBasePlayer(MockedPlayer player, PlayerBean bean)
+    private void initBasePlayer(MockedPlayer player, PlayerStructure structure)
     {
-        if (bean.getDisplayName() != null)
-            player.displayName = bean.getDisplayName();
-        if (bean.getPlayerListName() != null)
-            player.listName = new ChatComponentText(bean.getPlayerListName());
-        if (bean.getPlayerListHeader() != null)
-            player.getBukkitEntity().setPlayerListHeader(bean.getPlayerListHeader());
-        if (bean.getPlayerListFooter() != null)
-            player.getBukkitEntity().setPlayerListFooter(bean.getPlayerListFooter());
-        if (bean.getCompassTarget() != null)
+        if (structure.getDisplayName() != null)
+            player.displayName = structure.getDisplayName();
+        if (structure.getPlayerListName() != null)
+            player.listName = new ChatComponentText(structure.getPlayerListName());
+        if (structure.getPlayerListHeader() != null)
+            player.getBukkitEntity().setPlayerListHeader(structure.getPlayerListHeader());
+        if (structure.getPlayerListFooter() != null)
+            player.getBukkitEntity().setPlayerListFooter(structure.getPlayerListFooter());
+        if (structure.getCompassTarget() != null)
             player.compassTarget = player.getBukkitEntity().getLocation();
-        if (bean.getBedSpawnLocation() != null)
+        if (structure.getBedSpawnLocation() != null)
         {
-            Location loc = bean.getBedSpawnLocation();
+            Location loc = structure.getBedSpawnLocation();
             World world = Bukkit.getWorld(loc.getWorld().getName());
             if (world == null)
                 throw new IllegalArgumentException("World not found: " + loc.getWorld().getName());
@@ -130,20 +130,20 @@ public class PlayerMocker extends PlayerMockerBase
                     true
             );
         }
-        if (bean.getExp() != null)
-            player.giveExp(bean.getExp());
-        if (bean.getLevel() != null)
-            player.expLevel = bean.getLevel();
-        if (bean.getTotalExperience() != null)
-            player.expTotal = bean.getTotalExperience();
-        if (Boolean.TRUE.equals(bean.getFlying()))
-            player.abilities.isFlying = bean.getFlying();
-        if (bean.getWalkSpeed() != null)
-            player.abilities.walkSpeed = bean.getWalkSpeed();
-        if (bean.getFlySpeed() != null)
-            player.abilities.flySpeed = bean.getFlySpeed();
+        if (structure.getExp() != null)
+            player.giveExp(structure.getExp());
+        if (structure.getLevel() != null)
+            player.expLevel = structure.getLevel();
+        if (structure.getTotalExperience() != null)
+            player.expTotal = structure.getTotalExperience();
+        if (Boolean.TRUE.equals(structure.getFlying()))
+            player.abilities.isFlying = structure.getFlying();
+        if (structure.getWalkSpeed() != null)
+            player.abilities.walkSpeed = structure.getWalkSpeed();
+        if (structure.getFlySpeed() != null)
+            player.abilities.flySpeed = structure.getFlySpeed();
 
-        int opLevel = bean.getOpLevel() == null ? this.settings.getDefaultOPLevel(): bean.getOpLevel();
+        int opLevel = structure.getOpLevel() == null ? this.settings.getDefaultOPLevel(): structure.getOpLevel();
         boolean isOP = opLevel > 0;
         if (isOP)
         {
@@ -158,18 +158,18 @@ public class PlayerMocker extends PlayerMockerBase
 
         // permissions
 
-        Stream.of(bean.getActivePermissions(), this.settings.getDefaultPermissions())
+        Stream.of(structure.getActivePermissions(), this.settings.getDefaultPermissions())
                 .flatMap(List::stream)
                 .distinct()
                 .forEach(permission -> player.getBukkitEntity().addAttachment(this.registry.getPlugin(), permission, true));
     }
 
     @SuppressWarnings("deprecation")
-    private void initEntity(MockedPlayer player, PlayerBean bean)
+    private void initEntity(MockedPlayer player, PlayerStructure structure)
     {
-        if (bean.getLocation() != null)
+        if (structure.getLocation() != null)
         {
-            Location loc = bean.getLocation();
+            Location loc = structure.getLocation();
             player.setLocation(
                     loc.getX(), loc.getY(), loc.getZ(),
                     loc.getYaw(), loc.getPitch()
@@ -183,24 +183,24 @@ public class PlayerMocker extends PlayerMockerBase
                 player.spawnIn(((CraftWorld) world).getHandle());
             }
         }
-        if (bean.getCustomName() != null)
-            player.setCustomName(new ChatComponentText(bean.getCustomName()));
-        if (Boolean.TRUE.equals(bean.getGlowing()))
+        if (structure.getCustomName() != null)
+            player.setCustomName(new ChatComponentText(structure.getCustomName()));
+        if (Boolean.TRUE.equals(structure.getGlowing()))
             player.glowing = true;
-        if (Boolean.TRUE.equals(bean.getGravity()))
+        if (Boolean.TRUE.equals(structure.getGravity()))
             player.setNoGravity(false);
 
-        Stream.of(bean.getTags(), this.settings.getDefaultScoreboardTags())
+        Stream.of(structure.getTags(), this.settings.getDefaultScoreboardTags())
                 .flatMap(List::stream)
                 .distinct()
                 .forEach(player::addScoreboardTag);
 
-        if (bean.getMaxHealth() != null)
+        if (structure.getMaxHealth() != null)
             Objects.requireNonNull(player.getAttributeInstance(GenericAttributes.MAX_HEALTH))
-                    .setValue(bean.getMaxHealth());
-        if (bean.getHealth() != null)
-            player.setHealth(bean.getHealth());
-        for (PotionEffect effect : bean.getPotionEffects())
+                    .setValue(structure.getMaxHealth());
+        if (structure.getHealth() != null)
+            player.setHealth(structure.getHealth());
+        for (PotionEffect effect : structure.getPotionEffects())
             player.addEffect(new MobEffect(
                     MobEffectList.fromId(effect.getType().getId()),  // deprecated
                     effect.getDuration(),
@@ -209,26 +209,26 @@ public class PlayerMocker extends PlayerMockerBase
                     effect.hasParticles(),
                     effect.hasIcon()
             ));
-        if (bean.getLastDamageCause() != null)
+        if (structure.getLastDamageCause() != null)
             player.getBukkitEntity().setLastDamageCause(new EntityDamageEvent(
                     player.getBukkitEntity(),
-                    bean.getLastDamageCause().getCause(),
-                    bean.getLastDamageCause().getDamage()
+                    structure.getLastDamageCause().getCause(),
+                    structure.getLastDamageCause().getDamage()
             ));
     }
 
-    private void initHumanEntity(MockedPlayer player, PlayerBean bean)
+    private void initHumanEntity(MockedPlayer player, PlayerStructure structure)
     {
-        if (bean.getInventory() != null)
+        if (structure.getInventory() != null)
         {
-            PlayerInventoryBean inventory = bean.getInventory();
-            for (Map.Entry<Integer, ItemStackBean> entry : inventory.getMainContents().entrySet())
+            PlayerInventoryStructure inventory = structure.getInventory();
+            for (Map.Entry<Integer, ItemStackStructure> entry : inventory.getMainContents().entrySet())
                 player.inventory.setItem(entry.getKey(), CraftItemStack.asNMSCopy(entry.getValue().toItemStack()));
 
             if (inventory.getArmorContents() != null)
                 for (int i = 0; i < 4; i++)
                 {
-                    ItemStackBean item = inventory.getArmorContents()[i];
+                    ItemStackStructure item = inventory.getArmorContents()[i];
                     if (item != null)
                     {
                         int slot = 3 - i;  // 直感的に, 0 がヘルメットになるように逆順にする。
@@ -241,38 +241,38 @@ public class PlayerMocker extends PlayerMockerBase
             if (inventory.getMainHand() != null)
                 player.getBukkitEntity().getInventory().setItemInMainHand(inventory.getMainHand().toItemStack());
         }
-        if (player.getBukkitEntity().getGameMode() != bean.getGamemode())
-            player.playerInteractManager.setGameMode(EnumGamemode.a(bean.getGamemode().name().toLowerCase(Locale.ROOT)));
-        if (bean.getFoodLevel() != null)
-            player.getFoodData().foodLevel = bean.getFoodLevel();
+        if (player.getBukkitEntity().getGameMode() != structure.getGamemode())
+            player.playerInteractManager.setGameMode(EnumGamemode.a(structure.getGamemode().name().toLowerCase(Locale.ROOT)));
+        if (structure.getFoodLevel() != null)
+            player.getFoodData().foodLevel = structure.getFoodLevel();
     }
 
     @Override
     @NotNull
-    public Actor mock(@Nullable World world, @NotNull PlayerBean bean)
+    public Actor mock(@Nullable World world, @NotNull PlayerStructure structure)
     {
         MinecraftServer server = ((CraftServer) Bukkit.getServer()).getServer();
         NetworkManager mockedNetworkManager = new MockedNetworkManager(server);
         WorldServer worldServer = world == null ? server.E(): ((CraftWorld) world).getHandle();
-        GameProfile profile = createGameProfile(bean);
-        boolean doLogin = bean.getOnline() == null || bean.getOnline();
+        GameProfile profile = createGameProfile(structure);
+        boolean doLogin = structure.getOnline() == null || structure.getOnline();
 
         Location initialLocation;
-        if (bean.getLocation() != null)
-            initialLocation = bean.getLocation().clone();
+        if (structure.getLocation() != null)
+            initialLocation = structure.getLocation().clone();
         else if (world != null)
             initialLocation = world.getSpawnLocation().clone();
         else
             initialLocation = server.E().getWorld().getSpawnLocation().clone();
 
-        if (bean.getLocation() != null && bean.getLocation().getWorld() == null)
+        if (structure.getLocation() != null && structure.getLocation().getWorld() == null)
             initialLocation.setWorld(this.registry.getContextManager().getStageManager().getStage());
 
         MockedPlayer player = new MockedPlayer(this.manager,
                 this, mockedNetworkManager, server, worldServer, profile,
                 initialLocation
         );
-        this.initializePlayer(player, bean);
+        this.initializePlayer(player, structure);
 
         if (doLogin)
             this.doLogin(server, player);

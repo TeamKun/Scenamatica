@@ -6,7 +6,7 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredListener;
 import org.kunlab.scenamatica.enums.WatchType;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
+import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileStructure;
 
 import java.util.List;
 
@@ -39,7 +39,7 @@ public interface WatchingEntry<A extends ActionArgument>
     /**
      * 監視を行うシナリオを取得します。
      */
-    ScenarioFileBean getScenario();
+    ScenarioFileStructure getScenario();
 
     /**
      * 監視する動作を取得します。

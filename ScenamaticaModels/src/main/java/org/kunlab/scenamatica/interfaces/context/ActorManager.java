@@ -4,7 +4,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.exceptions.context.ContextPreparationException;
-import org.kunlab.scenamatica.interfaces.scenariofile.context.PlayerBean;
+import org.kunlab.scenamatica.interfaces.scenariofile.context.PlayerStructure;
 
 import java.util.List;
 import java.util.UUID;
@@ -18,10 +18,10 @@ public interface ActorManager
      * 役者を生成します。
      * このメソッドは非同期で実行する必要があります。
      *
-     * @param bean プレイヤー情報
+     * @param structure プレイヤー情報
      * @return 生成した役者
      */
-    Actor createActor(PlayerBean bean) throws ContextPreparationException;
+    Actor createActor(PlayerStructure structure) throws ContextPreparationException;
 
     /**
      * 役者を破棄します。

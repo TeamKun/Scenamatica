@@ -2,7 +2,7 @@ package org.kunlab.scenamatica.interfaces.scenario.runtime;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerBean;
+import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerStructure;
 
 import java.util.List;
 
@@ -17,7 +17,7 @@ public interface CompiledTriggerAction
      * @return トリガ
      */
     @NotNull
-    TriggerBean getTrigger();
+    TriggerStructure getTrigger();
 
     /**
      * 本シナリオの実行前に実行するシナリオを取得します。

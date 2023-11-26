@@ -14,16 +14,16 @@ import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.actions.entity.EntityArgumentHolder;
 import org.kunlab.scenamatica.action.actions.entity.EntitySpawnAction;
 import org.kunlab.scenamatica.action.utils.PlayerUtils;
-import org.kunlab.scenamatica.commons.utils.BeanUtils;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
+import org.kunlab.scenamatica.commons.utils.StructureUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.context.Actor;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.BeanSerializer;
-import org.kunlab.scenamatica.interfaces.scenariofile.entity.EntityBean;
-import org.kunlab.scenamatica.interfaces.scenariofile.inventory.ItemStackBean;
+import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
+import org.kunlab.scenamatica.interfaces.scenariofile.entity.EntityStructure;
+import org.kunlab.scenamatica.interfaces.scenariofile.inventory.ItemStackStructure;
 import org.kunlab.scenamatica.nms.enums.entity.NMSEntityUseAction;
 
 import java.util.Collections;
@@ -60,8 +60,8 @@ public class PlayerBucketEntityAction extends AbstractPlayerAction<PlayerBucketE
             targetEntity = argument.getEntity().selectTarget();
         else
         {
-            EntityBean bean = argument.getEntity().getTargetBean();
-            targetEntity = EntitySpawnAction.spawnEntity(bean, null, engine);
+            EntityStructure structure = argument.getEntity().getTargetStructure();
+            targetEntity = EntitySpawnAction.spawnEntity(structure, null, engine);
         }
 
         if (targetEntity == null)
@@ -71,10 +71,10 @@ public class PlayerBucketEntityAction extends AbstractPlayerAction<PlayerBucketE
         ItemStack itemInMainHand = player.getInventory().getItemInMainHand();
         if (argument.getOriginalBucket() != null)
         {
-            ItemStackBean beanOriginalBucket = argument.getOriginalBucket();
-            if (!BeanUtils.isSame(beanOriginalBucket, itemInMainHand, false))
+            ItemStackStructure structureOriginalBucket = argument.getOriginalBucket();
+            if (!StructureUtils.isSame(structureOriginalBucket, itemInMainHand, false))
             {
-                ItemStack originalBucket = beanOriginalBucket.toItemStack();
+                ItemStack originalBucket = structureOriginalBucket.toItemStack();
                 player.getInventory().setItemInMainHand(originalBucket);
             }
         }
@@ -100,8 +100,8 @@ public class PlayerBucketEntityAction extends AbstractPlayerAction<PlayerBucketE
         PlayerBucketEntityEvent e = (PlayerBucketEntityEvent) event;
 
         return argument.getEntity().checkMatchedEntity(e.getEntity())
-                || (argument.getEntityBucket() != null && BeanUtils.isSame(argument.getEntityBucket(), e.getEntityBucket(), false))
-                || (argument.getOriginalBucket() != null && BeanUtils.isSame(argument.getOriginalBucket(), e.getOriginalBucket(), false));
+                || (argument.getEntityBucket() != null && StructureUtils.isSame(argument.getEntityBucket(), e.getEntityBucket(), false))
+                || (argument.getOriginalBucket() != null && StructureUtils.isSame(argument.getOriginalBucket(), e.getOriginalBucket(), false));
     }
 
     @Override
@@ -113,20 +113,20 @@ public class PlayerBucketEntityAction extends AbstractPlayerAction<PlayerBucketE
     }
 
     @Override
-    public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull BeanSerializer serializer)
+    public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
     {
-        ItemStackBean originalBucket = null;
+        ItemStackStructure originalBucket = null;
         if (map.containsKey(Argument.KEY_ORIGINAL_BUCKET))
             originalBucket = serializer.deserialize(
                     MapUtils.checkAndCastMap(map.get(Argument.KEY_ORIGINAL_BUCKET)),
-                    ItemStackBean.class
+                    ItemStackStructure.class
             );
 
-        ItemStackBean entityBucket = null;
+        ItemStackStructure entityBucket = null;
         if (map.containsKey(Argument.KEY_ENTITY_BUCKET))
             entityBucket = serializer.deserialize(
                     MapUtils.checkAndCastMap(map.get(Argument.KEY_ENTITY_BUCKET)),
-                    ItemStackBean.class
+                    ItemStackStructure.class
             );
 
         return new Argument(
@@ -146,10 +146,10 @@ public class PlayerBucketEntityAction extends AbstractPlayerAction<PlayerBucketE
         public static final String KEY_ENTITY_BUCKET = "entityBucket";
 
         EntityArgumentHolder<?> entity;
-        ItemStackBean originalBucket;
-        ItemStackBean entityBucket;
+        ItemStackStructure originalBucket;
+        ItemStackStructure entityBucket;
 
-        public Argument(String target, EntityArgumentHolder<?> entity, ItemStackBean originalBucket, ItemStackBean entityBucket)
+        public Argument(String target, EntityArgumentHolder<?> entity, ItemStackStructure originalBucket, ItemStackStructure entityBucket)
         {
             super(target);
             this.entity = entity;

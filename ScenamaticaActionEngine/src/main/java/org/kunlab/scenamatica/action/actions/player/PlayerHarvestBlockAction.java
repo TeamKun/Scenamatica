@@ -8,15 +8,15 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.actions.block.BlockBreakAction;
-import org.kunlab.scenamatica.commons.utils.BeanUtils;
+import org.kunlab.scenamatica.commons.utils.StructureUtils;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.BeanSerializer;
-import org.kunlab.scenamatica.interfaces.scenariofile.inventory.ItemStackBean;
-import org.kunlab.scenamatica.interfaces.scenariofile.misc.BlockBean;
+import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
+import org.kunlab.scenamatica.interfaces.scenariofile.inventory.ItemStackStructure;
+import org.kunlab.scenamatica.interfaces.scenariofile.misc.BlockStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.ArrayList;
@@ -61,21 +61,21 @@ public class PlayerHarvestBlockAction extends AbstractPlayerAction<PlayerHarvest
 
         PlayerHarvestBlockEvent e = (PlayerHarvestBlockEvent) event;
 
-        List<ItemStackBean> items = argument.getItems();
+        List<ItemStackStructure> items = argument.getItems();
         if (!items.isEmpty())
         {
             @NotNull
             List<ItemStack> drops = e.getItemsHarvested();
-            for (ItemStackBean item : items)
+            for (ItemStackStructure item : items)
             {
                 boolean isExpectedItemHarvested =
-                        drops.stream().anyMatch(drop -> BeanUtils.isSame(item, drop, false));
+                        drops.stream().anyMatch(drop -> StructureUtils.isSame(item, drop, false));
                 if (!isExpectedItemHarvested)
                     return false;
             }
         }
 
-        return (argument.block == null || BeanUtils.isSame(argument.getBlock(), e.getHarvestedBlock(), engine));
+        return (argument.block == null || StructureUtils.isSame(argument.getBlock(), e.getHarvestedBlock(), engine));
     }
 
     @Override
@@ -87,21 +87,21 @@ public class PlayerHarvestBlockAction extends AbstractPlayerAction<PlayerHarvest
     }
 
     @Override
-    public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull BeanSerializer serializer)
+    public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
     {
-        BlockBean block = null;
+        BlockStructure block = null;
         if (map.containsKey(Argument.KEY_HARVESTED_BLOCK))
             block = serializer.deserialize(
                     MapUtils.checkAndCastMap(map.get(Argument.KEY_HARVESTED_BLOCK)),
-                    BlockBean.class
+                    BlockStructure.class
             );
 
-        List<ItemStackBean> items = new ArrayList<>();
+        List<ItemStackStructure> items = new ArrayList<>();
         if (map.containsKey(Argument.KEY_ITEMS_HARVESTED))
         {
             List<Map<String, Object>> itemMaps = MapUtils.getAsList(map, Argument.KEY_ITEMS_HARVESTED);
             for (Map<String, Object> itemMap : itemMaps)
-                items.add(serializer.deserialize(itemMap, ItemStackBean.class));
+                items.add(serializer.deserialize(itemMap, ItemStackStructure.class));
         }
 
         return new Argument(
@@ -118,11 +118,11 @@ public class PlayerHarvestBlockAction extends AbstractPlayerAction<PlayerHarvest
         public static final String KEY_HARVESTED_BLOCK = "block";
         public static final String KEY_ITEMS_HARVESTED = "items";
 
-        BlockBean block;
+        BlockStructure block;
         @NotNull
-        List<ItemStackBean> items;
+        List<ItemStackStructure> items;
 
-        public Argument(String target, BlockBean block, @NotNull List<ItemStackBean> items)
+        public Argument(String target, BlockStructure block, @NotNull List<ItemStackStructure> items)
         {
             super(target);
             this.block = block;
@@ -136,7 +136,7 @@ public class PlayerHarvestBlockAction extends AbstractPlayerAction<PlayerHarvest
             if (type == ScenarioType.ACTION_EXECUTE)
             {
                 ensurePresent(KEY_HARVESTED_BLOCK, this.block);
-                ensurePresent(KEY_HARVESTED_BLOCK + BlockBean.KEY_BLOCK_LOCATION, this.block.getLocation());
+                ensurePresent(KEY_HARVESTED_BLOCK + BlockStructure.KEY_BLOCK_LOCATION, this.block.getLocation());
                 if (!this.items.isEmpty())
                     throw new IllegalArgumentException("cannot specify items in action execute mode");
             }

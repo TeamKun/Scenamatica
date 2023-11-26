@@ -8,7 +8,7 @@ import org.kunlab.scenamatica.interfaces.scenario.ScenarioResult;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioSession;
 import org.kunlab.scenamatica.interfaces.scenario.TestReporter;
 import org.kunlab.scenamatica.interfaces.scenario.runtime.CompiledScenarioAction;
-import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerBean;
+import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerStructure;
 import org.kunlab.scenamatica.reporter.packets.AbstractRawPacket;
 import org.kunlab.scenamatica.reporter.packets.action.PacketActionConditionCheckFailed;
 import org.kunlab.scenamatica.reporter.packets.action.PacketActionConditionChecking;
@@ -36,7 +36,7 @@ public class RawTestReporter implements TestReporter
     private static final PrintStream OUT = new PrintStream(new FileOutputStream(FileDescriptor.out));
 
     @Override
-    public void onTestStart(@NotNull ScenarioEngine engine, @NotNull TriggerBean trigger)
+    public void onTestStart(@NotNull ScenarioEngine engine, @NotNull TriggerStructure trigger)
     {
         this.printJSON(new PacketTestStart(engine));
     }

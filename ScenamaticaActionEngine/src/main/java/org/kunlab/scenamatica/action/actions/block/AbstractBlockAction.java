@@ -5,12 +5,12 @@ import org.bukkit.event.Event;
 import org.bukkit.event.block.BlockEvent;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.action.actions.AbstractAction;
-import org.kunlab.scenamatica.commons.utils.BeanUtils;
+import org.kunlab.scenamatica.commons.utils.StructureUtils;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.commons.utils.Utils;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.BeanSerializer;
-import org.kunlab.scenamatica.interfaces.scenariofile.misc.BlockBean;
+import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
+import org.kunlab.scenamatica.interfaces.scenariofile.misc.BlockStructure;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,21 +36,21 @@ public abstract class AbstractBlockAction<A extends AbstractBlockActionArgument>
 
         BlockEvent e = (BlockEvent) event;
 
-        return argument.block == null || BeanUtils.isSame(argument.block, e.getBlock(), engine);
+        return argument.block == null || StructureUtils.isSame(argument.block, e.getBlock(), engine);
     }
 
-    public BlockBean deserializeBlockOrNull(@NotNull Map<String, Object> map, @NotNull BeanSerializer serializer)
+    public BlockStructure deserializeBlockOrNull(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
     {
         if (!map.containsKey(AbstractBlockActionArgument.KEY_BLOCK))
             return null;
 
         return serializer.deserialize(
                 MapUtils.checkAndCastMap(map.get(AbstractBlockActionArgument.KEY_BLOCK)),
-                BlockBean.class
+                BlockStructure.class
         );
     }
 
-    protected Location getBlockLocationWithWorld(@NotNull BlockBean block, @NotNull ScenarioEngine engine)
+    protected Location getBlockLocationWithWorld(@NotNull BlockStructure block, @NotNull ScenarioEngine engine)
     {
         return Utils.assignWorldToLocation(block.getLocation().clone(), engine);
     }

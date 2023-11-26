@@ -5,7 +5,7 @@ import org.kunlab.scenamatica.interfaces.action.Action;
 import org.kunlab.scenamatica.interfaces.action.ActionArgument;
 import org.kunlab.scenamatica.interfaces.action.CompiledAction;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.action.ActionBean;
+import org.kunlab.scenamatica.interfaces.scenariofile.action.ActionStructure;
 
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -18,5 +18,5 @@ public class CompiledActionImpl<A extends ActionArgument> implements CompiledAct
     A argument;
     BiConsumer<CompiledAction<?>, Throwable> errorHandler;
     Consumer<CompiledAction<?>> onExecute;
-    ActionBean bean;
+    ActionStructure structure;
 }

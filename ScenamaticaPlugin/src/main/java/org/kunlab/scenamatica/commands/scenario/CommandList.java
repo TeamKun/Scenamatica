@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.enums.TriggerType;
 import org.kunlab.scenamatica.interfaces.ScenamaticaRegistry;
-import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
+import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileStructure;
 import org.kunlab.scenamatica.utils.CommandUtils;
 
 import java.util.Comparator;
@@ -43,7 +43,7 @@ public class CommandList extends CommandBase
             return;
         }
 
-        Map<String, ScenarioFileBean> scenarioMap = this.registry.getScenarioFileManager().getPluginScenarios(plugin);
+        Map<String, ScenarioFileStructure> scenarioMap = this.registry.getScenarioFileManager().getPluginScenarios(plugin);
         if (scenarioMap == null)
         {
             terminal.error(LangProvider.get("command.scenario.list.noPlugin", MsgArgs.of("plugin", pluginName)));
@@ -57,11 +57,11 @@ public class CommandList extends CommandBase
         );
 
         scenarioMap.values().stream().parallel()
-                .sorted(Comparator.comparing(ScenarioFileBean::getName))
+                .sorted(Comparator.comparing(ScenarioFileStructure::getName))
                 .forEachOrdered(scenario -> this.printScenario(terminal, plugin, scenario));
     }
 
-    private void printScenario(Terminal terminal, Plugin plugin, ScenarioFileBean scenario)
+    private void printScenario(Terminal terminal, Plugin plugin, ScenarioFileStructure scenario)
     {
         boolean canManualDispatch = scenario.getTriggers().stream().parallel()
                 .anyMatch(trigger -> trigger.getType() == TriggerType.MANUAL_DISPATCH);

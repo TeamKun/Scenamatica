@@ -1,7 +1,7 @@
 package org.kunlab.scenamatica.interfaces.action;
 
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.action.ActionBean;
+import org.kunlab.scenamatica.interfaces.scenariofile.action.ActionStructure;
 
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -21,11 +21,11 @@ public interface CompiledAction<A extends ActionArgument>
     ScenarioEngine getEngine();
 
     /**
-     * アクションの Bean を取得します。
+     * アクションの Structure を取得します。
      *
-     * @return アクションの Bean
+     * @return アクションの Structure
      */
-    ActionBean getBean();
+    ActionStructure getStructure();
 
     /**
      * アクションの実行を取得します。

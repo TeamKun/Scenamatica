@@ -12,7 +12,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.jetbrains.annotations.NotNull;
-import org.kunlab.scenamatica.commons.utils.BeanUtils;
+import org.kunlab.scenamatica.commons.utils.StructureUtils;
 import org.kunlab.scenamatica.commons.utils.LogUtils;
 import org.kunlab.scenamatica.commons.utils.ThreadingUtil;
 import org.kunlab.scenamatica.context.actor.ActorManagerImpl;
@@ -26,10 +26,10 @@ import org.kunlab.scenamatica.interfaces.context.ActorManager;
 import org.kunlab.scenamatica.interfaces.context.Context;
 import org.kunlab.scenamatica.interfaces.context.ContextManager;
 import org.kunlab.scenamatica.interfaces.context.StageManager;
-import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
-import org.kunlab.scenamatica.interfaces.scenariofile.context.ContextBean;
-import org.kunlab.scenamatica.interfaces.scenariofile.context.PlayerBean;
-import org.kunlab.scenamatica.interfaces.scenariofile.entity.EntityBean;
+import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileStructure;
+import org.kunlab.scenamatica.interfaces.scenariofile.context.ContextStructure;
+import org.kunlab.scenamatica.interfaces.scenariofile.context.PlayerStructure;
+import org.kunlab.scenamatica.interfaces.scenariofile.entity.EntityStructure;
 import org.spigotmc.SpigotConfig;
 
 import java.util.ArrayList;
@@ -75,12 +75,12 @@ public class ContextManagerImpl implements ContextManager
         SpigotConfig.userCacheCap = 0;
     }
 
-    private static MsgArgs getArgs(ScenarioFileBean scenario, UUID testID)
+    private static MsgArgs getArgs(ScenarioFileStructure scenario, UUID testID)
     {
         return MsgArgs.of("prefix", LogUtils.gerScenarioPrefix(testID, scenario));
     }
 
-    private World prepareWorld(ContextBean context, ScenarioFileBean scenario, UUID testID) throws StageCreateFailedException
+    private World prepareWorld(ContextStructure context, ScenarioFileStructure scenario, UUID testID) throws StageCreateFailedException
     {
         if (context == null || context.getWorld() == null)
             return this.stageManager.shared(DEFAULT_ORIGINAL_WORLD_NAME);
@@ -103,12 +103,12 @@ public class ContextManagerImpl implements ContextManager
         );
     }
 
-    private List<Actor> prepareActors(ContextBean context, ScenarioFileBean scenario, UUID testID) throws StageCreateFailedException, StageNotCreatedException
+    private List<Actor> prepareActors(ContextStructure context, ScenarioFileStructure scenario, UUID testID) throws StageCreateFailedException, StageNotCreatedException
     {
         try
         {
             List<Actor> actors = new ArrayList<>();
-            for (PlayerBean actor : context.getActors())
+            for (PlayerStructure actor : context.getActors())
                 actors.add(this.actorManager.createActor(actor));
 
             this.isActorPrepared = true;
@@ -126,7 +126,7 @@ public class ContextManagerImpl implements ContextManager
 
     }
 
-    private Entity spawnEntity(World stage, EntityBean entity)
+    private Entity spawnEntity(World stage, EntityStructure entity)
     {
         EntityType type = entity.getType();
         if (type == null)
@@ -151,7 +151,7 @@ public class ContextManagerImpl implements ContextManager
                     String tagName = "scenamatica-" + entityTag;
                     Entity e = stage.spawnEntity(spawnLoc, type, CreatureSpawnEvent.SpawnReason.CUSTOM,
                             generatedEntity -> {
-                                BeanUtils.applyEntityBeanData(entity, generatedEntity);
+                                StructureUtils.applyEntityStructureData(entity, generatedEntity);
                                 generatedEntity.addScoreboardTag(tagName);
                             }
                     );
@@ -163,10 +163,10 @@ public class ContextManagerImpl implements ContextManager
         );
     }
 
-    private List<Entity> prepareEntities(World stage, ContextBean context, ScenarioFileBean scenario, UUID testID) throws StageCreateFailedException, StageNotCreatedException
+    private List<Entity> prepareEntities(World stage, ContextStructure context, ScenarioFileStructure scenario, UUID testID) throws StageCreateFailedException, StageNotCreatedException
     {
         List<Entity> entities = new ArrayList<>();
-        for (EntityBean entity : context.getEntities())
+        for (EntityStructure entity : context.getEntities())
             entities.add(this.spawnEntity(stage, entity));
 
         this.isActorPrepared = true;
@@ -175,10 +175,10 @@ public class ContextManagerImpl implements ContextManager
     }
 
     @Override
-    public Context prepareContext(@NotNull ScenarioFileBean scenario, @NotNull UUID testID)
+    public Context prepareContext(@NotNull ScenarioFileStructure scenario, @NotNull UUID testID)
             throws StageNotCreatedException, StageCreateFailedException
     {
-        ContextBean context = scenario.getContext();
+        ContextStructure context = scenario.getContext();
 
         this.logIfVerbose(scenario, "context.creating", testID);
 
@@ -209,21 +209,21 @@ public class ContextManagerImpl implements ContextManager
         return new ContextImpl(stage, actors, generatedEntities);
     }
 
-    private void logIfVerbose(ScenarioFileBean scenario, String message, MsgArgs args, UUID testID)
+    private void logIfVerbose(ScenarioFileStructure scenario, String message, MsgArgs args, UUID testID)
     {
         if (!this.verbose)
             return;
         this.logger.log(Level.INFO, LangProvider.get(message, getArgs(scenario, testID).add(args)));
     }
 
-    private void logIfVerbose(ScenarioFileBean scenario, String message, UUID testID)
+    private void logIfVerbose(ScenarioFileStructure scenario, String message, UUID testID)
     {
         if (!this.verbose)
             return;
         this.logger.log(Level.INFO, LangProvider.get(message, getArgs(scenario, testID)));
     }
 
-    private void logActorGenFail(ScenarioFileBean scenario, UUID testID)
+    private void logActorGenFail(ScenarioFileStructure scenario, UUID testID)
     {
         this.logger.log(Level.WARNING, LangProvider.get("context.actor.failed", getArgs(scenario, testID)));
     }

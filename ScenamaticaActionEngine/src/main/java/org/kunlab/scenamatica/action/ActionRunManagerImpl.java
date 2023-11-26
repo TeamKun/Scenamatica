@@ -15,7 +15,7 @@ import org.kunlab.scenamatica.interfaces.action.CompiledAction;
 import org.kunlab.scenamatica.interfaces.action.WatcherManager;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
+import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileStructure;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -60,7 +60,7 @@ public class ActionRunManagerImpl implements ActionRunManager
     @Override
     public <A extends ActionArgument> void queueWatch(@NotNull Plugin plugin,
                                                       @NotNull ScenarioEngine engine,
-                                                      @NotNull ScenarioFileBean scenario,
+                                                      @NotNull ScenarioFileStructure scenario,
                                                       @NotNull CompiledAction<A> action,
                                                       @NotNull WatchType watchType)
     {

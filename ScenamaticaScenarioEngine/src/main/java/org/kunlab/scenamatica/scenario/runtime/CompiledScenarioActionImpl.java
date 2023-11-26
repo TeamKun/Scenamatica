@@ -7,13 +7,13 @@ import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionArgument;
 import org.kunlab.scenamatica.interfaces.action.CompiledAction;
 import org.kunlab.scenamatica.interfaces.scenario.runtime.CompiledScenarioAction;
-import org.kunlab.scenamatica.interfaces.scenariofile.scenario.ScenarioBean;
+import org.kunlab.scenamatica.interfaces.scenariofile.scenario.ScenarioStructure;
 
 @Value
 public class CompiledScenarioActionImpl<A extends ActionArgument> implements CompiledScenarioAction<A>
 {
     @NotNull
-    ScenarioBean bean;
+    ScenarioStructure structure;
     @NotNull
     ScenarioType type;
     @NotNull

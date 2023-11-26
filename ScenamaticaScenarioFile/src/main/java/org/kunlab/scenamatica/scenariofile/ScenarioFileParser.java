@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import org.apache.commons.lang.StringUtils;
 import org.kunlab.scenamatica.exceptions.scenariofile.InvalidScenarioFileException;
 import org.kunlab.scenamatica.exceptions.scenariofile.NotAScenarioFileException;
-import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
+import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileStructure;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.FileNotFoundException;
@@ -27,7 +27,7 @@ public class ScenarioFileParser
             ".yaml"
     };
 
-    public static ScenarioFileBean fromMap(Map<String, Object> map, @Nullable String fileName)
+    public static ScenarioFileStructure fromMap(Map<String, Object> map, @Nullable String fileName)
             throws InvalidScenarioFileException
     {
         try
@@ -36,7 +36,7 @@ public class ScenarioFileParser
             if (!map.containsKey("scenamatica"))  // シナリオファイルには scenamatica キーが最上位に必須。
                 throw new NotAScenarioFileException(fileName);
 
-            return BeanSerializerImpl.getInstance().deserialize(map, ScenarioFileBean.class);
+            return StructureSerializerImpl.getInstance().deserialize(map, ScenarioFileStructure.class);
         }
         catch (IllegalArgumentException e)
         {
@@ -46,7 +46,7 @@ public class ScenarioFileParser
         }
     }
 
-    public static ScenarioFileBean fromInputStream(InputStream inputStream, @Nullable String fileName)
+    public static ScenarioFileStructure fromInputStream(InputStream inputStream, @Nullable String fileName)
             throws InvalidScenarioFileException
     {
         Yaml sYaml = new Yaml(new SimpleYamlConstructor());
@@ -54,7 +54,7 @@ public class ScenarioFileParser
         return fromMap(map, fileName);
     }
 
-    public static ScenarioFileBean fromJar(Path jarPath, Path inJarPath)
+    public static ScenarioFileStructure fromJar(Path jarPath, Path inJarPath)
             throws IOException, InvalidScenarioFileException
     {
         try (ZipFile zip = new ZipFile(jarPath.toFile()))  // .jar を .zip としてみなす。
@@ -70,10 +70,10 @@ public class ScenarioFileParser
         }
     }
 
-    public static Map<String, ScenarioFileBean> loadAllFromJar(Path jarPath)
+    public static Map<String, ScenarioFileStructure> loadAllFromJar(Path jarPath)
             throws IOException, InvalidScenarioFileException
     {
-        Map<String, ScenarioFileBean> map = new HashMap<>();
+        Map<String, ScenarioFileStructure> map = new HashMap<>();
 
         try (ZipFile zip = new ZipFile(jarPath.toFile()))  // .jar を .zip としてみなす。
         {
@@ -91,7 +91,7 @@ public class ScenarioFileParser
 
                 try (InputStream zis = zip.getInputStream(entry))
                 {
-                    ScenarioFileBean scenario = fromInputStream(zis, inZipPath);
+                    ScenarioFileStructure scenario = fromInputStream(zis, inZipPath);
                     if (map.containsKey(scenario.getName()))
                         throw new IllegalStateException(String.format(
                                 "Duplicated scenario name: %s(%s, %s)",

@@ -10,15 +10,15 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.utils.PlayerUtils;
-import org.kunlab.scenamatica.commons.utils.BeanUtils;
+import org.kunlab.scenamatica.commons.utils.StructureUtils;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.context.Actor;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.BeanSerializer;
-import org.kunlab.scenamatica.interfaces.scenariofile.inventory.ItemStackBean;
+import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
+import org.kunlab.scenamatica.interfaces.scenariofile.inventory.ItemStackStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Collections;
@@ -48,7 +48,7 @@ public class PlayerItemConsumeAction extends AbstractPlayerAction<PlayerItemCons
     {
         argument = this.requireArgsNonNull(argument);
 
-        ItemStackBean item = argument.getItem();
+        ItemStackStructure item = argument.getItem();
         Actor actor = PlayerUtils.getActorOrThrow(engine, argument.getTarget());
 
         if (item != null)
@@ -72,8 +72,8 @@ public class PlayerItemConsumeAction extends AbstractPlayerAction<PlayerItemCons
         ItemStack item = e.getItem();
         ItemStack replacement = e.getReplacement();
 
-        return (argument.item == null || BeanUtils.isSame(argument.getItem(), item, false))
-                && (argument.replacement == null || BeanUtils.isSame(argument.getReplacement(), replacement, false));
+        return (argument.item == null || StructureUtils.isSame(argument.getItem(), item, false))
+                && (argument.replacement == null || StructureUtils.isSame(argument.getReplacement(), replacement, false));
     }
 
     @Override
@@ -85,20 +85,20 @@ public class PlayerItemConsumeAction extends AbstractPlayerAction<PlayerItemCons
     }
 
     @Override
-    public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull BeanSerializer serializer)
+    public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
     {
-        ItemStackBean item = null;
+        ItemStackStructure item = null;
         if (map.containsKey(Argument.KEY_ITEM))
             item = serializer.deserialize(
                     MapUtils.checkAndCastMap(map.get(Argument.KEY_ITEM)),
-                    ItemStackBean.class
+                    ItemStackStructure.class
             );
 
-        ItemStackBean replacement = null;
+        ItemStackStructure replacement = null;
         if (map.containsKey(Argument.KEY_REPLACEMENT))
             replacement = serializer.deserialize(
                     MapUtils.checkAndCastMap(map.get(Argument.KEY_REPLACEMENT)),
-                    ItemStackBean.class
+                    ItemStackStructure.class
             );
 
         return new Argument(
@@ -116,11 +116,11 @@ public class PlayerItemConsumeAction extends AbstractPlayerAction<PlayerItemCons
         public static final String KEY_REPLACEMENT = "replacement";
 
         @Nullable
-        ItemStackBean item;
+        ItemStackStructure item;
         @Nullable
-        ItemStackBean replacement;
+        ItemStackStructure replacement;
 
-        public Argument(String target, @Nullable ItemStackBean item, @Nullable ItemStackBean replacement)
+        public Argument(String target, @Nullable ItemStackStructure item, @Nullable ItemStackStructure replacement)
         {
             super(target);
             this.item = item;

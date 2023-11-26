@@ -16,8 +16,8 @@ import org.kunlab.scenamatica.interfaces.scenario.ScenarioResult;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioSession;
 import org.kunlab.scenamatica.interfaces.scenario.TestReporter;
 import org.kunlab.scenamatica.interfaces.scenario.runtime.CompiledScenarioAction;
-import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
-import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerBean;
+import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileStructure;
+import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerStructure;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -67,9 +67,9 @@ public class BukkitTestReporter implements TestReporter
     }
 
     @Override
-    public void onTestStart(@NotNull ScenarioEngine engine, @NotNull TriggerBean trigger)
+    public void onTestStart(@NotNull ScenarioEngine engine, @NotNull TriggerStructure trigger)
     {
-        ScenarioFileBean scenario = engine.getScenario();
+        ScenarioFileStructure scenario = engine.getScenario();
 
         this.terminals.forEach(t ->
                 t.info(this.withPrefix(engine.getTestID(), scenario, LangProvider.get(
@@ -83,7 +83,7 @@ public class BukkitTestReporter implements TestReporter
     @Override
     public void onTestSkipped(@NotNull ScenarioEngine engine, @NotNull CompiledScenarioAction<?> action)
     {
-        ScenarioFileBean scenario = engine.getScenario();
+        ScenarioFileStructure scenario = engine.getScenario();
 
         this.terminals.forEach(t -> t.warn(this.withPrefix(engine.getTestID(), scenario, LangProvider.get(
                 "test.skip",
@@ -95,7 +95,7 @@ public class BukkitTestReporter implements TestReporter
     @Override
     public void onActionStart(@NotNull ScenarioEngine engine, @NotNull CompiledScenarioAction<?> action)
     {
-        ScenarioFileBean scenario = engine.getScenario();
+        ScenarioFileStructure scenario = engine.getScenario();
 
         switch (action.getType())
         {
@@ -122,7 +122,7 @@ public class BukkitTestReporter implements TestReporter
     @Override
     public void onActionSuccess(@NotNull ScenarioEngine engine, @NotNull CompiledAction<?> action)
     {
-        ScenarioFileBean scenario = engine.getScenario();
+        ScenarioFileStructure scenario = engine.getScenario();
 
         this.terminals.forEach(t -> t.success(this.withPrefix(engine.getTestID(), scenario, LangProvider.get(
                 "test.action.run.success",
@@ -133,7 +133,7 @@ public class BukkitTestReporter implements TestReporter
     @Override
     public void onWatchingActionExecuted(@NotNull ScenarioEngine engine, @NotNull CompiledAction<?> action)
     {
-        ScenarioFileBean scenario = engine.getScenario();
+        ScenarioFileStructure scenario = engine.getScenario();
 
         this.terminals.forEach(t -> t.success(this.withPrefix(engine.getTestID(), scenario, LangProvider.get(
                 "test.action.watch.done",
@@ -145,7 +145,7 @@ public class BukkitTestReporter implements TestReporter
     @Override
     public void onActionExecuteFailed(@NotNull ScenarioEngine engine, @NotNull CompiledAction<?> action, @NotNull Throwable error)
     {
-        ScenarioFileBean scenario = engine.getScenario();
+        ScenarioFileStructure scenario = engine.getScenario();
 
         this.terminals.forEach(t -> t.info(this.withPrefix(engine.getTestID(), scenario, LangProvider.get(
                 "test.action.run.fail",
@@ -157,7 +157,7 @@ public class BukkitTestReporter implements TestReporter
     @Override
     public void onActionJumped(@NotNull ScenarioEngine engine, @NotNull CompiledAction<?> action, @NotNull CompiledAction<?> expected)
     {
-        ScenarioFileBean scenario = engine.getScenario();
+        ScenarioFileStructure scenario = engine.getScenario();
 
         this.terminals.forEach(t -> t.warn(this.withPrefix(engine.getTestID(), scenario, LangProvider.get(
                 "test.action.jumped",
@@ -169,7 +169,7 @@ public class BukkitTestReporter implements TestReporter
     @Override
     public void onConditionCheckSuccess(@NotNull ScenarioEngine engine, @NotNull CompiledScenarioAction<?> action)
     {
-        ScenarioFileBean scenario = engine.getScenario();
+        ScenarioFileStructure scenario = engine.getScenario();
 
         this.terminals.forEach(t -> t.success(this.withPrefix(engine.getTestID(), scenario, LangProvider.get(
                 "test.action.require.success",
@@ -180,7 +180,7 @@ public class BukkitTestReporter implements TestReporter
     @Override
     public void onConditionCheckFailed(@NotNull ScenarioEngine engine, @NotNull CompiledScenarioAction<?> action)
     {
-        ScenarioFileBean scenario = engine.getScenario();
+        ScenarioFileStructure scenario = engine.getScenario();
 
         this.terminals.forEach(t -> t.error(this.withPrefix(engine.getTestID(), scenario, LangProvider.get(
                 "test.action.require.fail",
@@ -191,7 +191,7 @@ public class BukkitTestReporter implements TestReporter
     @Override
     public void onTestEnd(@NotNull ScenarioEngine engine, @NotNull ScenarioResult result)
     {
-        ScenarioFileBean scenario = engine.getScenario();
+        ScenarioFileStructure scenario = engine.getScenario();
 
         this.terminals.forEach(t -> {
             UUID testID = result.getTestID();
@@ -322,7 +322,7 @@ public class BukkitTestReporter implements TestReporter
         this.printSeparator(null, terminal, null, 50);
     }
 
-    protected void printTestSummary(Terminal terminal, ScenarioFileBean scenario, ScenarioResult result)
+    protected void printTestSummary(Terminal terminal, ScenarioFileStructure scenario, ScenarioResult result)
     {
         boolean passed = result.getScenarioResultCause() == ScenarioResultCause.PASSED;
 
@@ -347,7 +347,7 @@ public class BukkitTestReporter implements TestReporter
             terminal.error(this.withPrefix(result.getTestID(), scenario, summary));
     }
 
-    protected void printDetails(Terminal terminal, ScenarioFileBean scenario, ScenarioResult result)
+    protected void printDetails(Terminal terminal, ScenarioFileStructure scenario, ScenarioResult result)
     {
         ScenarioResultCause cause = result.getScenarioResultCause();
 
@@ -386,7 +386,7 @@ public class BukkitTestReporter implements TestReporter
         )));
     }
 
-    protected void printSeparator(UUID testID, Terminal terminal, ScenarioFileBean scenario)
+    protected void printSeparator(UUID testID, Terminal terminal, ScenarioFileStructure scenario)
     {
         if (terminal.isPlayer())
             this.printSeparator(testID, terminal, scenario, 25);
@@ -394,7 +394,7 @@ public class BukkitTestReporter implements TestReporter
             this.printSeparator(testID, terminal, scenario, 53);
     }
 
-    protected void printSeparator(UUID testID, Terminal terminal, ScenarioFileBean scenario, int size)
+    protected void printSeparator(UUID testID, Terminal terminal, ScenarioFileStructure scenario, int size)
     {
         int maxSize = 53;
         if (size > maxSize)
@@ -409,7 +409,7 @@ public class BukkitTestReporter implements TestReporter
         terminal.info(this.withPrefix(testID, scenario, ChatColor.BLUE + ChatColor.STRIKETHROUGH.toString() + line));
     }
 
-    protected String withPrefix(UUID testID, ScenarioFileBean scenario, String message)
+    protected String withPrefix(UUID testID, ScenarioFileStructure scenario, String message)
     {
         return LogUtils.gerScenarioPrefix(testID, scenario) + message;
     }

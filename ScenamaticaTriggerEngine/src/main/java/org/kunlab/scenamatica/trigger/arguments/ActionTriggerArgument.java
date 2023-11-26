@@ -2,7 +2,7 @@ package org.kunlab.scenamatica.trigger.arguments;
 
 import lombok.Value;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
-import org.kunlab.scenamatica.interfaces.scenariofile.action.ActionBean;
+import org.kunlab.scenamatica.interfaces.scenariofile.action.ActionStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.HashMap;
@@ -14,7 +14,7 @@ import java.util.Objects;
  * アクショントリガーの引数を表すインターフェースです。
  */
 @Value
-public class ActionTriggerArgument implements TriggerArgument, ActionBean
+public class ActionTriggerArgument implements TriggerArgument, ActionStructure
 {
     public static final String KEY_ACTION_TYPE = "action";
     public static final String KEY_ACTION_ARGS = "with";

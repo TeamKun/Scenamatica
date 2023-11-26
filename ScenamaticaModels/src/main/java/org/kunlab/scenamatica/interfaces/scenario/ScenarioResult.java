@@ -5,7 +5,7 @@ import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.enums.ScenarioResultCause;
 import org.kunlab.scenamatica.enums.ScenarioState;
 import org.kunlab.scenamatica.interfaces.action.Action;
-import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
+import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileStructure;
 
 import java.util.UUID;
 
@@ -28,7 +28,7 @@ public interface ScenarioResult
      * @return テストのシナリオ
      */
     @NotNull
-    ScenarioFileBean getScenario();
+    ScenarioFileStructure getScenario();
 
     /**
      * テストの状態を取得します。

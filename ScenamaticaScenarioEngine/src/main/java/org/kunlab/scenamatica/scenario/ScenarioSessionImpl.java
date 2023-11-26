@@ -9,7 +9,7 @@ import org.kunlab.scenamatica.interfaces.scenario.QueuedScenario;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioResult;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioSession;
-import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerBean;
+import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerStructure;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -60,7 +60,7 @@ public class ScenarioSessionImpl implements ScenarioSession
     }
 
     @Override
-    public void add(@NotNull ScenarioEngine engine, @NotNull TriggerBean trigger, @Nullable Consumer<? super ScenarioResult> callback)
+    public void add(@NotNull ScenarioEngine engine, @NotNull TriggerStructure trigger, @Nullable Consumer<? super ScenarioResult> callback)
     {
         this.scenarios.add(new QueuedScenarioImpl(this.manager, engine, trigger, callback));
         this.sort();

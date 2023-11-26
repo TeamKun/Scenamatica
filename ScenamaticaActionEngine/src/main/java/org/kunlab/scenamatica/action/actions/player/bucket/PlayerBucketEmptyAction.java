@@ -15,13 +15,13 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.utils.PlayerUtils;
-import org.kunlab.scenamatica.commons.utils.BeanUtils;
+import org.kunlab.scenamatica.commons.utils.StructureUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.context.Actor;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.BeanSerializer;
+import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 
 import java.util.Collections;
 import java.util.List;
@@ -56,7 +56,7 @@ public class PlayerBucketEmptyAction extends AbstractPlayerBucketAction<PlayerBu
         {
             Block blockClicked = null;
             if (argument.getBlockClicked() != null)
-                blockClicked = BeanUtils.applyBlockBeanData(engine, argument.getBlockClicked());
+                blockClicked = StructureUtils.applyBlockStructureData(engine, argument.getBlockClicked());
             this.doEventOnlyMode(player, block, blockClicked, direction, stack.getType(), stack, argument.getHand());
         }
 
@@ -105,7 +105,7 @@ public class PlayerBucketEmptyAction extends AbstractPlayerBucketAction<PlayerBu
     }
 
     @Override
-    public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull BeanSerializer serializer)
+    public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
     {
         return new Argument(Argument.deserialize(map, serializer));
     }

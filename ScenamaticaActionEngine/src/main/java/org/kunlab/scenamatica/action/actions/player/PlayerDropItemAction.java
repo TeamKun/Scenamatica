@@ -6,13 +6,13 @@ import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.kunlab.scenamatica.commons.utils.BeanUtils;
+import org.kunlab.scenamatica.commons.utils.StructureUtils;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.BeanSerializer;
-import org.kunlab.scenamatica.interfaces.scenariofile.entity.entities.EntityItemBean;
+import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
+import org.kunlab.scenamatica.interfaces.scenariofile.entity.entities.EntityItemStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Collections;
@@ -35,7 +35,7 @@ public class PlayerDropItemAction extends AbstractPlayerAction<PlayerDropItemAct
     public void execute(@NotNull ScenarioEngine engine, @Nullable Argument argument)
     {
         argument = this.requireArgsNonNull(argument);
-        EntityItemBean item = argument.getItem();
+        EntityItemStructure item = argument.getItem();
 
         // item がしてある場合は、先に手に持たせる。
         if (item != null)
@@ -52,9 +52,9 @@ public class PlayerDropItemAction extends AbstractPlayerAction<PlayerDropItemAct
 
         assert event instanceof PlayerDropItemEvent;
         PlayerDropItemEvent e = (PlayerDropItemEvent) event;
-        EntityItemBean item = argument.getItem();
+        EntityItemStructure item = argument.getItem();
 
-        return item == null || BeanUtils.isSame(
+        return item == null || StructureUtils.isSame(
                 item.getItemStack(),
                 e.getItemDrop().getItemStack(),
                 /* strict: */ true
@@ -70,13 +70,13 @@ public class PlayerDropItemAction extends AbstractPlayerAction<PlayerDropItemAct
     }
 
     @Override
-    public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull BeanSerializer serializer)
+    public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
     {
-        EntityItemBean item = null;
+        EntityItemStructure item = null;
         if (map.containsKey(Argument.KEY_ITEM))
             item = serializer.deserialize(
                     MapUtils.checkAndCastMap(map.get(Argument.KEY_ITEM)),
-                    EntityItemBean.class
+                    EntityItemStructure.class
             );
 
 
@@ -93,9 +93,9 @@ public class PlayerDropItemAction extends AbstractPlayerAction<PlayerDropItemAct
         public static final String KEY_ITEM = "item";
 
         @Nullable
-        EntityItemBean item;
+        EntityItemStructure item;
 
-        public Argument(String target, @Nullable EntityItemBean item)
+        public Argument(String target, @Nullable EntityItemStructure item)
         {
             super(target);
             this.item = item;

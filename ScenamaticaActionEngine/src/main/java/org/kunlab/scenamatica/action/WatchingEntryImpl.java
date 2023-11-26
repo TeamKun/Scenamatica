@@ -17,7 +17,7 @@ import org.kunlab.scenamatica.interfaces.action.WatcherManager;
 import org.kunlab.scenamatica.interfaces.action.WatchingEntry;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
+import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileStructure;
 
 import java.util.List;
 
@@ -27,7 +27,7 @@ public class WatchingEntryImpl<A extends ActionArgument> implements WatchingEntr
     WatcherManager manager;
     ScenarioEngine engine;
     Plugin plugin;
-    ScenarioFileBean scenario;
+    ScenarioFileStructure scenario;
     CompiledAction<A> action;
     WatchType type;
     List<Pair<Class<? extends Event>, RegisteredListener>> listeners;

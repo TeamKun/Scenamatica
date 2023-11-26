@@ -14,8 +14,8 @@ import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.BeanSerializer;
-import org.kunlab.scenamatica.interfaces.scenariofile.inventory.InventoryBean;
+import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
+import org.kunlab.scenamatica.interfaces.scenariofile.inventory.InventoryStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Collections;
@@ -76,7 +76,7 @@ public class InventoryCloseAction extends AbstractInventoryAction<InventoryClose
     }
 
     @Override
-    public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull BeanSerializer serializer)
+    public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
     {
         return new Argument(
                 super.deserializeInventoryIfContains(map, serializer),
@@ -95,7 +95,7 @@ public class InventoryCloseAction extends AbstractInventoryAction<InventoryClose
         String targetPlayer;
         InventoryCloseEvent.Reason reason;
 
-        public Argument(@Nullable InventoryBean inventory, String targetPlayer, InventoryCloseEvent.Reason reason)
+        public Argument(@Nullable InventoryStructure inventory, String targetPlayer, InventoryCloseEvent.Reason reason)
         {
             super(inventory);
             this.targetPlayer = targetPlayer;

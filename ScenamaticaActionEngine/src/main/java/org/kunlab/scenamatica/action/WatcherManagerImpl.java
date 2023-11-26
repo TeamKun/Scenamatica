@@ -18,7 +18,7 @@ import org.kunlab.scenamatica.interfaces.action.WatcherManager;
 import org.kunlab.scenamatica.interfaces.action.WatchingEntry;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
+import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileStructure;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -40,7 +40,7 @@ public class WatcherManagerImpl implements WatcherManager
     @Override
     public List<WatchingEntry<?>> registerWatchers(@NotNull Plugin plugin,
                                                    @NotNull ScenarioEngine engine,
-                                                   @NotNull ScenarioFileBean scenario,
+                                                   @NotNull ScenarioFileStructure scenario,
                                                    @NotNull List<? extends CompiledAction<?>> watchers,
                                                    @NotNull WatchType type)
     {
@@ -66,7 +66,7 @@ public class WatcherManagerImpl implements WatcherManager
     @Override
     public <A extends ActionArgument> WatchingEntry<A> registerWatcher(@NotNull ScenarioEngine engine,
                                                                        @NotNull CompiledAction<A> watcher,
-                                                                       @NotNull ScenarioFileBean scenario,
+                                                                       @NotNull ScenarioFileStructure scenario,
                                                                        @NotNull Plugin plugin,
                                                                        @NotNull WatchType type)
     {
@@ -88,7 +88,7 @@ public class WatcherManagerImpl implements WatcherManager
 
     private <A extends ActionArgument> WatchingEntry<A> createWatchingEntry(@NotNull ScenarioEngine engine,
                                                                             @NotNull CompiledAction<A> action,
-                                                                            @NotNull ScenarioFileBean scenario,
+                                                                            @NotNull ScenarioFileStructure scenario,
                                                                             @NotNull Plugin plugin,
                                                                             @NotNull WatchType type)
     {

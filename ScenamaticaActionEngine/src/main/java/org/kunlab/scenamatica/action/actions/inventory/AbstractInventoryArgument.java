@@ -5,7 +5,7 @@ import lombok.Getter;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.actions.AbstractActionArgument;
 import org.kunlab.scenamatica.interfaces.action.ActionArgument;
-import org.kunlab.scenamatica.interfaces.scenariofile.inventory.InventoryBean;
+import org.kunlab.scenamatica.interfaces.scenariofile.inventory.InventoryStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Objects;
@@ -17,7 +17,7 @@ public abstract class AbstractInventoryArgument extends AbstractActionArgument
     public static final String KEY_INVENTORY = "inventory";
 
     @Nullable
-    protected final InventoryBean inventory;
+    protected final InventoryStructure inventory;
 
     @Override
     public boolean isSame(TriggerArgument argument)

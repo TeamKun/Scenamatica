@@ -11,7 +11,7 @@ import org.kunlab.scenamatica.action.actions.world.AbstractWorldAction;
 import org.kunlab.scenamatica.action.actions.world.AbstractWorldActionArgument;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.BeanSerializer;
+import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Collections;
@@ -51,7 +51,7 @@ public class WorldBorderChangedAction extends AbstractWorldAction<WorldBorderCha
     }
 
     @Override
-    public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull BeanSerializer serializer)
+    public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
     {
         MapUtils.checkNumberIfContains(map, WorldBorderAction.Argument.KEY_SIZE);
         MapUtils.checkNumberIfContains(map, WorldBorderAction.Argument.KEY_SIZE_OLD);

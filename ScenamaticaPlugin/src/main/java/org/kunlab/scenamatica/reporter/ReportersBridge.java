@@ -7,7 +7,7 @@ import org.kunlab.scenamatica.interfaces.scenario.ScenarioResult;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioSession;
 import org.kunlab.scenamatica.interfaces.scenario.TestReporter;
 import org.kunlab.scenamatica.interfaces.scenario.runtime.CompiledScenarioAction;
-import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerBean;
+import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerStructure;
 
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -23,7 +23,7 @@ public class ReportersBridge implements TestReporter
     }
 
     @Override
-    public void onTestStart(@NotNull ScenarioEngine engine, @NotNull TriggerBean trigger)
+    public void onTestStart(@NotNull ScenarioEngine engine, @NotNull TriggerStructure trigger)
     {
         this.reporters.forEach(reporter -> reporter.onTestStart(engine, trigger));
     }

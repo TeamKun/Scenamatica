@@ -37,8 +37,8 @@ public abstract class AbstractActionPacket extends AbstractTestPacket
     {
         Map<String, Object> result = super.serialize();
 
-        result.put(KEY_ACTION, action.getBean());
-        result.put(KEY_ARGUMENT, action.getBean().getArguments());
+        result.put(KEY_ACTION, action.getStructure());
+        result.put(KEY_ARGUMENT, action.getStructure().getArguments());
 
         return result;
     }

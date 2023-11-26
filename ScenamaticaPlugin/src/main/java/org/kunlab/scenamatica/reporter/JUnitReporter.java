@@ -7,7 +7,7 @@ import org.kunlab.scenamatica.interfaces.scenario.ScenarioResult;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioSession;
 import org.kunlab.scenamatica.interfaces.scenario.TestReporter;
 import org.kunlab.scenamatica.interfaces.scenario.runtime.CompiledScenarioAction;
-import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerBean;
+import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerStructure;
 import org.kunlab.scenamatica.results.ScenarioResultWriter;
 
 public class JUnitReporter implements TestReporter
@@ -20,7 +20,7 @@ public class JUnitReporter implements TestReporter
     }
 
     @Override
-    public void onTestStart(@NotNull ScenarioEngine engine, @NotNull TriggerBean trigger)
+    public void onTestStart(@NotNull ScenarioEngine engine, @NotNull TriggerStructure trigger)
     {
         this.writer.getLogCapture().startCapture(engine.getTestID());
     }

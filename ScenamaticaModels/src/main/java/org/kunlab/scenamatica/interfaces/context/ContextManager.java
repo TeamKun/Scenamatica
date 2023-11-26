@@ -3,7 +3,7 @@ package org.kunlab.scenamatica.interfaces.context;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.exceptions.context.stage.StageCreateFailedException;
 import org.kunlab.scenamatica.exceptions.context.stage.StageNotCreatedException;
-import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
+import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileStructure;
 
 import java.util.UUID;
 
@@ -18,7 +18,7 @@ public interface ContextManager
      * @param scenario シナリオファイル
      * @return 成功した場合は true
      */
-    Context prepareContext(@NotNull ScenarioFileBean scenario, @NotNull UUID testID) throws StageCreateFailedException, StageNotCreatedException;
+    Context prepareContext(@NotNull ScenarioFileStructure scenario, @NotNull UUID testID) throws StageCreateFailedException, StageNotCreatedException;
 
     /**
      * 環境を破棄します。

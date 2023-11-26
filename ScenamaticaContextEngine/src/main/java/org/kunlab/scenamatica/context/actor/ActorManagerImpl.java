@@ -21,7 +21,7 @@ import org.kunlab.scenamatica.interfaces.ScenamaticaRegistry;
 import org.kunlab.scenamatica.interfaces.context.Actor;
 import org.kunlab.scenamatica.interfaces.context.ActorManager;
 import org.kunlab.scenamatica.interfaces.context.ContextManager;
-import org.kunlab.scenamatica.interfaces.scenariofile.context.PlayerBean;
+import org.kunlab.scenamatica.interfaces.scenariofile.context.PlayerStructure;
 import org.kunlab.scenamatica.settings.ActorSettings;
 
 import java.util.ArrayList;
@@ -73,24 +73,24 @@ public class ActorManagerImpl implements ActorManager, Listener
     }
 
     @Override
-    public Actor createActor(PlayerBean bean) throws ContextPreparationException
+    public Actor createActor(PlayerStructure structure) throws ContextPreparationException
     {
-        Objects.requireNonNull(bean.getName(), "Unable to create actor: name is null.");
+        Objects.requireNonNull(structure.getName(), "Unable to create actor: name is null.");
 
         if (Bukkit.getServer().isPrimaryThread())
             throw new ContextPreparationException("This method must be called from another thread.");
-        else if (this.actors.stream().anyMatch(p -> p.getName().equalsIgnoreCase(bean.getName())))
-            throw new ActorAlreadyExistsException(bean.getName());
+        else if (this.actors.stream().anyMatch(p -> p.getName().equalsIgnoreCase(structure.getName())))
+            throw new ActorAlreadyExistsException(structure.getName());
         else if (!this.contextManager.getStageManager().isStageCreated())
             throw new StageNotCreatedException();
         else if (this.actors.size() + 1 > this.settings.getMaxActors())
             throw new ContextPreparationException("Too many actors on this server (max: " + this.settings.getMaxActors() + ")");
 
-        Actor actor = ThreadingUtil.waitFor(this.registry, () -> this.actorGenerator.mock(this.contextManager.getStageManager().getStage(), bean));
+        Actor actor = ThreadingUtil.waitFor(this.registry, () -> this.actorGenerator.mock(this.contextManager.getStageManager().getStage(), structure));
 
         this.actors.add(actor);
 
-        if (bean.getOnline() == null || bean.getOnline())  // オンラインモードはログインするの待つ。
+        if (structure.getOnline() == null || structure.getOnline())  // オンラインモードはログインするの待つ。
             this.waitForJoin(actor);
 
         return actor;

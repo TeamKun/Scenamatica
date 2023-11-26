@@ -7,7 +7,7 @@ import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.misc.BlockBean;
+import org.kunlab.scenamatica.interfaces.scenariofile.misc.BlockStructure;
 
 import java.util.Locale;
 import java.util.UUID;
@@ -38,7 +38,7 @@ public class Utils
         return newLoc;
     }
 
-    public static Location assignWorldToBlockLocation(@NotNull BlockBean block, @NotNull ScenarioEngine engine)
+    public static Location assignWorldToBlockLocation(@NotNull BlockStructure block, @NotNull ScenarioEngine engine)
     {
         return assignWorldToLocation(block.getLocation(), engine);
     }

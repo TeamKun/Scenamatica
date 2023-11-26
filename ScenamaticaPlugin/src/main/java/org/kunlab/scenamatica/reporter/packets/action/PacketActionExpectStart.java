@@ -18,7 +18,7 @@ public class PacketActionExpectStart extends AbstractActionPacket
     {
         super(TYPE, scenario.getTestID(), action.getAction());
 
-        this.timeout = action.getBean().getTimeout();
+        this.timeout = action.getStructure().getTimeout();
     }
 
     @Override

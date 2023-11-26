@@ -3,7 +3,7 @@ package org.kunlab.scenamatica.interfaces.scenario;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerBean;
+import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerStructure;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -20,7 +20,7 @@ public interface ScenarioSession
      * @param trigger  トリガー
      * @param callback コールバック
      */
-    void add(@NotNull ScenarioEngine engine, @NotNull TriggerBean trigger, @Nullable Consumer<? super ScenarioResult> callback);
+    void add(@NotNull ScenarioEngine engine, @NotNull TriggerStructure trigger, @Nullable Consumer<? super ScenarioResult> callback);
 
     /**
      * セッションにシナリオを追加します。
@@ -28,7 +28,7 @@ public interface ScenarioSession
      * @param engine  シナリオエンジン
      * @param trigger トリガー
      */
-    default void add(@NotNull ScenarioEngine engine, @NotNull TriggerBean trigger)
+    default void add(@NotNull ScenarioEngine engine, @NotNull TriggerStructure trigger)
     {
         this.add(engine, trigger, null);
     }

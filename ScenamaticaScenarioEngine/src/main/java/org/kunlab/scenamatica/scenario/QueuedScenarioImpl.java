@@ -7,7 +7,7 @@ import org.kunlab.scenamatica.exceptions.scenario.TriggerNotFoundException;
 import org.kunlab.scenamatica.interfaces.scenario.QueuedScenario;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioResult;
-import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerBean;
+import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerStructure;
 
 import java.util.function.Consumer;
 
@@ -19,7 +19,7 @@ public class QueuedScenarioImpl implements QueuedScenario
     @NotNull
     private final ScenarioEngine engine;
     @NotNull
-    private final TriggerBean trigger;
+    private final TriggerStructure trigger;
     private final @Nullable Consumer<? super ScenarioResult> callback;
 
     private long startedAt;
@@ -28,7 +28,7 @@ public class QueuedScenarioImpl implements QueuedScenario
     private long finishedAt;
 
     public QueuedScenarioImpl(
-            @NotNull ScenarioManagerImpl manager, @NotNull ScenarioEngine engine, @NotNull TriggerBean trigger,
+            @NotNull ScenarioManagerImpl manager, @NotNull ScenarioEngine engine, @NotNull TriggerStructure trigger,
             @Nullable Consumer<? super ScenarioResult> callback)
     {
         this.manager = manager;

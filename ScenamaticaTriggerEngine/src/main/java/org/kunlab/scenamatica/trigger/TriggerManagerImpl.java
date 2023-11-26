@@ -14,10 +14,10 @@ import org.kunlab.scenamatica.interfaces.action.ActionRunManager;
 import org.kunlab.scenamatica.interfaces.action.CompiledAction;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenario.SessionCreator;
-import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
-import org.kunlab.scenamatica.interfaces.scenariofile.action.ActionBean;
+import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileStructure;
+import org.kunlab.scenamatica.interfaces.scenariofile.action.ActionStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
-import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerBean;
+import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerStructure;
 import org.kunlab.scenamatica.interfaces.trigger.TriggerManager;
 import org.kunlab.scenamatica.trigger.arguments.ActionTriggerArgument;
 
@@ -33,7 +33,7 @@ public class TriggerManagerImpl implements TriggerManager
 
     private final ScenamaticaRegistry registry;
     private final ActionRunManager actionManager;
-    private final Multimap<ScenarioEngine, TriggerBean> triggers;  // シナリオ名 / トリガー
+    private final Multimap<ScenarioEngine, TriggerStructure> triggers;  // シナリオ名 / トリガー
 
     private final List<TriggerType> ignoreTypes;
 
@@ -48,7 +48,7 @@ public class TriggerManagerImpl implements TriggerManager
     @Override
     public void bakeTriggers(@NotNull ScenarioEngine engine)
     {
-        ScenarioFileBean scenario = engine.getScenario();
+        ScenarioFileStructure scenario = engine.getScenario();
 
         String scenarioName = scenario.getName().toLowerCase(Locale.ROOT);
         if (this.triggers.containsKey(engine))
@@ -124,16 +124,16 @@ public class TriggerManagerImpl implements TriggerManager
         return type.getArgumentType() != null && argument == null;  // 引数が必要なのにない場合は無視。
     }
 
-    private void registerActionTrigger(ScenarioEngine engine, TriggerBean actionTrigger)
+    private void registerActionTrigger(ScenarioEngine engine, TriggerStructure actionTrigger)
     {
-        ScenarioFileBean scenario = engine.getScenario();
+        ScenarioFileStructure scenario = engine.getScenario();
         Plugin plugin = engine.getPlugin();
 
         TriggerArgument triggerArgument = actionTrigger.getArgument();
-        if (!(triggerArgument instanceof ActionBean))
+        if (!(triggerArgument instanceof ActionStructure))
             throw new IllegalArgumentException("Action trigger argument required");
 
-        ActionBean argument = (ActionBean) triggerArgument;
+        ActionStructure argument = (ActionStructure) triggerArgument;
 
         CompiledAction<?> action = this.actionManager.getCompiler().compile(
                 this.registry,

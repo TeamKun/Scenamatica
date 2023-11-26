@@ -5,11 +5,11 @@ import org.bukkit.event.inventory.InventoryEvent;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.action.actions.AbstractAction;
 import org.kunlab.scenamatica.action.actions.inventory.interact.AbstractInventoryInteractAction;
-import org.kunlab.scenamatica.commons.utils.BeanUtils;
+import org.kunlab.scenamatica.commons.utils.StructureUtils;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.BeanSerializer;
-import org.kunlab.scenamatica.interfaces.scenariofile.inventory.InventoryBean;
+import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
+import org.kunlab.scenamatica.interfaces.scenariofile.inventory.InventoryStructure;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,17 +37,17 @@ public abstract class AbstractInventoryAction<A extends AbstractInventoryArgumen
 
         InventoryEvent e = (InventoryEvent) event;
 
-        return BeanUtils.isSame(argument.getInventory(), e.getInventory(), false);
+        return StructureUtils.isSame(argument.getInventory(), e.getInventory(), false);
     }
 
-    protected InventoryBean deserializeInventoryIfContains(Map<String, Object> map, BeanSerializer serializer)
+    protected InventoryStructure deserializeInventoryIfContains(Map<String, Object> map, StructureSerializer serializer)
     {
         if (!map.containsKey(AbstractInventoryArgument.KEY_INVENTORY))
             return null;
 
         return serializer.deserialize(
                 MapUtils.checkAndCastMap(map.get(AbstractInventoryArgument.KEY_INVENTORY)),
-                InventoryBean.class
+                InventoryStructure.class
         );
     }
 }

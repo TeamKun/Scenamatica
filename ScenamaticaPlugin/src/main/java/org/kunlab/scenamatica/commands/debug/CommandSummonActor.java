@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.exceptions.context.ContextPreparationException;
 import org.kunlab.scenamatica.interfaces.ScenamaticaRegistry;
-import org.kunlab.scenamatica.scenariofile.beans.context.PlayerBeanImpl;
+import org.kunlab.scenamatica.scenariofile.structures.context.PlayerStructureImpl;
 
 import java.util.List;
 
@@ -27,7 +27,7 @@ public class CommandSummonActor extends CommandBase
         String name = args[0];
         try
         {
-            this.registry.getContextManager().getActorManager().createActor(new PlayerBeanImpl(
+            this.registry.getContextManager().getActorManager().createActor(new PlayerStructureImpl(
                     name,
                     true,
                     null,

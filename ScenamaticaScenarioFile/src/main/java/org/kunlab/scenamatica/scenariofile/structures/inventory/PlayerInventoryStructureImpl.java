@@ -1,0 +1,193 @@
+package org.kunlab.scenamatica.scenariofile.structures.inventory;
+
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Value;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.kunlab.scenamatica.commons.utils.MapUtils;
+import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
+import org.kunlab.scenamatica.interfaces.scenariofile.inventory.InventoryStructure;
+import org.kunlab.scenamatica.interfaces.scenariofile.inventory.ItemStackStructure;
+import org.kunlab.scenamatica.interfaces.scenariofile.inventory.PlayerInventoryStructure;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+@Value
+@AllArgsConstructor
+@EqualsAndHashCode(callSuper = true)
+public class PlayerInventoryStructureImpl extends InventoryStructureImpl implements PlayerInventoryStructure
+{
+    ItemStackStructure mainHand;
+    ItemStackStructure offHand;
+    ItemStackStructure[] armorContents;
+
+    public PlayerInventoryStructureImpl()
+    {
+        super(
+                null,
+                null,
+                Collections.emptyMap()
+        );
+
+        this.mainHand = null;
+        this.offHand = null;
+        this.armorContents = null;
+    }
+
+    public PlayerInventoryStructureImpl(@NotNull InventoryStructure main, @Nullable ItemStackStructure mainHand, @Nullable ItemStackStructure offHand, @Nullable ItemStackStructure[] armorContents)
+    {
+        super(9 * 4, main.getTitle(), main.getMainContents());
+        this.mainHand = mainHand;
+        this.offHand = offHand;
+        this.armorContents = armorContents;
+    }
+
+    /**
+     * プレイヤーインベントリの情報をMapにシリアライズします。
+     *
+     * @param structure  プレイヤーインベントリの情報
+     * @param serializer ItemStack のシリアライザ
+     * @return シリアライズされたMap
+     */
+    @NotNull
+    public static Map<String, Object> serialize(@NotNull PlayerInventoryStructure structure, @NotNull StructureSerializer serializer)
+    {
+        boolean noArmor = true;
+        List<Map<String, Object>> armorContents = new ArrayList<>();
+        for (ItemStackStructure armorContent : structure.getArmorContents())
+        {
+            if (armorContent == null)
+                armorContents.add(null);
+            else
+            {
+                armorContents.add(serializer.serialize(armorContent, ItemStackStructure.class));
+                noArmor = false;
+            }
+        }
+
+        if (noArmor)
+            armorContents = null;
+
+        Map<String, Object> map = new HashMap<>();
+
+        if (!structure.getMainContents().isEmpty())
+        {
+            Map<String, Object> mainContents = serializer.serialize(structure, InventoryStructure.class);
+            mainContents.remove(KEY_SIZE);  // Playerのインベントリサイズは36固定なので冗長
+
+            map.put(KEY_MAIN_INVENTORY, mainContents);
+        }
+
+        MapUtils.putIfNotNull(map, KEY_ARMOR_CONTENTS, armorContents);
+
+        if (structure.getMainHand() != null)
+            map.put(KEY_MAIN_HAND, serializer.serialize(structure.getMainHand(), ItemStackStructure.class));
+        if (structure.getOffHand() != null)
+            map.put(KEY_OFF_HAND, serializer.serialize(structure.getOffHand(), ItemStackStructure.class));
+
+        return map;
+    }
+
+    public static void validate(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
+    {
+        if (map.containsKey(KEY_MAIN_INVENTORY))
+        {
+            Map<String, Object> mainInventory = new HashMap<>(MapUtils.checkAndCastMap(map.get(KEY_MAIN_INVENTORY)));
+
+            if (!mainInventory.containsKey(KEY_SIZE))
+                mainInventory.put(KEY_SIZE, 9 * 4);
+            else if (!(mainInventory.get(KEY_SIZE) instanceof Integer ||
+                    (Integer) mainInventory.get(KEY_SIZE) != 9 * 4))
+                throw new IllegalArgumentException(KEY_SIZE + " must be 36 slots in player inventory.");
+
+            serializer.validate(mainInventory, InventoryStructure.class);
+        }
+        if (map.containsKey(KEY_MAIN_HAND))
+            serializer.validate(MapUtils.checkAndCastMap(map.get(KEY_MAIN_HAND)), ItemStackStructure.class);
+        if (map.containsKey(KEY_OFF_HAND))
+            serializer.validate(MapUtils.checkAndCastMap(map.get(KEY_OFF_HAND)), ItemStackStructure.class);
+
+        if (!map.containsKey(KEY_ARMOR_CONTENTS))
+            return;
+
+        if (!(map.get(KEY_ARMOR_CONTENTS) instanceof List))
+            throw new IllegalArgumentException(KEY_ARMOR_CONTENTS + " must be List.");
+        if (((List<?>) map.get(KEY_ARMOR_CONTENTS)).size() != 4)
+            throw new IllegalArgumentException(KEY_ARMOR_CONTENTS + " must be List of size 4.");
+
+        for (Object armorContent : (List<?>) map.get(KEY_ARMOR_CONTENTS))
+        {
+            if (armorContent == null)
+                continue;
+
+            serializer.validate(
+                    MapUtils.checkAndCastMap(armorContent),
+                    ItemStackStructure.class
+            );
+        }
+    }
+
+    @NotNull
+    public static PlayerInventoryStructure deserialize(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
+    {
+        validate(map, serializer);
+
+        ItemStackStructure[] armorContents;
+        if (map.containsKey(KEY_ARMOR_CONTENTS))
+        {
+            List<ItemStackStructure> armorContentsList = new ArrayList<>();
+            for (Object armorContent : (List<?>) map.get(KEY_ARMOR_CONTENTS))
+            {
+                if (armorContent == null)
+                    armorContentsList.add(null);
+                else
+                    armorContentsList.add(serializer.deserialize(MapUtils.checkAndCastMap(armorContent), ItemStackStructure.class));
+            }
+
+            armorContents = armorContentsList.toArray(new ItemStackStructure[0]);
+        }
+        else
+            armorContents = new ItemStackStructureImpl[4];
+
+        InventoryStructure mainInventoryStructure;
+        if (map.containsKey(KEY_MAIN_INVENTORY))
+        {
+            Map<String, Object> mainInventory = new HashMap<>(MapUtils.checkAndCastMap(map.get(KEY_MAIN_INVENTORY)));
+
+            mainInventoryStructure = serializer.deserialize(mainInventory, InventoryStructure.class);
+        }
+        else
+            mainInventoryStructure = new InventoryStructureImpl(null, null, Collections.emptyMap());
+
+
+        ItemStackStructure mainHandItem;
+        if (map.containsKey(KEY_MAIN_HAND))
+            mainHandItem = serializer.deserialize(
+                    MapUtils.checkAndCastMap(map.get(KEY_MAIN_HAND)),
+                    ItemStackStructure.class
+            );
+        else
+            mainHandItem = null;
+
+        ItemStackStructure offHandItem;
+        if (map.containsKey(KEY_OFF_HAND))
+            offHandItem = serializer.deserialize(
+                    MapUtils.checkAndCastMap(map.get(KEY_OFF_HAND)),
+                    ItemStackStructure.class
+            );
+        else
+            offHandItem = null;
+
+        return new PlayerInventoryStructureImpl(
+                mainInventoryStructure,
+                mainHandItem,
+                offHandItem,
+                armorContents
+        );
+    }
+}

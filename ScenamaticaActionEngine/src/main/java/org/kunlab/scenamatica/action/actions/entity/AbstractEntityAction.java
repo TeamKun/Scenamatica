@@ -7,8 +7,8 @@ import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.action.actions.AbstractAction;
 import org.kunlab.scenamatica.action.utils.EntityUtils;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.BeanSerializer;
-import org.kunlab.scenamatica.interfaces.scenariofile.entity.EntityBean;
+import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
+import org.kunlab.scenamatica.interfaces.scenariofile.entity.EntityStructure;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,24 +50,24 @@ public abstract class AbstractEntityAction<A extends AbstractEntityActionArgumen
                 .anyMatch(entity -> Objects.equals(entity.getUniqueId(), actualEntity.getUniqueId()));
     }
 
-    protected EntityArgumentHolder<Entity> deserializeTarget(Map<String, Object> map, BeanSerializer serializer)
+    protected EntityArgumentHolder<Entity> deserializeTarget(Map<String, Object> map, StructureSerializer serializer)
     {
         return EntityArgumentHolder.tryDeserialize(
                 map.get(AbstractEntityActionArgument.KEY_TARGET_ENTITY),
                 serializer,
-                EntityBean.class
+                EntityStructure.class
         );
     }
 
     protected <E extends Entity> EntityArgumentHolder<E> deserializeTarget(
             Map<String, Object> map,
-            BeanSerializer serializer,
-            Class<? extends EntityBean> beanClass)
+            StructureSerializer serializer,
+            Class<? extends EntityStructure> structureClass)
     {
         return EntityArgumentHolder.tryDeserialize(
                 map.get(AbstractEntityActionArgument.KEY_TARGET_ENTITY),
                 serializer,
-                beanClass
+                structureClass
         );
     }
 }

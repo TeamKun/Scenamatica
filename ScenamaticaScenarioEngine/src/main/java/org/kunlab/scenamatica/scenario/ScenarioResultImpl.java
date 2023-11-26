@@ -9,7 +9,7 @@ import org.kunlab.scenamatica.enums.ScenarioState;
 import org.kunlab.scenamatica.interfaces.action.Action;
 import org.kunlab.scenamatica.interfaces.action.ActionArgument;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioResult;
-import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
+import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileStructure;
 
 import java.util.UUID;
 
@@ -18,7 +18,7 @@ import java.util.UUID;
 public class ScenarioResultImpl implements ScenarioResult
 {
     @NotNull
-    ScenarioFileBean scenario;
+    ScenarioFileStructure scenario;
     @NotNull
     UUID testID;
     @NotNull
@@ -31,7 +31,7 @@ public class ScenarioResultImpl implements ScenarioResult
     @Nullable
     Action<? extends ActionArgument> failedAction;
 
-    public ScenarioResultImpl(@NotNull ScenarioFileBean scenario,
+    public ScenarioResultImpl(@NotNull ScenarioFileStructure scenario,
                               @NotNull UUID testID,
                               @NotNull ScenarioState state,
                               @NotNull ScenarioResultCause resultType,

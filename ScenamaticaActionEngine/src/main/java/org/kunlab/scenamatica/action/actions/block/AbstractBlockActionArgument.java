@@ -3,7 +3,7 @@ package org.kunlab.scenamatica.action.actions.block;
 import lombok.Getter;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.actions.AbstractActionArgument;
-import org.kunlab.scenamatica.interfaces.scenariofile.misc.BlockBean;
+import org.kunlab.scenamatica.interfaces.scenariofile.misc.BlockStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Objects;
@@ -13,9 +13,9 @@ public abstract class AbstractBlockActionArgument extends AbstractActionArgument
 {
     public static final String KEY_BLOCK = "block";
 
-    BlockBean block;
+    BlockStructure block;
 
-    public AbstractBlockActionArgument(@Nullable BlockBean block)
+    public AbstractBlockActionArgument(@Nullable BlockStructure block)
     {
         this.block = block;
     }

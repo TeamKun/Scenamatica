@@ -1,7 +1,7 @@
 package org.kunlab.scenamatica.interfaces.action;
 
 import org.jetbrains.annotations.NotNull;
-import org.kunlab.scenamatica.interfaces.scenariofile.BeanSerializer;
+import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 
 import java.util.Map;
 
@@ -24,5 +24,5 @@ public interface Action<A extends ActionArgument>
      * @param serializer シリアライザ
      * @return デシリアライズされた引数
      */
-    A deserializeArgument(@NotNull Map<String, Object> map, @NotNull BeanSerializer serializer);
+    A deserializeArgument(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer);
 }

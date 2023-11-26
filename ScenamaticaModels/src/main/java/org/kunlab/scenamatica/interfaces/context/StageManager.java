@@ -4,7 +4,7 @@ import org.bukkit.World;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.exceptions.context.stage.StageCreateFailedException;
 import org.kunlab.scenamatica.exceptions.context.stage.StageNotCreatedException;
-import org.kunlab.scenamatica.interfaces.scenariofile.context.StageBean;
+import org.kunlab.scenamatica.interfaces.scenariofile.context.StageStructure;
 
 /**
  * シナリオを実行するステージを管理するインターフェースです。
@@ -14,10 +14,10 @@ public interface StageManager
     /**
      * ステージを生成します。
      *
-     * @param bean ステージ情報
+     * @param structure ステージ情報
      * @return 生成したステージ
      */
-    @NotNull World createStage(StageBean bean) throws StageCreateFailedException;
+    @NotNull World createStage(StageStructure structure) throws StageCreateFailedException;
 
     /**
      * ステージをコピーします。

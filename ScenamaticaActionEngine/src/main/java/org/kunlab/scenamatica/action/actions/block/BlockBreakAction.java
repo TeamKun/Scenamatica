@@ -21,8 +21,8 @@ import org.kunlab.scenamatica.interfaces.action.types.Requireable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.context.Actor;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.BeanSerializer;
-import org.kunlab.scenamatica.interfaces.scenariofile.misc.BlockBean;
+import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
+import org.kunlab.scenamatica.interfaces.scenariofile.misc.BlockStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Collections;
@@ -46,7 +46,7 @@ public class BlockBreakAction extends AbstractBlockAction<BlockBreakAction.Argum
     {
         argument = this.requireArgsNonNull(argument);
 
-        BlockBean blockDef = argument.getBlock();
+        BlockStructure blockDef = argument.getBlock();
         Location location = this.getBlockLocationWithWorld(blockDef, engine);
         Block block = location.getBlock();
 
@@ -106,7 +106,7 @@ public class BlockBreakAction extends AbstractBlockAction<BlockBreakAction.Argum
     }
 
     @Override
-    public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull BeanSerializer serializer)
+    public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
     {
         return new Argument(
                 super.deserializeBlockOrNull(map, serializer),
@@ -136,7 +136,7 @@ public class BlockBreakAction extends AbstractBlockAction<BlockBreakAction.Argum
         String actor;
         Boolean dropItems;
 
-        public Argument(@Nullable BlockBean block, String actor, Boolean dropItems)
+        public Argument(@Nullable BlockStructure block, String actor, Boolean dropItems)
         {
             super(block);
             this.actor = actor;
@@ -168,10 +168,10 @@ public class BlockBreakAction extends AbstractBlockAction<BlockBreakAction.Argum
                     ensureNotPresent(Argument.KEY_ACTOR, this.actor);
                     ensureNotPresent(Argument.KEY_DROP_ITEMS, this.dropItems);
 
-                    BlockBean block = this.block;
-                    ensureNotPresent(Argument.KEY_BLOCK + "." + BlockBean.KEY_BLOCK_TYPE, block.getType());
-                    ensureNotPresent(Argument.KEY_BLOCK + "." + BlockBean.KEY_BIOME, block.getBiome());
-                    ensureNotPresent(Argument.KEY_BLOCK + "." + BlockBean.KEY_LIGHT_LEVEL, block.getLightLevel());
+                    BlockStructure block = this.block;
+                    ensureNotPresent(Argument.KEY_BLOCK + "." + BlockStructure.KEY_BLOCK_TYPE, block.getType());
+                    ensureNotPresent(Argument.KEY_BLOCK + "." + BlockStructure.KEY_BIOME, block.getBiome());
+                    ensureNotPresent(Argument.KEY_BLOCK + "." + BlockStructure.KEY_LIGHT_LEVEL, block.getLightLevel());
 
                     if (!block.getMetadata().isEmpty())
                         throw new IllegalArgumentException("The block metadata must be empty.");

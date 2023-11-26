@@ -3,7 +3,7 @@ package org.kunlab.scenamatica.interfaces.scenario;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.interfaces.action.CompiledAction;
 import org.kunlab.scenamatica.interfaces.scenario.runtime.CompiledScenarioAction;
-import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerBean;
+import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerStructure;
 
 /**
  * シナリオのテストの実行と結果を報告するためのインターフェースです。
@@ -16,7 +16,7 @@ public interface TestReporter
      * @param engine  エンジン
      * @param trigger シナリオのトリガ
      */
-    void onTestStart(@NotNull ScenarioEngine engine, @NotNull TriggerBean trigger);
+    void onTestStart(@NotNull ScenarioEngine engine, @NotNull TriggerStructure trigger);
 
     /**
      * シナリオの実行が（条件を満たしていない等で）スキップされたことをレポートします。

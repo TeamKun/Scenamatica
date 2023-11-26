@@ -13,7 +13,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.utils.PlayerUtils;
-import org.kunlab.scenamatica.commons.utils.BeanUtils;
+import org.kunlab.scenamatica.commons.utils.StructureUtils;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
@@ -21,8 +21,8 @@ import org.kunlab.scenamatica.interfaces.action.types.Requireable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.context.Actor;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.BeanSerializer;
-import org.kunlab.scenamatica.interfaces.scenariofile.misc.BlockBean;
+import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
+import org.kunlab.scenamatica.interfaces.scenariofile.misc.BlockStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Arrays;
@@ -56,7 +56,7 @@ public class BlockPlaceAction extends AbstractBlockAction<BlockPlaceAction.Argum
 
         Player actor = argument.getActor();
 
-        BlockBean blockDef = argument.getBlock();
+        BlockStructure blockDef = argument.getBlock();
         Location location = this.getBlockLocationWithWorld(blockDef, engine);
 
         Block block;
@@ -117,7 +117,7 @@ public class BlockPlaceAction extends AbstractBlockAction<BlockPlaceAction.Argum
     }
 
     @Override
-    public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull BeanSerializer serializer)
+    public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
     {
         return new Argument(
                 super.deserializeBlockOrNull(map, serializer),
@@ -132,10 +132,10 @@ public class BlockPlaceAction extends AbstractBlockAction<BlockPlaceAction.Argum
     {
         argument = this.requireArgsNonNull(argument);
 
-        BlockBean blockDef = argument.getBlock();
+        BlockStructure blockDef = argument.getBlock();
         Block block = this.getBlockLocationWithWorld(blockDef, engine).getBlock();
 
-        return BeanUtils.isSame(blockDef, block, engine.getContext().getStage());
+        return StructureUtils.isSame(blockDef, block, engine.getContext().getStage());
     }
 
     @Value
@@ -150,7 +150,7 @@ public class BlockPlaceAction extends AbstractBlockAction<BlockPlaceAction.Argum
         EquipmentSlot hand;  // HAND or OFF_HAND
         BlockFace direction;
 
-        public Argument(@Nullable BlockBean block, String actor, EquipmentSlot hand, BlockFace direction)
+        public Argument(@Nullable BlockStructure block, String actor, EquipmentSlot hand, BlockFace direction)
         {
             super(block);
             this.actor = actor;
@@ -187,7 +187,7 @@ public class BlockPlaceAction extends AbstractBlockAction<BlockPlaceAction.Argum
 
             if (type == ScenarioType.ACTION_EXECUTE)
             {
-                BlockBean blockDef = this.block;
+                BlockStructure blockDef = this.block;
                 if (blockDef.getType() == null)
                     throw new IllegalArgumentException("Block type cannot be null");
             }

@@ -5,7 +5,7 @@ import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
+import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileStructure;
 
 import java.util.UUID;
 
@@ -13,7 +13,7 @@ import java.util.UUID;
 public class LogUtils
 {
     @NotNull
-    public static String gerScenarioPrefix(@Nullable UUID testID, @Nullable ScenarioFileBean scenario)
+    public static String gerScenarioPrefix(@Nullable UUID testID, @Nullable ScenarioFileStructure scenario)
     {
         String withScenarioName = scenario == null ? "":
                 ChatColor.BOLD.toString() + ChatColor.AQUA + "TEST-" + StringUtils.substring(scenario.getName(), 0, 8);

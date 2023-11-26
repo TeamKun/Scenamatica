@@ -10,14 +10,14 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.utils.PlayerUtils;
-import org.kunlab.scenamatica.commons.utils.BeanUtils;
+import org.kunlab.scenamatica.commons.utils.StructureUtils;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.context.Actor;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.BeanSerializer;
-import org.kunlab.scenamatica.interfaces.scenariofile.inventory.ItemStackBean;
+import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
+import org.kunlab.scenamatica.interfaces.scenariofile.inventory.ItemStackStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Collections;
@@ -43,7 +43,7 @@ public class PlayerItemBreakAction extends AbstractPlayerAction<PlayerItemBreakA
 
         Actor actor = PlayerUtils.getActorOrThrow(engine, argument.getTarget());
         EquipmentSlot slot = argument.getSlot() == null ? EquipmentSlot.HAND: argument.getSlot();
-        ItemStackBean item = argument.getItem();
+        ItemStackStructure item = argument.getItem();
         if (item != null)
             actor.getPlayer().getInventory().setItem(slot, item.toItemStack());
 
@@ -139,7 +139,7 @@ public class PlayerItemBreakAction extends AbstractPlayerAction<PlayerItemBreakA
         assert event instanceof PlayerItemBreakEvent;
         PlayerItemBreakEvent e = (PlayerItemBreakEvent) event;
 
-        return argument.getItem() == null || BeanUtils.isSame(
+        return argument.getItem() == null || StructureUtils.isSame(
                 argument.getItem(),
                 e.getBrokenItem(),
                 /* strict */ false
@@ -155,13 +155,13 @@ public class PlayerItemBreakAction extends AbstractPlayerAction<PlayerItemBreakA
     }
 
     @Override
-    public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull BeanSerializer serializer)
+    public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
     {
-        ItemStackBean item = null;
+        ItemStackStructure item = null;
         if (map.containsKey(Argument.KEY_ITEM))
             item = serializer.deserialize(
                     MapUtils.checkAndCastMap(map.get(Argument.KEY_ITEM)),
-                    ItemStackBean.class
+                    ItemStackStructure.class
             );
 
         return new Argument(
@@ -179,11 +179,11 @@ public class PlayerItemBreakAction extends AbstractPlayerAction<PlayerItemBreakA
         public static final String KEY_SLOT = "slot";
 
         @Nullable
-        ItemStackBean item;
+        ItemStackStructure item;
         @Nullable
         EquipmentSlot slot;
 
-        public Argument(String target, @Nullable ItemStackBean item, @Nullable EquipmentSlot slot)
+        public Argument(String target, @Nullable ItemStackStructure item, @Nullable EquipmentSlot slot)
         {
             super(target);
             this.item = item;

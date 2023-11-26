@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.actions.inventory.AbstractInventoryArgument;
 import org.kunlab.scenamatica.action.utils.PlayerUtils;
-import org.kunlab.scenamatica.interfaces.scenariofile.inventory.InventoryBean;
+import org.kunlab.scenamatica.interfaces.scenariofile.inventory.InventoryStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Objects;
@@ -17,7 +17,7 @@ public abstract class AbstractInventoryInteractArgument extends AbstractInventor
     @NotNull
     private final String target;
 
-    public AbstractInventoryInteractArgument(@Nullable InventoryBean inventory, @NotNull String target)
+    public AbstractInventoryInteractArgument(@Nullable InventoryStructure inventory, @NotNull String target)
     {
         super(inventory);
         this.target = target;

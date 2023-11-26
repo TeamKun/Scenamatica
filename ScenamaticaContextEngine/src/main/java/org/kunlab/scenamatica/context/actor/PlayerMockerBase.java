@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.interfaces.ScenamaticaRegistry;
 import org.kunlab.scenamatica.interfaces.context.Actor;
 import org.kunlab.scenamatica.interfaces.context.ActorManager;
-import org.kunlab.scenamatica.interfaces.scenariofile.context.PlayerBean;
+import org.kunlab.scenamatica.interfaces.scenariofile.context.PlayerStructure;
 
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -31,15 +31,15 @@ public abstract class PlayerMockerBase
         this.manager = manager;
     }
 
-    protected static GameProfile createGameProfile(PlayerBean bean)
+    protected static GameProfile createGameProfile(PlayerStructure structure)
     {
-        UUID uuid = bean.getUuid() == null ? UUID.randomUUID(): bean.getUuid();
-        String name = bean.getName();
+        UUID uuid = structure.getUuid() == null ? UUID.randomUUID(): structure.getUuid();
+        String name = structure.getName();
 
         return new GameProfile(uuid, name);
     }
 
-    public abstract Actor mock(@NotNull World world, @NotNull PlayerBean bean);
+    public abstract Actor mock(@NotNull World world, @NotNull PlayerStructure structure);
 
     public abstract void unmock(Actor player);
 

@@ -8,15 +8,15 @@ import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.kunlab.scenamatica.commons.utils.BeanUtils;
+import org.kunlab.scenamatica.commons.utils.StructureUtils;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.BeanSerializer;
-import org.kunlab.scenamatica.interfaces.scenariofile.inventory.ItemStackBean;
+import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
+import org.kunlab.scenamatica.interfaces.scenariofile.inventory.ItemStackStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Collections;
@@ -42,7 +42,7 @@ public class PlayerHotbarSlotAction extends AbstractPlayerAction<PlayerHotbarSlo
 
         Player p = argument.getTarget();
         int slot = argument.getCurrentSlot();
-        ItemStackBean item = argument.getCurrentItem();
+        ItemStackStructure item = argument.getCurrentItem();
 
         p.getInventory().setHeldItemSlot(slot);
         if (item != null)
@@ -63,11 +63,11 @@ public class PlayerHotbarSlotAction extends AbstractPlayerAction<PlayerHotbarSlo
         int previousSlot = e.getPreviousSlot();
         Integer expectedPreviousSlot = argument.getPreviousSlot();
         ItemStack currentItem = e.getPlayer().getInventory().getItem(currentSlot);
-        ItemStackBean expectedCurrentItem = argument.getCurrentItem();
+        ItemStackStructure expectedCurrentItem = argument.getCurrentItem();
 
         return (expectedCurrentSlot == null || currentSlot == expectedCurrentSlot)
                 && (expectedPreviousSlot == null || previousSlot == expectedPreviousSlot)
-                && (expectedCurrentItem == null || BeanUtils.isSame(expectedCurrentItem, currentItem, false));
+                && (expectedCurrentItem == null || StructureUtils.isSame(expectedCurrentItem, currentItem, false));
     }
 
     @Override
@@ -79,20 +79,20 @@ public class PlayerHotbarSlotAction extends AbstractPlayerAction<PlayerHotbarSlo
     }
 
     @Override
-    public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull BeanSerializer serializer)
+    public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
     {
         Integer currentSlot = MapUtils.getAsNumberOrNull(map, Argument.KEY_CURRENT_SLOT, Number::intValue);
         Integer previousSlot = MapUtils.getAsNumberOrNull(map, Argument.KEY_PREVIOUS_SLOT, Number::intValue);
 
-        ItemStackBean item = null;
+        ItemStackStructure item = null;
         if (map.containsKey(Argument.KEY_CURRENT_ITEM))
         {
             Map<String, Object> itemMap =
                     MapUtils.checkAndCastMap(map.get(Argument.KEY_CURRENT_ITEM));
 
-            serializer.validate(itemMap, ItemStackBean.class);
+            serializer.validate(itemMap, ItemStackStructure.class);
 
-            item = serializer.deserialize(itemMap, ItemStackBean.class);
+            item = serializer.deserialize(itemMap, ItemStackStructure.class);
         }
 
         return new Argument(
@@ -110,10 +110,10 @@ public class PlayerHotbarSlotAction extends AbstractPlayerAction<PlayerHotbarSlo
 
         Player p = argument.getTarget();
         Integer currentSlot = argument.getCurrentSlot();
-        ItemStackBean currentItem = argument.getCurrentItem();
+        ItemStackStructure currentItem = argument.getCurrentItem();
 
         return (currentSlot == null || p.getInventory().getHeldItemSlot() == currentSlot)
-                && (currentItem == null || BeanUtils.isSame(currentItem, p.getInventory().getItemInMainHand(), false));
+                && (currentItem == null || StructureUtils.isSame(currentItem, p.getInventory().getItemInMainHand(), false));
     }
 
     @Value
@@ -126,9 +126,9 @@ public class PlayerHotbarSlotAction extends AbstractPlayerAction<PlayerHotbarSlo
 
         Integer currentSlot;
         Integer previousSlot;
-        ItemStackBean currentItem;
+        ItemStackStructure currentItem;
 
-        public Argument(String target, Integer currentSlot, Integer previousSlot, @Nullable ItemStackBean currentItem)
+        public Argument(String target, Integer currentSlot, Integer previousSlot, @Nullable ItemStackStructure currentItem)
         {
             super(target);
             this.currentSlot = currentSlot;

@@ -24,8 +24,8 @@ import org.kunlab.scenamatica.interfaces.scenario.ScenarioResultDeliverer;
 import org.kunlab.scenamatica.interfaces.scenario.TestReporter;
 import org.kunlab.scenamatica.interfaces.scenario.runtime.CompiledScenarioAction;
 import org.kunlab.scenamatica.interfaces.scenario.runtime.CompiledTriggerAction;
-import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
-import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerBean;
+import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileStructure;
+import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerStructure;
 import org.kunlab.scenamatica.scenario.ScenarioResultDelivererImpl;
 import org.kunlab.scenamatica.scenario.ScenarioResultImpl;
 
@@ -45,7 +45,7 @@ public class ScenarioExecutor
     private final List<? extends CompiledScenarioAction<?>> actions;
     private final List<? extends CompiledTriggerAction> triggerActions;
     private final CompiledScenarioAction<?> runIf;
-    private final ScenarioFileBean scenario;
+    private final ScenarioFileStructure scenario;
     private final ActionRunManager actionManager;
     private final ScenarioActionListener listener;
     private final ScenarioResultDeliverer deliverer;
@@ -95,14 +95,14 @@ public class ScenarioExecutor
         this.currentScenario = null;
     }
 
-    public ScenarioResult start(@NotNull TriggerBean trigger) throws TriggerNotFoundException
+    public ScenarioResult start(@NotNull TriggerStructure trigger) throws TriggerNotFoundException
     {
         ScenarioResult result = this.start$1(trigger);
         this.actionManager.getWatcherManager().unregisterWatchers(this.plugin, WatchType.SCENARIO);
         return result;
     }
 
-    private ScenarioResult start$1(@NotNull TriggerBean trigger) throws TriggerNotFoundException
+    private ScenarioResult start$1(@NotNull TriggerStructure trigger) throws TriggerNotFoundException
     {
 
         CompiledTriggerAction compiledTrigger = this.findTriggerOrThrow(trigger);
@@ -166,7 +166,7 @@ public class ScenarioExecutor
         return this.scenario.getTimeout() != -1 && this.getElapsedTicks() >= this.scenario.getTimeout();
     }
 
-    public CompiledTriggerAction findTriggerOrThrow(TriggerBean trigger) throws TriggerNotFoundException
+    public CompiledTriggerAction findTriggerOrThrow(TriggerStructure trigger) throws TriggerNotFoundException
     {
         return this.triggerActions.parallelStream()
                 .filter(t -> t.getTrigger().getType() == trigger.getType())
@@ -217,10 +217,10 @@ public class ScenarioExecutor
                 else
                     return this.genResult(ScenarioResultCause.CANCELLED);
 
-            CompiledScenarioAction<?> scenarioBean = scenario.get(i);
+            CompiledScenarioAction<?> scenarioStructure = scenario.get(i);
             CompiledScenarioAction<?> next = i + 1 < scenario.size() ? scenario.get(i + 1): null;
 
-            ScenarioResult result = this.runScenario(scenarioBean, next);
+            ScenarioResult result = this.runScenario(scenarioStructure, next);
             if (!(result.getScenarioResultCause() == ScenarioResultCause.PASSED || result.getScenarioResultCause() == ScenarioResultCause.SKIPPED))
                 return result;
         }
@@ -252,7 +252,7 @@ public class ScenarioExecutor
                 return this.testCondition(scenario);
         }
 
-        return this.deliverer.waitResult(scenario.getBean().getTimeout(), this.state);
+        return this.deliverer.waitResult(scenario.getStructure().getTimeout(), this.state);
     }
 
     private <T extends ActionArgument> void doAction(CompiledScenarioAction<T> scenario, CompiledScenarioAction<?> next)

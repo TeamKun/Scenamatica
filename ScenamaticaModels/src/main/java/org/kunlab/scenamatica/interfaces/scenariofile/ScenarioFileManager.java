@@ -14,7 +14,7 @@ public interface ScenarioFileManager
     /**
      * シリアライザを取得します。
      */
-    @NotNull BeanSerializer getSerializer();
+    @NotNull StructureSerializer getSerializer();
 
     /**
      * プラグインのシナリオを読み込みます。
@@ -33,7 +33,7 @@ public interface ScenarioFileManager
      * @return シナリオ (読み込みに失敗した場合は {@code null})
      * @see #getScenario(Plugin, String)
      */
-    @Nullable Map<String, ScenarioFileBean> getPluginScenarios(@NotNull Plugin plugin);
+    @Nullable Map<String, ScenarioFileStructure> getPluginScenarios(@NotNull Plugin plugin);
 
     /**
      * シナリオを取得します。
@@ -45,7 +45,7 @@ public interface ScenarioFileManager
      * @return シナリオ (読み込みに失敗した場合は {@code null} )
      * @see #getPluginScenarios(Plugin)
      */
-    @Nullable ScenarioFileBean getScenario(@NotNull Plugin plugin, @NotNull String scenarioName);
+    @Nullable ScenarioFileStructure getScenario(@NotNull Plugin plugin, @NotNull String scenarioName);
 
     /**
      * プラグインのシナリオをアンロードします。

@@ -14,7 +14,7 @@ import org.kunlab.scenamatica.exceptions.context.stage.StageCreateFailedExceptio
 import org.kunlab.scenamatica.exceptions.context.stage.StageNotCreatedException;
 import org.kunlab.scenamatica.interfaces.ScenamaticaRegistry;
 import org.kunlab.scenamatica.interfaces.context.StageManager;
-import org.kunlab.scenamatica.interfaces.scenariofile.context.StageBean;
+import org.kunlab.scenamatica.interfaces.scenariofile.context.StageStructure;
 
 import java.io.File;
 import java.io.IOException;
@@ -63,26 +63,26 @@ public class StageManagerImpl implements StageManager
 
     @Override
     @NotNull
-    public World createStage(StageBean bean) throws StageCreateFailedException
+    public World createStage(StageStructure structure) throws StageCreateFailedException
     {
         if (this.stage != null)
             return this.stage;
 
         NamespacedKey key = generateStageKey();
 
-        if (bean.getOriginalWorldName() != null)
-            return this.createStage(bean.getOriginalWorldName());
+        if (structure.getOriginalWorldName() != null)
+            return this.createStage(structure.getOriginalWorldName());
 
         WorldCreator creator = new WorldCreator(key);
-        if (bean.getEnvironment() != null)
-            creator.environment(bean.getEnvironment());
+        if (structure.getEnvironment() != null)
+            creator.environment(structure.getEnvironment());
         else
             creator.environment(World.Environment.NORMAL);
-        if (bean.getSeed() != null)
-            creator.seed(bean.getSeed());
-        creator.type(bean.getType());
-        creator.generateStructures(bean.isGenerateStructures());
-        creator.hardcore(bean.isHardcore());
+        if (structure.getSeed() != null)
+            creator.seed(structure.getSeed());
+        creator.type(structure.getType());
+        creator.generateStructures(structure.isGenerateStructures());
+        creator.hardcore(structure.isHardcore());
 
         this.stage = creator.createWorld();
         if (this.stage == null)

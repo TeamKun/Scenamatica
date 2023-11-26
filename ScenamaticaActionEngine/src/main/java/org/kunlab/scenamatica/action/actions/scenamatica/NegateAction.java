@@ -8,7 +8,7 @@ import org.kunlab.scenamatica.action.actions.AbstractActionArgument;
 import org.kunlab.scenamatica.interfaces.action.ActionArgument;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.BeanSerializer;
+import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Map;
@@ -28,7 +28,7 @@ public class NegateAction<T extends ActionArgument> extends AbstractScenamaticaA
     }
 
     @Override
-    public Argument<T> deserializeArgument(@NotNull Map<String, Object> map, @NotNull BeanSerializer serializer)
+    public Argument<T> deserializeArgument(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
     {
         throw new UnsupportedOperationException();
     }

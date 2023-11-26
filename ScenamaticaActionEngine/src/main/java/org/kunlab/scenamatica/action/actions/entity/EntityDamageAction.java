@@ -13,7 +13,7 @@ import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.BeanSerializer;
+import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Collections;
@@ -74,7 +74,7 @@ public class EntityDamageAction<A extends EntityDamageAction.Argument> extends A
     }
 
     @Override
-    public A deserializeArgument(@NotNull Map<String, Object> map, @NotNull BeanSerializer serializer)
+    public A deserializeArgument(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
     {
         Number amountNum = MapUtils.getAsNumberOrNull(map, Argument.KEY_AMOUNT);
         Double amount;

@@ -7,7 +7,7 @@ import org.kunlab.scenamatica.enums.ScenarioState;
 import org.kunlab.scenamatica.interfaces.ScenamaticaRegistry;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioResult;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioResultDeliverer;
-import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
+import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileStructure;
 
 import java.util.ArrayDeque;
 import java.util.UUID;
@@ -21,7 +21,7 @@ public class ScenarioResultDelivererImpl implements ScenarioResultDeliverer
     private final Object lock = new Object();
     private final CyclicBarrier barrier;
     private final ScenamaticaRegistry registry;
-    private final ScenarioFileBean scenario;
+    private final ScenarioFileStructure scenario;
     private final UUID testID;
     private final long startedAt;
     private final ArrayDeque<ScenarioResult> results;  // 受け渡し用
@@ -35,7 +35,7 @@ public class ScenarioResultDelivererImpl implements ScenarioResultDeliverer
     private long elapsedTick;
 
     public ScenarioResultDelivererImpl(@NotNull ScenamaticaRegistry registry,
-                                       @NotNull ScenarioFileBean scenario,
+                                       @NotNull ScenarioFileStructure scenario,
                                        @NotNull UUID testID,
                                        long startedAt)
 

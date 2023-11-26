@@ -12,7 +12,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.utils.PlayerUtils;
-import org.kunlab.scenamatica.commons.utils.BeanUtils;
+import org.kunlab.scenamatica.commons.utils.StructureUtils;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
@@ -20,8 +20,8 @@ import org.kunlab.scenamatica.interfaces.action.types.Requireable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.context.Actor;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.BeanSerializer;
-import org.kunlab.scenamatica.interfaces.scenariofile.inventory.ItemStackBean;
+import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
+import org.kunlab.scenamatica.interfaces.scenariofile.inventory.ItemStackStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Arrays;
@@ -49,7 +49,7 @@ public class PlayerItemDamageAction extends AbstractPlayerAction<PlayerItemDamag
 
         Actor actor = PlayerUtils.getActorOrThrow(engine, argument.getTarget());
         EquipmentSlot slot = argument.getSlot() == null ? EquipmentSlot.HAND: argument.getSlot();
-        ItemStackBean item = argument.getItem();
+        ItemStackStructure item = argument.getItem();
         if (item != null)
             actor.getPlayer().getInventory().setItem(slot, item.toItemStack());
 
@@ -71,7 +71,7 @@ public class PlayerItemDamageAction extends AbstractPlayerAction<PlayerItemDamag
 
         PlayerItemDamageEvent e = (PlayerItemDamageEvent) event;
 
-        return (argument.getItem() == null || BeanUtils.isSame(argument.getItem(), e.getItem(), false))
+        return (argument.getItem() == null || StructureUtils.isSame(argument.getItem(), e.getItem(), false))
                 && (argument.getDamage() == null || argument.getDamage() == e.getDamage());
     }
 
@@ -84,13 +84,13 @@ public class PlayerItemDamageAction extends AbstractPlayerAction<PlayerItemDamag
     }
 
     @Override
-    public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull BeanSerializer serializer)
+    public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
     {
-        ItemStackBean item = null;
+        ItemStackStructure item = null;
         if (map.containsKey(Argument.KEY_ITEM))
             item = serializer.deserialize(
                     MapUtils.checkAndCastMap(map.get(Argument.KEY_ITEM)),
-                    ItemStackBean.class
+                    ItemStackStructure.class
             );
 
         return new Argument(
@@ -114,7 +114,7 @@ public class PlayerItemDamageAction extends AbstractPlayerAction<PlayerItemDamag
         else
             slotToCheck = Collections.singletonList(argument.getSlot());
 
-        ItemStackBean itemToCheck = argument.getItem();
+        ItemStackStructure itemToCheck = argument.getItem();
         int expectedDamage = argument.getDamage();
         for (EquipmentSlot slot : slotToCheck)
         {
@@ -129,7 +129,7 @@ public class PlayerItemDamageAction extends AbstractPlayerAction<PlayerItemDamag
 
             if (itemToCheck != null)
             {
-                boolean isItemMatched = BeanUtils.isSame(
+                boolean isItemMatched = StructureUtils.isSame(
                         itemToCheck,
                         item,
                         /* strict */ false
@@ -153,11 +153,11 @@ public class PlayerItemDamageAction extends AbstractPlayerAction<PlayerItemDamag
         public static final String KEY_DAMAGE = "damage";
         public static final String KEY_SLOT = "slot";
 
-        ItemStackBean item;
+        ItemStackStructure item;
         Integer damage;
         EquipmentSlot slot;
 
-        public Argument(String target, ItemStackBean item, Integer damage, EquipmentSlot slot)
+        public Argument(String target, ItemStackStructure item, Integer damage, EquipmentSlot slot)
         {
             super(target);
             this.item = item;

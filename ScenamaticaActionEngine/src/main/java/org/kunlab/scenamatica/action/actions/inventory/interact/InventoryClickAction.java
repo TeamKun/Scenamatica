@@ -12,16 +12,16 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.utils.PlayerUtils;
-import org.kunlab.scenamatica.commons.utils.BeanUtils;
+import org.kunlab.scenamatica.commons.utils.StructureUtils;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.context.Actor;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.BeanSerializer;
-import org.kunlab.scenamatica.interfaces.scenariofile.inventory.InventoryBean;
-import org.kunlab.scenamatica.interfaces.scenariofile.inventory.ItemStackBean;
+import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
+import org.kunlab.scenamatica.interfaces.scenariofile.inventory.InventoryStructure;
+import org.kunlab.scenamatica.interfaces.scenariofile.inventory.ItemStackStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Collections;
@@ -97,9 +97,9 @@ public class InventoryClickAction<T extends InventoryClickAction.Argument> exten
                 && (argument.getSlotType() == null || argument.getSlotType() == e.getSlotType())
                 && (argument.getSlot() == null || argument.getSlot() == e.getSlot())
                 && (argument.getRawSlot() == null || argument.getRawSlot() == e.getRawSlot())
-                && (argument.getClickedItem() == null || BeanUtils.isSame(argument.getClickedItem(), e.getCurrentItem(), false))
+                && (argument.getClickedItem() == null || StructureUtils.isSame(argument.getClickedItem(), e.getCurrentItem(), false))
                 && (argument.getButton() == null || argument.getButton() == e.getHotbarButton())
-                && (argument.getCursorItem() == null || BeanUtils.isSame(argument.getCursorItem(), e.getCursor(), false));
+                && (argument.getCursorItem() == null || StructureUtils.isSame(argument.getCursorItem(), e.getCursor(), false));
     }
 
     @Override
@@ -111,20 +111,20 @@ public class InventoryClickAction<T extends InventoryClickAction.Argument> exten
     }
 
     @Override
-    public T deserializeArgument(@NotNull Map<String, Object> map, @NotNull BeanSerializer serializer)
+    public T deserializeArgument(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
     {
-        ItemStackBean clickedItem = null;
+        ItemStackStructure clickedItem = null;
         if (map.containsKey(Argument.KEY_CLICKED_ITEM))
             clickedItem = serializer.deserialize(
                     MapUtils.checkAndCastMap(map.get(Argument.KEY_CLICKED_ITEM)),
-                    ItemStackBean.class
+                    ItemStackStructure.class
             );
 
-        ItemStackBean cursorItem = null;
+        ItemStackStructure cursorItem = null;
         if (map.containsKey(Argument.KEY_CURSOR_ITEM))
             cursorItem = serializer.deserialize(
                     MapUtils.checkAndCastMap(map.get(Argument.KEY_CURSOR_ITEM)),
-                    ItemStackBean.class
+                    ItemStackStructure.class
             );
 
         // noinspection unchecked
@@ -160,11 +160,11 @@ public class InventoryClickAction<T extends InventoryClickAction.Argument> exten
         InventoryType.SlotType slotType;
         Integer slot;
         Integer rawSlot;
-        ItemStackBean clickedItem;
+        ItemStackStructure clickedItem;
         Integer button;
-        ItemStackBean cursorItem;
+        ItemStackStructure cursorItem;
 
-        public Argument(@Nullable InventoryBean inventory, @NotNull String target, ClickType type, InventoryAction action, InventoryType.SlotType slotType, Integer slot, Integer rawSlot, ItemStackBean clickedItem, Integer button, ItemStackBean cursorItem)
+        public Argument(@Nullable InventoryStructure inventory, @NotNull String target, ClickType type, InventoryAction action, InventoryType.SlotType slotType, Integer slot, Integer rawSlot, ItemStackStructure clickedItem, Integer button, ItemStackStructure cursorItem)
         {
             super(inventory, target);
             this.type = type;

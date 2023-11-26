@@ -24,8 +24,8 @@ import org.kunlab.scenamatica.interfaces.scenario.ScenarioResultDeliverer;
 import org.kunlab.scenamatica.interfaces.scenario.TestReporter;
 import org.kunlab.scenamatica.interfaces.scenario.runtime.CompiledScenarioAction;
 import org.kunlab.scenamatica.interfaces.scenario.runtime.CompiledTriggerAction;
-import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
-import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerBean;
+import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileStructure;
+import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerStructure;
 import org.kunlab.scenamatica.scenario.ScenarioActionListenerImpl;
 import org.kunlab.scenamatica.scenario.ScenarioCompiler;
 import org.kunlab.scenamatica.scenario.ScenarioResultImpl;
@@ -44,7 +44,7 @@ public class ScenarioEngineImpl implements ScenarioEngine
     private final ActionRunManager actionRunManager;
     private final TestReporter testReporter;  // 一意
     private final Plugin plugin;
-    private final ScenarioFileBean scenario;
+    private final ScenarioFileStructure scenario;
     private final ScenarioCompiler compiler;
     private final ScenarioActionListener listener;  // エンジンに一意
     private final String logPrefix;
@@ -53,9 +53,9 @@ public class ScenarioEngineImpl implements ScenarioEngine
     private final CompiledScenarioAction<?> runIf;
 
     private ScenarioExecutor executor;
-    private volatile boolean isRunning; // #start(@NotNull TriggerBean trigger) 内でのみ書き換えられる
+    private volatile boolean isRunning; // #start(@NotNull TriggerStructure trigger) 内でのみ書き換えられる
     private ScenarioState state;
-    private TriggerBean ranBy;
+    private TriggerStructure ranBy;
     private Context context;
 
     public ScenarioEngineImpl(@NotNull ScenamaticaRegistry registry,
@@ -63,7 +63,7 @@ public class ScenarioEngineImpl implements ScenarioEngine
                               @NotNull ActionRunManager actionRunManager,
                               @NotNull TestReporter testReporter,
                               @NotNull Plugin plugin,
-                              @NotNull ScenarioFileBean scenario)
+                              @NotNull ScenarioFileStructure scenario)
     {
         this.registry = registry;
         this.manager = manager;
@@ -101,8 +101,8 @@ public class ScenarioEngineImpl implements ScenarioEngine
     }
 
     @Override
-    @NotNull  // TODO: TriggerBean to TriggerType
-    public ScenarioResult start(@NotNull TriggerBean trigger) throws TriggerNotFoundException
+    @NotNull  // TODO: TriggerStructure to TriggerType
+    public ScenarioResult start(@NotNull TriggerStructure trigger) throws TriggerNotFoundException
     {
         this.ranBy = trigger;
         if (!this.isAutoRun())
@@ -130,7 +130,7 @@ public class ScenarioEngineImpl implements ScenarioEngine
         return result;
     }
 
-    private ScenarioResult start$1(@NotNull TriggerBean trigger) throws TriggerNotFoundException
+    private ScenarioResult start$1(@NotNull TriggerStructure trigger) throws TriggerNotFoundException
     {
         this.testReporter.onTestStart(this, trigger);
 

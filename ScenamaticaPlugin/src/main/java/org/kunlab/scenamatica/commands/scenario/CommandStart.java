@@ -18,7 +18,7 @@ import org.kunlab.scenamatica.exceptions.scenario.TriggerNotFoundException;
 import org.kunlab.scenamatica.interfaces.ScenamaticaRegistry;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenario.SessionCreator;
-import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
+import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileStructure;
 import org.kunlab.scenamatica.utils.CommandUtils;
 
 import java.util.ArrayList;
@@ -107,7 +107,7 @@ public class CommandStart extends CommandBase
             Plugin plugin;
             if ((plugin = Bukkit.getPluginManager().getPlugin(pluginName)) == null)
                 return null;
-            Map<String, ScenarioFileBean> scenarios = this.registry.getScenarioFileManager().getPluginScenarios(plugin);
+            Map<String, ScenarioFileStructure> scenarios = this.registry.getScenarioFileManager().getPluginScenarios(plugin);
             if (scenarios == null)
                 return null;
             return new ArrayList<>(scenarios.keySet());

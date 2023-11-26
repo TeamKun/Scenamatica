@@ -4,7 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.interfaces.ScenamaticaRegistry;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.action.ActionBean;
+import org.kunlab.scenamatica.interfaces.scenariofile.action.ActionStructure;
 
 import java.util.List;
 import java.util.function.BiConsumer;
@@ -20,7 +20,7 @@ public interface ActionCompiler
      *
      * @param registry      コンパイルに必要な情報を持つレジストリ
      * @param engine        コンパイルに必要な情報を持つシナリオエンジン
-     * @param bean          アクションの情報
+     * @param structure     アクションの情報
      * @param reportErrorTo コンパイルに失敗したときに呼び出されるコールバック
      * @param onSuccess     コンパイルに成功したときに呼び出されるコールバック
      * @param <A>           アクションの引数の型
@@ -28,7 +28,7 @@ public interface ActionCompiler
      */
     <A extends ActionArgument> CompiledAction<A> compile(@NotNull ScenamaticaRegistry registry,
                                                          @NotNull ScenarioEngine engine,
-                                                         @NotNull ActionBean bean,
+                                                         @NotNull ActionStructure structure,
                                                          @Nullable BiConsumer<CompiledAction<?>, Throwable> reportErrorTo,
                                                          @Nullable Consumer<CompiledAction<?>> onSuccess);
 

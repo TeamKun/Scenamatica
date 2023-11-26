@@ -15,7 +15,7 @@ import org.kunlab.scenamatica.events.actions.server.ServerLogEvent;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.BeanSerializer;
+import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Collections;
@@ -87,7 +87,7 @@ public class ServerLogAction extends AbstractServerAction<ServerLogAction.Argume
     }
 
     @Override
-    public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull BeanSerializer serializer)
+    public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
     {
         String source = (String) map.get(Argument.KEY_SOURCE);
         String message = (String) map.get(Argument.KEY_MESSAGE);

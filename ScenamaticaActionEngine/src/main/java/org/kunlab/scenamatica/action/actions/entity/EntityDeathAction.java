@@ -10,14 +10,14 @@ import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.kunlab.scenamatica.commons.utils.BeanUtils;
+import org.kunlab.scenamatica.commons.utils.StructureUtils;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.BeanSerializer;
-import org.kunlab.scenamatica.interfaces.scenariofile.inventory.ItemStackBean;
+import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
+import org.kunlab.scenamatica.interfaces.scenariofile.inventory.ItemStackStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.ArrayList;
@@ -62,10 +62,10 @@ public class EntityDeathAction extends AbstractEntityAction<EntityDeathAction.Ar
         EntityDeathEvent e = (EntityDeathEvent) event;
         if (argument.drops != null)
         {
-            List<ItemStackBean> expectedDrops = new ArrayList<>(argument.getDrops());
+            List<ItemStackStructure> expectedDrops = new ArrayList<>(argument.getDrops());
             expectedDrops.removeIf(expectedDrop ->
                     e.getDrops().stream()
-                            .noneMatch(drop -> BeanUtils.isSame(expectedDrop, drop, false))
+                            .noneMatch(drop -> StructureUtils.isSame(expectedDrop, drop, false))
             );
 
             if (!expectedDrops.isEmpty())
@@ -90,15 +90,15 @@ public class EntityDeathAction extends AbstractEntityAction<EntityDeathAction.Ar
     }
 
     @Override
-    public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull BeanSerializer serializer)
+    public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
     {
-        List<ItemStackBean> drops = null;
+        List<ItemStackStructure> drops = null;
         if (map.containsKey(Argument.KEY_DROPS))
         {
             drops = new ArrayList<>();
             List<Map<String, Object>> dropMaps = MapUtils.getAsList(map, Argument.KEY_DROPS);
             for (Map<String, Object> dropMap : dropMaps)
-                drops.add(serializer.deserialize(dropMap, ItemStackBean.class));
+                drops.add(serializer.deserialize(dropMap, ItemStackStructure.class));
         }
 
         return new Argument(
@@ -129,7 +129,7 @@ public class EntityDeathAction extends AbstractEntityAction<EntityDeathAction.Ar
         public static final String KEY_DEATH_SOUND_VOLUME = "soundVolume";
         public static final String KEY_DEATH_SOUND_PITCH = "soundPitch";
 
-        List<ItemStackBean> drops;
+        List<ItemStackStructure> drops;
         Integer dropExp;
         Double reviveHealth;
 
@@ -139,7 +139,7 @@ public class EntityDeathAction extends AbstractEntityAction<EntityDeathAction.Ar
         Float deathSoundVolume;
         Float deathSoundPitch;
 
-        public Argument(@Nullable EntityArgumentHolder<Entity> mayTarget, List<ItemStackBean> drops, Integer dropExp, Double reviveHealth, Boolean shouldPlayDeathSound, Sound deathSound, SoundCategory deathSoundCategory, Float deathSoundVolume, Float deathSoundPitch)
+        public Argument(@Nullable EntityArgumentHolder<Entity> mayTarget, List<ItemStackStructure> drops, Integer dropExp, Double reviveHealth, Boolean shouldPlayDeathSound, Sound deathSound, SoundCategory deathSoundCategory, Float deathSoundVolume, Float deathSoundPitch)
         {
             super(mayTarget);
             this.drops = drops;

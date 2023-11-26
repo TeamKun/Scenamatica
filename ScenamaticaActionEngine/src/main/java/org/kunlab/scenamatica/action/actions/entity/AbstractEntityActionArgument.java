@@ -5,7 +5,7 @@ import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.actions.AbstractActionArgument;
 import org.kunlab.scenamatica.interfaces.action.ActionArgument;
-import org.kunlab.scenamatica.interfaces.scenariofile.entity.EntityBean;
+import org.kunlab.scenamatica.interfaces.scenariofile.entity.EntityStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Objects;
@@ -75,9 +75,9 @@ public abstract class AbstractEntityActionArgument<E extends Entity> extends Abs
         return this.entity;
     }
 
-    public EntityBean getTargetBean()
+    public EntityStructure getTargetStructure()
     {
-        return this.entity == null ? null: this.entity.getTargetBean();
+        return this.entity == null ? null: this.entity.getTargetStructure();
     }
 
     public boolean checkMatchedEntity(Entity entity)

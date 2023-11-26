@@ -10,10 +10,10 @@ import org.kunlab.scenamatica.interfaces.scenario.ScenarioActionListener;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenario.runtime.CompiledScenarioAction;
 import org.kunlab.scenamatica.interfaces.scenario.runtime.CompiledTriggerAction;
-import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
-import org.kunlab.scenamatica.interfaces.scenariofile.action.ActionBean;
-import org.kunlab.scenamatica.interfaces.scenariofile.scenario.ScenarioBean;
-import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerBean;
+import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileStructure;
+import org.kunlab.scenamatica.interfaces.scenariofile.action.ActionStructure;
+import org.kunlab.scenamatica.interfaces.scenariofile.scenario.ScenarioStructure;
+import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerStructure;
 import org.kunlab.scenamatica.scenario.runtime.CompiledTriggerActionImpl;
 import org.kunlab.scenamatica.scenario.runtime.InternalCompiler;
 
@@ -26,7 +26,7 @@ public class ScenarioCompiler
     private final ScenamaticaRegistry registry;
     private final ScenarioEngine engine;
 
-    private final ScenarioFileBean scenario;
+    private final ScenarioFileStructure scenario;
     private final ActionRunManager actionManager;
     private final ScenarioActionListener listener;
     private final String logPrefix;
@@ -58,7 +58,7 @@ public class ScenarioCompiler
         );
     }
 
-    public CompiledScenarioAction<?> compileRunIf(ActionBean runIf)
+    public CompiledScenarioAction<?> compileRunIf(ActionStructure runIf)
     {
         this.logCompiling(++this.compiled, this.compileNeeded, "RUN_IF");
 
@@ -71,7 +71,7 @@ public class ScenarioCompiler
         );
     }
 
-    public List<CompiledScenarioAction<?>> compileMain(List<? extends ScenarioBean> scenarios)
+    public List<CompiledScenarioAction<?>> compileMain(List<? extends ScenarioStructure> scenarios)
     {
         this.logCompilingMain(++this.compiled, this.compileNeeded);
         return InternalCompiler.compileActions(
@@ -83,12 +83,12 @@ public class ScenarioCompiler
         );
     }
 
-    public List<CompiledTriggerAction> compileTriggerActions(List<? extends TriggerBean> triggers)
+    public List<CompiledTriggerAction> compileTriggerActions(List<? extends TriggerStructure> triggers)
     {
         int compiled = 1; // 本シナリオの分。
 
         List<CompiledTriggerAction> triggerActions = new ArrayList<>();
-        for (TriggerBean trigger : triggers)
+        for (TriggerStructure trigger : triggers)
         {
             List<CompiledScenarioAction<?>> beforeActions;
             List<CompiledScenarioAction<?>> afterActions;

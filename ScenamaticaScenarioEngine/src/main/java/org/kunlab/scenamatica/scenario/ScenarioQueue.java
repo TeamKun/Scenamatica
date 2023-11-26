@@ -14,7 +14,7 @@ import org.kunlab.scenamatica.interfaces.scenario.QueuedScenario;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioResult;
 import org.kunlab.scenamatica.interfaces.scenario.SessionCreator;
-import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerBean;
+import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerStructure;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -40,7 +40,7 @@ class ScenarioQueue
         this.scenarioQueue = new ArrayDeque<>();
     }
 
-    /* non-public */ void add(ScenarioEngine engine, TriggerBean trigger, Consumer<? super ScenarioResult> callback)
+    /* non-public */ void add(ScenarioEngine engine, TriggerStructure trigger, Consumer<? super ScenarioResult> callback)
     {
         this.scenarioQueue.add(new ScenarioSessionImpl(this.manager, Collections.singletonList(
                 new QueuedScenarioImpl(this.manager, engine, trigger, callback)
@@ -54,10 +54,10 @@ class ScenarioQueue
         for (SessionCreator.SessionElement elm : creator.getSessions())
         {
             ScenarioEngine engine = elm.getEngine();
-            TriggerBean trigger = null;
+            TriggerStructure trigger = null;
             if (engine == null)
             {
-                Pair<ScenarioEngine, TriggerBean> info =
+                Pair<ScenarioEngine, TriggerStructure> info =
                         this.manager.getRunInfoOrThrow(elm.getPlugin(), elm.getName(), elm.getType());
                 engine = info.getLeft();
                 trigger = info.getRight();
@@ -75,7 +75,7 @@ class ScenarioQueue
         this.runner.resume();
     }
 
-    /* non-public */ void addInterrupt(ScenarioEngine engine, TriggerBean trigger, Consumer<? super ScenarioResult> callback)
+    /* non-public */ void addInterrupt(ScenarioEngine engine, TriggerStructure trigger, Consumer<? super ScenarioResult> callback)
     {
         if (this.current != null)  // バックアップを取っておく。
             this.scenarioQueue.add(this.current);

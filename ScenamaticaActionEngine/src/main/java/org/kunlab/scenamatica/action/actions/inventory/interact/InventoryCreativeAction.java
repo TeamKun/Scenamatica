@@ -9,15 +9,15 @@ import org.bukkit.event.inventory.InventoryCreativeEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.utils.PlayerUtils;
-import org.kunlab.scenamatica.commons.utils.BeanUtils;
+import org.kunlab.scenamatica.commons.utils.StructureUtils;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.context.Actor;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.BeanSerializer;
-import org.kunlab.scenamatica.interfaces.scenariofile.inventory.ItemStackBean;
+import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
+import org.kunlab.scenamatica.interfaces.scenariofile.inventory.ItemStackStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Collections;
@@ -53,7 +53,7 @@ public class InventoryCreativeAction extends InventoryClickAction<InventoryCreat
         InventoryCreativeEvent e = (InventoryCreativeEvent) event;
 
         return super.isFired(argument, engine, event)
-                && (argument.getItem() == null || BeanUtils.isSame(argument.getItem(), e.getCursor(), false));
+                && (argument.getItem() == null || StructureUtils.isSame(argument.getItem(), e.getCursor(), false));
     }
 
     @Override
@@ -65,13 +65,13 @@ public class InventoryCreativeAction extends InventoryClickAction<InventoryCreat
     }
 
     @Override
-    public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull BeanSerializer serializer)
+    public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
     {
-        ItemStackBean stack = null;
+        ItemStackStructure stack = null;
         if (map.containsKey(Argument.KEY_ITEM))
             stack = serializer.deserialize(
                     MapUtils.checkAndCastMap(map.get(Argument.KEY_ITEM)),
-                    ItemStackBean.class
+                    ItemStackStructure.class
             );
 
         return new Argument(
@@ -86,9 +86,9 @@ public class InventoryCreativeAction extends InventoryClickAction<InventoryCreat
     {
         public static final String KEY_ITEM = "item";
 
-        ItemStackBean item;
+        ItemStackStructure item;
 
-        public Argument(InventoryClickAction.Argument argument, ItemStackBean item)
+        public Argument(InventoryClickAction.Argument argument, ItemStackStructure item)
         {
             super(
                     argument.getInventory(),

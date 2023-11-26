@@ -7,8 +7,8 @@ import org.kunlab.scenamatica.exceptions.scenario.TriggerNotFoundException;
 import org.kunlab.scenamatica.interfaces.context.Context;
 import org.kunlab.scenamatica.interfaces.scenario.runtime.CompiledScenarioAction;
 import org.kunlab.scenamatica.interfaces.scenario.runtime.CompiledTriggerAction;
-import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
-import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerBean;
+import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileStructure;
+import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerStructure;
 
 import java.util.List;
 import java.util.UUID;
@@ -41,7 +41,7 @@ public interface ScenarioEngine
      * @return テスト結果
      */
     @NotNull
-    ScenarioResult start(@NotNull TriggerBean trigger) throws TriggerNotFoundException;
+    ScenarioResult start(@NotNull TriggerStructure trigger) throws TriggerNotFoundException;
 
     /**
      * シナリオの実行をキャンセルします。
@@ -60,7 +60,7 @@ public interface ScenarioEngine
      *
      * @return シナリオ
      */
-    ScenarioFileBean getScenario();
+    ScenarioFileStructure getScenario();
 
     /**
      * シナリオの結果を受け取るリスナーを取得します。
@@ -86,7 +86,7 @@ public interface ScenarioEngine
      *
      * @return トリガ
      */
-    TriggerBean getRanBy();
+    TriggerStructure getRanBy();
 
     /**
      * 与えられた一意のテスト ID を取得します。

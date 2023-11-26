@@ -5,7 +5,7 @@ import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionArgument;
 import org.kunlab.scenamatica.interfaces.action.CompiledAction;
-import org.kunlab.scenamatica.interfaces.scenariofile.scenario.ScenarioBean;
+import org.kunlab.scenamatica.interfaces.scenariofile.scenario.ScenarioStructure;
 
 /**
  * コンパイルされたシナリオアクションを表すインターフェースです。
@@ -20,7 +20,7 @@ public interface CompiledScenarioAction<A extends ActionArgument>
      * @return コンパイル前のアクション
      */
     @NotNull
-    ScenarioBean getBean();
+    ScenarioStructure getStructure();
 
     /**
      * シナリオの種類を取得します。

@@ -6,14 +6,14 @@ import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.utils.EntityUtils;
-import org.kunlab.scenamatica.commons.utils.BeanUtils;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
+import org.kunlab.scenamatica.commons.utils.StructureUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.BeanSerializer;
-import org.kunlab.scenamatica.interfaces.scenariofile.entity.EntityBean;
+import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
+import org.kunlab.scenamatica.interfaces.scenariofile.entity.EntityStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Map;
@@ -36,11 +36,11 @@ public class EntityAction extends AbstractEntityAction<EntityAction.Argument>
         argument = this.requireArgsNonNull(argument);
 
         Entity target = argument.selectTarget();
-        EntityBean entityInfo = argument.getEntity();
+        EntityStructure entityInfo = argument.getEntity();
 
         assert entityInfo != null;
 
-        BeanUtils.applyEntityBeanData(entityInfo, target);
+        StructureUtils.applyEntityStructureData(entityInfo, target);
     }
 
     @Override
@@ -48,7 +48,7 @@ public class EntityAction extends AbstractEntityAction<EntityAction.Argument>
     {
         argument = this.requireArgsNonNull(argument);
 
-        EntityBean entityInfo = argument.getEntity();
+        EntityStructure entityInfo = argument.getEntity();
         Entity target = EntityUtils.getPlayerOrEntityOrNull(argument.getTargetString());
 
         if (target == null && entityInfo != null)
@@ -57,24 +57,24 @@ public class EntityAction extends AbstractEntityAction<EntityAction.Argument>
             return false;
 
         return entityInfo == null
-                || BeanUtils.isSame(entityInfo, target, false);
+                || StructureUtils.isSame(entityInfo, target, false);
     }
 
     @Override
-    public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull BeanSerializer serializer)
+    public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
     {
-        EntityBean bean;
+        EntityStructure structure;
         if (map.containsKey(Argument.KEY_ENTITY))
-            bean = serializer.deserialize(
+            structure = serializer.deserialize(
                     MapUtils.checkAndCastMap(map.get(Argument.KEY_ENTITY)),
-                    EntityBean.class
+                    EntityStructure.class
             );
         else
-            bean = null;
+            structure = null;
 
         return new Argument(
                 super.deserializeTarget(map, serializer),
-                bean
+                structure
         );
     }
 
@@ -84,9 +84,9 @@ public class EntityAction extends AbstractEntityAction<EntityAction.Argument>
     {
         public static final String KEY_ENTITY = "entity";
 
-        EntityBean entity;
+        EntityStructure entity;
 
-        public Argument(EntityArgumentHolder<Entity> target, @Nullable EntityBean entity)
+        public Argument(EntityArgumentHolder<Entity> target, @Nullable EntityStructure entity)
         {
             super(target);
             this.entity = entity;

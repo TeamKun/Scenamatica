@@ -7,8 +7,8 @@ import org.jetbrains.annotations.Nullable;
 import org.kunlab.kpm.utils.PluginUtil;
 import org.kunlab.scenamatica.exceptions.scenariofile.InvalidScenarioFileException;
 import org.kunlab.scenamatica.interfaces.ScenamaticaRegistry;
-import org.kunlab.scenamatica.interfaces.scenariofile.BeanSerializer;
-import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
+import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
+import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileManager;
 
 import java.io.IOException;
@@ -22,7 +22,7 @@ public class ScenarioFileManagerImpl implements ScenarioFileManager
     @NotNull
     private final ScenamaticaRegistry registry;
     @NotNull
-    private final Map<String, Map<String, ScenarioFileBean>> scenarios;
+    private final Map<String, Map<String, ScenarioFileStructure>> scenarios;
 
     public ScenarioFileManagerImpl(@NotNull ScenamaticaRegistry registry)
     {
@@ -31,9 +31,9 @@ public class ScenarioFileManagerImpl implements ScenarioFileManager
     }
 
     @Override
-    public @NotNull BeanSerializer getSerializer()
+    public @NotNull StructureSerializer getSerializer()
     {
-        return BeanSerializerImpl.getInstance();
+        return StructureSerializerImpl.getInstance();
     }
 
     @Override
@@ -42,7 +42,7 @@ public class ScenarioFileManagerImpl implements ScenarioFileManager
         try
         {
             Path pluginJarPath = PluginUtil.getFile(plugin).toPath();
-            Map<String, ScenarioFileBean> pluginScenarios = ScenarioFileParser.loadAllFromJar(pluginJarPath);
+            Map<String, ScenarioFileStructure> pluginScenarios = ScenarioFileParser.loadAllFromJar(pluginJarPath);
 
             this.validateScenarios(pluginScenarios.values());
 
@@ -62,12 +62,12 @@ public class ScenarioFileManagerImpl implements ScenarioFileManager
         }
     }
 
-    private void validateScenarios(Collection<? extends ScenarioFileBean> scenarios)
+    private void validateScenarios(Collection<? extends ScenarioFileStructure> scenarios)
             throws InvalidScenarioFileException
     {
         Version baseVersion = Version.of(this.registry.getPlugin().getDescription().getVersion());
 
-        for (ScenarioFileBean scenario : scenarios)
+        for (ScenarioFileStructure scenario : scenarios)
         {
             Version fileVersion = scenario.getScenamaticaVersion();
 
@@ -81,7 +81,7 @@ public class ScenarioFileManagerImpl implements ScenarioFileManager
 
     @Override
     @Nullable
-    public Map<String, ScenarioFileBean> getPluginScenarios(@NotNull Plugin plugin)
+    public Map<String, ScenarioFileStructure> getPluginScenarios(@NotNull Plugin plugin)
     {
         if (!(this.scenarios.containsKey(plugin.getName()) || this.loadPluginScenarios(plugin)))
             return null;
@@ -91,9 +91,9 @@ public class ScenarioFileManagerImpl implements ScenarioFileManager
 
     @Override
     @Nullable
-    public ScenarioFileBean getScenario(@NotNull Plugin plugin, @NotNull String scenarioName)
+    public ScenarioFileStructure getScenario(@NotNull Plugin plugin, @NotNull String scenarioName)
     {
-        Map<String, ScenarioFileBean> pluginScenarios = this.getPluginScenarios(plugin);
+        Map<String, ScenarioFileStructure> pluginScenarios = this.getPluginScenarios(plugin);
 
         if (pluginScenarios == null)
             return null;

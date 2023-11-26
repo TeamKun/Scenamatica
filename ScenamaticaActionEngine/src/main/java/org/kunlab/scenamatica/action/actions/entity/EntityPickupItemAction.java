@@ -13,13 +13,13 @@ import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.utils.EntityUtils;
-import org.kunlab.scenamatica.commons.utils.BeanUtils;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
+import org.kunlab.scenamatica.commons.utils.StructureUtils;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.BeanSerializer;
-import org.kunlab.scenamatica.interfaces.scenariofile.entity.entities.EntityItemBean;
+import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
+import org.kunlab.scenamatica.interfaces.scenariofile.entity.entities.EntityItemStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Collections;
@@ -56,13 +56,13 @@ public class EntityPickupItemAction extends AbstractEntityAction<EntityPickupIte
             item = argument.selectItem();
         else
         {
-            EntityItemBean itemBean = argument.getItem();
+            EntityItemStructure itemStructure = argument.getItem();
 
             // 拾う前に, アイテムを落とす必要がある
             item = target.getWorld().dropItemNaturally(
                     target.getLocation(),
                     argument.getItem().getItemStack().toItemStack(),
-                    (entity) -> BeanUtils.applyItemBeanData(itemBean, target, entity)
+                    (entity) -> StructureUtils.applyItemStructureData(itemStructure, target, entity)
             );
         }
 
@@ -104,7 +104,7 @@ public class EntityPickupItemAction extends AbstractEntityAction<EntityPickupIte
         EntityPickupItemEvent e = (EntityPickupItemEvent) event;
 
         return (argument.getRemaining() == null || Objects.equals(argument.getRemaining(), e.getRemaining()))
-                && (argument.getItem() == null || BeanUtils.isSame(argument.getItem(), e.getItem(), false));
+                && (argument.getItem() == null || StructureUtils.isSame(argument.getItem(), e.getItem(), false));
     }
 
     @Override
@@ -116,7 +116,7 @@ public class EntityPickupItemAction extends AbstractEntityAction<EntityPickupIte
     }
 
     @Override
-    public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull BeanSerializer serializer)
+    public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
     {
         Integer remaining = MapUtils.getAsNumberOrNull(map, Argument.KEY_REMAINING, Number::intValue);
 
@@ -140,7 +140,7 @@ public class EntityPickupItemAction extends AbstractEntityAction<EntityPickupIte
                     remaining,
                     serializer.deserialize(
                             MapUtils.checkAndCastMap(map.get(Argument.KEY_ITEM)),
-                            EntityItemBean.class
+                            EntityItemStructure.class
                     )
             );
     }
@@ -153,10 +153,10 @@ public class EntityPickupItemAction extends AbstractEntityAction<EntityPickupIte
         public static final String KEY_ITEM = "item";
 
         Integer remaining;
-        EntityItemBean item;
+        EntityItemStructure item;
         String itemSelector;
 
-        public Argument(@Nullable EntityArgumentHolder<Entity> mayTarget, Integer remaining, EntityItemBean item)
+        public Argument(@Nullable EntityArgumentHolder<Entity> mayTarget, Integer remaining, EntityItemStructure item)
         {
             super(mayTarget);
             this.remaining = remaining;

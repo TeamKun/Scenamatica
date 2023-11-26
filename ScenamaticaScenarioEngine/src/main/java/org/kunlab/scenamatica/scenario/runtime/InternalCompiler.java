@@ -9,10 +9,10 @@ import org.kunlab.scenamatica.interfaces.action.CompiledAction;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioActionListener;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenario.runtime.CompiledScenarioAction;
-import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
-import org.kunlab.scenamatica.interfaces.scenariofile.action.ActionBean;
-import org.kunlab.scenamatica.interfaces.scenariofile.scenario.ScenarioBean;
-import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerBean;
+import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileStructure;
+import org.kunlab.scenamatica.interfaces.scenariofile.action.ActionStructure;
+import org.kunlab.scenamatica.interfaces.scenariofile.scenario.ScenarioStructure;
+import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerStructure;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,10 +24,10 @@ public class InternalCompiler
             @NotNull ScenarioEngine engine,
             @NotNull ActionCompiler compiler,
             @NotNull ScenarioActionListener listener,
-            @NotNull List<? extends ScenarioBean> scenarios)
+            @NotNull List<? extends ScenarioStructure> scenarios)
     {
         List<CompiledScenarioAction<?>> compiled = new ArrayList<>();
-        for (ScenarioBean scenario : scenarios)
+        for (ScenarioStructure scenario : scenarios)
             compiled.add(compileAction(registry, engine, compiler, listener, scenario));
 
         return compiled;
@@ -38,7 +38,7 @@ public class InternalCompiler
             @NotNull ScenarioEngine engine,
             @NotNull ActionCompiler compiler,
             @NotNull ScenarioActionListener listener,
-            @NotNull ScenarioBean scenario)
+            @NotNull ScenarioStructure scenario)
     {
         try
         {
@@ -74,7 +74,7 @@ public class InternalCompiler
             @NotNull ScenarioEngine engine,
             @NotNull ActionCompiler compiler,
             @NotNull ScenarioActionListener listener,
-            @NotNull ActionBean bean)
+            @NotNull ActionStructure structure)
     {  // RunIF 用に偽装する。
         CompiledAction<A> action;
         try
@@ -83,7 +83,7 @@ public class InternalCompiler
             action = compiler.compile(
                     registry,
                     engine,
-                    bean,
+                    structure,
                     listener::onActionError,
                     listener::onActionExecuted
             );
@@ -91,11 +91,11 @@ public class InternalCompiler
 
         catch (Throwable e)
         {
-            throw new ScenarioCompilationErrorException(e, engine.getScenario().getName(), bean.getType());
+            throw new ScenarioCompilationErrorException(e, engine.getScenario().getName(), structure.getType());
         }
 
         return new CompiledScenarioActionImpl<>(
-                new ScenarioBean()
+                new ScenarioStructure()
                 {
                     @Override
                     public @NotNull ScenarioType getType()
@@ -104,13 +104,13 @@ public class InternalCompiler
                     }
 
                     @Override
-                    public @NotNull ActionBean getAction()
+                    public @NotNull ActionStructure getAction()
                     {
-                        return bean;
+                        return structure;
                     }
 
                     @Override
-                    public ActionBean getRunIf()
+                    public ActionStructure getRunIf()
                     {
                         return null;
                     }
@@ -127,11 +127,11 @@ public class InternalCompiler
         );
     }
 
-    public static int calcCompileNeeded(ScenarioFileBean scenario)
+    public static int calcCompileNeeded(ScenarioFileStructure scenario)
     {
         int compileNeeded = 1; // 本シナリオの分。
 
-        for (TriggerBean trigger : scenario.getTriggers())
+        for (TriggerStructure trigger : scenario.getTriggers())
         {
             if (!trigger.getBeforeThat().isEmpty())
                 compileNeeded++;

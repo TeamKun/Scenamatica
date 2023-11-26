@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.Value;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileBean;
+import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileStructure;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,7 +25,7 @@ public class PacketTestStart extends AbstractTestPacket
     ScenarioEngine engine;
 
     @NotNull
-    ScenarioFileBean scenario;
+    ScenarioFileStructure scenario;
     boolean isAutoStart;
     long startedAt;
 
@@ -53,7 +53,7 @@ public class PacketTestStart extends AbstractTestPacket
         Map<String, Object> result = new HashMap<>();
 
         result.put(KEY_SCENARIO, this.engine.getManager().getRegistry().getScenarioFileManager().getSerializer()
-                .serialize(this.scenario, ScenarioFileBean.class));
+                .serialize(this.scenario, ScenarioFileStructure.class));
         result.put(KEY_AUTO_START, this.isAutoStart);
         result.put(KEY_STARTED_AT, this.startedAt);
 

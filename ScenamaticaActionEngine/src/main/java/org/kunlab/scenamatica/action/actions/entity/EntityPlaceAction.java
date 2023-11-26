@@ -13,16 +13,16 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.utils.PlayerUtils;
-import org.kunlab.scenamatica.commons.utils.BeanUtils;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
+import org.kunlab.scenamatica.commons.utils.StructureUtils;
 import org.kunlab.scenamatica.commons.utils.Utils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.context.Actor;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.BeanSerializer;
-import org.kunlab.scenamatica.interfaces.scenariofile.misc.BlockBean;
+import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
+import org.kunlab.scenamatica.interfaces.scenariofile.misc.BlockStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Collections;
@@ -73,15 +73,15 @@ public class EntityPlaceAction extends AbstractEntityAction<EntityPlaceAction.Ar
         return false;
     }
 
-    private static boolean isNotOnlyLocationAvailable(@Nullable BlockBean bean)
+    private static boolean isNotOnlyLocationAvailable(@Nullable BlockStructure structure)
     {
-        if (bean == null)
+        if (structure == null)
             return false;
 
-        return bean.getType() != null
-                || bean.getMetadata() != null
-                // || bean.getLightLevel() != null  // LightLevel は関係ない。
-                || bean.getBiome() != null;
+        return structure.getType() != null
+                || structure.getMetadata().isEmpty()
+                // || structure.getLightLevel() != null  // LightLevel は関係ない。
+                || structure.getBiome() != null;
     }
 
     @Override
@@ -103,7 +103,7 @@ public class EntityPlaceAction extends AbstractEntityAction<EntityPlaceAction.Ar
         }
 
         if (isNotOnlyLocationAvailable(argument.getBlock()))
-            BeanUtils.applyBlockBeanData(argument.getBlock(), location);
+            StructureUtils.applyBlockStructureData(argument.getBlock(), location);
 
         assert argument.getTargetString() != null;  // EXECUTE は, validateArgument でチェック済み
         Material material = Utils.searchMaterial(argument.getTargetString());
@@ -135,8 +135,8 @@ public class EntityPlaceAction extends AbstractEntityAction<EntityPlaceAction.Ar
 
         if (argument.getBlock() != null)
         {
-            BlockBean block = argument.getBlock();
-            if (!BeanUtils.isSame(block, e.getBlock(), engine))
+            BlockStructure block = argument.getBlock();
+            if (!StructureUtils.isSame(block, e.getBlock(), engine))
                 return false;
         }
 
@@ -152,19 +152,19 @@ public class EntityPlaceAction extends AbstractEntityAction<EntityPlaceAction.Ar
     }
 
     @Override
-    public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull BeanSerializer serializer)
+    public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
     {
-        BlockBean blockBean = null;
+        BlockStructure blockStructure = null;
         if (map.containsKey(Argument.KEY_BLOCK))
-            blockBean = serializer.deserialize(
+            blockStructure = serializer.deserialize(
                     MapUtils.checkAndCastMap(map.get(Argument.KEY_BLOCK)),
-                    BlockBean.class
+                    BlockStructure.class
             );
 
         return new Argument(
                 super.deserializeTarget(map, serializer),
                 MapUtils.getOrNull(map, Argument.KEY_PLAYER),
-                blockBean,
+                blockStructure,
                 MapUtils.getAsEnumOrNull(map, Argument.KEY_BLOCK_FACE, BlockFace.class)
         );
     }
@@ -178,10 +178,10 @@ public class EntityPlaceAction extends AbstractEntityAction<EntityPlaceAction.Ar
         public static final String KEY_BLOCK_FACE = "direction";
 
         String playerSpecifier;
-        BlockBean block;
+        BlockStructure block;
         BlockFace blockFace;
 
-        public Argument(EntityArgumentHolder<Entity> target, String playerSpecifier, BlockBean block, BlockFace blockFace)
+        public Argument(EntityArgumentHolder<Entity> target, String playerSpecifier, BlockStructure block, BlockFace blockFace)
         {
             super(target);
             this.playerSpecifier = playerSpecifier;

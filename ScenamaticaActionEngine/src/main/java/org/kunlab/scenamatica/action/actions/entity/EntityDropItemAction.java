@@ -9,15 +9,15 @@ import org.bukkit.event.entity.EntityDropItemEvent;
 import org.bukkit.inventory.InventoryHolder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.kunlab.scenamatica.commons.utils.BeanUtils;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
+import org.kunlab.scenamatica.commons.utils.StructureUtils;
 import org.kunlab.scenamatica.commons.utils.Utils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.BeanSerializer;
-import org.kunlab.scenamatica.interfaces.scenariofile.entity.entities.EntityItemBean;
+import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
+import org.kunlab.scenamatica.interfaces.scenariofile.entity.entities.EntityItemStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Collections;
@@ -47,7 +47,7 @@ public class EntityDropItemAction extends AbstractEntityAction<EntityDropItemAct
         target.getWorld().dropItemNaturally(
                 target.getLocation(),
                 argument.getItem().getItemStack().toItemStack(),
-                (entity) -> BeanUtils.applyItemBeanData(argument.getItem(), target, entity)
+                (entity) -> StructureUtils.applyItemStructureData(argument.getItem(), target, entity)
         );
     }
 
@@ -59,16 +59,16 @@ public class EntityDropItemAction extends AbstractEntityAction<EntityDropItemAct
 
         EntityDropItemEvent e = (EntityDropItemEvent) event;
         Item item = e.getItemDrop();
-        EntityItemBean bean = argument.getItem();
+        EntityItemStructure structure = argument.getItem();
 
-        return bean == null
-                || (bean.getPickupDelay() == null || Objects.equals(bean.getPickupDelay(), item.getPickupDelay())
-                && (bean.getOwner() == null || Objects.equals(bean.getOwner(), item.getOwner()))
-                && (bean.getThrower() == null || Objects.equals(bean.getThrower(), item.getThrower()))
-                && (bean.getVelocity() == null || Utils.vectorEquals(bean.getVelocity(), item.getVelocity()))
-                && (bean.getCanMobPickup() == null || Objects.equals(bean.getCanMobPickup(), item.canMobPickup()))
-                && (bean.getWillAge() == null || Objects.equals(bean.getWillAge(), item.willAge())
-                && BeanUtils.isSame(bean.getItemStack(), item.getItemStack(), false))
+        return structure == null
+                || (structure.getPickupDelay() == null || Objects.equals(structure.getPickupDelay(), item.getPickupDelay())
+                && (structure.getOwner() == null || Objects.equals(structure.getOwner(), item.getOwner()))
+                && (structure.getThrower() == null || Objects.equals(structure.getThrower(), item.getThrower()))
+                && (structure.getVelocity() == null || Utils.vectorEquals(structure.getVelocity(), item.getVelocity()))
+                && (structure.getCanMobPickup() == null || Objects.equals(structure.getCanMobPickup(), item.canMobPickup()))
+                && (structure.getWillAge() == null || Objects.equals(structure.getWillAge(), item.willAge())
+                && StructureUtils.isSame(structure.getItemStack(), item.getItemStack(), false))
         );
     }
 
@@ -81,13 +81,13 @@ public class EntityDropItemAction extends AbstractEntityAction<EntityDropItemAct
     }
 
     @Override
-    public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull BeanSerializer serializer)
+    public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
     {
-        EntityItemBean item = null;
+        EntityItemStructure item = null;
         if (map.containsKey(Argument.KEY_DROP_ITEM))
             item = serializer.deserialize(
                     MapUtils.checkAndCastMap(map.get(Argument.KEY_DROP_ITEM)),
-                    EntityItemBean.class
+                    EntityItemStructure.class
             );
 
         return new Argument(
@@ -102,9 +102,9 @@ public class EntityDropItemAction extends AbstractEntityAction<EntityDropItemAct
     {
         public static final String KEY_DROP_ITEM = "item";
 
-        EntityItemBean item;
+        EntityItemStructure item;
 
-        public Argument(@Nullable EntityArgumentHolder<Entity> mayTarget, EntityItemBean item)
+        public Argument(@Nullable EntityArgumentHolder<Entity> mayTarget, EntityItemStructure item)
         {
             super(mayTarget);
             this.item = item;

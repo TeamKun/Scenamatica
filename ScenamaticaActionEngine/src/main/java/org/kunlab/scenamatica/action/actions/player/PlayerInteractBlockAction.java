@@ -13,15 +13,15 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.utils.PlayerUtils;
-import org.kunlab.scenamatica.commons.utils.BeanUtils;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
+import org.kunlab.scenamatica.commons.utils.StructureUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.context.Actor;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.BeanSerializer;
-import org.kunlab.scenamatica.interfaces.scenariofile.misc.BlockBean;
+import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
+import org.kunlab.scenamatica.interfaces.scenariofile.misc.BlockStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Collections;
@@ -39,9 +39,9 @@ public class PlayerInteractBlockAction extends AbstractPlayerAction<PlayerIntera
         World world = engine.getManager().getRegistry().getContextManager().getStageManager().getStage();
 
         Location clickPos;
-        BlockBean blockBean = argument.getBlock();
-        if (!(blockBean == null || blockBean.getLocation() == null))
-            clickPos = blockBean.getLocation().toBlockLocation();
+        BlockStructure blockStructure = argument.getBlock();
+        if (!(blockStructure == null || blockStructure.getLocation() == null))
+            clickPos = blockStructure.getLocation().toBlockLocation();
         else  // 指定がなかったら自身の位置をクリックする(しかない)
             clickPos = argument.getTarget().getLocation().toBlockLocation();
 
@@ -88,12 +88,12 @@ public class PlayerInteractBlockAction extends AbstractPlayerAction<PlayerIntera
         Action expectedAction = argument.getAction();
         EquipmentSlot expectedHand = argument.getHand();
         BlockFace expectedBlockFace = argument.getBlockFace();
-        BlockBean expectedBlock = argument.getBlock();
+        BlockStructure expectedBlock = argument.getBlock();
 
         return (expectedAction == null || expectedAction == e.getAction())
                 && (expectedHand == null || expectedHand == e.getHand())
                 && (expectedBlockFace == null || expectedBlockFace == e.getBlockFace())
-                && (expectedBlock == null || e.getClickedBlock() == null || BeanUtils.isSame(expectedBlock, e.getClickedBlock(), engine));
+                && (expectedBlock == null || e.getClickedBlock() == null || StructureUtils.isSame(expectedBlock, e.getClickedBlock(), engine));
     }
 
     @Override
@@ -105,13 +105,13 @@ public class PlayerInteractBlockAction extends AbstractPlayerAction<PlayerIntera
     }
 
     @Override
-    public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull BeanSerializer serializer)
+    public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
     {
-        BlockBean block = null;
+        BlockStructure block = null;
         if (map.containsKey(Argument.KEY_BLOCK))
             block = serializer.deserialize(
                     MapUtils.checkAndCastMap(map.get(Argument.KEY_BLOCK)),
-                    BlockBean.class
+                    BlockStructure.class
             );
 
         Action action = MapUtils.getAsEnumOrNull(map, Argument.KEY_ACTION, Action.class);
@@ -138,10 +138,10 @@ public class PlayerInteractBlockAction extends AbstractPlayerAction<PlayerIntera
 
         Action action;
         EquipmentSlot hand;  // HAND or OFF_HAND
-        BlockBean block;
+        BlockStructure block;
         BlockFace blockFace;
 
-        public Argument(String target, Action action, EquipmentSlot hand, BlockBean block, BlockFace blockFace)
+        public Argument(String target, Action action, EquipmentSlot hand, BlockStructure block, BlockFace blockFace)
         {
             super(target);
             this.action = action;
