@@ -5,6 +5,8 @@ import org.bukkit.Material;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.Creatable;
 import org.kunlab.scenamatica.interfaces.scenariofile.Mapped;
 import org.kunlab.scenamatica.interfaces.scenariofile.Structure;
@@ -74,4 +76,21 @@ public interface BlockStructure extends Structure, Mapped<Block>, Creatable<Bloc
      * @return ブロックの状態
      */
     Byte getBlockState();
+
+    /**
+     * Location にこのブロックの情報を適用します。
+     *
+     * @param location 適用先の Location
+     * @return 適用後の Location
+     */
+    Block apply(@NotNull Location location);
+
+    /**
+     * ワールド情報が欠落している場合に, ScenarioEngine からワールド情報を取得してから Location にこのブロックの情報を適用します。
+     *
+     * @param engine   取得元の ScenarioEngine
+     * @param location 適用先の Location
+     * @return 適用後の Location
+     */
+    Block apply(@NotNull ScenarioEngine engine, @Nullable Location location);
 }

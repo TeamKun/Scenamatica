@@ -14,7 +14,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.utils.PlayerUtils;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
-import org.kunlab.scenamatica.commons.utils.StructureUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
@@ -93,7 +92,7 @@ public class PlayerInteractBlockAction extends AbstractPlayerAction<PlayerIntera
         return (expectedAction == null || expectedAction == e.getAction())
                 && (expectedHand == null || expectedHand == e.getHand())
                 && (expectedBlockFace == null || expectedBlockFace == e.getBlockFace())
-                && (expectedBlock == null || e.getClickedBlock() == null || StructureUtils.isSame(expectedBlock, e.getClickedBlock()));
+                && (expectedBlock == null || e.getClickedBlock() == null || expectedBlock.isAdequate(e.getClickedBlock()));
     }
 
     @Override

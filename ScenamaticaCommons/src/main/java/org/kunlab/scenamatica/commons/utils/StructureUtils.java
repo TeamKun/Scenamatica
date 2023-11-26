@@ -5,11 +5,8 @@ import com.google.common.collect.Multimap;
 import lombok.experimental.UtilityClass;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
-import org.bukkit.block.Block;
-import org.bukkit.block.data.BlockData;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
@@ -23,21 +20,14 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.metadata.FixedMetadataValue;
-import org.bukkit.metadata.MetadataValue;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.java.PluginClassLoader;
 import org.bukkit.potion.PotionEffect;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.entity.EntityStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.entity.entities.EntityItemStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.entity.entities.ProjectileStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.InventoryStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.ItemStackStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.PlayerInventoryStructure;
-import org.kunlab.scenamatica.interfaces.scenariofile.misc.BlockStructure;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -163,69 +153,6 @@ public class StructureUtils
         if (structure.getDamage() != null)
             // noinspection deprecation
             return stack.getDurability() == structure.getDamage();
-
-        return true;
-    }
-
-    public static boolean isSame(BlockStructure blockStructure, Block block)
-    {
-        if (blockStructure == null || block == null)
-            return blockStructure == null && block == null;
-
-        if (blockStructure.getType() != null && blockStructure.getType() != block.getType())
-            return false;
-
-        Location expectedLoc = blockStructure.getLocation();
-        Location actualLoc = block.getLocation();
-        if (expectedLoc != null)  // TODO: Refactor: to LocationStructure
-        {
-            if (Double.doubleToLongBits(expectedLoc.getX()) != Double.doubleToLongBits(actualLoc.getX()))
-                return false;
-            if (Double.doubleToLongBits(expectedLoc.getY()) != Double.doubleToLongBits(actualLoc.getY()))
-                return false;
-            if (Double.doubleToLongBits(expectedLoc.getZ()) != Double.doubleToLongBits(actualLoc.getZ()))
-                return false;
-
-            if (Float.floatToIntBits(expectedLoc.getYaw()) != Float.floatToIntBits(actualLoc.getYaw()))
-                return false;
-            if (Float.floatToIntBits(expectedLoc.getPitch()) != Float.floatToIntBits(actualLoc.getPitch()))
-                return false;
-
-            if (expectedLoc.getWorld() != null && !expectedLoc.getWorld().equals(actualLoc.getWorld()))
-                return false;
-        }
-
-        if (blockStructure.getBiome() != null && blockStructure.getBiome() != block.getBiome())
-            return false;
-
-        if (!blockStructure.getMetadata().isEmpty())
-        {
-            Map<String, Object> expected = blockStructure.getMetadata();
-            for (Map.Entry<String, Object> entry : expected.entrySet())
-            {
-                List<MetadataValue> actual = block.getMetadata(entry.getKey());
-                if (actual.isEmpty()
-                        || actual.stream().noneMatch(v -> v.asString().equals(entry.getValue().toString())))
-                    return false;
-            }
-        }
-
-        if (!blockStructure.getBlockData().isEmpty())
-        {
-            Map<String, Object> expected = blockStructure.getBlockData();
-            Map<String, Object> actual = BlockDataParser.toMap(block.getBlockData());
-            if (!MapUtils.isAdequate(expected, actual))
-                return false;
-        }
-
-        if (blockStructure.getBlockState() != null)
-        {
-            byte expected = blockStructure.getBlockState();
-            // noinspection deprecation
-            byte actual = block.getState().getData().getData();
-
-            return expected == actual;
-        }
 
         return true;
     }
@@ -357,74 +284,6 @@ public class StructureUtils
                     entity.setFallDistance(structure.getFallDistance());
             }
         }
-    }
-
-    public static void applyBlockStructureData(@NotNull BlockStructure structure)
-    {
-        Location loc = structure.getLocation();
-        if (loc == null)
-            throw new IllegalArgumentException("Location is null");
-
-        applyBlockStructureData(structure, loc);
-    }
-
-    public static Block applyBlockStructureData(@NotNull BlockStructure blockStructure, @Nullable Location location)
-    {
-        Location targetLoc = location == null ? blockStructure.getLocation(): location;
-        if (targetLoc == null)
-            return null;
-
-        Block block = targetLoc.getBlock();
-        if (blockStructure.getType() != null)
-            block.setType(blockStructure.getType(), true);
-        if (blockStructure.getBiome() != null)
-            block.getWorld().setBiome(targetLoc.getBlockX(), targetLoc.getBlockY(), targetLoc.getBlockZ(), blockStructure.getBiome());
-        if (!blockStructure.getMetadata().isEmpty())
-        {
-            ClassLoader classLoader = StructureUtils.class.getClassLoader();
-            if (!(classLoader instanceof PluginClassLoader))
-                throw new IllegalStateException("ClassLoader is not PluginClassLoader");
-            Plugin owningPlugin = ((PluginClassLoader) classLoader).getPlugin();
-
-            for (Map.Entry<String, Object> entry : blockStructure.getMetadata().entrySet())
-                block.setMetadata(
-                        entry.getKey(),
-                        new FixedMetadataValue(owningPlugin, entry.getValue())
-                );
-        }
-
-        if (!blockStructure.getBlockData().isEmpty())
-        {
-            BlockData data = BlockDataParser.fromMap(block.getType(), blockStructure.getBlockData());
-            block.setBlockData(block.getBlockData().merge(data), true);
-        }
-
-        if (blockStructure.getBlockState() != null)
-        {
-            // noinspection deprecation
-            block.getState().getData().setData(blockStructure.getBlockState());
-            block.getState().update(true, true);
-        }
-
-        return block;
-    }
-
-    public static Block applyBlockStructureData(@NotNull ScenarioEngine engine, @NotNull BlockStructure block, @Nullable Location location)
-    {
-        Location targetLoc;
-        if (location != null)
-            targetLoc = Utils.assignWorldToLocation(location, engine);
-        else if (block.getLocation() != null)
-            targetLoc = Utils.assignWorldToLocation(block.getLocation(), engine);
-        else
-            return null;
-
-        return applyBlockStructureData(block, targetLoc);
-    }
-
-    public static Block applyBlockStructureData(@NotNull ScenarioEngine engine, @NotNull BlockStructure block)
-    {
-        return applyBlockStructureData(engine, block, null);
     }
 
     public static boolean isSame(@NotNull EntityStructure entityStructure, @NotNull Entity entity, boolean strict)

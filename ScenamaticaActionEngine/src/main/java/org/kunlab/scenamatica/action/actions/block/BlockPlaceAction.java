@@ -14,7 +14,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.utils.PlayerUtils;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
-import org.kunlab.scenamatica.commons.utils.StructureUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
@@ -135,7 +134,7 @@ public class BlockPlaceAction extends AbstractBlockAction<BlockPlaceAction.Argum
         BlockStructure blockDef = argument.getBlock();
         Block block = this.getBlockLocationWithWorld(blockDef, engine).getBlock();
 
-        return StructureUtils.isSame(blockDef, block);
+        return blockDef.isAdequate(block);
     }
 
     @Value
@@ -185,14 +184,20 @@ public class BlockPlaceAction extends AbstractBlockAction<BlockPlaceAction.Argum
             if (!(hand == null || hand == EquipmentSlot.OFF_HAND || hand == EquipmentSlot.HAND))
                 throw new IllegalArgumentException("Invalid hand: " + this.hand + ", allowed: " + EquipmentSlot.HAND + ", " + EquipmentSlot.OFF_HAND);
 
-            if (type == ScenarioType.ACTION_EXECUTE)
+            switch (type)
             {
-                BlockStructure blockDef = this.block;
-                if (blockDef.getType() == null)
-                    throw new IllegalArgumentException("Block type cannot be null");
+                case CONDITION_REQUIRE:
+                    ensurePresent(KEY_BLOCK, this.block);
+                    /* fall through */
+                case ACTION_EXPECT:
+                    ensureNotPresent(KEY_DIRECTION, this.direction);
+                    /* fall through */
+                case ACTION_EXECUTE:
+                    BlockStructure blockDef = this.block;
+                    if (blockDef.getType() == null)
+                        throw new IllegalArgumentException("Block type cannot be null");
+
             }
-            else
-                ensureNotPresent(Argument.KEY_DIRECTION, this.direction);
         }
 
         @Nullable

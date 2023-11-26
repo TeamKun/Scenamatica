@@ -143,9 +143,9 @@ public abstract class AbstractPlayerBucketAction<A extends BucketActionArgument>
         BlockStructure candidate2 = argument.getBlock();
         Block applyBlock = null;
         if (candidate1 != null)
-            applyBlock = StructureUtils.applyBlockStructureData(engine, candidate1);
+            applyBlock = candidate1.apply(engine, null);
         if (candidate2 != null)
-            applyBlock = StructureUtils.applyBlockStructureData(engine, candidate2);
+            applyBlock = candidate2.apply(engine, null);
 
         if (applyBlock != null)
             return applyBlock;
@@ -173,8 +173,8 @@ public abstract class AbstractPlayerBucketAction<A extends BucketActionArgument>
         PlayerBucketEvent e = (PlayerBucketEvent) event;
 
         return (argument.getItemStack() == null || StructureUtils.isSame(argument.getItemStack(), e.getItemStack(), true))
-                && (argument.getBlock() == null || StructureUtils.isSame(argument.getBlock(), e.getBlock()))
-                && (argument.getBlockClicked() == null || StructureUtils.isSame(argument.getBlockClicked(), e.getBlockClicked()))
+                && (argument.getBlock() == null || argument.getBlock().isAdequate(e.getBlock()))
+                && (argument.getBlockClicked() == null || argument.getBlockClicked().isAdequate(e.getBlockClicked()))
                 && (argument.getBlockFace() == null || argument.getBlockFace() == e.getBlockFace())
                 && (argument.getBucket() == null || argument.getBucket() == e.getBucket())
                 && (argument.getHand() == null || argument.getHand() == e.getHand());

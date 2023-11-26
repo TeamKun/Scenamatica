@@ -14,7 +14,6 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.utils.PlayerUtils;
-import org.kunlab.scenamatica.commons.utils.StructureUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
@@ -55,7 +54,7 @@ public class PlayerBucketFillAction extends AbstractPlayerBucketAction<PlayerBuc
         {
             Block blockClicked = null;
             if (argument.getBlockClicked() != null)
-                blockClicked = StructureUtils.applyBlockStructureData(engine, argument.getBlockClicked());
+                blockClicked = argument.getBlockClicked().apply(engine, null);
             this.doEventOnlyMode(player, block, blockClicked, direction, stack.getType(), stack, argument.getHand());
         }
 

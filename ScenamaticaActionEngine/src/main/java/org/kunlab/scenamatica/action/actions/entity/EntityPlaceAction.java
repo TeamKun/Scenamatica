@@ -14,7 +14,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.utils.PlayerUtils;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
-import org.kunlab.scenamatica.commons.utils.StructureUtils;
 import org.kunlab.scenamatica.commons.utils.Utils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
@@ -103,7 +102,7 @@ public class EntityPlaceAction extends AbstractEntityAction<EntityPlaceAction.Ar
         }
 
         if (isNotOnlyLocationAvailable(argument.getBlock()))
-            StructureUtils.applyBlockStructureData(argument.getBlock(), location);
+            argument.getBlock().applyTo(location.getBlock());
 
         assert argument.getTargetString() != null;  // EXECUTE は, validateArgument でチェック済み
         Material material = Utils.searchMaterial(argument.getTargetString());
@@ -136,7 +135,7 @@ public class EntityPlaceAction extends AbstractEntityAction<EntityPlaceAction.Ar
         if (argument.getBlock() != null)
         {
             BlockStructure block = argument.getBlock();
-            if (!StructureUtils.isSame(block, e.getBlock()))
+            if (!block.isAdequate(e.getBlock()))
                 return false;
         }
 

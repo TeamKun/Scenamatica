@@ -6,7 +6,6 @@ import org.bukkit.event.block.BlockEvent;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.action.actions.AbstractAction;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
-import org.kunlab.scenamatica.commons.utils.StructureUtils;
 import org.kunlab.scenamatica.commons.utils.Utils;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
@@ -36,7 +35,7 @@ public abstract class AbstractBlockAction<A extends AbstractBlockActionArgument>
 
         BlockEvent e = (BlockEvent) event;
 
-        return argument.block == null || StructureUtils.isSame(argument.block, e.getBlock());
+        return argument.block == null || argument.block.isAdequate(e.getBlock());
     }
 
     public BlockStructure deserializeBlockOrNull(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)

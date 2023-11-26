@@ -75,7 +75,7 @@ public class PlayerHarvestBlockAction extends AbstractPlayerAction<PlayerHarvest
             }
         }
 
-        return (argument.block == null || StructureUtils.isSame(argument.getBlock(), e.getHarvestedBlock()));
+        return (argument.block == null || argument.getBlock().isAdequate(e.getHarvestedBlock()));
     }
 
     @Override

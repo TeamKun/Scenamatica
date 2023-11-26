@@ -6,13 +6,23 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
+import org.bukkit.block.data.BlockData;
+import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.metadata.MetadataValue;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.java.PluginClassLoader;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.commons.utils.BlockDataParser;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
+import org.kunlab.scenamatica.commons.utils.StructureUtils;
 import org.kunlab.scenamatica.commons.utils.Utils;
+import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.misc.BlockStructure;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -111,6 +121,19 @@ public class BlockStructureImpl implements BlockStructure
         );
     }
 
+    public BlockStructure changeLocation(Location location)
+    {
+        return new BlockStructureImpl(
+                this.type,
+                location,
+                this.metadata,
+                this.lightLevel,
+                this.biome,
+                this.blockData,
+                this.blockState
+        );
+    }
+
     @Override
     public boolean equals(Object o)
     {
@@ -162,20 +185,134 @@ public class BlockStructureImpl implements BlockStructure
     @Override
     public Block create()
     {
-        return null;
+        if (this.location == null)
+            throw new IllegalStateException("location is null");
+        else if (this.location.getWorld() == null)
+            throw new IllegalStateException("location.world is null");
+
+        Block block = this.location.getBlock();
+        this.applyTo(block);
+
+        return block;
     }
 
     @Override
-    public void applyTo(Block object)
+    public void applyTo(Block block)
     {
+        Location location = this.location;
 
+        if (this.type != null)
+            block.setType(this.type, true);
+        if (this.biome != null)
+            block.getWorld().setBiome(location.getBlockX(), location.getBlockY(), location.getBlockZ(), this.biome);
+        if (!this.metadata.isEmpty())
+        {
+            ClassLoader classLoader = StructureUtils.class.getClassLoader();
+            if (!(classLoader instanceof PluginClassLoader))
+                throw new IllegalStateException("ClassLoader is not PluginClassLoader");
+            Plugin owningPlugin = ((PluginClassLoader) classLoader).getPlugin();
+
+            for (Map.Entry<String, Object> entry : this.metadata.entrySet())
+                block.setMetadata(
+                        entry.getKey(),
+                        new FixedMetadataValue(owningPlugin, entry.getValue())
+                );
+        }
+
+        if (!this.blockData.isEmpty())
+        {
+            BlockData data = BlockDataParser.fromMap(block.getType(), this.getBlockData());
+            block.setBlockData(block.getBlockData().merge(data), true);
+        }
+
+        if (this.blockState != null)
+        {
+            BlockState state = block.getState();
+            // noinspection deprecation
+            state.getData().setData(this.blockState);
+            state.update(true, true);
+        }
     }
 
     @Override
-    public boolean isCompatible(Block object, boolean strict)
+    public boolean isAdequate(Block block, boolean strict)
     {
-        return false;
+        if (!(this.type == null || this.type == block.getType()))
+            return false;
+
+        Location expectedLoc = this.location;
+        Location actualLoc = block.getLocation();
+        if (expectedLoc != null)  // TODO: Refactor: to LocationStructure
+        {
+            if (Double.doubleToLongBits(expectedLoc.getX()) != Double.doubleToLongBits(actualLoc.getX()))
+                return false;
+            if (Double.doubleToLongBits(expectedLoc.getY()) != Double.doubleToLongBits(actualLoc.getY()))
+                return false;
+            if (Double.doubleToLongBits(expectedLoc.getZ()) != Double.doubleToLongBits(actualLoc.getZ()))
+                return false;
+
+            if (Float.floatToIntBits(expectedLoc.getYaw()) != Float.floatToIntBits(actualLoc.getYaw()))
+                return false;
+            if (Float.floatToIntBits(expectedLoc.getPitch()) != Float.floatToIntBits(actualLoc.getPitch()))
+                return false;
+
+            if (expectedLoc.getWorld() != null && !expectedLoc.getWorld().equals(actualLoc.getWorld()))
+                return false;
+        }
+
+        if (!(this.biome == null || this.biome == block.getBiome()))
+            return false;
+
+        if (!this.metadata.isEmpty())
+        {
+            for (Map.Entry<String, Object> entry : this.metadata.entrySet())
+            {
+                List<MetadataValue> actual = block.getMetadata(entry.getKey());
+                if (actual.isEmpty()
+                        || actual.stream().noneMatch(v -> v.asString().equals(entry.getValue().toString())))
+                    return false;
+            }
+        }
+
+        if (!this.blockData.isEmpty())
+        {
+            Map<String, Object> actual = BlockDataParser.toMap(block.getBlockData());
+            if (!MapUtils.isAdequate(this.blockData, actual))
+                return false;
+        }
+
+        if (this.blockState != null)
+        {
+            byte expected = this.blockState;
+            // noinspection deprecation
+            byte actual = block.getState().getData().getData();
+
+            return expected == actual;
+        }
+
+        return true;
     }
 
+    @Override
+    public Block apply(@NotNull Location location)
+    {
+        Block block = location.getBlock();
+        this.applyTo(block);
 
+        return block;
+    }
+
+    @Override
+    public Block apply(@NotNull ScenarioEngine engine, @Nullable Location location)
+    {
+        Location targetLoc;
+        if (location != null)
+            targetLoc = Utils.assignWorldToLocation(location, engine);
+        else if (this.location != null)
+            targetLoc = Utils.assignWorldToLocation(this.location, engine);
+        else
+            return null;
+
+        return this.apply(targetLoc);
+    }
 }
