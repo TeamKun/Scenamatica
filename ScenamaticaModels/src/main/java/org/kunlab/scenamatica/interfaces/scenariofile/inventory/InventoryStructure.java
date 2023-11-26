@@ -2,6 +2,8 @@ package org.kunlab.scenamatica.interfaces.scenariofile.inventory;
 
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
+import org.kunlab.scenamatica.interfaces.scenariofile.Creatable;
+import org.kunlab.scenamatica.interfaces.scenariofile.Mapped;
 import org.kunlab.scenamatica.interfaces.scenariofile.Structure;
 
 import java.util.Map;
@@ -9,7 +11,7 @@ import java.util.Map;
 /**
  * インベントリの定義を表すインタフェースです。
  */
-public interface InventoryStructure extends Structure
+public interface InventoryStructure extends Structure, Mapped<Inventory>, Creatable<Inventory>
 {
     String KEY_SIZE = "size";
     String KEY_TITLE = "title";
@@ -36,11 +38,4 @@ public interface InventoryStructure extends Structure
      */
     @NotNull
     Map<Integer, ItemStackStructure> getMainContents();
-
-    /**
-     * このインベントリのインスタンスを生成します。
-     *
-     * @return インベントリ
-     */
-    Inventory createInventory();
 }

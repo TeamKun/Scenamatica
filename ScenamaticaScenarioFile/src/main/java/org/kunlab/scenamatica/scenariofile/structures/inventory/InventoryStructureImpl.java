@@ -5,6 +5,7 @@ import lombok.Data;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
@@ -95,7 +96,7 @@ public class InventoryStructureImpl implements InventoryStructure
     }
 
     @Override
-    public Inventory createInventory()
+    public Inventory create()
     {
         Integer size = this.size;
         if (size == null)
@@ -113,5 +114,30 @@ public class InventoryStructureImpl implements InventoryStructure
             inventory.setItem(entry.getKey(), entry.getValue().create());
 
         return inventory;
+    }
+
+    @Override
+    public void applyTo(Inventory object)
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean isAdequate(Inventory inventory, boolean strict)
+    {
+        if (strict && !(this.size == null || this.size == inventory.getSize()))
+            return false;
+
+
+        for (int i = 0; i < inventory.getSize(); i++)
+        {
+            ItemStackStructure expected = this.mainContents.get(i);
+            ItemStack actual = inventory.getItem(i);
+
+            if (!expected.isAdequate(actual, strict))
+                return false;
+        }
+
+        return true;
     }
 }

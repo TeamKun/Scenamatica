@@ -9,7 +9,6 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDropItemEvent;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.potion.PotionEffect;
@@ -17,7 +16,6 @@ import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.interfaces.scenariofile.entity.EntityStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.entity.entities.EntityItemStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.entity.entities.ProjectileStructure;
-import org.kunlab.scenamatica.interfaces.scenariofile.inventory.InventoryStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.ItemStackStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.PlayerInventoryStructure;
 
@@ -28,32 +26,6 @@ import java.util.Objects;
 @UtilityClass
 public class StructureUtils
 {
-
-    public static boolean isSame(@NotNull InventoryStructure inventoryStructure, @NotNull Inventory inventory, boolean strict)
-    {
-        if (strict && !(inventoryStructure.getSize() == null || inventoryStructure.getSize() == inventory.getSize()))
-            return false;
-
-
-        for (int i = 0; i < inventory.getSize(); i++)
-        {
-            ItemStackStructure expected = inventoryStructure.getMainContents().get(i);
-            ItemStack actual = inventory.getItem(i);
-
-            if (!expected.isAdequate(actual, strict))
-                return false;
-        }
-
-        if (inventory instanceof PlayerInventory && inventoryStructure instanceof PlayerInventoryStructure)
-        {
-            PlayerInventoryStructure playerInventoryStructure = (PlayerInventoryStructure) inventoryStructure;
-            PlayerInventory playerInventory = (PlayerInventory) inventory;
-            return isSame(playerInventoryStructure, playerInventory, strict);
-        }
-
-        return true;
-    }
-
     public static boolean isSame(@NotNull PlayerInventoryStructure playerInventoryStructure, @NotNull PlayerInventory playerInventory)
     {
         return isSame(playerInventoryStructure, playerInventory, true);
@@ -80,7 +52,7 @@ public class StructureUtils
         if (!(expectedOffHand == null || expectedOffHand.isAdequate(actualOffHand))) // TODO: Impl strict
             return false;
 
-        return !checkInventory || isSame((InventoryStructure) playerInventoryStructure, playerInventory, false); // TODO: Impl strict
+        return !checkInventory;
     }
 
     public static void applyEntityStructureData(@NotNull EntityStructure structure, @NotNull Entity entity)

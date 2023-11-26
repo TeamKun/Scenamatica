@@ -48,7 +48,7 @@ public class InventoryClickAction<T extends InventoryClickAction.Argument> exten
         Actor actor = PlayerUtils.getActorOrThrow(engine, target);
 
         if (argument.getInventory() != null)
-            target.openInventory(argument.getInventory().createInventory());
+            target.openInventory(argument.getInventory().create());
 
         Integer slot = argument.getSlot();
         if (slot == null)

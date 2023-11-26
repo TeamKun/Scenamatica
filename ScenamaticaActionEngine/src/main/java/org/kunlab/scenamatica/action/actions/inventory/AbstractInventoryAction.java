@@ -5,7 +5,6 @@ import org.bukkit.event.inventory.InventoryEvent;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.action.actions.AbstractAction;
 import org.kunlab.scenamatica.action.actions.inventory.interact.AbstractInventoryInteractAction;
-import org.kunlab.scenamatica.commons.utils.StructureUtils;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
@@ -32,12 +31,9 @@ public abstract class AbstractInventoryAction<A extends AbstractInventoryArgumen
         if (!(event instanceof InventoryEvent))
             return false;
 
-        if (argument.getInventory() == null)
-            return true;
-
         InventoryEvent e = (InventoryEvent) event;
 
-        return StructureUtils.isSame(argument.getInventory(), e.getInventory(), false);
+        return (argument.getInventory() == null || argument.getInventory().isAdequate(e.getInventory(), false));
     }
 
     protected InventoryStructure deserializeInventoryIfContains(Map<String, Object> map, StructureSerializer serializer)

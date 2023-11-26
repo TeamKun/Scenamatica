@@ -43,7 +43,7 @@ public class InventoryOpenAction extends AbstractInventoryAction<InventoryOpenAc
         Player player = argument.getTarget();
         InventoryStructure inventoryStructure = argument.getInventory();
         assert inventoryStructure != null;
-        Inventory inventory = inventoryStructure.createInventory();
+        Inventory inventory = inventoryStructure.create();
 
         player.openInventory(inventory);
     }
