@@ -6,7 +6,6 @@ import lombok.experimental.UtilityClass;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.block.Block;
@@ -168,7 +167,7 @@ public class StructureUtils
         return true;
     }
 
-    public static boolean isSame(BlockStructure blockStructure, Block block, World world)
+    public static boolean isSame(BlockStructure blockStructure, Block block)
     {
         if (blockStructure == null || block == null)
             return blockStructure == null && block == null;
@@ -176,13 +175,25 @@ public class StructureUtils
         if (blockStructure.getType() != null && blockStructure.getType() != block.getType())
             return false;
 
-        Location expectedLoc = blockStructure.getLocation().clone();
+        Location expectedLoc = blockStructure.getLocation();
         Location actualLoc = block.getLocation();
-        if (expectedLoc.getWorld() == null)
-            expectedLoc.setWorld(world);
+        if (expectedLoc != null)  // TODO: Refactor: to LocationStructure
+        {
+            if (Double.doubleToLongBits(expectedLoc.getX()) != Double.doubleToLongBits(actualLoc.getX()))
+                return false;
+            if (Double.doubleToLongBits(expectedLoc.getY()) != Double.doubleToLongBits(actualLoc.getY()))
+                return false;
+            if (Double.doubleToLongBits(expectedLoc.getZ()) != Double.doubleToLongBits(actualLoc.getZ()))
+                return false;
 
-        if (!expectedLoc.equals(actualLoc))
-            return false;
+            if (Float.floatToIntBits(expectedLoc.getYaw()) != Float.floatToIntBits(actualLoc.getYaw()))
+                return false;
+            if (Float.floatToIntBits(expectedLoc.getPitch()) != Float.floatToIntBits(actualLoc.getPitch()))
+                return false;
+
+            if (expectedLoc.getWorld() != null && !expectedLoc.getWorld().equals(actualLoc.getWorld()))
+                return false;
+        }
 
         if (blockStructure.getBiome() != null && blockStructure.getBiome() != block.getBiome())
             return false;
@@ -217,11 +228,6 @@ public class StructureUtils
         }
 
         return true;
-    }
-
-    public static boolean isSame(@NotNull BlockStructure blockStructure, @NotNull Block block, @NotNull ScenarioEngine engine)
-    {
-        return isSame(blockStructure, block, engine.getContext().getStage());
     }
 
     public static boolean isSame(@NotNull InventoryStructure inventoryStructure, @NotNull Inventory inventory, boolean strict)

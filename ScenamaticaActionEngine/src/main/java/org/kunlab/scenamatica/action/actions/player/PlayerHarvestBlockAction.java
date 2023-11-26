@@ -8,8 +8,8 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.actions.block.BlockBreakAction;
-import org.kunlab.scenamatica.commons.utils.StructureUtils;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
+import org.kunlab.scenamatica.commons.utils.StructureUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
@@ -75,7 +75,7 @@ public class PlayerHarvestBlockAction extends AbstractPlayerAction<PlayerHarvest
             }
         }
 
-        return (argument.block == null || StructureUtils.isSame(argument.getBlock(), e.getHarvestedBlock(), engine));
+        return (argument.block == null || StructureUtils.isSame(argument.getBlock(), e.getHarvestedBlock()));
     }
 
     @Override

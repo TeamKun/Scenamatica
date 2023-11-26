@@ -13,8 +13,8 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.utils.PlayerUtils;
-import org.kunlab.scenamatica.commons.utils.StructureUtils;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
+import org.kunlab.scenamatica.commons.utils.StructureUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
@@ -135,7 +135,7 @@ public class BlockPlaceAction extends AbstractBlockAction<BlockPlaceAction.Argum
         BlockStructure blockDef = argument.getBlock();
         Block block = this.getBlockLocationWithWorld(blockDef, engine).getBlock();
 
-        return StructureUtils.isSame(blockDef, block, engine.getContext().getStage());
+        return StructureUtils.isSame(blockDef, block);
     }
 
     @Value

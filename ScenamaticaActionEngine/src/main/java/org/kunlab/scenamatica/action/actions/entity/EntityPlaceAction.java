@@ -136,7 +136,7 @@ public class EntityPlaceAction extends AbstractEntityAction<EntityPlaceAction.Ar
         if (argument.getBlock() != null)
         {
             BlockStructure block = argument.getBlock();
-            if (!StructureUtils.isSame(block, e.getBlock(), engine))
+            if (!StructureUtils.isSame(block, e.getBlock()))
                 return false;
         }
 

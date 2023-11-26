@@ -3,7 +3,10 @@ package org.kunlab.scenamatica.interfaces.scenariofile.misc;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Biome;
+import org.bukkit.block.Block;
 import org.jetbrains.annotations.NotNull;
+import org.kunlab.scenamatica.interfaces.scenariofile.Creatable;
+import org.kunlab.scenamatica.interfaces.scenariofile.Mapped;
 import org.kunlab.scenamatica.interfaces.scenariofile.Structure;
 
 import java.util.Map;
@@ -11,7 +14,7 @@ import java.util.Map;
 /**
  * ブロックの情報を格納するクラスです。
  */
-public interface BlockStructure extends Structure
+public interface BlockStructure extends Structure, Mapped<Block>, Creatable<Block>
 {
     String KEY_BLOCK_TYPE = "type";
     String KEY_BLOCK_LOCATION = "location";

@@ -93,7 +93,7 @@ public class PlayerInteractBlockAction extends AbstractPlayerAction<PlayerIntera
         return (expectedAction == null || expectedAction == e.getAction())
                 && (expectedHand == null || expectedHand == e.getHand())
                 && (expectedBlockFace == null || expectedBlockFace == e.getBlockFace())
-                && (expectedBlock == null || e.getClickedBlock() == null || StructureUtils.isSame(expectedBlock, e.getClickedBlock(), engine));
+                && (expectedBlock == null || e.getClickedBlock() == null || StructureUtils.isSame(expectedBlock, e.getClickedBlock()));
     }
 
     @Override

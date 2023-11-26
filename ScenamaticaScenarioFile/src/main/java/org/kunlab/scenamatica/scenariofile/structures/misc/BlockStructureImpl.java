@@ -158,4 +158,24 @@ public class BlockStructureImpl implements BlockStructure
                 ", blockState=" + this.blockState +
                 '}';
     }
+
+    @Override
+    public Block create()
+    {
+        return null;
+    }
+
+    @Override
+    public void applyTo(Block object)
+    {
+
+    }
+
+    @Override
+    public boolean isCompatible(Block object, boolean strict)
+    {
+        return false;
+    }
+
+
 }

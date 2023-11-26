@@ -173,8 +173,8 @@ public abstract class AbstractPlayerBucketAction<A extends BucketActionArgument>
         PlayerBucketEvent e = (PlayerBucketEvent) event;
 
         return (argument.getItemStack() == null || StructureUtils.isSame(argument.getItemStack(), e.getItemStack(), true))
-                && (argument.getBlock() == null || StructureUtils.isSame(argument.getBlock(), e.getBlock(), engine))
-                && (argument.getBlockClicked() == null || StructureUtils.isSame(argument.getBlockClicked(), e.getBlockClicked(), engine))
+                && (argument.getBlock() == null || StructureUtils.isSame(argument.getBlock(), e.getBlock()))
+                && (argument.getBlockClicked() == null || StructureUtils.isSame(argument.getBlockClicked(), e.getBlockClicked()))
                 && (argument.getBlockFace() == null || argument.getBlockFace() == e.getBlockFace())
                 && (argument.getBucket() == null || argument.getBucket() == e.getBucket())
                 && (argument.getHand() == null || argument.getHand() == e.getHand());
