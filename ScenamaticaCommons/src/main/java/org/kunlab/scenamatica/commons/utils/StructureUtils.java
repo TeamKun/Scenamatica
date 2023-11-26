@@ -1,13 +1,7 @@
 package org.kunlab.scenamatica.commons.utils;
 
-import com.destroystokyo.paper.Namespaced;
-import com.google.common.collect.Multimap;
 import lombok.experimental.UtilityClass;
-import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
-import org.bukkit.attribute.Attribute;
-import org.bukkit.attribute.AttributeModifier;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
@@ -16,10 +10,8 @@ import org.bukkit.entity.Projectile;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDropItemEvent;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.interfaces.scenariofile.entity.EntityStructure;
@@ -31,131 +23,11 @@ import org.kunlab.scenamatica.interfaces.scenariofile.inventory.PlayerInventoryS
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 
 @UtilityClass
 public class StructureUtils
 {
-    public static boolean isSame(ItemStackStructure structure, ItemStack stack, boolean strict)
-    {
-        if (structure == null || stack == null)
-            return structure == null && stack == null;
-
-        if (structure.getType() != null)
-            if (stack.getType() != structure.getType())
-                return false;
-
-        if (structure.getAmount() != null)
-            if (stack.getAmount() != structure.getAmount())
-                return false;
-
-        ItemMeta meta = stack.getItemMeta();
-
-        if (structure.getDisplayName() != null)
-            if (meta == null || !TextUtils.isSameContent(meta.displayName(), structure.getDisplayName()))
-                return false;
-
-        if (structure.getLocalizedName() != null)
-            if (meta == null || !structure.getLocalizedName().equals(meta.getLocalizedName()))
-                return false;
-
-        if (!structure.getLore().isEmpty())
-        {
-            List<String> expected = structure.getLore();
-            List<Component> actual = meta == null ? null: meta.lore();
-
-            if (actual == null || (strict && actual.size() != expected.size()))
-                return false;
-
-            // Lore を文字列に変換して比較する
-            if (expected.stream().anyMatch(s -> actual.stream().noneMatch(c -> TextUtils.isSameContent(c, s))))
-                return false;
-        }
-
-        if (structure.getCustomModelData() != null)
-            if (meta == null || !structure.getCustomModelData().equals(meta.getCustomModelData()))
-                return false;
-
-        if (!structure.getEnchantments().isEmpty())
-        {
-            Map<Enchantment, Integer> expected = structure.getEnchantments();
-            Map<Enchantment, Integer> actual = stack.getEnchantments();
-
-            if (strict && actual.size() != expected.size())
-                return false;
-
-            for (Map.Entry<Enchantment, Integer> entry : expected.entrySet())
-                if (!actual.containsKey(entry.getKey()) || !actual.get(entry.getKey()).equals(entry.getValue()))
-                    return false;
-        }
-
-        if (!structure.getItemFlags().isEmpty())
-        {
-            List<ItemFlag> expected = structure.getItemFlags();
-            Set<ItemFlag> actual = meta == null ? null: meta.getItemFlags();
-
-            if (actual == null || (strict && actual.size() != expected.size()))
-                return false;
-
-            if (expected.stream().anyMatch(f -> actual.stream().noneMatch(f::equals)))
-                return false;
-        }
-
-        if (Boolean.TRUE.equals(structure.getUnbreakable()))
-            if (meta == null || !meta.isUnbreakable())
-                return false;
-
-        if (!structure.getAttributeModifiers().isEmpty())
-        {
-            Map<Attribute, List<AttributeModifier>> expected = structure.getAttributeModifiers();
-            Multimap<Attribute, AttributeModifier> actual = meta == null ? null: meta.getAttributeModifiers();
-
-            if (actual == null || (strict && actual.size() != expected.size()))
-                return false;
-
-            for (Map.Entry<Attribute, List<AttributeModifier>> entry : expected.entrySet())
-            {
-                if (!actual.containsKey(entry.getKey()) || actual.get(entry.getKey()).size() != entry.getValue().size())
-                    return false;
-
-                for (AttributeModifier modifier : entry.getValue())
-                    if (actual.get(entry.getKey()).stream().noneMatch(m -> m.equals(modifier)))
-                        return false;
-            }
-        }
-
-        if (!structure.getPlaceableKeys().isEmpty())
-        {
-            List<Namespaced> expected = structure.getPlaceableKeys();
-            Set<Namespaced> actual = meta == null ? null: meta.getPlaceableKeys();
-
-            if (actual == null || (strict && actual.size() != expected.size()))
-                return false;
-
-            if (expected.stream().anyMatch(k -> actual.stream().noneMatch(k::equals)))
-                return false;
-        }
-
-        if (!structure.getDestroyableKeys().isEmpty())
-        {
-            List<Namespaced> expected = structure.getDestroyableKeys();
-            Set<Namespaced> actual = meta == null ? null: meta.getDestroyableKeys();
-
-            if (actual == null || (strict && actual.size() != expected.size()))
-                return false;
-
-            if (expected.stream().anyMatch(k -> actual.stream().noneMatch(k::equals)))
-                return false;
-        }
-
-        if (structure.getDamage() != null)
-            // noinspection deprecation
-            return stack.getDurability() == structure.getDamage();
-
-        return true;
-    }
 
     public static boolean isSame(@NotNull InventoryStructure inventoryStructure, @NotNull Inventory inventory, boolean strict)
     {
@@ -168,7 +40,7 @@ public class StructureUtils
             ItemStackStructure expected = inventoryStructure.getMainContents().get(i);
             ItemStack actual = inventory.getItem(i);
 
-            if (!isSame(expected, actual, strict))
+            if (!expected.isAdequate(actual, strict))
                 return false;
         }
 
@@ -195,20 +67,20 @@ public class StructureUtils
 
         if (expectedArmors != null)
             for (int i = 0; i < expectedArmors.length; i++)
-                if (!isSame(expectedArmors[i], actualArmors[i], true))
+                if (!(expectedArmors[i] == null || expectedArmors[i].isAdequate(actualArmors[i]))) // TODO: Impl strict
                     return false;
 
         ItemStackStructure expectedMainHand = playerInventoryStructure.getMainHand();
         ItemStack actualMainHand = playerInventory.getItemInMainHand();
-        if (expectedMainHand != null && !isSame(expectedMainHand, actualMainHand, true))
+        if (!(expectedMainHand == null || expectedMainHand.isAdequate(actualMainHand))) // TODO: Impl strict
             return false;
 
         ItemStackStructure expectedOffHand = playerInventoryStructure.getOffHand();
         ItemStack actualOffHand = playerInventory.getItemInOffHand();
-        if (expectedOffHand != null && !isSame(expectedOffHand, actualOffHand, true))
+        if (!(expectedOffHand == null || expectedOffHand.isAdequate(actualOffHand))) // TODO: Impl strict
             return false;
 
-        return !checkInventory || isSame(playerInventoryStructure, playerInventory, true);
+        return !checkInventory || isSame((InventoryStructure) playerInventoryStructure, playerInventory, false); // TODO: Impl strict
     }
 
     public static void applyEntityStructureData(@NotNull EntityStructure structure, @NotNull Entity entity)

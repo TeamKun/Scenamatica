@@ -10,7 +10,6 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.utils.PlayerUtils;
-import org.kunlab.scenamatica.commons.utils.StructureUtils;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
@@ -45,7 +44,7 @@ public class PlayerItemBreakAction extends AbstractPlayerAction<PlayerItemBreakA
         EquipmentSlot slot = argument.getSlot() == null ? EquipmentSlot.HAND: argument.getSlot();
         ItemStackStructure item = argument.getItem();
         if (item != null)
-            actor.getPlayer().getInventory().setItem(slot, item.toItemStack());
+            actor.getPlayer().getInventory().setItem(slot, item.create());
 
         PlayerUtils.getActorOrThrow(engine, argument.getTarget()).breakItem(slot);
     }
@@ -139,11 +138,7 @@ public class PlayerItemBreakAction extends AbstractPlayerAction<PlayerItemBreakA
         assert event instanceof PlayerItemBreakEvent;
         PlayerItemBreakEvent e = (PlayerItemBreakEvent) event;
 
-        return argument.getItem() == null || StructureUtils.isSame(
-                argument.getItem(),
-                e.getBrokenItem(),
-                /* strict */ false
-        );
+        return argument.getItem() == null || argument.getItem().isAdequate(e.getBrokenItem());
     }
 
     @Override

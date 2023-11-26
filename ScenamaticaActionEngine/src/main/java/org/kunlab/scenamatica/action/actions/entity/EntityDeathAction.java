@@ -10,7 +10,6 @@ import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.kunlab.scenamatica.commons.utils.StructureUtils;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
@@ -65,7 +64,7 @@ public class EntityDeathAction extends AbstractEntityAction<EntityDeathAction.Ar
             List<ItemStackStructure> expectedDrops = new ArrayList<>(argument.getDrops());
             expectedDrops.removeIf(expectedDrop ->
                     e.getDrops().stream()
-                            .noneMatch(drop -> StructureUtils.isSame(expectedDrop, drop, false))
+                            .noneMatch(expectedDrop::isAdequate)
             );
 
             if (!expectedDrops.isEmpty())

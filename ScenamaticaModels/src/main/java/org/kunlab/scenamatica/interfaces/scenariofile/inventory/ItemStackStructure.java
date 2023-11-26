@@ -8,6 +8,8 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.kunlab.scenamatica.interfaces.scenariofile.Creatable;
+import org.kunlab.scenamatica.interfaces.scenariofile.Mapped;
 import org.kunlab.scenamatica.interfaces.scenariofile.Structure;
 
 import java.util.List;
@@ -16,7 +18,7 @@ import java.util.Map;
 /**
  * インベントリのアイテムを表すインタフェースです。
  */
-public interface ItemStackStructure extends Structure
+public interface ItemStackStructure extends Structure, Mapped<ItemStack>, Creatable<ItemStack>
 {
     String KEY_TYPE = "type";
     String KEY_AMOUNT = "amount";
@@ -36,15 +38,6 @@ public interface ItemStackStructure extends Structure
     String KEY_ATTRIBUTE_MODIFIER_AMOUNT = "amount";
     String KEY_ATTRIBUTE_MODIFIER_OPERATION = "operation";
     String KEY_ATTRIBUTE_MODIFIER_SLOT = "slot";
-
-    /**
-     * このインスタンスを{@link ItemStack}に変換します。
-     *
-     * @return 変換された{@link ItemStack
-     * @throws IllegalStateException アイテムの種類が設定されていない場合
-     */
-    @NotNull
-    ItemStack toItemStack();
 
     /**
      * このアイテムの種類を取得します。

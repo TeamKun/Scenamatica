@@ -15,7 +15,6 @@ import org.kunlab.scenamatica.action.actions.entity.EntityArgumentHolder;
 import org.kunlab.scenamatica.action.actions.entity.EntitySpawnAction;
 import org.kunlab.scenamatica.action.utils.PlayerUtils;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
-import org.kunlab.scenamatica.commons.utils.StructureUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
@@ -72,9 +71,9 @@ public class PlayerBucketEntityAction extends AbstractPlayerAction<PlayerBucketE
         if (argument.getOriginalBucket() != null)
         {
             ItemStackStructure structureOriginalBucket = argument.getOriginalBucket();
-            if (!StructureUtils.isSame(structureOriginalBucket, itemInMainHand, false))
+            if (!structureOriginalBucket.isAdequate(itemInMainHand))
             {
-                ItemStack originalBucket = structureOriginalBucket.toItemStack();
+                ItemStack originalBucket = structureOriginalBucket.create();
                 player.getInventory().setItemInMainHand(originalBucket);
             }
         }
@@ -100,8 +99,8 @@ public class PlayerBucketEntityAction extends AbstractPlayerAction<PlayerBucketE
         PlayerBucketEntityEvent e = (PlayerBucketEntityEvent) event;
 
         return argument.getEntity().checkMatchedEntity(e.getEntity())
-                || (argument.getEntityBucket() != null && StructureUtils.isSame(argument.getEntityBucket(), e.getEntityBucket(), false))
-                || (argument.getOriginalBucket() != null && StructureUtils.isSame(argument.getOriginalBucket(), e.getOriginalBucket(), false));
+                || (argument.getEntityBucket() == null || argument.getEntityBucket().isAdequate(e.getEntityBucket()))
+                || (argument.getOriginalBucket() == null || argument.getOriginalBucket().isAdequate(e.getOriginalBucket()));
     }
 
     @Override

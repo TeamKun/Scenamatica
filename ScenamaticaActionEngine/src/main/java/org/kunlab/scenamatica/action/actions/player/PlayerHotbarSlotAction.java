@@ -8,7 +8,6 @@ import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.kunlab.scenamatica.commons.utils.StructureUtils;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
@@ -46,7 +45,7 @@ public class PlayerHotbarSlotAction extends AbstractPlayerAction<PlayerHotbarSlo
 
         p.getInventory().setHeldItemSlot(slot);
         if (item != null)
-            p.getInventory().setItemInMainHand(item.toItemStack());
+            p.getInventory().setItemInMainHand(item.create());
     }
 
     @Override
@@ -67,7 +66,7 @@ public class PlayerHotbarSlotAction extends AbstractPlayerAction<PlayerHotbarSlo
 
         return (expectedCurrentSlot == null || currentSlot == expectedCurrentSlot)
                 && (expectedPreviousSlot == null || previousSlot == expectedPreviousSlot)
-                && (expectedCurrentItem == null || StructureUtils.isSame(expectedCurrentItem, currentItem, false));
+                && (expectedCurrentItem == null || expectedCurrentItem.isAdequate(currentItem));
     }
 
     @Override
@@ -113,7 +112,7 @@ public class PlayerHotbarSlotAction extends AbstractPlayerAction<PlayerHotbarSlo
         ItemStackStructure currentItem = argument.getCurrentItem();
 
         return (currentSlot == null || p.getInventory().getHeldItemSlot() == currentSlot)
-                && (currentItem == null || StructureUtils.isSame(currentItem, p.getInventory().getItemInMainHand(), false));
+                && (currentItem == null || currentItem.isAdequate(p.getInventory().getItemInMainHand()));
     }
 
     @Value

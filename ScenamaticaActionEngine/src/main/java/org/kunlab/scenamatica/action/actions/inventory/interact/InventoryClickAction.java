@@ -12,7 +12,6 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.utils.PlayerUtils;
-import org.kunlab.scenamatica.commons.utils.StructureUtils;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
@@ -74,7 +73,7 @@ public class InventoryClickAction<T extends InventoryClickAction.Argument> exten
 
         ItemStack clicked = null;
         if (argument.getClickedItem() != null)
-            clicked = argument.getClickedItem().toItemStack();
+            clicked = argument.getClickedItem().create();
 
         actor.clickInventory(
                 argument.getType(),
@@ -97,9 +96,9 @@ public class InventoryClickAction<T extends InventoryClickAction.Argument> exten
                 && (argument.getSlotType() == null || argument.getSlotType() == e.getSlotType())
                 && (argument.getSlot() == null || argument.getSlot() == e.getSlot())
                 && (argument.getRawSlot() == null || argument.getRawSlot() == e.getRawSlot())
-                && (argument.getClickedItem() == null || StructureUtils.isSame(argument.getClickedItem(), e.getCurrentItem(), false))
+                && (argument.getClickedItem() == null || argument.getClickedItem().isAdequate(e.getCurrentItem()))
                 && (argument.getButton() == null || argument.getButton() == e.getHotbarButton())
-                && (argument.getCursorItem() == null || StructureUtils.isSame(argument.getCursorItem(), e.getCursor(), false));
+                && (argument.getCursorItem() == null || argument.getCursorItem().isAdequate(e.getCursor()));
     }
 
     @Override

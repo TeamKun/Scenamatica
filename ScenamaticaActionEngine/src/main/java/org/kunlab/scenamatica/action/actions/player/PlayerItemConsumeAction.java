@@ -10,7 +10,6 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.utils.PlayerUtils;
-import org.kunlab.scenamatica.commons.utils.StructureUtils;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
@@ -52,7 +51,7 @@ public class PlayerItemConsumeAction extends AbstractPlayerAction<PlayerItemCons
         Actor actor = PlayerUtils.getActorOrThrow(engine, argument.getTarget());
 
         if (item != null)
-            actor.getPlayer().getInventory().setItemInMainHand(item.toItemStack());
+            actor.getPlayer().getInventory().setItemInMainHand(item.create());
         else if (!isConsumable(actor.getPlayer().getInventory().getItemInMainHand()))
             throw new IllegalArgumentException("The item in the main hand is not consumable.");
 
@@ -72,8 +71,8 @@ public class PlayerItemConsumeAction extends AbstractPlayerAction<PlayerItemCons
         ItemStack item = e.getItem();
         ItemStack replacement = e.getReplacement();
 
-        return (argument.item == null || StructureUtils.isSame(argument.getItem(), item, false))
-                && (argument.replacement == null || StructureUtils.isSame(argument.getReplacement(), replacement, false));
+        return (argument.getItem() == null || argument.getItem().isAdequate(item))
+                && (argument.getReplacement() == null || argument.getReplacement().isAdequate(replacement));
     }
 
     @Override

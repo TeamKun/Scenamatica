@@ -9,7 +9,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.actions.block.BlockBreakAction;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
-import org.kunlab.scenamatica.commons.utils.StructureUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
@@ -69,7 +68,7 @@ public class PlayerHarvestBlockAction extends AbstractPlayerAction<PlayerHarvest
             for (ItemStackStructure item : items)
             {
                 boolean isExpectedItemHarvested =
-                        drops.stream().anyMatch(drop -> StructureUtils.isSame(item, drop, false));
+                        drops.stream().anyMatch(item::isAdequate);
                 if (!isExpectedItemHarvested)
                     return false;
             }

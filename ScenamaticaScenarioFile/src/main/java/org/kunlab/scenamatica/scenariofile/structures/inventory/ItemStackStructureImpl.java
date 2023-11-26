@@ -1,8 +1,10 @@
 package org.kunlab.scenamatica.scenariofile.structures.inventory;
 
 import com.destroystokyo.paper.Namespaced;
+import com.google.common.collect.Multimap;
 import lombok.AllArgsConstructor;
 import lombok.Value;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
@@ -15,6 +17,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.commons.utils.NamespaceUtils;
+import org.kunlab.scenamatica.commons.utils.TextUtils;
 import org.kunlab.scenamatica.commons.utils.Utils;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.ItemStackStructure;
@@ -26,6 +29,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -404,50 +408,6 @@ public class ItemStackStructureImpl implements ItemStackStructure
     }
 
     @Override
-    @NotNull
-    @SuppressWarnings("deprecation")
-    public ItemStack toItemStack()
-    {
-        if (this.type == null)
-            throw new IllegalStateException("Unable to create ItemStack from ItemStackStructure: type is null");
-
-        int amount = this.amount != null ? this.amount: 1;
-
-        ItemStack stack = new ItemStack(this.type, amount);
-        ItemMeta meta = stack.getItemMeta();
-
-        if (this.displayName != null)
-            meta.setDisplayName(this.displayName);
-        if (this.localizedName != null)
-            meta.setLocalizedName(this.localizedName);
-        if (!this.lore.isEmpty())
-            meta.setLore(this.lore);
-        if (this.customModelData != null)
-            meta.setCustomModelData(this.customModelData);
-        if (!this.enchantments.isEmpty())
-            stack.addUnsafeEnchantments(this.enchantments);
-        if (!this.itemFlags.isEmpty())
-            meta.addItemFlags(this.itemFlags.toArray(new ItemFlag[0]));
-        if (this.unbreakable != null)
-            meta.setUnbreakable(this.unbreakable);
-        if (!this.attributeModifiers.isEmpty())
-            for (Attribute attribute : this.attributeModifiers.keySet())
-                for (AttributeModifier modifier : this.attributeModifiers.get(attribute))
-                    meta.addAttributeModifier(attribute, modifier);
-
-        if (!this.placeableKeys.isEmpty())
-            meta.setPlaceableKeys(this.placeableKeys);
-        if (!this.destroyableKeys.isEmpty())
-            meta.setDestroyableKeys(this.destroyableKeys);
-        if (this.damage != null && meta instanceof Damageable)
-            ((Damageable) meta).setDamage(this.damage);
-
-        stack.setItemMeta(meta);
-
-        return stack;
-    }
-
-    @Override
     public int hashCode()
     {
         int result = this.type.hashCode();
@@ -492,5 +452,169 @@ public class ItemStackStructureImpl implements ItemStackStructure
         return Objects.equals(this.damage, that.getDamage());
     }
 
+    @NotNull
+    @SuppressWarnings("deprecation")
+    public ItemStack create()
+    {
+        if (this.type == null)
+            throw new IllegalStateException("Unable to create ItemStack from ItemStackStructure: type is null");
 
+        int amount = this.amount != null ? this.amount: 1;
+
+        ItemStack stack = new ItemStack(this.type, amount);
+        ItemMeta meta = stack.getItemMeta();
+
+        if (this.displayName != null)
+            meta.setDisplayName(this.displayName);
+        if (this.localizedName != null)
+            meta.setLocalizedName(this.localizedName);
+        if (!this.lore.isEmpty())
+            meta.setLore(this.lore);
+        if (this.customModelData != null)
+            meta.setCustomModelData(this.customModelData);
+        if (!this.enchantments.isEmpty())
+            stack.addUnsafeEnchantments(this.enchantments);
+        if (!this.itemFlags.isEmpty())
+            meta.addItemFlags(this.itemFlags.toArray(new ItemFlag[0]));
+        if (this.unbreakable != null)
+            meta.setUnbreakable(this.unbreakable);
+        if (!this.attributeModifiers.isEmpty())
+            for (Attribute attribute : this.attributeModifiers.keySet())
+                for (AttributeModifier modifier : this.attributeModifiers.get(attribute))
+                    meta.addAttributeModifier(attribute, modifier);
+
+        if (!this.placeableKeys.isEmpty())
+            meta.setPlaceableKeys(this.placeableKeys);
+        if (!this.destroyableKeys.isEmpty())
+            meta.setDestroyableKeys(this.destroyableKeys);
+        if (this.damage != null && meta instanceof Damageable)
+            ((Damageable) meta).setDamage(this.damage);
+
+        stack.setItemMeta(meta);
+
+        return stack;
+    }
+
+    @Override
+    public void applyTo(ItemStack object)
+    {
+
+    }
+
+    @Override
+    public boolean isAdequate(ItemStack stack, boolean strict)
+    {
+        if (this.type != null)
+            if (stack.getType() != this.type)
+                return false;
+
+        if (this.amount != null)
+            if (stack.getAmount() != this.amount)
+                return false;
+
+        ItemMeta meta = stack.getItemMeta();
+
+        if (this.displayName != null)
+            if (meta == null || !TextUtils.isSameContent(meta.displayName(), this.displayName))
+                return false;
+
+        if (this.localizedName != null)
+            if (meta == null || !this.localizedName.equals(meta.getLocalizedName()))
+                return false;
+
+        if (!this.lore.isEmpty())
+        {
+            List<String> expected = this.lore;
+            List<Component> actual = meta == null ? null: meta.lore();
+
+            if (actual == null || (strict && actual.size() != expected.size()))
+                return false;
+
+            // Lore を文字列に変換して比較する
+            if (expected.stream().anyMatch(s -> actual.stream().noneMatch(c -> TextUtils.isSameContent(c, s))))
+                return false;
+        }
+
+        if (this.customModelData != null)
+            if (meta == null || !this.customModelData.equals(meta.getCustomModelData()))
+                return false;
+
+        if (!this.enchantments.isEmpty())
+        {
+            Map<Enchantment, Integer> expected = this.enchantments;
+            Map<Enchantment, Integer> actual = stack.getEnchantments();
+
+            if (strict && actual.size() != expected.size())
+                return false;
+
+            for (Map.Entry<Enchantment, Integer> entry : expected.entrySet())
+                if (!actual.containsKey(entry.getKey()) || !actual.get(entry.getKey()).equals(entry.getValue()))
+                    return false;
+        }
+
+        if (!this.itemFlags.isEmpty())
+        {
+            List<ItemFlag> expected = this.itemFlags;
+            Set<ItemFlag> actual = meta == null ? null: meta.getItemFlags();
+
+            if (actual == null || (strict && actual.size() != expected.size()))
+                return false;
+
+            if (expected.stream().anyMatch(f -> actual.stream().noneMatch(f::equals)))
+                return false;
+        }
+
+        if (Boolean.TRUE.equals(this.unbreakable))
+            if (meta == null || !meta.isUnbreakable())
+                return false;
+
+        if (!this.attributeModifiers.isEmpty())
+        {
+            Map<Attribute, List<AttributeModifier>> expected = this.attributeModifiers;
+            Multimap<Attribute, AttributeModifier> actual = meta == null ? null: meta.getAttributeModifiers();
+
+            if (actual == null || (strict && actual.size() != expected.size()))
+                return false;
+
+            for (Map.Entry<Attribute, List<AttributeModifier>> entry : expected.entrySet())
+            {
+                if (!actual.containsKey(entry.getKey()) || actual.get(entry.getKey()).size() != entry.getValue().size())
+                    return false;
+
+                for (AttributeModifier modifier : entry.getValue())
+                    if (actual.get(entry.getKey()).stream().noneMatch(m -> m.equals(modifier)))
+                        return false;
+            }
+        }
+
+        if (!this.placeableKeys.isEmpty())
+        {
+            List<Namespaced> expected = this.placeableKeys;
+            Set<Namespaced> actual = meta == null ? null: meta.getPlaceableKeys();
+
+            if (actual == null || (strict && actual.size() != expected.size()))
+                return false;
+
+            if (expected.stream().anyMatch(k -> actual.stream().noneMatch(k::equals)))
+                return false;
+        }
+
+        if (!this.destroyableKeys.isEmpty())
+        {
+            List<Namespaced> expected = this.destroyableKeys;
+            Set<Namespaced> actual = meta == null ? null: meta.getDestroyableKeys();
+
+            if (actual == null || (strict && actual.size() != expected.size()))
+                return false;
+
+            if (expected.stream().anyMatch(k -> actual.stream().noneMatch(k::equals)))
+                return false;
+        }
+
+        if (this.damage != null)
+            // noinspection deprecation
+            return stack.getDurability() == this.damage;
+
+        return true;
+    }
 }

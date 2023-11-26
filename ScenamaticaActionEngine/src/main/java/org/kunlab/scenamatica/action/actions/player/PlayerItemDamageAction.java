@@ -12,7 +12,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.utils.PlayerUtils;
-import org.kunlab.scenamatica.commons.utils.StructureUtils;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
@@ -51,7 +50,7 @@ public class PlayerItemDamageAction extends AbstractPlayerAction<PlayerItemDamag
         EquipmentSlot slot = argument.getSlot() == null ? EquipmentSlot.HAND: argument.getSlot();
         ItemStackStructure item = argument.getItem();
         if (item != null)
-            actor.getPlayer().getInventory().setItem(slot, item.toItemStack());
+            actor.getPlayer().getInventory().setItem(slot, item.create());
 
         ItemStack itemStack = actor.getPlayer().getInventory().getItem(slot);
         if (itemStack == null)
@@ -71,7 +70,7 @@ public class PlayerItemDamageAction extends AbstractPlayerAction<PlayerItemDamag
 
         PlayerItemDamageEvent e = (PlayerItemDamageEvent) event;
 
-        return (argument.getItem() == null || StructureUtils.isSame(argument.getItem(), e.getItem(), false))
+        return (argument.getItem() == null || argument.getItem().isAdequate(e.getItem()))
                 && (argument.getDamage() == null || argument.getDamage() == e.getDamage());
     }
 
@@ -127,16 +126,8 @@ public class PlayerItemDamageAction extends AbstractPlayerAction<PlayerItemDamag
                 continue;
             Damageable damageable = (Damageable) meta;
 
-            if (itemToCheck != null)
-            {
-                boolean isItemMatched = StructureUtils.isSame(
-                        itemToCheck,
-                        item,
-                        /* strict */ false
-                );
-                if (!isItemMatched)
-                    continue;
-            }
+            if (!(itemToCheck == null || itemToCheck.isAdequate(item)))
+                continue;
 
             if (expectedDamage == damageable.getDamage())
                 return true;

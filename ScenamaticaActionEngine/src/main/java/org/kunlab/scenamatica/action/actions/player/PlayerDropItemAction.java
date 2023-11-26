@@ -6,7 +6,6 @@ import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.kunlab.scenamatica.commons.utils.StructureUtils;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
@@ -39,7 +38,7 @@ public class PlayerDropItemAction extends AbstractPlayerAction<PlayerDropItemAct
 
         // item がしてある場合は、先に手に持たせる。
         if (item != null)
-            argument.getTarget().getInventory().setItemInMainHand(item.getItemStack().toItemStack());
+            argument.getTarget().getInventory().setItemInMainHand(item.getItemStack().create());
 
         argument.getTarget().dropItem(/* dropAll: */ false);
     }
@@ -54,11 +53,7 @@ public class PlayerDropItemAction extends AbstractPlayerAction<PlayerDropItemAct
         PlayerDropItemEvent e = (PlayerDropItemEvent) event;
         EntityItemStructure item = argument.getItem();
 
-        return item == null || StructureUtils.isSame(
-                item.getItemStack(),
-                e.getItemDrop().getItemStack(),
-                /* strict: */ true
-        );
+        return item == null || item.getItemStack().isAdequate(e.getItemDrop().getItemStack());
     }
 
     @Override

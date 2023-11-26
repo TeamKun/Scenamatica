@@ -61,7 +61,7 @@ public class EntityPickupItemAction extends AbstractEntityAction<EntityPickupIte
             // 拾う前に, アイテムを落とす必要がある
             item = target.getWorld().dropItemNaturally(
                     target.getLocation(),
-                    argument.getItem().getItemStack().toItemStack(),
+                    argument.getItem().getItemStack().create(),
                     (entity) -> StructureUtils.applyItemStructureData(itemStructure, target, entity)
             );
         }

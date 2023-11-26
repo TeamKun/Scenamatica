@@ -12,7 +12,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.actions.player.AbstractPlayerAction;
 import org.kunlab.scenamatica.action.utils.VoxelUtils;
-import org.kunlab.scenamatica.commons.utils.StructureUtils;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.misc.BlockStructure;
 
@@ -172,7 +171,7 @@ public abstract class AbstractPlayerBucketAction<A extends BucketActionArgument>
 
         PlayerBucketEvent e = (PlayerBucketEvent) event;
 
-        return (argument.getItemStack() == null || StructureUtils.isSame(argument.getItemStack(), e.getItemStack(), true))
+        return (argument.getItemStack() == null || argument.getItemStack().isAdequate(e.getItemStack()))
                 && (argument.getBlock() == null || argument.getBlock().isAdequate(e.getBlock()))
                 && (argument.getBlockClicked() == null || argument.getBlockClicked().isAdequate(e.getBlockClicked()))
                 && (argument.getBlockFace() == null || argument.getBlockFace() == e.getBlockFace())

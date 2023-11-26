@@ -46,7 +46,7 @@ public class EntityDropItemAction extends AbstractEntityAction<EntityDropItemAct
 
         target.getWorld().dropItemNaturally(
                 target.getLocation(),
-                argument.getItem().getItemStack().toItemStack(),
+                argument.getItem().getItemStack().create(),
                 (entity) -> StructureUtils.applyItemStructureData(argument.getItem(), target, entity)
         );
     }
@@ -68,8 +68,8 @@ public class EntityDropItemAction extends AbstractEntityAction<EntityDropItemAct
                 && (structure.getVelocity() == null || Utils.vectorEquals(structure.getVelocity(), item.getVelocity()))
                 && (structure.getCanMobPickup() == null || Objects.equals(structure.getCanMobPickup(), item.canMobPickup()))
                 && (structure.getWillAge() == null || Objects.equals(structure.getWillAge(), item.willAge())
-                && StructureUtils.isSame(structure.getItemStack(), item.getItemStack(), false))
-        );
+                && (structure.getTicksLived() == null || Objects.equals(structure.getTicksLived(), item.getTicksLived()))))
+                && (structure.getItemStack() == null || structure.getItemStack().isAdequate(item.getItemStack()));
     }
 
     @Override

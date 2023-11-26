@@ -9,7 +9,6 @@ import org.bukkit.event.inventory.InventoryCreativeEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.utils.PlayerUtils;
-import org.kunlab.scenamatica.commons.utils.StructureUtils;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
@@ -44,7 +43,7 @@ public class InventoryCreativeAction extends InventoryClickAction<InventoryCreat
         int slot = argument.getSlot();
         Actor actor = PlayerUtils.getActorOrThrow(engine, argument.getTarget());
 
-        actor.giveCreativeItem(slot, argument.getItem().toItemStack());
+        actor.giveCreativeItem(slot, argument.getItem().create());
     }
 
     @Override
@@ -53,7 +52,7 @@ public class InventoryCreativeAction extends InventoryClickAction<InventoryCreat
         InventoryCreativeEvent e = (InventoryCreativeEvent) event;
 
         return super.isFired(argument, engine, event)
-                && (argument.getItem() == null || StructureUtils.isSame(argument.getItem(), e.getCursor(), false));
+                && (argument.getItem() == null || argument.getItem().isAdequate(e.getCursor()));
     }
 
     @Override

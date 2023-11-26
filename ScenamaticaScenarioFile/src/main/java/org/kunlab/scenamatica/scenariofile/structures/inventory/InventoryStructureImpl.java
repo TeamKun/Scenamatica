@@ -110,7 +110,7 @@ public class InventoryStructureImpl implements InventoryStructure
         Inventory inventory = Bukkit.createInventory(null, size, title);
 
         for (Map.Entry<Integer, ItemStackStructure> entry : this.mainContents.entrySet())
-            inventory.setItem(entry.getKey(), entry.getValue().toItemStack());
+            inventory.setItem(entry.getKey(), entry.getValue().create());
 
         return inventory;
     }

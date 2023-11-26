@@ -223,7 +223,7 @@ public class PlayerMocker extends PlayerMockerBase
         {
             PlayerInventoryStructure inventory = structure.getInventory();
             for (Map.Entry<Integer, ItemStackStructure> entry : inventory.getMainContents().entrySet())
-                player.inventory.setItem(entry.getKey(), CraftItemStack.asNMSCopy(entry.getValue().toItemStack()));
+                player.inventory.setItem(entry.getKey(), CraftItemStack.asNMSCopy(entry.getValue().create()));
 
             if (inventory.getArmorContents() != null)
                 for (int i = 0; i < 4; i++)
@@ -232,14 +232,14 @@ public class PlayerMocker extends PlayerMockerBase
                     if (item != null)
                     {
                         int slot = 3 - i;  // 直感的に, 0 がヘルメットになるように逆順にする。
-                        player.inventory.armor.set(slot, CraftItemStack.asNMSCopy(item.toItemStack()));
+                        player.inventory.armor.set(slot, CraftItemStack.asNMSCopy(item.create()));
                     }
                 }
 
             if (inventory.getOffHand() != null)
-                player.getBukkitEntity().getInventory().setItemInOffHand(inventory.getOffHand().toItemStack());
+                player.getBukkitEntity().getInventory().setItemInOffHand(inventory.getOffHand().create());
             if (inventory.getMainHand() != null)
-                player.getBukkitEntity().getInventory().setItemInMainHand(inventory.getMainHand().toItemStack());
+                player.getBukkitEntity().getInventory().setItemInMainHand(inventory.getMainHand().create());
         }
         if (player.getBukkitEntity().getGameMode() != structure.getGamemode())
             player.playerInteractManager.setGameMode(EnumGamemode.a(structure.getGamemode().name().toLowerCase(Locale.ROOT)));
