@@ -1,10 +1,13 @@
 package org.kunlab.scenamatica.interfaces.scenariofile.entity;
 
 import org.bukkit.Location;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
+import org.kunlab.scenamatica.interfaces.scenariofile.Creatable;
+import org.kunlab.scenamatica.interfaces.scenariofile.Mapped;
 import org.kunlab.scenamatica.interfaces.scenariofile.Structure;
 
 import java.util.List;
@@ -13,7 +16,7 @@ import java.util.UUID;
 /**
  * エンティティのインターフェースです。
  */
-public interface EntityStructure extends Structure
+public interface EntityStructure<T extends Entity> extends Structure, Mapped<T>, Creatable<T>
 {
     String KEY_TYPE = "type";
     String KEY_LOCATION = "loc";

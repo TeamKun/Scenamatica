@@ -2,6 +2,7 @@ package org.kunlab.scenamatica.action.actions.entity;
 
 import lombok.EqualsAndHashCode;
 import lombok.Value;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.event.Event;
@@ -10,7 +11,6 @@ import org.bukkit.inventory.InventoryHolder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
-import org.kunlab.scenamatica.commons.utils.StructureUtils;
 import org.kunlab.scenamatica.commons.utils.Utils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
@@ -47,7 +47,14 @@ public class EntityDropItemAction extends AbstractEntityAction<EntityDropItemAct
         target.getWorld().dropItemNaturally(
                 target.getLocation(),
                 argument.getItem().getItemStack().create(),
-                (entity) -> StructureUtils.applyItemStructureData(argument.getItem(), target, entity)
+                (entity) -> {
+                    EntityDropItemEvent event = new EntityDropItemEvent(target, entity);
+                    Bukkit.getPluginManager().callEvent(event);
+                    if (event.isCancelled())
+                        entity.remove();
+
+                    argument.getItem().applyTo(entity);
+                }
         );
     }
 

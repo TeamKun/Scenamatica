@@ -6,7 +6,6 @@ import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.utils.EntityUtils;
-import org.kunlab.scenamatica.commons.utils.StructureUtils;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.entity.EntityStructure;
 
@@ -22,14 +21,15 @@ public class EntityArgumentHolder<E extends Entity>
     @Nullable
     protected final String targetSpecifier;
     @Nullable
-    protected final EntityStructure targetStructure;
+    protected final EntityStructure<E> targetStructure;
 
     public EntityArgumentHolder(@Nullable Object mayTarget)
     {
         if (mayTarget instanceof EntityStructure)
         {
             this.targetSpecifier = null;
-            this.targetStructure = (EntityStructure) mayTarget;
+            // noinspection unchecked
+            this.targetStructure = (EntityStructure<E>) mayTarget;
         }
         else
         {
@@ -41,7 +41,7 @@ public class EntityArgumentHolder<E extends Entity>
     public static <E extends Entity> EntityArgumentHolder<E> tryDeserialize(
             Object obj,
             StructureSerializer serializer,
-            Class<? extends EntityStructure> structureClass
+            @SuppressWarnings("rawtypes") Class<? extends EntityStructure> structureClass
     )
     {
         if (obj == null)
@@ -62,7 +62,7 @@ public class EntityArgumentHolder<E extends Entity>
         throw new IllegalArgumentException("Cannot deserialize EntityArgumentHolder from " + obj);
     }
 
-    public static EntityArgumentHolder<?> tryDeserialize(Object obj, StructureSerializer serializer)
+    public static EntityArgumentHolder<Entity> tryDeserialize(Object obj, StructureSerializer serializer)
     {
         return tryDeserialize(obj, serializer, EntityStructure.class);
     }
@@ -118,7 +118,11 @@ public class EntityArgumentHolder<E extends Entity>
         else /* if (this.getTargetStructure() != null) */
         {
             assert this.getTargetStructure() != null;
-            return StructureUtils.isSame(this.getTargetStructure(), entity, /* strict */ false);
+            if (!this.getTargetStructure().canApplyTo(entity))
+                return false;
+
+            // noinspection unchecked  Checked.
+            return this.getTargetStructure().isAdequate((E) entity);
         }
     }
 

@@ -7,7 +7,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.utils.EntityUtils;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
-import org.kunlab.scenamatica.commons.utils.StructureUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
@@ -36,11 +35,16 @@ public class EntityAction extends AbstractEntityAction<EntityAction.Argument>
         argument = this.requireArgsNonNull(argument);
 
         Entity target = argument.selectTarget();
+        // noinspection rawtypes
         EntityStructure entityInfo = argument.getEntity();
 
         assert entityInfo != null;
 
-        StructureUtils.applyEntityStructureData(entityInfo, target);
+        if (!entityInfo.canApplyTo(target))
+            throw new IllegalStateException("Cannot apply entity info of " + entityInfo + " to " + target);
+        else
+            // noinspection unchecked
+            entityInfo.applyTo(target);
     }
 
     @Override
@@ -48,6 +52,7 @@ public class EntityAction extends AbstractEntityAction<EntityAction.Argument>
     {
         argument = this.requireArgsNonNull(argument);
 
+        // noinspection rawtypes
         EntityStructure entityInfo = argument.getEntity();
         Entity target = EntityUtils.getPlayerOrEntityOrNull(argument.getTargetString());
 
@@ -56,14 +61,14 @@ public class EntityAction extends AbstractEntityAction<EntityAction.Argument>
         else if (target == null)
             return false;
 
-        return entityInfo == null
-                || StructureUtils.isSame(entityInfo, target, false);
+        // noinspection unchecked
+        return entityInfo == null || !entityInfo.canApplyTo(target) || entityInfo.isAdequate(target);
     }
 
     @Override
     public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
     {
-        EntityStructure structure;
+        EntityStructure<?> structure;
         if (map.containsKey(Argument.KEY_ENTITY))
             structure = serializer.deserialize(
                     MapUtils.checkAndCastMap(map.get(Argument.KEY_ENTITY)),
@@ -84,9 +89,9 @@ public class EntityAction extends AbstractEntityAction<EntityAction.Argument>
     {
         public static final String KEY_ENTITY = "entity";
 
-        EntityStructure entity;
+        EntityStructure<?> entity;
 
-        public Argument(EntityArgumentHolder<Entity> target, @Nullable EntityStructure entity)
+        public Argument(EntityArgumentHolder<Entity> target, @Nullable EntityStructure<?> entity)
         {
             super(target);
             this.entity = entity;

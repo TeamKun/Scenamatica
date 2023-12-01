@@ -5,6 +5,7 @@ import lombok.Data;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.MainHand;
 import org.bukkit.potion.PotionEffect;
@@ -26,7 +27,7 @@ import java.util.UUID;
 
 @Data
 @AllArgsConstructor
-public class HumanEntityStructureImpl extends EntityStructureImpl implements HumanEntityStructure
+public class HumanEntityStructureImpl<T extends HumanEntity> extends EntityStructureImpl<T> implements HumanEntityStructure<T>
 {
     private final PlayerInventoryStructure inventory;
     private final InventoryStructure<Inventory> enderChest;
@@ -51,7 +52,7 @@ public class HumanEntityStructureImpl extends EntityStructureImpl implements Hum
     }
 
     public HumanEntityStructureImpl(
-            EntityStructure entityStructure,
+            EntityStructure<?> entityStructure,
             PlayerInventoryStructure inventory,
             InventoryStructure<Inventory> enderChest,
             MainHand mainHand,
@@ -88,7 +89,7 @@ public class HumanEntityStructureImpl extends EntityStructureImpl implements Hum
      * @return シリアライズされたMap
      */
     @NotNull
-    public static Map<String, Object> serializeHuman(@NotNull HumanEntityStructure structure, @NotNull StructureSerializer serializer)
+    public static Map<String, Object> serializeHuman(@NotNull HumanEntityStructure<?> structure, @NotNull StructureSerializer serializer)
     {
         Map<String, Object> map = serializer.serialize(structure, EntityStructure.class);
         map.remove(EntityStructure.KEY_TYPE);
@@ -131,11 +132,11 @@ public class HumanEntityStructureImpl extends EntityStructureImpl implements Hum
      * @return デシリアライズされた人形エンティティの情報
      */
     @NotNull
-    public static HumanEntityStructure deserializeHuman(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
+    public static HumanEntityStructure<?> deserializeHuman(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
     {
         validate(map);
 
-        EntityStructure entityStructure = serializer.deserialize(map, EntityStructure.class);
+        EntityStructure<?> entityStructure = serializer.deserialize(map, EntityStructure.class);
 
         PlayerInventoryStructure inventory = null;
         if (map.containsKey(KEY_INVENTORY))
@@ -144,6 +145,7 @@ public class HumanEntityStructureImpl extends EntityStructureImpl implements Hum
 
         InventoryStructure<Inventory> enderChest = null;
         if (map.containsKey(KEY_ENDER_CHEST))
+            // noinspection unchecked
             enderChest = serializer.deserialize(
                     MapUtils.checkAndCastMap(map.get(KEY_ENDER_CHEST)), InventoryStructure.class);
 
@@ -160,7 +162,7 @@ public class HumanEntityStructureImpl extends EntityStructureImpl implements Hum
 
         Integer foodLevel = MapUtils.getOrNull(map, KEY_FOOD_LEVEL);
 
-        return new HumanEntityStructureImpl(
+        return new HumanEntityStructureImpl<>(
                 entityStructure,
                 inventory,
                 enderChest,
@@ -176,7 +178,7 @@ public class HumanEntityStructureImpl extends EntityStructureImpl implements Hum
         if (this == o) return true;
         if (!(o instanceof HumanEntityStructureImpl)) return false;
         if (!super.equals(o)) return false;
-        HumanEntityStructureImpl that = (HumanEntityStructureImpl) o;
+        HumanEntityStructureImpl<?> that = (HumanEntityStructureImpl<?>) o;
         return Objects.equals(this.inventory, that.inventory)
                 && Objects.equals(this.enderChest, that.enderChest)
                 && this.mainHand == that.mainHand
@@ -190,5 +192,11 @@ public class HumanEntityStructureImpl extends EntityStructureImpl implements Hum
         return Objects.hash(super.hashCode(), this.inventory, this.enderChest,
                 this.mainHand, this.gamemode, this.foodLevel
         );
+    }
+
+    @Override
+    public boolean canApplyTo(Object target)
+    {
+        return super.canApplyTo(target) && target instanceof HumanEntity;
     }
 }

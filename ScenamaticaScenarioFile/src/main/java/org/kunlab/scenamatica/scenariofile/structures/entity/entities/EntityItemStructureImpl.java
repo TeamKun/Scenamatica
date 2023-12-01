@@ -3,6 +3,7 @@ package org.kunlab.scenamatica.scenariofile.structures.entity.entities;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Item;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
@@ -18,7 +19,7 @@ import java.util.UUID;
 
 @Value
 @EqualsAndHashCode(callSuper = true)
-public class EntityItemStructureImpl extends EntityStructureImpl implements EntityItemStructure
+public class EntityItemStructureImpl extends EntityStructureImpl<Item> implements EntityItemStructure
 {
     @NotNull
     ItemStackStructure itemStack;
@@ -35,7 +36,7 @@ public class EntityItemStructureImpl extends EntityStructureImpl implements Enti
 
     Boolean willAge;
 
-    public EntityItemStructureImpl(@NotNull EntityStructure structure, @NotNull ItemStackStructure itemStack, @Nullable Integer pickupDelay,
+    public EntityItemStructureImpl(@NotNull EntityStructure<?> structure, @NotNull ItemStackStructure itemStack, @Nullable Integer pickupDelay,
                                    @Nullable UUID owner, @Nullable UUID thrower, Boolean canMobPickup, Boolean willAge)
     {
         super(  // TODO: Extended super argument
@@ -54,6 +55,7 @@ public class EntityItemStructureImpl extends EntityStructureImpl implements Enti
         this.willAge = willAge;
     }
 
+    @NotNull
     public static Map<String, Object> serialize(@NotNull EntityItemStructure structure, @NotNull StructureSerializer serializer)
     {
         Map<String, Object> map = serializer.serialize(structure, EntityStructure.class);
@@ -84,6 +86,7 @@ public class EntityItemStructureImpl extends EntityStructureImpl implements Enti
             throw new IllegalArgumentException("thrower must be UUID");
     }
 
+    @NotNull
     public static EntityItemStructure deserialize(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
     {
         serializer.validate(map, EntityStructure.class);
@@ -115,5 +118,40 @@ public class EntityItemStructureImpl extends EntityStructureImpl implements Enti
                 MapUtils.getOrNull(map, KEY_CAN_MOB_PICKUP),
                 MapUtils.getOrNull(map, KEY_WILL_AGE)
         );
+    }
+
+    @Override
+    public Item create()
+    {
+        return null;
+    }
+
+    @Override
+    public void applyTo(Item entity)
+    {
+        super.applyTo(entity);
+
+        if (this.pickupDelay != null)
+            entity.setPickupDelay(this.pickupDelay);
+        if (this.owner != null)
+            entity.setOwner(this.owner);
+        if (this.thrower != null)
+            entity.setThrower(this.thrower);
+        if (this.canMobPickup != null)
+            entity.setCanMobPickup(this.canMobPickup);
+        if (this.willAge != null)
+            entity.setWillAge(this.willAge);
+    }
+
+    @Override
+    public boolean canApplyTo(Object target)
+    {
+        return super.canApplyTo(target) && target instanceof Item;
+    }
+
+    @Override
+    public boolean isAdequate(Item object, boolean strict)
+    {
+        return false;
     }
 }

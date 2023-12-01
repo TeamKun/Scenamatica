@@ -16,7 +16,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.commons.utils.BlockDataParser;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
-import org.kunlab.scenamatica.commons.utils.StructureUtils;
 import org.kunlab.scenamatica.commons.utils.Utils;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.misc.BlockStructure;
@@ -207,7 +206,7 @@ public class BlockStructureImpl implements BlockStructure
             block.getWorld().setBiome(location.getBlockX(), location.getBlockY(), location.getBlockZ(), this.biome);
         if (!this.metadata.isEmpty())
         {
-            ClassLoader classLoader = StructureUtils.class.getClassLoader();
+            ClassLoader classLoader = BlockStructure.class.getClassLoader();
             if (!(classLoader instanceof PluginClassLoader))
                 throw new IllegalStateException("ClassLoader is not PluginClassLoader");
             Plugin owningPlugin = ((PluginClassLoader) classLoader).getPlugin();
@@ -232,6 +231,12 @@ public class BlockStructureImpl implements BlockStructure
             state.getData().setData(this.blockState);
             state.update(true, true);
         }
+    }
+
+    @Override
+    public boolean canApplyTo(Object target)
+    {
+        return target instanceof Block;
     }
 
     @Override

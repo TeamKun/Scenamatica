@@ -453,7 +453,6 @@ public class ItemStackStructureImpl implements ItemStackStructure
     }
 
     @NotNull
-    @SuppressWarnings("deprecation")
     public ItemStack create()
     {
         if (this.type == null)
@@ -462,6 +461,14 @@ public class ItemStackStructureImpl implements ItemStackStructure
         int amount = this.amount != null ? this.amount: 1;
 
         ItemStack stack = new ItemStack(this.type, amount);
+        this.applyTo(stack);
+        return stack;
+    }
+
+    @SuppressWarnings("deprecation")
+    @Override
+    public void applyTo(ItemStack stack)
+    {
         ItemMeta meta = stack.getItemMeta();
 
         if (this.displayName != null)
@@ -491,14 +498,12 @@ public class ItemStackStructureImpl implements ItemStackStructure
             ((Damageable) meta).setDamage(this.damage);
 
         stack.setItemMeta(meta);
-
-        return stack;
     }
 
     @Override
-    public void applyTo(ItemStack object)
+    public boolean canApplyTo(Object target)
     {
-
+        return target instanceof ItemStack;
     }
 
     @Override

@@ -3,7 +3,11 @@ package org.kunlab.scenamatica.scenariofile.structures.entity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.bukkit.Location;
+import org.bukkit.entity.Damageable;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
@@ -23,7 +27,7 @@ import java.util.UUID;
 
 @Data
 @AllArgsConstructor
-public class EntityStructureImpl implements EntityStructure
+public class EntityStructureImpl<T extends Entity> implements EntityStructure<T>
 {
     private final EntityType type;
     private final Location location;
@@ -75,7 +79,7 @@ public class EntityStructureImpl implements EntityStructure
         );
     }
 
-    public EntityStructureImpl(EntityStructure original)
+    public EntityStructureImpl(EntityStructure<?> original)
     {
         this(
                 original.getType(),
@@ -109,7 +113,7 @@ public class EntityStructureImpl implements EntityStructure
      * @return エンティティ情報をシリアライズしたMap
      */
     @NotNull
-    public static Map<String, Object> serialize(@NotNull EntityStructure entity, @NotNull StructureSerializer serializer)
+    public static Map<String, Object> serialize(@NotNull EntityStructure<?> entity, @NotNull StructureSerializer serializer)
     {
         Map<String, Object> map = new HashMap<>();
         MapUtils.putAsStrIfNotNull(map, KEY_TYPE, entity.getType());
@@ -256,7 +260,7 @@ public class EntityStructureImpl implements EntityStructure
      */
     @NotNull
     @SuppressWarnings("deprecation")
-    public static EntityStructure deserialize(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
+    public static EntityStructure<?> deserialize(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
     {
         validate(map);
 
@@ -330,7 +334,7 @@ public class EntityStructureImpl implements EntityStructure
         if (fallDistanceNumber != null)
             fallDistance = fallDistanceNumber.floatValue();
 
-        return new EntityStructureImpl(
+        return new EntityStructureImpl<>(
                 type,
                 loc,
                 velocity,
@@ -359,7 +363,7 @@ public class EntityStructureImpl implements EntityStructure
     {
         if (this == o) return true;
         if (!(o instanceof EntityStructureImpl)) return false;
-        EntityStructureImpl that = (EntityStructureImpl) o;
+        EntityStructureImpl<?> that = (EntityStructureImpl<?>) o;
         return this.glowing == that.glowing
                 && this.gravity == that.gravity
                 && this.type == that.type
@@ -378,5 +382,191 @@ public class EntityStructureImpl implements EntityStructure
         return Objects.hash(this.type, this.location, this.customName, this.uuid, this.glowing, this.gravity,
                 this.tags, this.lastDamageCause, this.maxHealth, this.health
         );
+    }
+
+    @Override
+    public T create()
+    {
+        return null;
+    }
+
+    @Override
+    public void applyTo(T entity)
+    {
+        if (this.customName != null)
+            entity.setCustomName(this.customName);
+        if (this.velocity != null)
+            entity.setVelocity(this.velocity);
+        if (this.customNameVisible != null)
+            entity.setCustomNameVisible(this.customNameVisible);
+        if (this.glowing != null)
+            entity.setGlowing(this.glowing);
+        if (this.gravity != null)
+            entity.setGravity(this.gravity);
+        if (this.silent != null)
+            entity.setSilent(this.silent);
+        if (this.invulnerable != null)
+            entity.setInvulnerable(this.invulnerable);
+        if (this.customNameVisible != null)
+            entity.setCustomNameVisible(this.customNameVisible);
+        if (this.invulnerable != null)
+            entity.setInvulnerable(this.invulnerable);
+        if (!this.tags.isEmpty())
+        {
+            entity.getScoreboardTags().clear();
+            entity.getScoreboardTags().addAll(this.tags);
+        }
+        if (this.lastDamageCause != null)
+            entity.setLastDamageCause(new EntityDamageEvent(
+                            entity,
+                            this.lastDamageCause.getCause(),
+                            this.lastDamageCause.getDamage()
+                    )
+            );
+        if (entity instanceof Damageable)
+        {
+            if (this.maxHealth != null)
+                // noinspection deprecation
+                ((Damageable) entity).setMaxHealth(this.maxHealth);
+            if (this.health != null)
+                ((Damageable) entity).setHealth(this.health);
+        }
+        if (entity instanceof LivingEntity)
+        {
+            if (!this.potionEffects.isEmpty())
+            {
+                new ArrayList<>(((LivingEntity) entity).getActivePotionEffects()).stream()
+                        .map(PotionEffect::getType)
+                        .forEach(((LivingEntity) entity)::removePotionEffect);
+
+                this.potionEffects.stream()
+                        .map(b -> new PotionEffect(
+                                        b.getType(),
+                                        b.getDuration(),
+                                        b.getAmplifier(),
+                                        b.isAmbient(),
+                                        b.hasParticles(),
+                                        b.hasIcon()
+                                )
+                        )
+                        .forEach(((LivingEntity) entity)::addPotionEffect);
+            }
+            if (this.fireTicks != null)
+                entity.setFireTicks(this.fireTicks);
+            if (this.ticksLived != null)
+                entity.setTicksLived(this.ticksLived);
+            if (this.portalCooldown != null)
+                entity.setPortalCooldown(this.portalCooldown);
+            if (this.persistent != null)
+            {
+                entity.setPersistent(this.persistent);
+                if (this.fallDistance != null)
+                    entity.setFallDistance(this.fallDistance);
+            }
+        }
+
+    }
+
+    @Override
+    public boolean canApplyTo(Object target)
+    {
+        return target instanceof Entity;
+    }
+
+    @Override
+    public boolean isAdequate(T entity, boolean strict)
+    {
+        if (this.type != null)
+            if (entity.getType() != this.type)
+                return false;
+        if (this.customName != null)
+            if (!Objects.equals(entity.getCustomName(), this.customName))
+                return false;
+        if (this.velocity != null)
+            if (!entity.getVelocity().equals(this.velocity))
+                return false;
+        if (this.customNameVisible != null)
+            if (entity.isCustomNameVisible() != this.customNameVisible)
+                return false;
+        if (this.glowing != null)
+            if (entity.isGlowing() != this.glowing)
+                return false;
+        if (this.gravity != null)
+            if (entity.hasGravity() != this.gravity)
+                return false;
+        if (this.silent != null)
+            if (entity.isSilent() != this.silent)
+                return false;
+        if (this.invulnerable != null)
+            if (entity.isInvulnerable() != this.invulnerable)
+                return false;
+        if (this.customNameVisible != null)
+            if (entity.isCustomNameVisible() != this.customNameVisible)
+                return false;
+        if (this.invulnerable != null)
+            if (entity.isInvulnerable() != this.invulnerable)
+                return false;
+        if (!this.tags.isEmpty())
+        {
+            ArrayList<String> tags = new ArrayList<>(entity.getScoreboardTags());
+            if (strict && tags.size() != this.tags.size())
+                return false;
+            if (!tags.containsAll(this.tags))
+                return false;
+        }
+
+        if (this.lastDamageCause != null)
+        {
+            EntityDamageEvent lastDamageCause = entity.getLastDamageCause();
+            if (lastDamageCause == null)
+                return false;
+            if (lastDamageCause.getCause() != this.lastDamageCause.getCause())
+                return false;
+            if (lastDamageCause.getDamage() != this.lastDamageCause.getDamage())
+                return false;
+        }
+
+        if (entity instanceof Damageable)
+        {
+            if (this.maxHealth != null)
+                // noinspection deprecation
+                if (((Damageable) entity).getMaxHealth() != this.maxHealth)
+                    return false;
+            if (this.health != null)
+                if (((Damageable) entity).getHealth() != this.health)
+                    return false;
+        }
+
+        if (entity instanceof LivingEntity)
+            if (!this.potionEffects.isEmpty())
+            {
+                List<PotionEffect> potionEffects = new ArrayList<>(((LivingEntity) entity).getActivePotionEffects());
+                if (strict && potionEffects.size() != this.potionEffects.size())
+                    return false;
+
+                for (PotionEffect effects : this.potionEffects)
+                    if (!potionEffects.contains(effects))
+                        return false;
+            }
+
+        if (this.fireTicks != null)
+            if (entity.getFireTicks() != this.fireTicks)
+                return false;
+        if (this.ticksLived != null)
+            if (entity.getTicksLived() != this.ticksLived)
+                return false;
+        if (this.portalCooldown != null)
+            if (entity.getPortalCooldown() != this.portalCooldown)
+                return false;
+        if (this.persistent != null)
+            if (entity.isPersistent() != this.persistent)
+                return false;
+
+        if (this.fallDistance != null)
+            // noinspection RedundantIfStatement
+            if (entity.getFallDistance() != this.fallDistance)
+                return false;
+
+        return true;
     }
 }

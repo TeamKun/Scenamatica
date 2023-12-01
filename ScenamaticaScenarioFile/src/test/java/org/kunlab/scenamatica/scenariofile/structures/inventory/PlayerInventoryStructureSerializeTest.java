@@ -113,7 +113,7 @@ public class PlayerInventoryStructureSerializeTest
     @Test
     void 正常デシリアライズできるか()
     {
-        PlayerInventoryStructure actual = PlayerInventoryStructureImpl.deserializePlayerInventory(FULFILLED_MAP, StructureSerializerImpl.getInstance());
+        PlayerInventoryStructure actual = PlayerInventoryStructureImpl.deserialize(FULFILLED_MAP, StructureSerializerImpl.getInstance());
 
         assertEquals(FULFILLED, actual);
     }
@@ -129,7 +129,7 @@ public class PlayerInventoryStructureSerializeTest
     @Test
     void 必須項目のみでデシリアライズできるか()
     {
-        PlayerInventoryStructure actual = PlayerInventoryStructureImpl.deserializePlayerInventory(EMPTY_MAP, StructureSerializerImpl.getInstance());
+        PlayerInventoryStructure actual = PlayerInventoryStructureImpl.deserialize(EMPTY_MAP, StructureSerializerImpl.getInstance());
 
         assertEquals(EMPTY, actual);
     }
@@ -168,7 +168,7 @@ public class PlayerInventoryStructureSerializeTest
 
         Assertions.assertThrows(
                 IllegalArgumentException.class,
-                () -> PlayerInventoryStructureImpl.deserializePlayerInventory(map, StructureSerializerImpl.getInstance())
+                () -> PlayerInventoryStructureImpl.deserialize(map, StructureSerializerImpl.getInstance())
         );
 
         // noinspection unchecked
@@ -179,7 +179,7 @@ public class PlayerInventoryStructureSerializeTest
 
         Assertions.assertThrows(
                 IllegalArgumentException.class,
-                () -> PlayerInventoryStructureImpl.deserializePlayerInventory(map, StructureSerializerImpl.getInstance())
+                () -> PlayerInventoryStructureImpl.deserialize(map, StructureSerializerImpl.getInstance())
         );
     }
 }

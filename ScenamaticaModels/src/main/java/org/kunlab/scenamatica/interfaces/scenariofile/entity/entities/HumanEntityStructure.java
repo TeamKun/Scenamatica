@@ -1,6 +1,8 @@
 package org.kunlab.scenamatica.interfaces.scenariofile.entity.entities;
 
 import org.bukkit.GameMode;
+import org.bukkit.entity.HumanEntity;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.MainHand;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -11,7 +13,7 @@ import org.kunlab.scenamatica.interfaces.scenariofile.inventory.PlayerInventoryS
 /**
  * 人型エンティティを表すインターフェースです。
  */
-public interface HumanEntityStructure extends EntityStructure
+public interface HumanEntityStructure<T extends HumanEntity> extends EntityStructure<T>
 {
     String KEY_INVENTORY = "inventory";
     String KEY_ENDER_CHEST = "enderChest";
@@ -33,7 +35,7 @@ public interface HumanEntityStructure extends EntityStructure
      * @return エンダーチェスト
      */
     @Nullable
-    InventoryStructure getEnderChest();
+    InventoryStructure<Inventory> getEnderChest();
 
     /**
      * 人型エンティティのメインハンドを取得します。

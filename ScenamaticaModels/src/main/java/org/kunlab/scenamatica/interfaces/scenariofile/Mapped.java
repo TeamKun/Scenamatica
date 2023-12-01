@@ -12,6 +12,8 @@ public interface Mapped<T>
      */
     void applyTo(T object);
 
+    boolean canApplyTo(Object target);
+
     /**
      * この構造が既存のオブジェクトに十分かどうかを比較します。
      *

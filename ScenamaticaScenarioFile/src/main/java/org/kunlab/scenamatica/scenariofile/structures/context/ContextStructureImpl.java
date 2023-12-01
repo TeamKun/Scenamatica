@@ -24,7 +24,7 @@ public class ContextStructureImpl implements ContextStructure
     @NotNull
     List<PlayerStructure> actors;
     @NotNull
-    List<EntityStructure> entities;
+    List<EntityStructure<?>> entities;
 
     StageStructure world;
 
@@ -45,7 +45,7 @@ public class ContextStructureImpl implements ContextStructure
         if (!structure.getEntities().isEmpty())
         {
             List<Map<String, Object>> entities = new ArrayList<>();
-            for (EntityStructure entity : structure.getEntities())
+            for (EntityStructure<?> entity : structure.getEntities())
                 entities.add(serializer.serialize(entity, EntityStructure.class));
 
             map.put(KEY_ENTITIES, entities);
@@ -102,7 +102,7 @@ public class ContextStructureImpl implements ContextStructure
                 actorList.add(serializer.deserialize(MapUtils.checkAndCastMap(player), PlayerStructure.class));
         }
 
-        List<EntityStructure> entityList = new ArrayList<>();
+        List<EntityStructure<?>> entityList = new ArrayList<>();
         if (map.containsKey(KEY_ENTITIES) && map.get(KEY_ENTITIES) != null)
         {
             for (Object entity : (List<?>) map.get(KEY_ENTITIES))

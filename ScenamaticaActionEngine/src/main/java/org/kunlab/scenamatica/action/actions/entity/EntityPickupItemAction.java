@@ -14,7 +14,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.utils.EntityUtils;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
-import org.kunlab.scenamatica.commons.utils.StructureUtils;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
@@ -62,7 +61,7 @@ public class EntityPickupItemAction extends AbstractEntityAction<EntityPickupIte
             item = target.getWorld().dropItemNaturally(
                     target.getLocation(),
                     argument.getItem().getItemStack().create(),
-                    (entity) -> StructureUtils.applyItemStructureData(itemStructure, target, entity)
+                    itemStructure::applyTo
             );
         }
 
@@ -104,7 +103,7 @@ public class EntityPickupItemAction extends AbstractEntityAction<EntityPickupIte
         EntityPickupItemEvent e = (EntityPickupItemEvent) event;
 
         return (argument.getRemaining() == null || Objects.equals(argument.getRemaining(), e.getRemaining()))
-                && (argument.getItem() == null || StructureUtils.isSame(argument.getItem(), e.getItem(), false));
+                && (argument.getItem() == null || argument.getItem().isAdequate(e.getItem()));
     }
 
     @Override

@@ -12,7 +12,6 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.jetbrains.annotations.NotNull;
-import org.kunlab.scenamatica.commons.utils.StructureUtils;
 import org.kunlab.scenamatica.commons.utils.LogUtils;
 import org.kunlab.scenamatica.commons.utils.ThreadingUtil;
 import org.kunlab.scenamatica.context.actor.ActorManagerImpl;
@@ -126,7 +125,7 @@ public class ContextManagerImpl implements ContextManager
 
     }
 
-    private Entity spawnEntity(World stage, EntityStructure entity)
+    private <T extends Entity> T spawnEntity(World stage, EntityStructure<? super T> entity)
     {
         EntityType type = entity.getType();
         if (type == null)
@@ -149,9 +148,10 @@ public class ContextManagerImpl implements ContextManager
         return ThreadingUtil.waitForOrThrow(this.registry, () -> {
                     UUID entityTag = UUID.randomUUID();
                     String tagName = "scenamatica-" + entityTag;
-                    Entity e = stage.spawnEntity(spawnLoc, type, CreatureSpawnEvent.SpawnReason.CUSTOM,
+                    @SuppressWarnings("unchecked")  // 一見 unchecked に見えるが、spawnEntity は T を返す。
+                    T e = (T) stage.spawnEntity(spawnLoc, type, CreatureSpawnEvent.SpawnReason.CUSTOM,
                             generatedEntity -> {
-                                StructureUtils.applyEntityStructureData(entity, generatedEntity);
+                                entity.applyTo((T) generatedEntity);
                                 generatedEntity.addScoreboardTag(tagName);
                             }
                     );
@@ -166,7 +166,7 @@ public class ContextManagerImpl implements ContextManager
     private List<Entity> prepareEntities(World stage, ContextStructure context, ScenarioFileStructure scenario, UUID testID) throws StageCreateFailedException, StageNotCreatedException
     {
         List<Entity> entities = new ArrayList<>();
-        for (EntityStructure entity : context.getEntities())
+        for (EntityStructure<?> entity : context.getEntities())
             entities.add(this.spawnEntity(stage, entity));
 
         this.isActorPrepared = true;

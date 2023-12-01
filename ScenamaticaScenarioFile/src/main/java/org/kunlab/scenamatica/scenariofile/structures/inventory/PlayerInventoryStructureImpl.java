@@ -136,7 +136,7 @@ public class PlayerInventoryStructureImpl extends InventoryStructureImpl<PlayerI
     }
 
     @NotNull
-    public static PlayerInventoryStructure deserializePlayerInventory(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
+    public static PlayerInventoryStructure deserialize(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
     {
         validate(map, serializer);
 
@@ -193,6 +193,12 @@ public class PlayerInventoryStructureImpl extends InventoryStructureImpl<PlayerI
                 offHandItem,
                 armorContents
         );
+    }
+
+    @Override
+    public boolean canApplyTo(Object target)
+    {
+        return super.canApplyTo(target) && target instanceof PlayerInventory;
     }
 
     @Override

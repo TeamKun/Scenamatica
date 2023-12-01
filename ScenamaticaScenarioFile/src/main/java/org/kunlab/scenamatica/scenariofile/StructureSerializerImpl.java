@@ -69,7 +69,7 @@ public class StructureSerializerImpl implements StructureSerializer
     {
         // エンティティの場合は, さらに EntityType で分岐する
         if (!clazz.getName().equals(EntityStructure.class.getName()) && EntityStructure.class.isAssignableFrom(clazz))
-            return SelectingEntityStructureSerializer.serialize((EntityStructure) structure, this);
+            return SelectingEntityStructureSerializer.serialize((EntityStructure<?>) structure, this);
 
         return this.selectEntry(clazz).getSerializer().apply(structure, this);
     }
@@ -80,7 +80,7 @@ public class StructureSerializerImpl implements StructureSerializer
         // エンティティの場合は, さらに EntityType で分岐する
         if (!clazz.getName().equals(EntityStructure.class.getName()) && EntityStructure.class.isAssignableFrom(clazz))
             // noinspection unchecked
-            return (T) SelectingEntityStructureSerializer.deserialize((Class<? extends EntityStructure>) clazz, map, this);
+            return (T) SelectingEntityStructureSerializer.deserialize((Class<? extends EntityStructure<?>>) clazz, map, this);
 
         return this.selectEntry(clazz).getDeserializer().apply(map, this);
     }
@@ -244,7 +244,7 @@ public class StructureSerializerImpl implements StructureSerializer
         this.registerStructure(
                 PlayerInventoryStructure.class,
                 PlayerInventoryStructureImpl::serializePlayerInventory,
-                PlayerInventoryStructureImpl::deserializePlayerInventory,
+                PlayerInventoryStructureImpl::deserialize,
                 PlayerInventoryStructureImpl::validate
         );
     }

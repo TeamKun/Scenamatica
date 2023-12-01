@@ -2,6 +2,7 @@ package org.kunlab.scenamatica.scenariofile.structures.entity.entities;
 
 import lombok.EqualsAndHashCode;
 import lombok.Value;
+import org.bukkit.entity.Projectile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
@@ -14,13 +15,13 @@ import java.util.Map;
 
 @EqualsAndHashCode(callSuper = true)
 @Value
-public class ProjectileStructureImpl extends EntityStructureImpl implements ProjectileStructure
+public class ProjectileStructureImpl extends EntityStructureImpl<Projectile> implements ProjectileStructure
 {
 
-    EntityStructure shooter;  // ProjectileSource だが, launchProjectile 以外存在しないので EntityStructure で代用。
+    EntityStructure<?> shooter;  // ProjectileSource だが, launchProjectile 以外存在しないので EntityStructure で代用。
     Boolean doesBounce;
 
-    public ProjectileStructureImpl(@NotNull EntityStructure original, @Nullable EntityStructure shooter, @Nullable Boolean doesBounce)
+    public ProjectileStructureImpl(@NotNull EntityStructure<?> original, @Nullable EntityStructure<?> shooter, @Nullable Boolean doesBounce)
     {
         super(original);
         this.shooter = shooter;
@@ -58,9 +59,9 @@ public class ProjectileStructureImpl extends EntityStructureImpl implements Proj
     {
         validate(map, serializer);
 
-        EntityStructure entity = serializer.deserialize(map, EntityStructure.class);
+        EntityStructure<?> entity = serializer.deserialize(map, EntityStructure.class);
 
-        EntityStructure shooter = null;
+        EntityStructure<?> shooter = null;
         if (map.containsKey(KEY_SHOOTER))
         {
             Map<String, Object> shooterMap = MapUtils.checkAndCastMap(map.get(KEY_SHOOTER));
@@ -72,5 +73,11 @@ public class ProjectileStructureImpl extends EntityStructureImpl implements Proj
                 shooter,
                 MapUtils.getOrNull(map, KEY_DOES_BOUNCE)
         );
+    }
+
+    @Override
+    public boolean canApplyTo(Object target)
+    {
+        return super.canApplyTo(target) && target instanceof Projectile;
     }
 }

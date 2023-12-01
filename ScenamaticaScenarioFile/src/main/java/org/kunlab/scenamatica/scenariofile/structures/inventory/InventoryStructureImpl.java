@@ -67,7 +67,7 @@ public class InventoryStructureImpl<T extends Inventory> implements InventoryStr
     }
 
     @NotNull
-    public static InventoryStructure<Inventory> deserialize(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
+    public static InventoryStructure<?> deserialize(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
     {
         validate(map, serializer);
 
@@ -145,5 +145,11 @@ public class InventoryStructureImpl<T extends Inventory> implements InventoryStr
         }
 
         return true;
+    }
+
+    @Override
+    public boolean canApplyTo(Object target)
+    {
+        return target instanceof Inventory;
     }
 }

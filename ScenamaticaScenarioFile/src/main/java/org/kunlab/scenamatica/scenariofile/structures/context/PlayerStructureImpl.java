@@ -2,6 +2,7 @@ package org.kunlab.scenamatica.scenariofile.structures.context;
 
 import lombok.Value;
 import org.bukkit.Location;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
@@ -16,7 +17,7 @@ import java.util.Map;
 import java.util.Objects;
 
 @Value
-public class PlayerStructureImpl extends HumanEntityStructureImpl implements PlayerStructure
+public class PlayerStructureImpl extends HumanEntityStructureImpl<Player> implements PlayerStructure
 {
     private static final float SPEED_DEFAULT = 0.2f;
 
@@ -39,7 +40,7 @@ public class PlayerStructureImpl extends HumanEntityStructureImpl implements Pla
     Integer opLevel;
     List<String> activePermissions;
 
-    public PlayerStructureImpl(@NotNull HumanEntityStructure human, @Nullable String name, Boolean online, String displayName,
+    public PlayerStructureImpl(@NotNull HumanEntityStructure<?> human, @Nullable String name, Boolean online, String displayName,
                                String playerListName, String playerListHeader,
                                String playerListFooter, Location compassTarget,
                                Location bedSpawnLocation, Integer exp,
@@ -162,7 +163,7 @@ public class PlayerStructureImpl extends HumanEntityStructureImpl implements Pla
     {
         validate(map);
 
-        HumanEntityStructure human = deserializeHuman(map, serializer);
+        HumanEntityStructure<?> human = deserializeHuman(map, serializer);
 
         String name = (String) map.get(KEY_NAME);
 
@@ -256,5 +257,11 @@ public class PlayerStructureImpl extends HumanEntityStructureImpl implements Pla
                 this.exp, this.level, this.totalExperience, this.allowFlight, this.flying, this.walkSpeed,
                 this.flySpeed
         );
+    }
+
+    @Override
+    public boolean canApplyTo(Object target)
+    {
+        return super.canApplyTo(target) && target instanceof Player;
     }
 }
