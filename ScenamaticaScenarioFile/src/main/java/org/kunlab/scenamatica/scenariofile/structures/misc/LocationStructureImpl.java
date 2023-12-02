@@ -1,0 +1,126 @@
+package org.kunlab.scenamatica.scenariofile.structures.misc;
+
+import lombok.AllArgsConstructor;
+import lombok.Value;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.kunlab.scenamatica.commons.utils.MapUtils;
+import org.kunlab.scenamatica.interfaces.scenariofile.misc.LocationStructure;
+
+import java.util.HashMap;
+import java.util.Map;
+
+@Value
+@AllArgsConstructor
+public class LocationStructureImpl implements LocationStructure
+{
+
+    Double x;
+    Double y;
+    Double z;
+    Float yaw;
+    Float pitch;
+    String world;
+
+    public static Map<String, Object> serialize(LocationStructure location)
+    {
+        Map<String, Object> map = new HashMap<>();
+
+        MapUtils.putIfNotNull(map, KEY_X, location.getX());
+        MapUtils.putIfNotNull(map, KEY_Y, location.getY());
+        MapUtils.putIfNotNull(map, kEY_Z, location.getZ());
+
+        MapUtils.putIfNotNull(map, KEY_YAW, location.getYaw());
+        MapUtils.putIfNotNull(map, KEY_PITCH, location.getPitch());
+
+        MapUtils.putIfNotNull(map, KEY_WORLD, location.getWorld());
+
+        return map;
+    }
+
+    public static void validate(Map<String, Object> map)
+    {
+        MapUtils.checkTypeIfContains(map, KEY_X, Double.class);
+        MapUtils.checkTypeIfContains(map, KEY_Y, Double.class);
+        MapUtils.checkTypeIfContains(map, kEY_Z, Double.class);
+
+        MapUtils.checkTypeIfContains(map, KEY_YAW, Float.class);
+        MapUtils.checkTypeIfContains(map, KEY_PITCH, Float.class);
+
+        MapUtils.checkTypeIfContains(map, KEY_WORLD, String.class);
+    }
+
+    public static LocationStructure deserialize(Map<String, Object> map)
+    {
+        validate(map);
+
+        return new LocationStructureImpl(
+                MapUtils.getAsNumberOrNull(map, KEY_X, Number::doubleValue),
+                MapUtils.getAsNumberOrNull(map, KEY_Y, Number::doubleValue),
+                MapUtils.getAsNumberOrNull(map, kEY_Z, Number::doubleValue),
+                MapUtils.getAsNumberOrNull(map, KEY_YAW, Number::floatValue),
+                MapUtils.getAsNumberOrNull(map, KEY_PITCH, Number::floatValue),
+                MapUtils.getOrNull(map, KEY_WORLD)
+        );
+    }
+
+    @Override
+    public void applyTo(Location object)
+    {
+        if (this.x != null)
+            object.setX(this.x);
+        if (this.y != null)
+            object.setY(this.y);
+        if (this.z != null)
+            object.setZ(this.z);
+
+        if (this.yaw != null)
+            object.setYaw(this.yaw);
+        if (this.pitch != null)
+            object.setPitch(this.pitch);
+
+        if (this.world != null)
+            object.setWorld(Bukkit.getWorld(this.world));
+    }
+
+    @Override
+    public boolean canApplyTo(Object target)
+    {
+        return target instanceof Location;
+    }
+
+    @Override
+    public boolean isAdequate(Location object, boolean strict)
+    {
+        double x = object.getX();
+        double y = object.getY();
+        double z = object.getZ();
+
+        float yaw = object.getYaw();
+        float pitch = object.getPitch();
+
+        String world = object.getWorld().getName();
+
+        double EPSILON = strict ? 1e-6: 1;
+
+        return (this.x == null || Math.abs(this.x - x) < EPSILON)
+                && (this.y == null || Math.abs(this.y - y) < EPSILON)
+                && (this.z == null || Math.abs(this.z - z) < EPSILON)
+                && (this.yaw == null || Math.abs(this.yaw - yaw) < EPSILON)
+                && (this.pitch == null || Math.abs(this.pitch - pitch) < EPSILON)
+                && (this.world == null || (strict ? this.world.equals(world): this.world.equalsIgnoreCase(world)));
+    }
+
+    @Override
+    public Location create()
+    {
+        return new Location(
+                this.world == null ? null: Bukkit.getWorld(this.world),
+                this.x == null ? 0: this.x,
+                this.y == null ? 0: this.y,
+                this.z == null ? 0: this.z,
+                this.yaw == null ? 0: this.yaw,
+                this.pitch == null ? 0: this.pitch
+        );
+    }
+}
