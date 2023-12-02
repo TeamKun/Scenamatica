@@ -2,11 +2,13 @@ package org.kunlab.scenamatica.interfaces.scenariofile.inventory;
 
 import org.bukkit.inventory.PlayerInventory;
 import org.jetbrains.annotations.Nullable;
+import org.kunlab.scenamatica.interfaces.scenariofile.Creatable;
+import org.kunlab.scenamatica.interfaces.scenariofile.Mapped;
 
 /**
  * プレイヤのインベントリの定義を表すインターフェースです。
  */
-public interface PlayerInventoryStructure extends InventoryStructure<PlayerInventory>
+public interface PlayerInventoryStructure extends GenericInventoryStructure, Mapped<PlayerInventory>, Creatable<PlayerInventory>
 {
     String KEY_MAIN_INVENTORY = "main";
     String KEY_MAIN_HAND = "mainHandItem";

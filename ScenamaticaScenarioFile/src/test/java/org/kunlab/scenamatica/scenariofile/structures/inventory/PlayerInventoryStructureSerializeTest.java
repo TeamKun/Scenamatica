@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class PlayerInventoryStructureSerializeTest
 {
     public static final PlayerInventoryStructure FULFILLED = new PlayerInventoryStructureImpl(
-            new InventoryStructureImpl<>(
+            new InventoryStructureImpl(
                     36,
                     "This is main inventory",
                     new HashMap<Integer, ItemStackStructure>()
@@ -113,7 +113,7 @@ public class PlayerInventoryStructureSerializeTest
     @Test
     void 正常デシリアライズできるか()
     {
-        PlayerInventoryStructure actual = PlayerInventoryStructureImpl.deserialize(FULFILLED_MAP, StructureSerializerImpl.getInstance());
+        PlayerInventoryStructure actual = PlayerInventoryStructureImpl.deserializePlayerInventory(FULFILLED_MAP, StructureSerializerImpl.getInstance());
 
         assertEquals(FULFILLED, actual);
     }
@@ -129,7 +129,7 @@ public class PlayerInventoryStructureSerializeTest
     @Test
     void 必須項目のみでデシリアライズできるか()
     {
-        PlayerInventoryStructure actual = PlayerInventoryStructureImpl.deserialize(EMPTY_MAP, StructureSerializerImpl.getInstance());
+        PlayerInventoryStructure actual = PlayerInventoryStructureImpl.deserializePlayerInventory(EMPTY_MAP, StructureSerializerImpl.getInstance());
 
         assertEquals(EMPTY, actual);
     }
@@ -168,7 +168,7 @@ public class PlayerInventoryStructureSerializeTest
 
         Assertions.assertThrows(
                 IllegalArgumentException.class,
-                () -> PlayerInventoryStructureImpl.deserialize(map, StructureSerializerImpl.getInstance())
+                () -> PlayerInventoryStructureImpl.deserializePlayerInventory(map, StructureSerializerImpl.getInstance())
         );
 
         // noinspection unchecked
@@ -179,7 +179,7 @@ public class PlayerInventoryStructureSerializeTest
 
         Assertions.assertThrows(
                 IllegalArgumentException.class,
-                () -> PlayerInventoryStructureImpl.deserialize(map, StructureSerializerImpl.getInstance())
+                () -> PlayerInventoryStructureImpl.deserializePlayerInventory(map, StructureSerializerImpl.getInstance())
         );
     }
 }

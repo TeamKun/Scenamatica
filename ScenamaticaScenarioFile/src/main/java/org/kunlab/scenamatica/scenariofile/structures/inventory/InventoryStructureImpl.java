@@ -1,102 +1,65 @@
 package org.kunlab.scenamatica.scenariofile.structures.inventory;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
+import org.kunlab.scenamatica.interfaces.scenariofile.inventory.GenericInventoryStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.InventoryStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.ItemStackStructure;
 
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 
-@Data
-@AllArgsConstructor
-public class InventoryStructureImpl<T extends Inventory> implements InventoryStructure<T>
+public class InventoryStructureImpl extends GenericInventoryStructureImpl implements InventoryStructure
 {
-    private final Integer size;
-    private final String title;
-    @NotNull
-    private final Map<Integer, ItemStackStructure> mainContents;
-
-    public InventoryStructureImpl()
+    public InventoryStructureImpl(Integer size, String title, @NotNull Map<Integer, ItemStackStructure> mainContents)
     {
-        this(
-                null,
-                null,
-                Collections.emptyMap()
-        );
+        super(size, title, mainContents);
+    }
+
+    public InventoryStructureImpl(GenericInventoryStructure original)
+    {
+        super(original.getSize(), original.getTitle(), original.getMainContents());
     }
 
     @NotNull
-    public static Map<String, Object> serialize(@NotNull InventoryStructure<Inventory> structure, @NotNull StructureSerializer serializer)
+    public static Map<String, Object> serialize(@NotNull GenericInventoryStructure structure, @NotNull StructureSerializer serializer)
     {
-        Map<Integer, Object> contents = new HashMap<>();
-        for (Map.Entry<Integer, ItemStackStructure> entry : structure.getMainContents().entrySet())
-            contents.put(entry.getKey(), serializer.serialize(entry.getValue(), ItemStackStructure.class));
-
-        Map<String, Object> map = new HashMap<>();
-        MapUtils.putIfNotNull(map, KEY_SIZE, structure.getSize());
-        MapUtils.putIfNotNull(map, KEY_TITLE, structure.getTitle());
-        MapUtils.putMapIfNotEmpty(map, KEY_MAIN_CONTENTS, contents);
-        return map;
+        return GenericInventoryStructureImpl.serialize(structure, serializer);
     }
 
     public static void validate(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
     {
-        MapUtils.checkTypeIfContains(map, KEY_SIZE, Integer.class);
-        MapUtils.checkTypeIfContains(map, KEY_TITLE, String.class);
-
-        if (!map.containsKey(KEY_MAIN_CONTENTS))
-            return;
-
-        Map<Integer, Object> contents = MapUtils.checkAndCastMap(
-                map.get(KEY_MAIN_CONTENTS),
-                Integer.class,
-                Object.class
-        );
-
-        for (Map.Entry<Integer, Object> entry : contents.entrySet())
-            serializer.validate(MapUtils.checkAndCastMap(entry.getValue()), ItemStackStructure.class);
+        GenericInventoryStructureImpl.validate(map, serializer);
     }
 
     @NotNull
-    public static InventoryStructure<?> deserialize(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
+    public static InventoryStructureImpl deserialize(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
     {
-        validate(map, serializer);
-
-        Map<Integer, ItemStackStructure> mainContents = new HashMap<>();
-        if (map.containsKey(KEY_MAIN_CONTENTS))
-        {
-            Map<Integer, Object> contents = MapUtils.checkAndCastMap(
-                    map.get(KEY_MAIN_CONTENTS),
-                    Integer.class,
-                    Object.class
-
-            );
-
-            for (Map.Entry<Integer, Object> entry : contents.entrySet())
-                mainContents.put(
-                        entry.getKey(),
-                        serializer.deserialize(MapUtils.checkAndCastMap(entry.getValue()), ItemStackStructure.class)
-                );
-        }
-
-        return new InventoryStructureImpl<>(
-                MapUtils.getOrNull(map, KEY_SIZE),
-                MapUtils.getOrNull(map, KEY_TITLE),
-                mainContents
-        );
+        return new InventoryStructureImpl(GenericInventoryStructureImpl.deserialize(map, serializer));
     }
 
     @Override
-    public T create()
+    public void applyTo(Inventory object)
+    {
+        super.applyToInventory(object);
+    }
+
+    @Override
+    public boolean isAdequate(Inventory inventory, boolean strict)
+    {
+        return super.isAdequateInventory(inventory, strict);
+    }
+
+    @Override
+    public boolean canApplyTo(Object target)
+    {
+        return target instanceof Inventory;
+    }
+
+    @Override
+    public Inventory create()
     {
         Integer size = this.size;
         if (size == null)
@@ -113,43 +76,6 @@ public class InventoryStructureImpl<T extends Inventory> implements InventoryStr
         for (Map.Entry<Integer, ItemStackStructure> entry : this.mainContents.entrySet())
             inventory.setItem(entry.getKey(), entry.getValue().create());
 
-        // noinspection unchecked
-        return (T) inventory;
-    }
-
-    @Override
-    public void applyTo(Inventory object)
-    {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public boolean isAdequate(Inventory inventory, boolean strict)
-    {
-        return this.isAdequateInventory(inventory, strict);
-    }
-
-    protected boolean isAdequateInventory(Inventory inventory, boolean strict)
-    {
-        if (strict && !(this.size == null || this.size == inventory.getSize()))
-            return false;
-
-
-        for (int i = 0; i < inventory.getSize(); i++)
-        {
-            ItemStackStructure expected = this.mainContents.get(i);
-            ItemStack actual = inventory.getItem(i);
-
-            if (!expected.isAdequate(actual, strict))
-                return false;
-        }
-
-        return true;
-    }
-
-    @Override
-    public boolean canApplyTo(Object target)
-    {
-        return target instanceof Inventory;
+        return inventory;
     }
 }

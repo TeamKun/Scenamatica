@@ -3,7 +3,6 @@ package org.kunlab.scenamatica.scenariofile.structures.inventory;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.jetbrains.annotations.NotNull;
@@ -23,7 +22,7 @@ import java.util.Map;
 @Value
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class PlayerInventoryStructureImpl extends InventoryStructureImpl<PlayerInventory> implements PlayerInventoryStructure
+public class PlayerInventoryStructureImpl extends GenericInventoryStructureImpl implements PlayerInventoryStructure
 {
     ItemStackStructure mainHand;
     ItemStackStructure offHand;
@@ -42,7 +41,7 @@ public class PlayerInventoryStructureImpl extends InventoryStructureImpl<PlayerI
         this.armorContents = null;
     }
 
-    public PlayerInventoryStructureImpl(@NotNull InventoryStructure<Inventory> main, @Nullable ItemStackStructure mainHand, @Nullable ItemStackStructure offHand, @Nullable ItemStackStructure[] armorContents)
+    public PlayerInventoryStructureImpl(@NotNull InventoryStructure main, @Nullable ItemStackStructure mainHand, @Nullable ItemStackStructure offHand, @Nullable ItemStackStructure[] armorContents)
     {
         super(9 * 4, main.getTitle(), main.getMainContents());
         this.mainHand = mainHand;
@@ -80,7 +79,7 @@ public class PlayerInventoryStructureImpl extends InventoryStructureImpl<PlayerI
 
         if (!structure.getMainContents().isEmpty())
         {
-            Map<String, Object> mainContents = serializer.serialize(structure, InventoryStructure.class);
+            Map<String, Object> mainContents = serializer.serialize((InventoryStructure) structure, InventoryStructure.class);
             mainContents.remove(KEY_SIZE);  // Playerのインベントリサイズは36固定なので冗長
 
             map.put(KEY_MAIN_INVENTORY, mainContents);
@@ -136,7 +135,7 @@ public class PlayerInventoryStructureImpl extends InventoryStructureImpl<PlayerI
     }
 
     @NotNull
-    public static PlayerInventoryStructure deserialize(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
+    public static PlayerInventoryStructure deserializePlayerInventory(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
     {
         validate(map, serializer);
 
@@ -157,16 +156,15 @@ public class PlayerInventoryStructureImpl extends InventoryStructureImpl<PlayerI
         else
             armorContents = new ItemStackStructureImpl[4];
 
-        InventoryStructure<Inventory> mainInventoryStructure;
+        InventoryStructure mainInventoryStructure;
         if (map.containsKey(KEY_MAIN_INVENTORY))
         {
             Map<String, Object> mainInventory = new HashMap<>(MapUtils.checkAndCastMap(map.get(KEY_MAIN_INVENTORY)));
 
-            // noinspection unchecked
             mainInventoryStructure = serializer.deserialize(mainInventory, InventoryStructure.class);
         }
         else
-            mainInventoryStructure = new InventoryStructureImpl<>(null, null, Collections.emptyMap());
+            mainInventoryStructure = new InventoryStructureImpl(null, null, Collections.emptyMap());
 
 
         ItemStackStructure mainHandItem;
@@ -198,13 +196,29 @@ public class PlayerInventoryStructureImpl extends InventoryStructureImpl<PlayerI
     @Override
     public boolean canApplyTo(Object target)
     {
-        return super.canApplyTo(target) && target instanceof PlayerInventory;
+        return target instanceof PlayerInventory;
     }
 
     @Override
     public void applyTo(PlayerInventory object)
     {
-        throw new UnsupportedOperationException();
+        super.applyToInventory(object);
+
+        if (this.mainHand != null)
+            object.setItemInMainHand(this.mainHand.create());
+
+        if (this.offHand != null)
+            object.setItemInOffHand(this.offHand.create());
+
+        if (this.armorContents != null)
+        {
+            ItemStack[] armorContents = new ItemStack[4];
+            for (int i = 0; i < this.armorContents.length; i++)
+                if (this.armorContents[i] != null)
+                    armorContents[i] = this.armorContents[i].create();
+
+            object.setArmorContents(armorContents);
+        }
     }
 
     @Override
@@ -229,5 +243,11 @@ public class PlayerInventoryStructureImpl extends InventoryStructureImpl<PlayerI
         ItemStackStructure expectedOffHand = this.offHand;
         ItemStack actualOffHand = playerInventory.getItemInOffHand();
         return expectedOffHand == null || expectedOffHand.isAdequate(actualOffHand, strict);
+    }
+
+    @Override
+    public PlayerInventory create()
+    {
+        return null;
     }
 }

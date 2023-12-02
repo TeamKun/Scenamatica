@@ -244,7 +244,7 @@ public class StructureSerializerImpl implements StructureSerializer
         this.registerStructure(
                 PlayerInventoryStructure.class,
                 PlayerInventoryStructureImpl::serializePlayerInventory,
-                PlayerInventoryStructureImpl::deserialize,
+                PlayerInventoryStructureImpl::deserializePlayerInventory,
                 PlayerInventoryStructureImpl::validate
         );
     }
