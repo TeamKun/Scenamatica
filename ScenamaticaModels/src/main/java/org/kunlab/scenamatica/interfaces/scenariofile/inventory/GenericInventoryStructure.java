@@ -6,7 +6,7 @@ import org.kunlab.scenamatica.interfaces.scenariofile.Structure;
 import java.util.Map;
 
 /**
- * インベントリの構造体の既定のインターフェースです。
+ * インベントリの構造体の基底のインターフェースです。
  */
 public interface GenericInventoryStructure extends Structure
 {
