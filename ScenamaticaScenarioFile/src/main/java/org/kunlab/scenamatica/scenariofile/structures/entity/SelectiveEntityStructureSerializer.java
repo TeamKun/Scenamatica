@@ -20,7 +20,7 @@ import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 
-public class SelectingEntityStructureSerializer
+public class SelectiveEntityStructureSerializer
 {
     private static final EntityStructureEntry<?> FALLBACK_ENTITY_STRUCTURE_ENTRY = new EntityStructureEntry<>(
             EntityStructure.class,

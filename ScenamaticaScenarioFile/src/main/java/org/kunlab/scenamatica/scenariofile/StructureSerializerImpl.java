@@ -24,7 +24,7 @@ import org.kunlab.scenamatica.scenariofile.structures.context.PlayerStructureImp
 import org.kunlab.scenamatica.scenariofile.structures.context.StageStructureImpl;
 import org.kunlab.scenamatica.scenariofile.structures.entity.DamageStructureImpl;
 import org.kunlab.scenamatica.scenariofile.structures.entity.EntityStructureImpl;
-import org.kunlab.scenamatica.scenariofile.structures.entity.SelectingEntityStructureSerializer;
+import org.kunlab.scenamatica.scenariofile.structures.entity.SelectiveEntityStructureSerializer;
 import org.kunlab.scenamatica.scenariofile.structures.inventory.InventoryStructureImpl;
 import org.kunlab.scenamatica.scenariofile.structures.inventory.ItemStackStructureImpl;
 import org.kunlab.scenamatica.scenariofile.structures.inventory.PlayerInventoryStructureImpl;
@@ -70,7 +70,7 @@ public class StructureSerializerImpl implements StructureSerializer
     {
         // エンティティの場合は, さらに EntityType で分岐する
         if (!clazz.getName().equals(GenericEntityStructure.class.getName()) && GenericEntityStructure.class.isAssignableFrom(clazz))
-            return SelectingEntityStructureSerializer.serialize((GenericEntityStructure) structure, this);
+            return SelectiveEntityStructureSerializer.serialize((GenericEntityStructure) structure, this);
 
         return this.selectEntry(clazz).getSerializer().apply(structure, this);
     }
@@ -81,7 +81,7 @@ public class StructureSerializerImpl implements StructureSerializer
         // エンティティの場合は, さらに EntityType で分岐する
         if (!clazz.getName().equals(EntityStructure.class.getName()) && GenericEntityStructure.class.isAssignableFrom(clazz))
             // noinspection unchecked
-            return (T) SelectingEntityStructureSerializer.deserialize((Class<? extends GenericEntityStructure>) clazz, map, this);
+            return (T) SelectiveEntityStructureSerializer.deserialize((Class<? extends GenericEntityStructure>) clazz, map, this);
 
         return this.selectEntry(clazz).getDeserializer().apply(map, this);
     }
@@ -92,7 +92,7 @@ public class StructureSerializerImpl implements StructureSerializer
         // エンティティの場合は, さらに EntityType で分岐する
         if (!clazz.getName().equals(GenericEntityStructure.class.getName()) && GenericEntityStructure.class.isAssignableFrom(clazz))
         {
-            SelectingEntityStructureSerializer.validate(map, this);
+            SelectiveEntityStructureSerializer.validate(map, this);
             return;
         }
         this.selectEntry(clazz).getValidator().accept(map, this);
