@@ -15,24 +15,24 @@ public class ProjectileStructureSerializeTest
 {
 
     public static final ProjectileStructure FULFILLED = new ProjectileStructureImpl(
-            EntityStructureSerializeTest.FULFILLED,
-            EntityStructureSerializeTest.FULFILLED,
+            AEntityStructureSerializeTest.FULFILLED,
+            AEntityStructureSerializeTest.FULFILLED,
             true
     );
 
-    public static final Map<String, Object> FULFILLED_MAP = new HashMap<String, Object>(EntityStructureSerializeTest.FULFILLED_MAP)
+    public static final Map<String, Object> FULFILLED_MAP = new HashMap<String, Object>(AEntityStructureSerializeTest.FULFILLED_MAP)
     {{
-        this.put(ProjectileStructure.KEY_SHOOTER, EntityStructureSerializeTest.FULFILLED_MAP);
+        this.put(ProjectileStructure.KEY_SHOOTER, AEntityStructureSerializeTest.FULFILLED_MAP);
         this.put(ProjectileStructure.KEY_DOES_BOUNCE, true);
     }};
 
     public static final ProjectileStructure EMPTY = new ProjectileStructureImpl(
-            EntityStructureSerializeTest.EMPTY,
+            AEntityStructureSerializeTest.EMPTY,
             null,
             null
     );
 
-    public static final Map<String, Object> EMPTY_MAP = new HashMap<>(EntityStructureSerializeTest.EMPTY_MAP);
+    public static final Map<String, Object> EMPTY_MAP = new HashMap<>(AEntityStructureSerializeTest.EMPTY_MAP);
 
     @Test
     void 正常にシリアライズできるか()

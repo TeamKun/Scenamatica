@@ -3,7 +3,7 @@ package org.kunlab.scenamatica.scenariofile.structures.context;
 import org.junit.jupiter.api.Test;
 import org.kunlab.scenamatica.interfaces.scenariofile.context.ContextStructure;
 import org.kunlab.scenamatica.scenariofile.StructureSerializerImpl;
-import org.kunlab.scenamatica.scenariofile.structures.entity.EntityStructureSerializeTest;
+import org.kunlab.scenamatica.scenariofile.structures.entity.AEntityStructureSerializeTest;
 import org.kunlab.scenamatica.scenariofile.structures.utils.MapTestUtil;
 
 import java.util.Arrays;
@@ -22,9 +22,9 @@ public class ContextStructureSerializeTest
                     PlayerStructureSerializeTest.FULFILLED
             ),
             Arrays.asList(
-                    EntityStructureSerializeTest.FULFILLED,
-                    EntityStructureSerializeTest.FULFILLED,
-                    EntityStructureSerializeTest.FULFILLED
+                    AEntityStructureSerializeTest.FULFILLED,
+                    AEntityStructureSerializeTest.FULFILLED,
+                    AEntityStructureSerializeTest.FULFILLED
             ),
             StageStructureSerializeTest.FULFILLED
     );
@@ -37,9 +37,9 @@ public class ContextStructureSerializeTest
                 PlayerStructureSerializeTest.FULFILLED_MAP
         ));
         this.put("entities", Arrays.asList(
-                EntityStructureSerializeTest.FULFILLED_MAP,
-                EntityStructureSerializeTest.FULFILLED_MAP,
-                EntityStructureSerializeTest.FULFILLED_MAP
+                AEntityStructureSerializeTest.FULFILLED_MAP,
+                AEntityStructureSerializeTest.FULFILLED_MAP,
+                AEntityStructureSerializeTest.FULFILLED_MAP
         ));
         this.put("stage", StageStructureSerializeTest.FULFILLED_MAP);
     }};

@@ -21,15 +21,14 @@ public class EntityArgumentHolder<E extends Entity>
     @Nullable
     protected final String targetSpecifier;
     @Nullable
-    protected final EntityStructure<E> targetStructure;
+    protected final EntityStructure targetStructure;
 
     public EntityArgumentHolder(@Nullable Object mayTarget)
     {
         if (mayTarget instanceof EntityStructure)
         {
             this.targetSpecifier = null;
-            // noinspection unchecked
-            this.targetStructure = (EntityStructure<E>) mayTarget;
+            this.targetStructure = (EntityStructure) mayTarget;
         }
         else
         {
@@ -41,7 +40,7 @@ public class EntityArgumentHolder<E extends Entity>
     public static <E extends Entity> EntityArgumentHolder<E> tryDeserialize(
             Object obj,
             StructureSerializer serializer,
-            @SuppressWarnings("rawtypes") Class<? extends EntityStructure> structureClass
+            Class<? extends EntityStructure> structureClass
     )
     {
         if (obj == null)
@@ -118,11 +117,7 @@ public class EntityArgumentHolder<E extends Entity>
         else /* if (this.getTargetStructure() != null) */
         {
             assert this.getTargetStructure() != null;
-            if (!this.getTargetStructure().canApplyTo(entity))
-                return false;
-
-            // noinspection unchecked  Checked.
-            return this.getTargetStructure().isAdequate((E) entity);
+            return EntityUtils.tryCastMapped(this.getTargetStructure(), entity).canApplyTo(entity);
         }
     }
 

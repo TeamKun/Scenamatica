@@ -2,7 +2,7 @@ package org.kunlab.scenamatica.interfaces.scenariofile.context;
 
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.interfaces.scenariofile.Structure;
-import org.kunlab.scenamatica.interfaces.scenariofile.entity.GenericEntityStructure;
+import org.kunlab.scenamatica.interfaces.scenariofile.entity.EntityStructure;
 
 import java.util.List;
 
@@ -25,7 +25,7 @@ public interface ContextStructure extends Structure
      * @return エンティティ
      */
     @NotNull
-    List<GenericEntityStructure> getEntities();
+    List<EntityStructure> getEntities();
 
     /**
      * ワールドを定義します。

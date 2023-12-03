@@ -1,5 +1,6 @@
 package org.kunlab.scenamatica.scenariofile.structures.inventory;
 
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.bukkit.inventory.Inventory;
@@ -15,15 +16,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Data
-@AllArgsConstructor
-class GenericInventoryStructureImpl implements GenericInventoryStructure
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
+public class GenericInventoryStructureImpl implements GenericInventoryStructure
 {
     protected final Integer size;
     protected final String title;
     @NotNull
     protected final Map<Integer, ItemStackStructure> mainContents;
 
-    public GenericInventoryStructureImpl()
+    protected GenericInventoryStructureImpl()
     {
         this(
                 null,
@@ -33,7 +34,7 @@ class GenericInventoryStructureImpl implements GenericInventoryStructure
     }
 
     @NotNull
-    protected static Map<String, Object> serialize(@NotNull GenericInventoryStructure structure, @NotNull StructureSerializer serializer)
+    public static Map<String, Object> serialize(@NotNull GenericInventoryStructure structure, @NotNull StructureSerializer serializer)
     {
         Map<Integer, Object> contents = new HashMap<>();
         for (Map.Entry<Integer, ItemStackStructure> entry : structure.getMainContents().entrySet())
@@ -46,7 +47,7 @@ class GenericInventoryStructureImpl implements GenericInventoryStructure
         return map;
     }
 
-    protected static void validate(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
+    public static void validate(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
     {
         MapUtils.checkTypeIfContains(map, KEY_SIZE, Integer.class);
         MapUtils.checkTypeIfContains(map, KEY_TITLE, String.class);
@@ -65,7 +66,7 @@ class GenericInventoryStructureImpl implements GenericInventoryStructure
     }
 
     @NotNull
-    protected static GenericInventoryStructureImpl deserialize(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
+    public static GenericInventoryStructureImpl deserialize(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
     {
         validate(map, serializer);
 
@@ -104,7 +105,7 @@ class GenericInventoryStructureImpl implements GenericInventoryStructure
             ItemStackStructure expected = this.mainContents.get(i);
             ItemStack actual = inventory.getItem(i);
 
-            if (!expected.isAdequate(actual, strict))
+            if (!(expected == null || expected.isAdequate(actual, strict)))
                 return false;
         }
 

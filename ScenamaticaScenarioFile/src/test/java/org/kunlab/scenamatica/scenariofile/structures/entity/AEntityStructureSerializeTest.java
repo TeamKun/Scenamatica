@@ -8,8 +8,9 @@ import org.bukkit.util.Vector;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.kunlab.scenamatica.interfaces.scenariofile.entity.EntityStructure;
-import org.kunlab.scenamatica.interfaces.scenariofile.entity.GenericEntityStructure;
+import org.kunlab.scenamatica.interfaces.scenariofile.entity.entities.AEntityStructure;
 import org.kunlab.scenamatica.scenariofile.StructureSerializerImpl;
+import org.kunlab.scenamatica.scenariofile.structures.entity.entities.AEntityStructureImpl;
 import org.kunlab.scenamatica.scenariofile.structures.utils.MapTestUtil;
 
 import java.lang.reflect.Field;
@@ -21,10 +22,10 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class EntityStructureSerializeTest
+public class AEntityStructureSerializeTest
 {
-    public static final EntityStructure FULFILLED = new EntityStructureImpl(
-            EntityType.DROPPED_ITEM,
+    public static final AEntityStructure FULFILLED = new AEntityStructureImpl(
+            EntityType.UNKNOWN,
             new Location(null, 1145, 1419, 19, 8, 10),
             new Vector(11, 45, 14),
             "YajuSNPI",
@@ -61,7 +62,7 @@ public class EntityStructureSerializeTest
 
     public static final Map<String, Object> FULFILLED_MAP = new HashMap<String, Object>()
     {{
-        this.put("type", "DROPPED_ITEM");
+        this.put("type", "UNKNOWN");
         this.put("loc", new HashMap<String, Object>()
         {{
             this.put("x", 1145.0);
@@ -106,7 +107,7 @@ public class EntityStructureSerializeTest
         this.put("fallDistance", 81.0f);
     }};
 
-    public static final EntityStructure EMPTY = new EntityStructureImpl();
+    public static final AEntityStructure EMPTY = new AEntityStructureImpl();
 
     public static final Map<String, Object> EMPTY_MAP = new HashMap<>();
 
@@ -133,7 +134,7 @@ public class EntityStructureSerializeTest
     @Test
     void 正常にシリアライズできるか()
     {
-        Map<String, Object> map = EntityStructureImpl.serialize((GenericEntityStructure) FULFILLED, StructureSerializerImpl.getInstance());
+        Map<String, Object> map = AEntityStructureImpl.serialize((EntityStructure) FULFILLED, StructureSerializerImpl.getInstance());
 
         MapTestUtil.assertEqual(FULFILLED_MAP, map);
     }
@@ -141,7 +142,7 @@ public class EntityStructureSerializeTest
     @Test
     void 正常にデシリアライズできるか()
     {
-        GenericEntityStructure entity = EntityStructureImpl.deserialize(FULFILLED_MAP, StructureSerializerImpl.getInstance());
+        EntityStructure entity = AEntityStructureImpl.deserialize(FULFILLED_MAP, StructureSerializerImpl.getInstance());
 
         assertEquals(FULFILLED, entity);
     }
@@ -149,7 +150,7 @@ public class EntityStructureSerializeTest
     @Test
     void 必須項目のみでシリアライズできるか()
     {
-        Map<String, Object> map = EntityStructureImpl.serialize((GenericEntityStructure) EMPTY, StructureSerializerImpl.getInstance());
+        Map<String, Object> map = AEntityStructureImpl.serialize((EntityStructure) EMPTY, StructureSerializerImpl.getInstance());
 
         MapTestUtil.assertEqual(EMPTY_MAP, map);
     }
@@ -157,7 +158,7 @@ public class EntityStructureSerializeTest
     @Test
     void 必須項目のみでデシリアライズできるか()
     {
-        GenericEntityStructure entity = EntityStructureImpl.deserialize(EMPTY_MAP, StructureSerializerImpl.getInstance());
+        EntityStructure entity = AEntityStructureImpl.deserialize(EMPTY_MAP, StructureSerializerImpl.getInstance());
 
         assertEquals(EMPTY, entity);
     }

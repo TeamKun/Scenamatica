@@ -186,11 +186,11 @@ public class BlockPlaceAction extends AbstractBlockAction<BlockPlaceAction.Argum
 
             switch (type)
             {
-                case CONDITION_REQUIRE:
-                    ensurePresent(KEY_BLOCK, this.block);
-                    /* fall through */
                 case ACTION_EXPECT:
                     ensureNotPresent(KEY_DIRECTION, this.direction);
+                    break;
+                case CONDITION_REQUIRE:
+                    ensurePresent(KEY_BLOCK, this.block);
                     /* fall through */
                 case ACTION_EXECUTE:
                     BlockStructure blockDef = this.block;

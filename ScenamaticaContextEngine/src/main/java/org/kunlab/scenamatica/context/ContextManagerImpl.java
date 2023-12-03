@@ -29,7 +29,7 @@ import org.kunlab.scenamatica.interfaces.scenariofile.Mapped;
 import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.context.ContextStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.context.PlayerStructure;
-import org.kunlab.scenamatica.interfaces.scenariofile.entity.GenericEntityStructure;
+import org.kunlab.scenamatica.interfaces.scenariofile.entity.EntityStructure;
 import org.spigotmc.SpigotConfig;
 
 import java.util.ArrayList;
@@ -126,7 +126,7 @@ public class ContextManagerImpl implements ContextManager
 
     }
 
-    private <T extends Entity> T spawnEntity(World stage, GenericEntityStructure entity)
+    private <T extends Entity> T spawnEntity(World stage, EntityStructure entity)
     {
         EntityType type = entity.getType();
         if (type == null)
@@ -167,7 +167,7 @@ public class ContextManagerImpl implements ContextManager
     private List<Entity> prepareEntities(World stage, ContextStructure context, ScenarioFileStructure scenario, UUID testID) throws StageCreateFailedException, StageNotCreatedException
     {
         List<Entity> entities = new ArrayList<>();
-        for (GenericEntityStructure entity : context.getEntities())
+        for (EntityStructure entity : context.getEntities())
             entities.add(this.spawnEntity(stage, entity));
 
         this.isActorPrepared = true;

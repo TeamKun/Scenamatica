@@ -8,7 +8,6 @@ import org.kunlab.scenamatica.interfaces.scenariofile.context.ContextStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.context.PlayerStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.context.StageStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.entity.EntityStructure;
-import org.kunlab.scenamatica.interfaces.scenariofile.entity.GenericEntityStructure;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,7 +24,7 @@ public class ContextStructureImpl implements ContextStructure
     @NotNull
     List<PlayerStructure> actors;
     @NotNull
-    List<GenericEntityStructure> entities;
+    List<EntityStructure> entities;
 
     StageStructure world;
 
@@ -46,8 +45,8 @@ public class ContextStructureImpl implements ContextStructure
         if (!structure.getEntities().isEmpty())
         {
             List<Map<String, Object>> entities = new ArrayList<>();
-            for (GenericEntityStructure entity : structure.getEntities())
-                entities.add(serializer.serialize(entity, GenericEntityStructure.class));
+            for (EntityStructure entity : structure.getEntities())
+                entities.add(serializer.serialize(entity, EntityStructure.class));
 
             map.put(KEY_ENTITIES, entities);
         }
@@ -103,11 +102,11 @@ public class ContextStructureImpl implements ContextStructure
                 actorList.add(serializer.deserialize(MapUtils.checkAndCastMap(player), PlayerStructure.class));
         }
 
-        List<GenericEntityStructure> entityList = new ArrayList<>();
+        List<EntityStructure> entityList = new ArrayList<>();
         if (map.containsKey(KEY_ENTITIES) && map.get(KEY_ENTITIES) != null)
         {
             for (Object entity : (List<?>) map.get(KEY_ENTITIES))
-                entityList.add(serializer.deserialize(MapUtils.checkAndCastMap(entity), GenericEntityStructure.class));
+                entityList.add(serializer.deserialize(MapUtils.checkAndCastMap(entity), EntityStructure.class));
         }
 
         StageStructure world = null;

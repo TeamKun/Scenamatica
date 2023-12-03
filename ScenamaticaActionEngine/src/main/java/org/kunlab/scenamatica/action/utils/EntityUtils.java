@@ -3,6 +3,8 @@ package org.kunlab.scenamatica.action.utils;
 import lombok.experimental.UtilityClass;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
+import org.kunlab.scenamatica.interfaces.scenariofile.Mapped;
+import org.kunlab.scenamatica.interfaces.scenariofile.entity.EntityStructure;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -12,6 +14,19 @@ import java.util.UUID;
 @UtilityClass
 public class EntityUtils
 {
+    public static <T extends Entity> Mapped<T> tryCastMapped(EntityStructure entity, Entity targetEntity)
+    {
+        if (!(entity instanceof Mapped))
+            throw new IllegalStateException("Entity is not mapped");
+
+        // noinspection unchecked
+        Mapped<T> mapped = (Mapped<T>) entity;
+        if (!mapped.canApplyTo(targetEntity))
+            throw new IllegalStateException("Entity cannot be applied to mapped entity");
+
+        return mapped;
+    }
+
     public static Entity getPlayerOrEntityOrThrow(String target)
     {
         if (target.isEmpty())

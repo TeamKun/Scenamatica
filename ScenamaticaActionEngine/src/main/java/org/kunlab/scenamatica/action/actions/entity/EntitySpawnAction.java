@@ -11,6 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.actions.AbstractAction;
 import org.kunlab.scenamatica.action.actions.AbstractActionArgument;
+import org.kunlab.scenamatica.action.utils.EntityUtils;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.commons.utils.Utils;
 import org.kunlab.scenamatica.enums.ScenarioType;
@@ -31,7 +32,7 @@ public class EntitySpawnAction extends AbstractAction<EntitySpawnAction.Argument
 {
     public static final String KEY_ACTION_NAME = "entity_spawn";
 
-    public static <T extends Entity> T spawnEntity(EntityStructure<? super T> structure, @Nullable Location spawnLoc, ScenarioEngine engine)
+    public static <T extends Entity> T spawnEntity(EntityStructure structure, @Nullable Location spawnLoc, ScenarioEngine engine)
     {
         if (spawnLoc == null)
             spawnLoc = engine.getContext().getStage().getSpawnLocation();
@@ -46,7 +47,7 @@ public class EntitySpawnAction extends AbstractAction<EntitySpawnAction.Argument
         return spawnLoc.getWorld().spawn(
                 spawnLoc,
                 entityClass,
-                structure::applyTo
+                entity -> EntityUtils.tryCastMapped(structure, entity).applyTo(entity)
         );
     }
 
@@ -61,7 +62,7 @@ public class EntitySpawnAction extends AbstractAction<EntitySpawnAction.Argument
     {
         argument = this.requireArgsNonNull(argument);
 
-        EntityStructure<?> structure = argument.getEntity();
+        EntityStructure structure = argument.getEntity();
         Location spawnLoc = structure.getLocation();
 
         spawnEntity(structure, spawnLoc, engine);
@@ -74,7 +75,7 @@ public class EntitySpawnAction extends AbstractAction<EntitySpawnAction.Argument
             return false;
 
         EntitySpawnEvent e = (EntitySpawnEvent) event;
-        return argument.getEntity().isAdequate(e.getEntity());
+        return EntityUtils.tryCastMapped(argument.getEntity(), e.getEntity()).isAdequate(e.getEntity());
     }
 
     @Override
@@ -104,7 +105,7 @@ public class EntitySpawnAction extends AbstractAction<EntitySpawnAction.Argument
     {
         public static final String KEY_ENTITY = "entity";
 
-        EntityStructure<?> entity;
+        EntityStructure entity;
         // CreatureSpawnEvent.SpawnReason reason は CreatureSpawnAction でつくる。
 
         @Override
@@ -124,7 +125,7 @@ public class EntitySpawnAction extends AbstractAction<EntitySpawnAction.Argument
             if (type == ScenarioType.ACTION_EXECUTE)
             {
                 ensurePresent(KEY_ENTITY, this.entity);
-                EntityStructure<?> structure = this.entity;
+                EntityStructure structure = this.entity;
                 ensurePresent(KEY_ENTITY + "." + EntityStructure.KEY_TYPE, structure.getType());
                 ensureEquals(KEY_ENTITY + "." + EntityStructure.KEY_TYPE, structure.getType(), EntityType.UNKNOWN);
             }

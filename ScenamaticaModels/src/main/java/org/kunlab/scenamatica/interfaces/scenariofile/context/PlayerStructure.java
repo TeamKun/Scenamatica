@@ -3,14 +3,14 @@ package org.kunlab.scenamatica.interfaces.scenariofile.context;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.kunlab.scenamatica.interfaces.scenariofile.Mapped;
-import org.kunlab.scenamatica.interfaces.scenariofile.entity.entities.GenericHumanEntityStructure;
+import org.kunlab.scenamatica.interfaces.scenariofile.entity.entities.HumanEntityStructure;
 
 import java.util.List;
 
 /**
  * プレイヤーを表すインターフェースです。
  */
-public interface PlayerStructure extends GenericHumanEntityStructure, Mapped<Player>
+public interface PlayerStructure extends HumanEntityStructure, Mapped<Player>
 {
     String KEY_NAME = "name";
     String KEY_ONLINE = "online";

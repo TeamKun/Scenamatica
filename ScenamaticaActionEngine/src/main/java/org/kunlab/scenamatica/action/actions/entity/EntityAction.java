@@ -11,6 +11,7 @@ import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
+import org.kunlab.scenamatica.interfaces.scenariofile.Mapped;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.entity.EntityStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
@@ -35,16 +36,20 @@ public class EntityAction extends AbstractEntityAction<EntityAction.Argument>
         argument = this.requireArgsNonNull(argument);
 
         Entity target = argument.selectTarget();
-        // noinspection rawtypes
         EntityStructure entityInfo = argument.getEntity();
 
-        assert entityInfo != null;
+        if (!(entityInfo instanceof Mapped<?>))
+            throw new IllegalStateException("Cannot check matched entity for non-mapped entity");
 
-        if (!entityInfo.canApplyTo(target))
+        // noinspection rawtypes
+        Mapped mapped = (Mapped) entityInfo;
+
+        if (!mapped.canApplyTo(target))
             throw new IllegalStateException("Cannot apply entity info of " + entityInfo + " to " + target);
-        else
-            // noinspection unchecked
-            entityInfo.applyTo(target);
+
+
+        // noinspection unchecked  // checked above
+        mapped.applyTo(target);
     }
 
     @Override
@@ -52,7 +57,6 @@ public class EntityAction extends AbstractEntityAction<EntityAction.Argument>
     {
         argument = this.requireArgsNonNull(argument);
 
-        // noinspection rawtypes
         EntityStructure entityInfo = argument.getEntity();
         Entity target = EntityUtils.getPlayerOrEntityOrNull(argument.getTargetString());
 
@@ -61,14 +65,13 @@ public class EntityAction extends AbstractEntityAction<EntityAction.Argument>
         else if (target == null)
             return false;
 
-        // noinspection unchecked
-        return entityInfo == null || !entityInfo.canApplyTo(target) || entityInfo.isAdequate(target);
+        return entityInfo == null || EntityUtils.tryCastMapped(entityInfo, target).isAdequate(target);
     }
 
     @Override
     public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
     {
-        EntityStructure<?> structure;
+        EntityStructure structure;
         if (map.containsKey(Argument.KEY_ENTITY))
             structure = serializer.deserialize(
                     MapUtils.checkAndCastMap(map.get(Argument.KEY_ENTITY)),
@@ -89,9 +92,9 @@ public class EntityAction extends AbstractEntityAction<EntityAction.Argument>
     {
         public static final String KEY_ENTITY = "entity";
 
-        EntityStructure<?> entity;
+        EntityStructure entity;
 
-        public Argument(EntityArgumentHolder<Entity> target, @Nullable EntityStructure<?> entity)
+        public Argument(EntityArgumentHolder<Entity> target, @Nullable EntityStructure entity)
         {
             super(target);
             this.entity = entity;

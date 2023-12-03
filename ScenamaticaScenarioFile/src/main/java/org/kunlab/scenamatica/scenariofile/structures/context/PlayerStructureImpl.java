@@ -8,8 +8,8 @@ import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.context.PlayerStructure;
-import org.kunlab.scenamatica.interfaces.scenariofile.entity.entities.GenericHumanEntityStructure;
-import org.kunlab.scenamatica.scenariofile.structures.entity.entities.GenericHumanEntityStructureImpl;
+import org.kunlab.scenamatica.interfaces.scenariofile.entity.entities.HumanEntityStructure;
+import org.kunlab.scenamatica.scenariofile.structures.entity.entities.HumanEntityStructureImpl;
 
 import java.util.HashMap;
 import java.util.List;
@@ -17,7 +17,7 @@ import java.util.Map;
 import java.util.Objects;
 
 @Value
-public class PlayerStructureImpl extends GenericHumanEntityStructureImpl implements PlayerStructure
+public class PlayerStructureImpl extends HumanEntityStructureImpl implements PlayerStructure
 {
     private static final float SPEED_DEFAULT = 0.2f;
 
@@ -40,7 +40,7 @@ public class PlayerStructureImpl extends GenericHumanEntityStructureImpl impleme
     Integer opLevel;
     List<String> activePermissions;
 
-    public PlayerStructureImpl(@NotNull GenericHumanEntityStructure human, @Nullable String name, Boolean online, String displayName,
+    public PlayerStructureImpl(@NotNull HumanEntityStructure human, @Nullable String name, Boolean online, String displayName,
                                String playerListName, String playerListHeader,
                                String playerListFooter, Location compassTarget,
                                Location bedSpawnLocation, Integer exp,
@@ -161,7 +161,7 @@ public class PlayerStructureImpl extends GenericHumanEntityStructureImpl impleme
     {
         validate(map);
 
-        GenericHumanEntityStructure human = deserializeHuman(map, serializer);
+        HumanEntityStructure human = deserializeHuman(map, serializer);
 
         String name = (String) map.get(KEY_NAME);
 

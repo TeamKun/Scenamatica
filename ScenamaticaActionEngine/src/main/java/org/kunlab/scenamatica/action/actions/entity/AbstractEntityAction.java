@@ -70,4 +70,5 @@ public abstract class AbstractEntityAction<A extends AbstractEntityActionArgumen
                 structureClass
         );
     }
+
 }

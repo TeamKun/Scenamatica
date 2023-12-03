@@ -3,6 +3,7 @@ package org.kunlab.scenamatica.commons.utils;
 import lombok.experimental.UtilityClass;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.entity.EntityType;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -82,6 +83,40 @@ public class Utils
             return material;
         else
             return null;
+    }
+
+    @Nullable
+    @SuppressWarnings("deprecation")
+    public static EntityType searchEntityType(@Nullable String name)
+    {
+        if (name == null)
+            return null;
+
+        String searchName = name.toUpperCase(Locale.ROOT);
+        if (name.contains(":")) // Namespace mode
+        {
+            String[] split = name.split(":");
+            searchName = split[1];
+        }
+
+        try
+        {
+            int mayId = Integer.parseInt(searchName);
+            return EntityType.fromId(mayId);
+        }
+        catch (NumberFormatException ignored)
+        {
+        }
+
+        try
+        {
+            return EntityType.valueOf(searchName);
+        }
+        catch (IllegalArgumentException ignored)
+        {
+        }
+
+        return EntityType.fromName(searchName);
     }
 
     public static int[] convertUUIDToIntegers(UUID uuid)
