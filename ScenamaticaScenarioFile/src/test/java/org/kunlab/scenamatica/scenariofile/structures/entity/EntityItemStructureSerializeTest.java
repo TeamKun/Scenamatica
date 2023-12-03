@@ -1,7 +1,7 @@
 package org.kunlab.scenamatica.scenariofile.structures.entity;
 
 import org.junit.jupiter.api.Test;
-import org.kunlab.scenamatica.interfaces.scenariofile.entity.EntityStructure;
+import org.kunlab.scenamatica.interfaces.scenariofile.entity.GenericEntityStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.entity.entities.EntityItemStructure;
 import org.kunlab.scenamatica.scenariofile.StructureSerializerImpl;
 import org.kunlab.scenamatica.scenariofile.structures.entity.entities.EntityItemStructureImpl;
@@ -64,7 +64,7 @@ public class EntityItemStructureSerializeTest
     @Test
     void 正常にデシリアライズできるか()
     {
-        EntityStructure entity = EntityItemStructureImpl.deserialize(FULFILLED_MAP, StructureSerializerImpl.getInstance());
+        GenericEntityStructure entity = EntityItemStructureImpl.deserialize(FULFILLED_MAP, StructureSerializerImpl.getInstance());
 
         assertEquals(FULFILLED, entity);
     }
@@ -80,7 +80,7 @@ public class EntityItemStructureSerializeTest
     @Test
     void 必須項目のみでデシリアライズできるか()
     {
-        EntityStructure entity = EntityItemStructureImpl.deserialize(EMPTY_MAP, StructureSerializerImpl.getInstance());
+        GenericEntityStructure entity = EntityItemStructureImpl.deserialize(EMPTY_MAP, StructureSerializerImpl.getInstance());
 
         assertEquals(EMPTY, entity);
     }

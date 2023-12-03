@@ -8,8 +8,8 @@ import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.context.PlayerStructure;
-import org.kunlab.scenamatica.interfaces.scenariofile.entity.entities.HumanEntityStructure;
-import org.kunlab.scenamatica.scenariofile.structures.entity.entities.HumanEntityStructureImpl;
+import org.kunlab.scenamatica.interfaces.scenariofile.entity.entities.GenericHumanEntityStructure;
+import org.kunlab.scenamatica.scenariofile.structures.entity.entities.GenericHumanEntityStructureImpl;
 
 import java.util.HashMap;
 import java.util.List;
@@ -17,7 +17,7 @@ import java.util.Map;
 import java.util.Objects;
 
 @Value
-public class PlayerStructureImpl extends HumanEntityStructureImpl<Player> implements PlayerStructure
+public class PlayerStructureImpl extends GenericHumanEntityStructureImpl implements PlayerStructure
 {
     private static final float SPEED_DEFAULT = 0.2f;
 
@@ -40,7 +40,7 @@ public class PlayerStructureImpl extends HumanEntityStructureImpl<Player> implem
     Integer opLevel;
     List<String> activePermissions;
 
-    public PlayerStructureImpl(@NotNull HumanEntityStructure<?> human, @Nullable String name, Boolean online, String displayName,
+    public PlayerStructureImpl(@NotNull GenericHumanEntityStructure human, @Nullable String name, Boolean online, String displayName,
                                String playerListName, String playerListHeader,
                                String playerListFooter, Location compassTarget,
                                Location bedSpawnLocation, Integer exp,
@@ -48,9 +48,7 @@ public class PlayerStructureImpl extends HumanEntityStructureImpl<Player> implem
                                Boolean allowFlight, Boolean flying,
                                Float walkSpeed, Float flySpeed, Integer opLevel, List<String> activePermissions)
     {
-        super(human, human.getInventory(), human.getEnderChest(),
-                human.getMainHand(), human.getGamemode(), human.getFoodLevel()
-        );
+        super(human);
         this.name = name;
         this.online = online;
         this.displayName = displayName;
@@ -163,7 +161,7 @@ public class PlayerStructureImpl extends HumanEntityStructureImpl<Player> implem
     {
         validate(map);
 
-        HumanEntityStructure<?> human = deserializeHuman(map, serializer);
+        GenericHumanEntityStructure human = deserializeHuman(map, serializer);
 
         String name = (String) map.get(KEY_NAME);
 
@@ -260,8 +258,70 @@ public class PlayerStructureImpl extends HumanEntityStructureImpl<Player> implem
     }
 
     @Override
+    @SuppressWarnings("deprecation")
+    public void applyTo(Player player)
+    {
+        super.applyToHumanEntity(player); // Mock の場合は NMS で行うのでこちらは呼ばれない
+
+        if (this.displayName != null)
+            player.setDisplayName(this.displayName);
+        if (this.playerListName != null)
+            player.setPlayerListName(this.playerListName);
+        if (this.playerListHeader != null)
+            player.setPlayerListHeader(this.playerListHeader);
+        if (this.playerListFooter != null)
+            player.setPlayerListFooter(this.playerListFooter);
+        if (this.compassTarget != null)
+            player.setCompassTarget(this.compassTarget);
+        if (this.bedSpawnLocation != null)
+            player.setBedSpawnLocation(this.bedSpawnLocation);
+        if (this.exp != null)
+            player.setExp(this.exp);
+        if (this.level != null)
+            player.setLevel(this.level);
+        if (this.totalExperience != null)
+            player.setTotalExperience(this.totalExperience);
+        if (this.allowFlight != null)
+            player.setAllowFlight(this.allowFlight);
+        if (this.flying != null)
+            player.setFlying(this.flying);
+        if (this.walkSpeed != null)
+            player.setWalkSpeed(this.walkSpeed);
+        if (this.flySpeed != null)
+            player.setFlySpeed(this.flySpeed);
+
+        if (this.opLevel != null)
+        {
+            player.setOp(this.opLevel > 0);
+            player.sendOpLevel(this.opLevel.byteValue());
+        }
+    }
+
+    @Override
     public boolean canApplyTo(Object target)
     {
-        return super.canApplyTo(target) && target instanceof Player;
+        return target instanceof Player;
+    }
+
+    @Override
+    @SuppressWarnings("deprecation")
+    public boolean isAdequate(Player player, boolean strict)
+    {
+        return super.isAdequateHumanEntity(player, strict)
+                && (this.name == null || this.name.equals(player.getName()))
+                && (this.displayName == null || this.displayName.equals(player.getDisplayName()))
+                && (this.playerListName == null || this.playerListName.equals(player.getPlayerListName()))
+                && (this.playerListHeader == null || this.playerListHeader.equals(player.getPlayerListHeader()))
+                && (this.playerListFooter == null || this.playerListFooter.equals(player.getPlayerListFooter()))
+                && (this.compassTarget == null || this.compassTarget.equals(player.getCompassTarget()))
+                && (this.bedSpawnLocation == null || this.bedSpawnLocation.equals(player.getBedSpawnLocation()))
+                && (this.exp == null || this.exp == player.getExp())
+                && (this.level == null || this.level.equals(player.getLevel()))
+                && (this.totalExperience == null || this.totalExperience.equals(player.getTotalExperience()))
+                && (this.allowFlight == null || this.allowFlight.equals(player.getAllowFlight()))
+                && (this.flying == null || this.flying.equals(player.isFlying()))
+                && (this.walkSpeed == null || this.walkSpeed.equals(player.getWalkSpeed()))
+                && (this.flySpeed == null || this.flySpeed.equals(player.getFlySpeed()))
+                && (this.activePermissions == null || this.activePermissions.stream().allMatch(player::hasPermission));
     }
 }

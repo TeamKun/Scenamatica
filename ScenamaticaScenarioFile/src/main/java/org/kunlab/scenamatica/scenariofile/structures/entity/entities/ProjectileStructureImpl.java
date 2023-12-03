@@ -8,20 +8,20 @@ import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.entity.EntityStructure;
+import org.kunlab.scenamatica.interfaces.scenariofile.entity.GenericEntityStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.entity.entities.ProjectileStructure;
-import org.kunlab.scenamatica.scenariofile.structures.entity.EntityStructureImpl;
+import org.kunlab.scenamatica.scenariofile.structures.entity.GenericEntityStructureImpl;
 
 import java.util.Map;
 
-@EqualsAndHashCode(callSuper = true)
 @Value
-public class ProjectileStructureImpl extends EntityStructureImpl<Projectile> implements ProjectileStructure
+@EqualsAndHashCode(callSuper = true)
+public class ProjectileStructureImpl extends GenericEntityStructureImpl implements ProjectileStructure
 {
-
-    EntityStructure<?> shooter;  // ProjectileSource だが, launchProjectile 以外存在しないので EntityStructure で代用。
+    GenericEntityStructure shooter;  // ProjectileSource だが, launchProjectile 以外存在しないので EntityStructure で代用。
     Boolean doesBounce;
 
-    public ProjectileStructureImpl(@NotNull EntityStructure<?> original, @Nullable EntityStructure<?> shooter, @Nullable Boolean doesBounce)
+    public ProjectileStructureImpl(@NotNull GenericEntityStructure original, @Nullable GenericEntityStructure shooter, @Nullable Boolean doesBounce)
     {
         super(original);
         this.shooter = shooter;
@@ -30,10 +30,10 @@ public class ProjectileStructureImpl extends EntityStructureImpl<Projectile> imp
 
     public static Map<String, Object> serialize(@NotNull ProjectileStructure structure, @NotNull StructureSerializer serializer)
     {
-        Map<String, Object> map = serializer.serialize(structure, EntityStructure.class);
+        Map<String, Object> map = GenericEntityStructureImpl.serialize(structure, serializer);
 
         if (structure.getShooter() != null)
-            MapUtils.putMapIfNotEmpty(map, KEY_SHOOTER, serializer.serialize(structure.getShooter(), EntityStructure.class));
+            MapUtils.putMapIfNotEmpty(map, KEY_SHOOTER, serializer.serialize(structure.getShooter(), GenericEntityStructure.class));
 
         MapUtils.putIfNotNull(map, KEY_DOES_BOUNCE, structure.getDoesBounce());
 
@@ -59,13 +59,13 @@ public class ProjectileStructureImpl extends EntityStructureImpl<Projectile> imp
     {
         validate(map, serializer);
 
-        EntityStructure<?> entity = serializer.deserialize(map, EntityStructure.class);
+        GenericEntityStructure entity = GenericEntityStructureImpl.deserialize(map, serializer);
 
-        EntityStructure<?> shooter = null;
+        GenericEntityStructure shooter = null;
         if (map.containsKey(KEY_SHOOTER))
         {
             Map<String, Object> shooterMap = MapUtils.checkAndCastMap(map.get(KEY_SHOOTER));
-            shooter = serializer.deserialize(shooterMap, EntityStructure.class);
+            shooter = serializer.deserialize(shooterMap, GenericEntityStructure.class);
         }
 
         return new ProjectileStructureImpl(
@@ -76,8 +76,26 @@ public class ProjectileStructureImpl extends EntityStructureImpl<Projectile> imp
     }
 
     @Override
+    public void applyTo(Projectile object)
+    {
+
+    }
+
+    @Override
     public boolean canApplyTo(Object target)
     {
-        return super.canApplyTo(target) && target instanceof Projectile;
+        return target instanceof Projectile;
+    }
+
+    @Override
+    public boolean isAdequate(Projectile object, boolean strict)
+    {
+        return false;
+    }
+
+    @Override
+    public Projectile create()
+    {
+        return null;
     }
 }

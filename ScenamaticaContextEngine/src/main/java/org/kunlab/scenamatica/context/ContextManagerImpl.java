@@ -25,10 +25,11 @@ import org.kunlab.scenamatica.interfaces.context.ActorManager;
 import org.kunlab.scenamatica.interfaces.context.Context;
 import org.kunlab.scenamatica.interfaces.context.ContextManager;
 import org.kunlab.scenamatica.interfaces.context.StageManager;
+import org.kunlab.scenamatica.interfaces.scenariofile.Mapped;
 import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.context.ContextStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.context.PlayerStructure;
-import org.kunlab.scenamatica.interfaces.scenariofile.entity.EntityStructure;
+import org.kunlab.scenamatica.interfaces.scenariofile.entity.GenericEntityStructure;
 import org.spigotmc.SpigotConfig;
 
 import java.util.ArrayList;
@@ -125,7 +126,7 @@ public class ContextManagerImpl implements ContextManager
 
     }
 
-    private <T extends Entity> T spawnEntity(World stage, EntityStructure<? super T> entity)
+    private <T extends Entity> T spawnEntity(World stage, GenericEntityStructure entity)
     {
         EntityType type = entity.getType();
         if (type == null)
@@ -151,7 +152,7 @@ public class ContextManagerImpl implements ContextManager
                     @SuppressWarnings("unchecked")  // 一見 unchecked に見えるが、spawnEntity は T を返す。
                     T e = (T) stage.spawnEntity(spawnLoc, type, CreatureSpawnEvent.SpawnReason.CUSTOM,
                             generatedEntity -> {
-                                entity.applyTo((T) generatedEntity);
+                                ((Mapped<T>) entity).applyTo((T) generatedEntity);
                                 generatedEntity.addScoreboardTag(tagName);
                             }
                     );
@@ -166,7 +167,7 @@ public class ContextManagerImpl implements ContextManager
     private List<Entity> prepareEntities(World stage, ContextStructure context, ScenarioFileStructure scenario, UUID testID) throws StageCreateFailedException, StageNotCreatedException
     {
         List<Entity> entities = new ArrayList<>();
-        for (EntityStructure<?> entity : context.getEntities())
+        for (GenericEntityStructure entity : context.getEntities())
             entities.add(this.spawnEntity(stage, entity));
 
         this.isActorPrepared = true;

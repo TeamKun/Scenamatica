@@ -1,12 +1,14 @@
 package org.kunlab.scenamatica.interfaces.scenariofile.entity.entities;
 
 import org.bukkit.entity.Projectile;
-import org.kunlab.scenamatica.interfaces.scenariofile.entity.EntityStructure;
+import org.kunlab.scenamatica.interfaces.scenariofile.Creatable;
+import org.kunlab.scenamatica.interfaces.scenariofile.Mapped;
+import org.kunlab.scenamatica.interfaces.scenariofile.entity.GenericEntityStructure;
 
 /**
  * 投射物のインターフェースです。
  */
-public interface ProjectileStructure extends EntityStructure<Projectile>
+public interface ProjectileStructure extends GenericEntityStructure, Mapped<Projectile>, Creatable<Projectile>
 {
     String KEY_SHOOTER = "shooter";
     String KEY_DOES_BOUNCE = "bounce";
@@ -16,7 +18,7 @@ public interface ProjectileStructure extends EntityStructure<Projectile>
      *
      * @return 撃ったエンティティ
      */
-    EntityStructure<?> getShooter();
+    GenericEntityStructure getShooter();
 
     /**
      * この投射物が跳ね返るかどうかを取得します。

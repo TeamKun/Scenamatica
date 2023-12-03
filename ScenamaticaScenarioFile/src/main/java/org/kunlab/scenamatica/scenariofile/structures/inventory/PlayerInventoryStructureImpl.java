@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
+import org.kunlab.scenamatica.interfaces.scenariofile.inventory.GenericInventoryStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.InventoryStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.ItemStackStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.PlayerInventoryStructure;
@@ -79,7 +80,7 @@ public class PlayerInventoryStructureImpl extends GenericInventoryStructureImpl 
 
         if (!structure.getMainContents().isEmpty())
         {
-            Map<String, Object> mainContents = serializer.serialize((InventoryStructure) structure, InventoryStructure.class);
+            Map<String, Object> mainContents = serializer.serialize(structure, GenericInventoryStructure.class);
             mainContents.remove(KEY_SIZE);  // Playerのインベントリサイズは36固定なので冗長
 
             map.put(KEY_MAIN_INVENTORY, mainContents);

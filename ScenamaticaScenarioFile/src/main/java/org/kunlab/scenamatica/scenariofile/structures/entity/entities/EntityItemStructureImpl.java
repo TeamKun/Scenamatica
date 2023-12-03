@@ -9,17 +9,17 @@ import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.commons.utils.UUIDUtil;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
-import org.kunlab.scenamatica.interfaces.scenariofile.entity.EntityStructure;
+import org.kunlab.scenamatica.interfaces.scenariofile.entity.GenericEntityStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.entity.entities.EntityItemStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.ItemStackStructure;
-import org.kunlab.scenamatica.scenariofile.structures.entity.EntityStructureImpl;
+import org.kunlab.scenamatica.scenariofile.structures.entity.GenericEntityStructureImpl;
 
 import java.util.Map;
 import java.util.UUID;
 
 @Value
 @EqualsAndHashCode(callSuper = true)
-public class EntityItemStructureImpl extends EntityStructureImpl<Item> implements EntityItemStructure
+public class EntityItemStructureImpl extends GenericEntityStructureImpl implements EntityItemStructure
 {
     @NotNull
     ItemStackStructure itemStack;
@@ -36,17 +36,10 @@ public class EntityItemStructureImpl extends EntityStructureImpl<Item> implement
 
     Boolean willAge;
 
-    public EntityItemStructureImpl(@NotNull EntityStructure<?> structure, @NotNull ItemStackStructure itemStack, @Nullable Integer pickupDelay,
+    public EntityItemStructureImpl(@NotNull GenericEntityStructure original, @NotNull ItemStackStructure itemStack, @Nullable Integer pickupDelay,
                                    @Nullable UUID owner, @Nullable UUID thrower, Boolean canMobPickup, Boolean willAge)
     {
-        super(  // TODO: Extended super argument
-                EntityType.DROPPED_ITEM,
-                structure.getLocation(), structure.getVelocity(), structure.getCustomName(), structure.getUuid(),
-                structure.getGlowing(), structure.getGravity(), structure.getSilent(), structure.getCustomNameVisible(),
-                structure.getInvulnerable(), structure.getTags(), structure.getMaxHealth(), structure.getHealth(),
-                structure.getLastDamageCause(), structure.getPotionEffects(), structure.getFireTicks(), structure.getTicksLived(),
-                structure.getPortalCooldown(), structure.getPersistent(), structure.getFallDistance()
-        );
+        super(EntityType.DROPPED_ITEM, original);
         this.itemStack = itemStack;
         this.pickupDelay = pickupDelay;
         this.owner = owner;
@@ -58,8 +51,8 @@ public class EntityItemStructureImpl extends EntityStructureImpl<Item> implement
     @NotNull
     public static Map<String, Object> serialize(@NotNull EntityItemStructure structure, @NotNull StructureSerializer serializer)
     {
-        Map<String, Object> map = serializer.serialize(structure, EntityStructure.class);
-        map.remove(EntityStructure.KEY_TYPE);
+        Map<String, Object> map = GenericEntityStructureImpl.serialize(structure, serializer);
+        map.remove(KEY_TYPE);
         map.putAll(serializer.serialize(structure.getItemStack(), ItemStackStructure.class));
 
         if (structure.getPickupDelay() != null)
@@ -78,7 +71,7 @@ public class EntityItemStructureImpl extends EntityStructureImpl<Item> implement
 
     public static void validate(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
     {
-        serializer.validate(map, EntityStructure.class);
+        GenericEntityStructureImpl.validate(map);
 
         if (map.containsKey(KEY_OWNER) && UUIDUtil.toUUIDOrNull((String) map.get(KEY_OWNER)) == null)
             throw new IllegalArgumentException("owner must be UUID");
@@ -89,7 +82,6 @@ public class EntityItemStructureImpl extends EntityStructureImpl<Item> implement
     @NotNull
     public static EntityItemStructure deserialize(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
     {
-        serializer.validate(map, EntityStructure.class);
         validate(map, serializer);
 
         Number pickupDelayNum = MapUtils.getAsNumberOrNull(map, KEY_PICKUP_DELAY);
@@ -110,7 +102,7 @@ public class EntityItemStructureImpl extends EntityStructureImpl<Item> implement
             map.put(KEY_TYPE, EntityType.DROPPED_ITEM.name());
 
         return new EntityItemStructureImpl(
-                serializer.deserialize(map, EntityStructure.class),
+                GenericEntityStructureImpl.deserialize(map, serializer),
                 itemStack,
                 pickupDelay,
                 ownerUUID,
@@ -129,7 +121,7 @@ public class EntityItemStructureImpl extends EntityStructureImpl<Item> implement
     @Override
     public void applyTo(Item entity)
     {
-        super.applyTo(entity);
+        super.applyToEntity(entity);
 
         if (this.pickupDelay != null)
             entity.setPickupDelay(this.pickupDelay);
@@ -146,7 +138,7 @@ public class EntityItemStructureImpl extends EntityStructureImpl<Item> implement
     @Override
     public boolean canApplyTo(Object target)
     {
-        return super.canApplyTo(target) && target instanceof Item;
+        return target instanceof Item;
     }
 
     @Override

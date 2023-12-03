@@ -1,12 +1,14 @@
 package org.kunlab.scenamatica.interfaces.scenariofile.entity.entities;
 
 import org.bukkit.entity.Item;
-import org.kunlab.scenamatica.interfaces.scenariofile.entity.EntityStructure;
+import org.kunlab.scenamatica.interfaces.scenariofile.Creatable;
+import org.kunlab.scenamatica.interfaces.scenariofile.Mapped;
+import org.kunlab.scenamatica.interfaces.scenariofile.entity.GenericEntityStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.ItemStackStructure;
 
 import java.util.UUID;
 
-public interface EntityItemStructure extends EntityStructure<Item>
+public interface EntityItemStructure extends GenericEntityStructure, Mapped<Item>, Creatable<Item>
 {
     // public static final String KEY_ITEM_STACK = "itemStack";    // トップレベルに ItemStackStructure のキーを置くのでいらない。
     String KEY_PICKUP_DELAY = "pickupDelay";

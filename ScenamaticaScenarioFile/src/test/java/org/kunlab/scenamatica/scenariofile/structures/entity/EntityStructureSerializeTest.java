@@ -8,6 +8,7 @@ import org.bukkit.util.Vector;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.kunlab.scenamatica.interfaces.scenariofile.entity.EntityStructure;
+import org.kunlab.scenamatica.interfaces.scenariofile.entity.GenericEntityStructure;
 import org.kunlab.scenamatica.scenariofile.StructureSerializerImpl;
 import org.kunlab.scenamatica.scenariofile.structures.utils.MapTestUtil;
 
@@ -132,7 +133,7 @@ public class EntityStructureSerializeTest
     @Test
     void 正常にシリアライズできるか()
     {
-        Map<String, Object> map = EntityStructureImpl.serialize(FULFILLED, StructureSerializerImpl.getInstance());
+        Map<String, Object> map = EntityStructureImpl.serialize((GenericEntityStructure) FULFILLED, StructureSerializerImpl.getInstance());
 
         MapTestUtil.assertEqual(FULFILLED_MAP, map);
     }
@@ -140,7 +141,7 @@ public class EntityStructureSerializeTest
     @Test
     void 正常にデシリアライズできるか()
     {
-        EntityStructure entity = EntityStructureImpl.deserialize(FULFILLED_MAP, StructureSerializerImpl.getInstance());
+        GenericEntityStructure entity = EntityStructureImpl.deserialize(FULFILLED_MAP, StructureSerializerImpl.getInstance());
 
         assertEquals(FULFILLED, entity);
     }
@@ -148,7 +149,7 @@ public class EntityStructureSerializeTest
     @Test
     void 必須項目のみでシリアライズできるか()
     {
-        Map<String, Object> map = EntityStructureImpl.serialize(EMPTY, StructureSerializerImpl.getInstance());
+        Map<String, Object> map = EntityStructureImpl.serialize((GenericEntityStructure) EMPTY, StructureSerializerImpl.getInstance());
 
         MapTestUtil.assertEqual(EMPTY_MAP, map);
     }
@@ -156,7 +157,7 @@ public class EntityStructureSerializeTest
     @Test
     void 必須項目のみでデシリアライズできるか()
     {
-        EntityStructure entity = EntityStructureImpl.deserialize(EMPTY_MAP, StructureSerializerImpl.getInstance());
+        GenericEntityStructure entity = EntityStructureImpl.deserialize(EMPTY_MAP, StructureSerializerImpl.getInstance());
 
         assertEquals(EMPTY, entity);
     }

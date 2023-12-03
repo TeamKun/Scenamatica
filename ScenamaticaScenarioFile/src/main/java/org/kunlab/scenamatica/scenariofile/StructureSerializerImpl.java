@@ -11,6 +11,7 @@ import org.kunlab.scenamatica.interfaces.scenariofile.context.PlayerStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.context.StageStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.entity.DamageStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.entity.EntityStructure;
+import org.kunlab.scenamatica.interfaces.scenariofile.entity.GenericEntityStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.InventoryStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.ItemStackStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.PlayerInventoryStructure;
@@ -68,8 +69,8 @@ public class StructureSerializerImpl implements StructureSerializer
     public @NotNull <T extends Structure> Map<String, Object> serialize(@NotNull T structure, @NotNull Class<T> clazz)
     {
         // エンティティの場合は, さらに EntityType で分岐する
-        if (!clazz.getName().equals(EntityStructure.class.getName()) && EntityStructure.class.isAssignableFrom(clazz))
-            return SelectingEntityStructureSerializer.serialize((EntityStructure<?>) structure, this);
+        if (!clazz.getName().equals(GenericEntityStructure.class.getName()) && GenericEntityStructure.class.isAssignableFrom(clazz))
+            return SelectingEntityStructureSerializer.serialize((GenericEntityStructure) structure, this);
 
         return this.selectEntry(clazz).getSerializer().apply(structure, this);
     }
@@ -78,9 +79,9 @@ public class StructureSerializerImpl implements StructureSerializer
     public <T extends Structure> @NotNull T deserialize(@NotNull Map<String, Object> map, @NotNull Class<T> clazz)
     {
         // エンティティの場合は, さらに EntityType で分岐する
-        if (!clazz.getName().equals(EntityStructure.class.getName()) && EntityStructure.class.isAssignableFrom(clazz))
+        if (!clazz.getName().equals(EntityStructure.class.getName()) && GenericEntityStructure.class.isAssignableFrom(clazz))
             // noinspection unchecked
-            return (T) SelectingEntityStructureSerializer.deserialize((Class<? extends EntityStructure<?>>) clazz, map, this);
+            return (T) SelectingEntityStructureSerializer.deserialize((Class<? extends GenericEntityStructure>) clazz, map, this);
 
         return this.selectEntry(clazz).getDeserializer().apply(map, this);
     }
@@ -89,7 +90,7 @@ public class StructureSerializerImpl implements StructureSerializer
     public <T extends Structure> void validate(@NotNull Map<String, Object> map, @NotNull Class<T> clazz)
     {
         // エンティティの場合は, さらに EntityType で分岐する
-        if (!clazz.getName().equals(EntityStructure.class.getName()) && EntityStructure.class.isAssignableFrom(clazz))
+        if (!clazz.getName().equals(GenericEntityStructure.class.getName()) && GenericEntityStructure.class.isAssignableFrom(clazz))
         {
             SelectingEntityStructureSerializer.validate(map, this);
             return;
