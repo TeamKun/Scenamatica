@@ -6,7 +6,6 @@ import org.kunlab.scenamatica.interfaces.action.CompiledAction;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioResult;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioSession;
-import org.kunlab.scenamatica.interfaces.scenario.TestReporter;
 import org.kunlab.scenamatica.interfaces.scenario.runtime.CompiledScenarioAction;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerStructure;
 import org.kunlab.scenamatica.reporter.packets.AbstractRawPacket;
@@ -30,7 +29,7 @@ import java.io.FileOutputStream;
 import java.io.PrintStream;
 import java.util.Map;
 
-public class RawTestReporter implements TestReporter
+public class RawTestReporter extends AbstractTestReporter
 {
     private static final Gson GSON = new Gson();
     private static final PrintStream OUT = new PrintStream(new FileOutputStream(FileDescriptor.out));

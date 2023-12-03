@@ -65,11 +65,10 @@ public final class Scenamatica extends JavaPlugin
     private ScenamaticaRegistry getRegistry(ExceptionHandler exceptionHandler, boolean isRaw)
     {
         boolean isVerbose = this.getConfig().getBoolean("reporting.verbose", true);
-        boolean isJunitReportingEnabled = this.getConfig().getBoolean("reporting.junit.enabled", true);
 
         return new ScenamaticaDaemon(Environment.builder(this)
                 .exceptionHandler(exceptionHandler)
-                .testReporter(this.getTestReporter(isRaw, isVerbose, isJunitReportingEnabled))
+                .testReporter(this.getTestReporter(this.getConfig()))
                 .actorSettings(ActorSettingsImpl.fromConfig(this.getConfig()))
                 .verbose(isVerbose)
                 .ignoreTriggerTypes(this.getIgnoreTriggerTypes())
@@ -114,8 +113,12 @@ public final class Scenamatica extends JavaPlugin
         this.resultWriter.init(this);
     }
 
-    private TestReporter getTestReporter(boolean isRaw, boolean isVerbose, boolean isJunitReportingEnabled)
+    private TestReporter getTestReporter(FileConfiguration config)
     {
+        boolean isRaw = config.getBoolean("reporting.raw", false);
+        boolean isVerbose = config.getBoolean("reporting.verbose", true);
+        boolean isJunitReportingEnabled = config.getBoolean("reporting.junit.enabled", true);
+
         List<TestReporter> reporters = new LinkedList<>();
         // 開始時 ＝＞ 昇順で実行される。
         // 終了時 ＝＞ 降順で実行される。
@@ -130,6 +133,9 @@ public final class Scenamatica extends JavaPlugin
             reporters.add(new BukkitTestReporter());
         else
             reporters.add(new CompactBukkitTestReporter());
+
+        boolean isRetryEnabled = config.getBoolean("execution.retry.enabled", true);
+
 
         return new ReportersBridge(reporters);
     }
