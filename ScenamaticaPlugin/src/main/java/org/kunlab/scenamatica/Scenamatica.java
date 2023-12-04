@@ -133,9 +133,9 @@ public final class Scenamatica extends JavaPlugin
             reporters.add(new JUnitReporter(this.resultWriter));
 
         if (isVerbose)
-            reporters.add(new BukkitTestReporter());
+            reporters.add(new BukkitTestReporter(this.registry));
         else
-            reporters.add(new CompactBukkitTestReporter());
+            reporters.add(new CompactBukkitTestReporter(this.registry));
 
         return new ReportersBridge(reporters);
     }

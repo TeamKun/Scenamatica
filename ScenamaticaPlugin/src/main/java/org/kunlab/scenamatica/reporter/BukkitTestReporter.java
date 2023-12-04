@@ -9,8 +9,8 @@ import org.bukkit.ChatColor;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.commons.utils.LogUtils;
 import org.kunlab.scenamatica.enums.ScenarioResultCause;
+import org.kunlab.scenamatica.interfaces.ScenamaticaRegistry;
 import org.kunlab.scenamatica.interfaces.action.CompiledAction;
-import org.kunlab.scenamatica.interfaces.scenario.QueuedScenario;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioResult;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioSession;
@@ -20,22 +20,22 @@ import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerStructure;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
-import java.util.function.BinaryOperator;
-import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 public class BukkitTestReporter extends AbstractTestReporter
 {
     protected final List<Terminal> terminals;
+    private final ScenamaticaRegistry registry;
 
-    public BukkitTestReporter()
+    public BukkitTestReporter(@NotNull ScenamaticaRegistry registry)
     {
+        this.registry = registry;
+
         this.terminals = new ArrayList<>();
 
         this.terminals.add(Terminals.ofConsole());
@@ -58,6 +58,16 @@ public class BukkitTestReporter extends AbstractTestReporter
             condition += " - " + action.getAction().getArgument().getArgumentString();
 
         return condition;
+    }
+
+    private static MsgArgs getSummaryStatsMsgArgsBase(ScenarioResultSet resultSet)
+    {
+        return MsgArgs.of("totalRun", resultSet.getTotalRan())
+                .add("passed", resultSet.getCountPasses())
+                .add("failed", resultSet.getCountFailures())
+                .add("cancelled", resultSet.getCountCancels())
+                .add("skipped", resultSet.getCountSkips())
+                .add("elapsed", resultSet.getElapsedString());
     }
 
     public void addRecipient(Terminal terminal)
@@ -221,79 +231,34 @@ public class BukkitTestReporter extends AbstractTestReporter
     @Override
     public void onTestSessionEnd(@NotNull ScenarioSession session)
     {
-        long endedAt = System.currentTimeMillis();
-        long elapsed = endedAt - session.getStartedAt();
-        String elapsedStr = formatTime(elapsed);
-        List<ScenarioResult> results = session.getScenarios().stream()
-                .map(QueuedScenario::getResult)
-                .collect(Collectors.toList());
-
-        int total = results.size();
-        int passed = (int) results.stream().parallel()
-                .filter(r -> r.getScenarioResultCause() == ScenarioResultCause.PASSED).count();
-        int failed = (int) results.stream().parallel()
-                .map(ScenarioResult::getScenarioResultCause)
-                .filter(ScenarioResultCause::isFailure)
-                .count();
-        int cancelled = (int) results.stream().parallel()
-                .filter(r -> r.getScenarioResultCause() == ScenarioResultCause.CANCELLED).count();
-        int skipped = (int) results.stream().parallel()
-                .filter(r -> r.getScenarioResultCause() == ScenarioResultCause.SKIPPED).count();
+        ScenarioResultSet resultSet = new ScenarioResultSet(
+                session.getStartedAt(),
+                System.currentTimeMillis(),
+                session.getScenarios()
+        );
 
         this.terminals.forEach(t -> {
-            if (failed > 0)
+            if (resultSet.hasFailures() && this.registry.getEnvironment().getMaxAttemptCount() <= 1)
                 this.printAutoRetryTip(t);
-            this.printSessionSummary(t, results, elapsedStr, total, passed, failed, cancelled, skipped);
+            this.printSessionSummary(t, resultSet);
         });
     }
 
-    private List<? extends ScenarioResult> pickupFlakes(List<? extends ScenarioResult> results)
+    protected void printSessionSummary(@NotNull Terminal terminal, ScenarioResultSet resultSet)
     {
-        return new ArrayList<>(results.stream()
-                .filter(r -> r.getAttemptOf() > 1)
-                .filter(r -> !r.getScenarioResultCause().isFailure())
-                .collect(Collectors.toMap(
-                        r -> Arrays.asList(r.getTestID(), r.getScenario()),
-                        Function.identity(),
-                        BinaryOperator.maxBy(Comparator.comparingInt(ScenarioResult::getAttemptOf))
-                ))
-                .values());
-    }
-
-    protected void printSessionSummary(@NotNull Terminal terminal, List<? extends ScenarioResult> results,
-                                       String elapsedStr, int total, int passed, int failed, int cancelled, int skipped)
-    {
-        boolean allPassed = passed == total;
-        boolean someFails = failed > 0;
-        boolean noTests = cancelled + skipped == total;
-
         this.printSeparator(null, terminal, null, 50);
 
         terminal.writeLine("");
 
-        List<? extends ScenarioResult> flakes = this.pickupFlakes(results);
-        if (flakes.isEmpty())
-            terminal.info(LangProvider.get(
-                    "test.session.result.stats",
-                    MsgArgs.of("totalRun", total - skipped - cancelled)
-                            .add("passed", passed)
-                            .add("failed", failed)
-                            .add("cancelled", cancelled)
-                            .add("skipped", skipped)
-                            .add("elapsed", elapsedStr)
-            ));
+        if (!resultSet.hasFlakes())
+            terminal.info(LangProvider.get("test.session.result.stats", getSummaryStatsMsgArgsBase(resultSet)));
         else
         {
-            long flakeScenarios = /* flaking runs = */ flakes.size();
-            long attemptCount = flakes.stream().mapToLong(ScenarioResult::getAttemptOf).sum();
+            long flakeScenarios = /* flaking runs = */ resultSet.getCountFlakes();
+            long attemptCount = resultSet.getFlakes().stream().mapToLong(ScenarioResult::getAttemptOf).sum();
             terminal.info(LangProvider.get(
                     "test.session.result.stats.with_flakes",
-                    MsgArgs.of("totalRun", total - skipped - cancelled)
-                            .add("passed", passed)
-                            .add("failed", failed)
-                            .add("cancelled", cancelled)
-                            .add("skipped", skipped)
-                            .add("elapsed", elapsedStr)
+                    getSummaryStatsMsgArgsBase(resultSet)
                             .add("flakes", flakeScenarios)
                             .add("attempts", attemptCount)
             ));
@@ -304,17 +269,17 @@ public class BukkitTestReporter extends AbstractTestReporter
 
         String resultKey = null;
         String messageKey = null;
-        if (allPassed)
+        if (resultSet.isAllPassed())
         {
             resultKey = "test.result.passed";
             messageKey = "test.session.result.message.passed";
         }
-        else if (someFails)
+        else if (resultSet.hasFailures())
         {
             resultKey = "test.result.failed";
             messageKey = "test.session.result.message.failed";
         }
-        else if (noTests)
+        else if (resultSet.isNothingTested())
         {
             resultKey = "test.result.unknown";
             messageKey = "test.session.result.message.noTests";
@@ -328,7 +293,7 @@ public class BukkitTestReporter extends AbstractTestReporter
                             .add("message", "%%" + messageKey + "%%")
             );
 
-            if (allPassed)
+            if (resultSet.isAllPassed())
                 terminal.success(summary);
             else
                 terminal.error(summary);
@@ -336,21 +301,19 @@ public class BukkitTestReporter extends AbstractTestReporter
             terminal.writeLine("");
         }
 
-        if (failed != 0)
-            this.printFailure(terminal, failed, results);
+        if (resultSet.hasFailures())
+            this.printFailure(terminal, resultSet);
 
         this.printSeparator(null, terminal, null, 50);
     }
 
-    private void printFailure(Terminal terminal, int failed, List<? extends ScenarioResult> results)
+    private void printFailure(Terminal terminal, ScenarioResultSet resultSet)
     {
         terminal.info(LangProvider.get(
                 "test.session.result.failures",
-                MsgArgs.of("count", failed)
+                MsgArgs.of("count", resultSet.getCountFailures())
         ));
-        List<String> distinctMessages = results.stream()
-                // 失敗のみを抽出
-                .filter(r -> r.getScenarioResultCause().isFailure())
+        List<String> distinctMessages = new HashMap<>(resultSet.getFailures().stream()
                 // 失敗メッセージの基礎を作成
                 .map(r -> {
                     String scenario = r.getScenario().getName();
@@ -364,13 +327,21 @@ public class BukkitTestReporter extends AbstractTestReporter
                     );
                 })
                 // 重複をカウントして保持
-                .collect(Collectors.groupingByConcurrent(msg -> msg, Collectors.counting()))
+                .collect(Collectors.groupingByConcurrent(msg -> msg, Collectors.counting())))
                 .entrySet().stream()
                 // メッセージを構築
                 .flatMap(entry -> {
                     long count = entry.getValue();
-                    return IntStream.rangeClosed(1, (int) count)
-                            .mapToObj(index -> (count > 1) ? entry.getKey() + " (" + index + ")": entry.getKey());
+                    // Modify the logic to keep only the message with the highest index
+                    if (count > 1)
+                    {
+                        String baseMessage = entry.getKey();
+                        return Stream.of(baseMessage + " (" + count + ")");
+                    }
+                    else
+                    {
+                        return Stream.of("");
+                    }
                 })
                 .collect(Collectors.toList());
 
@@ -471,6 +442,6 @@ public class BukkitTestReporter extends AbstractTestReporter
 
     protected void printAutoRetryTip(Terminal terminal)
     {
-        terminal.hint("test.session.result.retry_tip");
+        terminal.hint(LangProvider.get("test.session.result.retry_tip"));
     }
 }
