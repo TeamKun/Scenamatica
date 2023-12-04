@@ -20,12 +20,33 @@ public interface SessionCreator
     /**
      * セッション定義にシナリオを追加します。
      *
+     * @param plugin     シナリオを実行するプラグイン
+     * @param trigger    シナリオを実行するトリガー
+     * @param name       シナリオの名前
+     * @param maxAttempt 最大試行回数
+     * @return セッション定義
+     */
+    SessionCreator add(@NotNull Plugin plugin, @NotNull TriggerType trigger, @NotNull String name, int maxAttempt);
+
+    /**
+     * セッション定義にシナリオを追加します。
+     *
      * @param plugin  シナリオを実行するプラグイン
      * @param trigger シナリオを実行するトリガー
      * @param name    シナリオの名前
      * @return セッション定義
      */
     SessionCreator add(@NotNull Plugin plugin, @NotNull TriggerType trigger, @NotNull String name);
+
+    /**
+     * セッション定義にシナリオを追加します。
+     *
+     * @param engine     シナリオを実行するエンジン
+     * @param trigger    シナリオを実行するトリガー
+     * @param maxAttempt 最大試行回数
+     * @return セッション定義
+     */
+    SessionCreator add(@NotNull ScenarioEngine engine, @NotNull TriggerType trigger, int maxAttempt);
 
     /**
      * セッション定義にシナリオを追加します。
@@ -72,24 +93,16 @@ public interface SessionCreator
         @Nullable
         Consumer<? super ScenarioResult> callback;
 
-        public SessionElement(Plugin plugin, String name, @NotNull TriggerType type)
+        int maxAttempt;
+
+        public SessionElement(Plugin plugin, String name, @NotNull TriggerType type, int maxAttempt)
         {
-            this(plugin, name, type, null);
+            this(plugin, name, null, type, null, maxAttempt);
         }
 
-        public SessionElement(ScenarioEngine engine, @NotNull TriggerType type)
+        public SessionElement(ScenarioEngine engine, @NotNull TriggerType type, int maxAttempt)
         {
-            this(null, null, engine, type, null);
-        }
-
-        public SessionElement(Plugin plugin, String name, @NotNull TriggerType type, @Nullable Consumer<? super ScenarioResult> callback)
-        {
-            this(plugin, name, null, type, callback);
-        }
-
-        public SessionElement(ScenarioEngine engine, @NotNull TriggerType type, @Nullable Consumer<? super ScenarioResult> callback)
-        {
-            this(null, null, engine, type, callback);
+            this(null, null, engine, type, null, maxAttempt);
         }
     }
 }

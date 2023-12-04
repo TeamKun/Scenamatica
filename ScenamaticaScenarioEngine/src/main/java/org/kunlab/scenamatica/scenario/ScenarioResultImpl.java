@@ -27,6 +27,7 @@ public class ScenarioResultImpl implements ScenarioResult
     ScenarioResultCause scenarioResultCause;
     long startedAt;
     long finishedAt;
+    int attemptOf;
 
     @Nullable
     Action<? extends ActionArgument> failedAction;
@@ -35,7 +36,8 @@ public class ScenarioResultImpl implements ScenarioResult
                               @NotNull UUID testID,
                               @NotNull ScenarioState state,
                               @NotNull ScenarioResultCause resultType,
-                              long startedAt)
+                              long startedAt,
+                              int attemptOf)
     {
         this.scenario = scenario;
         this.testID = testID;
@@ -43,6 +45,7 @@ public class ScenarioResultImpl implements ScenarioResult
         this.scenarioResultCause = resultType;
         this.startedAt = startedAt;
         this.finishedAt = System.currentTimeMillis();
+        this.attemptOf = attemptOf;
         this.failedAction = null;
     }
 }

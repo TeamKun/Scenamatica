@@ -130,15 +130,33 @@ public interface ScenarioManager
     /**
      * シナリオの実行をキューに追加します。
      *
+     * @param plugin          シナリオを実行するプラグイン
+     * @param scenarioName    シナリオ名
+     * @param triggerType     トリガの種類
+     * @param maxAttemptCount 最大リトライ回数
+     * @throws ScenarioNotFoundException シナリオが存在しない場合
+     * @throws TriggerNotFoundException  指定されたトリガが存在しない場合
+     */
+    void queueScenario(@NotNull Plugin plugin,
+                       @NotNull String scenarioName,
+                       @NotNull TriggerType triggerType,
+                       int maxAttemptCount) throws ScenarioNotFoundException, TriggerNotFoundException;
+
+    /**
+     * シナリオの実行をキューに追加します。
+     *
      * @param plugin       シナリオを実行するプラグイン
      * @param scenarioName シナリオ名
      * @param triggerType  トリガの種類
      * @throws ScenarioNotFoundException シナリオが存在しない場合
      * @throws TriggerNotFoundException  指定されたトリガが存在しない場合
      */
-    void queueScenario(@NotNull Plugin plugin,
-                       @NotNull String scenarioName,
-                       @NotNull TriggerType triggerType) throws ScenarioNotFoundException, TriggerNotFoundException;
+    default void queueScenario(@NotNull Plugin plugin,
+                               @NotNull String scenarioName,
+                               @NotNull TriggerType triggerType) throws ScenarioNotFoundException, TriggerNotFoundException
+    {
+        this.queueScenario(plugin, scenarioName, triggerType, 0);
+    }
 
     /**
      * セッションをキューに追加します。

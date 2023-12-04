@@ -12,13 +12,13 @@ import org.kunlab.scenamatica.interfaces.action.ActionArgument;
 import org.kunlab.scenamatica.interfaces.action.CompiledAction;
 import org.kunlab.scenamatica.interfaces.action.WatchingEntry;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioActionListener;
-import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenario.TestReporter;
 import org.kunlab.scenamatica.interfaces.scenario.runtime.CompiledScenarioAction;
+import org.kunlab.scenamatica.scenario.engine.ScenarioEngineImpl;
 
 public class ScenarioActionListenerImpl implements ScenarioActionListener
 {
-    private final ScenarioEngine engine;
+    private final ScenarioEngineImpl engine;
     private final TestReporter reporter;
 
     @Getter
@@ -26,7 +26,7 @@ public class ScenarioActionListenerImpl implements ScenarioActionListener
     @Nullable
     private CompiledScenarioAction<?> waitingFor;
 
-    public ScenarioActionListenerImpl(ScenarioEngine engine, ScenamaticaRegistry registry)
+    public ScenarioActionListenerImpl(ScenarioEngineImpl engine, ScenamaticaRegistry registry)
     {
         this.engine = engine;
         this.reporter = registry.getTestReporter();
@@ -74,12 +74,13 @@ public class ScenarioActionListenerImpl implements ScenarioActionListener
     private void setResult(ScenarioResultCause cause, @Nullable Action<?> failedAction)
     {
         this.engine.getDeliverer().setResult(new ScenarioResultImpl(
-                this.engine.getScenario(),
-                this.engine.getTestID(),
-                this.engine.getState(),
+                this.engine.getExecutor().getScenario(),
+                this.engine.getExecutor().getTestID(),
+                this.engine.getExecutor().getState(),
                 cause,
                 this.engine.getStartedAt(),
                 System.currentTimeMillis(),
+                this.engine.getExecutor().getAttemptedCount(),
                 failedAction
         ));
     }

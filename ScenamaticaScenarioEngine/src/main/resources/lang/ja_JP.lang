@@ -12,3 +12,7 @@ scenario.run.starting.main=シナリオ %%scenarioName%% を開始していま�
 scenario.run.starting.before=シナリオ %%scenarioName%% の前シナリオを開始しています …
 scenario.run.starting.after=シナリオ %%scenarioName%% の後シナリオを開始しています …
 scenario.run.prepare.destroy=シナリオ %%scenarioName%% のコンテキストを破棄しています …
+
+scenario.run.retry.queue.queued=%%yellow%%シナリオ %%scenarioName%% の再試行が予約されました（%%count%%/%%maxCount%%）。
+scenario.run.retry.queue.failed=%%red%%シナリオ %%scenarioName%% の再試行は、すでに最大試行回数に達しているため失敗しました（%%count%%/%%maxCount%%）。
+scenario.run.retry.start=%%yellow%%シナリオ %%scenarioName%% の再試行が開始されました（%%count%%/%%maxCount%%）。

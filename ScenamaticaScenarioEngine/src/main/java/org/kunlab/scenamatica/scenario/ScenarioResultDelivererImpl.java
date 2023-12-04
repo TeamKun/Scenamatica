@@ -24,6 +24,7 @@ public class ScenarioResultDelivererImpl implements ScenarioResultDeliverer
     private final ScenarioFileStructure scenario;
     private final UUID testID;
     private final long startedAt;
+    private final int attempted;
     private final ArrayDeque<ScenarioResult> results;  // 受け渡し用
 
     private boolean killed;  // シャットダウンされたら true
@@ -37,7 +38,8 @@ public class ScenarioResultDelivererImpl implements ScenarioResultDeliverer
     public ScenarioResultDelivererImpl(@NotNull ScenamaticaRegistry registry,
                                        @NotNull ScenarioFileStructure scenario,
                                        @NotNull UUID testID,
-                                       long startedAt)
+                                       long startedAt,
+                                       int attempted)
 
     {
         this.barrier = new CyclicBarrier(2);
@@ -45,6 +47,7 @@ public class ScenarioResultDelivererImpl implements ScenarioResultDeliverer
         this.testID = testID;
         this.scenario = scenario;
         this.startedAt = startedAt;
+        this.attempted = attempted;
 
         this.results = new ArrayDeque<>();
         this.killed = false;
@@ -100,7 +103,8 @@ public class ScenarioResultDelivererImpl implements ScenarioResultDeliverer
                     this.testID,
                     state,
                     ScenarioResultCause.INTERNAL_ERROR,
-                    this.startedAt
+                    this.startedAt,
+                    this.attempted
             );
         }
         catch (BrokenBarrierException e)
@@ -112,7 +116,8 @@ public class ScenarioResultDelivererImpl implements ScenarioResultDeliverer
                     this.testID,
                     state,
                     ScenarioResultCause.CANCELLED,
-                    this.startedAt
+                    this.startedAt,
+                    this.attempted
             );
         }
 
@@ -139,7 +144,8 @@ public class ScenarioResultDelivererImpl implements ScenarioResultDeliverer
                     this.testID,
                     this.state,
                     ScenarioResultCause.SCENARIO_TIMED_OUT,
-                    this.startedAt
+                    this.startedAt,
+                    this.attempted
             ));
         }
     }

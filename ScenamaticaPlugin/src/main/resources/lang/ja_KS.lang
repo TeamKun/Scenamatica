@@ -65,9 +65,12 @@ test.result.detail.state=- テスト状態： %%state%% やで
 test.result.detail.elapsed=- 開始時刻： %%startedAt%%、終了時刻： %%finishedAt%%、経過時間： %%elapsed%%
 test.result.detail.failed=- アカンかったアクション： %%action%%
 
-test.session.result.stats=%%green%%やったテスト数： %%white%%%%totalRun%%、%%dark_green%%パスした： %%white%%%%passed%%、 %%red%%ボロタ： %%white%%%%failed%%、 %%yellow%%中止した： %%white%%%%cancelled%%、 %%gray%%スキップした： %%white%%%%skipped%%、 %%green%% 経過時間： %%white%%%%elapsed%%
+test.session.result.stats=%%green%%やったテスト： %%white%%%%totalRun%%、%%dark_green%%成功： %%white%%%%passed%%、 %%red%%チョンボ： %%white%%%%failed%%、 %%yellow%%中止： %%white%%%%cancelled%%、 %%gray%%スキップ： %%white%%%%skipped%%、 %%green%% 経過時間： %%white%%%%elapsed%%
+test.session.result.stats.with_flakes=%%green%%やったテスト： %%white%%%%totalRun%%、%%dark_green%%成功： %%white%%%%passed%%、 %%red%%チョンボ： %%white%%%%failed%%、 %%yellow%%キャンセル： %%white%%%%cancelled%%、 %%gray%%スキップ： %%white%%%%skipped%%、 %%dark_gray%%不安定： %%white%%%%flakes%% %%gray%%(試行回数： %%white%%%%attempts%%%%gray%%)、 %%green%% 経過時間： %%white%%%%elapsed%%
+
 test.session.result.message.passed=%%green%%全部のテストがうまくいってんで。
 test.session.result.message.failed=%%red%%何個かのテストがちょんぼしはったみたいやわ。
 test.session.result.message.noTests=%%yellow%%実行できたテストがあらへんかったわ。
 test.session.result.failures=%%red%%あかんかったテスト（%%count%%個）：
 test.session.result.failures.entry=-  %%bold%%%%red%%%%scenario%%%%reset%%%%italic%%%%gray%%(%%action%% - %%cause%%)
+test.session.result.retry_tip=%%gray%%失敗したシナリオを自動でやり直したかったら、 Scenamatica の設定でシナリオの再試行を有効にしてな。

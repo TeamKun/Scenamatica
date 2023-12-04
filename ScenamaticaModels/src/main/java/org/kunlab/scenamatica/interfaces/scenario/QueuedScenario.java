@@ -82,4 +82,26 @@ public interface QueuedScenario
      * @throws IllegalStateException シナリオが実行中の場合
      */
     ScenarioResult run() throws TriggerNotFoundException;
+
+    /**
+     * 最大リトライ回数を取得します。
+     *
+     * @return 最大リトライ回数
+     */
+    int getMaxAttemptCount();
+
+    /**
+     * リトライ回数を取得します。
+     *
+     * @return リトライ回数
+     */
+    int getAttemptCount();
+
+    /**
+     * 再試行のために、現在のシナリオをリセットします。
+     * リセットカウントはインクリメントされます。
+     *
+     * @throws IllegalStateException シナリオが実行中の場合
+     */
+    void resetForRetry();
 }

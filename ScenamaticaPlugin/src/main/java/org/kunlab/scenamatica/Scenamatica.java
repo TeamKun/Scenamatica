@@ -65,6 +65,8 @@ public final class Scenamatica extends JavaPlugin
     private ScenamaticaRegistry getRegistry(ExceptionHandler exceptionHandler, boolean isRaw)
     {
         boolean isVerbose = this.getConfig().getBoolean("reporting.verbose", true);
+        boolean doRetry = this.getConfig().getBoolean("execution.retry", true);
+        int maxAttemptCount = doRetry ? this.getConfig().getInt("execution.retry.maxAttempts", 3): 0;
 
         return new ScenamaticaDaemon(Environment.builder(this)
                 .exceptionHandler(exceptionHandler)
@@ -72,6 +74,7 @@ public final class Scenamatica extends JavaPlugin
                 .actorSettings(ActorSettingsImpl.fromConfig(this.getConfig()))
                 .verbose(isVerbose)
                 .ignoreTriggerTypes(this.getIgnoreTriggerTypes())
+                .maxAttemptCount(maxAttemptCount)
                 .build()
         );
     }
@@ -133,9 +136,6 @@ public final class Scenamatica extends JavaPlugin
             reporters.add(new BukkitTestReporter());
         else
             reporters.add(new CompactBukkitTestReporter());
-
-        boolean isRetryEnabled = config.getBoolean("execution.retry.enabled", true);
-
 
         return new ReportersBridge(reporters);
     }

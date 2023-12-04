@@ -138,14 +138,13 @@ public class ScenarioManagerImpl implements ScenarioManager
     }
 
     @Override
-    public void queueScenario(@NotNull Plugin plugin, @NotNull String scenarioName, @NotNull TriggerType triggerType)
-            throws ScenarioNotFoundException, TriggerNotFoundException
+    public void queueScenario(@NotNull Plugin plugin, @NotNull String scenarioName, @NotNull TriggerType triggerType, int maxAttemptCount) throws ScenarioNotFoundException, TriggerNotFoundException
     {
         Pair<ScenarioEngine, TriggerStructure> runInfo = this.getRunInfoOrThrow(plugin, scenarioName, triggerType);
         ScenarioEngine engine = runInfo.getLeft();
         TriggerStructure trigger = runInfo.getRight();
 
-        this.queue.add(engine, trigger, null);
+        this.queue.add(engine, trigger, null, maxAttemptCount);
     }
 
     @Override
@@ -203,8 +202,7 @@ public class ScenarioManagerImpl implements ScenarioManager
                 .orElse(null);
     }
 
-    /* non-public */ ScenarioResult runScenario(ScenarioEngine engine, TriggerStructure trigger)
-            throws TriggerNotFoundException
+    /* non-public */ ScenarioResult runScenario(ScenarioEngine engine, TriggerStructure trigger, int attempted)
     {
         if (!engine.getPlugin().isEnabled())
             throw new IllegalStateException("Plugin is disabled.");
@@ -215,7 +213,7 @@ public class ScenarioManagerImpl implements ScenarioManager
         ScenarioResult result;
         try
         {
-            result = engine.start(trigger);
+            result = engine.start(trigger, attempted);
         }
         catch (Throwable e)
         {
@@ -227,6 +225,7 @@ public class ScenarioManagerImpl implements ScenarioManager
                     ScenarioResultCause.INTERNAL_ERROR,
                     engine.getStartedAt(),
                     System.currentTimeMillis(),
+                    attempted,
                     null
             );
         }

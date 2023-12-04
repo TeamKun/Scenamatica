@@ -37,11 +37,24 @@ public interface ScenarioEngine
     /**
      * シナリオを開始します。
      *
+     * @param trigger        シナリオを開始したトリガー
+     * @param attemptedCount 試行された回数（n回目の実行）
+     * @return テスト結果
+     */
+    @NotNull
+    ScenarioResult start(@NotNull TriggerStructure trigger, int attemptedCount) throws TriggerNotFoundException;
+
+    /**
+     * シナリオを開始します。
+     *
      * @param trigger シナリオを開始したトリガー
      * @return テスト結果
      */
     @NotNull
-    ScenarioResult start(@NotNull TriggerStructure trigger) throws TriggerNotFoundException;
+    default ScenarioResult start(@NotNull TriggerStructure trigger) throws TriggerNotFoundException
+    {
+        return this.start(trigger, 1);
+    }
 
     /**
      * シナリオの実行をキャンセルします。

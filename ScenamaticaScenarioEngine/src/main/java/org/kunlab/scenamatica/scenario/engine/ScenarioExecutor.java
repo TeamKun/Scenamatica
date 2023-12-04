@@ -54,6 +54,7 @@ public class ScenarioExecutor
     private final UUID testID;
     private final long startedAt;
     private final String logPrefix;
+    private final int attemptedCount;
 
     private ScenarioState state;
     private long elapsedTicks;
@@ -64,7 +65,8 @@ public class ScenarioExecutor
                             ScenarioActionListener listener,
                             List<? extends CompiledScenarioAction<?>> actions,
                             List<? extends CompiledTriggerAction> triggerActions,
-                            CompiledScenarioAction<?> runIf)
+                            CompiledScenarioAction<?> runIf,
+                            int attemptedCount)
     {
         this.engine = engine;
         this.actionManager = actionManager;
@@ -72,6 +74,7 @@ public class ScenarioExecutor
         this.actions = actions;
         this.triggerActions = triggerActions;
         this.runIf = runIf;
+        this.attemptedCount = attemptedCount;
 
         this.registry = engine.getRegistry();
         this.plugin = engine.getPlugin();
@@ -87,7 +90,8 @@ public class ScenarioExecutor
                 this.registry,
                 this.scenario,
                 this.testID,
-                this.startedAt
+                this.startedAt,
+                this.attemptedCount
         );
 
         this.state = ScenarioState.STAND_BY;
@@ -364,7 +368,8 @@ public class ScenarioExecutor
                 this.testID,
                 this.state,
                 cause,
-                this.startedAt
+                this.startedAt,
+                this.attemptedCount
         );
     }
 }

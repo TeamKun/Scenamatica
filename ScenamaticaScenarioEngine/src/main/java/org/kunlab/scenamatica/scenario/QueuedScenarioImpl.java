@@ -21,21 +21,31 @@ public class QueuedScenarioImpl implements QueuedScenario
     @NotNull
     private final TriggerStructure trigger;
     private final @Nullable Consumer<? super ScenarioResult> callback;
+    private final int maxAttemptCount;
 
     private long startedAt;
     private boolean running;
     private ScenarioResult result;
     private long finishedAt;
+    private int attemptCount;
 
     public QueuedScenarioImpl(
             @NotNull ScenarioManagerImpl manager, @NotNull ScenarioEngine engine, @NotNull TriggerStructure trigger,
-            @Nullable Consumer<? super ScenarioResult> callback)
+            @Nullable Consumer<? super ScenarioResult> callback,
+            int maxAttemptCount)
     {
         this.manager = manager;
         this.queuedAt = System.currentTimeMillis();
         this.engine = engine;
         this.trigger = trigger;
         this.callback = callback;
+        this.maxAttemptCount = maxAttemptCount;
+
+        this.startedAt = -1;
+        this.running = false;
+        this.result = null;
+        this.finishedAt = -1;
+        this.attemptCount = 1;
     }
 
     /* non-public */ void onStart()
@@ -65,19 +75,19 @@ public class QueuedScenarioImpl implements QueuedScenario
     public ScenarioResult run() throws TriggerNotFoundException
     {
         this.onStart();
-        ScenarioResult result = this.manager.runScenario(this.engine, this.trigger);
+        ScenarioResult result = this.manager.runScenario(this.engine, this.trigger, this.attemptCount);
         this.onFinished(result);
 
         return result;
     }
 
-    private void sureRunning()
+    private void ensureNotRunning()
     {
         if (this.running)
             throw new IllegalStateException("Scenario is still running.");
     }
 
-    private void sureNotRunning()
+    private void ensureRunning()
     {
         if (!this.running)
             throw new IllegalStateException("Scenario is not running.");
@@ -85,23 +95,36 @@ public class QueuedScenarioImpl implements QueuedScenario
 
     public long getFinishedAt()
     {
-        this.sureNotRunning();
+        this.ensureRunning();
 
         return this.finishedAt;
     }
 
     public long getStartedAt()
     {
-        this.sureRunning();
+        this.ensureNotRunning();
 
         return this.startedAt;
     }
 
     public long getTakenTime()
     {
-        this.sureNotRunning();
+        this.ensureRunning();
 
         return this.finishedAt - this.startedAt;
+    }
+
+    @Override
+    public void resetForRetry()
+    {
+        this.ensureNotRunning();
+
+        this.startedAt = -1;
+        this.running = false;
+        this.result = null;
+        this.finishedAt = -1;
+
+        this.attemptCount++;
     }
 
 }

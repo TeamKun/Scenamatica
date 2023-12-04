@@ -16,11 +16,24 @@ public interface ScenarioSession
     /**
      * セッションにシナリオを追加します。
      *
+     * @param engine          シナリオエンジン
+     * @param trigger         トリガー
+     * @param callback        コールバック
+     * @param maxAttemptCount 最大リトライ回数
+     */
+    void add(@NotNull ScenarioEngine engine, @NotNull TriggerStructure trigger, @Nullable Consumer<? super ScenarioResult> callback, int maxAttemptCount);
+
+    /**
+     * セッションにシナリオを追加します。
+     *
      * @param engine   シナリオエンジン
      * @param trigger  トリガー
      * @param callback コールバック
      */
-    void add(@NotNull ScenarioEngine engine, @NotNull TriggerStructure trigger, @Nullable Consumer<? super ScenarioResult> callback);
+    default void add(@NotNull ScenarioEngine engine, @NotNull TriggerStructure trigger, @Nullable Consumer<? super ScenarioResult> callback)
+    {
+        this.add(engine, trigger, callback, 1);
+    }
 
     /**
      * セッションにシナリオを追加します。

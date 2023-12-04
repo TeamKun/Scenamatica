@@ -14,6 +14,7 @@ import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerStructure;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -33,7 +34,7 @@ public class ScenarioSessionImpl implements ScenarioSession
     {
         this.manager = manager;
         this.createdAt = System.currentTimeMillis();
-        this.scenarios = new ArrayList<>(scenarios);  // 内部で変更するため, 不変リストとかを入れないように。
+        this.scenarios = new LinkedList<>(scenarios);  // 内部で変更するため, 不変リストとかを入れないように。
         this.sort();
     }
 
@@ -60,10 +61,17 @@ public class ScenarioSessionImpl implements ScenarioSession
     }
 
     @Override
-    public void add(@NotNull ScenarioEngine engine, @NotNull TriggerStructure trigger, @Nullable Consumer<? super ScenarioResult> callback)
+    public void add(@NotNull ScenarioEngine engine, @NotNull TriggerStructure trigger, @Nullable Consumer<? super ScenarioResult> callback, int maxAttemptCount)
     {
-        this.scenarios.add(new QueuedScenarioImpl(this.manager, engine, trigger, callback));
+        this.add(new QueuedScenarioImpl(this.manager, engine, trigger, callback, maxAttemptCount));
         this.sort();
+    }
+
+    /* non-public */ void add(@NotNull QueuedScenario scenario)
+    {
+        this.scenarios.add(scenario);
+        if (this.running)
+            this.queue.add(scenario);
     }
 
     @Override

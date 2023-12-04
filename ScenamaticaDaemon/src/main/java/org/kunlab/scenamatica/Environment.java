@@ -25,6 +25,7 @@ public class Environment implements ScenamaticaEnvironment
     private final boolean verbose;
     @Singular
     private final List<TriggerType> ignoreTriggerTypes;
+    private final int maxAttemptCount;
 
     public static Environment.EnvironmentBuilder builder(Plugin plugin)
     {

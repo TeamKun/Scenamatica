@@ -62,8 +62,10 @@ test.result.detail.elapsed=-   Started at: %%startedAt%%, Finished at: %%finishe
 test.result.detail.failed=-   Failed action: %%action%%
 
 test.session.result.stats=%%green%%Executed tests: %%white%%%%totalRun%%, %%dark_green%%Passed: %%white%%%%passed%%, %%red%%Failure: %%white%%%%failed%%, %%yellow%%Cancelled: %%white%%%%cancelled%%, %%gray%%Skipped: %%white%%%%skipped%%, %%green%%Elapsed time: %%white%%%%elapsed%%
+test.session.result.stats.with_flakes=%%green%%Executed tests: %%white%%%%totalRun%%, %%dark_green%%Passed: %%white%%%%passed%%, %%red%%Failure: %%white%%%%failed%%, %%yellow%%Cancelled: %%white%%%%cancelled%%, %%gray%%Skipped: %%white%%%%skipped%%, %%dark_gray%%Flakes: %%white%%%%flakes%% %%gray%%(Attempts: %%white%%%%attempts%%%%gray%%), %%green%%Elapsed time: %%white%%%%elapsed%%
 test.session.result.message.passed=%%green%%All tests completed successfully.
 test.session.result.message.failed=%%red%%Some tests failed.
 test.session.result.message.noTests=%%yellow%%No tests were executed.
 test.session.result.failures=%%red%%Failed tests(%%count%%):
 test.session.result.failures.entry=-  %%bold%%%%red%%%%scenario%%%%reset%%%%italic%%%%gray%%(%%action%% - %%cause%%)
+test.session.result.retry_tip=%%gray%%If you want to automatically retry failed scenarios, please enable automatic retry of scenarios in Scenamatica configuration.

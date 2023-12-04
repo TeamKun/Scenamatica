@@ -36,6 +36,7 @@ public class TriggerManagerImpl implements TriggerManager
     private final Multimap<ScenarioEngine, TriggerStructure> triggers;  // シナリオ名 / トリガー
 
     private final List<TriggerType> ignoreTypes;
+    private final int defaultMaxAttempts;
 
     public TriggerManagerImpl(@NotNull ScenamaticaRegistry registry)
     {
@@ -43,6 +44,7 @@ public class TriggerManagerImpl implements TriggerManager
         this.actionManager = registry.getActionManager();
         this.triggers = ArrayListMultimap.create();
         this.ignoreTypes = registry.getEnvironment().getIgnoreTriggerTypes();
+        this.defaultMaxAttempts = registry.getEnvironment().getMaxAttemptCount();
     }
 
     @Override
@@ -83,7 +85,7 @@ public class TriggerManagerImpl implements TriggerManager
         SessionCreator creator = this.registry.getScenarioManager().newSession();
         engine.getScenario().getTriggers().stream()
                 .filter(t -> t.getType() == type)
-                .forEach(t -> creator.add(engine, t.getType()));
+                .forEach(t -> creator.add(engine, t.getType(), this.defaultMaxAttempts));
 
         this.registry.getScenarioManager().queueScenario(creator);
     }
@@ -108,7 +110,7 @@ public class TriggerManagerImpl implements TriggerManager
 
         SessionCreator creator = this.registry.getScenarioManager().newSession();
         for (ScenarioEngine engine : engines)
-            creator.add(engine, type);
+            creator.add(engine, type, this.defaultMaxAttempts);
 
         if (creator.isEmpty())
             return;

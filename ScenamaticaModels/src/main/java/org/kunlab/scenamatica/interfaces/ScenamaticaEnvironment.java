@@ -63,4 +63,11 @@ public interface ScenamaticaEnvironment
      */
     @NotNull
     List<TriggerType> getIgnoreTriggerTypes();
+
+    /**
+     * 最大試行回数を取得します。
+     *
+     * @return 最大試行回数
+     */
+    int getMaxAttemptCount();
 }

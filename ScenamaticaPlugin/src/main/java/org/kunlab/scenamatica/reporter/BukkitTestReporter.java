@@ -20,10 +20,15 @@ import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerStructure;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.BinaryOperator;
+import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class BukkitTestReporter extends AbstractTestReporter
 {
@@ -235,7 +240,24 @@ public class BukkitTestReporter extends AbstractTestReporter
         int skipped = (int) results.stream().parallel()
                 .filter(r -> r.getScenarioResultCause() == ScenarioResultCause.SKIPPED).count();
 
-        this.terminals.forEach(t -> this.printSessionSummary(t, results, elapsedStr, total, passed, failed, cancelled, skipped));
+        this.terminals.forEach(t -> {
+            if (failed > 0)
+                this.printAutoRetryTip(t);
+            this.printSessionSummary(t, results, elapsedStr, total, passed, failed, cancelled, skipped);
+        });
+    }
+
+    private List<? extends ScenarioResult> pickupFlakes(List<? extends ScenarioResult> results)
+    {
+        return new ArrayList<>(results.stream()
+                .filter(r -> r.getAttemptOf() > 1)
+                .filter(r -> !r.getScenarioResultCause().isFailure())
+                .collect(Collectors.toMap(
+                        r -> Arrays.asList(r.getTestID(), r.getScenario()),
+                        Function.identity(),
+                        BinaryOperator.maxBy(Comparator.comparingInt(ScenarioResult::getAttemptOf))
+                ))
+                .values());
     }
 
     protected void printSessionSummary(@NotNull Terminal terminal, List<? extends ScenarioResult> results,
@@ -249,15 +271,34 @@ public class BukkitTestReporter extends AbstractTestReporter
 
         terminal.writeLine("");
 
-        terminal.info(LangProvider.get(
-                "test.session.result.stats",
-                MsgArgs.of("totalRun", total - skipped - cancelled)
-                        .add("passed", passed)
-                        .add("failed", failed)
-                        .add("cancelled", cancelled)
-                        .add("skipped", skipped)
-                        .add("elapsed", elapsedStr)
-        ));
+        List<? extends ScenarioResult> flakes = this.pickupFlakes(results);
+        if (flakes.isEmpty())
+            terminal.info(LangProvider.get(
+                    "test.session.result.stats",
+                    MsgArgs.of("totalRun", total - skipped - cancelled)
+                            .add("passed", passed)
+                            .add("failed", failed)
+                            .add("cancelled", cancelled)
+                            .add("skipped", skipped)
+                            .add("elapsed", elapsedStr)
+            ));
+        else
+        {
+            long flakeScenarios = /* flaking runs = */ flakes.size();
+            long attemptCount = flakes.stream().mapToLong(ScenarioResult::getAttemptOf).sum();
+            terminal.info(LangProvider.get(
+                    "test.session.result.stats.with_flakes",
+                    MsgArgs.of("totalRun", total - skipped - cancelled)
+                            .add("passed", passed)
+                            .add("failed", failed)
+                            .add("cancelled", cancelled)
+                            .add("skipped", skipped)
+                            .add("elapsed", elapsedStr)
+                            .add("flakes", flakeScenarios)
+                            .add("attempts", attemptCount)
+            ));
+        }
+
 
         terminal.writeLine("");
 
@@ -296,29 +337,44 @@ public class BukkitTestReporter extends AbstractTestReporter
         }
 
         if (failed != 0)
-        {
-            terminal.info(LangProvider.get(
-                    "test.session.result.failures",
-                    MsgArgs.of("count", failed)
-            ));
-
-            results.stream()
-                    .filter(r -> r.getScenarioResultCause().isFailure())
-                    .map(r -> {
-                        String scenario = r.getScenario().getName();
-                        String cause = r.getScenarioResultCause().name();
-                        String action = r.getFailedAction() == null ? "???": r.getFailedAction().getName();
-                        return LangProvider.get(
-                                "test.session.result.failures.entry",
-                                MsgArgs.of("scenario", scenario)
-                                        .add("action", action)
-                                        .add("cause", cause)
-                        );
-                    })
-                    .forEach(terminal::writeLine);
-        }
+            this.printFailure(terminal, failed, results);
 
         this.printSeparator(null, terminal, null, 50);
+    }
+
+    private void printFailure(Terminal terminal, int failed, List<? extends ScenarioResult> results)
+    {
+        terminal.info(LangProvider.get(
+                "test.session.result.failures",
+                MsgArgs.of("count", failed)
+        ));
+        List<String> distinctMessages = results.stream()
+                // 失敗のみを抽出
+                .filter(r -> r.getScenarioResultCause().isFailure())
+                // 失敗メッセージの基礎を作成
+                .map(r -> {
+                    String scenario = r.getScenario().getName();
+                    String cause = r.getScenarioResultCause().name();
+                    String action = (r.getFailedAction() == null) ? "???": r.getFailedAction().getName();
+                    return LangProvider.get(
+                            "test.session.result.failures.entry",
+                            MsgArgs.of("scenario", scenario)
+                                    .add("action", action)
+                                    .add("cause", cause)
+                    );
+                })
+                // 重複をカウントして保持
+                .collect(Collectors.groupingByConcurrent(msg -> msg, Collectors.counting()))
+                .entrySet().stream()
+                // メッセージを構築
+                .flatMap(entry -> {
+                    long count = entry.getValue();
+                    return IntStream.rangeClosed(1, (int) count)
+                            .mapToObj(index -> (count > 1) ? entry.getKey() + " (" + index + ")": entry.getKey());
+                })
+                .collect(Collectors.toList());
+
+        distinctMessages.forEach(terminal::writeLine);
     }
 
     protected void printTestSummary(Terminal terminal, ScenarioFileStructure scenario, ScenarioResult result)
@@ -413,4 +469,8 @@ public class BukkitTestReporter extends AbstractTestReporter
         return LogUtils.gerScenarioPrefix(testID, scenario) + message;
     }
 
+    protected void printAutoRetryTip(Terminal terminal)
+    {
+        terminal.hint("test.session.result.retry_tip");
+    }
 }

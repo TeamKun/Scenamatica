@@ -95,14 +95,15 @@ public class ScenarioEngineImpl implements ScenarioEngine
      * @return ステージ
      */
     @Override
-    public @NotNull Context getContext()
+    @NotNull
+    public Context getContext()
     {
         return Objects.requireNonNull(this.context, "context is null");
     }
 
     @Override
     @NotNull  // TODO: TriggerStructure to TriggerType
-    public ScenarioResult start(@NotNull TriggerStructure trigger) throws TriggerNotFoundException
+    public ScenarioResult start(@NotNull TriggerStructure trigger, int attemptedCount) throws TriggerNotFoundException
     {
         this.ranBy = trigger;
         if (!this.isAutoRun())
@@ -119,18 +120,19 @@ public class ScenarioEngineImpl implements ScenarioEngine
                 this.listener,
                 this.actions,
                 this.triggerActions,
-                this.runIf
+                this.runIf,
+                attemptedCount
         );
 
         this.isRunning = true;
-        ScenarioResult result = this.start$1(trigger);
+        ScenarioResult result = this.start$1(trigger, attemptedCount);
         this.isRunning = false;  // これの位置を変えると, 排他の問題でバグる
         ThreadingUtil.waitFor(this.registry, this::cleanUp);
 
         return result;
     }
 
-    private ScenarioResult start$1(@NotNull TriggerStructure trigger) throws TriggerNotFoundException
+    private ScenarioResult start$1(@NotNull TriggerStructure trigger, int attemptedCount) throws TriggerNotFoundException
     {
         this.testReporter.onTestStart(this, trigger);
 
@@ -143,7 +145,8 @@ public class ScenarioEngineImpl implements ScenarioEngine
                     this.executor.getTestID(),
                     this.state,
                     ScenarioResultCause.CONTEXT_PREPARATION_FAILED,
-                    this.executor.getStartedAt()
+                    this.executor.getStartedAt(),
+                    attemptedCount
             );
 
         this.logWithPrefix(Level.INFO, LangProvider.get(

@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import net.kunmc.lab.peyangpaperutils.lang.LangProvider;
+import net.kunmc.lab.peyangpaperutils.lang.MsgArgs;
 import net.kunmc.lab.peyangpaperutils.lib.utils.Pair;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -40,10 +42,11 @@ class ScenarioQueue
         this.scenarioQueue = new ArrayDeque<>();
     }
 
-    /* non-public */ void add(ScenarioEngine engine, TriggerStructure trigger, Consumer<? super ScenarioResult> callback)
+    /* non-public */ void add(ScenarioEngine engine, TriggerStructure trigger,
+                              Consumer<? super ScenarioResult> callback, int maxAttemptCount)
     {
         this.scenarioQueue.add(new ScenarioSessionImpl(this.manager, Collections.singletonList(
-                new QueuedScenarioImpl(this.manager, engine, trigger, callback)
+                new QueuedScenarioImpl(this.manager, engine, trigger, callback, maxAttemptCount)
         )));
         this.runner.resume();
     }
@@ -68,7 +71,7 @@ class ScenarioQueue
             if (trigger == null)
                 continue;  // addAll では, トリガーが見つからなかったら無視する。
 
-            session.add(engine, trigger, elm.getCallback());
+            session.add(engine, trigger, elm.getCallback(), elm.getMaxAttempt());
         }
 
         this.scenarioQueue.add(session);
@@ -168,9 +171,54 @@ class ScenarioQueue
                 return true;
             }
 
-            next.run();  // onStart() => run => onFinished => callback 処理までやる。
+            if (next.getAttemptCount() > 1)
+                this.notifyRetryStart(next);
+
+            ScenarioResult result = next.run();  // onStart() => run => onFinished => callback 処理までやる。
+
+            if (result.getScenarioResultCause().isFailure() && next.getMaxAttemptCount() > 1)
+                this.tryQueueRetry(next);
 
             return true;
+        }
+
+        private void notifyRetryStart(QueuedScenario scenario)
+        {
+            ScenarioQueue.this.registry.getLogger().info(
+                    LangProvider.get(
+                            "scenario.run.retry.start",
+                            MsgArgs.of("scenarioName", scenario.getEngine().getScenario().getName())
+                                    .add("count", scenario.getAttemptCount())
+                                    .add("maxCount", scenario.getMaxAttemptCount())
+                    ));
+        }
+
+        private void tryQueueRetry(QueuedScenario scenario)
+        {
+            int maxAttemptCount = scenario.getMaxAttemptCount();
+            int retryCount = scenario.getAttemptCount();
+            if (retryCount >= maxAttemptCount)
+            {
+                ScenarioQueue.this.registry.getLogger().warning(
+                        LangProvider.get(
+                                "scenario.run.retry.queue.failed",
+                                MsgArgs.of("scenarioName", scenario.getEngine().getScenario().getName())
+                                        .add("count", retryCount)
+                                        .add("maxCount", maxAttemptCount)
+                        ));
+                return;
+            }
+
+            ScenarioQueue.this.registry.getLogger().info(
+                    LangProvider.get(
+                            "scenario.run.retry.queue.queued",
+                            MsgArgs.of("scenarioName", scenario.getEngine().getScenario().getName())
+                                    .add("count", retryCount)
+                                    .add("maxCount", maxAttemptCount)
+                    ));
+
+            scenario.resetForRetry();
+            ScenarioQueue.this.current.add(scenario);
         }
 
         @Override

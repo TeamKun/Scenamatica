@@ -61,6 +61,13 @@ public interface ScenarioResult
     long getFinishedAt();
 
     /**
+     * このテストのセッション内での試行回数を取得します。
+     *
+     * @return このテストのセッション内での試行回数
+     */
+    int getAttemptOf();
+
+    /**
      * テストに失敗した動作を取得します。
      *
      * @return テストに失敗した動作

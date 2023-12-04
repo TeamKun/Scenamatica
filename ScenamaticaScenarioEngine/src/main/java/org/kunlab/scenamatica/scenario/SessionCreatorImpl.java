@@ -25,16 +25,30 @@ public class SessionCreatorImpl implements SessionCreator
     }
 
     @Override
+    public SessionCreator add(@NotNull Plugin plugin, @NotNull TriggerType trigger, @NotNull String name, int maxAttempt)
+    {
+        this.sessions.add(new SessionElement(plugin, name, trigger, maxAttempt));
+        return this;
+    }
+
+    @Override
     public SessionCreator add(@NotNull Plugin plugin, @NotNull TriggerType trigger, @NotNull String name)
     {
-        this.sessions.add(new SessionElement(plugin, name, trigger));
+        this.sessions.add(new SessionElement(plugin, name, trigger, this.manager.getRegistry().getEnvironment().getMaxAttemptCount()));
+        return this;
+    }
+
+    @Override
+    public SessionCreator add(@NotNull ScenarioEngine engine, @NotNull TriggerType trigger, int maxAttempt)
+    {
+        this.sessions.add(new SessionElement(engine, trigger, maxAttempt));
         return this;
     }
 
     @Override
     public SessionCreator add(@NotNull ScenarioEngine engine, @NotNull TriggerType trigger)
     {
-        this.sessions.add(new SessionElement(engine, trigger));
+        this.sessions.add(new SessionElement(engine, trigger, this.manager.getRegistry().getEnvironment().getMaxAttemptCount()));
         return this;
     }
 
