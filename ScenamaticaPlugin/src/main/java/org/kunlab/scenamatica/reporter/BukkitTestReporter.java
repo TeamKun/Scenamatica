@@ -9,7 +9,6 @@ import org.bukkit.ChatColor;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.commons.utils.LogUtils;
 import org.kunlab.scenamatica.enums.ScenarioResultCause;
-import org.kunlab.scenamatica.interfaces.ScenamaticaRegistry;
 import org.kunlab.scenamatica.interfaces.action.CompiledAction;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioResult;
@@ -30,15 +29,20 @@ import java.util.stream.Stream;
 public class BukkitTestReporter extends AbstractTestReporter
 {
     protected final List<Terminal> terminals;
-    private final ScenamaticaRegistry registry;
+    private final int maxAttempts;
 
-    public BukkitTestReporter(@NotNull ScenamaticaRegistry registry)
+    public BukkitTestReporter(int maxAttempts)
     {
-        this.registry = registry;
+        this.maxAttempts = maxAttempts;
 
         this.terminals = new ArrayList<>();
 
         this.terminals.add(Terminals.ofConsole());
+    }
+
+    public BukkitTestReporter()
+    {
+        this(1);
     }
 
     private static String formatDateTime(long time)
@@ -238,7 +242,7 @@ public class BukkitTestReporter extends AbstractTestReporter
         );
 
         this.terminals.forEach(t -> {
-            if (resultSet.hasFailures() && this.registry.getEnvironment().getMaxAttemptCount() <= 1)
+            if (resultSet.hasFailures() && this.maxAttempts <= 1)
                 this.printAutoRetryTip(t);
             this.printSessionSummary(t, resultSet);
         });

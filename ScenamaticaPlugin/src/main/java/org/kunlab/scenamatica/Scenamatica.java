@@ -48,7 +48,7 @@ public final class Scenamatica extends JavaPlugin
         boolean isRaw = this.getConfig().getBoolean("reporting.raw", false);
         ExceptionHandler exceptionHandler = new SimpleExceptionHandler(this.getLogger(), isRaw);
         this.initJUnitReporter(exceptionHandler);
-        this.registry = this.getRegistry(exceptionHandler, isRaw);
+        this.registry = this.getRegistry(exceptionHandler);
 
         if (!this.initLangProvider())
             return;
@@ -62,7 +62,7 @@ public final class Scenamatica extends JavaPlugin
         this.initTestRecipient();
     }
 
-    private ScenamaticaRegistry getRegistry(ExceptionHandler exceptionHandler, boolean isRaw)
+    private ScenamaticaRegistry getRegistry(ExceptionHandler exceptionHandler)
     {
         boolean isVerbose = this.getConfig().getBoolean("reporting.verbose", true);
         boolean doRetry = this.getConfig().getBoolean("execution.retry", true);
@@ -133,9 +133,9 @@ public final class Scenamatica extends JavaPlugin
             reporters.add(new JUnitReporter(this.resultWriter));
 
         if (isVerbose)
-            reporters.add(new BukkitTestReporter(this.registry));
+            reporters.add(new BukkitTestReporter(config.getInt("execution.retry.maxAttempts", 3)));
         else
-            reporters.add(new CompactBukkitTestReporter(this.registry));
+            reporters.add(new CompactBukkitTestReporter());
 
         return new ReportersBridge(reporters);
     }
