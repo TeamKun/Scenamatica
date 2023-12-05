@@ -197,6 +197,7 @@ public class ScenarioEngineImpl implements ScenarioEngine
 
         this.executor = null;
         this.ranBy = null;
+        this.context = null;
         this.state = ScenarioState.STAND_BY;
     }
 
