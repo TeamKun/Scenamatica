@@ -76,6 +76,7 @@ import {ObjectType} from "/src/components/Object";
           },
           {
             name: "entity",
+            anchor: "entity-entity",
             type: "Entity",
             type_link: "../file-syntax#entity-structure",
             description: "書き換えるエンティティの状態です。",
@@ -582,6 +583,16 @@ AI を有効にした場合, エンティティは経路を探索し自発的に
 />
 
 ### `entity` {#spawn-entity}
+
+エンティティの構造体を指定します。
+
+:::tip
+
+これには、 `Entity` 型のオブジェクトないしはその子のオブジェクトを指定できます。
+
+`Projectile` 型のオブジェクトを指定した場合、 `shooter` 等を設定した状態でスポーンできます。
+
+:::
 
 :::caution
 

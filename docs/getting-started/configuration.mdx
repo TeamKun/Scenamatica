@@ -94,6 +94,28 @@ Scenamatica の全ての出力の言語を設定します。 対応している�
 + デフォルト値： `[]`
 + 型： `String[]`
 
+### \[実行] 実行の設定 {#execution}
+
+シナリオおよびテストの実行に関する設定を行います。
+
+#### `execution`.`retry` {#execution-retry}
+
+シナリオの実行に失敗した場合における再実行に関する設定を行います。
+
+##### `execution`.`retry`.`enabled` {#execution-retry-enabled}
+
+シナリオの実行に失敗した場合に、再実行を行うかどうかを設定します。
+
++ デフォルト値： `true`
++ 型： `Boolean`
+
+##### `execution`.`retry`.`maxAttempts` {#execution-retry-maxAttempts}
+
+シナリオの実行に失敗した場合に、再実行を行う最大回数を設定します。
+
++ デフォルト値： `3`
++ 型： `Integer`
+
 ### \[レポート] レポートの設定 {#reporting}
 
 プラグインのテスト結果のレポートに関する設定を行います。
