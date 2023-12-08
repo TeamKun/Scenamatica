@@ -9,8 +9,8 @@ type BukkitEvent = {
 
 export class ScenarioType {
     public static readonly EXECUTE = new ScenarioType("実行", "#20a420")
-    public static readonly EXPECT = new ScenarioType("監視", "#a42020")
-    public static readonly REQUIRE = new ScenarioType("要求", "#a420a4")
+    public static readonly EXPECT = new ScenarioType("監視", "#26c9a9")
+    public static readonly REQUIRE = new ScenarioType("要求", "#c95d16")
 
     private readonly shortName: string
     private readonly color: string
@@ -57,7 +57,7 @@ const Action: React.FC<ActionProps> = ({name, description, id, events, executabl
     )
 
     const buildEventsComponent = () => <>
-        <p className={styles.bigger}>このアクションは以下のイベントで呼び出されます。</p>
+        <p className={styles.bigger}>対応イベント</p>
         <ul>
             {Array.isArray(events) ? events.map(event => <li key={event.name}>{createEventLink(event)}</li>) :
                 <li>{createEventLink(events)}</li>}
@@ -91,7 +91,7 @@ const Action: React.FC<ActionProps> = ({name, description, id, events, executabl
         </table>
         {events ? buildEventsComponent() : <></>}
 
-        <p className={styles.bigger}>{args ? name + " の引数は以下の通りです。" : "このアクションは引数を取りません。"}</p>
+        <p className={styles.bigger}>{args ? name + " の引数" : "*（引数なし）*"}</p>
 
         {args ? <Object objects={args} /> : <></>}
     </>)

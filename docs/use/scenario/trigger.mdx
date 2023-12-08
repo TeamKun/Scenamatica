@@ -20,7 +20,7 @@ import { Object, ObjectType } from '/src/components/Object'
 
 :::tip
 
-トリガは、[シナリオ](elements/#scenario) に対して複数設定できます。  
+トリガは、[シナリオ](elements) に対して複数設定できます。  
 この場合、そのうちどれか一つが発火した時にシナリオが実行されます。
 
 :::
@@ -114,7 +114,7 @@ on:
 ```yaml
 # ...
 on:
-- type: triggers-on-action
+- type: on_action
   action: "player_death"
   with:
     target: "Actor1"
@@ -132,7 +132,7 @@ on:
 ```yaml
 # ...
 on:
-- type: triggers-on-load
+- type: on_load
 ```
 
 ### 手動実行 (`manual_dispatch`) トリガ {#triggers-manual-dispatch}
@@ -151,5 +151,5 @@ Scenamatica のコマンドを用いて、手動でシナリオを実行しま�
 ```yaml
 # ...
 on:
-- type: triggers-manual-dispatch
+- type: manual_dispatch
 ```

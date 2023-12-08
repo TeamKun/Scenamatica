@@ -62,3 +62,7 @@
   color: #000;
   background: repeating-linear-gradient(45deg, #95ceb1, #95ceb1 15px, #6dc292 15px, #6dc292 30px);
 }
+
+[data-theme="dark"] pre > code > .token-line .token.plain {
+  color: #ddd !important;
+}

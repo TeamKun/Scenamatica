@@ -9,8 +9,12 @@ td.name {
     font-size: 1.2em;
 }
 
+.label {
+    font-weight: bold;
+}
+
 [data-theme="dark"] .able .label {
-    color: #70b870;
+    color: #5fc05f;
 }
 
 [data-theme="light"] .able .label {

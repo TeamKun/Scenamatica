@@ -22,10 +22,7 @@
     white-space: nowrap;
 }
 
-[data-theme="dark"] .required {
-    color: #bfbf00;
-}
 
-[data-theme="light"] .required {
-    color: #404000;
+.required {
+    font-weight: bold;
 }
