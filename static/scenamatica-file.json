@@ -77,7 +77,7 @@
     },
     "scenario": {
       "$ref": "#/definitions/scenarios",
-      "description": "このシナリオファイルの本シナリオを定義します。",
+      "description": "このシナリオファイルのメインシナリオを定義します。",
       "minItems": 1
     }
   },
@@ -3367,11 +3367,11 @@
         },
         "before": {
           "$ref": "#/definitions/scenarios",
-          "description": "シナリオがこのトリガによって実行される場合, 本シナリオの実行前に実行するシナリオを定義します。"
+          "description": "シナリオがこのトリガによって実行される場合, メインシナリオの実行前に実行するシナリオを定義します。"
         },
         "after": {
           "$ref": "#/definitions/scenarios",
-          "description": "シナリオがこのトリガによって実行される場合, 本シナリオの実行後に実行するシナリオを定義します。"
+          "description": "シナリオがこのトリガによって実行される場合, メインシナリオの実行後に実行するシナリオを定義します。"
         },
         "runif": {
           "type": "object",

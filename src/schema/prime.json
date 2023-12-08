@@ -77,7 +77,7 @@
         },
         "scenario": {
             "$ref": "#/definitions/scenarios",
-            "description": "このシナリオファイルの本シナリオを定義します。",
+            "description": "このシナリオファイルのメインシナリオを定義します。",
             "minItems": 1
         }
     },
