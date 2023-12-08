@@ -1,0 +1,165 @@
+import BelowDocument from "/src/components/BelowDocument";
+import Requirements from "/src/components/Requirements";
+
+# GitHub Actions でテストを自動化する
+
+このページでは、GitHub Actions を使用して、テストを自動化する方法を説明します。
+
+---
+
+## このページの前提条件 {#requisites}
+
+<Requirements requirements={[
+  {
+    name: "GitHub アカウント",
+    version: "有効なアカウント",
+    description: "GitHub Actions を使用するためには、有効な GitHub アカウントが必要です。",
+    link: "https://github.com/"
+  }
+]} />
+
+:::tip
+
+このドキュメントでは、 [Github Actions](https://github.co.jp/features/actions) を使用してテストを自動化する方法について説明しています。  
+そのため、このドキュメントを読む前に、 [Github Actions](https://github.co.jp/features/actions) の基本的な知識を習得しておくことをおすすめします。
+
+関連リンク：[GitHub Actions 公式ドキュメント](https://docs.github.com/ja/actions)、[GitHub Actions 公式チュートリアル](https://docs.github.com/ja/actions/learn-github-actions/introduction-to-github-actions)、
+
+:::
+
+:::warning
+
+このチュートリアル内では、 [Scenamatica Action](https://github.com/TeamKun/scenamatica-action) を使用します。  
+このアクションを使用することで、 Minecraft の [EULA](https://account.mojang.com/documents/minecraft_eula) に同意したものとみなされます。  
+EULA に同意しない場合は、このアクションを使用しないでください。
+
+また、このアクション及び Scenamatica は、 Minecraft および Mojang AB が公式に認めたものではなく、また、Minecraft および Mojang AB とは一切関係ありません。
+
+:::
+
+## 概要 {#overview}
+
+GitHub Actions は、GitHub が提供する CI/CD サービスです。
+
+## ステップ1. シナリオを記述する。
+
+テストを自動化するためには、プラグインのシナリオを記述する必要があります。
+
+<BelowDocument docId="getting-started/tutorials/writing-my-first-scenario"
+               label="最初のシナリオを書いてみる"
+/>
+
+:::info
+
+既にシナリオを記述している場合は、このステップをスキップしてください。
+
+:::
+
+## ステップ2. ワークフローファイルを作成する。
+
+GitHub Actions でテストを自動化するためには、ワークフローのファイルを作成する必要があります。  
+ワークフローファイルの基本的な構文に関しては、[GitHub Actions の公式ドキュメント](https://docs.github.com/ja/actions/reference/workflow-syntax-for-github-actions)を参照してください。
+
+まずは、空の YAML ファイルを `./github/workflows/<任意の名前>.yml` に作成してください。
+
+## ステップ3. ワークフローの基本的な設定を記述する。
+
+ワークフローファイルの基本的な設定を記述します。
+
+```yaml
+
+name: <ワークフローの名前>
+
+on:
+  push:
+  # プルリクエストに対応する場合は、セクション「プルリクエストのテスト」を参照してください。
+
+jobs:
+  <任意のジョブ名>:
+    runs-on: ubuntu-latest
+    steps:
+```
+
+## ステップ4. テストを実行するステップを追加する。
+
+Scenamatica を使用してテストを行う前に、まずはあなたのプラグインを GitHub Actions 上でビルドする必要があります。  
+そのため、テストを実行する前に、ビルドを行うステップを追加しましょう。
+
+この例では、 Maven を使用してビルドを行っていますが、他のビルドツールを使用している場合は適宜読み替えてください。
+
+```yaml
+# ...
+
+steps:
+  - name: Checkout the repository
+    uses: actions/checkout@v2  # プロジェクトをチェックアウトして、ビルド対象のコードを取得します。
+  - name: Set up project JDK
+    uses: actions/setup-java@v1
+    with:
+      java-version: 11 
+      distribution: zulu
+      cache: maven # Maven のキャッシュを使用して、ビルドを高速化します(SHOULD)。 (Gradle の場合は gradle と記述してください。)
+  - name: Build with Maven
+    run: mvn clean package # Maven を使用してビルドを行います。 (Gradle の場合は ./gradlew clean build と記述してください。)
+```
+
+## ステップ5. Scenamatica を使用してテストを実行するステップを記述する。
+
+Scenamatica は [Scenamatica Action](https://github.com/TeamKun/scenamatica-action) を使用して、GitHub Actions で使えます。
+
+このアクションを実装しましょう。  
+`plugin` には、ビルドしたプラグインの jar ファイルを指定します。 (Gradle の場合は build/libs/<プラグインの jar ファイル名> と記述してください。)
+
+```yaml
+#...
+
+steps:
+  # ...
+  - name: Run tests with Scenamatica
+    uses: TeamKun/scenamatica-action@main
+    with:
+      plugin: target/<プラグインの jar ファイル名>
+```
+
+:::tip
+
+[Scenamatica Action](https://github.com/TeamKun/scenamatica-action) についての詳しい説明は[こちら](use/integration/ci-cd/#scenamatica-action) を参照してください。
+
+:::
+
+## ステップ6. ワークフローを有効化する。
+
+このファイルを含むコミットを作成し、 GitHub にプッシュしてください。
+
+```bash
+
+$ git add .
+$ git commit -m "Add Scenamatica test workflow"
+$ git push origin main
+```
+
+これにより、以降のプッシュ時にテストが自動的に実行されるようになります。  
+
+
+これで、テストの自動化が完了しました。 お疲れ様でした。 :tada:
+
+## プルリクエストのテスト {#test-pull-request}
+
+プルリクエストも自動的にテストを実行するように設定できます。
+その場合は、以下のように `pull_request` イベントを追加した後、トークンに権限を付与してください。
+
+```diff
+
+on:
+  pull_request:
+
+permissions:
+  pull-requests: write
+
+```
+
+:::info
+
+Scenamatica Action は、プルリクエストにテスト結果を送信するため、 `pull-requests: write` 権限が必要です。
+
+:::

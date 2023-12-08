@@ -9,19 +9,22 @@ type BelowDocumentProps = {
     message?: string
 
     small?: boolean
+    tutorial?: boolean
 
     anchor?: string
 }
 
-const BelowDocument: React.FC<BelowDocumentProps> = ({ docId, label, message, small , anchor}) => {
+const BelowDocument: React.FC<BelowDocumentProps> = ({ docId, label, message, small, tutorial, anchor}) => {
 
     const smallMode = !small
         ? undefined
         : {
             width: "350px",
-        }
+    }
 
-    const displayMessage = message ? message : "詳しくは以下のドキュメントを参照してください："
+    const defaultDisplayMessage =
+        tutorial ? "これについての実践的なチュートリアルは以下のドキュメントを参照してください。" : "詳しくは以下のドキュメントを参照してください："
+    const displayMessage = message ? message : defaultDisplayMessage
     const path = "/" + useLocalPathname().split("/").slice(1, 2).join("/") + "/" + (docId.endsWith("/README") ? docId.slice(0, -7) : docId) +
         (anchor ? "#" + anchor : "")
 
