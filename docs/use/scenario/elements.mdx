@@ -42,7 +42,7 @@ Scenamatica のシナリオを構成する要素について説明していま�
 各シナリオは、次の３つの要素で構成されています。
 
 + [シナリオタイプ](#scenario-type)
-+ [アクション](#action-concept)
++ [アクション](actions)
 + タイムアウト（ms）
 + [実行条件](#conditional-execution)
 
@@ -183,13 +183,6 @@ Scenamatica がテスト対象のプラグイン機能の実行を発火させ�
 
 :::
 
-## アクション {#action-concept}
-
-アクションとは、「プレイヤが死亡する」や「プレイヤがメッセージを送信する」などの、具体的な動作のことです。  
-これは大きな動作を最小まで分解したもので、プラグインの機能を検証するために必要な最小単位です。
-
-シナリオではこれを複数組み合わせて使用することで、プラグインの大きな機能を表現します。
-
 ## 実行順{#order}
 
 この機能を使用すれば、同じ[シナリオセッション](../test/#scenario-session)内でのシナリオの実行順序を制御できます。
@@ -283,7 +276,7 @@ Scenamatica はエンティティを削除されるまで継続して追跡し�
 指定の条件を満たした場合にのみ、シナリオまたはアクションを実行します。実行条件が満たされていない場合そのシナリオはスキップされますが、失敗とはみなされません。
 
 条件の指定には、[条件要求(`require`)](#scenario-type-condition-require) タイプのシナリオに対応した[アクション](#action-structure)を使用します。
-詳しくは[条件要求タイプ(`require`)](elements/#scenario-type-condition-require)および[アクション](#action-concept)の項目を参照してください。
+詳しくは[条件要求タイプ(`require`)](elements/#scenario-type-condition-require)および[アクション](actions)の項目を参照してください。
 
 :::tip
 

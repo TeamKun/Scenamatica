@@ -139,8 +139,8 @@ Scenamatica では、これらの記述のシンタックスシュガーとし�
     description: "シナリオのコンテキストです。"
   },
   {
-    name: "triggers",
-    anchor: "apex-triggers",
+    name: "on",
+    anchor: "apex-on",
     type: "Trigger[]",
     type_anchor: "trigger-structure",
     description: "シナリオのトリガです。",
@@ -244,11 +244,11 @@ Scenamatica のバージョンは、`x.y.z` の形式で指定します。
 
 :::
 
-### `triggers` {#apex-triggers}
+### `on` {#apex-on}
 
-シナリオのトリガーを定義します。
+シナリオのトリガを定義します。
 
-シナリオはトリガーの発火によって実行されます。手動実行する場合もこれは例外ではなく、それに対応したトリガが必要です。
+シナリオはトリガの発火によって実行されます。手動実行する場合もこれは例外ではなく、それに対応したトリガが必要です。
 
 ### `runif` {#apex-runif}
 

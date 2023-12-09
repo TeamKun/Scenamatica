@@ -1,4 +1,4 @@
-import BelowDocument from "../../../src/components/BelowDocument";
+import BelowDocument from "/src/components/BelowDocument";
 
 # 最初のシナリオを書いてみる
 
@@ -11,8 +11,7 @@ import BelowDocument from "../../../src/components/BelowDocument";
 この項目では、**基本的な**シナリオファイルを書く方法について説明します。  
 ここにない高度な機能や、その他の完全な構文については[こちら](/docs/use/scenario/file-syntax)を参照してください。
 
-## ステップ０. シナリオの概念について理解する
-
+## ステップ０. シナリオの概念について理解する {#step0-understanding-scenario-concept}
 Scenamatica は、シナリオと呼ばれるファイルを使用して、プラグインの動作をテストします。
 
 <BelowDocument docId={"use/scenario/README"}
@@ -20,14 +19,14 @@ Scenamatica は、シナリオと呼ばれるファイルを使用して、プ�
 />
 
 
-## ステップ１. ファイルを作成する
+## ステップ１. ファイルを作成する {#step1-create-file}
 
 まずは、[シナリオファイル](/docs/use/scenario/file-syntax)を作成します。ファイルの拡張子は `.yml` もしくは `.yaml` です。  
 場所に関しては、プラグインの最終的な `.jar` ファイルに配置されるのであればどこでも構いません。
 
 この例では、 `test-hoge-success.yml` というファイル名を使用します。
 
-## ステップ２. Scenamatica のバージョンを記述する
+## ステップ２. Scenamatica のバージョンを記述する {#step2-write-scenamatica-version}
 
 シナリオファイルの先頭には、対応している Scenamatica のバージョン\([`scenamatica`](/docs/use/scenario/file-syntax#apex-scenamatica)) を記述します。  
 これは、プラグインが対応している Scenamatica がサーバのものよりも古い場合に、存在しない機能を参照しないようにするためです。
@@ -39,7 +38,7 @@ Scenamatica は、シナリオと呼ばれるファイルを使用して、プ�
 scenamatica: "0.0.1"
 ```
 
-## ステップ３. 名前ち説明を記述する
+## ステップ３. 名前ち説明を記述する {#step3-write-name-and-description}
 
 シナリオファイルの次に、シナリオの名前と説明を記述します。
 
@@ -54,7 +53,7 @@ description: "hoge 機能の正常系テスト"
 # highlight-end
 ```
 
-## ステップ４. コンテキストを記述する
+## ステップ４. コンテキストを記述する {#step4-write-context}
 
 [コンテキスト](/docs/use/scenario/elements#context)には、シナリオの実行に必要な環境を記述します。  
 今回のテストでは、`/hoge` コマンドの実行者として[アクタ](/docs/use/scenario/elements#actor) `Actor1` がいることを想定しているので、以下のように記述します。  
@@ -74,10 +73,10 @@ context:
 # highlight-end
 ```
 
-## ステップ５. トリガを記述する
+## ステップ５. トリガを記述する {#step5-write-triggers}
 
 シナリオが実行されるためには、発火のための[トリガ](/docs/use/scenario/elements#trigger)が必要です。  
-トリガは、 [`triggers`](/docs/use/scenario/file-syntax#apex-triggers) というキーでオブジェクトのリストで記述します。
+トリガは、 [`on`](/docs/use/scenario/file-syntax#apex-on) というキーでオブジェクトのリストで記述します。
 
 今回は手動実行のみを想定しているので、 手動実行(`manual_dispatch`) というトリガを記述します。
 
@@ -93,7 +92,7 @@ context:
     env: NETHER
 
 # highlight-start
-triggers:
+on:
 - type: manual_dispatch
 # highlight-end
 ```
@@ -106,7 +105,7 @@ triggers:
 
 :::
 
-## ステップ６. シナリオを記述する
+## ステップ６. シナリオを記述する {#step6-write-scenario}
 
 プラグインの入力と出力をおおまかに抽出し、シナリオ化して記述します。
 
@@ -129,7 +128,7 @@ context:
   stage:
     env: NETHER
 
-triggers:
+on:
 - type: manual_dispatch
 
 # highlight-start
@@ -151,7 +150,7 @@ scenario:
 # highlight-end
 ```
 
-## ステップ７. シナリオを実行する
+## ステップ７. シナリオを実行する {#step7-run-scenario}
 
 シナリオが記述できたら、実行してみましょう。
 
@@ -165,7 +164,7 @@ scenario:
 その他のトリガに関しては、[こちら](/docs/use/scenario/trigger)を参照してください。
 :::
 
-## ステップ８. 糸冬 了
+## ステップ８. 糸冬 了 {#step8-congratulations}
   
 以上で基本的なチュートリアルは終了です。お疲れ様でした。
 
