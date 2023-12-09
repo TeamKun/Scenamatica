@@ -1,3 +1,7 @@
+---
+sidebar_position: 1
+---
+
 import BelowDocument from "/src/components/BelowDocument";
 
 # プラグインのテスト
@@ -10,6 +14,17 @@ import BelowDocument from "/src/components/BelowDocument";
 
 テストは, プラグインの[シナリオ](scenario)を実行し、実行に成功したかどうかを判定してプラグインの正常性を確認するためのものです。  
 この機能は[シナリオ](scenario)機能と密接に関連しています。
+
+## シナリオの記述作業を開発フローに取り込む {#integrating-scenamatica-to-development-flow}
+
+テストを利用するには、プラグインの機能やテストごとに [シナリオファイル](scenario#scenario-file) を記述する作業が必要です。  
+なぜなら、Scenamatica はあなたが作成した機能の発火条件や、それにどのような結果が期待されているかを知りせん。
+そのため、プラグインの開発者が正しい（期待される）動作を Scenamatica に教える必要があります。
+
+驚くことに、シナリオファイルの記述は JUnit のテストコードの記述と同じくらいかんたんです。  
+新規機能を追加する際には、その機能を実装する前にシナリオファイルを作成し、それに沿って実装を進めるとよいでしょう。
+
+プラグインにおけるテスト駆動開発の始まりです。
 
 ## テストの実行 {#test-execution}
 
