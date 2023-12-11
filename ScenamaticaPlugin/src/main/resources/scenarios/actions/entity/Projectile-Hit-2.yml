@@ -7,31 +7,34 @@ on:
   - type: on_load
     before:
       - type: execute
-        action: entity_spawn
-        with:
-          type: minecraft:villager
-          tags:
-            - 810snpi
-      - type: execute
         action: projectile_launch
         with:
-          type: minecraft:arrow
-          tags:
-            - 810snpi
+          entity:
+            type: minecraft:arrow
+            tags:
+              - 810snpi
+            shooter:
+              type: minecraft:villager
+              tags:
+                - 810snpi
   - type: manual_dispatch
     before:
       - type: execute
-        action: entity_spawn
-        with:
-          type: minecraft:villager
-          tags:
-            - 810snpi
-      - type: execute
         action: projectile_launch
         with:
-          type: minecraft:arrow
-          tags:
-            - 810snpi
+          entity:
+            type: minecraft:arrow
+            tags:
+              - 810snpi
+            shooter:
+              type: minecraft:villager
+              tags:
+                - 810snpi
+context:
+  entities:
+    - type: minecraft:villager
+      tags:
+        - 810snpi
 scenario:
   - type: execute
     action: projectile_hit
@@ -41,6 +44,7 @@ scenario:
         type: minecraft:villager
         tags:
           - 810snpi
+      eventOnly: true
   - type: expect
     action: projectile_hit
     with:

@@ -3,6 +3,7 @@ package org.kunlab.scenamatica.scenariofile.structures.entity.entities;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Projectile;
 import org.bukkit.projectiles.BlockProjectileSource;
 import org.bukkit.projectiles.ProjectileSource;
@@ -120,8 +121,8 @@ public class ProjectileStructureImpl extends EntityStructureImpl implements Proj
 
         if (this.shooter instanceof EntityStructure && this.shooter instanceof Mapped<?>)
         {
-            //noinspection unchecked
-            return ((Mapped<EntityStructure>) this.shooter).isAdequate((EntityStructure) projectileSource);
+            // noinspection unchecked
+            return ((Mapped<Entity>) this.shooter).isAdequate((Entity) projectileSource);
         }
         else if (this.shooter instanceof BlockStructure)
         {

@@ -82,7 +82,7 @@ public class ProjectileLaunchAction extends EntitySpawnAction<ProjectileLaunchAc
 
         ProjectileStructure entity = (ProjectileStructure) argument.getEntity().getTargetStructure();
         // noinspection unchecked -> Checked by validator
-        Class<? extends Projectile> entityType = (Class<? extends Projectile>) entity.getClass();
+        Class<? extends Projectile> entityType = (Class<? extends Projectile>) entity.getType().getEntityClass();
 
         ProjectileSourceStructure shooter = entity.getShooter();
         ProjectileSource source = this.convertProjectileSource(shooter, engine);
@@ -165,7 +165,8 @@ public class ProjectileLaunchAction extends EntitySpawnAction<ProjectileLaunchAc
     @Override
     public boolean isFired(@NotNull Argument argument, @NotNull ScenarioEngine engine, @NotNull Event event)
     {
-        assert event instanceof ProjectileLaunchEvent;
+        if (!(event instanceof ProjectileLaunchEvent))
+            return false;
         ProjectileLaunchEvent e = (ProjectileLaunchEvent) event;
 
         EntitySpecifier<?> entity = argument.getEntity();

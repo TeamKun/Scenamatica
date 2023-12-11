@@ -9,29 +9,35 @@ on:
       - type: execute
         action: entity_spawn
         with:
-          type: minecraft:villager
-          tags:
-            - 810snpi
+          entity:
+            type: minecraft:villager
+            tags:
+              - 810snpi
       - type: execute
         action: projectile_launch
         with:
-          type: minecraft:arrow
-          tags:
-            - 810snpi
+          entity:
+            type: minecraft:arrow
+            tags:
+              - 810snpi
+            shooter: "@e[type=minecraft:villager,tag=810snpi]"
   - type: manual_dispatch
     before:
       - type: execute
         action: entity_spawn
         with:
-          type: minecraft:villager
-          tags:
-            - 810snpi
+          entity:
+            type: minecraft:villager
+            tags:
+              - 810snpi
       - type: execute
         action: projectile_launch
         with:
-          type: minecraft:arrow
-          tags:
-            - 810snpi
+          entity:
+            type: minecraft:arrow
+            tags:
+              - 810snpi
+            shooter: "@e[type=minecraft:villager,tag=810snpi]"
 scenario:
   - type: execute
     action: projectile_hit

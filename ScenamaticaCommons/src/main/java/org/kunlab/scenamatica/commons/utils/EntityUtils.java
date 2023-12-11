@@ -36,6 +36,16 @@ public class EntityUtils
         return tryCastMapped(structure, entity).isAdequate(entity);
     }
 
+    @SuppressWarnings("rawtypes")
+    public static boolean checkIsAdequate(EntityStructure entity, Entity targetEntity)
+    {
+        if (!(entity instanceof Mapped))
+            throw new IllegalStateException("Entity is not mapped");
+
+        Mapped mapped = (Mapped) entity;
+        return mapped.canApplyTo(targetEntity) && mapped.isAdequate(targetEntity);
+    }
+
     public static Entity getPlayerOrEntityOrThrow(String target)
     {
         if (target.isEmpty())

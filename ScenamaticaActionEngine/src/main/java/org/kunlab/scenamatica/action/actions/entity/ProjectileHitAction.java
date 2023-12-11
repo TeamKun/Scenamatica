@@ -21,6 +21,7 @@ import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
+import org.kunlab.scenamatica.interfaces.scenariofile.entity.EntityStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.entity.entities.ProjectileStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.misc.BlockStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.EntitySpecifier;
@@ -64,14 +65,6 @@ public class ProjectileHitAction extends AbstractEntityAction<ProjectileHitActio
         if (argument.getHitBlock() != null)
             hitBlock = argument.getHitBlock().getBlockSafe();
 
-        ProjectileHitEvent event = new ProjectileHitEvent(
-                target,
-                hitEntity,
-                hitBlock,
-                argument.getBlockFace()
-        );
-
-
         if (argument.isEventOnly())
             this.doEventOnlyMode(engine, target, hitEntity, hitBlock, argument.getBlockFace());
         else
@@ -101,7 +94,7 @@ public class ProjectileHitAction extends AbstractEntityAction<ProjectileHitActio
 
         Vector blockVec = blockLoc.toVector().normalize();
 
-        target.setVelocity(blockVec.multiply(10));
+        target.setVelocity(blockVec.multiply(0.02));
     }
 
     private void doEventOnlyMode(@NotNull ScenarioEngine engine, @NotNull Projectile target, @Nullable Entity hitEntity, @Nullable Block hitBlock, @Nullable BlockFace blockFace)
@@ -133,7 +126,9 @@ public class ProjectileHitAction extends AbstractEntityAction<ProjectileHitActio
                 return false;
         }
 
-        return (argument.getHitEntity() == null || argument.getHitEntity().checkMatchedEntity(e.getHitEntity()))
+        boolean isA = argument.getHitEntity() == null || argument.getHitEntity().checkMatchedEntity(e.getHitEntity());
+
+        return isA
                 && (argument.getHitBlock() == null || argument.getHitBlock().isAdequate(e.getHitBlock()))
                 && (argument.getBlockFace() == null || argument.getBlockFace() == e.getHitBlockFace());
     }
@@ -149,13 +144,17 @@ public class ProjectileHitAction extends AbstractEntityAction<ProjectileHitActio
     @Override
     public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
     {
+        BlockStructure hitBlock = null;
+        if (map.containsKey(Argument.KEY_HIT_BLOCK))
+            hitBlock = serializer.deserialize(
+                    MapUtils.checkAndCastMap(map.get(Argument.KEY_HIT_BLOCK)),
+                    BlockStructure.class
+            );
+
         return new Argument(
                 super.deserializeTarget(map, serializer, ProjectileStructure.class),
-                EntitySpecifierImpl.tryDeserialize(map.get(Argument.KEY_HIT_ENTITY), serializer, ProjectileStructure.class),
-                serializer.deserialize(
-                        MapUtils.checkAndCastMap(map.get(Argument.KEY_HIT_BLOCK)),
-                        BlockStructure.class
-                ),
+                EntitySpecifierImpl.tryDeserialize(map.get(Argument.KEY_HIT_ENTITY), serializer, EntityStructure.class),
+                hitBlock,
                 MapUtils.getAsEnumOrNull(map, Argument.KEY_BLOCK_FACE, BlockFace.class),
                 MapUtils.getOrDefault(map, Argument.KEY_EVENT_ONLY, false)
         );

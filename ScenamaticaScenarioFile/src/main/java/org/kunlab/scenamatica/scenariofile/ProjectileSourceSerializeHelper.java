@@ -10,6 +10,11 @@ import java.util.Map;
 
 public class ProjectileSourceSerializeHelper
 {
+    public static String KEY_KIND = "kind";
+
+    public static String KIND_ENTITY = "entity";
+    public static String KIND_BLOCK = "block";
+
     public static Map<String, Object> serialize(ProjectileSourceStructure structure, StructureSerializer serializer)
     {
         if (structure instanceof EntityStructure)
@@ -22,6 +27,13 @@ public class ProjectileSourceSerializeHelper
 
     public static ProjectileSourceStructure deserialize(Map<String, Object> map, StructureSerializer serializer)
     {
+        if (KIND_ENTITY.equalsIgnoreCase((String) map.get(KEY_KIND)))
+            return tryDeserialize(map, serializer, EntityStructure.class);
+        else if (KIND_BLOCK.equalsIgnoreCase((String) map.get(KEY_KIND)))
+            return tryDeserialize(map, serializer, BlockStructure.class);
+
+        // 自動推論
+
         ProjectileSourceStructure structure = tryDeserialize(map, serializer, EntityStructure.class);
         if (structure != null)
             return structure;
@@ -35,12 +47,10 @@ public class ProjectileSourceSerializeHelper
 
     public static void validate(Map<String, Object> map, StructureSerializer serializer)
     {
-        RuntimeException e = tryValidate(map, serializer, EntityStructure.class);
-        if (e == null)
-            e = tryValidate(map, serializer, BlockStructure.class);
-
-        if (e != null)
-            throw e;
+        if (KIND_ENTITY.equalsIgnoreCase((String) map.get(KEY_KIND)))
+            serializer.validate(map, EntityStructure.class);
+        else if (KIND_BLOCK.equalsIgnoreCase((String) map.get(KEY_KIND)))
+            serializer.validate(map, BlockStructure.class);
     }
 
     private static <T extends Structure> T tryDeserialize(Map<String, Object> map, StructureSerializer serializer, Class<T> clazz)
@@ -55,18 +65,4 @@ public class ProjectileSourceSerializeHelper
         }
     }
 
-    private static RuntimeException tryValidate(Map<String, Object> map, StructureSerializer serializer, Class<? extends Structure> clazz)
-    {
-        try
-        {
-            serializer.validate(map, clazz);
-            return null;
-        }
-        catch (RuntimeException e)
-        {
-            if (e instanceof NullPointerException)
-                return null;
-            return e;
-        }
-    }
 }

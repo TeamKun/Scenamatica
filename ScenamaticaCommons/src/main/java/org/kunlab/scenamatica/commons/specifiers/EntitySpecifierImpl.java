@@ -120,6 +120,8 @@ public class EntitySpecifierImpl<E extends Entity> implements EntitySpecifier<E>
     @Override
     public boolean checkMatchedEntity(Entity entity)
     {
+        if (entity == null)
+            return false;
         if (!this.canProvideTarget())
             return true;
 
@@ -128,7 +130,7 @@ public class EntitySpecifierImpl<E extends Entity> implements EntitySpecifier<E>
         else /* if (this.getTargetStructure() != null) */
         {
             assert this.getTargetStructure() != null;
-            return EntityUtils.tryCheckIsAdequate(this.getTargetStructure(), entity);
+            return EntityUtils.checkIsAdequate(this.getTargetStructure(), entity);
         }
     }
 
