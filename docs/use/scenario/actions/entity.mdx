@@ -351,14 +351,13 @@ import {ObjectType} from "/src/components/Object";
             type: "EntitySpecifier",
             anchor: "general-target",
             type_link: "/docs/use/scenario/types/entities#entity-specifier",
-            type: ObjectType.STRING,
             description: "アイテムをドロップするエンティティです。",
             required: [ScenarioType.EXECUTE]
           },
           {
             name: "item",
             type: "EntitySpecifier{type: EntityItem}",
-            type_link: "/docs/use/scenario/types#entity-item-structure",
+            type_link: "/docs/use/scenario/types/entities#entity-item-structure",
             description: "ドロップするアイテムです。",
             required: [ScenarioType.EXECUTE]
           }
@@ -448,7 +447,7 @@ AI を有効にした場合, エンティティは経路を探索し自発的に
           {
             name: "item",
             type: "EntitySpecifier{type: EntityItem}",
-            type_link: "/docs/use/scenario/types#entity-item-structure",
+            type_link: "/docs/use/scenario/types/entities#entity-item-structure",
             description: "ピックアップするアイテムです。",
             anchor: "pickup-item-item",
             required: [ScenarioType.EXECUTE]
@@ -613,3 +612,97 @@ AI を有効にした場合, エンティティは経路を探索し自発的に
 また, アクション実行期待シナリオでは, Entity 型の `target` 引数は使用できません。
 
 :::
+
+## 投射物の弾着 {#projectile-hit}
+
+<Action name="エンティティによる投射物の弾着"
+        description="投射物を着弾させます。"
+        id="projectile_hit"
+        events={[
+          {
+            name: "ProjectileHitEvent",
+            package: "org.bukkit.event.entity",
+          }
+        ]}
+        args={[
+          {
+            name: "target",
+            type: "EntitySpecifier{type: Projectile}",
+            type_link: "/docs/use/scenario/types/entities#projectile-structure",
+            description: "着弾した投射物です。",
+            anchor: "projectile-hit-target",
+            required: [ScenarioType.EXECUTE]
+          },
+          {
+            name: "hitEntity",
+            type: "EntitySpecifier",
+            type_link: "/docs/use/scenario/types/entities#entity-specifier",
+            description: "着弾した投射物が当たったエンティティです。",
+          },
+          {
+            name: "hitBlock",
+            type: "Block",
+            type_link: "/docs/use/scenario/types/misc#block-structure",
+            description: "着弾した投射物が当たったブロックです。",
+          },
+          {
+            name: "blockFace",
+            type: "BlockFace{UP, DOWN, NORTH, EAST, SOUTH, WEST}",
+            type_link: "/docs/use/scenario/types#block-face-enum",
+            description: "着弾した投射物が当たったブロックの面です。",
+          },
+          {
+            name: "eventOnly",
+            type: ObjectType.BOOLEAN,
+            description: "イベントのみを発生させるかどうかです。",
+            anchor: "projectile-hit-event-only",
+            default: false,
+            available: [ScenarioType.EXECUTE]
+          }
+        ]}
+        executable watchable
+/>
+
+#### `eventOnly` {#projectile-hit-event-only}
+
+`true` を指定した場合、投射物の着弾イベントのみを発生させます。
+
+通常は、以下の動作を行います。
+
++ `hitEntity` が指定されている場合、そのエンティティの位置に投射物をテレポートさせ、速度を `0` にします。
++ `hitBlock` が指定されている場合、そのブロックの `blockFace` の正面 `0.2` の位置に投射物をテレポートさせ、ブロックの面に対して垂直な速度を `10` にします。
+
+## 投射物の発射 {#projectile-launch}
+
+<Action name="エンティティによる投射物の発射"
+        description="投射物を発射します。"
+        id="projectile_launch"
+        events={[
+          {
+            name: "ProjectileLaunchEvent",
+            package: "org.bukkit.event.entity",
+          }
+        ]}
+        args={[
+          {
+            name: "target",
+            type: "EntitySpecifier{type: Projectile}",
+            type_link: "/docs/use/scenario/types/entities#projectile-structure",
+            description: "スポーンさせるエンティティです。",
+            anchor: "projectile-launch-target",
+            required: [ScenarioType.EXECUTE]
+          }
+        ]}
+        executable watchable
+/>
+
+#### `target` {#projectile-launch-target}
+
+投射物の構造体を指定します。
+
+:::warning
+
+アクション実行シナリオでは `shooter` が必須です。
+
+:::
+
