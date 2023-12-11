@@ -16,7 +16,7 @@ import {ObjectType} from "/src/components/Object";
 
 :::
 
-<BelowDocument docId="use/scenario/file-syntax"
+<BelowDocument docId="use/scenario/scenario-file"
                label="シナリオファイルを記述する際の注意"
                anchor="notes"
 />
@@ -42,7 +42,7 @@ import {ObjectType} from "/src/components/Object";
 + `SWAP_OFFHAND` オフハンドのアイテムと入れ替え
 + `UNKNOWN` 不明
 
-## InventoryAction 列挙型 {#type-inventory-action}
+### InventoryAction 列挙型 {#type-inventory-action}
 
 + `NOTHING`  何もしない
 + `PICKUP_ALL` アイテムをすべて拾う
@@ -64,7 +64,7 @@ import {ObjectType} from "/src/components/Object";
 + `COLLECT_TO_CURSOR` カーソルに集める
 + `UNKNOWN` 不明
 
-## SlotType 列挙型 {#type-slot-type}
+### SlotType 列挙型 {#type-slot-type}
 
 + `RESULT` クラフト結果
 + `CRAFTING` クラフト
@@ -74,7 +74,7 @@ import {ObjectType} from "/src/components/Object";
 + `OUTSIDE` インベントリ外
 + `FUEL` 燃料
 
-## InventoryCloseReason 列挙型 {#type-inventory-close-reason}
+### InventoryCloseReason 列挙型 {#type-inventory-close-reason}
 
 + `UNKNOWN` 不明
 + `TELEPORT` テレポートによる強制クローズ
@@ -85,6 +85,8 @@ import {ObjectType} from "/src/components/Object";
 + `DISCONNECT` プレイヤがサーバから切断したことによる強制クローズ
 + `DEATH` プレイヤが死亡したことによる強制クローズ
 + `PLUGIN` Bukkit API を介したプラグインによる操作
+
+---
 
 ## インベントリ操作系 {#inventory-interaction}
 

@@ -16,7 +16,7 @@ import {ObjectType} from "/src/components/Object";
 
 :::
 
-<BelowDocument docId="use/scenario/file-syntax"
+<BelowDocument docId="use/scenario/scenario-file"
                label="シナリオファイルを記述する際の注意"
                anchor="notes"
 />
@@ -33,8 +33,20 @@ import {ObjectType} from "/src/components/Object";
   - 省略： `@e` は省略できます （例：`entity: "[team=Red,tags=MyTag]"` ）。
   - 省略： `@e[...]` はできます （例：`entity: "team=Red,tags=MyTag"` ）。
 + [Entity 型](/docs/use/scenario/types#entity-structure) のオブジェクト  
-  特に記述がない限り アクション実行期待シナリオの引数 `target` として使用できます。これを使用すれば、セレクタを使用せずに
-  高度な条件を指定できます。
+  特に記述がない限り使用できます。これを使用すれば、セレクタを使用せずに高度な条件を指定できます。
+
+:::warning
+
+セレクタをと [Entity 型](/docs/use/scenario/types/entities#entity-structure) のオブジェクトを指定する場合、
+捜索範囲はシナリオの[ステージ](/docs/use/scenario/elements#stage)内かつ、ロードされているチャンクに限定されます。
+
+:::
+
+:::tip
+
+[エンティティ（コンテキスト）](/docs/use/scenario/elements/entities#entity)を使用すれば、常に読み込まれるシナリオ専用のエンティティを作成できます。
+
+:::
 
 :::info シナリオの種類での振る舞いの違い
 
@@ -377,14 +389,14 @@ import {ObjectType} from "/src/components/Object";
           {
             name: "from",
             type: "Location",
-            type_link: "/docs/use/scenario/types#location-structure",
+            type_link: "/docs/use/scenario/types/misc#location-structure",
             description: "移動前の位置です。",
             available: [ScenarioType.EXPECT]
           },
           {
             name: "to",
             type: "Location",
-            type_link: "/docs/use/scenario/types#location-structure",
+            type_link: "/docs/use/scenario/types/misc#location-structure",
             description: "移動後の位置です。",
             required: [ScenarioType.EXECUTE, ScenarioType.EXPECT]
           },
@@ -496,7 +508,7 @@ AI を有効にした場合, エンティティは経路を探索し自発的に
             name: "block",
             anchor: "place-block",
             type: "Block",
-            type_link: "/docs/use/scenario/types#block-structure",
+            type_link: "/docs/use/scenario/types/misc#block-structure",
             description: "エンティティを設置するブロックです。",
             required: [ScenarioType.EXECUTE]
           },
@@ -515,7 +527,7 @@ AI を有効にした場合, エンティティは経路を探索し自発的に
 
 :::caution 
 
-アクション実行シナリオの場合、この項目および [`Block#location`](/docs/use/scenario/types#location-structure) は必須です。
+アクション実行シナリオの場合、この項目および [`Block#location`](/docs/use/scenario/types/misc#location-structure) は必須です。
 
 :::
 

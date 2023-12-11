@@ -15,9 +15,14 @@ Scenamatica で定義されている型について説明しています。
 
 Scenamatica では、YAML の型として以下の型が定義されています。
 
++ [エンティティに関連する型](/docs/use/scenario/types/entities)
++ [インベントリとアイテムに関連する型](/docs/use/scenario/types/inventory-items)
++ [その他の型](/docs/use/scenario/types/misc)  
+  [`Location`]((/docs/use/scenario/types/misc#location-structure)) や 
+  [`Block`](/docs/use/scenario/types/misc#block-structure), 
+  [`NamespacedKey`](/docs/use/scenario/types/misc#namespaced-key-structure) など
 
 ### シナリオファイルの構造 {#scenario-file-structure}
-
 
 <Object objects={[
   {
@@ -176,6 +181,8 @@ Scenamatica のバージョンは、`x.y.z` の形式で指定します。
 
 シナリオファイルのメインシナリオです。シナリオを定義するのに使用します。
 
+---
+
 ### Order 列挙型 {#order-enum}
 
 シナリオの実行順の列挙値です。
@@ -192,6 +199,7 @@ Scenamatica のバージョンは、`x.y.z` の形式で指定します。
 | LOWEST  | 10000       |
 | LAST    | 2147483647  |
 
+---
 
 ### Context 型 {#context-structure}
 
@@ -227,8 +235,14 @@ Scenamatica のバージョンは、`x.y.z` の形式で指定します。
 
 #### `entities` {#context-entities}
 
-シナリオの実行に必要なエンティティを定義します。  
+シナリオの実行に必要な任意のエンティティを定義します。  
 これを設定すると、シナリオの実行前に[ステージ](/docs/use/scenario/elements/#stage)内にエンティティが生成され、終了時に削除されます。
+
+:::caution
+これを指定する場合、[Entity 型](/docs/use/scenario/types/entities#entity-structure) の [`type`](/docs/use/scenario/types/entities#entity-type) を
+必ず指定する必要があります。  
+これは、エンティティの種類を指定して拡張パラメタを設定するためです。
+:::
 
 エンティティの概念についての説明は[こちら](/docs/use/scenario/elements/#entity)を参照してください。
 
@@ -238,25 +252,27 @@ Scenamatica のバージョンは、`x.y.z` の形式で指定します。
 
 ステージの概念についての説明は[こちら](/docs/use/scenario/elements/#stage)を参照してください。
 
+---
+
 ### Actor 型 {#actor-structure}
 
 <Object objects={[
   {
     name: "name",
-    type: "string",
+    type : ObjectType.STRING,
     description: "アクターの名前です。",
   
   },
   {
     name: "displayName",
     anchor: "actor-display-name",
-    type: "string",
+    type : ObjectType.STRING,
     description: "アクターの表示名です。",
   },
   {
     name: "online",
     anchor: "actor-online",
-    type: "boolean",
+    type : ObjectType.BOOLEAN,
     description: "アクターがオンラインかどうかを設定します。",
     default: true
   },
@@ -269,13 +285,13 @@ Scenamatica のバージョンは、`x.y.z` の形式で指定します。
   {
     name: "compass",
     type: "Location",
-    type_anchor: "location-structure",
+    type_link: "/docs/use/scenario/types/misc#location-structure",
     description: "アクターのコンパスの指す位置を設定します。"
   },
   {
     name: "bedLocation",
     type: "Location",
-    type_anchor: "location-structure",
+    type_link: "/docs/use/scenario/types/misc#location-structure",
     description: "アクターのベッドの位置を設定します。"
   },
   {
@@ -401,13 +417,15 @@ Scenamatica のバージョンは、`x.y.z` の形式で指定します。
 
 :::
 
+---
+
 ### Trigger 型 {#trigger-structure}
 
 <Object objects={[
   {
     name: "type",
     anchor: "trigger-type",
-    type: "string",
+    type : ObjectType.STRING,
     description: "トリガの種類です。",
     required: true
   },
@@ -491,47 +509,48 @@ Scenamatica のバージョンは、`x.y.z` の形式で指定します。
 シナリオのルートで定義されている場合、両方の条件が満たされた場合に実行されます。  
 詳しくは[こちら](#conditional-execution)を参照してください。
 
-### Stage 型 {#stage-structure}
+---
 
+### Stage 型 {#stage-structure}
 
 <Object objects={[
   {
     name: "copyOf",
     anchor: "stage-copyOf",
-    type: "string",
+    type : ObjectType.STRING,
     description: "オリジナルのワールドの名前です。"
   },
   {
     name: "type",
     anchor: "stage-type",
-    type: "string",
+    type : ObjectType.STRING,
     description: "ステージとして使用するワールドの種類です。",
     default: "normal"
   },
   {
     name: "seed",
     anchor: "stage-seed",
-    type: "number",
+    type: ObjectType.LONG,
     description: "ステージとして使用するワールドのシードです。"
   },
   {
     name: "structures",
     anchor: "stage-structures",
-    type: "boolean",
+    type : ObjectType.BOOLEAN,
     description: "ステージとして使用するワールドに構造物を生成するかどうかです。",
     default: "true"
   },
   {
     name: "env",
     anchor: "stage-env",
-    type: "string",
+    type : ObjectType.STRING,
     description: "ステージとして使用するワールドの環境です。",
     default: "normal"
   },
   {
     name: "hardcore",
     anchor: "stage-hardcore",
-    type: "boolean",
+    type : ObjectType.BOOLEAN,
     description: "ステージとして使用するワールドがハードコアかどうかです。",
     default: "false"
   },
@@ -590,8 +609,9 @@ Bukkit でロード済みの既存のワールドの構造、建築物、アイ�
 
 ステージとして使用するワールドがハードコアかどうかです。
 
-### Scenario 型 {#scenario-structure}
+---
 
+### Scenario 型 {#scenario-structure}
 
 <Object objects={[
   {
@@ -610,7 +630,7 @@ Bukkit でロード済みの既存のワールドの構造、建築物、アイ�
   {
     name: "timeout",
     anchor: "scenario-timeout",
-    type: "number",
+    type: ObjectType.LONG,
     description: "シナリオのタイムアウト時間のチック数です。",
     default: 20 * 5
   },
@@ -670,8 +690,9 @@ Bukkit でロード済みの既存のワールドの構造、建築物、アイ�
 
 詳しくは[こちら](#conditional-execution)を参照してください。
 
-### Action 型 {#action-structure}
+---
 
+### Action 型 {#action-structure}
 
 <Object objects={[
   {
@@ -706,104 +727,24 @@ Bukkit でロード済みの既存のワールドの構造、建築物、アイ�
 
 詳しくは、該当するアクションのページを参照してください。
 
-### ActorPlayerList 型 {#actor-player-list-structure}
+---
 
+### ActorPlayerList 型 {#actor-player-list-structure}
 
 <Object objects={[
   {
     name: "name",
-    type: "string",
+    type : ObjectType.STRING,
     description: "プレイヤリストの名前です。",
   },
   {
     name: "header",
-    type: "string",
+    type : ObjectType.STRING,
     description: "プレイヤリストのヘッダーです。",
   },
   {
     name: "footer",
-    type: "string",
+    type : ObjectType.STRING,
     description: "プレイヤリストのフッターです。",
   }
 ]} />
-
-### Location 型 {#location-structure}
-
-この型は、 Bukkit 標準の Location のラッパーです。以下の構造を持ちます。
-
-<Object objects={[
-  {
-    name: "x",
-    type: "number",
-    description: "X 座標です。",
-    required: true
-  },
-  {
-    name: "y",
-    type: "number",
-    description: "Y 座標です。",
-    required: true
-  },
-  {
-    name: "z",
-    type: "number",
-    description: "Z 座標です。",
-    required: true
-  },
-  {
-    name: "yaw",
-    type: "number",
-    description: "YAW 値です。",
-  },
-  {
-    name: "pitch",
-    type: "number",
-    description: "PITCH 値です。",
-  },
-  {
-    name: "world",
-    type: "string",
-    description: "ワールド名です。"
-  },
-]} />
-
-### Block 型 {#block-structure}
-
-<Object objects={[
-  {
-    name: "type",
-    type: "Enum{...Material}",
-    description: "ブロックの種類です。",
-  },
-  {
-    name: "location",
-    type: "Location",
-    type_anchor: "location-structure",
-    description: "ブロックの位置です。",
-  },
-  {
-    name: "metadata",
-    type: ObjectType.OBJECT,
-    description: "ブロックのメタデータです。",
-  },
-  {
-    name: "light",
-    type: ObjectType.INTEGER,
-    description: "ブロックの明るさです（0-15）。",
-  },
-  {
-    name: "biome",
-    type: "Enum{...Biome}",
-    description: "ブロックのバイオームです。",
-  }
-]} />
-
-### NamespacedKey 型 {#namespaced-key-structure}
-
-NamespacedKey 型は、名前空間を持つキーです。  
-名前空間とキーは `:` で区切り、各コンポーネントは次の正規表現に従います：`[a-z0-9_.-]+`
-
-:::tip 名前空間は省略可能です
-
-省略した場合は、暗黙的に `minecraft:` が指定されます。
-:::

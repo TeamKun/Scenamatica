@@ -15,15 +15,13 @@ export type ObjectElement = {
 }
 
 export enum ObjectType {
-    OBJECT = "オブジェクト",
-    ARRAY = "配列",
+    OBJECT = "構造体",
     STRING = "文字列",
-    INTEGER = "整数値 (int)",
-    LONG = "整数値 (long)",
+    INTEGER = "整数値 (32bit)",
+    LONG = "整数値 (64bit)",
     FLOAT = "単精度浮動小数点数",
     DOUBLE = "倍精度浮動小数点数",
     BOOLEAN = "真偽値",
-    NULL = "null",
 }
 
 type ObjectsProps = {
@@ -42,7 +40,7 @@ export const Object: React.FC<ObjectsProps> = ({ objects }) => {
         const name = element.anchor ? <a href={"#" + element.anchor}>{element.name}</a>: element.name
         let required: JSX.Element | null = null
         if (!element.required)
-            required = <span>任意</span>
+            required = <span>-</span>
         else if (typeof element.required === "string")
             required = <span className={styles.required}>{element.required}</span>
         else if (Array.isArray(element.required)) {
@@ -81,7 +79,7 @@ export const Object: React.FC<ObjectsProps> = ({ objects }) => {
                 <td><code>{typeName}</code></td>
                 <td>{required}</td>
                 <td>{element.description}</td>
-                {shouldShowDefaultValue ? <td>{element.default ? <code>{element.default}</code> : "N/A"}</td> : null}
+                {shouldShowDefaultValue ? <td>{element.default ? <code>{element.default}</code> : "-"}</td> : null}
                 {shouldShowAvailableFor ? <td>{availableFor ? availableFor : <code>ALL</code>}</td> : null}
             </tr>
         )

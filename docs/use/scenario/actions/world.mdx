@@ -17,14 +17,14 @@ import {ObjectType} from "/src/components/Object";
 
 :::
 
-<BelowDocument docId="use/scenario/file-syntax"
+<BelowDocument docId="use/scenario/scenario-file"
                label="シナリオファイルを記述する際の注意"
                anchor="notes"
 />
 
 ## 全般 - 引数 `world` {#apex-world}
 
-これらのアクションは、[NamespacedKey](#namespaced-key-structure) 型のオプション引数 `world` を受け取ります。
+これらのアクションは、[NamespacedKey](/docs/use/scenario/types/misc#namespaced-key-structure) 型のオプション引数 `world` を受け取ります。
 
 省略した場合はシナリオに割り当てられたステージが対象になります。
 
@@ -68,14 +68,14 @@ import {ObjectType} from "/src/components/Object";
           {
             name: "center",
             anchor: "world-border-center",
-            type_link: "/docs/use/scenario/types#location-structure",
+            type_link: "/docs/use/scenario/types/misc#location-structure",
             type: "Location",
             description: "ワールドボーダの中心座標です。",
           },
           {
             name: "center_old",
             anchor: "world-border-center-old",
-            type_link: "/docs/use/scenario/types#location-structure",
+            type_link: "/docs/use/scenario/types/misc#location-structure",
             type: "Location",
             description: "ワールドボーダの変更前の中心座標です。",
           }

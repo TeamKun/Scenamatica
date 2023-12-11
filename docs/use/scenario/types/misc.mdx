@@ -1,0 +1,93 @@
+import BelowDocument from "/src/components/BelowDocument";
+import { Object, ObjectType } from "/src/components/Object";
+
+# その他の型
+
+その他の様々な型です。
+
+---
+
+## Location 型 {#location-structure}
+
+この型は、 Bukkit 標準の Location のラッパーです。以下の構造を持ちます。
+
+<Object objects={[
+  {
+    name: "x",
+    type: "number",
+    description: "X 座標です。",
+    required: true
+  },
+  {
+    name: "y",
+    type: "number",
+    description: "Y 座標です。",
+    required: true
+  },
+  {
+    name: "z",
+    type: "number",
+    description: "Z 座標です。",
+    required: true
+  },
+  {
+    name: "yaw",
+    type: "number",
+    description: "YAW 値です。",
+  },
+  {
+    name: "pitch",
+    type: "number",
+    description: "PITCH 値です。",
+  },
+  {
+    name: "world",
+    type: "string",
+    description: "ワールド名です。"
+  },
+]} />
+
+---
+
+## Block 型 {#block-structure}
+
+<Object objects={[
+  {
+    name: "type",
+    type: "Enum{...Material}",
+    description: "ブロックの種類です。",
+  },
+  {
+    name: "location",
+    type: "Location",
+    type_anchor: "location-structure",
+    description: "ブロックの位置です。",
+  },
+  {
+    name: "metadata",
+    type: ObjectType.OBJECT,
+    description: "ブロックのメタデータです。",
+  },
+  {
+    name: "light",
+    type: ObjectType.INTEGER,
+    description: "ブロックの明るさです（0-15）。",
+  },
+  {
+    name: "biome",
+    type: "Enum{...Biome}",
+    description: "ブロックのバイオームです。",
+  }
+]} />
+
+---
+
+## NamespacedKey 型 {#namespaced-key-structure}
+
+NamespacedKey 型は、名前空間を持つキーです。  
+名前空間とキーは `:` で区切り、各コンポーネントは次の正規表現に従います：`[a-z0-9_.-]+`
+
+:::tip 名前空間は省略可能です
+
+省略した場合は、暗黙的に `minecraft:` が指定されます。
+:::

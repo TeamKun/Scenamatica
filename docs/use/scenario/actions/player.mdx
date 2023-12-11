@@ -16,7 +16,7 @@ import {ObjectType} from "/src/components/Object";
 
 :::
 
-<BelowDocument docId="use/scenario/file-syntax"
+<BelowDocument docId="use/scenario/scenario-file"
                label="シナリオファイルを記述する際の注意"
                anchor="notes"
 />
@@ -62,13 +62,13 @@ import {ObjectType} from "/src/components/Object";
             name: "block",
             description: "バケツを使用するブロックです。",
             type: "Block",
-            type_link: "/docs/use/scenario/types#block-structure",
+            type_link: "/docs/use/scenario/types/misc#block-structure",
           },
           {
             name: "clickedBlock",
             description: "バケツを使用するブロックです。",
             type: "Block",
-            type_link: "/docs/use/scenario/types#block-structure",
+            type_link: "/docs/use/scenario/types/misc#block-structure",
           },
           {
             name: "blockFace",
@@ -149,13 +149,13 @@ NMS の仕様上の都合により、 `block` を用いた液体の場所は `ev
             name: "block",
             description: "バケツを使用するブロックです。",
             type: "Block",
-            type_link: "/docs/use/scenario/types#block-structure",
+            type_link: "/docs/use/scenario/types/misc#block-structure",
           },
           {
             name: "clickedBlock",
             description: "バケツを使用するブロックです。",
             type: "Block",
-            type_link: "/docs/use/scenario/types#block-structure",
+            type_link: "/docs/use/scenario/types/misc#block-structure",
           },
           {
             name: "blockFace",
@@ -254,7 +254,7 @@ NMS の仕様上の都合により、 `block` を用いた液体の場所は `ev
 
 ### `advancement` {#advancement-advancement}
 
-進捗を [`NamespacedKey`](/docs/use/scenario/types#namespaced-key-structure) で指定します。
+進捗を [`NamespacedKey`](/docs/use/scenario/types/misc#namespaced-key-structure) で指定します。
 
 ### `criterion` {#advancement-criterion}
 
@@ -634,7 +634,7 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
             name: "block",
             description: "収穫するブロックです。",
             type: "Block",
-            type_link: "/docs/use/scenario/types#block-structure",
+            type_link: "/docs/use/scenario/types/misc#block-structure",
             required: [ScenarioType.EXECUTE]
           },
           {
@@ -751,7 +751,7 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
           {
             name: "position",
             type: "Vector(Location)",
-            type_link: "/docs/use/scenario/types#location-structure",
+            type_link: "/docs/use/scenario/types/misc#location-structure",
             description: "クリックするエンティティの位置です。",
             required: [ScenarioType.EXECUTE]
           }
@@ -810,7 +810,7 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
 
 ### `block` {#interact-block-block}
 
-<BelowDocument docId="use/scenario/file-syntax"
+<BelowDocument docId="use/scenario/types/misc"
                anchor="block-structure"
                label="Block 型"
 />
@@ -1232,7 +1232,7 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
             anchor: "from",
             description: "移動前の座標です。",
             type: "Location",
-            type_link: "/docs/use/scenario/types#location-structure",
+            type_link: "/docs/use/scenario/types/misc#location-structure",
             required: [ScenarioType.EXECUTE]
           },
           {
@@ -1240,7 +1240,7 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
             anchor: "to",
             description: "移動後の座標です。",
             type: "Location",
-            type_link: "/docs/use/scenario/types#location-structure",
+            type_link: "/docs/use/scenario/types/misc#location-structure",
             available: [ScenarioType.EXECUTE]
           }
         ]}
@@ -1361,7 +1361,7 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
             anchor: "respawn-location",
             description: "リスポーンする場所です。",
             type: "Location",
-            type_link: "/docs/use/scenario/types#location-structure",
+            type_link: "/docs/use/scenario/types/misc#location-structure",
           },
           {
             name: "isAnchor",
@@ -1467,7 +1467,7 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
             anchor: "teleport-location",
             description: "テレポート前の座標です。",
             type: "Location",
-            type_link: "/docs/use/scenario/types#location-structure",
+            type_link: "/docs/use/scenario/types/misc#location-structure",
             available: [ScenarioType.EXPECT]
           },
           {
@@ -1475,7 +1475,7 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
             anchor: "teleport-location",
             description: "テレポート後の座標です。",
             type: "Location",
-            type_link: "/docs/use/scenario/types#location-structure",
+            type_link: "/docs/use/scenario/types/misc#location-structure",
             required: [ScenarioType.EXECUTE]
           },
           {
