@@ -19,22 +19,8 @@
       ]
     },
     "direction": {
-      "type": "string",
       "description": "ブロックを設置する方向です。",
-      "enum": [
-        "UP",
-        "DOWN",
-        "NORTH",
-        "SOUTH",
-        "WEST",
-        "EAST",
-        "up",
-        "down",
-        "north",
-        "south",
-        "west",
-        "east"
-      ]
+      "$ref": "#/definitions/blockFace"
     }
   }
 }

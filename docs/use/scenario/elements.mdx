@@ -240,7 +240,7 @@ Scenamatica がテスト対象のプラグイン機能の実行を発火させ�
 2. シード値/環境等を指定して新規に生成する。  
   この方式はシナリオの実行時に毎回ワールドを生成するので、毎回違う環境で実行できます。ただし、ワールドの生成はパフォーマンスに影響するため注意してください。
 
-ステージの指定は、[シナリオファイルの `context`.`stage`](file-syntax#context-stage) プロパティによって行います。
+ステージの指定は、[シナリオファイルの `context`.`stage`](types#context-stage) プロパティによって行います。
 
 ### アクター {#actor}
 
@@ -259,7 +259,7 @@ Scenamatica がテスト対象のプラグイン機能の実行を発火させ�
 ただし、同イベントのフィールドである `previousSlot` は技術的制約により `currentSlot` と同じ値になります。
 :::
 
-アクターの指定は、[シナリオファイルの `context`.`actors`](file-syntax#context-actors) プロパティによって行います。
+アクターの指定は、[シナリオファイルの `context`.`actors`](types#context-actors) プロパティによって行います。
 
 ### エンティティ {#entity}
 
@@ -269,7 +269,7 @@ Scenamatica がテスト対象のプラグイン機能の実行を発火させ�
 Scenamatica はエンティティを削除されるまで継続して追跡し、そのエンティティを含むチャンクを強制的に読み込みます。  
 これは、セレクタによるエンティティの指定を可能にするためです。
 
-エンティティの指定は、[シナリオファイルの `context`.`entities`](file-syntax#context-entities) プロパティによって行います。
+エンティティの指定は、[シナリオファイルの `context`.`entities`](types#context-entities) プロパティによって行います。
 
 ## 条件実行 {#conditional-execution}
 

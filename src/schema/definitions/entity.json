@@ -293,58 +293,5 @@
         }
       }
     }
-  },
-  "entityItem": {
-    "type": "object",
-    "description": "アイテムのエンティティを表します。",
-    "$ref": "#/definitions/entity",
-    "$comment": "多重継承はできないので、 itemStack のプロパティをそっくりそのままコピーします。",
-    "properties": {
-      "pickupDelay": {
-        "type": "number",
-        "description": "アイテムを拾えるようになるまでの時間です。"
-      },
-      "owner": {
-        "type": "string",
-        "format": "uuid",
-        "description": "アイテムの所有者のUUIDです。"
-      },
-      "thrower": {
-        "type": "string",
-        "format": "uuid",
-        "description": "アイテムを投げたプレイヤーのUUIDです。"
-      },
-      "canMobPickup": {
-        "type": "boolean",
-        "description": "モブがアイテムを拾えるかどうかです。"
-      },
-      "canPlayerPickup": {
-        "type": "boolean",
-        "description": "プレイヤーがアイテムを拾えるかどうかです。"
-      },
-      "type": {
-        "type": "string",
-        "description": "アイテムの種類です。"
-      },
-      "amount": {
-        "type": "integer",
-        "description": "アイテムの個数です。省略時は 1 です。"
-      },
-      "name": {
-        "type": "string",
-        "description": "アイテムの名前です。 一般に displayName と同じです。"
-      },
-      "localizedName": {
-        "type": "string",
-        "description": "アイテムの多言語化された名前です。"
-      },
-      "lores": {
-        "type": "array",
-        "description": "アイテムの説明文です。",
-        "items": {
-          "type": "string"
-        }
-      }
-    }
   }
 }

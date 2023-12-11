@@ -35,6 +35,23 @@
       "z"
     ]
   },
+  "blockFace": {
+    "type": "string",
+    "enum": [
+      "UP",
+      "DOWN",
+      "NORTH",
+      "SOUTH",
+      "WEST",
+      "EAST",
+      "up",
+      "down",
+      "north",
+      "south",
+      "west",
+      "east"
+    ]
+  },
   "block": {
     "type": "object",
     "description": "ブロックです。",
@@ -1148,5 +1165,20 @@
   "vector": {
     "description": "ベクトルです。",
     "$ref": "#/definitions/location"
+  },
+  "projectileSource": {
+    "description": "発射源です。",
+    "oneOf": [
+      {
+        "$ref": "#/definitions/entity"
+      },
+      {
+        "$ref": "#/definitions/block"
+      },
+      {
+        "type": "string",
+        "description": "エンティティのセレクタです。"
+      }
+    ]
   }
 }

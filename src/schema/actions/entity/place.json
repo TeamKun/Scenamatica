@@ -16,15 +16,7 @@
     },
     "direction": {
       "description": "設置する方向です。",
-      "type": "string",
-      "enum": [
-        "UP",
-        "DOWN",
-        "NORTH",
-        "SOUTH",
-        "WEST",
-        "EAST"
-      ]
+      "$ref": "#/definitions/blockFace"
     }
   }
 }

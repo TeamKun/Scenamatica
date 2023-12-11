@@ -16,14 +16,7 @@
     },
     "blockFace": {
       "description": "プレイヤーがクリックしたブロックの面です。",
-      "enum": [
-        "UP",
-        "DOWN",
-        "NORTH",
-        "SOUTH",
-        "WEST",
-        "EAST"
-      ]
+      "$ref": "#/definitions/blockFace"
     },
     "bucket": {
       "$ref": "#/definitions/itemStack",

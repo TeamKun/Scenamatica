@@ -87,7 +87,16 @@ const parseArgs = () => {
 
 const loadJson = (baseDir: string, pathLike: string) : unknown => {
     // noinspection JSUnresolvedReference
-    return JSON.parse(fs.readFileSync(path.join(baseDir, pathLike), "utf8"))
+    try
+    {
+        return JSON.parse(fs.readFileSync(path.join(baseDir, pathLike), "utf8"))
+    }
+    catch (e)
+    {
+        console.log(`Error: Failed to load ${pathLike}`)
+        console.log(e)
+        process.exit(1)
+    }
 }
 
 const loadPrime = (baseDir: string) : Prime => {

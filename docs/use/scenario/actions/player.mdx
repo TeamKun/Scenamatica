@@ -62,13 +62,13 @@ import {ObjectType} from "/src/components/Object";
             name: "block",
             description: "バケツを使用するブロックです。",
             type: "Block",
-            type_link: "../../file-syntax#block-structure",
+            type_link: "../../types#block-structure",
           },
           {
             name: "clickedBlock",
             description: "バケツを使用するブロックです。",
             type: "Block",
-            type_link: "../../file-syntax#block-structure",
+            type_link: "../../types#block-structure",
           },
           {
             name: "blockFace",
@@ -149,13 +149,13 @@ NMS の仕様上の都合により、 `block` を用いた液体の場所は `ev
             name: "block",
             description: "バケツを使用するブロックです。",
             type: "Block",
-            type_link: "../../file-syntax#block-structure",
+            type_link: "../../types#block-structure",
           },
           {
             name: "clickedBlock",
             description: "バケツを使用するブロックです。",
             type: "Block",
-            type_link: "../../file-syntax#block-structure",
+            type_link: "../../types#block-structure",
           },
           {
             name: "blockFace",
@@ -254,7 +254,7 @@ NMS の仕様上の都合により、 `block` を用いた液体の場所は `ev
 
 ### `advancement` {#advancement-advancement}
 
-進捗を [`NamespacedKey`](../file-syntax#namespaced-key-structure) で指定します。
+進捗を [`NamespacedKey`](../types#namespaced-key-structure) で指定します。
 
 ### `criterion` {#advancement-criterion}
 
@@ -325,19 +325,19 @@ Bukkit の仕様により、現在は `ARM_SWING` のみが指定可能です。
             name: "entity",
             description: "格納するエンティティです。",
             type: "Entity",
-            type_link: "../../file-syntax#entity-structure",
+            type_link: "../../types#entity-structure",
           },
           {
             name: "bucket",
             description: "エンティティを入れるバケツです。",
             type: "ItemStack",
-            type_link: "../../file-syntax#item-stack-structure",
+            type_link: "../../types#item-stack-structure",
           },
           {
             name: "entityBucket",
             description: "エンティティが入ったバケツです。",
             type: "ItemStack",
-            type_link: "../../file-syntax#item-stack-structure",
+            type_link: "../../types#item-stack-structure",
           },
         ]}
         executable watchable
@@ -351,12 +351,6 @@ Bukkit の仕様により、現在は `ARM_SWING` のみが指定可能です。
 :::
 
 ### アクション実行シナリオでの使用 {#bucket-entity-usage-in-execution}
-
-:::info
-
-`entity` を [Entity 型](../file-syntax/#entity-structure)で指定した場合、先にエンティティをスポーンさせます。
-
-:::
 
 :::info
 
@@ -508,7 +502,7 @@ Bukkit の仕様により、現在は `ARM_SWING` のみが指定可能です。
             name: "item",
             description: "ドロップするアイテムです。",
             type: "EntityItem",
-            type_link: "../file-syntax#entity-item-structure",
+            type_link: "../types#entity-item-structure",
           }
         ]}
         executable watchable
@@ -640,14 +634,14 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
             name: "block",
             description: "収穫するブロックです。",
             type: "Block",
-            type_link: "../../file-syntax#block-structure",
+            type_link: "../../types#block-structure",
             required: [ScenarioType.EXECUTE]
           },
           {
             name: "items",
             description: "収穫したアイテムです。",
             type: "ItemStack[]",
-            type_link: "../../file-syntax#item-stack-structure",
+            type_link: "../../types#item-stack-structure",
             available: [ScenarioType.EXPECT]
           }
         ]}
@@ -720,7 +714,7 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
 
 ### `item` {#hotbar-item}
 
-この型は[こちら](../file-syntax/#item-stack-structure)を参照してください。
+この型は[こちら](../types/#item-stack-structure)を参照してください。
 
 ## プレイヤのエンティティのクリック（作用） {#interact-at-entity}
 
@@ -757,7 +751,7 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
           {
             name: "position",
             type: "Vector(Location)",
-            type_link: "../file-syntax#location-structure",
+            type_link: "../types#location-structure",
             description: "クリックするエンティティの位置です。",
             required: [ScenarioType.EXECUTE]
           }
@@ -886,7 +880,7 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
             name: "item",
             description: "破壊されるアイテムです。",
             type: "ItemStack",
-            type_link: "../file-syntax#item-stack-structure",
+            type_link: "../types#item-stack-structure",
           },
           {
             name: "slot",
@@ -928,13 +922,13 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
             name: "item",
             description: "消費されるアイテムです。",
             type: "ItemStack",
-            type_link: "../file-syntax#item-stack-structure",
+            type_link: "../types#item-stack-structure",
           },
           {
             name: "replacement",
             description: "消費されるアイテムの代わりに与えられるアイテムです。",
             type: "ItemStack",
-            type_link: "../file-syntax#item-stack-structure",
+            type_link: "../types#item-stack-structure",
             available: [ScenarioType.EXPECT]
           }
         ]}
@@ -973,7 +967,7 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
             anchor: "item-damage-item",
             description: "ダメージを与えられるアイテムです。",
             type: "ItemStack",
-            type_link: "../file-syntax#item-stack-structure",
+            type_link: "../types#item-stack-structure",
             required: [ScenarioType.EXECUTE, ScenarioType.REQUIRE],
             available: [ScenarioType.EXECUTE, ScenarioType.EXPECT]
           },
@@ -1238,7 +1232,7 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
             anchor: "from",
             description: "移動前の座標です。",
             type: "Location",
-            type_link: "../file-syntax#location-structure",
+            type_link: "../types#location-structure",
             required: [ScenarioType.EXECUTE]
           },
           {
@@ -1246,7 +1240,7 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
             anchor: "to",
             description: "移動後の座標です。",
             type: "Location",
-            type_link: "../file-syntax#location-structure",
+            type_link: "../types#location-structure",
             available: [ScenarioType.EXECUTE]
           }
         ]}
@@ -1367,7 +1361,7 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
             anchor: "respawn-location",
             description: "リスポーンする場所です。",
             type: "Location",
-            type_link: "../file-syntax#location-structure",
+            type_link: "../types#location-structure",
           },
           {
             name: "isAnchor",
@@ -1473,7 +1467,7 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
             anchor: "teleport-location",
             description: "テレポート前の座標です。",
             type: "Location",
-            type_link: "../file-syntax#location-structure",
+            type_link: "../types#location-structure",
             available: [ScenarioType.EXPECT]
           },
           {
@@ -1481,7 +1475,7 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
             anchor: "teleport-location",
             description: "テレポート後の座標です。",
             type: "Location",
-            type_link: "../file-syntax#location-structure",
+            type_link: "../types#location-structure",
             required: [ScenarioType.EXECUTE]
           },
           {

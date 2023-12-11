@@ -114,6 +114,76 @@
         "stone"
       ]
     },
+    "entityItem": {
+      "type": "object",
+      "description": "アイテムのエンティティを表します。",
+      "$ref": "#/definitions/entity",
+      "$comment": "多重継承はできないので、 itemStack のプロパティをそっくりそのままコピーします。",
+      "properties": {
+        "pickupDelay": {
+          "type": "number",
+          "description": "アイテムを拾えるようになるまでの時間です。"
+        },
+        "owner": {
+          "type": "string",
+          "format": "uuid",
+          "description": "アイテムの所有者のUUIDです。"
+        },
+        "thrower": {
+          "type": "string",
+          "format": "uuid",
+          "description": "アイテムを投げたプレイヤーのUUIDです。"
+        },
+        "canMobPickup": {
+          "type": "boolean",
+          "description": "モブがアイテムを拾えるかどうかです。"
+        },
+        "canPlayerPickup": {
+          "type": "boolean",
+          "description": "プレイヤーがアイテムを拾えるかどうかです。"
+        },
+        "type": {
+          "type": "string",
+          "description": "アイテムの種類です。"
+        },
+        "amount": {
+          "type": "integer",
+          "description": "アイテムの個数です。省略時は 1 です。"
+        },
+        "name": {
+          "type": "string",
+          "description": "アイテムの名前です。 一般に displayName と同じです。"
+        },
+        "localizedName": {
+          "type": "string",
+          "description": "アイテムの多言語化された名前です。"
+        },
+        "lores": {
+          "type": "array",
+          "description": "アイテムの説明文です。",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "projectile": {
+      "type": "object",
+      "description": "投射物を表します。",
+      "$ref": "#/definitions/entity",
+      "properties": {
+        "shooter": {
+          "type": "object",
+          "description": "投射物の発射者を表します。",
+          "$ref": "#/definitions/projectileSource"
+        },
+        "bounce": {
+          "type": "boolean",
+          "description": "投射物が跳ね返るかどうかを表します。",
+          "default": false
+        }
+      }
+    },
     "entity": {
       "type": "object",
       "properties": {
@@ -409,59 +479,6 @@
         }
       }
     },
-    "entityItem": {
-      "type": "object",
-      "description": "アイテムのエンティティを表します。",
-      "$ref": "#/definitions/entity",
-      "$comment": "多重継承はできないので、 itemStack のプロパティをそっくりそのままコピーします。",
-      "properties": {
-        "pickupDelay": {
-          "type": "number",
-          "description": "アイテムを拾えるようになるまでの時間です。"
-        },
-        "owner": {
-          "type": "string",
-          "format": "uuid",
-          "description": "アイテムの所有者のUUIDです。"
-        },
-        "thrower": {
-          "type": "string",
-          "format": "uuid",
-          "description": "アイテムを投げたプレイヤーのUUIDです。"
-        },
-        "canMobPickup": {
-          "type": "boolean",
-          "description": "モブがアイテムを拾えるかどうかです。"
-        },
-        "canPlayerPickup": {
-          "type": "boolean",
-          "description": "プレイヤーがアイテムを拾えるかどうかです。"
-        },
-        "type": {
-          "type": "string",
-          "description": "アイテムの種類です。"
-        },
-        "amount": {
-          "type": "integer",
-          "description": "アイテムの個数です。省略時は 1 です。"
-        },
-        "name": {
-          "type": "string",
-          "description": "アイテムの名前です。 一般に displayName と同じです。"
-        },
-        "localizedName": {
-          "type": "string",
-          "description": "アイテムの多言語化された名前です。"
-        },
-        "lores": {
-          "type": "array",
-          "description": "アイテムの説明文です。",
-          "items": {
-            "type": "string"
-          }
-        }
-      }
-    },
     "attributeModifier": {
       "type": "object",
       "description": "属性の変更設定を表します。",
@@ -588,2822 +605,6 @@
         "type"
       ]
     },
-    "itemSlot": {
-      "type": "string",
-      "enum": [
-        "HAND",
-        "OFF_HAND",
-        "FEET",
-        "LEGS",
-        "CHEST",
-        "HEAD",
-        "hand",
-        "off_hand",
-        "feet",
-        "legs",
-        "chest",
-        "head"
-      ]
-    },
-    "playerInventory": {
-      "description": "プレイヤーのインベントリを表します。",
-      "properties": {
-        "main": {
-          "$ref": "#/definitions/inventory",
-          "description": "インベントリのメインの部分です。"
-        },
-        "mainHandItem": {
-          "$ref": "#/definitions/itemStack",
-          "description": "インベントリのメインハンドのアイテムです。"
-        },
-        "offHandItem": {
-          "$ref": "#/definitions/itemStack",
-          "description": "インベントリのオフハンドのアイテムです。"
-        },
-        "armors": {
-          "type": "array",
-          "description": "インベントリのアーマーのアイテムです。上から順にヘルメット、チェストプレート、レギンス、ブーツです。どこかが空いている場合は null を格納します。",
-          "items": {
-            "anyOf": [
-              {
-                "type": "null"
-              },
-              {
-                "$ref": "#/definitions/itemStack"
-              }
-            ]
-          },
-          "minItems": 4,
-          "maxItems": 4
-        }
-      }
-    },
-    "teleportCause": {
-      "type": "string",
-      "enum": [
-        "COMMAND",
-        "DEATH",
-        "END_PORTAL",
-        "END_GATEWAY",
-        "CHORUS_FRUIT",
-        "SPECTATE",
-        "NETHER_PORTAL",
-        "ENDER_PEARL",
-        "UNKNOWN"
-      ]
-    },
-    "scenario": {
-      "type": "object",
-      "$ref": "#/definitions/action",
-      "properties": {
-        "type": {
-          "type": "string",
-          "description": "シナリオの種類です。",
-          "oneOf": [
-            {
-              "const": "expect",
-              "description": "アクションがプラグインによって実行されるか監視します。"
-            },
-            {
-              "const": "execute",
-              "description": "アクションを実行します。"
-            },
-            {
-              "const": "require",
-              "description": "条件が満たされているかチェックします。"
-            }
-          ]
-        },
-        "timeout": {
-          "type": "integer",
-          "description": "シナリオのタイムアウト時間を**チック**で指定します。-1 で無効化します。",
-          "minimum": -1,
-          "default": 100
-        },
-        "runif": {
-          "type": "object",
-          "description": "シナリオの実行条件を定義します。アクションで定義します。満たしていない場合はスキップされます。",
-          "$ref": "#/definitions/action"
-        }
-      },
-      "required": [
-        "type",
-        "action"
-      ]
-    },
-    "action": {
-      "type": "object",
-      "properties": {
-        "action": {
-          "type": "string",
-          "description": "アクションの種類です。 ",
-          "enum": [
-            "block_break",
-            "block_place",
-            "entity_damage_by_entity",
-            "entity_damage",
-            "entity_death",
-            "entity_drop_item",
-            "entity",
-            "entity_move",
-            "entity_pickup_item",
-            "entity_place",
-            "entity_spawn",
-            "inventory_close",
-            "inventory_click",
-            "inventory_creative",
-            "inventory_open",
-            "player_advancement",
-            "player_animation",
-            "player_bucket_empty",
-            "player_bucket_fill",
-            "player_bucket_entity",
-            "player_chat",
-            "player_death",
-            "player_drop_item",
-            "player_flight",
-            "player_gamemode",
-            "player_harvest_block",
-            "player_hotbar",
-            "player_interact_at_entity",
-            "player_interact_block",
-            "player_interact_entity",
-            "player_item_break",
-            "player_item_consume",
-            "player_item_damage",
-            "player_join",
-            "player_kick",
-            "player_level_change",
-            "player_move",
-            "player_projectile_launch",
-            "player_quit",
-            "player_respawn",
-            "player_sneak",
-            "player_sprint",
-            "player_teleport",
-            "message",
-            "milestone",
-            "negate",
-            "broadcast",
-            "command_dispatch",
-            "server_log",
-            "server_plugin_disable",
-            "server_plugin_enable",
-            "tab_complete",
-            "whitelist_toggle",
-            "world_border_changed",
-            "world_border",
-            "world_game_rule",
-            "world_init",
-            "world_load",
-            "world_save",
-            "world_unload"
-          ]
-        },
-        "with": {
-          "type": "object",
-          "description": "アクションの種類によっては, このプロパティにアクションの引数を指定します。"
-        }
-      },
-      "required": [
-        "action"
-      ],
-      "allOf": [
-        {
-          "if": {
-            "properties": {
-              "action": {
-                "const": "block_break",
-                "description": "ブロックの破壊を検知します。"
-              }
-            }
-          },
-          "then": {
-            "properties": {
-              "with": {
-                "$ref": "#/definitions/action/definitions/block_break"
-              }
-            }
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "action": {
-                "const": "block_place",
-                "description": "ブロックの設置を検知します。"
-              }
-            }
-          },
-          "then": {
-            "properties": {
-              "with": {
-                "$ref": "#/definitions/action/definitions/block_place"
-              }
-            }
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "action": {
-                "const": "entity_damage_by_entity",
-                "description": "エンティティ"
-              }
-            }
-          },
-          "then": {
-            "properties": {
-              "with": {
-                "$ref": "#/definitions/action/definitions/entity_damage_by_entity"
-              }
-            }
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "action": {
-                "const": "entity_damage",
-                "description": "エンティティにダメージを与えます。"
-              }
-            }
-          },
-          "then": {
-            "properties": {
-              "with": {
-                "$ref": "#/definitions/action/definitions/entity_damage"
-              }
-            }
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "action": {
-                "const": "entity_death",
-                "description": "エンティティをキルします。"
-              }
-            }
-          },
-          "then": {
-            "properties": {
-              "with": {
-                "$ref": "#/definitions/action/definitions/entity_death"
-              }
-            }
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "action": {
-                "const": "entity_drop_item",
-                "description": "エンティティにアイテムをドロップさせます。"
-              }
-            }
-          },
-          "then": {
-            "properties": {
-              "with": {
-                "$ref": "#/definitions/action/definitions/entity_drop_item"
-              }
-            }
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "action": {
-                "const": "entity",
-                "description": "エンティティの状態を変更します。"
-              }
-            }
-          },
-          "then": {
-            "properties": {
-              "with": {
-                "$ref": "#/definitions/action/definitions/entity"
-              }
-            }
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "action": {
-                "const": "entity_move",
-                "description": "エンティティを移動させます。"
-              }
-            }
-          },
-          "then": {
-            "properties": {
-              "with": {
-                "$ref": "#/definitions/action/definitions/entity_move"
-              }
-            }
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "action": {
-                "const": "entity_pickup_item",
-                "description": "エンティティにアイテムを拾わせます。"
-              }
-            }
-          },
-          "then": {
-            "properties": {
-              "with": {
-                "$ref": "#/definitions/action/definitions/entity_pickup_item"
-              }
-            }
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "action": {
-                "const": "entity_place",
-                "description": "エンティティの設置を検知します"
-              }
-            }
-          },
-          "then": {
-            "properties": {
-              "with": {
-                "$ref": "#/definitions/action/definitions/entity_place"
-              }
-            }
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "action": {
-                "const": "entity_spawn",
-                "description": "エンティティをスポーンさせます。"
-              }
-            }
-          },
-          "then": {
-            "properties": {
-              "with": {
-                "$ref": "#/definitions/action/definitions/entity_spawn"
-              }
-            }
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "action": {
-                "const": "inventory_close",
-                "description": "インベントリを閉じます。"
-              }
-            }
-          },
-          "then": {
-            "properties": {
-              "with": {
-                "$ref": "#/definitions/action/definitions/inventory_close"
-              }
-            }
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "action": {
-                "const": "inventory_click",
-                "description": "インベントリのクリックを検知します"
-              }
-            }
-          },
-          "then": {
-            "properties": {
-              "with": {
-                "$ref": "#/definitions/action/definitions/inventory_click"
-              }
-            }
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "action": {
-                "const": "inventory_creative",
-                "description": "クリエイティブインベントリのアイテムをクリックしたときに実行されます。"
-              }
-            }
-          },
-          "then": {
-            "properties": {
-              "with": {
-                "$ref": "#/definitions/action/definitions/inventory_creative"
-              }
-            }
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "action": {
-                "const": "inventory_open",
-                "description": "インベントリを閉きます。"
-              }
-            }
-          },
-          "then": {
-            "properties": {
-              "with": {
-                "$ref": "#/definitions/action/definitions/inventory_open"
-              }
-            }
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "action": {
-                "const": "player_advancement",
-                "description": "プレイヤに進捗を達成させます。"
-              }
-            }
-          },
-          "then": {
-            "properties": {
-              "with": {
-                "$ref": "#/definitions/action/definitions/player_advancement"
-              }
-            }
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "action": {
-                "const": "player_animation",
-                "description": "プレイヤのアニメーションを再生します。"
-              }
-            }
-          },
-          "then": {
-            "properties": {
-              "with": {
-                "$ref": "#/definitions/action/definitions/player_animation"
-              }
-            }
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "action": {
-                "const": "player_bucket_entity",
-                "description": "プレイヤがバケツにエンティティを入れます。"
-              }
-            }
-          },
-          "then": {
-            "properties": {
-              "with": {
-                "$ref": "#/definitions/action/definitions/player_bucket_entity"
-              }
-            }
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "action": {
-                "const": "player_chat",
-                "description": "プレイヤにチャットをさせます。"
-              }
-            }
-          },
-          "then": {
-            "properties": {
-              "with": {
-                "$ref": "#/definitions/action/definitions/player_chat"
-              }
-            }
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "action": {
-                "const": "player_death",
-                "description": "プレイヤをキルします。"
-              }
-            }
-          },
-          "then": {
-            "properties": {
-              "with": {
-                "$ref": "#/definitions/action/definitions/player_death"
-              }
-            }
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "action": {
-                "const": "player_drop_item",
-                "description": "プレイヤにアイテムをドロップさせます。"
-              }
-            }
-          },
-          "then": {
-            "properties": {
-              "with": {
-                "$ref": "#/definitions/action/definitions/player_drop_item"
-              }
-            }
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "action": {
-                "const": "player_flight",
-                "description": "プレイヤを飛行させます。"
-              }
-            }
-          },
-          "then": {
-            "properties": {
-              "with": {
-                "$ref": "#/definitions/action/definitions/player_flight"
-              }
-            }
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "action": {
-                "const": "player_gamemode",
-                "description": "プレイヤのゲームモードを変更します。"
-              }
-            }
-          },
-          "then": {
-            "properties": {
-              "with": {
-                "$ref": "#/definitions/action/definitions/player_gamemode"
-              }
-            }
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "action": {
-                "const": "player_harvest_block",
-                "description": "プレイヤに作物を収穫させます。"
-              }
-            }
-          },
-          "then": {
-            "properties": {
-              "with": {
-                "$ref": "#/definitions/action/definitions/player_harvest_block"
-              }
-            }
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "action": {
-                "const": "player_hotbar",
-                "description": "プレイヤのホットバーのアイテムを変更します。"
-              }
-            }
-          },
-          "then": {
-            "properties": {
-              "with": {
-                "$ref": "#/definitions/action/definitions/player_hotbar"
-              }
-            }
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "action": {
-                "const": "player_interact_at_entity",
-                "description": "プレイヤにエンティティをクリックさせます。"
-              }
-            }
-          },
-          "then": {
-            "properties": {
-              "with": {
-                "$ref": "#/definitions/action/definitions/player_interact_at_entity"
-              }
-            }
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "action": {
-                "const": "player_interact_block",
-                "description": "プレイヤにブロックを操作させます。"
-              }
-            }
-          },
-          "then": {
-            "properties": {
-              "with": {
-                "$ref": "#/definitions/action/definitions/player_interact_block"
-              }
-            }
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "action": {
-                "const": "player_interact_entity",
-                "description": "プレイヤにエンティティをクリックさせます。"
-              }
-            }
-          },
-          "then": {
-            "properties": {
-              "with": {
-                "$ref": "#/definitions/action/definitions/player_interact_entity"
-              }
-            }
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "action": {
-                "const": "player_item_break",
-                "description": "プレイヤにアイテムを破壊させます。"
-              }
-            }
-          },
-          "then": {
-            "properties": {
-              "with": {
-                "$ref": "#/definitions/action/definitions/player_item_break"
-              }
-            }
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "action": {
-                "const": "player_item_consume",
-                "description": "プレイヤにアイテムを消費させます。"
-              }
-            }
-          },
-          "then": {
-            "properties": {
-              "with": {
-                "$ref": "#/definitions/action/definitions/player_item_consume"
-              }
-            }
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "action": {
-                "const": "player_item_damage",
-                "description": "プレイヤが所持するアイテムにダメージを与えます。"
-              }
-            }
-          },
-          "then": {
-            "properties": {
-              "with": {
-                "$ref": "#/definitions/action/definitions/player_item_damage"
-              }
-            }
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "action": {
-                "const": "player_join",
-                "description": "プレイヤをサーバに参加させます。"
-              }
-            }
-          },
-          "then": {
-            "properties": {
-              "with": {
-                "$ref": "#/definitions/action/definitions/player_join"
-              }
-            }
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "action": {
-                "const": "player_kick",
-                "description": "プレイヤをサーバから強制退出させます。"
-              }
-            }
-          },
-          "then": {
-            "properties": {
-              "with": {
-                "$ref": "#/definitions/action/definitions/player_kick"
-              }
-            }
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "action": {
-                "const": "player_level_change",
-                "description": "プレイヤの経験レベルを変更します。"
-              }
-            }
-          },
-          "then": {
-            "properties": {
-              "with": {
-                "$ref": "#/definitions/action/definitions/player_level_change"
-              }
-            }
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "action": {
-                "const": "player_move",
-                "description": "プレイヤを移動させます。"
-              }
-            }
-          },
-          "then": {
-            "properties": {
-              "with": {
-                "$ref": "#/definitions/action/definitions/player_move"
-              }
-            }
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "action": {
-                "const": "player_projectile_launch",
-                "description": "プレイヤに投げ物を射出させます。"
-              }
-            }
-          },
-          "then": {
-            "properties": {
-              "with": {
-                "$ref": "#/definitions/action/definitions/player_projectile_launch"
-              }
-            }
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "action": {
-                "const": "player_quit",
-                "description": "プレイヤをサーバから退出させます。"
-              }
-            }
-          },
-          "then": {
-            "properties": {
-              "with": {
-                "$ref": "#/definitions/action/definitions/player_quit"
-              }
-            }
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "action": {
-                "const": "player_respawn",
-                "description": "プレイヤをリスポーンさせます。"
-              }
-            }
-          },
-          "then": {
-            "properties": {
-              "with": {
-                "$ref": "#/definitions/action/definitions/player_respawn"
-              }
-            }
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "action": {
-                "const": "player_sneak",
-                "description": "プレイヤをしゃがませます。"
-              }
-            }
-          },
-          "then": {
-            "properties": {
-              "with": {
-                "$ref": "#/definitions/action/definitions/player_sneak"
-              }
-            }
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "action": {
-                "const": "player_sprint",
-                "description": "プレイヤを走らせます。"
-              }
-            }
-          },
-          "then": {
-            "properties": {
-              "with": {
-                "$ref": "#/definitions/action/definitions/player_sprint"
-              }
-            }
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "action": {
-                "const": "player_teleport",
-                "description": "プレイヤをてレポートさせます。"
-              }
-            }
-          },
-          "then": {
-            "properties": {
-              "with": {
-                "$ref": "#/definitions/action/definitions/player_teleport"
-              }
-            }
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "action": {
-                "const": "message",
-                "description": "プレイヤにメッセージを送信します。"
-              }
-            }
-          },
-          "then": {
-            "properties": {
-              "with": {
-                "$ref": "#/definitions/action/definitions/message"
-              }
-            }
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "action": {
-                "const": "milestone",
-                "description": "マイルストーンを達成します。"
-              }
-            }
-          },
-          "then": {
-            "properties": {
-              "with": {
-                "$ref": "#/definitions/action/definitions/milestone"
-              }
-            }
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "action": {
-                "const": "broadcast",
-                "description": "サーバにブロードキャストメッセージを送信します。"
-              }
-            }
-          },
-          "then": {
-            "properties": {
-              "with": {
-                "$ref": "#/definitions/action/definitions/broadcast"
-              }
-            }
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "action": {
-                "const": "command_dispatch",
-                "description": "コマンドを実行します。"
-              }
-            }
-          },
-          "then": {
-            "properties": {
-              "with": {
-                "$ref": "#/definitions/action/definitions/command_dispatch"
-              }
-            }
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "action": {
-                "const": "server_log",
-                "description": "サーバにログを送信します。"
-              }
-            }
-          },
-          "then": {
-            "properties": {
-              "with": {
-                "$ref": "#/definitions/action/definitions/server_log"
-              }
-            }
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "action": {
-                "const": "server_plugin_disable",
-                "description": "サーバのプラグインを無効化します。"
-              }
-            }
-          },
-          "then": {
-            "properties": {
-              "with": {
-                "$ref": "#/definitions/action/definitions/server_plugin_disable"
-              }
-            }
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "action": {
-                "const": "server_plugin_enable",
-                "description": "サーバのプラグインを有効化します。"
-              }
-            }
-          },
-          "then": {
-            "properties": {
-              "with": {
-                "$ref": "#/definitions/action/definitions/server_plugin_enable"
-              }
-            }
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "action": {
-                "const": "tab_complete",
-                "description": "コマンドをタブ補完します。"
-              }
-            }
-          },
-          "then": {
-            "properties": {
-              "with": {
-                "$ref": "#/definitions/action/definitions/tab_complete"
-              }
-            }
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "action": {
-                "const": "whitelist_toggle",
-                "description": "サーバのホワイトリストを切り替えます。"
-              }
-            }
-          },
-          "then": {
-            "properties": {
-              "with": {
-                "$ref": "#/definitions/action/definitions/whitelist_toggle"
-              }
-            }
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "action": {
-                "const": "world_border_changed",
-                "description": "ワールドボーダの変更の完了を検知します。"
-              }
-            }
-          },
-          "then": {
-            "properties": {
-              "with": {
-                "$ref": "#/definitions/action/definitions/world_border_changed"
-              }
-            }
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "action": {
-                "const": "world_border",
-                "description": "ワールドのボーダを変更します。"
-              }
-            }
-          },
-          "then": {
-            "properties": {
-              "with": {
-                "$ref": "#/definitions/action/definitions/world_border"
-              }
-            }
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "action": {
-                "const": "world_game_rule",
-                "description": "ワールドのゲームルールを設定します"
-              }
-            }
-          },
-          "then": {
-            "properties": {
-              "with": {
-                "$ref": "#/definitions/action/definitions/world_game_rule"
-              }
-            }
-          }
-        }
-      ],
-      "definitions": {
-        "block_$base": {
-          "type": "object",
-          "properties": {
-            "block": {
-              "description": "対象のブロックです。",
-              "$ref": "#/definitions/block"
-            }
-          }
-        },
-        "block_break": {
-          "type": "object",
-          "description": "ブロックの破壊を検知します。",
-          "properties": {
-            "actor": {
-              "type": "string",
-              "description": "ブロックを破壊したアクタの名前です。",
-              "maxLength": 16
-            },
-            "dropItems": {
-              "type": "boolean",
-              "description": "ブロックがドロップするアイテムをドロップするかどうかです。"
-            }
-          },
-          "$ref": "#/definitions/action/definitions/block_$base"
-        },
-        "block_place": {
-          "type": "object",
-          "description": "ブロックの設置を検知します。",
-          "properties": {
-            "actor": {
-              "type": "string",
-              "description": "ブロックを破壊したアクタの名前です。",
-              "maxLength": 16
-            },
-            "hand": {
-              "type": "string",
-              "description": "ブロックを設置した手です。",
-              "enum": [
-                "HAND",
-                "OFF_HAND",
-                "hand",
-                "off_hand"
-              ]
-            },
-            "direction": {
-              "type": "string",
-              "description": "ブロックを設置する方向です。",
-              "enum": [
-                "UP",
-                "DOWN",
-                "NORTH",
-                "SOUTH",
-                "WEST",
-                "EAST",
-                "up",
-                "down",
-                "north",
-                "south",
-                "west",
-                "east"
-              ]
-            }
-          },
-          "$ref": "#/definitions/action/definitions/block_$base"
-        },
-        "entity_$base": {
-          "type": "object",
-          "properties": {
-            "target": {
-              "description": "対象のエンティティです。",
-              "oneOf": [
-                {
-                  "type": "string",
-                  "description": "エンティティの UUID またはセレクタです。"
-                },
-                {
-                  "$ref": "#/definitions/entity"
-                }
-              ]
-            }
-          }
-        },
-        "entity_damage_by_entity": {
-          "type": "object",
-          "description": "エンティティ",
-          "properties": {
-            "damager": {
-              "description": "ダメージ元のエンティティのUUIDまたはセレクタです。",
-              "type": "string"
-            }
-          },
-          "$ref": "#/definitions/action/definitions/entity_damage"
-        },
-        "entity_damage": {
-          "type": "object",
-          "description": "エンティティにダメージを与えます。",
-          "properties": {
-            "cause": {
-              "type": "string",
-              "description": "ダメージの種類です。",
-              "enum": [
-                "CONTACT",
-                "ENTITY_ATTACK",
-                "ENTITY_SWEEP_ATTACK",
-                "PROJECTILE",
-                "SUFFOCATION",
-                "FALL",
-                "FIRE",
-                "FIRE_TICK",
-                "MELTING",
-                "LAVA",
-                "DROWNING",
-                "BLOCK_EXPLOSION",
-                "ENTITY_EXPLOSION",
-                "VOID",
-                "LIGHTNING",
-                "SUICIDE",
-                "STARVATION",
-                "POTION",
-                "MAGIC",
-                "WITHER",
-                "FALLING_BLOCK",
-                "THORNS",
-                "DRAGON_BREATH",
-                "CUSTOM",
-                "FLY_INTO_WALL",
-                "HOT_FLOOR",
-                "CRAMMING",
-                "DRYOUT",
-                "contact",
-                "entity_attack",
-                "entity_sweep_attack",
-                "projectile",
-                "suffocation",
-                "fall",
-                "fire",
-                "fire_tick",
-                "melting",
-                "lava",
-                "drowning",
-                "block_explosion",
-                "entity_explosion",
-                "void",
-                "lightning",
-                "suicide",
-                "starvation",
-                "potion",
-                "magic",
-                "wither",
-                "falling_block",
-                "thorns",
-                "dragon_breath",
-                "custom",
-                "fly_into_wall",
-                "hot_floor",
-                "cramming",
-                "dryout"
-              ]
-            },
-            "amount": {
-              "type": "number",
-              "description": "与えるダメージの量(float)です。",
-              "min": 0
-            },
-            "modifiers": {
-              "type": "object",
-              "patternProperties": {
-                "^\\w+$": {
-                  "type": "number",
-                  "min": 0
-                }
-              }
-            }
-          },
-          "$ref": "#/definitions/action/definitions/entity_$base"
-        },
-        "entity_death": {
-          "type": "object",
-          "description": "エンティティをキルします。",
-          "properties": {
-            "drops": {
-              "description": "ドロップするアイテムです。",
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/itemStack"
-              }
-            },
-            "dropExp": {
-              "description": "ドロップする経験値です。",
-              "type": "integer",
-              "min": 0
-            },
-            "reviveHealth": {
-              "description": "復活時の体力です。",
-              "type": "number",
-              "min": 0
-            },
-            "playDeathSound": {
-              "description": "死亡時のサウンドを再生するかどうかです。",
-              "type": "boolean"
-            },
-            "sound": {
-              "description": "再生するサウンドです。",
-              "$ref": "#/definitions/sound"
-            },
-            "soundCategory": {
-              "description": "サウンドのカテゴリです。",
-              "type": "string",
-              "enum": [
-                "MASTER",
-                "MUSIC",
-                "RECORD",
-                "WEATHER",
-                "BLOCK",
-                "HOSTILE",
-                "NEUTRAL",
-                "PLAYER",
-                "AMBIENT",
-                "VOICE",
-                "master",
-                "music",
-                "record",
-                "weather",
-                "block",
-                "hostile",
-                "neutral",
-                "player",
-                "ambient",
-                "voice"
-              ]
-            },
-            "soundVolume": {
-              "description": "サウンドの音量です。",
-              "type": "number",
-              "min": 0
-            },
-            "soundPitch": {
-              "description": "サウンドのピッチです。",
-              "type": "number",
-              "min": 0
-            }
-          },
-          "$ref": "#/definitions/action/definitions/entity_$base"
-        },
-        "entity_drop_item": {
-          "type": "object",
-          "description": "エンティティにアイテムをドロップさせます。",
-          "properties": {
-            "item": {
-              "description": "ドロップするアイテムです。",
-              "$ref": "#/definitions/entityItem"
-            }
-          },
-          "$ref": "#/definitions/action/definitions/entity_$base"
-        },
-        "entity": {
-          "type": "object",
-          "description": "エンティティの状態を変更します。",
-          "properties": {
-            "entity": {
-              "$ref": "#/definitions/entity",
-              "description": "変更する値です。"
-            }
-          },
-          "$ref": "#/definitions/action/definitions/entity_$base"
-        },
-        "entity_move": {
-          "type": "object",
-          "description": "エンティティを移動させます。",
-          "properties": {
-            "from": {
-              "$ref": "#/definitions/location",
-              "description": "移動元の座標を指定します。"
-            },
-            "to": {
-              "$ref": "#/definitions/location",
-              "description": "移動先の座標を指定します。"
-            },
-            "ai": {
-              "type": "boolean",
-              "description": "AI を有効にするかどうかを指定します。",
-              "default": true
-            }
-          },
-          "$ref": "#/definitions/action/definitions/entity_$base"
-        },
-        "entity_pickup_item": {
-          "type": "object",
-          "description": "エンティティにアイテムを拾わせます。",
-          "properties": {
-            "remaining": {
-              "type": "number",
-              "description": "残りのアイテム数を指定します。"
-            },
-            "item": {
-              "description": "拾わせるアイテムを指定します。",
-              "oneOf": [
-                {
-                  "$ref": "#/definitions/entityItem",
-                  "description": "アイテムを指定します。"
-                },
-                {
-                  "type": "string",
-                  "description": "アイテムのセレクタを指定します。"
-                }
-              ]
-            }
-          },
-          "$ref": "#/definitions/action/definitions/entity_$base"
-        },
-        "entity_place": {
-          "type": "object",
-          "description": "エンティティの設置を検知します",
-          "properties": {
-            "target": {
-              "description": "設置するエンティティの UUID, セレクタ, 実体, または Material です。"
-            },
-            "player": {
-              "description": "設置するプレイヤーの名前または UUID です。",
-              "type": "string"
-            },
-            "block": {
-              "description": "設置場所のブロックです。",
-              "$ref": "#/definitions/block"
-            },
-            "direction": {
-              "description": "設置する方向です。",
-              "type": "string",
-              "enum": [
-                "UP",
-                "DOWN",
-                "NORTH",
-                "SOUTH",
-                "WEST",
-                "EAST",
-                "up",
-                "down",
-                "north",
-                "south",
-                "west",
-                "east"
-              ]
-            }
-          },
-          "$ref": "#/definitions/action/definitions/entity_damage"
-        },
-        "entity_spawn": {
-          "type": "object",
-          "description": "エンティティをスポーンさせます。",
-          "properties": {
-            "entity": {
-              "$ref": "#/definitions/entity"
-            }
-          },
-          "$ref": "#/definitions/action/definitions/entity_$base"
-        },
-        "inventory_$base": {
-          "type": "object",
-          "properties": {
-            "inventory": {
-              "description": "対象のインベントリです。",
-              "$ref": "#/definitions/inventory"
-            }
-          },
-          "definitions": {
-            "clickType": {
-              "type": "string",
-              "description": "クリックの種類です。",
-              "enum": [
-                "LEFT",
-                "SHIFT_LEFT",
-                "RIGHT",
-                "SHIFT_RIGHT",
-                "WINDOW_BORDER_LEFT",
-                "WINDOW_BORDER_RIGHT",
-                "MIDDLE",
-                "NUMBER_KEY",
-                "DOUBLE_CLICK",
-                "DROP",
-                "CONTROL_DROP",
-                "CREATIVE",
-                "SWAP_OFFHAND",
-                "UNKNOWN",
-                "left",
-                "shift_left",
-                "right",
-                "shift_right",
-                "window_border_left",
-                "window_border_right",
-                "middle",
-                "number_key",
-                "double_click",
-                "drop",
-                "control_drop",
-                "creative",
-                "swap_offhand",
-                "unknown"
-              ]
-            },
-            "inventoryAction": {
-              "type": "string",
-              "description": "インベントリのアクションです。",
-              "enum": [
-                "NOTHING",
-                "PICKUP_ALL",
-                "PICKUP_SOME",
-                "PICKUP_HALF",
-                "PICKUP_ONE",
-                "PLACE_ALL",
-                "PLACE_SOME",
-                "PLACE_ONE",
-                "SWAP_WITH_CURSOR",
-                "DROP_ALL_CURSOR",
-                "DROP_ONE_CURSOR",
-                "DROP_ALL_SLOT",
-                "DROP_ONE_SLOT",
-                "MOVE_TO_OTHER_INVENTORY",
-                "HOTBAR_MOVE_AND_REA",
-                "HOTBAR_SWAP",
-                "CLONE_STACK",
-                "COLLECT_TO_CURSOR",
-                "UNKNOWN",
-                "nothing",
-                "pickup_all",
-                "pickup_some",
-                "pickup_half",
-                "pickup_one",
-                "place_all",
-                "place_some",
-                "place_one",
-                "swap_with_cursor",
-                "drop_all_cursor",
-                "drop_one_cursor",
-                "drop_all_slot",
-                "drop_one_slot",
-                "move_to_other_inventory",
-                "hotbar_move_and_readd",
-                "hotbar_swap",
-                "clone_stack",
-                "collect_to_cursor",
-                "unknown"
-              ]
-            },
-            "slotType": {
-              "type": "string",
-              "description": "スロットの種類です。",
-              "enum": [
-                "RESULT",
-                "CRAFTING",
-                "ARMOR",
-                "CONTAINER",
-                "QUICKBAR",
-                "OUTSIDE",
-                "FUEL",
-                "result",
-                "crafting",
-                "armor",
-                "container",
-                "quickbar",
-                "outside",
-                "fuel"
-              ]
-            },
-            "closeReason": {
-              "type": "string",
-              "description": "インベントリを閉じた理由です。",
-              "enum": [
-                "UNKNOWN",
-                "TELEPORT",
-                "CANT_USE",
-                "UNLOADED",
-                "OPEN_NEW",
-                "PLAYER",
-                "DISCONNECT",
-                "DEATH",
-                "PLUGIN"
-              ]
-            }
-          }
-        },
-        "inventory_close": {
-          "type": "object",
-          "description": "インベントリを閉じます。",
-          "properties": {
-            "target": {
-              "type": "string",
-              "description": "対象のプレイヤーです。"
-            },
-            "reason": {
-              "$ref": "#/definitions/action/definitions/inventory_$base/definitions/closeReason"
-            }
-          },
-          "$ref": "#/definitions/action/definitions/inventory_$base"
-        },
-        "inventory_interact_$base": {
-          "type": "object",
-          "properties": {
-            "target": {
-              "type": "string",
-              "description": "対象のプレイヤーです。"
-            }
-          },
-          "$ref": "#/definitions/action/definitions/inventory_$base"
-        },
-        "inventory_click": {
-          "type": "object",
-          "description": "インベントリのクリックを検知します",
-          "properties": {
-            "type": {
-              "$ref": "#/definitions/action/definitions/inventory_$base/definitions/clickType"
-            },
-            "action": {
-              "$ref": "#/definitions/action/definitions/inventory_$base/definitions/inventoryAction"
-            },
-            "slotType": {
-              "$ref": "#/definitions/action/definitions/inventory_$base/definitions/slotType"
-            },
-            "slot": {
-              "type": "integer",
-              "description": "スロット番号です。",
-              "minimum": 0,
-              "maximum": 40
-            },
-            "rawSlot": {
-              "type": "integer",
-              "description": "スロット番号です。",
-              "minimum": 0
-            },
-            "clickedItem": {
-              "description": "クリックされたアイテムです。",
-              "$ref": "#/definitions/itemStack"
-            },
-            "button": {
-              "type": "integer",
-              "description": "ボタンの番号です。",
-              "minimum": 0
-            },
-            "cursorItem": {
-              "description": "カーソルにあるアイテムです。",
-              "$ref": "#/definitions/itemStack"
-            }
-          },
-          "$ref": "#/definitions/action/definitions/inventory_interact_$base"
-        },
-        "inventory_creative": {
-          "type": "object",
-          "description": "クリエイティブインベントリのアイテムをクリックしたときに実行されます。",
-          "properties": {
-            "item": {
-              "description": "クリックされたアイテムです。",
-              "$ref": "#/definitions/itemStack"
-            }
-          },
-          "$ref": "#/definitions/action/definitions/inventory_click"
-        },
-        "inventory_open": {
-          "type": "object",
-          "description": "インベントリを閉きます。",
-          "properties": {
-            "target": {
-              "type": "string",
-              "description": "対象のプレイヤーです。"
-            },
-            "inventory": {
-              "description": "開くインベントリです。",
-              "$ref": "#/definitions/inventory"
-            }
-          },
-          "$ref": "#/definitions/action/definitions/inventory_$base"
-        },
-        "player_$base": {
-          "type": "object",
-          "properties": {
-            "target": {
-              "type": "string",
-              "description": "対象のプレイヤーです。"
-            }
-          }
-        },
-        "player_advancement": {
-          "type": "object",
-          "description": "プレイヤに進捗を達成させます。",
-          "properties": {
-            "advancement": {
-              "type": "string",
-              "description": "達成する進捗です。",
-              "maxLength": 32767,
-              "$ref": "#/definitions/namespacedKey"
-            },
-            "criterion": {
-              "type": "string",
-              "description": "達成する条件です。省略した場合は全ての条件を達成します。",
-              "maxLength": 32767,
-              "$ref": "#/definitions/namespacedKey"
-            }
-          },
-          "$ref": "#/definitions/action/definitions/player_$base"
-        },
-        "player_animation": {
-          "type": "object",
-          "description": "プレイヤのアニメーションを再生します。",
-          "properties": {
-            "type": {
-              "type": "string",
-              "description": "再生するアニメーションの種類です。",
-              "enum": [
-                "ARM_SWING",
-                "arm_swing"
-              ]
-            }
-          },
-          "$ref": "#/definitions/action/definitions/player_$base"
-        },
-        "player_bucket_$base": {
-          "type": "object",
-          "properties": {
-            "item": {
-              "$ref": "#/definitions/itemStack",
-              "description": "操作後にプレイヤーが持っているアイテムです。"
-            },
-            "block": {
-              "$ref": "#/definitions/block",
-              "description": "設置する液体のブロックです。"
-            },
-            "clickedBlock": {
-              "$ref": "#/definitions/block",
-              "description": "プレイヤがクリックしたブロックです。"
-            },
-            "blockFace": {
-              "description": "プレイヤーがクリックしたブロックの面です。",
-              "enum": [
-                "UP",
-                "DOWN",
-                "NORTH",
-                "SOUTH",
-                "WEST",
-                "EAST",
-                "up",
-                "down",
-                "north",
-                "south",
-                "west",
-                "east"
-              ]
-            },
-            "bucket": {
-              "$ref": "#/definitions/itemStack",
-              "description": "設置する液体のバケツです。"
-            },
-            "hand": {
-              "description": "バケツを使用する手です。",
-              "enum": [
-                "MAIN_HAND",
-                "OFF_HAND",
-                "main_hand",
-                "off_hand"
-              ]
-            }
-          },
-          "$ref": "#/definitions/action/definitions/player_$base"
-        },
-        "player_bucket_entity": {
-          "type": "object",
-          "description": "プレイヤがバケツにエンティティを入れます。",
-          "properties": {
-            "bucket": {
-              "description": "エンティティをいれるバケツです。",
-              "$ref": "#/definitions/itemStack"
-            },
-            "entityBucket": {
-              "description": "エンティティが入ったバケツです。",
-              "$ref": "#/definitions/itemStack"
-            },
-            "entity": {
-              "description": "入れるエンティティです。",
-              "oneOf": [
-                {
-                  "type": "string",
-                  "description": "エンティティの UUID またはセレクタです。"
-                },
-                {
-                  "$ref": "#/definitions/entity"
-                }
-              ]
-            }
-          },
-          "$ref": "#/definitions/action/definitions/player_$base"
-        },
-        "player_chat": {
-          "type": "object",
-          "description": "プレイヤにチャットをさせます。",
-          "properties": {
-            "message": {
-              "type": "string",
-              "description": "送信するメッセージまたは判定用の正規表現です。"
-            },
-            "format": {
-              "type": "string",
-              "description": "メッセージのフォーマットです。",
-              "example": "<%1$s> %2$s"
-            }
-          },
-          "$ref": "#/definitions/action/definitions/player_$base"
-        },
-        "player_death": {
-          "type": "object",
-          "description": "プレイヤをキルします。",
-          "properties": {
-            "killer": {
-              "type": "string",
-              "description": "ターゲットを殺すプレイヤーです。"
-            },
-            "deathMessage": {
-              "type": "string",
-              "description": "死亡メッセージです。"
-            },
-            "exp": {
-              "type": "integer",
-              "description": "死亡時したプレイヤの新しい経験値です。",
-              "minimum": 0
-            },
-            "level": {
-              "type": "integer",
-              "description": "死亡時したプレイヤの新しいレベルです。",
-              "minimum": 0
-            },
-            "totalExp": {
-              "type": "integer",
-              "description": "死亡時したプレイヤの新しい総経験値です。",
-              "minimum": 0
-            },
-            "keepLevel": {
-              "type": "boolean",
-              "description": "死亡時したプレイヤのレベルを保持するかどうかです。"
-            },
-            "keepInventory": {
-              "type": "boolean",
-              "description": "死亡時したプレイヤのインベントリを保持するかどうかです。"
-            },
-            "doExpDrop": {
-              "type": "boolean",
-              "description": "死亡時したプレイヤの経験値ドロップをするかどうかです。"
-            }
-          },
-          "$ref": "#/definitions/action/definitions/player_$base"
-        },
-        "player_drop_item": {
-          "type": "object",
-          "description": "プレイヤにアイテムをドロップさせます。",
-          "properties": {
-            "item": {
-              "description": "ドロップするアイテムです。",
-              "$ref": "#/definitions/entityItem"
-            }
-          },
-          "$ref": "#/definitions/action/definitions/player_$base"
-        },
-        "player_flight": {
-          "type": "object",
-          "description": "プレイヤを飛行させます。",
-          "properties": {
-            "flying": {
-              "type": "boolean",
-              "description": "プレイヤーが飛行中かどうかです。"
-            }
-          },
-          "$ref": "#/definitions/action/definitions/player_$base"
-        },
-        "player_gamemode": {
-          "type": "object",
-          "description": "プレイヤのゲームモードを変更します。",
-          "properties": {
-            "gamemode": {
-              "type": "string",
-              "description": "ゲームモードです。",
-              "enum": [
-                "SURVIVAL",
-                "CREATIVE",
-                "ADVENTURE",
-                "SPECTATOR",
-                "survival",
-                "creative",
-                "adventure",
-                "spectator"
-              ]
-            },
-            "cause": {
-              "type": "string",
-              "description": "ゲームモードを変更した原因です。",
-              "enum": [
-                "COMMAND",
-                "PLUGIN",
-                "DEFAULT_GAMEMODE",
-                "HARDCORE_DEATH",
-                "UNKNOWN",
-                "command",
-                "plugin",
-                "default_gamemode",
-                "hardcore_death",
-                "unknown"
-              ]
-            },
-            "cancelMessage": {
-              "type": "string",
-              "description": "ゲームモード変更をキャンセルされたときに表示するメッセージです。"
-            }
-          },
-          "$ref": "#/definitions/action/definitions/player_$base"
-        },
-        "player_harvest_block": {
-          "type": "object",
-          "description": "プレイヤに作物を収穫させます。",
-          "properties": {
-            "block": {
-              "description": "対象の作物です。",
-              "$ref": "#/definitions/block"
-            },
-            "items": {
-              "type": "array",
-              "description": "収穫したアイテムです。",
-              "items": {
-                "$ref": "#/definitions/itemStack"
-              }
-            }
-          },
-          "$ref": "#/definitions/action/definitions/player_$base"
-        },
-        "player_hotbar": {
-          "type": "object",
-          "description": "プレイヤのホットバーのアイテムを変更します。",
-          "properties": {
-            "slot": {
-              "type": "integer",
-              "description": "ホットバーのスロットです。",
-              "minimum": 0,
-              "maximum": 8
-            },
-            "previous_slot": {
-              "type": "integer",
-              "description": "ホットバーのスロットが変更される前のスロットです。",
-              "minimum": 0,
-              "maximum": 8
-            },
-            "item": {
-              "description": "ホットバーのスロットに入っているアイテムです。",
-              "$ref": "#/definitions/itemStack"
-            }
-          },
-          "$ref": "#/definitions/action/definitions/player_$base"
-        },
-        "player_interact_at_entity": {
-          "type": "object",
-          "description": "プレイヤにエンティティをクリックさせます。",
-          "properties": {
-            "position": {
-              "description": "クリックするエンティティの場所です。",
-              "$ref": "#/definitions/location"
-            }
-          },
-          "$ref": "#/definitions/action/definitions/player_interact_entity"
-        },
-        "player_interact_block": {
-          "type": "object",
-          "description": "プレイヤにブロックを操作させます。",
-          "properties": {
-            "action": {
-              "type": "string",
-              "description": "プレイヤーが行ったアクションです。",
-              "enum": [
-                "RIGHT_CLICK_BLOCK",
-                "LEFT_CLICK_BLOCK",
-                "RIGHT_CLICK_AIR",
-                "LEFT_CLICK_AIR",
-                "right_click_block",
-                "left_click_block",
-                "right_click_air",
-                "left_click_air"
-              ]
-            },
-            "block": {
-              "description": "プレイヤーがクリックしたブロックです。",
-              "$ref": "#/definitions/block"
-            },
-            "hand": {
-              "type": "string",
-              "description": "プレイヤーがクリックした手です。",
-              "enum": [
-                "HAND",
-                "OFF_HAND",
-                "hand",
-                "off_hand"
-              ]
-            }
-          },
-          "$ref": "#/definitions/action/definitions/player_$base"
-        },
-        "player_interact_entity": {
-          "type": "object",
-          "description": "プレイヤにエンティティをクリックさせます。",
-          "properties": {
-            "entity": {
-              "description": "クリックするエンティティです。",
-              "oneOf": [
-                {
-                  "type": "string",
-                  "description": "エンティティの UUID またはセレクタです。"
-                },
-                {
-                  "$ref": "#/definitions/entity"
-                }
-              ]
-            },
-            "hand": {
-              "type": "string",
-              "description": "クリックする手です。",
-              "enum": [
-                "HAND",
-                "OFF_HAND",
-                "hand",
-                "off_hand"
-              ]
-            }
-          },
-          "$ref": "#/definitions/action/definitions/player_$base"
-        },
-        "player_item_break": {
-          "type": "object",
-          "description": "プレイヤにアイテムを破壊させます。",
-          "properties": {
-            "item": {
-              "description": "壊れたアイテムです。",
-              "$ref": "#/definitions/itemStack"
-            },
-            "slot": {
-              "description": "壊れたアイテムが入っていたスロットです。",
-              "$ref": "#/definitions/itemSlot"
-            }
-          },
-          "$ref": "#/definitions/action/definitions/player_$base"
-        },
-        "player_item_consume": {
-          "type": "object",
-          "description": "プレイヤにアイテムを消費させます。",
-          "properties": {
-            "item": {
-              "description": "消費するアイテムです。",
-              "$ref": "#/definitions/itemStack"
-            },
-            "replacement": {
-              "description": "消費後にプレイヤーに与えるアイテムです。",
-              "$ref": "#/definitions/itemStack"
-            }
-          },
-          "$ref": "#/definitions/action/definitions/player_$base"
-        },
-        "player_item_damage": {
-          "type": "object",
-          "description": "プレイヤが所持するアイテムにダメージを与えます。",
-          "properties": {
-            "item": {
-              "description": "ダメージを与えるアイテムです。",
-              "$ref": "#/definitions/itemStack"
-            },
-            "damage": {
-              "description": "与えるダメージです。",
-              "type": "number",
-              "minimum": 0,
-              "maximum": 2147483647
-            },
-            "slot": {
-              "description": "ダメージを与えるアイテムのスロットです。",
-              "$ref": "#/definitions/itemSlot"
-            }
-          },
-          "$ref": "#/definitions/action/definitions/player_$base"
-        },
-        "player_join": {
-          "type": "object",
-          "description": "プレイヤをサーバに参加させます。",
-          "properties": {
-            "message": {
-              "type": "string",
-              "description": "プレイヤーがサーバーに参加したときに表示するメッセージです。"
-            }
-          },
-          "$ref": "#/definitions/action/definitions/player_$base"
-        },
-        "player_kick": {
-          "type": "object",
-          "description": "プレイヤをサーバから強制退出させます。",
-          "properties": {
-            "leaveMessage": {
-              "type": "string",
-              "description": "プレイヤーがサーバーから退出したときに表示するメッセージです。"
-            },
-            "message": {
-              "type": "string",
-              "description": "プレイヤーがサーバーからキックされたときに表示するメッセージです。"
-            },
-            "cause": {
-              "type": "string",
-              "description": "プレイヤーがサーバーからキックされた原因です。",
-              "enum": [
-                "PLUGIN",
-                "WHITELIST",
-                "BANNED",
-                "IP_BANNED",
-                "KICK_COMMAND",
-                "FLYING_PLAYER",
-                "FLYING_VEHICLE",
-                "TIMEOUT",
-                "IDLING",
-                "INVALID_VEHICLE_MOVEMENT",
-                "INVALID_PLAYER_MOVEMENT",
-                "INVALID_ENTITY_ATTACKED",
-                "INVALID_PAYLOAD",
-                "SPAM",
-                "ILLEGAL_ACTION",
-                "ILLEGAL_CHARACTERS",
-                "SELF_INTERACTION",
-                "DUPLICATE_LOGIN",
-                "RESTART_COMMAND",
-                "UNKNOWN",
-                "plugin",
-                "whitelist",
-                "banned",
-                "ip_banned",
-                "kick_command",
-                "flying_player",
-                "flying_vehicle",
-                "timeout",
-                "idling",
-                "invalid_vehicle_movement",
-                "invalid_player_movement",
-                "invalid_entity_attacked",
-                "invalid_payload",
-                "spam",
-                "illegal_action",
-                "illegal_characters",
-                "self_interaction",
-                "duplicate_login",
-                "restart_command",
-                "unknown"
-              ]
-            }
-          },
-          "$ref": "#/definitions/action/definitions/player_$base"
-        },
-        "player_level_change": {
-          "type": "object",
-          "description": "プレイヤの経験レベルを変更します。",
-          "properties": {
-            "oldLevel": {
-              "type": "number",
-              "description": "変更前の経験レベルです。"
-            },
-            "level": {
-              "type": "number",
-              "description": "変更後の経験レベルです。"
-            }
-          },
-          "$ref": "#/definitions/action/definitions/player_$base"
-        },
-        "player_move": {
-          "type": "object",
-          "description": "プレイヤを移動させます。",
-          "properties": {
-            "from": {
-              "$ref": "#/definitions/location",
-              "description": "移動元の座標を指定します。"
-            },
-            "to": {
-              "$ref": "#/definitions/location",
-              "description": "移動先の座標を指定します。"
-            }
-          },
-          "$ref": "#/definitions/action/definitions/player_$base"
-        },
-        "player_projectile_launch": {
-          "type": "object",
-          "description": "プレイヤに投げ物を射出させます。",
-          "properties": {
-            "type": {
-              "type": "string",
-              "description": "投げ物の種類です。",
-              "enum": [
-                "ARROW",
-                "SNOWBALL",
-                "EGG",
-                "FIREBALL",
-                "SMALL_FIREBALL",
-                "ENDER_PEARL",
-                "WITHER_SKULL",
-                "SHULKER_BULLET",
-                "DRAGON_FIREBALL",
-                "POTION",
-                "EXPERIENCE_BOTTLE",
-                "ITEM",
-                "FIREWORK",
-                "TRIDENT",
-                "arrow",
-                "snowball",
-                "egg",
-                "fireball",
-                "small_fireball",
-                "ender_pearl",
-                "wither_skull",
-                "shulker_bullet",
-                "dragon_fireball",
-                "potion",
-                "experience_bottle",
-                "item",
-                "firework",
-                "trident"
-              ]
-            },
-            "velocity": {
-              "description": "投げ物の速度や向きです。",
-              "$ref": "#/definitions/vector"
-            },
-            "epsilon": {
-              "description": "投げ物の速度や向きを比較する際に許容する誤差です。",
-              "$ref": "#/definitions/vector"
-            }
-          },
-          "$ref": "#/definitions/action/definitions/player_$base"
-        },
-        "player_quit": {
-          "type": "object",
-          "description": "プレイヤをサーバから退出させます。",
-          "properties": {
-            "message": {
-              "type": "string",
-              "description": "プレイヤーがサーバーから退出したときに表示するメッセージです。"
-            },
-            "reason": {
-              "type": "string",
-              "description": "プレイヤーがサーバーから退出した原因です。",
-              "enum": [
-                "DISCONNECTED",
-                "KICKED",
-                "TIMED_OUT",
-                "ERRONEOUS_STATE",
-                "disconnected",
-                "kicked",
-                "timed_out",
-                "erroneous_state"
-              ]
-            }
-          },
-          "$ref": "#/definitions/action/definitions/player_$base"
-        },
-        "player_respawn": {
-          "type": "object",
-          "description": "プレイヤをリスポーンさせます。",
-          "properties": {
-            "isBed": {
-              "type": "boolean",
-              "description": "プレイヤーがベッドでスポーンするかどうかです。"
-            },
-            "isAnchor": {
-              "type": "boolean",
-              "description": "プレイヤーが錨でスポーンするかどうかです。"
-            },
-            "location": {
-              "description": "プレイヤーがスポーンする場所です。",
-              "$ref": "#/definitions/location"
-            }
-          },
-          "$ref": "#/definitions/action/definitions/player_$base"
-        },
-        "player_sneak": {
-          "type": "object",
-          "description": "プレイヤをしゃがませます。",
-          "properties": {
-            "sneaking": {
-              "type": "boolean",
-              "description": "プレイヤーがスニークしているかどうかです。"
-            }
-          },
-          "$ref": "#/definitions/action/definitions/player_$base"
-        },
-        "player_sprint": {
-          "type": "object",
-          "description": "プレイヤを走らせます。",
-          "properties": {
-            "sneaking": {
-              "type": "boolean",
-              "description": "プレイヤーが走っているかどうかです。"
-            }
-          },
-          "$ref": "#/definitions/action/definitions/player_$base"
-        },
-        "player_teleport": {
-          "type": "object",
-          "description": "プレイヤをてレポートさせます。",
-          "properties": {
-            "cause": {
-              "$ref": "#/definitions/teleportCause",
-              "description": "移動元の座標を指定します。"
-            }
-          },
-          "$ref": "#/definitions/action/definitions/player_move"
-        },
-        "message": {
-          "type": "object",
-          "description": "プレイヤにメッセージを送信します。",
-          "properties": {
-            "message": {
-              "type": "string",
-              "description": "メッセージの内容です。",
-              "maxLength": 32768
-            },
-            "recipient": {
-              "type": "string",
-              "description": "メッセージを受け取るプレイヤーの名前または UUID です。"
-            }
-          }
-        },
-        "milestone": {
-          "type": "object",
-          "description": "マイルストーンを達成します。",
-          "properties": {
-            "name": {
-              "type": "string",
-              "description": "マイルストーンの名前です。"
-            },
-            "reached": {
-              "type": "boolean",
-              "description": "マイルストーンに到達したかどうかです。検証時はこれと比較します。"
-            }
-          },
-          "required": [
-            "name"
-          ]
-        },
-        "broadcast": {
-          "type": "object",
-          "description": "サーバにブロードキャストメッセージを送信します。",
-          "properties": {
-            "message": {
-              "type": "string",
-              "description": "送信するメッセージかその判定用の正規表現です。"
-            },
-            "recipients": {
-              "type": "array",
-              "description": "メッセージを受け取るプレイヤーの名前です。",
-              "items": {
-                "type": "string"
-              }
-            },
-            "permission": {
-              "type": "string",
-              "description": "メッセージを受け取るために必要な権限です。"
-            },
-            "strictRecipients": {
-              "type": "boolean",
-              "description": "有効な場合、余計なプレイヤがメッセージを受け取ると失敗します。"
-            }
-          }
-        },
-        "command_dispatch": {
-          "type": "object",
-          "description": "コマンドを実行します。",
-          "properties": {
-            "command": {
-              "type": "string",
-              "description": "実行されるコマンドです。実行を検知する場合は正規表現を使用できます。"
-            },
-            "sender": {
-              "type": "string",
-              "description": "実行するプレイヤーです。"
-            }
-          }
-        },
-        "server_log": {
-          "type": "object",
-          "description": "サーバにログを送信します。",
-          "properties": {
-            "message": {
-              "type": "string",
-              "description": "対象のログを正規表現で記述します。"
-            },
-            "level": {
-              "type": "string",
-              "description": "ログのレベルです。",
-              "enum": [
-                "INFO",
-                "WARNING",
-                "WARN",
-                "ERROR",
-                "CONFIG",
-                "DEBUG",
-                "TRACE",
-                "FATAL",
-                "FINE",
-                "FINER",
-                "FINEST",
-                "SEVERE",
-                "info",
-                "warning",
-                "warn",
-                "error",
-                "config",
-                "debug",
-                "trace",
-                "fatal",
-                "fine",
-                "finer",
-                "finest",
-                "severe"
-              ]
-            },
-            "sender": {
-              "type": "string",
-              "description": "ログを送信したプラグインやロガーの名前です。"
-            }
-          }
-        },
-        "server_plugin_disable": {
-          "type": "object",
-          "description": "サーバのプラグインを無効化します。",
-          "properties": {
-            "plugin": {
-              "type": "string",
-              "description": "無効化されるプラグインです。"
-            }
-          }
-        },
-        "server_plugin_enable": {
-          "type": "object",
-          "description": "サーバのプラグインを有効化します。",
-          "properties": {
-            "plugin": {
-              "type": "string",
-              "description": "有効化されるプラグインです。"
-            }
-          }
-        },
-        "tab_complete": {
-          "type": "object",
-          "description": "コマンドをタブ補完します。",
-          "properties": {
-            "sender": {
-              "type": "string",
-              "description": "実行するプレイヤーです。"
-            },
-            "buffer": {
-              "type": "string",
-              "description": "入力された不完全なコマンドです。補完を検知する場合は正規表現を使用できます。"
-            },
-            "completions": {
-              "type": "array",
-              "description": "補完候補の配列です。補完を検知する場合は正規表現を使用できます。"
-            }
-          }
-        },
-        "whitelist_toggle": {
-          "type": "object",
-          "description": "サーバのホワイトリストを切り替えます。",
-          "properties": {
-            "enabled": {
-              "type": "boolean",
-              "description": "ホワイトリストが有効かどうかです。"
-            }
-          }
-        },
-        "world_$base": {
-          "type": "object",
-          "properties": {
-            "world": {
-              "description": "ワールドの名前の名前空間付きキーです。",
-              "$ref": "#/definitions/namespacedKey"
-            }
-          }
-        },
-        "world_border_changed": {
-          "type": "object",
-          "description": "ワールドボーダの変更の完了を検知します。",
-          "properties": {
-            "size": {
-              "type": "number",
-              "description": "ワールドボーダのサイズです。"
-            },
-            "size_old": {
-              "type": "number",
-              "description": "ワールドボーダのサイズの変更前の値です。"
-            },
-            "duration": {
-              "type": "number",
-              "description": "ワールドボーダの変更にかかる時間です。"
-            }
-          },
-          "$ref": "#/definitions/action/definitions/world_$base"
-        },
-        "world_border": {
-          "type": "object",
-          "description": "ワールドのボーダを変更します。",
-          "properties": {
-            "type": {
-              "type": "string",
-              "description": "ワールドボーダの変更の種類です。",
-              "enum": [
-                "STARTED_MOVE",
-                "INSTANT_MOVE",
-                "started_move",
-                "instant_move"
-              ]
-            },
-            "size": {
-              "type": "number",
-              "description": "ワールドボーダのサイズです。"
-            },
-            "size_old": {
-              "type": "number",
-              "description": "ワールドボーダのサイズの変更前の値です。"
-            },
-            "duration": {
-              "type": "number",
-              "description": "ワールドボーダの変更にかかる時間です。"
-            },
-            "center": {
-              "type": "object",
-              "description": "ワールドボーダの中心座標です。",
-              "$ref": "#/definitions/location"
-            },
-            "center_old": {
-              "type": "object",
-              "description": "ワールドボーダの中心座標の変更前の値です。",
-              "$ref": "#/definitions/location"
-            }
-          },
-          "$ref": "#/definitions/action/definitions/world_$base"
-        },
-        "world_game_rule": {
-          "type": "object",
-          "description": "ワールドのゲームルールを設定します",
-          "properties": {
-            "rule": {
-              "type": "string",
-              "description": "ゲームルールの名前です。",
-              "enum": [
-                "announceAdvancements",
-                "commandBlockOutput",
-                "disableElytraMovementCheck",
-                "doDaylightCycle",
-                "doEntityDrops",
-                "doFireTick",
-                "doInsomnia",
-                "doLimitedCrafting",
-                "doMobLoot",
-                "doMobSpawning",
-                "doTileDrops",
-                "doWeatherCycle",
-                "drowningDamage",
-                "fallDamage",
-                "fireDamage",
-                "universalAnger",
-                "disableRaids",
-                "doImmediateRespawn",
-                "doPatrolSpawning",
-                "doTraderSpawning",
-                "forgiveDeadPlayers",
-                "keepInventory",
-                "logAdminCommands",
-                "maxCommandChainLength",
-                "maxEntityCramming",
-                "mobGriefing",
-                "naturalRegeneration",
-                "playersSleepingPercentage",
-                "randomTickSpeed",
-                "reducedDebugInfo",
-                "sendCommandFeedback",
-                "showDeathMessages",
-                "spawnRadius",
-                "spectatorsGenerateChunks",
-                "universalAnger"
-              ]
-            },
-            "value": {
-              "type": [
-                "boolean",
-                "number"
-              ],
-              "description": "ゲームルールの値です。"
-            }
-          },
-          "$ref": "#/definitions/action/definitions/world_$base"
-        }
-      }
-    },
-    "actor": {
-      "$ref": "#/definitions/entity",
-      "type": "object",
-      "properties": {
-        "name": {
-          "type": "string",
-          "description": "アクターの名前です。",
-          "maxLength": 16
-        },
-        "online": {
-          "type": "boolean",
-          "description": "アクターがオンラインかどうかです。",
-          "default": true
-        },
-        "displayName": {
-          "type": "string",
-          "description": "アクターの表示名です。"
-        },
-        "playerList": {
-          "type": "object",
-          "description": "アクターのプレイヤーリストにおける扱いです。",
-          "properties": {
-            "name": {
-              "type": "string",
-              "description": "プレイヤーリストに表示される名前です。"
-            },
-            "header": {
-              "type": "string",
-              "description": "プレイヤーリストに表示されるヘッダーです。"
-            },
-            "footer": {
-              "type": "string",
-              "description": "プレイヤーリストに表示されるフッターです。"
-            }
-          }
-        },
-        "compass": {
-          "$ref": "#/definitions/location",
-          "description": "アクターのコンパスのターゲットです。"
-        },
-        "bedLocation": {
-          "$ref": "#/definitions/location",
-          "description": "アクターのベッドスポーンの位置です。"
-        },
-        "exp": {
-          "type": "integer",
-          "description": "アクターの経験値です。"
-        },
-        "level": {
-          "type": "integer",
-          "description": "アクターのレベルです。"
-        },
-        "totalExp": {
-          "type": "integer",
-          "description": "アクターの総経験値です。"
-        },
-        "flyable": {
-          "type": "boolean",
-          "description": "アクターが飛行できるかどうかです。ゲームモードがクリエイティブおよびスペクテイタの場合は, 暗黙的に true になります。"
-        },
-        "flying": {
-          "type": "boolean",
-          "description": "アクターが飛行中かどうかです。"
-        },
-        "walkSpeed": {
-          "type": "number",
-          "description": "アクターの歩行速度です。"
-        },
-        "flySpeed": {
-          "type": "number",
-          "description": "アクターの飛行速度です。"
-        },
-        "inventory": {
-          "$ref": "#/definitions/playerInventory",
-          "description": "アクターのインベントリです。"
-        },
-        "enderChest": {
-          "$ref": "#/definitions/inventory",
-          "description": "アクターのエンダーチェストです。"
-        },
-        "mainHand": {
-          "type": "string",
-          "description": "アクターの利き手です。",
-          "enum": [
-            "left",
-            "right",
-            "LEFT",
-            "RIGHT"
-          ],
-          "default": "right"
-        },
-        "gamemode": {
-          "type": "string",
-          "description": "アクターのゲームモードです。",
-          "enum": [
-            "survival",
-            "creative",
-            "adventure",
-            "spectator",
-            "SURVIVAL",
-            "CREATIVE",
-            "ADVENTURE",
-            "SPECTATOR"
-          ],
-          "default": "survival"
-        },
-        "foodLevel": {
-          "type": "integer",
-          "description": "アクターの食料レベルです。",
-          "minimum": 0,
-          "maximum": 20,
-          "default": 20
-        },
-        "op": {
-          "type": [
-            "boolean",
-            "integer"
-          ],
-          "minimum": 0,
-          "maximum": 4,
-          "description": "アクターの OP レベルです。 0 は OP ではないことを意味します。"
-        },
-        "permissions": {
-          "type": "array",
-          "description": "アクターに与える権限です。",
-          "items": {
-            "type": "string"
-          }
-        }
-      },
-      "required": [
-        "name"
-      ]
-    },
-    "stage": {
-      "type": "object",
-      "description": "シナリオを実行するステージです。",
-      "properties": {
-        "copyOf": {
-          "type": "string",
-          "description": "オリジナルのワールドの名前です。サーバ上に存在するワールドをもとに, 新しくステージを作成します。"
-        },
-        "type": {
-          "type": "string",
-          "description": "ステージとして使用するワールドの種類です。",
-          "enum": [
-            "normal",
-            "flat",
-            "large_biomes",
-            "amplified",
-            "NORMAL",
-            "FLAT",
-            "LARGE_BIOMES",
-            "AMPLIFIED"
-          ],
-          "default": "normal"
-        },
-        "seed": {
-          "type": "number",
-          "description": "ステージとして使用するワールドのシードです。"
-        },
-        "structures": {
-          "type": "boolean",
-          "description": "ステージとして使用するワールドに構造物を生成するかどうかです。",
-          "default": true
-        },
-        "env": {
-          "type": "string",
-          "description": "ステージとして使用するワールドの環境です。",
-          "enum": [
-            "normal",
-            "nether",
-            "end",
-            "custom",
-            "NORMAL",
-            "NETHER",
-            "END",
-            "CUSTOM"
-          ],
-          "default": "normal"
-        },
-        "hardcore": {
-          "type": "boolean",
-          "description": "ステージとして使用するワールドがハードコアかどうかです。",
-          "default": false
-        }
-      }
-    },
-    "trigger": {
-      "type": "object",
-      "description": "トリガとよばれる, シナリオの実行条件のオブジェクトです。",
-      "properties": {
-        "type": {
-          "type": "string",
-          "description": "トリガの種類です。",
-          "enum": [
-            "manual_dispatch",
-            "schedule",
-            "on_action",
-            "on_load"
-          ]
-        },
-        "before": {
-          "$ref": "#/definitions/scenarios",
-          "description": "シナリオがこのトリガによって実行される場合, メインシナリオの実行前に実行するシナリオを定義します。"
-        },
-        "after": {
-          "$ref": "#/definitions/scenarios",
-          "description": "シナリオがこのトリガによって実行される場合, メインシナリオの実行後に実行するシナリオを定義します。"
-        },
-        "runif": {
-          "type": "object",
-          "description": "シナリオの実行条件を定義します。アクションで定義します。満たしていない場合はスキップされます。",
-          "$ref": "#/definitions/action"
-        }
-      },
-      "required": [
-        "type"
-      ],
-      "allOf": [
-        {
-          "if": {
-            "properties": {
-              "type": {
-                "const": "on_action"
-              }
-            }
-          },
-          "then": {
-            "$ref": "#/definitions/action"
-          }
-        }
-      ]
-    },
-    "scenarios": {
-      "type": "array",
-      "items": {
-        "$ref": "#/definitions/scenario"
-      },
-      "maxProperties": 1
-    },
     "location": {
       "type": "object",
       "properties": {
@@ -3438,6 +639,23 @@
         "x",
         "y",
         "z"
+      ]
+    },
+    "blockFace": {
+      "type": "string",
+      "enum": [
+        "UP",
+        "DOWN",
+        "NORTH",
+        "SOUTH",
+        "WEST",
+        "EAST",
+        "up",
+        "down",
+        "north",
+        "south",
+        "west",
+        "east"
       ]
     },
     "block": {
@@ -4553,6 +1771,2893 @@
     "vector": {
       "description": "ベクトルです。",
       "$ref": "#/definitions/location"
+    },
+    "projectileSource": {
+      "description": "発射源です。",
+      "oneOf": [
+        {
+          "$ref": "#/definitions/entity"
+        },
+        {
+          "$ref": "#/definitions/block"
+        },
+        {
+          "type": "string",
+          "description": "エンティティのセレクタです。"
+        }
+      ]
+    },
+    "itemSlot": {
+      "type": "string",
+      "enum": [
+        "HAND",
+        "OFF_HAND",
+        "FEET",
+        "LEGS",
+        "CHEST",
+        "HEAD",
+        "hand",
+        "off_hand",
+        "feet",
+        "legs",
+        "chest",
+        "head"
+      ]
+    },
+    "playerInventory": {
+      "description": "プレイヤーのインベントリを表します。",
+      "properties": {
+        "main": {
+          "$ref": "#/definitions/inventory",
+          "description": "インベントリのメインの部分です。"
+        },
+        "mainHandItem": {
+          "$ref": "#/definitions/itemStack",
+          "description": "インベントリのメインハンドのアイテムです。"
+        },
+        "offHandItem": {
+          "$ref": "#/definitions/itemStack",
+          "description": "インベントリのオフハンドのアイテムです。"
+        },
+        "armors": {
+          "type": "array",
+          "description": "インベントリのアーマーのアイテムです。上から順にヘルメット、チェストプレート、レギンス、ブーツです。どこかが空いている場合は null を格納します。",
+          "items": {
+            "anyOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/definitions/itemStack"
+              }
+            ]
+          },
+          "minItems": 4,
+          "maxItems": 4
+        }
+      }
+    },
+    "teleportCause": {
+      "type": "string",
+      "enum": [
+        "COMMAND",
+        "DEATH",
+        "END_PORTAL",
+        "END_GATEWAY",
+        "CHORUS_FRUIT",
+        "SPECTATE",
+        "NETHER_PORTAL",
+        "ENDER_PEARL",
+        "UNKNOWN"
+      ]
+    },
+    "scenario": {
+      "type": "object",
+      "$ref": "#/definitions/action",
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "シナリオの種類です。",
+          "oneOf": [
+            {
+              "const": "expect",
+              "description": "アクションがプラグインによって実行されるか監視します。"
+            },
+            {
+              "const": "execute",
+              "description": "アクションを実行します。"
+            },
+            {
+              "const": "require",
+              "description": "条件が満たされているかチェックします。"
+            }
+          ]
+        },
+        "timeout": {
+          "type": "integer",
+          "description": "シナリオのタイムアウト時間を**チック**で指定します。-1 で無効化します。",
+          "minimum": -1,
+          "default": 100
+        },
+        "runif": {
+          "type": "object",
+          "description": "シナリオの実行条件を定義します。アクションで定義します。満たしていない場合はスキップされます。",
+          "$ref": "#/definitions/action"
+        }
+      },
+      "required": [
+        "type",
+        "action"
+      ]
+    },
+    "action": {
+      "type": "object",
+      "properties": {
+        "action": {
+          "type": "string",
+          "description": "アクションの種類です。 ",
+          "enum": [
+            "block_break",
+            "block_place",
+            "entity_damage_by_entity",
+            "entity_damage",
+            "entity_death",
+            "entity_drop_item",
+            "entity",
+            "entity_move",
+            "entity_pickup_item",
+            "entity_place",
+            "projectile_hit",
+            "projectile_launch",
+            "entity_spawn",
+            "inventory_close",
+            "inventory_click",
+            "inventory_creative",
+            "inventory_open",
+            "player_advancement",
+            "player_animation",
+            "player_bucket_empty",
+            "player_bucket_fill",
+            "player_bucket_entity",
+            "player_chat",
+            "player_death",
+            "player_drop_item",
+            "player_flight",
+            "player_gamemode",
+            "player_harvest_block",
+            "player_hotbar",
+            "player_interact_at_entity",
+            "player_interact_block",
+            "player_interact_entity",
+            "player_item_break",
+            "player_item_consume",
+            "player_item_damage",
+            "player_join",
+            "player_kick",
+            "player_level_change",
+            "player_move",
+            "player_projectile_launch",
+            "player_quit",
+            "player_respawn",
+            "player_sneak",
+            "player_sprint",
+            "player_teleport",
+            "message",
+            "milestone",
+            "negate",
+            "broadcast",
+            "command_dispatch",
+            "server_log",
+            "server_plugin_disable",
+            "server_plugin_enable",
+            "tab_complete",
+            "whitelist_toggle",
+            "world_border_changed",
+            "world_border",
+            "world_game_rule",
+            "world_init",
+            "world_load",
+            "world_save",
+            "world_unload"
+          ]
+        },
+        "with": {
+          "type": "object",
+          "description": "アクションの種類によっては, このプロパティにアクションの引数を指定します。"
+        }
+      },
+      "required": [
+        "action"
+      ],
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "block_break",
+                "description": "ブロックの破壊を検知します。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/block_break"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "block_place",
+                "description": "ブロックの設置を検知します。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/block_place"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "entity_damage_by_entity",
+                "description": "エンティティ"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/entity_damage_by_entity"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "entity_damage",
+                "description": "エンティティにダメージを与えます。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/entity_damage"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "entity_death",
+                "description": "エンティティをキルします。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/entity_death"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "entity_drop_item",
+                "description": "エンティティにアイテムをドロップさせます。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/entity_drop_item"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "entity",
+                "description": "エンティティの状態を変更します。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/entity"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "entity_move",
+                "description": "エンティティを移動させます。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/entity_move"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "entity_pickup_item",
+                "description": "エンティティにアイテムを拾わせます。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/entity_pickup_item"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "entity_place",
+                "description": "エンティティの設置を検知します"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/entity_place"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "projectile_hit",
+                "description": "投射物を着弾させます。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/projectile_hit"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "projectile_launch",
+                "description": "投射物をスポーンさせます。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/projectile_launch"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "entity_spawn",
+                "description": "エンティティをスポーンさせます。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/entity_spawn"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "inventory_close",
+                "description": "インベントリを閉じます。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/inventory_close"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "inventory_click",
+                "description": "インベントリのクリックを検知します"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/inventory_click"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "inventory_creative",
+                "description": "クリエイティブインベントリのアイテムをクリックしたときに実行されます。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/inventory_creative"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "inventory_open",
+                "description": "インベントリを閉きます。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/inventory_open"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "player_advancement",
+                "description": "プレイヤに進捗を達成させます。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/player_advancement"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "player_animation",
+                "description": "プレイヤのアニメーションを再生します。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/player_animation"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "player_bucket_entity",
+                "description": "プレイヤがバケツにエンティティを入れます。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/player_bucket_entity"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "player_chat",
+                "description": "プレイヤにチャットをさせます。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/player_chat"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "player_death",
+                "description": "プレイヤをキルします。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/player_death"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "player_drop_item",
+                "description": "プレイヤにアイテムをドロップさせます。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/player_drop_item"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "player_flight",
+                "description": "プレイヤを飛行させます。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/player_flight"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "player_gamemode",
+                "description": "プレイヤのゲームモードを変更します。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/player_gamemode"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "player_harvest_block",
+                "description": "プレイヤに作物を収穫させます。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/player_harvest_block"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "player_hotbar",
+                "description": "プレイヤのホットバーのアイテムを変更します。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/player_hotbar"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "player_interact_at_entity",
+                "description": "プレイヤにエンティティをクリックさせます。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/player_interact_at_entity"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "player_interact_block",
+                "description": "プレイヤにブロックを操作させます。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/player_interact_block"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "player_interact_entity",
+                "description": "プレイヤにエンティティをクリックさせます。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/player_interact_entity"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "player_item_break",
+                "description": "プレイヤにアイテムを破壊させます。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/player_item_break"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "player_item_consume",
+                "description": "プレイヤにアイテムを消費させます。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/player_item_consume"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "player_item_damage",
+                "description": "プレイヤが所持するアイテムにダメージを与えます。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/player_item_damage"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "player_join",
+                "description": "プレイヤをサーバに参加させます。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/player_join"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "player_kick",
+                "description": "プレイヤをサーバから強制退出させます。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/player_kick"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "player_level_change",
+                "description": "プレイヤの経験レベルを変更します。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/player_level_change"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "player_move",
+                "description": "プレイヤを移動させます。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/player_move"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "player_projectile_launch",
+                "description": "プレイヤに投げ物を射出させます。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/player_projectile_launch"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "player_quit",
+                "description": "プレイヤをサーバから退出させます。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/player_quit"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "player_respawn",
+                "description": "プレイヤをリスポーンさせます。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/player_respawn"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "player_sneak",
+                "description": "プレイヤをしゃがませます。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/player_sneak"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "player_sprint",
+                "description": "プレイヤを走らせます。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/player_sprint"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "player_teleport",
+                "description": "プレイヤをてレポートさせます。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/player_teleport"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "message",
+                "description": "プレイヤにメッセージを送信します。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/message"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "milestone",
+                "description": "マイルストーンを達成します。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/milestone"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "broadcast",
+                "description": "サーバにブロードキャストメッセージを送信します。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/broadcast"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "command_dispatch",
+                "description": "コマンドを実行します。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/command_dispatch"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "server_log",
+                "description": "サーバにログを送信します。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/server_log"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "server_plugin_disable",
+                "description": "サーバのプラグインを無効化します。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/server_plugin_disable"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "server_plugin_enable",
+                "description": "サーバのプラグインを有効化します。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/server_plugin_enable"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "tab_complete",
+                "description": "コマンドをタブ補完します。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/tab_complete"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "whitelist_toggle",
+                "description": "サーバのホワイトリストを切り替えます。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/whitelist_toggle"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "world_border_changed",
+                "description": "ワールドボーダの変更の完了を検知します。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/world_border_changed"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "world_border",
+                "description": "ワールドのボーダを変更します。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/world_border"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "world_game_rule",
+                "description": "ワールドのゲームルールを設定します"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/world_game_rule"
+              }
+            }
+          }
+        }
+      ],
+      "definitions": {
+        "block_$base": {
+          "type": "object",
+          "properties": {
+            "block": {
+              "description": "対象のブロックです。",
+              "$ref": "#/definitions/block"
+            }
+          }
+        },
+        "block_break": {
+          "type": "object",
+          "description": "ブロックの破壊を検知します。",
+          "properties": {
+            "actor": {
+              "type": "string",
+              "description": "ブロックを破壊したアクタの名前です。",
+              "maxLength": 16
+            },
+            "dropItems": {
+              "type": "boolean",
+              "description": "ブロックがドロップするアイテムをドロップするかどうかです。"
+            }
+          },
+          "$ref": "#/definitions/action/definitions/block_$base"
+        },
+        "block_place": {
+          "type": "object",
+          "description": "ブロックの設置を検知します。",
+          "properties": {
+            "actor": {
+              "type": "string",
+              "description": "ブロックを破壊したアクタの名前です。",
+              "maxLength": 16
+            },
+            "hand": {
+              "type": "string",
+              "description": "ブロックを設置した手です。",
+              "enum": [
+                "HAND",
+                "OFF_HAND",
+                "hand",
+                "off_hand"
+              ]
+            },
+            "direction": {
+              "description": "ブロックを設置する方向です。",
+              "$ref": "#/definitions/blockFace"
+            }
+          },
+          "$ref": "#/definitions/action/definitions/block_$base"
+        },
+        "entity_$base": {
+          "type": "object",
+          "properties": {
+            "target": {
+              "description": "対象のエンティティです。",
+              "oneOf": [
+                {
+                  "type": "string",
+                  "description": "エンティティの UUID またはセレクタです。"
+                },
+                {
+                  "$ref": "#/definitions/entity"
+                }
+              ]
+            }
+          }
+        },
+        "entity_damage_by_entity": {
+          "type": "object",
+          "description": "エンティティ",
+          "properties": {
+            "damager": {
+              "description": "ダメージ元のエンティティのUUIDまたはセレクタです。",
+              "type": "string"
+            }
+          },
+          "$ref": "#/definitions/action/definitions/entity_damage"
+        },
+        "entity_damage": {
+          "type": "object",
+          "description": "エンティティにダメージを与えます。",
+          "properties": {
+            "cause": {
+              "type": "string",
+              "description": "ダメージの種類です。",
+              "enum": [
+                "CONTACT",
+                "ENTITY_ATTACK",
+                "ENTITY_SWEEP_ATTACK",
+                "PROJECTILE",
+                "SUFFOCATION",
+                "FALL",
+                "FIRE",
+                "FIRE_TICK",
+                "MELTING",
+                "LAVA",
+                "DROWNING",
+                "BLOCK_EXPLOSION",
+                "ENTITY_EXPLOSION",
+                "VOID",
+                "LIGHTNING",
+                "SUICIDE",
+                "STARVATION",
+                "POTION",
+                "MAGIC",
+                "WITHER",
+                "FALLING_BLOCK",
+                "THORNS",
+                "DRAGON_BREATH",
+                "CUSTOM",
+                "FLY_INTO_WALL",
+                "HOT_FLOOR",
+                "CRAMMING",
+                "DRYOUT",
+                "contact",
+                "entity_attack",
+                "entity_sweep_attack",
+                "projectile",
+                "suffocation",
+                "fall",
+                "fire",
+                "fire_tick",
+                "melting",
+                "lava",
+                "drowning",
+                "block_explosion",
+                "entity_explosion",
+                "void",
+                "lightning",
+                "suicide",
+                "starvation",
+                "potion",
+                "magic",
+                "wither",
+                "falling_block",
+                "thorns",
+                "dragon_breath",
+                "custom",
+                "fly_into_wall",
+                "hot_floor",
+                "cramming",
+                "dryout"
+              ]
+            },
+            "amount": {
+              "type": "number",
+              "description": "与えるダメージの量(float)です。",
+              "min": 0
+            },
+            "modifiers": {
+              "type": "object",
+              "patternProperties": {
+                "^\\w+$": {
+                  "type": "number",
+                  "min": 0
+                }
+              }
+            }
+          },
+          "$ref": "#/definitions/action/definitions/entity_$base"
+        },
+        "entity_death": {
+          "type": "object",
+          "description": "エンティティをキルします。",
+          "properties": {
+            "drops": {
+              "description": "ドロップするアイテムです。",
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/itemStack"
+              }
+            },
+            "dropExp": {
+              "description": "ドロップする経験値です。",
+              "type": "integer",
+              "min": 0
+            },
+            "reviveHealth": {
+              "description": "復活時の体力です。",
+              "type": "number",
+              "min": 0
+            },
+            "playDeathSound": {
+              "description": "死亡時のサウンドを再生するかどうかです。",
+              "type": "boolean"
+            },
+            "sound": {
+              "description": "再生するサウンドです。",
+              "$ref": "#/definitions/sound"
+            },
+            "soundCategory": {
+              "description": "サウンドのカテゴリです。",
+              "type": "string",
+              "enum": [
+                "MASTER",
+                "MUSIC",
+                "RECORD",
+                "WEATHER",
+                "BLOCK",
+                "HOSTILE",
+                "NEUTRAL",
+                "PLAYER",
+                "AMBIENT",
+                "VOICE",
+                "master",
+                "music",
+                "record",
+                "weather",
+                "block",
+                "hostile",
+                "neutral",
+                "player",
+                "ambient",
+                "voice"
+              ]
+            },
+            "soundVolume": {
+              "description": "サウンドの音量です。",
+              "type": "number",
+              "min": 0
+            },
+            "soundPitch": {
+              "description": "サウンドのピッチです。",
+              "type": "number",
+              "min": 0
+            }
+          },
+          "$ref": "#/definitions/action/definitions/entity_$base"
+        },
+        "entity_drop_item": {
+          "type": "object",
+          "description": "エンティティにアイテムをドロップさせます。",
+          "properties": {
+            "item": {
+              "description": "ドロップするアイテムです。",
+              "$ref": "#/definitions/entityItem"
+            }
+          },
+          "$ref": "#/definitions/action/definitions/entity_$base"
+        },
+        "entity": {
+          "type": "object",
+          "description": "エンティティの状態を変更します。",
+          "properties": {
+            "entity": {
+              "$ref": "#/definitions/entity",
+              "description": "変更する値です。"
+            }
+          },
+          "$ref": "#/definitions/action/definitions/entity_$base"
+        },
+        "entity_move": {
+          "type": "object",
+          "description": "エンティティを移動させます。",
+          "properties": {
+            "from": {
+              "$ref": "#/definitions/location",
+              "description": "移動元の座標を指定します。"
+            },
+            "to": {
+              "$ref": "#/definitions/location",
+              "description": "移動先の座標を指定します。"
+            },
+            "ai": {
+              "type": "boolean",
+              "description": "AI を有効にするかどうかを指定します。",
+              "default": true
+            }
+          },
+          "$ref": "#/definitions/action/definitions/entity_$base"
+        },
+        "entity_pickup_item": {
+          "type": "object",
+          "description": "エンティティにアイテムを拾わせます。",
+          "properties": {
+            "remaining": {
+              "type": "number",
+              "description": "残りのアイテム数を指定します。"
+            },
+            "item": {
+              "description": "拾わせるアイテムを指定します。",
+              "oneOf": [
+                {
+                  "$ref": "#/definitions/entityItem",
+                  "description": "アイテムを指定します。"
+                },
+                {
+                  "type": "string",
+                  "description": "アイテムのセレクタを指定します。"
+                }
+              ]
+            }
+          },
+          "$ref": "#/definitions/action/definitions/entity_$base"
+        },
+        "entity_place": {
+          "type": "object",
+          "description": "エンティティの設置を検知します",
+          "properties": {
+            "target": {
+              "description": "設置するエンティティの UUID, セレクタ, 実体, または Material です。"
+            },
+            "player": {
+              "description": "設置するプレイヤーの名前または UUID です。",
+              "type": "string"
+            },
+            "block": {
+              "description": "設置場所のブロックです。",
+              "$ref": "#/definitions/block"
+            },
+            "direction": {
+              "description": "設置する方向です。",
+              "$ref": "#/definitions/blockFace"
+            }
+          },
+          "$ref": "#/definitions/action/definitions/entity_damage"
+        },
+        "projectile_hit": {
+          "type": "object",
+          "description": "投射物を着弾させます。",
+          "properties": {
+            "entity": {
+              "description": "着弾する投射物です。",
+              "oneOf": [
+                {
+                  "$ref": "#/definitions/projectile"
+                },
+                {
+                  "type": "string",
+                  "description": "エンティティの UUID またはセレクタです。"
+                }
+              ]
+            },
+            "hitEntity": {
+              "description": "着弾する対象のエンティティです。",
+              "oneOf": [
+                {
+                  "type": "string",
+                  "description": "エンティティの UUID またはセレクタです。"
+                },
+                {
+                  "$ref": "#/definitions/entity"
+                }
+              ]
+            },
+            "hitBlock": {
+              "description": "着弾する対象のブロックです。",
+              "$ref": "#/definitions/block"
+            },
+            "blockFace": {
+              "description": "着弾する対象のブロックの面です。",
+              "$ref": "#/definitions/blockFace"
+            },
+            "eventOnly": {
+              "description": "着弾イベントのみを発生させるかどうかです。",
+              "type": "boolean"
+            }
+          },
+          "$ref": "#/definitions/action/definitions/entity_$base"
+        },
+        "projectile_launch": {
+          "type": "object",
+          "description": "投射物をスポーンさせます。",
+          "properties": {
+            "entity": {
+              "description": "スポーンさせる投射物です。",
+              "oneOf": [
+                {
+                  "$ref": "#/definitions/projectile"
+                },
+                {
+                  "type": "string",
+                  "description": "エンティティの UUID またはセレクタです。"
+                }
+              ]
+            }
+          }
+        },
+        "entity_spawn": {
+          "type": "object",
+          "description": "エンティティをスポーンさせます。",
+          "properties": {
+            "entity": {
+              "$ref": "#/definitions/entity"
+            }
+          },
+          "$ref": "#/definitions/action/definitions/entity_$base"
+        },
+        "inventory_$base": {
+          "type": "object",
+          "properties": {
+            "inventory": {
+              "description": "対象のインベントリです。",
+              "$ref": "#/definitions/inventory"
+            }
+          },
+          "definitions": {
+            "clickType": {
+              "type": "string",
+              "description": "クリックの種類です。",
+              "enum": [
+                "LEFT",
+                "SHIFT_LEFT",
+                "RIGHT",
+                "SHIFT_RIGHT",
+                "WINDOW_BORDER_LEFT",
+                "WINDOW_BORDER_RIGHT",
+                "MIDDLE",
+                "NUMBER_KEY",
+                "DOUBLE_CLICK",
+                "DROP",
+                "CONTROL_DROP",
+                "CREATIVE",
+                "SWAP_OFFHAND",
+                "UNKNOWN",
+                "left",
+                "shift_left",
+                "right",
+                "shift_right",
+                "window_border_left",
+                "window_border_right",
+                "middle",
+                "number_key",
+                "double_click",
+                "drop",
+                "control_drop",
+                "creative",
+                "swap_offhand",
+                "unknown"
+              ]
+            },
+            "inventoryAction": {
+              "type": "string",
+              "description": "インベントリのアクションです。",
+              "enum": [
+                "NOTHING",
+                "PICKUP_ALL",
+                "PICKUP_SOME",
+                "PICKUP_HALF",
+                "PICKUP_ONE",
+                "PLACE_ALL",
+                "PLACE_SOME",
+                "PLACE_ONE",
+                "SWAP_WITH_CURSOR",
+                "DROP_ALL_CURSOR",
+                "DROP_ONE_CURSOR",
+                "DROP_ALL_SLOT",
+                "DROP_ONE_SLOT",
+                "MOVE_TO_OTHER_INVENTORY",
+                "HOTBAR_MOVE_AND_REA",
+                "HOTBAR_SWAP",
+                "CLONE_STACK",
+                "COLLECT_TO_CURSOR",
+                "UNKNOWN",
+                "nothing",
+                "pickup_all",
+                "pickup_some",
+                "pickup_half",
+                "pickup_one",
+                "place_all",
+                "place_some",
+                "place_one",
+                "swap_with_cursor",
+                "drop_all_cursor",
+                "drop_one_cursor",
+                "drop_all_slot",
+                "drop_one_slot",
+                "move_to_other_inventory",
+                "hotbar_move_and_readd",
+                "hotbar_swap",
+                "clone_stack",
+                "collect_to_cursor",
+                "unknown"
+              ]
+            },
+            "slotType": {
+              "type": "string",
+              "description": "スロットの種類です。",
+              "enum": [
+                "RESULT",
+                "CRAFTING",
+                "ARMOR",
+                "CONTAINER",
+                "QUICKBAR",
+                "OUTSIDE",
+                "FUEL",
+                "result",
+                "crafting",
+                "armor",
+                "container",
+                "quickbar",
+                "outside",
+                "fuel"
+              ]
+            },
+            "closeReason": {
+              "type": "string",
+              "description": "インベントリを閉じた理由です。",
+              "enum": [
+                "UNKNOWN",
+                "TELEPORT",
+                "CANT_USE",
+                "UNLOADED",
+                "OPEN_NEW",
+                "PLAYER",
+                "DISCONNECT",
+                "DEATH",
+                "PLUGIN"
+              ]
+            }
+          }
+        },
+        "inventory_close": {
+          "type": "object",
+          "description": "インベントリを閉じます。",
+          "properties": {
+            "target": {
+              "type": "string",
+              "description": "対象のプレイヤーです。"
+            },
+            "reason": {
+              "$ref": "#/definitions/action/definitions/inventory_$base/definitions/closeReason"
+            }
+          },
+          "$ref": "#/definitions/action/definitions/inventory_$base"
+        },
+        "inventory_interact_$base": {
+          "type": "object",
+          "properties": {
+            "target": {
+              "type": "string",
+              "description": "対象のプレイヤーです。"
+            }
+          },
+          "$ref": "#/definitions/action/definitions/inventory_$base"
+        },
+        "inventory_click": {
+          "type": "object",
+          "description": "インベントリのクリックを検知します",
+          "properties": {
+            "type": {
+              "$ref": "#/definitions/action/definitions/inventory_$base/definitions/clickType"
+            },
+            "action": {
+              "$ref": "#/definitions/action/definitions/inventory_$base/definitions/inventoryAction"
+            },
+            "slotType": {
+              "$ref": "#/definitions/action/definitions/inventory_$base/definitions/slotType"
+            },
+            "slot": {
+              "type": "integer",
+              "description": "スロット番号です。",
+              "minimum": 0,
+              "maximum": 40
+            },
+            "rawSlot": {
+              "type": "integer",
+              "description": "スロット番号です。",
+              "minimum": 0
+            },
+            "clickedItem": {
+              "description": "クリックされたアイテムです。",
+              "$ref": "#/definitions/itemStack"
+            },
+            "button": {
+              "type": "integer",
+              "description": "ボタンの番号です。",
+              "minimum": 0
+            },
+            "cursorItem": {
+              "description": "カーソルにあるアイテムです。",
+              "$ref": "#/definitions/itemStack"
+            }
+          },
+          "$ref": "#/definitions/action/definitions/inventory_interact_$base"
+        },
+        "inventory_creative": {
+          "type": "object",
+          "description": "クリエイティブインベントリのアイテムをクリックしたときに実行されます。",
+          "properties": {
+            "item": {
+              "description": "クリックされたアイテムです。",
+              "$ref": "#/definitions/itemStack"
+            }
+          },
+          "$ref": "#/definitions/action/definitions/inventory_click"
+        },
+        "inventory_open": {
+          "type": "object",
+          "description": "インベントリを閉きます。",
+          "properties": {
+            "target": {
+              "type": "string",
+              "description": "対象のプレイヤーです。"
+            },
+            "inventory": {
+              "description": "開くインベントリです。",
+              "$ref": "#/definitions/inventory"
+            }
+          },
+          "$ref": "#/definitions/action/definitions/inventory_$base"
+        },
+        "player_$base": {
+          "type": "object",
+          "properties": {
+            "target": {
+              "type": "string",
+              "description": "対象のプレイヤーです。"
+            }
+          }
+        },
+        "player_advancement": {
+          "type": "object",
+          "description": "プレイヤに進捗を達成させます。",
+          "properties": {
+            "advancement": {
+              "type": "string",
+              "description": "達成する進捗です。",
+              "maxLength": 32767,
+              "$ref": "#/definitions/namespacedKey"
+            },
+            "criterion": {
+              "type": "string",
+              "description": "達成する条件です。省略した場合は全ての条件を達成します。",
+              "maxLength": 32767,
+              "$ref": "#/definitions/namespacedKey"
+            }
+          },
+          "$ref": "#/definitions/action/definitions/player_$base"
+        },
+        "player_animation": {
+          "type": "object",
+          "description": "プレイヤのアニメーションを再生します。",
+          "properties": {
+            "type": {
+              "type": "string",
+              "description": "再生するアニメーションの種類です。",
+              "enum": [
+                "ARM_SWING",
+                "arm_swing"
+              ]
+            }
+          },
+          "$ref": "#/definitions/action/definitions/player_$base"
+        },
+        "player_bucket_$base": {
+          "type": "object",
+          "properties": {
+            "item": {
+              "$ref": "#/definitions/itemStack",
+              "description": "操作後にプレイヤーが持っているアイテムです。"
+            },
+            "block": {
+              "$ref": "#/definitions/block",
+              "description": "設置する液体のブロックです。"
+            },
+            "clickedBlock": {
+              "$ref": "#/definitions/block",
+              "description": "プレイヤがクリックしたブロックです。"
+            },
+            "blockFace": {
+              "description": "プレイヤーがクリックしたブロックの面です。",
+              "$ref": "#/definitions/blockFace"
+            },
+            "bucket": {
+              "$ref": "#/definitions/itemStack",
+              "description": "設置する液体のバケツです。"
+            },
+            "hand": {
+              "description": "バケツを使用する手です。",
+              "enum": [
+                "MAIN_HAND",
+                "OFF_HAND",
+                "main_hand",
+                "off_hand"
+              ]
+            }
+          },
+          "$ref": "#/definitions/action/definitions/player_$base"
+        },
+        "player_bucket_entity": {
+          "type": "object",
+          "description": "プレイヤがバケツにエンティティを入れます。",
+          "properties": {
+            "bucket": {
+              "description": "エンティティをいれるバケツです。",
+              "$ref": "#/definitions/itemStack"
+            },
+            "entityBucket": {
+              "description": "エンティティが入ったバケツです。",
+              "$ref": "#/definitions/itemStack"
+            },
+            "entity": {
+              "description": "入れるエンティティです。",
+              "oneOf": [
+                {
+                  "type": "string",
+                  "description": "エンティティの UUID またはセレクタです。"
+                },
+                {
+                  "$ref": "#/definitions/entity"
+                }
+              ]
+            }
+          },
+          "$ref": "#/definitions/action/definitions/player_$base"
+        },
+        "player_chat": {
+          "type": "object",
+          "description": "プレイヤにチャットをさせます。",
+          "properties": {
+            "message": {
+              "type": "string",
+              "description": "送信するメッセージまたは判定用の正規表現です。"
+            },
+            "format": {
+              "type": "string",
+              "description": "メッセージのフォーマットです。",
+              "example": "<%1$s> %2$s"
+            }
+          },
+          "$ref": "#/definitions/action/definitions/player_$base"
+        },
+        "player_death": {
+          "type": "object",
+          "description": "プレイヤをキルします。",
+          "properties": {
+            "killer": {
+              "type": "string",
+              "description": "ターゲットを殺すプレイヤーです。"
+            },
+            "deathMessage": {
+              "type": "string",
+              "description": "死亡メッセージです。"
+            },
+            "exp": {
+              "type": "integer",
+              "description": "死亡時したプレイヤの新しい経験値です。",
+              "minimum": 0
+            },
+            "level": {
+              "type": "integer",
+              "description": "死亡時したプレイヤの新しいレベルです。",
+              "minimum": 0
+            },
+            "totalExp": {
+              "type": "integer",
+              "description": "死亡時したプレイヤの新しい総経験値です。",
+              "minimum": 0
+            },
+            "keepLevel": {
+              "type": "boolean",
+              "description": "死亡時したプレイヤのレベルを保持するかどうかです。"
+            },
+            "keepInventory": {
+              "type": "boolean",
+              "description": "死亡時したプレイヤのインベントリを保持するかどうかです。"
+            },
+            "doExpDrop": {
+              "type": "boolean",
+              "description": "死亡時したプレイヤの経験値ドロップをするかどうかです。"
+            }
+          },
+          "$ref": "#/definitions/action/definitions/player_$base"
+        },
+        "player_drop_item": {
+          "type": "object",
+          "description": "プレイヤにアイテムをドロップさせます。",
+          "properties": {
+            "item": {
+              "description": "ドロップするアイテムです。",
+              "$ref": "#/definitions/entityItem"
+            }
+          },
+          "$ref": "#/definitions/action/definitions/player_$base"
+        },
+        "player_flight": {
+          "type": "object",
+          "description": "プレイヤを飛行させます。",
+          "properties": {
+            "flying": {
+              "type": "boolean",
+              "description": "プレイヤーが飛行中かどうかです。"
+            }
+          },
+          "$ref": "#/definitions/action/definitions/player_$base"
+        },
+        "player_gamemode": {
+          "type": "object",
+          "description": "プレイヤのゲームモードを変更します。",
+          "properties": {
+            "gamemode": {
+              "type": "string",
+              "description": "ゲームモードです。",
+              "enum": [
+                "SURVIVAL",
+                "CREATIVE",
+                "ADVENTURE",
+                "SPECTATOR",
+                "survival",
+                "creative",
+                "adventure",
+                "spectator"
+              ]
+            },
+            "cause": {
+              "type": "string",
+              "description": "ゲームモードを変更した原因です。",
+              "enum": [
+                "COMMAND",
+                "PLUGIN",
+                "DEFAULT_GAMEMODE",
+                "HARDCORE_DEATH",
+                "UNKNOWN",
+                "command",
+                "plugin",
+                "default_gamemode",
+                "hardcore_death",
+                "unknown"
+              ]
+            },
+            "cancelMessage": {
+              "type": "string",
+              "description": "ゲームモード変更をキャンセルされたときに表示するメッセージです。"
+            }
+          },
+          "$ref": "#/definitions/action/definitions/player_$base"
+        },
+        "player_harvest_block": {
+          "type": "object",
+          "description": "プレイヤに作物を収穫させます。",
+          "properties": {
+            "block": {
+              "description": "対象の作物です。",
+              "$ref": "#/definitions/block"
+            },
+            "items": {
+              "type": "array",
+              "description": "収穫したアイテムです。",
+              "items": {
+                "$ref": "#/definitions/itemStack"
+              }
+            }
+          },
+          "$ref": "#/definitions/action/definitions/player_$base"
+        },
+        "player_hotbar": {
+          "type": "object",
+          "description": "プレイヤのホットバーのアイテムを変更します。",
+          "properties": {
+            "slot": {
+              "type": "integer",
+              "description": "ホットバーのスロットです。",
+              "minimum": 0,
+              "maximum": 8
+            },
+            "previous_slot": {
+              "type": "integer",
+              "description": "ホットバーのスロットが変更される前のスロットです。",
+              "minimum": 0,
+              "maximum": 8
+            },
+            "item": {
+              "description": "ホットバーのスロットに入っているアイテムです。",
+              "$ref": "#/definitions/itemStack"
+            }
+          },
+          "$ref": "#/definitions/action/definitions/player_$base"
+        },
+        "player_interact_at_entity": {
+          "type": "object",
+          "description": "プレイヤにエンティティをクリックさせます。",
+          "properties": {
+            "position": {
+              "description": "クリックするエンティティの場所です。",
+              "$ref": "#/definitions/location"
+            }
+          },
+          "$ref": "#/definitions/action/definitions/player_interact_entity"
+        },
+        "player_interact_block": {
+          "type": "object",
+          "description": "プレイヤにブロックを操作させます。",
+          "properties": {
+            "action": {
+              "type": "string",
+              "description": "プレイヤーが行ったアクションです。",
+              "enum": [
+                "RIGHT_CLICK_BLOCK",
+                "LEFT_CLICK_BLOCK",
+                "RIGHT_CLICK_AIR",
+                "LEFT_CLICK_AIR",
+                "right_click_block",
+                "left_click_block",
+                "right_click_air",
+                "left_click_air"
+              ]
+            },
+            "block": {
+              "description": "プレイヤーがクリックしたブロックです。",
+              "$ref": "#/definitions/block"
+            },
+            "hand": {
+              "type": "string",
+              "description": "プレイヤーがクリックした手です。",
+              "enum": [
+                "HAND",
+                "OFF_HAND",
+                "hand",
+                "off_hand"
+              ]
+            }
+          },
+          "$ref": "#/definitions/action/definitions/player_$base"
+        },
+        "player_interact_entity": {
+          "type": "object",
+          "description": "プレイヤにエンティティをクリックさせます。",
+          "properties": {
+            "entity": {
+              "description": "クリックするエンティティです。",
+              "oneOf": [
+                {
+                  "type": "string",
+                  "description": "エンティティの UUID またはセレクタです。"
+                },
+                {
+                  "$ref": "#/definitions/entity"
+                }
+              ]
+            },
+            "hand": {
+              "type": "string",
+              "description": "クリックする手です。",
+              "enum": [
+                "HAND",
+                "OFF_HAND",
+                "hand",
+                "off_hand"
+              ]
+            }
+          },
+          "$ref": "#/definitions/action/definitions/player_$base"
+        },
+        "player_item_break": {
+          "type": "object",
+          "description": "プレイヤにアイテムを破壊させます。",
+          "properties": {
+            "item": {
+              "description": "壊れたアイテムです。",
+              "$ref": "#/definitions/itemStack"
+            },
+            "slot": {
+              "description": "壊れたアイテムが入っていたスロットです。",
+              "$ref": "#/definitions/itemSlot"
+            }
+          },
+          "$ref": "#/definitions/action/definitions/player_$base"
+        },
+        "player_item_consume": {
+          "type": "object",
+          "description": "プレイヤにアイテムを消費させます。",
+          "properties": {
+            "item": {
+              "description": "消費するアイテムです。",
+              "$ref": "#/definitions/itemStack"
+            },
+            "replacement": {
+              "description": "消費後にプレイヤーに与えるアイテムです。",
+              "$ref": "#/definitions/itemStack"
+            }
+          },
+          "$ref": "#/definitions/action/definitions/player_$base"
+        },
+        "player_item_damage": {
+          "type": "object",
+          "description": "プレイヤが所持するアイテムにダメージを与えます。",
+          "properties": {
+            "item": {
+              "description": "ダメージを与えるアイテムです。",
+              "$ref": "#/definitions/itemStack"
+            },
+            "damage": {
+              "description": "与えるダメージです。",
+              "type": "number",
+              "minimum": 0,
+              "maximum": 2147483647
+            },
+            "slot": {
+              "description": "ダメージを与えるアイテムのスロットです。",
+              "$ref": "#/definitions/itemSlot"
+            }
+          },
+          "$ref": "#/definitions/action/definitions/player_$base"
+        },
+        "player_join": {
+          "type": "object",
+          "description": "プレイヤをサーバに参加させます。",
+          "properties": {
+            "message": {
+              "type": "string",
+              "description": "プレイヤーがサーバーに参加したときに表示するメッセージです。"
+            }
+          },
+          "$ref": "#/definitions/action/definitions/player_$base"
+        },
+        "player_kick": {
+          "type": "object",
+          "description": "プレイヤをサーバから強制退出させます。",
+          "properties": {
+            "leaveMessage": {
+              "type": "string",
+              "description": "プレイヤーがサーバーから退出したときに表示するメッセージです。"
+            },
+            "message": {
+              "type": "string",
+              "description": "プレイヤーがサーバーからキックされたときに表示するメッセージです。"
+            },
+            "cause": {
+              "type": "string",
+              "description": "プレイヤーがサーバーからキックされた原因です。",
+              "enum": [
+                "PLUGIN",
+                "WHITELIST",
+                "BANNED",
+                "IP_BANNED",
+                "KICK_COMMAND",
+                "FLYING_PLAYER",
+                "FLYING_VEHICLE",
+                "TIMEOUT",
+                "IDLING",
+                "INVALID_VEHICLE_MOVEMENT",
+                "INVALID_PLAYER_MOVEMENT",
+                "INVALID_ENTITY_ATTACKED",
+                "INVALID_PAYLOAD",
+                "SPAM",
+                "ILLEGAL_ACTION",
+                "ILLEGAL_CHARACTERS",
+                "SELF_INTERACTION",
+                "DUPLICATE_LOGIN",
+                "RESTART_COMMAND",
+                "UNKNOWN",
+                "plugin",
+                "whitelist",
+                "banned",
+                "ip_banned",
+                "kick_command",
+                "flying_player",
+                "flying_vehicle",
+                "timeout",
+                "idling",
+                "invalid_vehicle_movement",
+                "invalid_player_movement",
+                "invalid_entity_attacked",
+                "invalid_payload",
+                "spam",
+                "illegal_action",
+                "illegal_characters",
+                "self_interaction",
+                "duplicate_login",
+                "restart_command",
+                "unknown"
+              ]
+            }
+          },
+          "$ref": "#/definitions/action/definitions/player_$base"
+        },
+        "player_level_change": {
+          "type": "object",
+          "description": "プレイヤの経験レベルを変更します。",
+          "properties": {
+            "oldLevel": {
+              "type": "number",
+              "description": "変更前の経験レベルです。"
+            },
+            "level": {
+              "type": "number",
+              "description": "変更後の経験レベルです。"
+            }
+          },
+          "$ref": "#/definitions/action/definitions/player_$base"
+        },
+        "player_move": {
+          "type": "object",
+          "description": "プレイヤを移動させます。",
+          "properties": {
+            "from": {
+              "$ref": "#/definitions/location",
+              "description": "移動元の座標を指定します。"
+            },
+            "to": {
+              "$ref": "#/definitions/location",
+              "description": "移動先の座標を指定します。"
+            }
+          },
+          "$ref": "#/definitions/action/definitions/player_$base"
+        },
+        "player_projectile_launch": {
+          "type": "object",
+          "description": "プレイヤに投げ物を射出させます。",
+          "properties": {
+            "type": {
+              "type": "string",
+              "description": "投げ物の種類です。",
+              "enum": [
+                "ARROW",
+                "SNOWBALL",
+                "EGG",
+                "FIREBALL",
+                "SMALL_FIREBALL",
+                "ENDER_PEARL",
+                "WITHER_SKULL",
+                "SHULKER_BULLET",
+                "DRAGON_FIREBALL",
+                "POTION",
+                "EXPERIENCE_BOTTLE",
+                "ITEM",
+                "FIREWORK",
+                "TRIDENT",
+                "arrow",
+                "snowball",
+                "egg",
+                "fireball",
+                "small_fireball",
+                "ender_pearl",
+                "wither_skull",
+                "shulker_bullet",
+                "dragon_fireball",
+                "potion",
+                "experience_bottle",
+                "item",
+                "firework",
+                "trident"
+              ]
+            },
+            "velocity": {
+              "description": "投げ物の速度や向きです。",
+              "$ref": "#/definitions/vector"
+            },
+            "epsilon": {
+              "description": "投げ物の速度や向きを比較する際に許容する誤差です。",
+              "$ref": "#/definitions/vector"
+            }
+          },
+          "$ref": "#/definitions/action/definitions/player_$base"
+        },
+        "player_quit": {
+          "type": "object",
+          "description": "プレイヤをサーバから退出させます。",
+          "properties": {
+            "message": {
+              "type": "string",
+              "description": "プレイヤーがサーバーから退出したときに表示するメッセージです。"
+            },
+            "reason": {
+              "type": "string",
+              "description": "プレイヤーがサーバーから退出した原因です。",
+              "enum": [
+                "DISCONNECTED",
+                "KICKED",
+                "TIMED_OUT",
+                "ERRONEOUS_STATE",
+                "disconnected",
+                "kicked",
+                "timed_out",
+                "erroneous_state"
+              ]
+            }
+          },
+          "$ref": "#/definitions/action/definitions/player_$base"
+        },
+        "player_respawn": {
+          "type": "object",
+          "description": "プレイヤをリスポーンさせます。",
+          "properties": {
+            "isBed": {
+              "type": "boolean",
+              "description": "プレイヤーがベッドでスポーンするかどうかです。"
+            },
+            "isAnchor": {
+              "type": "boolean",
+              "description": "プレイヤーが錨でスポーンするかどうかです。"
+            },
+            "location": {
+              "description": "プレイヤーがスポーンする場所です。",
+              "$ref": "#/definitions/location"
+            }
+          },
+          "$ref": "#/definitions/action/definitions/player_$base"
+        },
+        "player_sneak": {
+          "type": "object",
+          "description": "プレイヤをしゃがませます。",
+          "properties": {
+            "sneaking": {
+              "type": "boolean",
+              "description": "プレイヤーがスニークしているかどうかです。"
+            }
+          },
+          "$ref": "#/definitions/action/definitions/player_$base"
+        },
+        "player_sprint": {
+          "type": "object",
+          "description": "プレイヤを走らせます。",
+          "properties": {
+            "sneaking": {
+              "type": "boolean",
+              "description": "プレイヤーが走っているかどうかです。"
+            }
+          },
+          "$ref": "#/definitions/action/definitions/player_$base"
+        },
+        "player_teleport": {
+          "type": "object",
+          "description": "プレイヤをてレポートさせます。",
+          "properties": {
+            "cause": {
+              "$ref": "#/definitions/teleportCause",
+              "description": "移動元の座標を指定します。"
+            }
+          },
+          "$ref": "#/definitions/action/definitions/player_move"
+        },
+        "message": {
+          "type": "object",
+          "description": "プレイヤにメッセージを送信します。",
+          "properties": {
+            "message": {
+              "type": "string",
+              "description": "メッセージの内容です。",
+              "maxLength": 32768
+            },
+            "recipient": {
+              "type": "string",
+              "description": "メッセージを受け取るプレイヤーの名前または UUID です。"
+            }
+          }
+        },
+        "milestone": {
+          "type": "object",
+          "description": "マイルストーンを達成します。",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "マイルストーンの名前です。"
+            },
+            "reached": {
+              "type": "boolean",
+              "description": "マイルストーンに到達したかどうかです。検証時はこれと比較します。"
+            }
+          },
+          "required": [
+            "name"
+          ]
+        },
+        "broadcast": {
+          "type": "object",
+          "description": "サーバにブロードキャストメッセージを送信します。",
+          "properties": {
+            "message": {
+              "type": "string",
+              "description": "送信するメッセージかその判定用の正規表現です。"
+            },
+            "recipients": {
+              "type": "array",
+              "description": "メッセージを受け取るプレイヤーの名前です。",
+              "items": {
+                "type": "string"
+              }
+            },
+            "permission": {
+              "type": "string",
+              "description": "メッセージを受け取るために必要な権限です。"
+            },
+            "strictRecipients": {
+              "type": "boolean",
+              "description": "有効な場合、余計なプレイヤがメッセージを受け取ると失敗します。"
+            }
+          }
+        },
+        "command_dispatch": {
+          "type": "object",
+          "description": "コマンドを実行します。",
+          "properties": {
+            "command": {
+              "type": "string",
+              "description": "実行されるコマンドです。実行を検知する場合は正規表現を使用できます。"
+            },
+            "sender": {
+              "type": "string",
+              "description": "実行するプレイヤーです。"
+            }
+          }
+        },
+        "server_log": {
+          "type": "object",
+          "description": "サーバにログを送信します。",
+          "properties": {
+            "message": {
+              "type": "string",
+              "description": "対象のログを正規表現で記述します。"
+            },
+            "level": {
+              "type": "string",
+              "description": "ログのレベルです。",
+              "enum": [
+                "INFO",
+                "WARNING",
+                "WARN",
+                "ERROR",
+                "CONFIG",
+                "DEBUG",
+                "TRACE",
+                "FATAL",
+                "FINE",
+                "FINER",
+                "FINEST",
+                "SEVERE",
+                "info",
+                "warning",
+                "warn",
+                "error",
+                "config",
+                "debug",
+                "trace",
+                "fatal",
+                "fine",
+                "finer",
+                "finest",
+                "severe"
+              ]
+            },
+            "sender": {
+              "type": "string",
+              "description": "ログを送信したプラグインやロガーの名前です。"
+            }
+          }
+        },
+        "server_plugin_disable": {
+          "type": "object",
+          "description": "サーバのプラグインを無効化します。",
+          "properties": {
+            "plugin": {
+              "type": "string",
+              "description": "無効化されるプラグインです。"
+            }
+          }
+        },
+        "server_plugin_enable": {
+          "type": "object",
+          "description": "サーバのプラグインを有効化します。",
+          "properties": {
+            "plugin": {
+              "type": "string",
+              "description": "有効化されるプラグインです。"
+            }
+          }
+        },
+        "tab_complete": {
+          "type": "object",
+          "description": "コマンドをタブ補完します。",
+          "properties": {
+            "sender": {
+              "type": "string",
+              "description": "実行するプレイヤーです。"
+            },
+            "buffer": {
+              "type": "string",
+              "description": "入力された不完全なコマンドです。補完を検知する場合は正規表現を使用できます。"
+            },
+            "completions": {
+              "type": "array",
+              "description": "補完候補の配列です。補完を検知する場合は正規表現を使用できます。"
+            }
+          }
+        },
+        "whitelist_toggle": {
+          "type": "object",
+          "description": "サーバのホワイトリストを切り替えます。",
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "description": "ホワイトリストが有効かどうかです。"
+            }
+          }
+        },
+        "world_$base": {
+          "type": "object",
+          "properties": {
+            "world": {
+              "description": "ワールドの名前の名前空間付きキーです。",
+              "$ref": "#/definitions/namespacedKey"
+            }
+          }
+        },
+        "world_border_changed": {
+          "type": "object",
+          "description": "ワールドボーダの変更の完了を検知します。",
+          "properties": {
+            "size": {
+              "type": "number",
+              "description": "ワールドボーダのサイズです。"
+            },
+            "size_old": {
+              "type": "number",
+              "description": "ワールドボーダのサイズの変更前の値です。"
+            },
+            "duration": {
+              "type": "number",
+              "description": "ワールドボーダの変更にかかる時間です。"
+            }
+          },
+          "$ref": "#/definitions/action/definitions/world_$base"
+        },
+        "world_border": {
+          "type": "object",
+          "description": "ワールドのボーダを変更します。",
+          "properties": {
+            "type": {
+              "type": "string",
+              "description": "ワールドボーダの変更の種類です。",
+              "enum": [
+                "STARTED_MOVE",
+                "INSTANT_MOVE",
+                "started_move",
+                "instant_move"
+              ]
+            },
+            "size": {
+              "type": "number",
+              "description": "ワールドボーダのサイズです。"
+            },
+            "size_old": {
+              "type": "number",
+              "description": "ワールドボーダのサイズの変更前の値です。"
+            },
+            "duration": {
+              "type": "number",
+              "description": "ワールドボーダの変更にかかる時間です。"
+            },
+            "center": {
+              "type": "object",
+              "description": "ワールドボーダの中心座標です。",
+              "$ref": "#/definitions/location"
+            },
+            "center_old": {
+              "type": "object",
+              "description": "ワールドボーダの中心座標の変更前の値です。",
+              "$ref": "#/definitions/location"
+            }
+          },
+          "$ref": "#/definitions/action/definitions/world_$base"
+        },
+        "world_game_rule": {
+          "type": "object",
+          "description": "ワールドのゲームルールを設定します",
+          "properties": {
+            "rule": {
+              "type": "string",
+              "description": "ゲームルールの名前です。",
+              "enum": [
+                "announceAdvancements",
+                "commandBlockOutput",
+                "disableElytraMovementCheck",
+                "doDaylightCycle",
+                "doEntityDrops",
+                "doFireTick",
+                "doInsomnia",
+                "doLimitedCrafting",
+                "doMobLoot",
+                "doMobSpawning",
+                "doTileDrops",
+                "doWeatherCycle",
+                "drowningDamage",
+                "fallDamage",
+                "fireDamage",
+                "universalAnger",
+                "disableRaids",
+                "doImmediateRespawn",
+                "doPatrolSpawning",
+                "doTraderSpawning",
+                "forgiveDeadPlayers",
+                "keepInventory",
+                "logAdminCommands",
+                "maxCommandChainLength",
+                "maxEntityCramming",
+                "mobGriefing",
+                "naturalRegeneration",
+                "playersSleepingPercentage",
+                "randomTickSpeed",
+                "reducedDebugInfo",
+                "sendCommandFeedback",
+                "showDeathMessages",
+                "spawnRadius",
+                "spectatorsGenerateChunks",
+                "universalAnger"
+              ]
+            },
+            "value": {
+              "type": [
+                "boolean",
+                "number"
+              ],
+              "description": "ゲームルールの値です。"
+            }
+          },
+          "$ref": "#/definitions/action/definitions/world_$base"
+        }
+      }
+    },
+    "actor": {
+      "$ref": "#/definitions/entity",
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "アクターの名前です。",
+          "maxLength": 16
+        },
+        "online": {
+          "type": "boolean",
+          "description": "アクターがオンラインかどうかです。",
+          "default": true
+        },
+        "displayName": {
+          "type": "string",
+          "description": "アクターの表示名です。"
+        },
+        "playerList": {
+          "type": "object",
+          "description": "アクターのプレイヤーリストにおける扱いです。",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "プレイヤーリストに表示される名前です。"
+            },
+            "header": {
+              "type": "string",
+              "description": "プレイヤーリストに表示されるヘッダーです。"
+            },
+            "footer": {
+              "type": "string",
+              "description": "プレイヤーリストに表示されるフッターです。"
+            }
+          }
+        },
+        "compass": {
+          "$ref": "#/definitions/location",
+          "description": "アクターのコンパスのターゲットです。"
+        },
+        "bedLocation": {
+          "$ref": "#/definitions/location",
+          "description": "アクターのベッドスポーンの位置です。"
+        },
+        "exp": {
+          "type": "integer",
+          "description": "アクターの経験値です。"
+        },
+        "level": {
+          "type": "integer",
+          "description": "アクターのレベルです。"
+        },
+        "totalExp": {
+          "type": "integer",
+          "description": "アクターの総経験値です。"
+        },
+        "flyable": {
+          "type": "boolean",
+          "description": "アクターが飛行できるかどうかです。ゲームモードがクリエイティブおよびスペクテイタの場合は, 暗黙的に true になります。"
+        },
+        "flying": {
+          "type": "boolean",
+          "description": "アクターが飛行中かどうかです。"
+        },
+        "walkSpeed": {
+          "type": "number",
+          "description": "アクターの歩行速度です。"
+        },
+        "flySpeed": {
+          "type": "number",
+          "description": "アクターの飛行速度です。"
+        },
+        "inventory": {
+          "$ref": "#/definitions/playerInventory",
+          "description": "アクターのインベントリです。"
+        },
+        "enderChest": {
+          "$ref": "#/definitions/inventory",
+          "description": "アクターのエンダーチェストです。"
+        },
+        "mainHand": {
+          "type": "string",
+          "description": "アクターの利き手です。",
+          "enum": [
+            "left",
+            "right",
+            "LEFT",
+            "RIGHT"
+          ],
+          "default": "right"
+        },
+        "gamemode": {
+          "type": "string",
+          "description": "アクターのゲームモードです。",
+          "enum": [
+            "survival",
+            "creative",
+            "adventure",
+            "spectator",
+            "SURVIVAL",
+            "CREATIVE",
+            "ADVENTURE",
+            "SPECTATOR"
+          ],
+          "default": "survival"
+        },
+        "foodLevel": {
+          "type": "integer",
+          "description": "アクターの食料レベルです。",
+          "minimum": 0,
+          "maximum": 20,
+          "default": 20
+        },
+        "op": {
+          "type": [
+            "boolean",
+            "integer"
+          ],
+          "minimum": 0,
+          "maximum": 4,
+          "description": "アクターの OP レベルです。 0 は OP ではないことを意味します。"
+        },
+        "permissions": {
+          "type": "array",
+          "description": "アクターに与える権限です。",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "name"
+      ]
+    },
+    "stage": {
+      "type": "object",
+      "description": "シナリオを実行するステージです。",
+      "properties": {
+        "copyOf": {
+          "type": "string",
+          "description": "オリジナルのワールドの名前です。サーバ上に存在するワールドをもとに, 新しくステージを作成します。"
+        },
+        "type": {
+          "type": "string",
+          "description": "ステージとして使用するワールドの種類です。",
+          "enum": [
+            "normal",
+            "flat",
+            "large_biomes",
+            "amplified",
+            "NORMAL",
+            "FLAT",
+            "LARGE_BIOMES",
+            "AMPLIFIED"
+          ],
+          "default": "normal"
+        },
+        "seed": {
+          "type": "number",
+          "description": "ステージとして使用するワールドのシードです。"
+        },
+        "structures": {
+          "type": "boolean",
+          "description": "ステージとして使用するワールドに構造物を生成するかどうかです。",
+          "default": true
+        },
+        "env": {
+          "type": "string",
+          "description": "ステージとして使用するワールドの環境です。",
+          "enum": [
+            "normal",
+            "nether",
+            "end",
+            "custom",
+            "NORMAL",
+            "NETHER",
+            "END",
+            "CUSTOM"
+          ],
+          "default": "normal"
+        },
+        "hardcore": {
+          "type": "boolean",
+          "description": "ステージとして使用するワールドがハードコアかどうかです。",
+          "default": false
+        }
+      }
+    },
+    "trigger": {
+      "type": "object",
+      "description": "トリガとよばれる, シナリオの実行条件のオブジェクトです。",
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "トリガの種類です。",
+          "enum": [
+            "manual_dispatch",
+            "schedule",
+            "on_action",
+            "on_load"
+          ]
+        },
+        "before": {
+          "$ref": "#/definitions/scenarios",
+          "description": "シナリオがこのトリガによって実行される場合, メインシナリオの実行前に実行するシナリオを定義します。"
+        },
+        "after": {
+          "$ref": "#/definitions/scenarios",
+          "description": "シナリオがこのトリガによって実行される場合, メインシナリオの実行後に実行するシナリオを定義します。"
+        },
+        "runif": {
+          "type": "object",
+          "description": "シナリオの実行条件を定義します。アクションで定義します。満たしていない場合はスキップされます。",
+          "$ref": "#/definitions/action"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "on_action"
+              }
+            }
+          },
+          "then": {
+            "$ref": "#/definitions/action"
+          }
+        }
+      ]
+    },
+    "scenarios": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/scenario"
+      },
+      "maxProperties": 1
     }
   },
   "$schema": "http://json-schema.org/draft-07/schema#"

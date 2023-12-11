@@ -32,7 +32,7 @@ import {ObjectType} from "/src/components/Object";
 + プレイヤまたはエンティティのセレクタおよびその省略書式 （例：`entity: "@e[team=Red,tags=MyTag]"` ）
   - 省略： `@e` は省略できます （例：`entity: "[team=Red,tags=MyTag]"` ）。
   - 省略： `@e[...]` はできます （例：`entity: "team=Red,tags=MyTag"` ）。
-+ [Entity 型](../file-syntax#entity-structure) のオブジェクト  
++ [Entity 型](../types#entity-structure) のオブジェクト  
   特に記述がない限り アクション実行期待シナリオの引数 `target` として使用できます。これを使用すれば、セレクタを使用せずに
   高度な条件を指定できます。
 
@@ -78,7 +78,7 @@ import {ObjectType} from "/src/components/Object";
             name: "entity",
             anchor: "entity-entity",
             type: "Entity",
-            type_link: "../file-syntax#entity-structure",
+            type_link: "../types#entity-structure",
             description: "書き換えるエンティティの状態です。",
             required: [ScenarioType.EXECUTE]
           },
@@ -268,7 +268,7 @@ import {ObjectType} from "/src/components/Object";
           {
             name: "drops",
             type: "ItemStack[]",          
-            type_link: "../file-syntax#item-stack-structure",
+            type_link: "../types#item-stack-structure",
             description: "ドロップするアイテムです。",
             available: [ScenarioType.EXPECT]
           },
@@ -347,7 +347,7 @@ import {ObjectType} from "/src/components/Object";
           {
             name: "item",
             type: "EntityItem",
-            type_link: "../file-syntax#entity-item-structure",
+            type_link: "../types#entity-item-structure",
             description: "ドロップするアイテムです。",
             required: [ScenarioType.EXECUTE]
           }
@@ -377,14 +377,14 @@ import {ObjectType} from "/src/components/Object";
           {
             name: "from",
             type: "Location",
-            type_link: "../file-syntax#location-structure",
+            type_link: "../types#location-structure",
             description: "移動前の位置です。",
             available: [ScenarioType.EXPECT]
           },
           {
             name: "to",
             type: "Location",
-            type_link: "../file-syntax#location-structure",
+            type_link: "../types#location-structure",
             description: "移動後の位置です。",
             required: [ScenarioType.EXECUTE, ScenarioType.EXPECT]
           },
@@ -435,7 +435,7 @@ AI を有効にした場合, エンティティは経路を探索し自発的に
           {
             name: "item",
             type: "EntityItem | " + ObjectType.STRING,
-            type_link: "../file-syntax#entity-item-structure",
+            type_link: "../types#entity-item-structure",
             description: "ピックアップするアイテムです。",
             anchor: "pickup-item-item",
             required: [ScenarioType.EXECUTE]
@@ -463,7 +463,7 @@ AI を有効にした場合, エンティティは経路を探索し自発的に
 
 ### `item` {#pickup-item-item}
 
-アクション実行シナリオの場合でも, [アイテムの構造体](../file-syntax#entity-item-structure)またはエンティティのセレクタを指定できます。
+アクション実行シナリオの場合でも, [アイテムの構造体](../types#entity-item-structure)またはエンティティのセレクタを指定できます。
 アイテムの構造体を指定した場合, 事前にそのアイテムをワールドにスポーンさせます。
 
 
@@ -483,7 +483,7 @@ AI を有効にした場合, エンティティは経路を探索し自発的に
             name: "entity",
             anchor: "place-entity",
             type: "Entity",
-            type_link: "../file-syntax#entity-structure",
+            type_link: "../types#entity-structure",
             required: [ScenarioType.EXECUTE]
           },
           {
@@ -496,7 +496,7 @@ AI を有効にした場合, エンティティは経路を探索し自発的に
             name: "block",
             anchor: "place-block",
             type: "Block",
-            type_link: "../file-syntax#block-structure",
+            type_link: "../types#block-structure",
             description: "エンティティを設置するブロックです。",
             required: [ScenarioType.EXECUTE]
           },
@@ -504,7 +504,7 @@ AI を有効にした場合, エンティティは経路を探索し自発的に
             name: "direction",
             anchor: "place-direction",
             type: "BlockFace{UP, DOWN, NORTH, EAST, SOUTH, WEST}",
-            type_link: "../file-syntax#block-face-enum",
+            type_link: "../types#block-face-enum",
             description: "エンティティを設置する方向です。",
           }
         ]}
@@ -515,7 +515,7 @@ AI を有効にした場合, エンティティは経路を探索し自発的に
 
 :::caution 
 
-アクション実行シナリオの場合、この項目および [`Block#location`](../file-syntax#location-structure) は必須です。
+アクション実行シナリオの場合、この項目および [`Block#location`](../types#location-structure) は必須です。
 
 :::
 
@@ -574,7 +574,7 @@ AI を有効にした場合, エンティティは経路を探索し自発的に
           {
             name: "entity",
             type: "Entity",
-            type_link: "../file-syntax#entity-structure",
+            type_link: "../types#entity-structure",
             description: "スポーンさせるエンティティの構造体です。",
             required: [ScenarioType.EXECUTE]
           }
