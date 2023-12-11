@@ -128,7 +128,7 @@ public class EntitySpecifierImpl<E extends Entity> implements EntitySpecifier<E>
         else /* if (this.getTargetStructure() != null) */
         {
             assert this.getTargetStructure() != null;
-            return EntityUtils.tryCastMapped(this.getTargetStructure(), entity).canApplyTo(entity);
+            return EntityUtils.tryCheckIsAdequate(this.getTargetStructure(), entity);
         }
     }
 

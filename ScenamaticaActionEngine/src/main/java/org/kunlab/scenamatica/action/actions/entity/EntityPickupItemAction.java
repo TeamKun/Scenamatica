@@ -12,7 +12,6 @@ import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.kunlab.scenamatica.commons.specifiers.EntitySpecifierImpl;
 import org.kunlab.scenamatica.commons.utils.EntityUtils;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
@@ -20,6 +19,7 @@ import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.entity.entities.EntityItemStructure;
+import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.EntitySpecifier;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Collections;
@@ -156,7 +156,7 @@ public class EntityPickupItemAction extends AbstractEntityAction<EntityPickupIte
         EntityItemStructure item;
         String itemSelector;
 
-        public Argument(@Nullable EntitySpecifierImpl<Entity> mayTarget, Integer remaining, EntityItemStructure item)
+        public Argument(@Nullable EntitySpecifier<Entity> mayTarget, Integer remaining, EntityItemStructure item)
         {
             super(mayTarget);
             this.remaining = remaining;
@@ -164,7 +164,7 @@ public class EntityPickupItemAction extends AbstractEntityAction<EntityPickupIte
             this.itemSelector = null;
         }
 
-        public Argument(@Nullable EntitySpecifierImpl<Entity> mayTarget, Integer remaining, String itemSelector)
+        public Argument(@Nullable EntitySpecifier<Entity> mayTarget, Integer remaining, String itemSelector)
         {
             super(mayTarget);
             this.remaining = remaining;

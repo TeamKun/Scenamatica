@@ -10,7 +10,6 @@ import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.utils.LocationComparator;
-import org.kunlab.scenamatica.commons.specifiers.EntitySpecifierImpl;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.commons.utils.Utils;
 import org.kunlab.scenamatica.enums.ScenarioType;
@@ -18,6 +17,7 @@ import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
+import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.EntitySpecifier;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Collections;
@@ -100,7 +100,7 @@ public class EntityMoveAction extends AbstractEntityAction<EntityMoveAction.Argu
         // Execute のときのみ. デフォは true -> テレポート.
         boolean useAI;
 
-        public Argument(@Nullable EntitySpecifierImpl<Entity> mayTarget, Location from, Location to, boolean useAI)
+        public Argument(@Nullable EntitySpecifier<Entity> mayTarget, Location from, Location to, boolean useAI)
         {
             super(mayTarget);
             this.from = from;

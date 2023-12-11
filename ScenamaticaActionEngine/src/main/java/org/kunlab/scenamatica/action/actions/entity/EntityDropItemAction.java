@@ -10,7 +10,6 @@ import org.bukkit.event.entity.EntityDropItemEvent;
 import org.bukkit.inventory.InventoryHolder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.kunlab.scenamatica.commons.specifiers.EntitySpecifierImpl;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.commons.utils.Utils;
 import org.kunlab.scenamatica.enums.ScenarioType;
@@ -19,6 +18,7 @@ import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.entity.entities.EntityItemStructure;
+import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.EntitySpecifier;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Collections;
@@ -112,7 +112,7 @@ public class EntityDropItemAction extends AbstractEntityAction<EntityDropItemAct
 
         EntityItemStructure item;
 
-        public Argument(@Nullable EntitySpecifierImpl<Entity> mayTarget, EntityItemStructure item)
+        public Argument(@Nullable EntitySpecifier<Entity> mayTarget, EntityItemStructure item)
         {
             super(mayTarget);
             this.item = item;

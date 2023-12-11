@@ -165,11 +165,12 @@ public class ProjectileLaunchAction extends EntitySpawnAction<ProjectileLaunchAc
     @Override
     public boolean isFired(@NotNull Argument argument, @NotNull ScenarioEngine engine, @NotNull Event event)
     {
-        if (!super.isFired(argument, engine, event))
-            return false;
-
         assert event instanceof ProjectileLaunchEvent;
         ProjectileLaunchEvent e = (ProjectileLaunchEvent) event;
+
+        EntitySpecifier<?> entity = argument.getEntity();
+        if (!entity.checkMatchedEntity(e.getEntity()))
+            return false;
 
         if (argument.getEntity() != null)
         {

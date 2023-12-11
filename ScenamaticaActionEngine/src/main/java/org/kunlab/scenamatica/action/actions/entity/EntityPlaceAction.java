@@ -12,7 +12,6 @@ import org.bukkit.event.entity.EntityPlaceEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.kunlab.scenamatica.commons.specifiers.EntitySpecifierImpl;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.commons.utils.PlayerUtils;
 import org.kunlab.scenamatica.commons.utils.Utils;
@@ -23,6 +22,7 @@ import org.kunlab.scenamatica.interfaces.context.Actor;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.misc.BlockStructure;
+import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.EntitySpecifier;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Collections;
@@ -181,7 +181,7 @@ public class EntityPlaceAction extends AbstractEntityAction<EntityPlaceAction.Ar
         BlockStructure block;
         BlockFace blockFace;
 
-        public Argument(EntitySpecifierImpl<Entity> target, String playerSpecifier, BlockStructure block, BlockFace blockFace)
+        public Argument(EntitySpecifier<Entity> target, String playerSpecifier, BlockStructure block, BlockFace blockFace)
         {
             super(target);
             this.playerSpecifier = playerSpecifier;
