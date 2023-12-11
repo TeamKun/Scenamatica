@@ -217,7 +217,7 @@ import {ObjectType} from "/src/components/Object";
           },
           {
             name: "damager",
-            type: ObjectType.STRING,
+            type: "EntitySpecifier",
             anchor: "general-target",
             type_link: "/docs/use/scenario/types/entities#entity-specifier",
             description: "ダメージ元のエンティティです。",
@@ -348,6 +348,7 @@ import {ObjectType} from "/src/components/Object";
         args={[
           {
             name: "entity",
+            type: "EntitySpecifier",
             anchor: "general-target",
             type_link: "/docs/use/scenario/types/entities#entity-specifier",
             type: ObjectType.STRING,
@@ -356,7 +357,7 @@ import {ObjectType} from "/src/components/Object";
           },
           {
             name: "item",
-            type: "EntityItem",
+            type: "EntitySpecifier{type: EntityItem}",
             type_link: "/docs/use/scenario/types#entity-item-structure",
             description: "ドロップするアイテムです。",
             required: [ScenarioType.EXECUTE]
@@ -378,10 +379,10 @@ import {ObjectType} from "/src/components/Object";
         ]}
         args={[
           {
-            name: "entity",
+            name: "target",
             anchor: "general-target",
             type_link: "/docs/use/scenario/types/entities#entity-specifier",
-            type: ObjectType.STRING,
+            type: "EntitySpecifier",
             description: "移動させるエンティティです。",
             required: [ScenarioType.EXECUTE]
           },
@@ -437,16 +438,16 @@ AI を有効にした場合, エンティティは経路を探索し自発的に
         ]}
         args={[
           {
-            name: "entity",
+            name: "target",
             anchor: "general-target",
             type_link: "/docs/use/scenario/types/entities#entity-specifier",
-            type: ObjectType.STRING,
+            type: "EntitySpecifier",
             description: "アイテムをピックアップするエンティティです。",
             required: [ScenarioType.EXECUTE]
           },
           {
             name: "item",
-            type: "EntityItem | " + ObjectType.STRING,
+            type: "EntitySpecifier{type: EntityItem}",
             type_link: "/docs/use/scenario/types#entity-item-structure",
             description: "ピックアップするアイテムです。",
             anchor: "pickup-item-item",
@@ -492,9 +493,9 @@ AI を有効にした場合, エンティティは経路を探索し自発的に
         ]}
         args={[
           {
-            name: "entity",
-            anchor: "place-entity",
-            type: "Entity",
+            name: "target",
+            anchor: "place-target",
+            type: "EntitySpecifier | Material",
             type_link: "/docs/use/scenario/types#entity-structure",
             required: [ScenarioType.EXECUTE]
           },
@@ -541,7 +542,7 @@ AI を有効にした場合, エンティティは経路を探索し自発的に
 
 :::
 
-#### `entity` {#place-entity}
+#### `target` {#place-target}
 
 アクション実行シナリオの場合、設置するエンティティの UUID やセレクタ、または アイテム化したときの Material を指定します。  
 設置できるエンティティは、 Bukkit との相互作用のために以下のものに限られます。
@@ -584,10 +585,10 @@ AI を有効にした場合, エンティティは経路を探索し自発的に
         ]}
         args={[
           {
-            name: "entity",
-            type: "Entity",
+            name: "target",
+            type: "EntitySpecifier",
             type_link: "/docs/use/scenario/types#entity-structure",
-            description: "スポーンさせるエンティティの構造体です。",
+            description: "スポーンさせるエンティティです。",
             required: [ScenarioType.EXECUTE]
           }
         ]}
