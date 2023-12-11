@@ -266,7 +266,8 @@
         "type": "number",
         "description": "エンティティが落下した距離です。"
       }
-    }
+    },
+    "additionalProperties": true
   },
   "inventory": {
     "type": "object",

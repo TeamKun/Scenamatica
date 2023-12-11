@@ -7,6 +7,48 @@ import { Object, ObjectType } from "/src/components/Object";
 
 ---
 
+## 特別： EntitySpecifier 型（エンティティ指定子） {#entity-specifier}
+
+エンティティ指定子は、文字列型と[Entity 型](#entity-structure)としてふるまう特別な型です。  
+主にエンティティを指定するときに使用し、以下のような値をとります。
+
+1. プレイヤの名前 （例：`"Player1"` ）  
+  プレイヤを指定する場合にのみ有効です。
+2. プレイヤまたはエンティティの UUID （例：`"00000000-0000-0000-0000-000000000000"` ）
+3. プレイヤまたはエンティティのセレクタおよびその省略書式 （例：`"@e[team=Red,tags=MyTag]"` ）
+   + 省略： `@e` は省略できます （例：`"[team=Red,tags=MyTag]"` ）。
+   + 省略： `@e[...]` はできます （例：`"team=Red,tags=MyTag"` ）。
+4. [Entity 型](/docs/use/scenario/types#entity-structure) のオブジェクト  
+  特に記述がない限り使用できます。これを使用すれば、セレクタを使用せずに高度な条件を指定できます。
+
+例：
+（この例では、 `*.with.target` の値にエンティティ指定子を使用しています。）
+
+```yaml
+
+# 1. プレイヤの名前
+- with:
+    target: "Player1"
+
+# 2. プレイヤまたはエンティティの UUID
+- with:
+    target: "00000000-0000-0000-0000-000000000000"
+
+# 3. プレイヤまたはエンティティのセレクタおよびその省略書式
+- with:
+    target: "@e[team=Red,tags=MyTag]"
+
+# 4. Entity 型のオブジェクト
+- with:
+    target:
+      type: "minecraft:player"
+      name: "Player1"
+      team: "Red"
+      tags:
+        - "MyTag"
+```
+
+---
 
 ## EntityItem 型 {#entity-item-structure}
 
@@ -42,5 +84,29 @@ EntityItem 型は、以下の構造を持ちます。
     name: "thrower",
     type: ObjectType.STRING,
     description: "アイテムを投げたプレイヤーの UUID です。",
+  }
+]} />
+
+---
+
+## ProjectileStructure 型 {#projectile-structure}
+
+ProjectileStructure 型は、以下の親構造を持ちます。
+
++ [Entity 型](#entity-structure)
+
+ProjectileStructure 型は、以下の構造を持ちます。
+
+<Object objects={[
+  {
+    name: "shooter",
+    type: "EntitySpecifier",
+    type_anchor: "entity-specifier",
+    description: "投射物を投げたエンティティの指定子です。",
+  },
+  {
+    name: "bounce",
+    type: ObjectType.BOOLEAN,
+    description: "投射物が跳ね返るかどうかです。",
   }
 ]} />

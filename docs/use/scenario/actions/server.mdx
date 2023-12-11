@@ -52,7 +52,7 @@ import {ObjectType} from "/src/components/Object";
         executable watchable 
 />
 
-### `level` {#server-log-level}
+#### `level` {#server-log-level}
 
 ログのレベルを指定します。指定しなかった場合、全てのレベルのログを検知し、送信時には `INFO` で送信されます。
 
@@ -76,7 +76,7 @@ Java の標準的なレベルを指定できます。詳しくは以下のリス
 
 :::
 
-### `message` {#server-log-message}
+#### `message` {#server-log-message}
 
 検知するログの内容を**正規表現で**指定します。
 
@@ -172,12 +172,12 @@ Java の標準的なレベルを指定できます。詳しくは以下のリス
         executable watchable
 />
 
-### `message` {#broadcast-message}
+#### `message` {#broadcast-message}
 
 + シナリオの種類が `execute` の場合、この引数の値がそのまま送信されます。
 + シナリオの種類が `except`  の場合、この引数の値が正規表現として扱われ、マッチしているか検証されます。
 
-### `permission` {#broadcast-permission}
+#### `permission` {#broadcast-permission}
 
 メッセージの受信者に必要な権限を指定します。指定しなかった場合、全てのプレイヤーが受信者となります。
 
@@ -185,7 +185,7 @@ Java の標準的なレベルを指定できます。詳しくは以下のリス
 `except` モードではこの引数は使用できません。設定した場合、エラーが発生します。
 :::
 
-### `recipients` {#broadcast-recipients}
+#### `recipients` {#broadcast-recipients}
 
 指定しなかった場合、全てのプレイヤーが受信者となります。   
 
@@ -195,7 +195,7 @@ Java の標準的なレベルを指定できます。詳しくは以下のリス
 
 :::
 
-### `strictRecipients` {#broadcast-strict-recipients}
+#### `strictRecipients` {#broadcast-strict-recipients}
 
 これを設定すると、`recipients` で指定したプレイヤがメッセージの受信者か判定するのに加え、
 指定されていないプレイヤが受信者に含まれていないかも判定します。
@@ -239,7 +239,7 @@ Java の標準的なレベルを指定できます。詳しくは以下のリス
         executable watchable
 />
 
-### `command` {#command-dispatch-command}
+#### `command` {#command-dispatch-command}
 
 実行するコマンドを指定します。
 
@@ -249,7 +249,7 @@ Java の標準的なレベルを指定できます。詳しくは以下のリス
 
 :::
 
-### `sender` {#command-dispatch-sender}
+#### `sender` {#command-dispatch-sender}
 
 コマンドの実行する実行者を指定します。実行者が存在しない場合、シナリオは失敗します。
 
@@ -299,7 +299,7 @@ Java の標準的なレベルを指定できます。詳しくは以下のリス
 
 :::
 
-### `sender` {#tab-complete-sender}
+#### `sender` {#tab-complete-sender}
 
 タブ補完を実行する実行者を指定します。実行者が存在しない場合、シナリオは失敗します。
 

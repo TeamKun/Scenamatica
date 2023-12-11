@@ -22,7 +22,7 @@ import {ObjectType} from "/src/components/Object";
                anchor="notes"
 />
 
-## インベントリのクリック {#click}
+## クリック {#click}
 
 
 <Action name="インベントリのクリック"
@@ -31,7 +31,7 @@ import {ObjectType} from "/src/components/Object";
         args={[
           {
             name: "target",
-            type: ObjectType.STRING,
+            type: "-----",
             anchor: "click-target",
             description: "インベントリをクリックするプレイヤの ID です。",
             required: [ScenarioType.EXECUTE]
@@ -86,7 +86,7 @@ import {ObjectType} from "/src/components/Object";
         executable watchable
 />
 
-### `inventory` {#click-inventory}
+#### `inventory` {#click-inventory}
 
 `inventory` はクリックするインベントリを指定します。  
 省略した場合は、現在プレイヤが開いているインベントリが対象になります。
@@ -98,7 +98,7 @@ import {ObjectType} from "/src/components/Object";
 
 :::
 
-### `slot` および `rawSlot` {#click-slots}
+#### `slot` および `rawSlot` {#click-slots}
 
 `slot` は開いているインベントリの相対的なスロット番号を指定します。  
 `rawSlot` は開いているインベントリの絶対的なスロット番号を指定します。
@@ -109,11 +109,11 @@ import {ObjectType} from "/src/components/Object";
 
 :::
 
-### `slotType` {#click-slot-type}
+#### `slotType` {#click-slot-type}
 
 スロットの種類を指定します。
 
-### `button` {#click-button}
+#### `button` {#click-button}
 
 クリックされたボタンの番号を指定します。
 `0` が左クリック、`1` が右クリック、`2` が中クリック（マウスホイールのクリック）です。
@@ -152,6 +152,6 @@ import {ObjectType} from "/src/components/Object";
         watchable
 />
 
-### `item` {#creative-item}
+#### `item` {#creative-item}
 
 [親アクション](#creative)の `clickedItem` と同じで、内部的に値を共有しています。

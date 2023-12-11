@@ -24,17 +24,36 @@ import {ObjectType} from "/src/components/Object";
 
 ## 基本引数 {#general-arguments}
 
-### `target` {#target}
+#### `target` {#target}
 
-対象のプレイヤの名前を指定するには、一律で `target` というキーの引数を使用します。
+対象のエンティティを[PlayerSpecifier`{type: player}` 型（エンティティ指定子）](/docs/use/scenario/types/entities#entity-specifier)で指定します。
 
-:::tip
+:::info シナリオの種類での振る舞いの違い
 
-`target` の指定は大文字小文字を区別しません。  
-また、 **UUID でも指定できます**。
++ アクション実行シナリオでは、単一のプレイヤを指します。  
+`@e` 等で複数のプレイヤを指定した場合、最初に見つかったプレイヤが使用されます。
++ アクション実行期待シナリオでは、該当する**複数のプレイヤのどれか**を指します。  
+複数のプレイヤを指定した（が見つかった）場合、そのうちのどれか一体が条件を満たしていたらパスされます。  
+単一のプレイヤを指定した場合はそのプレイヤが条件を満たしているかどうかが判定されます。
+
+例：
+``` yaml
+
+- type: execute
+  action: entity_...
+  with:
+    targe: "@a[team=Red]"  # チームが Red のプレイヤのうち、最初に見つかったものが使用される
+
+---
+
+- type: expect
+  action: entity_...
+  with:
+    target: "@a[team=Red]"  # チームが Red のプレイヤのうち、どれか一体が条件を満たしていればパスされる
+
+```
 
 :::
-
 ## バケツの使用 {#bucket-empty}
 
 <Action name="バケツの使用"
@@ -95,7 +114,7 @@ import {ObjectType} from "/src/components/Object";
         watchable
 />
 
-### アクション実行シナリオでの使用 {#bucket-empty-usage-in-execution}
+#### アクション実行シナリオでの使用 {#bucket-empty-usage-in-execution}
 
 :::caution
 
@@ -109,7 +128,7 @@ NMS の仕様上の都合により、 `block` を用いた液体の場所は `ev
 
 :::
 
-### `eventOnly` {#bucket-empty-event-only}
+#### `eventOnly` {#bucket-empty-event-only}
 
 `eventOnly` を `true` に設定すると、引数に基づいてイベントのみを発火させ、バケツの中身を設置します。
 
@@ -182,7 +201,7 @@ NMS の仕様上の都合により、 `block` を用いた液体の場所は `ev
         watchable
 />
 
-### アクション実行シナリオでの使用 {#bucket-empty-usage-in-execution}
+#### アクション実行シナリオでの使用 {#bucket-empty-usage-in-execution}
 
 :::caution
 
@@ -196,7 +215,7 @@ NMS の仕様上の都合により、 `block` を用いた液体の場所は `ev
 
 :::
 
-### `eventOnly` {#bucket-fill-event-only}
+#### `eventOnly` {#bucket-fill-event-only}
 
 `eventOnly` を `true` に設定すると、引数に基づいてイベントのみを発火させ、液体を回収します。
 
@@ -252,17 +271,17 @@ NMS の仕様上の都合により、 `block` を用いた液体の場所は `ev
 
 :::
 
-### `advancement` {#advancement-advancement}
+#### `advancement` {#advancement-advancement}
 
 進捗を [`NamespacedKey`](/docs/use/scenario/types/misc#namespaced-key-structure) で指定します。
 
-### `criterion` {#advancement-criterion}
+#### `criterion` {#advancement-criterion}
 
 進捗の達成条件を指定します。
 
 アクション実行機能において省略した場合、指定された進捗の**全ての達成条件を達成**します。
 
-## プレイヤのアニメーション {#animation}
+## アニメーション {#animation}
 
 <Action name="プレイヤのアニメーション"
         description="プレイヤのアニメーションに関するアクションです。"
@@ -292,7 +311,7 @@ NMS の仕様上の都合により、 `block` を用いた液体の場所は `ev
         executable watchable
 />
 
-### `type` {#animation-type}
+#### `type` {#animation-type}
 
 実行するアニメーションの種類を指定します。  
 
@@ -350,7 +369,7 @@ Bukkit の仕様により、現在は `ARM_SWING` のみが指定可能です。
 
 :::
 
-### アクション実行シナリオでの使用 {#bucket-entity-usage-in-execution}
+#### アクション実行シナリオでの使用 {#bucket-entity-usage-in-execution}
 
 :::info
 
@@ -359,7 +378,7 @@ Bukkit の仕様により、現在は `ARM_SWING` のみが指定可能です。
 
 :::
 
-## プレイヤのチャット {#chat}
+## チャット {#chat}
 
 <Action name="プレイヤのチャット"
         description="プレイヤのチャットに関するアクションです。"
@@ -400,7 +419,7 @@ Bukkit の仕様により、現在は `ARM_SWING` のみが指定可能です。
 
 :::
 
-## プレイヤの死亡およびキル {#death}
+## 死亡およびキル {#death}
 
 <Action name="プレイヤの死亡およびキル"
         description="プレイヤの死亡およびキルに関するアクションです。"
@@ -508,7 +527,7 @@ Bukkit の仕様により、現在は `ARM_SWING` のみが指定可能です。
         executable watchable
 />
 
-## プレイヤの飛行 {#flight}
+## 飛行 {#flight}
 
 <Action name="プレイヤの飛行"
         description="プレイヤの飛行に関するアクションです。"
@@ -537,7 +556,7 @@ Bukkit の仕様により、現在は `ARM_SWING` のみが指定可能です。
         executable requireable watchable
 />
 
-### `flying` {#flight-flying}
+#### `flying` {#flight-flying}
 
 飛行するか（している）どうかを指定します。
 
@@ -588,7 +607,7 @@ Bukkit の仕様により、現在は `ARM_SWING` のみが指定可能です。
         executable requireable watchable
 />
 
-### `gamemode` {#gamemode-gamemode}
+#### `gamemode` {#gamemode-gamemode}
 
 ゲームモードを指定します。
 
@@ -599,7 +618,7 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
 
 :::
 
-### `cancelMessage` {#gamemode-cancel-message}
+#### `cancelMessage` {#gamemode-cancel-message}
 
 変更がキャンセルされた場合に表示するメッセージを指定します。
 
@@ -648,7 +667,7 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
         executable watchable
 />
 
-### アクション実行シナリオでの使用 {#harvest-block-usage-in-execution}
+#### アクション実行シナリオでの使用 {#harvest-block-usage-in-execution}
 
 :::tip
 このアクションは, 内部的に [`BlockBreakAction`](block#break) を呼び出しています。
@@ -698,7 +717,7 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
         executable requireable watchable
 />
 
-### `slot`, `previous` {#hotbar-slot}
+#### `slot`, `previous` {#hotbar-slot}
 
 ホットバーのスロットは `0` から `8` の整数で指定します。
 
@@ -712,11 +731,11 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
 
 :::
 
-### `item` {#hotbar-item}
+#### `item` {#hotbar-item}
 
 この型は[こちら](/docs/use/scenario/types/#item-stack-structure)を参照してください。
 
-## プレイヤのエンティティのクリック（作用） {#interact-at-entity}
+## エンティティのクリック（作用） {#interact-at-entity}
 
 :::caution DEPRECATED!!!
 
@@ -738,8 +757,8 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
         args={[
           {
             name: "target",
-            type: ObjectType.STRING,
-            type_anchor: "entity/#general-entity",
+            type: "-----",
+            type_anchor: "entity/#general-target",
             description: "クリックする対象のエンティティです。",
             required: [ScenarioType.EXECUTE]
           },
@@ -766,7 +785,7 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
 
 :::
 
-## プレイヤのブロックのクリック {#interact-block}
+## ブロックのクリック {#interact-block}
 
 <Action name="プレイヤのブロックのクリック"
         description="プレイヤのブロックのクリックに関するアクションです。"
@@ -808,14 +827,14 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
         executable watchable
 />
 
-### `block` {#interact-block-block}
+#### `block` {#interact-block-block}
 
 <BelowDocument docId="use/scenario/types/misc"
                anchor="block-structure"
                label="Block 型"
 />
 
-## プレイヤのエンティティのクリック {#interact-entity}
+## エンティティのクリック {#interact-entity}
 
 <Action name="プレイヤのエンティティのクリック"
         description="プレイヤのエンティティのクリックに関するアクションです。"
@@ -829,8 +848,8 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
         args={[
           {
             name: "target",
-            type: ObjectType.STRING,
-            type_anchor: "entity/#general-entity",
+            type: "-----",
+            type_anchor: "entity/#general-target",
             description: "クリックする対象のエンティティです。",
             required: [ScenarioType.EXECUTE]
           },
@@ -844,7 +863,7 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
         executable watchable
 />
 
-### アクション実行シナリオでの使用 {#interact-entity-usage-in-execution}
+#### アクション実行シナリオでの使用 {#interact-entity-usage-in-execution}
 
 プレイヤにエンティティをクリックさせます。
 
@@ -857,7 +876,7 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
 :::
  
 
-## プレイヤのアイテムの破壊 {#item-break}
+## アイテムの破壊 {#item-break}
 
 <Action name="プレイヤのアイテムの破壊"
         description="プレイヤのアイテムの破壊に関するアクションです。"
@@ -892,14 +911,14 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
         executable watchable
 />
 
-### アクション実行シナリオでの使用 {#item-break-usage-in-execution}
+#### アクション実行シナリオでの使用 {#item-break-usage-in-execution}
 
 `item` が設定されていた場合、破壊する前にそのアイテムを `slot` に設定します。
 `slot` はこのモードではデフォルトで `HAND` になります。
 
 
 
-## プレイヤのアイテムの消費 {#item-consume}
+## アイテムの消費 {#item-consume}
 
 <Action name="プレイヤのアイテムの消費"
         description="プレイヤのアイテムの消費に関するアクションです。"
@@ -935,7 +954,7 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
         executable watchable 
 />
 
-### アクション実行シナリオでの使用 {#item-consume-usage-in-execution}
+#### アクション実行シナリオでの使用 {#item-consume-usage-in-execution}
 
 プレイヤの利き手にあるアイテムを消費します。  
 
@@ -944,7 +963,7 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
 
 `replacement` は使用**できません**。
 
-## プレイヤのアイテムへのダメージ {#item-damage}
+## アイテムへのダメージ {#item-damage}
 
 <Action name="プレイヤのアイテムへのダメージ"
         description="プレイヤのアイテムへのダメージに関するアクションです。"
@@ -987,17 +1006,17 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
         executable watchable requireable={"装備スロットにあるアイテムのダメージが一致するか判定します。"}
 />
 
-### アクション実行シナリオでの使用 {#item-damage-usage-in-execution}
+#### アクション実行シナリオでの使用 {#item-damage-usage-in-execution}
 
 `item` が設定されていた場合、ダメージを与える前にそのアイテムを `slot` に設定します。  
 `slot` はこのモードでは デフォルトで `HAND` になります。
 
-### 条件要求シナリオでの使用 {#item-damage-usage-in-requirement}
+#### 条件要求シナリオでの使用 {#item-damage-usage-in-requirement}
 
 `slot` を省略した場合、プレイヤの全ての装備スロットにあるアイテムのダメージが一致するか判定します。  
 `item` を指定した場合、そのアイテムのダメージが一致するか判定します（どれか一つでも一致する場合は真）。
 
-### `item` {#item-damage-item}
+#### `item` {#item-damage-item}
 
 :::warning
 
@@ -1006,7 +1025,7 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
 
 :::
 
-## プレイヤの参加 {#join}
+## 参加 {#join}
 
 <Action name="プレイヤの参加"
         description="プレイヤの参加に関するアクションです。"
@@ -1031,7 +1050,7 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
         watchable
 />
 
-## プレイヤのキック {#kick}
+## キック {#kick}
 
 <Action name="プレイヤのキック"
         description="プレイヤのキックに関するアクションです。"
@@ -1073,7 +1092,7 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
         executable watchable
 />
 
-### `leave_message` {#kick-leave-message}
+#### `leave_message` {#kick-leave-message}
 
 :::caution
 アクション実行期待モードでは使用できません。
@@ -1104,7 +1123,7 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
 | `UNKNOWN`                  | 不明                 |
 
 
-## プレイヤの投げ物の発射 {#launch-projectile}
+## 投げ物の発射 {#launch-projectile}
 
 <Action name="プレイヤの投げ物の発射"
         description="プレイヤの投げ物の発射に関するアクションです。"
@@ -1142,7 +1161,7 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
         executable watchable
 />
 
-### `type` {#projectile-type}
+#### `type` {#projectile-type}
 
 発射される投げ物の種類を指定します。以下の種類が指定できます。
 
@@ -1164,11 +1183,11 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
 |      `TRIDENT`      | トライデント     |
   
 
-### `epsilon` {#projectile-epsilon}
+#### `epsilon` {#projectile-epsilon}
 
 投げ物をアクションで比較すする際に許容される誤差を指定します。
 
-## プレイヤの経験レベルの変更 {#level-change}
+## 経験レベルの変更 {#level-change}
 
 <Action name="プレイヤの経験レベルの変更"
         description="プレイヤの経験レベルの変更に関するアクションです。"
@@ -1208,7 +1227,7 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
 />
 
 
-## プレイヤの移動 {#move}
+## 移動 {#move}
 
 <Action name="プレイヤの移動"
         description="プレイヤの移動に関するアクションです。"
@@ -1256,7 +1275,7 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
 
 
 
-## プレイヤの退出 {#quit}
+## 退出 {#quit}
 
 <Action name="プレイヤの退出"
         description="プレイヤの退出に関するアクションです。"
@@ -1301,7 +1320,7 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
 :::
 
 
-### `message` {#quit-message}
+#### `message` {#quit-message}
 
 退出時のメッセージを指定します。
 
@@ -1316,7 +1335,7 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
 
 :::
 
-### `reason` {#quit-reason}
+#### `reason` {#quit-reason}
 
 以下の理由が使用できます：
 
@@ -1327,7 +1346,7 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
 | `TIMED_OUT`       | プレイヤがタイムアウトした場合         |
 | `ERRONEOUS_STATE` | パケットハンドラ内などで例外が発生した場合など |
 
-## プレイヤのリスポーン {#respawn}
+## リスポーン {#respawn}
 
 <Action name="プレイヤのリスポーン"
         description="プレイヤのリスポーンに関するアクションです。"
@@ -1373,7 +1392,7 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
         executable watchable
 />
 
-### `location` {#respawn-location}
+#### `location` {#respawn-location}
 
 リスポーンする場所を指定します。  
 
@@ -1383,7 +1402,7 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
 
 :::
 
-## プレイヤのスニーク {#sneak}
+## スニーク {#sneak}
 
 <Action name="プレイヤのスニーク"
         description="プレイヤのスニークに関するアクションです。"
@@ -1413,7 +1432,7 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
         watchable
 />
 
-## プレイヤの走り {#sprint}
+## 走り {#sprint}
 
 <Action name="プレイヤの走り"
         description="プレイヤの走りに関するアクションです。"
@@ -1443,7 +1462,7 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
         watchable
 />
 
-## プレイヤのテレポート {#teleport}
+## テレポート {#teleport}
 
 <Action name="プレイヤのテレポート"
         description="プレイヤのテレポートに関するアクションです。"

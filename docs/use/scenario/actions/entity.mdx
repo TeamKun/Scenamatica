@@ -21,23 +21,13 @@ import {ObjectType} from "/src/components/Object";
                anchor="notes"
 />
 
-## 基本引数 {#general-arguments}
+## 全般 - 引数 `target` {#general-target}
 
-### `target` {#general-target}
-
-対象のエンティティを指定します。以下の書式が有効です：
-
-+ プレイヤの名前 （例：`entity: "Player1"` ）
-+ プレイヤまたはエンティティの UUID （例：`entity: "00000000-0000-0000-0000-000000000000"` ）
-+ プレイヤまたはエンティティのセレクタおよびその省略書式 （例：`entity: "@e[team=Red,tags=MyTag]"` ）
-  - 省略： `@e` は省略できます （例：`entity: "[team=Red,tags=MyTag]"` ）。
-  - 省略： `@e[...]` はできます （例：`entity: "team=Red,tags=MyTag"` ）。
-+ [Entity 型](/docs/use/scenario/types#entity-structure) のオブジェクト  
-  特に記述がない限り使用できます。これを使用すれば、セレクタを使用せずに高度な条件を指定できます。
+対象のエンティティを[EntitySpecifier 型（エンティティ指定子）](/docs/use/scenario/types/entities#entity-specifier)で指定します。
 
 :::warning
 
-セレクタをと [Entity 型](/docs/use/scenario/types/entities#entity-structure) のオブジェクトを指定する場合、
+セレクタを [Entity 型](/docs/use/scenario/types/entities#entity-structure) のオブジェクトを指定する場合、
 捜索範囲はシナリオの[ステージ](/docs/use/scenario/elements#stage)内かつ、ロードされているチャンクに限定されます。
 
 :::
@@ -59,16 +49,18 @@ import {ObjectType} from "/src/components/Object";
 例：
 ``` yaml
 
-# 中略
 - type: execute
   action: entity_...
   with:
     targe: "@e[team=Red]"  # チームが Red のエンティティのうち、最初に見つかったものが使用される
-# 中略
+
+---
+
 - type: expect
   action: entity_...
   with:
     target: "@e[team=Red]"  # チームが Red のエンティティのうち、どれか一体が条件を満たしていればパスされる
+
 ```
 
 :::
@@ -81,9 +73,10 @@ import {ObjectType} from "/src/components/Object";
         args={[
           {
             name: "target",
-            type: ObjectType.STRING,
-            anchor: "general-entity",
-            description: "ダメージを与える対象のエンティティです。",
+            type: "EntitySpecifier",
+            anchor: "general-target",
+            type_link: "/docs/use/scenario/types/entities#entity-specifier",
+            description: "状態を書き換える対象のエンティティです。",
             required: true
           },
           {
@@ -100,7 +93,7 @@ import {ObjectType} from "/src/components/Object";
 
 条件要求シナリオで使用すると、エンティティの属性や状態（例：体力、位置、速度など）を確認できます。
 
-## エンティティのダメージ {#damage}
+## ダメージ {#damage}
 
 <Action name="エンティティのダメージ"
         description="エンティティにダメージを与えます。"
@@ -114,8 +107,9 @@ import {ObjectType} from "/src/components/Object";
         args={[
           {
             name: "target",
-            type: ObjectType.STRING,
-            anchor: "general-entity",
+            type: "EntitySpecifier",
+            anchor: "general-target",
+            type_link: "/docs/use/scenario/types/entities#entity-specifier",
             description: "ダメージを与える対象のエンティティです。",
             required: [ScenarioType.EXECUTE]
           },
@@ -145,7 +139,7 @@ import {ObjectType} from "/src/components/Object";
         executable watchable
 />
 
-### `amount` {#damage-amount}
+#### `amount` {#damage-amount}
 
 いわゆる `EntityDamageEvent#getFinalDamage()` に相当します。
 
@@ -155,7 +149,7 @@ import {ObjectType} from "/src/components/Object";
 
 :::
 
-### `modifiers` {#damage-modifiers}
+#### `modifiers` {#damage-modifiers}
 
 ダメージを計算するときに加味するべき重みをオブジェクトで指定します。  
 キーには以下の値を、値には重みを倍精度浮動小数点数 (`double`) で指定します。
@@ -168,7 +162,7 @@ import {ObjectType} from "/src/components/Object";
 + `MAGIC` ウィッチのポーション効果や防具のエンチャントによる防御
 + `ABSORPTION` エンチャント「ダメージ軽減」による防御
 
-### `EntityDamageCause` {#damage-enum-entity-damage-cause}
+#### `EntityDamageCause` {#damage-enum-entity-damage-cause}
 
 ダメージの種類を指定します。以下の値が有効です：
 
@@ -215,15 +209,17 @@ import {ObjectType} from "/src/components/Object";
         args={[
           {
             name: "target",
-            type: ObjectType.STRING,
-            anchor: "general-entity",
+            type: "EntitySpecifier",
+            anchor: "general-target",
+            type_link: "/docs/use/scenario/types/entities#entity-specifier",
             description: "ダメージを受けるエンティティです。",
             required: [ScenarioType.EXECUTE]
           },
           {
             name: "damager",
             type: ObjectType.STRING,
-            anchor: "general-entity",
+            anchor: "general-target",
+            type_link: "/docs/use/scenario/types/entities#entity-specifier",
             description: "ダメージ元のエンティティです。",
             required: [ScenarioType.EXECUTE]
           },
@@ -258,7 +254,7 @@ import {ObjectType} from "/src/components/Object";
 
 :::
 
-## エンティティの死亡 {#death}
+## 死亡 {#death}
 
 <Action name="エンティティの死亡"
         description="エンティティを死亡させます。"
@@ -272,8 +268,9 @@ import {ObjectType} from "/src/components/Object";
         args={[
           {
             name: "target",
-            type: ObjectType.STRING,
-            anchor: "general-entity",
+            type: "EntitySpecifier",
+            anchor: "general-target",
+            type_link: "/docs/use/scenario/types/entities#entity-specifier",
             description: "死亡させるエンティティです。",
             required: [ScenarioType.EXECUTE]
           },
@@ -351,7 +348,8 @@ import {ObjectType} from "/src/components/Object";
         args={[
           {
             name: "entity",
-            anchor: "general-entity",
+            anchor: "general-target",
+            type_link: "/docs/use/scenario/types/entities#entity-specifier",
             type: ObjectType.STRING,
             description: "アイテムをドロップするエンティティです。",
             required: [ScenarioType.EXECUTE]
@@ -367,7 +365,7 @@ import {ObjectType} from "/src/components/Object";
         executable watchable
 />
 
-## エンティティの移動 {#move}
+## 移動 {#move}
 
 <Action name="エンティティの移動"
         description="エンティティを移動させます。"
@@ -381,7 +379,8 @@ import {ObjectType} from "/src/components/Object";
         args={[
           {
             name: "entity",
-            anchor: "general-entity",
+            anchor: "general-target",
+            type_link: "/docs/use/scenario/types/entities#entity-specifier",
             type: ObjectType.STRING,
             description: "移動させるエンティティです。",
             required: [ScenarioType.EXECUTE]
@@ -418,7 +417,7 @@ import {ObjectType} from "/src/components/Object";
 
 :::
 
-### `ai` {#move-ai}
+#### `ai` {#move-ai}
 
 AI を有効にした場合, エンティティは経路を探索し自発的に移動しようとします。  
 経路が見つからなかった場合や, その場所に到達できない場合は例外をスローし, シナリオの実行が**失敗します**。
@@ -439,7 +438,8 @@ AI を有効にした場合, エンティティは経路を探索し自発的に
         args={[
           {
             name: "entity",
-            anchor: "general-entity",
+            anchor: "general-target",
+            type_link: "/docs/use/scenario/types/entities#entity-specifier",
             type: ObjectType.STRING,
             description: "アイテムをピックアップするエンティティです。",
             required: [ScenarioType.EXECUTE]
@@ -462,7 +462,7 @@ AI を有効にした場合, エンティティは経路を探索し自発的に
         executable watchable
 />
 
-### アクション実行シナリオでの使用 {#pickup-item-execute}
+#### アクション実行シナリオでの使用 {#pickup-item-execute}
 
 アイテムを拾うエンティティは, [LivingEntity](https://jd.papermc.io/paper/1.16/org/bukkit/entity/LivingEntity.html) かつ, 
 アイテムを拾える状態（[LivingEntity#canPickupItems()](https://jd.papermc.io/paper/1.16/org/bukkit/entity/LivingEntity.html#canPickupItems()) が `true`）である必要があります。
@@ -473,13 +473,13 @@ AI を有効にした場合, エンティティは経路を探索し自発的に
 
 プレイヤがアイテムを拾った場合, そのアイテムはプレイヤのインベントリに移動されます。
 
-### `item` {#pickup-item-item}
+#### `item` {#pickup-item-item}
 
 アクション実行シナリオの場合でも, [アイテムの構造体](/docs/use/scenario/types#entity-item-structure)またはエンティティのセレクタを指定できます。
 アイテムの構造体を指定した場合, 事前にそのアイテムをワールドにスポーンさせます。
 
 
-## エンティティの設置 {#place}
+## 設置 {#place}
 
 <Action name="エンティティの設置"
         description="エンティティを設置します。"
@@ -523,7 +523,7 @@ AI を有効にした場合, エンティティは経路を探索し自発的に
         executable watchable
 />
 
-### `block` {#place-block}
+#### `block` {#place-block}
 
 :::caution 
 
@@ -531,7 +531,7 @@ AI を有効にした場合, エンティティは経路を探索し自発的に
 
 :::
 
-### `direction` {#place-direction}
+#### `direction` {#place-direction}
 
 エンティティを設置する方向を指定します。
 
@@ -541,7 +541,7 @@ AI を有効にした場合, エンティティは経路を探索し自発的に
 
 :::
 
-### `entity` {#place-entity}
+#### `entity` {#place-entity}
 
 アクション実行シナリオの場合、設置するエンティティの UUID やセレクタ、または アイテム化したときの Material を指定します。  
 設置できるエンティティは、 Bukkit との相互作用のために以下のものに限られます。
@@ -571,7 +571,7 @@ AI を有効にした場合, エンティティは経路を探索し自発的に
 + `LEGACY_END_CRYSTAL`
 
 
-## エンティティのスポーン {#spawn}
+## スポーン {#spawn}
 
 <Action name="エンティティのスポーン"
         description="エンティティをスポーンさせます。"
@@ -594,7 +594,7 @@ AI を有効にした場合, エンティティは経路を探索し自発的に
         executable watchable
 />
 
-### `entity` {#spawn-entity}
+#### `entity` {#spawn-entity}
 
 エンティティの構造体を指定します。
 

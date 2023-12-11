@@ -173,7 +173,6 @@
       "$ref": "#/definitions/entity",
       "properties": {
         "shooter": {
-          "type": "object",
           "description": "投射物の発射者を表します。",
           "$ref": "#/definitions/projectileSource"
         },
@@ -451,7 +450,8 @@
           "type": "number",
           "description": "エンティティが落下した距離です。"
         }
-      }
+      },
+      "additionalProperties": true
     },
     "inventory": {
       "type": "object",
