@@ -138,6 +138,10 @@ const config = {
                   to: "/docs/getting-started",
                 },
                 {
+                  label: "チュートリアル",
+                  to: "/docs/getting-started/tutorials",
+                },
+                {
                   label: "コマンド",
                   to: "/docs/use/commandS",
                 },
