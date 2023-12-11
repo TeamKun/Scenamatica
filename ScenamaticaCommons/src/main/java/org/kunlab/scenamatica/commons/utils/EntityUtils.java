@@ -1,8 +1,11 @@
-package org.kunlab.scenamatica.action.utils;
+package org.kunlab.scenamatica.commons.utils;
 
+import javax.annotation.Nullable;
 import lombok.experimental.UtilityClass;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
+import org.kunlab.scenamatica.interfaces.context.Context;
+import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.Mapped;
 import org.kunlab.scenamatica.interfaces.scenariofile.entity.EntityStructure;
 
@@ -10,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Predicate;
 
 @UtilityClass
 public class EntityUtils
@@ -25,6 +29,11 @@ public class EntityUtils
             throw new IllegalStateException("Entity cannot be applied to mapped entity");
 
         return mapped;
+    }
+
+    public static boolean tryCheckIsAdequate(EntityStructure structure, Entity entity)
+    {
+        return tryCastMapped(structure, entity).isAdequate(entity);
     }
 
     public static Entity getPlayerOrEntityOrThrow(String target)
@@ -126,4 +135,45 @@ public class EntityUtils
         }
     }
 
+    public static <T extends Entity> Predicate<T> getEntityPredicate(EntityStructure structure)
+    {
+        if (!(structure instanceof Mapped))
+            throw new IllegalStateException("Entity is not mapped");
+
+        // noinspection unchecked
+        Mapped<T> mapped = (Mapped<T>) structure;
+
+        return ((Predicate<T>) mapped::canApplyTo).and(mapped::isAdequate);
+    }
+
+    private static Entity pickEntityOrNull(List<? extends Entity> entities, EntityStructure structure, @Nullable Predicate<? super Entity> predicate)
+    {
+        Predicate<? super Entity> finalPredicate;
+        if (predicate == null)
+            finalPredicate = getEntityPredicate(structure);
+        else
+            finalPredicate = getEntityPredicate(structure).and(predicate);
+
+        return entities.stream()
+                .filter(finalPredicate)
+                .findFirst()
+                .orElse(null);
+    }
+
+    public static Entity getEntity(EntityStructure structure, Context context, @Nullable Predicate<? super Entity> predicate)
+    {
+        Entity result = null;
+        if (!(context.getEntities() == null || context.getEntities().isEmpty()))
+            result = pickEntityOrNull(context.getEntities(), structure, predicate);
+
+        if (result == null)
+            result = pickEntityOrNull(context.getStage().getEntities(), structure, predicate);
+
+        return result;
+    }
+
+    public static Entity getEntity(EntityStructure structure, ScenarioEngine engine, @Nullable Predicate<? super Entity> predicate)
+    {
+        return getEntity(structure, engine.getContext(), predicate);
+    }
 }

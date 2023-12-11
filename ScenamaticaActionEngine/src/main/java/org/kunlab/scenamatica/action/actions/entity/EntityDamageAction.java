@@ -8,6 +8,7 @@ import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.kunlab.scenamatica.commons.specifiers.EntitySpecifierImpl;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
@@ -39,7 +40,7 @@ public class EntityDamageAction<A extends EntityDamageAction.Argument> extends A
     {
         argument = this.requireArgsNonNull(argument);
 
-        Entity target = argument.selectTarget();
+        Entity target = argument.selectTarget(engine.getContext());
 
         if (!(target instanceof Damageable))
             throw new IllegalArgumentException("Target is not damageable");
@@ -122,7 +123,7 @@ public class EntityDamageAction<A extends EntityDamageAction.Argument> extends A
         private final Double amount;
         private final Map<EntityDamageEvent.DamageModifier, @NotNull Double> modifiers;
 
-        public Argument(EntityArgumentHolder<Entity> target, EntityDamageEvent.DamageCause cause, Double amount, Map<EntityDamageEvent.DamageModifier, @NotNull Double> modifiers)
+        public Argument(EntitySpecifierImpl<Entity> target, EntityDamageEvent.DamageCause cause, Double amount, Map<EntityDamageEvent.DamageModifier, @NotNull Double> modifiers)
         {
             super(target);
             this.cause = cause;

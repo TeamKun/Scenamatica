@@ -16,7 +16,7 @@ import java.util.Map;
 /**
  * ブロックの情報を格納するクラスです。
  */
-public interface BlockStructure extends Structure, Mapped<Block>, Creatable<Block>
+public interface BlockStructure extends Structure, Mapped<Block>, Creatable<Block>, ProjectileSourceStructure
 {
     String KEY_BLOCK_TYPE = "type";
     String KEY_BLOCK_LOCATION = "location";
@@ -76,6 +76,13 @@ public interface BlockStructure extends Structure, Mapped<Block>, Creatable<Bloc
      * @return ブロックの状態
      */
     Byte getBlockState();
+
+    /**
+     * 安全にブロックを取得します。
+     *
+     * @return ブロック
+     */
+    Block getBlockSafe();
 
     /**
      * Location にこのブロックの情報を適用します。

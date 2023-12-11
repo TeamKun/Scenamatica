@@ -2,14 +2,23 @@ package org.kunlab.scenamatica.scenariofile.structures.entity.entities;
 
 import lombok.EqualsAndHashCode;
 import lombok.Value;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Projectile;
+import org.bukkit.projectiles.BlockProjectileSource;
+import org.bukkit.projectiles.ProjectileSource;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.kunlab.scenamatica.commons.utils.EntityUtils;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
+import org.kunlab.scenamatica.interfaces.scenariofile.Mapped;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.entity.EntityStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.entity.entities.ProjectileStructure;
+import org.kunlab.scenamatica.interfaces.scenariofile.misc.BlockStructure;
+import org.kunlab.scenamatica.interfaces.scenariofile.misc.ProjectileSourceStructure;
+import org.kunlab.scenamatica.interfaces.scenariofile.misc.SelectorProjectileSourceStructure;
 import org.kunlab.scenamatica.scenariofile.structures.entity.EntityStructureImpl;
+import org.kunlab.scenamatica.scenariofile.structures.misc.SelectorProjectileSourceStructureImpl;
 
 import java.util.Map;
 
@@ -17,10 +26,10 @@ import java.util.Map;
 @EqualsAndHashCode(callSuper = true)
 public class ProjectileStructureImpl extends EntityStructureImpl implements ProjectileStructure
 {
-    EntityStructure shooter;  // ProjectileSource だが, launchProjectile 以外存在しないので EntityStructure で代用。
+    ProjectileSourceStructure shooter;
     Boolean doesBounce;
 
-    public ProjectileStructureImpl(@NotNull EntityStructure original, @Nullable EntityStructure shooter, @Nullable Boolean doesBounce)
+    public ProjectileStructureImpl(@NotNull EntityStructure original, @Nullable ProjectileSourceStructure shooter, @Nullable Boolean doesBounce)
     {
         super(original);
         this.shooter = shooter;
@@ -31,10 +40,17 @@ public class ProjectileStructureImpl extends EntityStructureImpl implements Proj
     {
         Map<String, Object> map = EntityStructureImpl.serialize(structure, serializer);
 
-        if (structure.getShooter() != null)
-            MapUtils.putMapIfNotEmpty(map, KEY_SHOOTER, serializer.serialize(structure.getShooter(), EntityStructure.class));
-
         MapUtils.putIfNotNull(map, KEY_DOES_BOUNCE, structure.getDoesBounce());
+
+        ProjectileSourceStructure specifier = structure.getShooter();
+
+        if (specifier == null)
+            return map;
+
+        if (specifier instanceof SelectorProjectileSourceStructure)
+            MapUtils.putIfNotNull(map, KEY_SHOOTER, ((SelectorProjectileSourceStructure) specifier).getSelectorString());
+        else
+            map.put("shooter", serializer.serialize(specifier, ProjectileSourceStructure.class));
 
         return map;
     }
@@ -45,11 +61,10 @@ public class ProjectileStructureImpl extends EntityStructureImpl implements Proj
 
         MapUtils.checkTypeIfContains(map, KEY_DOES_BOUNCE, Boolean.class);
 
-        if (map.containsKey(KEY_SHOOTER))
-        {
-            Map<String, Object> shooterMap = MapUtils.checkAndCastMap(map.get(KEY_SHOOTER));
-            EntityStructureImpl.validate(shooterMap);
-        }
+        if (map.containsKey(KEY_SHOOTER) && map.get(KEY_SHOOTER) instanceof Map)
+            serializer.validate(MapUtils.checkAndCastMap(map.get(KEY_SHOOTER)), ProjectileSourceStructure.class);
+        else if (map.containsKey(KEY_SHOOTER) && !(map.get(KEY_SHOOTER) instanceof String))
+            throw new IllegalArgumentException("Invalid ProjectileSourceStructure: " + map.get(KEY_SHOOTER));
     }
 
     @NotNull
@@ -59,12 +74,11 @@ public class ProjectileStructureImpl extends EntityStructureImpl implements Proj
 
         EntityStructure entity = EntityStructureImpl.deserialize(map, serializer);
 
-        EntityStructure shooter = null;
-        if (map.containsKey(KEY_SHOOTER))
-        {
-            Map<String, Object> shooterMap = MapUtils.checkAndCastMap(map.get(KEY_SHOOTER));
-            shooter = serializer.deserialize(shooterMap, EntityStructure.class);
-        }
+        ProjectileSourceStructure shooter = null;
+        if (map.containsKey(KEY_SHOOTER) && map.get(KEY_SHOOTER) instanceof Map)
+            shooter = serializer.deserialize(MapUtils.checkAndCastMap(map.get(KEY_SHOOTER)), ProjectileSourceStructure.class);
+        else if (map.containsKey(KEY_SHOOTER) && map.get(KEY_SHOOTER) instanceof String)
+            shooter = new SelectorProjectileSourceStructureImpl((String) map.get(KEY_SHOOTER));
 
         return new ProjectileStructureImpl(
                 entity,
@@ -74,9 +88,12 @@ public class ProjectileStructureImpl extends EntityStructureImpl implements Proj
     }
 
     @Override
-    public void applyTo(Projectile object)
+    public void applyTo(Projectile projectile)
     {
+        super.applyToEntity(projectile);
 
+        if (this.doesBounce != null)
+            projectile.setBounce(this.doesBounce);
     }
 
     @Override
@@ -86,14 +103,43 @@ public class ProjectileStructureImpl extends EntityStructureImpl implements Proj
     }
 
     @Override
-    public boolean isAdequate(Projectile object, boolean strict)
+    public boolean isAdequate(Projectile entity, boolean strict)
     {
-        return false;
-    }
+        if (!super.isAdequateEntity(entity, strict))
+            return false;
 
-    @Override
-    public Projectile create()
-    {
-        return null;
+        if (!(this.doesBounce == null || this.doesBounce == entity.doesBounce()))
+            return false;
+
+        if (this.shooter == null)
+            return true;
+
+        ProjectileSource projectileSource = entity.getShooter();
+        if (projectileSource == null)
+            return false;
+
+        if (this.shooter instanceof EntityStructure && this.shooter instanceof Mapped<?>)
+        {
+            //noinspection unchecked
+            return ((Mapped<EntityStructure>) this.shooter).isAdequate((EntityStructure) projectileSource);
+        }
+        else if (this.shooter instanceof BlockStructure)
+        {
+            if (!(projectileSource instanceof BlockProjectileSource))
+                return false;
+
+            Block block = ((BlockProjectileSource) projectileSource).getBlock();
+            return ((BlockStructure) this.shooter).isAdequate(block, strict);
+        }
+        else if (this.shooter instanceof SelectorProjectileSourceStructure)
+        {
+            String selector = ((SelectorProjectileSourceStructure) this.shooter).getSelectorString();
+            if (selector == null)
+                return true;
+
+            return !EntityUtils.selectEntities(selector).isEmpty();
+        }
+
+        return false;
     }
 }

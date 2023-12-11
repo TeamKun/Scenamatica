@@ -10,6 +10,7 @@ import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.kunlab.scenamatica.commons.specifiers.EntitySpecifierImpl;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
@@ -41,7 +42,7 @@ public class EntityDeathAction extends AbstractEntityAction<EntityDeathAction.Ar
     {
         argument = this.requireArgsNonNull(argument);
 
-        Entity target = argument.selectTarget();
+        Entity target = argument.selectTarget(engine.getContext());
         if (target.isDead())
             throw new IllegalStateException("The target entity " + target + " is already dead.");
 
@@ -138,7 +139,7 @@ public class EntityDeathAction extends AbstractEntityAction<EntityDeathAction.Ar
         Float deathSoundVolume;
         Float deathSoundPitch;
 
-        public Argument(@Nullable EntityArgumentHolder<Entity> mayTarget, List<ItemStackStructure> drops, Integer dropExp, Double reviveHealth, Boolean shouldPlayDeathSound, Sound deathSound, SoundCategory deathSoundCategory, Float deathSoundVolume, Float deathSoundPitch)
+        public Argument(@Nullable EntitySpecifierImpl<Entity> mayTarget, List<ItemStackStructure> drops, Integer dropExp, Double reviveHealth, Boolean shouldPlayDeathSound, Sound deathSound, SoundCategory deathSoundCategory, Float deathSoundVolume, Float deathSoundPitch)
         {
             super(mayTarget);
             this.drops = drops;

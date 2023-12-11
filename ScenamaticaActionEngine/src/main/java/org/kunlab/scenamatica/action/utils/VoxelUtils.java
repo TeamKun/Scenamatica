@@ -14,6 +14,24 @@ public class VoxelUtils
                 .add(direction.multiply(distance));
     }
 
+    public static Location getFrontOf(Location viewer, BlockFace face, double distance)
+    {
+        Vector direction = face.getDirection();
+
+        return viewer.clone().add(direction.multiply(distance));
+    }
+
+    public static BlockFace getOpenFace(Location target)
+    {
+        for (BlockFace face : BlockFace.values())
+        {
+            if (target.getBlock().getRelative(face).isEmpty())
+                return face;
+        }
+
+        throw new IllegalStateException("No open face found");
+    }
+
     public static BlockFace toFace(Location viewer, Location target)
     {
         double x = target.getX() - viewer.getX();

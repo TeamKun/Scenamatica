@@ -1,0 +1,58 @@
+# noinspection YAMLSchemaValidation
+scenamatica: ${project.version}
+
+name: actions_entity_projectile_launch_3
+description: Testing entity_projectile_launch action with block shooter works or not
+on:
+  - type: on_load
+    before:
+      - type: execute
+        action: block_place
+        with:
+          block:
+            type: minecraft:dispenser
+            loc:
+              x: 0
+              y: 127
+              z: 0
+  - type: manual_dispatch
+    before:
+      - type: execute
+        action: block_place
+        with:
+          block:
+            type: minecraft:dispenser
+            loc:
+              x: 0
+              y: 127
+              z: 0
+
+context:
+  actors:
+    - name: Actor01
+
+scenario:
+  - type: execute
+    action: projectile_launch
+    with:
+      entity:
+        type: minecraft:arrow
+        shooter:
+          type: dispenser
+          loc:
+            x: 0
+            y: 127
+            z: 0
+  - type: expect
+    action: projectile_launch
+    with:
+      entity:
+        type: minecraft:arrow
+        shooter:
+          type: dispenser
+          loc:
+            x: 0
+            y: 127
+            z: 0
+
+

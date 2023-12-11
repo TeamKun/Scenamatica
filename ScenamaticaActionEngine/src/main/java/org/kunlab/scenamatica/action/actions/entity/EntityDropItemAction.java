@@ -10,6 +10,7 @@ import org.bukkit.event.entity.EntityDropItemEvent;
 import org.bukkit.inventory.InventoryHolder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.kunlab.scenamatica.commons.specifiers.EntitySpecifierImpl;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.commons.utils.Utils;
 import org.kunlab.scenamatica.enums.ScenarioType;
@@ -40,7 +41,7 @@ public class EntityDropItemAction extends AbstractEntityAction<EntityDropItemAct
     public void execute(@NotNull ScenarioEngine engine, @Nullable Argument argument)
     {
         assert argument != null;
-        Entity target = argument.selectTarget();
+        Entity target = argument.selectTarget(engine.getContext());
         if (!(target instanceof InventoryHolder))
             throw new IllegalArgumentException("Target is not inventory holder.");
 
@@ -111,7 +112,7 @@ public class EntityDropItemAction extends AbstractEntityAction<EntityDropItemAct
 
         EntityItemStructure item;
 
-        public Argument(@Nullable EntityArgumentHolder<Entity> mayTarget, EntityItemStructure item)
+        public Argument(@Nullable EntitySpecifierImpl<Entity> mayTarget, EntityItemStructure item)
         {
             super(mayTarget);
             this.item = item;

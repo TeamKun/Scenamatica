@@ -184,15 +184,20 @@ public class BlockStructureImpl implements BlockStructure
     @Override
     public Block create()
     {
+        Block block = this.getBlockSafe();
+        this.applyTo(block);
+
+        return block;
+    }
+
+    public Block getBlockSafe()
+    {
         if (this.location == null)
             throw new IllegalStateException("location is null");
         else if (this.location.getWorld() == null)
             throw new IllegalStateException("location.world is null");
 
-        Block block = this.location.getBlock();
-        this.applyTo(block);
-
-        return block;
+        return this.location.getBlock();
     }
 
     @Override

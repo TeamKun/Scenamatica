@@ -17,6 +17,7 @@ import org.kunlab.scenamatica.interfaces.scenariofile.inventory.InventoryStructu
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.ItemStackStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.PlayerInventoryStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.misc.BlockStructure;
+import org.kunlab.scenamatica.interfaces.scenariofile.misc.ProjectileSourceStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.scenario.ScenarioStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerStructure;
 import org.kunlab.scenamatica.scenariofile.structures.ScenarioFileStructureImpl;
@@ -184,6 +185,7 @@ public class StructureSerializerImpl implements StructureSerializer
         this.registerMiscStructures();
         this.registerScenarioStructures();
         this.registerTriggerStructures();
+        this.registerHelpers();
 
         this.registerStructure(
                 ScenarioFileStructure.class,
@@ -293,6 +295,16 @@ public class StructureSerializerImpl implements StructureSerializer
                 TriggerStructureImpl::serialize,
                 TriggerStructureImpl::deserialize,
                 TriggerStructureImpl::validate
+        );
+    }
+
+    private void registerHelpers()
+    {
+        this.registerStructure(
+                ProjectileSourceStructure.class,
+                ProjectileSourceSerializeHelper::serialize,
+                ProjectileSourceSerializeHelper::deserialize,
+                ProjectileSourceSerializeHelper::validate
         );
     }
 

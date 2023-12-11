@@ -4,7 +4,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.actions.inventory.AbstractInventoryArgument;
-import org.kunlab.scenamatica.action.utils.PlayerUtils;
+import org.kunlab.scenamatica.commons.utils.PlayerUtils;
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.InventoryStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 

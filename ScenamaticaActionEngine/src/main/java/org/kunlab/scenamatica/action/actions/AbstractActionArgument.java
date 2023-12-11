@@ -133,7 +133,7 @@ public abstract class AbstractActionArgument implements ActionArgument
      * @param value     値
      * @param expected  期待値
      */
-    protected static void ensureNotEquals(@NotNull String fieldName, @Nullable Object value, @Nullable Object expected)
+    protected static void ensureEquals(@NotNull String fieldName, @Nullable Object value, @Nullable Object expected)
     {
         if (!Objects.equals(value, expected))
             throw new IllegalArgumentException(String.format("The argument '%s' is not supported.", fieldName));
@@ -146,7 +146,7 @@ public abstract class AbstractActionArgument implements ActionArgument
      * @param value     値
      * @param expected  期待値
      */
-    protected static void ensureEquals(@NotNull String fieldName, @Nullable Object value, @Nullable Object expected)
+    protected static void ensureNotEquals(@NotNull String fieldName, @Nullable Object value, @Nullable Object expected)
     {
         if (Objects.equals(value, expected))
             throw new IllegalArgumentException(String.format("The value of the argument '%s' must not be '%s'.", fieldName, expected));

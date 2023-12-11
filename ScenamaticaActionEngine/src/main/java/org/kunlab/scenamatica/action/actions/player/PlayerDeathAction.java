@@ -7,8 +7,8 @@ import org.bukkit.event.Event;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.kunlab.scenamatica.action.utils.PlayerUtils;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
+import org.kunlab.scenamatica.commons.utils.PlayerUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
@@ -262,9 +262,9 @@ public class PlayerDeathAction extends AbstractPlayerAction<PlayerDeathAction.Ar
                     break;
                 case CONDITION_REQUIRE:
                     ensureNotPresent(Argument.KEY_DEATH_MESSAGE, this.deathMessage);
-                    ensureNotEquals(Argument.KEY_NEW_EXP, this.newExp, -1);
-                    ensureNotEquals(Argument.KEY_NEW_LEVEL, this.newLevel, -1);
-                    ensureNotEquals(Argument.KEY_NEW_TOTAL_EXP, this.newTotalExp, -1);
+                    ensureEquals(Argument.KEY_NEW_EXP, this.newExp, -1);
+                    ensureEquals(Argument.KEY_NEW_LEVEL, this.newLevel, -1);
+                    ensureEquals(Argument.KEY_NEW_TOTAL_EXP, this.newTotalExp, -1);
                     ensureNotPresent(Argument.KEY_KEEP_LEVEL, this.keepLevel);
                     ensureNotPresent(Argument.KEY_KEEP_INVENTORY, this.keepInventory);
                     ensureNotPresent(Argument.KEY_DO_EXP_DROP, this.doExpDrop);

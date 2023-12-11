@@ -1,29 +1,29 @@
-package org.kunlab.scenamatica.action.actions.entity;
+package org.kunlab.scenamatica.commons.specifiers;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.kunlab.scenamatica.action.utils.EntityUtils;
+import org.kunlab.scenamatica.commons.utils.EntityUtils;
+import org.kunlab.scenamatica.interfaces.context.Context;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.entity.EntityStructure;
+import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.EntitySpecifier;
 
 import java.util.Map;
 import java.util.Objects;
 
 @Getter
 @EqualsAndHashCode
-public class EntityArgumentHolder<E extends Entity>
+public class EntitySpecifierImpl<E extends Entity> implements EntitySpecifier<E>
 {
-    public static final EntityArgumentHolder<?> EMPTY = new EntityArgumentHolder<>(null);
+    public static final EntitySpecifierImpl<?> EMPTY = new EntitySpecifierImpl<>(null);
 
-    @Nullable
     protected final String targetSpecifier;
-    @Nullable
     protected final EntityStructure targetStructure;
 
-    public EntityArgumentHolder(@Nullable Object mayTarget)
+    public EntitySpecifierImpl(@Nullable Object mayTarget)
     {
         if (mayTarget instanceof EntityStructure)
         {
@@ -37,7 +37,7 @@ public class EntityArgumentHolder<E extends Entity>
         }
     }
 
-    public static <E extends Entity> EntityArgumentHolder<E> tryDeserialize(
+    public static <E extends Entity> EntitySpecifierImpl<E> tryDeserialize(
             Object obj,
             StructureSerializer serializer,
             Class<? extends EntityStructure> structureClass
@@ -45,46 +45,54 @@ public class EntityArgumentHolder<E extends Entity>
     {
         if (obj == null)
             // noinspection unchecked
-            return (EntityArgumentHolder<E>) EMPTY;
+            return (EntitySpecifierImpl<E>) EMPTY;
 
         if (obj instanceof String || obj instanceof EntityStructure)
-            return new EntityArgumentHolder<>(obj);
+            return new EntitySpecifierImpl<>(obj);
 
         if (obj instanceof Map)
         {
             // noinspection unchecked
             Map<String, Object> map = (Map<String, Object>) obj;
 
-            return new EntityArgumentHolder<>(serializer.deserialize(map, structureClass));
+            return new EntitySpecifierImpl<>(serializer.deserialize(map, structureClass));
         }
 
         throw new IllegalArgumentException("Cannot deserialize EntityArgumentHolder from " + obj);
     }
 
-    public static EntityArgumentHolder<Entity> tryDeserialize(Object obj, StructureSerializer serializer)
+    public static EntitySpecifier<Entity> tryDeserialize(Object obj, StructureSerializer serializer)
     {
         return tryDeserialize(obj, serializer, EntityStructure.class);
     }
 
+    @Override
     public boolean isSelectable()
     {
         return this.targetSpecifier != null;
     }
 
-    public E selectTarget()
+    @Override
+    public E selectTarget(@NotNull Context context)
     {
-        if (this.targetSpecifier == null)
-            throw new IllegalStateException("Cannot select target from targetStructure");
+        if (this.targetSpecifier != null)
+            //noinspection unchecked
+            return (E) EntityUtils.getPlayerOrEntityOrThrow(this.targetSpecifier);
+
+        if (this.targetStructure == null)
+            throw new IllegalStateException("Cannot select target from this specifier: " + this);
 
         //noinspection unchecked
-        return (E) EntityUtils.getPlayerOrEntityOrThrow(this.targetSpecifier);
+        return (E) EntityUtils.getEntity(this.targetStructure, context, null);
     }
 
-    public String getTargetString()
+    @Override
+    public String getSelectorString()
     {
         return this.targetSpecifier;
     }
 
+    @Override
     public Object getTargetRaw()
     {
         if (this.targetSpecifier != null)
@@ -93,11 +101,13 @@ public class EntityArgumentHolder<E extends Entity>
             return this.targetStructure;
     }
 
-    public boolean hasTarget()
+    @Override
+    public boolean canProvideTarget()
     {
-        return this.targetSpecifier != null || this.targetStructure != null;
+        return this.isSelectable() || this.hasStructure();
     }
 
+    @Override
     public String getArgumentString()
     {
         if (this.targetSpecifier != null)
@@ -107,13 +117,14 @@ public class EntityArgumentHolder<E extends Entity>
 
     }
 
+    @Override
     public boolean checkMatchedEntity(Entity entity)
     {
-        if (!this.hasTarget())
+        if (!this.canProvideTarget())
             return true;
 
         if (this.isSelectable())
-            return this.checkMatchedEntity(this.getTargetString(), entity);
+            return this.checkMatchedEntity(this.getSelectorString(), entity);
         else /* if (this.getTargetStructure() != null) */
         {
             assert this.getTargetStructure() != null;
@@ -126,5 +137,11 @@ public class EntityArgumentHolder<E extends Entity>
         return EntityUtils.selectEntities(specifier)
                 .stream()
                 .anyMatch(entity -> Objects.equals(entity.getUniqueId(), actualEntity.getUniqueId()));
+    }
+
+    @Override
+    public boolean hasStructure()
+    {
+        return this.targetStructure != null;
     }
 }

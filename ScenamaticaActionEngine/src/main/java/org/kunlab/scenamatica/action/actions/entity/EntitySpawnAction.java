@@ -1,7 +1,8 @@
 package org.kunlab.scenamatica.action.actions.entity;
 
+import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.Value;
+import lombok.Getter;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -11,8 +12,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.actions.AbstractAction;
 import org.kunlab.scenamatica.action.actions.AbstractActionArgument;
-import org.kunlab.scenamatica.action.utils.EntityUtils;
-import org.kunlab.scenamatica.commons.utils.MapUtils;
+import org.kunlab.scenamatica.commons.specifiers.EntitySpecifierImpl;
+import org.kunlab.scenamatica.commons.utils.EntityUtils;
 import org.kunlab.scenamatica.commons.utils.Utils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
@@ -20,6 +21,7 @@ import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.entity.EntityStructure;
+import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.EntitySpecifier;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Collections;
@@ -27,8 +29,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-public class EntitySpawnAction extends AbstractAction<EntitySpawnAction.Argument>
-        implements Executable<EntitySpawnAction.Argument>, Watchable<EntitySpawnAction.Argument>
+public class EntitySpawnAction<T extends EntitySpawnAction.Argument> extends AbstractAction<T>
+        implements Executable<T>, Watchable<T>
 {
     public static final String KEY_ACTION_NAME = "entity_spawn";
 
@@ -62,7 +64,8 @@ public class EntitySpawnAction extends AbstractAction<EntitySpawnAction.Argument
     {
         argument = this.requireArgsNonNull(argument);
 
-        EntityStructure structure = argument.getEntity();
+        EntityStructure structure = argument.getEntity().getTargetStructure();
+        assert structure != null;
         Location spawnLoc = structure.getLocation();
 
         spawnEntity(structure, spawnLoc, engine);
@@ -75,7 +78,11 @@ public class EntitySpawnAction extends AbstractAction<EntitySpawnAction.Argument
             return false;
 
         EntitySpawnEvent e = (EntitySpawnEvent) event;
-        return EntityUtils.tryCastMapped(argument.getEntity(), e.getEntity()).isAdequate(e.getEntity());
+
+        EntitySpecifier<?> entity = argument.getEntity();
+        return entity.isSelectable() ?
+                entity.checkMatchedEntity(e.getEntity()):
+                EntityUtils.tryCheckIsAdequate(entity.getTargetStructure(), e.getEntity());
     }
 
     @Override
@@ -87,25 +94,25 @@ public class EntitySpawnAction extends AbstractAction<EntitySpawnAction.Argument
     }
 
     @Override
-    public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
+    @SuppressWarnings("unchecked")
+    public T deserializeArgument(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
     {
         if (!map.containsKey(Argument.KEY_ENTITY))
-            return new Argument(null);
+            return (T) new Argument(EntitySpecifierImpl.EMPTY);
 
-        return new Argument(
-                serializer.deserialize(
-                        MapUtils.checkAndCastMap(map.get(Argument.KEY_ENTITY)),
-                        EntityStructure.class
-                ));
+        return (T) new Argument(
+                EntitySpecifierImpl.tryDeserialize(map.get(Argument.KEY_ENTITY), serializer, EntityStructure.class)
+        );
     }
 
     @EqualsAndHashCode(callSuper = true)
-    @Value
+    @Data
+    @Getter
     public static class Argument extends AbstractActionArgument
     {
         public static final String KEY_ENTITY = "entity";
 
-        EntityStructure entity;
+        private final EntitySpecifier<?> entity;
         // CreatureSpawnEvent.SpawnReason reason は CreatureSpawnAction でつくる。
 
         @Override
@@ -125,9 +132,11 @@ public class EntitySpawnAction extends AbstractAction<EntitySpawnAction.Argument
             if (type == ScenarioType.ACTION_EXECUTE)
             {
                 ensurePresent(KEY_ENTITY, this.entity);
-                EntityStructure structure = this.entity;
+                if (!this.entity.hasStructure())
+                    throw new IllegalArgumentException("Entity structure is not present");
+                EntityStructure structure = this.entity.getTargetStructure();
                 ensurePresent(KEY_ENTITY + "." + EntityStructure.KEY_TYPE, structure.getType());
-                ensureEquals(KEY_ENTITY + "." + EntityStructure.KEY_TYPE, structure.getType(), EntityType.UNKNOWN);
+                ensureNotEquals(KEY_ENTITY + "." + EntityStructure.KEY_TYPE, structure.getType(), EntityType.UNKNOWN);
             }
         }
 

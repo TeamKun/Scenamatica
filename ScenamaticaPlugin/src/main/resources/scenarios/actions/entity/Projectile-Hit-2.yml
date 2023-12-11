@@ -1,0 +1,53 @@
+# noinspection YAMLSchemaValidation
+scenamatica: ${project.version}
+
+name: actions_entity_projectile_hit_2
+description: Testing entity_projectile_hit action with structured entity works or not
+on:
+  - type: on_load
+    before:
+      - type: execute
+        action: entity_spawn
+        with:
+          type: minecraft:villager
+          tags:
+            - 810snpi
+      - type: execute
+        action: projectile_launch
+        with:
+          type: minecraft:arrow
+          tags:
+            - 810snpi
+  - type: manual_dispatch
+    before:
+      - type: execute
+        action: entity_spawn
+        with:
+          type: minecraft:villager
+          tags:
+            - 810snpi
+      - type: execute
+        action: projectile_launch
+        with:
+          type: minecraft:arrow
+          tags:
+            - 810snpi
+scenario:
+  - type: execute
+    action: projectile_hit
+    with:
+      target: "@e[type=minecraft:arrow,tag=810snpi]"
+      hitEntity:
+        type: minecraft:villager
+        tags:
+          - 810snpi
+  - type: expect
+    action: projectile_hit
+    with:
+      target: "@e[type=minecraft:arrow,tag=810snpi]"
+      hitEntity:
+        type: minecraft:villager
+        tags:
+          - 810snpi
+      timeout: 20
+

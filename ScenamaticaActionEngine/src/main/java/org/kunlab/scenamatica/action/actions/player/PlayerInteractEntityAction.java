@@ -9,15 +9,16 @@ import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.kunlab.scenamatica.action.actions.entity.EntityArgumentHolder;
-import org.kunlab.scenamatica.action.utils.PlayerUtils;
+import org.kunlab.scenamatica.commons.specifiers.EntitySpecifierImpl;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
+import org.kunlab.scenamatica.commons.utils.PlayerUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.context.Actor;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
+import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.EntitySpecifier;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 import org.kunlab.scenamatica.nms.enums.entity.NMSEntityUseAction;
 
@@ -43,7 +44,7 @@ public class PlayerInteractEntityAction<A extends PlayerInteractEntityAction.Arg
         argument = this.requireArgsNonNull(argument);
 
         Player player = argument.getTarget();
-        Entity targetEntity = argument.getEntity().selectTarget();
+        Entity targetEntity = argument.getEntity().selectTarget(engine.getContext());
 
         int distanceFromEntity = (int) player.getLocation().distance(targetEntity.getLocation());
         if (distanceFromEntity > 36)
@@ -100,7 +101,7 @@ public class PlayerInteractEntityAction<A extends PlayerInteractEntityAction.Arg
         // noinspection unchecked
         return (A) new Argument(
                 super.deserializeTarget(map),
-                EntityArgumentHolder.tryDeserialize(map.get(Argument.KEY_ENTITY), serializer),
+                EntitySpecifierImpl.tryDeserialize(map.get(Argument.KEY_ENTITY), serializer),
                 MapUtils.getAsEnumOrNull(map, Argument.KEY_HAND, EquipmentSlot.class)
         );
     }
@@ -112,10 +113,10 @@ public class PlayerInteractEntityAction<A extends PlayerInteractEntityAction.Arg
         public static final String KEY_ENTITY = "entity";
         public static final String KEY_HAND = "hand";
 
-        EntityArgumentHolder<?> entity;
+        EntitySpecifier<?> entity;
         EquipmentSlot hand;
 
-        public Argument(String target, EntityArgumentHolder<?> entity, EquipmentSlot hand)
+        public Argument(String target, EntitySpecifier<?> entity, EquipmentSlot hand)
         {
             super(target);
             this.entity = entity;

@@ -12,7 +12,8 @@ import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.kunlab.scenamatica.action.utils.EntityUtils;
+import org.kunlab.scenamatica.commons.specifiers.EntitySpecifierImpl;
+import org.kunlab.scenamatica.commons.utils.EntityUtils;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
@@ -42,7 +43,7 @@ public class EntityPickupItemAction extends AbstractEntityAction<EntityPickupIte
     {
         argument = this.requireArgsNonNull(argument);
 
-        Entity target = argument.selectTarget();
+        Entity target = argument.selectTarget(engine.getContext());
         if (!(target instanceof LivingEntity))
             throw new IllegalArgumentException("Target is not living entity.");
 
@@ -155,7 +156,7 @@ public class EntityPickupItemAction extends AbstractEntityAction<EntityPickupIte
         EntityItemStructure item;
         String itemSelector;
 
-        public Argument(@Nullable EntityArgumentHolder<Entity> mayTarget, Integer remaining, EntityItemStructure item)
+        public Argument(@Nullable EntitySpecifierImpl<Entity> mayTarget, Integer remaining, EntityItemStructure item)
         {
             super(mayTarget);
             this.remaining = remaining;
@@ -163,7 +164,7 @@ public class EntityPickupItemAction extends AbstractEntityAction<EntityPickupIte
             this.itemSelector = null;
         }
 
-        public Argument(@Nullable EntityArgumentHolder<Entity> mayTarget, Integer remaining, String itemSelector)
+        public Argument(@Nullable EntitySpecifierImpl<Entity> mayTarget, Integer remaining, String itemSelector)
         {
             super(mayTarget);
             this.remaining = remaining;

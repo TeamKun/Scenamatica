@@ -11,18 +11,17 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.kunlab.scenamatica.action.actions.entity.EntityArgumentHolder;
-import org.kunlab.scenamatica.action.actions.entity.EntitySpawnAction;
-import org.kunlab.scenamatica.action.utils.PlayerUtils;
+import org.kunlab.scenamatica.commons.specifiers.EntitySpecifierImpl;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
+import org.kunlab.scenamatica.commons.utils.PlayerUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.context.Actor;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
-import org.kunlab.scenamatica.interfaces.scenariofile.entity.EntityStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.ItemStackStructure;
+import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.EntitySpecifier;
 import org.kunlab.scenamatica.nms.enums.entity.NMSEntityUseAction;
 
 import java.util.Collections;
@@ -54,17 +53,7 @@ public class PlayerBucketEntityAction extends AbstractPlayerAction<PlayerBucketE
         Player player = argument.getTarget();
         Actor actor = PlayerUtils.getActorOrThrow(engine, player);
 
-        Entity targetEntity;
-        if (argument.getEntity().isSelectable())
-            targetEntity = argument.getEntity().selectTarget();
-        else
-        {
-            EntityStructure structure = argument.getEntity().getTargetStructure();
-            targetEntity = EntitySpawnAction.spawnEntity(structure, null, engine);
-        }
-
-        if (targetEntity == null)
-            throw new IllegalStateException("Target entity is null.");
+        Entity targetEntity = argument.getEntity().selectTarget(engine.getContext());
 
         // Null ではない
         ItemStack itemInMainHand = player.getInventory().getItemInMainHand();
@@ -130,7 +119,7 @@ public class PlayerBucketEntityAction extends AbstractPlayerAction<PlayerBucketE
 
         return new Argument(
                 super.deserializeTarget(map),
-                EntityArgumentHolder.tryDeserialize(map.get(Argument.KEY_ENTITY), serializer),
+                EntitySpecifierImpl.tryDeserialize(map.get(Argument.KEY_ENTITY), serializer),
                 originalBucket,
                 entityBucket
         );
@@ -144,11 +133,11 @@ public class PlayerBucketEntityAction extends AbstractPlayerAction<PlayerBucketE
         public static final String KEY_ORIGINAL_BUCKET = "bucket";
         public static final String KEY_ENTITY_BUCKET = "entityBucket";
 
-        EntityArgumentHolder<?> entity;
+        EntitySpecifier<?> entity;
         ItemStackStructure originalBucket;
         ItemStackStructure entityBucket;
 
-        public Argument(String target, EntityArgumentHolder<?> entity, ItemStackStructure originalBucket, ItemStackStructure entityBucket)
+        public Argument(String target, EntitySpecifier<?> entity, ItemStackStructure originalBucket, ItemStackStructure entityBucket)
         {
             super(target);
             this.entity = entity;
@@ -162,7 +151,7 @@ public class PlayerBucketEntityAction extends AbstractPlayerAction<PlayerBucketE
             super.validate(engine, type);
             if (type == ScenarioType.ACTION_EXECUTE)
             {
-                if (!this.entity.hasTarget())
+                if (!this.entity.canProvideTarget())
                     throw new IllegalStateException("Entity is not set.");
                 ensureNotPresent(KEY_ENTITY_BUCKET, this.entityBucket);
             }

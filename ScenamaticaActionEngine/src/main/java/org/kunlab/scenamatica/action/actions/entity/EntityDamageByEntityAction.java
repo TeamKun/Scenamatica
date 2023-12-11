@@ -9,7 +9,8 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.kunlab.scenamatica.action.utils.EntityUtils;
+import org.kunlab.scenamatica.commons.specifiers.EntitySpecifierImpl;
+import org.kunlab.scenamatica.commons.utils.EntityUtils;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
@@ -38,7 +39,7 @@ public class EntityDamageByEntityAction extends EntityDamageAction<EntityDamageB
     {
         argument = this.requireArgsNonNull(argument);
 
-        Entity target = argument.selectTarget();
+        Entity target = argument.selectTarget(engine.getContext());
 
         if (!(target instanceof Damageable))
             throw new IllegalArgumentException("Target is not damageable");
@@ -91,7 +92,7 @@ public class EntityDamageByEntityAction extends EntityDamageAction<EntityDamageB
         String damager;
 
         @SuppressWarnings("deprecation")  // DamageModifier は消えるとか言ってるけど多分きえない。たぶん。というかまだある。
-        public Argument(EntityArgumentHolder<Entity> target, EntityDamageEvent.DamageCause cause, Double amount, Map<EntityDamageEvent.DamageModifier, @NotNull Double> modifiers, String damager)
+        public Argument(EntitySpecifierImpl<Entity> target, EntityDamageEvent.DamageCause cause, Double amount, Map<EntityDamageEvent.DamageModifier, @NotNull Double> modifiers, String damager)
         {
             super(target, cause, amount, modifiers);
             this.damager = damager;

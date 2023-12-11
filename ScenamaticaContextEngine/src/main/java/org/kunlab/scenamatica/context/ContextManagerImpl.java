@@ -83,7 +83,7 @@ public class ContextManagerImpl implements ContextManager
     private World prepareWorld(ContextStructure context, ScenarioFileStructure scenario, UUID testID) throws StageCreateFailedException
     {
         if (context == null || context.getWorld() == null)
-            return this.stageManager.shared(DEFAULT_ORIGINAL_WORLD_NAME);
+            return this.stageManager.createStage(DEFAULT_ORIGINAL_WORLD_NAME);
 
         if (context.getWorld().getOriginalWorldName() != null
                 && Bukkit.getWorld(context.getWorld().getOriginalWorldName()) != null)  // 既存だったら再利用する。

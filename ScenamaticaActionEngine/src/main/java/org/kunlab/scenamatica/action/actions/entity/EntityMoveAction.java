@@ -10,6 +10,7 @@ import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.utils.LocationComparator;
+import org.kunlab.scenamatica.commons.specifiers.EntitySpecifierImpl;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.commons.utils.Utils;
 import org.kunlab.scenamatica.enums.ScenarioType;
@@ -41,7 +42,7 @@ public class EntityMoveAction extends AbstractEntityAction<EntityMoveAction.Argu
         argument = this.requireArgsNonNull(argument);
 
         Location toLoc = Utils.assignWorldToLocation(argument.getTo(), engine);
-        Entity entity = argument.selectTarget();
+        Entity entity = argument.selectTarget(engine.getContext());
 
         if (argument.isUseAI() && entity instanceof Mob)
         {
@@ -99,7 +100,7 @@ public class EntityMoveAction extends AbstractEntityAction<EntityMoveAction.Argu
         // Execute のときのみ. デフォは true -> テレポート.
         boolean useAI;
 
-        public Argument(@Nullable EntityArgumentHolder<Entity> mayTarget, Location from, Location to, boolean useAI)
+        public Argument(@Nullable EntitySpecifierImpl<Entity> mayTarget, Location from, Location to, boolean useAI)
         {
             super(mayTarget);
             this.from = from;

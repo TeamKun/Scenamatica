@@ -6,6 +6,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.interfaces.scenariofile.Structure;
+import org.kunlab.scenamatica.interfaces.scenariofile.misc.ProjectileSourceStructure;
 
 import java.util.List;
 import java.util.UUID;
@@ -13,7 +14,7 @@ import java.util.UUID;
 /**
  * エンティティの基底インターフェースです。
  */
-public interface EntityStructure extends Structure
+public interface EntityStructure extends Structure, ProjectileSourceStructure
 {
     String KEY_TYPE = "type";
     String KEY_LOCATION = "loc";

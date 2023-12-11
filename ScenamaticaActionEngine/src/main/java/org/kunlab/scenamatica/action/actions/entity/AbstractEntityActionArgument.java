@@ -5,7 +5,9 @@ import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.actions.AbstractActionArgument;
 import org.kunlab.scenamatica.interfaces.action.ActionArgument;
+import org.kunlab.scenamatica.interfaces.context.Context;
 import org.kunlab.scenamatica.interfaces.scenariofile.entity.EntityStructure;
+import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.EntitySpecifier;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Objects;
@@ -16,7 +18,7 @@ public abstract class AbstractEntityActionArgument<E extends Entity> extends Abs
     public static final String KEY_TARGET_ENTITY = "target";
 
     @Nullable
-    private final EntityArgumentHolder<E> entity;
+    private final EntitySpecifier<E> entity;
 
     @Override
     public boolean isSame(TriggerArgument argument)
@@ -41,18 +43,18 @@ public abstract class AbstractEntityActionArgument<E extends Entity> extends Abs
         return this.entity != null && this.entity.isSelectable();
     }
 
-    public Entity selectTarget()
+    public Entity selectTarget(Context context)
     {
         this.ensureTargetIsSet();
         assert this.entity != null;
-        return this.entity.selectTarget();
+        return this.entity.selectTarget(context);
     }
 
     public String getTargetString()
     {
         this.ensureTargetIsSet();
         assert this.entity != null;
-        return this.entity.getTargetString();
+        return this.entity.getSelectorString();
     }
 
     public Object getTargetRaw()
@@ -70,7 +72,7 @@ public abstract class AbstractEntityActionArgument<E extends Entity> extends Abs
         return this.entity.getArgumentString();
     }
 
-    public EntityArgumentHolder<E> getTargetHolder()
+    public EntitySpecifier<E> getTargetHolder()
     {
         return this.entity;
     }

@@ -5,7 +5,8 @@ import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityEvent;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.action.actions.AbstractAction;
-import org.kunlab.scenamatica.action.utils.EntityUtils;
+import org.kunlab.scenamatica.commons.specifiers.EntitySpecifierImpl;
+import org.kunlab.scenamatica.commons.utils.EntityUtils;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.entity.EntityStructure;
@@ -29,7 +30,9 @@ public abstract class AbstractEntityAction<A extends AbstractEntityActionArgumen
         actions.add(new EntityMoveAction());
         actions.add(new EntityPickupItemAction());
         actions.add(new EntityPlaceAction());
-        actions.add(new EntitySpawnAction());  // AbstractEntityAction を継承してない(引数都合)
+        actions.add(new EntitySpawnAction<>());  // AbstractEntityAction を継承してない(引数都合)
+        actions.add(new ProjectileHitAction());
+        actions.add(new ProjectileLaunchAction());
 
         return actions;
     }
@@ -50,21 +53,21 @@ public abstract class AbstractEntityAction<A extends AbstractEntityActionArgumen
                 .anyMatch(entity -> Objects.equals(entity.getUniqueId(), actualEntity.getUniqueId()));
     }
 
-    protected EntityArgumentHolder<Entity> deserializeTarget(Map<String, Object> map, StructureSerializer serializer)
+    protected EntitySpecifierImpl<Entity> deserializeTarget(Map<String, Object> map, StructureSerializer serializer)
     {
-        return EntityArgumentHolder.tryDeserialize(
+        return EntitySpecifierImpl.tryDeserialize(
                 map.get(AbstractEntityActionArgument.KEY_TARGET_ENTITY),
                 serializer,
                 EntityStructure.class
         );
     }
 
-    protected <E extends Entity> EntityArgumentHolder<E> deserializeTarget(
+    protected <E extends Entity> EntitySpecifierImpl<E> deserializeTarget(
             Map<String, Object> map,
             StructureSerializer serializer,
             Class<? extends EntityStructure> structureClass)
     {
-        return EntityArgumentHolder.tryDeserialize(
+        return EntitySpecifierImpl.tryDeserialize(
                 map.get(AbstractEntityActionArgument.KEY_TARGET_ENTITY),
                 serializer,
                 structureClass

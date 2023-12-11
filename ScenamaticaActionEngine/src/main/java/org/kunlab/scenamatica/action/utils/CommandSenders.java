@@ -3,6 +3,7 @@ package org.kunlab.scenamatica.action.utils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.kunlab.scenamatica.commons.utils.PlayerUtils;
 
 public class CommandSenders
 {

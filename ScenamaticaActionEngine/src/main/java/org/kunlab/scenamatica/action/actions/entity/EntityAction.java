@@ -5,7 +5,8 @@ import lombok.Value;
 import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.kunlab.scenamatica.action.utils.EntityUtils;
+import org.kunlab.scenamatica.commons.specifiers.EntitySpecifierImpl;
+import org.kunlab.scenamatica.commons.utils.EntityUtils;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
@@ -35,7 +36,7 @@ public class EntityAction extends AbstractEntityAction<EntityAction.Argument>
     {
         argument = this.requireArgsNonNull(argument);
 
-        Entity target = argument.selectTarget();
+        Entity target = argument.selectTarget(engine.getContext());
         EntityStructure entityInfo = argument.getEntity();
 
         if (!(entityInfo instanceof Mapped<?>))
@@ -94,7 +95,7 @@ public class EntityAction extends AbstractEntityAction<EntityAction.Argument>
 
         EntityStructure entity;
 
-        public Argument(EntityArgumentHolder<Entity> target, @Nullable EntityStructure entity)
+        public Argument(EntitySpecifierImpl<Entity> target, @Nullable EntityStructure entity)
         {
             super(target);
             this.entity = entity;
