@@ -1,6 +1,7 @@
 import React from "react"
 import styles from "./index.module.css"
 import {ActionArgument, ScenarioType} from "@site/src/components/Action";
+import Link from "@docusaurus/Link";
 
 export type ObjectElement = {
     name: string
@@ -60,9 +61,9 @@ export const Object: React.FC<ObjectsProps> = ({ objects }) => {
         const typeNameStr = typeof element.type === "string" ? element.type : (element.type as ObjectType)
         let typeName: string | JSX.Element = typeNameStr
         if (element.type_anchor)
-            typeName = <a href={"#" + element.type_anchor}>{typeNameStr}</a>
+            typeName = <Link to={"#" + element.type_anchor}>{typeNameStr}</Link>
         else if (element.type_link)
-            typeName = <a href={element.type_link}>{typeNameStr}</a>
+            typeName = <Link to={element.type_link}>{typeNameStr}</Link>
 
         let availableFor: JSX.Element | null = null
         if (isActionArgument(element) && element.available.length > 0) {

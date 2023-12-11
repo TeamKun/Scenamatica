@@ -11,7 +11,7 @@ import {ObjectType} from "/src/components/Object";
 
 :::tip
 
-**シナリオやシナリオファイルの概念が初めての方は[こちら](..)を参照して先に理解しておいてください。**
+**シナリオやシナリオファイルの概念が初めての方は[こちら](/docs/use/scenario)を参照して先に理解しておくことを推奨します。**
 
 :::
 
@@ -21,24 +21,24 @@ import {ObjectType} from "/src/components/Object";
 これは大きな動作を最小まで分解したもので、プラグインの機能を検証するために必要な最小単位です。
 
 シナリオではこれを複数個組み合わせて使用することで、プラグインの大きな機能を表現します。
-これを[シナリオ](../elements#scenario)と呼びます。
+これを[シナリオ](/docs/use/scenario/elements#scenario)と呼びます。
 
-すべてのアクションは、次の３つの[シナリオタイプ](../elements#scenario-type)の一つ以上で使用できます。  
-+ [アクション実行(`execute`)](../elements#scenario-type-action-execution) - アクションを実行します。  
+すべてのアクションは、次の３つの[シナリオタイプ](/docs/use/scenario/elements#scenario-type)の一つ以上で使用できます。  
++ [アクション実行(`execute`)](/docs/use/scenario/elements#scenario-type-action-execution) - アクションを実行します。  
   例：プレイヤをキルする、プレイヤにメッセージを送信する
-+ [アクション実行期待(`expect`)](../elements#scenario-type-expect) - アクションが**実行されるか**を検知または実行されるまで待機します。  
++ [アクション実行期待(`expect`)](/docs/use/scenario/elements#scenario-type-expect) - アクションが**実行されるか**を検知または実行されるまで待機します。  
   例：プレイヤが死亡する、プレイヤにメッセージが送信される
-+ [条件要求(`require`)](../elements#scenario-type-condition-require) - アクション（状態）が**すでに**満たされているかを検知します。  
++ [条件要求(`require`)](/docs/use/scenario/elements#scenario-type-condition-require) - アクション（状態）が**すでに**満たされているかを検知します。  
   例：プレイヤが死亡している、プレイヤがメッセージを送信している
 
 そのため、アクション一つにつき最大で３つのふるまいを持ちます。  
 例えばアクション [PlayerDeathAction](player/#death) は以下の３つのふるまいを持ちます。
 
-| シナリオタイプ                                                          | ふるまい        |
-|:-----------------------------------------------------------------|:------------|
-| [アクション実行(`execute`)](../elements#scenario-type-action-execution) | プレイヤをキルする   |
-| [アクション実行期待(`expect`)](../elements#scenario-type-expect)          | プレイヤが死亡する   |
-| [条件要求(`require`)](../elements#scenario-type-condition-require)   | プレイヤが死亡している |
+| シナリオタイプ                                                                          | ふるまい        |
+|:---------------------------------------------------------------------------------|:------------|
+| [アクション実行(`execute`)](/docs/use/scenario/elements#scenario-type-action-execution) | プレイヤをキルする   |
+| [アクション実行期待(`expect`)](/docs/use/scenario/elements#scenario-type-expect)          | プレイヤが死亡する   |
+| [条件要求(`require`)](/docs/use/scenario/elements#scenario-type-condition-require)   | プレイヤが死亡している |
 
 
 ## アクションの種類 {#actions}
@@ -46,15 +46,15 @@ import {ObjectType} from "/src/components/Object";
 アクションは膨大な数の種類があるので、各カテゴリ別に分けられています。  
 以下のアンカをクリックすると、そのカテゴリのアクション一覧に遷移します。
 
-+ [ブロック関連](block)  
++ [ブロック関連](/docs/use/scenario/actions/block)  
   ブロックの破壊など
-+ [プレイヤ関連](player)  
++ [プレイヤ関連](/docs/use/scenario/actions/player)  
   プレイヤの死亡、ゲームモードの変更など
-+ [サーバ関連](server)  
++ [サーバ関連](/docs/use/scenario/actions/server)  
   コマンドの送信など
-+ [ワールド関連](world)  
++ [ワールド関連](/docs/use/scenario/actions/world)  
   ワールドボーダの変更など
-+ [エンティティ関連](entity)  
++ [エンティティ関連](/docs/use/scenario/actions/entity)  
   エンティティのダメージなど
 
 ## 特にページを分ける程でもないアクション {#general-actions}
