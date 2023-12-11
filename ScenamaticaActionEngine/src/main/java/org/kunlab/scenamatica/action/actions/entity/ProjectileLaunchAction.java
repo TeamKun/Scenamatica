@@ -42,7 +42,7 @@ import java.util.Map;
 public class ProjectileLaunchAction extends EntitySpawnAction<ProjectileLaunchAction.Argument>
         implements Executable<ProjectileLaunchAction.Argument>, Watchable<ProjectileLaunchAction.Argument>, Listener
 {
-    public static final String KEY_ACTION_NAME = "entity_project_launch";
+    public static final String KEY_ACTION_NAME = "projectile_launch";
 
     private final Plugin plugin;
 
