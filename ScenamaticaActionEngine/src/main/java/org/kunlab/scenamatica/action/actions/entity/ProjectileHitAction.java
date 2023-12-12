@@ -126,9 +126,7 @@ public class ProjectileHitAction extends AbstractEntityAction<ProjectileHitActio
                 return false;
         }
 
-        boolean isA = argument.getHitEntity() == null || argument.getHitEntity().checkMatchedEntity(e.getHitEntity());
-
-        return isA
+        return argument.getHitEntity() == null || argument.getHitEntity().checkMatchedEntity(e.getHitEntity())
                 && (argument.getHitBlock() == null || argument.getHitBlock().isAdequate(e.getHitBlock()))
                 && (argument.getBlockFace() == null || argument.getBlockFace() == e.getHitBlockFace());
     }
