@@ -173,8 +173,6 @@ public class SelectiveEntityStructureSerializer
         EntityStructureEntry<T> entry = (EntityStructureEntry<T>) ENTITY_STRUCTURES.get(type);
         if (entry == null || !entry.getClazz().equals(clazz))
             return AEntityStructureImpl.serialize(entityStructure, serializer);
-        System.out.println("serialize: " + entityStructure);
-        System.out.println("TO: " + entry.getSerializer());
 
         return entry.getSerializer().apply(entityStructure, serializer);
     }
