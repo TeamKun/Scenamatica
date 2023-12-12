@@ -1,8 +1,8 @@
 # noinspection YAMLSchemaValidation
 scenamatica: ${project.version}
 
-name: actions_entity_projectile_hit_2
-description: Testing entity_projectile_hit action with structured entity works or not
+name: actions_entity_projectile_hit
+description: Testing entity_projectile_hit action works or not
 on:
   - type: on_load
     before:
