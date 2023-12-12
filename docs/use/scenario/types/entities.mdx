@@ -100,8 +100,9 @@ ProjectileStructure 型は、以下の構造を持ちます。
 <Object objects={[
   {
     name: "shooter",
-    type: "EntitySpecifier",
+    type: "EntitySpecifier | Block",
     type_anchor: "entity-specifier",
+    anchor: "projectile-structure-shooter",
     description: "投射物を投げたエンティティの指定子です。",
   },
   {
@@ -110,3 +111,9 @@ ProjectileStructure 型は、以下の構造を持ちます。
     description: "投射物が跳ね返るかどうかです。",
   }
 ]} />
+
+#### `shooter` {#projectile-structure-shooter}
+
+エンティティ情報またはブロック情報を指定します。  
+エンティティとブロックどちらの情報が格納されているかは、自動で推論されます。
+特別パラメタとして、 `shooter.kind`: `Enum{ENTITY, BLOCK}` を指定することで、明示的に指定できます。
