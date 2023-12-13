@@ -55,6 +55,8 @@ public class PlayerBucketEntityAction extends AbstractPlayerAction<PlayerBucketE
         Actor actor = PlayerUtils.getActorOrThrow(engine, player);
 
         Entity targetEntity = argument.getEntity().selectTarget(engine.getContext());
+        if (targetEntity == null)
+            throw new IllegalStateException("Entity is not found.");
 
         // Null ではない
         ItemStack itemInMainHand = player.getInventory().getItemInMainHand();

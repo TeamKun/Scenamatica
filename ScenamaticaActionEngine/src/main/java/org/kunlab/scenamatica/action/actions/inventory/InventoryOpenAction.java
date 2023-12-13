@@ -119,7 +119,7 @@ public class InventoryOpenAction extends AbstractInventoryAction<InventoryOpenAc
         {
             if (type == ScenarioType.ACTION_EXECUTE)
             {
-                if (this.targetSpecifier == null || !this.targetSpecifier.canProvideTarget())
+                if (!this.targetSpecifier.canProvideTarget())
                     throw new IllegalArgumentException("Cannot select target for this action, please specify target with valid specifier.");
 
                 ensurePresent(KEY_INVENTORY, this.inventory);
