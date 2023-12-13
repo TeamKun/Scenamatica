@@ -1,10 +1,15 @@
 package org.kunlab.scenamatica.action.actions.inventory.interact;
 
+import org.bukkit.entity.HumanEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.inventory.InventoryInteractEvent;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.action.actions.inventory.AbstractInventoryAction;
+import org.kunlab.scenamatica.commons.specifiers.PlayerSpecifierImpl;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
+import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
+import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.PlayerSpecifier;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,13 +36,17 @@ public abstract class AbstractInventoryInteractAction<A extends AbstractInventor
             return false;
 
         InventoryInteractEvent e = (InventoryInteractEvent) event;
+        HumanEntity whoClicked = e.getWhoClicked();
 
-        return argument.getTargetSpecifier() == null
-                || e.getWhoClicked().getUniqueId().equals(argument.getTarget().getUniqueId());
+        return (!argument.getTargetSpecifier().canProvideTarget()
+                || argument.getTargetSpecifier().checkMatchedPlayer((Player) whoClicked));
     }
 
-    protected String deserializeTarget(Map<String, Object> map)
+    protected PlayerSpecifier deserializeTarget(Map<String, Object> map, StructureSerializer serializer)
     {
-        return (String) map.get(AbstractInventoryInteractArgument.KEY_TARGET_PLAYER);
+        return PlayerSpecifierImpl.tryDeserializePlayer(
+                map.get(AbstractInventoryInteractArgument.KEY_TARGET_PLAYER),
+                serializer
+        );
     }
 }

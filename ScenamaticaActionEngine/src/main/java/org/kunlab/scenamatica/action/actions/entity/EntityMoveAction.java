@@ -113,7 +113,7 @@ public class EntityMoveAction extends AbstractEntityAction<EntityMoveAction.Argu
         {
             if (type == ScenarioType.ACTION_EXECUTE)
             {
-                this.throwIfNotSelectable();
+                this.ensureCanProvideTarget();
                 ensurePresent(KEY_TARGET_ENTITY, this.getTargetString());
                 ensureNotPresent(KEY_FROM, this.from);
                 ensurePresent(KEY_TO, this.to);

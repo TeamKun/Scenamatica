@@ -10,6 +10,7 @@ import org.kunlab.scenamatica.commons.utils.EntityUtils;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.entity.EntityStructure;
+import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.EntitySpecifier;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,7 +54,7 @@ public abstract class AbstractEntityAction<A extends AbstractEntityActionArgumen
                 .anyMatch(entity -> Objects.equals(entity.getUniqueId(), actualEntity.getUniqueId()));
     }
 
-    protected EntitySpecifierImpl<Entity> deserializeTarget(Map<String, Object> map, StructureSerializer serializer)
+    protected EntitySpecifier<Entity> deserializeTarget(Map<String, Object> map, StructureSerializer serializer)
     {
         return EntitySpecifierImpl.tryDeserialize(
                 map.get(AbstractEntityActionArgument.KEY_TARGET_ENTITY),
@@ -62,7 +63,7 @@ public abstract class AbstractEntityAction<A extends AbstractEntityActionArgumen
         );
     }
 
-    protected <E extends Entity> EntitySpecifierImpl<E> deserializeTarget(
+    protected <E extends Entity> EntitySpecifier<E> deserializeTarget(
             Map<String, Object> map,
             StructureSerializer serializer,
             Class<? extends EntityStructure> structureClass)

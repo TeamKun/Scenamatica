@@ -16,6 +16,7 @@ import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.ItemStackStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.misc.BlockStructure;
+import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.PlayerSpecifier;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.ArrayList;
@@ -104,7 +105,7 @@ public class PlayerHarvestBlockAction extends AbstractPlayerAction<PlayerHarvest
         }
 
         return new Argument(
-                super.deserializeTarget(map),
+                super.deserializeTarget(map, serializer),
                 block,
                 items
         );
@@ -121,7 +122,7 @@ public class PlayerHarvestBlockAction extends AbstractPlayerAction<PlayerHarvest
         @NotNull
         List<ItemStackStructure> items;
 
-        public Argument(String target, BlockStructure block, @NotNull List<ItemStackStructure> items)
+        public Argument(PlayerSpecifier target, BlockStructure block, @NotNull List<ItemStackStructure> items)
         {
             super(target);
             this.block = block;

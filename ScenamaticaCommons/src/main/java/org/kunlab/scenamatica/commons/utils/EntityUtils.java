@@ -36,7 +36,7 @@ public class EntityUtils
         return tryCastMapped(structure, entity).isAdequate(entity);
     }
 
-    @SuppressWarnings("rawtypes")
+    @SuppressWarnings({"rawtypes", "unchecked"})
     public static boolean checkIsAdequate(EntityStructure entity, Entity targetEntity)
     {
         if (!(entity instanceof Mapped))

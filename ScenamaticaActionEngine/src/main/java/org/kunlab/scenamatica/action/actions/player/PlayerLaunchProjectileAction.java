@@ -31,6 +31,7 @@ import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
+import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.PlayerSpecifier;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Collections;
@@ -53,8 +54,7 @@ public class PlayerLaunchProjectileAction extends AbstractPlayerAction<PlayerLau
     {
         argument = this.requireArgsNonNull(argument);
 
-        Player player = argument.getTarget();
-
+        Player player = argument.getTarget(engine);
         ProjectileType type = argument.getProjectileType();
 
         player.launchProjectile(type.getClazz(), argument.getVelocity());
@@ -104,7 +104,7 @@ public class PlayerLaunchProjectileAction extends AbstractPlayerAction<PlayerLau
             epsilon = Argument.DEFAULT_EPSILON;
 
         return new Argument(
-                super.deserializeTarget(map),
+                super.deserializeTarget(map, serializer),
                 MapUtils.getAsEnum(map, Argument.KEY_PROJECTILE_TYPE, ProjectileType.class),
                 /* ItemStackStructureImpl.deserialize(map, PlayerLaunchProjectileActionArgument.KEY_PROJECTILE_SHOOTER) */
                 Vector.deserialize(velocityMap),
@@ -169,7 +169,7 @@ public class PlayerLaunchProjectileAction extends AbstractPlayerAction<PlayerLau
 
         double epsilon;
 
-        public Argument(String target, @NotNull ProjectileType projectileType)
+        public Argument(PlayerSpecifier target, @NotNull ProjectileType projectileType)
         {
             super(target);
             this.projectileType = projectileType;
@@ -177,7 +177,7 @@ public class PlayerLaunchProjectileAction extends AbstractPlayerAction<PlayerLau
             this.epsilon = DEFAULT_EPSILON;
         }
 
-        public Argument(String target, @NotNull ProjectileType projectileType, @Nullable Vector velocity)
+        public Argument(PlayerSpecifier target, @NotNull ProjectileType projectileType, @Nullable Vector velocity)
         {
             super(target);
             this.projectileType = projectileType;
@@ -185,7 +185,7 @@ public class PlayerLaunchProjectileAction extends AbstractPlayerAction<PlayerLau
             this.epsilon = DEFAULT_EPSILON;
         }
 
-        public Argument(String target, @NotNull ProjectileType projectileType, @Nullable Vector velocity, double epsilon)
+        public Argument(PlayerSpecifier target, @NotNull ProjectileType projectileType, @Nullable Vector velocity, double epsilon)
         {
             super(target);
             this.projectileType = projectileType;

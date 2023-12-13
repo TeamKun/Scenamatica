@@ -42,7 +42,7 @@ public class PlayerBucketEmptyAction extends AbstractPlayerBucketAction<PlayerBu
     {
         argument = this.requireArgsNonNull(argument);
 
-        Player player = argument.getTarget();
+        Player player = argument.getTarget(engine);
         ItemStack stack = getBucket(player, argument);
         Block block = getPlaceAt(player, argument, engine);
         BlockFace direction = getDirection(player, block, argument);
@@ -123,7 +123,7 @@ public class PlayerBucketEmptyAction extends AbstractPlayerBucketAction<PlayerBu
         {
             if (type == ScenarioType.ACTION_EXECUTE)
             {
-                ensurePresent(Argument.KEY_TARGET_PLAYER, this.getTargetSpecifier());
+                this.ensureCanProvideTarget();
 
                 if (this.getBlockClicked() == null && this.getBlock() == null)
                     throw new IllegalArgumentException("No block to place specified(" + Argument.KEY_BLOCK + " or " + Argument.KEY_BLOCK_CLICKED + " is required).");

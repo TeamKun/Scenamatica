@@ -9,14 +9,14 @@ import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.kunlab.scenamatica.commons.utils.MapUtils;
-import org.kunlab.scenamatica.commons.utils.PlayerUtils;
+import org.kunlab.scenamatica.commons.specifiers.PlayerSpecifierImpl;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.InventoryStructure;
+import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.PlayerSpecifier;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Collections;
@@ -40,7 +40,10 @@ public class InventoryOpenAction extends AbstractInventoryAction<InventoryOpenAc
     {
         argument = this.requireArgsNonNull(argument);
 
-        Player player = argument.getTarget();
+        Player player = argument.getTargetSpecifier().selectTarget(engine.getContext());
+        if (player == null)
+            throw new IllegalStateException("Cannot select target for this action, please specify target with valid specifier.");
+
         InventoryStructure inventoryStructure = argument.getInventory();
         assert inventoryStructure != null;
         Inventory inventory = inventoryStructure.create();
@@ -55,15 +58,13 @@ public class InventoryOpenAction extends AbstractInventoryAction<InventoryOpenAc
         if (!super.checkMatchedInventoryEvent(argument, engine, event))
             return false;
 
-        Player expectedPlayer = null;
-        if (argument.getTargetSpecifier() != null)
-            expectedPlayer = argument.getTarget();
-
         assert event instanceof InventoryOpenEvent;
         InventoryOpenEvent e = (InventoryOpenEvent) event;
         HumanEntity player = e.getPlayer();
+        if (!(player instanceof Player))
+            return false;
 
-        return expectedPlayer == null || expectedPlayer.getUniqueId().equals(player.getUniqueId());
+        return (!argument.getTargetSpecifier().canProvideTarget() || argument.getTargetSpecifier().checkMatchedPlayer((Player) player));
     }
 
     @Override
@@ -79,7 +80,9 @@ public class InventoryOpenAction extends AbstractInventoryAction<InventoryOpenAc
     {
         return new Argument(
                 super.deserializeInventoryIfContains(map, serializer),
-                MapUtils.getOrNull(map, Argument.KEY_TARGET_PLAYER)
+                PlayerSpecifierImpl.tryDeserializePlayer(
+                        map.get(InventoryOpenAction.Argument.KEY_TARGET_PLAYER), serializer
+                )
         );
     }
 
@@ -89,22 +92,13 @@ public class InventoryOpenAction extends AbstractInventoryAction<InventoryOpenAc
     {
         public static final String KEY_TARGET_PLAYER = "target";
 
-        String targetPlayer;
+        @NotNull
+        PlayerSpecifier targetSpecifier;
 
-        public Argument(@Nullable InventoryStructure inventory, String targetPlayer)
+        public Argument(@Nullable InventoryStructure inventory, @NotNull PlayerSpecifier targetSpecifier)
         {
             super(inventory);
-            this.targetPlayer = targetPlayer;
-        }
-
-        public String getTargetSpecifier()
-        {
-            return this.targetPlayer;
-        }
-
-        public Player getTarget()
-        {
-            return PlayerUtils.getPlayerOrThrow(this.targetPlayer);
+            this.targetSpecifier = targetSpecifier;
         }
 
         @Override
@@ -117,7 +111,7 @@ public class InventoryOpenAction extends AbstractInventoryAction<InventoryOpenAc
 
             Argument arg = (Argument) argument;
 
-            return Objects.equals(this.targetPlayer, arg.targetPlayer);
+            return Objects.equals(this.targetSpecifier, arg.targetSpecifier);
         }
 
         @Override
@@ -125,7 +119,9 @@ public class InventoryOpenAction extends AbstractInventoryAction<InventoryOpenAc
         {
             if (type == ScenarioType.ACTION_EXECUTE)
             {
-                ensurePresent(KEY_TARGET_PLAYER, this.targetPlayer);
+                if (this.targetSpecifier == null || !this.targetSpecifier.canProvideTarget())
+                    throw new IllegalArgumentException("Cannot select target for this action, please specify target with valid specifier.");
+
                 ensurePresent(KEY_INVENTORY, this.inventory);
             }
         }
@@ -135,7 +131,7 @@ public class InventoryOpenAction extends AbstractInventoryAction<InventoryOpenAc
         {
             return appendArgumentString(
                     super.getArgumentString(),
-                    KEY_TARGET_PLAYER, this.targetPlayer
+                    KEY_TARGET_PLAYER, this.targetSpecifier
             );
         }
     }

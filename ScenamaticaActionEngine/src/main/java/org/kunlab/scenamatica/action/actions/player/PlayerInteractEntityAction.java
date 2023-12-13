@@ -19,6 +19,7 @@ import org.kunlab.scenamatica.interfaces.context.Actor;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.EntitySpecifier;
+import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.PlayerSpecifier;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 import org.kunlab.scenamatica.nms.enums.entity.NMSEntityUseAction;
 
@@ -43,7 +44,7 @@ public class PlayerInteractEntityAction<A extends PlayerInteractEntityAction.Arg
     {
         argument = this.requireArgsNonNull(argument);
 
-        Player player = argument.getTarget();
+        Player player = argument.getTarget(engine);
         Entity targetEntity = argument.getEntity().selectTarget(engine.getContext());
 
         int distanceFromEntity = (int) player.getLocation().distance(targetEntity.getLocation());
@@ -68,7 +69,7 @@ public class PlayerInteractEntityAction<A extends PlayerInteractEntityAction.Arg
     private void eventOnlyMode(@NotNull ScenarioEngine engine, @NotNull A argument, @NotNull Entity targetEntity)
     {
         PlayerInteractEntityEvent event = new PlayerInteractEntityEvent(
-                argument.getTarget(),
+                argument.getTarget(engine),
                 targetEntity,
                 argument.getHand() == null ? EquipmentSlot.HAND: argument.getHand()
         );
@@ -100,7 +101,7 @@ public class PlayerInteractEntityAction<A extends PlayerInteractEntityAction.Arg
     {
         // noinspection unchecked
         return (A) new Argument(
-                super.deserializeTarget(map),
+                super.deserializeTarget(map, serializer),
                 EntitySpecifierImpl.tryDeserialize(map.get(Argument.KEY_ENTITY), serializer),
                 MapUtils.getAsEnumOrNull(map, Argument.KEY_HAND, EquipmentSlot.class)
         );
@@ -116,7 +117,7 @@ public class PlayerInteractEntityAction<A extends PlayerInteractEntityAction.Arg
         EntitySpecifier<?> entity;
         EquipmentSlot hand;
 
-        public Argument(String target, EntitySpecifier<?> entity, EquipmentSlot hand)
+        public Argument(PlayerSpecifier target, EntitySpecifier<?> entity, EquipmentSlot hand)
         {
             super(target);
             this.entity = entity;

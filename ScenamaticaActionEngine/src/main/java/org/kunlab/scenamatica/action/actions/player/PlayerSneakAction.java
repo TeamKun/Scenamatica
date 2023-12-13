@@ -15,6 +15,7 @@ import org.kunlab.scenamatica.interfaces.action.types.Requireable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
+import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.PlayerSpecifier;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Collections;
@@ -40,7 +41,7 @@ public class PlayerSneakAction extends AbstractPlayerAction<PlayerSneakAction.Ar
 
         boolean sneaking = argument.sneaking;
 
-        Player player = argument.getTarget();
+        Player player = argument.getTarget(engine);
         PlayerToggleSneakEvent event = new PlayerToggleSneakEvent(player, sneaking);
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled())
@@ -73,7 +74,7 @@ public class PlayerSneakAction extends AbstractPlayerAction<PlayerSneakAction.Ar
     public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
     {
         return new Argument(
-                super.deserializeTarget(map),
+                super.deserializeTarget(map, serializer),
                 MapUtils.getOrNull(map, Argument.KEY_SNEAKING)
         );
     }
@@ -86,7 +87,7 @@ public class PlayerSneakAction extends AbstractPlayerAction<PlayerSneakAction.Ar
         assert argument.sneaking != null;
         boolean expectState = argument.sneaking;
 
-        return argument.getTarget().isSneaking() == expectState;
+        return argument.getTarget(engine).isSneaking() == expectState;
     }
 
     @Value
@@ -98,7 +99,7 @@ public class PlayerSneakAction extends AbstractPlayerAction<PlayerSneakAction.Ar
         @Nullable
         Boolean sneaking;
 
-        public Argument(String target, @Nullable Boolean sneaking)
+        public Argument(PlayerSpecifier target, @Nullable Boolean sneaking)
         {
             super(target);
             this.sneaking = sneaking;

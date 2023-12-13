@@ -159,7 +159,7 @@ public abstract class AbstractActionArgument implements ActionArgument
      * @param value     値
      */
 
-    protected void ensureTrue(@NotNull String fieldName, boolean value)
+    protected static void ensureFalse(@NotNull String fieldName, boolean value)
     {
         if (value)
             throw new IllegalArgumentException(String.format("The argument '%s' is not supported.", fieldName));

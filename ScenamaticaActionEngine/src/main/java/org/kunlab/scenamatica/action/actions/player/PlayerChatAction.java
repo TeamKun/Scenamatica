@@ -12,6 +12,7 @@ import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
+import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.PlayerSpecifier;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Collections;
@@ -19,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+@SuppressWarnings("deprecation")  // そもそも PlayerChatEvent が deprecated なので。
 public class PlayerChatAction extends AbstractPlayerAction<PlayerChatAction.Argument>
         implements Executable<PlayerChatAction.Argument>, Watchable<PlayerChatAction.Argument>
 {
@@ -35,7 +37,7 @@ public class PlayerChatAction extends AbstractPlayerAction<PlayerChatAction.Argu
     {
         argument = this.requireArgsNonNull(argument);
 
-        Player p = argument.getTarget();
+        Player p = argument.getTarget(engine);
         p.chat(argument.message);
     }
 
@@ -65,7 +67,7 @@ public class PlayerChatAction extends AbstractPlayerAction<PlayerChatAction.Argu
     public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
     {
         return new Argument(
-                super.deserializeTarget(map),
+                super.deserializeTarget(map, serializer),
                 (String) map.get(Argument.KEY_MESSAGE),
                 (String) map.get(Argument.KEY_FORMAT)
         );
@@ -81,7 +83,7 @@ public class PlayerChatAction extends AbstractPlayerAction<PlayerChatAction.Argu
         String message;
         String format;
 
-        public Argument(String target, String message, String format)
+        public Argument(PlayerSpecifier target, String message, String format)
         {
             super(target);
             this.message = message;

@@ -40,7 +40,7 @@ public class PlayerTeleportAction extends PlayerMoveAction<PlayerTeleportAction.
         if (cause == null)
             cause = PlayerTeleportEvent.TeleportCause.PLUGIN;
 
-        argument.getTarget().teleport(toLoc, cause);
+        argument.getTarget(engine).teleport(toLoc, cause);
     }
 
     @Override

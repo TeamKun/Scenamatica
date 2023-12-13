@@ -1,26 +1,27 @@
 package org.kunlab.scenamatica.action.actions.inventory.interact;
 
-import org.bukkit.entity.Player;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.actions.inventory.AbstractInventoryArgument;
-import org.kunlab.scenamatica.commons.utils.PlayerUtils;
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.InventoryStructure;
+import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.PlayerSpecifier;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Objects;
 
+@Getter
 public abstract class AbstractInventoryInteractArgument extends AbstractInventoryArgument
 {
     public static final String KEY_TARGET_PLAYER = "target";
 
     @NotNull
-    private final String target;
+    private final PlayerSpecifier targetSpecifier;
 
-    public AbstractInventoryInteractArgument(@Nullable InventoryStructure inventory, @NotNull String target)
+    public AbstractInventoryInteractArgument(@Nullable InventoryStructure inventory, @NotNull PlayerSpecifier targetSpecifier)
     {
         super(inventory);
-        this.target = target;
+        this.targetSpecifier = targetSpecifier;
     }
 
     @Override
@@ -33,17 +34,7 @@ public abstract class AbstractInventoryInteractArgument extends AbstractInventor
             return false;
 
         AbstractInventoryInteractArgument a = (AbstractInventoryInteractArgument) argument;
-        return Objects.equals(a.target, this.target);
-    }
-
-    public String getTargetSpecifier()
-    {
-        return this.target;
-    }
-
-    public Player getTarget()
-    {
-        return PlayerUtils.getPlayerOrThrow(this.target);
+        return Objects.equals(a.targetSpecifier, this.targetSpecifier);
     }
 
     @Override
@@ -51,7 +42,7 @@ public abstract class AbstractInventoryInteractArgument extends AbstractInventor
     {
         return buildArgumentString(
                 super.getArgumentString(),
-                KEY_TARGET_PLAYER, this.target
+                KEY_TARGET_PLAYER, this.targetSpecifier
         );
     }
 }

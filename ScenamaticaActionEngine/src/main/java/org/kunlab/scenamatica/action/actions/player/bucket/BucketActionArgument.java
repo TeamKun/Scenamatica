@@ -7,12 +7,14 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.inventory.EquipmentSlot;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.action.actions.player.AbstractPlayerActionArgument;
+import org.kunlab.scenamatica.commons.specifiers.PlayerSpecifierImpl;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.ItemStackStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.misc.BlockStructure;
+import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.PlayerSpecifier;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Map;
@@ -43,7 +45,7 @@ public class BucketActionArgument extends AbstractPlayerActionArgument
         this(origin.getTargetSpecifier(), origin.itemStack, origin.block, origin.blockClicked, origin.blockFace, origin.bucket, origin.hand, origin.eventOnly);
     }
 
-    public BucketActionArgument(String target, ItemStackStructure itemStack, BlockStructure block, BlockStructure blockClicked, BlockFace blockFace, Material bucket, EquipmentSlot hand, boolean eventOnly)
+    public BucketActionArgument(PlayerSpecifier target, ItemStackStructure itemStack, BlockStructure block, BlockStructure blockClicked, BlockFace blockFace, Material bucket, EquipmentSlot hand, boolean eventOnly)
     {
         super(target);
         this.itemStack = itemStack;
@@ -79,7 +81,7 @@ public class BucketActionArgument extends AbstractPlayerActionArgument
             );
 
         return new BucketActionArgument(
-                (String) map.get(AbstractPlayerActionArgument.KEY_TARGET_PLAYER),
+                PlayerSpecifierImpl.tryDeserializePlayer(map.get(AbstractPlayerActionArgument.KEY_TARGET_PLAYER), serializer),
                 itemStack,
                 block,
                 blockClicked,

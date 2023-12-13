@@ -21,6 +21,7 @@ import org.kunlab.scenamatica.interfaces.context.Actor;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.ItemStackStructure;
+import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.PlayerSpecifier;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Arrays;
@@ -46,7 +47,7 @@ public class PlayerItemDamageAction extends AbstractPlayerAction<PlayerItemDamag
     {
         argument = this.requireArgsNonNull(argument);
 
-        Actor actor = PlayerUtils.getActorOrThrow(engine, argument.getTarget());
+        Actor actor = PlayerUtils.getActorOrThrow(engine, argument.getTarget(engine));
         EquipmentSlot slot = argument.getSlot() == null ? EquipmentSlot.HAND: argument.getSlot();
         ItemStackStructure item = argument.getItem();
         if (item != null)
@@ -93,7 +94,7 @@ public class PlayerItemDamageAction extends AbstractPlayerAction<PlayerItemDamag
             );
 
         return new Argument(
-                super.deserializeTarget(map),
+                super.deserializeTarget(map, serializer),
                 item,
                 MapUtils.getAsNumberOrNull(map, Argument.KEY_DAMAGE, Number::intValue),
                 MapUtils.getAsEnumOrNull(map, Argument.KEY_SLOT, EquipmentSlot.class)
@@ -105,7 +106,7 @@ public class PlayerItemDamageAction extends AbstractPlayerAction<PlayerItemDamag
     {
         argument = this.requireArgsNonNull(argument);
 
-        Player player = argument.getTarget();
+        Player player = argument.getTarget(engine);
 
         List<EquipmentSlot> slotToCheck;
         if (argument.getSlot() == null)
@@ -148,7 +149,7 @@ public class PlayerItemDamageAction extends AbstractPlayerAction<PlayerItemDamag
         Integer damage;
         EquipmentSlot slot;
 
-        public Argument(String target, ItemStackStructure item, Integer damage, EquipmentSlot slot)
+        public Argument(PlayerSpecifier target, ItemStackStructure item, Integer damage, EquipmentSlot slot)
         {
             super(target);
             this.item = item;

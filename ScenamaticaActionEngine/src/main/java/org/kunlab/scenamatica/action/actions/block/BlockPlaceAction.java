@@ -12,6 +12,7 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.kunlab.scenamatica.commons.specifiers.PlayerSpecifierImpl;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.commons.utils.PlayerUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
@@ -22,6 +23,7 @@ import org.kunlab.scenamatica.interfaces.context.Actor;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.misc.BlockStructure;
+import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.PlayerSpecifier;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Arrays;
@@ -53,7 +55,8 @@ public class BlockPlaceAction extends AbstractBlockAction<BlockPlaceAction.Argum
     {
         argument = this.requireArgsNonNull(argument);
 
-        Player actor = argument.getActor();
+        Player actor = argument.getActorSpecifier() == null ?
+                null: argument.getActorSpecifier().selectTarget(engine.getContext());
 
         BlockStructure blockDef = argument.getBlock();
         Location location = this.getBlockLocationWithWorld(blockDef, engine);
@@ -93,18 +96,12 @@ public class BlockPlaceAction extends AbstractBlockAction<BlockPlaceAction.Argum
         assert event instanceof BlockPlaceEvent;
         BlockPlaceEvent e = (BlockPlaceEvent) event;
 
-        Player actor;
-        if ((actor = argument.getActor()) != null)
-        {
-            Player placer = e.getPlayer();
-            if (!placer.getUniqueId().equals(actor.getUniqueId()))
-                return false;
-        }
 
         if (!(argument.getHand() == null || e.getHand() == argument.getHand()))
             return false;
 
-        return argument.getBlock() == null || this.isConditionFulfilled(argument, engine);
+        return (argument.getActorSpecifier() == null || argument.getActorSpecifier().checkMatchedPlayer(e.getPlayer()))
+                && (argument.getBlock() == null || this.isConditionFulfilled(argument, engine));
     }
 
     @Override
@@ -120,7 +117,7 @@ public class BlockPlaceAction extends AbstractBlockAction<BlockPlaceAction.Argum
     {
         return new Argument(
                 super.deserializeBlockOrNull(map, serializer),
-                MapUtils.getOrNull(map, Argument.KEY_ACTOR),
+                PlayerSpecifierImpl.tryDeserializePlayer(map.get(Argument.KEY_ACTOR), serializer),
                 MapUtils.getAsEnumOrNull(map, Argument.KEY_HAND, EquipmentSlot.class),
                 MapUtils.getAsEnumOrNull(map, Argument.KEY_DIRECTION, BlockFace.class)
         );
@@ -145,14 +142,14 @@ public class BlockPlaceAction extends AbstractBlockAction<BlockPlaceAction.Argum
         public static final String KEY_HAND = "hand";
         public static final String KEY_DIRECTION = "direction";
 
-        String actor;
+        PlayerSpecifier actorSpecifier;
         EquipmentSlot hand;  // HAND or OFF_HAND
         BlockFace direction;
 
-        public Argument(@Nullable BlockStructure block, String actor, EquipmentSlot hand, BlockFace direction)
+        public Argument(@Nullable BlockStructure block, PlayerSpecifier actorSpecifier, EquipmentSlot hand, BlockFace direction)
         {
             super(block);
-            this.actor = actor;
+            this.actorSpecifier = actorSpecifier;
             this.hand = hand;
             this.direction = direction;
         }
@@ -166,7 +163,7 @@ public class BlockPlaceAction extends AbstractBlockAction<BlockPlaceAction.Argum
             Argument arg = (Argument) argument;
 
             return super.isSame(argument) &&
-                    (this.actor == null || this.actor.equals(arg.actor))
+                    (this.actorSpecifier == null || this.actorSpecifier.equals(arg.actorSpecifier))
                     && this.hand == arg.hand
                     && this.direction == arg.direction;
 
@@ -190,6 +187,8 @@ public class BlockPlaceAction extends AbstractBlockAction<BlockPlaceAction.Argum
                     ensureNotPresent(KEY_DIRECTION, this.direction);
                     break;
                 case CONDITION_REQUIRE:
+                    if (this.actorSpecifier != null && this.actorSpecifier.canProvideTarget())
+                        throw new IllegalArgumentException("Cannot specify the actor in the condition requiring mode.");
                     ensurePresent(KEY_BLOCK, this.block);
                     /* fall through */
                 case ACTION_EXECUTE:
@@ -200,20 +199,11 @@ public class BlockPlaceAction extends AbstractBlockAction<BlockPlaceAction.Argum
             }
         }
 
-        @Nullable
-        public Player getActor()
-        {
-            if (this.actor == null)
-                return null;
-
-            return PlayerUtils.getPlayerOrNull(this.actor);
-        }
-
         @Override
         public String getArgumentString()
         {
             return buildArgumentString(
-                    KEY_ACTOR, this.actor,
+                    KEY_ACTOR, this.actorSpecifier,
                     KEY_HAND, this.hand,
                     KEY_DIRECTION, this.direction
             );

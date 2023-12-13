@@ -8,7 +8,7 @@ import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.actions.AbstractActionArgument;
-import org.kunlab.scenamatica.commons.utils.PlayerUtils;
+import org.kunlab.scenamatica.commons.specifiers.PlayerSpecifierImpl;
 import org.kunlab.scenamatica.commons.utils.TextUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.events.actor.ActorMessageReceiveEvent;
@@ -16,6 +16,7 @@ import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
+import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.PlayerSpecifier;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Collections;
@@ -42,7 +43,10 @@ public class MessageAction extends AbstractScenamaticaAction<MessageAction.Argum
     {
         argument = this.requireArgsNonNull(argument);
 
-        Player recipient = PlayerUtils.getPlayerOrThrow(argument.getRecipient());
+        Player recipient = argument.getRecipient().selectTarget(engine.getContext());
+        if (recipient == null)
+            throw new IllegalArgumentException("Cannot find player");
+
         String content = argument.getMessage();
 
         recipient.sendMessage(content);
@@ -52,16 +56,13 @@ public class MessageAction extends AbstractScenamaticaAction<MessageAction.Argum
     public boolean isFired(@NotNull MessageAction.Argument argument, @NotNull ScenarioEngine engine, @NotNull Event event)
     {
         String content = argument.getMessage();
-        Player recipient = null;
-        if (argument.getRecipient() != null)
-            recipient = PlayerUtils.getPlayerOrThrow(argument.getRecipient());
 
         assert event instanceof ActorMessageReceiveEvent;
         ActorMessageReceiveEvent e = (ActorMessageReceiveEvent) event;
 
         TextComponent message = e.getMessage();
         return (content == null || TextUtils.isSameContent(message, content))
-                && (recipient == null || e.getPlayer().getUniqueId().equals(recipient.getUniqueId()));
+                && (argument.getRecipient() == null || argument.recipient.checkMatchedPlayer(e.getPlayer()));
     }
 
     @Override
@@ -77,7 +78,7 @@ public class MessageAction extends AbstractScenamaticaAction<MessageAction.Argum
     {
         return new Argument(
                 (String) map.get(Argument.KEY_MESSAGE),
-                (String) map.get(Argument.KEY_RECIPIENT)
+                PlayerSpecifierImpl.tryDeserializePlayer(map.get(Argument.KEY_RECIPIENT), serializer)
         );
     }
 
@@ -89,9 +90,9 @@ public class MessageAction extends AbstractScenamaticaAction<MessageAction.Argum
         public static final String KEY_RECIPIENT = "recipient";
 
         String message;
-        String recipient;
+        PlayerSpecifier recipient;
 
-        public Argument(String message, String recipient)
+        public Argument(String message, PlayerSpecifier recipient)
         {
             this.message = message;
             this.recipient = recipient;

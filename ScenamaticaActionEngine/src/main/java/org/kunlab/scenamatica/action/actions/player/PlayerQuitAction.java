@@ -1,6 +1,8 @@
 package org.kunlab.scenamatica.action.actions.player;
 
+import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.Value;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
@@ -18,6 +20,7 @@ import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.context.Actor;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
+import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.PlayerSpecifier;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Collections;
@@ -41,10 +44,10 @@ public class PlayerQuitAction extends AbstractPlayerAction<PlayerQuitAction.Argu
     {
         argument = this.requireArgsNonNull(argument);
 
-        PlayerQuitEvent.QuitReason reason = argument.getExceptReason();
+        PlayerQuitEvent.QuitReason reason = argument.getReason(ScenarioType.ACTION_EXECUTE);
         Component quitMessage = argument.getQuitMessage() == null ? null: Component.text(argument.getQuitMessage());
 
-        Player target = argument.getTarget();
+        Player target = argument.getTarget(engine);
         Actor targetActor = null;
         if (reason != PlayerQuitEvent.QuitReason.KICKED)
             targetActor = PlayerUtils.getActorOrThrow(engine, target);
@@ -70,7 +73,8 @@ public class PlayerQuitAction extends AbstractPlayerAction<PlayerQuitAction.Argu
     public boolean isConditionFulfilled(@Nullable PlayerQuitAction.Argument argument, @NotNull ScenarioEngine engine)
     {
         argument = this.requireArgsNonNull(argument);
-        return PlayerUtils.getPlayerOrNull(argument.getTargetSpecifier()) == null;
+        Player target = argument.getTargetOrNull(engine);
+        return target == null || !target.isOnline();
     }
 
     @Override
@@ -88,7 +92,7 @@ public class PlayerQuitAction extends AbstractPlayerAction<PlayerQuitAction.Argu
             return false;
 
         PlayerQuitEvent.QuitReason quitReason = e.getReason();
-        PlayerQuitEvent.QuitReason expectedQuitReason = argument.getReason();
+        PlayerQuitEvent.QuitReason expectedQuitReason = argument.getReason(ScenarioType.ACTION_EXPECT);
 
         return expectedQuitReason == null || quitReason == expectedQuitReason;
     }
@@ -105,7 +109,7 @@ public class PlayerQuitAction extends AbstractPlayerAction<PlayerQuitAction.Argu
     public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
     {
         return new Argument(
-                super.deserializeTarget(map),
+                super.deserializeTarget(map, serializer),
                 MapUtils.getOrNull(map, Argument.KEY_QUIT_MESSAGE),
                 MapUtils.getAsEnumOrNull(map, Argument.KEY_QUIT_REASON, PlayerQuitEvent.QuitReason.class)
         );
@@ -118,22 +122,24 @@ public class PlayerQuitAction extends AbstractPlayerAction<PlayerQuitAction.Argu
         public static final String KEY_QUIT_MESSAGE = "message";
         public static final String KEY_QUIT_REASON = "reason"; // Paper
 
-        private static final PlayerQuitEvent.QuitReason DEFAULT_REASON_ON_EXPECT_MODE
-                = PlayerQuitEvent.QuitReason.KICKED;
+        private static final PlayerQuitEvent.QuitReason DEFAULT_REASON_ON_EXECUTE_MODE = PlayerQuitEvent.QuitReason.KICKED;
 
         String quitMessage;
+        @Getter(AccessLevel.NONE)
         PlayerQuitEvent.QuitReason reason;
 
-        public Argument(@NotNull String targetSpecifier, String quitMessage, PlayerQuitEvent.QuitReason reason)
+        public Argument(@NotNull PlayerSpecifier targetSpecifier, String quitMessage, PlayerQuitEvent.QuitReason reason)
         {
             super(targetSpecifier);
             this.quitMessage = quitMessage;
             this.reason = reason;
         }
 
-        public PlayerQuitEvent.QuitReason getExceptReason()
+        public PlayerQuitEvent.QuitReason getReason(ScenarioType type)
         {
-            return this.reason == null ? DEFAULT_REASON_ON_EXPECT_MODE: this.reason;
+            if (type == ScenarioType.ACTION_EXECUTE && this.reason == null)
+                return DEFAULT_REASON_ON_EXECUTE_MODE;
+            return this.reason;
         }
 
         @Override

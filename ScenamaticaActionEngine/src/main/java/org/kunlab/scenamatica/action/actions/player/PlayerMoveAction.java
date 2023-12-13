@@ -16,6 +16,7 @@ import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
+import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.PlayerSpecifier;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Collections;
@@ -40,7 +41,7 @@ public class PlayerMoveAction<T extends PlayerMoveAction.Argument> extends Abstr
         argument = this.requireArgsNonNull(argument);
 
         Location toLoc = Utils.assignWorldToLocation(argument.getTo(), engine);
-        Player target = argument.getTarget();
+        Player target = argument.getTarget(engine);
         target.teleport(toLoc);
     }
 
@@ -70,7 +71,7 @@ public class PlayerMoveAction<T extends PlayerMoveAction.Argument> extends Abstr
     {
         // noinspection unchecked
         return (T) new Argument(
-                super.deserializeTarget(map),
+                super.deserializeTarget(map, serializer),
                 MapUtils.getAsLocationOrNull(map, Argument.KEY_FROM),
                 MapUtils.getAsLocationOrNull(map, Argument.KEY_TO)
         );
@@ -86,7 +87,7 @@ public class PlayerMoveAction<T extends PlayerMoveAction.Argument> extends Abstr
         private final Location from;
         private final Location to;
 
-        public Argument(String target, Location from, Location to)
+        public Argument(PlayerSpecifier target, Location from, Location to)
         {
             super(target);
             this.from = from;

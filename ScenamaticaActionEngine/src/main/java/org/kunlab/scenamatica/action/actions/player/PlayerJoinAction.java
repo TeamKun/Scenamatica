@@ -3,7 +3,6 @@ package org.kunlab.scenamatica.action.actions.player;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import net.kyori.adventure.text.Component;
-import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.jetbrains.annotations.NotNull;
@@ -18,6 +17,7 @@ import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.context.Actor;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
+import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.PlayerSpecifier;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Collections;
@@ -43,7 +43,7 @@ public class PlayerJoinAction extends AbstractPlayerAction<PlayerJoinAction.Argu
     {
         argument = this.requireArgsNonNull(argument);
 
-        String targetSpecifier = argument.getTargetSpecifier();  // argument.getTarget() は必ず null になる
+        String targetSpecifier = argument.getTargetSpecifier().getSelectorString();  // argument.getTarget(engine) は必ず null になる
 
         if (PlayerUtils.getPlayerOrNull(targetSpecifier) != null)
             throw new IllegalArgumentException("Cannot execute player join action because player is already online.");
@@ -56,16 +56,12 @@ public class PlayerJoinAction extends AbstractPlayerAction<PlayerJoinAction.Argu
     @Override
     public boolean isFired(@NotNull Argument argument, @NotNull ScenarioEngine engine, @NotNull Event event)
     {
+        if (!super.checkMatchedPlayerEvent(argument, engine, event))
+            return false;
+
         assert event instanceof PlayerJoinEvent;
         PlayerJoinEvent e = (PlayerJoinEvent) event;
-        Player player = e.getPlayer();
         Component message = e.joinMessage();
-
-        // ターゲットが存在するか。 UUID と Player#getName() で判定する。
-        String targetSpecifier = argument.getTargetSpecifier();
-        if (!(targetSpecifier == null || player.getName().equalsIgnoreCase(targetSpecifier)
-                || this.isSameUUIDString(player.getUniqueId().toString(), targetSpecifier)))
-            return false;
 
         String expectedJoinMessage = argument.getJoinMessage();
         return expectedJoinMessage == null || TextUtils.isSameContent(message, expectedJoinMessage);
@@ -83,7 +79,7 @@ public class PlayerJoinAction extends AbstractPlayerAction<PlayerJoinAction.Argu
     public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
     {
         return new Argument(
-                super.deserializeTarget(map),
+                super.deserializeTarget(map, serializer),
                 MapUtils.getOrNull(map, Argument.KEY_JOIN_MESSAGE)
         );
     }
@@ -92,7 +88,7 @@ public class PlayerJoinAction extends AbstractPlayerAction<PlayerJoinAction.Argu
     public boolean isConditionFulfilled(@Nullable Argument argument, @NotNull ScenarioEngine engine)
     {
         argument = this.requireArgsNonNull(argument);
-        return PlayerUtils.getPlayerOrNull(argument.getTargetSpecifier()) != null;
+        return argument.getTarget(engine).isOnline();
     }
 
     @Value
@@ -103,7 +99,7 @@ public class PlayerJoinAction extends AbstractPlayerAction<PlayerJoinAction.Argu
 
         String joinMessage;
 
-        public Argument(String target, String joinMessage)
+        public Argument(PlayerSpecifier target, String joinMessage)
         {
             super(target);
             this.joinMessage = joinMessage;

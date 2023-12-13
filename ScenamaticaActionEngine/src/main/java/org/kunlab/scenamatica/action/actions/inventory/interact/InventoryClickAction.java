@@ -21,6 +21,7 @@ import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.InventoryStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.ItemStackStructure;
+import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.PlayerSpecifier;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Collections;
@@ -44,7 +45,7 @@ public class InventoryClickAction<T extends InventoryClickAction.Argument> exten
     {
         argument = this.requireArgsNonNull(argument);
 
-        Player target = argument.getTarget();
+        Player target = argument.getTargetSpecifier().selectTarget(engine.getContext());
         Actor actor = PlayerUtils.getActorOrThrow(engine, target);
 
         if (argument.getInventory() != null)
@@ -129,7 +130,7 @@ public class InventoryClickAction<T extends InventoryClickAction.Argument> exten
         // noinspection unchecked
         return (T) new Argument(
                 super.deserializeInventoryIfContains(map, serializer),
-                super.deserializeTarget(map),
+                super.deserializeTarget(map, serializer),
                 MapUtils.getAsEnumOrNull(map, Argument.KEY_CLICK_TYPE, ClickType.class),
                 MapUtils.getAsEnumOrNull(map, Argument.KEY_INVENTORY_ACTION, InventoryAction.class),
                 MapUtils.getAsEnumOrNull(map, Argument.KEY_SLOT_TYPE, InventoryType.SlotType.class),
@@ -163,7 +164,7 @@ public class InventoryClickAction<T extends InventoryClickAction.Argument> exten
         Integer button;
         ItemStackStructure cursorItem;
 
-        public Argument(@Nullable InventoryStructure inventory, @NotNull String target, ClickType type, InventoryAction action, InventoryType.SlotType slotType, Integer slot, Integer rawSlot, ItemStackStructure clickedItem, Integer button, ItemStackStructure cursorItem)
+        public Argument(@Nullable InventoryStructure inventory, @NotNull PlayerSpecifier target, ClickType type, InventoryAction action, InventoryType.SlotType slotType, Integer slot, Integer rawSlot, ItemStackStructure clickedItem, Integer button, ItemStackStructure cursorItem)
         {
             super(inventory, target);
             this.type = type;

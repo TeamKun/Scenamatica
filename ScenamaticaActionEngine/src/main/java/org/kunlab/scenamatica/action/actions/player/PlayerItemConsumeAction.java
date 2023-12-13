@@ -18,6 +18,7 @@ import org.kunlab.scenamatica.interfaces.context.Actor;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.ItemStackStructure;
+import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.PlayerSpecifier;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Collections;
@@ -48,7 +49,7 @@ public class PlayerItemConsumeAction extends AbstractPlayerAction<PlayerItemCons
         argument = this.requireArgsNonNull(argument);
 
         ItemStackStructure item = argument.getItem();
-        Actor actor = PlayerUtils.getActorOrThrow(engine, argument.getTarget());
+        Actor actor = PlayerUtils.getActorOrThrow(engine, argument.getTarget(engine));
 
         if (item != null)
             actor.getPlayer().getInventory().setItemInMainHand(item.create());
@@ -101,7 +102,7 @@ public class PlayerItemConsumeAction extends AbstractPlayerAction<PlayerItemCons
             );
 
         return new Argument(
-                super.deserializeTarget(map),
+                super.deserializeTarget(map, serializer),
                 item,
                 replacement
         );
@@ -119,7 +120,7 @@ public class PlayerItemConsumeAction extends AbstractPlayerAction<PlayerItemCons
         @Nullable
         ItemStackStructure replacement;
 
-        public Argument(String target, @Nullable ItemStackStructure item, @Nullable ItemStackStructure replacement)
+        public Argument(PlayerSpecifier target, @Nullable ItemStackStructure item, @Nullable ItemStackStructure replacement)
         {
             super(target);
             this.item = item;

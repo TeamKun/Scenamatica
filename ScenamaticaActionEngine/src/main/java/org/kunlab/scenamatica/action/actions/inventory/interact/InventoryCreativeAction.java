@@ -41,7 +41,10 @@ public class InventoryCreativeAction extends InventoryClickAction<InventoryCreat
         argument = this.requireArgsNonNull(argument);
 
         int slot = argument.getSlot();
-        Actor actor = PlayerUtils.getActorOrThrow(engine, argument.getTarget());
+        Actor actor = PlayerUtils.getActorOrThrow(
+                engine,
+                argument.getTargetSpecifier().selectTarget(engine.getContext())
+        );
 
         actor.giveCreativeItem(slot, argument.getItem().create());
     }

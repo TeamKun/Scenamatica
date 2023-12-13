@@ -16,6 +16,7 @@ import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.ItemStackStructure;
+import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.PlayerSpecifier;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Collections;
@@ -39,7 +40,7 @@ public class PlayerHotbarSlotAction extends AbstractPlayerAction<PlayerHotbarSlo
     {
         argument = super.requireArgsNonNull(argument);
 
-        Player p = argument.getTarget();
+        Player p = argument.getTarget(engine);
         int slot = argument.getCurrentSlot();
         ItemStackStructure item = argument.getCurrentItem();
 
@@ -95,7 +96,7 @@ public class PlayerHotbarSlotAction extends AbstractPlayerAction<PlayerHotbarSlo
         }
 
         return new Argument(
-                super.deserializeTarget(map),
+                super.deserializeTarget(map, serializer),
                 currentSlot,
                 previousSlot,
                 item
@@ -107,7 +108,7 @@ public class PlayerHotbarSlotAction extends AbstractPlayerAction<PlayerHotbarSlo
     {
         argument = super.requireArgsNonNull(argument);
 
-        Player p = argument.getTarget();
+        Player p = argument.getTarget(engine);
         Integer currentSlot = argument.getCurrentSlot();
         ItemStackStructure currentItem = argument.getCurrentItem();
 
@@ -127,7 +128,7 @@ public class PlayerHotbarSlotAction extends AbstractPlayerAction<PlayerHotbarSlo
         Integer previousSlot;
         ItemStackStructure currentItem;
 
-        public Argument(String target, Integer currentSlot, Integer previousSlot, @Nullable ItemStackStructure currentItem)
+        public Argument(PlayerSpecifier target, Integer currentSlot, Integer previousSlot, @Nullable ItemStackStructure currentItem)
         {
             super(target);
             this.currentSlot = currentSlot;
@@ -173,7 +174,8 @@ public class PlayerHotbarSlotAction extends AbstractPlayerAction<PlayerHotbarSlo
         @Override
         public String getArgumentString()
         {
-            return buildArgumentString(
+            return appendArgumentString(
+                    super.getArgumentString(),
                     KEY_CURRENT_SLOT, this.currentSlot,
                     KEY_PREVIOUS_SLOT, this.previousSlot,
                     KEY_CURRENT_ITEM, this.currentItem

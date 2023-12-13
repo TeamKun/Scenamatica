@@ -15,6 +15,7 @@ import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
+import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.PlayerSpecifier;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Collections;
@@ -37,7 +38,7 @@ public class PlayerAnimationAction extends AbstractPlayerAction<PlayerAnimationA
     {
         argument = this.requireArgsNonNull(argument);
 
-        Player player = argument.getTarget();
+        Player player = argument.getTarget(engine);
 
         PlayerUtils.getActorOrThrow(engine, player)
                 .playAnimation(argument.type);
@@ -68,7 +69,7 @@ public class PlayerAnimationAction extends AbstractPlayerAction<PlayerAnimationA
     public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
     {
         return new Argument(
-                super.deserializeTarget(map),
+                super.deserializeTarget(map, serializer),
                 MapUtils.getAsEnumOrNull(map, Argument.KEY_ACTION_TYPE, PlayerAnimationType.class)
         );
     }
@@ -81,7 +82,7 @@ public class PlayerAnimationAction extends AbstractPlayerAction<PlayerAnimationA
 
         PlayerAnimationType type;
 
-        public Argument(String target, PlayerAnimationType type)
+        public Argument(PlayerSpecifier target, PlayerAnimationType type)
         {
             super(target);
             this.type = type;
@@ -110,8 +111,8 @@ public class PlayerAnimationAction extends AbstractPlayerAction<PlayerAnimationA
         @Override
         public String getArgumentString()
         {
-            return buildArgumentString(
-                    KEY_TARGET_PLAYER, this.getTargetSpecifier(),
+            return appendArgumentString(
+                    super.getArgumentString(),
                     KEY_ACTION_TYPE, this.type
             );
         }

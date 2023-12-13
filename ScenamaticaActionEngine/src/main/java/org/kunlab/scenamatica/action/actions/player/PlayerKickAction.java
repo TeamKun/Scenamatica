@@ -15,6 +15,7 @@ import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
+import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.PlayerSpecifier;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Collections;
@@ -43,7 +44,7 @@ public class PlayerKickAction extends AbstractPlayerAction<PlayerKickAction.Argu
         PlayerKickEvent.Cause cause = argument.getCause();
         Component kickMessage = argument.getKickMessage() == null ? null: Component.text(argument.getKickMessage());
 
-        Player target = argument.getTarget();
+        Player target = argument.getTarget(engine);
         if (cause == null)
             target.kick(kickMessage);
         else
@@ -82,7 +83,7 @@ public class PlayerKickAction extends AbstractPlayerAction<PlayerKickAction.Argu
     public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
     {
         return new Argument(
-                super.deserializeTarget(map),
+                super.deserializeTarget(map, serializer),
                 MapUtils.getOrNull(map, Argument.KEY_LEAVE_MESSAGE),
                 MapUtils.getOrNull(map, Argument.KEY_KICK_MESSAGE),
                 MapUtils.getAsEnumOrNull(map, Argument.KEY_CAUSE, PlayerKickEvent.Cause.class)
@@ -101,7 +102,7 @@ public class PlayerKickAction extends AbstractPlayerAction<PlayerKickAction.Argu
         String kickMessage;
         PlayerKickEvent.Cause cause;
 
-        public Argument(String target, String leaveMessage, String kickMessage, PlayerKickEvent.Cause cause)
+        public Argument(PlayerSpecifier target, String leaveMessage, String kickMessage, PlayerKickEvent.Cause cause)
         {
             super(target);
             this.leaveMessage = leaveMessage;

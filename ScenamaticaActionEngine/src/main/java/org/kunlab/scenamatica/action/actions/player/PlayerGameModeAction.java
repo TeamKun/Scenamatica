@@ -16,6 +16,7 @@ import org.kunlab.scenamatica.interfaces.action.types.Requireable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
+import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.PlayerSpecifier;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Collections;
@@ -39,7 +40,7 @@ public class PlayerGameModeAction extends AbstractPlayerAction<PlayerGameModeAct
     {
         argument = this.requireArgsNonNull(argument);
 
-        Player targetPlayer = argument.getTarget();
+        Player targetPlayer = argument.getTarget(engine);
         GameMode gameMode = argument.getGameMode();
 
         targetPlayer.setGameMode(gameMode);
@@ -59,9 +60,7 @@ public class PlayerGameModeAction extends AbstractPlayerAction<PlayerGameModeAct
         PlayerGameModeChangeEvent.Cause expectedCause = argument.getCause();
         String expectedCancelMsg = argument.getCancelMessage();
 
-
-        return (argument.getTargetSpecifier() == null || e.getPlayer().getUniqueId().equals(argument.getTarget().getUniqueId()))
-                && (expectedMode == null || e.getNewGameMode() == expectedMode)
+        return (expectedMode == null || e.getNewGameMode() == expectedMode)
                 && (expectedCause == null || e.getCause() == expectedCause)
                 && (expectedCancelMsg == null || TextUtils.isSameContent(e.cancelMessage(), expectedCancelMsg));
     }
@@ -78,7 +77,7 @@ public class PlayerGameModeAction extends AbstractPlayerAction<PlayerGameModeAct
     public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
     {
         return new Argument(
-                super.deserializeTarget(map),
+                super.deserializeTarget(map, serializer),
                 MapUtils.getAsEnumOrNull(map, Argument.KEY_GAME_MODE, GameMode.class),
                 MapUtils.getAsEnumOrNull(map, Argument.KEY_CAUSE, PlayerGameModeChangeEvent.Cause.class),
                 (String) map.get(Argument.KEY_CANCEL_MESSAGE)
@@ -92,7 +91,7 @@ public class PlayerGameModeAction extends AbstractPlayerAction<PlayerGameModeAct
 
         GameMode gameMode = argument.getGameMode();
 
-        return argument.getTarget().getGameMode() == gameMode;
+        return argument.getTarget(engine).getGameMode() == gameMode;
     }
 
     @Value
@@ -107,7 +106,7 @@ public class PlayerGameModeAction extends AbstractPlayerAction<PlayerGameModeAct
         PlayerGameModeChangeEvent.Cause cause;
         String cancelMessage;
 
-        public Argument(String target, GameMode gameMode, PlayerGameModeChangeEvent.Cause cause, String cancelMessage)
+        public Argument(PlayerSpecifier target, GameMode gameMode, PlayerGameModeChangeEvent.Cause cause, String cancelMessage)
         {
             super(target);
             this.gameMode = gameMode;

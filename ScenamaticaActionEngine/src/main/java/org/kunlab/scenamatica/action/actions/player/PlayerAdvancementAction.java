@@ -19,6 +19,7 @@ import org.kunlab.scenamatica.interfaces.action.types.Requireable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
+import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.PlayerSpecifier;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Arrays;
@@ -45,7 +46,7 @@ public class PlayerAdvancementAction
     {
         argument = this.requireArgsNonNull(argument);
 
-        Player target = argument.getTarget();
+        Player target = argument.getTarget(engine);
         Advancement advancement = Bukkit.getAdvancement(argument.getAdvancement());
         if (advancement == null)
             throw new IllegalArgumentException("Advancement not found: " + argument.getAdvancement());
@@ -107,7 +108,7 @@ public class PlayerAdvancementAction
             criteria = (String) map.get(Argument.KEY_CRITERIA);
 
         return new Argument(
-                super.deserializeTarget(map),
+                super.deserializeTarget(map, serializer),
                 advancement,
                 criteria
         );
@@ -122,7 +123,7 @@ public class PlayerAdvancementAction
         if (advancement == null)
             throw new IllegalArgumentException("Advancement not found: " + argument.getAdvancement());
 
-        AdvancementProgress progress = argument.getTarget().getAdvancementProgress(advancement);
+        AdvancementProgress progress = argument.getTarget(engine).getAdvancementProgress(advancement);
 
         if (argument.getCriterion() == null)  // 進捗を完了させるアクションの場合
             return progress.isDone();
@@ -140,7 +141,7 @@ public class PlayerAdvancementAction
         NamespacedKey advancement;
         String criterion;
 
-        public Argument(String target, NamespacedKey advancement, String criterion)
+        public Argument(PlayerSpecifier target, NamespacedKey advancement, String criterion)
         {
             super(target);
             this.advancement = advancement;
@@ -170,7 +171,7 @@ public class PlayerAdvancementAction
                 case CONDITION_REQUIRE:
                     /* fall through */
                 case ACTION_EXECUTE:
-                    ensurePresent(KEY_TARGET_PLAYER, this.getTargetSpecifier());
+                    this.ensureCanProvideTarget();
                     ensurePresent(KEY_ADVANCEMENT, this.advancement);
                     break;
             }

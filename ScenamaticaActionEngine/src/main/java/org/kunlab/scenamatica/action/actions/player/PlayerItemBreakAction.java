@@ -17,6 +17,7 @@ import org.kunlab.scenamatica.interfaces.context.Actor;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.ItemStackStructure;
+import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.PlayerSpecifier;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Collections;
@@ -40,13 +41,14 @@ public class PlayerItemBreakAction extends AbstractPlayerAction<PlayerItemBreakA
     {
         argument = this.requireArgsNonNull(argument);
 
-        Actor actor = PlayerUtils.getActorOrThrow(engine, argument.getTarget());
+        Actor actor = PlayerUtils.getActorOrThrow(engine, argument.getTarget(engine));
         EquipmentSlot slot = argument.getSlot() == null ? EquipmentSlot.HAND: argument.getSlot();
         ItemStackStructure item = argument.getItem();
+
         if (item != null)
             actor.getPlayer().getInventory().setItem(slot, item.create());
 
-        PlayerUtils.getActorOrThrow(engine, argument.getTarget()).breakItem(slot);
+        actor.breakItem(slot);
     }
 
     private boolean isDamageable(ItemStack itemInMainHand)
@@ -160,7 +162,7 @@ public class PlayerItemBreakAction extends AbstractPlayerAction<PlayerItemBreakA
             );
 
         return new Argument(
-                super.deserializeTarget(map),
+                super.deserializeTarget(map, serializer),
                 item,
                 MapUtils.getAsEnumOrNull(map, Argument.KEY_SLOT, EquipmentSlot.class)
         );
@@ -178,7 +180,7 @@ public class PlayerItemBreakAction extends AbstractPlayerAction<PlayerItemBreakA
         @Nullable
         EquipmentSlot slot;
 
-        public Argument(String target, @Nullable ItemStackStructure item, @Nullable EquipmentSlot slot)
+        public Argument(PlayerSpecifier target, @Nullable ItemStackStructure item, @Nullable EquipmentSlot slot)
         {
             super(target);
             this.item = item;

@@ -11,6 +11,7 @@ import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.entity.EntityStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.EntitySpecifier;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -18,7 +19,7 @@ import java.util.Objects;
 @EqualsAndHashCode
 public class EntitySpecifierImpl<E extends Entity> implements EntitySpecifier<E>
 {
-    public static final EntitySpecifierImpl<?> EMPTY = new EntitySpecifierImpl<>(null);
+    public static final EntitySpecifier<?> EMPTY = new EntitySpecifierImpl<>(null);
 
     protected final String targetSpecifier;
     protected final EntityStructure targetStructure;
@@ -37,7 +38,7 @@ public class EntitySpecifierImpl<E extends Entity> implements EntitySpecifier<E>
         }
     }
 
-    public static <E extends Entity> EntitySpecifierImpl<E> tryDeserialize(
+    public static <E extends Entity> EntitySpecifier<E> tryDeserialize(
             Object obj,
             StructureSerializer serializer,
             Class<? extends EntityStructure> structureClass
@@ -75,15 +76,19 @@ public class EntitySpecifierImpl<E extends Entity> implements EntitySpecifier<E>
     @Override
     public E selectTarget(@NotNull Context context)
     {
+        // noinspection unchecked
+        return (E) this.selectTargetRaw(context);
+    }
+
+    protected Entity selectTargetRaw(@NotNull Context context)
+    {
         if (this.targetSpecifier != null)
-            //noinspection unchecked
-            return (E) EntityUtils.getPlayerOrEntityOrThrow(this.targetSpecifier);
+            return EntityUtils.getPlayerOrEntityOrNull(this.targetSpecifier);
 
         if (this.targetStructure == null)
             throw new IllegalStateException("Cannot select target from this specifier: " + this);
 
-        //noinspection unchecked
-        return (E) EntityUtils.getEntity(this.targetStructure, context, null);
+        return EntityUtils.getEntity(this.targetStructure, context, null);
     }
 
     @Override
@@ -114,7 +119,6 @@ public class EntitySpecifierImpl<E extends Entity> implements EntitySpecifier<E>
             return "target=" + this.targetSpecifier;
         else
             return "target=" + this.targetStructure;
-
     }
 
     @Override
@@ -130,15 +134,24 @@ public class EntitySpecifierImpl<E extends Entity> implements EntitySpecifier<E>
         else /* if (this.getTargetStructure() != null) */
         {
             assert this.getTargetStructure() != null;
-            return EntityUtils.checkIsAdequate(this.getTargetStructure(), entity);
+            return this.isAdequate(this.getTargetStructure(), entity);
         }
     }
 
     protected boolean checkMatchedEntity(String specifier, @NotNull Entity actualEntity)
     {
-        return EntityUtils.selectEntities(specifier)
-                .stream()
+        return this.selectEntities(specifier).stream()
                 .anyMatch(entity -> Objects.equals(entity.getUniqueId(), actualEntity.getUniqueId()));
+    }
+
+    protected List<? extends Entity> selectEntities(String specifier)
+    {
+        return EntityUtils.selectEntities(specifier);
+    }
+
+    protected boolean isAdequate(EntityStructure structure, @NotNull Entity actualEntity)
+    {
+        return EntityUtils.checkIsAdequate(structure, actualEntity);
     }
 
     @Override

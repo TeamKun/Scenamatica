@@ -2,6 +2,7 @@ package org.kunlab.scenamatica.action.actions.player;
 
 import lombok.EqualsAndHashCode;
 import lombok.Value;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.jetbrains.annotations.NotNull;
@@ -12,6 +13,7 @@ import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.entity.entities.EntityItemStructure;
+import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.PlayerSpecifier;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Collections;
@@ -36,11 +38,12 @@ public class PlayerDropItemAction extends AbstractPlayerAction<PlayerDropItemAct
         argument = this.requireArgsNonNull(argument);
         EntityItemStructure item = argument.getItem();
 
+        Player target = argument.getTarget(engine);
         // item がしてある場合は、先に手に持たせる。
         if (item != null)
-            argument.getTarget().getInventory().setItemInMainHand(item.getItemStack().create());
+            target.getInventory().setItemInMainHand(item.getItemStack().create());
 
-        argument.getTarget().dropItem(/* dropAll: */ false);
+        target.dropItem(/* dropAll: */ false);
     }
 
     @Override
@@ -74,9 +77,8 @@ public class PlayerDropItemAction extends AbstractPlayerAction<PlayerDropItemAct
                     EntityItemStructure.class
             );
 
-
         return new Argument(
-                super.deserializeTarget(map),
+                super.deserializeTarget(map, serializer),
                 item
         );
     }
@@ -90,7 +92,7 @@ public class PlayerDropItemAction extends AbstractPlayerAction<PlayerDropItemAct
         @Nullable
         EntityItemStructure item;
 
-        public Argument(String target, @Nullable EntityItemStructure item)
+        public Argument(PlayerSpecifier target, @Nullable EntityItemStructure item)
         {
             super(target);
             this.item = item;

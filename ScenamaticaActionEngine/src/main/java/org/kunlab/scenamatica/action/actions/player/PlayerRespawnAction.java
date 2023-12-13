@@ -16,6 +16,7 @@ import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
+import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.PlayerSpecifier;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Arrays;
@@ -38,7 +39,7 @@ public class PlayerRespawnAction extends AbstractPlayerAction<PlayerRespawnActio
     {
         argument = this.requireArgsNonNull(argument);
 
-        Player player = argument.getTarget();
+        Player player = argument.getTarget(engine);
         if (!player.isDead())
             throw new IllegalStateException("Player is not dead");
 
@@ -84,7 +85,7 @@ public class PlayerRespawnAction extends AbstractPlayerAction<PlayerRespawnActio
     public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
     {
         return new Argument(
-                super.deserializeTarget(map),
+                super.deserializeTarget(map, serializer),
                 MapUtils.getOrNull(map, Argument.KEY_IS_BED),
                 MapUtils.getOrNull(map, Argument.KEY_IS_ANCHOR),
                 MapUtils.getAsLocationOrNull(map, Argument.KEY_LOCATION)
@@ -103,7 +104,7 @@ public class PlayerRespawnAction extends AbstractPlayerAction<PlayerRespawnActio
         Boolean isAnchor;
         Location location;
 
-        public Argument(String target, Boolean isBed, Boolean isAnchor, Location location)
+        public Argument(PlayerSpecifier target, Boolean isBed, Boolean isAnchor, Location location)
         {
             super(target);
             this.isBed = isBed;

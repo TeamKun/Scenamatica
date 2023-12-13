@@ -8,14 +8,15 @@ import org.bukkit.event.Event;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.kunlab.scenamatica.commons.specifiers.PlayerSpecifierImpl;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
-import org.kunlab.scenamatica.commons.utils.PlayerUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.InventoryStructure;
+import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.PlayerSpecifier;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Collections;
@@ -39,7 +40,10 @@ public class InventoryCloseAction extends AbstractInventoryAction<InventoryClose
     {
         argument = this.requireArgsNonNull(argument);
 
-        Player player = argument.getTarget();
+        Player player = argument.getTargetSpecifier().selectTarget(engine.getContext());
+        if (player == null)
+            throw new IllegalStateException("Cannot select target for this action, please specify target with valid specifier.");
+
         InventoryCloseEvent.Reason reason = argument.getReason();
 
         if (reason == null)
@@ -55,15 +59,11 @@ public class InventoryCloseAction extends AbstractInventoryAction<InventoryClose
         if (!super.checkMatchedInventoryEvent(argument, engine, event))
             return false;
 
-        Player expectedPlayer = null;
-        if (argument.getTargetSpecifier() != null)
-            expectedPlayer = argument.getTarget();
-
         assert event instanceof InventoryCloseEvent;
         InventoryCloseEvent e = (InventoryCloseEvent) event;
         HumanEntity player = e.getPlayer();
 
-        return (expectedPlayer == null || expectedPlayer.getUniqueId().equals(player.getUniqueId()))
+        return (!argument.getTargetSpecifier().canProvideTarget() || argument.getTargetSpecifier().checkMatchedPlayer((Player) player))
                 && (argument.getReason() == null || argument.getReason() == e.getReason());
     }
 
@@ -80,7 +80,7 @@ public class InventoryCloseAction extends AbstractInventoryAction<InventoryClose
     {
         return new Argument(
                 super.deserializeInventoryIfContains(map, serializer),
-                MapUtils.getOrNull(map, Argument.KEY_TARGET_PLAYER),
+                PlayerSpecifierImpl.tryDeserializePlayer(map.get(Argument.KEY_TARGET_PLAYER), serializer),
                 MapUtils.getAsEnumOrNull(map, Argument.KEY_REASON, InventoryCloseEvent.Reason.class)
         );
     }
@@ -92,24 +92,15 @@ public class InventoryCloseAction extends AbstractInventoryAction<InventoryClose
         public static final String KEY_TARGET_PLAYER = "target";
         public static final String KEY_REASON = "reason";
 
-        String targetPlayer;
+        @NotNull
+        PlayerSpecifier targetSpecifier;
         InventoryCloseEvent.Reason reason;
 
-        public Argument(@Nullable InventoryStructure inventory, String targetPlayer, InventoryCloseEvent.Reason reason)
+        public Argument(@Nullable InventoryStructure inventory, @NotNull PlayerSpecifier targetSpecifier, InventoryCloseEvent.Reason reason)
         {
             super(inventory);
-            this.targetPlayer = targetPlayer;
+            this.targetSpecifier = targetSpecifier;
             this.reason = reason;
-        }
-
-        public String getTargetSpecifier()
-        {
-            return this.targetPlayer;
-        }
-
-        public Player getTarget()
-        {
-            return PlayerUtils.getPlayerOrThrow(this.targetPlayer);
         }
 
         @Override
@@ -122,7 +113,7 @@ public class InventoryCloseAction extends AbstractInventoryAction<InventoryClose
 
             Argument arg = (Argument) argument;
 
-            return Objects.equals(this.targetPlayer, arg.targetPlayer)
+            return Objects.equals(this.targetSpecifier, arg.targetSpecifier)
                     && this.reason == arg.reason;
         }
 
@@ -131,7 +122,7 @@ public class InventoryCloseAction extends AbstractInventoryAction<InventoryClose
         {
             if (type == ScenarioType.ACTION_EXECUTE)
             {
-                ensurePresent(Argument.KEY_TARGET_PLAYER, this.targetPlayer);
+                ensurePresent(Argument.KEY_TARGET_PLAYER, this.targetSpecifier);
                 ensureNotPresent(Argument.KEY_INVENTORY, this.inventory);
             }
         }
@@ -141,7 +132,7 @@ public class InventoryCloseAction extends AbstractInventoryAction<InventoryClose
         {
             return appendArgumentString(
                     super.getArgumentString(),
-                    KEY_TARGET_PLAYER, this.targetPlayer,
+                    KEY_TARGET_PLAYER, this.targetSpecifier,
                     KEY_REASON, this.reason
             );
         }

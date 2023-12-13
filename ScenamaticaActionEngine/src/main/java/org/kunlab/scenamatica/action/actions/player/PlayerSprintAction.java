@@ -15,6 +15,7 @@ import org.kunlab.scenamatica.interfaces.action.types.Requireable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
+import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.PlayerSpecifier;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Collections;
@@ -40,7 +41,7 @@ public class PlayerSprintAction extends AbstractPlayerAction<PlayerSprintAction.
 
         boolean sprinting = argument.sprinting;
 
-        Player player = argument.getTarget();
+        Player player = argument.getTarget(engine);
         PlayerToggleSprintEvent event = new PlayerToggleSprintEvent(player, sprinting);
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled())
@@ -73,7 +74,7 @@ public class PlayerSprintAction extends AbstractPlayerAction<PlayerSprintAction.
     public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
     {
         return new Argument(
-                super.deserializeTarget(map),
+                super.deserializeTarget(map, serializer),
                 MapUtils.getOrNull(map, Argument.KEY_SPRINTING)
         );
     }
@@ -86,7 +87,7 @@ public class PlayerSprintAction extends AbstractPlayerAction<PlayerSprintAction.
         assert argument.sprinting != null;
         boolean expectState = argument.sprinting;
 
-        return argument.getTarget().isSprinting() == expectState;
+        return argument.getTarget(engine).isSprinting() == expectState;
     }
 
     @Value
@@ -98,7 +99,7 @@ public class PlayerSprintAction extends AbstractPlayerAction<PlayerSprintAction.
         @Nullable
         Boolean sprinting;
 
-        public Argument(String target, @Nullable Boolean sprinting)
+        public Argument(PlayerSpecifier target, @Nullable Boolean sprinting)
         {
             super(target);
             this.sprinting = sprinting;

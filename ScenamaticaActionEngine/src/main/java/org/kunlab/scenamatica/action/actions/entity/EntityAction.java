@@ -5,7 +5,6 @@ import lombok.Value;
 import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.kunlab.scenamatica.commons.specifiers.EntitySpecifierImpl;
 import org.kunlab.scenamatica.commons.utils.EntityUtils;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
@@ -15,6 +14,7 @@ import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.Mapped;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.entity.EntityStructure;
+import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.EntitySpecifier;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Map;
@@ -95,7 +95,7 @@ public class EntityAction extends AbstractEntityAction<EntityAction.Argument>
 
         EntityStructure entity;
 
-        public Argument(EntitySpecifierImpl<Entity> target, @Nullable EntityStructure entity)
+        public Argument(EntitySpecifier<Entity> target, @Nullable EntityStructure entity)
         {
             super(target);
             this.entity = entity;
@@ -115,7 +115,7 @@ public class EntityAction extends AbstractEntityAction<EntityAction.Argument>
         @Override
         public void validate(@NotNull ScenarioEngine engine, @NotNull ScenarioType type)
         {
-            this.throwIfNotSelectable();
+            this.ensureCanProvideTarget();
             if (type == ScenarioType.ACTION_EXECUTE && this.entity == null)
                 throw new IllegalArgumentException("Cannot execute action without entity argument.");
         }

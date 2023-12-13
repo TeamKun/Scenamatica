@@ -2,6 +2,7 @@ package org.kunlab.scenamatica.interfaces.scenariofile.specifiers;
 
 import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.interfaces.context.Context;
 import org.kunlab.scenamatica.interfaces.scenariofile.entity.EntityStructure;
 
@@ -25,6 +26,7 @@ public interface EntitySpecifier<E extends Entity>
      * @param context コンテキスト
      * @return エンティティ
      */
+    @Nullable
     E selectTarget(@NotNull Context context);
 
     /**

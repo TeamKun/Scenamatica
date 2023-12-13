@@ -13,6 +13,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.actions.AbstractActionArgument;
+import org.kunlab.scenamatica.commons.specifiers.PlayerSpecifierImpl;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.commons.utils.PlayerUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
@@ -23,6 +24,7 @@ import org.kunlab.scenamatica.interfaces.context.Actor;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.misc.BlockStructure;
+import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.PlayerSpecifier;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Collections;
@@ -50,7 +52,8 @@ public class BlockBreakAction extends AbstractBlockAction<BlockBreakAction.Argum
         Location location = this.getBlockLocationWithWorld(blockDef, engine);
         Block block = location.getBlock();
 
-        Player player = argument.getActor();
+        Player player = argument.getActorSpecifier() == null ?
+                null: argument.getActorSpecifier().selectTarget(engine.getContext());
         if (player == null)
         {
             block.breakNaturally();  // 自然に壊れたことにする
@@ -86,15 +89,7 @@ public class BlockBreakAction extends AbstractBlockAction<BlockBreakAction.Argum
                 return false;
         }
 
-        if (argument.getActor() != null)
-        {
-            Player player = argument.getActor();
-            Player actualPlayer = e.getPlayer();
-
-            return player.getUniqueId().equals(actualPlayer.getUniqueId());
-        }
-
-        return true;
+        return (argument.getActorSpecifier() == null || argument.getActorSpecifier().checkMatchedPlayer(e.getPlayer()));
     }
 
     @Override
@@ -110,7 +105,7 @@ public class BlockBreakAction extends AbstractBlockAction<BlockBreakAction.Argum
     {
         return new Argument(
                 super.deserializeBlockOrNull(map, serializer),
-                map.containsKey(Argument.KEY_ACTOR) ? (String) map.get(Argument.KEY_ACTOR): null,
+                PlayerSpecifierImpl.tryDeserializePlayer(map.get(Argument.KEY_ACTOR), serializer),
                 MapUtils.getOrNull(map, Argument.KEY_DROP_ITEMS)
         );
     }
@@ -133,13 +128,13 @@ public class BlockBreakAction extends AbstractBlockAction<BlockBreakAction.Argum
         public static final String KEY_ACTOR = "actor";
         public static final String KEY_DROP_ITEMS = "drop_items";
 
-        String actor;
+        PlayerSpecifier actorSpecifier;
         Boolean dropItems;
 
-        public Argument(@Nullable BlockStructure block, String actor, Boolean dropItems)
+        public Argument(@Nullable BlockStructure block, PlayerSpecifier actorSpecifier, Boolean dropItems)
         {
             super(block);
-            this.actor = actor;
+            this.actorSpecifier = actorSpecifier;
             this.dropItems = dropItems;
         }
 
@@ -152,7 +147,7 @@ public class BlockBreakAction extends AbstractBlockAction<BlockBreakAction.Argum
             Argument arg = (Argument) argument;
 
             return super.isSame(argument)
-                    && Objects.equals(this.actor, arg.actor)
+                    && Objects.equals(this.actorSpecifier, arg.actorSpecifier)
                     && Objects.equals(this.dropItems, arg.dropItems);
         }
 
@@ -165,7 +160,8 @@ public class BlockBreakAction extends AbstractBlockAction<BlockBreakAction.Argum
                     ensurePresent(Argument.KEY_BLOCK, this.block);
                     break;
                 case CONDITION_REQUIRE:
-                    ensureNotPresent(Argument.KEY_ACTOR, this.actor);
+                    if (this.actorSpecifier != null && this.actorSpecifier.canProvideTarget())
+                        throw new IllegalArgumentException("Cannot specify the actor in the condition requiring mode.");
                     ensureNotPresent(Argument.KEY_DROP_ITEMS, this.dropItems);
 
                     BlockStructure block = this.block;
@@ -179,21 +175,12 @@ public class BlockBreakAction extends AbstractBlockAction<BlockBreakAction.Argum
 
         }
 
-        @Nullable
-        public Player getActor()
-        {
-            if (this.actor == null)
-                return null;
-
-            return PlayerUtils.getPlayerOrNull(this.actor);
-        }
-
         @Override
         public String getArgumentString()
         {
             return AbstractActionArgument.appendArgumentString(
                     super.getArgumentString(),
-                    KEY_ACTOR, this.actor
+                    KEY_ACTOR, this.actorSpecifier
             );
         }
     }

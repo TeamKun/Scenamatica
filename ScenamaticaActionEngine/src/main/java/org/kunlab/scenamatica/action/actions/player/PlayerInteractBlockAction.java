@@ -21,6 +21,7 @@ import org.kunlab.scenamatica.interfaces.context.Actor;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.misc.BlockStructure;
+import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.PlayerSpecifier;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Collections;
@@ -42,7 +43,7 @@ public class PlayerInteractBlockAction extends AbstractPlayerAction<PlayerIntera
         if (!(blockStructure == null || blockStructure.getLocation() == null))
             clickPos = blockStructure.getLocation().toBlockLocation();
         else  // 指定がなかったら自身の位置をクリックする(しかない)
-            clickPos = argument.getTarget().getLocation().toBlockLocation();
+            clickPos = argument.getTarget(engine).getLocation().toBlockLocation();
 
         return world.getBlockAt(clickPos);
     }
@@ -68,7 +69,7 @@ public class PlayerInteractBlockAction extends AbstractPlayerAction<PlayerIntera
         else if ((action == Action.LEFT_CLICK_BLOCK || action == Action.RIGHT_CLICK_BLOCK) && clickBlock.getType().isAir())
             throw new IllegalArgumentException("Argument action is not allowed to be LEFT_CLICK_BLOCK or RIGHT_CLICK_BLOCK when the target block is air");
 
-        Actor actor = PlayerUtils.getActorOrThrow(engine, argument.getTarget());
+        Actor actor = PlayerUtils.getActorOrThrow(engine, argument.getTarget(engine));
         actor.interactAt(
                 action,
                 getClickBlock(engine, argument)
@@ -118,7 +119,7 @@ public class PlayerInteractBlockAction extends AbstractPlayerAction<PlayerIntera
         BlockFace blockFace = MapUtils.getAsEnumOrNull(map, Argument.KEY_BLOCK_FACE, BlockFace.class);
 
         return new Argument(
-                super.deserializeTarget(map),
+                super.deserializeTarget(map, serializer),
                 action,
                 hand,
                 block,
@@ -140,7 +141,7 @@ public class PlayerInteractBlockAction extends AbstractPlayerAction<PlayerIntera
         BlockStructure block;
         BlockFace blockFace;
 
-        public Argument(String target, Action action, EquipmentSlot hand, BlockStructure block, BlockFace blockFace)
+        public Argument(PlayerSpecifier target, Action action, EquipmentSlot hand, BlockStructure block, BlockFace blockFace)
         {
             super(target);
             this.action = action;

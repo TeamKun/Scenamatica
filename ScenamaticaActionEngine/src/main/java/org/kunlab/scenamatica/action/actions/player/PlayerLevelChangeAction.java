@@ -14,6 +14,7 @@ import org.kunlab.scenamatica.interfaces.action.types.Requireable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
+import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.PlayerSpecifier;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Collections;
@@ -38,7 +39,7 @@ public class PlayerLevelChangeAction extends AbstractPlayerAction<PlayerLevelCha
     {
         argument = this.requireArgsNonNull(argument);
 
-        Player player = argument.getTarget();
+        Player player = argument.getTarget(engine);
         player.setLevel(argument.getNewLevel());
     }
 
@@ -66,7 +67,7 @@ public class PlayerLevelChangeAction extends AbstractPlayerAction<PlayerLevelCha
     public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
     {
         return new Argument(
-                super.deserializeTarget(map),
+                super.deserializeTarget(map, serializer),
                 MapUtils.getAsNumberOrNull(map, Argument.KEY_OLD_LEVEL, Number::intValue),
                 MapUtils.getAsNumberOrNull(map, Argument.KEY_NEW_LEVEL, Number::intValue)
         );
@@ -77,7 +78,7 @@ public class PlayerLevelChangeAction extends AbstractPlayerAction<PlayerLevelCha
     {
         argument = this.requireArgsNonNull(argument);
 
-        Player player = argument.getTarget();
+        Player player = argument.getTarget(engine);
         return player.getLevel() == argument.getNewLevel();
     }
 
@@ -91,7 +92,7 @@ public class PlayerLevelChangeAction extends AbstractPlayerAction<PlayerLevelCha
         Integer oldLevel;
         Integer newLevel;
 
-        public Argument(String target, Integer oldLevel, Integer newLevel)
+        public Argument(PlayerSpecifier target, Integer oldLevel, Integer newLevel)
         {
             super(target);
             this.oldLevel = oldLevel;

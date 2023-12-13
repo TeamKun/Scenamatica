@@ -15,6 +15,7 @@ import org.kunlab.scenamatica.interfaces.action.types.Requireable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
+import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.PlayerSpecifier;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Collections;
@@ -40,7 +41,7 @@ public class PlayerFlightAction extends AbstractPlayerAction<PlayerFlightAction.
 
         boolean flying = argument.flying;
 
-        Player player = argument.getTarget();
+        Player player = argument.getTarget(engine);
         PlayerToggleFlightEvent event = new PlayerToggleFlightEvent(player, flying);
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled())
@@ -76,7 +77,7 @@ public class PlayerFlightAction extends AbstractPlayerAction<PlayerFlightAction.
     public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
     {
         return new Argument(
-                super.deserializeTarget(map),
+                super.deserializeTarget(map, serializer),
                 MapUtils.getOrNull(map, Argument.KEY_FLYING)
         );
     }
@@ -89,7 +90,7 @@ public class PlayerFlightAction extends AbstractPlayerAction<PlayerFlightAction.
         assert argument.flying != null;
         boolean expectState = argument.flying;
 
-        return argument.getTarget().isFlying() == expectState;
+        return argument.getTarget(engine).isFlying() == expectState;
     }
 
     @Value
@@ -101,7 +102,7 @@ public class PlayerFlightAction extends AbstractPlayerAction<PlayerFlightAction.
         @Nullable
         Boolean flying;
 
-        public Argument(String target, @Nullable Boolean flying)
+        public Argument(PlayerSpecifier target, @Nullable Boolean flying)
         {
             super(target);
             this.flying = flying;
@@ -115,8 +116,7 @@ public class PlayerFlightAction extends AbstractPlayerAction<PlayerFlightAction.
 
             Argument arg = (Argument) argument;
 
-            return super.isSame(argument) &&
-                    (this.flying == null || arg.flying == null || this.flying.equals(arg.flying));
+            return super.isSame(argument) && this.flying == arg.flying;
         }
 
         @Override

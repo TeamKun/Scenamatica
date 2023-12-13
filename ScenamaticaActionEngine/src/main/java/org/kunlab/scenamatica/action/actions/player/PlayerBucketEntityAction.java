@@ -22,6 +22,7 @@ import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.ItemStackStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.EntitySpecifier;
+import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.PlayerSpecifier;
 import org.kunlab.scenamatica.nms.enums.entity.NMSEntityUseAction;
 
 import java.util.Collections;
@@ -50,7 +51,7 @@ public class PlayerBucketEntityAction extends AbstractPlayerAction<PlayerBucketE
     public void execute(@NotNull ScenarioEngine engine, @Nullable Argument argument)
     {
         argument = this.requireArgsNonNull(argument);
-        Player player = argument.getTarget();
+        Player player = argument.getTarget(engine);
         Actor actor = PlayerUtils.getActorOrThrow(engine, player);
 
         Entity targetEntity = argument.getEntity().selectTarget(engine.getContext());
@@ -118,7 +119,7 @@ public class PlayerBucketEntityAction extends AbstractPlayerAction<PlayerBucketE
             );
 
         return new Argument(
-                super.deserializeTarget(map),
+                super.deserializeTarget(map, serializer),
                 EntitySpecifierImpl.tryDeserialize(map.get(Argument.KEY_ENTITY), serializer),
                 originalBucket,
                 entityBucket
@@ -137,7 +138,7 @@ public class PlayerBucketEntityAction extends AbstractPlayerAction<PlayerBucketE
         ItemStackStructure originalBucket;
         ItemStackStructure entityBucket;
 
-        public Argument(String target, EntitySpecifier<?> entity, ItemStackStructure originalBucket, ItemStackStructure entityBucket)
+        public Argument(PlayerSpecifier target, EntitySpecifier<?> entity, ItemStackStructure originalBucket, ItemStackStructure entityBucket)
         {
             super(target);
             this.entity = entity;

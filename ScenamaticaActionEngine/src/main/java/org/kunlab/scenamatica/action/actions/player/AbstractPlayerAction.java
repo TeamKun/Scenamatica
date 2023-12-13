@@ -6,12 +6,14 @@ import org.bukkit.event.player.PlayerEvent;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.action.actions.AbstractAction;
 import org.kunlab.scenamatica.action.actions.player.bucket.AbstractPlayerBucketAction;
+import org.kunlab.scenamatica.commons.specifiers.PlayerSpecifierImpl;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
+import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
+import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.PlayerSpecifier;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 public abstract class AbstractPlayerAction<A extends AbstractPlayerActionArgument> extends AbstractAction<A>
 {
@@ -52,18 +54,18 @@ public abstract class AbstractPlayerAction<A extends AbstractPlayerActionArgumen
     {
         if (!(event instanceof PlayerEvent))
             return false;
-        else if (argument.getTargetSpecifier() == null)
-            return true;
-
         PlayerEvent e = (PlayerEvent) event;
-        Player target = argument.getTarget();
+        Player player = e.getPlayer();
 
-        return Objects.equals(e.getPlayer().getUniqueId(), target.getUniqueId());
+        return (!argument.canProvideTarget() || argument.checkMatchedPlayer(player));
     }
 
-    protected String deserializeTarget(Map<String, Object> map)
+    protected PlayerSpecifier deserializeTarget(Map<String, Object> map, StructureSerializer serializer)
     {
-        return (String) map.get(AbstractPlayerActionArgument.KEY_TARGET_PLAYER);
+        return PlayerSpecifierImpl.tryDeserializePlayer(
+                map.get(AbstractPlayerActionArgument.KEY_TARGET_PLAYER),
+                serializer
+        );
     }
 
     protected boolean isSameUUIDString(String uuid1, String uuid2)

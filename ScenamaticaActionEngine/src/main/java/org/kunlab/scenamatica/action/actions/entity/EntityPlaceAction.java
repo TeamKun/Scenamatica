@@ -209,7 +209,7 @@ public class EntityPlaceAction extends AbstractEntityAction<EntityPlaceAction.Ar
             if (type != ScenarioType.ACTION_EXECUTE)
                 return;
 
-            this.throwIfNotSelectable();
+            this.ensureCanProvideTarget();
             ensurePresent(KEY_BLOCK, this.block);
             if (this.block.getLocation() == null)
                 throw new IllegalArgumentException("Block location is not specified.");

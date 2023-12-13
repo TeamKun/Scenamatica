@@ -38,11 +38,6 @@ public abstract class AbstractEntityActionArgument<E extends Entity> extends Abs
             throw new IllegalStateException("Target is not set.");
     }
 
-    public boolean isSelectable()
-    {
-        return this.entity != null && this.entity.isSelectable();
-    }
-
     public Entity selectTarget(Context context)
     {
         this.ensureTargetIsSet();
@@ -55,13 +50,6 @@ public abstract class AbstractEntityActionArgument<E extends Entity> extends Abs
         this.ensureTargetIsSet();
         assert this.entity != null;
         return this.entity.getSelectorString();
-    }
-
-    public Object getTargetRaw()
-    {
-        this.ensureTargetIsSet();
-        assert this.entity != null;
-        return this.entity.getTargetRaw();
     }
 
     @Override
@@ -89,9 +77,9 @@ public abstract class AbstractEntityActionArgument<E extends Entity> extends Abs
         return this.entity.checkMatchedEntity(entity);
     }
 
-    public void throwIfNotSelectable()
+    public void ensureCanProvideTarget()
     {
-        if (!this.isSelectable())
-            throw new IllegalArgumentException("Cannot select target for this action, please specify target with valid selector.");
+        if (this.entity == null || !this.entity.canProvideTarget())
+            throw new IllegalArgumentException("Cannot select target for this action, please specify target with valid specifier.");
     }
 }

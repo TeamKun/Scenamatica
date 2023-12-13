@@ -7,21 +7,21 @@ import org.bukkit.event.Event;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.kunlab.scenamatica.commons.specifiers.PlayerSpecifierImpl;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
-import org.kunlab.scenamatica.commons.utils.PlayerUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
+import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.PlayerSpecifier;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.UUID;
 
 public class PlayerDeathAction extends AbstractPlayerAction<PlayerDeathAction.Argument>
         implements Executable<PlayerDeathAction.Argument>, Requireable<PlayerDeathAction.Argument>, Watchable<PlayerDeathAction.Argument>
@@ -39,12 +39,11 @@ public class PlayerDeathAction extends AbstractPlayerAction<PlayerDeathAction.Ar
     {
         argument = this.requireArgsNonNull(argument);
 
-        Player target = argument.getTarget();
-        String killerName = argument.getKiller();
-        if (killerName != null)
+        Player target = argument.getTarget(engine);
+        if (argument.getKiller() != null)
         {
-            Player killerPlayer = PlayerUtils.getPlayerOrThrow(killerName);
-            target.setKiller(killerPlayer);
+            Player killer = argument.getKiller().selectTarget(engine.getContext());
+            target.setKiller(killer);
         }
 
         target.setHealth(0);
@@ -70,19 +69,12 @@ public class PlayerDeathAction extends AbstractPlayerAction<PlayerDeathAction.Ar
 
     private boolean checkTargetAndKiller(@NotNull PlayerDeathAction.Argument argument, @NotNull PlayerDeathEvent event)
     {
-        UUID targetUUID = null;
-        if (argument.getTargetSpecifier() != null)
-            targetUUID = argument.getTarget().getUniqueId();
-
-        Player killer = PlayerUtils.getPlayerOrNull(argument.getKiller());
-        UUID killerUUID = killer == null ? null: killer.getUniqueId();
+        Player target = event.getEntity();
+        Player killer = target.getKiller();
 
 
-        UUID eventDeathUUID = event.getEntity().getUniqueId();
-        UUID eventKillerUUID = event.getEntity().getKiller() == null ? null: event.getEntity().getKiller().getUniqueId();
-
-        return (targetUUID == null || targetUUID.equals(eventDeathUUID))
-                && (killerUUID == null || killerUUID.equals(eventKillerUUID));
+        return (argument.canProvideTarget() && argument.checkMatchedPlayer(target))
+                && (argument.getKiller() == null || argument.getKiller().checkMatchedPlayer(killer));
     }
 
     private boolean checkDeathMessage(@NotNull PlayerDeathAction.Argument argument, @NotNull PlayerDeathEvent event)
@@ -162,7 +154,7 @@ public class PlayerDeathAction extends AbstractPlayerAction<PlayerDeathAction.Ar
         MapUtils.checkTypeIfContains(map, Argument.KEY_KEEP_INVENTORY, Boolean.class);
         MapUtils.checkTypeIfContains(map, Argument.KEY_DO_EXP_DROP, Boolean.class);
 
-        String killer = MapUtils.getOrNull(map, "killer");
+        PlayerSpecifier killer = PlayerSpecifierImpl.tryDeserializePlayer(map.get(Argument.KEY_KILLER), serializer);
 
         String deathMessage = MapUtils.getOrNull(map, "deathMessage");
 
@@ -174,7 +166,7 @@ public class PlayerDeathAction extends AbstractPlayerAction<PlayerDeathAction.Ar
         Boolean doExpDrop = MapUtils.getOrNull(map, "doExpDrop");
 
         return new Argument(
-                super.deserializeTarget(map),
+                super.deserializeTarget(map, serializer),
                 killer,
                 deathMessage,
                 newExp,
@@ -191,15 +183,11 @@ public class PlayerDeathAction extends AbstractPlayerAction<PlayerDeathAction.Ar
     {
         argument = this.requireArgsNonNull(argument);
 
-        String killer = argument.getKiller();
+        Player targetPlayer = argument.getTarget(engine);
+        Player actualKiller = targetPlayer.getKiller();
+        PlayerSpecifier expectedKiller = argument.getKiller();
 
-        Player targetPlayer = argument.getTarget();
-        Player killerPlayer = PlayerUtils.getPlayerOrNull(killer);
-
-        return targetPlayer.isDead() &&
-                (killerPlayer == null || (targetPlayer.getKiller() != null
-                        && targetPlayer.getKiller().getUniqueId().equals(killerPlayer.getUniqueId()))
-                );
+        return targetPlayer.isDead() && (expectedKiller == null || expectedKiller.checkMatchedPlayer(actualKiller));
     }
 
     @Value
@@ -215,8 +203,7 @@ public class PlayerDeathAction extends AbstractPlayerAction<PlayerDeathAction.Ar
         public static final String KEY_KEEP_INVENTORY = "keepInventory";
         public static final String KEY_DO_EXP_DROP = "doExpDrop";
 
-        @Nullable
-        String killer;
+        PlayerSpecifier killer;
         @Nullable
         String deathMessage;
         int newExp;
@@ -226,7 +213,7 @@ public class PlayerDeathAction extends AbstractPlayerAction<PlayerDeathAction.Ar
         Boolean keepInventory;
         Boolean doExpDrop;
 
-        public Argument(String target, @Nullable String killer, @Nullable String deathMessage, int newExp, int newLevel, int newTotalExp, Boolean keepLevel, Boolean keepInventory, Boolean doExpDrop)
+        public Argument(PlayerSpecifier target, @Nullable PlayerSpecifier killer, @Nullable String deathMessage, int newExp, int newLevel, int newTotalExp, Boolean keepLevel, Boolean keepInventory, Boolean doExpDrop)
         {
             super(target);
             this.killer = killer;
@@ -258,7 +245,7 @@ public class PlayerDeathAction extends AbstractPlayerAction<PlayerDeathAction.Ar
             switch (type)
             {
                 case ACTION_EXECUTE:
-                    ensurePresent(Argument.KEY_TARGET_PLAYER, this.getTargetSpecifier());
+                    this.ensureCanProvideTarget();
                     break;
                 case CONDITION_REQUIRE:
                     ensureNotPresent(Argument.KEY_DEATH_MESSAGE, this.deathMessage);

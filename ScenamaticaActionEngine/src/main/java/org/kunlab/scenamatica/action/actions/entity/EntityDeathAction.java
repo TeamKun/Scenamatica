@@ -176,7 +176,7 @@ public class EntityDeathAction extends AbstractEntityAction<EntityDeathAction.Ar
         {
             if (type == ScenarioType.ACTION_EXECUTE)
             {
-                this.throwIfNotSelectable();
+                this.ensureCanProvideTarget();
                 ensureNotPresent(KEY_DROPS, this.drops);
                 ensureNotPresent(KEY_DROP_EXP, this.dropExp);
                 ensureNotPresent(KEY_REVIVE_HEALTH, this.reviveHealth);
