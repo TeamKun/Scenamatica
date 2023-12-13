@@ -22,11 +22,9 @@ import {ObjectType} from "/src/components/Object";
 />
 
 
-## 基本引数 {#general-arguments}
+## 全般 - 引数 `target` {#general-target}
 
-#### `target` {#target}
-
-対象のエンティティを[PlayerSpecifier`{type: player}` 型（エンティティ指定子）](/docs/use/scenario/types/entities#entity-specifier)で指定します。
+対象のエンティティを[PlayerSpecifier 型（プレイヤ指定子）](/docs/use/scenario/types/entities#player-specifier)で指定します。
 
 :::info シナリオの種類での振る舞いの違い
 
@@ -69,7 +67,8 @@ import {ObjectType} from "/src/components/Object";
           {
             name: "target",
             description: "バケツを使用するプレイヤーです。",
-            type: "プレイヤ",
+            type: "PlayerSpecifier",
+            type_anchor: "#general-target",
             required: [ScenarioType.EXECUTE]
           },
           {
@@ -156,7 +155,8 @@ NMS の仕様上の都合により、 `block` を用いた液体の場所は `ev
           {
             name: "target",
             description: "バケツを使用するプレイヤーです。",
-            type: "プレイヤ",
+            type: "PlayerSpecifier",
+            type_anchor: "#general-target",
             required: [ScenarioType.EXECUTE]
           },
           {
@@ -240,7 +240,8 @@ NMS の仕様上の都合により、 `block` を用いた液体の場所は `ev
             name: "target",
             anchor: "target",
             description: "進捗を達成するプレイヤーです。",
-            type: "プレイヤ",
+            type: "PlayerSpecifier",
+            type_anchor: "#general-target",
             required: [ScenarioType.EXPECT, ScenarioType.REQUIRE]
           },
           {
@@ -297,7 +298,8 @@ NMS の仕様上の都合により、 `block` を用いた液体の場所は `ev
             name: "target",
             anchor: "target",
             description: "アニメーションを実行するプレイヤーです。",
-            type: "プレイヤ",
+            type: "PlayerSpecifier",
+            type_anchor: "#general-target",
             required: [ScenarioType.EXECUTE],
           },
           {
@@ -337,7 +339,8 @@ Bukkit の仕様により、現在は `ARM_SWING` のみが指定可能です。
           {
             name: "target",
             description: "バケツに格納するエンティティを持っているプレイヤーです。",
-            type: "プレイヤ",
+            type: "PlayerSpecifier",
+            type_anchor: "#general-target",
             required: [ScenarioType.EXECUTE]
           },
           {
@@ -394,7 +397,8 @@ Bukkit の仕様により、現在は `ARM_SWING` のみが指定可能です。
             name: "target",
             anchor: "target",
             description: "チャットを送信するプレイヤーです。",
-            type: "プレイヤ",
+            type: "PlayerSpecifier",
+            type_anchor: "#general-target",
             required: [ScenarioType.EXECUTE],
           },
           {
@@ -435,13 +439,15 @@ Bukkit の仕様により、現在は `ARM_SWING` のみが指定可能です。
             name: "target",
             anchor: "target",
             description: "死亡するプレイヤーです。",
-            type: "プレイヤ",
+            type: "PlayerSpecifier",
+            type_anchor: "#general-target",
             required: [ScenarioType.EXECUTE],
           },
           {
             name: "killer",
             description: "殺したプレイヤーです。",
-            type: ObjectType.STRING,
+            type: "PlayerSpecifier",
+            type_anchor: "#general-target",
           },
           {
             name: "deathMessage",
@@ -514,7 +520,8 @@ Bukkit の仕様により、現在は `ARM_SWING` のみが指定可能です。
             name: "target",
             anchor: "target",
             description: "アイテムをドロップするプレイヤーです。",
-            type: "プレイヤ",
+            type: "PlayerSpecifier",
+            type_anchor: "#general-target",
             required: [ScenarioType.EXECUTE],
           },
           {
@@ -543,7 +550,8 @@ Bukkit の仕様により、現在は `ARM_SWING` のみが指定可能です。
             name: "target",
             anchor: "target",
             description: "飛ぶプレイヤーです。",
-            type: "プレイヤ",
+            type: "PlayerSpecifier",
+            type_anchor: "#general-target",
             required: [ScenarioType.EXECUTE],
           },
           {
@@ -580,7 +588,8 @@ Bukkit の仕様により、現在は `ARM_SWING` のみが指定可能です。
             name: "target",
             anchor: "target",
             description: "ゲームモードを変更するプレイヤーです。",
-            type: "プレイヤ",
+            type: "PlayerSpecifier",
+            type_anchor: "#general-target",
             required: [ScenarioType.EXECUTE, ScenarioType.REQUIRE]
           },
           {
@@ -646,7 +655,8 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
             name: "target",
             anchor: "target",
             description: "ゲームモードを変更するプレイヤーです。",
-            type: "プレイヤ",
+            type: "PlayerSpecifier",
+            type_anchor: "#general-target",
             required: [ScenarioType.EXECUTE]
           },
           {
@@ -690,7 +700,8 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
           {
             name: "target",
             description: "ホットバーのスロットを変更するプレイヤーです。",
-            type: "プレイヤ",
+            type: "PlayerSpecifier",
+            type_anchor: "#general-target",
             required: [ScenarioType.EXECUTE]
           },
           {
@@ -803,7 +814,8 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
             name: "target",
             anchor: "target",
             description: "ブロックをクリックするプレイヤーです。",
-            type: "プレイヤ",
+            type: "PlayerSpecifier",
+            type_anchor: "#general-target",
             required: [ScenarioType.EXECUTE]
           },
           {
@@ -894,7 +906,8 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
             name: "target",
             anchor: "target",
             description: "破壊されるアイテムを持っているプレイヤーです。",
-            type: "プレイヤ",
+            type: "PlayerSpecifier",
+            type_anchor: "#general-target",
             required: [ScenarioType.EXECUTE]
           },
           {
@@ -936,7 +949,8 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
             name: "target",
             anchor: "target",
             description: "アイテムを消費するプレイヤーです。",
-            type: "プレイヤ",
+            type: "PlayerSpecifier",
+            type_anchor: "#general-target",
             required: [ScenarioType.EXECUTE]
           },
           {
@@ -980,7 +994,8 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
           {
             name: "target",
             description: "ダメージを与えるプレイヤーです。",
-            type: "プレイヤ",
+            type: "PlayerSpecifier",
+            type_anchor: "#general-target",
             required: [ScenarioType.EXECUTE]
           },
           {
@@ -1043,7 +1058,8 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
             name: "target",
             anchor: "target",
             description: "参加するプレイヤーです。",
-            type: "プレイヤ",
+            type: "PlayerSpecifier",
+            type_anchor: "#general-target",
             required: [ScenarioType.EXECUTE] 
           }
         ]}
@@ -1068,7 +1084,8 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
             name: "target",
             anchor: "target",
             description: "キックされるプレイヤーです。",
-            type: "プレイヤ",
+            type: "PlayerSpecifier",
+            type_anchor: "#general-target",
             required: [ScenarioType.EXECUTE, ScenarioType.EXPECT]
           },
           {
@@ -1141,7 +1158,8 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
             name: "target",
             anchor: "target",
             description: "投げ物を発射するプレイヤーです。",
-            type: "プレイヤ",
+            type: "PlayerSpecifier",
+            type_anchor: "#general-target",
             required:[ScenarioType.EXECUTE, ScenarioType.EXPECT]
           },
           {
@@ -1205,7 +1223,8 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
             name: "target",
             anchor: "target",
             description: "経験レベルを変更するプレイヤーです。",
-            type: "プレイヤ",
+            type: "PlayerSpecifier",
+            type_anchor: "#general-target",
             required: [ScenarioType.EXECUTE]
           },
           {
@@ -1245,7 +1264,8 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
             name: "target",
             anchor: "target",
             description: "移動するプレイヤーです。",
-            type: "プレイヤ",
+            type: "PlayerSpecifier",
+            type_anchor: "#general-target",
             required: [ScenarioType.EXECUTE]
           },
           {
@@ -1293,7 +1313,8 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
             name: "target",
             anchor: "target",
             description: "退出するプレイヤーです。",
-            type: "プレイヤ",
+            type: "PlayerSpecifier",
+            type_anchor: "#general-target",
             required: [ScenarioType.EXECUTE]
           },
           {
@@ -1368,7 +1389,8 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
             name: "target",
             anchor: "target",
             description: "リスポーンするプレイヤです。",
-            type: "プレイヤ",
+            type: "PlayerSpecifier",
+            type_anchor: "#general-target",
             required: [ScenarioType.EXECUTE]
           },
           {
@@ -1420,7 +1442,8 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
             name: "target",
             anchor: "target",
             description: "スニークするプレイヤーです。",
-            type: "プレイヤ",
+            type: "PlayerSpecifier",
+            type_anchor: "#general-target",
             required: [ScenarioType.EXECUTE, ScenarioType.REQUIRE]
           },
           {
@@ -1450,7 +1473,8 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
             name: "target",
             anchor: "target",
             description: "走らせるプレイヤーです。",
-            type: "プレイヤ",
+            type: "PlayerSpecifier",
+            type_anchor: "#general-target",
             required: [ScenarioType.EXECUTE, ScenarioType.REQUIRE]
           },
           {
@@ -1480,7 +1504,8 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
             name: "target",
             anchor: "target",
             description: "テレポートするプレイヤーです。",
-            type: "プレイヤ",
+            type: "PlayerSpecifier",
+            type_anchor: "#general-target",
             required: [ScenarioType.EXECUTE]
           },
           {

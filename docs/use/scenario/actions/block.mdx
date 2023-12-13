@@ -29,7 +29,8 @@ import {ObjectType} from "/src/components/Object";
         args={[
           {
             name: "actor",
-            type: ObjectType.STRING,
+            type: "PlayerSpecifier",
+            type_link: "/docs/use/scenario/types/entities#player-specifier",
             anchor: "break-actor",
             description: "ブロックを破壊するアクタの ID です。",
             available: [ScenarioType.EXECUTE, ScenarioType.EXPECT]
@@ -78,7 +79,8 @@ import {ObjectType} from "/src/components/Object";
         args={[
           {
             name: "actor",
-            type: ObjectType.STRING,
+            type: "PlayerSpecifier",
+            type_link: "/docs/use/scenario/types/entities#player-specifier",
             anchor: "place-actor",
             description: "ブロックを設置するアクタの ID です。",
           },
