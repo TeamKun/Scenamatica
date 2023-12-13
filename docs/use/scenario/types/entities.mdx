@@ -166,8 +166,8 @@ import { Object, ObjectType } from "/src/components/Object";
 <Object objects={[
   {
     name: "modifier",
-    type: "DamageModifier",
-    type_link: "https://jd.papermc.io/paper/1.16/org/bukkit/event/entity/EntityDamageEvent.DamageModifier.html",
+    type: "Map<DamageModifier, Double>",
+    type_anchor: "damage-structure-damage-modifier-enum",
     description: "ダメージの変更子です。",
   },
   {
@@ -178,10 +178,51 @@ import { Object, ObjectType } from "/src/components/Object";
   {
     name: "cause",
     type: "DamageCause",
-    type_link: "https://jd.papermc.io/paper/1.16/org/bukkit/event/entity/EntityDamageEvent.DamageCause.html",
+    type_anchor: "damage-structure-damage-cause-enum",
     description: "ダメージの種類です。",
   }
 ]} />
+
+### DamageModifier 列挙型 {#damage-structure-damage-modifier-enum}
+
++ `BASE` 基本のダメージ。 `amount` で指定した値が使用されます。
++ `HARD_HAT` ヘルメットなどによる防御
++ `BLOCKING` シールドによる防御
++ `ARMOR` 防具による防御
++ `RESISTANCE` エンチャント「耐性」による防御
++ `MAGIC` ウィッチのポーション効果や防具のエンチャントによる防御
++ `ABSORPTION` エンチャント「ダメージ軽減」による防御
+
+### DamageCause 列挙型 {#damage-structure-damage-cause-enum}
+
++ `CONTACT` エンティティ同士の接触
++ `ENTITY_ATTACK` エンティティによる攻撃
++ `ENTITY_SWEEP_ATTACK` エンティティによる攻撃（範囲攻撃）
++ `PROJECTILE` 射撃
++ `SUFFOCATION` ブロックへのめり込み
++ `FALL` 落下
++ `FIRE` 炎
++ `FIRE_TICK` 炎の延焼
++ `MELTING` スノーゴーレムの溶解
++ `LAVA` 溶岩
++ `DROWNING` 溺れ
++ `BLOCK_EXPLOSION` 爆発
++ `ENTITY_EXPLOSION` エンティティの爆発
++ `VOID` 奈落への落下
++ `LIGHTNING` 雷
++ `SUICIDE` `/kill` コマンドによる自殺
++ `STARVATION` 飢餓
++ `POTION` ポーション効果
++ `MAGIC` 魔法
++ `WITHER` ウィザーの効果
++ `FALLING_BLOCK` 金床などの落下するブロック
++ `THORNS` エンチャント「棘」によるカウンター
++ `DRAGON_BREATH` エンダードラゴンのドラゴンブレス
++ `CUSTOM` カスタムダメージ
++ `FLY_INTO_WALL` エリトラなどによる壁への衝突
++ `HOT_FLOOR` マグマブロックなどの熱いブロック
++ `CRAMMING` エンティティの密集
++ `DRYOUT` 乾燥
 
 ---
 
