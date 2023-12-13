@@ -2,7 +2,6 @@ package org.kunlab.scenamatica.interfaces.scenariofile.entity;
 
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
-import org.bukkit.potion.PotionEffect;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.interfaces.scenariofile.Structure;
@@ -28,16 +27,9 @@ public interface EntityStructure extends Structure, ProjectileSourceStructure
     String KEY_CUSTOM_NAME_VISIBLE = "customNameVisible";
     String KEY_INVULNERABLE = "invulnerable";
     String KEY_TAGS = "tags";
-    String KEY_LAST_DAMAGE = "lastDamage";
+    String KEY_LAST_DAMAGE_CAUSE = "lastDamageCause";
     String KEY_MAX_HEALTH = "maxHealth";
     String KEY_HEALTH = "health";
-    String KEY_POTION_EFFECTS = "potions";
-    String KEY_POTION_EFFECTS_AMBIENT = "ambient";
-    String KEY_POTION_EFFECTS_AMPLIFIER = "amplifier";
-    String KEY_POTION_EFFECTS_DURATION = "duration";
-    String KEY_POTION_EFFECTS_TYPE = "type";
-    String KEY_POTION_EFFECTS_SHOW_PARTICLES = "particle";
-    String KEY_POTION_EFFECTS_SHOW_ICON = "icon";
     String KEY_FIRE_TICKS = "fireTicks";
     String KEY_TICKS_LIVED = "ticksLived";
     String KEY_PORTAL_COOLDOWN = "portalCooldown";
@@ -135,14 +127,6 @@ public interface EntityStructure extends Structure, ProjectileSourceStructure
      * @return 体力
      */
     Integer getHealth();
-
-    /**
-     * このエンティティに付与されているポーションエフェクトを取得します。
-     *
-     * @return ポーションエフェクト
-     */
-    @NotNull
-    List<PotionEffect> getPotionEffects();
 
     /**
      * このエンティティの最後に与えられたダメージを取得します。

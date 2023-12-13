@@ -14,6 +14,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 @UtilityClass
 public class EntityUtils
@@ -170,10 +171,20 @@ public class EntityUtils
                 .orElse(null);
     }
 
-    public static Entity getEntity(EntityStructure structure, Context context, @Nullable Predicate<? super Entity> predicate)
+    public static Entity getEntity(EntityStructure structure, @Nullable Context context, @Nullable Predicate<? super Entity> predicate)
     {
         Entity result = null;
-        if (!(context.getEntities() == null || context.getEntities().isEmpty()))
+        if (context == null)
+        {
+            return pickEntityOrNull(
+                    Bukkit.getWorlds().stream()
+                            .flatMap(world -> world.getEntities().stream())
+                            .collect(Collectors.toList()),
+                    structure,
+                    predicate
+            );
+        }
+        else if (!(context.getEntities() == null || context.getEntities().isEmpty()))
             result = pickEntityOrNull(context.getEntities(), structure, predicate);
 
         if (result == null)

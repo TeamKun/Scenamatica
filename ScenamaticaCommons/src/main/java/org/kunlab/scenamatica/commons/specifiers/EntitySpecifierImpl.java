@@ -19,7 +19,7 @@ import java.util.Objects;
 @EqualsAndHashCode
 public class EntitySpecifierImpl<E extends Entity> implements EntitySpecifier<E>
 {
-    public static final EntitySpecifier<?> EMPTY = new EntitySpecifierImpl<>(null);
+    public static final EntitySpecifier<Entity> EMPTY = new EntitySpecifierImpl<>(null);
 
     protected final String targetSpecifier;
     protected final EntityStructure targetStructure;
@@ -74,13 +74,13 @@ public class EntitySpecifierImpl<E extends Entity> implements EntitySpecifier<E>
     }
 
     @Override
-    public E selectTarget(@NotNull Context context)
+    public E selectTarget(@Nullable Context context)
     {
         // noinspection unchecked
         return (E) this.selectTargetRaw(context);
     }
 
-    protected Entity selectTargetRaw(@NotNull Context context)
+    protected Entity selectTargetRaw(@Nullable Context context)
     {
         if (this.targetSpecifier != null)
             return EntityUtils.getPlayerOrEntityOrNull(this.targetSpecifier);

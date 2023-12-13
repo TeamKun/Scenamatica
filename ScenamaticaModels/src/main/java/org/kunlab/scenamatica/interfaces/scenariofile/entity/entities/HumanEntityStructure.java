@@ -4,14 +4,14 @@ import org.bukkit.GameMode;
 import org.bukkit.inventory.MainHand;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.kunlab.scenamatica.interfaces.scenariofile.entity.EntityStructure;
+import org.kunlab.scenamatica.interfaces.scenariofile.entity.LivingEntityStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.InventoryStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.PlayerInventoryStructure;
 
 /**
  * 人型エンティティを表す基底インターフェースです。
  */
-public interface HumanEntityStructure extends EntityStructure
+public interface HumanEntityStructure extends LivingEntityStructure
 {
     String KEY_INVENTORY = "inventory";
     String KEY_ENDER_CHEST = "enderChest";

@@ -3,7 +3,6 @@ package org.kunlab.scenamatica.scenariofile.structures.entity.entities;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
-import org.bukkit.potion.PotionEffect;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
@@ -18,16 +17,16 @@ import java.util.UUID;
 
 public class AEntityStructureImpl extends EntityStructureImpl implements AEntityStructure
 {
-    public AEntityStructureImpl(EntityType type, Location location, Vector velocity, String customName, UUID uuid, Boolean glowing, Boolean gravity, Boolean silent, Boolean customNameVisible, Boolean invulnerable, @NotNull List<String> tags, Integer maxHealth, Integer health, DamageStructure lastDamageCause, @NotNull List<PotionEffect> potionEffects, Integer fireTicks, Integer ticksLived, Integer portalCooldown, Boolean persistent, Float fallDistance)
+    public AEntityStructureImpl(EntityType type, Location location, Vector velocity, String customName, UUID uuid, Boolean glowing, Boolean gravity, Boolean silent, Boolean customNameVisible, Boolean invulnerable, @NotNull List<String> tags, Integer maxHealth, Integer health, DamageStructure lastDamageCause, Integer fireTicks, Integer ticksLived, Integer portalCooldown, Boolean persistent, Float fallDistance)
     {
-        super(type, location, velocity, customName, uuid, glowing, gravity, silent, customNameVisible, invulnerable, tags, maxHealth, health, lastDamageCause, potionEffects, fireTicks, ticksLived, portalCooldown, persistent, fallDistance);
+        super(type, location, velocity, customName, uuid, glowing, gravity, silent, customNameVisible, invulnerable, tags, maxHealth, health, lastDamageCause, fireTicks, ticksLived, portalCooldown, persistent, fallDistance);
     }
 
     public AEntityStructureImpl()
     {
     }
 
-    public AEntityStructureImpl(EntityStructure original)
+    public AEntityStructureImpl(@NotNull EntityStructure original)
     {
         super(original);
     }

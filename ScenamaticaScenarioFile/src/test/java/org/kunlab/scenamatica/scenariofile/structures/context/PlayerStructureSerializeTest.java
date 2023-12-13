@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.kunlab.scenamatica.interfaces.scenariofile.context.PlayerStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.entity.entities.AEntityStructure;
 import org.kunlab.scenamatica.scenariofile.StructureSerializerImpl;
-import org.kunlab.scenamatica.scenariofile.structures.entity.AEntityStructureSerializeTest;
+import org.kunlab.scenamatica.scenariofile.structures.entity.LivingEntitySerializeTest;
 import org.kunlab.scenamatica.scenariofile.structures.entity.entities.AHumanEntityStructureImpl;
 import org.kunlab.scenamatica.scenariofile.structures.inventory.InventoryStructureSerializeTest;
 import org.kunlab.scenamatica.scenariofile.structures.inventory.PlayerInventoryStructureSerializeTest;
@@ -23,7 +23,7 @@ public class PlayerStructureSerializeTest
 {
     public static final PlayerStructure FULFILLED = new PlayerStructureImpl(
             new AHumanEntityStructureImpl(
-                    AEntityStructureSerializeTest.FULFILLED,
+                    LivingEntitySerializeTest.FULFILLED,
                     PlayerInventoryStructureSerializeTest.FULFILLED,
                     InventoryStructureSerializeTest.FULFILLED,
                     MainHand.LEFT,
@@ -49,7 +49,7 @@ public class PlayerStructureSerializeTest
             Collections.emptyList()
     );
 
-    public static final Map<String, Object> FULFILLED_MAP = new HashMap<String, Object>(AEntityStructureSerializeTest.FULFILLED_MAP)
+    public static final Map<String, Object> FULFILLED_MAP = new HashMap<String, Object>(LivingEntitySerializeTest.FULFILLED_MAP)
     {{
         this.remove(AEntityStructure.KEY_TYPE);
         this.put("inventory", PlayerInventoryStructureSerializeTest.FULFILLED_MAP);
@@ -91,7 +91,7 @@ public class PlayerStructureSerializeTest
 
     public static final PlayerStructure EMPTY = new PlayerStructureImpl(
             new AHumanEntityStructureImpl(
-                    AEntityStructureSerializeTest.EMPTY,
+                    LivingEntitySerializeTest.EMPTY,
                     null,
                     null,
                     null,

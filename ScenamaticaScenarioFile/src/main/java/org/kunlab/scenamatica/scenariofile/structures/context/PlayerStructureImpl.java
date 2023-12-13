@@ -159,7 +159,7 @@ public class PlayerStructureImpl extends HumanEntityStructureImpl implements Pla
     @NotNull
     public static PlayerStructure deserialize(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
     {
-        validate(map);
+        validateLivingEntity(map);
 
         HumanEntityStructure human = deserializeHuman(map, serializer);
 

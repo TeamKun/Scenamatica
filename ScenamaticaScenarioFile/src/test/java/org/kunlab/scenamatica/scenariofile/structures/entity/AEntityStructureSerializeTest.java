@@ -15,7 +15,6 @@ import org.kunlab.scenamatica.scenariofile.structures.utils.MapTestUtil;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -39,7 +38,6 @@ public class AEntityStructureSerializeTest
             22,
             20,
             DamageStructureSerializeTest.FULFILLED,
-            Collections.emptyList(),
             /*
             Collections.singletonList(
                     new PotionEffect(
@@ -89,7 +87,7 @@ public class AEntityStructureSerializeTest
         this.put("tags", Arrays.asList("tagTest", "tagTest2"));
         this.put("maxHealth", 22);
         this.put("health", 20);
-        this.put("lastDamage", DamageStructureSerializeTest.FULFILLED_MAP);/*
+        this.put("lastDamageCause", DamageStructureSerializeTest.FULFILLED_MAP);/*
         this.put("potions", Collections.singletonList(new HashMap<String, Object>()
         {{
             this.put("type", "BAD_OMEN");
