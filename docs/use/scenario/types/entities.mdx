@@ -50,14 +50,185 @@ import { Object, ObjectType } from "/src/components/Object";
 
 ---
 
+## Entity 型 {#entity-structure}
+
+
+<Object objects={[
+  {
+    name: "type",
+    type: "EntityType",
+    description: "エンティティの種類です。",
+  },
+  {
+    name: "loc | location",
+    type: "Location",
+    type_link: "/docs/use/scenario/types/misc#location-structure",
+    description: "エンティティの座標です。",
+  },
+  {
+    name: "velocity",
+    type: "Vector",
+    type_link: "/docs/use/scenario/types/misc#vector-structure",
+  },
+  {
+    name: "customName",
+    type: ObjectType.STRING,
+    description: "エンティティのカスタム名です。"
+  },
+  {
+    name: "uuid",
+    type: ObjectType.STRING,
+    description: "エンティティの UUID です。"
+  },
+  {
+    name: "glowing",
+    type: ObjectType.BOOLEAN,
+    description: "エンティティが発光しているかどうかです。"
+  },
+  {
+    name: "gravity",
+    type: ObjectType.BOOLEAN,
+    description: "エンティティが重力に従うかどうかです。"
+  },
+  {
+    name: "silent",
+    type: ObjectType.BOOLEAN,
+    description: "エンティティが音を発するかどうかです。"
+  },
+  {
+    name: "customNameVisible",
+    type: ObjectType.BOOLEAN,
+    description: "エンティティのカスタム名が表示されるかどうかです。"
+  },
+  {
+    name: "invulnerable",
+    type: ObjectType.BOOLEAN,
+    description: "エンティティが無敵かどうかです。"
+  },
+  {
+    name: "tags",
+    type: ObjectType.STRING + "[]",
+    description: "エンティティのタグです。"
+  },
+  {
+    name: "lastDamage",
+    type: "Damage",
+    type_anchor: "damage-structure",
+    description: "エンティティに与えられた最後のダメージです。"
+  },
+  {
+    name: "maxHealth",
+    type: ObjectType.INTEGER,
+    description: "エンティティの最大体力です。"
+  },
+  {
+    name: "health",
+    type: ObjectType.INTEGER,
+    description: "エンティティの体力です。"
+  },
+  {
+    name: "potions",
+    type: "PotionEffect[]",
+    type_anchor: "potion-effect-structure",
+    description: "エンティティに付与されているポーション効果です。"
+  },
+  {
+    name: "fireTicks",
+    type: ObjectType.INTEGER,
+    description: "エンティティが燃える残り時間です。"
+  },
+  {
+    name: "ticksLived",
+    type: ObjectType.INTEGER,
+    description: "エンティティが生きている時間です。"
+  },
+  {
+    name: "portalCooldown",
+    type: ObjectType.INTEGER,
+    description: "エンティティがポータルに入れるまでのクールダウン時間です。"
+  },
+  {
+    name: "persistent",
+    type: ObjectType.BOOLEAN,
+    description: "エンティティが永続的かどうかです。"
+  },
+  {
+    name: "fallDistance",
+    type: ObjectType.FLOAT,
+    description: "エンティティが落下した距離です。"
+  }
+]} />
+
+---
+
+## Damage 型 {#damage-structure}
+
+<Object objects={[
+  {
+    name: "modifier",
+    type: "DamageModifier",
+    type_link: "https://jd.papermc.io/paper/1.16/org/bukkit/event/entity/EntityDamageEvent.DamageModifier.html",
+    description: "ダメージの変更子です。",
+  },
+  {
+    name: "damage",
+    type: ObjectType.FLOAT,
+    description: "ダメージの量です。",
+  },
+  {
+    name: "cause",
+    type: "DamageCause",
+    type_link: "https://jd.papermc.io/paper/1.16/org/bukkit/event/entity/EntityDamageEvent.DamageCause.html",
+    description: "ダメージの種類です。",
+  }
+]} />
+
+---
+
+## PotionEffect 型 {#potion-effect-structure}
+
+<Object objects={[
+  {
+    name: "type",
+    type: "PotionEffectType",
+    type_link: "https://jd.papermc.io/paper/1.16/org/bukkit/potion/PotionEffectType.html",
+    description: "ポーション効果の種類です。",
+  },
+  {
+    name: "duration",
+    type: ObjectType.INTEGER,
+    description: "ポーション効果の持続時間です。",
+  },
+  {
+    name: "amplifier",
+    type: ObjectType.INTEGER,
+    description: "ポーション効果の強さです。",
+  },
+  {
+    name: "ambient",
+    type: ObjectType.BOOLEAN,
+    description: "ポーション効果がエンティティに表示されるかどうかです。",
+  },
+  {
+    name: "particle",
+    type: ObjectType.BOOLEAN,
+    description: "ポーション効果がエンティティからパーティクルとして表示されるかどうかです。",
+  },
+  {
+    name: "icon",
+    type: ObjectType.BOOLEAN,
+    description: "ポーション効果がエンティティのアイコンとして表示されるかどうかです。",
+  }
+]} />
+
+---
+
 ## EntityItem 型 {#entity-item-structure}
 
 EntityItem 型は、以下の親構造を持ちます。
 
 + [Entity 型](#entity-structure)
 + [ItemStack 型](/docs/use/scenario/types/inventory-items/#item-stack-structure)
-
-EntityItem 型は、以下の構造を持ちます。
 
 <Object objects={[
   {
@@ -95,7 +266,6 @@ ProjectileStructure 型は、以下の親構造を持ちます。
 
 + [Entity 型](#entity-structure)
 
-ProjectileStructure 型は、以下の構造を持ちます。
 
 <Object objects={[
   {
