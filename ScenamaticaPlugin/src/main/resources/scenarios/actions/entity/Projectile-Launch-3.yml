@@ -39,7 +39,7 @@ scenario:
         type: minecraft:arrow
         shooter:
           type: dispenser
-          loc:
+          location:
             x: 0
             y: 127
             z: 0
@@ -50,7 +50,8 @@ scenario:
         type: minecraft:arrow
         shooter:
           type: dispenser
-          loc:
+
+          location:
             x: 0
             y: 127
             z: 0
