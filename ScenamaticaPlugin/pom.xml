@@ -139,18 +139,6 @@
     <dependencies>
         <dependency>
             <groupId>org.kunlab.scenamatica</groupId>
-            <artifactId>ScenamaticaCommons</artifactId>
-            <version>0.8.0</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.kunlab.scenamatica</groupId>
-            <artifactId>ScenamaticaModels</artifactId>
-            <version>0.8.0</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.kunlab.scenamatica</groupId>
             <artifactId>ScenamaticaDaemon</artifactId>
             <version>0.8.0</version>
             <scope>compile</scope>
