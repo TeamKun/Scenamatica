@@ -157,7 +157,8 @@ Java の標準的なレベルを指定できます。詳しくは以下のリス
           },
           {
             name: "recipients",
-            type: ObjectType.STRING + "[]",
+            type: "{" + ObjectType.STRING + " | PlayerSpecifier}[]",
+            type_link: "/docs/use/scenario/types/entities#player-specifier",
             anchor: "broadcast-recipients",
             description: "メッセージの受信者を指定します。"
           },
@@ -225,7 +226,8 @@ Java の標準的なレベルを指定できます。詳しくは以下のリス
           {
             name: "command",
             anchor: "command-dispatch-command",
-            type: "string",
+            type: "{" + ObjectType.STRING + " | PlayerSpecifier}[]",
+            type_link: "/docs/use/scenario/types/entities#player-specifier",
             description: "実行するコマンドを指定します。",
             required: [ScenarioType.EXECUTE]
           },
@@ -274,7 +276,8 @@ Java の標準的なレベルを指定できます。詳しくは以下のリス
         args={[
           {
             name: "sender",
-            type: ObjectType.STRING,
+            type: "{" + ObjectType.STRING + " | PlayerSpecifier}[]",
+            type_link: "/docs/use/scenario/types/entities#player-specifier",
             anchor: "tab-complete-sender",
             description: "タブ補完を実行したプレイヤーを指定します。"
           },
