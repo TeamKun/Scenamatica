@@ -52,7 +52,7 @@ import { Object, ObjectType } from "/src/components/Object";
 
 ## 特別： PlayerSpecifier 型（プレイヤ指定子） {#player-specifier}
 
-プレイヤ指定子は、文字列型と[Player 型](#player-structure)としてふるまう特別な型です。
+プレイヤ指定子は、文字列型と[Player 型](/docs/use/scenario/types/#actor-structure)としてふるまう特別な型です。
 
 基本的には上記の[エンティティ指定子](#entity-specifier)と同じですが、プレイヤを指定する場合にのみ有効です。
 
@@ -60,23 +60,22 @@ import { Object, ObjectType } from "/src/components/Object";
 
 ## Entity 型 {#entity-structure}
 
-
 <Object objects={[
   {
     name: "type",
     type: "EntityType",
-    description: "エンティティの種類です。",
+    description: "エンティティの種類です。"
   },
   {
     name: "loc | location",
     type: "Location",
     type_link: "/docs/use/scenario/types/misc#location-structure",
-    description: "エンティティの座標です。",
+    description: "エンティティの座標です。"
   },
   {
     name: "velocity",
     type: "Vector",
-    type_link: "/docs/use/scenario/types/misc#vector-structure",
+    type_link: "/docs/use/scenario/types/misc#vector-structure"
   },
   {
     name: "customName",
@@ -176,18 +175,18 @@ import { Object, ObjectType } from "/src/components/Object";
     name: "modifier",
     type: "Map<DamageModifier, Double>",
     type_anchor: "damage-structure-damage-modifier-enum",
-    description: "ダメージの変更子です。",
+    description: "ダメージの変更子です。"
   },
   {
     name: "damage",
     type: ObjectType.FLOAT,
-    description: "ダメージの量です。",
+    description: "ダメージの量です。"
   },
   {
     name: "cause",
     type: "DamageCause",
     type_anchor: "damage-structure-damage-cause-enum",
-    description: "ダメージの種類です。",
+    description: "ダメージの種類です。"
   }
 ]} />
 
@@ -234,6 +233,166 @@ import { Object, ObjectType } from "/src/components/Object";
 
 ---
 
+## LivingEntity 型 {#living-entity-structure}
+
+LivingEntity 型は、以下の親構造を持ちます。
+
++ [Entity 型](#entity-structure)
+
+<Object objects={[
+  {
+    name: "remainAir",
+    type: ObjectType.INTEGER,
+    description: "空気残量です。"
+  },
+  {
+    name: "maxAir",
+    type: ObjectType.INTEGER,
+    description: "最大空気です。"
+  },
+  {
+    name: "arrowCooldown",
+    type: ObjectType.INTEGER,
+    description: "矢のクールダウンです。"
+  },
+  {
+    name: "arrowsInBody",
+    type: ObjectType.INTEGER,
+    description: "体に刺さっている矢の数です。"
+  },
+  {
+    name: "maxNoDamageTicks",
+    type: ObjectType.INTEGER,
+    description: "最大無敵時間です。"
+  },
+  {
+    name: "lastDamage",
+    type: ObjectType.FLOAT,
+    description: "最後に受けたダメージです。"
+  },
+  {
+    name: "noDamageTicks",
+    type: ObjectType.INTEGER,
+    description: "無敵時間です。"
+  },
+  {
+    name: "killer",
+    type: "PlayerSpecifier",
+    type_anchor: "player-specifier",
+    description: "エンティティを殺したプレイヤーです。"
+  },
+  {
+    name: "potions",
+    type: "PotionEffect[]",
+    type_anchor: "potion-effect-structure",
+    description: "エンティティに付与されているポーション効果です。"
+  },
+  {
+    name: "removeWhenFarAway",
+    type: ObjectType.BOOLEAN,
+    description: "遠く離れたときに削除されるかどうかです。"
+  },
+  {
+    name: "canPickupItems",
+    type: ObjectType.BOOLEAN,
+    description: "アイテムを拾えるかどうかです。"
+  },
+  {
+    name: "leashed",
+    type: ObjectType.BOOLEAN,
+    description: "リードされているかどうかです。"
+  },
+  {
+    name: "leashHolder",
+    type: "EntitySpecifier",
+    type_anchor: "entity-specifier",
+    description: "エンティティをリードしているエンティティです。"
+  },
+  {
+    name: "gliding",
+    type: ObjectType.BOOLEAN,
+    description: "滑空しているかどうかです。"
+  },
+  {
+    name: "swimming",
+    type: ObjectType.BOOLEAN,
+    description: "泳いでいるかどうかです。"
+  },
+  {
+    name: "riptiding",
+    type: ObjectType.BOOLEAN,
+    description: "トライデントを投げているかどうかです。"
+  },
+  {
+    name: "sleeping",
+    type: ObjectType.BOOLEAN,
+    description: "寝ているかどうかです。"
+  },
+  {
+    name: "ai",
+    type: ObjectType.BOOLEAN,
+    description: " AI を持つかどうかです。"
+  },
+  {
+    name: "collidable",
+    type: ObjectType.BOOLEAN,
+    description: "干渉するかどうかです。"
+  },
+  {
+    name: "invisible",
+    type: ObjectType.BOOLEAN,
+    description: "透明かどうかです。"
+  },
+  {
+    name: "arrowsStuck",
+    type: ObjectType.INTEGER,
+    description: "持っている矢の数です。"
+  },
+  {
+    name: "shieldBlockingDelay",
+    type: ObjectType.INTEGER,
+    description: "盾をブロックしている遅延時間です。"
+  },
+  {
+    name: "activeItem",
+    type: "ItemStack",
+    type_link: "/docs/use/scenario/types/inventory-items/#item-stack-structure",
+    description: "有効なアイテムです。"
+  },
+  {
+    name: "itemUseRemainTime",
+    type: ObjectType.INTEGER,
+    description: "アイテム使用の残り時間です。"
+  },
+  {
+    name: "handRaisedTime",
+    type: ObjectType.INTEGER,
+    description: "手を上げている時間です。"
+  },
+  {
+    name: "isHandRaised",
+    type: ObjectType.BOOLEAN,
+    description: "手を上げているかどうかです。"
+  },
+  {
+    name: "handRaised",
+    type: "Enum{MAIN_HAND, OFF_HAND}",
+    description: "上げている手です。"
+  },
+  {
+    name: "jumping",
+    type: ObjectType.BOOLEAN,
+    description: "ジャンプしているかどうかです。"
+  },
+  {
+    name: "hurtDirection",
+    type: ObjectType.FLOAT,
+    description: "受けたダメージの方向です。"
+  }
+]} />
+
+--
+
 ## PotionEffect 型 {#potion-effect-structure}
 
 <Object objects={[
@@ -241,32 +400,32 @@ import { Object, ObjectType } from "/src/components/Object";
     name: "type",
     type: "PotionEffectType",
     type_link: "https://jd.papermc.io/paper/1.16/org/bukkit/potion/PotionEffectType.html",
-    description: "ポーション効果の種類です。",
+    description: "ポーション効果の種類です。"
   },
   {
     name: "duration",
     type: ObjectType.INTEGER,
-    description: "ポーション効果の持続時間です。",
+    description: "ポーション効果の持続時間です。"
   },
   {
     name: "amplifier",
     type: ObjectType.INTEGER,
-    description: "ポーション効果の強さです。",
+    description: "ポーション効果の強さです。"
   },
   {
     name: "ambient",
     type: ObjectType.BOOLEAN,
-    description: "ポーション効果がエンティティに表示されるかどうかです。",
+    description: "ポーション効果がエンティティに表示されるかどうかです。"
   },
   {
     name: "particle",
     type: ObjectType.BOOLEAN,
-    description: "ポーション効果がエンティティからパーティクルとして表示されるかどうかです。",
+    description: "ポーション効果がエンティティからパーティクルとして表示されるかどうかです。"
   },
   {
     name: "icon",
     type: ObjectType.BOOLEAN,
-    description: "ポーション効果がエンティティのアイコンとして表示されるかどうかです。",
+    description: "ポーション効果がエンティティのアイコンとして表示されるかどうかです。"
   }
 ]} />
 
@@ -283,27 +442,27 @@ EntityItem 型は、以下の親構造を持ちます。
   {
     name: "canMobPickup",
     type: ObjectType.BOOLEAN,
-    description: "モブがアイテムを拾えるかどうかです。",
+    description: "モブがアイテムを拾えるかどうかです。"
   },
   {
     name: "pickupDelay",
     type: ObjectType.INTEGER,
-    description: "アイテムを拾えるまでの遅延時間です。",
+    description: "アイテムを拾えるまでの遅延時間です。"
   },
   {
     name: "willAge",
     type: ObjectType.BOOLEAN,
-    description: "アイテムが時間経過で消滅するかどうかです。",
+    description: "アイテムが時間経過で消滅するかどうかです。"
   },
   {
     name: "owner",
     type: ObjectType.STRING,
-    description: "アイテムの所有者の UUID です。",
+    description: "アイテムの所有者の UUID です。"
   },
   {
     name: "thrower",
     type: ObjectType.STRING,
-    description: "アイテムを投げたプレイヤーの UUID です。",
+    description: "アイテムを投げたプレイヤーの UUID です。"
   }
 ]} />
 
@@ -322,12 +481,12 @@ ProjectileStructure 型は、以下の親構造を持ちます。
     type: "EntitySpecifier | Block",
     type_anchor: "entity-specifier",
     anchor: "projectile-structure-shooter",
-    description: "投射物を投げたエンティティの指定子です。",
+    description: "投射物を投げたエンティティの指定子です。"
   },
   {
     name: "bounce",
     type: ObjectType.BOOLEAN,
-    description: "投射物が跳ね返るかどうかです。",
+    description: "投射物が跳ね返るかどうかです。"
   }
 ]} />
 
