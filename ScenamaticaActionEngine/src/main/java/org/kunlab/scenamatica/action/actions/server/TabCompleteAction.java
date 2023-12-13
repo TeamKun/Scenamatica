@@ -8,13 +8,15 @@ import org.bukkit.event.server.TabCompleteEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.actions.AbstractActionArgument;
-import org.kunlab.scenamatica.action.utils.CommandSenders;
+import org.kunlab.scenamatica.action.utils.PlayerLikeCommandSenders;
+import org.kunlab.scenamatica.commons.specifiers.PlayerSpecifierImpl;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
+import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.PlayerSpecifier;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.ArrayList;
@@ -60,7 +62,7 @@ public class TabCompleteAction extends AbstractServerAction<TabCompleteAction.Ar
     {
         argument = this.requireArgsNonNull(argument);
 
-        CommandSender sender = CommandSenders.resolveSenderOrConsoleOrThrow(argument.getSender());
+        CommandSender sender = PlayerLikeCommandSenders.resolveSenderOrConsoleOrThrow(argument.getSender(), engine.getContext());
         String buffer = argument.getBuffer();
         List<String> completions = argument.getCompletions();
         if (completions == null)
@@ -90,7 +92,7 @@ public class TabCompleteAction extends AbstractServerAction<TabCompleteAction.Ar
 
 
         return checkCompletions(argument.getCompletions(), e.getCompletions(), argument.isStrict())
-                && CommandSenders.isSpecifiedSender(e.getSender(), argument.getSender());
+                && PlayerLikeCommandSenders.isSpecifiedSender(e.getSender(), argument.getSender());
     }
 
     @Override
@@ -105,7 +107,7 @@ public class TabCompleteAction extends AbstractServerAction<TabCompleteAction.Ar
     public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
     {
         return new Argument(
-                (String) map.get(Argument.KEY_SENDER),
+                PlayerSpecifierImpl.tryDeserializePlayer(map.get(Argument.KEY_SENDER), serializer),
                 (String) map.get(Argument.KEY_BUFFER),
                 MapUtils.getAsListOrNull(map, Argument.KEY_COMPLETIONS),
                 MapUtils.getOrDefault(map, Argument.KEY_STRICT, true)
@@ -121,7 +123,7 @@ public class TabCompleteAction extends AbstractServerAction<TabCompleteAction.Ar
         public static final String KEY_COMPLETIONS = "completions";
         public static final String KEY_STRICT = "strict";
 
-        String sender;
+        PlayerSpecifier sender;
         String buffer;
         List<String> completions;
         boolean strict;

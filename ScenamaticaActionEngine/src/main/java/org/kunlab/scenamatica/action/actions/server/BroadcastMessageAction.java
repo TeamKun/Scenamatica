@@ -11,12 +11,15 @@ import org.bukkit.event.server.BroadcastMessageEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.actions.AbstractActionArgument;
+import org.kunlab.scenamatica.action.utils.PlayerLikeCommandSenders;
+import org.kunlab.scenamatica.commons.specifiers.PlayerSpecifierImpl;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
+import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.PlayerSpecifier;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.ArrayList;
@@ -28,6 +31,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class BroadcastMessageAction extends AbstractServerAction<BroadcastMessageAction.Argument>
         implements Executable<BroadcastMessageAction.Argument>, Watchable<BroadcastMessageAction.Argument>
@@ -47,23 +51,27 @@ public class BroadcastMessageAction extends AbstractServerAction<BroadcastMessag
 
         String message = argument.getMessage();
         String permission = argument.getPermission();
-        List<CommandSender> recipients = argument.getRecipients();
+        List<PlayerSpecifier> recipients = argument.getRecipients();
 
         if (permission == null)
             if (recipients == null || recipients.isEmpty())
                 Bukkit.broadcast(Component.text(message));
             else
-                this.simulateBukkitBroadcast(Component.text(message), recipients);
+                this.simulateBukkitBroadcast(engine, Component.text(message), recipients);
         else
             Bukkit.broadcast(Component.text(message), permission);
     }
 
-    private void simulateBukkitBroadcast(@NotNull Component messageComponent, @NotNull List<? extends CommandSender> recipients)
+    private void simulateBukkitBroadcast(@NotNull ScenarioEngine engine, @NotNull Component messageComponent,
+                                         @NotNull List<? extends PlayerSpecifier> recipients)
     {
-        Set<CommandSender> recipientsSet = new HashSet<>(recipients);
+        Set<PlayerSpecifier> recipientsSet = new HashSet<>(recipients);
+        Set<CommandSender> csRecipientsSet = recipientsSet.stream()
+                .map(ps -> PlayerLikeCommandSenders.getCommandSenderOrThrow(ps, engine.getContext()))
+                .collect(Collectors.toSet());
 
         BroadcastMessageEvent broadcastMessageEvent =
-                new BroadcastMessageEvent(!Bukkit.isPrimaryThread(), messageComponent, recipientsSet);
+                new BroadcastMessageEvent(!Bukkit.isPrimaryThread(), messageComponent, csRecipientsSet);
         Bukkit.getPluginManager().callEvent(broadcastMessageEvent);
 
         if (broadcastMessageEvent.isCancelled())
@@ -94,15 +102,18 @@ public class BroadcastMessageAction extends AbstractServerAction<BroadcastMessag
 
         if (argument.getRecipients() != null)
         {
-            List<CommandSender> recipients = argument.getRecipients();
+            List<PlayerSpecifier> expectedRecipients = argument.getRecipients();
             Set<CommandSender> actualRecipients = e.getRecipients();
 
-            for (CommandSender recipient : recipients)
-                if (!actualRecipients.contains(recipient))
+            for (PlayerSpecifier expectedRecipient : expectedRecipients)
+            {
+                CommandSender actualRecipient = PlayerLikeCommandSenders.getCommandSenderOrNull(expectedRecipient, engine.getContext());
+                if (actualRecipient == null || !actualRecipients.contains(actualRecipient))
                     return false;
+            }
 
             // 存在することのチェックは終わったので, 存在しないこと(余分なプレイヤがいないこと)をチェックする
-            return !argument.getStrictRecipients() || recipients.size() == actualRecipients.size();
+            return !argument.getStrictRecipients() || expectedRecipients.size() == actualRecipients.size();
         }
 
         return true;
@@ -119,9 +130,18 @@ public class BroadcastMessageAction extends AbstractServerAction<BroadcastMessag
     @Override
     public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
     {
+        List<PlayerSpecifier> recipients = new ArrayList<>();
+        if (map.containsKey(Argument.KEY_RECIPIENTS))
+        {
+            List<?> rawRecipients = (List<?>) map.get(Argument.KEY_RECIPIENTS);
+            for (Object rawRecipient : rawRecipients)
+                recipients.add(PlayerSpecifierImpl.tryDeserializePlayer(rawRecipient, serializer));
+        }
+
+
         return new Argument(
                 (String) map.get(Argument.KEY_MESSAGE),
-                MapUtils.getAsListOrEmpty(map, Argument.KEY_RECIPIENTS),
+                recipients,
                 MapUtils.getOrNull(map, Argument.KEY_PERMISSION),
                 MapUtils.getOrDefault(map, Argument.KEY_STRICT_RECIPIENTS, false)
         );
@@ -139,7 +159,7 @@ public class BroadcastMessageAction extends AbstractServerAction<BroadcastMessag
         private static final String CONSOLE_IDENTIFIER = "<CONSOLE>";
 
         String message;
-        List<String> recipients;  // Console = <CONSOLE>
+        List<PlayerSpecifier> recipients;
         String permission;
         Boolean strictRecipients;
 
@@ -152,10 +172,7 @@ public class BroadcastMessageAction extends AbstractServerAction<BroadcastMessag
             Argument arg = (Argument) argument;
 
             return Objects.equals(this.message, arg.message)
-                    && (arg.recipients == null || arg.recipients.stream().parallel()
-                    .allMatch(recipient -> this.recipients.stream().parallel()
-                            .anyMatch(recipient::equals)
-                    ))
+                    && (arg.recipients == null || this.recipients != null && MapUtils.equals(this.recipients, arg.recipients))
                     && (this.permission == null || this.permission.equals(arg.permission))
                     && this.strictRecipients == arg.strictRecipients;
         }
@@ -185,18 +202,11 @@ public class BroadcastMessageAction extends AbstractServerAction<BroadcastMessag
             );
         }
 
-        public List<CommandSender> getRecipients()
+        public List<CommandSender> getRecipients(ScenarioEngine engine)
         {
-            List<CommandSender> result = new ArrayList<>();
-            for (String recipient : this.recipients)
-            {
-                if (recipient.equals(CONSOLE_IDENTIFIER))
-                    result.add(Bukkit.getConsoleSender());
-                else
-                    result.add(Bukkit.getPlayer(recipient));
-            }
-
-            return result;
+            return this.recipients.stream()
+                    .map(ps -> PlayerLikeCommandSenders.getCommandSenderOrThrow(ps, engine.getContext()))
+                    .collect(Collectors.toList());
         }
     }
 }

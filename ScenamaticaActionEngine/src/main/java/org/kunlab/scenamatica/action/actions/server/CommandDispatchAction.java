@@ -10,13 +10,15 @@ import org.bukkit.event.server.ServerCommandEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.actions.AbstractActionArgument;
-import org.kunlab.scenamatica.action.utils.CommandSenders;
+import org.kunlab.scenamatica.action.utils.PlayerLikeCommandSenders;
+import org.kunlab.scenamatica.commons.specifiers.PlayerSpecifierImpl;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
+import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.PlayerSpecifier;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Arrays;
@@ -42,7 +44,7 @@ public class CommandDispatchAction extends AbstractServerAction<CommandDispatchA
     {
         argument = this.requireArgsNonNull(argument);
 
-        CommandSender sender = CommandSenders.resolveSenderOrConsoleOrThrow(argument.getSender());
+        CommandSender sender = PlayerLikeCommandSenders.resolveSenderOrConsoleOrThrow(argument.getSender(), engine.getContext());
 
         String command = argument.getCommand();
         if (command.startsWith("/")) // シンタックスシュガーのために, / から始まるやつにも対応
@@ -74,7 +76,8 @@ public class CommandDispatchAction extends AbstractServerAction<CommandDispatchA
                 return false;
         }
 
-        return CommandSenders.isSpecifiedSender(sender, argument.getSender());
+        assert sender != null;
+        return PlayerLikeCommandSenders.isSpecifiedSender(sender, argument.getSender());
     }
 
     @Override
@@ -93,7 +96,7 @@ public class CommandDispatchAction extends AbstractServerAction<CommandDispatchA
         MapUtils.checkTypeIfContains(map, Argument.KEY_SENDER, String.class);
 
         String command = (String) map.get(Argument.KEY_COMMAND);
-        String sender = MapUtils.getOrNull(map, Argument.KEY_SENDER);
+        PlayerSpecifier sender = PlayerSpecifierImpl.tryDeserializePlayer(map.get(Argument.KEY_SENDER), serializer);
 
         return new Argument(command, sender);
     }
@@ -106,7 +109,7 @@ public class CommandDispatchAction extends AbstractServerAction<CommandDispatchA
         public static final String KEY_SENDER = "sender";
 
         String command;
-        String sender;
+        PlayerSpecifier sender;
 
         @Override
         public boolean isSame(TriggerArgument argument)
