@@ -109,6 +109,7 @@ public class CommandDispatchAction extends AbstractServerAction<CommandDispatchA
         public static final String KEY_SENDER = "sender";
 
         String command;
+        @NotNull
         PlayerSpecifier sender;
 
         @Override

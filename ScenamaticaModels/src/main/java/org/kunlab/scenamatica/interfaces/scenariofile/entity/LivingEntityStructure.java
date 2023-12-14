@@ -103,6 +103,7 @@ public interface LivingEntityStructure extends EntityStructure
      *
      * @return 殺したプレイヤー
      */
+    @NotNull
     PlayerSpecifier getKiller();
 
     /**
@@ -139,6 +140,7 @@ public interface LivingEntityStructure extends EntityStructure
      *
      * @return リードしているエンティティ
      */
+    @NotNull
     EntitySpecifier<Entity> getLeashHolder();
 
     /**

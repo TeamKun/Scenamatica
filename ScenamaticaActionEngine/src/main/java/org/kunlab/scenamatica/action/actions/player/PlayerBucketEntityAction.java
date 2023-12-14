@@ -136,11 +136,12 @@ public class PlayerBucketEntityAction extends AbstractPlayerAction<PlayerBucketE
         public static final String KEY_ORIGINAL_BUCKET = "bucket";
         public static final String KEY_ENTITY_BUCKET = "entityBucket";
 
+        @NotNull
         EntitySpecifier<?> entity;
         ItemStackStructure originalBucket;
         ItemStackStructure entityBucket;
 
-        public Argument(PlayerSpecifier target, EntitySpecifier<?> entity, ItemStackStructure originalBucket, ItemStackStructure entityBucket)
+        public Argument(PlayerSpecifier target, @NotNull EntitySpecifier<?> entity, ItemStackStructure originalBucket, ItemStackStructure entityBucket)
         {
             super(target);
             this.entity = entity;

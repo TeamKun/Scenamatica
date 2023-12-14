@@ -42,6 +42,7 @@ public abstract class AbstractInventoryInteractAction<A extends AbstractInventor
                 || argument.getTargetSpecifier().checkMatchedPlayer((Player) whoClicked));
     }
 
+    @NotNull
     protected PlayerSpecifier deserializeTarget(Map<String, Object> map, StructureSerializer serializer)
     {
         return PlayerSpecifierImpl.tryDeserializePlayer(

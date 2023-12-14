@@ -54,7 +54,7 @@ public class ProjectileHitAction extends AbstractEntityAction<ProjectileHitActio
             throw new IllegalStateException("Target is not found");
 
         Entity hitEntity = null;
-        if (argument.getHitEntity() != null)
+        if (argument.getHitEntity().canProvideTarget())
         {
             hitEntity = argument.getHitEntity().selectTarget(engine.getContext());
             if (hitEntity == null)
@@ -66,12 +66,12 @@ public class ProjectileHitAction extends AbstractEntityAction<ProjectileHitActio
             hitBlock = argument.getHitBlock().getBlockSafe();
 
         if (argument.isEventOnly())
-            this.doEventOnlyMode(engine, target, hitEntity, hitBlock, argument.getBlockFace());
+            this.doEventOnlyMode(target, hitEntity, hitBlock, argument.getBlockFace());
         else
-            this.doNormalMode(engine, target, hitEntity, hitBlock, argument.getBlockFace());
+            this.doNormalMode(target, hitEntity, hitBlock, argument.getBlockFace());
     }
 
-    private void doNormalMode(ScenarioEngine engine, @NotNull Projectile target, @Nullable Entity hitEntity, @Nullable Block hitBlock, @Nullable BlockFace blockFace)
+    private void doNormalMode(@NotNull Projectile target, @Nullable Entity hitEntity, @Nullable Block hitBlock, @Nullable BlockFace blockFace)
     {
         if (hitEntity != null)
         {
@@ -97,7 +97,7 @@ public class ProjectileHitAction extends AbstractEntityAction<ProjectileHitActio
         target.setVelocity(blockVec.multiply(0.02));
     }
 
-    private void doEventOnlyMode(@NotNull ScenarioEngine engine, @NotNull Projectile target, @Nullable Entity hitEntity, @Nullable Block hitBlock, @Nullable BlockFace blockFace)
+    private void doEventOnlyMode(@NotNull Projectile target, @Nullable Entity hitEntity, @Nullable Block hitBlock, @Nullable BlockFace blockFace)
     {
         ProjectileHitEvent event = new ProjectileHitEvent(
                 target,
@@ -126,7 +126,7 @@ public class ProjectileHitAction extends AbstractEntityAction<ProjectileHitActio
                 return false;
         }
 
-        return argument.getHitEntity() == null || argument.getHitEntity().checkMatchedEntity(e.getHitEntity())
+        return (!argument.getHitEntity().canProvideTarget() || argument.getHitEntity().checkMatchedEntity(e.getHitEntity()))
                 && (argument.getHitBlock() == null || argument.getHitBlock().isAdequate(e.getHitBlock()))
                 && (argument.getBlockFace() == null || argument.getBlockFace() == e.getHitBlockFace());
     }
@@ -167,14 +167,15 @@ public class ProjectileHitAction extends AbstractEntityAction<ProjectileHitActio
         public static final String KEY_BLOCK_FACE = "blockFace";
         public static final String KEY_EVENT_ONLY = "eventOnly";
 
+        @NotNull
         EntitySpecifier<?> hitEntity;
         BlockStructure hitBlock;
         BlockFace blockFace;
         boolean eventOnly;
 
         public Argument(
-                @Nullable EntitySpecifier<Projectile> target,
-                @Nullable EntitySpecifier<?> hitEntity,
+                @NotNull EntitySpecifier<Projectile> target,
+                @NotNull EntitySpecifier<?> hitEntity,
                 @Nullable BlockStructure hitBlock,
                 @Nullable BlockFace blockFace,
                 boolean eventOnly

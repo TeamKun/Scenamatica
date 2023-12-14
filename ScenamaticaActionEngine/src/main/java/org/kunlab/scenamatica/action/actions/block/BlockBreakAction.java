@@ -52,8 +52,8 @@ public class BlockBreakAction extends AbstractBlockAction<BlockBreakAction.Argum
         Location location = this.getBlockLocationWithWorld(blockDef, engine);
         Block block = location.getBlock();
 
-        Player player = argument.getActorSpecifier() == null ?
-                null: argument.getActorSpecifier().selectTarget(engine.getContext());
+        Player player = argument.getActorSpecifier().canProvideTarget() ?
+                argument.getActorSpecifier().selectTarget(engine.getContext()): null;
         if (player == null)
         {
             block.breakNaturally();  // 自然に壊れたことにする
@@ -89,7 +89,7 @@ public class BlockBreakAction extends AbstractBlockAction<BlockBreakAction.Argum
                 return false;
         }
 
-        return (argument.getActorSpecifier() == null || argument.getActorSpecifier().checkMatchedPlayer(e.getPlayer()));
+        return (!argument.getActorSpecifier().canProvideTarget() || argument.getActorSpecifier().checkMatchedPlayer(e.getPlayer()));
     }
 
     @Override
@@ -128,10 +128,11 @@ public class BlockBreakAction extends AbstractBlockAction<BlockBreakAction.Argum
         public static final String KEY_ACTOR = "actor";
         public static final String KEY_DROP_ITEMS = "drop_items";
 
+        @NotNull
         PlayerSpecifier actorSpecifier;
         Boolean dropItems;
 
-        public Argument(@Nullable BlockStructure block, PlayerSpecifier actorSpecifier, Boolean dropItems)
+        public Argument(@Nullable BlockStructure block, @NotNull PlayerSpecifier actorSpecifier, Boolean dropItems)
         {
             super(block);
             this.actorSpecifier = actorSpecifier;
@@ -160,7 +161,7 @@ public class BlockBreakAction extends AbstractBlockAction<BlockBreakAction.Argum
                     ensurePresent(Argument.KEY_BLOCK, this.block);
                     break;
                 case CONDITION_REQUIRE:
-                    if (this.actorSpecifier != null && this.actorSpecifier.canProvideTarget())
+                    if (this.actorSpecifier.canProvideTarget())
                         throw new IllegalArgumentException("Cannot specify the actor in the condition requiring mode.");
                     ensureNotPresent(Argument.KEY_DROP_ITEMS, this.dropItems);
 

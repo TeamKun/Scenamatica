@@ -80,9 +80,7 @@ public class EntitySpawnAction<T extends EntitySpawnAction.Argument> extends Abs
         EntitySpawnEvent e = (EntitySpawnEvent) event;
 
         EntitySpecifier<?> entity = argument.getEntity();
-        return entity.isSelectable() ?
-                entity.checkMatchedEntity(e.getEntity()):
-                EntityUtils.tryCheckIsAdequate(entity.getTargetStructure(), e.getEntity());
+        return (!entity.canProvideTarget() || entity.checkMatchedEntity(e.getEntity()));
     }
 
     @Override
@@ -97,11 +95,8 @@ public class EntitySpawnAction<T extends EntitySpawnAction.Argument> extends Abs
     @SuppressWarnings("unchecked")
     public T deserializeArgument(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
     {
-        if (!map.containsKey(Argument.KEY_ENTITY))
-            return (T) new Argument(EntitySpecifierImpl.EMPTY);
-
         return (T) new Argument(
-                EntitySpecifierImpl.tryDeserialize(map.get(Argument.KEY_ENTITY), serializer, EntityStructure.class)
+                EntitySpecifierImpl.tryDeserialize(map.get(Argument.KEY_ENTITY), serializer)
         );
     }
 
@@ -112,6 +107,7 @@ public class EntitySpawnAction<T extends EntitySpawnAction.Argument> extends Abs
     {
         public static final String KEY_ENTITY = "entity";
 
+        @NotNull
         private final EntitySpecifier<?> entity;
         // CreatureSpawnEvent.SpawnReason reason は CreatureSpawnAction でつくる。
 

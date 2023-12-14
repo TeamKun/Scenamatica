@@ -46,6 +46,8 @@ public class PlayerInteractEntityAction<A extends PlayerInteractEntityAction.Arg
 
         Player player = argument.getTarget(engine);
         Entity targetEntity = argument.getEntity().selectTarget(engine.getContext());
+        if (targetEntity == null)
+            throw new IllegalStateException("Cannot select target for this action, please specify target with valid specifier.");
 
         int distanceFromEntity = (int) player.getLocation().distance(targetEntity.getLocation());
         if (distanceFromEntity > 36)
@@ -114,10 +116,11 @@ public class PlayerInteractEntityAction<A extends PlayerInteractEntityAction.Arg
         public static final String KEY_ENTITY = "entity";
         public static final String KEY_HAND = "hand";
 
+        @NotNull
         EntitySpecifier<?> entity;
         EquipmentSlot hand;
 
-        public Argument(PlayerSpecifier target, EntitySpecifier<?> entity, EquipmentSlot hand)
+        public Argument(PlayerSpecifier target, @NotNull EntitySpecifier<?> entity, EquipmentSlot hand)
         {
             super(target);
             this.entity = entity;

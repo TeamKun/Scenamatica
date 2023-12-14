@@ -123,6 +123,7 @@ public class TabCompleteAction extends AbstractServerAction<TabCompleteAction.Ar
         public static final String KEY_COMPLETIONS = "completions";
         public static final String KEY_STRICT = "strict";
 
+        @NotNull
         PlayerSpecifier sender;
         String buffer;
         List<String> completions;

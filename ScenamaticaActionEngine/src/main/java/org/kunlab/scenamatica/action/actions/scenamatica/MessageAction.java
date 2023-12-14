@@ -62,7 +62,7 @@ public class MessageAction extends AbstractScenamaticaAction<MessageAction.Argum
 
         TextComponent message = e.getMessage();
         return (content == null || TextUtils.isSameContent(message, content))
-                && (argument.getRecipient() == null || argument.recipient.checkMatchedPlayer(e.getPlayer()));
+                && (!argument.getRecipient().canProvideTarget() || argument.recipient.checkMatchedPlayer(e.getPlayer()));
     }
 
     @Override
@@ -90,9 +90,10 @@ public class MessageAction extends AbstractScenamaticaAction<MessageAction.Argum
         public static final String KEY_RECIPIENT = "recipient";
 
         String message;
+        @NotNull
         PlayerSpecifier recipient;
 
-        public Argument(String message, PlayerSpecifier recipient)
+        public Argument(String message, @NotNull PlayerSpecifier recipient)
         {
             this.message = message;
             this.recipient = recipient;

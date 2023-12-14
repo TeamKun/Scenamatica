@@ -112,7 +112,7 @@ public class EntityDropItemAction extends AbstractEntityAction<EntityDropItemAct
 
         EntityItemStructure item;
 
-        public Argument(@Nullable EntitySpecifier<Entity> mayTarget, EntityItemStructure item)
+        public Argument(@NotNull EntitySpecifier<Entity> mayTarget, EntityItemStructure item)
         {
             super(mayTarget);
             this.item = item;

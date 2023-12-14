@@ -156,7 +156,7 @@ public class EntityPickupItemAction extends AbstractEntityAction<EntityPickupIte
         EntityItemStructure item;
         String itemSelector;
 
-        public Argument(@Nullable EntitySpecifier<Entity> mayTarget, Integer remaining, EntityItemStructure item)
+        public Argument(@NotNull EntitySpecifier<Entity> mayTarget, Integer remaining, EntityItemStructure item)
         {
             super(mayTarget);
             this.remaining = remaining;
@@ -164,7 +164,7 @@ public class EntityPickupItemAction extends AbstractEntityAction<EntityPickupIte
             this.itemSelector = null;
         }
 
-        public Argument(@Nullable EntitySpecifier<Entity> mayTarget, Integer remaining, String itemSelector)
+        public Argument(@NotNull EntitySpecifier<Entity> mayTarget, Integer remaining, String itemSelector)
         {
             super(mayTarget);
             this.remaining = remaining;

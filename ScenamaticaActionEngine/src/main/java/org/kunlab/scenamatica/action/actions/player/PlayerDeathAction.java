@@ -40,7 +40,7 @@ public class PlayerDeathAction extends AbstractPlayerAction<PlayerDeathAction.Ar
         argument = this.requireArgsNonNull(argument);
 
         Player target = argument.getTarget(engine);
-        if (argument.getKiller() != null)
+        if (argument.getKiller().canProvideTarget())
         {
             Player killer = argument.getKiller().selectTarget(engine.getContext());
             target.setKiller(killer);
@@ -73,8 +73,8 @@ public class PlayerDeathAction extends AbstractPlayerAction<PlayerDeathAction.Ar
         Player killer = target.getKiller();
 
 
-        return (argument.canProvideTarget() && argument.checkMatchedPlayer(target))
-                && (argument.getKiller() == null || argument.getKiller().checkMatchedPlayer(killer));
+        return (!argument.canProvideTarget() || argument.checkMatchedPlayer(target))
+                && (!argument.getKiller().canProvideTarget() || argument.getKiller().checkMatchedPlayer(killer));
     }
 
     private boolean checkDeathMessage(@NotNull PlayerDeathAction.Argument argument, @NotNull PlayerDeathEvent event)
@@ -203,6 +203,7 @@ public class PlayerDeathAction extends AbstractPlayerAction<PlayerDeathAction.Ar
         public static final String KEY_KEEP_INVENTORY = "keepInventory";
         public static final String KEY_DO_EXP_DROP = "doExpDrop";
 
+        @NotNull
         PlayerSpecifier killer;
         @Nullable
         String deathMessage;
@@ -213,7 +214,7 @@ public class PlayerDeathAction extends AbstractPlayerAction<PlayerDeathAction.Ar
         Boolean keepInventory;
         Boolean doExpDrop;
 
-        public Argument(PlayerSpecifier target, @Nullable PlayerSpecifier killer, @Nullable String deathMessage, int newExp, int newLevel, int newTotalExp, Boolean keepLevel, Boolean keepInventory, Boolean doExpDrop)
+        public Argument(PlayerSpecifier target, @NotNull PlayerSpecifier killer, @Nullable String deathMessage, int newExp, int newLevel, int newTotalExp, Boolean keepLevel, Boolean keepInventory, Boolean doExpDrop)
         {
             super(target);
             this.killer = killer;

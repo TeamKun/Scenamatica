@@ -55,8 +55,8 @@ public class BlockPlaceAction extends AbstractBlockAction<BlockPlaceAction.Argum
     {
         argument = this.requireArgsNonNull(argument);
 
-        Player actor = argument.getActorSpecifier() == null ?
-                null: argument.getActorSpecifier().selectTarget(engine.getContext());
+        Player actor = argument.getActorSpecifier().canProvideTarget() ?
+                argument.getActorSpecifier().selectTarget(engine.getContext()): null;
 
         BlockStructure blockDef = argument.getBlock();
         Location location = this.getBlockLocationWithWorld(blockDef, engine);
@@ -100,7 +100,7 @@ public class BlockPlaceAction extends AbstractBlockAction<BlockPlaceAction.Argum
         if (!(argument.getHand() == null || e.getHand() == argument.getHand()))
             return false;
 
-        return (argument.getActorSpecifier() == null || argument.getActorSpecifier().checkMatchedPlayer(e.getPlayer()))
+        return (!argument.getActorSpecifier().canProvideTarget() || argument.getActorSpecifier().checkMatchedPlayer(e.getPlayer()))
                 && (argument.getBlock() == null || this.isConditionFulfilled(argument, engine));
     }
 
@@ -142,11 +142,12 @@ public class BlockPlaceAction extends AbstractBlockAction<BlockPlaceAction.Argum
         public static final String KEY_HAND = "hand";
         public static final String KEY_DIRECTION = "direction";
 
+        @NotNull
         PlayerSpecifier actorSpecifier;
         EquipmentSlot hand;  // HAND or OFF_HAND
         BlockFace direction;
 
-        public Argument(@Nullable BlockStructure block, PlayerSpecifier actorSpecifier, EquipmentSlot hand, BlockFace direction)
+        public Argument(@Nullable BlockStructure block, @NotNull PlayerSpecifier actorSpecifier, EquipmentSlot hand, BlockFace direction)
         {
             super(block);
             this.actorSpecifier = actorSpecifier;
@@ -162,8 +163,8 @@ public class BlockPlaceAction extends AbstractBlockAction<BlockPlaceAction.Argum
 
             Argument arg = (Argument) argument;
 
-            return super.isSame(argument) &&
-                    (this.actorSpecifier == null || this.actorSpecifier.equals(arg.actorSpecifier))
+            return super.isSame(argument)
+                    && this.actorSpecifier.equals(arg.actorSpecifier)
                     && this.hand == arg.hand
                     && this.direction == arg.direction;
 

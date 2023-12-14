@@ -2,7 +2,7 @@ package org.kunlab.scenamatica.action.actions.entity;
 
 import lombok.AllArgsConstructor;
 import org.bukkit.entity.Entity;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.action.actions.AbstractActionArgument;
 import org.kunlab.scenamatica.interfaces.action.ActionArgument;
 import org.kunlab.scenamatica.interfaces.context.Context;
@@ -17,7 +17,7 @@ public abstract class AbstractEntityActionArgument<E extends Entity> extends Abs
 {
     public static final String KEY_TARGET_ENTITY = "target";
 
-    @Nullable
+    @NotNull
     private final EntitySpecifier<E> entity;
 
     @Override
@@ -32,31 +32,19 @@ public abstract class AbstractEntityActionArgument<E extends Entity> extends Abs
         return Objects.equals(this.entity, ((AbstractEntityActionArgument<?>) argument).entity);
     }
 
-    private void ensureTargetIsSet()
-    {
-        if (this.entity == null)
-            throw new IllegalStateException("Target is not set.");
-    }
-
     public Entity selectTarget(Context context)
     {
-        this.ensureTargetIsSet();
-        assert this.entity != null;
         return this.entity.selectTarget(context);
     }
 
     public String getTargetString()
     {
-        this.ensureTargetIsSet();
-        assert this.entity != null;
         return this.entity.getSelectorString();
     }
 
     @Override
     public String getArgumentString()
     {
-        this.ensureTargetIsSet();
-        assert this.entity != null;
         return this.entity.getArgumentString();
     }
 
@@ -67,19 +55,17 @@ public abstract class AbstractEntityActionArgument<E extends Entity> extends Abs
 
     public EntityStructure getTargetStructure()
     {
-        return this.entity == null ? null: this.entity.getTargetStructure();
+        return this.entity.getTargetStructure();
     }
 
     public boolean checkMatchedEntity(Entity entity)
     {
-        if (this.entity == null)
-            return true;
         return this.entity.checkMatchedEntity(entity);
     }
 
     public void ensureCanProvideTarget()
     {
-        if (this.entity == null || !this.entity.canProvideTarget())
+        if (!this.entity.canProvideTarget())
             throw new IllegalArgumentException("Cannot select target for this action, please specify target with valid specifier.");
     }
 }
