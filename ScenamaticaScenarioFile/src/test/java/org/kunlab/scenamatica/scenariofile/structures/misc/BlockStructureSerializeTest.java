@@ -5,6 +5,7 @@ import org.bukkit.Material;
 import org.bukkit.block.Biome;
 import org.junit.jupiter.api.Test;
 import org.kunlab.scenamatica.interfaces.scenariofile.misc.BlockStructure;
+import org.kunlab.scenamatica.scenariofile.StructureSerializerImpl;
 import org.kunlab.scenamatica.scenariofile.structures.utils.MapTestUtil;
 
 import java.util.Collections;
@@ -17,7 +18,7 @@ public class BlockStructureSerializeTest
 {
     public static final BlockStructure FULFILLED = new BlockStructureImpl(
             Material.ACACIA_SIGN,
-            new Location(null, 114, 514, 19),
+            LocationStructureImpl.from(new Location(null, 114, 514, 19)),
             new HashMap<String, Object>()
             {{
                 this.put("key", "value");
@@ -68,7 +69,7 @@ public class BlockStructureSerializeTest
     @Test
     void 正常にシリアライズできるか()
     {
-        Map<String, Object> map = BlockStructureImpl.serialize(FULFILLED);
+        Map<String, Object> map = BlockStructureImpl.serialize(FULFILLED, StructureSerializerImpl.getInstance());
 
         MapTestUtil.assertEqual(FULFILLED_MAP, map);
     }
@@ -76,7 +77,7 @@ public class BlockStructureSerializeTest
     @Test
     void 正常にデシリアライズできるか()
     {
-        BlockStructure structure = BlockStructureImpl.deserialize(FULFILLED_MAP);
+        BlockStructure structure = BlockStructureImpl.deserialize(FULFILLED_MAP, StructureSerializerImpl.getInstance());
 
         assertEquals(structure, FULFILLED);
     }
@@ -84,14 +85,14 @@ public class BlockStructureSerializeTest
     @Test
     void 必須項目のみでシリアライズできるか()
     {
-        Map<String, Object> map = BlockStructureImpl.serialize(EMPTY);
+        Map<String, Object> map = BlockStructureImpl.serialize(EMPTY, StructureSerializerImpl.getInstance());
         MapTestUtil.assertEqual(EMPTY_MAP, map);
     }
 
     @Test
     void 必須項目のみでデシリアライズできるか()
     {
-        BlockStructure structure = BlockStructureImpl.deserialize(EMPTY_MAP);
+        BlockStructure structure = BlockStructureImpl.deserialize(EMPTY_MAP, StructureSerializerImpl.getInstance());
         assertEquals(EMPTY, structure);
     }
 }

@@ -22,6 +22,18 @@ public class LocationStructureImpl implements LocationStructure
     Float pitch;
     String world;
 
+    public static LocationStructure from(Location location)
+    {
+        return new LocationStructureImpl(
+                location.getX(),
+                location.getY(),
+                location.getZ(),
+                location.getYaw() == 0 ? null: location.getYaw(),
+                location.getPitch() == 0 ? null: location.getPitch(),
+                location.getWorld() == null ? null: location.getWorld().getName()
+        );
+    }
+
     public static Map<String, Object> serialize(LocationStructure location)
     {
         Map<String, Object> map = new HashMap<>();
@@ -40,12 +52,12 @@ public class LocationStructureImpl implements LocationStructure
 
     public static void validate(Map<String, Object> map)
     {
-        MapUtils.checkTypeIfContains(map, KEY_X, Double.class);
-        MapUtils.checkTypeIfContains(map, KEY_Y, Double.class);
-        MapUtils.checkTypeIfContains(map, kEY_Z, Double.class);
+        MapUtils.checkNumberIfContains(map, KEY_X);
+        MapUtils.checkNumberIfContains(map, KEY_Y);
+        MapUtils.checkNumberIfContains(map, kEY_Z);
 
-        MapUtils.checkTypeIfContains(map, KEY_YAW, Float.class);
-        MapUtils.checkTypeIfContains(map, KEY_PITCH, Float.class);
+        MapUtils.checkNumberIfContains(map, KEY_YAW);
+        MapUtils.checkNumberIfContains(map, KEY_PITCH);
 
         MapUtils.checkTypeIfContains(map, KEY_WORLD, String.class);
     }
@@ -101,7 +113,7 @@ public class LocationStructureImpl implements LocationStructure
 
         String world = object.getWorld().getName();
 
-        double EPSILON = strict ? 1e-6: 1;
+        double EPSILON = strict ? 1e-3: 1;
 
         return (this.x == null || Math.abs(this.x - x) < EPSILON)
                 && (this.y == null || Math.abs(this.y - y) < EPSILON)
@@ -122,5 +134,11 @@ public class LocationStructureImpl implements LocationStructure
                 this.yaw == null ? 0: this.yaw,
                 this.pitch == null ? 0: this.pitch
         );
+    }
+
+    @Override
+    public LocationStructure changeWorld(String world)
+    {
+        return new LocationStructureImpl(this.x, this.y, this.z, this.yaw, this.pitch, world);
     }
 }

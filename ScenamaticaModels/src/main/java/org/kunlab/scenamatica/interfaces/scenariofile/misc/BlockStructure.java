@@ -38,7 +38,7 @@ public interface BlockStructure extends Structure, Mapped<Block>, Creatable<Bloc
      *
      * @return ブロックの場所
      */
-    Location getLocation();
+    LocationStructure getLocation();
 
     /**
      * ブロックのメタデータを取得します。

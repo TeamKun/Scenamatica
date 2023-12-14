@@ -2,7 +2,6 @@ package org.kunlab.scenamatica.scenariofile.structures.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import org.bukkit.Location;
 import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -15,6 +14,8 @@ import org.kunlab.scenamatica.commons.utils.Utils;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.entity.DamageStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.entity.EntityStructure;
+import org.kunlab.scenamatica.interfaces.scenariofile.misc.LocationStructure;
+import org.kunlab.scenamatica.scenariofile.structures.misc.LocationStructureImpl;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -29,7 +30,7 @@ import java.util.UUID;
 public class EntityStructureImpl implements EntityStructure
 {
     protected final EntityType type;
-    protected final Location location;
+    protected final LocationStructure location;
 
     protected final Vector velocity;
     protected final String customName;
@@ -117,7 +118,8 @@ public class EntityStructureImpl implements EntityStructure
     {
         Map<String, Object> map = new HashMap<>();
         MapUtils.putAsStrIfNotNull(map, KEY_TYPE, entity.getType());
-        MapUtils.putLocationIfNotNull(map, KEY_LOCATION, entity.getLocation());
+        if (entity.getLocation() != null)
+            map.put(KEY_LOCATION, serializer.serialize(entity.getLocation(), LocationStructure.class));
         if (entity.getVelocity() != null)
             MapUtils.putIfNotNull(map, KEY_VELOCITY, entity.getVelocity().serialize());
         MapUtils.putIfNotNull(map, KEY_CUSTOM_NAME, entity.getCustomName());
@@ -165,7 +167,6 @@ public class EntityStructureImpl implements EntityStructure
                 throw new IllegalArgumentException("Invalid UUID.", e);
             }
 
-        MapUtils.checkLocationIfContains(map, KEY_LOCATION);
         MapUtils.checkTypeIfContains(map, KEY_CUSTOM_NAME, String.class);
         MapUtils.checkTypeIfContains(map, KEY_GLOWING, Boolean.class);
         MapUtils.checkTypeIfContains(map, KEY_GRAVITY, Boolean.class);
@@ -190,9 +191,15 @@ public class EntityStructureImpl implements EntityStructure
         EntityType type = null;
         if (map.containsKey(KEY_TYPE))
             type = Utils.searchEntityType((String) map.get(KEY_TYPE));
-        Location loc = MapUtils.getAsLocationOrNull(map, KEY_LOCATION);
-        if (loc == null)
-            loc = MapUtils.getAsLocationOrNull(map, KEY_LOCATION_2);
+        LocationStructure loc;
+        if (map.containsKey(KEY_LOCATION))
+            loc = serializer.deserialize(
+                    MapUtils.checkAndCastMap(map.get(KEY_LOCATION)), LocationStructure.class);
+        else if (map.containsKey(KEY_LOCATION_2))
+            loc = LocationStructureImpl.deserialize(
+                    MapUtils.checkAndCastMap(map.get(KEY_LOCATION_2)));
+        else
+            loc = null;
 
         Vector velocity = null;
         if (map.containsKey(KEY_VELOCITY))
@@ -281,7 +288,13 @@ public class EntityStructureImpl implements EntityStructure
 
     protected void applyToEntity(Entity entity)
     {
-
+        if (this.location != null)
+        {
+            if (this.location.getWorld() == null)
+                entity.teleport(this.location.changeWorld(entity.getWorld().getName()).create());
+            else
+                entity.teleport(this.location.create());
+        }
         if (this.customName != null)
             entity.setCustomName(this.customName);
         if (this.velocity != null)
@@ -368,7 +381,7 @@ public class EntityStructureImpl implements EntityStructure
 
         return (this.type == null || entity.getType() == this.type)
                 && (this.customName == null || this.customName.equals(entity.getCustomName()))
-                && (this.location == null || this.location.equals(entity.getLocation()))
+                && (this.location == null || this.location.isAdequate(entity.getLocation(), strict))
                 && (this.velocity == null || this.velocity.equals(entity.getVelocity()))
                 && (this.uuid == null || this.uuid.equals(entity.getUniqueId()))
                 && (this.glowing == null || this.glowing.equals(entity.isGlowing()))

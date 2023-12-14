@@ -8,7 +8,6 @@ import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.kunlab.scenamatica.action.utils.LocationComparator;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.commons.utils.Utils;
 import org.kunlab.scenamatica.enums.ScenarioType;
@@ -16,6 +15,7 @@ import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
+import org.kunlab.scenamatica.interfaces.scenariofile.misc.LocationStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.PlayerSpecifier;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
@@ -54,8 +54,8 @@ public class PlayerMoveAction<T extends PlayerMoveAction.Argument> extends Abstr
         assert event instanceof PlayerMoveEvent;
         PlayerMoveEvent e = (PlayerMoveEvent) event;
 
-        return (argument.getFrom() == null || LocationComparator.equals(argument.getFrom(), e.getFrom()))
-                && (argument.getTo() == null || LocationComparator.equals(argument.getTo(), e.getTo()));
+        return (argument.getFrom() == null || argument.getFrom().isAdequate(e.getFrom()))
+                && (argument.getTo() == null || argument.getTo().isAdequate(e.getTo()));
     }
 
     @Override
@@ -69,11 +69,26 @@ public class PlayerMoveAction<T extends PlayerMoveAction.Argument> extends Abstr
     @Override
     public T deserializeArgument(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
     {
+        LocationStructure from = null;
+        if (map.containsKey(Argument.KEY_FROM))
+            from = serializer.deserialize(
+                    MapUtils.checkAndCastMap(map.get(Argument.KEY_FROM)),
+                    LocationStructure.class
+            );
+
+        LocationStructure to = null;
+        if (map.containsKey(Argument.KEY_TO))
+            to = serializer.deserialize(
+                    MapUtils.checkAndCastMap(map.get(Argument.KEY_TO)),
+                    LocationStructure.class
+            );
+
+
         // noinspection unchecked
         return (T) new Argument(
                 super.deserializeTarget(map, serializer),
-                MapUtils.getAsLocationOrNull(map, Argument.KEY_FROM),
-                MapUtils.getAsLocationOrNull(map, Argument.KEY_TO)
+                from,
+                to
         );
     }
 
@@ -84,10 +99,10 @@ public class PlayerMoveAction<T extends PlayerMoveAction.Argument> extends Abstr
         public static final String KEY_FROM = "from";
         public static final String KEY_TO = "to";
 
-        private final Location from;
-        private final Location to;
+        private final LocationStructure from;
+        private final LocationStructure to;
 
-        public Argument(PlayerSpecifier target, Location from, Location to)
+        public Argument(PlayerSpecifier target, LocationStructure from, LocationStructure to)
         {
             super(target);
             this.from = from;

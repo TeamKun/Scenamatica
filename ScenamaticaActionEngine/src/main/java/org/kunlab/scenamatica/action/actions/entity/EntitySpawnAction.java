@@ -21,6 +21,7 @@ import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.entity.EntityStructure;
+import org.kunlab.scenamatica.interfaces.scenariofile.misc.LocationStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.EntitySpecifier;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
@@ -34,8 +35,9 @@ public class EntitySpawnAction<T extends EntitySpawnAction.Argument> extends Abs
 {
     public static final String KEY_ACTION_NAME = "entity_spawn";
 
-    public static <T extends Entity> T spawnEntity(EntityStructure structure, @Nullable Location spawnLoc, ScenarioEngine engine)
+    public static <T extends Entity> T spawnEntity(EntityStructure structure, @Nullable LocationStructure locDef, ScenarioEngine engine)
     {
+        Location spawnLoc = locDef == null ? null: locDef.create();
         if (spawnLoc == null)
             spawnLoc = engine.getContext().getStage().getSpawnLocation();
         // World が指定されていない場合は、ステージのワールドを使う。
@@ -66,7 +68,7 @@ public class EntitySpawnAction<T extends EntitySpawnAction.Argument> extends Abs
 
         EntityStructure structure = argument.getEntity().getTargetStructure();
         assert structure != null;
-        Location spawnLoc = structure.getLocation();
+        LocationStructure spawnLoc = structure.getLocation();
 
         spawnEntity(structure, spawnLoc, engine);
     }

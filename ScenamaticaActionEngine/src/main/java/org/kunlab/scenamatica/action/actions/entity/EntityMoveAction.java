@@ -9,7 +9,6 @@ import org.bukkit.entity.Mob;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.kunlab.scenamatica.action.utils.LocationComparator;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.commons.utils.Utils;
 import org.kunlab.scenamatica.enums.ScenarioType;
@@ -17,6 +16,7 @@ import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
+import org.kunlab.scenamatica.interfaces.scenariofile.misc.LocationStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.EntitySpecifier;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
@@ -64,8 +64,8 @@ public class EntityMoveAction extends AbstractEntityAction<EntityMoveAction.Argu
         assert event instanceof EntityMoveEvent;
         EntityMoveEvent e = (EntityMoveEvent) event;
 
-        return (argument.getFrom() == null || LocationComparator.equals(argument.getFrom(), e.getFrom()))
-                && (argument.getTo() == null || LocationComparator.equals(argument.getTo(), e.getTo()));
+        return (argument.getFrom() == null || argument.getFrom().isAdequate(e.getFrom())
+                && (argument.getTo() == null || argument.getTo().isAdequate(e.getTo())));
     }
 
     @Override
@@ -79,10 +79,19 @@ public class EntityMoveAction extends AbstractEntityAction<EntityMoveAction.Argu
     @Override
     public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
     {
+        LocationStructure from = null;
+        if (map.containsKey(Argument.KEY_FROM))
+            from = serializer.deserialize(MapUtils.checkAndCastMap(map.get(Argument.KEY_FROM)), LocationStructure.class);
+
+        LocationStructure to = null;
+        if (map.containsKey(Argument.KEY_TO))
+            to = serializer.deserialize(MapUtils.checkAndCastMap(map.get(Argument.KEY_TO)), LocationStructure.class);
+
+
         return new Argument(
                 super.deserializeTarget(map, serializer),
-                MapUtils.getAsLocationOrNull(map, Argument.KEY_FROM),
-                MapUtils.getAsLocationOrNull(map, Argument.KEY_TO),
+                from,
+                to,
                 MapUtils.getOrDefault(map, Argument.KEY_USE_AI, true)
         );
     }
@@ -95,12 +104,12 @@ public class EntityMoveAction extends AbstractEntityAction<EntityMoveAction.Argu
         public static final String KEY_TO = "to";
         public static final String KEY_USE_AI = "ai";
 
-        Location from;
-        Location to;
+        LocationStructure from;
+        LocationStructure to;
         // Execute のときのみ. デフォは true -> テレポート.
         boolean useAI;
 
-        public Argument(@NotNull EntitySpecifier<Entity> mayTarget, Location from, Location to, boolean useAI)
+        public Argument(@NotNull EntitySpecifier<Entity> mayTarget, LocationStructure from, LocationStructure to, boolean useAI)
         {
             super(mayTarget);
             this.from = from;

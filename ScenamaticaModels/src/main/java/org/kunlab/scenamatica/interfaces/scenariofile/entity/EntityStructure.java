@@ -1,10 +1,10 @@
 package org.kunlab.scenamatica.interfaces.scenariofile.entity;
 
-import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.interfaces.scenariofile.Structure;
+import org.kunlab.scenamatica.interfaces.scenariofile.misc.LocationStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.misc.ProjectileSourceStructure;
 
 import java.util.List;
@@ -48,7 +48,7 @@ public interface EntityStructure extends Structure, ProjectileSourceStructure
      *
      * @return 位置
      */
-    Location getLocation();
+    LocationStructure getLocation();
 
     /**
      * このエンティティの速度を取得します。

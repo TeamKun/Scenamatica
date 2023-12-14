@@ -11,6 +11,7 @@ import org.kunlab.scenamatica.interfaces.scenariofile.entity.EntityStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.entity.entities.AEntityStructure;
 import org.kunlab.scenamatica.scenariofile.StructureSerializerImpl;
 import org.kunlab.scenamatica.scenariofile.structures.entity.entities.AEntityStructureImpl;
+import org.kunlab.scenamatica.scenariofile.structures.misc.LocationStructureImpl;
 import org.kunlab.scenamatica.scenariofile.structures.utils.MapTestUtil;
 
 import java.lang.reflect.Field;
@@ -25,7 +26,7 @@ public class AEntityStructureSerializeTest
 {
     public static final AEntityStructure FULFILLED = new AEntityStructureImpl(
             EntityType.UNKNOWN,
-            new Location(null, 1145, 1419, 19, 8, 10),
+            LocationStructureImpl.from(new Location(null, 1145, 1419, 19, 8, 10)),
             new Vector(11, 45, 14),
             "YajuSNPI",
             UUID.fromString("a1b1c4d5-e1f4-a1b9-c1d9-e8f1a0bcdef1"),

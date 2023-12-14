@@ -51,6 +51,6 @@ public abstract class AbstractBlockAction<A extends AbstractBlockActionArgument>
 
     protected Location getBlockLocationWithWorld(@NotNull BlockStructure block, @NotNull ScenarioEngine engine)
     {
-        return Utils.assignWorldToLocation(block.getLocation().clone(), engine);
+        return Utils.assignWorldToLocation(block.getLocation().create().clone(), engine);
     }
 }

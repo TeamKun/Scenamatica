@@ -1,9 +1,9 @@
 package org.kunlab.scenamatica.interfaces.scenariofile.context;
 
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.kunlab.scenamatica.interfaces.scenariofile.Mapped;
 import org.kunlab.scenamatica.interfaces.scenariofile.entity.entities.HumanEntityStructure;
+import org.kunlab.scenamatica.interfaces.scenariofile.misc.LocationStructure;
 
 import java.util.List;
 
@@ -79,14 +79,14 @@ public interface PlayerStructure extends HumanEntityStructure, Mapped<Player>
      *
      * @return コンパスのターゲット
      */
-    Location getCompassTarget();
+    LocationStructure getCompassTarget();
 
     /**
      * ベッドのスポーン地点を取得します。
      *
      * @return ベッドのスポーン地点
      */
-    Location getBedSpawnLocation();
+    LocationStructure getBedSpawnLocation();
 
     /**
      * 経験値を取得します。

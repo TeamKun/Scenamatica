@@ -1,7 +1,6 @@
 package org.kunlab.scenamatica.scenariofile.structures.context;
 
 import lombok.Value;
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -9,6 +8,7 @@ import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.context.PlayerStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.entity.entities.HumanEntityStructure;
+import org.kunlab.scenamatica.interfaces.scenariofile.misc.LocationStructure;
 import org.kunlab.scenamatica.scenariofile.structures.entity.entities.HumanEntityStructureImpl;
 
 import java.util.HashMap;
@@ -27,8 +27,8 @@ public class PlayerStructureImpl extends HumanEntityStructureImpl implements Pla
     String playerListName;
     String playerListHeader;
     String playerListFooter;
-    Location compassTarget;
-    Location bedSpawnLocation;
+    LocationStructure compassTarget;
+    LocationStructure bedSpawnLocation;
     Integer exp;
     Integer level;
     Integer totalExperience;
@@ -42,8 +42,8 @@ public class PlayerStructureImpl extends HumanEntityStructureImpl implements Pla
 
     public PlayerStructureImpl(@NotNull HumanEntityStructure human, @Nullable String name, Boolean online, String displayName,
                                String playerListName, String playerListHeader,
-                               String playerListFooter, Location compassTarget,
-                               Location bedSpawnLocation, Integer exp,
+                               String playerListFooter, LocationStructure compassTarget,
+                               LocationStructure bedSpawnLocation, Integer exp,
                                Integer level, Integer totalExperience,
                                Boolean allowFlight, Boolean flying,
                                Float walkSpeed, Float flySpeed, Integer opLevel, List<String> activePermissions)
@@ -69,8 +69,8 @@ public class PlayerStructureImpl extends HumanEntityStructureImpl implements Pla
     }
 
     public PlayerStructureImpl(String name, Boolean online, String displayName, String playerListName,
-                               String playerListHeader, String playerListFooter, Location compassTarget,
-                               Location bedSpawnLocation, Integer exp, Integer level, Integer totalExperience,
+                               String playerListHeader, String playerListFooter, LocationStructure compassTarget,
+                               LocationStructure bedSpawnLocation, Integer exp, Integer level, Integer totalExperience,
                                Boolean allowFlight, Boolean flying, Float walkSpeed, Float flySpeed, Integer opLevel,
                                List<String> activePermissions)
     {
@@ -101,8 +101,10 @@ public class PlayerStructureImpl extends HumanEntityStructureImpl implements Pla
         MapUtils.putIfNotNull(map, KEY_ONLINE, structure.getOnline());
 
         MapUtils.putIfNotNull(map, KEY_DISPLAY_NAME, structure.getDisplayName());
-        MapUtils.putLocationIfNotNull(map, KEY_COMPASS_TARGET, structure.getCompassTarget());
-        MapUtils.putLocationIfNotNull(map, KEY_BED_SPAWN_LOCATION, structure.getBedSpawnLocation());
+        if (structure.getCompassTarget() != null)
+            map.put(KEY_COMPASS_TARGET, serializer.serialize(structure.getCompassTarget(), LocationStructure.class));
+        if (structure.getBedSpawnLocation() != null)
+            map.put(KEY_BED_SPAWN_LOCATION, serializer.serialize(structure.getBedSpawnLocation(), LocationStructure.class));
         MapUtils.putIfNotNull(map, KEY_EXP, structure.getExp());
         MapUtils.putIfNotNull(map, KEY_LEVEL, structure.getLevel());
         MapUtils.putIfNotNull(map, KEY_TOTAL_EXPERIENCE, structure.getTotalExperience());
@@ -137,8 +139,10 @@ public class PlayerStructureImpl extends HumanEntityStructureImpl implements Pla
         MapUtils.checkTypeIfContains(map, KEY_NAME, String.class);
         MapUtils.checkTypeIfContains(map, KEY_ONLINE, Boolean.class);
         MapUtils.checkTypeIfContains(map, KEY_DISPLAY_NAME, String.class);
-        MapUtils.checkLocationIfContains(map, KEY_COMPASS_TARGET);
-        MapUtils.checkLocationIfContains(map, KEY_BED_SPAWN_LOCATION);
+        if (map.containsKey(KEY_COMPASS_TARGET))
+            MapUtils.checkTypeIfContains(map, KEY_COMPASS_TARGET, Map.class);
+        if (map.containsKey(KEY_BED_SPAWN_LOCATION))
+            MapUtils.checkTypeIfContains(map, KEY_BED_SPAWN_LOCATION, Map.class);
         MapUtils.checkTypeIfContains(map, KEY_EXP, Number.class);
         MapUtils.checkTypeIfContains(map, KEY_LEVEL, Integer.class);
         MapUtils.checkTypeIfContains(map, KEY_TOTAL_EXPERIENCE, Integer.class);
@@ -167,8 +171,12 @@ public class PlayerStructureImpl extends HumanEntityStructureImpl implements Pla
 
         Boolean online = MapUtils.getOrNull(map, KEY_ONLINE);
         String displayName = MapUtils.getOrNull(map, KEY_DISPLAY_NAME);
-        Location compassTarget = MapUtils.getAsLocationOrNull(map, KEY_COMPASS_TARGET);
-        Location bedSpawnLocation = MapUtils.getAsLocationOrNull(map, KEY_BED_SPAWN_LOCATION);
+        LocationStructure compassTarget = null;
+        if (map.containsKey(KEY_COMPASS_TARGET))
+            compassTarget = serializer.deserialize(MapUtils.checkAndCastMap(map.get(KEY_COMPASS_TARGET)), LocationStructure.class);
+        LocationStructure bedSpawnLocation = null;
+        if (map.containsKey(KEY_BED_SPAWN_LOCATION))
+            bedSpawnLocation = serializer.deserialize(MapUtils.checkAndCastMap(map.get(KEY_BED_SPAWN_LOCATION)), LocationStructure.class);
         Integer exp = MapUtils.getOrNull(map, KEY_EXP);
         Integer level = MapUtils.getOrNull(map, KEY_LEVEL);
         Integer totalExperience = MapUtils.getOrNull(map, KEY_TOTAL_EXPERIENCE);
@@ -272,9 +280,9 @@ public class PlayerStructureImpl extends HumanEntityStructureImpl implements Pla
         if (this.playerListFooter != null)
             player.setPlayerListFooter(this.playerListFooter);
         if (this.compassTarget != null)
-            player.setCompassTarget(this.compassTarget);
+            player.setCompassTarget(this.compassTarget.create());
         if (this.bedSpawnLocation != null)
-            player.setBedSpawnLocation(this.bedSpawnLocation);
+            player.setBedSpawnLocation(this.bedSpawnLocation.create());
         if (this.exp != null)
             player.setExp(this.exp);
         if (this.level != null)
@@ -313,8 +321,8 @@ public class PlayerStructureImpl extends HumanEntityStructureImpl implements Pla
                 && (this.playerListName == null || this.playerListName.equals(player.getPlayerListName()))
                 && (this.playerListHeader == null || this.playerListHeader.equals(player.getPlayerListHeader()))
                 && (this.playerListFooter == null || this.playerListFooter.equals(player.getPlayerListFooter()))
-                && (this.compassTarget == null || this.compassTarget.equals(player.getCompassTarget()))
-                && (this.bedSpawnLocation == null || this.bedSpawnLocation.equals(player.getBedSpawnLocation()))
+                && (this.compassTarget == null || this.compassTarget.isAdequate(player.getCompassTarget(), strict))
+                && (this.bedSpawnLocation == null || this.bedSpawnLocation.isAdequate(player.getBedSpawnLocation(), strict))
                 && (this.exp == null || this.exp == player.getExp())
                 && (this.level == null || this.level.equals(player.getLevel()))
                 && (this.totalExperience == null || this.totalExperience.equals(player.getTotalExperience()))

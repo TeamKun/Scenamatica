@@ -94,7 +94,7 @@ public class EntityPlaceAction extends AbstractEntityAction<EntityPlaceAction.Ar
     public void execute(@NotNull ScenarioEngine engine, @Nullable Argument argument)
     {
         argument = this.requireArgsNonNull(argument);
-        Location location = argument.getBlock().getLocation();
+        Location location = argument.getBlock().getLocation().create();
         Actor actor = PlayerUtils.getActorByStringOrThrow(engine, argument.getPlayerSpecifier());
         if (location.getWorld() == null)
         {

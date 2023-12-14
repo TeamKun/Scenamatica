@@ -17,6 +17,7 @@ import org.kunlab.scenamatica.interfaces.scenariofile.inventory.InventoryStructu
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.ItemStackStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.PlayerInventoryStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.misc.BlockStructure;
+import org.kunlab.scenamatica.interfaces.scenariofile.misc.LocationStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.misc.ProjectileSourceStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.scenario.ScenarioStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerStructure;
@@ -32,6 +33,7 @@ import org.kunlab.scenamatica.scenariofile.structures.inventory.InventoryStructu
 import org.kunlab.scenamatica.scenariofile.structures.inventory.ItemStackStructureImpl;
 import org.kunlab.scenamatica.scenariofile.structures.inventory.PlayerInventoryStructureImpl;
 import org.kunlab.scenamatica.scenariofile.structures.misc.BlockStructureImpl;
+import org.kunlab.scenamatica.scenariofile.structures.misc.LocationStructureImpl;
 import org.kunlab.scenamatica.scenariofile.structures.scenario.ActionStructureImpl;
 import org.kunlab.scenamatica.scenariofile.structures.scenario.ScenarioStructureImpl;
 import org.kunlab.scenamatica.scenariofile.structures.trigger.TriggerStructureImpl;
@@ -269,6 +271,13 @@ public class StructureSerializerImpl implements StructureSerializer
                 BlockStructureImpl::serialize,
                 BlockStructureImpl::deserialize,
                 BlockStructureImpl::validate
+        );
+
+        this.registerStructure(
+                LocationStructure.class,
+                LocationStructureImpl::serialize,
+                LocationStructureImpl::deserialize,
+                LocationStructureImpl::validate
         );
     }
 

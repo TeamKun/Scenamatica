@@ -18,6 +18,7 @@ import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
+import org.kunlab.scenamatica.interfaces.scenariofile.misc.LocationStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Arrays;
@@ -48,7 +49,7 @@ public class WorldBorderAction extends AbstractWorldAction<WorldBorderAction.Arg
         if (argument.getSize() != -1)
             border.setSize(argument.getSize(), argument.getDuration());
         if (argument.getCenter() != null)
-            border.setCenter(argument.getCenter());
+            border.setCenter(argument.getCenter().create());
     }
 
     @Override
@@ -90,8 +91,8 @@ public class WorldBorderAction extends AbstractWorldAction<WorldBorderAction.Arg
                 && (argument.getSize() == -1 || argument.getSize() == size)
                 && (argument.getOldSize() == -1 || argument.getOldSize() == sizeOld)
                 && (argument.getDuration() == -1 || argument.getDuration() == duration)
-                && (argument.getCenter() == null || Objects.equals(argument.getCenter(), center))
-                && (argument.getOldCenter() == null || Objects.equals(argument.getOldCenter(), centerOld));
+                && (argument.getCenter() == null || argument.getCenter().isAdequate(center))
+                && (argument.getOldCenter() == null || argument.getOldCenter().isAdequate(centerOld));
     }
 
     @Override
@@ -111,8 +112,19 @@ public class WorldBorderAction extends AbstractWorldAction<WorldBorderAction.Arg
         MapUtils.checkNumberIfContains(map, Argument.KEY_SIZE_OLD);
         MapUtils.checkNumberIfContains(map, Argument.KEY_DURATION);
 
-        MapUtils.checkLocationIfContains(map, Argument.KEY_CENTER);
-        MapUtils.checkLocationIfContains(map, Argument.KEY_CENTER_OLD);
+        LocationStructure center = null;
+        if (map.containsKey(Argument.KEY_CENTER))
+            center = serializer.deserialize(
+                    MapUtils.checkAndCastMap(map.get(Argument.KEY_CENTER)),
+                    LocationStructure.class
+            );
+
+        LocationStructure centerOld = null;
+        if (map.containsKey(Argument.KEY_CENTER_OLD))
+            centerOld = serializer.deserialize(
+                    MapUtils.checkAndCastMap(map.get(Argument.KEY_CENTER_OLD)),
+                    LocationStructure.class
+            );
 
         return new Argument(
                 super.deserializeWorld(map),
@@ -120,8 +132,8 @@ public class WorldBorderAction extends AbstractWorldAction<WorldBorderAction.Arg
                 MapUtils.getAsNumberSafe(map, Argument.KEY_SIZE).doubleValue(),
                 MapUtils.getAsNumberSafe(map, Argument.KEY_SIZE_OLD).doubleValue(),
                 MapUtils.getAsNumberSafe(map, Argument.KEY_DURATION).longValue(),
-                MapUtils.getAsLocationOrNull(map, Argument.KEY_CENTER),
-                MapUtils.getAsLocationOrNull(map, Argument.KEY_CENTER_OLD)
+                center,
+                centerOld
         );
     }
 
@@ -156,11 +168,11 @@ public class WorldBorderAction extends AbstractWorldAction<WorldBorderAction.Arg
         long duration;
 
         @Nullable
-        Location center;
+        LocationStructure center;
         @Nullable
-        Location oldCenter;
+        LocationStructure oldCenter;
 
-        public Argument(@NotNull NamespacedKey worldRef, @Nullable WorldBorderBoundsChangeEvent.Type type, double size, double oldSize, long duration, @Nullable Location center, @Nullable Location oldCenter)
+        public Argument(@NotNull NamespacedKey worldRef, @Nullable WorldBorderBoundsChangeEvent.Type type, double size, double oldSize, long duration, @Nullable LocationStructure center, @Nullable LocationStructure oldCenter)
         {
             super(worldRef);
             this.type = type;

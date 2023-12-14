@@ -143,7 +143,7 @@ public class ContextManagerImpl implements ContextManager
             spawnLoc = new Location(stage, DEFAULT_LOC_X, y, DEFAULT_LOC_Z);
         }
         else
-            spawnLoc = entity.getLocation();
+            spawnLoc = entity.getLocation().create();
 
 
         return ThreadingUtil.waitForOrThrow(this.registry, () -> {

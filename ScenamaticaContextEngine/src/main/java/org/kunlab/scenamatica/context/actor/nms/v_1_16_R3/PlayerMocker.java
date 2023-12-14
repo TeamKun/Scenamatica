@@ -116,7 +116,7 @@ public class PlayerMocker extends PlayerMockerBase
             player.compassTarget = player.getBukkitEntity().getLocation();
         if (structure.getBedSpawnLocation() != null)
         {
-            Location loc = structure.getBedSpawnLocation();
+            Location loc = structure.getBedSpawnLocation().create();
             World world = Bukkit.getWorld(loc.getWorld().getName());
             if (world == null)
                 throw new IllegalArgumentException("World not found: " + loc.getWorld().getName());
@@ -169,7 +169,7 @@ public class PlayerMocker extends PlayerMockerBase
     {
         if (structure.getLocation() != null)
         {
-            Location loc = structure.getLocation();
+            Location loc = structure.getLocation().create();
             player.setLocation(
                     loc.getX(), loc.getY(), loc.getZ(),
                     loc.getYaw(), loc.getPitch()
@@ -259,7 +259,7 @@ public class PlayerMocker extends PlayerMockerBase
 
         Location initialLocation;
         if (structure.getLocation() != null)
-            initialLocation = structure.getLocation().clone();
+            initialLocation = structure.getLocation().create().clone();
         else if (world != null)
             initialLocation = world.getSpawnLocation().clone();
         else

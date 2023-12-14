@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.misc.BlockStructure;
+import org.kunlab.scenamatica.interfaces.scenariofile.misc.LocationStructure;
 
 import java.util.Locale;
 import java.util.UUID;
@@ -42,6 +43,11 @@ public class Utils
     public static Location assignWorldToBlockLocation(@NotNull BlockStructure block, @NotNull ScenarioEngine engine)
     {
         return assignWorldToLocation(block.getLocation(), engine);
+    }
+
+    public static Location assignWorldToLocation(@NotNull LocationStructure location, @NotNull ScenarioEngine engine)
+    {
+        return assignWorldToLocation(location.create(), engine);
     }
 
     public static boolean isEqualLocation(@NotNull Location loc1, @NotNull Location loc2)

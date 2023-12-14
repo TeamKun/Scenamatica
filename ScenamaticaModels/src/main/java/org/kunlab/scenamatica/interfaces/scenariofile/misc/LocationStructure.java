@@ -60,4 +60,12 @@ public interface LocationStructure extends Structure, Mapped<Location>, Creatabl
      * @return ワールド名
      */
     String getWorld();
+
+    /**
+     * ワールドを変更し、あたらしい LocationStructure を返します。
+     *
+     * @param world ワールド名
+     * @return 新しい LocationStructure
+     */
+    LocationStructure changeWorld(String world);
 }

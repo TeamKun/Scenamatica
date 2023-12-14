@@ -8,12 +8,12 @@ import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
-import org.kunlab.scenamatica.action.utils.LocationComparator;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.context.Actor;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
+import org.kunlab.scenamatica.interfaces.scenariofile.misc.LocationStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 import org.kunlab.scenamatica.nms.enums.entity.NMSEntityUseAction;
 
@@ -39,7 +39,7 @@ public class PlayerInteractAtEntityAction extends PlayerInteractEntityAction<Pla
                 targeTentity,
                 NMSEntityUseAction.INTERACT_AT,
                 argument.getHand(),
-                argument.getPosition()
+                argument.getPosition().create()
         );
     }
 
@@ -53,7 +53,7 @@ public class PlayerInteractAtEntityAction extends PlayerInteractEntityAction<Pla
         Vector clickedPosition = e.getClickedPosition();
         Location loc = clickedPosition.toLocation(engine.getContext().getStage());
 
-        return argument.getPosition() == null || LocationComparator.equals(loc, argument.getPosition());
+        return argument.getPosition() == null || argument.getPosition().isAdequate(loc);
     }
 
     @Override
@@ -67,13 +67,19 @@ public class PlayerInteractAtEntityAction extends PlayerInteractEntityAction<Pla
     @Override
     public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
     {
+        LocationStructure position = null;
+        if (map.containsKey(Argument.KEY_POSITION))
+            position = serializer.deserialize(
+                    MapUtils.checkAndCastMap(map.get(Argument.KEY_POSITION)),
+                    LocationStructure.class
+            );
 
         return new Argument(
                 super.deserializeArgument(
                         map,
                         serializer
                 ),
-                MapUtils.getAsLocationOrNull(map, Argument.KEY_POSITION)
+                position
         );
     }
 
@@ -83,9 +89,9 @@ public class PlayerInteractAtEntityAction extends PlayerInteractEntityAction<Pla
     {
         public static final String KEY_POSITION = "position";
 
-        Location position;  // ほんとは Vector だけれど, シリアライズ/デシリアライズの簡易性から Location で代用。
+        LocationStructure position;  // ほんとは Vector だけれど, シリアライズ/デシリアライズの簡易性から Location で代用。
 
-        public Argument(PlayerInteractEntityAction.Argument argument, Location position)
+        public Argument(PlayerInteractEntityAction.Argument argument, LocationStructure position)
         {
             super(argument.getTargetSpecifier(), argument.getEntity(), argument.getHand());
             this.position = position;

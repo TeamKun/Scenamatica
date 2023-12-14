@@ -3,7 +3,6 @@ package org.kunlab.scenamatica.action.actions.player;
 import com.destroystokyo.paper.event.player.PlayerPostRespawnEvent;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerRespawnEvent;
@@ -16,6 +15,7 @@ import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
+import org.kunlab.scenamatica.interfaces.scenariofile.misc.LocationStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.PlayerSpecifier;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
@@ -84,11 +84,18 @@ public class PlayerRespawnAction extends AbstractPlayerAction<PlayerRespawnActio
     @Override
     public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
     {
+        LocationStructure location = null;
+        if (map.containsKey(Argument.KEY_LOCATION))
+            location = serializer.deserialize(
+                    MapUtils.checkAndCastMap(map.get(Argument.KEY_LOCATION)),
+                    LocationStructure.class
+            );
+
         return new Argument(
                 super.deserializeTarget(map, serializer),
                 MapUtils.getOrNull(map, Argument.KEY_IS_BED),
                 MapUtils.getOrNull(map, Argument.KEY_IS_ANCHOR),
-                MapUtils.getAsLocationOrNull(map, Argument.KEY_LOCATION)
+                location
         );
     }
 
@@ -102,9 +109,9 @@ public class PlayerRespawnAction extends AbstractPlayerAction<PlayerRespawnActio
 
         Boolean isBed;
         Boolean isAnchor;
-        Location location;
+        LocationStructure location;
 
-        public Argument(PlayerSpecifier target, Boolean isBed, Boolean isAnchor, Location location)
+        public Argument(PlayerSpecifier target, Boolean isBed, Boolean isAnchor, LocationStructure location)
         {
             super(target);
             this.isBed = isBed;

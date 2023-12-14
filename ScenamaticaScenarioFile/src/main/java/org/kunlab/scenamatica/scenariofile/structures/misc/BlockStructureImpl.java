@@ -18,7 +18,9 @@ import org.kunlab.scenamatica.commons.utils.BlockDataParser;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.commons.utils.Utils;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
+import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.misc.BlockStructure;
+import org.kunlab.scenamatica.interfaces.scenariofile.misc.LocationStructure;
 
 import java.util.HashMap;
 import java.util.List;
@@ -30,7 +32,7 @@ import java.util.Objects;
 public class BlockStructureImpl implements BlockStructure
 {
     Material type;
-    Location location;
+    LocationStructure location;
     @NotNull
     Map<String, Object> metadata;
     Integer lightLevel;  // 0-15
@@ -43,7 +45,7 @@ public class BlockStructureImpl implements BlockStructure
         // noinspection deprecation
         return new BlockStructureImpl(
                 block.getType(),
-                block.getLocation(),
+                LocationStructureImpl.from(block.getLocation()),
                 new HashMap<>(),
                 (int) block.getLightLevel(),
                 block.getBiome(),
@@ -53,13 +55,14 @@ public class BlockStructureImpl implements BlockStructure
     }
 
     @NotNull
-    public static Map<String, Object> serialize(@NotNull BlockStructure blockStructure)
+    public static Map<String, Object> serialize(@NotNull BlockStructure blockStructure, @NotNull StructureSerializer serializer)
     {
         Map<String, Object> map = new HashMap<>();
 
         if (blockStructure.getType() != null)
             map.put(KEY_BLOCK_TYPE, blockStructure.getType().name());
-        MapUtils.putLocationIfNotNull(map, KEY_BLOCK_LOCATION, blockStructure.getLocation());
+        if (blockStructure.getLocation() != null)
+            map.put(KEY_BLOCK_LOCATION, serializer.serialize(blockStructure.getLocation(), LocationStructure.class));
 
         if (blockStructure.getBiome() != null)
             map.put(KEY_BIOME, blockStructure.getBiome().name());
@@ -78,10 +81,11 @@ public class BlockStructureImpl implements BlockStructure
         return map;
     }
 
-    public static void validate(@NotNull Map<String, Object> map)
+    public static void validate(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
     {
         MapUtils.checkMaterialNameIfContains(map, KEY_BLOCK_TYPE);
-        MapUtils.checkLocationIfContains(map, KEY_BLOCK_LOCATION);
+        if (map.containsKey(KEY_BLOCK_LOCATION))
+            serializer.validate(MapUtils.checkAndCastMap(map.get(KEY_BLOCK_LOCATION)), LocationStructure.class);
 
         if (map.containsKey(KEY_LIGHT_LEVEL))
         {
@@ -103,15 +107,18 @@ public class BlockStructureImpl implements BlockStructure
     }
 
     @NotNull
-    public static BlockStructure deserialize(@NotNull Map<String, Object> map)
+    public static BlockStructure deserialize(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
     {
-        validate(map);
+        validate(map, serializer);
+
+        LocationStructure location = null;
+        if (map.containsKey(KEY_BLOCK_LOCATION))
+            location = serializer.deserialize(MapUtils.checkAndCastMap(map.get(KEY_BLOCK_LOCATION)), LocationStructure.class);
 
         Material material = Utils.searchMaterial(MapUtils.getOrNull(map, KEY_BLOCK_TYPE));
-
         return new BlockStructureImpl(
                 material,
-                MapUtils.getAsLocationOrNull(map, KEY_BLOCK_LOCATION),
+                location,
                 MapUtils.getAndCastOrEmptyMap(map, KEY_METADATA),
                 MapUtils.getOrNull(map, KEY_LIGHT_LEVEL),
                 MapUtils.getAsEnumOrNull(map, KEY_BIOME, Biome.class),
@@ -120,7 +127,7 @@ public class BlockStructureImpl implements BlockStructure
         );
     }
 
-    public BlockStructure changeLocation(Location location)
+    public BlockStructure changeLocation(LocationStructure location)
     {
         return new BlockStructureImpl(
                 this.type,
@@ -197,13 +204,13 @@ public class BlockStructureImpl implements BlockStructure
         else if (this.location.getWorld() == null)
             throw new IllegalStateException("location.world is null");
 
-        return this.location.getBlock();
+        return this.location.create().getBlock();
     }
 
     @Override
     public void applyTo(Block block)
     {
-        Location location = this.location;
+        Location location = this.location.create();
 
         if (this.type != null)
             block.setType(this.type, true);
@@ -250,25 +257,8 @@ public class BlockStructureImpl implements BlockStructure
         if (!(this.type == null || this.type == block.getType()))
             return false;
 
-        Location expectedLoc = this.location;
-        Location actualLoc = block.getLocation();
-        if (expectedLoc != null)  // TODO: Refactor: to LocationStructure
-        {
-            if (Double.doubleToLongBits(expectedLoc.getX()) != Double.doubleToLongBits(actualLoc.getX()))
-                return false;
-            if (Double.doubleToLongBits(expectedLoc.getY()) != Double.doubleToLongBits(actualLoc.getY()))
-                return false;
-            if (Double.doubleToLongBits(expectedLoc.getZ()) != Double.doubleToLongBits(actualLoc.getZ()))
-                return false;
-
-            if (Float.floatToIntBits(expectedLoc.getYaw()) != Float.floatToIntBits(actualLoc.getYaw()))
-                return false;
-            if (Float.floatToIntBits(expectedLoc.getPitch()) != Float.floatToIntBits(actualLoc.getPitch()))
-                return false;
-
-            if (expectedLoc.getWorld() != null && !expectedLoc.getWorld().equals(actualLoc.getWorld()))
-                return false;
-        }
+        if (!(this.location == null || this.location.isAdequate(block.getLocation(), strict)))
+            return false;
 
         if (!(this.biome == null || this.biome == block.getBiome()))
             return false;

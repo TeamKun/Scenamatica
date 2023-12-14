@@ -11,6 +11,7 @@ import org.kunlab.scenamatica.scenariofile.structures.entity.LivingEntitySeriali
 import org.kunlab.scenamatica.scenariofile.structures.entity.entities.AHumanEntityStructureImpl;
 import org.kunlab.scenamatica.scenariofile.structures.inventory.InventoryStructureSerializeTest;
 import org.kunlab.scenamatica.scenariofile.structures.inventory.PlayerInventoryStructureSerializeTest;
+import org.kunlab.scenamatica.scenariofile.structures.misc.LocationStructureImpl;
 import org.kunlab.scenamatica.scenariofile.structures.utils.MapTestUtil;
 
 import java.util.Collections;
@@ -36,8 +37,8 @@ public class PlayerStructureSerializeTest
             "YajuSenpaiList",
             "YajuListHeader",
             "YajuListFooter",
-            new Location(null, 11, 45, 14),
-            new Location(null, 11, 45, 14),
+            LocationStructureImpl.from(new Location(null, 11, 45, 14)),
+            LocationStructureImpl.from(new Location(null, 11, 45, 14)),
             20,
             2000,
             20000,

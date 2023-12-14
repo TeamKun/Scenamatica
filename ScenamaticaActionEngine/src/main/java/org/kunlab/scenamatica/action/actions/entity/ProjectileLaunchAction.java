@@ -152,7 +152,7 @@ public class ProjectileLaunchAction extends EntitySpawnAction<ProjectileLaunchAc
             BlockStructure blockStructure = (BlockStructure) structure;
             if (blockStructure.getLocation() == null)
                 throw new IllegalArgumentException("BlockStructure must have location");
-            Block block = blockStructure.getLocation().getBlock();
+            Block block = blockStructure.getLocation().create().getBlock();
             if (block.getState() instanceof ProjectileSource)
                 return (ProjectileSource) block.getState();
             else
