@@ -122,7 +122,11 @@ public class Utils
         {
         }
 
-        return EntityType.fromName(searchName);
+        EntityType type = EntityType.fromName(searchName);
+        if (type == null)
+            throw new IllegalArgumentException("Unknown entity type: " + name);
+
+        return type;
     }
 
     public static int[] convertUUIDToIntegers(UUID uuid)

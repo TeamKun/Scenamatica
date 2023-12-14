@@ -4,6 +4,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
+import org.bukkit.block.Dispenser;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.Event;
@@ -14,6 +15,7 @@ import org.bukkit.plugin.EventExecutor;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredListener;
 import org.bukkit.plugin.java.PluginClassLoader;
+import org.bukkit.projectiles.BlockProjectileSource;
 import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
@@ -21,6 +23,7 @@ import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.utils.EventListenerUtils;
 import org.kunlab.scenamatica.commons.specifiers.EntitySpecifierImpl;
 import org.kunlab.scenamatica.commons.utils.EntityUtils;
+import org.kunlab.scenamatica.commons.utils.Utils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
@@ -67,6 +70,19 @@ public class ProjectileLaunchAction extends EntitySpawnAction<ProjectileLaunchAc
             throw new IllegalStateException("Can't specify your plugin.");
 
         return plugin;
+    }
+
+    private static BlockProjectileSource getBlockProjectileSource(Block block)
+    {
+        switch (block.getType())
+        {
+            case DISPENSER:
+                // noinspection deprecation
+            case LEGACY_DISPENSER:
+                return ((Dispenser) block.getState()).getBlockProjectileSource();
+            default:
+                throw new IllegalArgumentException("Block must be ProjectileSource");
+        }
     }
 
     @Override
@@ -152,11 +168,8 @@ public class ProjectileLaunchAction extends EntitySpawnAction<ProjectileLaunchAc
             BlockStructure blockStructure = (BlockStructure) structure;
             if (blockStructure.getLocation() == null)
                 throw new IllegalArgumentException("BlockStructure must have location");
-            Block block = blockStructure.getLocation().create().getBlock();
-            if (block.getState() instanceof ProjectileSource)
-                return (ProjectileSource) block.getState();
-            else
-                throw new IllegalArgumentException("Block must be ProjectileSource");
+            Block block = Utils.assignWorldToBlockLocation(blockStructure, engine).getBlock();
+            return getBlockProjectileSource(block);
         }
         else
             throw new IllegalArgumentException("Invalid ProjectileSourceStructure: " + structure);
@@ -173,15 +186,12 @@ public class ProjectileLaunchAction extends EntitySpawnAction<ProjectileLaunchAc
         if (!entity.checkMatchedEntity(e.getEntity()))
             return false;
 
-        if (argument.getEntity() != null)
+        if (argument.getEntity().isSelectable() && !argument.getEntity().checkMatchedEntity(e.getEntity()))
+            return false;
+        else if (argument.getEntity().hasStructure())
         {
-            if (argument.getEntity().isSelectable() && !argument.getEntity().checkMatchedEntity(e.getEntity()))
-                return false;
-            else if (argument.getEntity().hasStructure())
-            {
-                ProjectileStructure structure = (ProjectileStructure) argument.getEntity().getTargetStructure();
-                return structure.isAdequate(e.getEntity());
-            }
+            ProjectileStructure structure = (ProjectileStructure) argument.getEntity().getTargetStructure();
+            return structure.isAdequate(e.getEntity());
         }
 
         return true;
