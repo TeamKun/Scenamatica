@@ -6,6 +6,7 @@
       <sourceFolder url="file://$MODULE_DIR$" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/static" type="java-resource" />
       <excludeFolder url="file://$MODULE_DIR$/.docusaurus" />
+      <excludeFolder url="file://$MODULE_DIR$/build" />
     </content>
     <orderEntry type="sourceFolder" forTests="false" />
   </component>

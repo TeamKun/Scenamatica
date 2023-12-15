@@ -121,7 +121,7 @@ Scenamatica のバージョンは、`x.y.z` の形式で指定します。
 
 #### `definitions` {#apex-definitions}
 
-定義機能に関しては、[定義と参照 機能の概要](/docs/use/scenario/variables-and-definitions/variables-and-definitions#definition) を参照してください。
+定義機能に関しては、[定義と参照 機能の概要](/docs/use/scenario/variables-and-definitions#definition) を参照してください。
 
 #### `timeout` {#apex-timeout}
 
@@ -139,7 +139,7 @@ Scenamatica のバージョンは、`x.y.z` の形式で指定します。
 #### `order` {#apex-order}
 
 シナリオの**同一セッション**内での実行順序を制御します。   
-[セッション](./#scenario-session)とは、同じトリガの種類を持つシナリオが同時に発火した場合に、それらを一つのグループとみなしてシナリオを効率的に実行するためのものです。
+[セッション](.#scenario-session)とは、同じトリガの種類を持つシナリオが同時に発火した場合に、それらを一つのグループとみなしてシナリオを効率的に実行するためのものです。
 
 実行順序は、数値が低いものから順に実行されます。未設定の場合は自動的に名前順でソートされ、セッションの末尾に追加されます。
 
@@ -152,7 +152,7 @@ Scenamatica のバージョンは、`x.y.z` の形式で指定します。
 #### `context` {#apex-context}
 
 シナリオの実行に必要な環境を定義します。  
-コンテキストの概念についての説明は[こちら](/docs/use/scenario/elements/#context)を、ファイルに記述する際の構文にについては[こちら](#context-structure)を参照してください。
+コンテキストの概念についての説明は[こちら](/docs/use/scenario/elements#context)を、ファイルに記述する際の構文にについては[こちら](#context-structure)を参照してください。
 
 :::tip
 
@@ -231,12 +231,12 @@ Scenamatica のバージョンは、`x.y.z` の形式で指定します。
 
 シナリオの実行に必要なアクターを定義します。
 
-アクターの概念についての説明は[こちら](/docs/use/scenario/elements/#actor)を参照してください。
+アクターの概念についての説明は[こちら](/docs/use/scenario/elements#actor)を参照してください。
 
 #### `entities` {#context-entities}
 
 シナリオの実行に必要な任意のエンティティを定義します。  
-これを設定すると、シナリオの実行前に[ステージ](/docs/use/scenario/elements/#stage)内にエンティティが生成され、終了時に削除されます。
+これを設定すると、シナリオの実行前に[ステージ](/docs/use/scenario/elements#stage)内にエンティティが生成され、終了時に削除されます。
 
 :::caution
 これを指定する場合は、[Entity 型](/docs/use/scenario/types/entities#entity-structure) の [`type`](/docs/use/scenario/types/entities#entity-type) を
@@ -244,13 +244,13 @@ Scenamatica のバージョンは、`x.y.z` の形式で指定します。
 これは、エンティティの種類を指定して拡張パラメタを設定するためです。
 :::
 
-エンティティの概念についての説明は[こちら](/docs/use/scenario/elements/#entity)を参照してください。
+エンティティの概念についての説明は[こちら](/docs/use/scenario/elements#entity)を参照してください。
 
 #### `stage` {#context-stage}
 
 シナリオの実行に必要なステージを定義します。  
 
-ステージの概念についての説明は[こちら](/docs/use/scenario/elements/#stage)を参照してください。
+ステージの概念についての説明は[こちら](/docs/use/scenario/elements#stage)を参照してください。
 
 ---
 
@@ -341,13 +341,13 @@ Actor 型は以下の親構造を持ちます。
   {
     name: "inventory",
     type: "PlayerInventory",
-    type_link: "/docs/use/scenario/types/inventory-items/#player-inventory-structure",
+    type_link: "/docs/use/scenario/types/inventory-items#player-inventory-structure",
     description: "アクターのインベントリを設定します。"
   },
   {
     name: "enderChest",
     type: "Inventory",
-    type_link: "/docs/use/scenario/types/inventory-items/#inventory-structure",
+    type_link: "/docs/use/scenario/types/inventory-items#inventory-structure",
     description: "アクターのエンダーチェストを設定します。"
   },
   {
@@ -488,7 +488,7 @@ Actor 型は以下の親構造を持ちます。
 
 メインシナリオの実行前に実行するシナリオ（事前シナリオ）の定義です。
 
-シナリオの定義は、[こちら](/docs/use/scenario/elements/#scenario)を参照してください。
+シナリオの定義は、[こちら](/docs/use/scenario/elements#scenario)を参照してください。
 
 :::caution
 
@@ -500,7 +500,7 @@ Actor 型は以下の親構造を持ちます。
 
 メインシナリオの実行後に実行するシナリオ（事後シナリオ）の定義です。
 
-シナリオの定義は、[こちら](/docs/use/scenario/elements/#scenario)を参照してください。
+シナリオの定義は、[こちら](/docs/use/scenario/elements#scenario)を参照してください。
 
 :::caution
 

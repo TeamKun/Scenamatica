@@ -20,7 +20,7 @@ import { Object, ObjectType } from '/src/components/Object'
 
 ## 概要 {#overview}
 
-トリガは、[シナリオ](/docs/use/scenario/elements/#scenario) の実行を開始するための発火条件です。  
+トリガは、[シナリオ](/docs/use/scenario/elements#scenario) の実行を開始するための発火条件です。  
 手動実行や特定のアクションの発火など、様々なトリガがあります。
 
 :::tip
@@ -36,9 +36,9 @@ import { Object, ObjectType } from '/src/components/Object'
 
 :::
 
-### 事前・事後[シナリオ](/docs/use/scenario/elements/#scenario)機能 {#before-after-scenarios}
+### 事前・事後[シナリオ](/docs/use/scenario/elements#scenario)機能 {#before-after-scenarios}
 
-メイン[シナリオ](/docs/use/scenario/elements/#scenario)の実行前後に実行されるシナリオを、トリガごとに設定できます。  
+メイン[シナリオ](/docs/use/scenario/elements#scenario)の実行前後に実行されるシナリオを、トリガごとに設定できます。  
 両方設定した場合は、`事前シナリオ -> メインシナリオ -> 事後シナリオ` の順番で同期的に実行されます。
 
 :::info 例
@@ -68,7 +68,7 @@ on:
 ### 条件付きトリガ機能 {#conditional-triggers}
 
 トリガの発火条件に、追加で条件を指定できます。  
-これは、シナリオの[実行条件](/docs/use/scenario/elements/#conditional-execution)機能と同じですが、トリガごとに設定できるという点で異なります。  
+これは、シナリオの[実行条件](/docs/use/scenario/elements#conditional-execution)機能と同じですが、トリガごとに設定できるという点で異なります。  
 
 これを用いることで、例えば「プレイヤが死亡したときかつ マイルストーン Hoge が達成されているときにシナリオを実行する」といったことが可能になります。
 
@@ -106,7 +106,7 @@ on:
 
 引数に指定されたアクション実行期待シナリオが実行されたときにシナリオを実行します。  
 
-引数はアクション実行期待シナリオの記述と同じです。詳細な構文に関しては[こちら](/docs/use/scenario/types/#action-structure)を参照してください。
+引数はアクション実行期待シナリオの記述と同じです。詳細な構文に関しては[こちら](/docs/use/scenario/types#action-structure)を参照してください。
 
 :::tip
 
