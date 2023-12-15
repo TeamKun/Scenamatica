@@ -9,7 +9,7 @@ import java.lang.reflect.Field;
 public class ScenamaticaBridge
 {
     private static final String PLUGIN_NAME = "Scenamatica";
-    private static final String PLUGIN_CLASS = "net.kunmc.lab.scenamatica.Scenamatica";
+    private static final String PLUGIN_CLASS = "org.kunlab.scenamatica.Scenamatica";
     private static final String REGISTRY_FIELD = "registry";
 
     private static ScenamaticaRegistry registry;
@@ -28,7 +28,7 @@ public class ScenamaticaBridge
             }
             catch (ClassNotFoundException | IllegalAccessException | NoSuchFieldException e)
             {
-                e.printStackTrace();
+                throw new IllegalStateException("Unable to retrieve Scenamatica registry.", e);
             }
         }
 
