@@ -27,7 +27,7 @@ import {ObjectType} from "/src/components/Object";
 
 :::warning
 
-セレクタを [Entity 型](/docs/use/scenario/types/entities#entity-structure) のオブジェクトを指定する場合、
+セレクタを [Entity 型](/docs/use/scenario/types/entities#entity-structure) のオブジェクトを指定する場合は、
 捜索範囲はシナリオの[ステージ](/docs/use/scenario/elements#stage)内かつ、ロードされているチャンクに限定されます。
 
 :::
@@ -41,9 +41,9 @@ import {ObjectType} from "/src/components/Object";
 :::info シナリオの種類での振る舞いの違い
 
 + アクション実行シナリオでは、単一のエンティティを指します。  
-  `@e` 等で複数のエンティティを指定した場合、最初に見つかったエンティティが使用されます。
+  `@e` 等で複数のエンティティを指定した場合は、最初に見つかったエンティティが使用されます。
 + アクション実行期待シナリオでは、該当する**複数のエンティティのどれか**を指します。  
-  複数のエンティティを指定した（が見つかった）場合、そのうちのどれか一体が条件を満たしていたらパスされます。  
+  複数のエンティティを指定した（が見つかった）場合は、そのうちのどれか一体が条件を満たしていたらパスされます。  
   単一のエンティティを指定した場合はそのエンティティが条件を満たしているかどうかが判定されます。
 
 例：
@@ -278,7 +278,7 @@ import {ObjectType} from "/src/components/Object";
 :::caution 
 
 アクション実行シナリオにおいて, `target` はエンティティのオブジェクトである必要があります。セレクタは指定できません。
-これは, Bukkit が死亡したエンティティを即座に削除し, 追跡不能にするためです。
+これは、Bukkit が死亡したエンティティを即座に削除し, 追跡不能にするためです。
 
 :::
 
@@ -412,7 +412,7 @@ AI を有効にした場合, エンティティは経路を探索し自発的に
 
 #### アクション実行シナリオでの使用 {#pickup-item-execute}
 
-アイテムを拾うエンティティは, [LivingEntity](https://jd.papermc.io/paper/1.16/org/bukkit/entity/LivingEntity.html) かつ, 
+アイテムを拾うエンティティは、[LivingEntity](https://jd.papermc.io/paper/1.16/org/bukkit/entity/LivingEntity.html) かつ, 
 アイテムを拾える状態（[LivingEntity#canPickupItems()](https://jd.papermc.io/paper/1.16/org/bukkit/entity/LivingEntity.html#canPickupItems()) が `true`）である必要があります。
 
 さらに, アイテムが以下の状態である必要があります。
@@ -475,7 +475,7 @@ AI を有効にした場合, エンティティは経路を探索し自発的に
 
 :::caution 
 
-アクション実行シナリオの場合、この項目および [`Block#location`](/docs/use/scenario/types/misc#location-structure) は必須です。
+アクション実行シナリオの場合は、この項目および [`Block#location`](/docs/use/scenario/types/misc#location-structure) は必須です。
 
 :::
 
@@ -485,13 +485,13 @@ AI を有効にした場合, エンティティは経路を探索し自発的に
 
 :::info
 
-アクション実行シナリオで省略した場合、プレイヤの位置と対象の位置から推論されます。
+アクション実行シナリオで省略した場合は、プレイヤの位置と対象の位置から推論されます。
 
 :::
 
 #### `target` {#place-target}
 
-アクション実行シナリオの場合、設置するエンティティの UUID やセレクタ、または アイテム化したときの Material を指定します。  
+アクション実行シナリオの場合は、設置するエンティティの UUID やセレクタ、または アイテム化したときの Material を指定します。  
 設置できるエンティティは、 Bukkit との相互作用のために以下のものに限られます。
 それら以外を設置・召喚する場合は [エンティティのスポーン](#spawn)アクション を使用してください。
 
@@ -550,14 +550,14 @@ AI を有効にした場合, エンティティは経路を探索し自発的に
 
 これには、 `Entity` 型のオブジェクトないしはその子のオブジェクトを指定できます。
 
-`Projectile` 型のオブジェクトを指定した場合、 `shooter` 等を設定した状態でスポーンできます。
+`Projectile` 型のオブジェクトを指定した場合は、 `shooter` 等を設定した状態でスポーンできます。
 
 :::
 
 :::caution
 
-アクション実行シナリオでは, Entity オブジェクトの `type` が必須です。  
-また, アクション実行期待シナリオでは, Entity 型の `target` 引数は使用できません。
+アクション実行シナリオでは、Entity オブジェクトの `type` が必須です。  
+また, アクション実行期待シナリオでは、Entity 型の `target` 引数は使用できません。
 
 :::
 
@@ -613,12 +613,12 @@ AI を有効にした場合, エンティティは経路を探索し自発的に
 
 #### `eventOnly` {#projectile-hit-event-only}
 
-`true` を指定した場合、投射物の着弾イベントのみを発生させます。
+`true` を指定した場合は、投射物の着弾イベントのみを発生させます。
 
 通常は、以下の動作を行います。
 
-+ `hitEntity` が指定されている場合、そのエンティティの位置に投射物をテレポートさせ、速度を `0` にします。
-+ `hitBlock` が指定されている場合、そのブロックの `blockFace` の正面 `0.2` の位置に投射物をテレポートさせ、ブロックの面に対して垂直な速度を `10` にします。
++ `hitEntity` が指定されている場合は、そのエンティティの位置に投射物をテレポートさせ、速度を `0` にします。
++ `hitBlock` が指定されている場合は、そのブロックの `blockFace` の正面 `0.2` の位置に投射物をテレポートさせ、ブロックの面に対して垂直な速度を `10` にします。
 
 ## 投射物の発射 {#projectile-launch}
 

@@ -19,7 +19,7 @@
     },
     "strictRecipients": {
       "type": "boolean",
-      "description": "有効な場合、余計なプレイヤがメッセージを受け取ると失敗します。"
+      "description": "有効な場合は、余計なプレイヤがメッセージを受け取ると失敗します。"
     }
   }
 }

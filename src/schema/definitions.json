@@ -18,7 +18,7 @@
   "namespacedKey": {
     "type": "string",
     "pattern": "^([a-z0-9_/]+:)?[a-z0-9_/]+$",
-    "description": "名前空間付きキーです。 名前空間を指定しない場合は, minecraft: が暗黙的に指定されます。",
+    "description": "名前空間付きキーです。 名前空間を指定しない場合は、minecraft: が暗黙的に指定されます。",
     "examples": [
       "minecraft:stone",
       "stone"

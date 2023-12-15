@@ -12,7 +12,7 @@ import BelowDocument from "/src/components/BelowDocument";
 
 ## 概要 {#overview}
 
-テストは, プラグインの[シナリオ](/docs/use/scenario)を実行し、実行に成功したかどうかを判定してプラグインの正常性を確認するためのものです。  
+テストは、プラグインの[シナリオ](/docs/use/scenario)を実行し、実行に成功したかどうかを判定してプラグインの正常性を確認するためのものです。  
 この機能は[シナリオ](/docs/use/scenario)機能と密接に関連しています。
 
 ## シナリオの記述作業を開発フローに取り込む {#integrating-scenamatica-to-development-flow}
@@ -54,15 +54,15 @@ CI/CD パイプラインと連携すると、テストサーバの用意から�
 
 :::tip
 
-シナリオが同じトリガで、かつ同タイミングで発火した場合、同じセッションに登録されます。  
-例えば、 シナリオの読み込み後に実行するトリガ (`ON_LOAD`) を持つシナリオが .jar ファイルに複数存在する場合、同じセッションで実行されます。
+シナリオが同じトリガで、かつ同タイミングで発火した場合は、同じセッションに登録されます。  
+例えば、 シナリオの読み込み後に実行するトリガ (`ON_LOAD`) を持つシナリオが .jar ファイルに複数存在する場合は、同じセッションで実行されます。
 
 :::
 
 ## 条件付き実行 {#conditional-execution}
 
 [シナリオ](/docs/use/scenario)に[実行条件](/docs/use/scenario/elements#conditional-execution)を指定することで、テストの実行に条件を持たせられます。
-条件が満たされない場合、テストは実行されずにスキップされる（`SKIPPED` で終了する）ため、テストの実行に失敗したとはみなされません。
+条件が満たされない場合は、テストは実行されずにスキップされる（`SKIPPED` で終了する）ため、テストの実行に失敗したとはみなされません。
 
 ## テストの結果 {#test-status-result}
 
@@ -81,7 +81,7 @@ Scenamatica のテストは、以下の結果を持ちます。
   アクションの実行に失敗したことを示します。
 + `ACTION_EXPECTATION_JUMPED`
   実行を期待するアクションよりも先に他のアクションが（プラグインによって）実行されたことを示します。  
-  これについての詳細は[こちら](/docs/use/scenario/elements#scenario-type-condition-require:~:text=後に実行されるべきアクションが繰り上げられて先に実行された場合、このシナリオは失敗します。)
+  これについての詳細は[こちら](/docs/use/scenario/elements#scenario-type-condition-require:~:text=後に実行されるべきアクションが繰り上げられて先に実行された場合は、このシナリオは失敗します。)
   を参照してください。
 + `SCENARIO_TIMED_OUT`  
   実行を期待するアクションやシナリオが（所定の時間内に）実行されなかったことを示します。
