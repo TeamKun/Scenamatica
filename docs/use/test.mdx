@@ -33,7 +33,7 @@ import BelowDocument from "/src/components/BelowDocument";
 
 テスト（シナリオ）を手動で実行するには、[<kbd>/scenamatica scenario start</kbd>](/docs/use/commands/scenario#start)コマンドを実行します。
 
-::: tip 宣伝
+:::tip 宣伝
 
 CI/CD パイプラインと連携すると、テストサーバの用意からテストの実行、結果のレポートまで全て自動で行えます。
 
@@ -52,7 +52,7 @@ CI/CD パイプラインと連携すると、テストサーバの用意から�
 
 シナリオセッションは実行時に自動で構成されるため、開発者が意識する必要はありません。
 
-::: tip
+:::tip
 
 シナリオが同じトリガで、かつ同タイミングで発火した場合は、同じセッションに登録されます。  
 例えば、 シナリオの読み込み後に実行するトリガ (`ON_LOAD`) を持つシナリオが .jar ファイルに複数存在する場合は、同じセッションで実行されます。
@@ -103,7 +103,7 @@ Scenamatica のテストは、以下の結果を持ちます。
 + `SKIPPED`  
   シナリオの実行が何らかの要因によってスキップされたことを示します。
 
-::: tip SCENARIO_TIMED_OUT と RUN_TIMED_OUT の違い
+:::tip SCENARIO_TIMED_OUT と RUN_TIMED_OUT の違い
 
 `RUN_TIMED_OUT` は、シナリオファイルを構成するアクション全ての実行が所定の時間内に終了しなかったことを示すのに対し、  
 `SCENARIO_TIMED_OUT` は、その中の個々のアクションやシナリオが（それぞれに指定された）所定の時間内に終了しなかったことを示します。

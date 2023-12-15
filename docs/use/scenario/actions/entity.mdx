@@ -10,7 +10,7 @@ import {ObjectType} from "/src/components/Object";
 
 ## 記述する際の注意 {#notes}
 
-::: tip
+:::tip
 
 **シナリオやシナリオファイルの概念が初めての方は、先に[こちら](/docs/use/scenario)を参照して理解しておくことを推奨します。**
 
@@ -25,20 +25,20 @@ import {ObjectType} from "/src/components/Object";
 
 対象のエンティティを[EntitySpecifier 型（エンティティ指定子）](/docs/use/scenario/types/entities#entity-specifier)で指定します。
 
-::: danger
+:::danger
 
 セレクタを [Entity 型](/docs/use/scenario/types/entities#entity-structure) のオブジェクトを指定する場合は、
 捜索範囲はシナリオの[ステージ](/docs/use/scenario/elements#stage)内かつ、ロードされているチャンクに限定されます。
 
 :::
 
-::: tip
+:::tip
 
 [エンティティ（コンテキスト）](/docs/use/scenario/elements#entities#entity)を使用すれば、常に読み込まれるシナリオ専用のエンティティを作成できます。
 
 :::
 
-::: info シナリオの種類での振る舞いの違い
+:::info シナリオの種類での振る舞いの違い
 
 + アクション実行シナリオでは、単一のエンティティを指します。  
   `@e` 等で複数のエンティティを指定した場合は、最初に見つかったエンティティが使用されます。
@@ -196,7 +196,7 @@ import {ObjectType} from "/src/components/Object";
         executable watchable 
 />
 
-::: info
+:::info
 
 このアクションは[エンティティのダメージ](#damage) をベースにしており、内部のロジックもほとんど同じです。  
 
@@ -275,7 +275,7 @@ import {ObjectType} from "/src/components/Object";
         executable watchable
 />
 
-::: warning 
+:::warning 
 
 アクション実行シナリオにおいて, `target` はエンティティのオブジェクトである必要があります。セレクタは指定できません。
 これは、Bukkit が死亡したエンティティを即座に削除し, 追跡不能にするためです。
@@ -359,7 +359,7 @@ import {ObjectType} from "/src/components/Object";
         executable watchable
 />
 
-::: tip
+:::tip
 
 アクション実行期待シナリオにおける座標の比較は、誤差 `0.01` まで許容されます。
 
@@ -473,7 +473,7 @@ AI を有効にした場合, エンティティは経路を探索し自発的に
 
 #### `block` {#place-block}
 
-::: warning 
+:::warning 
 
 アクション実行シナリオの場合は、この項目および [`Block#location`](/docs/use/scenario/types/misc#location-structure) は必須です。
 
@@ -483,7 +483,7 @@ AI を有効にした場合, エンティティは経路を探索し自発的に
 
 エンティティを設置する方向を指定します。
 
-::: info
+:::info
 
 アクション実行シナリオで省略した場合は、プレイヤの位置と対象の位置から推論されます。
 
@@ -546,7 +546,7 @@ AI を有効にした場合, エンティティは経路を探索し自発的に
 
 エンティティの構造体を指定します。
 
-::: tip
+:::tip
 
 これには、 `Entity` 型のオブジェクトないしはその子のオブジェクトを指定できます。
 
@@ -554,7 +554,7 @@ AI を有効にした場合, エンティティは経路を探索し自発的に
 
 :::
 
-::: warning
+:::warning
 
 アクション実行シナリオでは、Entity オブジェクトの `type` が必須です。  
 また, アクション実行期待シナリオでは、Entity 型の `target` 引数は使用できません。
@@ -648,7 +648,7 @@ AI を有効にした場合, エンティティは経路を探索し自発的に
 
 投射物の構造体を指定します。
 
-::: danger
+:::danger
 
 アクション実行シナリオでは `shooter` が必須です。
 

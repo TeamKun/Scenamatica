@@ -10,7 +10,7 @@ import {ObjectType} from "/src/components/Object";
 
 ## 記述する際の注意 {#notes}
 
-::: tip
+:::tip
 
 **シナリオやシナリオファイルの概念が初めての方は、先に[こちら](/docs/use/scenario)を参照して理解しておくことを推奨します。**
 
@@ -26,7 +26,7 @@ import {ObjectType} from "/src/components/Object";
 
 対象のエンティティを[PlayerSpecifier 型（プレイヤ指定子）](/docs/use/scenario/types/entities#player-specifier)で指定します。
 
-::: info シナリオの種類での振る舞いの違い
+:::info シナリオの種類での振る舞いの違い
 
 + アクション実行シナリオでは、単一のプレイヤを指します。  
 `@e` 等で複数のプレイヤを指定した場合は、最初に見つかったプレイヤが使用されます。
@@ -115,13 +115,13 @@ import {ObjectType} from "/src/components/Object";
 
 #### アクション実行シナリオでの使用 {#bucket-empty-usage-in-execution}
 
-::: warning
+:::warning
 
 `block` と `clickedBlock` のどちらか一方は必須です。
 
 :::
 
-::: danger
+:::danger
 
 NMS の仕様上の都合により、 `block` を用いた液体の場所は `eventOnly` が `true` の場合にのみ有効です。
 
@@ -131,7 +131,7 @@ NMS の仕様上の都合により、 `block` を用いた液体の場所は `ev
 
 `eventOnly` を `true` に設定すると、引数に基づいてイベントのみを発火させ、バケツの中身を設置します。
 
-::: info
+:::info
 通常はアクタに `PacketPlayInBlockPlace` パケットを送信させます。
 引数 `clickedBlock` と `blockFace` に基づいて設置位置を決定します。
 しかし、この指定方法は直感的でない上にプレイヤとブロックの位置に依存しているため、コストが高くなってしまいます。
@@ -203,13 +203,13 @@ NMS の仕様上の都合により、 `block` を用いた液体の場所は `ev
 
 #### アクション実行シナリオでの使用 {#bucket-empty-usage-in-execution}
 
-::: warning
+:::warning
 
 `block` と `clickedBlock` のどちらか一方は必須です。
 
 :::
 
-::: danger
+:::danger
 
 NMS の仕様上の都合により、 `block` を用いた液体の場所は `eventOnly` が `true` の場合にのみ有効です。
 
@@ -261,7 +261,7 @@ NMS の仕様上の都合により、 `block` を用いた液体の場所は `ev
         executable requireable watchable
 />
 
-::: info
+:::info
 
 このアクションは進捗自体を達成する機能と、進捗の達成度を変更する機能を包含しています。  
 `criterion` を指定せずに実行すると、**残っている達成条件を全て達成**します。一方で指定した場合は、指定した達成条件のみを達成します。
@@ -317,7 +317,7 @@ NMS の仕様上の都合により、 `block` を用いた液体の場所は `ev
 
 実行するアニメーションの種類を指定します。  
 
-::: warning
+:::warning
 
 Bukkit の仕様により、現在は `ARM_SWING` のみが指定可能です。  
 また、将来の互換性を維持するために、この引数の省略はできません。
@@ -365,7 +365,7 @@ Bukkit の仕様により、現在は `ARM_SWING` のみが指定可能です。
         executable watchable
 />
 
-::: warning
+:::warning
 
 `bucket` に指定するアイテムは、エンティティを格納できるバケツである必要があります（参考：1.16.5 時点では `WATER_BUCKET` のいｍ）。
 `entityBucket` は、エンティティを格納した後のバケツを指定する必要があります。
@@ -374,7 +374,7 @@ Bukkit の仕様により、現在は `ARM_SWING` のみが指定可能です。
 
 #### アクション実行シナリオでの使用 {#bucket-entity-usage-in-execution}
 
-::: info
+:::info
 
 `bucket` を省略した場合は、プレイヤの持っているバケツを使用します。バケツを持っていない場合や対応していないバケツの場合は、アクションは失敗します。
 これを指定し、かつプレイヤの持っているアイテムと異なる場合は、先にプレイヤのアイテムをこのバケツに置換します。
@@ -417,7 +417,7 @@ Bukkit の仕様により、現在は `ARM_SWING` のみが指定可能です。
         executable watchable
 />
 
-::: warning
+:::warning
 
 `format` はアクション実行シナリオでは使用できません。
 
@@ -568,7 +568,7 @@ Bukkit の仕様により、現在は `ARM_SWING` のみが指定可能です。
 
 飛行するか（している）どうかを指定します。
 
-::: info
+:::info
 アクション実行シナリオおよび条件要求シナリオでは必須です。
 :::
 
@@ -620,7 +620,7 @@ Bukkit の仕様により、現在は `ARM_SWING` のみが指定可能です。
 
 ゲームモードを指定します。
 
-::: danger
+:::danger
 
 `gamemode` は上記に示す列挙型のみ指定できます。  
 Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `0` 〜 `3`)は指定できません。
@@ -631,7 +631,7 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
 
 変更がキャンセルされた場合に表示するメッセージを指定します。
 
-::: tip
+:::tip
 
 この項目は PaperMC による変更で追加された項目です。  
 詳しい動作は各ドキュメントを参照してください。
@@ -679,7 +679,7 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
 
 #### アクション実行シナリオでの使用 {#harvest-block-usage-in-execution}
 
-::: tip
+:::tip
 このアクションは、内部的に [`BlockBreakAction`](block#break) を呼び出しています。
 
 :::
@@ -732,7 +732,7 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
 
 ホットバーのスロットは `0` から `8` の整数で指定します。
 
-::: tip スロットのナンバリングについて
+:::tip スロットのナンバリングについて
 
 一見 1 ~ 9 ではなく, 0 ～ 8 で指定するのは不思議に思うかもしれませんが,
 これは Minecraft のインベントリのスロット ID 仕様によるものです。
@@ -748,7 +748,7 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
 
 ## エンティティのクリック（作用） {#interact-at-entity}
 
-::: warning DEPRECATED!!!
+:::warning DEPRECATED!!!
 
 このアクションは、**アーマースタンドのクリックのみ**をサポートしています。  
 ほとんどの場合は、 [プレイヤのエンティティのクリック](#interact-entity) を使用してください。
@@ -791,7 +791,7 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
         executable watchable
 />
 
-::: info
+:::info
 
 このアクションは、 [プレイヤのエンティティのクリック](#interact-entity) の子アクションで、
 諸々の仕様や引数を継承しています。
@@ -881,7 +881,7 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
 
 プレイヤにエンティティをクリックさせます。
 
-::: danger
+:::danger
 
 プレイヤとエンティティの距離が `36.0` ブロックより離れている場合は、 Scenamatica はイベントのみを発行します。
 通常はアクタから `PacketPlayInUseEntity` パケットが送信され、エンティティのクリックが再現されますが、
@@ -1035,7 +1035,7 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
 
 #### `item` {#item-damage-item}
 
-::: danger
+:::danger
 
 `item` で指定できるアイテムは、その [ItemMeta](https://jd.papermc.io/paper/1.16/org/bukkit/inventory/meta/ItemMeta.html) が [Damageable](https://jd.papermc.io/paper/1.16/org/bukkit/inventory/meta/Damageable.html) 
 を実装しているアイテムのみです。
@@ -1113,7 +1113,7 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
 
 #### `leave_message` {#kick-leave-message}
 
-::: warning
+:::warning
 アクション実行期待モードでは使用できません。
 :::
 
@@ -1289,7 +1289,7 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
         watchable
 />
 
-::: tip
+:::tip
 
 アクション実行期待シナリオにおける座標の比較は、誤差 `0.01` まで許容されます。
 
@@ -1338,7 +1338,7 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
 
 プレイヤの一般的な退出に関するアクションです。
 
-::: tip
+:::tip
 キックされた理由等などを使用したシナリオを作成する場合は、[プレイヤのキック](#kick) アクションを使用してください。
 :::
 
@@ -1347,11 +1347,11 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
 
 退出時のメッセージを指定します。
 
-::: warning
+:::warning
 条件要求シナリオでは使用できません。
 :::
 
-::: danger
+:::danger
 
 理由がキックの場合, キックされた理由がここに設定されます。  
 したがって、退出理由は翻訳可能コンポーネント`multiplayer.player.left`になるため、このアクションでは判定できません。
@@ -1420,7 +1420,7 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
 
 リスポーンする場所を指定します。  
 
-::: tip
+:::tip
 
 アクション実行シナリオで使用した場合は、リスポーンの実行前にベッドスポーン位置を変更します。
 
