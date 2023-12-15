@@ -312,7 +312,6 @@ public class MapUtils
         return (Map<K, V>) map.get(key);
     }
 
-    @SuppressWarnings("unchecked")
     public static Map<String, Object> getAndCastOrEmptyMap(@NotNull Map<String, Object> map, @NotNull String key)
     {
         if (!map.containsKey(key))
