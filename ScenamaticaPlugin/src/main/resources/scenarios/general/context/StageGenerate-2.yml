@@ -12,4 +12,5 @@ context:
   stage:
     type: FLAT
 
+# noinspection YAMLSchemaValidation
 scenario: []

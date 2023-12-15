@@ -37,6 +37,7 @@ scenario:
     with:
       entity:
         type: minecraft:arrow
+        # noinspection YAMLSchemaValidation
         shooter:
           type: dispenser
           location:
@@ -48,6 +49,7 @@ scenario:
     with:
       entity:
         type: minecraft:arrow
+        # noinspection YAMLSchemaValidation
         shooter:
           type: dispenser
 

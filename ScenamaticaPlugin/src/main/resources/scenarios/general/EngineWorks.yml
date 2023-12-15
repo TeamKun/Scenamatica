@@ -8,4 +8,5 @@ on:
   - type: manual_dispatch
   - type: on_load
 
+# noinspection YAMLSchemaValidation
 scenario: []

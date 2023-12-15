@@ -14,9 +14,11 @@ definitions:
 
 on:
   - type: on_load
+    # noinspection YAMLSchemaValidation
     before:
       - $ref: earn_hoge
   - type: manual_dispatch
+    # noinspection YAMLSchemaValidation
     before:
       - $ref: earn_hoge
 

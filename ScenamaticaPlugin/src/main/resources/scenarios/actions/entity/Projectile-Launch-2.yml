@@ -17,6 +17,7 @@ scenario:
     with:
       entity:
         type: minecraft:arrow
+        # noinspection YAMLSchemaValidation
         shooter:
           name: Actor01
   - type: expect
@@ -24,6 +25,7 @@ scenario:
     with:
       entity:
         type: minecraft:arrow
+        # noinspection YAMLSchemaValidation
         shooter:
           name: Actor01
 

@@ -16,4 +16,5 @@ context:
   stage:
     copyOf: world
 
+# noinspection YAMLSchemaValidation
 scenario: []

@@ -14,4 +14,5 @@ context:
       gamemode: SURVIVAL
       displayName: §c§lActor001
 
+# noinspection YAMLSchemaValidation
 scenario: []
