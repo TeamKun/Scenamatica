@@ -121,7 +121,7 @@ import {ObjectType} from "/src/components/Object";
 
 :::
 
-::: denger
+::: danger
 
 NMS の仕様上の都合により、 `block` を用いた液体の場所は `eventOnly` が `true` の場合にのみ有効です。
 
@@ -209,7 +209,7 @@ NMS の仕様上の都合により、 `block` を用いた液体の場所は `ev
 
 :::
 
-::: denger
+::: danger
 
 NMS の仕様上の都合により、 `block` を用いた液体の場所は `eventOnly` が `true` の場合にのみ有効です。
 
@@ -620,7 +620,7 @@ Bukkit の仕様により、現在は `ARM_SWING` のみが指定可能です。
 
 ゲームモードを指定します。
 
-::: denger
+::: danger
 
 `gamemode` は上記に示す列挙型のみ指定できます。  
 Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `0` 〜 `3`)は指定できません。
@@ -881,7 +881,7 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
 
 プレイヤにエンティティをクリックさせます。
 
-::: denger
+::: danger
 
 プレイヤとエンティティの距離が `36.0` ブロックより離れている場合は、 Scenamatica はイベントのみを発行します。
 通常はアクタから `PacketPlayInUseEntity` パケットが送信され、エンティティのクリックが再現されますが、
@@ -1035,7 +1035,7 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
 
 #### `item` {#item-damage-item}
 
-::: denger
+::: danger
 
 `item` で指定できるアイテムは、その [ItemMeta](https://jd.papermc.io/paper/1.16/org/bukkit/inventory/meta/ItemMeta.html) が [Damageable](https://jd.papermc.io/paper/1.16/org/bukkit/inventory/meta/Damageable.html) 
 を実装しているアイテムのみです。
@@ -1351,7 +1351,7 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
 条件要求シナリオでは使用できません。
 :::
 
-::: denger
+::: danger
 
 理由がキックの場合, キックされた理由がここに設定されます。  
 したがって、退出理由は翻訳可能コンポーネント`multiplayer.player.left`になるため、このアクションでは判定できません。
