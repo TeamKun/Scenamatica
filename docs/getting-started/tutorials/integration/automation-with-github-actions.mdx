@@ -18,7 +18,7 @@ import Requirements from "/src/components/Requirements";
   }
 ]} />
 
-:::tip
+::: tip
 
 このドキュメントでは、 [Github Actions](https://github.co.jp/features/actions) を使用してテストを自動化する方法について説明しています。  
 そのため、このドキュメントを読む前に、 [Github Actions](https://github.co.jp/features/actions) の基本的な知識を習得しておくことをおすすめします。
@@ -27,7 +27,7 @@ import Requirements from "/src/components/Requirements";
 
 :::
 
-:::denger
+::: denger
 
 このチュートリアル内では、 [Scenamatica Action](https://github.com/TeamKun/scenamatica-action) を使用します。  
 このアクションを使用することで、 Minecraft の [EULA](https://account.mojang.com/documents/minecraft_eula) に同意したものとみなされます。  
@@ -49,7 +49,7 @@ GitHub Actions は、GitHub が提供する CI/CD サービスです。
                label="最初のシナリオを書いてみる"
 />
 
-:::info
+::: info
 
 既にシナリオを記述している場合は、このステップをスキップしてください。
 
@@ -121,7 +121,7 @@ steps:
       plugin: target/<プラグインの jar ファイル名>
 ```
 
-:::tip
+::: tip
 
 [Scenamatica Action](https://github.com/TeamKun/scenamatica-action) についての詳しい説明は[こちら](/docs/use/integration/ci-cd#scenamatica-action) を参照してください。
 
@@ -158,7 +158,7 @@ permissions:
 
 ```
 
-:::info
+::: info
 
 Scenamatica Action は、プルリクエストにテスト結果を送信するため、 `pull-requests: write` 権限が必要です。
 
