@@ -20,6 +20,7 @@ public class PacketTestEnd extends AbstractTestPacket
     public static final String KEY_CAUSE = "cause";
     public static final String KEY_STARTED_AT = "startedAt";
     public static final String KEY_FINISHED_AT = "finishedAt";
+    public static final String KEY_ATTEMPT_OF = "attemptOf";
 
     private static final String TYPE = "end";
 
@@ -31,6 +32,7 @@ public class PacketTestEnd extends AbstractTestPacket
     ScenarioResultCause cause;
     long startedAt;
     long finishedAt;
+    int attemptOf;
 
     public PacketTestEnd(@NotNull ScenarioResult result)
     {
@@ -41,6 +43,7 @@ public class PacketTestEnd extends AbstractTestPacket
         this.cause = result.getScenarioResultCause();
         this.startedAt = result.getStartedAt();
         this.finishedAt = result.getFinishedAt();
+        this.attemptOf = result.getAttemptOf();
     }
 
     @Override
@@ -63,6 +66,7 @@ public class PacketTestEnd extends AbstractTestPacket
         result.put(KEY_CAUSE, this.cause.name());
         result.put(KEY_STARTED_AT, this.startedAt);
         result.put(KEY_FINISHED_AT, this.finishedAt);
+        result.put(KEY_ATTEMPT_OF, this.attemptOf);
 
         return result;
     }
