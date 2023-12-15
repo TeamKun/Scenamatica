@@ -25,7 +25,7 @@ import {ObjectType} from "/src/components/Object";
 
 対象のエンティティを[EntitySpecifier 型（エンティティ指定子）](/docs/use/scenario/types/entities#entity-specifier)で指定します。
 
-:::warning
+:::denger
 
 セレクタを [Entity 型](/docs/use/scenario/types/entities#entity-structure) のオブジェクトを指定する場合は、
 捜索範囲はシナリオの[ステージ](/docs/use/scenario/elements#stage)内かつ、ロードされているチャンクに限定されます。
@@ -275,7 +275,7 @@ import {ObjectType} from "/src/components/Object";
         executable watchable
 />
 
-:::caution 
+:::warning 
 
 アクション実行シナリオにおいて, `target` はエンティティのオブジェクトである必要があります。セレクタは指定できません。
 これは、Bukkit が死亡したエンティティを即座に削除し, 追跡不能にするためです。
@@ -473,7 +473,7 @@ AI を有効にした場合, エンティティは経路を探索し自発的に
 
 #### `block` {#place-block}
 
-:::caution 
+:::warning 
 
 アクション実行シナリオの場合は、この項目および [`Block#location`](/docs/use/scenario/types/misc#location-structure) は必須です。
 
@@ -554,7 +554,7 @@ AI を有効にした場合, エンティティは経路を探索し自発的に
 
 :::
 
-:::caution
+:::warning
 
 アクション実行シナリオでは、Entity オブジェクトの `type` が必須です。  
 また, アクション実行期待シナリオでは、Entity 型の `target` 引数は使用できません。
@@ -648,7 +648,7 @@ AI を有効にした場合, エンティティは経路を探索し自発的に
 
 投射物の構造体を指定します。
 
-:::warning
+:::denger
 
 アクション実行シナリオでは `shooter` が必須です。
 

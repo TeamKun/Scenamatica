@@ -29,16 +29,14 @@ jobs:
           environment: production
           initial-status: in_progress
 
-      - uses: actions/setup-node@v2
-        with:
-          cache: npm
-          node-version: 18
+      - name: pnpm-setup
+        uses: pnpm/action-setup@v2
       - name: Install dependencies
-        run: npm install
+        run: pnpm install
       - name: Build
         run: |
-          npm run build:schema
-          npm run build:site
+          pnpm run build:schema
+          pnpm run build:site
       - name: Setup Pages
         uses: actions/configure-pages@v2
       - name: Upload artifact

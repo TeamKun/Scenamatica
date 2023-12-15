@@ -115,13 +115,13 @@ import {ObjectType} from "/src/components/Object";
 
 #### アクション実行シナリオでの使用 {#bucket-empty-usage-in-execution}
 
-:::caution
+:::warning
 
 `block` と `clickedBlock` のどちらか一方は必須です。
 
 :::
 
-:::warning
+:::denger
 
 NMS の仕様上の都合により、 `block` を用いた液体の場所は `eventOnly` が `true` の場合にのみ有効です。
 
@@ -203,13 +203,13 @@ NMS の仕様上の都合により、 `block` を用いた液体の場所は `ev
 
 #### アクション実行シナリオでの使用 {#bucket-empty-usage-in-execution}
 
-:::caution
+:::warning
 
 `block` と `clickedBlock` のどちらか一方は必須です。
 
 :::
 
-:::warning
+:::denger
 
 NMS の仕様上の都合により、 `block` を用いた液体の場所は `eventOnly` が `true` の場合にのみ有効です。
 
@@ -317,7 +317,7 @@ NMS の仕様上の都合により、 `block` を用いた液体の場所は `ev
 
 実行するアニメーションの種類を指定します。  
 
-:::caution
+:::warning
 
 Bukkit の仕様により、現在は `ARM_SWING` のみが指定可能です。  
 また、将来の互換性を維持するために、この引数の省略はできません。
@@ -365,7 +365,7 @@ Bukkit の仕様により、現在は `ARM_SWING` のみが指定可能です。
         executable watchable
 />
 
-:::caution
+:::warning
 
 `bucket` に指定するアイテムは、エンティティを格納できるバケツである必要があります（参考：1.16.5 時点では `WATER_BUCKET` のいｍ）。
 `entityBucket` は、エンティティを格納した後のバケツを指定する必要があります。
@@ -417,7 +417,7 @@ Bukkit の仕様により、現在は `ARM_SWING` のみが指定可能です。
         executable watchable
 />
 
-:::caution
+:::warning
 
 `format` はアクション実行シナリオでは使用できません。
 
@@ -620,7 +620,7 @@ Bukkit の仕様により、現在は `ARM_SWING` のみが指定可能です。
 
 ゲームモードを指定します。
 
-:::warning
+:::denger
 
 `gamemode` は上記に示す列挙型のみ指定できます。  
 Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `0` 〜 `3`)は指定できません。
@@ -748,7 +748,7 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
 
 ## エンティティのクリック（作用） {#interact-at-entity}
 
-:::caution DEPRECATED!!!
+:::warning DEPRECATED!!!
 
 このアクションは、**アーマースタンドのクリックのみ**をサポートしています。  
 ほとんどの場合は、 [プレイヤのエンティティのクリック](#interact-entity) を使用してください。
@@ -881,7 +881,7 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
 
 プレイヤにエンティティをクリックさせます。
 
-:::warning
+:::denger
 
 プレイヤとエンティティの距離が `36.0` ブロックより離れている場合は、 Scenamatica はイベントのみを発行します。
 通常はアクタから `PacketPlayInUseEntity` パケットが送信され、エンティティのクリックが再現されますが、
@@ -1035,7 +1035,7 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
 
 #### `item` {#item-damage-item}
 
-:::warning
+:::denger
 
 `item` で指定できるアイテムは、その [ItemMeta](https://jd.papermc.io/paper/1.16/org/bukkit/inventory/meta/ItemMeta.html) が [Damageable](https://jd.papermc.io/paper/1.16/org/bukkit/inventory/meta/Damageable.html) 
 を実装しているアイテムのみです。
@@ -1113,7 +1113,7 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
 
 #### `leave_message` {#kick-leave-message}
 
-:::caution
+:::warning
 アクション実行期待モードでは使用できません。
 :::
 
@@ -1347,11 +1347,11 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
 
 退出時のメッセージを指定します。
 
-:::caution
+:::warning
 条件要求シナリオでは使用できません。
 :::
 
-:::warning
+:::denger
 
 理由がキックの場合, キックされた理由がここに設定されます。  
 したがって、退出理由は翻訳可能コンポーネント`multiplayer.player.left`になるため、このアクションでは判定できません。
