@@ -9,6 +9,7 @@ import org.kunlab.scenamatica.action.selector.compiler.parser.SelectorSyntaxAnal
 import org.kunlab.scenamatica.action.selector.compiler.parser.SyntaxTree;
 import org.kunlab.scenamatica.action.selector.compiler.parser.SyntaxTreeTraverser;
 import org.kunlab.scenamatica.action.selector.predicates.LocationPredicate;
+import org.kunlab.scenamatica.action.selector.predicates.NamePredicate;
 import org.kunlab.scenamatica.action.selector.predicates.SelectorPredicate;
 
 import java.util.ArrayList;
@@ -40,6 +41,7 @@ public class SelectorCompiler
         ArrayList<SelectorPredicate<? super Entity>> predicates = new ArrayList<>();
         // <editor-fold desc="Predicates registering">
         predicates.add(new LocationPredicate());
+        predicates.add(new NamePredicate());
         // </editor-fold>
         return predicates;
     }
