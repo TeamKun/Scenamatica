@@ -11,6 +11,7 @@ import org.kunlab.scenamatica.action.selector.compiler.parser.SyntaxTreeTraverse
 import org.kunlab.scenamatica.action.selector.predicates.LocationPredicate;
 import org.kunlab.scenamatica.action.selector.predicates.NamePredicate;
 import org.kunlab.scenamatica.action.selector.predicates.SelectorPredicate;
+import org.kunlab.scenamatica.action.selector.predicates.TypePredicate;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -42,6 +43,7 @@ public class SelectorCompiler
         // <editor-fold desc="Predicates registering">
         predicates.add(new LocationPredicate());
         predicates.add(new NamePredicate());
+        predicates.add(new TypePredicate());
         // </editor-fold>
         return predicates;
     }
