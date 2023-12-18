@@ -12,6 +12,7 @@ import org.kunlab.scenamatica.action.selector.compiler.parser.SyntaxTreeTraverse
 import org.kunlab.scenamatica.action.selector.predicates.DistancePredicate;
 import org.kunlab.scenamatica.action.selector.predicates.LocationPredicate;
 import org.kunlab.scenamatica.action.selector.predicates.NamePredicate;
+import org.kunlab.scenamatica.action.selector.predicates.ScorePredicate;
 import org.kunlab.scenamatica.action.selector.predicates.SelectorPredicate;
 import org.kunlab.scenamatica.action.selector.predicates.TypePredicate;
 
@@ -46,6 +47,7 @@ public class SelectorCompiler
         predicates.add(new DistancePredicate());
         predicates.add(new LocationPredicate());
         predicates.add(new NamePredicate());
+        predicates.add(new ScorePredicate());
         predicates.add(new TypePredicate());
         // </editor-fold>
         return predicates;
