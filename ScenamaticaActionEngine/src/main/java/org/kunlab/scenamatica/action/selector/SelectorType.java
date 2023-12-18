@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.function.Predicate;
+import java.util.function.BiPredicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -44,12 +44,12 @@ public enum SelectorType
         throw new IllegalArgumentException("Unknown selector type: " + type);
     }
 
-    public List<Entity> enumerate(@Nullable Player basis, @NotNull Predicate<? super Entity> predicate)
+    public List<Entity> enumerate(@Nullable Player basis, @NotNull BiPredicate<? super Player, ? super Entity> predicate)
     {
         switch (this)
         {
             case PLAYER_SELF:
-                if (basis == null || !predicate.test(basis))
+                if (basis == null || !predicate.test(basis, basis))
                     return Collections.emptyList();
                 else
                     return Collections.singletonList(basis);
@@ -58,7 +58,7 @@ public enum SelectorType
                     return Collections.emptyList();
                 return this.entitiesSupplier.get().stream()
                         .filter(entity -> entity instanceof Player)
-                        .filter(predicate)
+                        .filter(entity -> predicate.test(basis, entity))
                         .sorted((o1, o2) -> {
                             double d1 = o1.getLocation().distanceSquared(basis.getLocation());
                             double d2 = o2.getLocation().distanceSquared(basis.getLocation());
@@ -67,7 +67,7 @@ public enum SelectorType
                         .collect(Collectors.toList());
             default:
                 return new ArrayList<>(this.entitiesSupplier.get()).stream()
-                        .filter(predicate)
+                        .filter(entity -> entity instanceof Player)
                         .collect(Collectors.toList());
 
         }

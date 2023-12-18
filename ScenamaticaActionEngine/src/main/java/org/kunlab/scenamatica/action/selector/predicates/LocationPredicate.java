@@ -2,6 +2,7 @@ package org.kunlab.scenamatica.action.selector.predicates;
 
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.kunlab.scenamatica.action.selector.compiler.RangedNumber;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.commons.utils.NamespaceUtils;
@@ -20,7 +21,7 @@ public class LocationPredicate extends AbstractGeneralEntitySelectorPredicate
     public static final String KEY_WORLD = "world";
 
     @Override
-    public boolean test(Entity entity, Map<? super String, Object> properties)
+    public boolean test(Player basis, Entity entity, Map<? super String, Object> properties)
     {
         if (properties.containsKey(KEY_WORLD))
         {
@@ -45,11 +46,7 @@ public class LocationPredicate extends AbstractGeneralEntitySelectorPredicate
     @Override
     public void normalizeMap(Map<? super String, Object> properties)
     {
-        if (properties.containsKey(KEY_STRUCTURE_LOCATION_SHORT))  // 外に出す
-        {
-            properties.putAll(MapUtils.checkAndCastMap(properties.get(KEY_STRUCTURE_LOCATION_SHORT)));
-            properties.remove(KEY_STRUCTURE_LOCATION_SHORT);
-        }
+        expandItemsIfExists(KEY_STRUCTURE_LOCATION_SHORT, KEY_STRUCTURE_LOCATION, properties);
 
         RangedNumber.normalizeMap(KEY_STRUCTURE_LOCATION, KEY_X, properties);
         RangedNumber.normalizeMap(KEY_STRUCTURE_LOCATION, KEY_Y, properties);

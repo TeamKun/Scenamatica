@@ -2,6 +2,7 @@ package org.kunlab.scenamatica.action.selector.predicates;
 
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
 import org.kunlab.scenamatica.commons.utils.Utils;
 
 import java.util.Map;
@@ -11,7 +12,7 @@ public class TypePredicate extends AbstractGeneralEntitySelectorPredicate
     public static final String KEY_TYPE = "type";
 
     @Override
-    public boolean test(Entity entity, Map<? super String, Object> properties)
+    public boolean test(Player basis, Entity entity, Map<? super String, Object> properties)
     {
         EntityType type = (EntityType) properties.get(KEY_TYPE);
         return entity.getType() == type;

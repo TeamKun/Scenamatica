@@ -25,10 +25,35 @@ public abstract class AbstractSelectorPredicate<E extends Entity> implements Sel
         return obj == null ? null: obj.toString();
     }
 
+    protected static void transferItemIfExists(String key, Map<String, Object> from, Map<? super String, Object> to)
+    {
+        if (from.containsKey(key))
+        {
+            to.put(key, from.get(key));
+            from.remove(key);
+        }
+    }
+
+    protected static void expandItemsIfExists(String originalKey, String toKey, Map<? super String, Object> map)
+    {
+        if (map.containsKey(originalKey))
+        {
+            Map<String, Object> subMap = MapUtils.createOrRetriveMap(toKey, map);
+            subMap.put(originalKey, map.get(originalKey));
+            map.remove(originalKey);
+        }
+    }
+
     @Override
     public void normalizeMap(Map<? super String, Object> properties)
     {
 
+    }
+
+    @Override
+    public boolean isBasisRequired()
+    {
+        return false;
     }
 
     @Override

@@ -9,7 +9,7 @@ import org.kunlab.scenamatica.action.selector.compiler.SelectorCompiler;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Predicate;
+import java.util.function.BiPredicate;
 
 @Value
 @NotNull
@@ -17,11 +17,21 @@ public class Selector
 {
     String original;
     SelectorType type;
-    Predicate<? super Entity> predicate;
+    BiPredicate<? super Player, ? super Entity> predicate;
+
+    public static Selector compile(String selector, boolean canProvideBasis)
+    {
+        return SelectorCompiler.compile(selector, canProvideBasis);
+    }
 
     public static Selector compile(String selector)
     {
-        return SelectorCompiler.compile(selector);
+        return compile(selector, false);
+    }
+
+    public boolean test(@Nullable Player basis, @NotNull Entity entity)
+    {
+        return this.predicate.test(basis, entity);
     }
 
     public List<Entity> select(@Nullable Player basis)

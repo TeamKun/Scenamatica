@@ -3,7 +3,7 @@ package org.kunlab.scenamatica.action.selector.compiler;
 import lombok.experimental.StandardException;
 
 @StandardException
-public class SelectorSyntaxErrorException extends IllegalArgumentException
+public class SelectorSyntaxErrorException extends SelectorCompilationErrorException
 {
     public static SelectorSyntaxErrorException unexpectedToken(String given, String token, int index)
     {

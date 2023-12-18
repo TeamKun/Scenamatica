@@ -15,7 +15,7 @@ public class RangedNumber
 {
     public static final String KEY_MIN_SUFFIX = "min";
     public static final String KEY_MAX_SUFFIX = "max";
-    public static final String VALUE_SEPARATOR = "~";
+    public static final String VALUE_SEPARATOR = "..".replace(".", "\\.");
 
     Number min;
     Number max;
@@ -29,7 +29,11 @@ public class RangedNumber
 
             Map<String, Object> group = MapUtils.createOrRetriveMap(groupKey, properties);
             group.put(key, number);
+
+            return;
         }
+        else if (groupKey.equals(key))
+            return;
 
         Object parent = properties.get(groupKey);
         if (!(parent instanceof Map))

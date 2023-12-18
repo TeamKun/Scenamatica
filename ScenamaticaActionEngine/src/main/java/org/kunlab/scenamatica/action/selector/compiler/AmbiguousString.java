@@ -40,6 +40,8 @@ public class AmbiguousString
 
             Map<String, Object> group = MapUtils.createOrRetriveMap(groupKey, properties);
             group.put(key, string);
+
+            return;
         }
 
         Object parent = properties.get(groupKey);

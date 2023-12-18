@@ -1,12 +1,13 @@
 package org.kunlab.scenamatica.action.selector.predicates;
 
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 
 import java.util.Map;
 
 public interface SelectorPredicate<E extends Entity>
 {
-    boolean test(E entity, Map<? super String, Object> properties);
+    boolean test(Player basis, E entity, Map<? super String, Object> properties);
 
     default boolean isApplicable(Map<String, Object> properties)
     {
@@ -22,6 +23,8 @@ public interface SelectorPredicate<E extends Entity>
     String[] getUsingAmbiguousStringKeys();
 
     Class<? extends E> getApplicableClass();
+
+    boolean isBasisRequired();
 
     boolean isApplicableKey(Map<String, Object> properties);
 }
