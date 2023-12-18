@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
@@ -45,6 +46,8 @@ public class AmbiguousString
 
             return;
         }
+        else if (groupKey.equals(key))
+            return;
 
         Object parent = properties.get(groupKey);
         if (!(parent instanceof Map))
@@ -57,6 +60,11 @@ public class AmbiguousString
         AmbiguousString string = fromMap(key, parentMap);
         wipeMap(key, parentMap);
         parentMap.put(key, string);
+    }
+
+    public static void normalizeList(List<Object> list)
+    {
+        list.replaceAll(AmbiguousString::fromObject);
     }
 
     public static void wipeMap(String key, Map<? super String, Object> properties)
@@ -93,16 +101,27 @@ public class AmbiguousString
         }
 
         Object value = properties.get(key);
-        if (value instanceof AmbiguousString)
-            return (AmbiguousString) value;
-        else if (value instanceof String)
-            return new AmbiguousString(NegateSupport.toRawCast(value), NegateSupport.shouldNegate(value));
-        else if (value instanceof Map)
-            return parseAmbiguousMapString(key, MapUtils.checkAndCastMap(value));
-        else if (value == null)
+        return fromObject(value);
+    }
+
+    public static AmbiguousString fromObject(Object object)
+    {
+        return fromObject(null, object);
+    }
+
+    public static AmbiguousString fromObject(String key, Object object)
+    {
+        Object rawObject = NegateSupport.toRaw(object);
+        if (rawObject instanceof AmbiguousString)
+            return (AmbiguousString) rawObject;
+        else if (rawObject instanceof String)
+            return new AmbiguousString((String) rawObject, NegateSupport.shouldNegate(rawObject));
+        else if (rawObject instanceof Map)
+            return parseAmbiguousMapString(key, MapUtils.checkAndCastMap(rawObject));
+        else if (rawObject == null)
             return new AmbiguousString(null, false);
         else
-            throw new IllegalArgumentException("Invalid string format: " + value);
+            throw new IllegalArgumentException("Invalid string format: " + rawObject);
     }
 
     private static AmbiguousString parseAmbiguousMapString(String key, Map<? super String, Object> map)
@@ -113,7 +132,7 @@ public class AmbiguousString
                     NegateSupport.shouldNegate(KEY_SUFFIX_REGEX, map)
             );
 
-        if (map.containsKey(key))
+        if (key != null && map.containsKey(key))
             return new AmbiguousString(
                     NegateSupport.getRawCast(key, map),
                     NegateSupport.shouldNegate(key, map)
