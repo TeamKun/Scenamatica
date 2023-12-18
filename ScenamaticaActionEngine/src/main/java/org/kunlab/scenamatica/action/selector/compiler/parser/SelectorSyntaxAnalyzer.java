@@ -210,6 +210,12 @@ public class SelectorSyntaxAnalyzer
                         phase = null;
                     }
                     break;
+                case NEGATE:
+                    if (phase == null)
+                        throw SelectorSyntaxErrorException.unexpectedDeclare(token.getToken(), "negate", token.getIndex());
+                    if (phase == TokenType.PARAMETER_KEY)
+                        tempParm.setDoNegate(true);
+                    break;
             }
         }
 
@@ -281,15 +287,23 @@ public class SelectorSyntaxAnalyzer
     {
         private String key;
         private SyntaxTree value;
+        private boolean doNegate;
 
         public SyntaxTree construct()
         {
+            if (this.key == null)
+                throw new IllegalStateException("key is null");
+
+            SyntaxTree value = this.value;
+            if (this.doNegate)
+                value = new SyntaxTree(SyntaxType.NEGATE, null, new SyntaxTree[]{value});
+
             SyntaxTree tree = new SyntaxTree(
                     SyntaxType.PROPERTY,
                     null,
                     new SyntaxTree[]{
                             new SyntaxTree(SyntaxType.KEY, this.key, null),
-                            this.value
+                            value
                     }
             );
 

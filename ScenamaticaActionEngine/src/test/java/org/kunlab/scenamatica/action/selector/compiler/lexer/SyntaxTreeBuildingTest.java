@@ -465,4 +465,30 @@ public class SyntaxTreeBuildingTest
         SyntaxTree actual = SelectorSyntaxAnalyzer.analyze(tokens);
         assertTree(expected, actual);
     }
+
+    @Test
+    public void 否定を含む引数で正常に構築されること()
+    {
+        final LinkedList<SelectorToken> tokens = new LinkedList<SelectorToken>()
+        {{
+            this.add(new SelectorToken("[", 0, TokenType.PARAMETER_BEGIN));
+            this.add(new SelectorToken("foo", 1, TokenType.LITERAL));
+            this.add(new SelectorToken("=", 4, TokenType.KEY_VALUE_SEPARATOR));
+            this.add(new SelectorToken("!", 5, TokenType.NEGATE));
+            this.add(new SelectorToken("bar", 6, TokenType.LITERAL));
+            this.add(new SelectorToken("]", 9, TokenType.PARAMETER_END));
+        }};
+
+        final SyntaxTree expected = new SyntaxTree(SyntaxType.SELECTOR, null, new SyntaxTree[]{
+                new SyntaxTree(SyntaxType.PROPERTY, null, new SyntaxTree[]{
+                        new SyntaxTree(SyntaxType.KEY, "foo", null),
+                        new SyntaxTree(SyntaxType.NEGATE, null, new SyntaxTree[]{
+                                new SyntaxTree(SyntaxType.VALUE, "bar", null)
+                        })
+                })
+        });
+
+        SyntaxTree actual = SelectorSyntaxAnalyzer.analyze(tokens);
+        assertTree(expected, actual);
+    }
 }

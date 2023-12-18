@@ -6,6 +6,7 @@ public enum TokenType
 
     TYPE,
     LITERAL,
+    NEGATE,
 
     PARAMETER_BEGIN,
     PARAMETER_KEY,

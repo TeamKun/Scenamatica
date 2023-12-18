@@ -13,6 +13,7 @@ public class SelectorLexer
     public static final char COLLECTIONS_BEGIN = '{';
     public static final char COLLECTIONS_END = '}';
     public static final char KEY_VALUE_SEPARATOR = '=';
+    public static final char KEY_NEGATE = '!';
     public static final char STRING_QUOTE = '"';
     public static final char STRING_ESCAPE = '\\';
     public static final String[] IGNORED_CHARACTERS = {" ", "\t", "\n", "\r"};
@@ -26,6 +27,7 @@ public class SelectorLexer
                 || c == COLLECTIONS_BEGIN
                 || c == COLLECTIONS_END
                 || c == KEY_VALUE_SEPARATOR
+                || c == KEY_NEGATE
                 || c == STRING_QUOTE
                 || c == STRING_ESCAPE;
     }
@@ -46,6 +48,8 @@ public class SelectorLexer
             return TokenType.COLLECTIONS_END;
         else if (c == KEY_VALUE_SEPARATOR)
             return TokenType.KEY_VALUE_SEPARATOR;
+        else if (c == KEY_NEGATE)
+            return TokenType.NEGATE;
         else
             return TokenType.LITERAL;
     }
@@ -99,7 +103,8 @@ public class SelectorLexer
                         || previousTokenType == TokenType.PARAMETER_BEGIN
                         || previousTokenType == TokenType.COLLECTIONS_BEGIN
                         || previousTokenType == TokenType.PARAMETER_SEPARATOR
-                        || previousTokenType == TokenType.KEY_VALUE_SEPARATOR)
+                        || previousTokenType == TokenType.KEY_VALUE_SEPARATOR
+                        || previousTokenType == TokenType.NEGATE)
                 {
                     String token = processingToken.pop();
                     tokens.add(new SelectorToken(token, i - token.length() + ignoredCharacterCount, TokenType.LITERAL));
@@ -188,6 +193,12 @@ public class SelectorLexer
                 case KEY_VALUE_SEPARATOR:
                     if (previousTokenType == TokenType.LITERAL)
                         tokens.add(new SelectorToken(processingToken.pop(), i, TokenType.KEY_VALUE_SEPARATOR));
+                    else
+                        throw SelectorSyntaxErrorException.unexpectedToken(parametersString, processingToken.pop(), i);
+                    break;
+                case NEGATE:
+                    if (previousTokenType == TokenType.KEY_VALUE_SEPARATOR)
+                        tokens.add(new SelectorToken(processingToken.pop(), i, TokenType.NEGATE));
                     else
                         throw SelectorSyntaxErrorException.unexpectedToken(parametersString, processingToken.pop(), i);
             }

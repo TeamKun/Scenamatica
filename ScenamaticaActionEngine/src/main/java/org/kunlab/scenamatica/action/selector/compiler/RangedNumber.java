@@ -19,6 +19,7 @@ public class RangedNumber
 
     Number min;
     Number max;
+    boolean doNegate;
 
     public static void normalizeMap(String groupKey, String key, Map<? super String, Object> properties)
     {
@@ -79,21 +80,23 @@ public class RangedNumber
             max = (Number) properties.get(key + "_" + KEY_MAX_SUFFIX);
 
         if (!(min == null && max == null))
-            return new RangedNumber(min, max);
+            return new RangedNumber(min, max, false);
 
         if (properties.containsKey(key))
         {
-            Object value = properties.get(key);
+            Object value = NegateSupport.getRaw(key, properties);
+            boolean shouldNegate = NegateSupport.shouldNegate(key, properties);
+
             if (value instanceof RangedNumber)
                 return (RangedNumber) value;
             else if (value instanceof Number)
-                return new RangedNumber((Number) value, (Number) value);
+                return new RangedNumber((Number) value, (Number) value, shouldNegate);
             else if (value instanceof String)
-                return parseRangedStringNumber((String) value);
+                return parseRangedStringNumber((String) value, shouldNegate);
             else if (value instanceof Map)
-                return parseRangedMapNumber(MapUtils.checkAndCastMap(value));
+                return parseRangedMapNumber(MapUtils.checkAndCastMap(value), shouldNegate);
             else if (value == null)
-                return new RangedNumber(null, null);
+                return new RangedNumber(null, null, shouldNegate);
             else
                 throw new IllegalArgumentException("Invalid number format: " + value);
         }
@@ -102,7 +105,7 @@ public class RangedNumber
         throw new IllegalArgumentException("Invalid number format: " + properties);
     }
 
-    private static RangedNumber parseRangedMapNumber(Map<String, Object> map)
+    private static RangedNumber parseRangedMapNumber(Map<String, Object> map, boolean shouldNegate)
     {
         Number min = null;
         Number max = null;
@@ -113,19 +116,19 @@ public class RangedNumber
             max = (Number) map.get(KEY_MAX_SUFFIX);
 
         if (!(min == null && max == null))
-            return new RangedNumber(min, max);
+            return new RangedNumber(min, max, shouldNegate);
         else
             throw new IllegalArgumentException("Invalid ranged number format: " + map);
     }
 
-    private static RangedNumber parseRangedStringNumber(String value)
+    private static RangedNumber parseRangedStringNumber(String value, boolean shouldNegate)
     {
         try
         {
             if (!value.contains(VALUE_SEPARATOR))
             {
                 Number number = NumberFormat.getInstance().parse(value);
-                return new RangedNumber(number, number);
+                return new RangedNumber(number, number, shouldNegate);
             }
 
             String[] values = value.split(VALUE_SEPARATOR);
@@ -137,7 +140,7 @@ public class RangedNumber
             if (values.length > 1 && !values[1].isEmpty())
                 max = NumberFormat.getInstance().parse(values[1]);
 
-            return new RangedNumber(min, max);
+            return new RangedNumber(min, max, shouldNegate);
         }
         catch (ParseException e)
         {
@@ -145,10 +148,15 @@ public class RangedNumber
         }
     }
 
-    public boolean test(@Nullable Number number)
+    public boolean testRaw(Number number)
     {
         return (number != null || this.min == null && this.max == null)
                 && (this.min == null || this.min.doubleValue() <= number.doubleValue())
                 && (this.max == null || this.max.doubleValue() >= number.doubleValue());
+    }
+
+    public boolean test(@Nullable Number number)
+    {
+        return this.testRaw(number) ^ this.doNegate;
     }
 }

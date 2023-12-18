@@ -3,7 +3,6 @@ package org.kunlab.scenamatica.action.selector.compiler.parser;
 import net.kunmc.lab.peyangpaperutils.lib.utils.Pair;
 import org.kunlab.scenamatica.action.selector.SelectorType;
 import org.kunlab.scenamatica.action.selector.compiler.SelectorSyntaxErrorException;
-import org.kunlab.scenamatica.action.selector.compiler.lexer.SelectorLexer;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -14,45 +13,6 @@ import java.util.Map;
 public class SyntaxTreeTraverser
 {
     public static final SelectorType DEFAULT_TYPE = SelectorType.ENTITY_ALL;
-
-    public static void main(String[] args)
-    {
-        String a = "@e[tag=aw,location={x=123,y=456,z=789},location={pitch=10,x=10}]";
-
-        SyntaxTree tree = SelectorSyntaxAnalyzer.analyze(SelectorLexer.tokenize(a));
-        System.out.println(tree);
-
-        PropertiedSelector selector = traverse(tree);
-        System.out.println("type: " + selector.getType());
-        System.out.println("properties: " + prepareForPrint(selector.getProperties()));
-
-        // Expected:
-        // {
-        //   type: ENTITY_ALL,
-        //   properties: {
-        //     a: [b, c, c, [d, e], {C=D}]
-        // }
-    }
-
-    private static String prepareForPrint(Object obj)
-    {
-        if (obj == null)
-            return "null";
-        else if (obj instanceof List)
-        {
-            List<Object> list = (List<Object>) obj;
-            list.replaceAll(SyntaxTreeTraverser::prepareForPrint);
-            return list.toString();
-        }
-        else if (obj instanceof Map)
-        {
-            Map<String, Object> map = (Map<String, Object>) obj;
-            map.replaceAll((k, v) -> prepareForPrint(v));
-            return map.toString();
-        }
-        else
-            return obj.toString();
-    }
 
     public static PropertiedSelector traverse(SyntaxTree tree)
     {
@@ -106,6 +66,8 @@ public class SyntaxTreeTraverser
         {
             case VALUE:
                 return normalizeValue(tree.getValue());
+            case NEGATE:
+                return new NegativeValue(traverseValue(tree.getChildren()[0]));
             case COLLECTION:
                 return traverseCollection(tree);
             case PROPERTY:

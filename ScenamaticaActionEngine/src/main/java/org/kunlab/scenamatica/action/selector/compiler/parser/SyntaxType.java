@@ -11,4 +11,6 @@ public enum SyntaxType
 
     KEY,
     VALUE,
+
+    NEGATE,
 }

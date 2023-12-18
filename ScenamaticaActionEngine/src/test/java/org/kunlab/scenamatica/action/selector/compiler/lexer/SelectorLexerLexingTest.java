@@ -354,4 +354,22 @@ public class SelectorLexerLexingTest
         final LinkedList<SelectorToken> actualTokens = SelectorLexer.tokenize(testCase);
         assertTokens(expectedTokens, actualTokens);
     }
+
+    @Test
+    public void 否定を含む引数で正常にトークン化されること()
+    {
+        final String testCase = "[foo=!bar]";
+        final LinkedList<SelectorToken> expectedTokens = new LinkedList<SelectorToken>()
+        {{
+            this.add(new SelectorToken("[", 0, TokenType.PARAMETER_BEGIN));
+            this.add(new SelectorToken("foo", 1, TokenType.LITERAL));
+            this.add(new SelectorToken("=", 4, TokenType.KEY_VALUE_SEPARATOR));
+            this.add(new SelectorToken("!", 5, TokenType.NEGATE));
+            this.add(new SelectorToken("bar", 6, TokenType.LITERAL));
+            this.add(new SelectorToken("]", 9, TokenType.PARAMETER_END));
+        }};
+
+        final LinkedList<SelectorToken> actualTokens = SelectorLexer.tokenize(testCase);
+        assertTokens(expectedTokens, actualTokens);
+    }
 }

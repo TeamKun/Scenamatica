@@ -16,19 +16,21 @@ public class AmbiguousString
 
     String value;
     Pattern regex;
+    boolean doNegate;
 
-    public AmbiguousString(String value, String regex)
+    public AmbiguousString(String value, String regex, boolean doNegate)
     {
         this.value = value;
         if (regex == null)
             this.regex = null;
         else
             this.regex = Pattern.compile(regex);
+        this.doNegate = doNegate;
     }
 
-    public AmbiguousString(String regex)
+    public AmbiguousString(String regex, boolean doNegate)
     {
-        this(null, regex);
+        this(null, regex, doNegate);
     }
 
     public static void normalizeMap(String groupKey, String key, Map<? super String, Object> properties)
@@ -77,10 +79,11 @@ public class AmbiguousString
         // 1. キー_regex => regex
         // 2. Map で { regex: 正規表現 } => regex
         // 3. Map で { <key>: 文字列 } => value
-        if (properties.containsKey(key + "_" + KEY_SUFFIX_REGEX))
+        String regexKey = key + "_" + KEY_SUFFIX_REGEX;
+        if (properties.containsKey(regexKey))
         {
-            String regex = (String) properties.get(key + "_" + KEY_SUFFIX_REGEX);
-            return new AmbiguousString(regex);
+            String regex = (String) NegateSupport.toRaw(regexKey);
+            return new AmbiguousString(regex, NegateSupport.shouldNegate(regexKey));
         }
 
         if (!properties.containsKey(key))
@@ -93,30 +96,33 @@ public class AmbiguousString
         if (value instanceof AmbiguousString)
             return (AmbiguousString) value;
         else if (value instanceof String)
-            return new AmbiguousString((String) value);
+            return new AmbiguousString(NegateSupport.toRawCast(value), NegateSupport.shouldNegate(value));
         else if (value instanceof Map)
             return parseAmbiguousMapString(key, MapUtils.checkAndCastMap(value));
         else if (value == null)
-            return new AmbiguousString(null);
+            return new AmbiguousString(null, false);
         else
             throw new IllegalArgumentException("Invalid string format: " + value);
     }
 
-    private static AmbiguousString parseAmbiguousMapString(String key, Map<String, Object> map)
+    private static AmbiguousString parseAmbiguousMapString(String key, Map<? super String, Object> map)
     {
         if (map.containsKey(KEY_SUFFIX_REGEX))
-        {
-            String regex = (String) map.get(KEY_SUFFIX_REGEX);
-            return new AmbiguousString(regex);
-        }
+            return new AmbiguousString(
+                    NegateSupport.getRawCast(KEY_SUFFIX_REGEX, map),
+                    NegateSupport.shouldNegate(KEY_SUFFIX_REGEX, map)
+            );
 
         if (map.containsKey(key))
-            return new AmbiguousString((String) map.get(key), null);
+            return new AmbiguousString(
+                    NegateSupport.getRawCast(key, map),
+                    NegateSupport.shouldNegate(key, map)
+            );
 
         throw new IllegalArgumentException("Invalid ambiguous string format: " + map);
     }
 
-    public boolean test(String value)
+    public boolean testRaw(String value)
     {
         if (this.regex != null)
             return this.regex.matcher(value).matches();
@@ -124,5 +130,10 @@ public class AmbiguousString
             return this.value.equalsIgnoreCase(value);
         else
             return value == null;
+    }
+
+    public boolean test(String value)
+    {
+        return this.testRaw(value) ^ this.doNegate;
     }
 }
