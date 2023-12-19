@@ -44,7 +44,7 @@ public enum SelectorType
         throw new IllegalArgumentException("Unknown selector type: " + type);
     }
 
-    public List<Entity> enumerate(@Nullable Player basis, @NotNull BiPredicate<? super Player, ? super Entity> predicate)
+    public List<Entity> enumerate(@Nullable Player basis, @NotNull BiPredicate<? super Player, ? extends Entity> predicate)
     {
         switch (this)
         {
@@ -56,9 +56,10 @@ public enum SelectorType
             case PLAYER_NEAREST:
                 if (basis == null)
                     return Collections.emptyList();
+                // noinspection unchecked, rawtypes
                 return this.entitiesSupplier.get().stream()
                         .filter(entity -> entity instanceof Player)
-                        .filter(entity -> predicate.test(basis, entity))
+                        .filter(entity -> ((BiPredicate) predicate).test(basis, entity))
                         .sorted((o1, o2) -> {
                             double d1 = o1.getLocation().distanceSquared(basis.getLocation());
                             double d2 = o2.getLocation().distanceSquared(basis.getLocation());

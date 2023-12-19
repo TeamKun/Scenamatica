@@ -102,7 +102,7 @@ public class SelectorCompiler
         if (!canProvideBasis)
             ensureNoBasisRequired(predicates);
 
-        BiPredicate<? super Player, ? super Entity> predicate = combinePredicates(predicates, elements.getProperties());
+        BiPredicate<? super Player, ? extends Entity> predicate = combinePredicates(predicates, elements.getProperties());
 
         return new Selector(selector, elements.getType(), predicate);
     }

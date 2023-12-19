@@ -17,7 +17,7 @@ public class Selector
 {
     String original;
     SelectorType type;
-    BiPredicate<? super Player, ? super Entity> predicate;
+    BiPredicate<? super Player, ? extends Entity> predicate;
 
     public static Selector compile(String selector, boolean canProvideBasis)
     {
@@ -31,7 +31,15 @@ public class Selector
 
     public boolean test(@Nullable Player basis, @NotNull Entity entity)
     {
-        return this.predicate.test(basis, entity);
+        try
+        {
+            // noinspection unchecked
+            return ((BiPredicate<Player, Entity>) this.predicate).test(basis, entity);
+        }
+        catch (ClassCastException e)
+        {
+            return false;
+        }
     }
 
     public List<Entity> select(@Nullable Player basis)
