@@ -18,7 +18,7 @@ public class NamePredicate extends AbstractGeneralEntitySelectorPredicate
             return true;
 
         String name = entity.getName();
-        AmbiguousString ambiguousString = AmbiguousString.fromMap(KEY_NAME, properties);
+        AmbiguousString ambiguousString = (AmbiguousString) properties.get(KEY_NAME);
 
         return ambiguousString.test(name);
     }
@@ -26,7 +26,7 @@ public class NamePredicate extends AbstractGeneralEntitySelectorPredicate
     @Override
     public void normalizeMap(Map<? super String, Object> properties)
     {
-        AmbiguousString.normalizeMap(KEY_NAME, KEY_NAME, properties);
+        AmbiguousString.normalizeMap(KEY_NAME, properties);
     }
 
     @Override

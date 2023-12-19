@@ -39,9 +39,9 @@ public class DistancePredicate extends AbstractGeneralEntitySelectorPredicate
             distanceStruct.remove(KEY_VOXEL_FULL_Z);
         }
 
-        RangedNumber.normalizeMap(KEY_VOXEL_FULL_X, KEY_VOXEL_FULL_X, distanceStruct);
-        RangedNumber.normalizeMap(KEY_VOXEL_FULL_Y, KEY_VOXEL_FULL_Y, distanceStruct);
-        RangedNumber.normalizeMap(KEY_VOXEL_FULL_Z, KEY_VOXEL_FULL_Z, distanceStruct);
+        RangedNumber.normalizeMap(KEY_VOXEL_FULL_X, distanceStruct);
+        RangedNumber.normalizeMap(KEY_VOXEL_FULL_Y, distanceStruct);
+        RangedNumber.normalizeMap(KEY_VOXEL_FULL_Z, distanceStruct);
     }
 
     private static boolean processRangedDistance(Player basis, Entity entity, RangedNumber distance)

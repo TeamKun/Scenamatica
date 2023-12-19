@@ -15,6 +15,7 @@ import org.kunlab.scenamatica.action.selector.predicates.NamePredicate;
 import org.kunlab.scenamatica.action.selector.predicates.ScorePredicate;
 import org.kunlab.scenamatica.action.selector.predicates.SelectorPredicate;
 import org.kunlab.scenamatica.action.selector.predicates.TagPredicate;
+import org.kunlab.scenamatica.action.selector.predicates.TeamPredicate;
 import org.kunlab.scenamatica.action.selector.predicates.TypePredicate;
 
 import java.util.ArrayList;
@@ -50,6 +51,7 @@ public class SelectorCompiler
         predicates.add(new NamePredicate());
         predicates.add(new ScorePredicate());
         predicates.add(new TagPredicate());
+        predicates.add(new TeamPredicate());
         predicates.add(new TypePredicate());
         // </editor-fold>
         return predicates;

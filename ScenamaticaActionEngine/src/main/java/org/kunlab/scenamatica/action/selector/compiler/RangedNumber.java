@@ -21,6 +21,11 @@ public class RangedNumber
     Number max;
     boolean doNegate;
 
+    public static void normalizeMap(String key, Map<? super String, Object> properties)
+    {
+        normalizeMap(key, key, properties);
+    }
+
     public static void normalizeMap(String groupKey, String key, Map<? super String, Object> properties)
     {
         if (hasRangedNumber(key, properties))

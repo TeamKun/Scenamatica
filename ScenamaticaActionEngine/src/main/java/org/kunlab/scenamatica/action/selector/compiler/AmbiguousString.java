@@ -1,5 +1,7 @@
 package org.kunlab.scenamatica.action.selector.compiler;
 
+import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.Value;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -17,6 +19,7 @@ public class AmbiguousString
 
     String value;
     Pattern regex;
+    @Getter(AccessLevel.NONE)
     boolean doNegate;
 
     public AmbiguousString(String value, String regex, boolean doNegate)
@@ -32,6 +35,11 @@ public class AmbiguousString
     public AmbiguousString(String regex, boolean doNegate)
     {
         this(null, regex, doNegate);
+    }
+
+    public static void normalizeMap(String key, Map<? super String, Object> properties)
+    {
+        normalizeMap(key, key, properties);
     }
 
     public static void normalizeMap(String groupKey, String key, Map<? super String, Object> properties)
@@ -141,6 +149,17 @@ public class AmbiguousString
         throw new IllegalArgumentException("Invalid ambiguous string format: " + map);
     }
 
+    public boolean doNegate()
+    {
+        return this.doNegate;
+    }
+
+    public boolean isEmpty()
+    {
+        return (this.value == null || this.value.isEmpty())
+                && this.regex == null;
+    }
+
     public boolean testRaw(String value)
     {
         if (this.regex != null)
@@ -148,7 +167,7 @@ public class AmbiguousString
         else if (this.value != null)
             return this.value.equalsIgnoreCase(value);
         else
-            return value == null;
+            return value == null || value.isEmpty();
     }
 
     public boolean test(String value)
