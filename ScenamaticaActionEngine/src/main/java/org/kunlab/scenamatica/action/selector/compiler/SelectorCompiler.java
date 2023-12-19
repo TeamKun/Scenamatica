@@ -9,6 +9,7 @@ import org.kunlab.scenamatica.action.selector.compiler.parser.PropertiedSelector
 import org.kunlab.scenamatica.action.selector.compiler.parser.SelectorSyntaxAnalyzer;
 import org.kunlab.scenamatica.action.selector.compiler.parser.SyntaxTree;
 import org.kunlab.scenamatica.action.selector.compiler.parser.SyntaxTreeTraverser;
+import org.kunlab.scenamatica.action.selector.predicates.AdvancementsPredicate;
 import org.kunlab.scenamatica.action.selector.predicates.DistancePredicate;
 import org.kunlab.scenamatica.action.selector.predicates.GameModePredicate;
 import org.kunlab.scenamatica.action.selector.predicates.LevelPredicate;
@@ -48,6 +49,7 @@ public class SelectorCompiler
     {
         ArrayList<SelectorPredicate<? extends Entity>> predicates = new ArrayList<>();
         // <editor-fold desc="Predicates registering">
+        predicates.add(new AdvancementsPredicate());
         predicates.add(new DistancePredicate());
         predicates.add(new GameModePredicate());
         predicates.add(new LevelPredicate());
