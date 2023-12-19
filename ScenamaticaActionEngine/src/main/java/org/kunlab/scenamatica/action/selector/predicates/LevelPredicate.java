@@ -5,7 +5,7 @@ import org.kunlab.scenamatica.action.selector.compiler.RangedNumber;
 
 import java.util.Map;
 
-public class LevelPredicate extends AbstractSelectorPredicate<Player>
+public class LevelPredicate extends AbstractPlayerSelectorPredicate
 {
     public static final String KEY_LEVEL = "level";
     public static final String KEY_LEVEL_2 = "l";
@@ -33,12 +33,6 @@ public class LevelPredicate extends AbstractSelectorPredicate<Player>
                 KEY_LEVEL,
                 KEY_LEVEL_2
         };
-    }
-
-    @Override
-    public Class<? extends Player> getApplicableClass()
-    {
-        return Player.class;
     }
 
     @Override

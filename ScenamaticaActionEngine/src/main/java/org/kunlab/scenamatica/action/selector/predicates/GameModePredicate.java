@@ -7,7 +7,7 @@ import org.kunlab.scenamatica.action.selector.compiler.parser.NegativeValue;
 
 import java.util.Map;
 
-public class GameModePredicate extends AbstractSelectorPredicate<Player>
+public class GameModePredicate extends AbstractPlayerSelectorPredicate
 {
     public static final String KEY_GAME_MODE = "gamemode";
     public static final String KEY_GAME_MODE_2 = "m";
@@ -54,11 +54,5 @@ public class GameModePredicate extends AbstractSelectorPredicate<Player>
                 KEY_GAME_MODE,
                 KEY_GAME_MODE_2
         };
-    }
-
-    @Override
-    public Class<? extends Player> getApplicableClass()
-    {
-        return Player.class;
     }
 }
