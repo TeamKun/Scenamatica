@@ -9,6 +9,7 @@
         <outputRelativeToContentRoot value="true" />
         <module name="ScenamaticaCommons" />
         <module name="ScenamaticaActionEngine" />
+        <module name="ScenamaticaSelectorEngine" />
         <module name="NMSCore" />
         <module name="ScenamaticaDaemon" />
         <module name="ScenamaticaScenarioEngine" />

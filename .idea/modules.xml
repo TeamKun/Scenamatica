@@ -15,6 +15,7 @@
       <module fileurl="file://$PROJECT_DIR$/ScenamaticaPlugin/ScenamaticaPlugin.iml" filepath="$PROJECT_DIR$/ScenamaticaPlugin/ScenamaticaPlugin.iml" />
       <module fileurl="file://$PROJECT_DIR$/ScenamaticaScenarioEngine/ScenamaticaScenarioEngine.iml" filepath="$PROJECT_DIR$/ScenamaticaScenarioEngine/ScenamaticaScenarioEngine.iml" />
       <module fileurl="file://$PROJECT_DIR$/ScenamaticaScenarioFile/ScenamaticaScenarioFile.iml" filepath="$PROJECT_DIR$/ScenamaticaScenarioFile/ScenamaticaScenarioFile.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ScenamaticaSelectorEngine.iml" filepath="$PROJECT_DIR$/ScenamaticaSelectorEngine.iml" />
       <module fileurl="file://$PROJECT_DIR$/ScenamaticaTriggerEngine/ScenamaticaTriggerEngine.iml" filepath="$PROJECT_DIR$/ScenamaticaTriggerEngine/ScenamaticaTriggerEngine.iml" />
       <module fileurl="file://$PROJECT_DIR$/v1_16_R3.iml" filepath="$PROJECT_DIR$/v1_16_R3.iml" />
     </modules>

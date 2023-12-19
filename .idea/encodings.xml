@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="Encoding" defaultCharsetForPropertiesFiles="UTF-8">
-     <file url="file://$PROJECT_DIR$/NMSBridge/NMSCore/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/NMSBridge/NMSCore/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/NMSBridge/NMSCore/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/NMSBridge/NMSTypes/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/NMSBridge/NMSTypes/src/main/resources" charset="UTF-8" />
@@ -27,6 +27,8 @@
     <file url="file://$PROJECT_DIR$/ScenamaticaScenarioEngine/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/ScenamaticaScenarioFile/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/ScenamaticaScenarioFile/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ScenamaticaSelectorEngine/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ScenamaticaSelectorEngine/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/ScenamaticaTriggerEngine/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/ScenamaticaTriggerEngine/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/nms/NMSBridge/NMSTypes/src/main/java" charset="UTF-8" />
