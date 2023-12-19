@@ -20,11 +20,7 @@ public class LevelPredicate extends AbstractSelectorPredicate<Player>
     @Override
     public void normalizeMap(Map<? super String, Object> properties)
     {
-        if (properties.containsKey(KEY_LEVEL_2))
-        {
-            properties.put(KEY_LEVEL, properties.get(KEY_LEVEL_2));
-            properties.remove(KEY_LEVEL_2);
-        }
+        integrateAlias(properties, KEY_LEVEL, KEY_LEVEL_2);
 
         RangedNumber.normalizeMap(KEY_LEVEL, properties);
 

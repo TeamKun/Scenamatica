@@ -6,20 +6,9 @@ import org.kunlab.scenamatica.action.selector.compiler.RangedNumber;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 
 import java.util.Map;
-import java.util.Optional;
 
 public abstract class AbstractSelectorPredicate<E extends Entity> implements SelectorPredicate<E>
 {
-    protected static boolean isInRangeOrUnspecified(String key, Map<String, Object> properties)
-    {
-        Optional<Number> number = MapUtils.getAsNumber(properties, key);
-        if (!number.isPresent())
-            return true;
-
-        RangedNumber range = RangedNumber.fromMap(key, properties);
-        return range.test(number.get());
-    }
-
     protected static String normalizeString(Object obj)
     {
         return obj == null ? null: obj.toString();
@@ -41,6 +30,15 @@ public abstract class AbstractSelectorPredicate<E extends Entity> implements Sel
             Map<String, Object> subMap = MapUtils.createOrRetriveMap(toKey, map);
             subMap.put(originalKey, map.get(originalKey));
             map.remove(originalKey);
+        }
+    }
+
+    protected static void integrateAlias(Map<? super String, Object> properties, String key, String alias)
+    {
+        if (properties.containsKey(alias))
+        {
+            properties.put(key, properties.get(alias));
+            properties.remove(alias);
         }
     }
 

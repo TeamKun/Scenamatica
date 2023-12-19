@@ -23,21 +23,9 @@ public class DistancePredicate extends AbstractGeneralEntitySelectorPredicate
 
     private static void normalizeDistanceMap(Map<? super String, Object> distanceStruct)
     {
-        if (distanceStruct.containsKey(KEY_VOXEL_FULL_X))
-        {
-            distanceStruct.put(KEY_VOXEL_X, distanceStruct.get(KEY_VOXEL_FULL_X));
-            distanceStruct.remove(KEY_VOXEL_FULL_X);
-        }
-        if (distanceStruct.containsKey(KEY_VOXEL_FULL_Y))
-        {
-            distanceStruct.put(KEY_VOXEL_Y, distanceStruct.get(KEY_VOXEL_FULL_Y));
-            distanceStruct.remove(KEY_VOXEL_FULL_Y);
-        }
-        if (distanceStruct.containsKey(KEY_VOXEL_FULL_Z))
-        {
-            distanceStruct.put(KEY_VOXEL_Z, distanceStruct.get(KEY_VOXEL_FULL_Z));
-            distanceStruct.remove(KEY_VOXEL_FULL_Z);
-        }
+        integrateAlias(distanceStruct, KEY_VOXEL_X, KEY_VOXEL_FULL_X);
+        integrateAlias(distanceStruct, KEY_VOXEL_Y, KEY_VOXEL_FULL_Y);
+        integrateAlias(distanceStruct, KEY_VOXEL_Z, KEY_VOXEL_FULL_Z);
 
         RangedNumber.normalizeMap(KEY_VOXEL_FULL_X, distanceStruct);
         RangedNumber.normalizeMap(KEY_VOXEL_FULL_Y, distanceStruct);

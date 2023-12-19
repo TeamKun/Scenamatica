@@ -1,5 +1,6 @@
 package org.kunlab.scenamatica.action.selector.predicates;
 
+import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -18,8 +19,20 @@ public class LocationPredicate extends AbstractGeneralEntitySelectorPredicate
     public static final String KEY_Y = "y";
     public static final String KEY_Z = "z";
     public static final String KEY_YAW = "yaw";
+    public static final String KEY_YAW_2 = "y_rotation";
+    public static final String KEY_YAW_3 = "ry";
     public static final String KEY_PITCH = "pitch";
+    public static final String KEY_PITCH_2 = "x_rotation";
+    public static final String KEY_PITCH_3 = "rx";
     public static final String KEY_WORLD = "world";
+
+    protected static boolean isInRangeOrUnspecified(Number value, String key, Map<String, Object> properties)
+    {
+        if (!properties.containsKey(key))
+            return true;
+
+        return ((RangedNumber) properties.get(key)).test(value);
+    }
 
     @Override
     public boolean test(Player basis, Entity entity, Map<? super String, Object> properties)
@@ -37,20 +50,26 @@ public class LocationPredicate extends AbstractGeneralEntitySelectorPredicate
         if (!properties.containsKey(KEY_STRUCTURE_LOCATION))
             return true;
 
+        Location location = entity.getLocation();
         Map<String, Object> locationDefs = MapUtils.checkAndCastMap(properties.get(KEY_STRUCTURE_LOCATION));
 
-        return isInRangeOrUnspecified(KEY_X, locationDefs)
-                && isInRangeOrUnspecified(KEY_Y, locationDefs)
-                && isInRangeOrUnspecified(KEY_Z, locationDefs)
-                && isInRangeOrUnspecified(KEY_YAW, locationDefs)
-                && isInRangeOrUnspecified(KEY_PITCH, locationDefs);
-
+        return isInRangeOrUnspecified(location.getX(), KEY_X, locationDefs)
+                && isInRangeOrUnspecified(location.getY(), KEY_Y, locationDefs)
+                && isInRangeOrUnspecified(location.getZ(), KEY_Z, locationDefs)
+                && isInRangeOrUnspecified(location.getYaw(), KEY_YAW, locationDefs)
+                && isInRangeOrUnspecified(location.getPitch(), KEY_PITCH, locationDefs);
     }
 
     @Override
     public void normalizeMap(Map<? super String, Object> properties)
     {
         expandItemsIfExists(KEY_STRUCTURE_LOCATION_SHORT, KEY_STRUCTURE_LOCATION, properties);
+
+        integrateAlias(properties, KEY_YAW, KEY_YAW_2);
+        integrateAlias(properties, KEY_YAW, KEY_YAW_3);
+
+        integrateAlias(properties, KEY_PITCH, KEY_PITCH_2);
+        integrateAlias(properties, KEY_PITCH, KEY_PITCH_3);
 
         RangedNumber.normalizeMap(KEY_STRUCTURE_LOCATION, KEY_X, properties);
         RangedNumber.normalizeMap(KEY_STRUCTURE_LOCATION, KEY_Y, properties);

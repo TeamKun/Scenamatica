@@ -25,11 +25,7 @@ public class GameModePredicate extends AbstractSelectorPredicate<Player>
     @Override
     public void normalizeMap(Map<? super String, Object> properties)
     {
-        if (properties.containsKey(KEY_GAME_MODE_2))
-        {
-            properties.put(KEY_GAME_MODE, properties.get(KEY_GAME_MODE_2));
-            properties.remove(KEY_GAME_MODE_2);
-        }
+        integrateAlias(properties, KEY_GAME_MODE, KEY_GAME_MODE_2);
 
         Object mayGameMode = NegateSupport.getRaw(KEY_GAME_MODE, properties);
         boolean doNegate = NegateSupport.shouldNegate(KEY_GAME_MODE, properties);
