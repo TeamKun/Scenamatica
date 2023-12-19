@@ -49,7 +49,8 @@ public enum SelectorType
         switch (this)
         {
             case PLAYER_SELF:
-                if (basis == null || !predicate.test(basis, basis))
+                // noinspection unchecked, rawtypes
+                if (basis == null || !((BiPredicate) predicate).test(basis, basis))
                     return Collections.emptyList();
                 else
                     return Collections.singletonList(basis);
