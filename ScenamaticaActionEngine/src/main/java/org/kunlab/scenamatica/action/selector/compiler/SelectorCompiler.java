@@ -10,6 +10,7 @@ import org.kunlab.scenamatica.action.selector.compiler.parser.SelectorSyntaxAnal
 import org.kunlab.scenamatica.action.selector.compiler.parser.SyntaxTree;
 import org.kunlab.scenamatica.action.selector.compiler.parser.SyntaxTreeTraverser;
 import org.kunlab.scenamatica.action.selector.predicates.DistancePredicate;
+import org.kunlab.scenamatica.action.selector.predicates.LevelPredicate;
 import org.kunlab.scenamatica.action.selector.predicates.LocationPredicate;
 import org.kunlab.scenamatica.action.selector.predicates.NamePredicate;
 import org.kunlab.scenamatica.action.selector.predicates.ScorePredicate;
@@ -35,18 +36,19 @@ public class SelectorCompiler
         INSTANCE = new SelectorCompiler();
     }
 
-    private final List<SelectorPredicate<? super Entity>> predicates;
+    private final List<SelectorPredicate<? extends Entity>> predicates;
 
     private SelectorCompiler()
     {
         this.predicates = Collections.unmodifiableList(getAllPredicates());
     }
 
-    private static List<SelectorPredicate<? super Entity>> getAllPredicates()
+    private static List<SelectorPredicate<? extends Entity>> getAllPredicates()
     {
-        ArrayList<SelectorPredicate<? super Entity>> predicates = new ArrayList<>();
+        ArrayList<SelectorPredicate<? extends Entity>> predicates = new ArrayList<>();
         // <editor-fold desc="Predicates registering">
         predicates.add(new DistancePredicate());
+        predicates.add(new LevelPredicate());
         predicates.add(new LocationPredicate());
         predicates.add(new NamePredicate());
         predicates.add(new ScorePredicate());
@@ -57,23 +59,27 @@ public class SelectorCompiler
         return predicates;
     }
 
-    private static List<SelectorPredicate<? super Entity>> getPredicatesFor(Map<String, Object> properties)
+    private static List<SelectorPredicate<? extends Entity>> getPredicatesFor(Map<String, Object> properties)
     {
         return INSTANCE.predicates.stream()
                 .filter(predicate -> predicate.isApplicableKey(properties))
                 .collect(Collectors.toList());
     }
 
-    private static BiPredicate<? super Player, ? super Entity> combinePredicates(
-            List<? extends SelectorPredicate<? super Entity>> predicates,
+    private static BiPredicate<? super Player, ? extends Entity> combinePredicates(
+            List<? extends SelectorPredicate<? extends Entity>> predicates,
             Map<? super String, Object> properties)
     {
         // 複数の Predicate を結合
         return (player, entity) -> {
-            for (SelectorPredicate<? super Entity> predicate : predicates)
-                if (predicate.getApplicableClass().isInstance(entity) &&
-                        !predicate.test(player, entity, properties))
+            for (SelectorPredicate<? extends Entity> predicate : predicates)
+            {
+                if (!predicate.getApplicableClass().isInstance(entity))
+                    continue;
+                // noinspection rawtypes,unchecked
+                if (!((SelectorPredicate) predicate).test(player, entity, properties))
                     return false;
+            }
             return true;
         };
     }
@@ -86,9 +92,9 @@ public class SelectorCompiler
         PropertiedSelector elements = SyntaxTreeTraverser.traverse(tree);
 
         // Predicate 生成
-        List<SelectorPredicate<? super Entity>> predicates = getPredicatesFor(elements.getProperties());
+        List<SelectorPredicate<? extends Entity>> predicates = getPredicatesFor(elements.getProperties());
         Map<String, Object> properties = elements.getProperties();
-        for (SelectorPredicate<? super Entity> predicate : predicates)
+        for (SelectorPredicate<? extends Entity> predicate : predicates)
             predicate.normalizeMap(properties);
 
         if (!canProvideBasis)
@@ -99,7 +105,7 @@ public class SelectorCompiler
         return new Selector(selector, elements.getType(), predicate);
     }
 
-    private static void ensureNoBasisRequired(List<? extends SelectorPredicate<? super Entity>> predicates)
+    private static void ensureNoBasisRequired(List<? extends SelectorPredicate<? extends Entity>> predicates)
     {
         predicates.stream()
                 .filter(SelectorPredicate::isBasisRequired)
