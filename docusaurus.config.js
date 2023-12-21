@@ -191,7 +191,7 @@ const config = {
         prism: {
           theme: themes.github,
           darkTheme: themes.vsDark,
-          additionalLanguages: ["java", "yaml"],
+          additionalLanguages: ["java", "yaml", "ebnf"],
         },
         zoom: {
           background: {

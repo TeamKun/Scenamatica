@@ -4,7 +4,7 @@ import {ActionArgument, ScenarioType} from "@site/src/components/Action";
 import Link from "@docusaurus/Link";
 
 export type ObjectElement = {
-    name: string
+    name: string | string[]
     anchor?: string
     required?: boolean | ScenarioType[] | string
     type: string | ObjectType
@@ -33,6 +33,7 @@ const isActionArgument = (element: ObjectElement): element is ActionArgument => 
 }
 
 export const Object: React.FC<ObjectsProps> = ({ objects }) => {
+    const shouldShowRequiringState = objects.some((element) => element.required)
     const shouldShowDefaultValue = objects.some((element) => element.default)
     const shouldShowAvailableFor = objects.some((element) => isActionArgument(element) && element.available.length > 0)
 
@@ -73,11 +74,21 @@ export const Object: React.FC<ObjectsProps> = ({ objects }) => {
             }
         }
 
+        // <code> で name をラップ
+        const nameElements = Array.isArray(name) ? name.map((name, index) => {
+            if (index > 0)
+                return <><code>{name}</code></>
+            else
+                return <code>{name}</code>
+        }).reduce((prev: JSX.Element, curr: JSX.Element) => {
+            return <>{prev} | {curr}</>
+        }) : <code>{name}</code>
+
         return (
             <tr className={styles.objects} key={element.name}>
-                <td><code>{name}</code></td>
+                <td>{nameElements}</td>
                 <td><code>{typeName}</code></td>
-                <td>{required}</td>
+                {shouldShowRequiringState ? <td>{required}</td> : null}
                 <td>{element.description}</td>
                 {shouldShowDefaultValue ? <td>{element.default ? <code>{element.default}</code> : "-"}</td> : null}
                 {shouldShowAvailableFor ? <td>{availableFor ? availableFor : <code>ALL</code>}</td> : null}
@@ -92,7 +103,7 @@ export const Object: React.FC<ObjectsProps> = ({ objects }) => {
                 <tr className={styles.objects + " " + styles.header}>
                     <th>キー</th>
                     <th>型</th>
-                    <th>必須？</th>
+                    {shouldShowRequiringState ? <th>必須？</th> : null}
                     <th>説明</th>
                     {shouldShowDefaultValue ? <th>デフォルト</th> : null}
                     {shouldShowAvailableFor ? <th>利用可能</th> : null}

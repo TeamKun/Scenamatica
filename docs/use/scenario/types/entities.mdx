@@ -58,16 +58,28 @@ import { Object, ObjectType } from "/src/components/Object";
 
 ---
 
+## 特別： EntityType 列挙型 {#entity-type-enum}
+
+EntityType は, Bukkit の [EntityType](https://jd.papermc.io/paper/1.16/org/bukkit/entity/EntityType.html) 
+の拡張で、エンティティの種類を表す列挙型です。  
+以下の書式が有効です。
+
++ 列挙型の名前（例：`"PIG"`, `"pig"`）
++ 名前空間付きキー（例：`"minecraft:pig"`）
++ 数値 ID （例：`"90"`）
++ 名前 (例：`"pig"`)
+
 ## Entity 型 {#entity-structure}
 
 <Object objects={[
   {
     name: "type",
     type: "EntityType",
+    type_link: "/docs/use/scenario/types/entities#entity-type-enum",
     description: "エンティティの種類です。"
   },
   {
-    name: "loc | location",
+    name: ["loc", "location"],
     type: "Location",
     type_link: "/docs/use/scenario/types/misc#location-structure",
     description: "エンティティの座標です。"
