@@ -5,6 +5,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.kunlab.scenamatica.selector.compiler.SelectorCompilationErrorException;
 import org.kunlab.scenamatica.selector.compiler.SelectorCompiler;
 
 import java.util.List;
@@ -19,14 +20,33 @@ public class Selector
     SelectorType type;
     BiPredicate<? super Player, ? extends Entity> predicate;
 
-    public static Selector compile(String selector, boolean canProvideBasis)
+    @NotNull
+    public static Selector compile(@NotNull String selector, boolean canProvideBasis)
     {
-        return SelectorCompiler.compile(selector, canProvideBasis);
+        return SelectorCompiler.getInstance().compile(selector, canProvideBasis);
     }
 
-    public static Selector compile(String selector)
+    @NotNull
+    public static Selector compile(@NotNull String selector)
     {
         return compile(selector, false);
+    }
+
+    public static Optional<Selector> tryCompile(@NotNull String selector, boolean canProvideBasis)
+    {
+        try
+        {
+            return Optional.of(compile(selector, canProvideBasis));
+        }
+        catch (SelectorCompilationErrorException e)
+        {
+            return Optional.empty();
+        }
+    }
+
+    public static Optional<Selector> tryCompile(String selector)
+    {
+        return tryCompile(selector, false);
     }
 
     public boolean test(@Nullable Player basis, @NotNull Entity entity)
@@ -47,6 +67,11 @@ public class Selector
         return this.type.enumerate(basis, this.predicate);
     }
 
+    public List<Entity> select()
+    {
+        return this.select(null);
+    }
+
     public Optional<Entity> selectOne(@Nullable Player basis)
     {
         return this.type.enumerate(basis, this.predicate).stream().findFirst();
@@ -64,6 +89,6 @@ public class Selector
     @Override
     public String toString()
     {
-        return "Selector{'" + this.original + "'}";
+        return this.original;
     }
 }

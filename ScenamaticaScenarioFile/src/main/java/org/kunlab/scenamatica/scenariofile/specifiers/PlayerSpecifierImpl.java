@@ -1,18 +1,18 @@
-package org.kunlab.scenamatica.commons.specifiers;
+package org.kunlab.scenamatica.scenariofile.specifiers;
 
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.kunlab.scenamatica.interfaces.context.Actor;
 import org.kunlab.scenamatica.interfaces.context.Context;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.context.PlayerStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.entity.EntityStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.PlayerSpecifier;
 
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 public class PlayerSpecifierImpl extends EntitySpecifierImpl<Player> implements PlayerSpecifier
 {
@@ -56,30 +56,34 @@ public class PlayerSpecifierImpl extends EntitySpecifierImpl<Player> implements 
     }
 
     @Override
-    public Player selectTarget(@NotNull Context context)
+    public Optional<Player> selectTarget(@Nullable Context context)
     {
         // Player も一応 Entity なので、親クラスのメソッドを呼び出す。
-        Entity entity = super.selectTargetRaw(context);
+        Entity entity = super.selectTargetRaw(null, null);
+
+        if (entity == null)
+        {
+            if (context == null || context.getActors() == null)
+                return Optional.empty();
+
+            for (Actor actor : context.getActors())
+                if (super.checkMatchedEntity(actor.getPlayer()))
+                {
+                    entity = actor.getPlayer();
+                    break;
+                }
+        }
 
         if (!(entity instanceof Player))
-            return null;
+            return Optional.empty();
 
         Player player = (Player) entity;
 
         // プレイヤとしての追加のマッチングを行う。
         if (!(this.targetStructure == null || this.getTargetStructure().isAdequate(player)))
-            return null;
+            return Optional.empty();
 
-        return player;
-    }
-
-    @Override
-    protected List<? extends Player> selectEntities(String specifier)
-    {
-        return super.selectEntities(specifier).stream()
-                .filter(entity -> entity instanceof Player)
-                .map(entity -> (Player) entity)
-                .collect(Collectors.toList());
+        return Optional.of(player);
     }
 
     @Override

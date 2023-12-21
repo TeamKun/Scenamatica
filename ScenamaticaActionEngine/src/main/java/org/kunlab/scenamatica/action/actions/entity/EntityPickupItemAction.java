@@ -12,7 +12,6 @@ import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.kunlab.scenamatica.commons.utils.EntityUtils;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
@@ -53,7 +52,8 @@ public class EntityPickupItemAction extends AbstractEntityAction<EntityPickupIte
 
         Item item;
         if (argument.isItemSelectable())
-            item = argument.selectItem();
+            item = argument.getItemSelector().selectTarget(engine.getContext())
+                    .orElseThrow(() -> new IllegalStateException("Item is not found."));
         else
         {
             EntityItemStructure itemStructure = argument.getItem();
@@ -120,29 +120,11 @@ public class EntityPickupItemAction extends AbstractEntityAction<EntityPickupIte
     {
         Integer remaining = MapUtils.getAsNumberOrNull(map, Argument.KEY_REMAINING, Number::intValue);
 
-        if (!map.containsKey(Argument.KEY_ITEM))
-            return new Argument(
-                    super.deserializeTarget(map, serializer),
-                    remaining,
-                    (String) null
-            );
-
-        Object mayItem = map.get(Argument.KEY_ITEM);
-        if (mayItem instanceof String)
-            return new Argument(
-                    super.deserializeTarget(map, serializer),
-                    remaining,
-                    (String) mayItem
-            );
-        else
-            return new Argument(
-                    super.deserializeTarget(map, serializer),
-                    remaining,
-                    serializer.deserialize(
-                            MapUtils.checkAndCastMap(map.get(Argument.KEY_ITEM)),
-                            EntityItemStructure.class
-                    )
-            );
+        return new Argument(
+                super.deserializeTarget(map, serializer),
+                remaining,
+                serializer.tryDeserializeEntitySpecifier(map.get(Argument.KEY_ITEM), EntityItemStructure.class)
+        );
     }
 
     @Value
@@ -154,17 +136,9 @@ public class EntityPickupItemAction extends AbstractEntityAction<EntityPickupIte
 
         Integer remaining;
         EntityItemStructure item;
-        String itemSelector;
+        EntitySpecifier<? extends Item> itemSelector;
 
-        public Argument(@NotNull EntitySpecifier<Entity> mayTarget, Integer remaining, EntityItemStructure item)
-        {
-            super(mayTarget);
-            this.remaining = remaining;
-            this.item = item;
-            this.itemSelector = null;
-        }
-
-        public Argument(@NotNull EntitySpecifier<Entity> mayTarget, Integer remaining, String itemSelector)
+        public Argument(@NotNull EntitySpecifier<Entity> mayTarget, Integer remaining, EntitySpecifier<? extends Item> itemSelector)
         {
             super(mayTarget);
             this.remaining = remaining;
@@ -175,24 +149,6 @@ public class EntityPickupItemAction extends AbstractEntityAction<EntityPickupIte
         public boolean isItemSelectable()
         {
             return this.itemSelector != null;
-        }
-
-        public Item selectItem()
-        {
-            if (!this.isItemSelectable())
-                throw new IllegalArgumentException("Item is not selectable.");
-
-            List<Entity> entities = EntityUtils.selectEntities(this.itemSelector);
-            if (entities.isEmpty())
-                throw new IllegalStateException("No entity found: " + this.itemSelector);
-            else if (entities.size() > 1)
-                throw new IllegalStateException("Multiple entities found: " + this.itemSelector);
-
-            Entity entity = entities.get(0);
-            if (!(entity instanceof Item))
-                throw new IllegalStateException("Selected entity is not an item: " + this.itemSelector);
-
-            return (Item) entity;
         }
 
         @Override

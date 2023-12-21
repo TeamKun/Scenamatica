@@ -56,7 +56,7 @@ public class PlayerLikeCommandSenders
                 return Bukkit.getConsoleSender();
         }
 
-        return specifier.selectTarget(context);
+        return specifier.selectTarget(context).orElse(null);
     }
 
     public static CommandSender resolveSenderOrConsoleOrThrow(@NotNull PlayerSpecifier specifier, @NotNull Context context)

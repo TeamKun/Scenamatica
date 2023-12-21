@@ -9,10 +9,7 @@ import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.Mapped;
 import org.kunlab.scenamatica.interfaces.scenariofile.entity.EntityStructure;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.UUID;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -47,105 +44,6 @@ public class EntityUtils
         return mapped.canApplyTo(targetEntity) && mapped.isAdequate(targetEntity);
     }
 
-    public static Entity getPlayerOrEntityOrThrow(String target)
-    {
-        if (target.isEmpty())
-            return selectFirstEntity("@e");
-
-        Entity entity = PlayerUtils.getPlayerOrNull(target);
-        if (entity != null)
-            return entity;
-
-        try
-        {
-            UUID uuid = UUID.fromString(target);
-            entity = Bukkit.getEntity(uuid);
-
-            if (entity != null)
-                return entity;
-        }
-        catch (IllegalArgumentException ignored)
-        {
-        }
-
-        String normalizedSelector = normalizeSelector(target);
-        try
-        {
-            entity = selectFirstEntity(normalizedSelector);
-        }
-        catch (IllegalArgumentException ignored)
-        {
-            throw new IllegalArgumentException("Invalid target specifier: " + target);
-        }
-
-        if (entity == null)
-            throw new IllegalArgumentException("No entity found: " + target);
-
-        return entity;
-    }
-
-    public static List<Entity> selectEntities(String specifier)
-    {
-        if (specifier.isEmpty())
-            return Bukkit.selectEntities(Bukkit.getConsoleSender(), "@e");
-
-        List<Entity> result = new ArrayList<>();
-
-        Entity entity = PlayerUtils.getPlayerOrNull(specifier);
-        if (entity != null)
-            result.add(entity);
-
-        try
-        {
-            UUID uuid = UUID.fromString(specifier);
-            Entity uuidSelected = Bukkit.getEntity(uuid);
-            if (uuidSelected != null)
-                return new ArrayList<>(Collections.singleton(uuidSelected));
-            // UUID 選択は 1 体しかいないが, UUID で選択される可能性は低いので下の方。
-        }
-        catch (IllegalArgumentException ignored)
-        {
-        }
-
-        String normalizedSelector = normalizeSelector(specifier);
-        try
-        {
-            result.addAll(Bukkit.selectEntities(Bukkit.getConsoleSender(), normalizedSelector));
-        }
-        catch (IllegalArgumentException ignored)
-        {
-        }
-
-        return result;
-    }
-
-    public static String normalizeSelector(String original)
-    {
-        if (original.startsWith("@"))  // @ から始まる場合はそのまま
-            return original;
-        else if (original.startsWith("[") && original.endsWith("]"))  // [ から始まり ] の場合は @e をつけてあげる
-            return "@e" + original;
-        else  // それ以外は @e[...] としてあげる
-            return "@e[" + original + "]";
-    }
-
-    private static Entity selectFirstEntity(String selector)
-    {
-        return Bukkit.selectEntities(Bukkit.getConsoleSender(), selector).stream().findFirst().orElse(null);
-    }
-
-    public static Entity getPlayerOrEntityOrNull(String target)
-    {
-        try
-        {
-            return getPlayerOrEntityOrThrow(target);
-        }
-        catch (IllegalArgumentException ignored)
-        {
-            return null;
-        }
-    }
-
     public static <T extends Entity> Predicate<T> getEntityPredicate(EntityStructure structure)
     {
         if (!(structure instanceof Mapped))
@@ -171,30 +69,43 @@ public class EntityUtils
                 .orElse(null);
     }
 
-    public static Entity getEntity(EntityStructure structure, @Nullable Context context, @Nullable Predicate<? super Entity> predicate)
+    public static List<? extends Entity> getEntities(EntityStructure structure, @Nullable Context context, @Nullable Predicate<? super Entity> predicate)
     {
-        Entity result = null;
+        Predicate<? super Entity> finalPredicate;
+        if (predicate == null)
+            finalPredicate = getEntityPredicate(structure);
+        else
+            finalPredicate = getEntityPredicate(structure).and(predicate);
+
         if (context == null)
         {
-            return pickEntityOrNull(
-                    Bukkit.getWorlds().stream()
-                            .flatMap(world -> world.getEntities().stream())
-                            .collect(Collectors.toList()),
-                    structure,
-                    predicate
-            );
+            return Bukkit.getWorlds().stream()
+                    .flatMap(world -> world.getEntities().stream())
+                    .filter(finalPredicate)
+                    .collect(Collectors.toList());
         }
         else if (!(context.getEntities() == null || context.getEntities().isEmpty()))
-            result = pickEntityOrNull(context.getEntities(), structure, predicate);
+            return context.getEntities().stream()
+                    .filter(finalPredicate)
+                    .collect(Collectors.toList());
 
-        if (result == null)
-            result = pickEntityOrNull(context.getStage().getEntities(), structure, predicate);
+        return context.getStage().getEntities().stream()
+                .filter(finalPredicate)
+                .collect(Collectors.toList());
+    }
 
-        return result;
+    public static Entity getEntity(EntityStructure structure, @Nullable Context context, @Nullable Predicate<? super Entity> predicate)
+    {
+        List<? extends Entity> entities = getEntities(structure, context, predicate);
+        if (entities.isEmpty())
+            return null;
+
+        return pickEntityOrNull(entities, structure, predicate);
     }
 
     public static Entity getEntity(EntityStructure structure, ScenarioEngine engine, @Nullable Predicate<? super Entity> predicate)
     {
         return getEntity(structure, engine.getContext(), predicate);
     }
+
 }

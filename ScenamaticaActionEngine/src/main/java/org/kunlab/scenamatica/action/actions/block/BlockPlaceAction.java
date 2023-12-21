@@ -12,7 +12,6 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.kunlab.scenamatica.commons.specifiers.PlayerSpecifierImpl;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.commons.utils.PlayerUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
@@ -55,8 +54,8 @@ public class BlockPlaceAction extends AbstractBlockAction<BlockPlaceAction.Argum
     {
         argument = this.requireArgsNonNull(argument);
 
-        Player actor = argument.getActorSpecifier().canProvideTarget() ?
-                argument.getActorSpecifier().selectTarget(engine.getContext()): null;
+        Player actor = argument.getActorSpecifier().selectTarget(engine.getContext())
+                .orElse(null);
 
         BlockStructure blockDef = argument.getBlock();
         Location location = this.getBlockLocationWithWorld(blockDef, engine);
@@ -117,7 +116,7 @@ public class BlockPlaceAction extends AbstractBlockAction<BlockPlaceAction.Argum
     {
         return new Argument(
                 super.deserializeBlockOrNull(map, serializer),
-                PlayerSpecifierImpl.tryDeserializePlayer(map.get(Argument.KEY_ACTOR), serializer),
+                serializer.tryDeserializePlayerSpecifier(map.get(Argument.KEY_ACTOR)),
                 MapUtils.getAsEnumOrNull(map, Argument.KEY_HAND, EquipmentSlot.class),
                 MapUtils.getAsEnumOrNull(map, Argument.KEY_DIRECTION, BlockFace.class)
         );

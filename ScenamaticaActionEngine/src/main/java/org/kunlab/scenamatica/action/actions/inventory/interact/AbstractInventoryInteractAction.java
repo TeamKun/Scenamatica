@@ -6,7 +6,7 @@ import org.bukkit.event.Event;
 import org.bukkit.event.inventory.InventoryInteractEvent;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.action.actions.inventory.AbstractInventoryAction;
-import org.kunlab.scenamatica.commons.specifiers.PlayerSpecifierImpl;
+import org.kunlab.scenamatica.action.actions.player.AbstractPlayerActionArgument;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.PlayerSpecifier;
@@ -45,9 +45,7 @@ public abstract class AbstractInventoryInteractAction<A extends AbstractInventor
     @NotNull
     protected PlayerSpecifier deserializeTarget(Map<String, Object> map, StructureSerializer serializer)
     {
-        return PlayerSpecifierImpl.tryDeserializePlayer(
-                map.get(AbstractInventoryInteractArgument.KEY_TARGET_PLAYER),
-                serializer
-        );
+        return serializer.tryDeserializePlayerSpecifier(map.get(AbstractPlayerActionArgument.KEY_TARGET_PLAYER));
+
     }
 }

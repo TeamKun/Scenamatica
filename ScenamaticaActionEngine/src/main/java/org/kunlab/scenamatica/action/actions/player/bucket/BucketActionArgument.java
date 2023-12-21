@@ -7,7 +7,6 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.inventory.EquipmentSlot;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.action.actions.player.AbstractPlayerActionArgument;
-import org.kunlab.scenamatica.commons.specifiers.PlayerSpecifierImpl;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
@@ -81,7 +80,7 @@ public class BucketActionArgument extends AbstractPlayerActionArgument
             );
 
         return new BucketActionArgument(
-                PlayerSpecifierImpl.tryDeserializePlayer(map.get(AbstractPlayerActionArgument.KEY_TARGET_PLAYER), serializer),
+                serializer.tryDeserializePlayerSpecifier(map.get(AbstractPlayerActionArgument.KEY_TARGET_PLAYER)),
                 itemStack,
                 block,
                 blockClicked,

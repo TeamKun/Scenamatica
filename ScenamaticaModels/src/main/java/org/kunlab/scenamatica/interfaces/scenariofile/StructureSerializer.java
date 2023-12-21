@@ -1,6 +1,11 @@
 package org.kunlab.scenamatica.interfaces.scenariofile;
 
+import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.kunlab.scenamatica.interfaces.scenariofile.entity.EntityStructure;
+import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.EntitySpecifier;
+import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.PlayerSpecifier;
 
 import java.util.Map;
 
@@ -40,4 +45,38 @@ public interface StructureSerializer
      * @throws IllegalArgumentException 検証に失敗した場合
      */
     <T extends Structure> void validate(@NotNull Map<String, Object> map, @NotNull Class<T> clazz);
+
+    /**
+     * エンティティ指定子をデシリアライズします。
+     *
+     * @param obj            エンティティ指定子を表すオブジェクト
+     * @param structureClass エンティティ指定子の構造クラス
+     * @param <E>            エンティティの型
+     * @return デシリアライズされたエンティティ指定子
+     */
+    @NotNull <E extends Entity> EntitySpecifier<E> tryDeserializeEntitySpecifier(
+            @Nullable Object obj,
+            Class<? extends EntityStructure> structureClass
+    );
+
+    /**
+     * エンティティ指定子をデシリアライズします。
+     *
+     * @param obj エンティティ指定子を表すオブジェクト
+     */
+    @NotNull
+    default EntitySpecifier<Entity> tryDeserializeEntitySpecifier(@Nullable Object obj)
+    {
+        return this.tryDeserializeEntitySpecifier(obj, EntityStructure.class);
+    }
+
+    /**
+     * プレイヤ指定子をデシリアライズします。
+     *
+     * @param obj プレイヤ指定子を表すオブジェクト
+     * @return デシリアライズされたプレイヤ指定子
+     */
+    @NotNull
+    PlayerSpecifier tryDeserializePlayerSpecifier(@Nullable Object obj);
+
 }

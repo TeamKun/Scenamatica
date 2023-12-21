@@ -1,8 +1,9 @@
-package org.kunlab.scenamatica.commons.specifiers;
+package org.kunlab.scenamatica.scenariofile.specifiers;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.commons.utils.EntityUtils;
@@ -10,10 +11,11 @@ import org.kunlab.scenamatica.interfaces.context.Context;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.entity.EntityStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.EntitySpecifier;
+import org.kunlab.scenamatica.selector.Selector;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
+import java.util.Optional;
 
 @Getter
 @EqualsAndHashCode
@@ -21,21 +23,28 @@ public class EntitySpecifierImpl<E extends Entity> implements EntitySpecifier<E>
 {
     public static final EntitySpecifier<Entity> EMPTY = new EntitySpecifierImpl<>(null);
 
-    protected final String targetSpecifier;
+    protected final Selector selector;
     protected final EntityStructure targetStructure;
 
     public EntitySpecifierImpl(@Nullable Object mayTarget)
     {
-        if (mayTarget instanceof EntityStructure)
+        if (mayTarget == null)
         {
-            this.targetSpecifier = null;
-            this.targetStructure = (EntityStructure) mayTarget;
-        }
-        else
-        {
-            this.targetSpecifier = (String) mayTarget;
+            this.selector = null;
             this.targetStructure = null;
         }
+        else if (mayTarget instanceof EntityStructure)
+        {
+            this.selector = null;
+            this.targetStructure = (EntityStructure) mayTarget;
+        }
+        else if (mayTarget instanceof String)
+        {
+            this.selector = Selector.compile((String) mayTarget);
+            this.targetStructure = null;
+        }
+        else
+            throw new IllegalArgumentException("Unknown target type: " + mayTarget.getClass() + ", try deserialize instead");
     }
 
     public static <E extends Entity> EntitySpecifier<E> tryDeserialize(
@@ -62,28 +71,50 @@ public class EntitySpecifierImpl<E extends Entity> implements EntitySpecifier<E>
         throw new IllegalArgumentException("Cannot deserialize EntityArgumentHolder from " + obj);
     }
 
-    public static EntitySpecifier<Entity> tryDeserialize(Object obj, StructureSerializer serializer)
-    {
-        return tryDeserialize(obj, serializer, EntityStructure.class);
-    }
-
     @Override
     public boolean isSelectable()
     {
-        return this.targetSpecifier != null;
+        return this.selector != null;
     }
 
     @Override
-    public E selectTarget(@Nullable Context context)
+    public Optional<E> selectTarget(@Nullable Context context)
     {
-        // noinspection unchecked
-        return (E) this.selectTargetRaw(context);
+        return this.selectTarget(null, context);
     }
 
-    protected Entity selectTargetRaw(@Nullable Context context)
+    @Override
+    public Optional<E> selectTarget(@Nullable Player basis, @Nullable Context context)
     {
-        if (this.targetSpecifier != null)
-            return EntityUtils.getPlayerOrEntityOrNull(this.targetSpecifier);
+        if (!this.canProvideTarget())
+            return Optional.empty();
+
+        // noinspection unchecked
+        return (Optional<E>) Optional.ofNullable(this.selectTargetRaw(basis, context));
+    }
+
+    @Override
+    public @NotNull List<? extends Entity> selectTargets(@Nullable Context context)
+    {
+        return this.selectTargets(null, context);
+    }
+
+    @Override
+    public @NotNull List<? extends Entity> selectTargets(@Nullable Player basis, @Nullable Context context)
+    {
+        if (this.selector != null)
+            return this.selector.select(basis);
+
+        if (this.targetStructure == null)
+            throw new IllegalStateException("Cannot select target from this specifier: " + this);
+
+        return EntityUtils.getEntities(this.targetStructure, context, null);
+    }
+
+    protected Entity selectTargetRaw(@Nullable Player basis, @Nullable Context context)
+    {
+        if (this.selector != null)
+            return this.selector.selectOne(basis).orElse(null);
 
         if (this.targetStructure == null)
             throw new IllegalStateException("Cannot select target from this specifier: " + this);
@@ -94,14 +125,14 @@ public class EntitySpecifierImpl<E extends Entity> implements EntitySpecifier<E>
     @Override
     public String getSelectorString()
     {
-        return this.targetSpecifier;
+        return this.selector.getOriginal();
     }
 
     @Override
     public Object getTargetRaw()
     {
-        if (this.targetSpecifier != null)
-            return this.targetSpecifier;
+        if (this.selector != null)
+            return this.selector.getOriginal();
         else
             return this.targetStructure;
     }
@@ -115,8 +146,8 @@ public class EntitySpecifierImpl<E extends Entity> implements EntitySpecifier<E>
     @Override
     public String getArgumentString()
     {
-        if (this.targetSpecifier != null)
-            return "target=" + this.targetSpecifier;
+        if (this.selector != null)
+            return "target=" + this.selector;
         else
             return "target=" + this.targetStructure;
     }
@@ -130,23 +161,12 @@ public class EntitySpecifierImpl<E extends Entity> implements EntitySpecifier<E>
             return true;
 
         if (this.isSelectable())
-            return this.checkMatchedEntity(this.getSelectorString(), entity);
+            return this.getSelector().test(null, entity);
         else /* if (this.getTargetStructure() != null) */
         {
             assert this.getTargetStructure() != null;
             return this.isAdequate(this.getTargetStructure(), entity);
         }
-    }
-
-    protected boolean checkMatchedEntity(String specifier, @NotNull Entity actualEntity)
-    {
-        return this.selectEntities(specifier).stream()
-                .anyMatch(entity -> Objects.equals(entity.getUniqueId(), actualEntity.getUniqueId()));
-    }
-
-    protected List<? extends Entity> selectEntities(String specifier)
-    {
-        return EntityUtils.selectEntities(specifier);
     }
 
     protected boolean isAdequate(EntityStructure structure, @NotNull Entity actualEntity)

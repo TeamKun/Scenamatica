@@ -14,7 +14,6 @@ import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.utils.VoxelUtils;
-import org.kunlab.scenamatica.commons.specifiers.EntitySpecifierImpl;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
@@ -49,18 +48,10 @@ public class ProjectileHitAction extends AbstractEntityAction<ProjectileHitActio
         argument = this.requireArgsNonNull(argument);
 
         assert argument.getTargetHolder() != null;
-        Projectile target = argument.getTargetHolder().selectTarget(engine.getContext());
-        if (target == null)
-            throw new IllegalStateException("Target is not found");
+        Projectile target = argument.getTargetHolder().selectTarget(engine.getContext())
+                .orElseThrow(() -> new IllegalStateException("Cannot select target for this action, please specify target with valid specifier."));
 
-        Entity hitEntity = null;
-        if (argument.getHitEntity().canProvideTarget())
-        {
-            hitEntity = argument.getHitEntity().selectTarget(engine.getContext());
-            if (hitEntity == null)
-                throw new IllegalStateException("Hit entity is not found");
-        }
-
+        Entity hitEntity = argument.getHitEntity().selectTarget(engine.getContext()).orElse(null);
         Block hitBlock = null;
         if (argument.getHitBlock() != null)
             hitBlock = argument.getHitBlock().getBlockSafe();
@@ -151,7 +142,7 @@ public class ProjectileHitAction extends AbstractEntityAction<ProjectileHitActio
 
         return new Argument(
                 super.deserializeTarget(map, serializer, ProjectileStructure.class),
-                EntitySpecifierImpl.tryDeserialize(map.get(Argument.KEY_HIT_ENTITY), serializer, EntityStructure.class),
+                serializer.tryDeserializeEntitySpecifier(map.get(Argument.KEY_HIT_ENTITY), EntityStructure.class),
                 hitBlock,
                 MapUtils.getAsEnumOrNull(map, Argument.KEY_BLOCK_FACE, BlockFace.class),
                 MapUtils.getOrDefault(map, Argument.KEY_EVENT_ONLY, false)

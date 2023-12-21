@@ -45,9 +45,8 @@ public class InventoryClickAction<T extends InventoryClickAction.Argument> exten
     {
         argument = this.requireArgsNonNull(argument);
 
-        Player target = argument.getTargetSpecifier().selectTarget(engine.getContext());
-        if (target == null)
-            throw new IllegalStateException("Player is not found.");
+        Player target = argument.getTargetSpecifier().selectTarget(engine.getContext())
+                .orElseThrow(() -> new IllegalStateException("Target is not found."));
         Actor actor = PlayerUtils.getActorOrThrow(engine, target);
 
         if (argument.getInventory() != null)

@@ -1,16 +1,22 @@
 package org.kunlab.scenamatica.interfaces.scenariofile.specifiers;
 
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.interfaces.context.Context;
+import org.kunlab.scenamatica.interfaces.scenariofile.Structure;
 import org.kunlab.scenamatica.interfaces.scenariofile.entity.EntityStructure;
+
+import java.util.List;
+import java.util.Optional;
 
 /**
  * エンティティの指定子を提供します。
  *
  * @param <E> エンティティの型
  */
-public interface EntitySpecifier<E extends Entity>
+public interface EntitySpecifier<E extends Entity> extends Structure
 {
     /**
      * エンティティを選択可能かどうか取得します。
@@ -25,8 +31,35 @@ public interface EntitySpecifier<E extends Entity>
      * @param context コンテキスト
      * @return エンティティ
      */
-    @Nullable
-    E selectTarget(@Nullable Context context);
+    Optional<E> selectTarget(@Nullable Context context);
+
+    /**
+     * エンティティを選択します。
+     *
+     * @param basis   セレクタの基準となるエンティティ
+     * @param context コンテキスト
+     * @return エンティティ
+     */
+    Optional<E> selectTarget(@Nullable Player basis, @Nullable Context context);
+
+    /**
+     * エンティティを選択します。
+     *
+     * @param context コンテキスト
+     * @return エンティティ
+     */
+    @NotNull
+    List<? extends Entity> selectTargets(@Nullable Context context);
+
+    /**
+     * エンティティを選択します。
+     *
+     * @param basis   セレクタの基準となるエンティティ
+     * @param context コンテキスト
+     * @return エンティティ
+     */
+    @NotNull
+    List<? extends Entity> selectTargets(@Nullable Player basis, @Nullable Context context);
 
     /**
      * セレクタを取得します。

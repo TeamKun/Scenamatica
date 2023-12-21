@@ -11,7 +11,6 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.kunlab.scenamatica.commons.specifiers.EntitySpecifierImpl;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.commons.utils.PlayerUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
@@ -54,10 +53,8 @@ public class PlayerBucketEntityAction extends AbstractPlayerAction<PlayerBucketE
         Player player = argument.getTarget(engine);
         Actor actor = PlayerUtils.getActorOrThrow(engine, player);
 
-        Entity targetEntity = argument.getEntity().selectTarget(engine.getContext());
-        if (targetEntity == null)
-            throw new IllegalStateException("Entity is not found.");
-
+        Entity targetEntity = argument.getEntity().selectTarget(engine.getContext())
+                .orElseThrow(() -> new IllegalStateException("Target entity is not found."));
         // Null ではない
         ItemStack itemInMainHand = player.getInventory().getItemInMainHand();
         if (argument.getOriginalBucket() != null)
@@ -122,7 +119,7 @@ public class PlayerBucketEntityAction extends AbstractPlayerAction<PlayerBucketE
 
         return new Argument(
                 super.deserializeTarget(map, serializer),
-                EntitySpecifierImpl.tryDeserialize(map.get(Argument.KEY_ENTITY), serializer),
+                serializer.tryDeserializeEntitySpecifier(map.get(Argument.KEY_ENTITY)),
                 originalBucket,
                 entityBucket
         );

@@ -58,7 +58,8 @@ public abstract class AbstractPlayerActionArgument extends AbstractActionArgumen
     public Player getTargetOrNull(@NotNull ScenarioEngine engine)
     {
         this.ensureCanProvideTarget();
-        return this.target.selectTarget(engine.getContext());
+        return this.target.selectTarget(engine.getContext())
+                .orElse(null);
     }
 
     public boolean checkMatchedPlayer(@NotNull Player player)

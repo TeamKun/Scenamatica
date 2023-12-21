@@ -6,7 +6,6 @@ import org.bukkit.event.player.PlayerEvent;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.action.actions.AbstractAction;
 import org.kunlab.scenamatica.action.actions.player.bucket.AbstractPlayerBucketAction;
-import org.kunlab.scenamatica.commons.specifiers.PlayerSpecifierImpl;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.PlayerSpecifier;
@@ -62,10 +61,7 @@ public abstract class AbstractPlayerAction<A extends AbstractPlayerActionArgumen
 
     protected PlayerSpecifier deserializeTarget(Map<String, Object> map, StructureSerializer serializer)
     {
-        return PlayerSpecifierImpl.tryDeserializePlayer(
-                map.get(AbstractPlayerActionArgument.KEY_TARGET_PLAYER),
-                serializer
-        );
+        return serializer.tryDeserializePlayerSpecifier(map.get(AbstractPlayerActionArgument.KEY_TARGET_PLAYER));
     }
 
     protected boolean isSameUUIDString(String uuid1, String uuid2)

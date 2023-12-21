@@ -21,7 +21,6 @@ import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.utils.EventListenerUtils;
-import org.kunlab.scenamatica.commons.specifiers.EntitySpecifierImpl;
 import org.kunlab.scenamatica.commons.utils.EntityUtils;
 import org.kunlab.scenamatica.commons.utils.Utils;
 import org.kunlab.scenamatica.enums.ScenarioType;
@@ -36,6 +35,7 @@ import org.kunlab.scenamatica.interfaces.scenariofile.misc.ProjectileSourceStruc
 import org.kunlab.scenamatica.interfaces.scenariofile.misc.SelectorProjectileSourceStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.EntitySpecifier;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
+import org.kunlab.scenamatica.selector.Selector;
 
 import java.lang.invoke.MethodHandles;
 import java.util.Collections;
@@ -151,12 +151,12 @@ public class ProjectileLaunchAction extends EntitySpawnAction<ProjectileLaunchAc
         if (structure instanceof SelectorProjectileSourceStructure)
         {
             String selector = ((SelectorProjectileSourceStructure) structure).getSelectorString();
-            return EntityUtils.selectEntities(selector)
-                    .stream()
+            return Selector.compile(selector)
+                    .select().stream()
                     .filter(e -> e instanceof ProjectileSource)
                     .map(e -> (ProjectileSource) e)
                     .findFirst()
-                    .orElse(null);
+                    .orElseThrow(() -> new IllegalArgumentException("Selector must select ProjectileSource"));
         }
         else if (structure instanceof EntityStructure)
         {
@@ -209,9 +209,8 @@ public class ProjectileLaunchAction extends EntitySpawnAction<ProjectileLaunchAc
     public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
     {
         return new Argument(
-                EntitySpecifierImpl.tryDeserialize(
+                serializer.tryDeserializeEntitySpecifier(
                         map.get(EntitySpawnAction.Argument.KEY_ENTITY),
-                        serializer,
                         ProjectileStructure.class
                 )
         );

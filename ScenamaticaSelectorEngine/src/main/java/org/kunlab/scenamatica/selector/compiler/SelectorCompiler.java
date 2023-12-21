@@ -2,6 +2,7 @@ package org.kunlab.scenamatica.selector.compiler;
 
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.selector.Selector;
 import org.kunlab.scenamatica.selector.compiler.lexer.SelectorLexer;
 import org.kunlab.scenamatica.selector.compiler.lexer.SelectorToken;
@@ -38,11 +39,18 @@ public class SelectorCompiler
         INSTANCE = new SelectorCompiler();
     }
 
+    private final CompilerCache cache;
     private final List<SelectorPredicate<? extends Entity>> predicates;
 
     private SelectorCompiler()
     {
+        this.cache = new CompilerCache();
         this.predicates = Collections.unmodifiableList(getAllPredicates());
+    }
+
+    public static SelectorCompiler getInstance()
+    {
+        return INSTANCE;
     }
 
     private static List<SelectorPredicate<? extends Entity>> getAllPredicates()
@@ -63,13 +71,6 @@ public class SelectorCompiler
         return predicates;
     }
 
-    private static List<SelectorPredicate<? extends Entity>> getPredicatesFor(Map<String, Object> properties)
-    {
-        return INSTANCE.predicates.stream()
-                .filter(predicate -> predicate.isApplicableKey(properties))
-                .collect(Collectors.toList());
-    }
-
     private static BiPredicate<? super Player, ? extends Entity> combinePredicates(
             List<? extends SelectorPredicate<? extends Entity>> predicates,
             Map<? super String, Object> properties)
@@ -88,27 +89,6 @@ public class SelectorCompiler
         };
     }
 
-    public static Selector compile(String selector, boolean canProvideBasis)
-    {
-        // コンパイル
-        LinkedList<SelectorToken> tokens = SelectorLexer.tokenize(selector);
-        SyntaxTree tree = SelectorSyntaxAnalyzer.analyze(tokens);
-        PropertiedSelector elements = SyntaxTreeTraverser.traverse(tree);
-
-        // Predicate 生成
-        List<SelectorPredicate<? extends Entity>> predicates = getPredicatesFor(elements.getProperties());
-        Map<String, Object> properties = elements.getProperties();
-        for (SelectorPredicate<? extends Entity> predicate : predicates)
-            predicate.normalizeMap(properties);
-
-        if (!canProvideBasis)
-            ensureNoBasisRequired(predicates);
-
-        BiPredicate<? super Player, ? extends Entity> predicate = combinePredicates(predicates, elements.getProperties());
-
-        return new Selector(selector, elements.getType(), predicate);
-    }
-
     private static void ensureNoBasisRequired(List<? extends SelectorPredicate<? extends Entity>> predicates)
     {
         predicates.stream()
@@ -120,5 +100,39 @@ public class SelectorCompiler
                 .ifPresent(names -> {
                     throw new IllegalArgumentException("This selector(s) requires basis: " + names);
                 });
+    }
+
+    private List<SelectorPredicate<? extends Entity>> getPredicatesFor(Map<String, Object> properties)
+    {
+        return this.predicates.stream()
+                .filter(predicate -> predicate.isApplicableKey(properties))
+                .collect(Collectors.toList());
+    }
+
+    public Selector compile(@NotNull String selector, boolean canProvideBasis)
+    {
+        Selector cache = this.cache.get(selector, canProvideBasis);
+        if (cache != null)
+            return cache;
+
+        // コンパイル
+        LinkedList<SelectorToken> tokens = SelectorLexer.tokenize(selector);
+        SyntaxTree tree = SelectorSyntaxAnalyzer.analyze(tokens);
+        PropertiedSelector elements = SyntaxTreeTraverser.traverse(tree);
+
+        // Predicate 生成
+        List<SelectorPredicate<? extends Entity>> predicates = this.getPredicatesFor(elements.getProperties());
+        Map<String, Object> properties = elements.getProperties();
+        for (SelectorPredicate<? extends Entity> predicate : predicates)
+            predicate.normalizeMap(properties);
+
+        if (!canProvideBasis)
+            ensureNoBasisRequired(predicates);
+
+        BiPredicate<? super Player, ? extends Entity> predicate = combinePredicates(predicates, elements.getProperties());
+        Selector compiledSelector = new Selector(selector, elements.getType(), predicate);
+
+        this.cache.cache(selector, compiledSelector, canProvideBasis);
+        return compiledSelector;
     }
 }

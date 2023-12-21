@@ -59,7 +59,7 @@ public class EntityAction extends AbstractEntityAction<EntityAction.Argument>
         argument = this.requireArgsNonNull(argument);
 
         EntityStructure entityInfo = argument.getEntity();
-        Entity target = EntityUtils.getPlayerOrEntityOrNull(argument.getTargetString());
+        Entity target = argument.selectTarget(engine.getContext());
 
         if (target == null && entityInfo != null)
             throw new IllegalStateException("Cannot find entity with identifier " + argument.getTargetString());

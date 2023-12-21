@@ -9,7 +9,6 @@ import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.kunlab.scenamatica.commons.specifiers.EntitySpecifierImpl;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.commons.utils.PlayerUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
@@ -45,9 +44,8 @@ public class PlayerInteractEntityAction<A extends PlayerInteractEntityAction.Arg
         argument = this.requireArgsNonNull(argument);
 
         Player player = argument.getTarget(engine);
-        Entity targetEntity = argument.getEntity().selectTarget(engine.getContext());
-        if (targetEntity == null)
-            throw new IllegalStateException("Cannot select target for this action, please specify target with valid specifier.");
+        Entity targetEntity = argument.getEntity().selectTarget(engine.getContext())
+                .orElseThrow(() -> new IllegalStateException("Target entity is not found."));
 
         int distanceFromEntity = (int) player.getLocation().distance(targetEntity.getLocation());
         if (distanceFromEntity > 36)
@@ -104,7 +102,7 @@ public class PlayerInteractEntityAction<A extends PlayerInteractEntityAction.Arg
         // noinspection unchecked
         return (A) new Argument(
                 super.deserializeTarget(map, serializer),
-                EntitySpecifierImpl.tryDeserialize(map.get(Argument.KEY_ENTITY), serializer),
+                serializer.tryDeserializeEntitySpecifier(map.get(Argument.KEY_ENTITY)),
                 MapUtils.getAsEnumOrNull(map, Argument.KEY_HAND, EquipmentSlot.class)
         );
     }

@@ -13,7 +13,6 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.actions.AbstractActionArgument;
-import org.kunlab.scenamatica.commons.specifiers.PlayerSpecifierImpl;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.commons.utils.PlayerUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
@@ -52,8 +51,8 @@ public class BlockBreakAction extends AbstractBlockAction<BlockBreakAction.Argum
         Location location = this.getBlockLocationWithWorld(blockDef, engine);
         Block block = location.getBlock();
 
-        Player player = argument.getActorSpecifier().canProvideTarget() ?
-                argument.getActorSpecifier().selectTarget(engine.getContext()): null;
+        Player player = argument.getActorSpecifier().selectTarget(engine.getContext())
+                .orElse(null);
         if (player == null)
         {
             block.breakNaturally();  // 自然に壊れたことにする
@@ -105,7 +104,7 @@ public class BlockBreakAction extends AbstractBlockAction<BlockBreakAction.Argum
     {
         return new Argument(
                 super.deserializeBlockOrNull(map, serializer),
-                PlayerSpecifierImpl.tryDeserializePlayer(map.get(Argument.KEY_ACTOR), serializer),
+                serializer.tryDeserializePlayerSpecifier(map.get(Argument.KEY_ACTOR)),
                 MapUtils.getOrNull(map, Argument.KEY_DROP_ITEMS)
         );
     }
