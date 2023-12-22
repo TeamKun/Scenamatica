@@ -18,7 +18,7 @@ public class PlayerLikeCommandSenders
             return true;
 
         // 構造体を持たない場合, コンソールだと仮定する。
-        if (!expectedSender.hasStructure())
+        if (expectedSender.isSelectable())
         {
             String specifier = expectedSender.getSelectorString();
             assert specifier != null;
@@ -48,7 +48,7 @@ public class PlayerLikeCommandSenders
         if (!specifier.canProvideTarget())
             return null;
 
-        if (!specifier.hasStructure())
+        if (specifier.isSelectable())
         {
             String specifierString = specifier.getSelectorString();
             assert specifierString != null;

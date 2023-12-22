@@ -68,8 +68,9 @@ public enum SelectorType
                         })
                         .collect(Collectors.toList());
             default:
+                // noinspection unchecked, rawtypes
                 return new ArrayList<>(this.entitiesSupplier.get()).stream()
-                        .filter(entity -> entity instanceof Player)
+                        .filter(entity -> ((BiPredicate) predicate).test(basis, entity))
                         .collect(Collectors.toList());
 
         }
