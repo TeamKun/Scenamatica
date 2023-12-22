@@ -23,7 +23,9 @@ import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.misc.BlockStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.EntitySpecifier;
+import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.PlayerSpecifier;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
+import org.kunlab.scenamatica.selector.compiler.SelectorCompilationErrorException;
 
 import java.util.Collections;
 import java.util.List;
@@ -95,7 +97,8 @@ public class EntityPlaceAction extends AbstractEntityAction<EntityPlaceAction.Ar
     {
         argument = this.requireArgsNonNull(argument);
         Location location = argument.getBlock().getLocation().create();
-        Actor actor = PlayerUtils.getActorByStringOrThrow(engine, argument.getPlayerSpecifier());
+        Actor actor = PlayerUtils.getActorOrThrow(engine, argument.getPlayerSpecifier().selectTarget(engine.getContext())
+                .orElseThrow(() -> new IllegalArgumentException("Player is not specified.")));
         if (location.getWorld() == null)
         {
             location = location.clone();
@@ -105,10 +108,7 @@ public class EntityPlaceAction extends AbstractEntityAction<EntityPlaceAction.Ar
         if (isNotOnlyLocationAvailable(argument.getBlock()))
             argument.getBlock().applyTo(location.getBlock());
 
-        assert argument.getTargetString() != null;  // EXECUTE は, validateArgument でチェック済み
-        Material material = Utils.searchMaterial(argument.getTargetString());
-        if (material == null)
-            throw new IllegalArgumentException("Material is not specified.");
+        Material material = argument.getMaterialToPlace();
 
         if (!isPlaceable(material))
             throw new IllegalArgumentException("Material is not placable.");
@@ -123,15 +123,7 @@ public class EntityPlaceAction extends AbstractEntityAction<EntityPlaceAction.Ar
             return false;
 
         EntityPlaceEvent e = (EntityPlaceEvent) event;
-        Player placer = e.getPlayer();
         BlockFace blockFace = e.getBlockFace();
-
-        if (argument.getPlayerSpecifier() != null)
-        {
-            Player player = PlayerUtils.getPlayerOrThrow(argument.getPlayerSpecifier());
-            if (!Objects.equals(placer, player))
-                return false;
-        }
 
         if (argument.getBlock() != null)
         {
@@ -140,7 +132,10 @@ public class EntityPlaceAction extends AbstractEntityAction<EntityPlaceAction.Ar
                 return false;
         }
 
-        return argument.getBlockFace() == null || argument.getBlockFace() == blockFace;
+        Player placer = e.getPlayer();
+        return (argument.getBlockFace() == null || argument.getBlockFace() == blockFace)
+                && (argument.getPlayerSpecifier() == null || argument.getPlayerSpecifier().checkMatchedPlayer(placer))
+                && (argument.getMaterialToPlace() == null || argument.getMaterialToPlace() == e.getBlock().getType());
     }
 
     @Override
@@ -161,11 +156,27 @@ public class EntityPlaceAction extends AbstractEntityAction<EntityPlaceAction.Ar
                     BlockStructure.class
             );
 
+        EntitySpecifier<Entity> target = target = serializer.tryDeserializeEntitySpecifier(null);
+        Material materialToPlace = null;
+        if (map.containsKey(AbstractEntityActionArgument.KEY_TARGET_ENTITY))
+        {
+            try
+            {
+                target = super.deserializeTarget(map, serializer);
+            }
+            catch (SelectorCompilationErrorException ignored)
+            {
+                String materialName = (String) map.get(Argument.KEY_TARGET_ENTITY);
+                materialToPlace = Utils.searchMaterial(materialName);
+            }
+        }
+
         return new Argument(
-                super.deserializeTarget(map, serializer),
-                MapUtils.getOrNull(map, Argument.KEY_PLAYER),
+                target,
+                serializer.tryDeserializePlayerSpecifier(map.get(Argument.KEY_PLAYER)),
                 blockStructure,
-                MapUtils.getAsEnumOrNull(map, Argument.KEY_BLOCK_FACE, BlockFace.class)
+                MapUtils.getAsEnumOrNull(map, Argument.KEY_BLOCK_FACE, BlockFace.class),
+                materialToPlace
         );
     }
 
@@ -177,16 +188,19 @@ public class EntityPlaceAction extends AbstractEntityAction<EntityPlaceAction.Ar
         public static final String KEY_BLOCK = "block";
         public static final String KEY_BLOCK_FACE = "direction";
 
-        String playerSpecifier;
+        PlayerSpecifier playerSpecifier;
         BlockStructure block;
         BlockFace blockFace;
 
-        public Argument(EntitySpecifier<Entity> target, String playerSpecifier, BlockStructure block, BlockFace blockFace)
+        Material materialToPlace;
+
+        public Argument(EntitySpecifier<Entity> target, PlayerSpecifier playerSpecifier, BlockStructure block, BlockFace blockFace, Material materialToPlace)
         {
             super(target);
             this.playerSpecifier = playerSpecifier;
             this.block = block;
             this.blockFace = blockFace;
+            this.materialToPlace = materialToPlace;
         }
 
         @Override
@@ -209,21 +223,14 @@ public class EntityPlaceAction extends AbstractEntityAction<EntityPlaceAction.Ar
             if (type != ScenarioType.ACTION_EXECUTE)
                 return;
 
-            this.ensureCanProvideTarget();
             ensurePresent(KEY_BLOCK, this.block);
             if (this.block.getLocation() == null)
                 throw new IllegalArgumentException("Block location is not specified.");
 
             ensurePresent(KEY_PLAYER, this.playerSpecifier);
+            ensurePresent(KEY_BLOCK_FACE, this.blockFace);
 
-            String entitySpecifier = this.getTargetString();  // EXECUTE の場合は, 置く Material として扱う
-            ensurePresent(KEY_TARGET_ENTITY, entitySpecifier);
-
-            for (Material material : PLACEABLE_ITEMS)
-                if (material.name().equalsIgnoreCase(entitySpecifier) || material.name().equalsIgnoreCase("LEGACY_" + entitySpecifier))
-                    return;
-
-            throw new IllegalArgumentException("Unknown entity type: " + entitySpecifier);
+            ensurePresent(KEY_TARGET_ENTITY, this.materialToPlace);
         }
 
         @Override

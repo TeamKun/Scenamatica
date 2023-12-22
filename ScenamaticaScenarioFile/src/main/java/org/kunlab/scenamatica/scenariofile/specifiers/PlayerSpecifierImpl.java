@@ -1,5 +1,6 @@
 package org.kunlab.scenamatica.scenariofile.specifiers;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -10,20 +11,47 @@ import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.context.PlayerStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.entity.EntityStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.PlayerSpecifier;
+import org.kunlab.scenamatica.selector.Selector;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class PlayerSpecifierImpl extends EntitySpecifierImpl<Player> implements PlayerSpecifier
 {
-    public static final PlayerSpecifier EMPTY = new PlayerSpecifierImpl(null);
+    public static final PlayerSpecifier EMPTY = new PlayerSpecifierImpl();
 
-    public PlayerSpecifierImpl(@Nullable Object mayTarget)
+    private final String mayName;
+
+    private PlayerSpecifierImpl(@Nullable UUID mayUUID, @Nullable Selector selector, @Nullable EntityStructure targetStructure, @Nullable String mayName)
     {
-        super(mayTarget);
+        super(mayUUID, selector, targetStructure);
+        this.mayName = mayName;
 
         if (!(this.targetStructure == null || this.targetStructure instanceof PlayerStructure))
             throw new IllegalArgumentException("Target must be Player");
+    }
+
+    private PlayerSpecifierImpl(@Nullable Selector selector, @Nullable String mayName)
+    {
+        this(null, selector, null, mayName);
+    }
+
+    private PlayerSpecifierImpl(@NotNull EntityStructure targetStructure)
+    {
+        this(null, null, targetStructure, null);
+    }
+
+    private PlayerSpecifierImpl(@NotNull UUID mayUUID)
+    {
+        this(mayUUID, null, null, null);
+    }
+
+    private PlayerSpecifierImpl()
+    {
+        this(null, null, null, null);
     }
 
     @NotNull
@@ -35,18 +63,41 @@ public class PlayerSpecifierImpl extends EntitySpecifierImpl<Player> implements 
         if (obj == null)
             return EMPTY;
 
-        if (obj instanceof String || obj instanceof PlayerStructure)
-            return new PlayerSpecifierImpl(obj);
-
-        if (obj instanceof Map)
+        if (obj instanceof Selector)
+            return new PlayerSpecifierImpl((Selector) obj, null);
+        else if (obj instanceof EntityStructure)
+            return new PlayerSpecifierImpl((EntityStructure) obj);
+        else if (obj instanceof UUID)
+            return new PlayerSpecifierImpl((UUID) obj);
+        else if (obj instanceof Map)
         {
             // noinspection unchecked
             Map<String, Object> map = (Map<String, Object>) obj;
 
             return new PlayerSpecifierImpl(serializer.deserialize(map, PlayerStructure.class));
         }
+        else if (obj instanceof String)
+        {
+            UUID mayUUID = tryConvertToUUID((String) obj);
+
+            if (mayUUID == null)
+                return new PlayerSpecifierImpl(
+                        Selector.tryCompile((String) obj)
+                                .orElse(null),
+                        (String) obj
+                );
+            else
+                return new PlayerSpecifierImpl(mayUUID);
+        }
+
 
         throw new IllegalArgumentException("Cannot deserialize PlayerSpecifier from " + obj);
+    }
+
+    @Override
+    public boolean canProvideTarget()
+    {
+        return super.canProvideTarget() || this.mayName != null;
     }
 
     @Override
@@ -60,18 +111,22 @@ public class PlayerSpecifierImpl extends EntitySpecifierImpl<Player> implements 
     {
         // Player も一応 Entity なので、親クラスのメソッドを呼び出す。
         Entity entity = super.selectTargetRaw(null, null);
-
         if (entity == null)
         {
-            if (context == null || context.getActors() == null)
-                return Optional.empty();
-
-            for (Actor actor : context.getActors())
-                if (super.checkMatchedEntity(actor.getPlayer()))
-                {
-                    entity = actor.getPlayer();
-                    break;
-                }
+            if (context != null)
+            {
+                List<Player> actors = context.getActors().stream()
+                        .map(Actor::getPlayer)
+                        .collect(Collectors.toList());
+                for (Player actor : actors)
+                    if (this.checkMatchedPlayer(actor))
+                    {
+                        entity = actor;
+                        break;
+                    }
+            }
+            else if (this.mayName != null)
+                entity = Bukkit.getPlayer(this.mayName);
         }
 
         if (!(entity instanceof Player))
@@ -98,6 +153,7 @@ public class PlayerSpecifierImpl extends EntitySpecifierImpl<Player> implements 
     @Override
     public boolean checkMatchedPlayer(Player player)
     {
-        return super.checkMatchedEntity(player);
+        return super.checkMatchedEntity(player)
+                || (this.mayName != null && player.getName().equals(this.mayName));
     }
 }

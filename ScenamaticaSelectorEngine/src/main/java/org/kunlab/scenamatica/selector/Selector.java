@@ -11,6 +11,7 @@ import org.kunlab.scenamatica.selector.compiler.SelectorCompiler;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.BiPredicate;
+import java.util.stream.Collectors;
 
 @Value
 @NotNull
@@ -69,7 +70,7 @@ public class Selector
 
     public List<Entity> select()
     {
-        return this.select(null);
+        return this.select((Player) null);
     }
 
     public Optional<Entity> selectOne(@Nullable Player basis)
@@ -84,6 +85,13 @@ public class Selector
             return Optional.of(clazz.cast(entity));
         else
             return Optional.empty();
+    }
+
+    public List<Entity> select(@NotNull List<? extends Entity> entities)
+    {
+        return this.type.enumerate(null, this.predicate).stream()
+                .filter(entities::contains)
+                .collect(Collectors.toList());
     }
 
     @Override

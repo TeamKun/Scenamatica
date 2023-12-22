@@ -21,11 +21,13 @@ scenario:
     with:
       amount: 3
       target: "@e[type=minecraft:parrot,tag=810snpi]"
-      damager: Actor01
+      damager:
+        name: Actor01
   - type: expect
     action: entity_damage
     with:
       target: "@e[type=minecraft:parrot,tag=810snpi]"
-      damager: Actor01
+      damager:
+        name: Actor01
     timeout: 20
 

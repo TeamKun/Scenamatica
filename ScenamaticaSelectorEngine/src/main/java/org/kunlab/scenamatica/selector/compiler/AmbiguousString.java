@@ -122,14 +122,12 @@ public class AmbiguousString
         Object rawObject = NegateSupport.toRaw(object);
         if (rawObject instanceof AmbiguousString)
             return (AmbiguousString) rawObject;
-        else if (rawObject instanceof String)
-            return new AmbiguousString((String) rawObject, NegateSupport.shouldNegate(rawObject));
         else if (rawObject instanceof Map)
             return parseAmbiguousMapString(key, MapUtils.checkAndCastMap(rawObject));
         else if (rawObject == null)
             return new AmbiguousString(null, false);
         else
-            throw new IllegalArgumentException("Invalid string format: " + rawObject);
+            return new AmbiguousString(rawObject.toString(), NegateSupport.shouldNegate(rawObject));
     }
 
     private static AmbiguousString parseAmbiguousMapString(String key, Map<? super String, Object> map)

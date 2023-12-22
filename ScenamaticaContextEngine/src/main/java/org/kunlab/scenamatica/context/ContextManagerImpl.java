@@ -33,6 +33,7 @@ import org.kunlab.scenamatica.interfaces.scenariofile.entity.EntityStructure;
 import org.spigotmc.SpigotConfig;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
@@ -103,7 +104,8 @@ public class ContextManagerImpl implements ContextManager
         );
     }
 
-    private List<Actor> prepareActors(ContextStructure context, ScenarioFileStructure scenario, UUID testID) throws StageCreateFailedException, StageNotCreatedException
+    @NotNull
+    private List<Actor> prepareActors(ContextStructure context, ScenarioFileStructure scenario, UUID testID) throws StageNotCreatedException
     {
         try
         {
@@ -121,7 +123,7 @@ public class ContextManagerImpl implements ContextManager
             this.logActorGenFail(scenario, testID);
 
             this.stageManager.destroyStage();
-            return null;
+            return Collections.emptyList();
         }
 
     }
@@ -187,14 +189,16 @@ public class ContextManagerImpl implements ContextManager
         World stage = this.prepareWorld(context, scenario, testID);
         this.isWorldPrepared = true;
 
-        List<Actor> actors = null;
+        List<Actor> actors;
         if (!(context == null || context.getActors().isEmpty()))
         {
             this.logIfVerbose(scenario, "context.actor.generating", testID);
             actors = this.prepareActors(context, scenario, testID);
         }
+        else
+            actors = Collections.emptyList();
 
-        List<Entity> generatedEntities = null;
+        List<Entity> generatedEntities;
         if (!(context == null || context.getEntities().isEmpty()))
         {
             this.logIfVerbose(scenario, "context.entity.generating", testID);
@@ -204,6 +208,8 @@ public class ContextManagerImpl implements ContextManager
                     .map(Entity::getUniqueId)
                     .collect(Collectors.toList());
         }
+        else
+            generatedEntities = Collections.emptyList();
 
 
         this.logIfVerbose(scenario, "context.created", testID);

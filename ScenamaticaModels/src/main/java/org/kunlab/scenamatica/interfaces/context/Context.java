@@ -2,7 +2,7 @@ package org.kunlab.scenamatica.interfaces.context;
 
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -19,12 +19,12 @@ public interface Context
     /**
      * アクターです。
      */
-    @Nullable
+    @NotNull
     List<? extends Actor> getActors();
 
     /**
      * エンティティです。
      */
-    @Nullable
+    @NotNull
     List<? extends Entity> getEntities();
 }
