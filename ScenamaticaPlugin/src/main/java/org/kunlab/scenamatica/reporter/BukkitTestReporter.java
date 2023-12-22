@@ -336,16 +336,8 @@ public class BukkitTestReporter extends AbstractTestReporter
                 // メッセージを構築
                 .flatMap(entry -> {
                     long count = entry.getValue();
-                    // Modify the logic to keep only the message with the highest index
-                    if (count > 1)
-                    {
-                        String baseMessage = entry.getKey();
-                        return Stream.of(baseMessage + " (" + count + ")");
-                    }
-                    else
-                    {
-                        return Stream.of("");
-                    }
+                    String baseMessage = entry.getKey();
+                    return Stream.of(baseMessage + " (" + count + ")");
                 })
                 .collect(Collectors.toList());
 
