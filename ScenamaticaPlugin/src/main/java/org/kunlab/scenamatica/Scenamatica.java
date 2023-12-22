@@ -65,7 +65,7 @@ public final class Scenamatica extends JavaPlugin
     private ScenamaticaRegistry getRegistry(ExceptionHandler exceptionHandler)
     {
         boolean isVerbose = this.getConfig().getBoolean("reporting.verbose", true);
-        boolean doRetry = this.getConfig().getBoolean("execution.retry", true);
+        boolean doRetry = this.getConfig().getBoolean("execution.retry.enabled", true);
         int maxAttemptCount = doRetry ? this.getConfig().getInt("execution.retry.maxAttempts", 3): 0;
 
         return new ScenamaticaDaemon(Environment.builder(this)
