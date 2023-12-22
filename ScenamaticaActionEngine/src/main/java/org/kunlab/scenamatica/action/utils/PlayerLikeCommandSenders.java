@@ -18,9 +18,9 @@ public class PlayerLikeCommandSenders
             return true;
 
         // 構造体を持たない場合, コンソールだと仮定する。
-        if (expectedSender.isSelectable())
+        if (expectedSender.hasName())
         {
-            String specifier = expectedSender.getSelectorString();
+            String specifier = expectedSender.getName();
             assert specifier != null;
             if (actualSender instanceof ConsoleCommandSender && specifier.equalsIgnoreCase(CONSOLE_SENDER))
                 return true;
@@ -46,24 +46,16 @@ public class PlayerLikeCommandSenders
     public static CommandSender getCommandSenderOrNull(@NotNull PlayerSpecifier specifier, @NotNull Context context)
     {
         if (!specifier.canProvideTarget())
-            return null;
+            return Bukkit.getConsoleSender();
 
-        if (specifier.isSelectable())
+        if (specifier.hasName())
         {
-            String specifierString = specifier.getSelectorString();
+            String specifierString = specifier.getName();
             assert specifierString != null;
             if (specifierString.equalsIgnoreCase(CONSOLE_SENDER))
                 return Bukkit.getConsoleSender();
         }
 
         return specifier.selectTarget(context).orElse(null);
-    }
-
-    public static CommandSender resolveSenderOrConsoleOrThrow(@NotNull PlayerSpecifier specifier, @NotNull Context context)
-    {
-        if (!specifier.canProvideTarget())
-            return Bukkit.getConsoleSender();
-
-        return getCommandSenderOrThrow(specifier, context);
     }
 }

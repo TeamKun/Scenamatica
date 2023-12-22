@@ -5,43 +5,7 @@ name: actions_player_interact_at_entity_6
 description: Testing PlayerInteractAtEntityAction works or not if the distance between the player and the entity is too far
 on:
   - type: on_load
-    before:
-      - type: execute
-        action: entity_spawn
-        with:
-          entity:
-            type: minecraft:armor_stand
-            tags:
-              - 810snpi
-            location:
-              x: 0
-              y: 255
-              z: 0
-
-    after:
-      - action: command_dispatch
-        type: execute
-        with:
-          command: 'kill @e[type=minecraft:armor_stand,tag=810snpi]'
   - type: manual_dispatch
-    before:
-      - type: execute
-        action: entity_spawn
-        with:
-          entity:
-            type: minecraft:armor_stand
-            tags:
-              - 810snpi
-            location:
-              x: 0
-              y: 255
-              z: 0
-
-    after:
-      - action: command_dispatch
-        type: execute
-        with:
-          command: 'kill @e[type=minecraft:armor_stand,tag=810snpi]'
 
 context:
   actors:
@@ -52,6 +16,14 @@ context:
         z: 0
       flyable: true
       flying: true
+  entities:
+    - type: minecraft:armor_stand
+      tags:
+        - 810snpi
+      location:
+        x: 0
+        y: 255
+        z: 0
 
 scenario:
   - type: execute

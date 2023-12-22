@@ -61,7 +61,7 @@ public class TabCompleteAction extends AbstractServerAction<TabCompleteAction.Ar
     {
         argument = this.requireArgsNonNull(argument);
 
-        CommandSender sender = PlayerLikeCommandSenders.resolveSenderOrConsoleOrThrow(argument.getSender(), engine.getContext());
+        CommandSender sender = PlayerLikeCommandSenders.getCommandSenderOrThrow(argument.getSender(), engine.getContext());
         String buffer = argument.getBuffer();
         List<String> completions = argument.getCompletions();
         if (completions == null)

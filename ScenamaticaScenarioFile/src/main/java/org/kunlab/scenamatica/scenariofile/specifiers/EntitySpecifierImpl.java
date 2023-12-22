@@ -203,7 +203,7 @@ public class EntitySpecifierImpl<E extends Entity> implements EntitySpecifier<E>
         if (entity == null)
             return false;
         else if (!this.canProvideTarget())
-            return true;
+            return false;
 
         if (this.mayUUID != null)
             return entity.getUniqueId().equals(this.mayUUID);

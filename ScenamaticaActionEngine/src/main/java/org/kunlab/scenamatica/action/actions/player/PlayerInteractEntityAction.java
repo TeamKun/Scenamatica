@@ -85,7 +85,7 @@ public class PlayerInteractEntityAction<A extends PlayerInteractEntityAction.Arg
 
         PlayerInteractEntityEvent e = (PlayerInteractEntityEvent) event;
         return (argument.getHand() == null || argument.getHand() == e.getHand())
-                && (argument.getEntity().isSelectable() || argument.getEntity().checkMatchedEntity(e.getRightClicked()));
+                && (!argument.getEntity().canProvideTarget() || argument.getEntity().checkMatchedEntity(e.getRightClicked()));
     }
 
     @Override

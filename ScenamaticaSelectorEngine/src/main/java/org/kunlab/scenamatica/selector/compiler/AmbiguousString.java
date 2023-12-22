@@ -48,10 +48,7 @@ public class AmbiguousString
         {
             AmbiguousString string = fromMap(key, properties);
             wipeMap(key, properties);
-
-            Map<String, Object> group = MapUtils.createOrRetriveMap(groupKey, properties);
-            group.put(key, string);
-
+            properties.put(key, string);
             return;
         }
         else if (groupKey.equals(key))

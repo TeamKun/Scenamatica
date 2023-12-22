@@ -106,8 +106,8 @@ public class BroadcastMessageAction extends AbstractServerAction<BroadcastMessag
 
             for (PlayerSpecifier expectedRecipient : expectedRecipients)
             {
-                CommandSender actualRecipient = PlayerLikeCommandSenders.getCommandSenderOrNull(expectedRecipient, engine.getContext());
-                if (actualRecipient == null || !actualRecipients.contains(actualRecipient))
+                CommandSender csExceptedRecipient = PlayerLikeCommandSenders.getCommandSenderOrNull(expectedRecipient, engine.getContext());
+                if (csExceptedRecipient == null || !actualRecipients.contains(csExceptedRecipient))
                     return false;
             }
 

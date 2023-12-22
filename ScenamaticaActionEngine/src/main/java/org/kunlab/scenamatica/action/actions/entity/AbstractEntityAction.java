@@ -41,7 +41,7 @@ public abstract class AbstractEntityAction<A extends AbstractEntityActionArgumen
             return false;
 
         EntityEvent e = (EntityEvent) event;
-        return argument.checkMatchedEntity(e.getEntity());
+        return !argument.getTargetHolder().canProvideTarget() || argument.checkMatchedEntity(e.getEntity());
     }
 
     protected EntitySpecifier<Entity> deserializeTarget(Map<String, Object> map, StructureSerializer serializer)

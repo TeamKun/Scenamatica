@@ -1,5 +1,6 @@
 package org.kunlab.scenamatica.scenariofile.specifiers;
 
+import lombok.EqualsAndHashCode;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -19,6 +20,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+@EqualsAndHashCode(callSuper = true)
 public class PlayerSpecifierImpl extends EntitySpecifierImpl<Player> implements PlayerSpecifier
 {
     public static final PlayerSpecifier EMPTY = new PlayerSpecifierImpl();
@@ -155,5 +157,17 @@ public class PlayerSpecifierImpl extends EntitySpecifierImpl<Player> implements 
     {
         return super.checkMatchedEntity(player)
                 || (this.mayName != null && player.getName().equals(this.mayName));
+    }
+
+    @Override
+    public boolean hasName()
+    {
+        return this.mayName != null;
+    }
+
+    @Override
+    public String getName()
+    {
+        return this.mayName;
     }
 }

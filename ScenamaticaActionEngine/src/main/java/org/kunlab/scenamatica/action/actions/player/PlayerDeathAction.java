@@ -187,7 +187,8 @@ public class PlayerDeathAction extends AbstractPlayerAction<PlayerDeathAction.Ar
         Player actualKiller = targetPlayer.getKiller();
         PlayerSpecifier expectedKiller = argument.getKiller();
 
-        return targetPlayer.isDead() && (expectedKiller == null || expectedKiller.checkMatchedPlayer(actualKiller));
+        return targetPlayer.isDead()
+                && (!expectedKiller.canProvideTarget() || expectedKiller.checkMatchedPlayer(actualKiller));
     }
 
     @Value

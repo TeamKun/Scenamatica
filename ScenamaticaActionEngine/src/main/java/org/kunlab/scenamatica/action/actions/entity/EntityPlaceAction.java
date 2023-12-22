@@ -134,7 +134,7 @@ public class EntityPlaceAction extends AbstractEntityAction<EntityPlaceAction.Ar
 
         Player placer = e.getPlayer();
         return (argument.getBlockFace() == null || argument.getBlockFace() == blockFace)
-                && (argument.getPlayerSpecifier() == null || argument.getPlayerSpecifier().checkMatchedPlayer(placer))
+                && (!argument.getPlayerSpecifier().canProvideTarget() || argument.getPlayerSpecifier().checkMatchedPlayer(placer))
                 && (argument.getMaterialToPlace() == null || argument.getMaterialToPlace() == e.getBlock().getType());
     }
 

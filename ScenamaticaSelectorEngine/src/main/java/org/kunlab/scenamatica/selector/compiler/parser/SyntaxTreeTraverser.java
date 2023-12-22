@@ -4,7 +4,7 @@ import net.kunmc.lab.peyangpaperutils.lib.utils.Pair;
 import org.kunlab.scenamatica.selector.SelectorType;
 import org.kunlab.scenamatica.selector.compiler.SelectorSyntaxErrorException;
 
-import java.text.NumberFormat;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -127,7 +127,7 @@ public class SyntaxTreeTraverser
 
         try
         {
-            return NumberFormat.getInstance().parse(value);
+            return new BigDecimal(value);
         }
         catch (Exception e)
         {

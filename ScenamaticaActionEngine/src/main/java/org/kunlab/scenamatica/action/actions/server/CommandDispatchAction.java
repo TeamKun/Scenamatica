@@ -43,7 +43,7 @@ public class CommandDispatchAction extends AbstractServerAction<CommandDispatchA
     {
         argument = this.requireArgsNonNull(argument);
 
-        CommandSender sender = PlayerLikeCommandSenders.resolveSenderOrConsoleOrThrow(argument.getSender(), engine.getContext());
+        CommandSender sender = PlayerLikeCommandSenders.getCommandSenderOrThrow(argument.getSender(), engine.getContext());
 
         String command = argument.getCommand();
         if (command.startsWith("/")) // シンタックスシュガーのために, / から始まるやつにも対応
