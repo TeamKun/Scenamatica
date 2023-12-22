@@ -33,23 +33,6 @@ Scenamatica の全ての出力の言語を設定します。 対応している�
 + デフォルト値： `ja_JP`
 + 型： `Enum{ja_JP, en_US, ja_KS}`
 
-### \[シナリオ] シナリオの設定 {#scenario}
-
-シナリオの実行に関する設定を行います。
-
-#### `scenario`.`enabled` {#scenario-enabled}
-
-シナリオの実行を行うかどうかを設定します。`true` に設定すると、シナリオの実行が可能になります。
-この設定が `false` の場合は、シナリオはスケジュールされず、また自動実行も行われず、手動実行はエラーを出力します。
-
-:::tip
-この設定は、ゲーム内コマンドの [<kbd>`/scenamatica enable`</kbd>](/docs/use/commands#enable) コマンドによってオーバーライドされる可能性があります。
-その場合はこの設定ファイルの内容は書き換えられず、再起動時に元に戻ります。
-:::
-
-+ デフォルト値： `true`
-+ 型： `Boolean`
-
 ### \[アクター] アクターの設定 {#actor}
 
 シナリオのアクター \(NPC) に関する設定を行います。
@@ -97,6 +80,15 @@ Scenamatica の全ての出力の言語を設定します。 対応している�
 ### \[実行] 実行の設定 {#execution}
 
 シナリオおよびテストの実行に関する設定を行います。
+
+#### `execution`.`enabled` {#execution-enabled}
+
+シナリオの実行を有効にするかどうかを設定します。
+
+#### `execution`.`scenario`.`ignoreTriggers` {#execution-scenario-ignoreTriggers}
+
+シナリオの実行を無視するトリガの種類を設定します。
+また, この設定はシステム・プロパティの `org.kunlab.scenamatica.trigger.ignores` に "," 区切りで設定してオーバライドできます。
 
 #### `execution`.`retry` {#execution-retry}
 
