@@ -6,7 +6,7 @@ prefix: Scenamatica
 load: STARTUP
 authors: [Peyang]
 description: A plugin that provides advanced assistance by automating scenario testing for the PaperMC plugin
-website: https://kunmc.net/
+website: https://scenamatica.kunlab.org/
 
 commands:
   scenamatica:
