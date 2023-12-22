@@ -54,7 +54,7 @@ public final class Scenamatica extends JavaPlugin
             return;
 
         this.registry.getScenarioManager().setEnabled(
-                this.getConfig().getBoolean("scenario.enabled", true)
+                this.getConfig().getBoolean("execution.enabled", true)
         );
         this.registry.init();
 
@@ -81,7 +81,7 @@ public final class Scenamatica extends JavaPlugin
 
     private List<TriggerType> getIgnoreTriggerTypes()
     {
-        String[] byConfig = this.getConfig().getStringList("ignoreTriggerTypes").toArray(new String[0]);
+        String[] byConfig = this.getConfig().getStringList("execution.scenario.ignoreTriggerTypes").toArray(new String[0]);
         String[] byJVMArg = JVMArguments.getIgnoreTriggerTypes();
 
         String[] merged = Arrays.stream(new String[][]{byConfig, byJVMArg})
