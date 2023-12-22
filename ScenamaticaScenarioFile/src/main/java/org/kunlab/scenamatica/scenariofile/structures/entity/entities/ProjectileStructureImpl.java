@@ -9,7 +9,6 @@ import org.bukkit.projectiles.BlockProjectileSource;
 import org.bukkit.projectiles.ProjectileSource;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.kunlab.scenamatica.commons.utils.EntityUtils;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.interfaces.scenariofile.Mapped;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
@@ -20,6 +19,7 @@ import org.kunlab.scenamatica.interfaces.scenariofile.misc.ProjectileSourceStruc
 import org.kunlab.scenamatica.interfaces.scenariofile.misc.SelectorProjectileSourceStructure;
 import org.kunlab.scenamatica.scenariofile.structures.entity.EntityStructureImpl;
 import org.kunlab.scenamatica.scenariofile.structures.misc.SelectorProjectileSourceStructureImpl;
+import org.kunlab.scenamatica.selector.Selector;
 
 import java.util.Map;
 
@@ -137,8 +137,10 @@ public class ProjectileStructureImpl extends EntityStructureImpl implements Proj
             String selector = ((SelectorProjectileSourceStructure) this.shooter).getSelectorString();
             if (selector == null)
                 return true;
+            else if (!(projectileSource instanceof Entity))
+                return false;
 
-            return !EntityUtils.selectEntities(selector).isEmpty();
+            return Selector.compile(selector).test(null, (Entity) projectileSource);
         }
 
         return false;

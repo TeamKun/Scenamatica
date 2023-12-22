@@ -3,6 +3,7 @@ package org.kunlab.scenamatica.action.actions.player;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import net.kyori.adventure.text.Component;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.jetbrains.annotations.NotNull;
@@ -43,12 +44,11 @@ public class PlayerJoinAction extends AbstractPlayerAction<PlayerJoinAction.Argu
     {
         argument = this.requireArgsNonNull(argument);
 
-        String targetSpecifier = argument.getTargetSpecifier().getSelectorString();  // argument.getTarget(engine) は必ず null になる
+        Player player = argument.getTarget(engine);
+        if (player.isOnline())
+            throw new IllegalStateException("Player is already online.");
 
-        if (PlayerUtils.getPlayerOrNull(targetSpecifier) != null)
-            throw new IllegalArgumentException("Cannot execute player join action because player is already online.");
-
-        Actor actor = PlayerUtils.getActorByStringOrThrow(engine, targetSpecifier);
+        Actor actor = PlayerUtils.getActorOrThrow(engine, player);
 
         actor.joinServer();
     }

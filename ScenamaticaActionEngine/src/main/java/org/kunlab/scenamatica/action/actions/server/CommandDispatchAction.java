@@ -11,7 +11,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.actions.AbstractActionArgument;
 import org.kunlab.scenamatica.action.utils.PlayerLikeCommandSenders;
-import org.kunlab.scenamatica.commons.specifiers.PlayerSpecifierImpl;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
@@ -44,7 +43,7 @@ public class CommandDispatchAction extends AbstractServerAction<CommandDispatchA
     {
         argument = this.requireArgsNonNull(argument);
 
-        CommandSender sender = PlayerLikeCommandSenders.resolveSenderOrConsoleOrThrow(argument.getSender(), engine.getContext());
+        CommandSender sender = PlayerLikeCommandSenders.getCommandSenderOrThrow(argument.getSender(), engine.getContext());
 
         String command = argument.getCommand();
         if (command.startsWith("/")) // シンタックスシュガーのために, / から始まるやつにも対応
@@ -96,7 +95,7 @@ public class CommandDispatchAction extends AbstractServerAction<CommandDispatchA
         MapUtils.checkTypeIfContains(map, Argument.KEY_SENDER, String.class);
 
         String command = (String) map.get(Argument.KEY_COMMAND);
-        PlayerSpecifier sender = PlayerSpecifierImpl.tryDeserializePlayer(map.get(Argument.KEY_SENDER), serializer);
+        PlayerSpecifier sender = serializer.tryDeserializePlayerSpecifier(map.get(Argument.KEY_SENDER));
 
         return new Argument(command, sender);
     }

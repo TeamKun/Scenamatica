@@ -9,8 +9,6 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.kunlab.scenamatica.commons.utils.EntityUtils;
-import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
@@ -44,7 +42,10 @@ public class EntityDamageByEntityAction extends EntityDamageAction<EntityDamageB
         if (!(target instanceof Damageable))
             throw new IllegalArgumentException("Target is not damageable");
 
-        ((Damageable) target).damage(argument.getAmount(), argument.getDamager());
+        Entity damager = argument.getDamager().selectTarget(engine.getContext())
+                .orElseThrow(() -> new IllegalStateException("Cannot select damager for this action, please specify damager with valid specifier."));
+
+        ((Damageable) target).damage(argument.getAmount(), damager);
     }
 
     @Override
@@ -57,7 +58,7 @@ public class EntityDamageByEntityAction extends EntityDamageAction<EntityDamageB
         assert event instanceof EntityDamageByEntityEvent;
         EntityDamageByEntityEvent e = (EntityDamageByEntityEvent) event;
 
-        return super.checkMatchedEntity(argument.getDamagerString(), e.getDamager());
+        return argument.getDamager().checkMatchedEntity(e.getDamager());
     }
 
     @Override
@@ -72,14 +73,13 @@ public class EntityDamageByEntityAction extends EntityDamageAction<EntityDamageB
     public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
     {
         EntityDamageAction.Argument base = super.deserializeArgument(map, serializer);
-        String damager = MapUtils.getOrNull(map, Argument.KEY_DAMAGER);
 
         return new Argument(
                 base.getTargetHolder(),
                 base.getCause(),
                 base.getAmount(),
                 base.getModifiers(),
-                damager
+                serializer.tryDeserializeEntitySpecifier(map.get(Argument.KEY_DAMAGER))
         );
     }
 
@@ -89,23 +89,14 @@ public class EntityDamageByEntityAction extends EntityDamageAction<EntityDamageB
     {
         public static final String KEY_DAMAGER = "damager";  // 殴った人
 
-        String damager;
+        EntitySpecifier<Entity> damager;
 
         @SuppressWarnings("deprecation")  // DamageModifier は消えるとか言ってるけど多分きえない。たぶん。というかまだある。
-        public Argument(EntitySpecifier<Entity> target, EntityDamageEvent.DamageCause cause, Double amount, Map<EntityDamageEvent.DamageModifier, @NotNull Double> modifiers, String damager)
+        public Argument(EntitySpecifier<Entity> target, EntityDamageEvent.DamageCause cause, Double amount,
+                        Map<EntityDamageEvent.DamageModifier, @NotNull Double> modifiers, EntitySpecifier<Entity> damager)
         {
             super(target, cause, amount, modifiers);
             this.damager = damager;
-        }
-
-        public Entity getDamager()
-        {
-            return EntityUtils.getPlayerOrEntityOrThrow(this.damager);
-        }
-
-        public String getDamagerString()
-        {
-            return this.damager;
         }
 
         @Override
@@ -129,7 +120,8 @@ public class EntityDamageByEntityAction extends EntityDamageAction<EntityDamageB
             if (type == ScenarioType.ACTION_EXECUTE)
             {
                 this.ensureCanProvideTarget();
-                ensurePresent(KEY_DAMAGER, this.damager);
+                if (!this.getDamager().canProvideTarget())
+                    throw new IllegalArgumentException("Cannot select damager for this action, please specify damager with valid specifier.");
             }
         }
 

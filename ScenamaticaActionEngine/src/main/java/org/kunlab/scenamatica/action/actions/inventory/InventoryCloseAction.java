@@ -8,7 +8,6 @@ import org.bukkit.event.Event;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.kunlab.scenamatica.commons.specifiers.PlayerSpecifierImpl;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
@@ -40,9 +39,8 @@ public class InventoryCloseAction extends AbstractInventoryAction<InventoryClose
     {
         argument = this.requireArgsNonNull(argument);
 
-        Player player = argument.getTargetSpecifier().selectTarget(engine.getContext());
-        if (player == null)
-            throw new IllegalStateException("Cannot select target for this action, please specify target with valid specifier.");
+        Player player = argument.getTargetSpecifier().selectTarget(engine.getContext())
+                .orElseThrow(() -> new IllegalStateException("Cannot select target for this action, please specify target with valid specifier."));
 
         InventoryCloseEvent.Reason reason = argument.getReason();
 
@@ -80,7 +78,7 @@ public class InventoryCloseAction extends AbstractInventoryAction<InventoryClose
     {
         return new Argument(
                 super.deserializeInventoryIfContains(map, serializer),
-                PlayerSpecifierImpl.tryDeserializePlayer(map.get(Argument.KEY_TARGET_PLAYER), serializer),
+                serializer.tryDeserializePlayerSpecifier(map.get(Argument.KEY_TARGET_PLAYER)),
                 MapUtils.getAsEnumOrNull(map, Argument.KEY_REASON, InventoryCloseEvent.Reason.class)
         );
     }

@@ -8,6 +8,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -430,5 +431,20 @@ public class MapUtils
         if (!map.containsKey(key))
             return defaultValue;
         return ((Number) map.get(key)).intValue();
+    }
+
+    public static Map<String, Object> createOrRetriveMap(String parentKey, Map<? super String, Object> properties)
+    {
+        Object parentRaw = properties.get(parentKey);
+        Map<String, Object> parent;
+        if (parentRaw == null)
+        {
+            parent = new HashMap<>();
+            properties.put(parentKey, parent);
+        }
+        else
+            parent = checkAndCastMap(parentRaw);
+
+        return parent;
     }
 }

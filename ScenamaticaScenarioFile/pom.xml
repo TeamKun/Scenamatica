@@ -32,6 +32,12 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>org.kunlab.scenamatica</groupId>
+            <artifactId>ScenamaticaSelectorEngine</artifactId>
+            <version>0.9.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>com.github.TeamKun.TeamKUNPluginManager</groupId>
             <artifactId>KPMCommon</artifactId>
             <version>v3.0.3</version>

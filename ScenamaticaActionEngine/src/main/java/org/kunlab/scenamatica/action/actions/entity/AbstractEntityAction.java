@@ -5,8 +5,6 @@ import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityEvent;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.action.actions.AbstractAction;
-import org.kunlab.scenamatica.commons.specifiers.EntitySpecifierImpl;
-import org.kunlab.scenamatica.commons.utils.EntityUtils;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.entity.EntityStructure;
@@ -15,7 +13,6 @@ import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.EntitySpecifier
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 public abstract class AbstractEntityAction<A extends AbstractEntityActionArgument> extends AbstractAction<A>
 {
@@ -44,23 +41,12 @@ public abstract class AbstractEntityAction<A extends AbstractEntityActionArgumen
             return false;
 
         EntityEvent e = (EntityEvent) event;
-        return argument.checkMatchedEntity(e.getEntity());
-    }
-
-    protected boolean checkMatchedEntity(String specifier, @NotNull Entity actualEntity)
-    {
-        return EntityUtils.selectEntities(specifier)
-                .stream()
-                .anyMatch(entity -> Objects.equals(entity.getUniqueId(), actualEntity.getUniqueId()));
+        return !argument.getTargetHolder().canProvideTarget() || argument.checkMatchedEntity(e.getEntity());
     }
 
     protected EntitySpecifier<Entity> deserializeTarget(Map<String, Object> map, StructureSerializer serializer)
     {
-        return EntitySpecifierImpl.tryDeserialize(
-                map.get(AbstractEntityActionArgument.KEY_TARGET_ENTITY),
-                serializer,
-                EntityStructure.class
-        );
+        return serializer.tryDeserializeEntitySpecifier(map.get(AbstractEntityActionArgument.KEY_TARGET_ENTITY));
     }
 
     protected <E extends Entity> EntitySpecifier<E> deserializeTarget(
@@ -68,9 +54,8 @@ public abstract class AbstractEntityAction<A extends AbstractEntityActionArgumen
             StructureSerializer serializer,
             Class<? extends EntityStructure> structureClass)
     {
-        return EntitySpecifierImpl.tryDeserialize(
+        return serializer.tryDeserializeEntitySpecifier(
                 map.get(AbstractEntityActionArgument.KEY_TARGET_ENTITY),
-                serializer,
                 structureClass
         );
     }

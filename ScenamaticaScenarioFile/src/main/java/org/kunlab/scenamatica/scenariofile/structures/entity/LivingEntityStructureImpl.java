@@ -9,8 +9,6 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
-import org.kunlab.scenamatica.commons.specifiers.EntitySpecifierImpl;
-import org.kunlab.scenamatica.commons.specifiers.PlayerSpecifierImpl;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.entity.EntityStructure;
@@ -18,6 +16,8 @@ import org.kunlab.scenamatica.interfaces.scenariofile.entity.LivingEntityStructu
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.ItemStackStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.EntitySpecifier;
 import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.PlayerSpecifier;
+import org.kunlab.scenamatica.scenariofile.specifiers.EntitySpecifierImpl;
+import org.kunlab.scenamatica.scenariofile.specifiers.PlayerSpecifierImpl;
 import org.kunlab.scenamatica.scenariofile.structures.inventory.ItemStackStructureImpl;
 
 import java.util.ArrayList;
@@ -335,7 +335,7 @@ public class LivingEntityStructureImpl extends EntityStructureImpl implements Li
         Integer maxNoDamageTicks = MapUtils.getOrNull(map, KEY_MAX_NO_DAMAGE_TICKS);
         Double lastDamage = MapUtils.getOrNull(map, KEY_LAST_DAMAGE);
         Integer noDamageTicks = MapUtils.getOrNull(map, KEY_NO_DAMAGE_TICKS);
-        PlayerSpecifier killer = PlayerSpecifierImpl.tryDeserializePlayer(map.get(KEY_KILLER), serializer);
+        PlayerSpecifier killer = serializer.tryDeserializePlayerSpecifier(map.get(KEY_KILLER));
 
         List<PotionEffect> potionEffects = new ArrayList<>();
         if (map.containsKey(KEY_POTION_EFFECTS))
@@ -344,7 +344,7 @@ public class LivingEntityStructureImpl extends EntityStructureImpl implements Li
         Boolean removeWhenFarAway = MapUtils.getOrNull(map, KEY_REMOVE_WHEN_FAR_AWAY);
         Boolean canPickupItems = MapUtils.getOrNull(map, KEY_CAN_PICKUP_ITEMS);
         Boolean leashed = MapUtils.getOrNull(map, KEY_LEASHED);
-        EntitySpecifier<Entity> leashHolder = EntitySpecifierImpl.tryDeserialize(map.get(KEY_LEASH_HOLDER), serializer);
+        EntitySpecifier<Entity> leashHolder = serializer.tryDeserializeEntitySpecifier(map.get(KEY_LEASH_HOLDER));
         Boolean gliding = MapUtils.getOrNull(map, KEY_GLIDING);
         Boolean swimming = MapUtils.getOrNull(map, KEY_SWIMMING);
         Boolean riptiding = MapUtils.getOrNull(map, KEY_RIPTIDING);
@@ -541,7 +541,7 @@ public class LivingEntityStructureImpl extends EntityStructureImpl implements Li
         if (this.noDamageTicks != null)
             entity.setNoDamageTicks(this.noDamageTicks);
         if (this.killer.canProvideTarget())
-            entity.setKiller(this.killer.selectTarget(null));
+            entity.setKiller(this.killer.selectTarget(null).orElse(null));
         if (!this.potionEffects.isEmpty())
         {
             new ArrayList<>(entity.getActivePotionEffects()).stream()
@@ -565,7 +565,7 @@ public class LivingEntityStructureImpl extends EntityStructureImpl implements Li
         if (this.canPickupItems != null)
             entity.setCanPickupItems(this.canPickupItems);
         if (this.leashHolder.canProvideTarget())
-            entity.setLeashHolder(this.leashHolder.selectTarget(null));
+            entity.setLeashHolder(this.leashHolder.selectTarget(null).orElse(null));
         if (this.gliding != null)
             entity.setGliding(this.gliding);
         if (this.swimming != null)
@@ -609,11 +609,11 @@ public class LivingEntityStructureImpl extends EntityStructureImpl implements Li
                 && (this.maxNoDamageTicks == null || Objects.equals(this.maxNoDamageTicks, entity.getMaximumNoDamageTicks()))
                 && (this.lastDamage == null || Objects.equals(this.lastDamage, entity.getLastDamage()))
                 && (this.noDamageTicks == null || Objects.equals(this.noDamageTicks, entity.getNoDamageTicks()))
-                && (!this.killer.canProvideTarget() || Objects.equals(this.killer.selectTarget(null), entity.getKiller()))
+                && (!this.killer.canProvideTarget() || this.killer.checkMatchedPlayer(entity.getKiller()))
                 && (this.removeWhenFarAway == null || Objects.equals(this.removeWhenFarAway, entity.getRemoveWhenFarAway()))
                 && (this.canPickupItems == null || Objects.equals(this.canPickupItems, entity.getCanPickupItems()))
                 && (this.leashed == null || Objects.equals(this.leashed, entity.isLeashed()))
-                && (!this.leashHolder.canProvideTarget() || Objects.equals(this.leashHolder.selectTarget(null), entity.getLeashHolder()))
+                && (!this.leashHolder.canProvideTarget() || this.leashHolder.checkMatchedEntity(entity.getLeashHolder()))
                 && (this.gliding == null || Objects.equals(this.gliding, entity.isGliding()))
                 && (this.swimming == null || Objects.equals(this.swimming, entity.isSwimming()))
                 && (this.ai == null || Objects.equals(this.ai, entity.hasAI()))

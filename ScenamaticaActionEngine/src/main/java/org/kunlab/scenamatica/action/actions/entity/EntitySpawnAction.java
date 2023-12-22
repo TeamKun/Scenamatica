@@ -12,7 +12,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.actions.AbstractAction;
 import org.kunlab.scenamatica.action.actions.AbstractActionArgument;
-import org.kunlab.scenamatica.commons.specifiers.EntitySpecifierImpl;
 import org.kunlab.scenamatica.commons.utils.EntityUtils;
 import org.kunlab.scenamatica.commons.utils.Utils;
 import org.kunlab.scenamatica.enums.ScenarioType;
@@ -98,7 +97,7 @@ public class EntitySpawnAction<T extends EntitySpawnAction.Argument> extends Abs
     public T deserializeArgument(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
     {
         return (T) new Argument(
-                EntitySpecifierImpl.tryDeserialize(map.get(Argument.KEY_ENTITY), serializer)
+                serializer.tryDeserializeEntitySpecifier(map.get(Argument.KEY_ENTITY))
         );
     }
 

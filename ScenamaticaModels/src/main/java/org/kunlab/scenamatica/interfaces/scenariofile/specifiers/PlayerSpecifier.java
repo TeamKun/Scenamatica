@@ -23,4 +23,18 @@ public interface PlayerSpecifier extends EntitySpecifier<Player>
      * @return マッチしたかどうか
      */
     boolean checkMatchedPlayer(Player player);
+
+    /**
+     * セレクタとして名前を持っているかどうか取得します。
+     *
+     * @return セレクタとして名前を持っているかどうか
+     */
+    boolean hasName();
+
+    /**
+     * 名前を取得します。
+     *
+     * @return 名前
+     */
+    String getName();
 }

@@ -44,6 +44,7 @@ public class InventoryCreativeAction extends InventoryClickAction<InventoryCreat
         Actor actor = PlayerUtils.getActorOrThrow(
                 engine,
                 argument.getTargetSpecifier().selectTarget(engine.getContext())
+                        .orElseThrow(() -> new IllegalStateException("Target is not found."))
         );
 
         actor.giveCreativeItem(slot, argument.getItem().create());

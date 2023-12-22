@@ -9,7 +9,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.actions.AbstractActionArgument;
 import org.kunlab.scenamatica.action.utils.PlayerLikeCommandSenders;
-import org.kunlab.scenamatica.commons.specifiers.PlayerSpecifierImpl;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
@@ -62,7 +61,7 @@ public class TabCompleteAction extends AbstractServerAction<TabCompleteAction.Ar
     {
         argument = this.requireArgsNonNull(argument);
 
-        CommandSender sender = PlayerLikeCommandSenders.resolveSenderOrConsoleOrThrow(argument.getSender(), engine.getContext());
+        CommandSender sender = PlayerLikeCommandSenders.getCommandSenderOrThrow(argument.getSender(), engine.getContext());
         String buffer = argument.getBuffer();
         List<String> completions = argument.getCompletions();
         if (completions == null)
@@ -107,7 +106,7 @@ public class TabCompleteAction extends AbstractServerAction<TabCompleteAction.Ar
     public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
     {
         return new Argument(
-                PlayerSpecifierImpl.tryDeserializePlayer(map.get(Argument.KEY_SENDER), serializer),
+                serializer.tryDeserializePlayerSpecifier(map.get(Argument.KEY_SENDER)),
                 (String) map.get(Argument.KEY_BUFFER),
                 MapUtils.getAsListOrNull(map, Argument.KEY_COMPLETIONS),
                 MapUtils.getOrDefault(map, Argument.KEY_STRICT, true)

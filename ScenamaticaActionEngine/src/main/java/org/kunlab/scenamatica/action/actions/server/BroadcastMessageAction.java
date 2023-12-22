@@ -12,7 +12,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.actions.AbstractActionArgument;
 import org.kunlab.scenamatica.action.utils.PlayerLikeCommandSenders;
-import org.kunlab.scenamatica.commons.specifiers.PlayerSpecifierImpl;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
@@ -107,8 +106,8 @@ public class BroadcastMessageAction extends AbstractServerAction<BroadcastMessag
 
             for (PlayerSpecifier expectedRecipient : expectedRecipients)
             {
-                CommandSender actualRecipient = PlayerLikeCommandSenders.getCommandSenderOrNull(expectedRecipient, engine.getContext());
-                if (actualRecipient == null || !actualRecipients.contains(actualRecipient))
+                CommandSender csExceptedRecipient = PlayerLikeCommandSenders.getCommandSenderOrNull(expectedRecipient, engine.getContext());
+                if (csExceptedRecipient == null || !actualRecipients.contains(csExceptedRecipient))
                     return false;
             }
 
@@ -135,7 +134,7 @@ public class BroadcastMessageAction extends AbstractServerAction<BroadcastMessag
         {
             List<?> rawRecipients = (List<?>) map.get(Argument.KEY_RECIPIENTS);
             for (Object rawRecipient : rawRecipients)
-                recipients.add(PlayerSpecifierImpl.tryDeserializePlayer(rawRecipient, serializer));
+                recipients.add(serializer.tryDeserializePlayerSpecifier(rawRecipient));
         }
 
 

@@ -9,7 +9,6 @@ import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.kunlab.scenamatica.commons.specifiers.PlayerSpecifierImpl;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
@@ -40,9 +39,8 @@ public class InventoryOpenAction extends AbstractInventoryAction<InventoryOpenAc
     {
         argument = this.requireArgsNonNull(argument);
 
-        Player player = argument.getTargetSpecifier().selectTarget(engine.getContext());
-        if (player == null)
-            throw new IllegalStateException("Cannot select target for this action, please specify target with valid specifier.");
+        Player player = argument.getTargetSpecifier().selectTarget(engine.getContext())
+                .orElseThrow(() -> new IllegalStateException("Cannot select target for this action, please specify target with valid specifier."));
 
         InventoryStructure inventoryStructure = argument.getInventory();
         assert inventoryStructure != null;
@@ -80,9 +78,7 @@ public class InventoryOpenAction extends AbstractInventoryAction<InventoryOpenAc
     {
         return new Argument(
                 super.deserializeInventoryIfContains(map, serializer),
-                PlayerSpecifierImpl.tryDeserializePlayer(
-                        map.get(InventoryOpenAction.Argument.KEY_TARGET_PLAYER), serializer
-                )
+                serializer.tryDeserializePlayerSpecifier(map.get(InventoryOpenAction.Argument.KEY_TARGET_PLAYER))
         );
     }
 

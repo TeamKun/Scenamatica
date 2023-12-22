@@ -2,8 +2,6 @@ package org.kunlab.scenamatica.scenariofile.structures.entity;
 
 import org.bukkit.inventory.EquipmentSlot;
 import org.junit.jupiter.api.Test;
-import org.kunlab.scenamatica.commons.specifiers.EntitySpecifierImpl;
-import org.kunlab.scenamatica.commons.specifiers.PlayerSpecifierImpl;
 import org.kunlab.scenamatica.interfaces.scenariofile.entity.EntityStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.entity.LivingEntityStructure;
 import org.kunlab.scenamatica.scenariofile.StructureSerializerImpl;
@@ -27,12 +25,12 @@ public class LivingEntitySerializeTest
             931,
             114.0,
             514,
-            PlayerSpecifierImpl.tryDeserializePlayer("Me", StructureSerializerImpl.getInstance()),
+            StructureSerializerImpl.getInstance().tryDeserializePlayerSpecifier("@a"),
             Collections.emptyList(),
             true,
             true,
             true,
-            EntitySpecifierImpl.tryDeserialize("@e", StructureSerializerImpl.getInstance()),
+            StructureSerializerImpl.getInstance().tryDeserializeEntitySpecifier("@e"),
             true,
             true,
             true,
@@ -96,7 +94,7 @@ public class LivingEntitySerializeTest
         this.put("maxNoDamageTicks", 931);
         this.put("lastDamage", 114.0);
         this.put("noDamageTicks", 514);
-        this.put("killer", "Me");
+        this.put("killer", "@a");
         /*
         this.put("potions", Collections.singletonList(new HashMap<String, Object>()
         {{

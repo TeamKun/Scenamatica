@@ -8,7 +8,6 @@ import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.actions.AbstractActionArgument;
-import org.kunlab.scenamatica.commons.specifiers.PlayerSpecifierImpl;
 import org.kunlab.scenamatica.commons.utils.TextUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.events.actor.ActorMessageReceiveEvent;
@@ -43,9 +42,8 @@ public class MessageAction extends AbstractScenamaticaAction<MessageAction.Argum
     {
         argument = this.requireArgsNonNull(argument);
 
-        Player recipient = argument.getRecipient().selectTarget(engine.getContext());
-        if (recipient == null)
-            throw new IllegalArgumentException("Cannot find player");
+        Player recipient = argument.getRecipient().selectTarget(engine.getContext())
+                .orElseThrow(() -> new IllegalStateException("Cannot select target for this action, please specify target with valid specifier."));
 
         String content = argument.getMessage();
 
@@ -78,7 +76,7 @@ public class MessageAction extends AbstractScenamaticaAction<MessageAction.Argum
     {
         return new Argument(
                 (String) map.get(Argument.KEY_MESSAGE),
-                PlayerSpecifierImpl.tryDeserializePlayer(map.get(Argument.KEY_RECIPIENT), serializer)
+                serializer.tryDeserializePlayerSpecifier(map.get(Argument.KEY_RECIPIENT))
         );
     }
 

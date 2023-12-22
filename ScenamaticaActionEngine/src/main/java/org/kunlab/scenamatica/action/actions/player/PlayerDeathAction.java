@@ -7,7 +7,6 @@ import org.bukkit.event.Event;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.kunlab.scenamatica.commons.specifiers.PlayerSpecifierImpl;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
@@ -42,7 +41,8 @@ public class PlayerDeathAction extends AbstractPlayerAction<PlayerDeathAction.Ar
         Player target = argument.getTarget(engine);
         if (argument.getKiller().canProvideTarget())
         {
-            Player killer = argument.getKiller().selectTarget(engine.getContext());
+            Player killer = argument.getKiller().selectTarget(engine.getContext())
+                    .orElseThrow(() -> new IllegalStateException("Cannot select target for this action, please specify target with valid specifier."));
             target.setKiller(killer);
         }
 
@@ -154,7 +154,7 @@ public class PlayerDeathAction extends AbstractPlayerAction<PlayerDeathAction.Ar
         MapUtils.checkTypeIfContains(map, Argument.KEY_KEEP_INVENTORY, Boolean.class);
         MapUtils.checkTypeIfContains(map, Argument.KEY_DO_EXP_DROP, Boolean.class);
 
-        PlayerSpecifier killer = PlayerSpecifierImpl.tryDeserializePlayer(map.get(Argument.KEY_KILLER), serializer);
+        PlayerSpecifier killer = serializer.tryDeserializePlayerSpecifier(map.get(Argument.KEY_KILLER));
 
         String deathMessage = MapUtils.getOrNull(map, "deathMessage");
 
@@ -187,7 +187,8 @@ public class PlayerDeathAction extends AbstractPlayerAction<PlayerDeathAction.Ar
         Player actualKiller = targetPlayer.getKiller();
         PlayerSpecifier expectedKiller = argument.getKiller();
 
-        return targetPlayer.isDead() && (expectedKiller == null || expectedKiller.checkMatchedPlayer(actualKiller));
+        return targetPlayer.isDead()
+                && (!expectedKiller.canProvideTarget() || expectedKiller.checkMatchedPlayer(actualKiller));
     }
 
     @Value

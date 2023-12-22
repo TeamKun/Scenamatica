@@ -34,7 +34,8 @@ public abstract class AbstractEntityActionArgument<E extends Entity> extends Abs
 
     public Entity selectTarget(Context context)
     {
-        return this.entity.selectTarget(context);
+        return this.entity.selectTarget(context)
+                .orElseThrow(() -> new IllegalStateException("Cannot select target for this action, please specify target with valid specifier."));
     }
 
     public String getTargetString()

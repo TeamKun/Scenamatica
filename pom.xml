@@ -21,6 +21,7 @@
         <module>ScenamaticaScenarioEngine</module>
         <module>ScenamaticaAPI</module>
         <module>NMSBridge</module>
+        <module>ScenamaticaSelectorEngine</module>
     </modules>
 
     <name>Scenamatica</name>

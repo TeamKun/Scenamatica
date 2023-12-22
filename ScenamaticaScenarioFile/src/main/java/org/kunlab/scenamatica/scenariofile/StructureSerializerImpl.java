@@ -1,7 +1,9 @@
 package org.kunlab.scenamatica.scenariofile;
 
 import lombok.Value;
+import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.Structure;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
@@ -20,7 +22,11 @@ import org.kunlab.scenamatica.interfaces.scenariofile.misc.BlockStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.misc.LocationStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.misc.ProjectileSourceStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.scenario.ScenarioStructure;
+import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.EntitySpecifier;
+import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.PlayerSpecifier;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerStructure;
+import org.kunlab.scenamatica.scenariofile.specifiers.EntitySpecifierImpl;
+import org.kunlab.scenamatica.scenariofile.specifiers.PlayerSpecifierImpl;
 import org.kunlab.scenamatica.scenariofile.structures.ScenarioFileStructureImpl;
 import org.kunlab.scenamatica.scenariofile.structures.context.ContextStructureImpl;
 import org.kunlab.scenamatica.scenariofile.structures.context.PlayerStructureImpl;
@@ -105,7 +111,19 @@ public class StructureSerializerImpl implements StructureSerializer
         this.selectEntry(clazz).getValidator().accept(map, this);
     }
 
-    // <editor-fold desc="Structure 登録用のメソッド">
+    @Override
+    public <E extends Entity> @NotNull EntitySpecifier<E> tryDeserializeEntitySpecifier(@Nullable Object obj, Class<? extends EntityStructure> structureClass)
+    {
+        return EntitySpecifierImpl.tryDeserialize(obj, this, structureClass);
+    }
+
+    @Override
+    public @NotNull PlayerSpecifier tryDeserializePlayerSpecifier(@Nullable Object obj)
+    {
+        return PlayerSpecifierImpl.tryDeserializePlayer(obj, this);
+    }
+
+    // <editor-fold desc="Structure 登録用のメソッド"
 
     private <T extends Structure> void registerStructure(@NotNull Class<T> clazz,
                                                          @NotNull BiFunction<T, StructureSerializer, Map<String, Object>> serializer,
