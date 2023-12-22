@@ -49,7 +49,7 @@ public class CommandSummonActor extends CommandBase
         }
         catch (ContextPreparationException e)
         {
-            throw new RuntimeException(e);
+            terminal.error("Unable to create actor: " + e.getMessage());
         }
     }
 
