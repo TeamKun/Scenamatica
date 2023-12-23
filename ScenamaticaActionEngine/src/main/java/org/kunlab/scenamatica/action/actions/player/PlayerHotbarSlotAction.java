@@ -38,8 +38,6 @@ public class PlayerHotbarSlotAction extends AbstractPlayerAction<PlayerHotbarSlo
     @Override
     public void execute(@NotNull ScenarioEngine engine, @NotNull PlayerHotbarSlotAction.Argument argument)
     {
-        argument = super.requireArgsNonNull(argument);
-
         Player p = argument.getTarget(engine);
         int slot = argument.getCurrentSlot();
         ItemStackStructure item = argument.getCurrentItem();
@@ -106,8 +104,6 @@ public class PlayerHotbarSlotAction extends AbstractPlayerAction<PlayerHotbarSlo
     @Override
     public boolean isConditionFulfilled(@NotNull PlayerHotbarSlotAction.Argument argument, @NotNull ScenarioEngine engine)
     {
-        argument = super.requireArgsNonNull(argument);
-
         Player p = argument.getTarget(engine);
         Integer currentSlot = argument.getCurrentSlot();
         ItemStackStructure currentItem = argument.getCurrentItem();

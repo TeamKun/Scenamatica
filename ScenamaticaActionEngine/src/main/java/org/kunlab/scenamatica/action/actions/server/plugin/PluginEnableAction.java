@@ -57,7 +57,6 @@ public class PluginEnableAction extends AbstractPluginAction<PluginEnableAction.
     @Override
     public boolean isConditionFulfilled(@NotNull PluginEnableAction.Argument argument, @NotNull ScenarioEngine engine)
     {
-        argument = super.requireArgsNonNull(argument);
         return argument.getPlugin().isEnabled();
     }
 

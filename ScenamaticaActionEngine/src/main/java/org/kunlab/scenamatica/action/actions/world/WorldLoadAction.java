@@ -36,8 +36,6 @@ public class WorldLoadAction extends AbstractWorldAction<WorldLoadAction.Argumen
     @Override
     public void execute(@NotNull ScenarioEngine engine, @NotNull WorldLoadAction.Argument argument)
     {
-        argument = super.requireArgsNonNull(argument);
-
         NamespacedKey key = argument.getWorldRef();
         assert key != null;
 
@@ -56,7 +54,6 @@ public class WorldLoadAction extends AbstractWorldAction<WorldLoadAction.Argumen
     @Override
     public boolean isConditionFulfilled(@NotNull WorldLoadAction.Argument argument, @NotNull ScenarioEngine engine)
     {
-        argument = super.requireArgsNonNull(argument);
         return argument.getWorld() != null;
     }
 

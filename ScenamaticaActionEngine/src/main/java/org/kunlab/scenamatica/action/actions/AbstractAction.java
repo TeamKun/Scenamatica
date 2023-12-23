@@ -1,7 +1,5 @@
 package org.kunlab.scenamatica.action.actions;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.actions.block.AbstractBlockAction;
 import org.kunlab.scenamatica.action.actions.entity.AbstractEntityAction;
 import org.kunlab.scenamatica.action.actions.inventory.AbstractInventoryAction;
@@ -30,14 +28,5 @@ public abstract class AbstractAction<A extends ActionArgument> implements Action
         actions.addAll(AbstractScenamaticaAction.getActions());
 
         return actions;
-    }
-
-    @NotNull
-    protected <T> T requireArgsNonNull(@Nullable T argument)
-    {
-        if (argument == null)
-            throw new IllegalArgumentException("Cannot execute action without argument.");
-
-        return argument;
     }
 }

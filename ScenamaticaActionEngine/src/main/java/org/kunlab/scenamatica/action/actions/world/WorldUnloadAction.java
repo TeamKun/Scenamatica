@@ -35,7 +35,6 @@ public class WorldUnloadAction extends AbstractWorldAction<WorldUnloadAction.Arg
     @Override
     public void execute(@NotNull ScenarioEngine engine, @NotNull WorldUnloadAction.Argument argument)
     {
-        argument = super.requireArgsNonNull(argument);
         World world = argument.getWorldNonNull(engine);
 
         Bukkit.getServer().unloadWorld(world, !Boolean.FALSE.equals(argument.getSave()));  // ぬるぽ回避 && デフォは true
@@ -52,8 +51,6 @@ public class WorldUnloadAction extends AbstractWorldAction<WorldUnloadAction.Arg
     @Override
     public boolean isConditionFulfilled(@NotNull WorldUnloadAction.Argument argument, @NotNull ScenarioEngine engine)
     {
-        argument = super.requireArgsNonNull(argument);
-
         NamespacedKey key = argument.getWorldRef();
         assert key != null;
 
