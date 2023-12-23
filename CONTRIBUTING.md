@@ -45,17 +45,17 @@
 
 ## プロジェクトにコードを貢献する
 
-コードでの貢献は常に歓迎されます。 以下の点に注意して、一般的に貢献する方法で貢献してください。
+コードでの貢献は常に歓迎されます。 ただし、以下の点に注意してください。
 
 + 上流ブランチは `main` です。  
   プルリクエストは、 `main` ブランチに対して作成してください。
-+ 既存のコードスタイルに従ってください。    
++ 既存のコードスタイルに従ってください。  
   Scenamatica では主なスタイルとして、 BSD(Allman) スタイルを採用しています。
   また、コードのインデントには４つのスペースを使用してください。  
-  丸かっこの中の始まりと終わりの前にはスペースを**入れないで**ください。  
+  丸かっこ内の始まりにはスペースを**入れないで**ください。  
   `if` や `while` などの制御構文の後には、スペースを**入れて**ください。
-+ **プルリクエストのタイトル**及び**コミットメッセージ**
-  は [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) に従ってください。  
++ **プルリクエストのタイトル**及び**コミットメッセージ**は
+  [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) に従ってください。  
   これにより、コミット/PR が行う変更が明確になり、スコープの調整が容易になります。
 
 ## プロジェクトの構成
@@ -63,15 +63,15 @@
 このプロジェクトは、以下の１０つのモジュールから構成されています。
 
 + [ActionEngine](ScenamaticaActionEngine)  
-  [アクション](https://scenamatica.kunlab.org/docs/use/scenario/actions/)を実行するためのエンジンです。
-+ [ScenamaticaAPI](ScenamaticaAPI)  
-  Scenamatica の API です。
+  [アクション](https://scenamatica.kunlab.org/docs/use/scenario/actio
+  Scenamatica の API です。ns/)を実行するためのエンジンです。
++ [ScenamaticaAPI](ScenamaticaAPI)
 + [ScenamaticaCommons](ScenamaticaCommons)  
   Scenamatica 内部で使用される共通のユーティリティなどです。
 + [ScenamaticaContextEngine](ScenamaticaContextEngine)  
-  [コンテキスト](https://scenamatica.kunlab.org/docs/use/scenario/elements#context)を生成管理するためのエンジンです。
+  [コンテキスト](https://scenamatica.kunlab.org/docs/use/scenario/elements/#context)を生成管理するためのエンジンです。
 + [ScenamaticaDaemon](ScenamaticaDaemon)  
-  Scenamatica のバックエンドのメインです。https://scenamatica.kunlab.org/docs/use/scenario/file-syntax
+  Scenamatica のバックエンドのメインです。
 + [ScenamaticaModels](ScenamaticaModels)  
   Scenamatica の各サービスのインタフェースや列挙型、例外などのモデルです。
 + [ScenamaticaPlugin](ScenamaticaPlugin)  
@@ -79,6 +79,6 @@
 + [ScenamaticaScenarioEngine](ScenamaticaScenarioEngine)  
   [シナリオ](https://scenamatica.kunlab.org/docs/use/scenario/)を実行するためのエンジンです。
 + [ScenamaticaScenarioFile](ScenamaticaScenarioFile)  
-  [シナリオファイル](https://scenamatica.kunlab.org/docs/use/scenario/file-syntax)を読み込むためのエンジンです。
+  [シナリオファイル](https://scenamatica.kunlab.org/docs/use/scenario/scenario-file)を読み込むためのエンジンです。
 + [ScenamaticaTriggerEngine](ScenamaticaTriggerEngine)  
-  [トリガ](https://scenamatica.kunlab.org/docs/use/scenario/elements#trigger)を実行するためのエンジンです。
+  [トリガ](https://scenamatica.kunlab.org/docs/use/scenario/trigger)を実行するためのエンジンです。
