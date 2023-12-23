@@ -7,7 +7,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.commons.utils.TextUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
@@ -36,10 +35,8 @@ public class PlayerGameModeAction extends AbstractPlayerAction<PlayerGameModeAct
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @Nullable PlayerGameModeAction.Argument argument)
+    public void execute(@NotNull ScenarioEngine engine, @NotNull PlayerGameModeAction.Argument argument)
     {
-        argument = this.requireArgsNonNull(argument);
-
         Player targetPlayer = argument.getTarget(engine);
         GameMode gameMode = argument.getGameMode();
 
@@ -85,10 +82,8 @@ public class PlayerGameModeAction extends AbstractPlayerAction<PlayerGameModeAct
     }
 
     @Override
-    public boolean isConditionFulfilled(@Nullable PlayerGameModeAction.Argument argument, @NotNull ScenarioEngine engine)
+    public boolean isConditionFulfilled(@NotNull PlayerGameModeAction.Argument argument, @NotNull ScenarioEngine engine)
     {
-        argument = this.requireArgsNonNull(argument);
-
         GameMode gameMode = argument.getGameMode();
 
         return argument.getTarget(engine).getGameMode() == gameMode;

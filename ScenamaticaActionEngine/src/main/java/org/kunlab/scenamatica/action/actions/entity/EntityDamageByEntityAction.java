@@ -8,7 +8,6 @@ import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
@@ -33,10 +32,8 @@ public class EntityDamageByEntityAction extends EntityDamageAction<EntityDamageB
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @Nullable Argument argument)
+    public void execute(@NotNull ScenarioEngine engine, @NotNull EntityDamageByEntityAction.Argument argument)
     {
-        argument = this.requireArgsNonNull(argument);
-
         Entity target = argument.selectTarget(engine.getContext());
 
         if (!(target instanceof Damageable))
@@ -51,7 +48,6 @@ public class EntityDamageByEntityAction extends EntityDamageAction<EntityDamageB
     @Override
     public boolean isFired(@NotNull Argument argument, @NotNull ScenarioEngine engine, @NotNull Event event)
     {
-        argument = this.requireArgsNonNull(argument);
         if (!(event instanceof EntityDamageByEntityEvent || super.isFired(argument, engine, event)))
             return false;
 

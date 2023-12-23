@@ -35,10 +35,8 @@ public class InventoryOpenAction extends AbstractInventoryAction<InventoryOpenAc
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @Nullable Argument argument)
+    public void execute(@NotNull ScenarioEngine engine, @NotNull InventoryOpenAction.Argument argument)
     {
-        argument = this.requireArgsNonNull(argument);
-
         Player player = argument.getTargetSpecifier().selectTarget(engine.getContext())
                 .orElseThrow(() -> new IllegalStateException("Cannot select target for this action, please specify target with valid specifier."));
 
@@ -52,7 +50,6 @@ public class InventoryOpenAction extends AbstractInventoryAction<InventoryOpenAc
     @Override
     public boolean isFired(@NotNull Argument argument, @NotNull ScenarioEngine engine, @NotNull Event event)
     {
-        argument = this.requireArgsNonNull(argument);
         if (!super.checkMatchedInventoryEvent(argument, engine, event))
             return false;
 

@@ -8,7 +8,6 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Mob;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.commons.utils.Utils;
 import org.kunlab.scenamatica.enums.ScenarioType;
@@ -37,10 +36,8 @@ public class EntityMoveAction extends AbstractEntityAction<EntityMoveAction.Argu
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @Nullable Argument argument)
+    public void execute(@NotNull ScenarioEngine engine, @NotNull EntityMoveAction.Argument argument)
     {
-        argument = this.requireArgsNonNull(argument);
-
         Location toLoc = Utils.assignWorldToLocation(argument.getTo(), engine);
         Entity entity = argument.selectTarget(engine.getContext());
 

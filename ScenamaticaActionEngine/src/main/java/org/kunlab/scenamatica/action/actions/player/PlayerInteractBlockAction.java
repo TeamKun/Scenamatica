@@ -11,7 +11,6 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.commons.utils.PlayerUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
@@ -55,10 +54,8 @@ public class PlayerInteractBlockAction extends AbstractPlayerAction<PlayerIntera
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @Nullable Argument argument)
+    public void execute(@NotNull ScenarioEngine engine, @NotNull PlayerInteractBlockAction.Argument argument)
     {
-        argument = this.requireArgsNonNull(argument);
-
         Action action = argument.getAction();
         assert action != null;  // validateArgument()でチェック済み
 

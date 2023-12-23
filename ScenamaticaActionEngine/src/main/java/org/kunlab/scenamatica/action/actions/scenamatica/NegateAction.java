@@ -34,7 +34,7 @@ public class NegateAction<T extends ActionArgument> extends AbstractScenamaticaA
     }
 
     @Override
-    public boolean isConditionFulfilled(@Nullable Argument<T> argument, @NotNull ScenarioEngine engine)
+    public boolean isConditionFulfilled(@NotNull NegateAction.Argument<T> argument, @NotNull ScenarioEngine engine)
     {
         assert argument != null;
         // noinspection rawtypes  呼び出しの型に齟齬が起きる。

@@ -37,10 +37,8 @@ public class PlayerItemBreakAction extends AbstractPlayerAction<PlayerItemBreakA
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @Nullable Argument argument)
+    public void execute(@NotNull ScenarioEngine engine, @NotNull PlayerItemBreakAction.Argument argument)
     {
-        argument = this.requireArgsNonNull(argument);
-
         Actor actor = PlayerUtils.getActorOrThrow(engine, argument.getTarget(engine));
         EquipmentSlot slot = argument.getSlot() == null ? EquipmentSlot.HAND: argument.getSlot();
         ItemStackStructure item = argument.getItem();

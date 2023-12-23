@@ -7,7 +7,6 @@ import org.bukkit.entity.Entity;
 import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
@@ -36,10 +35,8 @@ public class EntityDamageAction<A extends EntityDamageAction.Argument> extends A
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @Nullable A argument)
+    public void execute(@NotNull ScenarioEngine engine, @NotNull A argument)
     {
-        argument = this.requireArgsNonNull(argument);
-
         Entity target = argument.selectTarget(engine.getContext());
 
         if (!(target instanceof Damageable))

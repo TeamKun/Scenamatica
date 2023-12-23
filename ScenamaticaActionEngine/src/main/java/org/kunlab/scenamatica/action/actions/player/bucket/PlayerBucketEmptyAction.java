@@ -13,7 +13,6 @@ import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.commons.utils.PlayerUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
@@ -38,10 +37,8 @@ public class PlayerBucketEmptyAction extends AbstractPlayerBucketAction<PlayerBu
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @Nullable Argument argument)
+    public void execute(@NotNull ScenarioEngine engine, @NotNull PlayerBucketEmptyAction.Argument argument)
     {
-        argument = this.requireArgsNonNull(argument);
-
         Player player = argument.getTarget(engine);
         ItemStack stack = getBucket(player, argument);
         Block block = getPlaceAt(player, argument, engine);

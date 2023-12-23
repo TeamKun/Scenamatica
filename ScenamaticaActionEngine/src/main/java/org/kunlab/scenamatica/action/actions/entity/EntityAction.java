@@ -32,10 +32,8 @@ public class EntityAction extends AbstractEntityAction<EntityAction.Argument>
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @Nullable Argument argument)
+    public void execute(@NotNull ScenarioEngine engine, @NotNull EntityAction.Argument argument)
     {
-        argument = this.requireArgsNonNull(argument);
-
         Entity target = argument.selectTarget(engine.getContext());
         EntityStructure entityInfo = argument.getEntity();
 
@@ -54,10 +52,8 @@ public class EntityAction extends AbstractEntityAction<EntityAction.Argument>
     }
 
     @Override
-    public boolean isConditionFulfilled(@Nullable Argument argument, @NotNull ScenarioEngine engine)
+    public boolean isConditionFulfilled(@NotNull EntityAction.Argument argument, @NotNull ScenarioEngine engine)
     {
-        argument = this.requireArgsNonNull(argument);
-
         EntityStructure entityInfo = argument.getEntity();
         Entity target = argument.selectTarget(engine.getContext());
 

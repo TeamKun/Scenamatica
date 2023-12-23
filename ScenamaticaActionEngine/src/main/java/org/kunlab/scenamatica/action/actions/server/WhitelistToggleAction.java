@@ -6,7 +6,6 @@ import lombok.Value;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.actions.AbstractActionArgument;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
@@ -34,9 +33,8 @@ public class WhitelistToggleAction extends AbstractServerAction<WhitelistToggleA
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @Nullable Argument argument)
+    public void execute(@NotNull ScenarioEngine engine, @NotNull WhitelistToggleAction.Argument argument)
     {
-        argument = this.requireArgsNonNull(argument);
         boolean enabled = argument.enabled;
 
         Bukkit.getServer().setWhitelist(enabled);
@@ -72,7 +70,7 @@ public class WhitelistToggleAction extends AbstractServerAction<WhitelistToggleA
     }
 
     @Override
-    public boolean isConditionFulfilled(@Nullable Argument argument, @NotNull ScenarioEngine engine)
+    public boolean isConditionFulfilled(@NotNull WhitelistToggleAction.Argument argument, @NotNull ScenarioEngine engine)
     {
         return argument == null || argument.enabled == null
                 || Bukkit.getServer().hasWhitelist() == argument.enabled;

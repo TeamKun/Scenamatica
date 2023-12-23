@@ -7,7 +7,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.commons.utils.PlayerUtils;
 import org.kunlab.scenamatica.commons.utils.TextUtils;
@@ -40,10 +39,8 @@ public class PlayerJoinAction extends AbstractPlayerAction<PlayerJoinAction.Argu
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @Nullable Argument argument)
+    public void execute(@NotNull ScenarioEngine engine, @NotNull PlayerJoinAction.Argument argument)
     {
-        argument = this.requireArgsNonNull(argument);
-
         Player player = argument.getTarget(engine);
         if (player.isOnline())
             throw new IllegalStateException("Player is already online.");
@@ -85,9 +82,8 @@ public class PlayerJoinAction extends AbstractPlayerAction<PlayerJoinAction.Argu
     }
 
     @Override
-    public boolean isConditionFulfilled(@Nullable Argument argument, @NotNull ScenarioEngine engine)
+    public boolean isConditionFulfilled(@NotNull PlayerJoinAction.Argument argument, @NotNull ScenarioEngine engine)
     {
-        argument = this.requireArgsNonNull(argument);
         return argument.getTarget(engine).isOnline();
     }
 

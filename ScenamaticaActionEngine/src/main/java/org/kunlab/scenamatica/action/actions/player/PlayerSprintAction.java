@@ -34,9 +34,8 @@ public class PlayerSprintAction extends AbstractPlayerAction<PlayerSprintAction.
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @Nullable Argument argument)
+    public void execute(@NotNull ScenarioEngine engine, @NotNull PlayerSprintAction.Argument argument)
     {
-        argument = this.requireArgsNonNull(argument);
         assert argument.sprinting != null;
 
         boolean sprinting = argument.sprinting;
@@ -80,10 +79,8 @@ public class PlayerSprintAction extends AbstractPlayerAction<PlayerSprintAction.
     }
 
     @Override
-    public boolean isConditionFulfilled(@Nullable Argument argument, @NotNull ScenarioEngine engine)
+    public boolean isConditionFulfilled(@NotNull PlayerSprintAction.Argument argument, @NotNull ScenarioEngine engine)
     {
-        argument = this.requireArgsNonNull(argument);
-
         assert argument.sprinting != null;
         boolean expectState = argument.sprinting;
 

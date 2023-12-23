@@ -57,10 +57,8 @@ public class TabCompleteAction extends AbstractServerAction<TabCompleteAction.Ar
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @Nullable Argument argument)
+    public void execute(@NotNull ScenarioEngine engine, @NotNull TabCompleteAction.Argument argument)
     {
-        argument = this.requireArgsNonNull(argument);
-
         CommandSender sender = PlayerLikeCommandSenders.getCommandSenderOrThrow(argument.getSender(), engine.getContext());
         String buffer = argument.getBuffer();
         List<String> completions = argument.getCompletions();

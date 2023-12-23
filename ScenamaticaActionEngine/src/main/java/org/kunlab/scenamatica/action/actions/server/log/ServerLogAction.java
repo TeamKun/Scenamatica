@@ -7,7 +7,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.actions.AbstractActionArgument;
 import org.kunlab.scenamatica.action.actions.server.AbstractServerAction;
 import org.kunlab.scenamatica.enums.ScenarioType;
@@ -49,10 +48,8 @@ public class ServerLogAction extends AbstractServerAction<ServerLogAction.Argume
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @Nullable ServerLogAction.Argument argument)
+    public void execute(@NotNull ScenarioEngine engine, @NotNull ServerLogAction.Argument argument)
     {
-        argument = this.requireArgsNonNull(argument);
-
         Logger logger = argument.getSource() == null ? LogManager.getRootLogger(): LogManager.getLogger(argument.getSource());
         Level level = argument.getLevel() == null ? Level.INFO: argument.getLevel();
 

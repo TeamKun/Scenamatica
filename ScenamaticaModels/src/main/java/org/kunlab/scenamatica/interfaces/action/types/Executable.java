@@ -12,5 +12,5 @@ public interface Executable<A extends ActionArgument>
      * @param engine   シナリオエンジン
      * @param argument 動作の引数
      */
-    void execute(@NotNull ScenarioEngine engine, A argument);
+    void execute(@NotNull ScenarioEngine engine, @NotNull A argument);
 }

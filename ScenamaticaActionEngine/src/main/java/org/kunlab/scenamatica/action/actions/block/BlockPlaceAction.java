@@ -50,10 +50,8 @@ public class BlockPlaceAction extends AbstractBlockAction<BlockPlaceAction.Argum
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @Nullable Argument argument)
+    public void execute(@NotNull ScenarioEngine engine, @NotNull BlockPlaceAction.Argument argument)
     {
-        argument = this.requireArgsNonNull(argument);
-
         Player actor = argument.getActorSpecifier().selectTarget(engine.getContext())
                 .orElse(null);
 
@@ -123,10 +121,8 @@ public class BlockPlaceAction extends AbstractBlockAction<BlockPlaceAction.Argum
     }
 
     @Override
-    public boolean isConditionFulfilled(@Nullable Argument argument, @NotNull ScenarioEngine engine)
+    public boolean isConditionFulfilled(@NotNull BlockPlaceAction.Argument argument, @NotNull ScenarioEngine engine)
     {
-        argument = this.requireArgsNonNull(argument);
-
         BlockStructure blockDef = argument.getBlock();
         Block block = this.getBlockLocationWithWorld(blockDef, engine).getBlock();
 
@@ -187,7 +183,7 @@ public class BlockPlaceAction extends AbstractBlockAction<BlockPlaceAction.Argum
                     ensureNotPresent(KEY_DIRECTION, this.direction);
                     break;
                 case CONDITION_REQUIRE:
-                    if (this.actorSpecifier != null && this.actorSpecifier.canProvideTarget())
+                    if (this.actorSpecifier.canProvideTarget())
                         throw new IllegalArgumentException("Cannot specify the actor in the condition requiring mode.");
                     ensurePresent(KEY_BLOCK, this.block);
                     /* fall through */

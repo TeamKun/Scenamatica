@@ -34,10 +34,8 @@ public class WorldGameRuleAction extends AbstractWorldAction<WorldGameRuleAction
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @Nullable Argument argument)
+    public void execute(@NotNull ScenarioEngine engine, @NotNull WorldGameRuleAction.Argument argument)
     {
-        argument = this.requireArgsNonNull(argument);
-
         World world = argument.getWorldNonNull(engine);
         GameRule<?> rule = argument.getGameRule();
         String value = argument.getValue();
@@ -108,10 +106,8 @@ public class WorldGameRuleAction extends AbstractWorldAction<WorldGameRuleAction
     }
 
     @Override
-    public boolean isConditionFulfilled(@Nullable Argument argument, @NotNull ScenarioEngine engine)
+    public boolean isConditionFulfilled(@NotNull WorldGameRuleAction.Argument argument, @NotNull ScenarioEngine engine)
     {
-        argument = this.requireArgsNonNull(argument);
-
         World world = argument.getWorldNonNull(engine);
         GameRule<?> rule = argument.getGameRule();
         Class<?> type = rule.getType();

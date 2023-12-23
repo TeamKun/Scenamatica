@@ -5,7 +5,6 @@ import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.actions.AbstractActionArgument;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.events.MilestoneReachedEvent;
@@ -34,10 +33,8 @@ public class MilestoneAction extends AbstractScenamaticaAction<MilestoneAction.A
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @Nullable MilestoneAction.Argument argument)
+    public void execute(@NotNull ScenarioEngine engine, @NotNull MilestoneAction.Argument argument)
     {
-        argument = this.requireArgsNonNull(argument);
-
         if (argument.getReached() == null || argument.getReached())
             engine.getManager().getMilestoneManager().reachMilestone(engine, argument.getName());
         else
@@ -78,10 +75,8 @@ public class MilestoneAction extends AbstractScenamaticaAction<MilestoneAction.A
     }
 
     @Override
-    public boolean isConditionFulfilled(@Nullable MilestoneAction.Argument argument, @NotNull ScenarioEngine engine)
+    public boolean isConditionFulfilled(@NotNull MilestoneAction.Argument argument, @NotNull ScenarioEngine engine)
     {
-        argument = this.requireArgsNonNull(argument);
-
         boolean isMilestoneReached = engine.getManager().getMilestoneManager().isReached(engine, argument.getName());
         return isMilestoneReached == (argument.getReached() == null || argument.getReached());
     }

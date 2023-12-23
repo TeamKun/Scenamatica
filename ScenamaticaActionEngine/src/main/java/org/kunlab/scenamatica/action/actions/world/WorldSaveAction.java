@@ -29,7 +29,7 @@ public class WorldSaveAction extends AbstractWorldAction<WorldSaveAction.Argumen
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @Nullable Argument argument)
+    public void execute(@NotNull ScenarioEngine engine, @NotNull WorldSaveAction.Argument argument)
     {
         argument = super.requireArgsNonNull(argument);
         World world = argument.getWorldNonNull(engine);

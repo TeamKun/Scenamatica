@@ -6,7 +6,6 @@ import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerHarvestBlockEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.actions.block.BlockBreakAction;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
@@ -37,10 +36,8 @@ public class PlayerHarvestBlockAction extends AbstractPlayerAction<PlayerHarvest
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @Nullable Argument argument)
+    public void execute(@NotNull ScenarioEngine engine, @NotNull PlayerHarvestBlockAction.Argument argument)
     {
-        argument = this.requireArgsNonNull(argument);
-
         BlockBreakAction.Argument blockBreakArgument = new BlockBreakAction.Argument(
                 argument.getBlock(),
                 argument.getTargetSpecifier(),

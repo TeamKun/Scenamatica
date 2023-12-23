@@ -10,7 +10,6 @@ import org.bukkit.event.player.PlayerBucketEntityEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.commons.utils.PlayerUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
@@ -47,9 +46,8 @@ public class PlayerBucketEntityAction extends AbstractPlayerAction<PlayerBucketE
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @Nullable Argument argument)
+    public void execute(@NotNull ScenarioEngine engine, @NotNull PlayerBucketEntityAction.Argument argument)
     {
-        argument = this.requireArgsNonNull(argument);
         Player player = argument.getTarget(engine);
         Actor actor = PlayerUtils.getActorOrThrow(engine, player);
 

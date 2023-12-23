@@ -7,7 +7,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.commons.utils.Utils;
 import org.kunlab.scenamatica.enums.ScenarioType;
@@ -35,10 +34,8 @@ public class PlayerRespawnAction extends AbstractPlayerAction<PlayerRespawnActio
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @Nullable Argument argument)
+    public void execute(@NotNull ScenarioEngine engine, @NotNull PlayerRespawnAction.Argument argument)
     {
-        argument = this.requireArgsNonNull(argument);
-
         Player player = argument.getTarget(engine);
         if (!player.isDead())
             throw new IllegalStateException("Player is not dead");

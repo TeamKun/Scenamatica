@@ -10,7 +10,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.commons.utils.PlayerUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
@@ -43,10 +42,8 @@ public class PlayerItemDamageAction extends AbstractPlayerAction<PlayerItemDamag
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @Nullable Argument argument)
+    public void execute(@NotNull ScenarioEngine engine, @NotNull PlayerItemDamageAction.Argument argument)
     {
-        argument = this.requireArgsNonNull(argument);
-
         Actor actor = PlayerUtils.getActorOrThrow(engine, argument.getTarget(engine));
         EquipmentSlot slot = argument.getSlot() == null ? EquipmentSlot.HAND: argument.getSlot();
         ItemStackStructure item = argument.getItem();
@@ -102,10 +99,8 @@ public class PlayerItemDamageAction extends AbstractPlayerAction<PlayerItemDamag
     }
 
     @Override
-    public boolean isConditionFulfilled(@Nullable Argument argument, @NotNull ScenarioEngine engine)
+    public boolean isConditionFulfilled(@NotNull PlayerItemDamageAction.Argument argument, @NotNull ScenarioEngine engine)
     {
-        argument = this.requireArgsNonNull(argument);
-
         Player player = argument.getTarget(engine);
 
         List<EquipmentSlot> slotToCheck;

@@ -8,7 +8,6 @@ import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.commons.utils.PlayerUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
@@ -39,10 +38,8 @@ public class PlayerInteractEntityAction<A extends PlayerInteractEntityAction.Arg
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @Nullable A argument)
+    public void execute(@NotNull ScenarioEngine engine, @NotNull A argument)
     {
-        argument = this.requireArgsNonNull(argument);
-
         Player player = argument.getTarget(engine);
         Entity targetEntity = argument.getEntity().selectTarget(engine.getContext())
                 .orElseThrow(() -> new IllegalStateException("Target entity is not found."));

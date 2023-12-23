@@ -7,7 +7,6 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryCreativeEvent;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.commons.utils.PlayerUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
@@ -36,10 +35,8 @@ public class InventoryCreativeAction extends InventoryClickAction<InventoryCreat
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @Nullable Argument argument)
+    public void execute(@NotNull ScenarioEngine engine, @NotNull InventoryCreativeAction.Argument argument)
     {
-        argument = this.requireArgsNonNull(argument);
-
         int slot = argument.getSlot();
         Actor actor = PlayerUtils.getActorOrThrow(
                 engine,

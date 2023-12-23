@@ -8,7 +8,6 @@ import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.server.ServerCommandEvent;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.actions.AbstractActionArgument;
 import org.kunlab.scenamatica.action.utils.PlayerLikeCommandSenders;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
@@ -39,10 +38,8 @@ public class CommandDispatchAction extends AbstractServerAction<CommandDispatchA
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @Nullable CommandDispatchAction.Argument argument)
+    public void execute(@NotNull ScenarioEngine engine, @NotNull CommandDispatchAction.Argument argument)
     {
-        argument = this.requireArgsNonNull(argument);
-
         CommandSender sender = PlayerLikeCommandSenders.getCommandSenderOrThrow(argument.getSender(), engine.getContext());
 
         String command = argument.getCommand();

@@ -43,10 +43,8 @@ public class ProjectileHitAction extends AbstractEntityAction<ProjectileHitActio
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @Nullable Argument argument)
+    public void execute(@NotNull ScenarioEngine engine, @NotNull ProjectileHitAction.Argument argument)
     {
-        argument = this.requireArgsNonNull(argument);
-
         assert argument.getTargetHolder() != null;
         Projectile target = argument.getTargetHolder().selectTarget(engine.getContext())
                 .orElseThrow(() -> new IllegalStateException("Cannot select target for this action, please specify target with valid specifier."));

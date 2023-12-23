@@ -9,7 +9,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.commons.utils.PlayerUtils;
 import org.kunlab.scenamatica.commons.utils.TextUtils;
@@ -40,10 +39,8 @@ public class PlayerQuitAction extends AbstractPlayerAction<PlayerQuitAction.Argu
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @Nullable Argument argument)
+    public void execute(@NotNull ScenarioEngine engine, @NotNull PlayerQuitAction.Argument argument)
     {
-        argument = this.requireArgsNonNull(argument);
-
         PlayerQuitEvent.QuitReason reason = argument.getReason(ScenarioType.ACTION_EXECUTE);
         Component quitMessage = argument.getQuitMessage() == null ? null: Component.text(argument.getQuitMessage());
 
@@ -70,9 +67,8 @@ public class PlayerQuitAction extends AbstractPlayerAction<PlayerQuitAction.Argu
     }
 
     @Override
-    public boolean isConditionFulfilled(@Nullable PlayerQuitAction.Argument argument, @NotNull ScenarioEngine engine)
+    public boolean isConditionFulfilled(@NotNull PlayerQuitAction.Argument argument, @NotNull ScenarioEngine engine)
     {
-        argument = this.requireArgsNonNull(argument);
         Player target = argument.getTargetOrNull(engine);
         return target == null || !target.isOnline();
     }

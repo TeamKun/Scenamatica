@@ -6,7 +6,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerChatEvent;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
@@ -33,10 +32,8 @@ public class PlayerChatAction extends AbstractPlayerAction<PlayerChatAction.Argu
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @Nullable Argument argument)
+    public void execute(@NotNull ScenarioEngine engine, @NotNull PlayerChatAction.Argument argument)
     {
-        argument = this.requireArgsNonNull(argument);
-
         Player p = argument.getTarget(engine);
         p.chat(argument.message);
     }

@@ -36,7 +36,7 @@ public class PlayerHotbarSlotAction extends AbstractPlayerAction<PlayerHotbarSlo
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @Nullable PlayerHotbarSlotAction.Argument argument)
+    public void execute(@NotNull ScenarioEngine engine, @NotNull PlayerHotbarSlotAction.Argument argument)
     {
         argument = super.requireArgsNonNull(argument);
 
@@ -104,7 +104,7 @@ public class PlayerHotbarSlotAction extends AbstractPlayerAction<PlayerHotbarSlo
     }
 
     @Override
-    public boolean isConditionFulfilled(@Nullable PlayerHotbarSlotAction.Argument argument, @NotNull ScenarioEngine engine)
+    public boolean isConditionFulfilled(@NotNull PlayerHotbarSlotAction.Argument argument, @NotNull ScenarioEngine engine)
     {
         argument = super.requireArgsNonNull(argument);
 

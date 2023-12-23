@@ -11,7 +11,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerAdvancementDoneEvent;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.commons.utils.NamespaceUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
@@ -42,10 +41,8 @@ public class PlayerAdvancementAction
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @Nullable PlayerAdvancementAction.Argument argument)
+    public void execute(@NotNull ScenarioEngine engine, @NotNull PlayerAdvancementAction.Argument argument)
     {
-        argument = this.requireArgsNonNull(argument);
-
         Player target = argument.getTarget(engine);
         Advancement advancement = Bukkit.getAdvancement(argument.getAdvancement());
         if (advancement == null)
@@ -62,8 +59,6 @@ public class PlayerAdvancementAction
     @Override
     public boolean isFired(@NotNull PlayerAdvancementAction.Argument argument, @NotNull ScenarioEngine engine, @NotNull Event event)
     {
-        argument = this.requireArgsNonNull(argument);
-
         if (!super.checkMatchedPlayerEvent(argument, engine, event))
             return false;
 
@@ -115,10 +110,8 @@ public class PlayerAdvancementAction
     }
 
     @Override
-    public boolean isConditionFulfilled(@Nullable PlayerAdvancementAction.Argument argument, @NotNull ScenarioEngine engine)
+    public boolean isConditionFulfilled(@NotNull PlayerAdvancementAction.Argument argument, @NotNull ScenarioEngine engine)
     {
-        argument = this.requireArgsNonNull(argument);
-
         Advancement advancement = Bukkit.getAdvancement(argument.getAdvancement());
         if (advancement == null)
             throw new IllegalArgumentException("Advancement not found: " + argument.getAdvancement());

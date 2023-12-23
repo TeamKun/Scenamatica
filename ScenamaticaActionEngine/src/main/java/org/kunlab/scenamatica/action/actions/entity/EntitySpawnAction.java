@@ -61,10 +61,8 @@ public class EntitySpawnAction<T extends EntitySpawnAction.Argument> extends Abs
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @Nullable Argument argument)
+    public void execute(@NotNull ScenarioEngine engine, @NotNull T argument)
     {
-        argument = this.requireArgsNonNull(argument);
-
         EntityStructure structure = argument.getEntity().getTargetStructure();
         assert structure != null;
         LocationStructure spawnLoc = structure.getLocation();

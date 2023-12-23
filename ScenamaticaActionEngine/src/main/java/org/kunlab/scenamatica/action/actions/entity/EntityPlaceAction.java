@@ -93,9 +93,8 @@ public class EntityPlaceAction extends AbstractEntityAction<EntityPlaceAction.Ar
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @Nullable Argument argument)
+    public void execute(@NotNull ScenarioEngine engine, @NotNull EntityPlaceAction.Argument argument)
     {
-        argument = this.requireArgsNonNull(argument);
         Location location = argument.getBlock().getLocation().create();
         Actor actor = PlayerUtils.getActorOrThrow(engine, argument.getPlayerSpecifier().selectTarget(engine.getContext())
                 .orElseThrow(() -> new IllegalArgumentException("Player is not specified.")));

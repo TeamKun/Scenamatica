@@ -34,9 +34,8 @@ public class PlayerFlightAction extends AbstractPlayerAction<PlayerFlightAction.
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @Nullable Argument argument)
+    public void execute(@NotNull ScenarioEngine engine, @NotNull PlayerFlightAction.Argument argument)
     {
-        argument = this.requireArgsNonNull(argument);
         assert argument.flying != null;
 
         boolean flying = argument.flying;
@@ -83,10 +82,8 @@ public class PlayerFlightAction extends AbstractPlayerAction<PlayerFlightAction.
     }
 
     @Override
-    public boolean isConditionFulfilled(@Nullable Argument argument, @NotNull ScenarioEngine engine)
+    public boolean isConditionFulfilled(@NotNull PlayerFlightAction.Argument argument, @NotNull ScenarioEngine engine)
     {
-        argument = this.requireArgsNonNull(argument);
-
         assert argument.flying != null;
         boolean expectState = argument.flying;
 

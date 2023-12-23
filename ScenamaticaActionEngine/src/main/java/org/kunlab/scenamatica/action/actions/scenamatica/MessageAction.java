@@ -6,7 +6,6 @@ import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.actions.AbstractActionArgument;
 import org.kunlab.scenamatica.commons.utils.TextUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
@@ -38,10 +37,8 @@ public class MessageAction extends AbstractScenamaticaAction<MessageAction.Argum
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @Nullable MessageAction.Argument argument)
+    public void execute(@NotNull ScenarioEngine engine, @NotNull MessageAction.Argument argument)
     {
-        argument = this.requireArgsNonNull(argument);
-
         Player recipient = argument.getRecipient().selectTarget(engine.getContext())
                 .orElseThrow(() -> new IllegalStateException("Cannot select target for this action, please specify target with valid specifier."));
 

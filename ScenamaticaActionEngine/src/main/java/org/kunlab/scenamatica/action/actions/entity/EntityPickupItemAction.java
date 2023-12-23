@@ -11,7 +11,6 @@ import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
@@ -38,10 +37,8 @@ public class EntityPickupItemAction extends AbstractEntityAction<EntityPickupIte
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @Nullable Argument argument)
+    public void execute(@NotNull ScenarioEngine engine, @NotNull EntityPickupItemAction.Argument argument)
     {
-        argument = this.requireArgsNonNull(argument);
-
         Entity target = argument.selectTarget(engine.getContext());
         if (!(target instanceof LivingEntity))
             throw new IllegalArgumentException("Target is not living entity.");

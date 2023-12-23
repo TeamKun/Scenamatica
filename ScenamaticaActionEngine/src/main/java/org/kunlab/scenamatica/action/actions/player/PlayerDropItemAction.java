@@ -33,9 +33,8 @@ public class PlayerDropItemAction extends AbstractPlayerAction<PlayerDropItemAct
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @Nullable Argument argument)
+    public void execute(@NotNull ScenarioEngine engine, @NotNull PlayerDropItemAction.Argument argument)
     {
-        argument = this.requireArgsNonNull(argument);
         EntityItemStructure item = argument.getItem();
 
         Player target = argument.getTarget(engine);

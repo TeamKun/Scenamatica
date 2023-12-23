@@ -9,7 +9,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.event.Event;
 import org.bukkit.event.server.BroadcastMessageEvent;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.actions.AbstractActionArgument;
 import org.kunlab.scenamatica.action.utils.PlayerLikeCommandSenders;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
@@ -44,10 +43,8 @@ public class BroadcastMessageAction extends AbstractServerAction<BroadcastMessag
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @Nullable Argument argument)
+    public void execute(@NotNull ScenarioEngine engine, @NotNull BroadcastMessageAction.Argument argument)
     {
-        argument = this.requireArgsNonNull(argument);
-
         String message = argument.getMessage();
         String permission = argument.getPermission();
         List<PlayerSpecifier> recipients = argument.getRecipients();
@@ -85,7 +82,6 @@ public class BroadcastMessageAction extends AbstractServerAction<BroadcastMessag
     @Override
     public boolean isFired(@NotNull Argument argument, @NotNull ScenarioEngine engine, @NotNull Event event)
     {
-        argument = this.requireArgsNonNull(argument);
         if (!(event instanceof BroadcastMessageEvent))
             return false;
 

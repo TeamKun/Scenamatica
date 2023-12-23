@@ -41,10 +41,8 @@ public class InventoryClickAction<T extends InventoryClickAction.Argument> exten
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @Nullable Argument argument)
+    public void execute(@NotNull ScenarioEngine engine, @NotNull T argument)
     {
-        argument = this.requireArgsNonNull(argument);
-
         Player target = argument.getTargetSpecifier().selectTarget(engine.getContext())
                 .orElseThrow(() -> new IllegalStateException("Target is not found."));
         Actor actor = PlayerUtils.getActorOrThrow(engine, target);

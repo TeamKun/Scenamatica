@@ -34,9 +34,8 @@ public class PlayerSneakAction extends AbstractPlayerAction<PlayerSneakAction.Ar
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @Nullable Argument argument)
+    public void execute(@NotNull ScenarioEngine engine, @NotNull PlayerSneakAction.Argument argument)
     {
-        argument = this.requireArgsNonNull(argument);
         assert argument.sneaking != null;
 
         boolean sneaking = argument.sneaking;
@@ -80,10 +79,8 @@ public class PlayerSneakAction extends AbstractPlayerAction<PlayerSneakAction.Ar
     }
 
     @Override
-    public boolean isConditionFulfilled(@Nullable Argument argument, @NotNull ScenarioEngine engine)
+    public boolean isConditionFulfilled(@NotNull PlayerSneakAction.Argument argument, @NotNull ScenarioEngine engine)
     {
-        argument = this.requireArgsNonNull(argument);
-
         assert argument.sneaking != null;
         boolean expectState = argument.sneaking;
 

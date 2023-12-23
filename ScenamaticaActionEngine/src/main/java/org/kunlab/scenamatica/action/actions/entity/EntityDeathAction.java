@@ -9,7 +9,6 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
@@ -38,10 +37,8 @@ public class EntityDeathAction extends AbstractEntityAction<EntityDeathAction.Ar
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @Nullable Argument argument)
+    public void execute(@NotNull ScenarioEngine engine, @NotNull EntityDeathAction.Argument argument)
     {
-        argument = this.requireArgsNonNull(argument);
-
         Entity target = argument.selectTarget(engine.getContext());
         if (target.isDead())
             throw new IllegalStateException("The target entity " + target + " is already dead.");

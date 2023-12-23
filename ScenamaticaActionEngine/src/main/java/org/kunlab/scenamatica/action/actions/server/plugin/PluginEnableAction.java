@@ -4,7 +4,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.event.Event;
 import org.bukkit.event.server.PluginEnableEvent;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
@@ -27,7 +26,7 @@ public class PluginEnableAction extends AbstractPluginAction<PluginEnableAction.
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @Nullable PluginEnableAction.Argument argument)
+    public void execute(@NotNull ScenarioEngine engine, @NotNull PluginEnableAction.Argument argument)
     {
         if (argument == null)
             return;
@@ -56,7 +55,7 @@ public class PluginEnableAction extends AbstractPluginAction<PluginEnableAction.
     }
 
     @Override
-    public boolean isConditionFulfilled(@Nullable PluginEnableAction.Argument argument, @NotNull ScenarioEngine engine)
+    public boolean isConditionFulfilled(@NotNull PluginEnableAction.Argument argument, @NotNull ScenarioEngine engine)
     {
         argument = super.requireArgsNonNull(argument);
         return argument.getPlugin().isEnabled();

@@ -9,7 +9,6 @@ import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDropItemEvent;
 import org.bukkit.inventory.InventoryHolder;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.commons.utils.Utils;
 import org.kunlab.scenamatica.enums.ScenarioType;
@@ -38,7 +37,7 @@ public class EntityDropItemAction extends AbstractEntityAction<EntityDropItemAct
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @Nullable Argument argument)
+    public void execute(@NotNull ScenarioEngine engine, @NotNull EntityDropItemAction.Argument argument)
     {
         assert argument != null;
         Entity target = argument.selectTarget(engine.getContext());

@@ -40,10 +40,8 @@ public class WorldBorderAction extends AbstractWorldAction<WorldBorderAction.Arg
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @Nullable Argument argument)
+    public void execute(@NotNull ScenarioEngine engine, @NotNull WorldBorderAction.Argument argument)
     {
-        argument = this.requireArgsNonNull(argument);
-
         WorldBorder border = argument.getWorldNonNull(engine).getWorldBorder();
 
         if (argument.getSize() != -1)
@@ -138,10 +136,8 @@ public class WorldBorderAction extends AbstractWorldAction<WorldBorderAction.Arg
     }
 
     @Override
-    public boolean isConditionFulfilled(@Nullable Argument argument, @NotNull ScenarioEngine engine)
+    public boolean isConditionFulfilled(@NotNull WorldBorderAction.Argument argument, @NotNull ScenarioEngine engine)
     {
-        argument = this.requireArgsNonNull(argument);
-
         WorldBorder border = argument.getWorldNonNull(engine).getWorldBorder();
 
         return (argument.getSize() == -1 || argument.getSize() == border.getSize())

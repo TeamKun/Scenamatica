@@ -33,7 +33,7 @@ public class WorldUnloadAction extends AbstractWorldAction<WorldUnloadAction.Arg
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @Nullable Argument argument)
+    public void execute(@NotNull ScenarioEngine engine, @NotNull WorldUnloadAction.Argument argument)
     {
         argument = super.requireArgsNonNull(argument);
         World world = argument.getWorldNonNull(engine);
@@ -50,7 +50,7 @@ public class WorldUnloadAction extends AbstractWorldAction<WorldUnloadAction.Arg
     }
 
     @Override
-    public boolean isConditionFulfilled(@Nullable Argument argument, @NotNull ScenarioEngine engine)
+    public boolean isConditionFulfilled(@NotNull WorldUnloadAction.Argument argument, @NotNull ScenarioEngine engine)
     {
         argument = super.requireArgsNonNull(argument);
 

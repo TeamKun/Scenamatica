@@ -34,7 +34,7 @@ public class WorldLoadAction extends AbstractWorldAction<WorldLoadAction.Argumen
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @Nullable Argument argument)
+    public void execute(@NotNull ScenarioEngine engine, @NotNull WorldLoadAction.Argument argument)
     {
         argument = super.requireArgsNonNull(argument);
 
@@ -54,7 +54,7 @@ public class WorldLoadAction extends AbstractWorldAction<WorldLoadAction.Argumen
     }
 
     @Override
-    public boolean isConditionFulfilled(@Nullable Argument argument, @NotNull ScenarioEngine engine)
+    public boolean isConditionFulfilled(@NotNull WorldLoadAction.Argument argument, @NotNull ScenarioEngine engine)
     {
         argument = super.requireArgsNonNull(argument);
         return argument.getWorld() != null;

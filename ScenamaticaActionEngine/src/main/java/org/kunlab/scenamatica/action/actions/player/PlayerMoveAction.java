@@ -7,7 +7,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.commons.utils.Utils;
 import org.kunlab.scenamatica.enums.ScenarioType;
@@ -36,10 +35,8 @@ public class PlayerMoveAction<T extends PlayerMoveAction.Argument> extends Abstr
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @Nullable Argument argument)
+    public void execute(@NotNull ScenarioEngine engine, @NotNull T argument)
     {
-        argument = this.requireArgsNonNull(argument);
-
         Location toLoc = Utils.assignWorldToLocation(argument.getTo(), engine);
         Player target = argument.getTarget(engine);
         target.teleport(toLoc);

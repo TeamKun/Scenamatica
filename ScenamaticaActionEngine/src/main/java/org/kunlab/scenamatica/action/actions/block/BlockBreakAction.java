@@ -43,10 +43,8 @@ public class BlockBreakAction extends AbstractBlockAction<BlockBreakAction.Argum
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @Nullable Argument argument)
+    public void execute(@NotNull ScenarioEngine engine, @NotNull BlockBreakAction.Argument argument)
     {
-        argument = this.requireArgsNonNull(argument);
-
         BlockStructure blockDef = argument.getBlock();
         Location location = this.getBlockLocationWithWorld(blockDef, engine);
         Block block = location.getBlock();
@@ -110,10 +108,8 @@ public class BlockBreakAction extends AbstractBlockAction<BlockBreakAction.Argum
     }
 
     @Override
-    public boolean isConditionFulfilled(@Nullable Argument argument, @NotNull ScenarioEngine engine)
+    public boolean isConditionFulfilled(@NotNull BlockBreakAction.Argument argument, @NotNull ScenarioEngine engine)
     {
-        argument = this.requireArgsNonNull(argument);
-
         Location loc = this.getBlockLocationWithWorld(argument.getBlock(), engine);
 
         return loc.getBlock().getType() == Material.AIR;

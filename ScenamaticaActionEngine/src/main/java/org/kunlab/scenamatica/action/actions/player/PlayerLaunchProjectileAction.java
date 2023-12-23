@@ -50,10 +50,8 @@ public class PlayerLaunchProjectileAction extends AbstractPlayerAction<PlayerLau
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @Nullable PlayerLaunchProjectileAction.Argument argument)
+    public void execute(@NotNull ScenarioEngine engine, @NotNull PlayerLaunchProjectileAction.Argument argument)
     {
-        argument = this.requireArgsNonNull(argument);
-
         Player player = argument.getTarget(engine);
         ProjectileType type = argument.getProjectileType();
 

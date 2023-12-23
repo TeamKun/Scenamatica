@@ -34,10 +34,8 @@ public class PlayerDeathAction extends AbstractPlayerAction<PlayerDeathAction.Ar
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @Nullable PlayerDeathAction.Argument argument)
+    public void execute(@NotNull ScenarioEngine engine, @NotNull PlayerDeathAction.Argument argument)
     {
-        argument = this.requireArgsNonNull(argument);
-
         Player target = argument.getTarget(engine);
         if (argument.getKiller().canProvideTarget())
         {
@@ -179,10 +177,8 @@ public class PlayerDeathAction extends AbstractPlayerAction<PlayerDeathAction.Ar
     }
 
     @Override
-    public boolean isConditionFulfilled(@Nullable PlayerDeathAction.Argument argument, @NotNull ScenarioEngine engine)
+    public boolean isConditionFulfilled(@NotNull PlayerDeathAction.Argument argument, @NotNull ScenarioEngine engine)
     {
-        argument = this.requireArgsNonNull(argument);
-
         Player targetPlayer = argument.getTarget(engine);
         Player actualKiller = targetPlayer.getKiller();
         PlayerSpecifier expectedKiller = argument.getKiller();

@@ -19,7 +19,6 @@ import org.bukkit.projectiles.BlockProjectileSource;
 import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.utils.EventListenerUtils;
 import org.kunlab.scenamatica.commons.utils.EntityUtils;
 import org.kunlab.scenamatica.commons.utils.Utils;
@@ -92,10 +91,8 @@ public class ProjectileLaunchAction extends EntitySpawnAction<ProjectileLaunchAc
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @Nullable Argument argument)
+    public void execute(@NotNull ScenarioEngine engine, @NotNull ProjectileLaunchAction.Argument argument)
     {
-        argument = this.requireArgsNonNull(argument);
-
         ProjectileStructure entity = (ProjectileStructure) argument.getEntity().getTargetStructure();
         // noinspection unchecked -> Checked by validator
         Class<? extends Projectile> entityType = (Class<? extends Projectile>) entity.getType().getEntityClass();

@@ -44,10 +44,8 @@ public class PlayerItemConsumeAction extends AbstractPlayerAction<PlayerItemCons
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @Nullable Argument argument)
+    public void execute(@NotNull ScenarioEngine engine, @NotNull PlayerItemConsumeAction.Argument argument)
     {
-        argument = this.requireArgsNonNull(argument);
-
         ItemStackStructure item = argument.getItem();
         Actor actor = PlayerUtils.getActorOrThrow(engine, argument.getTarget(engine));
 
