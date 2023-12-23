@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import net.kunmc.lab.peyangpaperutils.lib.command.CommandBase;
 import net.kunmc.lab.peyangpaperutils.lib.terminal.Terminal;
 import net.kyori.adventure.text.TextComponent;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -27,7 +28,7 @@ public class CommandSummonActor extends CommandBase
         String name = args[0];
         try
         {
-            this.registry.getContextManager().getActorManager().createActor(new PlayerStructureImpl(
+            this.registry.getContextManager().getActorManager().createActor(Bukkit.getWorlds().get(0), new PlayerStructureImpl(
                     name,
                     true,
                     null,

@@ -1,8 +1,6 @@
 package org.kunlab.scenamatica.exceptions.context.actor;
 
-import org.kunlab.scenamatica.exceptions.context.ContextPreparationException;
-
-public class ActorAlreadyExistsException extends ContextPreparationException
+public class ActorAlreadyExistsException extends ActorCreationException
 {
     public ActorAlreadyExistsException(String actorName)
     {

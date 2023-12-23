@@ -1,6 +1,5 @@
 package org.kunlab.scenamatica.context;
 
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import net.kunmc.lab.peyangpaperutils.lang.LangProvider;
@@ -12,18 +11,22 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.commons.utils.LogUtils;
 import org.kunlab.scenamatica.commons.utils.ThreadingUtil;
 import org.kunlab.scenamatica.context.actor.ActorManagerImpl;
 import org.kunlab.scenamatica.context.stage.StageManagerImpl;
+import org.kunlab.scenamatica.exceptions.context.EntityCreationException;
+import org.kunlab.scenamatica.exceptions.context.actor.ActorCreationException;
 import org.kunlab.scenamatica.exceptions.context.actor.VersionNotSupportedException;
+import org.kunlab.scenamatica.exceptions.context.stage.StageAlreadyDestroyedException;
 import org.kunlab.scenamatica.exceptions.context.stage.StageCreateFailedException;
-import org.kunlab.scenamatica.exceptions.context.stage.StageNotCreatedException;
 import org.kunlab.scenamatica.interfaces.ScenamaticaRegistry;
 import org.kunlab.scenamatica.interfaces.context.Actor;
 import org.kunlab.scenamatica.interfaces.context.ActorManager;
 import org.kunlab.scenamatica.interfaces.context.Context;
 import org.kunlab.scenamatica.interfaces.context.ContextManager;
+import org.kunlab.scenamatica.interfaces.context.Stage;
 import org.kunlab.scenamatica.interfaces.context.StageManager;
 import org.kunlab.scenamatica.interfaces.scenariofile.Mapped;
 import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileStructure;
@@ -38,7 +41,6 @@ import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 public class ContextManagerImpl implements ContextManager
 {
@@ -54,22 +56,15 @@ public class ContextManagerImpl implements ContextManager
     private final StageManager stageManager;
     private final EntityChunkLoader chunkLoader;
     private final Logger logger;
-    @Getter(AccessLevel.PACKAGE)
-    List<UUID> generatedEntities;
-    private boolean isWorldPrepared;
-    private boolean isActorPrepared;
 
     public ContextManagerImpl(@NotNull ScenamaticaRegistry registry) throws VersionNotSupportedException
     {
         this.registry = registry;
         this.verbose = registry.getEnvironment().isVerbose();
-        this.actorManager = new ActorManagerImpl(registry, this);
+        this.actorManager = new ActorManagerImpl(registry);
         this.stageManager = new StageManagerImpl(registry);
         this.logger = registry.getLogger();
         this.chunkLoader = new EntityChunkLoader(registry);
-
-        this.isWorldPrepared = false;
-        this.isActorPrepared = false;
 
         // ゴミを残さないように
         SpigotConfig.disablePlayerDataSaving = true;
@@ -81,7 +76,7 @@ public class ContextManagerImpl implements ContextManager
         return MsgArgs.of("prefix", LogUtils.gerScenarioPrefix(testID, scenario));
     }
 
-    private World prepareWorld(ContextStructure context, ScenarioFileStructure scenario, UUID testID) throws StageCreateFailedException
+    private Stage prepareStage(ContextStructure context, ScenarioFileStructure scenario, UUID testID) throws StageCreateFailedException
     {
         if (context == null || context.getWorld() == null)
             return this.stageManager.shared(DEFAULT_ORIGINAL_WORLD_NAME);
@@ -104,35 +99,34 @@ public class ContextManagerImpl implements ContextManager
         );
     }
 
-    @NotNull
-    private List<Actor> prepareActors(ContextStructure context, ScenarioFileStructure scenario, UUID testID) throws StageNotCreatedException
+    @Nullable
+    private List<Actor> tryPrepareActors(World defaultWorld, ContextStructure context)
     {
+        List<Actor> actors = new ArrayList<>();
         try
         {
-            List<Actor> actors = new ArrayList<>();
             for (PlayerStructure actor : context.getActors())
-                actors.add(this.actorManager.createActor(actor));
-
-            this.isActorPrepared = true;
+                actors.add(this.actorManager.createActor(defaultWorld, actor));
 
             return actors;
         }
         catch (Exception e)
         {
             this.registry.getExceptionHandler().report(e);
-            this.logActorGenFail(scenario, testID);
 
-            this.stageManager.destroyStage();
-            return Collections.emptyList();
+            for (Actor actor : actors)
+                this.actorManager.destroyActor(actor);
+
+            return null;
         }
 
     }
 
-    private <T extends Entity> T spawnEntity(World stage, EntityStructure entity)
+    private <T extends Entity> T spawnEntity(World stage, EntityStructure entity) throws EntityCreationException
     {
         EntityType type = entity.getType();
         if (type == null)
-            throw new IllegalArgumentException("Unable to spawn entity: type is null");
+            throw new EntityCreationException("Unable to spawn entity: type is null");
 
         Location spawnLoc;
         if (entity.getLocation() == null)
@@ -166,34 +160,38 @@ public class ContextManagerImpl implements ContextManager
         );
     }
 
-    private List<Entity> prepareEntities(World stage, ContextStructure context, ScenarioFileStructure scenario, UUID testID) throws StageCreateFailedException, StageNotCreatedException
+    private List<Entity> prepareEntities(Stage stage, ContextStructure context) throws EntityCreationException
     {
         List<Entity> entities = new ArrayList<>();
         for (EntityStructure entity : context.getEntities())
-            entities.add(this.spawnEntity(stage, entity));
-
-        this.isActorPrepared = true;
+            entities.add(this.spawnEntity(stage.getWorld(), entity));
 
         return entities;
     }
 
     @Override
     public Context prepareContext(@NotNull ScenarioFileStructure scenario, @NotNull UUID testID)
-            throws StageNotCreatedException, StageCreateFailedException
+            throws StageAlreadyDestroyedException, StageCreateFailedException, ActorCreationException, EntityCreationException
     {
         ContextStructure context = scenario.getContext();
 
         this.logIfVerbose(scenario, "context.creating", testID);
 
         this.logIfVerbose(scenario, "context.stage.generating", testID);
-        World stage = this.prepareWorld(context, scenario, testID);
-        this.isWorldPrepared = true;
+        Stage stage = this.prepareStage(context, scenario, testID);
 
         List<Actor> actors;
         if (!(context == null || context.getActors().isEmpty()))
         {
             this.logIfVerbose(scenario, "context.actor.generating", testID);
-            actors = this.prepareActors(context, scenario, testID);
+            actors = this.tryPrepareActors(stage.getWorld(), context);
+            if (actors == null)
+            {
+                this.logActorGenFail(scenario, testID);
+                // 失敗したのでロールバック
+                stage.destroy();
+                throw new ActorCreationException();
+            }
         }
         else
             actors = Collections.emptyList();
@@ -202,18 +200,19 @@ public class ContextManagerImpl implements ContextManager
         if (!(context == null || context.getEntities().isEmpty()))
         {
             this.logIfVerbose(scenario, "context.entity.generating", testID);
-            generatedEntities = this.prepareEntities(stage, context, scenario, testID);
-
-            this.generatedEntities = generatedEntities.stream()
-                    .map(Entity::getUniqueId)
-                    .collect(Collectors.toList());
+            generatedEntities = this.prepareEntities(stage, context);
         }
         else
             generatedEntities = Collections.emptyList();
 
 
         this.logIfVerbose(scenario, "context.created", testID);
-        return new ContextImpl(stage, actors, generatedEntities);
+        return new ContextImpl(
+                this,
+                stage,
+                Collections.unmodifiableList(actors),
+                Collections.unmodifiableList(generatedEntities)
+        );
     }
 
     private void logIfVerbose(ScenarioFileStructure scenario, String message, MsgArgs args, UUID testID)
@@ -235,45 +234,37 @@ public class ContextManagerImpl implements ContextManager
         this.logger.log(Level.WARNING, LangProvider.get("context.actor.failed", getArgs(scenario, testID)));
     }
 
-    @SneakyThrows(StageNotCreatedException.class)
     @Override
-    public void destroyContext()
+    @SneakyThrows(StageAlreadyDestroyedException.class)
+    public void destroyContext(Context context)
     {
-        if (this.isWorldPrepared)
-            this.stageManager.destroyStage();  // StageNotCreatedException はチェック済み。
+        if (context.hasStage())
+            this.stageManager.destroyStage(context.getStage());  // StageNotCreatedException はチェック済み。
 
-        if (this.isActorPrepared)
+        if (context.hasActors())
         {
-            List<Actor> actors = new ArrayList<>(this.actorManager.getActors());  // ConcurrentModificationException 対策
+            List<Actor> actors = new ArrayList<>(context.getActors());  // ConcurrentModificationException 対策
             for (Actor actor : actors)
                 this.actorManager.destroyActor(actor);
         }
 
-        this.chunkLoader.clear();
-        if (this.generatedEntities != null)
+        if (context.hasEntities())
         {
-            for (UUID uuid : this.generatedEntities)
-            {
-                Entity entity = Bukkit.getEntity(uuid);
+            for (Entity entity : context.getEntities())
                 if (entity != null)
+                {
+                    this.chunkLoader.removeEntity(entity);
                     entity.remove();
-            }
+                }
         }
-
-        this.isWorldPrepared = false;
-        this.isActorPrepared = false;
-        this.generatedEntities = null;
-
     }
 
-    @SneakyThrows(StageNotCreatedException.class)
     @Override
     public void shutdown()
     {
         this.actorManager.shutdown();
-        if (this.stageManager.isStageCreated())
-            this.stageManager.destroyStage();  // StageNotCreatedException はチェック済み。
-        this.chunkLoader.clear();
+        this.stageManager.shutdown();
+        this.chunkLoader.shutdown();
 
 
         SpigotConfig.disablePlayerDataSaving = false;

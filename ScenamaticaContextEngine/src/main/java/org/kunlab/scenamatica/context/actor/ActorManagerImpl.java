@@ -3,6 +3,7 @@ package org.kunlab.scenamatica.context.actor;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -16,11 +17,9 @@ import org.kunlab.scenamatica.events.actor.ActorPostJoinEvent;
 import org.kunlab.scenamatica.exceptions.context.ContextPreparationException;
 import org.kunlab.scenamatica.exceptions.context.actor.ActorAlreadyExistsException;
 import org.kunlab.scenamatica.exceptions.context.actor.VersionNotSupportedException;
-import org.kunlab.scenamatica.exceptions.context.stage.StageNotCreatedException;
 import org.kunlab.scenamatica.interfaces.ScenamaticaRegistry;
 import org.kunlab.scenamatica.interfaces.context.Actor;
 import org.kunlab.scenamatica.interfaces.context.ActorManager;
-import org.kunlab.scenamatica.interfaces.context.ContextManager;
 import org.kunlab.scenamatica.interfaces.scenariofile.context.PlayerStructure;
 import org.kunlab.scenamatica.settings.ActorSettings;
 
@@ -33,7 +32,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ActorManagerImpl implements ActorManager, Listener
 {
     private final ScenamaticaRegistry registry;
-    private final ContextManager contextManager;
     @Getter
     private final List<Actor> actors;
     private final PlayerMockerBase actorGenerator;
@@ -41,10 +39,11 @@ public class ActorManagerImpl implements ActorManager, Listener
 
     private final ConcurrentHashMap<UUID, Object> waitingForLogin;
 
-    public ActorManagerImpl(ScenamaticaRegistry registry, ContextManager contextManager) throws VersionNotSupportedException
+    private boolean destroyed;
+
+    public ActorManagerImpl(ScenamaticaRegistry registry) throws VersionNotSupportedException
     {
         this.registry = registry;
-        this.contextManager = contextManager;
         this.settings = registry.getEnvironment().getActorSettings();
         this.actors = new ArrayList<>();
         this.actorGenerator = getMocker(registry, this);
@@ -73,7 +72,7 @@ public class ActorManagerImpl implements ActorManager, Listener
     }
 
     @Override
-    public Actor createActor(PlayerStructure structure) throws ContextPreparationException
+    public Actor createActor(@NotNull World defaultWorld, @NotNull PlayerStructure structure) throws ContextPreparationException
     {
         Objects.requireNonNull(structure.getName(), "Unable to create actor: name is null.");
 
@@ -81,12 +80,13 @@ public class ActorManagerImpl implements ActorManager, Listener
             throw new ContextPreparationException("This method must be called from another thread.");
         else if (this.actors.stream().anyMatch(p -> p.getName().equalsIgnoreCase(structure.getName())))
             throw new ActorAlreadyExistsException(structure.getName());
-        else if (!this.contextManager.getStageManager().isStageCreated())
-            throw new StageNotCreatedException();
         else if (this.actors.size() + 1 > this.settings.getMaxActors())
             throw new ContextPreparationException("Too many actors on this server (max: " + this.settings.getMaxActors() + ")");
 
-        Actor actor = ThreadingUtil.waitFor(this.registry, () -> this.actorGenerator.mock(this.contextManager.getStageManager().getStage(), structure));
+        Actor actor = ThreadingUtil.waitFor(
+                this.registry,
+                () -> this.actorGenerator.mock(defaultWorld, structure)
+        );
 
         this.actors.add(actor);
 
@@ -126,6 +126,11 @@ public class ActorManagerImpl implements ActorManager, Listener
     @Override
     public void shutdown()
     {
+        if (this.destroyed)
+            throw new IllegalStateException("Already destroyed.");
+
+        this.destroyed = true;
+
         new ArrayList<>(this.actors)  //   回避
                 .forEach(this::destroyActor);
     }

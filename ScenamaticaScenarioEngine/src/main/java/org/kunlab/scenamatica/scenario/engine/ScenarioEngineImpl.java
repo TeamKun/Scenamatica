@@ -193,7 +193,7 @@ public class ScenarioEngineImpl implements ScenarioEngine
                 ),
                 true
         );
-        this.registry.getContextManager().destroyContext();
+        this.context.destroy();
 
         this.executor = null;
         this.ranBy = null;

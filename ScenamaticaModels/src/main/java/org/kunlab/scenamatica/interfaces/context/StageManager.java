@@ -1,9 +1,9 @@
 package org.kunlab.scenamatica.interfaces.context;
 
-import org.bukkit.World;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.kunlab.scenamatica.exceptions.context.stage.StageAlreadyDestroyedException;
 import org.kunlab.scenamatica.exceptions.context.stage.StageCreateFailedException;
-import org.kunlab.scenamatica.exceptions.context.stage.StageNotCreatedException;
 import org.kunlab.scenamatica.interfaces.scenariofile.context.StageStructure;
 
 /**
@@ -17,7 +17,7 @@ public interface StageManager
      * @param structure ステージ情報
      * @return 生成したステージ
      */
-    @NotNull World createStage(StageStructure structure) throws StageCreateFailedException;
+    @NotNull Stage createStage(@NotNull StageStructure structure) throws StageCreateFailedException;
 
     /**
      * ステージをコピーします。
@@ -25,7 +25,7 @@ public interface StageManager
      * @param originalName コピー元のワールド名
      * @return 生成したステージ
      */
-    @NotNull World createStage(String originalName) throws StageCreateFailedException;
+    @NotNull Stage createStage(@Nullable String originalName) throws StageCreateFailedException;
 
     /**
      * 共有ステージを設定します。
@@ -33,32 +33,16 @@ public interface StageManager
      * @param name 名前
      */
     @NotNull
-    World shared(@NotNull String name);
+    Stage shared(@NotNull String name);
 
     /**
      * ステージを破棄します。
      * 共有ステージの場合は破棄されません。
      */
-    void destroyStage() throws StageNotCreatedException;
+    void destroyStage(@NotNull Stage stage) throws StageAlreadyDestroyedException;
 
     /**
-     * ステージを取得します。
-     *
-     * @return ステージ
+     * ステージマネージャを破棄します。
      */
-    World getStage();
-
-    /**
-     * ステージが生成されているかどうかを取得します。
-     *
-     * @return 生成されている場合は true
-     */
-    boolean isStageCreated();
-
-    /**
-     * ステージが既存のワールドからコピーされたものかどうかを取得します。
-     *
-     * @return コピーされたものの場合は true
-     */
-    boolean hasCopied();
+    void shutdown();
 }

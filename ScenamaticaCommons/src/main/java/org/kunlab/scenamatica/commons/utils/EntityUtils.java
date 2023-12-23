@@ -84,12 +84,12 @@ public class EntityUtils
                     .filter(finalPredicate)
                     .collect(Collectors.toList());
         }
-        else if (!(context.getEntities() == null || context.getEntities().isEmpty()))
+        else if (!context.getEntities().isEmpty())
             return context.getEntities().stream()
                     .filter(finalPredicate)
                     .collect(Collectors.toList());
 
-        return context.getStage().getEntities().stream()
+        return context.getStage().getWorld().getEntities().stream()
                 .filter(finalPredicate)
                 .collect(Collectors.toList());
     }

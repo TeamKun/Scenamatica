@@ -30,7 +30,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.potion.PotionEffect;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.context.actor.PlayerMockerBase;
 import org.kunlab.scenamatica.interfaces.ScenamaticaRegistry;
 import org.kunlab.scenamatica.interfaces.context.Actor;
@@ -249,24 +248,22 @@ public class PlayerMocker extends PlayerMockerBase
 
     @Override
     @NotNull
-    public Actor mock(@Nullable World world, @NotNull PlayerStructure structure)
+    public Actor mock(@NotNull World world, @NotNull PlayerStructure structure)
     {
         MinecraftServer server = ((CraftServer) Bukkit.getServer()).getServer();
         NetworkManager mockedNetworkManager = new MockedNetworkManager(server);
-        WorldServer worldServer = world == null ? server.E(): ((CraftWorld) world).getHandle();
+        WorldServer worldServer = ((CraftWorld) world).getHandle();
         GameProfile profile = createGameProfile(structure);
         boolean doLogin = structure.getOnline() == null || structure.getOnline();
 
         Location initialLocation;
         if (structure.getLocation() != null)
             initialLocation = structure.getLocation().create().clone();
-        else if (world != null)
-            initialLocation = world.getSpawnLocation().clone();
         else
-            initialLocation = server.E().getWorld().getSpawnLocation().clone();
+            initialLocation = world.getSpawnLocation().clone();
 
         if (structure.getLocation() != null && structure.getLocation().getWorld() == null)
-            initialLocation.setWorld(this.registry.getContextManager().getStageManager().getStage());
+            initialLocation.setWorld(world);
 
         MockedPlayer player = new MockedPlayer(this.manager,
                 this, mockedNetworkManager, server, worldServer, profile,

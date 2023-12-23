@@ -35,7 +35,7 @@ public class Utils
             return loc;
 
         Location newLoc = loc.clone();
-        newLoc.setWorld(engine.getContext().getStage());
+        newLoc.setWorld(engine.getContext().getStage().getWorld());
 
         return newLoc;
     }

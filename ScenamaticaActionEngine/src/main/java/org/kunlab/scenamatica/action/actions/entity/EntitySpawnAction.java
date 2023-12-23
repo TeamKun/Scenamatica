@@ -38,7 +38,7 @@ public class EntitySpawnAction<T extends EntitySpawnAction.Argument> extends Abs
     {
         Location spawnLoc = locDef == null ? null: locDef.create();
         if (spawnLoc == null)
-            spawnLoc = engine.getContext().getStage().getSpawnLocation();
+            spawnLoc = engine.getContext().getStage().getWorld().getSpawnLocation();
         // World が指定されていない場合は、ステージのワールドを使う。
         spawnLoc = Utils.assignWorldToLocation(spawnLoc, engine);
 

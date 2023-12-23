@@ -7,7 +7,6 @@ import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.commands.debug.CommandCreateStage;
-import org.kunlab.scenamatica.commands.debug.CommandDestroyStage;
 import org.kunlab.scenamatica.commands.debug.CommandSummonActor;
 import org.kunlab.scenamatica.interfaces.ScenamaticaRegistry;
 
@@ -23,7 +22,6 @@ public class CommandDebug extends SubCommandWith
         commands = new HashMap<>();
         commands.put("summonActor", new CommandSummonActor(registry));
         commands.put("createStage", new CommandCreateStage(registry));
-        commands.put("destroyStage", new CommandDestroyStage(registry));
 
     }
 

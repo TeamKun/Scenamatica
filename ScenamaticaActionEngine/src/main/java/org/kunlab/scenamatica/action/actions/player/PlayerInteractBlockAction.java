@@ -35,8 +35,6 @@ public class PlayerInteractBlockAction extends AbstractPlayerAction<PlayerIntera
 
     private static Block getClickBlock(ScenarioEngine engine, Argument argument)
     {
-        World world = engine.getManager().getRegistry().getContextManager().getStageManager().getStage();
-
         Location clickPos;
         BlockStructure blockStructure = argument.getBlock();
         if (!(blockStructure == null || blockStructure.getLocation() == null))
@@ -44,6 +42,7 @@ public class PlayerInteractBlockAction extends AbstractPlayerAction<PlayerIntera
         else  // 指定がなかったら自身の位置をクリックする(しかない)
             clickPos = argument.getTarget(engine).getLocation().toBlockLocation();
 
+        World world = engine.getContext().getStage().getWorld();
         return world.getBlockAt(clickPos);
     }
 

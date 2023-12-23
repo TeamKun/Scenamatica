@@ -59,7 +59,7 @@ public abstract class AbstractWorldActionArgument extends AbstractActionArgument
     public World getWorldNonNull(ScenarioEngine engine)
     {
         if (this.worldRef == null)
-            return engine.getManager().getRegistry().getContextManager().getStageManager().getStage();
+            return engine.getContext().getStage().getWorld();
 
         return this.getWorld();
     }

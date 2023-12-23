@@ -1,6 +1,5 @@
 package org.kunlab.scenamatica.interfaces.context;
 
-import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 
@@ -14,7 +13,7 @@ public interface Context
     /**
      * ステージです。
      */
-    World getStage();
+    Stage getStage();
 
     /**
      * アクターです。
@@ -27,4 +26,30 @@ public interface Context
      */
     @NotNull
     List<? extends Entity> getEntities();
+
+    /**
+     * ステージが存在するかどうかを返します。
+     *
+     * @return ステージが存在するかどうか
+     */
+    boolean hasStage();
+
+    /**
+     * アクターが存在するかどうかを返します。
+     *
+     * @return アクターが存在するかどうか
+     */
+    boolean hasActors();
+
+    /**
+     * エンティティが存在するかどうかを返します。
+     *
+     * @return エンティティが存在するかどうか
+     */
+    boolean hasEntities();
+
+    /**
+     * このコンテキストを破棄します。
+     */
+    void destroy();
 }

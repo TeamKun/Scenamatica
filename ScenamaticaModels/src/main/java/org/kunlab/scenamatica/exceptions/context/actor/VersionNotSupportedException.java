@@ -1,13 +1,12 @@
 package org.kunlab.scenamatica.exceptions.context.actor;
 
 import lombok.Getter;
-import org.kunlab.scenamatica.exceptions.context.ContextPreparationException;
 
 /**
  * バージョンがサポートされていないことを示す例外です。
  */
 @Getter
-public class VersionNotSupportedException extends ContextPreparationException
+public class VersionNotSupportedException extends ActorCreationException
 {
     private final String version;
 

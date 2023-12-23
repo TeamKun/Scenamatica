@@ -51,7 +51,7 @@ public class PlayerInteractAtEntityAction extends PlayerInteractEntityAction<Pla
 
         PlayerInteractAtEntityEvent e = (PlayerInteractAtEntityEvent) event;
         Vector clickedPosition = e.getClickedPosition();
-        Location loc = clickedPosition.toLocation(engine.getContext().getStage());
+        Location loc = clickedPosition.toLocation(engine.getContext().getStage().getWorld());
 
         return argument.getPosition() == null || argument.getPosition().isAdequate(loc);
     }

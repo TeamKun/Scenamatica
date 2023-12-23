@@ -20,6 +20,8 @@ public class EntityChunkLoader extends BukkitRunnable implements Listener
     private final List<? super Chunk> loadedChunks;
     private final List<? super Chunk> dontUnloadChunks;
 
+    private boolean destryoed;
+
     public EntityChunkLoader(ScenamaticaRegistry registry)
     {
         this.entities = new HashMap<>();
@@ -92,6 +94,17 @@ public class EntityChunkLoader extends BukkitRunnable implements Listener
                 .filter(location -> location instanceof Entity)
                 .map(location -> (Entity) location)
                 .noneMatch(entity -> entity.getChunk().equals(chunk));
+    }
+
+    public void shutdown()
+    {
+        if (this.destryoed)
+            throw new IllegalStateException("ChunkLoader already destroyed");
+
+        this.destryoed = true;
+
+        this.clear();
+        this.cancel();
     }
 
     @Override

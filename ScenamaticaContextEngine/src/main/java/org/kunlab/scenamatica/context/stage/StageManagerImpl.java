@@ -1,6 +1,5 @@
 package org.kunlab.scenamatica.context.stage;
 
-import lombok.Getter;
 import lombok.SneakyThrows;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
@@ -9,10 +8,12 @@ import org.bukkit.WorldCreator;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.kpm.utils.ReflectionUtils;
 import org.kunlab.scenamatica.context.utils.WorldUtils;
+import org.kunlab.scenamatica.enums.StageType;
 import org.kunlab.scenamatica.exceptions.context.actor.VersionNotSupportedException;
+import org.kunlab.scenamatica.exceptions.context.stage.StageAlreadyDestroyedException;
 import org.kunlab.scenamatica.exceptions.context.stage.StageCreateFailedException;
-import org.kunlab.scenamatica.exceptions.context.stage.StageNotCreatedException;
 import org.kunlab.scenamatica.interfaces.ScenamaticaRegistry;
+import org.kunlab.scenamatica.interfaces.context.Stage;
 import org.kunlab.scenamatica.interfaces.context.StageManager;
 import org.kunlab.scenamatica.interfaces.scenariofile.context.StageStructure;
 
@@ -20,22 +21,23 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 import java.util.UUID;
 import java.util.stream.Stream;
 
 public class StageManagerImpl implements StageManager
 {
     private final ScenamaticaRegistry registry;
+    private final List<Stage> stages;
 
-    @Getter
-    private World stage;
-    private boolean hasCopied;
-    private boolean isShared;
+    private boolean destroyed;
 
     public StageManagerImpl(ScenamaticaRegistry registry)
     {
         this.registry = registry;
+        this.stages = new ArrayList<>();
     }
 
     @NotNull
@@ -63,11 +65,8 @@ public class StageManagerImpl implements StageManager
 
     @Override
     @NotNull
-    public World createStage(StageStructure structure) throws StageCreateFailedException
+    public Stage createStage(@NotNull StageStructure structure) throws StageCreateFailedException
     {
-        if (this.stage != null)
-            return this.stage;
-
         NamespacedKey key = generateStageKey();
 
         if (structure.getOriginalWorldName() != null)
@@ -84,67 +83,93 @@ public class StageManagerImpl implements StageManager
         creator.generateStructures(structure.isGenerateStructures());
         creator.hardcore(structure.isHardcore());
 
-        this.stage = creator.createWorld();
-        if (this.stage == null)
+        World world = creator.createWorld();
+        if (world == null)
             throw new StageCreateFailedException(key.toString());
 
-        this.stage.setAutoSave(false);
+        world.setAutoSave(false);
 
-        return this.stage;
+        return this.registerStage(world, StageType.GENERATED);
     }
 
     @Override
-    public @NotNull World createStage(String originalName) throws StageCreateFailedException
+    public @NotNull Stage createStage(String originalName) throws StageCreateFailedException
     {
         World copied;
         try
         {
-            copied = this.stage = WorldUtils.copyWorld(originalName, generateStageKey());
+            copied = WorldUtils.copyWorld(originalName, generateStageKey());
         }
         catch (IllegalArgumentException e)
         {
             throw new StageCreateFailedException(originalName, e);
         }
-        this.hasCopied = true;
-        return copied;
+
+        return this.registerStage(copied, StageType.CLONE);
+    }
+
+    private Stage registerStage(World world, StageType type)
+    {
+        Stage stage = new StageImpl(world, type, this);
+        this.stages.add(stage);
+        return stage;
     }
 
     @Override
-    public @NotNull World shared(@NotNull String name)
+    public @NotNull Stage shared(@NotNull String name)
     {
         World stage;
         if ((stage = Bukkit.getWorld(name)) == null)
             throw new IllegalArgumentException("World " + name + " is not loaded.");
 
-        this.isShared = true;
-        return this.stage = stage;
+        return this.registerStage(stage, StageType.SHARED);
     }
 
     @Override
     @SneakyThrows(VersionNotSupportedException.class)
-    public void destroyStage() throws StageNotCreatedException
+    public void destroyStage(@NotNull Stage stage) throws StageAlreadyDestroyedException
     {
-        if (this.stage == null)
-            throw new StageNotCreatedException();
-        else if (this.isShared)  // 共有ステージの場合は壊すと大変なことになる。
-        {
-            this.stage = null;
-            this.isShared = false;
-            return;
-        }
+        if (stage.isDestroyed())
+            throw new StageAlreadyDestroyedException();
+        else if (stage.getType() == StageType.SHARED)
+            return;  // SHARED ステージは破棄しない
+
+        World stageWorld = stage.getWorld();
 
         Bukkit.getOnlinePlayers()
                 .stream()
-                .filter(p -> p.getLocation().getWorld().equals(this.stage))
+                .filter(p -> p.getLocation().getWorld().equals(stageWorld))
                 .forEach(p -> p.teleport(Bukkit.getWorlds().get(0).getSpawnLocation()));
 
-        Bukkit.unloadWorld(this.stage, false);
+        Bukkit.unloadWorld(stageWorld, false);
 
-        Path worldPath = this.stage.getWorldFolder().toPath();
+        Path worldPath = stageWorld.getWorldFolder().toPath();
         this.deleteDirectory(worldPath);
-        getMocker().removeWorld(this.stage.getKey());
+        getMocker().removeWorld(stageWorld.getKey());
 
-        this.stage = null;
+        this.stages.remove(stage);
+    }
+
+    @Override
+    public void shutdown()
+    {
+        if (this.destroyed)
+            return;
+
+        this.destroyed = true;
+
+        new ArrayList<>(this.stages)
+                .forEach(stage ->
+                {
+                    try
+                    {
+                        this.destroyStage(stage);
+                    }
+                    catch (StageAlreadyDestroyedException e)
+                    {
+                        this.registry.getExceptionHandler().report(e);
+                    }
+                });
     }
 
     private void deleteDirectory(@NotNull Path path)
@@ -160,16 +185,5 @@ public class StageManagerImpl implements StageManager
         {
             this.registry.getExceptionHandler().report(e);
         }
-    }
-
-    @Override
-    public boolean isStageCreated()
-    {
-        return this.stage != null;
-    }
-
-    public boolean hasCopied()
-    {
-        return this.hasCopied;
     }
 }

@@ -137,7 +137,26 @@ public interface Actor
      */
     void damageItem(@NotNull EquipmentSlot slot, int damage);
 
+    /**
+     * クリエイティブモードでアイテムを与えます。
+     *
+     * @param slot スロット
+     * @param item アイテム
+     */
     void giveCreativeItem(int slot, @NotNull ItemStack item);
+
+    /**
+     * インベントリをクリックします。
+     *
+     * @param type        クリックタイプ
+     * @param slot        クリックするスロット
+     * @param button      クリックするボタン
+     * @param clickedItem クリックするアイテム
+     */
+    void clickInventory(@NotNull ClickType type,
+                        int slot,
+                        int button,
+                        @Nullable ItemStack clickedItem);
 
     /**
      * Bukkit の {@link Player} を取得します。
@@ -162,9 +181,4 @@ public interface Actor
      */
     @NotNull
     String getName();
-
-    void clickInventory(@NotNull ClickType type,
-                        int slot,
-                        int button,
-                        @Nullable ItemStack clickedItem);
 }

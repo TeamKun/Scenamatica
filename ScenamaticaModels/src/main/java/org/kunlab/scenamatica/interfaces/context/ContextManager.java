@@ -1,8 +1,10 @@
 package org.kunlab.scenamatica.interfaces.context;
 
 import org.jetbrains.annotations.NotNull;
+import org.kunlab.scenamatica.exceptions.context.EntityCreationException;
+import org.kunlab.scenamatica.exceptions.context.actor.ActorCreationException;
+import org.kunlab.scenamatica.exceptions.context.stage.StageAlreadyDestroyedException;
 import org.kunlab.scenamatica.exceptions.context.stage.StageCreateFailedException;
-import org.kunlab.scenamatica.exceptions.context.stage.StageNotCreatedException;
 import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileStructure;
 
 import java.util.UUID;
@@ -18,12 +20,15 @@ public interface ContextManager
      * @param scenario シナリオファイル
      * @return 成功した場合は true
      */
-    Context prepareContext(@NotNull ScenarioFileStructure scenario, @NotNull UUID testID) throws StageCreateFailedException, StageNotCreatedException;
+    Context prepareContext(@NotNull ScenarioFileStructure scenario, @NotNull UUID testID)
+            throws StageCreateFailedException, StageAlreadyDestroyedException, ActorCreationException, EntityCreationException;
 
     /**
      * 環境を破棄します。
+     *
+     * @param context 環境
      */
-    void destroyContext();
+    void destroyContext(Context context);
 
     /**
      * 環境を破棄します。
