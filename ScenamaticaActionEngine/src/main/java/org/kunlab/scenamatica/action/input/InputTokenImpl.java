@@ -41,9 +41,15 @@ public class InputTokenImpl<T> implements InputToken<T>
         this.validators = new EnumMap<>(ScenarioType.class);
     }
 
-    static <T> InputToken<T> of(String name, Class<T> clazz, Traverser<?, T> traverser)
+    public static <T> InputToken<T> of(String name, Class<T> clazz, Traverser<?, T> traverser)
     {
         return new InputTokenImpl<>(name, clazz, traverser);
+    }
+
+    public static <T> InputToken<T> of(String name, Class<? super T> clazz)
+    {
+        // noinspection unchecked,rawtypes
+        return new InputTokenImpl<>(name, clazz, InputTraverser.casted());
     }
 
     @Override

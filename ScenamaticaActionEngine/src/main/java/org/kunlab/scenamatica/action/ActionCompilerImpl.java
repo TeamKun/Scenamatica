@@ -19,6 +19,7 @@ import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.action.ActionStructure;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
@@ -54,7 +55,7 @@ public class ActionCompilerImpl implements ActionCompiler
         if (arguments == null)
             throw new IllegalArgumentException("NegateAction requires an argument.");
 
-        String actionName = MapUtils.getOrNull(arguments, NegateAction.Argument.KEY_ACTION);
+        String actionName = MapUtils.getOrNull(arguments, NegateAction.KEY_IN_ACTION);
         if (actionName == null)
             throw new IllegalArgumentException("NegateAction requires an action name.");
 
@@ -66,23 +67,23 @@ public class ActionCompilerImpl implements ActionCompiler
         else if (actionToBeNegated instanceof NegateAction)
             throw new IllegalArgumentException("Cannot nes a negate action.");
 
-        InputBoard argument = null;
-        if (arguments.containsKey(NegateAction.Argument.KEY_ARGUMENTS))
-        {
-            // arguments.get(NegateAction.Argument.KEY_ARGUMENTS)
+        InputBoard argument;
+        if (arguments.containsKey(NegateAction.KEY_IN_ARGUMENTS))
             argument = actionToBeNegated.getInputBoard(ScenarioType.CONDITION_REQUIRE);
-        }
+        else
+            argument = null;
 
-        //noinspection unchecked
-        NegateAction.Argument notArgument = new NegateAction.Argument(
-                (Requireable) actionToBeNegated,
-                argument
-        );
+        InputBoard negateArgument = action.getInputBoard(ScenarioType.CONDITION_REQUIRE);
+        negateArgument.compile(new HashMap<String, Object>()
+        {{
+            this.put(NegateAction.KEY_IN_ACTION, actionToBeNegated);
+            this.put(NegateAction.KEY_IN_ARGUMENTS, argument);
+        }});
 
         return new CompiledActionImpl(
                 engine,
                 action,
-                notArgument,
+                negateArgument,
                 reportErrorTo,
                 onSuccess,
                 structure

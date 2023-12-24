@@ -1,25 +1,24 @@
 package org.kunlab.scenamatica.action.actions.scenamatica;
 
-import lombok.EqualsAndHashCode;
-import lombok.Value;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.kunlab.scenamatica.action.actions.AbstractActionArgument;
-import org.kunlab.scenamatica.interfaces.action.ActionArgument;
+import org.kunlab.scenamatica.action.input.InputBoardImpl;
+import org.kunlab.scenamatica.action.input.InputTokenImpl;
+import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
+import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
-import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
-
-import java.util.Map;
-import java.util.Objects;
 
 // 特別：NegateActionは、 Scenamatica ネイティブなため, ほとんどの処理は Engine や InternalCompiler で行われる。（密結合）
-public class NegateAction<T extends ActionArgument> extends AbstractScenamaticaAction<NegateAction.Argument<T>>
-        implements Requireable<NegateAction.Argument<T>>
+public class NegateAction extends AbstractScenamaticaAction
+        implements Requireable
 {
-    // ここを変える場合は, ScenarioEngine の ActionCompiler もかえること。
     public static final String KEY_ACTION_NAME = "negate";
+    public static final String KEY_IN_ACTION = "action";
+    public static final String KEY_IN_ARGUMENTS = "with";
+
+    public static final InputToken<Requireable> IN_ACTION = InputTokenImpl.of(KEY_IN_ACTION, Requireable.class);
+    public static final InputToken<InputBoard> IN_ARGUMENTS = InputTokenImpl.of(KEY_IN_ARGUMENTS, InputBoard.class);
 
     @Override
     public String getName()
@@ -28,62 +27,19 @@ public class NegateAction<T extends ActionArgument> extends AbstractScenamaticaA
     }
 
     @Override
-    public Argument<T> deserializeArgument(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
+    public InputBoard getInputBoard(ScenarioType type)
     {
-        throw new UnsupportedOperationException();
+        return new InputBoardImpl(
+                type,
+                IN_ACTION,
+                IN_ARGUMENTS
+        );
     }
 
     @Override
-    public boolean isConditionFulfilled(@NotNull NegateAction.Argument<T> argument, @NotNull ScenarioEngine engine)
+    public boolean isConditionFulfilled(@NotNull InputBoard argument, @NotNull ScenarioEngine engine)
     {
-        assert argument != null;
-        // noinspection rawtypes  呼び出しの型に齟齬が起きる。
-        Requireable requireable = argument.getAction();
-
-        // noinspection unchecked  呼び出しの型に齟齬が起きる。
-        return !requireable.isConditionFulfilled(argument.getArgument(), engine);
-    }
-
-    @Value
-    @EqualsAndHashCode(callSuper = true)
-    public static class Argument<A extends ActionArgument> extends AbstractActionArgument
-    {
-        public static final String KEY_ACTION = "action";
-        public static final String KEY_ARGUMENTS = "with";
-
-        @NotNull
-        Requireable<A> action;
-        @Nullable
-        A argument;
-
-        @Override
-        public boolean isSame(TriggerArgument argument)
-        {
-            if (!(argument instanceof Argument))
-                return false;
-
-            try
-            {
-                // noinspection unchecked
-                Argument<A> arg = (Argument<A>) argument;
-
-                return Objects.equals(this.action, arg.action);
-            }
-            catch (ClassCastException e)
-            {
-                return false;
-            }
-        }
-
-        // TODO: Create validation for argument
-
-        @Override
-        public String getArgumentString()
-        {
-            return buildArgumentString(
-                    KEY_ACTION, this.action.getClass().getSimpleName(),
-                    KEY_ARGUMENTS, this.argument == null ? null: this.argument.getArgumentString()
-            );
-        }
+        Requireable requireable = argument.get(IN_ACTION);
+        return !requireable.isConditionFulfilled(argument.get(IN_ARGUMENTS), engine);
     }
 }
