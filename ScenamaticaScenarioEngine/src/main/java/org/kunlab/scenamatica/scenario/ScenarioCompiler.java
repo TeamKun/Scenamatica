@@ -226,9 +226,6 @@ public class ScenarioCompiler
             );
 
             scenario.getType().validatePerformableActionType(action.getExecutor().getClass());
-            if (action.getArgument() != null)
-                action.getArgument().validate();
-
 
             return new CompiledScenarioActionImpl<>(
                     scenario,

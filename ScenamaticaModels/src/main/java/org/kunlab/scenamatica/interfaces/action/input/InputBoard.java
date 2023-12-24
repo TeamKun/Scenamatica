@@ -27,6 +27,13 @@ public interface InputBoard extends TriggerArgument
     void resolveReferences(@NotNull SessionVariableHolder variables);
 
     /**
+     * 未解決の参照があるかどうかを返します。
+     *
+     * @return 未解決の参照があるかどうか
+     */
+    boolean hasUnresolvedReferences();
+
+    /**
      * トークンが含まれているかどうかを返します。
      *
      * @param token トークン

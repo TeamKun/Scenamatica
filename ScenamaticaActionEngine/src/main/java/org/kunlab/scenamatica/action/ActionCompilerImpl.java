@@ -116,6 +116,9 @@ public class ActionCompilerImpl implements ActionCompiler
         InputBoard argument = action.getInputBoard(ScenarioType.ACTION_EXECUTE);
         argument.compile(structure.getArguments());
 
+        if (!argument.hasUnresolvedReferences())
+            argument.validate();
+
         return new CompiledActionImpl(engine, action, argument, reportErrorTo, onSuccess, structure);
     }
 

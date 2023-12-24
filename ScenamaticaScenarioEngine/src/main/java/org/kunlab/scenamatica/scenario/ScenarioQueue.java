@@ -174,7 +174,7 @@ class ScenarioQueue
             if (next.getAttemptCount() > 1)
                 this.notifyRetryStart(next);
 
-            ScenarioResult result = next.run();  // onStart() => run => onFinished => callback 処理までやる。
+            ScenarioResult result = next.run(ScenarioQueue.this.current.getVariables());  // onStart() => run => onFinished => callback 処理までやる。
 
             if (result.getScenarioResultCause().isFailure() && next.getMaxAttemptCount() > 1)
                 this.tryQueueRetry(next);

@@ -21,12 +21,15 @@ public class InputBoardImpl implements InputBoard
     private final List<InputToken<?>[]> oneOf;
     private final Consumer<? super InputBoard> validator;
 
+    private boolean validated;
+
     public InputBoardImpl(@NotNull ScenarioType type, Consumer<? super InputBoard> validator, @NotNull InputToken<?>... tokens)
     {
         this.type = type;
         this.validator = validator;
         this.values = convertValueHolder(tokens);
         this.oneOf = new ArrayList<>();
+        this.validated = false;
     }
 
     public InputBoardImpl(@NotNull ScenarioType type, @NotNull InputToken<?>... tokens)
@@ -100,6 +103,7 @@ public class InputBoardImpl implements InputBoard
     @Override
     public void compile(Map<String, Object> map)
     {
+        this.validated = false;
         for (InputValueHolder<?> value : this.values)
         {
             Object obj = map.get(value.getToken().getName());
@@ -127,10 +131,23 @@ public class InputBoardImpl implements InputBoard
     }
 
     @Override
+    public boolean hasUnresolvedReferences()
+    {
+        for (InputValueHolder<?> value : this.values)
+        {
+            if (!value.isPresent())
+                return true;
+        }
+        return false;
+    }
+
+    @Override
     public void validate()
     {
         if (this.validator != null)
             this.validator.accept(this);
+
+        this.validated = true;
     }
 
     @Override

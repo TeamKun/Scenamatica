@@ -100,4 +100,11 @@ public interface ScenarioSession
      * @throws IllegalStateException セッションが実行中の場合
      */
     long getFinishedAt();
+
+    /**
+     * セッションの変数を取得します。
+     *
+     * @return 変数
+     */
+    SessionVariableHolder getVariables();
 }

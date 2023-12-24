@@ -9,6 +9,7 @@ import org.kunlab.scenamatica.interfaces.scenario.QueuedScenario;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioResult;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioSession;
+import org.kunlab.scenamatica.interfaces.scenario.SessionVariableHolder;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerStructure;
 
 import java.util.ArrayDeque;
@@ -24,6 +25,7 @@ public class ScenarioSessionImpl implements ScenarioSession
     private final ScenarioManagerImpl manager;
     private final long createdAt;
     private final List<QueuedScenario> scenarios;
+    private final SessionVariableHolder variables;
 
     private ArrayDeque<QueuedScenario> queue;
     private long startedAt;
@@ -35,6 +37,7 @@ public class ScenarioSessionImpl implements ScenarioSession
         this.manager = manager;
         this.createdAt = System.currentTimeMillis();
         this.scenarios = new LinkedList<>(scenarios);  // 内部で変更するため, 不変リストとかを入れないように。
+        this.variables = new SessionVariableHolderImpl();
         this.sort();
     }
 
