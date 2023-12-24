@@ -6,6 +6,7 @@ import lombok.SneakyThrows;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.enums.TriggerType;
 import org.kunlab.scenamatica.enums.WatchType;
 import org.kunlab.scenamatica.exceptions.scenario.ScenarioException;
@@ -137,9 +138,10 @@ public class TriggerManagerImpl implements TriggerManager
 
         ActionStructure argument = (ActionStructure) triggerArgument;
 
-        CompiledAction<?> action = this.actionManager.getCompiler().compile(
+        CompiledAction action = this.actionManager.getCompiler().compile(
                 this.registry,
                 engine,
+                ScenarioType.ACTION_EXPECT,
                 argument,
                 null,  /* reportErrorTo */
                 null  /* onSuccess */

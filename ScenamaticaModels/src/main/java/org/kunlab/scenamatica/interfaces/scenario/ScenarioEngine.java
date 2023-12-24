@@ -141,7 +141,7 @@ public interface ScenarioEngine
      *
      * @return コンパイルされたシナリオ
      */
-    CompiledScenarioAction<?> getCurrentScenario();
+    CompiledScenarioAction getCurrentScenario();
 
     /**
      * シナリオの結果を受け取るオブジェクトを取得します。
@@ -155,7 +155,7 @@ public interface ScenarioEngine
      *
      * @return コンパイルされたシナリオのアクション
      */
-    List<? extends CompiledScenarioAction<?>> getActions();
+    List<? extends CompiledScenarioAction> getActions();
 
     /**
      * コンパイルされたトリガのアクションを取得します。

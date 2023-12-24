@@ -24,7 +24,7 @@ public interface TestReporter
      * @param engine エンジン
      * @param action スキップの要因となったアクション
      */
-    void onTestSkipped(@NotNull ScenarioEngine engine, @NotNull CompiledScenarioAction<?> action);
+    void onTestSkipped(@NotNull ScenarioEngine engine, @NotNull CompiledScenarioAction action);
 
     /**
      * シナリオのアクションの開始をレポートします。
@@ -32,7 +32,7 @@ public interface TestReporter
      * @param engine エンジン
      * @param action アクション
      */
-    void onActionStart(@NotNull ScenarioEngine engine, @NotNull CompiledScenarioAction<?> action);
+    void onActionStart(@NotNull ScenarioEngine engine, @NotNull CompiledScenarioAction action);
 
     /**
      * シナリオのアクションが正常に実行されたことをレポートします。
@@ -40,7 +40,7 @@ public interface TestReporter
      * @param engine エンジン
      * @param action アクション
      */
-    void onActionSuccess(@NotNull ScenarioEngine engine, @NotNull CompiledAction<?> action);
+    void onActionSuccess(@NotNull ScenarioEngine engine, @NotNull CompiledAction action);
 
     /**
      * 監視していたアクションが正常に実行されたことをレポートします。
@@ -48,7 +48,7 @@ public interface TestReporter
      * @param engine エンジン
      * @param action アクション
      */
-    void onWatchingActionExecuted(@NotNull ScenarioEngine engine, @NotNull CompiledAction<?> action);
+    void onWatchingActionExecuted(@NotNull ScenarioEngine engine, @NotNull CompiledAction action);
 
     /**
      * 監視していたアクションがジャンプして実行されたことをレポートします。
@@ -57,7 +57,7 @@ public interface TestReporter
      * @param action   アクション
      * @param expected 期待されるアクション
      */
-    void onActionJumped(@NotNull ScenarioEngine engine, @NotNull CompiledAction<?> action, @NotNull CompiledAction<?> expected);
+    void onActionJumped(@NotNull ScenarioEngine engine, @NotNull CompiledAction action, @NotNull CompiledAction expected);
 
     /**
      * アクションの実行に失敗したことをレポートします。
@@ -65,7 +65,7 @@ public interface TestReporter
      * @param engine エンジン
      * @param action アクション
      */
-    void onActionExecuteFailed(@NotNull ScenarioEngine engine, @NotNull CompiledAction<?> action, @NotNull Throwable error);
+    void onActionExecuteFailed(@NotNull ScenarioEngine engine, @NotNull CompiledAction action, @NotNull Throwable error);
 
     /**
      * コンディションのチェックが成功したことをレポートします。
@@ -73,7 +73,7 @@ public interface TestReporter
      * @param engine エンジン
      * @param action アクション
      */
-    void onConditionCheckSuccess(@NotNull ScenarioEngine engine, @NotNull CompiledScenarioAction<?> action);
+    void onConditionCheckSuccess(@NotNull ScenarioEngine engine, @NotNull CompiledScenarioAction action);
 
     /**
      * コンディションのチェックが失敗したことをレポートします。
@@ -81,7 +81,7 @@ public interface TestReporter
      * @param engine エンジン
      * @param action アクション
      */
-    void onConditionCheckFailed(@NotNull ScenarioEngine engine, @NotNull CompiledScenarioAction<?> action);
+    void onConditionCheckFailed(@NotNull ScenarioEngine engine, @NotNull CompiledScenarioAction action);
 
     /**
      * テストが終了したことをレポートします。

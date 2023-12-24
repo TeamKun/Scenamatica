@@ -20,7 +20,7 @@ public interface ScenarioActionListener
      * @param error  エラー
      * @param <A>    アクションの引数
      */
-    <A extends ActionArgument> void onActionError(@NotNull CompiledAction<A> action, @NotNull Throwable error);
+    <A extends ActionArgument> void onActionError(@NotNull CompiledAction action, @NotNull Throwable error);
 
     /**
      * アクションが実行されたときに呼び出されます。
@@ -28,7 +28,7 @@ public interface ScenarioActionListener
      * @param action 実行されたアクション
      * @param <A>    アクションの引数
      */
-    <A extends ActionArgument> void onActionExecuted(@NotNull CompiledAction<A> action);
+    <A extends ActionArgument> void onActionExecuted(@NotNull CompiledAction action);
 
     /**
      * 監視対象のアクションがプラグインによって実行されたときに呼び出されます。
@@ -37,7 +37,7 @@ public interface ScenarioActionListener
      * @param event 発生したイベント
      * @param <A>   アクションの引数
      */
-    <A extends ActionArgument> void onActionFired(@NotNull WatchingEntry<A> entry, @NotNull Event event);
+    <A extends ActionArgument> void onActionFired(@NotNull WatchingEntry entry, @NotNull Event event);
 
     /**
      * 実行を期待するアクションを取得します。
@@ -45,12 +45,12 @@ public interface ScenarioActionListener
      * @return 実行を期待するアクション
      */
     @Nullable
-    CompiledScenarioAction<?> getWaitingFor();
+    CompiledScenarioAction getWaitingFor();
 
     /**
      * 実行を期待するアクションを設定します。
      *
      * @param waitingFor 実行を期待するアクション
      */
-    void setWaitingFor(@Nullable CompiledScenarioAction<?> waitingFor);
+    void setWaitingFor(@Nullable CompiledScenarioAction waitingFor);
 }

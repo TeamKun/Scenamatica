@@ -22,11 +22,11 @@ public interface WatcherManager
      * @param type     監視の種類
      * @return 監視の登録情報
      */
-    List<WatchingEntry<?>> registerWatchers(@NotNull Plugin plugin,
-                                            @NotNull ScenarioEngine engine,
-                                            @NotNull ScenarioFileStructure scenario,
-                                            @NotNull List<? extends CompiledAction<?>> watchers,
-                                            @NotNull WatchType type);
+    List<WatchingEntry> registerWatchers(@NotNull Plugin plugin,
+                                         @NotNull ScenarioEngine engine,
+                                         @NotNull ScenarioFileStructure scenario,
+                                         @NotNull List<? extends CompiledAction> watchers,
+                                         @NotNull WatchType type);
 
     /**
      * 監視を登録します。
@@ -36,11 +36,11 @@ public interface WatcherManager
      * @param type    監視の種類
      * @return 監視の登録情報
      */
-    <A extends ActionArgument> WatchingEntry<A> registerWatcher(@NotNull ScenarioEngine engine,
-                                                                @NotNull CompiledAction<A> watcher,
-                                                                @NotNull ScenarioFileStructure scenario,
-                                                                @NotNull Plugin plugin,
-                                                                @NotNull WatchType type);
+    WatchingEntry registerWatcher(@NotNull ScenarioEngine engine,
+                                  @NotNull CompiledAction watcher,
+                                  @NotNull ScenarioFileStructure scenario,
+                                  @NotNull Plugin plugin,
+                                  @NotNull WatchType type);
 
     /**
      * プラグインの全ての監視を解除します。
@@ -62,10 +62,10 @@ public interface WatcherManager
      *
      * @param entry 監視を解除する登録情報
      */
-    void unregisterWatcher(@NotNull WatchingEntry<?> entry);
+    void unregisterWatcher(@NotNull WatchingEntry entry);
 
     /**
      * 動作が実行されたときに呼び出されるメソッドです。
      */
-    void onActionFired(@NotNull WatchingEntry<?> entry, @NotNull Event event);
+    void onActionFired(@NotNull WatchingEntry entry, @NotNull Event event);
 }

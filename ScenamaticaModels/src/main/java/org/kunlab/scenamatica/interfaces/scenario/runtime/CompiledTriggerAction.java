@@ -25,7 +25,7 @@ public interface CompiledTriggerAction
      * @return 実行前に実行するシナリオ
      */
     @NotNull
-    List<CompiledScenarioAction<?>> getBeforeActions();
+    List<CompiledScenarioAction> getBeforeActions();
 
     /**
      * 本シナリオの実行後に実行するシナリオを取得します。
@@ -33,7 +33,7 @@ public interface CompiledTriggerAction
      * @return 実行後に実行するシナリオ
      */
     @NotNull
-    List<CompiledScenarioAction<?>> getAfterActions();
+    List<CompiledScenarioAction> getAfterActions();
 
     /**
      * 本シナリオの実行条件を取得します。
@@ -41,5 +41,5 @@ public interface CompiledTriggerAction
      * @return 実行条件
      */
     @Nullable
-    CompiledScenarioAction<?> getRunIf();
+    CompiledScenarioAction getRunIf();
 }

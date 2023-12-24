@@ -24,7 +24,7 @@ public class ScenarioActionListenerImpl implements ScenarioActionListener
     @Getter
     @Setter
     @Nullable
-    private CompiledScenarioAction<?> waitingFor;
+    private CompiledScenarioAction waitingFor;
 
     public ScenarioActionListenerImpl(ScenarioEngineImpl engine, ScenamaticaRegistry registry)
     {
@@ -33,24 +33,24 @@ public class ScenarioActionListenerImpl implements ScenarioActionListener
     }
 
     @Override
-    public <A extends ActionArgument> void onActionError(@NotNull CompiledAction<A> action, @NotNull Throwable error)
+    public <A extends ActionArgument> void onActionError(@NotNull CompiledAction action, @NotNull Throwable error)
     {
         this.reporter.onActionExecuteFailed(this.engine, action, error);
         this.setResult(ScenarioResultCause.ACTION_EXECUTION_FAILED, action.getExecutor());
     }
 
     @Override
-    public <A extends ActionArgument> void onActionExecuted(@NotNull CompiledAction<A> action)
+    public <A extends ActionArgument> void onActionExecuted(@NotNull CompiledAction action)
     {
         this.reporter.onActionSuccess(this.engine, action);
         this.setPassed();
     }
 
     @Override
-    public <A extends ActionArgument> void onActionFired(@NotNull WatchingEntry<A> entry, @NotNull Event event)
+    public <A extends ActionArgument> void onActionFired(@NotNull WatchingEntry entry, @NotNull Event event)
     {
-        CompiledAction<A> action = entry.getAction();
-        Action<A> executor = action.getExecutor();
+        CompiledAction action = entry.getAction();
+        Action executor = action.getExecutor();
 
         if (this.waitingFor == null)
             return;
@@ -71,7 +71,7 @@ public class ScenarioActionListenerImpl implements ScenarioActionListener
         }
     }
 
-    private void setResult(ScenarioResultCause cause, @Nullable Action<?> failedAction)
+    private void setResult(ScenarioResultCause cause, @Nullable Action failedAction)
     {
         this.engine.getDeliverer().setResult(new ScenarioResultImpl(
                 this.engine.getExecutor().getScenario(),

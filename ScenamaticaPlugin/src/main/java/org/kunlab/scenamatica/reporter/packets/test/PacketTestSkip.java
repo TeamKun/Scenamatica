@@ -14,9 +14,9 @@ public class PacketTestSkip extends AbstractTestPacket
     private final ScenarioEngine engine;
 
     @NotNull
-    private final CompiledScenarioAction<?> action;
+    private final CompiledScenarioAction action;
 
-    public PacketTestSkip(@NotNull ScenarioEngine engine, @NotNull CompiledScenarioAction<?> action)
+    public PacketTestSkip(@NotNull ScenarioEngine engine, @NotNull CompiledScenarioAction action)
     {
         super(TYPE, engine.getTestID());
         this.engine = engine;

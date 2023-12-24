@@ -58,7 +58,7 @@ public class ScenarioCompiler
         );
     }
 
-    public CompiledScenarioAction<?> compileRunIf(ActionStructure runIf)
+    public CompiledScenarioAction compileRunIf(ActionStructure runIf)
     {
         this.logCompiling(++this.compiled, this.compileNeeded, "RUN_IF");
 
@@ -71,7 +71,7 @@ public class ScenarioCompiler
         );
     }
 
-    public List<CompiledScenarioAction<?>> compileMain(List<? extends ScenarioStructure> scenarios)
+    public List<CompiledScenarioAction> compileMain(List<? extends ScenarioStructure> scenarios)
     {
         this.logCompilingMain(++this.compiled, this.compileNeeded);
         return InternalCompiler.compileActions(
@@ -90,8 +90,8 @@ public class ScenarioCompiler
         List<CompiledTriggerAction> triggerActions = new ArrayList<>();
         for (TriggerStructure trigger : triggers)
         {
-            List<CompiledScenarioAction<?>> beforeActions;
-            List<CompiledScenarioAction<?>> afterActions;
+            List<CompiledScenarioAction> beforeActions;
+            List<CompiledScenarioAction> afterActions;
 
             TriggerType triggerType = trigger.getType();
             if (!trigger.getBeforeThat().isEmpty())
@@ -110,7 +110,7 @@ public class ScenarioCompiler
             else
                 afterActions = new ArrayList<>();
 
-            CompiledScenarioAction<?> runIf = null;
+            CompiledScenarioAction runIf = null;
             if (trigger.getRunIf() != null)
                 runIf = InternalCompiler.compileConditionAction(
                         this.registry,

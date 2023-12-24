@@ -13,7 +13,7 @@ import org.kunlab.scenamatica.interfaces.action.ActionArgument;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class AbstractAction<A extends ActionArgument> implements Action<A>
+public abstract class AbstractAction<A extends ActionArgument> implements Action
 {
     public static List<? extends AbstractAction<?>> getActions()
     {

@@ -7,7 +7,6 @@ import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.enums.ScenarioResultCause;
 import org.kunlab.scenamatica.enums.ScenarioState;
 import org.kunlab.scenamatica.interfaces.action.Action;
-import org.kunlab.scenamatica.interfaces.action.ActionArgument;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioResult;
 import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileStructure;
 
@@ -30,7 +29,7 @@ public class ScenarioResultImpl implements ScenarioResult
     int attemptOf;
 
     @Nullable
-    Action<? extends ActionArgument> failedAction;
+    Action failedAction;
 
     public ScenarioResultImpl(@NotNull ScenarioFileStructure scenario,
                               @NotNull UUID testID,

@@ -8,7 +8,7 @@ public class PacketActionExecFailed extends AbstractActionPacket
 {
     private static final String TYPE = "exec_failed";
 
-    public PacketActionExecFailed(@NotNull ScenarioEngine scenario, @NotNull CompiledAction<?> action)
+    public PacketActionExecFailed(@NotNull ScenarioEngine scenario, @NotNull CompiledAction action)
     {
         super(TYPE, scenario.getTestID(), action);
     }

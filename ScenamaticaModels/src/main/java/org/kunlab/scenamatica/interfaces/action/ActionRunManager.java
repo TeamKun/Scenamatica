@@ -27,9 +27,8 @@ public interface ActionRunManager
      * 動作の実行をキューに追加します。
      *
      * @param action 動作
-     * @param <A>    動作の引数の型
      */
-    <A extends ActionArgument> void queueExecute(@NotNull CompiledAction<A> action);
+    void queueExecute(@NotNull CompiledAction action);
 
     /**
      * 動作の監視を追加します。
@@ -37,13 +36,12 @@ public interface ActionRunManager
      * @param plugin    監視するプラグイン
      * @param action    監視する動作
      * @param watchType 監視の種類です。
-     * @param <A>       動作の引数の型
      */
-    <A extends ActionArgument> void queueWatch(@NotNull Plugin plugin,
-                                               @NotNull ScenarioEngine engine,
-                                               @NotNull ScenarioFileStructure scenario,
-                                               @NotNull CompiledAction<A> action,
-                                               @NotNull WatchType watchType);
+    void queueWatch(@NotNull Plugin plugin,
+                    @NotNull ScenarioEngine engine,
+                    @NotNull ScenarioFileStructure scenario,
+                    @NotNull CompiledAction action,
+                    @NotNull WatchType watchType);
 
     /**
      * シャットダウンします。

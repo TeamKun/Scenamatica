@@ -43,12 +43,12 @@ public enum ScenarioType
         return null;
     }
 
-    public boolean canPerformActionInType(@NotNull @SuppressWarnings("rawtypes") Class<? extends Action> clazz)
+    public boolean canPerformActionInType(@NotNull Class<? extends Action> clazz)
     {
         return this.markerInterface.isAssignableFrom(clazz);
     }
 
-    public void validatePerformableActionType(@NotNull @SuppressWarnings("rawtypes") Class<? extends Action> clazz)
+    public void validatePerformableActionType(@NotNull Class<? extends Action> clazz)
     {
         if (!this.canPerformActionInType(clazz))
             throw new IllegalArgumentException("Action type " + clazz.getName() + " cannot be performed in scenario type " + this.name());

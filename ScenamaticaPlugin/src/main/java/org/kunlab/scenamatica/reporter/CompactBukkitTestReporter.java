@@ -18,25 +18,25 @@ public class CompactBukkitTestReporter extends BukkitTestReporter
     }
 
     @Override
-    public void onActionStart(@NotNull ScenarioEngine engine, @NotNull CompiledScenarioAction<?> action)
+    public void onActionStart(@NotNull ScenarioEngine engine, @NotNull CompiledScenarioAction action)
     {
         // 握りつぶす
     }
 
     @Override
-    public void onActionSuccess(@NotNull ScenarioEngine engine, @NotNull CompiledAction<?> action)
+    public void onActionSuccess(@NotNull ScenarioEngine engine, @NotNull CompiledAction action)
     {
         // 握りつぶす
     }
 
     @Override
-    public void onWatchingActionExecuted(@NotNull ScenarioEngine engine, @NotNull CompiledAction<?> action)
+    public void onWatchingActionExecuted(@NotNull ScenarioEngine engine, @NotNull CompiledAction action)
     {
         // 握りつぶす
     }
 
     @Override
-    public void onConditionCheckSuccess(@NotNull ScenarioEngine engine, @NotNull CompiledScenarioAction<?> action)
+    public void onConditionCheckSuccess(@NotNull ScenarioEngine engine, @NotNull CompiledScenarioAction action)
     {
         // 握りつぶす
     }

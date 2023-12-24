@@ -15,9 +15,9 @@ public abstract class AbstractActionPacket extends AbstractTestPacket
     private static final String GENRE = "action";
 
     @NotNull
-    private final CompiledAction<?> action;
+    private final CompiledAction action;
 
-    public AbstractActionPacket(@NotNull String type, @NotNull UUID testID, @NotNull CompiledAction<?> action)
+    public AbstractActionPacket(@NotNull String type, @NotNull UUID testID, @NotNull CompiledAction action)
 
     {
         super(GENRE, type, testID);
@@ -33,7 +33,7 @@ public abstract class AbstractActionPacket extends AbstractTestPacket
         return result;
     }
 
-    protected Map<String, Object> serializeAction(@NotNull CompiledAction<?> action)
+    protected Map<String, Object> serializeAction(@NotNull CompiledAction action)
     {
         Map<String, Object> result = super.serialize();
 

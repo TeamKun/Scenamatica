@@ -12,9 +12,9 @@ public class PacketActionJumped extends AbstractActionPacket
 
     private static final String TYPE = "jumped";
 
-    private final CompiledAction<?> expected;
+    private final CompiledAction expected;
 
-    public PacketActionJumped(@NotNull ScenarioEngine scenario, @NotNull CompiledAction<?> action, @NotNull CompiledAction<?> expected)
+    public PacketActionJumped(@NotNull ScenarioEngine scenario, @NotNull CompiledAction action, @NotNull CompiledAction expected)
     {
         super(TYPE, scenario.getTestID(), action);
         this.expected = expected;

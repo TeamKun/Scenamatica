@@ -13,7 +13,7 @@ import java.util.List;
 /**
  * 監視の登録情報を表します。
  */
-public interface WatchingEntry<A extends ActionArgument>
+public interface WatchingEntry
 {
     /**
      * 監視を管理するマネージャーを取得します。
@@ -46,7 +46,7 @@ public interface WatchingEntry<A extends ActionArgument>
      *
      * @return 監視する動作
      */
-    CompiledAction<A> getAction();
+    CompiledAction getAction();
 
     /**
      * 監視の種類を取得します。

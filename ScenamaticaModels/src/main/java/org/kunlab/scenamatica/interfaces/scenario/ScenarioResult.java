@@ -73,5 +73,5 @@ public interface ScenarioResult
      * @return テストに失敗した動作
      */
     @Nullable
-    Action<?> getFailedAction();
+    Action getFailedAction();
 }

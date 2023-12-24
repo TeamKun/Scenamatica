@@ -1,14 +1,12 @@
 package org.kunlab.scenamatica.interfaces.action;
 
-import org.jetbrains.annotations.NotNull;
-import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
-
-import java.util.Map;
+import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 
 /**
  * 動作のインタフェースです。
  */
-public interface Action<A extends ActionArgument>
+public interface Action
 {
     /**
      * 動作のシリアライズ名を返します。
@@ -18,11 +16,10 @@ public interface Action<A extends ActionArgument>
     String getName();
 
     /**
-     * 引数をデシリアライズします。
+     * 入力値の構造を返します。
      *
-     * @param map        デシリアライズするマップ
-     * @param serializer シリアライザ
-     * @return デシリアライズされた引数
+     * @param type シナリオの種類
+     * @return 入力値の構造
      */
-    A deserializeArgument(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer);
+    InputBoard getInputBoard(ScenarioType type);
 }

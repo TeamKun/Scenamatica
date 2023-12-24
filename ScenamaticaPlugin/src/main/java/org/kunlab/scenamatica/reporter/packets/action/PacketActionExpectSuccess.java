@@ -8,7 +8,7 @@ public class PacketActionExpectSuccess extends AbstractActionPacket
 {
     private static final String TYPE = "expect_success";
 
-    public PacketActionExpectSuccess(@NotNull ScenarioEngine scenario, @NotNull CompiledAction<?> action)
+    public PacketActionExpectSuccess(@NotNull ScenarioEngine scenario, @NotNull CompiledAction action)
     {
         super(TYPE, scenario.getTestID(), action);
     }

@@ -55,11 +55,11 @@ public class BukkitTestReporter extends AbstractTestReporter
         return new SimpleDateFormat("HH:mm:ss").format(new Date(time));
     }
 
-    private static String getConditionString(@NotNull CompiledScenarioAction<?> action)
+    private static String getConditionString(@NotNull CompiledScenarioAction action)
     {
         String condition = action.getAction().getExecutor().getClass().getSimpleName();
         if (action.getAction().getArgument() != null)
-            condition += " - " + action.getAction().getArgument().getArgumentString();
+            condition += " - " + action.getAction().getArgument().getValuesString();
 
         return condition;
     }
@@ -99,7 +99,7 @@ public class BukkitTestReporter extends AbstractTestReporter
     }
 
     @Override
-    public void onTestSkipped(@NotNull ScenarioEngine engine, @NotNull CompiledScenarioAction<?> action)
+    public void onTestSkipped(@NotNull ScenarioEngine engine, @NotNull CompiledScenarioAction action)
     {
         ScenarioFileStructure scenario = engine.getScenario();
 
@@ -111,7 +111,7 @@ public class BukkitTestReporter extends AbstractTestReporter
     }
 
     @Override
-    public void onActionStart(@NotNull ScenarioEngine engine, @NotNull CompiledScenarioAction<?> action)
+    public void onActionStart(@NotNull ScenarioEngine engine, @NotNull CompiledScenarioAction action)
     {
         ScenarioFileStructure scenario = engine.getScenario();
 
@@ -138,7 +138,7 @@ public class BukkitTestReporter extends AbstractTestReporter
     }
 
     @Override
-    public void onActionSuccess(@NotNull ScenarioEngine engine, @NotNull CompiledAction<?> action)
+    public void onActionSuccess(@NotNull ScenarioEngine engine, @NotNull CompiledAction action)
     {
         ScenarioFileStructure scenario = engine.getScenario();
 
@@ -149,7 +149,7 @@ public class BukkitTestReporter extends AbstractTestReporter
     }
 
     @Override
-    public void onWatchingActionExecuted(@NotNull ScenarioEngine engine, @NotNull CompiledAction<?> action)
+    public void onWatchingActionExecuted(@NotNull ScenarioEngine engine, @NotNull CompiledAction action)
     {
         ScenarioFileStructure scenario = engine.getScenario();
 
@@ -161,7 +161,7 @@ public class BukkitTestReporter extends AbstractTestReporter
     }
 
     @Override
-    public void onActionExecuteFailed(@NotNull ScenarioEngine engine, @NotNull CompiledAction<?> action, @NotNull Throwable error)
+    public void onActionExecuteFailed(@NotNull ScenarioEngine engine, @NotNull CompiledAction action, @NotNull Throwable error)
     {
         ScenarioFileStructure scenario = engine.getScenario();
 
@@ -173,7 +173,7 @@ public class BukkitTestReporter extends AbstractTestReporter
     }
 
     @Override
-    public void onActionJumped(@NotNull ScenarioEngine engine, @NotNull CompiledAction<?> action, @NotNull CompiledAction<?> expected)
+    public void onActionJumped(@NotNull ScenarioEngine engine, @NotNull CompiledAction action, @NotNull CompiledAction expected)
     {
         ScenarioFileStructure scenario = engine.getScenario();
 
@@ -185,7 +185,7 @@ public class BukkitTestReporter extends AbstractTestReporter
     }
 
     @Override
-    public void onConditionCheckSuccess(@NotNull ScenarioEngine engine, @NotNull CompiledScenarioAction<?> action)
+    public void onConditionCheckSuccess(@NotNull ScenarioEngine engine, @NotNull CompiledScenarioAction action)
     {
         ScenarioFileStructure scenario = engine.getScenario();
 
@@ -196,7 +196,7 @@ public class BukkitTestReporter extends AbstractTestReporter
     }
 
     @Override
-    public void onConditionCheckFailed(@NotNull ScenarioEngine engine, @NotNull CompiledScenarioAction<?> action)
+    public void onConditionCheckFailed(@NotNull ScenarioEngine engine, @NotNull CompiledScenarioAction action)
     {
         ScenarioFileStructure scenario = engine.getScenario();
 

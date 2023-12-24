@@ -12,7 +12,6 @@ import org.kunlab.scenamatica.enums.WatchType;
 import org.kunlab.scenamatica.exceptions.scenario.ScenarioException;
 import org.kunlab.scenamatica.interfaces.ScenamaticaRegistry;
 import org.kunlab.scenamatica.interfaces.action.Action;
-import org.kunlab.scenamatica.interfaces.action.ActionArgument;
 import org.kunlab.scenamatica.interfaces.action.CompiledAction;
 import org.kunlab.scenamatica.interfaces.action.WatcherManager;
 import org.kunlab.scenamatica.interfaces.action.WatchingEntry;
@@ -29,7 +28,7 @@ public class WatcherManagerImpl implements WatcherManager
 {
     private final ScenamaticaRegistry registry;
     private final Object lock = new Object();
-    private final Multimap<Plugin, WatchingEntry<?>> actionWatchers;
+    private final Multimap<Plugin, WatchingEntry> actionWatchers;
 
     public WatcherManagerImpl(@NotNull ScenamaticaRegistry registry)
     {
@@ -38,14 +37,14 @@ public class WatcherManagerImpl implements WatcherManager
     }
 
     @Override
-    public List<WatchingEntry<?>> registerWatchers(@NotNull Plugin plugin,
-                                                   @NotNull ScenarioEngine engine,
-                                                   @NotNull ScenarioFileStructure scenario,
-                                                   @NotNull List<? extends CompiledAction<?>> watchers,
-                                                   @NotNull WatchType type)
+    public List<WatchingEntry> registerWatchers(@NotNull Plugin plugin,
+                                                @NotNull ScenarioEngine engine,
+                                                @NotNull ScenarioFileStructure scenario,
+                                                @NotNull List<? extends CompiledAction> watchers,
+                                                @NotNull WatchType type)
     {
-        List<WatchingEntry<?>> entries = new ArrayList<>();
-        for (CompiledAction<?> watcher : watchers)
+        List<WatchingEntry> entries = new ArrayList<>();
+        for (CompiledAction watcher : watchers)
             entries.add(this.createWatchingEntry(
                             engine,
                             watcher,
@@ -64,13 +63,13 @@ public class WatcherManagerImpl implements WatcherManager
     }
 
     @Override
-    public <A extends ActionArgument> WatchingEntry<A> registerWatcher(@NotNull ScenarioEngine engine,
-                                                                       @NotNull CompiledAction<A> watcher,
-                                                                       @NotNull ScenarioFileStructure scenario,
-                                                                       @NotNull Plugin plugin,
-                                                                       @NotNull WatchType type)
+    public WatchingEntry registerWatcher(@NotNull ScenarioEngine engine,
+                                         @NotNull CompiledAction watcher,
+                                         @NotNull ScenarioFileStructure scenario,
+                                         @NotNull Plugin plugin,
+                                         @NotNull WatchType type)
     {
-        WatchingEntry<A> entry = this.createWatchingEntry(
+        WatchingEntry entry = this.createWatchingEntry(
                 engine,
                 watcher,
                 scenario,
@@ -86,18 +85,18 @@ public class WatcherManagerImpl implements WatcherManager
         return entry;
     }
 
-    private <A extends ActionArgument> WatchingEntry<A> createWatchingEntry(@NotNull ScenarioEngine engine,
-                                                                            @NotNull CompiledAction<A> action,
-                                                                            @NotNull ScenarioFileStructure scenario,
-                                                                            @NotNull Plugin plugin,
-                                                                            @NotNull WatchType type)
+    private WatchingEntry createWatchingEntry(@NotNull ScenarioEngine engine,
+                                              @NotNull CompiledAction action,
+                                              @NotNull ScenarioFileStructure scenario,
+                                              @NotNull Plugin plugin,
+                                              @NotNull WatchType type)
     {
-        Action<A> actionExecutor = action.getExecutor();
+        Action actionExecutor = action.getExecutor();
         if (!(actionExecutor instanceof Watchable))
             throw new IllegalStateException("The action " + actionExecutor.getName() + " is not watchable.");
 
         List<Pair<Class<? extends Event>, RegisteredListener>> listeners = new ArrayList<>();
-        WatchingEntry<A> watchingEntry = new WatchingEntryImpl<>(
+        WatchingEntry watchingEntry = new WatchingEntryImpl(
                 this,
                 engine,
                 plugin,
@@ -107,7 +106,7 @@ public class WatcherManagerImpl implements WatcherManager
                 listeners
         );
 
-        Watchable<?> watchable = (Watchable<?>) actionExecutor;
+        Watchable watchable = (Watchable) actionExecutor;
 
         for (Class<? extends Event> eventType : watchable.getAttachingEvents())
             listeners.add(Pair.of(eventType, watchingEntry.register(eventType)));
@@ -123,8 +122,8 @@ public class WatcherManagerImpl implements WatcherManager
 
         synchronized (this.lock)
         {
-            Collection<WatchingEntry<?>> entries = this.actionWatchers.get(plugin);
-            for (WatchingEntry<?> entry : entries)
+            Collection<WatchingEntry> entries = this.actionWatchers.get(plugin);
+            for (WatchingEntry entry : entries)
                 entry.unregister();
             this.actionWatchers.removeAll(plugin);
         }
@@ -139,10 +138,10 @@ public class WatcherManagerImpl implements WatcherManager
             if (!this.actionWatchers.containsKey(plugin))
                 return;
 
-            Iterator<WatchingEntry<?>> iterator = this.actionWatchers.get(plugin).iterator();
+            Iterator<WatchingEntry> iterator = this.actionWatchers.get(plugin).iterator();
             while (iterator.hasNext())
             {
-                WatchingEntry<?> entry = iterator.next();
+                WatchingEntry entry = iterator.next();
                 if (entry.getType() == type)
                 {
                     entry.unregister();
@@ -153,7 +152,7 @@ public class WatcherManagerImpl implements WatcherManager
     }
 
     @Override
-    public void unregisterWatcher(@NotNull WatchingEntry<?> entry)
+    public void unregisterWatcher(@NotNull WatchingEntry entry)
     {
         synchronized (this.lock)
         {
@@ -166,7 +165,7 @@ public class WatcherManagerImpl implements WatcherManager
     }
 
     @Override
-    public void onActionFired(@NotNull WatchingEntry<?> entry, @NotNull Event event)
+    public void onActionFired(@NotNull WatchingEntry entry, @NotNull Event event)
     {
         synchronized (this.lock)
         {

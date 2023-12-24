@@ -48,9 +48,9 @@ public class ScenarioEngineImpl implements ScenarioEngine
     private final ScenarioCompiler compiler;
     private final ScenarioActionListener listener;  // エンジンに一意
     private final String logPrefix;
-    private final List<? extends CompiledScenarioAction<?>> actions;
+    private final List<? extends CompiledScenarioAction> actions;
     private final List<? extends CompiledTriggerAction> triggerActions;
-    private final CompiledScenarioAction<?> runIf;
+    private final CompiledScenarioAction runIf;
 
     private ScenarioExecutor executor;
     private volatile boolean isRunning; // #start(@NotNull TriggerStructure trigger) 内でのみ書き換えられる
@@ -281,7 +281,7 @@ public class ScenarioEngineImpl implements ScenarioEngine
      * @return コンパイルされたシナリオ
      */
     @Override
-    public CompiledScenarioAction<?> getCurrentScenario()
+    public CompiledScenarioAction getCurrentScenario()
     {
         return this.executor.getCurrentScenario();
     }

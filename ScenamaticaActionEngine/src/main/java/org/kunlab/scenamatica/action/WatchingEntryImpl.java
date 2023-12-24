@@ -11,7 +11,6 @@ import org.bukkit.plugin.RegisteredListener;
 import org.kunlab.scenamatica.action.utils.EventListenerUtils;
 import org.kunlab.scenamatica.enums.WatchType;
 import org.kunlab.scenamatica.interfaces.action.Action;
-import org.kunlab.scenamatica.interfaces.action.ActionArgument;
 import org.kunlab.scenamatica.interfaces.action.CompiledAction;
 import org.kunlab.scenamatica.interfaces.action.WatcherManager;
 import org.kunlab.scenamatica.interfaces.action.WatchingEntry;
@@ -22,24 +21,24 @@ import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileStructure;
 import java.util.List;
 
 @Value
-public class WatchingEntryImpl<A extends ActionArgument> implements WatchingEntry<A>
+public class WatchingEntryImpl implements WatchingEntry
 {
     WatcherManager manager;
     ScenarioEngine engine;
     Plugin plugin;
     ScenarioFileStructure scenario;
-    CompiledAction<A> action;
+    CompiledAction action;
     WatchType type;
     List<Pair<Class<? extends Event>, RegisteredListener>> listeners;
 
     @Override
     public RegisteredListener register(Class<? extends Event> eventType)
     {
-        Action<A> actionExecutor = this.action.getExecutor();
+        Action actionExecutor = this.action.getExecutor();
         if (!(actionExecutor instanceof Watchable))
             throw new IllegalStateException("The action " + actionExecutor.getName() + " is not watchable.");
-        //noinspection unchecked
-        Watchable<A> watchable = (Watchable<A>) actionExecutor;
+
+        Watchable watchable = (Watchable) actionExecutor;
 
         Listener dummyListener = new Listener()
         {

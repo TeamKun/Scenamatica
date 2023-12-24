@@ -8,7 +8,7 @@ public class PacketActionExecuted extends AbstractActionPacket
 {
     private static final String TYPE = "exec_success";
 
-    public PacketActionExecuted(@NotNull ScenarioEngine scenario, @NotNull CompiledAction<?> action)
+    public PacketActionExecuted(@NotNull ScenarioEngine scenario, @NotNull CompiledAction action)
     {
         super(TYPE, scenario.getTestID(), action);
     }

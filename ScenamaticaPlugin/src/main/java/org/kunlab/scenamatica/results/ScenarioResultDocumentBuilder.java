@@ -138,7 +138,7 @@ public class ScenarioResultDocumentBuilder
         Element error = document.createElement(ResultKeys.KEY_CASE_ERROR);
         error.setAttribute(ResultKeys.KEY_CASE_ERROR_TYPE, result.getScenarioResultCause().name());
 
-        Action<?> failedAction = result.getFailedAction();
+        Action failedAction = result.getFailedAction();
         if (failedAction != null)
             error.setAttribute(ResultKeys.KEY_CASE_ERROR_MESSAGE, "Failed to pass scenario: " + failedAction.getName());
 
@@ -150,7 +150,7 @@ public class ScenarioResultDocumentBuilder
         Element failure = document.createElement(ResultKeys.KEY_CASE_FAILURE);
         failure.setAttribute(ResultKeys.KEY_CASE_FAILURE_TYPE, result.getScenarioResultCause().name());
 
-        Action<?> failedAction = result.getFailedAction();
+        Action failedAction = result.getFailedAction();
         if (failedAction != null)
             failure.setAttribute(ResultKeys.KEY_CASE_FAILURE_MESSAGE, failedAction.getName());
 

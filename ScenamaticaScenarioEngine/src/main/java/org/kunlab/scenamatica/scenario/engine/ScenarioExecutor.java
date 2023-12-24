@@ -42,14 +42,14 @@ public class ScenarioExecutor
     private final ScenamaticaRegistry registry;
     private final TestReporter testReporter;
     private final ScenarioEngineImpl engine;
-    private final List<? extends CompiledScenarioAction<?>> actions;
+    private final List<? extends CompiledScenarioAction> actions;
     private final List<? extends CompiledTriggerAction> triggerActions;
-    private final CompiledScenarioAction<?> runIf;
+    private final CompiledScenarioAction runIf;
     private final ScenarioFileStructure scenario;
     private final ActionRunManager actionManager;
     private final ScenarioActionListener listener;
     private final ScenarioResultDeliverer deliverer;
-    private final List<CompiledScenarioAction<?>> watchedActions;
+    private final List<CompiledScenarioAction> watchedActions;
     private final Plugin plugin;
     private final UUID testID;
     private final long startedAt;
@@ -58,14 +58,14 @@ public class ScenarioExecutor
 
     private ScenarioState state;
     private long elapsedTicks;
-    private CompiledScenarioAction<?> currentScenario;
+    private CompiledScenarioAction currentScenario;
 
     public ScenarioExecutor(ScenarioEngineImpl engine,
                             ActionRunManager actionManager,
                             ScenarioActionListener listener,
-                            List<? extends CompiledScenarioAction<?>> actions,
+                            List<? extends CompiledScenarioAction> actions,
                             List<? extends CompiledTriggerAction> triggerActions,
-                            CompiledScenarioAction<?> runIf,
+                            CompiledScenarioAction runIf,
                             int attemptedCount)
     {
         this.engine = engine;
@@ -180,7 +180,7 @@ public class ScenarioExecutor
                 );
     }
 
-    private ScenarioResult testRunConditionIfExists(@Nullable CompiledScenarioAction<?> runIf)
+    private ScenarioResult testRunConditionIfExists(@Nullable CompiledScenarioAction runIf)
     {
         if (runIf != null)
         {
@@ -198,10 +198,10 @@ public class ScenarioExecutor
     }
 
     @Nullable
-    private ScenarioResult runScenario(List<? extends CompiledScenarioAction<?>> scenario)
+    private ScenarioResult runScenario(List<? extends CompiledScenarioAction> scenario)
     {
         // 飛び判定用に, 予めすべてのアクションを監視対象にしておく。
-        List<CompiledAction<?>> watches = scenario.stream()
+        List<CompiledAction> watches = scenario.stream()
                 .filter(a -> a.getType() == ScenarioType.ACTION_EXPECT)
                 .map(CompiledScenarioAction::getAction)
                 .collect(Collectors.toList());
@@ -221,8 +221,8 @@ public class ScenarioExecutor
                 else
                     return this.genResult(ScenarioResultCause.CANCELLED);
 
-            CompiledScenarioAction<?> scenarioStructure = scenario.get(i);
-            CompiledScenarioAction<?> next = i + 1 < scenario.size() ? scenario.get(i + 1): null;
+            CompiledScenarioAction scenarioStructure = scenario.get(i);
+            CompiledScenarioAction next = i + 1 < scenario.size() ? scenario.get(i + 1): null;
 
             ScenarioResult result = this.runScenario(scenarioStructure, next);
             if (!(result.getScenarioResultCause() == ScenarioResultCause.PASSED || result.getScenarioResultCause() == ScenarioResultCause.SKIPPED))
@@ -232,7 +232,7 @@ public class ScenarioExecutor
         return null;
     }
 
-    private ScenarioResult runScenario(CompiledScenarioAction<?> scenario, CompiledScenarioAction<?> next)
+    private ScenarioResult runScenario(CompiledScenarioAction scenario, CompiledScenarioAction next)
     {
         if (scenario.getRunIf() != null)
         {
@@ -259,7 +259,7 @@ public class ScenarioExecutor
         return this.deliverer.waitResult(scenario.getStructure().getTimeout(), this.state);
     }
 
-    private <T extends ActionArgument> void doAction(CompiledScenarioAction<T> scenario, CompiledScenarioAction<?> next)
+    private <T extends ActionArgument> void doAction(CompiledScenarioAction scenario, CompiledScenarioAction next)
     {
         this.testReporter.onActionStart(this.engine, scenario);
 
@@ -270,7 +270,7 @@ public class ScenarioExecutor
         this.actionManager.queueExecute(scenario.getAction());
     }
 
-    private <T extends ActionArgument> ScenarioResult testCondition(CompiledScenarioAction<T> scenario)
+    private <T extends ActionArgument> ScenarioResult testCondition(CompiledScenarioAction scenario)
     {
         this.testReporter.onActionStart(this.engine, scenario);
 

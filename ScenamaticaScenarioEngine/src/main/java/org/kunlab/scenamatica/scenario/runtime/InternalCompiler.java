@@ -3,7 +3,6 @@ package org.kunlab.scenamatica.scenario.runtime;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.ScenamaticaRegistry;
-import org.kunlab.scenamatica.interfaces.action.ActionArgument;
 import org.kunlab.scenamatica.interfaces.action.ActionCompiler;
 import org.kunlab.scenamatica.interfaces.action.CompiledAction;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioActionListener;
@@ -19,21 +18,21 @@ import java.util.List;
 
 public class InternalCompiler
 {
-    public static List<CompiledScenarioAction<?>> compileActions(
+    public static List<CompiledScenarioAction> compileActions(
             @NotNull ScenamaticaRegistry registry,
             @NotNull ScenarioEngine engine,
             @NotNull ActionCompiler compiler,
             @NotNull ScenarioActionListener listener,
             @NotNull List<? extends ScenarioStructure> scenarios)
     {
-        List<CompiledScenarioAction<?>> compiled = new ArrayList<>();
+        List<CompiledScenarioAction> compiled = new ArrayList<>();
         for (ScenarioStructure scenario : scenarios)
             compiled.add(compileAction(registry, engine, compiler, listener, scenario));
 
         return compiled;
     }
 
-    public static <A extends ActionArgument> CompiledScenarioAction<A> compileAction(
+    public static CompiledScenarioAction compileAction(
             @NotNull ScenamaticaRegistry registry,
             @NotNull ScenarioEngine engine,
             @NotNull ActionCompiler compiler,
@@ -42,9 +41,10 @@ public class InternalCompiler
     {
         try
         {
-            CompiledAction<A> action = compiler.compile(
+            CompiledAction action = compiler.compile(
                     registry,
                     engine,
+                    scenario.getType(),
                     scenario.getAction(),
                     listener::onActionError,
                     listener::onActionExecuted
@@ -69,20 +69,21 @@ public class InternalCompiler
         }
     }
 
-    public static <A extends ActionArgument> CompiledScenarioAction<A> compileConditionAction(
+    public static CompiledScenarioAction compileConditionAction(
             @NotNull ScenamaticaRegistry registry,
             @NotNull ScenarioEngine engine,
             @NotNull ActionCompiler compiler,
             @NotNull ScenarioActionListener listener,
             @NotNull ActionStructure structure)
     {  // RunIF 用に偽装する。
-        CompiledAction<A> action;
+        CompiledAction action;
         try
         {
 
             action = compiler.compile(
                     registry,
                     engine,
+                    ScenarioType.CONDITION_REQUIRE,
                     structure,
                     listener::onActionError,
                     listener::onActionExecuted
