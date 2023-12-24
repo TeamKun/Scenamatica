@@ -3,11 +3,13 @@ package org.kunlab.scenamatica.action.input;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Setter;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.input.InputReference;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.input.InputValueHolder;
+import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 
 import java.util.Objects;
 
@@ -46,7 +48,7 @@ public class InputValueHolderImpl<T> implements InputValueHolder<T>
     }
 
     @Override
-    public void set(@Nullable Object obj)
+    public void set(@NotNull StructureSerializer serializer, @Nullable Object obj)
     {
         if (obj == null)
             this.valueReference = InputReferenceImpl.valued(this.token, this.token.getDefaultValue());
@@ -54,7 +56,7 @@ public class InputValueHolderImpl<T> implements InputValueHolder<T>
             // assert obj instanceof String
             this.valueReference = new InputReferenceImpl<>(this.token, obj);
         else
-            this.valueReference = InputReferenceImpl.valued(this.token, this.token.traverse(obj));
+            this.valueReference = InputReferenceImpl.valued(this.token, this.token.traverse(serializer, obj));
     }
 
     @Override

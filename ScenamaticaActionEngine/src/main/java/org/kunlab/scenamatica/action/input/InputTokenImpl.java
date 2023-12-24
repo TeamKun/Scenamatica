@@ -6,6 +6,7 @@ import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.input.InputTraverser;
 import org.kunlab.scenamatica.interfaces.action.input.Traverser;
+import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -75,11 +76,11 @@ public class InputTokenImpl<T> implements InputToken<T>
     }
 
     @Override
-    public T traverse(Object obj)
+    public T traverse(@NotNull StructureSerializer serializer, Object obj)
     {
         for (Traverser<?, T> traverser : this.traversers)
             if (traverser.getInputClazz().isInstance(obj))
-                return traverser.tryTraverse(obj);
+                return traverser.tryTraverse(serializer, obj);
 
         throw new IllegalArgumentException("Unknown traverser type");
     }

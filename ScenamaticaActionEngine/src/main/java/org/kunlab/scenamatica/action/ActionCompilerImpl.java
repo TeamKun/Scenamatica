@@ -45,6 +45,7 @@ public class ActionCompilerImpl implements ActionCompiler
 
     private static CompiledActionImpl processNegateAction(
             ScenarioEngine engine,
+            StructureSerializer serializer,
             NegateAction action,
             ActionStructure structure,
             BiConsumer<CompiledAction, Throwable> reportErrorTo,
@@ -73,7 +74,7 @@ public class ActionCompilerImpl implements ActionCompiler
             argument = null;
 
         InputBoard negateArgument = action.getInputBoard(ScenarioType.CONDITION_REQUIRE);
-        negateArgument.compile(new HashMap<String, Object>()
+        negateArgument.compile(serializer, new HashMap<String, Object>()
         {{
             this.put(NegateAction.KEY_IN_ACTION, actionToBeNegated);
             this.put(NegateAction.KEY_IN_ARGUMENTS, argument);
@@ -105,16 +106,17 @@ public class ActionCompilerImpl implements ActionCompiler
                                   @Nullable BiConsumer<CompiledAction, Throwable> reportErrorTo,
                                   @Nullable Consumer<CompiledAction> onSuccess)
     {
+        StructureSerializer serializer = engine.getManager().getRegistry().getScenarioFileManager().getSerializer();
         Action action = getActionByName(structure.getType());
         if (action == null)
             throw new IllegalArgumentException("Action " + structure.getType() + " is not found.");
         else if (action instanceof NegateAction)
-            return processNegateAction(engine, (NegateAction) action, structure, reportErrorTo, onSuccess);
+            return processNegateAction(engine, serializer, (NegateAction) action, structure, reportErrorTo, onSuccess);
 
-        StructureSerializer serializer = engine.getManager().getRegistry().getScenarioFileManager().getSerializer();
 
         InputBoard argument = action.getInputBoard(ScenarioType.ACTION_EXECUTE);
-        argument.compile(structure.getArguments());
+        if (structure.getArguments() != null)
+            argument.compile(serializer, structure.getArguments());
 
         if (!argument.hasUnresolvedReferences())
             argument.validate();

@@ -1,5 +1,7 @@
 package org.kunlab.scenamatica.interfaces.action.input;
 
+import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
+
 /**
  * 入力値をトラバースする関数型インターフェースです。
  *
@@ -12,7 +14,7 @@ public interface InputTraverser<I, O>
     static <T, R> InputTraverser<T, R> casted()
     {
         // noinspection unchecked
-        return (input) -> (R) input;
+        return (ser, input) -> (R) input;
     }
 
     /**
@@ -20,5 +22,5 @@ public interface InputTraverser<I, O>
      *
      * @return トラバース後の値
      */
-    O traverse(I obj);
+    O traverse(StructureSerializer ser, I obj);
 }

@@ -82,7 +82,7 @@ public class QueuedScenarioImpl implements QueuedScenario
         {
             InputBoard inputs = action.getAction().getArgument();
             if (inputs.hasUnresolvedReferences())
-                inputs.resolveReferences(variable);
+                inputs.resolveReferences(this.manager.getRegistry().getScenarioFileManager().getSerializer(), variable);
 
             inputs.validate();
         }

@@ -1,6 +1,8 @@
 package org.kunlab.scenamatica.interfaces.action.input;
 
+import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 
 import java.util.EnumMap;
 import java.util.List;
@@ -81,5 +83,5 @@ public interface InputToken<T>
      * @param obj トラバースするオブジェクト
      * @return トラバース結果
      */
-    T traverse(Object obj);
+    T traverse(@NotNull StructureSerializer serializer, Object obj);
 }

@@ -1,7 +1,9 @@
 package org.kunlab.scenamatica.interfaces.action.input;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 
 /**
  * 入力値保持を表すインターフェースです。
@@ -31,7 +33,7 @@ public interface InputValueHolder<T>
      *
      * @param obj 値
      */
-    void set(@Nullable Object obj);
+    void set(@NotNull StructureSerializer serializer, @Nullable Object obj);
 
     /**
      * 値が存在するかどうかを返します。

@@ -2,6 +2,7 @@ package org.kunlab.scenamatica.interfaces.action.input;
 
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.interfaces.scenario.SessionVariableHolder;
+import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Map;
@@ -17,14 +18,15 @@ public interface InputBoard extends TriggerArgument
      *
      * @param map 対象のマップ
      */
-    void compile(Map<String, Object> map);
+    void compile(@NotNull StructureSerializer serializer, @NotNull Map<String, Object> map);
 
     /**
      * 入力値にある参照を解決します。
      *
-     * @param variables 変数のホルダー
+     * @param serializer
+     * @param variables  変数のホルダー
      */
-    void resolveReferences(@NotNull SessionVariableHolder variables);
+    void resolveReferences(@NotNull StructureSerializer serializer, @NotNull SessionVariableHolder variables);
 
     /**
      * 未解決の参照があるかどうかを返します。

@@ -1,5 +1,8 @@
 package org.kunlab.scenamatica.interfaces.action.input;
 
+import org.jetbrains.annotations.NotNull;
+import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
+
 /**
  * 入力値をトラバースするインターフェースです。
  *
@@ -11,18 +14,20 @@ public interface Traverser<I, O>
     /**
      * トラバースします。
      *
-     * @param obj 入力値
+     * @param serializer シリアライザ
+     * @param obj        入力値
      * @return トラバース後の値
      */
-    O traverse(I obj);
+    O traverse(@NotNull StructureSerializer serializer, I obj);
 
     /**
      * トラバースします。
      *
-     * @param obj 入力値
+     * @param serializer シリアライザ
+     * @param obj        入力値
      * @return トラバース後の値
      */
-    O tryTraverse(Object obj);
+    O tryTraverse(@NotNull StructureSerializer serializer, Object obj);
 
     /**
      * トラバースする入力値の型を返します。

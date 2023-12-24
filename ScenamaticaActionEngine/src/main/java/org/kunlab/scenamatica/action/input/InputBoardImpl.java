@@ -6,6 +6,7 @@ import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.input.InputValueHolder;
 import org.kunlab.scenamatica.interfaces.scenario.SessionVariableHolder;
+import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.ArrayList;
@@ -101,13 +102,13 @@ public class InputBoardImpl implements InputBoard
     }
 
     @Override
-    public void compile(Map<String, Object> map)
+    public void compile(@NotNull StructureSerializer serializer, @NotNull Map<String, Object> map)
     {
         this.validated = false;
         for (InputValueHolder<?> value : this.values)
         {
             Object obj = map.get(value.getToken().getName());
-            value.set(obj);
+            value.set(serializer, obj);
             if (value.isPresent())
                 value.validate(this.type);
         }
@@ -116,14 +117,14 @@ public class InputBoardImpl implements InputBoard
     }
 
     @Override
-    public void resolveReferences(@NotNull SessionVariableHolder variables)
+    public void resolveReferences(@NotNull StructureSerializer serializer, @NotNull SessionVariableHolder variables)
     {
         for (InputValueHolder<?> value : this.values)
         {
             if (value.isPresent())
                 continue;
 
-            value.getValueReference().resolve(variables);
+            value.getValueReference().resolve(serializer, variables);
 
             // assert value.isPresent();
             value.validate(this.type);

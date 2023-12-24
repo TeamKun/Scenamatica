@@ -1,8 +1,10 @@
 package org.kunlab.scenamatica.action.input;
 
 import lombok.Value;
+import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.interfaces.action.input.InputTraverser;
 import org.kunlab.scenamatica.interfaces.action.input.Traverser;
+import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 
 @Value
 public class TraverserImpl<I, O> implements Traverser<I, O>
@@ -22,16 +24,16 @@ public class TraverserImpl<I, O> implements Traverser<I, O>
     }
 
     @Override
-    public O traverse(I obj)
+    public O traverse(@NotNull StructureSerializer serializer, I obj)
     {
-        return this.traverser.traverse(obj);
+        return this.traverser.traverse(serializer, obj);
     }
 
     @Override
-    public O tryTraverse(Object obj)
+    public O tryTraverse(@NotNull StructureSerializer serializer, Object obj)
     {
         if (this.inputClazz.isInstance(obj))
-            return this.traverse(this.inputClazz.cast(obj));
+            return this.traverse(serializer, this.inputClazz.cast(obj));
         else
             throw new IllegalArgumentException("obj is not instance of " + this.inputClazz.getName());
     }

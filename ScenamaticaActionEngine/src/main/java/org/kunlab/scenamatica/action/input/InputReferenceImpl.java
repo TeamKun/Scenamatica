@@ -9,6 +9,7 @@ import org.kunlab.scenamatica.interfaces.action.input.InputReference;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.input.Traverser;
 import org.kunlab.scenamatica.interfaces.scenario.SessionVariableHolder;
+import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -20,6 +21,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Data
 public class InputReferenceImpl<T> implements InputReference<T>
@@ -252,7 +254,7 @@ public class InputReferenceImpl<T> implements InputReference<T>
     }
 
     @Override
-    public void resolve(@NotNull SessionVariableHolder variables)
+    public void resolve(@NotNull StructureSerializer serializer, @NotNull SessionVariableHolder variables)
     {
         if (this.referenceParts == null)
             throw new IllegalStateException("This reference doesn't contain any references: " + this.referencing);
@@ -264,25 +266,54 @@ public class InputReferenceImpl<T> implements InputReference<T>
             throw new IllegalStateException("Failed to resolve reference: " + this.referencing + " -> " + resolved);
 
         if (resolved == null)
-            this.resolve((T) null);
+            this.resolve(null);
         else
-            this.resolve(this.smartCast(resolved));
+            this.resolve(this.smartCast(serializer, resolved));
     }
 
-    private T smartCast(Object resolved)
+    private T smartCast(@NotNull StructureSerializer serializer, Object resolved)
     {
         List<Traverser<?, T>> traversers = this.token.getTraversers();
         if (traversers.isEmpty())
             return this.token.getClazz().cast(resolved);
         else
         {
+            Class<?> possibleType = this.guessPossibleType(traversers.stream()
+                    .map(Traverser::getInputClazz)
+                    .collect(Collectors.toList()));
+
+            if (possibleType == null)
+                throw new IllegalStateException("Failed to guess possible type: " + traversers);
+
             for (Traverser<?, T> traverser : traversers)
             {
-                if (traverser.getInputClazz().isInstance(resolved))
-                    return traverser.tryTraverse(resolved);
+                if (traverser.getInputClazz() == possibleType)
+                    return this.token.getClazz().cast(traverser.tryTraverse(serializer, resolved));
             }
 
             throw new IllegalArgumentException("Unknown traverser type");
         }
+    }
+
+    private Class<?> guessPossibleType(List<Class<?>> classes)
+    {
+        for (Class<?> clazz : classes)
+        {
+            if (clazz == String.class)
+                return String.class;
+            else if (clazz == Integer.class || clazz == int.class)
+                return Integer.class;
+            else if (clazz == Long.class || clazz == long.class)
+                return Long.class;
+            else if (clazz == Double.class || clazz == double.class)
+                return Double.class;
+            else if (clazz == Boolean.class || clazz == boolean.class)
+                return Boolean.class;
+            else if (clazz == List.class)
+                return List.class;
+            else if (clazz == Map.class)
+                return Map.class;
+        }
+        return null;
     }
 }
