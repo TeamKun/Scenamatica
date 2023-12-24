@@ -3,7 +3,6 @@ package org.kunlab.scenamatica.interfaces.action;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.enums.ScenarioType;
-import org.kunlab.scenamatica.interfaces.ScenamaticaRegistry;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.action.ActionStructure;
 
@@ -19,7 +18,6 @@ public interface ActionCompiler
     /**
      * アクションをコンパイルします。
      *
-     * @param registry      コンパイルに必要な情報を持つレジストリ
      * @param engine        コンパイルに必要な情報を持つシナリオエンジン
      * @param scenarioType  アクションが属するシナリオの種類です。
      * @param structure     アクションの情報
@@ -27,12 +25,12 @@ public interface ActionCompiler
      * @param onSuccess     コンパイルに成功したときに呼び出されるコールバック
      * @return コンパイルされたアクション
      */
-    CompiledAction compile(@NotNull ScenamaticaRegistry registry,  // TODO: インスタンスにする
-                           @NotNull ScenarioEngine engine,
-                           @NotNull ScenarioType scenarioType,
-                           @NotNull ActionStructure structure,
-                           @Nullable BiConsumer<CompiledAction, Throwable> reportErrorTo,
-                           @Nullable Consumer<CompiledAction> onSuccess);
+    CompiledAction compile(
+            @NotNull ScenarioEngine engine,
+            @NotNull ScenarioType scenarioType,
+            @NotNull ActionStructure structure,
+            @Nullable BiConsumer<CompiledAction, Throwable> reportErrorTo,
+            @Nullable Consumer<CompiledAction> onSuccess);
 
     /**
      * 登録されたアクションのリストを取得します。

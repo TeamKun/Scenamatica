@@ -6,7 +6,6 @@ import org.kunlab.scenamatica.action.actions.AbstractAction;
 import org.kunlab.scenamatica.action.actions.scenamatica.NegateAction;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
-import org.kunlab.scenamatica.interfaces.ScenamaticaRegistry;
 import org.kunlab.scenamatica.interfaces.action.Action;
 import org.kunlab.scenamatica.interfaces.action.ActionCompiler;
 import org.kunlab.scenamatica.interfaces.action.CompiledAction;
@@ -100,8 +99,7 @@ public class ActionCompilerImpl implements ActionCompiler
     }
 
     @Override
-    public CompiledAction compile(@NotNull ScenamaticaRegistry registry,
-                                  @NotNull ScenarioEngine engine,
+    public CompiledAction compile(@NotNull ScenarioEngine engine,
                                   @NotNull ScenarioType scenarioType,
                                   @NotNull ActionStructure structure,
                                   @Nullable BiConsumer<CompiledAction, Throwable> reportErrorTo,

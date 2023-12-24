@@ -2,10 +2,13 @@ package org.kunlab.scenamatica.scenario;
 
 import net.kunmc.lab.peyangpaperutils.lang.LangProvider;
 import net.kunmc.lab.peyangpaperutils.lang.MsgArgs;
+import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.commons.utils.LogUtils;
+import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.enums.TriggerType;
-import org.kunlab.scenamatica.interfaces.ScenamaticaRegistry;
+import org.kunlab.scenamatica.interfaces.action.ActionCompiler;
 import org.kunlab.scenamatica.interfaces.action.ActionRunManager;
+import org.kunlab.scenamatica.interfaces.action.CompiledAction;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioActionListener;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenario.runtime.CompiledScenarioAction;
@@ -14,37 +17,57 @@ import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.action.ActionStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.scenario.ScenarioStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerStructure;
+import org.kunlab.scenamatica.scenario.runtime.CompiledScenarioActionImpl;
 import org.kunlab.scenamatica.scenario.runtime.CompiledTriggerActionImpl;
-import org.kunlab.scenamatica.scenario.runtime.InternalCompiler;
+import org.kunlab.scenamatica.scenario.runtime.ScenarioCompilationErrorException;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ScenarioCompiler
 {
-    private final ScenamaticaRegistry registry;
+    private final Logger logger;
     private final ScenarioEngine engine;
 
     private final ScenarioFileStructure scenario;
-    private final ActionRunManager actionManager;
+    private final ActionCompiler actionCompiler;
     private final ScenarioActionListener listener;
     private final String logPrefix;
     private final int compileNeeded;
 
     private int compiled;
 
-    public ScenarioCompiler(ScenarioEngine engine, ScenamaticaRegistry registry, ActionRunManager actionManager)
+    public ScenarioCompiler(ScenarioEngine engine, Logger logger, ActionRunManager actionManager)
     {
         this.engine = engine;
-        this.registry = registry;
+        this.logger = logger;
         this.scenario = engine.getScenario();
-        this.actionManager = actionManager;
+        this.actionCompiler = actionManager.getCompiler();
         this.listener = engine.getListener();
         this.logPrefix = LogUtils.gerScenarioPrefix(null, this.scenario);
 
-        this.compileNeeded = InternalCompiler.calcCompileNeeded(this.scenario);
+        this.compileNeeded = calcCompileNeeded(this.scenario);
         this.compiled = 0;
+    }
+
+    public static int calcCompileNeeded(ScenarioFileStructure scenario)
+    {
+        int compileNeeded = 1; // 本シナリオの分。
+
+        for (TriggerStructure trigger : scenario.getTriggers())
+        {
+            if (!trigger.getBeforeThat().isEmpty())
+                compileNeeded++;
+            if (!trigger.getAfterThat().isEmpty())
+                compileNeeded++;
+        }
+
+        if (scenario.getRunIf() != null)
+            compileNeeded++;
+
+        return compileNeeded;
     }
 
     public void notifyCompileStart()
@@ -62,10 +85,7 @@ public class ScenarioCompiler
     {
         this.logCompiling(++this.compiled, this.compileNeeded, "RUN_IF");
 
-        return InternalCompiler.compileConditionAction(
-                this.registry,
-                this.engine,
-                this.actionManager.getCompiler(),
+        return this.compileConditionAction(
                 this.listener,
                 runIf
         );
@@ -74,10 +94,7 @@ public class ScenarioCompiler
     public List<CompiledScenarioAction> compileMain(List<? extends ScenarioStructure> scenarios)
     {
         this.logCompilingMain(++this.compiled, this.compileNeeded);
-        return InternalCompiler.compileActions(
-                this.registry,
-                this.engine,
-                this.actionManager.getCompiler(),
+        return this.compileActions(
                 this.listener,
                 scenarios
         );
@@ -112,10 +129,7 @@ public class ScenarioCompiler
 
             CompiledScenarioAction runIf = null;
             if (trigger.getRunIf() != null)
-                runIf = InternalCompiler.compileConditionAction(
-                        this.registry,
-                        this.engine,
-                        this.actionManager.getCompiler(),
+                runIf = this.compileConditionAction(
                         this.listener,
                         trigger.getRunIf()
                 );
@@ -129,6 +143,105 @@ public class ScenarioCompiler
         }
 
         return triggerActions;
+    }
+
+    public CompiledScenarioAction compileConditionAction(
+            @NotNull ScenarioActionListener listener,
+            @NotNull ActionStructure structure)
+    {  // RunIF 用に偽装する。
+        CompiledAction action;
+        try
+        {
+
+            action = this.actionCompiler.compile(
+                    this.engine,
+                    ScenarioType.CONDITION_REQUIRE,
+                    structure,
+                    listener::onActionError,
+                    listener::onActionExecuted
+            );
+        }
+
+        catch (Throwable e)
+        {
+            throw new ScenarioCompilationErrorException(e, this.engine.getScenario().getName(), structure.getType());
+        }
+
+        return new CompiledScenarioActionImpl<>(
+                new ScenarioStructure()
+                {
+                    @Override
+                    public @NotNull ScenarioType getType()
+                    {
+                        return ScenarioType.CONDITION_REQUIRE;
+                    }
+
+                    @Override
+                    public @NotNull ActionStructure getAction()
+                    {
+                        return structure;
+                    }
+
+                    @Override
+                    public ActionStructure getRunIf()
+                    {
+                        return null;
+                    }
+
+                    @Override
+                    public long getTimeout()
+                    {
+                        return -1;
+                    }
+                },
+                ScenarioType.CONDITION_REQUIRE,
+                action,
+                null
+        );
+    }
+
+    public List<CompiledScenarioAction> compileActions(
+            @NotNull ScenarioActionListener listener,
+            @NotNull List<? extends ScenarioStructure> scenarios)
+    {
+        List<CompiledScenarioAction> compiled = new ArrayList<>();
+        for (ScenarioStructure scenario : scenarios)
+            compiled.add(this.compileAction(listener, scenario));
+
+        return compiled;
+    }
+
+    public CompiledScenarioAction compileAction(
+            @NotNull ScenarioActionListener listener,
+            @NotNull ScenarioStructure scenario)
+    {
+        try
+        {
+            CompiledAction action = this.actionCompiler.compile(
+                    this.engine,
+                    scenario.getType(),
+                    scenario.getAction(),
+                    listener::onActionError,
+                    listener::onActionExecuted
+            );
+
+            scenario.getType().validatePerformableActionType(action.getExecutor().getClass());
+            if (action.getArgument() != null)
+                action.getArgument().validate();
+
+
+            return new CompiledScenarioActionImpl<>(
+                    scenario,
+                    scenario.getType(),
+                    action,
+                    scenario.getRunIf() == null ? null:
+                            this.compileConditionAction(listener, scenario.getRunIf())
+            );
+        }
+        catch (Throwable e)
+        {
+            throw new ScenarioCompilationErrorException(e, this.engine.getScenario().getName(), scenario.getAction().getType());
+        }
     }
 
     private void logCompiling(int compiled, int total, String type, TriggerType triggerType)
@@ -162,7 +275,7 @@ public class ScenarioCompiler
 
     private void logWithPrefix(Level level, String message)
     {
-        this.registry.getLogger().log(
+        this.logger.log(
                 level,
                 this.logPrefix + message
         );

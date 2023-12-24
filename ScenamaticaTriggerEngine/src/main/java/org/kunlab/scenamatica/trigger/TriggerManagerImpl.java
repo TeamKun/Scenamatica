@@ -139,7 +139,6 @@ public class TriggerManagerImpl implements TriggerManager
         ActionStructure argument = (ActionStructure) triggerArgument;
 
         CompiledAction action = this.actionManager.getCompiler().compile(
-                this.registry,
                 engine,
                 ScenarioType.ACTION_EXPECT,
                 argument,
