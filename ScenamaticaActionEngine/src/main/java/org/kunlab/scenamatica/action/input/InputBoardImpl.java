@@ -11,6 +11,7 @@ import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 public class InputBoardImpl implements InputBoard
 {
@@ -18,12 +19,19 @@ public class InputBoardImpl implements InputBoard
     private final InputValueHolder<?>[] values;
     // Contracts
     private final List<InputToken<?>[]> oneOf;
+    private final Consumer<? super InputBoard> validator;
+
+    public InputBoardImpl(@NotNull ScenarioType type, Consumer<? super InputBoard> validator, @NotNull InputToken<?>... tokens)
+    {
+        this.type = type;
+        this.validator = validator;
+        this.values = convertValueHolder(tokens);
+        this.oneOf = new ArrayList<>();
+    }
 
     public InputBoardImpl(@NotNull ScenarioType type, @NotNull InputToken<?>... tokens)
     {
-        this.type = type;
-        this.values = convertValueHolder(tokens);
-        this.oneOf = new ArrayList<>();
+        this(type, null, tokens);
     }
 
     private static InputValueHolder<?>[] convertValueHolder(InputToken<?>[] tokens)
@@ -116,6 +124,13 @@ public class InputBoardImpl implements InputBoard
             // assert value.isPresent();
             value.validate(this.type);
         }
+    }
+
+    @Override
+    public void validate()
+    {
+        if (this.validator != null)
+            this.validator.accept(this);
     }
 
     @Override

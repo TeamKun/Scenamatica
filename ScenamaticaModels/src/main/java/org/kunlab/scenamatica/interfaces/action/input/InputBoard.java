@@ -60,5 +60,15 @@ public interface InputBoard extends TriggerArgument
      */
     <T> T get(InputToken<T> token);
 
+    /**
+     * 値を検証します。
+     */
+    void validate();
+
+    /**
+     * 値を文字列として取得します。
+     *
+     * @return 値
+     */
     String getValuesString();
 }
