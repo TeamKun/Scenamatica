@@ -1,8 +1,5 @@
 package org.kunlab.scenamatica.action.actions.block;
 
-import javax.annotation.ParametersAreNullableByDefault;
-import lombok.EqualsAndHashCode;
-import lombok.Value;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -11,30 +8,28 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.kunlab.scenamatica.action.actions.AbstractActionArgument;
-import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.commons.utils.PlayerUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
+import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.context.Actor;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.misc.BlockStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.PlayerSpecifier;
-import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
-public class BlockBreakAction extends AbstractBlockAction<BlockBreakAction.Argument>
-        implements Executable<BlockBreakAction.Argument>, Requireable<BlockBreakAction.Argument>, Watchable<BlockBreakAction.Argument>
+public class BlockBreakAction extends AbstractBlockAction
+        implements Executable, Requireable, Watchable
 {
     public static final String KEY_ACTION_NAME = "block_break";
+
+    public static final InputToken<PlayerSpecifier> IN_ACTOR = ofInput("actor", PlayerSpecifier.class, ofPlayer());
+    public static final InputToken<Boolean> IN_DROP_ITEMS = ofInput("drop_items", Boolean.class);
 
     @Override
     public String getName()
@@ -43,14 +38,13 @@ public class BlockBreakAction extends AbstractBlockAction<BlockBreakAction.Argum
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @NotNull BlockBreakAction.Argument argument)
+    public void execute(@NotNull ScenarioEngine engine, @NotNull InputBoard argument)
     {
-        BlockStructure blockDef = argument.getBlock();
+        BlockStructure blockDef = argument.get(IN_BLOCK);
         Location location = this.getBlockLocationWithWorld(blockDef, engine);
         Block block = location.getBlock();
 
-        Player player = argument.getActorSpecifier().selectTarget(engine.getContext())
-                .orElse(null);
+        Player player = argument.get(IN_ACTOR).selectTarget(engine.getContext()).orElse(null);
         if (player == null)
         {
             block.breakNaturally();  // 自然に壊れたことにする
@@ -73,20 +67,15 @@ public class BlockBreakAction extends AbstractBlockAction<BlockBreakAction.Argum
     }
 
     @Override
-    public boolean isFired(@NotNull Argument argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public boolean isFired(@NotNull InputBoard argument, @NotNull ScenarioEngine engine, @NotNull Event event)
     {
         if (!super.checkMatchedBlockEvent(argument, engine, event))
             return false;
 
         BlockBreakEvent e = (BlockBreakEvent) event;
-        if (argument.getDropItems() != null)
-        {
-            boolean isDropItems = e.isDropItems();
-            if (argument.getDropItems() != isDropItems)
-                return false;
-        }
 
-        return (!argument.getActorSpecifier().canProvideTarget() || argument.getActorSpecifier().checkMatchedPlayer(e.getPlayer()));
+        return argument.ifPresent(IN_ACTOR, player -> player.checkMatchedPlayer(e.getPlayer()))
+                && argument.ifPresent(IN_DROP_ITEMS, dropItems -> dropItems == e.isDropItems());
     }
 
     @Override
@@ -98,86 +87,45 @@ public class BlockBreakAction extends AbstractBlockAction<BlockBreakAction.Argum
     }
 
     @Override
-    public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
+    public InputBoard getInputBoard(ScenarioType type)
     {
-        return new Argument(
-                super.deserializeBlockOrNull(map, serializer),
-                serializer.tryDeserializePlayerSpecifier(map.get(Argument.KEY_ACTOR)),
-                MapUtils.getOrNull(map, Argument.KEY_DROP_ITEMS)
-        );
+        InputBoard board = super.createBaseInput(type)
+                .register(IN_ACTOR);
+
+        switch (type)
+        {
+            case ACTION_EXECUTE:
+            case ACTION_EXPECT:
+                board.register(IN_DROP_ITEMS);
+                break;
+            case CONDITION_REQUIRE:
+                board.validator(
+                                b -> b.isPresent(IN_DROP_ITEMS),
+                                "The drop_items must be specified in the condition requiring mode."
+                        )
+                        .validator(
+                                b -> b.ifPresent(IN_BLOCK, block -> block.getType() == null),
+                                "The block must be specified in the condition requiring mode."
+                        )
+                        .validator(
+                                b -> b.ifPresent(IN_BLOCK, block -> block.getBiome() != null),
+                                "Cannot specify the biome in the condition requiring mode."
+                        )
+                        .validator(
+                                b -> b.ifPresent(IN_BLOCK, block -> block.getLightLevel() != null),
+                                "Cannot specify the light level in the condition requiring mode."
+                        );
+                break;
+        }
+
+        return board;
     }
 
     @Override
-    public boolean isConditionFulfilled(@NotNull BlockBreakAction.Argument argument, @NotNull ScenarioEngine engine)
+    public boolean isConditionFulfilled(@NotNull InputBoard argument, @NotNull ScenarioEngine engine)
     {
-        Location loc = this.getBlockLocationWithWorld(argument.getBlock(), engine);
+        Location loc = this.getBlockLocationWithWorld(argument.get(IN_BLOCK), engine);
 
         return loc.getBlock().getType() == Material.AIR;
-    }
-
-    @Value
-    @ParametersAreNullableByDefault
-    @EqualsAndHashCode(callSuper = true)
-    public static class Argument extends AbstractBlockActionArgument
-    {
-        public static final String KEY_ACTOR = "actor";
-        public static final String KEY_DROP_ITEMS = "drop_items";
-
-        @NotNull
-        PlayerSpecifier actorSpecifier;
-        Boolean dropItems;
-
-        public Argument(@Nullable BlockStructure block, @NotNull PlayerSpecifier actorSpecifier, Boolean dropItems)
-        {
-            super(block);
-            this.actorSpecifier = actorSpecifier;
-            this.dropItems = dropItems;
-        }
-
-        @Override
-        public boolean isSame(TriggerArgument argument)
-        {
-            if (!(argument instanceof Argument))
-                return false;
-
-            Argument arg = (Argument) argument;
-
-            return super.isSame(argument)
-                    && Objects.equals(this.actorSpecifier, arg.actorSpecifier)
-                    && Objects.equals(this.dropItems, arg.dropItems);
-        }
-
-        @Override
-        public void validate(@NotNull ScenarioEngine engine, @NotNull ScenarioType type)
-        {
-            switch (type)
-            {
-                case ACTION_EXECUTE:
-                    ensurePresent(Argument.KEY_BLOCK, this.block);
-                    break;
-                case CONDITION_REQUIRE:
-                    if (this.actorSpecifier.canProvideTarget())
-                        throw new IllegalArgumentException("Cannot specify the actor in the condition requiring mode.");
-                    ensureNotPresent(Argument.KEY_DROP_ITEMS, this.dropItems);
-
-                    BlockStructure block = this.block;
-                    ensureNotPresent(Argument.KEY_BLOCK + "." + BlockStructure.KEY_BLOCK_TYPE, block.getType());
-                    ensureNotPresent(Argument.KEY_BLOCK + "." + BlockStructure.KEY_BIOME, block.getBiome());
-                    ensureNotPresent(Argument.KEY_BLOCK + "." + BlockStructure.KEY_LIGHT_LEVEL, block.getLightLevel());
-
-                    if (!block.getMetadata().isEmpty())
-                        throw new IllegalArgumentException("The block metadata must be empty.");
-            }
-
-        }
-
-        @Override
-        public String getArgumentString()
-        {
-            return AbstractActionArgument.appendArgumentString(
-                    super.getArgumentString(),
-                    KEY_ACTOR, this.actorSpecifier
-            );
-        }
     }
 }

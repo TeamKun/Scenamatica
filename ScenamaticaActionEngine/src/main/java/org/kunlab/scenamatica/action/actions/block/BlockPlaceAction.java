@@ -1,7 +1,5 @@
 package org.kunlab.scenamatica.action.actions.block;
 
-import lombok.EqualsAndHashCode;
-import lombok.Value;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -11,29 +9,33 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.commons.utils.PlayerUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
+import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.context.Actor;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.misc.BlockStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.PlayerSpecifier;
-import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
-public class BlockPlaceAction extends AbstractBlockAction<BlockPlaceAction.Argument>
-        implements Executable<BlockPlaceAction.Argument>, Requireable<BlockPlaceAction.Argument>, Watchable<BlockPlaceAction.Argument>
+public class BlockPlaceAction extends AbstractBlockAction
+        implements Executable, Requireable, Watchable
 {
     public static final String KEY_ACTION_NAME = "block_place";
+    public static final InputToken<PlayerSpecifier> IN_ACTOR = ofInput("actor", PlayerSpecifier.class, ofPlayer());
+    public static final InputToken<EquipmentSlot> IN_HAND = ofEnumInput("hand", EquipmentSlot.class)
+            .validator(
+                    hand -> hand == EquipmentSlot.HAND || hand == EquipmentSlot.OFF_HAND,
+                    "Invalid hand: %s, allowed: " + EquipmentSlot.HAND + ", " + EquipmentSlot.OFF_HAND
+            );
+
     private static final BlockFace[] ALLOWED_FACES = {
             BlockFace.UP,
             BlockFace.DOWN,
@@ -42,6 +44,12 @@ public class BlockPlaceAction extends AbstractBlockAction<BlockPlaceAction.Argum
             BlockFace.SOUTH,
             BlockFace.WEST
     };
+    public static final InputToken<BlockFace> IN_DIRECTION = ofEnumInput("direction", BlockFace.class)
+            .validator(
+                    face -> Arrays.stream(ALLOWED_FACES).parallel().anyMatch(f -> f == face),
+                    "Invalid direction: %s, allowed: " + Arrays.toString(ALLOWED_FACES)
+            )
+            .defaultValue(BlockFace.EAST);
 
     @Override
     public String getName()
@@ -50,12 +58,11 @@ public class BlockPlaceAction extends AbstractBlockAction<BlockPlaceAction.Argum
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @NotNull BlockPlaceAction.Argument argument)
+    public void execute(@NotNull ScenarioEngine engine, @NotNull InputBoard argument)
     {
-        Player actor = argument.getActorSpecifier().selectTarget(engine.getContext())
-                .orElse(null);
+        Player actor = argument.get(IN_ACTOR).selectTarget(engine.getContext()).orElse(null);
 
-        BlockStructure blockDef = argument.getBlock();
+        BlockStructure blockDef = argument.get(IN_BLOCK);
         Location location = this.getBlockLocationWithWorld(blockDef, engine);
 
         Block block;
@@ -66,8 +73,8 @@ public class BlockPlaceAction extends AbstractBlockAction<BlockPlaceAction.Argum
         }
         else
         {
-            BlockFace direction = argument.getDirection() == null ? BlockFace.EAST: argument.getDirection();
-            EquipmentSlot hand = argument.getHand() == null ? EquipmentSlot.HAND: argument.getHand();
+            BlockFace direction = argument.get(IN_DIRECTION);
+            EquipmentSlot hand = argument.has(IN_HAND) ? argument.get(IN_HAND): EquipmentSlot.HAND;
 
             Actor scenarioActor = PlayerUtils.getActorOrThrow(engine, actor);
             scenarioActor.placeBlock(
@@ -85,7 +92,7 @@ public class BlockPlaceAction extends AbstractBlockAction<BlockPlaceAction.Argum
     }
 
     @Override
-    public boolean isFired(@NotNull Argument argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public boolean isFired(@NotNull InputBoard argument, @NotNull ScenarioEngine engine, @NotNull Event event)
     {
         if (!super.checkMatchedBlockEvent(argument, engine, event))
             return false;
@@ -93,12 +100,9 @@ public class BlockPlaceAction extends AbstractBlockAction<BlockPlaceAction.Argum
         assert event instanceof BlockPlaceEvent;
         BlockPlaceEvent e = (BlockPlaceEvent) event;
 
-
-        if (!(argument.getHand() == null || e.getHand() == argument.getHand()))
-            return false;
-
-        return (!argument.getActorSpecifier().canProvideTarget() || argument.getActorSpecifier().checkMatchedPlayer(e.getPlayer()))
-                && (argument.getBlock() == null || this.isConditionFulfilled(argument, engine));
+        return argument.ifPresent(IN_ACTOR, actor -> actor.checkMatchedPlayer(e.getPlayer()))
+                && argument.ifPresent(IN_HAND, hand -> hand == e.getHand())
+                && argument.ifPresent(IN_BLOCK, block -> this.isConditionFulfilled(argument, engine));
     }
 
     @Override
@@ -110,99 +114,36 @@ public class BlockPlaceAction extends AbstractBlockAction<BlockPlaceAction.Argum
     }
 
     @Override
-    public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
+    public boolean isConditionFulfilled(@NotNull InputBoard argument, @NotNull ScenarioEngine engine)
     {
-        return new Argument(
-                super.deserializeBlockOrNull(map, serializer),
-                serializer.tryDeserializePlayerSpecifier(map.get(Argument.KEY_ACTOR)),
-                MapUtils.getAsEnumOrNull(map, Argument.KEY_HAND, EquipmentSlot.class),
-                MapUtils.getAsEnumOrNull(map, Argument.KEY_DIRECTION, BlockFace.class)
-        );
-    }
-
-    @Override
-    public boolean isConditionFulfilled(@NotNull BlockPlaceAction.Argument argument, @NotNull ScenarioEngine engine)
-    {
-        BlockStructure blockDef = argument.getBlock();
+        BlockStructure blockDef = argument.get(IN_BLOCK);
         Block block = this.getBlockLocationWithWorld(blockDef, engine).getBlock();
 
         return blockDef.isAdequate(block);
     }
 
-    @Value
-    @EqualsAndHashCode(callSuper = true)
-    public static class Argument extends AbstractBlockActionArgument
+    @Override
+    public InputBoard getInputBoard(ScenarioType type)
     {
-        public static final String KEY_ACTOR = "actor";
-        public static final String KEY_HAND = "hand";
-        public static final String KEY_DIRECTION = "direction";
+        InputBoard board = this.createBaseInput(type);
 
-        @NotNull
-        PlayerSpecifier actorSpecifier;
-        EquipmentSlot hand;  // HAND or OFF_HAND
-        BlockFace direction;
-
-        public Argument(@Nullable BlockStructure block, @NotNull PlayerSpecifier actorSpecifier, EquipmentSlot hand, BlockFace direction)
+        switch (type)
         {
-            super(block);
-            this.actorSpecifier = actorSpecifier;
-            this.hand = hand;
-            this.direction = direction;
+            case CONDITION_REQUIRE:
+                board.requireNonNull(IN_BLOCK)
+                        .validator(
+                                b -> !b.isPresent(IN_ACTOR),
+                                "Cannot specify the actor in the condition requiring mode."
+                        );
+                /* fall through */
+            case ACTION_EXECUTE:
+                board.validator(
+                        b -> b.ifPresent(IN_BLOCK, block -> block.getType() != null),
+                        "Block type cannot be null"
+                );
+                break;
         }
 
-        @Override
-        public boolean isSame(TriggerArgument argument)
-        {
-            if (!(argument instanceof Argument))
-                return false;
-
-            Argument arg = (Argument) argument;
-
-            return super.isSame(argument)
-                    && this.actorSpecifier.equals(arg.actorSpecifier)
-                    && this.hand == arg.hand
-                    && this.direction == arg.direction;
-
-        }
-
-        @Override
-        public void validate(@NotNull ScenarioEngine engine, @NotNull ScenarioType type)
-        {
-            if (this.direction != null
-                    // Direction が有効かどうかのチェック。(NMS との互換性)
-                    && Arrays.stream(ALLOWED_FACES).parallel().noneMatch(face -> face == this.direction))
-                throw new IllegalArgumentException("Invalid direction: " + this.direction + ", allowed: " + Arrays.toString(ALLOWED_FACES));
-
-            EquipmentSlot hand = this.hand;
-            if (!(hand == null || hand == EquipmentSlot.OFF_HAND || hand == EquipmentSlot.HAND))
-                throw new IllegalArgumentException("Invalid hand: " + this.hand + ", allowed: " + EquipmentSlot.HAND + ", " + EquipmentSlot.OFF_HAND);
-
-            switch (type)
-            {
-                case ACTION_EXPECT:
-                    ensureNotPresent(KEY_DIRECTION, this.direction);
-                    break;
-                case CONDITION_REQUIRE:
-                    if (this.actorSpecifier.canProvideTarget())
-                        throw new IllegalArgumentException("Cannot specify the actor in the condition requiring mode.");
-                    ensurePresent(KEY_BLOCK, this.block);
-                    /* fall through */
-                case ACTION_EXECUTE:
-                    BlockStructure blockDef = this.block;
-                    if (blockDef.getType() == null)
-                        throw new IllegalArgumentException("Block type cannot be null");
-
-            }
-        }
-
-        @Override
-        public String getArgumentString()
-        {
-            return buildArgumentString(
-                    KEY_ACTOR, this.actorSpecifier,
-                    KEY_HAND, this.hand,
-                    KEY_DIRECTION, this.direction
-            );
-        }
+        return board;
     }
 }

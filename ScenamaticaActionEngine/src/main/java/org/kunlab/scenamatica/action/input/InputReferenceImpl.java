@@ -11,6 +11,7 @@ import org.kunlab.scenamatica.interfaces.action.input.Traverser;
 import org.kunlab.scenamatica.interfaces.scenario.SessionVariableHolder;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -47,11 +48,6 @@ public class InputReferenceImpl<T> implements InputReference<T>
         this.referenceParts = referencing == null ? null: selectReferences(referencing);
         this.value = value;
         this.isResolved = isResolved;
-    }
-
-    public InputReferenceImpl(@NotNull InputToken<T> token, @Nullable Object referencing)
-    {
-        this(token, referencing, null, false);
     }
 
     private static String[] selectReferences(Object referencing)
@@ -105,12 +101,17 @@ public class InputReferenceImpl<T> implements InputReference<T>
 
     public static <D> InputReference<D> valued(InputToken<D> token, D value)
     {
-        return new InputReferenceImpl<>(token, value);
+        return new InputReferenceImpl<>(token, null, value, true);
     }
 
     public static <D> InputReference<D> empty(InputToken<D> token)
     {
-        return new InputReferenceImpl<>(token, null);
+        return new InputReferenceImpl<>(token, null, null, false);
+    }
+
+    public static <D> InputReference<D> references(InputToken<D> token, Object referencing)
+    {
+        return new InputReferenceImpl<>(token, referencing, null, false);
     }
 
     public static boolean containsReference(String str)
@@ -222,6 +223,74 @@ public class InputReferenceImpl<T> implements InputReference<T>
             return resolveReferences(base.toString(), references, variables);
     }
 
+    private static <T extends Number> T smartCastNumber(Number num, Class<? extends T> clazz)
+    {
+        if (clazz == Integer.class || clazz == int.class)
+            return clazz.cast(num.intValue());
+        else if (clazz == Long.class || clazz == long.class)
+            return clazz.cast(num.longValue());
+        else if (clazz == Double.class || clazz == double.class)
+            return clazz.cast(num.doubleValue());
+        else if (clazz == Float.class || clazz == float.class)
+            return clazz.cast(num.floatValue());
+        else
+            throw new IllegalArgumentException("Unknown number type: " + clazz);
+    }
+
+    private static <T> T smartCast(Object obj, Class<? extends T> clazz)
+    {
+        if (obj == null)
+            return null;
+        else if (clazz.isInstance(obj))
+            return clazz.cast(obj);
+
+        if (clazz == String.class)
+            return clazz.cast(obj.toString());
+        else if (Number.class.isAssignableFrom(clazz))
+        {
+            if (obj instanceof Number)
+            {
+                // noinspection unchecked
+                return clazz.cast(smartCastNumber((Number) obj, (Class<? extends Number>) clazz));
+            }
+            else if (obj instanceof String)
+            {
+                BigDecimal decimal = new BigDecimal((String) obj);
+                // noinspection unchecked
+                return clazz.cast(smartCastNumber(decimal, (Class<? extends Number>) clazz));
+            }
+            else
+                throw new IllegalArgumentException("Unknown number type: " + clazz);
+        }
+        else if (clazz == Boolean.class || clazz == boolean.class)
+        {
+            if (obj instanceof Boolean)
+                return clazz.cast(obj);  // Boolean#parseBoolean は false になるので使わない
+            else if (obj instanceof String && ((String) obj).equalsIgnoreCase("true"))
+                return clazz.cast(true);
+            else if (obj instanceof String && ((String) obj).equalsIgnoreCase("false"))
+                return clazz.cast(false);
+            else
+                throw new IllegalArgumentException("Unknown boolean type: " + clazz);
+        }
+        else if (clazz == List.class)
+        {
+            if (obj instanceof List)
+                return clazz.cast(obj);
+            else
+                throw new IllegalArgumentException("Unknown list type: " + clazz);
+        }
+        else if (clazz == Map.class)
+        {
+            if (obj instanceof Map)
+                return clazz.cast(obj);
+            else
+                throw new IllegalArgumentException("Unknown map type: " + clazz);
+        }
+        else
+            throw new IllegalArgumentException("Unknown type: " + clazz);
+    }
+
     @Override
     public boolean isEquals(String reference)
     {
@@ -265,17 +334,23 @@ public class InputReferenceImpl<T> implements InputReference<T>
         if (containsReference(resolved))
             throw new IllegalStateException("Failed to resolve reference: " + this.referencing + " -> " + resolved);
 
-        if (resolved == null)
-            this.resolve(null);
-        else
-            this.resolve(this.smartCast(serializer, resolved));
+        this.resolve(this.smartCast(serializer, resolved));
     }
 
-    private T smartCast(@NotNull StructureSerializer serializer, Object resolved)
+    @Override
+    public boolean isEmpty()
     {
+        return this.value == null && this.referencing == null;
+    }
+
+    private T smartCast(@NotNull StructureSerializer serializer, @Nullable Object resolved)
+    {
+        if (resolved == null)
+            return null;
+
         List<Traverser<?, T>> traversers = this.token.getTraversers();
         if (traversers.isEmpty())
-            return this.token.getClazz().cast(resolved);
+            return smartCast(resolved, this.token.getClazz());
         else
         {
             Class<?> possibleType = this.guessPossibleType(traversers.stream()
@@ -288,7 +363,7 @@ public class InputReferenceImpl<T> implements InputReference<T>
             for (Traverser<?, T> traverser : traversers)
             {
                 if (traverser.getInputClazz() == possibleType)
-                    return this.token.getClazz().cast(traverser.tryTraverse(serializer, resolved));
+                    return this.token.getClazz().cast(traverser.tryTraverse(serializer, smartCast(resolved, possibleType)));
             }
 
             throw new IllegalArgumentException("Unknown traverser type");

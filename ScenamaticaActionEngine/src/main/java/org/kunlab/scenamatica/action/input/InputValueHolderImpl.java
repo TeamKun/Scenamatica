@@ -12,6 +12,8 @@ import org.kunlab.scenamatica.interfaces.action.input.InputValueHolder;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 
 import java.util.Objects;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 @Data
 public class InputValueHolderImpl<T> implements InputValueHolder<T>
@@ -41,10 +43,46 @@ public class InputValueHolderImpl<T> implements InputValueHolder<T>
     @Override
     public T getValue()
     {
-        if (!this.isPresent())
+        if (!this.isResolved())
             throw new IllegalStateException("Value is not present");
 
         return this.valueReference.getValue();
+    }
+
+    @Override
+    public boolean isNull()
+    {
+        return this.isResolved() && this.valueReference.getValue() == null;
+    }
+
+    @Override
+    public boolean isNotNull()
+    {
+        return this.isResolved() && this.valueReference.getValue() != null;
+    }
+
+    @Override
+    public <U> U ifNotNull(@NotNull Function<? super T, ? extends U> mapper, @Nullable U defaultValue)
+    {
+        if (this.isNotNull())
+            return mapper.apply(this.valueReference.getValue());
+        else
+            return defaultValue;
+    }
+
+    @Override
+    public boolean ifNotNull(@NotNull Predicate<? super T> predicate, boolean defaultValue)
+    {
+        if (this.isNotNull())
+            return predicate.test(this.valueReference.getValue());
+        else
+            return defaultValue;
+    }
+
+    @Override
+    public boolean ifNotNull(@NotNull Predicate<? super T> predicate)
+    {
+        return this.ifNotNull(predicate, false);
     }
 
     @Override
@@ -54,13 +92,25 @@ public class InputValueHolderImpl<T> implements InputValueHolder<T>
             this.valueReference = InputReferenceImpl.valued(this.token, this.token.getDefaultValue());
         else if (InputReferenceImpl.containsReference(obj))
             // assert obj instanceof String
-            this.valueReference = new InputReferenceImpl<>(this.token, obj);
+            this.valueReference = InputReferenceImpl.references(this.token, obj);
         else
             this.valueReference = InputReferenceImpl.valued(this.token, this.token.traverse(serializer, obj));
     }
 
     @Override
-    public boolean isPresent()
+    public void setEmpty()
+    {
+        this.valueReference = InputReferenceImpl.empty(this.token);
+    }
+
+    @Override
+    public boolean isEmpty()
+    {
+        return this.valueReference.isEmpty();
+    }
+
+    @Override
+    public boolean isResolved()
     {
         return this.valueReference != null && this.valueReference.isResolved();
     }

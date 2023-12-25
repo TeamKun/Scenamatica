@@ -4,9 +4,8 @@ import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 
-import java.util.EnumMap;
 import java.util.List;
-import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 /**
  * 入力値を受け取るためのトークンです。
@@ -41,16 +40,19 @@ public interface InputToken<T>
      *
      * @param type      シナリオタイプ
      * @param validator バリデタ
-     * @return このトークン
+     * @param message   バリデーションエラー時のメッセージ
+     * @return クローンされたトークン
      */
-    InputToken<T> validator(ScenarioType type, Consumer<? super T> validator);
+    InputToken<T> validator(ScenarioType type, Predicate<? super T> validator, String message);
 
     /**
-     * このトークンのバリデタを取得します。
+     * 入力値のバリデタを登録します。
      *
-     * @return バリデタ
+     * @param validator バリデタ
+     * @param message   バリデーションエラー時のメッセージ
+     * @return クローンされたトークン
      */
-    EnumMap<ScenarioType, Consumer<? super T>> getValidators();
+    InputToken<T> validator(Predicate<? super T> validator, String message);
 
     /**
      * 入力値のトラバーサを登録します。
@@ -58,9 +60,17 @@ public interface InputToken<T>
      * @param clazz     トラバースするオブジェクトの型
      * @param traverser トラバーサ
      * @param <I>       トラバースするオブジェクトの型
-     * @return このトークン
+     * @return クローンされたトークン
      */
     <I> InputToken<T> traverser(Class<I> clazz, InputTraverser<? super I, ? extends T> traverser);
+
+    /**
+     * デフォルト値を設定します。
+     *
+     * @param defaultValue デフォルト値
+     * @return クローンされたトークン
+     */
+    InputToken<T> defaultValue(T defaultValue);
 
     /**
      * このトークンのトラバーサを取得します。

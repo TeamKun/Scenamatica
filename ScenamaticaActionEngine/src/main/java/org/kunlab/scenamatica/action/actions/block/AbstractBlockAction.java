@@ -7,20 +7,29 @@ import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.action.actions.AbstractAction;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.commons.utils.Utils;
+import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
+import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.misc.BlockStructure;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public abstract class AbstractBlockAction<A extends AbstractBlockActionArgument>
-        extends AbstractAction<A>
+public abstract class AbstractBlockAction
+        extends AbstractAction
 {
-    public static List<? extends AbstractBlockAction<?>> getActions()
+    public static final InputToken<BlockStructure> IN_BLOCK = ofInput("block", BlockStructure.class,
+            ofTraverser(Map.class, (ser, map) -> ser.deserialize(
+                    MapUtils.checkAndCastMap(map),
+                    BlockStructure.class
+            ))
+    );
+
+    public static List<? extends AbstractBlockAction> getActions()
     {
-        List<AbstractBlockAction<?>> actions = new ArrayList<>();
+        List<AbstractBlockAction> actions = new ArrayList<>();
 
         actions.add(new BlockBreakAction());
         actions.add(new BlockPlaceAction());
@@ -28,25 +37,23 @@ public abstract class AbstractBlockAction<A extends AbstractBlockActionArgument>
         return actions;
     }
 
-    public boolean checkMatchedBlockEvent(@NotNull A argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    protected InputBoard createBaseInput(@NotNull ScenarioType type)
+    {
+        InputBoard board = ofInputs(type, IN_BLOCK);
+        if (type == ScenarioType.ACTION_EXECUTE)
+            board.requireNonNull(IN_BLOCK);
+
+        return board;
+    }
+
+    public boolean checkMatchedBlockEvent(@NotNull InputBoard input, @NotNull ScenarioEngine engine, @NotNull Event event)
     {
         if (!(event instanceof BlockEvent))
             return false;
 
         BlockEvent e = (BlockEvent) event;
 
-        return argument.block == null || argument.block.isAdequate(e.getBlock());
-    }
-
-    public BlockStructure deserializeBlockOrNull(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
-    {
-        if (!map.containsKey(AbstractBlockActionArgument.KEY_BLOCK))
-            return null;
-
-        return serializer.deserialize(
-                MapUtils.checkAndCastMap(map.get(AbstractBlockActionArgument.KEY_BLOCK)),
-                BlockStructure.class
-        );
+        return input.ifPresent(IN_BLOCK, block -> block.isAdequate(e.getBlock()));
     }
 
     protected Location getBlockLocationWithWorld(@NotNull BlockStructure block, @NotNull ScenarioEngine engine)

@@ -1,7 +1,10 @@
 package org.kunlab.scenamatica.action.input;
 
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
 import lombok.Value;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.input.InputTraverser;
@@ -10,10 +13,12 @@ import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.EnumMap;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
-import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 @Value
 @NotNull
@@ -24,7 +29,37 @@ public class InputTokenImpl<T> implements InputToken<T>
     List<Traverser<?, T>> traversers;
     T defaultValue;
 
-    EnumMap<ScenarioType, Consumer<? super T>> validators;
+    Map<ScenarioType, Collection<ValidatorElement>> validators;
+
+    private InputTokenImpl(InputTokenImpl<T> token, @Nullable ScenarioType type, Predicate<? super T> validator, String message)
+    {
+        this.name = token.name;
+        this.clazz = token.clazz;
+        this.traversers = token.traversers;
+        this.defaultValue = token.defaultValue;
+        this.validators = Collections.unmodifiableMap(this.appendValidatorsMap(token, type, validator, message).asMap());
+    }
+
+    private InputTokenImpl(InputTokenImpl<T> token, @Nullable Traverser<?, T> traverser)
+    {
+        this.name = token.name;
+        this.clazz = token.clazz;
+        this.defaultValue = token.defaultValue;
+        this.validators = token.validators;
+
+        List<Traverser<?, T>> traversers = new ArrayList<>(token.traversers);
+        traversers.add(traverser);
+        this.traversers = Collections.unmodifiableList(traversers);
+    }
+
+    private InputTokenImpl(InputTokenImpl<T> token, @Nullable T defaultValue)
+    {
+        this.name = token.name;
+        this.clazz = token.clazz;
+        this.traversers = token.traversers;
+        this.defaultValue = defaultValue == null ? token.defaultValue: defaultValue;
+        this.validators = token.validators;
+    }
 
     @SafeVarargs
     private InputTokenImpl(String name, Class<T> clazz, Traverser<?, T>... traversers)
@@ -37,9 +72,9 @@ public class InputTokenImpl<T> implements InputToken<T>
     {
         this.name = name;
         this.clazz = clazz;
-        this.traversers = new ArrayList<>(Arrays.asList(traversers));
+        this.traversers = Collections.unmodifiableList(Arrays.asList(traversers));
         this.defaultValue = defaultValue;
-        this.validators = new EnumMap<>(ScenarioType.class);
+        this.validators = Collections.emptyMap();
     }
 
     public static <T> InputToken<T> of(String name, Class<T> clazz, Traverser<?, T> traverser)
@@ -53,26 +88,54 @@ public class InputTokenImpl<T> implements InputToken<T>
         return new InputTokenImpl<>(name, clazz, InputTraverser.casted());
     }
 
-    @Override
-    public InputToken<T> validator(ScenarioType type, Consumer<? super T> validator)
+    @NotNull
+    private Multimap<ScenarioType, ValidatorElement> appendValidatorsMap(InputTokenImpl<T> token, @Nullable ScenarioType type, Predicate<? super T> validator, String message)
     {
-        this.validators.put(type, validator);
-        return this;
+        Multimap<ScenarioType, ValidatorElement> validators = ArrayListMultimap.create(token.validators.size(), 1);
+        for (Map.Entry<ScenarioType, Collection<ValidatorElement>> entry : token.validators.entrySet())
+        {
+            ScenarioType key = entry.getKey();
+            Collection<ValidatorElement> value = entry.getValue();
+            validators.putAll(key, value);
+        }
+        validators.put(type, new ValidatorElement(validator, message));
+        return validators;
+    }
+
+    @Override
+    public InputToken<T> validator(ScenarioType type, Predicate<? super T> validator, String message)
+    {
+        return new InputTokenImpl<>(this, type, validator, message);
+    }
+
+    @Override
+    public InputToken<T> validator(Predicate<? super T> validator, String message)
+    {
+        InputToken<T> token = this;
+        for (ScenarioType type : ScenarioType.values())
+            token = this.validator(type, validator, message);
+
+        return token;
     }
 
     @Override
     public <I> InputToken<T> traverser(Class<I> clazz, InputTraverser<? super I, ? extends T> traverser)
     {
-        this.traversers.add(TraverserImpl.of(clazz, traverser));
-        return this;
+        return new InputTokenImpl<>(this, TraverserImpl.of(clazz, traverser));
+    }
+
+    @Override
+    public InputToken<T> defaultValue(T defaultValue)
+    {
+        return new InputTokenImpl<>(this, defaultValue);
     }
 
     @Override
     public void validate(ScenarioType type, T value)
     {
-        Consumer<? super T> validator = this.validators.get(type);
-        if (validator != null)
-            validator.accept(value);
+        for (ValidatorElement validator : this.validators.get(type))
+            if (!validator.validator.test(value))
+                throw new IllegalArgumentException(String.format(validator.message, value));
     }
 
     @Override
@@ -100,5 +163,12 @@ public class InputTokenImpl<T> implements InputToken<T>
     public int hashCode()
     {
         return Objects.hash(this.getName());
+    }
+
+    @Value
+    private class ValidatorElement
+    {
+        Predicate<? super T> validator;
+        String message;
     }
 }

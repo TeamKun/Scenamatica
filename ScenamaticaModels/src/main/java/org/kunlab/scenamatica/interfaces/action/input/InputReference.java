@@ -65,4 +65,11 @@ public interface InputReference<T>
      * @return 解決済みの場合はtrue
      */
     boolean isResolved();
+
+    /**
+     * この参照が空かどうかを取得します。
+     *
+     * @return 空の場合はtrue
+     */
+    boolean isEmpty();
 }
