@@ -130,7 +130,7 @@ public class BlockPlaceAction extends AbstractBlockAction
         switch (type)
         {
             case CONDITION_REQUIRE:
-                board.requireNonNull(IN_BLOCK)
+                board.requirePresent(IN_BLOCK)
                         .validator(
                                 b -> !b.isPresent(IN_ACTOR),
                                 "Cannot specify the actor in the condition requiring mode."

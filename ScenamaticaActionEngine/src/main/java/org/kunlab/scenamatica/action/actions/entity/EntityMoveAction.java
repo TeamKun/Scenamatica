@@ -1,33 +1,42 @@
 package org.kunlab.scenamatica.action.actions.entity;
 
 import io.papermc.paper.event.entity.EntityMoveEvent;
-import lombok.EqualsAndHashCode;
-import lombok.Value;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Mob;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
-import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.commons.utils.Utils;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
+import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.misc.LocationStructure;
-import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.EntitySpecifier;
-import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
-public class EntityMoveAction extends AbstractEntityAction<EntityMoveAction.Argument>
-        implements Executable<EntityMoveAction.Argument>, Watchable<EntityMoveAction.Argument>
+public class EntityMoveAction extends AbstractGeneralEntityAction
+        implements Executable, Watchable
 {
     public static final String KEY_ACTION_NAME = "entity_move";
+    public static final InputToken<LocationStructure> IN_FROM = ofInput(
+            "from",
+            LocationStructure.class,
+            ofDeserializer(LocationStructure.class)
+    );
+    public static final InputToken<LocationStructure> IN_TO = ofInput(
+            "to",
+            LocationStructure.class,
+            ofDeserializer(LocationStructure.class)
+    );
+    public static final InputToken<Boolean> IN_USE_AI = ofInput(
+            "ai",
+            Boolean.class,
+            true
+    );
 
     @Override
     public String getName()
@@ -36,12 +45,12 @@ public class EntityMoveAction extends AbstractEntityAction<EntityMoveAction.Argu
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @NotNull EntityMoveAction.Argument argument)
+    public void execute(@NotNull ScenarioEngine engine, @NotNull InputBoard argument)
     {
-        Location toLoc = Utils.assignWorldToLocation(argument.getTo(), engine);
-        Entity entity = argument.selectTarget(engine.getContext());
+        Location toLoc = Utils.assignWorldToLocation(argument.get(IN_TO), engine);
+        Entity entity = this.selectTarget(argument, engine);
 
-        if (argument.isUseAI() && entity instanceof Mob)
+        if (argument.get(IN_USE_AI) && entity instanceof Mob)
         {
             Mob mob = (Mob) entity;
             boolean success = mob.getPathfinder().moveTo(toLoc);
@@ -53,7 +62,7 @@ public class EntityMoveAction extends AbstractEntityAction<EntityMoveAction.Argu
     }
 
     @Override
-    public boolean isFired(@NotNull Argument argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public boolean isFired(@NotNull InputBoard argument, @NotNull ScenarioEngine engine, @NotNull Event event)
     {
         if (!super.checkMatchedEntityEvent(argument, engine, event))
             return false;
@@ -61,8 +70,8 @@ public class EntityMoveAction extends AbstractEntityAction<EntityMoveAction.Argu
         assert event instanceof EntityMoveEvent;
         EntityMoveEvent e = (EntityMoveEvent) event;
 
-        return (argument.getFrom() == null || argument.getFrom().isAdequate(e.getFrom())
-                && (argument.getTo() == null || argument.getTo().isAdequate(e.getTo())));
+        return argument.ifPresent(IN_FROM, from -> from.isAdequate(e.getFrom()))
+                && argument.ifPresent(IN_TO, to -> to.isAdequate(e.getTo()));
     }
 
     @Override
@@ -74,78 +83,14 @@ public class EntityMoveAction extends AbstractEntityAction<EntityMoveAction.Argu
     }
 
     @Override
-    public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
+    public InputBoard getInputBoard(ScenarioType type)
     {
-        LocationStructure from = null;
-        if (map.containsKey(Argument.KEY_FROM))
-            from = serializer.deserialize(MapUtils.checkAndCastMap(map.get(Argument.KEY_FROM)), LocationStructure.class);
-
-        LocationStructure to = null;
-        if (map.containsKey(Argument.KEY_TO))
-            to = serializer.deserialize(MapUtils.checkAndCastMap(map.get(Argument.KEY_TO)), LocationStructure.class);
-
-
-        return new Argument(
-                super.deserializeTarget(map, serializer),
-                from,
-                to,
-                MapUtils.getOrDefault(map, Argument.KEY_USE_AI, true)
-        );
-    }
-
-    @Value
-    @EqualsAndHashCode(callSuper = true)
-    public static class Argument extends AbstractEntityActionArgument<Entity>
-    {
-        public static final String KEY_FROM = "from";
-        public static final String KEY_TO = "to";
-        public static final String KEY_USE_AI = "ai";
-
-        LocationStructure from;
-        LocationStructure to;
-        // Execute のときのみ. デフォは true -> テレポート.
-        boolean useAI;
-
-        public Argument(@NotNull EntitySpecifier<Entity> mayTarget, LocationStructure from, LocationStructure to, boolean useAI)
-        {
-            super(mayTarget);
-            this.from = from;
-            this.to = to;
-            this.useAI = useAI;
-        }
-
-        @Override
-        public void validate(@NotNull ScenarioEngine engine, @NotNull ScenarioType type)
-        {
-            if (type == ScenarioType.ACTION_EXECUTE)
-            {
-                this.ensureCanProvideTarget();
-                ensurePresent(KEY_TARGET_ENTITY, this.getTargetString());
-                ensureNotPresent(KEY_FROM, this.from);
-                ensurePresent(KEY_TO, this.to);
-            }
-        }
-
-        @Override
-        public boolean isSame(TriggerArgument argument)
-        {
-            if (!(argument instanceof Argument))
-                return false;
-
-            Argument arg = (Argument) argument;
-            return super.isSame(arg)
-                    && Objects.equals(this.from, arg.from)
-                    && Objects.equals(this.to, arg.to);
-        }
-
-        @Override
-        public String getArgumentString()
-        {
-            return appendArgumentString(
-                    super.getArgumentString(),
-                    KEY_FROM, this.from,
-                    KEY_TO, this.to
-            );
-        }
+        InputBoard board = super.getInputBoard(type)
+                .registerAll(IN_FROM, IN_TO);
+        if (type == ScenarioType.ACTION_EXECUTE)
+            board.register(IN_USE_AI)
+                    .requirePresent(IN_TO)
+                    .validator(b -> !b.isPresent(IN_FROM), "Cannot specify from in execute action.");
+        return board;
     }
 }

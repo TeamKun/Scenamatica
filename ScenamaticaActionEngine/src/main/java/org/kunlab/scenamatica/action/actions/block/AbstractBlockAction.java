@@ -41,7 +41,7 @@ public abstract class AbstractBlockAction
     {
         InputBoard board = ofInputs(type, IN_BLOCK);
         if (type == ScenarioType.ACTION_EXECUTE)
-            board.requireNonNull(IN_BLOCK);
+            board.requirePresent(IN_BLOCK);
 
         return board;
     }

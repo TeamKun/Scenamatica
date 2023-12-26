@@ -61,7 +61,7 @@ public interface InputBoard extends TriggerArgument
      * @param tokens トークン
      * @return this
      */
-    InputBoard requireNonNull(InputToken<?>... tokens);
+    InputBoard requirePresent(InputToken<?>... tokens);
 
     /**
      * 入力を追加します。
@@ -105,6 +105,17 @@ public interface InputBoard extends TriggerArgument
      * @return 値
      */
     <T> T get(InputToken<T> token);
+
+    /**
+     * 値を取得します。
+     * 解決済みでない場合は、指定された値を返します。
+     *
+     * @param token        トークン
+     * @param defaultValue 値が null の場合に返す値
+     * @param <T>          値の型
+     * @return 値
+     */
+    <T> T orElse(InputToken<? extends T> token, T defaultValue);
 
     /**
      * 値があるかどうかを返します。

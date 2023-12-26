@@ -115,7 +115,7 @@ public abstract class AbstractAction implements Action
         return t -> p1.test(t) && p2.test(t);
     }
 
-    protected static <T extends Entity> InputToken<EntitySpecifier<T>> ofSpecifier(String name, Class<T> entityClass, Class<? extends EntityStructure> structureClass)
+    protected static <T extends Entity> InputToken<EntitySpecifier<T>> ofInput(String name, Class<T> entityClass, Class<? extends EntityStructure> structureClass)
     {
         return ofInput(
                 name,
@@ -129,6 +129,6 @@ public abstract class AbstractAction implements Action
 
     protected static InputToken<EntitySpecifier<Entity>> ofSpecifier(String name)
     {
-        return ofSpecifier(name, Entity.class, EntityStructure.class);
+        return ofInput(name, Entity.class, EntityStructure.class);
     }
 }

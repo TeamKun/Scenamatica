@@ -1,7 +1,5 @@
 package org.kunlab.scenamatica.action.actions.entity;
 
-import lombok.EqualsAndHashCode;
-import lombok.Value;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
@@ -11,24 +9,31 @@ import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
-import org.kunlab.scenamatica.commons.utils.MapUtils;
+import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
+import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.entity.entities.EntityItemStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.EntitySpecifier;
-import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
-public class EntityPickupItemAction extends AbstractEntityAction<EntityPickupItemAction.Argument>
-        implements Executable<EntityPickupItemAction.Argument>, Watchable<EntityPickupItemAction.Argument>
+public class EntityPickupItemAction extends AbstractGeneralEntityAction
+        implements Executable, Watchable
 {
     public static final String KEY_ACTION_NAME = "entity_pickup_item";
+    public static final InputToken<Integer> IN_REMAINING = ofInput(
+            "remaining",
+            Integer.class
+    );
+    public static final InputToken<EntitySpecifier<Item>> IN_ITEM = ofInput(
+            "item",
+            Item.class,
+            EntityItemStructure.class
+    );
 
     @Override
     public String getName()
@@ -37,9 +42,9 @@ public class EntityPickupItemAction extends AbstractEntityAction<EntityPickupIte
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @NotNull EntityPickupItemAction.Argument argument)
+    public void execute(@NotNull ScenarioEngine engine, @NotNull InputBoard argument)
     {
-        Entity target = argument.selectTarget(engine.getContext());
+        Entity target = this.selectTarget(argument, engine);
         if (!(target instanceof LivingEntity))
             throw new IllegalArgumentException("Target is not living entity.");
 
@@ -47,18 +52,19 @@ public class EntityPickupItemAction extends AbstractEntityAction<EntityPickupIte
         if (!leTarget.getCanPickupItems())
             throw new IllegalStateException("The target cannot pickup items (LivingEntity#getCanPickupItems() is false).");
 
-        Item item;
-        if (argument.isItemSelectable())
-            item = argument.getItemSelector().selectTarget(engine.getContext())
+        EntitySpecifier<Item> itemSpecifier = argument.get(IN_ITEM);
+        Item item;  // TODO: 統一？
+        if (itemSpecifier.isSelectable())
+            item = itemSpecifier.selectTarget(engine.getContext())
                     .orElseThrow(() -> new IllegalStateException("Item is not found."));
         else
         {
-            EntityItemStructure itemStructure = argument.getItem();
+            EntityItemStructure itemStructure = (EntityItemStructure) itemSpecifier;
 
             // 拾う前に, アイテムを落とす必要がある
             item = target.getWorld().dropItemNaturally(
                     target.getLocation(),
-                    argument.getItem().getItemStack().create(),
+                    itemStructure.getItemStack().create(),
                     itemStructure::applyTo
             );
         }
@@ -93,15 +99,15 @@ public class EntityPickupItemAction extends AbstractEntityAction<EntityPickupIte
     }
 
     @Override
-    public boolean isFired(@NotNull Argument argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public boolean isFired(@NotNull InputBoard argument, @NotNull ScenarioEngine engine, @NotNull Event event)
     {
         if (!super.checkMatchedEntityEvent(argument, engine, event))
             return false;
 
         EntityPickupItemEvent e = (EntityPickupItemEvent) event;
 
-        return (argument.getRemaining() == null || Objects.equals(argument.getRemaining(), e.getRemaining()))
-                && (argument.getItem() == null || argument.getItem().isAdequate(e.getItem()));
+        return argument.ifPresent(IN_REMAINING, remaining -> remaining.equals(e.getRemaining()))
+                && argument.ifPresent(IN_ITEM, item -> item.checkMatchedEntity(e.getItem()));
     }
 
     @Override
@@ -113,60 +119,20 @@ public class EntityPickupItemAction extends AbstractEntityAction<EntityPickupIte
     }
 
     @Override
-    public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
+    public InputBoard getInputBoard(ScenarioType type)
     {
-        Integer remaining = MapUtils.getAsNumberOrNull(map, Argument.KEY_REMAINING, Number::intValue);
+        InputBoard board = super.getInputBoard(type)
+                .registerAll(IN_REMAINING, IN_ITEM);
+        if (type == ScenarioType.ACTION_EXECUTE)
+            board.requirePresent(IN_ITEM)
+                    .validator(
+                            b -> b.ifPresent(
+                                    IN_ITEM,
+                                    item -> !item.hasStructure() || item.getTargetStructure() instanceof EntityItemStructure
+                            ),
+                            "Item must be EntityItemStructure."
+                    );
 
-        return new Argument(
-                super.deserializeTarget(map, serializer),
-                remaining,
-                serializer.tryDeserializeEntitySpecifier(map.get(Argument.KEY_ITEM), EntityItemStructure.class)
-        );
-    }
-
-    @Value
-    @EqualsAndHashCode(callSuper = true)
-    public static class Argument extends AbstractEntityActionArgument<Entity>
-    {
-        public static final String KEY_REMAINING = "remaining";
-        public static final String KEY_ITEM = "item";
-
-        Integer remaining;
-        EntityItemStructure item;
-        EntitySpecifier<? extends Item> itemSelector;
-
-        public Argument(@NotNull EntitySpecifier<Entity> mayTarget, Integer remaining, EntitySpecifier<? extends Item> itemSelector)
-        {
-            super(mayTarget);
-            this.remaining = remaining;
-            this.item = null;
-            this.itemSelector = itemSelector;
-        }
-
-        public boolean isItemSelectable()
-        {
-            return this.itemSelector != null;
-        }
-
-        @Override
-        public boolean isSame(TriggerArgument argument)
-        {
-            if (!(argument instanceof Argument))
-                return false;
-
-            Argument arg = (Argument) argument;
-
-            return super.isSame(arg)
-                    && Objects.equals(this.item, arg.item);
-        }
-
-        @Override
-        public String getArgumentString()
-        {
-            return appendArgumentString(
-                    super.getArgumentString(),
-                    KEY_ITEM, this.item
-            );
-        }
+        return board;
     }
 }

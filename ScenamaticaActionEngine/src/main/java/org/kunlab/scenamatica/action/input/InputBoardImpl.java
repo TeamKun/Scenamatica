@@ -141,6 +141,15 @@ public class InputBoardImpl implements InputBoard
     }
 
     @Override
+    public <T> T orElse(InputToken<? extends T> token, T defaultValue)
+    {
+        if (this.isResolved(token))
+            return this.get(token);
+        else
+            return defaultValue;
+    }
+
+    @Override
     public boolean has(@NotNull InputToken<?> token)
     {
         return this.getHolder(token).isResolved();
