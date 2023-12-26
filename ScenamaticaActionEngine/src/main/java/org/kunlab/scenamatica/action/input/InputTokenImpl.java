@@ -83,10 +83,10 @@ public class InputTokenImpl<T> implements InputToken<T>
         return new InputTokenImpl<>(name, clazz, traverser);
     }
 
-    public static <T> InputToken<T> of(String name, Class<? extends T> clazz)
+    public static <T> InputToken<T> of(String name, Class<T> clazz)
     {
         // noinspection unchecked,rawtypes
-        return new InputTokenImpl<>(name, clazz, null, TraverserImpl.of(clazz, InputTraverser.casted()));
+        return new InputTokenImpl<>(name, clazz, (T) null, TraverserImpl.of(clazz, InputTraverser.casted()));
     }
 
     public static <T> InputToken<T> of(String name, Class<T> clazz, Traverser<?, T> traverser, T defaultValue)
@@ -94,9 +94,8 @@ public class InputTokenImpl<T> implements InputToken<T>
         return new InputTokenImpl<>(name, clazz, defaultValue, traverser);
     }
 
-    public static <T> InputToken<T> of(String name, Class<? extends T> clazz, T defaultValue)
+    public static <T> InputToken<T> of(String name, Class<T> clazz, T defaultValue)
     {
-        // noinspection unchecked,rawtypes
         return new InputTokenImpl<>(name, clazz, defaultValue, TraverserImpl.of(clazz, InputTraverser.casted()));
     }
 

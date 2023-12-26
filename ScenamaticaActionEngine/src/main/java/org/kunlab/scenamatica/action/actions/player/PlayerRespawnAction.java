@@ -22,15 +22,15 @@ public class PlayerRespawnAction extends AbstractPlayerAction
 {
     public static final String KEY_ACTION_NAME = "player_respawn";
     public static final InputToken<Boolean> IN_IS_BED = ofInput(
-            Argument.KEY_IS_BED,
+            "isBed",
             Boolean.class
     );
     public static final InputToken<Boolean> IN_IS_ANCHOR = ofInput(
-            Argument.KEY_IS_ANCHOR,
+            "isAnchor",
             Boolean.class
     );
     public static final InputToken<LocationStructure> IN_LOCATION = ofInput(
-            Argument.KEY_LOCATION,
+            "location",
             LocationStructure.class,
             ofDeserializer(LocationStructure.class)
     );
