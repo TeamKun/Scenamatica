@@ -1,30 +1,32 @@
 package org.kunlab.scenamatica.action.actions.scenamatica;
 
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Value;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
-import org.kunlab.scenamatica.action.actions.AbstractActionArgument;
-import org.kunlab.scenamatica.commons.utils.MapUtils;
+import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.events.MilestoneReachedEvent;
+import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
+import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.scenario.MilestoneEntry;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
-import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
-public class MilestoneAction extends AbstractScenamaticaAction<MilestoneAction.Argument>
-        implements Executable<MilestoneAction.Argument>, Watchable<MilestoneAction.Argument>, Requireable<MilestoneAction.Argument>
+public class MilestoneAction extends AbstractScenamaticaAction
+        implements Executable, Watchable, Requireable
 {
     public static final String KEY_ACTION_NAME = "milestone";
+    public static final InputToken<String> IN_NAME = ofInput(
+            "name",
+            String.class
+    );
+    public static final InputToken<Boolean> IN_REACHED = ofInput(
+            "reached",
+            Boolean.class
+    );
 
     @Override
     public String getName()
@@ -33,28 +35,26 @@ public class MilestoneAction extends AbstractScenamaticaAction<MilestoneAction.A
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @NotNull MilestoneAction.Argument argument)
+    public void execute(@NotNull ScenarioEngine engine, @NotNull InputBoard argument)
     {
-        if (argument.getReached() == null || argument.getReached())
-            engine.getManager().getMilestoneManager().reachMilestone(engine, argument.getName());
+        String name = argument.get(IN_NAME);
+        if (argument.ifPresent(IN_REACHED, reached -> reached))
+            engine.getManager().getMilestoneManager().reachMilestone(engine, name);
         else
-            engine.getManager().getMilestoneManager().revokeMilestone(engine, argument.getName());
+            engine.getManager().getMilestoneManager().revokeMilestone(engine, name);
     }
 
     @Override
-    public boolean isFired(@NotNull MilestoneAction.Argument argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public boolean isFired(@NotNull InputBoard argument, @NotNull ScenarioEngine engine, @NotNull Event event)
     {
         assert event instanceof MilestoneReachedEvent;
         MilestoneReachedEvent e = (MilestoneReachedEvent) event;
 
-        Boolean expectedCondition = argument.getReached();
         boolean condition = !e.isCancelled();
-
-        String expectedMilestoneName = argument.getName();
         MilestoneEntry milestone = e.getMilestone();
 
-        return (expectedMilestoneName == null || expectedMilestoneName.equals(milestone.getName()))
-                && (expectedCondition == null || expectedCondition == condition);
+        return argument.ifPresent(IN_NAME, name -> name.equalsIgnoreCase(milestone.getName()))
+                && argument.ifPresent(IN_REACHED, reached -> reached == condition);
     }
 
     @Override
@@ -66,51 +66,26 @@ public class MilestoneAction extends AbstractScenamaticaAction<MilestoneAction.A
     }
 
     @Override
-    public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
+    public boolean isConditionFulfilled(@NotNull InputBoard argument, @NotNull ScenarioEngine engine)
     {
-        return new Argument(
-                MapUtils.getOrNull(map, Argument.KEY_NAME),
-                MapUtils.getOrNull(map, Argument.KEY_REACHED)
-        );
+        boolean isMilestoneReached = engine.getManager().getMilestoneManager().isReached(engine, argument.get(IN_NAME));
+        return argument.ifPresent(IN_REACHED, reached -> reached == isMilestoneReached);
     }
 
     @Override
-    public boolean isConditionFulfilled(@NotNull MilestoneAction.Argument argument, @NotNull ScenarioEngine engine)
+    public InputBoard getInputBoard(ScenarioType type)
     {
-        boolean isMilestoneReached = engine.getManager().getMilestoneManager().isReached(engine, argument.getName());
-        return isMilestoneReached == (argument.getReached() == null || argument.getReached());
-    }
-
-    @Value
-    @AllArgsConstructor
-    @EqualsAndHashCode(callSuper = true)
-    public static class Argument extends AbstractActionArgument
-    {
-        public static final String KEY_NAME = "name";
-        public static final String KEY_REACHED = "reached";
-
-        String name;
-        Boolean reached;
-
-        @Override
-        public boolean isSame(TriggerArgument argument)
+        InputBoard board = ofInputs(type, IN_NAME, IN_REACHED);
+        switch (type)
         {
-            if (!(argument instanceof Argument))
-                return false;
-
-            Argument arg = (Argument) argument;
-
-            return Objects.equals(this.name, arg.name)
-                    && Objects.equals(this.reached, arg.reached);
+            case ACTION_EXECUTE:
+                board.requirePresent(IN_REACHED);
+                /* fall through */
+            case CONDITION_REQUIRE:
+                board.requirePresent(IN_NAME);
+                break;
         }
 
-        @Override
-        public String getArgumentString()
-        {
-            return buildArgumentString(
-                    KEY_NAME, this.name,
-                    KEY_REACHED, this.reached
-            );
-        }
+        return board;
     }
 }

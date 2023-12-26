@@ -1,15 +1,13 @@
 package org.kunlab.scenamatica.action.actions.scenamatica;
 
 import org.jetbrains.annotations.NotNull;
-import org.kunlab.scenamatica.action.input.InputBoardImpl;
-import org.kunlab.scenamatica.action.input.InputTokenImpl;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 
-// 特別：NegateActionは、 Scenamatica ネイティブなため, ほとんどの処理は Engine や InternalCompiler で行われる。（密結合）
+// 特別：NegateActionは、 Scenamatica ネイティブなため, ほとんどの処理は Engine や CompilerSupportSupport で行われる。（密結合）
 public class NegateAction extends AbstractScenamaticaAction
         implements Requireable
 {
@@ -17,8 +15,8 @@ public class NegateAction extends AbstractScenamaticaAction
     public static final String KEY_IN_ACTION = "action";
     public static final String KEY_IN_ARGUMENTS = "with";
 
-    public static final InputToken<Requireable> IN_ACTION = InputTokenImpl.of(KEY_IN_ACTION, Requireable.class);
-    public static final InputToken<InputBoard> IN_ARGUMENTS = InputTokenImpl.of(KEY_IN_ARGUMENTS, InputBoard.class);
+    public static final InputToken<Requireable> IN_ACTION = ofInput(KEY_IN_ACTION, Requireable.class);
+    public static final InputToken<InputBoard> IN_ARGUMENTS = ofInput(KEY_IN_ARGUMENTS, InputBoard.class);
 
     @Override
     public String getName()
@@ -29,7 +27,7 @@ public class NegateAction extends AbstractScenamaticaAction
     @Override
     public InputBoard getInputBoard(ScenarioType type)
     {
-        return new InputBoardImpl(
+        return ofInputs(
                 type,
                 IN_ACTION,
                 IN_ARGUMENTS

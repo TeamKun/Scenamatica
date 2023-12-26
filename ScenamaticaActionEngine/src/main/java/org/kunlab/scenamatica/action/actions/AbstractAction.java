@@ -33,6 +33,12 @@ import java.util.function.Predicate;
 
 public abstract class AbstractAction implements Action
 {
+    private static final Traverser<Map<String, Object>, PlayerSpecifier> PLAYER_SPECIFIER_TRAVERSER =
+            TraverserImpl.of(
+                    InputTypeToken.ofMap(String.class, Object.class),
+                    StructureSerializer::tryDeserializePlayerSpecifier
+            );
+
     public static List<? extends AbstractAction> getActions()
     {
         List<AbstractAction> actions = new ArrayList<>();
@@ -95,9 +101,9 @@ public abstract class AbstractAction implements Action
         ));
     }
 
-    protected static Traverser<Object, PlayerSpecifier> ofPlayer()
+    protected static Traverser<Map<String, Object>, PlayerSpecifier> ofPlayer()
     {
-        return TraverserImpl.of(Map.class, StructureSerializer::tryDeserializePlayerSpecifier);
+        return PLAYER_SPECIFIER_TRAVERSER;
     }
 
     protected static <T extends Enum<T>> Traverser<String, T> ofEnum(@NotNull Class<T> clazz)
