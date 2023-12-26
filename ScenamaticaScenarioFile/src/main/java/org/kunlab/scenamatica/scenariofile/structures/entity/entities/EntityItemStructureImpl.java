@@ -144,6 +144,12 @@ public class EntityItemStructureImpl extends EntityStructureImpl implements Enti
     @Override
     public boolean isAdequate(Item object, boolean strict)
     {
-        return false;
+        return super.isAdequateEntity(object, strict)
+                && (this.pickupDelay == null || this.pickupDelay.equals(object.getPickupDelay()))
+                && (this.owner == null || this.owner.equals(object.getOwner()))
+                && (this.thrower == null || this.thrower.equals(object.getThrower()))
+                && (this.canMobPickup == null || this.canMobPickup.equals(object.canMobPickup()))
+                && (this.willAge == null || this.willAge.equals(object.willAge()))
+                && this.itemStack.isAdequate(object.getItemStack(), strict);
     }
 }

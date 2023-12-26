@@ -59,10 +59,7 @@ public class WorldUnloadAction extends AbstractWorldAction
     @Override
     public InputBoard getInputBoard(ScenarioType type)
     {
-        InputBoard board = super.getInputBoard(type);
-        if (type == ScenarioType.ACTION_EXECUTE)
-            board.requirePresent(IN_SAVE);
-
-        return board;
+        return super.getInputBoard(type)
+                .registerAll(IN_SAVE);
     }
 }

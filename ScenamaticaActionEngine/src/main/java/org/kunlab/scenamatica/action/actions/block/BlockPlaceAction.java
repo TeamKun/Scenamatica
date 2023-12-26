@@ -60,22 +60,21 @@ public class BlockPlaceAction extends AbstractBlockAction
     @Override
     public void execute(@NotNull ScenarioEngine engine, @NotNull InputBoard argument)
     {
-        Player actor = argument.get(IN_ACTOR).selectTarget(engine.getContext()).orElse(null);
-
         BlockStructure blockDef = argument.get(IN_BLOCK);
         Location location = this.getBlockLocationWithWorld(blockDef, engine);
 
         Block block;
-        if (actor == null)
+        if (!argument.isPresent(IN_ACTOR))
         {
             block = location.getBlock();
             block.setType(blockDef.getType());
         }
         else
         {
-            BlockFace direction = argument.get(IN_DIRECTION);
-            EquipmentSlot hand = argument.has(IN_HAND) ? argument.get(IN_HAND): EquipmentSlot.HAND;
+            BlockFace direction = argument.orElse(IN_DIRECTION, () -> BlockFace.EAST);
+            EquipmentSlot hand = argument.orElse(IN_HAND, () -> EquipmentSlot.HAND);
 
+            Player actor = argument.get(IN_ACTOR).selectTarget(engine.getContext()).orElse(null);
             Actor scenarioActor = PlayerUtils.getActorOrThrow(engine, actor);
             scenarioActor.placeBlock(
                     location,
@@ -123,9 +122,10 @@ public class BlockPlaceAction extends AbstractBlockAction
     }
 
     @Override
-    public InputBoard getInputBoard(ScenarioType type)
+    public InputBoard getInputBoard(@NotNull ScenarioType type)
     {
-        InputBoard board = this.createBaseInput(type);
+        InputBoard board = super.getInputBoard(type)
+                .registerAll(IN_ACTOR, IN_HAND, IN_DIRECTION);
 
         switch (type)
         {

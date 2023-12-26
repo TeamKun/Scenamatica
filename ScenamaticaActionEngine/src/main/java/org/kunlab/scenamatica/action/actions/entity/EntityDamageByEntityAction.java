@@ -20,7 +20,7 @@ public class EntityDamageByEntityAction extends EntityDamageAction
 {
     public static final String KEY_ACTION_NAME = "entity_damage_by_entity";
     public static final InputToken<EntitySpecifier<Entity>> IN_DAMAGER =  // 殴った人
-            ofSpecifier("target");
+            ofSpecifier("damager");
 
     @Override
     public String getName()

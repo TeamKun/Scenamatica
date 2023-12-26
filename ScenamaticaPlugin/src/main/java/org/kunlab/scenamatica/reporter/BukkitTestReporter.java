@@ -165,6 +165,8 @@ public class BukkitTestReporter extends AbstractTestReporter
     {
         ScenarioFileStructure scenario = engine.getScenario();
 
+        error.printStackTrace();
+
         this.terminals.forEach(t -> t.info(this.withPrefix(engine.getTestID(), scenario, LangProvider.get(
                 "test.action.run.fail",
                 MsgArgs.of("action", action.getExecutor().getClass().getSimpleName())

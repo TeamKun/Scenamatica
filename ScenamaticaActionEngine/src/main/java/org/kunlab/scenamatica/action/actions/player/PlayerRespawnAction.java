@@ -57,7 +57,7 @@ public class PlayerRespawnAction extends AbstractPlayerAction
     @Override
     public boolean isFired(@NotNull InputBoard argument, @NotNull ScenarioEngine engine, @NotNull Event event)
     {
-        if (!(event instanceof PlayerRespawnEvent || super.checkMatchedPlayerEvent(argument, engine, event)))
+        if (!super.checkMatchedPlayerEvent(argument, engine, event))
             return false;
 
         if (event instanceof PlayerRespawnEvent)
@@ -92,7 +92,7 @@ public class PlayerRespawnAction extends AbstractPlayerAction
     {
         InputBoard board = super.getInputBoard(type)
                 .register(IN_LOCATION);
-        if (type == ScenarioType.ACTION_EXECUTE)
+        if (type != ScenarioType.ACTION_EXECUTE)
             board.registerAll(IN_IS_BED, IN_IS_ANCHOR);
 
         return board;

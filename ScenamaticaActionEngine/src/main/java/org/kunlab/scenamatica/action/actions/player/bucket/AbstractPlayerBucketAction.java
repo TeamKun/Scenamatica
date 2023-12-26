@@ -211,8 +211,11 @@ public abstract class AbstractPlayerBucketAction extends AbstractPlayerAction
                 .registerAll(IN_ITEM, IN_BLOCK, IN_BLOCK_CLICKED, IN_BLOCK_FACE, IN_BUCKET, IN_HAND);
         if (type == ScenarioType.ACTION_EXECUTE)
             board.register(IN_EVENT_ONLY)
-                    .oneOf(IN_BLOCK, IN_BLOCK_CLICKED);
-
+                    .validator(
+                            b -> b.isPresent(IN_EVENT_ONLY) || !(b.isPresent(IN_BLOCK_CLICKED)
+                                    && b.isPresent(IN_BLOCK)),
+                            "Cannot specify both block and clickedBlock in the action execution mode if 'eventOnly' is not specified."
+                    );
         return board;
     }
 

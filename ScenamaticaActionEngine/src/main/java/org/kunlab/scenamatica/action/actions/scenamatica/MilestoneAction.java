@@ -69,22 +69,16 @@ public class MilestoneAction extends AbstractScenamaticaAction
     public boolean isConditionFulfilled(@NotNull InputBoard argument, @NotNull ScenarioEngine engine)
     {
         boolean isMilestoneReached = engine.getManager().getMilestoneManager().isReached(engine, argument.get(IN_NAME));
-        return argument.ifPresent(IN_REACHED, reached -> reached == isMilestoneReached);
+        boolean expected = argument.orElse(IN_REACHED, () -> true);
+        return isMilestoneReached == expected;
     }
 
     @Override
     public InputBoard getInputBoard(ScenarioType type)
     {
         InputBoard board = ofInputs(type, IN_NAME, IN_REACHED);
-        switch (type)
-        {
-            case ACTION_EXECUTE:
-                board.requirePresent(IN_REACHED);
-                /* fall through */
-            case CONDITION_REQUIRE:
-                board.requirePresent(IN_NAME);
-                break;
-        }
+        if (type == ScenarioType.ACTION_EXECUTE || type == ScenarioType.CONDITION_REQUIRE)
+            board.requirePresent(IN_NAME);
 
         return board;
     }

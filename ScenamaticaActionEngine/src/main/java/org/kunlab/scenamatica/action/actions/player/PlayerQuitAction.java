@@ -108,7 +108,7 @@ public class PlayerQuitAction extends AbstractPlayerAction
 
         if (type == ScenarioType.ACTION_EXECUTE)
             board.validator(
-                    b -> b.isPresent(IN_QUIT_MESSAGE) && b.ifPresent(IN_QUIT_REASON, r -> r == PlayerQuitEvent.QuitReason.DISCONNECTED),
+                    b -> !b.isPresent(IN_QUIT_MESSAGE) || b.ifPresent(IN_QUIT_REASON, r -> r == PlayerQuitEvent.QuitReason.DISCONNECTED),
                     "Quit message is not allowed when executing player quitting by disconnection."
             );
 

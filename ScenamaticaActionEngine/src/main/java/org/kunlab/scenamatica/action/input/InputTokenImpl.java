@@ -78,14 +78,13 @@ public class InputTokenImpl<T> implements InputToken<T>
         this.validators = Collections.emptyMap();
     }
 
-    public static <T> InputToken<T> of(String name, Class<T> clazz, Traverser<?, T> traverser)
+    public static <T> InputToken<T> of(String name, Class<T> clazz, Traverser<?, T>... traversers)
     {
-        return new InputTokenImpl<>(name, clazz, traverser);
+        return new InputTokenImpl<>(name, clazz, traversers);
     }
 
     public static <T> InputToken<T> of(String name, Class<T> clazz)
     {
-        // noinspection unchecked,rawtypes
         return new InputTokenImpl<>(name, clazz, (T) null, TraverserImpl.of(clazz, InputTraverser.casted()));
     }
 
@@ -144,7 +143,10 @@ public class InputTokenImpl<T> implements InputToken<T>
     @Override
     public void validate(ScenarioType type, T value)
     {
-        for (ValidatorElement validator : this.validators.get(type))
+        Collection<ValidatorElement> validators = this.validators.get(type);
+        if (validators == null)
+            return;
+        for (ValidatorElement validator : validators)
             if (!validator.validator.test(value))
                 throw new IllegalArgumentException(String.format(validator.message, value));
     }

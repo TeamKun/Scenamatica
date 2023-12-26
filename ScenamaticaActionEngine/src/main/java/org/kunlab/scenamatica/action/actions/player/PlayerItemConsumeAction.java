@@ -89,7 +89,7 @@ public class PlayerItemConsumeAction extends AbstractPlayerAction
     {
         InputBoard board = super.getInputBoard(type)
                 .register(IN_ITEM);
-        if (type == ScenarioType.ACTION_EXECUTE)
+        if (type != ScenarioType.ACTION_EXECUTE)
             board.register(IN_REPLACEMENT);
 
         return board;

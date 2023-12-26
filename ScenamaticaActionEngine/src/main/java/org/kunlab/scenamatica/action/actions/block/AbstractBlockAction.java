@@ -37,7 +37,8 @@ public abstract class AbstractBlockAction
         return actions;
     }
 
-    protected InputBoard createBaseInput(@NotNull ScenarioType type)
+    @Override
+    public InputBoard getInputBoard(@NotNull ScenarioType type)
     {
         InputBoard board = ofInputs(type, IN_BLOCK);
         if (type == ScenarioType.ACTION_EXECUTE)

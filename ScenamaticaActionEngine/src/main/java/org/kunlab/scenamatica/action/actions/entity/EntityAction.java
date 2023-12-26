@@ -66,7 +66,7 @@ public class EntityAction extends AbstractGeneralEntityAction
     public InputBoard getInputBoard(ScenarioType type)
     {
         InputBoard board = super.getInputBoard(type)
-                .requirePresent(IN_ENTITY);
+                .register(IN_ENTITY);
 
         if (type == ScenarioType.ACTION_EXECUTE)
             board.requirePresent(IN_ENTITY);

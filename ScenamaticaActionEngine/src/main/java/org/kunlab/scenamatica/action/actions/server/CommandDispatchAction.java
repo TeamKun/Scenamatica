@@ -42,7 +42,10 @@ public class CommandDispatchAction extends AbstractServerAction
     @Override
     public void execute(@NotNull ScenarioEngine engine, @NotNull InputBoard argument)
     {
-        CommandSender sender = PlayerLikeCommandSenders.getCommandSenderOrThrow(argument.get(IN_SENDER), engine.getContext());
+        CommandSender sender = PlayerLikeCommandSenders.getCommandSenderOrThrow(
+                argument.orElse(IN_SENDER, () -> null),
+                engine.getContext()
+        );
 
         String command = argument.get(IN_COMMAND);
         if (command.startsWith("/")) // シンタックスシュガーのために, / から始まるやつにも対応

@@ -143,7 +143,7 @@ public class InventoryClickAction extends AbstractInventoryInteractAction
     public InputBoard getInputBoard(ScenarioType type)
     {
         InputBoard board = super.getInputBoard(type)
-                .registerAll(IN_CLICK_TYPE, IN_INVENTORY_ACTION, IN_SLOT_TYPE, /* IN_SLOT_TYPE, */
+                .registerAll(IN_CLICK_TYPE, IN_INVENTORY_ACTION, IN_SLOT_TYPE,
                         IN_SLOT, IN_RAW_SLOT, IN_CLICKED_ITEM, IN_BUTTON, IN_CURSOR_ITEM
                 );
 
@@ -157,13 +157,10 @@ public class InventoryClickAction extends AbstractInventoryInteractAction
                             "cannot specify both slot and raw_slot at the same time"
                     )
                     .validator(
-                            b -> b.isPresent(IN_BUTTON) || b.get(IN_CLICK_TYPE) == ClickType.LEFT
-                                    || b.get(IN_CLICK_TYPE) == ClickType.RIGHT
-                                    || b.get(IN_CLICK_TYPE) == ClickType.MIDDLE,
+                            b -> b.isPresent(IN_BUTTON) || !b.isPresent(IN_CLICK_TYPE)
+                                    || (b.get(IN_CLICK_TYPE) == ClickType.LEFT || b.get(IN_CLICK_TYPE) == ClickType.RIGHT || b.get(IN_CLICK_TYPE) == ClickType.MIDDLE),
                             "button cannot be null when click type is not left, right or middle"
                     );
-        else
-            board.register(IN_SLOT);
 
         return board;
     }

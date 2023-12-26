@@ -57,7 +57,7 @@ public class MessageAction extends AbstractScenamaticaAction
 
         TextComponent message = e.getMessage();
         return argument.ifPresent(IN_MESSAGE, content -> TextUtils.isSameContent(message, content))
-                && argument.ifPresent(IN_RECIPIENT, player -> player.checkMatchedEntity(e.getPlayer()));
+                && argument.ifPresent(IN_RECIPIENT, player -> player.checkMatchedPlayer(e.getPlayer()));
     }
 
     @Override

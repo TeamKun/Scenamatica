@@ -46,7 +46,7 @@ public abstract class AbstractInventoryInteractAction
         if (!(whoClicked instanceof Player))
             return false;
 
-        return argument.ifPresent(IN_PLAYER, player -> player.checkMatchedEntity(whoClicked));
+        return argument.ifPresent(IN_PLAYER, player -> player.checkMatchedPlayer((Player) whoClicked));
     }
 
     @Override

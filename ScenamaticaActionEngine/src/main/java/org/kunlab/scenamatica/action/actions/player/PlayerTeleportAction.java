@@ -54,7 +54,7 @@ public class PlayerTeleportAction extends PlayerMoveAction
         assert event instanceof PlayerTeleportEvent;
         PlayerTeleportEvent e = (PlayerTeleportEvent) event;
 
-        return argument.get(IN_CAUSE) == e.getCause();
+        return argument.ifPresent(IN_CAUSE, e.getCause()::equals);
     }
 
     @Override

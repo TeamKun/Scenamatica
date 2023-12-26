@@ -91,17 +91,13 @@ public class PlayerHotbarSlotAction extends AbstractPlayerAction
     public InputBoard getInputBoard(ScenarioType type)
     {
         InputBoard board = super.getInputBoard(type)
-                .register(IN_CURRENT_SLOT);
-        switch (type)
-        {
-            case ACTION_EXPECT:
-                board.register(IN_CURRENT_ITEM);
-                /* fall through */
-            case ACTION_EXECUTE:
-                board.register(IN_PREVIOUS_SLOT)
-                        .requirePresent(IN_CURRENT_SLOT);
-                break;
-        }
+                .registerAll(IN_CURRENT_SLOT, IN_CURRENT_ITEM);
+
+        if (type == ScenarioType.ACTION_EXPECT || type == ScenarioType.ACTION_EXECUTE)
+            board.registerAll(IN_PREVIOUS_SLOT);
+        if (type == ScenarioType.ACTION_EXECUTE)
+            board.requirePresent(IN_CURRENT_SLOT);
+
         return board;
     }
 }

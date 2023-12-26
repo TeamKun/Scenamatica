@@ -69,7 +69,10 @@ public class ActionCompilerImpl implements ActionCompiler
 
         InputBoard argument;
         if (arguments.containsKey(NegateAction.KEY_IN_ARGUMENTS))
+        {
             argument = actionToBeNegated.getInputBoard(ScenarioType.CONDITION_REQUIRE);
+            argument.compile(serializer, MapUtils.checkAndCastMap(arguments.get(NegateAction.KEY_IN_ARGUMENTS)));
+        }
         else
             argument = null;
 
@@ -114,7 +117,7 @@ public class ActionCompilerImpl implements ActionCompiler
             return processNegateAction(engine, serializer, (NegateAction) action, structure, reportErrorTo, onSuccess);
 
 
-        InputBoard argument = action.getInputBoard(ScenarioType.ACTION_EXECUTE);
+        InputBoard argument = action.getInputBoard(scenarioType);
         if (structure.getArguments() != null)
             argument.compile(serializer, structure.getArguments());
 

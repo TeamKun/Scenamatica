@@ -87,9 +87,9 @@ public class BlockBreakAction extends AbstractBlockAction
     }
 
     @Override
-    public InputBoard getInputBoard(ScenarioType type)
+    public InputBoard getInputBoard(@NotNull ScenarioType type)
     {
-        InputBoard board = super.createBaseInput(type)
+        InputBoard board = super.getInputBoard(type)
                 .register(IN_ACTOR);
 
         switch (type)
@@ -100,19 +100,15 @@ public class BlockBreakAction extends AbstractBlockAction
                 break;
             case CONDITION_REQUIRE:
                 board.validator(
-                                b -> b.isPresent(IN_DROP_ITEMS),
-                                "The drop_items must be specified in the condition requiring mode."
-                        )
-                        .validator(
                                 b -> b.ifPresent(IN_BLOCK, block -> block.getType() == null),
                                 "The block must be specified in the condition requiring mode."
                         )
                         .validator(
-                                b -> b.ifPresent(IN_BLOCK, block -> block.getBiome() != null),
+                                b -> b.ifPresent(IN_BLOCK, block -> block.getBiome() == null),
                                 "Cannot specify the biome in the condition requiring mode."
                         )
                         .validator(
-                                b -> b.ifPresent(IN_BLOCK, block -> block.getLightLevel() != null),
+                                b -> b.ifPresent(IN_BLOCK, block -> block.getLightLevel() == null),
                                 "Cannot specify the light level in the condition requiring mode."
                         );
                 break;

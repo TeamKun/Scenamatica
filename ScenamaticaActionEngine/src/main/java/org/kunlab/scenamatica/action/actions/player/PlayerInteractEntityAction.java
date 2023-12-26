@@ -50,7 +50,7 @@ public class PlayerInteractEntityAction extends AbstractPlayerAction
             engine.getPlugin().getLogger().warning(engine.getLogPrefix() + "The distance between player and entity is too far. ("
                     + distanceFromEntity + " blocks), so the actual action will not be executed(only event will be fired).");
 
-            this.eventOnlyMode(engine, argument, targetEntity);
+            this.eventOnlyMode(engine, argument, player, targetEntity);
             return;
         }
 
@@ -68,10 +68,10 @@ public class PlayerInteractEntityAction extends AbstractPlayerAction
         );
     }
 
-    private void eventOnlyMode(@NotNull ScenarioEngine engine, @NotNull InputBoard argument, @NotNull Entity targetEntity)
+    private void eventOnlyMode(@NotNull ScenarioEngine engine, @NotNull InputBoard argument, @NotNull Player who, @NotNull Entity targetEntity)
     {
         PlayerInteractEntityEvent event = new PlayerInteractEntityEvent(
-                selectTarget(argument, engine),
+                who,
                 targetEntity,
                 argument.orElse(IN_HAND, () -> EquipmentSlot.HAND)
         );

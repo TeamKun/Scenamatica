@@ -45,10 +45,7 @@ public abstract class AbstractInventoryAction extends AbstractAction
     @Override
     public InputBoard getInputBoard(ScenarioType type)
     {
-        InputBoard board = ofInputs(type, IN_INVENTORY);
-        if (type == ScenarioType.ACTION_EXECUTE)
-            board.requirePresent(IN_INVENTORY);
 
-        return board;
+        return ofInputs(type, IN_INVENTORY);
     }
 }

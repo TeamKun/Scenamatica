@@ -72,7 +72,10 @@ public class TabCompleteAction extends AbstractServerAction
     @Override
     public void execute(@NotNull ScenarioEngine engine, @NotNull InputBoard argument)
     {
-        CommandSender sender = PlayerLikeCommandSenders.getCommandSenderOrThrow(argument.get(IN_SENDER), engine.getContext());
+        CommandSender sender = PlayerLikeCommandSenders.getCommandSenderOrThrow(
+                argument.orElse(IN_SENDER, () -> null),
+                engine.getContext()
+        );
         String buffer = argument.get(IN_BUFFER);
         List<String> completions = argument.orElse(IN_COMPLETIONS, ArrayList::new);
         // ↑ Collections.emptyList() はプラグインの動作に影響を与えるので使わない
@@ -99,7 +102,7 @@ public class TabCompleteAction extends AbstractServerAction
                 return false;
         }
 
-        boolean strict = argument.get(IN_STRICT);
+        boolean strict = argument.orElse(IN_STRICT, () -> false);
 
         return checkCompletions(argument.orElse(IN_COMPLETIONS, () -> null),
                 e.getCompletions(), strict
@@ -122,7 +125,7 @@ public class TabCompleteAction extends AbstractServerAction
     {
         InputBoard board = ofInputs(type, IN_SENDER, IN_BUFFER, IN_COMPLETIONS, IN_STRICT);
         if (type == ScenarioType.ACTION_EXECUTE)
-            board = board.requirePresent(IN_SENDER, IN_BUFFER);
+            board = board.requirePresent(IN_BUFFER);
 
         return board;
     }

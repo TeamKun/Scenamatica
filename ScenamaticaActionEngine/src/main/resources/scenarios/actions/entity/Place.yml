@@ -17,7 +17,7 @@ scenario:
   - type: execute
     action: entity_place
     with:
-      target: "ARMOR_STAND"
+      material: "ARMOR_STAND"
       block:
         location:
           x: 0

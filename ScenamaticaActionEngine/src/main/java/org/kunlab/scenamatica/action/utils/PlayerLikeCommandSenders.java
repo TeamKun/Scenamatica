@@ -5,6 +5,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.interfaces.context.Context;
 import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.PlayerSpecifier;
 
@@ -34,7 +35,7 @@ public class PlayerLikeCommandSenders
         return expectedSender.checkMatchedPlayer(player);
     }
 
-    public static CommandSender getCommandSenderOrThrow(@NotNull PlayerSpecifier specifier, @NotNull Context context)
+    public static CommandSender getCommandSenderOrThrow(@Nullable PlayerSpecifier specifier, @NotNull Context context)
     {
         CommandSender sender = getCommandSenderOrNull(specifier, context);
         if (sender == null)
@@ -43,9 +44,9 @@ public class PlayerLikeCommandSenders
             return sender;
     }
 
-    public static CommandSender getCommandSenderOrNull(@NotNull PlayerSpecifier specifier, @NotNull Context context)
+    public static CommandSender getCommandSenderOrNull(@Nullable PlayerSpecifier specifier, @NotNull Context context)
     {
-        if (!specifier.canProvideTarget())
+        if (specifier == null || !specifier.canProvideTarget())
             return Bukkit.getConsoleSender();
 
         if (specifier.hasName())

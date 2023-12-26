@@ -64,7 +64,9 @@ public class WorldBorderAction extends AbstractWorldAction
     {
         WorldBorder border = super.getWorldNonNull(argument, engine).getWorldBorder();
 
-        argument.runIfPresent(IN_SIZE, border::setSize);
+        argument.runIfPresent(IN_SIZE, size -> {
+            border.setSize(size, argument.orElse(IN_DURATION, () -> 0L));
+        });
         argument.runIfPresent(IN_CENTER, center -> border.setCenter(center.create()));
     }
 

@@ -21,7 +21,7 @@ public class PlayerAnimationAction extends AbstractPlayerAction
 {
     public static final String KEY_ACTION_NAME = "player_animation";
     public static final InputToken<PlayerAnimationType> IN_ANIMATION_TYPE = ofEnumInput(
-            "animation_type",
+            "type",
             PlayerAnimationType.class
     );
 

@@ -22,7 +22,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 @Data
 public class InputReferenceImpl<T> implements InputReference<T>
@@ -249,9 +248,7 @@ public class InputReferenceImpl<T> implements InputReference<T>
         else if (clazz.isInstance(obj))
             return clazz.cast(obj);
 
-        if (clazz == String.class)
-            return clazz.cast(obj.toString());
-        else if (Number.class.isAssignableFrom(clazz))
+        if (Number.class.isAssignableFrom(clazz))
         {
             if (obj instanceof Number)
             {
@@ -276,24 +273,37 @@ public class InputReferenceImpl<T> implements InputReference<T>
             else if (obj instanceof String && ((String) obj).equalsIgnoreCase("false"))
                 return clazz.cast(false);
             else
-                throw new IllegalArgumentException("Unknown boolean type: " + clazz);
+                throw new IllegalArgumentException("Unknown boolean type: " + obj);
         }
         else if (clazz == List.class)
         {
             if (obj instanceof List)
                 return clazz.cast(obj);
             else
-                throw new IllegalArgumentException("Unknown list type: " + clazz);
+                throw new IllegalArgumentException("Unknown list type: " + obj);
         }
         else if (clazz == Map.class)
         {
             if (obj instanceof Map)
                 return clazz.cast(obj);
             else
-                throw new IllegalArgumentException("Unknown map type: " + clazz);
+                throw new IllegalArgumentException("Unknown map type: " + obj);
         }
+        else if (clazz == String.class)
+            return clazz.cast(obj.toString());
         else
-            throw new IllegalArgumentException("Unknown type: " + clazz);
+            throw new IllegalArgumentException("Unknown type: " + obj);
+    }
+
+    private static boolean canSmartCast(Class<?> clazz, Object obj)
+    {
+        return obj == null
+                || clazz.isInstance(obj)
+                || clazz == String.class
+                || (Number.class.isAssignableFrom(clazz) && obj instanceof Number)
+                || (clazz == Boolean.class && obj instanceof Boolean)
+                || (clazz == List.class && obj instanceof List)
+                || (clazz == Map.class && obj instanceof Map);
     }
 
     private static <U> U smartCast(@NotNull InputToken<U> token, @NotNull StructureSerializer serializer, @Nullable Object resolved)
@@ -306,43 +316,17 @@ public class InputReferenceImpl<T> implements InputReference<T>
             return smartCast(resolved, token.getClazz());
         else
         {
-            Class<?> possibleType = guessPossibleType(traversers.stream()
-                    .map(Traverser::getInputClazz)
-                    .collect(Collectors.toList()));
-
-            if (possibleType == null)
-                throw new IllegalStateException("Failed to guess possible type: " + traversers);
-
             for (Traverser<?, U> traverser : traversers)
             {
-                if (traverser.getInputClazz() == possibleType)
+                Class<?> possibleType = traverser.getInputClazz();
+                if (canSmartCast(possibleType, resolved))
                     return token.getClazz().cast(traverser.tryTraverse(serializer, smartCast(resolved, possibleType)));
+                else if (possibleType.isInstance(resolved))
+                    return token.getClazz().cast(traverser.tryTraverse(serializer, resolved));
             }
 
             throw new IllegalArgumentException("Unknown traverser type");
         }
-    }
-
-    private static Class<?> guessPossibleType(List<Class<?>> classes)
-    {
-        for (Class<?> clazz : classes)
-        {
-            if (clazz == String.class)
-                return String.class;
-            else if (clazz == Integer.class || clazz == int.class)
-                return Integer.class;
-            else if (clazz == Long.class || clazz == long.class)
-                return Long.class;
-            else if (clazz == Double.class || clazz == double.class)
-                return Double.class;
-            else if (clazz == Boolean.class || clazz == boolean.class)
-                return Boolean.class;
-            else if (clazz == List.class)
-                return List.class;
-            else if (clazz == Map.class)
-                return Map.class;
-        }
-        return null;
     }
 
     @Override

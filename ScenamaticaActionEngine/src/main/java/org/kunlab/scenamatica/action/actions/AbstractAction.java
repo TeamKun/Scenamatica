@@ -27,17 +27,24 @@ import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.EntitySpecifier
 import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.PlayerSpecifier;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
 public abstract class AbstractAction implements Action
 {
-    private static final Traverser<Map<String, Object>, PlayerSpecifier> PLAYER_SPECIFIER_TRAVERSER =
+    @SuppressWarnings("unchecked")
+    private static final Traverser<?, PlayerSpecifier>[] PLAYER_SPECIFIER_TRAVERSERS = Arrays.asList(
             TraverserImpl.of(
                     InputTypeToken.ofMap(String.class, Object.class),
                     StructureSerializer::tryDeserializePlayerSpecifier
-            );
+            ),
+            TraverserImpl.of(
+                    String.class,
+                    StructureSerializer::tryDeserializePlayerSpecifier
+            )
+    ).toArray(new Traverser[0]);
 
     public static List<? extends AbstractAction> getActions()
     {
@@ -54,11 +61,6 @@ public abstract class AbstractAction implements Action
         return actions;
     }
 
-    protected static <T> InputToken<T> ofInput(@NotNull String name, @NotNull Class<T> clazz, @NotNull Traverser<?, T> traverser)
-    {
-        return InputTokenImpl.of(name, clazz, traverser);
-    }
-
     protected static <T> InputToken<T> ofInput(@NotNull String name, @NotNull Class<T> clazz)
     {
         return InputTokenImpl.of(name, clazz);
@@ -67,6 +69,12 @@ public abstract class AbstractAction implements Action
     protected static <T> InputToken<T> ofInput(@NotNull String name, @NotNull Class<T> clazz, @NotNull Traverser<?, T> traverser, @NotNull T defaultValue)
     {
         return InputTokenImpl.of(name, clazz, traverser, defaultValue);
+    }
+
+    @SafeVarargs
+    protected static <T> InputToken<T> ofInput(@NotNull String name, @NotNull Class<T> clazz, @NotNull Traverser<?, T>... traversers)
+    {
+        return InputTokenImpl.of(name, clazz, traversers);
     }
 
     protected static <T> InputToken<T> ofInput(@NotNull String name, @NotNull Class<T> clazz, @NotNull T defaultValue)
@@ -101,9 +109,9 @@ public abstract class AbstractAction implements Action
         ));
     }
 
-    protected static Traverser<Map<String, Object>, PlayerSpecifier> ofPlayer()
+    protected static Traverser<?, PlayerSpecifier>[] ofPlayer()
     {
-        return PLAYER_SPECIFIER_TRAVERSER;
+        return PLAYER_SPECIFIER_TRAVERSERS;
     }
 
     protected static <T extends Enum<T>> Traverser<String, T> ofEnum(@NotNull Class<T> clazz)
@@ -128,7 +136,11 @@ public abstract class AbstractAction implements Action
                 InputTypeToken.ofEntity(entityClass),
                 ofTraverser(
                         Map.class,
-                        (map, serializer) -> map.tryDeserializeEntitySpecifier(map, structureClass)
+                        (ser, map) -> ser.tryDeserializeEntitySpecifier(map, structureClass)
+                ),
+                ofTraverser(
+                        String.class,
+                        (ser, str) -> ser.tryDeserializeEntitySpecifier(str, structureClass)
                 )
         );
     }

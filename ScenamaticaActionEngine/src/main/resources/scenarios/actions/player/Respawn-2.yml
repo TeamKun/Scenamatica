@@ -37,8 +37,4 @@ scenario:
     action: player_respawn
     with:
       target: Actor001
-      location:
-        x: 0
-        y: 0
-        z: 0
 

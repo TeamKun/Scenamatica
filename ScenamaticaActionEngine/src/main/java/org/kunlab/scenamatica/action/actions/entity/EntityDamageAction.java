@@ -97,7 +97,8 @@ public class EntityDamageAction extends AbstractGeneralEntityAction
     @Override
     public InputBoard getInputBoard(ScenarioType type)
     {
-        InputBoard board = super.getInputBoard(type);
+        InputBoard board = super.getInputBoard(type)
+                .registerAll(IN_CAUSE, IN_AMOUNT, IN_MODIFIERS);
         if (type == ScenarioType.ACTION_EXECUTE)
             board.requirePresent(IN_AMOUNT)
                     .validator(in -> !in.isPresent(IN_CAUSE), "Use entity_damage_by_entity or entity_damage_by_block action instead");

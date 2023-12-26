@@ -96,11 +96,9 @@ public class ServerLogAction extends AbstractServerAction
     @Override
     public InputBoard getInputBoard(ScenarioType type)
     {
-        InputBoard board = ofInputs(type, IN_LEVEL, IN_MESSAGE);
+        InputBoard board = ofInputs(type, IN_LEVEL, IN_MESSAGE, IN_SOURCE);
         if (type == ScenarioType.ACTION_EXECUTE)
             board.requirePresent(IN_MESSAGE);
-        else
-            board.register(IN_SOURCE);
 
         return board;
     }

@@ -19,6 +19,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 public class InputBoardImpl implements InputBoard
 {
@@ -240,7 +241,10 @@ public class InputBoardImpl implements InputBoard
             }
 
             if (count != 1)
-                throw new IllegalArgumentException("Invalid contract: OneOf value " + Arrays.toString(tokens) + " must be included.");
+                throw new IllegalArgumentException("Invalid contract: OneOf value " + Arrays.stream(tokens)
+                        .map(InputToken::getName)
+                        .collect(Collectors.joining(", "))
+                        + " must be included.");
         }
 
         for (InputToken<?>[] tokens : this.requiredNonNull)
@@ -248,7 +252,7 @@ public class InputBoardImpl implements InputBoard
             for (InputToken<?> token : tokens)
             {
                 if (!this.getHolder(token).isResolved() || this.getHolder(token).isNull())
-                    throw new IllegalArgumentException("Invalid contract: Required value " + token.getName() + " must be included and not null.");
+                    throw new IllegalArgumentException("Invalid contract: Required value '" + token.getName() + "' must be included and not null.");
             }
         }
     }

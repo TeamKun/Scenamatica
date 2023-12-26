@@ -184,7 +184,7 @@ public class EntityPlaceAction extends AbstractGeneralEntityAction
     @Override
     public InputBoard getInputBoard(ScenarioType type)
     {
-        InputBoard board = ofInputs(type, IN_PLAYER, IN_BLOCK, IN_BLOCK_FACE, IN_MATERIAL);
+        InputBoard board = ofInputs(type, this.IN_TARGET_ENTITY, IN_PLAYER, IN_BLOCK, IN_BLOCK_FACE, IN_MATERIAL);
         if (type == ScenarioType.ACTION_EXECUTE)
             board.requirePresent(IN_PLAYER, IN_BLOCK, IN_BLOCK_FACE, IN_MATERIAL);
 

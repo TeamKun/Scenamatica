@@ -58,7 +58,7 @@ public class InventoryOpenAction extends AbstractInventoryAction
         if (!(player instanceof Player))
             return false;
 
-        return argument.ifPresent(IN_PLAYER, playerSpecifier -> playerSpecifier.checkMatchedEntity(player));
+        return argument.ifPresent(IN_PLAYER, playerSpecifier -> playerSpecifier.checkMatchedPlayer((Player) player));
     }
 
     @Override

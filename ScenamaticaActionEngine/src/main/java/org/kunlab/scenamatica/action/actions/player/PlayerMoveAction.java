@@ -73,7 +73,7 @@ public class PlayerMoveAction extends AbstractPlayerAction
         InputBoard board = super.getInputBoard(type)
                 .register(IN_TO);
         if (type == ScenarioType.ACTION_EXECUTE)
-            board.requirePresent(IN_FROM);
+            board.requirePresent(IN_TO);
         else
             board.register(IN_FROM);
 

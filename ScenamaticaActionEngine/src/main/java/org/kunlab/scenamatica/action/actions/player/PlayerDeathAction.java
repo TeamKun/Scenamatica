@@ -78,13 +78,13 @@ public class PlayerDeathAction extends AbstractPlayerAction
     @Override
     public boolean isFired(@NotNull InputBoard argument, @NotNull ScenarioEngine engine, @NotNull Event event)
     {
-        if (!super.checkMatchedPlayerEvent(argument, engine, event))
-            return false;
+        // assert !(event instanceof PlayerEvent);
 
         assert event instanceof PlayerDeathEvent;
         PlayerDeathEvent e = (PlayerDeathEvent) event;
 
-        return argument.ifPresent(IN_KILLER, killer -> killer.checkMatchedPlayer(e.getEntity().getKiller()))
+        return argument.ifPresent(IN_TARGET, target -> target.checkMatchedPlayer(e.getEntity()))
+                && argument.ifPresent(IN_KILLER, killer -> killer.checkMatchedPlayer(e.getEntity().getKiller()))
                 && argument.ifPresent(IN_DEATH_MESSAGE, msg -> Objects.equals(msg, e.getDeathMessage()))
                 && argument.ifPresent(IN_NEW_EXP, exp -> exp == e.getNewExp())
                 && argument.ifPresent(IN_NEW_LEVEL, level -> level == e.getNewLevel())
