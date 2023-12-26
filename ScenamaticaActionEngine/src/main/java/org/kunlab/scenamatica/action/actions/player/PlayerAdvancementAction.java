@@ -1,8 +1,6 @@
 package org.kunlab.scenamatica.action.actions.player;
 
 import com.destroystokyo.paper.event.player.PlayerAdvancementCriterionGrantEvent;
-import lombok.EqualsAndHashCode;
-import lombok.Value;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.advancement.Advancement;
@@ -13,26 +11,43 @@ import org.bukkit.event.player.PlayerAdvancementDoneEvent;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.commons.utils.NamespaceUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
+import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
-import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.PlayerSpecifier;
-import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 public class PlayerAdvancementAction
-        extends AbstractPlayerAction<PlayerAdvancementAction.Argument>
-        implements Executable<PlayerAdvancementAction.Argument>, Watchable<PlayerAdvancementAction.Argument>, Requireable<PlayerAdvancementAction.Argument>
+        extends AbstractPlayerAction
+        implements Executable, Watchable, Requireable
 {
     public static final String KEY_ACTION_NAME = "player_advancement";
 
     // 進捗の Criterion を付与するアクションと, 進捗を完了させるアクションを統合した。
     // 脚注： Criterion => 単数, Criteria => 複数 -- ギリシャ語による。
+    public static final InputToken<NamespacedKey> IN_ADVANCEMENT = ofInput(
+            "advancement",
+            NamespacedKey.class,
+            ofTraverser(String.class, (ser, str) -> NamespaceUtils.fromString(str))
+    );
+    public static final InputToken<String> IN_CRITERION = ofInput(
+            "criterion",
+            String.class
+    );
+
+    private static Advancement retrieveAdvancement(@NotNull InputBoard argument)
+    {
+        NamespacedKey advKey = argument.get(IN_ADVANCEMENT);
+        Advancement advancement = Bukkit.getAdvancement(advKey);
+        if (advancement == null)
+            throw new IllegalArgumentException("Advancement not found: " + advKey);
+
+        return advancement;
+    }
 
     @Override
     public String getName()
@@ -41,23 +56,20 @@ public class PlayerAdvancementAction
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @NotNull PlayerAdvancementAction.Argument argument)
+    public void execute(@NotNull ScenarioEngine engine, @NotNull InputBoard argument)
     {
-        Player target = argument.getTarget(engine);
-        Advancement advancement = Bukkit.getAdvancement(argument.getAdvancement());
-        if (advancement == null)
-            throw new IllegalArgumentException("Advancement not found: " + argument.getAdvancement());
-
+        Player target = selectTarget(argument, engine);
+        Advancement advancement = retrieveAdvancement(argument);
         AdvancementProgress progress = target.getAdvancementProgress(advancement);
 
-        if (argument.getCriterion() != null)  // Criteria を指定している場合は, その Criteria を付与するアクションになる。
-            progress.awardCriteria(argument.getCriterion());
+        if (argument.isPresent(IN_CRITERION))  // Criteria を指定している場合は, その Criteria を付与するアクションになる。
+            progress.awardCriteria(argument.get(IN_CRITERION));
         else  // 指定していないので, 進捗を完了させる。
             progress.getRemainingCriteria().forEach(progress::awardCriteria);
     }
 
     @Override
-    public boolean isFired(@NotNull PlayerAdvancementAction.Argument argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public boolean isFired(@NotNull InputBoard argument, @NotNull ScenarioEngine engine, @NotNull Event event)
     {
         if (!super.checkMatchedPlayerEvent(argument, engine, event))
             return false;
@@ -66,19 +78,15 @@ public class PlayerAdvancementAction
         {
             PlayerAdvancementDoneEvent e = (PlayerAdvancementDoneEvent) event;
 
-            NamespacedKey expectedAdv = argument.getAdvancement();
-            return expectedAdv == null || e.getAdvancement().getKey().equals(expectedAdv);
+            return argument.ifPresent(IN_ADVANCEMENT, e.getAdvancement().getKey()::equals);
         }
         else  // 進捗の Criterion を付与するアクションの場合
         {
             assert event instanceof PlayerAdvancementCriterionGrantEvent;
             PlayerAdvancementCriterionGrantEvent e = (PlayerAdvancementCriterionGrantEvent) event;
 
-            String criteria = argument.getCriterion();
-
-            NamespacedKey expectedAdv = argument.getAdvancement();
-            return (expectedAdv == null || e.getAdvancement().getKey().equals(expectedAdv))
-                    && (criteria == null || e.getCriterion().equals(criteria));
+            return argument.ifPresent(IN_ADVANCEMENT, e.getAdvancement().getKey()::equals)
+                    && argument.ifPresent(IN_CRITERION, e.getCriterion()::equals);
         }
     }
 
@@ -92,92 +100,25 @@ public class PlayerAdvancementAction
     }
 
     @Override
-    public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
+    public boolean isConditionFulfilled(@NotNull InputBoard argument, @NotNull ScenarioEngine engine)
     {
-        NamespacedKey advancement = null;
-        if (map.containsKey(Argument.KEY_ADVANCEMENT))
-            advancement = NamespaceUtils.fromString((String) map.get(Argument.KEY_ADVANCEMENT));
+        Advancement advancement = retrieveAdvancement(argument);
+        AdvancementProgress progress = selectTarget(argument, engine).getAdvancementProgress(advancement);
 
-        String criteria = null;
-        if (map.containsKey(Argument.KEY_CRITERIA))
-            criteria = (String) map.get(Argument.KEY_CRITERIA);
-
-        return new Argument(
-                super.deserializeTarget(map, serializer),
-                advancement,
-                criteria
-        );
+        if (argument.isPresent(IN_CRITERION))  // 進捗を完了させるアクションの場合
+            return progress.getAwardedCriteria().contains(argument.get(IN_CRITERION));
+        else  // 進捗の Criterion を付与するアクションの場合
+            return progress.isDone();
     }
 
     @Override
-    public boolean isConditionFulfilled(@NotNull PlayerAdvancementAction.Argument argument, @NotNull ScenarioEngine engine)
+    public InputBoard getInputBoard(ScenarioType type)
     {
-        Advancement advancement = Bukkit.getAdvancement(argument.getAdvancement());
-        if (advancement == null)
-            throw new IllegalArgumentException("Advancement not found: " + argument.getAdvancement());
+        InputBoard board = super.getInputBoard(type)
+                .registerAll(IN_ADVANCEMENT, IN_CRITERION);
+        if (type == ScenarioType.ACTION_EXECUTE || type == ScenarioType.CONDITION_REQUIRE)
+            board.requirePresent(IN_ADVANCEMENT);
 
-        AdvancementProgress progress = argument.getTarget(engine).getAdvancementProgress(advancement);
-
-        if (argument.getCriterion() == null)  // 進捗を完了させるアクションの場合
-            return progress.isDone();
-        else  // 進捗の Criterion を付与するアクションの場合
-            return progress.getAwardedCriteria().contains(argument.getCriterion());
-    }
-
-    @Value
-    @EqualsAndHashCode(callSuper = true)
-    public static class Argument extends AbstractPlayerActionArgument
-    {
-        public static final String KEY_ADVANCEMENT = "advancement";
-        public static final String KEY_CRITERIA = "criteria";
-
-        NamespacedKey advancement;
-        String criterion;
-
-        public Argument(PlayerSpecifier target, NamespacedKey advancement, String criterion)
-        {
-            super(target);
-            this.advancement = advancement;
-            this.criterion = criterion;
-        }
-
-        @Override
-        public boolean isSame(TriggerArgument argument)
-        {
-            if (!(argument instanceof Argument))
-                return false;
-
-            Argument casted = (Argument) argument;
-
-            return super.isSame(argument)
-                    && (this.advancement == null || this.advancement.equals(casted.advancement))
-                    && (this.criterion == null || this.criterion.equals(casted.criterion));
-        }
-
-        @Override
-        public void validate(@NotNull ScenarioEngine engine, @NotNull ScenarioType type)
-        {
-            super.validate(engine, type);
-
-            switch (type)
-            {
-                case CONDITION_REQUIRE:
-                    /* fall through */
-                case ACTION_EXECUTE:
-                    this.ensureCanProvideTarget();
-                    ensurePresent(KEY_ADVANCEMENT, this.advancement);
-                    break;
-            }
-        }
-
-        @Override
-        public String getArgumentString()
-        {
-            return appendArgumentString(
-                    super.getArgumentString(),
-                    KEY_ADVANCEMENT, this.advancement,
-                    KEY_CRITERIA, this.criterion
-            );
-        }
+        return board;
     }
 }

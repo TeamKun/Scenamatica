@@ -81,6 +81,13 @@ public interface InputValueHolder<T>
     void set(@NotNull StructureSerializer serializer, @Nullable Object obj);
 
     /**
+     * 値を設定します。
+     *
+     * @param value 値
+     */
+    void set(@Nullable T value);
+
+    /**
      * 値を空に設定します。
      */
     void setEmpty();

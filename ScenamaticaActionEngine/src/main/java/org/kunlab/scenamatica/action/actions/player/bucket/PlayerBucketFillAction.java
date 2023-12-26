@@ -1,7 +1,5 @@
 package org.kunlab.scenamatica.action.actions.player.bucket;
 
-import lombok.EqualsAndHashCode;
-import lombok.Value;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -13,19 +11,17 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.commons.utils.PlayerUtils;
-import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.context.Actor;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
-public class PlayerBucketFillAction extends AbstractPlayerBucketAction<PlayerBucketFillAction.Argument>
-        implements Watchable<PlayerBucketFillAction.Argument>, Executable<PlayerBucketFillAction.Argument>
+public class PlayerBucketFillAction extends AbstractPlayerBucketAction
+        implements Watchable, Executable
 {
     public static final String KEY_ACTION_NAME = "player_bucket_fill";
 
@@ -36,9 +32,9 @@ public class PlayerBucketFillAction extends AbstractPlayerBucketAction<PlayerBuc
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @NotNull PlayerBucketFillAction.Argument argument)
+    public void execute(@NotNull ScenarioEngine engine, @NotNull InputBoard argument)
     {
-        Player player = argument.getTarget(engine);
+        Player player = selectTarget(argument, engine);
         ItemStack stack = getBucket(player, argument);
         Block block = getPlaceAt(player, argument, engine);
         BlockFace direction = getDirection(player, block, argument);
@@ -47,12 +43,13 @@ public class PlayerBucketFillAction extends AbstractPlayerBucketAction<PlayerBuc
         if (isFilledBucket(stack.getType()))
             throw new IllegalArgumentException("The bucket is filled with liquid: " + stack.getType() + " held by " + player.getName());
 
-        if (argument.isEventOnly())
+        if (argument.get(IN_EVENT_ONLY))
         {
             Block blockClicked = null;
-            if (argument.getBlockClicked() != null)
-                blockClicked = argument.getBlockClicked().apply(engine, null);
-            this.doEventOnlyMode(player, block, blockClicked, direction, stack.getType(), stack, argument.getHand());
+            if (argument.isPresent(IN_BLOCK_CLICKED))
+                blockClicked = argument.get(IN_BLOCK_CLICKED).apply(engine, null);
+            EquipmentSlot hand = argument.orElse(IN_HAND, () -> null);
+            this.doEventOnlyMode(player, block, blockClicked, direction, stack.getType(), stack, hand);
         }
 
         actor.placeItem(
@@ -92,44 +89,10 @@ public class PlayerBucketFillAction extends AbstractPlayerBucketAction<PlayerBuc
     }
 
     @Override
-    public boolean isFired(@NotNull Argument argument, @NotNull ScenarioEngine engine, @NotNull Event event)
-    {
-        return super.checkMatchedBucketEvent(argument, engine, event);
-    }
-
-    @Override
     public List<Class<? extends Event>> getAttachingEvents()
     {
         return Collections.singletonList(
                 PlayerBucketFillEvent.class
         );
-    }
-
-    @Override
-    public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
-    {
-        return new Argument(Argument.deserialize(map, serializer));
-    }
-
-    @Value
-    @EqualsAndHashCode(callSuper = true)
-    public static class Argument extends BucketActionArgument
-    {
-        public Argument(BucketActionArgument origin)
-        {
-            super(origin);
-        }
-
-        @Override
-        public void validate(@NotNull ScenarioEngine engine, @NotNull ScenarioType type)
-        {
-            if (type == ScenarioType.ACTION_EXECUTE)
-            {
-                this.ensureCanProvideTarget();
-
-                if (this.getBlockClicked() == null && this.getBlock() == null)
-                    throw new IllegalArgumentException("No block to place specified(" + PlayerBucketEmptyAction.Argument.KEY_BLOCK + " or " + PlayerBucketEmptyAction.Argument.KEY_BLOCK_CLICKED + " is required).");
-            }
-        }
     }
 }

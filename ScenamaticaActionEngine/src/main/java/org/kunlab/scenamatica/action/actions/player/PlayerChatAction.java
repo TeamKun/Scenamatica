@@ -1,29 +1,32 @@
 package org.kunlab.scenamatica.action.actions.player;
 
-import lombok.EqualsAndHashCode;
-import lombok.Value;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerChatEvent;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
+import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
-import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.PlayerSpecifier;
-import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
 @SuppressWarnings("deprecation")  // そもそも PlayerChatEvent が deprecated なので。
-public class PlayerChatAction extends AbstractPlayerAction<PlayerChatAction.Argument>
-        implements Executable<PlayerChatAction.Argument>, Watchable<PlayerChatAction.Argument>
+public class PlayerChatAction extends AbstractPlayerAction
+        implements Executable, Watchable
 {
     public static final String KEY_ACTION_NAME = "player_chat";
+    public static final InputToken<String> IN_MESSAGE = ofInput(
+            "message",
+            String.class
+    );
+    public static final InputToken<String> IN_FORMAT = ofInput(
+            "format",
+            String.class
+    );
 
     @Override
     public String getName()
@@ -32,14 +35,14 @@ public class PlayerChatAction extends AbstractPlayerAction<PlayerChatAction.Argu
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @NotNull PlayerChatAction.Argument argument)
+    public void execute(@NotNull ScenarioEngine engine, @NotNull InputBoard argument)
     {
-        Player p = argument.getTarget(engine);
-        p.chat(argument.message);
+        Player p = selectTarget(argument, engine);
+        p.chat(argument.get(IN_MESSAGE));
     }
 
     @Override
-    public boolean isFired(@NotNull Argument argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public boolean isFired(@NotNull InputBoard argument, @NotNull ScenarioEngine engine, @NotNull Event event)
     {
         if (!super.checkMatchedPlayerEvent(argument, engine, event))
             return false;
@@ -47,8 +50,8 @@ public class PlayerChatAction extends AbstractPlayerAction<PlayerChatAction.Argu
         assert event instanceof PlayerChatEvent;
         PlayerChatEvent playerChatEvent = (PlayerChatEvent) event;
 
-        return (argument.message == null || playerChatEvent.getMessage().matches(argument.message))
-                && (argument.format == null || playerChatEvent.getFormat().matches(argument.format));
+        return argument.ifPresent(IN_MESSAGE, playerChatEvent.getMessage()::matches)
+                && argument.ifPresent(IN_FORMAT, playerChatEvent.getFormat()::matches);
     }
 
     @Override
@@ -61,65 +64,16 @@ public class PlayerChatAction extends AbstractPlayerAction<PlayerChatAction.Argu
     }
 
     @Override
-    public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
+    public InputBoard getInputBoard(ScenarioType type)
     {
-        return new Argument(
-                super.deserializeTarget(map, serializer),
-                (String) map.get(Argument.KEY_MESSAGE),
-                (String) map.get(Argument.KEY_FORMAT)
-        );
+        InputBoard board = super.getInputBoard(type)
+                .register(IN_MESSAGE);
+        if (type == ScenarioType.ACTION_EXECUTE)
+            board.requirePresent(IN_TARGET);
+        else
+            board.register(IN_FORMAT);
+
+        return board;
     }
 
-    @Value
-    @EqualsAndHashCode(callSuper = true)
-    public static class Argument extends AbstractPlayerActionArgument
-    {
-        public static final String KEY_MESSAGE = "message";
-        public static final String KEY_FORMAT = "format";
-
-        String message;
-        String format;
-
-        public Argument(PlayerSpecifier target, String message, String format)
-        {
-            super(target);
-            this.message = message;
-            this.format = format;
-        }
-
-        @Override
-        public boolean isSame(TriggerArgument argument)
-        {
-            if (!(argument instanceof Argument))
-                return false;
-
-            Argument arg = (Argument) argument;
-
-            return super.isSame(arg)
-                    && Objects.equals(this.message, arg.message)
-                    && Objects.equals(this.format, arg.format);
-        }
-
-        @Override
-        public void validate(@NotNull ScenarioEngine engine, @NotNull ScenarioType type)
-        {
-            super.validate(engine, type);
-
-            if (type == ScenarioType.ACTION_EXECUTE)
-            {
-                ensurePresent(KEY_MESSAGE, this.message);
-                ensureNotPresent(KEY_FORMAT, this.format);
-            }
-        }
-
-        @Override
-        public String getArgumentString()
-        {
-            return appendArgumentString(
-                    super.getArgumentString(),
-                    KEY_MESSAGE, this.message,
-                    KEY_FORMAT, this.format
-            );
-        }
-    }
 }

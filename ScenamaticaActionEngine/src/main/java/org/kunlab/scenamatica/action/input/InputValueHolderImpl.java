@@ -98,6 +98,12 @@ public class InputValueHolderImpl<T> implements InputValueHolder<T>
     }
 
     @Override
+    public void set(@Nullable T value)
+    {
+        this.valueReference = InputReferenceImpl.valued(this.token, value);
+    }
+
+    @Override
     public void setEmpty()
     {
         this.valueReference = InputReferenceImpl.empty(this.token);

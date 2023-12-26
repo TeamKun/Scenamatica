@@ -1,34 +1,37 @@
 package org.kunlab.scenamatica.action.actions.player;
 
-import lombok.EqualsAndHashCode;
-import lombok.Value;
 import org.bukkit.Material;
 import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerItemBreakEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.commons.utils.PlayerUtils;
+import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
+import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.context.Actor;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.ItemStackStructure;
-import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.PlayerSpecifier;
-import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
-public class PlayerItemBreakAction extends AbstractPlayerAction<PlayerItemBreakAction.Argument>
-        implements Executable<PlayerItemBreakAction.Argument>, Watchable<PlayerItemBreakAction.Argument>
+public class PlayerItemBreakAction extends AbstractPlayerAction
+        implements Executable, Watchable
 {
     public static final String KEY_ACTION_NAME = "player_item_break";
+    public static final InputToken<ItemStackStructure> IN_ITEM = ofInput(
+            "item",
+            ItemStackStructure.class,
+            ofDeserializer(ItemStackStructure.class)
+    );
+    public static final InputToken<EquipmentSlot> IN_SLOT = ofEnumInput(
+            "slot",
+            EquipmentSlot.class
+    );
 
     @Override
     public String getName()
@@ -37,14 +40,13 @@ public class PlayerItemBreakAction extends AbstractPlayerAction<PlayerItemBreakA
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @NotNull PlayerItemBreakAction.Argument argument)
+    public void execute(@NotNull ScenarioEngine engine, @NotNull InputBoard argument)
     {
-        Actor actor = PlayerUtils.getActorOrThrow(engine, argument.getTarget(engine));
-        EquipmentSlot slot = argument.getSlot() == null ? EquipmentSlot.HAND: argument.getSlot();
-        ItemStackStructure item = argument.getItem();
+        Actor actor = PlayerUtils.getActorOrThrow(engine, selectTarget(argument, engine));
+        EquipmentSlot slot = argument.orElse(IN_SLOT, () -> EquipmentSlot.HAND);
 
-        if (item != null)
-            actor.getPlayer().getInventory().setItem(slot, item.create());
+        if (argument.isPresent(IN_ITEM))
+            actor.getPlayer().getInventory().setItem(slot, argument.get(IN_ITEM).create());
 
         actor.breakItem(slot);
     }
@@ -130,7 +132,7 @@ public class PlayerItemBreakAction extends AbstractPlayerAction<PlayerItemBreakA
     }
 
     @Override
-    public boolean isFired(@NotNull Argument argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public boolean isFired(@NotNull InputBoard argument, @NotNull ScenarioEngine engine, @NotNull Event event)
     {
         if (!super.checkMatchedPlayerEvent(argument, engine, event))
             return false;
@@ -138,7 +140,7 @@ public class PlayerItemBreakAction extends AbstractPlayerAction<PlayerItemBreakA
         assert event instanceof PlayerItemBreakEvent;
         PlayerItemBreakEvent e = (PlayerItemBreakEvent) event;
 
-        return argument.getItem() == null || argument.getItem().isAdequate(e.getBrokenItem());
+        return argument.ifPresent(IN_ITEM, item -> item.isAdequate(e.getBrokenItem()));
     }
 
     @Override
@@ -150,62 +152,13 @@ public class PlayerItemBreakAction extends AbstractPlayerAction<PlayerItemBreakA
     }
 
     @Override
-    public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
+    public InputBoard getInputBoard(ScenarioType type)
     {
-        ItemStackStructure item = null;
-        if (map.containsKey(Argument.KEY_ITEM))
-            item = serializer.deserialize(
-                    MapUtils.checkAndCastMap(map.get(Argument.KEY_ITEM)),
-                    ItemStackStructure.class
-            );
+        InputBoard board = super.getInputBoard(type)
+                .registerAll(IN_ITEM);
+        if (type != ScenarioType.ACTION_EXPECT)
+            board.register(IN_SLOT);
 
-        return new Argument(
-                super.deserializeTarget(map, serializer),
-                item,
-                MapUtils.getAsEnumOrNull(map, Argument.KEY_SLOT, EquipmentSlot.class)
-        );
-    }
-
-    @Value
-    @EqualsAndHashCode(callSuper = true)
-    public static class Argument extends AbstractPlayerActionArgument
-    {
-        public static final String KEY_ITEM = "item";
-        public static final String KEY_SLOT = "slot";
-
-        @Nullable
-        ItemStackStructure item;
-        @Nullable
-        EquipmentSlot slot;
-
-        public Argument(PlayerSpecifier target, @Nullable ItemStackStructure item, @Nullable EquipmentSlot slot)
-        {
-            super(target);
-            this.item = item;
-            this.slot = slot;
-        }
-
-        @Override
-        public boolean isSame(TriggerArgument argument)
-        {
-            if (!(argument instanceof Argument))
-                return false;
-
-            Argument arg = (Argument) argument;
-
-            return super.isSame(arg)
-                    && Objects.equals(this.item, arg.item);
-        }
-
-        // TODO: Create validation for argument
-
-        @Override
-        public String getArgumentString()
-        {
-            return appendArgumentString(
-                    super.getArgumentString(),
-                    KEY_ITEM, this.item
-            );
-        }
+        return board;
     }
 }

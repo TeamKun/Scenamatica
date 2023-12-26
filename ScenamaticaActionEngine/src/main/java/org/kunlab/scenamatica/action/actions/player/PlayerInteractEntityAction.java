@@ -1,35 +1,35 @@
 package org.kunlab.scenamatica.action.actions.player;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.jetbrains.annotations.NotNull;
-import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.commons.utils.PlayerUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
+import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.context.Actor;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.EntitySpecifier;
-import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.PlayerSpecifier;
-import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 import org.kunlab.scenamatica.nms.enums.entity.NMSEntityUseAction;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
-public class PlayerInteractEntityAction<A extends PlayerInteractEntityAction.Argument> extends AbstractPlayerAction<A>
-        implements Executable<A>, Watchable<A>
+public class PlayerInteractEntityAction extends AbstractPlayerAction
+        implements Executable, Watchable
 {
     public static final String KEY_ACTION_NAME = "player_interact_entity";
+    public static final InputToken<EntitySpecifier<Entity>> IN_ENTITY = ofSpecifier("entity");
+    public static final InputToken<EquipmentSlot> IN_HAND = ofEnumInput("hand", EquipmentSlot.class)
+            .validator(
+                    (slot) -> slot == EquipmentSlot.HAND || slot == EquipmentSlot.OFF_HAND,
+                    "The hand must be either hand or off hand"
+            );
 
     @Override
     public String getName()
@@ -38,10 +38,10 @@ public class PlayerInteractEntityAction<A extends PlayerInteractEntityAction.Arg
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @NotNull A argument)
+    public void execute(@NotNull ScenarioEngine engine, @NotNull InputBoard argument)
     {
-        Player player = argument.getTarget(engine);
-        Entity targetEntity = argument.getEntity().selectTarget(engine.getContext())
+        Player player = selectTarget(argument, engine);
+        Entity targetEntity = argument.get(IN_ENTITY).selectTarget(engine.getContext())
                 .orElseThrow(() -> new IllegalStateException("Target entity is not found."));
 
         int distanceFromEntity = (int) player.getLocation().distance(targetEntity.getLocation());
@@ -58,31 +58,38 @@ public class PlayerInteractEntityAction<A extends PlayerInteractEntityAction.Arg
         this.doInteract(argument, targetEntity, actor);
     }
 
-    protected void doInteract(A argument, Entity targeTentity, Actor actor)
+    protected void doInteract(InputBoard argument, Entity targeTentity, Actor actor)
     {
-        actor.interactEntity(targeTentity, NMSEntityUseAction.INTERACT, argument.getHand(), actor.getPlayer().getLocation());
+        actor.interactEntity(
+                targeTentity,
+                NMSEntityUseAction.INTERACT,
+                argument.orElse(IN_HAND, () -> EquipmentSlot.HAND),
+                actor.getPlayer().getLocation()
+        );
     }
 
-    private void eventOnlyMode(@NotNull ScenarioEngine engine, @NotNull A argument, @NotNull Entity targetEntity)
+    private void eventOnlyMode(@NotNull ScenarioEngine engine, @NotNull InputBoard argument, @NotNull Entity targetEntity)
     {
         PlayerInteractEntityEvent event = new PlayerInteractEntityEvent(
-                argument.getTarget(engine),
+                selectTarget(argument, engine),
                 targetEntity,
-                argument.getHand() == null ? EquipmentSlot.HAND: argument.getHand()
+                argument.orElse(IN_HAND, () -> EquipmentSlot.HAND)
         );
 
         engine.getPlugin().getServer().getPluginManager().callEvent(event);
     }
 
     @Override
-    public boolean isFired(@NotNull A argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public boolean isFired(@NotNull InputBoard argument, @NotNull ScenarioEngine engine, @NotNull Event event)
     {
         if (!super.checkMatchedPlayerEvent(argument, engine, event))
             return false;
 
+        assert event instanceof PlayerInteractEntityEvent;
         PlayerInteractEntityEvent e = (PlayerInteractEntityEvent) event;
-        return (argument.getHand() == null || argument.getHand() == e.getHand())
-                && (!argument.getEntity().canProvideTarget() || argument.getEntity().checkMatchedEntity(e.getRightClicked()));
+
+        return argument.ifPresent(IN_ENTITY, entity -> entity.checkMatchedEntity(e.getRightClicked()))
+                && argument.ifPresent(IN_HAND, hand -> hand == e.getHand());
     }
 
     @Override
@@ -94,68 +101,13 @@ public class PlayerInteractEntityAction<A extends PlayerInteractEntityAction.Arg
     }
 
     @Override
-    public A deserializeArgument(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
+    public InputBoard getInputBoard(ScenarioType type)
     {
-        // noinspection unchecked
-        return (A) new Argument(
-                super.deserializeTarget(map, serializer),
-                serializer.tryDeserializeEntitySpecifier(map.get(Argument.KEY_ENTITY)),
-                MapUtils.getAsEnumOrNull(map, Argument.KEY_HAND, EquipmentSlot.class)
-        );
-    }
+        InputBoard board = super.getInputBoard(type)
+                .registerAll(IN_ENTITY, IN_HAND);
+        if (type == ScenarioType.ACTION_EXECUTE)
+            board.requirePresent(IN_TARGET);
 
-    @Getter
-    @EqualsAndHashCode(callSuper = true)
-    public static class Argument extends AbstractPlayerActionArgument
-    {
-        public static final String KEY_ENTITY = "entity";
-        public static final String KEY_HAND = "hand";
-
-        @NotNull
-        EntitySpecifier<?> entity;
-        EquipmentSlot hand;
-
-        public Argument(PlayerSpecifier target, @NotNull EntitySpecifier<?> entity, EquipmentSlot hand)
-        {
-            super(target);
-            this.entity = entity;
-            this.hand = hand;
-        }
-
-        @Override
-        public void validate(@NotNull ScenarioEngine engine, @NotNull ScenarioType type)
-        {
-            super.validate(engine, type);
-            if (this.hand != null && !(this.hand == EquipmentSlot.HAND || this.hand == EquipmentSlot.OFF_HAND))
-                throw new IllegalStateException("Hand must be either HAND or OFF_HAND");
-
-            if (type == ScenarioType.ACTION_EXECUTE
-                    && !this.entity.isSelectable())
-                throw new IllegalStateException("Entity must be selectable on execute action");
-
-        }
-
-        @Override
-        public boolean isSame(TriggerArgument argument)
-        {
-            if (!(argument instanceof Argument))
-                return false;
-
-            Argument arg = (Argument) argument;
-
-            return super.isSame(argument)
-                    && Objects.equals(this.entity, arg.entity)
-                    && this.hand == arg.hand;
-        }
-
-        @Override
-        public String getArgumentString()
-        {
-            return appendArgumentString(
-                    super.getArgumentString(),
-                    KEY_ENTITY, this.entity,
-                    KEY_HAND, this.hand
-            );
-        }
+        return board;
     }
 }

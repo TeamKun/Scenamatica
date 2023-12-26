@@ -1,27 +1,29 @@
 package org.kunlab.scenamatica.action.actions.player;
 
-import lombok.EqualsAndHashCode;
-import lombok.Value;
 import org.bukkit.Location;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.jetbrains.annotations.NotNull;
-import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.commons.utils.Utils;
+import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
+import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
-import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
-public class PlayerTeleportAction extends PlayerMoveAction<PlayerTeleportAction.Argument>
-        implements Executable<PlayerTeleportAction.Argument>, Watchable<PlayerTeleportAction.Argument>
+public class PlayerTeleportAction extends PlayerMoveAction
+        implements Executable, Watchable
 {
     public static final String KEY_ACTION_NAME = "player_teleport";
+    public static final InputToken<PlayerTeleportEvent.TeleportCause> IN_CAUSE = ofEnumInput(
+            "cause",
+            PlayerTeleportEvent.TeleportCause.class
+    );
 
     @Override
     public String getName()
@@ -30,18 +32,21 @@ public class PlayerTeleportAction extends PlayerMoveAction<PlayerTeleportAction.
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @NotNull PlayerTeleportAction.Argument argument)
+    public void execute(@NotNull ScenarioEngine engine, @NotNull InputBoard argument)
     {
-        Location toLoc = Utils.assignWorldToLocation(argument.getTo(), engine);
-        PlayerTeleportEvent.TeleportCause cause = argument.getCause();
-        if (cause == null)
+        Location toLoc = Utils.assignWorldToLocation(argument.get(IN_TO), engine);
+        PlayerTeleportEvent.TeleportCause cause;
+        if (argument.isPresent(IN_CAUSE))
+            cause = argument.get(IN_CAUSE);
+        else
             cause = PlayerTeleportEvent.TeleportCause.PLUGIN;
 
-        argument.getTarget(engine).teleport(toLoc, cause);
+        Player player = selectTarget(argument, engine);
+        player.teleport(toLoc, cause);
     }
 
     @Override
-    public boolean isFired(@NotNull Argument argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public boolean isFired(@NotNull InputBoard argument, @NotNull ScenarioEngine engine, @NotNull Event event)
     {
         if (!super.isFired(argument, engine, event))
             return false;
@@ -49,7 +54,7 @@ public class PlayerTeleportAction extends PlayerMoveAction<PlayerTeleportAction.
         assert event instanceof PlayerTeleportEvent;
         PlayerTeleportEvent e = (PlayerTeleportEvent) event;
 
-        return (argument.getCause() == null || argument.getCause() == e.getCause());
+        return argument.get(IN_CAUSE) == e.getCause();
     }
 
     @Override
@@ -61,49 +66,9 @@ public class PlayerTeleportAction extends PlayerMoveAction<PlayerTeleportAction.
     }
 
     @Override
-    public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
+    public InputBoard getInputBoard(ScenarioType type)
     {
-
-        return new Argument(
-                super.deserializeArgument(map, serializer),
-                MapUtils.getAsEnumOrNull(map, Argument.KEY_CAUSE, PlayerTeleportEvent.TeleportCause.class)
-        );
-    }
-
-    @Value
-    @EqualsAndHashCode(callSuper = true)
-    public static class Argument extends PlayerMoveAction.Argument
-    {
-        public static final String KEY_CAUSE = "cause";
-
-        PlayerTeleportEvent.TeleportCause cause;
-
-        public Argument(PlayerMoveAction.Argument argument, PlayerTeleportEvent.TeleportCause cause)
-        {
-            super(argument.getTargetSpecifier(), argument.getFrom(), argument.getTo());
-
-            this.cause = cause;
-        }
-
-        @Override
-        public boolean isSame(TriggerArgument argument)
-        {
-            if (!(argument instanceof Argument))
-                return false;
-
-            Argument arg = (Argument) argument;
-
-            return super.isSame(arg)
-                    && this.cause == arg.cause;
-        }
-
-        @Override
-        public String getArgumentString()
-        {
-            return appendArgumentString(
-                    super.getArgumentString(),
-                    KEY_CAUSE, this.cause.name()
-            );
-        }
+        return super.getInputBoard(type)
+                .register(IN_CAUSE);
     }
 }

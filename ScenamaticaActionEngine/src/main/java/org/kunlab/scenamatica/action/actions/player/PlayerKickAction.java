@@ -1,31 +1,37 @@
 package org.kunlab.scenamatica.action.actions.player;
 
-import lombok.EqualsAndHashCode;
-import lombok.Value;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.jetbrains.annotations.NotNull;
-import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.commons.utils.TextUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
+import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
-import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.PlayerSpecifier;
-import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
-public class PlayerKickAction extends AbstractPlayerAction<PlayerKickAction.Argument>
-        implements Executable<PlayerKickAction.Argument>, Watchable<PlayerKickAction.Argument>
+public class PlayerKickAction extends AbstractPlayerAction
+        implements Executable, Watchable
 {
     public static final String KEY_ACTION_NAME = "player_kick";
+    public static final InputToken<String> IN_LEAVE_MESSAGE = ofInput(
+            "leaveMessage",
+            String.class
+    );
+    public static final InputToken<String> IN_KICK_MESSAGE = ofInput(
+            "kickMessage",
+            String.class
+    );
+    public static final InputToken<PlayerKickEvent.Cause> IN_CAUSE = ofEnumInput(
+            "cause",
+            PlayerKickEvent.Cause.class
+    );
 
     @Override
     public String getName()
@@ -34,22 +40,22 @@ public class PlayerKickAction extends AbstractPlayerAction<PlayerKickAction.Argu
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @NotNull PlayerKickAction.Argument argument)
+    public void execute(@NotNull ScenarioEngine engine, @NotNull InputBoard argument)
     {
         // leaveMessage はつかえない。
 
-        PlayerKickEvent.Cause cause = argument.getCause();
-        Component kickMessage = argument.getKickMessage() == null ? null: Component.text(argument.getKickMessage());
+        Component kickMessage = argument.isPresent(IN_KICK_MESSAGE) ?
+                Component.text(argument.get(IN_KICK_MESSAGE)): null;
 
-        Player target = argument.getTarget(engine);
-        if (cause == null)
-            target.kick(kickMessage);
+        Player target = selectTarget(argument, engine);
+        if (argument.isPresent(IN_CAUSE))
+            target.kick(kickMessage, argument.get(IN_CAUSE));
         else
-            target.kick(kickMessage, cause);
+            target.kick(kickMessage);
     }
 
     @Override
-    public boolean isFired(@NotNull Argument argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public boolean isFired(@NotNull InputBoard argument, @NotNull ScenarioEngine engine, @NotNull Event event)
     {
         if (!super.checkMatchedPlayerEvent(argument, engine, event))
             return false;
@@ -59,13 +65,9 @@ public class PlayerKickAction extends AbstractPlayerAction<PlayerKickAction.Argu
         Component kickMessage = e.reason();
         PlayerKickEvent.Cause cause = e.getCause();
 
-        String expectedLeaveMessage = argument.getLeaveMessage();
-        String expectedKickMessage = argument.getKickMessage();
-        PlayerKickEvent.Cause expectedCause = argument.getCause();
-
-        return (expectedLeaveMessage == null || TextUtils.isSameContent(leaveMessage, expectedLeaveMessage))
-                && (expectedKickMessage == null || TextUtils.isSameContent(kickMessage, expectedKickMessage))
-                && (expectedCause == null || cause == expectedCause);
+        return argument.ifPresent(IN_LEAVE_MESSAGE, message -> TextUtils.isSameContent(leaveMessage, message))
+                && argument.ifPresent(IN_KICK_MESSAGE, message -> TextUtils.isSameContent(kickMessage, message))
+                && argument.ifPresent(IN_CAUSE, c -> c == cause);
     }
 
     @Override
@@ -77,66 +79,14 @@ public class PlayerKickAction extends AbstractPlayerAction<PlayerKickAction.Argu
     }
 
     @Override
-    public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
+    public InputBoard getInputBoard(ScenarioType type)
     {
-        return new Argument(
-                super.deserializeTarget(map, serializer),
-                MapUtils.getOrNull(map, Argument.KEY_LEAVE_MESSAGE),
-                MapUtils.getOrNull(map, Argument.KEY_KICK_MESSAGE),
-                MapUtils.getAsEnumOrNull(map, Argument.KEY_CAUSE, PlayerKickEvent.Cause.class)
-        );
-    }
+        InputBoard board = super.getInputBoard(type)
+                .registerAll(IN_KICK_MESSAGE, IN_CAUSE);
 
-    @Value
-    @EqualsAndHashCode(callSuper = true)
-    public static class Argument extends AbstractPlayerActionArgument
-    {
-        public static final String KEY_LEAVE_MESSAGE = "leave_message";
-        public static final String KEY_KICK_MESSAGE = "message";
-        public static final String KEY_CAUSE = "cause";
+        if (type != ScenarioType.ACTION_EXECUTE)
+            board.register(IN_LEAVE_MESSAGE);
 
-        String leaveMessage;
-        String kickMessage;
-        PlayerKickEvent.Cause cause;
-
-        public Argument(PlayerSpecifier target, String leaveMessage, String kickMessage, PlayerKickEvent.Cause cause)
-        {
-            super(target);
-            this.leaveMessage = leaveMessage;
-            this.kickMessage = kickMessage;
-            this.cause = cause;
-        }
-
-        @Override
-        public boolean isSame(TriggerArgument argument)
-        {
-            if (!(argument instanceof Argument))
-                return false;
-
-            Argument arg = (Argument) argument;
-
-            return super.isSame(arg)
-                    && Objects.equals(this.leaveMessage, arg.leaveMessage)
-                    && Objects.equals(this.kickMessage, arg.kickMessage)
-                    && this.cause == arg.cause;
-        }
-
-        @Override
-        public void validate(@NotNull ScenarioEngine engine, @NotNull ScenarioType type)
-        {
-            if (type == ScenarioType.ACTION_EXECUTE)
-                ensureNotPresent(KEY_LEAVE_MESSAGE, this.leaveMessage);
-        }
-
-        @Override
-        public String getArgumentString()
-        {
-            return appendArgumentString(
-                    super.getArgumentString(),
-                    KEY_LEAVE_MESSAGE, this.leaveMessage,
-                    KEY_KICK_MESSAGE, this.kickMessage,
-                    KEY_CAUSE, this.cause
-            );
-        }
+        return board;
     }
 }

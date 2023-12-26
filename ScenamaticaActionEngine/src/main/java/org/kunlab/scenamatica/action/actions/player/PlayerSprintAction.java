@@ -1,31 +1,29 @@
 package org.kunlab.scenamatica.action.actions.player;
 
-import lombok.EqualsAndHashCode;
-import lombok.Value;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerToggleSprintEvent;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
+import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
-import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.PlayerSpecifier;
-import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
-public class PlayerSprintAction extends AbstractPlayerAction<PlayerSprintAction.Argument>
-        implements Executable<PlayerSprintAction.Argument>, Watchable<PlayerSprintAction.Argument>, Requireable<PlayerSprintAction.Argument>
+public class PlayerSprintAction extends AbstractPlayerAction
+        implements Executable, Watchable, Requireable
 {
     public static final String KEY_ACTION_NAME = "player_sprint";
+    public static final InputToken<Boolean> IN_SPRINTING = ofInput(
+            "sprinting",
+            Boolean.class
+    );
 
     @Override
     public String getName()
@@ -34,13 +32,12 @@ public class PlayerSprintAction extends AbstractPlayerAction<PlayerSprintAction.
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @NotNull PlayerSprintAction.Argument argument)
+    public void execute(@NotNull ScenarioEngine engine, @NotNull InputBoard argument)
     {
-        assert argument.sprinting != null;
+        boolean sprinting = argument.get(IN_SPRINTING);
 
-        boolean sprinting = argument.sprinting;
-
-        Player player = argument.getTarget(engine);
+        Player player = selectTarget(argument, engine);
+        // Player#setSprinting は PlayerToggleSprintEvent を呼び出さないので、以下手動で呼び出す。
         PlayerToggleSprintEvent event = new PlayerToggleSprintEvent(player, sprinting);
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled())
@@ -50,7 +47,7 @@ public class PlayerSprintAction extends AbstractPlayerAction<PlayerSprintAction.
     }
 
     @Override
-    public boolean isFired(@NotNull Argument argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public boolean isFired(@NotNull InputBoard argument, @NotNull ScenarioEngine engine, @NotNull Event event)
     {
         if (!super.checkMatchedPlayerEvent(argument, engine, event))
             return false;
@@ -58,7 +55,7 @@ public class PlayerSprintAction extends AbstractPlayerAction<PlayerSprintAction.
         assert event instanceof PlayerToggleSprintEvent;
         PlayerToggleSprintEvent e = (PlayerToggleSprintEvent) event;
 
-        return argument.sprinting == null || argument.sprinting == e.isSprinting();
+        return argument.ifPresent(IN_SPRINTING, sprinting -> sprinting == e.isSprinting());
     }
 
     @Override
@@ -70,71 +67,20 @@ public class PlayerSprintAction extends AbstractPlayerAction<PlayerSprintAction.
     }
 
     @Override
-    public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
+    public boolean isConditionFulfilled(@NotNull InputBoard argument, @NotNull ScenarioEngine engine)
     {
-        return new Argument(
-                super.deserializeTarget(map, serializer),
-                MapUtils.getOrNull(map, Argument.KEY_SPRINTING)
-        );
+        Player player = selectTarget(argument, engine);
+        return argument.ifPresent(IN_SPRINTING, sprinting -> sprinting == player.isSprinting());
     }
 
     @Override
-    public boolean isConditionFulfilled(@NotNull PlayerSprintAction.Argument argument, @NotNull ScenarioEngine engine)
+    public InputBoard getInputBoard(ScenarioType type)
     {
-        assert argument.sprinting != null;
-        boolean expectState = argument.sprinting;
+        InputBoard board = super.getInputBoard(type)
+                .register(IN_SPRINTING);
+        if (type == ScenarioType.ACTION_EXECUTE || type == ScenarioType.CONDITION_REQUIRE)
+            board.requirePresent(IN_SPRINTING);
 
-        return argument.getTarget(engine).isSprinting() == expectState;
-    }
-
-    @Value
-    @EqualsAndHashCode(callSuper = true)
-    public static class Argument extends AbstractPlayerActionArgument
-    {
-        public static final String KEY_SPRINTING = "sprinting";
-
-        @Nullable
-        Boolean sprinting;
-
-        public Argument(PlayerSpecifier target, @Nullable Boolean sprinting)
-        {
-            super(target);
-            this.sprinting = sprinting;
-        }
-
-        @Override
-        public boolean isSame(TriggerArgument argument)
-        {
-            if (!(argument instanceof Argument))
-                return false;
-
-            Argument arg = (Argument) argument;
-
-            return super.isSame(argument) &&
-                    (this.sprinting == null || arg.sprinting == null || this.sprinting.equals(arg.sprinting));
-        }
-
-        @Override
-        public void validate(@NotNull ScenarioEngine engine, @NotNull ScenarioType type)
-        {
-            super.validate(engine, type);
-
-            switch (type)
-            {
-                case ACTION_EXECUTE:
-                case CONDITION_REQUIRE:
-                    ensurePresent(Argument.KEY_SPRINTING, this.sprinting);
-                    break;
-            }
-        }
-
-        @Override
-        public String getArgumentString()
-        {
-            return appendArgumentString(
-                    super.getArgumentString(),
-                    KEY_SPRINTING, this.sprinting
-            );
-        }
+        return board;
     }
 }

@@ -2,9 +2,7 @@ package org.kunlab.scenamatica.action.actions.player;
 
 import com.destroystokyo.paper.event.player.PlayerLaunchProjectileEvent;
 import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.Value;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.DragonFireball;
 import org.bukkit.entity.Egg;
@@ -23,25 +21,36 @@ import org.bukkit.entity.WitherSkull;
 import org.bukkit.event.Event;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.commons.utils.Utils;
-import org.kunlab.scenamatica.interfaces.action.ActionArgument;
+import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
+import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
-import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.PlayerSpecifier;
-import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
+import org.kunlab.scenamatica.interfaces.scenariofile.misc.LocationStructure;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
-public class PlayerLaunchProjectileAction extends AbstractPlayerAction<PlayerLaunchProjectileAction.Argument>
-        implements Executable<PlayerLaunchProjectileAction.Argument>, Watchable<PlayerLaunchProjectileAction.Argument>
+public class PlayerLaunchProjectileAction extends AbstractPlayerAction
+        implements Executable, Watchable
 {
     public static final String KEY_ACTION_NAME = "player_projectile_launch";
+    public static final InputToken<ProjectileType> IN_PROJECTILE_TYPE = ofEnumInput(
+            "projectileType",
+            ProjectileType.class
+    );
+    public static final InputToken<LocationStructure> IN_VELOCITY = ofInput(
+            "velocity",
+            LocationStructure.class,
+            ofDeserializer(LocationStructure.class)
+    );
+    public static final InputToken<Double> IN_EPSILON = ofInput(
+            "epsilon",
+            Double.class,
+            0.01
+    );
 
     @Override
     public String getName()
@@ -50,32 +59,32 @@ public class PlayerLaunchProjectileAction extends AbstractPlayerAction<PlayerLau
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @NotNull PlayerLaunchProjectileAction.Argument argument)
+    public void execute(@NotNull ScenarioEngine engine, @NotNull InputBoard argument)
     {
-        Player player = argument.getTarget(engine);
-        ProjectileType type = argument.getProjectileType();
+        Player player = selectTarget(argument, engine);
+        ProjectileType type = argument.get(IN_PROJECTILE_TYPE);
+        Vector velocity = argument.get(IN_VELOCITY).create().toVector();
 
-        player.launchProjectile(type.getClazz(), argument.getVelocity());
+        player.launchProjectile(type.getClazz(), velocity);
     }
 
     @Override
-    public boolean isFired(@NotNull PlayerLaunchProjectileAction.Argument argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public boolean isFired(@NotNull InputBoard argument, @NotNull ScenarioEngine engine, @NotNull Event event)
     {
         if (!super.checkMatchedPlayerEvent(argument, engine, event))
             return false;
 
         assert event instanceof PlayerLaunchProjectileEvent;
-
         PlayerLaunchProjectileEvent e = (PlayerLaunchProjectileEvent) event;
 
         ProjectileType projectileType = ProjectileType.fromProjectile(e.getProjectile());
+        Vector velocity = e.getProjectile().getVelocity().clone();
 
-        Vector velocity = e.getProjectile().getVelocity().clone().normalize();
-
-        // TODO: Check shooter item
-        return /* StructureUtils.isSame(argument.getShooterItem(), e.getItemStack(), false)
-                &&*/ argument.getProjectileType() == projectileType
-                && (argument.getVelocity() == null || Utils.vectorEquals(argument.getVelocity(), velocity, argument.getEpsilon()));
+        return argument.ifPresent(IN_PROJECTILE_TYPE, type -> type == projectileType)
+                && argument.ifPresent(
+                IN_VELOCITY,
+                loc -> Utils.vectorEquals(loc.create().toVector(), velocity, argument.get(IN_EPSILON))
+        );
     }
 
     @Override
@@ -87,27 +96,14 @@ public class PlayerLaunchProjectileAction extends AbstractPlayerAction<PlayerLau
     }
 
     @Override
-    public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
+    public InputBoard getInputBoard(ScenarioType type)
     {
-        MapUtils.checkEnumName(map, Argument.KEY_PROJECTILE_TYPE, ProjectileType.class);
-        MapUtils.checkTypeIfContains(map, Argument.KEY_PROJECTILE_EPSILON, Double.class);
-        // ItemStackStructureImpl.checkMap(map, PlayerLaunchProjectileActionArgument.KEY_PROJECTILE_SHOOTER);
+        InputBoard board = super.getInputBoard(type)
+                .registerAll(IN_PROJECTILE_TYPE, IN_VELOCITY, IN_EPSILON);
+        if (type == ScenarioType.CONDITION_REQUIRE)
+            board.requirePresent(IN_PROJECTILE_TYPE, IN_VELOCITY);
 
-        Map<String, Object> velocityMap = MapUtils.checkAndCastMap(map.get(Argument.KEY_PROJECTILE_VELOCITY));
-
-        double epsilon;
-        if (map.containsKey(Argument.KEY_PROJECTILE_EPSILON) && map.get(Argument.KEY_PROJECTILE_EPSILON) != null)
-            epsilon = (double) map.get(Argument.KEY_PROJECTILE_EPSILON);
-        else
-            epsilon = Argument.DEFAULT_EPSILON;
-
-        return new Argument(
-                super.deserializeTarget(map, serializer),
-                MapUtils.getAsEnum(map, Argument.KEY_PROJECTILE_TYPE, ProjectileType.class),
-                /* ItemStackStructureImpl.deserialize(map, PlayerLaunchProjectileActionArgument.KEY_PROJECTILE_SHOOTER) */
-                Vector.deserialize(velocityMap),
-                epsilon
-        );
+        return board;
     }
 
     @AllArgsConstructor
@@ -147,74 +143,4 @@ public class PlayerLaunchProjectileAction extends AbstractPlayerAction<PlayerLau
         }
     }
 
-    @Value
-    @EqualsAndHashCode(callSuper = true)
-    public static class Argument extends AbstractPlayerActionArgument
-    {
-        public static final String KEY_PROJECTILE_TYPE = "type";
-        public static final String KEY_PROJECTILE_VELOCITY = "velocity";
-        public static final String KEY_PROJECTILE_EPSILON = "epsilon";  // 比較のしきい値。
-        // public static final String KEY_PROJECTILE_SHOOTER = "shooterItem";
-
-        public static final double DEFAULT_EPSILON = 0.01;
-
-        // @NotNull
-        // ItemStackStructure shooterItem;
-        @NotNull
-        ProjectileType projectileType;
-        @Nullable
-        Vector velocity;
-
-        double epsilon;
-
-        public Argument(PlayerSpecifier target, @NotNull ProjectileType projectileType)
-        {
-            super(target);
-            this.projectileType = projectileType;
-            this.velocity = null;
-            this.epsilon = DEFAULT_EPSILON;
-        }
-
-        public Argument(PlayerSpecifier target, @NotNull ProjectileType projectileType, @Nullable Vector velocity)
-        {
-            super(target);
-            this.projectileType = projectileType;
-            this.velocity = velocity;
-            this.epsilon = DEFAULT_EPSILON;
-        }
-
-        public Argument(PlayerSpecifier target, @NotNull ProjectileType projectileType, @Nullable Vector velocity, double epsilon)
-        {
-            super(target);
-            this.projectileType = projectileType;
-            this.velocity = velocity;
-            this.epsilon = epsilon;
-        }
-
-        @Override
-        public boolean isSame(TriggerArgument argument)
-        {
-            if (!(argument instanceof ActionArgument))
-                return false;
-
-            if (!Argument.class.isAssignableFrom(argument.getClass()))
-                return false;
-
-            Argument a = (Argument) argument;
-
-            return this.projectileType == a.projectileType /* && this.shooterItem.isSame(a.shooterItem) */;
-        }
-
-        // TODO: Create validation for argument
-        @Override
-        public String getArgumentString()
-        {
-            return appendArgumentString(
-                    super.getArgumentString(),
-                    KEY_PROJECTILE_TYPE, this.projectileType,
-                    KEY_PROJECTILE_VELOCITY, this.velocity,
-                    KEY_PROJECTILE_EPSILON, this.epsilon
-            );
-        }
-    }
 }

@@ -1,35 +1,38 @@
 package org.kunlab.scenamatica.action.actions.player;
 
-import lombok.EqualsAndHashCode;
-import lombok.Value;
 import org.bukkit.Material;
 import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.commons.utils.PlayerUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
+import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.context.Actor;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.ItemStackStructure;
-import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.PlayerSpecifier;
-import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
-public class PlayerItemConsumeAction extends AbstractPlayerAction<PlayerItemConsumeAction.Argument>
-        implements Executable<PlayerItemConsumeAction.Argument>, Watchable<PlayerItemConsumeAction.Argument>
+public class PlayerItemConsumeAction extends AbstractPlayerAction
+        implements Executable, Watchable
 {
     public static final String KEY_ACTION_NAME = "player_item_consume";
+    public static final InputToken<ItemStackStructure> IN_ITEM = ofInput(
+            "item",
+            ItemStackStructure.class,
+            ofDeserializer(ItemStackStructure.class)
+    );
+    public static final InputToken<ItemStackStructure> IN_REPLACEMENT = ofInput(
+            "replacement",
+            ItemStackStructure.class,
+            ofDeserializer(ItemStackStructure.class)
+    );
 
     private static boolean isConsumable(@NotNull ItemStack item)
     {
@@ -44,13 +47,12 @@ public class PlayerItemConsumeAction extends AbstractPlayerAction<PlayerItemCons
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @NotNull PlayerItemConsumeAction.Argument argument)
+    public void execute(@NotNull ScenarioEngine engine, @NotNull InputBoard argument)
     {
-        ItemStackStructure item = argument.getItem();
-        Actor actor = PlayerUtils.getActorOrThrow(engine, argument.getTarget(engine));
+        Actor actor = PlayerUtils.getActorOrThrow(engine, selectTarget(argument, engine));
 
-        if (item != null)
-            actor.getPlayer().getInventory().setItemInMainHand(item.create());
+        if (argument.isPresent(IN_ITEM))
+            actor.getPlayer().getInventory().setItemInMainHand(argument.get(IN_ITEM).create());
         else if (!isConsumable(actor.getPlayer().getInventory().getItemInMainHand()))
             throw new IllegalArgumentException("The item in the main hand is not consumable.");
 
@@ -59,7 +61,7 @@ public class PlayerItemConsumeAction extends AbstractPlayerAction<PlayerItemCons
     }
 
     @Override
-    public boolean isFired(@NotNull Argument argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public boolean isFired(@NotNull InputBoard argument, @NotNull ScenarioEngine engine, @NotNull Event event)
     {
         if (!super.checkMatchedPlayerEvent(argument, engine, event))
             return false;
@@ -70,8 +72,8 @@ public class PlayerItemConsumeAction extends AbstractPlayerAction<PlayerItemCons
         ItemStack item = e.getItem();
         ItemStack replacement = e.getReplacement();
 
-        return (argument.getItem() == null || argument.getItem().isAdequate(item))
-                && (argument.getReplacement() == null || argument.getReplacement().isAdequate(replacement));
+        return argument.ifPresent(IN_ITEM, i -> i.isAdequate(item))
+                && argument.ifPresent(IN_REPLACEMENT, r -> r.isAdequate(replacement));
     }
 
     @Override
@@ -83,77 +85,13 @@ public class PlayerItemConsumeAction extends AbstractPlayerAction<PlayerItemCons
     }
 
     @Override
-    public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
+    public InputBoard getInputBoard(ScenarioType type)
     {
-        ItemStackStructure item = null;
-        if (map.containsKey(Argument.KEY_ITEM))
-            item = serializer.deserialize(
-                    MapUtils.checkAndCastMap(map.get(Argument.KEY_ITEM)),
-                    ItemStackStructure.class
-            );
+        InputBoard board = super.getInputBoard(type)
+                .register(IN_ITEM);
+        if (type == ScenarioType.ACTION_EXECUTE)
+            board.register(IN_REPLACEMENT);
 
-        ItemStackStructure replacement = null;
-        if (map.containsKey(Argument.KEY_REPLACEMENT))
-            replacement = serializer.deserialize(
-                    MapUtils.checkAndCastMap(map.get(Argument.KEY_REPLACEMENT)),
-                    ItemStackStructure.class
-            );
-
-        return new Argument(
-                super.deserializeTarget(map, serializer),
-                item,
-                replacement
-        );
-    }
-
-    @Value
-    @EqualsAndHashCode(callSuper = true)
-    public static class Argument extends AbstractPlayerActionArgument
-    {
-        public static final String KEY_ITEM = "item";
-        public static final String KEY_REPLACEMENT = "replacement";
-
-        @Nullable
-        ItemStackStructure item;
-        @Nullable
-        ItemStackStructure replacement;
-
-        public Argument(PlayerSpecifier target, @Nullable ItemStackStructure item, @Nullable ItemStackStructure replacement)
-        {
-            super(target);
-            this.item = item;
-            this.replacement = replacement;
-        }
-
-        @Override
-        public boolean isSame(TriggerArgument argument)
-        {
-            if (!(argument instanceof Argument))
-                return false;
-
-            Argument arg = (Argument) argument;
-            return super.isSame(arg)
-                    && Objects.equals(this.item, arg.item)
-                    && Objects.equals(this.replacement, arg.replacement);
-        }
-
-        @Override
-        public void validate(@NotNull ScenarioEngine engine, @NotNull ScenarioType type)
-        {
-            if (type != ScenarioType.ACTION_EXECUTE)
-                return;
-
-            ensureNotPresent(Argument.KEY_REPLACEMENT, this.replacement);
-        }
-
-        @Override
-        public String getArgumentString()
-        {
-            return appendArgumentString(
-                    super.getArgumentString(),
-                    KEY_ITEM, this.item,
-                    KEY_REPLACEMENT, this.replacement
-            );
-        }
+        return board;
     }
 }

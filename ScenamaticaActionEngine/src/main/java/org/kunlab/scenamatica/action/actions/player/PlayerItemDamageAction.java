@@ -1,7 +1,5 @@
 package org.kunlab.scenamatica.action.actions.player;
 
-import lombok.EqualsAndHashCode;
-import lombok.Value;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerItemDamageEvent;
@@ -10,30 +8,38 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
-import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.commons.utils.PlayerUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
+import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.context.Actor;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.ItemStackStructure;
-import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.PlayerSpecifier;
-import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
-public class PlayerItemDamageAction extends AbstractPlayerAction<PlayerItemDamageAction.Argument>
-        implements Executable<PlayerItemDamageAction.Argument>, Watchable<PlayerItemDamageAction.Argument>,
-        Requireable<PlayerItemDamageAction.Argument>
+public class PlayerItemDamageAction extends AbstractPlayerAction
+        implements Executable, Watchable, Requireable
 {
     public static final String KEY_ACTION_NAME = "player_item_damage";
+    public static final InputToken<ItemStackStructure> IN_ITEM = ofInput(
+            "item",
+            ItemStackStructure.class,
+            ofDeserializer(ItemStackStructure.class)
+    );
+    public static final InputToken<Integer> IN_DAMAGE = ofInput(
+            "damage",
+            Integer.class
+    );
+    public static final InputToken<EquipmentSlot> IN_SLOT = ofEnumInput(
+            "slot",
+            EquipmentSlot.class
+    );
 
     @Override
     public String getName()
@@ -42,13 +48,12 @@ public class PlayerItemDamageAction extends AbstractPlayerAction<PlayerItemDamag
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @NotNull PlayerItemDamageAction.Argument argument)
+    public void execute(@NotNull ScenarioEngine engine, @NotNull InputBoard argument)
     {
-        Actor actor = PlayerUtils.getActorOrThrow(engine, argument.getTarget(engine));
-        EquipmentSlot slot = argument.getSlot() == null ? EquipmentSlot.HAND: argument.getSlot();
-        ItemStackStructure item = argument.getItem();
-        if (item != null)
-            actor.getPlayer().getInventory().setItem(slot, item.create());
+        Actor actor = PlayerUtils.getActorOrThrow(engine, selectTarget(argument, engine));
+        EquipmentSlot slot = argument.orElse(IN_SLOT, () -> EquipmentSlot.HAND);
+
+        argument.runIfPresent(IN_ITEM, item -> actor.getPlayer().getInventory().setItem(slot, item.create()));
 
         ItemStack itemStack = actor.getPlayer().getInventory().getItem(slot);
         if (itemStack == null)
@@ -56,20 +61,19 @@ public class PlayerItemDamageAction extends AbstractPlayerAction<PlayerItemDamag
         else if (!(itemStack.getItemMeta() instanceof Damageable))
             throw new IllegalStateException("Target item in slot " + slot + " is not Damageable");
 
-        int damageAmount = argument.getDamage();
-        actor.damageItem(slot, damageAmount);
+        actor.damageItem(slot, argument.get(IN_DAMAGE));
     }
 
     @Override
-    public boolean isFired(@NotNull Argument argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public boolean isFired(@NotNull InputBoard argument, @NotNull ScenarioEngine engine, @NotNull Event event)
     {
         if (!super.checkMatchedPlayerEvent(argument, engine, event))
             return false;
 
         PlayerItemDamageEvent e = (PlayerItemDamageEvent) event;
 
-        return (argument.getItem() == null || argument.getItem().isAdequate(e.getItem()))
-                && (argument.getDamage() == null || argument.getDamage() == e.getDamage());
+        return argument.ifPresent(IN_ITEM, item -> item.isAdequate(e.getItem()))
+                && argument.ifPresent(IN_DAMAGE, damage -> damage == e.getDamage());
     }
 
     @Override
@@ -81,36 +85,17 @@ public class PlayerItemDamageAction extends AbstractPlayerAction<PlayerItemDamag
     }
 
     @Override
-    public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
+    public boolean isConditionFulfilled(@NotNull InputBoard argument, @NotNull ScenarioEngine engine)
     {
-        ItemStackStructure item = null;
-        if (map.containsKey(Argument.KEY_ITEM))
-            item = serializer.deserialize(
-                    MapUtils.checkAndCastMap(map.get(Argument.KEY_ITEM)),
-                    ItemStackStructure.class
-            );
-
-        return new Argument(
-                super.deserializeTarget(map, serializer),
-                item,
-                MapUtils.getAsNumberOrNull(map, Argument.KEY_DAMAGE, Number::intValue),
-                MapUtils.getAsEnumOrNull(map, Argument.KEY_SLOT, EquipmentSlot.class)
-        );
-    }
-
-    @Override
-    public boolean isConditionFulfilled(@NotNull PlayerItemDamageAction.Argument argument, @NotNull ScenarioEngine engine)
-    {
-        Player player = argument.getTarget(engine);
+        Player player = selectTarget(argument, engine);
 
         List<EquipmentSlot> slotToCheck;
-        if (argument.getSlot() == null)
-            slotToCheck = Arrays.asList(EquipmentSlot.values());
+        if (argument.isPresent(IN_SLOT))
+            slotToCheck = Collections.singletonList(argument.get(IN_SLOT));
         else
-            slotToCheck = Collections.singletonList(argument.getSlot());
+            slotToCheck = Arrays.asList(EquipmentSlot.values());
 
-        ItemStackStructure itemToCheck = argument.getItem();
-        int expectedDamage = argument.getDamage();
+        int expectedDamage = argument.get(IN_DAMAGE);
         for (EquipmentSlot slot : slotToCheck)
         {
             ItemStack item = player.getInventory().getItem(slot);
@@ -122,7 +107,7 @@ public class PlayerItemDamageAction extends AbstractPlayerAction<PlayerItemDamag
                 continue;
             Damageable damageable = (Damageable) meta;
 
-            if (!(itemToCheck == null || itemToCheck.isAdequate(item)))
+            if (!argument.ifPresent(IN_ITEM, itemStructure -> itemStructure.isAdequate(item)))
                 continue;
 
             if (expectedDamage == damageable.getDamage())
@@ -132,61 +117,14 @@ public class PlayerItemDamageAction extends AbstractPlayerAction<PlayerItemDamag
         return false;
     }
 
-    @Value
-    @EqualsAndHashCode(callSuper = true)
-    public static class Argument extends AbstractPlayerActionArgument
+    @Override
+    public InputBoard getInputBoard(ScenarioType type)
     {
-        public static final String KEY_ITEM = "item";
-        public static final String KEY_DAMAGE = "damage";
-        public static final String KEY_SLOT = "slot";
+        InputBoard board = super.getInputBoard(type)
+                .registerAll(IN_ITEM, IN_DAMAGE, IN_SLOT);
+        if (type == ScenarioType.CONDITION_REQUIRE || type == ScenarioType.ACTION_EXECUTE)
+            board.requirePresent(IN_DAMAGE);
 
-        ItemStackStructure item;
-        Integer damage;
-        EquipmentSlot slot;
-
-        public Argument(PlayerSpecifier target, ItemStackStructure item, Integer damage, EquipmentSlot slot)
-        {
-            super(target);
-            this.item = item;
-            this.damage = damage;
-            this.slot = slot;
-        }
-
-        @Override
-        public void validate(@NotNull ScenarioEngine engine, @NotNull ScenarioType type)
-        {
-            super.validate(engine, type);
-
-            switch (type)
-            {
-                case CONDITION_REQUIRE:
-                case ACTION_EXECUTE:
-                    ensurePresent(KEY_DAMAGE, this.damage);
-            }
-
-        }
-
-        @Override
-        public boolean isSame(TriggerArgument argument)
-        {
-            if (!(argument instanceof Argument))
-                return false;
-
-            Argument arg = (Argument) argument;
-
-            return super.isSame(argument)
-                    && Objects.equals(this.item, arg.item)
-                    && Objects.equals(this.damage, arg.damage);
-        }
-
-        @Override
-        public String getArgumentString()
-        {
-            return appendArgumentString(
-                    super.getArgumentString(),
-                    KEY_ITEM, this.item,
-                    KEY_DAMAGE, this.damage
-            );
-        }
+        return board;
     }
 }
