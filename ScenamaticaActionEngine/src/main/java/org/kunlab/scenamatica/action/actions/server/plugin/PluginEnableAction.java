@@ -3,19 +3,19 @@ package org.kunlab.scenamatica.action.actions.server.plugin;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Event;
 import org.bukkit.event.server.PluginEnableEvent;
+import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
+import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
-public class PluginEnableAction extends AbstractPluginAction<PluginEnableAction.Argument>
-        implements Executable<PluginEnableAction.Argument>, Watchable<PluginEnableAction.Argument>, Requireable<PluginEnableAction.Argument>
+public class PluginEnableAction extends AbstractPluginAction
+        implements Executable, Watchable, Requireable
 {
     public static final String KEY_ACTION_NAME = KEY_PREFIX + "enable";
 
@@ -26,16 +26,19 @@ public class PluginEnableAction extends AbstractPluginAction<PluginEnableAction.
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @NotNull PluginEnableAction.Argument argument)
+    public void execute(@NotNull ScenarioEngine engine, @NotNull InputBoard argument)
     {
-        if (argument == null)
-            return;
+        Plugin plugin = super.getPlugin(argument);
+        if (engine.getPlugin() == plugin)
+            throw new IllegalArgumentException("Cannot disable the plugin itself.");
+        else if (plugin.isEnabled())
+            throw new IllegalArgumentException("Plugin is already enabled.");
 
-        Bukkit.getPluginManager().enablePlugin(argument.getPlugin());
+        Bukkit.getPluginManager().enablePlugin(plugin);
     }
 
     @Override
-    public boolean isFired(Argument argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public boolean isFired(InputBoard argument, @NotNull ScenarioEngine engine, @NotNull Event event)
     {
         return this.checkMatchedPluginEvent(argument, engine, event);
     }
@@ -49,30 +52,8 @@ public class PluginEnableAction extends AbstractPluginAction<PluginEnableAction.
     }
 
     @Override
-    public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
+    public boolean isConditionFulfilled(@NotNull InputBoard argument, @NotNull ScenarioEngine engine)
     {
-        return new Argument(super.deserializePlugin(map));
-    }
-
-    @Override
-    public boolean isConditionFulfilled(@NotNull PluginEnableAction.Argument argument, @NotNull ScenarioEngine engine)
-    {
-        return argument.getPlugin().isEnabled();
-    }
-
-    public static class Argument extends AbstractPluginActionArgument
-    {
-        public Argument(String plugin)
-        {
-            super(plugin);
-        }
-
-        @Override
-        public String getArgumentString()
-        {
-            return buildArgumentString(
-                    KEY_PLUGIN, this.getPluginName()
-            );
-        }
+        return this.getPlugin(argument).isEnabled();
     }
 }
