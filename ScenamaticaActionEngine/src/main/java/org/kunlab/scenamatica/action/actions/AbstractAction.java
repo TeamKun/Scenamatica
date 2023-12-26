@@ -12,6 +12,7 @@ import org.kunlab.scenamatica.action.actions.world.AbstractWorldAction;
 import org.kunlab.scenamatica.action.input.InputBoardImpl;
 import org.kunlab.scenamatica.action.input.InputTokenImpl;
 import org.kunlab.scenamatica.action.input.TraverserImpl;
+import org.kunlab.scenamatica.action.utils.InputTypeToken;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.Action;
@@ -52,22 +53,32 @@ public abstract class AbstractAction implements Action
         return InputTokenImpl.of(name, clazz, traverser);
     }
 
-    public static <T> InputToken<T> ofInput(@NotNull String name, @NotNull Class<? super T> clazz)
+    protected static <T> InputToken<T> ofInput(@NotNull String name, @NotNull Class<T> clazz)
     {
         return InputTokenImpl.of(name, clazz);
     }
 
-    public static <T extends Enum<T>> InputToken<T> ofEnumInput(@NotNull String name, @NotNull Class<T> clazz)
+    protected static <T> InputToken<T> ofInput(@NotNull String name, @NotNull Class<T> clazz, @NotNull Traverser<?, T> traverser, @NotNull T defaultValue)
+    {
+        return InputTokenImpl.of(name, clazz, traverser, defaultValue);
+    }
+
+    protected static <T> InputToken<T> ofInput(@NotNull String name, @NotNull Class<T> clazz, @NotNull T defaultValue)
+    {
+        return InputTokenImpl.of(name, clazz, defaultValue);
+    }
+
+    protected static <T extends Enum<T>> InputToken<T> ofEnumInput(@NotNull String name, @NotNull Class<T> clazz)
     {
         return InputTokenImpl.of(name, clazz, ofEnum(clazz));
     }
 
-    public static <I, O> Traverser<I, O> ofTraverser(@NotNull Class<? extends I> inputClazz, @NotNull InputTraverser<? super I, ? extends O> traverser)
+    protected static <I, O> Traverser<I, O> ofTraverser(@NotNull Class<? extends I> inputClazz, @NotNull InputTraverser<? super I, ? extends O> traverser)
     {
         return TraverserImpl.of(inputClazz, traverser);
     }
 
-    public static <I extends Map<String, Object>, O extends Structure> Traverser<I, O> ofDeserializer(@NotNull Class<? extends O> clazz)
+    protected static <I extends Map<String, Object>, O extends Structure> Traverser<I, O> ofDeserializer(@NotNull Class<? extends O> clazz)
     {
         // noinspection unchecked,rawtypes
         return (Traverser) TraverserImpl.of(Map.class, (ser, map) -> ser.deserialize(
@@ -76,15 +87,15 @@ public abstract class AbstractAction implements Action
         ));
     }
 
-    public static <E extends Entity, O extends EntityStructure> Traverser<Object, EntitySpecifier<E>> ofSpecifier(@NotNull Class<? extends O> clazz)
+    protected static <O extends EntityStructure> Traverser<Object, EntitySpecifier<Entity>> ofSpecifier(@NotNull Class<? extends O> clazz)
     {
-        return TraverserImpl.of(Map.class, (ser, obj) -> ser.tryDeserializeEntitySpecifier(
+        return TraverserImpl.of(Object.class, (ser, obj) -> ser.tryDeserializeEntitySpecifier(
                 obj,
                 clazz
         ));
     }
 
-    public static Traverser<Object, PlayerSpecifier> ofPlayer()
+    protected static Traverser<Object, PlayerSpecifier> ofPlayer()
     {
         return TraverserImpl.of(Map.class, StructureSerializer::tryDeserializePlayerSpecifier);
     }
@@ -104,4 +115,20 @@ public abstract class AbstractAction implements Action
         return t -> p1.test(t) && p2.test(t);
     }
 
+    protected static <T extends Entity> InputToken<EntitySpecifier<T>> ofSpecifier(String name, Class<T> entityClass, Class<? extends EntityStructure> structureClass)
+    {
+        return ofInput(
+                name,
+                InputTypeToken.ofEntity(entityClass),
+                ofTraverser(
+                        Map.class,
+                        (map, serializer) -> map.tryDeserializeEntitySpecifier(map, structureClass)
+                )
+        );
+    }
+
+    protected static InputToken<EntitySpecifier<Entity>> ofSpecifier(String name)
+    {
+        return ofSpecifier(name, Entity.class, EntityStructure.class);
+    }
 }

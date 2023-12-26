@@ -104,6 +104,11 @@ public class InputReferenceImpl<T> implements InputReference<T>
         return new InputReferenceImpl<>(token, null, value, true);
     }
 
+    public static <D> InputReference<D> valuedCast(InputToken<D> token, StructureSerializer serializer, Object value)
+    {
+        return new InputReferenceImpl<>(token, null, smartCast(token, serializer, value), true);
+    }
+
     public static <D> InputReference<D> empty(InputToken<D> token)
     {
         return new InputReferenceImpl<>(token, null, null, false);
@@ -291,6 +296,55 @@ public class InputReferenceImpl<T> implements InputReference<T>
             throw new IllegalArgumentException("Unknown type: " + clazz);
     }
 
+    private static <U> U smartCast(@NotNull InputToken<U> token, @NotNull StructureSerializer serializer, @Nullable Object resolved)
+    {
+        if (resolved == null)
+            return null;
+
+        List<Traverser<?, U>> traversers = token.getTraversers();
+        if (traversers.isEmpty())
+            return smartCast(resolved, token.getClazz());
+        else
+        {
+            Class<?> possibleType = guessPossibleType(traversers.stream()
+                    .map(Traverser::getInputClazz)
+                    .collect(Collectors.toList()));
+
+            if (possibleType == null)
+                throw new IllegalStateException("Failed to guess possible type: " + traversers);
+
+            for (Traverser<?, U> traverser : traversers)
+            {
+                if (traverser.getInputClazz() == possibleType)
+                    return token.getClazz().cast(traverser.tryTraverse(serializer, smartCast(resolved, possibleType)));
+            }
+
+            throw new IllegalArgumentException("Unknown traverser type");
+        }
+    }
+
+    private static Class<?> guessPossibleType(List<Class<?>> classes)
+    {
+        for (Class<?> clazz : classes)
+        {
+            if (clazz == String.class)
+                return String.class;
+            else if (clazz == Integer.class || clazz == int.class)
+                return Integer.class;
+            else if (clazz == Long.class || clazz == long.class)
+                return Long.class;
+            else if (clazz == Double.class || clazz == double.class)
+                return Double.class;
+            else if (clazz == Boolean.class || clazz == boolean.class)
+                return Boolean.class;
+            else if (clazz == List.class)
+                return List.class;
+            else if (clazz == Map.class)
+                return Map.class;
+        }
+        return null;
+    }
+
     @Override
     public boolean isEquals(String reference)
     {
@@ -345,50 +399,6 @@ public class InputReferenceImpl<T> implements InputReference<T>
 
     private T smartCast(@NotNull StructureSerializer serializer, @Nullable Object resolved)
     {
-        if (resolved == null)
-            return null;
-
-        List<Traverser<?, T>> traversers = this.token.getTraversers();
-        if (traversers.isEmpty())
-            return smartCast(resolved, this.token.getClazz());
-        else
-        {
-            Class<?> possibleType = this.guessPossibleType(traversers.stream()
-                    .map(Traverser::getInputClazz)
-                    .collect(Collectors.toList()));
-
-            if (possibleType == null)
-                throw new IllegalStateException("Failed to guess possible type: " + traversers);
-
-            for (Traverser<?, T> traverser : traversers)
-            {
-                if (traverser.getInputClazz() == possibleType)
-                    return this.token.getClazz().cast(traverser.tryTraverse(serializer, smartCast(resolved, possibleType)));
-            }
-
-            throw new IllegalArgumentException("Unknown traverser type");
-        }
-    }
-
-    private Class<?> guessPossibleType(List<Class<?>> classes)
-    {
-        for (Class<?> clazz : classes)
-        {
-            if (clazz == String.class)
-                return String.class;
-            else if (clazz == Integer.class || clazz == int.class)
-                return Integer.class;
-            else if (clazz == Long.class || clazz == long.class)
-                return Long.class;
-            else if (clazz == Double.class || clazz == double.class)
-                return Double.class;
-            else if (clazz == Boolean.class || clazz == boolean.class)
-                return Boolean.class;
-            else if (clazz == List.class)
-                return List.class;
-            else if (clazz == Map.class)
-                return Map.class;
-        }
-        return null;
+        return smartCast(this.token, serializer, resolved);
     }
 }

@@ -27,6 +27,7 @@ public class InputTokenImpl<T> implements InputToken<T>
     String name;
     Class<T> clazz;
     List<Traverser<?, T>> traversers;
+    @Nullable
     T defaultValue;
 
     Map<ScenarioType, Collection<ValidatorElement>> validators;
@@ -86,6 +87,17 @@ public class InputTokenImpl<T> implements InputToken<T>
     {
         // noinspection unchecked,rawtypes
         return new InputTokenImpl<>(name, clazz, InputTraverser.casted());
+    }
+
+    public static <T> InputToken<T> of(String name, Class<T> clazz, Traverser<?, T> traverser, T defaultValue)
+    {
+        return new InputTokenImpl<>(name, clazz, defaultValue, traverser);
+    }
+
+    public static <T> InputToken<T> of(String name, Class<? super T> clazz, T defaultValue)
+    {
+        // noinspection unchecked,rawtypes
+        return new InputTokenImpl<>(name, clazz, defaultValue, InputTraverser.casted());
     }
 
     @NotNull
@@ -156,7 +168,7 @@ public class InputTokenImpl<T> implements InputToken<T>
         if (!(object instanceof InputTokenImpl))
             return false;
         InputToken<?> that = (InputToken<?>) object;
-        return Objects.equals(this.getName(), that.getName());
+        return this.getName().equals(that.getName());
     }
 
     @Override

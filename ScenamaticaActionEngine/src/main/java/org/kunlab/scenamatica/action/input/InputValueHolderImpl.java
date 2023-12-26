@@ -31,12 +31,12 @@ public class InputValueHolderImpl<T> implements InputValueHolder<T>
     @Override
     public boolean isEquals(InputToken<?> token)
     {
-        return this.token == token;  // token はメモリ上で一意なので == で比較して良い
+        return Objects.equals(this.token, token);
     }
 
     public boolean isEquals(InputValueHolder<?> holder)
     {
-        return this.token == holder.getToken()  // token はメモリ上で一意なので == で比較して良い
+        return Objects.equals(this.token, holder.getToken())
                 && Objects.equals(this.valueReference, holder.getValueReference());
     }
 
@@ -94,7 +94,7 @@ public class InputValueHolderImpl<T> implements InputValueHolder<T>
             // assert obj instanceof String
             this.valueReference = InputReferenceImpl.references(this.token, obj);
         else
-            this.valueReference = InputReferenceImpl.valued(this.token, this.token.traverse(serializer, obj));
+            this.valueReference = InputReferenceImpl.valuedCast(this.token, serializer, obj);
     }
 
     @Override

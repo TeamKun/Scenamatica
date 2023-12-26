@@ -60,7 +60,7 @@ public class InputBoardImpl implements InputBoard
     }
 
     @Override
-    public InputBoard requireNonNull(InputToken<?>... tokens)
+    public InputBoard requirePresent(InputToken<?>... tokens)
     {
         this.ensureAllContains(tokens);
         this.requiredNonNull.add(tokens);
