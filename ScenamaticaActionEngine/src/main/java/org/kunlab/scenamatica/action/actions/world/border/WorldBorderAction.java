@@ -27,7 +27,7 @@ public class WorldBorderAction extends AbstractWorldAction
     public static final String KEY_ACTION_NAME = "world_border";
 
     public static final InputToken<WorldBorderBoundsChangeEvent.Type> IN_TYPE = ofEnumInput(
-            "type"
+            "type",
             WorldBorderBoundsChangeEvent.Type.class
     );
     public static final InputToken<Double> IN_SIZE = ofInput(

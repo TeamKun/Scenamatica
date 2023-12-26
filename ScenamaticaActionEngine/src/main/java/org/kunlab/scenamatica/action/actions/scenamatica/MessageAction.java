@@ -66,13 +66,14 @@ public class MessageAction extends AbstractScenamaticaAction
         return Collections.singletonList(
                 ActorMessageReceiveEvent.class
         );
-
+    }
 
     @Override
-        public InputBoard getInputBoard (ScenarioType type)
-        {
-            InputBoard board = ofInputs(type, IN_MESSAGE, IN_RECIPIENT);
-            if (type == ScenarioType.ACTION_EXECUTE)
-                board.requirePresent(IN_MESSAGE, IN_RECIPIENT);
+    public InputBoard getInputBoard(ScenarioType type)
+    {
+        InputBoard board = ofInputs(type, IN_MESSAGE, IN_RECIPIENT);
+        if (type == ScenarioType.ACTION_EXECUTE)
+            board.requirePresent(IN_MESSAGE, IN_RECIPIENT);
+        return board;
     }
 }
