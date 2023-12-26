@@ -13,7 +13,6 @@ import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.enums.WatchType;
 import org.kunlab.scenamatica.exceptions.scenario.TriggerNotFoundException;
 import org.kunlab.scenamatica.interfaces.ScenamaticaRegistry;
-import org.kunlab.scenamatica.interfaces.action.ActionArgument;
 import org.kunlab.scenamatica.interfaces.action.ActionRunManager;
 import org.kunlab.scenamatica.interfaces.action.CompiledAction;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
@@ -259,7 +258,7 @@ public class ScenarioExecutor
         return this.deliverer.waitResult(scenario.getStructure().getTimeout(), this.state);
     }
 
-    private <T extends ActionArgument> void doAction(CompiledScenarioAction scenario, CompiledScenarioAction next)
+    private void doAction(CompiledScenarioAction scenario, CompiledScenarioAction next)
     {
         this.testReporter.onActionStart(this.engine, scenario);
 
@@ -270,18 +269,16 @@ public class ScenarioExecutor
         this.actionManager.queueExecute(scenario.getAction());
     }
 
-    private <T extends ActionArgument> ScenarioResult testCondition(CompiledScenarioAction scenario)
+    private ScenarioResult testCondition(CompiledScenarioAction scenario)
     {
         this.testReporter.onActionStart(this.engine, scenario);
 
         assert scenario.getAction().getExecutor() instanceof Requireable;
-        //noinspection rawtypes
         Requireable requireable = (Requireable) scenario.getAction().getExecutor();
 
         boolean result;
         try
         {
-            //noinspection unchecked
             result = requireable.isConditionFulfilled(scenario.getAction().getArgument(), this.engine);
         }
         catch (Throwable e)
@@ -306,19 +303,18 @@ public class ScenarioExecutor
         return scenarioResult;
     }
 
-    @SuppressWarnings({"rawtypes", "unchecked"})  // 型は上流で保証されている。
     private void addWatch(CompiledScenarioAction/*<?>*/ scenario)
     {
         if (this.watchedActions.contains(scenario))
             return;
 
         assert scenario.getAction().getExecutor() instanceof Watchable;
-        Watchable requireable = (Watchable) scenario.getAction().getExecutor();  // suppresses rawtypes
+        Watchable requireable = (Watchable) scenario.getAction().getExecutor();
 
         this.watchedActions.add(scenario);
 
         this.testReporter.onActionStart(this.engine, scenario);
-        requireable.onStartWatching(scenario.getAction().getArgument(), this.plugin, null);  // suppresses unchecked
+        requireable.onStartWatching(scenario.getAction().getArgument(), this.plugin, null);
         this.listener.setWaitingFor(scenario);
     }
 

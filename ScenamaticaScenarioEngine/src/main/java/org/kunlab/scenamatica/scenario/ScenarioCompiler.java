@@ -167,7 +167,7 @@ public class ScenarioCompiler
             throw new ScenarioCompilationErrorException(e, this.engine.getScenario().getName(), structure.getType());
         }
 
-        return new CompiledScenarioActionImpl<>(
+        return new CompiledScenarioActionImpl(
                 new ScenarioStructure()
                 {
                     @Override
@@ -227,7 +227,7 @@ public class ScenarioCompiler
 
             scenario.getType().validatePerformableActionType(action.getExecutor().getClass());
 
-            return new CompiledScenarioActionImpl<>(
+            return new CompiledScenarioActionImpl(
                     scenario,
                     scenario.getType(),
                     action,
