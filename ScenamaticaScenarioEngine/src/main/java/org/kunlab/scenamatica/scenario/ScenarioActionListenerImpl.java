@@ -8,7 +8,6 @@ import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.enums.ScenarioResultCause;
 import org.kunlab.scenamatica.interfaces.ScenamaticaRegistry;
 import org.kunlab.scenamatica.interfaces.action.Action;
-import org.kunlab.scenamatica.interfaces.action.ActionArgument;
 import org.kunlab.scenamatica.interfaces.action.CompiledAction;
 import org.kunlab.scenamatica.interfaces.action.WatchingEntry;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioActionListener;
@@ -33,21 +32,21 @@ public class ScenarioActionListenerImpl implements ScenarioActionListener
     }
 
     @Override
-    public <A extends ActionArgument> void onActionError(@NotNull CompiledAction action, @NotNull Throwable error)
+    public void onActionError(@NotNull CompiledAction action, @NotNull Throwable error)
     {
         this.reporter.onActionExecuteFailed(this.engine, action, error);
         this.setResult(ScenarioResultCause.ACTION_EXECUTION_FAILED, action.getExecutor());
     }
 
     @Override
-    public <A extends ActionArgument> void onActionExecuted(@NotNull CompiledAction action)
+    public void onActionExecuted(@NotNull CompiledAction action)
     {
         this.reporter.onActionSuccess(this.engine, action);
         this.setPassed();
     }
 
     @Override
-    public <A extends ActionArgument> void onActionFired(@NotNull WatchingEntry entry, @NotNull Event event)
+    public void onActionFired(@NotNull WatchingEntry entry, @NotNull Event event)
     {
         CompiledAction action = entry.getAction();
         Action executor = action.getExecutor();
