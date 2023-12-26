@@ -8,30 +8,33 @@ import java.util.List;
 import java.util.Map;
 
 @SuppressWarnings({"unchecked", "UnstableApiUsage"})
-public class InputTypeToken<T> extends TypeToken<T>
+public class InputTypeToken<T>
 {
     public static <B, U extends B> Class<U> ofBased(Class<B> ignored)
     {
-        return new InputTypeToken<U>().toType();
+        return (Class<U>) new TypeToken<U>()
+        {
+        }.getRawType();
     }
 
     public static <U> Class<List<U>> ofList(Class<U> ignored)
     {
-        return new InputTypeToken<List<U>>().toType();
+        return (Class<List<U>>) new TypeToken<List<U>>()
+        {
+        }.getRawType();
     }
 
     public static <K, V> Class<Map<K, V>> ofMap(Class<K> ignoredKey, Class<V> ignoredValue)
     {
-        return new InputTypeToken<Map<K, V>>().toType();
+        return (Class<Map<K, V>>) new TypeToken<Map<K, V>>()
+        {
+        }.getRawType();
     }
 
     public static <U extends Entity> Class<EntitySpecifier<U>> ofEntity(Class<U> ignored)
     {
-        return new InputTypeToken<EntitySpecifier<U>>().toType();
-    }
-
-    public Class<T> toType()
-    {
-        return (Class<T>) this.getRawType();
+        return (Class<EntitySpecifier<U>>) new TypeToken<EntitySpecifier<U>>()
+        {
+        }.getRawType();
     }
 }
