@@ -1,7 +1,5 @@
 package org.kunlab.scenamatica.action.actions.inventory.interact;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.inventory.ClickType;
@@ -10,29 +8,60 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.commons.utils.PlayerUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
+import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.context.Actor;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
-import org.kunlab.scenamatica.interfaces.scenariofile.inventory.InventoryStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.ItemStackStructure;
-import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.PlayerSpecifier;
-import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
-public class InventoryClickAction<T extends InventoryClickAction.Argument> extends AbstractInventoryInteractAction<T>
-        implements Executable<T>, Watchable<T>
+public class InventoryClickAction extends AbstractInventoryInteractAction
+        implements Executable, Watchable
 {
     public static final String KEY_ACTION_NAME = "inventory_click";
+    public static final InputToken<ClickType> IN_CLICK_TYPE = ofInput(
+            "type",
+            ClickType.class,
+            ofEnum(ClickType.class)
+    );
+    public static final InputToken<InventoryAction> IN_INVENTORY_ACTION = ofInput(
+            "action",
+            InventoryAction.class,
+            ofEnum(InventoryAction.class)
+    );
+    public static final InputToken<InventoryType.SlotType> IN_SLOT_TYPE = ofInput(
+            "slotType",
+            InventoryType.SlotType.class,
+            ofEnum(InventoryType.SlotType.class)
+    );
+    public static final InputToken<Integer> IN_SLOT = ofInput(
+            "slot",
+            Integer.class
+    );
+    public static final InputToken<Integer> IN_RAW_SLOT = ofInput(
+            "rawSlot",
+            Integer.class
+    );
+    public static final InputToken<ItemStackStructure> IN_CLICKED_ITEM = ofInput(
+            "clickedItem",
+            ItemStackStructure.class,
+            ofDeserializer(ItemStackStructure.class)
+    );
+    public static final InputToken<Integer> IN_BUTTON = ofInput(
+            "button",
+            Integer.class
+    );
+    public static final InputToken<ItemStackStructure> IN_CURSOR_ITEM = ofInput(
+            "cursorItem",
+            ItemStackStructure.class,
+            ofDeserializer(ItemStackStructure.class)
+    );
 
     @Override
     public String getName()
@@ -41,42 +70,43 @@ public class InventoryClickAction<T extends InventoryClickAction.Argument> exten
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @NotNull T argument)
+    public void execute(@NotNull ScenarioEngine engine, @NotNull InputBoard argument)
     {
-        Player target = argument.getTargetSpecifier().selectTarget(engine.getContext())
+        Player target = argument.get(IN_PLAYER).selectTarget(engine.getContext())
                 .orElseThrow(() -> new IllegalStateException("Target is not found."));
         Actor actor = PlayerUtils.getActorOrThrow(engine, target);
+        ClickType type = argument.get(IN_CLICK_TYPE);
 
-        if (argument.getInventory() != null)
-            target.openInventory(argument.getInventory().create());
+        if (argument.isPresent(IN_INVENTORY))
+            target.openInventory(argument.get(IN_INVENTORY).create());
 
-        Integer slot = argument.getSlot();
-        if (slot == null)
-            if (argument.getSlotType() == InventoryType.SlotType.OUTSIDE)
-                slot = -999;
+        Integer slot = argument.orElse(IN_SLOT, () -> {
+            if (argument.orElse(IN_SLOT_TYPE, () -> null) == InventoryType.SlotType.OUTSIDE)
+                return -999;
             else
-            {
-                assert argument.getRawSlot() != null;
-                slot = target.getOpenInventory().convertSlot(argument.getRawSlot());
-            }
+                return target.getOpenInventory().convertSlot(argument.get(IN_RAW_SLOT));
+        });
 
-        Integer button = argument.getButton();
-        if (button == null)
-            if (argument.getType() == ClickType.LEFT)
-                button = 0;
-            else if (argument.getType() == ClickType.RIGHT)
-                button = 1;
-            else if (argument.getType() == ClickType.MIDDLE)
-                button = 2;
+        Integer button = argument.orElse(IN_BUTTON, () -> {
+            switch (type)
+            {
+                case LEFT:
+                    return 0;
+                case RIGHT:
+                    return 1;
+                case MIDDLE:
+                    return 2;
+                default:
+                    throw new IllegalStateException("Invalid click type: " + type);
+            }
+        });
 
         assert button != null;
 
-        ItemStack clicked = null;
-        if (argument.getClickedItem() != null)
-            clicked = argument.getClickedItem().create();
+        ItemStack clicked = argument.ifPresent(IN_CLICKED_ITEM, ItemStackStructure::create, null);
 
         actor.clickInventory(
-                argument.getType(),
+                type,
                 slot,
                 button,
                 clicked
@@ -84,21 +114,21 @@ public class InventoryClickAction<T extends InventoryClickAction.Argument> exten
     }
 
     @Override
-    public boolean isFired(@NotNull T argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public boolean isFired(@NotNull InputBoard argument, @NotNull ScenarioEngine engine, @NotNull Event event)
     {
         if (!super.checkMatchedInventoryInteractEvent(argument, engine, event))
             return false;
 
         InventoryClickEvent e = (InventoryClickEvent) event;
 
-        return (argument.getType() == null || argument.getType() == e.getClick()
-                && (argument.getAction() == null || argument.getAction() == e.getAction()))
-                && (argument.getSlotType() == null || argument.getSlotType() == e.getSlotType())
-                && (argument.getSlot() == null || argument.getSlot() == e.getSlot())
-                && (argument.getRawSlot() == null || argument.getRawSlot() == e.getRawSlot())
-                && (argument.getClickedItem() == null || argument.getClickedItem().isAdequate(e.getCurrentItem()))
-                && (argument.getButton() == null || argument.getButton() == e.getHotbarButton())
-                && (argument.getCursorItem() == null || argument.getCursorItem().isAdequate(e.getCursor()));
+        return argument.ifPresent(IN_CLICK_TYPE, type -> type == e.getClick())
+                && argument.ifPresent(IN_INVENTORY_ACTION, action -> action == e.getAction())
+                && argument.ifPresent(IN_SLOT_TYPE, slotType -> slotType == e.getSlotType())
+                && argument.ifPresent(IN_SLOT, slot -> slot == e.getSlot())
+                && argument.ifPresent(IN_RAW_SLOT, rawSlot -> rawSlot == e.getRawSlot())
+                && argument.ifPresent(IN_CLICKED_ITEM, clickedItem -> clickedItem.isAdequate(e.getCurrentItem()))
+                && argument.ifPresent(IN_BUTTON, button -> button == e.getHotbarButton())
+                && argument.ifPresent(IN_CURSOR_ITEM, cursorItem -> cursorItem.isAdequate(e.getCursor()));
     }
 
     @Override
@@ -110,126 +140,31 @@ public class InventoryClickAction<T extends InventoryClickAction.Argument> exten
     }
 
     @Override
-    public T deserializeArgument(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
+    public InputBoard getInputBoard(ScenarioType type)
     {
-        ItemStackStructure clickedItem = null;
-        if (map.containsKey(Argument.KEY_CLICKED_ITEM))
-            clickedItem = serializer.deserialize(
-                    MapUtils.checkAndCastMap(map.get(Argument.KEY_CLICKED_ITEM)),
-                    ItemStackStructure.class
-            );
+        InputBoard board = super.getInputBoard(type)
+                .registerAll(IN_CLICK_TYPE, IN_INVENTORY_ACTION, IN_SLOT_TYPE, /* IN_SLOT_TYPE, */
+                        IN_SLOT, IN_RAW_SLOT, IN_CLICKED_ITEM, IN_BUTTON, IN_CURSOR_ITEM
+                );
 
-        ItemStackStructure cursorItem = null;
-        if (map.containsKey(Argument.KEY_CURSOR_ITEM))
-            cursorItem = serializer.deserialize(
-                    MapUtils.checkAndCastMap(map.get(Argument.KEY_CURSOR_ITEM)),
-                    ItemStackStructure.class
-            );
+        if (type == ScenarioType.ACTION_EXECUTE)
+            board.validator(
+                            b -> b.isPresent(IN_SLOT) || b.isPresent(IN_RAW_SLOT),
+                            "slot or raw_slot must be present at the same time"
+                    )
+                    .validator(
+                            b -> !(b.isPresent(IN_SLOT) && b.isPresent(IN_RAW_SLOT)),
+                            "cannot specify both slot and raw_slot at the same time"
+                    )
+                    .validator(
+                            b -> b.isPresent(IN_BUTTON) || b.get(IN_CLICK_TYPE) == ClickType.LEFT
+                                    || b.get(IN_CLICK_TYPE) == ClickType.RIGHT
+                                    || b.get(IN_CLICK_TYPE) == ClickType.MIDDLE,
+                            "button cannot be null when click type is not left, right or middle"
+                    );
+        else
+            board.register(IN_SLOT);
 
-        // noinspection unchecked
-        return (T) new Argument(
-                super.deserializeInventoryIfContains(map, serializer),
-                super.deserializeTarget(map, serializer),
-                MapUtils.getAsEnumOrNull(map, Argument.KEY_CLICK_TYPE, ClickType.class),
-                MapUtils.getAsEnumOrNull(map, Argument.KEY_INVENTORY_ACTION, InventoryAction.class),
-                MapUtils.getAsEnumOrNull(map, Argument.KEY_SLOT_TYPE, InventoryType.SlotType.class),
-                MapUtils.getOrNull(map, Argument.KEY_SLOT),
-                MapUtils.getOrNull(map, Argument.KEY_RAW_SLOT),
-                clickedItem,
-                MapUtils.getOrNull(map, Argument.KEY_CURSOR_ITEM),
-                cursorItem
-        );
-    }
-
-    @Getter // 継承用
-    @EqualsAndHashCode(callSuper = true)
-    public static class Argument extends AbstractInventoryInteractArgument
-    {
-        public static final String KEY_CLICK_TYPE = "type";
-        public static final String KEY_INVENTORY_ACTION = "action";
-        public static final String KEY_SLOT_TYPE = "slotType";
-        public static final String KEY_SLOT = "slot";
-        public static final String KEY_RAW_SLOT = "rawSlot";
-        public static final String KEY_CLICKED_ITEM = "clickedItem";
-        public static final String KEY_BUTTON = "button";
-        public static final String KEY_CURSOR_ITEM = "cursorItem";
-
-        ClickType type;
-        InventoryAction action;
-        InventoryType.SlotType slotType;
-        Integer slot;
-        Integer rawSlot;
-        ItemStackStructure clickedItem;
-        Integer button;
-        ItemStackStructure cursorItem;
-
-        public Argument(@Nullable InventoryStructure inventory, @NotNull PlayerSpecifier target, ClickType type, InventoryAction action, InventoryType.SlotType slotType, Integer slot, Integer rawSlot, ItemStackStructure clickedItem, Integer button, ItemStackStructure cursorItem)
-        {
-            super(inventory, target);
-            this.type = type;
-            this.action = action;
-            this.slotType = slotType;
-            this.slot = slot;
-            this.rawSlot = rawSlot;
-            this.clickedItem = clickedItem;
-            this.button = button;
-            this.cursorItem = cursorItem;
-        }
-
-        @Override
-        public boolean isSame(TriggerArgument argument)
-        {
-            if (!(argument instanceof Argument))
-                return false;
-
-            Argument arg = (Argument) argument;
-
-            return super.isSame(arg)
-                    && this.type == arg.type
-                    && this.action == arg.action
-                    && this.slotType == arg.slotType
-                    && Objects.equals(this.slot, arg.slot)
-                    && Objects.equals(this.rawSlot, arg.rawSlot)
-                    && Objects.equals(this.clickedItem, arg.clickedItem)
-                    && Objects.equals(this.button, arg.button)
-                    && Objects.equals(this.cursorItem, arg.cursorItem);
-        }
-
-        @Override
-        public void validate(@NotNull ScenarioEngine engine, @NotNull ScenarioType type)
-        {
-            if (type == ScenarioType.ACTION_EXECUTE)
-            {
-                if (this.slot == null && this.rawSlot == null)
-                    throw new IllegalArgumentException("slot and raw_slot cannot be null at the same time");
-
-                if (this.button == null
-                        && !(this.type == ClickType.LEFT
-                        || this.type == ClickType.RIGHT
-                        || this.type == ClickType.MIDDLE))
-                    throw new IllegalArgumentException("button cannot be null when click type is not left, right or middle");
-
-                ensurePresent(Argument.KEY_TARGET_PLAYER, this.getTargetSpecifier());
-                ensureNotPresent(Argument.KEY_SLOT_TYPE, this.slotType);
-                if (!(this.slot == null || this.rawSlot == null))
-                    throw new IllegalArgumentException("cannot specify both slot and raw_slot in action execute scenario");
-            }
-        }
-
-        @Override
-        public String getArgumentString()
-        {
-            return appendArgumentString(
-                    super.getArgumentString(),
-                    KEY_CLICK_TYPE, this.type,
-                    KEY_INVENTORY_ACTION, this.action,
-                    KEY_SLOT_TYPE, this.slotType,
-                    KEY_SLOT, this.slot,
-                    KEY_RAW_SLOT, this.rawSlot,
-                    KEY_CLICKED_ITEM, this.clickedItem,
-                    KEY_BUTTON, this.button,
-                    KEY_CURSOR_ITEM, this.cursorItem
-            );
-        }
+        return board;
     }
 }

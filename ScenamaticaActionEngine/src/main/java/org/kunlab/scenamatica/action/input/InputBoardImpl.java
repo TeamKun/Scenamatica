@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 public class InputBoardImpl implements InputBoard
 {
@@ -147,6 +148,15 @@ public class InputBoardImpl implements InputBoard
             return this.get(token);
         else
             return defaultValue;
+    }
+
+    @Override
+    public <T> T orElse(InputToken<? extends T> token, @NotNull Supplier<? extends T> defaultValue)
+    {
+        if (this.isResolved(token))
+            return this.get(token);
+        else
+            return defaultValue.get();
     }
 
     @Override

@@ -58,7 +58,7 @@ public class ProjectileHitAction extends AbstractEntityAction<Projectile>
         if (argument.isPresent(IN_HIT_BLOCK))
             hitBlock = argument.get(IN_HIT_BLOCK).getBlockSafe();
 
-        BlockFace face = argument.orElse(IN_BLOCK_FACE, null);
+        BlockFace face = argument.orElse(IN_BLOCK_FACE, () -> null);
         if (argument.get(IN_EVENT_ONLY))
             this.doEventOnlyMode(target, hitEntity, hitBlock, face);
         else

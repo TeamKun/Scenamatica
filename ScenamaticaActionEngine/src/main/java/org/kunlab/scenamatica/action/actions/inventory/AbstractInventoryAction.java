@@ -5,20 +5,26 @@ import org.bukkit.event.inventory.InventoryEvent;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.action.actions.AbstractAction;
 import org.kunlab.scenamatica.action.actions.inventory.interact.AbstractInventoryInteractAction;
-import org.kunlab.scenamatica.commons.utils.MapUtils;
+import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
+import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.InventoryStructure;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
-public abstract class AbstractInventoryAction<A extends AbstractInventoryArgument> extends AbstractAction<A>
+public abstract class AbstractInventoryAction extends AbstractAction
 {
-    public static List<? extends AbstractInventoryAction<?>> getActions()
+    public static final InputToken<InventoryStructure> IN_INVENTORY = ofInput(
+            "inventory",
+            InventoryStructure.class,
+            ofDeserializer(InventoryStructure.class)
+    );
+
+    public static List<? extends AbstractInventoryAction> getActions()
     {
-        List<AbstractInventoryAction<?>> actions = new ArrayList<>(AbstractInventoryInteractAction.getActions());
+        List<AbstractInventoryAction> actions = new ArrayList<>(AbstractInventoryInteractAction.getActions());
 
         actions.add(new InventoryCloseAction());
         actions.add(new InventoryOpenAction());
@@ -26,24 +32,23 @@ public abstract class AbstractInventoryAction<A extends AbstractInventoryArgumen
         return actions;
     }
 
-    public boolean checkMatchedInventoryEvent(@NotNull A argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public boolean checkMatchedInventoryEvent(@NotNull InputBoard argument, @NotNull ScenarioEngine engine, @NotNull Event event)
     {
         if (!(event instanceof InventoryEvent))
             return false;
 
         InventoryEvent e = (InventoryEvent) event;
 
-        return (argument.getInventory() == null || argument.getInventory().isAdequate(e.getInventory(), false));
+        return argument.ifPresent(IN_INVENTORY, inventory -> inventory.isAdequate(e.getInventory()));
     }
 
-    protected InventoryStructure deserializeInventoryIfContains(Map<String, Object> map, StructureSerializer serializer)
+    @Override
+    public InputBoard getInputBoard(ScenarioType type)
     {
-        if (!map.containsKey(AbstractInventoryArgument.KEY_INVENTORY))
-            return null;
+        InputBoard board = ofInputs(type, IN_INVENTORY);
+        if (type == ScenarioType.ACTION_EXECUTE)
+            board.requirePresent(IN_INVENTORY);
 
-        return serializer.deserialize(
-                MapUtils.checkAndCastMap(map.get(AbstractInventoryArgument.KEY_INVENTORY)),
-                InventoryStructure.class
-        );
+        return board;
     }
 }

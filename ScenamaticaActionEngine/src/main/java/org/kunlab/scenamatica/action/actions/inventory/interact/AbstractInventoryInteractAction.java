@@ -6,29 +6,35 @@ import org.bukkit.event.Event;
 import org.bukkit.event.inventory.InventoryInteractEvent;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.action.actions.inventory.AbstractInventoryAction;
-import org.kunlab.scenamatica.action.actions.player.AbstractPlayerActionArgument;
+import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
+import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.PlayerSpecifier;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
-public abstract class AbstractInventoryInteractAction<A extends AbstractInventoryInteractArgument>
-        extends AbstractInventoryAction<A>
+public abstract class AbstractInventoryInteractAction
+        extends AbstractInventoryAction
 {
-    public static List<? extends AbstractInventoryInteractAction<?>> getActions()
-    {
-        List<AbstractInventoryInteractAction<?>> actions = new ArrayList<>();
+    public static final InputToken<PlayerSpecifier> IN_PLAYER = ofInput(
+            "target",
+            PlayerSpecifier.class,
+            ofPlayer()
+    );
 
-        actions.add(new InventoryClickAction<>());
+    public static List<? extends AbstractInventoryInteractAction> getActions()
+    {
+        List<AbstractInventoryInteractAction> actions = new ArrayList<>();
+
+        actions.add(new InventoryClickAction());
         actions.add(new InventoryCreativeAction());
 
         return actions;
     }
 
-    public boolean checkMatchedInventoryInteractEvent(@NotNull A argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public boolean checkMatchedInventoryInteractEvent(@NotNull InputBoard argument, @NotNull ScenarioEngine engine, @NotNull Event event)
     {
         if (!super.checkMatchedInventoryEvent(argument, engine, event))
             return false;
@@ -37,15 +43,20 @@ public abstract class AbstractInventoryInteractAction<A extends AbstractInventor
 
         InventoryInteractEvent e = (InventoryInteractEvent) event;
         HumanEntity whoClicked = e.getWhoClicked();
+        if (!(whoClicked instanceof Player))
+            return false;
 
-        return (!argument.getTargetSpecifier().canProvideTarget()
-                || argument.getTargetSpecifier().checkMatchedPlayer((Player) whoClicked));
+        return argument.ifPresent(IN_PLAYER, player -> player.checkMatchedEntity(whoClicked));
     }
 
-    @NotNull
-    protected PlayerSpecifier deserializeTarget(Map<String, Object> map, StructureSerializer serializer)
+    @Override
+    public InputBoard getInputBoard(ScenarioType type)
     {
-        return serializer.tryDeserializePlayerSpecifier(map.get(AbstractPlayerActionArgument.KEY_TARGET_PLAYER));
+        InputBoard board = super.getInputBoard(type)
+                .register(IN_PLAYER);
+        if (type == ScenarioType.ACTION_EXECUTE)
+            board.requirePresent(IN_PLAYER);
 
+        return board;
     }
 }

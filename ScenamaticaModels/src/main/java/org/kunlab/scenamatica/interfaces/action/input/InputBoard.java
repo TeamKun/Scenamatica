@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 /**
  * アクションの入力を表すクラスです。
@@ -115,7 +116,7 @@ public interface InputBoard extends TriggerArgument
      * @param <T>          値の型
      * @return 値
      */
-    <T> T orElse(InputToken<? extends T> token, T defaultValue);
+    <T> T orElse(InputToken<? extends T> token, @NotNull Supplier<? extends T> defaultValue);
 
     /**
      * 値があるかどうかを返します。
