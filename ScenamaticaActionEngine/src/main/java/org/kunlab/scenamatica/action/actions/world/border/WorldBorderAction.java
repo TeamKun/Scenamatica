@@ -2,36 +2,56 @@ package org.kunlab.scenamatica.action.actions.world.border;
 
 import io.papermc.paper.event.world.border.WorldBorderBoundsChangeEvent;
 import io.papermc.paper.event.world.border.WorldBorderCenterChangeEvent;
-import lombok.EqualsAndHashCode;
-import lombok.Value;
 import org.bukkit.Location;
-import org.bukkit.NamespacedKey;
 import org.bukkit.WorldBorder;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.actions.world.AbstractWorldAction;
-import org.kunlab.scenamatica.action.actions.world.AbstractWorldActionArgument;
-import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
+import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
+import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.misc.LocationStructure;
-import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
-public class WorldBorderAction extends AbstractWorldAction<WorldBorderAction.Argument>
-        implements Executable<WorldBorderAction.Argument>, Requireable<WorldBorderAction.Argument>
+public class WorldBorderAction extends AbstractWorldAction
+        implements Executable, Watchable, Requireable
 {
     // WorldBorderBoundsChangeEvent と WorldBorderCenterChangeEvent を処理する
 
     public static final String KEY_ACTION_NAME = "world_border";
+
+    public static final InputToken<WorldBorderBoundsChangeEvent.Type> IN_TYPE = ofEnumInput(
+            "type"
+            WorldBorderBoundsChangeEvent.Type.class
+    );
+    public static final InputToken<Double> IN_SIZE = ofInput(
+            "size",
+            Double.class
+    );
+    public static final InputToken<Double> IN_SIZE_OLD = ofInput(
+            "sizeOld",
+            Double.class
+    );
+    public static final InputToken<Long> IN_DURATION = ofInput(
+            "duration",
+            Long.class
+    );
+    public static final InputToken<LocationStructure> IN_CENTER = ofInput(
+            "center",
+            LocationStructure.class,
+            ofDeserializer(LocationStructure.class)
+    );
+    public static final InputToken<LocationStructure> IN_CENTER_OLD = ofInput(
+            "centerOld",
+            LocationStructure.class,
+            ofDeserializer(LocationStructure.class)
+    );
 
     @Override
     public String getName()
@@ -40,18 +60,16 @@ public class WorldBorderAction extends AbstractWorldAction<WorldBorderAction.Arg
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @NotNull WorldBorderAction.Argument argument)
+    public void execute(@NotNull ScenarioEngine engine, @NotNull InputBoard argument)
     {
-        WorldBorder border = argument.getWorldNonNull(engine).getWorldBorder();
+        WorldBorder border = super.getWorldNonNull(argument, engine).getWorldBorder();
 
-        if (argument.getSize() != -1)
-            border.setSize(argument.getSize(), argument.getDuration());
-        if (argument.getCenter() != null)
-            border.setCenter(argument.getCenter().create());
+        argument.runIfPresent(IN_SIZE, border::setSize);
+        argument.runIfPresent(IN_CENTER, center -> border.setCenter(center.create()));
     }
 
     @Override
-    public boolean isFired(@NotNull Argument argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public boolean isFired(@NotNull InputBoard argument, @NotNull ScenarioEngine engine, @NotNull Event event)
     {
         if (!super.isFired(argument, engine, event))
             return false;
@@ -85,12 +103,12 @@ public class WorldBorderAction extends AbstractWorldAction<WorldBorderAction.Arg
             centerOld = e.getOldCenter();
         }
 
-        return (argument.getType() == null || argument.getType() == type)
-                && (argument.getSize() == -1 || argument.getSize() == size)
-                && (argument.getOldSize() == -1 || argument.getOldSize() == sizeOld)
-                && (argument.getDuration() == -1 || argument.getDuration() == duration)
-                && (argument.getCenter() == null || argument.getCenter().isAdequate(center))
-                && (argument.getOldCenter() == null || argument.getOldCenter().isAdequate(centerOld));
+        return argument.ifPresent(IN_TYPE, inType -> inType == type)
+                && argument.ifPresent(IN_SIZE, inSize -> inSize == size)
+                && argument.ifPresent(IN_SIZE_OLD, inSizeOld -> inSizeOld == sizeOld)
+                && argument.ifPresent(IN_DURATION, inDuration -> inDuration == duration)
+                && argument.ifPresent(IN_CENTER, inCenter -> inCenter.isAdequate(center))
+                && argument.ifPresent(IN_CENTER_OLD, inCenterOld -> inCenterOld.isAdequate(centerOld));
     }
 
     @Override
@@ -103,124 +121,22 @@ public class WorldBorderAction extends AbstractWorldAction<WorldBorderAction.Arg
     }
 
     @Override
-    public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
+    public boolean isConditionFulfilled(@NotNull InputBoard argument, @NotNull ScenarioEngine engine)
     {
-        MapUtils.checkEnumNameIfContains(map, Argument.KEY_TYPE, WorldBorderBoundsChangeEvent.Type.class);
-        MapUtils.checkNumberIfContains(map, Argument.KEY_SIZE);
-        MapUtils.checkNumberIfContains(map, Argument.KEY_SIZE_OLD);
-        MapUtils.checkNumberIfContains(map, Argument.KEY_DURATION);
+        WorldBorder border = super.getWorldNonNull(argument, engine).getWorldBorder();
 
-        LocationStructure center = null;
-        if (map.containsKey(Argument.KEY_CENTER))
-            center = serializer.deserialize(
-                    MapUtils.checkAndCastMap(map.get(Argument.KEY_CENTER)),
-                    LocationStructure.class
-            );
-
-        LocationStructure centerOld = null;
-        if (map.containsKey(Argument.KEY_CENTER_OLD))
-            centerOld = serializer.deserialize(
-                    MapUtils.checkAndCastMap(map.get(Argument.KEY_CENTER_OLD)),
-                    LocationStructure.class
-            );
-
-        return new Argument(
-                super.deserializeWorld(map),
-                MapUtils.getAsEnumOrNull(map, Argument.KEY_TYPE, WorldBorderBoundsChangeEvent.Type.class),
-                MapUtils.getAsNumberSafe(map, Argument.KEY_SIZE).doubleValue(),
-                MapUtils.getAsNumberSafe(map, Argument.KEY_SIZE_OLD).doubleValue(),
-                MapUtils.getAsNumberSafe(map, Argument.KEY_DURATION).longValue(),
-                center,
-                centerOld
-        );
+        return argument.ifPresent(IN_SIZE, size -> size == border.getSize())
+                && argument.ifPresent(IN_DURATION, duration -> duration == border.getWarningDistance())
+                && argument.ifPresent(IN_CENTER, center -> center.isAdequate(border.getCenter()));
     }
 
     @Override
-    public boolean isConditionFulfilled(@NotNull WorldBorderAction.Argument argument, @NotNull ScenarioEngine engine)
+    public InputBoard getInputBoard(ScenarioType type)
     {
-        WorldBorder border = argument.getWorldNonNull(engine).getWorldBorder();
-
-        return (argument.getSize() == -1 || argument.getSize() == border.getSize())
-                && (argument.getDuration() == -1 || argument.getDuration() == border.getSize())
-                && (argument.getCenter() == null || Objects.equals(argument.getCenter(), border.getCenter()));
-    }
-
-    @Value
-    @EqualsAndHashCode(callSuper = true)
-    public static class Argument extends AbstractWorldActionArgument
-    {
-        public static final String KEY_TYPE = "type";
-        public static final String KEY_SIZE = "size";
-        public static final String KEY_SIZE_OLD = "size_old";
-        public static final String KEY_DURATION = "duration";
-
-        public static final String KEY_CENTER = "center";
-        public static final String KEY_CENTER_OLD = "center_old";
-
-        @Nullable
-        WorldBorderBoundsChangeEvent.Type type;
-        double size;
-        double oldSize;
-        long duration;
-
-        @Nullable
-        LocationStructure center;
-        @Nullable
-        LocationStructure oldCenter;
-
-        public Argument(@NotNull NamespacedKey worldRef, @Nullable WorldBorderBoundsChangeEvent.Type type, double size, double oldSize, long duration, @Nullable LocationStructure center, @Nullable LocationStructure oldCenter)
-        {
-            super(worldRef);
-            this.type = type;
-            this.size = size;
-            this.oldSize = oldSize;
-            this.duration = duration;
-            this.center = center;
-            this.oldCenter = oldCenter;
-        }
-
-        @Override
-        public boolean isSame(TriggerArgument argument)
-        {
-            if (!(argument instanceof Argument))
-                return false;
-
-            Argument arg = (Argument) argument;
-
-            return super.isSame(arg)
-                    && Objects.equals(this.center, arg.center)
-                    && this.type == arg.type
-                    && this.size == arg.size
-                    && this.oldSize == arg.oldSize
-                    && this.duration == arg.duration;
-        }
-
-        @Override
-        public void validate(@NotNull ScenarioEngine engine, @NotNull ScenarioType type)
-        {
-            switch (type)
-            {
-                case ACTION_EXECUTE:
-                case CONDITION_REQUIRE:
-                    ensureNotPresent(Argument.KEY_TYPE, this.type);
-                    ensureNotPresent(Argument.KEY_SIZE_OLD, this.oldSize);
-                    ensureNotPresent(Argument.KEY_CENTER_OLD, this.oldCenter);
-                    break;
-            }
-        }
-
-        @Override
-        public String getArgumentString()
-        {
-            return appendArgumentString(
-                    super.getArgumentString(),
-                    KEY_TYPE, this.type,
-                    KEY_SIZE, this.size,
-                    KEY_SIZE_OLD, this.oldSize,
-                    KEY_DURATION, this.duration,
-                    KEY_CENTER, this.center,
-                    KEY_CENTER_OLD, this.oldCenter
-            );
-        }
+        InputBoard board = super.getInputBoard(type)
+                .registerAll(IN_SIZE, IN_DURATION, IN_CENTER);
+        if (type == ScenarioType.ACTION_EXECUTE)
+            board.registerAll(IN_TYPE, IN_SIZE_OLD, IN_CENTER_OLD);
+        return board;
     }
 }

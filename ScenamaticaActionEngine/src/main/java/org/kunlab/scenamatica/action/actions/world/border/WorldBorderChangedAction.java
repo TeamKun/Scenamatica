@@ -1,26 +1,34 @@
 package org.kunlab.scenamatica.action.actions.world.border;
 
 import io.papermc.paper.event.world.border.WorldBorderBoundsChangeFinishEvent;
-import lombok.EqualsAndHashCode;
-import lombok.Value;
-import org.bukkit.NamespacedKey;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.actions.world.AbstractWorldAction;
-import org.kunlab.scenamatica.action.actions.world.AbstractWorldActionArgument;
-import org.kunlab.scenamatica.commons.utils.MapUtils;
+import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
+import org.kunlab.scenamatica.interfaces.action.input.InputToken;
+import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
-import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
-public class WorldBorderChangedAction extends AbstractWorldAction<WorldBorderChangedAction.Argument>
+public class WorldBorderChangedAction extends AbstractWorldAction
+        implements Watchable
 {
     public static final String KEY_ACTION_NAME = "world_border_changed";
+    public static final InputToken<Double> IN_SIZE = ofInput(
+            "size",
+            Double.class
+    );
+    public static final InputToken<Double> IN_SIZE_OLD = ofInput(
+            "sizeOld",
+            Double.class
+    );
+    public static final InputToken<Long> IN_DURATION = ofInput(
+            "duration",
+            Long.class
+    );
 
     @Override
     public String getName()
@@ -29,7 +37,7 @@ public class WorldBorderChangedAction extends AbstractWorldAction<WorldBorderCha
     }
 
     @Override
-    public boolean isFired(@NotNull Argument argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public boolean isFired(@NotNull InputBoard argument, @NotNull ScenarioEngine engine, @NotNull Event event)
     {
         if (!super.isFired(argument, engine, event))
             return false;
@@ -37,9 +45,9 @@ public class WorldBorderChangedAction extends AbstractWorldAction<WorldBorderCha
         assert event instanceof WorldBorderBoundsChangeFinishEvent;
         WorldBorderBoundsChangeFinishEvent e = (WorldBorderBoundsChangeFinishEvent) event;
 
-        return (argument.getSize() == -1 || argument.getSize() == e.getNewSize())
-                && (argument.getOldSize() == -1 || argument.getOldSize() == e.getOldSize())
-                && (argument.getDuration() == -1 || argument.getDuration() == e.getDuration());
+        return argument.ifPresent(IN_SIZE, size -> size == e.getNewSize())
+                && argument.ifPresent(IN_SIZE_OLD, sizeOld -> sizeOld == e.getOldSize())
+                && argument.ifPresent(IN_DURATION, duration -> duration == e.getDuration());
     }
 
     @Override
@@ -51,64 +59,10 @@ public class WorldBorderChangedAction extends AbstractWorldAction<WorldBorderCha
     }
 
     @Override
-    public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
+    public InputBoard getInputBoard(ScenarioType type)
     {
-        MapUtils.checkNumberIfContains(map, WorldBorderAction.Argument.KEY_SIZE);
-        MapUtils.checkNumberIfContains(map, WorldBorderAction.Argument.KEY_SIZE_OLD);
-        MapUtils.checkNumberIfContains(map, WorldBorderAction.Argument.KEY_DURATION);
 
-        return new WorldBorderChangedAction.Argument(
-                super.deserializeWorld(map),
-                MapUtils.getAsNumberSafe(map, WorldBorderAction.Argument.KEY_SIZE).doubleValue(),
-                MapUtils.getAsNumberSafe(map, WorldBorderAction.Argument.KEY_SIZE_OLD).doubleValue(),
-                MapUtils.getAsNumberSafe(map, WorldBorderAction.Argument.KEY_DURATION).longValue()
-        );
-    }
-
-    @Value
-    @EqualsAndHashCode(callSuper = true)
-    public static class Argument extends AbstractWorldActionArgument
-    {
-        public static final String KEY_SIZE = "size";
-        public static final String KEY_SIZE_OLD = "size_old";
-        public static final String KEY_DURATION = "duration";
-
-        double size;
-        double oldSize;
-        long duration;
-
-        public Argument(@Nullable NamespacedKey worldRef, double size, double oldSize, long duration)
-        {
-            super(worldRef);
-            this.size = size;
-            this.oldSize = oldSize;
-            this.duration = duration;
-        }
-
-        @Override
-        public boolean isSame(TriggerArgument argument)
-        {
-            if (!(argument instanceof WorldBorderChangedAction.Argument))
-                return false;
-
-            WorldBorderChangedAction.Argument arg = (WorldBorderChangedAction.Argument) argument;
-
-            return super.isSame(arg)
-                    && this.size == arg.size
-                    && this.oldSize == arg.oldSize
-                    && this.duration == arg.duration;
-        }
-
-        // TODO: Create validation for argument
-        @Override
-        public String getArgumentString()
-        {
-            return appendArgumentString(
-                    super.getArgumentString(),
-                    KEY_SIZE, this.size,
-                    KEY_SIZE_OLD, this.oldSize,
-                    KEY_DURATION, this.duration
-            );
-        }
+        return super.getInputBoard(type)
+                .registerAll(IN_SIZE, IN_SIZE_OLD, IN_DURATION);
     }
 }

@@ -1,24 +1,19 @@
 package org.kunlab.scenamatica.action.actions.world;
 
-import lombok.EqualsAndHashCode;
-import lombok.Value;
-import org.bukkit.NamespacedKey;
 import org.bukkit.World;
 import org.bukkit.event.Event;
 import org.bukkit.event.world.WorldSaveEvent;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
+import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
-import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
-public class WorldSaveAction extends AbstractWorldAction<WorldSaveAction.Argument>
-        implements Executable<WorldSaveAction.Argument>
+public class WorldSaveAction extends AbstractWorldAction
+        implements Executable, Watchable
 {
     public static final String KEY_ACTION_NAME = "world_save";
 
@@ -29,9 +24,9 @@ public class WorldSaveAction extends AbstractWorldAction<WorldSaveAction.Argumen
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @NotNull WorldSaveAction.Argument argument)
+    public void execute(@NotNull ScenarioEngine engine, @NotNull InputBoard argument)
     {
-        World world = argument.getWorldNonNull(engine);
+        World world = super.getWorldNonNull(argument, engine);
         world.save();
     }
 
@@ -41,41 +36,5 @@ public class WorldSaveAction extends AbstractWorldAction<WorldSaveAction.Argumen
         return Collections.singletonList(
                 WorldSaveEvent.class
         );
-    }
-
-    @Override
-    public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
-    {
-        return new Argument(
-                super.deserializeWorld(map)
-        );
-    }
-
-    @Value
-    @EqualsAndHashCode(callSuper = true)
-    public static class Argument extends AbstractWorldActionArgument
-    {
-        public Argument(@Nullable NamespacedKey worldRef)
-        {
-            super(worldRef);
-        }
-
-        @Override
-        public boolean isSame(TriggerArgument argument)
-        {
-            if (!(argument instanceof Argument))
-                return false;
-
-            Argument arg = (Argument) argument;
-
-            return this.isSameWorld(arg);
-        }
-
-        @Override
-        public String getArgumentString()
-        {
-            // TODO: Create validation for argument
-            return super.getArgumentString();
-        }
     }
 }

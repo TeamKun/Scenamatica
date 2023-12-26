@@ -1,21 +1,14 @@
 package org.kunlab.scenamatica.action.actions.world;
 
-import lombok.EqualsAndHashCode;
-import lombok.Value;
-import org.bukkit.NamespacedKey;
 import org.bukkit.event.Event;
 import org.bukkit.event.world.WorldInitEvent;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
-import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
+import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
-public class WorldInitAction extends AbstractWorldAction<WorldInitAction.Argument>
+public class WorldInitAction extends AbstractWorldAction
+        implements Watchable
 {
     public static final String KEY_ACTION_NAME = "world_init";
 
@@ -26,52 +19,10 @@ public class WorldInitAction extends AbstractWorldAction<WorldInitAction.Argumen
     }
 
     @Override
-    public boolean isFired(@NotNull Argument argument, @NotNull ScenarioEngine engine, @NotNull Event event)
-    {
-        return super.isFired(argument, engine, event);
-    }
-
-    @Override
     public List<Class<? extends Event>> getAttachingEvents()
     {
         return Collections.singletonList(
                 WorldInitEvent.class
         );
-    }
-
-    @Override
-    public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
-    {
-        return new Argument(
-                super.deserializeWorld(map)
-        );
-    }
-
-    @Value
-    @EqualsAndHashCode(callSuper = true)
-    public static class Argument extends AbstractWorldActionArgument
-    {
-        public Argument(@Nullable NamespacedKey worldRef)
-        {
-            super(worldRef);
-        }
-
-        @Override
-        public boolean isSame(TriggerArgument argument)
-        {
-            if (!(argument instanceof Argument))
-                return false;
-
-            Argument arg = (Argument) argument;
-
-            return this.isSameWorld(arg);
-        }
-
-        // TODO: Create validation for argument
-        @Override
-        public String getArgumentString()
-        {
-            return super.getArgumentString();
-        }
     }
 }
