@@ -8,7 +8,7 @@ import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.scenario.QueuedScenario;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioResult;
-import org.kunlab.scenamatica.interfaces.scenario.SessionVariableHolder;
+import org.kunlab.scenamatica.interfaces.scenario.SessionStorage;
 import org.kunlab.scenamatica.interfaces.scenario.runtime.CompiledScenarioAction;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerStructure;
 
@@ -75,7 +75,7 @@ public class QueuedScenarioImpl implements QueuedScenario
     }
 
     @Override
-    public ScenarioResult run(SessionVariableHolder variable) throws TriggerNotFoundException
+    public ScenarioResult run(SessionStorage variable) throws TriggerNotFoundException
     {
         this.ensureNotRunning();
         for (CompiledScenarioAction action : this.engine.getActions())
@@ -104,20 +104,6 @@ public class QueuedScenarioImpl implements QueuedScenario
     {
         if (!this.running)
             throw new IllegalStateException("Scenario is not running.");
-    }
-
-    public long getFinishedAt()
-    {
-        this.ensureRunning();
-
-        return this.finishedAt;
-    }
-
-    public long getStartedAt()
-    {
-        this.ensureNotRunning();
-
-        return this.startedAt;
     }
 
     public long getTakenTime()

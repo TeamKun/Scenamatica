@@ -7,7 +7,7 @@ import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.input.InputValueHolder;
-import org.kunlab.scenamatica.interfaces.scenario.SessionVariableHolder;
+import org.kunlab.scenamatica.interfaces.scenario.SessionStorage;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
@@ -279,7 +279,7 @@ public class InputBoardImpl implements InputBoard
     }
 
     @Override
-    public void resolveReferences(@NotNull StructureSerializer serializer, @NotNull SessionVariableHolder variables)
+    public void resolveReferences(@NotNull StructureSerializer serializer, @NotNull SessionStorage variables)
     {
         for (InputValueHolder<?> value : this.values)
         {

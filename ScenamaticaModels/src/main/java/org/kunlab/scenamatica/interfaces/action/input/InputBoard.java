@@ -2,7 +2,7 @@ package org.kunlab.scenamatica.interfaces.action.input;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.kunlab.scenamatica.interfaces.scenario.SessionVariableHolder;
+import org.kunlab.scenamatica.interfaces.scenario.SessionStorage;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
@@ -31,7 +31,7 @@ public interface InputBoard extends TriggerArgument
      * @param serializer シリアライザー
      * @param variables  変数のホルダー
      */
-    void resolveReferences(@NotNull StructureSerializer serializer, @NotNull SessionVariableHolder variables);
+    void resolveReferences(@NotNull StructureSerializer serializer, @NotNull SessionStorage variables);
 
     /**
      * 未解決の参照があるかどうかを返します。

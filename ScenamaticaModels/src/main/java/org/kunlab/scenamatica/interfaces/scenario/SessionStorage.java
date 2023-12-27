@@ -6,7 +6,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * セッション変数を表すインターフェースです。
  */
-public interface SessionVariableHolder
+public interface SessionStorage
 {
     /**
      * キーから値を取得します。

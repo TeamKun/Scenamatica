@@ -8,7 +8,7 @@ import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.interfaces.action.input.InputReference;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.input.Traverser;
-import org.kunlab.scenamatica.interfaces.scenario.SessionVariableHolder;
+import org.kunlab.scenamatica.interfaces.scenario.SessionStorage;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 
 import java.math.BigDecimal;
@@ -153,7 +153,7 @@ public class InputReferenceImpl<T> implements InputReference<T>
             return containsReference(obj.toString());
     }
 
-    private static String resolveReferences(String base, String[] references, SessionVariableHolder variables)
+    private static String resolveReferences(String base, String[] references, SessionStorage variables)
     {
         boolean containsNull = false;
         for (String reference : references)
@@ -170,7 +170,7 @@ public class InputReferenceImpl<T> implements InputReference<T>
         return base.isEmpty() && containsNull ? null: base;
     }
 
-    private static Collection<?> resolveReferences(Collection<?> base, String[] references, SessionVariableHolder variables)
+    private static Collection<?> resolveReferences(Collection<?> base, String[] references, SessionStorage variables)
     {
         List<Object> resolved = new ArrayList<>();
         for (Object obj : base)
@@ -191,7 +191,7 @@ public class InputReferenceImpl<T> implements InputReference<T>
         return resolved;
     }
 
-    private static Map<?, ?> resolveReferences(Map<?, ?> base, String[] references, SessionVariableHolder variables)
+    private static Map<?, ?> resolveReferences(Map<?, ?> base, String[] references, SessionStorage variables)
     {
         Map<Object, Object> resolved = new HashMap<>();
         for (Map.Entry<?, ?> entry : base.entrySet())
@@ -215,7 +215,7 @@ public class InputReferenceImpl<T> implements InputReference<T>
         return resolved;
     }
 
-    private static Object resolveReferences(Object base, String[] references, SessionVariableHolder variables)
+    private static Object resolveReferences(Object base, String[] references, SessionStorage variables)
     {
         if (base instanceof Collection)
             return resolveReferences((Collection<?>) base, references, variables);
@@ -361,7 +361,7 @@ public class InputReferenceImpl<T> implements InputReference<T>
     }
 
     @Override
-    public void resolve(@NotNull StructureSerializer serializer, @NotNull SessionVariableHolder variables)
+    public void resolve(@NotNull StructureSerializer serializer, @NotNull SessionStorage variables)
     {
         if (this.referenceParts == null)
             throw new IllegalStateException("This reference doesn't contain any references: " + this.referencing);

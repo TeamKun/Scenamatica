@@ -164,33 +164,19 @@ class ScenarioQueue
             if (ScenarioQueue.this.current == null && !this.pickNextSession())
                 return this.pause();  // 次のセッションがない場合は待機。
 
-            QueuedScenario next;
-            if ((next = ScenarioQueue.this.current.getNext()) == null)
+            if (!ScenarioQueue.this.current.hasNext())
             {
                 this.endSession();
                 return true;
             }
 
-            if (next.getAttemptCount() > 1)
-                this.notifyRetryStart(next);
-
-            ScenarioResult result = next.run(ScenarioQueue.this.current.getVariables());  // onStart() => run => onFinished => callback 処理までやる。
+            QueuedScenario next = ScenarioQueue.this.current.pollNext();
+            ScenarioResult result = ScenarioQueue.this.current.runNext();
 
             if (result.getScenarioResultCause().isFailure() && next.getMaxAttemptCount() > 1)
                 this.tryQueueRetry(next);
 
             return true;
-        }
-
-        private void notifyRetryStart(QueuedScenario scenario)
-        {
-            ScenarioQueue.this.registry.getLogger().info(
-                    LangProvider.get(
-                            "scenario.run.retry.start",
-                            MsgArgs.of("scenarioName", scenario.getEngine().getScenario().getName())
-                                    .add("count", scenario.getAttemptCount())
-                                    .add("maxCount", scenario.getMaxAttemptCount())
-                    ));
         }
 
         private void tryQueueRetry(QueuedScenario scenario)

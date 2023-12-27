@@ -2,7 +2,7 @@ package org.kunlab.scenamatica.interfaces.action.input;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.kunlab.scenamatica.interfaces.scenario.SessionVariableHolder;
+import org.kunlab.scenamatica.interfaces.scenario.SessionStorage;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 
 /**
@@ -33,7 +33,7 @@ public interface InputReference<T>
      * @param variables セッション変数
      * @throws IllegalStateException 解決できない場合
      */
-    void resolve(@NotNull StructureSerializer serializer, @NotNull SessionVariableHolder variables);
+    void resolve(@NotNull StructureSerializer serializer, @NotNull SessionStorage variables);
 
     /**
      * この参照のトークンを取得します。

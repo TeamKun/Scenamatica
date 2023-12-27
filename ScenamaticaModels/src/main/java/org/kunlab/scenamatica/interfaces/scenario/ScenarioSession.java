@@ -3,6 +3,7 @@ package org.kunlab.scenamatica.interfaces.scenario;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.kunlab.scenamatica.exceptions.scenario.TriggerNotFoundException;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerStructure;
 
 import java.util.List;
@@ -64,6 +65,20 @@ public interface ScenarioSession
     void remove(Plugin plugin, String name);
 
     /**
+     * つぎのシナリオがあるかどうかを取得します。
+     *
+     * @return つぎのシナリオがあるかどうか
+     */
+    boolean hasNext();
+
+    /**
+     * 次のシナリオを実行します。
+     *
+     * @return シナリオの実行結果
+     */
+    ScenarioResult runNext() throws TriggerNotFoundException;
+
+    /**
      * セッションに登録されているシナリオを取得します。
      * 注：このメソッドより返されるリストは不変です。
      *
@@ -106,5 +121,12 @@ public interface ScenarioSession
      *
      * @return 変数
      */
-    SessionVariableHolder getVariables();
+    SessionStorage getVariables();
+
+    /**
+     * 今実行中のシナリオを取得します。
+     *
+     * @return 今実行中のシナリオ
+     */
+    QueuedScenario getCurrent();
 }
