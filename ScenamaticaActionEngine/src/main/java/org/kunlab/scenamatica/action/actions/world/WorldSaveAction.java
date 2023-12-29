@@ -4,10 +4,9 @@ import org.bukkit.World;
 import org.bukkit.event.Event;
 import org.bukkit.event.world.WorldSaveEvent;
 import org.jetbrains.annotations.NotNull;
-import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
+import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
-import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 
 import java.util.Collections;
 import java.util.List;
@@ -24,9 +23,9 @@ public class WorldSaveAction extends AbstractWorldAction
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @NotNull InputBoard argument)
+    public void execute(@NotNull ActionContext ctxt)
     {
-        World world = super.getWorldNonNull(argument, engine);
+        World world = super.getWorldNonNull(ctxt);
         world.save();
     }
 

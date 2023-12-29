@@ -80,7 +80,7 @@ public class QueuedScenarioImpl implements QueuedScenario
         this.ensureNotRunning();
         for (CompiledScenarioAction action : this.engine.getActions())
         {
-            InputBoard inputs = action.getAction().getArgument();
+            InputBoard inputs = action.getAction().getContext().getInput();
             if (inputs.hasUnresolvedReferences())
                 inputs.resolveReferences(this.manager.getRegistry().getScenarioFileManager().getSerializer(), variable);
 
@@ -88,7 +88,7 @@ public class QueuedScenarioImpl implements QueuedScenario
         }
 
         this.onStart();
-        ScenarioResult result = this.manager.runScenario(this.engine, this.trigger, this.attemptCount);
+        ScenarioResult result = this.manager.runScenario(this.engine, this.trigger, variable, this.attemptCount);
         this.onFinished(result);
 
         return result;

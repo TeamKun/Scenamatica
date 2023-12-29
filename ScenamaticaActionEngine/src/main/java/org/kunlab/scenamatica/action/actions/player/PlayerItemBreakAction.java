@@ -6,14 +6,13 @@ import org.bukkit.event.player.PlayerItemBreakEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import org.kunlab.scenamatica.commons.utils.PlayerUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.context.Actor;
-import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.ItemStackStructure;
 
 import java.util.Collections;
@@ -40,13 +39,13 @@ public class PlayerItemBreakAction extends AbstractPlayerAction
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @NotNull InputBoard argument)
+    public void execute(@NotNull ActionContext ctxt)
     {
-        Actor actor = PlayerUtils.getActorOrThrow(engine, selectTarget(argument, engine));
-        EquipmentSlot slot = argument.orElse(IN_SLOT, () -> EquipmentSlot.HAND);
+        Actor actor = ctxt.getActorOrThrow(selectTarget(ctxt));
+        EquipmentSlot slot = ctxt.orElseInput(IN_SLOT, () -> EquipmentSlot.HAND);
 
-        if (argument.isPresent(IN_ITEM))
-            actor.getPlayer().getInventory().setItem(slot, argument.get(IN_ITEM).create());
+        if (ctxt.hasInput(IN_ITEM))
+            actor.getPlayer().getInventory().setItem(slot, ctxt.input(IN_ITEM).create());
 
         actor.breakItem(slot);
     }
@@ -132,15 +131,15 @@ public class PlayerItemBreakAction extends AbstractPlayerAction
     }
 
     @Override
-    public boolean isFired(@NotNull InputBoard argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public boolean checkFired(@NotNull ActionContext ctxt, @NotNull Event event)
     {
-        if (!super.checkMatchedPlayerEvent(argument, engine, event))
+        if (!super.checkMatchedPlayerEvent(ctxt, event))
             return false;
 
         assert event instanceof PlayerItemBreakEvent;
         PlayerItemBreakEvent e = (PlayerItemBreakEvent) event;
 
-        return argument.ifPresent(IN_ITEM, item -> item.isAdequate(e.getBrokenItem()));
+        return ctxt.ifHasInput(IN_ITEM, item -> item.isAdequate(e.getBrokenItem()));
     }
 
     @Override

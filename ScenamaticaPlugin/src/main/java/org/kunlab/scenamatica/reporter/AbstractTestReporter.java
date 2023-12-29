@@ -1,6 +1,7 @@
 package org.kunlab.scenamatica.reporter;
 
 import org.jetbrains.annotations.NotNull;
+import org.kunlab.scenamatica.interfaces.action.ActionResult;
 import org.kunlab.scenamatica.interfaces.action.CompiledAction;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioResult;
@@ -31,19 +32,19 @@ public abstract class AbstractTestReporter implements TestReporter
     }
 
     @Override
-    public void onActionSuccess(@NotNull ScenarioEngine engine, @NotNull CompiledAction action)
+    public void onActionSuccess(@NotNull ScenarioEngine engine, @NotNull ActionResult result)
     {
 
     }
 
     @Override
-    public void onWatchingActionExecuted(@NotNull ScenarioEngine engine, @NotNull CompiledAction action)
+    public void onWatchingActionExecuted(@NotNull ScenarioEngine engine, @NotNull ActionResult result)
     {
 
     }
 
     @Override
-    public void onActionJumped(@NotNull ScenarioEngine engine, @NotNull CompiledAction action, @NotNull CompiledAction expected)
+    public void onActionJumped(@NotNull ScenarioEngine engine, @NotNull ActionResult result, @NotNull CompiledAction expected)
     {
 
     }

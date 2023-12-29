@@ -1,11 +1,9 @@
 package org.kunlab.scenamatica.interfaces.action.types;
 
 import org.bukkit.event.Event;
-import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
-import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
+import org.kunlab.scenamatica.interfaces.action.ActionContext;
 
 import java.util.List;
 
@@ -17,23 +15,21 @@ public interface Watchable
     /**
      * 動作が実行されたかチェックするバスに登録されたときに呼び出されます。
      *
-     * @param argument 動作の引数
-     * @param plugin   プラグイン
-     * @param event    これに関連するイベント
+     * @param ctxt  動作の実行コンテキスト
+     * @param event これに関連するイベント
      */
-    default void onStartWatching(InputBoard argument, @NotNull Plugin plugin, @Nullable Event event)
+    default void onStartWatching(@NotNull ActionContext ctxt, @Nullable Event event)
     {
     }
 
     /**
      * 動作が実行されたかどうかを返します。
      *
-     * @param argument 動作の引数
-     * @param engine   シナリオエンジン
-     * @param event    これに関連するイベント
-     * @return 動作が実行されたかどうか
+     * @param ctxt  動作の実行コンテキスト
+     * @param event これに関連するイベント
+     * @return 動作が実行された場合は true
      */
-    boolean isFired(InputBoard argument, @NotNull ScenarioEngine engine, @NotNull Event event);
+    boolean checkFired(@NotNull ActionContext ctxt, @NotNull Event event);
 
     /**
      * アタッチす るイベントのクラスを返します。

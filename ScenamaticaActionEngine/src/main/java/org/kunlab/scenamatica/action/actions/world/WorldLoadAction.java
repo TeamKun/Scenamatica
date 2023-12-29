@@ -7,10 +7,10 @@ import org.bukkit.event.Event;
 import org.bukkit.event.world.WorldLoadEvent;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
-import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -29,9 +29,9 @@ public class WorldLoadAction extends AbstractWorldAction
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @NotNull InputBoard argument)
+    public void execute(@NotNull ActionContext ctxt)
     {
-        NamespacedKey key = argument.get(IN_WORLD);
+        NamespacedKey key = ctxt.input(IN_WORLD);
         assert key != null;
 
         Path worldDir = Bukkit.getWorldContainer().toPath();
@@ -47,9 +47,9 @@ public class WorldLoadAction extends AbstractWorldAction
     }
 
     @Override
-    public boolean isConditionFulfilled(@NotNull InputBoard argument, @NotNull ScenarioEngine engine)
+    public boolean checkConditionFulfilled(@NotNull ActionContext ctxt)
     {
-        return super.getWorld(argument) != null;
+        return super.getWorld(ctxt) != null;
     }
 
     @Override

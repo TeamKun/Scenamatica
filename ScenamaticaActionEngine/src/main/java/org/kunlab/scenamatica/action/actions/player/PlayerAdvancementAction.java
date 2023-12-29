@@ -11,12 +11,12 @@ import org.bukkit.event.player.PlayerAdvancementDoneEvent;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.commons.utils.NamespaceUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
-import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 
 import java.util.Arrays;
 import java.util.List;
@@ -39,9 +39,9 @@ public class PlayerAdvancementAction
             String.class
     );
 
-    private static Advancement retrieveAdvancement(@NotNull InputBoard argument)
+    private static Advancement retrieveAdvancement(@NotNull ActionContext ctxt)
     {
-        NamespacedKey advKey = argument.get(IN_ADVANCEMENT);
+        NamespacedKey advKey = ctxt.input(IN_ADVANCEMENT);
         Advancement advancement = Bukkit.getAdvancement(advKey);
         if (advancement == null)
             throw new IllegalArgumentException("Advancement not found: " + advKey);
@@ -56,37 +56,37 @@ public class PlayerAdvancementAction
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @NotNull InputBoard argument)
+    public void execute(@NotNull ActionContext ctxt)
     {
-        Player target = selectTarget(argument, engine);
-        Advancement advancement = retrieveAdvancement(argument);
+        Player target = selectTarget(ctxt);
+        Advancement advancement = retrieveAdvancement(ctxt);
         AdvancementProgress progress = target.getAdvancementProgress(advancement);
 
-        if (argument.isPresent(IN_CRITERION))  // Criteria を指定している場合は, その Criteria を付与するアクションになる。
-            progress.awardCriteria(argument.get(IN_CRITERION));
+        if (ctxt.hasInput(IN_CRITERION))  // Criteria を指定している場合は, その Criteria を付与するアクションになる。
+            progress.awardCriteria(ctxt.input(IN_CRITERION));
         else  // 指定していないので, 進捗を完了させる。
             progress.getRemainingCriteria().forEach(progress::awardCriteria);
     }
 
     @Override
-    public boolean isFired(@NotNull InputBoard argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public boolean checkFired(@NotNull ActionContext ctxt, @NotNull Event event)
     {
-        if (!super.checkMatchedPlayerEvent(argument, engine, event))
+        if (!super.checkMatchedPlayerEvent(ctxt, event))
             return false;
 
         if (event instanceof PlayerAdvancementDoneEvent)  // 進捗を完了させるアクションの場合
         {
             PlayerAdvancementDoneEvent e = (PlayerAdvancementDoneEvent) event;
 
-            return argument.ifPresent(IN_ADVANCEMENT, e.getAdvancement().getKey()::equals);
+            return ctxt.ifHasInput(IN_ADVANCEMENT, e.getAdvancement().getKey()::equals);
         }
         else  // 進捗の Criterion を付与するアクションの場合
         {
             assert event instanceof PlayerAdvancementCriterionGrantEvent;
             PlayerAdvancementCriterionGrantEvent e = (PlayerAdvancementCriterionGrantEvent) event;
 
-            return argument.ifPresent(IN_ADVANCEMENT, e.getAdvancement().getKey()::equals)
-                    && argument.ifPresent(IN_CRITERION, e.getCriterion()::equals);
+            return ctxt.ifHasInput(IN_ADVANCEMENT, e.getAdvancement().getKey()::equals)
+                    && ctxt.ifHasInput(IN_CRITERION, e.getCriterion()::equals);
         }
     }
 
@@ -100,13 +100,13 @@ public class PlayerAdvancementAction
     }
 
     @Override
-    public boolean isConditionFulfilled(@NotNull InputBoard argument, @NotNull ScenarioEngine engine)
+    public boolean checkConditionFulfilled(@NotNull ActionContext ctxt)
     {
-        Advancement advancement = retrieveAdvancement(argument);
-        AdvancementProgress progress = selectTarget(argument, engine).getAdvancementProgress(advancement);
+        Advancement advancement = retrieveAdvancement(ctxt);
+        AdvancementProgress progress = selectTarget(ctxt).getAdvancementProgress(advancement);
 
-        if (argument.isPresent(IN_CRITERION))  // 進捗を完了させるアクションの場合
-            return progress.getAwardedCriteria().contains(argument.get(IN_CRITERION));
+        if (ctxt.hasInput(IN_CRITERION))  // 進捗を完了させるアクションの場合
+            return progress.getAwardedCriteria().contains(ctxt.input(IN_CRITERION));
         else  // 進捗の Criterion を付与するアクションの場合
             return progress.isDone();
     }

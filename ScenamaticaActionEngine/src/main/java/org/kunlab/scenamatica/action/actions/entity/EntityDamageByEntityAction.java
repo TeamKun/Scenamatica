@@ -6,10 +6,10 @@ import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
-import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.EntitySpecifier;
 
 import java.util.Collections;
@@ -29,29 +29,29 @@ public class EntityDamageByEntityAction extends EntityDamageAction
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @NotNull InputBoard argument)
+    public void execute(@NotNull ActionContext ctxt)
     {
-        Entity target = this.selectTarget(argument, engine);
+        Entity target = this.selectTarget(ctxt);
 
         if (!(target instanceof Damageable))
             throw new IllegalArgumentException("Target is not damageable");
 
-        Entity damager = argument.get(IN_DAMAGER).selectTarget(engine.getContext())
+        Entity damager = ctxt.input(IN_DAMAGER).selectTarget(ctxt.getContext())
                 .orElseThrow(() -> new IllegalStateException("Cannot select damager for this action, please specify damager with valid specifier."));
 
-        ((Damageable) target).damage(argument.get(IN_AMOUNT), damager);
+        ((Damageable) target).damage(ctxt.input(IN_AMOUNT), damager);
     }
 
     @Override
-    public boolean isFired(@NotNull InputBoard argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public boolean checkFired(@NotNull ActionContext ctxt, @NotNull Event event)
     {
-        if (!(event instanceof EntityDamageByEntityEvent || super.isFired(argument, engine, event)))
+        if (!(event instanceof EntityDamageByEntityEvent || super.checkFired(ctxt, event)))
             return false;
 
         assert event instanceof EntityDamageByEntityEvent;
         EntityDamageByEntityEvent e = (EntityDamageByEntityEvent) event;
 
-        return argument.ifPresent(IN_DAMAGER, damager -> damager.checkMatchedEntity(e.getDamager()));
+        return ctxt.ifHasInput(IN_DAMAGER, damager -> damager.checkMatchedEntity(e.getDamager()));
     }
 
     @Override

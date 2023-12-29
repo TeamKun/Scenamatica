@@ -5,12 +5,12 @@ import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerLevelChangeEvent;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
-import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 
 import java.util.Collections;
 import java.util.List;
@@ -36,22 +36,22 @@ public class PlayerLevelChangeAction extends AbstractPlayerAction
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @NotNull InputBoard argument)
+    public void execute(@NotNull ActionContext ctxt)
     {
-        Player player = selectTarget(argument, engine);
-        player.setLevel(argument.get(IN_NEW_LEVEL));
+        Player player = selectTarget(ctxt);
+        player.setLevel(ctxt.input(IN_NEW_LEVEL));
     }
 
     @Override
-    public boolean isFired(@NotNull InputBoard argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public boolean checkFired(@NotNull ActionContext ctxt, @NotNull Event event)
     {
-        if (!super.checkMatchedPlayerEvent(argument, engine, event))
+        if (!super.checkMatchedPlayerEvent(ctxt, event))
             return false;
 
         PlayerLevelChangeEvent e = (PlayerLevelChangeEvent) event;
 
-        return argument.ifPresent(IN_OLD_LEVEL, oldLevel -> oldLevel == e.getOldLevel())
-                && argument.ifPresent(IN_NEW_LEVEL, newLevel -> newLevel == e.getNewLevel());
+        return ctxt.ifHasInput(IN_OLD_LEVEL, oldLevel -> oldLevel == e.getOldLevel())
+                && ctxt.ifHasInput(IN_NEW_LEVEL, newLevel -> newLevel == e.getNewLevel());
     }
 
     @Override
@@ -63,10 +63,10 @@ public class PlayerLevelChangeAction extends AbstractPlayerAction
     }
 
     @Override
-    public boolean isConditionFulfilled(@NotNull InputBoard argument, @NotNull ScenarioEngine engine)
+    public boolean checkConditionFulfilled(@NotNull ActionContext ctxt)
     {
-        Player player = selectTarget(argument, engine);
-        return argument.ifPresent(IN_NEW_LEVEL, newLevel -> newLevel == player.getLevel());
+        Player player = selectTarget(ctxt);
+        return ctxt.ifHasInput(IN_NEW_LEVEL, newLevel -> newLevel == player.getLevel());
     }
 
     @Override

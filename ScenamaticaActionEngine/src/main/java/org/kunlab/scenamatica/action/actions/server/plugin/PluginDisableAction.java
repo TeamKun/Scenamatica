@@ -5,11 +5,10 @@ import org.bukkit.event.Event;
 import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
-import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
+import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
-import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 
 import java.util.Collections;
 import java.util.List;
@@ -26,19 +25,19 @@ public class PluginDisableAction extends AbstractPluginAction
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @NotNull InputBoard argument)
+    public void execute(@NotNull ActionContext ctxt)
     {
-        Plugin plugin = super.getPlugin(argument);
-        if (engine.getPlugin() == plugin)
+        Plugin plugin = super.getPlugin(ctxt);
+        if (ctxt.getEngine().getPlugin() == plugin)
             throw new IllegalArgumentException("Cannot disable the plugin itself.");
 
         Bukkit.getPluginManager().disablePlugin(plugin);
     }
 
     @Override
-    public boolean isFired(InputBoard argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public boolean checkFired(@NotNull ActionContext ctxt, @NotNull Event event)
     {
-        return this.checkMatchedPluginEvent(argument, engine, event);
+        return this.checkMatchedPluginEvent(ctxt, event);
     }
 
     @Override
@@ -50,9 +49,9 @@ public class PluginDisableAction extends AbstractPluginAction
     }
 
     @Override
-    public boolean isConditionFulfilled(@NotNull InputBoard argument, @NotNull ScenarioEngine engine)
+    public boolean checkConditionFulfilled(@NotNull ActionContext ctxt)
     {
-        return !super.getPlugin(argument).isEnabled();
+        return !super.getPlugin(ctxt).isEnabled();
     }
 
 

@@ -10,12 +10,10 @@ import org.bukkit.event.player.PlayerBucketFillEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import org.kunlab.scenamatica.commons.utils.PlayerUtils;
-import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
+import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.context.Actor;
-import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 
 import java.util.Collections;
 import java.util.List;
@@ -32,23 +30,23 @@ public class PlayerBucketFillAction extends AbstractPlayerBucketAction
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @NotNull InputBoard argument)
+    public void execute(@NotNull ActionContext ctxt)
     {
-        Player player = selectTarget(argument, engine);
-        ItemStack stack = getBucket(player, argument);
-        Block block = getPlaceAt(player, argument, engine);
-        BlockFace direction = getDirection(player, block, argument);
-        Actor actor = PlayerUtils.getActorOrThrow(engine, player);
+        Player player = selectTarget(ctxt);
+        ItemStack stack = getBucket(player, ctxt);
+        Block block = getPlaceAt(player, ctxt);
+        BlockFace direction = getDirection(player, block, ctxt);
+        Actor actor = ctxt.getActorOrThrow(player);
 
         if (isFilledBucket(stack.getType()))
             throw new IllegalArgumentException("The bucket is filled with liquid: " + stack.getType() + " held by " + player.getName());
 
-        if (argument.get(IN_EVENT_ONLY))
+        if (ctxt.input(IN_EVENT_ONLY))
         {
             Block blockClicked = null;
-            if (argument.isPresent(IN_BLOCK_CLICKED))
-                blockClicked = argument.get(IN_BLOCK_CLICKED).apply(engine, null);
-            EquipmentSlot hand = argument.orElse(IN_HAND, () -> null);
+            if (ctxt.hasInput(IN_BLOCK_CLICKED))
+                blockClicked = ctxt.input(IN_BLOCK_CLICKED).apply(ctxt.getEngine(), null);
+            EquipmentSlot hand = ctxt.orElseInput(IN_HAND, () -> null);
             this.doEventOnlyMode(player, block, blockClicked, direction, stack.getType(), stack, hand);
         }
 

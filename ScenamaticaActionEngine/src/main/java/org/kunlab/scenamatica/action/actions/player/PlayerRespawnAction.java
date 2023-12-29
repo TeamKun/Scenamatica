@@ -7,11 +7,11 @@ import org.bukkit.event.player.PlayerRespawnEvent;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.commons.utils.Utils;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
-import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.misc.LocationStructure;
 
 import java.util.Arrays;
@@ -42,39 +42,39 @@ public class PlayerRespawnAction extends AbstractPlayerAction
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @NotNull InputBoard argument)
+    public void execute(@NotNull ActionContext ctxt)
     {
-        Player player = selectTarget(argument, engine);
+        Player player = selectTarget(ctxt);
         if (!player.isDead())
             throw new IllegalStateException("Player is not dead");
 
-        if (argument.isPresent(IN_LOCATION))
-            player.setBedSpawnLocation(Utils.assignWorldToLocation(argument.get(IN_LOCATION), engine), true);
+        if (ctxt.hasInput(IN_LOCATION))
+            player.setBedSpawnLocation(Utils.assignWorldToLocation(ctxt.input(IN_LOCATION), ctxt.getEngine()), true);
 
         player.spigot().respawn();
     }
 
     @Override
-    public boolean isFired(@NotNull InputBoard argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public boolean checkFired(@NotNull ActionContext ctxt, @NotNull Event event)
     {
-        if (!super.checkMatchedPlayerEvent(argument, engine, event))
+        if (!super.checkMatchedPlayerEvent(ctxt, event))
             return false;
 
         if (event instanceof PlayerRespawnEvent)
         {
             PlayerRespawnEvent e = (PlayerRespawnEvent) event;
 
-            return argument.ifPresent(IN_IS_BED, isBed -> isBed == e.isBedSpawn())
-                    && argument.ifPresent(IN_IS_ANCHOR, isAnchor -> isAnchor == e.isAnchorSpawn())
-                    && argument.ifPresent(IN_LOCATION, loc -> loc.isAdequate(e.getRespawnLocation()));
+            return ctxt.ifHasInput(IN_IS_BED, isBed -> isBed == e.isBedSpawn())
+                    && ctxt.ifHasInput(IN_IS_ANCHOR, isAnchor -> isAnchor == e.isAnchorSpawn())
+                    && ctxt.ifHasInput(IN_LOCATION, loc -> loc.isAdequate(e.getRespawnLocation()));
         }
         else
         {
             assert event instanceof PlayerPostRespawnEvent;
             PlayerPostRespawnEvent e = (PlayerPostRespawnEvent) event;
 
-            return argument.ifPresent(IN_IS_BED, isBed -> isBed == e.isBedSpawn())
-                    && argument.ifPresent(IN_LOCATION, loc -> loc.isAdequate(e.getRespawnedLocation()));
+            return ctxt.ifHasInput(IN_IS_BED, isBed -> isBed == e.isBedSpawn())
+                    && ctxt.ifHasInput(IN_LOCATION, loc -> loc.isAdequate(e.getRespawnedLocation()));
         }
     }
 

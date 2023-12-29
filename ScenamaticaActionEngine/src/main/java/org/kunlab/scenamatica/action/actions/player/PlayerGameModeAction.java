@@ -6,12 +6,12 @@ import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.commons.utils.TextUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
-import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 
 import java.util.Collections;
 import java.util.List;
@@ -40,23 +40,23 @@ public class PlayerGameModeAction extends AbstractPlayerAction
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @NotNull InputBoard argument)
+    public void execute(@NotNull ActionContext ctxt)
     {
-        selectTarget(argument, engine).setGameMode(argument.get(IN_GAME_MODE));
+        selectTarget(ctxt).setGameMode(ctxt.input(IN_GAME_MODE));
     }
 
     @Override
-    public boolean isFired(@NotNull InputBoard argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public boolean checkFired(@NotNull ActionContext ctxt, @NotNull Event event)
     {
-        if (!super.checkMatchedPlayerEvent(argument, engine, event))
+        if (!super.checkMatchedPlayerEvent(ctxt, event))
             return false;
 
         assert event instanceof PlayerGameModeChangeEvent;
         PlayerGameModeChangeEvent e = (PlayerGameModeChangeEvent) event;
 
-        return argument.ifPresent(IN_GAME_MODE, gameMode -> gameMode == e.getNewGameMode())
-                && argument.ifPresent(IN_CAUSE, cause -> cause == e.getCause())
-                && argument.ifPresent(IN_CANCEL_MESSAGE, cancelMessage -> TextUtils.isSameContent(e.cancelMessage(), cancelMessage));
+        return ctxt.ifHasInput(IN_GAME_MODE, gameMode -> gameMode == e.getNewGameMode())
+                && ctxt.ifHasInput(IN_CAUSE, cause -> cause == e.getCause())
+                && ctxt.ifHasInput(IN_CANCEL_MESSAGE, cancelMessage -> TextUtils.isSameContent(e.cancelMessage(), cancelMessage));
     }
 
     @Override
@@ -68,9 +68,9 @@ public class PlayerGameModeAction extends AbstractPlayerAction
     }
 
     @Override
-    public boolean isConditionFulfilled(@NotNull InputBoard argument, @NotNull ScenarioEngine engine)
+    public boolean checkConditionFulfilled(@NotNull ActionContext ctxt)
     {
-        return argument.ifPresent(IN_GAME_MODE, gameMode -> selectTarget(argument, engine).getGameMode() == gameMode);
+        return ctxt.ifHasInput(IN_GAME_MODE, gameMode -> selectTarget(ctxt).getGameMode() == gameMode);
     }
 
     @Override

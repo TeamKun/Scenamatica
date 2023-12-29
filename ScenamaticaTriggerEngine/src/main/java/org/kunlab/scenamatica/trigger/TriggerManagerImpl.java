@@ -130,7 +130,6 @@ public class TriggerManagerImpl implements TriggerManager
     private void registerActionTrigger(ScenarioEngine engine, TriggerStructure actionTrigger)
     {
         ScenarioFileStructure scenario = engine.getScenario();
-        Plugin plugin = engine.getPlugin();
 
         TriggerArgument triggerArgument = actionTrigger.getArgument();
         if (!(triggerArgument instanceof ActionStructure))
@@ -148,7 +147,6 @@ public class TriggerManagerImpl implements TriggerManager
 
         // 型はコンパイラでチェック済みなのでキャストしておく。
         this.actionManager.queueWatch(
-                plugin,
                 engine,
                 scenario,
                 action,

@@ -8,11 +8,11 @@ import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.utils.InputTypeToken;
 import org.kunlab.scenamatica.action.utils.PlayerLikeCommandSenders;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
-import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.PlayerSpecifier;
 
 import java.util.ArrayList;
@@ -70,29 +70,29 @@ public class TabCompleteAction extends AbstractServerAction
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @NotNull InputBoard argument)
+    public void execute(@NotNull ActionContext ctxt)
     {
         CommandSender sender = PlayerLikeCommandSenders.getCommandSenderOrThrow(
-                argument.orElse(IN_SENDER, () -> null),
-                engine.getContext()
+                ctxt.orElseInput(IN_SENDER, () -> null),
+                ctxt.getContext()
         );
-        String buffer = argument.get(IN_BUFFER);
-        List<String> completions = argument.orElse(IN_COMPLETIONS, ArrayList::new);
+        String buffer = ctxt.input(IN_BUFFER);
+        List<String> completions = ctxt.orElseInput(IN_COMPLETIONS, ArrayList::new);
         // ↑ Collections.emptyList() はプラグインの動作に影響を与えるので使わない
 
         TabCompleteEvent event = new TabCompleteEvent(sender, buffer, completions);
-        engine.getPlugin().getServer().getPluginManager().callEvent(event);
+        ctxt.getEngine().getPlugin().getServer().getPluginManager().callEvent(event);
     }
 
     @Override
-    public boolean isFired(@NotNull InputBoard argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public boolean checkFired(@NotNull ActionContext ctxt, @NotNull Event event)
     {
         assert event instanceof TabCompleteEvent;
         TabCompleteEvent e = (TabCompleteEvent) event;
 
-        if (argument.isPresent(IN_BUFFER))
+        if (ctxt.hasInput(IN_BUFFER))
         {
-            String expectedBuffer = argument.get(IN_BUFFER);
+            String expectedBuffer = ctxt.input(IN_BUFFER);
             String actualBuffer = e.getBuffer();
 
             Pattern pattern = Pattern.compile(expectedBuffer);
@@ -102,11 +102,12 @@ public class TabCompleteAction extends AbstractServerAction
                 return false;
         }
 
-        boolean strict = argument.orElse(IN_STRICT, () -> false);
+        boolean strict = ctxt.orElseInput(IN_STRICT, () -> false);
 
-        return checkCompletions(argument.orElse(IN_COMPLETIONS, () -> null),
+        return checkCompletions(
+                ctxt.orElseInput(IN_COMPLETIONS, () -> null),
                 e.getCompletions(), strict
-        ) && argument.ifPresent(
+        ) && ctxt.ifHasInput(
                 IN_SENDER,
                 sender -> PlayerLikeCommandSenders.isSpecifiedSender(e.getSender(), sender)
         );

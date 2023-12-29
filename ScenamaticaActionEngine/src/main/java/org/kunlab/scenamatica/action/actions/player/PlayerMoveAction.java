@@ -7,11 +7,11 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.commons.utils.Utils;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
-import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.misc.LocationStructure;
 
 import java.util.Collections;
@@ -39,24 +39,24 @@ public class PlayerMoveAction extends AbstractPlayerAction
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @NotNull InputBoard argument)
+    public void execute(@NotNull ActionContext ctxt)
     {
-        Location toLoc = Utils.assignWorldToLocation(argument.get(IN_TO), engine);
-        Player target = selectTarget(argument, engine);
+        Location toLoc = Utils.assignWorldToLocation(ctxt.input(IN_TO), ctxt.getEngine());
+        Player target = selectTarget(ctxt);
         target.teleport(toLoc);
     }
 
     @Override
-    public boolean isFired(@NotNull InputBoard argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public boolean checkFired(@NotNull ActionContext ctxt, @NotNull Event event)
     {
-        if (!super.checkMatchedPlayerEvent(argument, engine, event))
+        if (!super.checkMatchedPlayerEvent(ctxt, event))
             return false;
 
         assert event instanceof PlayerMoveEvent;
         PlayerMoveEvent e = (PlayerMoveEvent) event;
 
-        return argument.ifPresent(IN_FROM, from -> from.isAdequate(e.getFrom()))
-                && argument.ifPresent(IN_TO, to -> to.isAdequate(e.getTo()));
+        return ctxt.ifHasInput(IN_FROM, from -> from.isAdequate(e.getFrom()))
+                && ctxt.ifHasInput(IN_TO, to -> to.isAdequate(e.getTo()));
     }
 
     @Override

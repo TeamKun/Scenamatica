@@ -1,6 +1,7 @@
 package org.kunlab.scenamatica.reporter.packets.action;
 
 import org.jetbrains.annotations.NotNull;
+import org.kunlab.scenamatica.interfaces.action.ActionResult;
 import org.kunlab.scenamatica.interfaces.action.CompiledAction;
 import org.kunlab.scenamatica.reporter.packets.test.AbstractTestPacket;
 
@@ -10,35 +11,40 @@ import java.util.UUID;
 public abstract class AbstractActionPacket extends AbstractTestPacket
 {
     public static final String KEY_ACTION = "action";
-    public static final String KEY_ARGUMENT = "argument";
 
     private static final String GENRE = "action";
 
     @NotNull
-    private final CompiledAction action;
+    private final String actionName;
+
+    public AbstractActionPacket(@NotNull String type, @NotNull UUID testID, @NotNull ActionResult action)
+
+    {
+        super(GENRE, type, testID);
+        this.actionName = action.getActionName();
+    }
 
     public AbstractActionPacket(@NotNull String type, @NotNull UUID testID, @NotNull CompiledAction action)
 
     {
         super(GENRE, type, testID);
-        this.action = action;
+        this.actionName = action.getExecutor().getName();
     }
 
     @Override
     public Map<String, Object> serialize()
     {
         Map<String, Object> result = super.serialize();
-        result.putAll(this.serializeAction(this.action));
+        result.putAll(this.serializeAction(this.actionName));
 
         return result;
     }
 
-    protected Map<String, Object> serializeAction(@NotNull CompiledAction action)
+    protected Map<String, Object> serializeAction(@NotNull String name)
     {
         Map<String, Object> result = super.serialize();
 
-        result.put(KEY_ACTION, action.getStructure());
-        result.put(KEY_ARGUMENT, action.getStructure().getArguments());
+        result.put(KEY_ACTION, name);
 
         return result;
     }

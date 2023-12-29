@@ -88,13 +88,13 @@ public class SessionStorage extends AbstractVariableProvider implements ChildSto
     private Object getScenarioResultDetail(ScenarioResult result, String[] keys)
     {
         if (keys.length == 0)
-            return result.getScenarioResultCause() == ScenarioResultCause.PASSED;
+            return result.getCause() == ScenarioResultCause.PASSED;
 
         String key = keys[0];
         switch (key)
         {
             case KEY_SCENARIO_RESULT_CAUSE:
-                return result.getScenarioResultCause().toString();
+                return result.getCause().toString();
             case KEY_SCENARIO_RESULT_STATE:
                 return result.getState().toString();
             case KEY_SCENARIO_RESULT_ATTEMPT_OF:

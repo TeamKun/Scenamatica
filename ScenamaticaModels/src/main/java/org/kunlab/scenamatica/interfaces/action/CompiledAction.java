@@ -1,11 +1,9 @@
 package org.kunlab.scenamatica.interfaces.action;
 
-import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
-import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
+import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.scenariofile.action.ActionStructure;
 
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
 /**
  * アクションをコンパイルした結果を表します。
@@ -13,11 +11,11 @@ import java.util.function.Consumer;
 public interface CompiledAction
 {
     /**
-     * アクションに関連付けられた Engine を取得します。
+     * アクションに関連付けられた Context
      *
      * @return Engine
      */
-    ScenarioEngine getEngine();
+    ActionContext getContext();
 
     /**
      * アクションの Structure を取得します。
@@ -34,13 +32,6 @@ public interface CompiledAction
     Action getExecutor();
 
     /**
-     * アクションの引数を取得します。
-     *
-     * @return アクションの引数
-     */
-    InputBoard getArgument();
-
-    /**
      * エラーハンドラーを取得します。
      *
      * @return エラーハンドラー
@@ -52,5 +43,5 @@ public interface CompiledAction
      *
      * @return コールバック
      */
-    Consumer<CompiledAction> getOnExecute();
+    BiConsumer<ActionResult, ScenarioType> getOnExecute();
 }

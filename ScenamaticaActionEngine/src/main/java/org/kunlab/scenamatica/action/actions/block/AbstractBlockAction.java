@@ -8,9 +8,9 @@ import org.kunlab.scenamatica.action.actions.AbstractAction;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.commons.utils.Utils;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
-import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.misc.BlockStructure;
 
 import java.util.ArrayList;
@@ -47,18 +47,18 @@ public abstract class AbstractBlockAction
         return board;
     }
 
-    public boolean checkMatchedBlockEvent(@NotNull InputBoard input, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public boolean checkMatchedBlockEvent(@NotNull ActionContext ctxt, @NotNull Event event)
     {
         if (!(event instanceof BlockEvent))
             return false;
 
         BlockEvent e = (BlockEvent) event;
 
-        return input.ifPresent(IN_BLOCK, block -> block.isAdequate(e.getBlock()));
+        return ctxt.ifHasInput(IN_BLOCK, block -> block.isAdequate(e.getBlock()));
     }
 
-    protected Location getBlockLocationWithWorld(@NotNull BlockStructure block, @NotNull ScenarioEngine engine)
+    protected Location getBlockLocationWithWorld(@NotNull BlockStructure block, @NotNull ActionContext ctxt)
     {
-        return Utils.assignWorldToLocation(block.getLocation().create().clone(), engine);
+        return Utils.assignWorldToLocation(block.getLocation().create().clone(), ctxt.getEngine());
     }
 }

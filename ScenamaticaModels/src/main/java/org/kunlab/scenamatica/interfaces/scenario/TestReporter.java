@@ -1,6 +1,7 @@
 package org.kunlab.scenamatica.interfaces.scenario;
 
 import org.jetbrains.annotations.NotNull;
+import org.kunlab.scenamatica.interfaces.action.ActionResult;
 import org.kunlab.scenamatica.interfaces.action.CompiledAction;
 import org.kunlab.scenamatica.interfaces.scenario.runtime.CompiledScenarioAction;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerStructure;
@@ -38,26 +39,26 @@ public interface TestReporter
      * シナリオのアクションが正常に実行されたことをレポートします。
      *
      * @param engine エンジン
-     * @param action アクション
+     * @param result アクション
      */
-    void onActionSuccess(@NotNull ScenarioEngine engine, @NotNull CompiledAction action);
+    void onActionSuccess(@NotNull ScenarioEngine engine, @NotNull ActionResult result);
 
     /**
      * 監視していたアクションが正常に実行されたことをレポートします。
      *
      * @param engine エンジン
-     * @param action アクション
+     * @param result アクション
      */
-    void onWatchingActionExecuted(@NotNull ScenarioEngine engine, @NotNull CompiledAction action);
+    void onWatchingActionExecuted(@NotNull ScenarioEngine engine, @NotNull ActionResult result);
 
     /**
      * 監視していたアクションがジャンプして実行されたことをレポートします。
      *
      * @param engine   エンジン
-     * @param action   アクション
+     * @param result   アクション
      * @param expected 期待されるアクション
      */
-    void onActionJumped(@NotNull ScenarioEngine engine, @NotNull CompiledAction action, @NotNull CompiledAction expected);
+    void onActionJumped(@NotNull ScenarioEngine engine, @NotNull ActionResult result, @NotNull CompiledAction expected);
 
     /**
      * アクションの実行に失敗したことをレポートします。

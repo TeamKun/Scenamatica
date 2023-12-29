@@ -8,11 +8,11 @@ import org.bukkit.event.server.ServerCommandEvent;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.action.utils.PlayerLikeCommandSenders;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
-import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.PlayerSpecifier;
 
 import java.util.Arrays;
@@ -40,14 +40,14 @@ public class CommandDispatchAction extends AbstractServerAction
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @NotNull InputBoard argument)
+    public void execute(@NotNull ActionContext ctxt)
     {
         CommandSender sender = PlayerLikeCommandSenders.getCommandSenderOrThrow(
-                argument.orElse(IN_SENDER, () -> null),
-                engine.getContext()
+                ctxt.orElseInput(IN_SENDER, () -> null),
+                ctxt.getContext()
         );
 
-        String command = argument.get(IN_COMMAND);
+        String command = ctxt.input(IN_COMMAND);
         if (command.startsWith("/")) // シンタックスシュガーのために, / から始まるやつにも対応
             command = command.substring(1);
 
@@ -55,7 +55,7 @@ public class CommandDispatchAction extends AbstractServerAction
     }
 
     @Override
-    public boolean isFired(@NotNull InputBoard argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public boolean checkFired(@NotNull ActionContext ctxt, @NotNull Event event)
     {
         String command;
         CommandSender sender;
@@ -73,10 +73,10 @@ public class CommandDispatchAction extends AbstractServerAction
             return false;
 
 
-        return argument.ifPresent(
+        return ctxt.ifHasInput(
                 IN_COMMAND,
                 cmd -> Pattern.compile(cmd).matcher(command).matches()
-        ) && argument.ifPresent(
+        ) && ctxt.ifHasInput(
                 IN_SENDER,
                 s -> PlayerLikeCommandSenders.isSpecifiedSender(sender, s)
         );

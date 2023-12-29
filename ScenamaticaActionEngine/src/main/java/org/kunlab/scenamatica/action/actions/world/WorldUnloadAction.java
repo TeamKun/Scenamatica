@@ -7,11 +7,11 @@ import org.bukkit.event.Event;
 import org.bukkit.event.world.WorldUnloadEvent;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
-import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 
 import java.util.Collections;
 import java.util.List;
@@ -32,11 +32,11 @@ public class WorldUnloadAction extends AbstractWorldAction
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @NotNull InputBoard argument)
+    public void execute(@NotNull ActionContext ctxt)
     {
-        World world = super.getWorldNonNull(argument, engine);
+        World world = super.getWorldNonNull(ctxt);
 
-        Bukkit.getServer().unloadWorld(world, argument.orElse(IN_SAVE, () -> true));
+        Bukkit.getServer().unloadWorld(world, ctxt.orElseInput(IN_SAVE, () -> true));
     }
 
     @Override
@@ -48,9 +48,9 @@ public class WorldUnloadAction extends AbstractWorldAction
     }
 
     @Override
-    public boolean isConditionFulfilled(@NotNull InputBoard argument, @NotNull ScenarioEngine engine)
+    public boolean checkConditionFulfilled(@NotNull ActionContext ctxt)
     {
-        NamespacedKey key = argument.get(IN_WORLD);
+        NamespacedKey key = ctxt.input(IN_WORLD);
         assert key != null;
 
         return Bukkit.getWorld(key) == null;

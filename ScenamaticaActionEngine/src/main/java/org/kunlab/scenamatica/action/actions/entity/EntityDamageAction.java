@@ -8,11 +8,11 @@ import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.action.utils.InputTypeToken;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
-import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -58,32 +58,32 @@ public class EntityDamageAction extends AbstractGeneralEntityAction
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @NotNull InputBoard argument)
+    public void execute(@NotNull ActionContext ctxt)
     {
-        Entity target = this.selectTarget(argument, engine);
+        Entity target = this.selectTarget(ctxt);
 
         if (!(target instanceof Damageable))
             throw new IllegalArgumentException("Target is not damageable");
 
-        ((Damageable) target).damage(argument.get(IN_AMOUNT));
+        ((Damageable) target).damage(ctxt.input(IN_AMOUNT));
     }
 
     @Override
-    public boolean isFired(@NotNull InputBoard argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public boolean checkFired(@NotNull ActionContext ctxt, @NotNull Event event)
     {
-        if (!super.checkMatchedEntityEvent(argument, engine, event))
+        if (!super.checkMatchedEntityEvent(ctxt, event))
             return false;
 
         assert event instanceof EntityDamageEvent;
         EntityDamageEvent e = (EntityDamageEvent) event;
 
-        if (argument.isPresent(IN_MODIFIERS))
-            for (Map.Entry<EntityDamageEvent.DamageModifier, Double> entry : argument.get(IN_MODIFIERS).entrySet())
+        if (ctxt.hasInput(IN_MODIFIERS))
+            for (Map.Entry<EntityDamageEvent.DamageModifier, Double> entry : ctxt.input(IN_MODIFIERS).entrySet())
                 if (e.getDamage(entry.getKey()) != entry.getValue())
                     return false;
 
-        return argument.ifPresent(IN_CAUSE, cause -> cause == e.getCause())
-                && argument.ifPresent(IN_AMOUNT, amount -> amount == e.getDamage());
+        return ctxt.ifHasInput(IN_CAUSE, cause -> cause == e.getCause())
+                && ctxt.ifHasInput(IN_AMOUNT, amount -> amount == e.getDamage());
     }
 
     @Override

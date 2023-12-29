@@ -5,16 +5,15 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.jetbrains.annotations.NotNull;
-import org.kunlab.scenamatica.commons.utils.PlayerUtils;
 import org.kunlab.scenamatica.commons.utils.TextUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.context.Actor;
-import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 
 import java.util.Collections;
 import java.util.List;
@@ -40,20 +39,20 @@ public class PlayerQuitAction extends AbstractPlayerAction
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @NotNull InputBoard argument)
+    public void execute(@NotNull ActionContext ctxt)
     {
-        PlayerQuitEvent.QuitReason reason = argument.orElse(IN_QUIT_REASON, () -> PlayerQuitEvent.QuitReason.KICKED);
+        PlayerQuitEvent.QuitReason reason = ctxt.orElseInput(IN_QUIT_REASON, () -> PlayerQuitEvent.QuitReason.KICKED);
 
-        Player target = selectTarget(argument, engine);
+        Player target = selectTarget(ctxt);
         Actor targetActor = null;
         if (reason != PlayerQuitEvent.QuitReason.KICKED)
-            targetActor = PlayerUtils.getActorOrThrow(engine, target);
+            targetActor = ctxt.getActorOrThrow(target);
 
         switch (reason)
         {
             case KICKED:
-                if (argument.isPresent(IN_QUIT_MESSAGE))
-                    target.kick(Component.text(argument.get(IN_QUIT_MESSAGE)));
+                if (ctxt.hasInput(IN_QUIT_MESSAGE))
+                    target.kick(Component.text(ctxt.input(IN_QUIT_MESSAGE)));
                 else
                     target.kick(null);
                 break;
@@ -70,16 +69,16 @@ public class PlayerQuitAction extends AbstractPlayerAction
     }
 
     @Override
-    public boolean isConditionFulfilled(@NotNull InputBoard argument, @NotNull ScenarioEngine engine)
+    public boolean checkConditionFulfilled(@NotNull ActionContext ctxt)
     {
-        Optional<Player> target = argument.get(IN_TARGET).selectTarget(engine.getContext());
+        Optional<Player> target = ctxt.input(IN_TARGET).selectTarget(ctxt.getContext());
         return !target.isPresent() || !target.get().isOnline();
     }
 
     @Override
-    public boolean isFired(@NotNull InputBoard argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public boolean checkFired(@NotNull ActionContext ctxt, @NotNull Event event)
     {
-        if (!super.checkMatchedPlayerEvent(argument, engine, event))
+        if (!super.checkMatchedPlayerEvent(ctxt, event))
             return false;
 
         assert event instanceof PlayerQuitEvent;
@@ -88,8 +87,8 @@ public class PlayerQuitAction extends AbstractPlayerAction
         Component quitMessage = e.quitMessage();
         PlayerQuitEvent.QuitReason quitReason = e.getReason();
 
-        return argument.ifPresent(IN_QUIT_MESSAGE, message -> TextUtils.isSameContent(quitMessage, message))
-                && argument.ifPresent(IN_QUIT_REASON, reason -> reason == quitReason);
+        return ctxt.ifHasInput(IN_QUIT_MESSAGE, message -> TextUtils.isSameContent(quitMessage, message))
+                && ctxt.ifHasInput(IN_QUIT_REASON, reason -> reason == quitReason);
     }
 
     @Override

@@ -10,11 +10,11 @@ import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.action.utils.InputTypeToken;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
-import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.ItemStackStructure;
 
 import java.util.ArrayList;
@@ -74,9 +74,9 @@ public class EntityDeathAction extends AbstractGeneralEntityAction
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @NotNull InputBoard argument)
+    public void execute(@NotNull ActionContext ctxt)
     {
-        Entity target = this.selectTarget(argument, engine);
+        Entity target = this.selectTarget(ctxt);
         if (target.isDead())
             throw new IllegalStateException("The target entity " + target + " is already dead.");
 
@@ -88,16 +88,16 @@ public class EntityDeathAction extends AbstractGeneralEntityAction
     }
 
     @Override
-    public boolean isFired(@NotNull InputBoard argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public boolean checkFired(@NotNull ActionContext ctxt, @NotNull Event event)
     {
-        if (!super.checkMatchedEntityEvent(argument, engine, event))
+        if (!super.checkMatchedEntityEvent(ctxt, event))
             return false;
 
         EntityDeathEvent e = (EntityDeathEvent) event;
 
-        if (argument.isPresent(IN_DROPS))
+        if (ctxt.hasInput(IN_DROPS))
         {
-            List<ItemStackStructure> expectedDrops = new ArrayList<>(argument.get(IN_DROPS));
+            List<ItemStackStructure> expectedDrops = new ArrayList<>(ctxt.input(IN_DROPS));
             expectedDrops.removeIf(expectedDrop ->
                     e.getDrops().stream()
                             .noneMatch(expectedDrop::isAdequate)
@@ -107,13 +107,13 @@ public class EntityDeathAction extends AbstractGeneralEntityAction
                 return false;
         }
 
-        return argument.ifPresent(IN_DROP_EXP, exp -> exp == e.getDroppedExp())
-                && argument.ifPresent(IN_REVIVE_HEALTH, health -> health == e.getReviveHealth())
-                && argument.ifPresent(IN_SHOULD_PLAY_DEATH_SOUND, shouldPlay -> shouldPlay == e.shouldPlayDeathSound())
-                && argument.ifPresent(IN_DEATH_SOUND, sound -> sound == e.getDeathSound())
-                && argument.ifPresent(IN_DEATH_SOUND_CATEGORY, category -> category == e.getDeathSoundCategory())
-                && argument.ifPresent(IN_DEATH_SOUND_VOLUME, volume -> volume == e.getDeathSoundVolume())
-                && argument.ifPresent(IN_DEATH_SOUND_PITCH, pitch -> pitch == e.getDeathSoundPitch());
+        return ctxt.ifHasInput(IN_DROP_EXP, exp -> exp == e.getDroppedExp())
+                && ctxt.ifHasInput(IN_REVIVE_HEALTH, health -> health == e.getReviveHealth())
+                && ctxt.ifHasInput(IN_SHOULD_PLAY_DEATH_SOUND, shouldPlay -> shouldPlay == e.shouldPlayDeathSound())
+                && ctxt.ifHasInput(IN_DEATH_SOUND, sound -> sound == e.getDeathSound())
+                && ctxt.ifHasInput(IN_DEATH_SOUND_CATEGORY, category -> category == e.getDeathSoundCategory())
+                && ctxt.ifHasInput(IN_DEATH_SOUND_VOLUME, volume -> volume == e.getDeathSoundVolume())
+                && ctxt.ifHasInput(IN_DEATH_SOUND_PITCH, pitch -> pitch == e.getDeathSoundPitch());
 
     }
 

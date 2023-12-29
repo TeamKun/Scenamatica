@@ -8,10 +8,10 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.context.Actor;
-import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.misc.LocationStructure;
 import org.kunlab.scenamatica.nms.enums.entity.NMSEntityUseAction;
 
@@ -34,27 +34,27 @@ public class PlayerInteractAtEntityAction extends PlayerInteractEntityAction
     }
 
     @Override
-    protected void doInteract(InputBoard argument, Entity targeTentity, Actor actor)
+    protected void doInteract(ActionContext ctxt, Entity targeTentity, Actor actor)
     {
         actor.interactEntity(
                 targeTentity,
                 NMSEntityUseAction.INTERACT_AT,
-                argument.orElse(IN_HAND, () -> EquipmentSlot.HAND),
-                argument.get(IN_POSITION).create()
+                ctxt.orElseInput(IN_HAND, () -> EquipmentSlot.HAND),
+                ctxt.input(IN_POSITION).create()
         );
     }
 
     @Override
-    public boolean isFired(@NotNull InputBoard argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public boolean checkFired(@NotNull ActionContext ctxt, @NotNull Event event)
     {
-        if (!super.isFired(argument, engine, event))
+        if (!super.checkFired(ctxt, event))
             return false;
 
         PlayerInteractAtEntityEvent e = (PlayerInteractAtEntityEvent) event;
         Vector clickedPosition = e.getClickedPosition();
-        Location loc = clickedPosition.toLocation(engine.getContext().getStage().getWorld());
+        Location loc = clickedPosition.toLocation(ctxt.getContext().getStage().getWorld());
 
-        return argument.ifPresent(IN_POSITION, position -> position.isAdequate(loc));
+        return ctxt.ifHasInput(IN_POSITION, position -> position.isAdequate(loc));
     }
 
     @Override

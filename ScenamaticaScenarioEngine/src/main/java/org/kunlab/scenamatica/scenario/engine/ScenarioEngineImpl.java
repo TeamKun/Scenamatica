@@ -16,20 +16,22 @@ import org.kunlab.scenamatica.exceptions.scenario.TriggerNotFoundException;
 import org.kunlab.scenamatica.interfaces.ScenamaticaRegistry;
 import org.kunlab.scenamatica.interfaces.action.ActionRunManager;
 import org.kunlab.scenamatica.interfaces.context.Context;
+import org.kunlab.scenamatica.interfaces.scenario.ActionResultDeliverer;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioActionListener;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioManager;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioResult;
-import org.kunlab.scenamatica.interfaces.scenario.ScenarioResultDeliverer;
+import org.kunlab.scenamatica.interfaces.scenario.SessionStorage;
 import org.kunlab.scenamatica.interfaces.scenario.TestReporter;
 import org.kunlab.scenamatica.interfaces.scenario.runtime.CompiledScenarioAction;
 import org.kunlab.scenamatica.interfaces.scenario.runtime.CompiledTriggerAction;
 import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerStructure;
-import org.kunlab.scenamatica.scenario.ScenarioActionListenerImpl;
 import org.kunlab.scenamatica.scenario.ScenarioCompiler;
 import org.kunlab.scenamatica.scenario.ScenarioResultImpl;
+import org.kunlab.scenamatica.scenario.ScenarioTestReporterBridge;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -72,7 +74,7 @@ public class ScenarioEngineImpl implements ScenarioEngine
         this.plugin = plugin;
         this.scenario = scenario;
         this.state = ScenarioState.STAND_BY;
-        this.listener = new ScenarioActionListenerImpl(this, this.registry);
+        this.listener = new ScenarioTestReporterBridge(this, this.registry);
         this.verbose = registry.getEnvironment().isVerbose();
         this.logPrefix = LogUtils.gerScenarioPrefix(null, this.scenario);
 
@@ -103,7 +105,7 @@ public class ScenarioEngineImpl implements ScenarioEngine
 
     @Override
     @NotNull  // TODO: TriggerStructure to TriggerType
-    public ScenarioResult start(@NotNull TriggerStructure trigger, int attemptedCount) throws TriggerNotFoundException
+    public ScenarioResult start(@NotNull TriggerStructure trigger, @NotNull SessionStorage variable, int attemptedCount) throws TriggerNotFoundException
     {
         this.ranBy = trigger;
         if (!this.isAutoRun())
@@ -121,6 +123,7 @@ public class ScenarioEngineImpl implements ScenarioEngine
                 this.actions,
                 this.triggerActions,
                 this.runIf,
+                variable,
                 attemptedCount
         );
 
@@ -145,6 +148,7 @@ public class ScenarioEngineImpl implements ScenarioEngine
                     this.executor.getTestID(),
                     this.state,
                     ScenarioResultCause.CONTEXT_PREPARATION_FAILED,
+                    Collections.emptyList(),
                     this.executor.getStartedAt(),
                     attemptedCount
             );
@@ -292,7 +296,7 @@ public class ScenarioEngineImpl implements ScenarioEngine
      * @return シナリオの結果を受け取るオブジェクト
      */
     @Override
-    public ScenarioResultDeliverer getDeliverer()
+    public ActionResultDeliverer getDeliverer()
     {
         return this.executor.getDeliverer();
     }

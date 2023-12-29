@@ -9,11 +9,11 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
-import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.entity.entities.EntityItemStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.EntitySpecifier;
 
@@ -40,13 +40,13 @@ public class EntityDropItemAction extends AbstractGeneralEntityAction
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @NotNull InputBoard argument)
+    public void execute(@NotNull ActionContext ctxt)
     {
-        Entity target = this.selectTarget(argument, engine);
+        Entity target = this.selectTarget(ctxt);
         if (!(target instanceof InventoryHolder))
             throw new IllegalArgumentException("Target is not inventory holder.");
 
-        EntityItemStructure itemStructure = (EntityItemStructure) argument.get(IN_ITEM).getTargetStructure();
+        EntityItemStructure itemStructure = (EntityItemStructure) ctxt.input(IN_ITEM).getTargetStructure();
         ItemStack stack = itemStructure.getItemStack().create();
 
         target.getWorld().dropItemNaturally(
@@ -64,15 +64,15 @@ public class EntityDropItemAction extends AbstractGeneralEntityAction
     }
 
     @Override
-    public boolean isFired(@NotNull InputBoard argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public boolean checkFired(@NotNull ActionContext ctxt, @NotNull Event event)
     {
-        if (!super.checkMatchedEntityEvent(argument, engine, event))
+        if (!super.checkMatchedEntityEvent(ctxt, event))
             return false;
 
         EntityDropItemEvent e = (EntityDropItemEvent) event;
         Item item = e.getItemDrop();
 
-        return argument.ifPresent(IN_ITEM, itemSpecifier -> itemSpecifier.checkMatchedEntity(item));
+        return ctxt.ifHasInput(IN_ITEM, itemSpecifier -> itemSpecifier.checkMatchedEntity(item));
     }
 
     @Override

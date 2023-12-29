@@ -8,7 +8,6 @@ import org.kunlab.scenamatica.interfaces.scenariofile.action.ActionStructure;
 
 import java.util.List;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
 /**
  * アクションをコンパイルするインタフェースです。
@@ -21,8 +20,8 @@ public interface ActionCompiler
      * @param engine        コンパイルに必要な情報を持つシナリオエンジン
      * @param scenarioType  アクションが属するシナリオの種類です。
      * @param structure     アクションの情報
-     * @param reportErrorTo コンパイルに失敗したときに呼び出されるコールバック
-     * @param onSuccess     コンパイルに成功したときに呼び出されるコールバック
+     * @param reportErrorTo アクションの実行に失敗した場合に呼び出されるコールバック
+     * @param onSuccess     アクションの実行に成功した場合に呼び出されるコールバック
      * @return コンパイルされたアクション
      */
     CompiledAction compile(
@@ -30,7 +29,7 @@ public interface ActionCompiler
             @NotNull ScenarioType scenarioType,
             @NotNull ActionStructure structure,
             @Nullable BiConsumer<CompiledAction, Throwable> reportErrorTo,
-            @Nullable Consumer<CompiledAction> onSuccess);
+            @Nullable BiConsumer<ActionResult, ScenarioType> onSuccess);
 
     /**
      * 登録されたアクションのリストを取得します。

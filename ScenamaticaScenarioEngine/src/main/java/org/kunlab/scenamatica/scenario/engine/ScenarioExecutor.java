@@ -5,31 +5,37 @@ import net.kunmc.lab.peyangpaperutils.lang.LangProvider;
 import net.kunmc.lab.peyangpaperutils.lang.MsgArgs;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.commons.utils.LogUtils;
+import org.kunlab.scenamatica.enums.ActionResultCause;
 import org.kunlab.scenamatica.enums.ScenarioResultCause;
 import org.kunlab.scenamatica.enums.ScenarioState;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.enums.WatchType;
 import org.kunlab.scenamatica.exceptions.scenario.TriggerNotFoundException;
 import org.kunlab.scenamatica.interfaces.ScenamaticaRegistry;
+import org.kunlab.scenamatica.interfaces.action.ActionContext;
+import org.kunlab.scenamatica.interfaces.action.ActionResult;
 import org.kunlab.scenamatica.interfaces.action.ActionRunManager;
 import org.kunlab.scenamatica.interfaces.action.CompiledAction;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
+import org.kunlab.scenamatica.interfaces.scenario.ActionResultDeliverer;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioActionListener;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioResult;
-import org.kunlab.scenamatica.interfaces.scenario.ScenarioResultDeliverer;
+import org.kunlab.scenamatica.interfaces.scenario.SessionStorage;
 import org.kunlab.scenamatica.interfaces.scenario.TestReporter;
 import org.kunlab.scenamatica.interfaces.scenario.runtime.CompiledScenarioAction;
 import org.kunlab.scenamatica.interfaces.scenario.runtime.CompiledTriggerAction;
 import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerStructure;
-import org.kunlab.scenamatica.scenario.ScenarioResultDelivererImpl;
+import org.kunlab.scenamatica.scenario.ActionResultDelivererImpl;
 import org.kunlab.scenamatica.scenario.ScenarioResultImpl;
+import org.kunlab.scenamatica.scenario.ScenarioWaitTimedOutException;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.logging.Level;
@@ -44,10 +50,11 @@ public class ScenarioExecutor
     private final List<? extends CompiledScenarioAction> actions;
     private final List<? extends CompiledTriggerAction> triggerActions;
     private final CompiledScenarioAction runIf;
+    private final SessionStorage variable;
     private final ScenarioFileStructure scenario;
     private final ActionRunManager actionManager;
     private final ScenarioActionListener listener;
-    private final ScenarioResultDeliverer deliverer;
+    private final ActionResultDeliverer deliverer;
     private final List<CompiledScenarioAction> watchedActions;
     private final Plugin plugin;
     private final UUID testID;
@@ -65,6 +72,7 @@ public class ScenarioExecutor
                             List<? extends CompiledScenarioAction> actions,
                             List<? extends CompiledTriggerAction> triggerActions,
                             CompiledScenarioAction runIf,
+                            SessionStorage variable,
                             int attemptedCount)
     {
         this.engine = engine;
@@ -73,6 +81,7 @@ public class ScenarioExecutor
         this.actions = actions;
         this.triggerActions = triggerActions;
         this.runIf = runIf;
+        this.variable = variable;
         this.attemptedCount = attemptedCount;
 
         this.registry = engine.getRegistry();
@@ -85,17 +94,32 @@ public class ScenarioExecutor
         this.startedAt = System.currentTimeMillis();
         this.logPrefix = LogUtils.gerScenarioPrefix(this.testID, this.scenario);
 
-        this.deliverer = new ScenarioResultDelivererImpl(
-                this.registry,
-                this.scenario,
-                this.testID,
-                this.startedAt,
-                this.attemptedCount
-        );
+        this.deliverer = new ActionResultDelivererImpl();
 
         this.state = ScenarioState.STAND_BY;
         this.elapsedTicks = 0;
         this.currentScenario = null;
+    }
+
+    private static ScenarioResultCause toScenarioScopeCase(ActionResultCause actionCause)
+    {
+        switch (actionCause)
+        {
+            case EXECUTION_FAILED:
+                return ScenarioResultCause.ACTION_EXECUTION_FAILED;
+            case EXECUTION_JUMPED:
+                return ScenarioResultCause.ACTION_EXPECTATION_JUMPED;
+            case UNEXPECTED_CONDITION:
+                return ScenarioResultCause.ILLEGAL_CONDITION;
+            case INTERNAL_ERROR:
+                return ScenarioResultCause.INTERNAL_ERROR;
+            case TIMED_OUT:
+                return ScenarioResultCause.SCENARIO_TIMED_OUT;
+            case SKIPPED:
+                return ScenarioResultCause.SKIPPED;
+            default:
+                throw new IllegalStateException("Unexpected value: " + actionCause);
+        }
     }
 
     public ScenarioResult start(@NotNull TriggerStructure trigger) throws TriggerNotFoundException
@@ -110,17 +134,27 @@ public class ScenarioExecutor
 
         CompiledTriggerAction compiledTrigger = this.findTriggerOrThrow(trigger);
 
-        ScenarioResult mayResult = this.testRunConditionIfExists(this.runIf);
-        if (mayResult != null)
-            return mayResult;
+        if (this.runIf != null)
+        {
+            ActionResult result = this.runExecuteCondition(this.runIf); // シナリオレベルの runif
+            if (!result.isSuccess())
+                return this.genResult(ScenarioResultCause.SKIPPED);
+        }
 
-        mayResult = this.testRunConditionIfExists(compiledTrigger.getRunIf());
-        if (mayResult != null)
-            return mayResult;
+        if (compiledTrigger.getRunIf() != null)
+        {
+            ActionResult result = this.runExecuteCondition(compiledTrigger.getRunIf());  // トリガーレベルの runif
+            if (!result.isSuccess())
+                return this.genResult(ScenarioResultCause.SKIPPED);
+        }
 
-        mayResult = this.runBeforeIfPresent(compiledTrigger);
-        if (mayResult != null)
-            return mayResult;
+        if (!trigger.getBeforeThat().isEmpty())
+        {
+            ScenarioResult result = this.runBeforeIfPresent(compiledTrigger);
+            if (!result.getCause().isOK())
+                return result;
+        }
+
 
         this.state = ScenarioState.RUNNING_MAIN;
         this.infoWithPrefixIfVerbose(
@@ -129,18 +163,21 @@ public class ScenarioExecutor
                         MsgArgs.of("scenarioName", this.scenario.getName())
                 )
         );
-        mayResult = this.runScenario(this.actions);
-        if (mayResult != null)
-            return mayResult;
+        ScenarioResult result = this.runScenario(this.actions);
+        if (!result.getCause().isOK())
+            return result;
 
-        mayResult = this.runAfterIfPresent(compiledTrigger);
-        if (mayResult != null)
-            return mayResult;
+        if (!trigger.getAfterThat().isEmpty())
+        {
+            ScenarioResult afterResult = this.runAfter(compiledTrigger);
+            if (!afterResult.getCause().isOK())
+                return afterResult;
+        }
 
         this.state = ScenarioState.FINISHED;
         // genResult は, state を参照するので以下と順番を変えると最終的な state がおかしくなる。
 
-        return this.genResult(ScenarioResultCause.PASSED);
+        return result;
     }
 
     public void cancel()
@@ -159,7 +196,7 @@ public class ScenarioExecutor
 
         // タイムアウト処理。
         if (this.deliverer.isWaiting())
-            this.deliverer.setResult(this.genResult(ScenarioResultCause.RUN_TIMED_OUT));
+            this.deliverer.timedout();
         else
             this.engine.cancel();
     }
@@ -179,24 +216,18 @@ public class ScenarioExecutor
                 );
     }
 
-    private ScenarioResult testRunConditionIfExists(@Nullable CompiledScenarioAction runIf)
+    @NotNull
+    private ActionResult runExecuteCondition(@NotNull CompiledScenarioAction runIf)
     {
-        if (runIf != null)
-        {
-            ScenarioResult conditionResult = this.testCondition(runIf);
-            // コンディションチェックに失敗した(満たしていない)場合は(エラーにはせずに)スキップする。
-            if (conditionResult.getScenarioResultCause() != ScenarioResultCause.PASSED)
-            {
-                this.testReporter.onTestSkipped(this.engine, runIf);
+        ActionResult result = this.testCondition(runIf);
+        // コンディションチェックに失敗した(満たしていない)場合は(エラーにはせずに)スキップする。
+        if (!result.isSuccess())
+            this.testReporter.onTestSkipped(this.engine, runIf);
 
-                return this.genResult(ScenarioResultCause.SKIPPED); // 実質的にはエラーではないので、スキップする。
-            }
-        }
-
-        return null;
+        return result;
     }
 
-    @Nullable
+    @NotNull
     private ScenarioResult runScenario(List<? extends CompiledScenarioAction> scenario)
     {
         // 飛び判定用に, 予めすべてのアクションを監視対象にしておく。
@@ -205,39 +236,76 @@ public class ScenarioExecutor
                 .map(CompiledScenarioAction::getAction)
                 .collect(Collectors.toList());
         this.actionManager.getWatcherManager().registerWatchers(
-                this.plugin,
                 this.engine,
                 this.scenario,
                 watches,
                 WatchType.SCENARIO
         );
 
-        for (int i = 0; i < scenario.size(); i++)
+        boolean allSuccess = true;
+        ActionResultCause cause = null;
+        List<ActionResult> results;
+        try
         {
-            if (!this.engine.isRunning())
-                if (this.isTimedOut())
-                    return this.genResult(ScenarioResultCause.RUN_TIMED_OUT);
-                else
-                    return this.genResult(ScenarioResultCause.CANCELLED);
+            results = new ArrayList<>();
+            for (int i = 0; i < scenario.size(); i++)
+            {
+                if (!this.engine.isRunning())
+                    if (this.isTimedOut())
+                        return this.genResult(ScenarioResultCause.RUN_TIMED_OUT, results);
+                    else
+                        return this.genResult(ScenarioResultCause.CANCELLED, results);
 
-            CompiledScenarioAction scenarioStructure = scenario.get(i);
-            CompiledScenarioAction next = i + 1 < scenario.size() ? scenario.get(i + 1): null;
+                CompiledScenarioAction scenarioStructure = scenario.get(i);
+                CompiledScenarioAction next = i + 1 < scenario.size() ? scenario.get(i + 1): null;
 
-            ScenarioResult result = this.runScenario(scenarioStructure, next);
-            if (!(result.getScenarioResultCause() == ScenarioResultCause.PASSED || result.getScenarioResultCause() == ScenarioResultCause.SKIPPED))
-                return result;
+                ActionResult result = this.runScenario(scenarioStructure, next);
+                if (result == null)
+                    continue; // スキップされた場合は次のアクションへ。
+
+                results.add(result);
+                if (!result.getOutputs().isEmpty())
+                    for (Map.Entry<String, Object> entry : result.getOutputs().entrySet())
+                        this.variable.set(entry.getKey(), entry.getValue());
+
+                if (!result.isSuccess())
+                {
+                    allSuccess = false;
+                    cause = result.getCause();
+                }
+
+                if (result.isHalt())
+                    break;  // Halt された場合は即座に終了。
+            }
+        }
+        catch (ScenarioWaitTimedOutException ignored)
+        {
+            return this.genResult(ScenarioResultCause.SCENARIO_TIMED_OUT);
+        }
+        catch (Throwable e)
+        {
+            this.registry.getExceptionHandler().report(e);
+            return this.genResult(ScenarioResultCause.INTERNAL_ERROR);
         }
 
-        return null;
+        if (allSuccess)
+            return this.genResult(ScenarioResultCause.PASSED, results);
+        else
+            return this.genResult(toScenarioScopeCase(cause), results);
     }
 
-    private ScenarioResult runScenario(CompiledScenarioAction scenario, CompiledScenarioAction next)
+    private ActionResult runScenario(CompiledScenarioAction scenario, CompiledScenarioAction next)
     {
         if (scenario.getRunIf() != null)
         {
-            ScenarioResult result = this.testCondition(scenario.getRunIf());
-            if (result.getScenarioResultCause() != ScenarioResultCause.PASSED)
-                return this.genResult(ScenarioResultCause.SKIPPED);
+            CompiledScenarioAction runIf = scenario.getRunIf();
+            this.runExecuteCondition(runIf);
+            if (!runIf.getAction().getContext().isSuccess())
+            {
+                ActionContext context = scenario.getAction().getContext();
+                context.skip(); // スキップとしてマークしておく。
+                return null;
+            }
         }
 
         this.currentScenario = scenario;
@@ -255,7 +323,7 @@ public class ScenarioExecutor
                 return this.testCondition(scenario);
         }
 
-        return this.deliverer.waitResult(scenario.getStructure().getTimeout(), this.state);
+        return this.deliverer.waitForResult(scenario.getStructure().getTimeout(), this.state);
     }
 
     private void doAction(CompiledScenarioAction scenario, CompiledScenarioAction next)
@@ -269,38 +337,36 @@ public class ScenarioExecutor
         this.actionManager.queueExecute(scenario.getAction());
     }
 
-    private ScenarioResult testCondition(CompiledScenarioAction scenario)
+    private ActionResult testCondition(CompiledScenarioAction scenario)
     {
         this.testReporter.onActionStart(this.engine, scenario);
 
         assert scenario.getAction().getExecutor() instanceof Requireable;
         Requireable requireable = (Requireable) scenario.getAction().getExecutor();
 
-        boolean result;
+        ActionContext context = scenario.getAction().getContext();
         try
         {
-            result = requireable.isConditionFulfilled(scenario.getAction().getArgument(), this.engine);
+            boolean result = requireable.checkConditionFulfilled(context);
+
+            if (result && context.isSuccess())  // 正規化： 成功状態がない場合は, 暗黙的に成功とする。
+                context.success();
+            else
+                context.fail(ActionResultCause.UNEXPECTED_CONDITION);
         }
         catch (Throwable e)
         {
             this.registry.getExceptionHandler().report(e);
             this.testReporter.onConditionCheckFailed(this.engine, scenario);
-            return this.genResult(ScenarioResultCause.INTERNAL_ERROR);
+            context.fail(e);
         }
 
-        ScenarioResult scenarioResult;
-        if (result)
-        {
+        if (context.isSuccess())
             this.testReporter.onConditionCheckSuccess(this.engine, scenario);
-            scenarioResult = this.genResult(ScenarioResultCause.PASSED);
-        }
         else
-        {
             this.testReporter.onConditionCheckFailed(this.engine, scenario);
-            scenarioResult = this.genResult(ScenarioResultCause.ILLEGAL_CONDITION);
-        }
 
-        return scenarioResult;
+        return context.createResult(scenario.getAction());
     }
 
     private void addWatch(CompiledScenarioAction/*<?>*/ scenario)
@@ -314,40 +380,30 @@ public class ScenarioExecutor
         this.watchedActions.add(scenario);
 
         this.testReporter.onActionStart(this.engine, scenario);
-        requireable.onStartWatching(scenario.getAction().getArgument(), this.plugin, null);
+        requireable.onStartWatching(scenario.getAction().getContext(), null);
         this.listener.setWaitingFor(scenario);
     }
 
     private ScenarioResult runBeforeIfPresent(CompiledTriggerAction trigger)
     {
-        if (!trigger.getTrigger().getBeforeThat().isEmpty())
-        {
-            this.state = ScenarioState.RUNNING_BEFORE;
-            this.infoWithPrefixIfVerbose(LangProvider.get(
-                            "scenario.run.starting.before",
-                            MsgArgs.of("scenarioName", this.scenario.getName())
-                    )
-            );
-            return this.runScenario(trigger.getBeforeActions());
-        }
-
-        return null;
+        this.state = ScenarioState.RUNNING_BEFORE;
+        this.infoWithPrefixIfVerbose(LangProvider.get(
+                        "scenario.run.starting.before",
+                        MsgArgs.of("scenarioName", this.scenario.getName())
+                )
+        );
+        return this.runScenario(trigger.getBeforeActions());
     }
 
-    private ScenarioResult runAfterIfPresent(CompiledTriggerAction trigger)
+    private ScenarioResult runAfter(CompiledTriggerAction trigger)
     {
-        if (!trigger.getTrigger().getAfterThat().isEmpty())
-        {
-            this.state = ScenarioState.RUNNING_AFTER;
-            this.infoWithPrefixIfVerbose(LangProvider.get(
-                            "scenario.run.starting.after",
-                            MsgArgs.of("scenarioName", this.scenario.getName())
-                    )
-            );
-            return this.runScenario(trigger.getAfterActions());
-        }
-
-        return null;
+        this.state = ScenarioState.RUNNING_AFTER;
+        this.infoWithPrefixIfVerbose(LangProvider.get(
+                        "scenario.run.starting.after",
+                        MsgArgs.of("scenarioName", this.scenario.getName())
+                )
+        );
+        return this.runScenario(trigger.getAfterActions());
     }
 
     private void infoWithPrefixIfVerbose(String message)
@@ -357,15 +413,21 @@ public class ScenarioExecutor
         this.registry.getLogger().log(Level.INFO, this.logPrefix + message);
     }
 
-    private ScenarioResult genResult(ScenarioResultCause cause)
+    private ScenarioResult genResult(ScenarioResultCause cause, List<ActionResult> actionResults)
     {
         return new ScenarioResultImpl(
                 this.scenario,
                 this.testID,
                 this.state,
                 cause,
+                actionResults,
                 this.startedAt,
                 this.attemptedCount
         );
+    }
+
+    private ScenarioResult genResult(ScenarioResultCause cause)
+    {
+        return this.genResult(cause, Collections.emptyList());
     }
 }

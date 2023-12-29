@@ -8,11 +8,11 @@ import org.kunlab.scenamatica.action.actions.block.BlockBreakAction;
 import org.kunlab.scenamatica.action.utils.InputTypeToken;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
-import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.ItemStackStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.misc.BlockStructure;
 
@@ -55,29 +55,30 @@ public class PlayerHarvestBlockAction extends AbstractPlayerAction
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @NotNull InputBoard argument)
+    public void execute(@NotNull ActionContext ctxt)
     {
-        BlockBreakAction breakAction = engine.getManager().getRegistry().getActionManager().getCompiler()
-                .findAction(BlockBreakAction.class);
+        BlockBreakAction breakAction = ctxt.findAction(BlockBreakAction.class);
 
         InputBoard blockBreakBoard = breakAction.getInputBoard(ScenarioType.ACTION_EXECUTE);
-        blockBreakBoard.getHolder(BlockBreakAction.IN_BLOCK).set(argument.get(IN_HARVESTED_BLOCK));
-        blockBreakBoard.getHolder(BlockBreakAction.IN_ACTOR).set(argument.get(IN_TARGET));
+        blockBreakBoard.getHolder(BlockBreakAction.IN_BLOCK).set(ctxt.input(IN_HARVESTED_BLOCK));
+        blockBreakBoard.getHolder(BlockBreakAction.IN_ACTOR).set(ctxt.input(IN_TARGET));
 
-        breakAction.execute(engine, blockBreakBoard);
+        breakAction.execute(ctxt.renew(blockBreakBoard));
+        for (Map.Entry<String, Object> entry : ctxt.getOutput().entrySet())
+            ctxt.output(entry.getKey(), entry.getValue());
     }
 
     @Override
-    public boolean isFired(@NotNull InputBoard argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public boolean checkFired(@NotNull ActionContext ctxt, @NotNull Event event)
     {
-        if (!super.checkMatchedPlayerEvent(argument, engine, event))
+        if (!super.checkMatchedPlayerEvent(ctxt, event))
             return false;
 
         assert event instanceof PlayerHarvestBlockEvent;
         PlayerHarvestBlockEvent e = (PlayerHarvestBlockEvent) event;
 
-        return argument.ifPresent(IN_HARVESTED_BLOCK, block -> block.isAdequate(e.getHarvestedBlock()))
-                && argument.ifPresent(
+        return ctxt.ifHasInput(IN_HARVESTED_BLOCK, block -> block.isAdequate(e.getHarvestedBlock()))
+                && ctxt.ifHasInput(
                 IN_ITEMS_HARVESTED,
                 items -> {
                     @NotNull

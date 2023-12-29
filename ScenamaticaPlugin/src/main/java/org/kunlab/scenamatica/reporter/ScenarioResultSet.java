@@ -87,7 +87,7 @@ public class ScenarioResultSet
                 // 2回以上実行されているものを抽出
                 .filter(r -> r.getAttemptOf() > 1)
                 // 後に成功したものを抽出（2回以上実行 ＝ 1回目..は失敗）
-                .filter(r -> !r.getScenarioResultCause().isFailure())
+                .filter(r -> !r.getCause().isFailure())
                 // 最大試行回数のものを抽出
                 .collect(Collectors.toMap(
                         r -> Arrays.asList(r.getTestID(), r.getScenario()),
@@ -106,7 +106,7 @@ public class ScenarioResultSet
     {
         for (ScenarioResult result : this.results)
         {
-            switch (result.getScenarioResultCause())
+            switch (result.getCause())
             {
                 case PASSED:
                     this.passes.add(result);

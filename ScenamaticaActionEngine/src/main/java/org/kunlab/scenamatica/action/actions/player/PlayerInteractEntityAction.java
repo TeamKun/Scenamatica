@@ -1,19 +1,19 @@
 package org.kunlab.scenamatica.action.actions.player;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.jetbrains.annotations.NotNull;
-import org.kunlab.scenamatica.commons.utils.PlayerUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.context.Actor;
-import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.EntitySpecifier;
 import org.kunlab.scenamatica.nms.enums.entity.NMSEntityUseAction;
 
@@ -38,58 +38,58 @@ public class PlayerInteractEntityAction extends AbstractPlayerAction
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @NotNull InputBoard argument)
+    public void execute(@NotNull ActionContext ctxt)
     {
-        Player player = selectTarget(argument, engine);
-        Entity targetEntity = argument.get(IN_ENTITY).selectTarget(engine.getContext())
+        Player player = selectTarget(ctxt);
+        Entity targetEntity = ctxt.input(IN_ENTITY).selectTarget(ctxt.getContext())
                 .orElseThrow(() -> new IllegalStateException("Target entity is not found."));
 
         int distanceFromEntity = (int) player.getLocation().distance(targetEntity.getLocation());
         if (distanceFromEntity > 36)
         {
-            engine.getPlugin().getLogger().warning(engine.getLogPrefix() + "The distance between player and entity is too far. ("
+            ctxt.getLogger().warning("The distance between player and entity is too far. ("
                     + distanceFromEntity + " blocks), so the actual action will not be executed(only event will be fired).");
 
-            this.eventOnlyMode(engine, argument, player, targetEntity);
+            this.eventOnlyMode(ctxt, player, targetEntity);
             return;
         }
 
-        Actor actor = PlayerUtils.getActorOrThrow(engine, player);
-        this.doInteract(argument, targetEntity, actor);
+        Actor actor = ctxt.getActorOrThrow(player);
+        this.doInteract(ctxt, targetEntity, actor);
     }
 
-    protected void doInteract(InputBoard argument, Entity targeTentity, Actor actor)
+    protected void doInteract(ActionContext ctxt, Entity targeTentity, Actor actor)
     {
         actor.interactEntity(
                 targeTentity,
                 NMSEntityUseAction.INTERACT,
-                argument.orElse(IN_HAND, () -> EquipmentSlot.HAND),
+                ctxt.orElseInput(IN_HAND, () -> EquipmentSlot.HAND),
                 actor.getPlayer().getLocation()
         );
     }
 
-    private void eventOnlyMode(@NotNull ScenarioEngine engine, @NotNull InputBoard argument, @NotNull Player who, @NotNull Entity targetEntity)
+    private void eventOnlyMode(@NotNull ActionContext ctxt, @NotNull Player who, @NotNull Entity targetEntity)
     {
         PlayerInteractEntityEvent event = new PlayerInteractEntityEvent(
                 who,
                 targetEntity,
-                argument.orElse(IN_HAND, () -> EquipmentSlot.HAND)
+                ctxt.orElseInput(IN_HAND, () -> EquipmentSlot.HAND)
         );
 
-        engine.getPlugin().getServer().getPluginManager().callEvent(event);
+        Bukkit.getPluginManager().callEvent(event);
     }
 
     @Override
-    public boolean isFired(@NotNull InputBoard argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public boolean checkFired(@NotNull ActionContext ctxt, @NotNull Event event)
     {
-        if (!super.checkMatchedPlayerEvent(argument, engine, event))
+        if (!super.checkMatchedPlayerEvent(ctxt, event))
             return false;
 
         assert event instanceof PlayerInteractEntityEvent;
         PlayerInteractEntityEvent e = (PlayerInteractEntityEvent) event;
 
-        return argument.ifPresent(IN_ENTITY, entity -> entity.checkMatchedEntity(e.getRightClicked()))
-                && argument.ifPresent(IN_HAND, hand -> hand == e.getHand());
+        return ctxt.ifHasInput(IN_ENTITY, entity -> entity.checkMatchedEntity(e.getRightClicked()))
+                && ctxt.ifHasInput(IN_HAND, hand -> hand == e.getHand());
     }
 
     @Override

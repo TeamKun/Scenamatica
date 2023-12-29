@@ -4,11 +4,11 @@ import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.commons.utils.EntityUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
-import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.Mapped;
 import org.kunlab.scenamatica.interfaces.scenariofile.entity.EntityStructure;
 
@@ -30,10 +30,10 @@ public class EntityAction extends AbstractGeneralEntityAction
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @NotNull InputBoard argument)
+    public void execute(@NotNull ActionContext ctxt)
     {
-        Entity target = this.selectTarget(argument, engine);
-        EntityStructure entityInfo = argument.get(IN_ENTITY);
+        Entity target = this.selectTarget(ctxt);
+        EntityStructure entityInfo = ctxt.input(IN_ENTITY);
 
         if (!(entityInfo instanceof Mapped<?>))
             throw new IllegalStateException("Cannot check matched entity for non-mapped entity");
@@ -50,16 +50,16 @@ public class EntityAction extends AbstractGeneralEntityAction
     }
 
     @Override
-    public boolean isConditionFulfilled(@NotNull InputBoard argument, @NotNull ScenarioEngine engine)
+    public boolean checkConditionFulfilled(@NotNull ActionContext ctxt)
     {
-        Entity target = this.selectTarget(argument, engine);
+        Entity target = this.selectTarget(ctxt);
 
-        if (target == null && !argument.isPresent(IN_ENTITY))
+        if (target == null && !ctxt.hasInput(IN_ENTITY))
             throw new IllegalStateException("Cannot find entity");
         else if (target == null)
             return false;
 
-        return argument.ifPresent(IN_ENTITY, entity -> EntityUtils.tryCastMapped(entity, target).isAdequate(target));
+        return ctxt.ifHasInput(IN_ENTITY, entity -> EntityUtils.tryCastMapped(entity, target).isAdequate(target));
     }
 
     @Override

@@ -11,14 +11,13 @@ import org.bukkit.event.entity.EntityPlaceEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.kunlab.scenamatica.commons.utils.PlayerUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.context.Actor;
-import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.misc.BlockStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.PlayerSpecifier;
 
@@ -133,32 +132,33 @@ public class EntityPlaceAction extends AbstractGeneralEntityAction
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @NotNull InputBoard argument)
+    public void execute(@NotNull ActionContext ctxt)
     {
-        Location location = argument.get(IN_BLOCK).getLocation().create();
-        Actor actor = PlayerUtils.getActorOrThrow(engine, argument.get(IN_PLAYER).selectTarget(engine.getContext())
-                .orElseThrow(() -> new IllegalArgumentException("Player is not specified.")));
+        Location location = ctxt.input(IN_BLOCK).getLocation().create();
+        Actor actor = ctxt.getActorOrThrow(ctxt.input(IN_PLAYER).selectTarget(ctxt.getContext())
+                .orElseThrow(() -> new IllegalArgumentException("Player is not specified."))
+        );
         if (location.getWorld() == null)
         {
             location = location.clone();
             location.setWorld(actor.getPlayer().getWorld());  // Engine による推定はしない(Actor のワールド依存のアクションなため)
         }
 
-        if (isNotOnlyLocationAvailable(argument.get(IN_BLOCK)))
-            argument.get(IN_BLOCK).applyTo(location.getBlock());
+        if (isNotOnlyLocationAvailable(ctxt.input(IN_BLOCK)))
+            ctxt.input(IN_BLOCK).applyTo(location.getBlock());
 
-        Material material = argument.get(IN_MATERIAL);
+        Material material = ctxt.input(IN_MATERIAL);
 
         if (!isPlaceable(material))
             throw new IllegalArgumentException("Material is not placable.");
 
-        actor.placeItem(location, new ItemStack(material), argument.get(IN_BLOCK_FACE));
+        actor.placeItem(location, new ItemStack(material), ctxt.input(IN_BLOCK_FACE));
     }
 
     @Override
-    public boolean isFired(@NotNull InputBoard argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public boolean checkFired(@NotNull ActionContext ctxt, @NotNull Event event)
     {
-        if (!super.checkMatchedEntityEvent(argument, engine, event))
+        if (!super.checkMatchedEntityEvent(ctxt, event))
             return false;
 
         EntityPlaceEvent e = (EntityPlaceEvent) event;
@@ -167,10 +167,10 @@ public class EntityPlaceAction extends AbstractGeneralEntityAction
         Block block = e.getBlock();
         EntityType entityType = e.getEntityType();
 
-        return argument.ifPresent(IN_PLAYER, player -> player.checkMatchedPlayer(placer))
-                && argument.ifPresent(IN_BLOCK_FACE, face -> face == blockFace)
-                && argument.ifPresent(IN_MATERIAL, material -> material == toMaterial(entityType))
-                && argument.ifPresent(IN_BLOCK, blockStructure -> blockStructure.isAdequate(block));
+        return ctxt.ifHasInput(IN_PLAYER, player -> player.checkMatchedPlayer(placer))
+                && ctxt.ifHasInput(IN_BLOCK_FACE, face -> face == blockFace)
+                && ctxt.ifHasInput(IN_MATERIAL, material -> material == toMaterial(entityType))
+                && ctxt.ifHasInput(IN_BLOCK, blockStructure -> blockStructure.isAdequate(block));
     }
 
     @Override

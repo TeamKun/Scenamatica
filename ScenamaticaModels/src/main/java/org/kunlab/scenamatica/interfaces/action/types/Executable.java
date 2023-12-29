@@ -1,16 +1,14 @@
 package org.kunlab.scenamatica.interfaces.action.types;
 
 import org.jetbrains.annotations.NotNull;
-import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
-import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
+import org.kunlab.scenamatica.interfaces.action.ActionContext;
 
 public interface Executable
 {
     /**
      * 動作を実行します。
      *
-     * @param engine   シナリオエンジン
-     * @param argument 動作の引数
+     * @param ctxt 動作の実行コンテキスト
      */
-    void execute(@NotNull ScenarioEngine engine, @NotNull InputBoard argument);
+    void execute(@NotNull ActionContext ctxt);
 }

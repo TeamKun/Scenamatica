@@ -8,15 +8,14 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.jetbrains.annotations.NotNull;
-import org.kunlab.scenamatica.commons.utils.PlayerUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.context.Actor;
-import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.misc.BlockStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.PlayerSpecifier;
 
@@ -38,13 +37,13 @@ public class BlockBreakAction extends AbstractBlockAction
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @NotNull InputBoard argument)
+    public void execute(@NotNull ActionContext ctxt)
     {
-        BlockStructure blockDef = argument.get(IN_BLOCK);
-        Location location = this.getBlockLocationWithWorld(blockDef, engine);
+        BlockStructure blockDef = ctxt.input(IN_BLOCK);
+        Location location = this.getBlockLocationWithWorld(blockDef, ctxt);
         Block block = location.getBlock();
 
-        Player player = argument.get(IN_ACTOR).selectTarget(engine.getContext()).orElse(null);
+        Player player = ctxt.input(IN_ACTOR).selectTarget(ctxt.getContext()).orElse(null);
         if (player == null)
         {
             block.breakNaturally();  // 自然に壊れたことにする
@@ -53,7 +52,7 @@ public class BlockBreakAction extends AbstractBlockAction
 
         this.validateBreakable(block, player);
 
-        Actor actor = PlayerUtils.getActorOrThrow(engine, player); // アクタ以外は破壊シミュレートできない。
+        Actor actor = ctxt.getActorOrThrow(player); // アクタ以外は破壊シミュレートできない。
         actor.breakBlock(block);
     }
 
@@ -67,15 +66,15 @@ public class BlockBreakAction extends AbstractBlockAction
     }
 
     @Override
-    public boolean isFired(@NotNull InputBoard argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public boolean checkFired(@NotNull ActionContext ctxt, @NotNull Event event)
     {
-        if (!super.checkMatchedBlockEvent(argument, engine, event))
+        if (!super.checkMatchedBlockEvent(ctxt, event))
             return false;
 
         BlockBreakEvent e = (BlockBreakEvent) event;
 
-        return argument.ifPresent(IN_ACTOR, player -> player.checkMatchedPlayer(e.getPlayer()))
-                && argument.ifPresent(IN_DROP_ITEMS, dropItems -> dropItems == e.isDropItems());
+        return ctxt.ifHasInput(IN_ACTOR, player -> player.checkMatchedPlayer(e.getPlayer()))
+                && ctxt.ifHasInput(IN_DROP_ITEMS, dropItems -> dropItems == e.isDropItems());
     }
 
     @Override
@@ -118,9 +117,9 @@ public class BlockBreakAction extends AbstractBlockAction
     }
 
     @Override
-    public boolean isConditionFulfilled(@NotNull InputBoard argument, @NotNull ScenarioEngine engine)
+    public boolean checkConditionFulfilled(@NotNull ActionContext ctxt)
     {
-        Location loc = this.getBlockLocationWithWorld(argument.get(IN_BLOCK), engine);
+        Location loc = this.getBlockLocationWithWorld(ctxt.input(IN_BLOCK), ctxt);
 
         return loc.getBlock().getType() == Material.AIR;
     }

@@ -7,11 +7,11 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.commons.utils.Utils;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
-import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 
 import java.util.Collections;
 import java.util.List;
@@ -32,29 +32,29 @@ public class PlayerTeleportAction extends PlayerMoveAction
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @NotNull InputBoard argument)
+    public void execute(@NotNull ActionContext ctxt)
     {
-        Location toLoc = Utils.assignWorldToLocation(argument.get(IN_TO), engine);
+        Location toLoc = Utils.assignWorldToLocation(ctxt.input(IN_TO), ctxt.getEngine());
         PlayerTeleportEvent.TeleportCause cause;
-        if (argument.isPresent(IN_CAUSE))
-            cause = argument.get(IN_CAUSE);
+        if (ctxt.hasInput(IN_CAUSE))
+            cause = ctxt.input(IN_CAUSE);
         else
             cause = PlayerTeleportEvent.TeleportCause.PLUGIN;
 
-        Player player = selectTarget(argument, engine);
+        Player player = selectTarget(ctxt);
         player.teleport(toLoc, cause);
     }
 
     @Override
-    public boolean isFired(@NotNull InputBoard argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public boolean checkFired(@NotNull ActionContext ctxt, @NotNull Event event)
     {
-        if (!super.isFired(argument, engine, event))
+        if (!super.checkFired(ctxt, event))
             return false;
 
         assert event instanceof PlayerTeleportEvent;
         PlayerTeleportEvent e = (PlayerTeleportEvent) event;
 
-        return argument.ifPresent(IN_CAUSE, e.getCause()::equals);
+        return ctxt.ifHasInput(IN_CAUSE, e.getCause()::equals);
     }
 
     @Override

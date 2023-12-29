@@ -6,12 +6,12 @@ import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
-import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.ItemStackStructure;
 
 import java.util.Collections;
@@ -43,19 +43,19 @@ public class PlayerHotbarSlotAction extends AbstractPlayerAction
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @NotNull InputBoard argument)
+    public void execute(@NotNull ActionContext ctxt)
     {
-        Player p = selectTarget(argument, engine);
-        int slot = argument.get(IN_CURRENT_SLOT);
+        Player p = selectTarget(ctxt);
+        int slot = ctxt.input(IN_CURRENT_SLOT);
 
         p.getInventory().setHeldItemSlot(slot);
-        argument.runIfPresent(IN_CURRENT_ITEM, item -> p.getInventory().setItemInMainHand(item.create()));
+        ctxt.runIfHasInput(IN_CURRENT_ITEM, item -> p.getInventory().setItemInMainHand(item.create()));
     }
 
     @Override
-    public boolean isFired(@NotNull InputBoard argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public boolean checkFired(@NotNull ActionContext ctxt, @NotNull Event event)
     {
-        if (!super.checkMatchedPlayerEvent(argument, engine, event))
+        if (!super.checkMatchedPlayerEvent(ctxt, event))
             return false;
 
         assert event instanceof PlayerItemHeldEvent;
@@ -65,9 +65,9 @@ public class PlayerHotbarSlotAction extends AbstractPlayerAction
         int previousSlot = e.getPreviousSlot();
         ItemStack currentItem = e.getPlayer().getInventory().getItem(currentSlot);
 
-        return argument.ifPresent(IN_CURRENT_SLOT, slot -> slot == currentSlot)
-                && argument.ifPresent(IN_PREVIOUS_SLOT, slot -> slot == previousSlot)
-                && argument.ifPresent(IN_CURRENT_ITEM, item -> item.isAdequate(currentItem));
+        return ctxt.ifHasInput(IN_CURRENT_SLOT, slot -> slot == currentSlot)
+                && ctxt.ifHasInput(IN_PREVIOUS_SLOT, slot -> slot == previousSlot)
+                && ctxt.ifHasInput(IN_CURRENT_ITEM, item -> item.isAdequate(currentItem));
     }
 
     @Override
@@ -79,12 +79,12 @@ public class PlayerHotbarSlotAction extends AbstractPlayerAction
     }
 
     @Override
-    public boolean isConditionFulfilled(@NotNull InputBoard argument, @NotNull ScenarioEngine engine)
+    public boolean checkConditionFulfilled(@NotNull ActionContext ctxt)
     {
-        Player p = selectTarget(argument, engine);
+        Player p = selectTarget(ctxt);
 
-        return argument.ifPresent(IN_CURRENT_SLOT, slot -> slot == p.getInventory().getHeldItemSlot())
-                && argument.ifPresent(IN_CURRENT_ITEM, item -> item.isAdequate(p.getInventory().getItemInMainHand()));
+        return ctxt.ifHasInput(IN_CURRENT_SLOT, slot -> slot == p.getInventory().getHeldItemSlot())
+                && ctxt.ifHasInput(IN_CURRENT_ITEM, item -> item.isAdequate(p.getInventory().getItemInMainHand()));
     }
 
     @Override

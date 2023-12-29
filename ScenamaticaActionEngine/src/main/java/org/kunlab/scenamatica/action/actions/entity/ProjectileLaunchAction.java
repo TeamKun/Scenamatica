@@ -21,10 +21,10 @@ import org.kunlab.scenamatica.action.utils.EventListenerUtils;
 import org.kunlab.scenamatica.commons.utils.EntityUtils;
 import org.kunlab.scenamatica.commons.utils.Utils;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
-import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.entity.EntityStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.entity.entities.ProjectileStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.misc.BlockStructure;
@@ -87,15 +87,15 @@ public class ProjectileLaunchAction extends EntitySpawnAction<Projectile>
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @NotNull InputBoard argument)
+    public void execute(@NotNull ActionContext ctxt)
     {
-        ProjectileStructure entity = (ProjectileStructure) argument.get(this.IN_ENTITY).getTargetStructure();
+        ProjectileStructure entity = (ProjectileStructure) ctxt.input(this.IN_ENTITY).getTargetStructure();
         // noinspection unchecked -> Checked by validator
         Class<? extends Projectile> entityType = (Class<? extends Projectile>) entity.getType().getEntityClass();
         assert entityType != null;
 
         ProjectileSourceStructure shooter = entity.getShooter();
-        ProjectileSource source = this.convertProjectileSource(shooter, engine);
+        ProjectileSource source = this.convertProjectileSource(shooter, ctxt);
 
         RegisteredListener transformer = this.registerTransformer(entity.getType(), entity);
         Vector velocity = entity.getVelocity();
@@ -140,7 +140,7 @@ public class ProjectileLaunchAction extends EntitySpawnAction<Projectile>
         EventListenerUtils.getListeners(ProjectileLaunchEvent.class).unregister(listener);
     }
 
-    private ProjectileSource convertProjectileSource(ProjectileSourceStructure structure, ScenarioEngine engine)
+    private ProjectileSource convertProjectileSource(ProjectileSourceStructure structure, ActionContext ctxt)
     {
         if (structure instanceof SelectorProjectileSourceStructure)
         {
@@ -155,14 +155,14 @@ public class ProjectileLaunchAction extends EntitySpawnAction<Projectile>
         else if (structure instanceof EntityStructure)
         {
             EntityStructure entity = (EntityStructure) structure;
-            return (ProjectileSource) EntityUtils.getEntity(entity, engine, e -> e instanceof ProjectileSource);
+            return (ProjectileSource) EntityUtils.getEntity(entity, ctxt.getEngine(), e -> e instanceof ProjectileSource);
         }
         else if (structure instanceof BlockStructure)
         {
             BlockStructure blockStructure = (BlockStructure) structure;
             if (blockStructure.getLocation() == null)
                 throw new IllegalArgumentException("BlockStructure must have location");
-            Block block = Utils.assignWorldToBlockLocation(blockStructure, engine).getBlock();
+            Block block = Utils.assignWorldToBlockLocation(blockStructure, ctxt.getEngine()).getBlock();
             return getBlockProjectileSource(block);
         }
         else

@@ -1,6 +1,5 @@
 package org.kunlab.scenamatica.interfaces.action;
 
-import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.enums.WatchType;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
@@ -37,8 +36,7 @@ public interface ActionRunManager
      * @param action    監視する動作
      * @param watchType 監視の種類です。
      */
-    void queueWatch(@NotNull Plugin plugin,
-                    @NotNull ScenarioEngine engine,
+    void queueWatch(@NotNull ScenarioEngine engine,
                     @NotNull ScenarioFileStructure scenario,
                     @NotNull CompiledAction action,
                     @NotNull WatchType watchType);

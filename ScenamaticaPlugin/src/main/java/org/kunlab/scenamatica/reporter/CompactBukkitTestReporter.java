@@ -1,7 +1,7 @@
 package org.kunlab.scenamatica.reporter;
 
 import org.jetbrains.annotations.NotNull;
-import org.kunlab.scenamatica.interfaces.action.CompiledAction;
+import org.kunlab.scenamatica.interfaces.action.ActionResult;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioResult;
 import org.kunlab.scenamatica.interfaces.scenario.runtime.CompiledScenarioAction;
@@ -24,13 +24,13 @@ public class CompactBukkitTestReporter extends BukkitTestReporter
     }
 
     @Override
-    public void onActionSuccess(@NotNull ScenarioEngine engine, @NotNull CompiledAction action)
+    public void onActionSuccess(@NotNull ScenarioEngine engine, @NotNull ActionResult result)
     {
         // 握りつぶす
     }
 
     @Override
-    public void onWatchingActionExecuted(@NotNull ScenarioEngine engine, @NotNull CompiledAction action)
+    public void onWatchingActionExecuted(@NotNull ScenarioEngine engine, @NotNull ActionResult result)
     {
         // 握りつぶす
     }

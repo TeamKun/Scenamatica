@@ -7,10 +7,10 @@ import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.action.actions.AbstractAction;
 import org.kunlab.scenamatica.action.actions.player.bucket.AbstractPlayerBucketAction;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
-import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.PlayerSpecifier;
 
 import java.util.ArrayList;
@@ -58,20 +58,20 @@ public abstract class AbstractPlayerAction extends AbstractAction
         return actions;
     }
 
-    public static Player selectTarget(@NotNull InputBoard argument, @NotNull ScenarioEngine engine)
+    public static Player selectTarget(@NotNull ActionContext ctxt)
     {
-        return argument.get(IN_TARGET).selectTarget(engine.getContext())
+        return ctxt.input(IN_TARGET).selectTarget(ctxt.getContext())
                 .orElseThrow(() -> new IllegalArgumentException("Cannot select target for this action, please specify the target with valid specifier."));
     }
 
-    public boolean checkMatchedPlayerEvent(@NotNull InputBoard argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public boolean checkMatchedPlayerEvent(@NotNull ActionContext ctxt, @NotNull Event event)
     {
         if (!(event instanceof PlayerEvent))
             return false;
         PlayerEvent e = (PlayerEvent) event;
         Player player = e.getPlayer();
 
-        return argument.ifPresent(IN_TARGET, target -> target.checkMatchedPlayer(player));
+        return ctxt.ifHasInput(IN_TARGET, target -> target.checkMatchedPlayer(player));
     }
 
     @Override

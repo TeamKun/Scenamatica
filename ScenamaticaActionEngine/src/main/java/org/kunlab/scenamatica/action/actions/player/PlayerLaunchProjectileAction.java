@@ -23,11 +23,11 @@ import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.commons.utils.Utils;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
-import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.misc.LocationStructure;
 
 import java.util.Collections;
@@ -59,19 +59,19 @@ public class PlayerLaunchProjectileAction extends AbstractPlayerAction
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @NotNull InputBoard argument)
+    public void execute(@NotNull ActionContext ctxt)
     {
-        Player player = selectTarget(argument, engine);
-        ProjectileType type = argument.get(IN_PROJECTILE_TYPE);
-        Vector velocity = argument.get(IN_VELOCITY).create().toVector();
+        Player player = selectTarget(ctxt);
+        ProjectileType type = ctxt.input(IN_PROJECTILE_TYPE);
+        Vector velocity = ctxt.input(IN_VELOCITY).create().toVector();
 
         player.launchProjectile(type.getClazz(), velocity);
     }
 
     @Override
-    public boolean isFired(@NotNull InputBoard argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public boolean checkFired(@NotNull ActionContext ctxt, @NotNull Event event)
     {
-        if (!super.checkMatchedPlayerEvent(argument, engine, event))
+        if (!super.checkMatchedPlayerEvent(ctxt, event))
             return false;
 
         assert event instanceof PlayerLaunchProjectileEvent;
@@ -80,10 +80,10 @@ public class PlayerLaunchProjectileAction extends AbstractPlayerAction
         ProjectileType projectileType = ProjectileType.fromProjectile(e.getProjectile());
         Vector velocity = e.getProjectile().getVelocity().clone();
 
-        return argument.ifPresent(IN_PROJECTILE_TYPE, type -> type == projectileType)
-                && argument.ifPresent(
+        return ctxt.ifHasInput(IN_PROJECTILE_TYPE, type -> type == projectileType)
+                && ctxt.ifHasInput(
                 IN_VELOCITY,
-                loc -> Utils.vectorEquals(loc.create().toVector(), velocity, argument.get(IN_EPSILON))
+                loc -> Utils.vectorEquals(loc.create().toVector(), velocity, ctxt.input(IN_EPSILON))
         );
     }
 

@@ -5,10 +5,10 @@ import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.action.actions.world.AbstractWorldAction;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
-import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 
 import java.util.Collections;
 import java.util.List;
@@ -37,17 +37,17 @@ public class WorldBorderChangedAction extends AbstractWorldAction
     }
 
     @Override
-    public boolean isFired(@NotNull InputBoard argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public boolean checkFired(@NotNull ActionContext ctxt, @NotNull Event event)
     {
-        if (!super.isFired(argument, engine, event))
+        if (!super.checkFired(ctxt, event))
             return false;
 
         assert event instanceof WorldBorderBoundsChangeFinishEvent;
         WorldBorderBoundsChangeFinishEvent e = (WorldBorderBoundsChangeFinishEvent) event;
 
-        return argument.ifPresent(IN_SIZE, size -> size == e.getNewSize())
-                && argument.ifPresent(IN_SIZE_OLD, sizeOld -> sizeOld == e.getOldSize())
-                && argument.ifPresent(IN_DURATION, duration -> duration == e.getDuration());
+        return ctxt.ifHasInput(IN_SIZE, size -> size == e.getNewSize())
+                && ctxt.ifHasInput(IN_SIZE_OLD, sizeOld -> sizeOld == e.getOldSize())
+                && ctxt.ifHasInput(IN_DURATION, duration -> duration == e.getDuration());
     }
 
     @Override

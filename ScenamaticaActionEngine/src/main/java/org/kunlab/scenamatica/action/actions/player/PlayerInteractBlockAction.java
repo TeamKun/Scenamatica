@@ -8,14 +8,13 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.jetbrains.annotations.NotNull;
-import org.kunlab.scenamatica.commons.utils.PlayerUtils;
 import org.kunlab.scenamatica.commons.utils.Utils;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
-import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.misc.BlockStructure;
 
 import java.util.Collections;
@@ -46,15 +45,15 @@ public class PlayerInteractBlockAction extends AbstractPlayerAction
             BlockFace.class
     );
 
-    private static Block getClickBlock(ScenarioEngine engine, InputBoard argument)
+    private static Block getClickBlock(ActionContext ctxt)
     {
         Location clickPos;
-        if (argument.isPresent(IN_BLOCK) && argument.ifPresent(IN_BLOCK, b -> b.getLocation() != null, false))  // 指定があったらその位置をクリックする
-            clickPos = argument.get(IN_BLOCK).getLocation().create();
+        if (ctxt.hasInput(IN_BLOCK) && ctxt.ifHasInput(IN_BLOCK, b -> b.getLocation() != null, false))  // 指定があったらその位置をクリックする
+            clickPos = ctxt.input(IN_BLOCK).getLocation().create();
         else  // 指定がなかったら自身の位置をクリックする(しかない)
-            clickPos = selectTarget(argument, engine).getLocation().toBlockLocation();
+            clickPos = selectTarget(ctxt).getLocation().toBlockLocation();
 
-        Location normalizedPos = Utils.assignWorldToLocation(clickPos, engine);
+        Location normalizedPos = Utils.assignWorldToLocation(clickPos, ctxt.getEngine());
         return normalizedPos.getWorld().getBlockAt(normalizedPos);
     }
 
@@ -65,37 +64,37 @@ public class PlayerInteractBlockAction extends AbstractPlayerAction
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @NotNull InputBoard argument)
+    public void execute(@NotNull ActionContext ctxt)
     {
-        Action action = argument.get(IN_ACTION);
+        Action action = ctxt.input(IN_ACTION);
 
         // 引数の検証を行う( validateArgument() はランタイムではないのでこちら側でやるしかない。)
-        Block clickBlock = getClickBlock(engine, argument);
+        Block clickBlock = getClickBlock(ctxt);
         if ((action == Action.LEFT_CLICK_AIR || action == Action.RIGHT_CLICK_AIR) && !clickBlock.getType().isAir())
             throw new IllegalArgumentException("Argument action is not allowed to be LEFT_CLICK_AIR or RIGHT_CLICK_AIR when the target block is not air");
         else if ((action == Action.LEFT_CLICK_BLOCK || action == Action.RIGHT_CLICK_BLOCK) && clickBlock.getType().isAir())
             throw new IllegalArgumentException("Argument action is not allowed to be LEFT_CLICK_BLOCK or RIGHT_CLICK_BLOCK when the target block is air");
 
-        PlayerUtils.getActorOrThrow(engine, selectTarget(argument, engine))
+        ctxt.getActorOrThrow(selectTarget(ctxt))
                 .interactAt(
                         action,
-                        getClickBlock(engine, argument)
+                        getClickBlock(ctxt)
                 );
     }
 
     @Override
-    public boolean isFired(@NotNull InputBoard argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public boolean checkFired(@NotNull ActionContext ctxt, @NotNull Event event)
     {
-        if (!super.checkMatchedPlayerEvent(argument, engine, event))
+        if (!super.checkMatchedPlayerEvent(ctxt, event))
             return false;
 
         assert event instanceof PlayerInteractEvent;
         PlayerInteractEvent e = (PlayerInteractEvent) event;
 
-        return argument.ifPresent(IN_ACTION, action -> action == e.getAction())
-                && argument.ifPresent(IN_HAND, hand -> hand == e.getHand())
-                && argument.ifPresent(IN_BLOCK, block -> block.isAdequate(e.getClickedBlock()))
-                && argument.ifPresent(IN_BLOCK_FACE, face -> face == e.getBlockFace());
+        return ctxt.ifHasInput(IN_ACTION, action -> action == e.getAction())
+                && ctxt.ifHasInput(IN_HAND, hand -> hand == e.getHand())
+                && ctxt.ifHasInput(IN_BLOCK, block -> block.isAdequate(e.getClickedBlock()))
+                && ctxt.ifHasInput(IN_BLOCK_FACE, face -> face == e.getBlockFace());
     }
 
     @Override

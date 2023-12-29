@@ -12,10 +12,10 @@ import org.kunlab.scenamatica.action.actions.world.border.WorldBorderAction;
 import org.kunlab.scenamatica.action.actions.world.border.WorldBorderChangedAction;
 import org.kunlab.scenamatica.commons.utils.NamespaceUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
-import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,14 +47,14 @@ public abstract class AbstractWorldAction extends AbstractAction
     }
 
     @Override
-    public boolean isFired(@NotNull InputBoard argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public boolean checkFired(@NotNull ActionContext ctxt, @NotNull Event event)
     {
         if (!(event instanceof WorldEvent))
             return false;
 
         WorldEvent e = (WorldEvent) event;
 
-        return e.getWorld().getKey().equals(this.getWorldNonNull(argument, engine).getKey());
+        return e.getWorld().getKey().equals(this.getWorldNonNull(ctxt).getKey());
     }
 
     @Override
@@ -63,9 +63,9 @@ public abstract class AbstractWorldAction extends AbstractAction
         return ofInputs(type, IN_WORLD);
     }
 
-    public World getWorld(InputBoard argument)
+    public World getWorld(ActionContext ctxt)
     {
-        NamespacedKey key = argument.get(IN_WORLD);
+        NamespacedKey key = ctxt.input(IN_WORLD);
         World world = null;
         if (key == null || (world = Bukkit.getWorld(key)) != null)
             return world;
@@ -76,11 +76,11 @@ public abstract class AbstractWorldAction extends AbstractAction
         return null;
     }
 
-    public World getWorldNonNull(InputBoard argument, ScenarioEngine engine)
+    public World getWorldNonNull(ActionContext ctxt)
     {
-        if (!argument.isPresent(IN_WORLD))
-            return engine.getContext().getStage().getWorld();
+        if (!ctxt.hasInput(IN_WORLD))
+            return ctxt.getContext().getStage().getWorld();
 
-        return this.getWorld(argument);
+        return this.getWorld(ctxt);
     }
 }

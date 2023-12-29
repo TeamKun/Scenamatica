@@ -5,11 +5,11 @@ import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerChatEvent;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
-import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 
 import java.util.Collections;
 import java.util.List;
@@ -35,23 +35,23 @@ public class PlayerChatAction extends AbstractPlayerAction
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @NotNull InputBoard argument)
+    public void execute(@NotNull ActionContext ctxt)
     {
-        Player p = selectTarget(argument, engine);
-        p.chat(argument.get(IN_MESSAGE));
+        Player p = selectTarget(ctxt);
+        p.chat(ctxt.input(IN_MESSAGE));
     }
 
     @Override
-    public boolean isFired(@NotNull InputBoard argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public boolean checkFired(@NotNull ActionContext ctxt, @NotNull Event event)
     {
-        if (!super.checkMatchedPlayerEvent(argument, engine, event))
+        if (!super.checkMatchedPlayerEvent(ctxt, event))
             return false;
 
         assert event instanceof PlayerChatEvent;
         PlayerChatEvent playerChatEvent = (PlayerChatEvent) event;
 
-        return argument.ifPresent(IN_MESSAGE, playerChatEvent.getMessage()::matches)
-                && argument.ifPresent(IN_FORMAT, playerChatEvent.getFormat()::matches);
+        return ctxt.ifHasInput(IN_MESSAGE, playerChatEvent.getMessage()::matches)
+                && ctxt.ifHasInput(IN_FORMAT, playerChatEvent.getFormat()::matches);
     }
 
     @Override

@@ -10,11 +10,11 @@ import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
-import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.entity.entities.EntityItemStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.EntitySpecifier;
 
@@ -42,9 +42,9 @@ public class EntityPickupItemAction extends AbstractGeneralEntityAction
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @NotNull InputBoard argument)
+    public void execute(@NotNull ActionContext ctxt)
     {
-        Entity target = this.selectTarget(argument, engine);
+        Entity target = this.selectTarget(ctxt);
         if (!(target instanceof LivingEntity))
             throw new IllegalArgumentException("Target is not living entity.");
 
@@ -52,10 +52,10 @@ public class EntityPickupItemAction extends AbstractGeneralEntityAction
         if (!leTarget.getCanPickupItems())
             throw new IllegalStateException("The target cannot pickup items (LivingEntity#getCanPickupItems() is false).");
 
-        EntitySpecifier<Item> itemSpecifier = argument.get(IN_ITEM);
+        EntitySpecifier<Item> itemSpecifier = ctxt.input(IN_ITEM);
         Item item;  // TODO: 統一？
         if (itemSpecifier.isSelectable())
-            item = itemSpecifier.selectTarget(engine.getContext())
+            item = itemSpecifier.selectTarget(ctxt.getContext())
                     .orElseThrow(() -> new IllegalStateException("Item is not found."));
         else
         {
@@ -99,15 +99,15 @@ public class EntityPickupItemAction extends AbstractGeneralEntityAction
     }
 
     @Override
-    public boolean isFired(@NotNull InputBoard argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public boolean checkFired(@NotNull ActionContext ctxt, @NotNull Event event)
     {
-        if (!super.checkMatchedEntityEvent(argument, engine, event))
+        if (!super.checkMatchedEntityEvent(ctxt, event))
             return false;
 
         EntityPickupItemEvent e = (EntityPickupItemEvent) event;
 
-        return argument.ifPresent(IN_REMAINING, remaining -> remaining.equals(e.getRemaining()))
-                && argument.ifPresent(IN_ITEM, item -> item.checkMatchedEntity(e.getItem()));
+        return ctxt.ifHasInput(IN_REMAINING, remaining -> remaining.equals(e.getRemaining()))
+                && ctxt.ifHasInput(IN_ITEM, item -> item.checkMatchedEntity(e.getItem()));
     }
 
     @Override

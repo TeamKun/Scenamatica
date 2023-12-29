@@ -4,6 +4,7 @@ import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.events.MilestoneReachedEvent;
+import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
@@ -35,17 +36,18 @@ public class MilestoneAction extends AbstractScenamaticaAction
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @NotNull InputBoard argument)
+    public void execute(@NotNull ActionContext ctxt)
     {
-        String name = argument.get(IN_NAME);
-        if (argument.ifPresent(IN_REACHED, reached -> reached))
+        ScenarioEngine engine = ctxt.getEngine();
+        String name = ctxt.input(IN_NAME);
+        if (ctxt.ifHasInput(IN_REACHED, reached -> reached))
             engine.getManager().getMilestoneManager().reachMilestone(engine, name);
         else
             engine.getManager().getMilestoneManager().revokeMilestone(engine, name);
     }
 
     @Override
-    public boolean isFired(@NotNull InputBoard argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public boolean checkFired(@NotNull ActionContext ctxt, @NotNull Event event)
     {
         assert event instanceof MilestoneReachedEvent;
         MilestoneReachedEvent e = (MilestoneReachedEvent) event;
@@ -53,8 +55,8 @@ public class MilestoneAction extends AbstractScenamaticaAction
         boolean condition = !e.isCancelled();
         MilestoneEntry milestone = e.getMilestone();
 
-        return argument.ifPresent(IN_NAME, name -> name.equalsIgnoreCase(milestone.getName()))
-                && argument.ifPresent(IN_REACHED, reached -> reached == condition);
+        return ctxt.ifHasInput(IN_NAME, name -> name.equalsIgnoreCase(milestone.getName()))
+                && ctxt.ifHasInput(IN_REACHED, reached -> reached == condition);
     }
 
     @Override
@@ -66,10 +68,10 @@ public class MilestoneAction extends AbstractScenamaticaAction
     }
 
     @Override
-    public boolean isConditionFulfilled(@NotNull InputBoard argument, @NotNull ScenarioEngine engine)
+    public boolean checkConditionFulfilled(@NotNull ActionContext ctxt)
     {
-        boolean isMilestoneReached = engine.getManager().getMilestoneManager().isReached(engine, argument.get(IN_NAME));
-        boolean expected = argument.orElse(IN_REACHED, () -> true);
+        boolean isMilestoneReached = ctxt.getEngine().getManager().getMilestoneManager().isReached(ctxt.getEngine(), ctxt.input(IN_NAME));
+        boolean expected = ctxt.orElseInput(IN_REACHED, () -> true);
         return isMilestoneReached == expected;
     }
 

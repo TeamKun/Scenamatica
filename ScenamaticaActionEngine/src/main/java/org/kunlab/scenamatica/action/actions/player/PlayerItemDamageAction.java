@@ -8,15 +8,14 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
-import org.kunlab.scenamatica.commons.utils.PlayerUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.context.Actor;
-import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.ItemStackStructure;
 
 import java.util.Arrays;
@@ -48,12 +47,12 @@ public class PlayerItemDamageAction extends AbstractPlayerAction
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @NotNull InputBoard argument)
+    public void execute(@NotNull ActionContext ctxt)
     {
-        Actor actor = PlayerUtils.getActorOrThrow(engine, selectTarget(argument, engine));
-        EquipmentSlot slot = argument.orElse(IN_SLOT, () -> EquipmentSlot.HAND);
+        Actor actor = ctxt.getActorOrThrow(selectTarget(ctxt));
+        EquipmentSlot slot = ctxt.orElseInput(IN_SLOT, () -> EquipmentSlot.HAND);
 
-        argument.runIfPresent(IN_ITEM, item -> actor.getPlayer().getInventory().setItem(slot, item.create()));
+        ctxt.runIfHasInput(IN_ITEM, item -> actor.getPlayer().getInventory().setItem(slot, item.create()));
 
         ItemStack itemStack = actor.getPlayer().getInventory().getItem(slot);
         if (itemStack == null)
@@ -61,19 +60,19 @@ public class PlayerItemDamageAction extends AbstractPlayerAction
         else if (!(itemStack.getItemMeta() instanceof Damageable))
             throw new IllegalStateException("Target item in slot " + slot + " is not Damageable");
 
-        actor.damageItem(slot, argument.get(IN_DAMAGE));
+        actor.damageItem(slot, ctxt.input(IN_DAMAGE));
     }
 
     @Override
-    public boolean isFired(@NotNull InputBoard argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public boolean checkFired(@NotNull ActionContext ctxt, @NotNull Event event)
     {
-        if (!super.checkMatchedPlayerEvent(argument, engine, event))
+        if (!super.checkMatchedPlayerEvent(ctxt, event))
             return false;
 
         PlayerItemDamageEvent e = (PlayerItemDamageEvent) event;
 
-        return argument.ifPresent(IN_ITEM, item -> item.isAdequate(e.getItem()))
-                && argument.ifPresent(IN_DAMAGE, damage -> damage == e.getDamage());
+        return ctxt.ifHasInput(IN_ITEM, item -> item.isAdequate(e.getItem()))
+                && ctxt.ifHasInput(IN_DAMAGE, damage -> damage == e.getDamage());
     }
 
     @Override
@@ -85,17 +84,17 @@ public class PlayerItemDamageAction extends AbstractPlayerAction
     }
 
     @Override
-    public boolean isConditionFulfilled(@NotNull InputBoard argument, @NotNull ScenarioEngine engine)
+    public boolean checkConditionFulfilled(@NotNull ActionContext ctxt)
     {
-        Player player = selectTarget(argument, engine);
+        Player player = selectTarget(ctxt);
 
         List<EquipmentSlot> slotToCheck;
-        if (argument.isPresent(IN_SLOT))
-            slotToCheck = Collections.singletonList(argument.get(IN_SLOT));
+        if (ctxt.hasInput(IN_SLOT))
+            slotToCheck = Collections.singletonList(ctxt.input(IN_SLOT));
         else
             slotToCheck = Arrays.asList(EquipmentSlot.values());
 
-        int expectedDamage = argument.get(IN_DAMAGE);
+        int expectedDamage = ctxt.input(IN_DAMAGE);
         for (EquipmentSlot slot : slotToCheck)
         {
             ItemStack item = player.getInventory().getItem(slot);
@@ -107,7 +106,7 @@ public class PlayerItemDamageAction extends AbstractPlayerAction
                 continue;
             Damageable damageable = (Damageable) meta;
 
-            if (!argument.ifPresent(IN_ITEM, itemStructure -> itemStructure.isAdequate(item)))
+            if (!ctxt.ifHasInput(IN_ITEM, itemStructure -> itemStructure.isAdequate(item)))
                 continue;
 
             if (expectedDamage == damageable.getDamage())

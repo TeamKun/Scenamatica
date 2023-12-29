@@ -6,14 +6,13 @@ import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import org.kunlab.scenamatica.commons.utils.PlayerUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.context.Actor;
-import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.ItemStackStructure;
 
 import java.util.Collections;
@@ -47,12 +46,12 @@ public class PlayerItemConsumeAction extends AbstractPlayerAction
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @NotNull InputBoard argument)
+    public void execute(@NotNull ActionContext ctxt)
     {
-        Actor actor = PlayerUtils.getActorOrThrow(engine, selectTarget(argument, engine));
+        Actor actor = ctxt.getActorOrThrow(selectTarget(ctxt));
 
-        if (argument.isPresent(IN_ITEM))
-            actor.getPlayer().getInventory().setItemInMainHand(argument.get(IN_ITEM).create());
+        if (ctxt.hasInput(IN_ITEM))
+            actor.getPlayer().getInventory().setItemInMainHand(ctxt.input(IN_ITEM).create());
         else if (!isConsumable(actor.getPlayer().getInventory().getItemInMainHand()))
             throw new IllegalArgumentException("The item in the main hand is not consumable.");
 
@@ -61,9 +60,9 @@ public class PlayerItemConsumeAction extends AbstractPlayerAction
     }
 
     @Override
-    public boolean isFired(@NotNull InputBoard argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public boolean checkFired(@NotNull ActionContext ctxt, @NotNull Event event)
     {
-        if (!super.checkMatchedPlayerEvent(argument, engine, event))
+        if (!super.checkMatchedPlayerEvent(ctxt, event))
             return false;
 
         assert event instanceof PlayerItemConsumeEvent;
@@ -72,8 +71,8 @@ public class PlayerItemConsumeAction extends AbstractPlayerAction
         ItemStack item = e.getItem();
         ItemStack replacement = e.getReplacement();
 
-        return argument.ifPresent(IN_ITEM, i -> i.isAdequate(item))
-                && argument.ifPresent(IN_REPLACEMENT, r -> r.isAdequate(replacement));
+        return ctxt.ifHasInput(IN_ITEM, i -> i.isAdequate(item))
+                && ctxt.ifHasInput(IN_REPLACEMENT, r -> r.isAdequate(replacement));
     }
 
     @Override

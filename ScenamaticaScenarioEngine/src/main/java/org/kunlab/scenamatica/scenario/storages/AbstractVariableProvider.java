@@ -10,7 +10,7 @@ import java.util.function.Function;
 
 public abstract class AbstractVariableProvider
 {
-    public static String KEY_SEPARATOR = ".";
+    public static String KEY_SEPARATOR = ".".replace(".", "\\.");
 
     private final Map<String, Object> map;
 

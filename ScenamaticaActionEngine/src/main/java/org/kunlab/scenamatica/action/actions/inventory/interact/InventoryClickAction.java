@@ -8,14 +8,13 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import org.kunlab.scenamatica.commons.utils.PlayerUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.context.Actor;
-import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.ItemStackStructure;
 
 import java.util.Collections;
@@ -70,24 +69,24 @@ public class InventoryClickAction extends AbstractInventoryInteractAction
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @NotNull InputBoard argument)
+    public void execute(@NotNull ActionContext ctxt)
     {
-        Player target = argument.get(IN_PLAYER).selectTarget(engine.getContext())
+        Player target = ctxt.input(IN_PLAYER).selectTarget(ctxt.getContext())
                 .orElseThrow(() -> new IllegalStateException("Target is not found."));
-        Actor actor = PlayerUtils.getActorOrThrow(engine, target);
-        ClickType type = argument.get(IN_CLICK_TYPE);
+        Actor actor = ctxt.getActorOrThrow(target);
+        ClickType type = ctxt.input(IN_CLICK_TYPE);
 
-        if (argument.isPresent(IN_INVENTORY))
-            target.openInventory(argument.get(IN_INVENTORY).create());
+        if (ctxt.hasInput(IN_INVENTORY))
+            target.openInventory(ctxt.input(IN_INVENTORY).create());
 
-        Integer slot = argument.orElse(IN_SLOT, () -> {
-            if (argument.orElse(IN_SLOT_TYPE, () -> null) == InventoryType.SlotType.OUTSIDE)
+        Integer slot = ctxt.orElseInput(IN_SLOT, () -> {
+            if (ctxt.orElseInput(IN_SLOT_TYPE, () -> null) == InventoryType.SlotType.OUTSIDE)
                 return -999;
             else
-                return target.getOpenInventory().convertSlot(argument.get(IN_RAW_SLOT));
+                return target.getOpenInventory().convertSlot(ctxt.input(IN_RAW_SLOT));
         });
 
-        Integer button = argument.orElse(IN_BUTTON, () -> {
+        Integer button = ctxt.orElseInput(IN_BUTTON, () -> {
             switch (type)
             {
                 case LEFT:
@@ -103,7 +102,7 @@ public class InventoryClickAction extends AbstractInventoryInteractAction
 
         assert button != null;
 
-        ItemStack clicked = argument.ifPresent(IN_CLICKED_ITEM, ItemStackStructure::create, null);
+        ItemStack clicked = ctxt.ifHasInput(IN_CLICKED_ITEM, ItemStackStructure::create, null);
 
         actor.clickInventory(
                 type,
@@ -114,21 +113,21 @@ public class InventoryClickAction extends AbstractInventoryInteractAction
     }
 
     @Override
-    public boolean isFired(@NotNull InputBoard argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public boolean checkFired(@NotNull ActionContext ctxt, @NotNull Event event)
     {
-        if (!super.checkMatchedInventoryInteractEvent(argument, engine, event))
+        if (!super.checkMatchedInventoryInteractEvent(ctxt, event))
             return false;
 
         InventoryClickEvent e = (InventoryClickEvent) event;
 
-        return argument.ifPresent(IN_CLICK_TYPE, type -> type == e.getClick())
-                && argument.ifPresent(IN_INVENTORY_ACTION, action -> action == e.getAction())
-                && argument.ifPresent(IN_SLOT_TYPE, slotType -> slotType == e.getSlotType())
-                && argument.ifPresent(IN_SLOT, slot -> slot == e.getSlot())
-                && argument.ifPresent(IN_RAW_SLOT, rawSlot -> rawSlot == e.getRawSlot())
-                && argument.ifPresent(IN_CLICKED_ITEM, clickedItem -> clickedItem.isAdequate(e.getCurrentItem()))
-                && argument.ifPresent(IN_BUTTON, button -> button == e.getHotbarButton())
-                && argument.ifPresent(IN_CURSOR_ITEM, cursorItem -> cursorItem.isAdequate(e.getCursor()));
+        return ctxt.ifHasInput(IN_CLICK_TYPE, type -> type == e.getClick())
+                && ctxt.ifHasInput(IN_INVENTORY_ACTION, action -> action == e.getAction())
+                && ctxt.ifHasInput(IN_SLOT_TYPE, slotType -> slotType == e.getSlotType())
+                && ctxt.ifHasInput(IN_SLOT, slot -> slot == e.getSlot())
+                && ctxt.ifHasInput(IN_RAW_SLOT, rawSlot -> rawSlot == e.getRawSlot())
+                && ctxt.ifHasInput(IN_CLICKED_ITEM, clickedItem -> clickedItem.isAdequate(e.getCurrentItem()))
+                && ctxt.ifHasInput(IN_BUTTON, button -> button == e.getHotbarButton())
+                && ctxt.ifHasInput(IN_CURSOR_ITEM, cursorItem -> cursorItem.isAdequate(e.getCursor()));
     }
 
     @Override

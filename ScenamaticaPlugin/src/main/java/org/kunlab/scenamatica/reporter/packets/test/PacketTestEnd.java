@@ -40,7 +40,7 @@ public class PacketTestEnd extends AbstractTestPacket
 
         this.scenario = result.getScenario();
         this.state = result.getState();
-        this.cause = result.getScenarioResultCause();
+        this.cause = result.getCause();
         this.startedAt = result.getStartedAt();
         this.finishedAt = result.getFinishedAt();
         this.attemptOf = result.getAttemptOf();

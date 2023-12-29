@@ -9,15 +9,14 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import org.kunlab.scenamatica.commons.utils.PlayerUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.context.Actor;
-import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.misc.BlockStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.PlayerSpecifier;
 
@@ -58,24 +57,24 @@ public class BlockPlaceAction extends AbstractBlockAction
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @NotNull InputBoard argument)
+    public void execute(@NotNull ActionContext ctxt)
     {
-        BlockStructure blockDef = argument.get(IN_BLOCK);
-        Location location = this.getBlockLocationWithWorld(blockDef, engine);
+        BlockStructure blockDef = ctxt.input(IN_BLOCK);
+        Location location = this.getBlockLocationWithWorld(blockDef, ctxt);
 
         Block block;
-        if (!argument.isPresent(IN_ACTOR))
+        if (!ctxt.hasInput(IN_ACTOR))
         {
             block = location.getBlock();
             block.setType(blockDef.getType());
         }
         else
         {
-            BlockFace direction = argument.orElse(IN_DIRECTION, () -> BlockFace.EAST);
-            EquipmentSlot hand = argument.orElse(IN_HAND, () -> EquipmentSlot.HAND);
+            BlockFace direction = ctxt.orElseInput(IN_DIRECTION, () -> BlockFace.EAST);
+            EquipmentSlot hand = ctxt.orElseInput(IN_HAND, () -> EquipmentSlot.HAND);
 
-            Player actor = argument.get(IN_ACTOR).selectTarget(engine.getContext()).orElse(null);
-            Actor scenarioActor = PlayerUtils.getActorOrThrow(engine, actor);
+            Player actor = ctxt.input(IN_ACTOR).selectTarget(ctxt.getContext()).orElse(null);
+            Actor scenarioActor = ctxt.getActorOrThrow(actor);
             scenarioActor.placeBlock(
                     location,
                     new ItemStack(blockDef.getType()),  // assert blockDef.getType() != null
@@ -91,17 +90,17 @@ public class BlockPlaceAction extends AbstractBlockAction
     }
 
     @Override
-    public boolean isFired(@NotNull InputBoard argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public boolean checkFired(@NotNull ActionContext ctxt, @NotNull Event event)
     {
-        if (!super.checkMatchedBlockEvent(argument, engine, event))
+        if (!super.checkMatchedBlockEvent(ctxt, event))
             return false;
 
         assert event instanceof BlockPlaceEvent;
         BlockPlaceEvent e = (BlockPlaceEvent) event;
 
-        return argument.ifPresent(IN_ACTOR, actor -> actor.checkMatchedPlayer(e.getPlayer()))
-                && argument.ifPresent(IN_HAND, hand -> hand == e.getHand())
-                && argument.ifPresent(IN_BLOCK, block -> this.isConditionFulfilled(argument, engine));
+        return ctxt.ifHasInput(IN_ACTOR, actor -> actor.checkMatchedPlayer(e.getPlayer()))
+                && ctxt.ifHasInput(IN_HAND, hand -> hand == e.getHand())
+                && ctxt.ifHasInput(IN_BLOCK, block -> block.isAdequate(e.getBlockPlaced()));
     }
 
     @Override
@@ -113,10 +112,10 @@ public class BlockPlaceAction extends AbstractBlockAction
     }
 
     @Override
-    public boolean isConditionFulfilled(@NotNull InputBoard argument, @NotNull ScenarioEngine engine)
+    public boolean checkConditionFulfilled(@NotNull ActionContext ctxt)
     {
-        BlockStructure blockDef = argument.get(IN_BLOCK);
-        Block block = this.getBlockLocationWithWorld(blockDef, engine).getBlock();
+        BlockStructure blockDef = ctxt.input(IN_BLOCK);
+        Block block = this.getBlockLocationWithWorld(blockDef, ctxt).getBlock();
 
         return blockDef.isAdequate(block);
     }

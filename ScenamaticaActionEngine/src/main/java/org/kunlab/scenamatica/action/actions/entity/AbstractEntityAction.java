@@ -4,13 +4,11 @@ import org.bukkit.entity.Entity;
 import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityEvent;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.actions.AbstractAction;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
-import org.kunlab.scenamatica.interfaces.context.Context;
-import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.entity.EntityStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.EntitySpecifier;
 
@@ -52,13 +50,13 @@ public abstract class AbstractEntityAction<E extends Entity> extends AbstractAct
         return actions;
     }
 
-    protected boolean checkMatchedEntityEvent(@NotNull InputBoard argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    protected boolean checkMatchedEntityEvent(@NotNull ActionContext ctxt, @NotNull Event event)
     {
         if (!(event instanceof EntityEvent))
             return false;
 
         EntityEvent e = (EntityEvent) event;
-        return argument.ifPresent(this.IN_TARGET_ENTITY, specifier -> specifier.checkMatchedEntity(e.getEntity()));
+        return ctxt.ifHasInput(this.IN_TARGET_ENTITY, specifier -> specifier.checkMatchedEntity(e.getEntity()));
     }
 
     @Override
@@ -74,14 +72,9 @@ public abstract class AbstractEntityAction<E extends Entity> extends AbstractAct
         return board;
     }
 
-    public E selectTarget(@NotNull InputBoard board, @Nullable Context context)
+    public E selectTarget(@NotNull ActionContext ctxt)
     {
-        return board.get(this.IN_TARGET_ENTITY).selectTarget(context)
+        return ctxt.input(this.IN_TARGET_ENTITY).selectTarget(ctxt.getContext())
                 .orElseThrow(() -> new IllegalStateException("Cannot select target for this action, please specify target with valid specifier."));
-    }
-
-    public E selectTarget(@NotNull InputBoard board, @NotNull ScenarioEngine engine)
-    {
-        return this.selectTarget(board, engine.getContext());
     }
 }

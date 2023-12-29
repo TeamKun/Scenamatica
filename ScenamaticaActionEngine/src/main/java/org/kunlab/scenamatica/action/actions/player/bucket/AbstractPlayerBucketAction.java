@@ -14,9 +14,9 @@ import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.actions.player.AbstractPlayerAction;
 import org.kunlab.scenamatica.action.utils.VoxelUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
-import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.ItemStackStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.misc.BlockStructure;
 
@@ -157,12 +157,12 @@ public abstract class AbstractPlayerBucketAction extends AbstractPlayerAction
         }
     }
 
-    protected static ItemStack getBucket(Player player, InputBoard argument)
+    protected static ItemStack getBucket(Player player, ActionContext ctxt)
     {
         ItemStack stack;
-        if (argument.isPresent(IN_BUCKET))
+        if (ctxt.hasInput(IN_BUCKET))
         {
-            Material bucket = argument.get(IN_BUCKET);
+            Material bucket = ctxt.input(IN_BUCKET);
             stack = new ItemStack(bucket);
             if (!isBucketMaterial(stack.getType()))
                 throw new IllegalArgumentException("Item " + bucket + " is not a bucket.");
@@ -178,13 +178,13 @@ public abstract class AbstractPlayerBucketAction extends AbstractPlayerAction
         return stack;
     }
 
-    protected static Block getPlaceAt(Player player, InputBoard argument, ScenarioEngine engine)
+    protected static Block getPlaceAt(Player player, ActionContext ctxt)
     {
         Block applyBlock = null;
-        if (argument.isPresent(IN_BLOCK_CLICKED))
-            applyBlock = argument.get(IN_BLOCK_CLICKED).apply(engine, null);
-        else if (argument.isPresent(IN_BLOCK))
-            applyBlock = argument.get(IN_BLOCK).apply(engine, null);
+        if (ctxt.hasInput(IN_BLOCK_CLICKED))
+            applyBlock = ctxt.input(IN_BLOCK_CLICKED).apply(ctxt.getEngine(), null);
+        else if (ctxt.hasInput(IN_BLOCK))
+            applyBlock = ctxt.input(IN_BLOCK).apply(ctxt.getEngine(), null);
 
         if (applyBlock != null)
             return applyBlock;
@@ -196,10 +196,10 @@ public abstract class AbstractPlayerBucketAction extends AbstractPlayerAction
         return block;
     }
 
-    protected static BlockFace getDirection(Player player, Block placeAt, InputBoard argument)
+    protected static BlockFace getDirection(Player player, Block placeAt, ActionContext ctxt)
     {
-        if (argument.isPresent(IN_BLOCK_FACE))
-            return argument.get(IN_BLOCK_FACE);
+        if (ctxt.hasInput(IN_BLOCK_FACE))
+            return ctxt.input(IN_BLOCK_FACE);
         else
             return VoxelUtils.toFace(player.getEyeLocation(), placeAt.getLocation()).getOppositeFace();
     }
@@ -220,18 +220,18 @@ public abstract class AbstractPlayerBucketAction extends AbstractPlayerAction
     }
 
     @Override
-    public boolean isFired(@NotNull InputBoard argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public boolean checkFired(@NotNull ActionContext ctxt, @NotNull Event event)
     {
-        if (!super.checkMatchedPlayerEvent(argument, engine, event))
+        if (!super.checkMatchedPlayerEvent(ctxt, event))
             return false;
 
         PlayerBucketEvent e = (PlayerBucketEvent) event;
 
-        return argument.ifPresent(IN_ITEM, (item) -> item.isAdequate(e.getItemStack()))
-                && argument.ifPresent(IN_BLOCK, (block) -> block.isAdequate(e.getBlockClicked()))
-                && argument.ifPresent(IN_BLOCK_CLICKED, (block) -> block.isAdequate(e.getBlockClicked()))
-                && argument.ifPresent(IN_BLOCK_FACE, (face) -> face == e.getBlockFace())
-                && argument.ifPresent(IN_BUCKET, (bucket) -> bucket == e.getBucket())
-                && argument.ifPresent(IN_HAND, (hand) -> hand == e.getHand());
+        return ctxt.ifHasInput(IN_ITEM, (item) -> item.isAdequate(e.getItemStack()))
+                && ctxt.ifHasInput(IN_BLOCK, (block) -> block.isAdequate(e.getBlockClicked()))
+                && ctxt.ifHasInput(IN_BLOCK_CLICKED, (block) -> block.isAdequate(e.getBlockClicked()))
+                && ctxt.ifHasInput(IN_BLOCK_FACE, (face) -> face == e.getBlockFace())
+                && ctxt.ifHasInput(IN_BUCKET, (bucket) -> bucket == e.getBucket())
+                && ctxt.ifHasInput(IN_HAND, (hand) -> hand == e.getHand());
     }
 }

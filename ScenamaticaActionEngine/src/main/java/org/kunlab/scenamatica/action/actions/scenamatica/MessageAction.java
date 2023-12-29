@@ -7,11 +7,11 @@ import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.commons.utils.TextUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.events.actor.ActorMessageReceiveEvent;
+import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
-import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.PlayerSpecifier;
 
 import java.util.Collections;
@@ -41,23 +41,23 @@ public class MessageAction extends AbstractScenamaticaAction
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @NotNull InputBoard argument)
+    public void execute(@NotNull ActionContext ctxt)
     {
-        Player recipient = argument.get(IN_RECIPIENT).selectTarget(engine.getContext())
+        Player recipient = ctxt.input(IN_RECIPIENT).selectTarget(ctxt.getContext())
                 .orElseThrow(() -> new IllegalStateException("Cannot select target for this action, please specify target with valid specifier."));
 
-        recipient.sendMessage(argument.get(IN_MESSAGE));
+        recipient.sendMessage(ctxt.input(IN_MESSAGE));
     }
 
     @Override
-    public boolean isFired(@NotNull InputBoard argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public boolean checkFired(@NotNull ActionContext ctxt, @NotNull Event event)
     {
         assert event instanceof ActorMessageReceiveEvent;
         ActorMessageReceiveEvent e = (ActorMessageReceiveEvent) event;
 
         TextComponent message = e.getMessage();
-        return argument.ifPresent(IN_MESSAGE, content -> TextUtils.isSameContent(message, content))
-                && argument.ifPresent(IN_RECIPIENT, player -> player.checkMatchedPlayer(e.getPlayer()));
+        return ctxt.ifHasInput(IN_MESSAGE, content -> TextUtils.isSameContent(message, content))
+                && ctxt.ifHasInput(IN_RECIPIENT, player -> player.checkMatchedPlayer(e.getPlayer()));
     }
 
     @Override

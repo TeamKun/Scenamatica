@@ -8,6 +8,7 @@ import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.Action;
 import org.kunlab.scenamatica.interfaces.action.ActionCompiler;
+import org.kunlab.scenamatica.interfaces.action.ActionResult;
 import org.kunlab.scenamatica.interfaces.action.CompiledAction;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
@@ -22,7 +23,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
 public class ActionCompilerImpl implements ActionCompiler
 {
@@ -49,7 +49,7 @@ public class ActionCompilerImpl implements ActionCompiler
             NegateAction action,
             ActionStructure structure,
             BiConsumer<CompiledAction, Throwable> reportErrorTo,
-            Consumer<CompiledAction> onSuccess)
+            BiConsumer<ActionResult, ScenarioType> onSuccess)
     {
         Map<String, Object> arguments = structure.getArguments();
         if (arguments == null)
@@ -84,12 +84,11 @@ public class ActionCompilerImpl implements ActionCompiler
         }});
 
         return new CompiledActionImpl(
-                engine,
                 action,
-                negateArgument,
+                new ActionContextImpl(engine, negateArgument, engine.getPlugin().getLogger()),
+                structure,
                 reportErrorTo,
-                onSuccess,
-                structure
+                onSuccess
         );
     }
 
@@ -107,7 +106,7 @@ public class ActionCompilerImpl implements ActionCompiler
                                   @NotNull ScenarioType scenarioType,
                                   @NotNull ActionStructure structure,
                                   @Nullable BiConsumer<CompiledAction, Throwable> reportErrorTo,
-                                  @Nullable Consumer<CompiledAction> onSuccess)
+                                  @Nullable BiConsumer<ActionResult, ScenarioType> onSuccess)
     {
         StructureSerializer serializer = engine.getManager().getRegistry().getScenarioFileManager().getSerializer();
         Action action = getActionByName(structure.getType());
@@ -124,7 +123,13 @@ public class ActionCompilerImpl implements ActionCompiler
         if (!argument.hasUnresolvedReferences())
             argument.validate();
 
-        return new CompiledActionImpl(engine, action, argument, reportErrorTo, onSuccess, structure);
+        return new CompiledActionImpl(
+                action,
+                new ActionContextImpl(engine, argument, engine.getPlugin().getLogger()),
+                structure,
+                reportErrorTo,
+                onSuccess
+        );
     }
 
     @Override

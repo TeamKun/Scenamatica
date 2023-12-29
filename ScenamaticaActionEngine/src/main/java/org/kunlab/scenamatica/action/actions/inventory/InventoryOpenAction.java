@@ -7,11 +7,11 @@ import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
-import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.InventoryStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.PlayerSpecifier;
 
@@ -35,21 +35,21 @@ public class InventoryOpenAction extends AbstractInventoryAction
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @NotNull InputBoard argument)
+    public void execute(@NotNull ActionContext ctxt)
     {
-        Player player = argument.get(IN_PLAYER).selectTarget(engine.getContext())
+        Player player = ctxt.input(IN_PLAYER).selectTarget(ctxt.getContext())
                 .orElseThrow(() -> new IllegalStateException("Cannot select target for this action, please specify target with valid specifier."));
 
-        InventoryStructure inventoryStructure = argument.get(IN_INVENTORY);
+        InventoryStructure inventoryStructure = ctxt.input(IN_INVENTORY);
         Inventory inventory = inventoryStructure.create();
 
         player.openInventory(inventory);
     }
 
     @Override
-    public boolean isFired(@NotNull InputBoard argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public boolean checkFired(@NotNull ActionContext ctxt, @NotNull Event event)
     {
-        if (!super.checkMatchedInventoryEvent(argument, engine, event))
+        if (!super.checkMatchedInventoryEvent(ctxt, event))
             return false;
 
         assert event instanceof InventoryOpenEvent;
@@ -58,7 +58,7 @@ public class InventoryOpenAction extends AbstractInventoryAction
         if (!(player instanceof Player))
             return false;
 
-        return argument.ifPresent(IN_PLAYER, playerSpecifier -> playerSpecifier.checkMatchedPlayer((Player) player));
+        return ctxt.ifHasInput(IN_PLAYER, playerSpecifier -> playerSpecifier.checkMatchedPlayer((Player) player));
     }
 
     @Override

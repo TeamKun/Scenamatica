@@ -5,12 +5,12 @@ import org.bukkit.event.Event;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
-import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.PlayerSpecifier;
 
 import java.util.Collections;
@@ -62,12 +62,12 @@ public class PlayerDeathAction extends AbstractPlayerAction
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @NotNull InputBoard argument)
+    public void execute(@NotNull ActionContext ctxt)
     {
-        Player target = selectTarget(argument, engine);
+        Player target = selectTarget(ctxt);
 
-        argument.runIfPresent(IN_KILLER, killerSpecifier -> {
-            Player killer = killerSpecifier.selectTarget(engine.getContext())
+        ctxt.runIfHasInput(IN_KILLER, killerSpecifier -> {
+            Player killer = killerSpecifier.selectTarget(ctxt.getContext())
                     .orElseThrow(() -> new IllegalStateException("Cannot select target for this action, please specify target with valid specifier."));
             target.setKiller(killer);
         });
@@ -76,22 +76,22 @@ public class PlayerDeathAction extends AbstractPlayerAction
     }
 
     @Override
-    public boolean isFired(@NotNull InputBoard argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public boolean checkFired(@NotNull ActionContext ctxt, @NotNull Event event)
     {
         // assert !(event instanceof PlayerEvent);
 
         assert event instanceof PlayerDeathEvent;
         PlayerDeathEvent e = (PlayerDeathEvent) event;
 
-        return argument.ifPresent(IN_TARGET, target -> target.checkMatchedPlayer(e.getEntity()))
-                && argument.ifPresent(IN_KILLER, killer -> killer.checkMatchedPlayer(e.getEntity().getKiller()))
-                && argument.ifPresent(IN_DEATH_MESSAGE, msg -> Objects.equals(msg, e.getDeathMessage()))
-                && argument.ifPresent(IN_NEW_EXP, exp -> exp == e.getNewExp())
-                && argument.ifPresent(IN_NEW_LEVEL, level -> level == e.getNewLevel())
-                && argument.ifPresent(IN_NEW_TOTAL_EXP, totalExp -> totalExp == e.getNewTotalExp())
-                && argument.ifPresent(IN_KEEP_LEVEL, keepLevel -> keepLevel == e.getKeepLevel())
-                && argument.ifPresent(IN_KEEP_INVENTORY, keepInventory -> keepInventory == e.getKeepInventory())
-                && argument.ifPresent(IN_DO_EXP_DROP, doExpDrop -> doExpDrop == e.shouldDropExperience());
+        return ctxt.ifHasInput(IN_TARGET, target -> target.checkMatchedPlayer(e.getEntity()))
+                && ctxt.ifHasInput(IN_KILLER, killer -> killer.checkMatchedPlayer(e.getEntity().getKiller()))
+                && ctxt.ifHasInput(IN_DEATH_MESSAGE, msg -> Objects.equals(msg, e.getDeathMessage()))
+                && ctxt.ifHasInput(IN_NEW_EXP, exp -> exp == e.getNewExp())
+                && ctxt.ifHasInput(IN_NEW_LEVEL, level -> level == e.getNewLevel())
+                && ctxt.ifHasInput(IN_NEW_TOTAL_EXP, totalExp -> totalExp == e.getNewTotalExp())
+                && ctxt.ifHasInput(IN_KEEP_LEVEL, keepLevel -> keepLevel == e.getKeepLevel())
+                && ctxt.ifHasInput(IN_KEEP_INVENTORY, keepInventory -> keepInventory == e.getKeepInventory())
+                && ctxt.ifHasInput(IN_DO_EXP_DROP, doExpDrop -> doExpDrop == e.shouldDropExperience());
     }
 
     @Override
@@ -103,13 +103,13 @@ public class PlayerDeathAction extends AbstractPlayerAction
     }
 
     @Override
-    public boolean isConditionFulfilled(@NotNull InputBoard argument, @NotNull ScenarioEngine engine)
+    public boolean checkConditionFulfilled(@NotNull ActionContext ctxt)
     {
-        Player targetPlayer = selectTarget(argument, engine);
+        Player targetPlayer = selectTarget(ctxt);
         Player actualKiller = targetPlayer.getKiller();
 
         return targetPlayer.isDead()
-                && argument.ifPresent(IN_KILLER, killer -> killer.checkMatchedPlayer(actualKiller));
+                && ctxt.ifHasInput(IN_KILLER, killer -> killer.checkMatchedPlayer(actualKiller));
     }
 
     @Override

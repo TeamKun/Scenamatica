@@ -7,11 +7,11 @@ import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.action.utils.InputTypeToken;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
-import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 
 import java.util.Collections;
 import java.util.List;
@@ -37,11 +37,11 @@ public class WorldGameRuleAction extends AbstractWorldAction
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @NotNull InputBoard argument)
+    public void execute(@NotNull ActionContext ctxt)
     {
-        World world = super.getWorldNonNull(argument, engine);
-        GameRule<?> rule = argument.get(IN_GAME_RULE);
-        String value = argument.get(IN_VALUE);
+        World world = super.getWorldNonNull(ctxt);
+        GameRule<?> rule = ctxt.input(IN_GAME_RULE);
+        String value = ctxt.input(IN_VALUE);
 
         Class<?> type = rule.getType();
 
@@ -65,16 +65,16 @@ public class WorldGameRuleAction extends AbstractWorldAction
     }
 
     @Override
-    public boolean isFired(@NotNull InputBoard argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public boolean checkFired(@NotNull ActionContext ctxt, @NotNull Event event)
     {
-        if (!super.isFired(argument, engine, event))
+        if (!super.checkFired(ctxt, event))
             return false;
 
         assert event instanceof WorldGameRuleChangeEvent;
         WorldGameRuleChangeEvent e = (WorldGameRuleChangeEvent) event;
 
-        return argument.ifPresent(IN_GAME_RULE, rule -> rule.getName().equalsIgnoreCase(e.getGameRule().getName()))
-                && argument.ifPresent(IN_VALUE, value -> value.equalsIgnoreCase(e.getValue()));
+        return ctxt.ifHasInput(IN_GAME_RULE, rule -> rule.getName().equalsIgnoreCase(e.getGameRule().getName()))
+                && ctxt.ifHasInput(IN_VALUE, value -> value.equalsIgnoreCase(e.getValue()));
     }
 
     @Override
@@ -86,12 +86,12 @@ public class WorldGameRuleAction extends AbstractWorldAction
     }
 
     @Override
-    public boolean isConditionFulfilled(@NotNull InputBoard argument, @NotNull ScenarioEngine engine)
+    public boolean checkConditionFulfilled(@NotNull ActionContext ctxt)
     {
-        World world = super.getWorldNonNull(argument, engine);
-        GameRule<?> rule = argument.get(IN_GAME_RULE);
+        World world = super.getWorldNonNull(ctxt);
+        GameRule<?> rule = ctxt.input(IN_GAME_RULE);
         Class<?> type = rule.getType();
-        String expectedValue = argument.get(IN_VALUE);
+        String expectedValue = ctxt.input(IN_VALUE);
 
         assert type == Boolean.class || type == Integer.class;  // Bukkit API にはこれ以外の型は存在しない
         if (type == Boolean.class)

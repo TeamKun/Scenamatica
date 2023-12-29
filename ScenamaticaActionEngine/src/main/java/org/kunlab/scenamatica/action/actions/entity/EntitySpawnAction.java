@@ -11,6 +11,7 @@ import org.kunlab.scenamatica.action.actions.AbstractAction;
 import org.kunlab.scenamatica.commons.utils.EntityUtils;
 import org.kunlab.scenamatica.commons.utils.Utils;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
@@ -64,24 +65,24 @@ public class EntitySpawnAction<E extends Entity> extends AbstractAction
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @NotNull InputBoard argument)
+    public void execute(@NotNull ActionContext ctxt)
     {
-        EntityStructure structure = argument.get(this.IN_ENTITY).getTargetStructure();
+        EntityStructure structure = ctxt.input(this.IN_ENTITY).getTargetStructure();
         assert structure != null;
         LocationStructure spawnLoc = structure.getLocation();
 
-        spawnEntity(structure, spawnLoc, engine);
+        spawnEntity(structure, spawnLoc, ctxt.getEngine());
     }
 
     @Override
-    public boolean isFired(@NotNull InputBoard argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public boolean checkFired(@NotNull ActionContext ctxt, @NotNull Event event)
     {
         if (!(event instanceof EntitySpawnEvent))
             return false;
 
         EntitySpawnEvent e = (EntitySpawnEvent) event;
 
-        return argument.ifPresent(this.IN_ENTITY, specifier -> specifier.checkMatchedEntity(e.getEntity()));
+        return ctxt.ifHasInput(this.IN_ENTITY, specifier -> specifier.checkMatchedEntity(e.getEntity()));
     }
 
     @Override

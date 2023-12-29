@@ -44,7 +44,7 @@ public interface ScenarioResult
      * @return テストの結果
      */
     @NotNull
-    ScenarioResultCause getScenarioResultCause();
+    ScenarioResultCause getCause();
 
     /**
      * テストが開始された時間を取得します。

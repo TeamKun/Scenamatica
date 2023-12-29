@@ -158,7 +158,7 @@ public class ScenarioCompiler
                     ScenarioType.CONDITION_REQUIRE,
                     structure,
                     listener::onActionError,
-                    listener::onActionExecuted
+                    listener::onActionFinished
             );
         }
 
@@ -222,7 +222,7 @@ public class ScenarioCompiler
                     scenario.getType(),
                     scenario.getAction(),
                     listener::onActionError,
-                    listener::onActionExecuted
+                    listener::onActionFinished
             );
 
             scenario.getType().validatePerformableActionType(action.getExecutor().getClass());

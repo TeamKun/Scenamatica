@@ -6,11 +6,11 @@ import org.bukkit.event.Event;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
-import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.PlayerSpecifier;
 
 import java.util.Collections;
@@ -38,12 +38,12 @@ public class InventoryCloseAction extends AbstractInventoryAction
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @NotNull InputBoard argument)
+    public void execute(@NotNull ActionContext ctxt)
     {
-        Player player = argument.get(IN_PLAYER).selectTarget(engine.getContext())
+        Player player = ctxt.input(IN_PLAYER).selectTarget(ctxt.getContext())
                 .orElseThrow(() -> new IllegalStateException("Cannot select target for this action, please specify target with valid specifier."));
 
-        InventoryCloseEvent.Reason reason = argument.orElse(IN_REASON, () -> null);
+        InventoryCloseEvent.Reason reason = ctxt.orElseInput(IN_REASON, () -> null);
         if (reason == null)
             player.closeInventory();
         else
@@ -51,9 +51,9 @@ public class InventoryCloseAction extends AbstractInventoryAction
     }
 
     @Override
-    public boolean isFired(@NotNull InputBoard argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public boolean checkFired(@NotNull ActionContext ctxt, @NotNull Event event)
     {
-        if (!super.checkMatchedInventoryEvent(argument, engine, event))
+        if (!super.checkMatchedInventoryEvent(ctxt, event))
             return false;
 
         assert event instanceof InventoryCloseEvent;
@@ -62,8 +62,8 @@ public class InventoryCloseAction extends AbstractInventoryAction
         if (!(player instanceof Player))
             return false;
 
-        return argument.ifPresent(IN_PLAYER, specifier -> specifier.checkMatchedPlayer((Player) player))
-                && argument.ifPresent(IN_REASON, reason -> reason == e.getReason());
+        return ctxt.ifHasInput(IN_PLAYER, specifier -> specifier.checkMatchedPlayer((Player) player))
+                && ctxt.ifHasInput(IN_REASON, reason -> reason == e.getReason());
     }
 
     @Override

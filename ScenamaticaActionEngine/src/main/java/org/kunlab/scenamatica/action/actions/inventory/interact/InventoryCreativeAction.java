@@ -3,14 +3,13 @@ package org.kunlab.scenamatica.action.actions.inventory.interact;
 import org.bukkit.event.Event;
 import org.bukkit.event.inventory.InventoryCreativeEvent;
 import org.jetbrains.annotations.NotNull;
-import org.kunlab.scenamatica.commons.utils.PlayerUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.context.Actor;
-import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.ItemStackStructure;
 
 import java.util.Collections;
@@ -33,25 +32,24 @@ public class InventoryCreativeAction extends InventoryClickAction
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @NotNull InputBoard argument)
+    public void execute(@NotNull ActionContext ctxt)
     {
-        int slot = argument.get(IN_SLOT);
-        Actor actor = PlayerUtils.getActorOrThrow(
-                engine,
-                argument.get(IN_PLAYER).selectTarget(engine.getContext())
-                        .orElseThrow(() -> new IllegalStateException("Target is not found."))
+        int slot = ctxt.input(IN_SLOT);
+        Actor actor = ctxt.getActorOrThrow(ctxt.input(IN_PLAYER)
+                .selectTarget(ctxt.getContext())
+                .orElseThrow(() -> new IllegalStateException("Target is not found."))
         );
 
-        actor.giveCreativeItem(slot, argument.get(IN_ITEM).create());
+        actor.giveCreativeItem(slot, ctxt.input(IN_ITEM).create());
     }
 
     @Override
-    public boolean isFired(@NotNull InputBoard argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public boolean checkFired(@NotNull ActionContext ctxt, @NotNull Event event)
     {
         InventoryCreativeEvent e = (InventoryCreativeEvent) event;
 
-        return super.isFired(argument, engine, event)
-                && argument.ifPresent(IN_ITEM, item -> item.isAdequate(e.getCursor()));
+        return super.checkFired(ctxt, event)
+                && ctxt.ifHasInput(IN_ITEM, item -> item.isAdequate(e.getCursor()));
     }
 
     @Override

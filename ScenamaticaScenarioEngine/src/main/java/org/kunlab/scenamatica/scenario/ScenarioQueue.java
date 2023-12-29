@@ -173,7 +173,7 @@ class ScenarioQueue
             QueuedScenario next = ScenarioQueue.this.current.pollNext();
             ScenarioResult result = ScenarioQueue.this.current.runNext();
 
-            if (result.getScenarioResultCause().isFailure() && next.getMaxAttemptCount() > 1)
+            if (result.getCause().isFailure() && next.getMaxAttemptCount() > 1)
                 this.tryQueueRetry(next);
 
             return true;

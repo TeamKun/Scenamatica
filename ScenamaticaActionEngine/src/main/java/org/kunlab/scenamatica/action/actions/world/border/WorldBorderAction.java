@@ -8,12 +8,12 @@ import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.action.actions.world.AbstractWorldAction;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
-import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.misc.LocationStructure;
 
 import java.util.Arrays;
@@ -60,20 +60,20 @@ public class WorldBorderAction extends AbstractWorldAction
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @NotNull InputBoard argument)
+    public void execute(@NotNull ActionContext ctxt)
     {
-        WorldBorder border = super.getWorldNonNull(argument, engine).getWorldBorder();
+        WorldBorder border = super.getWorldNonNull(ctxt).getWorldBorder();
 
-        argument.runIfPresent(IN_SIZE, size -> {
-            border.setSize(size, argument.orElse(IN_DURATION, () -> 0L));
+        ctxt.runIfHasInput(IN_SIZE, size -> {
+            border.setSize(size, ctxt.orElseInput(IN_DURATION, () -> 0L));
         });
-        argument.runIfPresent(IN_CENTER, center -> border.setCenter(center.create()));
+        ctxt.runIfHasInput(IN_CENTER, center -> border.setCenter(center.create()));
     }
 
     @Override
-    public boolean isFired(@NotNull InputBoard argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public boolean checkFired(@NotNull ActionContext ctxt, @NotNull Event event)
     {
-        if (!super.isFired(argument, engine, event))
+        if (!super.checkFired(ctxt, event))
             return false;
 
         WorldBorderBoundsChangeEvent.Type type;
@@ -105,12 +105,12 @@ public class WorldBorderAction extends AbstractWorldAction
             centerOld = e.getOldCenter();
         }
 
-        return argument.ifPresent(IN_TYPE, inType -> inType == type)
-                && argument.ifPresent(IN_SIZE, inSize -> inSize == size)
-                && argument.ifPresent(IN_SIZE_OLD, inSizeOld -> inSizeOld == sizeOld)
-                && argument.ifPresent(IN_DURATION, inDuration -> inDuration == duration)
-                && argument.ifPresent(IN_CENTER, inCenter -> inCenter.isAdequate(center))
-                && argument.ifPresent(IN_CENTER_OLD, inCenterOld -> inCenterOld.isAdequate(centerOld));
+        return ctxt.ifHasInput(IN_TYPE, inType -> inType == type)
+                && ctxt.ifHasInput(IN_SIZE, inSize -> inSize == size)
+                && ctxt.ifHasInput(IN_SIZE_OLD, inSizeOld -> inSizeOld == sizeOld)
+                && ctxt.ifHasInput(IN_DURATION, inDuration -> inDuration == duration)
+                && ctxt.ifHasInput(IN_CENTER, inCenter -> inCenter.isAdequate(center))
+                && ctxt.ifHasInput(IN_CENTER_OLD, inCenterOld -> inCenterOld.isAdequate(centerOld));
     }
 
     @Override
@@ -123,13 +123,13 @@ public class WorldBorderAction extends AbstractWorldAction
     }
 
     @Override
-    public boolean isConditionFulfilled(@NotNull InputBoard argument, @NotNull ScenarioEngine engine)
+    public boolean checkConditionFulfilled(@NotNull ActionContext ctxt)
     {
-        WorldBorder border = super.getWorldNonNull(argument, engine).getWorldBorder();
+        WorldBorder border = super.getWorldNonNull(ctxt).getWorldBorder();
 
-        return argument.ifPresent(IN_SIZE, size -> size == border.getSize())
-                && argument.ifPresent(IN_DURATION, duration -> duration == border.getWarningDistance())
-                && argument.ifPresent(IN_CENTER, center -> center.isAdequate(border.getCenter()));
+        return ctxt.ifHasInput(IN_SIZE, size -> size == border.getSize())
+                && ctxt.ifHasInput(IN_DURATION, duration -> duration == border.getWarningDistance())
+                && ctxt.ifHasInput(IN_CENTER, center -> center.isAdequate(border.getCenter()));
     }
 
     @Override

@@ -23,6 +23,7 @@ import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioManager;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioResult;
 import org.kunlab.scenamatica.interfaces.scenario.SessionCreator;
+import org.kunlab.scenamatica.interfaces.scenario.SessionStorage;
 import org.kunlab.scenamatica.interfaces.scenario.TestReporter;
 import org.kunlab.scenamatica.interfaces.scenario.runtime.CompiledTriggerAction;
 import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileStructure;
@@ -31,6 +32,7 @@ import org.kunlab.scenamatica.scenario.engine.ScenarioEngineImpl;
 import org.kunlab.scenamatica.scenario.milestone.MilestoneManagerImpl;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -202,7 +204,7 @@ public class ScenarioManagerImpl implements ScenarioManager
                 .orElse(null);
     }
 
-    /* non-public */ ScenarioResult runScenario(ScenarioEngine engine, TriggerStructure trigger, int attempted)
+    /* non-public */ ScenarioResult runScenario(ScenarioEngine engine, TriggerStructure trigger, SessionStorage variable, int attempted)
     {
         if (!engine.getPlugin().isEnabled())
             throw new IllegalStateException("Plugin is disabled.");
@@ -213,7 +215,7 @@ public class ScenarioManagerImpl implements ScenarioManager
         ScenarioResult result;
         try
         {
-            result = engine.start(trigger, attempted);
+            result = engine.start(trigger, variable, attempted);
         }
         catch (Throwable e)
         {
@@ -223,6 +225,7 @@ public class ScenarioManagerImpl implements ScenarioManager
                     engine.getTestID(),
                     engine.getState(),
                     ScenarioResultCause.INTERNAL_ERROR,
+                    Collections.emptyList(),
                     engine.getStartedAt(),
                     System.currentTimeMillis(),
                     attempted,

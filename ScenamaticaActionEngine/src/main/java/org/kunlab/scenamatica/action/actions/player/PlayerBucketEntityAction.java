@@ -8,14 +8,13 @@ import org.bukkit.event.player.PlayerBucketEntityEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import org.kunlab.scenamatica.commons.utils.PlayerUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.context.Actor;
-import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.ItemStackStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.EntitySpecifier;
 import org.kunlab.scenamatica.nms.enums.entity.NMSEntityUseAction;
@@ -54,18 +53,18 @@ public class PlayerBucketEntityAction extends AbstractPlayerAction
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @NotNull InputBoard argument)
+    public void execute(@NotNull ActionContext ctxt)
     {
-        Player player = selectTarget(argument, engine);
-        Actor actor = PlayerUtils.getActorOrThrow(engine, player);
+        Player player = selectTarget(ctxt);
+        Actor actor = ctxt.getActorOrThrow(player);
 
-        Entity targetEntity = argument.get(IN_ENTITY).selectTarget(engine.getContext())
+        Entity targetEntity = ctxt.input(IN_ENTITY).selectTarget(ctxt.getContext())
                 .orElseThrow(() -> new IllegalStateException("Target entity is not found."));
         // Null ではない
         ItemStack itemInMainHand = player.getInventory().getItemInMainHand();
-        if (argument.isPresent(IN_ORIGINAL_BUCKET))
+        if (ctxt.hasInput(IN_ORIGINAL_BUCKET))
         {
-            ItemStackStructure structureOriginalBucket = argument.get(IN_ORIGINAL_BUCKET);
+            ItemStackStructure structureOriginalBucket = ctxt.input(IN_ORIGINAL_BUCKET);
             if (!structureOriginalBucket.isAdequate(itemInMainHand))
             {
                 ItemStack originalBucket = structureOriginalBucket.create();
@@ -86,16 +85,16 @@ public class PlayerBucketEntityAction extends AbstractPlayerAction
     }
 
     @Override
-    public boolean isFired(@NotNull InputBoard argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public boolean checkFired(@NotNull ActionContext ctxt, @NotNull Event event)
     {
-        if (!super.checkMatchedPlayerEvent(argument, engine, event))
+        if (!super.checkMatchedPlayerEvent(ctxt, event))
             return false;
 
         PlayerBucketEntityEvent e = (PlayerBucketEntityEvent) event;
 
-        return argument.ifPresent(IN_ENTITY, entity -> entity.checkMatchedEntity(e.getEntity()))
-                && argument.ifPresent(IN_ORIGINAL_BUCKET, bucket -> bucket.isAdequate(e.getOriginalBucket()))
-                && argument.ifPresent(IN_ENTITY_BUCKET, bucket -> bucket.isAdequate(e.getEntityBucket()));
+        return ctxt.ifHasInput(IN_ENTITY, entity -> entity.checkMatchedEntity(e.getEntity()))
+                && ctxt.ifHasInput(IN_ORIGINAL_BUCKET, bucket -> bucket.isAdequate(e.getOriginalBucket()))
+                && ctxt.ifHasInput(IN_ENTITY_BUCKET, bucket -> bucket.isAdequate(e.getEntityBucket()));
     }
 
     @Override

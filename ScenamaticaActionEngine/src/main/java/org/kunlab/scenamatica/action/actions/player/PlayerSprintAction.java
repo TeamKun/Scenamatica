@@ -6,12 +6,12 @@ import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerToggleSprintEvent;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
-import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 
 import java.util.Collections;
 import java.util.List;
@@ -32,11 +32,11 @@ public class PlayerSprintAction extends AbstractPlayerAction
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @NotNull InputBoard argument)
+    public void execute(@NotNull ActionContext ctxt)
     {
-        boolean sprinting = argument.get(IN_SPRINTING);
+        boolean sprinting = ctxt.input(IN_SPRINTING);
 
-        Player player = selectTarget(argument, engine);
+        Player player = selectTarget(ctxt);
         // Player#setSprinting は PlayerToggleSprintEvent を呼び出さないので、以下手動で呼び出す。
         PlayerToggleSprintEvent event = new PlayerToggleSprintEvent(player, sprinting);
         Bukkit.getPluginManager().callEvent(event);
@@ -47,15 +47,15 @@ public class PlayerSprintAction extends AbstractPlayerAction
     }
 
     @Override
-    public boolean isFired(@NotNull InputBoard argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public boolean checkFired(@NotNull ActionContext ctxt, @NotNull Event event)
     {
-        if (!super.checkMatchedPlayerEvent(argument, engine, event))
+        if (!super.checkMatchedPlayerEvent(ctxt, event))
             return false;
 
         assert event instanceof PlayerToggleSprintEvent;
         PlayerToggleSprintEvent e = (PlayerToggleSprintEvent) event;
 
-        return argument.ifPresent(IN_SPRINTING, sprinting -> sprinting == e.isSprinting());
+        return ctxt.ifHasInput(IN_SPRINTING, sprinting -> sprinting == e.isSprinting());
     }
 
     @Override
@@ -67,10 +67,10 @@ public class PlayerSprintAction extends AbstractPlayerAction
     }
 
     @Override
-    public boolean isConditionFulfilled(@NotNull InputBoard argument, @NotNull ScenarioEngine engine)
+    public boolean checkConditionFulfilled(@NotNull ActionContext ctxt)
     {
-        Player player = selectTarget(argument, engine);
-        return argument.ifPresent(IN_SPRINTING, sprinting -> sprinting == player.isSprinting());
+        Player player = selectTarget(ctxt);
+        return ctxt.ifHasInput(IN_SPRINTING, sprinting -> sprinting == player.isSprinting());
     }
 
     @Override
