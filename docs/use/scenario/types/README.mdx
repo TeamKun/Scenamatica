@@ -61,7 +61,7 @@ Scenamatica では、YAML の型として以下の型が定義されています
   {
     name: "order",
     anchor: "apex-order",
-    type: ObjectType.INTEGER + " | Order",
+    type: [ObjectType.INTEGER, "Order"],
     type_anchor: "order-enum",
     description: "シナリオの実行順序です。小さいほど先に実行されます。",
     default: `NORMAL`
@@ -623,14 +623,22 @@ Bukkit でロード済みの既存のワールドの構造、建築物、アイ�
     name: "type",
     anchor: "scenario-type",
     type: "列挙値{expect, execute, require}",
-    description: "シナリオの種類です。"
+    description: "シナリオの種類です。",
+    required: true
   },
   {
     name: "action",
     anchor: "scenario-action",
     type: "Action",
     typeLink: "action-structure",
-    description: "シナリオのアクションです。"
+    description: "シナリオのアクションです。",
+    required: true
+  },
+  {
+    name: "name",
+    anchor: "scenario-name",
+    type: ObjectType.STRING,
+    description: "シナリオの名前です。"
   },
   {
     name: "timeout",
@@ -676,6 +684,12 @@ Bukkit でロード済みの既存のワールドの構造、建築物、アイ�
 #### `action` {#scenario-action}
 
 シナリオのアクションです。
+
+#### `name` {#scenario-name}
+
+シナリオに命名するためのファイル内で一意の名前です。
+
+アクションの出力を変数として使用する際に使用されます。
 
 #### `timeout` {#scenario-timeout}
 

@@ -156,6 +156,12 @@ actions:
     anchor: "variables-system",
     description: "Java のシステムプロパティを取得します。"
   },
+  {
+    name: "scenario",
+    type: ["Scenario"],
+    type_anchor: "variables-type-scenario",
+    description: "自身のシナリオを取得します。",
+  }
 ]}/>
 
 #### `system` {#variables-system}
@@ -209,14 +215,19 @@ Java の `System#getProperties()Ljava/lang/String;` で取得できるシステ�
     description: "セッションの開始時刻です。"
   },
   {
-    name: "scenarios",
+    name: "scenarios.*",
     type: [ObjectType.INTEGER, "Scenario"],
+    type_anchor: "variables-type-scenario",
+    anchor: "variables-type-session-scenarios",
     description: "セッションに属するシナリオの一覧またはその数です。",
-    anchor: "variables-type-session-scenarios"
   }
 ]} />
 
 #### `session`.`scenarios`.`*` {#variables-type-session-scenarios}
+
+`*` には、シナリオ（ファイル）の名前を指定します。
+
+#### Scenario {#variables-type-scenario}
 
 この変数を使用してシナリオを取得するには、子に[シナリオの名前](use/scenario/types/#apex-name)を指定します(MUST)。
 
@@ -239,9 +250,35 @@ Java の `System#getProperties()Ljava/lang/String;` で取得できるシステ�
     type: ObjectType.LONG,
     description: "シナリオの終了時刻です。",
   },
+  {
+    name: "scenarios.*.output",
+    type: "Object",
+    description: "シナリオの出力です。",
+    anchor: "variables-type-session-scenarios-output"
+  },
+  {
+    name: "scenarios.*.runif.output",
+    type: "Object",
+    description: "シナリオの条件の出力です。",
+    anchor: "variables-type-session-scenarios-runif-output"
+  },
+  {
+    name: "trigger",
+    type: "Trigger",
+    description: "シナリオを発火させたトリガです。",
+    type_anchor: "variables-type-trigger",
+  }
 ]} />
 
-#### `session`.`scenarios`.`*`.`result` {#variables-type-session-scenarios-result}
+#### `session`.`scenarios`.`*`.`output` {#variables-type-session-scenarios-result}
+
+`*` には、シナリオのインデックスまたは[名前](use/scenario/types/#scenario-name)を指定します。
+
+#### `session`.`scenarios`.`*`.`runif` {#variables-type-session-scenarios-runif-output}
+
+`*` には、シナリオのインデックスまたは[名前](use/scenario/types/#scenario-name)を指定します。
+
+#### ScenarioResult {#variables-type-scenario-result}
 
 <Object objects={[
   {
@@ -261,3 +298,27 @@ Java の `System#getProperties()Ljava/lang/String;` で取得できるシステ�
     description: "シナリオの試行回数です。"
   }
 ]} />
+
+#### Trigger {#variables-type-trigger}
+
+以下の変数に加えて追加で[トリガ](/docs/use/scenario/types#trigger-structure)におけるすべての値を参照できます。
+
+<Object objects={[
+  {
+    name: "runif.output",
+    type: "Object",
+    description: "トリガの条件付き実行の出力です。"
+  },
+  {
+    name: "before.*.output",
+    type: "Object",
+    description: "トリガの前シナリオの出力です。"
+  },
+  {
+    name: "after.*.output",
+    type: "Object",
+    description: "トリガの後シナリオの出力です。"
+  }
+]} />
+
+`*` には、シナリオのインデックスまたは[名前](use/scenario/types/#scenario-name)を指定します。
