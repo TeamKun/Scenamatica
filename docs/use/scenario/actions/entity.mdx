@@ -442,8 +442,14 @@ AI を有効にした場合, エンティティは経路を探索し自発的に
           {
             name: "target",
             anchor: "place-target",
-            type: "EntitySpecifier | Material",
+            type: "EntitySpecifier",
             type_link: "/docs/use/scenario/types#entity-structure",
+            available: [ScenarioType.EXPECT, ScenarioType.REQUIRE]
+          },
+          {
+            name: "material",
+            anchor: "place-material",
+            type: "Material",
             required: [ScenarioType.EXECUTE]
           },
           {
@@ -489,9 +495,8 @@ AI を有効にした場合, エンティティは経路を探索し自発的に
 
 :::
 
-#### `target` {#place-target}
+#### `material` {#place-material}
 
-アクション実行シナリオの場合は、設置するエンティティのアイテム化したときの **`Material` を指定します**。  
 設置できるエンティティは、 Bukkit との相互作用のために以下のものに限られます。
 それら以外を設置・召喚する場合は [エンティティのスポーン](#spawn)アクション を使用してください。
 

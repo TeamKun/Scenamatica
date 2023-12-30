@@ -2,15 +2,23 @@
 sidebar_position: 6
 ---
 
-# 変数と定義
+import BelowDocument from "/src/components/BelowDocument";
+import { Object, ObjectType } from "/src/components/Object";
 
-このページでは、シナリオファイルでの変数と定義機能について説明します。
+# 変数・定数の定義と参照
+
+このページでは、シナリオの変数や定数の定義、およびその参照方法について説明します。
 
 ---
 
-## 定義と参照 機能 {#definition}
+## 概要
 
-### 概要 {#definition-overview}
+[シナリオファイル](/docs/use/scenario/scenario-file#overview)では、定数を定義し、同じファイル内の任意の場所から参照できます。
+さらに、シナリオ内で使用できる予約された変数も使用できます。
+
+## 定数の定義と参照 {#constant-definition}
+
+### 概要 {#constant-definition-overview}
 
 定義機能は、シナリオファイルで任意の値の定数を定義し、同じファイルの任意の場所から参照できるようにする機能です。
 
@@ -27,7 +35,7 @@ sidebar_position: 6
   文字列の埋め込み機能は、 YAML のキーでは使用できません。
   :::
 
-### 定義の作成 {#create-definition}
+### 定義の作成 {#create-constant}
   
 定義は、シナリオファイルのルートに `definitions` という名前のオブジェクトを作成し、その中に定義を記述します。  
 キーには割り当てる任意の名前を記述し、値には定義したい任意の型の値を記述します。
@@ -87,7 +95,7 @@ context:
 :::tip
 
 `{` と `}` をエスケープする場合は、 `${{}` や `${}}` のように記述します。  
-（`{` と `}` という名前の定義が暗黙的に作成されており、参照の形でアクセスします。）
+（`{` と `}` という名前の定義が暗黙的に作成されており、参照する形でアクセスします。）
 
 :::
 
@@ -105,3 +113,151 @@ actions:
       recipient: "Hoge"
 
 ```
+
+## 予約された変数 {#reserved-variables}
+
+### 概要 {#reserved-variables-overview}
+
+これは、予め定義された任意の値です。
+予約されたキーを用いてシナリオ内で参照することで、シナリオの実行時に値が設定されます。
+
+変数はセッションごともしくは実行ごとにリセットされます。
+
+### 変数の参照 {#reserved-variables-reference}
+
+変数を使用するには、リテラルのかわりに使用する変数名を `${` および `}` で囲みます。  
+各要素は `.` で区切ってアクセスします。
+
+:::tip
+
+型は自動で推論されるため、使用できない型を参照するとエラーになります。   
+また、文字列との相互変換や、数値のキャストも自動で行われます。
+
+:::
+
+### 変数の一覧 {#reserved-variables-list}
+
+<Object objects={[
+  {
+    name: "runtime",
+    type: "Runtime",
+    type_anchor: "variables-type-runtime",
+    description: "Java のランタイム情報を取得します。",
+  },
+  {
+    name: "session",
+    type: "Session",
+    type_anchor: "variables-type-session",
+    description: "現在のシナリオが属しているセッションの情報です。",
+  },
+  {
+    name: "system",
+    type: "SystemProperties",
+    anchor: "variables-system",
+    description: "Java のシステムプロパティを取得します。"
+  },
+]}/>
+
+#### `system` {#variables-system}
+
+Java の `System#getProperties()Ljava/lang/String;` で取得できるシステムプロパティを取得します。
+
+:::warning
+
+存在しないプロパティを参照するとエラーになります。
+
+:::
+
+#### `runtime` {#variables-type-runtime}
+
+<Object objects={[
+  {
+    name: "memory",
+    type: "Memory",
+    type_anchor: "variables-type-runtime-memory",
+    description: "マシンのメモリ情報を取得します。",
+  }
+]} />
+
+#### `runtime`.`memory` {#variables-type-runtime-memory}
+
+<Object objects={[
+  {
+    name: "total",
+    type: ObjectType.LONG,
+    description: "マシンのメモリの合計値です。",
+  },
+  {
+    name: "free",
+    type: ObjectType.LONG,
+    description: "マシンのメモリの空き値です。",
+  },
+  {
+    name: "max",
+    type: ObjectType.LONG,
+    description: "マシンのメモリの最大値です。",
+  }
+]} />
+
+
+#### `session` {#variables-type-session}
+
+<Object objects={[
+  {
+    name: "started_at",
+    type: ObjectType.LONG,
+    description: "セッションの開始時刻です。"
+  },
+  {
+    name: "scenarios",
+    type: [ObjectType.INTEGER, "Scenario"],
+    description: "セッションに属するシナリオの一覧またはその数です。",
+    anchor: "variables-type-session-scenarios"
+  }
+]} />
+
+#### `session`.`scenarios`.`*` {#variables-type-session-scenarios}
+
+この変数を使用してシナリオを取得するには、子に[シナリオの名前](use/scenario/types/#apex-name)を指定します(MUST)。
+
+また、以下の変数に加えて追加で[シナリオファイル](/docs/use/scenario/scenario-file)におけるすべての値を参照できます。
+
+<Object objects={[
+  {
+    name: "result",
+    type: [ObjectType.BOOLEAN, "ScenarioResult"],
+    description: "シナリオの実行結果または成功したかどうかです。",
+    anchor: "variables-type-session-scenarios-result"
+  },
+  {
+    name: "started_at",
+    type: ObjectType.LONG,
+    description: "シナリオの開始時刻です。",
+  },
+  {
+    name: "finished_at",
+    type: ObjectType.LONG,
+    description: "シナリオの終了時刻です。",
+  },
+]} />
+
+#### `session`.`scenarios`.`*`.`result` {#variables-type-session-scenarios-result}
+
+<Object objects={[
+  {
+    name: "state",
+    type: "String(ScenarioState)",
+    description: "シナリオの状態です。"
+  },
+  {
+    name: "cause",
+    type: "String(ScenarioCause)",
+    type_link: "/docs/use/scenario/test#test-status-result",
+    description: "シナリオの終了理由です。"
+  },
+  {
+    name: "attempt_of",
+    type: ObjectType.INTEGER,
+    description: "シナリオの試行回数です。"
+  }
+]} />

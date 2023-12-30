@@ -7,7 +7,7 @@
       "type": "number",
       "description": "ワールドボーダのサイズです。"
     },
-    "size_old": {
+    "sizeOld": {
       "type": "number",
       "description": "ワールドボーダのサイズの変更前の値です。"
     },
