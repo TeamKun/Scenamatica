@@ -16,7 +16,7 @@ public class NegateAction extends AbstractScenamaticaAction
     public static final String KEY_IN_ARGUMENTS = "with";
 
     public static final InputToken<Requireable> IN_ACTION = ofInput(KEY_IN_ACTION, Requireable.class);
-    public static final InputToken<InputBoard> IN_ARGUMENTS = ofInput(KEY_IN_ARGUMENTS, InputBoard.class);
+    public static final InputToken<ActionContext> IN_ARGUMENTS = ofInput(KEY_IN_ARGUMENTS, ActionContext.class);
 
     @Override
     public String getName()
@@ -38,6 +38,6 @@ public class NegateAction extends AbstractScenamaticaAction
     public boolean checkConditionFulfilled(@NotNull ActionContext ctxt)
     {
         Requireable requireable = ctxt.input(IN_ACTION);
-        return !requireable.checkConditionFulfilled(ctxt);
+        return !requireable.checkConditionFulfilled(ctxt.input(IN_ARGUMENTS));
     }
 }

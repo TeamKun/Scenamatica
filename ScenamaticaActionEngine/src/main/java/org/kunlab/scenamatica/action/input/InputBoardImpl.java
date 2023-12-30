@@ -133,7 +133,7 @@ public class InputBoardImpl implements InputBoard
                 return (InputValueHolder) value;
         }
 
-        throw new IllegalArgumentException("Token not found");
+        throw new IllegalArgumentException("Token " + token.getName() + " is not registered.");
     }
 
     @Override

@@ -17,6 +17,7 @@ import org.kunlab.scenamatica.interfaces.context.ActorManager;
 import org.kunlab.scenamatica.interfaces.context.Context;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 
+import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -33,12 +34,12 @@ public class ActionContextImpl implements ActionContext
     private static final String KEY_SEPARATOR = ".".replace(".", "\\.");
 
     private final ScenarioEngine engine;
-    private final Context context;
     private final InputBoard input;
     private final Map<String, Object> output;
     private final Logger logger;
     private final UUID contextID;
 
+    private WeakReference<Context> context;
     private Boolean success;
     private ActionResultCause cause;
     private boolean halt;
@@ -52,9 +53,16 @@ public class ActionContextImpl implements ActionContext
         this.logger = logger;
 
         this.contextID = UUID.randomUUID();
-        this.context = engine.getContext();
 
         this.output = new HashMap<>();
+    }
+
+    public Context getContext()
+    {
+        if (this.context == null || this.context.get() == null)
+            this.context = new WeakReference<>(this.engine.getContext());
+
+        return this.context.get();
     }
 
     @Override
@@ -240,4 +248,6 @@ public class ActionContextImpl implements ActionContext
     {
         return ActionResultImpl.fromContext(action.getExecutor(), this);
     }
+
+
 }

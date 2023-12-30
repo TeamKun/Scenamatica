@@ -290,8 +290,10 @@ public class ScenarioExecutor
 
         if (allSuccess)
             return this.genResult(ScenarioResultCause.PASSED, results);
-        else
+        else if (cause != null)
             return this.genResult(toScenarioScopeCase(cause), results);
+        else
+            return this.genResult(ScenarioResultCause.INTERNAL_ERROR, results);
     }
 
     private ActionResult runScenario(CompiledScenarioAction scenario, CompiledScenarioAction next)
@@ -357,7 +359,6 @@ public class ScenarioExecutor
         catch (Throwable e)
         {
             this.registry.getExceptionHandler().report(e);
-            this.testReporter.onConditionCheckFailed(this.engine, scenario);
             context.fail(e);
         }
 

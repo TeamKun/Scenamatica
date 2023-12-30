@@ -67,20 +67,15 @@ public class ActionCompilerImpl implements ActionCompiler
         else if (actionToBeNegated instanceof NegateAction)
             throw new IllegalArgumentException("Cannot nes a negate action.");
 
-        InputBoard argument;
+        InputBoard argument = actionToBeNegated.getInputBoard(ScenarioType.CONDITION_REQUIRE);
         if (arguments.containsKey(NegateAction.KEY_IN_ARGUMENTS))
-        {
-            argument = actionToBeNegated.getInputBoard(ScenarioType.CONDITION_REQUIRE);
             argument.compile(serializer, MapUtils.checkAndCastMap(arguments.get(NegateAction.KEY_IN_ARGUMENTS)));
-        }
-        else
-            argument = null;
 
         InputBoard negateArgument = action.getInputBoard(ScenarioType.CONDITION_REQUIRE);
         negateArgument.compile(serializer, new HashMap<String, Object>()
         {{
             this.put(NegateAction.KEY_IN_ACTION, actionToBeNegated);
-            this.put(NegateAction.KEY_IN_ARGUMENTS, argument);
+            this.put(NegateAction.KEY_IN_ARGUMENTS, new ActionContextImpl(engine, argument, engine.getPlugin().getLogger()));
         }});
 
         return new CompiledActionImpl(
