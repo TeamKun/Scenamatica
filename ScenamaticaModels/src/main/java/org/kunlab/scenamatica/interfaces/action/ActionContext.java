@@ -33,6 +33,21 @@ public interface ActionContext
     UUID getContextID();
 
     /**
+     * 指定された名前を取得します。
+     *
+     * @return 名前
+     */
+    @Nullable
+    String getScenarioName();
+
+    /**
+     * 名前を設定します。
+     *
+     * @param name 名前
+     */
+    void setScenarioName(@Nullable String name);
+
+    /**
      * アクションを成功として終了します。
      */
     void success();

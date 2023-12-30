@@ -193,6 +193,12 @@ public class ScenarioCompiler
                     {
                         return -1;
                     }
+
+                    @Override
+                    public String getName()
+                    {
+                        return null;
+                    }
                 },
                 ScenarioType.CONDITION_REQUIRE,
                 action,
@@ -225,6 +231,7 @@ public class ScenarioCompiler
                     listener::onActionFinished
             );
 
+            action.getContext().setScenarioName(scenario.getName());
             scenario.getType().validatePerformableActionType(action.getExecutor().getClass());
 
             return new CompiledScenarioActionImpl(

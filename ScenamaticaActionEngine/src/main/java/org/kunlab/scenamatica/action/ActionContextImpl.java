@@ -1,6 +1,7 @@
 package org.kunlab.scenamatica.action;
 
 import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -39,6 +40,8 @@ public class ActionContextImpl implements ActionContext
     private final Logger logger;
     private final UUID contextID;
 
+    @Setter
+    private String scenarioName;
     private WeakReference<Context> context;
     private Boolean success;
     private ActionResultCause cause;

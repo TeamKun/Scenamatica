@@ -21,7 +21,7 @@ public abstract class AbstractActionPacket extends AbstractTestPacket
 
     {
         super(GENRE, type, testID);
-        this.actionName = action.getActionName();
+        this.actionName = action.getScenarioName();
     }
 
     public AbstractActionPacket(@NotNull String type, @NotNull UUID testID, @NotNull CompiledAction action)

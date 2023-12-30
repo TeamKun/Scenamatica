@@ -17,7 +17,7 @@ public interface ActionResult
      *
      * @return アクションの名前
      */
-    String getActionName();
+    String getScenarioName();
 
     /**
      * アクションの実行時のコンテキストを取得します。

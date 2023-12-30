@@ -2,6 +2,7 @@ package org.kunlab.scenamatica.scenariofile.structures.scenario;
 
 import lombok.Value;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
@@ -15,13 +16,18 @@ import java.util.Map;
 public class ScenarioStructureImpl implements ScenarioStructure
 {
     public static final String KEY_SCENARIO_TYPE = "type";
+    public static final String KEY_SCENARIO_NAME = "name";
     public static final String KEY_RUN_IF = "runif";
     public static final String KEY_TIMEOUT = "timeout";
+
     private static final long DEFAULT_TIMEOUT_TICK = 20L * 5L;
+
     @NotNull
     ScenarioType type;
     @NotNull
     ActionStructure action;
+    @Nullable
+    String name;
 
     ActionStructure runIf;
     long timeout;  // Scenario は 他で使わないので NotNull(primitive).
@@ -37,8 +43,8 @@ public class ScenarioStructureImpl implements ScenarioStructure
         Map<String, Object> map = new HashMap<>();
         map.put(KEY_SCENARIO_TYPE, structure.getType().getKey());
 
-        if (structure.getTimeout() != -1)
-            map.put(KEY_TIMEOUT, structure.getTimeout());
+        MapUtils.putIfNotNull(map, KEY_TIMEOUT, structure.getTimeout());
+        MapUtils.putIfNotNull(map, KEY_SCENARIO_NAME, structure.getName());
 
         map.putAll(serializer.serialize(structure.getAction(), ActionStructure.class));
 
@@ -79,6 +85,7 @@ public class ScenarioStructureImpl implements ScenarioStructure
 
         ScenarioType type = ScenarioType.fromKey((String) map.get(KEY_SCENARIO_TYPE));
         long timeout = MapUtils.getAsLongOrDefault(map, KEY_TIMEOUT, DEFAULT_TIMEOUT_TICK);
+        String name = MapUtils.getOrNull(map, KEY_SCENARIO_NAME);
 
         ActionStructure runIf = null;
         if (map.containsKey(KEY_RUN_IF))
@@ -91,6 +98,7 @@ public class ScenarioStructureImpl implements ScenarioStructure
         return new ScenarioStructureImpl(
                 type,
                 serializer.deserialize(map, ActionStructure.class),
+                name,
                 runIf,
                 timeout
         );

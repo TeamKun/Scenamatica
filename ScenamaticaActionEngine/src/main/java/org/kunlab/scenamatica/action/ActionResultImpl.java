@@ -15,7 +15,7 @@ import java.util.UUID;
 @Value
 public class ActionResultImpl implements ActionResult
 {
-    String actionName;
+    String scenarioName;
     UUID runID;
     boolean success;
     boolean halt;
@@ -27,8 +27,12 @@ public class ActionResultImpl implements ActionResult
 
     public static ActionResult fromContext(Action action, ActionContext context)
     {
+        String scenarioName = context.getScenarioName() == null ?
+                action.getName():
+                context.getScenarioName();
+
         return new ActionResultImpl(
-                action.getName(),
+                scenarioName,
                 context.getContextID(),  // runID は contextID と同じ
                 context.isSuccess(),
                 context.isHalt(),

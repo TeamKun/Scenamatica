@@ -144,7 +144,7 @@ public class BukkitTestReporter extends AbstractTestReporter
 
         this.terminals.forEach(t -> t.success(this.withPrefix(engine.getTestID(), scenario, LangProvider.get(
                 "test.action.run.success",
-                MsgArgs.of("action", result.getActionName())
+                MsgArgs.of("action", result.getScenarioName())
         ))));
     }
 
@@ -155,7 +155,7 @@ public class BukkitTestReporter extends AbstractTestReporter
 
         this.terminals.forEach(t -> t.success(this.withPrefix(engine.getTestID(), scenario, LangProvider.get(
                 "test.action.watch.done",
-                MsgArgs.of("action", result.getActionName())
+                MsgArgs.of("action", result.getScenarioName())
         ))));
 
     }
@@ -178,7 +178,7 @@ public class BukkitTestReporter extends AbstractTestReporter
 
         this.terminals.forEach(t -> t.warn(this.withPrefix(engine.getTestID(), scenario, LangProvider.get(
                 "test.action.jumped",
-                MsgArgs.of("action", result.getActionName())
+                MsgArgs.of("action", result.getScenarioName())
                         .add("scenario", engine.getScenario().getName())
         ))));
     }

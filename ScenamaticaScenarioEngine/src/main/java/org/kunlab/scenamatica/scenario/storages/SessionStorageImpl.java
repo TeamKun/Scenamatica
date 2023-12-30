@@ -40,10 +40,9 @@ public class SessionStorageImpl extends AbstractVariableProvider implements Sess
         List<ChildStorage> storages = new ArrayList<>(UNIQUE_STORAGES);
 
         // <editor-fold defaultstate="collapsed" desc="Initialize storages">
-        org.kunlab.scenamatica.scenario.storages.SessionStorage sessionStorage =
-                new org.kunlab.scenamatica.scenario.storages.SessionStorage(registry.getScenarioFileManager().getSerializer(), session);
-        storages.add(sessionStorage);
-        storages.add(new ScenarioStorage(session, sessionStorage));
+        ScenarioStorage scenarioStorage = new ScenarioStorage(session, registry.getScenarioFileManager().getSerializer());
+        storages.add(new org.kunlab.scenamatica.scenario.storages.SessionStorage(session, scenarioStorage));
+        storages.add(scenarioStorage);
         // </editor-fold>
 
         return Collections.unmodifiableList(storages);

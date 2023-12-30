@@ -1,10 +1,12 @@
 package org.kunlab.scenamatica.scenario.engine;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.kunmc.lab.peyangpaperutils.lang.LangProvider;
 import net.kunmc.lab.peyangpaperutils.lang.MsgArgs;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.commons.utils.LogUtils;
 import org.kunlab.scenamatica.enums.ActionResultCause;
 import org.kunlab.scenamatica.enums.ScenarioResultCause;
@@ -35,7 +37,6 @@ import org.kunlab.scenamatica.scenario.ScenarioWaitTimedOutException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.logging.Level;
@@ -44,6 +45,9 @@ import java.util.stream.Collectors;
 @Getter
 public class ScenarioExecutor
 {
+    private static final String STORAGE_KEY_PREFIX = "scenario.";
+    private static final String STORAGE_KEY_OUTPUT = "output";
+
     private final ScenamaticaRegistry registry;
     private final TestReporter testReporter;
     private final ScenarioEngineImpl engine;
@@ -122,35 +126,80 @@ public class ScenarioExecutor
         }
     }
 
+    private static String genStorageKey(@Nullable String scenarioName, int idx, @NotNull RunOn runOn, @NotNull RunAs runAs)
+    {
+        StringBuilder key = new StringBuilder(STORAGE_KEY_PREFIX);
+        if (!(runOn == RunOn.TRIGGER || runAs == RunAs.RUNIF))
+            key.append(runOn.getKey());
+
+        if (runOn != RunOn.RUNIF)
+        {
+            key.append(".");
+            if (scenarioName == null)
+                key.append(idx);
+            else
+                key.append(scenarioName);
+        }
+
+        if (!(runAs == RunAs.NORMAL || runAs == RunAs.RUNIF))
+            key.append(".").append(runAs.getKey());
+
+        return key.append(".").append(STORAGE_KEY_OUTPUT).toString();
+
+        /*
+         1. runOn == TRIGGER
+            1.1. runAs == NORMAL => ERR
+            1.2. runAs == RUNIF
+                scenario.trigger.runif.output
+            1.3. runAs == BEFORE
+                scenario.trigger.before.<idx|name>.output
+            1.4. runAs == AFTER
+                scenario.trigger.after.<idx|name>.output
+        2. runOn == SCENARIOS
+            2.1. runAs == NORMAL
+                scenario.scenarios.<idx|name>.output
+            2.2. runAs == RUNIF
+                scenario.scenarios.runif.output
+            2.3. runAs == BEFORE => ERR
+            2.4. runAs == AFTER => ERR
+        3. runOn == RUNIF
+            3.1. runAs == NORMAL => ERR
+            3.2. runAs == RUNIF
+                scenario.runif.output
+            3.3. runAs == BEFORE => ERR
+            3.4. runAs == AFTER => ERR
+         */
+    }
+
     public ScenarioResult start(@NotNull TriggerStructure trigger) throws TriggerNotFoundException
     {
         ScenarioResult result = this.start$1(trigger);
+
         this.actionManager.getWatcherManager().unregisterWatchers(this.plugin, WatchType.SCENARIO);
         return result;
     }
 
     private ScenarioResult start$1(@NotNull TriggerStructure trigger) throws TriggerNotFoundException
     {
-
         CompiledTriggerAction compiledTrigger = this.findTriggerOrThrow(trigger);
 
         if (this.runIf != null)
         {
-            ActionResult result = this.runExecuteCondition(this.runIf); // シナリオレベルの runif
+            ActionResult result = this.runExecuteCondition(this.runIf, RunOn.RUNIF); // シナリオレベルの runif
             if (!result.isSuccess())
                 return this.genResult(ScenarioResultCause.SKIPPED);
         }
 
         if (compiledTrigger.getRunIf() != null)
         {
-            ActionResult result = this.runExecuteCondition(compiledTrigger.getRunIf());  // トリガーレベルの runif
+            ActionResult result = this.runExecuteCondition(compiledTrigger.getRunIf(), RunOn.TRIGGER);  // トリガーレベルの runif
             if (!result.isSuccess())
                 return this.genResult(ScenarioResultCause.SKIPPED);
         }
 
         if (!trigger.getBeforeThat().isEmpty())
         {
-            ScenarioResult result = this.runBeforeIfPresent(compiledTrigger);
+            ScenarioResult result = this.runBefore(compiledTrigger);
             if (!result.getCause().isOK())
                 return result;
         }
@@ -163,7 +212,7 @@ public class ScenarioExecutor
                         MsgArgs.of("scenarioName", this.scenario.getName())
                 )
         );
-        ScenarioResult result = this.runScenario(this.actions);
+        ScenarioResult result = this.runScenario(this.actions, RunAs.NORMAL);
         if (!result.getCause().isOK())
             return result;
 
@@ -217,18 +266,20 @@ public class ScenarioExecutor
     }
 
     @NotNull
-    private ActionResult runExecuteCondition(@NotNull CompiledScenarioAction runIf)
+    private ActionResult runExecuteCondition(@NotNull CompiledScenarioAction runIf, RunOn on)
     {
         ActionResult result = this.testCondition(runIf);
         // コンディションチェックに失敗した(満たしていない)場合は(エラーにはせずに)スキップする。
         if (!result.isSuccess())
             this.testReporter.onTestSkipped(this.engine, runIf);
 
+        this.makeOutput(on, RunAs.RUNIF, result);
+
         return result;
     }
 
     @NotNull
-    private ScenarioResult runScenario(List<? extends CompiledScenarioAction> scenario)
+    private ScenarioResult runScenario(List<? extends CompiledScenarioAction> scenario, RunAs as)
     {
         // 飛び判定用に, 予めすべてのアクションを監視対象にしておく。
         List<CompiledAction> watches = scenario.stream()
@@ -264,9 +315,7 @@ public class ScenarioExecutor
                     continue; // スキップされた場合は次のアクションへ。
 
                 results.add(result);
-                if (!result.getOutputs().isEmpty())
-                    for (Map.Entry<String, Object> entry : result.getOutputs().entrySet())
-                        this.variable.set(entry.getKey(), entry.getValue());
+                this.makeOutput(RunOn.SCENARIOS, as, i, result);
 
                 if (!result.isSuccess())
                 {
@@ -301,8 +350,8 @@ public class ScenarioExecutor
         if (scenario.getRunIf() != null)
         {
             CompiledScenarioAction runIf = scenario.getRunIf();
-            this.runExecuteCondition(runIf);
-            if (!runIf.getAction().getContext().isSuccess())
+            ActionResult result = this.runExecuteCondition(runIf, RunOn.SCENARIOS); // シナリオレベルの runif
+            if (!result.isSuccess())
             {
                 ActionContext context = scenario.getAction().getContext();
                 context.skip(); // スキップとしてマークしておく。
@@ -385,7 +434,7 @@ public class ScenarioExecutor
         this.listener.setWaitingFor(scenario);
     }
 
-    private ScenarioResult runBeforeIfPresent(CompiledTriggerAction trigger)
+    private ScenarioResult runBefore(CompiledTriggerAction trigger)
     {
         this.state = ScenarioState.RUNNING_BEFORE;
         this.infoWithPrefixIfVerbose(LangProvider.get(
@@ -393,7 +442,7 @@ public class ScenarioExecutor
                         MsgArgs.of("scenarioName", this.scenario.getName())
                 )
         );
-        return this.runScenario(trigger.getBeforeActions());
+        return this.runScenario(trigger.getBeforeActions(), RunAs.BEFORE);
     }
 
     private ScenarioResult runAfter(CompiledTriggerAction trigger)
@@ -404,7 +453,7 @@ public class ScenarioExecutor
                         MsgArgs.of("scenarioName", this.scenario.getName())
                 )
         );
-        return this.runScenario(trigger.getAfterActions());
+        return this.runScenario(trigger.getAfterActions(), RunAs.AFTER);
     }
 
     private void infoWithPrefixIfVerbose(String message)
@@ -430,5 +479,40 @@ public class ScenarioExecutor
     private ScenarioResult genResult(ScenarioResultCause cause)
     {
         return this.genResult(cause, Collections.emptyList());
+    }
+
+    private void makeOutput(RunOn runOn, RunAs runAs, int idx, ActionResult result)
+    {
+        String key = genStorageKey(result.getScenarioName(), idx, runOn, runAs);
+        this.variable.set(key, result.getOutputs());
+    }
+
+    private void makeOutput(RunOn runOn, RunAs runAs, ActionResult result)
+    {
+        String key = genStorageKey(result.getScenarioName(), -1, runOn, runAs);
+        this.variable.set(key, result.getOutputs());
+    }
+
+    @AllArgsConstructor
+    @Getter
+    enum RunOn
+    {
+        TRIGGER("trigger"),
+        SCENARIOS("scenarios"),
+        RUNIF("runif");
+
+        private final String key;
+    }
+
+    @AllArgsConstructor
+    @Getter
+    enum RunAs
+    {
+        NORMAL(null),
+        RUNIF("runif"),
+        BEFORE("before"),
+        AFTER("after");
+
+        private final String key;
     }
 }
