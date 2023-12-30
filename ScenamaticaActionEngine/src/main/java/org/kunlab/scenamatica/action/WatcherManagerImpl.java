@@ -185,7 +185,7 @@ public class WatcherManagerImpl implements WatcherManager
 
         this.unregister(entry);  // シナリオのアクションは一度だけ実行するようにする。(トリガは複数)
 
-        entry.getEngine().getListener().onActionFinished(ActionResultImpl.fromAction(entry.getAction()), ScenarioType.CONDITION_REQUIRE);
+        entry.getEngine().getListener().onActionFinished(ActionResultImpl.fromAction(entry.getAction()), ScenarioType.ACTION_EXPECT);
 
         synchronized (this.lock)
         {
