@@ -22,6 +22,7 @@ import org.kunlab.scenamatica.interfaces.action.input.InputTraverser;
 import org.kunlab.scenamatica.interfaces.action.input.Traverser;
 import org.kunlab.scenamatica.interfaces.scenariofile.Structure;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
+import org.kunlab.scenamatica.interfaces.scenariofile.context.PlayerStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.entity.EntityStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.EntitySpecifier;
 import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.PlayerSpecifier;
@@ -43,6 +44,10 @@ public abstract class AbstractAction implements Action
             TraverserImpl.of(
                     String.class,
                     StructureSerializer::tryDeserializePlayerSpecifier
+            ),
+            TraverserImpl.of(
+                    PlayerStructure.class,
+                    (ser, ps) -> ser.tryDeserializePlayerSpecifier(ps.getUuid())
             )
     ).toArray(new Traverser[0]);
 
@@ -141,6 +146,10 @@ public abstract class AbstractAction implements Action
                 ofTraverser(
                         String.class,
                         (ser, str) -> ser.tryDeserializeEntitySpecifier(str, structureClass)
+                ),
+                ofTraverser(
+                        structureClass,
+                        (ser, structure) -> ser.tryDeserializeEntitySpecifier(structure.getUuid(), structureClass)
                 )
         );
     }

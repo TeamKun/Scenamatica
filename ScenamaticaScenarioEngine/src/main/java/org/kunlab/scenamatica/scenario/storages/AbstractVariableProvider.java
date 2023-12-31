@@ -58,7 +58,7 @@ public abstract class AbstractVariableProvider
 
     protected static String[] splitKey(String key)
     {
-        return key.split(KEY_SEPARATOR);
+        return key.split(KEY_SEPARATOR.replace(".", "\\."));
     }
 
     protected static String[] sliceKey(String key, int startIdx)
@@ -93,31 +93,39 @@ public abstract class AbstractVariableProvider
         return get(map, keys, ser);
     }
 
+    @SuppressWarnings("unchecked")
     protected static Object get(@NotNull Map<String, ?> map, @NotNull String[] keys, @Nullable StructureSerializer ser)
     {
         if (keys.length == 0)
             return null;
 
-        for (int i = 0; i < keys.length - 1; i++)
+        int lastIndex = keys.length - 1;
+
+        for (int i = 0; i < lastIndex; i++)
         {
             Object value = map.get(keys[i]);
             if (value instanceof Map)
-                // noinspection unchecked
                 map = (Map<String, Object>) value;
             else if (value instanceof Structure)
-            {
-                if (ser == null)
-                    throw new IllegalArgumentException("StructureSerializer is null");
-                else
-                    map = ser.serialize((Structure) value, null);
-            }
+                map = requireSerializer(ser).serialize((Structure) value, null);
             else if (value instanceof Function)
-                return value;
+                return ((Function<String[], ?>) value).apply(sliceKey(keys, i + 1));
             else
                 throw new IllegalArgumentException("Unknown key '" + String.join(".", keys) + "'");
         }
 
-        return map.get(keys[keys.length - 1]);
+        Object value = map.get(keys[lastIndex]);
+        if (value instanceof Function)
+            return ((Function<String[], ?>) value).apply(new String[0]);
+        else if (value instanceof Structure)
+            return requireSerializer(ser).serialize((Structure) value, null);
+        else return value;
+    }
+
+    private static StructureSerializer requireSerializer(@Nullable StructureSerializer ser)
+    {
+        if (ser == null) throw new IllegalArgumentException("StructureSerializer is null");
+        return ser;
     }
 
     protected void putAll(@NotNull Map<String, ?> map)

@@ -6,7 +6,6 @@ import net.kunmc.lab.peyangpaperutils.lang.LangProvider;
 import net.kunmc.lab.peyangpaperutils.lang.MsgArgs;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.commons.utils.LogUtils;
 import org.kunlab.scenamatica.enums.ActionResultCause;
 import org.kunlab.scenamatica.enums.ScenarioResultCause;
@@ -24,6 +23,7 @@ import org.kunlab.scenamatica.interfaces.action.types.Requireable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.scenario.ActionResultDeliverer;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioActionListener;
+import org.kunlab.scenamatica.interfaces.scenario.ScenarioExecutor;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioResult;
 import org.kunlab.scenamatica.interfaces.scenario.SessionStorage;
 import org.kunlab.scenamatica.interfaces.scenario.TestReporter;
@@ -38,15 +38,16 @@ import org.kunlab.scenamatica.scenario.ScenarioWaitTimedOutException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 @Getter
-public class ScenarioExecutor
+public class ScenarioExecutorImpl implements ScenarioExecutor
 {
-    private static final String STORAGE_KEY_PREFIX = "scenario.";
+    private static final String STORAGE_KEY_PREFIX = "scenario";
     private static final String STORAGE_KEY_OUTPUT = "output";
 
     private final ScenamaticaRegistry registry;
@@ -71,14 +72,14 @@ public class ScenarioExecutor
     private long elapsedTicks;
     private CompiledScenarioAction currentScenario;
 
-    public ScenarioExecutor(ScenarioEngineImpl engine,
-                            ActionRunManager actionManager,
-                            ScenarioActionListener listener,
-                            List<? extends CompiledScenarioAction> actions,
-                            List<? extends CompiledTriggerAction> triggerActions,
-                            CompiledScenarioAction runIf,
-                            SessionStorage variable,
-                            int attemptedCount)
+    public ScenarioExecutorImpl(ScenarioEngineImpl engine,
+                                ActionRunManager actionManager,
+                                ScenarioActionListener listener,
+                                List<? extends CompiledScenarioAction> actions,
+                                List<? extends CompiledTriggerAction> triggerActions,
+                                CompiledScenarioAction runIf,
+                                SessionStorage variable,
+                                int attemptedCount)
     {
         this.engine = engine;
         this.actionManager = actionManager;
@@ -128,20 +129,14 @@ public class ScenarioExecutor
         }
     }
 
-    private static String genStorageKey(@Nullable String scenarioName, int idx, @NotNull RunOn runOn, @NotNull RunAs runAs)
+    private static String genStorageKey(@NotNull RunOn runOn, @NotNull RunAs runAs)
     {
         StringBuilder key = new StringBuilder(STORAGE_KEY_PREFIX);
         if (!(runOn == RunOn.TRIGGER || runAs == RunAs.RUNIF))
-            key.append(runOn.getKey());
+            key.append(".").append(runOn.getKey());
 
         if (runOn != RunOn.RUNIF)
-        {
-            key.append(".");
-            if (scenarioName == null)
-                key.append(idx);
-            else
-                key.append(scenarioName);
-        }
+            key.append(".%s");  // 参照名が入る。
 
         if (!(runAs == RunAs.NORMAL || runAs == RunAs.RUNIF))
             key.append(".").append(runAs.getKey());
@@ -161,7 +156,7 @@ public class ScenarioExecutor
             2.1. runAs == NORMAL
                 scenario.scenarios.<idx|name>.output
             2.2. runAs == RUNIF
-                scenario.scenarios.runif.output
+                scenario.scenarios.<idx|name>.runif.output
             2.3. runAs == BEFORE => ERR
             2.4. runAs == AFTER => ERR
         3. runOn == RUNIF
@@ -187,14 +182,14 @@ public class ScenarioExecutor
 
         if (this.runIf != null)
         {
-            ActionResult result = this.runExecuteCondition(this.runIf, RunOn.RUNIF); // シナリオレベルの runif
+            ActionResult result = this.runExecuteCondition(this.runIf, -1, RunOn.RUNIF); // シナリオレベルの runif
             if (!result.isSuccess())
                 return this.genResult(ScenarioResultCause.SKIPPED);
         }
 
         if (compiledTrigger.getRunIf() != null)
         {
-            ActionResult result = this.runExecuteCondition(compiledTrigger.getRunIf(), RunOn.TRIGGER);  // トリガーレベルの runif
+            ActionResult result = this.runExecuteCondition(compiledTrigger.getRunIf(), -1, RunOn.TRIGGER);  // トリガーレベルの runif
             if (!result.isSuccess())
                 return this.genResult(ScenarioResultCause.SKIPPED);
         }
@@ -268,14 +263,14 @@ public class ScenarioExecutor
     }
 
     @NotNull
-    private ActionResult runExecuteCondition(@NotNull CompiledScenarioAction runIf, RunOn on)
+    private ActionResult runExecuteCondition(@NotNull CompiledScenarioAction runIf, int idx, RunOn on)
     {
         ActionResult result = this.testCondition(runIf);
         // コンディションチェックに失敗した(満たしていない)場合は(エラーにはせずに)スキップする。
         if (!result.isSuccess())
             this.testReporter.onTestSkipped(this.engine, runIf);
 
-        this.makeOutput(on, RunAs.RUNIF, result);
+        this.makeRunIFOutput(on, idx, result);
 
         return result;
     }
@@ -312,12 +307,11 @@ public class ScenarioExecutor
                 CompiledScenarioAction scenarioStructure = scenario.get(i);
                 CompiledScenarioAction next = i + 1 < scenario.size() ? scenario.get(i + 1): null;
 
-                ActionResult result = this.runScenario(scenarioStructure, next);
+                ActionResult result = this.runScenario(scenarioStructure, i, next);
                 if (result == null)
                     continue; // スキップされた場合は次のアクションへ。
 
                 results.add(result);
-                this.makeOutput(RunOn.SCENARIOS, as, i, result);
 
                 if (!result.isSuccess())
                 {
@@ -347,12 +341,34 @@ public class ScenarioExecutor
             return this.genResult(ScenarioResultCause.INTERNAL_ERROR, results);
     }
 
-    private ActionResult runScenario(CompiledScenarioAction scenario, CompiledScenarioAction next)
+    @Override
+    public boolean resolveInputs(CompiledAction action)
+    {
+        InputBoard input = action.getContext().getInput();
+        if (!input.hasUnresolvedReferences())
+            return true;
+
+        try
+        {
+            input.resolveReferences(this.registry.getScenarioFileManager().getSerializer(), this.variable);
+            if (input.hasUnresolvedReferences())
+                return false;
+        }
+        catch (Exception e)
+        {
+            this.registry.getExceptionHandler().report(e);
+            return false;
+        }
+
+        return true;
+    }
+
+    private ActionResult runScenario(CompiledScenarioAction scenario, int idx, CompiledScenarioAction next)
     {
         if (scenario.getRunIf() != null)
         {
             CompiledScenarioAction runIf = scenario.getRunIf();
-            ActionResult result = this.runExecuteCondition(runIf, RunOn.SCENARIOS); // シナリオレベルの runif
+            ActionResult result = this.runExecuteCondition(runIf, idx, RunOn.SCENARIOS); // シナリオレベルの runif
             if (!result.isSuccess())
             {
                 ActionContext context = scenario.getAction().getContext();
@@ -362,18 +378,10 @@ public class ScenarioExecutor
         }
 
         ActionContext context = scenario.getAction().getContext();
-        InputBoard input = context.getInput();
-        if (input.hasUnresolvedReferences())
+        if (!this.resolveInputs(scenario.getAction()))
         {
-            input.resolveReferences(
-                    this.registry.getScenarioFileManager().getSerializer(),
-                    this.variable
-            );
-            if (input.hasUnresolvedReferences())
-            {
-                context.fail(ActionResultCause.UNRESOLVED_REFERENCES);
-                return context.createResult(scenario.getAction());
-            }
+            context.fail(ActionResultCause.UNRESOLVED_REFERENCES);
+            return context.createResult(scenario.getAction());
         }
 
         this.currentScenario = scenario;
@@ -391,7 +399,21 @@ public class ScenarioExecutor
                 return this.testCondition(scenario);
         }
 
-        return this.deliverer.waitForResult(scenario.getStructure().getTimeout(), this.state);
+        try
+        {
+            return this.deliverer.waitForResult(scenario.getStructure().getTimeout(), this.state);
+        }
+        catch (ScenarioWaitTimedOutException e)
+        {
+            context.fail(ActionResultCause.TIMED_OUT);
+            return context.createResult(scenario.getAction());
+        }
+        catch (Exception e)
+        {
+            this.registry.getExceptionHandler().report(e);
+            context.fail(ActionResultCause.INTERNAL_ERROR);
+            return context.createResult(scenario.getAction());
+        }
     }
 
     private void doAction(CompiledScenarioAction scenario, CompiledScenarioAction next)
@@ -498,16 +520,36 @@ public class ScenarioExecutor
         return this.genResult(cause, Collections.emptyList());
     }
 
-    private void makeOutput(RunOn runOn, RunAs runAs, int idx, ActionResult result)
+    @Override
+    public void uploadScenarioOutputs(ActionContext sender, Map<String, Object> outputs)
     {
-        String key = genStorageKey(result.getScenarioName(), idx, runOn, runAs);
-        this.variable.set(key, result.getOutputs());
+        int idx = this.actions.stream()
+                .filter(a -> a.getAction().getContext().getContextID().equals(sender.getContextID()))
+                .map(this.actions::indexOf)
+                .findFirst().orElseThrow(() -> new IllegalStateException("Unable to upload outputs: Unrecognized sender."));
+
+        this.makeOutput(RunOn.SCENARIOS, RunAs.NORMAL, idx, sender.getScenarioName(), outputs);
     }
 
-    private void makeOutput(RunOn runOn, RunAs runAs, ActionResult result)
+    private void makeOutput(RunOn runOn, RunAs runAs, int idx, String scenarioName, Map<String, Object> outputs)
     {
-        String key = genStorageKey(result.getScenarioName(), -1, runOn, runAs);
-        this.variable.set(key, result.getOutputs());
+        String key = genStorageKey(runOn, runAs);
+        this.variable.set(key.replace("%s", String.valueOf(idx)), outputs);
+        if (scenarioName != null)
+            this.variable.set(key.replace("%s", scenarioName), outputs);
+    }
+
+    private void makeOutput(RunOn runOn, RunAs runAs, int idx, ActionResult result)
+    {
+        String key = genStorageKey(runOn, runAs);
+        this.variable.set(key.replace("%s", String.valueOf(idx)), result.getOutputs());
+        if (result.getScenarioName() != null)
+            this.variable.set(key.replace("%s", result.getScenarioName()), result.getOutputs());
+    }
+
+    private void makeRunIFOutput(RunOn runOn, int idx, ActionResult result)
+    {
+        this.makeOutput(runOn, RunAs.RUNIF, idx, result);
     }
 
     @AllArgsConstructor

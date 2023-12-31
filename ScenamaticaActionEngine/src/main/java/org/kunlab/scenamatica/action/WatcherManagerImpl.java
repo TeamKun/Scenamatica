@@ -11,12 +11,14 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredListener;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.action.utils.EventListenerUtils;
+import org.kunlab.scenamatica.enums.ActionResultCause;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.enums.TriggerType;
 import org.kunlab.scenamatica.enums.WatchType;
 import org.kunlab.scenamatica.exceptions.scenario.ScenarioException;
 import org.kunlab.scenamatica.interfaces.ScenamaticaRegistry;
 import org.kunlab.scenamatica.interfaces.action.Action;
+import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.CompiledAction;
 import org.kunlab.scenamatica.interfaces.action.WatcherManager;
 import org.kunlab.scenamatica.interfaces.action.WatchingEntry;
@@ -159,7 +161,7 @@ public class WatcherManagerImpl implements WatcherManager
         synchronized (this.lock)
         {
             if (!this.actionWatchers.containsValue(entry))
-                throw new IllegalStateException("Unrecognized entry.");
+                return;
         }
 
         if (entry.getType() == WatchType.TRIGGER)
@@ -218,6 +220,17 @@ public class WatcherManagerImpl implements WatcherManager
         Action actionExecutor = entry.getAction().getExecutor();
         assert actionExecutor instanceof Watchable;
         Watchable watchable = (Watchable) actionExecutor;
+
+        if (entry.getType() == WatchType.SCENARIO)
+        {
+            ActionContext context = entry.getAction().getContext();
+            if (!entry.getEngine().getExecutor().resolveInputs(entry.getAction()))
+            {
+                context.fail(ActionResultCause.UNRESOLVED_REFERENCES);
+                entry.getEngine().getListener().onActionError(entry.getAction(), new IllegalArgumentException("Failed to resolve references."));
+                return;
+            }
+        }
 
         // 引数にマッチしているかどうかをチェックする。
         if (watchable.checkFired(entry.getAction().getContext(), evt))

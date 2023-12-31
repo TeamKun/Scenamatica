@@ -36,6 +36,9 @@ public class ActionResultDelivererImpl implements ActionResultDeliverer
     {
         synchronized (this.lock)
         {
+            if (this.barrier.getNumberWaiting() > 1)
+                return;
+
             this.results.add(result);
 
             this.waitTimeout = -1L;
@@ -106,8 +109,7 @@ public class ActionResultDelivererImpl implements ActionResultDeliverer
         if (!this.waiting)
             return;
 
-        //noinspection DataFlowIssue
-        if (this.exceptionCaught instanceof RuntimeException)
+        if (exceptionCaught instanceof RuntimeException)
             this.exceptionCaught = (RuntimeException) exceptionCaught;
         else
             this.exceptionCaught = new RuntimeException(exceptionCaught);

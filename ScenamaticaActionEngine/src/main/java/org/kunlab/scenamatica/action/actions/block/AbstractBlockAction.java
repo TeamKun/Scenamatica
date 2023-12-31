@@ -1,9 +1,12 @@
 package org.kunlab.scenamatica.action.actions.block;
 
 import org.bukkit.Location;
+import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.block.BlockEvent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.actions.AbstractAction;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.commons.utils.Utils;
@@ -11,6 +14,7 @@ import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
+import org.kunlab.scenamatica.interfaces.scenariofile.context.PlayerStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.misc.BlockStructure;
 
 import java.util.ArrayList;
@@ -26,6 +30,8 @@ public abstract class AbstractBlockAction
                     BlockStructure.class
             ))
     );
+    public static final String OUT_KEY_BLOCK = "block";
+    public static final String OUT_KEY_PLAYER = "player";
 
     public static List<? extends AbstractBlockAction> getActions()
     {
@@ -35,6 +41,14 @@ public abstract class AbstractBlockAction
         actions.add(new BlockPlaceAction());
 
         return actions;
+    }
+
+    protected static void makeOutputs(@NotNull ActionContext ctxt, @NotNull Block block, @Nullable Player player)
+    {
+        ctxt.output(OUT_KEY_BLOCK, ctxt.getSerializer().toStructure(block, BlockStructure.class));
+        if (player != null)
+            ctxt.output(OUT_KEY_PLAYER, ctxt.getSerializer().toStructure(player, PlayerStructure.class));
+        ctxt.commitOutput();
     }
 
     @Override
@@ -47,7 +61,7 @@ public abstract class AbstractBlockAction
         return board;
     }
 
-    public boolean checkMatchedBlockEvent(@NotNull ActionContext ctxt, @NotNull Event event)
+    protected boolean checkMatchedBlockEvent(@NotNull ActionContext ctxt, @NotNull Event event)
     {
         if (!(event instanceof BlockEvent))
             return false;

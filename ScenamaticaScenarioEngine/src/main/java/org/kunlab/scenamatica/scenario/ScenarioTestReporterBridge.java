@@ -48,8 +48,7 @@ public class ScenarioTestReporterBridge implements ScenarioActionListener
 
         CompiledAction action = this.waitingFor.getAction();
 
-        if (result.getScenarioName().equals(action.getExecutor().getName())
-                && result.getRunID().equals(action.getContext().getContextID()))
+        if (result.getRunID().equals(action.getContext().getContextID()))
             this.reporter.onWatchingActionExecuted(this.engine, result);
         else  // 他のアクションが実行された。
             this.reporter.onActionJumped(this.engine, result, action);

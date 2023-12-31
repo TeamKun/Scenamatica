@@ -19,7 +19,6 @@ import org.kunlab.scenamatica.interfaces.context.Context;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 
-import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -44,7 +43,6 @@ public class ActionContextImpl implements ActionContext
 
     @Setter
     private String scenarioName;
-    private WeakReference<Context> context;
     private Boolean success;
     private ActionResultCause cause;
     private boolean halt;
@@ -65,10 +63,7 @@ public class ActionContextImpl implements ActionContext
 
     public Context getContext()
     {
-        if (this.context == null || this.context.get() == null)
-            this.context = new WeakReference<>(this.engine.getContext());
-
-        return this.context.get();
+        return this.engine.getContext();
     }
 
     @Override
@@ -163,6 +158,12 @@ public class ActionContextImpl implements ActionContext
 
         for (int i = 0; i < kvPairs.length; i += 2)
             this.output(kvPairs[i].toString(), kvPairs[i + 1]);
+    }
+
+    @Override
+    public void commitOutput()
+    {
+        this.engine.getExecutor().uploadScenarioOutputs(this, this.output);
     }
 
     @Override

@@ -54,7 +54,8 @@ public class ScenarioEngineImpl implements ScenarioEngine
     private final List<? extends CompiledTriggerAction> triggerActions;
     private final CompiledScenarioAction runIf;
 
-    private ScenarioExecutor executor;
+    @Getter
+    private ScenarioExecutorImpl executor;
     private volatile boolean isRunning; // #start(@NotNull TriggerStructure trigger) 内でのみ書き換えられる
     private ScenarioState state;
     private TriggerStructure ranBy;
@@ -116,7 +117,7 @@ public class ScenarioEngineImpl implements ScenarioEngine
                     true
             );
 
-        this.executor = new ScenarioExecutor(
+        this.executor = new ScenarioExecutorImpl(
                 this,
                 this.actionRunManager,
                 this.listener,

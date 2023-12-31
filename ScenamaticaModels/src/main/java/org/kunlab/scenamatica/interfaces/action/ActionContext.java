@@ -122,6 +122,11 @@ public interface ActionContext
     void outputs(Object... kvPairs);
 
     /**
+     * アクションの実行結果を出力します。
+     */
+    void commitOutput();
+
+    /**
      * 成功状態を持っているかどうかを取得します。
      *
      * @return 成功状態を持っているかどうか

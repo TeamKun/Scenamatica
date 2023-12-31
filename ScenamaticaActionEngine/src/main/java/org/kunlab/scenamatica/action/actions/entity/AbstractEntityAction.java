@@ -17,13 +17,12 @@ import java.util.List;
 
 public abstract class AbstractEntityAction<E extends Entity> extends AbstractAction
 {
-    public static final String KEY_TARGET_ENTITY = "target";
-
+    public static final String OUT_KEY_ENTITY = "entity";
     public final InputToken<EntitySpecifier<E>> IN_TARGET_ENTITY;
 
     public AbstractEntityAction(Class<E> entityClass, Class<? extends EntityStructure> structureClazz)
     {
-        this.IN_TARGET_ENTITY = ofInput(KEY_TARGET_ENTITY, entityClass, structureClazz);
+        this.IN_TARGET_ENTITY = ofInput("target", entityClass, structureClazz);
     }
 
     public AbstractEntityAction()
@@ -57,6 +56,11 @@ public abstract class AbstractEntityAction<E extends Entity> extends AbstractAct
 
         EntityEvent e = (EntityEvent) event;
         return ctxt.ifHasInput(this.IN_TARGET_ENTITY, specifier -> specifier.checkMatchedEntity(e.getEntity()));
+    }
+
+    protected void makeOutputs(@NotNull ActionContext ctxt, @NotNull E entity)
+    {
+        ctxt.output(OUT_KEY_ENTITY, entity);
     }
 
     @Override

@@ -50,7 +50,16 @@ public class ScenarioStorage extends AbstractVariableProvider implements ChildSt
 
     private static boolean isOutputKey(String key)
     {
-        return key.endsWith(OUTPUT_MARKER) || key.equals(KEY_OUTPUT);
+        return key.contains(OUTPUT_MARKER) || key.equals(KEY_OUTPUT);
+    }
+
+    private static boolean isOutputKey(String[] keys)
+    {
+        for (String key : keys)
+            if (isOutputKey(key))
+                return true;
+
+        return false;
     }
 
     private static String getOutputkey(QueuedScenario scenario, String key)
@@ -101,7 +110,7 @@ public class ScenarioStorage extends AbstractVariableProvider implements ChildSt
             throw new IllegalArgumentException("Ambiguous key: " + key);
 
         // 末尾の .output を, OUTPUT_IDENTIFIER に置換する
-        String generalKey = key.substring(0, key.length() - OUTPUT_MARKER.length()) + OUTPUT_IDENTIFIER;
+        String generalKey = key.substring(0, key.length() - OUTPUT_MARKER.length() + 1) + OUTPUT_IDENTIFIER;
 
         QueuedScenario current = this.session.getCurrent();
         super.set(getOutputkey(current, generalKey), value);
@@ -127,8 +136,15 @@ public class ScenarioStorage extends AbstractVariableProvider implements ChildSt
 
         if (keys.length == 0)
             return this.ser.serialize(scenario.getEngine().getScenario(), ScenarioFileStructure.class);
-        else if (isOutputKey(keys[keys.length - 1]))
-            return this.getScenarioOutputsDetail(scenario, keys);
+        else if (isOutputKey(keys))
+            try
+            {
+                return this.getScenarioOutputsDetail(scenario, keys);
+            }
+            catch (IllegalArgumentException e)
+            {
+                throw new IllegalArgumentException("Unknown output key: " + KEY + "." + String.join(".", keys));
+            }
 
         ScenarioResult result = scenario.getResult();
         String key = keys[1];
@@ -162,8 +178,8 @@ public class ScenarioStorage extends AbstractVariableProvider implements ChildSt
 
     private Pair<Object, Integer> lookupOutput(QueuedScenario scenario, String[] keys)
     {
-        final String separator = KEY_SEPARATOR.replace(".", "\\.");
-        StringBuilder builder = new StringBuilder(KEY_OUTPUT);
+        final String separator = KEY_SEPARATOR;
+        StringBuilder builder = new StringBuilder();
         for (int i = 0; i < keys.length; i++)
         {
             String key = keys[i];
@@ -171,7 +187,7 @@ public class ScenarioStorage extends AbstractVariableProvider implements ChildSt
                 builder.append(separator);
             if (isOutputKey(key))
             {
-                String generalKey = getOutputkey(scenario, builder + "." + OUTPUT_IDENTIFIER);
+                String generalKey = getOutputkey(scenario, builder + OUTPUT_IDENTIFIER);
                 Object lookupResult = super.get(generalKey);
                 if (lookupResult == null)
                     builder.append(key);

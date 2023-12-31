@@ -15,6 +15,7 @@ import java.util.UUID;
 @Value
 public class ActionResultImpl implements ActionResult
 {
+    @Nullable
     String scenarioName;
     UUID runID;
     boolean success;
