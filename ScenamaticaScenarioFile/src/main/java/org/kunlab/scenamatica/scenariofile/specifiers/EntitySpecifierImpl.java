@@ -93,7 +93,7 @@ public class EntitySpecifierImpl<E extends Entity> implements EntitySpecifier<E>
         throw new IllegalArgumentException("Cannot deserialize EntityArgumentHolder from " + obj);
     }
 
-    public static EntitySpecifier<?> of(@NotNull Entity entity)
+    public static <E extends Entity> EntitySpecifier<E> of(@NotNull E entity)
     {
         return new EntitySpecifierImpl<>(entity.getUniqueId());
     }

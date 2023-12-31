@@ -12,7 +12,7 @@ import java.util.function.Function;
 
 public abstract class AbstractVariableProvider
 {
-    public static String KEY_SEPARATOR = ".".replace(".", "\\.");
+    public static String KEY_SEPARATOR = ".";
 
     protected final Map<String, Object> map;
     protected final StructureSerializer ser;
@@ -114,7 +114,7 @@ public abstract class AbstractVariableProvider
             else if (value instanceof Function)
                 return value;
             else
-                throw new IllegalArgumentException("Unknown key '" + String.join(", ", keys) + "'");
+                throw new IllegalArgumentException("Unknown key '" + String.join(".", keys) + "'");
         }
 
         return map.get(keys[keys.length - 1]);
@@ -142,7 +142,7 @@ public abstract class AbstractVariableProvider
 
     public void set(@NotNull String key, @Nullable Object value)
     {
-        String[] keys = key.split(KEY_SEPARATOR);
+        String[] keys = key.split(KEY_SEPARATOR.replace(".", "\\."));
         if (keys.length == 0)
             return;
 

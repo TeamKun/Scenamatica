@@ -4,12 +4,10 @@ import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.exceptions.scenario.TriggerNotFoundException;
-import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.scenario.QueuedScenario;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioResult;
 import org.kunlab.scenamatica.interfaces.scenario.SessionStorage;
-import org.kunlab.scenamatica.interfaces.scenario.runtime.CompiledScenarioAction;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerStructure;
 
 import java.util.function.Consumer;
@@ -78,15 +76,6 @@ public class QueuedScenarioImpl implements QueuedScenario
     public ScenarioResult run(SessionStorage variable) throws TriggerNotFoundException
     {
         this.ensureNotRunning();
-        for (CompiledScenarioAction action : this.engine.getActions())
-        {
-            InputBoard inputs = action.getAction().getContext().getInput();
-            if (inputs.hasUnresolvedReferences())
-                inputs.resolveReferences(this.manager.getRegistry().getScenarioFileManager().getSerializer(), variable);
-
-            inputs.validate();
-        }
-
         this.onStart();
         ScenarioResult result = this.manager.runScenario(this.engine, this.trigger, variable, this.attemptCount);
         this.onFinished(result);

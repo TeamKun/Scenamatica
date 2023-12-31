@@ -18,6 +18,7 @@ import org.kunlab.scenamatica.exceptions.scenario.ScenarioNotRunningException;
 import org.kunlab.scenamatica.exceptions.scenario.TriggerNotFoundException;
 import org.kunlab.scenamatica.interfaces.ScenamaticaRegistry;
 import org.kunlab.scenamatica.interfaces.action.ActionRunManager;
+import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.scenario.MilestoneManager;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioManager;
@@ -25,6 +26,7 @@ import org.kunlab.scenamatica.interfaces.scenario.ScenarioResult;
 import org.kunlab.scenamatica.interfaces.scenario.SessionCreator;
 import org.kunlab.scenamatica.interfaces.scenario.SessionStorage;
 import org.kunlab.scenamatica.interfaces.scenario.TestReporter;
+import org.kunlab.scenamatica.interfaces.scenario.runtime.CompiledScenarioAction;
 import org.kunlab.scenamatica.interfaces.scenario.runtime.CompiledTriggerAction;
 import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerStructure;
@@ -215,6 +217,14 @@ public class ScenarioManagerImpl implements ScenarioManager
         ScenarioResult result;
         try
         {
+            for (CompiledScenarioAction action : engine.getActions())
+            {
+                InputBoard inputs = action.getAction().getContext().getInput();
+                if (inputs.hasUnresolvedReferences())
+                    inputs.resolveReferences(this.registry.getScenarioFileManager().getSerializer(), variable);
+
+                inputs.validate();
+            }
             result = engine.start(trigger, variable, attempted);
         }
         catch (Throwable e)

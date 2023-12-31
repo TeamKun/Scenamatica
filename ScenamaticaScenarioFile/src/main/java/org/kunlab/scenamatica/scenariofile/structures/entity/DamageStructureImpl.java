@@ -25,8 +25,11 @@ public class DamageStructureImpl implements DamageStructure
     {
         Map<String, Object> map = new HashMap<>();
         map.put(KEY_DAMAGE, structure.getDamage());
+        Map<String, Object> modifiers = new HashMap<>();
         for (Map.Entry<EntityDamageEvent.DamageModifier, Double> entry : structure.getModifiers().entrySet())
-            map.put(entry.getKey().name().toLowerCase(), entry.getValue());
+            modifiers.put(entry.getKey().name().toLowerCase(), entry.getValue());
+        if (!modifiers.isEmpty())
+            map.put(KEY_MODIFIER, modifiers);
         map.put(KEY_CAUSE, structure.getCause().name());
 
         return map;
@@ -51,11 +54,9 @@ public class DamageStructureImpl implements DamageStructure
     {
         validate(map);
         Map<EntityDamageEvent.DamageModifier, Double> modifiers = new EnumMap<>(EntityDamageEvent.DamageModifier.class);
-        for (EntityDamageEvent.DamageModifier modifier : EntityDamageEvent.DamageModifier.values())
-        {
-            if (map.containsKey(modifier.name()))
-                modifiers.put(modifier, MapUtils.getAsNumber(map, modifier.name(), Number::doubleValue));
-        }
+        if (map.containsKey(KEY_MODIFIER))
+            for (Map.Entry<String, Object> entry : MapUtils.checkAndCastMap(map.get(KEY_MODIFIER)).entrySet())
+                modifiers.put(EntityDamageEvent.DamageModifier.valueOf(entry.getKey().toUpperCase()), Double.parseDouble(entry.getValue().toString()));
 
         return new DamageStructureImpl(
                 modifiers,

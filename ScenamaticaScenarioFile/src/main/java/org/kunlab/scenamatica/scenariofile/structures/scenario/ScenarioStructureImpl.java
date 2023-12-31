@@ -43,7 +43,8 @@ public class ScenarioStructureImpl implements ScenarioStructure
         Map<String, Object> map = new HashMap<>();
         map.put(KEY_SCENARIO_TYPE, structure.getType().getKey());
 
-        MapUtils.putIfNotNull(map, KEY_TIMEOUT, structure.getTimeout());
+        if (structure.getTimeout() != -1)
+            map.put(KEY_TIMEOUT, structure.getTimeout());
         MapUtils.putIfNotNull(map, KEY_SCENARIO_NAME, structure.getName());
 
         map.putAll(serializer.serialize(structure.getAction(), ActionStructure.class));

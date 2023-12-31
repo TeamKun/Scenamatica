@@ -24,7 +24,6 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
-import java.util.function.Function;
 
 public class SelectiveEntityStructureSerializer
 {
@@ -46,7 +45,7 @@ public class SelectiveEntityStructureSerializer
                 EntityItemStructureImpl::serialize,
                 EntityItemStructureImpl::deserialize,
                 EntityItemStructureImpl::validate,
-                EntityItemStructureImpl::of
+                (entity, ignored) -> EntityItemStructureImpl.of(entity)
         );/*
         registerStructure(
                 EntityType.PLAYER,
@@ -62,7 +61,7 @@ public class SelectiveEntityStructureSerializer
                 PlayerStructureImpl::serialize,
                 PlayerStructureImpl::deserialize,
                 PlayerStructureImpl::validate,
-                PlayerStructureImpl::of
+                (player, ignored) -> PlayerStructureImpl.of(player)
         );
 
         registerStructure(
@@ -71,7 +70,7 @@ public class SelectiveEntityStructureSerializer
                 AEntityStructureImpl::serialize,
                 AEntityStructureImpl::deserialize,
                 (stringObjectMap, structureSerializer) -> AEntityStructureImpl.validate(stringObjectMap),
-                AEntityStructureImpl::of
+                (entity, ignored) -> AEntityStructureImpl.of(entity)
         );
 
         registerProjectiles();
@@ -134,16 +133,6 @@ public class SelectiveEntityStructureSerializer
                         constructor
                 )
         );
-    }
-
-    private static <E extends Entity, S extends EntityStructure & Mapped<E>> void registerStructure(@NotNull EntityType entityType,
-                                                                                                    @NotNull Class<S> clazz,
-                                                                                                    @NotNull BiFunction<S, StructureSerializer, Map<String, Object>> serializer,
-                                                                                                    @NotNull BiFunction<Map<String, Object>, StructureSerializer, S> deserializer,
-                                                                                                    @NotNull BiConsumer<Map<String, Object>, StructureSerializer> validator,
-                                                                                                    @NotNull Function<E, ? extends S> constructor)
-    {
-        registerStructure(entityType, clazz, serializer, deserializer, validator, (entity, ignored) -> constructor.apply(entity));
     }
 
     public static <T extends EntityStructure & Mapped<?>> T deserialize(@NotNull EntityType entityType,
