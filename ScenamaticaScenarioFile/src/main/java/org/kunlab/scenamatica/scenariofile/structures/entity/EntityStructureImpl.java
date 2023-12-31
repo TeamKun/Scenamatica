@@ -260,6 +260,32 @@ public class EntityStructureImpl implements EntityStructure
         );
     }
 
+    public static EntityStructure of(@NotNull Entity entity)
+    {
+        // noinspection deprecation
+        return new EntityStructureImpl(
+                entity.getType(),
+                LocationStructureImpl.of(entity.getLocation()),
+                entity.getVelocity(),
+                entity.getCustomName(),
+                entity.getUniqueId(),
+                entity.isGlowing(),
+                entity.hasGravity(),
+                entity.isSilent(),
+                entity.isCustomNameVisible(),
+                entity.isInvulnerable(),
+                new ArrayList<>(entity.getScoreboardTags()),
+                entity instanceof Damageable ? (int) ((Damageable) entity).getMaxHealth(): null,
+                entity instanceof Damageable ? (int) ((Damageable) entity).getHealth(): null,
+                entity.getLastDamageCause() != null ? DamageStructureImpl.of(entity.getLastDamageCause()): null,
+                entity.getFireTicks(),
+                entity.getTicksLived(),
+                entity.getPortalCooldown(),
+                entity.isPersistent(),
+                entity.getFallDistance()
+        );
+    }
+
     @Override
     public boolean equals(Object o)
     {

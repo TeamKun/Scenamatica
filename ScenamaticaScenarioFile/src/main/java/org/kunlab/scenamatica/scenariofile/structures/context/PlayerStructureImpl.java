@@ -2,6 +2,7 @@ package org.kunlab.scenamatica.scenariofile.structures.context;
 
 import lombok.Value;
 import org.bukkit.entity.Player;
+import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
@@ -10,11 +11,13 @@ import org.kunlab.scenamatica.interfaces.scenariofile.context.PlayerStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.entity.entities.HumanEntityStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.misc.LocationStructure;
 import org.kunlab.scenamatica.scenariofile.structures.entity.entities.HumanEntityStructureImpl;
+import org.kunlab.scenamatica.scenariofile.structures.misc.LocationStructureImpl;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Value
 public class PlayerStructureImpl extends HumanEntityStructureImpl implements PlayerStructure
@@ -229,6 +232,59 @@ public class PlayerStructureImpl extends HumanEntityStructureImpl implements Pla
                 opLevel,
                 activePermissions
         );
+    }
+
+    public static PlayerStructure of(@NotNull Player player)
+    {
+        return new PlayerStructureImpl(
+                HumanEntityStructureImpl.ofHuman(player),
+                player.getName(),
+                player.isOnline(),
+                player.getDisplayName(),
+                player.getPlayerListName(),
+                player.getPlayerListHeader(),
+                player.getPlayerListFooter(),
+                LocationStructureImpl.of(player.getCompassTarget()),
+                player.getBedSpawnLocation() == null ? null: LocationStructureImpl.of(player.getBedSpawnLocation()),
+                (int) (player.getExp() * 100),
+                player.getLevel(),
+                player.getTotalExperience(),
+                player.getAllowFlight(),
+                player.isFlying(),
+                player.getWalkSpeed(),
+                player.getFlySpeed(),
+                guessOpLevel(player),
+                player
+                        .getEffectivePermissions()
+                        .stream()
+                        .map(PermissionAttachmentInfo::getPermission)
+                        .collect(Collectors.toList())
+        );
+    }
+
+    private static int guessOpLevel(@NotNull Player player)
+    {
+        if (!player.isOp())
+            return 0;
+
+        /* 1 – Can edit spawn protection
+         * 2 – Can use /clear, /difficulty, /effect, /gamemode, /gamerule, /give, and /tp, and can edit command blocks
+         * 3 – Can use /ban, /deop, /kick, and /op
+         * 4 – Can use /stop
+         */
+
+        boolean canTP = player.hasPermission("minecraft.command.tp");
+        boolean canOP = player.hasPermission("minecraft.command.op");
+        boolean canStop = player.hasPermission("minecraft.command.stop");
+
+        if (canTP && canOP && canStop)
+            return 4;
+        else if (canTP && canOP)
+            return 3;
+        else if (canTP)
+            return 2;
+        else
+            return 1;
     }
 
     @Override

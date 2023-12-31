@@ -1,10 +1,14 @@
 package org.kunlab.scenamatica.scenariofile;
 
+import org.bukkit.entity.Entity;
+import org.bukkit.projectiles.BlockProjectileSource;
+import org.bukkit.projectiles.ProjectileSource;
 import org.kunlab.scenamatica.interfaces.scenariofile.Structure;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.entity.EntityStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.misc.BlockStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.misc.ProjectileSourceStructure;
+import org.kunlab.scenamatica.scenariofile.structures.misc.BlockStructureImpl;
 
 import java.util.Map;
 
@@ -51,6 +55,16 @@ public class ProjectileSourceSerializeHelper
             serializer.validate(map, EntityStructure.class);
         else if (KIND_BLOCK.equalsIgnoreCase((String) map.get(KEY_KIND)))
             serializer.validate(map, BlockStructure.class);
+    }
+
+    public static ProjectileSourceStructure of(ProjectileSource source, StructureSerializer serializer)
+    {
+        if (source instanceof BlockProjectileSource)
+            return BlockStructureImpl.of(((BlockProjectileSource) source).getBlock());
+        else if (source instanceof Entity)
+            return serializer.toStructure((Entity) source, null);
+        else
+            throw new IllegalArgumentException("Unrecognized ProjectileSource: " + source);
     }
 
     private static <T extends Structure> T tryDeserialize(Map<String, Object> map, StructureSerializer serializer, Class<T> clazz)

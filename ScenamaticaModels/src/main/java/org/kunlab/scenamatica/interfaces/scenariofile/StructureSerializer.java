@@ -46,6 +46,8 @@ public interface StructureSerializer
      */
     <T extends Structure> void validate(@NotNull Map<String, Object> map, @NotNull Class<T> clazz);
 
+    <V, T extends Mapped<V> & Structure> T toStructure(@NotNull V value, @Nullable Class<T> clazz);
+
     /**
      * エンティティ指定子をデシリアライズします。
      *

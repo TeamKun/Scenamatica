@@ -26,7 +26,7 @@ public class AEntityStructureSerializeTest
 {
     public static final AEntityStructure FULFILLED = new AEntityStructureImpl(
             EntityType.UNKNOWN,
-            LocationStructureImpl.from(new Location(null, 1145, 1419, 19, 8, 10)),
+            LocationStructureImpl.of(new Location(null, 1145, 1419, 19, 8, 10)),
             new Vector(11, 45, 14),
             "YajuSNPI",
             UUID.fromString("a1b1c4d5-e1f4-a1b9-c1d9-e8f1a0bcdef1"),

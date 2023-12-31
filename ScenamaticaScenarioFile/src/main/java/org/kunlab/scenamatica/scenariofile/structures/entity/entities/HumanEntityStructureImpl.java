@@ -14,6 +14,8 @@ import org.kunlab.scenamatica.interfaces.scenariofile.entity.entities.HumanEntit
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.InventoryStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.PlayerInventoryStructure;
 import org.kunlab.scenamatica.scenariofile.structures.entity.LivingEntityStructureImpl;
+import org.kunlab.scenamatica.scenariofile.structures.inventory.InventoryStructureImpl;
+import org.kunlab.scenamatica.scenariofile.structures.inventory.PlayerInventoryStructureImpl;
 
 import java.util.Map;
 import java.util.Objects;
@@ -150,6 +152,19 @@ public class HumanEntityStructureImpl extends LivingEntityStructureImpl implemen
                 mainHand,
                 gamemode,
                 foodLevel
+        );
+    }
+
+    @NotNull
+    public static HumanEntityStructure ofHuman(@NotNull HumanEntity entity)
+    {
+        return new HumanEntityStructureImpl(
+                LivingEntityStructureImpl.ofLivingEntity(entity),
+                PlayerInventoryStructureImpl.of(entity.getInventory()),
+                InventoryStructureImpl.of(entity.getEnderChest()),
+                entity.getMainHand(),
+                entity.getGameMode(),
+                entity.getFoodLevel()
         );
     }
 

@@ -13,6 +13,7 @@ import org.kunlab.scenamatica.interfaces.scenariofile.entity.EntityStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.entity.entities.EntityItemStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.ItemStackStructure;
 import org.kunlab.scenamatica.scenariofile.structures.entity.EntityStructureImpl;
+import org.kunlab.scenamatica.scenariofile.structures.inventory.ItemStackStructureImpl;
 
 import java.util.Map;
 import java.util.UUID;
@@ -112,10 +113,18 @@ public class EntityItemStructureImpl extends EntityStructureImpl implements Enti
         );
     }
 
-    @Override
-    public Item create()
+    @NotNull
+    public static EntityItemStructure of(@NotNull Item entity)
     {
-        return null;
+        return new EntityItemStructureImpl(
+                EntityStructureImpl.of(entity),
+                ItemStackStructureImpl.of(entity.getItemStack()),
+                entity.getPickupDelay(),
+                entity.getOwner(),
+                entity.getThrower(),
+                entity.canMobPickup(),
+                entity.willAge()
+        );
     }
 
     @Override

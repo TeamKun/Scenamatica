@@ -93,6 +93,11 @@ public class EntitySpecifierImpl<E extends Entity> implements EntitySpecifier<E>
         throw new IllegalArgumentException("Cannot deserialize EntityArgumentHolder from " + obj);
     }
 
+    public static EntitySpecifier<?> of(@NotNull Entity entity)
+    {
+        return new EntitySpecifierImpl<>(entity.getUniqueId());
+    }
+
     protected static UUID tryConvertToUUID(String mayUUID)
     {
         try

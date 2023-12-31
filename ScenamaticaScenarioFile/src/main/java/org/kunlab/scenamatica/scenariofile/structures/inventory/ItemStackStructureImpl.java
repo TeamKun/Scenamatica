@@ -358,7 +358,7 @@ public class ItemStackStructureImpl implements ItemStackStructure
     }
 
     @SuppressWarnings("deprecation")
-    public static ItemStackStructure fromItemStack(@NotNull ItemStack stack)
+    public static ItemStackStructure of(@NotNull ItemStack stack)
     {
         ItemMeta meta = stack.getItemMeta();
 

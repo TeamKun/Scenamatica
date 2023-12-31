@@ -40,6 +40,11 @@ public class InventoryStructureImpl extends GenericInventoryStructureImpl implem
         return new InventoryStructureImpl(GenericInventoryStructureImpl.deserialize(map, serializer));
     }
 
+    public static InventoryStructureImpl of(@NotNull Inventory inventory)
+    {
+        return new InventoryStructureImpl(GenericInventoryStructureImpl.of(inventory));
+    }
+
     @Override
     public void applyTo(Inventory object)
     {

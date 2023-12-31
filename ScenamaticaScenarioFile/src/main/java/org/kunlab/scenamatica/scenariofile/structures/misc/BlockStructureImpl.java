@@ -40,12 +40,12 @@ public class BlockStructureImpl implements BlockStructure
     Map<String, Object> blockData;
     Byte blockState;
 
-    public static BlockStructure fromBlock(Block block)
+    public static BlockStructure of(Block block)
     {
         // noinspection deprecation
         return new BlockStructureImpl(
                 block.getType(),
-                LocationStructureImpl.from(block.getLocation()),
+                LocationStructureImpl.of(block.getLocation()),
                 new HashMap<>(),
                 (int) block.getLightLevel(),
                 block.getBiome(),

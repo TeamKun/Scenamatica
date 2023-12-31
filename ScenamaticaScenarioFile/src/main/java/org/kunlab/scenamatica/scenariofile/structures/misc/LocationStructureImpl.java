@@ -22,7 +22,7 @@ public class LocationStructureImpl implements LocationStructure
     Float pitch;
     String world;
 
-    public static LocationStructure from(Location location)
+    public static LocationStructure of(Location location)
     {
         return new LocationStructureImpl(
                 location.getX(),

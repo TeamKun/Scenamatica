@@ -96,6 +96,11 @@ public class PlayerSpecifierImpl extends EntitySpecifierImpl<Player> implements 
         throw new IllegalArgumentException("Cannot deserialize PlayerSpecifier from " + obj);
     }
 
+    public static PlayerSpecifier of(@NotNull Player player)
+    {
+        return new PlayerSpecifierImpl(player.getUniqueId());
+    }
+
     @Override
     public boolean canProvideTarget()
     {

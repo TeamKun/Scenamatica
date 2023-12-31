@@ -94,6 +94,25 @@ public class GenericInventoryStructureImpl implements GenericInventoryStructure
         );
     }
 
+    public static GenericInventoryStructureImpl of(@NotNull Inventory inventory)
+    {
+        Map<Integer, ItemStackStructure> mainContents = new HashMap<>();
+        for (int i = 0; i < inventory.getSize(); i++)
+        {
+            ItemStack item = inventory.getItem(i);
+            if (item == null)
+                continue;
+
+            mainContents.put(i, ItemStackStructureImpl.of(item));
+        }
+
+        return new GenericInventoryStructureImpl(
+                inventory.getSize(),
+                null,
+                mainContents
+        );
+    }
+
     protected boolean isAdequateInventory(Inventory inventory, boolean strict)
     {
         if (strict && !(this.size == null || this.size == inventory.getSize()))

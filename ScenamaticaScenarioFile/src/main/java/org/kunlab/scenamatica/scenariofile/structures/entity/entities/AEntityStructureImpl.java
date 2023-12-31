@@ -48,6 +48,11 @@ public class AEntityStructureImpl extends EntityStructureImpl implements AEntity
         EntityStructureImpl.validate(structure);
     }
 
+    public static AEntityStructureImpl of(@NotNull Entity entity)
+    {
+        return new AEntityStructureImpl(EntityStructureImpl.of(entity));
+    }
+
     @Override
     public Entity create()
     {

@@ -1,15 +1,20 @@
 package org.kunlab.scenamatica.scenariofile.structures.entity;
 
 import lombok.Value;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Projectile;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.commons.utils.Utils;
+import org.kunlab.scenamatica.interfaces.scenariofile.Mapped;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.context.PlayerStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.entity.EntityStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.entity.entities.AEntityStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.entity.entities.EntityItemStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.entity.entities.ProjectileStructure;
+import org.kunlab.scenamatica.scenariofile.StructureSerializerImpl;
 import org.kunlab.scenamatica.scenariofile.structures.context.PlayerStructureImpl;
 import org.kunlab.scenamatica.scenariofile.structures.entity.entities.AEntityStructureImpl;
 import org.kunlab.scenamatica.scenariofile.structures.entity.entities.EntityItemStructureImpl;
@@ -19,10 +24,11 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
+import java.util.function.Function;
 
 public class SelectiveEntityStructureSerializer
 {
-    private static final EnumMap<EntityType, EntityStructureEntry<?>> ENTITY_STRUCTURES;
+    private static final EnumMap<EntityType, EntityStructureEntry<?, ?>> ENTITY_STRUCTURES;
 
     static
     {
@@ -39,7 +45,8 @@ public class SelectiveEntityStructureSerializer
                 EntityItemStructure.class,
                 EntityItemStructureImpl::serialize,
                 EntityItemStructureImpl::deserialize,
-                EntityItemStructureImpl::validate
+                EntityItemStructureImpl::validate,
+                EntityItemStructureImpl::of
         );/*
         registerStructure(
                 EntityType.PLAYER,
@@ -54,7 +61,8 @@ public class SelectiveEntityStructureSerializer
                 PlayerStructure.class,
                 PlayerStructureImpl::serialize,
                 PlayerStructureImpl::deserialize,
-                PlayerStructureImpl::validate
+                PlayerStructureImpl::validate,
+                PlayerStructureImpl::of
         );
 
         registerStructure(
@@ -62,7 +70,8 @@ public class SelectiveEntityStructureSerializer
                 AEntityStructure.class,
                 AEntityStructureImpl::serialize,
                 AEntityStructureImpl::deserialize,
-                (stringObjectMap, structureSerializer) -> AEntityStructureImpl.validate(stringObjectMap)
+                (stringObjectMap, structureSerializer) -> AEntityStructureImpl.validate(stringObjectMap),
+                AEntityStructureImpl::of
         );
 
         registerProjectiles();
@@ -73,6 +82,7 @@ public class SelectiveEntityStructureSerializer
         BiFunction<ProjectileStructure, StructureSerializer, Map<String, Object>> serializer = ProjectileStructureImpl::serialize;
         BiFunction<Map<String, Object>, StructureSerializer, ProjectileStructure> deserializer = ProjectileStructureImpl::deserialize;
         BiConsumer<Map<String, Object>, StructureSerializer> validator = ProjectileStructureImpl::validate;
+        BiFunction<Projectile, StructureSerializer, ProjectileStructure> constructor = ProjectileStructureImpl::of;
 
         EntityType[] projectileTypes = {
                 EntityType.ARROW,
@@ -101,16 +111,18 @@ public class SelectiveEntityStructureSerializer
                     ProjectileStructure.class,
                     serializer,
                     deserializer,
-                    validator
+                    validator,
+                    constructor
             );
         }
     }
 
-    private static <S extends EntityStructure> void registerStructure(@NotNull EntityType entityType,
-                                                                      @NotNull Class<S> clazz,
-                                                                      @NotNull BiFunction<S, StructureSerializer, Map<String, Object>> serializer,
-                                                                      @NotNull BiFunction<Map<String, Object>, StructureSerializer, S> deserializer,
-                                                                      @NotNull BiConsumer<Map<String, Object>, StructureSerializer> validator)
+    private static <E extends Entity, S extends EntityStructure & Mapped<E>> void registerStructure(@NotNull EntityType entityType,
+                                                                                                    @NotNull Class<S> clazz,
+                                                                                                    @NotNull BiFunction<S, StructureSerializer, Map<String, Object>> serializer,
+                                                                                                    @NotNull BiFunction<Map<String, Object>, StructureSerializer, S> deserializer,
+                                                                                                    @NotNull BiConsumer<Map<String, Object>, StructureSerializer> validator,
+                                                                                                    @NotNull BiFunction<E, StructureSerializer, S> constructor)
     {
         ENTITY_STRUCTURES.put(
                 entityType,
@@ -118,17 +130,28 @@ public class SelectiveEntityStructureSerializer
                         clazz,
                         serializer,
                         deserializer,
-                        validator
+                        validator,
+                        constructor
                 )
         );
     }
 
-    public static <T extends EntityStructure> T deserialize(@NotNull EntityType entityType,
-                                                            @NotNull Map<String, Object> data,
-                                                            @NotNull StructureSerializer serializer)
+    private static <E extends Entity, S extends EntityStructure & Mapped<E>> void registerStructure(@NotNull EntityType entityType,
+                                                                                                    @NotNull Class<S> clazz,
+                                                                                                    @NotNull BiFunction<S, StructureSerializer, Map<String, Object>> serializer,
+                                                                                                    @NotNull BiFunction<Map<String, Object>, StructureSerializer, S> deserializer,
+                                                                                                    @NotNull BiConsumer<Map<String, Object>, StructureSerializer> validator,
+                                                                                                    @NotNull Function<E, ? extends S> constructor)
+    {
+        registerStructure(entityType, clazz, serializer, deserializer, validator, (entity, ignored) -> constructor.apply(entity));
+    }
+
+    public static <T extends EntityStructure & Mapped<?>> T deserialize(@NotNull EntityType entityType,
+                                                                        @NotNull Map<String, Object> data,
+                                                                        @NotNull StructureSerializer serializer)
     {
         // noinspection unchecked
-        EntityStructureEntry<T> entry = (EntityStructureEntry<T>) ENTITY_STRUCTURES.get(entityType);
+        EntityStructureEntry<?, T> entry = (EntityStructureEntry<?, T>) ENTITY_STRUCTURES.get(entityType);
         if (entry == null)
             throw new IllegalArgumentException("Unknown entity type: " + entityType);
         return entry.getDeserializer().apply(data, serializer);
@@ -142,8 +165,7 @@ public class SelectiveEntityStructureSerializer
         type = guessByMapValue(data, type);
 
         boolean canGeneralize = clazz == EntityStructure.class;
-        // noinspection unchecked
-        EntityStructureEntry<T> entry = (EntityStructureEntry<T>) ENTITY_STRUCTURES.get(type);
+        EntityStructureEntry<?, ?> entry = ENTITY_STRUCTURES.get(type);
         if (entry == null)
             if (canGeneralize)
                 // noinspection unchecked  canGeneralize が true なら, clazz は EntityStructure.class である。
@@ -151,32 +173,34 @@ public class SelectiveEntityStructureSerializer
             else
                 throw new IllegalArgumentException("Unknown entity type: " + type);
 
-        return entry.getDeserializer().apply(data, serializer);
+        return (T) entry.getDeserializer().apply(data, serializer);
     }
 
     public static <T extends EntityStructure> T deserialize(@NotNull Class<T> clazz,
                                                             @NotNull Map<String, Object> data,
                                                             @NotNull StructureSerializer serializer)
     {
+        // noinspection unchecked
         return deserialize(getEntityTypeSafe(clazz), data, serializer);
     }
 
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public static <T extends EntityStructure> Map<String, Object> serialize(@NotNull T entityStructure,
                                                                             @NotNull StructureSerializer serializer,
-                                                                            @NotNull Class<? extends T> clazz)
+                                                                            @Nullable Class<? extends T> clazz)
     {
         EntityType type = entityStructure.getType();
-        if (type == null)
+        if (type == null && clazz != null)
             type = getEntityTypeSafe(clazz);
 
-        // noinspection unchecked
-        EntityStructureEntry<T> entry = (EntityStructureEntry<T>) ENTITY_STRUCTURES.get(type);
+        EntityStructureEntry entry = ENTITY_STRUCTURES.get(type);
         if (entry == null || !entry.getClazz().equals(clazz))
             return AEntityStructureImpl.serialize(entityStructure, serializer);
 
-        return entry.getSerializer().apply(entityStructure, serializer);
+        return (Map<String, Object>) entry.getSerializer().apply(entityStructure, serializer);
     }
 
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public static <T extends EntityStructure> void validate(@NotNull Map<String, Object> map,
                                                             @NotNull StructureSerializer serializer,
                                                             @NotNull Class<T> clazz)
@@ -184,8 +208,7 @@ public class SelectiveEntityStructureSerializer
         EntityType type = getEntityTypeSafe(clazz);
         type = guessByMapValue(map, type);
 
-        // noinspection unchecked
-        EntityStructureEntry<T> entry = (EntityStructureEntry<T>) ENTITY_STRUCTURES.get(type);
+        EntityStructureEntry entry = ENTITY_STRUCTURES.get(type);
         if (entry == null)
         {
             AEntityStructureImpl.validate(map);
@@ -212,7 +235,7 @@ public class SelectiveEntityStructureSerializer
         if (clazz.equals(EntityStructure.class))
             return EntityType.UNKNOWN;  // フォールバックモード
 
-        for (Map.Entry<EntityType, EntityStructureEntry<?>> entry : ENTITY_STRUCTURES.entrySet())
+        for (Map.Entry<EntityType, EntityStructureEntry<?, ?>> entry : ENTITY_STRUCTURES.entrySet())
         {
             if (entry.getValue().getClazz().equals(clazz))
                 return entry.getKey();
@@ -221,13 +244,32 @@ public class SelectiveEntityStructureSerializer
         throw new IllegalArgumentException("Unknown entity structure class: " + clazz);
     }
 
+    private static <E extends Entity, S extends EntityStructure & Mapped<E>> EntityStructureEntry<E, S> getEntry(@NotNull EntityType entityType)
+    {
+        // noinspection unchecked
+        return (EntityStructureEntry<E, S>) ENTITY_STRUCTURES.get(entityType);
+    }
+
+    public static <V extends Entity, T extends Mapped<V> & EntityStructure> T toStructure(V value, StructureSerializerImpl structureSerializer)
+    {
+        if (value == null)
+            return null;
+
+        EntityStructureEntry<V, T> entry = getEntry(value.getType());
+        if (entry == null)
+            throw new IllegalArgumentException("Unknown entity type: " + value.getType());
+
+        return entry.getConstructor().apply(value, structureSerializer);
+    }
+
     @Value
     @NotNull
-    public static class EntityStructureEntry<S extends EntityStructure>
+    public static class EntityStructureEntry<E extends Entity, S extends EntityStructure & Mapped<E>>
     {
         Class<S> clazz;
         BiFunction<S, StructureSerializer, Map<String, Object>> serializer;
         BiFunction<Map<String, Object>, StructureSerializer, S> deserializer;
         BiConsumer<Map<String, Object>, StructureSerializer> validator;
+        BiFunction<E, StructureSerializer, S> constructor;
     }
 }
