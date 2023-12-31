@@ -17,6 +17,7 @@ import org.kunlab.scenamatica.interfaces.context.Actor;
 import org.kunlab.scenamatica.interfaces.context.ActorManager;
 import org.kunlab.scenamatica.interfaces.context.Context;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
+import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
@@ -39,6 +40,7 @@ public class ActionContextImpl implements ActionContext
     private final Map<String, Object> output;
     private final Logger logger;
     private final UUID contextID;
+    private final StructureSerializer serializer;
 
     @Setter
     private String scenarioName;
@@ -54,6 +56,7 @@ public class ActionContextImpl implements ActionContext
         this.engine = engine;
         this.input = inputBoard;
         this.logger = logger;
+        this.serializer = engine.getManager().getRegistry().getScenarioFileManager().getSerializer();
 
         this.contextID = UUID.randomUUID();
 

@@ -67,6 +67,11 @@ public interface InputReference<T>
     boolean isResolved();
 
     /**
+     * この参照を解放します。
+     */
+    void release();
+
+    /**
      * この参照が空かどうかを取得します。
      *
      * @return 空の場合はtrue

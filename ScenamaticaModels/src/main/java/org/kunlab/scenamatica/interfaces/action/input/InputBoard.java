@@ -34,6 +34,11 @@ public interface InputBoard extends TriggerArgument
     void resolveReferences(@NotNull StructureSerializer serializer, @NotNull SessionStorage variables);
 
     /**
+     * 入力値にあるすべての参照を解放します。
+     */
+    void releaseReferences();
+
+    /**
      * 未解決の参照があるかどうかを返します。
      *
      * @return 未解決の参照があるかどうか

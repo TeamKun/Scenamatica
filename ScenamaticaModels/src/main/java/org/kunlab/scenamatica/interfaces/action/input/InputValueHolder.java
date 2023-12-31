@@ -124,4 +124,9 @@ public interface InputValueHolder<T>
      * @return 値参照
      */
     InputReference<T> getValueReference();
+
+    /**
+     * この入力値保持の参照値を開放します。
+     */
+    void release();
 }

@@ -248,13 +248,9 @@ public class InputBoardImpl implements InputBoard
         }
 
         for (InputToken<?>[] tokens : this.requiredNonNull)
-        {
             for (InputToken<?> token : tokens)
-            {
-                if (!this.getHolder(token).isResolved() || this.getHolder(token).isNull())
+                if (this.getHolder(token).isNull())
                     throw new IllegalArgumentException("Invalid contract: Required value '" + token.getName() + "' must be included and not null.");
-            }
-        }
     }
 
     @Override
@@ -291,6 +287,13 @@ public class InputBoardImpl implements InputBoard
             // assert value.isPresent();
             value.validate(this.type);
         }
+    }
+
+    @Override
+    public void releaseReferences()
+    {
+        for (InputValueHolder<?> value : this.values)
+            value.getValueReference().release();
     }
 
     @Override

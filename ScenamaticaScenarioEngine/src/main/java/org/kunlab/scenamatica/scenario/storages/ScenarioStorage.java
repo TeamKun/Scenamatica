@@ -162,12 +162,13 @@ public class ScenarioStorage extends AbstractVariableProvider implements ChildSt
 
     private Pair<Object, Integer> lookupOutput(QueuedScenario scenario, String[] keys)
     {
+        final String separator = KEY_SEPARATOR.replace(".", "\\.");
         StringBuilder builder = new StringBuilder(KEY_OUTPUT);
         for (int i = 0; i < keys.length; i++)
         {
             String key = keys[i];
             if (builder.length() > 0)
-                builder.append(KEY_SEPARATOR);
+                builder.append(separator);
             if (isOutputKey(key))
             {
                 String generalKey = getOutputkey(scenario, builder + "." + OUTPUT_IDENTIFIER);

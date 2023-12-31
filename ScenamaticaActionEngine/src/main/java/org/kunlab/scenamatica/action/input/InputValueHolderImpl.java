@@ -127,4 +127,9 @@ public class InputValueHolderImpl<T> implements InputValueHolder<T>
         this.token.validate(type, this.valueReference.getValue());
     }
 
+    @Override
+    public void release()
+    {
+        this.valueReference.release();
+    }
 }

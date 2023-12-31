@@ -290,6 +290,13 @@ public class ScenarioEngineImpl implements ScenarioEngine
         return this.executor.getCurrentScenario();
     }
 
+    @Override
+    public void releaseScenarioInputs()
+    {
+        for (CompiledScenarioAction action : this.actions)
+            action.getAction().getContext().getInput().releaseReferences();
+    }
+
     /**
      * シナリオの結果を受け取るオブジェクトを取得します。
      *

@@ -376,6 +376,15 @@ public class InputReferenceImpl<T> implements InputReference<T>
     }
 
     @Override
+    public void release()
+    {
+        if (this.referenceParts == null)
+            return;
+        this.value = null;
+        this.isResolved = false;
+    }
+
+    @Override
     public boolean isEmpty()
     {
         return this.value == null && this.referencing == null;

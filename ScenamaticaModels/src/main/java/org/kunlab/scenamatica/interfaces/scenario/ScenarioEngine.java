@@ -146,6 +146,11 @@ public interface ScenarioEngine
     CompiledScenarioAction getCurrentScenario();
 
     /**
+     * シナリオの入力の参照を解放します。
+     */
+    void releaseScenarioInputs();
+
+    /**
      * シナリオの結果を受け取るオブジェクトを取得します。
      *
      * @return シナリオの結果を受け取るオブジェクト

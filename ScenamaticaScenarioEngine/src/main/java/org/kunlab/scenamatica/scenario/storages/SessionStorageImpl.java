@@ -59,7 +59,7 @@ public class SessionStorageImpl extends AbstractVariableProvider implements Sess
         for (ChildStorage storage : this.storages)
         {
             if (storage.getKey().equalsIgnoreCase(ns))
-                return storage.get(String.join(KEY_SEPARATOR, sliceKey(keys, 1)));
+                return storage.get(String.join(".", sliceKey(keys, 1)));
         }
 
         throw new IllegalArgumentException("Storage '" + ns + "' not found");
