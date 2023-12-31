@@ -35,12 +35,11 @@ public class ScenarioStorage extends AbstractVariableProvider implements ChildSt
     private static final String OUTPUT_IDENTIFIER = "$" + UUID.randomUUID().toString().substring(0, 8).toUpperCase() + "$";
 
     private final ScenarioSession session;
-    private final StructureSerializer serializer;
 
     public ScenarioStorage(@NotNull ScenarioSession session, @NotNull StructureSerializer serializer)
     {
+        super(serializer);
         this.session = session;
-        this.serializer = serializer;
     }
 
     private static void ensureHasResult(ScenarioResult result)
@@ -124,8 +123,10 @@ public class ScenarioStorage extends AbstractVariableProvider implements ChildSt
 
     private Object getScenarioDetail(@NotNull QueuedScenario scenario, String[] keys)
     {
+        assert this.ser != null;
+
         if (keys.length == 0)
-            return this.serializer.serialize(scenario.getEngine().getScenario(), ScenarioFileStructure.class);
+            return this.ser.serialize(scenario.getEngine().getScenario(), ScenarioFileStructure.class);
         else if (isOutputKey(keys[keys.length - 1]))
             return this.getScenarioOutputsDetail(scenario, keys);
 
@@ -151,10 +152,10 @@ public class ScenarioStorage extends AbstractVariableProvider implements ChildSt
                 else
                     return id.toString();
             case KEY_TRIGGER:
-                Map<String, Object> trigger = this.serializer.serialize(scenario.getEngine().getRanBy(), TriggerStructure.class);
+                Map<String, Object> trigger = this.ser.serialize(scenario.getEngine().getRanBy(), TriggerStructure.class);
                 return get(trigger, sliceKey(keys, 2));  // {scenario, trigger, <keys>...}
             default:
-                Map<String, Object> map = this.serializer.serialize(scenario.getEngine().getScenario(), ScenarioFileStructure.class);
+                Map<String, Object> map = this.ser.serialize(scenario.getEngine().getScenario(), ScenarioFileStructure.class);
                 return get(map, sliceKey(keys, 1));  // {scenario, <keys>...}
         }
     }
@@ -196,7 +197,7 @@ public class ScenarioStorage extends AbstractVariableProvider implements ChildSt
         if (index == keys.length - 1)
             return map;
 
-        return get(map, sliceKey(keys, index + 1));
+        return get(map, sliceKey(keys, index + 1), this.ser);
     }
 
     private Object getScenarioResultDetail(ScenarioResult result, String[] keys)

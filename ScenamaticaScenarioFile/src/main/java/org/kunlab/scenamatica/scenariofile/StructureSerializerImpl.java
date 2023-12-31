@@ -76,22 +76,27 @@ public class StructureSerializerImpl implements StructureSerializer
         return StructureSerializerImpl.INSTANCE;
     }
 
+    private static boolean isEntityRelated(@Nullable Object value, @Nullable Class<?> clazz)
+    {
+        return value instanceof EntityStructure || clazz != null && EntityStructure.class.isAssignableFrom(clazz);
+    }
+
     @Override
-    public @NotNull <T extends Structure> Map<String, Object> serialize(@NotNull T structure, @NotNull Class<T> clazz)
+    public @NotNull <T extends Structure> Map<String, Object> serialize(@NotNull T structure, @Nullable Class<T> clazz)
     {
         // エンティティの場合は, さらに EntityType で分岐する
-        if (EntityStructure.class.isAssignableFrom(clazz))
+        if (isEntityRelated(structure, clazz))
             // noinspection unchecked
             return SelectiveEntityStructureSerializer.serialize((EntityStructure) structure, this, (Class<? extends EntityStructure>) clazz);
 
-        return this.selectEntry(clazz).getSerializer().apply(structure, this);
+        return this.selectEntry(structure, clazz).getSerializer().apply(structure, this);
     }
 
     @Override
     public <T extends Structure> @NotNull T deserialize(@NotNull Map<String, Object> map, @NotNull Class<T> clazz)
     {
         // エンティティの場合は, さらに EntityType で分岐する
-        if (EntityStructure.class.isAssignableFrom(clazz))
+        if (isEntityRelated(null, clazz))
             // noinspection unchecked
             return (T) SelectiveEntityStructureSerializer.deserialize(map, this, (Class<? extends EntityStructure>) clazz);
 
@@ -102,7 +107,7 @@ public class StructureSerializerImpl implements StructureSerializer
     public <T extends Structure> void validate(@NotNull Map<String, Object> map, @NotNull Class<T> clazz)
     {
         // エンティティの場合は, さらに EntityType で分岐する
-        if (EntityStructure.class.isAssignableFrom(clazz))
+        if (isEntityRelated(null, clazz))
         {
             // noinspection unchecked
             SelectiveEntityStructureSerializer.validate(map, this, (Class<? extends EntityStructure>) clazz);
@@ -186,6 +191,14 @@ public class StructureSerializerImpl implements StructureSerializer
 
     // </editor-fold>
 
+    private <T extends Structure> StructureEntry<T> selectEntry(@NotNull T value, @Nullable Class<T> clazz)
+    {
+        if (clazz != null)
+            return this.selectEntry(clazz);
+        else
+            return this.guessEntry(value);
+    }
+
     private <T extends Structure> StructureEntry<T> selectEntry(@NotNull Class<T> clazz)
     {
         // noinspection unchecked
@@ -193,6 +206,15 @@ public class StructureSerializerImpl implements StructureSerializer
                 .filter(entry -> entry.getClazz().equals(clazz))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("Unknown structure class: " + clazz));
+    }
+
+    private <T extends Structure> StructureEntry<T> guessEntry(@NotNull T value)
+    {
+        // noinspection unchecked
+        return (StructureEntry<T>) this.structureEntries.stream().parallel()
+                .filter(entry -> entry.getClazz().isInstance(value))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Unknown structure class: " + value.getClass()));
     }
 
     // <editor-fold desc="すべての Structure を登録するメソッド">

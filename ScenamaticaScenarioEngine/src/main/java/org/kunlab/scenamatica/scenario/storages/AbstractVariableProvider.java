@@ -2,6 +2,8 @@ package org.kunlab.scenamatica.scenario.storages;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.kunlab.scenamatica.interfaces.scenariofile.Structure;
+import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -13,14 +15,23 @@ public abstract class AbstractVariableProvider
     public static String KEY_SEPARATOR = ".".replace(".", "\\.");
 
     protected final Map<String, Object> map;
+    protected final StructureSerializer ser;
+
+    public AbstractVariableProvider(@Nullable StructureSerializer ser)
+    {
+        this.map = new ConcurrentHashMap<>();
+        this.ser = ser;
+    }
 
     public AbstractVariableProvider()
     {
         this.map = new ConcurrentHashMap<>();
+        this.ser = null;
     }
 
-    public AbstractVariableProvider(@Nullable Map<String, ?> map)
+    public AbstractVariableProvider(@Nullable Map<String, ?> map, @Nullable StructureSerializer ser)
     {
+        this.ser = ser;
         if (map == null)
             this.map = null;
         else
@@ -68,11 +79,21 @@ public abstract class AbstractVariableProvider
 
     protected static Object get(@NotNull Map<String, ?> map, @NotNull String key)
     {
-        String[] keys = splitKey(key);
-        return get(map, keys);
+        return get(map, key, null);
     }
 
     protected static Object get(@NotNull Map<String, ?> map, @NotNull String[] keys)
+    {
+        return get(map, keys, null);
+    }
+
+    protected static Object get(@NotNull Map<String, ?> map, @NotNull String key, @Nullable StructureSerializer ser)
+    {
+        String[] keys = splitKey(key);
+        return get(map, keys, ser);
+    }
+
+    protected static Object get(@NotNull Map<String, ?> map, @NotNull String[] keys, @Nullable StructureSerializer ser)
     {
         if (keys.length == 0)
             return null;
@@ -83,6 +104,13 @@ public abstract class AbstractVariableProvider
             if (value instanceof Map)
                 // noinspection unchecked
                 map = (Map<String, Object>) value;
+            else if (value instanceof Structure)
+            {
+                if (ser == null)
+                    throw new IllegalArgumentException("StructureSerializer is null");
+                else
+                    map = ser.serialize((Structure) value, null);
+            }
             else if (value instanceof Function)
                 return value;
             else
@@ -101,7 +129,7 @@ public abstract class AbstractVariableProvider
     public @Nullable Object get(@NotNull String key)
     {
         assert this.map != null;
-        Object value = get(this.map, key);
+        Object value = get(this.map, key, this.ser);
         if (value instanceof Function)
         {
             String[] keys = sliceKey(key, 1);

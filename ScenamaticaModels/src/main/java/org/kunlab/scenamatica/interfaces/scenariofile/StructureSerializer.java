@@ -23,7 +23,7 @@ public interface StructureSerializer
      * @return シリアライズされた Structure の Map
      * @throws IllegalArgumentException シリアライズに失敗した場合
      */
-    @NotNull <T extends Structure> Map<String, Object> serialize(@NotNull T structure, @NotNull Class<T> clazz);
+    @NotNull <T extends Structure> Map<String, Object> serialize(@NotNull T structure, @Nullable Class<T> clazz);
 
     /**
      * Structure をデシリアライズします。
