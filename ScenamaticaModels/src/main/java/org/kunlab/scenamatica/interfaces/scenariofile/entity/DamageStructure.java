@@ -11,7 +11,7 @@ import java.util.Map;
  */
 public interface DamageStructure extends Structure
 {
-    String KEY_MODIFIER = "modifier";
+    String KEY_MODIFIER = "modifiers";
     String KEY_CAUSE = "cause";
     String KEY_DAMAGE = "damage";
 

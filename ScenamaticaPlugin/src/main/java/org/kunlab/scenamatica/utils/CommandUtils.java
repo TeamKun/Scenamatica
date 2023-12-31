@@ -17,13 +17,13 @@ public class CommandUtils
     @NotNull
     public static List<String> getScenariosByTrigger(ScenamaticaRegistry registry, TriggerType type)
     {
-        return Arrays.stream(Bukkit.getPluginManager().getPlugins()).parallel()
+        return Arrays.stream(Bukkit.getPluginManager().getPlugins())
                 .filter(plugin -> {
                     Map<String, ScenarioFileStructure> scenarios = registry.getScenarioFileManager().getPluginScenarios(plugin);
 
                     // MANUAL_DISPATCH トリガを持っているか確認する、
-                    return scenarios != null && scenarios.values().stream().parallel()
-                            .anyMatch(scenario -> scenario.getTriggers().stream().parallel()
+                    return scenarios != null && scenarios.values().stream()
+                            .anyMatch(scenario -> scenario.getTriggers().stream()
                                     .anyMatch(trigger -> trigger.getType() == type));
                 })
                 .map(Plugin::getName)

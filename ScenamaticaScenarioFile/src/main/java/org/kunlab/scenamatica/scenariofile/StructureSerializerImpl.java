@@ -278,7 +278,7 @@ public class StructureSerializerImpl implements StructureSerializer
     private <T extends Structure> StructureEntry<T> selectEntry(@NotNull Class<T> clazz)
     {
         // noinspection unchecked
-        return (StructureEntry<T>) this.structureEntries.stream().parallel()
+        return (StructureEntry<T>) this.structureEntries.stream()
                 .filter(entry -> entry.getClazz().equals(clazz))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("Unknown structure class: " + clazz));
@@ -287,7 +287,7 @@ public class StructureSerializerImpl implements StructureSerializer
     private <T extends Structure> StructureEntry<T> guessEntry(@NotNull T value)
     {
         // noinspection unchecked
-        return (StructureEntry<T>) this.structureEntries.stream().parallel()
+        return (StructureEntry<T>) this.structureEntries.stream()
                 .filter(entry -> entry.getClazz().isInstance(value))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("Unknown structure class: " + value.getClass()));
@@ -303,7 +303,7 @@ public class StructureSerializerImpl implements StructureSerializer
             applicator = entry -> entry.getClazz().equals(clazz);
 
         //noinspection DataFlowIssue <- 誤検出
-        return this.structureEntries.stream().parallel()
+        return this.structureEntries.stream()
                 .filter(entry -> entry instanceof MappedStructureEntry)
                 .map(entry -> (MappedStructureEntry) entry)
                 .filter(applicator)

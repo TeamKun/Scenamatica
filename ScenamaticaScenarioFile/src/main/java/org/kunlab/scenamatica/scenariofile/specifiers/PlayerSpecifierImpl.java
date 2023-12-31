@@ -117,7 +117,7 @@ public class PlayerSpecifierImpl extends EntitySpecifierImpl<Player> implements 
     public Optional<Player> selectTarget(@Nullable Context context)
     {
         // Player も一応 Entity なので、親クラスのメソッドを呼び出す。
-        Entity entity = super.selectTargetRaw(null, null);
+        Entity entity = super.selectTargetRaw(null, context);
         if (entity == null)
         {
             if (context != null)

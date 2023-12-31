@@ -33,6 +33,8 @@ public class InputReferenceImpl<T> implements InputReference<T>
     private final InputToken<T> token;
     @Nullable
     private final Object referencing;
+    @Nullable
+    private final Object rawValue;
     private final String[] referenceParts;
 
     @Setter(AccessLevel.NONE)
@@ -40,12 +42,13 @@ public class InputReferenceImpl<T> implements InputReference<T>
     @Setter(AccessLevel.NONE)
     private boolean isResolved;
 
-    public InputReferenceImpl(@NotNull InputToken<T> token, @Nullable Object referencing, T value, boolean isResolved)
+    public InputReferenceImpl(@NotNull InputToken<T> token, @Nullable Object referencing, T value, @Nullable Object rawValue, boolean isResolved)
     {
         this.token = token;
         this.referencing = referencing;
         this.referenceParts = referencing == null ? null: selectReferences(referencing);
         this.value = value;
+        this.rawValue = rawValue;
         this.isResolved = isResolved;
     }
 
@@ -100,22 +103,22 @@ public class InputReferenceImpl<T> implements InputReference<T>
 
     public static <D> InputReference<D> valued(InputToken<D> token, D value)
     {
-        return new InputReferenceImpl<>(token, null, value, true);
+        return new InputReferenceImpl<>(token, null, value, value, true);
     }
 
     public static <D> InputReference<D> valuedCast(InputToken<D> token, StructureSerializer serializer, Object value)
     {
-        return new InputReferenceImpl<>(token, null, smartCast(token, serializer, value), true);
+        return new InputReferenceImpl<>(token, null, smartCast(token, serializer, value), value, true);
     }
 
     public static <D> InputReference<D> empty(InputToken<D> token)
     {
-        return new InputReferenceImpl<>(token, null, null, false);
+        return new InputReferenceImpl<>(token, null, null, null, false);
     }
 
     public static <D> InputReference<D> references(InputToken<D> token, Object referencing)
     {
-        return new InputReferenceImpl<>(token, referencing, null, false);
+        return new InputReferenceImpl<>(token, referencing, null, null, false);
     }
 
     public static boolean containsReference(String str)
@@ -363,6 +366,11 @@ public class InputReferenceImpl<T> implements InputReference<T>
     @Override
     public void resolve(@NotNull StructureSerializer serializer, @NotNull SessionStorage variables)
     {
+        if (this.rawValue != null)
+        {
+            this.resolve(this.smartCast(serializer, this.rawValue));
+            return;
+        }
         if (this.referenceParts == null)
             throw new IllegalStateException("This reference doesn't contain any references: " + this.referencing);
         assert this.referencing != null;
@@ -378,8 +386,8 @@ public class InputReferenceImpl<T> implements InputReference<T>
     @Override
     public void release()
     {
-        if (this.referenceParts == null)
-            return;
+        if (this.referencing == null && this.value == this.rawValue)
+            return; // 最適化
         this.value = null;
         this.isResolved = false;
     }
@@ -387,7 +395,7 @@ public class InputReferenceImpl<T> implements InputReference<T>
     @Override
     public boolean isEmpty()
     {
-        return this.value == null && this.referencing == null;
+        return this.value == null && this.referencing == null && this.rawValue == null;
     }
 
     private T smartCast(@NotNull StructureSerializer serializer, @Nullable Object resolved)

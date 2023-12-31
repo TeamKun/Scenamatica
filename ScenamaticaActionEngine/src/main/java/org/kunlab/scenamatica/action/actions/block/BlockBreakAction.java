@@ -54,6 +54,8 @@ public class BlockBreakAction extends AbstractBlockAction
 
         Actor actor = ctxt.getActorOrThrow(player); // アクタ以外は破壊シミュレートできない。
         actor.breakBlock(block);
+
+        makeOutputs(ctxt, block, player);
     }
 
     private void validateBreakable(@NotNull Block block, @NotNull Player player)
@@ -73,8 +75,12 @@ public class BlockBreakAction extends AbstractBlockAction
 
         BlockBreakEvent e = (BlockBreakEvent) event;
 
-        return ctxt.ifHasInput(IN_ACTOR, player -> player.checkMatchedPlayer(e.getPlayer()))
+        boolean result = ctxt.ifHasInput(IN_ACTOR, player -> player.checkMatchedPlayer(e.getPlayer()))
                 && ctxt.ifHasInput(IN_DROP_ITEMS, dropItems -> dropItems == e.isDropItems());
+        if (result)
+            makeOutputs(ctxt, e.getBlock(), e.getPlayer());
+
+        return result;
     }
 
     @Override

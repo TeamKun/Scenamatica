@@ -229,7 +229,7 @@ public class ScenarioResultDocumentBuilder
 
     private long summingResultsTime(@NotNull List<? extends ScenarioResult> results)
     {
-        return results.stream().parallel()
+        return results.stream()
                 .mapToLong(result -> result.getFinishedAt() - result.getStartedAt())
                 .sum();
     }

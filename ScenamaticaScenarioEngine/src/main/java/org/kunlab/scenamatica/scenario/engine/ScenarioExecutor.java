@@ -19,6 +19,7 @@ import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.ActionResult;
 import org.kunlab.scenamatica.interfaces.action.ActionRunManager;
 import org.kunlab.scenamatica.interfaces.action.CompiledAction;
+import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.scenario.ActionResultDeliverer;
@@ -116,6 +117,7 @@ public class ScenarioExecutor
             case UNEXPECTED_CONDITION:
                 return ScenarioResultCause.ILLEGAL_CONDITION;
             case INTERNAL_ERROR:
+            case UNRESOLVED_REFERENCES:
                 return ScenarioResultCause.INTERNAL_ERROR;
             case TIMED_OUT:
                 return ScenarioResultCause.SCENARIO_TIMED_OUT;
@@ -356,6 +358,21 @@ public class ScenarioExecutor
                 ActionContext context = scenario.getAction().getContext();
                 context.skip(); // スキップとしてマークしておく。
                 return null;
+            }
+        }
+
+        ActionContext context = scenario.getAction().getContext();
+        InputBoard input = context.getInput();
+        if (input.hasUnresolvedReferences())
+        {
+            input.resolveReferences(
+                    this.registry.getScenarioFileManager().getSerializer(),
+                    this.variable
+            );
+            if (input.hasUnresolvedReferences())
+            {
+                context.fail(ActionResultCause.UNRESOLVED_REFERENCES);
+                return context.createResult(scenario.getAction());
             }
         }
 

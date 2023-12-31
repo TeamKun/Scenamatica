@@ -18,7 +18,6 @@ import org.kunlab.scenamatica.exceptions.scenario.ScenarioNotRunningException;
 import org.kunlab.scenamatica.exceptions.scenario.TriggerNotFoundException;
 import org.kunlab.scenamatica.interfaces.ScenamaticaRegistry;
 import org.kunlab.scenamatica.interfaces.action.ActionRunManager;
-import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.scenario.MilestoneManager;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioManager;
@@ -26,7 +25,6 @@ import org.kunlab.scenamatica.interfaces.scenario.ScenarioResult;
 import org.kunlab.scenamatica.interfaces.scenario.SessionCreator;
 import org.kunlab.scenamatica.interfaces.scenario.SessionStorage;
 import org.kunlab.scenamatica.interfaces.scenario.TestReporter;
-import org.kunlab.scenamatica.interfaces.scenario.runtime.CompiledScenarioAction;
 import org.kunlab.scenamatica.interfaces.scenario.runtime.CompiledTriggerAction;
 import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerStructure;
@@ -178,7 +176,7 @@ public class ScenarioManagerImpl implements ScenarioManager
     /* non-public */ Pair<ScenarioEngine, TriggerStructure> getRunInfoOrThrow(Plugin plugin, String scenarioName, TriggerType trigger)
             throws ScenarioNotFoundException, TriggerNotFoundException
     {
-        ScenarioEngine engine = this.engines.get(plugin).stream().parallel()
+        ScenarioEngine engine = this.engines.get(plugin).stream()
                 .filter(e -> e.getScenario().getName().equals(scenarioName))
                 .findFirst()
                 .orElseThrow(() -> new ScenarioNotFoundException(scenarioName));
@@ -199,7 +197,7 @@ public class ScenarioManagerImpl implements ScenarioManager
     @Nullable
         /* non-pubic */ TriggerStructure getTriggerOrNull(@NotNull ScenarioEngine engine, TriggerType type)
     {
-        return engine.getTriggerActions().stream().parallel()
+        return engine.getTriggerActions().stream()
                 .map(CompiledTriggerAction::getTrigger)
                 .filter(t -> t.getType() == type)
                 .findFirst()
@@ -217,14 +215,6 @@ public class ScenarioManagerImpl implements ScenarioManager
         ScenarioResult result;
         try
         {
-            for (CompiledScenarioAction action : engine.getActions())
-            {
-                InputBoard inputs = action.getAction().getContext().getInput();
-                if (inputs.hasUnresolvedReferences())
-                    inputs.resolveReferences(this.registry.getScenarioFileManager().getSerializer(), variable);
-
-                inputs.validate();
-            }
             result = engine.start(trigger, variable, attempted);
         }
         catch (Throwable e)
@@ -332,7 +322,7 @@ public class ScenarioManagerImpl implements ScenarioManager
     @Override
     public @Nullable ScenarioEngine getEngine(@NotNull Plugin plugin, @NotNull String scenarioName)
     {
-        return this.engines.get(plugin).stream().parallel()
+        return this.engines.get(plugin).stream()
                 .filter(e -> e.getScenario().getName().equals(scenarioName))
                 .findFirst()
                 .orElse(null);

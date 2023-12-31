@@ -138,14 +138,13 @@ public class ActorManagerImpl implements ActorManager, Listener
     @Override
     public boolean isActor(@NotNull Player player)
     {
-        return this.actors.stream().parallel()
-                .anyMatch(p -> p.getUUID().equals(player.getUniqueId()));
+        return this.actors.stream().anyMatch(p -> p.getUUID().equals(player.getUniqueId()));
     }
 
     @Override
     public Actor getByUUID(@NotNull UUID uuid)
     {
-        return this.actors.stream().parallel()
+        return this.actors.stream()
                 .filter(p -> p.getUUID().equals(uuid))
                 .findFirst()
                 .orElse(null);
@@ -154,7 +153,7 @@ public class ActorManagerImpl implements ActorManager, Listener
     @Override
     public @Nullable Actor getByName(@NotNull String name)
     {
-        return this.actors.stream().parallel()
+        return this.actors.stream()
                 .filter(p -> p.getName().equalsIgnoreCase(name))
                 .findFirst()
                 .orElse(null);

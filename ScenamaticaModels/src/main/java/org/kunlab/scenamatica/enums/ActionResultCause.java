@@ -7,6 +7,7 @@ public enum ActionResultCause
 
     EXECUTION_JUMPED,
     INTERNAL_ERROR,
+    UNRESOLVED_REFERENCES,
     TIMED_OUT,
     SKIPPED
 }

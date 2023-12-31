@@ -10,6 +10,7 @@ import org.kunlab.scenamatica.interfaces.action.input.InputValueHolder;
 import org.kunlab.scenamatica.interfaces.context.Actor;
 import org.kunlab.scenamatica.interfaces.context.Context;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
+import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 
 import java.util.Map;
 import java.util.Optional;
@@ -198,6 +199,13 @@ public interface ActionContext
      * @return 適用結果
      */
     <T> boolean ifHasInput(@NotNull InputToken<T> token, @NotNull Predicate<? super T> predicate);
+
+    /**
+     * シリアライザを取得します。
+     *
+     * @return シリアライザ
+     */
+    StructureSerializer getSerializer();
 
     /**
      * 入力値のホルダーを取得します。
