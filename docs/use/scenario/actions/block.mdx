@@ -1,4 +1,4 @@
-import Action, {ScenarioType} from "/src/components/Action";
+ import Action, {ScenarioType} from "/src/components/Action";
 import BelowDocument from "/src/components/BelowDocument";
 import {ObjectType} from "/src/components/Object";
 
@@ -20,6 +20,20 @@ import {ObjectType} from "/src/components/Object";
                label="シナリオファイルを記述する際の注意"
                anchor="notes"
 />
+
+## 全般 - 出力 `block` {#block}
+
+対象となったブロックの [`Block`](/docs/use/scenario/types/misc#block-structure) オブジェクトを出力します。
+
+## 全般 - 出力 `player`
+
+その操作を行ったプレイヤの [`Player`](/docs/use/scenario/types/entities#player-structure) オブジェクトを出力します。
+
+:::warning
+
+これは、引数にプレイヤを指定するアクションにおいて、プレイヤを指定した場合にのみ出力されます。
+
+:::
 
 ## 破壊 {#break}
 

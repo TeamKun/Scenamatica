@@ -5,5 +5,15 @@
       "description": "対象のブロックです。",
       "$ref": "#/definitions/block"
     }
+  },
+  "outputs": {
+    "block": {
+      "description": "対象となったブロックです。",
+      "$ref": "#/definitions/block"
+    },
+    "player": {
+      "description": "設置したプレイヤです。",
+      "$ref": "#/definitions/player"
+    }
   }
 }
