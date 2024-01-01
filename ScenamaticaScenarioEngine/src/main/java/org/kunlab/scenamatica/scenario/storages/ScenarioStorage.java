@@ -65,7 +65,11 @@ public class ScenarioStorage extends AbstractVariableProvider implements ChildSt
 
     private static String getOutputkey(QueuedScenario scenario, String key)
     {
-        return KEY_OUTPUT + "." + scenario.getEngine().getScenario().getName() + "." + key;
+        String normalizedKey = KEY_OUTPUT + "." + scenario.getEngine().getScenario().getName() + "." + key;
+        if (!normalizedKey.startsWith(KEY))  // scenario.scenario.hoge => scenario.hoge への省略を可
+            normalizedKey = KEY + "." + normalizedKey;
+
+        return normalizedKey;
     }
 
     @Override
@@ -81,7 +85,7 @@ public class ScenarioStorage extends AbstractVariableProvider implements ChildSt
     public void set(@NotNull String key, @Nullable Object value)
     {
         if (!isOutputKey(key))
-            throw new BrokenReferenceException("This storage is read-only: " + key);
+            throw new IllegalStateException("This storage is read-only: " + key);
 
         /*
          1. runOn == TRIGGER
@@ -149,7 +153,7 @@ public class ScenarioStorage extends AbstractVariableProvider implements ChildSt
                 return this.getScenarioResultDetail(result, sliceKey(keys, 2));
             case KEY_SCENARIO_STARTED_AT:
                 if (result == null && !scenario.isRunning())
-                    throw new BrokenReferenceException("scenario is not started: " + scenario.getEngine().getScenario().getName());
+                    throw new IllegalStateException("scenario is not started: " + scenario.getEngine().getScenario().getName());
                 else
                     return scenario.getStartedAt();
             case KEY_SCENARIO_FINISHED_AT:
@@ -192,7 +196,7 @@ public class ScenarioStorage extends AbstractVariableProvider implements ChildSt
                 builder.append(key);
         }
 
-        throw new BrokenReferenceException("Ambiguous key: " + builder);
+        throw new BrokenReferenceException(builder.toString());
     }
 
     private Object getScenarioOutputsDetail(QueuedScenario scenario, String[] keys)
@@ -226,7 +230,7 @@ public class ScenarioStorage extends AbstractVariableProvider implements ChildSt
             case KEY_SCENARIO_RESULT_ATTEMPT_OF:
                 return result.getAttemptOf();
             default:
-                throw new BrokenReferenceException("Ambiguous key: " + key);
+                throw new BrokenReferenceException(key);
         }
     }
 

@@ -9,7 +9,7 @@ public
 enum RunOn
 {
     TRIGGER("trigger"),
-    SCENARIOS("scenarios"),
+    SCENARIOS("scenario"),
     RUNIF("runif");
 
     private final String key;

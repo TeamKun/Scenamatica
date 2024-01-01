@@ -70,6 +70,13 @@ public class ScenarioStructureImpl implements ScenarioStructure
 
         MapUtils.checkNumberIfContains(map, KEY_TIMEOUT);
 
+        if (map.containsKey(KEY_SCENARIO_NAME))
+        {
+            MapUtils.checkType(map, KEY_SCENARIO_NAME, String.class);
+            if (((String) map.get(KEY_SCENARIO_NAME)).equalsIgnoreCase("scenario"))
+                throw new IllegalArgumentException("scenario name \"scenario\" is reserved");
+        }
+
         serializer.validate(map, ActionStructure.class);
     }
 

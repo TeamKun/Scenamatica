@@ -22,7 +22,7 @@ public class SystemStorage extends AbstractVariableProvider implements ChildStor
     {
         String prop = System.getProperty(key);
         if (prop == null)
-            throw new BrokenReferenceException("System property '" + key + "' not found");
+            throw new BrokenReferenceException("System property '" + key + "' not found", key);
         else
             return prop;
     }
