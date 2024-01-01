@@ -366,25 +366,62 @@ public class ItemStackStructureImpl implements ItemStackStructure
         if (meta instanceof Damageable)
             damage = ((Damageable) stack).getDamage();
 
-        //noinspection DataFlowIssue
+        String displayName = null;
+        String localizedName = null;
+        List<String> lore = Collections.emptyList();
+        Integer customModelData = null;
+        List<ItemFlag> flags = Collections.emptyList();
+        Boolean unbreakable = null;
+        Map<Enchantment, Integer> enchantments = Collections.emptyMap();
+        Map<Attribute, List<AttributeModifier>> attributeModifiers = Collections.emptyMap();
+        List<Namespaced> placeableKeys = Collections.emptyList();
+        List<Namespaced> destroyableKeys = Collections.emptyList();
+        if (meta != null)
+        {
+            displayName = meta.hasDisplayName() ? meta.getDisplayName(): null;
+            localizedName = meta.hasLocalizedName() ? meta.getLocalizedName(): null;
+            if (meta.hasLore())
+            {
+                lore = meta.getLore();
+                assert lore != null;
+            }
+            customModelData = meta.hasCustomModelData() ? meta.getCustomModelData(): null;
+            flags = new ArrayList<>(meta.getItemFlags());
+            unbreakable = meta.isUnbreakable();
+            enchantments = new HashMap<>(stack.getEnchantments());
+            if (meta.hasAttributeModifiers())
+                attributeModifiers = new HashMap<>(Objects.requireNonNull(meta.getAttributeModifiers()).asMap()
+                        .entrySet().stream()
+                        .collect(Collectors.toMap(
+                                Map.Entry::getKey,
+                                e -> new ArrayList<>(e.getValue())
+                        )));
+            if (meta.hasPlaceableKeys())
+                placeableKeys = new ArrayList<>(meta.getPlaceableKeys());
+            if (meta.hasDestroyableKeys())
+                destroyableKeys = new ArrayList<>(meta.getDestroyableKeys());
+        }
+
         return new ItemStackStructureImpl(
                 stack.getType(),
                 stack.getAmount(),
-                meta.hasDisplayName() ? meta.getDisplayName(): null,
-                meta.hasLocalizedName() ? meta.getLocalizedName(): null,
-                meta.hasLore() ? meta.getLore(): null,
-                meta.hasCustomModelData() ? meta.getCustomModelData(): null,
-                stack.getEnchantments(),
-                new ArrayList<>(meta.getItemFlags()),
-                meta.isUnbreakable(),
-                meta.getAttributeModifiers().asMap().entrySet().stream().collect(Collectors.toMap(
-                        Map.Entry::getKey,
-                        entry -> new ArrayList<>(entry.getValue())
-                )),
-                new ArrayList<>(meta.getPlaceableKeys()),
-                new ArrayList<>(meta.getDestroyableKeys()),
+                displayName,
+                localizedName,
+                lore,
+                customModelData,
+                enchantments,
+                flags,
+                unbreakable,
+                attributeModifiers,
+                placeableKeys,
+                destroyableKeys,
                 damage
         );
+    }
+
+    public static boolean isApplicable(Object o)
+    {
+        return o instanceof ItemStack;
     }
 
     @Override

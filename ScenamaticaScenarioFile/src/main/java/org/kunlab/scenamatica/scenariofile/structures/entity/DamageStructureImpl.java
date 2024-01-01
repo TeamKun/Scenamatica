@@ -77,4 +77,34 @@ public class DamageStructureImpl implements DamageStructure
                 event.getDamage()
         );
     }
+
+    public static boolean isApplicable(Object o)
+    {
+        return o instanceof EntityDamageEvent;
+    }
+
+    @Override
+    public void applyTo(EntityDamageEvent object)
+    {
+        for (Map.Entry<EntityDamageEvent.DamageModifier, Double> entry : this.modifiers.entrySet())
+            object.setDamage(entry.getKey(), entry.getValue());
+        object.setDamage(this.damage);
+    }
+
+    @Override
+    public boolean canApplyTo(Object target)
+    {
+        return target instanceof EntityDamageEvent;
+    }
+
+    @Override
+    public boolean isAdequate(EntityDamageEvent object, boolean ignored)
+    {
+        for (Map.Entry<EntityDamageEvent.DamageModifier, Double> entry : this.modifiers.entrySet())
+            if (object.getDamage(entry.getKey()) != entry.getValue())
+                return false;
+
+        return object.getDamage() == this.damage
+                && object.getCause() == this.cause;
+    }
 }

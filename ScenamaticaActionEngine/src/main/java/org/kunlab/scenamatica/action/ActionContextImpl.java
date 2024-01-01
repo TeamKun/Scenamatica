@@ -6,6 +6,8 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.enums.ActionResultCause;
+import org.kunlab.scenamatica.enums.RunAs;
+import org.kunlab.scenamatica.enums.RunOn;
 import org.kunlab.scenamatica.interfaces.action.Action;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.ActionResult;
@@ -40,7 +42,10 @@ public class ActionContextImpl implements ActionContext
     private final Logger logger;
     private final UUID contextID;
     private final StructureSerializer serializer;
+    private final RunOn runOn;
+    private final RunAs runAs;
 
+    private boolean doOutput;
     @Setter
     private String scenarioName;
     private Boolean success;
@@ -49,9 +54,11 @@ public class ActionContextImpl implements ActionContext
     private boolean skipped;
     private Throwable err;
 
-    public ActionContextImpl(@NotNull ScenarioEngine engine, @NotNull InputBoard inputBoard, @NotNull Logger logger)
+    public ActionContextImpl(@NotNull ScenarioEngine engine, @NotNull RunOn runOn, @NotNull RunAs runAs, @NotNull InputBoard inputBoard, @NotNull Logger logger)
     {
         this.engine = engine;
+        this.runOn = runOn;
+        this.runAs = runAs;
         this.input = inputBoard;
         this.logger = logger;
         this.serializer = engine.getManager().getRegistry().getScenarioFileManager().getSerializer();
@@ -59,6 +66,7 @@ public class ActionContextImpl implements ActionContext
         this.contextID = UUID.randomUUID();
 
         this.output = new HashMap<>();
+        this.doOutput = true;
     }
 
     public Context getContext()
@@ -133,6 +141,9 @@ public class ActionContextImpl implements ActionContext
     @Override
     public void output(String key, Object value)
     {
+        if (!this.doOutput)
+            return;
+
         String[] keys = key.split(KEY_SEPARATOR);
         if (keys.length == 0)
             throw new IllegalArgumentException("key is empty");
@@ -153,7 +164,9 @@ public class ActionContextImpl implements ActionContext
     @Override
     public void outputs(Object... kvPairs)
     {
-        if (kvPairs.length % 2 != 0)
+        if (!this.doOutput)
+            return;
+        else if (kvPairs.length % 2 != 0)
             throw new IllegalArgumentException("kvPairs.length % 2 != 0");
 
         for (int i = 0; i < kvPairs.length; i += 2)
@@ -163,7 +176,10 @@ public class ActionContextImpl implements ActionContext
     @Override
     public void commitOutput()
     {
+        if (!this.doOutput)
+            return;
         this.engine.getExecutor().uploadScenarioOutputs(this, this.output);
+        this.output.clear();
     }
 
     @Override
@@ -247,7 +263,7 @@ public class ActionContextImpl implements ActionContext
     @Override
     public ActionContext renew(InputBoard input)
     {
-        return new ActionContextImpl(this.engine, input, this.logger);
+        return new ActionContextImpl(this.engine, this.getRunOn(), this.getRunAs(), input, this.logger);
     }
 
     @Override
@@ -256,5 +272,29 @@ public class ActionContextImpl implements ActionContext
         return ActionResultImpl.fromContext(action.getExecutor(), this);
     }
 
+    @Override
+    public void doOutput(boolean doOutput)
+    {
+        this.doOutput = doOutput;
+    }
 
+    @Override
+    public boolean doOutput()
+    {
+        return this.doOutput;
+    }
+
+    /**
+     * リセットします。
+     */
+    @Override
+    public void reset()
+    {
+        this.success = null;
+        this.cause = null;
+        this.halt = false;
+        this.skipped = false;
+        this.err = null;
+        this.output.clear();
+    }
 }

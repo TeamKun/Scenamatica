@@ -5,6 +5,8 @@ import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.actions.AbstractAction;
 import org.kunlab.scenamatica.action.actions.scenamatica.NegateAction;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
+import org.kunlab.scenamatica.enums.RunAs;
+import org.kunlab.scenamatica.enums.RunOn;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.Action;
 import org.kunlab.scenamatica.interfaces.action.ActionCompiler;
@@ -45,6 +47,8 @@ public class ActionCompilerImpl implements ActionCompiler
 
     private static CompiledActionImpl processNegateAction(
             ScenarioEngine engine,
+            RunOn runOn,
+            RunAs runAs,
             StructureSerializer serializer,
             NegateAction action,
             ActionStructure structure,
@@ -75,12 +79,12 @@ public class ActionCompilerImpl implements ActionCompiler
         negateArgument.compile(serializer, new HashMap<String, Object>()
         {{
             this.put(NegateAction.KEY_IN_ACTION, actionToBeNegated);
-            this.put(NegateAction.KEY_IN_ARGUMENTS, new ActionContextImpl(engine, argument, engine.getPlugin().getLogger()));
+            this.put(NegateAction.KEY_IN_ARGUMENTS, new ActionContextImpl(engine, runOn, runAs, argument, engine.getPlugin().getLogger()));
         }});
 
         return new CompiledActionImpl(
                 action,
-                new ActionContextImpl(engine, negateArgument, engine.getPlugin().getLogger()),
+                new ActionContextImpl(engine, runOn, runAs, negateArgument, engine.getPlugin().getLogger()),
                 structure,
                 reportErrorTo,
                 onSuccess
@@ -99,6 +103,8 @@ public class ActionCompilerImpl implements ActionCompiler
     @Override
     public CompiledAction compile(@NotNull ScenarioEngine engine,
                                   @NotNull ScenarioType scenarioType,
+                                  @NotNull RunOn runOn,
+                                  @NotNull RunAs runAs,
                                   @NotNull ActionStructure structure,
                                   @Nullable BiConsumer<CompiledAction, Throwable> reportErrorTo,
                                   @Nullable BiConsumer<ActionResult, ScenarioType> onSuccess)
@@ -108,7 +114,7 @@ public class ActionCompilerImpl implements ActionCompiler
         if (action == null)
             throw new IllegalArgumentException("Action " + structure.getType() + " is not found.");
         else if (action instanceof NegateAction)
-            return processNegateAction(engine, serializer, (NegateAction) action, structure, reportErrorTo, onSuccess);
+            return processNegateAction(engine, runOn, runAs, serializer, (NegateAction) action, structure, reportErrorTo, onSuccess);
 
 
         InputBoard argument = action.getInputBoard(scenarioType);
@@ -120,7 +126,7 @@ public class ActionCompilerImpl implements ActionCompiler
 
         return new CompiledActionImpl(
                 action,
-                new ActionContextImpl(engine, argument, engine.getPlugin().getLogger()),
+                new ActionContextImpl(engine, runOn, runAs, argument, engine.getPlugin().getLogger()),
                 structure,
                 reportErrorTo,
                 onSuccess

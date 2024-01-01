@@ -53,6 +53,11 @@ public class AEntityStructureImpl extends EntityStructureImpl implements AEntity
         return new AEntityStructureImpl(EntityStructureImpl.of(entity));
     }
 
+    public static boolean isApplicable(@NotNull Object obj)
+    {
+        return obj instanceof Entity;
+    }
+
     @Override
     public Entity create()
     {
@@ -68,7 +73,7 @@ public class AEntityStructureImpl extends EntityStructureImpl implements AEntity
     @Override
     public boolean canApplyTo(Object target)
     {
-        return target instanceof Entity;
+        return isApplicable(target);
     }
 
     @Override

@@ -79,4 +79,8 @@ public class ProjectileSourceSerializeHelper
         }
     }
 
+    public static boolean isApplicable(Object o)
+    {
+        return o instanceof ProjectileSource;
+    }
 }

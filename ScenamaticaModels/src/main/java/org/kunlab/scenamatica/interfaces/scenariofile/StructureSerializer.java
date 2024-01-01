@@ -46,6 +46,15 @@ public interface StructureSerializer
      */
     <T extends Structure> void validate(@NotNull Map<String, Object> map, @NotNull Class<T> clazz);
 
+    /**
+     * 実体を Mapped のインスタンスに変換します。
+     *
+     * @param value 実体
+     * @param clazz Mapped のインスタンスのクラス
+     * @param <V>   実体の型
+     * @param <T>   Mapped のインスタンスの型
+     * @return Mapped のインスタンス
+     */
     <V, T extends Mapped<V> & Structure> T toStructure(@NotNull V value, @Nullable Class<T> clazz);
 
     /**

@@ -45,6 +45,11 @@ public class InventoryStructureImpl extends GenericInventoryStructureImpl implem
         return new InventoryStructureImpl(GenericInventoryStructureImpl.of(inventory));
     }
 
+    public static boolean isApplicable(@NotNull Object obj)
+    {
+        return obj instanceof Inventory;
+    }
+
     @Override
     public void applyTo(Inventory object)
     {
@@ -60,7 +65,7 @@ public class InventoryStructureImpl extends GenericInventoryStructureImpl implem
     @Override
     public boolean canApplyTo(Object target)
     {
-        return target instanceof Inventory;
+        return isApplicable(target);
     }
 
     @Override

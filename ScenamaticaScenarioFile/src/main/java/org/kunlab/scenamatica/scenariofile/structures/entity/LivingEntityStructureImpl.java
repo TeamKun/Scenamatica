@@ -417,7 +417,7 @@ public class LivingEntityStructureImpl extends EntityStructureImpl implements Li
                 entity.getRemoveWhenFarAway(),
                 entity.getCanPickupItems(),
                 entity.isLeashed(),
-                EntitySpecifierImpl.of(entity.getLeashHolder()),
+                entity.isLeashed() ? EntitySpecifierImpl.of(entity.getLeashHolder()): null,
                 entity.isGliding(),
                 entity.isSwimming(),
                 entity.isRiptiding(),

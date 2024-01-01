@@ -127,6 +127,11 @@ public class BlockStructureImpl implements BlockStructure
         );
     }
 
+    public static boolean isApplicable(Object o)
+    {
+        return o instanceof Block;
+    }
+
     public BlockStructure changeLocation(LocationStructure location)
     {
         return new BlockStructureImpl(

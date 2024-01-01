@@ -76,6 +76,11 @@ public class LocationStructureImpl implements LocationStructure
         );
     }
 
+    public static boolean isApplicable(Object o)
+    {
+        return o instanceof Location;
+    }
+
     @Override
     public void applyTo(Location object)
     {

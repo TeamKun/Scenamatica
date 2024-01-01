@@ -57,7 +57,6 @@ public class ScenarioTestReporterBridge implements ScenarioActionListener
     @Override
     public void onActionError(CompiledAction action, Throwable throwable)
     {
-        this.engine.getRegistry().getExceptionHandler().report(throwable);
         this.engine.getDeliverer().setExceptionCaught(throwable);
     }
 }

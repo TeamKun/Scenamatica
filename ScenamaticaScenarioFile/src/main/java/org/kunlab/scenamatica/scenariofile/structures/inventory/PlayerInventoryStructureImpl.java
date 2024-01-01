@@ -200,7 +200,8 @@ public class PlayerInventoryStructureImpl extends GenericInventoryStructureImpl 
         for (int i = 0; i < armors.length; i++)
         {
             ItemStack armor = inventory.getArmorContents()[i];
-            if (armor.getType().isAir())
+            //noinspection ConstantValue  <- nullる可能性ある。
+            if (armor == null)
                 armors[i] = null;
             else
                 armors[i] = ItemStackStructureImpl.of(armor);

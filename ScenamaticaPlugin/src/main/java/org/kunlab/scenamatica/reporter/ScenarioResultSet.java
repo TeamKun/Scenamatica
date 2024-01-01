@@ -114,9 +114,9 @@ public class ScenarioResultSet
                 case SKIPPED:
                     this.skips.add(result);
                     break;
-                case INTERNAL_ERROR:
+                /*case INTERNAL_ERROR:
                     this.errors.add(result);
-                    break;
+                    break;*/
                 case CANCELLED:
                     this.cancels.add(result);
                     break;

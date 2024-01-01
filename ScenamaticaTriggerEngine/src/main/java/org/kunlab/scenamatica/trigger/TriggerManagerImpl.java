@@ -6,6 +6,8 @@ import lombok.SneakyThrows;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.kunlab.scenamatica.enums.RunAs;
+import org.kunlab.scenamatica.enums.RunOn;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.enums.TriggerType;
 import org.kunlab.scenamatica.enums.WatchType;
@@ -140,6 +142,8 @@ public class TriggerManagerImpl implements TriggerManager
         CompiledAction action = this.actionManager.getCompiler().compile(
                 engine,
                 ScenarioType.ACTION_EXPECT,
+                RunOn.TRIGGER,
+                RunAs.NORMAL,
                 argument,
                 null,  /* reportErrorTo */
                 null  /* onSuccess */

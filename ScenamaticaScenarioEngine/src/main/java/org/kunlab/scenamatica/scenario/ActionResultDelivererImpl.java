@@ -7,15 +7,10 @@ import org.kunlab.scenamatica.interfaces.action.ActionResult;
 import org.kunlab.scenamatica.interfaces.scenario.ActionResultDeliverer;
 
 import java.util.ArrayDeque;
-import java.util.concurrent.BrokenBarrierException;
-import java.util.concurrent.CyclicBarrier;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 public class ActionResultDelivererImpl implements ActionResultDeliverer
 {
     private final Object lock = new Object();
-    private final CyclicBarrier barrier;
     private final ArrayDeque<ActionResult> results;  // 受け渡し用
 
     @Getter
@@ -26,8 +21,6 @@ public class ActionResultDelivererImpl implements ActionResultDeliverer
 
     public ActionResultDelivererImpl()
     {
-        this.barrier = new CyclicBarrier(2);
-
         this.results = new ArrayDeque<>();
     }
 
@@ -36,16 +29,13 @@ public class ActionResultDelivererImpl implements ActionResultDeliverer
     {
         synchronized (this.lock)
         {
-            if (this.barrier.getNumberWaiting() > 1)
-                return;
-
             this.results.add(result);
 
             this.waitTimeout = -1L;
             this.elapsedTick = 0;
-        }
 
-        this.await();
+            this.lock.notifyAll();
+        }
     }
 
     @Override
@@ -55,31 +45,29 @@ public class ActionResultDelivererImpl implements ActionResultDeliverer
         if (timeout > 0)
             this.waitTimeout = timeout;
 
-        this.waiting = true;  // タイムアウト制御用
-        this.elapsedTick = 0;
-        this.await();
-
         synchronized (this.lock)
         {
+            this.waiting = true;  // タイムアウト制御用
+            this.elapsedTick = 0;
+
+            if (!this.results.isEmpty())
+                return this.results.pop();
+
+            try
+            {
+                this.lock.wait();
+            }
+            catch (InterruptedException e)
+            {
+                throw new IllegalStateException(e);
+            }
+
             this.waiting = false;
             if (this.exceptionCaught != null)
                 throw this.exceptionCaught;
 
             return this.results.pop();
         }
-    }
-
-    private void await()
-    {
-        try
-        {
-            this.barrier.await();
-        }
-        catch (InterruptedException | BrokenBarrierException e)
-        {
-            throw new IllegalStateException(e);
-        }
-
     }
 
     @Override
@@ -106,27 +94,27 @@ public class ActionResultDelivererImpl implements ActionResultDeliverer
     @Override
     public void setExceptionCaught(Throwable exceptionCaught)
     {
-        if (!this.waiting)
-            return;
+        synchronized (this.lock)
+        {
+            if (!this.waiting)
+                return;
 
-        if (exceptionCaught instanceof RuntimeException)
-            this.exceptionCaught = (RuntimeException) exceptionCaught;
-        else
-            this.exceptionCaught = new RuntimeException(exceptionCaught);
-        this.await();
+            if (exceptionCaught instanceof RuntimeException)
+                this.exceptionCaught = (RuntimeException) exceptionCaught;
+            else
+                this.exceptionCaught = new RuntimeException(exceptionCaught);
+
+            this.lock.notifyAll();
+        }
     }
 
     @Override
     public void kill()
     {
-        this.barrier.reset();
-        try
+        synchronized (this.lock)
         {
-            this.barrier.await(1, TimeUnit.MILLISECONDS);
-        }
-        catch (InterruptedException | BrokenBarrierException | TimeoutException ignored)
-        {
-            // BrokenBarrierException を上で起こさせるだけなので, 握りつぶす
+            this.waiting = false;
+            this.lock.notifyAll();
         }
     }
 }

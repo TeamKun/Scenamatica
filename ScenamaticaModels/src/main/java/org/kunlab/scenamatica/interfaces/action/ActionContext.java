@@ -4,6 +4,8 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.enums.ActionResultCause;
+import org.kunlab.scenamatica.enums.RunAs;
+import org.kunlab.scenamatica.enums.RunOn;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.input.InputValueHolder;
@@ -319,4 +321,37 @@ public interface ActionContext
      * @return 実行結果
      */
     ActionResult createResult(@NotNull CompiledAction action);
+
+    /**
+     * アクションの実行結果を出力するかどうかを設定します。
+     *
+     * @param doOutput 出力するかどうか
+     */
+    void doOutput(boolean doOutput);
+
+    /**
+     * アクションの実行結果を出力するかどうかを取得します。
+     *
+     * @return 出力するかどうか
+     */
+    boolean doOutput();
+
+    /**
+     * アクションがどこで実行されるかを取得します。
+     *
+     * @return 実行される場所
+     */
+    RunOn getRunOn();
+
+    /**
+     * アクションが誰によって実行されるかを取得します。
+     *
+     * @return 実行されるアクター
+     */
+    RunAs getRunAs();
+
+    /**
+     * リセットします。
+     */
+    void reset();
 }

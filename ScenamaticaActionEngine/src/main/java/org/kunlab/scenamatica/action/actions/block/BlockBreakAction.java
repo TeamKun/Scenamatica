@@ -52,10 +52,9 @@ public class BlockBreakAction extends AbstractBlockAction
 
         this.validateBreakable(block, player);
 
+        makeOutputs(ctxt, block, player);
         Actor actor = ctxt.getActorOrThrow(player); // アクタ以外は破壊シミュレートできない。
         actor.breakBlock(block);
-
-        makeOutputs(ctxt, block, player);
     }
 
     private void validateBreakable(@NotNull Block block, @NotNull Player player)

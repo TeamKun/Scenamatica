@@ -4,6 +4,8 @@ import net.kunmc.lab.peyangpaperutils.lang.LangProvider;
 import net.kunmc.lab.peyangpaperutils.lang.MsgArgs;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.commons.utils.LogUtils;
+import org.kunlab.scenamatica.enums.RunAs;
+import org.kunlab.scenamatica.enums.RunOn;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.enums.TriggerType;
 import org.kunlab.scenamatica.interfaces.action.ActionCompiler;
@@ -85,16 +87,15 @@ public class ScenarioCompiler
     {
         this.logCompiling(++this.compiled, this.compileNeeded, "RUN_IF");
 
-        return this.compileConditionAction(
-                this.listener,
-                runIf
-        );
+        return this.compileConditionAction(RunOn.RUNIF, RunAs.RUNIF, this.listener, runIf);
     }
 
-    public List<CompiledScenarioAction> compileMain(List<? extends ScenarioStructure> scenarios)
+    public List<CompiledScenarioAction> compileMain(RunOn runOn, RunAs runAs, List<? extends ScenarioStructure> scenarios)
     {
         this.logCompilingMain(++this.compiled, this.compileNeeded);
         return this.compileActions(
+                runOn,
+                runAs,
                 this.listener,
                 scenarios
         );
@@ -114,7 +115,7 @@ public class ScenarioCompiler
             if (!trigger.getBeforeThat().isEmpty())
             {
                 this.logCompiling(++compiled, this.compileNeeded, "BEFORE", triggerType);
-                beforeActions = this.compileMain(trigger.getBeforeThat());
+                beforeActions = this.compileMain(RunOn.TRIGGER, RunAs.BEFORE, trigger.getBeforeThat());
             }
             else
                 beforeActions = new ArrayList<>();
@@ -122,16 +123,16 @@ public class ScenarioCompiler
             if (!trigger.getAfterThat().isEmpty())
             {
                 this.logCompiling(++compiled, this.compileNeeded, "AFTER", triggerType);
-                afterActions = this.compileMain(trigger.getAfterThat());
+                afterActions = this.compileMain(RunOn.TRIGGER, RunAs.AFTER, trigger.getAfterThat());
             }
             else
                 afterActions = new ArrayList<>();
 
             CompiledScenarioAction runIf = null;
             if (trigger.getRunIf() != null)
-                runIf = this.compileConditionAction(
-                        this.listener,
-                        trigger.getRunIf()
+                runIf = this.compileConditionAction(RunOn.TRIGGER,
+                        RunAs.RUNIF,
+                        this.listener, trigger.getRunIf()
                 );
 
             triggerActions.add(new CompiledTriggerActionImpl(
@@ -146,7 +147,7 @@ public class ScenarioCompiler
     }
 
     public CompiledScenarioAction compileConditionAction(
-            @NotNull ScenarioActionListener listener,
+            @NotNull RunOn runOn, @NotNull RunAs runAs, @NotNull ScenarioActionListener listener,
             @NotNull ActionStructure structure)
     {  // RunIF 用に偽装する。
         CompiledAction action;
@@ -156,6 +157,8 @@ public class ScenarioCompiler
             action = this.actionCompiler.compile(
                     this.engine,
                     ScenarioType.CONDITION_REQUIRE,
+                    runOn,
+                    runAs,
                     structure,
                     listener::onActionError,
                     listener::onActionFinished
@@ -206,19 +209,19 @@ public class ScenarioCompiler
         );
     }
 
-    public List<CompiledScenarioAction> compileActions(
-            @NotNull ScenarioActionListener listener,
-            @NotNull List<? extends ScenarioStructure> scenarios)
+    public List<CompiledScenarioAction> compileActions(@NotNull RunOn runOn, @NotNull RunAs runAs,
+                                                       @NotNull ScenarioActionListener listener,
+                                                       @NotNull List<? extends ScenarioStructure> scenarios)
     {
         List<CompiledScenarioAction> compiled = new ArrayList<>();
         for (ScenarioStructure scenario : scenarios)
-            compiled.add(this.compileAction(listener, scenario));
+            compiled.add(this.compileAction(runOn, runAs, listener, scenario));
 
         return compiled;
     }
 
     public CompiledScenarioAction compileAction(
-            @NotNull ScenarioActionListener listener,
+            @NotNull RunOn runOn, @NotNull RunAs runAs, @NotNull ScenarioActionListener listener,
             @NotNull ScenarioStructure scenario)
     {
         try
@@ -226,6 +229,8 @@ public class ScenarioCompiler
             CompiledAction action = this.actionCompiler.compile(
                     this.engine,
                     scenario.getType(),
+                    runOn,
+                    runAs,
                     scenario.getAction(),
                     listener::onActionError,
                     listener::onActionFinished
@@ -239,7 +244,7 @@ public class ScenarioCompiler
                     scenario.getType(),
                     action,
                     scenario.getRunIf() == null ? null:
-                            this.compileConditionAction(listener, scenario.getRunIf())
+                            this.compileConditionAction(runOn, RunAs.RUNIF, listener, scenario.getRunIf())
             );
         }
         catch (Throwable e)

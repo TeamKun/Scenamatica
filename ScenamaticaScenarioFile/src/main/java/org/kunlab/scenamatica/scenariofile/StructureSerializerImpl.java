@@ -13,7 +13,6 @@ import org.kunlab.scenamatica.interfaces.scenariofile.Structure;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.action.ActionStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.context.ContextStructure;
-import org.kunlab.scenamatica.interfaces.scenariofile.context.PlayerStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.context.StageStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.entity.DamageStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.entity.EntityStructure;
@@ -33,7 +32,6 @@ import org.kunlab.scenamatica.scenariofile.specifiers.EntitySpecifierImpl;
 import org.kunlab.scenamatica.scenariofile.specifiers.PlayerSpecifierImpl;
 import org.kunlab.scenamatica.scenariofile.structures.ScenarioFileStructureImpl;
 import org.kunlab.scenamatica.scenariofile.structures.context.ContextStructureImpl;
-import org.kunlab.scenamatica.scenariofile.structures.context.PlayerStructureImpl;
 import org.kunlab.scenamatica.scenariofile.structures.context.StageStructureImpl;
 import org.kunlab.scenamatica.scenariofile.structures.entity.DamageStructureImpl;
 import org.kunlab.scenamatica.scenariofile.structures.entity.SelectiveEntityStructureSerializer;
@@ -265,6 +263,16 @@ public class StructureSerializerImpl implements StructureSerializer
         this.structureEntries.add(new MappedStructureEntry<>(clazz, (v, t) -> serializer.apply(v), (v, t) -> deserializer.apply(v), (v, t) -> validator.accept(v), constructor, applicator));
     }
 
+    private <V, T extends Mapped<V> & Structure> void registerStructure(@NotNull Class<T> clazz,
+                                                                        @NotNull BiFunction<T, StructureSerializer, Map<String, Object>> serializer,
+                                                                        @NotNull Function<? super Map<String, Object>, ? extends T> deserializer,
+                                                                        @NotNull Consumer<? super Map<String, Object>> validator,
+                                                                        @NotNull Function<V, T> constructor,
+                                                                        @NotNull Predicate<?> applicator)
+    {
+        this.structureEntries.add(new MappedStructureEntry<>(clazz, serializer, (v, t) -> deserializer.apply(v), (v, t) -> validator.accept(v), constructor, applicator));
+    }
+
     // </editor-fold>
 
     private <T extends Structure> StructureEntry<T> selectEntry(@NotNull T value, @Nullable Class<T> clazz)
@@ -338,13 +346,14 @@ public class StructureSerializerImpl implements StructureSerializer
                 ContextStructureImpl::serialize,
                 ContextStructureImpl::deserialize,
                 ContextStructureImpl::validate
-        );
+        );/*
         this.registerStructure(
                 PlayerStructure.class,
                 PlayerStructureImpl::serialize,
                 PlayerStructureImpl::deserialize,
-                (BiConsumer<Map<String, Object>, StructureSerializer>) PlayerStructureImpl::validate
-        );
+                (BiConsumer<Map<String, Object>, StructureSerializer>) PlayerStructureImpl::validate,
+                PlayerStructureImpl::of
+        );*/
         this.registerStructure(
                 StageStructure.class,
                 StageStructureImpl::serialize,
@@ -359,13 +368,17 @@ public class StructureSerializerImpl implements StructureSerializer
                 DamageStructure.class,
                 DamageStructureImpl::serialize,
                 DamageStructureImpl::deserialize,
-                DamageStructureImpl::validate
+                DamageStructureImpl::validate,
+                DamageStructureImpl::of,
+                DamageStructureImpl::isApplicable
         );
         this.registerStructure(
                 AEntityStructure.class,
                 AEntityStructureImpl::serialize,
                 AEntityStructureImpl::deserialize,
-                AEntityStructureImpl::validate
+                AEntityStructureImpl::validate,
+                AEntityStructureImpl::of,
+                AEntityStructureImpl::isApplicable
         );
     }
 
@@ -381,19 +394,25 @@ public class StructureSerializerImpl implements StructureSerializer
                 InventoryStructure.class,
                 InventoryStructureImpl::serialize,
                 InventoryStructureImpl::deserialize,
-                InventoryStructureImpl::validate
+                InventoryStructureImpl::validate,
+                InventoryStructureImpl::of,
+                InventoryStructureImpl::isApplicable
         );
         this.registerStructure(
                 ItemStackStructure.class,
                 ItemStackStructureImpl::serialize,
                 ItemStackStructureImpl::deserialize,
-                ItemStackStructureImpl::validate
+                ItemStackStructureImpl::validate,
+                ItemStackStructureImpl::of,
+                ItemStackStructureImpl::isApplicable
         );
         this.registerStructure(
                 PlayerInventoryStructure.class,
                 PlayerInventoryStructureImpl::serializePlayerInventory,
                 PlayerInventoryStructureImpl::deserializePlayerInventory,
-                PlayerInventoryStructureImpl::validate
+                PlayerInventoryStructureImpl::validate,
+                PlayerInventoryStructureImpl::of,
+                PlayerInventoryStructureImpl::isApplicable
         );
     }
 
@@ -403,14 +422,18 @@ public class StructureSerializerImpl implements StructureSerializer
                 BlockStructure.class,
                 BlockStructureImpl::serialize,
                 BlockStructureImpl::deserialize,
-                BlockStructureImpl::validate
+                BlockStructureImpl::validate,
+                BlockStructureImpl::of,
+                BlockStructureImpl::isApplicable
         );
 
         this.registerStructure(
                 LocationStructure.class,
                 LocationStructureImpl::serialize,
                 LocationStructureImpl::deserialize,
-                LocationStructureImpl::validate
+                LocationStructureImpl::validate,
+                LocationStructureImpl::of,
+                LocationStructureImpl::isApplicable
         );
     }
 

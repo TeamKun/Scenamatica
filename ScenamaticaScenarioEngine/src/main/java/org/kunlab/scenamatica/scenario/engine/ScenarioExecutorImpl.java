@@ -1,6 +1,5 @@
 package org.kunlab.scenamatica.scenario.engine;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.kunmc.lab.peyangpaperutils.lang.LangProvider;
 import net.kunmc.lab.peyangpaperutils.lang.MsgArgs;
@@ -8,6 +7,8 @@ import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.commons.utils.LogUtils;
 import org.kunlab.scenamatica.enums.ActionResultCause;
+import org.kunlab.scenamatica.enums.RunAs;
+import org.kunlab.scenamatica.enums.RunOn;
 import org.kunlab.scenamatica.enums.ScenarioResultCause;
 import org.kunlab.scenamatica.enums.ScenarioState;
 import org.kunlab.scenamatica.enums.ScenarioType;
@@ -37,10 +38,12 @@ import org.kunlab.scenamatica.scenario.ScenarioWaitTimedOutException;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
@@ -129,13 +132,18 @@ public class ScenarioExecutorImpl implements ScenarioExecutor
         }
     }
 
+    private static boolean isStorageScenarioNameNeeded(RunOn runOn, RunAs runAs)
+    {
+        return runOn == RunOn.SCENARIOS || (runOn == RunOn.TRIGGER && runAs != RunAs.RUNIF);
+    }
+
     private static String genStorageKey(@NotNull RunOn runOn, @NotNull RunAs runAs)
     {
         StringBuilder key = new StringBuilder(STORAGE_KEY_PREFIX);
         if (!(runOn == RunOn.TRIGGER || runAs == RunAs.RUNIF))
             key.append(".").append(runOn.getKey());
 
-        if (runOn != RunOn.RUNIF)
+        if (isStorageScenarioNameNeeded(runOn, runAs))
             key.append(".%s");  // 参照名が入る。
 
         if (!(runAs == RunAs.NORMAL || runAs == RunAs.RUNIF))
@@ -182,14 +190,14 @@ public class ScenarioExecutorImpl implements ScenarioExecutor
 
         if (this.runIf != null)
         {
-            ActionResult result = this.runExecuteCondition(this.runIf, -1, RunOn.RUNIF); // シナリオレベルの runif
+            ActionResult result = this.runExecuteCondition(this.runIf, RunOn.RUNIF); // シナリオレベルの runif
             if (!result.isSuccess())
                 return this.genResult(ScenarioResultCause.SKIPPED);
         }
 
         if (compiledTrigger.getRunIf() != null)
         {
-            ActionResult result = this.runExecuteCondition(compiledTrigger.getRunIf(), -1, RunOn.TRIGGER);  // トリガーレベルの runif
+            ActionResult result = this.runExecuteCondition(compiledTrigger.getRunIf(), RunOn.TRIGGER);  // トリガーレベルの runif
             if (!result.isSuccess())
                 return this.genResult(ScenarioResultCause.SKIPPED);
         }
@@ -263,15 +271,12 @@ public class ScenarioExecutorImpl implements ScenarioExecutor
     }
 
     @NotNull
-    private ActionResult runExecuteCondition(@NotNull CompiledScenarioAction runIf, int idx, RunOn on)
+    private ActionResult runExecuteCondition(@NotNull CompiledScenarioAction runIf, RunOn on)
     {
         ActionResult result = this.testCondition(runIf);
         // コンディションチェックに失敗した(満たしていない)場合は(エラーにはせずに)スキップする。
         if (!result.isSuccess())
             this.testReporter.onTestSkipped(this.engine, runIf);
-
-        this.makeRunIFOutput(on, idx, result);
-
         return result;
     }
 
@@ -307,7 +312,7 @@ public class ScenarioExecutorImpl implements ScenarioExecutor
                 CompiledScenarioAction scenarioStructure = scenario.get(i);
                 CompiledScenarioAction next = i + 1 < scenario.size() ? scenario.get(i + 1): null;
 
-                ActionResult result = this.runScenario(scenarioStructure, i, next);
+                ActionResult result = this.runScenario(scenarioStructure, next);
                 if (result == null)
                     continue; // スキップされた場合は次のアクションへ。
 
@@ -363,12 +368,12 @@ public class ScenarioExecutorImpl implements ScenarioExecutor
         return true;
     }
 
-    private ActionResult runScenario(CompiledScenarioAction scenario, int idx, CompiledScenarioAction next)
+    private ActionResult runScenario(CompiledScenarioAction scenario, CompiledScenarioAction next)
     {
         if (scenario.getRunIf() != null)
         {
             CompiledScenarioAction runIf = scenario.getRunIf();
-            ActionResult result = this.runExecuteCondition(runIf, idx, RunOn.SCENARIOS); // シナリオレベルの runif
+            ActionResult result = this.runExecuteCondition(runIf, RunOn.SCENARIOS); // シナリオレベルの runif
             if (!result.isSuccess())
             {
                 ActionContext context = scenario.getAction().getContext();
@@ -523,55 +528,86 @@ public class ScenarioExecutorImpl implements ScenarioExecutor
     @Override
     public void uploadScenarioOutputs(ActionContext sender, Map<String, Object> outputs)
     {
-        int idx = this.actions.stream()
-                .filter(a -> a.getAction().getContext().getContextID().equals(sender.getContextID()))
-                .map(this.actions::indexOf)
-                .findFirst().orElseThrow(() -> new IllegalStateException("Unable to upload outputs: Unrecognized sender."));
+        int idx = this.getIndex(sender);
+        this.makeOutput(sender.getRunOn(), sender.getRunAs(), idx, sender.getScenarioName(), outputs);
+    }
 
-        this.makeOutput(RunOn.SCENARIOS, RunAs.NORMAL, idx, sender.getScenarioName(), outputs);
+    private int getIndex(ActionContext sender)
+    {
+        Predicate<? super CompiledScenarioAction> predicate = a -> a.getAction().getContext().getContextID().equals(sender.getContextID());
+
+        switch (sender.getRunOn())
+        {
+            case SCENARIOS:
+                return this.getIndexForScenario(predicate);
+            case TRIGGER:
+                return this.getIndexForTrigger(sender, predicate);
+            default:
+                return -1;
+        }
+    }
+
+    private int getIndexForScenario(Predicate<? super CompiledScenarioAction> predicate)
+    {
+        IllegalStateException e = new IllegalStateException("Unable to upload outputs: Unrecognized sender.");
+
+        return this.actions.stream()
+                .filter(predicate)
+                .map(this.actions::indexOf)
+                .findFirst()
+                .orElseThrow(() -> e);
+    }
+
+    private int getIndexForTrigger(ActionContext sender, Predicate<? super CompiledScenarioAction> predicate)
+    {
+        IllegalStateException e = new IllegalStateException("Unable to upload outputs: Unrecognized sender.");
+
+        RunAs runAs = sender.getRunAs();
+        List<CompiledScenarioAction> population;
+
+        switch (runAs)
+        {
+            case BEFORE:
+                population = this.getBeforeActionsFromTriggers();
+                break;
+            case AFTER:
+                population = this.getAfterActionsFromTriggers();
+                break;
+            default:
+                return -1;
+        }
+
+        return population.stream()
+                .filter(predicate)
+                .map(population::indexOf)
+                .findFirst()
+                .orElseThrow(() -> e);
+    }
+
+    private List<CompiledScenarioAction> getBeforeActionsFromTriggers()
+    {
+        return this.triggerActions.stream()
+                .map(CompiledTriggerAction::getBeforeActions)
+                .flatMap(List::stream)
+                .collect(Collectors.toList());
+    }
+
+    private List<CompiledScenarioAction> getAfterActionsFromTriggers()
+    {
+        return this.triggerActions.stream()
+                .map(CompiledTriggerAction::getAfterActions)
+                .flatMap(List::stream)
+                .collect(Collectors.toList());
     }
 
     private void makeOutput(RunOn runOn, RunAs runAs, int idx, String scenarioName, Map<String, Object> outputs)
     {
+        Map<String, Object> copy = new HashMap<>(outputs);
+
         String key = genStorageKey(runOn, runAs);
-        this.variable.set(key.replace("%s", String.valueOf(idx)), outputs);
+        if (idx != -1)
+            this.variable.set(key.replace("%s", String.valueOf(idx)), copy);
         if (scenarioName != null)
-            this.variable.set(key.replace("%s", scenarioName), outputs);
-    }
-
-    private void makeOutput(RunOn runOn, RunAs runAs, int idx, ActionResult result)
-    {
-        String key = genStorageKey(runOn, runAs);
-        this.variable.set(key.replace("%s", String.valueOf(idx)), result.getOutputs());
-        if (result.getScenarioName() != null)
-            this.variable.set(key.replace("%s", result.getScenarioName()), result.getOutputs());
-    }
-
-    private void makeRunIFOutput(RunOn runOn, int idx, ActionResult result)
-    {
-        this.makeOutput(runOn, RunAs.RUNIF, idx, result);
-    }
-
-    @AllArgsConstructor
-    @Getter
-    enum RunOn
-    {
-        TRIGGER("trigger"),
-        SCENARIOS("scenarios"),
-        RUNIF("runif");
-
-        private final String key;
-    }
-
-    @AllArgsConstructor
-    @Getter
-    enum RunAs
-    {
-        NORMAL(null),
-        RUNIF("runif"),
-        BEFORE("before"),
-        AFTER("after");
-
-        private final String key;
+            this.variable.set(key.replace("%s", scenarioName), copy);
     }
 }

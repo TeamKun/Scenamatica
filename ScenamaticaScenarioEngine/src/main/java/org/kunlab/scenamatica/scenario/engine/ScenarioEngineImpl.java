@@ -9,12 +9,16 @@ import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.commons.utils.LogUtils;
 import org.kunlab.scenamatica.commons.utils.ThreadingUtil;
 import org.kunlab.scenamatica.enums.MilestoneScope;
+import org.kunlab.scenamatica.enums.RunAs;
+import org.kunlab.scenamatica.enums.RunOn;
 import org.kunlab.scenamatica.enums.ScenarioResultCause;
 import org.kunlab.scenamatica.enums.ScenarioState;
 import org.kunlab.scenamatica.enums.TriggerType;
 import org.kunlab.scenamatica.exceptions.scenario.TriggerNotFoundException;
 import org.kunlab.scenamatica.interfaces.ScenamaticaRegistry;
+import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.ActionRunManager;
+import org.kunlab.scenamatica.interfaces.action.CompiledAction;
 import org.kunlab.scenamatica.interfaces.context.Context;
 import org.kunlab.scenamatica.interfaces.scenario.ActionResultDeliverer;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioActionListener;
@@ -85,7 +89,7 @@ public class ScenarioEngineImpl implements ScenarioEngine
         ScenarioCompiler compiler = this.compiler = new ScenarioCompiler(this, registry.getLogger(), actionRunManager);
         compiler.notifyCompileStart();
 
-        this.actions = compiler.compileMain(scenario.getScenario());
+        this.actions = compiler.compileMain(RunOn.SCENARIOS, RunAs.NORMAL, scenario.getScenario());
         this.triggerActions = compiler.compileTriggerActions(scenario.getTriggers());
         this.runIf = scenario.getRunIf() == null ? null: compiler.compileRunIf(scenario.getRunIf());
         // トリガの準備
@@ -199,6 +203,10 @@ public class ScenarioEngineImpl implements ScenarioEngine
                 true
         );
         this.context.destroy();
+        this.actions.stream()
+                .map(CompiledScenarioAction::getAction)
+                .map(CompiledAction::getContext)
+                .forEach(ActionContext::reset);
 
         this.executor = null;
         this.ranBy = null;

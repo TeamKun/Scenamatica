@@ -156,12 +156,17 @@ public class InputReferenceImpl<T> implements InputReference<T>
             return containsReference(obj.toString());
     }
 
-    private static String resolveReferences(String base, String[] references, SessionStorage variables)
+    private static Object resolveReferences(String base, String[] references, SessionStorage variables)
     {
+        boolean isOnlyReference = references.length == 1 && base.equals(String.format(REFERENCE_PATTERN_PF, references[0]));
+
         boolean containsNull = false;
         for (String reference : references)
         {
             Object obj = variables.get(reference);
+            if (isOnlyReference)
+                return obj;
+
             containsNull |= obj == null;
 
             String value = obj == null ? "": obj.toString();
