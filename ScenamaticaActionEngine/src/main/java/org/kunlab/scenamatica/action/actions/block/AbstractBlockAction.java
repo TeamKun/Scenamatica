@@ -31,7 +31,7 @@ public abstract class AbstractBlockAction
             ))
     );
     public static final String OUT_KEY_BLOCK = "block";
-    public static final String OUT_KEY_PLAYER = "player";
+    public static final String OUT_KEY_ACTOR = "actor";
 
     public static List<? extends AbstractBlockAction> getActions()
     {
@@ -43,11 +43,11 @@ public abstract class AbstractBlockAction
         return actions;
     }
 
-    protected static void makeOutputs(@NotNull ActionContext ctxt, @NotNull Block block, @Nullable Player player)
+    protected void makeOutputs(@NotNull ActionContext ctxt, @NotNull Block block, @Nullable Player player)
     {
         ctxt.output(OUT_KEY_BLOCK, ctxt.getSerializer().toStructure(block, BlockStructure.class));
         if (player != null)
-            ctxt.output(OUT_KEY_PLAYER, ctxt.getSerializer().toStructure(player, PlayerStructure.class));
+            ctxt.output(OUT_KEY_ACTOR, ctxt.getSerializer().toStructure(player, PlayerStructure.class));
         ctxt.commitOutput();
     }
 

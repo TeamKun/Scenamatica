@@ -45,7 +45,7 @@ public class BlockPlaceAction extends AbstractBlockAction
     };
     public static final InputToken<BlockFace> IN_DIRECTION = ofEnumInput("direction", BlockFace.class)
             .validator(
-                    face -> Arrays.stream(ALLOWED_FACES).parallel().anyMatch(f -> f == face),
+                    face -> Arrays.stream(ALLOWED_FACES).anyMatch(f -> f == face),
                     "Invalid direction: %s, allowed: " + Arrays.toString(ALLOWED_FACES)
             )
             .defaultValue(BlockFace.EAST);
@@ -62,31 +62,27 @@ public class BlockPlaceAction extends AbstractBlockAction
         BlockStructure blockDef = ctxt.input(IN_BLOCK);
         Location location = this.getBlockLocationWithWorld(blockDef, ctxt);
 
-        Block block;
-        if (!ctxt.hasInput(IN_ACTOR))
-        {
-            block = location.getBlock();
-            block.setType(blockDef.getType());
-        }
-        else
+        Block block = location.getBlock();
+        if (ctxt.hasInput(IN_ACTOR))
         {
             BlockFace direction = ctxt.orElseInput(IN_DIRECTION, () -> BlockFace.EAST);
             EquipmentSlot hand = ctxt.orElseInput(IN_HAND, () -> EquipmentSlot.HAND);
 
-            Player actor = ctxt.input(IN_ACTOR).selectTarget(ctxt.getContext()).orElse(null);
-            Actor scenarioActor = ctxt.getActorOrThrow(actor);
+            Player player = ctxt.input(IN_ACTOR).selectTarget(ctxt.getContext())
+                    .orElseThrow(() -> new IllegalStateException("Cannot find player"));
+            Actor scenarioActor = ctxt.getActorOrThrow(player);
+            this.makeOutputs(ctxt, location.getBlock(), player);
             scenarioActor.placeBlock(
                     location,
                     new ItemStack(blockDef.getType()),  // assert blockDef.getType() != null
                     hand,
                     direction
             );
-
-            block = location.getBlock();  // 更新の必要があるため、共通化できない。
         }
+        else
+            this.makeOutputs(ctxt, location.getBlock(), null);
 
-        if (blockDef.getBiome() != null)
-            block.setBiome(blockDef.getBiome());
+        blockDef.applyTo(block);
     }
 
     @Override
