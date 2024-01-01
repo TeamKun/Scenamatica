@@ -364,7 +364,7 @@ public class ItemStackStructureImpl implements ItemStackStructure
 
         Integer damage = null;
         if (meta instanceof Damageable)
-            damage = ((Damageable) stack).getDamage();
+            damage = ((Damageable) meta).getDamage();
 
         String displayName = null;
         String localizedName = null;
