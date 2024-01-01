@@ -130,6 +130,12 @@ public class StructureSerializerImpl implements StructureSerializer
     }
 
     @Override
+    public <V, T extends Mapped<V> & Structure> T toStructure(@NotNull V value)
+    {
+        return this.toStructure(value, null);  // 自動推論
+    }
+
+    @Override
     public <E extends Entity> @NotNull EntitySpecifier<E> tryDeserializeEntitySpecifier(@Nullable Object obj, Class<? extends EntityStructure> structureClass)
     {
         return EntitySpecifierImpl.tryDeserialize(obj, this, structureClass);

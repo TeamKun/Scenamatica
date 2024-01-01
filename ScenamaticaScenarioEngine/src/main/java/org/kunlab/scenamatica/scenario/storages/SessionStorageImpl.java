@@ -63,7 +63,7 @@ public class SessionStorageImpl extends AbstractVariableProvider implements Sess
                 return storage.get(String.join(".", sliceKey(keys, 1)));
         }
 
-        throw new BrokenReferenceException("Storage '" + ns + "' not found");
+        throw new BrokenReferenceException("Storage not found: " + ns, ns);
     }
 
     @Override
@@ -83,6 +83,6 @@ public class SessionStorageImpl extends AbstractVariableProvider implements Sess
             }
         }
 
-        throw new BrokenReferenceException("Storage '" + ns + "' not found");
+        throw new BrokenReferenceException("Storage not found: " + ns, ns);
     }
 }

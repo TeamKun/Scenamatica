@@ -2,6 +2,7 @@ package org.kunlab.scenamatica.scenario.storages;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.kunlab.scenamatica.exceptions.scenario.BrokenReferenceException;
 import org.kunlab.scenamatica.interfaces.scenariofile.Structure;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 
@@ -111,8 +112,12 @@ public abstract class AbstractVariableProvider
             else if (value instanceof Function)
                 return ((Function<String[], ?>) value).apply(sliceKey(keys, i + 1));
             else
-                throw new IllegalArgumentException("Unknown key '" + String.join(".", keys) + "'");
+                throw new BrokenReferenceException(String.join(".", keys));
         }
+
+        String key = keys[lastIndex];
+        if (!map.containsKey(key))
+            throw new BrokenReferenceException(String.join(".", keys));
 
         Object value = map.get(keys[lastIndex]);
         if (value instanceof Function)
@@ -124,8 +129,10 @@ public abstract class AbstractVariableProvider
 
     private static StructureSerializer requireSerializer(@Nullable StructureSerializer ser)
     {
-        if (ser == null) throw new IllegalArgumentException("StructureSerializer is null");
-        return ser;
+        if (ser == null)
+            throw new IllegalStateException("StructureSerializer is null");
+        else
+            return ser;
     }
 
     protected void putAll(@NotNull Map<String, ?> map)

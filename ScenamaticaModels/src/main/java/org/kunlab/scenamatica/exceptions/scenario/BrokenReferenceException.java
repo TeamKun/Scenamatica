@@ -13,4 +13,9 @@ public class BrokenReferenceException extends IllegalArgumentException
         this.reference = reference;
     }
 
+    public BrokenReferenceException(String message, String reference)
+    {
+        super(message);
+        this.reference = reference;
+    }
 }

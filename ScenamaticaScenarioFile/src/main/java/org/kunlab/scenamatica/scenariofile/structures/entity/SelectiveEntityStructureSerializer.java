@@ -151,7 +151,8 @@ public class SelectiveEntityStructureSerializer
                                                             @NotNull Class<T> clazz)
     {
         EntityType type = getEntityTypeSafe(clazz);
-        type = guessByMapValue(data, type);
+        if (type == EntityType.UNKNOWN)
+            type = guessByMapValue(data, type);
 
         boolean canGeneralize = clazz == EntityStructure.class;
         EntityStructureEntry<?, ?> entry = ENTITY_STRUCTURES.get(type);
@@ -195,7 +196,8 @@ public class SelectiveEntityStructureSerializer
                                                             @NotNull Class<T> clazz)
     {
         EntityType type = getEntityTypeSafe(clazz);
-        type = guessByMapValue(map, type);
+        if (type == EntityType.UNKNOWN)
+            type = guessByMapValue(map, type);
 
         EntityStructureEntry entry = ENTITY_STRUCTURES.get(type);
         if (entry == null)
@@ -209,19 +211,18 @@ public class SelectiveEntityStructureSerializer
 
     private static EntityType guessByMapValue(@NotNull Map<String, Object> map, EntityType type)
     {
-        if (type == EntityType.UNKNOWN)
-        {
-            EntityType typeGuess = Utils.searchEntityType((String) map.get("type"));
-            if (typeGuess != null)
-                type = typeGuess;
-        }
-        return type;
+        EntityType typeGuess = Utils.searchEntityType((String) map.get("type"));
+        if (typeGuess == null)
+            return EntityType.UNKNOWN;
+        else
+            return typeGuess;
+
     }
 
     @NotNull
     private static EntityType getEntityTypeSafe(@NotNull Class<? extends EntityStructure> clazz)
     {
-        if (clazz.equals(EntityStructure.class))
+        if (clazz.equals(EntityStructure.class) || clazz.equals(AEntityStructure.class))
             return EntityType.UNKNOWN;  // フォールバックモード
 
         for (Map.Entry<EntityType, EntityStructureEntry<?, ?>> entry : ENTITY_STRUCTURES.entrySet())
