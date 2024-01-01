@@ -2,6 +2,7 @@ package org.kunlab.scenamatica.scenario.storages;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.kunlab.scenamatica.exceptions.scenario.BrokenReferenceException;
 
 public class SystemStorage extends AbstractVariableProvider implements ChildStorage
 {
@@ -21,7 +22,7 @@ public class SystemStorage extends AbstractVariableProvider implements ChildStor
     {
         String prop = System.getProperty(key);
         if (prop == null)
-            throw new IllegalArgumentException("System property '" + key + "' not found");
+            throw new BrokenReferenceException("System property '" + key + "' not found");
         else
             return prop;
     }

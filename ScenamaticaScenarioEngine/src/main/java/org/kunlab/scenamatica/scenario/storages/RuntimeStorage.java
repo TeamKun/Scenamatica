@@ -2,6 +2,7 @@ package org.kunlab.scenamatica.scenario.storages;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.kunlab.scenamatica.exceptions.scenario.BrokenReferenceException;
 
 public class RuntimeStorage extends AbstractVariableProvider implements ChildStorage
 {
@@ -18,7 +19,7 @@ public class RuntimeStorage extends AbstractVariableProvider implements ChildSto
     private static Object processMemory(String[] keys)
     {
         if (keys.length == 0)
-            throw new IllegalArgumentException("Empty memory key");
+            throw new BrokenReferenceException("Empty memory key");
 
         String key = keys[0];
         if (key.equalsIgnoreCase(KEY_MEMORY_FREE))
@@ -28,7 +29,7 @@ public class RuntimeStorage extends AbstractVariableProvider implements ChildSto
         else if (key.equalsIgnoreCase(KEY_MEMORY_MAX))
             return Runtime.getRuntime().maxMemory();
         else
-            throw new IllegalArgumentException("Unknown key '" + key + "'");
+            throw new BrokenReferenceException("Unknown key '" + key + "'");
     }
 
     @Override
@@ -36,14 +37,14 @@ public class RuntimeStorage extends AbstractVariableProvider implements ChildSto
     {
         String[] keys = splitKey(key);
         if (keys.length <= 2)
-            throw new IllegalArgumentException("Unknown key '" + key + "'");
+            throw new BrokenReferenceException("Unknown key '" + key + "'");
         String ns = keys[0];
         String[] subKeys = sliceKey(key, 1);
 
         if (ns.equalsIgnoreCase(KEY_MEMORY))
             return processMemory(subKeys);
         else
-            throw new IllegalArgumentException("Unknown namespace '" + ns + "'");
+            throw new BrokenReferenceException("Unknown namespace '" + ns + "'");
     }
 
     @Override

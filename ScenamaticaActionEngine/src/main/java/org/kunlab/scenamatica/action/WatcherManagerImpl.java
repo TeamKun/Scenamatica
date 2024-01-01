@@ -227,7 +227,7 @@ public class WatcherManagerImpl implements WatcherManager
             if (!entry.getEngine().getExecutor().resolveInputs(entry.getAction()))
             {
                 context.fail(ActionResultCause.UNRESOLVED_REFERENCES);
-                entry.getEngine().getListener().onActionError(entry.getAction(), new IllegalArgumentException("Failed to resolve references."));
+                entry.getEngine().getListener().onActionError(entry.getAction(), new IllegalStateException("Unresolved references"));
                 return;
             }
         }

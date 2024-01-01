@@ -2,6 +2,7 @@ package org.kunlab.scenamatica.scenario.storages;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.kunlab.scenamatica.exceptions.scenario.BrokenReferenceException;
 import org.kunlab.scenamatica.interfaces.ScenamaticaRegistry;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioSession;
 import org.kunlab.scenamatica.interfaces.scenario.SessionStorage;
@@ -62,7 +63,7 @@ public class SessionStorageImpl extends AbstractVariableProvider implements Sess
                 return storage.get(String.join(".", sliceKey(keys, 1)));
         }
 
-        throw new IllegalArgumentException("Storage '" + ns + "' not found");
+        throw new BrokenReferenceException("Storage '" + ns + "' not found");
     }
 
     @Override
@@ -82,6 +83,6 @@ public class SessionStorageImpl extends AbstractVariableProvider implements Sess
             }
         }
 
-        throw new IllegalArgumentException("Storage '" + ns + "' not found");
+        throw new BrokenReferenceException("Storage '" + ns + "' not found");
     }
 }

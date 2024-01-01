@@ -4,6 +4,7 @@ import net.kunmc.lab.peyangpaperutils.lib.utils.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.enums.ScenarioResultCause;
+import org.kunlab.scenamatica.exceptions.scenario.BrokenReferenceException;
 import org.kunlab.scenamatica.interfaces.scenario.QueuedScenario;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioResult;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioSession;
@@ -80,7 +81,7 @@ public class ScenarioStorage extends AbstractVariableProvider implements ChildSt
     public void set(@NotNull String key, @Nullable Object value)
     {
         if (!isOutputKey(key))
-            throw new IllegalArgumentException("This storage is read-only: " + key);
+            throw new BrokenReferenceException("This storage is read-only: " + key);
 
         /*
          1. runOn == TRIGGER
@@ -107,7 +108,7 @@ public class ScenarioStorage extends AbstractVariableProvider implements ChildSt
          */
         String[] keys = splitKey(key);
         if (keys.length < 2)
-            throw new IllegalArgumentException("Ambiguous key: " + key);
+            throw new BrokenReferenceException(key);
 
         // 末尾の .output を, OUTPUT_IDENTIFIER に置換する
         String generalKey = key.substring(0, key.length() - OUTPUT_MARKER.length() + 1) + OUTPUT_IDENTIFIER;
@@ -120,7 +121,7 @@ public class ScenarioStorage extends AbstractVariableProvider implements ChildSt
     {
         String scenarioName = keys[0];
         if (keys.length == 1)
-            throw new IllegalArgumentException("Ambiguous key: " + scenarioName);
+            throw new BrokenReferenceException(scenarioName);
 
         QueuedScenario scenario = session.getScenarios().stream()
                 .filter(s -> s.getEngine().getScenario().getName().equalsIgnoreCase(scenarioName))
@@ -137,14 +138,7 @@ public class ScenarioStorage extends AbstractVariableProvider implements ChildSt
         if (keys.length == 0)
             return this.ser.serialize(scenario.getEngine().getScenario(), ScenarioFileStructure.class);
         else if (isOutputKey(keys))
-            try
-            {
-                return this.getScenarioOutputsDetail(scenario, keys);
-            }
-            catch (IllegalArgumentException e)
-            {
-                throw new IllegalArgumentException("Unknown output key: " + KEY + "." + String.join(".", keys));
-            }
+            return this.getScenarioOutputsDetail(scenario, keys);
 
         ScenarioResult result = scenario.getResult();
         String key = keys[1];
@@ -155,7 +149,7 @@ public class ScenarioStorage extends AbstractVariableProvider implements ChildSt
                 return this.getScenarioResultDetail(result, sliceKey(keys, 2));
             case KEY_SCENARIO_STARTED_AT:
                 if (result == null && !scenario.isRunning())
-                    throw new IllegalArgumentException("scenario is not started: " + scenario.getEngine().getScenario().getName());
+                    throw new BrokenReferenceException("scenario is not started: " + scenario.getEngine().getScenario().getName());
                 else
                     return scenario.getStartedAt();
             case KEY_SCENARIO_FINISHED_AT:
@@ -198,7 +192,7 @@ public class ScenarioStorage extends AbstractVariableProvider implements ChildSt
                 builder.append(key);
         }
 
-        throw new IllegalArgumentException("Ambiguous key: " + builder);
+        throw new BrokenReferenceException("Ambiguous key: " + builder);
     }
 
     private Object getScenarioOutputsDetail(QueuedScenario scenario, String[] keys)
@@ -232,7 +226,7 @@ public class ScenarioStorage extends AbstractVariableProvider implements ChildSt
             case KEY_SCENARIO_RESULT_ATTEMPT_OF:
                 return result.getAttemptOf();
             default:
-                throw new IllegalArgumentException("Ambiguous key: " + key);
+                throw new BrokenReferenceException("Ambiguous key: " + key);
         }
     }
 
