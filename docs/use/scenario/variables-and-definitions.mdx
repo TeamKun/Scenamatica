@@ -257,16 +257,21 @@ Java の `System#getProperties()Ljava/lang/String;` で取得できるシステ�
     description: "シナリオの終了時刻です。",
   },
   {
-    name: "scenarios.*.output",
+    name: "scenario.*.output",
     type: "Object",
     description: "シナリオの出力です。",
-    anchor: "variables-type-session-scenarios-output"
+    anchor: "variables-type-session-scenario-output"
   },
   {
-    name: "scenarios.*.runif.output",
+    name: "scenario.*.runif.output",
+    type: "Object",
+    description: "各シナリオの条件の出力です。",
+    anchor: "variables-type-session-scenario-runif-output"
+  },
+  {
+    name: "runif.output",
     type: "Object",
     description: "シナリオの条件の出力です。",
-    anchor: "variables-type-session-scenarios-runif-output"
   },
   {
     name: "trigger",
@@ -276,14 +281,27 @@ Java の `System#getProperties()Ljava/lang/String;` で取得できるシステ�
   }
 ]} />
 
-#### `session`.`scenarios`.`*`.`output` {#variables-type-session-scenarios-result}
+#### `session`.`scenario`.`*`.`output` {#variables-type-session-scenario-result}
 
 `*` には、シナリオのインデックスまたは[名前](use/scenario/types/#scenario-name)を指定します。
 
-#### `session`.`scenarios`.`*`.`runif` {#variables-type-session-scenarios-runif-output}
+:::tip
+
+これを参照する場合、中間の `scenario` は省略できます。
+例： `session.scenario.foo.output` → `session.foo.output`
+
+:::
+
+#### `session`.`scenario`.`*`.`runif`.`output` {#variables-type-session-scenario-runif-output}
 
 `*` には、シナリオのインデックスまたは[名前](use/scenario/types/#scenario-name)を指定します。
 
+:::tip
+
+これを参照する場合、中間の `scenario` は省略できます。
+例： `session.scenario.foo.runif.output` → `session.foo.runif.output`
+
+:::
 #### ScenarioResult {#variables-type-scenario-result}
 
 <Object objects={[
@@ -324,6 +342,11 @@ Java の `System#getProperties()Ljava/lang/String;` で取得できるシステ�
     name: "after.*.output",
     type: "Object",
     description: "トリガの後シナリオの出力です。"
+  },
+  {
+    name: "output",
+    type: "Object",
+    description: "トリガの出力です。"
   }
 ]} />
 

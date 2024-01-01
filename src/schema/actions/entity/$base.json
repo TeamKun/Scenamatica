@@ -13,5 +13,11 @@
         }
       ]
     }
+  },
+  "outputs": {
+    "target": {
+      "$ref": "#/definitions/entity"
+      "description": "対象となったエンティティです。"
+    }
   }
 }

@@ -7,5 +7,11 @@
       "$ref": "#/definitions/entity",
       "description": "変更する値です。"
     }
+  },
+  "outputs": {
+    "entity": {
+      "$ref": "#/definitions/entity",
+      "description": "変更後の値です。"
+    }
   }
 }
