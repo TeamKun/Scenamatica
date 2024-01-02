@@ -65,6 +65,10 @@ import {ObjectType} from "/src/components/Object";
 
 :::
 
+## 全般 - 出力 `target` {#general-target}
+
+対象となったエンティティの[`Entity`](/docs/use/scenario/types/entities#entity-structure) オブジェクトを出力します。
+
 ## 特別：エンティティ {#entity}
 
 <Action name="エンティティ"
@@ -87,6 +91,14 @@ import {ObjectType} from "/src/components/Object";
             description: "書き換えるエンティティの状態です。",
             required: [ScenarioType.EXECUTE]
           },
+        ]}
+        outputs={[
+          {
+            name: "target",
+            type: "Entity",
+            type_link: "/docs/use/scenario/types#entity-structure",
+            description: "書き換えたエンティティです。",
+          }
         ]}
         executable={"エンティティの状態・属性を変更します。"}
         requireable={"エンティティの状態・属性を検証します。"}
@@ -134,6 +146,14 @@ import {ObjectType} from "/src/components/Object";
             type_link: "/docs/use/scenario/types/entities#damage-structure-damage-modifier-enum",
             description: "ダメージの Modifier です。",
             available: [ScenarioType.EXPECT]
+          }
+        ]}
+        outputs={[
+          {
+            name: "target",
+            type: "Entity",
+            type_link: "/docs/use/scenario/types#entity-structure",
+            description: "ダメージを与えたエンティティです。",
           }
         ]}
         executable watchable
@@ -191,6 +211,20 @@ import {ObjectType} from "/src/components/Object";
             type: ObjectType.OBJECT,
             description: "ダメージの Modifier です。",
             available: [ScenarioType.EXPECT]
+          }
+        ]}
+        outputs={[
+          {
+            name: "target",
+            type: "Entity",
+            type_link: "/docs/use/scenario/types#entity-structure",
+            description: "ダメージを受けたエンティティです。",
+          },
+          {
+            name: "damager",
+            type: "Entity",
+            type_link: "/docs/use/scenario/types#entity-structure",
+            description: "ダメージを与えたエンティティです。",
           }
         ]}
         executable watchable 
@@ -272,6 +306,14 @@ import {ObjectType} from "/src/components/Object";
             available: [ScenarioType.EXPECT]
           }
         ]}
+        outputs={[
+          {
+            name: "target",
+            type: "Entity",
+            type_link: "/docs/use/scenario/types#entity-structure",
+            description: "死亡させたエンティティです。",
+          }
+        ]}
         executable watchable
 />
 
@@ -308,6 +350,20 @@ import {ObjectType} from "/src/components/Object";
             type_link: "/docs/use/scenario/types/entities#entity-item-structure",
             description: "ドロップするアイテムです。",
             required: [ScenarioType.EXECUTE]
+          }
+        ]}
+        outputs={[
+          {
+            name: "target",
+            type: "Entity",
+            type_link: "/docs/use/scenario/types#entity-structure",
+            description: "アイテムをドロップしたエンティティです。",
+          },
+          {
+            name: "item",
+            type: "Entity",
+            type_link: "/docs/use/scenario/types#entity-structure",
+            description: "ドロップしたアイテムです。",
           }
         ]}
         executable watchable
@@ -354,6 +410,26 @@ import {ObjectType} from "/src/components/Object";
             available: [ScenarioType.EXECUTE],
             anchor: "move-ai",
             default: true
+          }
+        ]}
+        outputs={[
+          {
+            name: "target",
+            type: "Entity",
+            type_link: "/docs/use/scenario/types#entity-structure",
+            description: "移動させたエンティティです。"
+          },
+          {
+            name: "from",
+            type: "Location",
+            type_link: "/docs/use/scenario/types/misc#location-structure",
+            description: "移動前の位置です。"
+          },
+          {
+            name: "to",
+            type: "Location",
+            type_link: "/docs/use/scenario/types/misc#location-structure",
+            description: "移動後の位置です。"
           }
         ]}
         executable watchable
@@ -405,6 +481,44 @@ AI を有効にした場合, エンティティは経路を探索し自発的に
             type: ObjectType.INTEGER,
             description: "残りのアイテムの数です。",
             available: [ScenarioType.EXPECT]
+          }
+        ]}
+        outputs={[
+          {
+            name: "target",
+            type: "Entity",
+            type_link: "/docs/use/scenario/types#entity-structure",
+            description: "アイテムをピックアップしたエンティティです。",
+          },
+          {
+            name: "item",
+            type: "Entity",
+            type_link: "/docs/use/scenario/types#entity-structure",
+            description: "ピックアップしたアイテムです。",
+          },
+          {
+            name: "remaining",
+            type: ObjectType.INTEGER,
+            description: "残りのアイテムの数です。",
+          }
+        ]}
+        outputs={[
+          {
+            name: "target",
+            type: "Entity",
+            type_link: "/docs/use/scenario/types#entity-structure",
+            description: "アイテムをピックアップしたエンティティです。",
+          },
+          {
+            name: "item",
+            type: "Entity",
+            type_link: "/docs/use/scenario/types#entity-structure",
+            description: "ピックアップしたアイテムです。",
+          },
+          {
+            name: "remaining",
+            type: ObjectType.INTEGER,
+            description: "残りのアイテムの数です。",
           }
         ]}
         executable watchable
@@ -474,6 +588,33 @@ AI を有効にした場合, エンティティは経路を探索し自発的に
             description: "エンティティを設置する方向です。",
           }
         ]}
+        outputs={[
+          {
+            name: "target",
+            type: "Entity",
+            type_link: "/docs/use/scenario/types#entity-structure",
+            description: "設置されたエンティティです。",
+            available: [ScenarioType.EXPECT]
+          },
+          {
+            name: "player",
+            type: "Player",
+            type_link: "/docs/use/scenario/types/entities#player-structure",
+            description: "エンティティを設置したプレイヤーです。"
+          },
+          {
+            name: "block",
+            type: "Block",
+            type_link: "/docs/use/scenario/types/misc#block-structure",
+            description: "エンティティを設置したブロックです。"
+          },
+          {
+            name: "direction",
+            type: "BlockFace{UP, DOWN, NORTH, EAST, SOUTH, WEST}",
+            type_link: "/docs/use/scenario/types#block-face-enum",
+            description: "エンティティを設置した方向です。"
+          }
+        ]}
         executable watchable
 />
 
@@ -537,11 +678,19 @@ AI を有効にした場合, エンティティは経路を探索し自発的に
         ]}
         args={[
           {
-            name: "target",
+            name: "entity",
             type: "EntitySpecifier",
             type_link: "/docs/use/scenario/types#entity-structure",
             description: "スポーンさせるエンティティです。",
             required: [ScenarioType.EXECUTE]
+          }
+        ]}
+        outputs={[
+          {
+            name: "entity",
+            type: "Entity",
+            type_link: "/docs/use/scenario/types#entity-structure",
+            description: "スポーンさせたエンティティです。",
           }
         ]}
         executable watchable
@@ -613,8 +762,42 @@ AI を有効にした場合, エンティティは経路を探索し自発的に
             available: [ScenarioType.EXECUTE]
           }
         ]}
+        outputs={[
+          {
+            name: "target",
+            type: "Entity",
+            type_link: "/docs/use/scenario/types#entity-structure",
+            description: "着弾した投射物です。",
+          },
+          {
+            name: "hitEntity",
+            type: "Entity",
+            type_link: "/docs/use/scenario/types#entity-structure",
+            description: "着弾した投射物が当たったエンティティです。",
+          },
+          {
+            name: "hitBlock",
+            type: "Block",
+            type_link: "/docs/use/scenario/types/misc#block-structure",
+            description: "着弾した投射物が当たったブロックです。",
+          },
+          {
+            name: "blockFace",
+            type: "BlockFace{UP, DOWN, NORTH, EAST, SOUTH, WEST}",
+            type_link: "/docs/use/scenario/types#block-face-enum",
+            description: "着弾した投射物が当たったブロックの面です。",
+          }
+        ]}
         executable watchable
 />
+
+#### アクション 実行シナリオでの使用 {#projectile-hit-execute}
+
+:::warning
+
+出力 `hitEntity` および出力 `hitBlock` は、引数で指定子た場合にのみ出力されます。
+
+:::
 
 #### `eventOnly` {#projectile-hit-event-only}
 
@@ -644,6 +827,14 @@ AI を有効にした場合, エンティティは経路を探索し自発的に
             description: "スポーンさせるエンティティです。",
             anchor: "projectile-launch-target",
             required: [ScenarioType.EXECUTE]
+          }
+        ]}
+        outputs={[
+          {
+            name: "target",
+            type: "Entity",
+            type_link: "/docs/use/scenario/types#entity-structure",
+            description: "発射した投射物です。",
           }
         ]}
         executable watchable

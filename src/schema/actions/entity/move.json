@@ -16,5 +16,15 @@
       "description": "AI を有効にするかどうかを指定します。",
       "default": true
     }
+  },
+  "outputs": {
+    "from": {
+      "$ref": "#/definitions/location",
+      "description": "移動前の座標を出力します。"
+    },
+    "to": {
+      "$ref": "#/definitions/location",
+      "description": "移動後の座標を出力します。"
+    }
   }
 }

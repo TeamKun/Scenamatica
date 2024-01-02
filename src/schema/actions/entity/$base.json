@@ -16,7 +16,7 @@
   },
   "outputs": {
     "target": {
-      "$ref": "#/definitions/entity"
+      "$ref": "#/definitions/entity",
       "description": "対象となったエンティティです。"
     }
   }

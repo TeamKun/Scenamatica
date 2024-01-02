@@ -21,5 +21,23 @@
       "description": "設置する方向です。",
       "$ref": "#/definitions/blockFace"
     }
+  },
+  "outputs": {
+    "material": {
+      "description": "設置するエンティティをアイテム化したときのアイテムです。",
+      "type": "item"
+    },
+    "player": {
+      "description": "設置するプレイヤーです。",
+      "type": "entity"
+    },
+    "block": {
+      "description": "設置場所のブロックです。",
+      "$ref": "#/definitions/block"
+    },
+    "direction": {
+      "description": "設置する方向です。",
+      "$ref": "#/definitions/blockFace"
+    }
   }
 }

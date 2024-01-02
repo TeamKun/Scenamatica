@@ -20,5 +20,15 @@
         }
       ]
     }
+  },
+  "outputs": {
+    "item": {
+      "description": "拾わせたアイテムを出力します。",
+      "$ref": "#/definitions/entityItem"
+    },
+    "remaining": {
+      "description": "残りのアイテム数を出力します。",
+      "type": "number"
+    }
   }
 }

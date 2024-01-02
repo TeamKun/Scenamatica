@@ -29,6 +29,10 @@ export type ActionArgument = ObjectElement & {
     available?: ScenarioType[]
 }
 
+export type ActionOutput = ObjectElement & {
+    available?: ScenarioType[]
+}
+
 type ActionProps = {
     name: string
     description: string
@@ -39,11 +43,12 @@ type ActionProps = {
     requireable?: boolean | string
 
     args?: ActionArgument[]
+    outputs?: ActionOutput[]
 }
 
 const EVENT_JAVADOC_LINK_BASE =  "https://jd.papermc.io/paper/1.16/"
 
-const Action: React.FC<ActionProps> = ({name, description, id, events, executable, watchable, requireable, args}) => {
+const Action: React.FC<ActionProps> = ({name, description, id, events, executable, watchable, requireable, args, outputs}) => {
     const able = (value: boolean | string) => {
         if (typeof value === "boolean" || value === undefined) {
             return <td className={value ? styles.able : styles.unable}><span className={styles.label}>{value ? "はい" : "いいえ"}</span></td>
@@ -94,6 +99,10 @@ const Action: React.FC<ActionProps> = ({name, description, id, events, executabl
         <p className={styles.bigger}>{args ? name + " の引数" : "*（引数なし）*"}</p>
 
         {args ? <Object objects={args} /> : <></>}
+
+        <p className={styles.bigger}>{outputs ? name + " の出力" : "*（出力なし）*"}</p>
+
+        {outputs ? <Object objects={outputs} /> : <></>}
     </>)
 }
 

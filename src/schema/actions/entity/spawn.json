@@ -6,5 +6,10 @@
     "entity": {
       "$ref": "#/definitions/entity"
     }
+  },
+  "outputs": {
+    "entity": {
+      "$ref": "#/definitions/entity"
+    }
   }
 }

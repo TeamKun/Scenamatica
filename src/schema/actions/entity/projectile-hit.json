@@ -39,5 +39,19 @@
       "description": "着弾イベントのみを発生させるかどうかです。",
       "type": "boolean"
     }
+  },
+  "outputs": {
+    "hitEntity": {
+      "description": "着弾した対象のエンティティです。",
+      "$ref": "#/definitions/entity"
+    },
+    "hitBlock": {
+      "description": "着弾した対象のブロックです。",
+      "$ref": "#/definitions/block"
+    },
+    "blockFace": {
+      "description": "着弾した対象のブロックの面です。",
+      "$ref": "#/definitions/blockFace"
+    }
   }
 }

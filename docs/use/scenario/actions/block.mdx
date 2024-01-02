@@ -1,4 +1,4 @@
- import Action, {ScenarioType} from "/src/components/Action";
+import Action, {ScenarioType} from "/src/components/Action";
 import BelowDocument from "/src/components/BelowDocument";
 import {ObjectType} from "/src/components/Object";
 
@@ -64,6 +64,20 @@ import {ObjectType} from "/src/components/Object";
             available: [ScenarioType.EXPECT]
           }
         ]}
+        outputs={[
+          {
+            name: "block",
+            type: "Block",
+            type_link: "/docs/use/scenario/types/misc#block-structure",
+            description: "破壊されたブロックです。",
+          },
+          {
+            name: "player",
+            type: "Player",
+            type_link: "/docs/use/scenario/types/entities#player-structure",
+            description: "ブロックを破壊したプレイヤです。",
+          }
+        ]}
         executable={"ステージ上のブロックを破壊します。"}
         watchable={"ステージ上のブロックが破壊されるまで待機します。"}
         requireable={"ステージ上のブロックが破壊されているか（空気かどうか）を判定します。"}
@@ -115,6 +129,20 @@ import {ObjectType} from "/src/components/Object";
             name: "hand",
             type: "EquipmentSlot{HAND, OFF_HAND}",
             description: "設置するブロックを持っている手です。",
+          }
+        ]}
+        outputs={[
+          {
+            name: "block",
+            type: "Block",
+            type_link: "/docs/use/scenario/types/misc#block-structure",
+            description: "設置されたブロックです。",
+          },
+          {
+            name: "player",
+            type: "Player",
+            type_link: "/docs/use/scenario/types/entities#player-structure",
+            description: "ブロックを設置したプレイヤです。",
           }
         ]}
         executable={"ステージ上にブロックを設置します。"}
