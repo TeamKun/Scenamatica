@@ -30,6 +30,7 @@ public class ScenarioStorage extends AbstractVariableProvider implements ChildSt
 
     private static final String KEY_OUTPUT = "output";
     private static final String KEY_TRIGGER = "trigger";
+    private static final String KEY_RUNIF = "runif";
 
     private static final String OUTPUT_MARKER = "." + KEY_OUTPUT;
 
@@ -65,11 +66,7 @@ public class ScenarioStorage extends AbstractVariableProvider implements ChildSt
 
     private static String getOutputkey(QueuedScenario scenario, String key)
     {
-        String normalizedKey = KEY_OUTPUT + "." + scenario.getEngine().getScenario().getName() + "." + key;
-        if (!normalizedKey.startsWith(KEY))  // scenario.scenario.hoge => scenario.hoge への省略を可
-            normalizedKey = KEY + "." + normalizedKey;
-
-        return normalizedKey;
+        return KEY_OUTPUT + "." + scenario.getEngine().getScenario().getName() + "." + key;
     }
 
     @Override
@@ -186,11 +183,16 @@ public class ScenarioStorage extends AbstractVariableProvider implements ChildSt
             if (isOutputKey(key))
             {
                 String generalKey = getOutputkey(scenario, builder + OUTPUT_IDENTIFIER);
-                Object lookupResult = super.get(generalKey);
-                if (lookupResult == null)
-                    builder.append(key);
-                else
+                Object lookupResult;
+                try
+                {
+                    lookupResult = super.get(generalKey);
                     return new Pair<>(lookupResult, i);
+                }
+                catch (BrokenReferenceException ignored)
+                {
+                    builder.append(key);
+                }
             }
             else
                 builder.append(key);

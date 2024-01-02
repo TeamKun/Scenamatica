@@ -25,13 +25,13 @@ scenario:
   - type: expect
     action: block_break
     with:
-      actor: ${scenario.scenarios.0.output.actor}
-      block: ${scenario.scenarios.0.output.block}
+      actor: ${scenario.scenario.0.output.actor}
+      block: ${scenario.scenario.0.output.block}
   - type: execute
     action: block_break
     with:
-      actor: ${scenario.scenarios.1.output.actor}
-      block: ${scenario.scenarios.1.output.block}
+      actor: ${scenario.scenario.1.output.actor}
+      block: ${scenario.scenario.1.output.block}
   - type: expect
     action: block_break
     with:

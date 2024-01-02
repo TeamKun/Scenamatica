@@ -1,7 +1,7 @@
 # noinspection YAMLSchemaValidation
 scenamatica: ${project.version}
 
-name: actions_block_place
+name: actions_block_place_4
 description: Testing block_place action works or not
 on:
   - type: on_load
@@ -10,6 +10,8 @@ on:
 context:
   actors:
     - name: Actor001
+  stage:
+    type: normal
 
 
 scenario:
@@ -18,14 +20,15 @@ scenario:
     with:
       actor: Actor001
       block:
-        type: DIRT
+        type: SAND
         location:
-          x: 0
-          y: 0
+          x: 4578
+          y: 255
           z: 0
     timeout: 20
   - type: expect
     action: block_place
     with:
-      actor: ${scenario.scenarios.0.output.actor}
-      block: ${scenario.scenarios.0.output.block}
+      actor: ${scenario.scenario.0.output.actor}
+      block:
+        location: ${scenario.scenario.0.output.block.location}

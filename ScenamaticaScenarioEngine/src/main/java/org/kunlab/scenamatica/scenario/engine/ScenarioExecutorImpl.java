@@ -139,9 +139,8 @@ public class ScenarioExecutorImpl implements ScenarioExecutor
 
     private static String genStorageKey(@NotNull RunOn runOn, @NotNull RunAs runAs)
     {
-        StringBuilder key = new StringBuilder(STORAGE_KEY_PREFIX);
-        if (!(runOn == RunOn.TRIGGER || runAs == RunAs.RUNIF))
-            key.append(".").append(runOn.getKey());
+        StringBuilder key = new StringBuilder(STORAGE_KEY_PREFIX)
+                .append(".").append(runOn.getKey());
 
         if (isStorageScenarioNameNeeded(runOn, runAs))
             key.append(".%s");  // 参照名が入る。

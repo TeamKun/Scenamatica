@@ -1,6 +1,8 @@
 package org.kunlab.scenamatica.action.actions.block;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
@@ -78,11 +80,32 @@ public class BlockPlaceAction extends AbstractBlockAction
                     hand,
                     direction
             );
+            if (this.shouldFirePlaceEvent(block, blockDef.getType()))
+                this.firePlaceEvent(block, player, hand, direction);
         }
         else
             this.makeOutputs(ctxt, location.getBlock(), null);
 
         blockDef.applyTo(block);
+    }
+
+    private boolean shouldFirePlaceEvent(Block at, Material typeToPlace)
+    {
+        return at.getType() == typeToPlace;
+    }
+
+    private void firePlaceEvent(Block block, Player player, EquipmentSlot hand, BlockFace against)
+    {
+        BlockPlaceEvent event = new BlockPlaceEvent(
+                block,
+                block.getState(),
+                block.getRelative(against),
+                new ItemStack(block.getType()),
+                player,
+                block.isBuildable(),
+                hand
+        );
+        Bukkit.getPluginManager().callEvent(event);
     }
 
     @Override

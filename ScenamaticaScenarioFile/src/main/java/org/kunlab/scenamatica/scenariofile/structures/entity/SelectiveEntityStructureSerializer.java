@@ -154,7 +154,7 @@ public class SelectiveEntityStructureSerializer
         if (type == EntityType.UNKNOWN)
             type = guessByMapValue(data, type);
 
-        boolean canGeneralize = clazz == EntityStructure.class;
+        boolean canGeneralize = clazz == EntityStructure.class || clazz == AEntityStructure.class;
         EntityStructureEntry<?, ?> entry = ENTITY_STRUCTURES.get(type);
         if (entry == null)
             if (canGeneralize)
