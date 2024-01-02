@@ -16,7 +16,6 @@ import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
-import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.entity.EntityStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.misc.LocationStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.EntitySpecifier;
@@ -28,23 +27,29 @@ public class EntitySpawnAction<E extends Entity> extends AbstractAction
         implements Executable, Watchable
 {
     public static final String KEY_ACTION_NAME = "entity_spawn";
+    public static final String KEY_OUT_ENTITY = "entity";
     public final InputToken<EntitySpecifier<E>> IN_ENTITY;
+
+    private final Class<E> entityClass;
+    private final Class<? extends EntityStructure> structureClass;
 
     public EntitySpawnAction(Class<E> entityclass, Class<? extends EntityStructure> structureClass)
     {
+        this.entityClass = entityclass;
+        this.structureClass = structureClass;
         this.IN_ENTITY = ofInput("entity", entityclass, structureClass)
                 .validator(ScenarioType.ACTION_EXECUTE, EntitySpecifier::hasStructure, "Entity structure is not present")
                 .validator(ScenarioType.ACTION_EXECUTE, specifier -> specifier.getTargetStructure().getType() != null, "Entity type is not present")
                 .validator(ScenarioType.ACTION_EXECUTE, specifier -> specifier.getTargetStructure().getType() != EntityType.UNKNOWN, "Entity type is unknown");
     }
 
-    public static <T extends Entity> T spawnEntity(EntityStructure structure, @Nullable LocationStructure locDef, ScenarioEngine engine)
+    public <T extends Entity> T spawnEntity(ActionContext ctxt, EntityStructure structure, @Nullable LocationStructure locDef)
     {
         Location spawnLoc = locDef == null ? null: locDef.create();
         if (spawnLoc == null)
-            spawnLoc = engine.getContext().getStage().getWorld().getSpawnLocation();
+            spawnLoc = ctxt.getContext().getStage().getWorld().getSpawnLocation();
         // World が指定されていない場合は、ステージのワールドを使う。
-        spawnLoc = Utils.assignWorldToLocation(spawnLoc, engine);
+        spawnLoc = Utils.assignWorldToLocation(spawnLoc, ctxt.getEngine());
 
         assert structure.getType() != null;
         // noinspection unchecked
@@ -54,7 +59,10 @@ public class EntitySpawnAction<E extends Entity> extends AbstractAction
         return spawnLoc.getWorld().spawn(
                 spawnLoc,
                 entityClass,
-                entity -> EntityUtils.tryCastMapped(structure, entity).applyTo(entity)
+                entity -> {
+                    EntityUtils.tryCastMapped(structure, entity).applyTo(entity);
+                    this.makeOutputs(ctxt, entity);
+                }
         );
     }
 
@@ -71,7 +79,13 @@ public class EntitySpawnAction<E extends Entity> extends AbstractAction
         assert structure != null;
         LocationStructure spawnLoc = structure.getLocation();
 
-        spawnEntity(structure, spawnLoc, ctxt.getEngine());
+        this.spawnEntity(ctxt, structure, spawnLoc);
+    }
+
+    protected void makeOutputs(@NotNull ActionContext ctxt, @NotNull Entity entity)
+    {
+        ctxt.output(KEY_OUT_ENTITY, ctxt.getSerializer().toStructure(entity));
+        ctxt.commitOutput();
     }
 
     @Override
@@ -82,7 +96,11 @@ public class EntitySpawnAction<E extends Entity> extends AbstractAction
 
         EntitySpawnEvent e = (EntitySpawnEvent) event;
 
-        return ctxt.ifHasInput(this.IN_ENTITY, specifier -> specifier.checkMatchedEntity(e.getEntity()));
+        boolean result = ctxt.ifHasInput(this.IN_ENTITY, specifier -> specifier.checkMatchedEntity(e.getEntity()));
+        if (result)
+            this.makeOutputs(ctxt, e.getEntity());
+
+        return result;
     }
 
     @Override

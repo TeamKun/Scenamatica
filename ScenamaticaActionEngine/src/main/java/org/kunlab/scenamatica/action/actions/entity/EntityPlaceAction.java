@@ -4,6 +4,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -60,6 +61,12 @@ public class EntityPlaceAction extends AbstractGeneralEntityAction
             ofEnum(Material.class)
     );
 
+    public static final String OUT_KEY_PLAYER = "player";
+    public static final String OUT_KEY_BLOCK = "block";
+    public static final String OUT_KEY_BLOCK_FACE = "direction";
+    public static final String OUT_KEY_MATERIAL = "material";
+
+
     static
     {
         Map<Material, EntityType> map = new EnumMap<>(Material.class);
@@ -111,7 +118,7 @@ public class EntityPlaceAction extends AbstractGeneralEntityAction
         for (Map.Entry<Material, EntityType> entry : PLACEABLE_ENTITIES_MAP.entrySet())
             if (entry.getValue() == entityType)
                 return entry.getKey();
-        return null;
+        throw new IllegalArgumentException("EntityType" + entityType + " is not placeable.");
     }
 
     private static boolean isNotOnlyLocationAvailable(@Nullable BlockStructure structure)
@@ -152,6 +159,7 @@ public class EntityPlaceAction extends AbstractGeneralEntityAction
         if (!isPlaceable(material))
             throw new IllegalArgumentException("Material is not placable.");
 
+        this.makeOutputs(ctxt, null, actor.getPlayer(), location.getBlock(), ctxt.input(IN_BLOCK_FACE), material);
         actor.placeItem(location, new ItemStack(material), ctxt.input(IN_BLOCK_FACE));
     }
 
@@ -167,10 +175,26 @@ public class EntityPlaceAction extends AbstractGeneralEntityAction
         Block block = e.getBlock();
         EntityType entityType = e.getEntityType();
 
-        return ctxt.ifHasInput(IN_PLAYER, player -> player.checkMatchedPlayer(placer))
+        boolean result = ctxt.ifHasInput(IN_PLAYER, player -> player.checkMatchedPlayer(placer))
                 && ctxt.ifHasInput(IN_BLOCK_FACE, face -> face == blockFace)
                 && ctxt.ifHasInput(IN_MATERIAL, material -> material == toMaterial(entityType))
                 && ctxt.ifHasInput(IN_BLOCK, blockStructure -> blockStructure.isAdequate(block));
+        if (result)
+            this.makeOutputs(ctxt, e.getEntity(), placer, block, blockFace, toMaterial(entityType));
+
+        return result;
+    }
+
+    protected void makeOutputs(@NotNull ActionContext ctxt, @Nullable Entity entity, @Nullable Player player, @NotNull Block block, @Nullable BlockFace blockFace, @NotNull Material material)
+    {
+        if (player != null)
+            ctxt.output(OUT_KEY_PLAYER, player);
+        ctxt.output(OUT_KEY_BLOCK, ctxt.getSerializer().toStructure(block, BlockStructure.class));
+        if (blockFace != null)
+            ctxt.output(OUT_KEY_BLOCK_FACE, blockFace);
+        ctxt.output(OUT_KEY_MATERIAL, material);
+
+        super.makeOutputs(ctxt, entity);
     }
 
     @Override

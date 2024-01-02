@@ -4,30 +4,27 @@ import org.bukkit.entity.Entity;
 import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityEvent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.actions.AbstractAction;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
+import org.kunlab.scenamatica.interfaces.scenariofile.Mapped;
 import org.kunlab.scenamatica.interfaces.scenariofile.entity.EntityStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.EntitySpecifier;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class AbstractEntityAction<E extends Entity> extends AbstractAction
+public abstract class AbstractEntityAction<E extends Entity, V extends EntityStructure & Mapped<E>> extends AbstractAction
 {
-    public static final String OUT_KEY_ENTITY = "entity";
+    public static final String OUT_KEY_TARGET = "target";
     public final InputToken<EntitySpecifier<E>> IN_TARGET_ENTITY;
 
-    public AbstractEntityAction(Class<E> entityClass, Class<? extends EntityStructure> structureClazz)
+    public AbstractEntityAction(Class<E> entityClass, Class<V> structureClazz)
     {
         this.IN_TARGET_ENTITY = ofInput("target", entityClass, structureClazz);
-    }
-
-    public AbstractEntityAction()
-    {
-        this.IN_TARGET_ENTITY = null;
     }
 
     public static List<? extends AbstractAction> getActions()
@@ -58,9 +55,11 @@ public abstract class AbstractEntityAction<E extends Entity> extends AbstractAct
         return ctxt.ifHasInput(this.IN_TARGET_ENTITY, specifier -> specifier.checkMatchedEntity(e.getEntity()));
     }
 
-    protected void makeOutputs(@NotNull ActionContext ctxt, @NotNull E entity)
+    protected void makeOutputs(@NotNull ActionContext ctxt, @Nullable E entity)
     {
-        ctxt.output(OUT_KEY_ENTITY, entity);
+        if (entity != null)
+            ctxt.output(OUT_KEY_TARGET, ctxt.getSerializer().toStructure(entity, null));
+        ctxt.commitOutput();
     }
 
     @Override

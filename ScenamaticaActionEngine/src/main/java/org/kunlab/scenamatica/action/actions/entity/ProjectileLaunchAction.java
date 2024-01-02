@@ -1,6 +1,5 @@
 package org.kunlab.scenamatica.action.actions.entity;
 
-import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
 import org.bukkit.block.Dispenser;
 import org.bukkit.entity.EntityType;
@@ -48,9 +47,6 @@ public class ProjectileLaunchAction extends EntitySpawnAction<Projectile>
         super(Projectile.class, ProjectileStructure.class);
 
         this.plugin = getPlugin();
-
-        Bukkit.getPluginManager().registerEvents(this, this.plugin);
-
     }
 
     private static Plugin getPlugin()
@@ -97,7 +93,7 @@ public class ProjectileLaunchAction extends EntitySpawnAction<Projectile>
         ProjectileSourceStructure shooter = entity.getShooter();
         ProjectileSource source = this.convertProjectileSource(shooter, ctxt);
 
-        RegisteredListener transformer = this.registerTransformer(entity.getType(), entity);
+        RegisteredListener transformer = this.registerTransformer(ctxt, entity.getType(), entity);
         Vector velocity = entity.getVelocity();
         if (velocity == null)
             source.launchProjectile(entityType);
@@ -107,7 +103,7 @@ public class ProjectileLaunchAction extends EntitySpawnAction<Projectile>
         this.unregisterTransformer(transformer);
     }
 
-    private RegisteredListener registerTransformer(EntityType type, ProjectileStructure structure)
+    private RegisteredListener registerTransformer(ActionContext ctxt, EntityType type, ProjectileStructure structure)
     {
         Listener dummyListener = new Listener()
         {
@@ -119,13 +115,14 @@ public class ProjectileLaunchAction extends EntitySpawnAction<Projectile>
                 ProjectileLaunchEvent e = (ProjectileLaunchEvent) event;
                 if (e.getEntityType() == type)
                     structure.applyTo(e.getEntity());
+                super.makeOutputs(ctxt, e.getEntity());
             }
         };
 
         RegisteredListener registeredListener = new RegisteredListener(
                 dummyListener,
                 executor,
-                EventPriority.MONITOR,  // ほかのイベントハンドラによる改変を許可。
+                EventPriority.HIGHEST,
                 this.plugin,
                 false
         );

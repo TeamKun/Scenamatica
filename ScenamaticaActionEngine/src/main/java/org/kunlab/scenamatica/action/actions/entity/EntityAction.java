@@ -23,6 +23,8 @@ public class EntityAction extends AbstractGeneralEntityAction
             ofDeserializer(EntityStructure.class)
     );
 
+    public static final String OUT_KEY_ENTITY = "entity";
+
     @Override
     public String getName()
     {
@@ -44,6 +46,7 @@ public class EntityAction extends AbstractGeneralEntityAction
         if (!mapped.canApplyTo(target))
             throw new IllegalStateException("Cannot apply entity info of " + entityInfo + " to " + target);
 
+        this.makeOutputs(ctxt, target);
 
         // noinspection unchecked  // checked above
         mapped.applyTo(target);
@@ -59,7 +62,11 @@ public class EntityAction extends AbstractGeneralEntityAction
         else if (target == null)
             return false;
 
-        return ctxt.ifHasInput(IN_ENTITY, entity -> EntityUtils.tryCastMapped(entity, target).isAdequate(target));
+        boolean result = ctxt.ifHasInput(IN_ENTITY, entity -> EntityUtils.tryCastMapped(entity, target).isAdequate(target));
+        if (result)
+            this.makeOutputs(ctxt, target);
+
+        return result;
     }
 
     @Override

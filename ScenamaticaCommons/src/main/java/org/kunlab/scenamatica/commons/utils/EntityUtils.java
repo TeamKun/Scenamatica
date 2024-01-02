@@ -52,7 +52,8 @@ public class EntityUtils
         // noinspection unchecked
         Mapped<T> mapped = (Mapped<T>) structure;
 
-        return ((Predicate<T>) mapped::canApplyTo).and(mapped::isAdequate);
+        return ((Predicate<T>) mapped::canApplyTo).and(mapped::isAdequate)
+                .or((entit) -> structure.getUuid() != null && structure.getUuid().equals(entit.getUniqueId()));
     }
 
     private static Entity pickEntityOrNull(List<? extends Entity> entities, EntityStructure structure, @Nullable Predicate<? super Entity> predicate)

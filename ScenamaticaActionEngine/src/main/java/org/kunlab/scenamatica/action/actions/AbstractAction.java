@@ -144,12 +144,12 @@ public abstract class AbstractAction implements Action
                         (ser, map) -> ser.tryDeserializeEntitySpecifier(map, structureClass)
                 ),
                 ofTraverser(
-                        String.class,
-                        (ser, str) -> ser.tryDeserializeEntitySpecifier(str, structureClass)
-                ),
-                ofTraverser(
                         structureClass,
                         (ser, structure) -> ser.tryDeserializeEntitySpecifier(structure.getUuid(), structureClass)
+                ),
+                ofTraverser(
+                        String.class,
+                        (ser, str) -> ser.tryDeserializeEntitySpecifier(str, structureClass)
                 )
         );
     }

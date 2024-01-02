@@ -65,6 +65,7 @@ public class EntityDamageAction extends AbstractGeneralEntityAction
         if (!(target instanceof Damageable))
             throw new IllegalArgumentException("Target is not damageable");
 
+        this.makeOutputs(ctxt, target);
         ((Damageable) target).damage(ctxt.input(IN_AMOUNT));
     }
 
@@ -82,8 +83,12 @@ public class EntityDamageAction extends AbstractGeneralEntityAction
                 if (e.getDamage(entry.getKey()) != entry.getValue())
                     return false;
 
-        return ctxt.ifHasInput(IN_CAUSE, cause -> cause == e.getCause())
+        boolean result = ctxt.ifHasInput(IN_CAUSE, cause -> cause == e.getCause())
                 && ctxt.ifHasInput(IN_AMOUNT, amount -> amount == e.getDamage());
+        if (result)
+            this.makeOutputs(ctxt, e.getEntity());
+
+        return result;
     }
 
     @Override

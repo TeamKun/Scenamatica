@@ -84,6 +84,7 @@ public class EntityDeathAction extends AbstractGeneralEntityAction
             throw new IllegalStateException("The target entity " + target + " is not a living entity.");
 
         LivingEntity livingEntity = (LivingEntity) target;
+        this.makeOutputs(ctxt, livingEntity);
         livingEntity.setHealth(0.0f);
     }
 
@@ -107,14 +108,17 @@ public class EntityDeathAction extends AbstractGeneralEntityAction
                 return false;
         }
 
-        return ctxt.ifHasInput(IN_DROP_EXP, exp -> exp == e.getDroppedExp())
+        boolean result = ctxt.ifHasInput(IN_DROP_EXP, exp -> exp == e.getDroppedExp())
                 && ctxt.ifHasInput(IN_REVIVE_HEALTH, health -> health == e.getReviveHealth())
                 && ctxt.ifHasInput(IN_SHOULD_PLAY_DEATH_SOUND, shouldPlay -> shouldPlay == e.shouldPlayDeathSound())
                 && ctxt.ifHasInput(IN_DEATH_SOUND, sound -> sound == e.getDeathSound())
                 && ctxt.ifHasInput(IN_DEATH_SOUND_CATEGORY, category -> category == e.getDeathSoundCategory())
                 && ctxt.ifHasInput(IN_DEATH_SOUND_VOLUME, volume -> volume == e.getDeathSoundVolume())
                 && ctxt.ifHasInput(IN_DEATH_SOUND_PITCH, pitch -> pitch == e.getDeathSoundPitch());
+        if (result)
+            this.makeOutputs(ctxt, e.getEntity());
 
+        return result;
     }
 
     @Override

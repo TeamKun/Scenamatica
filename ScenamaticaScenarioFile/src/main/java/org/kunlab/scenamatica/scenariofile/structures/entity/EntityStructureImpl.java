@@ -362,7 +362,7 @@ public class EntityStructureImpl implements EntityStructure
 
         if (this.fireTicks != null)
             entity.setFireTicks(this.fireTicks);
-        if (this.ticksLived != null)
+        if (this.ticksLived != null && this.ticksLived >= 1)  // < 1 は java.lang.IllegalArgumentException:
             entity.setTicksLived(this.ticksLived);
         if (this.portalCooldown != null)
             entity.setPortalCooldown(this.portalCooldown);

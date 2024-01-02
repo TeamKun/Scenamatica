@@ -11,7 +11,6 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredListener;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.action.utils.EventListenerUtils;
-import org.kunlab.scenamatica.enums.ActionResultCause;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.enums.TriggerType;
 import org.kunlab.scenamatica.enums.WatchType;
@@ -205,7 +204,7 @@ public class WatcherManagerImpl implements WatcherManager
         RegisteredListener registeredListener = new RegisteredListener(
                 DUMMY_LISTENER,
                 executor,
-                EventPriority.LOWEST,  // ほかのイベントハンドラによる改変を許可。
+                EventPriority.MONITOR,  // ほかのイベントハンドラによる改変を許可。
                 entry.getEngine().getPlugin(),
                 true  // キャンセルされたら反応しないようにする。
         );
@@ -226,8 +225,7 @@ public class WatcherManagerImpl implements WatcherManager
             ActionContext context = entry.getAction().getContext();
             if (!entry.getEngine().getExecutor().resolveInputs(entry.getAction()))
             {
-                context.fail(ActionResultCause.UNRESOLVED_REFERENCES);
-                entry.getEngine().getListener().onActionError(entry.getAction(), new IllegalStateException("Unresolved references"));
+                this.registry.getLogger().warning("Unable to resolve inputs for action " + entry.getAction().getExecutor().getName() + " in scenario " + entry.getScenario().getName());
                 return;
             }
         }

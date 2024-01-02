@@ -1,0 +1,41 @@
+# noinspection YAMLSchemaValidation
+scenamatica: ${project.version}
+
+name: actions_entity_pickup_item_4
+description: Testing entity_pickup_item action outputs works or not
+on:
+  - type: manual_dispatch
+
+context:
+  entities:
+    - type: minecraft:villager
+      tags:
+        - 810snpi
+
+
+scenario:
+  - type: execute
+    action: entity_pickup_item
+    with:
+      target: "@e[type=minecraft:villager,tag=810snpi]"
+      item:
+        type: minecraft:stone
+        amount: 10
+  - type: expect
+    action: entity_damage
+    with:
+      target: ${scenario.scenario.0.output.target}
+      item:
+        type: minecraft:stone
+    timeout: 20
+  - type: execute
+    action: entity_pickup_item
+    with:
+      target: ${scenario.scenario.1.output.target}
+  - type: expect
+    action: entity_damage
+    with:
+      target: "@e[type=minecraft:villager,tag=810snpi]"
+      item:
+        type: minecraft:stone
+    timeout: 20

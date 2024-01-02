@@ -1,12 +1,12 @@
 package org.kunlab.scenamatica.action.actions.entity;
 
 import org.bukkit.entity.Entity;
-import org.kunlab.scenamatica.interfaces.scenariofile.entity.EntityStructure;
+import org.kunlab.scenamatica.interfaces.scenariofile.entity.entities.AEntityStructure;
 
-public abstract class AbstractGeneralEntityAction extends AbstractEntityAction<Entity>
+public abstract class AbstractGeneralEntityAction extends AbstractEntityAction<Entity, AEntityStructure>
 {
     public AbstractGeneralEntityAction()
     {
-        super(Entity.class, EntityStructure.class);
+        super(Entity.class, AEntityStructure.class);
     }
 }

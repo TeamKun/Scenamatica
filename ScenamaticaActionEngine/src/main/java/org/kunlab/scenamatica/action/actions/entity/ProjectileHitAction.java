@@ -25,7 +25,7 @@ import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.EntitySpecifier
 import java.util.Collections;
 import java.util.List;
 
-public class ProjectileHitAction extends AbstractEntityAction<Projectile>
+public class ProjectileHitAction extends AbstractEntityAction<Projectile, ProjectileStructure>
         implements Executable, Watchable
 {
     public static final String KEY_ACTION_NAME = "projectile_hit";
@@ -37,6 +37,10 @@ public class ProjectileHitAction extends AbstractEntityAction<Projectile>
     );
     public static final InputToken<BlockFace> IN_BLOCK_FACE = ofEnumInput("blockFace", BlockFace.class);
     public static final InputToken<Boolean> IN_EVENT_ONLY = ofInput("eventOnly", Boolean.class, false);
+
+    public static final String KEY_OUT_HIT_ENTITY = "hitEntity";
+    public static final String KEY_OUT_HIT_BLOCK = "hitBlock";
+    public static final String KEY_OUT_BLOCK_FACE = "blockFace";
 
     public ProjectileHitAction()
     {
@@ -59,6 +63,7 @@ public class ProjectileHitAction extends AbstractEntityAction<Projectile>
             hitBlock = ctxt.input(IN_HIT_BLOCK).getBlockSafe();
 
         BlockFace face = ctxt.orElseInput(IN_BLOCK_FACE, () -> null);
+        this.makeOutputs(ctxt, target, hitBlock, face);
         if (ctxt.input(IN_EVENT_ONLY))
             this.doEventOnlyMode(target, hitEntity, hitBlock, face);
         else
@@ -112,12 +117,26 @@ public class ProjectileHitAction extends AbstractEntityAction<Projectile>
         assert event instanceof ProjectileHitEvent;
         ProjectileHitEvent e = (ProjectileHitEvent) event;
 
-        return ctxt.ifHasInput(IN_HIT_ENTITY, specifier -> specifier.checkMatchedEntity(e.getHitEntity()))
+        boolean result = ctxt.ifHasInput(IN_HIT_ENTITY, specifier -> specifier.checkMatchedEntity(e.getHitEntity()))
                 && ctxt.ifHasInput(IN_BLOCK_FACE, face -> face == e.getHitBlockFace())
                 && ctxt.ifHasInput(IN_HIT_BLOCK, block -> {
             Block hitBlock = e.getHitBlock();
             return hitBlock != null && block.isAdequate(hitBlock);
         });
+        if (result)
+            this.makeOutputs(ctxt, e.getEntity(), e.getHitBlock(), e.getHitBlockFace());
+
+        return result;
+    }
+
+    protected void makeOutputs(@NotNull ActionContext ctxt, @NotNull Projectile entity, @Nullable Block hitBlock, @Nullable BlockFace blockFace)
+    {
+        ctxt.output(KEY_OUT_HIT_ENTITY, entity);
+        if (hitBlock != null)
+            ctxt.output(KEY_OUT_HIT_BLOCK, hitBlock);
+        if (blockFace != null)
+            ctxt.output(KEY_OUT_BLOCK_FACE, blockFace);
+        super.makeOutputs(ctxt, entity);
     }
 
     @Override

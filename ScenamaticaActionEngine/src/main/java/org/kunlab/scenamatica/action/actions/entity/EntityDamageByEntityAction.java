@@ -21,6 +21,7 @@ public class EntityDamageByEntityAction extends EntityDamageAction
     public static final String KEY_ACTION_NAME = "entity_damage_by_entity";
     public static final InputToken<EntitySpecifier<Entity>> IN_DAMAGER =  // 殴った人
             ofSpecifier("damager");
+    public static final String OUT_KEY_DAMAGER = "damager";
 
     @Override
     public String getName()
@@ -39,6 +40,7 @@ public class EntityDamageByEntityAction extends EntityDamageAction
         Entity damager = ctxt.input(IN_DAMAGER).selectTarget(ctxt.getContext())
                 .orElseThrow(() -> new IllegalStateException("Cannot select damager for this action, please specify damager with valid specifier."));
 
+        this.makeOutputs(ctxt, target, damager);
         ((Damageable) target).damage(ctxt.input(IN_AMOUNT), damager);
     }
 
@@ -51,7 +53,17 @@ public class EntityDamageByEntityAction extends EntityDamageAction
         assert event instanceof EntityDamageByEntityEvent;
         EntityDamageByEntityEvent e = (EntityDamageByEntityEvent) event;
 
-        return ctxt.ifHasInput(IN_DAMAGER, damager -> damager.checkMatchedEntity(e.getDamager()));
+        boolean result = ctxt.ifHasInput(IN_DAMAGER, damager -> damager.checkMatchedEntity(e.getDamager()));
+        if (result)
+            this.makeOutputs(ctxt, e.getEntity(), e.getDamager());
+
+        return result;
+    }
+
+    protected void makeOutputs(@NotNull ActionContext ctxt, @NotNull Entity entity, @NotNull Entity damager)
+    {
+        ctxt.output(OUT_KEY_DAMAGER, damager);
+        super.makeOutputs(ctxt, entity);
     }
 
     @Override

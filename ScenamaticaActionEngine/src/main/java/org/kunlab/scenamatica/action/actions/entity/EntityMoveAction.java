@@ -38,6 +38,9 @@ public class EntityMoveAction extends AbstractGeneralEntityAction
             true
     );
 
+    public static final String OUT_KEY_FROM = "from";
+    public static final String OUT_KEY_TO = "to";
+
     @Override
     public String getName()
     {
@@ -50,6 +53,7 @@ public class EntityMoveAction extends AbstractGeneralEntityAction
         Location toLoc = Utils.assignWorldToLocation(ctxt.input(IN_TO), ctxt.getEngine());
         Entity entity = this.selectTarget(ctxt);
 
+        this.makeOutputs(ctxt, entity, entity.getLocation(), toLoc);
         if (ctxt.input(IN_USE_AI) && entity instanceof Mob)
         {
             Mob mob = (Mob) entity;
@@ -70,8 +74,19 @@ public class EntityMoveAction extends AbstractGeneralEntityAction
         assert event instanceof EntityMoveEvent;
         EntityMoveEvent e = (EntityMoveEvent) event;
 
-        return ctxt.ifHasInput(IN_FROM, from -> from.isAdequate(e.getFrom()))
+        boolean result = ctxt.ifHasInput(IN_FROM, from -> from.isAdequate(e.getFrom()))
                 && ctxt.ifHasInput(IN_TO, to -> to.isAdequate(e.getTo()));
+        if (result)
+            this.makeOutputs(ctxt, e.getEntity(), e.getFrom(), e.getTo());
+
+        return result;
+    }
+
+    protected void makeOutputs(@NotNull ActionContext ctxt, @NotNull Entity entity, @NotNull Location from, @NotNull Location to)
+    {
+        ctxt.output(OUT_KEY_FROM, ctxt.getSerializer().toStructure(from, LocationStructure.class));
+        ctxt.output(OUT_KEY_TO, ctxt.getSerializer().toStructure(to, LocationStructure.class));
+        super.makeOutputs(ctxt, entity);
     }
 
     @Override

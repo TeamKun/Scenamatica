@@ -24,6 +24,7 @@ public class EntityDropItemAction extends AbstractGeneralEntityAction
         implements Executable, Watchable
 {
     public static final String KEY_ACTION_NAME = "entity_drop_item";
+    public static final String OUT_KEY_ITEM = "item";
     public static InputToken<EntitySpecifier<Item>> IN_ITEM =
             ofInput("item", Item.class, EntityItemStructure.class)
                     .validator(ScenarioType.ACTION_EXECUTE, EntitySpecifier::hasStructure, "Item structure is not specified.")
@@ -49,16 +50,18 @@ public class EntityDropItemAction extends AbstractGeneralEntityAction
         EntityItemStructure itemStructure = (EntityItemStructure) ctxt.input(IN_ITEM).getTargetStructure();
         ItemStack stack = itemStructure.getItemStack().create();
 
+
         target.getWorld().dropItemNaturally(
                 target.getLocation(),
                 stack,
-                (entity) -> {
-                    EntityDropItemEvent event = new EntityDropItemEvent(target, entity);
+                (itemDropped) -> {
+                    this.makeOutputs(ctxt, target, itemDropped);
+                    EntityDropItemEvent event = new EntityDropItemEvent(target, itemDropped);
                     Bukkit.getPluginManager().callEvent(event);
                     if (event.isCancelled())
-                        entity.remove();
+                        itemDropped.remove();
 
-                    itemStructure.applyTo(entity);
+                    itemStructure.applyTo(itemDropped);
                 }
         );
     }
@@ -72,7 +75,17 @@ public class EntityDropItemAction extends AbstractGeneralEntityAction
         EntityDropItemEvent e = (EntityDropItemEvent) event;
         Item item = e.getItemDrop();
 
-        return ctxt.ifHasInput(IN_ITEM, itemSpecifier -> itemSpecifier.checkMatchedEntity(item));
+        boolean result = ctxt.ifHasInput(IN_ITEM, itemSpecifier -> itemSpecifier.checkMatchedEntity(item));
+        if (result)
+            this.makeOutputs(ctxt, ((EntityDropItemEvent) event).getEntity(), item);
+
+        return result;
+    }
+
+    protected void makeOutputs(@NotNull ActionContext ctxt, @NotNull Entity entity, @NotNull Item item)
+    {
+        ctxt.output(OUT_KEY_ITEM, item);
+        super.makeOutputs(ctxt, entity);
     }
 
     @Override

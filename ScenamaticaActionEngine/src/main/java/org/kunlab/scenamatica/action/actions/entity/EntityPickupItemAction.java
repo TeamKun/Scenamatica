@@ -35,6 +35,9 @@ public class EntityPickupItemAction extends AbstractGeneralEntityAction
             EntityItemStructure.class
     );
 
+    public static final String OUT_KEY_ITEM = "item";
+    public static final String OUT_KEY_REMAINING = "remaining";
+
     @Override
     public String getName()
     {
@@ -76,14 +79,15 @@ public class EntityPickupItemAction extends AbstractGeneralEntityAction
         else if (!isPlayer && !item.canPlayerPickup())
             throw new IllegalStateException("The item cannot be picked up by players (Item#canPlayerPickup() is false).");
 
+        int amount = ctxt.orElseInput(IN_REMAINING, () -> item.getItemStack().getAmount() - 1);
         // NMS にすら アイテムを拾ったことを検知する API がないので偽造する
-        EntityPickupItemEvent event = new EntityPickupItemEvent(leTarget, item, 0);
+        EntityPickupItemEvent event = new EntityPickupItemEvent(leTarget, item, amount);
         Bukkit.getPluginManager().callEvent(event);
 
         if (event.isCancelled())
             throw new IllegalStateException("Item pickup event is cancelled.");
 
-        int quantity = item.getItemStack().getAmount() - event.getRemaining();
+        int quantity = item.getItemStack().getAmount() - amount;
         leTarget.playPickupItemAnimation(item, quantity);
         item.getItemStack().setAmount(event.getRemaining());
 
@@ -106,8 +110,20 @@ public class EntityPickupItemAction extends AbstractGeneralEntityAction
 
         EntityPickupItemEvent e = (EntityPickupItemEvent) event;
 
+        boolean result = ctxt.ifHasInput(IN_REMAINING, remaining -> remaining.equals(e.getRemaining()))
+                && ctxt.ifHasInput(IN_ITEM, item -> item.checkMatchedEntity(e.getItem()));
+        if (result)
+            this.makeOutputs(ctxt, e.getEntity(), e.getItem(), e.getRemaining());
+
         return ctxt.ifHasInput(IN_REMAINING, remaining -> remaining.equals(e.getRemaining()))
                 && ctxt.ifHasInput(IN_ITEM, item -> item.checkMatchedEntity(e.getItem()));
+    }
+
+    protected void makeOutputs(@NotNull ActionContext ctxt, @NotNull Entity entity, @NotNull Item item, int remaining)
+    {
+        ctxt.output(OUT_KEY_ITEM, item);
+        ctxt.output(OUT_KEY_REMAINING, remaining);
+        super.makeOutputs(ctxt, entity);
     }
 
     @Override
