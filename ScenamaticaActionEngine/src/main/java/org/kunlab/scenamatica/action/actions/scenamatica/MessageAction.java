@@ -34,6 +34,9 @@ public class MessageAction extends AbstractScenamaticaAction
             ofPlayer()
     );
 
+    public static final String KEY_OUT_MESSAGE = "message";
+    public static final String KEY_OUT_RECIPIENT = "recipient";
+
     @Override
     public String getName()
     {
@@ -45,8 +48,10 @@ public class MessageAction extends AbstractScenamaticaAction
     {
         Player recipient = ctxt.input(IN_RECIPIENT).selectTarget(ctxt.getContext())
                 .orElseThrow(() -> new IllegalStateException("Cannot select target for this action, please specify target with valid specifier."));
+        String message = ctxt.input(IN_MESSAGE);
 
-        recipient.sendMessage(ctxt.input(IN_MESSAGE));
+        this.makeOutputs(ctxt, recipient, message);
+        recipient.sendMessage(message);
     }
 
     @Override
@@ -56,8 +61,18 @@ public class MessageAction extends AbstractScenamaticaAction
         ActorMessageReceiveEvent e = (ActorMessageReceiveEvent) event;
 
         TextComponent message = e.getMessage();
-        return ctxt.ifHasInput(IN_MESSAGE, content -> TextUtils.isSameContent(message, content))
+        boolean result = ctxt.ifHasInput(IN_MESSAGE, content -> TextUtils.isSameContent(message, content))
                 && ctxt.ifHasInput(IN_RECIPIENT, player -> player.checkMatchedPlayer(e.getPlayer()));
+        if (result)
+            this.makeOutputs(ctxt, e.getPlayer(), TextUtils.toString(message));
+
+        return result;
+    }
+
+    protected void makeOutputs(@NotNull ActionContext ctxt, @NotNull Player player, @NotNull String message)
+    {
+        ctxt.output(KEY_OUT_MESSAGE, message);
+        ctxt.output(KEY_OUT_RECIPIENT, player);
     }
 
     @Override

@@ -29,6 +29,9 @@ public class MilestoneAction extends AbstractScenamaticaAction
             Boolean.class
     );
 
+    public static final String KEY_OUT_NAME = "name";
+    public static final String KEY_OUT_REACHED = "reached";
+
     @Override
     public String getName()
     {
@@ -40,7 +43,10 @@ public class MilestoneAction extends AbstractScenamaticaAction
     {
         ScenarioEngine engine = ctxt.getEngine();
         String name = ctxt.input(IN_NAME);
-        if (ctxt.ifHasInput(IN_REACHED, reached -> reached))
+        boolean reached = ctxt.ifHasInput(IN_REACHED, r -> r);
+
+        this.makeOutputs(ctxt, name, reached);
+        if (reached)
             engine.getManager().getMilestoneManager().reachMilestone(engine, name);
         else
             engine.getManager().getMilestoneManager().revokeMilestone(engine, name);
@@ -55,8 +61,18 @@ public class MilestoneAction extends AbstractScenamaticaAction
         boolean condition = !e.isCancelled();
         MilestoneEntry milestone = e.getMilestone();
 
-        return ctxt.ifHasInput(IN_NAME, name -> name.equalsIgnoreCase(milestone.getName()))
+        boolean result = ctxt.ifHasInput(IN_NAME, name -> name.equalsIgnoreCase(milestone.getName()))
                 && ctxt.ifHasInput(IN_REACHED, reached -> reached == condition);
+        if (result)
+            this.makeOutputs(ctxt, milestone.getName(), condition);
+
+        return result;
+    }
+
+    protected void makeOutputs(@NotNull ActionContext ctxt, @NotNull String milestoneName, boolean reached)
+    {
+        ctxt.output(KEY_OUT_NAME, milestoneName);
+        ctxt.output(KEY_OUT_REACHED, reached);
     }
 
     @Override
