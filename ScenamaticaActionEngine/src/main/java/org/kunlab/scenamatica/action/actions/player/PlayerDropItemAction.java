@@ -1,8 +1,10 @@
 package org.kunlab.scenamatica.action.actions.player;
 
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
@@ -25,6 +27,8 @@ public class PlayerDropItemAction extends AbstractPlayerAction
             ofDeserializer(EntityItemStructure.class)
     );
 
+    public static final String KEY_OUT_ITEM = "item";
+
     @Override
     public String getName()
     {
@@ -35,9 +39,13 @@ public class PlayerDropItemAction extends AbstractPlayerAction
     public void execute(@NotNull ActionContext ctxt)
     {
         Player target = selectTarget(ctxt);
-        // item がしてある場合は、先に手に持たせる。
-        ctxt.runIfHasInput(IN_ITEM, item -> target.getInventory().setItemInMainHand(item.getItemStack().create()));
+        ItemStack stack = ctxt.ifHasInput(IN_ITEM, (r) -> {
+            ItemStack st = r.getItemStack().create();
+            target.getInventory().setItemInMainHand(st);
+            return st;
+        }, target.getInventory().getItemInMainHand());
 
+        this.makeOutputs(ctxt, target, stack);
         target.dropItem(/* dropAll: */ false);
     }
 
@@ -50,7 +58,23 @@ public class PlayerDropItemAction extends AbstractPlayerAction
         assert event instanceof PlayerDropItemEvent;
         PlayerDropItemEvent e = (PlayerDropItemEvent) event;
 
-        return ctxt.ifHasInput(IN_ITEM, item -> item.isAdequate(e.getItemDrop()));
+        boolean result = ctxt.ifHasInput(IN_ITEM, item -> item.isAdequate(e.getItemDrop()));
+        if (result)
+            ctxt.output(KEY_OUT_ITEM, e.getItemDrop());
+
+        return result;
+    }
+
+    protected void makeOutputs(@NotNull ActionContext ctxt, @NotNull Player target, @NotNull Item item)
+    {
+        ctxt.output(KEY_OUT_ITEM, item);
+        super.makeOutputs(ctxt, target);
+    }
+
+    protected void makeOutputs(@NotNull ActionContext ctxt, @NotNull Player target, @NotNull ItemStack item)
+    {
+        ctxt.output(KEY_OUT_ITEM, item);
+        super.makeOutputs(ctxt, target);
     }
 
     @Override

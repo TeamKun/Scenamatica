@@ -8,6 +8,7 @@ import org.bukkit.event.player.PlayerBucketEntityEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
@@ -40,6 +41,10 @@ public class PlayerBucketEntityAction extends AbstractPlayerAction
     ).validator(bucket -> bucket.getType() != null, "Original bucket type is null.")
             .validator(bucket -> canBucketPickupEntity(bucket.getType()), "Original bucket type is not water bucket.");
 
+    public static final String KEY_OUT_ENTITY = "entity";
+    public static final String KEY_OUT_BUCKET = "bucket";
+    public static final String KEY_OUT_ENTITY_BUCKET = "entityBucket";
+
     @SuppressWarnings("deprecation")
     private static boolean canBucketPickupEntity(@NotNull Material type)
     {
@@ -61,20 +66,21 @@ public class PlayerBucketEntityAction extends AbstractPlayerAction
         Entity targetEntity = ctxt.input(IN_ENTITY).selectTarget(ctxt.getContext())
                 .orElseThrow(() -> new IllegalStateException("Target entity is not found."));
         // Null ではない
-        ItemStack itemInMainHand = player.getInventory().getItemInMainHand();
+        ItemStack originalBucket = player.getInventory().getItemInMainHand();
         if (ctxt.hasInput(IN_ORIGINAL_BUCKET))
         {
             ItemStackStructure structureOriginalBucket = ctxt.input(IN_ORIGINAL_BUCKET);
-            if (!structureOriginalBucket.isAdequate(itemInMainHand))
+            if (!structureOriginalBucket.isAdequate(originalBucket))
             {
-                ItemStack originalBucket = structureOriginalBucket.create();
+                originalBucket = structureOriginalBucket.create();
                 player.getInventory().setItemInMainHand(originalBucket);
             }
         }
-        else if (!canBucketPickupEntity(itemInMainHand.getType()))
-            throw new IllegalStateException("The item in main hand is not water bucket, but " + itemInMainHand.getType() +
+        else if (!canBucketPickupEntity(originalBucket.getType()))
+            throw new IllegalStateException("The item in main hand is not water bucket, but " + originalBucket.getType() +
                     ". Please ensure that the player is holding correct bucket or specify original bucket.");
 
+        this.makeOutputs(ctxt, player, targetEntity, originalBucket, null);
 
         actor.interactEntity(
                 targetEntity,
@@ -92,9 +98,22 @@ public class PlayerBucketEntityAction extends AbstractPlayerAction
 
         PlayerBucketEntityEvent e = (PlayerBucketEntityEvent) event;
 
-        return ctxt.ifHasInput(IN_ENTITY, entity -> entity.checkMatchedEntity(e.getEntity()))
+        boolean result = ctxt.ifHasInput(IN_ENTITY, entity -> entity.checkMatchedEntity(e.getEntity()))
                 && ctxt.ifHasInput(IN_ORIGINAL_BUCKET, bucket -> bucket.isAdequate(e.getOriginalBucket()))
                 && ctxt.ifHasInput(IN_ENTITY_BUCKET, bucket -> bucket.isAdequate(e.getEntityBucket()));
+        if (result)
+            this.makeOutputs(ctxt, e.getPlayer(), e.getEntity(), e.getOriginalBucket(), e.getEntityBucket());
+
+        return result;
+    }
+
+    protected void makeOutputs(@NotNull ActionContext ctxt, @NotNull Player player, @NotNull Entity entity, @NotNull ItemStack originalBucket, @Nullable ItemStack entityBucket)
+    {
+        ctxt.output(KEY_OUT_ENTITY, entity);
+        ctxt.output(KEY_OUT_BUCKET, originalBucket);
+        if (entityBucket != null)
+            ctxt.output(KEY_OUT_ENTITY_BUCKET, entityBucket);
+        super.makeOutputs(ctxt, player);
     }
 
     @Override

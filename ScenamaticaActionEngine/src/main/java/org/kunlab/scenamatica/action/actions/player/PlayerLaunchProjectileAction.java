@@ -52,6 +52,8 @@ public class PlayerLaunchProjectileAction extends AbstractPlayerAction
             0.01
     );
 
+    public static final String KEY_OUT_PROJECTILE = "projectile";
+
     @Override
     public String getName()
     {
@@ -65,7 +67,9 @@ public class PlayerLaunchProjectileAction extends AbstractPlayerAction
         ProjectileType type = ctxt.input(IN_PROJECTILE_TYPE);
         Vector velocity = ctxt.input(IN_VELOCITY).create().toVector();
 
-        player.launchProjectile(type.getClazz(), velocity);
+        this.makeOutputs(ctxt, player);
+        Projectile proj = player.launchProjectile(type.getClazz(), velocity);
+        this.makeLazyOutputs(ctxt, player, proj);
     }
 
     @Override
@@ -80,11 +84,22 @@ public class PlayerLaunchProjectileAction extends AbstractPlayerAction
         ProjectileType projectileType = ProjectileType.fromProjectile(e.getProjectile());
         Vector velocity = e.getProjectile().getVelocity().clone();
 
-        return ctxt.ifHasInput(IN_PROJECTILE_TYPE, type -> type == projectileType)
+        boolean result = ctxt.ifHasInput(IN_PROJECTILE_TYPE, type -> type == projectileType)
                 && ctxt.ifHasInput(
                 IN_VELOCITY,
                 loc -> Utils.vectorEquals(loc.create().toVector(), velocity, ctxt.input(IN_EPSILON))
         );
+
+        if (result)
+            this.makeLazyOutputs(ctxt, e.getPlayer(), e.getProjectile());
+
+        return result;
+    }
+
+    protected void makeLazyOutputs(@NotNull ActionContext ctxt, @NotNull Player player, @NotNull Projectile projectile)
+    {
+        ctxt.output(KEY_OUT_PROJECTILE, projectile);
+        super.makeOutputs(ctxt, player);
     }
 
     @Override

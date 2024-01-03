@@ -17,6 +17,7 @@ import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
+import org.kunlab.scenamatica.interfaces.context.Actor;
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.ItemStackStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.misc.BlockStructure;
 
@@ -60,6 +61,12 @@ public abstract class AbstractPlayerBucketAction extends AbstractPlayerAction
             Boolean.class,
             false
     );
+
+    public static final String KEY_OUT_ITEM = "item";
+    public static final String KEY_OUT_BLOCK = "block";
+    public static final String KEY_OUT_BLOCK_FACE = "blockFace";
+    public static final String KEY_OUT_BUCKET = "bucket";
+    public static final String KEY_OUT_HAND = "hand";
 
     public static List<? extends AbstractPlayerBucketAction> getActions()
     {
@@ -219,6 +226,24 @@ public abstract class AbstractPlayerBucketAction extends AbstractPlayerAction
         return board;
     }
 
+    protected void makeOutput(@NotNull ActionContext ctxt, @NotNull PlayerBucketEvent event)
+    {
+        this.makeOutput(ctxt, event.getPlayer(), event.getItemStack(), event.getBlock(), event.getBlockFace(),
+                event.getBucket(), event.getHand()
+        );
+    }
+
+    protected void makeOutput(@NotNull ActionContext ctxt, @NotNull Player player, ItemStack item, Block block,
+                              BlockFace face, Material bucket, EquipmentSlot hand)
+    {
+        ctxt.output(KEY_OUT_ITEM, item);
+        ctxt.output(KEY_OUT_BLOCK, block);
+        ctxt.output(KEY_OUT_BLOCK_FACE, face);
+        ctxt.output(KEY_OUT_BUCKET, bucket);
+        ctxt.output(KEY_OUT_HAND, hand);
+        super.makeOutputs(ctxt, player);
+    }
+
     @Override
     public boolean checkFired(@NotNull ActionContext ctxt, @NotNull Event event)
     {
@@ -227,11 +252,39 @@ public abstract class AbstractPlayerBucketAction extends AbstractPlayerAction
 
         PlayerBucketEvent e = (PlayerBucketEvent) event;
 
-        return ctxt.ifHasInput(IN_ITEM, (item) -> item.isAdequate(e.getItemStack()))
+        boolean result = ctxt.ifHasInput(IN_ITEM, (item) -> item.isAdequate(e.getItemStack()))
                 && ctxt.ifHasInput(IN_BLOCK, (block) -> block.isAdequate(e.getBlockClicked()))
                 && ctxt.ifHasInput(IN_BLOCK_CLICKED, (block) -> block.isAdequate(e.getBlockClicked()))
                 && ctxt.ifHasInput(IN_BLOCK_FACE, (face) -> face == e.getBlockFace())
                 && ctxt.ifHasInput(IN_BUCKET, (bucket) -> bucket == e.getBucket())
                 && ctxt.ifHasInput(IN_HAND, (hand) -> hand == e.getHand());
+
+        if (result)
+            this.makeOutput(ctxt, e);
+
+        return result;
     }
+
+    protected void enumerateItemUse(@NotNull ActionContext ctxt, Player player, Block block, BlockFace direction, ItemStack stack, Actor actor)
+    {
+        if (ctxt.input(IN_EVENT_ONLY))
+        {
+            Block blockClicked = null;
+            if (ctxt.hasInput(IN_BLOCK_CLICKED))
+                blockClicked = ctxt.input(IN_BLOCK_CLICKED).apply(ctxt.getEngine(), null);
+            EquipmentSlot hand = ctxt.orElseInput(IN_HAND, () -> null);
+            this.doEventOnlyMode(ctxt, player, block, blockClicked, direction, stack.getType(), stack, hand);
+            return;
+        }
+
+        this.makeOutput(ctxt, player, stack, block, direction, stack.getType(), EquipmentSlot.HAND);
+        actor.placeItem(
+                block.getLocation(),
+                stack,
+                direction
+        );
+    }
+
+    protected abstract void doEventOnlyMode(@NotNull ActionContext ctxt, Player who, Block block, Block blockClicked,
+                                            BlockFace blockFace, Material bucket, ItemStack itemInHand, EquipmentSlot hand);
 }

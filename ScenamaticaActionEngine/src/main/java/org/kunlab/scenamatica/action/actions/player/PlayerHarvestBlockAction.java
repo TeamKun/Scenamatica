@@ -1,5 +1,7 @@
 package org.kunlab.scenamatica.action.actions.player;
 
+import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerHarvestBlockEvent;
 import org.bukkit.inventory.ItemStack;
@@ -48,6 +50,9 @@ public class PlayerHarvestBlockAction extends AbstractPlayerAction
             )
     );
 
+    public static final String KEY_BLOCK_HARVESTED = "block";
+    public static final String KEY_ITEMS_HARVESTED = "items";
+
     @Override
     public String getName()
     {
@@ -64,8 +69,6 @@ public class PlayerHarvestBlockAction extends AbstractPlayerAction
         blockBreakBoard.getHolder(BlockBreakAction.IN_ACTOR).set(ctxt.input(IN_TARGET));
 
         breakAction.execute(ctxt.renew(blockBreakBoard));
-        for (Map.Entry<String, Object> entry : ctxt.getOutput().entrySet())
-            ctxt.output(entry.getKey(), entry.getValue());
     }
 
     @Override
@@ -77,7 +80,7 @@ public class PlayerHarvestBlockAction extends AbstractPlayerAction
         assert event instanceof PlayerHarvestBlockEvent;
         PlayerHarvestBlockEvent e = (PlayerHarvestBlockEvent) event;
 
-        return ctxt.ifHasInput(IN_HARVESTED_BLOCK, block -> block.isAdequate(e.getHarvestedBlock()))
+        boolean result = ctxt.ifHasInput(IN_HARVESTED_BLOCK, block -> block.isAdequate(e.getHarvestedBlock()))
                 && ctxt.ifHasInput(
                 IN_ITEMS_HARVESTED,
                 items -> {
@@ -93,6 +96,18 @@ public class PlayerHarvestBlockAction extends AbstractPlayerAction
                     return false;
                 }
         );
+
+        if (result)
+            this.makeOutputs(ctxt, e.getPlayer(), e.getHarvestedBlock(), e.getItemsHarvested());
+
+        return result;
+    }
+
+    protected void makeOutputs(@NotNull ActionContext ctxt, @NotNull Player player, @NotNull Block block, List<ItemStack> items)
+    {
+        ctxt.output(KEY_BLOCK_HARVESTED, block);
+        ctxt.output(KEY_ITEMS_HARVESTED, items);
+        super.makeOutputs(ctxt, player);
     }
 
     @Override

@@ -1,11 +1,13 @@
 package org.kunlab.scenamatica.action.actions.player;
 
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerItemBreakEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
@@ -32,6 +34,9 @@ public class PlayerItemBreakAction extends AbstractPlayerAction
             EquipmentSlot.class
     );
 
+    public static final String KEY_OUT_ITEM = "item";
+    public static final String KEY_OUT_SLOT = "slot";
+
     @Override
     public String getName()
     {
@@ -47,6 +52,10 @@ public class PlayerItemBreakAction extends AbstractPlayerAction
         if (ctxt.hasInput(IN_ITEM))
             actor.getPlayer().getInventory().setItem(slot, ctxt.input(IN_ITEM).create());
 
+        ItemStack item = actor.getPlayer().getInventory().getItem(slot);
+        if (item == null)
+            throw new IllegalStateException("Item is null");
+        this.makeOutputs(ctxt, actor.getPlayer(), item, slot);
         actor.breakItem(slot);
     }
 
@@ -139,7 +148,19 @@ public class PlayerItemBreakAction extends AbstractPlayerAction
         assert event instanceof PlayerItemBreakEvent;
         PlayerItemBreakEvent e = (PlayerItemBreakEvent) event;
 
-        return ctxt.ifHasInput(IN_ITEM, item -> item.isAdequate(e.getBrokenItem()));
+        boolean result = ctxt.ifHasInput(IN_ITEM, item -> item.isAdequate(e.getBrokenItem()));
+        if (result)
+            this.makeOutputs(ctxt, e.getPlayer(), e.getBrokenItem(), null);
+
+        return result;
+    }
+
+    protected void makeOutputs(@NotNull ActionContext ctxt, @NotNull Player player, @NotNull ItemStack item, @Nullable EquipmentSlot slot)
+    {
+        ctxt.output(KEY_OUT_ITEM, item);
+        if (slot != null)
+            ctxt.output(KEY_OUT_SLOT, slot);
+        super.makeOutputs(ctxt, player);
     }
 
     @Override

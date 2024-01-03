@@ -5,6 +5,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.commons.utils.TextUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
@@ -25,13 +26,17 @@ public class PlayerKickAction extends AbstractPlayerAction
             String.class
     );
     public static final InputToken<String> IN_KICK_MESSAGE = ofInput(
-            "kickMessage",
+            "message",
             String.class
     );
     public static final InputToken<PlayerKickEvent.Cause> IN_CAUSE = ofEnumInput(
             "cause",
             PlayerKickEvent.Cause.class
     );
+
+    public static final String KEY_OUT_LEAVE_MESSAGE = "leaveMessage";
+    public static final String KEY_OUT_KICK_MESSAGE = "message";
+    public static final String KEY_OUT_CAUSE = "cause";
 
     @Override
     public String getName()
@@ -44,10 +49,11 @@ public class PlayerKickAction extends AbstractPlayerAction
     {
         // leaveMessage はつかえない。
 
-        Component kickMessage = ctxt.hasInput(IN_KICK_MESSAGE) ?
-                Component.text(ctxt.input(IN_KICK_MESSAGE)): null;
-
+        Component kickMessage = ctxt.ifHasInput(IN_KICK_MESSAGE, Component::text, null);
+        PlayerKickEvent.Cause cause = ctxt.orElseInput(IN_CAUSE, () -> null);
         Player target = selectTarget(ctxt);
+
+        this.makeOutputs(ctxt, target, null, kickMessage, cause);
         if (ctxt.hasInput(IN_CAUSE))
             target.kick(kickMessage, ctxt.input(IN_CAUSE));
         else
@@ -65,9 +71,22 @@ public class PlayerKickAction extends AbstractPlayerAction
         Component kickMessage = e.reason();
         PlayerKickEvent.Cause cause = e.getCause();
 
-        return ctxt.ifHasInput(IN_LEAVE_MESSAGE, message -> TextUtils.isSameContent(leaveMessage, message))
+        boolean result = ctxt.ifHasInput(IN_LEAVE_MESSAGE, message -> TextUtils.isSameContent(leaveMessage, message))
                 && ctxt.ifHasInput(IN_KICK_MESSAGE, message -> TextUtils.isSameContent(kickMessage, message))
                 && ctxt.ifHasInput(IN_CAUSE, c -> c == cause);
+        if (result)
+            this.makeOutputs(ctxt, e.getPlayer(), leaveMessage, kickMessage, cause);
+
+        return result;
+    }
+
+    protected void makeOutputs(@NotNull ActionContext ctxt, @NotNull Player player, @Nullable Component leaveMessage, @Nullable Component kickMessage, @Nullable PlayerKickEvent.Cause cause)
+    {
+        if (leaveMessage != null)
+            ctxt.output(KEY_OUT_LEAVE_MESSAGE, TextUtils.toString(leaveMessage));
+        ctxt.output(KEY_OUT_KICK_MESSAGE, TextUtils.toString(kickMessage));
+        ctxt.output(KEY_OUT_CAUSE, cause);
+        super.makeOutputs(ctxt, player);
     }
 
     @Override

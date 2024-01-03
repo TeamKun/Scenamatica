@@ -37,6 +37,7 @@ public class PlayerFlightAction extends AbstractPlayerAction
         boolean flying = ctxt.orElseInput(IN_FLYING, () -> true);
 
         Player player = selectTarget(ctxt);
+        super.makeOutputs(ctxt, player);
         PlayerToggleFlightEvent event = new PlayerToggleFlightEvent(player, flying);
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled())
@@ -57,7 +58,11 @@ public class PlayerFlightAction extends AbstractPlayerAction
         assert event instanceof PlayerToggleFlightEvent;
         PlayerToggleFlightEvent e = (PlayerToggleFlightEvent) event;
 
-        return ctxt.ifHasInput(IN_FLYING, flying -> flying == e.isFlying());
+        boolean result = ctxt.ifHasInput(IN_FLYING, flying -> flying == e.isFlying());
+        if (result)
+            super.makeOutputs(ctxt, e.getPlayer());
+
+        return result;
     }
 
     @Override

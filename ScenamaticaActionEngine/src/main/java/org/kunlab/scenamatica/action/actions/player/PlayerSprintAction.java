@@ -43,6 +43,7 @@ public class PlayerSprintAction extends AbstractPlayerAction
         if (event.isCancelled())
             return;
 
+        super.makeOutputs(ctxt, player);
         player.setSprinting(sprinting);
     }
 
@@ -55,7 +56,11 @@ public class PlayerSprintAction extends AbstractPlayerAction
         assert event instanceof PlayerToggleSprintEvent;
         PlayerToggleSprintEvent e = (PlayerToggleSprintEvent) event;
 
-        return ctxt.ifHasInput(IN_SPRINTING, sprinting -> sprinting == e.isSprinting());
+        boolean result = ctxt.ifHasInput(IN_SPRINTING, sprinting -> sprinting == e.isSprinting());
+        if (result)
+            super.makeOutputs(ctxt, e.getPlayer());
+
+        return result;
     }
 
     @Override

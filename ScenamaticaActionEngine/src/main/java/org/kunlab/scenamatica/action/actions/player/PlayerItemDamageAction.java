@@ -40,6 +40,21 @@ public class PlayerItemDamageAction extends AbstractPlayerAction
             EquipmentSlot.class
     );
 
+    public static final String KEY_OUT_ITEM = "item";
+    public static final String KEY_OUT_DAMAGE = "damage";
+
+    private static ItemStack getDamagedItem(@NotNull ItemStack item, int damage)
+    {
+        ItemStack newItem = item.clone();
+        ItemMeta meta = newItem.getItemMeta();
+        if (!(meta instanceof Damageable))
+            throw new IllegalStateException("Target item is not Damageable");
+        Damageable damageable = (Damageable) meta;
+        damageable.setDamage(damage);
+        newItem.setItemMeta(meta);
+        return newItem;
+    }
+
     @Override
     public String getName()
     {
@@ -59,8 +74,10 @@ public class PlayerItemDamageAction extends AbstractPlayerAction
             throw new IllegalStateException("Target does not have item in slot " + slot);
         else if (!(itemStack.getItemMeta() instanceof Damageable))
             throw new IllegalStateException("Target item in slot " + slot + " is not Damageable");
+        int damage = ctxt.input(IN_DAMAGE);
 
-        actor.damageItem(slot, ctxt.input(IN_DAMAGE));
+        this.makeOutputs(ctxt, actor.getPlayer(), getDamagedItem(itemStack, damage), damage);
+        actor.damageItem(slot, damage);
     }
 
     @Override
@@ -69,10 +86,22 @@ public class PlayerItemDamageAction extends AbstractPlayerAction
         if (!super.checkMatchedPlayerEvent(ctxt, event))
             return false;
 
+        assert event instanceof PlayerItemDamageEvent;
         PlayerItemDamageEvent e = (PlayerItemDamageEvent) event;
 
-        return ctxt.ifHasInput(IN_ITEM, item -> item.isAdequate(e.getItem()))
+        boolean result = ctxt.ifHasInput(IN_ITEM, item -> item.isAdequate(e.getItem()))
                 && ctxt.ifHasInput(IN_DAMAGE, damage -> damage == e.getDamage());
+        if (result)
+            this.makeOutputs(ctxt, e.getPlayer(), e.getItem(), e.getDamage());
+
+        return result;
+    }
+
+    protected void makeOutputs(@NotNull ActionContext ctxt, @NotNull Player player, @NotNull ItemStack item, int damage)
+    {
+        ctxt.output(KEY_OUT_ITEM, item);
+        ctxt.output(KEY_OUT_DAMAGE, damage);
+        super.makeOutputs(ctxt, player);
     }
 
     @Override
@@ -110,7 +139,10 @@ public class PlayerItemDamageAction extends AbstractPlayerAction
                 continue;
 
             if (expectedDamage == damageable.getDamage())
+            {
+                this.makeOutputs(ctxt, player, item, expectedDamage);
                 return true;
+            }
         }
 
         return false;

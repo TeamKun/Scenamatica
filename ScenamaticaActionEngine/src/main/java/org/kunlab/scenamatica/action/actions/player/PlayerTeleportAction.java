@@ -25,6 +25,8 @@ public class PlayerTeleportAction extends PlayerMoveAction
             PlayerTeleportEvent.TeleportCause.class
     );
 
+    public static final String KEY_OUT_CAUSE = "cause";
+
     @Override
     public String getName()
     {
@@ -42,6 +44,7 @@ public class PlayerTeleportAction extends PlayerMoveAction
             cause = PlayerTeleportEvent.TeleportCause.PLUGIN;
 
         Player player = selectTarget(ctxt);
+        this.makeOutputs(ctxt, player, player.getLocation(), toLoc, cause);
         player.teleport(toLoc, cause);
     }
 
@@ -54,7 +57,18 @@ public class PlayerTeleportAction extends PlayerMoveAction
         assert event instanceof PlayerTeleportEvent;
         PlayerTeleportEvent e = (PlayerTeleportEvent) event;
 
-        return ctxt.ifHasInput(IN_CAUSE, e.getCause()::equals);
+        boolean result = ctxt.ifHasInput(IN_CAUSE, e.getCause()::equals);
+        if (result)
+            this.makeOutputs(ctxt, e.getPlayer(), e.getFrom(), e.getTo(), e.getCause());
+
+        return result;
+    }
+
+    private void makeOutputs(@NotNull ActionContext ctxt, @NotNull Player player, @NotNull Location from,
+                             @NotNull Location to, @NotNull PlayerTeleportEvent.TeleportCause cause)
+    {
+        ctxt.output(KEY_OUT_CAUSE, cause);
+        super.makeOutputs(ctxt, player, from, to);
     }
 
     @Override

@@ -32,6 +32,9 @@ public class PlayerMoveAction extends AbstractPlayerAction
             ofDeserializer(LocationStructure.class)
     );
 
+    public static final String KEY_OUT_FROM = "from";
+    public static final String KEY_OUT_TO = "to";
+
     @Override
     public String getName()
     {
@@ -43,6 +46,8 @@ public class PlayerMoveAction extends AbstractPlayerAction
     {
         Location toLoc = Utils.assignWorldToLocation(ctxt.input(IN_TO), ctxt.getEngine());
         Player target = selectTarget(ctxt);
+        this.makeOutputs(ctxt, target, target.getLocation(), toLoc);
+
         target.teleport(toLoc);
     }
 
@@ -55,8 +60,12 @@ public class PlayerMoveAction extends AbstractPlayerAction
         assert event instanceof PlayerMoveEvent;
         PlayerMoveEvent e = (PlayerMoveEvent) event;
 
-        return ctxt.ifHasInput(IN_FROM, from -> from.isAdequate(e.getFrom()))
+        boolean result = ctxt.ifHasInput(IN_FROM, from -> from.isAdequate(e.getFrom()))
                 && ctxt.ifHasInput(IN_TO, to -> to.isAdequate(e.getTo()));
+        if (result)
+            this.makeOutputs(ctxt, e.getPlayer(), e.getFrom(), e.getTo());
+
+        return result;
     }
 
     @Override
@@ -65,6 +74,14 @@ public class PlayerMoveAction extends AbstractPlayerAction
         return Collections.singletonList(
                 PlayerMoveEvent.class
         );
+    }
+
+    protected void makeOutputs(@NotNull ActionContext ctxt, @NotNull Player player, @NotNull Location from, @NotNull Location to)
+    {
+        ctxt.output(KEY_OUT_FROM, from);
+        ctxt.output(KEY_OUT_TO, to);
+
+        super.makeOutputs(ctxt, player);
     }
 
     @Override

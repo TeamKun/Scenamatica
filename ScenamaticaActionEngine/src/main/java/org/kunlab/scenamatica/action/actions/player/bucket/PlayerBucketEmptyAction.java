@@ -42,24 +42,15 @@ public class PlayerBucketEmptyAction extends AbstractPlayerBucketAction
         if (isEmptyBucket(stack.getType()))
             throw new IllegalArgumentException("The bucket is empty: " + stack.getType() + " held by " + player.getName());
 
-        if (ctxt.input(IN_EVENT_ONLY))
-        {
-            Block blockClicked = null;
-            if (ctxt.hasInput(IN_BLOCK_CLICKED))
-                blockClicked = ctxt.input(IN_BLOCK_CLICKED).apply(ctxt.getEngine(), null);
-            EquipmentSlot hand = ctxt.orElseInput(IN_HAND, () -> null);
-            this.doEventOnlyMode(player, block, blockClicked, direction, stack.getType(), stack, hand);
-        }
-
-        actor.placeItem(
-                block.getLocation(),
-                stack,
-                direction
-        );
+        this.enumerateItemUse(ctxt, player, block, direction, stack, actor);
     }
 
-    private void doEventOnlyMode(Player who, Block block, Block blockClicked, BlockFace blockFace, Material bucket, ItemStack itemInHand, EquipmentSlot hand)
+    @Override
+    protected void doEventOnlyMode(@NotNull ActionContext ctxt, Player who, Block block, Block blockClicked,
+                                   BlockFace blockFace, Material bucket, ItemStack itemInHand, EquipmentSlot hand)
     {
+        this.makeOutput(ctxt, who, itemInHand, block, blockFace, bucket, hand);
+
         PlayerBucketEmptyEvent event = new PlayerBucketEmptyEvent(who, block, blockClicked, blockFace, bucket, itemInHand, hand);
         Bukkit.getServer().getPluginManager().callEvent(event);
 
@@ -79,6 +70,7 @@ public class PlayerBucketEmptyAction extends AbstractPlayerBucketAction
 
         if (itemInHand != null)
             who.getInventory().setItem(hand, itemInHand);
+
     }
 
     @Override

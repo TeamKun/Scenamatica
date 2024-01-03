@@ -4,6 +4,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerChatEvent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
@@ -28,6 +29,9 @@ public class PlayerChatAction extends AbstractPlayerAction
             String.class
     );
 
+    public static final String KEY_OUT_MESSAGE = "message";
+    public static final String KEY_OUT_FORMAT = "format";
+
     @Override
     public String getName()
     {
@@ -38,7 +42,10 @@ public class PlayerChatAction extends AbstractPlayerAction
     public void execute(@NotNull ActionContext ctxt)
     {
         Player p = selectTarget(ctxt);
-        p.chat(ctxt.input(IN_MESSAGE));
+        String message = ctxt.input(IN_MESSAGE);
+
+        this.makeOutputs(ctxt, p, message, null);
+        p.chat(message);
     }
 
     @Override
@@ -50,8 +57,20 @@ public class PlayerChatAction extends AbstractPlayerAction
         assert event instanceof PlayerChatEvent;
         PlayerChatEvent playerChatEvent = (PlayerChatEvent) event;
 
-        return ctxt.ifHasInput(IN_MESSAGE, playerChatEvent.getMessage()::matches)
+        boolean result = ctxt.ifHasInput(IN_MESSAGE, playerChatEvent.getMessage()::matches)
                 && ctxt.ifHasInput(IN_FORMAT, playerChatEvent.getFormat()::matches);
+        if (result)
+            this.makeOutputs(ctxt, playerChatEvent.getPlayer(), playerChatEvent.getMessage(), playerChatEvent.getFormat());
+
+        return result;
+    }
+
+    private void makeOutputs(@NotNull ActionContext ctxt, @NotNull Player player, @NotNull String message, @Nullable String format)
+    {
+        ctxt.output(KEY_OUT_MESSAGE, message);
+        if (format != null)
+            ctxt.output(KEY_OUT_FORMAT, format);
+        super.makeOutputs(ctxt, player);
     }
 
     @Override

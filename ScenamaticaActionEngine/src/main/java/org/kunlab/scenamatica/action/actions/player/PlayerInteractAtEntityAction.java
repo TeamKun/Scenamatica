@@ -2,6 +2,7 @@ package org.kunlab.scenamatica.action.actions.player;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.inventory.EquipmentSlot;
@@ -21,6 +22,7 @@ import java.util.List;
 public class PlayerInteractAtEntityAction extends PlayerInteractEntityAction
 {
     public static final String KEY_ACTION_NAME = "player_interact_at_entity";
+    public static final String OUT_POSITION = "position";
     public static InputToken<LocationStructure> IN_POSITION = ofInput(
             "position",
             LocationStructure.class,
@@ -34,12 +36,12 @@ public class PlayerInteractAtEntityAction extends PlayerInteractEntityAction
     }
 
     @Override
-    protected void doInteract(ActionContext ctxt, Entity targeTentity, Actor actor)
+    protected void doInteract(ActionContext ctxt, Entity targeTentity, Actor actor, @NotNull EquipmentSlot hand)
     {
         actor.interactEntity(
                 targeTentity,
                 NMSEntityUseAction.INTERACT_AT,
-                ctxt.orElseInput(IN_HAND, () -> EquipmentSlot.HAND),
+                hand,
                 ctxt.input(IN_POSITION).create()
         );
     }
@@ -54,7 +56,17 @@ public class PlayerInteractAtEntityAction extends PlayerInteractEntityAction
         Vector clickedPosition = e.getClickedPosition();
         Location loc = clickedPosition.toLocation(ctxt.getContext().getStage().getWorld());
 
-        return ctxt.ifHasInput(IN_POSITION, position -> position.isAdequate(loc));
+        boolean result = ctxt.ifHasInput(IN_POSITION, position -> position.isAdequate(loc));
+        if (result)
+            this.makeOutputs(ctxt, e.getPlayer(), e.getRightClicked(), e.getHand(), loc);
+
+        return result;
+    }
+
+    private void makeOutputs(@NotNull ActionContext ctxt, @NotNull Player player, @NotNull Entity targetEntity, @NotNull EquipmentSlot hand, @NotNull Location position)
+    {
+        ctxt.output(OUT_POSITION, position);
+        super.makeOutputs(ctxt, player, targetEntity, hand);
     }
 
     @Override

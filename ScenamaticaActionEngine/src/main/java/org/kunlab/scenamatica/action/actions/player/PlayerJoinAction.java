@@ -5,6 +5,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.commons.utils.TextUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
@@ -30,6 +31,8 @@ public class PlayerJoinAction extends AbstractPlayerAction
             String.class
     );
 
+    public static final String KEY_OUT_MESSAGE = "message";
+
     @Override
     public String getName()
     {
@@ -45,6 +48,7 @@ public class PlayerJoinAction extends AbstractPlayerAction
 
         Actor actor = ctxt.getActorOrThrow(player);
 
+        this.makeOutputs(ctxt, player, null);
         actor.joinServer();
     }
 
@@ -58,7 +62,18 @@ public class PlayerJoinAction extends AbstractPlayerAction
         PlayerJoinEvent e = (PlayerJoinEvent) event;
         Component message = e.joinMessage();
 
-        return ctxt.ifHasInput(IN_MESSAGE, msg -> TextUtils.isSameContent(message, msg));
+        boolean result = ctxt.ifHasInput(IN_MESSAGE, msg -> TextUtils.isSameContent(message, msg));
+        if (result)
+            this.makeOutputs(ctxt, e.getPlayer(), TextUtils.toString(message));
+
+        return result;
+    }
+
+    private void makeOutputs(@NotNull ActionContext ctxt, @NotNull Player player, @Nullable String message)
+    {
+        if (message != null)
+            ctxt.output(KEY_OUT_MESSAGE, message);
+        this.makeOutputs(ctxt, player);
     }
 
     @Override
@@ -73,7 +88,11 @@ public class PlayerJoinAction extends AbstractPlayerAction
     public boolean checkConditionFulfilled(@NotNull ActionContext ctxt)
     {
         Optional<Player> playerOptional = ctxt.input(IN_TARGET).selectTarget(ctxt.getContext());
-        return playerOptional.isPresent() && playerOptional.get().isOnline();
+        boolean result = playerOptional.isPresent() && playerOptional.get().isOnline();
+        if (result)
+            this.makeOutputs(ctxt, playerOptional.get(), null);
+
+        return result;
     }
 
     @Override

@@ -17,11 +17,11 @@ scenario:
     action: player_kick
     with:
       target: Actor001
-      kick_message: "You are kicked due to YajuSNPI"
+      message: "You are kicked due to YajuSNPI"
       cause: INVALID_PLAYER_MOVEMENT
   - type: expect
     action: player_kick
     with:
       target: Actor001
-      kick_message: "You are kicked due to YajuSNPI"
+      message: "You are kicked due to YajuSNPI"
       cause: INVALID_PLAYER_MOVEMENT

@@ -43,6 +43,7 @@ public class PlayerSneakAction extends AbstractPlayerAction
         if (event.isCancelled())
             return;
 
+        super.makeOutputs(ctxt, player);
         player.setSneaking(sneaking);
     }
 
@@ -55,7 +56,11 @@ public class PlayerSneakAction extends AbstractPlayerAction
         assert event instanceof PlayerToggleSneakEvent;
         PlayerToggleSneakEvent e = (PlayerToggleSneakEvent) event;
 
-        return ctxt.ifHasInput(IN_SNEAKING, sneaking -> sneaking == e.isSneaking());
+        boolean result = ctxt.ifHasInput(IN_SNEAKING, sneaking -> sneaking == e.isSneaking());
+        if (result)
+            super.makeOutputs(ctxt, e.getPlayer());
+
+        return result;
     }
 
     @Override

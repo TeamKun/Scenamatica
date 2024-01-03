@@ -25,6 +25,8 @@ public abstract class AbstractPlayerAction extends AbstractAction
             ofPlayer()
     );
 
+    public static final String KEY_OUT_TARGET = "target";
+
     public static List<? extends AbstractPlayerAction> getActions()
     {
         List<AbstractPlayerAction> actions = new ArrayList<>(AbstractPlayerBucketAction.getActions());
@@ -72,6 +74,12 @@ public abstract class AbstractPlayerAction extends AbstractAction
         Player player = e.getPlayer();
 
         return ctxt.ifHasInput(IN_TARGET, target -> target.checkMatchedPlayer(player));
+    }
+
+    protected void makeOutputs(@NotNull ActionContext ctxt, @NotNull Player player)
+    {
+        ctxt.output(KEY_OUT_TARGET, player);
+        ctxt.commitOutput();
     }
 
     @Override

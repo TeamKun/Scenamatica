@@ -5,6 +5,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.commons.utils.TextUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
@@ -32,6 +33,9 @@ public class PlayerQuitAction extends AbstractPlayerAction
             PlayerQuitEvent.QuitReason.class
     );
 
+    public static final String KEY_OUT_QUIT_MESSAGE = "message";
+    public static final String KEY_OUT_QUIT_REASON = "reason";
+
     @Override
     public String getName()
     {
@@ -47,14 +51,16 @@ public class PlayerQuitAction extends AbstractPlayerAction
         Actor targetActor = null;
         if (reason != PlayerQuitEvent.QuitReason.KICKED)
             targetActor = ctxt.getActorOrThrow(target);
+        String quitMessage = ctxt.orElseInput(IN_QUIT_MESSAGE, () -> null);
+        this.makeOutputs(ctxt, target, quitMessage, reason);
 
         switch (reason)
         {
             case KICKED:
-                if (ctxt.hasInput(IN_QUIT_MESSAGE))
-                    target.kick(Component.text(ctxt.input(IN_QUIT_MESSAGE)));
-                else
+                if (quitMessage == null)
                     target.kick(null);
+                else
+                    target.kick(Component.text(quitMessage));
                 break;
             case DISCONNECTED:
                 targetActor.leaveServer();
@@ -87,8 +93,20 @@ public class PlayerQuitAction extends AbstractPlayerAction
         Component quitMessage = e.quitMessage();
         PlayerQuitEvent.QuitReason quitReason = e.getReason();
 
-        return ctxt.ifHasInput(IN_QUIT_MESSAGE, message -> TextUtils.isSameContent(quitMessage, message))
+        boolean result = ctxt.ifHasInput(IN_QUIT_MESSAGE, message -> TextUtils.isSameContent(quitMessage, message))
                 && ctxt.ifHasInput(IN_QUIT_REASON, reason -> reason == quitReason);
+        if (result)
+            this.makeOutputs(ctxt, e.getPlayer(), TextUtils.toString(quitMessage), quitReason);
+
+        return result;
+    }
+
+    private void makeOutputs(@NotNull ActionContext ctxt, @NotNull Player player, @Nullable String message, @NotNull PlayerQuitEvent.QuitReason reason)
+    {
+        if (message != null)
+            ctxt.output(KEY_OUT_QUIT_MESSAGE, message);
+        ctxt.output(KEY_OUT_QUIT_REASON, reason);
+        super.makeOutputs(ctxt, player);
     }
 
     @Override

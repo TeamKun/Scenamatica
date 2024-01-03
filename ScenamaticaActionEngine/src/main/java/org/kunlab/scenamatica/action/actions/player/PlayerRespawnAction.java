@@ -1,6 +1,7 @@
 package org.kunlab.scenamatica.action.actions.player;
 
 import com.destroystokyo.paper.event.player.PlayerPostRespawnEvent;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerRespawnEvent;
@@ -35,6 +36,10 @@ public class PlayerRespawnAction extends AbstractPlayerAction
             ofDeserializer(LocationStructure.class)
     );
 
+    public static final String KEY_OUT_IS_BED = "isBed";
+    public static final String KEY_OUT_IS_ANCHOR = "isAnchor";
+    public static final String KEY_OUT_LOCATION = "location";
+
     @Override
     public String getName()
     {
@@ -51,6 +56,7 @@ public class PlayerRespawnAction extends AbstractPlayerAction
         if (ctxt.hasInput(IN_LOCATION))
             player.setBedSpawnLocation(Utils.assignWorldToLocation(ctxt.input(IN_LOCATION), ctxt.getEngine()), true);
 
+        super.makeOutputs(ctxt, player);
         player.spigot().respawn();
     }
 
@@ -60,22 +66,43 @@ public class PlayerRespawnAction extends AbstractPlayerAction
         if (!super.checkMatchedPlayerEvent(ctxt, event))
             return false;
 
+        boolean result;
         if (event instanceof PlayerRespawnEvent)
         {
             PlayerRespawnEvent e = (PlayerRespawnEvent) event;
 
-            return ctxt.ifHasInput(IN_IS_BED, isBed -> isBed == e.isBedSpawn())
+            result = ctxt.ifHasInput(IN_IS_BED, isBed -> isBed == e.isBedSpawn())
                     && ctxt.ifHasInput(IN_IS_ANCHOR, isAnchor -> isAnchor == e.isAnchorSpawn())
                     && ctxt.ifHasInput(IN_LOCATION, loc -> loc.isAdequate(e.getRespawnLocation()));
+            if (result)
+                this.makeOutputs(ctxt, e.getPlayer(), e.isBedSpawn(), e.isAnchorSpawn(), e.getRespawnLocation());
         }
         else
         {
             assert event instanceof PlayerPostRespawnEvent;
             PlayerPostRespawnEvent e = (PlayerPostRespawnEvent) event;
 
-            return ctxt.ifHasInput(IN_IS_BED, isBed -> isBed == e.isBedSpawn())
+            result = ctxt.ifHasInput(IN_IS_BED, isBed -> isBed == e.isBedSpawn())
                     && ctxt.ifHasInput(IN_LOCATION, loc -> loc.isAdequate(e.getRespawnedLocation()));
+            if (result)
+                this.makeOutputs(ctxt, e.getPlayer(), e.isBedSpawn(), false, e.getRespawnedLocation());
         }
+
+        return result;
+    }
+
+    private void makeOutputs(@NotNull ActionContext ctxt, @NotNull Player player, boolean isBed, boolean isAnchor, @NotNull Location location)
+    {
+        ctxt.output(KEY_OUT_IS_BED, isBed);
+        ctxt.output(KEY_OUT_IS_ANCHOR, isAnchor);
+        ctxt.output(KEY_OUT_LOCATION, location);
+        super.makeOutputs(ctxt, player);
+    }
+
+    private void makeOutputs(@NotNull ActionContext ctxt, @NotNull Player player, @NotNull Location location)
+    {
+        ctxt.output(KEY_OUT_LOCATION, location);
+        super.makeOutputs(ctxt, player);
     }
 
     @Override

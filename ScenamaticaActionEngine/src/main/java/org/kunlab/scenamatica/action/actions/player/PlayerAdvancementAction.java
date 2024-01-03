@@ -8,7 +8,9 @@ import org.bukkit.advancement.AdvancementProgress;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerAdvancementDoneEvent;
+import org.bukkit.event.player.PlayerEvent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.commons.utils.NamespaceUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
@@ -39,6 +41,9 @@ public class PlayerAdvancementAction
             String.class
     );
 
+    public static final String KEY_OUT_ADVANCEMENT = "advancement";
+    public static final String KEY_OUT_CRITERION = "criterion";
+
     private static Advancement retrieveAdvancement(@NotNull ActionContext ctxt)
     {
         NamespacedKey advKey = ctxt.input(IN_ADVANCEMENT);
@@ -63,9 +68,16 @@ public class PlayerAdvancementAction
         AdvancementProgress progress = target.getAdvancementProgress(advancement);
 
         if (ctxt.hasInput(IN_CRITERION))  // Criteria を指定している場合は, その Criteria を付与するアクションになる。
-            progress.awardCriteria(ctxt.input(IN_CRITERION));
+        {
+            String criterion = ctxt.input(IN_CRITERION);
+            this.makeOutputs(ctxt, target, advancement.getKey(), criterion);
+            progress.awardCriteria(criterion);
+        }
         else  // 指定していないので, 進捗を完了させる。
+        {
+            this.makeOutputs(ctxt, target, advancement.getKey(), null);
             progress.getRemainingCriteria().forEach(progress::awardCriteria);
+        }
     }
 
     @Override
@@ -74,20 +86,39 @@ public class PlayerAdvancementAction
         if (!super.checkMatchedPlayerEvent(ctxt, event))
             return false;
 
+        boolean result;
+        NamespacedKey advancement;
+        String criterion = null;
         if (event instanceof PlayerAdvancementDoneEvent)  // 進捗を完了させるアクションの場合
         {
             PlayerAdvancementDoneEvent e = (PlayerAdvancementDoneEvent) event;
 
-            return ctxt.ifHasInput(IN_ADVANCEMENT, e.getAdvancement().getKey()::equals);
+            advancement = e.getAdvancement().getKey();
+            result = ctxt.ifHasInput(IN_ADVANCEMENT, e.getAdvancement().getKey()::equals);
         }
         else  // 進捗の Criterion を付与するアクションの場合
         {
             assert event instanceof PlayerAdvancementCriterionGrantEvent;
             PlayerAdvancementCriterionGrantEvent e = (PlayerAdvancementCriterionGrantEvent) event;
 
-            return ctxt.ifHasInput(IN_ADVANCEMENT, e.getAdvancement().getKey()::equals)
+            advancement = e.getAdvancement().getKey();
+            criterion = e.getCriterion();
+            result = ctxt.ifHasInput(IN_ADVANCEMENT, e.getAdvancement().getKey()::equals)
                     && ctxt.ifHasInput(IN_CRITERION, e.getCriterion()::equals);
         }
+
+        if (result)
+            this.makeOutputs(ctxt, ((PlayerEvent) event).getPlayer(), advancement, criterion);
+
+        return result;
+    }
+
+    protected void makeOutputs(@NotNull ActionContext ctxt, @NotNull Player player, @NotNull NamespacedKey advancement, @Nullable String criterion)
+    {
+        ctxt.output(KEY_OUT_ADVANCEMENT, advancement);
+        if (criterion != null)
+            ctxt.output(KEY_OUT_CRITERION, criterion);
+        super.makeOutputs(ctxt, player);
     }
 
     @Override

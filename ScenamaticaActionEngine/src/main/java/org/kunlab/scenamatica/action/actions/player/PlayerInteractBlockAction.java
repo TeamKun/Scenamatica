@@ -3,11 +3,13 @@ package org.kunlab.scenamatica.action.actions.player;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.commons.utils.Utils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
@@ -45,6 +47,11 @@ public class PlayerInteractBlockAction extends AbstractPlayerAction
             BlockFace.class
     );
 
+    public static final String KEY_OUT_ACTION = "action";
+    public static final String KEY_OUT_BLOCK = "block";
+    public static final String KEY_OUT_BLOCK_FACE = "blockFace";
+    public static final String KEY_OUT_HAND = "hand";
+
     private static Block getClickBlock(ActionContext ctxt)
     {
         Location clickPos;
@@ -67,6 +74,7 @@ public class PlayerInteractBlockAction extends AbstractPlayerAction
     public void execute(@NotNull ActionContext ctxt)
     {
         Action action = ctxt.input(IN_ACTION);
+        Player player = selectTarget(ctxt);
 
         // 引数の検証を行う( validateArgument() はランタイムではないのでこちら側でやるしかない。)
         Block clickBlock = getClickBlock(ctxt);
@@ -75,7 +83,8 @@ public class PlayerInteractBlockAction extends AbstractPlayerAction
         else if ((action == Action.LEFT_CLICK_BLOCK || action == Action.RIGHT_CLICK_BLOCK) && clickBlock.getType().isAir())
             throw new IllegalArgumentException("Argument action is not allowed to be LEFT_CLICK_BLOCK or RIGHT_CLICK_BLOCK when the target block is air");
 
-        ctxt.getActorOrThrow(selectTarget(ctxt))
+        this.makeOutputs(ctxt, player, clickBlock, null, EquipmentSlot.HAND);
+        ctxt.getActorOrThrow(player)
                 .interactAt(
                         action,
                         getClickBlock(ctxt)
@@ -91,10 +100,27 @@ public class PlayerInteractBlockAction extends AbstractPlayerAction
         assert event instanceof PlayerInteractEvent;
         PlayerInteractEvent e = (PlayerInteractEvent) event;
 
-        return ctxt.ifHasInput(IN_ACTION, action -> action == e.getAction())
+        boolean result = ctxt.ifHasInput(IN_ACTION, action -> action == e.getAction())
                 && ctxt.ifHasInput(IN_HAND, hand -> hand == e.getHand())
                 && ctxt.ifHasInput(IN_BLOCK, block -> block.isAdequate(e.getClickedBlock()))
                 && ctxt.ifHasInput(IN_BLOCK_FACE, face -> face == e.getBlockFace());
+        if (result)
+            this.makeOutputs(ctxt, e.getPlayer(), e.getClickedBlock(), e.getBlockFace(), e.getHand());
+
+        return result;
+    }
+
+    protected void makeOutputs(@NotNull ActionContext ctxt, @NotNull Player player, @Nullable Block block, @Nullable BlockFace face, @Nullable EquipmentSlot hand)
+    {
+        ctxt.output(KEY_OUT_ACTION, block);
+        if (block != null)
+            ctxt.output(KEY_OUT_BLOCK, block);
+        if (face != null)
+            ctxt.output(KEY_OUT_BLOCK_FACE, face);
+        if (hand != null)
+            ctxt.output(KEY_OUT_HAND, hand);
+
+        super.makeOutputs(ctxt, player);
     }
 
     @Override

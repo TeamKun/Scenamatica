@@ -1,6 +1,7 @@
 package org.kunlab.scenamatica.action.actions.player;
 
 import org.bukkit.GameMode;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.jetbrains.annotations.NotNull;
@@ -33,6 +34,10 @@ public class PlayerGameModeAction extends AbstractPlayerAction
             String.class
     );
 
+    public static final String KEY_OUT_GAME_MODE = "gamemode";
+    public static final String KEY_OUT_CAUSE = "cause";
+    public static final String KEY_OUT_CANCEL_MESSAGE = "cancelMessage";
+
     @Override
     public String getName()
     {
@@ -42,7 +47,11 @@ public class PlayerGameModeAction extends AbstractPlayerAction
     @Override
     public void execute(@NotNull ActionContext ctxt)
     {
-        selectTarget(ctxt).setGameMode(ctxt.input(IN_GAME_MODE));
+        Player target = selectTarget(ctxt);
+        GameMode gm = ctxt.input(IN_GAME_MODE);
+
+        super.makeOutputs(ctxt, target);
+        target.setGameMode(gm);
     }
 
     @Override
@@ -54,9 +63,27 @@ public class PlayerGameModeAction extends AbstractPlayerAction
         assert event instanceof PlayerGameModeChangeEvent;
         PlayerGameModeChangeEvent e = (PlayerGameModeChangeEvent) event;
 
-        return ctxt.ifHasInput(IN_GAME_MODE, gameMode -> gameMode == e.getNewGameMode())
+        boolean result = ctxt.ifHasInput(IN_GAME_MODE, gameMode -> gameMode == e.getNewGameMode())
                 && ctxt.ifHasInput(IN_CAUSE, cause -> cause == e.getCause())
                 && ctxt.ifHasInput(IN_CANCEL_MESSAGE, cancelMessage -> TextUtils.isSameContent(e.cancelMessage(), cancelMessage));
+        if (result)
+            this.makeOutputs(ctxt, e.getPlayer(), e.getNewGameMode(), e.getCause(), TextUtils.toString(e.cancelMessage()));
+
+        return result;
+    }
+
+    private void makeOutputs(@NotNull ActionContext ctxt, @NotNull Player player, @NotNull GameMode gameMode)
+    {
+        super.makeOutputs(ctxt, player);
+        ctxt.output(KEY_OUT_GAME_MODE, gameMode);
+    }
+
+    private void makeOutputs(@NotNull ActionContext ctxt, @NotNull Player player, @NotNull GameMode gameMode, @NotNull PlayerGameModeChangeEvent.Cause cause, @NotNull String cancelMessage)
+    {
+        super.makeOutputs(ctxt, player);
+        ctxt.output(KEY_OUT_GAME_MODE, gameMode);
+        ctxt.output(KEY_OUT_CAUSE, cause);
+        ctxt.output(KEY_OUT_CANCEL_MESSAGE, cancelMessage);
     }
 
     @Override
@@ -70,7 +97,13 @@ public class PlayerGameModeAction extends AbstractPlayerAction
     @Override
     public boolean checkConditionFulfilled(@NotNull ActionContext ctxt)
     {
-        return ctxt.ifHasInput(IN_GAME_MODE, gameMode -> selectTarget(ctxt).getGameMode() == gameMode);
+        Player targetPlayer = selectTarget(ctxt);
+
+        boolean result = ctxt.ifHasInput(IN_GAME_MODE, gameMode -> targetPlayer.getGameMode() == gameMode);
+        if (result)
+            this.makeOutputs(ctxt, targetPlayer, targetPlayer.getGameMode());
+
+        return result;
     }
 
     @Override

@@ -24,6 +24,8 @@ public class PlayerAnimationAction extends AbstractPlayerAction
             PlayerAnimationType.class
     );
 
+    public static final String KEY_OUT_ANIMATION_TYPE = "type";
+
     @Override
     public String getName()
     {
@@ -34,9 +36,11 @@ public class PlayerAnimationAction extends AbstractPlayerAction
     public void execute(@NotNull ActionContext ctxt)
     {
         Player player = selectTarget(ctxt);
+        PlayerAnimationType type = ctxt.input(IN_ANIMATION_TYPE);
 
+        this.makeOutputs(ctxt, player, type);
         ctxt.getActorOrThrow(player)
-                .playAnimation(ctxt.input(IN_ANIMATION_TYPE));
+                .playAnimation(type);
     }
 
     @Override
@@ -48,7 +52,17 @@ public class PlayerAnimationAction extends AbstractPlayerAction
         assert event instanceof PlayerAnimationEvent;
         PlayerAnimationEvent e = (PlayerAnimationEvent) event;
 
-        return ctxt.ifHasInput(IN_ANIMATION_TYPE, type -> type == e.getAnimationType());
+        boolean result = ctxt.ifHasInput(IN_ANIMATION_TYPE, type -> type == e.getAnimationType());
+        if (result)
+            this.makeOutputs(ctxt, e.getPlayer(), e.getAnimationType());
+
+        return result;
+    }
+
+    private void makeOutputs(@NotNull ActionContext ctxt, @NotNull Player player, @NotNull PlayerAnimationType type)
+    {
+        ctxt.output(KEY_OUT_ANIMATION_TYPE, type);
+        super.makeOutputs(ctxt, player);
     }
 
     @Override

@@ -4,6 +4,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerLevelChangeEvent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
@@ -29,6 +30,9 @@ public class PlayerLevelChangeAction extends AbstractPlayerAction
             Integer.class
     );
 
+    public static final String KEY_OUT_OLD_LEVEL = "oldLevel";
+    public static final String KEY_OUT_NEW_LEVEL = "level";
+
     @Override
     public String getName()
     {
@@ -39,7 +43,11 @@ public class PlayerLevelChangeAction extends AbstractPlayerAction
     public void execute(@NotNull ActionContext ctxt)
     {
         Player player = selectTarget(ctxt);
-        player.setLevel(ctxt.input(IN_NEW_LEVEL));
+        int oldLevel = player.getLevel();
+        int newLevel = ctxt.input(IN_NEW_LEVEL);
+
+        this.makeOutputs(ctxt, player, oldLevel, newLevel);
+        player.setLevel(newLevel);
     }
 
     @Override
@@ -50,8 +58,12 @@ public class PlayerLevelChangeAction extends AbstractPlayerAction
 
         PlayerLevelChangeEvent e = (PlayerLevelChangeEvent) event;
 
-        return ctxt.ifHasInput(IN_OLD_LEVEL, oldLevel -> oldLevel == e.getOldLevel())
+        boolean result = ctxt.ifHasInput(IN_OLD_LEVEL, oldLevel -> oldLevel == e.getOldLevel())
                 && ctxt.ifHasInput(IN_NEW_LEVEL, newLevel -> newLevel == e.getNewLevel());
+        if (result)
+            this.makeOutputs(ctxt, e.getPlayer(), e.getOldLevel(), e.getNewLevel());
+
+        return result;
     }
 
     @Override
@@ -66,7 +78,19 @@ public class PlayerLevelChangeAction extends AbstractPlayerAction
     public boolean checkConditionFulfilled(@NotNull ActionContext ctxt)
     {
         Player player = selectTarget(ctxt);
-        return ctxt.ifHasInput(IN_NEW_LEVEL, newLevel -> newLevel == player.getLevel());
+        boolean result = ctxt.ifHasInput(IN_NEW_LEVEL, newLevel -> newLevel == player.getLevel());
+        if (result)
+            this.makeOutputs(ctxt, player, null, player.getLevel());
+
+        return result;
+    }
+
+    private void makeOutputs(@NotNull ActionContext ctxt, @NotNull Player player, @Nullable Integer oldLevel, int newLevel)
+    {
+        if (oldLevel != null)
+            ctxt.output(KEY_OUT_OLD_LEVEL, oldLevel);
+        ctxt.output(KEY_OUT_NEW_LEVEL, newLevel);
+        super.makeOutputs(ctxt, player);
     }
 
     @Override

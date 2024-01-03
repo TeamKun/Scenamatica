@@ -5,6 +5,7 @@ import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
@@ -36,6 +37,10 @@ public class PlayerHotbarSlotAction extends AbstractPlayerAction
             ofDeserializer(ItemStackStructure.class)
     );
 
+    public static final String KEY_OUTPUT_SLOT = "slot";
+    public static final String KEY_OUTPUT_PREVIOUS_SLOT = "previous";
+    public static final String KEY_OUTPUT_ITEM = "item";
+
     @Override
     public String getName()
     {
@@ -48,8 +53,14 @@ public class PlayerHotbarSlotAction extends AbstractPlayerAction
         Player p = selectTarget(ctxt);
         int slot = ctxt.input(IN_CURRENT_SLOT);
 
+        ItemStack stack = ctxt.ifHasInput(IN_CURRENT_ITEM, (r) -> {
+            ItemStack st = r.create();
+            p.getInventory().setItem(slot, st);
+            return st;
+        }, p.getInventory().getItemInMainHand());
+
+        this.makeOutputs(ctxt, p, p.getInventory().getHeldItemSlot(), slot, stack);
         p.getInventory().setHeldItemSlot(slot);
-        ctxt.runIfHasInput(IN_CURRENT_ITEM, item -> p.getInventory().setItemInMainHand(item.create()));
     }
 
     @Override
@@ -65,9 +76,14 @@ public class PlayerHotbarSlotAction extends AbstractPlayerAction
         int previousSlot = e.getPreviousSlot();
         ItemStack currentItem = e.getPlayer().getInventory().getItem(currentSlot);
 
-        return ctxt.ifHasInput(IN_CURRENT_SLOT, slot -> slot == currentSlot)
+        boolean result = ctxt.ifHasInput(IN_CURRENT_SLOT, slot -> slot == currentSlot)
                 && ctxt.ifHasInput(IN_PREVIOUS_SLOT, slot -> slot == previousSlot)
                 && ctxt.ifHasInput(IN_CURRENT_ITEM, item -> item.isAdequate(currentItem));
+
+        if (result)
+            this.makeOutputs(ctxt, e.getPlayer(), previousSlot, currentSlot, currentItem);
+
+        return result;
     }
 
     @Override
@@ -78,13 +94,28 @@ public class PlayerHotbarSlotAction extends AbstractPlayerAction
         );
     }
 
+    protected void makeOutputs(@NotNull ActionContext ctxt, @NotNull Player player, @Nullable Integer prev, @Nullable Integer slot, @Nullable ItemStack item)
+    {
+        ctxt.output(KEY_OUTPUT_SLOT, slot);
+        if (prev != null)
+            ctxt.output(KEY_OUTPUT_PREVIOUS_SLOT, prev);
+        ctxt.output(KEY_OUTPUT_PREVIOUS_SLOT, prev);
+        if (item != null)
+            ctxt.output(KEY_OUTPUT_ITEM, item);
+
+        super.makeOutputs(ctxt, player);
+    }
+
     @Override
     public boolean checkConditionFulfilled(@NotNull ActionContext ctxt)
     {
         Player p = selectTarget(ctxt);
-
-        return ctxt.ifHasInput(IN_CURRENT_SLOT, slot -> slot == p.getInventory().getHeldItemSlot())
+        boolean result = ctxt.ifHasInput(IN_CURRENT_SLOT, slot -> slot == p.getInventory().getHeldItemSlot())
                 && ctxt.ifHasInput(IN_CURRENT_ITEM, item -> item.isAdequate(p.getInventory().getItemInMainHand()));
+        if (result)
+            this.makeOutputs(ctxt, p, null, p.getInventory().getHeldItemSlot(), p.getInventory().getItemInMainHand());
+
+        return result;
     }
 
     @Override
