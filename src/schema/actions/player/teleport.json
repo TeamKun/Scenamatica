@@ -5,7 +5,13 @@
   "arguments": {
     "cause": {
       "$ref": "#/definitions/teleportCause",
-      "description": "移動元の座標を指定します。"
+      "description": "移動した理由を指定します。"
+    }
+  },
+  "outputs": {
+    "cause": {
+      "$ref": "#/definitions/teleportCause",
+      "description": "移動した理由です。"
     }
   }
 }

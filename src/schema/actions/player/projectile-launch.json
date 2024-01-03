@@ -31,5 +31,12 @@
       "description": "投げ物の速度や向きを比較する際に許容する誤差です。",
       "$ref": "#/definitions/vector"
     }
+  },
+  "outputs": {
+    "projectile": {
+      "lazy": true,
+      "description": "射出された投げ物です。",
+      "$ref": "#/definitions/projectile"
+    }
   }
 }

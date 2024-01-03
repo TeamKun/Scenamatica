@@ -28,5 +28,21 @@
       "type": "string",
       "description": "ゲームモード変更をキャンセルされたときに表示するメッセージです。"
     }
+  },
+  "outputs": {
+    "target": {
+      "gamemode": {
+        "type": "string",
+        "description": "変更後のゲームモードです。"
+      },
+      "cause": {
+        "type": "string",
+        "description": "ゲームモードを変更した原因です。"
+      },
+      "cancelMessage": {
+        "type": "string",
+        "description": "ゲームモード変更をキャンセルされたときに表示するメッセージです。"
+      }
+    }
   }
 }

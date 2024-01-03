@@ -7,5 +7,22 @@
       "description": "ドロップするアイテムです。",
       "$ref": "#/definitions/entityItem"
     }
+  },
+  "outputs": {
+    "player": {
+      "description": "ドロップしたプレイヤです。",
+      "$ref": "#/definitions/player"
+    },
+    "item": {
+      "description": "ドロップしたアイテムです。",
+      "oneOf": [
+        {
+          "$ref": "#/definitions/entityItem"
+        },
+        {
+          "type": "#/definitions/itemStack"
+        }
+      ]
+    }
   }
 }

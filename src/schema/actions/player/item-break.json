@@ -11,5 +11,15 @@
       "description": "壊れたアイテムが入っていたスロットです。",
       "$ref": "#/definitions/itemSlot"
     }
+  },
+  "outputs": {
+    "item": {
+      "description": "壊れたアイテムです。",
+      "$ref": "#/definitions/itemStack"
+    },
+    "slot": {
+      "description": "壊れたアイテムが入っていたスロットです。",
+      "$ref": "#/definitions/itemSlot"
+    }
   }
 }

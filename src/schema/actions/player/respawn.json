@@ -15,5 +15,19 @@
       "description": "プレイヤーがスポーンする場所です。",
       "$ref": "#/definitions/location"
     }
+  },
+  "outputs": {
+    "location": {
+      "description": "プレイヤーがスポーンする場所です。",
+      "$ref": "#/definitions/location"
+    },
+    "isBed": {
+      "type": "boolean",
+      "description": "プレイヤーがベッドでスポーンするかどうかです。"
+    },
+    "isAnchor": {
+      "type": "boolean",
+      "description": "プレイヤーが錨でスポーンするかどうかです。"
+    }
   }
 }

@@ -17,5 +17,16 @@
       "description": "ダメージを与えるアイテムのスロットです。",
       "$ref": "#/definitions/itemSlot"
     }
+  },
+  "outputs": {
+    "item": {
+      "description": "ダメージを与えた後のアイテムです。",
+      "$ref": "#/definitions/itemStack"
+    },
+    "damage": {
+      "description": "与えたダメージです。",
+      "type": "number",
+      "minimum": 0
+    }
   }
 }

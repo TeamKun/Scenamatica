@@ -15,5 +15,19 @@
       "maxLength": 32767,
       "$ref": "#/definitions/namespacedKey"
     }
+  },
+  "outputs": {
+    "advancement": {
+      "type": "string",
+      "description": "達成した進捗です。",
+      "maxLength": 32767,
+      "$ref": "#/definitions/namespacedKey"
+    },
+    "criterion": {
+      "type": "string",
+      "description": "達成した条件です。",
+      "maxLength": 32767,
+      "$ref": "#/definitions/namespacedKey"
+    }
   }
 }

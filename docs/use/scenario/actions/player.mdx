@@ -52,6 +52,11 @@ import {ObjectType} from "/src/components/Object";
 ```
 
 :::
+
+## 全般 - 出力 `target` {#general-output-target}
+
+対象となったプレイヤの [`Player`](/docs/use/scenario/types/README#actor-structure) オブジェクトを出力します。
+
 ## バケツの使用 {#bucket-empty}
 
 <Action name="バケツの使用"
@@ -109,6 +114,42 @@ import {ObjectType} from "/src/components/Object";
             available: [ScenarioType.EXECUTE]
           }
         ]}
+        outputs={[
+          {
+            name: "target",
+            description: "バケツを使用したプレイヤーです。",
+            type: "Player",
+            type_link: "/docs/use/scenario/types/README#actor-structure",
+          },
+          {
+            name: "item",
+            description: "使用したあとのバケツのアイテムです。",
+            type: "ItemStack",
+            type_link: "/docs/use/scenario/types#item-stack-structure",
+          },
+          {
+            name: "bucket",
+            description: "使用したバケツです。",
+            type: "Enum{...Material}"
+          },
+          {
+            name: "block",
+            description: "バケツを使用したブロックです。",
+            type: "Block",
+            type_link: "/docs/use/scenario/types/misc#block-structure",
+          },
+          {
+            name: "blockFace",
+            description: "ブロックの面です。",
+            type: "BlockFace{UP, DOWN, NORTH, EAST, SOUTH, WEST}"
+          },
+          {
+            name: "hand",
+            description: "使用した手です。",
+            type: "列挙型{HAND, OFF_HAND}",
+            default: "HAND"
+          },
+        ]}
         executable={"バケツ内の液体をブロックに撒きます。"}
         watchable
 />
@@ -155,8 +196,8 @@ NMS の仕様上の都合により、 `block` を用いた液体の場所は `ev
           {
             name: "target",
             description: "バケツを使用するプレイヤーです。",
-            type: "PlayerSpecifier",
-            type_anchor: "#general-target",
+            type: "Player",
+            type_link: "/docs/use/scenario/types/README#actor-structure",
             required: [ScenarioType.EXECUTE]
           },
           {
@@ -196,6 +237,42 @@ NMS の仕様上の都合により、 `block` を用いた液体の場所は `ev
             default: "false",
             available: [ScenarioType.EXECUTE]
           }
+        ]}
+        outputs={[
+          {
+            name: "target",
+            description: "バケツを使用したプレイヤーです。",
+            type: "Player",
+            type_link: "/docs/use/scenario/types/README#actor-structure",
+          },
+          {
+            name: "item",
+            description: "使用したあとのバケツのアイテムです。",
+            type: "ItemStack",
+            type_link: "/docs/use/scenario/types#item-stack-structure",
+          },
+          {
+            name: "bucket",
+            description: "使用したバケツです。",
+            type: "Enum{...Material}"
+          },
+          {
+            name: "block",
+            description: "バケツを使用したブロックです。",
+            type: "Block",
+            type_link: "/docs/use/scenario/types/misc#block-structure",
+          },
+          {
+            name: "blockFace",
+            description: "ブロックの面です。",
+            type: "BlockFace{UP, DOWN, NORTH, EAST, SOUTH, WEST}"
+          },
+          {
+            name: "hand",
+            description: "使用した手です。",
+            type: "列挙型{HAND, OFF_HAND}",
+            default: "HAND"
+          },
         ]}
         executable={"バケツ内の液体をブロックに撒きます。"}
         watchable
@@ -249,7 +326,29 @@ NMS の仕様上の都合により、 `block` を用いた液体の場所は `ev
             anchor: "advancement-advancement",
             description: "進捗です。",
             type: "NamespacedKey",
+            type_link: "/docs/use/scenario/types/misc#namespaced-key-structure",
             required: [ScenarioType.EXPECT, ScenarioType.REQUIRE]
+          },
+          {
+            name: "criterion",
+            anchor: "advancement-criterion",
+            description: "進捗の達成条件です。",
+            type: ObjectType.STRING,
+          }
+        ]}
+        outputs={[
+          {
+            name: "target",
+            description: "進捗を達成したプレイヤーです。",
+            type: "Player",
+            type_link: "/docs/use/scenario/types/README#actor-structure",
+          },
+          {
+            name: "advancement",
+            anchor: "advancement-advancement",
+            description: "進捗です。",
+            type_link: "/docs/use/scenario/types/misc#namespaced-key-structure",
+            type: "NamespacedKey",
           },
           {
             name: "criterion",
@@ -269,6 +368,13 @@ NMS の仕様上の都合により、 `block` を用いた液体の場所は `ev
 実行期待機能においても、 `criterion` を指定せずに実行すると、進捗自体を達成しているか判定します。  
 一方で指定した場合は、指定した進捗の指定した達成条件を達成しているか判定します。
 
+:::
+
+#### アクション実行シナリオでの使用 {#advancement-usage-in-execution}
+
+:::warning
+
+出力 `criterion` は引数 `criterion` を指定した場合のみ出力されます。
 
 :::
 
@@ -308,6 +414,21 @@ NMS の仕様上の都合により、 `block` を用いた液体の場所は `ev
             description: "実行するアニメーションの種類です。",
             type: "列挙型{ARM_SWING}",
             required: [ScenarioType.EXECUTE],
+          }
+        ]}
+        outputs={[
+          {
+            name: "target",
+            anchor: "target",
+            description: "アニメーションを実行したプレイヤーです。",
+            type: "Player",
+            type_link: "/docs/use/scenario/types/README#actor-structure",
+          },
+          {
+            name: "type",
+            anchor: "animation-type",
+            description: "実行するアニメーションの種類です。",
+            type: "列挙型{ARM_SWING}",
           }
         ]}
         executable watchable
@@ -362,6 +483,33 @@ Bukkit の仕様により、現在は `ARM_SWING` のみが指定可能です。
             type_link: "/docs/use/scenario/types#item-stack-structure",
           },
         ]}
+        outputs={[
+          {
+            name: "target",
+            description: "バケツに格納したプレイヤーです。",
+            type: "Player",
+            type_link: "/docs/use/scenario/types/README#actor-structure",
+          },
+          {
+            name: "entity",
+            description: "格納したエンティティです。",
+            type: "Entity",
+            type_link: "/docs/use/scenario/types#entity-structure",
+          },
+          {
+            name: "bucket",
+            description: "エンティティを入れるバケツです。",
+            type: "ItemStack",
+            type_link: "/docs/use/scenario/types#item-stack-structure",
+          },
+          {
+            name: "entityBucket",
+            description: "エンティティが入ったバケツです。",
+            type: "ItemStack",
+            type_link: "/docs/use/scenario/types#item-stack-structure",
+            available: [ScenarioType.EXPECT]
+          },
+        ]}
         executable watchable
 />
 
@@ -378,6 +526,12 @@ Bukkit の仕様により、現在は `ARM_SWING` のみが指定可能です。
 
 `bucket` を省略した場合は、プレイヤの持っているバケツを使用します。バケツを持っていない場合や対応していないバケツの場合は、アクションは失敗します。
 これを指定し、かつプレイヤの持っているアイテムと異なる場合は、先にプレイヤのアイテムをこのバケツに置換します。
+
+:::
+
+:::warning
+
+出力 `entityBucket` は引数 `entityBucket` を指定した場合のみ出力されます。
 
 :::
 
@@ -412,6 +566,26 @@ Bukkit の仕様により、現在は `ARM_SWING` のみが指定可能です。
             description: "チャットのフォーマットです。",
             type: ObjectType.STRING,
             required: [ScenarioType.EXECUTE],
+          }
+        ]}
+        outputs={[
+          {
+            name: "target",
+            anchor: "target",
+            description: "チャットを送信したプレイヤーです。",
+            type: "Player",
+            type_link: "/docs/use/scenario/types/README#actor-structure",
+          },
+          {
+            name: "message",
+            description: "送信したメッセージです。",
+            type: ObjectType.STRING,
+          },
+          {
+            name: "format",
+            description: "チャットのフォーマットです。",
+            type: ObjectType.STRING,
+            available: [ScenarioType.EXPECT],
           }
         ]}
         executable watchable
@@ -498,6 +672,63 @@ Bukkit の仕様により、現在は `ARM_SWING` のみが指定可能です。
             available: [ScenarioType.EXECUTE, ScenarioType.EXPECT],
           }
         ]}
+        outputs={[
+          {
+            name: "target",
+            anchor: "target",
+            description: "死亡したプレイヤーです。",
+            type: "Player",
+            type_link: "/docs/use/scenario/types/README#actor-structure",
+          },
+          {
+            name: "killer",
+            description: "殺したプレイヤーです。",
+            type: "Player",
+            type_link: "/docs/use/scenario/types/README#actor-structure",
+          },
+          {
+            name: "deathMessage",
+            description: "死亡メッセージです。",
+            type: ObjectType.STRING,
+            available: [ScenarioType.EXPECT],
+          },
+          {
+            name: "exp",
+            description: "死亡したプレイヤーの新しい経験値です。",
+            type: ObjectType.INTEGER,
+            available: [ScenarioType.EXPECT],
+          },
+          {
+            name: "totalExp",
+            description: "死亡したプレイヤーの新しい総経験値です。",
+            type: ObjectType.INTEGER,
+            available: [ScenarioType.EXPECT],
+          },
+          {
+            name: "keepLevel",
+            description: "死亡したプレイヤーのレベルを保持するかどうかです。",
+            type: ObjectType.BOOLEAN,
+            available: [ScenarioType.EXPECT],
+          },
+          {
+            name: "keepInventory",
+            description: "死亡したプレイヤーのインベントリ内容を保持するかどうかです。",
+            type: ObjectType.BOOLEAN,
+            available: [ScenarioType.EXPECT],
+          },
+          {
+            name: "keepExperience",
+            description: "死亡したプレイヤーの経験値を保持するかどうかです。",
+            type: ObjectType.BOOLEAN,
+            available: [ScenarioType.EXPECT],
+          },
+          {
+            name: "doExpDrop",
+            description: "死亡したプレイヤーの経験値ドロップを行うかどうかです。",
+            type: ObjectType.BOOLEAN,
+            available: [ScenarioType.EXPECT],
+          }
+        ]}
         executable={"プレイヤを殺害します。"}
         requireable
         watchable={"プレイヤが死亡しているかどうか判定します。"}
@@ -531,8 +762,33 @@ Bukkit の仕様により、現在は `ARM_SWING` のみが指定可能です。
             type_link: "/docs/use/scenario/types#entity-item-structure",
           }
         ]}
+        outputs={[
+          {
+            name: "target",
+            anchor: "target",
+            description: "アイテムをドロップしたプレイヤーです。",
+            type: "Player",
+            type_link: "/docs/use/scenario/types/README#actor-structure",
+          },
+          {
+            name: "item",
+            description: "ドロップしたアイテムです。",
+            type: "EntityItem|ItemStack",
+            anchor: "drop-item-output-item",
+          }
+        ]}
         executable watchable
 />
+
+#### 出力 `item` {#drop-item-output-item}
+
+:::warning
+
+この出力の型はシナリオの種類によって異なります。
+
++ アクション実行シナリオでは、ドロップしたアイテムの [`ItemStack`](/docs/use/scenario/types/inventory-items/#item-stack-structure) が出力されます。
++ 実行期待シナリオでは、ドロップしたアイテムの [`EntityItem`](/docs/use/scenario/types/entities#entity-item-structure) が出力されます。
+:::
 
 ## 飛行 {#flight}
 
@@ -559,6 +815,15 @@ Bukkit の仕様により、現在は `ARM_SWING` のみが指定可能です。
             anchor: "flight-flying",
             description: "飛行中かどうかです。",
             type: ObjectType.BOOLEAN
+          }
+        ]}
+        outputs={[
+          {
+            name: "target",
+            anchor: "target",
+            description: "飛行したプレイヤーです。",
+            type: "Player",
+            type_link: "/docs/use/scenario/types/README#actor-structure",
           }
         ]}
         executable requireable watchable
@@ -604,6 +869,34 @@ Bukkit の仕様により、現在は `ARM_SWING` のみが指定可能です。
             description: "ゲームモード変更の原因です。",
             type: "列挙型{PLUGIN, COMMAND, DEFAULT_GAMEMODE, HARDCORE_DEATH, UNKNOWN}",
             available: [ScenarioType.EXECUTE, ScenarioType.EXPECT]
+          },
+          {
+            name: "cancelMessage",
+            anchor: "gamemode-cancel-message",
+            description: "変更がキャンセルされた場合に表示するメッセージです（Paper)。",
+            type: ObjectType.STRING,
+            available: [ScenarioType.EXPECT]
+          }
+        ]}
+        outputs={[
+          {
+            name: "target",
+            anchor: "target",
+            description: "ゲームモードを変更したプレイヤーです。",
+            type: "Player",
+            type_link: "/docs/use/scenario/types/README#actor-structure",
+          },
+          {
+            name: "gamemode",
+            anchor: "gamemode-gamemode",
+            description: "ゲームモードです。",
+            type: "列挙型{SURVIVAL, CREATIVE, ADVENTURE, SPECTATOR}",
+          },
+          {
+            name: "cause",
+            description: "ゲームモード変更の原因です。",
+            type: "列挙型{PLUGIN, COMMAND, DEFAULT_GAMEMODE, HARDCORE_DEATH, UNKNOWN}",
+            available: [ScenarioType.EXPECT]
           },
           {
             name: "cancelMessage",
@@ -674,6 +967,28 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
             available: [ScenarioType.EXPECT]
           }
         ]}
+        outputs={[
+          {
+            name: "target",
+            anchor: "target",
+            description: "収穫したプレイヤーです。",
+            type: "Player",
+            type_link: "/docs/use/scenario/types/README#actor-structure",
+          },
+          {
+            name: "block",
+            description: "収穫したブロックです。",
+            type: "Block",
+            type_link: "/docs/use/scenario/types/misc#block-structure",
+          },
+          {
+            name: "items",
+            description: "収穫したアイテムです。",
+            type: "ItemStack[]",
+            type_link: "/docs/use/scenario/types#item-stack-structure",
+            available: [ScenarioType.EXPECT]
+          }
+        ]}
         executable watchable
 />
 
@@ -722,7 +1037,33 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
             name: "item",
             anchor: "hotbar-item",
             description: "ホットバーのスロットにあるアイテムです。",
-            type: "ItemStack"
+            type: "ItemStack",
+            type_link: "/docs/use/scenario/types/inventory-items#item-stack-structure",
+          },
+        ]}
+        outputs={[
+          {
+            name: "target",
+            description: "ホットバーのスロットを変更したプレイヤーです。",
+            type: "Player",
+            type_link: "/docs/use/scenario/types/README#actor-structure",
+          },
+          {
+            name: "slot",
+            description: "ホットバーのスロットです。",
+            type: ObjectType.INTEGER,
+          },
+          {
+            name: "previous",
+            description: "変更前のホットバーのスロットです。",
+            type: ObjectType.INTEGER,
+            available: [ScenarioType.EXPECT, ScenarioType.EXECUTE]
+          },
+          {
+            name: "item",
+            description: "ホットバーのスロットにあるアイテムです。",
+            type: "ItemStack",
+            type_link: "/docs/use/scenario/types/inventory-items#item-stack-structure",
           },
         ]}
         executable requireable watchable
@@ -757,9 +1098,8 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
 
 :::
 
-
-<Action name="プレイヤのエンティティのクリック（作用）"
-        description="プレイヤのエンティティのクリック（作用）に関するアクションです。"
+<Action name="プレイヤのエンティティの相互作用"
+        description="プレイヤのエンティティのクリックに関するアクションです。"
         id="player_interact_at_entity"
         events={
           {
@@ -772,7 +1112,14 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
             name: "target",
             type: "-----",
             type_anchor: "entity#general-target",
-            description: "クリックする対象のエンティティです。",
+            description: "クリックしたプレイヤです。",
+            required: [ScenarioType.EXECUTE]
+          },
+          {
+            name: "entity",
+            type: "EntitySpecifier",
+            type_anchor: "/docs/use/scenario/types/entities#entity-specifier",
+            description: "クリックした対象のエンティティです。",
             required: [ScenarioType.EXECUTE]
           },
           {
@@ -786,6 +1133,31 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
             type_link: "/docs/use/scenario/types/misc#location-structure",
             description: "クリックするエンティティの位置です。",
             required: [ScenarioType.EXECUTE]
+          }
+        ]}
+        outputs={[
+          {
+            name: "target",
+            type: "Player",
+            type_link: "/docs/use/scenario/types/README#actor-structure",
+            description: "クリックした対象のエンティティです。",
+          },
+          {
+            name: "entity",
+            type: "Entity",
+            type_link: "/docs/use/scenario/types/entities#entity-structure",
+            description: "クリックした対象のエンティティです。",
+          },
+          {
+            name: "hand",
+            type: "列挙型{HAND, OFF_HAND}",
+            description: "クリックする手です。",
+          },
+          {
+            name: "position",
+            type: "Vector(Location)",
+            type_link: "/docs/use/scenario/types/misc#location-structure",
+            description: "クリックするエンティティの位置です。",
           }
         ]}
         executable watchable
@@ -838,6 +1210,41 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
             type: "列挙型{LEFT_CLICK_BLOCK, RIGHT_CLICK_BLOCK, LEFT_CLICK_AIR, RIGHT_CLICK_AIR}"
           }
         ]}
+        outputs={[
+          {
+            name: "target",
+            anchor: "target",
+            description: "ブロックをクリックしたプレイヤーです。",
+            type: "Player",
+            type_link: "/docs/use/scenario/types/README#actor-structure",
+          },
+          {
+            name: "block",
+            anchor: "block",
+            description: "クリックされたブロックです。",
+            type: "Block",
+            type_link: "/docs/use/scenario/types/misc#block-structure"
+          },
+          {
+            name: "blockFace",
+            anchor: "block-face",
+            description: "クリックされたブロックの面です。",
+            type: "列挙型{NORTH, EAST, SOUTH, WEST, UP, DOWN, SELF}",
+            available: [ScenarioType.EXPECT]
+          },
+          {
+            name: "hand",
+            anchor: "hand",
+            description: "クリックされた手です。",
+            type: "列挙型{HAND, OFF_HAND}"
+          },
+          {
+            name: "action",
+            anchor: "action",
+            description: "クリックの種類です。",
+            type: "列挙型{LEFT_CLICK_BLOCK, RIGHT_CLICK_BLOCK, LEFT_CLICK_AIR, RIGHT_CLICK_AIR}"
+          }
+        ]}
         executable watchable
 />
 
@@ -864,7 +1271,14 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
             name: "target",
             type: "-----",
             type_anchor: "entity#general-target",
-            description: "クリックする対象のエンティティです。",
+            description: "クリックしたプレイヤです。",
+            required: [ScenarioType.EXECUTE]
+          },
+          {
+            name: "entity",
+            type: "EntitySpecifier",
+            type_anchor: "/docs/use/scenario/types/entities#entity-specifier",
+            description: "クリックした対象のエンティティです。",
             required: [ScenarioType.EXECUTE]
           },
           {
@@ -872,6 +1286,25 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
             type: "列挙型{HAND, OFF_HAND}",
             description: "クリックする手です。",
             default: "HAND(on execute action)"
+          }
+        ]}
+        outputs={[
+          {
+            name: "target",
+            type: "Player",
+            type_link: "/docs/use/scenario/types/README#actor-structure",
+            description: "クリックした対象のエンティティです。",
+          },
+          {
+            name: "entity",
+            type: "Entity",
+            type_link: "/docs/use/scenario/types/entities#entity-structure",
+            description: "クリックした対象のエンティティです。",
+          },
+          {
+            name: "hand",
+            type: "列挙型{HAND, OFF_HAND}",
+            description: "クリックした手です。",
           }
         ]}
         executable watchable
@@ -923,6 +1356,27 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
             default: "アクション実行モードの場合は HAND"
           }
         ]}
+        outputs={[
+          {
+            name: "target",
+            anchor: "target",
+            description: "破壊されたアイテムを持っているプレイヤーです。",
+            type: "Player",
+            type_link: "/docs/use/scenario/types/README#actor-structure",
+          },
+          {
+            name: "item",
+            description: "破壊されたアイテムです。",
+            type: "ItemStack",
+            type_link: "/docs/use/scenario/types#item-stack-structure",
+          },
+          {
+            name: "slot",
+            description: "破壊されたアイテムがあるスロットです。",
+            type: "列挙型{HAND, OFF_HAND, HEAD, CHEST, LEGS, FEET}",
+            available: [ScenarioType.EXECUTE]
+          }
+        ]}
         executable watchable
 />
 
@@ -930,8 +1384,6 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
 
 `item` が設定されていた場合は、破壊する前にそのアイテムを `slot` に設定します。
 `slot` はこのモードではデフォルトで `HAND` になります。
-
-
 
 ## アイテムの消費 {#item-consume}
 
@@ -965,6 +1417,27 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
             type: "ItemStack",
             type_link: "/docs/use/scenario/types#item-stack-structure",
             available: [ScenarioType.EXPECT]
+          }
+        ]}
+        outputs={[
+          {
+            name: "target",
+            anchor: "target",
+            description: "アイテムを消費したプレイヤーです。",
+            type: "Player",
+            type_link: "/docs/use/scenario/types/README#actor-structure",
+          },
+          {
+            name: "item",
+            description: "消費されたアイテムです。",
+            type: "ItemStack",
+            type_link: "/docs/use/scenario/types#item-stack-structure",
+          },
+          {
+            name: "replacement",
+            description: "消費されたアイテムの代わりに与えられるアイテムです。",
+            type: "ItemStack",
+            type_link: "/docs/use/scenario/types#item-stack-structure",
           }
         ]}
         executable watchable 
@@ -1020,6 +1493,52 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
             default: "アクション実行モードの場合は HAND"
           }
         ]}
+        outputs={[
+          {
+            name: "target",
+            description: "ダメージを与えたプレイヤーです。",
+            type: "Player",
+            type_link: "/docs/use/scenario/types/README#actor-structure",
+          },
+          {
+            name: "item",
+            anchor: "item-damage-item",
+            description: "ダメージを与えられたアイテムです。",
+            type: "ItemStack",
+            type_link: "/docs/use/scenario/types#item-stack-structure",
+          },
+          {
+            name: "damage",
+            description: "与えたダメージです。",
+            type: ObjectType.INTEGER,
+          },
+          {
+            name: "slot",
+            description: "ダメージを与えられたアイテムがあるスロットです。",
+            type: "列挙型{HAND, OFF_HAND, HEAD, CHEST, LEGS, FEET}",
+            available: [ScenarioType.EXECUTE]
+          }
+        ]}
+        outputs={[
+          {
+            name: "target",
+            description: "ダメージを与えたプレイヤーです。",
+            type: "Player",
+            type_link: "/docs/use/scenario/types/README#actor-structure",
+          },
+          {
+            name: "item",
+            anchor: "item-damage-item",
+            description: "ダメージを与えられたアイテムです。",
+            type: "ItemStack",
+            type_link: "/docs/use/scenario/types#item-stack-structure",
+          },
+          {
+            name: "damage",
+            description: "与えたダメージです。",
+            type: ObjectType.INTEGER,
+          }
+        ]}
         executable watchable requireable={"装備スロットにあるアイテムのダメージが一致するか判定します。"}
 />
 
@@ -1063,6 +1582,21 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
             required: [ScenarioType.EXECUTE] 
           }
         ]}
+        outputs={[
+          {
+            name: "target",
+            anchor: "target",
+            description: "参加したプレイヤーです。",
+            type: "Player",
+            type_link: "/docs/use/scenario/types/README#actor-structure",
+          },
+          {
+            name: "message",
+            description: "参加メッセージです。",
+            type: ObjectType.STRING,
+            available: [ScenarioType.EXPECT]
+          }
+        ]}
         executable
         requireable={"プレイヤがオンラインかどうか判定します。"}
         watchable
@@ -1096,7 +1630,35 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
             available: [ScenarioType.EXPECT]
           },
           {
-            name: "kick_message",
+            name: "message",
+            description: "キックされたプレイヤーに表示されるメッセージです。",
+            type: ObjectType.STRING
+          },
+          {
+            name: "cause",
+            anchor: "kick-cause",
+            description: "キックの理由です。",
+            type: "列挙型{...}",
+            type_anchor: "kick-cause-enum"
+          }
+        ]}
+        outputs={[
+          {
+            name: "target",
+            anchor: "target",
+            description: "キックされたプレイヤーです。",
+            type: "Player",
+            type_link: "/docs/use/scenario/types/README#actor-structure",
+          },
+          {
+            name: "leaveMessage",
+            anchor: "kick-leave-message",
+            description: "コンソールとサーバ上のプレイヤ全員に表示されるメッセージです。",
+            type: ObjectType.STRING,
+            available: [ScenarioType.EXPECT]
+          },
+          {
+            name: "message",
             description: "キックされたプレイヤーに表示されるメッセージです。",
             type: ObjectType.STRING
           },
@@ -1164,24 +1726,40 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
           },
           {
             name: "type",
-            anchor: "projectile-type",
+            anchor: "launch-projectile-type",
             description: "発射される投げ物の種類です。",
             type: "Enum{...}",
             required: [ScenarioType.EXECUTE, ScenarioType.EXECUTE]
           },
           {
             name: "epsilon",
-            anchor: "projectile-epsilon",
+            anchor: "launch-projectile-epsilon",
             description: "投げ物の発射ベクトルの有効数字です。",
             type: ObjectType.DOUBLE,
             default: "0.001",
             available: [ScenarioType.EXECUTE]
           }
         ]}
+        outputs={[
+          {
+            name: "target",
+            anchor: "target",
+            description: "投げ物を発射したプレイヤーです。",
+            type: "Player",
+            type_link: "/docs/use/scenario/types/README#actor-structure",
+          },
+          {
+            name: "projectile",
+            anchor: "launch-projectile-out-projectile",
+            description: "発射された投げ物です。",
+            type: "Projectile",
+            type_link: "/docs/use/scenario/types/entities#projectile-structure",
+          }
+        ]}
         executable watchable
 />
 
-#### `type` {#projectile-type}
+#### `type` {#launch-projectile-type}
 
 発射される投げ物の種類を指定します。以下の種類が指定できます。
 
@@ -1203,9 +1781,18 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
 |      `TRIDENT`      | トライデント     |
   
 
-#### `epsilon` {#projectile-epsilon}
+#### `epsilon` {#launch-projectile-epsilon}
 
 投げ物をアクションで比較すする際に許容される誤差を指定します。
+
+#### `projectile` {#launch-projectile-out-projectile}
+
+:::danger
+
+出力 `projectile` は、怠惰な出力です。  
+そのため、これの直後にあるアクション実行期待からは参照できません。
+
+```
 
 ## 経験レベルの変更 {#level-change}
 
@@ -1242,6 +1829,25 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
             available: [ScenarioType.EXPECT]
           }
         ]}
+        outputs={[
+          {
+            name: "target",
+            type: "Player",
+            type_link: "/docs/use/scenario/types#actor-structure",
+            description: "経験レベルを変更したプレイヤーです。",
+          },
+          {
+            name: "level",
+            description: "新しい経験レベルです。",
+            type: ObjectType.INTEGER,
+          },
+          {
+            name: "oldLevel",
+            description: "変更前の経験レベルです。",
+            type: ObjectType.INTEGER,
+            available: [ScenarioType.EXECUTE, ScenarioType.EXPECT]
+          }
+        ]}
         executable
         requireable={"プレイヤの経験レベルが指定したに値なっているか判定します。"}
         watchable
@@ -1270,7 +1876,6 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
           },
           {
             name: "from",
-            anchor: "from",
             description: "移動前の座標です。",
             type: "Location",
             type_link: "/docs/use/scenario/types/misc#location-structure",
@@ -1278,12 +1883,31 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
           },
           {
             name: "to",
-            anchor: "to",
             description: "移動後の座標です。",
             type: "Location",
             type_link: "/docs/use/scenario/types/misc#location-structure",
             available: [ScenarioType.EXECUTE]
           }
+        ]}
+        outputs={[
+          {
+            name: "target",
+            type: "Player",
+            type_link: "/docs/use/scenario/types#actor-structure",
+            description: "移動したプレイヤーです。",
+          },
+          {
+            name: "from",
+            description: "移動前の座標です。",
+            type: "Location",
+            type_link: "/docs/use/scenario/types/misc#location-structure",
+          },
+          {
+            name: "to",
+            description: "移動後の座標です。",
+            type: "Location",
+            type_link: "/docs/use/scenario/types/misc#location-structure",
+          },
         ]}
         executable={"プレイヤを指定された座標にテレポートさせます。"}
         watchable
@@ -1331,6 +1955,25 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
             default: "アクション実行シナリオの場合は KICKED, 他は N/A "
           }
         ]}
+        outputs={[
+          {
+            name: "target",
+            type: "Player",
+            type_link: "/docs/use/scenario/types#actor-structure",
+            description: "退出したプレイヤーです。",
+          },
+          {
+            name: "message",
+            description: "退出時のメッセージです。",
+            type: ObjectType.STRING,
+          },
+          {
+            name: "reason",
+            description: "退出の理由です。",
+            type: "列挙型{DISCONNECTED, KICKED, TIMED_OUT, ERRONEOUS_STATE}",
+            default: "アクション実行シナリオの場合は KICKED, 他は N/A "
+          }
+        ]}
         executable 
         requireable={"プレイヤがオフラインかどうか判定します。"}
         watchable
@@ -1342,6 +1985,13 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
 キックされた理由等などを使用したシナリオを作成する場合は、[プレイヤのキック](#kick) アクションを使用してください。
 :::
 
+#### アクション実行シナリオでの使用 {#quit-usage-in-execution}
+
+:::warning
+
+出力 `message` は入力 `reason` が `KICKED` の場合のみ有効です。
+
+:::
 
 #### `message` {#quit-message}
 
@@ -1413,8 +2063,36 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
             available: [ScenarioType.EXPECT]
           }
         ]}
+        outputs={[
+          {
+            name: "target",
+            type: "Player",
+            type_link: "/docs/use/scenario/types#actor-structure",
+            description: "リスポーンしたプレイヤーです。",
+          },
+          {
+            name: "location",
+            description: "リスポーンした場所です。",
+            type: "Location",
+            type_link: "/docs/use/scenario/types/misc#location-structure",
+          },
+          {
+            name: "isBed",
+            description: "ベッドでリスポーンしたかどうかです。",
+            type: ObjectType.BOOLEAN,
+            available: [ScenarioType.EXPECT]
+          },
+          {
+            name: "isAnchor",
+            anchor: "respawn-output-is-anchor",
+            description: "アンカでリスポーンしたかどうかです。",
+            type: ObjectType.BOOLEAN,
+            available: [ScenarioType.EXPECT]
+          }
+        ]}
         executable watchable
 />
+
 
 #### `location` {#respawn-location}
 
@@ -1423,6 +2101,14 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
 :::tip
 
 アクション実行シナリオで使用した場合は、リスポーンの実行前にベッドスポーン位置を変更します。
+
+:::
+
+#### 出力： `isAnchor` {#respawn-output-is-anchor}
+
+:::danger
+
+`PlayerPostRespawnEvent` では常に `false` になります。
 
 :::
 
@@ -1450,6 +2136,14 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
             name: "sneaking",
             description: "スニークするかどうかです。",
             type: ObjectType.BOOLEAN
+          }
+        ]}
+        outputs={[
+          {
+            name: "target",
+            type: "Player",
+            type_link: "/docs/use/scenario/types#actor-structure",
+            description: "スニークしたプレイヤーです。",
           }
         ]}
         executable
@@ -1483,6 +2177,14 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
             type: ObjectType.BOOLEAN
           }
         ]}
+        outputs={[
+          {
+            name: "target",
+            type: "Player",
+            type_link: "/docs/use/scenario/types#actor-structure",
+            description: "走ったプレイヤーです。",
+          }
+        ]}
         executable 
         requireable={"プレイヤが走っているかどうか判定します。"}
         watchable
@@ -1510,7 +2212,6 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
           },
           {
             name: "from",
-            anchor: "teleport-location",
             description: "テレポート前の座標です。",
             type: "Location",
             type_link: "/docs/use/scenario/types/misc#location-structure",
@@ -1518,7 +2219,6 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
           },
           {
             name: "to",
-            anchor: "teleport-location",
             description: "テレポート後の座標です。",
             type: "Location",
             type_link: "/docs/use/scenario/types/misc#location-structure",
@@ -1526,10 +2226,34 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
           },
           {
             name: "cause",
-            anchor: "teleport-cause",
             description: "テレポートの原因です。",
             type: "列挙型{COMMAND, PLUGIN, NETHER_PORTAL, END_PORTAL, END_GATEWAY, CHORUS_FRUIT, SPECTATE, ENDER_PEARL, UNKNOWN}",
             default: "アクション実行シナリオの場合は PLUGIN, 他は N/A"
+          }
+        ]}
+        outputs={[
+          {
+            name: "target",
+            type: "Player",
+            type_link: "/docs/use/scenario/types#actor-structure",
+            description: "テレポートしたプレイヤーです。",
+          },
+          {
+            name: "from",
+            description: "テレポート前の座標です。",
+            type: "Location",
+            type_link: "/docs/use/scenario/types/misc#location-structure",
+          },
+          {
+            name: "to",
+            description: "テレポート後の座標です。",
+            type: "Location",
+            type_link: "/docs/use/scenario/types/misc#location-structure",
+          },
+          {
+            name: "cause",
+            description: "テレポートの原因です。",
+            type: "列挙型{COMMAND, PLUGIN, NETHER_PORTAL, END_PORTAL, END_GATEWAY, CHORUS_FRUIT, SPECTATE, ENDER_PEARL, UNKNOWN}",
           }
         ]}
         executable

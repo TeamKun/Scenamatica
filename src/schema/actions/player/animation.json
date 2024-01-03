@@ -10,5 +10,14 @@
         "ARM_SWING"
       ]
     }
+  },
+  "outputs": {
+    "type": {
+      "type": "string",
+      "description": "再生するアニメーションの種類です。",
+      "enum": [
+        "ARM_SWING"
+      ]
+    }
   }
 }

@@ -11,5 +11,15 @@
       "type": "number",
       "description": "変更後の経験レベルです。"
     }
+  },
+  "outputs": {
+    "level": {
+      "type": "number",
+      "description": "変更後の経験レベルです。"
+    },
+    "oldLevel": {
+      "type": "number",
+      "description": "変更前の経験レベルです。"
+    }
   }
 }

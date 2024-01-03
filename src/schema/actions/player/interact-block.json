@@ -24,6 +24,38 @@
         "HAND",
         "OFF_HAND"
       ]
+    },
+    "blockFace": {
+        "description": "プレイヤーがクリックしたブロックの面です。",
+        "$ref": "#/definitions/blockFace"
+    }
+  },
+  "outputs": {
+    "block": {
+      "description": "プレイヤーがクリックしたブロックです。",
+      "$ref": "#/definitions/block"
+    },
+    "hand": {
+      "type": "string",
+      "description": "プレイヤーがクリックした手です。",
+      "enum": [
+        "HAND",
+        "OFF_HAND"
+      ]
+    },
+    "action": {
+      "type": "string",
+      "description": "プレイヤーが行ったアクションです。",
+      "enum": [
+        "RIGHT_CLICK_BLOCK",
+        "LEFT_CLICK_BLOCK",
+        "RIGHT_CLICK_AIR",
+        "LEFT_CLICK_AIR"
+      ]
+    },
+    "blockFace": {
+      "description": "プレイヤーがクリックしたブロックの面です。",
+      "$ref": "#/definitions/blockFace"
     }
   }
 }

@@ -11,5 +11,15 @@
       "$ref": "#/definitions/location",
       "description": "移動先の座標を指定します。"
     }
+  },
+  "outputs": {
+    "from": {
+      "$ref": "#/definitions/location",
+      "description": "移動元の座標を返します。"
+    },
+    "to": {
+      "$ref": "#/definitions/location",
+      "description": "移動先の座標を返します。"
+    }
   }
 }

@@ -14,5 +14,11 @@
         }
       ]
     }
+  },
+  "outputs": {
+    "target": {
+      "description": "対象のプレイヤーです。",
+      "$ref": "#/definitions/player"
+    }
   }
 }

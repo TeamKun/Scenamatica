@@ -11,5 +11,15 @@
       "description": "消費後にプレイヤーに与えるアイテムです。",
       "$ref": "#/definitions/itemStack"
     }
+  },
+  "outputs": {
+    "item": {
+      "description": "消費したアイテムです。",
+      "$ref": "#/definitions/itemStack"
+    },
+    "replacement": {
+      "description": "消費後にプレイヤーに与えたアイテムです。",
+      "$ref": "#/definitions/itemStack"
+    }
   }
 }

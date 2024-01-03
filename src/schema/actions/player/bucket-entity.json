@@ -23,5 +23,19 @@
         }
       ]
     }
+  },
+  "outputs": {
+    "bucket": {
+      "description": "エンティティをいれたバケツです。",
+      "$ref": "#/definitions/itemStack"
+    },
+    "entityBucket": {
+      "description": "エンティティが入ったバケツです。",
+      "$ref": "#/definitions/itemStack"
+    },
+    "entity": {
+      "description": "入れたエンティティです。",
+      "$ref": "#/definitions/entity"
+    }
   }
 }

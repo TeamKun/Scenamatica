@@ -19,5 +19,23 @@
       "description": "ホットバーのスロットに入っているアイテムです。",
       "$ref": "#/definitions/itemStack"
     }
+  },
+  "outputs": {
+    "slot": {
+      "type": "integer",
+      "description": "ホットバーのスロットです。",
+      "minimum": 0,
+      "maximum": 8
+    },
+    "previous": {
+      "type": "integer",
+      "description": "ホットバーのスロットが変更される前のスロットです。",
+      "minimum": 0,
+      "maximum": 8
+    },
+    "item": {
+      "description": "ホットバーのスロットに入っているアイテムです。",
+      "$ref": "#/definitions/itemStack"
+    }
   }
 }

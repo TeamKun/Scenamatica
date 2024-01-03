@@ -25,5 +25,19 @@
         "off_hand"
       ]
     }
+  },
+  "outputs": {
+    "entity": {
+      "description": "クリックしたエンティティです。",
+      "$ref": "#/definitions/entity"
+    },
+    "hand": {
+      "description": "クリックした手です。",
+      "type": "string",
+      "enum": [
+        "HAND",
+        "OFF_HAND"
+      ]
+    }
   }
 }

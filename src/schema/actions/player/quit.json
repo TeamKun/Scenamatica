@@ -17,5 +17,21 @@
         "ERRONEOUS_STATE"
       ]
     }
+  },
+  "outputs": {
+    "message": {
+      "type": "string",
+      "description": "プレイヤーがサーバーから退出したときに表示されたメッセージです。"
+    },
+    "reason": {
+      "type": "string",
+      "description": "プレイヤーがサーバーから退出した原因です。",
+      "enum": [
+        "DISCONNECTED",
+        "KICKED",
+        "TIMED_OUT",
+        "ERRONEOUS_STATE"
+      ]
+    }
   }
 }

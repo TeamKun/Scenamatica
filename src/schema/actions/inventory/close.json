@@ -18,6 +18,6 @@
     },
     "reason": {
       "$ref": "#/definitions/closeReason"
-    },
+    }
   }
 }

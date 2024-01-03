@@ -29,5 +29,30 @@
         "OFF_HAND"
       ]
     }
+  },
+  "outputs": {
+    "item": {
+      "$ref": "#/definitions/itemStack",
+      "description": "操作後にプレイヤーが持っているアイテムです。"
+    },
+    "block": {
+      "$ref": "#/definitions/block",
+      "description": "設置する液体のブロックです。"
+    },
+    "blockFace": {
+      "description": "プレイヤーがクリックしたブロックの面です。",
+      "$ref": "#/definitions/blockFace"
+    },
+    "bucket": {
+      "$ref": "#/definitions/itemStack",
+      "description": "設置する液体のバケツです。"
+    },
+    "hand": {
+      "description": "バケツを使用する手です。",
+      "enum": [
+        "MAIN_HAND",
+        "OFF_HAND"
+      ]
+    }
   }
 }

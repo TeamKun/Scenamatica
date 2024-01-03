@@ -12,5 +12,15 @@
       "description": "メッセージのフォーマットです。",
       "example": "<%1$s> %2$s"
     }
+  },
+  "outputs": {
+    "message": {
+      "type": "string",
+      "description": "送信されたメッセージです。"
+    },
+    "format": {
+      "type": "string",
+      "description": "メッセージのフォーマットです。"
+    }
   }
 }

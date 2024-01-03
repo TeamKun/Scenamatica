@@ -14,5 +14,18 @@
         "$ref": "#/definitions/itemStack"
       }
     }
+  },
+  "outputs": {
+    "block": {
+      "description": "収穫した作物です。",
+      "$ref": "#/definitions/block"
+    },
+    "items": {
+      "type": "array",
+      "description": "収穫したアイテムです。",
+      "items": {
+        "$ref": "#/definitions/itemStack"
+      }
+    }
   }
 }
