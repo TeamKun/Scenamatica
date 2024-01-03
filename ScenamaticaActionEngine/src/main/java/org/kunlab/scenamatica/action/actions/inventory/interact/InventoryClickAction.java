@@ -6,8 +6,10 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
@@ -62,6 +64,15 @@ public class InventoryClickAction extends AbstractInventoryInteractAction
             ofDeserializer(ItemStackStructure.class)
     );
 
+    public static final String OUT_KEY_CLICK_TYPE = "type";
+    public static final String OUT_KEY_INVENTORY_ACTION = "action";
+    public static final String OUT_KEY_SLOT_TYPE = "slotType";
+    public static final String OUT_KEY_SLOT = "slot";
+    public static final String OUT_KEY_RAW_SLOT = "rawSlot";
+    public static final String OUT_KEY_CLICKED_ITEM = "clickedItem";
+    public static final String OUT_KEY_BUTTON = "button";
+    public static final String OUT_KEY_CURSOR_ITEM = "cursorItem";
+
     @Override
     public String getName()
     {
@@ -76,9 +87,12 @@ public class InventoryClickAction extends AbstractInventoryInteractAction
         Actor actor = ctxt.getActorOrThrow(target);
         ClickType type = ctxt.input(IN_CLICK_TYPE);
 
+        Inventory inv = null;
         if (ctxt.hasInput(IN_INVENTORY))
-            target.openInventory(ctxt.input(IN_INVENTORY).create());
-
+        {
+            inv = ctxt.input(IN_INVENTORY).create();
+            target.openInventory(inv);
+        }
         Integer slot = ctxt.orElseInput(IN_SLOT, () -> {
             if (ctxt.orElseInput(IN_SLOT_TYPE, () -> null) == InventoryType.SlotType.OUTSIDE)
                 return -999;
@@ -104,12 +118,22 @@ public class InventoryClickAction extends AbstractInventoryInteractAction
 
         ItemStack clicked = ctxt.ifHasInput(IN_CLICKED_ITEM, ItemStackStructure::create, null);
 
+        this.makeOutputs(ctxt, target, inv, type, slot, button);
         actor.clickInventory(
                 type,
                 slot,
                 button,
                 clicked
         );
+    }
+
+    protected void makeOutputs(@NotNull ActionContext ctxt, Player target, @Nullable Inventory inventory, ClickType type, int slot, int button)
+    {
+        ctxt.output(OUT_KEY_TARGET, target);
+        ctxt.output(OUT_KEY_CLICK_TYPE, type);
+        ctxt.output(OUT_KEY_SLOT, slot);
+        ctxt.output(OUT_KEY_BUTTON, button);
+        super.makeOutputs(ctxt, target, inventory);
     }
 
     @Override
@@ -120,7 +144,7 @@ public class InventoryClickAction extends AbstractInventoryInteractAction
 
         InventoryClickEvent e = (InventoryClickEvent) event;
 
-        return ctxt.ifHasInput(IN_CLICK_TYPE, type -> type == e.getClick())
+        boolean result = ctxt.ifHasInput(IN_CLICK_TYPE, type -> type == e.getClick())
                 && ctxt.ifHasInput(IN_INVENTORY_ACTION, action -> action == e.getAction())
                 && ctxt.ifHasInput(IN_SLOT_TYPE, slotType -> slotType == e.getSlotType())
                 && ctxt.ifHasInput(IN_SLOT, slot -> slot == e.getSlot())
@@ -128,6 +152,26 @@ public class InventoryClickAction extends AbstractInventoryInteractAction
                 && ctxt.ifHasInput(IN_CLICKED_ITEM, clickedItem -> clickedItem.isAdequate(e.getCurrentItem()))
                 && ctxt.ifHasInput(IN_BUTTON, button -> button == e.getHotbarButton())
                 && ctxt.ifHasInput(IN_CURSOR_ITEM, cursorItem -> cursorItem.isAdequate(e.getCursor()));
+
+        if (result)
+            this.makeOutputs(ctxt, e);
+
+        return result;
+    }
+
+    protected void makeOutputs(@NotNull ActionContext ctxt, @NotNull InventoryClickEvent e)
+    {
+        ctxt.output(OUT_KEY_CLICK_TYPE, e.getClick());
+        ctxt.output(OUT_KEY_INVENTORY_ACTION, e.getAction());
+        ctxt.output(OUT_KEY_SLOT_TYPE, e.getSlotType());
+        ctxt.output(OUT_KEY_SLOT, e.getSlot());
+        ctxt.output(OUT_KEY_RAW_SLOT, e.getRawSlot());
+        if (e.getCurrentItem() != null)
+            ctxt.output(OUT_KEY_CLICKED_ITEM, e.getCurrentItem());
+        ctxt.output(OUT_KEY_BUTTON, e.getHotbarButton());
+        if (e.getCursor() != null)
+            ctxt.output(OUT_KEY_CURSOR_ITEM, e.getCursor());
+        super.makeOutputs(ctxt, e.getWhoClicked(), e.getClickedInventory());
     }
 
     @Override

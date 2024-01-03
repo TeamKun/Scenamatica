@@ -28,6 +28,8 @@ public class InventoryOpenAction extends AbstractInventoryAction
             ofPlayer()
     );
 
+    public static final String KEY_OUT_TARGET = "target";
+
     @Override
     public String getName()
     {
@@ -43,6 +45,7 @@ public class InventoryOpenAction extends AbstractInventoryAction
         InventoryStructure inventoryStructure = ctxt.input(IN_INVENTORY);
         Inventory inventory = inventoryStructure.create();
 
+        this.makeOutputs(ctxt, player, inventory);
         player.openInventory(inventory);
     }
 
@@ -58,7 +61,22 @@ public class InventoryOpenAction extends AbstractInventoryAction
         if (!(player instanceof Player))
             return false;
 
-        return ctxt.ifHasInput(IN_PLAYER, playerSpecifier -> playerSpecifier.checkMatchedPlayer((Player) player));
+        boolean result = ctxt.ifHasInput(IN_PLAYER, playerSpecifier -> playerSpecifier.checkMatchedPlayer((Player) player));
+        if (result)
+            this.makeOutputs(ctxt, e);
+
+        return result;
+    }
+
+    protected void makeOutputs(@NotNull ActionContext ctxt, @NotNull Player player, @NotNull Inventory inventory)
+    {
+        ctxt.output(KEY_OUT_TARGET, player);
+        super.makeOutputs(ctxt, inventory);
+    }
+
+    protected void makeOutputs(@NotNull ActionContext ctxt, @NotNull InventoryOpenEvent event)
+    {
+        this.makeOutputs(ctxt, (Player) event.getPlayer(), event.getInventory());
     }
 
     @Override

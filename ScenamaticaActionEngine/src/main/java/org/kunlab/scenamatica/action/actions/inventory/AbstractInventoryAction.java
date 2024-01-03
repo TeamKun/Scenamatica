@@ -2,7 +2,9 @@ package org.kunlab.scenamatica.action.actions.inventory;
 
 import org.bukkit.event.Event;
 import org.bukkit.event.inventory.InventoryEvent;
+import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.actions.AbstractAction;
 import org.kunlab.scenamatica.action.actions.inventory.interact.AbstractInventoryInteractAction;
 import org.kunlab.scenamatica.enums.ScenarioType;
@@ -21,6 +23,7 @@ public abstract class AbstractInventoryAction extends AbstractAction
             InventoryStructure.class,
             ofDeserializer(InventoryStructure.class)
     );
+    public static final String OUT_KEY_INVENTORY = "inventory";
 
     public static List<? extends AbstractInventoryAction> getActions()
     {
@@ -45,7 +48,13 @@ public abstract class AbstractInventoryAction extends AbstractAction
     @Override
     public InputBoard getInputBoard(ScenarioType type)
     {
-
         return ofInputs(type, IN_INVENTORY);
+    }
+
+    protected void makeOutputs(@NotNull ActionContext ctxt, @Nullable Inventory inventory)
+    {
+        if (inventory != null)
+            ctxt.output(OUT_KEY_INVENTORY, inventory);
+        ctxt.commitOutput();
     }
 }

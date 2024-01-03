@@ -4,7 +4,9 @@ import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
@@ -30,6 +32,9 @@ public class InventoryCloseAction extends AbstractInventoryAction
             InventoryCloseEvent.Reason.class,
             ofEnum(InventoryCloseEvent.Reason.class)
     );
+
+    public static final String KEY_OUT_TARGET = "target";
+    public static final String KEY_OUT_REASON = "reason";
 
     @Override
     public String getName()
@@ -62,8 +67,25 @@ public class InventoryCloseAction extends AbstractInventoryAction
         if (!(player instanceof Player))
             return false;
 
-        return ctxt.ifHasInput(IN_PLAYER, specifier -> specifier.checkMatchedPlayer((Player) player))
+        boolean result = ctxt.ifHasInput(IN_PLAYER, specifier -> specifier.checkMatchedPlayer((Player) player))
                 && ctxt.ifHasInput(IN_REASON, reason -> reason == e.getReason());
+        if (result)
+            this.makeOutputs(ctxt, e);
+
+        return result;
+    }
+
+    protected void makeOutputs(@NotNull ActionContext ctxt, @NotNull Inventory inventory, @NotNull Player player, @Nullable InventoryCloseEvent.Reason reason)
+    {
+        ctxt.output(KEY_OUT_TARGET, player);
+        if (reason != null)
+            ctxt.output(KEY_OUT_REASON, reason);
+        super.makeOutputs(ctxt, inventory);
+    }
+
+    protected void makeOutputs(@NotNull ActionContext ctxt, @NotNull InventoryCloseEvent e)
+    {
+        this.makeOutputs(ctxt, e.getInventory(), (Player) e.getPlayer(), e.getReason());
     }
 
     @Override

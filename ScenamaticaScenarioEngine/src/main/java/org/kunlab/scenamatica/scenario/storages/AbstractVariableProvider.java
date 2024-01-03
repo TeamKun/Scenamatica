@@ -105,19 +105,7 @@ public abstract class AbstractVariableProvider
         for (int i = 0; i < lastIndex; i++)
         {
             Object value = map.get(keys[i]);
-            if (value instanceof Map)
-                map = (Map<String, Object>) value;
-            else if (value instanceof Structure)
-                map = requireSerializer(ser).serialize((Structure) value, null);
-            else if (value instanceof Function)
-                return ((Function<String[], ?>) value).apply(sliceKey(keys, i + 1));
-            else if (shouldConvertToStructure(ser, value))
-            {
-                Structure structure = requireSerializer(ser).toStructure(value, null);
-                map = requireSerializer(ser).serialize(structure, null);
-            }
-            else
-                throw new BrokenReferenceException(String.join(".", keys));
+            map = castToMapLikeOrThrow(value, keys, i, ser);
         }
 
         String key = keys[lastIndex];
@@ -133,6 +121,24 @@ public abstract class AbstractVariableProvider
             return requireSerializer(ser).toStructure(value, null);
         else
             return value;
+    }
+
+    @SuppressWarnings("unchecked")
+    private static Map<String, Object> castToMapLikeOrThrow(@Nullable Object value, @NotNull String[] keys, int idx, @Nullable StructureSerializer ser)
+    {
+        if (value instanceof Map)
+            return (Map<String, Object>) value;
+        else if (value instanceof Structure)
+            return requireSerializer(ser).serialize((Structure) value, null);
+        else if (value instanceof Function)
+            return ((Function<String[], Map<String, Object>>) value).apply(sliceKey(keys, idx + 1));
+        else if (shouldConvertToStructure(ser, value))
+        {
+            Structure structure = requireSerializer(ser).toStructure(value, null);
+            return requireSerializer(ser).serialize(structure, null);
+        }
+        else
+            throw new BrokenReferenceException(String.join(".", keys));
     }
 
     private static boolean shouldConvertToStructure(@Nullable StructureSerializer ser, @Nullable Object value)

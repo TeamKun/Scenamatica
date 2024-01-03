@@ -4,7 +4,9 @@ import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.inventory.InventoryInteractEvent;
+import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.actions.inventory.AbstractInventoryAction;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
@@ -23,6 +25,8 @@ public abstract class AbstractInventoryInteractAction
             PlayerSpecifier.class,
             ofPlayer()
     );
+
+    public static final String OUT_KEY_TARGET = "target";
 
     public static List<? extends AbstractInventoryInteractAction> getActions()
     {
@@ -46,6 +50,12 @@ public abstract class AbstractInventoryInteractAction
             return false;
 
         return ctxt.ifHasInput(IN_PLAYER, player -> player.checkMatchedPlayer((Player) whoClicked));
+    }
+
+    protected void makeOutputs(@NotNull ActionContext ctxt, @NotNull HumanEntity player, @Nullable Inventory inventory)
+    {
+        ctxt.output(OUT_KEY_TARGET, player);
+        super.makeOutputs(ctxt, inventory);
     }
 
     @Override

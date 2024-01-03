@@ -1,7 +1,9 @@
 package org.kunlab.scenamatica.action.actions.inventory.interact;
 
+import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.inventory.InventoryCreativeEvent;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
@@ -25,6 +27,8 @@ public class InventoryCreativeAction extends InventoryClickAction
             ofDeserializer(ItemStackStructure.class)
     );
 
+    public static final String KEY_OUT_ITEM = "item";
+
     @Override
     public String getName()
     {
@@ -40,16 +44,36 @@ public class InventoryCreativeAction extends InventoryClickAction
                 .orElseThrow(() -> new IllegalStateException("Target is not found."))
         );
 
-        actor.giveCreativeItem(slot, ctxt.input(IN_ITEM).create());
+        ItemStack stack = ctxt.input(IN_ITEM).create();
+        this.makeOutputs(ctxt, actor.getPlayer(), stack, slot);
+        actor.giveCreativeItem(slot, stack);
+    }
+
+    protected void makeOutputs(@NotNull ActionContext ctxt, @NotNull Player player, @NotNull ItemStack item, int slot)
+    {
+        ctxt.output(KEY_OUT_ITEM, item);
+        ctxt.output(OUT_KEY_SLOT, slot);
+        super.makeOutputs(ctxt, player.getInventory());
     }
 
     @Override
     public boolean checkFired(@NotNull ActionContext ctxt, @NotNull Event event)
     {
+        assert event instanceof InventoryCreativeEvent;
         InventoryCreativeEvent e = (InventoryCreativeEvent) event;
 
-        return super.checkFired(ctxt, event)
+        boolean result = super.checkFired(ctxt, event)
                 && ctxt.ifHasInput(IN_ITEM, item -> item.isAdequate(e.getCursor()));
+        if (result)
+            ctxt.output(KEY_OUT_ITEM, e.getCursor());
+
+        return result;
+    }
+
+    protected void makeOutputs(@NotNull ActionContext ctxt, @NotNull InventoryCreativeEvent e)
+    {
+        ctxt.output(KEY_OUT_ITEM, e.getCursor());
+        super.makeOutputs(ctxt, e);
     }
 
     @Override
