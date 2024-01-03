@@ -31,13 +31,8 @@ public class PluginDisableAction extends AbstractPluginAction
         if (ctxt.getEngine().getPlugin() == plugin)
             throw new IllegalArgumentException("Cannot disable the plugin itself.");
 
+        this.makeOutputs(ctxt, plugin);
         Bukkit.getPluginManager().disablePlugin(plugin);
-    }
-
-    @Override
-    public boolean checkFired(@NotNull ActionContext ctxt, @NotNull Event event)
-    {
-        return this.checkMatchedPluginEvent(ctxt, event);
     }
 
     @Override
@@ -51,7 +46,11 @@ public class PluginDisableAction extends AbstractPluginAction
     @Override
     public boolean checkConditionFulfilled(@NotNull ActionContext ctxt)
     {
-        return !super.getPlugin(ctxt).isEnabled();
+        boolean result = !this.getPlugin(ctxt).isEnabled();
+        if (result)
+            this.makeOutputs(ctxt, this.getPlugin(ctxt));
+
+        return result;
     }
 
 

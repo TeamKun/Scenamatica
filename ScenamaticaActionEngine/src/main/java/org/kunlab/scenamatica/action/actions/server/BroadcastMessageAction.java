@@ -1,14 +1,15 @@
 package org.kunlab.scenamatica.action.actions.server;
 
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.server.BroadcastMessageEvent;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.action.utils.InputTypeToken;
 import org.kunlab.scenamatica.action.utils.PlayerLikeCommandSenders;
+import org.kunlab.scenamatica.commons.utils.TextUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
@@ -43,6 +44,16 @@ public class BroadcastMessageAction extends AbstractServerAction
                     recipients.add(ser.tryDeserializePlayerSpecifier(rawRecipient));
 
                 return recipients;
+            }),
+            ofTraverser(InputTypeToken.ofList(CommandSender.class), (ser, list) -> {
+                List<PlayerSpecifier> recipients = new ArrayList<>();
+                for (CommandSender rawRecipient : list)
+                    if (rawRecipient instanceof Player)
+                        recipients.add(ser.tryDeserializePlayerSpecifier(rawRecipient));
+                    else
+                        recipients.add(ser.tryDeserializePlayerSpecifier("<CONSOLE>"));
+
+                return recipients;
             })
     );
     public static final InputToken<String> IN_PERMISSION = ofInput(
@@ -53,6 +64,9 @@ public class BroadcastMessageAction extends AbstractServerAction
             "strictRecipients",
             Boolean.class
     );
+
+    public static final String KEY_OUT_MESSAGE = "message";
+    public static final String KEY_OUT_RECIPIENTS = "recipients";
 
     @Override
     public String getName()
@@ -93,6 +107,7 @@ public class BroadcastMessageAction extends AbstractServerAction
 
         messageComponent = broadcastMessageEvent.message();
 
+        this.makeOutputs(ctxt, TextUtils.toString(messageComponent), new ArrayList<>(csRecipientsSet));
         for (CommandSender recipient : broadcastMessageEvent.getRecipients())
             recipient.sendMessage(messageComponent);
     }
@@ -108,11 +123,12 @@ public class BroadcastMessageAction extends AbstractServerAction
         if (ctxt.hasInput(IN_MESSAGE))
         {
             Pattern pattern = Pattern.compile(ctxt.input(IN_MESSAGE));
-            Matcher matcher = pattern.matcher(((TextComponent) e.message()).content());
+            Matcher matcher = pattern.matcher(TextUtils.toString(e.message()));
             if (!matcher.find())
                 return false;
         }
 
+        boolean result = true;
         if (ctxt.hasInput(IN_RECIPIENTS))
         {
             List<PlayerSpecifier> expectedRecipients = ctxt.input(IN_RECIPIENTS);
@@ -126,10 +142,20 @@ public class BroadcastMessageAction extends AbstractServerAction
             }
 
             // 存在することのチェックは終わったので, 存在しないこと(余分なプレイヤがいないこと)をチェックする
-            return !ctxt.orElseInput(IN_STRICT_RECIPIENTS, () -> false) || actualRecipients.size() == expectedRecipients.size();
+            result = !ctxt.orElseInput(IN_STRICT_RECIPIENTS, () -> false) || actualRecipients.size() == expectedRecipients.size();
         }
 
-        return true;
+        if (result)
+            this.makeOutputs(ctxt, TextUtils.toString(e.message()), new ArrayList<>(e.getRecipients()));
+
+        return result;
+    }
+
+    protected void makeOutputs(@NotNull ActionContext ctxt, @NotNull String message, @NotNull List<CommandSender> recipients)
+    {
+        ctxt.output(KEY_OUT_MESSAGE, message);
+        ctxt.output(KEY_OUT_RECIPIENTS, recipients);
+        ctxt.commitOutput();
     }
 
     @Override

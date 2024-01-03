@@ -33,13 +33,8 @@ public class PluginEnableAction extends AbstractPluginAction
         else if (plugin.isEnabled())
             throw new IllegalArgumentException("Plugin is already enabled.");
 
+        this.makeOutputs(ctxt, plugin);
         Bukkit.getPluginManager().enablePlugin(plugin);
-    }
-
-    @Override
-    public boolean checkFired(@NotNull ActionContext ctxt, @NotNull Event event)
-    {
-        return this.checkMatchedPluginEvent(ctxt, event);
     }
 
     @Override
@@ -53,6 +48,10 @@ public class PluginEnableAction extends AbstractPluginAction
     @Override
     public boolean checkConditionFulfilled(@NotNull ActionContext ctxt)
     {
-        return this.getPlugin(ctxt).isEnabled();
+        boolean result = this.getPlugin(ctxt).isEnabled();
+        if (result)
+            this.makeOutputs(ctxt, this.getPlugin(ctxt));
+
+        return result;
     }
 }

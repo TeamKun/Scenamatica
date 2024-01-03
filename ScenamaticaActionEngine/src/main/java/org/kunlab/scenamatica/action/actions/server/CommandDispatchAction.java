@@ -33,6 +33,9 @@ public class CommandDispatchAction extends AbstractServerAction
             ofPlayer()
     );
 
+    public static final String KEY_OUT_COMMAND = "command";
+    public static final String KEY_OUT_SENDER = "sender";
+
     @Override
     public String getName()
     {
@@ -51,6 +54,7 @@ public class CommandDispatchAction extends AbstractServerAction
         if (command.startsWith("/")) // シンタックスシュガーのために, / から始まるやつにも対応
             command = command.substring(1);
 
+        this.outputResults(ctxt, sender, command);
         Bukkit.dispatchCommand(sender, command);
     }
 
@@ -73,13 +77,23 @@ public class CommandDispatchAction extends AbstractServerAction
             return false;
 
 
-        return ctxt.ifHasInput(
+        boolean result = ctxt.ifHasInput(
                 IN_COMMAND,
                 cmd -> Pattern.compile(cmd).matcher(command).matches()
         ) && ctxt.ifHasInput(
                 IN_SENDER,
                 s -> PlayerLikeCommandSenders.isSpecifiedSender(sender, s)
         );
+
+        if (result)
+            this.outputResults(ctxt, sender, command);
+        return result;
+    }
+
+    private void outputResults(@NotNull ActionContext ctxt, @NotNull CommandSender player, @NotNull String command)
+    {
+        ctxt.output(KEY_OUT_COMMAND, command);
+        ctxt.output(KEY_OUT_SENDER, player);
     }
 
     @Override

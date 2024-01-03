@@ -17,16 +17,21 @@ public abstract class AbstractPluginAction extends AbstractServerAction
             "plugin",
             String.class
     );
+    public static final String KEY_OUT_PLUGIN = "plugin";
     protected static final String KEY_PREFIX = "server_plugin_";
 
-    public boolean checkMatchedPluginEvent(@NotNull ActionContext ctxt, @NotNull Event event)
+    public boolean checkFired(@NotNull ActionContext ctxt, @NotNull Event event)
     {
         if (!(event instanceof PluginEvent))
             return false;
 
         PluginEvent e = (PluginEvent) event;
 
-        return ctxt.ifHasInput(IN_PLUGIN, plugin -> plugin.equalsIgnoreCase(e.getPlugin().getName()));
+        boolean result = ctxt.ifHasInput(IN_PLUGIN, plugin -> plugin.equalsIgnoreCase(e.getPlugin().getName()));
+        if (result)
+            this.makeOutputs(ctxt, e.getPlugin());
+
+        return result;
     }
 
     @Override
@@ -37,6 +42,12 @@ public abstract class AbstractPluginAction extends AbstractServerAction
             board = board.requirePresent(IN_PLUGIN);
 
         return board;
+    }
+
+    protected void makeOutputs(@NotNull ActionContext ctxt, @NotNull Plugin plugin)
+    {
+        ctxt.output(KEY_OUT_PLUGIN, plugin.getName());
+        ctxt.commitOutput();
     }
 
     @NotNull

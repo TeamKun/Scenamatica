@@ -1,6 +1,8 @@
 package org.kunlab.scenamatica.action.actions;
 
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.action.actions.block.AbstractBlockAction;
 import org.kunlab.scenamatica.action.actions.entity.AbstractEntityAction;
@@ -13,6 +15,7 @@ import org.kunlab.scenamatica.action.input.InputBoardImpl;
 import org.kunlab.scenamatica.action.input.InputTokenImpl;
 import org.kunlab.scenamatica.action.input.TraverserImpl;
 import org.kunlab.scenamatica.action.utils.InputTypeToken;
+import org.kunlab.scenamatica.action.utils.PlayerLikeCommandSenders;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.Action;
@@ -48,6 +51,14 @@ public abstract class AbstractAction implements Action
             TraverserImpl.of(
                     PlayerStructure.class,
                     (ser, ps) -> ser.tryDeserializePlayerSpecifier(ps.getUuid())
+            ),
+            TraverserImpl.of(
+                    CommandSender.class,
+                    (ser, ps) -> {
+                        if (ps instanceof Player)
+                            return ser.tryDeserializePlayerSpecifier(ps);
+                        else return ser.tryDeserializePlayerSpecifier(PlayerLikeCommandSenders.CONSOLE_SENDER);
+                    }
             )
     ).toArray(new Traverser[0]);
 
