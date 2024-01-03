@@ -7,5 +7,19 @@
       "description": "クリックされたアイテムです。",
       "$ref": "#/definitions/itemStack"
     }
+  },
+  "outputs": {
+    "item": {
+        "description": "クリックされたアイテムです。",
+        "$ref": "#/definitions/itemStack"
+    },
+    "slot": {
+      "description": "クリックされたスロットです。",
+      "type": "number"
+    },
+    "inventory": {
+      "description": "クリックされたインベントリです。",
+      "$ref": "#/definitions/inventory"
+    }
   }
 }

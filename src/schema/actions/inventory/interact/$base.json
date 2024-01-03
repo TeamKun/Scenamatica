@@ -6,5 +6,11 @@
       "type": "string",
       "description": "対象のプレイヤーです。"
     }
+  },
+  "outputs": {
+    "target": {
+      "description": "対象になったプレイヤです。",
+      "$ref": "#/definitions/player"
+    }
   }
 }

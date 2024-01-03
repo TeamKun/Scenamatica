@@ -11,5 +11,15 @@
       "description": "開くインベントリです。",
       "$ref": "#/definitions/inventory"
     }
+  },
+  "outputs": {
+    "target": {
+      "$ref": "#/definitions/player",
+      "description": "開いたプレイヤーです。"
+    },
+    "inventory": {
+      "description": "開いたインベントリです。",
+      "$ref": "#/definitions/inventory"
+    }
   }
 }

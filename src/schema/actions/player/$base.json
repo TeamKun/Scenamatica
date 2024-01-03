@@ -2,8 +2,17 @@
   "name": "player_$base",
   "arguments": {
     "target": {
-      "type": "string",
-      "description": "対象のプレイヤーです。"
+      "description": "対象のプレイヤーです。",
+      "oneOf": [
+        {
+          "type": "string",
+          "description": "プレイヤ名または UUID セレクタを指定します。"
+        },
+        {
+          "$ref": "#/definitions/player",
+          "description": "プレイヤの構造を指定します。"
+        }
+      ]
     }
   }
 }

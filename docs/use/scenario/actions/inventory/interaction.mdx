@@ -22,6 +22,10 @@ import {ObjectType} from "/src/components/Object";
                anchor="notes"
 />
 
+## 全般 - 出力 `target` {#general-output-target}
+
+対象となった人間エンティティの [`HumanEntity`](/docs/use/scenario/types/README/#actor-structure) です。
+
 ## クリック {#click}
 
 
@@ -91,8 +95,78 @@ import {ObjectType} from "/src/components/Object";
             description: "カーソルにあるアイテムです。"
           }
         ]}
+        outputs={[
+          {
+            name: "target",
+            type: "Player",
+            type_link: "/docs/use/scenario/types/README#actor-structure",
+            description: "インベントリをクリックしたプレイヤです。"
+          },
+          {
+            name: "inventory",
+            type: "Inventory",
+            type_link: "/docs/use/scenario/types/inventory-items#inventory-structure",
+            description: "クリックしたインベントリです。"
+          },
+          {
+            name: "type",
+            type: "ClickType",
+            type_link: "/docs/use/scenario/actions/inventory#type-click-type",
+            description: "クリックの種類です。",
+            available: [ScenarioType.EXPECT]
+          },
+          {
+            name: "slot",
+            type: ObjectType.INTEGER,
+            anchor: "click-slots",
+            description: "クリックしたスロットの番号です。",
+          },
+          {
+            name: "rawSlot",
+            type: ObjectType.INTEGER,
+            anchor: "click-slots",
+            description: "クリックしたスロットの生の番号です。",
+            available: [ScenarioType.EXPECT]
+          },
+          {
+            name: "slotType",
+            type: "SlotType",
+            type_link: "/docs/use/scenario/types#type-slot-type",
+            anchor: "click-slot-type",
+            description: "クリックしたスロットの種類です。",
+            available: [ScenarioType.EXPECT]
+          },
+          {
+            name: "clickedItem",
+            type: "ItemStack",
+            type_link: "/docs/use/scenario/types#item-stack-structure",
+            description: "クリックされたスロットのアイテムです。",
+          },
+          {
+            name: "button",
+            type: ObjectType.INTEGER,
+            anchor: "click-button",
+            description: "クリックされたボタンの番号です。",
+          },
+          {
+            name: "cursorItem",
+            type: "ItemStack",
+            type_link: "/docs/use/scenario/types#item-stack-structure",
+            description: "カーソルにあるアイテムです。",
+            available: [ScenarioType.EXPECT]
+          }
+        ]}
         executable watchable
 />
+
+#### アクション実行シナリオでの使用 {#click-usage-in-execution}
+
+:::warning
+
+出力 `inventory` は入力 `inventory` が指定された場合のみ出力されます。  
+出力 `slot` は入力 `slot` または `rawSlot` が指定された場合のみ出力されます。
+
+:::
 
 #### `inventory` {#click-inventory}
 
@@ -137,6 +211,13 @@ import {ObjectType} from "/src/components/Object";
 
 - [インベントリのクリック](#click)
 
+:::danger
+
+このアクションでは、入力は**継承されません**。  
+また、アクション実行シナリオでは、出力は**継承されません**。
+
+:::
+
 <Action name="クリエイティブインベントリのクリック"
         description="クリエイティブインベントリをクリックします。"
         id="creative_inventory_click"
@@ -155,6 +236,33 @@ import {ObjectType} from "/src/components/Object";
             description: "クリックするスロットの番号です。",
             required: [ScenarioType.EXECUTE]
           },
+        ]}
+        outputs={[
+          {
+            name: "target",
+            type: "Player",
+            type_link: "/docs/use/scenario/types/README#actor-structure",
+            description: "インベントリをクリックしたプレイヤです。"
+          },
+          {
+            name: "item",
+            anchor: "creative-item",
+            type: "ItemStack",
+            type_link: "/docs/use/scenario/types#item-stack-structure",
+            description: "配置するアイテムです。",
+          },
+          {
+            name: "slot",
+            type: ObjectType.INTEGER,
+            anchor: "click-slots",
+            description: "クリックしたスロットの番号です。",
+          },
+          {
+            name: "inventory",
+            type: "Inventory",
+            type_link: "/docs/use/scenario/types/inventory-items#inventory-structure",
+            description: "クリックしたインベントリです。"
+          }
         ]}
         executable={"任意のスロットに任意のアイテムを配置します。"}
         watchable

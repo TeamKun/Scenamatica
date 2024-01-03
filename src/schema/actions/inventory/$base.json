@@ -120,5 +120,11 @@
         "PLUGIN"
       ]
     }
+  },
+  "outputs": {
+    "inventory": {
+      "description": "対象になったプレイヤーのインベントリです。",
+      "$ref": "#/definitions/inventory"
+    }
   }
 }

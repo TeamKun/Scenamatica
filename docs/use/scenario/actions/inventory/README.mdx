@@ -21,6 +21,10 @@ import {ObjectType} from "/src/components/Object";
                anchor="notes"
 />
 
+## 全般 - 出力 `inventory` {#general-output-inventory}
+
+対象となったインベントリの[`Inventory`](/docs/use/scenario/types/inventory-items/#inventory-structure)が出力されます。
+
 ## インベントリ操作系 {#inventory-interaction}
 
 プレイヤによるインベントリの操作に関するアクションです。
@@ -62,8 +66,37 @@ import {ObjectType} from "/src/components/Object";
             description: "インベントリを閉じる理由です。",
           }
         ]}
+        outputs={[
+          {
+            name: "inventory",
+            type: "Inventory",
+            type_link: "/docs/use/scenario/types#inventory-structure",
+            description: "閉じたインベントリです。",
+          },
+          {
+            name: "Player",
+            type: "Player",
+            type_link: "/docs/use/scenario/types/README#actor-structure",
+            description: "インベントリを閉じたプレイヤです。",
+          },
+          {
+            name: "reason",
+            type: "InventoryCloseReason",
+            type_anchor: "#type-inventory-close-reason",
+            description: "インベントリを閉じた理由です。",
+          },
+          
+        ]}
         executable watchable
 />
+
+#### アクション実行シナリオでの使用 {#close-usage-in-execution}
+
+:::warning
+
+出力 `reason` は入力 `reason` が指定されている場合のみ出力されます。
+
+:::
 
 ## インベントリを開く {#open}
 
@@ -89,6 +122,20 @@ import {ObjectType} from "/src/components/Object";
             type_link: "/docs/use/scenario/types#inventory-structure",
             description: "開くインベントリです。",
             required: [ScenarioType.EXECUTE]
+          },
+        ]}
+        outputs={[
+          {
+            name: "inventory",
+            type: "Inventory",
+            type_link: "/docs/use/scenario/types#inventory-structure",
+            description: "開いたインベントリです。",
+          },
+          {
+            name: "Player",
+            type: "Player",
+            type_link: "/docs/use/scenario/types/README#actor-structure",
+            description: "インベントリを開いたプレイヤです。",
           },
         ]}
         executable watchable

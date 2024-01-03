@@ -10,5 +10,14 @@
     "reason": {
       "$ref": "#/definitions/action/definitions/inventory_$base/definitions/closeReason"
     }
+  },
+  "outputs": {
+    "target": {
+        "type": "string",
+        "description": "対象のプレイヤーです。"
+    },
+    "reason": {
+      "$ref": "#/definitions/closeReason"
+    },
   }
 }

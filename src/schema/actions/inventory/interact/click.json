@@ -36,5 +36,42 @@
       "description": "カーソルにあるアイテムです。",
       "$ref": "#/definitions/itemStack"
     }
+  },
+  "outputs": {
+    "type": {
+      "description": "クリックの種類です。",
+      "$ref": "#/definitions/clickType"
+    },
+    "action": {
+        "description": "インベントリのアクションです。",
+      "$ref": "#/definitions/inventoryAction"
+    },
+    "slotType": {
+      "description": "クリックしたスロットの種類です。",
+      "$ref": "#/definitions/slotType"
+    },
+    "slot": {
+      "type": "integer",
+      "description": "クリックしたスロット番号です。",
+      "minimum": 0
+    },
+    "rawSlot": {
+        "type": "integer",
+        "description": "クリックしたスロット番号の生の値です。",
+        "minimum": 0
+    },
+    "clickedItem": {
+      "description": "クリックされたアイテムです。",
+      "$ref": "#/definitions/itemStack"
+    },
+    "button": {
+      "type": "integer",
+      "description": "ボタンの番号です。",
+      "minimum": 0
+    },
+    "cursorItem": {
+      "description": "カーソルにあるアイテムです。",
+      "$ref": "#/definitions/itemStack"
+    }
   }
 }
