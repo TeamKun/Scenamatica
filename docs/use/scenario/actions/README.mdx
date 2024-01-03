@@ -63,6 +63,47 @@ import {ObjectType} from "/src/components/Object";
 
 ## 特にページを分ける程でもないアクション {#general-actions}
 
+### 特別：チャットメッセージの送信 {#message}
+
+<Action name="メッセージの送信"
+        description="エンティティにメッセージを送信します。"
+        id="message"
+        args={[
+          {
+            name: "message",
+            anchor: "message-message",
+            type: ObjectType.STRING,
+            description: "メッセージの内容です。",
+            required: [ScenarioType.EXECUTE]
+          },
+          {
+            name: "recipient",
+            type: "PlayerSpecifier",
+            type_link: "/docs/use/scenario/types/entities#player-specifier",
+            description: "メッセージの受信者です。",
+            required: [ScenarioType.EXECUTE]
+          }
+        ]}
+        outputs={[
+          {
+            name: "message",
+            type: ObjectType.STRING,
+            description: "送信されたメッセージです。"
+          },,
+          {
+            name: "recipient",
+            type: "Player",
+            type_link: "/docs/use/scenario/types/entities#player-structure",
+          description: "メッセージの受信者です。"
+          }
+        ]}
+        executable requireable watchable
+/>
+
+#### `message` {#message-message}
+
+メッセージの色及び書式は 接頭辞 `§` に続けて[特定の文字](https://minecraft.fandom.com/ja/wiki/Formatting_codes)を指定します。
+
 ### 特別：マイルストーンの達成 {#milestone}
 
 :::tip
@@ -92,35 +133,20 @@ import {ObjectType} from "/src/components/Object";
             required: [ScenarioType.EXECUTE, ScenarioType.REQUIRE]
           }
         ]}
-        executable requireable watchable
-/>
-
-### 特別：チャットメッセージの送信 {#message}
-
-<Action name="メッセージの送信"
-        description="エンティティにメッセージを送信します。"
-        id="message"
-        args={[
+        outputs={[
           {
-            name: "message",
-            anchor: "message-message",
+            name: "name",
+            description: "マイルストーンの名前です。",
             type: ObjectType.STRING,
-            description: "メッセージの内容",
-            required: [ScenarioType.EXECUTE]
           },
           {
-            name: "recipient",
-            type: "プレイヤ",
-            description: "メッセージの受信者",
-            required: [ScenarioType.EXECUTE]
+            name: "reached",
+            description: "マイルストーンを達成したかどうかを設定します。",
+            type: ObjectType.BOOLEAN,
           }
         ]}
         executable requireable watchable
 />
-
-#### `message` {#message-message}
-
-メッセージの色及び書式は 接頭辞 `§` に続けて[特定の文字](https://minecraft.fandom.com/ja/wiki/Formatting_codes)を指定します。
 
 ### 特別：反転
 
@@ -130,15 +156,16 @@ import {ObjectType} from "/src/components/Object";
         args={[
           {
             name: "action",
-            type: "アクション",
+            type: "Action",
+            type_link: "/docs/use/scenario/actions",
             description: "反転するアクション",
-            required: [ScenarioType.REQUIRE]
+            required: true
           },
           {
             name: "with",
-            type: "オブジェクト",
+            type: "Object",
             description: "反転するアクションの引数",
-            required: [ScenarioType.REQUIRE]
+          required: true
           }
         ]}
         requireable

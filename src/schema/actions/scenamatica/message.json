@@ -11,5 +11,15 @@
       "type": "string",
       "description": "メッセージを受け取るプレイヤーの名前または UUID です。"
     }
+  },
+  "outputs": {
+    "message": {
+      "type": "string",
+      "description": "送信されたメッセージです。"
+    },
+    "recipient": {
+      "type": "string",
+      "description": "メッセージを受け取ったプレイヤーの名前です。"
+    }
   }
 }

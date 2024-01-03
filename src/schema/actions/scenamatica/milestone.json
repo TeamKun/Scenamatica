@@ -8,8 +8,17 @@
     },
     "reached": {
       "type": "boolean",
-      "description": "マイルストーンに到達したかどうかです。検証時はこれと比較します。"
+      "description": "マイルストーンに到達したかどうかです。"
     }
   },
-  "required": ["name"]
+  "outputs": {
+    "name": {
+      "type": "string",
+      "description": "マイルストーンの名前です。"
+    },
+    "reached": {
+      "type": "boolean",
+      "description": "マイルストーンに到達したかどうかです。"
+    }
+  }
 }
