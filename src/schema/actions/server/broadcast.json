@@ -21,5 +21,18 @@
       "type": "boolean",
       "description": "有効な場合は、余計なプレイヤがメッセージを受け取ると失敗します。"
     }
+  },
+  "outputs": {
+    "message": {
+      "type": "string",
+      "description": "送信されたメッセージです。"
+    },
+    "recipients": {
+      "type": "array",
+      "description": "メッセージを受け取ったプレイヤーです。",
+      "items": {
+        "type": "string"
+      }
+    }
   }
 }

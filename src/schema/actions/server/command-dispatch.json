@@ -10,5 +10,15 @@
       "type": "string",
       "description": "実行するプレイヤーです。"
     }
+  },
+  "outputs": {
+    "command": {
+      "type": "string",
+      "description": "実行されたコマンドです。"
+    },
+    "sender": {
+      "type": "string",
+      "description": "実行したプレイヤーです。"
+    }
   }
 }

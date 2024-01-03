@@ -6,5 +6,11 @@
       "type": "string",
       "description": "有効化されるプラグインです。"
     }
+  },
+  "outputs": {
+    "plugin": {
+      "type": "string",
+      "description": "有効化されたプラグインです。"
+    }
   }
 }

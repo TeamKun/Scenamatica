@@ -105,6 +105,13 @@ Java の標準的なレベルを指定できます。詳しくは以下のリス
           required: [ScenarioType.EXECUTE, ScenarioType.REQUIRE]
           }
         ]}
+        outputs={[
+            {
+                name: "plugin",
+                type: ObjectType.STRING,
+                description: "有効化されたプラグインを出力します。"
+            }
+        ]}
         executable watchable requireable
 />
 
@@ -126,6 +133,13 @@ Java の標準的なレベルを指定できます。詳しくは以下のリス
             description: "無効化するプラグインを指定します。",
             required: [ScenarioType.EXECUTE, ScenarioType.REQUIRE]
           }
+        ]}
+        outputs={[
+            {
+                name: "plugin",
+                type: ObjectType.STRING,
+                description: "無効化されたプラグインを出力します。"
+            }
         ]}
         executable watchable requireable
 />
@@ -169,6 +183,20 @@ Java の標準的なレベルを指定できます。詳しくは以下のリス
             description: "メッセージの受信者を厳密に判定するかを指定します。",
             available: [ScenarioType.EXPECT]
           }
+        ]}
+        outputs={[
+            {
+                name: "message",
+                type: ObjectType.STRING,
+                anchor: "broadcast-message",
+                description: "送信されたメッセージを出力します。"
+            },
+            {
+                name: "recipients",
+                type: "CommandSender[]",
+                anchor: "broadcast-recipients",
+                description: "メッセージの受信者を出力します。"
+            }
         ]}
         executable watchable
 />
@@ -237,6 +265,18 @@ Java の標準的なレベルを指定できます。詳しくは以下のリス
             type: "プレイヤ",
             description: "コマンドの実行者を指定します。"
           }
+        ]}
+        outputs={[
+            {
+                name: "command",
+                type: ObjectType.STRING,
+                description: "実行されたコマンドを出力します。"
+            },
+            {
+                name: "sender",
+                type: "CommandSender",
+                description: "コマンドの実行者を出力します。"
+            }
         ]}
         executable watchable
 />
