@@ -252,6 +252,11 @@ public class SelectiveEntityStructureSerializer
         return entry.getConstructor().apply(value, structureSerializer);
     }
 
+    public static boolean canConvertToStructure(@NotNull Entity value)
+    {
+        return getEntry(value.getType()) != null;
+    }
+
     @Value
     @NotNull
     public static class EntityStructureEntry<E extends Entity, S extends EntityStructure & Mapped<E>>

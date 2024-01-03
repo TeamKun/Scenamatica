@@ -14,7 +14,6 @@ import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
-import org.kunlab.scenamatica.interfaces.scenariofile.context.PlayerStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.misc.BlockStructure;
 
 import java.util.ArrayList;
@@ -45,9 +44,9 @@ public abstract class AbstractBlockAction
 
     protected void makeOutputs(@NotNull ActionContext ctxt, @NotNull Block block, @Nullable Player player)
     {
-        ctxt.output(OUT_KEY_BLOCK, ctxt.getSerializer().toStructure(block, BlockStructure.class));
+        ctxt.output(OUT_KEY_BLOCK, block);
         if (player != null)
-            ctxt.output(OUT_KEY_ACTOR, ctxt.getSerializer().toStructure(player, PlayerStructure.class));
+            ctxt.output(OUT_KEY_ACTOR, player);
         ctxt.commitOutput();
     }
 

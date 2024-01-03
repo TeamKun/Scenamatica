@@ -58,7 +58,7 @@ public abstract class AbstractEntityAction<E extends Entity, V extends EntityStr
     protected void makeOutputs(@NotNull ActionContext ctxt, @Nullable E entity)
     {
         if (entity != null)
-            ctxt.output(OUT_KEY_TARGET, ctxt.getSerializer().toStructure(entity, null));
+            ctxt.output(OUT_KEY_TARGET, entity);
         ctxt.commitOutput();
     }
 

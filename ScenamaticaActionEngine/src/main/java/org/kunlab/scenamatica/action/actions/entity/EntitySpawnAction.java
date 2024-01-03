@@ -84,7 +84,7 @@ public class EntitySpawnAction<E extends Entity> extends AbstractAction
 
     protected void makeOutputs(@NotNull ActionContext ctxt, @NotNull Entity entity)
     {
-        ctxt.output(KEY_OUT_ENTITY, ctxt.getSerializer().toStructure(entity));
+        ctxt.output(KEY_OUT_ENTITY, entity);
         ctxt.commitOutput();
     }
 

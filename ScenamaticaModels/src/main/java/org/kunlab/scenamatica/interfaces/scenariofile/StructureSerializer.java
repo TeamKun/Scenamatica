@@ -58,6 +58,14 @@ public interface StructureSerializer
     <V, T extends Mapped<V> & Structure> T toStructure(@NotNull V value, @Nullable Class<T> clazz);
 
     /**
+     * 指定された値を Structure に変換できるかどうかを返します。
+     *
+     * @param value 値
+     * @return 変換できるかどうか
+     */
+    boolean canConvertToStructure(@NotNull Object value);
+
+    /**
      * 実体を Mapped のインスタンスに変換します。
      *
      * @param value 実体

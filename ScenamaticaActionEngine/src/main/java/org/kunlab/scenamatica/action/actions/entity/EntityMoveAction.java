@@ -84,8 +84,8 @@ public class EntityMoveAction extends AbstractGeneralEntityAction
 
     protected void makeOutputs(@NotNull ActionContext ctxt, @NotNull Entity entity, @NotNull Location from, @NotNull Location to)
     {
-        ctxt.output(OUT_KEY_FROM, ctxt.getSerializer().toStructure(from, LocationStructure.class));
-        ctxt.output(OUT_KEY_TO, ctxt.getSerializer().toStructure(to, LocationStructure.class));
+        ctxt.output(OUT_KEY_FROM, from);
+        ctxt.output(OUT_KEY_TO, to);
         super.makeOutputs(ctxt, entity);
     }
 

@@ -111,6 +111,11 @@ public abstract class AbstractVariableProvider
                 map = requireSerializer(ser).serialize((Structure) value, null);
             else if (value instanceof Function)
                 return ((Function<String[], ?>) value).apply(sliceKey(keys, i + 1));
+            else if (shouldConvertToStructure(ser, value))
+            {
+                Structure structure = requireSerializer(ser).toStructure(value, null);
+                map = requireSerializer(ser).serialize(structure, null);
+            }
             else
                 throw new BrokenReferenceException(String.join(".", keys));
         }
@@ -124,7 +129,18 @@ public abstract class AbstractVariableProvider
             return ((Function<String[], ?>) value).apply(new String[0]);
         else if (value instanceof Structure)
             return requireSerializer(ser).serialize((Structure) value, null);
-        else return value;
+        else if (shouldConvertToStructure(ser, value))
+            return requireSerializer(ser).toStructure(value, null);
+        else
+            return value;
+    }
+
+    private static boolean shouldConvertToStructure(@Nullable StructureSerializer ser, @Nullable Object value)
+    {
+        if (value == null || value.getClass().isPrimitive())
+            return false;
+        else
+            return requireSerializer(ser).canConvertToStructure(value);
     }
 
     private static StructureSerializer requireSerializer(@Nullable StructureSerializer ser)

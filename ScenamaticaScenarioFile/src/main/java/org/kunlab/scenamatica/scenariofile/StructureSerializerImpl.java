@@ -79,16 +79,22 @@ public class StructureSerializerImpl implements StructureSerializer
         return StructureSerializerImpl.INSTANCE;
     }
 
-    private static boolean isEntityRelated(@Nullable Object value, @Nullable Class<?> clazz)
+    private static boolean isEntityRelatedStructure(@Nullable Object value, @Nullable Class<?> clazz)
     {
         return value instanceof EntityStructure || clazz != null && EntityStructure.class.isAssignableFrom(clazz);
+    }
+
+    private static boolean isEntityRelatedValue(@Nullable Object value, @Nullable Class<?> clazz)
+    {
+        return value instanceof Entity || clazz != null && Entity.class.isAssignableFrom(clazz)
+                || isEntityRelatedStructure(value, clazz);
     }
 
     @Override
     public @NotNull <T extends Structure> Map<String, Object> serialize(@NotNull T structure, @Nullable Class<T> clazz)
     {
         // エンティティの場合は, さらに EntityType で分岐する
-        if (isEntityRelated(structure, clazz))
+        if (isEntityRelatedStructure(structure, clazz))
             // noinspection unchecked
             return SelectiveEntityStructureSerializer.serialize((EntityStructure) structure, this, (Class<? extends EntityStructure>) clazz);
 
@@ -99,7 +105,7 @@ public class StructureSerializerImpl implements StructureSerializer
     public <T extends Structure> @NotNull T deserialize(@NotNull Map<String, Object> map, @NotNull Class<T> clazz)
     {
         // エンティティの場合は, さらに EntityType で分岐する
-        if (isEntityRelated(null, clazz))
+        if (isEntityRelatedStructure(null, clazz))
             // noinspection unchecked
             return (T) SelectiveEntityStructureSerializer.deserialize(map, this, (Class<? extends EntityStructure>) clazz);
 
@@ -110,7 +116,7 @@ public class StructureSerializerImpl implements StructureSerializer
     public <T extends Structure> void validate(@NotNull Map<String, Object> map, @NotNull Class<T> clazz)
     {
         // エンティティの場合は, さらに EntityType で分岐する
-        if (isEntityRelated(null, clazz))
+        if (isEntityRelatedStructure(null, clazz))
         {
             // noinspection unchecked
             SelectiveEntityStructureSerializer.validate(map, this, (Class<? extends EntityStructure>) clazz);
@@ -123,10 +129,24 @@ public class StructureSerializerImpl implements StructureSerializer
     public <V, T extends Mapped<V> & Structure> T toStructure(@NotNull V value, @Nullable Class<T> clazz)
     {
         // エンティティの場合は, さらに EntityType で分岐する
-        if (isEntityRelated(value, clazz))
+        if (isEntityRelatedValue(value, clazz))
             return (T) SelectiveEntityStructureSerializer.toStructure((Entity) value, this);
 
         return this.selectMappedEntry(value, clazz).getConstructor().apply(value);
+    }
+
+    @Override
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    public boolean canConvertToStructure(@NotNull Object value)
+    {
+        // エンティティの場合は, さらに EntityType で分岐する
+        if (isEntityRelatedValue(value, null))
+            return SelectiveEntityStructureSerializer.canConvertToStructure((Entity) value);
+
+        return this.structureEntries.stream()
+                .filter(entry -> entry instanceof MappedStructureEntry)
+                .map(entry -> (MappedStructureEntry) entry)
+                .anyMatch(entry -> entry.getApplicator().test(value));
     }
 
     @Override
@@ -316,7 +336,6 @@ public class StructureSerializerImpl implements StructureSerializer
         else
             applicator = entry -> entry.getClazz().equals(clazz);
 
-        //noinspection DataFlowIssue <- 誤検出
         return this.structureEntries.stream()
                 .filter(entry -> entry instanceof MappedStructureEntry)
                 .map(entry -> (MappedStructureEntry) entry)

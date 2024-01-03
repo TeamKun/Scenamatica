@@ -189,7 +189,7 @@ public class EntityPlaceAction extends AbstractGeneralEntityAction
     {
         if (player != null)
             ctxt.output(OUT_KEY_PLAYER, player);
-        ctxt.output(OUT_KEY_BLOCK, ctxt.getSerializer().toStructure(block, BlockStructure.class));
+        ctxt.output(OUT_KEY_BLOCK, block);
         if (blockFace != null)
             ctxt.output(OUT_KEY_BLOCK_FACE, blockFace);
         ctxt.output(OUT_KEY_MATERIAL, material);
