@@ -51,5 +51,15 @@
       ],
       "description": "ゲームルールの値です。"
     }
+  },
+  "outputs": {
+    "rule": {
+      "type": "string",
+      "description": "設定されたゲームルールの名前です。"
+    },
+    "value": {
+      "type": "string",
+      "description": "設定されたゲームルールの値です。"
+    }
   }
 }

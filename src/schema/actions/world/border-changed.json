@@ -15,5 +15,19 @@
       "type": "number",
       "description": "ワールドボーダの変更にかかる時間です。"
     }
+  },
+  "outputs": {
+    "size": {
+      "type": "number",
+      "description": "ワールドボーダのサイズです。"
+    },
+    "sizeOld": {
+      "type": "number",
+      "description": "ワールドボーダのサイズの変更前の値です。"
+    },
+    "duration": {
+      "type": "number",
+      "description": "ワールドボーダの変更にかかる時間です。"
+    }
   }
 }

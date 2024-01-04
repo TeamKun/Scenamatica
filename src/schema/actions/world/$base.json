@@ -5,5 +5,11 @@
       "description": "ワールドの名前の名前空間付きキーです。",
       "$ref": "#/definitions/namespacedKey"
     }
+  },
+  "outputs": {
+    "world": {
+      "description": "ワールドの名前の名前空間付きキーです。",
+      "$ref": "#/definitions/namespacedKey"
+    }
   }
 }

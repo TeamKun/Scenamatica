@@ -45,6 +45,12 @@ import {ObjectType} from "/src/components/Object";
         ]}
         args={[
           {
+            name: "world",
+            type_link: "/docs/use/scenario/types/misc#namespaced-key-structure",
+            type: "NamespacedKey",
+            description: "ワールドの名前空間付きキーです。",
+          },
+          {
             name: "type",
             anchor: "world-border-type",
             type: "Enum{STARTED_MOVE, INSTANT_MOVE}",
@@ -81,8 +87,56 @@ import {ObjectType} from "/src/components/Object";
             description: "ワールドボーダの変更前の中心座標です。",
           }
         ]}
+        outputs={[
+          {
+            name: "world",
+            type_link: "/docs/use/scenario/types/misc#namespaced-key-structure",
+            type: "NamespacedKey",
+            description: "ワールドの名前空間付きキーです。",
+          },
+          {
+            name: "type",
+            type: "Enum{STARTED_MOVE, INSTANT_MOVE}",
+            description: "ワールドボーダの移動方法です。",
+          },
+          {
+            name: "size",
+            type: ObjectType.DOUBLE,
+            description: "ワールドボーダの半径です。",
+          },
+          {
+            name: "sizeOld",
+            type: ObjectType.DOUBLE,
+            description: "ワールドボーダの変更前の半径です。",
+          },
+          {
+            name: "duration",
+            type: ObjectType.LONG,
+            description: "ワールドボーダの移動にかかる時間です。",
+          },
+          {
+            name: "center",
+            type_link: "/docs/use/scenario/types/misc#location-structure",
+            type: "Location",
+            description: "ワールドボーダの中心座標です。",
+          },
+          {
+            name: "centerOld",
+            type_link: "/docs/use/scenario/types/misc#location-structure",
+            type: "Location",
+            description: "ワールドボーダの変更前の中心座標です。",
+          }
+        ]}
         executable watchable requireable
 />
+
+#### アクション実行シナリオでの使用 {#world-border-usage-in-execution}
+
+:::warning
+
+出力 `size`、 `duration`、 `center` は、引数で指定した場合にのみ出力されます。
+
+:::
 
 ### ワールドボーダの変更の完了 {#world-border-changed}
 
@@ -96,6 +150,12 @@ import {ObjectType} from "/src/components/Object";
           },
         ]}
         args={[
+          {
+            name: "world",
+            type_link: "/docs/use/scenario/types/misc#namespaced-key-structure",
+            type: "NamespacedKey",
+            description: "ワールドの名前空間付きキーです。",
+          },
           {
             name: "size",
             type: ObjectType.DOUBLE,
@@ -128,6 +188,12 @@ import {ObjectType} from "/src/components/Object";
         ]}
         args={[
           {
+            name: "world",
+            type_link: "/docs/use/scenario/types/misc#namespaced-key-structure",
+            type: "NamespacedKey",
+            description: "ワールドの名前空間付きキーです。",
+          },
+          {
             name: "rule",
             anchor: "world-game-rule-rule",
             type: "Enum{doDaylightCycle, ...}",
@@ -157,6 +223,14 @@ import {ObjectType} from "/src/components/Object";
             package: "org.bukkit.event.world",
           },
         ]}
+        outputs={[
+          {
+            name: "world",
+            type_link: "/docs/use/scenario/types/misc#namespaced-key-structure",
+            type: "NamespacedKey",
+            description: "ワールドの名前空間付きキーです。",
+          },
+        ]}
         id="world_init"
         watchable
 />
@@ -170,6 +244,22 @@ import {ObjectType} from "/src/components/Object";
             name: "WorldLoadEvent",
             package: "org.bukkit.event.world",
           },
+        ]}
+        arguments={[
+          {
+            name: "world",
+            type_link: "/docs/use/scenario/types/misc#namespaced-key-structure",
+            type: "NamespacedKey",
+            description: "ワールドの名前空間付きキーです。",
+          }
+        ]}
+        outputs={[
+          {
+            name: "world",
+            type_link: "/docs/use/scenario/types/misc#namespaced-key-structure",
+            type: "NamespacedKey",
+            description: "ワールドの名前空間付きキーです。",
+          }
         ]}
         id="world_load"
         executable requireable watchable
@@ -203,6 +293,22 @@ import {ObjectType} from "/src/components/Object";
             name: "WorldUnloadEvent",
             package: "org.bukkit.event.world",
           },
+        ]}
+        arguments={[
+          {
+            name: "world",
+            type_link: "/docs/use/scenario/types/misc#namespaced-key-structure",
+            type: "NamespacedKey",
+            description: "ワールドの名前空間付きキーです。",
+          }
+        ]}
+        outputs={[
+          {
+            name: "world",
+            type_link: "/docs/use/scenario/types/misc#namespaced-key-structure",
+            type: "NamespacedKey",
+            description: "ワールドの名前空間付きキーです。",
+          }
         ]}
         id="world_unload"
         executable requireable watchable
