@@ -2,6 +2,7 @@ package org.kunlab.scenamatica.action.actions.world;
 
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
+import org.bukkit.World;
 import org.bukkit.WorldCreator;
 import org.bukkit.event.Event;
 import org.bukkit.event.world.WorldLoadEvent;
@@ -43,13 +44,18 @@ public class WorldLoadAction extends AbstractWorldAction
         assert key != null;
 
         // createWorld は, ワールドが存在する場合は読み込むだけ。
+        this.makeOutputs(ctxt, key);
         Bukkit.createWorld(new WorldCreator(key.getKey()));
     }
 
     @Override
     public boolean checkConditionFulfilled(@NotNull ActionContext ctxt)
     {
-        return super.getWorld(ctxt) != null;
+        World world;
+        boolean result = (world = super.getWorld(ctxt)) != null;
+        if (result)
+            this.makeOutputs(ctxt, world);
+        return result;
     }
 
     @Override

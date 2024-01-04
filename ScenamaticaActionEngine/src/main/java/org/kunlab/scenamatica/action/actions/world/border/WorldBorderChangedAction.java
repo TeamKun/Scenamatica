@@ -30,6 +30,10 @@ public class WorldBorderChangedAction extends AbstractWorldAction
             Long.class
     );
 
+    public static final String KEY_OUT_SIZE = "size";
+    public static final String KEY_OUT_SIZE_OLD = "sizeOld";
+    public static final String KEY_OUT_DURATION = "duration";
+
     @Override
     public String getName()
     {
@@ -45,9 +49,21 @@ public class WorldBorderChangedAction extends AbstractWorldAction
         assert event instanceof WorldBorderBoundsChangeFinishEvent;
         WorldBorderBoundsChangeFinishEvent e = (WorldBorderBoundsChangeFinishEvent) event;
 
-        return ctxt.ifHasInput(IN_SIZE, size -> size == e.getNewSize())
+        boolean result = ctxt.ifHasInput(IN_SIZE, size -> size == e.getNewSize())
                 && ctxt.ifHasInput(IN_SIZE_OLD, sizeOld -> sizeOld == e.getOldSize())
                 && ctxt.ifHasInput(IN_DURATION, duration -> duration == e.getDuration());
+        if (result)
+            this.makeOutputs(ctxt, e);
+
+        return result;
+    }
+
+    protected void makeOutputs(@NotNull ActionContext ctxt, @NotNull WorldBorderBoundsChangeFinishEvent event)
+    {
+        ctxt.output(KEY_OUT_SIZE, event.getNewSize());
+        ctxt.output(KEY_OUT_SIZE_OLD, event.getOldSize());
+        ctxt.output(KEY_OUT_DURATION, event.getDuration());
+        super.makeOutputs(ctxt, event.getWorld());
     }
 
     @Override

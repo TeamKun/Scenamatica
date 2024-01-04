@@ -30,6 +30,9 @@ public class WorldGameRuleAction extends AbstractWorldAction
             String.class
     );
 
+    public static final String KEY_GAME_RULE = "rule";
+    public static final String KEY_VALUE = "value";
+
     @Override
     public String getName()
     {
@@ -60,7 +63,9 @@ public class WorldGameRuleAction extends AbstractWorldAction
             success = world.setGameRule(integerRule, Integer.parseInt(value));
         }
 
-        if (!success)
+        if (success)
+            this.makeOutputs(ctxt, world, rule, value);
+        else
             throw new IllegalArgumentException("Failed to set the game rule: Attempted to set " + rule.getName() + " to " + value);
     }
 
@@ -73,8 +78,20 @@ public class WorldGameRuleAction extends AbstractWorldAction
         assert event instanceof WorldGameRuleChangeEvent;
         WorldGameRuleChangeEvent e = (WorldGameRuleChangeEvent) event;
 
-        return ctxt.ifHasInput(IN_GAME_RULE, rule -> rule.getName().equalsIgnoreCase(e.getGameRule().getName()))
+        boolean result = ctxt.ifHasInput(IN_GAME_RULE, rule -> rule.getName().equalsIgnoreCase(e.getGameRule().getName()))
                 && ctxt.ifHasInput(IN_VALUE, value -> value.equalsIgnoreCase(e.getValue()));
+
+        if (result)
+            this.makeOutputs(ctxt, e.getWorld(), e.getGameRule(), e.getValue());
+
+        return result;
+    }
+
+    private void makeOutputs(@NotNull ActionContext ctxt, @NotNull World world, @NotNull GameRule<?> rule, @NotNull String value)
+    {
+        ctxt.output(KEY_GAME_RULE, rule);
+        ctxt.output(KEY_VALUE, value);
+        super.makeOutputs(ctxt, world);
     }
 
     @Override

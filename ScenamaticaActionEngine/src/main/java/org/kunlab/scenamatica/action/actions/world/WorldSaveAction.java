@@ -26,6 +26,7 @@ public class WorldSaveAction extends AbstractWorldAction
     public void execute(@NotNull ActionContext ctxt)
     {
         World world = super.getWorldNonNull(ctxt);
+        this.makeOutputs(ctxt, world);
         world.save();
     }
 

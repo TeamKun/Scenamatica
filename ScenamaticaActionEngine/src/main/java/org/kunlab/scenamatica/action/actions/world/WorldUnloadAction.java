@@ -36,6 +36,7 @@ public class WorldUnloadAction extends AbstractWorldAction
     {
         World world = super.getWorldNonNull(ctxt);
 
+        this.makeOutputs(ctxt, world);
         Bukkit.getServer().unloadWorld(world, ctxt.orElseInput(IN_SAVE, () -> true));
     }
 
@@ -53,7 +54,10 @@ public class WorldUnloadAction extends AbstractWorldAction
         NamespacedKey key = ctxt.input(IN_WORLD);
         assert key != null;
 
-        return Bukkit.getWorld(key) == null;
+        boolean result = Bukkit.getWorld(key) == null;
+        if (result)
+            this.makeOutputs(ctxt, key);
+        return result;
     }
 
     @Override

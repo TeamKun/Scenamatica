@@ -29,6 +29,7 @@ public abstract class AbstractWorldAction extends AbstractAction
             NamespacedKey.class,
             ofTraverser(String.class, (ser, str) -> NamespaceUtils.fromString(str))
     );
+    public static final String KEY_OUT_WORLD = "world";
     private static final String[] PADDING_TARGET = {"the_end", "nether"};
 
     public static List<? extends AbstractWorldAction> getActions()
@@ -54,7 +55,9 @@ public abstract class AbstractWorldAction extends AbstractAction
 
         WorldEvent e = (WorldEvent) event;
 
-        return e.getWorld().getKey().equals(this.getWorldNonNull(ctxt).getKey());
+        boolean result = ctxt.ifHasInput(IN_WORLD, world -> world.equals(e.getWorld().getKey()));
+        this.makeOutputs(ctxt, e.getWorld().getKey());
+        return result;
     }
 
     @Override
@@ -63,7 +66,7 @@ public abstract class AbstractWorldAction extends AbstractAction
         return ofInputs(type, IN_WORLD);
     }
 
-    public World getWorld(ActionContext ctxt)
+    protected World getWorld(ActionContext ctxt)
     {
         NamespacedKey key = ctxt.input(IN_WORLD);
         World world = null;
@@ -76,11 +79,22 @@ public abstract class AbstractWorldAction extends AbstractAction
         return null;
     }
 
-    public World getWorldNonNull(ActionContext ctxt)
+    protected World getWorldNonNull(ActionContext ctxt)
     {
         if (!ctxt.hasInput(IN_WORLD))
             return ctxt.getContext().getStage().getWorld();
 
         return this.getWorld(ctxt);
+    }
+
+    protected void makeOutputs(@NotNull ActionContext ctxt, @NotNull NamespacedKey world)
+    {
+        ctxt.output(KEY_OUT_WORLD, world.getKey());
+        ctxt.commitOutput();
+    }
+
+    protected void makeOutputs(@NotNull ActionContext ctxt, @NotNull World world)
+    {
+        this.makeOutputs(ctxt, world.getKey());
     }
 }
