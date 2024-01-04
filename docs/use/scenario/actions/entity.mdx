@@ -154,6 +154,23 @@ import {ObjectType} from "/src/components/Object";
             type: "Entity",
             type_link: "/docs/use/scenario/types#entity-structure",
             description: "ダメージを与えたエンティティです。",
+          },
+          {
+            name: "amount",
+            anchor: "damage-amount",
+            type: ObjectType.FLOAT,
+            description: "ダメージの量です。",
+          },
+          {
+            name: "cause",
+            type: "EntityDamageCause",
+            description: "ダメージの種類です。",
+          },
+          {
+            name: "modifiers",
+            type: "Map<DamageModifier, Double>",
+            type_link: "/docs/use/scenario/types/entities#damage-structure-damage-modifier-enum",
+            description: "ダメージの Modifier です。",
           }
         ]}
         executable watchable
@@ -221,10 +238,27 @@ import {ObjectType} from "/src/components/Object";
             description: "ダメージを受けたエンティティです。",
           },
           {
-            name: "damager",
+            name: "target",
             type: "Entity",
             type_link: "/docs/use/scenario/types#entity-structure",
             description: "ダメージを与えたエンティティです。",
+          },
+          {
+            name: "amount",
+            anchor: "damage-amount",
+            type: ObjectType.FLOAT,
+            description: "ダメージの量です。",
+          },
+          {
+            name: "cause",
+            type: "EntityDamageCause",
+            description: "ダメージの種類です。",
+          },
+          {
+            name: "modifiers",
+            type: "Map<DamageModifier, Double>",
+            type_link: "/docs/use/scenario/types/entities#damage-structure-damage-modifier-enum",
+            description: "ダメージの Modifier です。",
           }
         ]}
         executable watchable 
