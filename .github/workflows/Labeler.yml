@@ -34,7 +34,7 @@ jobs:
     if: "github.event.action == 'labeled'"
     steps:
       - name: "Remove pending and denied label when triaged"
-        if: "contains(github.event.issue.labels.*.name, 'Status: Pending') && github.event.label.name == 'Status: Accepted'"
+        if: "github.event.action == 'labeled'  && (contains(github.event.issue.labels.*.name, 'Status: Pending') || contains(github.event.issue.labels.*.name, 'Status: Pending'))"
         uses: andymckay/labeler@master
         with:
           remove-labels: "Status: Pending, Status: Denied"
