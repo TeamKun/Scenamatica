@@ -1,30 +1,30 @@
 package org.kunlab.scenamatica.action.actions.player;
 
-import lombok.EqualsAndHashCode;
-import lombok.Value;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerAnimationEvent;
 import org.bukkit.event.player.PlayerAnimationType;
 import org.jetbrains.annotations.NotNull;
-import org.kunlab.scenamatica.commons.utils.MapUtils;
-import org.kunlab.scenamatica.commons.utils.PlayerUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.ActionContext;
+import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
+import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
-import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
-import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.PlayerSpecifier;
-import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
-public class PlayerAnimationAction extends AbstractPlayerAction<PlayerAnimationAction.Argument>
-        implements Executable<PlayerAnimationAction.Argument>, Watchable<PlayerAnimationAction.Argument>
+public class PlayerAnimationAction extends AbstractPlayerAction
+        implements Executable, Watchable
 {
     public static final String KEY_ACTION_NAME = "player_animation";
+    public static final InputToken<PlayerAnimationType> IN_ANIMATION_TYPE = ofEnumInput(
+            "type",
+            PlayerAnimationType.class
+    );
+
+    public static final String KEY_OUT_ANIMATION_TYPE = "type";
 
     @Override
     public String getName()
@@ -33,25 +33,36 @@ public class PlayerAnimationAction extends AbstractPlayerAction<PlayerAnimationA
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @NotNull PlayerAnimationAction.Argument argument)
+    public void execute(@NotNull ActionContext ctxt)
     {
-        Player player = argument.getTarget(engine);
+        Player player = selectTarget(ctxt);
+        PlayerAnimationType type = ctxt.input(IN_ANIMATION_TYPE);
 
-        PlayerUtils.getActorOrThrow(engine, player)
-                .playAnimation(argument.type);
+        this.makeOutputs(ctxt, player, type);
+        ctxt.getActorOrThrow(player)
+                .playAnimation(type);
     }
 
     @Override
-    public boolean isFired(@NotNull Argument argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public boolean checkFired(@NotNull ActionContext ctxt, @NotNull Event event)
     {
-        if (!super.checkMatchedPlayerEvent(argument, engine, event))
+        if (!super.checkMatchedPlayerEvent(ctxt, event))
             return false;
 
         assert event instanceof PlayerAnimationEvent;
-
         PlayerAnimationEvent e = (PlayerAnimationEvent) event;
 
-        return argument.type == null || argument.type == e.getAnimationType();
+        boolean result = ctxt.ifHasInput(IN_ANIMATION_TYPE, type -> type == e.getAnimationType());
+        if (result)
+            this.makeOutputs(ctxt, e.getPlayer(), e.getAnimationType());
+
+        return result;
+    }
+
+    private void makeOutputs(@NotNull ActionContext ctxt, @NotNull Player player, @NotNull PlayerAnimationType type)
+    {
+        ctxt.output(KEY_OUT_ANIMATION_TYPE, type);
+        super.makeOutputs(ctxt, player);
     }
 
     @Override
@@ -63,55 +74,13 @@ public class PlayerAnimationAction extends AbstractPlayerAction<PlayerAnimationA
     }
 
     @Override
-    public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
+    public InputBoard getInputBoard(ScenarioType type)
     {
-        return new Argument(
-                super.deserializeTarget(map, serializer),
-                MapUtils.getAsEnumOrNull(map, Argument.KEY_ACTION_TYPE, PlayerAnimationType.class)
-        );
-    }
+        InputBoard board = super.getInputBoard(type)
+                .register(IN_ANIMATION_TYPE);
+        if (type == ScenarioType.ACTION_EXECUTE)
+            board.requirePresent(IN_TARGET);
 
-    @Value
-    @EqualsAndHashCode(callSuper = true)
-    public static class Argument extends AbstractPlayerActionArgument
-    {
-        public static final String KEY_ACTION_TYPE = "type";
-
-        PlayerAnimationType type;
-
-        public Argument(PlayerSpecifier target, PlayerAnimationType type)
-        {
-            super(target);
-            this.type = type;
-        }
-
-        @Override
-        public void validate(@NotNull ScenarioEngine engine, @NotNull ScenarioType type)
-        {
-            super.validate(engine, type);
-            if (type == ScenarioType.ACTION_EXECUTE)
-                ensurePresent(KEY_ACTION_TYPE, this.type);
-        }
-
-        @Override
-        public boolean isSame(TriggerArgument argument)
-        {
-            if (!(argument instanceof Argument))
-                return false;
-
-            Argument arg = (Argument) argument;
-
-            return super.isSameTarget(arg)
-                    && this.type == arg.type;
-        }
-
-        @Override
-        public String getArgumentString()
-        {
-            return appendArgumentString(
-                    super.getArgumentString(),
-                    KEY_ACTION_TYPE, this.type
-            );
-        }
+        return board;
     }
 }

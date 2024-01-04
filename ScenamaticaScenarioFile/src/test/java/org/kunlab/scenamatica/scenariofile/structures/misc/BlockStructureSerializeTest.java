@@ -18,7 +18,7 @@ public class BlockStructureSerializeTest
 {
     public static final BlockStructure FULFILLED = new BlockStructureImpl(
             Material.ACACIA_SIGN,
-            LocationStructureImpl.from(new Location(null, 114, 514, 19)),
+            LocationStructureImpl.of(new Location(null, 114, 514, 19)),
             new HashMap<String, Object>()
             {{
                 this.put("key", "value");

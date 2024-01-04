@@ -4,60 +4,80 @@ import org.bukkit.entity.Entity;
 import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityEvent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.actions.AbstractAction;
-import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
+import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.ActionContext;
+import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
+import org.kunlab.scenamatica.interfaces.action.input.InputToken;
+import org.kunlab.scenamatica.interfaces.scenariofile.Mapped;
 import org.kunlab.scenamatica.interfaces.scenariofile.entity.EntityStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.EntitySpecifier;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
-public abstract class AbstractEntityAction<A extends AbstractEntityActionArgument> extends AbstractAction<A>
+public abstract class AbstractEntityAction<E extends Entity, V extends EntityStructure & Mapped<E>> extends AbstractAction
 {
-    public static List<? extends AbstractAction<?>> getActions()
+    public static final String OUT_KEY_TARGET = "target";
+    public final InputToken<EntitySpecifier<E>> IN_TARGET_ENTITY;
+
+    public AbstractEntityAction(Class<E> entityClass, Class<V> structureClazz)
     {
-        List<AbstractAction<?>> actions = new ArrayList<>();
+        this.IN_TARGET_ENTITY = ofInput("target", entityClass, structureClazz);
+    }
+
+    public static List<? extends AbstractAction> getActions()
+    {
+        List<AbstractAction> actions = new ArrayList<>();
 
         actions.add(new EntityAction());
-        actions.add(new EntityDamageAction<>());
+        actions.add(new EntityDamageAction());
         actions.add(new EntityDamageByEntityAction());
         actions.add(new EntityDeathAction());
         actions.add(new EntityDropItemAction());
         actions.add(new EntityMoveAction());
         actions.add(new EntityPickupItemAction());
         actions.add(new EntityPlaceAction());
-        actions.add(new EntitySpawnAction<>());  // AbstractEntityAction を継承してない(引数都合)
+        actions.add(new EntitySpawnAction<>(Entity.class, EntityStructure.class));  // AbstractEntityAction を継承してない(引数都合)
         actions.add(new ProjectileHitAction());
         actions.add(new ProjectileLaunchAction());
 
         return actions;
     }
 
-    protected boolean checkMatchedEntityEvent(@NotNull A argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    protected boolean checkMatchedEntityEvent(@NotNull ActionContext ctxt, @NotNull Event event)
     {
         if (!(event instanceof EntityEvent))
             return false;
 
         EntityEvent e = (EntityEvent) event;
-        return !argument.getTargetHolder().canProvideTarget() || argument.checkMatchedEntity(e.getEntity());
+        return ctxt.ifHasInput(this.IN_TARGET_ENTITY, specifier -> specifier.checkMatchedEntity(e.getEntity()));
     }
 
-    protected EntitySpecifier<Entity> deserializeTarget(Map<String, Object> map, StructureSerializer serializer)
+    protected void makeOutputs(@NotNull ActionContext ctxt, @Nullable E entity)
     {
-        return serializer.tryDeserializeEntitySpecifier(map.get(AbstractEntityActionArgument.KEY_TARGET_ENTITY));
+        if (entity != null)
+            ctxt.output(OUT_KEY_TARGET, entity);
+        ctxt.commitOutput();
     }
 
-    protected <E extends Entity> EntitySpecifier<E> deserializeTarget(
-            Map<String, Object> map,
-            StructureSerializer serializer,
-            Class<? extends EntityStructure> structureClass)
+    @Override
+    public InputBoard getInputBoard(ScenarioType type)
     {
-        return serializer.tryDeserializeEntitySpecifier(
-                map.get(AbstractEntityActionArgument.KEY_TARGET_ENTITY),
-                structureClass
+        InputBoard board = ofInputs(
+                type,
+                this.IN_TARGET_ENTITY
         );
+        if (type == ScenarioType.ACTION_EXECUTE)
+            board.requirePresent(this.IN_TARGET_ENTITY);
+
+        return board;
     }
 
+    public E selectTarget(@NotNull ActionContext ctxt)
+    {
+        return ctxt.input(this.IN_TARGET_ENTITY).selectTarget(ctxt.getContext())
+                .orElseThrow(() -> new IllegalStateException("Cannot select target for this action, please specify target with valid specifier."));
+    }
 }

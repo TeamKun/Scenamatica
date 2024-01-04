@@ -1,29 +1,29 @@
 package org.kunlab.scenamatica.action.actions.entity;
 
-import lombok.EqualsAndHashCode;
-import lombok.Value;
 import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.commons.utils.EntityUtils;
-import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.ActionContext;
+import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
+import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
-import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.Mapped;
-import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.entity.EntityStructure;
-import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.EntitySpecifier;
-import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
-import java.util.Map;
-import java.util.Objects;
-
-public class EntityAction extends AbstractEntityAction<EntityAction.Argument>
-        implements Executable<EntityAction.Argument>, Requireable<EntityAction.Argument>
+public class EntityAction extends AbstractGeneralEntityAction
+        implements Executable, Requireable
 {
     public static final String KEY_ACTION_NAME = "entity";
+
+    public static final InputToken<EntityStructure> IN_ENTITY = ofInput(
+            "entity",
+            EntityStructure.class,
+            ofDeserializer(EntityStructure.class)
+    );
+
+    public static final String OUT_KEY_ENTITY = "entity";
 
     @Override
     public String getName()
@@ -32,10 +32,10 @@ public class EntityAction extends AbstractEntityAction<EntityAction.Argument>
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @NotNull EntityAction.Argument argument)
+    public void execute(@NotNull ActionContext ctxt)
     {
-        Entity target = argument.selectTarget(engine.getContext());
-        EntityStructure entityInfo = argument.getEntity();
+        Entity target = this.selectTarget(ctxt);
+        EntityStructure entityInfo = ctxt.input(IN_ENTITY);
 
         if (!(entityInfo instanceof Mapped<?>))
             throw new IllegalStateException("Cannot check matched entity for non-mapped entity");
@@ -46,83 +46,38 @@ public class EntityAction extends AbstractEntityAction<EntityAction.Argument>
         if (!mapped.canApplyTo(target))
             throw new IllegalStateException("Cannot apply entity info of " + entityInfo + " to " + target);
 
+        this.makeOutputs(ctxt, target);
 
         // noinspection unchecked  // checked above
         mapped.applyTo(target);
     }
 
     @Override
-    public boolean isConditionFulfilled(@NotNull EntityAction.Argument argument, @NotNull ScenarioEngine engine)
+    public boolean checkConditionFulfilled(@NotNull ActionContext ctxt)
     {
-        EntityStructure entityInfo = argument.getEntity();
-        Entity target = argument.selectTarget(engine.getContext());
+        Entity target = this.selectTarget(ctxt);
 
-        if (target == null && entityInfo != null)
-            throw new IllegalStateException("Cannot find entity with identifier " + argument.getTargetString());
+        if (target == null && !ctxt.hasInput(IN_ENTITY))
+            throw new IllegalStateException("Cannot find entity");
         else if (target == null)
             return false;
 
-        return entityInfo == null || EntityUtils.tryCastMapped(entityInfo, target).isAdequate(target);
+        boolean result = ctxt.ifHasInput(IN_ENTITY, entity -> EntityUtils.tryCastMapped(entity, target).isAdequate(target));
+        if (result)
+            this.makeOutputs(ctxt, target);
+
+        return result;
     }
 
     @Override
-    public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
+    public InputBoard getInputBoard(ScenarioType type)
     {
-        EntityStructure structure;
-        if (map.containsKey(Argument.KEY_ENTITY))
-            structure = serializer.deserialize(
-                    MapUtils.checkAndCastMap(map.get(Argument.KEY_ENTITY)),
-                    EntityStructure.class
-            );
-        else
-            structure = null;
+        InputBoard board = super.getInputBoard(type)
+                .register(IN_ENTITY);
 
-        return new Argument(
-                super.deserializeTarget(map, serializer),
-                structure
-        );
-    }
+        if (type == ScenarioType.ACTION_EXECUTE)
+            board.requirePresent(IN_ENTITY);
 
-    @Value
-    @EqualsAndHashCode(callSuper = true)
-    public static class Argument extends AbstractEntityActionArgument<Entity>
-    {
-        public static final String KEY_ENTITY = "entity";
-
-        EntityStructure entity;
-
-        public Argument(EntitySpecifier<Entity> target, @Nullable EntityStructure entity)
-        {
-            super(target);
-            this.entity = entity;
-        }
-
-        @Override
-        public boolean isSame(TriggerArgument argument)
-        {
-            if (!super.isSame(argument))
-                return false;
-
-            Argument arg = (Argument) argument;
-
-            return Objects.equals(this.entity, arg.entity);
-        }
-
-        @Override
-        public void validate(@NotNull ScenarioEngine engine, @NotNull ScenarioType type)
-        {
-            this.ensureCanProvideTarget();
-            if (type == ScenarioType.ACTION_EXECUTE && this.entity == null)
-                throw new IllegalArgumentException("Cannot execute action without entity argument.");
-        }
-
-        @Override
-        public String getArgumentString()
-        {
-            return appendArgumentString(
-                    super.getArgumentString(),
-                    KEY_ENTITY, this.entity
-            );
-        }
+        return board;
     }
 }

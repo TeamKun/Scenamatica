@@ -9,6 +9,7 @@ import org.bukkit.ChatColor;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.commons.utils.LogUtils;
 import org.kunlab.scenamatica.enums.ScenarioResultCause;
+import org.kunlab.scenamatica.interfaces.action.ActionResult;
 import org.kunlab.scenamatica.interfaces.action.CompiledAction;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioResult;
@@ -55,13 +56,12 @@ public class BukkitTestReporter extends AbstractTestReporter
         return new SimpleDateFormat("HH:mm:ss").format(new Date(time));
     }
 
-    private static String getConditionString(@NotNull CompiledScenarioAction<?> action)
+    private static String getConditionString(@NotNull CompiledScenarioAction action)
     {
         String condition = action.getAction().getExecutor().getClass().getSimpleName();
-        if (action.getAction().getArgument() != null)
-            condition += " - " + action.getAction().getArgument().getArgumentString();
+        String argument = action.getAction().getContext().getInput().getValuesString();
 
-        return condition;
+        return argument.isEmpty() ? condition: condition + " - " + argument;
     }
 
     private static MsgArgs getSummaryStatsMsgArgsBase(ScenarioResultSet resultSet)
@@ -99,7 +99,7 @@ public class BukkitTestReporter extends AbstractTestReporter
     }
 
     @Override
-    public void onTestSkipped(@NotNull ScenarioEngine engine, @NotNull CompiledScenarioAction<?> action)
+    public void onTestSkipped(@NotNull ScenarioEngine engine, @NotNull CompiledScenarioAction action)
     {
         ScenarioFileStructure scenario = engine.getScenario();
 
@@ -111,7 +111,7 @@ public class BukkitTestReporter extends AbstractTestReporter
     }
 
     @Override
-    public void onActionStart(@NotNull ScenarioEngine engine, @NotNull CompiledScenarioAction<?> action)
+    public void onActionStart(@NotNull ScenarioEngine engine, @NotNull CompiledScenarioAction action)
     {
         ScenarioFileStructure scenario = engine.getScenario();
 
@@ -138,33 +138,32 @@ public class BukkitTestReporter extends AbstractTestReporter
     }
 
     @Override
-    public void onActionSuccess(@NotNull ScenarioEngine engine, @NotNull CompiledAction<?> action)
+    public void onActionSuccess(@NotNull ScenarioEngine engine, @NotNull ActionResult result)
     {
         ScenarioFileStructure scenario = engine.getScenario();
 
         this.terminals.forEach(t -> t.success(this.withPrefix(engine.getTestID(), scenario, LangProvider.get(
                 "test.action.run.success",
-                MsgArgs.of("action", action.getExecutor().getClass().getSimpleName())
+                MsgArgs.of("action", result.getScenarioName())
         ))));
     }
 
     @Override
-    public void onWatchingActionExecuted(@NotNull ScenarioEngine engine, @NotNull CompiledAction<?> action)
+    public void onWatchingActionExecuted(@NotNull ScenarioEngine engine, @NotNull ActionResult result)
     {
         ScenarioFileStructure scenario = engine.getScenario();
 
         this.terminals.forEach(t -> t.success(this.withPrefix(engine.getTestID(), scenario, LangProvider.get(
                 "test.action.watch.done",
-                MsgArgs.of("action", action.getExecutor().getClass().getSimpleName())
+                MsgArgs.of("action", result.getScenarioName())
         ))));
 
     }
 
     @Override
-    public void onActionExecuteFailed(@NotNull ScenarioEngine engine, @NotNull CompiledAction<?> action, @NotNull Throwable error)
+    public void onActionExecuteFailed(@NotNull ScenarioEngine engine, @NotNull CompiledAction action, @NotNull Throwable error)
     {
         ScenarioFileStructure scenario = engine.getScenario();
-
         this.terminals.forEach(t -> t.info(this.withPrefix(engine.getTestID(), scenario, LangProvider.get(
                 "test.action.run.fail",
                 MsgArgs.of("action", action.getExecutor().getClass().getSimpleName())
@@ -173,19 +172,19 @@ public class BukkitTestReporter extends AbstractTestReporter
     }
 
     @Override
-    public void onActionJumped(@NotNull ScenarioEngine engine, @NotNull CompiledAction<?> action, @NotNull CompiledAction<?> expected)
+    public void onActionJumped(@NotNull ScenarioEngine engine, @NotNull ActionResult result, @NotNull CompiledAction expected)
     {
         ScenarioFileStructure scenario = engine.getScenario();
 
         this.terminals.forEach(t -> t.warn(this.withPrefix(engine.getTestID(), scenario, LangProvider.get(
                 "test.action.jumped",
-                MsgArgs.of("action", action.getExecutor().getClass().getSimpleName())
+                MsgArgs.of("action", result.getScenarioName())
                         .add("scenario", engine.getScenario().getName())
         ))));
     }
 
     @Override
-    public void onConditionCheckSuccess(@NotNull ScenarioEngine engine, @NotNull CompiledScenarioAction<?> action)
+    public void onConditionCheckSuccess(@NotNull ScenarioEngine engine, @NotNull CompiledScenarioAction action)
     {
         ScenarioFileStructure scenario = engine.getScenario();
 
@@ -196,7 +195,7 @@ public class BukkitTestReporter extends AbstractTestReporter
     }
 
     @Override
-    public void onConditionCheckFailed(@NotNull ScenarioEngine engine, @NotNull CompiledScenarioAction<?> action)
+    public void onConditionCheckFailed(@NotNull ScenarioEngine engine, @NotNull CompiledScenarioAction action)
     {
         ScenarioFileStructure scenario = engine.getScenario();
 
@@ -321,7 +320,7 @@ public class BukkitTestReporter extends AbstractTestReporter
                 // 失敗メッセージの基礎を作成
                 .map(r -> {
                     String scenario = r.getScenario().getName();
-                    String cause = r.getScenarioResultCause().name();
+                    String cause = r.getCause().name();
                     String action = (r.getFailedAction() == null) ? "???": r.getFailedAction().getName();
                     return LangProvider.get(
                             "test.session.result.failures.entry",
@@ -346,18 +345,18 @@ public class BukkitTestReporter extends AbstractTestReporter
 
     protected void printTestSummary(Terminal terminal, ScenarioFileStructure scenario, ScenarioResult result)
     {
-        boolean passed = result.getScenarioResultCause() == ScenarioResultCause.PASSED;
+        boolean passed = result.getCause() == ScenarioResultCause.PASSED;
 
         String resultKey;
         if (passed)
             resultKey = "test.result.passed";
-        else if (result.getScenarioResultCause() == ScenarioResultCause.CANCELLED)
+        else if (result.getCause() == ScenarioResultCause.CANCELLED)
             resultKey = "test.result.cancelled";
-        else if (result.getScenarioResultCause() == ScenarioResultCause.SKIPPED)
+        else if (result.getCause() == ScenarioResultCause.SKIPPED)
             resultKey = "test.result.skipped";
         else
             resultKey = "test.result.failed";
-        String messageKey = "test.result.message." + result.getScenarioResultCause().name().toLowerCase();
+        String messageKey = "test.result.message." + result.getCause().name().toLowerCase();
 
         String summary = LangProvider.get(
                 "test.result",
@@ -371,7 +370,7 @@ public class BukkitTestReporter extends AbstractTestReporter
 
     protected void printDetails(Terminal terminal, ScenarioFileStructure scenario, ScenarioResult result)
     {
-        ScenarioResultCause cause = result.getScenarioResultCause();
+        ScenarioResultCause cause = result.getCause();
 
         terminal.info(this.withPrefix(result.getTestID(), scenario, LangProvider.get("test.result.detail")));
         terminal.info(this.withPrefix(result.getTestID(), scenario, LangProvider.get(

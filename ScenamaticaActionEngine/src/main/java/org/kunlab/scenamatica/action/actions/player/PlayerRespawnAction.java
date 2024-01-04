@@ -1,31 +1,44 @@
 package org.kunlab.scenamatica.action.actions.player;
 
 import com.destroystokyo.paper.event.player.PlayerPostRespawnEvent;
-import lombok.EqualsAndHashCode;
-import lombok.Value;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.jetbrains.annotations.NotNull;
-import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.commons.utils.Utils;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.ActionContext;
+import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
+import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
-import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.misc.LocationStructure;
-import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.PlayerSpecifier;
-import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
-public class PlayerRespawnAction extends AbstractPlayerAction<PlayerRespawnAction.Argument>
-        implements Executable<PlayerRespawnAction.Argument>, Watchable<PlayerRespawnAction.Argument>
+public class PlayerRespawnAction extends AbstractPlayerAction
+        implements Executable, Watchable
 {
     public static final String KEY_ACTION_NAME = "player_respawn";
+    public static final InputToken<Boolean> IN_IS_BED = ofInput(
+            "isBed",
+            Boolean.class
+    );
+    public static final InputToken<Boolean> IN_IS_ANCHOR = ofInput(
+            "isAnchor",
+            Boolean.class
+    );
+    public static final InputToken<LocationStructure> IN_LOCATION = ofInput(
+            "location",
+            LocationStructure.class,
+            ofDeserializer(LocationStructure.class)
+    );
+
+    public static final String KEY_OUT_IS_BED = "isBed";
+    public static final String KEY_OUT_IS_ANCHOR = "isAnchor";
+    public static final String KEY_OUT_LOCATION = "location";
 
     @Override
     public String getName()
@@ -34,39 +47,62 @@ public class PlayerRespawnAction extends AbstractPlayerAction<PlayerRespawnActio
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @NotNull PlayerRespawnAction.Argument argument)
+    public void execute(@NotNull ActionContext ctxt)
     {
-        Player player = argument.getTarget(engine);
+        Player player = selectTarget(ctxt);
         if (!player.isDead())
             throw new IllegalStateException("Player is not dead");
 
-        if (argument.getLocation() != null)
-            player.setBedSpawnLocation(Utils.assignWorldToLocation(argument.getLocation(), engine), true);
+        if (ctxt.hasInput(IN_LOCATION))
+            player.setBedSpawnLocation(Utils.assignWorldToLocation(ctxt.input(IN_LOCATION), ctxt.getEngine()), true);
 
+        super.makeOutputs(ctxt, player);
         player.spigot().respawn();
     }
 
     @Override
-    public boolean isFired(@NotNull Argument argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public boolean checkFired(@NotNull ActionContext ctxt, @NotNull Event event)
     {
-        if (!(event instanceof PlayerRespawnEvent || super.checkMatchedPlayerEvent(argument, engine, event)))
+        if (!super.checkMatchedPlayerEvent(ctxt, event))
             return false;
 
+        boolean result;
         if (event instanceof PlayerRespawnEvent)
         {
             PlayerRespawnEvent e = (PlayerRespawnEvent) event;
 
-            return (argument.getIsBed() == null || argument.getIsBed() == e.isBedSpawn())
-                    && (argument.getIsAnchor() == null || argument.getIsAnchor() == e.isAnchorSpawn());
+            result = ctxt.ifHasInput(IN_IS_BED, isBed -> isBed == e.isBedSpawn())
+                    && ctxt.ifHasInput(IN_IS_ANCHOR, isAnchor -> isAnchor == e.isAnchorSpawn())
+                    && ctxt.ifHasInput(IN_LOCATION, loc -> loc.isAdequate(e.getRespawnLocation()));
+            if (result)
+                this.makeOutputs(ctxt, e.getPlayer(), e.isBedSpawn(), e.isAnchorSpawn(), e.getRespawnLocation());
         }
         else
         {
             assert event instanceof PlayerPostRespawnEvent;
             PlayerPostRespawnEvent e = (PlayerPostRespawnEvent) event;
 
-            return (argument.getIsBed() == null || argument.getIsBed() == e.isBedSpawn())
-                    && (argument.getLocation() == null || argument.getLocation().equals(e.getRespawnedLocation()));
+            result = ctxt.ifHasInput(IN_IS_BED, isBed -> isBed == e.isBedSpawn())
+                    && ctxt.ifHasInput(IN_LOCATION, loc -> loc.isAdequate(e.getRespawnedLocation()));
+            if (result)
+                this.makeOutputs(ctxt, e.getPlayer(), e.isBedSpawn(), false, e.getRespawnedLocation());
         }
+
+        return result;
+    }
+
+    private void makeOutputs(@NotNull ActionContext ctxt, @NotNull Player player, boolean isBed, boolean isAnchor, @NotNull Location location)
+    {
+        ctxt.output(KEY_OUT_IS_BED, isBed);
+        ctxt.output(KEY_OUT_IS_ANCHOR, isAnchor);
+        ctxt.output(KEY_OUT_LOCATION, location);
+        super.makeOutputs(ctxt, player);
+    }
+
+    private void makeOutputs(@NotNull ActionContext ctxt, @NotNull Player player, @NotNull Location location)
+    {
+        ctxt.output(KEY_OUT_LOCATION, location);
+        super.makeOutputs(ctxt, player);
     }
 
     @Override
@@ -79,73 +115,13 @@ public class PlayerRespawnAction extends AbstractPlayerAction<PlayerRespawnActio
     }
 
     @Override
-    public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
+    public InputBoard getInputBoard(ScenarioType type)
     {
-        LocationStructure location = null;
-        if (map.containsKey(Argument.KEY_LOCATION))
-            location = serializer.deserialize(
-                    MapUtils.checkAndCastMap(map.get(Argument.KEY_LOCATION)),
-                    LocationStructure.class
-            );
+        InputBoard board = super.getInputBoard(type)
+                .register(IN_LOCATION);
+        if (type != ScenarioType.ACTION_EXECUTE)
+            board.registerAll(IN_IS_BED, IN_IS_ANCHOR);
 
-        return new Argument(
-                super.deserializeTarget(map, serializer),
-                MapUtils.getOrNull(map, Argument.KEY_IS_BED),
-                MapUtils.getOrNull(map, Argument.KEY_IS_ANCHOR),
-                location
-        );
-    }
-
-    @Value
-    @EqualsAndHashCode(callSuper = true)
-    public static class Argument extends AbstractPlayerActionArgument
-    {
-        public static final String KEY_IS_BED = "isBed";
-        public static final String KEY_IS_ANCHOR = "isAnchor";
-        public static final String KEY_LOCATION = "location";
-
-        Boolean isBed;
-        Boolean isAnchor;
-        LocationStructure location;
-
-        public Argument(PlayerSpecifier target, Boolean isBed, Boolean isAnchor, LocationStructure location)
-        {
-            super(target);
-            this.isBed = isBed;
-            this.isAnchor = isAnchor;
-            this.location = location;
-        }
-
-        @Override
-        public boolean isSame(TriggerArgument argument)
-        {
-            if (!(argument instanceof Argument))
-                return false;
-
-            Argument arg = (Argument) argument;
-            return super.isSame(arg)
-                    && this.isBed == arg.isBed
-                    && this.isAnchor == arg.isAnchor;
-        }
-
-        @Override
-        public void validate(@NotNull ScenarioEngine engine, @NotNull ScenarioType type)
-        {
-            if (type != ScenarioType.ACTION_EXECUTE)
-                return;
-
-            ensureNotPresent(Argument.KEY_IS_BED, this.isBed);
-            ensureNotPresent(Argument.KEY_IS_ANCHOR, this.isAnchor);
-        }
-
-        @Override
-        public String getArgumentString()
-        {
-            return appendArgumentString(
-                    super.getArgumentString(),
-                    KEY_IS_BED, this.isBed,
-                    KEY_IS_ANCHOR, this.isAnchor
-            );
-        }
+        return board;
     }
 }

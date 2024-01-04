@@ -8,7 +8,7 @@ public class PacketActionConditionCheckFailed extends AbstractActionPacket
 {
     private static final String TYPE = "condition_success";
 
-    public PacketActionConditionCheckFailed(@NotNull ScenarioEngine scenario, @NotNull CompiledScenarioAction<?> action)
+    public PacketActionConditionCheckFailed(@NotNull ScenarioEngine scenario, @NotNull CompiledScenarioAction action)
     {
         super(TYPE, scenario.getTestID(), action.getAction());
     }

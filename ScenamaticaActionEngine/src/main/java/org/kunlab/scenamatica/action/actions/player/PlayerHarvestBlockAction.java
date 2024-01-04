@@ -1,33 +1,57 @@
 package org.kunlab.scenamatica.action.actions.player;
 
-import lombok.EqualsAndHashCode;
-import lombok.Value;
+import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerHarvestBlockEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.action.actions.block.BlockBreakAction;
+import org.kunlab.scenamatica.action.utils.InputTypeToken;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.ActionContext;
+import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
+import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
-import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.ItemStackStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.misc.BlockStructure;
-import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.PlayerSpecifier;
-import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
-public class PlayerHarvestBlockAction extends AbstractPlayerAction<PlayerHarvestBlockAction.Argument>
-        implements Executable<PlayerHarvestBlockAction.Argument>, Watchable<PlayerHarvestBlockAction.Argument>
+public class PlayerHarvestBlockAction extends AbstractPlayerAction
+        implements Executable, Watchable
 {
     public static final String KEY_ACTION_NAME = "player_harvest_block";
+
+    public static final InputToken<BlockStructure> IN_HARVESTED_BLOCK = ofInput(
+            "block",
+            BlockStructure.class,
+            ofDeserializer(BlockStructure.class)
+    ).validator(ScenarioType.ACTION_EXECUTE, block -> block.getLocation() != null,
+            "block must have location in action execute mode"
+    );
+    public static final InputToken<List<ItemStackStructure>> IN_ITEMS_HARVESTED = ofInput(
+            "items",
+            InputTypeToken.ofList(ItemStackStructure.class),
+            ofTraverser(
+                    List.class,
+                    (ser, map) -> {
+                        List<ItemStackStructure> items = new ArrayList<>();
+                        List<Map<String, Object>> itemMaps = MapUtils.checkAndCastList(map, InputTypeToken.ofMap(String.class, Object.class));
+                        for (Map<String, Object> itemMap : itemMaps)
+                            items.add(ser.deserialize(itemMap, ItemStackStructure.class));
+                        return items;
+                    }
+            )
+    );
+
+    public static final String KEY_BLOCK_HARVESTED = "block";
+    public static final String KEY_ITEMS_HARVESTED = "items";
 
     @Override
     public String getName()
@@ -36,43 +60,54 @@ public class PlayerHarvestBlockAction extends AbstractPlayerAction<PlayerHarvest
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @NotNull PlayerHarvestBlockAction.Argument argument)
+    public void execute(@NotNull ActionContext ctxt)
     {
-        BlockBreakAction.Argument blockBreakArgument = new BlockBreakAction.Argument(
-                argument.getBlock(),
-                argument.getTargetSpecifier(),
-                null
-        );
+        BlockBreakAction breakAction = ctxt.findAction(BlockBreakAction.class);
 
-        BlockBreakAction breakAction = engine.getManager().getRegistry().getActionManager().getCompiler()
-                .findAction(BlockBreakAction.class);
+        InputBoard blockBreakBoard = breakAction.getInputBoard(ScenarioType.ACTION_EXECUTE);
+        blockBreakBoard.getHolder(BlockBreakAction.IN_BLOCK).set(ctxt.input(IN_HARVESTED_BLOCK));
+        blockBreakBoard.getHolder(BlockBreakAction.IN_ACTOR).set(ctxt.input(IN_TARGET));
 
-        breakAction.execute(engine, blockBreakArgument);
+        breakAction.execute(ctxt.renew(blockBreakBoard));
     }
 
     @Override
-    public boolean isFired(@NotNull Argument argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public boolean checkFired(@NotNull ActionContext ctxt, @NotNull Event event)
     {
-        if (!super.checkMatchedPlayerEvent(argument, engine, event))
+        if (!super.checkMatchedPlayerEvent(ctxt, event))
             return false;
 
+        assert event instanceof PlayerHarvestBlockEvent;
         PlayerHarvestBlockEvent e = (PlayerHarvestBlockEvent) event;
 
-        List<ItemStackStructure> items = argument.getItems();
-        if (!items.isEmpty())
-        {
-            @NotNull
-            List<ItemStack> drops = e.getItemsHarvested();
-            for (ItemStackStructure item : items)
-            {
-                boolean isExpectedItemHarvested =
-                        drops.stream().anyMatch(item::isAdequate);
-                if (!isExpectedItemHarvested)
+        boolean result = ctxt.ifHasInput(IN_HARVESTED_BLOCK, block -> block.isAdequate(e.getHarvestedBlock()))
+                && ctxt.ifHasInput(
+                IN_ITEMS_HARVESTED,
+                items -> {
+                    @NotNull
+                    List<ItemStack> drops = e.getItemsHarvested();
+                    for (ItemStackStructure item : items)
+                    {
+                        boolean isExpectedItemHarvested =
+                                drops.stream().anyMatch(item::isAdequate);
+                        if (!isExpectedItemHarvested)
+                            return false;
+                    }
                     return false;
-            }
-        }
+                }
+        );
 
-        return (argument.block == null || argument.getBlock().isAdequate(e.getHarvestedBlock()));
+        if (result)
+            this.makeOutputs(ctxt, e.getPlayer(), e.getHarvestedBlock(), e.getItemsHarvested());
+
+        return result;
+    }
+
+    protected void makeOutputs(@NotNull ActionContext ctxt, @NotNull Player player, @NotNull Block block, List<ItemStack> items)
+    {
+        ctxt.output(KEY_BLOCK_HARVESTED, block);
+        ctxt.output(KEY_ITEMS_HARVESTED, items);
+        super.makeOutputs(ctxt, player);
     }
 
     @Override
@@ -84,82 +119,12 @@ public class PlayerHarvestBlockAction extends AbstractPlayerAction<PlayerHarvest
     }
 
     @Override
-    public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
+    public InputBoard getInputBoard(ScenarioType type)
     {
-        BlockStructure block = null;
-        if (map.containsKey(Argument.KEY_HARVESTED_BLOCK))
-            block = serializer.deserialize(
-                    MapUtils.checkAndCastMap(map.get(Argument.KEY_HARVESTED_BLOCK)),
-                    BlockStructure.class
-            );
-
-        List<ItemStackStructure> items = new ArrayList<>();
-        if (map.containsKey(Argument.KEY_ITEMS_HARVESTED))
-        {
-            List<Map<String, Object>> itemMaps = MapUtils.getAsList(map, Argument.KEY_ITEMS_HARVESTED);
-            for (Map<String, Object> itemMap : itemMaps)
-                items.add(serializer.deserialize(itemMap, ItemStackStructure.class));
-        }
-
-        return new Argument(
-                super.deserializeTarget(map, serializer),
-                block,
-                items
-        );
-    }
-
-    @Value
-    @EqualsAndHashCode(callSuper = true)
-    public static class Argument extends AbstractPlayerActionArgument
-    {
-        public static final String KEY_HARVESTED_BLOCK = "block";
-        public static final String KEY_ITEMS_HARVESTED = "items";
-
-        BlockStructure block;
-        @NotNull
-        List<ItemStackStructure> items;
-
-        public Argument(PlayerSpecifier target, BlockStructure block, @NotNull List<ItemStackStructure> items)
-        {
-            super(target);
-            this.block = block;
-            this.items = items;
-        }
-
-        @Override
-        public void validate(@NotNull ScenarioEngine engine, @NotNull ScenarioType type)
-        {
-            super.validate(engine, type);
-            if (type == ScenarioType.ACTION_EXECUTE)
-            {
-                ensurePresent(KEY_HARVESTED_BLOCK, this.block);
-                ensurePresent(KEY_HARVESTED_BLOCK + BlockStructure.KEY_BLOCK_LOCATION, this.block.getLocation());
-                if (!this.items.isEmpty())
-                    throw new IllegalArgumentException("cannot specify items in action execute mode");
-            }
-        }
-
-        @Override
-        public boolean isSame(TriggerArgument argument)
-        {
-            if (!(argument instanceof Argument))
-                return false;
-
-            Argument arg = (Argument) argument;
-
-            return super.isSame(arg)
-                    && Objects.equals(this.block, arg.block)
-                    && this.items.equals(arg.items);
-        }
-
-        @Override
-        public String getArgumentString()
-        {
-            return appendArgumentString(
-                    super.getArgumentString(),
-                    KEY_HARVESTED_BLOCK, this.block,
-                    KEY_ITEMS_HARVESTED, this.items
-            );
-        }
+        InputBoard board = super.getInputBoard(type)
+                .register(IN_HARVESTED_BLOCK);
+        if (type != ScenarioType.ACTION_EXECUTE)
+            board.register(IN_ITEMS_HARVESTED);
+        return board;
     }
 }

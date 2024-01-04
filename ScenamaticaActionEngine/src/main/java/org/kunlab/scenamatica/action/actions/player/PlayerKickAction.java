@@ -1,31 +1,42 @@
 package org.kunlab.scenamatica.action.actions.player;
 
-import lombok.EqualsAndHashCode;
-import lombok.Value;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.jetbrains.annotations.NotNull;
-import org.kunlab.scenamatica.commons.utils.MapUtils;
+import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.commons.utils.TextUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.ActionContext;
+import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
+import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
-import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
-import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.PlayerSpecifier;
-import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
-public class PlayerKickAction extends AbstractPlayerAction<PlayerKickAction.Argument>
-        implements Executable<PlayerKickAction.Argument>, Watchable<PlayerKickAction.Argument>
+public class PlayerKickAction extends AbstractPlayerAction
+        implements Executable, Watchable
 {
     public static final String KEY_ACTION_NAME = "player_kick";
+    public static final InputToken<String> IN_LEAVE_MESSAGE = ofInput(
+            "leaveMessage",
+            String.class
+    );
+    public static final InputToken<String> IN_KICK_MESSAGE = ofInput(
+            "message",
+            String.class
+    );
+    public static final InputToken<PlayerKickEvent.Cause> IN_CAUSE = ofEnumInput(
+            "cause",
+            PlayerKickEvent.Cause.class
+    );
+
+    public static final String KEY_OUT_LEAVE_MESSAGE = "leaveMessage";
+    public static final String KEY_OUT_KICK_MESSAGE = "message";
+    public static final String KEY_OUT_CAUSE = "cause";
 
     @Override
     public String getName()
@@ -34,24 +45,25 @@ public class PlayerKickAction extends AbstractPlayerAction<PlayerKickAction.Argu
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @NotNull PlayerKickAction.Argument argument)
+    public void execute(@NotNull ActionContext ctxt)
     {
         // leaveMessage はつかえない。
 
-        PlayerKickEvent.Cause cause = argument.getCause();
-        Component kickMessage = argument.getKickMessage() == null ? null: Component.text(argument.getKickMessage());
+        Component kickMessage = ctxt.ifHasInput(IN_KICK_MESSAGE, Component::text, null);
+        PlayerKickEvent.Cause cause = ctxt.orElseInput(IN_CAUSE, () -> null);
+        Player target = selectTarget(ctxt);
 
-        Player target = argument.getTarget(engine);
-        if (cause == null)
-            target.kick(kickMessage);
+        this.makeOutputs(ctxt, target, null, kickMessage, cause);
+        if (ctxt.hasInput(IN_CAUSE))
+            target.kick(kickMessage, ctxt.input(IN_CAUSE));
         else
-            target.kick(kickMessage, cause);
+            target.kick(kickMessage);
     }
 
     @Override
-    public boolean isFired(@NotNull Argument argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public boolean checkFired(@NotNull ActionContext ctxt, @NotNull Event event)
     {
-        if (!super.checkMatchedPlayerEvent(argument, engine, event))
+        if (!super.checkMatchedPlayerEvent(ctxt, event))
             return false;
 
         PlayerKickEvent e = (PlayerKickEvent) event;
@@ -59,13 +71,23 @@ public class PlayerKickAction extends AbstractPlayerAction<PlayerKickAction.Argu
         Component kickMessage = e.reason();
         PlayerKickEvent.Cause cause = e.getCause();
 
-        String expectedLeaveMessage = argument.getLeaveMessage();
-        String expectedKickMessage = argument.getKickMessage();
-        PlayerKickEvent.Cause expectedCause = argument.getCause();
+        boolean result = ctxt.ifHasInput(IN_LEAVE_MESSAGE, message -> TextUtils.isSameContent(leaveMessage, message))
+                && ctxt.ifHasInput(IN_KICK_MESSAGE, message -> TextUtils.isSameContent(kickMessage, message))
+                && ctxt.ifHasInput(IN_CAUSE, c -> c == cause);
+        if (result)
+            this.makeOutputs(ctxt, e.getPlayer(), leaveMessage, kickMessage, cause);
 
-        return (expectedLeaveMessage == null || TextUtils.isSameContent(leaveMessage, expectedLeaveMessage))
-                && (expectedKickMessage == null || TextUtils.isSameContent(kickMessage, expectedKickMessage))
-                && (expectedCause == null || cause == expectedCause);
+        return result;
+    }
+
+    protected void makeOutputs(@NotNull ActionContext ctxt, @NotNull Player player, @Nullable Component leaveMessage, @Nullable Component kickMessage, @Nullable PlayerKickEvent.Cause cause)
+    {
+        if (leaveMessage != null)
+            ctxt.output(KEY_OUT_LEAVE_MESSAGE, TextUtils.toString(leaveMessage));
+        if (kickMessage != null)
+            ctxt.output(KEY_OUT_KICK_MESSAGE, TextUtils.toString(kickMessage));
+        ctxt.output(KEY_OUT_CAUSE, cause);
+        super.makeOutputs(ctxt, player);
     }
 
     @Override
@@ -77,66 +99,14 @@ public class PlayerKickAction extends AbstractPlayerAction<PlayerKickAction.Argu
     }
 
     @Override
-    public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
+    public InputBoard getInputBoard(ScenarioType type)
     {
-        return new Argument(
-                super.deserializeTarget(map, serializer),
-                MapUtils.getOrNull(map, Argument.KEY_LEAVE_MESSAGE),
-                MapUtils.getOrNull(map, Argument.KEY_KICK_MESSAGE),
-                MapUtils.getAsEnumOrNull(map, Argument.KEY_CAUSE, PlayerKickEvent.Cause.class)
-        );
-    }
+        InputBoard board = super.getInputBoard(type)
+                .registerAll(IN_KICK_MESSAGE, IN_CAUSE);
 
-    @Value
-    @EqualsAndHashCode(callSuper = true)
-    public static class Argument extends AbstractPlayerActionArgument
-    {
-        public static final String KEY_LEAVE_MESSAGE = "leave_message";
-        public static final String KEY_KICK_MESSAGE = "message";
-        public static final String KEY_CAUSE = "cause";
+        if (type != ScenarioType.ACTION_EXECUTE)
+            board.register(IN_LEAVE_MESSAGE);
 
-        String leaveMessage;
-        String kickMessage;
-        PlayerKickEvent.Cause cause;
-
-        public Argument(PlayerSpecifier target, String leaveMessage, String kickMessage, PlayerKickEvent.Cause cause)
-        {
-            super(target);
-            this.leaveMessage = leaveMessage;
-            this.kickMessage = kickMessage;
-            this.cause = cause;
-        }
-
-        @Override
-        public boolean isSame(TriggerArgument argument)
-        {
-            if (!(argument instanceof Argument))
-                return false;
-
-            Argument arg = (Argument) argument;
-
-            return super.isSame(arg)
-                    && Objects.equals(this.leaveMessage, arg.leaveMessage)
-                    && Objects.equals(this.kickMessage, arg.kickMessage)
-                    && this.cause == arg.cause;
-        }
-
-        @Override
-        public void validate(@NotNull ScenarioEngine engine, @NotNull ScenarioType type)
-        {
-            if (type == ScenarioType.ACTION_EXECUTE)
-                ensureNotPresent(KEY_LEAVE_MESSAGE, this.leaveMessage);
-        }
-
-        @Override
-        public String getArgumentString()
-        {
-            return appendArgumentString(
-                    super.getArgumentString(),
-                    KEY_LEAVE_MESSAGE, this.leaveMessage,
-                    KEY_KICK_MESSAGE, this.kickMessage,
-                    KEY_CAUSE, this.cause
-            );
-        }
+        return board;
     }
 }

@@ -1,22 +1,18 @@
 package org.kunlab.scenamatica.interfaces.action.types;
 
 import org.jetbrains.annotations.NotNull;
-import org.kunlab.scenamatica.interfaces.action.ActionArgument;
-import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
+import org.kunlab.scenamatica.interfaces.action.ActionContext;
 
 /**
  * コンディションのチェックが可能な動作を表すインターフェースです。
- *
- * @param <A> 動作の引数の型
  */
-public interface Requireable<A extends ActionArgument>
+public interface Requireable
 {
     /**
      * 条件を満たしているかチェックします。
      *
-     * @param argument 引数
-     * @param engine   エンジン
-     * @return 条件を満たしている場合はtrue
+     * @param ctxt 動作の実行コンテキスト
+     * @return 条件を満たしている場合は true
      */
-    boolean isConditionFulfilled(@NotNull A argument, @NotNull ScenarioEngine engine);
+    boolean checkConditionFulfilled(@NotNull ActionContext ctxt);
 }

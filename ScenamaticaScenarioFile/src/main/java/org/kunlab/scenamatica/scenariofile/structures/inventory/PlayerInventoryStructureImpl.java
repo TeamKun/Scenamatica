@@ -194,6 +194,27 @@ public class PlayerInventoryStructureImpl extends GenericInventoryStructureImpl 
         );
     }
 
+    public static PlayerInventoryStructure of(@NotNull PlayerInventory inventory)
+    {
+        ItemStackStructure[] armors = new ItemStackStructure[4];
+        for (int i = 0; i < armors.length; i++)
+        {
+            ItemStack armor = inventory.getArmorContents()[i];
+            //noinspection ConstantValue  <- nullる可能性ある。
+            if (armor == null)
+                armors[i] = null;
+            else
+                armors[i] = ItemStackStructureImpl.of(armor);
+        }
+
+        return new PlayerInventoryStructureImpl(
+                InventoryStructureImpl.of(inventory),
+                ItemStackStructureImpl.of(inventory.getItemInMainHand()),
+                ItemStackStructureImpl.of(inventory.getItemInOffHand()),
+                armors
+        );
+    }
+
     @Override
     public boolean canApplyTo(Object target)
     {

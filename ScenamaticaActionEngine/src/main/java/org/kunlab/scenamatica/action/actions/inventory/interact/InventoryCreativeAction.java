@@ -1,32 +1,33 @@
 package org.kunlab.scenamatica.action.actions.inventory.interact;
 
-import lombok.EqualsAndHashCode;
-import lombok.Value;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
-import org.bukkit.event.inventory.ClickType;
-import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryCreativeEvent;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import org.kunlab.scenamatica.commons.utils.MapUtils;
-import org.kunlab.scenamatica.commons.utils.PlayerUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.ActionContext;
+import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
+import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.context.Actor;
-import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.ItemStackStructure;
-import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
-public class InventoryCreativeAction extends InventoryClickAction<InventoryCreativeAction.Argument>
-        implements Executable<InventoryCreativeAction.Argument>, Watchable<InventoryCreativeAction.Argument>
+public class InventoryCreativeAction extends InventoryClickAction
+        implements Executable, Watchable
 {
     public static final String KEY_ACTION_NAME = "inventory_creative";
+    public static final InputToken<ItemStackStructure> IN_ITEM = ofInput(
+            "item",
+            ItemStackStructure.class,
+            ofDeserializer(ItemStackStructure.class)
+    );
+
+    public static final String KEY_OUT_ITEM = "item";
 
     @Override
     public String getName()
@@ -35,25 +36,44 @@ public class InventoryCreativeAction extends InventoryClickAction<InventoryCreat
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @NotNull InventoryCreativeAction.Argument argument)
+    public void execute(@NotNull ActionContext ctxt)
     {
-        int slot = argument.getSlot();
-        Actor actor = PlayerUtils.getActorOrThrow(
-                engine,
-                argument.getTargetSpecifier().selectTarget(engine.getContext())
-                        .orElseThrow(() -> new IllegalStateException("Target is not found."))
+        int slot = ctxt.input(IN_SLOT);
+        Actor actor = ctxt.getActorOrThrow(ctxt.input(IN_PLAYER)
+                .selectTarget(ctxt.getContext())
+                .orElseThrow(() -> new IllegalStateException("Target is not found."))
         );
 
-        actor.giveCreativeItem(slot, argument.getItem().create());
+        ItemStack stack = ctxt.input(IN_ITEM).create();
+        this.makeOutputs(ctxt, actor.getPlayer(), stack, slot);
+        actor.giveCreativeItem(slot, stack);
+    }
+
+    protected void makeOutputs(@NotNull ActionContext ctxt, @NotNull Player player, @NotNull ItemStack item, int slot)
+    {
+        ctxt.output(KEY_OUT_ITEM, item);
+        ctxt.output(OUT_KEY_SLOT, slot);
+        super.makeOutputs(ctxt, player.getInventory());
     }
 
     @Override
-    public boolean isFired(@NotNull Argument argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public boolean checkFired(@NotNull ActionContext ctxt, @NotNull Event event)
     {
+        assert event instanceof InventoryCreativeEvent;
         InventoryCreativeEvent e = (InventoryCreativeEvent) event;
 
-        return super.isFired(argument, engine, event)
-                && (argument.getItem() == null || argument.getItem().isAdequate(e.getCursor()));
+        boolean result = super.checkFired(ctxt, event)
+                && ctxt.ifHasInput(IN_ITEM, item -> item.isAdequate(e.getCursor()));
+        if (result)
+            ctxt.output(KEY_OUT_ITEM, e.getCursor());
+
+        return result;
+    }
+
+    protected void makeOutputs(@NotNull ActionContext ctxt, @NotNull InventoryCreativeEvent e)
+    {
+        ctxt.output(KEY_OUT_ITEM, e.getCursor());
+        super.makeOutputs(ctxt, e);
     }
 
     @Override
@@ -65,75 +85,13 @@ public class InventoryCreativeAction extends InventoryClickAction<InventoryCreat
     }
 
     @Override
-    public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
+    public InputBoard getInputBoard(ScenarioType type)
     {
-        ItemStackStructure stack = null;
-        if (map.containsKey(Argument.KEY_ITEM))
-            stack = serializer.deserialize(
-                    MapUtils.checkAndCastMap(map.get(Argument.KEY_ITEM)),
-                    ItemStackStructure.class
-            );
+        InputBoard board = super.getInputBoard(type)
+                .register(IN_ITEM);
+        if (type == ScenarioType.ACTION_EXECUTE)
+            board.requirePresent(IN_ITEM, IN_SLOT);
 
-        return new Argument(
-                super.deserializeArgument(map, serializer),
-                stack
-        );
-    }
-
-    @Value
-    @EqualsAndHashCode(callSuper = true)
-    public static class Argument extends InventoryClickAction.Argument
-    {
-        public static final String KEY_ITEM = "item";
-
-        ItemStackStructure item;
-
-        public Argument(InventoryClickAction.Argument argument, ItemStackStructure item)
-        {
-            super(
-                    argument.getInventory(),
-                    argument.getTargetSpecifier(),
-                    ClickType.CREATIVE,
-                    InventoryAction.PLACE_ALL,
-                    argument.getSlotType(),
-                    argument.getSlot(),
-                    argument.getRawSlot(),
-                    argument.getClickedItem(),
-                    argument.getButton(),
-                    argument.getCursorItem()
-            );
-            this.item = item;
-        }
-
-        @Override
-        public void validate(@NotNull ScenarioEngine engine, @NotNull ScenarioType type)
-        {
-            if (type == ScenarioType.ACTION_EXECUTE)
-            {
-                ensurePresent(KEY_ITEM, this.item);
-                ensurePresent(KEY_SLOT, this.getSlot());
-            }
-        }
-
-        @Override
-        public boolean isSame(TriggerArgument argument)
-        {
-            if (!(argument instanceof Argument))
-                return false;
-
-            Argument arg = (Argument) argument;
-
-            return super.isSame(arg) &&
-                    Objects.equals(this.item, arg.item);
-        }
-
-        @Override
-        public String getArgumentString()
-        {
-            return appendArgumentString(
-                    super.getArgumentString(),
-                    KEY_ITEM, this.item
-            );
-        }
+        return board;
     }
 }

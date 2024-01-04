@@ -1,32 +1,40 @@
 package org.kunlab.scenamatica.action.actions.inventory;
 
-import lombok.EqualsAndHashCode;
-import lombok.Value;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.ActionContext;
+import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
+import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
-import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
-import org.kunlab.scenamatica.interfaces.scenariofile.inventory.InventoryStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.PlayerSpecifier;
-import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
-public class InventoryCloseAction extends AbstractInventoryAction<InventoryCloseAction.Argument>
-        implements Executable<InventoryCloseAction.Argument>, Watchable<InventoryCloseAction.Argument>
+public class InventoryCloseAction extends AbstractInventoryAction
+        implements Executable, Watchable
 {
     public static final String KEY_ACTION_NAME = "inventory_close";
+    public static final InputToken<PlayerSpecifier> IN_PLAYER = ofInput(
+            "target",
+            PlayerSpecifier.class,
+            ofPlayer()
+    );
+    public static final InputToken<InventoryCloseEvent.Reason> IN_REASON = ofInput(
+            "reason",
+            InventoryCloseEvent.Reason.class,
+            ofEnum(InventoryCloseEvent.Reason.class)
+    );
+
+    public static final String KEY_OUT_TARGET = "target";
+    public static final String KEY_OUT_REASON = "reason";
 
     @Override
     public String getName()
@@ -35,13 +43,12 @@ public class InventoryCloseAction extends AbstractInventoryAction<InventoryClose
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @NotNull InventoryCloseAction.Argument argument)
+    public void execute(@NotNull ActionContext ctxt)
     {
-        Player player = argument.getTargetSpecifier().selectTarget(engine.getContext())
+        Player player = ctxt.input(IN_PLAYER).selectTarget(ctxt.getContext())
                 .orElseThrow(() -> new IllegalStateException("Cannot select target for this action, please specify target with valid specifier."));
 
-        InventoryCloseEvent.Reason reason = argument.getReason();
-
+        InventoryCloseEvent.Reason reason = ctxt.orElseInput(IN_REASON, () -> null);
         if (reason == null)
             player.closeInventory();
         else
@@ -49,17 +56,36 @@ public class InventoryCloseAction extends AbstractInventoryAction<InventoryClose
     }
 
     @Override
-    public boolean isFired(@NotNull Argument argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public boolean checkFired(@NotNull ActionContext ctxt, @NotNull Event event)
     {
-        if (!super.checkMatchedInventoryEvent(argument, engine, event))
+        if (!super.checkMatchedInventoryEvent(ctxt, event))
             return false;
 
         assert event instanceof InventoryCloseEvent;
         InventoryCloseEvent e = (InventoryCloseEvent) event;
         HumanEntity player = e.getPlayer();
+        if (!(player instanceof Player))
+            return false;
 
-        return (!argument.getTargetSpecifier().canProvideTarget() || argument.getTargetSpecifier().checkMatchedPlayer((Player) player))
-                && (argument.getReason() == null || argument.getReason() == e.getReason());
+        boolean result = ctxt.ifHasInput(IN_PLAYER, specifier -> specifier.checkMatchedPlayer((Player) player))
+                && ctxt.ifHasInput(IN_REASON, reason -> reason == e.getReason());
+        if (result)
+            this.makeOutputs(ctxt, e);
+
+        return result;
+    }
+
+    protected void makeOutputs(@NotNull ActionContext ctxt, @NotNull Inventory inventory, @NotNull Player player, @Nullable InventoryCloseEvent.Reason reason)
+    {
+        ctxt.output(KEY_OUT_TARGET, player);
+        if (reason != null)
+            ctxt.output(KEY_OUT_REASON, reason);
+        super.makeOutputs(ctxt, inventory);
+    }
+
+    protected void makeOutputs(@NotNull ActionContext ctxt, @NotNull InventoryCloseEvent e)
+    {
+        this.makeOutputs(ctxt, e.getInventory(), (Player) e.getPlayer(), e.getReason());
     }
 
     @Override
@@ -71,65 +97,14 @@ public class InventoryCloseAction extends AbstractInventoryAction<InventoryClose
     }
 
     @Override
-    public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
+    public InputBoard getInputBoard(ScenarioType type)
     {
-        return new Argument(
-                super.deserializeInventoryIfContains(map, serializer),
-                serializer.tryDeserializePlayerSpecifier(map.get(Argument.KEY_TARGET_PLAYER)),
-                MapUtils.getAsEnumOrNull(map, Argument.KEY_REASON, InventoryCloseEvent.Reason.class)
-        );
-    }
+        InputBoard board = ofInputs(type, IN_PLAYER, IN_REASON);
+        if (type == ScenarioType.ACTION_EXECUTE)
+            board.requirePresent(IN_PLAYER);
+        else
+            board.register(IN_INVENTORY); // EXECUTE には INVENTORY は必要ない
 
-    @Value
-    @EqualsAndHashCode(callSuper = true)
-    public static class Argument extends AbstractInventoryArgument
-    {
-        public static final String KEY_TARGET_PLAYER = "target";
-        public static final String KEY_REASON = "reason";
-
-        @NotNull
-        PlayerSpecifier targetSpecifier;
-        InventoryCloseEvent.Reason reason;
-
-        public Argument(@Nullable InventoryStructure inventory, @NotNull PlayerSpecifier targetSpecifier, InventoryCloseEvent.Reason reason)
-        {
-            super(inventory);
-            this.targetSpecifier = targetSpecifier;
-            this.reason = reason;
-        }
-
-        @Override
-        public boolean isSame(TriggerArgument argument)
-        {
-            if (!(argument instanceof Argument))
-                return false;
-            else if (!super.isSame(argument))
-                return false;
-
-            Argument arg = (Argument) argument;
-
-            return Objects.equals(this.targetSpecifier, arg.targetSpecifier)
-                    && this.reason == arg.reason;
-        }
-
-        @Override
-        public void validate(@NotNull ScenarioEngine engine, @NotNull ScenarioType type)
-        {
-            if (type == ScenarioType.ACTION_EXECUTE)
-            {
-                ensurePresent(Argument.KEY_TARGET_PLAYER, this.targetSpecifier);
-                ensureNotPresent(Argument.KEY_INVENTORY, this.inventory);
-            }
-        }
-
-        @Override
-        public String getArgumentString()
-        {
-            return appendArgumentString(
-                    super.getArgumentString(),
-                    KEY_TARGET_PLAYER, this.targetSpecifier,
-                    KEY_REASON, this.reason
-            );
-        }
+        return board;
     }
 }

@@ -1,30 +1,29 @@
 package org.kunlab.scenamatica.action.actions.world;
 
-import lombok.EqualsAndHashCode;
-import lombok.Value;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.World;
 import org.bukkit.event.Event;
 import org.bukkit.event.world.WorldUnloadEvent;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.ActionContext;
+import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
+import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
-import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
-import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
-public class WorldUnloadAction extends AbstractWorldAction<WorldUnloadAction.Argument>
-        implements Executable<WorldUnloadAction.Argument>, Requireable<WorldUnloadAction.Argument>
+public class WorldUnloadAction extends AbstractWorldAction
+        implements Executable, Requireable
 {
     public static final String KEY_ACTION_NAME = "world_unload";
+    public static final InputToken<Boolean> IN_SAVE = ofInput(
+            "save",
+            Boolean.class
+    );
 
     @Override
     public String getName()
@@ -33,11 +32,14 @@ public class WorldUnloadAction extends AbstractWorldAction<WorldUnloadAction.Arg
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @NotNull WorldUnloadAction.Argument argument)
+    public void execute(@NotNull ActionContext ctxt)
     {
-        World world = argument.getWorldNonNull(engine);
+        World world = super.getWorld(ctxt);
 
-        Bukkit.getServer().unloadWorld(world, !Boolean.FALSE.equals(argument.getSave()));  // ぬるぽ回避 && デフォは true
+        if (world == null)
+            throw new IllegalStateException("Unable to find world: " + ctxt.input(IN_WORLD));
+        this.makeOutputs(ctxt, world);
+        Bukkit.getServer().unloadWorld(world, ctxt.orElseInput(IN_SAVE, () -> true));
     }
 
     @Override
@@ -49,63 +51,21 @@ public class WorldUnloadAction extends AbstractWorldAction<WorldUnloadAction.Arg
     }
 
     @Override
-    public boolean isConditionFulfilled(@NotNull WorldUnloadAction.Argument argument, @NotNull ScenarioEngine engine)
+    public boolean checkConditionFulfilled(@NotNull ActionContext ctxt)
     {
-        NamespacedKey key = argument.getWorldRef();
+        NamespacedKey key = ctxt.input(IN_WORLD);
         assert key != null;
 
-        return Bukkit.getWorld(key) == null;
+        boolean result = Bukkit.getWorld(key) == null;
+        if (result)
+            this.makeOutputs(ctxt, key);
+        return result;
     }
 
     @Override
-    public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
+    public InputBoard getInputBoard(ScenarioType type)
     {
-        return new Argument(
-                super.deserializeWorld(map),
-                MapUtils.getOrNull(map, Argument.KEY_SAVE)
-        );
-    }
-
-    @Value
-    @EqualsAndHashCode(callSuper = true)
-    public static class Argument extends AbstractWorldActionArgument
-    {
-        public static final String KEY_SAVE = "save";
-
-        @Nullable
-        Boolean save;
-
-        public Argument(@Nullable NamespacedKey worldRef, Boolean save)
-        {
-            super(worldRef);
-            this.save = save;
-        }
-
-        @Override
-        public boolean isSame(TriggerArgument argument)
-        {
-            if (!(argument instanceof Argument))
-                return false;
-
-            Argument arg = (Argument) argument;
-
-            return this.isSameWorld(arg);
-        }
-
-        @Override
-        public void validate(@NotNull ScenarioEngine engine, @NotNull ScenarioType type)
-        {
-            if (!(type == ScenarioType.ACTION_EXECUTE || this.save == null))
-                throw new IllegalArgumentException("Argument 'save' is only available in 'action_execute' type.");
-        }
-
-        @Override
-        public String getArgumentString()
-        {
-            return appendArgumentString(
-                    super.getArgumentString(),
-                    KEY_SAVE, this.save
-            );
-        }
+        return super.getInputBoard(type)
+                .registerAll(IN_SAVE);
     }
 }

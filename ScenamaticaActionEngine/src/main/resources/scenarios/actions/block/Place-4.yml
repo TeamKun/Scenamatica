@@ -1,0 +1,34 @@
+# noinspection YAMLSchemaValidation
+scenamatica: ${project.version}
+
+name: actions_block_place_4
+description: Testing block_place action works or not
+on:
+  - type: on_load
+  - type: manual_dispatch
+
+context:
+  actors:
+    - name: Actor001
+  stage:
+    type: normal
+
+
+scenario:
+  - type: execute
+    action: block_place
+    with:
+      actor: Actor001
+      block:
+        type: SAND
+        location:
+          x: 4578
+          y: 255
+          z: 0
+    timeout: 20
+  - type: expect
+    action: block_place
+    with:
+      actor: ${scenario.scenario.0.output.actor}
+      block:
+        location: ${scenario.scenario.0.output.block.location}

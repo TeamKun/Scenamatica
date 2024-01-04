@@ -56,14 +56,14 @@ public class CommandList extends CommandBase
                 )
         );
 
-        scenarioMap.values().stream().parallel()
+        scenarioMap.values().stream()
                 .sorted(Comparator.comparing(ScenarioFileStructure::getName))
                 .forEachOrdered(scenario -> this.printScenario(terminal, plugin, scenario));
     }
 
     private void printScenario(Terminal terminal, Plugin plugin, ScenarioFileStructure scenario)
     {
-        boolean canManualDispatch = scenario.getTriggers().stream().parallel()
+        boolean canManualDispatch = scenario.getTriggers().stream()
                 .anyMatch(trigger -> trigger.getType() == TriggerType.MANUAL_DISPATCH);
         String manualDispatch = LangProvider.get(canManualDispatch ? "command.enable.enable": "command.enable.disable");
 

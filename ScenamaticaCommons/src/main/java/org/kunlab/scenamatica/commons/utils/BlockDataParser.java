@@ -15,6 +15,8 @@ public class BlockDataParser
             return Collections.emptyMap();
 
         String dataString = data.getAsString(true);
+        if (!dataString.contains("["))
+            return Collections.emptyMap();
         return parseSpecifiers(trimSpecifiers(dataString));
     }
 
@@ -48,8 +50,8 @@ public class BlockDataParser
         Map<String, Object> map = new HashMap<>();
 
         String buffer;
-        int idx;
-        while ((idx = specifiers.indexOf('=')) != -1)
+        int idx = 0;
+        while ((idx = specifiers.indexOf('=', idx)) != -1)
         {
             buffer = specifiers.substring(0, idx);
             specifiers = specifiers.substring(idx + 1);
@@ -61,10 +63,13 @@ public class BlockDataParser
             String key = buffer.trim();
             String value = specifiers.substring(0, idx).trim();
 
-            specifiers = specifiers.substring(idx + 1);
-
             Object casted = castType(value);
             map.put(key, casted);
+
+            if (idx == specifiers.length())
+                break;
+            else
+                specifiers = specifiers.substring(idx + 1);
         }
 
         return map;

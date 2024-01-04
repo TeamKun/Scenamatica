@@ -23,7 +23,7 @@ public interface StructureSerializer
      * @return シリアライズされた Structure の Map
      * @throws IllegalArgumentException シリアライズに失敗した場合
      */
-    @NotNull <T extends Structure> Map<String, Object> serialize(@NotNull T structure, @NotNull Class<T> clazz);
+    @NotNull <T extends Structure> Map<String, Object> serialize(@NotNull T structure, @Nullable Class<T> clazz);
 
     /**
      * Structure をデシリアライズします。
@@ -45,6 +45,35 @@ public interface StructureSerializer
      * @throws IllegalArgumentException 検証に失敗した場合
      */
     <T extends Structure> void validate(@NotNull Map<String, Object> map, @NotNull Class<T> clazz);
+
+    /**
+     * 実体を Mapped のインスタンスに変換します。
+     *
+     * @param value 実体
+     * @param clazz Mapped のインスタンスのクラス
+     * @param <V>   実体の型
+     * @param <T>   Mapped のインスタンスの型
+     * @return Mapped のインスタンス
+     */
+    <V, T extends Mapped<V> & Structure> T toStructure(@NotNull V value, @Nullable Class<T> clazz);
+
+    /**
+     * 指定された値を Structure に変換できるかどうかを返します。
+     *
+     * @param value 値
+     * @return 変換できるかどうか
+     */
+    boolean canConvertToStructure(@NotNull Object value);
+
+    /**
+     * 実体を Mapped のインスタンスに変換します。
+     *
+     * @param value 実体
+     * @param <V>   実体の型
+     * @param <T>   Mapped のインスタンスの型
+     * @return Mapped のインスタンス
+     */
+    <V, T extends Mapped<V> & Structure> T toStructure(@NotNull V value);
 
     /**
      * エンティティ指定子をデシリアライズします。

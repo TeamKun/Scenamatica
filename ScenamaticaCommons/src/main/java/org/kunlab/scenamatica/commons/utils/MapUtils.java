@@ -230,6 +230,20 @@ public class MapUtils
         return (Map<String, Object>) mayMap;
     }
 
+    @SuppressWarnings("unchecked")
+    public static <T> List<T> checkAndCastList(Object mayList, Class<T> valueType)
+    {
+        if (!(mayList instanceof List))
+            throw new IllegalArgumentException("Unexpected type of value: " + mayList + " (expected: List)");
+
+        List<?> list = (List<?>) mayList;
+        for (Object o : list)
+            if (!valueType.isInstance(o))
+                throw new IllegalArgumentException("Unexpected type of value: " + o + " (expected: " + valueType.getSimpleName() + ")");
+
+        return (List<T>) list;
+    }
+
     public static <T extends Enum<T>> void checkEnumName(Map<String, Object> map, String key, Class<T> enumType)
     {
         MapUtils.checkContainsKey(map, key);

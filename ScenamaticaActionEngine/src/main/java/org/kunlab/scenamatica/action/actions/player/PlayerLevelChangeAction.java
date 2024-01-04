@@ -1,31 +1,37 @@
 package org.kunlab.scenamatica.action.actions.player;
 
-import lombok.EqualsAndHashCode;
-import lombok.Value;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerLevelChangeEvent;
 import org.jetbrains.annotations.NotNull;
-import org.kunlab.scenamatica.commons.utils.MapUtils;
+import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.ActionContext;
+import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
+import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
-import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
-import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.PlayerSpecifier;
-import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
-public class PlayerLevelChangeAction extends AbstractPlayerAction<PlayerLevelChangeAction.Argument>
-        implements Watchable<PlayerLevelChangeAction.Argument>, Executable<PlayerLevelChangeAction.Argument>,
-        Requireable<PlayerLevelChangeAction.Argument>
+public class PlayerLevelChangeAction extends AbstractPlayerAction
+        implements Watchable, Executable,
+        Requireable
 {
     public static final String KEY_ACTION_NAME = "player_level_change";
+    public static final InputToken<Integer> IN_OLD_LEVEL = ofInput(
+            "oldLevel",
+            Integer.class
+    );
+    public static final InputToken<Integer> IN_NEW_LEVEL = ofInput(
+            "level",
+            Integer.class
+    );
+
+    public static final String KEY_OUT_OLD_LEVEL = "oldLevel";
+    public static final String KEY_OUT_NEW_LEVEL = "level";
 
     @Override
     public String getName()
@@ -34,22 +40,30 @@ public class PlayerLevelChangeAction extends AbstractPlayerAction<PlayerLevelCha
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @NotNull PlayerLevelChangeAction.Argument argument)
+    public void execute(@NotNull ActionContext ctxt)
     {
-        Player player = argument.getTarget(engine);
-        player.setLevel(argument.getNewLevel());
+        Player player = selectTarget(ctxt);
+        int oldLevel = player.getLevel();
+        int newLevel = ctxt.input(IN_NEW_LEVEL);
+
+        this.makeOutputs(ctxt, player, oldLevel, newLevel);
+        player.setLevel(newLevel);
     }
 
     @Override
-    public boolean isFired(@NotNull Argument argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public boolean checkFired(@NotNull ActionContext ctxt, @NotNull Event event)
     {
-        if (!super.checkMatchedPlayerEvent(argument, engine, event))
+        if (!super.checkMatchedPlayerEvent(ctxt, event))
             return false;
 
         PlayerLevelChangeEvent e = (PlayerLevelChangeEvent) event;
 
-        return (argument.getOldLevel() == null || argument.getOldLevel() == e.getOldLevel())
-                && (argument.getNewLevel() == null || argument.getNewLevel() == e.getNewLevel());
+        boolean result = ctxt.ifHasInput(IN_OLD_LEVEL, oldLevel -> oldLevel == e.getOldLevel())
+                && ctxt.ifHasInput(IN_NEW_LEVEL, newLevel -> newLevel == e.getNewLevel());
+        if (result)
+            this.makeOutputs(ctxt, e.getPlayer(), e.getOldLevel(), e.getNewLevel());
+
+        return result;
     }
 
     @Override
@@ -61,68 +75,39 @@ public class PlayerLevelChangeAction extends AbstractPlayerAction<PlayerLevelCha
     }
 
     @Override
-    public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
+    public boolean checkConditionFulfilled(@NotNull ActionContext ctxt)
     {
-        return new Argument(
-                super.deserializeTarget(map, serializer),
-                MapUtils.getAsNumberOrNull(map, Argument.KEY_OLD_LEVEL, Number::intValue),
-                MapUtils.getAsNumberOrNull(map, Argument.KEY_NEW_LEVEL, Number::intValue)
-        );
+        Player player = selectTarget(ctxt);
+        boolean result = ctxt.ifHasInput(IN_NEW_LEVEL, newLevel -> newLevel == player.getLevel());
+        if (result)
+            this.makeOutputs(ctxt, player, null, player.getLevel());
+
+        return result;
+    }
+
+    private void makeOutputs(@NotNull ActionContext ctxt, @NotNull Player player, @Nullable Integer oldLevel, int newLevel)
+    {
+        if (oldLevel != null)
+            ctxt.output(KEY_OUT_OLD_LEVEL, oldLevel);
+        ctxt.output(KEY_OUT_NEW_LEVEL, newLevel);
+        super.makeOutputs(ctxt, player);
     }
 
     @Override
-    public boolean isConditionFulfilled(@NotNull PlayerLevelChangeAction.Argument argument, @NotNull ScenarioEngine engine)
+    public InputBoard getInputBoard(ScenarioType type)
     {
-        Player player = argument.getTarget(engine);
-        return player.getLevel() == argument.getNewLevel();
-    }
-
-    @Value
-    @EqualsAndHashCode(callSuper = true)
-    public static class Argument extends AbstractPlayerActionArgument
-    {
-        public static final String KEY_OLD_LEVEL = "oldLevel";
-        public static final String KEY_NEW_LEVEL = "level";
-
-        Integer oldLevel;
-        Integer newLevel;
-
-        public Argument(PlayerSpecifier target, Integer oldLevel, Integer newLevel)
+        InputBoard board = super.getInputBoard(type)
+                .register(IN_NEW_LEVEL);
+        switch (type)
         {
-            super(target);
-            this.oldLevel = oldLevel;
-            this.newLevel = newLevel;
+            case ACTION_EXPECT:
+                board.register(IN_OLD_LEVEL);
+                break;
+            case ACTION_EXECUTE:
+                board.requirePresent(IN_NEW_LEVEL);
+                break;
         }
 
-        @Override
-        public void validate(@NotNull ScenarioEngine engine, @NotNull ScenarioType type)
-        {
-            super.validate(engine, type);
-            if (type == ScenarioType.ACTION_EXECUTE || type == ScenarioType.CONDITION_REQUIRE)
-                ensureNotPresent(KEY_OLD_LEVEL, this.oldLevel);
-        }
-
-        @Override
-        public boolean isSame(TriggerArgument argument)
-        {
-            if (!(argument instanceof Argument))
-                return false;
-
-            Argument arg = (Argument) argument;
-
-            return super.isSame(arg)
-                    && Objects.equals(this.oldLevel, arg.oldLevel)
-                    && Objects.equals(this.newLevel, arg.newLevel);
-        }
-
-        @Override
-        public String getArgumentString()
-        {
-            return appendArgumentString(
-                    super.getArgumentString(),
-                    KEY_OLD_LEVEL, this.oldLevel,
-                    KEY_NEW_LEVEL, this.newLevel
-            );
-        }
+        return board;
     }
 }

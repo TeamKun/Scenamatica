@@ -7,22 +7,70 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerBucketEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.actions.player.AbstractPlayerAction;
 import org.kunlab.scenamatica.action.utils.VoxelUtils;
-import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
+import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.ActionContext;
+import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
+import org.kunlab.scenamatica.interfaces.action.input.InputToken;
+import org.kunlab.scenamatica.interfaces.context.Actor;
+import org.kunlab.scenamatica.interfaces.scenariofile.inventory.ItemStackStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.misc.BlockStructure;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class AbstractPlayerBucketAction<A extends BucketActionArgument> extends AbstractPlayerAction<A>
+public abstract class AbstractPlayerBucketAction extends AbstractPlayerAction
 {
-    public static List<? extends AbstractPlayerBucketAction<?>> getActions()
+    public static final InputToken<ItemStackStructure> IN_ITEM = ofInput(
+            "item",
+            ItemStackStructure.class,
+            ofDeserializer(ItemStackStructure.class)
+    );
+    public static final InputToken<BlockStructure> IN_BLOCK = ofInput(
+            "block",
+            BlockStructure.class,
+            ofDeserializer(BlockStructure.class)
+    );
+    public static final InputToken<BlockStructure> IN_BLOCK_CLICKED = ofInput(
+            "clickedBlock",
+            BlockStructure.class,
+            ofDeserializer(BlockStructure.class)
+    );
+    public static final InputToken<BlockFace> IN_BLOCK_FACE = ofEnumInput(
+            "blockFace",
+            BlockFace.class
+    );
+    public static final InputToken<Material> IN_BUCKET = ofEnumInput(
+            "bucket",
+            Material.class
+    );
+    public static final InputToken<EquipmentSlot> IN_HAND = ofEnumInput(
+            "hand",
+            EquipmentSlot.class
+    ).validator(
+            (slot) -> slot == EquipmentSlot.HAND || slot == EquipmentSlot.OFF_HAND,
+            "The hand must be either hand or off hand"
+    );
+    public static final InputToken<Boolean> IN_EVENT_ONLY = ofInput(
+            "eventOnly",
+            Boolean.class,
+            false
+    );
+
+    public static final String KEY_OUT_ITEM = "item";
+    public static final String KEY_OUT_BLOCK = "block";
+    public static final String KEY_OUT_BLOCK_FACE = "blockFace";
+    public static final String KEY_OUT_BUCKET = "bucket";
+    public static final String KEY_OUT_HAND = "hand";
+
+    public static List<? extends AbstractPlayerBucketAction> getActions()
     {
-        List<AbstractPlayerBucketAction<?>> actions = new ArrayList<>();
+        List<AbstractPlayerBucketAction> actions = new ArrayList<>();
 
         actions.add(new PlayerBucketEmptyAction());
         actions.add(new PlayerBucketFillAction());
@@ -116,35 +164,34 @@ public abstract class AbstractPlayerBucketAction<A extends BucketActionArgument>
         }
     }
 
-    protected static ItemStack getBucket(Player player, BucketActionArgument argument)
+    protected static ItemStack getBucket(Player player, ActionContext ctxt)
     {
         ItemStack stack;
-        if (argument.getBucket() == null)
+        if (ctxt.hasInput(IN_BUCKET))
+        {
+            Material bucket = ctxt.input(IN_BUCKET);
+            stack = new ItemStack(bucket);
+            if (!isBucketMaterial(stack.getType()))
+                throw new IllegalArgumentException("Item " + bucket + " is not a bucket.");
+            player.getInventory().setItemInMainHand(stack);
+        }
+        else
         {
             stack = player.getInventory().getItemInMainHand();
             if (!isBucketMaterial(stack.getType()))
                 throw new IllegalArgumentException("No bucket in the main hand, " + "please specify the bucket item implicitly: " + player.getName());
         }
-        else
-        {
-            stack = new ItemStack(argument.getBucket());
-            if (!isBucketMaterial(stack.getType()))
-                throw new IllegalArgumentException("Item " + argument.getBucket() + " is not a bucket.");
-            player.getInventory().setItemInMainHand(stack);
-        }
 
         return stack;
     }
 
-    protected static Block getPlaceAt(Player player, BucketActionArgument argument, ScenarioEngine engine)
+    protected static Block getPlaceAt(Player player, ActionContext ctxt)
     {
-        BlockStructure candidate1 = argument.getBlockClicked();
-        BlockStructure candidate2 = argument.getBlock();
         Block applyBlock = null;
-        if (candidate1 != null)
-            applyBlock = candidate1.apply(engine, null);
-        if (candidate2 != null)
-            applyBlock = candidate2.apply(engine, null);
+        if (ctxt.hasInput(IN_BLOCK_CLICKED))
+            applyBlock = ctxt.input(IN_BLOCK_CLICKED).apply(ctxt.getEngine(), null);
+        else if (ctxt.hasInput(IN_BLOCK))
+            applyBlock = ctxt.input(IN_BLOCK).apply(ctxt.getEngine(), null);
 
         if (applyBlock != null)
             return applyBlock;
@@ -156,26 +203,88 @@ public abstract class AbstractPlayerBucketAction<A extends BucketActionArgument>
         return block;
     }
 
-    protected static BlockFace getDirection(Player player, Block placeAt, BucketActionArgument argument)
+    protected static BlockFace getDirection(Player player, Block placeAt, ActionContext ctxt)
     {
-        if (argument.getBlockFace() != null)
-            return argument.getBlockFace();
-
-        return VoxelUtils.toFace(player.getEyeLocation(), placeAt.getLocation()).getOppositeFace();
+        if (ctxt.hasInput(IN_BLOCK_FACE))
+            return ctxt.input(IN_BLOCK_FACE);
+        else
+            return VoxelUtils.toFace(player.getEyeLocation(), placeAt.getLocation()).getOppositeFace();
     }
 
-    public boolean checkMatchedBucketEvent(@NotNull A argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    @Override
+    public InputBoard getInputBoard(ScenarioType type)
     {
-        if (!super.checkMatchedPlayerEvent(argument, engine, event))
+        InputBoard board = super.getInputBoard(type)
+                .registerAll(IN_ITEM, IN_BLOCK, IN_BLOCK_CLICKED, IN_BLOCK_FACE, IN_BUCKET, IN_HAND);
+        if (type == ScenarioType.ACTION_EXECUTE)
+            board.register(IN_EVENT_ONLY)
+                    .validator(
+                            b -> b.isPresent(IN_EVENT_ONLY) || !(b.isPresent(IN_BLOCK_CLICKED)
+                                    && b.isPresent(IN_BLOCK)),
+                            "Cannot specify both block and clickedBlock in the action execution mode if 'eventOnly' is not specified."
+                    );
+        return board;
+    }
+
+    protected void makeOutput(@NotNull ActionContext ctxt, @NotNull PlayerBucketEvent event)
+    {
+        this.makeOutput(ctxt, event.getPlayer(), event.getItemStack(), event.getBlock(), event.getBlockFace(),
+                event.getBucket(), event.getHand()
+        );
+    }
+
+    protected void makeOutput(@NotNull ActionContext ctxt, @NotNull Player player, ItemStack item, Block block,
+                              BlockFace face, Material bucket, EquipmentSlot hand)
+    {
+        ctxt.output(KEY_OUT_ITEM, item);
+        ctxt.output(KEY_OUT_BLOCK, block);
+        ctxt.output(KEY_OUT_BLOCK_FACE, face);
+        ctxt.output(KEY_OUT_BUCKET, bucket);
+        ctxt.output(KEY_OUT_HAND, hand);
+        super.makeOutputs(ctxt, player);
+    }
+
+    @Override
+    public boolean checkFired(@NotNull ActionContext ctxt, @NotNull Event event)
+    {
+        if (!super.checkMatchedPlayerEvent(ctxt, event))
             return false;
 
         PlayerBucketEvent e = (PlayerBucketEvent) event;
 
-        return (argument.getItemStack() == null || argument.getItemStack().isAdequate(e.getItemStack()))
-                && (argument.getBlock() == null || argument.getBlock().isAdequate(e.getBlock()))
-                && (argument.getBlockClicked() == null || argument.getBlockClicked().isAdequate(e.getBlockClicked()))
-                && (argument.getBlockFace() == null || argument.getBlockFace() == e.getBlockFace())
-                && (argument.getBucket() == null || argument.getBucket() == e.getBucket())
-                && (argument.getHand() == null || argument.getHand() == e.getHand());
+        boolean result = ctxt.ifHasInput(IN_ITEM, (item) -> item.isAdequate(e.getItemStack()))
+                && ctxt.ifHasInput(IN_BLOCK, (block) -> block.isAdequate(e.getBlockClicked()))
+                && ctxt.ifHasInput(IN_BLOCK_CLICKED, (block) -> block.isAdequate(e.getBlockClicked()))
+                && ctxt.ifHasInput(IN_BLOCK_FACE, (face) -> face == e.getBlockFace())
+                && ctxt.ifHasInput(IN_BUCKET, (bucket) -> bucket == e.getBucket())
+                && ctxt.ifHasInput(IN_HAND, (hand) -> hand == e.getHand());
+
+        if (result)
+            this.makeOutput(ctxt, e);
+
+        return result;
     }
+
+    protected void enumerateItemUse(@NotNull ActionContext ctxt, Player player, Block block, BlockFace direction, ItemStack stack, Actor actor)
+    {
+        if (ctxt.input(IN_EVENT_ONLY))
+        {
+            Block blockClicked = null;
+            if (ctxt.hasInput(IN_BLOCK_CLICKED))
+                blockClicked = ctxt.input(IN_BLOCK_CLICKED).apply(ctxt.getEngine(), null);
+            EquipmentSlot hand = ctxt.orElseInput(IN_HAND, () -> null);
+            this.doEventOnlyMode(ctxt, player, block, blockClicked, direction, stack.getType(), stack, hand);
+            return;
+        }
+
+        this.makeOutput(ctxt, player, stack, block, direction, stack.getType(), EquipmentSlot.HAND);
+        actor.placeItem(
+                block.getLocation(),
+                stack,
+                direction
+        );
+    }
+
+    protected abstract void doEventOnlyMode(@NotNull ActionContext ctxt, Player who, Block block, Block blockClicked,
+                                            BlockFace blockFace, Material bucket, ItemStack itemInHand, EquipmentSlot hand);
 }

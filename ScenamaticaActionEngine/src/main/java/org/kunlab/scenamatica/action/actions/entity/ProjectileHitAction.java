@@ -1,7 +1,5 @@
 package org.kunlab.scenamatica.action.actions.entity;
 
-import lombok.EqualsAndHashCode;
-import lombok.Value;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -14,27 +12,40 @@ import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.utils.VoxelUtils;
-import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.ActionContext;
+import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
+import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
-import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
-import org.kunlab.scenamatica.interfaces.scenariofile.entity.EntityStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.entity.entities.ProjectileStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.misc.BlockStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.EntitySpecifier;
-import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
-public class ProjectileHitAction extends AbstractEntityAction<ProjectileHitAction.Argument>
-        implements Executable<ProjectileHitAction.Argument>, Watchable<ProjectileHitAction.Argument>
+public class ProjectileHitAction extends AbstractEntityAction<Projectile, ProjectileStructure>
+        implements Executable, Watchable
 {
     public static final String KEY_ACTION_NAME = "projectile_hit";
+    public static final InputToken<EntitySpecifier<Entity>> IN_HIT_ENTITY = ofSpecifier("hitEntity");
+    public static final InputToken<BlockStructure> IN_HIT_BLOCK = ofInput(
+            "hitBlock",
+            BlockStructure.class,
+            ofDeserializer(BlockStructure.class)
+    );
+    public static final InputToken<BlockFace> IN_BLOCK_FACE = ofEnumInput("blockFace", BlockFace.class);
+    public static final InputToken<Boolean> IN_EVENT_ONLY = ofInput("eventOnly", Boolean.class, false);
+
+    public static final String KEY_OUT_HIT_ENTITY = "hitEntity";
+    public static final String KEY_OUT_HIT_BLOCK = "hitBlock";
+    public static final String KEY_OUT_BLOCK_FACE = "blockFace";
+
+    public ProjectileHitAction()
+    {
+        super(Projectile.class, ProjectileStructure.class);
+    }
 
     @Override
     public String getName()
@@ -43,21 +54,20 @@ public class ProjectileHitAction extends AbstractEntityAction<ProjectileHitActio
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @NotNull ProjectileHitAction.Argument argument)
+    public void execute(@NotNull ActionContext ctxt)
     {
-        assert argument.getTargetHolder() != null;
-        Projectile target = argument.getTargetHolder().selectTarget(engine.getContext())
-                .orElseThrow(() -> new IllegalStateException("Cannot select target for this action, please specify target with valid specifier."));
-
-        Entity hitEntity = argument.getHitEntity().selectTarget(engine.getContext()).orElse(null);
+        Projectile target = this.selectTarget(ctxt);
+        Entity hitEntity = ctxt.input(IN_HIT_ENTITY).selectTarget(ctxt.getContext()).orElse(null);
         Block hitBlock = null;
-        if (argument.getHitBlock() != null)
-            hitBlock = argument.getHitBlock().getBlockSafe();
+        if (ctxt.hasInput(IN_HIT_BLOCK))
+            hitBlock = ctxt.input(IN_HIT_BLOCK).getBlockSafe();
 
-        if (argument.isEventOnly())
-            this.doEventOnlyMode(target, hitEntity, hitBlock, argument.getBlockFace());
+        BlockFace face = ctxt.orElseInput(IN_BLOCK_FACE, () -> null);
+        this.makeOutputs(ctxt, target, hitBlock, face);
+        if (ctxt.input(IN_EVENT_ONLY))
+            this.doEventOnlyMode(target, hitEntity, hitBlock, face);
         else
-            this.doNormalMode(target, hitEntity, hitBlock, argument.getBlockFace());
+            this.doNormalMode(target, hitEntity, hitBlock, face);
     }
 
     private void doNormalMode(@NotNull Projectile target, @Nullable Entity hitEntity, @Nullable Block hitBlock, @Nullable BlockFace blockFace)
@@ -99,25 +109,34 @@ public class ProjectileHitAction extends AbstractEntityAction<ProjectileHitActio
     }
 
     @Override
-    public boolean isFired(@NotNull Argument argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public boolean checkFired(@NotNull ActionContext ctxt, @NotNull Event event)
     {
-        if (!super.checkMatchedEntityEvent(argument, engine, event))
+        if (!super.checkMatchedEntityEvent(ctxt, event))
             return false;
 
         assert event instanceof ProjectileHitEvent;
         ProjectileHitEvent e = (ProjectileHitEvent) event;
 
-        if (argument.getHitBlock() != null)
-        {
-            if (e.getHitBlock() == null)
-                return false;
-            else if (!argument.getHitBlock().isAdequate(e.getHitBlock()))
-                return false;
-        }
+        boolean result = ctxt.ifHasInput(IN_HIT_ENTITY, specifier -> specifier.checkMatchedEntity(e.getHitEntity()))
+                && ctxt.ifHasInput(IN_BLOCK_FACE, face -> face == e.getHitBlockFace())
+                && ctxt.ifHasInput(IN_HIT_BLOCK, block -> {
+            Block hitBlock = e.getHitBlock();
+            return hitBlock != null && block.isAdequate(hitBlock);
+        });
+        if (result)
+            this.makeOutputs(ctxt, e.getEntity(), e.getHitBlock(), e.getHitBlockFace());
 
-        return (!argument.getHitEntity().canProvideTarget() || argument.getHitEntity().checkMatchedEntity(e.getHitEntity()))
-                && (argument.getHitBlock() == null || argument.getHitBlock().isAdequate(e.getHitBlock()))
-                && (argument.getBlockFace() == null || argument.getBlockFace() == e.getHitBlockFace());
+        return result;
+    }
+
+    protected void makeOutputs(@NotNull ActionContext ctxt, @NotNull Projectile entity, @Nullable Block hitBlock, @Nullable BlockFace blockFace)
+    {
+        ctxt.output(KEY_OUT_HIT_ENTITY, entity);
+        if (hitBlock != null)
+            ctxt.output(KEY_OUT_HIT_BLOCK, hitBlock);
+        if (blockFace != null)
+            ctxt.output(KEY_OUT_BLOCK_FACE, blockFace);
+        super.makeOutputs(ctxt, entity);
     }
 
     @Override
@@ -129,87 +148,16 @@ public class ProjectileHitAction extends AbstractEntityAction<ProjectileHitActio
     }
 
     @Override
-    public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
+    public InputBoard getInputBoard(ScenarioType type)
     {
-        BlockStructure hitBlock = null;
-        if (map.containsKey(Argument.KEY_HIT_BLOCK))
-            hitBlock = serializer.deserialize(
-                    MapUtils.checkAndCastMap(map.get(Argument.KEY_HIT_BLOCK)),
-                    BlockStructure.class
-            );
+        InputBoard board = super.getInputBoard(type)
+                .registerAll(IN_HIT_ENTITY, IN_HIT_BLOCK, IN_BLOCK_FACE);
+        if (type == ScenarioType.ACTION_EXECUTE)
+            board.register(IN_EVENT_ONLY)
+                    .requirePresent(IN_HIT_ENTITY);
 
-        return new Argument(
-                super.deserializeTarget(map, serializer, ProjectileStructure.class),
-                serializer.tryDeserializeEntitySpecifier(map.get(Argument.KEY_HIT_ENTITY), EntityStructure.class),
-                hitBlock,
-                MapUtils.getAsEnumOrNull(map, Argument.KEY_BLOCK_FACE, BlockFace.class),
-                MapUtils.getOrDefault(map, Argument.KEY_EVENT_ONLY, false)
-        );
+        return board;
     }
 
-    @Value
-    @EqualsAndHashCode(callSuper = true)
-    public static class Argument extends AbstractEntityActionArgument<Projectile>
-    {
-        public static final String KEY_HIT_ENTITY = "hitEntity";
-        public static final String KEY_HIT_BLOCK = "hitBlock";
-        public static final String KEY_BLOCK_FACE = "blockFace";
-        public static final String KEY_EVENT_ONLY = "eventOnly";
 
-        @NotNull
-        EntitySpecifier<?> hitEntity;
-        BlockStructure hitBlock;
-        BlockFace blockFace;
-        boolean eventOnly;
-
-        public Argument(
-                @NotNull EntitySpecifier<Projectile> target,
-                @NotNull EntitySpecifier<?> hitEntity,
-                @Nullable BlockStructure hitBlock,
-                @Nullable BlockFace blockFace,
-                boolean eventOnly
-        )
-        {
-            super(target);
-            this.hitEntity = hitEntity;
-            this.hitBlock = hitBlock;
-            this.blockFace = blockFace;
-            this.eventOnly = eventOnly;
-        }
-
-        @Override
-        public void validate(@NotNull ScenarioEngine engine, @NotNull ScenarioType type)
-        {
-            super.validate(engine, type);
-            if (type == ScenarioType.ACTION_EXECUTE)
-                ensurePresent(KEY_TARGET_ENTITY, this.getTargetHolder());
-        }
-
-        @Override
-        public boolean isSame(TriggerArgument argument)
-        {
-            if (!(argument instanceof Argument))
-                return false;
-
-            Argument arg = (Argument) argument;
-
-            return super.isSame(arg)
-                    && Objects.equals(this.hitEntity, arg.hitEntity)
-                    && Objects.equals(this.hitBlock, arg.hitBlock)
-                    && this.blockFace == arg.blockFace
-                    && this.eventOnly == arg.eventOnly;
-        }
-
-        @Override
-        public String getArgumentString()
-        {
-            return appendArgumentString(
-                    super.getArgumentString(),
-                    KEY_HIT_ENTITY, this.hitEntity,
-                    KEY_HIT_BLOCK, this.hitBlock,
-                    KEY_BLOCK_FACE, this.blockFace,
-                    KEY_EVENT_ONLY, this.eventOnly
-            );
-        }
-    }
 }

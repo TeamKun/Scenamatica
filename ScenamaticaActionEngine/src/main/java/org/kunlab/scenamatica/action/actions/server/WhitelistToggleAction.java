@@ -1,30 +1,29 @@
 package org.kunlab.scenamatica.action.actions.server;
 
 import com.destroystokyo.paper.event.server.WhitelistToggleEvent;
-import lombok.EqualsAndHashCode;
-import lombok.Value;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
-import org.kunlab.scenamatica.action.actions.AbstractActionArgument;
-import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.ActionContext;
+import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
+import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
-import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
-import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
-public class WhitelistToggleAction extends AbstractServerAction<WhitelistToggleAction.Argument>
-        implements Executable<WhitelistToggleAction.Argument>, Watchable<WhitelistToggleAction.Argument>, Requireable<WhitelistToggleAction.Argument>
+public class WhitelistToggleAction extends AbstractServerAction
+        implements Executable, Watchable, Requireable
 {
     public static final String KEY_ACTION_NAME = "whitelist_toggle";
+    public static final InputToken<Boolean> IN_ENABLED = ofInput(
+            "enabled",
+            Boolean.class,
+            true
+    );
 
     @Override
     public String getName()
@@ -33,22 +32,20 @@ public class WhitelistToggleAction extends AbstractServerAction<WhitelistToggleA
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @NotNull WhitelistToggleAction.Argument argument)
+    public void execute(@NotNull ActionContext ctxt)
     {
-        boolean enabled = argument.enabled;
-
-        Bukkit.getServer().setWhitelist(enabled);
+        Bukkit.getServer().setWhitelist(ctxt.input(IN_ENABLED));
     }
 
     @Override
-    public boolean isFired(@NotNull Argument argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public boolean checkFired(@NotNull ActionContext ctxt, @NotNull Event event)
     {
         if (!(event instanceof WhitelistToggleEvent))
             return false;
 
         WhitelistToggleEvent e = (WhitelistToggleEvent) event;
 
-        return argument.enabled == null || argument.enabled == e.isEnabled();
+        return ctxt.ifHasInput(IN_ENABLED, enabled -> enabled == e.isEnabled());
     }
 
     @Override
@@ -60,54 +57,18 @@ public class WhitelistToggleAction extends AbstractServerAction<WhitelistToggleA
     }
 
     @Override
-    public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
+    public boolean checkConditionFulfilled(@NotNull ActionContext ctxt)
     {
-        MapUtils.checkContainsKey(map, Argument.KEY_ENABLED);
-
-        return new Argument(
-                (boolean) map.get(Argument.KEY_ENABLED)
-        );
+        return ctxt.ifHasInput(IN_ENABLED, enabled -> Bukkit.getServer().hasWhitelist() == enabled);
     }
 
     @Override
-    public boolean isConditionFulfilled(@NotNull WhitelistToggleAction.Argument argument, @NotNull ScenarioEngine engine)
+    public InputBoard getInputBoard(ScenarioType type)
     {
-        return argument == null || argument.enabled == null
-                || Bukkit.getServer().hasWhitelist() == argument.enabled;
-    }
+        InputBoard board = ofInputs(type, IN_ENABLED);
+        if (type == ScenarioType.ACTION_EXECUTE || type == ScenarioType.CONDITION_REQUIRE)
+            board.requirePresent(IN_ENABLED);
 
-    @Value
-    @EqualsAndHashCode(callSuper = true)
-    public static class Argument extends AbstractActionArgument
-    {
-        public static final String KEY_ENABLED = "enabled";
-
-        Boolean enabled;
-
-        @Override
-        public boolean isSame(TriggerArgument argument)
-        {
-            if (!(argument instanceof Argument))
-                return false;
-
-            Argument arg = (Argument) argument;
-
-            return Objects.equals(this.enabled, arg.enabled);
-        }
-
-        @Override
-        public void validate(@NotNull ScenarioEngine engine, @NotNull ScenarioType type)
-        {
-            if (type == ScenarioType.ACTION_EXECUTE)
-                ensurePresent(KEY_ENABLED, this.enabled);
-        }
-
-        @Override
-        public String getArgumentString()
-        {
-            return buildArgumentString(
-                    KEY_ENABLED, this.enabled
-            );
-        }
+        return board;
     }
 }

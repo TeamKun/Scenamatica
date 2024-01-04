@@ -6,6 +6,9 @@ import lombok.SneakyThrows;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.kunlab.scenamatica.enums.RunAs;
+import org.kunlab.scenamatica.enums.RunOn;
+import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.enums.TriggerType;
 import org.kunlab.scenamatica.enums.WatchType;
 import org.kunlab.scenamatica.exceptions.scenario.ScenarioException;
@@ -129,7 +132,6 @@ public class TriggerManagerImpl implements TriggerManager
     private void registerActionTrigger(ScenarioEngine engine, TriggerStructure actionTrigger)
     {
         ScenarioFileStructure scenario = engine.getScenario();
-        Plugin plugin = engine.getPlugin();
 
         TriggerArgument triggerArgument = actionTrigger.getArgument();
         if (!(triggerArgument instanceof ActionStructure))
@@ -137,9 +139,11 @@ public class TriggerManagerImpl implements TriggerManager
 
         ActionStructure argument = (ActionStructure) triggerArgument;
 
-        CompiledAction<?> action = this.actionManager.getCompiler().compile(
-                this.registry,
+        CompiledAction action = this.actionManager.getCompiler().compile(
                 engine,
+                ScenarioType.ACTION_EXPECT,
+                RunOn.TRIGGER,
+                RunAs.NORMAL,
                 argument,
                 null,  /* reportErrorTo */
                 null  /* onSuccess */
@@ -147,7 +151,6 @@ public class TriggerManagerImpl implements TriggerManager
 
         // 型はコンパイラでチェック済みなのでキャストしておく。
         this.actionManager.queueWatch(
-                plugin,
                 engine,
                 scenario,
                 action,

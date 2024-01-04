@@ -15,9 +15,9 @@ public class CompiledTriggerActionImpl implements CompiledTriggerAction
     @NotNull
     TriggerStructure trigger;
     @NotNull
-    List<CompiledScenarioAction<?>> beforeActions;
+    List<CompiledScenarioAction> beforeActions;
     @NotNull
-    List<CompiledScenarioAction<?>> afterActions;
+    List<CompiledScenarioAction> afterActions;
     @Nullable
-    CompiledScenarioAction<?> runIf;
+    CompiledScenarioAction runIf;
 }

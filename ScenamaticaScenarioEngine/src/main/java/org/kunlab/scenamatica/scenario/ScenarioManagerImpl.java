@@ -23,6 +23,7 @@ import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioManager;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioResult;
 import org.kunlab.scenamatica.interfaces.scenario.SessionCreator;
+import org.kunlab.scenamatica.interfaces.scenario.SessionStorage;
 import org.kunlab.scenamatica.interfaces.scenario.TestReporter;
 import org.kunlab.scenamatica.interfaces.scenario.runtime.CompiledTriggerAction;
 import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileStructure;
@@ -31,6 +32,7 @@ import org.kunlab.scenamatica.scenario.engine.ScenarioEngineImpl;
 import org.kunlab.scenamatica.scenario.milestone.MilestoneManagerImpl;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -174,7 +176,7 @@ public class ScenarioManagerImpl implements ScenarioManager
     /* non-public */ Pair<ScenarioEngine, TriggerStructure> getRunInfoOrThrow(Plugin plugin, String scenarioName, TriggerType trigger)
             throws ScenarioNotFoundException, TriggerNotFoundException
     {
-        ScenarioEngine engine = this.engines.get(plugin).stream().parallel()
+        ScenarioEngine engine = this.engines.get(plugin).stream()
                 .filter(e -> e.getScenario().getName().equals(scenarioName))
                 .findFirst()
                 .orElseThrow(() -> new ScenarioNotFoundException(scenarioName));
@@ -195,14 +197,14 @@ public class ScenarioManagerImpl implements ScenarioManager
     @Nullable
         /* non-pubic */ TriggerStructure getTriggerOrNull(@NotNull ScenarioEngine engine, TriggerType type)
     {
-        return engine.getTriggerActions().stream().parallel()
+        return engine.getTriggerActions().stream()
                 .map(CompiledTriggerAction::getTrigger)
                 .filter(t -> t.getType() == type)
                 .findFirst()
                 .orElse(null);
     }
 
-    /* non-public */ ScenarioResult runScenario(ScenarioEngine engine, TriggerStructure trigger, int attempted)
+    /* non-public */ ScenarioResult runScenario(ScenarioEngine engine, TriggerStructure trigger, SessionStorage variable, int attempted)
     {
         if (!engine.getPlugin().isEnabled())
             throw new IllegalStateException("Plugin is disabled.");
@@ -213,7 +215,7 @@ public class ScenarioManagerImpl implements ScenarioManager
         ScenarioResult result;
         try
         {
-            result = engine.start(trigger, attempted);
+            result = engine.start(trigger, variable, attempted);
         }
         catch (Throwable e)
         {
@@ -223,6 +225,7 @@ public class ScenarioManagerImpl implements ScenarioManager
                     engine.getTestID(),
                     engine.getState(),
                     ScenarioResultCause.INTERNAL_ERROR,
+                    Collections.emptyList(),
                     engine.getStartedAt(),
                     System.currentTimeMillis(),
                     attempted,
@@ -319,7 +322,7 @@ public class ScenarioManagerImpl implements ScenarioManager
     @Override
     public @Nullable ScenarioEngine getEngine(@NotNull Plugin plugin, @NotNull String scenarioName)
     {
-        return this.engines.get(plugin).stream().parallel()
+        return this.engines.get(plugin).stream()
                 .filter(e -> e.getScenario().getName().equals(scenarioName))
                 .findFirst()
                 .orElse(null);

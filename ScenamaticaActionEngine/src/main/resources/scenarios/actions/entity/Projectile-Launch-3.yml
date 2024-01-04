@@ -1,0 +1,26 @@
+# noinspection YAMLSchemaValidation
+scenamatica: ${project.version}
+
+name: actions_entity_projectile_launch_3
+description: Testing entity_projectile_launch action outputs works or not
+on:
+  - type: on_load
+  - type: manual_dispatch
+
+context:
+  actors:
+    - name: Actor01
+
+scenario:
+  - type: execute
+    action: projectile_launch
+    with:
+      entity:
+        type: minecraft:arrow
+        # noinspection YAMLSchemaValidation
+        shooter:
+          name: Actor01
+  - type: expect
+    action: projectile_launch
+    with:
+      entity: ${scenario.scenario.0.output.entity}

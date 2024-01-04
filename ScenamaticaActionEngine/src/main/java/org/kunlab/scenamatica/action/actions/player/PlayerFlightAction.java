@@ -1,31 +1,29 @@
 package org.kunlab.scenamatica.action.actions.player;
 
-import lombok.EqualsAndHashCode;
-import lombok.Value;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerToggleFlightEvent;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.ActionContext;
+import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
+import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
-import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
-import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.PlayerSpecifier;
-import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
-public class PlayerFlightAction extends AbstractPlayerAction<PlayerFlightAction.Argument>
-        implements Executable<PlayerFlightAction.Argument>, Requireable<PlayerFlightAction.Argument>, Watchable<PlayerFlightAction.Argument>
+public class PlayerFlightAction extends AbstractPlayerAction
+        implements Executable, Requireable, Watchable
 {
     public static final String KEY_ACTION_NAME = "player_flight";
+    public static final InputToken<Boolean> IN_FLYING = ofInput(
+            "flying",
+            Boolean.class
+    );
 
     @Override
     public String getName()
@@ -34,13 +32,12 @@ public class PlayerFlightAction extends AbstractPlayerAction<PlayerFlightAction.
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @NotNull PlayerFlightAction.Argument argument)
+    public void execute(@NotNull ActionContext ctxt)
     {
-        assert argument.flying != null;
+        boolean flying = ctxt.orElseInput(IN_FLYING, () -> true);
 
-        boolean flying = argument.flying;
-
-        Player player = argument.getTarget(engine);
+        Player player = selectTarget(ctxt);
+        super.makeOutputs(ctxt, player);
         PlayerToggleFlightEvent event = new PlayerToggleFlightEvent(player, flying);
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled())
@@ -53,15 +50,19 @@ public class PlayerFlightAction extends AbstractPlayerAction<PlayerFlightAction.
     }
 
     @Override
-    public boolean isFired(@NotNull Argument argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public boolean checkFired(@NotNull ActionContext ctxt, @NotNull Event event)
     {
-        if (!super.checkMatchedPlayerEvent(argument, engine, event))
+        if (!super.checkMatchedPlayerEvent(ctxt, event))
             return false;
 
         assert event instanceof PlayerToggleFlightEvent;
         PlayerToggleFlightEvent e = (PlayerToggleFlightEvent) event;
 
-        return argument.flying == null || argument.flying == e.isFlying();
+        boolean result = ctxt.ifHasInput(IN_FLYING, flying -> flying == e.isFlying());
+        if (result)
+            super.makeOutputs(ctxt, e.getPlayer());
+
+        return result;
     }
 
     @Override
@@ -73,70 +74,17 @@ public class PlayerFlightAction extends AbstractPlayerAction<PlayerFlightAction.
     }
 
     @Override
-    public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
+    public boolean checkConditionFulfilled(@NotNull ActionContext ctxt)
     {
-        return new Argument(
-                super.deserializeTarget(map, serializer),
-                MapUtils.getOrNull(map, Argument.KEY_FLYING)
-        );
+        boolean expectState = ctxt.orElseInput(IN_FLYING, () -> true);
+
+        return selectTarget(ctxt).isFlying() == expectState;
     }
 
     @Override
-    public boolean isConditionFulfilled(@NotNull PlayerFlightAction.Argument argument, @NotNull ScenarioEngine engine)
+    public InputBoard getInputBoard(ScenarioType type)
     {
-        assert argument.flying != null;
-        boolean expectState = argument.flying;
-
-        return argument.getTarget(engine).isFlying() == expectState;
-    }
-
-    @Value
-    @EqualsAndHashCode(callSuper = true)
-    public static class Argument extends AbstractPlayerActionArgument
-    {
-        public static final String KEY_FLYING = "flying";
-
-        @Nullable
-        Boolean flying;
-
-        public Argument(PlayerSpecifier target, @Nullable Boolean flying)
-        {
-            super(target);
-            this.flying = flying;
-        }
-
-        @Override
-        public boolean isSame(TriggerArgument argument)
-        {
-            if (!(argument instanceof Argument))
-                return false;
-
-            Argument arg = (Argument) argument;
-
-            return super.isSame(argument) && this.flying == arg.flying;
-        }
-
-        @Override
-        public void validate(@NotNull ScenarioEngine engine, @NotNull ScenarioType type)
-        {
-            super.validate(engine, type);
-
-            switch (type)
-            {
-                case ACTION_EXECUTE:
-                case CONDITION_REQUIRE:
-                    ensurePresent(Argument.KEY_FLYING, this.flying);
-                    break;
-            }
-        }
-
-        @Override
-        public String getArgumentString()
-        {
-            return appendArgumentString(
-                    super.getArgumentString(),
-                    KEY_FLYING, this.flying
-            );
-        }
+        return super.getInputBoard(type)
+                .registerAll(IN_FLYING);
     }
 }

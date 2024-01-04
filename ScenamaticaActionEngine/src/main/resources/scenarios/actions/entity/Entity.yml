@@ -5,6 +5,7 @@ name: actions_entity
 description: Testing entity action works or not
 on:
   - type: on_load
+  - type: manual_dispatch
 
 context:
   entities:

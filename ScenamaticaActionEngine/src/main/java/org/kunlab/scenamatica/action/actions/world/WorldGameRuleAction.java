@@ -1,31 +1,37 @@
 package org.kunlab.scenamatica.action.actions.world;
 
 import io.papermc.paper.event.world.WorldGameRuleChangeEvent;
-import lombok.EqualsAndHashCode;
-import lombok.Value;
 import org.bukkit.GameRule;
-import org.bukkit.NamespacedKey;
 import org.bukkit.World;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.kunlab.scenamatica.commons.utils.MapUtils;
+import org.kunlab.scenamatica.action.utils.InputTypeToken;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.ActionContext;
+import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
+import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
-import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
-import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
-public class WorldGameRuleAction extends AbstractWorldAction<WorldGameRuleAction.Argument>
-        implements Executable<WorldGameRuleAction.Argument>, Requireable<WorldGameRuleAction.Argument>
+public class WorldGameRuleAction extends AbstractWorldAction
+        implements Executable, Requireable
 {
     public static final String KEY_ACTION_NAME = "world_game_rule";
+    public static final InputToken<GameRule<?>> IN_GAME_RULE = ofInput(
+            "rule",
+            InputTypeToken.ofBased(GameRule.class),
+            ofTraverser(String.class, (ser, str) -> GameRule.getByName(str))
+    );
+    public static final InputToken<String> IN_VALUE = ofInput(
+            "value",
+            String.class
+    );
+
+    public static final String KEY_GAME_RULE = "rule";
+    public static final String KEY_VALUE = "value";
 
     @Override
     public String getName()
@@ -34,12 +40,11 @@ public class WorldGameRuleAction extends AbstractWorldAction<WorldGameRuleAction
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @NotNull WorldGameRuleAction.Argument argument)
+    public void execute(@NotNull ActionContext ctxt)
     {
-        World world = argument.getWorldNonNull(engine);
-        GameRule<?> rule = argument.getGameRule();
-        String value = argument.getValue();
-        assert value != null;
+        World world = super.getWorldNonNull(ctxt);
+        GameRule<?> rule = ctxt.input(IN_GAME_RULE);
+        String value = ctxt.input(IN_VALUE);
 
         Class<?> type = rule.getType();
 
@@ -58,21 +63,35 @@ public class WorldGameRuleAction extends AbstractWorldAction<WorldGameRuleAction
             success = world.setGameRule(integerRule, Integer.parseInt(value));
         }
 
-        if (!success)
+        if (success)
+            this.makeOutputs(ctxt, world, rule, value);
+        else
             throw new IllegalArgumentException("Failed to set the game rule: Attempted to set " + rule.getName() + " to " + value);
     }
 
     @Override
-    public boolean isFired(@NotNull Argument argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public boolean checkFired(@NotNull ActionContext ctxt, @NotNull Event event)
     {
+        if (!super.checkFired(ctxt, event))
+            return false;
+
         assert event instanceof WorldGameRuleChangeEvent;
         WorldGameRuleChangeEvent e = (WorldGameRuleChangeEvent) event;
 
-        if (!super.isFired(argument, engine, event))
-            return false;
+        boolean result = ctxt.ifHasInput(IN_GAME_RULE, rule -> rule.getName().equalsIgnoreCase(e.getGameRule().getName()))
+                && ctxt.ifHasInput(IN_VALUE, value -> value.equalsIgnoreCase(e.getValue()));
 
-        return (argument.getGameRule() == null || e.getGameRule().getName().equalsIgnoreCase(argument.getGameRule().getName()))
-                && (argument.getValue() == null || e.getValue().equalsIgnoreCase(argument.getValue()));
+        if (result)
+            this.makeOutputs(ctxt, e.getWorld(), e.getGameRule(), e.getValue());
+
+        return result;
+    }
+
+    private void makeOutputs(@NotNull ActionContext ctxt, @NotNull World world, @NotNull GameRule<?> rule, @NotNull String value)
+    {
+        ctxt.output(KEY_GAME_RULE, rule);
+        ctxt.output(KEY_VALUE, value);
+        super.makeOutputs(ctxt, world);
     }
 
     @Override
@@ -84,35 +103,12 @@ public class WorldGameRuleAction extends AbstractWorldAction<WorldGameRuleAction
     }
 
     @Override
-    public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
+    public boolean checkConditionFulfilled(@NotNull ActionContext ctxt)
     {
-        MapUtils.checkContainsKey(map, Argument.KEY_GAME_RULE);
-
-        GameRule<?> rule = GameRule.getByName(map.get(Argument.KEY_GAME_RULE).toString());
-        if (rule == null)
-            throw new IllegalArgumentException("Invalid game rule: " + map.get(Argument.KEY_GAME_RULE));
-
-        String value;
-        if (map.containsKey(Argument.KEY_VALUE))
-            value = map.get(Argument.KEY_VALUE).toString();  // ClassCastException 回避
-        else
-            value = null;
-
-        return new Argument(
-                this.deserializeWorld(map),
-                rule,
-                value
-        );
-    }
-
-    @Override
-    public boolean isConditionFulfilled(@NotNull WorldGameRuleAction.Argument argument, @NotNull ScenarioEngine engine)
-    {
-        World world = argument.getWorldNonNull(engine);
-        GameRule<?> rule = argument.getGameRule();
+        World world = super.getWorldNonNull(ctxt);
+        GameRule<?> rule = ctxt.input(IN_GAME_RULE);
         Class<?> type = rule.getType();
-        String expectedValue = argument.getValue();
-        assert expectedValue != null;
+        String expectedValue = ctxt.input(IN_VALUE);
 
         assert type == Boolean.class || type == Integer.class;  // Bukkit API にはこれ以外の型は存在しない
         if (type == Boolean.class)
@@ -131,60 +127,13 @@ public class WorldGameRuleAction extends AbstractWorldAction<WorldGameRuleAction
         }
     }
 
-    @Value
-    @EqualsAndHashCode(callSuper = true)
-    public static class Argument extends AbstractWorldActionArgument
+    @Override
+    public InputBoard getInputBoard(ScenarioType type)
     {
-        public static final String KEY_GAME_RULE = "rule";
-        public static final String KEY_VALUE = "value";
-
-        GameRule<?> gameRule;
-        String value;
-
-        public Argument(@Nullable NamespacedKey worldRef, @NotNull GameRule<?> gameRule, @Nullable String value)
-        {
-            super(worldRef);
-            this.gameRule = gameRule;
-            this.value = value;
-        }
-
-        @Override
-        public boolean isSame(TriggerArgument argument)
-        {
-            if (!(argument instanceof Argument))
-                return false;
-
-            Argument arg = (Argument) argument;
-
-            return super.isSameWorld(arg)
-                    && Objects.equals(this.gameRule, arg.gameRule)
-                    && Objects.equals(this.value, arg.value);
-        }
-
-        @Override
-        public void validate(@NotNull ScenarioEngine engine, @NotNull ScenarioType type)
-        {
-            switch (type)
-            {
-                case ACTION_EXECUTE:
-                    /* fallthrough */
-                case CONDITION_REQUIRE:
-                    ensurePresent(KEY_GAME_RULE, this.gameRule);
-                    break;
-                case ACTION_EXPECT:
-                    ensurePresent(KEY_VALUE, this.value);
-                    break;
-            }
-        }
-
-        @Override
-        public String getArgumentString()
-        {
-            return appendArgumentString(
-                    super.getArgumentString(),
-                    KEY_GAME_RULE, this.gameRule.getName(),
-                    KEY_VALUE, this.value
-            );
-        }
+        InputBoard board = super.getInputBoard(type)
+                .registerAll(IN_GAME_RULE, IN_VALUE);
+        if (type == ScenarioType.ACTION_EXECUTE || type == ScenarioType.CONDITION_REQUIRE)
+            board.requirePresent(IN_GAME_RULE, IN_VALUE);
+        return board;
     }
 }

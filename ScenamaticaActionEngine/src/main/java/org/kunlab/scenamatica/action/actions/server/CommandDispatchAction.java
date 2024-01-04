@@ -1,35 +1,40 @@
 package org.kunlab.scenamatica.action.actions.server;
 
-import lombok.EqualsAndHashCode;
-import lombok.Value;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.server.ServerCommandEvent;
 import org.jetbrains.annotations.NotNull;
-import org.kunlab.scenamatica.action.actions.AbstractActionArgument;
 import org.kunlab.scenamatica.action.utils.PlayerLikeCommandSenders;
-import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.ActionContext;
+import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
+import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
-import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.PlayerSpecifier;
-import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class CommandDispatchAction extends AbstractServerAction<CommandDispatchAction.Argument>
-        implements Executable<CommandDispatchAction.Argument>, Watchable<CommandDispatchAction.Argument>
+public class CommandDispatchAction extends AbstractServerAction
+        implements Executable, Watchable
 {
     public static final String KEY_ACTION_NAME = "command_dispatch";
+    public static final InputToken<String> IN_COMMAND = ofInput(
+            "command",
+            String.class
+    );
+    public static final InputToken<PlayerSpecifier> IN_SENDER = ofInput(
+            "sender",
+            PlayerSpecifier.class,
+            ofPlayer()
+    );
+
+    public static final String KEY_OUT_COMMAND = "command";
+    public static final String KEY_OUT_SENDER = "sender";
 
     @Override
     public String getName()
@@ -38,24 +43,31 @@ public class CommandDispatchAction extends AbstractServerAction<CommandDispatchA
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @NotNull CommandDispatchAction.Argument argument)
+    public void execute(@NotNull ActionContext ctxt)
     {
-        CommandSender sender = PlayerLikeCommandSenders.getCommandSenderOrThrow(argument.getSender(), engine.getContext());
+        CommandSender sender = PlayerLikeCommandSenders.getCommandSenderOrThrow(
+                ctxt.orElseInput(IN_SENDER, () -> null),
+                ctxt.getContext()
+        );
 
-        String command = argument.getCommand();
+        String command = ctxt.input(IN_COMMAND);
         if (command.startsWith("/")) // シンタックスシュガーのために, / から始まるやつにも対応
             command = command.substring(1);
 
+        this.outputResults(ctxt, sender, command);
         Bukkit.dispatchCommand(sender, command);
     }
 
     @Override
-    public boolean isFired(@NotNull CommandDispatchAction.Argument argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public boolean checkFired(@NotNull ActionContext ctxt, @NotNull Event event)
     {
         String command;
-        CommandSender sender = null;
+        CommandSender sender;
         if (event instanceof ServerCommandEvent)  // non-player
+        {
             command = ((ServerCommandEvent) event).getCommand();
+            sender = ((ServerCommandEvent) event).getSender();
+        }
         else if (event instanceof PlayerCommandPreprocessEvent)  // player
         {
             command = ((PlayerCommandPreprocessEvent) event).getMessage();
@@ -64,16 +76,24 @@ public class CommandDispatchAction extends AbstractServerAction<CommandDispatchA
         else
             return false;
 
-        if (argument.getCommand() != null)
-        {
-            Pattern pattern = Pattern.compile(argument.getCommand());
-            Matcher matcher = pattern.matcher(command);
-            if (!matcher.matches())
-                return false;
-        }
 
-        assert sender != null;
-        return PlayerLikeCommandSenders.isSpecifiedSender(sender, argument.getSender());
+        boolean result = ctxt.ifHasInput(
+                IN_COMMAND,
+                cmd -> Pattern.compile(cmd).matcher(command).matches()
+        ) && ctxt.ifHasInput(
+                IN_SENDER,
+                s -> PlayerLikeCommandSenders.isSpecifiedSender(sender, s)
+        );
+
+        if (result)
+            this.outputResults(ctxt, sender, command);
+        return result;
+    }
+
+    private void outputResults(@NotNull ActionContext ctxt, @NotNull CommandSender player, @NotNull String command)
+    {
+        ctxt.output(KEY_OUT_COMMAND, command);
+        ctxt.output(KEY_OUT_SENDER, player);
     }
 
     @Override
@@ -86,50 +106,12 @@ public class CommandDispatchAction extends AbstractServerAction<CommandDispatchA
     }
 
     @Override
-    public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
+    public InputBoard getInputBoard(ScenarioType type)
     {
-        MapUtils.checkTypeIfContains(map, Argument.KEY_COMMAND, String.class);
-        MapUtils.checkTypeIfContains(map, Argument.KEY_SENDER, String.class);
+        InputBoard board = ofInputs(type, IN_COMMAND, IN_SENDER);
+        if (type == ScenarioType.ACTION_EXECUTE)
+            board = board.requirePresent(IN_COMMAND);
 
-        String command = (String) map.get(Argument.KEY_COMMAND);
-        PlayerSpecifier sender = serializer.tryDeserializePlayerSpecifier(map.get(Argument.KEY_SENDER));
-
-        return new Argument(command, sender);
-    }
-
-    @Value
-    @EqualsAndHashCode(callSuper = true)
-    public static class Argument extends AbstractActionArgument
-    {
-        public static final String KEY_COMMAND = "command";
-        public static final String KEY_SENDER = "sender";
-
-        String command;
-        @NotNull
-        PlayerSpecifier sender;
-
-        @Override
-        public boolean isSame(TriggerArgument argument)
-        {
-            return argument instanceof Argument
-                    && Objects.equals(this.command, ((Argument) argument).command)
-                    && Objects.equals(this.sender, ((Argument) argument).sender);
-        }
-
-        @Override
-        public void validate(@NotNull ScenarioEngine engine, @NotNull ScenarioType type)
-        {
-            if (type == ScenarioType.ACTION_EXECUTE)
-                ensurePresent(KEY_COMMAND, this.command);
-        }
-
-        @Override
-        public String getArgumentString()
-        {
-            return buildArgumentString(
-                    KEY_COMMAND, this.command,
-                    KEY_SENDER, this.sender
-            );
-        }
+        return board;
     }
 }

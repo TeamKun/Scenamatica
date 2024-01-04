@@ -1,15 +1,22 @@
 package org.kunlab.scenamatica.scenario;
 
+import lombok.AccessLevel;
 import lombok.Data;
+import lombok.Setter;
+import net.kunmc.lab.peyangpaperutils.lang.LangProvider;
+import net.kunmc.lab.peyangpaperutils.lang.MsgArgs;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.enums.ScenarioOrder;
+import org.kunlab.scenamatica.exceptions.scenario.TriggerNotFoundException;
 import org.kunlab.scenamatica.interfaces.scenario.QueuedScenario;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioResult;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioSession;
+import org.kunlab.scenamatica.interfaces.scenario.SessionStorage;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerStructure;
+import org.kunlab.scenamatica.scenario.storages.SessionStorageImpl;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -19,22 +26,27 @@ import java.util.List;
 import java.util.function.Consumer;
 
 @Data
+@Setter(AccessLevel.NONE)
 public class ScenarioSessionImpl implements ScenarioSession
 {
     private final ScenarioManagerImpl manager;
     private final long createdAt;
     private final List<QueuedScenario> scenarios;
+    private final SessionStorage variables;
 
     private ArrayDeque<QueuedScenario> queue;
     private long startedAt;
     private boolean running;
     private long finishedAt;
 
+    private QueuedScenario current;
+
     public ScenarioSessionImpl(ScenarioManagerImpl manager, @NotNull List<QueuedScenario> scenarios)
     {
         this.manager = manager;
         this.createdAt = System.currentTimeMillis();
         this.scenarios = new LinkedList<>(scenarios);  // 内部で変更するため, 不変リストとかを入れないように。
+        this.variables = new SessionStorageImpl(manager.getRegistry(), this);
         this.sort();
     }
 
@@ -114,6 +126,39 @@ public class ScenarioSessionImpl implements ScenarioSession
         return this.startedAt;
     }
 
+    private void notifyRetryStart(QueuedScenario scenario)
+    {
+        this.manager.getRegistry().getLogger().info(
+                LangProvider.get(
+                        "scenario.run.retry.start",
+                        MsgArgs.of("scenarioName", scenario.getEngine().getScenario().getName())
+                                .add("count", scenario.getAttemptCount())
+                                .add("maxCount", scenario.getMaxAttemptCount())
+                ));
+    }
+
+    @Override
+    public ScenarioResult runNext() throws TriggerNotFoundException
+    {
+        if (!this.hasNext())
+            throw new IllegalStateException("There is no next scenario.");
+
+        QueuedScenario next = this.queue.pop();
+
+        if (next.getAttemptCount() > 1)
+            this.notifyRetryStart(next);
+
+        this.current = next;
+        try
+        {
+            return next.run(this.variables);  // onStart() => run => onFinished => callback 処理までやる。
+        }
+        finally
+        {
+            this.current = null;
+        }
+    }
+
     @Override
     public long getFinishedAt()
     {
@@ -133,11 +178,20 @@ public class ScenarioSessionImpl implements ScenarioSession
     {
         this.running = false;
         this.finishedAt = System.currentTimeMillis();
+        for (QueuedScenario scenario : this.scenarios)
+            scenario.getEngine().releaseScenarioInputs();
     }
 
-    @Nullable
-        /* non-public */ QueuedScenario getNext()
+    public boolean hasNext()
     {
-        return this.queue.isEmpty() ? null: this.queue.pop();
+        return !(this.queue == null || this.queue.isEmpty());
+    }
+
+    @NotNull
+        /* non-public */ QueuedScenario pollNext()
+    {
+        if (!this.hasNext())
+            throw new IllegalStateException("There is no next scenario.");
+        return this.queue.getFirst();
     }
 }

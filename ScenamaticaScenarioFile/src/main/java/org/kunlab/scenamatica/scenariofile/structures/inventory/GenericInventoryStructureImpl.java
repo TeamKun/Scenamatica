@@ -66,7 +66,7 @@ public class GenericInventoryStructureImpl implements GenericInventoryStructure
     }
 
     @NotNull
-    public static GenericInventoryStructureImpl deserialize(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
+    public static GenericInventoryStructure deserialize(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
     {
         validate(map, serializer);
 
@@ -92,6 +92,30 @@ public class GenericInventoryStructureImpl implements GenericInventoryStructure
                 MapUtils.getOrNull(map, KEY_TITLE),
                 mainContents
         );
+    }
+
+    public static GenericInventoryStructure of(@NotNull Inventory inventory)
+    {
+        Map<Integer, ItemStackStructure> mainContents = new HashMap<>();
+        for (int i = 0; i < inventory.getSize(); i++)
+        {
+            ItemStack item = inventory.getItem(i);
+            if (item == null)
+                continue;
+
+            mainContents.put(i, ItemStackStructureImpl.of(item));
+        }
+
+        return new GenericInventoryStructureImpl(
+                inventory.getSize(),
+                null,
+                mainContents
+        );
+    }
+
+    public static boolean isApplicable(@NotNull Object obj)
+    {
+        return obj instanceof Inventory;
     }
 
     protected boolean isAdequateInventory(Inventory inventory, boolean strict)

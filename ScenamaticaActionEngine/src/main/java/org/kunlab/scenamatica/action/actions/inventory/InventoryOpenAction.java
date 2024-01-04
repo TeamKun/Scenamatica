@@ -1,32 +1,34 @@
 package org.kunlab.scenamatica.action.actions.inventory;
 
-import lombok.EqualsAndHashCode;
-import lombok.Value;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.ActionContext;
+import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
+import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
-import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.InventoryStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.PlayerSpecifier;
-import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
-public class InventoryOpenAction extends AbstractInventoryAction<InventoryOpenAction.Argument>
-        implements Executable<InventoryOpenAction.Argument>, Watchable<InventoryOpenAction.Argument>
+public class InventoryOpenAction extends AbstractInventoryAction
+        implements Executable, Watchable
 {
     public static final String KEY_ACTION_NAME = "inventory_open";
+    public static final InputToken<PlayerSpecifier> IN_PLAYER = ofInput(
+            "target",
+            PlayerSpecifier.class,
+            ofPlayer()
+    );
+
+    public static final String KEY_OUT_TARGET = "target";
 
     @Override
     public String getName()
@@ -35,22 +37,22 @@ public class InventoryOpenAction extends AbstractInventoryAction<InventoryOpenAc
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @NotNull InventoryOpenAction.Argument argument)
+    public void execute(@NotNull ActionContext ctxt)
     {
-        Player player = argument.getTargetSpecifier().selectTarget(engine.getContext())
+        Player player = ctxt.input(IN_PLAYER).selectTarget(ctxt.getContext())
                 .orElseThrow(() -> new IllegalStateException("Cannot select target for this action, please specify target with valid specifier."));
 
-        InventoryStructure inventoryStructure = argument.getInventory();
-        assert inventoryStructure != null;
+        InventoryStructure inventoryStructure = ctxt.input(IN_INVENTORY);
         Inventory inventory = inventoryStructure.create();
 
+        this.makeOutputs(ctxt, player, inventory);
         player.openInventory(inventory);
     }
 
     @Override
-    public boolean isFired(@NotNull Argument argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public boolean checkFired(@NotNull ActionContext ctxt, @NotNull Event event)
     {
-        if (!super.checkMatchedInventoryEvent(argument, engine, event))
+        if (!super.checkMatchedInventoryEvent(ctxt, event))
             return false;
 
         assert event instanceof InventoryOpenEvent;
@@ -59,7 +61,22 @@ public class InventoryOpenAction extends AbstractInventoryAction<InventoryOpenAc
         if (!(player instanceof Player))
             return false;
 
-        return (!argument.getTargetSpecifier().canProvideTarget() || argument.getTargetSpecifier().checkMatchedPlayer((Player) player));
+        boolean result = ctxt.ifHasInput(IN_PLAYER, playerSpecifier -> playerSpecifier.checkMatchedPlayer((Player) player));
+        if (result)
+            this.makeOutputs(ctxt, e);
+
+        return result;
+    }
+
+    protected void makeOutputs(@NotNull ActionContext ctxt, @NotNull Player player, @NotNull Inventory inventory)
+    {
+        ctxt.output(KEY_OUT_TARGET, player);
+        super.makeOutputs(ctxt, inventory);
+    }
+
+    protected void makeOutputs(@NotNull ActionContext ctxt, @NotNull InventoryOpenEvent event)
+    {
+        this.makeOutputs(ctxt, (Player) event.getPlayer(), event.getInventory());
     }
 
     @Override
@@ -71,61 +88,12 @@ public class InventoryOpenAction extends AbstractInventoryAction<InventoryOpenAc
     }
 
     @Override
-    public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
+    public InputBoard getInputBoard(ScenarioType type)
     {
-        return new Argument(
-                super.deserializeInventoryIfContains(map, serializer),
-                serializer.tryDeserializePlayerSpecifier(map.get(InventoryOpenAction.Argument.KEY_TARGET_PLAYER))
-        );
-    }
-
-    @Value
-    @EqualsAndHashCode(callSuper = true)
-    public static class Argument extends AbstractInventoryArgument
-    {
-        public static final String KEY_TARGET_PLAYER = "target";
-
-        @NotNull
-        PlayerSpecifier targetSpecifier;
-
-        public Argument(@Nullable InventoryStructure inventory, @NotNull PlayerSpecifier targetSpecifier)
-        {
-            super(inventory);
-            this.targetSpecifier = targetSpecifier;
-        }
-
-        @Override
-        public boolean isSame(TriggerArgument argument)
-        {
-            if (!(argument instanceof Argument))
-                return false;
-            else if (!super.isSame(argument))
-                return false;
-
-            Argument arg = (Argument) argument;
-
-            return Objects.equals(this.targetSpecifier, arg.targetSpecifier);
-        }
-
-        @Override
-        public void validate(@NotNull ScenarioEngine engine, @NotNull ScenarioType type)
-        {
-            if (type == ScenarioType.ACTION_EXECUTE)
-            {
-                if (!this.targetSpecifier.canProvideTarget())
-                    throw new IllegalArgumentException("Cannot select target for this action, please specify target with valid specifier.");
-
-                ensurePresent(KEY_INVENTORY, this.inventory);
-            }
-        }
-
-        @Override
-        public String getArgumentString()
-        {
-            return appendArgumentString(
-                    super.getArgumentString(),
-                    KEY_TARGET_PLAYER, this.targetSpecifier
-            );
-        }
+        InputBoard board = super.getInputBoard(type)
+                .register(IN_PLAYER);
+        if (type == ScenarioType.ACTION_EXECUTE)
+            board.requirePresent(IN_PLAYER);
+        return board;
     }
 }

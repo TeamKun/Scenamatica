@@ -1,32 +1,43 @@
 package org.kunlab.scenamatica.action.actions.player;
 
-import lombok.EqualsAndHashCode;
-import lombok.Value;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.jetbrains.annotations.NotNull;
-import org.kunlab.scenamatica.commons.utils.MapUtils;
+import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.commons.utils.TextUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.ActionContext;
+import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
+import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
-import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
-import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.PlayerSpecifier;
-import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
-public class PlayerGameModeAction extends AbstractPlayerAction<PlayerGameModeAction.Argument>
-        implements Executable<PlayerGameModeAction.Argument>, Watchable<PlayerGameModeAction.Argument>, Requireable<PlayerGameModeAction.Argument>
+public class PlayerGameModeAction extends AbstractPlayerAction
+        implements Executable, Watchable, Requireable
 {
     public static final String KEY_ACTION_NAME = "player_gamemode";
+    public static final InputToken<GameMode> IN_GAME_MODE = ofEnumInput(
+            "gamemode",
+            GameMode.class
+    );
+    public static final InputToken<PlayerGameModeChangeEvent.Cause> IN_CAUSE = ofEnumInput(
+            "cause",
+            PlayerGameModeChangeEvent.Cause.class
+    );
+    public static final InputToken<String> IN_CANCEL_MESSAGE = ofInput(
+            "cancelMessage",
+            String.class
+    );
+
+    public static final String KEY_OUT_GAME_MODE = "gamemode";
+    public static final String KEY_OUT_CAUSE = "cause";
+    public static final String KEY_OUT_CANCEL_MESSAGE = "cancelMessage";
 
     @Override
     public String getName()
@@ -35,31 +46,46 @@ public class PlayerGameModeAction extends AbstractPlayerAction<PlayerGameModeAct
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @NotNull PlayerGameModeAction.Argument argument)
+    public void execute(@NotNull ActionContext ctxt)
     {
-        Player targetPlayer = argument.getTarget(engine);
-        GameMode gameMode = argument.getGameMode();
+        Player target = selectTarget(ctxt);
+        GameMode gm = ctxt.input(IN_GAME_MODE);
 
-        targetPlayer.setGameMode(gameMode);
+        super.makeOutputs(ctxt, target);
+        target.setGameMode(gm);
     }
 
     @Override
-    public boolean isFired(@NotNull PlayerGameModeAction.Argument argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public boolean checkFired(@NotNull ActionContext ctxt, @NotNull Event event)
     {
-        if (!super.checkMatchedPlayerEvent(argument, engine, event))
+        if (!super.checkMatchedPlayerEvent(ctxt, event))
             return false;
 
         assert event instanceof PlayerGameModeChangeEvent;
-
         PlayerGameModeChangeEvent e = (PlayerGameModeChangeEvent) event;
 
-        GameMode expectedMode = argument.getGameMode();
-        PlayerGameModeChangeEvent.Cause expectedCause = argument.getCause();
-        String expectedCancelMsg = argument.getCancelMessage();
+        boolean result = ctxt.ifHasInput(IN_GAME_MODE, gameMode -> gameMode == e.getNewGameMode())
+                && ctxt.ifHasInput(IN_CAUSE, cause -> cause == e.getCause())
+                && ctxt.ifHasInput(IN_CANCEL_MESSAGE, cancelMessage -> TextUtils.isSameContent(e.cancelMessage(), cancelMessage));
+        if (result)
+            this.makeOutputs(ctxt, e.getPlayer(), e.getNewGameMode(), e.getCause(), TextUtils.toString(e.cancelMessage()));
 
-        return (expectedMode == null || e.getNewGameMode() == expectedMode)
-                && (expectedCause == null || e.getCause() == expectedCause)
-                && (expectedCancelMsg == null || TextUtils.isSameContent(e.cancelMessage(), expectedCancelMsg));
+        return result;
+    }
+
+    private void makeOutputs(@NotNull ActionContext ctxt, @NotNull Player player, @NotNull GameMode gameMode)
+    {
+        super.makeOutputs(ctxt, player);
+        ctxt.output(KEY_OUT_GAME_MODE, gameMode);
+    }
+
+    private void makeOutputs(@NotNull ActionContext ctxt, @NotNull Player player, @NotNull GameMode gameMode, @NotNull PlayerGameModeChangeEvent.Cause cause, @Nullable String cancelMessage)
+    {
+        super.makeOutputs(ctxt, player);
+        ctxt.output(KEY_OUT_GAME_MODE, gameMode);
+        ctxt.output(KEY_OUT_CAUSE, cause);
+        if (cancelMessage != null)
+            ctxt.output(KEY_OUT_CANCEL_MESSAGE, cancelMessage);
     }
 
     @Override
@@ -71,85 +97,34 @@ public class PlayerGameModeAction extends AbstractPlayerAction<PlayerGameModeAct
     }
 
     @Override
-    public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
+    public boolean checkConditionFulfilled(@NotNull ActionContext ctxt)
     {
-        return new Argument(
-                super.deserializeTarget(map, serializer),
-                MapUtils.getAsEnumOrNull(map, Argument.KEY_GAME_MODE, GameMode.class),
-                MapUtils.getAsEnumOrNull(map, Argument.KEY_CAUSE, PlayerGameModeChangeEvent.Cause.class),
-                (String) map.get(Argument.KEY_CANCEL_MESSAGE)
-        );
+        Player targetPlayer = selectTarget(ctxt);
+
+        boolean result = ctxt.ifHasInput(IN_GAME_MODE, gameMode -> targetPlayer.getGameMode() == gameMode);
+        if (result)
+            this.makeOutputs(ctxt, targetPlayer, targetPlayer.getGameMode());
+
+        return result;
     }
 
     @Override
-    public boolean isConditionFulfilled(@NotNull PlayerGameModeAction.Argument argument, @NotNull ScenarioEngine engine)
+    public InputBoard getInputBoard(ScenarioType type)
     {
-        GameMode gameMode = argument.getGameMode();
+        InputBoard board = super.getInputBoard(type)
+                .register(IN_GAME_MODE);
 
-        return argument.getTarget(engine).getGameMode() == gameMode;
-    }
-
-    @Value
-    @EqualsAndHashCode(callSuper = true)
-    public static class Argument extends AbstractPlayerActionArgument
-    {
-        public static final String KEY_GAME_MODE = "gamemode";
-        public static final String KEY_CAUSE = "cause";
-        public static final String KEY_CANCEL_MESSAGE = "cancelMessage";
-
-        GameMode gameMode;
-        PlayerGameModeChangeEvent.Cause cause;
-        String cancelMessage;
-
-        public Argument(PlayerSpecifier target, GameMode gameMode, PlayerGameModeChangeEvent.Cause cause, String cancelMessage)
+        switch (type)
         {
-            super(target);
-            this.gameMode = gameMode;
-            this.cause = cause;
-            this.cancelMessage = cancelMessage;
+
+            case ACTION_EXECUTE:
+                board.requirePresent(IN_GAME_MODE);
+                /* fall through */
+            case ACTION_EXPECT:
+                board.registerAll(IN_CAUSE, IN_CANCEL_MESSAGE);
+                break;
         }
 
-        @Override
-        public boolean isSame(TriggerArgument argument)
-        {
-            if (!(argument instanceof Argument))
-                return false;
-
-            Argument arg = (Argument) argument;
-
-            return super.isSame(arg) &&
-                    this.gameMode == arg.gameMode &&
-                    this.cause == arg.cause &&
-                    Objects.equals(this.cancelMessage, arg.cancelMessage);
-        }
-
-        @Override
-        public void validate(@NotNull ScenarioEngine engine, @NotNull ScenarioType type)
-        {
-            super.validate(engine, type);
-            switch (type)
-            {
-                case ACTION_EXECUTE:
-                    ensurePresent(KEY_GAME_MODE, this.gameMode);
-                    /* fall through */
-                case CONDITION_REQUIRE:
-                    ensurePresent(KEY_TARGET_PLAYER, this.getTargetSpecifier());
-                    ensureNotPresent(Argument.KEY_CAUSE, this.cause);
-                    ensureNotPresent(Argument.KEY_CANCEL_MESSAGE, this.cancelMessage);
-                    break;
-
-            }
-        }
-
-        @Override
-        public String getArgumentString()
-        {
-            return appendArgumentString(
-                    super.getArgumentString(),
-                    KEY_GAME_MODE, this.gameMode,
-                    KEY_CAUSE, this.cause,
-                    KEY_CANCEL_MESSAGE, this.cancelMessage
-            );
-        }
+        return board;
     }
 }

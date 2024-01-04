@@ -22,7 +22,7 @@ public class LocationStructureImpl implements LocationStructure
     Float pitch;
     String world;
 
-    public static LocationStructure from(Location location)
+    public static LocationStructure of(Location location)
     {
         return new LocationStructureImpl(
                 location.getX(),
@@ -74,6 +74,11 @@ public class LocationStructureImpl implements LocationStructure
                 MapUtils.getAsNumberOrNull(map, KEY_PITCH, Number::floatValue),
                 MapUtils.getOrNull(map, KEY_WORLD)
         );
+    }
+
+    public static boolean isApplicable(Object o)
+    {
+        return o instanceof Location;
     }
 
     @Override

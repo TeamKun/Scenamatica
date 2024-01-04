@@ -34,7 +34,7 @@ scenario:
         x: 1
         y: 0
         z: 3
-      size_old: 200
+      sizeOld: 200
   - type: require
     action: world_border
     with:

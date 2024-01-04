@@ -401,6 +401,43 @@ public class LivingEntityStructureImpl extends EntityStructureImpl implements Li
         );
     }
 
+    public static LivingEntityStructure ofLivingEntity(@NotNull LivingEntity entity)
+    {
+        return new LivingEntityStructureImpl(
+                EntityStructureImpl.of(entity),
+                entity.getRemainingAir(),
+                entity.getMaximumAir(),
+                entity.getArrowCooldown(),
+                entity.getArrowsInBody(),
+                entity.getMaximumNoDamageTicks(),
+                entity.getLastDamage(),
+                entity.getNoDamageTicks(),
+                entity.getKiller() == null ? PlayerSpecifierImpl.EMPTY: PlayerSpecifierImpl.of(entity.getKiller()),
+                new ArrayList<>(entity.getActivePotionEffects()),
+                entity.getRemoveWhenFarAway(),
+                entity.getCanPickupItems(),
+                entity.isLeashed(),
+                entity.isLeashed() ? EntitySpecifierImpl.of(entity.getLeashHolder()): null,
+                entity.isGliding(),
+                entity.isSwimming(),
+                entity.isRiptiding(),
+                entity.isSleeping(),
+                entity.hasAI(),
+                entity.isCollidable(),
+                entity.isInvisible(),
+                // Paper
+                entity.getArrowsStuck(),
+                entity.getShieldBlockingDelay(),
+                ItemStackStructureImpl.of(Objects.requireNonNull(entity.getEquipment()).getItemInMainHand()),
+                entity.getItemUseRemainingTime(),
+                entity.getHandRaisedTime(),
+                entity.isHandRaised(),
+                entity.getHandRaised(),
+                entity.isJumping(),
+                entity.getHurtDirection()
+        );
+    }
+
     private static List<Map<String, Object>> serializePotionEffects(@NotNull List<? extends PotionEffect> potionEffects)
     {
         List<Map<String, Object>> list = new ArrayList<>();

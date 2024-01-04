@@ -72,7 +72,7 @@ public class ScenarioResultDocumentBuilder
 
         for (ScenarioResult result : results)
         {
-            ScenarioResultCause cause = result.getScenarioResultCause();
+            ScenarioResultCause cause = result.getCause();
             if (cause.isFailure())
                 failures++;
             else if (cause.isSkipped() || cause.isCancelled())
@@ -113,11 +113,11 @@ public class ScenarioResultDocumentBuilder
         );
         testCase.setAttribute(ResultKeys.KEY_CASE_STATUS, result.getState().name());
 
-        if (result.getScenarioResultCause().isFailure())
+        if (result.getCause().isFailure())
             testCase.appendChild(this.buildCauseFailure(document, result));
-        else if (result.getScenarioResultCause().isSkipped() || result.getScenarioResultCause().isCancelled())
+        else if (result.getCause().isSkipped() || result.getCause().isCancelled())
             testCase.appendChild(document.createElement(ResultKeys.KEY_CASE_SKIPPED));
-        else if (result.getScenarioResultCause().isError())
+        else if (result.getCause().isError())
             testCase.appendChild(document.createElement(ResultKeys.KEY_CASE_ERROR));
 
         // stdout を追加 (ケースごと)
@@ -136,9 +136,9 @@ public class ScenarioResultDocumentBuilder
     private Element buildCauseError(@NotNull Document document, @NotNull ScenarioResult result)
     {
         Element error = document.createElement(ResultKeys.KEY_CASE_ERROR);
-        error.setAttribute(ResultKeys.KEY_CASE_ERROR_TYPE, result.getScenarioResultCause().name());
+        error.setAttribute(ResultKeys.KEY_CASE_ERROR_TYPE, result.getCause().name());
 
-        Action<?> failedAction = result.getFailedAction();
+        Action failedAction = result.getFailedAction();
         if (failedAction != null)
             error.setAttribute(ResultKeys.KEY_CASE_ERROR_MESSAGE, "Failed to pass scenario: " + failedAction.getName());
 
@@ -148,9 +148,9 @@ public class ScenarioResultDocumentBuilder
     private Element buildCauseFailure(@NotNull Document document, @NotNull ScenarioResult result)
     {
         Element failure = document.createElement(ResultKeys.KEY_CASE_FAILURE);
-        failure.setAttribute(ResultKeys.KEY_CASE_FAILURE_TYPE, result.getScenarioResultCause().name());
+        failure.setAttribute(ResultKeys.KEY_CASE_FAILURE_TYPE, result.getCause().name());
 
-        Action<?> failedAction = result.getFailedAction();
+        Action failedAction = result.getFailedAction();
         if (failedAction != null)
             failure.setAttribute(ResultKeys.KEY_CASE_FAILURE_MESSAGE, failedAction.getName());
 
@@ -229,7 +229,7 @@ public class ScenarioResultDocumentBuilder
 
     private long summingResultsTime(@NotNull List<? extends ScenarioResult> results)
     {
-        return results.stream().parallel()
+        return results.stream()
                 .mapToLong(result -> result.getFinishedAt() - result.getStartedAt())
                 .sum();
     }

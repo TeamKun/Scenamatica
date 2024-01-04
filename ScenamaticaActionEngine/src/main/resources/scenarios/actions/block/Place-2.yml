@@ -10,6 +10,8 @@ description: Testing block_place action without block works or not
 context:
   actors:
     - name: Actor001
+  stage:
+    type: normal
 
 
 scenario:

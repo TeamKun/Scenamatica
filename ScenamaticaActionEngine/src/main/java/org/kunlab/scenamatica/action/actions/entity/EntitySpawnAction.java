@@ -1,8 +1,5 @@
 package org.kunlab.scenamatica.action.actions.entity;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -11,36 +8,48 @@ import org.bukkit.event.entity.EntitySpawnEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.actions.AbstractAction;
-import org.kunlab.scenamatica.action.actions.AbstractActionArgument;
 import org.kunlab.scenamatica.commons.utils.EntityUtils;
 import org.kunlab.scenamatica.commons.utils.Utils;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.ActionContext;
+import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
+import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
-import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.entity.EntityStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.misc.LocationStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.EntitySpecifier;
-import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
-public class EntitySpawnAction<T extends EntitySpawnAction.Argument> extends AbstractAction<T>
-        implements Executable<T>, Watchable<T>
+public class EntitySpawnAction<E extends Entity> extends AbstractAction
+        implements Executable, Watchable
 {
     public static final String KEY_ACTION_NAME = "entity_spawn";
+    public static final String KEY_OUT_ENTITY = "entity";
+    public final InputToken<EntitySpecifier<E>> IN_ENTITY;
 
-    public static <T extends Entity> T spawnEntity(EntityStructure structure, @Nullable LocationStructure locDef, ScenarioEngine engine)
+    private final Class<E> entityClass;
+    private final Class<? extends EntityStructure> structureClass;
+
+    public EntitySpawnAction(Class<E> entityclass, Class<? extends EntityStructure> structureClass)
+    {
+        this.entityClass = entityclass;
+        this.structureClass = structureClass;
+        this.IN_ENTITY = ofInput("entity", entityclass, structureClass)
+                .validator(ScenarioType.ACTION_EXECUTE, EntitySpecifier::hasStructure, "Entity structure is not present")
+                .validator(ScenarioType.ACTION_EXECUTE, specifier -> specifier.getTargetStructure().getType() != null, "Entity type is not present")
+                .validator(ScenarioType.ACTION_EXECUTE, specifier -> specifier.getTargetStructure().getType() != EntityType.UNKNOWN, "Entity type is unknown");
+    }
+
+    public <T extends Entity> T spawnEntity(ActionContext ctxt, EntityStructure structure, @Nullable LocationStructure locDef)
     {
         Location spawnLoc = locDef == null ? null: locDef.create();
         if (spawnLoc == null)
-            spawnLoc = engine.getContext().getStage().getWorld().getSpawnLocation();
+            spawnLoc = ctxt.getContext().getStage().getWorld().getSpawnLocation();
         // World が指定されていない場合は、ステージのワールドを使う。
-        spawnLoc = Utils.assignWorldToLocation(spawnLoc, engine);
+        spawnLoc = Utils.assignWorldToLocation(spawnLoc, ctxt.getEngine());
 
         assert structure.getType() != null;
         // noinspection unchecked
@@ -50,7 +59,10 @@ public class EntitySpawnAction<T extends EntitySpawnAction.Argument> extends Abs
         return spawnLoc.getWorld().spawn(
                 spawnLoc,
                 entityClass,
-                entity -> EntityUtils.tryCastMapped(structure, entity).applyTo(entity)
+                entity -> {
+                    EntityUtils.tryCastMapped(structure, entity).applyTo(entity);
+                    this.makeOutputs(ctxt, entity);
+                }
         );
     }
 
@@ -61,25 +73,34 @@ public class EntitySpawnAction<T extends EntitySpawnAction.Argument> extends Abs
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @NotNull T argument)
+    public void execute(@NotNull ActionContext ctxt)
     {
-        EntityStructure structure = argument.getEntity().getTargetStructure();
+        EntityStructure structure = ctxt.input(this.IN_ENTITY).getTargetStructure();
         assert structure != null;
         LocationStructure spawnLoc = structure.getLocation();
 
-        spawnEntity(structure, spawnLoc, engine);
+        this.spawnEntity(ctxt, structure, spawnLoc);
+    }
+
+    protected void makeOutputs(@NotNull ActionContext ctxt, @NotNull Entity entity)
+    {
+        ctxt.output(KEY_OUT_ENTITY, entity);
+        ctxt.commitOutput();
     }
 
     @Override
-    public boolean isFired(@NotNull Argument argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public boolean checkFired(@NotNull ActionContext ctxt, @NotNull Event event)
     {
         if (!(event instanceof EntitySpawnEvent))
             return false;
 
         EntitySpawnEvent e = (EntitySpawnEvent) event;
 
-        EntitySpecifier<?> entity = argument.getEntity();
-        return (!entity.canProvideTarget() || entity.checkMatchedEntity(e.getEntity()));
+        boolean result = ctxt.ifHasInput(this.IN_ENTITY, specifier -> specifier.checkMatchedEntity(e.getEntity()));
+        if (result)
+            this.makeOutputs(ctxt, e.getEntity());
+
+        return result;
     }
 
     @Override
@@ -91,56 +112,12 @@ public class EntitySpawnAction<T extends EntitySpawnAction.Argument> extends Abs
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public T deserializeArgument(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
+    public InputBoard getInputBoard(ScenarioType type)
     {
-        return (T) new Argument(
-                serializer.tryDeserializeEntitySpecifier(map.get(Argument.KEY_ENTITY))
-        );
-    }
+        InputBoard board = ofInputs(type, this.IN_ENTITY);
+        if (type == ScenarioType.ACTION_EXECUTE)
+            board.requirePresent(this.IN_ENTITY);
 
-    @EqualsAndHashCode(callSuper = true)
-    @Data
-    @Getter
-    public static class Argument extends AbstractActionArgument
-    {
-        public static final String KEY_ENTITY = "entity";
-
-        @NotNull
-        private final EntitySpecifier<?> entity;
-        // CreatureSpawnEvent.SpawnReason reason は CreatureSpawnAction でつくる。
-
-        @Override
-        public boolean isSame(TriggerArgument argument)
-        {
-            if (!(argument instanceof Argument))
-                return false;
-
-            Argument arg = (Argument) argument;
-
-            return Objects.equals(this.entity, arg.entity);
-        }
-
-        @Override
-        public void validate(@NotNull ScenarioEngine engine, @NotNull ScenarioType type)
-        {
-            if (type == ScenarioType.ACTION_EXECUTE)
-            {
-                ensurePresent(KEY_ENTITY, this.entity);
-                if (!this.entity.hasStructure())
-                    throw new IllegalArgumentException("Entity structure is not present");
-                EntityStructure structure = this.entity.getTargetStructure();
-                ensurePresent(KEY_ENTITY + "." + EntityStructure.KEY_TYPE, structure.getType());
-                ensureNotEquals(KEY_ENTITY + "." + EntityStructure.KEY_TYPE, structure.getType(), EntityType.UNKNOWN);
-            }
-        }
-
-        @Override
-        public String getArgumentString()
-        {
-            return appendArgumentString(
-                    KEY_ENTITY, this.entity
-            );
-        }
+        return board;
     }
 }

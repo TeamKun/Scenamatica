@@ -13,6 +13,7 @@ import org.kunlab.scenamatica.interfaces.scenariofile.entity.EntityStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.entity.entities.EntityItemStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.ItemStackStructure;
 import org.kunlab.scenamatica.scenariofile.structures.entity.EntityStructureImpl;
+import org.kunlab.scenamatica.scenariofile.structures.inventory.ItemStackStructureImpl;
 
 import java.util.Map;
 import java.util.UUID;
@@ -112,10 +113,18 @@ public class EntityItemStructureImpl extends EntityStructureImpl implements Enti
         );
     }
 
-    @Override
-    public Item create()
+    @NotNull
+    public static EntityItemStructure of(@NotNull Item entity)
     {
-        return null;
+        return new EntityItemStructureImpl(
+                EntityStructureImpl.of(entity),
+                ItemStackStructureImpl.of(entity.getItemStack()),
+                entity.getPickupDelay(),
+                entity.getOwner(),
+                entity.getThrower(),
+                entity.canMobPickup(),
+                entity.willAge()
+        );
     }
 
     @Override
@@ -144,6 +153,12 @@ public class EntityItemStructureImpl extends EntityStructureImpl implements Enti
     @Override
     public boolean isAdequate(Item object, boolean strict)
     {
-        return false;
+        return super.isAdequateEntity(object, strict)
+                && (this.pickupDelay == null || this.pickupDelay.equals(object.getPickupDelay()))
+                && (this.owner == null || this.owner.equals(object.getOwner()))
+                && (this.thrower == null || this.thrower.equals(object.getThrower()))
+                && (this.canMobPickup == null || this.canMobPickup.equals(object.canMobPickup()))
+                && (this.willAge == null || this.willAge.equals(object.willAge()))
+                && this.itemStack.isAdequate(object.getItemStack(), strict);
     }
 }

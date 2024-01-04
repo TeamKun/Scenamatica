@@ -1,36 +1,49 @@
 package org.kunlab.scenamatica.action.actions.server;
 
-import lombok.EqualsAndHashCode;
-import lombok.Value;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.Event;
 import org.bukkit.event.server.TabCompleteEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.kunlab.scenamatica.action.actions.AbstractActionArgument;
+import org.kunlab.scenamatica.action.utils.InputTypeToken;
 import org.kunlab.scenamatica.action.utils.PlayerLikeCommandSenders;
-import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.ActionContext;
+import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
+import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
-import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.PlayerSpecifier;
-import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class TabCompleteAction extends AbstractServerAction<TabCompleteAction.Argument>
-        implements Executable<TabCompleteAction.Argument>, Watchable<TabCompleteAction.Argument>
+public class TabCompleteAction extends AbstractServerAction
+        implements Executable, Watchable
 {
 
     public static final String KEY_ACTION_NAME = "tab_complete";
+    public static final InputToken<PlayerSpecifier> IN_SENDER = ofInput(
+            "sender",
+            PlayerSpecifier.class,
+            ofPlayer()
+    );
+    public static final InputToken<String> IN_BUFFER = ofInput(
+            "buffer",
+            String.class
+    );
+    public static final InputToken<List<String>> IN_COMPLETIONS = ofInput(
+            "completions",
+            InputTypeToken.ofList(String.class)
+    );
+    public static final InputToken<Boolean> IN_STRICT = ofInput(
+            "strict",
+            Boolean.class,
+            false
+    );
 
     private static boolean checkCompletions(@Nullable List<String> expected, List<String> actual, boolean strict)
     {
@@ -57,27 +70,29 @@ public class TabCompleteAction extends AbstractServerAction<TabCompleteAction.Ar
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @NotNull TabCompleteAction.Argument argument)
+    public void execute(@NotNull ActionContext ctxt)
     {
-        CommandSender sender = PlayerLikeCommandSenders.getCommandSenderOrThrow(argument.getSender(), engine.getContext());
-        String buffer = argument.getBuffer();
-        List<String> completions = argument.getCompletions();
-        if (completions == null)
-            completions = new ArrayList<>(); // Collections.emptyList() だと不変なのでプラグインのイベントハンドラがバグるかも。
+        CommandSender sender = PlayerLikeCommandSenders.getCommandSenderOrThrow(
+                ctxt.orElseInput(IN_SENDER, () -> null),
+                ctxt.getContext()
+        );
+        String buffer = ctxt.input(IN_BUFFER);
+        List<String> completions = ctxt.orElseInput(IN_COMPLETIONS, ArrayList::new);
+        // ↑ Collections.emptyList() はプラグインの動作に影響を与えるので使わない
 
         TabCompleteEvent event = new TabCompleteEvent(sender, buffer, completions);
-        engine.getPlugin().getServer().getPluginManager().callEvent(event);
+        ctxt.getEngine().getPlugin().getServer().getPluginManager().callEvent(event);
     }
 
     @Override
-    public boolean isFired(@NotNull Argument argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public boolean checkFired(@NotNull ActionContext ctxt, @NotNull Event event)
     {
         assert event instanceof TabCompleteEvent;
         TabCompleteEvent e = (TabCompleteEvent) event;
 
-        if (argument.getBuffer() != null)
+        if (ctxt.hasInput(IN_BUFFER))
         {
-            String expectedBuffer = argument.getBuffer();
+            String expectedBuffer = ctxt.input(IN_BUFFER);
             String actualBuffer = e.getBuffer();
 
             Pattern pattern = Pattern.compile(expectedBuffer);
@@ -87,9 +102,15 @@ public class TabCompleteAction extends AbstractServerAction<TabCompleteAction.Ar
                 return false;
         }
 
+        boolean strict = ctxt.orElseInput(IN_STRICT, () -> false);
 
-        return checkCompletions(argument.getCompletions(), e.getCompletions(), argument.isStrict())
-                && PlayerLikeCommandSenders.isSpecifiedSender(e.getSender(), argument.getSender());
+        return checkCompletions(
+                ctxt.orElseInput(IN_COMPLETIONS, () -> null),
+                e.getCompletions(), strict
+        ) && ctxt.ifHasInput(
+                IN_SENDER,
+                sender -> PlayerLikeCommandSenders.isSpecifiedSender(e.getSender(), sender)
+        );
     }
 
     @Override
@@ -101,61 +122,12 @@ public class TabCompleteAction extends AbstractServerAction<TabCompleteAction.Ar
     }
 
     @Override
-    public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
+    public InputBoard getInputBoard(ScenarioType type)
     {
-        return new Argument(
-                serializer.tryDeserializePlayerSpecifier(map.get(Argument.KEY_SENDER)),
-                (String) map.get(Argument.KEY_BUFFER),
-                MapUtils.getAsListOrNull(map, Argument.KEY_COMPLETIONS),
-                MapUtils.getOrDefault(map, Argument.KEY_STRICT, true)
-        );
-    }
+        InputBoard board = ofInputs(type, IN_SENDER, IN_BUFFER, IN_COMPLETIONS, IN_STRICT);
+        if (type == ScenarioType.ACTION_EXECUTE)
+            board = board.requirePresent(IN_BUFFER);
 
-    @Value
-    @EqualsAndHashCode(callSuper = true)
-    public static class Argument extends AbstractActionArgument
-    {
-        public static final String KEY_SENDER = "sender";
-        public static final String KEY_BUFFER = "buffer";
-        public static final String KEY_COMPLETIONS = "completions";
-        public static final String KEY_STRICT = "strict";
-
-        @NotNull
-        PlayerSpecifier sender;
-        String buffer;
-        List<String> completions;
-        boolean strict;
-
-        @Override
-        public boolean isSame(TriggerArgument argument)
-        {
-            if (!(argument instanceof Argument))
-                return false;
-
-            Argument arg = (Argument) argument;
-
-            return Objects.equals(this.sender, arg.sender)
-                    && Objects.equals(this.buffer, arg.buffer)
-                    && MapUtils.equals(this.completions, arg.completions
-            );
-        }
-
-        @Override
-        public void validate(@NotNull ScenarioEngine engine, @NotNull ScenarioType type)
-        {
-            if (type == ScenarioType.ACTION_EXECUTE)
-                ensurePresent(KEY_BUFFER, this.buffer);
-        }
-
-        @Override
-        public String getArgumentString()
-        {
-            return buildArgumentString(
-                    KEY_SENDER, this.sender,
-                    KEY_BUFFER, this.buffer,
-                    KEY_COMPLETIONS, this.completions,
-                    KEY_STRICT, this.strict
-            );
-        }
+        return board;
     }
 }

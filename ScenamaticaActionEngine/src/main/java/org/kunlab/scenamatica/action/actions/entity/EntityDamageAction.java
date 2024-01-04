@@ -1,32 +1,69 @@
 package org.kunlab.scenamatica.action.actions.entity;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
 import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.kunlab.scenamatica.action.utils.InputTypeToken;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.ActionContext;
+import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
+import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
-import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
-import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.EntitySpecifier;
-import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 @SuppressWarnings("deprecation")  // DamageModifier <- very soon で消えるらしい。 1.8 の頃から言ってる。 <- 石油かよ！！？
-public class EntityDamageAction<A extends EntityDamageAction.Argument> extends AbstractEntityAction<A>
-        implements Executable<A>, Watchable<A>
+public class EntityDamageAction extends AbstractGeneralEntityAction
+        implements Executable, Watchable
 {
     public static final String KEY_ACTION_NAME = "entity_damage";
+    public static final InputToken<EntityDamageEvent.DamageCause> IN_CAUSE = ofEnumInput(
+            "cause",
+            EntityDamageEvent.DamageCause.class
+    );
+    public static final InputToken<Double> IN_AMOUNT = ofInput(
+            "amount",
+            Double.class
+    );
+    public static final InputToken<Map<EntityDamageEvent.DamageModifier, Double>> IN_MODIFIERS = ofInput(
+            "modifiers",
+            InputTypeToken.ofMap(EntityDamageEvent.DamageModifier.class, Double.class),
+            ofTraverser(Map.class, (ser, map) -> {
+                Map<EntityDamageEvent.DamageModifier, Double> modifiersMap = new HashMap<>();
+                Map<String, Number> modifiersMapRaw = MapUtils.checkAndCastMap(
+                        map, String.class, Number.class
+                );
+
+                for (Map.Entry<String, Number> entry : modifiersMapRaw.entrySet())
+                {
+                    EntityDamageEvent.DamageModifier cause = EntityDamageEvent.DamageModifier.valueOf(entry.getKey());
+                    modifiersMap.put(cause, entry.getValue().doubleValue());
+                }
+
+                return modifiersMap;
+            })
+    );
+
+    public static final String KEY_OUT_CAUSE = "cause";
+    public static final String KEY_OUT_AMOUNT = "amount";
+    public static final String KEY_OUT_MODIFIERS = "modifiers";
+
+    protected static Map<String, Double> createModifiersMap(EntityDamageEvent evt)
+    {
+        Map<String, Double> modifiersMap = new HashMap<>();
+        for (EntityDamageEvent.DamageModifier modifier : EntityDamageEvent.DamageModifier.values())
+            modifiersMap.put(modifier.name().toLowerCase(), evt.getDamage(modifier));
+
+        return modifiersMap;
+    }
 
     @Override
     public String getName()
@@ -35,32 +72,47 @@ public class EntityDamageAction<A extends EntityDamageAction.Argument> extends A
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @NotNull A argument)
+    public void execute(@NotNull ActionContext ctxt)
     {
-        Entity target = argument.selectTarget(engine.getContext());
+        Entity target = this.selectTarget(ctxt);
 
         if (!(target instanceof Damageable))
             throw new IllegalArgumentException("Target is not damageable");
 
-        ((Damageable) target).damage(argument.getAmount());
+        this.makeOutputs(ctxt, target, null, ctxt.input(IN_AMOUNT), null);
+        ((Damageable) target).damage(ctxt.input(IN_AMOUNT));
     }
 
     @Override
-    public boolean isFired(@NotNull A argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public boolean checkFired(@NotNull ActionContext ctxt, @NotNull Event event)
     {
-        if (!super.checkMatchedEntityEvent(argument, engine, event))
+        if (!super.checkMatchedEntityEvent(ctxt, event))
             return false;
 
         assert event instanceof EntityDamageEvent;
         EntityDamageEvent e = (EntityDamageEvent) event;
 
-        if (argument.getModifiers() != null)
-            for (Map.Entry<EntityDamageEvent.DamageModifier, Double> entry : argument.getModifiers().entrySet())
+        if (ctxt.hasInput(IN_MODIFIERS))
+            for (Map.Entry<EntityDamageEvent.DamageModifier, Double> entry : ctxt.input(IN_MODIFIERS).entrySet())
                 if (e.getDamage(entry.getKey()) != entry.getValue())
                     return false;
 
-        return (argument.getCause() == null || argument.getCause() == e.getCause())
-                && (argument.getAmount() == null || argument.getAmount() == e.getFinalDamage());
+        boolean result = ctxt.ifHasInput(IN_CAUSE, cause -> cause == e.getCause())
+                && ctxt.ifHasInput(IN_AMOUNT, amount -> amount == e.getDamage());
+        if (result)
+            this.makeOutputs(ctxt, e.getEntity(), e.getCause(), e.getDamage(), createModifiersMap(e));
+
+        return result;
+    }
+
+    protected void makeOutputs(@NotNull ActionContext ctxt, @NotNull Entity entity, @Nullable EntityDamageEvent.DamageCause cause, double amount, @Nullable Map<String, Double> modifiers)
+    {
+        if (cause != null)
+            ctxt.output(KEY_OUT_CAUSE, cause);
+        ctxt.output(KEY_OUT_AMOUNT, amount);
+        if (modifiers != null)
+            ctxt.output(KEY_OUT_MODIFIERS, modifiers);
+        super.makeOutputs(ctxt, entity);
     }
 
     @Override
@@ -72,96 +124,14 @@ public class EntityDamageAction<A extends EntityDamageAction.Argument> extends A
     }
 
     @Override
-    public A deserializeArgument(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
+    public InputBoard getInputBoard(ScenarioType type)
     {
-        Number amountNum = MapUtils.getAsNumberOrNull(map, Argument.KEY_AMOUNT);
-        Double amount;
-        if (amountNum == null)
-            amount = null;
-        else
-            amount = amountNum.doubleValue();
+        InputBoard board = super.getInputBoard(type)
+                .registerAll(IN_CAUSE, IN_AMOUNT, IN_MODIFIERS);
+        if (type == ScenarioType.ACTION_EXECUTE)
+            board.requirePresent(IN_AMOUNT)
+                    .validator(in -> !in.isPresent(IN_CAUSE), "Use entity_damage_by_entity or entity_damage_by_block action instead");
 
-        Map<EntityDamageEvent.DamageModifier, Double> modifiersMap;
-        if (map.containsKey(Argument.KEY_DAMAGE_MODIFIERS))
-        {
-            modifiersMap = new HashMap<>();
-
-            Map<String, Number> modifiersMapRaw = MapUtils.checkAndCastMap(
-                    map, String.class, Number.class
-            );
-
-            for (Map.Entry<String, Number> entry : modifiersMapRaw.entrySet())
-            {
-                EntityDamageEvent.DamageModifier cause = EntityDamageEvent.DamageModifier.valueOf(entry.getKey());
-                modifiersMap.put(cause, entry.getValue().doubleValue());
-            }
-        }
-        else
-            modifiersMap = null;
-
-        // noinspection unchecked  A は Argument であることが保証されている
-        return (A) new Argument(
-                super.deserializeTarget(map, serializer),
-                MapUtils.getAsEnumOrNull(map, Argument.KEY_DAMAGE_CAUSE, EntityDamageEvent.DamageCause.class),
-                amount,
-                modifiersMap
-        );
-    }
-
-    @Getter
-    @EqualsAndHashCode(callSuper = true)
-    public static class Argument extends AbstractEntityActionArgument<Entity>
-    {
-        public static final String KEY_DAMAGE_CAUSE = "cause";
-        public static final String KEY_AMOUNT = "amount";  // 最終ダメージ
-        public static final String KEY_DAMAGE_MODIFIERS = "modifiers";
-
-        private final EntityDamageEvent.DamageCause cause;
-        private final Double amount;
-        private final Map<EntityDamageEvent.DamageModifier, @NotNull Double> modifiers;
-
-        public Argument(EntitySpecifier<Entity> target, EntityDamageEvent.DamageCause cause, Double amount, Map<EntityDamageEvent.DamageModifier, @NotNull Double> modifiers)
-        {
-            super(target);
-            this.cause = cause;
-            this.amount = amount;
-            this.modifiers = modifiers;
-        }
-
-        @Override
-        public boolean isSame(TriggerArgument argument)
-        {
-            if (!(argument instanceof Argument))
-                return false;
-
-            Argument arg = (Argument) argument;
-
-            return this.cause == arg.cause
-                    && Objects.equals(this.amount, arg.amount)
-                    && MapUtils.equals(this.modifiers, this.modifiers);
-        }
-
-        @Override
-        public void validate(@NotNull ScenarioEngine engine, @NotNull ScenarioType type)
-        {
-            if (type == ScenarioType.ACTION_EXECUTE)
-            {
-                this.ensureCanProvideTarget();
-                ensurePresent(Argument.KEY_AMOUNT, this.amount);
-                if (this.cause != null)
-                    throw new IllegalArgumentException("Use entity_damage_by_entity or entity_damage_by_block action instead.");
-            }
-        }
-
-        @Override
-        public String getArgumentString()
-        {
-            return appendArgumentString(
-                    super.getArgumentString(),
-                    KEY_DAMAGE_CAUSE, this.cause,
-                    KEY_AMOUNT, this.amount,
-                    KEY_DAMAGE_MODIFIERS, this.modifiers
-            );
-        }
+        return board;
     }
 }

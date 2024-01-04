@@ -38,22 +38,24 @@ public interface ScenarioEngine
      * シナリオを開始します。
      *
      * @param trigger        シナリオを開始したトリガー
+     * @param variable       セッション変数
      * @param attemptedCount 試行された回数（n回目の実行）
      * @return テスト結果
      */
     @NotNull
-    ScenarioResult start(@NotNull TriggerStructure trigger, int attemptedCount) throws TriggerNotFoundException;
+    ScenarioResult start(@NotNull TriggerStructure trigger, @NotNull SessionStorage variable, int attemptedCount) throws TriggerNotFoundException;
 
     /**
      * シナリオを開始します。
      *
-     * @param trigger シナリオを開始したトリガー
+     * @param trigger  シナリオを開始したトリガー
+     * @param variable セッション変数
      * @return テスト結果
      */
     @NotNull
-    default ScenarioResult start(@NotNull TriggerStructure trigger) throws TriggerNotFoundException
+    default ScenarioResult start(@NotNull TriggerStructure trigger, @NotNull SessionStorage variable) throws TriggerNotFoundException
     {
-        return this.start(trigger, 1);
+        return this.start(trigger, variable, 1);
     }
 
     /**
@@ -141,21 +143,26 @@ public interface ScenarioEngine
      *
      * @return コンパイルされたシナリオ
      */
-    CompiledScenarioAction<?> getCurrentScenario();
+    CompiledScenarioAction getCurrentScenario();
+
+    /**
+     * シナリオの入力の参照を解放します。
+     */
+    void releaseScenarioInputs();
 
     /**
      * シナリオの結果を受け取るオブジェクトを取得します。
      *
      * @return シナリオの結果を受け取るオブジェクト
      */
-    ScenarioResultDeliverer getDeliverer();
+    ActionResultDeliverer getDeliverer();
 
     /**
      * コンパイルされたシナリオのアクションを取得します。
      *
      * @return コンパイルされたシナリオのアクション
      */
-    List<? extends CompiledScenarioAction<?>> getActions();
+    List<? extends CompiledScenarioAction> getActions();
 
     /**
      * コンパイルされたトリガのアクションを取得します。
@@ -163,4 +170,11 @@ public interface ScenarioEngine
      * @return コンパイルされたトリガのアクション
      */
     List<? extends CompiledTriggerAction> getTriggerActions();
+
+    /**
+     * シナリオの実行を取得します。
+     *
+     * @return シナリオの実行
+     */
+    ScenarioExecutor getExecutor();
 }

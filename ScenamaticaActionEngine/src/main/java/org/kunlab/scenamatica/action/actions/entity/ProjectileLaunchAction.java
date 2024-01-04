@@ -1,8 +1,5 @@
 package org.kunlab.scenamatica.action.actions.entity;
 
-import lombok.EqualsAndHashCode;
-import lombok.Value;
-import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
 import org.bukkit.block.Dispenser;
 import org.bukkit.entity.EntityType;
@@ -23,26 +20,23 @@ import org.kunlab.scenamatica.action.utils.EventListenerUtils;
 import org.kunlab.scenamatica.commons.utils.EntityUtils;
 import org.kunlab.scenamatica.commons.utils.Utils;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.ActionContext;
+import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
-import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.entity.EntityStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.entity.entities.ProjectileStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.misc.BlockStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.misc.ProjectileSourceStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.misc.SelectorProjectileSourceStructure;
-import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.EntitySpecifier;
-import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 import org.kunlab.scenamatica.selector.Selector;
 
 import java.lang.invoke.MethodHandles;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
-public class ProjectileLaunchAction extends EntitySpawnAction<ProjectileLaunchAction.Argument>
-        implements Executable<ProjectileLaunchAction.Argument>, Watchable<ProjectileLaunchAction.Argument>, Listener
+public class ProjectileLaunchAction extends EntitySpawnAction<Projectile>
+        implements Executable, Watchable, Listener
 {
     public static final String KEY_ACTION_NAME = "projectile_launch";
 
@@ -50,11 +44,9 @@ public class ProjectileLaunchAction extends EntitySpawnAction<ProjectileLaunchAc
 
     public ProjectileLaunchAction()
     {
-        super();
+        super(Projectile.class, ProjectileStructure.class);
+
         this.plugin = getPlugin();
-
-
-        Bukkit.getPluginManager().registerEvents(this, this.plugin);
     }
 
     private static Plugin getPlugin()
@@ -91,16 +83,17 @@ public class ProjectileLaunchAction extends EntitySpawnAction<ProjectileLaunchAc
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @NotNull ProjectileLaunchAction.Argument argument)
+    public void execute(@NotNull ActionContext ctxt)
     {
-        ProjectileStructure entity = (ProjectileStructure) argument.getEntity().getTargetStructure();
+        ProjectileStructure entity = (ProjectileStructure) ctxt.input(this.IN_ENTITY).getTargetStructure();
         // noinspection unchecked -> Checked by validator
         Class<? extends Projectile> entityType = (Class<? extends Projectile>) entity.getType().getEntityClass();
+        assert entityType != null;
 
         ProjectileSourceStructure shooter = entity.getShooter();
-        ProjectileSource source = this.convertProjectileSource(shooter, engine);
+        ProjectileSource source = this.convertProjectileSource(shooter, ctxt);
 
-        RegisteredListener transformer = this.registerTransformer(entity.getType(), entity);
+        RegisteredListener transformer = this.registerTransformer(ctxt, entity.getType(), entity);
         Vector velocity = entity.getVelocity();
         if (velocity == null)
             source.launchProjectile(entityType);
@@ -110,7 +103,7 @@ public class ProjectileLaunchAction extends EntitySpawnAction<ProjectileLaunchAc
         this.unregisterTransformer(transformer);
     }
 
-    private RegisteredListener registerTransformer(EntityType type, ProjectileStructure structure)
+    private RegisteredListener registerTransformer(ActionContext ctxt, EntityType type, ProjectileStructure structure)
     {
         Listener dummyListener = new Listener()
         {
@@ -122,13 +115,14 @@ public class ProjectileLaunchAction extends EntitySpawnAction<ProjectileLaunchAc
                 ProjectileLaunchEvent e = (ProjectileLaunchEvent) event;
                 if (e.getEntityType() == type)
                     structure.applyTo(e.getEntity());
+                super.makeOutputs(ctxt, e.getEntity());
             }
         };
 
         RegisteredListener registeredListener = new RegisteredListener(
                 dummyListener,
                 executor,
-                EventPriority.MONITOR,  // ほかのイベントハンドラによる改変を許可。
+                EventPriority.HIGHEST,
                 this.plugin,
                 false
         );
@@ -143,7 +137,7 @@ public class ProjectileLaunchAction extends EntitySpawnAction<ProjectileLaunchAc
         EventListenerUtils.getListeners(ProjectileLaunchEvent.class).unregister(listener);
     }
 
-    private ProjectileSource convertProjectileSource(ProjectileSourceStructure structure, ScenarioEngine engine)
+    private ProjectileSource convertProjectileSource(ProjectileSourceStructure structure, ActionContext ctxt)
     {
         if (structure instanceof SelectorProjectileSourceStructure)
         {
@@ -158,40 +152,18 @@ public class ProjectileLaunchAction extends EntitySpawnAction<ProjectileLaunchAc
         else if (structure instanceof EntityStructure)
         {
             EntityStructure entity = (EntityStructure) structure;
-            return (ProjectileSource) EntityUtils.getEntity(entity, engine, e -> e instanceof ProjectileSource);
+            return (ProjectileSource) EntityUtils.getEntity(entity, ctxt.getEngine(), e -> e instanceof ProjectileSource);
         }
         else if (structure instanceof BlockStructure)
         {
             BlockStructure blockStructure = (BlockStructure) structure;
             if (blockStructure.getLocation() == null)
                 throw new IllegalArgumentException("BlockStructure must have location");
-            Block block = Utils.assignWorldToBlockLocation(blockStructure, engine).getBlock();
+            Block block = Utils.assignWorldToBlockLocation(blockStructure, ctxt.getEngine()).getBlock();
             return getBlockProjectileSource(block);
         }
         else
             throw new IllegalArgumentException("Invalid ProjectileSourceStructure: " + structure);
-    }
-
-    @Override
-    public boolean isFired(@NotNull Argument argument, @NotNull ScenarioEngine engine, @NotNull Event event)
-    {
-        if (!(event instanceof ProjectileLaunchEvent))
-            return false;
-        ProjectileLaunchEvent e = (ProjectileLaunchEvent) event;
-
-        EntitySpecifier<?> entity = argument.getEntity();
-        if (!entity.checkMatchedEntity(e.getEntity()))
-            return false;
-
-        if (argument.getEntity().isSelectable() && !argument.getEntity().checkMatchedEntity(e.getEntity()))
-            return false;
-        else if (argument.getEntity().hasStructure())
-        {
-            ProjectileStructure structure = (ProjectileStructure) argument.getEntity().getTargetStructure();
-            return structure.isAdequate(e.getEntity());
-        }
-
-        return true;
     }
 
     @Override
@@ -203,57 +175,22 @@ public class ProjectileLaunchAction extends EntitySpawnAction<ProjectileLaunchAc
     }
 
     @Override
-    public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
+    public InputBoard getInputBoard(ScenarioType type)
     {
-        return new Argument(
-                serializer.tryDeserializeEntitySpecifier(
-                        map.get(EntitySpawnAction.Argument.KEY_ENTITY),
-                        ProjectileStructure.class
-                )
-        );
-    }
+        InputBoard board = super.getInputBoard(type);
+        if (type == ScenarioType.ACTION_EXECUTE)
+            board.validator(b -> {
+                        EntityStructure structure = b.get(this.IN_ENTITY).getTargetStructure();
+                        assert structure != null;
+                        return ProjectileStructure.class.isAssignableFrom(structure.getClass());
+                    }, "EntityStructure must be ProjectileStructure")
+                    .validator(b -> {
+                                ProjectileStructure structure = (ProjectileStructure) b.get(this.IN_ENTITY).getTargetStructure();
+                                assert structure != null;
+                                return structure.getShooter() != null;
+                            }, "ProjectileStructure must have shooter"
+                    );
 
-    @Value
-    @EqualsAndHashCode(callSuper = true)
-    public static class Argument extends EntitySpawnAction.Argument
-    {
-        public Argument(@NotNull EntitySpecifier<? extends Projectile> projectile)
-        {
-            super(projectile);
-        }
-
-        @Override
-        public boolean isSame(TriggerArgument argument)
-        {
-            if (!(argument instanceof Argument))
-                return false;
-
-            Argument arg = (Argument) argument;
-            return super.isSame(arg);
-        }
-
-        @Override
-        public void validate(@NotNull ScenarioEngine engine, @NotNull ScenarioType type)
-        {
-            super.validate(engine, type);
-            if (type == ScenarioType.ACTION_EXECUTE)
-            {
-                ProjectileStructure structure = (ProjectileStructure) this.getEntity().getTargetStructure();
-                assert structure.getType().getEntityClass() != null;
-                if (structure.getType().getEntityClass().isAssignableFrom(Projectile.class))
-                    throw new IllegalArgumentException("ProjectileStructure must have projectile type");
-
-                ProjectileSourceStructure shooter = structure.getShooter();
-                if (shooter == null)
-                    throw new IllegalArgumentException("ProjectileStructure must have shooter");
-            }
-        }
-
-        @Override
-        public EntitySpecifier<? extends Projectile> getEntity()
-        {
-            // noinspection unchecked -> Checked by superclass
-            return (EntitySpecifier<? extends Projectile>) super.getEntity();
-        }
+        return board;
     }
 }

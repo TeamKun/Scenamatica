@@ -1,34 +1,41 @@
 package org.kunlab.scenamatica.action.actions.player;
 
-import lombok.EqualsAndHashCode;
-import lombok.Value;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerItemBreakEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.kunlab.scenamatica.commons.utils.MapUtils;
-import org.kunlab.scenamatica.commons.utils.PlayerUtils;
+import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.ActionContext;
+import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
+import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.context.Actor;
-import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.ItemStackStructure;
-import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.PlayerSpecifier;
-import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
-public class PlayerItemBreakAction extends AbstractPlayerAction<PlayerItemBreakAction.Argument>
-        implements Executable<PlayerItemBreakAction.Argument>, Watchable<PlayerItemBreakAction.Argument>
+public class PlayerItemBreakAction extends AbstractPlayerAction
+        implements Executable, Watchable
 {
     public static final String KEY_ACTION_NAME = "player_item_break";
+    public static final InputToken<ItemStackStructure> IN_ITEM = ofInput(
+            "item",
+            ItemStackStructure.class,
+            ofDeserializer(ItemStackStructure.class)
+    );
+    public static final InputToken<EquipmentSlot> IN_SLOT = ofEnumInput(
+            "slot",
+            EquipmentSlot.class
+    );
+
+    public static final String KEY_OUT_ITEM = "item";
+    public static final String KEY_OUT_SLOT = "slot";
 
     @Override
     public String getName()
@@ -37,15 +44,18 @@ public class PlayerItemBreakAction extends AbstractPlayerAction<PlayerItemBreakA
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @NotNull PlayerItemBreakAction.Argument argument)
+    public void execute(@NotNull ActionContext ctxt)
     {
-        Actor actor = PlayerUtils.getActorOrThrow(engine, argument.getTarget(engine));
-        EquipmentSlot slot = argument.getSlot() == null ? EquipmentSlot.HAND: argument.getSlot();
-        ItemStackStructure item = argument.getItem();
+        Actor actor = ctxt.getActorOrThrow(selectTarget(ctxt));
+        EquipmentSlot slot = ctxt.orElseInput(IN_SLOT, () -> EquipmentSlot.HAND);
 
-        if (item != null)
-            actor.getPlayer().getInventory().setItem(slot, item.create());
+        if (ctxt.hasInput(IN_ITEM))
+            actor.getPlayer().getInventory().setItem(slot, ctxt.input(IN_ITEM).create());
 
+        ItemStack item = actor.getPlayer().getInventory().getItem(slot);
+        if (item == null)
+            throw new IllegalStateException("Item is null");
+        this.makeOutputs(ctxt, actor.getPlayer(), item, slot);
         actor.breakItem(slot);
     }
 
@@ -130,15 +140,27 @@ public class PlayerItemBreakAction extends AbstractPlayerAction<PlayerItemBreakA
     }
 
     @Override
-    public boolean isFired(@NotNull Argument argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public boolean checkFired(@NotNull ActionContext ctxt, @NotNull Event event)
     {
-        if (!super.checkMatchedPlayerEvent(argument, engine, event))
+        if (!super.checkMatchedPlayerEvent(ctxt, event))
             return false;
 
         assert event instanceof PlayerItemBreakEvent;
         PlayerItemBreakEvent e = (PlayerItemBreakEvent) event;
 
-        return argument.getItem() == null || argument.getItem().isAdequate(e.getBrokenItem());
+        boolean result = ctxt.ifHasInput(IN_ITEM, item -> item.isAdequate(e.getBrokenItem()));
+        if (result)
+            this.makeOutputs(ctxt, e.getPlayer(), e.getBrokenItem(), null);
+
+        return result;
+    }
+
+    protected void makeOutputs(@NotNull ActionContext ctxt, @NotNull Player player, @NotNull ItemStack item, @Nullable EquipmentSlot slot)
+    {
+        ctxt.output(KEY_OUT_ITEM, item);
+        if (slot != null)
+            ctxt.output(KEY_OUT_SLOT, slot);
+        super.makeOutputs(ctxt, player);
     }
 
     @Override
@@ -150,62 +172,13 @@ public class PlayerItemBreakAction extends AbstractPlayerAction<PlayerItemBreakA
     }
 
     @Override
-    public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
+    public InputBoard getInputBoard(ScenarioType type)
     {
-        ItemStackStructure item = null;
-        if (map.containsKey(Argument.KEY_ITEM))
-            item = serializer.deserialize(
-                    MapUtils.checkAndCastMap(map.get(Argument.KEY_ITEM)),
-                    ItemStackStructure.class
-            );
+        InputBoard board = super.getInputBoard(type)
+                .registerAll(IN_ITEM);
+        if (type != ScenarioType.ACTION_EXPECT)
+            board.register(IN_SLOT);
 
-        return new Argument(
-                super.deserializeTarget(map, serializer),
-                item,
-                MapUtils.getAsEnumOrNull(map, Argument.KEY_SLOT, EquipmentSlot.class)
-        );
-    }
-
-    @Value
-    @EqualsAndHashCode(callSuper = true)
-    public static class Argument extends AbstractPlayerActionArgument
-    {
-        public static final String KEY_ITEM = "item";
-        public static final String KEY_SLOT = "slot";
-
-        @Nullable
-        ItemStackStructure item;
-        @Nullable
-        EquipmentSlot slot;
-
-        public Argument(PlayerSpecifier target, @Nullable ItemStackStructure item, @Nullable EquipmentSlot slot)
-        {
-            super(target);
-            this.item = item;
-            this.slot = slot;
-        }
-
-        @Override
-        public boolean isSame(TriggerArgument argument)
-        {
-            if (!(argument instanceof Argument))
-                return false;
-
-            Argument arg = (Argument) argument;
-
-            return super.isSame(arg)
-                    && Objects.equals(this.item, arg.item);
-        }
-
-        // TODO: Create validation for argument
-
-        @Override
-        public String getArgumentString()
-        {
-            return appendArgumentString(
-                    super.getArgumentString(),
-                    KEY_ITEM, this.item
-            );
-        }
+        return board;
     }
 }

@@ -9,27 +9,33 @@ import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.commons.utils.LogUtils;
 import org.kunlab.scenamatica.commons.utils.ThreadingUtil;
 import org.kunlab.scenamatica.enums.MilestoneScope;
+import org.kunlab.scenamatica.enums.RunAs;
+import org.kunlab.scenamatica.enums.RunOn;
 import org.kunlab.scenamatica.enums.ScenarioResultCause;
 import org.kunlab.scenamatica.enums.ScenarioState;
 import org.kunlab.scenamatica.enums.TriggerType;
 import org.kunlab.scenamatica.exceptions.scenario.TriggerNotFoundException;
 import org.kunlab.scenamatica.interfaces.ScenamaticaRegistry;
+import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.ActionRunManager;
+import org.kunlab.scenamatica.interfaces.action.CompiledAction;
 import org.kunlab.scenamatica.interfaces.context.Context;
+import org.kunlab.scenamatica.interfaces.scenario.ActionResultDeliverer;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioActionListener;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioManager;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioResult;
-import org.kunlab.scenamatica.interfaces.scenario.ScenarioResultDeliverer;
+import org.kunlab.scenamatica.interfaces.scenario.SessionStorage;
 import org.kunlab.scenamatica.interfaces.scenario.TestReporter;
 import org.kunlab.scenamatica.interfaces.scenario.runtime.CompiledScenarioAction;
 import org.kunlab.scenamatica.interfaces.scenario.runtime.CompiledTriggerAction;
 import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerStructure;
-import org.kunlab.scenamatica.scenario.ScenarioActionListenerImpl;
 import org.kunlab.scenamatica.scenario.ScenarioCompiler;
 import org.kunlab.scenamatica.scenario.ScenarioResultImpl;
+import org.kunlab.scenamatica.scenario.ScenarioTestReporterBridge;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -48,11 +54,12 @@ public class ScenarioEngineImpl implements ScenarioEngine
     private final ScenarioCompiler compiler;
     private final ScenarioActionListener listener;  // エンジンに一意
     private final String logPrefix;
-    private final List<? extends CompiledScenarioAction<?>> actions;
+    private final List<? extends CompiledScenarioAction> actions;
     private final List<? extends CompiledTriggerAction> triggerActions;
-    private final CompiledScenarioAction<?> runIf;
+    private final CompiledScenarioAction runIf;
 
-    private ScenarioExecutor executor;
+    @Getter
+    private ScenarioExecutorImpl executor;
     private volatile boolean isRunning; // #start(@NotNull TriggerStructure trigger) 内でのみ書き換えられる
     private ScenarioState state;
     private TriggerStructure ranBy;
@@ -72,17 +79,17 @@ public class ScenarioEngineImpl implements ScenarioEngine
         this.plugin = plugin;
         this.scenario = scenario;
         this.state = ScenarioState.STAND_BY;
-        this.listener = new ScenarioActionListenerImpl(this, this.registry);
+        this.listener = new ScenarioTestReporterBridge(this, this.registry);
         this.verbose = registry.getEnvironment().isVerbose();
         this.logPrefix = LogUtils.gerScenarioPrefix(null, this.scenario);
 
         this.executor = null;
 
         // 以下、 アクションをコンパイルしてキャッシュしておく。
-        ScenarioCompiler compiler = this.compiler = new ScenarioCompiler(this, registry, actionRunManager);
+        ScenarioCompiler compiler = this.compiler = new ScenarioCompiler(this, registry.getLogger(), actionRunManager);
         compiler.notifyCompileStart();
 
-        this.actions = compiler.compileMain(scenario.getScenario());
+        this.actions = compiler.compileMain(RunOn.SCENARIOS, RunAs.NORMAL, scenario.getScenario());
         this.triggerActions = compiler.compileTriggerActions(scenario.getTriggers());
         this.runIf = scenario.getRunIf() == null ? null: compiler.compileRunIf(scenario.getRunIf());
         // トリガの準備
@@ -103,7 +110,7 @@ public class ScenarioEngineImpl implements ScenarioEngine
 
     @Override
     @NotNull  // TODO: TriggerStructure to TriggerType
-    public ScenarioResult start(@NotNull TriggerStructure trigger, int attemptedCount) throws TriggerNotFoundException
+    public ScenarioResult start(@NotNull TriggerStructure trigger, @NotNull SessionStorage variable, int attemptedCount) throws TriggerNotFoundException
     {
         this.ranBy = trigger;
         if (!this.isAutoRun())
@@ -114,13 +121,14 @@ public class ScenarioEngineImpl implements ScenarioEngine
                     true
             );
 
-        this.executor = new ScenarioExecutor(
+        this.executor = new ScenarioExecutorImpl(
                 this,
                 this.actionRunManager,
                 this.listener,
                 this.actions,
                 this.triggerActions,
                 this.runIf,
+                variable,
                 attemptedCount
         );
 
@@ -145,6 +153,7 @@ public class ScenarioEngineImpl implements ScenarioEngine
                     this.executor.getTestID(),
                     this.state,
                     ScenarioResultCause.CONTEXT_PREPARATION_FAILED,
+                    Collections.emptyList(),
                     this.executor.getStartedAt(),
                     attemptedCount
             );
@@ -194,6 +203,10 @@ public class ScenarioEngineImpl implements ScenarioEngine
                 true
         );
         this.context.destroy();
+        this.actions.stream()
+                .map(CompiledScenarioAction::getAction)
+                .map(CompiledAction::getContext)
+                .forEach(ActionContext::reset);
 
         this.executor = null;
         this.ranBy = null;
@@ -281,9 +294,16 @@ public class ScenarioEngineImpl implements ScenarioEngine
      * @return コンパイルされたシナリオ
      */
     @Override
-    public CompiledScenarioAction<?> getCurrentScenario()
+    public CompiledScenarioAction getCurrentScenario()
     {
         return this.executor.getCurrentScenario();
+    }
+
+    @Override
+    public void releaseScenarioInputs()
+    {
+        for (CompiledScenarioAction action : this.actions)
+            action.getAction().getContext().getInput().releaseReferences();
     }
 
     /**
@@ -292,7 +312,7 @@ public class ScenarioEngineImpl implements ScenarioEngine
      * @return シナリオの結果を受け取るオブジェクト
      */
     @Override
-    public ScenarioResultDeliverer getDeliverer()
+    public ActionResultDeliverer getDeliverer()
     {
         return this.executor.getDeliverer();
     }

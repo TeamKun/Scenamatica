@@ -1,40 +1,73 @@
 package org.kunlab.scenamatica.action.actions.server;
 
-import lombok.EqualsAndHashCode;
-import lombok.Value;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.server.BroadcastMessageEvent;
 import org.jetbrains.annotations.NotNull;
-import org.kunlab.scenamatica.action.actions.AbstractActionArgument;
+import org.jetbrains.annotations.Nullable;
+import org.kunlab.scenamatica.action.utils.InputTypeToken;
 import org.kunlab.scenamatica.action.utils.PlayerLikeCommandSenders;
-import org.kunlab.scenamatica.commons.utils.MapUtils;
+import org.kunlab.scenamatica.commons.utils.TextUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.ActionContext;
+import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
+import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
-import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.PlayerSpecifier;
-import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-public class BroadcastMessageAction extends AbstractServerAction<BroadcastMessageAction.Argument>
-        implements Executable<BroadcastMessageAction.Argument>, Watchable<BroadcastMessageAction.Argument>
+public class BroadcastMessageAction extends AbstractServerAction
+        implements Executable, Watchable
 {
     public static final String KEY_ACTION_NAME = "broadcast";
+    public static final InputToken<String> IN_MESSAGE = ofInput(
+            "message",
+            String.class
+    );
+    public static final InputToken<List<PlayerSpecifier>> IN_RECIPIENTS = ofInput(
+            "recipients",
+            InputTypeToken.ofList(PlayerSpecifier.class),
+            ofTraverser(InputTypeToken.ofList(String.class), (ser, list) -> {
+                List<PlayerSpecifier> recipients = new ArrayList<>();
+                for (String rawRecipient : list)
+                    recipients.add(ser.tryDeserializePlayerSpecifier(rawRecipient));
+
+                return recipients;
+            }),
+            ofTraverser(InputTypeToken.ofList(CommandSender.class), (ser, list) -> {
+                List<PlayerSpecifier> recipients = new ArrayList<>();
+                for (CommandSender rawRecipient : list)
+                    if (rawRecipient instanceof Player)
+                        recipients.add(ser.tryDeserializePlayerSpecifier(rawRecipient));
+                    else
+                        recipients.add(ser.tryDeserializePlayerSpecifier("<CONSOLE>"));
+
+                return recipients;
+            })
+    );
+    public static final InputToken<String> IN_PERMISSION = ofInput(
+            "permission",
+            String.class
+    );
+    public static final InputToken<Boolean> IN_STRICT_RECIPIENTS = ofInput(
+            "strictRecipients",
+            Boolean.class
+    );
+
+    public static final String KEY_OUT_MESSAGE = "message";
+    public static final String KEY_OUT_RECIPIENTS = "recipients";
 
     @Override
     public String getName()
@@ -43,27 +76,27 @@ public class BroadcastMessageAction extends AbstractServerAction<BroadcastMessag
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @NotNull BroadcastMessageAction.Argument argument)
+    public void execute(@NotNull ActionContext ctxt)
     {
-        String message = argument.getMessage();
-        String permission = argument.getPermission();
-        List<PlayerSpecifier> recipients = argument.getRecipients();
+        String message = ctxt.input(IN_MESSAGE);
+        String permission = ctxt.orElseInput(IN_PERMISSION, () -> null);
+        List<PlayerSpecifier> recipients = ctxt.orElseInput(IN_RECIPIENTS, () -> null);
 
         if (permission == null)
             if (recipients == null || recipients.isEmpty())
                 Bukkit.broadcast(Component.text(message));
             else
-                this.simulateBukkitBroadcast(engine, Component.text(message), recipients);
+                this.simulateBukkitBroadcast(ctxt, Component.text(message), recipients);
         else
             Bukkit.broadcast(Component.text(message), permission);
     }
 
-    private void simulateBukkitBroadcast(@NotNull ScenarioEngine engine, @NotNull Component messageComponent,
+    private void simulateBukkitBroadcast(@NotNull ActionContext ctxt, @NotNull Component messageComponent,
                                          @NotNull List<? extends PlayerSpecifier> recipients)
     {
         Set<PlayerSpecifier> recipientsSet = new HashSet<>(recipients);
         Set<CommandSender> csRecipientsSet = recipientsSet.stream()
-                .map(ps -> PlayerLikeCommandSenders.getCommandSenderOrThrow(ps, engine.getContext()))
+                .map(ps -> PlayerLikeCommandSenders.getCommandSenderOrThrow(ps, ctxt.getContext()))
                 .collect(Collectors.toSet());
 
         BroadcastMessageEvent broadcastMessageEvent =
@@ -75,43 +108,56 @@ public class BroadcastMessageAction extends AbstractServerAction<BroadcastMessag
 
         messageComponent = broadcastMessageEvent.message();
 
+        this.makeOutputs(ctxt, TextUtils.toString(messageComponent), new ArrayList<>(csRecipientsSet));
         for (CommandSender recipient : broadcastMessageEvent.getRecipients())
             recipient.sendMessage(messageComponent);
     }
 
     @Override
-    public boolean isFired(@NotNull Argument argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public boolean checkFired(@NotNull ActionContext ctxt, @NotNull Event event)
     {
         if (!(event instanceof BroadcastMessageEvent))
             return false;
 
         BroadcastMessageEvent e = (BroadcastMessageEvent) event;
 
-        if (argument.getMessage() != null)
+        if (ctxt.hasInput(IN_MESSAGE))
         {
-            Pattern pattern = Pattern.compile(argument.getMessage());
-            Matcher matcher = pattern.matcher(((TextComponent) e.message()).content());
+            Pattern pattern = Pattern.compile(ctxt.input(IN_MESSAGE));
+            Matcher matcher = pattern.matcher(TextUtils.toString(e.message()));
             if (!matcher.find())
                 return false;
         }
 
-        if (argument.getRecipients() != null)
+        boolean result = true;
+        if (ctxt.hasInput(IN_RECIPIENTS))
         {
-            List<PlayerSpecifier> expectedRecipients = argument.getRecipients();
+            List<PlayerSpecifier> expectedRecipients = ctxt.input(IN_RECIPIENTS);
             Set<CommandSender> actualRecipients = e.getRecipients();
 
             for (PlayerSpecifier expectedRecipient : expectedRecipients)
             {
-                CommandSender csExceptedRecipient = PlayerLikeCommandSenders.getCommandSenderOrNull(expectedRecipient, engine.getContext());
+                CommandSender csExceptedRecipient = PlayerLikeCommandSenders.getCommandSenderOrNull(expectedRecipient, ctxt.getContext());
                 if (csExceptedRecipient == null || !actualRecipients.contains(csExceptedRecipient))
                     return false;
             }
 
             // 存在することのチェックは終わったので, 存在しないこと(余分なプレイヤがいないこと)をチェックする
-            return !argument.getStrictRecipients() || expectedRecipients.size() == actualRecipients.size();
+            result = !ctxt.orElseInput(IN_STRICT_RECIPIENTS, () -> false) || actualRecipients.size() == expectedRecipients.size();
         }
 
-        return true;
+        if (result)
+            this.makeOutputs(ctxt, TextUtils.toString(e.message()), new ArrayList<>(e.getRecipients()));
+
+        return result;
+    }
+
+    protected void makeOutputs(@NotNull ActionContext ctxt, @Nullable String message, @NotNull List<CommandSender> recipients)
+    {
+        if (message != null)
+            ctxt.output(KEY_OUT_MESSAGE, message);
+        ctxt.output(KEY_OUT_RECIPIENTS, recipients);
+        ctxt.commitOutput();
     }
 
     @Override
@@ -123,85 +169,14 @@ public class BroadcastMessageAction extends AbstractServerAction<BroadcastMessag
     }
 
     @Override
-    public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
+    public InputBoard getInputBoard(ScenarioType type)
     {
-        List<PlayerSpecifier> recipients = new ArrayList<>();
-        if (map.containsKey(Argument.KEY_RECIPIENTS))
-        {
-            List<?> rawRecipients = (List<?>) map.get(Argument.KEY_RECIPIENTS);
-            for (Object rawRecipient : rawRecipients)
-                recipients.add(serializer.tryDeserializePlayerSpecifier(rawRecipient));
-        }
-
-
-        return new Argument(
-                (String) map.get(Argument.KEY_MESSAGE),
-                recipients,
-                MapUtils.getOrNull(map, Argument.KEY_PERMISSION),
-                MapUtils.getOrDefault(map, Argument.KEY_STRICT_RECIPIENTS, false)
-        );
-    }
-
-    @Value
-    @EqualsAndHashCode(callSuper = true)
-    public static class Argument extends AbstractActionArgument
-    {
-        public static final String KEY_MESSAGE = "message";
-        public static final String KEY_RECIPIENTS = "recipients";
-        public static final String KEY_PERMISSION = "permission";
-        public static final String KEY_STRICT_RECIPIENTS = "strictRecipients";
-
-        private static final String CONSOLE_IDENTIFIER = "<CONSOLE>";
-
-        String message;
-        List<PlayerSpecifier> recipients;
-        String permission;
-        Boolean strictRecipients;
-
-        @Override
-        public boolean isSame(TriggerArgument argument)
-        {
-            if (!(argument instanceof Argument))
-                return false;
-
-            Argument arg = (Argument) argument;
-
-            return Objects.equals(this.message, arg.message)
-                    && (arg.recipients == null || this.recipients != null && MapUtils.equals(this.recipients, arg.recipients))
-                    && (this.permission == null || this.permission.equals(arg.permission))
-                    && this.strictRecipients == arg.strictRecipients;
-        }
-
-        @Override
-        public void validate(@NotNull ScenarioEngine engine, @NotNull ScenarioType type)
-        {
-            switch (type)
-            {
-                case ACTION_EXPECT:
-                    ensureNotPresent(KEY_PERMISSION, this.permission);
-                    break;
-                case ACTION_EXECUTE:
-                    ensurePresent(KEY_MESSAGE, this.message);
-                    break;
-            }
-        }
-
-        @Override
-        public String getArgumentString()
-        {
-            return buildArgumentString(
-                    KEY_MESSAGE, this.message,
-                    KEY_RECIPIENTS, this.recipients,
-                    KEY_PERMISSION, this.permission,
-                    KEY_STRICT_RECIPIENTS, this.strictRecipients
-            );
-        }
-
-        public List<CommandSender> getRecipients(ScenarioEngine engine)
-        {
-            return this.recipients.stream()
-                    .map(ps -> PlayerLikeCommandSenders.getCommandSenderOrThrow(ps, engine.getContext()))
-                    .collect(Collectors.toList());
-        }
+        InputBoard board = ofInputs(type, IN_MESSAGE, IN_RECIPIENTS);
+        if (type == ScenarioType.ACTION_EXECUTE)
+            board.requirePresent(IN_MESSAGE)
+                    .register(IN_PERMISSION);
+        else if (type == ScenarioType.ACTION_EXPECT)
+            board.register(IN_STRICT_RECIPIENTS);
+        return board;
     }
 }

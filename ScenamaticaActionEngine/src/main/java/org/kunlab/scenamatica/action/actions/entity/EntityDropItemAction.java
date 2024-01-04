@@ -1,34 +1,38 @@
 package org.kunlab.scenamatica.action.actions.entity;
 
-import lombok.EqualsAndHashCode;
-import lombok.Value;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDropItemEvent;
 import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import org.kunlab.scenamatica.commons.utils.MapUtils;
-import org.kunlab.scenamatica.commons.utils.Utils;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.ActionContext;
+import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
+import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
-import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.entity.entities.EntityItemStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.EntitySpecifier;
-import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
-public class EntityDropItemAction extends AbstractEntityAction<EntityDropItemAction.Argument>
-        implements Executable<EntityDropItemAction.Argument>, Watchable<EntityDropItemAction.Argument>
+public class EntityDropItemAction extends AbstractGeneralEntityAction
+        implements Executable, Watchable
 {
     public static final String KEY_ACTION_NAME = "entity_drop_item";
+    public static final String OUT_KEY_ITEM = "item";
+    public static InputToken<EntitySpecifier<Item>> IN_ITEM =
+            ofInput("item", Item.class, EntityItemStructure.class)
+                    .validator(ScenarioType.ACTION_EXECUTE, EntitySpecifier::hasStructure, "Item structure is not specified.")
+                    .validator(
+                            ScenarioType.ACTION_EXECUTE,
+                            specifier -> specifier.getTargetStructure() instanceof EntityItemStructure,
+                            "item must be an item structure."
+                    );
 
     @Override
     public String getName()
@@ -37,46 +41,51 @@ public class EntityDropItemAction extends AbstractEntityAction<EntityDropItemAct
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @NotNull EntityDropItemAction.Argument argument)
+    public void execute(@NotNull ActionContext ctxt)
     {
-        assert argument != null;
-        Entity target = argument.selectTarget(engine.getContext());
+        Entity target = this.selectTarget(ctxt);
         if (!(target instanceof InventoryHolder))
             throw new IllegalArgumentException("Target is not inventory holder.");
 
+        EntityItemStructure itemStructure = (EntityItemStructure) ctxt.input(IN_ITEM).getTargetStructure();
+        ItemStack stack = itemStructure.getItemStack().create();
+
+
         target.getWorld().dropItemNaturally(
                 target.getLocation(),
-                argument.getItem().getItemStack().create(),
-                (entity) -> {
-                    EntityDropItemEvent event = new EntityDropItemEvent(target, entity);
+                stack,
+                (itemDropped) -> {
+                    this.makeOutputs(ctxt, target, itemDropped);
+                    EntityDropItemEvent event = new EntityDropItemEvent(target, itemDropped);
                     Bukkit.getPluginManager().callEvent(event);
                     if (event.isCancelled())
-                        entity.remove();
+                        itemDropped.remove();
 
-                    argument.getItem().applyTo(entity);
+                    itemStructure.applyTo(itemDropped);
                 }
         );
     }
 
     @Override
-    public boolean isFired(@NotNull Argument argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public boolean checkFired(@NotNull ActionContext ctxt, @NotNull Event event)
     {
-        if (!super.checkMatchedEntityEvent(argument, engine, event))
+        if (!super.checkMatchedEntityEvent(ctxt, event))
             return false;
 
         EntityDropItemEvent e = (EntityDropItemEvent) event;
         Item item = e.getItemDrop();
-        EntityItemStructure structure = argument.getItem();
 
-        return structure == null
-                || (structure.getPickupDelay() == null || Objects.equals(structure.getPickupDelay(), item.getPickupDelay())
-                && (structure.getOwner() == null || Objects.equals(structure.getOwner(), item.getOwner()))
-                && (structure.getThrower() == null || Objects.equals(structure.getThrower(), item.getThrower()))
-                && (structure.getVelocity() == null || Utils.vectorEquals(structure.getVelocity(), item.getVelocity()))
-                && (structure.getCanMobPickup() == null || Objects.equals(structure.getCanMobPickup(), item.canMobPickup()))
-                && (structure.getWillAge() == null || Objects.equals(structure.getWillAge(), item.willAge())
-                && (structure.getTicksLived() == null || Objects.equals(structure.getTicksLived(), item.getTicksLived()))))
-                && (structure.getItemStack() == null || structure.getItemStack().isAdequate(item.getItemStack()));
+        boolean result = ctxt.ifHasInput(IN_ITEM, itemSpecifier -> itemSpecifier.checkMatchedEntity(item));
+        if (result)
+            this.makeOutputs(ctxt, ((EntityDropItemEvent) event).getEntity(), item);
+
+        return result;
+    }
+
+    protected void makeOutputs(@NotNull ActionContext ctxt, @NotNull Entity entity, @NotNull Item item)
+    {
+        ctxt.output(OUT_KEY_ITEM, item);
+        super.makeOutputs(ctxt, entity);
     }
 
     @Override
@@ -88,64 +97,13 @@ public class EntityDropItemAction extends AbstractEntityAction<EntityDropItemAct
     }
 
     @Override
-    public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
+    public InputBoard getInputBoard(ScenarioType type)
     {
-        EntityItemStructure item = null;
-        if (map.containsKey(Argument.KEY_DROP_ITEM))
-            item = serializer.deserialize(
-                    MapUtils.checkAndCastMap(map.get(Argument.KEY_DROP_ITEM)),
-                    EntityItemStructure.class
-            );
+        InputBoard board = super.getInputBoard(type)
+                .register(IN_ITEM);
+        if (type == ScenarioType.ACTION_EXECUTE)
+            board.requirePresent(IN_ITEM);
 
-        return new Argument(
-                super.deserializeTarget(map, serializer),
-                item
-        );
-    }
-
-    @Value
-    @EqualsAndHashCode(callSuper = true)
-    public static class Argument extends AbstractEntityActionArgument<Entity>
-    {
-        public static final String KEY_DROP_ITEM = "item";
-
-        EntityItemStructure item;
-
-        public Argument(@NotNull EntitySpecifier<Entity> mayTarget, EntityItemStructure item)
-        {
-            super(mayTarget);
-            this.item = item;
-        }
-
-        @Override
-        public boolean isSame(TriggerArgument argument)
-        {
-            if (!(argument instanceof Argument))
-                return false;
-
-            Argument arg = (Argument) argument;
-
-            return super.isSame(arg)
-                    && Objects.equals(this.item, arg.item);
-        }
-
-        @Override
-        public void validate(@NotNull ScenarioEngine engine, @NotNull ScenarioType type)
-        {
-            if (type == ScenarioType.ACTION_EXECUTE)
-            {
-                this.ensureCanProvideTarget();
-                ensurePresent(KEY_DROP_ITEM, this.item);
-            }
-        }
-
-        @Override
-        public String getArgumentString()
-        {
-            return appendArgumentString(
-                    super.getArgumentString(),
-                    KEY_DROP_ITEM, this.item
-            );
-        }
+        return board;
     }
 }

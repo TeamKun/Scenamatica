@@ -1,36 +1,37 @@
 package org.kunlab.scenamatica.action.actions.player;
 
-import lombok.EqualsAndHashCode;
-import lombok.Value;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.jetbrains.annotations.NotNull;
-import org.kunlab.scenamatica.commons.utils.MapUtils;
-import org.kunlab.scenamatica.commons.utils.PlayerUtils;
+import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.commons.utils.TextUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.ActionContext;
+import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
+import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.context.Actor;
-import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
-import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.PlayerSpecifier;
-import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.Optional;
 
-public class PlayerJoinAction extends AbstractPlayerAction<PlayerJoinAction.Argument>
-        implements Executable<PlayerJoinAction.Argument>, Watchable<PlayerJoinAction.Argument>, Requireable<PlayerJoinAction.Argument>
+public class PlayerJoinAction extends AbstractPlayerAction
+        implements Executable, Watchable, Requireable
 {
     // OfflinePlayer を扱うため, 通常の PlayerAction とは違う実装をする。
 
     public static final String KEY_ACTION_NAME = "player_join";
+    public static final InputToken<String> IN_MESSAGE = ofInput(
+            "message",
+            String.class
+    );
+
+    public static final String KEY_OUT_MESSAGE = "message";
 
     @Override
     public String getName()
@@ -39,29 +40,40 @@ public class PlayerJoinAction extends AbstractPlayerAction<PlayerJoinAction.Argu
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @NotNull PlayerJoinAction.Argument argument)
+    public void execute(@NotNull ActionContext ctxt)
     {
-        Player player = argument.getTarget(engine);
+        Player player = selectTarget(ctxt);
         if (player.isOnline())
             throw new IllegalStateException("Player is already online.");
 
-        Actor actor = PlayerUtils.getActorOrThrow(engine, player);
+        Actor actor = ctxt.getActorOrThrow(player);
 
+        this.makeOutputs(ctxt, player, null);
         actor.joinServer();
     }
 
     @Override
-    public boolean isFired(@NotNull Argument argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public boolean checkFired(@NotNull ActionContext ctxt, @NotNull Event event)
     {
-        if (!super.checkMatchedPlayerEvent(argument, engine, event))
+        if (!super.checkMatchedPlayerEvent(ctxt, event))
             return false;
 
         assert event instanceof PlayerJoinEvent;
         PlayerJoinEvent e = (PlayerJoinEvent) event;
         Component message = e.joinMessage();
 
-        String expectedJoinMessage = argument.getJoinMessage();
-        return expectedJoinMessage == null || TextUtils.isSameContent(message, expectedJoinMessage);
+        boolean result = ctxt.ifHasInput(IN_MESSAGE, msg -> TextUtils.isSameContent(message, msg));
+        if (result)
+            this.makeOutputs(ctxt, e.getPlayer(), TextUtils.toString(message));
+
+        return result;
+    }
+
+    private void makeOutputs(@NotNull ActionContext ctxt, @NotNull Player player, @Nullable String message)
+    {
+        if (message != null)
+            ctxt.output(KEY_OUT_MESSAGE, message);
+        this.makeOutputs(ctxt, player);
     }
 
     @Override
@@ -73,58 +85,23 @@ public class PlayerJoinAction extends AbstractPlayerAction<PlayerJoinAction.Argu
     }
 
     @Override
-    public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
+    public boolean checkConditionFulfilled(@NotNull ActionContext ctxt)
     {
-        return new Argument(
-                super.deserializeTarget(map, serializer),
-                MapUtils.getOrNull(map, Argument.KEY_JOIN_MESSAGE)
-        );
+        Optional<Player> playerOptional = ctxt.input(IN_TARGET).selectTarget(ctxt.getContext());
+        boolean result = playerOptional.isPresent() && playerOptional.get().isOnline();
+        if (result)
+            this.makeOutputs(ctxt, playerOptional.get(), null);
+
+        return result;
     }
 
     @Override
-    public boolean isConditionFulfilled(@NotNull PlayerJoinAction.Argument argument, @NotNull ScenarioEngine engine)
+    public InputBoard getInputBoard(ScenarioType type)
     {
-        return argument.getTarget(engine).isOnline();
-    }
+        InputBoard board = super.getInputBoard(type);
+        if (type != ScenarioType.CONDITION_REQUIRE)
+            board.register(IN_MESSAGE);
 
-    @Value
-    @EqualsAndHashCode(callSuper = true)
-    public static class Argument extends AbstractPlayerActionArgument
-    {
-        public static final String KEY_JOIN_MESSAGE = "message";
-
-        String joinMessage;
-
-        public Argument(PlayerSpecifier target, String joinMessage)
-        {
-            super(target);
-            this.joinMessage = joinMessage;
-        }
-
-        @Override
-        public boolean isSame(TriggerArgument argument)
-        {
-            if (!(argument instanceof Argument))
-                return false;
-            Argument arg = (Argument) argument;
-
-            return super.isSame(argument)
-                    && Objects.equals(this.joinMessage, arg.joinMessage);
-        }
-
-        @Override
-        public void validate(@NotNull ScenarioEngine engine, @NotNull ScenarioType type)
-        {
-            super.validate(engine, type);
-        }
-
-        @Override
-        public String getArgumentString()
-        {
-            return appendArgumentString(
-                    super.getArgumentString(),
-                    KEY_JOIN_MESSAGE, this.joinMessage
-            );
-        }
+        return board;
     }
 }

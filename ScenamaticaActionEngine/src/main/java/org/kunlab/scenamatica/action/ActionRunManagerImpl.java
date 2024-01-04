@@ -2,14 +2,14 @@ package org.kunlab.scenamatica.action;
 
 import lombok.Getter;
 import net.kunmc.lab.peyangpaperutils.lib.utils.Runner;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.action.actions.server.log.ServerLogHandler;
+import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.enums.WatchType;
 import org.kunlab.scenamatica.interfaces.ScenamaticaRegistry;
-import org.kunlab.scenamatica.interfaces.action.ActionArgument;
 import org.kunlab.scenamatica.interfaces.action.ActionCompiler;
+import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.ActionRunManager;
 import org.kunlab.scenamatica.interfaces.action.CompiledAction;
 import org.kunlab.scenamatica.interfaces.action.WatcherManager;
@@ -27,7 +27,7 @@ public class ActionRunManagerImpl implements ActionRunManager
     private final ActionCompiler compiler;
     @Getter
     private final WatcherManager watcherManager;
-    private final Deque<CompiledAction<?>> actionQueue;
+    private final Deque<CompiledAction> actionQueue;
     private final ServerLogHandler serverLogHandler;
 
     private BukkitTask runner;
@@ -52,19 +52,18 @@ public class ActionRunManagerImpl implements ActionRunManager
     }
 
     @Override
-    public <A extends ActionArgument> void queueExecute(@NotNull CompiledAction<A> entry)
+    public void queueExecute(@NotNull CompiledAction entry)
     {
         this.actionQueue.add(entry);
     }
 
     @Override
-    public <A extends ActionArgument> void queueWatch(@NotNull Plugin plugin,
-                                                      @NotNull ScenarioEngine engine,
-                                                      @NotNull ScenarioFileStructure scenario,
-                                                      @NotNull CompiledAction<A> action,
-                                                      @NotNull WatchType watchType)
+    public void queueWatch(@NotNull ScenarioEngine engine,
+                           @NotNull ScenarioFileStructure scenario,
+                           @NotNull CompiledAction action,
+                           @NotNull WatchType watchType)
     {
-        this.watcherManager.registerWatcher(engine, action, scenario, plugin, watchType);
+        this.watcherManager.registerWatcher(engine, action, scenario, watchType);
     }
 
     @Override
@@ -76,20 +75,20 @@ public class ActionRunManagerImpl implements ActionRunManager
             this.runner.cancel();
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
     private void executeNext()
     {
         if (this.actionQueue.isEmpty())
             return;
 
-        CompiledAction<?> entry = this.actionQueue.pop();
+        CompiledAction entry = this.actionQueue.pop();
         try
         {
             assert entry.getExecutor() instanceof Executable;
 
             Executable executable = (Executable) entry.getExecutor();
-            executable.execute(entry.getEngine(), entry.getArgument());
-            entry.getOnExecute().accept(entry);
+            ActionContext ctxt = entry.getContext();
+            executable.execute(ctxt);
+            entry.getOnExecute().accept(ctxt.createResult(entry), ScenarioType.ACTION_EXECUTE);
         }
         catch (Throwable e)
         {

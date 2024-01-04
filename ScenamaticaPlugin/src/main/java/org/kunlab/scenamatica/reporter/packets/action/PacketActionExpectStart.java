@@ -14,7 +14,7 @@ public class PacketActionExpectStart extends AbstractActionPacket
 
     private final long timeout;
 
-    public PacketActionExpectStart(@NotNull ScenarioEngine scenario, @NotNull CompiledScenarioAction<?> action)
+    public PacketActionExpectStart(@NotNull ScenarioEngine scenario, @NotNull CompiledScenarioAction action)
     {
         super(TYPE, scenario.getTestID(), action.getAction());
 

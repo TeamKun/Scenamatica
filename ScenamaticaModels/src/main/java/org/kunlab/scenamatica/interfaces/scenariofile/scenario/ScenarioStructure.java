@@ -41,4 +41,11 @@ public interface ScenarioStructure extends Structure
      * @return タイムアウトの時間
      */
     long getTimeout();
+
+    /**
+     * このシナリオの名前を取得します。
+     *
+     * @return 名前
+     */
+    String getName();
 }

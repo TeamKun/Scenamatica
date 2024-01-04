@@ -2,13 +2,14 @@ package org.kunlab.scenamatica.interfaces.action;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.kunlab.scenamatica.interfaces.ScenamaticaRegistry;
+import org.kunlab.scenamatica.enums.RunAs;
+import org.kunlab.scenamatica.enums.RunOn;
+import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.action.ActionStructure;
 
 import java.util.List;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
 /**
  * アクションをコンパイルするインタフェースです。
@@ -18,19 +19,23 @@ public interface ActionCompiler
     /**
      * アクションをコンパイルします。
      *
-     * @param registry      コンパイルに必要な情報を持つレジストリ
      * @param engine        コンパイルに必要な情報を持つシナリオエンジン
+     * @param scenarioType  アクションが属するシナリオの種類です。
+     * @param runOn         アクションが実行されるタイミング
+     * @param runAs         アクションが実行される権限
      * @param structure     アクションの情報
-     * @param reportErrorTo コンパイルに失敗したときに呼び出されるコールバック
-     * @param onSuccess     コンパイルに成功したときに呼び出されるコールバック
-     * @param <A>           アクションの引数の型
+     * @param reportErrorTo アクションの実行に失敗した場合に呼び出されるコールバック
+     * @param onSuccess     アクションの実行に成功した場合に呼び出されるコールバック
      * @return コンパイルされたアクション
      */
-    <A extends ActionArgument> CompiledAction<A> compile(@NotNull ScenamaticaRegistry registry,
-                                                         @NotNull ScenarioEngine engine,
-                                                         @NotNull ActionStructure structure,
-                                                         @Nullable BiConsumer<CompiledAction<?>, Throwable> reportErrorTo,
-                                                         @Nullable Consumer<CompiledAction<?>> onSuccess);
+    CompiledAction compile(
+            @NotNull ScenarioEngine engine,
+            @NotNull ScenarioType scenarioType,
+            @NotNull RunOn runOn,
+            @NotNull RunAs runAs,
+            @NotNull ActionStructure structure,
+            @Nullable BiConsumer<CompiledAction, Throwable> reportErrorTo,
+            @Nullable BiConsumer<ActionResult, ScenarioType> onSuccess);
 
     /**
      * 登録されたアクションのリストを取得します。
@@ -39,7 +44,7 @@ public interface ActionCompiler
      * @return 登録されたアクションのリスト
      */
     @NotNull
-    List<? extends Action<?>> getRegisteredActions();
+    List<? extends Action> getRegisteredActions();
 
     /**
      * アクションのクラスからアクションのインスタンスを取得します。
@@ -48,5 +53,5 @@ public interface ActionCompiler
      * @return アクションのインスタンス
      * @throws IllegalArgumentException アクションが見つからない場合
      */
-    @NotNull <T extends Action<?>> T findAction(@NotNull Class<? extends T> actionClass);
+    @NotNull <T extends Action> T findAction(@NotNull Class<? extends T> actionClass);
 }

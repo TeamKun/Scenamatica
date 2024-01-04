@@ -1,7 +1,5 @@
 package org.kunlab.scenamatica.action.actions.player;
 
-import lombok.EqualsAndHashCode;
-import lombok.Value;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -10,28 +8,42 @@ import org.bukkit.event.player.PlayerBucketEntityEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import org.kunlab.scenamatica.commons.utils.MapUtils;
-import org.kunlab.scenamatica.commons.utils.PlayerUtils;
+import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.ActionContext;
+import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
+import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.context.Actor;
-import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.ItemStackStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.EntitySpecifier;
-import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.PlayerSpecifier;
 import org.kunlab.scenamatica.nms.enums.entity.NMSEntityUseAction;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 // 注： AbstractPlayerBucketAction を継承していない。
-public class PlayerBucketEntityAction extends AbstractPlayerAction<PlayerBucketEntityAction.Argument>
-        implements Executable<PlayerBucketEntityAction.Argument>, Watchable<PlayerBucketEntityAction.Argument>
+public class PlayerBucketEntityAction extends AbstractPlayerAction
+        implements Executable, Watchable
 {
     public static final String KEY_ACTION_NAME = "player_bucket_entity";
+    public static final InputToken<EntitySpecifier<Entity>> IN_ENTITY = ofSpecifier("entity");
+    public static final InputToken<ItemStackStructure> IN_ORIGINAL_BUCKET = ofInput(
+            "bucket",
+            ItemStackStructure.class,
+            ofDeserializer(ItemStackStructure.class)
+    );
+    public static final InputToken<ItemStackStructure> IN_ENTITY_BUCKET = ofInput(
+            "entityBucket",
+            ItemStackStructure.class,
+            ofDeserializer(ItemStackStructure.class)
+    ).validator(bucket -> bucket.getType() != null, "Original bucket type is null.")
+            .validator(bucket -> canBucketPickupEntity(bucket.getType()), "Original bucket type is not water bucket.");
+
+    public static final String KEY_OUT_ENTITY = "entity";
+    public static final String KEY_OUT_BUCKET = "bucket";
+    public static final String KEY_OUT_ENTITY_BUCKET = "entityBucket";
 
     @SuppressWarnings("deprecation")
     private static boolean canBucketPickupEntity(@NotNull Material type)
@@ -46,28 +58,29 @@ public class PlayerBucketEntityAction extends AbstractPlayerAction<PlayerBucketE
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @NotNull PlayerBucketEntityAction.Argument argument)
+    public void execute(@NotNull ActionContext ctxt)
     {
-        Player player = argument.getTarget(engine);
-        Actor actor = PlayerUtils.getActorOrThrow(engine, player);
+        Player player = selectTarget(ctxt);
+        Actor actor = ctxt.getActorOrThrow(player);
 
-        Entity targetEntity = argument.getEntity().selectTarget(engine.getContext())
+        Entity targetEntity = ctxt.input(IN_ENTITY).selectTarget(ctxt.getContext())
                 .orElseThrow(() -> new IllegalStateException("Target entity is not found."));
         // Null ではない
-        ItemStack itemInMainHand = player.getInventory().getItemInMainHand();
-        if (argument.getOriginalBucket() != null)
+        ItemStack originalBucket = player.getInventory().getItemInMainHand();
+        if (ctxt.hasInput(IN_ORIGINAL_BUCKET))
         {
-            ItemStackStructure structureOriginalBucket = argument.getOriginalBucket();
-            if (!structureOriginalBucket.isAdequate(itemInMainHand))
+            ItemStackStructure structureOriginalBucket = ctxt.input(IN_ORIGINAL_BUCKET);
+            if (!structureOriginalBucket.isAdequate(originalBucket))
             {
-                ItemStack originalBucket = structureOriginalBucket.create();
+                originalBucket = structureOriginalBucket.create();
                 player.getInventory().setItemInMainHand(originalBucket);
             }
         }
-        else if (!canBucketPickupEntity(itemInMainHand.getType()))
-            throw new IllegalStateException("The item in main hand is not water bucket, but " + itemInMainHand.getType() +
+        else if (!canBucketPickupEntity(originalBucket.getType()))
+            throw new IllegalStateException("The item in main hand is not water bucket, but " + originalBucket.getType() +
                     ". Please ensure that the player is holding correct bucket or specify original bucket.");
 
+        this.makeOutputs(ctxt, player, targetEntity, originalBucket, null);
 
         actor.interactEntity(
                 targetEntity,
@@ -78,16 +91,29 @@ public class PlayerBucketEntityAction extends AbstractPlayerAction<PlayerBucketE
     }
 
     @Override
-    public boolean isFired(@NotNull Argument argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public boolean checkFired(@NotNull ActionContext ctxt, @NotNull Event event)
     {
-        if (!super.checkMatchedPlayerEvent(argument, engine, event))
+        if (!super.checkMatchedPlayerEvent(ctxt, event))
             return false;
 
         PlayerBucketEntityEvent e = (PlayerBucketEntityEvent) event;
 
-        return argument.getEntity().checkMatchedEntity(e.getEntity())
-                || (argument.getEntityBucket() == null || argument.getEntityBucket().isAdequate(e.getEntityBucket()))
-                || (argument.getOriginalBucket() == null || argument.getOriginalBucket().isAdequate(e.getOriginalBucket()));
+        boolean result = ctxt.ifHasInput(IN_ENTITY, entity -> entity.checkMatchedEntity(e.getEntity()))
+                && ctxt.ifHasInput(IN_ORIGINAL_BUCKET, bucket -> bucket.isAdequate(e.getOriginalBucket()))
+                && ctxt.ifHasInput(IN_ENTITY_BUCKET, bucket -> bucket.isAdequate(e.getEntityBucket()));
+        if (result)
+            this.makeOutputs(ctxt, e.getPlayer(), e.getEntity(), e.getOriginalBucket(), e.getEntityBucket());
+
+        return result;
+    }
+
+    protected void makeOutputs(@NotNull ActionContext ctxt, @NotNull Player player, @NotNull Entity entity, @NotNull ItemStack originalBucket, @Nullable ItemStack entityBucket)
+    {
+        ctxt.output(KEY_OUT_ENTITY, entity);
+        ctxt.output(KEY_OUT_BUCKET, originalBucket);
+        if (entityBucket != null)
+            ctxt.output(KEY_OUT_ENTITY_BUCKET, entityBucket);
+        super.makeOutputs(ctxt, player);
     }
 
     @Override
@@ -99,70 +125,15 @@ public class PlayerBucketEntityAction extends AbstractPlayerAction<PlayerBucketE
     }
 
     @Override
-    public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
+    public InputBoard getInputBoard(ScenarioType type)
     {
-        ItemStackStructure originalBucket = null;
-        if (map.containsKey(Argument.KEY_ORIGINAL_BUCKET))
-            originalBucket = serializer.deserialize(
-                    MapUtils.checkAndCastMap(map.get(Argument.KEY_ORIGINAL_BUCKET)),
-                    ItemStackStructure.class
-            );
+        InputBoard board = super.getInputBoard(type)
+                .registerAll(IN_ENTITY, IN_ORIGINAL_BUCKET);
+        if (type == ScenarioType.ACTION_EXECUTE)
+            board.requirePresent(IN_ENTITY);
+        else
+            board.register(IN_ENTITY_BUCKET);
 
-        ItemStackStructure entityBucket = null;
-        if (map.containsKey(Argument.KEY_ENTITY_BUCKET))
-            entityBucket = serializer.deserialize(
-                    MapUtils.checkAndCastMap(map.get(Argument.KEY_ENTITY_BUCKET)),
-                    ItemStackStructure.class
-            );
-
-        return new Argument(
-                super.deserializeTarget(map, serializer),
-                serializer.tryDeserializeEntitySpecifier(map.get(Argument.KEY_ENTITY)),
-                originalBucket,
-                entityBucket
-        );
-    }
-
-    @Value
-    @EqualsAndHashCode(callSuper = true)
-    public static class Argument extends AbstractPlayerActionArgument
-    {
-        public static final String KEY_ENTITY = "entity";
-        public static final String KEY_ORIGINAL_BUCKET = "bucket";
-        public static final String KEY_ENTITY_BUCKET = "entityBucket";
-
-        @NotNull
-        EntitySpecifier<?> entity;
-        ItemStackStructure originalBucket;
-        ItemStackStructure entityBucket;
-
-        public Argument(PlayerSpecifier target, @NotNull EntitySpecifier<?> entity, ItemStackStructure originalBucket, ItemStackStructure entityBucket)
-        {
-            super(target);
-            this.entity = entity;
-            this.originalBucket = originalBucket;
-            this.entityBucket = entityBucket;
-        }
-
-        @Override
-        public void validate(@NotNull ScenarioEngine engine, @NotNull ScenarioType type)
-        {
-            super.validate(engine, type);
-            if (type == ScenarioType.ACTION_EXECUTE)
-            {
-                if (!this.entity.canProvideTarget())
-                    throw new IllegalStateException("Entity is not set.");
-                ensureNotPresent(KEY_ENTITY_BUCKET, this.entityBucket);
-            }
-
-            if (this.originalBucket != null)
-            {
-                Material originalBucketType = this.originalBucket.getType();
-                if (originalBucketType == null)
-                    throw new IllegalStateException("Original bucket type is null.");
-                else if (!canBucketPickupEntity(originalBucketType))
-                    throw new IllegalStateException("Original bucket type is not water bucket.");
-            }
-        }
+        return board;
     }
 }

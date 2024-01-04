@@ -1,7 +1,5 @@
 package org.kunlab.scenamatica.action.actions.entity;
 
-import lombok.EqualsAndHashCode;
-import lombok.Value;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
 import org.bukkit.entity.Entity;
@@ -9,26 +7,65 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.jetbrains.annotations.NotNull;
+import org.kunlab.scenamatica.action.utils.InputTypeToken;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.interfaces.action.ActionContext;
+import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
+import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
-import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.ItemStackStructure;
-import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.EntitySpecifier;
-import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
-public class EntityDeathAction extends AbstractEntityAction<EntityDeathAction.Argument>
-        implements Executable<EntityDeathAction.Argument>, Watchable<EntityDeathAction.Argument>
+public class EntityDeathAction extends AbstractGeneralEntityAction
+        implements Executable, Watchable
 {
     public static final String KEY_ACTION_NAME = "entity_death";
+    public static final InputToken<List<ItemStackStructure>> IN_DROPS = ofInput(
+            "drops",
+            InputTypeToken.ofList(ItemStackStructure.class),
+            ofTraverser(List.class, (ser, list) -> {
+                List<ItemStackStructure> drops = new ArrayList<>();
+                List<Map<String, Object>> dropMaps = MapUtils.checkAndCastList(list, InputTypeToken.ofMap(String.class, Object.class));
+                for (Map<String, Object> dropMap : dropMaps)
+                    drops.add(ser.deserialize(dropMap, ItemStackStructure.class));
+
+                return drops;
+            })
+    );
+    public static final InputToken<Integer> IN_DROP_EXP = ofInput(
+            "dropExp",
+            Integer.class
+    );
+    public static final InputToken<Double> IN_REVIVE_HEALTH = ofInput(
+            "reviveHealth",
+            Double.class
+    );
+    public static final InputToken<Boolean> IN_SHOULD_PLAY_DEATH_SOUND = ofInput(
+            "playDeathSound",
+            Boolean.class
+    );
+    public static final InputToken<Sound> IN_DEATH_SOUND = ofInput(
+            "sound",
+            Sound.class
+    );
+    public static final InputToken<SoundCategory> IN_DEATH_SOUND_CATEGORY = ofInput(
+            "soundCategory",
+            SoundCategory.class
+    );
+    public static final InputToken<Float> IN_DEATH_SOUND_VOLUME = ofInput(
+            "soundVolume",
+            Float.class
+    );
+    public static final InputToken<Float> IN_DEATH_SOUND_PITCH = ofInput(
+            "soundPitch",
+            Float.class
+    );
 
     @Override
     public String getName()
@@ -37,9 +74,9 @@ public class EntityDeathAction extends AbstractEntityAction<EntityDeathAction.Ar
     }
 
     @Override
-    public void execute(@NotNull ScenarioEngine engine, @NotNull EntityDeathAction.Argument argument)
+    public void execute(@NotNull ActionContext ctxt)
     {
-        Entity target = argument.selectTarget(engine.getContext());
+        Entity target = this.selectTarget(ctxt);
         if (target.isDead())
             throw new IllegalStateException("The target entity " + target + " is already dead.");
 
@@ -47,19 +84,21 @@ public class EntityDeathAction extends AbstractEntityAction<EntityDeathAction.Ar
             throw new IllegalStateException("The target entity " + target + " is not a living entity.");
 
         LivingEntity livingEntity = (LivingEntity) target;
+        this.makeOutputs(ctxt, livingEntity);
         livingEntity.setHealth(0.0f);
     }
 
     @Override
-    public boolean isFired(@NotNull Argument argument, @NotNull ScenarioEngine engine, @NotNull Event event)
+    public boolean checkFired(@NotNull ActionContext ctxt, @NotNull Event event)
     {
-        if (!super.checkMatchedEntityEvent(argument, engine, event))
+        if (!super.checkMatchedEntityEvent(ctxt, event))
             return false;
 
         EntityDeathEvent e = (EntityDeathEvent) event;
-        if (argument.drops != null)
+
+        if (ctxt.hasInput(IN_DROPS))
         {
-            List<ItemStackStructure> expectedDrops = new ArrayList<>(argument.getDrops());
+            List<ItemStackStructure> expectedDrops = new ArrayList<>(ctxt.input(IN_DROPS));
             expectedDrops.removeIf(expectedDrop ->
                     e.getDrops().stream()
                             .noneMatch(expectedDrop::isAdequate)
@@ -69,13 +108,17 @@ public class EntityDeathAction extends AbstractEntityAction<EntityDeathAction.Ar
                 return false;
         }
 
-        return (argument.getDropExp() == null || argument.getDropExp() == e.getDroppedExp())
-                && (argument.getReviveHealth() == null || argument.getReviveHealth() == e.getReviveHealth())
-                && (argument.getShouldPlayDeathSound() == null || argument.getShouldPlayDeathSound() == e.shouldPlayDeathSound())
-                && (argument.getDeathSound() == null || argument.getDeathSound() == e.getDeathSound())
-                && (argument.getDeathSoundCategory() == null || argument.getDeathSoundCategory() == e.getDeathSoundCategory())
-                && (argument.getDeathSoundVolume() == null || argument.getDeathSoundVolume() == e.getDeathSoundVolume())
-                && (argument.getDeathSoundPitch() == null || argument.getDeathSoundPitch() == e.getDeathSoundPitch());
+        boolean result = ctxt.ifHasInput(IN_DROP_EXP, exp -> exp == e.getDroppedExp())
+                && ctxt.ifHasInput(IN_REVIVE_HEALTH, health -> health == e.getReviveHealth())
+                && ctxt.ifHasInput(IN_SHOULD_PLAY_DEATH_SOUND, shouldPlay -> shouldPlay == e.shouldPlayDeathSound())
+                && ctxt.ifHasInput(IN_DEATH_SOUND, sound -> sound == e.getDeathSound())
+                && ctxt.ifHasInput(IN_DEATH_SOUND_CATEGORY, category -> category == e.getDeathSoundCategory())
+                && ctxt.ifHasInput(IN_DEATH_SOUND_VOLUME, volume -> volume == e.getDeathSoundVolume())
+                && ctxt.ifHasInput(IN_DEATH_SOUND_PITCH, pitch -> pitch == e.getDeathSoundPitch());
+        if (result)
+            this.makeOutputs(ctxt, e.getEntity());
+
+        return result;
     }
 
     @Override
@@ -87,118 +130,21 @@ public class EntityDeathAction extends AbstractEntityAction<EntityDeathAction.Ar
     }
 
     @Override
-    public Argument deserializeArgument(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
+    public InputBoard getInputBoard(ScenarioType type)
     {
-        List<ItemStackStructure> drops = null;
-        if (map.containsKey(Argument.KEY_DROPS))
-        {
-            drops = new ArrayList<>();
-            List<Map<String, Object>> dropMaps = MapUtils.getAsList(map, Argument.KEY_DROPS);
-            for (Map<String, Object> dropMap : dropMaps)
-                drops.add(serializer.deserialize(dropMap, ItemStackStructure.class));
-        }
-
-        return new Argument(
-                super.deserializeTarget(map, serializer),
-                drops,
-                MapUtils.getOrNull(map, Argument.KEY_DROP_EXP),
-                MapUtils.getOrNull(map, Argument.KEY_REVIVE_HEALTH),
-
-                MapUtils.getOrNull(map, Argument.KEY_SHOULD_PLAY_DEATH_SOUND),
-                MapUtils.getOrNull(map, Argument.KEY_DEATH_SOUND),
-                MapUtils.getOrNull(map, Argument.KEY_DEATH_SOUND_CATEGORY),
-                MapUtils.getAsNumberOrNull(map, Argument.KEY_DEATH_SOUND_VOLUME, Number::floatValue),
-                MapUtils.getAsNumberOrNull(map, Argument.KEY_DEATH_SOUND_VOLUME, Number::floatValue)
-        );
-    }
-
-    @Value
-    @EqualsAndHashCode(callSuper = true)
-    public static class Argument extends AbstractEntityActionArgument<Entity>
-    {
-        public static final String KEY_DROPS = "drops";
-        public static final String KEY_DROP_EXP = "dropExp";
-        public static final String KEY_REVIVE_HEALTH = "reviveHealth";
-
-        public static final String KEY_SHOULD_PLAY_DEATH_SOUND = "playDeathSound";
-        public static final String KEY_DEATH_SOUND = "sound";
-        public static final String KEY_DEATH_SOUND_CATEGORY = "soundCategory";
-        public static final String KEY_DEATH_SOUND_VOLUME = "soundVolume";
-        public static final String KEY_DEATH_SOUND_PITCH = "soundPitch";
-
-        List<ItemStackStructure> drops;
-        Integer dropExp;
-        Double reviveHealth;
-
-        Boolean shouldPlayDeathSound;
-        Sound deathSound;
-        SoundCategory deathSoundCategory;
-        Float deathSoundVolume;
-        Float deathSoundPitch;
-
-        public Argument(@NotNull EntitySpecifier<Entity> mayTarget, List<ItemStackStructure> drops, Integer dropExp, Double reviveHealth, Boolean shouldPlayDeathSound, Sound deathSound, SoundCategory deathSoundCategory, Float deathSoundVolume, Float deathSoundPitch)
-        {
-            super(mayTarget);
-            this.drops = drops;
-            this.dropExp = dropExp;
-            this.reviveHealth = reviveHealth;
-            this.shouldPlayDeathSound = shouldPlayDeathSound;
-            this.deathSound = deathSound;
-            this.deathSoundCategory = deathSoundCategory;
-            this.deathSoundVolume = deathSoundVolume;
-            this.deathSoundPitch = deathSoundPitch;
-        }
-
-        @Override
-        public boolean isSame(TriggerArgument argument)
-        {
-            if (!(argument instanceof Argument))
-                return false;
-
-            Argument arg = (Argument) argument;
-
-            return super.isSame(arg)
-                    && (this.drops == null && arg.drops == null || this.drops != null && arg.drops != null && MapUtils.equals(this.drops, arg.drops))
-                    && Objects.equals(this.dropExp, arg.dropExp)
-                    && Objects.equals(this.reviveHealth, arg.reviveHealth)
-                    && Objects.equals(this.shouldPlayDeathSound, arg.shouldPlayDeathSound)
-                    && this.deathSound == arg.deathSound
-                    && this.deathSoundCategory == arg.deathSoundCategory
-                    && Objects.equals(this.deathSoundVolume, arg.deathSoundVolume)
-                    && Objects.equals(this.deathSoundPitch, arg.deathSoundPitch);
-        }
-
-        @Override
-        public void validate(@NotNull ScenarioEngine engine, @NotNull ScenarioType type)
-        {
-            if (type == ScenarioType.ACTION_EXECUTE)
-            {
-                this.ensureCanProvideTarget();
-                ensureNotPresent(KEY_DROPS, this.drops);
-                ensureNotPresent(KEY_DROP_EXP, this.dropExp);
-                ensureNotPresent(KEY_REVIVE_HEALTH, this.reviveHealth);
-                ensureNotPresent(KEY_SHOULD_PLAY_DEATH_SOUND, this.shouldPlayDeathSound);
-                ensureNotPresent(KEY_DEATH_SOUND, this.deathSound);
-                ensureNotPresent(KEY_DEATH_SOUND_CATEGORY, this.deathSoundCategory);
-                ensureNotPresent(KEY_DEATH_SOUND_VOLUME, this.deathSoundVolume);
-                ensureNotPresent(KEY_DEATH_SOUND_PITCH, this.deathSoundPitch);
-            }
-        }
-
-        @Override
-        public String getArgumentString()
-        {
-            return appendArgumentString(
-                    super.getArgumentString(),
-                    KEY_DROPS, this.drops,
-                    KEY_DROP_EXP, this.dropExp,
-                    KEY_REVIVE_HEALTH, this.reviveHealth,
-                    KEY_SHOULD_PLAY_DEATH_SOUND, this.shouldPlayDeathSound,
-                    KEY_DEATH_SOUND, this.deathSound,
-                    KEY_DEATH_SOUND_CATEGORY, this.deathSoundCategory,
-                    KEY_DEATH_SOUND_VOLUME, this.deathSoundVolume,
-                    KEY_DEATH_SOUND_PITCH, this.deathSoundPitch
+        InputBoard board = super.getInputBoard(type);
+        if (type != ScenarioType.ACTION_EXECUTE)
+            board.registerAll(
+                    IN_DROPS,
+                    IN_DROP_EXP,
+                    IN_REVIVE_HEALTH,
+                    IN_SHOULD_PLAY_DEATH_SOUND,
+                    IN_DEATH_SOUND,
+                    IN_DEATH_SOUND_CATEGORY,
+                    IN_DEATH_SOUND_VOLUME,
+                    IN_DEATH_SOUND_PITCH
             );
-        }
+
+        return board;
     }
 }

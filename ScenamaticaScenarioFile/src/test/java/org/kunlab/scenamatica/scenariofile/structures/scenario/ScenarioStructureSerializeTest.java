@@ -16,6 +16,7 @@ public class ScenarioStructureSerializeTest
     public static final ScenarioStructure FULFILLED = new ScenarioStructureImpl(
             ScenarioType.ACTION_EXECUTE,
             ActionStructureSerializeTest.FULFILLED,
+            "NONAME",
             null,
             114514L
     );
@@ -24,11 +25,13 @@ public class ScenarioStructureSerializeTest
     {{
         this.put("type", "execute");
         this.put("timeout", 114514L);
+        this.put("name", "NONAME");
     }};
 
     public static final ScenarioStructure EMPTY = new ScenarioStructureImpl(
             ScenarioType.ACTION_EXECUTE,
             ActionStructureSerializeTest.EMPTY,
+            null,
             null,
             -1
     );
@@ -70,6 +73,7 @@ public class ScenarioStructureSerializeTest
         ScenarioStructure expected = new ScenarioStructureImpl(
                 ScenarioType.ACTION_EXECUTE,
                 ActionStructureSerializeTest.EMPTY,
+                null,
                 null,
                 100  // デフォルト値で補完される
         );

@@ -15,9 +15,14 @@ public enum ScenarioResultCause
     CANCELLED,
     SKIPPED;
 
+    public boolean isOK()
+    {
+        return this == PASSED || this == SKIPPED || this == CANCELLED;
+    }
+
     public boolean isFailure()
     {
-        return this != PASSED && this != SKIPPED && this != CANCELLED;
+        return !this.isOK();
     }
 
     public boolean isSkipped()

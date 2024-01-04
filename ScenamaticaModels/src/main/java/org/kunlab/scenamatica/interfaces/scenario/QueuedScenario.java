@@ -62,7 +62,6 @@ public interface QueuedScenario
      * シナリオの実行結果を取得します。
      *
      * @return シナリオの実行結果
-     * @throws IllegalStateException シナリオが実行中の場合
      * @see #isRunning()
      */
     ScenarioResult getResult();
@@ -79,9 +78,11 @@ public interface QueuedScenario
     /**
      * シナリオを実行します。
      *
+     * @param variables セッション変数
+     * @return シナリオの実行結果
      * @throws IllegalStateException シナリオが実行中の場合
      */
-    ScenarioResult run() throws TriggerNotFoundException;
+    ScenarioResult run(SessionStorage variables) throws TriggerNotFoundException;
 
     /**
      * 最大リトライ回数を取得します。

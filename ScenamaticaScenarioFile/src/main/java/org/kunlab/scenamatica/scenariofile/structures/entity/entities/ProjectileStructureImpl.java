@@ -17,6 +17,7 @@ import org.kunlab.scenamatica.interfaces.scenariofile.entity.entities.Projectile
 import org.kunlab.scenamatica.interfaces.scenariofile.misc.BlockStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.misc.ProjectileSourceStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.misc.SelectorProjectileSourceStructure;
+import org.kunlab.scenamatica.scenariofile.ProjectileSourceSerializeHelper;
 import org.kunlab.scenamatica.scenariofile.structures.entity.EntityStructureImpl;
 import org.kunlab.scenamatica.scenariofile.structures.misc.SelectorProjectileSourceStructureImpl;
 import org.kunlab.scenamatica.selector.Selector;
@@ -85,6 +86,15 @@ public class ProjectileStructureImpl extends EntityStructureImpl implements Proj
                 entity,
                 shooter,
                 MapUtils.getOrNull(map, KEY_DOES_BOUNCE)
+        );
+    }
+
+    public static ProjectileStructure of(@NotNull Projectile projectile, @NotNull StructureSerializer serializer)
+    {
+        return new ProjectileStructureImpl(
+                EntityStructureImpl.of(projectile),
+                ProjectileSourceSerializeHelper.of(projectile.getShooter(), serializer),
+                projectile.doesBounce()
         );
     }
 

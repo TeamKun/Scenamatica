@@ -24,6 +24,8 @@ public class TextUtils
 
     public static boolean isContentMatches(net.kyori.adventure.text.Component component, String content)
     {
+        if (component == null || content == null)
+            return (content == null && component == null) || content.isEmpty();
         net.kyori.adventure.text.TextComponent textComponent;
         if (component instanceof net.kyori.adventure.text.TextComponent)
             textComponent = (net.kyori.adventure.text.TextComponent) component;
@@ -31,5 +33,24 @@ public class TextUtils
             textComponent = net.kyori.adventure.text.TextComponent.ofChildren(component);
 
         return textComponent.content().matches(content);
+    }
+
+    public static String toString(net.kyori.adventure.text.Component component)
+    {
+        if (component == null)
+            return null;
+
+        net.kyori.adventure.text.TextComponent textComponent;
+        if (component instanceof net.kyori.adventure.text.TextComponent)
+            textComponent = (net.kyori.adventure.text.TextComponent) component;
+        else
+            textComponent = net.kyori.adventure.text.TextComponent.ofChildren(component);
+
+        return textComponent.content();
+    }
+
+    public static String toString(TextComponent component)
+    {
+        return component.toPlainText();
     }
 }
