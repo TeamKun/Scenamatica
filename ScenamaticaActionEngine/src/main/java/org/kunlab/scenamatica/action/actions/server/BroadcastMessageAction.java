@@ -7,6 +7,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.server.BroadcastMessageEvent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.utils.InputTypeToken;
 import org.kunlab.scenamatica.action.utils.PlayerLikeCommandSenders;
 import org.kunlab.scenamatica.commons.utils.TextUtils;
@@ -151,9 +152,10 @@ public class BroadcastMessageAction extends AbstractServerAction
         return result;
     }
 
-    protected void makeOutputs(@NotNull ActionContext ctxt, @NotNull String message, @NotNull List<CommandSender> recipients)
+    protected void makeOutputs(@NotNull ActionContext ctxt, @Nullable String message, @NotNull List<CommandSender> recipients)
     {
-        ctxt.output(KEY_OUT_MESSAGE, message);
+        if (message != null)
+            ctxt.output(KEY_OUT_MESSAGE, message);
         ctxt.output(KEY_OUT_RECIPIENTS, recipients);
         ctxt.commitOutput();
     }

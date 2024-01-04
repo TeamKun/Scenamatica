@@ -5,6 +5,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.commons.utils.TextUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
@@ -78,12 +79,13 @@ public class PlayerGameModeAction extends AbstractPlayerAction
         ctxt.output(KEY_OUT_GAME_MODE, gameMode);
     }
 
-    private void makeOutputs(@NotNull ActionContext ctxt, @NotNull Player player, @NotNull GameMode gameMode, @NotNull PlayerGameModeChangeEvent.Cause cause, @NotNull String cancelMessage)
+    private void makeOutputs(@NotNull ActionContext ctxt, @NotNull Player player, @NotNull GameMode gameMode, @NotNull PlayerGameModeChangeEvent.Cause cause, @Nullable String cancelMessage)
     {
         super.makeOutputs(ctxt, player);
         ctxt.output(KEY_OUT_GAME_MODE, gameMode);
         ctxt.output(KEY_OUT_CAUSE, cause);
-        ctxt.output(KEY_OUT_CANCEL_MESSAGE, cancelMessage);
+        if (cancelMessage != null)
+            ctxt.output(KEY_OUT_CANCEL_MESSAGE, cancelMessage);
     }
 
     @Override

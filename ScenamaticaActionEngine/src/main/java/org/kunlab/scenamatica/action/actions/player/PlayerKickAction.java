@@ -84,7 +84,8 @@ public class PlayerKickAction extends AbstractPlayerAction
     {
         if (leaveMessage != null)
             ctxt.output(KEY_OUT_LEAVE_MESSAGE, TextUtils.toString(leaveMessage));
-        ctxt.output(KEY_OUT_KICK_MESSAGE, TextUtils.toString(kickMessage));
+        if (kickMessage != null)
+            ctxt.output(KEY_OUT_KICK_MESSAGE, TextUtils.toString(kickMessage));
         ctxt.output(KEY_OUT_CAUSE, cause);
         super.makeOutputs(ctxt, player);
     }
