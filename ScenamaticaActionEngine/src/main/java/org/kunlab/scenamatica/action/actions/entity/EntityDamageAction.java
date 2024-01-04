@@ -5,6 +5,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.utils.InputTypeToken;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
@@ -51,6 +52,19 @@ public class EntityDamageAction extends AbstractGeneralEntityAction
             })
     );
 
+    public static final String KEY_OUT_CAUSE = "cause";
+    public static final String KEY_OUT_AMOUNT = "amount";
+    public static final String KEY_OUT_MODIFIERS = "modifiers";
+
+    protected static Map<String, Double> createModifiersMap(EntityDamageEvent evt)
+    {
+        Map<String, Double> modifiersMap = new HashMap<>();
+        for (EntityDamageEvent.DamageModifier modifier : EntityDamageEvent.DamageModifier.values())
+            modifiersMap.put(modifier.name().toLowerCase(), evt.getDamage(modifier));
+
+        return modifiersMap;
+    }
+
     @Override
     public String getName()
     {
@@ -65,7 +79,7 @@ public class EntityDamageAction extends AbstractGeneralEntityAction
         if (!(target instanceof Damageable))
             throw new IllegalArgumentException("Target is not damageable");
 
-        this.makeOutputs(ctxt, target);
+        this.makeOutputs(ctxt, target, null, ctxt.input(IN_AMOUNT), null);
         ((Damageable) target).damage(ctxt.input(IN_AMOUNT));
     }
 
@@ -86,9 +100,19 @@ public class EntityDamageAction extends AbstractGeneralEntityAction
         boolean result = ctxt.ifHasInput(IN_CAUSE, cause -> cause == e.getCause())
                 && ctxt.ifHasInput(IN_AMOUNT, amount -> amount == e.getDamage());
         if (result)
-            this.makeOutputs(ctxt, e.getEntity());
+            this.makeOutputs(ctxt, e.getEntity(), e.getCause(), e.getDamage(), createModifiersMap(e));
 
         return result;
+    }
+
+    protected void makeOutputs(@NotNull ActionContext ctxt, @NotNull Entity entity, @Nullable EntityDamageEvent.DamageCause cause, double amount, @Nullable Map<String, Double> modifiers)
+    {
+        if (cause != null)
+            ctxt.output(KEY_OUT_CAUSE, cause);
+        ctxt.output(KEY_OUT_AMOUNT, amount);
+        if (modifiers != null)
+            ctxt.output(KEY_OUT_MODIFIERS, modifiers);
+        super.makeOutputs(ctxt, entity);
     }
 
     @Override

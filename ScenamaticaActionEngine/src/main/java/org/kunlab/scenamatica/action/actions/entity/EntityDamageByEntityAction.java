@@ -4,7 +4,9 @@ import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
@@ -14,6 +16,7 @@ import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.EntitySpecifier
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 public class EntityDamageByEntityAction extends EntityDamageAction
         implements Executable
@@ -40,7 +43,7 @@ public class EntityDamageByEntityAction extends EntityDamageAction
         Entity damager = ctxt.input(IN_DAMAGER).selectTarget(ctxt.getContext())
                 .orElseThrow(() -> new IllegalStateException("Cannot select damager for this action, please specify damager with valid specifier."));
 
-        this.makeOutputs(ctxt, target, damager);
+        this.makeOutputs(ctxt, target, damager, null, ctxt.input(IN_AMOUNT), null);
         ((Damageable) target).damage(ctxt.input(IN_AMOUNT), damager);
     }
 
@@ -55,15 +58,15 @@ public class EntityDamageByEntityAction extends EntityDamageAction
 
         boolean result = ctxt.ifHasInput(IN_DAMAGER, damager -> damager.checkMatchedEntity(e.getDamager()));
         if (result)
-            this.makeOutputs(ctxt, e.getEntity(), e.getDamager());
+            this.makeOutputs(ctxt, e.getEntity(), e.getDamager(), e.getCause(), e.getDamage(), createModifiersMap(e));
 
         return result;
     }
 
-    protected void makeOutputs(@NotNull ActionContext ctxt, @NotNull Entity entity, @NotNull Entity damager)
+    protected void makeOutputs(@NotNull ActionContext ctxt, @NotNull Entity entity, @NotNull Entity damager, EntityDamageEvent.DamageCause cause, double amount, @Nullable Map<String, Double> modifiers)
     {
         ctxt.output(OUT_KEY_DAMAGER, damager);
-        super.makeOutputs(ctxt, entity);
+        super.makeOutputs(ctxt, entity, cause, amount, modifiers);
     }
 
     @Override
