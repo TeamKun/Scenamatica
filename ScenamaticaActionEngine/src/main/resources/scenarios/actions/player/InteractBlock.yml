@@ -10,6 +10,9 @@ on:
 context:
   actors:
     - name: Actor001
+  stage:
+    type: NORMAL
+    seed: 114514
 
 scenario:
   - type: execute
