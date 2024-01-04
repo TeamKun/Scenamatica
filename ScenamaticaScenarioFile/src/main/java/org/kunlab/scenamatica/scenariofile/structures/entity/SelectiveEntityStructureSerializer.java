@@ -247,14 +247,12 @@ public class SelectiveEntityStructureSerializer
 
         EntityStructureEntry<V, T> entry = getEntry(value.getType());
         if (entry == null)
-            throw new IllegalArgumentException("Unknown entity type: " + value.getType());
+        {
+            // noinspection unchecked: Fallback mode
+            return (T) AEntityStructureImpl.of(value);
+        }
 
         return entry.getConstructor().apply(value, structureSerializer);
-    }
-
-    public static boolean canConvertToStructure(@NotNull Entity value)
-    {
-        return getEntry(value.getType()) != null;
     }
 
     @Value

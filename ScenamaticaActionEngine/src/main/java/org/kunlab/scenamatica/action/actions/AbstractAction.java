@@ -45,10 +45,6 @@ public abstract class AbstractAction implements Action
                     StructureSerializer::tryDeserializePlayerSpecifier
             ),
             TraverserImpl.of(
-                    String.class,
-                    StructureSerializer::tryDeserializePlayerSpecifier
-            ),
-            TraverserImpl.of(
                     PlayerStructure.class,
                     (ser, ps) -> ser.tryDeserializePlayerSpecifier(ps.getUuid())
             ),
@@ -59,6 +55,10 @@ public abstract class AbstractAction implements Action
                             return ser.tryDeserializePlayerSpecifier(ps);
                         else return ser.tryDeserializePlayerSpecifier(PlayerLikeCommandSenders.CONSOLE_SENDER);
                     }
+            ),
+            TraverserImpl.of(
+                    String.class,
+                    StructureSerializer::tryDeserializePlayerSpecifier
             )
     ).toArray(new Traverser[0]);
 
@@ -155,7 +155,7 @@ public abstract class AbstractAction implements Action
                         (ser, map) -> ser.tryDeserializeEntitySpecifier(map, structureClass)
                 ),
                 ofTraverser(
-                        structureClass,
+                        EntityStructure.class,
                         (ser, structure) -> ser.tryDeserializeEntitySpecifier(structure.getUuid(), structureClass)
                 ),
                 ofTraverser(

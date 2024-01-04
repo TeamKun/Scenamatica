@@ -333,7 +333,10 @@ public class InputReferenceImpl<T> implements InputReference<T>
                     return token.getClazz().cast(traverser.tryTraverse(serializer, resolved));
             }
 
-            throw new IllegalArgumentException("Incompatible type detected for " + token.getName() + ": " + resolved.getClass().getName());
+            if (token.getClazz().isInstance(resolved))
+                return token.getClazz().cast(resolved);
+            else
+                throw new IllegalArgumentException("Incompatible type detected for " + token.getName() + ": " + resolved.getClass().getName());
         }
     }
 

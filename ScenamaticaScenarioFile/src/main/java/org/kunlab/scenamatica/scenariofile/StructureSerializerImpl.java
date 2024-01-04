@@ -139,9 +139,8 @@ public class StructureSerializerImpl implements StructureSerializer
     @SuppressWarnings({"rawtypes", "unchecked"})
     public boolean canConvertToStructure(@NotNull Object value)
     {
-        // エンティティの場合は, さらに EntityType で分岐する
         if (isEntityRelatedValue(value, null))
-            return SelectiveEntityStructureSerializer.canConvertToStructure((Entity) value);
+            return true;  // エンティティの場合は, 裏でフォールバックが効くので true を返す
 
         return this.structureEntries.stream()
                 .filter(entry -> entry instanceof MappedStructureEntry)

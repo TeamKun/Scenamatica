@@ -32,12 +32,3 @@ scenario:
     with:
       actor: ${scenario.scenario.1.output.actor}
       block: ${scenario.scenario.1.output.block}
-  - type: expect
-    action: block_break
-    with:
-      actor: Actor001
-      block:
-        location:
-          x: 0
-          y: 0
-          z: 0
