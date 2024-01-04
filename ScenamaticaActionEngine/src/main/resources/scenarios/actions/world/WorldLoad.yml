@@ -7,6 +7,11 @@ on:
   - type: on_load
   - type: manual_dispatch
 
+runif:
+  action: world_load
+  with:
+    world: the_end
+
 scenario:
   # Implicitly unload the world
   - type: execute

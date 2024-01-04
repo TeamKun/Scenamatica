@@ -34,8 +34,10 @@ public class WorldUnloadAction extends AbstractWorldAction
     @Override
     public void execute(@NotNull ActionContext ctxt)
     {
-        World world = super.getWorldNonNull(ctxt);
+        World world = super.getWorld(ctxt);
 
+        if (world == null)
+            throw new IllegalStateException("Unable to find world: " + ctxt.input(IN_WORLD));
         this.makeOutputs(ctxt, world);
         Bukkit.getServer().unloadWorld(world, ctxt.orElseInput(IN_SAVE, () -> true));
     }

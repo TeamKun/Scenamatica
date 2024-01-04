@@ -533,7 +533,18 @@ public class ScenarioExecutorImpl implements ScenarioExecutor
 
     private int getIndex(ActionContext sender)
     {
-        Predicate<? super CompiledScenarioAction> predicate = a -> a.getAction().getContext().getContextID().equals(sender.getContextID());
+        Predicate<? super CompiledScenarioAction> predicate;
+        switch (sender.getRunAs())
+        {
+            case NORMAL:
+                predicate = a -> a.getAction().getContext().getContextID().equals(sender.getContextID());
+                break;
+            case RUNIF:
+                predicate = a -> a.getRunIf() != null && a.getRunIf().getAction().getContext().getContextID().equals(sender.getContextID());
+                break;
+            default:
+                throw new IllegalStateException("Unable to upload outputs: Unexpected runAs: " + sender.getRunAs());
+        }
 
         switch (sender.getRunOn())
         {
