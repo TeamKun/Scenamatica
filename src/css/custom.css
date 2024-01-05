@@ -15,6 +15,7 @@
   --ifm-color-primary-lightest: #79caff;
   --ifm-code-font-size: 95%;
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
+  --ifm-alert-border-width: 1px;
 
   --ifm-font-family-monospace: "JetBrains Mono";
 }
@@ -30,6 +31,7 @@
   --ifm-color-primary-lightest: #79caff;
   --ifm-background-color: #0c1017 !important;
   --ifm-navbar-background-color: #192634;
+  --ifm-card-background-color: #0000004C;
 
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
 }
