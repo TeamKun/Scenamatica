@@ -1,0 +1,26 @@
+.card {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    justify-items: start;
+    flex-direction: row;
+
+    width: 100%;
+    padding: 1rem;
+
+    border: 2px solid;
+    border-radius: 15px;
+}
+@media (max-width: 996px) {
+    .card {
+        flex-direction: column;
+    }
+}
+
+
+.emoji {
+    font-size: 4.5rem;
+    margin-right: 0.5rem;
+    user-select: none;
+
+}

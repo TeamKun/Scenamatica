@@ -28,7 +28,16 @@
   --ifm-color-primary-light: #53bbff;
   --ifm-color-primary-lighter: #66c2ff;
   --ifm-color-primary-lightest: #79caff;
+  --ifm-background-color: #0c1017 !important;
+  --ifm-navbar-background-color: #192634;
+
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
+}
+
+html {
+  /*noinspection CssInvalidPropertyValue*/
+  word-break: auto-phrase;
+  scroll-behavior: smooth;
 }
 
 .icon-link::before {

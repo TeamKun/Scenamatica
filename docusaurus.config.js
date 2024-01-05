@@ -5,14 +5,13 @@ const {themes} = require("prism-react-renderer");
 /** @type {import("@docusaurus/types").Config} */
 const config = {
   title: "Scenamatica",
-  tagline: "Enhance PaperMC plugin quality with its automated testing framework: YAML-defined scenarios, CI/CD integration.",
+  tagline: "Let's enhance your PaperMC plugin quality with Scenamatica: YAML-defined scenarios, CI/CD integration.",
   favicon: "img/favicon.ico",
   url: "https://scenamatica.kunlab.org/",
   baseUrl: "/",
 
   clientModules: [
-    require.resolve("@fontsource/jetbrains-mono/index.css"),
-    require.resolve("@fortawesome/fontawesome-free/css/all.min.css"),
+    require.resolve("@fontsource/jetbrains-mono/index.css")
   ],
 
   // GitHub pages deployment config.
@@ -83,7 +82,7 @@ const config = {
           title: "Scenamatica",
           logo: {
             alt: "Scenamatica Logo",
-            src: "img/logo.png",
+            src: "img/logo2.png",
           },
           items: [
             {

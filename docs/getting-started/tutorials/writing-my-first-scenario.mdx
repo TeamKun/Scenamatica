@@ -136,17 +136,20 @@ scenario:
   # Actor1 が /hoge を実行する。
 - type: execute
   action: command_dispatch
-  command: "/hoge"
-  sender: Actor1
+  with:
+    command: "/hoge"
+    sender: Actor1
   # fuga というメッセージが（Actor1 に）表示される。
 - type: expect
   action: message
-  content: "fuga"
-  recipient: Actor1
+  with:
+    content: "fuga"
+    recipient: Actor1
   # Actor1 が死ぬ。
 - type: expect
   action: player_death
-  target: Actor1
+  with:
+    target: Actor1
 # highlight-end
 ```
 
