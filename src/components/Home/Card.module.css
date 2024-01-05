@@ -1,8 +1,8 @@
 .card {
     display: flex;
-    justify-content: center;
-    align-items: center;
+    align-items: flex-end;
     justify-items: start;
+    justify-content: space-between;
     flex-direction: row;
 
     width: 100%;
@@ -11,16 +11,14 @@
     border: 2px solid;
     border-radius: 15px;
 }
-@media (max-width: 996px) {
-    .card {
-        flex-direction: column;
-    }
-}
-
 
 .emoji {
     font-size: 4.5rem;
     margin-right: 0.5rem;
     user-select: none;
 
+}
+
+.text {
+    text-align: left;
 }

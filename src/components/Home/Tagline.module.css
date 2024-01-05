@@ -109,6 +109,28 @@
     .heroBanner {
         padding: 2rem;
     }
+
+    pre, .tagline {
+        overflow: hidden;
+
+        /* 自動スクロール */
+    }
+
+    .tagline {
+        animation: autoScroll 14s linear infinite;
+        animation-delay: 5s;
+    }
+
+
+    @keyframes autoScroll {
+        0% {
+            padding-left: 100%;
+            transform: translateX(0);
+        }
+        100% {
+            transform: translateX(-100%);
+        }
+    }
 }
 
 .keepSpace {

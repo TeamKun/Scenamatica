@@ -1,11 +1,72 @@
 /* Hero banner */
 .heroBanner {
-    padding: 4rem 0;
+    padding: 0 0 5rem;
     text-align: center;
     position: relative;
     overflow: hidden;
     background-color: #111721;
     color: #53bbff;
+
+    min-height: calc(100vh - 3rem);
+}
+
+h1.title {
+    margin: 20px;
+    font-size: 50px;
+}
+
+.scroll {
+    color: #48b5fc;
+    font-size: 3rem;
+
+    position: absolute;
+    bottom: 100px;
+    left: calc(50% - 1.5rem);
+
+    animation: scroll 1.5s infinite;
+}
+
+.scroll > p {
+    margin: 0;
+    height: 20px;
+
+    animation: scrollArrow 2s infinite;
+}
+
+.scroll > p:nth-child(1) {
+    animation-delay: 0s;
+}
+
+.scroll > p:nth-child(2) {
+    animation-delay: 0.25s;
+}
+
+.scroll > p:nth-child(3) {
+    animation-delay: 0.5s;
+}
+
+@keyframes scrollArrow {
+    0% {
+        opacity: 0.8;
+    }
+    50% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 0.6;
+    }
+}
+
+@keyframes scroll {
+    0% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(20px);
+    }
+    100% {
+        transform: translateY(0);
+    }
 }
 
 .characters {
@@ -21,10 +82,14 @@
 
 /* Buttons */
 .buttons {
-    margin-top: 20px;
+    margin-top: 3rem;
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+.buttons > a:hover {
+    background-color: #53bbff;
 }
 
 .description {
@@ -69,6 +134,13 @@
 
 .button {
     margin: 0 10px;
+    border-radius: 0;
+    border: 2px solid #53bbff;
+}
+
+.buttonGitHub {
+    background-color: #000000;
+    color: white !important;
 }
 
 .overview {
@@ -118,7 +190,8 @@
 }
 
 .appeal {
-    text-align: left;
+    text-align: left !important;
+    border-bottom: 1px solid #333;
 }
 
 @media (min-width: 600px) {
@@ -174,16 +247,17 @@
 
 .topicDesc > div {
     max-width: 550px;
-    padding-left: 20px;
-    padding-right: 20px;
+    padding: 50px;
 }
 
 .topicDesc > div.right {
     margin-left: auto;
+    margin-right: 10px;
 }
 
 .topicDesc > div.left {
     margin-right: auto;
+    margin-left: 10px;
 }
 
 @media (min-width: 996px) {
@@ -209,4 +283,11 @@ div:has(> .ghTab) {
 
 .imageTabs.left li:nth-child(1) {
     margin-left: auto;
+}
+
+footer.landingFooter {
+    background-color: #111721;
+    color: #53bbff;
+    padding: 100px;
+    text-align: center;
 }

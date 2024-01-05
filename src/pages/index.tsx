@@ -11,7 +11,7 @@ import Character from "@site/src/components/Home/Character";
 import Tagline from "@site/src/components/Home/Tagline";
 import Card from "@site/src/components/Home/Card";
 import CodeBlock from '@theme/CodeBlock';
-import {faHeartPulse, faLanguage, faListCheck, faUsers} from "@fortawesome/free-solid-svg-icons"
+import {faChevronDown, faHeartPulse, faLanguage, faListCheck, faUsers} from "@fortawesome/free-solid-svg-icons"
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faGithub} from "@fortawesome/free-brands-svg-icons";
 
@@ -70,10 +70,20 @@ function Characters(): JSX.Element {
 }
 
 function Buttons(): JSX.Element {
+    const context = useDocusaurusContext()
+
     return (
         <div className={styles.buttons}>
-            <Link className={styles.button + " button button--secondary button--lg"} to="/docs/home">
-                使い始める &gt;
+            <Link className={clsx(styles.button, " button button--secondary button--lg")} to="/docs/home">
+                詳しくみる &gt;
+            </Link>
+            <Link className={clsx(styles.button, styles.buttonGitHub, " button button--secondary button--lg")}
+                  href={`https://github.com/${context.siteConfig.organizationName}/${context.siteConfig.projectName}`}>
+                <FontAwesomeIcon
+                    icon={faGithub}
+                    width={18}
+                    height={18}
+                /> GitHub&gt;
             </Link>
         </div>
     )
@@ -83,7 +93,7 @@ function Features(): JSX.Element {
     return (
         <div className={styles.features}>
             <Card
-                title={"YAML でシナリオをかんたんに定義"}
+                title={"YAML でシナリオをかんたん定義"}
                 description={"YAML でシナリオを直感的に記述しましょう！"}
                 emoji={faListCheck}
                 emojiColor={"#129182"}
@@ -94,7 +104,7 @@ function Features(): JSX.Element {
                 title={"ローカライズされたインタフェース"}
                 description={"もちろん関西弁にも対応しています！"}
                 emoji={faLanguage}
-                emojiColor={"#508ff6"}
+                emojiColor={"#f5bd46"}
                 backgroundColor={"#ee2514"}
                 link={"#topics-localize"}
             />
@@ -107,8 +117,8 @@ function Features(): JSX.Element {
                 link={"#topics-ci-cd-integration"}
             />
             <Card
-                title={"テスト環境をかんたんに構築"}
-                description={"テストのために、クライアントをわざわざ人数分起動する必要はもうありません！"}
+                title={"テスト環境をかんたん構築"}
+                description={"テストのために、クライアントをわざわざ 人数分起動する必要はもうありません！"}
                 emoji={faUsers}
                 emojiColor={"#559955"}
                 backgroundColor={"#aaaa21"}
@@ -140,10 +150,10 @@ function Appeals(): JSX.Element {
     return (
         <>
             <Appeal right>
-                <p>
-                    <h2 id={"topics-scenario-yaml"}>YAML でシナリオをかんたんに定義</h2>
+                <div>
+                    <h2 id={"topics-scenario-yaml"}>YAML でシナリオをかんたん定義</h2>
                     <p>
-                    Scenamatica のシナリオは、右のようなのかんたんな YAML で定義されます。
+                        Scenamatica のシナリオは、右のようなのかんたんな YAML で定義されます。
                         この例では、 仮想的なプレイヤにネザーでコマンドを実行してもらい、
                         それによって発火したプラグインの機能のふるまいを検証しています。
                     </p>
@@ -152,7 +162,7 @@ function Appeals(): JSX.Element {
                         さらに、非プログラマの方でもシナリオを書けるため、チームでのプラグイン開発がはかどります。
                     </p>
                     <p>Scenamatica は、PaperMC プラグインのテスト駆動開発にはもってこいです！</p>
-                </p>
+                </div>
                 <div className={styles.exampleCode}>
                     <div style={{position: "absolute", width: "100%"}}>
                         <CodeBlock
@@ -164,7 +174,7 @@ function Appeals(): JSX.Element {
                 </div>
             </Appeal>
             <Appeal>
-                <p style={{marginLeft: "10px"}}>
+                <div style={{marginLeft: "10px"}}>
                     <h2 id={"topics-localize"}>ローカライズされたインタフェース</h2>
                     Scenamatica は、日本語をはじめとする数種類の言語に対応しています。
                     <p>特に、プラグインの出力は完全にローカライズされています！</p>
@@ -179,7 +189,7 @@ function Appeals(): JSX.Element {
                         ※Scenamatica では、現在翻訳してくれるとても優しい方を募集しています！
                     </p>
                     <span>詳しくは上の <FontAwesomeIcon icon={faGithub}/> ボタンからリポジトリをご覧ください。</span>
-                </p>
+                </div>
                 <Tabs className={clsx(styles.imageTabs, styles.left)}>
                     <TabItem value="ja_JP" label="日本語">
                         <img src="/img/langs/ja_JP.png" alt="日本語" width={"100%"}/>
@@ -193,7 +203,7 @@ function Appeals(): JSX.Element {
                 </Tabs>
             </Appeal>
             <Appeal right>
-                <p>
+                <div>
                     <h2 id={"topics-ci-cd-integration"}>CI-CD との統合</h2>
                     <p>
                         CI-CD との統合により、プラグインの品質を継続的に監視できます。
@@ -208,7 +218,7 @@ function Appeals(): JSX.Element {
                         コメントは最新のコミット用に自動で更新されるため、スパムになる心配はありません。
                     </p>
                     <p>チーム全員とテスト結果を共有して、よりよい開発体験を目指します。</p>
-                </p>
+                </div>
                 <Tabs className={clsx(styles.imageTabs, styles.ghTab)}>
                     <TabItem value="summary" label="概要">
                         <img src="/img/actions/summary.png" alt="サマリ" width={"100%"}/>
@@ -225,8 +235,8 @@ function Appeals(): JSX.Element {
                 </Tabs>
             </Appeal>
             <Appeal>
-                <p style={{marginLeft: "10px"}} className={styles.appealDesc}>
-                    <h2 id={"topics-build-test-environment"}>テスト環境をかんたんに構築</h2>
+                <div className={styles.appealDesc}>
+                    <h2 id={"topics-build-test-environment"}>テスト環境をかんたん構築</h2>
                     <p>
                         Scenamatica を利用すると、テストに必要なプレイヤ（アクタ）とワールド（ステージ）、
                         エンティティを自動で準備できます。
@@ -241,7 +251,7 @@ function Appeals(): JSX.Element {
                         プラグインのテスト専用のワールドを用意することで、限定的な環境下でのテストを実現できます。
                         また、新規に生成するモードを活用すると、ランダムな条件でのテストを実現できます。
                     </p>
-                </p>
+                </div>
                 <Tabs className={clsx(styles.imageTabs, styles.left)}>
                     <TabItem value="actor" label="アクタ">
                         <img src="/img/contexts/actor.png" alt="アクタ" width={"100%"}/>
@@ -265,7 +275,7 @@ export default function Home(): JSX.Element {
                 <Characters/>
                 <div className="container">
                     <img width={150} height={150} src="/img/logo.png" alt="Scenamatica" className={styles.heroLogo}/>
-                    <h1 className="hero__title">{siteConfig.title}</h1>
+                    <h1 className={styles.title}>{siteConfig.title}</h1>
                     <Tagline/>
                     <div>
                         <p className={styles.description}>
@@ -277,6 +287,12 @@ export default function Home(): JSX.Element {
                         </p>
                     </div>
                     <Buttons/>
+
+                    <div className={styles.scroll}>
+                        <p><FontAwesomeIcon icon={faChevronDown}/></p>
+                        <p><FontAwesomeIcon icon={faChevronDown}/></p>
+                        <p><FontAwesomeIcon icon={faChevronDown}/></p>
+                    </div>
                 </div>
             </header>
             <main>
@@ -299,6 +315,10 @@ export default function Home(): JSX.Element {
                     <Appeals/>
                 </div>
             </main>
+            <footer className={styles.landingFooter}>
+                <h2>ぜひ Scenamatica を使ってみてください！</h2>
+                <Buttons/>
+            </footer>
         </Layout>
     )
 }
