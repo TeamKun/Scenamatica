@@ -17,7 +17,8 @@
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
   --ifm-alert-border-width: 1px;
 
-  --ifm-font-family-monospace: "JetBrains Mono";
+  --ifm-font-family-monospace: "JetBrains Mono", monospace;
+  --ifm-font-family-base: "Murecho", sans-serif;
 }
 
 /* For readability concerns, you should choose a lighter palette in dark mode. */

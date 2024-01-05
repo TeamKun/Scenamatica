@@ -11,7 +11,8 @@ const config = {
   baseUrl: "/",
 
   clientModules: [
-    require.resolve("@fontsource/jetbrains-mono/index.css")
+    require.resolve("@fontsource/jetbrains-mono/index.css"),
+    require.resolve("@fontsource/murecho/index.css"),
   ],
 
   // GitHub pages deployment config.

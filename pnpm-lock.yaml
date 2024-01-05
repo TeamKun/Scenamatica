@@ -23,6 +23,9 @@ dependencies:
   '@fontsource/jetbrains-mono':
     specifier: ^4.5.12
     version: 4.5.12
+  '@fontsource/murecho':
+    specifier: ^5.0.17
+    version: 5.0.17
   '@fortawesome/fontawesome-svg-core':
     specifier: ^6.5.1
     version: 6.5.1
@@ -2440,6 +2443,10 @@ packages:
 
   /@fontsource/jetbrains-mono@4.5.12:
     resolution: {integrity: sha512-LJF1ala1/u+wXZmESFqIk08FA9yGX4/uAAleCHmXUMgEjvNAYFHUQQ7eK5hQQoBOwh99cU5suTrqYqEkgzwzPA==}
+    dev: false
+
+  /@fontsource/murecho@5.0.17:
+    resolution: {integrity: sha512-fxGwo69Va4GE6X8nitdijZtkmdVNSPvWFN0JO63856H5PLvZk0BXSFYbnHACcTddFGVvGitfsWJngkzUPtaGCQ==}
     dev: false
 
   /@fortawesome/fontawesome-common-types@6.5.1:

@@ -83,7 +83,7 @@ function Buttons(): JSX.Element {
                     icon={faGithub}
                     width={18}
                     height={18}
-                /> GitHub&gt;
+                /> GitHub &gt;
             </Link>
         </div>
     )
