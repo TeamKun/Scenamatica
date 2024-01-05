@@ -30,7 +30,7 @@ execution:
   # シナリオの実行に失敗した場合の自動再実行についての設定を定義します。
   retry:
     # シナリオの再実行を有効にするかどうかを設定します。
-    enabled: true
+    enabled: false
     # シナリオの実行を試みる最大回数を設定します。
     # この設定は `enabled` が有効な場合のみ有効です。
     maxAttempts: 3
