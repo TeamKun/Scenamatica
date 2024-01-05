@@ -32,12 +32,15 @@ command.scenario.status.details.time=Started at: %%startedAt%%
 
 test.start=Starting test of scenario %%scenario%% by %%trigger%%.
 test.skip=%%bold%%→%%reset%% The test of the scenario %%scenario%% has been skipped because %%condition%% is not met.
-test.action.run=A scheduled action %%name%% is being executed.
+test.action.run=A scheduled action %%action%% is being executed.
 test.action.run.fail=%%bold%%❌%%reset%%  The scheduled action %%action%% failed to execute due to %%cause%%.
 test.action.run.success=%%bold%%✔%%reset%%  The scheduled action %%action%% has been executed successfully.
 test.action.watch=The expected action %%action%% is being watched.
 test.action.watch.done=%%bold%%✔%%reset%%  The action %%action%% of the scenario %%scenarioName%% has been executed by the plugin.
 test.action.jumped=%%bold%%⚠%%reset%% The action %%action%% of the scenario %%scenario%% has been executed before the expected action.
+test.action.require.start=Checking if the condition %%condition%% required continuing the scenario is met.
+test.action.require.success=%%bold%%✔%%reset%% The condition %%condition%% required to continue the scenario is met.
+test.action.require.fail=%%bold%%❌%%reset%% The condition %%condition%% required to continue the scenario is not met.
 
 test.result=%%green%%Test result: %%result%% %%gray%%- %%message%%
 test.result.passed=%%green%%✔  Passed
@@ -56,6 +59,7 @@ test.result.message.internal_error=%%red%%An unexpected internal error has occur
 test.result.message.cancelled=%%yellow%%The test has been cancelled.
 test.result.message.skipped=%%gray%%The test has been skipped.
 
+test.result.detail=Detailed test result:
 test.result.detail.id=-   Test ID: %%id%%
 test.result.detail.state=-   Test state: %%state%%
 test.result.detail.elapsed=-   Started at: %%startedAt%%, Finished at: %%finishedAt%%, Elapsed: %%elapsed%%
