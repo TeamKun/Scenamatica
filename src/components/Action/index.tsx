@@ -1,6 +1,9 @@
-import React from "react"
+import React, {ReactDOM, useState} from "react"
 import styles from "./index.module.css"
 import {Object, ObjectElement} from "@site/src/components/Object";
+import clsx from "clsx";
+import {translate} from "@docusaurus/Translate";
+import CopyableText from "@site/src/components/CopyableText";
 
 type BukkitEvent = {
     name: string
@@ -48,7 +51,17 @@ type ActionProps = {
 
 const EVENT_JAVADOC_LINK_BASE =  "https://jd.papermc.io/paper/1.16/"
 
-const Action: React.FC<ActionProps> = ({name, description, id, events, executable, watchable, requireable, args, outputs}) => {
+const Action: React.FC<ActionProps> = ({
+                                           name,
+                                           description,
+                                           id,
+                                           events,
+                                           executable,
+                                           watchable,
+                                           requireable,
+                                           args,
+                                           outputs
+                                       }) => {
     const able = (value: boolean | string) => {
         if (typeof value === "boolean" || value === undefined) {
             return <td className={value ? styles.able : styles.unable}><span className={styles.label}>{value ? "はい" : "いいえ"}</span></td>
@@ -78,7 +91,9 @@ const Action: React.FC<ActionProps> = ({name, description, id, events, executabl
                 </tr>
                 <tr>
                     <td>ID(指定用名)</td>
-                    <td><kbd><code>{id}</code></kbd></td>
+                    <td>
+                        <CopyableText domID={id}>{id}</CopyableText>
+                    </td>
                 </tr>
                 <tr>
                     <td>実行可能 (<kbd>execute</kbd>)</td>
