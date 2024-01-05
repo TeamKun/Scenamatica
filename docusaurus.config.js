@@ -43,6 +43,60 @@ const config = {
         ],
       },
     ],
+    [
+      "@docusaurus/plugin-pwa",
+      {
+        debug: false,
+        pwaHead: [
+          {
+            tagName: "link",
+            rel: "icon",
+            href: "/img/favicon.ico",
+          },
+          {
+            tagName: "link",
+            rel: "manifest",
+            href: "/manifest.json",
+          },
+          {
+            tagName: "meta",
+            name: "theme-color",
+            content: "#53BBFFFF",
+          },
+          {
+            tagName: "meta",
+            name: "apple-mobile-web-app-capable",
+            content: "yes",
+          },
+          {
+            tagName: "meta",
+            name: "apple-mobile-web-app-status-bar-style",
+            content: "black",
+          },
+          {
+            tagName: "link",
+            rel: "apple-touch-icon",
+            href: "/img/logo2.png",
+          },
+          {
+            tagName: "link",
+            rel: "mask-icon",
+            href: "/img/logo2.png",
+            color: "#53BBFFFF",
+          },
+          {
+            tagName: "meta",
+            name: "msapplication-TileImage",
+            content: "/img/logo2.png",
+          },
+          {
+            tagName: "meta",
+            name: "msapplication-TileColor",
+            content: "#53BBFFFF",
+          },
+        ],
+      }
+    ]
   ],
 
   presets: [
