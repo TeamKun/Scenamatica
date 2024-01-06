@@ -21,3 +21,6 @@ Scenamatica を使用するための、実践的なチュートリアルを紹�
 
 #### [チュートリアル：GitHub Actions でテストを自動化する](/docs/getting-started/tutorials/integration/automation-with-github-actions) {#github-actions}
 
+## テストの実行 {#run-test}
+
+#### [チュートリアル：失敗したテストを自動で再試行するように設定する](/docs/getting-started/tutorials/test/automated-retrying-tests) {#run-test}

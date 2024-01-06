@@ -70,15 +70,13 @@ function Characters(): JSX.Element {
 }
 
 function Buttons(): JSX.Element {
-    const context = useDocusaurusContext()
-
     return (
         <div className={styles.buttons}>
             <Link className={clsx(styles.button, " button button--secondary button--lg")} to="/docs/home">
                 詳しくみる &gt;
             </Link>
             <Link className={clsx(styles.button, styles.buttonGitHub, " button button--secondary button--lg")}
-                  href={`https://github.com/${context.siteConfig.organizationName}/${context.siteConfig.projectName}`}>
+                  href={`https://github.com/TeamKUN/Scenamatica`}>
                 <FontAwesomeIcon
                     icon={faGithub}
                     width={18}
@@ -192,13 +190,13 @@ function Appeals(): JSX.Element {
                 </div>
                 <Tabs className={clsx(styles.imageTabs, styles.left)}>
                     <TabItem value="ja_JP" label="日本語">
-                        <img src="/img/langs/ja_JP.png" alt="日本語" width={"100%"}/>
+                        <img className={styles.noSelect} src="/img/langs/ja_JP.png" alt="日本語" width={"100%"}/>
                     </TabItem>
                     <TabItem value="en_US" label="English">
-                        <img src="/img/langs/en_US.png" alt="English" width={"100%"}/>
+                        <img className={styles.noSelect} src="/img/langs/en_US.png" alt="English" width={"100%"}/>
                     </TabItem>
                     <TabItem value="ja_KS" label="関西弁">
-                        <img src="/img/langs/ja_KS.png" alt="関西弁" width={"100%"}/>
+                        <img className={styles.noSelect} src="/img/langs/ja_KS.png" alt="関西弁" width={"100%"}/>
                     </TabItem>
                 </Tabs>
             </Appeal>
@@ -221,16 +219,16 @@ function Appeals(): JSX.Element {
                 </div>
                 <Tabs className={clsx(styles.imageTabs, styles.ghTab)}>
                     <TabItem value="summary" label="概要">
-                        <img src="/img/actions/summary.png" alt="サマリ" width={"100%"}/>
+                        <img className={styles.noSelect} src="/img/actions/summary.png" alt="サマリ" width={"100%"}/>
                     </TabItem>
                     <TabItem value="pie" label="パイチャート">
-                        <img src="/img/actions/pie.png" alt="パイチャート" width={"100%"}/>
+                        <img className={styles.noSelect} src="/img/actions/pie.png" alt="パイチャート" width={"100%"}/>
                     </TabItem>
                     <TabItem value="antt" label="ガントチャート">
-                        <img src="/img/actions/gantt.png" alt="ガントチャート" width={"100%"}/>
+                        <img className={styles.noSelect} src="/img/actions/gantt.png" alt="ガントチャート" width={"100%"}/>
                     </TabItem>
                     <TabItem value="pr-done" label="プルリクエスト">
-                        <img src="/img/actions/pr-done.png" alt="プルリクエスト" width={"100%"}/>
+                        <img className={styles.noSelect} src="/img/actions/pr-done.png" alt="プルリクエスト" width={"100%"}/>
                     </TabItem>
                 </Tabs>
             </Appeal>
@@ -254,10 +252,10 @@ function Appeals(): JSX.Element {
                 </div>
                 <Tabs className={clsx(styles.imageTabs, styles.left)}>
                     <TabItem value="actor" label="アクタ">
-                        <img src="/img/contexts/actor.png" alt="アクタ" width={"100%"}/>
+                        <img className={styles.noSelect} src="/img/contexts/actor.png" alt="アクタ" width={"100%"}/>
                     </TabItem>
                     <TabItem value="en_US" label="ステージ">
-                        <img src="/img/contexts/stage.png" alt="ステージ" width={"100%"}/>
+                        <img className={styles.noSelect} src="/img/contexts/stage.png" alt="ステージ" width={"100%"}/>
                     </TabItem>
                 </Tabs>
             </Appeal>
@@ -274,7 +272,7 @@ export default function Home(): JSX.Element {
             <header className={clsx("hero hero--primary", styles.heroBanner)}>
                 <Characters/>
                 <div className="container">
-                    <img width={150} height={150} src="/img/logo.png" alt="Scenamatica" className={styles.heroLogo}/>
+                    <img width={150} height={150} src="/img/logo.png" alt="Scenamatica" className={clsx(styles.heroLogo, styles.noSelect)}/>
                     <h1 className={styles.title}>{siteConfig.title}</h1>
                     <Tagline/>
                     <div>

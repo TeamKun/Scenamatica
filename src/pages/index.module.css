@@ -291,3 +291,8 @@ footer.landingFooter {
     padding: 100px;
     text-align: center;
 }
+
+.noSelect {
+    user-select: none;
+    pointer-events: none;
+}

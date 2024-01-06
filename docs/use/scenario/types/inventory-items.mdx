@@ -102,8 +102,10 @@ PlayerInventory 型は以下の親を継承しています。
 
 :::danger
 
-`armors` のサイズは、必ず 4 つでなければなりません。  
-空の場合は、 `null` を指定してください。
+`armors` の要素数は、必ず 4 つでなければなりません。  
+空の場合は `null` で補完してください。
+
+例： `armors: [null, DIAMOND_CHESTPLATE, GOLDEN_LEGGINGS, null]`
 
 :::
 

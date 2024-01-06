@@ -52,7 +52,7 @@ import { Object, ObjectType } from "/src/components/Object";
 
 ## 特別： PlayerSpecifier 型（プレイヤ指定子） {#player-specifier}
 
-プレイヤ指定子は、文字列型と[Player 型](/docs/use/scenario/types#actor-structure)としてふるまう特別な型です。
+プレイヤ指定子は、文字列型と[Player 型](/docs/use/scenario/types/entities#player-structure)としてふるまう特別な型です。
 
 基本的には上記の[エンティティ指定子](#entity-specifier)と同じですが、プレイヤを指定する場合にのみ有効です。
 
@@ -437,9 +437,179 @@ LivingEntity 型は以下の親構造を持ちます。
   {
     name: "icon",
     type: ObjectType.BOOLEAN,
-    description: "ポーション効果がエンティティのアイコンとして表示されるかどうかです。"
+    description: "ポーション効果のアイコンが表示されるかどうかです。"
   }
 ]} />
+
+---
+
+## Player 型 {#player-structure}
+
+Player 型は以下の親構造を持ちます。
+
++ [LivingEntity 型](#living-entity-structure)
+
+
+<Object objects={[
+  {
+    name: "name",
+    type : ObjectType.STRING,
+    description: "アクターの名前です。",
+
+  },
+  {
+    name: "displayName",
+    anchor: "actor-display-name",
+    type : ObjectType.STRING,
+    description: "アクターの表示名です。",
+  },
+  {
+    name: "online",
+    anchor: "actor-online",
+    type : ObjectType.BOOLEAN,
+    description: "アクターがオンラインかどうかを設定します。",
+    default: true
+  },
+  {
+    name: "playerList",
+    type: "ActorPlayerList",
+    type_anchor: "actor-player-list-structure",
+    description: "アクターのプレイヤリストの設定です。",
+  },
+  {
+    name: "compass",
+    type: "Location",
+    type_link: "/docs/use/scenario/types/misc#location-structure",
+    description: "アクターのコンパスの指す位置を設定します。"
+  },
+  {
+    name: "bedLocation",
+    type: "Location",
+    type_link: "/docs/use/scenario/types/misc#location-structure",
+    description: "アクターのベッドの位置を設定します。"
+  },
+  {
+    name: "exp",
+    type: ObjectType.INTEGER,
+    description: "アクターの経験値を設定します。"
+  },
+  {
+    name: "level",
+    type: ObjectType.INTEGER,
+    description: "アクターのレベルを設定します。"
+  },
+  {
+    name: "totalExp",
+    type: ObjectType.INTEGER,
+    description: "アクターの総経験値を設定します。"
+  },
+  {
+    name: "flyable",
+    type: ObjectType.BOOLEAN,
+    description: "アクターが飛行可能かどうかを設定します。",
+    default: "gamemode が CREATIVE/SPECTATOR の場合は true、それ以外の場合は false"
+  },
+  {
+    name: "flying",
+    type: ObjectType.BOOLEAN,
+    description: "アクターが飛行中かどうかを設定します。",
+    default: "false"
+  },
+  {
+    name: "flySpeed",
+    type: ObjectType.FLOAT,
+    description: "アクターの飛行速度を設定します。",
+    default: 0.2
+  },
+  {
+    name: "walkSpeed",
+    type: ObjectType.FLOAT,
+    description: "アクターの歩行速度を設定します。",
+    default: 0.2
+  },
+  {
+    name: "inventory",
+    type: "PlayerInventory",
+    type_link: "/docs/use/scenario/types/inventory-items#player-inventory-structure",
+    description: "アクターのインベントリを設定します。"
+  },
+  {
+    name: "enderChest",
+    type: "Inventory",
+    type_link: "/docs/use/scenario/types/inventory-items#inventory-structure",
+    description: "アクターのエンダーチェストを設定します。"
+  },
+  {
+    name: "mainHand",
+    type: "Enum{RIGHT, LEFT}",
+    description: "アクターの利き手を設定します。",
+    default: "RIGHT"
+  },
+  {
+    name: "gamemode",
+    type: "Enum{SURVIVAL, CREATIVE, ADVENTURE, SPECTATOR}",
+    description: "アクターのゲームモードを設定します。",
+    default: "SURVIVAL"
+  },
+  {
+    name: "foodLevel",
+    type: ObjectType.INTEGER,
+    description: "アクターの食料レベルを設定します。",
+    default: 20
+  },
+  {
+    name: "op",
+    anchor: "actor-op",
+    type: ObjectType.BOOLEAN + " | " + ObjectType.INTEGER,
+    description: "アクターの OP 権限レベルを設定します。",
+    default: "false"
+  },
+  {
+    name: "permissions",
+    anchor: "actor-permissions",
+    type: "String[]",
+    description: "アクターに与える権限を設定します。"
+  }
+]} />
+
+#### `displayName` {#actor-display-name}
+
+:::warning
+
+この項目は Bukkit との互換性を保つために存在します。  
+必ずしも表示名として使用されるわけではありません。
+
+:::
+
+#### `online` {#actor-online}
+
+アクターがオンラインかどうかを真偽値で設定します。  
+`false` の場合は、アクターは準備されますがログイン処理は行われません。
+
+[`PlayerJoinEvent`](/docs/use/scenario/actions/player#join) をテストする場合は、この値を `false` に設定することで
+余計な発火を防止できます。
+
+#### `op` {#actor-op}
+
+アクターの OP 権限レベルを真偽値か 4 までの整数で設定します。  
+真偽値を指定した場合は、 [こちら](/docs/getting-started/configuration#actor-defaultOP) で設定したデフォルトの OP 権限レベルが参照されます。
+
+整数と権限の強度は以下の通りです：
+
+- `0` - OP 権限なし
+- `1` - OP 権限あり。スポーン範囲制限を無視できる。
+- `2` -    〃      ちょと多くのコマンドを使える。コマンドブロックを使える。
+- `3` -    〃      もっといっぱいコマンドを使える。
+- `4` -    〃      ほぼ全てのコマンドを使える。
+
+#### `permissions` {#actor-permissions}
+
+:::tip
+
+[こちら](/docs/getting-started/configuration#actor-defaultPermissions) で設定したデフォルトの権限が予め適用されています。  
+上記の設定を取り消すことはできません。
+
+:::
 
 ---
 
