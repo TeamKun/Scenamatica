@@ -4,7 +4,7 @@
   "arguments": {
     "target": {
       "type": "string",
-      "description": "対象のプレイヤーです。"
+      "description": "対象のプレイヤです。"
     }
   },
   "outputs": {

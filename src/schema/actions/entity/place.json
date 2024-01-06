@@ -10,7 +10,7 @@
       "description": "設置するエンティティをアイテム化したときのアイテムです。"
     },
     "player": {
-      "description": "設置するプレイヤーの名前または UUID です。",
+      "description": "設置するプレイヤの名前または UUID です。",
       "type": "string"
     },
     "block": {
@@ -28,7 +28,7 @@
       "type": "item"
     },
     "player": {
-      "description": "設置するプレイヤーです。",
+      "description": "設置するプレイヤです。",
       "type": "entity"
     },
     "block": {

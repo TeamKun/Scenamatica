@@ -9,7 +9,7 @@
     },
     "recipient": {
       "type": "string",
-      "description": "メッセージを受け取るプレイヤーの名前または UUID です。"
+      "description": "メッセージを受け取るプレイヤの名前または UUID です。"
     }
   },
   "outputs": {
@@ -19,7 +19,7 @@
     },
     "recipient": {
       "type": "string",
-      "description": "メッセージを受け取ったプレイヤーの名前です。"
+      "description": "メッセージを受け取ったプレイヤの名前です。"
     }
   }
 }

@@ -5,7 +5,7 @@
   "arguments": {
     "target": {
       "type": "string",
-      "description": "対象のプレイヤーです。"
+      "description": "対象のプレイヤです。"
     },
     "reason": {
       "$ref": "#/definitions/action/definitions/inventory_$base/definitions/closeReason"
@@ -14,7 +14,7 @@
   "outputs": {
     "target": {
         "type": "string",
-        "description": "対象のプレイヤーです。"
+        "description": "対象のプレイヤです。"
     },
     "reason": {
       "$ref": "#/definitions/closeReason"

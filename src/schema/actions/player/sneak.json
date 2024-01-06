@@ -5,7 +5,7 @@
   "arguments": {
     "sneaking": {
       "type": "boolean",
-      "description": "プレイヤーがスニークしているかどうかです。"
+      "description": "プレイヤがスニークしているかどうかです。"
     }
   }
 }

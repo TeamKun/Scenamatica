@@ -5,29 +5,29 @@
   "arguments": {
     "isBed": {
       "type": "boolean",
-      "description": "プレイヤーがベッドでスポーンするかどうかです。"
+      "description": "プレイヤがベッドでスポーンするかどうかです。"
     },
     "isAnchor": {
       "type": "boolean",
-      "description": "プレイヤーが錨でスポーンするかどうかです。"
+      "description": "プレイヤが錨でスポーンするかどうかです。"
     },
     "location": {
-      "description": "プレイヤーがスポーンする場所です。",
+      "description": "プレイヤがスポーンする場所です。",
       "$ref": "#/definitions/location"
     }
   },
   "outputs": {
     "location": {
-      "description": "プレイヤーがスポーンする場所です。",
+      "description": "プレイヤがスポーンする場所です。",
       "$ref": "#/definitions/location"
     },
     "isBed": {
       "type": "boolean",
-      "description": "プレイヤーがベッドでスポーンするかどうかです。"
+      "description": "プレイヤがベッドでスポーンするかどうかです。"
     },
     "isAnchor": {
       "type": "boolean",
-      "description": "プレイヤーが錨でスポーンするかどうかです。"
+      "description": "プレイヤが錨でスポーンするかどうかです。"
     }
   }
 }

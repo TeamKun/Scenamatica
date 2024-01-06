@@ -5,11 +5,11 @@
   "arguments": {
     "message": {
       "type": "string",
-      "description": "プレイヤーがサーバーから退出したときに表示するメッセージです。"
+      "description": "プレイヤがサーバーから退出したときに表示するメッセージです。"
     },
     "reason": {
       "type": "string",
-      "description": "プレイヤーがサーバーから退出した原因です。",
+      "description": "プレイヤがサーバーから退出した原因です。",
       "enum": [
         "DISCONNECTED",
         "KICKED",
@@ -21,11 +21,11 @@
   "outputs": {
     "message": {
       "type": "string",
-      "description": "プレイヤーがサーバーから退出したときに表示されたメッセージです。"
+      "description": "プレイヤがサーバーから退出したときに表示されたメッセージです。"
     },
     "reason": {
       "type": "string",
-      "description": "プレイヤーがサーバーから退出した原因です。",
+      "description": "プレイヤがサーバーから退出した原因です。",
       "enum": [
         "DISCONNECTED",
         "KICKED",

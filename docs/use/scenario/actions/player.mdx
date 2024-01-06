@@ -71,7 +71,7 @@ import {ObjectType} from "/src/components/Object";
         args={[
           {
             name: "target",
-            description: "バケツを使用するプレイヤーです。",
+            description: "バケツを使用するプレイヤです。",
             type: "PlayerSpecifier",
             type_anchor: "#general-target",
             required: [ScenarioType.EXECUTE]
@@ -117,7 +117,7 @@ import {ObjectType} from "/src/components/Object";
         outputs={[
           {
             name: "target",
-            description: "バケツを使用したプレイヤーです。",
+            description: "バケツを使用したプレイヤです。",
             type: "Player",
             type_link: "/docs/use/scenario/types/entities/#player-structure",
           },
@@ -195,7 +195,7 @@ NMS の仕様上の都合により、 `block` を用いた液体の場所は `ev
         args={[
           {
             name: "target",
-            description: "バケツを使用するプレイヤーです。",
+            description: "バケツを使用するプレイヤです。",
             type: "Player",
             type_link: "/docs/use/scenario/types/entities/#player-structure",
             required: [ScenarioType.EXECUTE]
@@ -241,7 +241,7 @@ NMS の仕様上の都合により、 `block` を用いた液体の場所は `ev
         outputs={[
           {
             name: "target",
-            description: "バケツを使用したプレイヤーです。",
+            description: "バケツを使用したプレイヤです。",
             type: "Player",
             type_link: "/docs/use/scenario/types/entities/#player-structure",
           },
@@ -316,7 +316,7 @@ NMS の仕様上の都合により、 `block` を用いた液体の場所は `ev
           {
             name: "target",
             anchor: "target",
-            description: "進捗を達成するプレイヤーです。",
+            description: "進捗を達成するプレイヤです。",
             type: "PlayerSpecifier",
             type_anchor: "#general-target",
             required: [ScenarioType.EXPECT, ScenarioType.REQUIRE]
@@ -339,7 +339,7 @@ NMS の仕様上の都合により、 `block` を用いた液体の場所は `ev
         outputs={[
           {
             name: "target",
-            description: "進捗を達成したプレイヤーです。",
+            description: "進捗を達成したプレイヤです。",
             type: "Player",
             type_link: "/docs/use/scenario/types/entities/#player-structure",
           },
@@ -403,7 +403,7 @@ NMS の仕様上の都合により、 `block` を用いた液体の場所は `ev
           {
             name: "target",
             anchor: "target",
-            description: "アニメーションを実行するプレイヤーです。",
+            description: "アニメーションを実行するプレイヤです。",
             type: "PlayerSpecifier",
             type_anchor: "#general-target",
             required: [ScenarioType.EXECUTE],
@@ -420,7 +420,7 @@ NMS の仕様上の都合により、 `block` を用いた液体の場所は `ev
           {
             name: "target",
             anchor: "target",
-            description: "アニメーションを実行したプレイヤーです。",
+            description: "アニメーションを実行したプレイヤです。",
             type: "Player",
             type_link: "/docs/use/scenario/types/entities/#player-structure",
           },
@@ -459,7 +459,7 @@ Bukkit の仕様により、現在は `ARM_SWING` のみが指定可能です。
         args={[
           {
             name: "target",
-            description: "バケツに格納するエンティティを持っているプレイヤーです。",
+            description: "バケツに格納するエンティティを持っているプレイヤです。",
             type: "PlayerSpecifier",
             type_anchor: "#general-target",
             required: [ScenarioType.EXECUTE]
@@ -486,7 +486,7 @@ Bukkit の仕様により、現在は `ARM_SWING` のみが指定可能です。
         outputs={[
           {
             name: "target",
-            description: "バケツに格納したプレイヤーです。",
+            description: "バケツに格納したプレイヤです。",
             type: "Player",
             type_link: "/docs/use/scenario/types/entities/#player-structure",
           },
@@ -550,7 +550,7 @@ Bukkit の仕様により、現在は `ARM_SWING` のみが指定可能です。
           {
             name: "target",
             anchor: "target",
-            description: "チャットを送信するプレイヤーです。",
+            description: "チャットを送信するプレイヤです。",
             type: "PlayerSpecifier",
             type_anchor: "#general-target",
             required: [ScenarioType.EXECUTE],
@@ -572,7 +572,7 @@ Bukkit の仕様により、現在は `ARM_SWING` のみが指定可能です。
           {
             name: "target",
             anchor: "target",
-            description: "チャットを送信したプレイヤーです。",
+            description: "チャットを送信したプレイヤです。",
             type: "Player",
             type_link: "/docs/use/scenario/types/entities/#player-structure",
           },
@@ -612,14 +612,14 @@ Bukkit の仕様により、現在は `ARM_SWING` のみが指定可能です。
           {
             name: "target",
             anchor: "target",
-            description: "死亡するプレイヤーです。",
+            description: "死亡するプレイヤです。",
             type: "PlayerSpecifier",
             type_anchor: "#general-target",
             required: [ScenarioType.EXECUTE],
           },
           {
             name: "killer",
-            description: "殺したプレイヤーです。",
+            description: "殺したプレイヤです。",
             type: "PlayerSpecifier",
             type_anchor: "#general-target",
           },
@@ -631,42 +631,42 @@ Bukkit の仕様により、現在は `ARM_SWING` のみが指定可能です。
           },
           {
             name: "exp",
-            description: "死亡したプレイヤーの新しい経験値です。",
+            description: "死亡したプレイヤの新しい経験値です。",
             type: ObjectType.INTEGER,
             default: "(ゲームルールによる)",
             available: [ScenarioType.EXECUTE, ScenarioType.EXPECT],
           },
           {
             name: "totalExp",
-            description: "死亡したプレイヤーの新しい総経験値です。",
+            description: "死亡したプレイヤの新しい総経験値です。",
             type: ObjectType.INTEGER,
             default: "(ゲームルールによる)",
             available: [ScenarioType.EXECUTE, ScenarioType.EXPECT],
           },
           {
             name: "keepLevel",
-            description: "死亡したプレイヤーのレベルを保持するかどうかです。",
+            description: "死亡したプレイヤのレベルを保持するかどうかです。",
             type: ObjectType.BOOLEAN,
             default: "(ゲームルールによる)",
             available: [ScenarioType.EXECUTE, ScenarioType.EXPECT],
           },
           {
             name: "keepInventory",
-            description: "死亡したプレイヤーのインベントリ内容を保持するかどうかです。",
+            description: "死亡したプレイヤのインベントリ内容を保持するかどうかです。",
             type: ObjectType.BOOLEAN,
             default: "(ゲームルールによる)",
             available: [ScenarioType.EXECUTE, ScenarioType.EXPECT],
           },
           {
             name: "keepExperience",
-            description: "死亡したプレイヤーの経験値を保持するかどうかです。",
+            description: "死亡したプレイヤの経験値を保持するかどうかです。",
             type: ObjectType.BOOLEAN,
             default: "(ゲームルールによる)",
             available: [ScenarioType.EXECUTE, ScenarioType.EXPECT],
           },
           {
             name: "doExpDrop",
-            description: "死亡したプレイヤーの経験値ドロップを行うかどうかです。",
+            description: "死亡したプレイヤの経験値ドロップを行うかどうかです。",
             type: ObjectType.BOOLEAN,
             default: "(ゲームルールによる)",
             available: [ScenarioType.EXECUTE, ScenarioType.EXPECT],
@@ -676,13 +676,13 @@ Bukkit の仕様により、現在は `ARM_SWING` のみが指定可能です。
           {
             name: "target",
             anchor: "target",
-            description: "死亡したプレイヤーです。",
+            description: "死亡したプレイヤです。",
             type: "Player",
             type_link: "/docs/use/scenario/types/entities/#player-structure",
           },
           {
             name: "killer",
-            description: "殺したプレイヤーです。",
+            description: "殺したプレイヤです。",
             type: "Player",
             type_link: "/docs/use/scenario/types/entities/#player-structure",
           },
@@ -694,37 +694,37 @@ Bukkit の仕様により、現在は `ARM_SWING` のみが指定可能です。
           },
           {
             name: "exp",
-            description: "死亡したプレイヤーの新しい経験値です。",
+            description: "死亡したプレイヤの新しい経験値です。",
             type: ObjectType.INTEGER,
             available: [ScenarioType.EXPECT],
           },
           {
             name: "totalExp",
-            description: "死亡したプレイヤーの新しい総経験値です。",
+            description: "死亡したプレイヤの新しい総経験値です。",
             type: ObjectType.INTEGER,
             available: [ScenarioType.EXPECT],
           },
           {
             name: "keepLevel",
-            description: "死亡したプレイヤーのレベルを保持するかどうかです。",
+            description: "死亡したプレイヤのレベルを保持するかどうかです。",
             type: ObjectType.BOOLEAN,
             available: [ScenarioType.EXPECT],
           },
           {
             name: "keepInventory",
-            description: "死亡したプレイヤーのインベントリ内容を保持するかどうかです。",
+            description: "死亡したプレイヤのインベントリ内容を保持するかどうかです。",
             type: ObjectType.BOOLEAN,
             available: [ScenarioType.EXPECT],
           },
           {
             name: "keepExperience",
-            description: "死亡したプレイヤーの経験値を保持するかどうかです。",
+            description: "死亡したプレイヤの経験値を保持するかどうかです。",
             type: ObjectType.BOOLEAN,
             available: [ScenarioType.EXPECT],
           },
           {
             name: "doExpDrop",
-            description: "死亡したプレイヤーの経験値ドロップを行うかどうかです。",
+            description: "死亡したプレイヤの経験値ドロップを行うかどうかです。",
             type: ObjectType.BOOLEAN,
             available: [ScenarioType.EXPECT],
           }
@@ -750,7 +750,7 @@ Bukkit の仕様により、現在は `ARM_SWING` のみが指定可能です。
           {
             name: "target",
             anchor: "target",
-            description: "アイテムをドロップするプレイヤーです。",
+            description: "アイテムをドロップするプレイヤです。",
             type: "PlayerSpecifier",
             type_anchor: "#general-target",
             required: [ScenarioType.EXECUTE],
@@ -766,7 +766,7 @@ Bukkit の仕様により、現在は `ARM_SWING` のみが指定可能です。
           {
             name: "target",
             anchor: "target",
-            description: "アイテムをドロップしたプレイヤーです。",
+            description: "アイテムをドロップしたプレイヤです。",
             type: "Player",
             type_link: "/docs/use/scenario/types/entities/#player-structure",
           },
@@ -805,7 +805,7 @@ Bukkit の仕様により、現在は `ARM_SWING` のみが指定可能です。
           {
             name: "target",
             anchor: "target",
-            description: "飛ぶプレイヤーです。",
+            description: "飛ぶプレイヤです。",
             type: "PlayerSpecifier",
             type_anchor: "#general-target",
             required: [ScenarioType.EXECUTE],
@@ -821,7 +821,7 @@ Bukkit の仕様により、現在は `ARM_SWING` のみが指定可能です。
           {
             name: "target",
             anchor: "target",
-            description: "飛行したプレイヤーです。",
+            description: "飛行したプレイヤです。",
             type: "Player",
             type_link: "/docs/use/scenario/types/entities/#player-structure",
           }
@@ -852,7 +852,7 @@ Bukkit の仕様により、現在は `ARM_SWING` のみが指定可能です。
           {
             name: "target",
             anchor: "target",
-            description: "ゲームモードを変更するプレイヤーです。",
+            description: "ゲームモードを変更するプレイヤです。",
             type: "PlayerSpecifier",
             type_anchor: "#general-target",
             required: [ScenarioType.EXECUTE, ScenarioType.REQUIRE]
@@ -882,7 +882,7 @@ Bukkit の仕様により、現在は `ARM_SWING` のみが指定可能です。
           {
             name: "target",
             anchor: "target",
-            description: "ゲームモードを変更したプレイヤーです。",
+            description: "ゲームモードを変更したプレイヤです。",
             type: "Player",
             type_link: "/docs/use/scenario/types/entities/#player-structure",
           },
@@ -947,7 +947,7 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
           {
             name: "target",
             anchor: "target",
-            description: "ゲームモードを変更するプレイヤーです。",
+            description: "ゲームモードを変更するプレイヤです。",
             type: "PlayerSpecifier",
             type_anchor: "#general-target",
             required: [ScenarioType.EXECUTE]
@@ -971,7 +971,7 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
           {
             name: "target",
             anchor: "target",
-            description: "収穫したプレイヤーです。",
+            description: "収穫したプレイヤです。",
             type: "Player",
             type_link: "/docs/use/scenario/types/entities/#player-structure",
           },
@@ -1014,7 +1014,7 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
         args={[
           {
             name: "target",
-            description: "ホットバーのスロットを変更するプレイヤーです。",
+            description: "ホットバーのスロットを変更するプレイヤです。",
             type: "PlayerSpecifier",
             type_anchor: "#general-target",
             required: [ScenarioType.EXECUTE]
@@ -1044,7 +1044,7 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
         outputs={[
           {
             name: "target",
-            description: "ホットバーのスロットを変更したプレイヤーです。",
+            description: "ホットバーのスロットを変更したプレイヤです。",
             type: "Player",
             type_link: "/docs/use/scenario/types/entities/#player-structure",
           },
@@ -1185,7 +1185,7 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
           {
             name: "target",
             anchor: "target",
-            description: "ブロックをクリックするプレイヤーです。",
+            description: "ブロックをクリックするプレイヤです。",
             type: "PlayerSpecifier",
             type_anchor: "#general-target",
             required: [ScenarioType.EXECUTE]
@@ -1214,7 +1214,7 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
           {
             name: "target",
             anchor: "target",
-            description: "ブロックをクリックしたプレイヤーです。",
+            description: "ブロックをクリックしたプレイヤです。",
             type: "Player",
             type_link: "/docs/use/scenario/types/entities/#player-structure",
           },
@@ -1338,7 +1338,7 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
           {
             name: "target",
             anchor: "target",
-            description: "破壊されるアイテムを持っているプレイヤーです。",
+            description: "破壊されるアイテムを持っているプレイヤです。",
             type: "PlayerSpecifier",
             type_anchor: "#general-target",
             required: [ScenarioType.EXECUTE]
@@ -1360,7 +1360,7 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
           {
             name: "target",
             anchor: "target",
-            description: "破壊されたアイテムを持っているプレイヤーです。",
+            description: "破壊されたアイテムを持っているプレイヤです。",
             type: "Player",
             type_link: "/docs/use/scenario/types/entities/#player-structure",
           },
@@ -1400,7 +1400,7 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
           {
             name: "target",
             anchor: "target",
-            description: "アイテムを消費するプレイヤーです。",
+            description: "アイテムを消費するプレイヤです。",
             type: "PlayerSpecifier",
             type_anchor: "#general-target",
             required: [ScenarioType.EXECUTE]
@@ -1423,7 +1423,7 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
           {
             name: "target",
             anchor: "target",
-            description: "アイテムを消費したプレイヤーです。",
+            description: "アイテムを消費したプレイヤです。",
             type: "Player",
             type_link: "/docs/use/scenario/types/entities/#player-structure",
           },
@@ -1473,7 +1473,7 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
         args={[
           {
             name: "target",
-            description: "ダメージを与えるプレイヤーです。",
+            description: "ダメージを与えるプレイヤです。",
             type: "PlayerSpecifier",
             type_anchor: "#general-target",
             required: [ScenarioType.EXECUTE]
@@ -1503,7 +1503,7 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
         outputs={[
           {
             name: "target",
-            description: "ダメージを与えたプレイヤーです。",
+            description: "ダメージを与えたプレイヤです。",
             type: "Player",
             type_link: "/docs/use/scenario/types/entities/#player-structure",
           },
@@ -1529,7 +1529,7 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
         outputs={[
           {
             name: "target",
-            description: "ダメージを与えたプレイヤーです。",
+            description: "ダメージを与えたプレイヤです。",
             type: "Player",
             type_link: "/docs/use/scenario/types/entities/#player-structure",
           },
@@ -1583,7 +1583,7 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
           {
             name: "target",
             anchor: "target",
-            description: "参加するプレイヤーです。",
+            description: "参加するプレイヤです。",
             type: "PlayerSpecifier",
             type_anchor: "#general-target",
             required: [ScenarioType.EXECUTE] 
@@ -1593,7 +1593,7 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
           {
             name: "target",
             anchor: "target",
-            description: "参加したプレイヤーです。",
+            description: "参加したプレイヤです。",
             type: "Player",
             type_link: "/docs/use/scenario/types/entities/#player-structure",
           },
@@ -1624,7 +1624,7 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
           {
             name: "target",
             anchor: "target",
-            description: "キックされるプレイヤーです。",
+            description: "キックされるプレイヤです。",
             type: "PlayerSpecifier",
             type_anchor: "#general-target",
             required: [ScenarioType.EXECUTE, ScenarioType.EXPECT]
@@ -1638,7 +1638,7 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
           },
           {
             name: "message",
-            description: "キックされたプレイヤーに表示されるメッセージです。",
+            description: "キックされたプレイヤに表示されるメッセージです。",
             type: ObjectType.STRING
           },
           {
@@ -1653,7 +1653,7 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
           {
             name: "target",
             anchor: "target",
-            description: "キックされたプレイヤーです。",
+            description: "キックされたプレイヤです。",
             type: "Player",
             type_link: "/docs/use/scenario/types/entities/#player-structure",
           },
@@ -1666,7 +1666,7 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
           },
           {
             name: "message",
-            description: "キックされたプレイヤーに表示されるメッセージです。",
+            description: "キックされたプレイヤに表示されるメッセージです。",
             type: ObjectType.STRING
           },
           {
@@ -1726,7 +1726,7 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
           {
             name: "target",
             anchor: "target",
-            description: "投げ物を発射するプレイヤーです。",
+            description: "投げ物を発射するプレイヤです。",
             type: "PlayerSpecifier",
             type_anchor: "#general-target",
             required:[ScenarioType.EXECUTE, ScenarioType.EXPECT]
@@ -1751,7 +1751,7 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
           {
             name: "target",
             anchor: "target",
-            description: "投げ物を発射したプレイヤーです。",
+            description: "投げ物を発射したプレイヤです。",
             type: "Player",
             type_link: "/docs/use/scenario/types/entities/#player-structure",
           },
@@ -1816,7 +1816,7 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
           {
             name: "target",
             anchor: "target",
-            description: "経験レベルを変更するプレイヤーです。",
+            description: "経験レベルを変更するプレイヤです。",
             type: "PlayerSpecifier",
             type_anchor: "#general-target",
             required: [ScenarioType.EXECUTE]
@@ -1841,7 +1841,7 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
             name: "target",
             type: "Player",
             type_link: "/docs/use/scenario/types/entities#player-structure",
-            description: "経験レベルを変更したプレイヤーです。",
+            description: "経験レベルを変更したプレイヤです。",
           },
           {
             name: "level",
@@ -1876,7 +1876,7 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
           {
             name: "target",
             anchor: "target",
-            description: "移動するプレイヤーです。",
+            description: "移動するプレイヤです。",
             type: "PlayerSpecifier",
             type_anchor: "#general-target",
             required: [ScenarioType.EXECUTE]
@@ -1901,7 +1901,7 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
             name: "target",
             type: "Player",
             type_link: "/docs/use/scenario/types/entities#player-structure",
-            description: "移動したプレイヤーです。",
+            description: "移動したプレイヤです。",
           },
           {
             name: "from",
@@ -1943,7 +1943,7 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
           {
             name: "target",
             anchor: "target",
-            description: "退出するプレイヤーです。",
+            description: "退出するプレイヤです。",
             type: "PlayerSpecifier",
             type_anchor: "#general-target",
             required: [ScenarioType.EXECUTE]
@@ -1967,7 +1967,7 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
             name: "target",
             type: "Player",
             type_link: "/docs/use/scenario/types/entities#player-structure",
-            description: "退出したプレイヤーです。",
+            description: "退出したプレイヤです。",
           },
           {
             name: "message",
@@ -2075,7 +2075,7 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
             name: "target",
             type: "Player",
             type_link: "/docs/use/scenario/types/entities#player-structure",
-            description: "リスポーンしたプレイヤーです。",
+            description: "リスポーンしたプレイヤです。",
           },
           {
             name: "location",
@@ -2134,7 +2134,7 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
           {
             name: "target",
             anchor: "target",
-            description: "スニークするプレイヤーです。",
+            description: "スニークするプレイヤです。",
             type: "PlayerSpecifier",
             type_anchor: "#general-target",
             required: [ScenarioType.EXECUTE, ScenarioType.REQUIRE]
@@ -2150,7 +2150,7 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
             name: "target",
             type: "Player",
             type_link: "/docs/use/scenario/types/entities#player-structure",
-            description: "スニークしたプレイヤーです。",
+            description: "スニークしたプレイヤです。",
           }
         ]}
         executable
@@ -2173,7 +2173,7 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
           {
             name: "target",
             anchor: "target",
-            description: "走らせるプレイヤーです。",
+            description: "走らせるプレイヤです。",
             type: "PlayerSpecifier",
             type_anchor: "#general-target",
             required: [ScenarioType.EXECUTE, ScenarioType.REQUIRE]
@@ -2189,7 +2189,7 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
             name: "target",
             type: "Player",
             type_link: "/docs/use/scenario/types/entities#player-structure",
-            description: "走ったプレイヤーです。",
+            description: "走ったプレイヤです。",
           }
         ]}
         executable 
@@ -2212,7 +2212,7 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
           {
             name: "target",
             anchor: "target",
-            description: "テレポートするプレイヤーです。",
+            description: "テレポートするプレイヤです。",
             type: "PlayerSpecifier",
             type_anchor: "#general-target",
             required: [ScenarioType.EXECUTE]
@@ -2243,7 +2243,7 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
             name: "target",
             type: "Player",
             type_link: "/docs/use/scenario/types/entities#player-structure",
-            description: "テレポートしたプレイヤーです。",
+            description: "テレポートしたプレイヤです。",
           },
           {
             name: "from",

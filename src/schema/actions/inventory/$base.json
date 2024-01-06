@@ -123,7 +123,7 @@
   },
   "outputs": {
     "inventory": {
-      "description": "対象になったプレイヤーのインベントリです。",
+      "description": "対象になったプレイヤのインベントリです。",
       "$ref": "#/definitions/inventory"
     }
   }

@@ -61,83 +61,83 @@
     "properties": {
       "name": {
         "type": "string",
-        "description": "アクターの名前です。",
+        "description": "アクタの名前です。",
         "maxLength": 16
       },
       "online": {
         "type": "boolean",
-        "description": "アクターがオンラインかどうかです。",
+        "description": "アクタがオンラインかどうかです。",
         "default": true
       },
       "displayName": {
         "type": "string",
-        "description": "アクターの表示名です。"
+        "description": "アクタの表示名です。"
       },
       "playerList": {
         "type": "object",
-        "description": "アクターのプレイヤーリストにおける扱いです。",
+        "description": "アクタのプレイヤリストにおける扱いです。",
         "properties": {
           "name": {
             "type": "string",
-            "description": "プレイヤーリストに表示される名前です。"
+            "description": "プレイヤリストに表示される名前です。"
           },
           "header": {
             "type": "string",
-            "description": "プレイヤーリストに表示されるヘッダーです。"
+            "description": "プレイヤリストに表示されるヘッダーです。"
           },
           "footer": {
             "type": "string",
-            "description": "プレイヤーリストに表示されるフッターです。"
+            "description": "プレイヤリストに表示されるフッターです。"
           }
         }
       },
       "compass": {
         "$ref": "#/definitions/location",
-        "description": "アクターのコンパスのターゲットです。"
+        "description": "アクタのコンパスのターゲットです。"
       },
       "bedLocation": {
         "$ref": "#/definitions/location",
-        "description": "アクターのベッドスポーンの位置です。"
+        "description": "アクタのベッドスポーンの位置です。"
       },
       "exp": {
         "type": "integer",
-        "description": "アクターの経験値です。"
+        "description": "アクタの経験値です。"
       },
       "level": {
         "type": "integer",
-        "description": "アクターのレベルです。"
+        "description": "アクタのレベルです。"
       },
       "totalExp": {
         "type": "integer",
-        "description": "アクターの総経験値です。"
+        "description": "アクタの総経験値です。"
       },
       "flyable": {
         "type": "boolean",
-        "description": "アクターが飛行できるかどうかです。ゲームモードがクリエイティブおよびスペクテイタの場合は、暗黙的に true になります。"
+        "description": "アクタが飛行できるかどうかです。ゲームモードがクリエイティブおよびスペクテイタの場合は、暗黙的に true になります。"
       },
       "flying": {
         "type": "boolean",
-        "description": "アクターが飛行中かどうかです。"
+        "description": "アクタが飛行中かどうかです。"
       },
       "walkSpeed": {
         "type": "number",
-        "description": "アクターの歩行速度です。"
+        "description": "アクタの歩行速度です。"
       },
       "flySpeed": {
         "type": "number",
-        "description": "アクターの飛行速度です。"
+        "description": "アクタの飛行速度です。"
       },
       "inventory": {
         "$ref": "#/definitions/playerInventory",
-        "description": "アクターのインベントリです。"
+        "description": "アクタのインベントリです。"
       },
       "enderChest": {
         "$ref": "#/definitions/inventory",
-        "description": "アクターのエンダーチェストです。"
+        "description": "アクタのエンダーチェストです。"
       },
       "mainHand": {
         "type": "string",
-        "description": "アクターの利き手です。",
+        "description": "アクタの利き手です。",
         "enum": [
           "left",
           "right",
@@ -148,7 +148,7 @@
       },
       "gamemode": {
         "type": "string",
-        "description": "アクターのゲームモードです。",
+        "description": "アクタのゲームモードです。",
         "enum": [
           "survival",
           "creative",
@@ -163,7 +163,7 @@
       },
       "foodLevel": {
         "type": "integer",
-        "description": "アクターの食料レベルです。",
+        "description": "アクタの食料レベルです。",
         "minimum": 0,
         "maximum": 20,
         "default": 20
@@ -175,11 +175,11 @@
         ],
         "minimum": 0,
         "maximum": 4,
-        "description": "アクターの OP レベルです。 0 は OP ではないことを意味します。"
+        "description": "アクタの OP レベルです。 0 は OP ではないことを意味します。"
       },
       "permissions": {
         "type": "array",
-        "description": "アクターに与える権限です。",
+        "description": "アクタに与える権限です。",
         "items": {
           "type": "string"
         }

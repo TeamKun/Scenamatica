@@ -8,7 +8,7 @@
     },
     "sender": {
       "type": "string",
-      "description": "実行するプレイヤーです。"
+      "description": "実行するプレイヤです。"
     }
   },
   "outputs": {
@@ -18,7 +18,7 @@
     },
     "sender": {
       "type": "string",
-      "description": "実行したプレイヤーです。"
+      "description": "実行したプレイヤです。"
     }
   }
 }

@@ -47,7 +47,7 @@ import { Object, ObjectType } from '/src/components/Object'
 このとき、トリガは「[手動実行](#triggers-manual-dispatch)」および「[アクション：プレイヤの死亡](#triggers-on-action)」を設定します。  
 シナリオが手動実行されるとき、実際にはプレイヤが死亡していないため、事前トリガ機能を用いてプレイヤを死亡させます。
 
-```yaml
+```yaml showLineNumbers
 # ...
 on:
   - type: on_action
@@ -76,7 +76,7 @@ on:
 
 上記の例を実装すると、以下のようになります。
 
-```yaml
+```yaml showLineNumbers
 # ...
 on:
   - type: on_action
@@ -116,7 +116,7 @@ on:
 
 #### 例 {#triggers-on-action-example}
 
-```yaml
+```yaml showLineNumbers
 # ...
 on:
 - type: on_action
@@ -134,7 +134,7 @@ on:
 
 #### 例 {#triggers-on-load-example}
 
-```yaml
+```yaml showLineNumbers
 # ...
 on:
 - type: on_load
@@ -153,7 +153,7 @@ Scenamatica のコマンドを用いて、手動でシナリオを実行しま�
 
 #### 例 {#triggers-manual-dispatch-example}
 
-```yaml
+```yaml showLineNumbers
 # ...
 on:
 - type: manual_dispatch

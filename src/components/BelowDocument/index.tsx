@@ -16,9 +16,10 @@ type BelowDocumentProps = {
 
 const BelowDocument: React.FC<BelowDocumentProps> = ({ docId, label, message, small, tutorial, anchor}) => {
 
-    const smallMode = !small
-        ? undefined
-        : {
+    const style = !small
+        ? {
+            marginBottom: "10px"
+        } : {
             width: "350px",
     }
 
@@ -32,7 +33,7 @@ const BelowDocument: React.FC<BelowDocumentProps> = ({ docId, label, message, sm
     return (
         <>
             <p>{displayMessage}</p>
-            <div style={smallMode}>
+            <div style={style}>
                 <DocCard
                     item={{
                         type: "link",

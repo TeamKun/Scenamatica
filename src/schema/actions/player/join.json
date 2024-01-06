@@ -5,13 +5,13 @@
   "arguments": {
     "message": {
       "type": "string",
-      "description": "プレイヤーがサーバーに参加したときに表示するメッセージです。"
+      "description": "プレイヤがサーバーに参加したときに表示するメッセージです。"
     }
   },
   "outputs": {
     "message": {
         "type": "string",
-        "description": "プレイヤーがサーバーに参加したときに表示するメッセージです。"
+        "description": "プレイヤがサーバーに参加したときに表示するメッセージです。"
     }
   }
 }

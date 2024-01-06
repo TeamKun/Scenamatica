@@ -15,16 +15,30 @@ import { Object, ObjectType } from "/src/components/Object";
 1. プレイヤの名前 （例：`"Player1"` ）  
   プレイヤを指定する場合にのみ有効です。
 2. プレイヤまたはエンティティの UUID （例：`"00000000-0000-0000-0000-000000000000"` ）
-3. プレイヤまたはエンティティのセレクタおよびその省略書式 （例：`"@e[team=Red,tags=MyTag]"` ）
+3. プレイヤまたはエンティティの[セレクタ](/docs/use/scenario/selector)およびその省略書式 （例：`"@e[team=Red,tag=MyTag]"` ）
    + 省略： `@e` は省略できます （例：`"[team=Red,tags=MyTag]"` ）。
    + 省略： `@e[...]` はできます （例：`"team=Red,tags=MyTag"` ）。
 4. [Entity 型](/docs/use/scenario/types#entity-structure) のオブジェクト  
-  特に記述がない限り使用できます。これを使用すれば、セレクタを使用せずに高度な条件を指定できます。
+  特に記述がない限り使用できます。これを使用すれば、[セレクタ](/docs/use/scenario/selector)を使用せずに高度な条件を指定できます。
+
+:::danger
+
+項目３および４で説明されている[セレクタ](/docs/use/scenario/selector) は、通常の
+[Minecraft セレクタ](https://minecraft.fandom.com/ja/wiki/Target_selectors) とは異なります。
+
+Scenamatica では、いくつかの理由で独自のセレクタを使用しています。
+基本的な構文や機能は同じですが、一部の機能が削除されているか、独自の機能が追加されています。
+
+<BelowDocument docId={"use/scenario/selector"}
+               label="Scenamatica ターゲットセレクタ"
+/> 
+
+:::
 
 例：
 （この例では、 `*.with.target` の値にエンティティ指定子を使用しています。）
 
-```yaml
+```yaml showLineNumbers
 
 # 1. プレイヤの名前
 - with:
@@ -87,7 +101,8 @@ EntityType は, Bukkit の [EntityType](https://jd.papermc.io/paper/1.16/org/buk
   {
     name: "velocity",
     type: "Vector",
-    type_link: "/docs/use/scenario/types/misc#vector-structure"
+    type_link: "/docs/use/scenario/types/misc#vector-structure",
+    description: "エンティティの速度です。"
   },
   {
     name: "customName",
@@ -291,7 +306,7 @@ LivingEntity 型は以下の親構造を持ちます。
     name: "killer",
     type: "PlayerSpecifier",
     type_anchor: "player-specifier",
-    description: "エンティティを殺したプレイヤーです。"
+    description: "エンティティを殺したプレイヤです。"
   },
   {
     name: "potions",
@@ -454,121 +469,121 @@ Player 型は以下の親構造を持ちます。
   {
     name: "name",
     type : ObjectType.STRING,
-    description: "アクターの名前です。",
+    description: "アクタの名前です。",
 
   },
   {
     name: "displayName",
     anchor: "actor-display-name",
     type : ObjectType.STRING,
-    description: "アクターの表示名です。",
+    description: "アクタの表示名です。",
   },
   {
     name: "online",
     anchor: "actor-online",
     type : ObjectType.BOOLEAN,
-    description: "アクターがオンラインかどうかを設定します。",
+    description: "アクタがオンラインかどうかを設定します。",
     default: true
   },
   {
     name: "playerList",
     type: "ActorPlayerList",
     type_anchor: "actor-player-list-structure",
-    description: "アクターのプレイヤリストの設定です。",
+    description: "アクタのプレイヤリストの設定です。",
   },
   {
     name: "compass",
     type: "Location",
     type_link: "/docs/use/scenario/types/misc#location-structure",
-    description: "アクターのコンパスの指す位置を設定します。"
+    description: "アクタのコンパスの指す位置を設定します。"
   },
   {
     name: "bedLocation",
     type: "Location",
     type_link: "/docs/use/scenario/types/misc#location-structure",
-    description: "アクターのベッドの位置を設定します。"
+    description: "アクタのベッドの位置を設定します。"
   },
   {
     name: "exp",
     type: ObjectType.INTEGER,
-    description: "アクターの経験値を設定します。"
+    description: "アクタの経験値を設定します。"
   },
   {
     name: "level",
     type: ObjectType.INTEGER,
-    description: "アクターのレベルを設定します。"
+    description: "アクタのレベルを設定します。"
   },
   {
     name: "totalExp",
     type: ObjectType.INTEGER,
-    description: "アクターの総経験値を設定します。"
+    description: "アクタの総経験値を設定します。"
   },
   {
     name: "flyable",
     type: ObjectType.BOOLEAN,
-    description: "アクターが飛行可能かどうかを設定します。",
+    description: "アクタが飛行可能かどうかを設定します。",
     default: "gamemode が CREATIVE/SPECTATOR の場合は true、それ以外の場合は false"
   },
   {
     name: "flying",
     type: ObjectType.BOOLEAN,
-    description: "アクターが飛行中かどうかを設定します。",
+    description: "アクタが飛行中かどうかを設定します。",
     default: "false"
   },
   {
     name: "flySpeed",
     type: ObjectType.FLOAT,
-    description: "アクターの飛行速度を設定します。",
+    description: "アクタの飛行速度を設定します。",
     default: 0.2
   },
   {
     name: "walkSpeed",
     type: ObjectType.FLOAT,
-    description: "アクターの歩行速度を設定します。",
+    description: "アクタの歩行速度を設定します。",
     default: 0.2
   },
   {
     name: "inventory",
     type: "PlayerInventory",
     type_link: "/docs/use/scenario/types/inventory-items#player-inventory-structure",
-    description: "アクターのインベントリを設定します。"
+    description: "アクタのインベントリを設定します。"
   },
   {
     name: "enderChest",
     type: "Inventory",
     type_link: "/docs/use/scenario/types/inventory-items#inventory-structure",
-    description: "アクターのエンダーチェストを設定します。"
+    description: "アクタのエンダーチェストを設定します。"
   },
   {
     name: "mainHand",
     type: "Enum{RIGHT, LEFT}",
-    description: "アクターの利き手を設定します。",
+    description: "アクタの利き手を設定します。",
     default: "RIGHT"
   },
   {
     name: "gamemode",
     type: "Enum{SURVIVAL, CREATIVE, ADVENTURE, SPECTATOR}",
-    description: "アクターのゲームモードを設定します。",
+    description: "アクタのゲームモードを設定します。",
     default: "SURVIVAL"
   },
   {
     name: "foodLevel",
     type: ObjectType.INTEGER,
-    description: "アクターの食料レベルを設定します。",
+    description: "アクタの食料レベルを設定します。",
     default: 20
   },
   {
     name: "op",
     anchor: "actor-op",
     type: ObjectType.BOOLEAN + " | " + ObjectType.INTEGER,
-    description: "アクターの OP 権限レベルを設定します。",
+    description: "アクタの OP 権限レベルを設定します。",
     default: "false"
   },
   {
     name: "permissions",
     anchor: "actor-permissions",
     type: "String[]",
-    description: "アクターに与える権限を設定します。"
+    description: "アクタに与える権限を設定します。"
   }
 ]} />
 
@@ -583,15 +598,15 @@ Player 型は以下の親構造を持ちます。
 
 #### `online` {#actor-online}
 
-アクターがオンラインかどうかを真偽値で設定します。  
-`false` の場合は、アクターは準備されますがログイン処理は行われません。
+アクタがオンラインかどうかを真偽値で設定します。  
+`false` の場合は、アクタは準備されますがログイン処理は行われません。
 
 [`PlayerJoinEvent`](/docs/use/scenario/actions/player#join) をテストする場合は、この値を `false` に設定することで
 余計な発火を防止できます。
 
 #### `op` {#actor-op}
 
-アクターの OP 権限レベルを真偽値か 4 までの整数で設定します。  
+アクタの OP 権限レベルを真偽値か 4 までの整数で設定します。  
 真偽値を指定した場合は、 [こちら](/docs/getting-started/configuration#actor-defaultOP) で設定したデフォルトの OP 権限レベルが参照されます。
 
 整数と権限の強度は以下の通りです：
@@ -644,7 +659,7 @@ EntityItem 型は以下の親構造を持ちます。
   {
     name: "thrower",
     type: ObjectType.STRING,
-    description: "アイテムを投げたプレイヤーの UUID です。"
+    description: "アイテムを投げたプレイヤの UUID です。"
   }
 ]} />
 

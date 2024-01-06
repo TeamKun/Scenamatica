@@ -2,7 +2,7 @@
   "name": "player_$base",
   "arguments": {
     "target": {
-      "description": "対象のプレイヤーです。",
+      "description": "対象のプレイヤです。",
       "oneOf": [
         {
           "type": "string",
@@ -17,7 +17,7 @@
   },
   "outputs": {
     "target": {
-      "description": "対象のプレイヤーです。",
+      "description": "対象のプレイヤです。",
       "$ref": "#/definitions/player"
     }
   }

@@ -17,7 +17,7 @@
     ]
   },
   "playerInventory": {
-    "description": "プレイヤーのインベントリを表します。",
+    "description": "プレイヤのインベントリを表します。",
     "properties": {
       "main": {
         "$ref": "#/definitions/inventory",

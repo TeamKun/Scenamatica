@@ -5,7 +5,7 @@
   "arguments": {
     "killer": {
       "type": "string",
-      "description": "ターゲットを殺すプレイヤーです。"
+      "description": "ターゲットを殺すプレイヤです。"
     },
     "deathMessage": {
       "type": "string",
@@ -42,7 +42,7 @@
   "outputs": {
     "killer": {
       "type": "string",
-      "description": "ターゲットを殺すプレイヤーです。"
+      "description": "ターゲットを殺すプレイヤです。"
     },
     "deathMessage": {
       "type": "string",

@@ -8,7 +8,7 @@
       "$ref": "#/definitions/itemStack"
     },
     "replacement": {
-      "description": "消費後にプレイヤーに与えるアイテムです。",
+      "description": "消費後にプレイヤに与えるアイテムです。",
       "$ref": "#/definitions/itemStack"
     }
   },
@@ -18,7 +18,7 @@
       "$ref": "#/definitions/itemStack"
     },
     "replacement": {
-      "description": "消費後にプレイヤーに与えたアイテムです。",
+      "description": "消費後にプレイヤに与えたアイテムです。",
       "$ref": "#/definitions/itemStack"
     }
   }

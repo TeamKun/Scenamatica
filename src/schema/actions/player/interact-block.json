@@ -5,7 +5,7 @@
   "arguments": {
     "action": {
       "type": "string",
-      "description": "プレイヤーが行ったアクションです。",
+      "description": "プレイヤが行ったアクションです。",
       "enum": [
         "RIGHT_CLICK_BLOCK",
         "LEFT_CLICK_BLOCK",
@@ -14,30 +14,30 @@
       ]
     },
     "block": {
-      "description": "プレイヤーがクリックしたブロックです。",
+      "description": "プレイヤがクリックしたブロックです。",
       "$ref": "#/definitions/block"
     },
     "hand": {
       "type": "string",
-      "description": "プレイヤーがクリックした手です。",
+      "description": "プレイヤがクリックした手です。",
       "enum": [
         "HAND",
         "OFF_HAND"
       ]
     },
     "blockFace": {
-        "description": "プレイヤーがクリックしたブロックの面です。",
+        "description": "プレイヤがクリックしたブロックの面です。",
         "$ref": "#/definitions/blockFace"
     }
   },
   "outputs": {
     "block": {
-      "description": "プレイヤーがクリックしたブロックです。",
+      "description": "プレイヤがクリックしたブロックです。",
       "$ref": "#/definitions/block"
     },
     "hand": {
       "type": "string",
-      "description": "プレイヤーがクリックした手です。",
+      "description": "プレイヤがクリックした手です。",
       "enum": [
         "HAND",
         "OFF_HAND"
@@ -45,7 +45,7 @@
     },
     "action": {
       "type": "string",
-      "description": "プレイヤーが行ったアクションです。",
+      "description": "プレイヤが行ったアクションです。",
       "enum": [
         "RIGHT_CLICK_BLOCK",
         "LEFT_CLICK_BLOCK",
@@ -54,7 +54,7 @@
       ]
     },
     "blockFace": {
-      "description": "プレイヤーがクリックしたブロックの面です。",
+      "description": "プレイヤがクリックしたブロックの面です。",
       "$ref": "#/definitions/blockFace"
     }
   }

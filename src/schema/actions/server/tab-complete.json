@@ -4,7 +4,7 @@
   "arguments": {
     "sender": {
       "type": "string",
-      "description": "実行するプレイヤーです。"
+      "description": "実行するプレイヤです。"
     },
     "buffer": {
       "type": "string",

@@ -4,7 +4,7 @@
   "arguments": {
     "item": {
       "$ref": "#/definitions/itemStack",
-      "description": "操作後にプレイヤーが持っているアイテムです。"
+      "description": "操作後にプレイヤが持っているアイテムです。"
     },
     "block": {
       "$ref": "#/definitions/block",
@@ -15,7 +15,7 @@
       "description": "プレイヤがクリックしたブロックです。"
     },
     "blockFace": {
-      "description": "プレイヤーがクリックしたブロックの面です。",
+      "description": "プレイヤがクリックしたブロックの面です。",
       "$ref": "#/definitions/blockFace"
     },
     "bucket": {
@@ -33,14 +33,14 @@
   "outputs": {
     "item": {
       "$ref": "#/definitions/itemStack",
-      "description": "操作後にプレイヤーが持っているアイテムです。"
+      "description": "操作後にプレイヤが持っているアイテムです。"
     },
     "block": {
       "$ref": "#/definitions/block",
       "description": "設置する液体のブロックです。"
     },
     "blockFace": {
-      "description": "プレイヤーがクリックしたブロックの面です。",
+      "description": "プレイヤがクリックしたブロックの面です。",
       "$ref": "#/definitions/blockFace"
     },
     "bucket": {

@@ -5,7 +5,7 @@
   "arguments": {
     "target": {
       "type": "string",
-      "description": "対象のプレイヤーです。"
+      "description": "対象のプレイヤです。"
     },
     "inventory": {
       "description": "開くインベントリです。",
@@ -15,7 +15,7 @@
   "outputs": {
     "target": {
       "$ref": "#/definitions/player",
-      "description": "開いたプレイヤーです。"
+      "description": "開いたプレイヤです。"
     },
     "inventory": {
       "description": "開いたインベントリです。",

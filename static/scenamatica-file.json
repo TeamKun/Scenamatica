@@ -51,7 +51,7 @@
       "properties": {
         "actors": {
           "type": "array",
-          "description": "シナリオの実行に必要なアクターを定義します。必要なアクターは、適宜自動生成されます。",
+          "description": "シナリオの実行に必要なアクタを定義します。必要なアクタは、適宜自動生成されます。",
           "items": {
             "$ref": "#/definitions/actor"
           }
@@ -132,7 +132,7 @@
         "thrower": {
           "type": "string",
           "format": "uuid",
-          "description": "アイテムを投げたプレイヤーのUUIDです。"
+          "description": "アイテムを投げたプレイヤのUUIDです。"
         },
         "canMobPickup": {
           "type": "boolean",
@@ -140,7 +140,7 @@
         },
         "canPlayerPickup": {
           "type": "boolean",
-          "description": "プレイヤーがアイテムを拾えるかどうかです。"
+          "description": "プレイヤがアイテムを拾えるかどうかです。"
         },
         "type": {
           "type": "string",
@@ -1805,7 +1805,7 @@
       ]
     },
     "playerInventory": {
-      "description": "プレイヤーのインベントリを表します。",
+      "description": "プレイヤのインベントリを表します。",
       "properties": {
         "main": {
           "$ref": "#/definitions/inventory",
@@ -3211,7 +3211,7 @@
               "description": "設置するエンティティの UUID, セレクタ, 実体, または Material です。"
             },
             "player": {
-              "description": "設置するプレイヤーの名前または UUID です。",
+              "description": "設置するプレイヤの名前または UUID です。",
               "type": "string"
             },
             "block": {
@@ -3426,7 +3426,7 @@
           "properties": {
             "target": {
               "type": "string",
-              "description": "対象のプレイヤーです。"
+              "description": "対象のプレイヤです。"
             },
             "reason": {
               "$ref": "#/definitions/action/definitions/inventory_$base/definitions/closeReason"
@@ -3439,7 +3439,7 @@
           "properties": {
             "target": {
               "type": "string",
-              "description": "対象のプレイヤーです。"
+              "description": "対象のプレイヤです。"
             }
           },
           "$ref": "#/definitions/action/definitions/inventory_$base"
@@ -3501,7 +3501,7 @@
           "properties": {
             "target": {
               "type": "string",
-              "description": "対象のプレイヤーです。"
+              "description": "対象のプレイヤです。"
             },
             "inventory": {
               "description": "開くインベントリです。",
@@ -3515,7 +3515,7 @@
           "properties": {
             "target": {
               "type": "string",
-              "description": "対象のプレイヤーです。"
+              "description": "対象のプレイヤです。"
             }
           }
         },
@@ -3558,7 +3558,7 @@
           "properties": {
             "item": {
               "$ref": "#/definitions/itemStack",
-              "description": "操作後にプレイヤーが持っているアイテムです。"
+              "description": "操作後にプレイヤが持っているアイテムです。"
             },
             "block": {
               "$ref": "#/definitions/block",
@@ -3569,7 +3569,7 @@
               "description": "プレイヤがクリックしたブロックです。"
             },
             "blockFace": {
-              "description": "プレイヤーがクリックしたブロックの面です。",
+              "description": "プレイヤがクリックしたブロックの面です。",
               "$ref": "#/definitions/blockFace"
             },
             "bucket": {
@@ -3637,7 +3637,7 @@
           "properties": {
             "killer": {
               "type": "string",
-              "description": "ターゲットを殺すプレイヤーです。"
+              "description": "ターゲットを殺すプレイヤです。"
             },
             "deathMessage": {
               "type": "string",
@@ -3690,7 +3690,7 @@
           "properties": {
             "flying": {
               "type": "boolean",
-              "description": "プレイヤーが飛行中かどうかです。"
+              "description": "プレイヤが飛行中かどうかです。"
             }
           },
           "$ref": "#/definitions/action/definitions/player_$base"
@@ -3794,7 +3794,7 @@
           "properties": {
             "action": {
               "type": "string",
-              "description": "プレイヤーが行ったアクションです。",
+              "description": "プレイヤが行ったアクションです。",
               "enum": [
                 "RIGHT_CLICK_BLOCK",
                 "LEFT_CLICK_BLOCK",
@@ -3807,12 +3807,12 @@
               ]
             },
             "block": {
-              "description": "プレイヤーがクリックしたブロックです。",
+              "description": "プレイヤがクリックしたブロックです。",
               "$ref": "#/definitions/block"
             },
             "hand": {
               "type": "string",
-              "description": "プレイヤーがクリックした手です。",
+              "description": "プレイヤがクリックした手です。",
               "enum": [
                 "HAND",
                 "OFF_HAND",
@@ -3876,7 +3876,7 @@
               "$ref": "#/definitions/itemStack"
             },
             "replacement": {
-              "description": "消費後にプレイヤーに与えるアイテムです。",
+              "description": "消費後にプレイヤに与えるアイテムです。",
               "$ref": "#/definitions/itemStack"
             }
           },
@@ -3909,7 +3909,7 @@
           "properties": {
             "message": {
               "type": "string",
-              "description": "プレイヤーがサーバーに参加したときに表示するメッセージです。"
+              "description": "プレイヤがサーバーに参加したときに表示するメッセージです。"
             }
           },
           "$ref": "#/definitions/action/definitions/player_$base"
@@ -3920,15 +3920,15 @@
           "properties": {
             "leaveMessage": {
               "type": "string",
-              "description": "プレイヤーがサーバーから退出したときに表示するメッセージです。"
+              "description": "プレイヤがサーバーから退出したときに表示するメッセージです。"
             },
             "message": {
               "type": "string",
-              "description": "プレイヤーがサーバーからキックされたときに表示するメッセージです。"
+              "description": "プレイヤがサーバーからキックされたときに表示するメッセージです。"
             },
             "cause": {
               "type": "string",
-              "description": "プレイヤーがサーバーからキックされた原因です。",
+              "description": "プレイヤがサーバーからキックされた原因です。",
               "enum": [
                 "PLUGIN",
                 "WHITELIST",
@@ -4060,11 +4060,11 @@
           "properties": {
             "message": {
               "type": "string",
-              "description": "プレイヤーがサーバーから退出したときに表示するメッセージです。"
+              "description": "プレイヤがサーバーから退出したときに表示するメッセージです。"
             },
             "reason": {
               "type": "string",
-              "description": "プレイヤーがサーバーから退出した原因です。",
+              "description": "プレイヤがサーバーから退出した原因です。",
               "enum": [
                 "DISCONNECTED",
                 "KICKED",
@@ -4085,14 +4085,14 @@
           "properties": {
             "isBed": {
               "type": "boolean",
-              "description": "プレイヤーがベッドでスポーンするかどうかです。"
+              "description": "プレイヤがベッドでスポーンするかどうかです。"
             },
             "isAnchor": {
               "type": "boolean",
-              "description": "プレイヤーが錨でスポーンするかどうかです。"
+              "description": "プレイヤが錨でスポーンするかどうかです。"
             },
             "location": {
-              "description": "プレイヤーがスポーンする場所です。",
+              "description": "プレイヤがスポーンする場所です。",
               "$ref": "#/definitions/location"
             }
           },
@@ -4104,7 +4104,7 @@
           "properties": {
             "sneaking": {
               "type": "boolean",
-              "description": "プレイヤーがスニークしているかどうかです。"
+              "description": "プレイヤがスニークしているかどうかです。"
             }
           },
           "$ref": "#/definitions/action/definitions/player_$base"
@@ -4115,7 +4115,7 @@
           "properties": {
             "sneaking": {
               "type": "boolean",
-              "description": "プレイヤーが走っているかどうかです。"
+              "description": "プレイヤが走っているかどうかです。"
             }
           },
           "$ref": "#/definitions/action/definitions/player_$base"
@@ -4142,7 +4142,7 @@
             },
             "recipient": {
               "type": "string",
-              "description": "メッセージを受け取るプレイヤーの名前または UUID です。"
+              "description": "メッセージを受け取るプレイヤの名前または UUID です。"
             }
           }
         },
@@ -4173,7 +4173,7 @@
             },
             "recipients": {
               "type": "array",
-              "description": "メッセージを受け取るプレイヤーの名前です。",
+              "description": "メッセージを受け取るプレイヤの名前です。",
               "items": {
                 "type": "string"
               }
@@ -4198,7 +4198,7 @@
             },
             "sender": {
               "type": "string",
-              "description": "実行するプレイヤーです。"
+              "description": "実行するプレイヤです。"
             }
           }
         },
@@ -4272,7 +4272,7 @@
           "properties": {
             "sender": {
               "type": "string",
-              "description": "実行するプレイヤーです。"
+              "description": "実行するプレイヤです。"
             },
             "buffer": {
               "type": "string",
@@ -4424,83 +4424,83 @@
       "properties": {
         "name": {
           "type": "string",
-          "description": "アクターの名前です。",
+          "description": "アクタの名前です。",
           "maxLength": 16
         },
         "online": {
           "type": "boolean",
-          "description": "アクターがオンラインかどうかです。",
+          "description": "アクタがオンラインかどうかです。",
           "default": true
         },
         "displayName": {
           "type": "string",
-          "description": "アクターの表示名です。"
+          "description": "アクタの表示名です。"
         },
         "playerList": {
           "type": "object",
-          "description": "アクターのプレイヤーリストにおける扱いです。",
+          "description": "アクタのプレイヤリストにおける扱いです。",
           "properties": {
             "name": {
               "type": "string",
-              "description": "プレイヤーリストに表示される名前です。"
+              "description": "プレイヤリストに表示される名前です。"
             },
             "header": {
               "type": "string",
-              "description": "プレイヤーリストに表示されるヘッダーです。"
+              "description": "プレイヤリストに表示されるヘッダーです。"
             },
             "footer": {
               "type": "string",
-              "description": "プレイヤーリストに表示されるフッターです。"
+              "description": "プレイヤリストに表示されるフッターです。"
             }
           }
         },
         "compass": {
           "$ref": "#/definitions/location",
-          "description": "アクターのコンパスのターゲットです。"
+          "description": "アクタのコンパスのターゲットです。"
         },
         "bedLocation": {
           "$ref": "#/definitions/location",
-          "description": "アクターのベッドスポーンの位置です。"
+          "description": "アクタのベッドスポーンの位置です。"
         },
         "exp": {
           "type": "integer",
-          "description": "アクターの経験値です。"
+          "description": "アクタの経験値です。"
         },
         "level": {
           "type": "integer",
-          "description": "アクターのレベルです。"
+          "description": "アクタのレベルです。"
         },
         "totalExp": {
           "type": "integer",
-          "description": "アクターの総経験値です。"
+          "description": "アクタの総経験値です。"
         },
         "flyable": {
           "type": "boolean",
-          "description": "アクターが飛行できるかどうかです。ゲームモードがクリエイティブおよびスペクテイタの場合は、暗黙的に true になります。"
+          "description": "アクタが飛行できるかどうかです。ゲームモードがクリエイティブおよびスペクテイタの場合は、暗黙的に true になります。"
         },
         "flying": {
           "type": "boolean",
-          "description": "アクターが飛行中かどうかです。"
+          "description": "アクタが飛行中かどうかです。"
         },
         "walkSpeed": {
           "type": "number",
-          "description": "アクターの歩行速度です。"
+          "description": "アクタの歩行速度です。"
         },
         "flySpeed": {
           "type": "number",
-          "description": "アクターの飛行速度です。"
+          "description": "アクタの飛行速度です。"
         },
         "inventory": {
           "$ref": "#/definitions/playerInventory",
-          "description": "アクターのインベントリです。"
+          "description": "アクタのインベントリです。"
         },
         "enderChest": {
           "$ref": "#/definitions/inventory",
-          "description": "アクターのエンダーチェストです。"
+          "description": "アクタのエンダーチェストです。"
         },
         "mainHand": {
           "type": "string",
-          "description": "アクターの利き手です。",
+          "description": "アクタの利き手です。",
           "enum": [
             "left",
             "right",
@@ -4511,7 +4511,7 @@
         },
         "gamemode": {
           "type": "string",
-          "description": "アクターのゲームモードです。",
+          "description": "アクタのゲームモードです。",
           "enum": [
             "survival",
             "creative",
@@ -4526,7 +4526,7 @@
         },
         "foodLevel": {
           "type": "integer",
-          "description": "アクターの食料レベルです。",
+          "description": "アクタの食料レベルです。",
           "minimum": 0,
           "maximum": 20,
           "default": 20
@@ -4538,11 +4538,11 @@
           ],
           "minimum": 0,
           "maximum": 4,
-          "description": "アクターの OP レベルです。 0 は OP ではないことを意味します。"
+          "description": "アクタの OP レベルです。 0 は OP ではないことを意味します。"
         },
         "permissions": {
           "type": "array",
-          "description": "アクターに与える権限です。",
+          "description": "アクタに与える権限です。",
           "items": {
             "type": "string"
           }

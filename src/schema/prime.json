@@ -51,7 +51,7 @@
             "properties": {
                 "actors": {
                     "type": "array",
-                    "description": "シナリオの実行に必要なアクターを定義します。必要なアクターは、適宜自動生成されます。",
+                    "description": "シナリオの実行に必要なアクタを定義します。必要なアクタは、適宜自動生成されます。",
                     "items": {
                         "$ref": "#/definitions/actor"
                     }

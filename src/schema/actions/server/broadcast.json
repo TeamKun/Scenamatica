@@ -8,7 +8,7 @@
     },
     "recipients": {
       "type": "array",
-      "description": "メッセージを受け取るプレイヤーの名前です。",
+      "description": "メッセージを受け取るプレイヤの名前です。",
       "items": {
         "type": "string"
       }
@@ -29,7 +29,7 @@
     },
     "recipients": {
       "type": "array",
-      "description": "メッセージを受け取ったプレイヤーです。",
+      "description": "メッセージを受け取ったプレイヤです。",
       "items": {
         "type": "string"
       }

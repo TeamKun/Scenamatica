@@ -5,15 +5,15 @@
   "arguments": {
     "leaveMessage": {
       "type": "string",
-      "description": "プレイヤーがサーバーから退出したときに表示するメッセージです。"
+      "description": "プレイヤがサーバーから退出したときに表示するメッセージです。"
     },
     "message": {
       "type": "string",
-      "description": "プレイヤーがサーバーからキックされたときに表示するメッセージです。"
+      "description": "プレイヤがサーバーからキックされたときに表示するメッセージです。"
     },
     "cause": {
       "type": "string",
-      "description": "プレイヤーがサーバーからキックされた原因です。",
+      "description": "プレイヤがサーバーからキックされた原因です。",
       "enum": [
         "PLUGIN",
         "WHITELIST",
@@ -41,15 +41,15 @@
   "outputs": {
     "leaveMessage": {
       "type": "string",
-      "description": "プレイヤーがサーバーから退出したときに表示するメッセージです。"
+      "description": "プレイヤがサーバーから退出したときに表示するメッセージです。"
     },
     "message": {
       "type": "string",
-      "description": "プレイヤーがサーバーからキックされたときに表示するメッセージです。"
+      "description": "プレイヤがサーバーからキックされたときに表示するメッセージです。"
     },
     "cause": {
       "type": "string",
-      "description": "プレイヤーがサーバーからキックされた原因です。",
+      "description": "プレイヤがサーバーからキックされた原因です。",
       "enum": [
         "PLUGIN",
         "WHITELIST",
