@@ -67,7 +67,7 @@ GitHub Actions でテストを自動化するためには、ワークフロー�
 
 ワークフローファイルの基本的な設定を記述します。
 
-```yaml {title=".github/workflows/my-scenamatica-workflow.yml"}
+```yaml {title=".github/workflows/my-scenamatica-workflow.yml"} showLineNumbers
 
 name: <ワークフローの名前>
 
@@ -88,7 +88,7 @@ Scenamatica を使用してテストを行う前に、まずはあなたのプ�
 
 この例では、 Maven を使用してビルドを行っていますが、他のビルドツールを使用している場合は適宜読み替えてください。
 
-```yaml {title=".github/workflows/my-scenamatica-workflow.yml"}
+```yaml {title=".github/workflows/my-scenamatica-workflow.yml"} showLineNumbers
 # ...
 
 steps:
@@ -111,7 +111,7 @@ Scenamatica は [Scenamatica Action](https://github.com/TeamKun/scenamatica-acti
 このアクションを実装しましょう。  
 `plugin` には、ビルドしたプラグインの jar ファイルを指定します。 (Gradle の場合は build/libs/\<プラグインの jar ファイル名> と記述してください。)
 
-```yaml {title=".github/workflows/my-scenamatica-workflow.yml"}
+```yaml {title=".github/workflows/my-scenamatica-workflow.yml"} showLineNumbers
 #...
 
 steps:
@@ -153,7 +153,7 @@ $ git push origin main
 Scenamatica Action は、プルリクエストにテスト結果を送信するため、 `pull-requests: write` 権限が必要です。
 以下のように `pull_request` イベントを追加した後、トークンに権限を付与してください。
 
-```yaml {title=".github/workflows/my-scenamatica-workflow.yml"}
+```yaml {title=".github/workflows/my-scenamatica-workflow.yml"} showLineNumbers
 
 on:
   push:

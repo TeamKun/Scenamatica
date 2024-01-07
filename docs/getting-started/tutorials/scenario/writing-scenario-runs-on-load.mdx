@@ -1,6 +1,10 @@
+---
+sidebar_position: 1
+---
+
 import BelowDocument from "/src/components/BelowDocument";
 
-# 読み込み時に実行されるシナリオを書いてみる
+# 読み込み時に自動で実行 されるシナリオを書いてみる
 
 プラグインの読み込み時に自動で実行されるシナリオを書いてみましょう。
 
@@ -10,11 +14,13 @@ import BelowDocument from "/src/components/BelowDocument";
 
 このチュートリアルでは、[トリガ `on_load`][trigger-on-load]の使い方を学びます。
 
+これを完了すると、サーバの起動時やリロード時に自動で実行されるシナリオを作成できるようになります。
+
 ## ステップ１． 基本的なシナリオを作成する {#step1-create-basic-scenario}
 
 まずは、以下のような簡単なシナリオを作成します。
 
-```yaml title="test-hoge-success.yml"
+```yaml title="test-hoge-success.yml" showLineNumbers
 scenamatica: "0.0.1"
 name: "test-hoge-success"
 description: "hoge 機能の正常系テスト"
@@ -64,7 +70,7 @@ scenario:
 
 以下のようにして、`on_load` を追加します。
 
-```yaml title="test-hoge-success.yml"
+```yaml title="test-hoge-success.yml" showLineNumbers
 
 on:
 - type: manual_dispatch
@@ -72,12 +78,12 @@ on:
 - type: on_load
 ```
 
-## ステップ３．プラグインを再読込する {#step3-reload-plugin}
+## ステップ３．動作を確認する {#step3-check-if-it-works}
 
 シナリオを作成したら、サーバを再起動するか、プラグインを再読込します。  
 シナリオが実行されたらこのチュートリアルは完了です。お疲れ様でした。
 
-```bashl
+```bash
 # サーバを再起動する場合
 $ java -jar <サーバのjarファイル名>.jar
 

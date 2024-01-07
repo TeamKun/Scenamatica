@@ -45,7 +45,7 @@ scenamatica: "0.0.1"
 名前\([`name`](/docs/use/scenario/types#apex-name)) は、シナリオの識別子として使用されます。プラグインの中で一意な命名をしてください。  
 説明\([`description`](/docs/use/scenario/types#scenario-file-structure)) は、人間が読みやすいような説明文を記述します。
 
-```yaml title="test-hoge-success.yml"
+```yaml title="test-hoge-success.yml" showLineNumbers
 scenamatica: "0.0.1"
 # highlight-start
 name: "test-hoge-success"
@@ -59,7 +59,7 @@ description: "hoge 機能の正常系テスト"
 今回のテストでは、`/hoge` コマンドの実行者として[アクタ](/docs/use/scenario/elements#actor) `Actor1` がいることを想定しているので、以下のように記述します。  
 また、ネザーで実行するようにしてみましょう。
 
-```yaml title="test-hoge-success.yml"
+```yaml title="test-hoge-success.yml" showLineNumbers
 scenamatica: "0.0.1"
 name: "test-hoge-success"
 description: "hoge 機能の正常系テスト"
@@ -80,7 +80,7 @@ context:
 
 今回は手動実行のみを想定しているので、 手動実行(`manual_dispatch`) というトリガを記述します。
 
-```yaml title="test-hoge-success.yml"
+```yaml title="test-hoge-success.yml" showLineNumbers
 scenamatica: "0.0.1"
 name: "test-hoge-success"
 description: "hoge 機能の正常系テスト"
@@ -117,7 +117,7 @@ on:
 
 これらをシナリオ化すると、以下のようになります。
 
-```yaml title="test-hoge-success.yml"
+```yaml title="test-hoge-success.yml" showLineNumbers
 scenamatica: "0.0.1"
 name: "test-hoge-success"
 description: "hoge 機能の正常系テスト"

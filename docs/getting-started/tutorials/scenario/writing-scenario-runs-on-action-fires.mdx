@@ -1,6 +1,10 @@
+---
+sidebar_position: 2
+---
+
 import BelowDocument from "/src/components/BelowDocument";
 
-# アクションの発火時に実行されるシナリオを書いてみる
+# アクションの発火時に実行 されるシナリオを書いてみる
 
 アクションの発火時に自動的に実行されるシナリオを書いてみましょう。
 
@@ -15,11 +19,11 @@ import BelowDocument from "/src/components/BelowDocument";
 
 ## 基本：アクション発火時に実行されるシナリオを書いてみる {#basic-usage}
 
-### ステップ１ 基本的なシナリオを作成する {#basic-usage-step1-create-basic-scenario}
+### ステップ１ 前提となるシナリオを作成する {#basic-usage-step1-create-basic-scenario}
 
 まずは、以下のような簡単なシナリオを作成します。
 
-```yaml title="test-hoge-success.yml"
+```yaml title="test-hoge-success.yml" showLineNumbers
 scenamatica: "0.0.1"
 name: "test-hoge-success"
 description: "hoge 機能の正常系テスト"
@@ -73,7 +77,7 @@ scenario:
 以下のようにして、`on_action` を追加します。
 引数には [アクション `message`](/docs/use/scenario/actions#message) を指定します。
 
-```yaml title="test-hoge-success.yml"
+```yaml title="test-hoge-success.yml" showLineNumbers
 scenamatica: "0.0.1"
 name: "test-hoge-success"
 description: "hoge 機能の正常系テスト"
@@ -136,7 +140,7 @@ tellraw @a {"text":"Hello, World!"}
 
 まずは、以下のような簡単なシナリオを作成します。
 
-```yaml title="test-hoge-success.yml"
+```yaml title="test-hoge-success.yml" showLineNumbers
 scenamatica: "0.0.1"
 name: "test-hoge-success"
 description: "hoge 機能の正常系テスト"
@@ -185,7 +189,7 @@ scenario:
 今回の例を見ると、プラグインの機能は `/hoge` というコマンドで発火することがわかります。
 前節で確認したシナリオを見てみると、以下の部分が該当します。
 
-```yaml title="test-hoge-success.yml"
+```yaml title="test-hoge-success.yml" showLineNumbers
 #...
 scenario:
   # highlight-start
@@ -214,7 +218,7 @@ scenario:
 以下のようにして、トリガに `on_action` を追加します。  
 また、メインシナリオに記述されている、プラグインの機能を発火させるシナリオを削除します。
 
-```yaml title="test-hoge-success.yml"
+```yaml title="test-hoge-success.yml" showLineNumbers
 scenamatica: "0.0.1"
 name: "test-hoge-success"
 description: "hoge 機能の正常系テスト"
@@ -244,13 +248,13 @@ scenario:
   action: player_death
 ```
 
-### ステップ４．動作を確認する {#passive-scenario-step4-check-behavior}
+### ステップ４．動作を確認する {#passive-scenario-step4-check-if-it-works}
 
 実際にシナリオを実行してみましょう。
 
 Minecraft サーバーにログインし、以下のコマンドを実行します。
 
-```bash
+```yaml
 # 注：実際にはあなたのプラグインのコマンドを実行してください。
 /hoge
 ```

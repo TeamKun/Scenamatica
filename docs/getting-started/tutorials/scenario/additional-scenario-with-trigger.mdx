@@ -1,0 +1,184 @@
+---
+sidebar_position: 3
+---
+
+import BelowDocument from "/src/components/BelowDocument";
+
+# トリガによって分岐した 追加のシナリオを実行する
+
+分岐した追加のシナリオを実行してみましょう。
+
+---
+
+## 概要 {#overview}
+
+このチュートリアルでは、[事前・事後シナリオ機能](/docs/use/scenario/trigger#before-after-scenarios) の使い方を学びます。
+
+これを完了すると、シナリオの実行前後に分岐した任意の処理を、トリガによって追加できるようになります。  
+
+### シチュエーションの例
+
+例えば、私のプラグイン「Speakable Villager」を考えます。
+このプラグインは、プレイヤが村人を殴ると、そのプレイヤのチャットメッセージに「殴らないで！」というメッセージを送信します。
+
+このプラグインのテストのために、後述の[前提となるシナリオ](#step1-write-basic-scenario)を作成しました。
+このシナリオでは、シナリオの発火のために、プレイヤが自ら村人を殴る必要があります。
+しかし、これではサーバの起動時や [CI-CD でのテスト実行](/docs/use/integration/ci-cd)時に発火しません。
+また、ただ単に解決策として[トリガ：`on_load`](/docs/getting-started/tutorials/scenario/writing-scenario-runs-on-load)を追加し、
+シナリオにプレイヤが村人を殴るアクションを追加すると、二重でプラグインの機能が発火してしまいます。
+
+このような場合に、事前・事後シナリオ機能を使うことで、自動実行時などに追加でプレイヤが村人を殴るアクションを実行させます。
+これにより、テスト対象の機能を発火させて自動テストを実現します。
+
+## ステップ１. 前提となるシナリオを作成する {#step1-write-basic-scenario}
+
+まずは、前提となるかんたんなシナリオを作成しましょう。
+
+<BelowDocument docId={"getting-started/tutorials/writing-my-first-scenario"}
+               label={"最初のシナリオを書いてみる"}
+               tutorial
+/>
+
+今回はあらかじめ用意しておいたシナリオを使います。
+
+```yaml title="villager-speaking-test.yml" showLineNumbers
+# このシナリオでは、プレイヤが村人を殴ったときに、「殴らないで！」というメッセージが送信されるかテストします。
+scenamatica: "0.0.1"
+name: "message_on_villager_hit"
+
+on:
+  # プレイヤーが村人を殴ったときに発火するようにする。。
+  - type: on_action
+    action: player_interact_at_entity
+    with:
+      entity:
+        # いづれかの村人を対象とする。
+        type: villager
+    
+scenario:
+  # 「殴らないで！」というメッセージが送信されることを確認する。
+  - type: expect
+    action: message
+    with:
+      message: "殴らないで！"
+```
+
+## ステップ２. どのような処理を追加するか考える {#step2-think-about-what-to-add}
+
+考える時間です！どのような処理を追加するべきか考えましょう。
+
+今回の例では、まずは自動テストを実現するために、そのトリガを追加する必要があるようです。  
+さらに、自動実行時にプラグインの機能を発火させる必要があるので、村人を新たにスポーンして、プレイヤが村人を殴るアクションを追加する必要があります。
+しかしメインシナリオに追加してしまうと、プラグインの機能が二重で発火し、「殴らないで！」メッセージが二回送信されてしまいます。
+
+これを解決するために、事前シナリオ機能を使って、自動実行時のみにこのアクションを実行します。
+また、このままでは自動実行時に村人が残ってしまいます（エンティティの場合は問題はありませんが、今回は明示的に削除します。）  
+そのため、事後シナリオ機能を使って、自動実行時に村人を削除するようにしましょう。
+
+ついに事前・事後シナリオ機能の出番がやってきました！:tada::tada:
+
+## ステップ３. 自動でシナリオが発火するようにする {#step3-make-scenario-fire-automatically}
+
+まずは、自動でシナリオが発火するようにしましょう。  
+そのために、[トリガ：`on_load`](/docs/getting-started/tutorials/scenario/writing-scenario-runs-on-load)を追加します。
+
+<BelowDocument docId={"getting-started/tutorials/scenario/writing-scenario-runs-on-load"}
+               label={"読み込み時に実行されるシナリオを書いてみる"}
+               tutorial
+/>
+
+以下のように、`on_load`を追加します。
+
+```yaml title="villager-speaking-test.yml" showLineNumbers
+# ...
+on:
+  # プレイヤーが村人を殴ったときに発火するようにする。。
+  - type: on_action
+    action: player_interact_at_entity
+    with:
+      entity:
+        # いづれかの村人を対象とする。
+        type: villager
+# highlight-next-line
+  - type: on_load
+```
+
+これで、サーバの起動時にシナリオが発火するようになりました。
+
+## ステップ４. 事前シナリオを追加する {#step4-add-before-scenario}
+
+次に、**自動実行時に**村人をスポーンさせ、さらにプレイヤが村人を殴るアクションを追加します。
+
+これを追加しなかった場合、テスト対象の機能が発火しないために自動実行されたテストは失敗します。
+
+以下のようにして、トリガ `on_load` に対して事前シナリオを追加します。
+
+```yaml title="villager-speaking-test.yml" showLineNumbers
+# ...
+on:
+  # ...
+  - type: on_load
+# highlight-start
+    # 事前シナリオを追加する。
+    before:
+      # 村人をスポーンさせる。
+      - type: execute
+        action: entity_spawn
+        with:
+          entity:
+            type: villager
+            tags:
+            - 114514 # 削除のために、村人を追跡できるようにする。
+      # プレイヤが村人を殴るアクションを追加する。
+      - type: execute
+        action: player_interact_at_entity
+        with:
+          entity:
+            # いづれかの村人を対象とする。
+            type: villager
+# highlight-end
+```
+
+## ステップ５. 事後シナリオを追加する {#step5-add-after-scenario}
+
+最後に、**自動実行時に**村人を削除する事後シナリオを追加します。
+
+```yaml title="villager-speaking-test.yml" showLineNumbers
+# ...
+on:
+  # ...
+  - type: on_load
+    # 事前シナリオを追加する。
+    before:
+      # ...
+    # highlight-start
+    after:
+    # 村人を削除する。
+    - type: execute
+      action: entity_death
+      with:
+        entity:
+          # いづれかの村人を対象とする。
+          type: villager
+          tags:
+          - 114514
+    # highlight-end
+```
+
+### ステップ６．動作を確認する {#step6-check-if-it-works}
+
+実際にシナリオを実行してみましょう。  
+プラグインをビルドし、サーバを再起動します。
+
+```bash
+# サーバを再起動する場合
+$ java -jar <サーバのjarファイル名>.jar
+
+# 再読込する場合
+$ reload confirm 
+```
+
+シナリオが実行され正常に終了したことを確認したら、このチュートリアルは完了です。お疲れ様でした。
+
+他の応用的なチュートリアルを読むには[こちら](/docs/getting-started/tutorials)を参照してください。  
+シナリオファイルの完全な構文については[こちら](/docs/use/scenario/scenario-file)を参照してください。
