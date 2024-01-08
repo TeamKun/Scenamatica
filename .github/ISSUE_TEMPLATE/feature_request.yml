@@ -11,7 +11,7 @@ body:
   - type: textarea
     id: description
     attributes:
-      label: "詳細"
+      label: "新規機能の簡潔な説明"
       description: "あなたが希望する新規機能についての明確で簡潔な説明を記入してください。"
     validations:
       required: true
@@ -40,13 +40,6 @@ body:
     attributes:
       label: "Scenamatica のバージョン"
       description: "現在使用している Scenamatica のバージョンを記入してください。"
-    validations:
-      required: true
-  - type: input
-    id: server_description
-    attributes:
-      label: "サーバーの詳細"
-      description: "/version コマンドで取得できるサーバーの詳細を**正確に**記入してください。"
     validations:
       required: true
   - type: textarea

@@ -1,0 +1,72 @@
+name: アクションの追加リクエスト
+description: 機能追加、特にアクションの追加に関するリクエストはこちら
+title: "【機能】アクション "
+labels: ["Type: Enchantment"]
+assignees: ["PeyaPeyaPeyang"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Scenamatica に貢献いただきありがとうございます。以下のフォームを記入し提出してください！
+  - type: textarea
+    id: description
+    attributes:
+      label: "新規アクションの簡潔な説明"
+      description: "あなたが希望する新規アクションについての明確で簡潔な説明を記入してください。"
+    validations:
+      required: true
+  - type: textarea
+    id: usecase
+    attributes:
+      label: "このアクションはどのような場面で使用できますか？"
+      description: "あなたが希望する新規アクションのついて、どういった場面で使用できるかを簡潔に説明してください。"
+    validations:
+      required: true
+  - type: input
+    id: input_action_execute
+    attributes:
+      label: "入力：アクション実行シナリオ（存在する場合）"
+      description: "アクション実行シナリオ(execute)で使用した場合の期待された動作を簡潔に説明してください（存在する場合）。"
+      placeholder: 任意のプレイヤが上空 20 m にテレポートする
+    validations:
+      required: false
+  - type: input
+    id: input_action_expect
+    attributes:
+      label: "入力：アクション実行期待シナリオ"
+      description: "アクション実行期待シナリオ(expect)で使用した場合の期待された動作を簡潔に説明してください（存在する場合）。"
+      placeholder: 任意のプレイヤの高度がちょうど 20 m になる
+    validations:
+      required: false
+  - type: input
+    id: input_action_require
+    attributes:
+      label: "入力：コンディション要求シナリオ"
+      description: "コンディション要求シナリオ(require)で使用した場合の期待された動作を簡潔に説明してください（存在する場合）。"
+      placeholder: プレイヤが上空 20 m にいる
+    validations:
+      required: false
+  - type: textarea
+    id: outputs
+    attributes:
+      label: "新規アクションの出力"
+      description: "あなたが希望する新規アクションの出力を簡潔に説明してください。"
+      placeholder: |
+        - `player`: 対象となったプレイヤ
+  - type: input
+    id: connecting_events
+    attributes:
+      label: "接続するイベント"
+      description: "アクション実行シナリオ(execute)で使用する場合は, それの動作に関連したイベントを記入してください。"
+      placeholder: org.bukkit.event.player.PlayerMoveEvent
+    validations:
+      required: false
+  - type: textarea
+    id: other
+    attributes:
+      label: "その他"
+      description: |
+        ログ、スクリーンショット等その他お好きなように添付してください。
+        このエリアに画像をドラッグ&ドロップすることでも添付できます。
+    validations:
+      required: false
