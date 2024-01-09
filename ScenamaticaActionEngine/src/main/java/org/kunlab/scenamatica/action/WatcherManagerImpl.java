@@ -254,9 +254,16 @@ public class WatcherManagerImpl implements WatcherManager
             return;
         }
 
-        // 引数にマッチしているかどうかをチェックする。
-        if (watchable.checkFired(action.getContext(), evt))
-            this.onActionFired(entry, isJumped);
+        try
+        {
+            // 引数にマッチしているかどうかをチェックする。
+            if (watchable.checkFired(action.getContext(), evt))
+                this.onActionFired(entry, isJumped);
+        }
+        catch (Throwable e)
+        {
+            entry.getEngine().getListener().onActionError(entry.getAction(), e);
+        }
     }
 
     @Nullable
