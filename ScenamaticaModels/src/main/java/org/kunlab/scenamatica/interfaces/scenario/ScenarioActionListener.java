@@ -2,7 +2,6 @@ package org.kunlab.scenamatica.interfaces.scenario;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionResult;
 import org.kunlab.scenamatica.interfaces.action.CompiledAction;
 import org.kunlab.scenamatica.interfaces.scenario.runtime.CompiledScenarioAction;
@@ -15,7 +14,15 @@ public interface ScenarioActionListener
     /**
      * アクションが実行されたときに呼び出されます。
      */
-    void onActionFinished(@NotNull ActionResult result, ScenarioType type);
+    void onActionExecutionFinished(@NotNull ActionResult result);
+
+    /**
+     * 監視していたアクションが実行されたときに呼び出されます。
+     *
+     * @param result   実行結果
+     * @param isJumped ジャンプして実行されたかどうか
+     */
+    void onObservingActionExecuted(@NotNull ActionResult result, boolean isJumped);
 
     /**
      * 実行を期待するアクションを取得します。

@@ -13,6 +13,7 @@ import org.kunlab.scenamatica.enums.ScenarioResultCause;
 import org.kunlab.scenamatica.enums.ScenarioState;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.enums.WatchType;
+import org.kunlab.scenamatica.exceptions.scenario.BrokenReferenceException;
 import org.kunlab.scenamatica.exceptions.scenario.TriggerNotFoundException;
 import org.kunlab.scenamatica.interfaces.ScenamaticaRegistry;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
@@ -179,6 +180,7 @@ public class ScenarioExecutorImpl implements ScenarioExecutor
     {
         ScenarioResult result = this.start$1(trigger);
 
+        // 後始末
         this.actionManager.getWatcherManager().unregisterWatchers(this.plugin, WatchType.SCENARIO);
         return result;
     }
@@ -346,25 +348,11 @@ public class ScenarioExecutorImpl implements ScenarioExecutor
     }
 
     @Override
-    public boolean resolveInputs(CompiledAction action)
+    public void resolveInputs(CompiledAction action)
     {
         InputBoard input = action.getContext().getInput();
-        if (!input.hasUnresolvedReferences())
-            return true;
-
-        try
-        {
+        if (input.hasUnresolvedReferences())
             input.resolveReferences(this.registry.getScenarioFileManager().getSerializer(), this.variable);
-            if (input.hasUnresolvedReferences())
-                return false;
-        }
-        catch (Exception e)
-        {
-            this.registry.getExceptionHandler().report(e);
-            return false;
-        }
-
-        return true;
     }
 
     private ActionResult runScenario(CompiledScenarioAction scenario, CompiledScenarioAction next)
@@ -382,8 +370,13 @@ public class ScenarioExecutorImpl implements ScenarioExecutor
         }
 
         ActionContext context = scenario.getAction().getContext();
-        if (!this.resolveInputs(scenario.getAction()))
+        try
         {
+            this.resolveInputs(scenario.getAction());
+        }
+        catch (BrokenReferenceException e)
+        {
+            this.registry.getExceptionHandler().report(e);
             context.fail(ActionResultCause.UNRESOLVED_REFERENCES);
             return context.createResult(scenario.getAction());
         }
@@ -410,6 +403,12 @@ public class ScenarioExecutorImpl implements ScenarioExecutor
         catch (ScenarioWaitTimedOutException e)
         {
             context.fail(ActionResultCause.TIMED_OUT);
+            return context.createResult(scenario.getAction());
+        }
+        catch (BrokenReferenceException e)
+        {
+            this.registry.getExceptionHandler().report(e);
+            context.fail(ActionResultCause.UNRESOLVED_REFERENCES);
             return context.createResult(scenario.getAction());
         }
         catch (Exception e)

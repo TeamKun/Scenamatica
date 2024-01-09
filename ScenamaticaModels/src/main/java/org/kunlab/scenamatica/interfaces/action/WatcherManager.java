@@ -18,24 +18,22 @@ public interface WatcherManager
      *
      * @param watchers 監視する動作のリスト
      * @param type     監視の種類
-     * @return 監視の登録情報
      */
-    List<WatchingEntry> registerWatchers(@NotNull ScenarioEngine engine,
-                                         @NotNull ScenarioFileStructure scenario,
-                                         @NotNull List<? extends CompiledAction> watchers,
-                                         @NotNull WatchType type);
+    void registerWatchers(@NotNull ScenarioEngine engine,
+                          @NotNull ScenarioFileStructure scenario,
+                          @NotNull List<? extends CompiledAction> watchers,
+                          @NotNull WatchType type);
 
     /**
      * 監視を登録します。
      *
      * @param watcher 監視する動作
      * @param type    監視の種類
-     * @return 監視の登録情報
      */
-    WatchingEntry registerWatcher(@NotNull ScenarioEngine engine,
-                                  @NotNull CompiledAction watcher,
-                                  @NotNull ScenarioFileStructure scenario,
-                                  @NotNull WatchType type);
+    void registerWatcher(@NotNull ScenarioEngine engine,
+                         @NotNull CompiledAction watcher,
+                         @NotNull ScenarioFileStructure scenario,
+                         @NotNull WatchType type);
 
     /**
      * プラグインの全ての監視を解除します。

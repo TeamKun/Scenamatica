@@ -10,17 +10,16 @@ import org.bukkit.plugin.EventExecutor;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredListener;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.utils.EventListenerUtils;
-import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.enums.TriggerType;
 import org.kunlab.scenamatica.enums.WatchType;
+import org.kunlab.scenamatica.exceptions.scenario.BrokenReferenceException;
 import org.kunlab.scenamatica.exceptions.scenario.ScenarioException;
 import org.kunlab.scenamatica.interfaces.ScenamaticaRegistry;
 import org.kunlab.scenamatica.interfaces.action.Action;
-import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.CompiledAction;
 import org.kunlab.scenamatica.interfaces.action.WatcherManager;
-import org.kunlab.scenamatica.interfaces.action.WatchingEntry;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileStructure;
@@ -43,7 +42,7 @@ public class WatcherManagerImpl implements WatcherManager
 
     private final ScenamaticaRegistry registry;
     private final Object lock = new Object();
-    private final Multimap<Plugin, WatchingEntryImpl> actionWatchers;
+    private final Multimap<Plugin, WatchEntry> actionWatchers;
 
     public WatcherManagerImpl(@NotNull ScenamaticaRegistry registry)
     {
@@ -52,40 +51,39 @@ public class WatcherManagerImpl implements WatcherManager
     }
 
     @Override
-    public List<WatchingEntry> registerWatchers(@NotNull ScenarioEngine engine,
-                                                @NotNull ScenarioFileStructure scenario,
-                                                @NotNull List<? extends CompiledAction> watchers,
-                                                @NotNull WatchType type)
+    public void registerWatchers(@NotNull ScenarioEngine engine,
+                                 @NotNull ScenarioFileStructure scenario,
+                                 @NotNull List<? extends CompiledAction> watchers,
+                                 @NotNull WatchType type)
     {
-        List<WatchingEntry> entries = new ArrayList<>();
-        for (CompiledAction watcher : watchers)
+        List<WatchEntry> entries = new ArrayList<>();
+        for (int i = 0; i < watchers.size(); i++)
             entries.add(this.createWatchingEntry(
-                            engine,
-                            watcher,
-                            scenario,
-                            type
-                    )
-            );
+                    engine,
+                    watchers.get(i),
+                    scenario,
+                    i,
+                    type
+            ));
 
         synchronized (this.lock)
         {
-            for (WatchingEntry entry : entries)
-                this.actionWatchers.put(engine.getPlugin(), (WatchingEntryImpl) entry);
+            for (WatchEntry entry : entries)
+                this.actionWatchers.put(engine.getPlugin(), entry);
         }
-
-        return entries;
     }
 
     @Override
-    public WatchingEntry registerWatcher(@NotNull ScenarioEngine engine,
-                                         @NotNull CompiledAction watcher,
-                                         @NotNull ScenarioFileStructure scenario,
-                                         @NotNull WatchType type)
+    public void registerWatcher(@NotNull ScenarioEngine engine,
+                                @NotNull CompiledAction watcher,
+                                @NotNull ScenarioFileStructure scenario,
+                                @NotNull WatchType type)
     {
-        WatchingEntryImpl entry = this.createWatchingEntry(
+        WatchEntry entry = this.createWatchingEntry(
                 engine,
                 watcher,
                 scenario,
+                this.getLastIdxOf(engine, type) + 1,
                 type
         );
 
@@ -93,24 +91,34 @@ public class WatcherManagerImpl implements WatcherManager
         {
             this.actionWatchers.put(engine.getPlugin(), entry);
         }
-
-        return entry;
     }
 
-    private WatchingEntryImpl createWatchingEntry(@NotNull ScenarioEngine engine,
-                                                  @NotNull CompiledAction action,
-                                                  @NotNull ScenarioFileStructure scenario,
-                                                  @NotNull WatchType type)
+    private int getLastIdxOf(@NotNull ScenarioEngine engine, @NotNull WatchType type)
+    {
+        return this.actionWatchers.get(engine.getPlugin()).stream()
+                .filter(entry -> entry.getEngine() == engine)
+                .filter(entry -> entry.getType() == type)
+                .mapToInt(WatchEntry::getIdx)
+                .max()
+                .orElse(0);
+    }
+
+    private WatchEntry createWatchingEntry(@NotNull ScenarioEngine engine,
+                                           @NotNull CompiledAction action,
+                                           @NotNull ScenarioFileStructure scenario,
+                                           int idx,
+                                           @NotNull WatchType type)
     {
         Action actionExecutor = action.getExecutor();
         if (!(actionExecutor instanceof Watchable))
             throw new IllegalStateException("The action " + actionExecutor.getName() + " is not watchable.");
 
         List<Pair<Class<? extends Event>, RegisteredListener>> listeners = new ArrayList<>();
-        WatchingEntryImpl watchingEntry = new WatchingEntryImpl(
+        WatchEntry watchEntry = new WatchEntry(
                 this,
                 engine,
                 scenario,
+                idx,
                 action,
                 type,
                 listeners
@@ -119,9 +127,9 @@ public class WatcherManagerImpl implements WatcherManager
         Watchable watchable = (Watchable) actionExecutor;
 
         for (Class<? extends Event> eventType : watchable.getAttachingEvents())
-            listeners.add(Pair.of(eventType, this.register(watchingEntry, eventType)));
+            listeners.add(Pair.of(eventType, this.registerListener(watchEntry, eventType)));
 
-        return watchingEntry;
+        return watchEntry;
     }
 
     @Override
@@ -132,8 +140,8 @@ public class WatcherManagerImpl implements WatcherManager
 
         synchronized (this.lock)
         {
-            Collection<WatchingEntryImpl> entries = this.actionWatchers.get(plugin);
-            for (WatchingEntryImpl entry : new ArrayList<>(entries))
+            Collection<WatchEntry> entries = this.actionWatchers.get(plugin);
+            for (WatchEntry entry : new ArrayList<>(entries))
                 this.unregister(entry);
         }
 
@@ -147,7 +155,7 @@ public class WatcherManagerImpl implements WatcherManager
             if (!this.actionWatchers.containsKey(plugin))
                 return;
 
-            for (WatchingEntryImpl entry : new ArrayList<>(this.actionWatchers.get(plugin)))
+            for (WatchEntry entry : new ArrayList<>(this.actionWatchers.get(plugin)))
             {
                 if (entry.getType() == type)
                     this.unregister(entry);
@@ -155,7 +163,7 @@ public class WatcherManagerImpl implements WatcherManager
         }
     }
 
-    public void onActionFired(@NotNull WatchingEntryImpl entry)
+    public void onActionFired(@NotNull WatchEntry entry, boolean isJumped)
     {
         synchronized (this.lock)
         {
@@ -163,44 +171,54 @@ public class WatcherManagerImpl implements WatcherManager
                 return;
         }
 
-        if (entry.getType() == WatchType.TRIGGER)
+        switch (entry.getType())
         {
-            try
-            {
-                this.registry.getTriggerManager().performTriggerFire(
-                        entry.getEngine().getPlugin(),
-                        entry.getScenario().getName(),
-                        TriggerType.ON_ACTION,
-                        entry.getAction().getContext().getInput()
-                );
-            }
-            catch (ScenarioException e)
-            {
-                this.registry.getExceptionHandler().report(e);
-            }
-
-            return;
-        }
-
-        assert entry.getType() == WatchType.SCENARIO;
-
-        this.unregister(entry);  // シナリオのアクションは一度だけ実行するようにする。(トリガは複数)
-
-        entry.getEngine().getListener().onActionFinished(ActionResultImpl.fromAction(entry.getAction()), ScenarioType.ACTION_EXPECT);
-
-        synchronized (this.lock)
-        {
-            this.actionWatchers.remove(entry.getEngine().getPlugin(), entry);
+            case SCENARIO:
+                this.onScenarioFired(entry, isJumped);
+                break;
+            case TRIGGER:
+                this.onTriggerFired(entry);
+                break;
+            default:
+                throw new IllegalStateException("Unknown watch type: " + entry.getType());
         }
     }
 
-    private RegisteredListener register(WatchingEntryImpl entry, Class<? extends Event> eventType)
+    private void onScenarioFired(@NotNull WatchEntry entry, boolean isJumped)
+    {
+        entry.setEnabled(false);  // シナリオのアクションは一度だけ実行するようにする。(トリガは複数)
+
+        entry.getEngine().getListener().onObservingActionExecuted(
+                ActionResultImpl.fromAction(entry.getAction()),
+                isJumped
+        );
+    }
+
+    private void onTriggerFired(@NotNull WatchEntry entry)
+    {
+        try
+        {
+            this.registry.getTriggerManager().performTriggerFire(
+                    entry.getEngine().getPlugin(),
+                    entry.getScenario().getName(),
+                    TriggerType.ON_ACTION,
+                    entry.getAction().getContext().getInput()
+            );
+        }
+        catch (ScenarioException e)
+        {
+            this.registry.getExceptionHandler().report(e);
+        }
+
+    }
+
+    private RegisteredListener registerListener(WatchEntry entry, Class<? extends Event> eventType)
     {
         Action actionExecutor = entry.getAction().getExecutor();
         if (!(actionExecutor instanceof Watchable))
             throw new IllegalStateException("The action " + actionExecutor.getName() + " is not watchable.");
 
-        EventExecutor executor = (listener1, event) -> this.onEventFire(entry, event);
+        EventExecutor executor = (listener1, event) -> this.onEventFired(entry, event);
         RegisteredListener registeredListener = new RegisteredListener(
                 DUMMY_LISTENER,
                 executor,
@@ -214,32 +232,63 @@ public class WatcherManagerImpl implements WatcherManager
         return registeredListener;
     }
 
-    private void onEventFire(WatchingEntryImpl entry, Event evt)
+    private void onEventFired(WatchEntry entry, Event evt)
     {
-        Action actionExecutor = entry.getAction().getExecutor();
+        CompiledAction action = entry.getAction();
+        Action actionExecutor = action.getExecutor();
         assert actionExecutor instanceof Watchable;
         Watchable watchable = (Watchable) actionExecutor;
 
-        if (entry.getType() == WatchType.SCENARIO)
+        boolean isJumped = this.checkJumped(entry);
+
+        // 引数の解決を試みる。（この状態では、引数の解決が完了していない可能性がある。）
+        BrokenReferenceException resolveError = this.tryResolve(entry);
+        if (resolveError != null)
         {
-            ActionContext context = entry.getAction().getContext();
-            if (!entry.getEngine().getExecutor().resolveInputs(entry.getAction()))
-            {
-                this.registry.getLogger().warning("Unable to resolve inputs for action " + entry.getAction().getExecutor().getName() + " in scenario " + entry.getScenario().getName());
-                return;
-            }
+            // 引数の解決に失敗した場合のケースとして：
+            // 1. ジャンプが発生した場合（ジャンプ間にその変数を埋めることが想定されていた？)
+            // 2. 本当に変数がない場合。
+            // 前者は許容されるべきであるが、後者は許容されない。
+            if (!isJumped)
+                entry.getEngine().getListener().onActionError(entry.getAction(), resolveError);
+            return;
         }
 
         // 引数にマッチしているかどうかをチェックする。
-        if (watchable.checkFired(entry.getAction().getContext(), evt))
-            this.onActionFired(entry);
+        if (watchable.checkFired(action.getContext(), evt))
+            this.onActionFired(entry, isJumped);
     }
 
-    private void unregister(WatchingEntryImpl entry)
+    @Nullable
+    private BrokenReferenceException tryResolve(@NotNull WatchEntry entry)
+    {
+        try
+        {
+            entry.getEngine().getExecutor().resolveInputs(entry.getAction());
+            return null;
+        }
+        catch (BrokenReferenceException e)
+        {
+            return e;
+        }
+    }
+
+    private boolean checkJumped(@NotNull WatchEntry executedEntry)
+    {
+        return this.actionWatchers.get(executedEntry.getEngine().getPlugin()).stream()
+                .filter(entry -> entry.getType() == WatchType.SCENARIO)  // ジャンプはシナリオ内でしか発生しない。
+                .filter(WatchEntry::isEnabled)
+                .anyMatch(entry -> entry.getIdx() < executedEntry.getIdx());  // これ以降のアクションが実行されたかどうかをチェックする。
+    }
+
+    private void unregister(WatchEntry entry)
     {
         for (Pair<Class<? extends Event>, RegisteredListener> listenerPair : entry.getListeners())
             EventListenerUtils.getListeners(listenerPair.getLeft()).unregister(listenerPair.getRight());
 
-        this.actionWatchers.remove(entry.getEngine().getPlugin(), entry);
+        synchronized (this.lock)
+        {
+            this.actionWatchers.remove(entry.getEngine().getPlugin(), entry);
+        }
     }
 }

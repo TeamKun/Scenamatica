@@ -2,6 +2,7 @@ package org.kunlab.scenamatica.interfaces.action.input;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.kunlab.scenamatica.exceptions.scenario.BrokenReferenceException;
 import org.kunlab.scenamatica.interfaces.scenario.SessionStorage;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 
@@ -31,7 +32,7 @@ public interface InputReference<T>
      * 参照を解決します。
      *
      * @param variables セッション変数
-     * @throws IllegalStateException 解決できない場合
+     * @throws BrokenReferenceException 解決できない場合
      */
     void resolve(@NotNull StructureSerializer serializer, @NotNull SessionStorage variables);
 

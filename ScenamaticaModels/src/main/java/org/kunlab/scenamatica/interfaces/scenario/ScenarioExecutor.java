@@ -88,9 +88,8 @@ public interface ScenarioExecutor
      * シナリオの入力を解決します。
      *
      * @param action 入力を解決するアクション
-     * @return 解決に成功したかどうか
      */
-    boolean resolveInputs(CompiledAction action);
+    void resolveInputs(CompiledAction action);
 
     /**
      * 出力をアップロードします。

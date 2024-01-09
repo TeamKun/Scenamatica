@@ -30,6 +30,7 @@ public class InputBoardImpl implements InputBoard
     private final List<InputToken<?>[]> requiredNonNull;
     private final List<ValidatorElement> validators;
 
+    private boolean hasUnresolved;
     private boolean validated;
 
     private InputValueHolder<?> lastExistCheck;
@@ -42,6 +43,8 @@ public class InputBoardImpl implements InputBoard
         this.requiredNonNull = new ArrayList<>();
         this.validators = new ArrayList<>();
         this.validated = false;
+        if (tokens.length > 0)
+            this.hasUnresolved = true;
     }
 
     private static List<InputValueHolder<?>> convertValueHolder(InputToken<?>[] tokens)
@@ -49,7 +52,6 @@ public class InputBoardImpl implements InputBoard
         List<InputValueHolder<?>> values = new ArrayList<>();
         for (InputToken<?> token : tokens)
             values.add(new InputValueHolderImpl<>(token));
-
         return values;
     }
 
@@ -58,6 +60,7 @@ public class InputBoardImpl implements InputBoard
     {
         this.ensureAllContains(tokens);
         this.oneOf.add(tokens);
+        this.validated = false;
         return this;
     }
 
@@ -66,6 +69,7 @@ public class InputBoardImpl implements InputBoard
     {
         this.ensureAllContains(tokens);
         this.requiredNonNull.add(tokens);
+        this.validated = false;
         return this;
     }
 
@@ -85,6 +89,8 @@ public class InputBoardImpl implements InputBoard
             throw new IllegalArgumentException("Token already registered: " + token.getName());
 
         this.values.add(new InputValueHolderImpl<>(token));
+        this.hasUnresolved = true;
+        this.validated = false;
         return this;
     }
 
@@ -100,6 +106,7 @@ public class InputBoardImpl implements InputBoard
     @Override
     public InputBoard validator(@NotNull Predicate<? super InputBoard> validator, @Nullable String validateFailedMessage)
     {
+        this.validated = false;
         this.validators.add(new ValidatorElement(validator, validateFailedMessage));
         return this;
     }
@@ -257,6 +264,7 @@ public class InputBoardImpl implements InputBoard
     public void compile(@NotNull StructureSerializer serializer, @NotNull Map<String, Object> map)
     {
         this.validated = false;
+        boolean allResolved = true;
         for (InputValueHolder<?> value : this.values)
         {
             if (!map.containsKey(value.getToken().getName()))
@@ -269,7 +277,11 @@ public class InputBoardImpl implements InputBoard
             value.set(serializer, obj);
             if (value.isResolved())
                 value.validate(this.type);
+            else
+                allResolved = false;
         }
+
+        this.hasUnresolved = !allResolved;
 
         this.validateContract();
     }
@@ -287,11 +299,17 @@ public class InputBoardImpl implements InputBoard
             // assert value.isPresent();
             value.validate(this.type);
         }
+
+        this.validate();
+        this.hasUnresolved = false;
     }
 
     @Override
     public void releaseReferences()
     {
+        if (!this.values.isEmpty())
+            this.hasUnresolved = true;
+
         for (InputValueHolder<?> value : this.values)
             value.getValueReference().release();
     }
@@ -299,12 +317,7 @@ public class InputBoardImpl implements InputBoard
     @Override
     public boolean hasUnresolvedReferences()
     {
-        for (InputValueHolder<?> value : this.values)
-        {
-            if (!(value.isResolved() || value.isEmpty()))
-                return true;
-        }
-        return false;
+        return this.hasUnresolved;
     }
 
     @Override

@@ -161,7 +161,7 @@ public class ScenarioCompiler
                     runAs,
                     structure,
                     listener::onActionError,
-                    listener::onActionFinished
+                    (result, type) -> listener.onActionExecutionFinished(result)
             );
         }
 
@@ -233,7 +233,7 @@ public class ScenarioCompiler
                     runAs,
                     scenario.getAction(),
                     listener::onActionError,
-                    listener::onActionFinished
+                    (result, type) -> listener.onActionExecutionFinished(result)
             );
 
             action.getContext().setScenarioName(scenario.getName());

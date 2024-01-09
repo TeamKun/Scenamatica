@@ -31,9 +31,9 @@ import org.kunlab.scenamatica.interfaces.scenario.runtime.CompiledScenarioAction
 import org.kunlab.scenamatica.interfaces.scenario.runtime.CompiledTriggerAction;
 import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerStructure;
+import org.kunlab.scenamatica.scenario.ScenarioActionExecutionListener;
 import org.kunlab.scenamatica.scenario.ScenarioCompiler;
 import org.kunlab.scenamatica.scenario.ScenarioResultImpl;
-import org.kunlab.scenamatica.scenario.ScenarioTestReporterBridge;
 
 import java.util.Collections;
 import java.util.List;
@@ -79,7 +79,7 @@ public class ScenarioEngineImpl implements ScenarioEngine
         this.plugin = plugin;
         this.scenario = scenario;
         this.state = ScenarioState.STAND_BY;
-        this.listener = new ScenarioTestReporterBridge(this, this.registry);
+        this.listener = new ScenarioActionExecutionListener(this, this.registry);
         this.verbose = registry.getEnvironment().isVerbose();
         this.logPrefix = LogUtils.gerScenarioPrefix(null, this.scenario);
 

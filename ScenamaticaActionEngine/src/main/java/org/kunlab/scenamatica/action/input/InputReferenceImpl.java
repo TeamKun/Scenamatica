@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.kunlab.scenamatica.exceptions.scenario.BrokenReferenceException;
 import org.kunlab.scenamatica.interfaces.action.input.InputReference;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.input.Traverser;
@@ -380,13 +381,13 @@ public class InputReferenceImpl<T> implements InputReference<T>
             return;
         }
         if (this.referenceParts == null)
-            throw new IllegalStateException("This reference doesn't contain any references: " + this.referencing);
+            throw new BrokenReferenceException("This reference doesn't contain any references: " + this.referencing, this.referencing);
         assert this.referencing != null;
 
         Object resolved = resolveReferences(this.referencing, this.referenceParts, variables);
 
         if (containsReference(resolved))
-            throw new IllegalStateException("Failed to resolve reference: " + this.referencing + " -> " + resolved);
+            throw new BrokenReferenceException("Failed to resolve reference: " + this.referencing + " -> " + resolved, this.referencing);
 
         this.resolve(this.smartCast(serializer, resolved));
     }
