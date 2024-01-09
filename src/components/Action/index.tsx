@@ -75,7 +75,7 @@ const Action: React.FC<ActionProps> = ({
     )
 
     const buildEventsComponent = () => <>
-        <p className={styles.bigger}>対応イベント</p>
+        <p className={clsx(styles.bigger, "compatibleEvents")}>対応イベント</p>
         <ul>
             {Array.isArray(events) ? events.map(event => <li key={event.name}>{createEventLink(event)}</li>) :
                 <li>{createEventLink(events)}</li>}
@@ -83,7 +83,7 @@ const Action: React.FC<ActionProps> = ({
     </>
 
     return (<>
-        <p>{description}</p>
+        <p className={"actionDescription"}>{description}</p>
         <table className={styles.action}>
             <tbody>
                 <tr>
@@ -91,7 +91,7 @@ const Action: React.FC<ActionProps> = ({
                 </tr>
                 <tr>
                     <td>ID(指定用名)</td>
-                    <td>
+                    <td className={"actionID"}>
                         <CopyableText domID={id}>{id}</CopyableText>
                     </td>
                 </tr>
@@ -111,11 +111,11 @@ const Action: React.FC<ActionProps> = ({
         </table>
         {events ? buildEventsComponent() : <></>}
 
-        <p className={styles.bigger}>{args ? name + " の引数" : "*（引数なし）*"}</p>
+        <p className={clsx(styles.bigger, "actionArguments")}>{args ? name + " の引数" : "*（引数なし）*"}</p>
 
         {args ? <Object objects={args} /> : <></>}
 
-        <p className={styles.bigger}>{outputs ? name + " の出力" : "*（出力なし）*"}</p>
+        <p className={clsx(styles.bigger, "actionOutputs")}>{outputs ? name + " の出力" : "*（出力なし）*"}</p>
 
         {outputs ? <Object objects={outputs} /> : <></>}
     </>)
