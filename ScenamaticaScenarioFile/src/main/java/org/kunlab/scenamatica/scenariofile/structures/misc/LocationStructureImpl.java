@@ -146,4 +146,22 @@ public class LocationStructureImpl implements LocationStructure
     {
         return new LocationStructureImpl(this.x, this.y, this.z, this.yaw, this.pitch, world);
     }
+
+    @Override
+    public String toString()
+    {
+        StringBuilder builder = new StringBuilder("Location{")
+                .append("x=").append(this.x).append(", ")
+                .append("y=").append(this.y).append(", ")
+                .append("z=").append(this.z);
+        if (this.yaw != null)
+            builder.append(", yaw=").append(this.yaw);
+        if (this.pitch != null)
+            builder.append(", pitch=").append(this.pitch);
+
+        if (this.world != null)
+            builder.append(", world=").append(this.world);
+
+        return builder.append("}").toString();
+    }
 }

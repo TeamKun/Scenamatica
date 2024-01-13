@@ -88,9 +88,16 @@ public interface BlockStructure extends Structure, Mapped<Block>, Creatable<Bloc
      * Location にこのブロックの情報を適用します。
      *
      * @param location 適用先の Location
-     * @return 適用後の Location
+     * @return 適用後の Block
      */
     Block apply(@NotNull Location location);
+
+    /**
+     * このブロックの情報を適用します。
+     *
+     * @return 適用後の Block
+     */
+    Block apply();
 
     /**
      * ワールド情報が欠落している場合に, ScenarioEngine からワールド情報を取得してから Location にこのブロックの情報を適用します。

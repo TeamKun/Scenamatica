@@ -213,9 +213,9 @@ public class BlockStructureImpl implements BlockStructure
     }
 
     @Override
-    public void applyTo(Block block)
+    public void applyTo(@NotNull Block block)
     {
-        Location location = this.location.create();
+        Location location = block.getLocation();
 
         if (this.type != null)
             block.setType(this.type, true);
@@ -305,6 +305,17 @@ public class BlockStructureImpl implements BlockStructure
         this.applyTo(block);
 
         return block;
+    }
+
+    @Override
+    public Block apply()
+    {
+        if (this.location == null)
+            throw new IllegalStateException("location is null");
+        else if (this.location.getWorld() == null)
+            throw new IllegalStateException("location.world is null");
+
+        return this.apply(this.location.create());
     }
 
     @Override

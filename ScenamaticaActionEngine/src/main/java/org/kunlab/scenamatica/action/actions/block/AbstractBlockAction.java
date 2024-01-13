@@ -36,6 +36,7 @@ public abstract class AbstractBlockAction
     {
         List<AbstractBlockAction> actions = new ArrayList<>();
 
+        actions.add(new BlockAction());
         actions.add(new BlockBreakAction());
         actions.add(new BlockPlaceAction());
 
@@ -72,6 +73,11 @@ public abstract class AbstractBlockAction
 
     protected Location getBlockLocationWithWorld(@NotNull BlockStructure block, @NotNull ActionContext ctxt)
     {
+        if (block.getLocation() == null)
+            throw new IllegalStateException("Block location is not specified");
+        else if (block.getLocation().getX() == null || block.getLocation().getY() == null || block.getLocation().getZ() == null)
+            throw new IllegalStateException("Unable to specify block location: " + block.getLocation());
+
         return Utils.assignWorldToLocation(block.getLocation().create().clone(), ctxt.getEngine());
     }
 }
