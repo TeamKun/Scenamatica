@@ -19,9 +19,21 @@ import BelowDocument from "/src/components/BelowDocument";
 
 ## 基本：アクション発火時に実行されるシナリオを書いてみる {#basic-usage}
 
-### ステップ１ 前提となるシナリオを作成する {#basic-usage-step1-create-basic-scenario}
+### ステップ１. 前提となるシナリオを作成する {#basic-usage-step1-create-basic-scenario}
 
 まずは、以下のような簡単なシナリオを作成します。
+
+:::tip
+
+このシナリオは、[チュートリアル：最初のシナリオを書いてみる](/docs/getting-started/tutorials/writing-my-first-scenario#step6-write-scenario)
+で作成したシナリオと同じものです。
+
+<BelowDocument docId="getting-started/tutorials/writing-my-first-scenario"
+               label="チュートリアル：最初のシナリオを書いてみる"
+               tutorial
+/>
+
+:::
 
 ```yaml title="test-hoge-success.yml" showLineNumbers
 scenamatica: "0.0.1"
@@ -53,17 +65,6 @@ scenario:
   action: player_death
   target: Actor1
 ```
-
-:::tip
-
-このシナリオは、[チュートリアル：最初のシナリオを書いてみる](/docs/getting-started/tutorials/writing-my-first-scenario#step6-write-scenario)で作成したシナリオと同じものです。
-
-<BelowDocument docId="getting-started/tutorials/writing-my-first-scenario"
-               label="チュートリアル：最初のシナリオを書いてみる"
-               tutorial
-/>
-
-:::
 
 ### ステップ２. トリガに `on_action` を追加する {#basic-usage-step2-add-on-action-to-trigger}
 
@@ -114,7 +115,7 @@ scenario:
   target: Actor1
 ```
 
-### ステップ３．動作を確認する {#basic-usage-step3-check-behavior}
+### ステップ３. 動作を確認する {#basic-usage-step3-check-behavior}
 
 実際にシナリオを実行してみましょう。
 
@@ -135,10 +136,20 @@ tellraw @a {"text":"Hello, World!"}
 
 このチュートリアルでは、[トリガ `on_action`][trigger-on-action]を使って、プラグインの機能が発火した際に自動でシナリオを実行する方法を学びます。
 
-### ステップ１．基本的なシナリオを作成する {#passive-scenario-step1-create-scenario}
-
+### ステップ１. 基本的なシナリオを作成する {#passive-scenario-step1-create-scenario}
 
 まずは、以下のような簡単なシナリオを作成します。
+
+:::tip
+
+このシナリオは、[チュートリアル：最初のシナリオを書いてみる](/docs/getting-started/tutorials/writing-my-first-scenario#step6-write-scenario)で作成したシナリオと同じものです。
+
+<BelowDocument docId="getting-started/tutorials/writing-my-first-scenario"
+               label="チュートリアル：最初のシナリオを書いてみる"
+               tutorial
+/>
+
+:::
 
 ```yaml title="test-hoge-success.yml" showLineNumbers
 scenamatica: "0.0.1"
@@ -171,18 +182,7 @@ scenario:
   target: Actor1
 ```
 
-:::tip
-
-このシナリオは、[チュートリアル：最初のシナリオを書いてみる](/docs/getting-started/tutorials/writing-my-first-scenario#step6-write-scenario)で作成したシナリオと同じものです。
-
-<BelowDocument docId="getting-started/tutorials/writing-my-first-scenario"
-               label="チュートリアル：最初のシナリオを書いてみる"
-               tutorial
-/>
-
-:::
-
-### ステップ２．プラグインの発火条件を確認する {#passive-scenario-step2-check-plugin-trigger}
+### ステップ２. プラグインの発火条件を確認する {#passive-scenario-step2-check-plugin-trigger}
 
 プラグインの機能の発火でシナリオを開始するために、まずはその発火条件を確認します。
 
@@ -202,7 +202,7 @@ scenario:
 #...
 ```
 
-### ステップ３．トリガにプラグインの機能の発火条件を追加する {#passive-scenario-step3-add-trigger}
+### ステップ３. トリガにプラグインの機能の発火条件を追加する {#passive-scenario-step3-add-trigger}
 
 [トリガ `on_action`][trigger-on-action] を使って、プラグインの機能が発火した際に自動でシナリオを実行するようにします。
 
@@ -248,7 +248,7 @@ scenario:
   action: player_death
 ```
 
-### ステップ４．動作を確認する {#passive-scenario-step4-check-if-it-works}
+### ステップ４. 動作を確認する {#passive-scenario-step4-check-if-it-works}
 
 実際にシナリオを実行してみましょう。
 

@@ -1,8 +1,8 @@
 ---
 sidebar_position: 6
+toc_max_heading_level: 4
 ---
 
-import BelowDocument from "/src/components/BelowDocument";
 import { Object, ObjectType } from "/src/components/Object";
 
 # 変数・定数の定義と参照
@@ -16,7 +16,7 @@ import { Object, ObjectType } from "/src/components/Object";
 [シナリオファイル](/docs/use/scenario/scenario-file#overview)では、定数を定義し、同じファイル内の任意の場所から参照できます。
 さらに、シナリオ内で使用できる予約された変数も使用できます。
 
-## 定数の定義と参照 {#constant-definition}
+## 定数 {#constant-definition}
 
 ### 概要 {#constant-definition-overview}
 
@@ -25,22 +25,21 @@ import { Object, ObjectType } from "/src/components/Object";
 主に、アクタのインベントリや検証用のメッセージなど、同じ値を複数回使用する場合に使用します。  
 これにより、シナリオファイルの冗長な記述を減らし、**可読性と保守性を向上**させます。
 
-定義・参照には以下のの２つの種類があります。
+定義を作成するには `definitions` という名前のオブジェクトをシナリオファイルのルートに作成し、その中で自由に定義します。
+キーには割り当てる名前を記述し、値には任意の型の値を記述します。
+
+定義機能には以下のの２つの種類があります。
 1. **オブジェクトの定義**  
-  オブジェクトとは、アクタのインベントリの設定など、 YAML の `キー:値` で表現されるものです。
+  オブジェクトとは、 YAML では `キー: 値` と表現される構造体です。
   参照用のプロパティを使用したいところで記述することで、オブジェクトの値を参照できます。
 2. **埋め込み文字列の定義**  
-  シナリオファイル内の任意の文字列の一部または全部を、定義を使用して置換します。
+  任意な文字列の一部または全部を、定義を使用して置換します。
   :::warning
-  文字列の埋め込み機能は、 YAML のキーでは使用できません。
+  文字列の埋め込み機能は、 YAML の**キーでは使用できません**。
   :::
 
 ### 定義の作成 {#create-constant}
   
-定義は、シナリオファイルのルートに `definitions` という名前のオブジェクトを作成し、その中に定義を記述します。  
-キーには割り当てる任意の名前を記述し、値には定義したい任意の型の値を記述します。
-
-以下は、定義の例です。
 
 ```yaml showLineNumbers
 scenamatica: 1.0.0
@@ -191,7 +190,7 @@ Java の `System#getProperties()Ljava/lang/String;` で取得できるシステ�
   }
 ]} />
 
-#### `runtime`.`memory` {#variables-type-runtime-memory}
+##### `runtime`.`memory` {#variables-type-runtime-memory}
 
 <Object objects={[
   {
@@ -229,11 +228,11 @@ Java の `System#getProperties()Ljava/lang/String;` で取得できるシステ�
   }
 ]} />
 
-#### `session`.`scenarios`.`*` {#variables-type-session-scenarios}
+##### `session`.`scenarios`.`*` {#variables-type-session-scenarios}
 
 `*` には、シナリオ（ファイル）の名前を指定します。
 
-#### Scenario {#variables-type-scenario}
+#### Scenario 型 {#variables-type-scenario}
 
 この変数を使用してシナリオを取得するには、子に[シナリオの名前](/docs/use/scenario/types/#apex-name)を指定します(MUST)。
 
@@ -281,7 +280,7 @@ Java の `System#getProperties()Ljava/lang/String;` で取得できるシステ�
   }
 ]} />
 
-#### `session`.`scenario`.`*`.`output` {#variables-type-session-scenario-result}
+##### `session`.`scenario`.`*`.`output` {#variables-type-session-scenario-result}
 
 `*` には、シナリオのインデックスまたは[名前](/docs/use/scenario/types/#scenario-name)を指定します。
 
@@ -292,7 +291,7 @@ Java の `System#getProperties()Ljava/lang/String;` で取得できるシステ�
 
 :::
 
-#### `session`.`scenario`.`*`.`runif`.`output` {#variables-type-session-scenario-runif-output}
+##### `session`.`scenario`.`*`.`runif`.`output` {#variables-type-session-scenario-runif-output}
 
 `*` には、シナリオのインデックスまたは[名前](/docs/use/scenario/types/#scenario-name)を指定します。
 
@@ -302,7 +301,7 @@ Java の `System#getProperties()Ljava/lang/String;` で取得できるシステ�
 例： `session.scenario.foo.runif.output` → `session.foo.runif.output`
 
 :::
-#### ScenarioResult {#variables-type-scenario-result}
+#### ScenarioResult 型 {#variables-type-scenario-result}
 
 <Object objects={[
   {
@@ -323,7 +322,7 @@ Java の `System#getProperties()Ljava/lang/String;` で取得できるシステ�
   }
 ]} />
 
-#### Trigger {#variables-type-trigger}
+#### Trigger 型 {#variables-type-trigger}
 
 以下の変数に加えて追加で[トリガ](/docs/use/scenario/types#trigger-structure)におけるすべての値を参照できます。
 

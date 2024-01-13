@@ -14,11 +14,29 @@ import BelowDocument from "/src/components/BelowDocument";
 
 このチュートリアルでは、[トリガ `on_load`][trigger-on-load]の使い方を学びます。
 
-これを完了すると、サーバの起動時やリロード時に自動で実行されるシナリオを作成できるようになります。
+これを完了すると、サーバの起動時やリロード時に自動で実行されるシナリオを作成できるようになります。  
+さらに、これを応用すると、CI/CD などで自動テストを行えます。
 
-## ステップ１． 基本的なシナリオを作成する {#step1-create-basic-scenario}
+<BelowDocument docId="getting-started/tutorials/integration/automation-with-github-actions"
+               label="チュートリアル： GitHub Actions でテストを自動化する"
+               tutorial
+/>
+
+
+## ステップ１. 基本的なシナリオを作成する {#step1-create-basic-scenario}
 
 まずは、以下のような簡単なシナリオを作成します。
+
+:::tip
+
+このシナリオは、[チュートリアル：最初のシナリオを書いてみる](/docs/getting-started/tutorials/writing-my-first-scenario#step6-write-scenario)で作成したシナリオと同じものです。
+
+<BelowDocument docId="getting-started/tutorials/writing-my-first-scenario"
+               label="チュートリアル：最初のシナリオを書いてみる"
+               tutorial
+/>
+
+:::
 
 ```yaml title="test-hoge-success.yml" showLineNumbers
 scenamatica: "0.0.1"
@@ -51,18 +69,7 @@ scenario:
   target: Actor1
 ```
 
-:::tip
-
-このシナリオは、[チュートリアル：最初のシナリオを書いてみる](/docs/getting-started/tutorials/writing-my-first-scenario#step6-write-scenario)で作成したシナリオと同じものです。  
-
-<BelowDocument docId="getting-started/tutorials/writing-my-first-scenario"
-               label="チュートリアル：最初のシナリオを書いてみる"
-               tutorial
-/>
-
-:::
-
-## ステップ２．トリガに `on_load` を追加する {#step2-add-on-load-to-trigger}
+## ステップ２. トリガに `on_load` を追加する {#step2-add-on-load-to-trigger}
 
 [トリガ `on_load`][trigger-on-load] は、そのプラグインが読み込まれたときに自動で発火するトリガです。  
 これには、プラグインのリロードも含まれます。
@@ -78,7 +85,7 @@ on:
 - type: on_load
 ```
 
-## ステップ３．動作を確認する {#step3-check-if-it-works}
+## ステップ３. 動作を確認する {#step3-check-if-it-works}
 
 シナリオを作成したら、サーバを再起動するか、プラグインを再読込します。  
 シナリオが実行されたらこのチュートリアルは完了です。お疲れ様でした。

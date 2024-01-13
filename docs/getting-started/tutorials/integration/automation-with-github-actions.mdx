@@ -3,7 +3,7 @@ import Requirements from "/src/components/Requirements";
 
 # GitHub Actions でテストを自動化する
 
-このページでは、GitHub Actions を使用して、テストを自動化する方法を説明します。
+GitHub Actions を使用して、テストを自動化しましょう。
 
 ---
 
@@ -39,14 +39,16 @@ EULA に同意しない場合は、このアクションを使用しないでく
 
 ## 概要 {#overview}
 
-GitHub Actions は、GitHub が提供する CI/CD サービスです。
+このチュートリアルでは、[GitHub Actions 連携機能](/docs/use/integration/ci-cd#github-actions)を使用して、テストを自動化する方法について学びます。
 
-## ステップ1. シナリオを記述する。
+これを完了すると、コミットのプッシュ時やプルリクエストのオープン時に、自動でテストを実行して、リグレッションを防げます。
 
-テストを自動化するためには、プラグインのシナリオを記述する必要があります。
+## ステップ1. 読み込み時に自動で実行されるシナリオを記述する。
 
-<BelowDocument docId="getting-started/tutorials/writing-my-first-scenario"
-               label="最初のシナリオを書いてみる"
+テストを自動化するためには、読み込み時に自動で実行されるシナリオを記述する必要があります。
+
+<BelowDocument docId="getting-started/tutorials/scenario/writing-scenario-runs-on-load"
+               label="自動で実行 されるシナリオを書いてみる"
 />
 
 :::info
@@ -149,9 +151,15 @@ $ git push origin main
 
 ## プルリクエストのテスト {#test-pull-request}
 
-プルリクエストも自動的にテストを実行するように設定できます。  
-Scenamatica Action は、プルリクエストにテスト結果を送信するため、 `pull-requests: write` 権限が必要です。
+プルリクエストに関連したイベントでテストを実行することもできます。
 以下のように `pull_request` イベントを追加した後、トークンに権限を付与してください。
+
+:::danger
+
+Scenamatica Action は、を使ってプリリクエストをテストするには、 `pull-requests: write` 権限が必要です。  
+これは、プルリクエストにテスト結果のコメントを書き込むために使用します。
+
+:::
 
 ```yaml {title=".github/workflows/my-scenamatica-workflow.yml"} showLineNumbers
 

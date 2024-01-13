@@ -16,7 +16,7 @@ import BelowDocument from "/src/components/BelowDocument";
 
 これを完了すると、シナリオの実行前後に分岐した任意の処理を、トリガによって追加できるようになります。  
 
-### シチュエーションの例
+### シチュエーションの例 {#example-situation}
 
 例えば、私のプラグイン「Speakable Villager」を考えます。
 このプラグインは、プレイヤが村人を殴ると、そのプレイヤのチャットメッセージに「殴らないで！」というメッセージを送信します。
@@ -47,7 +47,7 @@ scenamatica: "0.0.1"
 name: "message_on_villager_hit"
 
 on:
-  # プレイヤーが村人を殴ったときに発火するようにする。。
+  # プレイヤーが村人を殴ったときに発火するようにする。
   - type: on_action
     action: player_interact_at_entity
     with:
@@ -165,7 +165,7 @@ on:
     # highlight-end
 ```
 
-### ステップ６．動作を確認する {#step6-check-if-it-works}
+## ステップ６. 動作を確認する {#step6-check-if-it-works}
 
 実際にシナリオを実行してみましょう。  
 プラグインをビルドし、サーバを再起動します。

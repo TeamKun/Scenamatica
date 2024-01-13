@@ -269,7 +269,64 @@ const config = {
           indexName: "scenamatica-kunlab",
           contextualSearch: true,
           searchPagePath: "search",
-        }
+        },
+        metadata: [
+          {
+            name: "twitter:card",
+            content: "summary_large_image"
+          },
+          {
+            name: "keywords",
+            content: "Scenamatica, Minecraft, PaperMC, Plugin, Scenario, CI/CD, Automatic Testing, Spigot, Bukkit, Plugin, Plugin Development"
+          }
+        ],
+        headTags: [
+          {
+            tagName: "meta",
+            name: "twitter:title",
+            content: "Scenamatica"
+          },
+          {
+            tagName: "meta",
+            name: "twitter:description",
+            content: "Let's enhance your PaperMC plugin quality with Scenamatica: YAML-defined scenarios, CI/CD integration."
+          },
+          {
+            tagName: "meta",
+            name: "twitter:image",
+            content: "https://scenamatica.kunlab.org/img/landing.png"
+          },
+          {
+            tagName: "meta",
+            name: "twitter:card",
+            content: "summary_large_image"
+          },
+          {
+            tagName: "meta",
+            name: "og:title",
+            content: "Scenamatica"
+          },
+          {
+            tagName: "meta",
+            name: "og:description",
+            content: "Let's enhance your PaperMC plugin quality with Scenamatica: YAML-defined scenarios, CI/CD integration."
+          },
+          {
+            tagName: "meta",
+            name: "og:image",
+            content: "https://scenamatica.kunlab.org/img/logo2.png"
+          },
+          {
+            tagName: "meta",
+            name: "og:url",
+            content: "https://scenamatica.kunlab.org/"
+          },
+          {
+            tagName: "meta",
+            name: "og:site_name",
+            content: "Scenamatica"
+          }
+        ]
       }),
 };
 
