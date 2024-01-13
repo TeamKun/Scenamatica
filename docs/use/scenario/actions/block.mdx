@@ -35,6 +35,40 @@ import {ObjectType} from "/src/components/Object";
 
 :::
 
+# 特別：ブロック {#block}
+
+<Action
+  name="ブロック"
+  description="ブロックの状態や振る舞い、属性を変更します。"
+  id="block"
+  args={[
+    {
+      name: "block",
+      type: "Block",
+      type_link: "/docs/use/scenario/types/misc#block-structure",
+      description: "変更するブロックです。",
+      required: [ScenarioType.EXECUTE]
+    },
+    {
+      name: "data",
+      type: "Block",
+      type_link: "/docs/use/scenario/types/misc#block-structure",
+      description: "変更後のブロックです。",
+      required: [ScenarioType.EXECUTE]
+    }
+  ]}
+  outputs={[
+    {
+      name: "block",
+      type: "Block",
+      type_link: "/docs/use/scenario/types/misc#block-structure",
+      description: "変更されたブロックです。",
+    }
+  ]}
+  executable={"ブロックの状態・属性を変更します。"}
+  requireable={"ブロックの状態・属性が指定されたものと一致するかを判定します。"}
+/>
+
 ## 破壊 {#break}
 
 <Action name="ブロックの破壊"

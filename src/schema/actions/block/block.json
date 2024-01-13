@@ -1,0 +1,11 @@
+{
+  "name": "block",
+  "description": "ブロックの状態を変更します。",
+  "base": "block_$base",
+  "arguments": {
+    "data": {
+      "$ref": "#/definitions/block",
+      "description": "ブロックの位置を指定します。"
+    }
+  }
+}
