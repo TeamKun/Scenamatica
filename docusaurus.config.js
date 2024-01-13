@@ -313,11 +313,6 @@ const config = {
           },
           {
             tagName: "meta",
-            name: "og:image",
-            content: "https://scenamatica.kunlab.org/img/logo2.png"
-          },
-          {
-            tagName: "meta",
             name: "og:url",
             content: "https://scenamatica.kunlab.org/"
           },
@@ -326,7 +321,8 @@ const config = {
             name: "og:site_name",
             content: "Scenamatica"
           }
-        ]
+        ],
+        image: "img/landing.png",
       }),
 };
 
