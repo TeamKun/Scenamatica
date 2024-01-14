@@ -35,7 +35,7 @@ import {ObjectType} from "/src/components/Object";
 
 :::
 
-# 特別：ブロック {#block}
+## 特別：ブロック {#block}
 
 <Action
   name="ブロック"
@@ -68,6 +68,16 @@ import {ObjectType} from "/src/components/Object";
   executable={"ブロックの状態・属性を変更します。"}
   requireable={"ブロックの状態・属性が指定されたものと一致するかを判定します。"}
 />
+
+#### コンディション要求シナリオでの使用 {#block-usage-in-requiring}
+
+:::tip
+
+引数 `data` が空な場合、ブロックが空であるか（空気かどうか）を判定します。
+
+参考：[Block#isEmpty()V](https://jd.papermc.io/paper/1.16/org/bukkit/block/Block.html#isEmpty--)
+
+:::
 
 ## 破壊 {#break}
 
