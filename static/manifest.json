@@ -2,7 +2,7 @@
   "name": "Scenamatica Documents",
   "short_name": "Scenamatica",
   "start_url": "/",
-  "theme_color": "#53BBFFFF",
+  "theme_color": "#53bbff",
   "background_color": "#0c1017",
   "scope": "/",
   "display": "standalone",
