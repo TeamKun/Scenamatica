@@ -19,14 +19,14 @@ scenario:
     action: entity
     with:
       target: "@e[type=minecraft:parrot,tag=810snpi]"
-      entity:
+      data:
         glowing: true
         customNameVisible: true
   - type: require
     action: entity
     with:
       target: "@e[type=minecraft:parrot,tag=810snpi]"
-      entity:
+      data:
         glowing: true
         customNameVisible: true
     timeout: 20
