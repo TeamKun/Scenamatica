@@ -1,0 +1,11 @@
+{
+  "name": "player",
+  "description": "プレイヤの状態を変更します。",
+  "base": "player_$base",
+  "arguments": {
+    "data": {
+      "$ref": "#/definitions/player",
+      "description": "プレイヤの状態です。"
+    }
+  }
+}

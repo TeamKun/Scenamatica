@@ -1897,6 +1897,7 @@
           "type": "string",
           "description": "アクションの種類です。 ",
           "enum": [
+            "block",
             "block_break",
             "block_place",
             "entity_damage_by_entity",
@@ -1936,6 +1937,7 @@
             "player_kick",
             "player_level_change",
             "player_move",
+            "player",
             "player_projectile_launch",
             "player_quit",
             "player_respawn",
@@ -1970,6 +1972,23 @@
         "action"
       ],
       "allOf": [
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "block",
+                "description": "ブロックの状態を変更します。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/block"
+              }
+            }
+          }
+        },
         {
           "if": {
             "properties": {
@@ -2603,6 +2622,23 @@
           "if": {
             "properties": {
               "action": {
+                "const": "player",
+                "description": "プレイヤの状態を変更します。"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "with": {
+                "$ref": "#/definitions/action/definitions/player"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
                 "const": "player_projectile_launch",
                 "description": "プレイヤに投げ物を射出させます。"
               }
@@ -2916,6 +2952,17 @@
             }
           }
         },
+        "block": {
+          "type": "object",
+          "description": "ブロックの状態を変更します。",
+          "properties": {
+            "data": {
+              "$ref": "#/definitions/block",
+              "description": "ブロックの位置を指定します。"
+            }
+          },
+          "$ref": "#/definitions/action/definitions/block_$base"
+        },
         "block_break": {
           "type": "object",
           "description": "ブロックの破壊を検知します。",
@@ -3152,7 +3199,7 @@
           "type": "object",
           "description": "エンティティの状態を変更します。",
           "properties": {
-            "entity": {
+            "data": {
               "$ref": "#/definitions/entity",
               "description": "変更する値です。"
             }
@@ -3208,7 +3255,10 @@
           "description": "エンティティの設置を検知します",
           "properties": {
             "target": {
-              "description": "設置するエンティティの UUID, セレクタ, 実体, または Material です。"
+              "description": "設置するエンティティの UUID, セレクタ, 実体です。"
+            },
+            "material": {
+              "description": "設置するエンティティをアイテム化したときのアイテムです。"
             },
             "player": {
               "description": "設置するプレイヤの名前または UUID です。",
@@ -3514,8 +3564,17 @@
           "type": "object",
           "properties": {
             "target": {
-              "type": "string",
-              "description": "対象のプレイヤです。"
+              "description": "対象のプレイヤです。",
+              "oneOf": [
+                {
+                  "type": "string",
+                  "description": "プレイヤ名または UUID セレクタを指定します。"
+                },
+                {
+                  "$ref": "#/definitions/player",
+                  "description": "プレイヤの構造を指定します。"
+                }
+              ]
             }
           }
         },
@@ -3819,6 +3878,10 @@
                 "hand",
                 "off_hand"
               ]
+            },
+            "blockFace": {
+              "description": "プレイヤがクリックしたブロックの面です。",
+              "$ref": "#/definitions/blockFace"
             }
           },
           "$ref": "#/definitions/action/definitions/player_$base"
@@ -4005,6 +4068,17 @@
           },
           "$ref": "#/definitions/action/definitions/player_$base"
         },
+        "player": {
+          "type": "object",
+          "description": "プレイヤの状態を変更します。",
+          "properties": {
+            "data": {
+              "$ref": "#/definitions/player",
+              "description": "プレイヤの状態です。"
+            }
+          },
+          "$ref": "#/definitions/action/definitions/player_$base"
+        },
         "player_projectile_launch": {
           "type": "object",
           "description": "プレイヤに投げ物を射出させます。",
@@ -4126,7 +4200,7 @@
           "properties": {
             "cause": {
               "$ref": "#/definitions/teleportCause",
-              "description": "移動元の座標を指定します。"
+              "description": "移動した理由を指定します。"
             }
           },
           "$ref": "#/definitions/action/definitions/player_move"
@@ -4156,12 +4230,9 @@
             },
             "reached": {
               "type": "boolean",
-              "description": "マイルストーンに到達したかどうかです。検証時はこれと比較します。"
+              "description": "マイルストーンに到達したかどうかです。"
             }
-          },
-          "required": [
-            "name"
-          ]
+          }
         },
         "broadcast": {
           "type": "object",
@@ -4311,7 +4382,7 @@
               "type": "number",
               "description": "ワールドボーダのサイズです。"
             },
-            "size_old": {
+            "sizeOld": {
               "type": "number",
               "description": "ワールドボーダのサイズの変更前の値です。"
             },
@@ -4340,7 +4411,7 @@
               "type": "number",
               "description": "ワールドボーダのサイズです。"
             },
-            "size_old": {
+            "sizeOld": {
               "type": "number",
               "description": "ワールドボーダのサイズの変更前の値です。"
             },
@@ -4353,7 +4424,7 @@
               "description": "ワールドボーダの中心座標です。",
               "$ref": "#/definitions/location"
             },
-            "center_old": {
+            "centerOld": {
               "type": "object",
               "description": "ワールドボーダの中心座標の変更前の値です。",
               "$ref": "#/definitions/location"

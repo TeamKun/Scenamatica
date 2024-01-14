@@ -57,6 +57,41 @@ import {ObjectType} from "/src/components/Object";
 
 対象となったプレイヤの [`Player`](/docs/use/scenario/types/entities/#player-structure) オブジェクトを出力します。
 
+## 特別：プレイヤ {#player}
+
+<Action name="プレイヤ"
+        description="プレイヤの状態や振る舞い、属性を変更します。"
+        id="player"
+        args={[
+          {
+            name: "target",
+            type: "PlayerSpecifier",
+            anchor: "general-target",
+            type_link: "/docs/use/scenario/types/entities#player-specifier",
+            description: "状態を書き換える対象のプレイヤです。",
+            required: true
+          },
+          {
+            name: "data",
+            type: "Player",
+            type_link: "/docs/use/scenario/types#player-structure",
+            description: "書き換えるプレイヤの状態です。",
+            required: [ScenarioType.EXECUTE]
+          },
+        ]}
+        outputs={[
+          {
+            name: "target",
+            type: "Player",
+            type_link: "/docs/use/scenario/types#player-structure",
+            description: "書き換えたプレイヤです。",
+          }
+        ]}
+        executable={"プレイヤの状態・属性を変更します。"}
+        requireable={"プレイヤが存在するか、または状態・属性が指定されたものと一致するかを判定します。"}
+/>
+
+
 ## バケツの使用 {#bucket-empty}
 
 <Action name="バケツの使用"
