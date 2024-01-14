@@ -76,7 +76,7 @@ reporting:
   # JUnit Result XML と呼ばれるデファクトスタンダードのテスト結果フォーマットで出力します。
   junit:
     # JUnit レポートを出力するかどうかを設定します。
-    enabled: true
+    enabled: false
     # レポートの出力先を設定します。
     # Scenamatica のデータフォルダ(e.g. `plugins/Scenamatica`) からの相対パスで指定します。
     directory: "reports/"
