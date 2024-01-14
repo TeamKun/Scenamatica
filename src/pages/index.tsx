@@ -151,7 +151,7 @@ function Appeals(): JSX.Element {
                 <div>
                     <h2 id={"topics-scenario-yaml"}>YAML でシナリオをかんたん定義</h2>
                     <p>
-                        Scenamatica のシナリオは、右のようなのかんたんな YAML で定義されます。
+                        Scenamatica のシナリオは、右のようなかんたんな YAML で定義されます。
                         この例では、 仮想的なプレイヤにネザーでコマンドを実行してもらい、
                         それによって発火したプラグインの機能のふるまいを検証しています。
                     </p>
