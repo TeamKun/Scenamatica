@@ -1,0 +1,29 @@
+# noinspection YAMLSchemaValidation
+scenamatica: ${project.version}
+
+name: actions_player
+description: Testing player action works or not
+on:
+  - type: on_load
+  - type: manual_dispatch
+
+context:
+  actors:
+    - name: Actor001
+
+scenario:
+  - type: execute
+    action: player
+    with:
+      target: Actor001
+      data:
+        tags:
+          - 810snpi
+  - type: require
+    action: player
+    with:
+      target: Actor001
+      data:
+        tags:
+          - 810snpi
+    timeout: 20
