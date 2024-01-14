@@ -1,5 +1,8 @@
 import React from "react"
 import styles from "./index.module.css"
+import Link from "@docusaurus/Link";
+import isInternalUrl from "@docusaurus/core/lib/client/exports/isInternalUrl";
+import IconExternalLink from "@theme/Icon/ExternalLink";
 
 type RequirementElement = {
     name: string
@@ -14,7 +17,13 @@ type RequirementsProps = {
 
 const Requirements: React.FC<RequirementsProps> = ({ requirements }) => {
     const elements = requirements.map((element) =>{
-        const reqName = element.link ? <a href={element.link}>{element.name}</a>: element.name
+        const isInternalLink = element.link && isInternalUrl(element.link)
+        const reqName = element.link ?
+            <Link to={element.link}>
+                {element.name}
+                {!isInternalLink && <IconExternalLink />}
+            </Link>:
+            element.name
         const description = element.description ? element.description : ""
         return (
             <tr className={styles.requirements + " " + styles.body}>
