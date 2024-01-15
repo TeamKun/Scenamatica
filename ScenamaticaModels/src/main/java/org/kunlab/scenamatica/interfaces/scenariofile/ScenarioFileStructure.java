@@ -40,7 +40,7 @@ public interface ScenarioFileStructure extends Structure
      *
      * @return 説明
      */
-    @NotNull
+    @Nullable
     String getDescription();
 
     /**

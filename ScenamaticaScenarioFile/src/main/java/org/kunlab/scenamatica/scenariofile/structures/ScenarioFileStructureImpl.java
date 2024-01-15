@@ -35,7 +35,7 @@ public class ScenarioFileStructureImpl implements ScenarioFileStructure
     Version scenamaticaVersion;
     @NotNull
     String name;
-    @NotNull
+    @Nullable
     String description;
     long timeout;
     int order;
@@ -55,7 +55,7 @@ public class ScenarioFileStructureImpl implements ScenarioFileStructure
 
         map.put(KEY_SCENAMATICA_VERSION, structure.getScenamaticaVersion().toString());
         map.put(KEY_NAME, structure.getName());
-        map.put(KEY_DESCRIPTION, structure.getDescription());
+        MapUtils.putIfNotNull(map, KEY_DESCRIPTION, structure.getDescription());
 
         if (structure.getTimeout() != DEFAULT_TIMEOUT_TICK)
             map.put(KEY_TIMEOUT, structure.getTimeout());
@@ -86,7 +86,7 @@ public class ScenarioFileStructureImpl implements ScenarioFileStructure
             throw new IllegalArgumentException("Invalid version string: " + map.get(KEY_SCENAMATICA_VERSION));
 
         MapUtils.checkType(map, KEY_NAME, String.class);
-        MapUtils.checkType(map, KEY_DESCRIPTION, String.class);
+        MapUtils.checkTypeIfContains(map, KEY_DESCRIPTION, String.class);
         MapUtils.checkNumberIfContains(map, KEY_TIMEOUT);
         MapUtils.checkNumberIfContains(map, KEY_ORDER);
 

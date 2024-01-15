@@ -93,12 +93,16 @@ public class ScenarioFileParser
                 {
                     ScenarioFileStructure scenario = fromInputStream(zis, inZipPath);
                     if (map.containsKey(scenario.getName()))
+                    {
+                        String descA = map.get(scenario.getName()).getDescription();
+                        String descB = scenario.getDescription();
                         throw new IllegalStateException(String.format(
                                 "Duplicated scenario name: %s(%s, %s)",
                                 scenario.getName(),
-                                map.get(scenario.getName()).getDescription(),
-                                scenario.getDescription()
+                                descA == null ? "N/A": descA,
+                                descB == null ? "N/A": descB
                         ));
+                    }
 
                     map.put(scenario.getName(), scenario);
                 }

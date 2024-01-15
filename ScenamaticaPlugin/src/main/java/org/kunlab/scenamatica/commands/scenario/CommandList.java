@@ -70,7 +70,7 @@ public class CommandList extends CommandBase
         TextComponent entry = Component.text(LangProvider.get(
                 "command.scenario.list.entry",
                 MsgArgs.of("scenario", scenario.getName())
-                        .add("description", scenario.getDescription())
+                        .add("description", scenario.getDescription() == null ? "N/A": scenario.getDescription())
                         .add("manually", manualDispatch)
         ));
 
