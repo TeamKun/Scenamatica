@@ -112,8 +112,9 @@ public class TriggerManagerImpl implements TriggerManager
             return;
 
         SessionCreator creator = this.registry.getScenarioManager().newSession();
-        for (ScenarioEngine engine : engines)
-            creator.add(engine, type, this.defaultMaxAttempts);
+        engines.stream()
+                .filter(e -> e.getTriggerActions().stream().anyMatch(t -> t.getTrigger().getType() == type))
+                .forEach(e -> creator.add(e, type, this.defaultMaxAttempts));
 
         if (creator.isEmpty())
             return;
