@@ -40,6 +40,7 @@ import org.kunlab.scenamatica.interfaces.scenariofile.inventory.PlayerInventoryS
 import org.kunlab.scenamatica.settings.ActorSettings;
 
 import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -251,7 +252,7 @@ public class PlayerMocker extends PlayerMockerBase
     public Actor mock(@NotNull World world, @NotNull PlayerStructure structure)
     {
         MinecraftServer server = ((CraftServer) Bukkit.getServer()).getServer();
-        NetworkManager mockedNetworkManager = new MockedNetworkManager(server);
+        NetworkManager mockedNetworkManager = new MockedNetworkManager(server, structure);
         WorldServer worldServer = ((CraftWorld) world).getHandle();
         GameProfile profile = createGameProfile(structure);
         boolean doLogin = structure.getOnline() == null || structure.getOnline();
@@ -279,7 +280,7 @@ public class PlayerMocker extends PlayerMockerBase
 
     /* non-public */ void doLogin(MinecraftServer server, MockedPlayer player)
     {
-        if (!this.dispatchLoginEvent(player))
+        if (!this.dispatchLoginEvent(player, (InetSocketAddress) player.getNetworkManager().getSocketAddress()))
             throw new IllegalStateException("Login for " + player.getName() + " was denied.");
 
         this.registerPlayer(server, player);

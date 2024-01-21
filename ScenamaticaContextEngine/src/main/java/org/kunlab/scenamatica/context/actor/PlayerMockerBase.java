@@ -1,7 +1,6 @@
 package org.kunlab.scenamatica.context.actor;
 
 import com.mojang.authlib.GameProfile;
-import lombok.SneakyThrows;
 import org.apache.logging.log4j.LogManager;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -13,19 +12,13 @@ import org.kunlab.scenamatica.interfaces.context.Actor;
 import org.kunlab.scenamatica.interfaces.context.ActorManager;
 import org.kunlab.scenamatica.interfaces.scenariofile.context.PlayerStructure;
 
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
-import java.net.UnknownHostException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.UUID;
 
 public abstract class PlayerMockerBase
 {
-    public static final String DEFAULT_IP = "114.51.48.10";
-    public static final Integer DEFAULT_PORT = 1919;
-    public static final String DEFAULT_HOST_NAME = DEFAULT_IP;
-
     private final ScenamaticaRegistry registry;
     private final ActorManager manager;
 
@@ -51,34 +44,20 @@ public abstract class PlayerMockerBase
 
     public abstract void postActorLogin(Player player);
 
-    @SneakyThrows(UnknownHostException.class)
-    protected boolean dispatchLoginEvent(Actor player)
+    protected boolean dispatchLoginEvent(Actor player, InetSocketAddress addr)
     {
-        InetAddress addr;
-        InetSocketAddress socketAddr;
-        String hostName;
-        if (player.getInitialStructure().getRemoteAddress() == null)
-            addr = InetAddress.getByName(DEFAULT_IP);
-        else
-            addr = player.getInitialStructure().getRemoteAddress();
-        if (player.getInitialStructure().getPort() == null)
-            socketAddr = new InetSocketAddress(addr, DEFAULT_PORT);
-        else
-            socketAddr = new InetSocketAddress(addr, player.getInitialStructure().getPort());
-        if (player.getInitialStructure().getHostName() == null)
-            hostName = DEFAULT_HOST_NAME;
-        else
-            hostName = player.getInitialStructure().getHostName();
-
-
-        PlayerLoginEvent event = new PlayerLoginEvent(player.getPlayer(), hostName, addr);
+        PlayerLoginEvent event = new PlayerLoginEvent(
+                player.getPlayer(),
+                addr.getHostName(),
+                addr.getAddress()
+        );
         Bukkit.getPluginManager().callEvent(event);
 
         if (event.getResult() != PlayerLoginEvent.Result.ALLOWED)
         {
             // LoginListener 名義のログを偽装
             LogManager.getLogger(this.getLoginListenerClass())
-                    .info("Disconnecting {}: {}", socketAddr, event.kickMessage());
+                    .info("Disconnecting {}: {}", player.getPlayer().getAddress(), event.getKickMessage());
         }
 
         return event.getResult() == PlayerLoginEvent.Result.ALLOWED;

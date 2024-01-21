@@ -1,6 +1,7 @@
 package org.kunlab.scenamatica.context.actor.nms.v_1_16_R3;
 
-import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.embedded.EmbeddedChannel;
+import io.netty.handler.timeout.ReadTimeoutHandler;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
 import javax.annotation.Nullable;
@@ -8,11 +9,18 @@ import javax.crypto.Cipher;
 import lombok.SneakyThrows;
 import net.minecraft.server.v1_16_R3.EnumProtocol;
 import net.minecraft.server.v1_16_R3.EnumProtocolDirection;
+import net.minecraft.server.v1_16_R3.LegacyPingHandler;
 import net.minecraft.server.v1_16_R3.MinecraftServer;
 import net.minecraft.server.v1_16_R3.NetworkManager;
 import net.minecraft.server.v1_16_R3.Packet;
+import net.minecraft.server.v1_16_R3.PacketDecoder;
+import net.minecraft.server.v1_16_R3.PacketEncoder;
+import net.minecraft.server.v1_16_R3.PacketPrepender;
+import net.minecraft.server.v1_16_R3.PacketSplitter;
 import net.minecraft.server.v1_16_R3.ServerConnection;
-import org.kunlab.scenamatica.context.actor.MockedChannel;
+import org.bukkit.Bukkit;
+import org.bukkit.craftbukkit.v1_16_R3.CraftServer;
+import org.kunlab.scenamatica.interfaces.scenariofile.context.PlayerStructure;
 
 import java.lang.reflect.Field;
 import java.net.InetAddress;
@@ -23,6 +31,8 @@ import java.util.List;
 
 class MockedNetworkManager extends NetworkManager
 {
+    public static final String DEFAULT_IP = "114.51.48.10";
+    public static final Integer DEFAULT_PORT = 1919;
     private static final Field fConnectedChannels;  // Lnet/minecraft/server/NetworkManager;f:Ljava/util/List<Lnet.minecraft.server.NetworkManager;>;
 
     static
@@ -41,14 +51,31 @@ class MockedNetworkManager extends NetworkManager
     private boolean alive;
 
     @SneakyThrows(UnknownHostException.class)
-    public MockedNetworkManager(MinecraftServer server)
+    public MockedNetworkManager(MinecraftServer server, PlayerStructure initialStructure)
     {
         super(EnumProtocolDirection.SERVERBOUND);
 
         this.alive = true;
 
-        this.socketAddress = new InetSocketAddress(InetAddress.getByName("191.9.81.0"), 1919);
-        this.channel = new MockedChannel();
+        InetAddress addr;
+        InetSocketAddress socketAddr;
+        if (initialStructure.getRemoteAddress() == null)
+            addr = InetAddress.getByName(DEFAULT_IP);
+        else
+            addr = initialStructure.getRemoteAddress();
+        if (initialStructure.getPort() == null)
+            socketAddr = new InetSocketAddress(addr, DEFAULT_PORT);
+        else
+            socketAddr = new InetSocketAddress(addr, initialStructure.getPort());
+        this.socketAddress = socketAddr;
+        this.channel = new EmbeddedChannel();
+        this.channel.pipeline().addLast("timeout", new ReadTimeoutHandler(30))
+                .addLast("legacy_query", new LegacyPingHandler(((CraftServer) Bukkit.getServer()).getServer().getServerConnection()))
+                .addLast("splitter", new PacketSplitter())
+                .addLast("decoder", new PacketDecoder(EnumProtocolDirection.SERVERBOUND))
+                .addLast("prepender", new PacketPrepender())
+                .addLast("encoder", new PacketEncoder(EnumProtocolDirection.CLIENTBOUND))
+                .addLast("packet_handler", this);
 
         registerToMinecraft(server, this);
         this.preparing = false;  // ディスコネ時に, iterator から削除されるように。
@@ -82,11 +109,6 @@ class MockedNetworkManager extends NetworkManager
 
     @Override
     public void sendPacket(Packet<?> packet, @Nullable GenericFutureListener<? extends Future<? super Void>> genericfuturelistener)
-    {
-    }
-
-    @Override
-    public void channelActive(ChannelHandlerContext channelhandlercontext)
     {
     }
 
