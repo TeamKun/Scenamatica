@@ -3,7 +3,7 @@
 import * as fs from "fs"
 import * as path from "path"
 
-const DEF_SCHEMA= "http://json-schema.org/draft-07/schema#"
+const DEF_SCHEMA= "http://json-schema.org/draft-07/schema"
 
 const PATH_PRIME = "prime.json"
 const PATH_DEFINITIONS = "definitions.json"

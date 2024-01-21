@@ -5,7 +5,7 @@
   "scripts": {
     "docusaurus": "docusaurus",
     "start": "docusaurus start",
-    "build:schema": "ts-node script/schema/build.ts src/schema static/scenamatica-file.json",
+    "build:schema": "ts-node script/schema/build.ts src/schema/schema static/scenamatica-file.json",
     "build:site": "docusaurus build",
     "swizzle": "docusaurus swizzle",
     "deploy": "docusaurus deploy",
