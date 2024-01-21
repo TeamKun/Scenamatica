@@ -1,8 +1,7 @@
 {
   "entityItem": {
-    "type": "object",
+    "type": "entity",
     "description": "アイテムのエンティティを表します。",
-    "$ref": "#/definitions/entity",
     "$comment": "多重継承はできないので、 itemStack のプロパティをそっくりそのままコピーします。",
     "properties": {
       "pickupDelay": {

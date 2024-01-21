@@ -7,7 +7,7 @@
       "description": "着弾する投射物です。",
       "oneOf": [
         {
-          "$ref": "#/definitions/projectile"
+          "type": "projectile"
         },
         {
           "type": "string",
@@ -23,17 +23,17 @@
           "description": "エンティティの UUID またはセレクタです。"
         },
         {
-          "$ref": "#/definitions/entity"
+          "type": "entity"
         }
       ]
     },
     "hitBlock": {
       "description": "着弾する対象のブロックです。",
-      "$ref": "#/definitions/block"
+      "type": "block"
     },
     "blockFace": {
       "description": "着弾する対象のブロックの面です。",
-      "$ref": "#/definitions/blockFace"
+      "type": "blockFace"
     },
     "eventOnly": {
       "description": "着弾イベントのみを発生させるかどうかです。",
@@ -43,15 +43,15 @@
   "outputs": {
     "hitEntity": {
       "description": "着弾した対象のエンティティです。",
-      "$ref": "#/definitions/entity"
+      "type": "entity"
     },
     "hitBlock": {
       "description": "着弾した対象のブロックです。",
-      "$ref": "#/definitions/block"
+      "type": "block"
     },
     "blockFace": {
       "description": "着弾した対象のブロックの面です。",
-      "$ref": "#/definitions/blockFace"
+      "type": "blockFace"
     }
   }
 }

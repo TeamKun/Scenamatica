@@ -5,19 +5,19 @@
   "arguments": {
     "item": {
       "description": "ドロップするアイテムです。",
-      "$ref": "#/definitions/entityItem"
+      "type": "entityItem"
     }
   },
   "outputs": {
     "player": {
       "description": "ドロップしたプレイヤです。",
-      "$ref": "#/definitions/player"
+      "type": "player"
     },
     "item": {
       "description": "ドロップしたアイテムです。",
       "oneOf": [
         {
-          "$ref": "#/definitions/entityItem"
+          "type": "entityItem"
         },
         {
           "type": "#/definitions/itemStack"

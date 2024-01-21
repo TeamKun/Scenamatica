@@ -7,11 +7,11 @@
         "description": "エンティティの種類です。"
       },
       "location": {
-        "$ref": "#/definitions/location",
+        "type": "location",
         "description": "エンティティの位置です。"
       },
       "velocity": {
-        "$ref": "#/definitions/vector",
+        "type": "vector",
         "description": "エンティティの速度です。"
       },
       "customName": {
@@ -289,7 +289,7 @@
         "description": "インベントリのアイテムです。キーがスロット番号で、値がアイテムスタックです。",
         "patternProperties": {
           "^\\d+$": {
-            "$ref": "#/definitions/itemStack"
+            "type": "itemStack"
           }
         }
       }

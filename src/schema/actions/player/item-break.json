@@ -5,21 +5,21 @@
   "arguments": {
     "item": {
       "description": "壊れたアイテムです。",
-      "$ref": "#/definitions/itemStack"
+      "type": "itemStack"
     },
     "slot": {
       "description": "壊れたアイテムが入っていたスロットです。",
-      "$ref": "#/definitions/itemSlot"
+      "type": "itemSlot"
     }
   },
   "outputs": {
     "item": {
       "description": "壊れたアイテムです。",
-      "$ref": "#/definitions/itemStack"
+      "type": "itemStack"
     },
     "slot": {
       "description": "壊れたアイテムが入っていたスロットです。",
-      "$ref": "#/definitions/itemSlot"
+      "type": "itemSlot"
     }
   }
 }

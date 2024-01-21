@@ -5,13 +5,13 @@
   "arguments": {
     "item": {
       "description": "ドロップするアイテムです。",
-      "$ref": "#/definitions/entityItem"
+      "type": "entityItem"
     }
   },
   "outputs": {
     "item": {
       "description": "ドロップしたアイテムです。",
-      "$ref": "#/definitions/entityItem"
+      "type": "entityItem"
     }
   }
 }

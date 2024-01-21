@@ -25,7 +25,7 @@
     },
     "clickedItem": {
       "description": "クリックされたアイテムです。",
-      "$ref": "#/definitions/itemStack"
+      "type": "itemStack"
     },
     "button": {
       "type": "integer",
@@ -34,21 +34,21 @@
     },
     "cursorItem": {
       "description": "カーソルにあるアイテムです。",
-      "$ref": "#/definitions/itemStack"
+      "type": "itemStack"
     }
   },
   "outputs": {
     "type": {
       "description": "クリックの種類です。",
-      "$ref": "#/definitions/clickType"
+      "type": "clickType"
     },
     "action": {
         "description": "インベントリのアクションです。",
-      "$ref": "#/definitions/inventoryAction"
+      "type": "inventoryAction"
     },
     "slotType": {
       "description": "クリックしたスロットの種類です。",
-      "$ref": "#/definitions/slotType"
+      "type": "slotType"
     },
     "slot": {
       "type": "integer",
@@ -62,7 +62,7 @@
     },
     "clickedItem": {
       "description": "クリックされたアイテムです。",
-      "$ref": "#/definitions/itemStack"
+      "type": "itemStack"
     },
     "button": {
       "type": "integer",
@@ -71,7 +71,7 @@
     },
     "cursorItem": {
       "description": "カーソルにあるアイテムです。",
-      "$ref": "#/definitions/itemStack"
+      "type": "itemStack"
     }
   }
 }

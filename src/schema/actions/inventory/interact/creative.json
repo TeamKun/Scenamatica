@@ -5,13 +5,13 @@
   "arguments": {
     "item": {
       "description": "クリックされたアイテムです。",
-      "$ref": "#/definitions/itemStack"
+      "type": "itemStack"
     }
   },
   "outputs": {
     "item": {
         "description": "クリックされたアイテムです。",
-        "$ref": "#/definitions/itemStack"
+        "type": "itemStack"
     },
     "slot": {
       "description": "クリックされたスロットです。",
@@ -19,7 +19,7 @@
     },
     "inventory": {
       "description": "クリックされたインベントリです。",
-      "$ref": "#/definitions/inventory"
+      "type": "inventory"
     }
   }
 }

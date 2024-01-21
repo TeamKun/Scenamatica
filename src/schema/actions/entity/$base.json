@@ -9,14 +9,14 @@
           "description": "エンティティの UUID またはセレクタです。"
         },
         {
-          "$ref": "#/definitions/entity"
+          "type": "entity"
         }
       ]
     }
   },
   "outputs": {
     "target": {
-      "$ref": "#/definitions/entity",
+      "type": "entity",
       "description": "対象となったエンティティです。"
     }
   }

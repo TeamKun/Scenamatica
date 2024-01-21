@@ -17,7 +17,7 @@
     },
     "item": {
       "description": "ホットバーのスロットに入っているアイテムです。",
-      "$ref": "#/definitions/itemStack"
+      "type": "itemStack"
     }
   },
   "outputs": {
@@ -35,7 +35,7 @@
     },
     "item": {
       "description": "ホットバーのスロットに入っているアイテムです。",
-      "$ref": "#/definitions/itemStack"
+      "type": "itemStack"
     }
   }
 }

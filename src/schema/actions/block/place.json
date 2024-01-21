@@ -20,7 +20,7 @@
     },
     "direction": {
       "description": "ブロックを設置する方向です。",
-      "$ref": "#/definitions/blockFace"
+      "type": "blockFace"
     }
   }
 }

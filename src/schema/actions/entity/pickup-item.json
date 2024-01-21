@@ -11,7 +11,7 @@
       "description": "拾わせるアイテムを指定します。",
       "oneOf": [
         {
-          "$ref": "#/definitions/entityItem",
+          "type": "entityItem",
           "description": "アイテムを指定します。"
         },
         {
@@ -24,7 +24,7 @@
   "outputs": {
     "item": {
       "description": "拾わせたアイテムを出力します。",
-      "$ref": "#/definitions/entityItem"
+      "type": "entityItem"
     },
     "remaining": {
       "description": "残りのアイテム数を出力します。",

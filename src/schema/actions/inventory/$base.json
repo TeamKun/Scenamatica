@@ -3,7 +3,7 @@
   "arguments": {
     "inventory": {
       "description": "対象のインベントリです。",
-      "$ref": "#/definitions/inventory"
+      "type": "inventory"
     }
   },
   "definitions": {
@@ -124,7 +124,7 @@
   "outputs": {
     "inventory": {
       "description": "対象になったプレイヤのインベントリです。",
-      "$ref": "#/definitions/inventory"
+      "type": "inventory"
     }
   }
 }

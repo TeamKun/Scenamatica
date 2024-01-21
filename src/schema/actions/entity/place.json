@@ -15,11 +15,11 @@
     },
     "block": {
       "description": "設置場所のブロックです。",
-      "$ref": "#/definitions/block"
+      "type": "block"
     },
     "direction": {
       "description": "設置する方向です。",
-      "$ref": "#/definitions/blockFace"
+      "type": "blockFace"
     }
   },
   "outputs": {
@@ -33,11 +33,11 @@
     },
     "block": {
       "description": "設置場所のブロックです。",
-      "$ref": "#/definitions/block"
+      "type": "block"
     },
     "direction": {
       "description": "設置する方向です。",
-      "$ref": "#/definitions/blockFace"
+      "type": "blockFace"
     }
   }
 }

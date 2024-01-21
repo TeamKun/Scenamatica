@@ -9,17 +9,17 @@
     },
     "inventory": {
       "description": "開くインベントリです。",
-      "$ref": "#/definitions/inventory"
+      "type": "inventory"
     }
   },
   "outputs": {
     "target": {
-      "$ref": "#/definitions/player",
+      "type": "player",
       "description": "開いたプレイヤです。"
     },
     "inventory": {
       "description": "開いたインベントリです。",
-      "$ref": "#/definitions/inventory"
+      "type": "inventory"
     }
   }
 }

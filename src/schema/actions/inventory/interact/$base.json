@@ -10,7 +10,7 @@
   "outputs": {
     "target": {
       "description": "対象になったプレイヤです。",
-      "$ref": "#/definitions/player"
+      "type": "player"
     }
   }
 }

@@ -11,7 +11,7 @@
           "description": "エンティティの UUID またはセレクタです。"
         },
         {
-          "$ref": "#/definitions/entity"
+          "type": "entity"
         }
       ]
     },
@@ -29,7 +29,7 @@
   "outputs": {
     "entity": {
       "description": "クリックしたエンティティです。",
-      "$ref": "#/definitions/entity"
+      "type": "entity"
     },
     "hand": {
       "description": "クリックした手です。",

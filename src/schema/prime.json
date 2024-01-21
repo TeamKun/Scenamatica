@@ -3,7 +3,7 @@
     "type": "object",
     "properties": {
         "scenamatica": {
-            "$ref": "#/definitions/version",
+            "type": "version",
             "description": "対応する Scenamatica のバージョンです。動作している Scenamatica のバージョンよりも新しいバージョンのシナリオファイルは読み込めません。"
         },
         "name": {
@@ -41,7 +41,7 @@
             "type": "array",
             "description": "シナリオの実行条件を定義します。シナリオは、この配列の要素のいずれかに一致するときに実行されます。何も指定しない場合は、そのシナリオは一生実行されません。",
             "items": {
-                "$ref": "#/definitions/trigger"
+                "type": "trigger"
             },
             "minItems": 1
         },
@@ -53,30 +53,29 @@
                     "type": "array",
                     "description": "シナリオの実行に必要なアクタを定義します。必要なアクタは、適宜自動生成されます。",
                     "items": {
-                        "$ref": "#/definitions/actor"
+                        "type": "player"
                     }
                 },
                 "entities": {
                     "type": "array",
                     "description": "シナリオの実行に必要なエンティティを定義します。エンティティが指定されている場合, シナリオ開始時に自動的に生成されます。",
                     "items": {
-                        "$ref": "#/definitions/entity"
+                        "type": "entity"
                     }
                 },
                 "stage": {
-                    "$ref": "#/definitions/stage",
+                    "type": "stage",
                     "description": "シナリオの実行に必要なステージを定義します。ステージが指定されている場合, シナリオ開始時に自動的に生成されます。"
                 }
             },
             "additionalProperties": false
         },
         "runif": {
-            "type": "object",
             "description": "シナリオの実行条件を定義します。アクションで定義します。満たしていない場合はスキップされます。",
-            "$ref": "#/definitions/action"
+            "type": "action"
         },
         "scenario": {
-            "$ref": "#/definitions/scenarios",
+            "type": "scenarios",
             "description": "このシナリオファイルのメインシナリオを定義します。",
             "minItems": 1
         }

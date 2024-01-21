@@ -4,11 +4,11 @@
   "base": "entity_$base",
   "arguments": {
     "from": {
-      "$ref": "#/definitions/location",
+      "type": "location",
       "description": "移動元の座標を指定します。"
     },
     "to": {
-      "$ref": "#/definitions/location",
+      "type": "location",
       "description": "移動先の座標を指定します。"
     },
     "ai": {
@@ -19,11 +19,11 @@
   },
   "outputs": {
     "from": {
-      "$ref": "#/definitions/location",
+      "type": "location",
       "description": "移動前の座標を出力します。"
     },
     "to": {
-      "$ref": "#/definitions/location",
+      "type": "location",
       "description": "移動後の座標を出力します。"
     }
   }

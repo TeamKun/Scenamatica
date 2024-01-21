@@ -1,12 +1,11 @@
 {
   "projectile": {
-    "type": "object",
+    "type": "entity",
     "description": "投射物を表します。",
-    "$ref": "#/definitions/entity",
     "properties": {
       "shooter": {
         "description": "投射物の発射者を表します。",
-        "$ref": "#/definitions/projectileSource"
+        "type": "projectileSource"
       },
       "bounce": {
         "type": "boolean",

@@ -9,7 +9,7 @@
           "description": "プレイヤ名または UUID セレクタを指定します。"
         },
         {
-          "$ref": "#/definitions/player",
+          "type": "player",
           "description": "プレイヤの構造を指定します。"
         }
       ]
@@ -18,7 +18,7 @@
   "outputs": {
     "target": {
       "description": "対象のプレイヤです。",
-      "$ref": "#/definitions/player"
+      "type": "player"
     }
   }
 }

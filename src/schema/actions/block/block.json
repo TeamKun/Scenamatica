@@ -4,7 +4,7 @@
   "base": "block_$base",
   "arguments": {
     "data": {
-      "$ref": "#/definitions/block",
+      "type": "block",
       "description": "ブロックの位置を指定します。"
     }
   }

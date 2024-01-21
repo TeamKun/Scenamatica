@@ -61,9 +61,8 @@
         "description": "ブロックの種類です。"
       },
       "location": {
-        "type": "object",
         "description": "ブロックの座標です。",
-        "$ref": "#/definitions/location"
+        "type": "location"
       },
       "metadata": {
         "type": "object",
@@ -1164,16 +1163,16 @@
   },
   "vector": {
     "description": "ベクトルです。",
-    "$ref": "#/definitions/location"
+    "type": "location"
   },
   "projectileSource": {
     "description": "発射源です。",
     "oneOf": [
       {
-        "$ref": "#/definitions/entity"
+        "type": "entity"
       },
       {
-        "$ref": "#/definitions/block"
+        "type": "block"
       },
       {
         "type": "string",

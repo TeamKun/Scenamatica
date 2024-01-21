@@ -25,18 +25,18 @@
     },
     "velocity": {
       "description": "投げ物の速度や向きです。",
-      "$ref": "#/definitions/vector"
+      "type": "vector"
     },
     "epsilon": {
       "description": "投げ物の速度や向きを比較する際に許容する誤差です。",
-      "$ref": "#/definitions/vector"
+      "type": "vector"
     }
   },
   "outputs": {
     "projectile": {
       "lazy": true,
       "description": "射出された投げ物です。",
-      "$ref": "#/definitions/projectile"
+      "type": "projectile"
     }
   }
 }

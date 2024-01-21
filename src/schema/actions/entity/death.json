@@ -7,7 +7,7 @@
       "description": "ドロップするアイテムです。",
       "type": "array",
       "items": {
-        "$ref": "#/definitions/itemStack"
+        "type": "itemStack"
       }
     },
     "dropExp": {
@@ -26,7 +26,7 @@
     },
     "sound": {
       "description": "再生するサウンドです。",
-      "$ref": "#/definitions/sound"
+      "type": "sound"
     },
     "soundCategory": {
       "description": "サウンドのカテゴリです。",

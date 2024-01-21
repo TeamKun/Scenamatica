@@ -3,23 +3,23 @@
   "base": "player_$base",
   "arguments": {
     "item": {
-      "$ref": "#/definitions/itemStack",
+      "type": "itemStack",
       "description": "操作後にプレイヤが持っているアイテムです。"
     },
     "block": {
-      "$ref": "#/definitions/block",
+      "type": "block",
       "description": "設置する液体のブロックです。"
     },
     "clickedBlock": {
-      "$ref": "#/definitions/block",
+      "type": "block",
       "description": "プレイヤがクリックしたブロックです。"
     },
     "blockFace": {
       "description": "プレイヤがクリックしたブロックの面です。",
-      "$ref": "#/definitions/blockFace"
+      "type": "blockFace"
     },
     "bucket": {
-      "$ref": "#/definitions/itemStack",
+      "type": "itemStack",
       "description": "設置する液体のバケツです。"
     },
     "hand": {
@@ -32,19 +32,19 @@
   },
   "outputs": {
     "item": {
-      "$ref": "#/definitions/itemStack",
+      "type": "itemStack",
       "description": "操作後にプレイヤが持っているアイテムです。"
     },
     "block": {
-      "$ref": "#/definitions/block",
+      "type": "block",
       "description": "設置する液体のブロックです。"
     },
     "blockFace": {
       "description": "プレイヤがクリックしたブロックの面です。",
-      "$ref": "#/definitions/blockFace"
+      "type": "blockFace"
     },
     "bucket": {
-      "$ref": "#/definitions/itemStack",
+      "type": "itemStack",
       "description": "設置する液体のバケツです。"
     },
     "hand": {

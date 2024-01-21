@@ -5,26 +5,26 @@
   "arguments": {
     "block": {
       "description": "対象の作物です。",
-      "$ref": "#/definitions/block"
+      "type": "block"
     },
     "items": {
       "type": "array",
       "description": "収穫したアイテムです。",
       "items": {
-        "$ref": "#/definitions/itemStack"
+        "type": "itemStack"
       }
     }
   },
   "outputs": {
     "block": {
       "description": "収穫した作物です。",
-      "$ref": "#/definitions/block"
+      "type": "block"
     },
     "items": {
       "type": "array",
       "description": "収穫したアイテムです。",
       "items": {
-        "$ref": "#/definitions/itemStack"
+        "type": "itemStack"
       }
     }
   }

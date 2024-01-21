@@ -5,11 +5,11 @@
   "arguments": {
     "bucket": {
       "description": "エンティティをいれるバケツです。",
-      "$ref": "#/definitions/itemStack"
+      "type": "itemStack"
     },
     "entityBucket": {
       "description": "エンティティが入ったバケツです。",
-      "$ref": "#/definitions/itemStack"
+      "type": "itemStack"
     },
     "entity": {
       "description": "入れるエンティティです。",
@@ -19,7 +19,7 @@
           "description": "エンティティの UUID またはセレクタです。"
         },
         {
-          "$ref": "#/definitions/entity"
+          "type": "entity"
         }
       ]
     }
@@ -27,15 +27,15 @@
   "outputs": {
     "bucket": {
       "description": "エンティティをいれたバケツです。",
-      "$ref": "#/definitions/itemStack"
+      "type": "itemStack"
     },
     "entityBucket": {
       "description": "エンティティが入ったバケツです。",
-      "$ref": "#/definitions/itemStack"
+      "type": "itemStack"
     },
     "entity": {
       "description": "入れたエンティティです。",
-      "$ref": "#/definitions/entity"
+      "type": "entity"
     }
   }
 }

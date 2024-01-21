@@ -61,14 +61,14 @@
         "type": "array",
         "description": "アイテムの設置可能なブロックです。",
         "items": {
-          "$ref": "#/definitions/namespacedKey"
+          "type": "namespacedKey"
         }
       },
       "destroyables": {
         "type": "array",
         "description": "アイテムの破壊可能なブロックです。",
         "items": {
-          "$ref": "#/definitions/namespacedKey"
+          "type": "namespacedKey"
         }
       },
       "customModel": {
@@ -112,7 +112,7 @@
         "description": "アイテムにかかっている属性を設定します。",
         "patternProperties": {
           "^[a-zA-Z_]+$": {
-            "$ref": "#/definitions/attributeModifier"
+            "type": "attributeModifier"
           }
         }
       },

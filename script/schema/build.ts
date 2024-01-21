@@ -286,6 +286,29 @@ const appendOtherCaseOfEnum = (action: Action, definitions: {[key: string]: unkn
     }
 }
 
+const convertTypeToDefinitions = (obj: {[key: string]: any}): void => {
+    const knownTypes = [
+        "string",
+        "number",
+        "integer",
+        "boolean",
+        "array",
+        "object",
+        "null"
+    ]
+
+    // すべてのプロパティを深さ優先探索, キーtype のみを処理。 type が knownTypes 以外であれば、その値を $ref に変換する。
+    for (const key in obj) {
+        const value = obj[key]
+        if (key === "type" && typeof value === "string" && !knownTypes.includes(value)) {
+            obj["$ref"] = `#/definitions/${value}`
+            delete obj["type"]
+        } else if (typeof value === "object") {
+            convertTypeToDefinitions(value as {[key: string]: unknown})
+        }
+    }
+}
+
 const main = () => {
     const args = parseArgs()
     const baseDir = args.baseDir
@@ -302,6 +325,9 @@ const main = () => {
     console.log("Loading actions...")
     const actions = loadActions(baseDir)
     buildActions(prime, actions)
+
+    console.log("Converting type to definitions...")
+    convertTypeToDefinitions(prime)
 
     console.log("Saving output schema...")
     saveOutputSchema(prime, args.outputFile)

@@ -15,7 +15,7 @@
     },
     "block": {
       "description": "プレイヤがクリックしたブロックです。",
-      "$ref": "#/definitions/block"
+      "type": "block"
     },
     "hand": {
       "type": "string",
@@ -27,13 +27,13 @@
     },
     "blockFace": {
         "description": "プレイヤがクリックしたブロックの面です。",
-        "$ref": "#/definitions/blockFace"
+        "type": "blockFace"
     }
   },
   "outputs": {
     "block": {
       "description": "プレイヤがクリックしたブロックです。",
-      "$ref": "#/definitions/block"
+      "type": "block"
     },
     "hand": {
       "type": "string",
@@ -55,7 +55,7 @@
     },
     "blockFace": {
       "description": "プレイヤがクリックしたブロックの面です。",
-      "$ref": "#/definitions/blockFace"
+      "type": "blockFace"
     }
   }
 }

@@ -11,7 +11,7 @@
   "outputs": {
     "damager": {
       "description": "ダメージ元となったエンティティです。",
-      "$ref": "#/definitions/entity"
+      "type": "entity"
     }
   }
 }

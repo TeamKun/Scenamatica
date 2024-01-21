@@ -13,13 +13,13 @@
     },
     "location": {
       "description": "プレイヤがスポーンする場所です。",
-      "$ref": "#/definitions/location"
+      "type": "location"
     }
   },
   "outputs": {
     "location": {
       "description": "プレイヤがスポーンする場所です。",
-      "$ref": "#/definitions/location"
+      "type": "location"
     },
     "isBed": {
       "type": "boolean",

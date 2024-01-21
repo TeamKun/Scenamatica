@@ -4,7 +4,7 @@
   "base": "player_$base",
   "arguments": {
     "data": {
-      "$ref": "#/definitions/player",
+      "type": "player",
       "description": "プレイヤの状態です。"
     }
   }

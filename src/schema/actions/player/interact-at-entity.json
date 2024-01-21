@@ -5,13 +5,13 @@
   "arguments": {
     "position": {
       "description": "クリックするエンティティの場所です。",
-      "$ref": "#/definitions/location"
+      "type": "location"
     }
   },
   "outputs": {
     "position": {
       "description": "クリックしたエンティティの場所です。",
-      "$ref": "#/definitions/location"
+      "type": "location"
     }
   }
 }

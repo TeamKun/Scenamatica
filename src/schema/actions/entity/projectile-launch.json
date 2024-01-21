@@ -6,7 +6,7 @@
       "description": "スポーンさせる投射物です。",
       "oneOf": [
         {
-          "$ref": "#/definitions/projectile"
+          "type": "projectile"
         },
         {
           "type": "string",

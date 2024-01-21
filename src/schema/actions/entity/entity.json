@@ -4,13 +4,13 @@
   "base": "entity_$base",
   "arguments": {
     "data": {
-      "$ref": "#/definitions/entity",
+      "type": "entity",
       "description": "変更する値です。"
     }
   },
   "outputs": {
     "entity": {
-      "$ref": "#/definitions/entity",
+      "type": "entity",
       "description": "変更後の値です。"
     }
   }

@@ -4,13 +4,13 @@
   "base": "player_move",
   "arguments": {
     "cause": {
-      "$ref": "#/definitions/teleportCause",
+      "type": "teleportCause",
       "description": "移動した理由を指定します。"
     }
   },
   "outputs": {
     "cause": {
-      "$ref": "#/definitions/teleportCause",
+      "type": "teleportCause",
       "description": "移動した理由です。"
     }
   }

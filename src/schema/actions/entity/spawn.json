@@ -4,12 +4,12 @@
   "base": "entity_$base",
   "arguments": {
     "entity": {
-      "$ref": "#/definitions/entity"
+      "type": "entity"
     }
   },
   "outputs": {
     "entity": {
-      "$ref": "#/definitions/entity"
+      "type": "entity"
     }
   }
 }
