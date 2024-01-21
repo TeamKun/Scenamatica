@@ -54,21 +54,21 @@
     "properties": {
       "name": {
         "type": "string",
-        "description": "アクタの名前です。",
+        "description": "プレイヤの名前です。",
         "maxLength": 16
       },
       "online": {
         "type": "boolean",
-        "description": "アクタがオンラインかどうかです。",
+        "description": "プレイヤがオンラインかどうかです。",
         "default": true
       },
       "displayName": {
         "type": "string",
-        "description": "アクタの表示名です。"
+        "description": "プレイヤの表示名です。"
       },
       "playerList": {
         "type": "object",
-        "description": "アクタのプレイヤリストにおける扱いです。",
+        "description": "プレイヤのプレイヤリストにおける扱いです。",
         "properties": {
           "name": {
             "type": "string",
@@ -86,51 +86,51 @@
       },
       "compass": {
         "type": "location",
-        "description": "アクタのコンパスのターゲットです。"
+        "description": "プレイヤのコンパスのターゲットです。"
       },
       "bedLocation": {
         "type": "location",
-        "description": "アクタのベッドスポーンの位置です。"
+        "description": "プレイヤのベッドスポーンの位置です。"
       },
       "exp": {
         "type": "integer",
-        "description": "アクタの経験値です。"
+        "description": "プレイヤの経験値です。"
       },
       "level": {
         "type": "integer",
-        "description": "アクタのレベルです。"
+        "description": "プレイヤのレベルです。"
       },
       "totalExp": {
         "type": "integer",
-        "description": "アクタの総経験値です。"
+        "description": "プレイヤの総経験値です。"
       },
       "flyable": {
         "type": "boolean",
-        "description": "アクタが飛行できるかどうかです。ゲームモードがクリエイティブおよびスペクテイタの場合は、暗黙的に true になります。"
+        "description": "プレイヤが飛行できるかどうかです。ゲームモードがクリエイティブおよびスペクテイタの場合は、暗黙的に true になります。"
       },
       "flying": {
         "type": "boolean",
-        "description": "アクタが飛行中かどうかです。"
+        "description": "プレイヤが飛行中かどうかです。"
       },
       "walkSpeed": {
         "type": "number",
-        "description": "アクタの歩行速度です。"
+        "description": "プレイヤの歩行速度です。"
       },
       "flySpeed": {
         "type": "number",
-        "description": "アクタの飛行速度です。"
+        "description": "プレイヤの飛行速度です。"
       },
       "inventory": {
         "type": "playerInventory",
-        "description": "アクタのインベントリです。"
+        "description": "プレイヤのインベントリです。"
       },
       "enderChest": {
         "type": "inventory",
-        "description": "アクタのエンダーチェストです。"
+        "description": "プレイヤのエンダーチェストです。"
       },
       "mainHand": {
         "type": "string",
-        "description": "アクタの利き手です。",
+        "description": "プレイヤの利き手です。",
         "enum": [
           "left",
           "right",
@@ -141,7 +141,7 @@
       },
       "gamemode": {
         "type": "string",
-        "description": "アクタのゲームモードです。",
+        "description": "プレイヤのゲームモードです。",
         "enum": [
           "survival",
           "creative",
@@ -156,7 +156,7 @@
       },
       "foodLevel": {
         "type": "integer",
-        "description": "アクタの食料レベルです。",
+        "description": "プレイヤの食料レベルです。",
         "minimum": 0,
         "maximum": 20,
         "default": 20
@@ -168,11 +168,11 @@
         ],
         "minimum": 0,
         "maximum": 4,
-        "description": "アクタの OP レベルです。 0 は OP ではないことを意味します。"
+        "description": "プレイヤの OP レベルです。 0 は OP ではないことを意味します。"
       },
       "permissions": {
         "type": "array",
-        "description": "アクタに与える権限です。",
+        "description": "プレイヤに与える権限です。",
         "items": {
           "type": "string"
         }
