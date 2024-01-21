@@ -265,9 +265,9 @@ public class PlayerMocker extends PlayerMockerBase
         if (structure.getLocation() != null && structure.getLocation().getWorld() == null)
             initialLocation.setWorld(world);
 
-        MockedPlayer player = new MockedPlayer(this.manager,
-                this, mockedNetworkManager, server, worldServer, profile,
-                initialLocation
+        MockedPlayer player = new MockedPlayer(
+                this.manager, this, mockedNetworkManager, server, worldServer,
+                profile, initialLocation, structure
         );
         this.initializePlayer(player, structure);
 
@@ -279,7 +279,7 @@ public class PlayerMocker extends PlayerMockerBase
 
     /* non-public */ void doLogin(MinecraftServer server, MockedPlayer player)
     {
-        if (!this.dispatchLoginEvent(player.getBukkitEntity()))
+        if (!this.dispatchLoginEvent(player))
             throw new IllegalStateException("Login for " + player.getName() + " was denied.");
 
         this.registerPlayer(server, player);

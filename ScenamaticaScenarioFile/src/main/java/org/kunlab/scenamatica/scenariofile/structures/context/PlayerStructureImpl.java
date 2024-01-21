@@ -13,6 +13,9 @@ import org.kunlab.scenamatica.interfaces.scenariofile.misc.LocationStructure;
 import org.kunlab.scenamatica.scenariofile.structures.entity.entities.HumanEntityStructureImpl;
 import org.kunlab.scenamatica.scenariofile.structures.misc.LocationStructureImpl;
 
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +29,9 @@ public class PlayerStructureImpl extends HumanEntityStructureImpl implements Pla
 
     String name;
     Boolean online;
+    InetAddress remoteAddress;
+    Integer port;
+    String hostName;
     String displayName;
     String playerListName;
     String playerListHeader;
@@ -43,7 +49,8 @@ public class PlayerStructureImpl extends HumanEntityStructureImpl implements Pla
     Integer opLevel;
     List<String> activePermissions;
 
-    public PlayerStructureImpl(@NotNull HumanEntityStructure human, @Nullable String name, Boolean online, String displayName,
+    public PlayerStructureImpl(@NotNull HumanEntityStructure human, @Nullable String name, Boolean online,
+                               InetAddress remoteAddress, Integer port, String hostName, String displayName,
                                String playerListName, String playerListHeader,
                                String playerListFooter, LocationStructure compassTarget,
                                LocationStructure bedSpawnLocation, Integer exp,
@@ -54,6 +61,9 @@ public class PlayerStructureImpl extends HumanEntityStructureImpl implements Pla
         super(human);
         this.name = name;
         this.online = online;
+        this.remoteAddress = remoteAddress;
+        this.port = port;
+        this.hostName = hostName;
         this.displayName = displayName;
         this.playerListName = playerListName;
         this.playerListHeader = playerListHeader;
@@ -71,14 +81,18 @@ public class PlayerStructureImpl extends HumanEntityStructureImpl implements Pla
         this.activePermissions = activePermissions;
     }
 
-    public PlayerStructureImpl(String name, Boolean online, String displayName, String playerListName,
-                               String playerListHeader, String playerListFooter, LocationStructure compassTarget,
+    public PlayerStructureImpl(String name, Boolean online, InetAddress remoteAddress, Integer port, String hostName,
+                               String displayName, String playerListName, String playerListHeader,
+                               String playerListFooter, LocationStructure compassTarget,
                                LocationStructure bedSpawnLocation, Integer exp, Integer level, Integer totalExperience,
                                Boolean allowFlight, Boolean flying, Float walkSpeed, Float flySpeed, Integer opLevel,
                                List<String> activePermissions)
     {
         this.name = name;
         this.online = online;
+        this.remoteAddress = remoteAddress;
+        this.port = port;
+        this.hostName = hostName;
         this.displayName = displayName;
         this.playerListName = playerListName;
         this.playerListHeader = playerListHeader;
@@ -128,6 +142,15 @@ public class PlayerStructureImpl extends HumanEntityStructureImpl implements Pla
             MapUtils.putIfNotNull(playerList, KEY_PLAYER_LIST_HEADER, structure.getPlayerListHeader());
             MapUtils.putIfNotNull(playerList, KEY_PLAYER_LIST_FOOTER, structure.getPlayerListFooter());
             map.put(KEY_PLAYER_LIST, playerList);
+        }
+
+        if (!(structure.getRemoteAddress() == null && structure.getPort() == null && structure.getHostName() == null))
+        {
+            Map<String, Object> connection = new HashMap<>();
+            MapUtils.putIfNotNull(connection, KEY_CONNECTION_IP, structure.getRemoteAddress().getHostAddress());
+            MapUtils.putIfNotNull(connection, KEY_CONNECTION_PORT, structure.getPort());
+            MapUtils.putIfNotNull(connection, KEY_CONNECTION_HOSTNAME, structure.getHostName());
+            map.put(KEY_CONNECTION, connection);
         }
 
         if (!structure.getActivePermissions().isEmpty())
@@ -193,11 +216,31 @@ public class PlayerStructureImpl extends HumanEntityStructureImpl implements Pla
         String playerListFooter = null;
         if (map.containsKey(KEY_PLAYER_LIST))
         {
-            Map<String, Object> playerList =
-                    MapUtils.checkAndCastMap(map.get(KEY_PLAYER_LIST));
+            Map<String, Object> playerList = MapUtils.checkAndCastMap(map.get(KEY_PLAYER_LIST));
             playerListName = MapUtils.getOrNull(playerList, KEY_PLAYER_LIST_NAME);
             playerListHeader = MapUtils.getOrNull(playerList, KEY_PLAYER_LIST_HEADER);
             playerListFooter = MapUtils.getOrNull(playerList, KEY_PLAYER_LIST_FOOTER);
+        }
+
+        InetAddress remoteAddress = null;
+        Integer portNumber = null;
+        String hostName = null;
+        if (map.containsKey(KEY_CONNECTION))
+        {
+            Map<String, Object> connection = MapUtils.checkAndCastMap(map.get(KEY_CONNECTION));
+            if (connection.containsKey(KEY_CONNECTION_IP))
+            {
+                try
+                {
+                    remoteAddress = InetAddress.getByName(MapUtils.getOrNull(connection, KEY_CONNECTION_IP));
+                }
+                catch (UnknownHostException e)
+                {
+                    throw new IllegalArgumentException("Failed to parse the player IP address", e);
+                }
+            }
+            portNumber = MapUtils.getAsNumber(connection, KEY_CONNECTION_PORT, Number::intValue);
+            hostName = MapUtils.getOrNull(connection, KEY_CONNECTION_HOSTNAME);
         }
 
         Integer opLevel = null;
@@ -216,6 +259,9 @@ public class PlayerStructureImpl extends HumanEntityStructureImpl implements Pla
                 human,
                 name,
                 online,
+                remoteAddress,
+                portNumber,
+                hostName,
                 displayName,
                 playerListName,
                 playerListHeader,
@@ -240,6 +286,9 @@ public class PlayerStructureImpl extends HumanEntityStructureImpl implements Pla
                 HumanEntityStructureImpl.ofHuman(player),
                 player.getName(),
                 player.isOnline(),
+                player.getAddress() == null ? null: player.getAddress().getAddress(),
+                player.getAddress() == null ? null: player.getAddress().getPort(),
+                player.getAddress() == null ? null: player.getAddress().getHostName(),
                 player.getDisplayName(),
                 player.getPlayerListName(),
                 player.getPlayerListHeader(),
@@ -299,6 +348,10 @@ public class PlayerStructureImpl extends HumanEntityStructureImpl implements Pla
                 && Objects.equals(this.flying, that.flying)
                 && Objects.equals(this.name, that.name)
                 && Objects.equals(this.displayName, that.displayName)
+                && Objects.equals(this.online, that.online)
+                && Objects.equals(this.remoteAddress, that.remoteAddress)
+                && Objects.equals(this.port, that.port)
+                && Objects.equals(this.hostName, that.hostName)
                 && Objects.equals(this.playerListName, that.playerListName)
                 && Objects.equals(this.playerListHeader, that.playerListHeader)
                 && Objects.equals(this.playerListFooter, that.playerListFooter)
@@ -374,6 +427,8 @@ public class PlayerStructureImpl extends HumanEntityStructureImpl implements Pla
         return super.isAdequateHumanEntity(player, strict)
                 && (this.name == null || this.name.equals(player.getName()))
                 && (this.displayName == null || this.displayName.equals(player.getDisplayName()))
+                && (this.online == null || this.online.equals(player.isOnline()))
+                && (this.remoteAddress == null || this.isIPAdequate(player))
                 && (this.playerListName == null || this.playerListName.equals(player.getPlayerListName()))
                 && (this.playerListHeader == null || this.playerListHeader.equals(player.getPlayerListHeader()))
                 && (this.playerListFooter == null || this.playerListFooter.equals(player.getPlayerListFooter()))
@@ -387,5 +442,17 @@ public class PlayerStructureImpl extends HumanEntityStructureImpl implements Pla
                 && (this.walkSpeed == null || this.walkSpeed.equals(player.getWalkSpeed()))
                 && (this.flySpeed == null || this.flySpeed.equals(player.getFlySpeed()))
                 && (this.activePermissions == null || this.activePermissions.stream().allMatch(player::hasPermission));
+    }
+
+    private boolean isIPAdequate(Player player)
+    {
+        InetSocketAddress playerAddr = player.getAddress();
+        if (playerAddr == null
+                && !(this.remoteAddress == null && this.port == null && this.hostName == null))
+            return false;
+
+        return (this.remoteAddress == null || this.remoteAddress.equals(playerAddr.getAddress()))
+                && (this.port == null || this.port.equals(playerAddr.getPort()))
+                && (this.hostName == null || this.hostName.equals(playerAddr.getHostName()));
     }
 }

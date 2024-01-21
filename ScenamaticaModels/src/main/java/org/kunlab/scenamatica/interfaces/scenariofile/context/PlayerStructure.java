@@ -5,6 +5,7 @@ import org.kunlab.scenamatica.interfaces.scenariofile.Mapped;
 import org.kunlab.scenamatica.interfaces.scenariofile.entity.entities.HumanEntityStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.misc.LocationStructure;
 
+import java.net.InetAddress;
 import java.util.List;
 
 /**
@@ -14,6 +15,10 @@ public interface PlayerStructure extends HumanEntityStructure, Mapped<Player>
 {
     String KEY_NAME = "name";
     String KEY_ONLINE = "online";
+    String KEY_CONNECTION = "connection";
+    String KEY_CONNECTION_IP = "ip";
+    String KEY_CONNECTION_PORT = "port";
+    String KEY_CONNECTION_HOSTNAME = "hostname";
     String KEY_DISPLAY_NAME = "display";
     String KEY_PLAYER_LIST = "playerList";
     String KEY_PLAYER_LIST_NAME = "name";
@@ -45,6 +50,27 @@ public interface PlayerStructure extends HumanEntityStructure, Mapped<Player>
      * @return プレイヤーがオンラインかどうか
      */
     Boolean getOnline();
+
+    /**
+     * プレイヤーのIPアドレスを取得します。
+     *
+     * @return プレイヤーのIPアドレス
+     */
+    InetAddress getRemoteAddress();
+
+    /**
+     * プレイヤーのポート番号を取得します。
+     *
+     * @return プレイヤーのポート番号
+     */
+    Integer getPort();
+
+    /**
+     * プレイヤーのホスト名を取得します。
+     *
+     * @return プレイヤーのホスト名
+     */
+    String getHostName();
 
     /**
      * プレイヤーの表示名を取得します。

@@ -12,6 +12,7 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.kunlab.scenamatica.interfaces.scenariofile.context.PlayerStructure;
 import org.kunlab.scenamatica.nms.enums.entity.NMSEntityUseAction;
 
 import java.util.UUID;
@@ -28,6 +29,13 @@ public interface Actor
      */
     @NotNull
     ActorManager getManager();
+
+    /**
+     * 初期化に使用された構造体を取得します。
+     *
+     * @return 構造体
+     */
+    PlayerStructure getInitialStructure();
 
     /**
      * アニメーションを再生します。

@@ -49,6 +49,7 @@ import org.kunlab.scenamatica.context.actor.nms.v_1_16_R3.packets.MockedPacketPl
 import org.kunlab.scenamatica.events.actor.ActorPostJoinEvent;
 import org.kunlab.scenamatica.interfaces.context.Actor;
 import org.kunlab.scenamatica.interfaces.context.ActorManager;
+import org.kunlab.scenamatica.interfaces.scenariofile.context.PlayerStructure;
 import org.kunlab.scenamatica.nms.enums.entity.NMSEntityUseAction;
 
 import java.io.IOException;
@@ -64,6 +65,8 @@ class MockedPlayer extends EntityPlayer implements Actor
     private final Location initialLocation;
     @Getter
     private final NetworkManager networkManager;
+    @Getter
+    private final PlayerStructure initialStructure;
 
     public MockedPlayer(
             ActorManager manager,
@@ -72,13 +75,15 @@ class MockedPlayer extends EntityPlayer implements Actor
             MinecraftServer minecraftserver,
             WorldServer worldserver,
             GameProfile gameprofile,
-            Location initialLocation)
+            Location initialLocation,
+            PlayerStructure initialStructure)
     {
         super(minecraftserver, worldserver, gameprofile, new PlayerInteractManager(worldserver));
         this.manager = manager;
         this.mocker = mocker;
         this.networkManager = networkManager;
         this.initialLocation = initialLocation;
+        this.initialStructure = initialStructure;
 
         this.setNoGravity(false);
         this.G = 0.5f; // ブロックをのぼれるたかさ

@@ -22,6 +22,10 @@ import java.util.UUID;
 
 public abstract class PlayerMockerBase
 {
+    public static final String DEFAULT_IP = "114.51.48.10";
+    public static final Integer DEFAULT_PORT = 1919;
+    public static final String DEFAULT_HOST_NAME = DEFAULT_IP;
+
     private final ScenamaticaRegistry registry;
     private final ActorManager manager;
 
@@ -48,12 +52,26 @@ public abstract class PlayerMockerBase
     public abstract void postActorLogin(Player player);
 
     @SneakyThrows(UnknownHostException.class)
-    protected boolean dispatchLoginEvent(Player player)
+    protected boolean dispatchLoginEvent(Actor player)
     {
-        InetAddress addr = InetAddress.getByName("191.9.81.0");
-        InetSocketAddress socketAddr = new InetSocketAddress(addr, 1919);
+        InetAddress addr;
+        InetSocketAddress socketAddr;
+        String hostName;
+        if (player.getInitialStructure().getRemoteAddress() == null)
+            addr = InetAddress.getByName(DEFAULT_IP);
+        else
+            addr = player.getInitialStructure().getRemoteAddress();
+        if (player.getInitialStructure().getPort() == null)
+            socketAddr = new InetSocketAddress(addr, DEFAULT_PORT);
+        else
+            socketAddr = new InetSocketAddress(addr, player.getInitialStructure().getPort());
+        if (player.getInitialStructure().getHostName() == null)
+            hostName = DEFAULT_HOST_NAME;
+        else
+            hostName = player.getInitialStructure().getHostName();
 
-        PlayerLoginEvent event = new PlayerLoginEvent(player, "191.9.81.0", addr);
+
+        PlayerLoginEvent event = new PlayerLoginEvent(player.getPlayer(), hostName, addr);
         Bukkit.getPluginManager().callEvent(event);
 
         if (event.getResult() != PlayerLoginEvent.Result.ALLOWED)

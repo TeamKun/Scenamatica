@@ -14,6 +14,8 @@ import org.kunlab.scenamatica.scenariofile.structures.inventory.PlayerInventoryS
 import org.kunlab.scenamatica.scenariofile.structures.misc.LocationStructureImpl;
 import org.kunlab.scenamatica.scenariofile.structures.utils.MapTestUtil;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -22,34 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class PlayerStructureSerializeTest
 {
-    public static final PlayerStructure FULFILLED = new PlayerStructureImpl(
-            new AHumanEntityStructureImpl(
-                    LivingEntitySerializeTest.FULFILLED,
-                    PlayerInventoryStructureSerializeTest.FULFILLED,
-                    InventoryStructureSerializeTest.FULFILLED,
-                    MainHand.LEFT,
-                    GameMode.ADVENTURE,
-                    20
-            ),
-            "YajuSNPIName",
-            false,
-            "YajuSNPIDisplay",
-            "YajuSenpaiList",
-            "YajuListHeader",
-            "YajuListFooter",
-            LocationStructureImpl.of(new Location(null, 11, 45, 14)),
-            LocationStructureImpl.of(new Location(null, 11, 45, 14)),
-            20,
-            2000,
-            20000,
-            true,
-            true,
-            114f,
-            514f,
-            4,
-            Collections.emptyList()
-    );
-
+    public static final PlayerStructure FULFILLED;
     public static final Map<String, Object> FULFILLED_MAP = new HashMap<String, Object>(LivingEntitySerializeTest.FULFILLED_MAP)
     {{
         this.remove(AEntityStructure.KEY_TYPE);
@@ -61,6 +36,12 @@ public class PlayerStructureSerializeTest
 
         this.put("name", "YajuSNPIName");
         this.put("online", false);
+        this.put("connection", new HashMap<String, Object>()
+        {{
+            this.put("ip", "114.51.48.10");
+            this.put("port", 1919);
+            this.put("hostname", "YajuSNPIPC");
+        }});
         this.put("display", "YajuSNPIDisplay");
         this.put("playerList", new HashMap<String, Object>()
         {{
@@ -89,7 +70,6 @@ public class PlayerStructureSerializeTest
         this.put("flySpeed", 514f);
         this.put("op", 4);
     }};
-
     public static final PlayerStructure EMPTY = new PlayerStructureImpl(
             new AHumanEntityStructureImpl(
                     LivingEntitySerializeTest.EMPTY,
@@ -115,10 +95,53 @@ public class PlayerStructureSerializeTest
             null,
             null,
             null,
+            null,
+            null,
+            null,
             Collections.emptyList()
     );
-
     public static final Map<String, Object> EMPTY_MAP = new HashMap<>();
+
+    static
+    {
+        try
+        {
+            FULFILLED = new PlayerStructureImpl(
+                    new AHumanEntityStructureImpl(
+                            LivingEntitySerializeTest.FULFILLED,
+                            PlayerInventoryStructureSerializeTest.FULFILLED,
+                            InventoryStructureSerializeTest.FULFILLED,
+                            MainHand.LEFT,
+                            GameMode.ADVENTURE,
+                            20
+                    ),
+                    "YajuSNPIName",
+                    false,
+                    InetAddress.getByName("114.51.48.10"),
+                    1919,
+                    "YajuSNPIPC",
+                    "YajuSNPIDisplay",
+                    "YajuSenpaiList",
+                    "YajuListHeader",
+                    "YajuListFooter",
+                    LocationStructureImpl.of(new Location(null, 11, 45, 14)),
+                    LocationStructureImpl.of(new Location(null, 11, 45, 14)),
+                    20,
+                    2000,
+                    20000,
+                    true,
+                    true,
+                    114f,
+                    514f,
+                    4,
+                    Collections.emptyList()
+            );
+        }
+        catch (UnknownHostException e)
+        {
+            throw new RuntimeException(e);
+        }
+    }
 
     @Test
     void 正常にシリアライズできるか()

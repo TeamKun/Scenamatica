@@ -1,0 +1,22 @@
+# noinspection YAMLSchemaValidation
+scenamatica: ${project.version}
+
+name: general_context_actor_2
+description: Testing actor generation with ip and port works or not
+order: -100
+on:
+  - type: manual_dispatch
+  - type: on_load
+
+context:
+  actors:
+    - name: Actor001
+      gamemode: SURVIVAL
+      displayName: §c§lActor001
+      connection:
+        ip: 1.2.3.4
+        port: 1234
+        hostname: Yaju1234
+
+# noinspection YAMLSchemaValidation
+scenario: []
