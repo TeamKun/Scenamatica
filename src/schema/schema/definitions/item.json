@@ -32,7 +32,7 @@
     "description": "アイテムスタックを表します。",
     "properties": {
       "type": {
-        "type": "string",
+        "type": "material",
         "description": "アイテムの種類です。"
       },
       "amount": {

@@ -51,7 +51,7 @@
     "description": "ブロックです。",
     "properties": {
       "type": {
-        "type": "string",
+        "type": "material",
         "description": "ブロックの種類です。"
       },
       "location": {
