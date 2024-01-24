@@ -40,8 +40,7 @@
         "sendCommandFeedback",
         "showDeathMessages",
         "spawnRadius",
-        "spectatorsGenerateChunks",
-        "universalAnger"
+        "spectatorsGenerateChunks"
       ]
     },
     "value": {
