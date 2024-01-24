@@ -7,13 +7,7 @@
       "FEET",
       "LEGS",
       "CHEST",
-      "HEAD",
-      "hand",
-      "off_hand",
-      "feet",
-      "legs",
-      "chest",
-      "head"
+      "HEAD"
     ]
   },
   "playerInventory": {
@@ -153,8 +147,6 @@
         "type": "string",
         "description": "プレイヤの利き手です。",
         "enum": [
-          "left",
-          "right",
           "LEFT",
           "RIGHT"
         ],
@@ -164,10 +156,6 @@
         "type": "string",
         "description": "プレイヤのゲームモードです。",
         "enum": [
-          "survival",
-          "creative",
-          "adventure",
-          "spectator",
           "SURVIVAL",
           "CREATIVE",
           "ADVENTURE",

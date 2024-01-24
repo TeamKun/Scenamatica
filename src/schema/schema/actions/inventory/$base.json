@@ -24,21 +24,7 @@
         "CONTROL_DROP",
         "CREATIVE",
         "SWAP_OFFHAND",
-        "UNKNOWN",
-        "left",
-        "shift_left",
-        "right",
-        "shift_right",
-        "window_border_left",
-        "window_border_right",
-        "middle",
-        "number_key",
-        "double_click",
-        "drop",
-        "control_drop",
-        "creative",
-        "swap_offhand",
-        "unknown"
+        "UNKNOWN"
       ]
     },
     "inventoryAction": {
@@ -63,26 +49,7 @@
         "HOTBAR_SWAP",
         "CLONE_STACK",
         "COLLECT_TO_CURSOR",
-        "UNKNOWN",
-        "nothing",
-        "pickup_all",
-        "pickup_some",
-        "pickup_half",
-        "pickup_one",
-        "place_all",
-        "place_some",
-        "place_one",
-        "swap_with_cursor",
-        "drop_all_cursor",
-        "drop_one_cursor",
-        "drop_all_slot",
-        "drop_one_slot",
-        "move_to_other_inventory",
-        "hotbar_move_and_readd",
-        "hotbar_swap",
-        "clone_stack",
-        "collect_to_cursor",
-        "unknown"
+        "UNKNOWN"
       ]
     },
     "slotType": {
@@ -95,14 +62,7 @@
         "CONTAINER",
         "QUICKBAR",
         "OUTSIDE",
-        "FUEL",
-        "result",
-        "crafting",
-        "armor",
-        "container",
-        "quickbar",
-        "outside",
-        "fuel"
+        "FUEL"
       ]
     },
     "closeReason": {

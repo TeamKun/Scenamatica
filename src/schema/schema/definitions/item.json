@@ -20,9 +20,6 @@
         "type": "string",
         "description": "属性の変更設定の操作です。",
         "enum": [
-          "add_number",
-          "add_scalar",
-          "multiply_scalar_1",
           "ADD_NUMBER",
           "ADD_SCALAR",
           "MULTIPLY_SCALAR_1"
@@ -92,14 +89,7 @@
             "HIDE_DESTROYS",
             "HIDE_PLACED_ON",
             "HIDE_POTION_EFFECTS",
-            "HIDE_DYE",
-            "hide_enchants",
-            "hide_attributes",
-            "hide_unbreakable",
-            "hide_destroys",
-            "hide_placed_on",
-            "hide_potion_effects",
-            "hide_dye"
+            "HIDE_DYE"
           ]
         }
       },

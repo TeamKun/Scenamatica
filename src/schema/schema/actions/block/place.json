@@ -13,9 +13,7 @@
       "description": "ブロックを設置した手です。",
       "enum": [
         "HAND",
-        "OFF_HAND",
-        "hand",
-        "off_hand"
+        "OFF_HAND"
       ]
     },
     "direction": {
