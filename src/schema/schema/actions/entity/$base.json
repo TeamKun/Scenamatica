@@ -3,15 +3,7 @@
   "arguments": {
     "target": {
       "description": "対象のエンティティです。",
-      "oneOf": [
-        {
-          "type": "string",
-          "description": "エンティティの UUID またはセレクタです。"
-        },
-        {
-          "type": "entity"
-        }
-      ]
+      "type": "entitySpecifier"
     }
   },
   "outputs": {

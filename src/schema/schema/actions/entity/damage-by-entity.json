@@ -4,8 +4,8 @@
   "base": "entity_damage",
   "arguments": {
     "damager": {
-      "description": "ダメージ元のエンティティのUUIDまたはセレクタです。",
-      "type": "string"
+      "description": "ダメージ元のエンティティの指定子です。",
+      "type": "entitySpecifier"
     }
   },
   "outputs": {

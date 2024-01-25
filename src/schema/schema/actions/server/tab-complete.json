@@ -3,8 +3,17 @@
   "description": "コマンドをタブ補完します。",
   "arguments": {
     "sender": {
-      "type": "string",
-      "description": "実行するプレイヤです。"
+      "description": "実行するプレイヤです。",
+      "oneOf": [
+        {
+          "type": "playerSpecifier"
+        },
+        {
+          "type": "string",
+          "const": "<CONSOLE>",
+          "description": "コンソールを表します。"
+        }
+      ]
     },
     "buffer": {
       "type": "string",

@@ -4,7 +4,7 @@
   "base": "player_$base",
   "arguments": {
     "killer": {
-      "type": "string",
+      "type": "entitySpecifier",
       "description": "ターゲットを殺すプレイヤです。"
     },
     "deathMessage": {
@@ -41,8 +41,8 @@
   },
   "outputs": {
     "killer": {
-      "type": "string",
-      "description": "ターゲットを殺すプレイヤです。"
+      "type": "entitySpecifier",
+      "description": "ターゲットを殺したプレイヤです。"
     },
     "deathMessage": {
       "type": "string",

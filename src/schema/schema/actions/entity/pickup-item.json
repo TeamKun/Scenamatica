@@ -8,17 +8,9 @@
       "description": "残りのアイテム数を指定します。"
     },
     "item": {
+      "type": "entitySpecifier",
       "description": "拾わせるアイテムを指定します。",
-      "oneOf": [
-        {
-          "type": "entityItem",
-          "description": "アイテムを指定します。"
-        },
-        {
-          "type": "string",
-          "description": "アイテムのセレクタを指定します。"
-        }
-      ]
+      "$entityKindOf": "entityItem"
     }
   },
   "outputs": {

@@ -4,9 +4,11 @@
   "base": "entity_damage",
   "arguments": {
     "target": {
-      "description": "設置するエンティティの UUID, セレクタ, 実体です。"
+      "type": "entitySpecifier",
+      "description": "設置するエンティティです。"
     },
     "material": {
+      "type": "material",
       "description": "設置するエンティティをアイテム化したときのアイテムです。"
     },
     "player": {

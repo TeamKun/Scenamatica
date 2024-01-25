@@ -4,24 +4,16 @@
   "base": "player_$base",
   "arguments": {
     "bucket": {
-      "description": "エンティティをいれるバケツです。",
-      "type": "itemStack"
+      "type": "itemStack",
+      "description": "エンティティをいれるバケツです。"
     },
     "entityBucket": {
-      "description": "エンティティが入ったバケツです。",
-      "type": "itemStack"
+      "type": "itemStack",
+      "description": "エンティティが入ったバケツです。"
     },
     "entity": {
-      "description": "入れるエンティティです。",
-      "oneOf": [
-        {
-          "type": "string",
-          "description": "エンティティの UUID またはセレクタです。"
-        },
-        {
-          "type": "entity"
-        }
-      ]
+      "type": "entitySpecifier",
+      "description": "入れるエンティティです。"
     }
   },
   "outputs": {

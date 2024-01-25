@@ -2,23 +2,14 @@
   "name": "player_$base",
   "arguments": {
     "target": {
-      "description": "対象のプレイヤです。",
-      "oneOf": [
-        {
-          "type": "string",
-          "description": "プレイヤ名または UUID セレクタを指定します。"
-        },
-        {
-          "type": "player",
-          "description": "プレイヤの構造を指定します。"
-        }
-      ]
+      "type": "playerSpecifier",
+      "description": "対象のプレイヤです。"
     }
   },
   "outputs": {
     "target": {
-      "description": "対象のプレイヤです。",
-      "type": "player"
+      "type": "player",
+      "description": "対象のプレイヤです。"
     }
   }
 }

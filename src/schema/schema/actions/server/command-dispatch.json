@@ -7,8 +7,17 @@
       "description": "実行されるコマンドです。実行を検知する場合は正規表現を使用できます。"
     },
     "sender": {
-      "type": "string",
-      "description": "実行するプレイヤです。"
+      "description": "実行するプレイヤです。",
+      "oneOf": [
+        {
+          "type": "string",
+          "const": "<CONSOLE",
+          "description": "コンソールから実行します。"
+        },
+        {
+          "type": "playerSpecifier"
+        }
+      ]
     }
   },
   "outputs": {
@@ -17,8 +26,17 @@
       "description": "実行されたコマンドです。"
     },
     "sender": {
-      "type": "string",
-      "description": "実行したプレイヤです。"
+      "description": "実行したプレイヤまたはコンソールです。",
+        "oneOf": [
+            {
+            "type": "string",
+            "const": "<CONSOLE>",
+            "description": "コンソールから実行されました。"
+            },
+            {
+            "type": "playerSpecifier"
+            }
+        ]
     }
   }
 }

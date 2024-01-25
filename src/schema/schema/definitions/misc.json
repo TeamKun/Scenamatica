@@ -70,7 +70,7 @@
         "maximum": 15
       },
       "biome": {
-        "$ref": "#/definitions/biome",
+        "$ref": "biome",
         "description": "ブロックのバイオームです。"
       }
     }
@@ -80,18 +80,7 @@
     "type": "location"
   },
   "projectileSource": {
-    "description": "発射源です。",
-    "oneOf": [
-      {
-        "type": "entity"
-      },
-      {
-        "type": "block"
-      },
-      {
-        "type": "string",
-        "description": "エンティティのセレクタです。"
-      }
-    ]
+    "type": "entitySpecifier",
+    "description": "発射源です。"
   }
 }

@@ -3,7 +3,7 @@
   "base": "inventory_$base",
   "arguments": {
     "target": {
-      "type": "string",
+      "type": "playerSpecifier",
       "description": "対象のプレイヤです。"
     }
   },

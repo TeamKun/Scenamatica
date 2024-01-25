@@ -5,15 +5,19 @@ import * as path from "path"
 
 const DEF_SCHEMA= "http://json-schema.org/draft-07/schema"
 
-const PATH_PRIME = "prime.json"
-const PATH_DEFINITIONS = "definitions.json"
-const PATH_DIR_DEFINITIONS = "definitions/"
-const PATH_DIR_ACTIONS = "actions/"
+const PATH_IN_PRIME = "prime.json"
+const PATH_OUT_SCHEMA = "schema"
+const PATH_OUT_META = "meta.json"
+const PATH_OUT_SCENAMATICA_FILE = "scenamatica-file.json"
+
+const PATH_DIR_DEFINITIONS = "definitions"
+const PATH_DIR_ACTIONS = "actions"
 
 
 type Action = {
     name: string
     description: string
+    namespace: string
     base?: string
     arguments?: {
         [key: string]: unknown | {
@@ -70,18 +74,29 @@ type Prime = Definable & {
     }
 }
 
+type Meta = {
+    definitionsDir: string
+    actionsDir: string
+    definitions: {
+        [key: string]: string[]
+    }
+    actions: {
+        [key: string]: string
+    }
+}
+
 
 const parseArgs = () => {
     // noinspection JSUnresolvedReference
     const args = process.argv.slice(2)
     if (args.length < 2) {
         console.log("Error: No arguments provided")
-        console.log("Usage: build.ts base-dir output-file")
+        console.log("Usage: build.ts base-dir output-dir")
         process.exit(1)
     }
     return {
         baseDir: args[0],
-        outputFile: args[1]
+        outputDir: args[1]
     }
 }
 
@@ -100,12 +115,9 @@ const loadJson = (baseDir: string, pathLike: string) : unknown => {
 }
 
 const loadPrime = (baseDir: string) : Prime => {
-    return loadJson(baseDir, PATH_PRIME) as Prime
+    return loadJson(baseDir, PATH_IN_PRIME) as Prime
 }
 
-const loadPrimeDefinition = (baseDir: string) : {[key: string]: unknown} => {
-    return loadJson(baseDir, PATH_DEFINITIONS) as {[key: string]: unknown}
-}
 
 const setDefinitions = (definable: Definable, ...definitions: {[key: string]: unknown}[]) : Definable => {
     if (!definable.definitions) {
@@ -121,7 +133,6 @@ const setDefinitions = (definable: Definable, ...definitions: {[key: string]: un
     return definable
 }
 
-
 const retrieveExtendedDefinitions = (baseDir: string): {
     [key: string]: {
         [key: string]: unknown
@@ -131,9 +142,13 @@ const retrieveExtendedDefinitions = (baseDir: string): {
 
     const definitions: { [key: string]: {[key: string]: unknown} } = {}
     walkDir(definitionsPath, (file) => {
-        const name = file.split(".")[0]
+        const fileNameWithDir = path.relative(definitionsPath, file)
+            .replace(/\\/g, "/")  // For Windows
+            .replace(/\.json$/, "")
         const definition = loadJson("", file)
-        definitions[name] = definition as {[key: string]: unknown}
+        definitions[fileNameWithDir] = {
+            ...(definition as {[key: string]: unknown}),
+        }
     })
 
     return definitions
@@ -143,12 +158,10 @@ const retrieveExtendedDefinitions = (baseDir: string): {
 
 const retrieveCompletePrimeFile = (baseDir: string) : Prime => {
     const prime = loadPrime(baseDir)
-    const definitions = loadPrimeDefinition(baseDir)
-    const completedPrime = setDefinitions(prime, definitions)
 
-    completedPrime["$schema"] = DEF_SCHEMA
+    prime["$schema"] = DEF_SCHEMA
 
-    return completedPrime as Prime
+    return prime as Prime
 }
 
 const loadActions = (baseDir: string) : Action[] => {
@@ -157,7 +170,10 @@ const loadActions = (baseDir: string) : Action[] => {
 
     walkDir(actionsPath, (file) => {
         if (file.endsWith(".json")) {
+            const namespace = path.relative(actionsPath, path.dirname(file))
+                .replace(/\\/g, "/")  // For Windows
             const action = loadJson("", file) as Action
+            action.namespace = namespace
             actions.push(action)
         }
     })
@@ -179,10 +195,56 @@ const walkDir = (dir: string, callback: (file: string) => void) => {
 }
 
 const saveOutputSchema = (schema: Prime, outputFile: string) => {
+    // create dirs
+    const dir = path.dirname(outputFile)
+    if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, {recursive: true})
+    }
+
     // noinspection JSUnresolvedReference
     fs.writeFileSync(outputFile, JSON.stringify(schema, null, 2))
 }
 
+const buildDefinitionIndex = (definitions: {[key: string]: {[key: string]: unknown}}) => {
+    const meta = {}
+    for (const file in definitions) {
+        for (const key in definitions[file]) {
+            if (!meta[file]) {
+                meta[file] = []
+            }
+            meta[file].push(key)
+        }
+    }
+
+    return meta
+}
+
+const buildActionsIndex = (actions: Action[]) => {
+    const meta = {}
+    for (const action of actions) {
+        if (!meta[action.namespace]) {
+            meta[action.namespace] = {}
+        }
+        meta[action.namespace][action.name] = action.description
+    }
+
+    return meta
+}
+
+const saveMetaData = (actions: Action[], definitions: {[key: string]: {[key: string]: unknown}}, outputFile) => {
+    const definitionIndex = buildDefinitionIndex(definitions)
+    const actionIndex = buildActionsIndex(actions)
+    const meta: Meta = {
+        definitionsDir: PATH_DIR_DEFINITIONS,
+        actionsDir: PATH_DIR_ACTIONS,
+        definitions: definitionIndex,
+        actions: actionIndex
+    }
+
+
+    // noinspection JSUnresolvedReference
+    fs.writeFileSync(outputFile, JSON.stringify(meta, null, 2))
+}
 
 const buildActions = (prime: Prime, actions: Action[]) => {
     prime.definitions.action.properties.action.enum = actions
@@ -257,6 +319,32 @@ const buildActions = (prime: Prime, actions: Action[]) => {
     prime.definitions.action.definitions = argumentDefinitions
 }
 
+const normalizeEnumRecursively = (obj: {[key: string]: any}): void => {
+    const enumKey = "enum"
+    const enumValue = obj[enumKey]
+    if (enumValue) {
+        if (Array.isArray(enumValue)) {
+            const arrayEnumValue = enumValue as unknown[]
+            for (let i = 0; i < enumValue.length; i++) {
+                const value = enumValue[i]
+                if (typeof value === "string") {
+                    const isOnlyUpperCase = value.match(/^[A-Z_]+$/)
+                    if (isOnlyUpperCase) {
+                        arrayEnumValue.push(value.toLowerCase())
+                    }
+                }
+            }
+        }
+    }
+
+    for (const key in obj) {
+        const value = obj[key]
+        if (typeof value === "object") {
+            normalizeEnumRecursively(value as {[key: string]: unknown})
+        }
+    }
+}
+
 const appendOtherCaseOfEnum = (action: Action, definitions: {[key: string]: unknown}) => {
     if (!action.arguments) {
         return
@@ -268,21 +356,7 @@ const appendOtherCaseOfEnum = (action: Action, definitions: {[key: string]: unkn
             continue
         }
 
-        const enumValues = (value as {[key: string]: unknown}).enum as string[]
-        const aliases = []
-        let applyAlias = true
-        for (const enumValue of enumValues) {
-            if (enumValue.match(/^[A-Z_]+$/)) {
-                aliases.push(enumValue.toLowerCase())
-            } else {
-                applyAlias = false
-                break
-            }
-        }
-
-        if (applyAlias) {
-            definitions.properties[key].enum = enumValues.concat(aliases)
-        }
+        normalizeEnumRecursively(value as {[key: string]: unknown})
     }
 }
 
@@ -320,6 +394,7 @@ const main = () => {
     const extendedDefinitions = retrieveExtendedDefinitions(baseDir)
     for (const key in extendedDefinitions) {
         setDefinitions(prime, extendedDefinitions[key])
+        normalizeEnumRecursively(extendedDefinitions[key])
     }
 
     console.log("Loading actions...")
@@ -330,7 +405,12 @@ const main = () => {
     convertTypeToDefinitions(prime)
 
     console.log("Saving output schema...")
-    saveOutputSchema(prime, args.outputFile)
+    saveOutputSchema(prime, path.join(args.outputDir, PATH_OUT_SCHEMA, PATH_OUT_SCENAMATICA_FILE))
+    saveMetaData(actions, extendedDefinitions, path.join(args.outputDir, PATH_OUT_SCHEMA, PATH_OUT_META))
+    // Legacy support.
+    saveOutputSchema(prime, path.join(args.outputDir, PATH_OUT_SCENAMATICA_FILE))
+
+    console.log("Done!")
 }
 
 main()

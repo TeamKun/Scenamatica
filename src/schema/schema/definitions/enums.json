@@ -997,6 +997,22 @@
       "WEATHER_RAIN_ABOVE"
     ]
   },
+  "soundCategory": {
+    "type": "string",
+    "description": "サウンドのカテゴリーを表します。",
+    "enum": [
+      "MASTER",
+      "MUSIC",
+      "RECORDS",
+      "WEATHER",
+      "BLOCKS",
+      "HOSTILE",
+      "NEUTRAL",
+      "PLAYERS",
+      "AMBIENT",
+      "VOICE"
+    ]
+  },
   "biome": {
     "type": "string",
     "description": "ブロックのバイオームの種類を表します。",

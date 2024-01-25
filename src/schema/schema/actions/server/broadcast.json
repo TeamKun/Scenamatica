@@ -8,9 +8,18 @@
     },
     "recipients": {
       "type": "array",
-      "description": "メッセージを受け取るプレイヤの名前です。",
+      "description": "メッセージを受け取るプレイヤです。",
       "items": {
-        "type": "string"
+        "oneOf": [
+          {
+            "type": "playerSpecifier"
+          },
+          {
+            "type": "string",
+            "const": "<CONSOLE>",
+            "description": "コンソールに送信します。"
+          }
+        ]
       }
     },
     "permission": {
@@ -29,9 +38,17 @@
     },
     "recipients": {
       "type": "array",
-      "description": "メッセージを受け取ったプレイヤです。",
+      "description": "メッセージを受け取ったプレイヤまたはコンソールです。",
       "items": {
-        "type": "string"
+        "oneOf": [
+          {
+            "type": "player"
+          },
+          {
+            "type": "string",
+            "const": "<CONSOLE>"
+          }
+        ]
       }
     }
   }

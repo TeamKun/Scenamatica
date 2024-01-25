@@ -21,4 +21,4 @@ yarn-error.log*
 
 .idea
 
-/static/scenamatica-file.json
+/src/schema/scenamatica-file.json

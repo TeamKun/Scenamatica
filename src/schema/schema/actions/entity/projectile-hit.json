@@ -5,27 +5,12 @@
   "arguments": {
     "entity": {
       "description": "着弾する投射物です。",
-      "oneOf": [
-        {
-          "type": "projectile"
-        },
-        {
-          "type": "string",
-          "description": "エンティティの UUID またはセレクタです。"
-        }
-      ]
+      "type": "entitySpecifier",
+      "$entityKindOf": "projectile"
     },
     "hitEntity": {
       "description": "着弾する対象のエンティティです。",
-      "oneOf": [
-        {
-          "type": "string",
-          "description": "エンティティの UUID またはセレクタです。"
-        },
-        {
-          "type": "entity"
-        }
-      ]
+      "type": "entitySpecifier"
     },
     "hitBlock": {
       "description": "着弾する対象のブロックです。",

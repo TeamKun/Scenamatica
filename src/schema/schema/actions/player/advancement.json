@@ -4,26 +4,26 @@
   "base": "player_$base",
   "arguments": {
     "advancement": {
+      "type": "namespacedKey",
       "description": "達成する進捗です。",
-      "maxLength": 32767,
-      "type": "namespacedKey"
+      "maxLength": 32767
     },
     "criterion": {
+      "type": "namespacedKey",
       "description": "達成する条件です。省略した場合は全ての条件を達成します。",
-      "maxLength": 32767,
-      "type": "namespacedKey"
+      "maxLength": 32767
     }
   },
   "outputs": {
     "advancement": {
+      "type": "namespacedKey",
       "description": "達成した進捗です。",
-      "maxLength": 32767,
-      "type": "namespacedKey"
+      "maxLength": 32767
     },
     "criterion": {
+      "type": "namespacedKey",
       "description": "達成した条件です。",
-      "maxLength": 32767,
-      "type": "namespacedKey"
+      "maxLength": 32767
     }
   }
 }

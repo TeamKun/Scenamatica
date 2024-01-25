@@ -29,20 +29,8 @@
       "type": "sound"
     },
     "soundCategory": {
-      "description": "サウンドのカテゴリです。",
-      "type": "string",
-      "enum": [
-        "MASTER",
-        "MUSIC",
-        "RECORD",
-        "WEATHER",
-        "BLOCK",
-        "HOSTILE",
-        "NEUTRAL",
-        "PLAYER",
-        "AMBIENT",
-        "VOICE"
-      ]
+      "type": "soundCategory",
+      "description": "サウンドのカテゴリです。"
     },
     "soundVolume": {
       "description": "サウンドの音量です。",
