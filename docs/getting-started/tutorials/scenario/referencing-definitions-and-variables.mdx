@@ -259,9 +259,9 @@ $ reload confirm
 今回はあらかじめ用意しておいたシナリオを使います。
 
 ```yaml title="placing-diamond-block-on-kill-test.yml" showLineNumbers
-# このシナリオでは、プレイヤが敵を倒したときに、プレイヤの真下のブロックをダイヤモンドブロックに置換されるかどうかをテストします。
+# このシナリオでは、プレイヤが敵を倒したときに、プレイヤの真下のブロックを溶岩ブロックに置換されるかどうかをテストします。
 scenamatica: "0.0.1"
-name: "placing-diamond-block-on-kill-test"
+name: "placing-lava-block-on-kill-test"
 
 context:
   actors:
@@ -284,7 +284,7 @@ scenario:
 - type: expect
   action: block_place
   with:
-    # プレイヤの位置のブロックがダイヤモンドブロックに置換されることを期待する。
+    # プレイヤの位置のブロックが溶岩ブロックに置換されることを期待する。
     location:
       # プレイヤの座標を指定する。
       x: 0
@@ -330,7 +330,7 @@ scenario:
 今回の場合では、`scenario.scenario.0.output.target.location` を参照するために、
 `with.location` の値として `${scenario.scenario.0.output.target.location}` を指定します。
 
-```yaml title="placing-diamond-block-on-kill-test.yml" showLineNumbers
+```yaml title="placing-lava-block-on-kill-test.yml" showLineNumbers
 # ...
 scenario:
   # プレイヤに敵を倒させる。
@@ -342,7 +342,7 @@ scenario:
 - type: expect
   action: block_place
   with:
-    # プレイヤの位置のブロックがダイヤモンドブロックに置換されることを期待する。
+    # プレイヤの位置のブロックが溶岩ブロックに置換されることを期待する。
     # highlight-start
     location: "${scenario.scenario.0.output.target.location}"
     # highlight-end
@@ -357,7 +357,7 @@ Scenamatica では、シナリオに命名できます！
 
 以下のようにして、シナリオに名前をつけましょう。参照するときは、インデックスの代わりに名前を使います。
 
-```yaml title="placing-diamond-block-on-kill-test.yml" showLineNumbers
+```yaml title="placing-lava-block-on-kill-test.yml" showLineNumbers
 # ...
 scenario:
   # プレイヤに敵を倒させる。
@@ -370,7 +370,7 @@ scenario:
 - type: expect
   action: block_place
   with:
-    # プレイヤの位置のブロックがダイヤモンドブロックに置換されることを期待する。
+    # プレイヤの位置のブロックが溶岩ブロックに置換されることを期待する。
     # highlight-start
     location: "${scenario.scenario.kill_actor002.output.target.location}"
     # highlight-end
