@@ -116,7 +116,7 @@ const config = {
           lastVersion: "current",
           versions: {
             current: {
-              label: "Scenamatica Beta",
+              label: "Scenamatica v1",
             },
           },
         },
