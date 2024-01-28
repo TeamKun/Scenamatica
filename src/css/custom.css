@@ -79,3 +79,8 @@ html {
 [data-theme="dark"] pre > code > .token-line .token.plain {
   color: #ddd !important;
 }
+
+@media (max-width: 768px)
+.DocSearch-Container {
+  position: fixed !important;
+}
