@@ -80,7 +80,8 @@ html {
   color: #ddd !important;
 }
 
-@media (max-width: 768px)
-.DocSearch-Container {
-  position: fixed !important;
+@media (max-width: 768px) {
+  .DocSearch-Container {
+    position: fixed !important;
+  }
 }
