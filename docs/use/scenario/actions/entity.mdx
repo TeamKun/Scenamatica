@@ -27,7 +27,7 @@ import {ObjectType} from "/src/components/Object";
 
 :::danger
 
-セレクタを [Entity 型](/docs/use/scenario/types/entities#entity-structure) のオブジェクトを指定する場合は、
+セレクタを [Entity 型](/docs/use/scenario/types/entities#entity) のオブジェクトを指定する場合は、
 捜索範囲はシナリオの[ステージ](/docs/use/scenario/elements#stage)内かつ、ロードされているチャンクに限定されます。
 
 :::
@@ -67,7 +67,7 @@ import {ObjectType} from "/src/components/Object";
 
 ## 全般 - 出力 `target` {#general-output-target}
 
-対象となったエンティティの[`Entity`](/docs/use/scenario/types/entities#entity-structure) オブジェクトを出力します。
+対象となったエンティティの[`Entity`](/docs/use/scenario/types/entities#entity) オブジェクトを出力します。
 
 ## 特別：エンティティ {#entity}
 
@@ -86,7 +86,7 @@ import {ObjectType} from "/src/components/Object";
           {
             name: "data",
             type: "Entity",
-            type_link: "/docs/use/scenario/types#entity-structure",
+            type_link: "/docs/use/scenario/types#entity",
             description: "書き換えるエンティティの状態です。",
             required: [ScenarioType.EXECUTE]
           },
@@ -95,7 +95,7 @@ import {ObjectType} from "/src/components/Object";
           {
             name: "target",
             type: "Entity",
-            type_link: "/docs/use/scenario/types#entity-structure",
+            type_link: "/docs/use/scenario/types#entity",
             description: "書き換えたエンティティです。",
           }
         ]}
@@ -140,7 +140,7 @@ import {ObjectType} from "/src/components/Object";
           {
             name: "modifiers",
             type: "Map<DamageModifier, Double>",
-            type_link: "/docs/use/scenario/types/entities#damage-structure-damage-modifier-enum",
+            type_link: "/docs/use/scenario/types/entities#damage-damage-modifier",
             description: "ダメージの Modifier です。",
             available: [ScenarioType.EXPECT]
           }
@@ -149,7 +149,7 @@ import {ObjectType} from "/src/components/Object";
           {
             name: "target",
             type: "Entity",
-            type_link: "/docs/use/scenario/types#entity-structure",
+            type_link: "/docs/use/scenario/types#entity",
             description: "ダメージを与えたエンティティです。",
           },
           {
@@ -166,7 +166,7 @@ import {ObjectType} from "/src/components/Object";
           {
             name: "modifiers",
             type: "Map<DamageModifier, Double>",
-            type_link: "/docs/use/scenario/types/entities#damage-structure-damage-modifier-enum",
+            type_link: "/docs/use/scenario/types/entities#damage-damage-modifier",
             description: "ダメージの Modifier です。",
           }
         ]}
@@ -231,13 +231,13 @@ import {ObjectType} from "/src/components/Object";
           {
             name: "target",
             type: "Entity",
-            type_link: "/docs/use/scenario/types#entity-structure",
+            type_link: "/docs/use/scenario/types#entity",
             description: "ダメージを受けたエンティティです。",
           },
           {
             name: "target",
             type: "Entity",
-            type_link: "/docs/use/scenario/types#entity-structure",
+            type_link: "/docs/use/scenario/types#entity",
             description: "ダメージを与えたエンティティです。",
           },
           {
@@ -254,7 +254,7 @@ import {ObjectType} from "/src/components/Object";
           {
             name: "modifiers",
             type: "Map<DamageModifier, Double>",
-            type_link: "/docs/use/scenario/types/entities#damage-structure-damage-modifier-enum",
+            type_link: "/docs/use/scenario/types/entities#damage-damage-modifier",
             description: "ダメージの Modifier です。",
           }
         ]}
@@ -290,7 +290,7 @@ import {ObjectType} from "/src/components/Object";
           {
             name: "drops",
             type: "ItemStack[]",          
-            type_link: "/docs/use/scenario/types#item-stack-structure",
+            type_link: "/docs/use/scenario/types#item-stack",
             description: "ドロップするアイテムです。",
             available: [ScenarioType.EXPECT]
           },
@@ -341,7 +341,7 @@ import {ObjectType} from "/src/components/Object";
           {
             name: "target",
             type: "Entity",
-            type_link: "/docs/use/scenario/types#entity-structure",
+            type_link: "/docs/use/scenario/types#entity",
             description: "死亡させたエンティティです。",
           }
         ]}
@@ -378,7 +378,7 @@ import {ObjectType} from "/src/components/Object";
           {
             name: "item",
             type: "EntitySpecifier{type: EntityItem}",
-            type_link: "/docs/use/scenario/types/entities#entity-item-structure",
+            type_link: "/docs/use/scenario/types/entities#entity-item",
             description: "ドロップするアイテムです。",
             required: [ScenarioType.EXECUTE]
           }
@@ -387,13 +387,13 @@ import {ObjectType} from "/src/components/Object";
           {
             name: "target",
             type: "Entity",
-            type_link: "/docs/use/scenario/types#entity-structure",
+            type_link: "/docs/use/scenario/types#entity",
             description: "アイテムをドロップしたエンティティです。",
           },
           {
             name: "item",
             type: "Entity",
-            type_link: "/docs/use/scenario/types#entity-structure",
+            type_link: "/docs/use/scenario/types#entity",
             description: "ドロップしたアイテムです。",
           }
         ]}
@@ -423,14 +423,14 @@ import {ObjectType} from "/src/components/Object";
           {
             name: "from",
             type: "Location",
-            type_link: "/docs/use/scenario/types/misc#location-structure",
+            type_link: "/docs/use/scenario/types/misc#location",
             description: "移動前の位置です。",
             available: [ScenarioType.EXPECT]
           },
           {
             name: "to",
             type: "Location",
-            type_link: "/docs/use/scenario/types/misc#location-structure",
+            type_link: "/docs/use/scenario/types/misc#location",
             description: "移動後の位置です。",
             required: [ScenarioType.EXECUTE, ScenarioType.EXPECT]
           },
@@ -447,19 +447,19 @@ import {ObjectType} from "/src/components/Object";
           {
             name: "target",
             type: "Entity",
-            type_link: "/docs/use/scenario/types#entity-structure",
+            type_link: "/docs/use/scenario/types#entity",
             description: "移動させたエンティティです。"
           },
           {
             name: "from",
             type: "Location",
-            type_link: "/docs/use/scenario/types/misc#location-structure",
+            type_link: "/docs/use/scenario/types/misc#location",
             description: "移動前の位置です。"
           },
           {
             name: "to",
             type: "Location",
-            type_link: "/docs/use/scenario/types/misc#location-structure",
+            type_link: "/docs/use/scenario/types/misc#location",
             description: "移動後の位置です。"
           }
         ]}
@@ -502,7 +502,7 @@ AI を有効にした場合, エンティティは経路を探索し自発的に
           {
             name: "item",
             type: "EntitySpecifier{type: EntityItem}",
-            type_link: "/docs/use/scenario/types/entities#entity-item-structure",
+            type_link: "/docs/use/scenario/types/entities#entity-item",
             description: "ピックアップするアイテムです。",
             anchor: "pickup-item-item",
             required: [ScenarioType.EXECUTE]
@@ -518,13 +518,13 @@ AI を有効にした場合, エンティティは経路を探索し自発的に
           {
             name: "target",
             type: "Entity",
-            type_link: "/docs/use/scenario/types#entity-structure",
+            type_link: "/docs/use/scenario/types#entity",
             description: "アイテムをピックアップしたエンティティです。",
           },
           {
             name: "item",
             type: "Entity",
-            type_link: "/docs/use/scenario/types#entity-structure",
+            type_link: "/docs/use/scenario/types#entity",
             description: "ピックアップしたアイテムです。",
           },
           {
@@ -537,13 +537,13 @@ AI を有効にした場合, エンティティは経路を探索し自発的に
           {
             name: "target",
             type: "Entity",
-            type_link: "/docs/use/scenario/types#entity-structure",
+            type_link: "/docs/use/scenario/types#entity",
             description: "アイテムをピックアップしたエンティティです。",
           },
           {
             name: "item",
             type: "Entity",
-            type_link: "/docs/use/scenario/types#entity-structure",
+            type_link: "/docs/use/scenario/types#entity",
             description: "ピックアップしたアイテムです。",
           },
           {
@@ -568,7 +568,7 @@ AI を有効にした場合, エンティティは経路を探索し自発的に
 
 #### `item` {#pickup-item-item}
 
-アクション実行シナリオの場合でも, [アイテムの構造体](/docs/use/scenario/types#entity-item-structure)またはエンティティのセレクタを指定できます。
+アクション実行シナリオの場合でも, [アイテムの構造体](/docs/use/scenario/types#entity-item)またはエンティティのセレクタを指定できます。
 アイテムの構造体を指定した場合, 事前にそのアイテムをワールドにスポーンさせます。
 
 
@@ -588,7 +588,7 @@ AI を有効にした場合, エンティティは経路を探索し自発的に
             name: "target",
             anchor: "place-target",
             type: "EntitySpecifier",
-            type_link: "/docs/use/scenario/types#entity-structure",
+            type_link: "/docs/use/scenario/types#entity",
             available: [ScenarioType.EXPECT, ScenarioType.REQUIRE]
           },
           {
@@ -607,7 +607,7 @@ AI を有効にした場合, エンティティは経路を探索し自発的に
             name: "block",
             anchor: "place-block",
             type: "Block",
-            type_link: "/docs/use/scenario/types/misc#block-structure",
+            type_link: "/docs/use/scenario/types/misc#block",
             description: "エンティティを設置するブロックです。",
             required: [ScenarioType.EXECUTE]
           },
@@ -615,7 +615,7 @@ AI を有効にした場合, エンティティは経路を探索し自発的に
             name: "direction",
             anchor: "place-direction",
             type: "BlockFace{UP, DOWN, NORTH, EAST, SOUTH, WEST}",
-            type_link: "/docs/use/scenario/types#block-face-enum",
+            type_link: "/docs/use/scenario/types#block-face",
             description: "エンティティを設置する方向です。",
           }
         ]}
@@ -623,26 +623,26 @@ AI を有効にした場合, エンティティは経路を探索し自発的に
           {
             name: "target",
             type: "Entity",
-            type_link: "/docs/use/scenario/types#entity-structure",
+            type_link: "/docs/use/scenario/types#entity",
             description: "設置されたエンティティです。",
             available: [ScenarioType.EXPECT]
           },
           {
             name: "player",
             type: "Player",
-            type_link: "/docs/use/scenario/types/entities#player-structure",
+            type_link: "/docs/use/scenario/types/entities#player",
             description: "エンティティを設置したプレイヤです。"
           },
           {
             name: "block",
             type: "Block",
-            type_link: "/docs/use/scenario/types/misc#block-structure",
+            type_link: "/docs/use/scenario/types/misc#block",
             description: "エンティティを設置したブロックです。"
           },
           {
             name: "direction",
             type: "BlockFace{UP, DOWN, NORTH, EAST, SOUTH, WEST}",
-            type_link: "/docs/use/scenario/types#block-face-enum",
+            type_link: "/docs/use/scenario/types#block-face",
             description: "エンティティを設置した方向です。"
           }
         ]}
@@ -653,7 +653,7 @@ AI を有効にした場合, エンティティは経路を探索し自発的に
 
 :::warning 
 
-アクション実行シナリオの場合は、この項目および [`Block#location`](/docs/use/scenario/types/misc#location-structure) は必須です。
+アクション実行シナリオの場合は、この項目および [`Block#location`](/docs/use/scenario/types/misc#location) は必須です。
 
 :::
 
@@ -711,7 +711,7 @@ AI を有効にした場合, エンティティは経路を探索し自発的に
           {
             name: "entity",
             type: "EntitySpecifier",
-            type_link: "/docs/use/scenario/types#entity-structure",
+            type_link: "/docs/use/scenario/types#entity",
             description: "スポーンさせるエンティティです。",
             required: [ScenarioType.EXECUTE]
           }
@@ -720,7 +720,7 @@ AI を有効にした場合, エンティティは経路を探索し自発的に
           {
             name: "entity",
             type: "Entity",
-            type_link: "/docs/use/scenario/types#entity-structure",
+            type_link: "/docs/use/scenario/types#entity",
             description: "スポーンさせたエンティティです。",
           }
         ]}
@@ -761,7 +761,7 @@ AI を有効にした場合, エンティティは経路を探索し自発的に
           {
             name: "target",
             type: "EntitySpecifier{type: Projectile}",
-            type_link: "/docs/use/scenario/types/entities#projectile-structure",
+            type_link: "/docs/use/scenario/types/entities#projectile",
             description: "着弾した投射物です。",
             anchor: "projectile-hit-target",
             required: [ScenarioType.EXECUTE]
@@ -775,13 +775,13 @@ AI を有効にした場合, エンティティは経路を探索し自発的に
           {
             name: "hitBlock",
             type: "Block",
-            type_link: "/docs/use/scenario/types/misc#block-structure",
+            type_link: "/docs/use/scenario/types/misc#block",
             description: "着弾した投射物が当たったブロックです。",
           },
           {
             name: "blockFace",
             type: "BlockFace{UP, DOWN, NORTH, EAST, SOUTH, WEST}",
-            type_link: "/docs/use/scenario/types#block-face-enum",
+            type_link: "/docs/use/scenario/types#block-face",
             description: "着弾した投射物が当たったブロックの面です。",
           },
           {
@@ -797,25 +797,25 @@ AI を有効にした場合, エンティティは経路を探索し自発的に
           {
             name: "target",
             type: "Entity",
-            type_link: "/docs/use/scenario/types#entity-structure",
+            type_link: "/docs/use/scenario/types#entity",
             description: "着弾した投射物です。",
           },
           {
             name: "hitEntity",
             type: "Entity",
-            type_link: "/docs/use/scenario/types#entity-structure",
+            type_link: "/docs/use/scenario/types#entity",
             description: "着弾した投射物が当たったエンティティです。",
           },
           {
             name: "hitBlock",
             type: "Block",
-            type_link: "/docs/use/scenario/types/misc#block-structure",
+            type_link: "/docs/use/scenario/types/misc#block",
             description: "着弾した投射物が当たったブロックです。",
           },
           {
             name: "blockFace",
             type: "BlockFace{UP, DOWN, NORTH, EAST, SOUTH, WEST}",
-            type_link: "/docs/use/scenario/types#block-face-enum",
+            type_link: "/docs/use/scenario/types#block-face",
             description: "着弾した投射物が当たったブロックの面です。",
           }
         ]}
@@ -854,7 +854,7 @@ AI を有効にした場合, エンティティは経路を探索し自発的に
           {
             name: "target",
             type: "EntitySpecifier{type: Projectile}",
-            type_link: "/docs/use/scenario/types/entities#projectile-structure",
+            type_link: "/docs/use/scenario/types/entities#projectile",
             description: "スポーンさせるエンティティです。",
             anchor: "projectile-launch-target",
             required: [ScenarioType.EXECUTE]
@@ -864,7 +864,7 @@ AI を有効にした場合, エンティティは経路を探索し自発的に
           {
             name: "target",
             type: "Entity",
-            type_link: "/docs/use/scenario/types#entity-structure",
+            type_link: "/docs/use/scenario/types#entity",
             description: "発射した投射物です。",
           }
         ]}

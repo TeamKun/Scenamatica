@@ -23,7 +23,7 @@ import {ObjectType} from "/src/components/Object";
 
 ## 全般 - 出力 `inventory` {#general-output-inventory}
 
-対象となったインベントリの[`Inventory`](/docs/use/scenario/types/inventory-items/#inventory-structure)が出力されます。
+対象となったインベントリの[`Inventory`](/docs/use/scenario/types/inventory-items/#inventory)が出力されます。
 
 ## インベントリ操作系 {#inventory-interaction}
 
@@ -55,7 +55,7 @@ import {ObjectType} from "/src/components/Object";
             name: "inventory",
             anchor: "inventory-close-inventory",
             type: "Inventory",
-            type_link: "/docs/use/scenario/types#inventory-structure",
+            type_link: "/docs/use/scenario/types#inventory",
             description: "閉じるインベントリです。",
             available: [ScenarioType.EXPECT, ScenarioType.REQUIRE]
           },
@@ -70,13 +70,13 @@ import {ObjectType} from "/src/components/Object";
           {
             name: "inventory",
             type: "Inventory",
-            type_link: "/docs/use/scenario/types#inventory-structure",
+            type_link: "/docs/use/scenario/types#inventory",
             description: "閉じたインベントリです。",
           },
           {
             name: "Player",
             type: "Player",
-            type_link: "/docs/use/scenario/types/entities/#player-structure",
+            type_link: "/docs/use/scenario/types/entities/#player",
             description: "インベントリを閉じたプレイヤです。",
           },
           {
@@ -119,7 +119,7 @@ import {ObjectType} from "/src/components/Object";
           {
             name: "inventory",
             type: "Inventory",
-            type_link: "/docs/use/scenario/types#inventory-structure",
+            type_link: "/docs/use/scenario/types#inventory",
             description: "開くインベントリです。",
             required: [ScenarioType.EXECUTE]
           },
@@ -128,13 +128,13 @@ import {ObjectType} from "/src/components/Object";
           {
             name: "inventory",
             type: "Inventory",
-            type_link: "/docs/use/scenario/types#inventory-structure",
+            type_link: "/docs/use/scenario/types#inventory",
             description: "開いたインベントリです。",
           },
           {
             name: "Player",
             type: "Player",
-            type_link: "/docs/use/scenario/types/entities/#player-structure",
+            type_link: "/docs/use/scenario/types/entities/#player",
             description: "インベントリを開いたプレイヤです。",
           },
         ]}

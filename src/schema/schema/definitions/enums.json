@@ -1,4 +1,18 @@
 {
+  "order": {
+    "type": "string",
+    "description": "シナリオの実行順を表します。",
+    "enums": [
+      "FIRST",
+      "HIGHEST",
+      "HIGH",
+      "NORMAL",
+      "LOW",
+      "LOWER",
+      "LOWEST",
+      "LAST"
+    ]
+  },
   "sound": {
     "type": "string",
     "description": "音の種類を表します。",

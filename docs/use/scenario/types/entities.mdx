@@ -9,7 +9,7 @@ import { Object, ObjectType } from "/src/components/Object";
 
 ## 特別： EntitySpecifier 型（エンティティ指定子） {#entity-specifier}
 
-エンティティ指定子は、文字列型と[Entity 型](#entity-structure)としてふるまう特別な型です。  
+エンティティ指定子は、文字列型と[Entity 型](#entity)としてふるまう特別な型です。  
 主にエンティティを指定するときに使用し、以下のような値をとります。
 
 1. プレイヤの名前 （例：`"Player1"` ）  
@@ -18,7 +18,7 @@ import { Object, ObjectType } from "/src/components/Object";
 3. プレイヤまたはエンティティの[セレクタ](/docs/use/scenario/selector)およびその省略書式 （例：`"@e[team=Red,tag=MyTag]"` ）
    + 省略： `@e` は省略できます （例：`"[team=Red,tags=MyTag]"` ）。
    + 省略： `@e[...]` はできます （例：`"team=Red,tags=MyTag"` ）。
-4. [Entity 型](/docs/use/scenario/types#entity-structure) のオブジェクト  
+4. [Entity 型](/docs/use/scenario/types#entity) のオブジェクト  
   特に記述がない限り使用できます。これを使用すれば、[セレクタ](/docs/use/scenario/selector)を使用せずに高度な条件を指定できます。
 
 :::danger
@@ -66,13 +66,13 @@ Scenamatica では、いくつかの理由で独自のセレクタを使用し�
 
 ## 特別： PlayerSpecifier 型（プレイヤ指定子） {#player-specifier}
 
-プレイヤ指定子は、文字列型と[Player 型](/docs/use/scenario/types/entities#player-structure)としてふるまう特別な型です。
+プレイヤ指定子は、文字列型と[Player 型](/docs/use/scenario/types/entities#player)としてふるまう特別な型です。
 
 基本的には上記の[エンティティ指定子](#entity-specifier)と同じですが、プレイヤを指定する場合にのみ有効です。
 
 ---
 
-## 特別： EntityType 列挙型 {#entity-type-enum}
+## 特別： EntityType 列挙型 {#entity-type}
 
 EntityType は, Bukkit の [EntityType](https://jd.papermc.io/paper/1.16/org/bukkit/entity/EntityType.html) 
 の拡張で、エンティティの種類を表す列挙型です。  
@@ -83,25 +83,25 @@ EntityType は, Bukkit の [EntityType](https://jd.papermc.io/paper/1.16/org/buk
 + 数値 ID （例：`"90"`）
 + 名前 (例：`"pig"`)
 
-## Entity 型 {#entity-structure}
+## Entity 型 {#entity}
 
 <Object objects={[
   {
     name: "type",
     type: "EntityType",
-    type_link: "/docs/use/scenario/types/entities#entity-type-enum",
+    type_link: "/docs/use/scenario/types/entities#entity-type",
     description: "エンティティの種類です。"
   },
   {
     name: ["loc", "location"],
     type: "Location",
-    type_link: "/docs/use/scenario/types/misc#location-structure",
+    type_link: "/docs/use/scenario/types/misc#location",
     description: "エンティティの座標です。"
   },
   {
     name: "velocity",
     type: "Vector",
-    type_link: "/docs/use/scenario/types/misc#vector-structure",
+    type_link: "/docs/use/scenario/types/misc#vector",
     description: "エンティティの速度です。"
   },
   {
@@ -147,7 +147,7 @@ EntityType は, Bukkit の [EntityType](https://jd.papermc.io/paper/1.16/org/buk
   {
     name: "lastDamage",
     type: "Damage",
-    type_anchor: "damage-structure",
+    type_anchor: "damage",
     description: "エンティティに与えられた最後のダメージです。"
   },
   {
@@ -163,7 +163,7 @@ EntityType は, Bukkit の [EntityType](https://jd.papermc.io/paper/1.16/org/buk
   {
     name: "potions",
     type: "PotionEffect[]",
-    type_anchor: "potion-effect-structure",
+    type_anchor: "potion-effect",
     description: "エンティティに付与されているポーション効果です。"
   },
   {
@@ -195,13 +195,13 @@ EntityType は, Bukkit の [EntityType](https://jd.papermc.io/paper/1.16/org/buk
 
 ---
 
-## Damage 型 {#damage-structure}
+## Damage 型 {#damage}
 
 <Object objects={[
   {
     name: "modifier",
     type: "Map<DamageModifier, Double>",
-    type_anchor: "damage-structure-damage-modifier-enum",
+    type_anchor: "damage-damage-modifier",
     description: "ダメージの変更子です。"
   },
   {
@@ -212,12 +212,12 @@ EntityType は, Bukkit の [EntityType](https://jd.papermc.io/paper/1.16/org/buk
   {
     name: "cause",
     type: "DamageCause",
-    type_anchor: "damage-structure-damage-cause-enum",
+    type_anchor: "damage-damage-cause",
     description: "ダメージの種類です。"
   }
 ]} />
 
-### DamageModifier 列挙型 {#damage-structure-damage-modifier-enum}
+### DamageModifier 列挙型 {#damage-damage-modifier}
 
 + `BASE` 基本のダメージ。 `amount` で指定した値が使用されます。
 + `HARD_HAT` ヘルメットなどによる防御
@@ -227,7 +227,7 @@ EntityType は, Bukkit の [EntityType](https://jd.papermc.io/paper/1.16/org/buk
 + `MAGIC` ウィッチのポーション効果や防具のエンチャントによる防御
 + `ABSORPTION` エンチャント「ダメージ軽減」による防御
 
-### DamageCause 列挙型 {#damage-structure-damage-cause-enum}
+### DamageCause 列挙型 {#damage-damage-cause}
 
 + `CONTACT` エンティティ同士の接触
 + `ENTITY_ATTACK` エンティティによる攻撃
@@ -260,11 +260,11 @@ EntityType は, Bukkit の [EntityType](https://jd.papermc.io/paper/1.16/org/buk
 
 ---
 
-## LivingEntity 型 {#living-entity-structure}
+## LivingEntity 型 {#living-entity}
 
 LivingEntity 型は以下の親構造を持ちます。
 
-+ [Entity 型](#entity-structure)
++ [Entity 型](#entity)
 
 <Object objects={[
   {
@@ -311,7 +311,7 @@ LivingEntity 型は以下の親構造を持ちます。
   {
     name: "potions",
     type: "PotionEffect[]",
-    type_anchor: "potion-effect-structure",
+    type_anchor: "potion-effect",
     description: "エンティティに付与されているポーション効果です。"
   },
   {
@@ -383,7 +383,7 @@ LivingEntity 型は以下の親構造を持ちます。
   {
     name: "activeItem",
     type: "ItemStack",
-    type_link: "/docs/use/scenario/types/inventory-items#item-stack-structure",
+    type_link: "/docs/use/scenario/types/inventory-items#item-stack",
     description: "有効なアイテムです。"
   },
   {
@@ -420,7 +420,7 @@ LivingEntity 型は以下の親構造を持ちます。
 
 --
 
-## PotionEffect 型 {#potion-effect-structure}
+## PotionEffect 型 {#potion-effect}
 
 <Object objects={[
   {
@@ -458,11 +458,11 @@ LivingEntity 型は以下の親構造を持ちます。
 
 ---
 
-## Player 型 {#player-structure}
+## Player 型 {#player}
 
 Player 型は以下の親構造を持ちます。
 
-+ [LivingEntity 型](#living-entity-structure)
++ [LivingEntity 型](#living-entity)
 
 
 <Object objects={[
@@ -488,19 +488,19 @@ Player 型は以下の親構造を持ちます。
   {
     name: "playerList",
     type: "ActorPlayerList",
-    type_anchor: "actor-player-list-structure",
+    type_anchor: "player-list",
     description: "アクタのプレイヤリストの設定です。",
   },
   {
     name: "compass",
     type: "Location",
-    type_link: "/docs/use/scenario/types/misc#location-structure",
+    type_link: "/docs/use/scenario/types/misc#location",
     description: "アクタのコンパスの指す位置を設定します。"
   },
   {
     name: "bedLocation",
     type: "Location",
-    type_link: "/docs/use/scenario/types/misc#location-structure",
+    type_link: "/docs/use/scenario/types/misc#location",
     description: "アクタのベッドの位置を設定します。"
   },
   {
@@ -545,13 +545,13 @@ Player 型は以下の親構造を持ちます。
   {
     name: "inventory",
     type: "PlayerInventory",
-    type_link: "/docs/use/scenario/types/inventory-items#player-inventory-structure",
+    type_link: "/docs/use/scenario/types/inventory-items#player-inventory",
     description: "アクタのインベントリを設定します。"
   },
   {
     name: "enderChest",
     type: "Inventory",
-    type_link: "/docs/use/scenario/types/inventory-items#inventory-structure",
+    type_link: "/docs/use/scenario/types/inventory-items#inventory",
     description: "アクタのエンダーチェストを設定します。"
   },
   {
@@ -628,12 +628,12 @@ Player 型は以下の親構造を持ちます。
 
 ---
 
-## EntityItem 型 {#entity-item-structure}
+## EntityItem 型 {#entity-item}
 
 EntityItem 型は以下の親構造を持ちます。
 
-+ [Entity 型](#entity-structure)
-+ [ItemStack 型](/docs/use/scenario/types/inventory-items#item-stack-structure)
++ [Entity 型](#entity)
++ [ItemStack 型](/docs/use/scenario/types/inventory-items#item-stack)
 
 <Object objects={[
   {
@@ -665,11 +665,11 @@ EntityItem 型は以下の親構造を持ちます。
 
 ---
 
-## ProjectileStructure 型 {#projectile-structure}
+## ProjectileStructure 型 {#projectile}
 
 ProjectileStructure 型は以下の親構造を持ちます。
 
-+ [Entity 型](#entity-structure)
++ [Entity 型](#entity)
 
 
 <Object objects={[
@@ -677,7 +677,7 @@ ProjectileStructure 型は以下の親構造を持ちます。
     name: "shooter",
     type: "EntitySpecifier | Block",
     type_anchor: "entity-specifier",
-    anchor: "projectile-structure-shooter",
+    anchor: "projectile-shooter",
     description: "投射物を投げたエンティティの指定子です。"
   },
   {
@@ -687,7 +687,7 @@ ProjectileStructure 型は以下の親構造を持ちます。
   }
 ]} />
 
-#### `shooter` {#projectile-structure-shooter}
+#### `shooter` {#projectile-shooter}
 
 エンティティ情報またはブロック情報を指定します。  
 エンティティとブロックどちらの情報が格納されているかは、自動で推論されます。

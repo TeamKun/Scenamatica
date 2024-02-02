@@ -4,8 +4,8 @@
     "description": "投射物を表します。",
     "properties": {
       "shooter": {
-        "description": "投射物の発射者を表します。",
-        "type": "projectileSource"
+        "type": "projectileSource",
+        "description": "投射物の発射者を表します。"
       },
       "bounce": {
         "type": "boolean",

@@ -77,6 +77,7 @@ type Prime = Definable & {
 type Meta = {
     definitionsDir: string
     actionsDir: string
+    prime: string
     definitions: {
         [key: string]: string[]
     }
@@ -237,6 +238,7 @@ const saveMetaData = (actions: Action[], definitions: {[key: string]: {[key: str
     const meta: Meta = {
         definitionsDir: PATH_DIR_DEFINITIONS,
         actionsDir: PATH_DIR_ACTIONS,
+        prime: PATH_IN_PRIME,
         definitions: definitionIndex,
         actions: actionIndex
     }

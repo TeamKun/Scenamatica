@@ -24,7 +24,7 @@ import {ObjectType} from "/src/components/Object";
 
 ## 全般 - 出力 `target` {#general-output-target}
 
-対象となった人間エンティティの [`HumanEntity`](/docs/use/scenario/types/entities/#player-structure) です。
+対象となった人間エンティティの [`HumanEntity`](/docs/use/scenario/types/entities/#player) です。
 
 ## クリック {#click}
 
@@ -51,7 +51,7 @@ import {ObjectType} from "/src/components/Object";
           {
             name: "inventory",
             type: "Inventory",
-            type_link: "/docs/use/scenario/types#inventory-structure",
+            type_link: "/docs/use/scenario/types#inventory",
             anchor: "click-inventory",
             description: "クリックするインベントリです。",
           },
@@ -79,7 +79,7 @@ import {ObjectType} from "/src/components/Object";
           {
             name: "clickedItem",
             type: "ItemStack",
-            type_link: "/docs/use/scenario/types#item-stack-structure",
+            type_link: "/docs/use/scenario/types#item-stack",
             description: "クリックされたスロットのアイテムです。",
           },
           {
@@ -91,7 +91,7 @@ import {ObjectType} from "/src/components/Object";
           {
             name: "cursorItem",
             type: "ItemStack",
-            type_link: "/docs/use/scenario/types#item-stack-structure",
+            type_link: "/docs/use/scenario/types#item-stack",
             description: "カーソルにあるアイテムです。"
           }
         ]}
@@ -99,13 +99,13 @@ import {ObjectType} from "/src/components/Object";
           {
             name: "target",
             type: "Player",
-            type_link: "/docs/use/scenario/types/entities/#player-structure",
+            type_link: "/docs/use/scenario/types/entities/#player",
             description: "インベントリをクリックしたプレイヤです。"
           },
           {
             name: "inventory",
             type: "Inventory",
-            type_link: "/docs/use/scenario/types/inventory-items#inventory-structure",
+            type_link: "/docs/use/scenario/types/inventory-items#inventory",
             description: "クリックしたインベントリです。"
           },
           {
@@ -139,7 +139,7 @@ import {ObjectType} from "/src/components/Object";
           {
             name: "clickedItem",
             type: "ItemStack",
-            type_link: "/docs/use/scenario/types#item-stack-structure",
+            type_link: "/docs/use/scenario/types#item-stack",
             description: "クリックされたスロットのアイテムです。",
           },
           {
@@ -151,7 +151,7 @@ import {ObjectType} from "/src/components/Object";
           {
             name: "cursorItem",
             type: "ItemStack",
-            type_link: "/docs/use/scenario/types#item-stack-structure",
+            type_link: "/docs/use/scenario/types#item-stack",
             description: "カーソルにあるアイテムです。",
             available: [ScenarioType.EXPECT]
           }
@@ -226,7 +226,7 @@ import {ObjectType} from "/src/components/Object";
             name: "item",
             anchor: "creative-item",
             type: "ItemStack",
-            type_link: "/docs/use/scenario/types#item-stack-structure",
+            type_link: "/docs/use/scenario/types#item-stack",
             description: "配置するアイテムです。",
           },
           {
@@ -241,14 +241,14 @@ import {ObjectType} from "/src/components/Object";
           {
             name: "target",
             type: "Player",
-            type_link: "/docs/use/scenario/types/entities/#player-structure",
+            type_link: "/docs/use/scenario/types/entities/#player",
             description: "インベントリをクリックしたプレイヤです。"
           },
           {
             name: "item",
             anchor: "creative-item",
             type: "ItemStack",
-            type_link: "/docs/use/scenario/types#item-stack-structure",
+            type_link: "/docs/use/scenario/types#item-stack",
             description: "配置するアイテムです。",
           },
           {
@@ -260,7 +260,7 @@ import {ObjectType} from "/src/components/Object";
           {
             name: "inventory",
             type: "Inventory",
-            type_link: "/docs/use/scenario/types/inventory-items#inventory-structure",
+            type_link: "/docs/use/scenario/types/inventory-items#inventory",
             description: "クリックしたインベントリです。"
           }
         ]}

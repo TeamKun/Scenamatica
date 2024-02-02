@@ -19,7 +19,7 @@ export default function References(): JSX.Element {
                     <ul>
                         <li><Link to="/docs/home">ドキュメントホーム</Link></li>
                         <li><Link to="/docs/getting-started/tutorials">各種チュートリアル</Link></li>
-                        <li><Link to="/docs/use/scenario/types#scenario-file-structure">シナリオファイルの構造</Link>
+                        <li><Link to="/docs/use/scenario/types#scenario-file">シナリオファイルの構造</Link>
                         </li>
                         <br/>
                         <li><Link to="/docs/use/scenario/types">型一覧</Link></li>

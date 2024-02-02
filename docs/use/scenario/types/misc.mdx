@@ -7,7 +7,7 @@ import { Object, ObjectType } from "/src/components/Object";
 
 ---
 
-## Location 型 {#location-structure}
+## Location 型 {#location}
 
 この型は、 Bukkit 標準の Location のラッパーです。以下の構造を持ちます。
 
@@ -46,7 +46,7 @@ import { Object, ObjectType } from "/src/components/Object";
 
 ---
 
-## Vector 型 {#vector-structure}
+## Vector 型 {#vector}
 
 この型は、 Bukkit 標準の Vector のラッパーです。以下の構造を持ちます。
 
@@ -70,7 +70,7 @@ import { Object, ObjectType } from "/src/components/Object";
 
 ---
 
-## Block 型 {#block-structure}
+## Block 型 {#block}
 
 <Object objects={[
   {
@@ -81,7 +81,7 @@ import { Object, ObjectType } from "/src/components/Object";
   {
     name: ["loc", "location"],
     type: "Location",
-    type_anchor: "location-structure",
+    type_anchor: "location",
     description: "ブロックの位置です。",
   },
   {
@@ -103,7 +103,7 @@ import { Object, ObjectType } from "/src/components/Object";
 
 ---
 
-## NamespacedKey 型 {#namespaced-key-structure}
+## NamespacedKey 型 {#namespaced-key}
 
 NamespacedKey 型は、名前空間を持つキーです。  
 名前空間とキーは `:` で区切り、各コンポーネントは次の正規表現に従います：`[a-z0-9_.-]+`

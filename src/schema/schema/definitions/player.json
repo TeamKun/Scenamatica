@@ -82,22 +82,8 @@
         "description": "プレイヤの表示名です。"
       },
       "playerList": {
-        "type": "object",
-        "description": "プレイヤのプレイヤリストにおける扱いです。",
-        "properties": {
-          "name": {
-            "type": "string",
-            "description": "プレイヤリストに表示される名前です。"
-          },
-          "header": {
-            "type": "string",
-            "description": "プレイヤリストに表示されるヘッダーです。"
-          },
-          "footer": {
-            "type": "string",
-            "description": "プレイヤリストに表示されるフッターです。"
-          }
-        }
+        "type": "playerList",
+        "description": "プレイヤのプレイヤリストにおける扱いです。"
       },
       "compass": {
         "type": "location",
@@ -171,13 +157,17 @@
         "default": 20
       },
       "op": {
-        "type": [
-          "boolean",
-          "integer"
-        ],
-        "minimum": 0,
-        "maximum": 4,
-        "description": "プレイヤの OP レベルです。 0 は OP ではないことを意味します。"
+        "description": "プレイヤの OP レベルです。 0 は OP ではないことを意味します。",
+        "oneOf": [
+          {
+            "type": "boolean"
+          },
+          {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 4
+          }
+        ]
       },
       "permissions": {
         "type": "array",
@@ -204,5 +194,19 @@
       "ENDER_PEARL",
       "UNKNOWN"
     ]
+  },
+  "playerList": {
+    "type": "object",
+    "description": "プレイヤリストに関する情報です。",
+    "properties": {
+      "header": {
+        "type": "string",
+        "description": "プレイヤリストに表示されるヘッダーです。"
+      },
+      "footer": {
+        "type": "string",
+        "description": "プレイヤリストに表示されるフッターです。"
+      }
+    }
   }
 }

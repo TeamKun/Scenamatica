@@ -23,11 +23,11 @@ import {ObjectType} from "/src/components/Object";
 
 ## 全般 - 出力 `block` {#block}
 
-対象となったブロックの [`Block`](/docs/use/scenario/types/misc#block-structure) オブジェクトを出力します。
+対象となったブロックの [`Block`](/docs/use/scenario/types/misc#block) オブジェクトを出力します。
 
 ## 全般 - 出力 `player`
 
-その操作を行ったプレイヤの [`Player`](/docs/use/scenario/types/entities#player-structure) オブジェクトを出力します。
+その操作を行ったプレイヤの [`Player`](/docs/use/scenario/types/entities#player) オブジェクトを出力します。
 
 :::warning
 
@@ -45,14 +45,14 @@ import {ObjectType} from "/src/components/Object";
     {
       name: "block",
       type: "Block",
-      type_link: "/docs/use/scenario/types/misc#block-structure",
+      type_link: "/docs/use/scenario/types/misc#block",
       description: "変更するブロックです。",
       required: [ScenarioType.EXECUTE]
     },
     {
       name: "data",
       type: "Block",
-      type_link: "/docs/use/scenario/types/misc#block-structure",
+      type_link: "/docs/use/scenario/types/misc#block",
       description: "変更後のブロックです。",
       required: [ScenarioType.EXECUTE]
     }
@@ -61,7 +61,7 @@ import {ObjectType} from "/src/components/Object";
     {
       name: "block",
       type: "Block",
-      type_link: "/docs/use/scenario/types/misc#block-structure",
+      type_link: "/docs/use/scenario/types/misc#block",
       description: "変更されたブロックです。",
     }
   ]}
@@ -97,7 +97,7 @@ import {ObjectType} from "/src/components/Object";
             name: "block",
             anchor: "break-block",
             type: "Block",
-            type_link: "/docs/use/scenario/types/misc#block-structure",
+            type_link: "/docs/use/scenario/types/misc#block",
             description: "破壊するブロックです。",
             required: [ScenarioType.EXECUTE]
           },
@@ -112,13 +112,13 @@ import {ObjectType} from "/src/components/Object";
           {
             name: "block",
             type: "Block",
-            type_link: "/docs/use/scenario/types/misc#block-structure",
+            type_link: "/docs/use/scenario/types/misc#block",
             description: "破壊されたブロックです。",
           },
           {
             name: "player",
             type: "Player",
-            type_link: "/docs/use/scenario/types/entities#player-structure",
+            type_link: "/docs/use/scenario/types/entities#player",
             description: "ブロックを破壊したプレイヤです。",
           }
         ]}
@@ -159,7 +159,7 @@ import {ObjectType} from "/src/components/Object";
           {
             name: "block",
             type: "Block",
-            type_link: "/docs/use/scenario/types/misc#block-structure",
+            type_link: "/docs/use/scenario/types/misc#block",
             description: "設置するブロックです。",
             required: [ScenarioType.EXECUTE]
           },
@@ -179,13 +179,13 @@ import {ObjectType} from "/src/components/Object";
           {
             name: "block",
             type: "Block",
-            type_link: "/docs/use/scenario/types/misc#block-structure",
+            type_link: "/docs/use/scenario/types/misc#block",
             description: "設置されたブロックです。",
           },
           {
             name: "player",
             type: "Player",
-            type_link: "/docs/use/scenario/types/entities#player-structure",
+            type_link: "/docs/use/scenario/types/entities#player",
             description: "ブロックを設置したプレイヤです。",
           }
         ]}
@@ -199,7 +199,7 @@ import {ObjectType} from "/src/components/Object";
 条件要求シナリオでこれを使用した場合は、指定された場所のブロックの種類が指定されたブロックと一致するかどうかをテストします。  
 
 :::warning
-実行シナリオでは、 `block`の[`type`](/docs/use/scenario/types/misc#block-structure) を空にできません。
+実行シナリオでは、 `block`の[`type`](/docs/use/scenario/types/misc#block) を空にできません。
 :::
 
 #### `actor` {#place-actor}

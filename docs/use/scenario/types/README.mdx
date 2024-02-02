@@ -18,11 +18,11 @@ Scenamatica では、YAML の型として以下の型が定義されています
 + [エンティティに関連する型](/docs/use/scenario/types/entities)
 + [インベントリとアイテムに関連する型](/docs/use/scenario/types/inventory-items)
 + [その他の型](/docs/use/scenario/types/misc)  
-  [`Location`](/docs/use/scenario/types/misc#location-structure) や 
-  [`Block`](/docs/use/scenario/types/misc#block-structure), 
-  [`NamespacedKey`](/docs/use/scenario/types/misc#namespaced-key-structure) など
+  [`Location`](/docs/use/scenario/types/misc#location) や 
+  [`Block`](/docs/use/scenario/types/misc#block), 
+  [`NamespacedKey`](/docs/use/scenario/types/misc#namespaced-key) など
 
-### シナリオファイルの構造 {#scenario-file-structure}
+## シナリオファイルの構造 {#scenario-file}
 
 <Object objects={[
   {
@@ -62,7 +62,7 @@ Scenamatica では、YAML の型として以下の型が定義されています
     name: "order",
     anchor: "apex-order",
     type: [ObjectType.INTEGER, "Order"],
-    type_anchor: "order-enum",
+    type_anchor: "order",
     description: "シナリオの実行順序です。小さいほど先に実行されます。",
     default: `NORMAL`
   },
@@ -70,14 +70,14 @@ Scenamatica では、YAML の型として以下の型が定義されています
     name: "context",
     anchor: "apex-context",
     type: "Context",
-    type_anchor: "context-structure",
+    type_anchor: "context",
     description: "シナリオのコンテキストです。"
   },
   {
     name: "on",
     anchor: "apex-on",
     type: "Trigger[]",
-    type_anchor: "trigger-structure",
+    type_anchor: "trigger",
     description: "シナリオのトリガです。",
     required: true
   },
@@ -85,14 +85,14 @@ Scenamatica では、YAML の型として以下の型が定義されています
     name: "runif",
     anchor: "apex-runif",
     type: "Action(type:require)",
-    type_anchor: "action-structure",
+    type_anchor: "action",
     description: "シナリオを実行する条件です。"
   },
   {
     name: "scenario",
     anchor: "apex-scenario",
     type: "Scenario[]",
-    type_anchor: "scenario-structure",
+    type_anchor: "scenario",
     description: "シナリオファイルのメインシナリオです。",
     required: true
   }
@@ -152,7 +152,7 @@ Scenamatica のバージョンは、`x.y.z` の形式で指定します。
 #### `context` {#apex-context}
 
 シナリオの実行に必要な環境を定義します。  
-コンテキストの概念についての説明は[こちら](/docs/use/scenario/elements#context)を、ファイルに記述する際の構文にについては[こちら](#context-structure)を参照してください。
+コンテキストの概念についての説明は[こちら](/docs/use/scenario/elements#context)を、ファイルに記述する際の構文にについては[こちら](#context)を参照してください。
 
 :::tip
 
@@ -183,7 +183,7 @@ Scenamatica のバージョンは、`x.y.z` の形式で指定します。
 
 ---
 
-### Order 列挙型 {#order-enum}
+## Order 列挙型 {#order}
 
 シナリオの実行順の列挙値です。
 
@@ -201,28 +201,28 @@ Scenamatica のバージョンは、`x.y.z` の形式で指定します。
 
 ---
 
-### Context 型 {#context-structure}
+## Context 型 {#context}
 
 <Object objects={[
   {
     name: "actors",
     anchor: "context-actors",
     type: "Player[]",
-    type_link: "/docs/use/scenario/types/entities#player-structure",
+    type_link: "/docs/use/scenario/types/entities#player",
     description: "シナリオの実行に必要なアクタを定義します。"
   },
   {
     name: "entities",
     anchor: "context-entities",
     type: "Entity[]",
-    type_link: "entities#entity-structure",
+    type_link: "entities#entity",
     description: "シナリオの実行に必要なエンティティを定義します。"
   },
   {
     name: "stage",
     anchor: "context-stage",
     type: "Stage",
-    type_anchor: "stage-structure",
+    type_anchor: "stage",
     description: "シナリオの実行に必要なステージを定義します。"
   }
 ]} />
@@ -239,7 +239,7 @@ Scenamatica のバージョンは、`x.y.z` の形式で指定します。
 これを設定すると、シナリオの実行前に[ステージ](/docs/use/scenario/elements#stage)内にエンティティが生成され、終了時に削除されます。
 
 :::warning
-これを指定する場合は、[Entity 型](/docs/use/scenario/types/entities#entity-structure) の [`type`](/docs/use/scenario/types/entities#entity-type) を
+これを指定する場合は、[Entity 型](/docs/use/scenario/types/entities#entity) の [`type`](/docs/use/scenario/types/entities#entity-type) を
 必ず指定する必要があります。  
 これは、エンティティの種類を指定して拡張パラメタを設定するためです。
 :::
@@ -254,7 +254,7 @@ Scenamatica のバージョンは、`x.y.z` の形式で指定します。
 
 ---
 
-### Trigger 型 {#trigger-structure}
+## Trigger 型 {#trigger}
 
 <Object objects={[
   {
@@ -268,21 +268,21 @@ Scenamatica のバージョンは、`x.y.z` の形式で指定します。
     name: "before",
     anchor: "trigger-before",
     type: "Scenario[]",
-    type_anchor: "scenario-structure",
+    type_anchor: "scenario",
     description: "メインシナリオの実行前に実行するシナリオの定義です。"
   },
   {
     name: "after",
     anchor: "trigger-after",
     type: "Scenario[]",
-    type_anchor: "scenario-structure",
+    type_anchor: "scenario",
     description: "メインシナリオの実行後に実行するシナリオの定義です。"
   },
   {
     name: "runif",
     anchor: "trigger-runif",
     type: "Action(type:require)",
-    type_anchor: "action-structure",
+    type_anchor: "action",
     description: "メインシナリオの実行条件をアクションで定義します。"
   },
   {
@@ -346,7 +346,7 @@ Scenamatica のバージョンは、`x.y.z` の形式で指定します。
 
 ---
 
-### Stage 型 {#stage-structure}
+## Stage 型 {#stage}
 
 <Object objects={[
   {
@@ -370,7 +370,7 @@ Scenamatica のバージョンは、`x.y.z` の形式で指定します。
   },
   {
     name: "structures",
-    anchor: "stage-structures",
+    anchor: "stages",
     type : ObjectType.BOOLEAN,
     description: "ステージとして使用するワールドに構造物を生成するかどうかです。",
     default: "true"
@@ -426,7 +426,7 @@ Bukkit でロード済みの既存のワールドの構造、建築物、アイ�
 
 :::
 
-#### `structures` {#stage-structures}
+#### `structures` {#stages}
 
 ステージとして使用するワールドに構造物を生成するかどうかです。
 
@@ -446,7 +446,7 @@ Bukkit でロード済みの既存のワールドの構造、建築物、アイ�
 
 ---
 
-### Scenario 型 {#scenario-structure}
+## Scenario 型 {#scenario}
 
 <Object objects={[
   {
@@ -460,7 +460,7 @@ Bukkit でロード済みの既存のワールドの構造、建築物、アイ�
     name: "action",
     anchor: "scenario-action",
     type: "Action",
-    typeLink: "action-structure",
+    typeLink: "action",
     description: "シナリオのアクションです。",
     required: true
   },
@@ -481,7 +481,7 @@ Bukkit でロード済みの既存のワールドの構造、建築物、アイ�
     name: "runif",
     anchor: "scenario-runif",
     type: "Action(type: require)",
-    typeLink: "action-structure",
+    typeLink: "action",
     description: "シナリオの実行条件です。"
   }
 ]} />
@@ -547,7 +547,7 @@ Bukkit でロード済みの既存のワールドの構造、建築物、アイ�
 
 ---
 
-### Action 型 {#action-structure}
+## Action 型 {#action}
 
 <Object objects={[
   {
@@ -584,7 +584,7 @@ Bukkit でロード済みの既存のワールドの構造、建築物、アイ�
 
 ---
 
-### ActorPlayerList 型 {#actor-player-list-structure}
+## ActorPlayerList 型 {#player-list}
 
 <Object objects={[
   {
