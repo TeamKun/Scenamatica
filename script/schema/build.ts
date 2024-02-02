@@ -16,6 +16,7 @@ const PATH_DIR_ACTIONS = "actions"
 
 type Action = {
     name: string
+    file: string
     description: string
     namespace: string
     base?: string
@@ -82,7 +83,10 @@ type Meta = {
         [key: string]: string[]
     }
     actions: {
-        [key: string]: string
+        [key: string]: {
+            file: string
+            description: string
+        }
     }
 }
 
@@ -175,6 +179,7 @@ const loadActions = (baseDir: string) : Action[] => {
                 .replace(/\\/g, "/")  // For Windows
             const action = loadJson("", file) as Action
             action.namespace = namespace
+            action.file = file.split(/[/\\]/).pop()
             actions.push(action)
         }
     })
@@ -226,7 +231,10 @@ const buildActionsIndex = (actions: Action[]) => {
         if (!meta[action.namespace]) {
             meta[action.namespace] = {}
         }
-        meta[action.namespace][action.name] = action.description
+        meta[action.namespace][action.name] = {
+            file: action.file,
+            description: action.description
+        }
     }
 
     return meta
