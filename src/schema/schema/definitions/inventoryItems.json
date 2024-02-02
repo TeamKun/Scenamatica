@@ -114,5 +114,64 @@
     "required": [
       "type"
     ]
+  },
+  "inventory": {
+    "type": "object",
+    "description": "インベントリを表します。",
+    "properties": {
+      "size": {
+        "type": "integer",
+        "description": "インベントリのサイズです。",
+        "default": 36,
+        "multipleOf": 9
+      },
+      "title": {
+        "type": "string",
+        "description": "インベントリのタイトルです。",
+        "maxLength": 32
+      },
+      "items": {
+        "type": "object",
+        "description": "インベントリのアイテムです。キーがスロット番号で、値がアイテムスタックです。",
+        "patternProperties": {
+          "^\\d+$": {
+            "type": "itemStack"
+          }
+        }
+      }
+    }
+  },
+  "playerInventory": {
+    "description": "プレイヤのインベントリを表します。",
+    "properties": {
+      "main": {
+        "type": "inventory",
+        "description": "インベントリのメインの部分です。"
+      },
+      "mainHandItem": {
+        "type": "itemStack",
+        "description": "インベントリのメインハンドのアイテムです。"
+      },
+      "offHandItem": {
+        "type": "itemStack",
+        "description": "インベントリのオフハンドのアイテムです。"
+      },
+      "armors": {
+        "type": "array",
+        "description": "インベントリのアーマーのアイテムです。上から順にヘルメット、チェストプレート、レギンス、ブーツです。どこかが空いている場合は null を格納します。",
+        "items": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "itemStack"
+            }
+          ]
+        },
+        "minItems": 4,
+        "maxItems": 4
+      }
+    }
   }
 }

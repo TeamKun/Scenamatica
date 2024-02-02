@@ -13,6 +13,77 @@
       "LAST"
     ]
   },
+  "damageModifier": {
+    "type": "string",
+    "description": "ダメージの編集の種類です。",
+    "enum": [
+      "BASE",
+      "HARD_HAT",
+      "BLOCKING",
+      "ARMOR",
+      "RESISTANCE",
+      "MAGIC",
+      "ABSORPTION"
+    ]
+  },
+  "damageCause": {
+    "type": "string",
+    "description": "ダメージの原因です。",
+    "enum": [
+      "CONTACT",
+      "ENTITY_ATTACK",
+      "PROJECTILE",
+      "SUFFOCATION",
+      "FALL",
+      "FIRE",
+      "FIRE_TICK",
+      "MELTING",
+      "LAVA",
+      "DROWNING",
+      "BLOCK_EXPLOSION",
+      "ENTITY_EXPLOSION",
+      "VOID",
+      "LIGHTNING",
+      "SUICIDE",
+      "STARVATION",
+      "POISON",
+      "MAGIC",
+      "WATER",
+      "FALLING_BLOCK",
+      "THORNS",
+      "DRAGON_BREATH",
+      "CUSTOM",
+      "FLY_INTO_WALL",
+      "HOT_FLOOR",
+      "CRAMMING",
+      "DRYOUT"
+    ]
+  },
+  "teleportCause": {
+    "type": "string",
+    "enum": [
+      "COMMAND",
+      "DEATH",
+      "END_PORTAL",
+      "END_GATEWAY",
+      "CHORUS_FRUIT",
+      "SPECTATE",
+      "NETHER_PORTAL",
+      "ENDER_PEARL",
+      "UNKNOWN"
+    ]
+  },
+  "itemSlot": {
+    "type": "string",
+    "enum": [
+      "HAND",
+      "OFF_HAND",
+      "FEET",
+      "LEGS",
+      "CHEST",
+      "HEAD"
+    ]
+  },
   "sound": {
     "type": "string",
     "description": "音の種類を表します。",

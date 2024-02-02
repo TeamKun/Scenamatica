@@ -201,7 +201,7 @@ EntityType は, Bukkit の [EntityType](https://jd.papermc.io/paper/1.16/org/buk
   {
     name: "modifier",
     type: "Map<DamageModifier, Double>",
-    type_anchor: "damage-damage-modifier",
+    type_anchor: "damage-modifier",
     description: "ダメージの変更子です。"
   },
   {
@@ -212,12 +212,12 @@ EntityType は, Bukkit の [EntityType](https://jd.papermc.io/paper/1.16/org/buk
   {
     name: "cause",
     type: "DamageCause",
-    type_anchor: "damage-damage-cause",
+    type_anchor: "damage-cause",
     description: "ダメージの種類です。"
   }
 ]} />
 
-### DamageModifier 列挙型 {#damage-damage-modifier}
+## DamageModifier 列挙型 {#damage-modifier}
 
 + `BASE` 基本のダメージ。 `amount` で指定した値が使用されます。
 + `HARD_HAT` ヘルメットなどによる防御
@@ -227,7 +227,7 @@ EntityType は, Bukkit の [EntityType](https://jd.papermc.io/paper/1.16/org/buk
 + `MAGIC` ウィッチのポーション効果や防具のエンチャントによる防御
 + `ABSORPTION` エンチャント「ダメージ軽減」による防御
 
-### DamageCause 列挙型 {#damage-damage-cause}
+## DamageCause 列挙型 {#damage-cause}
 
 + `CONTACT` エンティティ同士の接触
 + `ENTITY_ATTACK` エンティティによる攻撃
@@ -469,8 +469,7 @@ Player 型は以下の親構造を持ちます。
   {
     name: "name",
     type : ObjectType.STRING,
-    description: "アクタの名前です。",
-
+    description: "アクタの名前です。"
   },
   {
     name: "displayName",
@@ -487,7 +486,7 @@ Player 型は以下の親構造を持ちます。
   },
   {
     name: "playerList",
-    type: "ActorPlayerList",
+    type: "PlayerList",
     type_anchor: "player-list",
     description: "アクタのプレイヤリストの設定です。",
   },
@@ -625,6 +624,28 @@ Player 型は以下の親構造を持ちます。
 上記の設定を取り消すことはできません。
 
 :::
+
+---
+
+## ActorPlayerList 型 {#player-list}
+
+<Object objects={[
+  {
+    name: "name",
+    type : ObjectType.STRING,
+    description: "プレイヤリストの名前です。",
+  },
+  {
+    name: "header",
+    type : ObjectType.STRING,
+    description: "プレイヤリストのヘッダーです。",
+  },
+  {
+    name: "footer",
+    type : ObjectType.STRING,
+    description: "プレイヤリストのフッターです。",
+  }
+]} />
 
 ---
 

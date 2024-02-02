@@ -1,48 +1,4 @@
 {
-  "itemSlot": {
-    "type": "string",
-    "enum": [
-      "HAND",
-      "OFF_HAND",
-      "FEET",
-      "LEGS",
-      "CHEST",
-      "HEAD"
-    ]
-  },
-  "playerInventory": {
-    "description": "プレイヤのインベントリを表します。",
-    "properties": {
-      "main": {
-        "type": "inventory",
-        "description": "インベントリのメインの部分です。"
-      },
-      "mainHandItem": {
-        "type": "itemStack",
-        "description": "インベントリのメインハンドのアイテムです。"
-      },
-      "offHandItem": {
-        "type": "itemStack",
-        "description": "インベントリのオフハンドのアイテムです。"
-      },
-      "armors": {
-        "type": "array",
-        "description": "インベントリのアーマーのアイテムです。上から順にヘルメット、チェストプレート、レギンス、ブーツです。どこかが空いている場合は null を格納します。",
-        "items": {
-          "anyOf": [
-            {
-              "type": "null"
-            },
-            {
-              "type": "itemStack"
-            }
-          ]
-        },
-        "minItems": 4,
-        "maxItems": 4
-      }
-    }
-  },
   "player": {
     "type": "entity",
     "properties": {
@@ -179,20 +135,6 @@
     },
     "required": [
       "name"
-    ]
-  },
-  "teleportCause": {
-    "type": "string",
-    "enum": [
-      "COMMAND",
-      "DEATH",
-      "END_PORTAL",
-      "END_GATEWAY",
-      "CHORUS_FRUIT",
-      "SPECTATE",
-      "NETHER_PORTAL",
-      "ENDER_PEARL",
-      "UNKNOWN"
     ]
   },
   "playerList": {
