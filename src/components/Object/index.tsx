@@ -88,9 +88,9 @@ export const Object: React.FC<ObjectsProps> = ({ objects }) => {
             <tr className={styles.objects} key={element.name}>
                 <td>{nameElements}</td>
                 <td><code>{typeName}</code></td>
-                {shouldShowRequiringState ? <td>{required}</td> : null}
-                <td>{element.description}</td>
-                {shouldShowDefaultValue ? <td>{element.default ? <code>{element.default}</code> : "-"}</td> : null}
+                {shouldShowRequiringState ? <td className={styles.requiredStatus}>{required}</td> : null}
+                <td className={styles.description}>{element.description}</td>
+                {shouldShowDefaultValue ? <td className={element.default ? null: styles.none}>{element.default ? <code>{element.default}</code> : "-"}</td> : null}
                 {shouldShowAvailableFor ? <td>{availableFor ? availableFor : <code>ALL</code>}</td> : null}
             </tr>
         )

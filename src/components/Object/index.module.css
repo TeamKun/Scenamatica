@@ -17,12 +17,25 @@
 }
 
 .header th {
-    padding-left: 50px;
-    padding-right: 50px;
     white-space: nowrap;
 }
 
-
 .required {
     font-weight: bold;
+}
+
+td {
+    width: fit-content;
+}
+
+td.description {
+    width: max-content;
+}
+
+td.requiredStatus {
+    text-align: center;
+}
+
+td.none {
+    text-align: center;
 }
