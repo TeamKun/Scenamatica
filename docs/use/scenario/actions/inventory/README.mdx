@@ -62,7 +62,7 @@ import {ObjectType} from "/src/components/Object";
           {
             name: "reason",
             type: "InventoryCloseReason",
-            type_anchor: "#type-inventory-close-reason",
+            type_link: "/docs/use/scenario/types/inventory-items#inventory-close-reason",
             description: "インベントリを閉じる理由です。",
           }
         ]}
@@ -82,7 +82,7 @@ import {ObjectType} from "/src/components/Object";
           {
             name: "reason",
             type: "InventoryCloseReason",
-            type_anchor: "#type-inventory-close-reason",
+            type_link: "/docs/use/scenario/types/inventory-items#inventory-close-reason",
             description: "インベントリを閉じた理由です。",
           },
           
@@ -147,76 +147,3 @@ import {ObjectType} from "/src/components/Object";
 これは、 Bukkit がプレイヤのインベントリの状態を追跡していないためです。
 
 :::
-
----
-
-## 型 {#types}
-
-### inventoryClickType 列挙型 {#type-click-type}
-
-インベントリのクリックの種類です。
-
-+ `LEFT` 左クリック
-+ `SHIFT_LEFT` 左シフトクリック
-+ `RIGHT` 右クリック
-+ `SHIFT_RIGHT` 右シフトクリック
-+ `WINDOW_BORDER_LEFT` ウィンドウの左端をクリック
-+ `WINDOW_BORDER_RIGHT` ウィンドウの右端をクリック
-+ `MIDDLE` マウスホイールクリック
-+ `NUMBER_KEY` 数字キーをクリック
-+ `DOUBLE_CLICK` ダブルクリック
-+ `DROP` アイテムをドロップ
-+ `CONTROL_DROP` コントロールキーを押しながらアイテムをドロップ
-+ `CREATIVE` クリエイティブモードでアイテムをドロップ
-+ `SWAP_OFFHAND` オフハンドのアイテムと入れ替え
-+ `UNKNOWN` 不明
-
----
-
-### InventoryAction 列挙型 {#type-inventory-action}
-
-+ `NOTHING`  何もしない
-+ `PICKUP_ALL` アイテムをすべて拾う
-+ `PICKUP_SOME` アイテムをいくつか拾う
-+ `PICKUP_HALF` アイテムを半分拾う
-+ `PICKUP_ONE` アイテムを1つ拾う
-+ `PLACE_ALL` アイテムをすべて置く
-+ `PLACE_SOME` アイテムをいくつか置く
-+ `PLACE_ONE` アイテムを1つ置く
-+ `SWAP_WITH_CURSOR` カーソルのアイテムと入れ替える
-+ `DROP_ALL_CURSOR` カーソルのアイテムをすべてドロップ
-+ `DROP_ONE_CURSOR` カーソルのアイテムを1つドロップ
-+ `DROP_ALL_SLOT` スロットのアイテムをすべてドロップ
-+ `DROP_ONE_SLOT` スロットのアイテムを1つドロップ
-+ `MOVE_TO_OTHER_INVENTORY` 別のインベントリに移動
-+ `HOTBAR_MOVE_AND_REA` クイックスロットに移動
-+ `HOTBAR_SWAP` クイックスロットと入れ替え
-+ `CLONE_STACK` スタックを複製
-+ `COLLECT_TO_CURSOR` カーソルに集める
-+ `UNKNOWN` 不明
-
----
-
-### SlotType 列挙型 {#type-slot-type}
-
-+ `RESULT` クラフト結果
-+ `CRAFTING` クラフト
-+ `ARMOR` 防具
-+ `CONTAINER` コンテナ
-+ `QUICKBAR` ホットバー
-+ `OUTSIDE` インベントリ外
-+ `FUEL` 燃料
-
----
-
-### InventoryCloseReason 列挙型 {#type-inventory-close-reason}
-
-+ `UNKNOWN` 不明
-+ `TELEPORT` テレポートによる強制クローズ
-+ `CANT_USE` プレイヤがインベントリにアクセスする権限を剥奪された
-+ `UNLOADED` インベントリがアンロードされた
-+ `OPEN_NEW` 他のインベントリを開いた
-+ `PLAYER` 自発的にインベントリを閉じた
-+ `DISCONNECT` プレイヤがサーバから切断したことによる強制クローズ
-+ `DEATH` プレイヤが死亡したことによる強制クローズ
-+ `PLUGIN` Bukkit API を介したプラグインによる操作
