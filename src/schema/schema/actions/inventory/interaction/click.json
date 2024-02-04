@@ -4,13 +4,13 @@
   "base": "inventory_interact_$base",
   "arguments": {
     "type": {
-      "$ref": "#/definitions/action/definitions/inventory_$base/definitions/clickType"
+      "type": "inventoryClickType"
     },
     "action": {
-      "$ref": "#/definitions/action/definitions/inventory_$base/definitions/inventoryAction"
+      "type": "inventoryAction"
     },
     "slotType": {
-      "$ref": "#/definitions/action/definitions/inventory_$base/definitions/slotType"
+      "type": "slotType"
     },
     "slot": {
       "type": "integer",
@@ -40,7 +40,7 @@
   "outputs": {
     "type": {
       "description": "クリックの種類です。",
-      "type": "clickType"
+      "type": "inventoryClickType"
     },
     "action": {
         "description": "インベントリのアクションです。",
