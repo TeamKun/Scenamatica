@@ -68,13 +68,17 @@
         "enum": []
       },
       "with": {
-        "type": "object",
+        "type": "actionArgument",
         "description": "アクションの種類によっては、このプロパティにアクションの引数を指定します。"
       }
     },
     "required": [
       "action"
     ]
+  },
+  "actionArgument": {
+    "type": "object",
+    "description": "アクションの引数です。",
   },
   "stage": {
     "type": "object",
