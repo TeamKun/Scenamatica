@@ -78,7 +78,7 @@
   },
   "actionArgument": {
     "type": "object",
-    "description": "アクションの引数です。",
+    "description": "アクションの引数です。"
   },
   "stage": {
     "type": "object",
