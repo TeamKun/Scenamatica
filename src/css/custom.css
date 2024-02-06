@@ -40,6 +40,19 @@
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
 }
 
+[data-theme="dark"] {
+  --scenario-type-color-execution: #7fbfff;
+  --scenario-type-color-requirement: #7fffff;
+  --scenario-type-color-expectation: #bfff7f;
+}
+
+[data-theme="light"] {
+  --scenario-type-color-execution: #5d8bb9;
+  --scenario-type-color-requirement: #60bbbb;
+  --scenario-type-color-expectation: #75c22c;
+}
+
+
 nav.navbar, nav.navbar a > i {
   color: #e3e3e3;
 }

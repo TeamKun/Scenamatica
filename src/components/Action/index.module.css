@@ -22,14 +22,30 @@ td.name {
 }
 
 [data-theme="dark"] .unable .label {
-    color: #b87070;
+    color: #be4646;
 }
 
 [data-theme="light"] .unable .label {
-    color: #8d1a1a;
+    color: #a93535;
 }
 
  .bigger {
     font-size: 1.25em;
     font-weight: bold;
+}
+
+ .scenarioType {
+     font-weight: bold;
+ }
+
+.scenarioType.execution{
+    color: var(--scenario-type-color-execution);
+}
+
+.scenarioType.requirement {
+    color: var(--scenario-type-color-requirement);
+}
+
+.scenarioType.expectation {
+    color: var(--scenario-type-color-expectation);
 }

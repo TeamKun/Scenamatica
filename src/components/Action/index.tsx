@@ -1,8 +1,7 @@
-import React, {ReactDOM, useState} from "react"
+import React from "react"
 import styles from "./index.module.css"
 import {Object, ObjectElement} from "@site/src/components/Object";
 import clsx from "clsx";
-import {translate} from "@docusaurus/Translate";
 import CopyableText from "@site/src/components/CopyableText";
 
 type BukkitEvent = {
@@ -11,20 +10,20 @@ type BukkitEvent = {
 }
 
 export class ScenarioType {
-    public static readonly EXECUTE = new ScenarioType("実行", "#20a420")
-    public static readonly EXPECT = new ScenarioType("監視", "#26c9a9")
-    public static readonly REQUIRE = new ScenarioType("要求", "#c95d16")
+    public static readonly EXECUTE = new ScenarioType("実行", styles.execution)
+    public static readonly EXPECT = new ScenarioType("監視", styles.expectation)
+    public static readonly REQUIRE = new ScenarioType("要求", styles.requirement)
 
     private readonly shortName: string
-    private readonly color: string
+    private readonly clazz: string
 
-    constructor(shortName: string, color: string) {
+    constructor(shortName: string, clazz: string) {
         this.shortName = shortName
-        this.color = color
+        this.clazz = clazz
     }
 
     public toElement(): JSX.Element {
-        return <code style={{color: this.color}}>{this.shortName}</code>
+        return <code className={clsx(styles.scenarioType, this.clazz)}>{this.shortName}</code>
     }
 }
 

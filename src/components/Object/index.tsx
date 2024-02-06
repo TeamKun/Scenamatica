@@ -48,7 +48,7 @@ export const Object: React.FC<ObjectsProps> = ({ objects }) => {
             required = <span className={styles.required}>
                 {element.required.map((type, index) => {
                     if (index > 0)
-                        return <>{" | "}{type.toElement()}</>
+                        return <>{" "}{type.toElement()}</>
                     else
                         return <>{type.toElement()}</>
                 })}
@@ -66,12 +66,14 @@ export const Object: React.FC<ObjectsProps> = ({ objects }) => {
 
         let availableFor: JSX.Element | null = null
         if (isActionArgument(element) && element.available.length > 0) {
-            for (const type of element.available) {
-                if (availableFor)
-                    availableFor = <>{availableFor} | {type.toElement()}</>
-                else
-                    availableFor = <>{type.toElement()}</>
-            }
+            availableFor = <span>
+                {element.available.map((type, index) => {
+                    if (index > 0)
+                        return <>{" "}{type.toElement()}</>
+                    else
+                        return <>{type.toElement()}</>
+                })}
+            </span>
         }
 
         // <code> で name をラップ
@@ -91,7 +93,7 @@ export const Object: React.FC<ObjectsProps> = ({ objects }) => {
                 {shouldShowRequiringState ? <td className={styles.requiredStatus}>{required}</td> : null}
                 <td className={styles.description}>{element.description}</td>
                 {shouldShowDefaultValue ? <td className={element.default ? null: styles.none}>{element.default ? <code>{element.default}</code> : "-"}</td> : null}
-                {shouldShowAvailableFor ? <td>{availableFor ? availableFor : <code>ALL</code>}</td> : null}
+                {shouldShowAvailableFor ? <td className={styles.scenarioType}>{availableFor ? availableFor : <code><span className={styles.allType}>すべて</span></code>}</td> : null}
             </tr>
         )
     })

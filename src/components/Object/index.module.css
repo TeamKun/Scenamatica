@@ -39,3 +39,20 @@ td.requiredStatus {
 td.none {
     text-align: center;
 }
+
+td.scenarioType{
+    text-align: center;
+}
+
+.allType {
+    background: linear-gradient(90deg,
+        var(--scenario-type-color-execution),
+        var(--scenario-type-color-requirement),
+        var(--scenario-type-color-expectation)
+    );
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+
+    font-weight: bold;
+}
