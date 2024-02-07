@@ -2,6 +2,14 @@
   "name": "world_game_rule",
   "description": "ワールドのゲームルールを設定します",
   "base": "world_$base",
+  "events": [
+    "io.papermc.paper.event.world.GameRuleChangeEvent"
+  ],
+
+  "executable": "ゲームルールを変更します。",
+  "watchable": "ゲームルールが変更されるか期待します。",
+  "requireable": "ゲームルールが指定された値であることを要求します。,
+
   "arguments": {
     "rule": {
       "type": "string",

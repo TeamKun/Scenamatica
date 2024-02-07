@@ -2,11 +2,20 @@
   "name": "projectile_hit",
   "description": "投射物を着弾させます。",
   "base": "entity_$base",
+  "events": [
+    "org.bukkit.event.entity.ProjectileHitEvent"
+  ],
+
+  "executable": "投射物を着弾させます。",
+  "watchable": "投射物が着弾することを期待します。",
+  "requireable": false,
+
   "arguments": {
     "entity": {
       "description": "着弾する投射物です。",
       "type": "entitySpecifier",
-      "$entityKindOf": "projectile"
+      "$entityKindOf": "projectile",
+      "requiredOn": ["execute"]
     },
     "hitEntity": {
       "description": "着弾する対象のエンティティです。",
@@ -22,7 +31,8 @@
     },
     "eventOnly": {
       "description": "着弾イベントのみを発生させるかどうかです。",
-      "type": "boolean"
+      "type": "boolean",
+      "availableFor": ["execute"]
     }
   },
   "outputs": {

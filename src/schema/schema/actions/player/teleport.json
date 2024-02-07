@@ -2,6 +2,10 @@
   "name": "player_teleport",
   "description": "プレイヤをてレポートさせます。",
   "base": "player_move",
+  "events": [
+    "org.bukkit.event.player.PlayerTeleportEvent"
+  ],
+
   "arguments": {
     "cause": {
       "type": "teleportCause",

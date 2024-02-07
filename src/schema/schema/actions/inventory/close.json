@@ -2,6 +2,13 @@
   "name": "inventory_close",
   "description": "インベントリを閉じます。",
   "base": "inventory_$base",
+  "events": [
+    "org.bukkit.event.inventory.InventoryCloseEvent"
+  ],
+  "executable": "プレイヤのインベントリを閉じます。",
+  "watchable": "プレイヤがインベントリを閉じることを期待します。",
+  "requireable": false,
+
   "arguments": {
     "target": {
       "type": "playerSpecifier",

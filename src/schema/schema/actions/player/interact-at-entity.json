@@ -2,10 +2,19 @@
   "name": "player_interact_at_entity",
   "description": "プレイヤにエンティティをクリックさせます。",
   "base": "player_interact_entity",
+  "events": [
+    "org.bukkit.event.player.PlayerInteractAtEntityEvent"
+  ],
+
+  "executable": "プレイヤにエンティティをクリックさせます。",
+  "watchable": "プレイヤがエンティティをクリックすることを期待します。",
+  "requireable": false,
+
   "arguments": {
     "position": {
+      "type": "location",
       "description": "クリックするエンティティの場所です。",
-      "type": "location"
+      "requiredOn": ["execute"]
     }
   },
   "outputs": {

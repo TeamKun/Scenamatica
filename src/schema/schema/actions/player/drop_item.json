@@ -2,6 +2,14 @@
   "name": "player_drop_item",
   "description": "プレイヤにアイテムをドロップさせます。",
   "base": "player_$base",
+  "events": [
+    "org.bukkit.event.player.PlayerDropItemEvent"
+  ],
+
+  "executable": "プレイヤにアイテムを捨てさせます。",
+  "watchable": "プレイヤがアイテムを捨てることを期待します。",
+  "requireable": false,
+
   "arguments": {
     "item": {
       "description": "ドロップするアイテムです。",
@@ -20,7 +28,7 @@
           "type": "entityItem"
         },
         {
-          "type": "#/definitions/itemStack"
+          "type": "itemStack"
         }
       ]
     }

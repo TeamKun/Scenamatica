@@ -1,7 +1,15 @@
 {
   "name": "world_border_changed",
-  "description": "ワールドボーダの変更の完了を検知します。",
+  "description": "ワールドボーダの変更の完了を期待します。",
   "base": "world_$base",
+  "events": [
+    "org.bukkit.event.world.WorldBorderBoundsChangeFinishEvent"
+  ],
+
+  "executable": false,
+  "watchable": "ワールドボーダの変更の完了を期待します。",
+  "requireable": false,
+
   "arguments": {
     "size": {
       "type": "number",

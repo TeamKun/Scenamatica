@@ -2,6 +2,14 @@
   "name": "player_death",
   "description": "プレイヤをキルします。",
   "base": "player_$base",
+  "events": [
+    "org.bukkit.event.entity.PlayerDeathEvent"
+  ],
+
+  "executable": "プレイヤを死亡させます。",
+  "watchable": "プレイヤが死亡するか期待します。",
+  "requireable": "プレイヤが死亡していることを要求します。",
+
   "arguments": {
     "killer": {
       "type": "entitySpecifier",
@@ -9,34 +17,41 @@
     },
     "deathMessage": {
       "type": "string",
-      "description": "死亡メッセージです。"
+      "description": "死亡メッセージです。",
+      "availableFor": ["execute", "watch"]
     },
     "exp": {
       "type": "integer",
-      "description": "死亡時したプレイヤの新しい経験値です。",
-      "minimum": 0
+      "description": "死亡するプレイヤの新しい経験値です。",
+      "minimum": 0,
+      "availableFor": ["execute", "watch"]
     },
     "level": {
       "type": "integer",
-      "description": "死亡時したプレイヤの新しいレベルです。",
-      "minimum": 0
+      "description": "死亡するプレイヤの新しいレベルです。",
+      "minimum": 0,
+      "availableFor": ["execute", "watch"]
     },
     "totalExp": {
       "type": "integer",
-      "description": "死亡時したプレイヤの新しい総経験値です。",
-      "minimum": 0
+      "description": "死亡するプレイヤの新しい総経験値です。",
+      "minimum": 0,
+      "availableFor": ["execute", "watch"]
     },
     "keepLevel": {
       "type": "boolean",
-      "description": "死亡時したプレイヤのレベルを保持するかどうかです。"
+      "description": "死亡するプレイヤのレベルを保持するかどうかです。",
+      "availableFor": ["execute", "watch"]
     },
     "keepInventory": {
       "type": "boolean",
-      "description": "死亡時したプレイヤのインベントリを保持するかどうかです。"
+      "description": "死亡するプレイヤのインベントリを保持するかどうかです。",
+      "availableFor": ["execute", "watch"]
     },
     "doExpDrop": {
       "type": "boolean",
-      "description": "死亡時したプレイヤの経験値ドロップをするかどうかです。"
+      "description": "死亡するプレイヤの経験値ドロップをするかどうかです。",
+      "availableFor": ["execute", "watch"]
     }
   },
   "outputs": {
@@ -50,30 +65,36 @@
     },
     "exp": {
       "type": "integer",
-      "description": "死亡時したプレイヤの新しい経験値です。",
-      "minimum": 0
+      "description": "死亡したプレイヤの新しい経験値です。",
+      "minimum": 0,
+      "availableFor": ["watch"]
     },
     "level": {
       "type": "integer",
-      "description": "死亡時したプレイヤの新しいレベルです。",
-      "minimum": 0
+      "description": "死亡したプレイヤの新しいレベルです。",
+      "minimum": 0,
+      "availableFor": ["watch"]
     },
     "totalExp": {
       "type": "integer",
-      "description": "死亡時したプレイヤの新しい総経験値です。",
-      "minimum": 0
+      "description": "死亡したプレイヤの新しい総経験値です。",
+      "minimum": 0,
+      "availableFor": ["watch"]
     },
     "keepLevel": {
       "type": "boolean",
-      "description": "死亡時したプレイヤのレベルを保持するかどうかです。"
+      "description": "死亡したプレイヤのレベルを保持するかどうかです。",
+      "availableFor": ["watch"]
     },
     "keepInventory": {
       "type": "boolean",
-      "description": "死亡時したプレイヤのインベントリを保持するかどうかです。"
+      "description": "死亡したプレイヤのインベントリを保持するかどうかです。",
+      "availableFor": ["watch"]
     },
     "doExpDrop": {
       "type": "boolean",
-      "description": "死亡時したプレイヤの経験値ドロップをするかどうかです。"
+      "description": "死亡したプレイヤの経験値ドロップをするかどうかです。",
+      "availableFor": ["watch"]
     }
   }
 }

@@ -2,6 +2,15 @@
   "name": "world_border",
   "description": "ワールドのボーダを変更します。",
   "base": "world_$base",
+  "events": [
+    "org.bukkit.event.world.WorldBorderBoundsChangeEvent",
+    "org.bukkit.event.world.WorldBorderCenterChangeEvent"
+  ],
+
+  "executable": "ワールドボーダを変更します。",
+  "watchable": "ワールドボーダが変更されるか期待します。",
+  "requireable": "ワールドボーダが指定されたものであることを要求します。",
+
   "arguments": {
     "type": {
       "type": "string",
@@ -9,7 +18,8 @@
       "enum": [
         "STARTED_MOVE",
         "INSTANT_MOVE"
-      ]
+      ],
+      "availableFor": ["require"]
     },
     "size": {
       "type": "number",

@@ -4,7 +4,8 @@
   "arguments": {
     "target": {
       "type": "playerSpecifier",
-      "description": "対象のプレイヤです。"
+      "description": "対象のプレイヤです。",
+      "requiredOn": ["execute"]
     }
   },
   "outputs": {

@@ -2,6 +2,14 @@
   "name": "player_sneak",
   "description": "プレイヤをしゃがませます。",
   "base": "player_$base",
+  "events": [
+    "org.bukkit.event.player.PlayerToggleSneakEvent"
+  ],
+
+  "executable": "プレイヤのしゃがみ状態を変更します。",
+  "watchable": "プレイヤがしゃがむことを期待します。",
+  "requireable": "プレイヤがしゃがんでいることを要求します。",
+
   "arguments": {
     "sneaking": {
       "type": "boolean",

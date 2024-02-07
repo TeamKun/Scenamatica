@@ -2,6 +2,14 @@
   "name": "player_projectile_launch",
   "description": "プレイヤに投げ物を射出させます。",
   "base": "player_$base",
+  "events": [
+    "org.bukkit.event.entity.ProjectileLaunchEvent"
+  ],
+
+  "executable": "プレイヤに投げ物を射出させます。",
+  "watchable": "プレイヤが投げ物を射出するか期待します。",
+  "requireable": false,
+
   "arguments": {
     "type": {
       "type": "string",
@@ -21,7 +29,8 @@
         "ITEM",
         "FIREWORK",
         "TRIDENT"
-      ]
+      ],
+      "requiredOn": ["execute", "watch"]
     },
     "velocity": {
       "description": "投げ物の速度や向きです。",
@@ -29,7 +38,8 @@
     },
     "epsilon": {
       "description": "投げ物の速度や向きを比較する際に許容する誤差です。",
-      "type": "vector"
+      "type": "vector",
+      "availableFor": ["watch"]
     }
   },
   "outputs": {

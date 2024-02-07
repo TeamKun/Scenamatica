@@ -1,10 +1,19 @@
 {
   "name": "broadcast",
   "description": "サーバにブロードキャストメッセージを送信します。",
+  "events": [
+    "org.bukkit.event.server.BroadcastMessageEvent"
+  ],
+
+  "executable": "メッセージをサーバ全体にブロードキャストします。",
+  "watchable": "メッセージがブロードキャストされるか期待します。",
+  "requireable": false,
+
   "arguments": {
     "message": {
       "type": "string",
-      "description": "送信するメッセージかその判定用の正規表現です。"
+      "description": "送信するメッセージかその判定用の正規表現です。",
+      "requiredOn": ["execute"]
     },
     "recipients": {
       "type": "array",
@@ -28,7 +37,8 @@
     },
     "strictRecipients": {
       "type": "boolean",
-      "description": "有効な場合は、余計なプレイヤがメッセージを受け取ると失敗します。"
+      "description": "有効な場合は、余計なプレイヤがメッセージを受け取ると失敗します。",
+      "availableFor": ["watch"]
     }
   },
   "outputs": {

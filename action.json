@@ -1,0 +1,145 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "title": "Scenamatica Action",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "The name of the action"
+    },
+    "description": {
+      "type": "string",
+      "description": "A description of the action"
+    },
+    "base": {
+      "type": "string",
+      "description": "The base action to use for the action"
+    },
+    "executable": {
+      "oneOf": [
+        {
+          "type": "string",
+          "description": "What will happen when the action is executed"
+        },
+        {
+          "type": "boolean",
+          "const": false,
+          "description": "Whether the action is executable"
+        }
+      ]
+    },
+    "watchable": {
+      "oneOf": [
+        {
+          "type": "string",
+          "description": "What will happen when the action is watched"
+        },
+        {
+          "type": "boolean",
+          "const": false,
+          "description": "Whether the action is watchable"
+        }
+      ]
+    },
+    "requireable": {
+      "oneOf": [
+        {
+          "type": "string",
+          "description": "What will happen when the action is required"
+        },
+        {
+          "type": "boolean",
+          "const": false,
+          "description": "Whether the action is requireable"
+        }
+      ]
+    },
+    "events": {
+      "type": "array",
+      "description": "The events that the action can emit",
+      "items": {
+        "type": "string"
+      }
+    },
+    "arguments": {
+      "type": "object",
+      "description": "The arguments for the action",
+      "additionalProperties": true,
+      "patternProperties": {
+        "^[a-zA-Z0-9_]+$": {
+          "type": "object",
+          "properties": {
+            "requiredOn": {
+              "oneOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "string",
+                      "enum": [
+                        "execute",
+                        "watch",
+                        "require"
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            "availableFor": {
+              "type": "array",
+              "items": [
+                {
+                  "type": "string",
+                  "enum": [
+                    "execute",
+                    "watch",
+                    "require"
+                  ]
+                }
+              ]
+            }
+          },
+          "additionalProperties": true
+        }
+      }
+    },
+    "outputs": {
+      "type": "object",
+      "description": "The output of the action",
+      "additionalProperties": true,
+      "patternProperties": {
+        "^[a-zA-Z0-9_]+$": {
+          "type": "object",
+          "properties": {
+            "availableFor": {
+              "type": "array",
+              "items": [
+                {
+                  "type": "string",
+                  "enum": [
+                    "execute",
+                    "watch",
+                    "require"
+                  ]
+                }
+              ]
+            }
+          },
+          "additionalProperties": true
+        }
+      }
+    }
+  },
+  "required": [
+    "name",
+    "description",
+    "executable",
+    "watchable",
+    "requireable"
+  ],
+  "additionalProperties": false
+}

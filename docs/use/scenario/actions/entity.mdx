@@ -134,7 +134,7 @@ import {ObjectType} from "/src/components/Object";
             name: "cause",
             type: "EntityDamageCause",
             description: "ダメージの種類です。",
-            required: [ScenarioType.EXPECT],
+            required: [ScenarioType.WATCH],
             available: [ScenarioType.EXECUTE]
           },
           {
@@ -142,7 +142,7 @@ import {ObjectType} from "/src/components/Object";
             type: "Map<DamageModifier, Double>",
             type_link: "/docs/use/scenario/types/entities#damage-damage-modifier",
             description: "ダメージの Modifier です。",
-            available: [ScenarioType.EXPECT]
+            available: [ScenarioType.WATCH]
           }
         ]}
         outputs={[
@@ -217,14 +217,14 @@ import {ObjectType} from "/src/components/Object";
             anchor: "damage-amount",
             type: ObjectType.FLOAT,
             description: "ダメージの量です。",
-            required: [ScenarioType.EXECUTE, ScenarioType.EXPECT]
+            required: [ScenarioType.EXECUTE, ScenarioType.WATCH]
           },
           {
             name: "modifiers",
             anchor: "damage-modifiers",
             type: ObjectType.OBJECT,
             description: "ダメージの Modifier です。",
-            available: [ScenarioType.EXPECT]
+            available: [ScenarioType.WATCH]
           }
         ]}
         outputs={[
@@ -292,49 +292,49 @@ import {ObjectType} from "/src/components/Object";
             type: "ItemStack[]",          
             type_link: "/docs/use/scenario/types#item-stack",
             description: "ドロップするアイテムです。",
-            available: [ScenarioType.EXPECT]
+            available: [ScenarioType.WATCH]
           },
           {
             name: "dropExp",
             type: ObjectType.INTEGER,
             description: "ドロップする経験値です。",
-            available: [ScenarioType.EXPECT]
+            available: [ScenarioType.WATCH]
           },
           {
             name: "reviveHealth",
             type: ObjectType.INTEGER,
             description: "復活時の体力です。",
-            available: [ScenarioType.EXPECT]
+            available: [ScenarioType.WATCH]
           },
           {
             name: "playDeathSound",
             type: ObjectType.BOOLEAN,
             description: "死亡時のサウンドを再生するかどうかです。",
-            available: [ScenarioType.EXPECT]
+            available: [ScenarioType.WATCH]
           },
           {
             name: "sound",
             type: "Sound",
             description: "再生するサウンドです。",
-            available: [ScenarioType.EXPECT]
+            available: [ScenarioType.WATCH]
           },
           {
             name: "soundCategory",
             type: "SoundCategory",
             description: "サウンドのカテゴリです。",
-            available: [ScenarioType.EXPECT]
+            available: [ScenarioType.WATCH]
           },
           {
             name: "soundVolume",
             type: ObjectType.FLOAT,
             description: "サウンドの音量です。",
-            available: [ScenarioType.EXPECT]
+            available: [ScenarioType.WATCH]
           },
           {
             name: "soundPitch",
             type: ObjectType.FLOAT,
             description: "サウンドのピッチです。",
-            available: [ScenarioType.EXPECT]
+            available: [ScenarioType.WATCH]
           }
         ]}
         outputs={[
@@ -425,14 +425,14 @@ import {ObjectType} from "/src/components/Object";
             type: "Location",
             type_link: "/docs/use/scenario/types/misc#location",
             description: "移動前の位置です。",
-            available: [ScenarioType.EXPECT]
+            available: [ScenarioType.WATCH]
           },
           {
             name: "to",
             type: "Location",
             type_link: "/docs/use/scenario/types/misc#location",
             description: "移動後の位置です。",
-            required: [ScenarioType.EXECUTE, ScenarioType.EXPECT]
+            required: [ScenarioType.EXECUTE, ScenarioType.WATCH]
           },
           {
             name: "ai",
@@ -510,7 +510,7 @@ AI を有効にした場合, エンティティは経路を探索し自発的に
             name: "remaining",
             type: ObjectType.INTEGER,
             description: "残りのアイテムの数です。",
-            available: [ScenarioType.EXPECT]
+            available: [ScenarioType.WATCH]
           }
         ]}
         outputs={[
@@ -588,7 +588,7 @@ AI を有効にした場合, エンティティは経路を探索し自発的に
             anchor: "place-target",
             type: "EntitySpecifier",
             type_link: "/docs/use/scenario/types#entity",
-            available: [ScenarioType.EXPECT, ScenarioType.REQUIRE]
+            available: [ScenarioType.WATCH, ScenarioType.REQUIRE]
           },
           {
             name: "material",
@@ -624,7 +624,7 @@ AI を有効にした場合, エンティティは経路を探索し自発的に
             type: "Entity",
             type_link: "/docs/use/scenario/types#entity",
             description: "設置されたエンティティです。",
-            available: [ScenarioType.EXPECT]
+            available: [ScenarioType.WATCH]
           },
           {
             name: "player",
@@ -694,60 +694,9 @@ AI を有効にした場合, エンティティは経路を探索し自発的に
 + `END_CRYSTAL`
 + `LEGACY_END_CRYSTAL`
 
-
-## スポーン {#spawn}
-
-<Action name="エンティティのスポーン"
-        description="エンティティをスポーンさせます。"
-        id="entity_spawn"
-        events={[
-          {
-            name: "EntitySpawnEvent",
-            package: "org.bukkit.event.entity",
-          }
-        ]}
-        args={[
-          {
-            name: "entity",
-            type: "EntitySpecifier",
-            type_link: "/docs/use/scenario/types#entity",
-            description: "スポーンさせるエンティティです。",
-            required: [ScenarioType.EXECUTE]
-          }
-        ]}
-        outputs={[
-          {
-            name: "entity",
-            type: "Entity",
-            type_link: "/docs/use/scenario/types#entity",
-            description: "スポーンさせたエンティティです。",
-          }
-        ]}
-        executable watchable
-/>
-
-#### `entity` {#spawn-entity}
-
-エンティティの構造体を指定します。
-
-:::tip
-
-これには、 `Entity` 型のオブジェクトないしはその子のオブジェクトを指定できます。
-
-`Projectile` 型のオブジェクトを指定した場合は、 `shooter` 等を設定した状態でスポーンできます。
-
-:::
-
-:::warning
-
-アクション実行シナリオでは、Entity オブジェクトの `type` が必須です。  
-また, アクション実行期待シナリオでは、Entity 型の `target` 引数は使用できません。
-
-:::
-
 ## 投射物の弾着 {#projectile-hit}
 
-<Action name="エンティティによる投射物の弾着"
+<Action name="投射物の弾着"
         description="投射物を着弾させます。"
         id="projectile_hit"
         events={[
@@ -840,7 +789,7 @@ AI を有効にした場合, エンティティは経路を探索し自発的に
 
 ## 投射物の発射 {#projectile-launch}
 
-<Action name="エンティティによる投射物の発射"
+<Action name="投射物の発射"
         description="投射物を発射します。"
         id="projectile_launch"
         events={[
@@ -880,3 +829,54 @@ AI を有効にした場合, エンティティは経路を探索し自発的に
 
 :::
 
+
+
+## スポーン {#spawn}
+
+<Action name="エンティティのスポーン"
+        description="エンティティをスポーンさせます。"
+        id="entity_spawn"
+        events={[
+          {
+            name: "EntitySpawnEvent",
+            package: "org.bukkit.event.entity",
+          }
+        ]}
+        args={[
+          {
+            name: "entity",
+            type: "EntitySpecifier",
+            type_link: "/docs/use/scenario/types#entity",
+            description: "スポーンさせるエンティティです。",
+            required: [ScenarioType.EXECUTE]
+          }
+        ]}
+        outputs={[
+          {
+            name: "entity",
+            type: "Entity",
+            type_link: "/docs/use/scenario/types#entity",
+            description: "スポーンさせたエンティティです。",
+          }
+        ]}
+        executable watchable
+/>
+
+#### `entity` {#spawn-entity}
+
+エンティティの構造体を指定します。
+
+:::tip
+
+これには、 `Entity` 型のオブジェクトないしはその子のオブジェクトを指定できます。
+
+`Projectile` 型のオブジェクトを指定した場合は、 `shooter` 等を設定した状態でスポーンできます。
+
+:::
+
+:::warning
+
+アクション実行シナリオでは、Entity オブジェクトの `type` が必須です。  
+また, アクション実行期待シナリオでは、Entity 型の `target` 引数は使用できません。
+
+:::

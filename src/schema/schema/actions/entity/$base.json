@@ -2,8 +2,9 @@
   "name": "entity_$base",
   "arguments": {
     "target": {
+      "type": "entitySpecifier",
       "description": "対象のエンティティです。",
-      "type": "entitySpecifier"
+      "requiredOn": ["execute"]
     }
   },
   "outputs": {

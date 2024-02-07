@@ -27,7 +27,13 @@
       "enum": [
         "MAIN_HAND",
         "OFF_HAND"
-      ]
+      ],
+      "availableFor": ["watch"]
+    },
+    "eventOnly": {
+      "type": "boolean",
+      "description": "イベントのみ発火させるかどうかです。",
+      "availableFor": ["execute"]
     }
   },
   "outputs": {

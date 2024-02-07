@@ -32,6 +32,12 @@ import {ObjectType} from "/src/components/Object";
 <Action name="インベントリのクリック"
         description="インベントリをクリックします。"
         id="inventory_click"
+        events={[
+          {
+            "name": "InventoryClickEvent",
+            "package": "org.bukkit.event.inventory",
+          }
+        ]}
         args={[
           {
             name: "target",
@@ -60,7 +66,7 @@ import {ObjectType} from "/src/components/Object";
             type: ObjectType.INTEGER,
             anchor: "click-slots",
             description: "クリックするスロットの番号です。",
-            available: [ScenarioType.EXPECT]
+            available: [ScenarioType.WATCH]
           },
           {
             name: "rawSlot",
@@ -74,7 +80,7 @@ import {ObjectType} from "/src/components/Object";
             type_link: "/docs/use/scenario/types#type-slot-type",
             anchor: "click-slot-type",
             description: "クリックするスロットの種類です。",
-            available: [ScenarioType.EXPECT, ScenarioType.REQUIRE]
+            available: [ScenarioType.WATCH, ScenarioType.REQUIRE]
           },
           {
             name: "clickedItem",
@@ -113,7 +119,7 @@ import {ObjectType} from "/src/components/Object";
             type: "ClickType",
             type_link: "/docs/use/scenario/types/inventory-items#inventory-click-type",
             description: "クリックの種類です。",
-            available: [ScenarioType.EXPECT]
+            available: [ScenarioType.WATCH]
           },
           {
             name: "slot",
@@ -126,7 +132,7 @@ import {ObjectType} from "/src/components/Object";
             type: ObjectType.INTEGER,
             anchor: "click-slots",
             description: "クリックしたスロットの生の番号です。",
-            available: [ScenarioType.EXPECT]
+            available: [ScenarioType.WATCH]
           },
           {
             name: "slotType",
@@ -134,7 +140,7 @@ import {ObjectType} from "/src/components/Object";
             type_link: "/docs/use/scenario/types#type-slot-type",
             anchor: "click-slot-type",
             description: "クリックしたスロットの種類です。",
-            available: [ScenarioType.EXPECT]
+            available: [ScenarioType.WATCH]
           },
           {
             name: "clickedItem",
@@ -153,7 +159,7 @@ import {ObjectType} from "/src/components/Object";
             type: "ItemStack",
             type_link: "/docs/use/scenario/types#item-stack",
             description: "カーソルにあるアイテムです。",
-            available: [ScenarioType.EXPECT]
+            available: [ScenarioType.WATCH]
           }
         ]}
         executable watchable
@@ -221,6 +227,12 @@ import {ObjectType} from "/src/components/Object";
 <Action name="クリエイティブインベントリのクリック"
         description="クリエイティブインベントリをクリックします。"
         id="creative_inventory_click"
+        events={[
+          {
+            "name": "InventoryClickEvent",
+            "package": "org.bukkit.event.inventory",
+          }
+        ]}
         args={[
           {
             name: "item",

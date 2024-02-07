@@ -1,6 +1,11 @@
 {
   "name": "server_log",
   "description": "サーバにログを送信します。",
+
+  "executable": "サーバにログを送信します。",
+  "watchable": "サーバに指定されたログが送信されることを期待します。",
+  "requireable": false,
+
   "arguments": {
     "message": {
       "type": "string",

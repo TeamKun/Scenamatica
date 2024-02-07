@@ -2,6 +2,14 @@
   "name": "inventory_open",
   "description": "インベントリを閉きます。",
   "base": "inventory_$base",
+  "events": [
+    "org.bukkit.event.inventory.InventoryOpenEvent"
+  ],
+
+  "executable": "プレイヤにインベントリを開かせます。",
+  "watchable": "プレイヤがインベントリを開くことを期待します。",
+  "requireable": "プレイヤにインベントリを開かせることができます。",
+
   "arguments": {
     "target": {
       "type": "playerSpecifier",
@@ -21,5 +29,5 @@
       "description": "開いたインベントリです。",
       "type": "inventory"
     }
-  }
+  },
 }

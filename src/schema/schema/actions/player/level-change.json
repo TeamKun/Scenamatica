@@ -2,14 +2,24 @@
   "name": "player_level_change",
   "description": "プレイヤの経験レベルを変更します。",
   "base": "player_$base",
+  "events": [
+    "org.bukkit.event.player.PlayerLevelChangeEvent"
+  ],
+
+  "executable": "プレイヤの経験レベルを変更します。",
+  "watchable": "プレイヤの経験レベルが変更されることを期待します。",
+  "requireable": "プレイヤの経験レベルが指定した値であることを要求します。",
+
   "arguments": {
     "oldLevel": {
       "type": "number",
-      "description": "変更前の経験レベルです。"
+      "description": "変更前の経験レベルです。",
+      "availableFor": ["watch"]
     },
     "level": {
       "type": "number",
-      "description": "変更後の経験レベルです。"
+      "description": "変更後の経験レベルです。",
+      "requiredOn": ["execute", "require"]
     }
   },
   "outputs": {

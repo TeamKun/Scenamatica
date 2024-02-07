@@ -2,16 +2,25 @@
   "name": "entity",
   "description": "エンティティの状態を変更します。",
   "base": "entity_$base",
+
+  "executable": "エンティティの状態・属性を変更します",
+  "watchable": false,
+  "requireable": "エンティティの状態・属性が指定されたものと一致するかを判定します。",
+
   "arguments": {
+    "entity": {
+      "requiredOn": true
+    },
     "data": {
       "type": "entity",
-      "description": "変更する値です。"
+      "description": "変更する値です。",
+      "requiredOn": ["execute"]
     }
   },
   "outputs": {
     "entity": {
       "type": "entity",
-      "description": "変更後の値です。"
+      "description": "書き換えたエンティティです。"
     }
   }
 }

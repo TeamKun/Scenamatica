@@ -2,14 +2,23 @@
   "name": "player_respawn",
   "description": "プレイヤをリスポーンさせます。",
   "base": "player_$base",
+  "events": [
+    "org.bukkit.event.player.PlayerRespawnEvent"
+  ],
+
+  "executable": "プレイヤをリスポーンさせます。",
+  "watchable": "プレイヤがリスポーンするか期待します。",
+
   "arguments": {
     "isBed": {
       "type": "boolean",
-      "description": "プレイヤがベッドでスポーンするかどうかです。"
+      "description": "プレイヤがベッドでスポーンするかどうかです。",
+      "availableFor": ["watch"]
     },
     "isAnchor": {
       "type": "boolean",
-      "description": "プレイヤが錨でスポーンするかどうかです。"
+      "description": "プレイヤが錨でスポーンするかどうかです。",
+      "availableFor": ["watch"]
     },
     "location": {
       "description": "プレイヤがスポーンする場所です。",
@@ -23,11 +32,13 @@
     },
     "isBed": {
       "type": "boolean",
-      "description": "プレイヤがベッドでスポーンするかどうかです。"
+      "description": "プレイヤがベッドでスポーンするかどうかです。",
+      "availableFor": ["watch"]
     },
     "isAnchor": {
       "type": "boolean",
-      "description": "プレイヤが錨でスポーンするかどうかです。"
+      "description": "プレイヤが錨でスポーンするかどうかです。",
+      "availableFor": ["watch"]
     }
   }
 }

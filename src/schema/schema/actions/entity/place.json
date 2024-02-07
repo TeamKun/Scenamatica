@@ -1,23 +1,36 @@
 {
   "name": "entity_place",
-  "description": "エンティティの設置を検知します",
+  "description": "エンティティの設置を期待します",
   "base": "entity_damage",
+  "events": [
+    "org.bukkit.event.entity.EntityPlaceEvent"
+  ],
+
+  "executable": "エンティティを設置します",
+  "watchable": "エンティティが設置されることを期待します",
+  "requireable": false,
+
+
   "arguments": {
     "target": {
       "type": "entitySpecifier",
-      "description": "設置するエンティティです。"
+      "description": "設置するエンティティです。",
+      "availableFor": ["watch", "require"]
     },
     "material": {
       "type": "material",
-      "description": "設置するエンティティをアイテム化したときのアイテムです。"
+      "description": "設置するエンティティをアイテム化したときのアイテムです。",
+      "requiredOn": ["execute"]
     },
     "player": {
       "description": "設置するプレイヤの名前または UUID です。",
-      "type": "string"
+      "type": "string",
+      "requiredOn": ["execute"]
     },
     "block": {
       "description": "設置場所のブロックです。",
-      "type": "block"
+      "type": "block",
+      "requiredOn": ["execute"]
     },
     "direction": {
       "description": "設置する方向です。",

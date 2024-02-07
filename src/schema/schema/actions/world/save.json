@@ -1,5 +1,11 @@
 {
   "name": "world_save",
   "description": "ワールドを保存します。",
-  "base": "world_$base"
+  "base": "world_$base",
+  "events": [
+    "org.bukkit.event.world.WorldSaveEvent"
+  ],
+  "executable": "ワールドを保存します。",
+  "watchable": "ワールドが保存されるか期待します。",
+  "requireable": false
 }

@@ -2,15 +2,25 @@
   "name": "entity_pickup_item",
   "description": "エンティティにアイテムを拾わせます。",
   "base": "entity_$base",
+  "events": [
+    "org.bukkit.event.player.EntityPickupItemEvent"
+  ],
+
+  "executable": "エンティティにアイテムを拾わせます。",
+  "watchable": "エンティティがアイテムを拾うことを期待します。",
+  "requireable": false,
+
   "arguments": {
     "remaining": {
       "type": "number",
-      "description": "残りのアイテム数を指定します。"
+      "description": "残りのアイテム数を指定します。",
+      "availableFor": ["watch"]
     },
     "item": {
       "type": "entitySpecifier",
-      "description": "拾わせるアイテムを指定します。",
-      "$entityKindOf": "entityItem"
+      "$entityKindOf": "entityItem",
+      "description": "拾わせるアイテムのエンティティを指定します。",
+      "requiredOn": ["execute"]
     }
   },
   "outputs": {

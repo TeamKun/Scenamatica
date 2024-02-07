@@ -1,5 +1,12 @@
 {
   "name": "player_bucket_empty",
   "description": "プレイヤにバケツを空にさせます。",
-  "base": "player_bucket_$base"
+  "base": "player_bucket_$base",
+  "events": [
+    "org.bukkit.event.player.PlayerBucketEmptyEvent"
+  ],
+
+  "executable": "プレイヤの持つバケツを空にさせます",
+  "watchable": "プレイヤの持つバケツが空にされるか期待します。",
+  "requireable": false
 }

@@ -1,5 +1,11 @@
 {
   "name": "world_init",
-  "description": "ワールドの初期化を検知します。",
-  "base": "world_$base"
+  "description": "ワールドの初期化を期待します。",
+  "base": "world_$base",
+  "events": [
+    "org.bukkit.event.world.WorldInitEvent"
+  ],
+  "executable": false,
+  "watchable": "ワールドが初期化されるか期待します。",
+  "requireable": false
 }

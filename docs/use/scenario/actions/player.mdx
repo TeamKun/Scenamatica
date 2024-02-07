@@ -138,7 +138,7 @@ import {ObjectType} from "/src/components/Object";
             description: "使用する手です。",
             type: "列挙型{HAND, OFF_HAND}",
             default: "HAND",
-            available: [ScenarioType.EXPECT]
+            available: [ScenarioType.WATCH]
           },
           {
             name: "eventOnly",
@@ -262,7 +262,7 @@ NMS の仕様上の都合により、 `block` を用いた液体の場所は `ev
             description: "使用する手です。",
             type: "列挙型{HAND, OFF_HAND}",
             default: "HAND",
-            available: [ScenarioType.EXPECT]
+            available: [ScenarioType.WATCH]
           },
           {
             name: "eventOnly",
@@ -354,7 +354,7 @@ NMS の仕様上の都合により、 `block` を用いた液体の場所は `ev
             description: "進捗を達成するプレイヤです。",
             type: "PlayerSpecifier",
             type_anchor: "#general-target",
-            required: [ScenarioType.EXPECT, ScenarioType.REQUIRE]
+            required: [ScenarioType.EXECUTE, ScenarioType.REQUIRE]
           },
           {
             name: "advancement",
@@ -362,7 +362,7 @@ NMS の仕様上の都合により、 `block` を用いた液体の場所は `ev
             description: "進捗です。",
             type: "NamespacedKey",
             type_link: "/docs/use/scenario/types/misc#namespaced-key",
-            required: [ScenarioType.EXPECT, ScenarioType.REQUIRE]
+            required: [ScenarioType.EXECUTE, ScenarioType.REQUIRE]
           },
           {
             name: "criterion",
@@ -502,8 +502,9 @@ Bukkit の仕様により、現在は `ARM_SWING` のみが指定可能です。
           {
             name: "entity",
             description: "格納するエンティティです。",
-            type: "Entity",
-            type_link: "/docs/use/scenario/types#entity",
+            type: "EntitySpecifier",
+            type_link: "/docs/use/scenario/types/entities#entity-specifier",
+            required: [ScenarioType.EXECUTE]
           },
           {
             name: "bucket",
@@ -542,7 +543,7 @@ Bukkit の仕様により、現在は `ARM_SWING` のみが指定可能です。
             description: "エンティティが入ったバケツです。",
             type: "ItemStack",
             type_link: "/docs/use/scenario/types#item-stack",
-            available: [ScenarioType.EXPECT]
+            available: [ScenarioType.WATCH]
           },
         ]}
         executable watchable
@@ -599,8 +600,7 @@ Bukkit の仕様により、現在は `ARM_SWING` のみが指定可能です。
           {
             name: "format",
             description: "チャットのフォーマットです。",
-            type: ObjectType.STRING,
-            required: [ScenarioType.EXECUTE],
+            type: ObjectType.STRING
           }
         ]}
         outputs={[
@@ -620,7 +620,7 @@ Bukkit の仕様により、現在は `ARM_SWING` のみが指定可能です。
             name: "format",
             description: "チャットのフォーマットです。",
             type: ObjectType.STRING,
-            available: [ScenarioType.EXPECT],
+            available: [ScenarioType.WATCH],
           }
         ]}
         executable watchable
@@ -654,7 +654,7 @@ Bukkit の仕様により、現在は `ARM_SWING` のみが指定可能です。
           },
           {
             name: "killer",
-            description: "殺したプレイヤです。",
+            description: "ターゲットを死亡させるプレイヤです。",
             type: "PlayerSpecifier",
             type_anchor: "#general-target",
           },
@@ -662,49 +662,49 @@ Bukkit の仕様により、現在は `ARM_SWING` のみが指定可能です。
             name: "deathMessage",
             description: "死亡メッセージです。",
             type: ObjectType.STRING,
-            available: [ScenarioType.EXECUTE, ScenarioType.EXPECT],
+            available: [ScenarioType.EXECUTE, ScenarioType.WATCH],
           },
           {
             name: "exp",
             description: "死亡したプレイヤの新しい経験値です。",
             type: ObjectType.INTEGER,
             default: "(ゲームルールによる)",
-            available: [ScenarioType.EXECUTE, ScenarioType.EXPECT],
+            available: [ScenarioType.EXECUTE, ScenarioType.WATCH],
           },
           {
             name: "totalExp",
             description: "死亡したプレイヤの新しい総経験値です。",
             type: ObjectType.INTEGER,
             default: "(ゲームルールによる)",
-            available: [ScenarioType.EXECUTE, ScenarioType.EXPECT],
+            available: [ScenarioType.EXECUTE, ScenarioType.WATCH],
           },
           {
             name: "keepLevel",
             description: "死亡したプレイヤのレベルを保持するかどうかです。",
             type: ObjectType.BOOLEAN,
             default: "(ゲームルールによる)",
-            available: [ScenarioType.EXECUTE, ScenarioType.EXPECT],
+            available: [ScenarioType.EXECUTE, ScenarioType.WATCH],
           },
           {
             name: "keepInventory",
             description: "死亡したプレイヤのインベントリ内容を保持するかどうかです。",
             type: ObjectType.BOOLEAN,
             default: "(ゲームルールによる)",
-            available: [ScenarioType.EXECUTE, ScenarioType.EXPECT],
+            available: [ScenarioType.EXECUTE, ScenarioType.WATCH],
           },
           {
             name: "keepExperience",
             description: "死亡したプレイヤの経験値を保持するかどうかです。",
             type: ObjectType.BOOLEAN,
             default: "(ゲームルールによる)",
-            available: [ScenarioType.EXECUTE, ScenarioType.EXPECT],
+            available: [ScenarioType.EXECUTE, ScenarioType.WATCH],
           },
           {
             name: "doExpDrop",
             description: "死亡したプレイヤの経験値ドロップを行うかどうかです。",
             type: ObjectType.BOOLEAN,
             default: "(ゲームルールによる)",
-            available: [ScenarioType.EXECUTE, ScenarioType.EXPECT],
+            available: [ScenarioType.EXECUTE, ScenarioType.WATCH],
           }
         ]}
         outputs={[
@@ -725,43 +725,43 @@ Bukkit の仕様により、現在は `ARM_SWING` のみが指定可能です。
             name: "deathMessage",
             description: "死亡メッセージです。",
             type: ObjectType.STRING,
-            available: [ScenarioType.EXPECT],
+            available: [ScenarioType.WATCH],
           },
           {
             name: "exp",
             description: "死亡したプレイヤの新しい経験値です。",
             type: ObjectType.INTEGER,
-            available: [ScenarioType.EXPECT],
+            available: [ScenarioType.WATCH],
           },
           {
             name: "totalExp",
             description: "死亡したプレイヤの新しい総経験値です。",
             type: ObjectType.INTEGER,
-            available: [ScenarioType.EXPECT],
+            available: [ScenarioType.WATCH],
           },
           {
             name: "keepLevel",
             description: "死亡したプレイヤのレベルを保持するかどうかです。",
             type: ObjectType.BOOLEAN,
-            available: [ScenarioType.EXPECT],
+            available: [ScenarioType.WATCH],
           },
           {
             name: "keepInventory",
             description: "死亡したプレイヤのインベントリ内容を保持するかどうかです。",
             type: ObjectType.BOOLEAN,
-            available: [ScenarioType.EXPECT],
+            available: [ScenarioType.WATCH],
           },
           {
             name: "keepExperience",
             description: "死亡したプレイヤの経験値を保持するかどうかです。",
             type: ObjectType.BOOLEAN,
-            available: [ScenarioType.EXPECT],
+            available: [ScenarioType.WATCH],
           },
           {
             name: "doExpDrop",
             description: "死亡したプレイヤの経験値ドロップを行うかどうかです。",
             type: ObjectType.BOOLEAN,
-            available: [ScenarioType.EXPECT],
+            available: [ScenarioType.WATCH],
           }
         ]}
         executable={"プレイヤを殺害します。"}
@@ -832,7 +832,7 @@ Bukkit の仕様により、現在は `ARM_SWING` のみが指定可能です。
         id="player_sneak"
         events={[
           {
-            name: "PlayerToggleSneakEvent",
+            name: "PlayerToggleFlightEvent",
             package: "org.bukkit.event.player",
           }
         ]}
@@ -843,13 +843,13 @@ Bukkit の仕様により、現在は `ARM_SWING` のみが指定可能です。
             description: "飛ぶプレイヤです。",
             type: "PlayerSpecifier",
             type_anchor: "#general-target",
-            required: [ScenarioType.EXECUTE],
+            required: [ScenarioType.EXECUTE, ScenarioType.REQUIRE],
           },
           {
             name: "flying",
-            anchor: "flight-flying",
             description: "飛行中かどうかです。",
-            type: ObjectType.BOOLEAN
+            type: ObjectType.BOOLEAN,
+            required: [ScenarioType.EXECUTE, ScenarioType.REQUIRE]
           }
         ]}
         outputs={[
@@ -863,14 +863,6 @@ Bukkit の仕様により、現在は `ARM_SWING` のみが指定可能です。
         ]}
         executable requireable watchable
 />
-
-#### `flying` {#flight-flying}
-
-飛行するか（している）どうかを指定します。
-
-:::info
-アクション実行シナリオおよび条件要求シナリオでは必須です。
-:::
 
 ## ゲームモード {#gamemode}
 
@@ -903,14 +895,14 @@ Bukkit の仕様により、現在は `ARM_SWING` のみが指定可能です。
             name: "cause",
             description: "ゲームモード変更の原因です。",
             type: "列挙型{PLUGIN, COMMAND, DEFAULT_GAMEMODE, HARDCORE_DEATH, UNKNOWN}",
-            available: [ScenarioType.EXECUTE, ScenarioType.EXPECT]
+            available: [ScenarioType.EXECUTE, ScenarioType.WATCH]
           },
           {
             name: "cancelMessage",
             anchor: "gamemode-cancel-message",
             description: "変更がキャンセルされた場合に表示するメッセージです（Paper)。",
             type: ObjectType.STRING,
-            available: [ScenarioType.EXPECT]
+            available: [ScenarioType.WATCH]
           }
         ]}
         outputs={[
@@ -931,14 +923,14 @@ Bukkit の仕様により、現在は `ARM_SWING` のみが指定可能です。
             name: "cause",
             description: "ゲームモード変更の原因です。",
             type: "列挙型{PLUGIN, COMMAND, DEFAULT_GAMEMODE, HARDCORE_DEATH, UNKNOWN}",
-            available: [ScenarioType.EXPECT]
+            available: [ScenarioType.WATCH]
           },
           {
             name: "cancelMessage",
             anchor: "gamemode-cancel-message",
             description: "変更がキャンセルされた場合に表示するメッセージです（Paper)。",
             type: ObjectType.STRING,
-            available: [ScenarioType.EXPECT]
+            available: [ScenarioType.WATCH]
           }
         ]}
         executable requireable watchable
@@ -999,7 +991,7 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
             description: "収穫したアイテムです。",
             type: "ItemStack[]",
             type_link: "/docs/use/scenario/types#item-stack",
-            available: [ScenarioType.EXPECT]
+            available: [ScenarioType.WATCH]
           }
         ]}
         outputs={[
@@ -1021,7 +1013,7 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
             description: "収穫したアイテムです。",
             type: "ItemStack[]",
             type_link: "/docs/use/scenario/types#item-stack",
-            available: [ScenarioType.EXPECT]
+            available: [ScenarioType.WATCH]
           }
         ]}
         executable watchable
@@ -1035,10 +1027,10 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
 :::
 
 
-## ホットバーのスロットの変更 {#hotbar}
+## ホットバーの選択中スロットの変更 {#hotbar}
 
-<Action name="ホットバーのスロットの変更"
-        description="ホットバーのスロットの変更に関するアクションです。"
+<Action name="ホットバーの選択中スロットの変更"
+        description="ホットバーの選択中スロットの変更に関するアクションです。"
         id="player_hotbar"
         events={
           {
@@ -1066,7 +1058,7 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
             anchor: "hotbar-slot",
             description: "変更前のホットバーのスロットです。",
             type: ObjectType.INTEGER,
-            available: [ScenarioType.EXECUTE, ScenarioType.EXPECT]
+            available: [ScenarioType.EXECUTE, ScenarioType.WATCH]
           },
           {
             name: "item",
@@ -1080,8 +1072,9 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
           {
             name: "target",
             description: "ホットバーのスロットを変更したプレイヤです。",
-            type: "Player",
-            type_link: "/docs/use/scenario/types/entities/#player",
+            type: "PlayerSpecifier",
+            type_anchor: "#general-target",
+            required: [ScenarioType.EXECUTE, ScenarioType.REQUIRE]
           },
           {
             name: "slot",
@@ -1092,7 +1085,7 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
             name: "previous",
             description: "変更前のホットバーのスロットです。",
             type: ObjectType.INTEGER,
-            available: [ScenarioType.EXPECT, ScenarioType.EXECUTE]
+            available: [ScenarioType.WATCH]
           },
           {
             name: "item",
@@ -1145,8 +1138,8 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
         args={[
           {
             name: "target",
-            type: "-----",
-            type_anchor: "entity#general-target",
+            type: "PlayerSpecifier",
+            type_anchor: "#general-target",
             description: "クリックしたプレイヤです。",
             required: [ScenarioType.EXECUTE]
           },
@@ -1265,7 +1258,7 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
             anchor: "block-face",
             description: "クリックされたブロックの面です。",
             type: "列挙型{NORTH, EAST, SOUTH, WEST, UP, DOWN, SELF}",
-            available: [ScenarioType.EXPECT]
+            available: [ScenarioType.WATCH]
           },
           {
             name: "hand",
@@ -1304,8 +1297,8 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
         args={[
           {
             name: "target",
-            type: "-----",
-            type_anchor: "entity#general-target",
+            type: "PlayerSpecifier",
+            type_anchor: "#general-target",
             description: "クリックしたプレイヤです。",
             required: [ScenarioType.EXECUTE]
           },
@@ -1451,7 +1444,7 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
             description: "消費されるアイテムの代わりに与えられるアイテムです。",
             type: "ItemStack",
             type_link: "/docs/use/scenario/types#item-stack",
-            available: [ScenarioType.EXPECT]
+            available: [ScenarioType.WATCH]
           }
         ]}
         outputs={[
@@ -1508,10 +1501,10 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
         args={[
           {
             name: "target",
-            description: "ダメージを与えるプレイヤです。",
+            description: "ダメージを与えるアイテムを持つプレイヤです。",
             type: "PlayerSpecifier",
             type_anchor: "#general-target",
-            required: [ScenarioType.EXECUTE]
+            required: [ScenarioType.EXECUTE, ScenarioType.REQUIRE]
           },
           {
             name: "item",
@@ -1519,8 +1512,7 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
             description: "ダメージを与えられるアイテムです。",
             type: "ItemStack",
             type_link: "/docs/use/scenario/types#item-stack",
-            required: [ScenarioType.EXECUTE, ScenarioType.REQUIRE],
-            available: [ScenarioType.EXECUTE, ScenarioType.EXPECT]
+            required: [ScenarioType.EXECUTE, ScenarioType.REQUIRE]
           },
           {
             name: "damage",
@@ -1636,7 +1628,7 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
             name: "message",
             description: "参加メッセージです。",
             type: ObjectType.STRING,
-            available: [ScenarioType.EXPECT]
+            available: [ScenarioType.WATCH]
           }
         ]}
         executable
@@ -1662,14 +1654,14 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
             description: "キックされるプレイヤです。",
             type: "PlayerSpecifier",
             type_anchor: "#general-target",
-            required: [ScenarioType.EXECUTE, ScenarioType.EXPECT]
+            required: [ScenarioType.EXECUTE, ScenarioType.WATCH]
           },
           {
             name: "leaveMessage",
             anchor: "kick-leave-message",
             description: "コンソールとサーバ上のプレイヤ全員に表示されるメッセージです。",
             type: ObjectType.STRING,
-            available: [ScenarioType.EXPECT]
+            available: [ScenarioType.WATCH]
           },
           {
             name: "message",
@@ -1697,7 +1689,7 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
             anchor: "kick-leave-message",
             description: "コンソールとサーバ上のプレイヤ全員に表示されるメッセージです。",
             type: ObjectType.STRING,
-            available: [ScenarioType.EXPECT]
+            available: [ScenarioType.WATCH]
           },
           {
             name: "message",
@@ -1745,97 +1737,6 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
 | `RESTART_COMMAND`          | Spigotの再起動コマンド     |
 | `UNKNOWN`                  | 不明                 |
 
-
-## 投げ物の発射 {#launch-projectile}
-
-<Action name="プレイヤの投げ物の発射"
-        description="プレイヤの投げ物の発射に関するアクションです。"
-        id="player_projectile_launch"
-        events={
-          {
-            name: "ProjectileLaunchEvent",
-            package: "org.bukkit.event.entity",
-          }
-        }
-        args={[
-          {
-            name: "target",
-            anchor: "target",
-            description: "投げ物を発射するプレイヤです。",
-            type: "PlayerSpecifier",
-            type_anchor: "#general-target",
-            required:[ScenarioType.EXECUTE, ScenarioType.EXPECT]
-          },
-          {
-            name: "type",
-            anchor: "launch-projectile-type",
-            description: "発射される投げ物の種類です。",
-            type: "Enum{...}",
-            required: [ScenarioType.EXECUTE, ScenarioType.EXECUTE]
-          },
-          {
-            name: "epsilon",
-            anchor: "launch-projectile-epsilon",
-            description: "投げ物の発射ベクトルの有効数字です。",
-            type: ObjectType.DOUBLE,
-            default: "0.001",
-            available: [ScenarioType.EXECUTE]
-          }
-        ]}
-        outputs={[
-          {
-            name: "target",
-            anchor: "target",
-            description: "投げ物を発射したプレイヤです。",
-            type: "Player",
-            type_link: "/docs/use/scenario/types/entities/#player",
-          },
-          {
-            name: "projectile",
-            anchor: "launch-projectile-out-projectile",
-            description: "発射された投げ物です。",
-            type: "Projectile",
-            type_link: "/docs/use/scenario/types/entities#projectile",
-          }
-        ]}
-        executable watchable
-/>
-
-#### `type` {#launch-projectile-type}
-
-発射される投げ物の種類を指定します。以下の種類が指定できます。
-
-|         種類          | 説明         |
-|:-------------------:|:-----------|
-|       `ARROW`       | 矢          |
-|     `SNOWBALL`      | 雪玉         |
-|        `EGG`        | 卵          |
-|     `FIREBALL`      | ファイアーチャージ  |
-|  `SMALL_FIREBALL`   | 小型の火球      |
-|    `ENDER_PEARL`    | エンダーパール    |
-|   `WITHER_SKULL`    | ウィザーの頭     |
-|  `SHULKER_BULLET`   | シュルカーの弾丸   |
-|  `DRAGON_FIREBALL`  | エンドドラゴンの火球 |
-|      `POTION`       | ポーション      |
-| `EXPERIENCE_BOTTLE` | 経験値ボトル     |
-|       `ITEM`        | アイテム       |
-|     `FIREWORK`      | 花火         |
-|      `TRIDENT`      | トライデント     |
-  
-
-#### `epsilon` {#launch-projectile-epsilon}
-
-投げ物をアクションで比較すする際に許容される誤差を指定します。
-
-#### `projectile` {#launch-projectile-out-projectile}
-
-:::danger
-
-出力 `projectile` は、怠惰な出力です。  
-そのため、これの直後にあるアクション実行期待からは参照できません。
-
-:::
-
 ## 経験レベルの変更 {#level-change}
 
 <Action name="プレイヤの経験レベルの変更"
@@ -1854,7 +1755,7 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
             description: "経験レベルを変更するプレイヤです。",
             type: "PlayerSpecifier",
             type_anchor: "#general-target",
-            required: [ScenarioType.EXECUTE]
+            required: [ScenarioType.EXECUTE, ScenarioType.REQUIRE]
           },
           {
             name: "level",
@@ -1868,7 +1769,7 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
             anchor: "old-level",
             description: "変更前の経験レベルです。",
             type: ObjectType.INTEGER,
-            available: [ScenarioType.EXPECT]
+            available: [ScenarioType.WATCH]
           }
         ]}
         outputs={[
@@ -1887,14 +1788,13 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
             name: "oldLevel",
             description: "変更前の経験レベルです。",
             type: ObjectType.INTEGER,
-            available: [ScenarioType.EXECUTE, ScenarioType.EXPECT]
+            available: [ScenarioType.EXECUTE, ScenarioType.WATCH]
           }
         ]}
         executable
         requireable={"プレイヤの経験レベルが指定したに値なっているか判定します。"}
         watchable
 />
-
 
 ## 移動 {#move}
 
@@ -1961,7 +1861,95 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
 
 :::
 
+## 投げ物の発射 {#launch-projectile}
 
+<Action name="プレイヤの投げ物の発射"
+        description="プレイヤの投げ物の発射に関するアクションです。"
+        id="player_projectile_launch"
+        events={
+          {
+            name: "ProjectileLaunchEvent",
+            package: "org.bukkit.event.entity",
+          }
+        }
+        args={[
+          {
+            name: "target",
+            anchor: "target",
+            description: "投げ物を発射するプレイヤです。",
+            type: "PlayerSpecifier",
+            type_anchor: "#general-target",
+            required:[ScenarioType.EXECUTE]
+          },
+          {
+            name: "type",
+            anchor: "launch-projectile-type",
+            description: "発射される投げ物の種類です。",
+            type: "Enum{...}",
+            required: [ScenarioType.EXECUTE, ScenarioType.WATCH]
+          },
+          {
+            name: "epsilon",
+            anchor: "launch-projectile-epsilon",
+            description: "投げ物の発射ベクトルの有効数字です。",
+            type: ObjectType.DOUBLE,
+            default: "0.001",
+            available: [ScenarioType.WATCH]
+          }
+        ]}
+        outputs={[
+          {
+            name: "target",
+            anchor: "target",
+            description: "投げ物を発射したプレイヤです。",
+            type: "Player",
+            type_link: "/docs/use/scenario/types/entities/#player",
+          },
+          {
+            name: "projectile",
+            anchor: "launch-projectile-out-projectile",
+            description: "発射された投げ物です。",
+            type: "Projectile",
+            type_link: "/docs/use/scenario/types/entities#projectile",
+          }
+        ]}
+        executable watchable
+/>
+
+#### `type` {#launch-projectile-type}
+
+発射される投げ物の種類を指定します。以下の種類が指定できます。
+
+|         種類          | 説明         |
+|:-------------------:|:-----------|
+|       `ARROW`       | 矢          |
+|     `SNOWBALL`      | 雪玉         |
+|        `EGG`        | 卵          |
+|     `FIREBALL`      | ファイアーチャージ  |
+|  `SMALL_FIREBALL`   | 小型の火球      |
+|    `ENDER_PEARL`    | エンダーパール    |
+|   `WITHER_SKULL`    | ウィザーの頭     |
+|  `SHULKER_BULLET`   | シュルカーの弾丸   |
+|  `DRAGON_FIREBALL`  | エンドドラゴンの火球 |
+|      `POTION`       | ポーション      |
+| `EXPERIENCE_BOTTLE` | 経験値ボトル     |
+|       `ITEM`        | アイテム       |
+|     `FIREWORK`      | 花火         |
+|      `TRIDENT`      | トライデント     |
+
+
+#### `epsilon` {#launch-projectile-epsilon}
+
+投げ物をアクションで比較すする際に許容される誤差を指定します。
+
+#### `projectile` {#launch-projectile-out-projectile}
+
+:::danger
+
+出力 `projectile` は、怠惰な出力です。  
+そのため、これの直後にあるアクション実行期待からは参照できません。
+
+:::
 
 ## 退出 {#quit}
 
@@ -2089,7 +2077,7 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
             name: "isBed",
             description: "ベッドでリスポーンするかどうかです。",
             type: ObjectType.BOOLEAN,
-            available: [ScenarioType.EXPECT]
+            available: [ScenarioType.WATCH]
           },
           {
             name: "location",
@@ -2102,7 +2090,7 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
             name: "isAnchor",
             description: "アンカでリスポーンするかどうかです。",
             type: ObjectType.BOOLEAN,
-            available: [ScenarioType.EXPECT]
+            available: [ScenarioType.WATCH]
           }
         ]}
         outputs={[
@@ -2122,14 +2110,14 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
             name: "isBed",
             description: "ベッドでリスポーンしたかどうかです。",
             type: ObjectType.BOOLEAN,
-            available: [ScenarioType.EXPECT]
+            available: [ScenarioType.WATCH]
           },
           {
             name: "isAnchor",
             anchor: "respawn-output-is-anchor",
             description: "アンカでリスポーンしたかどうかです。",
             type: ObjectType.BOOLEAN,
-            available: [ScenarioType.EXPECT]
+            available: [ScenarioType.WATCH]
           }
         ]}
         executable watchable
@@ -2257,7 +2245,7 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
             description: "テレポート前の座標です。",
             type: "Location",
             type_link: "/docs/use/scenario/types/misc#location",
-            available: [ScenarioType.EXPECT]
+            available: [ScenarioType.WATCH]
           },
           {
             name: "to",

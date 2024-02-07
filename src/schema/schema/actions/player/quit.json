@@ -2,6 +2,15 @@
   "name": "player_quit",
   "description": "プレイヤをサーバから退出させます。",
   "base": "player_$base",
+  "events": [
+    "org.bukkit.event.player.PlayerQuitEvent"
+  ],
+
+  "executable": "プレイヤをサーバから退出させます。",
+  "watchable": "プレイヤがサーバから退出するか期待します。",
+  "requireable": "プレイヤがオフラインであることを要求します。",
+
+
   "arguments": {
     "message": {
       "type": "string",

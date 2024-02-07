@@ -2,10 +2,19 @@
   "name": "player_chat",
   "description": "プレイヤにチャットをさせます。",
   "base": "player_$base",
+  "events": [
+    "org.bukkit.event.player.PlayerChatEvent"
+  ],
+
+  "executable": "プレイヤにチャットをさせます。",
+  "watchable": "プレイヤがチャットをするか期待します。",
+  "requireable": false,
+
   "arguments": {
     "message": {
       "type": "string",
-      "description": "送信するメッセージまたは判定用の正規表現です。"
+      "description": "送信するメッセージまたは判定用の正規表現です。",
+      "requiredOn": ["execute"]
     },
     "format": {
       "type": "string",

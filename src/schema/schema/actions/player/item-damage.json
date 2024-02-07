@@ -2,30 +2,40 @@
   "name": "player_item_damage",
   "description": "プレイヤが所持するアイテムにダメージを与えます。",
   "base": "player_$base",
+  "events": [
+    "org.bukkit.event.player.PlayerItemDamageEvent"
+  ],
+
+  "executable": "プレイヤの所持アイテムにダメージを与えます。",
+  "watchable": "プレイヤの所持アイテムにダメージが与えられるか期待します。",
+  "requireable": "装備スロットにあるアイテムのダメージが一致するか判定します。",
+
   "arguments": {
     "item": {
+      "type": "itemStack",
       "description": "ダメージを与えるアイテムです。",
-      "type": "itemStack"
+      "requiredOn": ["execute", "watch"]
     },
     "damage": {
-      "description": "与えるダメージです。",
       "type": "number",
+      "description": "与えるダメージです。",
       "minimum": 0,
-      "maximum": 2147483647
+      "maximum": 2147483647,
+      "requiredOn": ["execute", "watch"]
     },
     "slot": {
-      "description": "ダメージを与えるアイテムのスロットです。",
-      "type": "itemSlot"
+      "type": "itemSlot",
+      "description": "ダメージを与えるアイテムのスロットです。"
     }
   },
   "outputs": {
     "item": {
-      "description": "ダメージを与えた後のアイテムです。",
-      "type": "itemStack"
+      "type": "itemStack",
+      "description": "ダメージを与えた後のアイテムです。"
     },
     "damage": {
-      "description": "与えたダメージです。",
       "type": "number",
+      "description": "与えたダメージです。"
       "minimum": 0
     }
   }

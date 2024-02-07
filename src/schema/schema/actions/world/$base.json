@@ -2,14 +2,14 @@
   "name": "world_$base",
   "arguments": {
     "world": {
-      "description": "ワールドの名前の名前空間付きキーです。",
-      "type": "namespacedKey"
+      "type": "namespacedKey",
+      "description": "ワールドの名前の名前空間付きキーです。"
     }
   },
   "outputs": {
     "world": {
-      "description": "ワールドの名前の名前空間付きキーです。",
-      "type": "namespacedKey"
+      "type": "namespacedKey",
+      "description": "ワールドの名前の名前空間付きキーです。"
     }
   }
 }

@@ -1,14 +1,21 @@
 {
   "name": "milestone",
   "description": "マイルストーンを達成します。",
+
+  "executable": "マイルストーンを達成します。",
+  "watchable": "マイルストーンを達成するか期待します。",
+  "requireable": "マイルストーンを達成していることを要求します。",
+
   "arguments": {
     "name": {
       "type": "string",
-      "description": "マイルストーンの名前です。"
+      "description": "マイルストーンの名前です。",
+      "requiredOn": ["execute", "require"]
     },
     "reached": {
       "type": "boolean",
-      "description": "マイルストーンに到達したかどうかです。"
+      "description": "マイルストーンに到達したかどうかです。",
+      "requiredOn": ["execute", "require"]
     }
   },
   "outputs": {

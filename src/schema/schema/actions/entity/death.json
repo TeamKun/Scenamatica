@@ -2,45 +2,61 @@
   "name": "entity_death",
   "description": "エンティティをキルします。",
   "base": "entity_$base",
+  "events": [
+    "org.bukkit.event.entity.EntityDeathEvent"
+  ],
+
+  "executable": "エンティティをキルします。",
+  "watchable": "エンティティのキルを期待します。",
+  "requireable": false,
+
   "arguments": {
     "drops": {
       "description": "ドロップするアイテムです。",
       "type": "array",
       "items": {
         "type": "itemStack"
-      }
+      },
+      "availableFor": ["watch"]
     },
     "dropExp": {
       "description": "ドロップする経験値です。",
       "type": "integer",
-      "min": 0
+      "min": 0,
+      "availableFor": ["watch"]
     },
     "reviveHealth": {
       "description": "復活時の体力です。",
       "type": "number",
-      "min": 0
+      "min": 0,
+      "availableFor": ["watch"]
     },
     "playDeathSound": {
       "description": "死亡時のサウンドを再生するかどうかです。",
-      "type": "boolean"
+      "type": "boolean",
+      "availableFor": ["watch"]
     },
     "sound": {
       "description": "再生するサウンドです。",
-      "type": "sound"
+      "type": "sound",
+      "availableFor": ["watch"]
     },
     "soundCategory": {
       "type": "soundCategory",
-      "description": "サウンドのカテゴリです。"
+      "description": "サウンドのカテゴリです。",
+      "availableFor": ["watch"]
     },
     "soundVolume": {
       "description": "サウンドの音量です。",
       "type": "number",
-      "min": 0
+      "min": 0,
+      "availableFor": ["watch"]
     },
     "soundPitch": {
       "description": "サウンドのピッチです。",
       "type": "number",
-      "min": 0
+      "min": 0,
+      "availableFor": ["watch"]
     }
   }
 }

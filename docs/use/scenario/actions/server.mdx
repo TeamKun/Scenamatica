@@ -21,6 +21,158 @@ import {ObjectType} from "/src/components/Object";
                anchor="notes"
 />
 
+## メッセージのブロードキャスト {#broadcast}
+
+<Action name="メッセージのブロードキャスト"
+        description="メッセージをサーバ全体にブロードキャストします。"
+        id="broadcast"
+        events={
+          {
+            name: "BroadcastMessageEvent",
+            package: "org.bukkit.event.server",
+          }
+        }
+        args={[
+          {
+            name: "message",
+            type: ObjectType.STRING,
+            anchor: "broadcast-message",
+            description: "送信するメッセージまたは判定用の正規表現を指定します。",
+            required: [ScenarioType.EXECUTE]
+          },
+          {
+            name: "permission",
+            type: ObjectType.STRING,
+            anchor: "broadcast-permission",
+            description: "メッセージの受信者に必要な権限を指定します。"
+          },
+          {
+            name: "recipients",
+            type: "{" + ObjectType.STRING + " | PlayerSpecifier}[]",
+            type_link: "/docs/use/scenario/types/entities#player-specifier",
+            anchor: "broadcast-recipients",
+            description: "メッセージの受信者を指定します。"
+          },
+          {
+            name: "strictRecipients",
+            type: ObjectType.BOOLEAN,
+            anchor: "broadcast-strict-recipients",
+            description: "メッセージの受信者を厳密に判定するかを指定します。",
+            available: [ScenarioType.WATCH]
+          }
+        ]}
+        outputs={[
+          {
+            name: "message",
+            type: ObjectType.STRING,
+            anchor: "broadcast-message",
+            description: "送信されたメッセージを出力します。"
+          },
+          {
+            name: "recipients",
+            type: "CommandSender[]",
+            anchor: "broadcast-recipients",
+            description: "メッセージの受信者を出力します。"
+          }
+        ]}
+        executable watchable
+/>
+
+#### `message` {#broadcast-message}
+
++ シナリオの種類が `execute` の場合は、この引数の値がそのまま送信されます。
++ シナリオの種類が `except`  の場合は、この引数の値が正規表現として扱われ、マッチしているか検証されます。
+
+#### `permission` {#broadcast-permission}
+
+メッセージの受信者に必要な権限を指定します。指定しなかった場合は、全てのプレイヤが受信者となります。
+
+:::warning
+`except` モードではこの引数は使用できません。設定した場合は、エラーが発生します。
+:::
+
+#### `recipients` {#broadcast-recipients}
+
+指定しなかった場合は、全てのプレイヤが受信者となります。
+
+:::tip
+
+`<CONSOLE>` を指定すると、コンソールが受信者となります。
+
+:::
+
+#### `strictRecipients` {#broadcast-strict-recipients}
+
+これを設定すると、`recipients` で指定したプレイヤがメッセージの受信者か判定するのに加え、
+指定されていないプレイヤが受信者に含まれていないかも判定します。
+
+## コマンドの実行 {#command-dispatch}
+
+<Action name="コマンドの実行"
+        description="コマンドをサーバに送信します。"
+        id="command_dispatch"
+        events={[
+          {
+            name: "ServerCommandEvent",
+            package: "org.bukkit.event.server",
+          },
+          {
+            name: "PlayerCommandPreprocessEvent",
+            package: "org.bukkit.event.player",
+          }
+        ]}
+        args={[
+          {
+            name: "command",
+            anchor: "command-dispatch-command",
+            type: "{" + ObjectType.STRING + " | PlayerSpecifier}[]",
+            type_link: "/docs/use/scenario/types/entities#player-specifier",
+            description: "実行するコマンドを指定します。",
+            required: [ScenarioType.EXECUTE]
+          },
+          {
+            name: "sender",
+            anchor: "command-dispatch-sender",
+            type: "プレイヤ",
+            description: "コマンドの実行者を指定します。"
+          }
+        ]}
+        outputs={[
+          {
+            name: "command",
+            type: ObjectType.STRING,
+            description: "実行されたコマンドを出力します。"
+          },
+          {
+            name: "sender",
+            type: "CommandSender",
+            description: "コマンドの実行者を出力します。"
+          }
+        ]}
+        executable watchable
+/>
+
+#### `command` {#command-dispatch-command}
+
+実行するコマンドを指定します。
+
+:::tip
+
+**コマンドの指定には、`/`を付ける必要はありません。**（指定した場合は自動的に除去されます）
+
+:::
+
+#### `sender` {#command-dispatch-sender}
+
+コマンドの実行する実行者を指定します。実行者が存在しない場合は、シナリオは失敗します。
+
+:::info
+
+`<CONSOLE>` を指定すると、コンソールが実行者になります。
+
+:::
+
+
 ## サーバのログ {#server-log}
 
 <Action name="サーバログ"
@@ -46,7 +198,7 @@ import {ObjectType} from "/src/components/Object";
             anchor: "server-log-sender",
             type: ObjectType.STRING,
             description: "ログの送信者を指定します。",
-            available: [ScenarioType.EXPECT]
+            available: [ScenarioType.WATCH]
           }
         ]}
         executable watchable 
@@ -86,6 +238,35 @@ Java の標準的なレベルを指定できます。詳しくは以下のリス
 
 :::
 
+## プラグインの無効化 {#plugin-disable}
+
+<Action name="プラグインの無効化"
+        description="プラグインを無効化します。"
+        id="server_plugin_disable"
+        events={
+          {
+            name: "PluginDisableEvent",
+            package: "org.bukkit.event.server",
+          }
+        }
+        args={[
+          {
+            name: "plugin",
+            type: ObjectType.STRING,
+            description: "無効化するプラグインを指定します。",
+            required: [ScenarioType.EXECUTE, ScenarioType.REQUIRE]
+          }
+        ]}
+        outputs={[
+          {
+            name: "plugin",
+            type: ObjectType.STRING,
+            description: "無効化されたプラグインを出力します。"
+          }
+        ]}
+        executable watchable requireable
+/>
+
 ## プラグインの有効化 {#plugin-enable}
 
 <Action name="プラグインの有効化"
@@ -114,193 +295,6 @@ Java の標準的なレベルを指定できます。詳しくは以下のリス
         ]}
         executable watchable requireable
 />
-
-## プラグインの無効化 {#plugin-disable}
-
-<Action name="プラグインの無効化"
-        description="プラグインを無効化します。"
-        id="server_plugin_disable"
-        events={
-          {
-            name: "PluginDisableEvent",
-            package: "org.bukkit.event.server",
-          }
-        }
-        args={[
-          {
-            name: "plugin",
-            type: ObjectType.STRING,
-            description: "無効化するプラグインを指定します。",
-            required: [ScenarioType.EXECUTE, ScenarioType.REQUIRE]
-          }
-        ]}
-        outputs={[
-            {
-                name: "plugin",
-                type: ObjectType.STRING,
-                description: "無効化されたプラグインを出力します。"
-            }
-        ]}
-        executable watchable requireable
-/>
-
-## メッセージのブロードキャスト {#broadcast}
-
-<Action name="メッセージのブロードキャスト"
-        description="メッセージをサーバ全体にブロードキャストします。"
-        id="broadcast"
-        events={
-          {
-            name: "BroadcastMessageEvent",
-            package: "org.bukkit.event.server",
-          }
-        }
-        args={[
-          {
-            name: "message",
-            type: ObjectType.STRING,
-            anchor: "broadcast-message",
-            description: "送信するメッセージまたは判定用の正規表現を指定します。",
-            required: [ScenarioType.EXECUTE]
-          },
-          {
-            name: "permission",
-            type: ObjectType.STRING,
-            anchor: "broadcast-permission",
-            description: "メッセージの受信者に必要な権限を指定します。"
-          },
-          {
-            name: "recipients",
-            type: "{" + ObjectType.STRING + " | PlayerSpecifier}[]",
-            type_link: "/docs/use/scenario/types/entities#player-specifier",
-            anchor: "broadcast-recipients",
-            description: "メッセージの受信者を指定します。"
-          },
-          {
-            name: "strictRecipients",
-            type: ObjectType.BOOLEAN,
-            anchor: "broadcast-strict-recipients",
-            description: "メッセージの受信者を厳密に判定するかを指定します。",
-            available: [ScenarioType.EXPECT]
-          }
-        ]}
-        outputs={[
-            {
-                name: "message",
-                type: ObjectType.STRING,
-                anchor: "broadcast-message",
-                description: "送信されたメッセージを出力します。"
-            },
-            {
-                name: "recipients",
-                type: "CommandSender[]",
-                anchor: "broadcast-recipients",
-                description: "メッセージの受信者を出力します。"
-            }
-        ]}
-        executable watchable
-/>
-
-#### `message` {#broadcast-message}
-
-+ シナリオの種類が `execute` の場合は、この引数の値がそのまま送信されます。
-+ シナリオの種類が `except`  の場合は、この引数の値が正規表現として扱われ、マッチしているか検証されます。
-
-#### `permission` {#broadcast-permission}
-
-メッセージの受信者に必要な権限を指定します。指定しなかった場合は、全てのプレイヤが受信者となります。
-
-:::warning
-`except` モードではこの引数は使用できません。設定した場合は、エラーが発生します。
-:::
-
-#### `recipients` {#broadcast-recipients}
-
-指定しなかった場合は、全てのプレイヤが受信者となります。   
-
-:::tip
-
-`<CONSOLE>` を指定すると、コンソールが受信者となります。
-
-:::
-
-#### `strictRecipients` {#broadcast-strict-recipients}
-
-これを設定すると、`recipients` で指定したプレイヤがメッセージの受信者か判定するのに加え、
-指定されていないプレイヤが受信者に含まれていないかも判定します。
-
-:::tip
-
-この項目は、`except` モードでのみ有効です。
-
-:::
-
-## コマンドの実行 {#command-dispatch}
-
-<Action name="コマンドの実行"
-        description="コマンドをサーバに送信します。"
-        id="command_dispatch"
-        events={[
-          {
-            name: "ServerCommandEvent",
-            package: "org.bukkit.event.server",
-          },
-          {
-            name: "PlayerCommandPreprocessEvent",
-            package: "org.bukkit.event.player",
-          }
-        ]}
-        args={[
-          {
-            name: "command",
-            anchor: "command-dispatch-command",
-            type: "{" + ObjectType.STRING + " | PlayerSpecifier}[]",
-            type_link: "/docs/use/scenario/types/entities#player-specifier",
-            description: "実行するコマンドを指定します。",
-            required: [ScenarioType.EXECUTE]
-          },
-          {
-            name: "sender",
-            anchor: "command-dispatch-sender",
-            type: "プレイヤ",
-            description: "コマンドの実行者を指定します。"
-          }
-        ]}
-        outputs={[
-            {
-                name: "command",
-                type: ObjectType.STRING,
-                description: "実行されたコマンドを出力します。"
-            },
-            {
-                name: "sender",
-                type: "CommandSender",
-                description: "コマンドの実行者を出力します。"
-            }
-        ]}
-        executable watchable
-/>
-
-#### `command` {#command-dispatch-command}
-
-実行するコマンドを指定します。
-
-:::tip
-
-**コマンドの指定には、`/`を付ける必要はありません。**（指定した場合は自動的に除去されます）
-
-:::
-
-#### `sender` {#command-dispatch-sender}
-
-コマンドの実行する実行者を指定します。実行者が存在しない場合は、シナリオは失敗します。
-
-:::info
-
-`<CONSOLE>` を指定すると、コンソールが実行者になります。
-
-:::
-
 
 ## コマンドのタブ補完 {#tab-complete}
 

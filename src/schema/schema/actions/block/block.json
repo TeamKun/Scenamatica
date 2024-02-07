@@ -2,10 +2,16 @@
   "name": "block",
   "description": "ブロックの状態を変更します。",
   "base": "block_$base",
+
+  "executable": "ブロックの状態・属性を変更します。",
+  "watchable": false,
+  "requireable": "ブロックの状態・属性が指定されたものと一致するかどうかを判定します。",
+
   "arguments": {
     "data": {
       "type": "block",
-      "description": "ブロックの位置を指定します。"
+      "description": "ブロックの位置を指定します。",
+      "requiredOn": ["execute"]
     }
   }
 }

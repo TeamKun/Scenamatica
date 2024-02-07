@@ -1,11 +1,20 @@
 {
   "name": "entity_damage_by_entity",
-  "description": "エンティティ",
+  "description": "エンティティによるダメージをエンティティに与えます。",
   "base": "entity_damage",
+  "events": [
+    "org.bukkit.event.entity.EntityDamageByEntityEvent"
+  ],
+
+  "executable": "エンティティによるダメージをエンティティに与えます。",
+  "watchable": "エンティティがエンティティによるダメージを受けることを期待します。",
+  "requireable": false,
+
   "arguments": {
     "damager": {
-      "description": "ダメージ元のエンティティの指定子です。",
-      "type": "entitySpecifier"
+      "type": "entitySpecifier",
+      "description": "ダメージ元のエンティティです。",
+      "requiredOn": ["execute"]
     }
   },
   "outputs": {

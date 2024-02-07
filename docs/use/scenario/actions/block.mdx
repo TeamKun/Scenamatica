@@ -84,6 +84,12 @@ import {ObjectType} from "/src/components/Object";
 <Action name="ブロックの破壊"
         description="ブロックを破壊します。"
         id="block_break"
+        events={[
+          {
+            name: "BlockBreakEvent",
+            package: "org.bukkit.event.block",
+          }
+        ]}
         args={[
           {
             name: "actor",
@@ -91,7 +97,7 @@ import {ObjectType} from "/src/components/Object";
             type_link: "/docs/use/scenario/types/entities#player-specifier",
             anchor: "break-actor",
             description: "ブロックを破壊するアクタの ID です。",
-            available: [ScenarioType.EXECUTE, ScenarioType.EXPECT]
+            available: [ScenarioType.EXECUTE, ScenarioType.WATCH]
           },
           {
             name: "block",
@@ -105,7 +111,7 @@ import {ObjectType} from "/src/components/Object";
             name: "dropItems",
             type: ObjectType.BOOLEAN,
             description: "ブロックを破壊した際にアイテムをドロップするかどうかです。",
-            available: [ScenarioType.EXPECT]
+            available: [ScenarioType.WATCH]
           }
         ]}
         outputs={[
@@ -122,8 +128,7 @@ import {ObjectType} from "/src/components/Object";
             description: "ブロックを破壊したプレイヤです。",
           }
         ]}
-        executable={"ステージ上のブロックを破壊します。"}
-        watchable={"ステージ上のブロックが破壊されるまで待機します。"}
+        executable watchable
         requireable={"ステージ上のブロックが破壊されているか（空気かどうか）を判定します。"}
 />
 
@@ -148,13 +153,20 @@ import {ObjectType} from "/src/components/Object";
 <Action name="ブロックの設置"
         description="ブロックを設置します。"
         id="block_place"
+        events={[
+          {
+            name: "BlockPlaceEvent",
+            package: "org.bukkit.event.block",
+          }
+        ]}
         args={[
           {
             name: "actor",
             type: "PlayerSpecifier",
             type_link: "/docs/use/scenario/types/entities#player-specifier",
             anchor: "place-actor",
-            description: "ブロックを設置するアクタの ID です。",
+            description: "ブロックを設置するアクタです。",
+            available: [ScenarioType.EXECUTE, ScenarioType.WATCH]
           },
           {
             name: "block",
@@ -173,6 +185,7 @@ import {ObjectType} from "/src/components/Object";
             name: "hand",
             type: "EquipmentSlot{HAND, OFF_HAND}",
             description: "設置するブロックを持っている手です。",
+            available: [ScenarioType.EXECUTE]
           }
         ]}
         outputs={[
@@ -189,8 +202,7 @@ import {ObjectType} from "/src/components/Object";
             description: "ブロックを設置したプレイヤです。",
           }
         ]}
-        executable={"ステージ上にブロックを設置します。"}
-        watchable={"ステージ上のブロックが設置されるまで待機します。"}
+        executable watchable
         requireable={"ステージ上にブロックが設置されているかを判定します。"}
 />
 

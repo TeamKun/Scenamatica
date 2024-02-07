@@ -2,6 +2,14 @@
   "name": "player_interact_block",
   "description": "プレイヤにブロックを操作させます。",
   "base": "player_$base",
+  "events": [
+    "org.bukkit.event.player.PlayerInteractEvent"
+  ],
+
+  "executable": "プレイヤにブロックをクリックさせます。",
+  "watchable": "プレイヤガブロックをクリックするか期待します。",
+  "requireable": false,
+
   "arguments": {
     "action": {
       "type": "string",
@@ -32,8 +40,8 @@
   },
   "outputs": {
     "block": {
-      "description": "プレイヤがクリックしたブロックです。",
-      "type": "block"
+      "type": "block",
+      "description": "プレイヤがクリックしたブロックです。"
     },
     "hand": {
       "type": "string",
@@ -54,8 +62,9 @@
       ]
     },
     "blockFace": {
-      "description": "プレイヤがクリックしたブロックの面です。",
       "type": "blockFace"
+      "description": "プレイヤがクリックしたブロックの面です。",
+      "availableFor": ["watch"]
     }
   }
 }

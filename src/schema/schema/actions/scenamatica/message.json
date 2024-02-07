@@ -1,6 +1,12 @@
 {
   "name": "message",
   "description": "プレイヤにメッセージを送信します。",
+
+  "executable": "プレイヤにメッセージを送信します。",
+  "watchable": "プレイヤにメッセージが送信されることを期待します。",
+  "requireable": false,
+
+
   "arguments": {
     "message": {
       "type": "string",
@@ -8,8 +14,16 @@
       "maxLength": 32768
     },
     "recipient": {
-      "type": "string",
-      "description": "メッセージを受け取るプレイヤの名前または UUID です。"
+      "description": "メッセージを受け取るプレイヤの名前または UUID です。",
+      "oneOf": [
+        {
+          "type": "string",
+          "const": "<CONSOLE>"
+        },
+        {
+          "type": "playerSpecifier"
+        }
+      ]
     }
   },
   "outputs": {

@@ -1,7 +1,15 @@
 {
   "name": "inventory_click",
-  "description": "インベントリのクリックを検知します",
+  "description": "インベントリのクリックの実行および期待を行います。",
   "base": "inventory_interact_$base",
+  "events": [
+    "org.bukkit.event.inventory.InventoryClickEvent"
+  ],
+
+  "executable": "インベントリをクリックします。",
+  "watchable": "インベントリのクリックを期待します。",
+  "requireable": false,
+
   "arguments": {
     "type": {
       "type": "inventoryClickType"
@@ -37,13 +45,14 @@
       "type": "itemStack"
     }
   },
+
   "outputs": {
     "type": {
       "description": "クリックの種類です。",
       "type": "inventoryClickType"
     },
     "action": {
-        "description": "インベントリのアクションです。",
+      "description": "インベントリのアクションです。",
       "type": "inventoryAction"
     },
     "slotType": {
