@@ -29,5 +29,5 @@
       "description": "開いたインベントリです。",
       "type": "inventory"
     }
-  },
+  }
 }

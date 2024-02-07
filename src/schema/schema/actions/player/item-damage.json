@@ -35,7 +35,7 @@
     },
     "damage": {
       "type": "number",
-      "description": "与えたダメージです。"
+      "description": "与えたダメージです。",
       "minimum": 0
     }
   }

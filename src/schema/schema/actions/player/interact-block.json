@@ -62,7 +62,7 @@
       ]
     },
     "blockFace": {
-      "type": "blockFace"
+      "type": "blockFace",
       "description": "プレイヤがクリックしたブロックの面です。",
       "availableFor": ["watch"]
     }
