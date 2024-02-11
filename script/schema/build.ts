@@ -206,7 +206,7 @@ const saveOutputSchema = (schema: Prime, outputFile: string) => {
     }
 
     // noinspection JSUnresolvedReference
-    fs.writeFileSync(outputFile, JSON.stringify(schema, null))
+    fs.writeFileSync(outputFile, JSON.stringify(schema, null, 2))
 }
 
 const buildDefinitionIndex = (definitions: {[key: string]: {[key: string]: unknown}}) => {
