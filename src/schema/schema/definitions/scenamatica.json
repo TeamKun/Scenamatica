@@ -173,7 +173,7 @@
         },
         "then": {
           "type": "action",
-          "$scenarioKindOf": "expect",
+          "$scenarioKindOf": "expect"
         }
       }
     ]
