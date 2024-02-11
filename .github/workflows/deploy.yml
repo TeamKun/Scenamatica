@@ -34,9 +34,7 @@ jobs:
       - name: Install dependencies
         run: pnpm install
       - name: Build
-        run: |
-          pnpm run build:schema
-          pnpm run build:site
+        run: pnpm run build
       - name: Setup Pages
         uses: actions/configure-pages@v2
       - name: Upload artifact
