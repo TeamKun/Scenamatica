@@ -28,7 +28,7 @@
       "type": {
         "type": "string",
         "description": "シナリオの種類です。",
-        "oneOf": [
+        "anyOf": [
           {
             "const": "expect",
             "description": "アクションがプラグインによって実行されるか監視します。"

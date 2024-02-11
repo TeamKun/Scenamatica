@@ -13,13 +13,13 @@
   "arguments": {
     "entity": {
       "description": "スポーンさせる投射物です。",
-      "oneOf": [
+      "anyOf": [
         {
           "type": "projectile"
         },
         {
-          "type": "string",
-          "description": "エンティティの UUID またはセレクタです。"
+          "type": "entitySpecifier",
+          "$entityKindOf": "projectile"
         }
       ],
       "requiredOn": ["execute"]

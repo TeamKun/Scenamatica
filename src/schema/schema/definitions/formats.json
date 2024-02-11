@@ -37,7 +37,7 @@
   },
   "entitySpecifier": {
     "description": "エンティティを指定するための指定子です。",
-    "oneOf": [
+    "anyOf": [
       {
         "type": "selector",
         "description": "セレクタを指定します。"
@@ -55,7 +55,7 @@
   },
   "playerSpecifier": {
     "description": "プレイヤを指定するための指定子です。",
-    "oneOf": [
+    "anyOf": [
       {
         "type": "selector",
         "description": "セレクタを指定します。"

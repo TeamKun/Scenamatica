@@ -19,7 +19,7 @@
     },
     "sender": {
       "description": "実行するプレイヤです。",
-      "oneOf": [
+      "anyOf": [
         {
           "type": "string",
           "const": "<CONSOLE",
@@ -38,7 +38,7 @@
     },
     "sender": {
       "description": "実行したプレイヤまたはコンソールです。",
-        "oneOf": [
+        "anyOf": [
             {
             "type": "string",
             "const": "<CONSOLE>",

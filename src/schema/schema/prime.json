@@ -34,7 +34,7 @@
     "order": {
       "description": "シナリオの実行順序を指定します。小さいほど先に実行されます。",
       "default": 2147483647,
-      "oneOf": [
+      "anyOf": [
         {
           "type": "integer"
         },

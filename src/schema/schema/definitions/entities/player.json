@@ -114,7 +114,7 @@
       },
       "op": {
         "description": "プレイヤの OP レベルです。 0 は OP ではないことを意味します。",
-        "oneOf": [
+        "anyOf": [
           {
             "type": "boolean"
           },

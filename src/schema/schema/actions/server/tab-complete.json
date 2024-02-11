@@ -12,7 +12,7 @@
   "arguments": {
     "sender": {
       "description": "実行するプレイヤです。",
-      "oneOf": [
+      "anyOf": [
         {
           "type": "playerSpecifier"
         },

@@ -15,7 +15,7 @@
     },
     "recipient": {
       "description": "メッセージを受け取るプレイヤの名前または UUID です。",
-      "oneOf": [
+      "anyOf": [
         {
           "type": "string",
           "const": "<CONSOLE>"

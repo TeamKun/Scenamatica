@@ -16,7 +16,7 @@
       "description": "The base action to use for the action"
     },
     "executable": {
-      "oneOf": [
+      "anyOf": [
         {
           "type": "string",
           "description": "What will happen when the action is executed"
@@ -29,7 +29,7 @@
       ]
     },
     "watchable": {
-      "oneOf": [
+      "anyOf": [
         {
           "type": "string",
           "description": "What will happen when the action is watched"
@@ -42,7 +42,7 @@
       ]
     },
     "requireable": {
-      "oneOf": [
+      "anyOf": [
         {
           "type": "string",
           "description": "What will happen when the action is required"
@@ -70,7 +70,7 @@
           "type": "object",
           "properties": {
             "requiredOn": {
-              "oneOf": [
+              "anyOf": [
                 {
                   "type": "boolean"
                 },

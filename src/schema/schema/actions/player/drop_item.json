@@ -23,7 +23,7 @@
     },
     "item": {
       "description": "ドロップしたアイテムです。",
-      "oneOf": [
+      "anyOf": [
         {
           "type": "entityItem"
         },

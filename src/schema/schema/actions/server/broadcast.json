@@ -19,7 +19,7 @@
       "type": "array",
       "description": "メッセージを受け取るプレイヤです。",
       "items": {
-        "oneOf": [
+        "anyOf": [
           {
             "type": "playerSpecifier"
           },
@@ -50,7 +50,7 @@
       "type": "array",
       "description": "メッセージを受け取ったプレイヤまたはコンソールです。",
       "items": {
-        "oneOf": [
+        "anyOf": [
           {
             "type": "player"
           },
