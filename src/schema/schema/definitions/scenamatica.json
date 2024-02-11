@@ -155,6 +155,7 @@
       },
       "runif": {
         "type": "action",
+        "$scenarioKindOf": "require",
         "description": "シナリオの実行条件を定義します。アクションで定義します。満たしていない場合はスキップされます。"
       }
     },
@@ -171,7 +172,8 @@
           }
         },
         "then": {
-          "type": "action"
+          "type": "action",
+          "$scenarioKindOf": "expect",
         }
       }
     ]
