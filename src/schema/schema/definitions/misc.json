@@ -70,7 +70,7 @@
         "maximum": 15
       },
       "biome": {
-        "$ref": "biome",
+        "type": "biome",
         "description": "ブロックのバイオームです。"
       }
     }

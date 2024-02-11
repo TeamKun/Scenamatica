@@ -15,7 +15,7 @@
       "description": "対象のプレイヤです。"
     },
     "reason": {
-      "$ref": "#/definitions/action/definitions/inventory_$base/definitions/closeReason"
+      "type": "closeReason"
     }
   },
   "outputs": {

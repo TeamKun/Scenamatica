@@ -60,17 +60,15 @@ type Prime = Definable & {
     $schema: string
     definitions: {
         action: {
-            properties: {
-                action: {
-                    enum: string[]
-                }
-            },
             allOf: ActionDiversion[]
             definitions: {
                 [key: string]: {
                     [key: string]: unknown
                 }
             }
+        }
+        actionKinds: {
+            enum: string[]
         }
     }
 }
@@ -208,7 +206,7 @@ const saveOutputSchema = (schema: Prime, outputFile: string) => {
     }
 
     // noinspection JSUnresolvedReference
-    fs.writeFileSync(outputFile, JSON.stringify(schema, null, 2))
+    fs.writeFileSync(outputFile, JSON.stringify(schema, null))
 }
 
 const buildDefinitionIndex = (definitions: {[key: string]: {[key: string]: unknown}}) => {
@@ -257,7 +255,7 @@ const saveMetaData = (actions: Action[], definitions: {[key: string]: {[key: str
 }
 
 const buildActions = (prime: Prime, actions: Action[]) => {
-    prime.definitions.action.properties.action.enum = actions
+    prime.definitions.actionKinds.enum = actions
         .filter((action) => !action.name.includes("$base"))
         .map((action) => action.name)
 

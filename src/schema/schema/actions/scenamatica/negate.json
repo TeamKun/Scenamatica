@@ -1,9 +1,13 @@
 {
   "name": "negate",
   "description": "条件要求アクションの判定結果を反転します。",
-  "base": "#/definitions/action",
   "executable": false,
   "watchable": false,
   "requireable": "条件要求アクションの判定結果を反転して取得します。",
-  "required": ["action"]
+  "arguments": {
+    "action": {
+      "type": "action",
+      "$scenarioKindOf": "require"
+    }
+  }
 }

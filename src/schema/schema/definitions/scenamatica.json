@@ -51,7 +51,8 @@
       },
       "runif": {
         "type": "action",
-        "description": "シナリオの実行条件を定義します。アクションで定義します。満たしていない場合はスキップされます。"
+        "description": "シナリオの実行条件を定義します。アクションで定義します。満たしていない場合はスキップされます。",
+        "$scenarioKindOf": "require"
       }
     },
     "required": [
@@ -63,9 +64,8 @@
     "type": "object",
     "properties": {
       "action": {
-        "type": "string",
-        "description": "アクションの種類です。 ",
-        "enum": []
+        "type": "actionKinds",
+        "description": "アクションの種類です。 "
       },
       "with": {
         "type": "actionArgument",
@@ -75,6 +75,11 @@
     "required": [
       "action"
     ]
+  },
+  "actionKinds": {
+    "type": "string",
+    "description": "アクションの種類です。 ",
+    "enum": []
   },
   "actionArgument": {
     "type": "object",
