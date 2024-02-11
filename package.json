@@ -19,11 +19,11 @@
   },
   "homepage": "https://github.com/TeamKUN/ScenamaticaDocs",
   "dependencies": {
-    "@docusaurus/core": "^3.1.0",
-    "@docusaurus/plugin-client-redirects": "^3.1.0",
-    "@docusaurus/plugin-pwa": "^3.1.0",
-    "@docusaurus/preset-classic": "^3.1.0",
-    "@docusaurus/theme-common": "^3.1.0",
+    "@docusaurus/core": "^3.1.1",
+    "@docusaurus/plugin-client-redirects": "^3.1.1",
+    "@docusaurus/plugin-pwa": "^3.1.1",
+    "@docusaurus/preset-classic": "^3.1.1",
+    "@docusaurus/theme-common": "^3.1.1",
     "@fontsource/jetbrains-mono": "^4.5.12",
     "@fontsource/murecho": "^5.0.17",
     "@fortawesome/fontawesome-svg-core": "^6.5.1",
@@ -39,8 +39,8 @@
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
-    "@docusaurus/module-type-aliases": "^3.1.0",
-    "@docusaurus/tsconfig": "^3.1.0",
+    "@docusaurus/module-type-aliases": "^3.1.1",
+    "@docusaurus/tsconfig": "^3.1.1",
     "ts-loader": "^9.5.1",
     "ts-node": "^10.9.2",
     "typescript": "~5.2.2"
