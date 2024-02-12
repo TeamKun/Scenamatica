@@ -241,7 +241,7 @@ const config = {
               ],
             },
           ],
-          copyright: `Copyright &copy; ${new Date().getFullYear()} <a href="https://github.com/TeamKUN">KUN Development Team</a>., <a href="https://peya.tokyo/">Peyang</a>`,
+          copyright: `Copyright &copy; ${new Date().getFullYear()} Scenamatica HQ in <a href="https://github.com/TeamKUN">KUN Development Team</a>., <a href="https://peya.tokyo/">Peyang</a>`,
         },
         prism: {
           theme: themes.github,
