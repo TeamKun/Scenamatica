@@ -16,7 +16,6 @@ scenario:
   - type: execute
     action: block
     with:
-      actor: Actor001
       block:
         location:
           x: 0
@@ -27,7 +26,6 @@ scenario:
   - type: require
     action: block
     with:
-      actor: Actor001
       block:
         location:
           x: 0
