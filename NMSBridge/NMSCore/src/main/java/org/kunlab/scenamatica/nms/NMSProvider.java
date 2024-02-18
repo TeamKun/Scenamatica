@@ -1,9 +1,11 @@
 package org.kunlab.scenamatica.nms;
 
+import lombok.Getter;
 import org.bukkit.Bukkit;
 
 public class NMSProvider
 {
+    @Getter
     private static String version;
     private static WrapperProvider provider;
 
@@ -35,10 +37,5 @@ public class NMSProvider
     private static String getServerVersion()
     {
         return Bukkit.getServer().getClass().getPackage().getName().substring(23);
-    }
-
-    public static String getVersion()
-    {
-        return version;
     }
 }

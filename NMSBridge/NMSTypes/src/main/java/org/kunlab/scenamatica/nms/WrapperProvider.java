@@ -16,7 +16,7 @@ public interface WrapperProvider
      * @param bukkitEntity Bukkit のエンティティ
      * @return NMS のエンティティ
      */
-    NMSEntity getEntity(Entity bukkitEntity);
+    NMSEntity ofEntity(Entity bukkitEntity);
 
     /**
      * 指定された Bukkit の生きているエンティティを NMS のエンティティに変換します。
@@ -24,5 +24,5 @@ public interface WrapperProvider
      * @param bukkitEntity Bukkit の生きているエンティティ
      * @return NMS のエンティティ
      */
-    NMSLivingEntity getEntity(LivingEntity bukkitEntity);
+    NMSLivingEntity ofEntity(LivingEntity bukkitEntity);
 }

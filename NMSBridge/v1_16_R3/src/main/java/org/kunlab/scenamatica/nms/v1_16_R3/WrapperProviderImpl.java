@@ -11,13 +11,13 @@ import org.kunlab.scenamatica.nms.v1_16_R3.entity.NMSLivingEntityImpl;
 public class WrapperProviderImpl implements WrapperProvider
 {
     @Override
-    public NMSEntity getEntity(Entity bukkitEntity)
+    public NMSEntity ofEntity(Entity bukkitEntity)
     {
         return new NMSEntityImpl(bukkitEntity);
     }
 
     @Override
-    public NMSLivingEntity getEntity(LivingEntity bukkitEntity)
+    public NMSLivingEntity ofEntity(LivingEntity bukkitEntity)
     {
         return new NMSLivingEntityImpl(bukkitEntity);
     }
