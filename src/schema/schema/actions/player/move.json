@@ -15,7 +15,7 @@
     "from": {
       "type": "location",
       "description": "移動元の座標を指定します。",
-      "requiredOn": ["execute"]
+      "availableOn": ["expect"]
     },
     "to": {
       "type": "location",

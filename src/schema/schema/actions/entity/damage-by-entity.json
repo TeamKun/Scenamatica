@@ -15,6 +15,9 @@
       "type": "entitySpecifier",
       "description": "ダメージ元のエンティティです。",
       "requiredOn": ["execute"]
+    },
+    "cause": {
+      "requiredOn": false
     }
   },
   "outputs": {

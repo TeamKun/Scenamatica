@@ -14,14 +14,14 @@
     "item": {
       "type": "itemStack",
       "description": "ダメージを与えるアイテムです。",
-      "requiredOn": ["execute", "watch"]
+      "requiredOn": ["execute"]
     },
     "damage": {
       "type": "number",
       "description": "与えるダメージです。",
       "minimum": 0,
       "maximum": 2147483647,
-      "requiredOn": ["execute", "watch"]
+      "requiredOn": ["execute", "require"]
     },
     "slot": {
       "type": "itemSlot",

@@ -1,13 +1,12 @@
 {
   "name": "entity_spawn",
   "description": "エンティティをスポーンさせます。",
-  "base": "entity_$base",
   "events": [
     "org.bukkit.event.entity.EntitySpawnEvent"
   ],
 
   "executable": "エンティティをスポーンさせます。",
-  "watchable": "エンティティがすぽーんすることを期待します。",
+  "watchable": "エンティティがスポーンすることを期待します。",
   "requireable": false,
 
   "arguments": {

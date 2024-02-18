@@ -132,10 +132,7 @@
           "type": "string"
         }
       }
-    },
-    "required": [
-      "name"
-    ]
+    }
   },
   "playerList": {
     "type": "object",

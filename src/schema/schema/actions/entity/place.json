@@ -1,7 +1,6 @@
 {
   "name": "entity_place",
   "description": "エンティティの設置を期待します",
-  "base": "entity_damage",
   "events": [
     "org.bukkit.event.entity.EntityPlaceEvent"
   ],

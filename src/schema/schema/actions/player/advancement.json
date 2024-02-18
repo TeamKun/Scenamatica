@@ -12,7 +12,7 @@
   "requireable": "プレイヤが進捗または達成度を満たしていることを要求します。",
 
   "arguments": {
-    "player": {
+    "target": {
       "type": "playerSpecifier",
       "description": "進捗を達成させるプレイヤです。",
       "requiredOn": ["execute", "require"]

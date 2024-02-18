@@ -1,7 +1,6 @@
 {
   "name": "projectile_launch",
   "description": "投射物をスポーンさせます。",
-  "base": "entity_spawn",
   "events": [
     "org.bukkit.event.entity.ProjectileLaunchEvent"
   ],
@@ -11,7 +10,7 @@
   "requireable": false,
 
   "arguments": {
-    "entity": {
+    "target": {
       "description": "スポーンさせる投射物です。",
       "anyOf": [
         {

@@ -8,7 +8,7 @@
   "requireable": "エンティティの状態・属性が指定されたものと一致するかを判定します。",
 
   "arguments": {
-    "entity": {
+    "target": {
       "requiredOn": true
     },
     "data": {

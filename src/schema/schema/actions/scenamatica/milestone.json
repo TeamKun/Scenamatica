@@ -14,8 +14,7 @@
     },
     "reached": {
       "type": "boolean",
-      "description": "マイルストーンに到達したかどうかです。",
-      "requiredOn": ["execute", "require"]
+      "description": "マイルストーンに到達したかどうかです。"
     }
   },
   "outputs": {

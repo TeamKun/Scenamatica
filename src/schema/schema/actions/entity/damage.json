@@ -43,8 +43,7 @@
         "HOT_FLOOR",
         "CRAMMING",
         "DRYOUT"
-      ],
-      "requiredOn": ["execute"]
+      ]
     },
     "amount": {
       "type": "number",
