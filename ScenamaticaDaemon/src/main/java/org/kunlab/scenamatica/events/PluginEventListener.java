@@ -25,6 +25,9 @@ public class PluginEventListener implements Listener
     @EventHandler
     public void onPluginEnabled(PluginEnableEvent event)
     {
+        if (event.getPlugin().getName().equals(this.registry.getPlugin().getName()))
+            return;
+
         MsgArgs msgArgs = MsgArgs.of("plugin", event.getPlugin().getName());
         this.logger.info(LangProvider.get("daemon.plugin.enabled", msgArgs));
         this.logger.info(LangProvider.get("daemon.plugin.scenario.scanning", msgArgs));
@@ -45,6 +48,9 @@ public class PluginEventListener implements Listener
     @EventHandler
     public void onPluginDisabled(PluginDisableEvent event)
     {
+        if (event.getPlugin().getName().equals(this.registry.getPlugin().getName()))
+            return;
+
         this.safePluginShutdown(event.getPlugin());
         MsgArgs msgArgs = MsgArgs.of("plugin", event.getPlugin().getName());
         this.logger.info(LangProvider.get("daemon.plugin.disabled", msgArgs));

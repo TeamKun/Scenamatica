@@ -1,5 +1,6 @@
 package org.kunlab.scenamatica.interfaces.action;
 
+import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.enums.WatchType;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
@@ -13,14 +14,7 @@ public interface ActionRunManager
     /**
      * 初期化します。
      */
-    void init();
-
-    /**
-     * アクションのコンパイラを取得します。
-     *
-     * @return アクションのコンパイラ
-     */
-    ActionCompiler getCompiler();
+    void init(@NotNull Plugin scenamatica);
 
     /**
      * 動作の実行をキューに追加します。
@@ -32,7 +26,8 @@ public interface ActionRunManager
     /**
      * 動作の監視を追加します。
      *
-     * @param plugin    監視するプラグイン
+     * @param engine    シナリオエンジン
+     * @param scenario  シナリオファイル構造
      * @param action    監視する動作
      * @param watchType 監視の種類です。
      */

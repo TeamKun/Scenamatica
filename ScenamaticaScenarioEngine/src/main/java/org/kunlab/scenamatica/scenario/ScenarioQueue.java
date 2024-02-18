@@ -45,10 +45,12 @@ class ScenarioQueue
     /* non-public */ void add(ScenarioEngine engine, TriggerStructure trigger,
                               Consumer<? super ScenarioResult> callback, int maxAttemptCount)
     {
-        this.scenarioQueue.add(new ScenarioSessionImpl(this.manager, Collections.singletonList(
-                new QueuedScenarioImpl(this.manager, engine, trigger, callback, maxAttemptCount)
-        )));
-        this.runner.resume();
+        this.scenarioQueue.add(new ScenarioSessionImpl(
+                this.manager,
+                Collections.singletonList(new QueuedScenarioImpl(this.manager, engine, trigger, callback, maxAttemptCount))
+        ));
+        if (this.runner != null)
+            this.runner.resume();
     }
 
     /* non-public */ void addAll(SessionCreator creator) throws TriggerNotFoundException, ScenarioNotFoundException
@@ -75,7 +77,9 @@ class ScenarioQueue
         }
 
         this.scenarioQueue.add(session);
-        this.runner.resume();
+
+        if (this.runner != null)
+            this.runner.resume();
     }
 
     /* non-public */ void addInterrupt(ScenarioEngine engine, TriggerStructure trigger, Consumer<? super ScenarioResult> callback)
@@ -84,10 +88,10 @@ class ScenarioQueue
             this.scenarioQueue.add(this.current);
 
         this.current = new ScenarioSessionImpl(this.manager, new ArrayList<>());
-
         this.current.add(engine, trigger, callback);
 
-        this.runner.resume();
+        if (this.runner != null)
+            this.runner.resume();
     }
 
     /* non-public */ void remove(Plugin plugin, String name)

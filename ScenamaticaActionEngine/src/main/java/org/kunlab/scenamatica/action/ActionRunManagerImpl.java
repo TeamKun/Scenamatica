@@ -2,13 +2,14 @@ package org.kunlab.scenamatica.action;
 
 import lombok.Getter;
 import net.kunmc.lab.peyangpaperutils.lib.utils.Runner;
+import org.bukkit.Bukkit;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.action.actions.server.log.ServerLogHandler;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.enums.WatchType;
-import org.kunlab.scenamatica.interfaces.ScenamaticaRegistry;
-import org.kunlab.scenamatica.interfaces.action.ActionCompiler;
+import org.kunlab.scenamatica.interfaces.ExceptionHandler;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.ActionRunManager;
 import org.kunlab.scenamatica.interfaces.action.CompiledAction;
@@ -16,15 +17,13 @@ import org.kunlab.scenamatica.interfaces.action.WatcherManager;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileStructure;
+import org.kunlab.scenamatica.interfaces.trigger.TriggerManager;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
 
 public class ActionRunManagerImpl implements ActionRunManager
 {
-    private final ScenamaticaRegistry registry;
-    @Getter
-    private final ActionCompiler compiler;
     @Getter
     private final WatcherManager watcherManager;
     private final Deque<CompiledAction> actionQueue;
@@ -32,23 +31,22 @@ public class ActionRunManagerImpl implements ActionRunManager
 
     private BukkitTask runner;
 
-    public ActionRunManagerImpl(@NotNull ScenamaticaRegistry registry)
+    public ActionRunManagerImpl(@NotNull TriggerManager triggerManager,
+                                @NotNull ExceptionHandler exceptionHandler)
     {
-        this.registry = registry;
-        this.compiler = new ActionCompilerImpl();
-        this.watcherManager = new WatcherManagerImpl(registry);
+        this.watcherManager = new WatcherManagerImpl(triggerManager, exceptionHandler);
         this.actionQueue = new ArrayDeque<>();
-        this.serverLogHandler = new ServerLogHandler(registry.getPlugin().getServer());
+        this.serverLogHandler = new ServerLogHandler(Bukkit.getServer());
 
         this.runner = null;
     }
 
     @Override
-    public void init()
+    public void init(@NotNull Plugin scenamatica)
     {
         this.serverLogHandler.init();
 
-        this.runner = Runner.runTimer(this.registry.getPlugin(), this::executeNext, 0, 1);
+        this.runner = Runner.runTimer(scenamatica, this::executeNext, 0, 1);
     }
 
     @Override

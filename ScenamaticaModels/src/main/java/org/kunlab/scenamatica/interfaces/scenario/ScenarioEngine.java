@@ -162,14 +162,14 @@ public interface ScenarioEngine
      *
      * @return コンパイルされたシナリオのアクション
      */
-    List<? extends CompiledScenarioAction> getActions();
+    List<CompiledScenarioAction> getActions();
 
     /**
      * コンパイルされたトリガのアクションを取得します。
      *
      * @return コンパイルされたトリガのアクション
      */
-    List<? extends CompiledTriggerAction> getTriggerActions();
+    List<CompiledTriggerAction> getTriggerActions();
 
     /**
      * シナリオの実行を取得します。

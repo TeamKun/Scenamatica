@@ -17,7 +17,7 @@ import org.kunlab.scenamatica.enums.TriggerType;
 import org.kunlab.scenamatica.exceptions.scenario.TriggerNotFoundException;
 import org.kunlab.scenamatica.interfaces.ScenamaticaRegistry;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
-import org.kunlab.scenamatica.interfaces.action.ActionRunManager;
+import org.kunlab.scenamatica.interfaces.action.ActionManager;
 import org.kunlab.scenamatica.interfaces.action.CompiledAction;
 import org.kunlab.scenamatica.interfaces.context.Context;
 import org.kunlab.scenamatica.interfaces.scenario.ActionResultDeliverer;
@@ -47,15 +47,15 @@ public class ScenarioEngineImpl implements ScenarioEngine
     private final ScenamaticaRegistry registry;
     private final boolean verbose;
     private final ScenarioManager manager;
-    private final ActionRunManager actionRunManager;
+    private final ActionManager actionManager;
     private final TestReporter testReporter;  // 一意
     private final Plugin plugin;
     private final ScenarioFileStructure scenario;
     private final ScenarioCompiler compiler;
     private final ScenarioActionListener listener;  // エンジンに一意
     private final String logPrefix;
-    private final List<? extends CompiledScenarioAction> actions;
-    private final List<? extends CompiledTriggerAction> triggerActions;
+    private final List<CompiledScenarioAction> actions;
+    private final List<CompiledTriggerAction> triggerActions;
     private final CompiledScenarioAction runIf;
 
     @Getter
@@ -67,14 +67,14 @@ public class ScenarioEngineImpl implements ScenarioEngine
 
     public ScenarioEngineImpl(@NotNull ScenamaticaRegistry registry,
                               @NotNull ScenarioManager manager,
-                              @NotNull ActionRunManager actionRunManager,
+                              @NotNull ActionManager actionManager,
                               @NotNull TestReporter testReporter,
                               @NotNull Plugin plugin,
                               @NotNull ScenarioFileStructure scenario)
     {
         this.registry = registry;
         this.manager = manager;
-        this.actionRunManager = actionRunManager;
+        this.actionManager = actionManager;
         this.testReporter = testReporter;
         this.plugin = plugin;
         this.scenario = scenario;
@@ -86,7 +86,7 @@ public class ScenarioEngineImpl implements ScenarioEngine
         this.executor = null;
 
         // 以下、 アクションをコンパイルしてキャッシュしておく。
-        ScenarioCompiler compiler = this.compiler = new ScenarioCompiler(this, registry.getLogger(), actionRunManager);
+        ScenarioCompiler compiler = this.compiler = new ScenarioCompiler(this, registry.getLogger(), actionManager);
         compiler.notifyCompileStart();
 
         this.actions = compiler.compileMain(RunOn.SCENARIOS, RunAs.NORMAL, scenario.getScenario());
@@ -94,6 +94,16 @@ public class ScenarioEngineImpl implements ScenarioEngine
         this.runIf = scenario.getRunIf() == null ? null: compiler.compileRunIf(scenario.getRunIf());
         // トリガの準備
         registry.getTriggerManager().bakeTriggers(this);
+    }
+
+    public List<CompiledScenarioAction> getActions()
+    {
+        return Collections.unmodifiableList(this.actions);
+    }
+
+    public List<CompiledTriggerAction> getTriggerActions()
+    {
+        return Collections.unmodifiableList(this.triggerActions);
     }
 
     /**
@@ -123,7 +133,7 @@ public class ScenarioEngineImpl implements ScenarioEngine
 
         this.executor = new ScenarioExecutorImpl(
                 this,
-                this.actionRunManager,
+                this.actionManager.getRunManager(),
                 this.listener,
                 this.actions,
                 this.triggerActions,
@@ -314,7 +324,7 @@ public class ScenarioEngineImpl implements ScenarioEngine
     @Override
     public ActionResultDeliverer getDeliverer()
     {
-        return this.executor.getDeliverer();
+        return this.executor == null ? null: this.executor.getDeliverer();
     }
 
     private void logWithPrefix(Level level, String message, boolean onlyVerbose)

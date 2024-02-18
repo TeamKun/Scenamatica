@@ -16,13 +16,14 @@ import org.kunlab.scenamatica.enums.TriggerType;
 import org.kunlab.scenamatica.enums.WatchType;
 import org.kunlab.scenamatica.exceptions.scenario.BrokenReferenceException;
 import org.kunlab.scenamatica.exceptions.scenario.ScenarioException;
-import org.kunlab.scenamatica.interfaces.ScenamaticaRegistry;
+import org.kunlab.scenamatica.interfaces.ExceptionHandler;
 import org.kunlab.scenamatica.interfaces.action.Action;
 import org.kunlab.scenamatica.interfaces.action.CompiledAction;
 import org.kunlab.scenamatica.interfaces.action.WatcherManager;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileStructure;
+import org.kunlab.scenamatica.interfaces.trigger.TriggerManager;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -40,13 +41,16 @@ public class WatcherManagerImpl implements WatcherManager
         };
     }
 
-    private final ScenamaticaRegistry registry;
+    private final TriggerManager triggerManager;
+    private final ExceptionHandler exceptionHandler;
+
     private final Object lock = new Object();
     private final Multimap<Plugin, WatchEntry> actionWatchers;
 
-    public WatcherManagerImpl(@NotNull ScenamaticaRegistry registry)
+    public WatcherManagerImpl(@NotNull TriggerManager triggerManager, @NotNull ExceptionHandler exceptionHandler)
     {
-        this.registry = registry;
+        this.triggerManager = triggerManager;
+        this.exceptionHandler = exceptionHandler;
         this.actionWatchers = ArrayListMultimap.create();
     }
 
@@ -198,7 +202,7 @@ public class WatcherManagerImpl implements WatcherManager
     {
         try
         {
-            this.registry.getTriggerManager().performTriggerFire(
+            this.triggerManager.performTriggerFire(
                     entry.getEngine().getPlugin(),
                     entry.getScenario().getName(),
                     TriggerType.ON_ACTION,
@@ -207,7 +211,7 @@ public class WatcherManagerImpl implements WatcherManager
         }
         catch (ScenarioException e)
         {
-            this.registry.getExceptionHandler().report(e);
+            this.exceptionHandler.report(e);
         }
 
     }

@@ -30,17 +30,18 @@ public class EntitySpawnAction<E extends Entity> extends AbstractAction
     public static final String KEY_OUT_ENTITY = "entity";
     public final InputToken<EntitySpecifier<E>> IN_ENTITY;
 
-    private final Class<E> entityClass;
-    private final Class<? extends EntityStructure> structureClass;
-
     public EntitySpawnAction(Class<E> entityclass, Class<? extends EntityStructure> structureClass)
     {
-        this.entityClass = entityclass;
-        this.structureClass = structureClass;
         this.IN_ENTITY = ofInput("entity", entityclass, structureClass)
                 .validator(ScenarioType.ACTION_EXECUTE, EntitySpecifier::hasStructure, "Entity structure is not present")
                 .validator(ScenarioType.ACTION_EXECUTE, specifier -> specifier.getTargetStructure().getType() != null, "Entity type is not present")
                 .validator(ScenarioType.ACTION_EXECUTE, specifier -> specifier.getTargetStructure().getType() != EntityType.UNKNOWN, "Entity type is unknown");
+    }
+
+    public EntitySpawnAction()
+    {
+        // noinspection unchecked
+        this((Class<E>) Entity.class, EntityStructure.class);
     }
 
     public <T extends Entity> T spawnEntity(ActionContext ctxt, EntityStructure structure, @Nullable LocationStructure locDef)

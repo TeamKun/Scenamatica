@@ -51,12 +51,14 @@ public class ScenarioActionExecutionListener implements ScenarioActionListener
     private void deliver(ActionResult result)
     {
         this.waitingFor = null;
-        this.engine.getDeliverer().setResult(result);
+        if (this.engine.getDeliverer() != null)
+            this.engine.getDeliverer().setResult(result);
     }
 
     @Override
     public void onActionError(CompiledAction action, Throwable throwable)
     {
-        this.engine.getDeliverer().setExceptionCaught(throwable);
+        if (this.waitingFor != null)
+            this.engine.getDeliverer().setExceptionCaught(throwable);
     }
 }

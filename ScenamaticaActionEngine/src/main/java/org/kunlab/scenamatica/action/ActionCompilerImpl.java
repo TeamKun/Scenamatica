@@ -2,50 +2,35 @@ package org.kunlab.scenamatica.action;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.kunlab.scenamatica.action.actions.AbstractAction;
 import org.kunlab.scenamatica.action.actions.scenamatica.NegateAction;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.enums.RunAs;
 import org.kunlab.scenamatica.enums.RunOn;
 import org.kunlab.scenamatica.enums.ScenarioType;
-import org.kunlab.scenamatica.interfaces.action.Action;
 import org.kunlab.scenamatica.interfaces.action.ActionCompiler;
+import org.kunlab.scenamatica.interfaces.action.ActionLoader;
 import org.kunlab.scenamatica.interfaces.action.ActionResult;
 import org.kunlab.scenamatica.interfaces.action.CompiledAction;
+import org.kunlab.scenamatica.interfaces.action.LoadedAction;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
-import org.kunlab.scenamatica.interfaces.action.types.Executable;
-import org.kunlab.scenamatica.interfaces.action.types.Requireable;
-import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.action.ActionStructure;
 
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
 
 public class ActionCompilerImpl implements ActionCompiler
 {
-    public static final List<Action> ACTIONS;
+    private final ActionLoader loader;
 
-    static
+    public ActionCompilerImpl(ActionLoader loader)
     {
-        ACTIONS = Collections.unmodifiableList(AbstractAction.getActions());
-        validateActions(ACTIONS);
+        this.loader = loader;
     }
 
-    private static void validateActions(List<? extends Action> actions)
-    {
-        for (Action action : actions)
-        {
-            if (!(action instanceof Executable) && !(action instanceof Watchable) && !(action instanceof Requireable))
-                throw new IllegalArgumentException("Action " + action.getClass().getName() + " is not executable, watchable, or requireable, cannot be used.");
-        }
-    }
-
-    private static CompiledActionImpl processNegateAction(
+    private CompiledActionImpl processNegateAction(
             ScenarioEngine engine,
             RunOn runOn,
             RunAs runAs,
@@ -63,22 +48,22 @@ public class ActionCompilerImpl implements ActionCompiler
         if (actionName == null)
             throw new IllegalArgumentException("NegateAction requires an action name.");
 
-        Action actionToBeNegated = getActionByName(actionName);
+        LoadedAction<?> actionToBeNegated = this.loader.getActionByName(actionName);
         if (actionToBeNegated == null)
             throw new IllegalArgumentException("Action " + actionName + " is not found.");
-        else if (!(actionToBeNegated instanceof Requireable))
+        else if (!actionToBeNegated.isRequireable())
             throw new IllegalArgumentException("Action " + actionName + " is not requireable.");
-        else if (actionToBeNegated instanceof NegateAction)
-            throw new IllegalArgumentException("Cannot nes a negate action.");
+        else if (NegateAction.class.isAssignableFrom(actionToBeNegated.getActionClass()))
+            throw new IllegalArgumentException("NegateAction cannot negate another NegateAction.");
 
-        InputBoard argument = actionToBeNegated.getInputBoard(ScenarioType.CONDITION_REQUIRE);
+        InputBoard argument = actionToBeNegated.getInstance().getInputBoard(ScenarioType.CONDITION_REQUIRE);
         if (arguments.containsKey(NegateAction.KEY_IN_ARGUMENTS))
             argument.compile(serializer, MapUtils.checkAndCastMap(arguments.get(NegateAction.KEY_IN_ARGUMENTS)));
 
         InputBoard negateArgument = action.getInputBoard(ScenarioType.CONDITION_REQUIRE);
         negateArgument.compile(serializer, new HashMap<String, Object>()
         {{
-            this.put(NegateAction.KEY_IN_ACTION, actionToBeNegated);
+            this.put(NegateAction.KEY_IN_ACTION, actionToBeNegated.getInstance());
             this.put(NegateAction.KEY_IN_ARGUMENTS, new ActionContextImpl(engine, runOn, runAs, argument, engine.getPlugin().getLogger()));
         }});
 
@@ -91,15 +76,6 @@ public class ActionCompilerImpl implements ActionCompiler
         );
     }
 
-    private static Action getActionByName(String name)
-    {
-        for (Action a : ACTIONS)
-            if (a.getName().equalsIgnoreCase(name))
-                return a;
-
-        return null;
-    }
-
     @Override
     public CompiledAction compile(@NotNull ScenarioEngine engine,
                                   @NotNull ScenarioType scenarioType,
@@ -110,14 +86,14 @@ public class ActionCompilerImpl implements ActionCompiler
                                   @Nullable BiConsumer<ActionResult, ScenarioType> onSuccess)
     {
         StructureSerializer serializer = engine.getManager().getRegistry().getScenarioFileManager().getSerializer();
-        Action action = getActionByName(structure.getType());
+        LoadedAction<?> action = this.loader.getActionByName(structure.getType());
         if (action == null)
             throw new IllegalArgumentException("Action " + structure.getType() + " is not found.");
-        else if (action instanceof NegateAction)
-            return processNegateAction(engine, runOn, runAs, serializer, (NegateAction) action, structure, reportErrorTo, onSuccess);
+        else if (action.isRequireable() && NegateAction.class.isAssignableFrom(action.getActionClass())) // negate 用の特別処理
+            return this.processNegateAction(engine, runOn, runAs, serializer, (NegateAction) action.getInstance(), structure, reportErrorTo, onSuccess);
 
 
-        InputBoard argument = action.getInputBoard(scenarioType);
+        InputBoard argument = action.getInstance().getInputBoard(scenarioType);
         if (structure.getArguments() != null)
             argument.compile(serializer, structure.getArguments());
 
@@ -125,28 +101,11 @@ public class ActionCompilerImpl implements ActionCompiler
             argument.validate();
 
         return new CompiledActionImpl(
-                action,
+                action.getInstance(),
                 new ActionContextImpl(engine, runOn, runAs, argument, engine.getPlugin().getLogger()),
                 structure,
                 reportErrorTo,
                 onSuccess
         );
-    }
-
-    @Override
-    public @NotNull List<? extends Action> getRegisteredActions()
-    {
-        return Collections.unmodifiableList(ACTIONS);
-    }
-
-    @Override
-    public @NotNull <T extends Action> T findAction(@NotNull Class<? extends T> actionClass)
-    {
-        for (Action action : ACTIONS)
-            if (action.getClass().equals(actionClass))
-                //noinspection unchecked
-                return (T) action;
-
-        throw new IllegalArgumentException("Action " + actionClass.getName() + " is not found.");
     }
 }

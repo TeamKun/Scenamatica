@@ -273,4 +273,18 @@ public interface ScenarioManager
      * @param enabled 有効にするなら {@code true}
      */
     void setEnabled(boolean enabled);
+
+    /**
+     * シナリオを無効化します。
+     *
+     * @param engine シナリオエンジン
+     */
+    void invalidate(@NotNull ScenarioEngine engine);
+
+    /**
+     * プラグインのシナリオを無効化します。
+     *
+     * @param plugin プラグイン
+     */
+    void invalidate(@NotNull Plugin plugin);
 }

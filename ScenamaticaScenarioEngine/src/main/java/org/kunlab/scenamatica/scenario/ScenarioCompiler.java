@@ -9,7 +9,7 @@ import org.kunlab.scenamatica.enums.RunOn;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.enums.TriggerType;
 import org.kunlab.scenamatica.interfaces.action.ActionCompiler;
-import org.kunlab.scenamatica.interfaces.action.ActionRunManager;
+import org.kunlab.scenamatica.interfaces.action.ActionManager;
 import org.kunlab.scenamatica.interfaces.action.CompiledAction;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioActionListener;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
@@ -41,7 +41,7 @@ public class ScenarioCompiler
 
     private int compiled;
 
-    public ScenarioCompiler(ScenarioEngine engine, Logger logger, ActionRunManager actionManager)
+    public ScenarioCompiler(ScenarioEngine engine, Logger logger, ActionManager actionManager)
     {
         this.engine = engine;
         this.logger = logger;

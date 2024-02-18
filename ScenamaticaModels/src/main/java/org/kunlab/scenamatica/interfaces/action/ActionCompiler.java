@@ -8,7 +8,6 @@ import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.action.ActionStructure;
 
-import java.util.List;
 import java.util.function.BiConsumer;
 
 /**
@@ -36,22 +35,4 @@ public interface ActionCompiler
             @NotNull ActionStructure structure,
             @Nullable BiConsumer<CompiledAction, Throwable> reportErrorTo,
             @Nullable BiConsumer<ActionResult, ScenarioType> onSuccess);
-
-    /**
-     * 登録されたアクションのリストを取得します。
-     * 注：このリストは変更不可です。
-     *
-     * @return 登録されたアクションのリスト
-     */
-    @NotNull
-    List<? extends Action> getRegisteredActions();
-
-    /**
-     * アクションのクラスからアクションのインスタンスを取得します。
-     *
-     * @param actionClass アクションのクラス
-     * @return アクションのインスタンス
-     * @throws IllegalArgumentException アクションが見つからない場合
-     */
-    @NotNull <T extends Action> T findAction(@NotNull Class<? extends T> actionClass);
 }

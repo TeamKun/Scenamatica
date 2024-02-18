@@ -12,6 +12,7 @@ import org.kunlab.scenamatica.interfaces.action.Action;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.ActionResult;
 import org.kunlab.scenamatica.interfaces.action.CompiledAction;
+import org.kunlab.scenamatica.interfaces.action.LoadedAction;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.input.InputValueHolder;
@@ -257,7 +258,8 @@ public class ActionContextImpl implements ActionContext
     @Override
     public <T extends Action> T findAction(Class<T> actionClass)
     {
-        return this.engine.getManager().getRegistry().getActionManager().getCompiler().findAction(actionClass);
+        LoadedAction<T> action = this.engine.getManager().getRegistry().getActionManager().getLoader().getActionByClass(actionClass);
+        return action == null ? null: action.getInstance();
     }
 
     @Override
