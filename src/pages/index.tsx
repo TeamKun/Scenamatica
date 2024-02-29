@@ -107,20 +107,20 @@ function Features(): JSX.Element {
                 link={"#topics-localize"}
             />
             <Card
+                title={"テスト環境をかんたん構築"}
+                description={"クライアントの用意から開放されましょう！"}
+                emoji={faUsers}
+                emojiColor={"#559955"}
+                backgroundColor={"#aaaa21"}
+                link={"#topics-build-test-environment"}
+            />
+            <Card
                 title={"CI-CD との統合"}
                 description={"プラグインの品質を継続的に監視しましょう。"}
                 emoji={faHeartPulse}
                 emojiColor={"#ddd"}
                 backgroundColor={"#113151"}
                 link={"#topics-ci-cd-integration"}
-            />
-            <Card
-                title={"テスト環境をかんたん構築"}
-                description={"テストのために、クライアントをわざわざ 人数分起動する必要はもうありません！"}
-                emoji={faUsers}
-                emojiColor={"#559955"}
-                backgroundColor={"#aaaa21"}
-                link={"#topics-build-test-environment"}
             />
         </div>
     )
