@@ -4,7 +4,7 @@ sidebar_position: 3
 
 import Requirements from "/src/components/Requirements";
 
-# IDE などのツールと Scenamatica を連携する
+# JUnit 対応ツールと Scenamatica の連携
 
 JUnit XML 形式のレポートを利用できるツールとの連携をする方法を説明しています。
 
@@ -22,14 +22,6 @@ JUnit XML 形式のレポートを利用できるツールとの連携をする�
 
 ## 概要  {#overview}
 
-Scenamatica は、IDE などと連携することで、より便利に活用できます。
-
-主に、以下の方法で連携できます：
-
-+ [JUnit XML による IDE との連携](#junit-xml)
-
-## JUnit XML による IDE との連携 {#junit-xml}
-
 [JUnit XML](https://www.ibm.com/docs/ja/developer-for-zos/9.1.1?topic=formats-junit-xml-format) は、
 有名なテストフレームワークである [JUnit](https://junit.org/junit5/) およびビルドツールの [Apache Ant](https://ant.apache.org/) によって利用されている、
 テスト結果を記録するための XML 形式のフォーマットです。  
@@ -42,7 +34,7 @@ Scenamatica では、JUnit XML 形式でテスト結果を出力できます。�
 JUnit XML は、デフォルトで `plugins/Scenamatica/reports` 配下に出力されるようになっています。  
 有効/無効や出力先の変更は、[こちら](/docs/getting-started/configuration#reporting-junit)から設定できます。
 
-### IDE との連携 {#ide}
+### JUnit XML を利用した IDE との連携 {#ide}
 
 JUnit XML は、[IntelliJ IDEA](https://www.jetbrains.com/ja-jp/idea/) や [Visual Studio Code](https://azure.microsoft.com/ja-jp/products/visual-studio-code/),
 [Eclipse](https://www.eclipse.org/) などのほとんどの IDE で読み込めます。  
