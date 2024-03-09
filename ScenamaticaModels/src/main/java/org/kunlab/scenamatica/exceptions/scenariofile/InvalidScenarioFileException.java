@@ -8,7 +8,7 @@ public class InvalidScenarioFileException extends Exception
 
     public InvalidScenarioFileException(String message, IllegalArgumentException e)
     {
-        super("Invalid scenario file syntax: " + message);
+        super("Invalid scenario file syntax: " + message, e);
     }
 
     public InvalidScenarioFileException(String message)
