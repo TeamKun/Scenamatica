@@ -56,5 +56,5 @@ scenario:
         type: minecraft:villager
         tags:
           - 810snpi
-      timeout: 20
+    timeout: 20
 
