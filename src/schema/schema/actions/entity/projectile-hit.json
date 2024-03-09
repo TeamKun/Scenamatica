@@ -11,7 +11,7 @@
   "requireable": false,
 
   "arguments": {
-    "target": {
+    "entity": {
       "description": "着弾する投射物です。",
       "type": "entitySpecifier",
       "$entityKindOf": "projectile",

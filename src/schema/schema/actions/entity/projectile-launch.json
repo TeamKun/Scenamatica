@@ -10,7 +10,7 @@
   "requireable": false,
 
   "arguments": {
-    "target": {
+    "entity": {
       "description": "スポーンさせる投射物です。",
       "anyOf": [
         {
