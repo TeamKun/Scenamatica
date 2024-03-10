@@ -14,9 +14,6 @@ import org.kunlab.scenamatica.interfaces.scenariofile.Mapped;
 import org.kunlab.scenamatica.interfaces.scenariofile.entity.EntityStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.EntitySpecifier;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public abstract class AbstractEntityAction<E extends Entity, V extends EntityStructure & Mapped<E>> extends AbstractAction
 {
     public static final String OUT_KEY_TARGET = "target";
@@ -25,25 +22,6 @@ public abstract class AbstractEntityAction<E extends Entity, V extends EntityStr
     public AbstractEntityAction(Class<E> entityClass, Class<V> structureClazz)
     {
         this.IN_TARGET_ENTITY = ofInput("target", entityClass, structureClazz);
-    }
-
-    public static List<? extends AbstractAction> getActions()
-    {
-        List<AbstractAction> actions = new ArrayList<>();
-
-        actions.add(new EntityAction());
-        actions.add(new EntityDamageAction());
-        actions.add(new EntityDamageByEntityAction());
-        actions.add(new EntityDeathAction());
-        actions.add(new EntityDropItemAction());
-        actions.add(new EntityMoveAction());
-        actions.add(new EntityPickupItemAction());
-        actions.add(new EntityPlaceAction());
-        actions.add(new EntitySpawnAction<>(Entity.class, EntityStructure.class));  // AbstractEntityAction を継承してない(引数都合)
-        actions.add(new ProjectileHitAction());
-        actions.add(new ProjectileLaunchAction());
-
-        return actions;
     }
 
     protected boolean checkMatchedEntityEvent(@NotNull ActionContext ctxt, @NotNull Event event)

@@ -4,6 +4,10 @@
     <list size="1">
       <item index="0" class="java.lang.String" itemvalue="org.bukkit.event.EventHandler" />
     </list>
+    <pattern value="org.kunlab.scenamatica.interfaces.action.types.Requireable" hierarchically="true" />
+    <pattern value="org.kunlab.scenamatica.interfaces.action.types.Executable" hierarchically="true" />
+    <pattern value="org.kunlab.scenamatica.interfaces.action.types.Watchable" hierarchically="true" />
+    <pattern value="org.kunlab.scenamatica.interfaces.action.Action" hierarchically="true" />
   </component>
   <component name="ExternalStorageConfigurationManager" enabled="true" />
   <component name="FrameworkDetectionExcludesConfiguration">
@@ -15,7 +19,6 @@
         <option value="$PROJECT_DIR$/pom.xml" />
       </list>
     </option>
-    <option name="workspaceImportForciblyTurnedOn" value="true" />
   </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" project-jdk-name="1.8" project-jdk-type="JavaSDK" />
   <component name="SaveActionSettings">

@@ -14,9 +14,6 @@ import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.PlayerSpecifier;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public abstract class AbstractInventoryInteractAction
         extends AbstractInventoryAction
 {
@@ -27,16 +24,6 @@ public abstract class AbstractInventoryInteractAction
     );
 
     public static final String OUT_KEY_TARGET = "target";
-
-    public static List<? extends AbstractInventoryInteractAction> getActions()
-    {
-        List<AbstractInventoryInteractAction> actions = new ArrayList<>();
-
-        actions.add(new InventoryClickAction());
-        actions.add(new InventoryCreativeAction());
-
-        return actions;
-    }
 
     public boolean checkMatchedInventoryInteractEvent(@NotNull ActionContext ctxt, @NotNull Event event)
     {
