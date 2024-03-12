@@ -10,19 +10,7 @@ import org.kunlab.scenamatica.nms.types.entity.NMSLivingEntity;
  */
 public interface WrapperProvider
 {
-    /**
-     * 指定された Bukkit のエンティティを NMS のエンティティに変換します。
-     *
-     * @param bukkitEntity Bukkit のエンティティ
-     * @return NMS のエンティティ
-     */
-    NMSEntity ofEntity(Entity bukkitEntity);
+    NMSEntity wrap(Entity bukkitEntity);
 
-    /**
-     * 指定された Bukkit の生きているエンティティを NMS のエンティティに変換します。
-     *
-     * @param bukkitEntity Bukkit の生きているエンティティ
-     * @return NMS のエンティティ
-     */
-    NMSLivingEntity ofEntity(LivingEntity bukkitEntity);
+    NMSLivingEntity wrap(LivingEntity bukkitEntity);
 }

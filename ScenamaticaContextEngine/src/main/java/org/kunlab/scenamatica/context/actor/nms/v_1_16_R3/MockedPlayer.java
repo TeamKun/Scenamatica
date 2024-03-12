@@ -50,6 +50,7 @@ import org.kunlab.scenamatica.events.actor.ActorPostJoinEvent;
 import org.kunlab.scenamatica.interfaces.context.Actor;
 import org.kunlab.scenamatica.interfaces.context.ActorManager;
 import org.kunlab.scenamatica.interfaces.scenariofile.context.PlayerStructure;
+import org.kunlab.scenamatica.nms.NMSProvider;
 import org.kunlab.scenamatica.nms.enums.entity.NMSEntityUseAction;
 
 import java.io.IOException;
@@ -166,27 +167,12 @@ class MockedPlayer extends EntityPlayer implements Actor
     {
         int entityId = entity.getEntityId();
         EnumHand enumHand = toHand(hand);
-
-        PacketPlayInUseEntity.EnumEntityUseAction nmsType;
-        switch (type)
-        {
-            case ATTACK:
-                nmsType = PacketPlayInUseEntity.EnumEntityUseAction.ATTACK;
-                break;
-            case INTERACT:
-                nmsType = PacketPlayInUseEntity.EnumEntityUseAction.INTERACT;
-                break;
-            case INTERACT_AT:
-                nmsType = PacketPlayInUseEntity.EnumEntityUseAction.INTERACT_AT;
-                break;
-            default:
-                throw new IllegalArgumentException("Unknown NMSEntityUseAction: " + type.name());
-        }
+        PacketPlayInUseEntity.EnumEntityUseAction nmsAction = NMSProvider.getTypeSupport().toNMS(type, PacketPlayInUseEntity.EnumEntityUseAction.class);
 
         PacketDataSerializer serializer = new PacketDataSerializer(Unpooled.buffer());
         serializer.d(entityId);
-        serializer.a(nmsType);
-        if (nmsType == PacketPlayInUseEntity.EnumEntityUseAction.INTERACT_AT)
+        serializer.a(nmsAction);
+        if (nmsAction == PacketPlayInUseEntity.EnumEntityUseAction.INTERACT_AT)
         {
             if (location == null)
                 throw new IllegalArgumentException("location must not be null when type is INTERACT_AT");
@@ -196,8 +182,8 @@ class MockedPlayer extends EntityPlayer implements Actor
             serializer.writeFloat((float) location.getZ());
         }
 
-        if (nmsType == PacketPlayInUseEntity.EnumEntityUseAction.INTERACT
-                || nmsType == PacketPlayInUseEntity.EnumEntityUseAction.INTERACT_AT)
+        if (nmsAction == PacketPlayInUseEntity.EnumEntityUseAction.INTERACT
+                || nmsAction == PacketPlayInUseEntity.EnumEntityUseAction.INTERACT_AT)
             serializer.a(enumHand);
 
         boolean isSneaking = this.getBukkitEntity().isSneaking();

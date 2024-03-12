@@ -7,6 +7,7 @@ import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftEntity;
 import org.kunlab.scenamatica.nms.enums.entity.NMSMoveType;
 import org.kunlab.scenamatica.nms.types.entity.NMSEntity;
+import org.kunlab.scenamatica.nms.v1_16_R3.TypeSupportImpl;
 import org.kunlab.scenamatica.nms.v1_16_R3.utils.NMSSupport;
 
 public class NMSEntityImpl implements NMSEntity
@@ -41,7 +42,7 @@ public class NMSEntityImpl implements NMSEntity
     @Override
     public void move(NMSMoveType moveType, Location location)
     {
-        EnumMoveType convertedMoveType = NMSSupport.convertMoveTypeToNMS(moveType);
+        EnumMoveType convertedMoveType = TypeSupportImpl.toNMS(moveType);
         Vec3D convertedLocation = NMSSupport.convertLocToVec3D(location);
 
         this.nmsEntity.move(convertedMoveType, convertedLocation);

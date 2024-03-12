@@ -22,4 +22,10 @@ public class NMSLivingEntityImpl extends NMSEntityImpl implements NMSLivingEntit
     {
         return this.bukkitEntity;
     }
+
+    @Override
+    public Object getNMSCraftRaw()
+    {
+        return this.nmsEntity;
+    }
 }
