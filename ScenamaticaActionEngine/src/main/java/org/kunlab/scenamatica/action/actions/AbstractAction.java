@@ -4,6 +4,13 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.kunlab.scenamatica.action.actions.block.AbstractBlockAction;
+import org.kunlab.scenamatica.action.actions.entity.AbstractEntityAction;
+import org.kunlab.scenamatica.action.actions.inventory.AbstractInventoryAction;
+import org.kunlab.scenamatica.action.actions.player.AbstractPlayerAction;
+import org.kunlab.scenamatica.action.actions.scenamatica.AbstractScenamaticaAction;
+import org.kunlab.scenamatica.action.actions.server.AbstractServerAction;
+import org.kunlab.scenamatica.action.actions.world.AbstractWorldAction;
 import org.kunlab.scenamatica.action.input.InputBoardImpl;
 import org.kunlab.scenamatica.action.input.InputTokenImpl;
 import org.kunlab.scenamatica.action.input.TraverserImpl;
@@ -23,7 +30,9 @@ import org.kunlab.scenamatica.interfaces.scenariofile.entity.EntityStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.EntitySpecifier;
 import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.PlayerSpecifier;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
@@ -52,6 +61,21 @@ public abstract class AbstractAction implements Action
                     StructureSerializer::tryDeserializePlayerSpecifier
             )
     ).toArray(new Traverser[0]);
+
+    public static List<? extends AbstractAction> getActions()
+    {
+        List<AbstractAction> actions = new ArrayList<>();
+
+        actions.addAll(AbstractBlockAction.getActions());
+        actions.addAll(AbstractEntityAction.getActions());
+        actions.addAll(AbstractInventoryAction.getActions());
+        actions.addAll(AbstractPlayerAction.getActions());
+        actions.addAll(AbstractServerAction.getActions());
+        actions.addAll(AbstractWorldAction.getActions());
+        actions.addAll(AbstractScenamaticaAction.getActions());
+
+        return actions;
+    }
 
     protected static <T> InputToken<T> ofInput(@NotNull String name, @NotNull Class<T> clazz)
     {

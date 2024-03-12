@@ -8,12 +8,17 @@ import org.bukkit.event.Event;
 import org.bukkit.event.world.WorldEvent;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.action.actions.AbstractAction;
+import org.kunlab.scenamatica.action.actions.world.border.WorldBorderAction;
+import org.kunlab.scenamatica.action.actions.world.border.WorldBorderChangedAction;
 import org.kunlab.scenamatica.commons.utils.NamespaceUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class AbstractWorldAction extends AbstractAction
         implements Watchable
@@ -26,6 +31,21 @@ public abstract class AbstractWorldAction extends AbstractAction
     );
     public static final String KEY_OUT_WORLD = "world";
     private static final String[] PADDING_TARGET = {"the_end", "nether"};
+
+    public static List<? extends AbstractWorldAction> getActions()
+    {
+        List<AbstractWorldAction> actions = new ArrayList<>();
+
+        actions.add(new WorldBorderAction());
+        actions.add(new WorldBorderChangedAction());
+        actions.add(new WorldGameRuleAction());
+        actions.add(new WorldInitAction());
+        actions.add(new WorldLoadAction());
+        actions.add(new WorldSaveAction());
+        actions.add(new WorldUnloadAction());
+
+        return actions;
+    }
 
     @Override
     public boolean checkFired(@NotNull ActionContext ctxt, @NotNull Event event)
