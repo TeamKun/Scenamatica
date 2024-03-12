@@ -5,7 +5,6 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
-import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.enums.ScenarioType;
@@ -59,12 +58,12 @@ public class PlayerInteractAtEntityAction extends PlayerInteractEntityAction
 
         boolean result = ctxt.ifHasInput(IN_POSITION, position -> position.isAdequate(loc));
         if (result)
-            this.makeOutputs(ctxt, e.getPlayer(), e.getRightClicked(), e.getHand(), loc);
+            this.makeOutputs(ctxt, e.getPlayer(), e.getRightClicked(), NMSHand.fromEquipmentSlot(e.getHand()), loc);
 
         return result;
     }
 
-    private void makeOutputs(@NotNull ActionContext ctxt, @NotNull Player player, @NotNull Entity targetEntity, @NotNull EquipmentSlot hand, @NotNull Location position)
+    private void makeOutputs(@NotNull ActionContext ctxt, @NotNull Player player, @NotNull Entity targetEntity, @NotNull NMSHand hand, @NotNull Location position)
     {
         ctxt.output(OUT_POSITION, position);
         super.makeOutputs(ctxt, player, targetEntity, hand);
