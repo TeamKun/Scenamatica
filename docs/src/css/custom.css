@@ -16,6 +16,7 @@
   --ifm-code-font-size: 95%;
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
   --ifm-alert-border-width: 1px;
+  --ifm-footer-background-color: #f5f5f5;
 
   /* navbar を常に黒くする魔法 */
   --ifm-navbar-background-color: #192634;
@@ -52,6 +53,9 @@
   --scenario-type-color-expectation: #75c22c;
 }
 
+.footer {
+  --ifm-footer-background-color: #0c1017;
+}
 
 nav.navbar, nav.navbar a > i {
   color: #e3e3e3;
