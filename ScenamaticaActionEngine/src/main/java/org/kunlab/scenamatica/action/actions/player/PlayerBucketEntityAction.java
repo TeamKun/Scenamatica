@@ -5,7 +5,6 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerBucketEntityEvent;
-import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -19,6 +18,7 @@ import org.kunlab.scenamatica.interfaces.context.Actor;
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.ItemStackStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.EntitySpecifier;
 import org.kunlab.scenamatica.nms.enums.entity.NMSEntityUseAction;
+import org.kunlab.scenamatica.nms.enums.entity.NMSHand;
 
 import java.util.Collections;
 import java.util.List;
@@ -85,7 +85,7 @@ public class PlayerBucketEntityAction extends AbstractPlayerAction
         actor.interactEntity(
                 targetEntity,
                 NMSEntityUseAction.INTERACT,
-                EquipmentSlot.HAND,
+                NMSHand.MAIN_HAND,
                 null
         );
     }

@@ -4,7 +4,6 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
-import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -16,6 +15,7 @@ import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.context.Actor;
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.ItemStackStructure;
+import org.kunlab.scenamatica.nms.enums.entity.NMSHand;
 
 import java.util.Collections;
 import java.util.List;
@@ -82,7 +82,7 @@ public class PlayerItemConsumeAction extends AbstractPlayerAction
 
         this.makeOutputs(ctxt, actor.getPlayer(), item, getReplacement(item));
         // 食べ初めをトリガするので、シナリオタイムアウトになるかもしれない。
-        actor.consume(EquipmentSlot.HAND);
+        actor.consume(NMSHand.MAIN_HAND);
     }
 
     @Override

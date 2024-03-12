@@ -15,6 +15,7 @@ import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.context.Actor;
+import org.kunlab.scenamatica.nms.enums.entity.NMSHand;
 
 import java.util.Collections;
 import java.util.List;
@@ -47,11 +48,12 @@ public class PlayerBucketEmptyAction extends AbstractPlayerBucketAction
 
     @Override
     protected void doEventOnlyMode(@NotNull ActionContext ctxt, Player who, Block block, Block blockClicked,
-                                   BlockFace blockFace, Material bucket, ItemStack itemInHand, EquipmentSlot hand)
+                                   BlockFace blockFace, Material bucket, ItemStack itemInHand, NMSHand hand)
     {
         this.makeOutput(ctxt, who, itemInHand, block, blockFace, bucket, hand);
+        EquipmentSlot handSlot = hand == null ? EquipmentSlot.HAND: hand.toEquipmentSlot();
 
-        PlayerBucketEmptyEvent event = new PlayerBucketEmptyEvent(who, block, blockClicked, blockFace, bucket, itemInHand, hand);
+        PlayerBucketEmptyEvent event = new PlayerBucketEmptyEvent(who, block, blockClicked, blockFace, bucket, itemInHand, handSlot);
         Bukkit.getServer().getPluginManager().callEvent(event);
 
         if (event.isCancelled())
@@ -69,7 +71,7 @@ public class PlayerBucketEmptyAction extends AbstractPlayerBucketAction
             block.getWorld().spawnEntity(block.getLocation(), entityToSpawn);
 
         if (itemInHand != null)
-            who.getInventory().setItem(hand, itemInHand);
+            who.getInventory().setItem(handSlot, itemInHand);
 
     }
 

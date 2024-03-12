@@ -8,7 +8,6 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.enums.ScenarioType;
@@ -21,6 +20,7 @@ import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.context.Actor;
 import org.kunlab.scenamatica.interfaces.scenariofile.misc.BlockStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.PlayerSpecifier;
+import org.kunlab.scenamatica.nms.enums.entity.NMSHand;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -31,11 +31,7 @@ public class BlockPlaceAction extends AbstractBlockAction
 {
     public static final String KEY_ACTION_NAME = "block_place";
     public static final InputToken<PlayerSpecifier> IN_ACTOR = ofInput("actor", PlayerSpecifier.class, ofPlayer());
-    public static final InputToken<EquipmentSlot> IN_HAND = ofEnumInput("hand", EquipmentSlot.class)
-            .validator(
-                    hand -> hand == EquipmentSlot.HAND || hand == EquipmentSlot.OFF_HAND,
-                    "Invalid hand: %s, allowed: " + EquipmentSlot.HAND + ", " + EquipmentSlot.OFF_HAND
-            );
+    public static final InputToken<NMSHand> IN_HAND = ofEnumInput("hand", NMSHand.class);
 
     private static final BlockFace[] ALLOWED_FACES = {
             BlockFace.UP,
@@ -68,7 +64,7 @@ public class BlockPlaceAction extends AbstractBlockAction
         if (ctxt.hasInput(IN_ACTOR))
         {
             BlockFace direction = ctxt.orElseInput(IN_DIRECTION, () -> BlockFace.EAST);
-            EquipmentSlot hand = ctxt.orElseInput(IN_HAND, () -> EquipmentSlot.HAND);
+            NMSHand hand = ctxt.orElseInput(IN_HAND, () -> NMSHand.MAIN_HAND);
 
             Player player = ctxt.input(IN_ACTOR).selectTarget(ctxt.getContext())
                     .orElseThrow(() -> new IllegalStateException("Cannot find player"));
@@ -94,7 +90,7 @@ public class BlockPlaceAction extends AbstractBlockAction
         return at.getType() == typeToPlace;
     }
 
-    private void firePlaceEvent(Block block, Player player, EquipmentSlot hand, BlockFace against)
+    private void firePlaceEvent(Block block, Player player, NMSHand hand, BlockFace against)
     {
         BlockPlaceEvent event = new BlockPlaceEvent(
                 block,
@@ -103,7 +99,7 @@ public class BlockPlaceAction extends AbstractBlockAction
                 new ItemStack(block.getType()),
                 player,
                 block.isBuildable(),
-                hand
+                hand.toEquipmentSlot()
         );
         Bukkit.getPluginManager().callEvent(event);
     }
@@ -118,7 +114,7 @@ public class BlockPlaceAction extends AbstractBlockAction
         BlockPlaceEvent e = (BlockPlaceEvent) event;
 
         return ctxt.ifHasInput(IN_ACTOR, actor -> actor.checkMatchedPlayer(e.getPlayer()))
-                && ctxt.ifHasInput(IN_HAND, hand -> hand == e.getHand())
+                && ctxt.ifHasInput(IN_HAND, hand -> hand == NMSHand.fromEquipmentSlot(e.getHand()))
                 && ctxt.ifHasInput(IN_BLOCK, block -> block.isAdequate(e.getBlockPlaced()));
     }
 

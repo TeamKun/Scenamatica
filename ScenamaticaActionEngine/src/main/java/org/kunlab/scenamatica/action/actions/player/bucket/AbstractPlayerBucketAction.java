@@ -7,7 +7,6 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerBucketEvent;
-import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -21,6 +20,7 @@ import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.context.Actor;
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.ItemStackStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.misc.BlockStructure;
+import org.kunlab.scenamatica.nms.enums.entity.NMSHand;
 
 public abstract class AbstractPlayerBucketAction extends AbstractPlayerAction
         implements Watchable
@@ -48,12 +48,9 @@ public abstract class AbstractPlayerBucketAction extends AbstractPlayerAction
             "bucket",
             Material.class
     );
-    public static final InputToken<EquipmentSlot> IN_HAND = ofEnumInput(
+    public static final InputToken<NMSHand> IN_HAND = ofEnumInput(
             "hand",
-            EquipmentSlot.class
-    ).validator(
-            (slot) -> slot == EquipmentSlot.HAND || slot == EquipmentSlot.OFF_HAND,
-            "The hand must be either hand or off hand"
+            NMSHand.class
     );
     public static final InputToken<Boolean> IN_EVENT_ONLY = ofInput(
             "eventOnly",
@@ -218,12 +215,12 @@ public abstract class AbstractPlayerBucketAction extends AbstractPlayerAction
     protected void makeOutput(@NotNull ActionContext ctxt, @NotNull PlayerBucketEvent event)
     {
         this.makeOutput(ctxt, event.getPlayer(), event.getItemStack(), event.getBlock(), event.getBlockFace(),
-                event.getBucket(), event.getHand()
+                event.getBucket(), NMSHand.fromEquipmentSlot(event.getHand())
         );
     }
 
     protected void makeOutput(@NotNull ActionContext ctxt, @NotNull Player player, ItemStack item, Block block,
-                              BlockFace face, Material bucket, EquipmentSlot hand)
+                              BlockFace face, Material bucket, NMSHand hand)
     {
         ctxt.output(KEY_OUT_ITEM, item);
         ctxt.output(KEY_OUT_BLOCK, block);
@@ -246,7 +243,7 @@ public abstract class AbstractPlayerBucketAction extends AbstractPlayerAction
                 && ctxt.ifHasInput(IN_BLOCK_CLICKED, (block) -> block.isAdequate(e.getBlockClicked()))
                 && ctxt.ifHasInput(IN_BLOCK_FACE, (face) -> face == e.getBlockFace())
                 && ctxt.ifHasInput(IN_BUCKET, (bucket) -> bucket == e.getBucket())
-                && ctxt.ifHasInput(IN_HAND, (hand) -> hand == e.getHand());
+                && ctxt.ifHasInput(IN_HAND, (hand) -> hand == NMSHand.fromEquipmentSlot(e.getHand()));
 
         if (result)
             this.makeOutput(ctxt, e);
@@ -261,12 +258,12 @@ public abstract class AbstractPlayerBucketAction extends AbstractPlayerAction
             Block blockClicked = null;
             if (ctxt.hasInput(IN_BLOCK_CLICKED))
                 blockClicked = ctxt.input(IN_BLOCK_CLICKED).apply(ctxt.getEngine(), null);
-            EquipmentSlot hand = ctxt.orElseInput(IN_HAND, () -> null);
+            NMSHand hand = ctxt.orElseInput(IN_HAND, () -> null);
             this.doEventOnlyMode(ctxt, player, block, blockClicked, direction, stack.getType(), stack, hand);
             return;
         }
 
-        this.makeOutput(ctxt, player, stack, block, direction, stack.getType(), EquipmentSlot.HAND);
+        this.makeOutput(ctxt, player, stack, block, direction, stack.getType(), NMSHand.MAIN_HAND);
         actor.placeItem(
                 block.getLocation(),
                 stack,
@@ -275,5 +272,5 @@ public abstract class AbstractPlayerBucketAction extends AbstractPlayerAction
     }
 
     protected abstract void doEventOnlyMode(@NotNull ActionContext ctxt, Player who, Block block, Block blockClicked,
-                                            BlockFace blockFace, Material bucket, ItemStack itemInHand, EquipmentSlot hand);
+                                            BlockFace blockFace, Material bucket, ItemStack itemInHand, NMSHand hand);
 }

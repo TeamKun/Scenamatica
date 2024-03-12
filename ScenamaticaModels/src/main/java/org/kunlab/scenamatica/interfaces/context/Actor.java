@@ -14,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.interfaces.scenariofile.context.PlayerStructure;
 import org.kunlab.scenamatica.nms.enums.entity.NMSEntityUseAction;
+import org.kunlab.scenamatica.nms.enums.entity.NMSHand;
 
 import java.util.UUID;
 
@@ -60,7 +61,7 @@ public interface Actor
      * @param hand     クリックする手
      * @param location クリックする位置
      */
-    void interactEntity(@NotNull Entity entity, @NotNull NMSEntityUseAction type, @Nullable EquipmentSlot hand,
+    void interactEntity(@NotNull Entity entity, @NotNull NMSEntityUseAction type, @Nullable NMSHand hand,
                         @Nullable Location location);
 
     /**
@@ -91,10 +92,10 @@ public interface Actor
      *
      * @param location  設置するブロックの位置
      * @param stack     設置するブロックのアイテム
-     * @param slot      プレイヤの手( {@link EquipmentSlot#HAND} または {@link EquipmentSlot#OFF_HAND} )
+     * @param hand      プレイヤの手
      * @param direction プレイヤの向き
      */
-    void placeBlock(@NotNull Location location, @NotNull ItemStack stack, @NotNull EquipmentSlot slot, @NotNull BlockFace direction);
+    void placeBlock(@NotNull Location location, @NotNull ItemStack stack, @NotNull NMSHand hand, @NotNull BlockFace direction);
 
     /**
      * サーバに参加します。
@@ -125,22 +126,22 @@ public interface Actor
     /**
      * アイテムを食べます。
      *
-     * @param slot 食べるアイテムの手( {@link EquipmentSlot#HAND} または {@link EquipmentSlot#OFF_HAND} )
+     * @param hand 食べるアイテムの手
      * @throws IllegalStateException アイテムを持っていない場合/アイテムが食べられない場合
      */
-    void consume(@NotNull EquipmentSlot slot);
+    void consume(@NotNull NMSHand hand);
 
     /**
      * 持ってるツールを壊します。
      *
-     * @param slot 壊すツールの手( {@link EquipmentSlot#HAND} または {@link EquipmentSlot#OFF_HAND} )
+     * @param slot 壊すツールの装備スロット
      */
     void breakItem(@NotNull EquipmentSlot slot);
 
     /**
      * 持ってるアイテムにダメージを与えます。
      *
-     * @param slot   手
+     * @param slot   ダメージを与えるアイテムの装備スロット
      * @param damage ダメージ
      */
     void damageItem(@NotNull EquipmentSlot slot, int damage);

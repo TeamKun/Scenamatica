@@ -15,6 +15,7 @@ import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.context.Actor;
 import org.kunlab.scenamatica.interfaces.scenariofile.misc.LocationStructure;
 import org.kunlab.scenamatica.nms.enums.entity.NMSEntityUseAction;
+import org.kunlab.scenamatica.nms.enums.entity.NMSHand;
 
 import java.util.Collections;
 import java.util.List;
@@ -36,7 +37,7 @@ public class PlayerInteractAtEntityAction extends PlayerInteractEntityAction
     }
 
     @Override
-    protected void doInteract(ActionContext ctxt, Entity targeTentity, Actor actor, @NotNull EquipmentSlot hand)
+    protected void doInteract(ActionContext ctxt, Entity targeTentity, Actor actor, @NotNull NMSHand hand)
     {
         actor.interactEntity(
                 targeTentity,

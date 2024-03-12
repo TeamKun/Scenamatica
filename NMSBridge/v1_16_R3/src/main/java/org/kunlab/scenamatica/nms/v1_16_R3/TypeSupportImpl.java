@@ -1,5 +1,6 @@
 package org.kunlab.scenamatica.nms.v1_16_R3;
 
+import net.minecraft.server.v1_16_R3.EnumHand;
 import net.minecraft.server.v1_16_R3.EnumMoveType;
 import net.minecraft.server.v1_16_R3.PacketPlayInUseEntity;
 import org.jetbrains.annotations.NotNull;
@@ -7,6 +8,7 @@ import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.nms.NMSElement;
 import org.kunlab.scenamatica.nms.TypeSupport;
 import org.kunlab.scenamatica.nms.enums.entity.NMSEntityUseAction;
+import org.kunlab.scenamatica.nms.enums.entity.NMSHand;
 import org.kunlab.scenamatica.nms.enums.entity.NMSMoveType;
 
 public class TypeSupportImpl implements TypeSupport
@@ -79,6 +81,32 @@ public class TypeSupportImpl implements TypeSupport
         }
     }
 
+    public static NMSHand fromNMS(EnumHand hand)
+    {
+        switch (hand)
+        {
+            case MAIN_HAND:
+                return NMSHand.MAIN_HAND;
+            case OFF_HAND:
+                return NMSHand.OFF_HAND;
+            default:
+                throw new IllegalArgumentException("Unknown EnumHand: " + hand.name());
+        }
+    }
+
+    public static EnumHand toNMS(NMSHand hand)
+    {
+        switch (hand)
+        {
+            case MAIN_HAND:
+                return EnumHand.MAIN_HAND;
+            case OFF_HAND:
+                return EnumHand.OFF_HAND;
+            default:
+                throw new IllegalArgumentException("Unknown NMSHand: " + hand.name());
+        }
+    }
+
     @Override
     @SuppressWarnings("unchecked")
     public <T, U extends NMSElement> T toNMS(@Nullable U enumValue, @NotNull Class<T> clazz)
@@ -91,6 +119,8 @@ public class TypeSupportImpl implements TypeSupport
             value = toNMS((NMSEntityUseAction) enumValue);
         else if (enumValue instanceof NMSMoveType && clazz.equals(EnumMoveType.class))
             value = toNMS((NMSMoveType) enumValue);
+        else if (enumValue instanceof NMSHand && clazz.equals(EnumHand.class))
+            value = toNMS((NMSHand) enumValue);
 
         if (value != null)
             return (T) value;
@@ -109,6 +139,8 @@ public class TypeSupportImpl implements TypeSupport
             value = fromNMS((PacketPlayInUseEntity.EnumEntityUseAction) nmsValue);
         else if (nmsValue instanceof EnumMoveType)
             value = fromNMS((EnumMoveType) nmsValue);
+        else if (nmsValue instanceof EnumHand)
+            value = fromNMS((EnumHand) nmsValue);
 
         if (value != null)
             return (T) value;

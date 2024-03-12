@@ -52,6 +52,7 @@ import org.kunlab.scenamatica.interfaces.context.ActorManager;
 import org.kunlab.scenamatica.interfaces.scenariofile.context.PlayerStructure;
 import org.kunlab.scenamatica.nms.NMSProvider;
 import org.kunlab.scenamatica.nms.enums.entity.NMSEntityUseAction;
+import org.kunlab.scenamatica.nms.enums.entity.NMSHand;
 
 import java.io.IOException;
 import java.lang.reflect.Constructor;
@@ -104,18 +105,6 @@ class MockedPlayer extends EntityPlayer implements Actor
         }
     }
 
-    private static EnumHand toHand(EquipmentSlot slot)
-    {
-        final EnumHand DEFAULT_HAND = EnumHand.MAIN_HAND;
-
-        if (slot == null)
-            return DEFAULT_HAND;
-        else if (!(slot == EquipmentSlot.HAND || slot == EquipmentSlot.OFF_HAND))
-            throw new IllegalArgumentException("slot must be HAND or OFF_HAND");
-
-        return slot == EquipmentSlot.HAND ? EnumHand.MAIN_HAND: EnumHand.OFF_HAND;
-    }
-
     @Override
     public @NotNull ActorManager getManager()
     {
@@ -163,10 +152,10 @@ class MockedPlayer extends EntityPlayer implements Actor
     @SneakyThrows(IOException.class)
     @Override
     public void interactEntity(@NotNull org.bukkit.entity.Entity entity, @NotNull NMSEntityUseAction type,
-                               @Nullable EquipmentSlot hand, @Nullable Location location)
+                               @Nullable NMSHand hand, @Nullable Location location)
     {
         int entityId = entity.getEntityId();
-        EnumHand enumHand = toHand(hand);
+        EnumHand enumHand = NMSProvider.getTypeSupport().toNMS(hand, EnumHand.class);
         PacketPlayInUseEntity.EnumEntityUseAction nmsAction = NMSProvider.getTypeSupport().toNMS(type, PacketPlayInUseEntity.EnumEntityUseAction.class);
 
         PacketDataSerializer serializer = new PacketDataSerializer(Unpooled.buffer());
@@ -240,10 +229,10 @@ class MockedPlayer extends EntityPlayer implements Actor
     }
 
     @Override
-    public void placeBlock(@NotNull Location location, @NotNull ItemStack stack, @NotNull EquipmentSlot slot, @NotNull BlockFace direction)
+    public void placeBlock(@NotNull Location location, @NotNull ItemStack stack, @NotNull NMSHand nmsHand, @NotNull BlockFace direction)
     {
         net.minecraft.server.v1_16_R3.ItemStack nmsTack = CraftItemStack.asNMSCopy(stack);
-        EnumHand hand = slot == EquipmentSlot.HAND ? EnumHand.MAIN_HAND: EnumHand.OFF_HAND;
+        EnumHand hand = NMSProvider.getTypeSupport().toNMS(nmsHand, EnumHand.class);
         MovingObjectPositionBlock position = new MovingObjectPositionBlock(
                 /* vec3D: */ new Vec3D(location.getX(), location.getY(), location.getZ()),
                 /* enumDirection: */ EnumDirection.valueOf(direction.name()),  // 互換性あり
@@ -314,13 +303,13 @@ class MockedPlayer extends EntityPlayer implements Actor
     }
 
     @Override
-    public void consume(@NotNull EquipmentSlot slot)
+    public void consume(@NotNull NMSHand nmsHand)
     {
-        EnumHand hand = toHand(slot);
+        EnumHand hand = NMSProvider.getTypeSupport().toNMS(nmsHand, EnumHand.class);
 
         net.minecraft.server.v1_16_R3.ItemStack nmsStack = this.b(hand);
         if (!(nmsStack == null || nmsStack.getItem().isFood()))
-            throw new IllegalStateException("Item in " + slot.name() + " is not food");
+            throw new IllegalStateException("Item in " + nmsHand.name() + " is not food");
 
         this.c(hand);
     }

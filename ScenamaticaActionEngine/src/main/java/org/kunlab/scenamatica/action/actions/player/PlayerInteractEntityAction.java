@@ -5,7 +5,6 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
-import org.bukkit.inventory.EquipmentSlot;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.enums.ScenarioType;
@@ -17,6 +16,7 @@ import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.context.Actor;
 import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.EntitySpecifier;
 import org.kunlab.scenamatica.nms.enums.entity.NMSEntityUseAction;
+import org.kunlab.scenamatica.nms.enums.entity.NMSHand;
 
 import java.util.Collections;
 import java.util.List;
@@ -26,11 +26,7 @@ public class PlayerInteractEntityAction extends AbstractPlayerAction
 {
     public static final String KEY_ACTION_NAME = "player_interact_entity";
     public static final InputToken<EntitySpecifier<Entity>> IN_ENTITY = ofSpecifier("entity");
-    public static final InputToken<EquipmentSlot> IN_HAND = ofEnumInput("hand", EquipmentSlot.class)
-            .validator(
-                    (slot) -> slot == EquipmentSlot.HAND || slot == EquipmentSlot.OFF_HAND,
-                    "The hand must be either hand or off hand"
-            );
+    public static final InputToken<NMSHand> IN_HAND = ofEnumInput("hand", NMSHand.class);
 
     public static final String KEY_OUT_ENTITY = "entity";
     public static final String KEY_OUT_HAND = "hand";
@@ -47,7 +43,7 @@ public class PlayerInteractEntityAction extends AbstractPlayerAction
         Player player = selectTarget(ctxt);
         Entity targetEntity = ctxt.input(IN_ENTITY).selectTarget(ctxt.getContext())
                 .orElseThrow(() -> new IllegalStateException("Target entity is not found."));
-        EquipmentSlot hand = ctxt.orElseInput(IN_HAND, () -> EquipmentSlot.HAND);
+        NMSHand hand = ctxt.orElseInput(IN_HAND, () -> NMSHand.MAIN_HAND);
 
         int distanceFromEntity = (int) player.getLocation().distance(targetEntity.getLocation());
         if (distanceFromEntity > 36)
@@ -63,7 +59,7 @@ public class PlayerInteractEntityAction extends AbstractPlayerAction
         this.doInteract(ctxt, targetEntity, actor, hand);
     }
 
-    protected void doInteract(ActionContext ctxt, Entity targeTentity, Actor actor, @NotNull EquipmentSlot hand)
+    protected void doInteract(ActionContext ctxt, Entity targeTentity, Actor actor, @NotNull NMSHand hand)
     {
         this.makeOutputs(ctxt, actor.getPlayer(), targeTentity, hand);
         actor.interactEntity(
@@ -75,13 +71,13 @@ public class PlayerInteractEntityAction extends AbstractPlayerAction
     }
 
     private void eventOnlyMode(@NotNull ActionContext ctxt, @NotNull Player who, @NotNull Entity targetEntity,
-                               @NotNull EquipmentSlot hand)
+                               @NotNull NMSHand hand)
     {
         this.makeOutputs(ctxt, who, targetEntity, hand);
         PlayerInteractEntityEvent event = new PlayerInteractEntityEvent(
                 who,
                 targetEntity,
-                hand
+                hand.toEquipmentSlot()
         );
 
         Bukkit.getPluginManager().callEvent(event);
@@ -97,15 +93,15 @@ public class PlayerInteractEntityAction extends AbstractPlayerAction
         PlayerInteractEntityEvent e = (PlayerInteractEntityEvent) event;
 
         boolean result = ctxt.ifHasInput(IN_ENTITY, entity -> entity.checkMatchedEntity(e.getRightClicked()))
-                && ctxt.ifHasInput(IN_HAND, hand -> hand == e.getHand());
+                && ctxt.ifHasInput(IN_HAND, hand -> hand == NMSHand.fromEquipmentSlot(e.getHand()));
         if (result)
-            this.makeOutputs(ctxt, e.getPlayer(), e.getRightClicked(), e.getHand());
+            this.makeOutputs(ctxt, e.getPlayer(), e.getRightClicked(), NMSHand.fromEquipmentSlot(e.getHand()));
 
         return result;
     }
 
     protected void makeOutputs(@NotNull ActionContext ctxt, @NotNull Player player, @Nullable Entity targetEntity,
-                               @NotNull EquipmentSlot hand)
+                               @NotNull NMSHand hand)
     {
         ctxt.output(KEY_OUT_ENTITY, targetEntity);
         ctxt.output(KEY_OUT_HAND, hand);
