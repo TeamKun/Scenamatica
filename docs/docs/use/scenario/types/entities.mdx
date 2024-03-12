@@ -403,7 +403,8 @@ LivingEntity 型は以下の親構造を持ちます。
   },
   {
     name: "handRaised",
-    type: "Enum{MAIN_HAND, OFF_HAND}",
+    type: "Hand",
+    type_link: "/docs/use/scenario/types/entities#hand",
     description: "上げている手です。"
   },
   {
@@ -624,6 +625,13 @@ Player 型は以下の親構造を持ちます。
 上記の設定を取り消すことはできません。
 
 :::
+
+--
+
+## Hand 列挙型 {#hand}
+
++ `MAIN_HAND` - 利き手
++ `OFF_HAND` - じゃないほう
 
 ---
 

@@ -17,12 +17,8 @@
       "availableFor": ["execute", "watch"]
     },
     "hand": {
-      "type": "string",
+      "type": "hand",
       "description": "ブロックを設置した手です。",
-      "enum": [
-        "HAND",
-        "OFF_HAND"
-      ],
       "availableFor": ["execute"]
     },
     "direction": {

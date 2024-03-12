@@ -17,12 +17,8 @@
       "requiredOn": ["execute"]
     },
     "hand": {
-      "type": "string",
-      "description": "クリックする手です。",
-      "enum": [
-        "HAND",
-        "OFF_HAND"
-      ]
+      "type": "hand",
+      "description": "クリックする手です。"
     }
   },
   "outputs": {
@@ -31,12 +27,8 @@
       "type": "entity"
     },
     "hand": {
-      "description": "クリックした手です。",
-      "type": "string",
-      "enum": [
-        "HAND",
-        "OFF_HAND"
-      ]
+      "type": "hand",
+      "description": "クリックした手です。"
     }
   }
 }

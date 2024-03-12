@@ -23,11 +23,8 @@
       "description": "設置する液体のバケツです。"
     },
     "hand": {
+      "type": "hand",
       "description": "バケツを使用する手です。",
-      "enum": [
-        "MAIN_HAND",
-        "OFF_HAND"
-      ],
       "availableFor": ["watch"]
     },
     "eventOnly": {
@@ -54,11 +51,8 @@
       "description": "設置する液体のバケツです。"
     },
     "hand": {
-      "description": "バケツを使用する手です。",
-      "enum": [
-        "MAIN_HAND",
-        "OFF_HAND"
-      ]
+      "type": "hand",
+      "description": "バケツを使用する手です。"
     }
   }
 }

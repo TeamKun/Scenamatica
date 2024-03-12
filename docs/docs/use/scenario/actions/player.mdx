@@ -136,8 +136,9 @@ import {ObjectType} from "/src/components/Object";
           {
             name: "hand",
             description: "使用する手です。",
-            type: "列挙型{HAND, OFF_HAND}",
-            default: "HAND",
+            type: "Hand",
+            type_link: "/docs/use/scenario/types/entities#hand",
+            default: "MAIN_HAND",
             available: [ScenarioType.WATCH]
           },
           {
@@ -181,8 +182,8 @@ import {ObjectType} from "/src/components/Object";
           {
             name: "hand",
             description: "使用した手です。",
-            type: "列挙型{HAND, OFF_HAND}",
-            default: "HAND"
+            type: "Hand",
+            type_link: "/docs/use/scenario/types/entities#hand"
           },
         ]}
         executable={"バケツ内の液体をブロックに撒きます。"}
@@ -260,8 +261,9 @@ NMS の仕様上の都合により、 `block` を用いた液体の場所は `ev
           {
             name: "hand",
             description: "使用する手です。",
-            type: "列挙型{HAND, OFF_HAND}",
-            default: "HAND",
+            type: "Hand",
+            type_link: "/docs/use/scenario/types/entities#hand",
+            default: "MAIN_HAND",
             available: [ScenarioType.WATCH]
           },
           {
@@ -305,8 +307,9 @@ NMS の仕様上の都合により、 `block` を用いた液体の場所は `ev
           {
             name: "hand",
             description: "使用した手です。",
-            type: "列挙型{HAND, OFF_HAND}",
-            default: "HAND"
+            type: "Hand",
+            type_link: "/docs/use/scenario/types/entities#hand",
+            default: "MAIN_HAND",
           },
         ]}
         executable={"バケツ内の液体をブロックに撒きます。"}
@@ -1152,7 +1155,8 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
           },
           {
             name: "hand",
-            type: "列挙型{HAND, OFF_HAND}",
+            type: "Hand",
+            type_link: "/docs/use/scenario/types/entities#hand",
             description: "クリックする手です。",
           },
           {
@@ -1178,7 +1182,8 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
           },
           {
             name: "hand",
-            type: "列挙型{HAND, OFF_HAND}",
+            type: "Hand",
+            type_link: "/docs/use/scenario/types/entities#hand",
             description: "クリックする手です。",
           },
           {
@@ -1229,7 +1234,8 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
             name: "hand",
             anchor: "hand",
             description: "クリックされた手です。",
-            type: "列挙型{HAND, OFF_HAND}"
+            type: "Hand",
+            type_link: "/docs/use/scenario/types/entities#hand",
           },
           {
             name: "action",
@@ -1264,7 +1270,8 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
             name: "hand",
             anchor: "hand",
             description: "クリックされた手です。",
-            type: "列挙型{HAND, OFF_HAND}"
+            type: "Hand",
+            type_link: "/docs/use/scenario/types/entities#hand",
           },
           {
             name: "action",
@@ -1311,9 +1318,10 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
           },
           {
             name: "hand",
-            type: "列挙型{HAND, OFF_HAND}",
+            type: "Hand",
+            type_link: "/docs/use/scenario/types/entities#hand",
             description: "クリックする手です。",
-            default: "HAND(on execute action)"
+            default: "MAIN_HAND(on execute action)"
           }
         ]}
         outputs={[
@@ -1331,7 +1339,8 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
           },
           {
             name: "hand",
-            type: "列挙型{HAND, OFF_HAND}",
+            type: "Hand",
+            type_link: "/docs/use/scenario/types/entities#hand",
             description: "クリックした手です。",
           }
         ]}

@@ -1643,5 +1643,13 @@
       "DEATH",
       "PLUGIN"
     ]
+  },
+  "hand": {
+    "type": "string",
+    "description": "手の種類です。",
+    "enum": [
+      "MAIN_HAND",
+      "OFF_HAND"
+    ]
   }
 }

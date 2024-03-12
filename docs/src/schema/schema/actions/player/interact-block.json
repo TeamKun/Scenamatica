@@ -26,12 +26,8 @@
       "type": "block"
     },
     "hand": {
-      "type": "string",
-      "description": "プレイヤがクリックした手です。",
-      "enum": [
-        "HAND",
-        "OFF_HAND"
-      ]
+      "type": "hand",
+      "description": "プレイヤがクリックした手です。"
     },
     "blockFace": {
         "description": "プレイヤがクリックしたブロックの面です。",
@@ -44,12 +40,8 @@
       "description": "プレイヤがクリックしたブロックです。"
     },
     "hand": {
-      "type": "string",
-      "description": "プレイヤがクリックした手です。",
-      "enum": [
-        "HAND",
-        "OFF_HAND"
-      ]
+      "type": "hand",
+      "description": "プレイヤがクリックした手です。"
     },
     "action": {
       "type": "string",
