@@ -9,11 +9,19 @@ on:
 
 jobs:
   qodana:
+    strategy:
+      matrix:
+        minecraft: [1.16.5]
     runs-on: self-hosted
     steps:
       - uses: actions/checkout@v3
+      - name: Set up JDK 8
+        uses: actions/setup-java@v3
+        id: sj
         with:
-          fetch-depth: 0
+          java-version: 8
+          distribution: zulu
+          cache: maven
       - name: Set up Maven
         uses: stCarolas/setup-maven@v5
         with:
@@ -21,13 +29,25 @@ jobs:
       - uses: PeyaPeyaPeyang/nmsaction@v3
         if: "steps.sj.outputs.cache-hit != 'true'"
         with:
-          rev: 1.16.5
+          rev: ${{ matrix.minecraft }}
       - name: Install nms into m2
         if: "steps.sj.outputs.cache-hit != 'true'"
         run: |
-          mkdir -p $HOME/.m2/repository
-          cp -a nms-build/.m2/repository/. $HOME/.m2/repository
+          mkdir -p $HOME/.m2
+          cp -a nms-build/.m2/. $HOME/.m2
+      - name: Install Maven
+        run: |
+          mvn -B install --file pom.xml
+      - name: Retrieve the absolute path of .m2
+        id: m2-path
+        run: |
+          mkdir -p m2-copy
+          cp -a $HOME/.m2/. m2-copy
+          M2_PATH=$(pwd)/m2-copy
+          echo "m2-path=$M2_PATH" >> $GITHUB_OUTPUT
       - name: 'Qodana Scan'
         uses: JetBrains/qodana-action@main
+        with:
+          args: --volume,${{ steps.m2-path.outputs.m2-path }}:/data/cache/.m2
         env:
           QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }}
