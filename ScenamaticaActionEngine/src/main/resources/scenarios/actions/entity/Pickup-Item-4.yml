@@ -22,7 +22,7 @@ scenario:
         type: minecraft:stone
         amount: 10
   - type: expect
-    action: entity_damage
+    action: entity_pickup_item
     with:
       target: ${scenario.scenario.0.output.target}
       item:
@@ -32,8 +32,11 @@ scenario:
     action: entity_pickup_item
     with:
       target: ${scenario.scenario.1.output.target}
+      item:
+        type: minecraft:stone
+        amount: 10
   - type: expect
-    action: entity_damage
+    action: entity_pickup_item
     with:
       target: "@e[type=minecraft:villager,tag=810snpi]"
       item:
