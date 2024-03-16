@@ -6,8 +6,13 @@
   "requireable": "条件要求アクションの判定結果を反転して取得します。",
   "arguments": {
     "action": {
-      "type": "action",
-      "$scenarioKindOf": "require"
+      "type": "actionKinds",
+      "$scenarioKindOf": "require",
+      "requiredOn": true
+    },
+    "with": {
+      "type": "actionArgument",
+      "description": "アクションの種類によっては、このプロパティにアクションの引数を指定します。"
     }
   }
 }
