@@ -24,6 +24,6 @@ public interface NMSEntity extends NMSWrapped
      * @param moveType 動かす方法
      * @param location 動かす先の座標
      */
-    @Versioned(from = "1.13")
+    @Versioned(from = "1.16.5")
     void move(NMSMoveType moveType, Location location);
 }

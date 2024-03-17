@@ -6,17 +6,20 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.kunlab.scenamatica.nms.WrapperProvider;
 import org.kunlab.scenamatica.nms.impl.v1_16_R3.entity.NMSEntityHumanImpl;
 import org.kunlab.scenamatica.nms.impl.v1_16_R3.entity.NMSEntityImpl;
 import org.kunlab.scenamatica.nms.impl.v1_16_R3.entity.NMSEntityLivingImpl;
 import org.kunlab.scenamatica.nms.impl.v1_16_R3.entity.NMSEntityPlayerImpl;
+import org.kunlab.scenamatica.nms.impl.v1_16_R3.item.NMSItemStackImpl;
 import org.kunlab.scenamatica.nms.types.NMSMinecraftServer;
 import org.kunlab.scenamatica.nms.types.NMSWorldServer;
 import org.kunlab.scenamatica.nms.types.entity.NMSEntity;
 import org.kunlab.scenamatica.nms.types.entity.NMSEntityHuman;
 import org.kunlab.scenamatica.nms.types.entity.NMSEntityLiving;
 import org.kunlab.scenamatica.nms.types.entity.NMSEntityPlayer;
+import org.kunlab.scenamatica.nms.types.item.NMSItemStack;
 
 public class WrapperProviderImpl implements WrapperProvider
 {
@@ -35,9 +38,14 @@ public class WrapperProviderImpl implements WrapperProvider
         return new NMSEntityHumanImpl(bukkitEntity);
     }
 
-    public static NMSEntityPlayer wrap$(org.bukkit.entity.Player bukkitEntity)
+    public static NMSEntityPlayer wrap$(Player bukkitEntity)
     {
         return new NMSEntityPlayerImpl(bukkitEntity);
+    }
+
+    public static NMSItemStack wrap$(ItemStack bukkitItemStack)
+    {
+        return new NMSItemStackImpl(bukkitItemStack);
     }
 
     public static NMSWorldServer wrap$(World bukkitWorld)
@@ -72,6 +80,12 @@ public class WrapperProviderImpl implements WrapperProvider
     public NMSEntityPlayer wrap(Player bukkitEntity)
     {
         return wrap$(bukkitEntity);
+    }
+
+    @Override
+    public NMSItemStack wrap(ItemStack bukkitItemStack)
+    {
+        return wrap$(bukkitItemStack);
     }
 
     @Override

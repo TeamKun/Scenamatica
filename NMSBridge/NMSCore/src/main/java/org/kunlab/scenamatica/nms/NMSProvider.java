@@ -2,8 +2,10 @@ package org.kunlab.scenamatica.nms;
 
 import lombok.Getter;
 import org.bukkit.Bukkit;
+import org.kunlab.scenamatica.nms.impl.v1_16_R3.NMSRegistryImpl;
 import org.kunlab.scenamatica.nms.impl.v1_16_R3.TypeSupportImpl;
 import org.kunlab.scenamatica.nms.impl.v1_16_R3.WrapperProviderImpl;
+import org.kunlab.scenamatica.nms.types.NMSRegistry;
 
 public class NMSProvider
 {
@@ -11,6 +13,7 @@ public class NMSProvider
     private static String version;
     private static WrapperProvider provider;
     private static TypeSupport typeSupport;
+    private static NMSRegistry registry;
 
     public static WrapperProvider getProvider()
     {
@@ -40,6 +43,7 @@ public class NMSProvider
             case "v1_16_R3":
                 provider = new WrapperProviderImpl();
                 typeSupport = new TypeSupportImpl();
+                registry = new NMSRegistryImpl();
                 break;
             default:
                 throw new IllegalStateException("Unsupported server version: " + version);

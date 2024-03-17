@@ -8,7 +8,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.player.PlayerAnimationType;
-import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -122,21 +121,6 @@ public interface Actor
      * サーバからエラーでキックされます。
      */
     void kickErroneous();
-
-    /**
-     * 持ってるツールを壊します。
-     *
-     * @param slot 壊すツールの装備スロット
-     */
-    void breakItem(@NotNull EquipmentSlot slot);
-
-    /**
-     * 持ってるアイテムにダメージを与えます。
-     *
-     * @param slot   ダメージを与えるアイテムの装備スロット
-     * @param damage ダメージ
-     */
-    void damageItem(@NotNull EquipmentSlot slot, int damage);
 
     /**
      * クリエイティブモードでアイテムを与えます。

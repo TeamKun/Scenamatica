@@ -6,6 +6,8 @@ import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerItemBreakEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.Damageable;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.enums.ScenarioType;
@@ -14,8 +16,12 @@ import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
-import org.kunlab.scenamatica.interfaces.context.Actor;
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.ItemStackStructure;
+import org.kunlab.scenamatica.nms.NMSProvider;
+import org.kunlab.scenamatica.nms.enums.entity.NMSItemSlot;
+import org.kunlab.scenamatica.nms.types.entity.NMSEntityLiving;
+import org.kunlab.scenamatica.nms.types.item.NMSItem;
+import org.kunlab.scenamatica.nms.types.item.NMSItemStack;
 
 import java.util.Collections;
 import java.util.List;
@@ -46,17 +52,35 @@ public class PlayerItemBreakAction extends AbstractPlayerAction
     @Override
     public void execute(@NotNull ActionContext ctxt)
     {
-        Actor actor = ctxt.getActorOrThrow(selectTarget(ctxt));
+        Player player = selectTarget(ctxt);
         EquipmentSlot slot = ctxt.orElseInput(IN_SLOT, () -> EquipmentSlot.HAND);
 
         if (ctxt.hasInput(IN_ITEM))
-            actor.getPlayer().getInventory().setItem(slot, ctxt.input(IN_ITEM).create());
+            player.getInventory().setItem(slot, ctxt.input(IN_ITEM).create());
 
-        ItemStack item = actor.getPlayer().getInventory().getItem(slot);
+        ItemStack item = player.getInventory().getItem(slot);
         if (item == null)
             throw new IllegalStateException("Item is null");
-        this.makeOutputs(ctxt, actor.getPlayer(), item, slot);
-        actor.breakItem(slot);
+        else if (!this.isDamageable(item))
+            throw new IllegalStateException("Item is not damageable");
+        this.makeOutputs(ctxt, player, item, slot);
+
+        NMSItemSlot nmsSlot = NMSItemSlot.fromBukkit(slot);
+        NMSEntityLiving nmsPlayer = NMSProvider.getProvider().wrap(player);
+        NMSItemStack nmsStack = NMSProvider.getProvider().wrap(item);
+        NMSItem nmsItem = nmsStack.getItem();
+
+        int damageToApply = 999;
+        ItemMeta meta = item.getItemMeta();
+        if (meta instanceof Damageable)
+        {
+            Damageable damageable = (Damageable) meta;
+            int maxDurability = nmsItem.getMaxDurability();
+            int currentDurability = maxDurability - damageable.getDamage();
+            damageToApply = Math.min(damageToApply, currentDurability);
+        }
+
+        nmsStack.damage(damageToApply, nmsPlayer, nmsEntityLiving -> nmsEntityLiving.broadcastItemBreak(nmsSlot));
     }
 
     private boolean isDamageable(ItemStack itemInMainHand)

@@ -13,10 +13,8 @@ import net.minecraft.server.v1_16_R3.Entity;
 import net.minecraft.server.v1_16_R3.EntityPlayer;
 import net.minecraft.server.v1_16_R3.EnumDirection;
 import net.minecraft.server.v1_16_R3.EnumHand;
-import net.minecraft.server.v1_16_R3.EnumItemSlot;
 import net.minecraft.server.v1_16_R3.EnumMoveType;
 import net.minecraft.server.v1_16_R3.InventoryClickType;
-import net.minecraft.server.v1_16_R3.Item;
 import net.minecraft.server.v1_16_R3.ItemActionContext;
 import net.minecraft.server.v1_16_R3.MinecraftServer;
 import net.minecraft.server.v1_16_R3.MovingObjectPositionBlock;
@@ -32,7 +30,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.craftbukkit.v1_16_R3.CraftEquipmentSlot;
 import org.bukkit.craftbukkit.v1_16_R3.event.CraftEventFactory;
 import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
@@ -41,7 +38,6 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.player.PlayerAnimationType;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -300,26 +296,6 @@ class MockedPlayer extends EntityPlayer implements Actor
                 /* throwable: */ new IllegalStateException("Erroneous packet for " + this.getName() + " [E]!")
         );
         this.actualLeave("Internal server error");
-    }
-
-    @Override
-    public void breakItem(@NotNull EquipmentSlot slot)
-    {
-        EnumItemSlot nmsSlot = CraftEquipmentSlot.getNMS(slot);
-        net.minecraft.server.v1_16_R3.ItemStack st = this.getEquipment(nmsSlot);
-        Item item = st.getItem();
-
-        st.damage(item.getMaxDurability() - st.getDamage(), this, (entity) -> entity.broadcastItemBreak(nmsSlot));
-    }
-
-    @Override
-    public void damageItem(@NotNull EquipmentSlot slot, int damage)
-    {
-        EnumItemSlot nmsSlot = CraftEquipmentSlot.getNMS(slot);
-        net.minecraft.server.v1_16_R3.ItemStack st = this.getEquipment(nmsSlot);
-
-        st.damage(damage, this, ignored -> {
-        });
     }
 
     public void giveCreativeItem(int slot, @NotNull ItemStack item)

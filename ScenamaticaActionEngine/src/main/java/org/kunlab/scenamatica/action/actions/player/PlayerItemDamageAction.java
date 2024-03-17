@@ -15,8 +15,10 @@ import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
-import org.kunlab.scenamatica.interfaces.context.Actor;
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.ItemStackStructure;
+import org.kunlab.scenamatica.nms.NMSProvider;
+import org.kunlab.scenamatica.nms.types.entity.NMSEntityPlayer;
+import org.kunlab.scenamatica.nms.types.item.NMSItemStack;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -64,20 +66,24 @@ public class PlayerItemDamageAction extends AbstractPlayerAction
     @Override
     public void execute(@NotNull ActionContext ctxt)
     {
-        Actor actor = ctxt.getActorOrThrow(selectTarget(ctxt));
+        Player player = selectTarget(ctxt);
         EquipmentSlot slot = ctxt.orElseInput(IN_SLOT, () -> EquipmentSlot.HAND);
 
-        ctxt.runIfHasInput(IN_ITEM, item -> actor.getPlayer().getInventory().setItem(slot, item.create()));
+        ctxt.runIfHasInput(IN_ITEM, item -> player.getInventory().setItem(slot, item.create()));
 
-        ItemStack itemStack = actor.getPlayer().getInventory().getItem(slot);
+        ItemStack itemStack = player.getInventory().getItem(slot);
         if (itemStack == null)
             throw new IllegalStateException("Target does not have item in slot " + slot);
         else if (!(itemStack.getItemMeta() instanceof Damageable))
             throw new IllegalStateException("Target item in slot " + slot + " is not Damageable");
         int damage = ctxt.input(IN_DAMAGE);
 
-        this.makeOutputs(ctxt, actor.getPlayer(), getDamagedItem(itemStack, damage), damage);
-        actor.damageItem(slot, damage);
+        this.makeOutputs(ctxt, player, getDamagedItem(itemStack, damage), damage);
+
+        NMSEntityPlayer nmsPlayer = NMSProvider.getProvider().wrap(player);
+        NMSItemStack nmsStack = NMSProvider.getProvider().wrap(itemStack);
+        nmsStack.damage(damage, nmsPlayer, ignored -> {
+        });
     }
 
     @Override
