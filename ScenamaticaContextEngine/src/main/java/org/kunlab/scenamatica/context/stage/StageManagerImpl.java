@@ -1,21 +1,19 @@
 package org.kunlab.scenamatica.context.stage;
 
-import lombok.SneakyThrows;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
 import org.jetbrains.annotations.NotNull;
-import org.kunlab.kpm.utils.ReflectionUtils;
 import org.kunlab.scenamatica.context.utils.WorldUtils;
 import org.kunlab.scenamatica.enums.StageType;
-import org.kunlab.scenamatica.exceptions.context.actor.VersionNotSupportedException;
 import org.kunlab.scenamatica.exceptions.context.stage.StageAlreadyDestroyedException;
 import org.kunlab.scenamatica.exceptions.context.stage.StageCreateFailedException;
 import org.kunlab.scenamatica.interfaces.ScenamaticaRegistry;
 import org.kunlab.scenamatica.interfaces.context.Stage;
 import org.kunlab.scenamatica.interfaces.context.StageManager;
 import org.kunlab.scenamatica.interfaces.scenariofile.context.StageStructure;
+import org.kunlab.scenamatica.nms.NMSProvider;
 
 import java.io.File;
 import java.io.IOException;
@@ -47,20 +45,6 @@ public class StageManagerImpl implements StageManager
         NamespacedKey key = NamespacedKey.fromString("scenamatica:" + stageName);
         assert key != null;
         return key;
-    }
-
-    private static MinecraftServerController getMocker()
-            throws VersionNotSupportedException
-    {
-        String version = ReflectionUtils.PackageType.getServerVersion();
-        //noinspection SwitchStatementWithTooFewBranches
-        switch (version)  // TODO: Support other versions.
-        {
-            case "v1_16_R3":
-                return new org.kunlab.scenamatica.context.stage.nms.v_1_16_5.MinecraftServerControllerImpl();
-            default:
-                throw new VersionNotSupportedException(version);
-        }
     }
 
     @Override
@@ -126,7 +110,6 @@ public class StageManagerImpl implements StageManager
     }
 
     @Override
-    @SneakyThrows(VersionNotSupportedException.class)
     public void destroyStage(@NotNull Stage stage) throws StageAlreadyDestroyedException
     {
         if (stage.isDestroyed())
@@ -145,7 +128,8 @@ public class StageManagerImpl implements StageManager
 
         Path worldPath = stageWorld.getWorldFolder().toPath();
         this.deleteDirectory(worldPath);
-        getMocker().removeWorld(stageWorld.getKey());
+        NMSProvider.getProvider().wrap(Bukkit.getServer())
+                .getWorlds().removeWorld(stageWorld.getKey());
 
         this.stages.remove(stage);
     }

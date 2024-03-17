@@ -106,7 +106,7 @@ public class TypeSupportImpl implements TypeSupport
                 throw new IllegalArgumentException("Unknown NMSHand: " + hand.name());
         }
     }
-
+    
     @Override
     @SuppressWarnings("unchecked")
     public <T, U extends NMSElement> T toNMS(@Nullable U enumValue, @NotNull Class<T> clazz)
