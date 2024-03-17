@@ -70,14 +70,13 @@ public class PlayerItemBreakAction extends AbstractPlayerAction
         NMSItemStack nmsStack = NMSProvider.getProvider().wrap(item);
         NMSItem nmsItem = nmsStack.getItem();
 
-        int damageToApply = 999;
+        int damageToApply = 9999;
         ItemMeta meta = item.getItemMeta();
         if (meta instanceof Damageable)
         {
             Damageable damageable = (Damageable) meta;
             int maxDurability = nmsItem.getMaxDurability();
-            int currentDurability = maxDurability - damageable.getDamage();
-            damageToApply = Math.min(damageToApply, currentDurability);
+            damageToApply = /* int currentDurability = */ maxDurability - damageable.getDamage();
         }
 
         nmsStack.damage(damageToApply, nmsPlayer, nmsEntityLiving -> nmsEntityLiving.broadcastItemBreak(nmsSlot));
