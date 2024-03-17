@@ -20,7 +20,7 @@ public class NMSEntityLivingImpl extends NMSEntityImpl implements NMSEntityLivin
     }
 
     @Override
-    public LivingEntity getBukkitEntity()
+    public LivingEntity getBukkit()
     {
         return this.bukkitEntity;
     }
@@ -32,10 +32,8 @@ public class NMSEntityLivingImpl extends NMSEntityImpl implements NMSEntityLivin
     }
 
     @Override
-    public Object getNMSCraftRaw()
+    public Object getNMSRaw()
     {
         return this.nmsEntity;
     }
-
-
 }

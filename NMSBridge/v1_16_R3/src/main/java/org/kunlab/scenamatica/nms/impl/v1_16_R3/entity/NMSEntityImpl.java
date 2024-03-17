@@ -28,13 +28,7 @@ public class NMSEntityImpl implements NMSEntity
     }
 
     @Override
-    public Object getNMSCraftRaw()
-    {
-        return this.bukkitEntity;
-    }
-
-    @Override
-    public org.bukkit.entity.Entity getBukkitEntity()
+    public org.bukkit.entity.Entity getBukkit()
     {
         return this.bukkitEntity;
     }

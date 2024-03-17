@@ -19,13 +19,13 @@ public class NMSEntityHumanImpl extends NMSEntityLivingImpl implements NMSEntity
     }
 
     @Override
-    public HumanEntity getBukkitEntity()
+    public HumanEntity getBukkit()
     {
         return this.bukkitEntity;
     }
 
     @Override
-    public Object getNMSCraftRaw()
+    public Object getNMSRaw()
     {
         return this.nmsEntity;
     }

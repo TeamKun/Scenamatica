@@ -7,5 +7,10 @@ import org.bukkit.entity.HumanEntity;
  */
 public interface NMSEntityHuman extends NMSEntityLiving
 {
-
+    /**
+     * ラップしている {@link HumanEntity} を取得します。
+     *
+     * @return {@link HumanEntity}
+     */
+    HumanEntity getBukkit();
 }

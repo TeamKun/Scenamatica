@@ -48,7 +48,7 @@ public abstract class WorldMap implements NMSWrapped
     }
 
     @Override
-    public Object getNMSCraftRaw()
+    public Object getBukkit()
     {
         return null;
     }

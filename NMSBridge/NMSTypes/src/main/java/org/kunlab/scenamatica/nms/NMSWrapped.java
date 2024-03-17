@@ -17,5 +17,5 @@ public interface NMSWrapped extends NMSElement
      *
      * @return ラップされた CraftBukkit クラス
      */
-    Object getNMSCraftRaw();
+    Object getBukkit();
 }

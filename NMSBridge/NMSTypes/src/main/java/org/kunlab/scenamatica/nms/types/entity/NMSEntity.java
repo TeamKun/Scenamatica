@@ -16,7 +16,7 @@ public interface NMSEntity extends NMSWrapped
      *
      * @return {@link Entity}
      */
-    Entity getBukkitEntity();
+    Entity getBukkit();
 
     /**
      * エンティティを動かします。

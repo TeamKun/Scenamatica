@@ -13,7 +13,7 @@ public interface NMSEntityLiving extends NMSEntity
      *
      * @return {@link LivingEntity}
      */
-    LivingEntity getBukkitEntity();
+    LivingEntity getBukkit();
 
     /**
      * 手に持っているアイテムを消費します。

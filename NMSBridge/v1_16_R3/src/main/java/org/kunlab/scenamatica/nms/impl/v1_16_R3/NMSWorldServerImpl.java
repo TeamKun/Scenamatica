@@ -22,7 +22,7 @@ public class NMSWorldServerImpl implements NMSWorldServer
     }
 
     @Override
-    public Object getNMSCraftRaw()
+    public Object getBukkit()
     {
         return this.bukkitWorld;
     }

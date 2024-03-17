@@ -25,7 +25,7 @@ public class NMSMinecraftServerImpl implements NMSMinecraftServer
     }
 
     @Override
-    public Object getNMSCraftRaw()
+    public Object getBukkit()
     {
         return this.bukkitServer;
     }
