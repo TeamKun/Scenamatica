@@ -1,4 +1,4 @@
-package org.kunlab.scenamatica.nms.v1_16_R3;
+package org.kunlab.scenamatica.nms.impl.v1_16_R3;
 
 import net.minecraft.server.v1_16_R3.WorldServer;
 import org.bukkit.World;

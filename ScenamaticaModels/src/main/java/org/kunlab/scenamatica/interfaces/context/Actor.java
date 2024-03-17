@@ -124,14 +124,6 @@ public interface Actor
     void kickErroneous();
 
     /**
-     * アイテムを食べます。
-     *
-     * @param hand 食べるアイテムの手
-     * @throws IllegalStateException アイテムを持っていない場合/アイテムが食べられない場合
-     */
-    void consume(@NotNull NMSHand hand);
-
-    /**
      * 持ってるツールを壊します。
      *
      * @param slot 壊すツールの装備スロット

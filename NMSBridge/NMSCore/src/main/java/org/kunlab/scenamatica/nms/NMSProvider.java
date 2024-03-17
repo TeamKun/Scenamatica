@@ -2,6 +2,8 @@ package org.kunlab.scenamatica.nms;
 
 import lombok.Getter;
 import org.bukkit.Bukkit;
+import org.kunlab.scenamatica.nms.impl.v1_16_R3.TypeSupportImpl;
+import org.kunlab.scenamatica.nms.impl.v1_16_R3.WrapperProviderImpl;
 
 public class NMSProvider
 {
@@ -36,8 +38,8 @@ public class NMSProvider
         switch (version)
         {
             case "v1_16_R3":
-                provider = new org.kunlab.scenamatica.nms.v1_16_R3.WrapperProviderImpl();
-                typeSupport = new org.kunlab.scenamatica.nms.v1_16_R3.TypeSupportImpl();
+                provider = new WrapperProviderImpl();
+                typeSupport = new TypeSupportImpl();
                 break;
             default:
                 throw new IllegalStateException("Unsupported server version: " + version);

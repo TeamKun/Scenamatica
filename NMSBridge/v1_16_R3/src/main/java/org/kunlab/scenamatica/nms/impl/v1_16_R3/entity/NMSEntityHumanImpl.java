@@ -1,4 +1,4 @@
-package org.kunlab.scenamatica.nms.v1_16_R3.entity;
+package org.kunlab.scenamatica.nms.impl.v1_16_R3.entity;
 
 import net.minecraft.server.v1_16_R3.EntityHuman;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftHumanEntity;

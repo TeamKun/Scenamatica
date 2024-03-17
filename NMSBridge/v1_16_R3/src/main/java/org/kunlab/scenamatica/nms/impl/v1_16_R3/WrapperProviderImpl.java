@@ -1,4 +1,4 @@
-package org.kunlab.scenamatica.nms.v1_16_R3;
+package org.kunlab.scenamatica.nms.impl.v1_16_R3;
 
 import org.bukkit.Server;
 import org.bukkit.World;
@@ -7,16 +7,16 @@ import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.kunlab.scenamatica.nms.WrapperProvider;
+import org.kunlab.scenamatica.nms.impl.v1_16_R3.entity.NMSEntityHumanImpl;
+import org.kunlab.scenamatica.nms.impl.v1_16_R3.entity.NMSEntityImpl;
+import org.kunlab.scenamatica.nms.impl.v1_16_R3.entity.NMSEntityLivingImpl;
+import org.kunlab.scenamatica.nms.impl.v1_16_R3.entity.NMSEntityPlayerImpl;
 import org.kunlab.scenamatica.nms.types.NMSMinecraftServer;
 import org.kunlab.scenamatica.nms.types.NMSWorldServer;
 import org.kunlab.scenamatica.nms.types.entity.NMSEntity;
 import org.kunlab.scenamatica.nms.types.entity.NMSEntityHuman;
 import org.kunlab.scenamatica.nms.types.entity.NMSEntityLiving;
 import org.kunlab.scenamatica.nms.types.entity.NMSEntityPlayer;
-import org.kunlab.scenamatica.nms.v1_16_R3.entity.NMSEntityHumanImpl;
-import org.kunlab.scenamatica.nms.v1_16_R3.entity.NMSEntityImpl;
-import org.kunlab.scenamatica.nms.v1_16_R3.entity.NMSEntityLivingImpl;
-import org.kunlab.scenamatica.nms.v1_16_R3.entity.NMSEntityPlayerImpl;
 
 public class WrapperProviderImpl implements WrapperProvider
 {

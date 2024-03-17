@@ -1,10 +1,10 @@
-package org.kunlab.scenamatica.nms.v1_16_R3.entity;
+package org.kunlab.scenamatica.nms.impl.v1_16_R3.entity;
 
 import net.minecraft.server.v1_16_R3.EntityLiving;
 import org.bukkit.entity.LivingEntity;
 import org.kunlab.scenamatica.nms.enums.entity.NMSHand;
+import org.kunlab.scenamatica.nms.impl.v1_16_R3.TypeSupportImpl;
 import org.kunlab.scenamatica.nms.types.entity.NMSEntityLiving;
-import org.kunlab.scenamatica.nms.v1_16_R3.TypeSupportImpl;
 
 public class NMSEntityLivingImpl extends NMSEntityImpl implements NMSEntityLiving
 {

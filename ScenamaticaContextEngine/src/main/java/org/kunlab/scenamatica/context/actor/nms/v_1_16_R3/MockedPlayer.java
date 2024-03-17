@@ -303,18 +303,6 @@ class MockedPlayer extends EntityPlayer implements Actor
     }
 
     @Override
-    public void consume(@NotNull NMSHand nmsHand)
-    {
-        EnumHand hand = NMSProvider.getTypeSupport().toNMS(nmsHand, EnumHand.class);
-
-        net.minecraft.server.v1_16_R3.ItemStack nmsStack = this.b(hand);
-        if (!(nmsStack == null || nmsStack.getItem().isFood()))
-            throw new IllegalStateException("Item in " + nmsHand.name() + " is not food");
-
-        this.c(hand);
-    }
-
-    @Override
     public void breakItem(@NotNull EquipmentSlot slot)
     {
         EnumItemSlot nmsSlot = CraftEquipmentSlot.getNMS(slot);

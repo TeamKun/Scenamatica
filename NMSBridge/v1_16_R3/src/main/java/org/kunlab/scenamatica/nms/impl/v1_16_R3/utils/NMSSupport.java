@@ -1,4 +1,4 @@
-package org.kunlab.scenamatica.nms.v1_16_R3.utils;
+package org.kunlab.scenamatica.nms.impl.v1_16_R3.utils;
 
 import net.minecraft.server.v1_16_R3.Vec3D;
 import org.bukkit.Location;

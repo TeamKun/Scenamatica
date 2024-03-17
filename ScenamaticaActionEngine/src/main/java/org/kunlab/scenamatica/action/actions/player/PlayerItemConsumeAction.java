@@ -13,8 +13,8 @@ import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
-import org.kunlab.scenamatica.interfaces.context.Actor;
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.ItemStackStructure;
+import org.kunlab.scenamatica.nms.NMSProvider;
 import org.kunlab.scenamatica.nms.enums.entity.NMSHand;
 
 import java.util.Collections;
@@ -71,18 +71,18 @@ public class PlayerItemConsumeAction extends AbstractPlayerAction
     @Override
     public void execute(@NotNull ActionContext ctxt)
     {
-        Actor actor = ctxt.getActorOrThrow(selectTarget(ctxt));
+        Player player = selectTarget(ctxt);
 
         if (ctxt.hasInput(IN_ITEM))
-            actor.getPlayer().getInventory().setItemInMainHand(ctxt.input(IN_ITEM).create());
+            player.getInventory().setItemInMainHand(ctxt.input(IN_ITEM).create());
 
-        ItemStack item = actor.getPlayer().getInventory().getItemInMainHand();
+        ItemStack item = player.getInventory().getItemInMainHand();
         if (!isConsumable(item))
             throw new IllegalArgumentException("The item in the main hand is not consumable.");
 
-        this.makeOutputs(ctxt, actor.getPlayer(), item, getReplacement(item));
+        this.makeOutputs(ctxt, player, item, getReplacement(item));
         // 食べ初めをトリガするので、シナリオタイムアウトになるかもしれない。
-        actor.consume(NMSHand.MAIN_HAND);
+        NMSProvider.getProvider().wrap(player).consume(NMSHand.MAIN_HAND);
     }
 
     @Override

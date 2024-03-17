@@ -1,4 +1,4 @@
-package org.kunlab.scenamatica.nms.v1_16_R3;
+package org.kunlab.scenamatica.nms.impl.v1_16_R3;
 
 import net.minecraft.server.v1_16_R3.EnumHand;
 import net.minecraft.server.v1_16_R3.EnumMoveType;
@@ -106,7 +106,7 @@ public class TypeSupportImpl implements TypeSupport
                 throw new IllegalArgumentException("Unknown NMSHand: " + hand.name());
         }
     }
-    
+
     @Override
     @SuppressWarnings("unchecked")
     public <T, U extends NMSElement> T toNMS(@Nullable U enumValue, @NotNull Class<T> clazz)

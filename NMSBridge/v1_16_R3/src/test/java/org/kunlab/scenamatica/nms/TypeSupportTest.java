@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.kunlab.scenamatica.nms.enums.entity.NMSEntityUseAction;
 import org.kunlab.scenamatica.nms.enums.entity.NMSHand;
 import org.kunlab.scenamatica.nms.enums.entity.NMSMoveType;
-import org.kunlab.scenamatica.nms.v1_16_R3.TypeSupportImpl;
+import org.kunlab.scenamatica.nms.impl.v1_16_R3.TypeSupportImpl;
 
 import java.util.EnumMap;
 import java.util.Map;

@@ -1,4 +1,4 @@
-package org.kunlab.scenamatica.nms.v1_16_R3.entity;
+package org.kunlab.scenamatica.nms.impl.v1_16_R3.entity;
 
 import net.minecraft.server.v1_16_R3.Entity;
 import net.minecraft.server.v1_16_R3.EnumMoveType;
@@ -6,9 +6,9 @@ import net.minecraft.server.v1_16_R3.Vec3D;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftEntity;
 import org.kunlab.scenamatica.nms.enums.entity.NMSMoveType;
+import org.kunlab.scenamatica.nms.impl.v1_16_R3.TypeSupportImpl;
+import org.kunlab.scenamatica.nms.impl.v1_16_R3.utils.NMSSupport;
 import org.kunlab.scenamatica.nms.types.entity.NMSEntity;
-import org.kunlab.scenamatica.nms.v1_16_R3.TypeSupportImpl;
-import org.kunlab.scenamatica.nms.v1_16_R3.utils.NMSSupport;
 
 public class NMSEntityImpl implements NMSEntity
 {
