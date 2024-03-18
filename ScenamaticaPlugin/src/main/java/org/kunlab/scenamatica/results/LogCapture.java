@@ -1,5 +1,6 @@
 package org.kunlab.scenamatica.results;
 
+import lombok.Getter;
 import lombok.Value;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -17,6 +18,7 @@ import java.util.UUID;
 
 public class LogCapture implements Listener
 {
+    @Getter
     private final List<TestLogs> finalEntries;
 
     private List<LogEntry> currentEntries;
@@ -57,11 +59,6 @@ public class LogCapture implements Listener
                 .findFirst()
                 .map(TestLogs::getEntries)
                 .orElse(null);
-    }
-
-    public List<TestLogs> getFinalEntries()
-    {
-        return this.finalEntries;
     }
 
     @EventHandler
