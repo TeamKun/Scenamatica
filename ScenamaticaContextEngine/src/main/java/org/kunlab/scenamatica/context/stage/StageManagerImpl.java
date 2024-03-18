@@ -5,6 +5,7 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
 import org.jetbrains.annotations.NotNull;
+import org.kunlab.scenamatica.commons.utils.ThreadingUtil;
 import org.kunlab.scenamatica.context.utils.WorldUtils;
 import org.kunlab.scenamatica.enums.StageType;
 import org.kunlab.scenamatica.exceptions.context.stage.StageAlreadyDestroyedException;
@@ -23,6 +24,12 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.stream.Stream;
 
 public class StageManagerImpl implements StageManager
@@ -47,15 +54,9 @@ public class StageManagerImpl implements StageManager
         return key;
     }
 
-    @Override
-    @NotNull
-    public Stage createStage(@NotNull StageStructure structure) throws StageCreateFailedException
+    private static WorldCreator cretateWorldCreator(StageStructure structure)
     {
         NamespacedKey key = generateStageKey();
-
-        if (structure.getOriginalWorldName() != null)
-            return this.createStage(structure.getOriginalWorldName());
-
         WorldCreator creator = new WorldCreator(key);
         if (structure.getEnvironment() != null)
             creator.environment(structure.getEnvironment());
@@ -67,13 +68,32 @@ public class StageManagerImpl implements StageManager
         creator.generateStructures(structure.isGenerateStructures());
         creator.hardcore(structure.isHardcore());
 
-        World world = creator.createWorld();
-        if (world == null)
-            throw new StageCreateFailedException(key.toString());
+        return creator;
+    }
 
-        world.setAutoSave(false);
+    private World generateWorld(WorldCreator creator, long timeoutMillis)
+    {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        Future<? extends World> future = executor.submit(() -> ThreadingUtil.waitFor(this.registry, creator::createWorld));
 
-        return this.registerStage(world, StageType.GENERATED);
+        try
+        {
+            return future.get(timeoutMillis, TimeUnit.MILLISECONDS);
+        }
+        catch (TimeoutException | InterruptedException e)
+        {
+            future.cancel(true);
+            return null;
+        }
+        catch (ExecutionException e)
+        {
+            e.printStackTrace();
+            return null;
+        }
+        finally
+        {
+            executor.shutdown();
+        }
     }
 
     @Override
@@ -90,6 +110,30 @@ public class StageManagerImpl implements StageManager
         }
 
         return this.registerStage(copied, StageType.CLONE);
+    }
+
+    @Override
+    @NotNull
+    public Stage createStage(@NotNull StageStructure structure, long timeoutMillis, int maxAttemptCounts) throws StageCreateFailedException
+    {
+        if (structure.getOriginalWorldName() != null)
+            return ThreadingUtil.waitForOrThrow(this.registry, () -> this.createStage(structure.getOriginalWorldName()));
+
+        WorldCreator creator = cretateWorldCreator(structure);
+        World world = null;
+        for (int i = 0; i < maxAttemptCounts; i++)
+        {
+            world = this.generateWorld(creator, timeoutMillis);
+            if (world != null)
+                break;
+        }
+
+        if (world == null)
+            throw new StageCreateFailedException(creator.key().toString());
+
+        world.setAutoSave(false);
+
+        return this.registerStage(world, StageType.GENERATED);
     }
 
     private Stage registerStage(World world, StageType type)

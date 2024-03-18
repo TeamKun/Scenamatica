@@ -14,10 +14,12 @@ public interface StageManager
     /**
      * ステージを生成します。
      *
-     * @param structure ステージ情報
+     * @param structure        ステージ情報
+     * @param timeoutMillis    タイムアウト時間, 0以下の場合は無制限
+     * @param maxAttemptCounts 最大試行回数 0以下の場合は無制限
      * @return 生成したステージ
      */
-    @NotNull Stage createStage(@NotNull StageStructure structure) throws StageCreateFailedException;
+    @NotNull Stage createStage(@NotNull StageStructure structure, long timeoutMillis, int maxAttemptCounts) throws StageCreateFailedException;
 
     /**
      * ステージをコピーします。

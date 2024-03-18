@@ -94,9 +94,10 @@ public class ContextManagerImpl implements ContextManager
             );
         }
 
-        return ThreadingUtil.waitForOrThrow(this.registry, () ->
-                this.stageManager.createStage(context.getWorld())
-        );
+        long timeoutMillis = 15 * 1000;
+        int maxAttemptCounts = 3;
+
+        return this.stageManager.createStage(context.getWorld(), timeoutMillis, maxAttemptCounts);
     }
 
     @Nullable
