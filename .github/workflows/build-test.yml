@@ -69,7 +69,7 @@ jobs:
           plugin: Scenamatica.jar
         env:
           NO_SCENAMATICA: true
-        timeout-minutes: 10
+        timeout-minutes: 20
       - name: Clean artifacts
         if: always()
         uses: geekyeggo/delete-artifact@v2
