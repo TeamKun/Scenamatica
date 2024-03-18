@@ -11,8 +11,8 @@ import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.events.actions.server.ServerLogEvent;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 
@@ -26,7 +26,7 @@ public class LogCapture implements Listener
 
     public LogCapture()
     {
-        this.finalEntries = new ArrayList<>();
+        this.finalEntries = new LinkedList<>();
     }
 
     public void init(@NotNull Plugin scenamatica)
@@ -37,7 +37,7 @@ public class LogCapture implements Listener
     public void startCapture(UUID testID)
     {
         this.currentTestID = testID;
-        this.currentEntries = new ArrayList<>();
+        this.currentEntries = new LinkedList<>();
     }
 
     public void endCapture()

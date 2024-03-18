@@ -1,6 +1,6 @@
 package org.kunlab.scenamatica.results;
 
-import com.google.common.collect.HashMultimap;
+import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Multimap;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -215,7 +215,7 @@ public class ScenarioResultDocumentBuilder
 
     private Multimap<Plugin, ScenarioResult> groupingResultsByPlugin(@NotNull ScenarioSession session)
     {
-        Multimap<Plugin, ScenarioResult> results = HashMultimap.create();
+        Multimap<Plugin, ScenarioResult> results = LinkedListMultimap.create();
 
         for (QueuedScenario scenario : session.getScenarios())
         {
