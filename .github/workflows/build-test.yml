@@ -74,6 +74,8 @@ jobs:
         env:
           NO_SCENAMATICA: true
         timeout-minutes: 20
+      - name: Sleep in 5 mintues
+        run: sleep 300
       - name: Clean artifacts
         if: always()
         uses: geekyeggo/delete-artifact@v2
