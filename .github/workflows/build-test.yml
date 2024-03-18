@@ -68,7 +68,7 @@ jobs:
           java-version: 8
           distribution: zulu
       - name: Run Scenamatica tests
-        uses: teamkun/scenamatica-action@v1.8.0
+        uses: teamkun/scenamatica-action@main
         with:
           plugin: Scenamatica.jar
         env:
