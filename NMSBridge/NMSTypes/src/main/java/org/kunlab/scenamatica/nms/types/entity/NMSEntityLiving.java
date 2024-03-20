@@ -2,7 +2,7 @@ package org.kunlab.scenamatica.nms.types.entity;
 
 import org.bukkit.entity.LivingEntity;
 import org.kunlab.scenamatica.nms.Versioned;
-import org.kunlab.scenamatica.nms.enums.entity.NMSHand;
+import org.kunlab.scenamatica.nms.enums.NMSHand;
 import org.kunlab.scenamatica.nms.enums.entity.NMSItemSlot;
 
 /**

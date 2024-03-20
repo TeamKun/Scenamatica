@@ -12,8 +12,8 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.interfaces.scenariofile.context.PlayerStructure;
+import org.kunlab.scenamatica.nms.enums.NMSHand;
 import org.kunlab.scenamatica.nms.enums.entity.NMSEntityUseAction;
-import org.kunlab.scenamatica.nms.enums.entity.NMSHand;
 
 import java.util.UUID;
 

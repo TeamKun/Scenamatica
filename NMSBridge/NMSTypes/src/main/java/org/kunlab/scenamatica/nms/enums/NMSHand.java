@@ -1,4 +1,4 @@
-package org.kunlab.scenamatica.nms.enums.entity;
+package org.kunlab.scenamatica.nms.enums;
 
 import org.bukkit.inventory.EquipmentSlot;
 import org.kunlab.scenamatica.nms.NMSElement;

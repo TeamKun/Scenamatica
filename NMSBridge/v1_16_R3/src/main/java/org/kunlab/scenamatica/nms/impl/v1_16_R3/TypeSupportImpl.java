@@ -8,8 +8,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.nms.NMSElement;
 import org.kunlab.scenamatica.nms.TypeSupport;
+import org.kunlab.scenamatica.nms.enums.NMSHand;
 import org.kunlab.scenamatica.nms.enums.entity.NMSEntityUseAction;
-import org.kunlab.scenamatica.nms.enums.entity.NMSHand;
 import org.kunlab.scenamatica.nms.enums.entity.NMSItemSlot;
 import org.kunlab.scenamatica.nms.enums.entity.NMSMoveType;
 

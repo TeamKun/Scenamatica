@@ -3,7 +3,7 @@ package org.kunlab.scenamatica.nms.impl.v1_16_R3.entity;
 import net.minecraft.server.v1_16_R3.EntityLiving;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftLivingEntity;
 import org.bukkit.entity.LivingEntity;
-import org.kunlab.scenamatica.nms.enums.entity.NMSHand;
+import org.kunlab.scenamatica.nms.enums.NMSHand;
 import org.kunlab.scenamatica.nms.enums.entity.NMSItemSlot;
 import org.kunlab.scenamatica.nms.impl.v1_16_R3.TypeSupportImpl;
 import org.kunlab.scenamatica.nms.types.entity.NMSEntityLiving;

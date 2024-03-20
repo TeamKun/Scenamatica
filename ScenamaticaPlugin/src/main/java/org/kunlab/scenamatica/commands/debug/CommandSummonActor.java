@@ -3,15 +3,16 @@ package org.kunlab.scenamatica.commands.debug;
 import lombok.AllArgsConstructor;
 import net.kunmc.lab.peyangpaperutils.lib.command.CommandBase;
 import net.kunmc.lab.peyangpaperutils.lib.terminal.Terminal;
+import net.kunmc.lab.peyangpaperutils.lib.utils.Runner;
 import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.kunlab.scenamatica.exceptions.context.ContextPreparationException;
 import org.kunlab.scenamatica.interfaces.ScenamaticaRegistry;
 import org.kunlab.scenamatica.scenariofile.structures.context.PlayerStructureImpl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @AllArgsConstructor
@@ -26,35 +27,28 @@ public class CommandSummonActor extends CommandBase
             return;
 
         String name = args[0];
-        try
-        {
-            this.registry.getContextManager().getActorManager().createActor(Bukkit.getWorlds().get(0), new PlayerStructureImpl(
-                    name,
-                    true,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    false,
-                    false,
-                    null,
-                    null,
-                    4,
-                    null
-            ));
-        }
-        catch (ContextPreparationException e)
-        {
-            terminal.error("Unable to create actor: " + e.getMessage());
-        }
+        Runner.runAsync(() -> this.registry.getContextManager().getActorManager().createActor(Bukkit.getWorlds().get(0), new PlayerStructureImpl(
+                name,
+                true,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                false,
+                false,
+                null,
+                null,
+                4,
+                new ArrayList<>()
+        )));
     }
 
     @Override

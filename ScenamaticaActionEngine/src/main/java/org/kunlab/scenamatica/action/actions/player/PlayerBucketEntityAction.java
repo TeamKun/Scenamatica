@@ -17,8 +17,8 @@ import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.context.Actor;
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.ItemStackStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.EntitySpecifier;
+import org.kunlab.scenamatica.nms.enums.NMSHand;
 import org.kunlab.scenamatica.nms.enums.entity.NMSEntityUseAction;
-import org.kunlab.scenamatica.nms.enums.entity.NMSHand;
 
 import java.util.Collections;
 import java.util.List;
