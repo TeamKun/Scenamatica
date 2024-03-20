@@ -9,11 +9,9 @@ import net.kunmc.lab.peyangpaperutils.lib.utils.Runner;
 import net.minecraft.server.v1_16_R3.BlockPosition;
 import net.minecraft.server.v1_16_R3.ChatComponentText;
 import net.minecraft.server.v1_16_R3.DamageSource;
-import net.minecraft.server.v1_16_R3.Entity;
 import net.minecraft.server.v1_16_R3.EntityPlayer;
 import net.minecraft.server.v1_16_R3.EnumDirection;
 import net.minecraft.server.v1_16_R3.EnumHand;
-import net.minecraft.server.v1_16_R3.EnumMoveType;
 import net.minecraft.server.v1_16_R3.InventoryClickType;
 import net.minecraft.server.v1_16_R3.ItemActionContext;
 import net.minecraft.server.v1_16_R3.MinecraftServer;
@@ -47,8 +45,8 @@ import org.kunlab.scenamatica.interfaces.context.Actor;
 import org.kunlab.scenamatica.interfaces.context.ActorManager;
 import org.kunlab.scenamatica.interfaces.scenariofile.context.PlayerStructure;
 import org.kunlab.scenamatica.nms.NMSProvider;
+import org.kunlab.scenamatica.nms.enums.NMSHand;
 import org.kunlab.scenamatica.nms.enums.entity.NMSEntityUseAction;
-import org.kunlab.scenamatica.nms.enums.entity.NMSHand;
 
 import java.io.IOException;
 import java.lang.reflect.Constructor;
@@ -394,46 +392,20 @@ class MockedPlayer extends EntityPlayer implements Actor
             Bukkit.getPluginManager().callEvent(new ActorPostJoinEvent(this));
 
         super.tick();
-        this.processGravity();
-    }
-
-    private void processGravity()
-    {
-        Vec3D vec = this.getMot();
-
-        if (!this.onGround)
-        {
-            if (this.inWater)
-                vec = vec.add(0, -0.0252f, 0);
-            else
-                vec = vec.add(0, -0.4, 0);
-        }
-
-        this.move(EnumMoveType.SELF, vec);
+        // this.processGravity();
     }
 
     @Override
     public boolean damageEntity(DamageSource damageSource, float f)
     {
-        Entity damager = damageSource.getEntity();
-
         boolean damaged = super.damageEntity(damageSource, f);
-        if (damaged && damager != null)
-            this.processKnockBack(damager);
-
+        if (damaged && this.velocityChanged)
+        {
+            this.velocityChanged = false;
+            Runner.run(() -> this.velocityChanged = true);
+        }
         return damaged;
-    }
 
-    private void processKnockBack(Entity damager)
-    {
-        float knockbackDepth = 1.2F;
-
-        Runner.run(() -> this.setMot(new Vec3D(
-                        -Math.sin(damager.yaw * Math.PI / 180.0F) * knockbackDepth * 0.5F,
-                        0.8F,
-                        Math.cos(damager.yaw * Math.PI / 180.0F) * knockbackDepth * 0.5F
-                )
-        ));
     }
 
     @Override
