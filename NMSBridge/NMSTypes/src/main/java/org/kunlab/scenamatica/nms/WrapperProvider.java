@@ -1,5 +1,6 @@
 package org.kunlab.scenamatica.nms;
 
+import org.bukkit.Location;
 import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
@@ -9,6 +10,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.kunlab.scenamatica.nms.types.NMSMinecraftServer;
 import org.kunlab.scenamatica.nms.types.NMSWorldServer;
+import org.kunlab.scenamatica.nms.types.block.NMSBlockPosition;
 import org.kunlab.scenamatica.nms.types.entity.NMSEntity;
 import org.kunlab.scenamatica.nms.types.entity.NMSEntityHuman;
 import org.kunlab.scenamatica.nms.types.entity.NMSEntityLiving;
@@ -29,9 +31,17 @@ public interface WrapperProvider
 
     NMSEntityPlayer wrap(Player bukkitEntity);
 
+    // ==================[ ITEMS ]==================
+
     NMSItemStack wrap(ItemStack bukkitItemStack);
 
+    // ==================[ BLOCK/WORLDS ]==================
+
     NMSWorldServer wrap(World bukkitWorld);
+
+    NMSBlockPosition wrap(Location bukkitLocation);
+
+    // ==================[ SERVER ]==================
 
     NMSMinecraftServer wrap(Server server);
 }

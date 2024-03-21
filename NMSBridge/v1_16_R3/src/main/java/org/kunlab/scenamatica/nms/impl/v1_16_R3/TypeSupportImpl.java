@@ -1,5 +1,6 @@
 package org.kunlab.scenamatica.nms.impl.v1_16_R3;
 
+import net.minecraft.server.v1_16_R3.EnumDirection;
 import net.minecraft.server.v1_16_R3.EnumHand;
 import net.minecraft.server.v1_16_R3.EnumItemSlot;
 import net.minecraft.server.v1_16_R3.EnumMoveType;
@@ -12,9 +13,27 @@ import org.kunlab.scenamatica.nms.enums.NMSHand;
 import org.kunlab.scenamatica.nms.enums.entity.NMSEntityUseAction;
 import org.kunlab.scenamatica.nms.enums.entity.NMSItemSlot;
 import org.kunlab.scenamatica.nms.enums.entity.NMSMoveType;
+import org.kunlab.scenamatica.nms.enums.voxel.NMSDirection;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Function;
 
 public class TypeSupportImpl implements TypeSupport
 {
+    private static final List<ConversionPair<?, ?>> CONVERSION_PAIRS = new ArrayList<>();
+
+    static
+    {
+        CONVERSION_PAIRS.add(new ConversionPair<>(NMSEntityUseAction.class, PacketPlayInUseEntity.EnumEntityUseAction.class, TypeSupportImpl::toNMS, TypeSupportImpl::fromNMS));
+        CONVERSION_PAIRS.add(new ConversionPair<>(NMSHand.class, EnumHand.class, TypeSupportImpl::toNMS, TypeSupportImpl::fromNMS));
+        CONVERSION_PAIRS.add(new ConversionPair<>(NMSItemSlot.class, EnumItemSlot.class, TypeSupportImpl::toNMS, TypeSupportImpl::fromNMS));
+        CONVERSION_PAIRS.add(new ConversionPair<>(NMSMoveType.class, EnumMoveType.class, TypeSupportImpl::toNMS, TypeSupportImpl::fromNMS));
+        CONVERSION_PAIRS.add(new ConversionPair<>(NMSDirection.class, EnumDirection.class, TypeSupportImpl::toNMS, TypeSupportImpl::fromNMS));
+    }
+
+    // <editor-fold desc="Conversion Methods">
+
     public static PacketPlayInUseEntity.EnumEntityUseAction toNMS(NMSEntityUseAction action)
     {
         switch (action)
@@ -151,48 +170,91 @@ public class TypeSupportImpl implements TypeSupport
         }
     }
 
+    public static EnumDirection toNMS(NMSDirection direction)
+    {
+        switch (direction)
+        {
+            case NORTH:
+                return EnumDirection.NORTH;
+            case SOUTH:
+                return EnumDirection.SOUTH;
+            case WEST:
+                return EnumDirection.WEST;
+            case EAST:
+                return EnumDirection.EAST;
+            case UP:
+                return EnumDirection.UP;
+            case DOWN:
+                return EnumDirection.DOWN;
+            default:
+                throw new IllegalArgumentException("Unknown NMSDirection: " + direction.name());
+        }
+    }
+
+    public static NMSDirection fromNMS(EnumDirection direction)
+    {
+        switch (direction)
+        {
+            case NORTH:
+                return NMSDirection.NORTH;
+            case SOUTH:
+                return NMSDirection.SOUTH;
+            case WEST:
+                return NMSDirection.WEST;
+            case EAST:
+                return NMSDirection.EAST;
+            case UP:
+                return NMSDirection.UP;
+            case DOWN:
+                return NMSDirection.DOWN;
+            default:
+                throw new IllegalArgumentException("Unknown EnumDirection: " + direction.name());
+        }
+    }
+
+    // </editor-fold>
+
     @Override
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public <T, U extends NMSElement> T toNMS(@Nullable U enumValue, @NotNull Class<T> clazz)
     {
         if (enumValue == null)
             return null;
 
-        Object value = null;
-        if (enumValue instanceof NMSEntityUseAction && clazz.equals(PacketPlayInUseEntity.EnumEntityUseAction.class))
-            value = toNMS((NMSEntityUseAction) enumValue);
-        else if (enumValue instanceof NMSHand && clazz.equals(EnumHand.class))
-            value = toNMS((NMSHand) enumValue);
-        else if (enumValue instanceof NMSItemSlot && clazz.equals(EnumItemSlot.class))
-            value = toNMS((NMSItemSlot) enumValue);
-        else if (enumValue instanceof NMSMoveType && clazz.equals(EnumMoveType.class))
-            value = toNMS((NMSMoveType) enumValue);
-
-        if (value != null)
-            return (T) value;
+        for (ConversionPair pair : CONVERSION_PAIRS)
+            if (pair.nmsType.isInstance(enumValue))
+                return (T) pair.toNmsFunction.apply(enumValue);
 
         throw new IllegalArgumentException("Unknown NMSElement: " + enumValue.getClass().getName());
     }
 
-    @SuppressWarnings("unchecked")
+    @Override
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public <T extends NMSElement> T fromNMS(@Nullable Object nmsValue, @NotNull Class<T> clazz)
     {
         if (nmsValue == null)
             return null;
 
-        Object value = null;
-        if (nmsValue instanceof PacketPlayInUseEntity.EnumEntityUseAction)
-            value = fromNMS((PacketPlayInUseEntity.EnumEntityUseAction) nmsValue);
-        else if (nmsValue instanceof EnumHand)
-            value = fromNMS((EnumHand) nmsValue);
-        else if (nmsValue instanceof EnumItemSlot)
-            value = fromNMS((EnumItemSlot) nmsValue);
-        else if (nmsValue instanceof EnumMoveType)
-            value = fromNMS((EnumMoveType) nmsValue);
-
-        if (value != null)
-            return (T) value;
+        for (ConversionPair pair : CONVERSION_PAIRS)
+            if (pair.nmsClass.isInstance(nmsValue))
+                return (T) pair.fromNmsFunction.apply(nmsValue);
 
         throw new IllegalArgumentException("Unknown NMSElement: " + nmsValue.getClass().getName());
+    }
+
+    private static class ConversionPair<U extends NMSElement, T>
+    {
+        private final Class<U> nmsType;
+        private final Class<T> nmsClass;
+        private final Function<U, T> toNmsFunction;
+        private final Function<T, U> fromNmsFunction;
+
+        private ConversionPair(Class<U> nmsType, Class<T> nmsClass, Function<U, T> toNmsFunction, Function<T, U> fromNmsFunction)
+        {
+            this.nmsType = nmsType;
+            this.nmsClass = nmsClass;
+            this.toNmsFunction = toNmsFunction;
+            this.fromNmsFunction = fromNmsFunction;
+        }
     }
 }

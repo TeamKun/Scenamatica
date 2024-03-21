@@ -11,7 +11,7 @@ import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.kunlab.scenamatica.action.utils.VoxelUtils;
+import org.kunlab.scenamatica.commons.utils.VoxelUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;

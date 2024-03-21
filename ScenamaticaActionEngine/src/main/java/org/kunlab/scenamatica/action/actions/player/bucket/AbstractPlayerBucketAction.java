@@ -11,7 +11,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.actions.player.AbstractPlayerAction;
-import org.kunlab.scenamatica.action.utils.VoxelUtils;
+import org.kunlab.scenamatica.commons.utils.VoxelUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
@@ -207,7 +207,7 @@ public abstract class AbstractPlayerBucketAction extends AbstractPlayerAction
         if (ctxt.hasInput(IN_BLOCK_FACE))
             return ctxt.input(IN_BLOCK_FACE);
         else
-            return VoxelUtils.toFace(player.getEyeLocation(), placeAt.getLocation()).getOppositeFace();
+            return VoxelUtils.traceDirection(player.getEyeLocation(), placeAt.getLocation()).getOppositeFace();
     }
 
     @Override

@@ -39,6 +39,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.kunlab.scenamatica.commons.utils.VoxelUtils;
 import org.kunlab.scenamatica.context.actor.nms.v_1_16_R3.packets.MockedPacketPlayInSetCreativeSlot;
 import org.kunlab.scenamatica.events.actor.ActorPostJoinEvent;
 import org.kunlab.scenamatica.interfaces.context.Actor;
@@ -47,6 +48,7 @@ import org.kunlab.scenamatica.interfaces.scenariofile.context.PlayerStructure;
 import org.kunlab.scenamatica.nms.NMSProvider;
 import org.kunlab.scenamatica.nms.enums.NMSHand;
 import org.kunlab.scenamatica.nms.enums.entity.NMSEntityUseAction;
+import org.kunlab.scenamatica.nms.enums.voxel.NMSDirection;
 
 import java.io.IOException;
 import java.lang.reflect.Constructor;
@@ -191,11 +193,9 @@ class MockedPlayer extends EntityPlayer implements Actor
 
         net.minecraft.server.v1_16_R3.ItemStack nmsItem = CraftItemStack.asNMSCopy(item);
 
-        EnumDirection direction;
         if (face == null)
-            direction = Utils.getDirection(location, this.getPlayer().getLocation());
-        else
-            direction = Utils.toNMSDirection(face);
+            face = VoxelUtils.traceDirection(this.getPlayer().getLocation(), location);
+        EnumDirection direction = NMSProvider.getTypeSupport().toNMS(NMSDirection.fromBlockFace(face), EnumDirection.class);
 
         MovingObjectPositionBlock position = new MovingObjectPositionBlock(
                 /* vec3D: */ new Vec3D(location.getX(), location.getY(), location.getZ()),

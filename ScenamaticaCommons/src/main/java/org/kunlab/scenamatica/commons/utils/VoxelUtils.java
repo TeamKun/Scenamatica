@@ -1,4 +1,4 @@
-package org.kunlab.scenamatica.action.utils;
+package org.kunlab.scenamatica.commons.utils;
 
 import org.bukkit.Location;
 import org.bukkit.block.BlockFace;
@@ -32,7 +32,7 @@ public class VoxelUtils
         throw new IllegalStateException("No open face found");
     }
 
-    public static BlockFace toFace(Location viewer, Location target)
+    public static BlockFace traceDirection(Location viewer, Location target)
     {
         double x = target.getX() - viewer.getX();
         double y = target.getY() - viewer.getY();
@@ -43,10 +43,10 @@ public class VoxelUtils
         double pitch = Math.atan2(y, xz);
         double yaw = Math.atan2(z, x);
 
-        return toFace(pitch, yaw);
+        return traceDirection(pitch, yaw);
     }
 
-    public static BlockFace toFace(double pitch, double yaw)
+    public static BlockFace traceDirection(double pitch, double yaw)
     {
         yaw = Math.toDegrees(yaw);
 

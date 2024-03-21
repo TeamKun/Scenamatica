@@ -15,9 +15,11 @@ import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
-import org.kunlab.scenamatica.interfaces.context.Actor;
 import org.kunlab.scenamatica.interfaces.scenariofile.misc.BlockStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.PlayerSpecifier;
+import org.kunlab.scenamatica.nms.NMSProvider;
+import org.kunlab.scenamatica.nms.types.block.NMSBlockPosition;
+import org.kunlab.scenamatica.nms.types.entity.NMSEntityPlayer;
 
 import java.util.Collections;
 import java.util.List;
@@ -53,8 +55,9 @@ public class BlockBreakAction extends AbstractBlockAction
         this.validateBreakable(block, player);
 
         this.makeOutputs(ctxt, block, player);
-        Actor actor = ctxt.getActorOrThrow(player); // アクタ以外は破壊シミュレートできない。
-        actor.breakBlock(block);
+        NMSEntityPlayer nmsPlayer = NMSProvider.getProvider().wrap(player);
+        NMSBlockPosition nmsBlockPosition = NMSProvider.getProvider().wrap(location);
+        nmsPlayer.getInteractManager().breakBlock(nmsBlockPosition);
     }
 
     private void validateBreakable(@NotNull Block block, @NotNull Player player)

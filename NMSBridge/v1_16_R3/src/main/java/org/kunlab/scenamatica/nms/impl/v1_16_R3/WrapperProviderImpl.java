@@ -1,5 +1,7 @@
 package org.kunlab.scenamatica.nms.impl.v1_16_R3;
 
+import net.minecraft.server.v1_16_R3.PlayerInteractManager;
+import org.bukkit.Location;
 import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
@@ -8,21 +10,30 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.kunlab.scenamatica.nms.WrapperProvider;
+import org.kunlab.scenamatica.nms.impl.v1_16_R3.block.NMSBlockPositionImpl;
 import org.kunlab.scenamatica.nms.impl.v1_16_R3.entity.NMSEntityHumanImpl;
 import org.kunlab.scenamatica.nms.impl.v1_16_R3.entity.NMSEntityImpl;
 import org.kunlab.scenamatica.nms.impl.v1_16_R3.entity.NMSEntityLivingImpl;
 import org.kunlab.scenamatica.nms.impl.v1_16_R3.entity.NMSEntityPlayerImpl;
 import org.kunlab.scenamatica.nms.impl.v1_16_R3.item.NMSItemStackImpl;
+import org.kunlab.scenamatica.nms.impl.v1_16_R3.player.NMSPlayerInteractManagerImpl;
 import org.kunlab.scenamatica.nms.types.NMSMinecraftServer;
 import org.kunlab.scenamatica.nms.types.NMSWorldServer;
+import org.kunlab.scenamatica.nms.types.block.NMSBlockPosition;
 import org.kunlab.scenamatica.nms.types.entity.NMSEntity;
 import org.kunlab.scenamatica.nms.types.entity.NMSEntityHuman;
 import org.kunlab.scenamatica.nms.types.entity.NMSEntityLiving;
 import org.kunlab.scenamatica.nms.types.entity.NMSEntityPlayer;
 import org.kunlab.scenamatica.nms.types.item.NMSItemStack;
+import org.kunlab.scenamatica.nms.types.player.NMSPlayerInteractManager;
 
 public class WrapperProviderImpl implements WrapperProvider
 {
+    public static NMSBlockPosition wrap$(Location bukkitLocation)
+    {
+        return new NMSBlockPositionImpl(bukkitLocation);
+    }
+
     public static NMSEntity wrap$(Entity bukkitEntity)
     {
         return new NMSEntityImpl(bukkitEntity);
@@ -46,6 +57,11 @@ public class WrapperProviderImpl implements WrapperProvider
     public static NMSItemStack wrap$(ItemStack bukkitItemStack)
     {
         return new NMSItemStackImpl(bukkitItemStack);
+    }
+
+    public static NMSPlayerInteractManager wrap$(PlayerInteractManager playerInteractManager)
+    {
+        return new NMSPlayerInteractManagerImpl(playerInteractManager);
     }
 
     public static NMSWorldServer wrap$(World bukkitWorld)
@@ -92,6 +108,12 @@ public class WrapperProviderImpl implements WrapperProvider
     public NMSWorldServer wrap(World bukkitWorld)
     {
         return wrap$(bukkitWorld);
+    }
+
+    @Override
+    public NMSBlockPosition wrap(Location bukkitLocation)
+    {
+        return wrap$(bukkitLocation);
     }
 
     @Override
