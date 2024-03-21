@@ -4,8 +4,10 @@ import com.mojang.authlib.GameProfile;
 import net.minecraft.server.v1_16_R3.EntityPlayer;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
-import org.kunlab.scenamatica.nms.impl.v1_16_R3.WrapperProviderImpl;
+import org.kunlab.scenamatica.nms.impl.v1_16_R3.player.NMSPlayerConnectionImpl;
+import org.kunlab.scenamatica.nms.impl.v1_16_R3.player.NMSPlayerInteractManagerImpl;
 import org.kunlab.scenamatica.nms.types.entity.NMSEntityPlayer;
+import org.kunlab.scenamatica.nms.types.player.NMSPlayerConnection;
 import org.kunlab.scenamatica.nms.types.player.NMSPlayerInteractManager;
 
 public class NMSEntityPlayerImpl extends NMSEntityHumanImpl implements NMSEntityPlayer
@@ -14,6 +16,7 @@ public class NMSEntityPlayerImpl extends NMSEntityHumanImpl implements NMSEntity
     private final EntityPlayer nmsEntity;
 
     private final NMSPlayerInteractManager interactManager;
+    private final NMSPlayerConnection connection;
 
     public NMSEntityPlayerImpl(Player bukkitEntity)
     {
@@ -22,7 +25,8 @@ public class NMSEntityPlayerImpl extends NMSEntityHumanImpl implements NMSEntity
         this.bukkitEntity = bukkitEntity;
         this.nmsEntity = ((CraftPlayer) bukkitEntity).getHandle();
 
-        this.interactManager = WrapperProviderImpl.wrap$(this.nmsEntity.playerInteractManager);
+        this.interactManager = new NMSPlayerInteractManagerImpl(this.nmsEntity.playerInteractManager);
+        this.connection = new NMSPlayerConnectionImpl(this.nmsEntity.playerConnection);
     }
 
     @Override
@@ -35,6 +39,12 @@ public class NMSEntityPlayerImpl extends NMSEntityHumanImpl implements NMSEntity
     public NMSPlayerInteractManager getInteractManager()
     {
         return this.interactManager;
+    }
+
+    @Override
+    public NMSPlayerConnection getConnection()
+    {
+        return this.connection;
     }
 
     @Override

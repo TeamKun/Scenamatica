@@ -114,26 +114,6 @@ public class PlayerMocker extends PlayerMockerBase
     }
 
     @Override
-    public void unmock(Actor actor)
-    {
-        Player player = actor.getPlayer();
-        CraftPlayer craftPlayer = (CraftPlayer) player;
-        EntityPlayer entityPlayer = craftPlayer.getHandle();
-
-        if (!(entityPlayer instanceof MockedPlayer))
-            return;
-
-        MockedPlayer mockedPlayer = (MockedPlayer) entityPlayer;
-
-        MinecraftServer server = mockedPlayer.getMinecraftServer();
-        assert server != null;
-
-        super.removePersistentPlayerData(player);
-        if (mockedPlayer.playerConnection != null)
-            mockedPlayer.playerConnection.disconnect("Unmocked");
-    }
-
-    @Override
     protected Class<?> getLoginListenerClass()
     {
         return LoginListener.class;

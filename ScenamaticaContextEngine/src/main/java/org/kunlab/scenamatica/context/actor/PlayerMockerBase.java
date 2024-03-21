@@ -17,6 +17,7 @@ import org.kunlab.scenamatica.nms.types.NMSMinecraftServer;
 import org.kunlab.scenamatica.nms.types.NMSPlayerList;
 import org.kunlab.scenamatica.nms.types.NMSWorldServer;
 import org.kunlab.scenamatica.nms.types.entity.NMSEntityPlayer;
+import org.kunlab.scenamatica.nms.types.player.NMSPlayerConnection;
 import org.kunlab.scenamatica.settings.ActorSettings;
 
 import java.net.InetSocketAddress;
@@ -45,9 +46,31 @@ public abstract class PlayerMockerBase
         return new GameProfile(uuid, name);
     }
 
+    private static void removePersistentPlayerData(NMSPlayerList nmsPlayerList, NMSEntityPlayer nmsPlayer, Player player)
+    {
+        if (nmsPlayerList.isOp(nmsPlayer.getProfile()))
+            nmsPlayerList.removeOp(nmsPlayer.getProfile());
+        player.getEffectivePermissions().forEach(permissionAttachmentInfo -> {
+            if (permissionAttachmentInfo.getAttachment() != null)
+                player.removeAttachment(permissionAttachmentInfo.getAttachment());
+        });
+    }
+
     public abstract Actor mock(@NotNull World world, @NotNull PlayerStructure structure);
 
-    public abstract void unmock(Actor player);
+    public void unmock(Actor actor)
+    {
+        Player player = actor.getPlayer();
+
+        NMSMinecraftServer nmsServer = NMSProvider.getProvider().wrap(Bukkit.getServer());
+        NMSPlayerList nmsPlayerList = nmsServer.getPlayerList();
+        NMSEntityPlayer nmsPlayer = NMSProvider.getProvider().wrap(player);
+        NMSPlayerConnection nmsConnection = nmsPlayer.getConnection();
+
+        removePersistentPlayerData(nmsPlayerList, nmsPlayer, player);
+
+        nmsConnection.disconnect("Disconnected");
+    }
 
     protected abstract Class<?> getLoginListenerClass();
 
@@ -66,7 +89,7 @@ public abstract class PlayerMockerBase
         {
             // LoginListener 名義のログを偽装
             LogManager.getLogger(this.getLoginListenerClass())
-                    .info("Disconnecting {}: {}", player.getPlayer().getAddress(), event.getKickMessage());
+                    .info("Disconnecting {}: {}", player.getPlayer().getAddress(), event.kickMessage());
         }
 
         return event.getResult() == PlayerLoginEvent.Result.ALLOWED;
@@ -86,29 +109,9 @@ public abstract class PlayerMockerBase
                 .forEach(permission -> player.addAttachment(this.registry.getPlugin(), permission, true));
     }
 
-    protected void removePersistentPlayerData(Player player)
-    {
-        NMSMinecraftServer nmsServer = NMSProvider.getProvider().wrap(Bukkit.getServer());
-        NMSPlayerList nmsPlayerList = nmsServer.getPlayerList();
-        NMSEntityPlayer nmsPlayer = NMSProvider.getProvider().wrap(player);
-
-        if (nmsPlayerList.isOp(nmsPlayer.getProfile()))
-            nmsPlayerList.removeOp(nmsPlayer.getProfile());
-        player.getEffectivePermissions().forEach(permissionAttachmentInfo -> {
-            if (permissionAttachmentInfo.getAttachment() != null)
-                player.removeAttachment(permissionAttachmentInfo.getAttachment());
-        });
-    }
-
     protected void moveToLocationSafe(Player player, Location initialLocation)
     {
         World initialWorld = initialLocation.getWorld();
-        float yaw = initialLocation.getYaw();
-        float pitch = initialLocation.getPitch();
-        double x = initialLocation.getX();
-        double y = initialLocation.getY();
-        double z = initialLocation.getZ();
-
         if (initialWorld == player.getWorld())
         {
             player.teleport(initialLocation);
