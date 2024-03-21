@@ -26,6 +26,14 @@ public interface ScenarioFileStructure extends Structure
     Version getScenamaticaVersion();
 
     /**
+     * 対応する Minecraft のバージョンを取得します。
+     *
+     * @return Minecraft のバージョン
+     */
+    @NotNull
+    List<Version> getMinecraftVersions();
+
+    /**
      * このシナリオの名前を取得します。
      * 対象プラグインで一意である必要があります。
      * キャメルケースが推奨されています。

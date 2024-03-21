@@ -7,14 +7,14 @@ import org.jetbrains.annotations.Nullable;
 import org.kunlab.kpm.utils.PluginUtil;
 import org.kunlab.scenamatica.exceptions.scenariofile.InvalidScenarioFileException;
 import org.kunlab.scenamatica.interfaces.ScenamaticaRegistry;
-import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
-import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileManager;
+import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileStructure;
+import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class ScenarioFileManagerImpl implements ScenarioFileManager
@@ -44,7 +44,7 @@ public class ScenarioFileManagerImpl implements ScenarioFileManager
             Path pluginJarPath = PluginUtil.getFile(plugin).toPath();
             Map<String, ScenarioFileStructure> pluginScenarios = ScenarioFileParser.loadAllFromJar(pluginJarPath);
 
-            this.validateScenarios(pluginScenarios.values());
+            pluginScenarios.values().removeIf(scenario -> !this.canLoadScenario(scenario));
 
             this.scenarios.put(plugin.getName(), pluginScenarios);
 
@@ -62,21 +62,36 @@ public class ScenarioFileManagerImpl implements ScenarioFileManager
         }
     }
 
-    private void validateScenarios(Collection<? extends ScenarioFileStructure> scenarios)
-            throws InvalidScenarioFileException
+    private boolean canLoadScenario(@NotNull ScenarioFileStructure scenario)
     {
         Version baseVersion = Version.of(this.registry.getPlugin().getDescription().getVersion());
-
-        for (ScenarioFileStructure scenario : scenarios)
+        Version fileVersion = scenario.getScenamaticaVersion();
+        if (scenario.getScenamaticaVersion().isNewerThan(baseVersion))
         {
-            Version fileVersion = scenario.getScenamaticaVersion();
-
-            // この Scenamatica より新しいバージョンのファイルは読み込まない
-            if (fileVersion.isNewerThan(baseVersion))
-                throw new InvalidScenarioFileException(
-                        "The scenario file " + scenario.getName() + " is newer than running Scenamatica daemon version." +
-                                " (File version: " + fileVersion + ", Scenamatica version: " + baseVersion + ")");
+            this.registry.getLogger().warning(
+                    "The scenario file " + scenario.getName() + " is newer than running Scenamatica daemon version." +
+                            " (File version: " + fileVersion + ", Scenamatica version: " + baseVersion + ")"
+            );
+            return false;
         }
+
+        List<Version> minecraftVersions = scenario.getMinecraftVersions();
+        if (minecraftVersions.isEmpty())
+            return true;
+
+        Version runningVersion = Version.of(this.registry.getPlugin().getServer().getMinecraftVersion());
+        for (Version version : minecraftVersions)
+        {
+            if (runningVersion.isEqualTo(version))
+                return true;
+        }
+
+        this.registry.getLogger().warning(
+                "The scenario file " + scenario.getName() + " is not compatible with running Minecraft version." +
+                        " (Compatible versions: " + String.join(", ", minecraftVersions.stream().map(Version::toString).toArray(String[]::new)) + ", Running version: " + runningVersion + ")"
+        );
+
+        return false;
     }
 
     @Override
