@@ -2,6 +2,7 @@ package org.kunlab.scenamatica.nms.impl.v1_16_R3.entity;
 
 import com.mojang.authlib.GameProfile;
 import net.minecraft.server.v1_16_R3.EntityPlayer;
+import net.minecraft.server.v1_16_R3.PlayerConnection;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.kunlab.scenamatica.nms.impl.v1_16_R3.player.NMSPlayerConnectionImpl;
@@ -16,7 +17,9 @@ public class NMSEntityPlayerImpl extends NMSEntityHumanImpl implements NMSEntity
     private final EntityPlayer nmsEntity;
 
     private final NMSPlayerInteractManager interactManager;
-    private final NMSPlayerConnection connection;
+
+    private PlayerConnection lastConnection;
+    private NMSPlayerConnection connection;
 
     public NMSEntityPlayerImpl(Player bukkitEntity)
     {
@@ -26,7 +29,18 @@ public class NMSEntityPlayerImpl extends NMSEntityHumanImpl implements NMSEntity
         this.nmsEntity = ((CraftPlayer) bukkitEntity).getHandle();
 
         this.interactManager = new NMSPlayerInteractManagerImpl(this.nmsEntity.playerInteractManager);
-        this.connection = new NMSPlayerConnectionImpl(this.nmsEntity.playerConnection);
+    }
+
+    @Override
+    public NMSPlayerConnection getConnection()
+    {
+        if (this.lastConnection != this.nmsEntity.playerConnection)
+        {
+            this.lastConnection = this.nmsEntity.playerConnection;
+            this.connection = new NMSPlayerConnectionImpl(this.lastConnection);
+        }
+
+        return this.connection;
     }
 
     @Override
@@ -39,12 +53,6 @@ public class NMSEntityPlayerImpl extends NMSEntityHumanImpl implements NMSEntity
     public NMSPlayerInteractManager getInteractManager()
     {
         return this.interactManager;
-    }
-
-    @Override
-    public NMSPlayerConnection getConnection()
-    {
-        return this.connection;
     }
 
     @Override
