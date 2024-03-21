@@ -11,12 +11,14 @@ import org.bukkit.event.player.PlayerLoginEvent;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.interfaces.ScenamaticaRegistry;
 import org.kunlab.scenamatica.interfaces.context.Actor;
+import org.kunlab.scenamatica.interfaces.context.ActorManager;
 import org.kunlab.scenamatica.interfaces.scenariofile.context.PlayerStructure;
 import org.kunlab.scenamatica.nms.NMSProvider;
 import org.kunlab.scenamatica.nms.types.NMSMinecraftServer;
 import org.kunlab.scenamatica.nms.types.NMSPlayerList;
 import org.kunlab.scenamatica.nms.types.NMSWorldServer;
 import org.kunlab.scenamatica.nms.types.entity.NMSEntityPlayer;
+import org.kunlab.scenamatica.nms.types.player.NMSNetworkManager;
 import org.kunlab.scenamatica.nms.types.player.NMSPlayerConnection;
 import org.kunlab.scenamatica.settings.ActorSettings;
 
@@ -30,11 +32,13 @@ import java.util.stream.Stream;
 public abstract class PlayerMockerBase
 {
     private final ScenamaticaRegistry registry;
+    private final ActorManager manager;
     private final ActorSettings settings;
 
-    public PlayerMockerBase(ScenamaticaRegistry registry, ActorSettings settings)
+    public PlayerMockerBase(ScenamaticaRegistry registry, ActorManager manager, ActorSettings settings)
     {
         this.registry = registry;
+        this.manager = manager;
         this.settings = settings;
     }
 
@@ -56,7 +60,32 @@ public abstract class PlayerMockerBase
         });
     }
 
-    public abstract Actor mock(@NotNull World world, @NotNull PlayerStructure structure);
+    protected static Location createInitialLocation(World world, PlayerStructure structure)
+    {
+        Location initialLocation;
+        if (structure.getLocation() == null)
+            initialLocation = world.getSpawnLocation().clone();
+        else
+            initialLocation = structure.getLocation().create();
+
+        if (structure.getLocation() != null && structure.getLocation().getWorld() == null)
+            initialLocation.setWorld(world);
+
+        return initialLocation;
+    }
+
+    public Actor mock(@NotNull World world, @NotNull PlayerStructure structure)
+    {
+        Actor actor = this.createActorInstance(world, structure);
+
+        this.initActor(actor.getPlayer(), structure);
+
+        boolean doLogin = structure.getOnline() == null || structure.getOnline();
+        if (doLogin)
+            this.doLogin(actor);
+
+        return actor;
+    }
 
     public void unmock(Actor actor)
     {
@@ -72,9 +101,20 @@ public abstract class PlayerMockerBase
         nmsConnection.disconnect("Disconnected");
     }
 
-    protected abstract Class<?> getLoginListenerClass();
+    public void doLogin(Actor player)
+    {
+        NMSMinecraftServer nmsServer = NMSProvider.getProvider().wrap(Bukkit.getServer());
+        NMSPlayerList nmsPlayerList = nmsServer.getPlayerList();
 
-    public abstract void postActorLogin(Player player);
+        NMSEntityPlayer nmsEntityPlayer = NMSProvider.getProvider().wrap(player.getPlayer());
+        NMSNetworkManager nmsNetworkManager = nmsEntityPlayer.getNetworkManager();
+
+        if (!this.dispatchLoginEvent(player, (InetSocketAddress) nmsNetworkManager.getSocketAddress()))
+            throw new IllegalStateException("Login for " + player.getName() + " was denied.");
+
+        nmsPlayerList.registerPlayer(nmsNetworkManager, nmsEntityPlayer);
+        this.postActorLogin(player.getPlayer());
+    }
 
     protected boolean dispatchLoginEvent(Actor player, InetSocketAddress addr)
     {
@@ -164,4 +204,22 @@ public abstract class PlayerMockerBase
             this.registry.getExceptionHandler().report(e);
         }
     }
+
+    public void postActorLogin(@NotNull Player player)
+    {
+        this.injectPlayerConnection(player);
+        this.sendSettings(player);
+
+        Actor actor = this.manager.getByUUID(player.getUniqueId());
+        assert actor != null;
+        this.moveToLocationSafe(player, actor.getInitialLocation());
+    }
+
+    protected abstract void sendSettings(@NotNull Player player);
+
+    protected abstract Actor createActorInstance(@NotNull World world, @NotNull PlayerStructure structure);
+
+    protected abstract Class<?> getLoginListenerClass();
+
+    protected abstract void injectPlayerConnection(@NotNull Player player);
 }

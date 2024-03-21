@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.nms.NMSWrapped;
 import org.kunlab.scenamatica.nms.types.entity.NMSEntityPlayer;
+import org.kunlab.scenamatica.nms.types.player.NMSNetworkManager;
 
 /**
  * PlayerList の NMS 版です。
@@ -30,6 +31,8 @@ public interface NMSPlayerList extends NMSWrapped
     @NotNull
     @Contract("_, _, _, _, _ -> param1")
     NMSEntityPlayer moveToWorld(@NotNull NMSEntityPlayer player, @NotNull NMSWorldServer world, boolean shouldCopyState, @Nullable Location locationToSpawn, boolean avoidSuffocation);
+
+    void registerPlayer(NMSNetworkManager networkManager, NMSEntityPlayer player);
 
     /**
      * 指定したプロファイルが OP 権限を持っているかどうかを取得します。

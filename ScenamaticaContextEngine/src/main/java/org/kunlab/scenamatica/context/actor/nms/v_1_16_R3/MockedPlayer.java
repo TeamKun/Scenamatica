@@ -257,7 +257,7 @@ class MockedPlayer extends EntityPlayer implements Actor
     @Override
     public void joinServer()
     {
-        this.mocker.doLogin(this.server, this);
+        this.mocker.doLogin(this);
     }
 
     private void actualLeave(String message)

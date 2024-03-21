@@ -38,6 +38,13 @@ public interface Actor
     PlayerStructure getInitialStructure();
 
     /**
+     * 初期位置を取得します。
+     *
+     * @return 初期位置
+     */
+    Location getInitialLocation();
+
+    /**
      * アニメーションを再生します。
      *
      * @param animation 再生するアニメーション

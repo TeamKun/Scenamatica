@@ -2,6 +2,7 @@ package org.kunlab.scenamatica.nms.types.entity;
 
 import com.mojang.authlib.GameProfile;
 import org.bukkit.entity.Player;
+import org.kunlab.scenamatica.nms.types.player.NMSNetworkManager;
 import org.kunlab.scenamatica.nms.types.player.NMSPlayerConnection;
 import org.kunlab.scenamatica.nms.types.player.NMSPlayerInteractManager;
 
@@ -30,6 +31,13 @@ public interface NMSEntityPlayer extends NMSEntityHuman
      * @return プレイヤーコネクション
      */
     NMSPlayerConnection getConnection();
+
+    /**
+     * ネットワークマネージャを取得します。
+     *
+     * @return ネットワークマネージャ
+     */
+    NMSNetworkManager getNetworkManager();
 
     /**
      * プロファイルを取得します。

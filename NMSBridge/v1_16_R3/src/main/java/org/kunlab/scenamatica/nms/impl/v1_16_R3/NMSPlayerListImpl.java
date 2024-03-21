@@ -2,6 +2,7 @@ package org.kunlab.scenamatica.nms.impl.v1_16_R3;
 
 import com.mojang.authlib.GameProfile;
 import net.minecraft.server.v1_16_R3.EntityPlayer;
+import net.minecraft.server.v1_16_R3.NetworkManager;
 import net.minecraft.server.v1_16_R3.PlayerList;
 import net.minecraft.server.v1_16_R3.WorldServer;
 import org.bukkit.Bukkit;
@@ -12,6 +13,7 @@ import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.nms.types.NMSPlayerList;
 import org.kunlab.scenamatica.nms.types.NMSWorldServer;
 import org.kunlab.scenamatica.nms.types.entity.NMSEntityPlayer;
+import org.kunlab.scenamatica.nms.types.player.NMSNetworkManager;
 
 public class NMSPlayerListImpl implements NMSPlayerList
 {
@@ -53,6 +55,15 @@ public class NMSPlayerListImpl implements NMSPlayerList
         );
 
         return player;
+    }
+
+    @Override
+    public void registerPlayer(NMSNetworkManager networkManager, NMSEntityPlayer player)
+    {
+        NetworkManager nmsNetworkManager = (NetworkManager) networkManager.getNMSRaw();
+        EntityPlayer nmsPlayer = (EntityPlayer) player.getNMSRaw();
+
+        this.nmsPlayerList.a(nmsNetworkManager, nmsPlayer);
     }
 
     @Override
