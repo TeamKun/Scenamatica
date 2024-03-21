@@ -22,7 +22,7 @@ public class NMSEntityImpl implements NMSEntity
     }
 
     @Override
-    public Object getNMSRaw()
+    public Entity getNMSRaw()
     {
         return this.nmsEntity;
     }

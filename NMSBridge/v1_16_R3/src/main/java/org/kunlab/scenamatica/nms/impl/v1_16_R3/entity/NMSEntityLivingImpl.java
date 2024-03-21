@@ -40,7 +40,7 @@ public class NMSEntityLivingImpl extends NMSEntityImpl implements NMSEntityLivin
     }
 
     @Override
-    public Object getNMSRaw()
+    public EntityLiving getNMSRaw()
     {
         return this.nmsEntity;
     }

@@ -1,5 +1,6 @@
 package org.kunlab.scenamatica.nms.types;
 
+import org.bukkit.World;
 import org.kunlab.scenamatica.nms.NMSWrapped;
 
 /**
@@ -7,5 +8,6 @@ import org.kunlab.scenamatica.nms.NMSWrapped;
  */
 public interface NMSWorldServer extends NMSWrapped
 {
-
+    @Override
+    World getBukkit();
 }

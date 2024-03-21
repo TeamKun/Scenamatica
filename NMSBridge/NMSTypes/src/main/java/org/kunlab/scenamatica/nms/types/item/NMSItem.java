@@ -4,7 +4,7 @@ import org.kunlab.scenamatica.nms.NMSElement;
 import org.kunlab.scenamatica.nms.Versioned;
 
 /**
- * ItemStack の NMS インターフェースです。
+ * Item の NMS インターフェースです。
  */
 public interface NMSItem extends NMSElement
 {

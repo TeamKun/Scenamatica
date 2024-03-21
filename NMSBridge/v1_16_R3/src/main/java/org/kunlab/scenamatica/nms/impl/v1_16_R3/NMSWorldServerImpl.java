@@ -16,13 +16,13 @@ public class NMSWorldServerImpl implements NMSWorldServer
     }
 
     @Override
-    public Object getNMSRaw()
+    public WorldServer getNMSRaw()
     {
         return this.nmsWorld;
     }
 
     @Override
-    public Object getBukkit()
+    public World getBukkit()
     {
         return this.bukkitWorld;
     }

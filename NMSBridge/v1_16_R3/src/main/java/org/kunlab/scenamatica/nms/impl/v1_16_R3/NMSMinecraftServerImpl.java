@@ -19,13 +19,13 @@ public class NMSMinecraftServerImpl implements NMSMinecraftServer
     }
 
     @Override
-    public Object getNMSRaw()
+    public MinecraftServer getNMSRaw()
     {
         return this.nmsServer;
     }
 
     @Override
-    public Object getBukkit()
+    public Server getBukkit()
     {
         return this.bukkitServer;
     }

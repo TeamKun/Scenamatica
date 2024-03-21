@@ -57,7 +57,7 @@ public class NMSItemStackImpl implements NMSItemStack
     }
 
     @Override
-    public Object getNMSRaw()
+    public ItemStack getNMSRaw()
     {
         return this.nmsItemStack;
     }

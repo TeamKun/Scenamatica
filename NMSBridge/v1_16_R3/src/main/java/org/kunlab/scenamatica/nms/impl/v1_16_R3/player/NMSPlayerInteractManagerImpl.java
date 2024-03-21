@@ -17,7 +17,7 @@ public class NMSPlayerInteractManagerImpl implements NMSPlayerInteractManager
     }
 
     @Override
-    public Object getNMSRaw()
+    public PlayerInteractManager getNMSRaw()
     {
         return this.playerInteractManager;
     }

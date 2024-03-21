@@ -37,7 +37,7 @@ public class NMSEntityPlayerImpl extends NMSEntityHumanImpl implements NMSEntity
     }
 
     @Override
-    public Object getNMSRaw()
+    public EntityPlayer getNMSRaw()
     {
         return this.nmsEntity;
     }

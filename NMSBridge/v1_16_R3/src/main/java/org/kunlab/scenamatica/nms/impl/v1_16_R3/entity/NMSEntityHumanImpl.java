@@ -35,7 +35,7 @@ public class NMSEntityHumanImpl extends NMSEntityLivingImpl implements NMSEntity
     }
 
     @Override
-    public Object getNMSRaw()
+    public EntityHuman getNMSRaw()
     {
         return this.nmsEntity;
     }
