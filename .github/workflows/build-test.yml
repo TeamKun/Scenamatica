@@ -1,13 +1,29 @@
 name: Build and test with Scenamatica
 on:
   push:
-    branches:
-      - main
-      - develop
+    paths:
+      - "NMSBridge/**"
+      - "ScenamaticaActionEngine/**"
+      - "ScenamaticaAPI/**"
+      - "ScenamaticaCommons/**"
+      - "ScenamaticaContextEngine/**"
+      - "ScenamaticaContextDaemon/**"
+      - "ScenamaticaPlugin/**"
+      - "ScenamaticaScenarioEngine/**"
+      - "ScenamaticaScenarioSelectorEngine/**"
+      - "ScenamaticaScenarioTriggerEngine/**"
   pull_request:
-    branches:
-      - main
-      - develop
+    paths:
+      - "NMSBridge/**"
+      - "ScenamaticaActionEngine/**"
+      - "ScenamaticaAPI/**"
+      - "ScenamaticaCommons/**"
+      - "ScenamaticaContextEngine/**"
+      - "ScenamaticaContextDaemon/**"
+      - "ScenamaticaPlugin/**"
+      - "ScenamaticaScenarioEngine/**"
+      - "ScenamaticaScenarioSelectorEngine/**"
+      - "ScenamaticaScenarioTriggerEngine/**"
 
 permissions:
   pull-requests: write
