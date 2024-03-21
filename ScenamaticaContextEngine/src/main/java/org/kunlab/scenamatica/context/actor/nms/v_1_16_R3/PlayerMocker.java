@@ -65,14 +65,14 @@ public class PlayerMocker extends PlayerMockerBase
     @SneakyThrows(IOException.class)
     private static void sendSettings(EntityPlayer player)
     {
-        String locale = "en_US";
+        String locale = player.getBukkitEntity().getLocale();
         int viewDistance = 0x02;
         int chatMode = 0;  // 0: enabled, 1: commands only, 2: hidden
         boolean chatColors = true;
         int displayedSkinParts = 0x01 | 0x02 | 0x04 | 0x08 | 0x10 | 0x20 | 0x40;
         // 0x01: cape, 0x02: jacket, 0x04: left sleeve, 0x08: right sleeve,
         // 0x10: left pants leg, 0x20: right pants leg, 0x40: hat
-        int mainHand = 1; // 0: left, 1: right
+        int mainHand = player.getMainHand().ordinal();
 
         PacketDataSerializer serializer = new PacketDataSerializer(ByteBufAllocator.DEFAULT.buffer());
         serializer.a(locale);
