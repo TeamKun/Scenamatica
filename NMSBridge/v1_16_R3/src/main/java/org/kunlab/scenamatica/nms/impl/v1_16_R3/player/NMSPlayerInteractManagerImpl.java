@@ -3,7 +3,7 @@ package org.kunlab.scenamatica.nms.impl.v1_16_R3.player;
 import net.minecraft.server.v1_16_R3.BlockPosition;
 import net.minecraft.server.v1_16_R3.PlayerInteractManager;
 import org.jetbrains.annotations.NotNull;
-import org.kunlab.scenamatica.nms.impl.v1_16_R3.TypeSupportImpl;
+import org.kunlab.scenamatica.nms.impl.v1_16_R3.block.NMSBlockPositionImpl;
 import org.kunlab.scenamatica.nms.types.block.NMSBlockPosition;
 import org.kunlab.scenamatica.nms.types.player.NMSPlayerInteractManager;
 
@@ -23,15 +23,9 @@ public class NMSPlayerInteractManagerImpl implements NMSPlayerInteractManager
     }
 
     @Override
-    public Object getBukkit()
-    {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public void breakBlock(@NotNull NMSBlockPosition position)
     {
-        BlockPosition nmsPosition = TypeSupportImpl.toNMS(position);
+        BlockPosition nmsPosition = ((NMSBlockPositionImpl) position).getNMSRaw();
         this.playerInteractManager.breakBlock(nmsPosition);
     }
 }

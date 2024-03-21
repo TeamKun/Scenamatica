@@ -39,7 +39,7 @@ public class NMSBlockPositionImpl implements NMSBlockPosition
     }
 
     @Override
-    public Object getNMSRaw()
+    public BlockPosition getNMSRaw()
     {
         return this.blockPosition;
     }
