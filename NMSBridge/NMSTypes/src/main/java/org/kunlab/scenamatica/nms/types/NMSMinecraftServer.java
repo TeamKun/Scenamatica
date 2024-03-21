@@ -11,6 +11,13 @@ public interface NMSMinecraftServer extends NMSWrapped
     @Versioned(from = "1.16.5")
     WorldMap getWorlds();
 
+    /**
+     * プレイヤーリストを取得します。
+     *
+     * @return プレイヤーリスト
+     */
+    NMSPlayerList getPlayerList();
+
     @Override
     Server getBukkit();
 }

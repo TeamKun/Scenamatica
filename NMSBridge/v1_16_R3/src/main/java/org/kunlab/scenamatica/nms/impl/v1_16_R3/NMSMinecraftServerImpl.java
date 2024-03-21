@@ -11,11 +11,13 @@ public class NMSMinecraftServerImpl implements NMSMinecraftServer
 {
     private final Server bukkitServer;
     private final MinecraftServer nmsServer;
+    private final NMSPlayerListImpl playerList;
 
     public NMSMinecraftServerImpl(Server bukkitServer)
     {
         this.bukkitServer = bukkitServer;
         this.nmsServer = ((CraftServer) bukkitServer).getServer();
+        this.playerList = new NMSPlayerListImpl(this.nmsServer.getPlayerList());
     }
 
     @Override

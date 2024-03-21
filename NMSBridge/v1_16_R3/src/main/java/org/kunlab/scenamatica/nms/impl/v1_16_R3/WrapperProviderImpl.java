@@ -64,14 +64,14 @@ public class WrapperProviderImpl implements WrapperProvider
         return new NMSPlayerInteractManagerImpl(playerInteractManager);
     }
 
-    public static NMSWorldServer wrap$(World bukkitWorld)
-    {
-        return new NMSWorldServerImpl(bukkitWorld);
-    }
-
     public static NMSMinecraftServer wrap$(Server server)
     {
         return new NMSMinecraftServerImpl(server);
+    }
+
+    public static NMSWorldServer wrap$(World bukkitWorld)
+    {
+        return new NMSWorldServerImpl(bukkitWorld);
     }
 
     @Override
@@ -105,6 +105,12 @@ public class WrapperProviderImpl implements WrapperProvider
     }
 
     @Override
+    public NMSMinecraftServer wrap(Server server)
+    {
+        return wrap$(server);
+    }
+
+    @Override
     public NMSWorldServer wrap(World bukkitWorld)
     {
         return wrap$(bukkitWorld);
@@ -116,9 +122,4 @@ public class WrapperProviderImpl implements WrapperProvider
         return wrap$(bukkitLocation);
     }
 
-    @Override
-    public NMSMinecraftServer wrap(Server server)
-    {
-        return wrap$(server);
-    }
 }

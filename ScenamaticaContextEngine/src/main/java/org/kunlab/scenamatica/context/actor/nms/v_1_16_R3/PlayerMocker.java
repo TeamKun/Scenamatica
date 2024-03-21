@@ -3,18 +3,10 @@ package org.kunlab.scenamatica.context.actor.nms.v_1_16_R3;
 import com.mojang.authlib.GameProfile;
 import io.netty.buffer.ByteBufAllocator;
 import lombok.SneakyThrows;
-import net.kunmc.lab.peyangpaperutils.lib.utils.Runner;
-import net.minecraft.server.v1_16_R3.BlockPosition;
-import net.minecraft.server.v1_16_R3.ChatComponentText;
 import net.minecraft.server.v1_16_R3.EntityPlayer;
-import net.minecraft.server.v1_16_R3.EnumGamemode;
-import net.minecraft.server.v1_16_R3.GenericAttributes;
 import net.minecraft.server.v1_16_R3.LoginListener;
 import net.minecraft.server.v1_16_R3.MinecraftServer;
-import net.minecraft.server.v1_16_R3.MobEffect;
-import net.minecraft.server.v1_16_R3.MobEffectList;
 import net.minecraft.server.v1_16_R3.NetworkManager;
-import net.minecraft.server.v1_16_R3.OpListEntry;
 import net.minecraft.server.v1_16_R3.PacketDataSerializer;
 import net.minecraft.server.v1_16_R3.PacketPlayInSettings;
 import net.minecraft.server.v1_16_R3.PlayerList;
@@ -25,41 +17,28 @@ import org.bukkit.World;
 import org.bukkit.craftbukkit.v1_16_R3.CraftServer;
 import org.bukkit.craftbukkit.v1_16_R3.CraftWorld;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
-import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
-import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.potion.PotionEffect;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.context.actor.PlayerMockerBase;
 import org.kunlab.scenamatica.interfaces.ScenamaticaRegistry;
 import org.kunlab.scenamatica.interfaces.context.Actor;
 import org.kunlab.scenamatica.interfaces.context.ActorManager;
 import org.kunlab.scenamatica.interfaces.scenariofile.context.PlayerStructure;
-import org.kunlab.scenamatica.interfaces.scenariofile.inventory.ItemStackStructure;
-import org.kunlab.scenamatica.interfaces.scenariofile.inventory.PlayerInventoryStructure;
-import org.kunlab.scenamatica.settings.ActorSettings;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Stream;
 
 public class PlayerMocker extends PlayerMockerBase
 {
     private final ScenamaticaRegistry registry;
     private final ActorManager manager;
-    private final ActorSettings settings;
 
     public PlayerMocker(ScenamaticaRegistry registry, ActorManager manager)
     {
-        super(registry, manager);
+        super(registry, registry.getEnvironment().getActorSettings());
+
         this.registry = registry;
         this.manager = manager;
-
-        this.settings = registry.getEnvironment().getActorSettings();
     }
 
     @SneakyThrows(IOException.class)
@@ -95,158 +74,6 @@ public class PlayerMocker extends PlayerMockerBase
         sendSettings(player);
     }
 
-    private void initializePlayer(MockedPlayer player, PlayerStructure structure)
-    {
-        this.initHumanEntity(player, structure);
-        this.initBasePlayer(player, structure);
-        this.initEntity(player, structure);
-    }
-
-    private void initBasePlayer(MockedPlayer player, PlayerStructure structure)
-    {
-        if (structure.getDisplayName() != null)
-            player.displayName = structure.getDisplayName();
-        if (structure.getPlayerListName() != null)
-            player.listName = new ChatComponentText(structure.getPlayerListName());
-        if (structure.getPlayerListHeader() != null)
-            player.getBukkitEntity().setPlayerListHeader(structure.getPlayerListHeader());
-        if (structure.getPlayerListFooter() != null)
-            player.getBukkitEntity().setPlayerListFooter(structure.getPlayerListFooter());
-        if (structure.getCompassTarget() != null)
-            player.compassTarget = player.getBukkitEntity().getLocation();
-        if (structure.getBedSpawnLocation() != null)
-        {
-            Location loc = structure.getBedSpawnLocation().create();
-            World world = Bukkit.getWorld(loc.getWorld().getName());
-            if (world == null)
-                throw new IllegalArgumentException("World not found: " + loc.getWorld().getName());
-
-            BlockPosition pos = new BlockPosition(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
-
-            player.setRespawnPosition(
-                    ((CraftWorld) world).getHandle().getDimensionKey(), pos,
-                    0,
-                    false,
-                    true
-            );
-        }
-        if (structure.getExp() != null)
-            player.giveExp(structure.getExp());
-        if (structure.getLevel() != null)
-            player.expLevel = structure.getLevel();
-        if (structure.getTotalExperience() != null)
-            player.expTotal = structure.getTotalExperience();
-        if (Boolean.TRUE.equals(structure.getFlying()))
-            player.abilities.isFlying = structure.getFlying();
-        if (structure.getWalkSpeed() != null)
-            player.abilities.walkSpeed = structure.getWalkSpeed();
-        if (structure.getFlySpeed() != null)
-            player.abilities.flySpeed = structure.getFlySpeed();
-
-        int opLevel = structure.getOpLevel() == null ? this.settings.getDefaultOPLevel(): structure.getOpLevel();
-        boolean isOP = opLevel > 0;
-        if (isOP)
-        {
-            OpListEntry entry = new OpListEntry(
-                    player.getProfile(),
-                    opLevel,
-                    true  // bypassPlayerLimit
-            );
-
-            player.server.getPlayerList().getOPs().add(entry);
-        }
-
-        // permissions
-
-        Stream.of(structure.getActivePermissions(), this.settings.getDefaultPermissions())
-                .flatMap(List::stream)
-                .distinct()
-                .forEach(permission -> player.getBukkitEntity().addAttachment(this.registry.getPlugin(), permission, true));
-    }
-
-    @SuppressWarnings("deprecation")
-    private void initEntity(MockedPlayer player, PlayerStructure structure)
-    {
-        if (structure.getLocation() != null)
-        {
-            Location loc = structure.getLocation().create();
-            player.setLocation(
-                    loc.getX(), loc.getY(), loc.getZ(),
-                    loc.getYaw(), loc.getPitch()
-            );
-            if (loc.getWorld() != null)
-            {
-                World world = Bukkit.getWorld(loc.getWorld().getName());
-                if (world == null)
-                    throw new IllegalArgumentException("World not found: " + loc.getWorld().getName());
-
-                player.spawnIn(((CraftWorld) world).getHandle());
-            }
-        }
-        if (structure.getCustomName() != null)
-            player.setCustomName(new ChatComponentText(structure.getCustomName()));
-        if (Boolean.TRUE.equals(structure.getGlowing()))
-            player.glowing = true;
-        if (Boolean.TRUE.equals(structure.getGravity()))
-            player.setNoGravity(false);
-
-        Stream.of(structure.getTags(), this.settings.getDefaultScoreboardTags())
-                .flatMap(List::stream)
-                .distinct()
-                .forEach(player::addScoreboardTag);
-
-        if (structure.getMaxHealth() != null)
-            Objects.requireNonNull(player.getAttributeInstance(GenericAttributes.MAX_HEALTH))
-                    .setValue(structure.getMaxHealth());
-        if (structure.getHealth() != null)
-            player.setHealth(structure.getHealth());
-        for (PotionEffect effect : structure.getPotionEffects())
-            player.addEffect(new MobEffect(
-                    MobEffectList.fromId(effect.getType().getId()),  // deprecated
-                    effect.getDuration(),
-                    effect.getAmplifier(),
-                    effect.isAmbient(),
-                    effect.hasParticles(),
-                    effect.hasIcon()
-            ));
-        if (structure.getLastDamageCause() != null)
-            player.getBukkitEntity().setLastDamageCause(new EntityDamageEvent(
-                    player.getBukkitEntity(),
-                    structure.getLastDamageCause().getCause(),
-                    structure.getLastDamageCause().getDamage()
-            ));
-    }
-
-    private void initHumanEntity(MockedPlayer player, PlayerStructure structure)
-    {
-        if (structure.getInventory() != null)
-        {
-            PlayerInventoryStructure inventory = structure.getInventory();
-            for (Map.Entry<Integer, ItemStackStructure> entry : inventory.getMainContents().entrySet())
-                player.inventory.setItem(entry.getKey(), CraftItemStack.asNMSCopy(entry.getValue().create()));
-
-            if (inventory.getArmorContents() != null)
-                for (int i = 0; i < 4; i++)
-                {
-                    ItemStackStructure item = inventory.getArmorContents()[i];
-                    if (item != null)
-                    {
-                        int slot = 3 - i;  // 直感的に, 0 がヘルメットになるように逆順にする。
-                        player.inventory.armor.set(slot, CraftItemStack.asNMSCopy(item.create()));
-                    }
-                }
-
-            if (inventory.getOffHand() != null)
-                player.getBukkitEntity().getInventory().setItemInOffHand(inventory.getOffHand().create());
-            if (inventory.getMainHand() != null)
-                player.getBukkitEntity().getInventory().setItemInMainHand(inventory.getMainHand().create());
-        }
-        if (player.getBukkitEntity().getGameMode() != structure.getGamemode())
-            player.playerInteractManager.setGameMode(EnumGamemode.a(structure.getGamemode().name().toLowerCase(Locale.ROOT)));
-        if (structure.getFoodLevel() != null)
-            player.getFoodData().foodLevel = structure.getFoodLevel();
-    }
-
     @Override
     @NotNull
     public Actor mock(@NotNull World world, @NotNull PlayerStructure structure)
@@ -270,7 +97,7 @@ public class PlayerMocker extends PlayerMockerBase
                 this.manager, this, mockedNetworkManager, server, worldServer,
                 profile, initialLocation, structure
         );
-        this.initializePlayer(player, structure);
+        super.initActor(player.getBukkitEntity(), structure);
 
         if (doLogin)
             this.doLogin(server, player);
@@ -301,13 +128,7 @@ public class PlayerMocker extends PlayerMockerBase
         MinecraftServer server = mockedPlayer.getMinecraftServer();
         assert server != null;
 
-        if (server.getPlayerList().isOp(mockedPlayer.getProfile()))
-            server.getPlayerList().removeOp(mockedPlayer.getProfile());
-        player.getEffectivePermissions().forEach(permissionAttachmentInfo -> {
-            if (permissionAttachmentInfo.getAttachment() != null)
-                player.removeAttachment(permissionAttachmentInfo.getAttachment());
-        });
-
+        super.removePersistentPlayerData(player);
         if (mockedPlayer.playerConnection != null)
             mockedPlayer.playerConnection.disconnect("Unmocked");
     }
@@ -331,30 +152,7 @@ public class PlayerMocker extends PlayerMockerBase
                 mockedPlayer
         );
 
-        Location initialLocation = mockedPlayer.getInitialLocation();
-        WorldServer world = ((CraftWorld) initialLocation.getWorld()).getHandle();
-        float yaw = mockedPlayer.yaw;
-        float pitch = mockedPlayer.pitch;
-        double x = initialLocation.getX();
-        double y = initialLocation.getY();
-        double z = initialLocation.getZ();
-
-        if (world != mockedPlayer.getWorldServer())
-        {
-            PlayerList list = ((CraftServer) Bukkit.getServer()).getHandle();
-
-            Runner.run(() -> {  // Removing entity while ticking! 回避
-                list.moveToWorld(
-                        mockedPlayer,
-                        world,
-                        true,
-                        new Location(world.getWorld(), x, y, z, yaw, pitch),
-                        true
-                );
-            });
-        }
-        else
-            mockedPlayer.getPlayer().teleport(new Location(world.getWorld(), x, y, z, yaw, pitch));
+        super.moveToLocationSafe(player, mockedPlayer.getInitialLocation());
     }
 
 }

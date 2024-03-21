@@ -1,5 +1,6 @@
 package org.kunlab.scenamatica.nms.impl.v1_16_R3.entity;
 
+import com.mojang.authlib.GameProfile;
 import net.minecraft.server.v1_16_R3.EntityPlayer;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
@@ -34,6 +35,12 @@ public class NMSEntityPlayerImpl extends NMSEntityHumanImpl implements NMSEntity
     public NMSPlayerInteractManager getInteractManager()
     {
         return this.interactManager;
+    }
+
+    @Override
+    public GameProfile getProfile()
+    {
+        return this.nmsEntity.getProfile();
     }
 
     @Override
