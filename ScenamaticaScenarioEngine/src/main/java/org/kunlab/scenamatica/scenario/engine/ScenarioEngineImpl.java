@@ -212,7 +212,8 @@ public class ScenarioEngineImpl implements ScenarioEngine
                 ),
                 true
         );
-        this.context.destroy();
+        if (this.context != null)
+            this.context.destroy();
         this.actions.stream()
                 .map(CompiledScenarioAction::getAction)
                 .map(CompiledAction::getContext)

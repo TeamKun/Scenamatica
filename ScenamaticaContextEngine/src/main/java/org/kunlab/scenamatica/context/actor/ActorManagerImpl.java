@@ -164,7 +164,7 @@ public class ActorManagerImpl implements ActorManager, Listener
     {
         Actor actor = e.getActor();
         Player player = actor.getPlayer();
-        this.actorGenerator.postActorLogin(player);
+        this.actorGenerator.postActorLogin(actor);
         Object locker = this.waitingForLogin.remove(player.getUniqueId());
 
         if (!Objects.nonNull(locker))

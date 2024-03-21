@@ -9,6 +9,7 @@ import net.minecraft.server.v1_16_R3.MinecraftServer;
 import net.minecraft.server.v1_16_R3.NetworkManager;
 import net.minecraft.server.v1_16_R3.PacketDataSerializer;
 import net.minecraft.server.v1_16_R3.PacketPlayInSettings;
+import net.minecraft.server.v1_16_R3.PlayerList;
 import net.minecraft.server.v1_16_R3.WorldServer;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -25,6 +26,7 @@ import org.kunlab.scenamatica.interfaces.context.ActorManager;
 import org.kunlab.scenamatica.interfaces.scenariofile.context.PlayerStructure;
 
 import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.util.Locale;
 
 public class PlayerMocker extends PlayerMockerBase
@@ -79,6 +81,21 @@ public class PlayerMocker extends PlayerMockerBase
                 this.manager, this, mockedNetworkManager, server, worldServer,
                 profile, initialLocation, structure
         );
+    }
+
+    @Override
+    public void doLogin(Actor player)
+    {
+        MockedPlayer mockedPlayer = (MockedPlayer) player;
+
+        NetworkManager networkManager = mockedPlayer.getNetworkManager();
+        if (!this.dispatchLoginEvent(player, (InetSocketAddress) networkManager.getSocketAddress()))
+            throw new IllegalStateException("Login for " + player.getName() + " was denied.");
+
+        PlayerList playerList = ((CraftServer) Bukkit.getServer()).getHandle();
+        playerList.a(networkManager, mockedPlayer);
+
+        this.sendSettings(mockedPlayer.getBukkitEntity());
     }
 
     @Override

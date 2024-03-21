@@ -18,7 +18,6 @@ import org.kunlab.scenamatica.nms.types.NMSMinecraftServer;
 import org.kunlab.scenamatica.nms.types.NMSPlayerList;
 import org.kunlab.scenamatica.nms.types.NMSWorldServer;
 import org.kunlab.scenamatica.nms.types.entity.NMSEntityPlayer;
-import org.kunlab.scenamatica.nms.types.player.NMSNetworkManager;
 import org.kunlab.scenamatica.nms.types.player.NMSPlayerConnection;
 import org.kunlab.scenamatica.settings.ActorSettings;
 
@@ -87,6 +86,8 @@ public abstract class PlayerMockerBase
         return actor;
     }
 
+    public abstract void doLogin(Actor actor);
+
     public void unmock(Actor actor)
     {
         Player player = actor.getPlayer();
@@ -99,21 +100,6 @@ public abstract class PlayerMockerBase
         removePersistentPlayerData(nmsPlayerList, nmsPlayer, player);
 
         nmsConnection.disconnect("Disconnected");
-    }
-
-    public void doLogin(Actor player)
-    {
-        NMSMinecraftServer nmsServer = NMSProvider.getProvider().wrap(Bukkit.getServer());
-        NMSPlayerList nmsPlayerList = nmsServer.getPlayerList();
-
-        NMSEntityPlayer nmsEntityPlayer = NMSProvider.getProvider().wrap(player.getPlayer());
-        NMSNetworkManager nmsNetworkManager = nmsEntityPlayer.getNetworkManager();
-
-        if (!this.dispatchLoginEvent(player, (InetSocketAddress) nmsNetworkManager.getSocketAddress()))
-            throw new IllegalStateException("Login for " + player.getName() + " was denied.");
-
-        nmsPlayerList.registerPlayer(nmsNetworkManager, nmsEntityPlayer);
-        this.postActorLogin(player.getPlayer());
     }
 
     protected boolean dispatchLoginEvent(Actor player, InetSocketAddress addr)
@@ -205,14 +191,10 @@ public abstract class PlayerMockerBase
         }
     }
 
-    public void postActorLogin(@NotNull Player player)
+    public void postActorLogin(@NotNull Actor actor)
     {
-        this.injectPlayerConnection(player);
-        this.sendSettings(player);
-
-        Actor actor = this.manager.getByUUID(player.getUniqueId());
-        assert actor != null;
-        this.moveToLocationSafe(player, actor.getInitialLocation());
+        this.injectPlayerConnection(actor.getPlayer());
+        this.moveToLocationSafe(actor.getPlayer(), actor.getInitialLocation());
     }
 
     protected abstract void sendSettings(@NotNull Player player);

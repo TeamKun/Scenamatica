@@ -2,6 +2,7 @@ package org.kunlab.scenamatica.nms.impl.v1_16_R3.entity;
 
 import com.mojang.authlib.GameProfile;
 import net.minecraft.server.v1_16_R3.EntityPlayer;
+import net.minecraft.server.v1_16_R3.NetworkManager;
 import net.minecraft.server.v1_16_R3.PlayerConnection;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
@@ -19,8 +20,9 @@ public class NMSEntityPlayerImpl extends NMSEntityHumanImpl implements NMSEntity
     private final EntityPlayer nmsEntity;
 
     private final NMSPlayerInteractManager interactManager;
-    private final NMSNetworkManager networkManager;
 
+    private NetworkManager lastNetworkManager;
+    private NMSNetworkManager networkManager;
     private PlayerConnection lastConnection;
     private NMSPlayerConnection connection;
 
@@ -31,7 +33,6 @@ public class NMSEntityPlayerImpl extends NMSEntityHumanImpl implements NMSEntity
         this.bukkitEntity = bukkitEntity;
         this.nmsEntity = ((CraftPlayer) bukkitEntity).getHandle();
 
-        this.networkManager = new NMSNetworkManagerImpl(this.nmsEntity.playerConnection.networkManager);
         this.interactManager = new NMSPlayerInteractManagerImpl(this.nmsEntity.playerInteractManager);
     }
 
@@ -50,6 +51,16 @@ public class NMSEntityPlayerImpl extends NMSEntityHumanImpl implements NMSEntity
     @Override
     public NMSNetworkManager getNetworkManager()
     {
+        PlayerConnection connection = this.nmsEntity.playerConnection;
+        if (connection == null)
+            return null;
+
+        if (this.lastNetworkManager != connection.networkManager)
+        {
+            this.lastNetworkManager = connection.networkManager;
+            this.networkManager = new NMSNetworkManagerImpl(this.lastNetworkManager);
+        }
+
         return this.networkManager;
     }
 
