@@ -237,7 +237,8 @@ public class PlayerInventoryStructureImpl extends GenericInventoryStructureImpl 
             ItemStack[] armorContents = new ItemStack[4];
             for (int i = 0; i < this.armorContents.length; i++)
                 if (this.armorContents[i] != null)
-                    armorContents[i] = this.armorContents[i].create();
+                    armorContents[3 - i] =  // 逆順にする => 0: ヘルメット ～ 3: ブーツ で統一するため(Bukkitは逆)
+                            this.armorContents[i].create();
 
             object.setArmorContents(armorContents);
         }
