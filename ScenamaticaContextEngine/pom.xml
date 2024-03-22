@@ -38,12 +38,6 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.github.TeamKun.TeamKUNPluginManager</groupId>
-            <artifactId>KPMCommon</artifactId>
-            <version>v3.0.3</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
             <groupId>org.kunlab.scenamatica.nms</groupId>
             <artifactId>NMSTypes</artifactId>
             <version>1.0.0</version>

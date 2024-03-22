@@ -10,7 +10,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.kunlab.kpm.utils.ReflectionUtils;
 import org.kunlab.scenamatica.commons.utils.ThreadingUtil;
 import org.kunlab.scenamatica.events.actor.ActorPostJoinEvent;
 import org.kunlab.scenamatica.exceptions.context.ContextPreparationException;
@@ -54,7 +53,7 @@ public class ActorManagerImpl implements ActorManager, Listener
     private static PlayerMockerBase getMocker(ScenamaticaRegistry registry, ActorManager manager)
             throws VersionNotSupportedException
     {
-        String version = ReflectionUtils.PackageType.getServerVersion();
+        String version = getServerNMSVersion();
         //noinspection SwitchStatementWithTooFewBranches
         switch (version)  // TODO: Support other versions.
         {
@@ -63,6 +62,11 @@ public class ActorManagerImpl implements ActorManager, Listener
             default:
                 throw new VersionNotSupportedException(version);
         }
+    }
+
+    private static String getServerNMSVersion()
+    {
+        return Bukkit.getServer().getClass().getPackage().getName().substring(23);
     }
 
     private void init()

@@ -69,7 +69,6 @@
                             <artifactSet>
                                 <excludes>
                                     <exclude>org.slf4j:*</exclude>
-                                    <exclude>com.zaxxer.hikari:*</exclude>
                                 </excludes>
                             </artifactSet>
                             <filters>

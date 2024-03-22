@@ -7,8 +7,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.event.server.PluginEnableEvent;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
-import org.kunlab.kpm.utils.PluginUtil;
 import org.kunlab.scenamatica.interfaces.ExceptionHandler;
 import org.kunlab.scenamatica.interfaces.ScenamaticaRegistry;
 import org.kunlab.scenamatica.interfaces.action.Action;
@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -39,11 +40,25 @@ import java.util.stream.Collectors;
 
 public class ActionLoaderImpl implements ActionLoader, Listener
 {
+    private static final Method pluginGetFile;
+
+    static
+    {
+        try
+        {
+            pluginGetFile = JavaPlugin.class.getDeclaredMethod("getFile");
+            pluginGetFile.setAccessible(true);
+        }
+        catch (NoSuchMethodException var1)
+        {
+            throw new IllegalStateException(var1);
+        }
+    }
+
     private final ScenamaticaRegistry registry;
     private final ExceptionHandler exceptionHandler;
     private final Logger logger;
     private final List<LoadedAction<?>> actions;
-
     private boolean isAlive;
 
     public ActionLoaderImpl(@NotNull ScenamaticaRegistry registry)
@@ -55,6 +70,18 @@ public class ActionLoaderImpl implements ActionLoader, Listener
         this.actions = new LinkedList<>();
 
         this.isAlive = true;
+    }
+
+    private static File getPluginFile(Plugin plugin)
+    {
+        try
+        {
+            return (File) pluginGetFile.invoke(plugin);
+        }
+        catch (ReflectiveOperationException var2)
+        {
+            throw new IllegalStateException(var2);
+        }
     }
 
     private static boolean isConstructableActionClass(Class<?> clazz, Class<?> actionClazz)
@@ -71,7 +98,7 @@ public class ActionLoaderImpl implements ActionLoader, Listener
 
     private static URL getJARURL(Plugin plugin)
     {
-        File jarFile = PluginUtil.getFile(plugin);
+        File jarFile = getPluginFile(plugin);
         String jarFullPath = jarFile.getAbsolutePath();
 
         try
