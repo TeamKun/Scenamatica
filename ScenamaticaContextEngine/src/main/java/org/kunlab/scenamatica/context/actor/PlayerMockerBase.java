@@ -76,9 +76,6 @@ public abstract class PlayerMockerBase
     public Actor mock(@NotNull World world, @NotNull PlayerStructure structure)
     {
         Actor actor = this.createActorInstance(world, structure);
-
-        this.initActor(actor.getPlayer(), structure);
-
         boolean doLogin = structure.getOnline() == null || structure.getOnline();
         if (doLogin)
             this.doLogin(actor);
@@ -121,10 +118,12 @@ public abstract class PlayerMockerBase
         return event.getResult() == PlayerLoginEvent.Result.ALLOWED;
     }
 
-    protected void initActor(Player player, PlayerStructure structure)
+    private void initActor(Actor actor)
     {
-        structure.applyTo(player);
+        Player player = actor.getPlayer();
+        PlayerStructure structure = actor.getInitialStructure();
 
+        structure.applyTo(player);
         Stream.of(structure.getTags(), this.settings.getDefaultScoreboardTags())
                 .flatMap(List::stream)
                 .distinct()
@@ -194,6 +193,7 @@ public abstract class PlayerMockerBase
     public void postActorLogin(@NotNull Actor actor)
     {
         this.injectPlayerConnection(actor.getPlayer());
+        this.initActor(actor);
         this.moveToLocationSafe(actor.getPlayer(), actor.getInitialLocation());
     }
 

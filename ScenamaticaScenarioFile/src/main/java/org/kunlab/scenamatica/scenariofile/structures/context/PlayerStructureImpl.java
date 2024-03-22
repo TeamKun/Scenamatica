@@ -378,7 +378,7 @@ public class PlayerStructureImpl extends HumanEntityStructureImpl implements Pla
     @SuppressWarnings("deprecation")
     public void applyTo(Player player)
     {
-        super.applyToHumanEntity(player); // Mock の場合は NMS で行うのでこちらは呼ばれない
+        super.applyToHumanEntity(player);
 
         if (this.displayName != null)
             player.setDisplayName(this.displayName);
