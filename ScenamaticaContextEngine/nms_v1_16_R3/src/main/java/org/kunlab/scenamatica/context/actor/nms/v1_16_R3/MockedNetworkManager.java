@@ -1,4 +1,4 @@
-package org.kunlab.scenamatica.context.actor.nms.v_1_16_R3;
+package org.kunlab.scenamatica.context.actor.nms.v1_16_R3;
 
 import io.netty.channel.embedded.EmbeddedChannel;
 import io.netty.handler.timeout.ReadTimeoutHandler;

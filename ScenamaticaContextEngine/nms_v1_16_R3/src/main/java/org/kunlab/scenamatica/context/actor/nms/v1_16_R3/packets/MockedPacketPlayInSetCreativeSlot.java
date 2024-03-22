@@ -1,4 +1,4 @@
-package org.kunlab.scenamatica.context.actor.nms.v_1_16_R3.packets;
+package org.kunlab.scenamatica.context.actor.nms.v1_16_R3.packets;
 
 import lombok.Getter;
 import net.minecraft.server.v1_16_R3.ItemStack;

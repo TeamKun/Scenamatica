@@ -12,7 +12,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.kpm.utils.ReflectionUtils;
 import org.kunlab.scenamatica.commons.utils.ThreadingUtil;
-import org.kunlab.scenamatica.context.actor.nms.v_1_16_R3.PlayerMocker;
 import org.kunlab.scenamatica.events.actor.ActorPostJoinEvent;
 import org.kunlab.scenamatica.exceptions.context.ContextPreparationException;
 import org.kunlab.scenamatica.exceptions.context.actor.ActorAlreadyExistsException;
@@ -60,7 +59,7 @@ public class ActorManagerImpl implements ActorManager, Listener
         switch (version)  // TODO: Support other versions.
         {
             case "v1_16_R3":
-                return new PlayerMocker(registry, manager);
+                return new org.kunlab.scenamatica.context.actor.nms.v1_16_R3.PlayerMocker(registry, manager);
             default:
                 throw new VersionNotSupportedException(version);
         }

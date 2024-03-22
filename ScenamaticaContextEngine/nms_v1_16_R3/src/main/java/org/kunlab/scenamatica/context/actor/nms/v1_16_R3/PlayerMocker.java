@@ -1,4 +1,4 @@
-package org.kunlab.scenamatica.context.actor.nms.v_1_16_R3;
+package org.kunlab.scenamatica.context.actor.nms.v1_16_R3;
 
 import com.mojang.authlib.GameProfile;
 import io.netty.buffer.ByteBufAllocator;
@@ -27,7 +27,6 @@ import org.kunlab.scenamatica.interfaces.scenariofile.context.PlayerStructure;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.util.Locale;
 
 public class PlayerMocker extends PlayerMockerBase
 {
@@ -44,7 +43,7 @@ public class PlayerMocker extends PlayerMockerBase
     @SneakyThrows(IOException.class)
     protected void sendSettings(@NotNull Player player)
     {
-        Locale locale = player.locale();
+        String locale = player.getLocale();
         int viewDistance = 0x02;
         int chatMode = 0;  // 0: enabled, 1: commands only, 2: hidden
         boolean chatColors = true;
@@ -54,7 +53,7 @@ public class PlayerMocker extends PlayerMockerBase
         int mainHand = player.getMainHand().ordinal();
 
         PacketDataSerializer serializer = new PacketDataSerializer(ByteBufAllocator.DEFAULT.buffer());
-        serializer.a(locale.toString());
+        serializer.a(locale);
         serializer.d(viewDistance);
         serializer.d(chatMode);
         serializer.writeBoolean(chatColors);

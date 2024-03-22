@@ -1,4 +1,4 @@
-package org.kunlab.scenamatica.context.actor.nms.v_1_16_R3;
+package org.kunlab.scenamatica.context.actor.nms.v1_16_R3;
 
 import com.mojang.authlib.GameProfile;
 import io.netty.buffer.Unpooled;
@@ -40,7 +40,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.commons.utils.VoxelUtils;
-import org.kunlab.scenamatica.context.actor.nms.v_1_16_R3.packets.MockedPacketPlayInSetCreativeSlot;
+import org.kunlab.scenamatica.context.actor.nms.v1_16_R3.packets.MockedPacketPlayInSetCreativeSlot;
 import org.kunlab.scenamatica.events.actor.ActorPostJoinEvent;
 import org.kunlab.scenamatica.interfaces.context.Actor;
 import org.kunlab.scenamatica.interfaces.context.ActorManager;
