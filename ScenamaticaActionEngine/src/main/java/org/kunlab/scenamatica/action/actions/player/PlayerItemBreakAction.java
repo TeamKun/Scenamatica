@@ -60,7 +60,7 @@ public class PlayerItemBreakAction extends AbstractPlayerAction
 
         ItemStack item = player.getInventory().getItem(slot);
         if (item == null)
-            throw new IllegalStateException("Item is null");
+            throw new IllegalStateException("The player haven't any item in the slot " + slot);
         else if (!this.isDamageable(item))
             throw new IllegalStateException("Item is not damageable");
         this.makeOutputs(ctxt, player, item, slot);
