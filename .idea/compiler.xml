@@ -17,6 +17,7 @@
         <module name="v1_16_R3" />
         <module name="ScenamaticaContextEngine" />
         <module name="ScenamaticaModels" />
+        <module name="v1_13_R2" />
         <module name="ScenamaticaAPI" />
         <module name="ScenamaticaScenarioFile" />
         <module name="ScenamaticaPlugin" />

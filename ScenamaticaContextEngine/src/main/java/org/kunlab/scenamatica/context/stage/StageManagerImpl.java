@@ -14,7 +14,6 @@ import org.kunlab.scenamatica.interfaces.ScenamaticaRegistry;
 import org.kunlab.scenamatica.interfaces.context.Stage;
 import org.kunlab.scenamatica.interfaces.context.StageManager;
 import org.kunlab.scenamatica.interfaces.scenariofile.context.StageStructure;
-import org.kunlab.scenamatica.nms.NMSProvider;
 
 import java.io.File;
 import java.io.IOException;
@@ -172,8 +171,6 @@ public class StageManagerImpl implements StageManager
 
         Path worldPath = stageWorld.getWorldFolder().toPath();
         this.deleteDirectory(worldPath);
-        NMSProvider.getProvider().wrap(Bukkit.getServer())
-                .getWorlds().removeWorld(stageWorld.getKey());
 
         this.stages.remove(stage);
     }

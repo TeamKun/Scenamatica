@@ -79,7 +79,8 @@ public class PlayerItemBreakAction extends AbstractPlayerAction
             damageToApply = /* int currentDurability = */ maxDurability - damageable.getDamage();
         }
 
-        nmsStack.damage(damageToApply, nmsPlayer, nmsEntityLiving -> nmsEntityLiving.broadcastItemBreak(nmsSlot));
+        nmsStack.damage(damageToApply, nmsPlayer);
+        nmsPlayer.broadcastItemBreak(nmsSlot);
     }
 
     private boolean isDamageable(ItemStack itemInMainHand)

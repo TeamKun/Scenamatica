@@ -1,10 +1,10 @@
-package org.kunlab.scenamatica.nms.impl.v1_16_R3.item;
+package org.kunlab.scenamatica.nms.impl.v1_13_R2.item;
 
-import net.minecraft.server.v1_16_R3.EntityLiving;
-import net.minecraft.server.v1_16_R3.ItemStack;
-import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftItemStack;
+import net.minecraft.server.v1_13_R2.EntityLiving;
+import net.minecraft.server.v1_13_R2.ItemStack;
+import org.bukkit.craftbukkit.v1_13_R2.inventory.CraftItemStack;
 import org.kunlab.scenamatica.nms.Versioned;
-import org.kunlab.scenamatica.nms.impl.v1_16_R3.NMSRegistryImpl;
+import org.kunlab.scenamatica.nms.impl.v1_13_R2.NMSRegistryImpl;
 import org.kunlab.scenamatica.nms.types.entity.NMSEntityLiving;
 import org.kunlab.scenamatica.nms.types.item.NMSItem;
 import org.kunlab.scenamatica.nms.types.item.NMSItemStack;
@@ -13,8 +13,8 @@ import java.lang.reflect.Field;
 
 public class NMSItemStackImpl implements NMSItemStack
 {
-    private static final Field fHANDLE; // Lorg/bukkit/craftbukkit/v1_16_R3/inventory/CraftItemStack;
-    // -> handle:Lnet/minecraft/server/v1_16_R3/ItemStack;
+    private static final Field fHANDLE; // Lorg/bukkit/craftbukkit/v1_13_R2/inventory/CraftItemStack;
+    // -> handle:Lnet/minecraft/server/v1_13_R2/ItemStack;
 
     static
     {
@@ -73,9 +73,7 @@ public class NMSItemStackImpl implements NMSItemStack
     {
         this.nmsItemStack.damage(
                 damage,
-                (EntityLiving) owner.getNMSRaw(),
-                ignored -> {
-                }
+                (EntityLiving) owner.getNMSRaw()
         );
     }
 

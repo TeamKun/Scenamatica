@@ -5,9 +5,9 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.kunlab.scenamatica</groupId>
-        <artifactId>Scenamatica</artifactId>
+        <artifactId>NMSBridge</artifactId>
         <version>1.0.0</version>
-        <relativePath>../../pom.xml</relativePath>
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
     <groupId>org.kunlab.scenamatica.nms</groupId>
@@ -27,7 +27,7 @@
         </dependency>
         <dependency>
             <groupId>org.kunlab.scenamatica.nms</groupId>
-            <artifactId>v1_16_R3</artifactId>
+            <artifactId>v1_13_R2</artifactId>
             <version>1.0.0</version>
             <scope>provided</scope>
         </dependency>

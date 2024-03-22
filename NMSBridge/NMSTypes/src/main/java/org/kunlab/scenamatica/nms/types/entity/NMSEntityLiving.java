@@ -22,7 +22,7 @@ public interface NMSEntityLiving extends NMSEntity
      *
      * @param hand 手
      */
-    @Versioned(from = "1.16.5")
+    @Versioned(from = "1.13.2")
     void consume(NMSHand hand);
 
     /**

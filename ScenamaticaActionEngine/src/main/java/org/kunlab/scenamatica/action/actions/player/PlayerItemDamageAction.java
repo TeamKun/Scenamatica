@@ -82,8 +82,7 @@ public class PlayerItemDamageAction extends AbstractPlayerAction
 
         NMSEntityPlayer nmsPlayer = NMSProvider.getProvider().wrap(player);
         NMSItemStack nmsStack = NMSProvider.getProvider().wrap(itemStack);
-        nmsStack.damage(damage, nmsPlayer, ignored -> {
-        });
+        nmsStack.damage(damage, nmsPlayer);
     }
 
     @Override

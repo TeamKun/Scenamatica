@@ -114,7 +114,7 @@
         </dependency>
         <dependency>
             <groupId>org.kunlab.scenamatica.nms</groupId>
-            <artifactId>v1_16_R3</artifactId>
+            <artifactId>v1_13_R2</artifactId>
             <version>1.0.0</version>
         </dependency>
     </dependencies>

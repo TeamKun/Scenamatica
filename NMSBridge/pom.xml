@@ -15,6 +15,7 @@
         <module>NMSTypes</module>
         <module>NMSCore</module>
         <module>v1_16_R3</module>
+        <module>v1_13_R2</module>
     </modules>
 
     <properties>
@@ -29,6 +30,12 @@
             <groupId>com.mojang</groupId>
             <artifactId>authlib</artifactId>
             <version>1.5.25</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
+            <version>24.1.0</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

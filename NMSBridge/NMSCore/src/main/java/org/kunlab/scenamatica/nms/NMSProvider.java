@@ -2,9 +2,9 @@ package org.kunlab.scenamatica.nms;
 
 import lombok.Getter;
 import org.bukkit.Bukkit;
-import org.kunlab.scenamatica.nms.impl.v1_16_R3.NMSRegistryImpl;
-import org.kunlab.scenamatica.nms.impl.v1_16_R3.TypeSupportImpl;
-import org.kunlab.scenamatica.nms.impl.v1_16_R3.WrapperProviderImpl;
+import org.kunlab.scenamatica.nms.impl.v1_13_R2.NMSRegistryImpl;
+import org.kunlab.scenamatica.nms.impl.v1_13_R2.TypeSupportImpl;
+import org.kunlab.scenamatica.nms.impl.v1_13_R2.WrapperProviderImpl;
 import org.kunlab.scenamatica.nms.types.NMSRegistry;
 
 public class NMSProvider
