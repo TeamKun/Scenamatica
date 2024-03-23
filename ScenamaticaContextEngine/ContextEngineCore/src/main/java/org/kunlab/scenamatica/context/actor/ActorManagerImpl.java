@@ -54,11 +54,12 @@ public class ActorManagerImpl implements ActorManager, Listener
             throws VersionNotSupportedException
     {
         String version = getServerNMSVersion();
-        //noinspection SwitchStatementWithTooFewBranches
         switch (version)  // TODO: Support other versions.
         {
             case "v1_16_R3":
                 return new org.kunlab.scenamatica.context.actor.nms.v1_16_R3.PlayerMocker(registry, manager);
+            case "v1_13_R2":
+                return new org.kunlab.scenamatica.context.actor.nms.v1_13_R2.PlayerMocker(registry, manager);
             default:
                 throw new VersionNotSupportedException(version);
         }

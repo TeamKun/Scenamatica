@@ -24,6 +24,7 @@
         <module name="ScenamaticaPlugin" />
         <module name="ScenamaticaTriggerEngine" />
         <module name="nms_v1_16_R3" />
+        <module name="nms_v1_13_R2" />
       </profile>
     </annotationProcessing>
   </component>

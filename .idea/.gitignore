@@ -12,3 +12,5 @@
 /discord.xml
 /git_toolbox_prj.xml
 /jsonSchemas.xml
+# GitHub Copilot persisted chat sessions
+/copilot/chatSessions
