@@ -24,6 +24,8 @@ on:
       - "ScenamaticaScenarioEngine/**"
       - "ScenamaticaScenarioSelectorEngine/**"
       - "ScenamaticaScenarioTriggerEngine/**"
+  workflow_dispatch:
+
 
 permissions:
   pull-requests: write
