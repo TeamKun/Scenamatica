@@ -19,32 +19,6 @@
     "message": {
       "type": "string",
       "description": "プレイヤがサーバーからキックされたときに表示するメッセージです。"
-    },
-    "cause": {
-      "type": "string",
-      "description": "プレイヤがサーバーからキックされた原因です。",
-      "enum": [
-        "PLUGIN",
-        "WHITELIST",
-        "BANNED",
-        "IP_BANNED",
-        "KICK_COMMAND",
-        "FLYING_PLAYER",
-        "FLYING_VEHICLE",
-        "TIMEOUT",
-        "IDLING",
-        "INVALID_VEHICLE_MOVEMENT",
-        "INVALID_PLAYER_MOVEMENT",
-        "INVALID_ENTITY_ATTACKED",
-        "INVALID_PAYLOAD",
-        "SPAM",
-        "ILLEGAL_ACTION",
-        "ILLEGAL_CHARACTERS",
-        "SELF_INTERACTION",
-        "DUPLICATE_LOGIN",
-        "RESTART_COMMAND",
-        "UNKNOWN"
-      ]
     }
   },
   "outputs": {
@@ -56,32 +30,6 @@
     "message": {
       "type": "string",
       "description": "プレイヤがサーバーからキックされたときに表示するメッセージです。"
-    },
-    "cause": {
-      "type": "string",
-      "description": "プレイヤがサーバーからキックされた原因です。",
-      "enum": [
-        "PLUGIN",
-        "WHITELIST",
-        "BANNED",
-        "IP_BANNED",
-        "KICK_COMMAND",
-        "FLYING_PLAYER",
-        "FLYING_VEHICLE",
-        "TIMEOUT",
-        "IDLING",
-        "INVALID_VEHICLE_MOVEMENT",
-        "INVALID_PLAYER_MOVEMENT",
-        "INVALID_ENTITY_ATTACKED",
-        "INVALID_PAYLOAD",
-        "SPAM",
-        "ILLEGAL_ACTION",
-        "ILLEGAL_CHARACTERS",
-        "SELF_INTERACTION",
-        "DUPLICATE_LOGIN",
-        "RESTART_COMMAND",
-        "UNKNOWN"
-      ]
     }
   }
 }
