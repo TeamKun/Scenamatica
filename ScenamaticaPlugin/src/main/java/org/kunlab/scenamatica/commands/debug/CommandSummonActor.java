@@ -2,9 +2,9 @@ package org.kunlab.scenamatica.commands.debug;
 
 import lombok.AllArgsConstructor;
 import net.kunmc.lab.peyangpaperutils.lib.command.CommandBase;
+import net.kunmc.lab.peyangpaperutils.lib.components.Text;
 import net.kunmc.lab.peyangpaperutils.lib.terminal.Terminal;
 import net.kunmc.lab.peyangpaperutils.lib.utils.Runner;
-import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
@@ -64,7 +64,7 @@ public class CommandSummonActor extends CommandBase
     }
 
     @Override
-    public TextComponent getHelpOneLine()
+    public Text getHelpOneLine()
     {
         return of("Summon actor for debug");
     }

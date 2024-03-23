@@ -67,8 +67,33 @@ public class ContextManagerImpl implements ContextManager
         this.chunkLoader = new EntityChunkLoader(registry);
 
         // ゴミを残さないように
-        SpigotConfig.disablePlayerDataSaving = true;
-        SpigotConfig.userCacheCap = 0;
+        disableSpigotFeatures();
+    }
+
+    private static void disableSpigotFeatures()
+    {
+        try
+        {
+            SpigotConfig.disablePlayerDataSaving = true;
+            SpigotConfig.userCacheCap = 0;
+        }
+        catch (NoSuchFieldError ignored)
+        {
+
+        }
+    }
+
+    private static void enableSpigotFeatures()
+    {
+        try
+        {
+            SpigotConfig.disablePlayerDataSaving = false;
+            SpigotConfig.userCacheCap = 1000;
+        }
+        catch (NoSuchFieldError ignored)
+        {
+
+        }
     }
 
     private static MsgArgs getArgs(ScenarioFileStructure scenario, UUID testID)
@@ -267,8 +292,6 @@ public class ContextManagerImpl implements ContextManager
         this.stageManager.shutdown();
         this.chunkLoader.shutdown();
 
-
-        SpigotConfig.disablePlayerDataSaving = false;
-        SpigotConfig.userCacheCap = 1000;  // デフォルト
+        enableSpigotFeatures();
     }
 }

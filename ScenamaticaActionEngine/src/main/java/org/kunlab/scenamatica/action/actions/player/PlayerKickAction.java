@@ -1,12 +1,10 @@
 package org.kunlab.scenamatica.action.actions.player;
 
-import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.kunlab.scenamatica.commons.utils.TextUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
@@ -29,10 +27,6 @@ public class PlayerKickAction extends AbstractPlayerAction
             "message",
             String.class
     );
-    public static final InputToken<PlayerKickEvent.Cause> IN_CAUSE = ofEnumInput(
-            "cause",
-            PlayerKickEvent.Cause.class
-    );
 
     public static final String KEY_OUT_LEAVE_MESSAGE = "leaveMessage";
     public static final String KEY_OUT_KICK_MESSAGE = "message";
@@ -48,16 +42,13 @@ public class PlayerKickAction extends AbstractPlayerAction
     public void execute(@NotNull ActionContext ctxt)
     {
         // leaveMessage はつかえない。
-
-        Component kickMessage = ctxt.ifHasInput(IN_KICK_MESSAGE, Component::text, null);
-        PlayerKickEvent.Cause cause = ctxt.orElseInput(IN_CAUSE, () -> null);
+        String kickMessage = ctxt.orElseInput(IN_KICK_MESSAGE, () -> null);
         Player target = selectTarget(ctxt);
 
-        this.makeOutputs(ctxt, target, null, kickMessage, cause);
-        if (ctxt.hasInput(IN_CAUSE))
-            target.kick(kickMessage, ctxt.input(IN_CAUSE));
-        else
-            target.kick(kickMessage);
+        this.makeOutputs(ctxt, target, null, kickMessage);
+
+        // noinspection deprecation  De-Adventure API
+        target.kickPlayer(kickMessage);
     }
 
     @Override
@@ -67,26 +58,25 @@ public class PlayerKickAction extends AbstractPlayerAction
             return false;
 
         PlayerKickEvent e = (PlayerKickEvent) event;
-        Component leaveMessage = e.leaveMessage();
-        Component kickMessage = e.reason();
-        PlayerKickEvent.Cause cause = e.getCause();
+        // noinspection deprecation  De-Adventure API
+        String leaveMessage = e.getLeaveMessage();
+        // noinspection deprecation  De-Adventure API
+        String kickMessage = e.getReason();
 
-        boolean result = ctxt.ifHasInput(IN_LEAVE_MESSAGE, message -> TextUtils.isSameContent(leaveMessage, message))
-                && ctxt.ifHasInput(IN_KICK_MESSAGE, message -> TextUtils.isSameContent(kickMessage, message))
-                && ctxt.ifHasInput(IN_CAUSE, c -> c == cause);
+        boolean result = ctxt.ifHasInput(IN_LEAVE_MESSAGE, s -> s.equals(leaveMessage))
+                && ctxt.ifHasInput(IN_KICK_MESSAGE, s -> s.equals(kickMessage));
         if (result)
-            this.makeOutputs(ctxt, e.getPlayer(), leaveMessage, kickMessage, cause);
+            this.makeOutputs(ctxt, e.getPlayer(), leaveMessage, kickMessage);
 
         return result;
     }
 
-    protected void makeOutputs(@NotNull ActionContext ctxt, @NotNull Player player, @Nullable Component leaveMessage, @Nullable Component kickMessage, @Nullable PlayerKickEvent.Cause cause)
+    protected void makeOutputs(@NotNull ActionContext ctxt, @NotNull Player player, @Nullable String leaveMessage, @Nullable String kickMessage)
     {
         if (leaveMessage != null)
-            ctxt.output(KEY_OUT_LEAVE_MESSAGE, TextUtils.toString(leaveMessage));
+            ctxt.output(KEY_OUT_LEAVE_MESSAGE, leaveMessage);
         if (kickMessage != null)
-            ctxt.output(KEY_OUT_KICK_MESSAGE, TextUtils.toString(kickMessage));
-        ctxt.output(KEY_OUT_CAUSE, cause);
+            ctxt.output(KEY_OUT_KICK_MESSAGE, kickMessage);
         super.makeOutputs(ctxt, player);
     }
 
@@ -101,8 +91,7 @@ public class PlayerKickAction extends AbstractPlayerAction
     @Override
     public InputBoard getInputBoard(ScenarioType type)
     {
-        InputBoard board = super.getInputBoard(type)
-                .registerAll(IN_KICK_MESSAGE, IN_CAUSE);
+        InputBoard board = super.getInputBoard(type);
 
         if (type != ScenarioType.ACTION_EXECUTE)
             board.register(IN_LEAVE_MESSAGE);

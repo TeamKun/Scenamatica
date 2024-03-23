@@ -5,7 +5,6 @@ import org.bukkit.event.Event;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.kunlab.scenamatica.commons.utils.TextUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
@@ -96,9 +95,10 @@ public class PlayerDeathAction extends AbstractPlayerAction
         assert event instanceof PlayerDeathEvent;
         PlayerDeathEvent e = (PlayerDeathEvent) event;
 
+        // noinspection deprecation  De-Adventure API
         boolean result = ctxt.ifHasInput(IN_TARGET, target -> target.checkMatchedPlayer(e.getEntity()))
                 && ctxt.ifHasInput(IN_KILLER, killer -> killer.checkMatchedPlayer(e.getEntity().getKiller()))
-                && ctxt.ifHasInput(IN_DEATH_MESSAGE, msg -> TextUtils.isSameContent(e.deathMessage(), msg))
+                && ctxt.ifHasInput(IN_DEATH_MESSAGE, msg -> msg.equalsIgnoreCase(e.getDeathMessage()))
                 && ctxt.ifHasInput(IN_NEW_EXP, exp -> exp == e.getNewExp())
                 && ctxt.ifHasInput(IN_NEW_LEVEL, level -> level == e.getNewLevel())
                 && ctxt.ifHasInput(IN_NEW_TOTAL_EXP, totalExp -> totalExp == e.getNewTotalExp())
@@ -107,9 +107,10 @@ public class PlayerDeathAction extends AbstractPlayerAction
                 && ctxt.ifHasInput(IN_DO_EXP_DROP, doExpDrop -> doExpDrop == e.shouldDropExperience());
 
         if (result)
+            // noinspection deprecation  De-Adventure API
             this.makeOutputs(ctxt,
                     e.getEntity(),
-                    e.getEntity().getKiller(), TextUtils.toString(e.deathMessage()),
+                    e.getEntity().getKiller(), e.getDeathMessage(),
                     e.getNewExp(), e.getNewLevel(), e.getNewTotalExp(), e.getKeepLevel(), e.getKeepInventory(),
                     e.shouldDropExperience()
             );
@@ -117,11 +118,12 @@ public class PlayerDeathAction extends AbstractPlayerAction
         return result;
     }
 
-    protected void makeOutputs(@NotNull ActionContext ctxt, @NotNull Player target, @Nullable Player killer, @NotNull String deathMessage, @NotNull Integer newExp, @NotNull Integer newLevel, @NotNull Integer newTotalExp, @NotNull Boolean keepLevel, @NotNull Boolean keepInventory, @NotNull Boolean doExpDrop)
+    protected void makeOutputs(@NotNull ActionContext ctxt, @NotNull Player target, @Nullable Player killer, @Nullable String deathMessage, @NotNull Integer newExp, @NotNull Integer newLevel, @NotNull Integer newTotalExp, @NotNull Boolean keepLevel, @NotNull Boolean keepInventory, @NotNull Boolean doExpDrop)
     {
         if (killer != null)
             ctxt.output(KEY_OUT_KILLER, killer);
-        ctxt.output(KEY_OUT_DEATH_MESSAGE, deathMessage);
+        if (deathMessage != null)
+            ctxt.output(KEY_OUT_DEATH_MESSAGE, deathMessage);
         ctxt.output(KEY_OUT_NEW_EXP, newExp);
         ctxt.output(KEY_OUT_NEW_LEVEL, newLevel);
         ctxt.output(KEY_OUT_NEW_TOTAL_EXP, newTotalExp);

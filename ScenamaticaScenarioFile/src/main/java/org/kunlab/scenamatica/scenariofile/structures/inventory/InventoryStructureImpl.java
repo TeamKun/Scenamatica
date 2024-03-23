@@ -1,6 +1,5 @@
 package org.kunlab.scenamatica.scenariofile.structures.inventory;
 
-import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
@@ -75,12 +74,11 @@ public class InventoryStructureImpl extends GenericInventoryStructureImpl implem
         if (size == null)
             size = 9 * 4; // プレイヤインベントリのサイズ
 
-        Component title;
-        if (this.title == null)
-            title = Component.empty();
-        else
-            title = Component.text(this.title);
+        String title = this.title;
+        if (title == null)
+            title = "";
 
+        // noinspection deprecation  De-Adventure API
         Inventory inventory = Bukkit.createInventory(null, size, title);
 
         for (Map.Entry<Integer, ItemStackStructure> entry : this.mainContents.entrySet())

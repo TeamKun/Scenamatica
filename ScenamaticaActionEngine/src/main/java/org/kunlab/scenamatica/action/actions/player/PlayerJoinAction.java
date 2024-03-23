@@ -1,12 +1,10 @@
 package org.kunlab.scenamatica.action.actions.player;
 
-import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.kunlab.scenamatica.commons.utils.TextUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
@@ -60,11 +58,13 @@ public class PlayerJoinAction extends AbstractPlayerAction
 
         assert event instanceof PlayerJoinEvent;
         PlayerJoinEvent e = (PlayerJoinEvent) event;
-        Component message = e.joinMessage();
 
-        boolean result = ctxt.ifHasInput(IN_MESSAGE, msg -> TextUtils.isSameContent(message, msg));
+        // noinspection deprecation  De-Adventure API
+        String message = e.getJoinMessage();
+
+        boolean result = ctxt.ifHasInput(IN_MESSAGE, msg -> msg.equals(message));
         if (result)
-            this.makeOutputs(ctxt, e.getPlayer(), TextUtils.toString(message));
+            this.makeOutputs(ctxt, e.getPlayer(), message);
 
         return result;
     }

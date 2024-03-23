@@ -4,7 +4,6 @@ import com.destroystokyo.paper.Namespaced;
 import com.google.common.collect.Multimap;
 import lombok.AllArgsConstructor;
 import lombok.Value;
-import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
@@ -17,7 +16,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.commons.utils.NamespaceUtils;
-import org.kunlab.scenamatica.commons.utils.TextUtils;
 import org.kunlab.scenamatica.commons.utils.Utils;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.ItemStackStructure;
@@ -31,6 +29,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @Value
@@ -557,7 +556,8 @@ public class ItemStackStructureImpl implements ItemStackStructure
         ItemMeta meta = stack.getItemMeta();
 
         if (this.displayName != null)
-            if (meta == null || !TextUtils.isSameContent(meta.displayName(), this.displayName))
+            // noinspection deprecation  De-Adventure API
+            if (meta == null || !this.displayName.equalsIgnoreCase(meta.getDisplayName()))
                 return false;
 
         if (this.localizedName != null)
@@ -567,13 +567,19 @@ public class ItemStackStructureImpl implements ItemStackStructure
         if (!this.lore.isEmpty())
         {
             List<String> expected = this.lore;
-            List<Component> actual = meta == null ? null: meta.lore();
+            // noinspection deprecation  De-Adventure API
+            List<String> actual = meta == null ? null: meta.getLore();
 
             if (actual == null || (strict && actual.size() != expected.size()))
                 return false;
 
-            // Lore を文字列に変換して比較する
-            if (expected.stream().anyMatch(s -> actual.stream().noneMatch(c -> TextUtils.isSameContent(c, s))))
+            Predicate<String> predicate;
+            if (strict)
+                predicate = s -> actual.stream().anyMatch(s::equalsIgnoreCase);
+            else
+                predicate = s -> actual.stream().anyMatch(s::contains);
+
+            if (expected.stream().anyMatch(s -> actual.stream().noneMatch(predicate)))
                 return false;
         }
 

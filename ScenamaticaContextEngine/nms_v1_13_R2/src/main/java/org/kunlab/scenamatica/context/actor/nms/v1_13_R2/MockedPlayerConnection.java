@@ -2,9 +2,9 @@ package org.kunlab.scenamatica.context.actor.nms.v1_13_R2;
 
 import io.netty.buffer.ByteBufAllocator;
 import lombok.SneakyThrows;
+import net.kunmc.lab.peyangpaperutils.lib.components.Text;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
-import net.md_5.bungee.api.chat.TextComponent;
 import net.minecraft.server.v1_13_R2.ChatMessageType;
 import net.minecraft.server.v1_13_R2.EntityPlayer;
 import net.minecraft.server.v1_13_R2.IChatBaseComponent;
@@ -139,11 +139,9 @@ class MockedPlayerConnection extends PlayerConnection
                 return;
         }
 
-        TextComponent textComponent = new TextComponent(components);
-
         ActorMessageReceiveEvent event = new ActorMessageReceiveEvent(
                 this.player.getBukkitEntity(),
-                textComponent,
+                Text.of(components),
                 getEventType(type)
         );
 

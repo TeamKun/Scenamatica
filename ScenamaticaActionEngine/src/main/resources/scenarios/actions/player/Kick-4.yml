@@ -2,7 +2,7 @@
 scenamatica: ${project.version}
 
 name: actions_player_kick_4
-description: Testing player_kick action with its cause and kick message works or not
+description: Testing player_kick action without target works or not
 on:
   - type: on_load
   - type: manual_dispatch
@@ -17,11 +17,7 @@ scenario:
     action: player_kick
     with:
       target: Actor001
-      message: "You are kicked due to YajuSNPI"
-      cause: INVALID_PLAYER_MOVEMENT
   - type: expect
     action: player_kick
     with:
-      target: Actor001
-      message: "You are kicked due to YajuSNPI"
-      cause: INVALID_PLAYER_MOVEMENT
+

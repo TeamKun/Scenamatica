@@ -1,8 +1,8 @@
 package org.kunlab.scenamatica.commands.debug;
 
 import net.kunmc.lab.peyangpaperutils.lib.command.CommandBase;
+import net.kunmc.lab.peyangpaperutils.lib.components.Text;
 import net.kunmc.lab.peyangpaperutils.lib.terminal.Terminal;
-import net.kyori.adventure.text.TextComponent;
 import org.bukkit.WorldType;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
@@ -60,7 +60,7 @@ public class CommandCreateStage extends CommandBase
     }
 
     @Override
-    public TextComponent getHelpOneLine()
+    public Text getHelpOneLine()
     {
         return of("Create a stage");
     }

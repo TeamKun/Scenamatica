@@ -1,6 +1,5 @@
 package org.kunlab.scenamatica.action.actions.server;
 
-import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -10,7 +9,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.utils.InputTypeToken;
 import org.kunlab.scenamatica.action.utils.PlayerLikeCommandSenders;
-import org.kunlab.scenamatica.commons.utils.TextUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
@@ -84,14 +82,16 @@ public class BroadcastMessageAction extends AbstractServerAction
 
         if (permission == null)
             if (recipients == null || recipients.isEmpty())
-                Bukkit.broadcast(Component.text(message));
+                // noinspection deprecation  De-Adventure API
+                Bukkit.broadcastMessage(message);
             else
-                this.simulateBukkitBroadcast(ctxt, Component.text(message), recipients);
+                this.simulateBukkitBroadcast(ctxt, message, recipients);
         else
-            Bukkit.broadcast(Component.text(message), permission);
+            // noinspection deprecation  De-Adventure API
+            Bukkit.broadcast(message, permission);
     }
 
-    private void simulateBukkitBroadcast(@NotNull ActionContext ctxt, @NotNull Component messageComponent,
+    private void simulateBukkitBroadcast(@NotNull ActionContext ctxt, @NotNull String message,
                                          @NotNull List<? extends PlayerSpecifier> recipients)
     {
         Set<PlayerSpecifier> recipientsSet = new HashSet<>(recipients);
@@ -99,18 +99,20 @@ public class BroadcastMessageAction extends AbstractServerAction
                 .map(ps -> PlayerLikeCommandSenders.getCommandSenderOrThrow(ps, ctxt.getContext()))
                 .collect(Collectors.toSet());
 
+        // noinspection deprecation  De-Adventure API
         BroadcastMessageEvent broadcastMessageEvent =
-                new BroadcastMessageEvent(!Bukkit.isPrimaryThread(), messageComponent, csRecipientsSet);
+                new BroadcastMessageEvent(!Bukkit.isPrimaryThread(), message, csRecipientsSet);
         Bukkit.getPluginManager().callEvent(broadcastMessageEvent);
 
         if (broadcastMessageEvent.isCancelled())
             return;
 
-        messageComponent = broadcastMessageEvent.message();
+        // noinspection deprecation  De-Adventure API
+        message = broadcastMessageEvent.getMessage();
 
-        this.makeOutputs(ctxt, TextUtils.toString(messageComponent), new ArrayList<>(csRecipientsSet));
+        this.makeOutputs(ctxt, message, new ArrayList<>(csRecipientsSet));
         for (CommandSender recipient : broadcastMessageEvent.getRecipients())
-            recipient.sendMessage(messageComponent);
+            recipient.sendMessage(message);
     }
 
     @Override
@@ -121,10 +123,12 @@ public class BroadcastMessageAction extends AbstractServerAction
 
         BroadcastMessageEvent e = (BroadcastMessageEvent) event;
 
+        // noinspection deprecation  De-Adventure API
+        String message = e.getMessage();
         if (ctxt.hasInput(IN_MESSAGE))
         {
             Pattern pattern = Pattern.compile(ctxt.input(IN_MESSAGE));
-            Matcher matcher = pattern.matcher(TextUtils.toString(e.message()));
+            Matcher matcher = pattern.matcher(message);
             if (!matcher.find())
                 return false;
         }
@@ -147,7 +151,7 @@ public class BroadcastMessageAction extends AbstractServerAction
         }
 
         if (result)
-            this.makeOutputs(ctxt, TextUtils.toString(e.message()), new ArrayList<>(e.getRecipients()));
+            this.makeOutputs(ctxt, message, new ArrayList<>(e.getRecipients()));
 
         return result;
     }

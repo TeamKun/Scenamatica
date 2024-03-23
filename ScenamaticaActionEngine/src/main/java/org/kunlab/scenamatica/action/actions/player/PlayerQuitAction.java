@@ -1,12 +1,10 @@
 package org.kunlab.scenamatica.action.actions.player;
 
-import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.kunlab.scenamatica.commons.utils.TextUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
@@ -57,10 +55,8 @@ public class PlayerQuitAction extends AbstractPlayerAction
         switch (reason)
         {
             case KICKED:
-                if (quitMessage == null)
-                    target.kick(null);
-                else
-                    target.kick(Component.text(quitMessage));
+                // noinspection deprecation  De-Adventure API
+                target.kickPlayer(quitMessage);
                 break;
             case DISCONNECTED:
                 targetActor.leaveServer();
@@ -90,13 +86,14 @@ public class PlayerQuitAction extends AbstractPlayerAction
         assert event instanceof PlayerQuitEvent;
         PlayerQuitEvent e = (PlayerQuitEvent) event;
 
-        Component quitMessage = e.quitMessage();
+        // noinspection deprecation  De-Adventure API
+        String quitMessage = e.getQuitMessage();
         PlayerQuitEvent.QuitReason quitReason = e.getReason();
 
-        boolean result = ctxt.ifHasInput(IN_QUIT_MESSAGE, message -> TextUtils.isSameContent(quitMessage, message))
+        boolean result = ctxt.ifHasInput(IN_QUIT_MESSAGE, message -> message.equalsIgnoreCase(quitMessage))
                 && ctxt.ifHasInput(IN_QUIT_REASON, reason -> reason == quitReason);
         if (result)
-            this.makeOutputs(ctxt, e.getPlayer(), TextUtils.toString(quitMessage), quitReason);
+            this.makeOutputs(ctxt, e.getPlayer(), quitMessage, quitReason);
 
         return result;
     }
