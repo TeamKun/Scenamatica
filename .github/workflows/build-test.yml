@@ -75,6 +75,11 @@ jobs:
     name: Self-test with Scenamatica
     runs-on: self-hosted
     needs: build
+    strategy:
+      matrix:
+        minecraft:
+          - 1.16.5
+          - 1.13.2
     steps:
       - uses: actions/download-artifact@v3
         with:
@@ -89,9 +94,17 @@ jobs:
         uses: teamkun/scenamatica-action@main
         with:
           plugin: Scenamatica.jar
+          minecraft: ${{ matrix.minecraft }}
+          server-dir: server-${{ matrix.minecraft }}
         env:
           NO_SCENAMATICA: true
         timeout-minutes: 20
+  clean:
+    name: Clean up
+    runs-on: self-hosted
+    if: always()
+    needs: test
+    steps:
       - name: Clean artifacts
         if: always()
         uses: geekyeggo/delete-artifact@v2
