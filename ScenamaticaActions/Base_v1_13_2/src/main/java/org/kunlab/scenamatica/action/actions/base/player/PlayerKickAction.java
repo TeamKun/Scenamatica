@@ -30,7 +30,6 @@ public class PlayerKickAction extends AbstractPlayerAction
 
     public static final String KEY_OUT_LEAVE_MESSAGE = "leaveMessage";
     public static final String KEY_OUT_KICK_MESSAGE = "message";
-    public static final String KEY_OUT_CAUSE = "cause";
 
     @Override
     public String getName()
@@ -91,7 +90,8 @@ public class PlayerKickAction extends AbstractPlayerAction
     @Override
     public InputBoard getInputBoard(ScenarioType type)
     {
-        InputBoard board = super.getInputBoard(type);
+        InputBoard board = super.getInputBoard(type)
+                .register(IN_KICK_MESSAGE);
 
         if (type != ScenarioType.ACTION_EXECUTE)
             board.register(IN_LEAVE_MESSAGE);
