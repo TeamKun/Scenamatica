@@ -7,6 +7,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.utils.InputTypeToken;
+import org.kunlab.scenamatica.annotations.action.ActionMeta;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
@@ -21,10 +22,10 @@ import java.util.List;
 import java.util.Map;
 
 @SuppressWarnings("deprecation")  // DamageModifier <- very soon で消えるらしい。 1.8 の頃から言ってる。 <- 石油かよ！！？
+@ActionMeta("entity_damage")
 public class EntityDamageAction extends AbstractGeneralEntityAction
         implements Executable, Watchable
 {
-    public static final String KEY_ACTION_NAME = "entity_damage";
     public static final InputToken<EntityDamageEvent.DamageCause> IN_CAUSE = ofEnumInput(
             "cause",
             EntityDamageEvent.DamageCause.class
@@ -41,7 +42,6 @@ public class EntityDamageAction extends AbstractGeneralEntityAction
                 Map<String, Number> modifiersMapRaw = MapUtils.checkAndCastMap(
                         map, String.class, Number.class
                 );
-
                 for (Map.Entry<String, Number> entry : modifiersMapRaw.entrySet())
                 {
                     EntityDamageEvent.DamageModifier cause = EntityDamageEvent.DamageModifier.valueOf(entry.getKey());
@@ -63,12 +63,6 @@ public class EntityDamageAction extends AbstractGeneralEntityAction
             modifiersMap.put(modifier.name().toLowerCase(), evt.getDamage(modifier));
 
         return modifiersMap;
-    }
-
-    @Override
-    public String getName()
-    {
-        return KEY_ACTION_NAME;
     }
 
     @Override

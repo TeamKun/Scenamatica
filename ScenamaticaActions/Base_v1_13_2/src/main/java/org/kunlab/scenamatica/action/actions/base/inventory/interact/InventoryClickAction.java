@@ -10,6 +10,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.kunlab.scenamatica.annotations.action.ActionMeta;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
@@ -22,10 +23,10 @@ import org.kunlab.scenamatica.interfaces.scenariofile.inventory.ItemStackStructu
 import java.util.Collections;
 import java.util.List;
 
+@ActionMeta("inventory_click")
 public class InventoryClickAction extends AbstractInventoryInteractAction
         implements Executable, Watchable
 {
-    public static final String KEY_ACTION_NAME = "inventory_click";
     public static final InputToken<ClickType> IN_CLICK_TYPE = ofInput(
             "type",
             ClickType.class,
@@ -63,7 +64,6 @@ public class InventoryClickAction extends AbstractInventoryInteractAction
             ItemStackStructure.class,
             ofDeserializer(ItemStackStructure.class)
     );
-
     public static final String OUT_KEY_CLICK_TYPE = "type";
     public static final String OUT_KEY_INVENTORY_ACTION = "action";
     public static final String OUT_KEY_SLOT_TYPE = "slotType";
@@ -72,12 +72,6 @@ public class InventoryClickAction extends AbstractInventoryInteractAction
     public static final String OUT_KEY_CLICKED_ITEM = "clickedItem";
     public static final String OUT_KEY_BUTTON = "button";
     public static final String OUT_KEY_CURSOR_ITEM = "cursorItem";
-
-    @Override
-    public String getName()
-    {
-        return KEY_ACTION_NAME;
-    }
 
     @Override
     public void execute(@NotNull ActionContext ctxt)

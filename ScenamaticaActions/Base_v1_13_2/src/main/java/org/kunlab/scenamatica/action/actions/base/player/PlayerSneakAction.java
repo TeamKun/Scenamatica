@@ -5,6 +5,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.jetbrains.annotations.NotNull;
+import org.kunlab.scenamatica.annotations.action.ActionMeta;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
@@ -16,20 +17,14 @@ import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import java.util.Collections;
 import java.util.List;
 
+@ActionMeta("player_sneak")
 public class PlayerSneakAction extends AbstractPlayerAction
         implements Executable, Watchable, Requireable
 {
-    public static final String KEY_ACTION_NAME = "player_sneak";
     public static final InputToken<Boolean> IN_SNEAKING = ofInput(
             "sneaking",
             Boolean.class
     );
-
-    @Override
-    public String getName()
-    {
-        return KEY_ACTION_NAME;
-    }
 
     @Override
     public void execute(@NotNull ActionContext ctxt)

@@ -4,6 +4,7 @@ import io.papermc.paper.event.world.border.WorldBorderBoundsChangeFinishEvent;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.action.actions.base.world.AbstractWorldAction;
+import org.kunlab.scenamatica.annotations.action.ActionMeta;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
@@ -13,10 +14,10 @@ import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import java.util.Collections;
 import java.util.List;
 
+@ActionMeta("world_border_changed")
 public class WorldBorderChangedAction extends AbstractWorldAction
         implements Watchable
 {
-    public static final String KEY_ACTION_NAME = "world_border_changed";
     public static final InputToken<Double> IN_SIZE = ofInput(
             "size",
             Double.class
@@ -29,16 +30,9 @@ public class WorldBorderChangedAction extends AbstractWorldAction
             "duration",
             Long.class
     );
-
     public static final String KEY_OUT_SIZE = "size";
     public static final String KEY_OUT_SIZE_OLD = "sizeOld";
     public static final String KEY_OUT_DURATION = "duration";
-
-    @Override
-    public String getName()
-    {
-        return KEY_ACTION_NAME;
-    }
 
     @Override
     public boolean checkFired(@NotNull ActionContext ctxt, @NotNull Event event)

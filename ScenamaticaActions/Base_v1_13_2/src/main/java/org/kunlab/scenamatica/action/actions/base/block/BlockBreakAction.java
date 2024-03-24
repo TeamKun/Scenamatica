@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.jetbrains.annotations.NotNull;
+import org.kunlab.scenamatica.annotations.action.ActionMeta;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
@@ -24,19 +25,12 @@ import org.kunlab.scenamatica.nms.types.entity.NMSEntityPlayer;
 import java.util.Collections;
 import java.util.List;
 
+@ActionMeta("block_break")
 public class BlockBreakAction extends AbstractBlockAction
         implements Executable, Requireable, Watchable
 {
-    public static final String KEY_ACTION_NAME = "block_break";
-
     public static final InputToken<PlayerSpecifier> IN_ACTOR = ofInput("actor", PlayerSpecifier.class, ofPlayer());
     public static final InputToken<Boolean> IN_DROP_ITEMS = ofInput("drop_items", Boolean.class);
-
-    @Override
-    public String getName()
-    {
-        return KEY_ACTION_NAME;
-    }
 
     @Override
     public void execute(@NotNull ActionContext ctxt)

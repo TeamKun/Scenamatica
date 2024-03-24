@@ -7,6 +7,7 @@ import net.kunmc.lab.peyangpaperutils.lib.terminal.Terminals;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
 import org.jetbrains.annotations.NotNull;
+import org.kunlab.scenamatica.commons.utils.ActionMetaUtils;
 import org.kunlab.scenamatica.commons.utils.LogUtils;
 import org.kunlab.scenamatica.enums.ScenarioResultCause;
 import org.kunlab.scenamatica.interfaces.action.ActionResult;
@@ -321,7 +322,7 @@ public class BukkitTestReporter extends AbstractTestReporter
                 .map(r -> {
                     String scenario = r.getScenario().getName();
                     String cause = r.getCause().name();
-                    String action = (r.getFailedAction() == null) ? "???": r.getFailedAction().getName();
+                    String action = (r.getFailedAction() == null) ? "???": ActionMetaUtils.getActionName(r.getFailedAction());
                     return LangProvider.get(
                             "test.session.result.failures.entry",
                             MsgArgs.of("scenario", scenario)

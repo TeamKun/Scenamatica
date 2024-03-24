@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.utils.InputTypeToken;
 import org.kunlab.scenamatica.action.utils.PlayerLikeCommandSenders;
+import org.kunlab.scenamatica.annotations.action.ActionMeta;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
@@ -21,11 +22,11 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@ActionMeta("tab_complete")
 public class TabCompleteAction extends AbstractServerAction
         implements Executable, Watchable
 {
 
-    public static final String KEY_ACTION_NAME = "tab_complete";
     public static final InputToken<PlayerSpecifier> IN_SENDER = ofInput(
             "sender",
             PlayerSpecifier.class,
@@ -44,7 +45,6 @@ public class TabCompleteAction extends AbstractServerAction
             Boolean.class,
             false
     );
-
     private static boolean checkCompletions(@Nullable List<String> expected, List<String> actual, boolean strict)
     {
         if (expected == null)
@@ -61,12 +61,6 @@ public class TabCompleteAction extends AbstractServerAction
         }
 
         return true;
-    }
-
-    @Override
-    public String getName()
-    {
-        return KEY_ACTION_NAME;
     }
 
     @Override

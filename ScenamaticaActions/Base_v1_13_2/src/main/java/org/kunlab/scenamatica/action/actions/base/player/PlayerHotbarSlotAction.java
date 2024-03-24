@@ -6,6 +6,7 @@ import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.kunlab.scenamatica.annotations.action.ActionMeta;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
@@ -18,11 +19,10 @@ import org.kunlab.scenamatica.interfaces.scenariofile.inventory.ItemStackStructu
 import java.util.Collections;
 import java.util.List;
 
+@ActionMeta("player_hotbar")
 public class PlayerHotbarSlotAction extends AbstractPlayerAction
         implements Executable, Watchable, Requireable
 {
-    public static final String KEY_ACTION_NAME = "player_hotbar";
-
     public static final InputToken<Integer> IN_CURRENT_SLOT = ofInput(
             "slot",
             Integer.class
@@ -40,12 +40,6 @@ public class PlayerHotbarSlotAction extends AbstractPlayerAction
     public static final String KEY_OUTPUT_SLOT = "slot";
     public static final String KEY_OUTPUT_PREVIOUS_SLOT = "previous";
     public static final String KEY_OUTPUT_ITEM = "item";
-
-    @Override
-    public String getName()
-    {
-        return KEY_ACTION_NAME;
-    }
 
     @Override
     public void execute(@NotNull ActionContext ctxt)

@@ -10,6 +10,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.kunlab.scenamatica.annotations.action.ActionMeta;
 import org.kunlab.scenamatica.commons.utils.Utils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
@@ -22,10 +23,10 @@ import org.kunlab.scenamatica.interfaces.scenariofile.misc.BlockStructure;
 import java.util.Collections;
 import java.util.List;
 
+@ActionMeta("player_interact_block")
 public class PlayerInteractBlockAction extends AbstractPlayerAction
         implements Executable, Watchable
 {
-    public static final String KEY_ACTION_NAME = "player_interact_block";
     public static final InputToken<Action> IN_ACTION = ofEnumInput(
             "action",
             Action.class
@@ -46,7 +47,6 @@ public class PlayerInteractBlockAction extends AbstractPlayerAction
             "blockFace",
             BlockFace.class
     );
-
     public static final String KEY_OUT_ACTION = "action";
     public static final String KEY_OUT_BLOCK = "block";
     public static final String KEY_OUT_BLOCK_FACE = "blockFace";
@@ -62,12 +62,6 @@ public class PlayerInteractBlockAction extends AbstractPlayerAction
 
         Location normalizedPos = Utils.assignWorldToLocation(clickPos, ctxt.getEngine());
         return normalizedPos.getWorld().getBlockAt(normalizedPos);
-    }
-
-    @Override
-    public String getName()
-    {
-        return KEY_ACTION_NAME;
     }
 
     @Override

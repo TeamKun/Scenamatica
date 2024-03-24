@@ -7,6 +7,7 @@ import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.kunlab.scenamatica.annotations.action.ActionMeta;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
@@ -21,21 +22,14 @@ import org.kunlab.scenamatica.nms.enums.entity.NMSEntityUseAction;
 import java.util.Collections;
 import java.util.List;
 
+@ActionMeta("player_interact_entity")
 public class PlayerInteractEntityAction extends AbstractPlayerAction
         implements Executable, Watchable
 {
-    public static final String KEY_ACTION_NAME = "player_interact_entity";
     public static final InputToken<EntitySpecifier<Entity>> IN_ENTITY = ofSpecifier("entity");
     public static final InputToken<NMSHand> IN_HAND = ofEnumInput("hand", NMSHand.class);
-
     public static final String KEY_OUT_ENTITY = "entity";
     public static final String KEY_OUT_HAND = "hand";
-
-    @Override
-    public String getName()
-    {
-        return KEY_ACTION_NAME;
-    }
 
     @Override
     public void execute(@NotNull ActionContext ctxt)

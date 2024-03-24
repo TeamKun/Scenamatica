@@ -5,6 +5,7 @@ import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.kunlab.scenamatica.annotations.action.ActionMeta;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
@@ -15,10 +16,10 @@ import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import java.util.Collections;
 import java.util.List;
 
+@ActionMeta("player_kick")
 public class PlayerKickAction extends AbstractPlayerAction
         implements Executable, Watchable
 {
-    public static final String KEY_ACTION_NAME = "player_kick";
     public static final InputToken<String> IN_LEAVE_MESSAGE = ofInput(
             "leaveMessage",
             String.class
@@ -27,15 +28,8 @@ public class PlayerKickAction extends AbstractPlayerAction
             "message",
             String.class
     );
-
     public static final String KEY_OUT_LEAVE_MESSAGE = "leaveMessage";
     public static final String KEY_OUT_KICK_MESSAGE = "message";
-
-    @Override
-    public String getName()
-    {
-        return KEY_ACTION_NAME;
-    }
 
     @Override
     public void execute(@NotNull ActionContext ctxt)

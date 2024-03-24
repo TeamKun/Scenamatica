@@ -8,6 +8,7 @@ import org.bukkit.event.entity.EntityDropItemEvent;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.kunlab.scenamatica.annotations.action.ActionMeta;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
@@ -20,10 +21,10 @@ import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.EntitySpecifier
 import java.util.Collections;
 import java.util.List;
 
+@ActionMeta("entity_drop_item")
 public class EntityDropItemAction extends AbstractGeneralEntityAction
         implements Executable, Watchable
 {
-    public static final String KEY_ACTION_NAME = "entity_drop_item";
     public static final String OUT_KEY_ITEM = "item";
     public static InputToken<EntitySpecifier<Item>> IN_ITEM =
             ofInput("item", Item.class, EntityItemStructure.class)
@@ -33,12 +34,6 @@ public class EntityDropItemAction extends AbstractGeneralEntityAction
                             specifier -> specifier.getTargetStructure() instanceof EntityItemStructure,
                             "item must be an item structure."
                     );
-
-    @Override
-    public String getName()
-    {
-        return KEY_ACTION_NAME;
-    }
 
     @Override
     public void execute(@NotNull ActionContext ctxt)

@@ -11,6 +11,7 @@ import org.bukkit.event.player.PlayerAdvancementDoneEvent;
 import org.bukkit.event.player.PlayerEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.kunlab.scenamatica.annotations.action.ActionMeta;
 import org.kunlab.scenamatica.commons.utils.NamespaceUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
@@ -23,12 +24,11 @@ import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import java.util.Arrays;
 import java.util.List;
 
+@ActionMeta("player_advancement")
 public class PlayerAdvancementAction
         extends AbstractPlayerAction
         implements Executable, Watchable, Requireable
 {
-    public static final String KEY_ACTION_NAME = "player_advancement";
-
     // 進捗の Criterion を付与するアクションと, 進捗を完了させるアクションを統合した。
     // 脚注： Criterion => 単数, Criteria => 複数 -- ギリシャ語による。
     public static final InputToken<NamespacedKey> IN_ADVANCEMENT = ofInput(
@@ -52,12 +52,6 @@ public class PlayerAdvancementAction
             throw new IllegalArgumentException("Advancement not found: " + advKey);
 
         return advancement;
-    }
-
-    @Override
-    public String getName()
-    {
-        return KEY_ACTION_NAME;
     }
 
     @Override

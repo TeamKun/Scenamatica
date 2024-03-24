@@ -6,6 +6,7 @@ import org.bukkit.World;
 import org.bukkit.event.Event;
 import org.bukkit.event.world.WorldUnloadEvent;
 import org.jetbrains.annotations.NotNull;
+import org.kunlab.scenamatica.annotations.action.ActionMeta;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
@@ -16,20 +17,14 @@ import org.kunlab.scenamatica.interfaces.action.types.Requireable;
 import java.util.Collections;
 import java.util.List;
 
+@ActionMeta("world_unload")
 public class WorldUnloadAction extends AbstractWorldAction
         implements Executable, Requireable
 {
-    public static final String KEY_ACTION_NAME = "world_unload";
     public static final InputToken<Boolean> IN_SAVE = ofInput(
             "save",
             Boolean.class
     );
-
-    @Override
-    public String getName()
-    {
-        return KEY_ACTION_NAME;
-    }
 
     @Override
     public void execute(@NotNull ActionContext ctxt)

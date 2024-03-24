@@ -6,6 +6,7 @@ import org.bukkit.World;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.action.utils.InputTypeToken;
+import org.kunlab.scenamatica.annotations.action.ActionMeta;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
@@ -16,10 +17,10 @@ import org.kunlab.scenamatica.interfaces.action.types.Requireable;
 import java.util.Collections;
 import java.util.List;
 
+@ActionMeta("world_game_rule")
 public class WorldGameRuleAction extends AbstractWorldAction
         implements Executable, Requireable
 {
-    public static final String KEY_ACTION_NAME = "world_game_rule";
     public static final InputToken<GameRule<?>> IN_GAME_RULE = ofInput(
             "rule",
             InputTypeToken.ofBased(GameRule.class),
@@ -29,15 +30,8 @@ public class WorldGameRuleAction extends AbstractWorldAction
             "value",
             String.class
     );
-
     public static final String KEY_GAME_RULE = "rule";
     public static final String KEY_VALUE = "value";
-
-    @Override
-    public String getName()
-    {
-        return KEY_ACTION_NAME;
-    }
 
     @Override
     public void execute(@NotNull ActionContext ctxt)

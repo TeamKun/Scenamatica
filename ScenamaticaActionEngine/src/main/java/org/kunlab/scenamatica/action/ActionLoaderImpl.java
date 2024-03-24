@@ -9,6 +9,9 @@ import org.bukkit.event.server.PluginEnableEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
+import org.kunlab.scenamatica.annotations.action.ActionMeta;
+import org.kunlab.scenamatica.commons.utils.ActionMetaUtils;
+import org.kunlab.scenamatica.enums.MinecraftVersion;
 import org.kunlab.scenamatica.interfaces.ExceptionHandler;
 import org.kunlab.scenamatica.interfaces.ScenamaticaRegistry;
 import org.kunlab.scenamatica.interfaces.action.Action;
@@ -109,6 +112,12 @@ public class ActionLoaderImpl implements ActionLoader, Listener
         {
             throw new RuntimeException("Failed to create URL for JAR file " + jarFullPath, e);
         }
+    }
+
+    private static boolean isCompatibleWithServer(Class<? extends Action> actionClass)
+    {
+        ActionMeta meta = ActionMetaUtils.getActionMetaData(actionClass);
+        return MinecraftVersion.current().isInRange(meta.supportsSince(), meta.supportsUntil());
     }
 
     @Override
@@ -230,9 +239,15 @@ public class ActionLoaderImpl implements ActionLoader, Listener
         {
             try
             {
-                Class<?> actionClass = cl.loadClass(actionClassName);
                 //noinspection unchecked
-                actionClasses.add((Class<? extends Action>) actionClass);
+                Class<? extends Action> actionClass = (Class<? extends Action>) cl.loadClass(actionClassName);
+                if (!isCompatibleWithServer(actionClass))
+                {
+                    this.logger.log(Level.FINE, "Action " + actionClass.getName() + " is not compatible with the server version.");
+                    continue;
+                }
+
+                actionClasses.add(actionClass);
             }
             catch (ClassNotFoundException e)
             {
@@ -330,7 +345,7 @@ public class ActionLoaderImpl implements ActionLoader, Listener
         {
             List<CompiledScenarioAction> actions = engine.getActions();
             boolean isActionToBeRemoveUsed = actions.stream()
-                    .anyMatch(compiledAction -> compiledAction.getAction().getExecutor().getName().equals(action.getName()));
+                    .anyMatch(compiledAction -> ActionMetaUtils.getActionMetaData(compiledAction.getAction().getExecutor().getClass()).value().equals(action.getName()));
             if (isActionToBeRemoveUsed)
             {
                 this.logger.warning("Action " + action.getName() + " is used in scenario " + engine.getScenario().getName() + ", the engine will be stopped and unloaded.");

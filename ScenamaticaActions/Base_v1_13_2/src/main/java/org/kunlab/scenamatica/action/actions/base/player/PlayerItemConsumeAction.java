@@ -7,6 +7,7 @@ import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.kunlab.scenamatica.annotations.action.ActionMeta;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
@@ -20,10 +21,10 @@ import org.kunlab.scenamatica.nms.enums.NMSHand;
 import java.util.Collections;
 import java.util.List;
 
+@ActionMeta("player_item_consume")
 public class PlayerItemConsumeAction extends AbstractPlayerAction
         implements Executable, Watchable
 {
-    public static final String KEY_ACTION_NAME = "player_item_consume";
     public static final InputToken<ItemStackStructure> IN_ITEM = ofInput(
             "item",
             ItemStackStructure.class,
@@ -34,7 +35,6 @@ public class PlayerItemConsumeAction extends AbstractPlayerAction
             ItemStackStructure.class,
             ofDeserializer(ItemStackStructure.class)
     );
-
     public static final String KEY_OUT_ITEM = "item";
     public static final String KEY_OUT_REPLACEMENT = "replacement";
 
@@ -60,12 +60,6 @@ public class PlayerItemConsumeAction extends AbstractPlayerAction
         else
             return null;
 
-    }
-
-    @Override
-    public String getName()
-    {
-        return KEY_ACTION_NAME;
     }
 
     @Override

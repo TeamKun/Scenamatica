@@ -12,6 +12,7 @@ import org.bukkit.event.entity.EntityPlaceEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.kunlab.scenamatica.annotations.action.ActionMeta;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
@@ -28,11 +29,10 @@ import java.util.List;
 import java.util.Map;
 
 @SuppressWarnings("deprecation")
+@ActionMeta("entity_place")
 public class EntityPlaceAction extends AbstractGeneralEntityAction
         implements Executable, Watchable
 {
-    public static final String KEY_ACTION_NAME = "entity_place";
-
     // armor stands, boats, minecarts, and end crystals. しか呼ばれないらしい
     public static final Map<Material, EntityType> PLACEABLE_ENTITIES_MAP;
 
@@ -130,12 +130,6 @@ public class EntityPlaceAction extends AbstractGeneralEntityAction
                 || structure.getMetadata().isEmpty()
                 // || structure.getLightLevel() != null  // LightLevel は関係ない。
                 || structure.getBiome() != null;
-    }
-
-    @Override
-    public String getName()
-    {
-        return KEY_ACTION_NAME;
     }
 
     @Override

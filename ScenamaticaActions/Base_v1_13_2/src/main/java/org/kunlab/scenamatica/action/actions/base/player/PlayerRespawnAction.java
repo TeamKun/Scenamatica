@@ -6,6 +6,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.jetbrains.annotations.NotNull;
+import org.kunlab.scenamatica.annotations.action.ActionMeta;
 import org.kunlab.scenamatica.commons.utils.Utils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
@@ -18,10 +19,10 @@ import org.kunlab.scenamatica.interfaces.scenariofile.misc.LocationStructure;
 import java.util.Arrays;
 import java.util.List;
 
+@ActionMeta("player_respawn")
 public class PlayerRespawnAction extends AbstractPlayerAction
         implements Executable, Watchable
 {
-    public static final String KEY_ACTION_NAME = "player_respawn";
     public static final InputToken<Boolean> IN_IS_BED = ofInput(
             "isBed",
             Boolean.class
@@ -35,16 +36,9 @@ public class PlayerRespawnAction extends AbstractPlayerAction
             LocationStructure.class,
             ofDeserializer(LocationStructure.class)
     );
-
     public static final String KEY_OUT_IS_BED = "isBed";
     public static final String KEY_OUT_IS_ANCHOR = "isAnchor";
     public static final String KEY_OUT_LOCATION = "location";
-
-    @Override
-    public String getName()
-    {
-        return KEY_ACTION_NAME;
-    }
 
     @Override
     public void execute(@NotNull ActionContext ctxt)

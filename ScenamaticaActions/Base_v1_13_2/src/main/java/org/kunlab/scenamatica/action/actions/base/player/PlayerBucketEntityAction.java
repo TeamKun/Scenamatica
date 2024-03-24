@@ -8,6 +8,7 @@ import org.bukkit.event.player.PlayerBucketEntityEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.kunlab.scenamatica.annotations.action.ActionMeta;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
@@ -24,10 +25,10 @@ import java.util.Collections;
 import java.util.List;
 
 // 注： AbstractPlayerBucketAction を継承していない。
+@ActionMeta("player_bucket_entity")
 public class PlayerBucketEntityAction extends AbstractPlayerAction
         implements Executable, Watchable
 {
-    public static final String KEY_ACTION_NAME = "player_bucket_entity";
     public static final InputToken<EntitySpecifier<Entity>> IN_ENTITY = ofSpecifier("entity");
     public static final InputToken<ItemStackStructure> IN_ORIGINAL_BUCKET = ofInput(
             "bucket",
@@ -40,7 +41,6 @@ public class PlayerBucketEntityAction extends AbstractPlayerAction
             ofDeserializer(ItemStackStructure.class)
     ).validator(bucket -> bucket.getType() != null, "Original bucket type is null.")
             .validator(bucket -> canBucketPickupEntity(bucket.getType()), "Original bucket type is not water bucket.");
-
     public static final String KEY_OUT_ENTITY = "entity";
     public static final String KEY_OUT_BUCKET = "bucket";
     public static final String KEY_OUT_ENTITY_BUCKET = "entityBucket";
@@ -49,12 +49,6 @@ public class PlayerBucketEntityAction extends AbstractPlayerAction
     private static boolean canBucketPickupEntity(@NotNull Material type)
     {
         return type == Material.WATER_BUCKET || type == Material.LEGACY_WATER_BUCKET;
-    }
-
-    @Override
-    public String getName()
-    {
-        return KEY_ACTION_NAME;
     }
 
     @Override

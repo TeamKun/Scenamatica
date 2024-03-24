@@ -2,6 +2,7 @@ package org.kunlab.scenamatica.action.actions.base.entity;
 
 import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;
+import org.kunlab.scenamatica.annotations.action.ActionMeta;
 import org.kunlab.scenamatica.commons.utils.EntityUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
@@ -11,22 +12,15 @@ import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
 import org.kunlab.scenamatica.interfaces.scenariofile.entity.EntityStructure;
 
+@ActionMeta("entity")
 public class EntityAction extends AbstractGeneralEntityAction
         implements Executable, Requireable
 {
-    public static final String KEY_ACTION_NAME = "entity";
-
     public static final InputToken<EntityStructure> IN_ENTITY = ofInput(
             "data",
             EntityStructure.class,
             ofDeserializer(EntityStructure.class)
     );
-
-    @Override
-    public String getName()
-    {
-        return KEY_ACTION_NAME;
-    }
 
     @Override
     public void execute(@NotNull ActionContext ctxt)

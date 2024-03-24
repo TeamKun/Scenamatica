@@ -10,6 +10,7 @@ import org.bukkit.event.Event;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.kunlab.scenamatica.annotations.action.ActionMeta;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
@@ -26,10 +27,10 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+@ActionMeta("block_place")
 public class BlockPlaceAction extends AbstractBlockAction
         implements Executable, Requireable, Watchable
 {
-    public static final String KEY_ACTION_NAME = "block_place";
     public static final InputToken<PlayerSpecifier> IN_ACTOR = ofInput("actor", PlayerSpecifier.class, ofPlayer());
     public static final InputToken<NMSHand> IN_HAND = ofEnumInput("hand", NMSHand.class);
 
@@ -47,12 +48,6 @@ public class BlockPlaceAction extends AbstractBlockAction
                     "Invalid direction: %s, allowed: " + Arrays.toString(ALLOWED_FACES)
             )
             .defaultValue(BlockFace.EAST);
-
-    @Override
-    public String getName()
-    {
-        return KEY_ACTION_NAME;
-    }
 
     @Override
     public void execute(@NotNull ActionContext ctxt)

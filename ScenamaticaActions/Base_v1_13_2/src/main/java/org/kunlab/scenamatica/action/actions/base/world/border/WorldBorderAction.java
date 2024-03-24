@@ -10,6 +10,7 @@ import org.bukkit.event.world.WorldEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.actions.base.world.AbstractWorldAction;
+import org.kunlab.scenamatica.annotations.action.ActionMeta;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
@@ -23,12 +24,11 @@ import org.kunlab.scenamatica.interfaces.scenariofile.misc.LocationStructure;
 import java.util.Arrays;
 import java.util.List;
 
+@ActionMeta("world_border")
 public class WorldBorderAction extends AbstractWorldAction
         implements Executable, Watchable, Requireable
 {
     // WorldBorderBoundsChangeEvent と WorldBorderCenterChangeEvent を処理する
-
-    public static final String KEY_ACTION_NAME = "world_border";
 
     public static final InputToken<WorldBorderBoundsChangeEvent.Type> IN_TYPE = ofEnumInput(
             "type",
@@ -63,12 +63,6 @@ public class WorldBorderAction extends AbstractWorldAction
     public static final String KEY_DURATION = "duration";
     public static final String KEY_CENTER = "center";
     public static final String KEY_CENTER_OLD = "centerOld";
-
-    @Override
-    public String getName()
-    {
-        return KEY_ACTION_NAME;
-    }
 
     @Override
     public void execute(@NotNull ActionContext ctxt)

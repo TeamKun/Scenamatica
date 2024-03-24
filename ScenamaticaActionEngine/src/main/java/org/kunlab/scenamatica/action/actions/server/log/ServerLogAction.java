@@ -6,6 +6,7 @@ import org.apache.logging.log4j.Logger;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.action.AbstractAction;
+import org.kunlab.scenamatica.annotations.action.ActionMeta;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.events.actions.server.ServerLogEvent;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
@@ -18,10 +19,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+@ActionMeta("server_log")
 public class ServerLogAction extends AbstractAction
         implements Executable, Watchable
 {
-    public static final String KEY_ACTION_NAME = "server_log";
     public static final InputToken<String> IN_SOURCE = ofInput(
             "source",
             String.class
@@ -51,12 +52,6 @@ public class ServerLogAction extends AbstractAction
             throw new IllegalArgumentException("Illegal log level: " + original + " is not allowed here.");
 
         return result;
-    }
-
-    @Override
-    public String getName()
-    {
-        return KEY_ACTION_NAME;
     }
 
     @Override

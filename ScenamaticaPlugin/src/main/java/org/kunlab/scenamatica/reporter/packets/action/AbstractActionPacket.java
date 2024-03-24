@@ -1,6 +1,7 @@
 package org.kunlab.scenamatica.reporter.packets.action;
 
 import org.jetbrains.annotations.NotNull;
+import org.kunlab.scenamatica.commons.utils.ActionMetaUtils;
 import org.kunlab.scenamatica.interfaces.action.ActionResult;
 import org.kunlab.scenamatica.interfaces.action.CompiledAction;
 import org.kunlab.scenamatica.reporter.packets.test.AbstractTestPacket;
@@ -28,7 +29,7 @@ public abstract class AbstractActionPacket extends AbstractTestPacket
 
     {
         super(GENRE, type, testID);
-        this.actionName = action.getExecutor().getName();
+        this.actionName = ActionMetaUtils.getActionName(action.getExecutor());
     }
 
     @Override

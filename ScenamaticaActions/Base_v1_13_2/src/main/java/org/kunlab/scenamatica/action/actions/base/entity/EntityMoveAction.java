@@ -6,6 +6,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Mob;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
+import org.kunlab.scenamatica.annotations.action.ActionMeta;
 import org.kunlab.scenamatica.commons.utils.Utils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
@@ -18,10 +19,10 @@ import org.kunlab.scenamatica.interfaces.scenariofile.misc.LocationStructure;
 import java.util.Collections;
 import java.util.List;
 
+@ActionMeta("entity_move")
 public class EntityMoveAction extends AbstractGeneralEntityAction
         implements Executable, Watchable
 {
-    public static final String KEY_ACTION_NAME = "entity_move";
     public static final InputToken<LocationStructure> IN_FROM = ofInput(
             "from",
             LocationStructure.class,
@@ -37,15 +38,8 @@ public class EntityMoveAction extends AbstractGeneralEntityAction
             Boolean.class,
             true
     );
-
     public static final String OUT_KEY_FROM = "from";
     public static final String OUT_KEY_TO = "to";
-
-    @Override
-    public String getName()
-    {
-        return KEY_ACTION_NAME;
-    }
 
     @Override
     public void execute(@NotNull ActionContext ctxt)

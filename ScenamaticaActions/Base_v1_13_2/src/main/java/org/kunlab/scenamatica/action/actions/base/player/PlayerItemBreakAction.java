@@ -10,6 +10,7 @@ import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.kunlab.scenamatica.annotations.action.ActionMeta;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
@@ -26,10 +27,10 @@ import org.kunlab.scenamatica.nms.types.item.NMSItemStack;
 import java.util.Collections;
 import java.util.List;
 
+@ActionMeta("player_item_break")
 public class PlayerItemBreakAction extends AbstractPlayerAction
         implements Executable, Watchable
 {
-    public static final String KEY_ACTION_NAME = "player_item_break";
     public static final InputToken<ItemStackStructure> IN_ITEM = ofInput(
             "item",
             ItemStackStructure.class,
@@ -39,15 +40,8 @@ public class PlayerItemBreakAction extends AbstractPlayerAction
             "slot",
             EquipmentSlot.class
     );
-
     public static final String KEY_OUT_ITEM = "item";
     public static final String KEY_OUT_SLOT = "slot";
-
-    @Override
-    public String getName()
-    {
-        return KEY_ACTION_NAME;
-    }
 
     @Override
     public void execute(@NotNull ActionContext ctxt)

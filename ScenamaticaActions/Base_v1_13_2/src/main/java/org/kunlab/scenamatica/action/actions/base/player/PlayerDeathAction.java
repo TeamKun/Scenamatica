@@ -5,6 +5,7 @@ import org.bukkit.event.Event;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.kunlab.scenamatica.annotations.action.ActionMeta;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
@@ -17,10 +18,10 @@ import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.PlayerSpecifier
 import java.util.Collections;
 import java.util.List;
 
+@ActionMeta("player_death")
 public class PlayerDeathAction extends AbstractPlayerAction
         implements Executable, Requireable, Watchable
 {
-    public static final String KEY_ACTION_NAME = "player_death";
     public static final InputToken<PlayerSpecifier> IN_KILLER = ofInput(
             "killer",
             PlayerSpecifier.class,
@@ -54,7 +55,6 @@ public class PlayerDeathAction extends AbstractPlayerAction
             "doExpDrop",
             Boolean.class
     );
-
     public static final String KEY_OUT_KILLER = "killer";
     public static final String KEY_OUT_DEATH_MESSAGE = "deathMessage";
     public static final String KEY_OUT_NEW_EXP = "exp";
@@ -63,12 +63,6 @@ public class PlayerDeathAction extends AbstractPlayerAction
     public static final String KEY_OUT_KEEP_LEVEL = "keepLevel";
     public static final String KEY_OUT_KEEP_INVENTORY = "keepInventory";
     public static final String KEY_OUT_DO_EXP_DROP = "doExpDrop";
-
-    @Override
-    public String getName()
-    {
-        return KEY_ACTION_NAME;
-    }
 
     @Override
     public void execute(@NotNull ActionContext ctxt)

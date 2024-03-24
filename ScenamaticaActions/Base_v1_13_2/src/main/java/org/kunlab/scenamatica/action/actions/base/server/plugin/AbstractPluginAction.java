@@ -18,7 +18,6 @@ public abstract class AbstractPluginAction extends AbstractServerAction
             String.class
     );
     public static final String KEY_OUT_PLUGIN = "plugin";
-    protected static final String KEY_PREFIX = "server_plugin_";
 
     public boolean checkFired(@NotNull ActionContext ctxt, @NotNull Event event)
     {

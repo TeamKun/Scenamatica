@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.utils.InputTypeToken;
 import org.kunlab.scenamatica.action.utils.PlayerLikeCommandSenders;
+import org.kunlab.scenamatica.annotations.action.ActionMeta;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
@@ -26,10 +27,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+@ActionMeta("broadcast")
 public class BroadcastMessageAction extends AbstractServerAction
         implements Executable, Watchable
 {
-    public static final String KEY_ACTION_NAME = "broadcast";
     public static final InputToken<String> IN_MESSAGE = ofInput(
             "message",
             String.class
@@ -41,7 +42,6 @@ public class BroadcastMessageAction extends AbstractServerAction
                 List<PlayerSpecifier> recipients = new ArrayList<>();
                 for (String rawRecipient : list)
                     recipients.add(ser.tryDeserializePlayerSpecifier(rawRecipient));
-
                 return recipients;
             }),
             ofTraverser(InputTypeToken.ofList(CommandSender.class), (ser, list) -> {
@@ -66,12 +66,6 @@ public class BroadcastMessageAction extends AbstractServerAction
 
     public static final String KEY_OUT_MESSAGE = "message";
     public static final String KEY_OUT_RECIPIENTS = "recipients";
-
-    @Override
-    public String getName()
-    {
-        return KEY_ACTION_NAME;
-    }
 
     @Override
     public void execute(@NotNull ActionContext ctxt)

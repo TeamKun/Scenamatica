@@ -5,6 +5,7 @@ import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.kunlab.scenamatica.annotations.action.ActionMeta;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
@@ -18,10 +19,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+@ActionMeta("player_quit")
 public class PlayerQuitAction extends AbstractPlayerAction
         implements Executable, Watchable, Requireable
 {
-    public static final String KEY_ACTION_NAME = "player_quit";
     public static final InputToken<String> IN_QUIT_MESSAGE = ofInput(
             "message",
             String.class
@@ -30,15 +31,8 @@ public class PlayerQuitAction extends AbstractPlayerAction
             "reason",
             PlayerQuitEvent.QuitReason.class
     );
-
     public static final String KEY_OUT_QUIT_MESSAGE = "message";
     public static final String KEY_OUT_QUIT_REASON = "reason";
-
-    @Override
-    public String getName()
-    {
-        return KEY_ACTION_NAME;
-    }
 
     @Override
     public void execute(@NotNull ActionContext ctxt)

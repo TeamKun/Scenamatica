@@ -8,6 +8,7 @@ import org.bukkit.event.entity.EntitySpawnEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.AbstractAction;
+import org.kunlab.scenamatica.annotations.action.ActionMeta;
 import org.kunlab.scenamatica.commons.utils.EntityUtils;
 import org.kunlab.scenamatica.commons.utils.Utils;
 import org.kunlab.scenamatica.enums.ScenarioType;
@@ -23,10 +24,10 @@ import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.EntitySpecifier
 import java.util.Collections;
 import java.util.List;
 
+@ActionMeta("entity_spawn")
 public class EntitySpawnAction<E extends Entity> extends AbstractAction
         implements Executable, Watchable
 {
-    public static final String KEY_ACTION_NAME = "entity_spawn";
     public static final String KEY_OUT_ENTITY = "entity";
     public final InputToken<EntitySpecifier<E>> IN_ENTITY;
 
@@ -65,12 +66,6 @@ public class EntitySpawnAction<E extends Entity> extends AbstractAction
                     this.makeOutputs(ctxt, entity);
                 }
         );
-    }
-
-    @Override
-    public String getName()
-    {
-        return KEY_ACTION_NAME;
     }
 
     @Override

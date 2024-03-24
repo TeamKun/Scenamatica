@@ -7,6 +7,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.kunlab.scenamatica.annotations.action.ActionMeta;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
@@ -18,19 +19,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+@ActionMeta("entity_damage_by_entity")
 public class EntityDamageByEntityAction extends EntityDamageAction
         implements Executable
 {
-    public static final String KEY_ACTION_NAME = "entity_damage_by_entity";
     public static final InputToken<EntitySpecifier<Entity>> IN_DAMAGER =  // 殴った人
             ofSpecifier("damager");
     public static final String OUT_KEY_DAMAGER = "damager";
-
-    @Override
-    public String getName()
-    {
-        return KEY_ACTION_NAME;
-    }
 
     @Override
     public void execute(@NotNull ActionContext ctxt)

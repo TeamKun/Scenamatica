@@ -7,6 +7,7 @@ import org.bukkit.WorldCreator;
 import org.bukkit.event.Event;
 import org.bukkit.event.world.WorldLoadEvent;
 import org.jetbrains.annotations.NotNull;
+import org.kunlab.scenamatica.annotations.action.ActionMeta;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
@@ -18,16 +19,10 @@ import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
 
+@ActionMeta("world_load")
 public class WorldLoadAction extends AbstractWorldAction
         implements Executable, Requireable
 {
-    public static final String KEY_ACTION_NAME = "world_load";
-
-    @Override
-    public String getName()
-    {
-        return KEY_ACTION_NAME;
-    }
 
     @Override
     public void execute(@NotNull ActionContext ctxt)

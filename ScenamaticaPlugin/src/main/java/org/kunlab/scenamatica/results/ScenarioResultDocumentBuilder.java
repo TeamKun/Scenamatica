@@ -7,6 +7,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.jetbrains.annotations.NotNull;
+import org.kunlab.scenamatica.commons.utils.ActionMetaUtils;
 import org.kunlab.scenamatica.enums.ScenarioResultCause;
 import org.kunlab.scenamatica.interfaces.action.Action;
 import org.kunlab.scenamatica.interfaces.scenario.QueuedScenario;
@@ -140,7 +141,10 @@ public class ScenarioResultDocumentBuilder
 
         Action failedAction = result.getFailedAction();
         if (failedAction != null)
-            error.setAttribute(ResultKeys.KEY_CASE_ERROR_MESSAGE, "Failed to pass scenario: " + failedAction.getName());
+            error.setAttribute(
+                    ResultKeys.KEY_CASE_ERROR_MESSAGE,
+                    "Failed to pass scenario: " + ActionMetaUtils.getActionName(failedAction)
+            );
 
         return error;
     }
@@ -152,7 +156,7 @@ public class ScenarioResultDocumentBuilder
 
         Action failedAction = result.getFailedAction();
         if (failedAction != null)
-            failure.setAttribute(ResultKeys.KEY_CASE_FAILURE_MESSAGE, failedAction.getName());
+            failure.setAttribute(ResultKeys.KEY_CASE_FAILURE_MESSAGE, ActionMetaUtils.getActionName(failedAction));
 
         return failure;
     }

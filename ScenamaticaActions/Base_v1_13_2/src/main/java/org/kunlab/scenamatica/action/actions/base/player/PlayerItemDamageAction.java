@@ -8,6 +8,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
+import org.kunlab.scenamatica.annotations.action.ActionMeta;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
@@ -24,10 +25,10 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+@ActionMeta("player_item_damage")
 public class PlayerItemDamageAction extends AbstractPlayerAction
         implements Executable, Watchable, Requireable
 {
-    public static final String KEY_ACTION_NAME = "player_item_damage";
     public static final InputToken<ItemStackStructure> IN_ITEM = ofInput(
             "item",
             ItemStackStructure.class,
@@ -41,7 +42,6 @@ public class PlayerItemDamageAction extends AbstractPlayerAction
             "slot",
             EquipmentSlot.class
     );
-
     public static final String KEY_OUT_ITEM = "item";
     public static final String KEY_OUT_DAMAGE = "damage";
 
@@ -55,12 +55,6 @@ public class PlayerItemDamageAction extends AbstractPlayerAction
         damageable.setDamage(damage);
         newItem.setItemMeta(meta);
         return newItem;
-    }
-
-    @Override
-    public String getName()
-    {
-        return KEY_ACTION_NAME;
     }
 
     @Override

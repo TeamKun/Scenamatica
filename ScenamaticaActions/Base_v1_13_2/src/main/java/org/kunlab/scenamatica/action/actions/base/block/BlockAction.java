@@ -3,6 +3,7 @@ package org.kunlab.scenamatica.action.actions.base.block;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.jetbrains.annotations.NotNull;
+import org.kunlab.scenamatica.annotations.action.ActionMeta;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
@@ -11,22 +12,15 @@ import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
 import org.kunlab.scenamatica.interfaces.scenariofile.misc.BlockStructure;
 
+@ActionMeta("block")
 public class BlockAction extends AbstractBlockAction
         implements Executable, Requireable
 {
-    public static final String KEY_ACTION_NAME = "block";
-
     public static final InputToken<BlockStructure> IN_DATA = ofInput(
             "data",
             BlockStructure.class,
             ofDeserializer(BlockStructure.class)
     );
-
-    @Override
-    public String getName()
-    {
-        return KEY_ACTION_NAME;
-    }
 
     @Override
     public void execute(@NotNull ActionContext ctxt)

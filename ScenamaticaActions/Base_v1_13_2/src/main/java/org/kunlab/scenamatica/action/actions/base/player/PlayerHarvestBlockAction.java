@@ -8,6 +8,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.action.actions.base.block.BlockBreakAction;
 import org.kunlab.scenamatica.action.utils.InputTypeToken;
+import org.kunlab.scenamatica.annotations.action.ActionMeta;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
@@ -23,11 +24,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+@ActionMeta("player_harvest_block")
 public class PlayerHarvestBlockAction extends AbstractPlayerAction
         implements Executable, Watchable
 {
-    public static final String KEY_ACTION_NAME = "player_harvest_block";
-
     public static final InputToken<BlockStructure> IN_HARVESTED_BLOCK = ofInput(
             "block",
             BlockStructure.class,
@@ -52,12 +52,6 @@ public class PlayerHarvestBlockAction extends AbstractPlayerAction
 
     public static final String KEY_BLOCK_HARVESTED = "block";
     public static final String KEY_ITEMS_HARVESTED = "items";
-
-    @Override
-    public String getName()
-    {
-        return KEY_ACTION_NAME;
-    }
 
     @Override
     public void execute(@NotNull ActionContext ctxt)

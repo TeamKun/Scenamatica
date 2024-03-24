@@ -5,6 +5,7 @@ import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.kunlab.scenamatica.annotations.action.ActionMeta;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
@@ -18,24 +19,17 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+@ActionMeta("player_join")
 public class PlayerJoinAction extends AbstractPlayerAction
         implements Executable, Watchable, Requireable
 {
     // OfflinePlayer を扱うため, 通常の PlayerAction とは違う実装をする。
 
-    public static final String KEY_ACTION_NAME = "player_join";
     public static final InputToken<String> IN_MESSAGE = ofInput(
             "message",
             String.class
     );
-
     public static final String KEY_OUT_MESSAGE = "message";
-
-    @Override
-    public String getName()
-    {
-        return KEY_ACTION_NAME;
-    }
 
     @Override
     public void execute(@NotNull ActionContext ctxt)

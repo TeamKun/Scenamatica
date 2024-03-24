@@ -11,6 +11,7 @@ import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.kunlab.scenamatica.annotations.action.ActionMeta;
 import org.kunlab.scenamatica.commons.utils.VoxelUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
@@ -25,10 +26,10 @@ import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.EntitySpecifier
 import java.util.Collections;
 import java.util.List;
 
+@ActionMeta("projectile_hit")
 public class ProjectileHitAction extends AbstractEntityAction<Projectile, ProjectileStructure>
         implements Executable, Watchable
 {
-    public static final String KEY_ACTION_NAME = "projectile_hit";
     public static final InputToken<EntitySpecifier<Entity>> IN_HIT_ENTITY = ofSpecifier("hitEntity");
     public static final InputToken<BlockStructure> IN_HIT_BLOCK = ofInput(
             "hitBlock",
@@ -37,7 +38,6 @@ public class ProjectileHitAction extends AbstractEntityAction<Projectile, Projec
     );
     public static final InputToken<BlockFace> IN_BLOCK_FACE = ofEnumInput("blockFace", BlockFace.class);
     public static final InputToken<Boolean> IN_EVENT_ONLY = ofInput("eventOnly", Boolean.class, false);
-
     public static final String KEY_OUT_HIT_ENTITY = "hitEntity";
     public static final String KEY_OUT_HIT_BLOCK = "hitBlock";
     public static final String KEY_OUT_BLOCK_FACE = "blockFace";
@@ -45,12 +45,6 @@ public class ProjectileHitAction extends AbstractEntityAction<Projectile, Projec
     public ProjectileHitAction()
     {
         super(Projectile.class, ProjectileStructure.class);
-    }
-
-    @Override
-    public String getName()
-    {
-        return KEY_ACTION_NAME;
     }
 
     @Override

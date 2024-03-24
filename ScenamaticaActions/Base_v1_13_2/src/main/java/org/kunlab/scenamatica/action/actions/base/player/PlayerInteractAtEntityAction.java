@@ -7,6 +7,7 @@ import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
+import org.kunlab.scenamatica.annotations.action.ActionMeta;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
@@ -19,21 +20,15 @@ import org.kunlab.scenamatica.nms.enums.entity.NMSEntityUseAction;
 import java.util.Collections;
 import java.util.List;
 
+@ActionMeta("player_interact_at_entity")
 public class PlayerInteractAtEntityAction extends PlayerInteractEntityAction
 {
-    public static final String KEY_ACTION_NAME = "player_interact_at_entity";
     public static final String OUT_POSITION = "position";
     public static InputToken<LocationStructure> IN_POSITION = ofInput(
             "position",
             LocationStructure.class,
             ofDeserializer(LocationStructure.class)
     );
-
-    @Override
-    public String getName()
-    {
-        return KEY_ACTION_NAME;
-    }
 
     @Override
     protected void doInteract(ActionContext ctxt, Entity targeTentity, Actor actor, @NotNull NMSHand hand)

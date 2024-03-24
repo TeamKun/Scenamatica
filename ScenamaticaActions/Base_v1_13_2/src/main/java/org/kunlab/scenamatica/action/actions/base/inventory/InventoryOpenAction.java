@@ -6,6 +6,7 @@ import org.bukkit.event.Event;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
+import org.kunlab.scenamatica.annotations.action.ActionMeta;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
@@ -18,23 +19,16 @@ import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.PlayerSpecifier
 import java.util.Collections;
 import java.util.List;
 
+@ActionMeta("inventory_open")
 public class InventoryOpenAction extends AbstractInventoryAction
         implements Executable, Watchable
 {
-    public static final String KEY_ACTION_NAME = "inventory_open";
     public static final InputToken<PlayerSpecifier> IN_PLAYER = ofInput(
             "target",
             PlayerSpecifier.class,
             ofPlayer()
     );
-
     public static final String KEY_OUT_TARGET = "target";
-
-    @Override
-    public String getName()
-    {
-        return KEY_ACTION_NAME;
-    }
 
     @Override
     public void execute(@NotNull ActionContext ctxt)

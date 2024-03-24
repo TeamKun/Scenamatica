@@ -5,6 +5,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.jetbrains.annotations.NotNull;
+import org.kunlab.scenamatica.annotations.action.ActionMeta;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
@@ -17,22 +18,15 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+@ActionMeta("player_gamemode")
 public class PlayerGameModeAction extends AbstractPlayerAction
         implements Executable, Watchable, Requireable
 {
-    public static final String KEY_ACTION_NAME = "player_gamemode";
     public static final InputToken<GameMode> IN_GAME_MODE = ofEnumInput(
             "gamemode",
             GameMode.class
     );
-
     public static final String KEY_OUT_GAME_MODE = "gamemode";
-
-    @Override
-    public String getName()
-    {
-        return KEY_ACTION_NAME;
-    }
 
     @Override
     public void execute(@NotNull ActionContext ctxt)

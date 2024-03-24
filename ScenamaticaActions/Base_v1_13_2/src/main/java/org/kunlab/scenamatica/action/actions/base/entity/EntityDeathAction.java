@@ -8,6 +8,7 @@ import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.action.utils.InputTypeToken;
+import org.kunlab.scenamatica.annotations.action.ActionMeta;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
@@ -22,10 +23,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+@ActionMeta("entity_death")
 public class EntityDeathAction extends AbstractGeneralEntityAction
         implements Executable, Watchable
 {
-    public static final String KEY_ACTION_NAME = "entity_death";
     public static final InputToken<List<ItemStackStructure>> IN_DROPS = ofInput(
             "drops",
             InputTypeToken.ofList(ItemStackStructure.class),
@@ -34,7 +35,6 @@ public class EntityDeathAction extends AbstractGeneralEntityAction
                 List<Map<String, Object>> dropMaps = MapUtils.checkAndCastList(list, InputTypeToken.ofMap(String.class, Object.class));
                 for (Map<String, Object> dropMap : dropMaps)
                     drops.add(ser.deserialize(dropMap, ItemStackStructure.class));
-
                 return drops;
             })
     );
@@ -66,12 +66,6 @@ public class EntityDeathAction extends AbstractGeneralEntityAction
             "soundPitch",
             Float.class
     );
-
-    @Override
-    public String getName()
-    {
-        return KEY_ACTION_NAME;
-    }
 
     @Override
     public void execute(@NotNull ActionContext ctxt)

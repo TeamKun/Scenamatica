@@ -21,6 +21,7 @@ import org.bukkit.entity.WitherSkull;
 import org.bukkit.event.Event;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
+import org.kunlab.scenamatica.annotations.action.ActionMeta;
 import org.kunlab.scenamatica.commons.utils.Utils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
@@ -33,10 +34,10 @@ import org.kunlab.scenamatica.interfaces.scenariofile.misc.LocationStructure;
 import java.util.Collections;
 import java.util.List;
 
+@ActionMeta("player_projectile_launch")
 public class PlayerLaunchProjectileAction extends AbstractPlayerAction
         implements Executable, Watchable
 {
-    public static final String KEY_ACTION_NAME = "player_projectile_launch";
     public static final InputToken<ProjectileType> IN_PROJECTILE_TYPE = ofEnumInput(
             "projectileType",
             ProjectileType.class
@@ -51,14 +52,7 @@ public class PlayerLaunchProjectileAction extends AbstractPlayerAction
             Double.class,
             0.01
     );
-
     public static final String KEY_OUT_PROJECTILE = "projectile";
-
-    @Override
-    public String getName()
-    {
-        return KEY_ACTION_NAME;
-    }
 
     @Override
     public void execute(@NotNull ActionContext ctxt)
