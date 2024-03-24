@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/Base_v1_13_2.iml" filepath="$PROJECT_DIR$/Base_v1_13_2.iml" />
       <module fileurl="file://$PROJECT_DIR$/ContextEngineCore.iml" filepath="$PROJECT_DIR$/ContextEngineCore.iml" />
       <module fileurl="file://$PROJECT_DIR$/ContextEngineNMSBase.iml" filepath="$PROJECT_DIR$/ContextEngineNMSBase.iml" />
       <module fileurl="file://$PROJECT_DIR$/NMSBridge.iml" filepath="$PROJECT_DIR$/NMSBridge.iml" />
@@ -10,6 +11,7 @@
       <module fileurl="file://$PROJECT_DIR$/Scenamatica.iml" filepath="$PROJECT_DIR$/Scenamatica.iml" />
       <module fileurl="file://$PROJECT_DIR$/ScenamaticaAPI/ScenamaticaAPI.iml" filepath="$PROJECT_DIR$/ScenamaticaAPI/ScenamaticaAPI.iml" />
       <module fileurl="file://$PROJECT_DIR$/ScenamaticaActionEngine/ScenamaticaActionEngine.iml" filepath="$PROJECT_DIR$/ScenamaticaActionEngine/ScenamaticaActionEngine.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ScenamaticaActions.iml" filepath="$PROJECT_DIR$/ScenamaticaActions.iml" />
       <module fileurl="file://$PROJECT_DIR$/ScenamaticaCommons/ScenamaticaCommons.iml" filepath="$PROJECT_DIR$/ScenamaticaCommons/ScenamaticaCommons.iml" />
       <module fileurl="file://$PROJECT_DIR$/ScenamaticaContextEngine/ScenamaticaContextEngine.iml" filepath="$PROJECT_DIR$/ScenamaticaContextEngine/ScenamaticaContextEngine.iml" />
       <module fileurl="file://$PROJECT_DIR$/ScenamaticaDaemon/ScenamaticaDaemon.iml" filepath="$PROJECT_DIR$/ScenamaticaDaemon/ScenamaticaDaemon.iml" />

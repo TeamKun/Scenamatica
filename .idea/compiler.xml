@@ -19,6 +19,7 @@
         <module name="ContextEngineNMSBase" />
         <module name="ScenamaticaModels" />
         <module name="v1_13_R2" />
+        <module name="Base_v1_13_2" />
         <module name="ScenamaticaAPI" />
         <module name="ScenamaticaScenarioFile" />
         <module name="ScenamaticaPlugin" />

@@ -1,6 +1,6 @@
 package org.kunlab.scenamatica.action.actions.scenamatica;
 
-import org.kunlab.scenamatica.action.actions.AbstractAction;
+import org.kunlab.scenamatica.action.AbstractAction;
 
 import java.util.ArrayList;
 import java.util.List;

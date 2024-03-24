@@ -22,6 +22,7 @@
         <module>ScenamaticaAPI</module>
         <module>NMSBridge</module>
         <module>ScenamaticaSelectorEngine</module>
+        <module>ScenamaticaActions</module>
     </modules>
 
     <name>Scenamatica</name>
@@ -92,10 +93,10 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>net.kunmc.lab</groupId>
+            <groupId>com.github.TeamKUN</groupId>
             <artifactId>PeyangPaperUtils</artifactId>
-            <version>3.0.0</version>
-            <scope>compile</scope>
+            <version>3.0.1</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
