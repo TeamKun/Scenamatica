@@ -255,37 +255,53 @@ public class ActionLoaderImpl implements ActionLoader, Listener
 
         for (Class<? extends Action> actionClass : actionClasses)
         {
-            Action constructedAction = this.constructAction(actionClass);
-            if (constructedAction == null)
+            Action constructedAction;
+            try  // try を constructAction 内に移動させると, ネイティブクラスローダからの java.lang.NoClassDefFoundError の餌食になる。
+            {
+                constructedAction = this.constructAction(actionClass);
+            }
+            catch (ClassNotFoundException | NoClassDefFoundError e)
+            {
+                String eventPackage = "org.bukkit.event";
+                String paperEventPackage = "io.papermc.paper.event";
+                if (e.getMessage().contains(eventPackage.replace(".", "/"))
+                        || e.getMessage().contains(paperEventPackage.replace(".", "/")))
+                {
+                    // 鯖のバージョンが低い
+                    this.logger.info("Unable to load action " + actionClass.getName() + ", the server is not compatible with " + e.getMessage() + ".");
+                    continue;
+                }
+
+                this.logger.warning("Failed to construct action " + actionClass.getName());
+                this.exceptionHandler.report(e);
                 continue;
+            }
+            catch (Throwable e)
+            {
+                this.logger.warning("Failed to construct action " + actionClass.getName());
+                this.exceptionHandler.report(e);
+                continue;
+            }
 
             LoadedAction<?> loadedAction = LoadedActionImpl.of(plugin, constructedAction);
             this.actions.add(loadedAction);
         }
     }
 
-    private Action constructAction(Class<? extends Action> actionClass)
+    private Action constructAction(Class<? extends Action> actionClass) throws InvocationTargetException, InstantiationException, IllegalAccessException, ClassNotFoundException
     {
-        try
+        Constructor<?>[] constructor = actionClass.getConstructors();
+        for (Constructor<?> c : constructor)
         {
-            Constructor<?>[] constructor = actionClass.getConstructors();
-            for (Constructor<?> c : constructor)
-            {
-                if (c.getParameterCount() == 0)
-                    return (Action) c.newInstance();
-                else if (c.getParameterCount() == 1 && c.getParameterTypes()[0].equals(ScenamaticaRegistry.class))
-                    return (Action) c.newInstance(this.registry);
-            }
+            if (c.getParameterCount() == 0)
+                return (Action) c.newInstance();
+            else if (c.getParameterCount() == 1 && c.getParameterTypes()[0].equals(ScenamaticaRegistry.class))
+                return (Action) c.newInstance(this.registry);
+        }
 
-            this.logger.warning("Failed to construct action " + actionClass.getName() + ", no suitable constructor found.");
-            return null;
-        }
-        catch (InstantiationException | IllegalAccessException | InvocationTargetException e)
-        {
-            this.logger.warning("Failed to construct action " + actionClass.getName());
-            this.exceptionHandler.report(e);
-            return null;
-        }
+        this.logger.warning("Failed to construct action " + actionClass.getName() + ", no suitable constructor found.");
+
+        return null;
     }
 
     private void unloadActionsInternal()
