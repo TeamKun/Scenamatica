@@ -22,9 +22,6 @@ import org.kunlab.scenamatica.interfaces.scenariofile.inventory.ItemStackStructu
 import org.kunlab.scenamatica.interfaces.scenariofile.misc.BlockStructure;
 import org.kunlab.scenamatica.nms.enums.NMSHand;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public abstract class AbstractPlayerBucketAction extends AbstractPlayerAction
         implements Watchable
 {
@@ -66,16 +63,6 @@ public abstract class AbstractPlayerBucketAction extends AbstractPlayerAction
     public static final String KEY_OUT_BLOCK_FACE = "blockFace";
     public static final String KEY_OUT_BUCKET = "bucket";
     public static final String KEY_OUT_HAND = "hand";
-
-    public static List<? extends AbstractPlayerBucketAction> getActions()
-    {
-        List<AbstractPlayerBucketAction> actions = new ArrayList<>();
-
-        actions.add(new PlayerBucketEmptyAction());
-        actions.add(new PlayerBucketFillAction());
-
-        return actions;
-    }
 
     protected static boolean isEmptyBucket(Material bucket)
     {

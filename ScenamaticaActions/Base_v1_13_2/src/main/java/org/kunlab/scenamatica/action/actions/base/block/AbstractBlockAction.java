@@ -16,8 +16,6 @@ import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.scenariofile.misc.BlockStructure;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 public abstract class AbstractBlockAction
@@ -31,17 +29,6 @@ public abstract class AbstractBlockAction
     );
     public static final String OUT_KEY_BLOCK = "block";
     public static final String OUT_KEY_ACTOR = "actor";
-
-    public static List<? extends AbstractBlockAction> getActions()
-    {
-        List<AbstractBlockAction> actions = new ArrayList<>();
-
-        actions.add(new BlockAction());
-        actions.add(new BlockBreakAction());
-        actions.add(new BlockPlaceAction());
-
-        return actions;
-    }
 
     protected void makeOutputs(@NotNull ActionContext ctxt, @NotNull Block block, @Nullable Player player)
     {

@@ -5,15 +5,11 @@ import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerEvent;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.action.AbstractAction;
-import org.kunlab.scenamatica.action.actions.base.player.bucket.AbstractPlayerBucketAction;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.PlayerSpecifier;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public abstract class AbstractPlayerAction extends AbstractAction
 {
@@ -24,40 +20,6 @@ public abstract class AbstractPlayerAction extends AbstractAction
     );
 
     public static final String KEY_OUT_TARGET = "target";
-
-    public static List<? extends AbstractPlayerAction> getActions()
-    {
-        List<AbstractPlayerAction> actions = new ArrayList<>(AbstractPlayerBucketAction.getActions());
-        actions.add(new PlayerAction());
-        actions.add(new PlayerAdvancementAction());
-        actions.add(new PlayerAnimationAction());
-        actions.add(new PlayerBucketEntityAction());
-        actions.add(new PlayerChatAction());
-        actions.add(new PlayerDeathAction());
-        actions.add(new PlayerDropItemAction());
-        actions.add(new PlayerFlightAction());
-        actions.add(new PlayerGameModeAction());
-        actions.add(new PlayerHarvestBlockAction());
-        actions.add(new PlayerHotbarSlotAction());
-        actions.add(new PlayerInteractAtEntityAction());
-        actions.add(new PlayerInteractBlockAction());
-        actions.add(new PlayerInteractEntityAction());
-        actions.add(new PlayerItemBreakAction());
-        actions.add(new PlayerItemConsumeAction());
-        actions.add(new PlayerItemDamageAction());
-        actions.add(new PlayerJoinAction());
-        actions.add(new PlayerKickAction());
-        actions.add(new PlayerLaunchProjectileAction());
-        actions.add(new PlayerLevelChangeAction());
-        actions.add(new PlayerMoveAction());
-        actions.add(new PlayerQuitAction());
-        actions.add(new PlayerRespawnAction());
-        actions.add(new PlayerSneakAction());
-        actions.add(new PlayerSprintAction());
-        actions.add(new PlayerTeleportAction());
-
-        return actions;
-    }
 
     public static Player selectTarget(@NotNull ActionContext ctxt)
     {
