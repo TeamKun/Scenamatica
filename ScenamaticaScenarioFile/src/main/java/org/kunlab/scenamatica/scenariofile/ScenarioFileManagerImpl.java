@@ -16,7 +16,6 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.nio.file.Path;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class ScenarioFileManagerImpl implements ScenarioFileManager
@@ -104,23 +103,7 @@ public class ScenarioFileManagerImpl implements ScenarioFileManager
             return false;
         }
 
-        List<Version> minecraftVersions = scenario.getMinecraftVersions();
-        if (minecraftVersions.isEmpty())
-            return true;
-
-        Version runningVersion = Version.of(this.registry.getPlugin().getServer().getMinecraftVersion());
-        for (Version version : minecraftVersions)
-        {
-            if (runningVersion.isEqualTo(version))
-                return true;
-        }
-
-        this.registry.getLogger().warning(
-                "The scenario file " + scenario.getName() + " is not compatible with running Minecraft version." +
-                        " (Compatible versions: " + String.join(", ", minecraftVersions.stream().map(Version::toString).toArray(String[]::new)) + ", Running version: " + runningVersion + ")"
-        );
-
-        return false;
+        return true;
     }
 
     @Override

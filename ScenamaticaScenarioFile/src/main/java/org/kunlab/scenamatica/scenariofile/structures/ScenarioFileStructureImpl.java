@@ -8,12 +8,12 @@ import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.enums.ScenarioOrder;
 import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
+import org.kunlab.scenamatica.interfaces.scenariofile.VersionRange;
 import org.kunlab.scenamatica.interfaces.scenariofile.action.ActionStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.context.ContextStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.scenario.ScenarioStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerStructure;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,8 +35,8 @@ public class ScenarioFileStructureImpl implements ScenarioFileStructure
 
     @NotNull
     Version scenamaticaVersion;
-    @NotNull
-    List<Version> minecraftVersions;
+    @Nullable
+    VersionRange minecraftVersions;
     @NotNull
     String name;
     @Nullable
@@ -58,11 +58,9 @@ public class ScenarioFileStructureImpl implements ScenarioFileStructure
         Map<String, Object> map = new HashMap<>();
 
         map.put(KEY_SCENAMATICA_VERSION, structure.getScenamaticaVersion().toString());
-        List<String> minecraftVersions = new ArrayList<>();
-        for (Version version : structure.getMinecraftVersions())
-            minecraftVersions.add(version.toString());
-        if (!minecraftVersions.isEmpty())
-            map.put(KEY_MINECRAFT_VERSIONS, minecraftVersions);
+
+        if (structure.getMinecraftVersions() != null)
+            map.put(KEY_MINECRAFT_VERSIONS, serializer.serialize(structure.getMinecraftVersions(), VersionRange.class));
 
         map.put(KEY_NAME, structure.getName());
         MapUtils.putIfNotNull(map, KEY_DESCRIPTION, structure.getDescription());
@@ -96,16 +94,11 @@ public class ScenarioFileStructureImpl implements ScenarioFileStructure
             throw new IllegalArgumentException("Invalid version string: " + map.get(KEY_SCENAMATICA_VERSION));
 
         if (map.containsKey(KEY_MINECRAFT_VERSIONS))
-        {
-            Object minecraftVersions = map.get(KEY_MINECRAFT_VERSIONS);
-            if (minecraftVersions instanceof List)
-                ((List<?>) minecraftVersions).forEach(o -> {
-                    if (!Version.isValidVersionString((String) o))
-                        throw new IllegalArgumentException("Invalid version string: " + o);
-                });
-            else
-                throw new IllegalArgumentException("Invalid version string: " + minecraftVersions);
-        }
+            serializer.validate(
+                    MapUtils.checkAndCastMap(map.get(KEY_MINECRAFT_VERSIONS)),
+                    VersionRange.class
+            );
+
 
         MapUtils.checkType(map, KEY_NAME, String.class);
         MapUtils.checkTypeIfContains(map, KEY_DESCRIPTION, String.class);
@@ -133,9 +126,9 @@ public class ScenarioFileStructureImpl implements ScenarioFileStructure
         validate(map, serializer);
 
         Version scenamatica = Version.of((String) map.get(KEY_SCENAMATICA_VERSION));
-        List<Version> minecraftVersions = new ArrayList<>();
+        VersionRange minecraftVersions = null;
         if (map.containsKey(KEY_MINECRAFT_VERSIONS))
-            ((List<?>) map.get(KEY_MINECRAFT_VERSIONS)).forEach(o -> minecraftVersions.add(Version.of((String) o)));
+            minecraftVersions = serializer.deserialize(MapUtils.checkAndCastMap(map.get(KEY_MINECRAFT_VERSIONS)), VersionRange.class);
 
         String name = (String) map.get(KEY_NAME);
         String description = (String) map.get(KEY_DESCRIPTION);
