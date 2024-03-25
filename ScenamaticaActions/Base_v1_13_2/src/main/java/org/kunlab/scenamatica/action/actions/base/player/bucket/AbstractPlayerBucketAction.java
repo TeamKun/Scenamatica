@@ -214,7 +214,7 @@ public abstract class AbstractPlayerBucketAction extends AbstractPlayerAction
 
     protected void makeOutput(@NotNull ActionContext ctxt, @NotNull PlayerBucketEvent event)
     {
-        this.makeOutput(ctxt, event.getPlayer(), event.getItemStack(), event.getBlock(), event.getBlockFace(),
+        this.makeOutput(ctxt, event.getPlayer(), event.getItemStack(), event.getBlockClicked(), event.getBlockFace(),
                 event.getBucket(), NMSHand.fromEquipmentSlot(event.getHand())
         );
     }

@@ -18,6 +18,9 @@ import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.scenariofile.entity.entities.EntityItemStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.EntitySpecifier;
+import org.kunlab.scenamatica.nms.NMSProvider;
+import org.kunlab.scenamatica.nms.types.entity.NMSEntityItem;
+import org.kunlab.scenamatica.nms.types.entity.NMSEntityLiving;
 
 import java.util.Collections;
 import java.util.List;
@@ -61,16 +64,17 @@ public class EntityPickupItemAction extends AbstractGeneralEntityAction
             // 拾う前に, アイテムを落とす必要がある
             item = target.getWorld().dropItemNaturally(
                     target.getLocation(),
-                    itemStructure.getItemStack().create(),
-                    itemStructure::applyTo
+                    itemStructure.getItemStack().create()
             );
+            itemStructure.applyTo(item);
         }
 
         boolean isPlayer = target instanceof Player;
+        boolean canPlayerPickUp = item.getPickupDelay() != Short.MAX_VALUE;
 
         if (isPlayer && !item.canMobPickup())
             throw new IllegalStateException("The item cannot be picked up by mobs (Item#canMobPickup() is false).");
-        else if (!isPlayer && !item.canPlayerPickup())
+        else if (!isPlayer && !canPlayerPickUp)
             throw new IllegalStateException("The item cannot be picked up by players (Item#canPlayerPickup() is false).");
 
         int amount = ctxt.orElseInput(IN_REMAINING, () -> item.getItemStack().getAmount() - 1);
@@ -82,7 +86,9 @@ public class EntityPickupItemAction extends AbstractGeneralEntityAction
             throw new IllegalStateException("Item pickup event is cancelled.");
 
         int quantity = item.getItemStack().getAmount() - amount;
-        leTarget.playPickupItemAnimation(item, quantity);
+        NMSEntityLiving nmsEntity = NMSProvider.getProvider().wrap(leTarget);
+        NMSEntityItem nmsItem = NMSProvider.getProvider().wrap(item);
+        nmsEntity.receive(nmsItem, quantity);
         item.getItemStack().setAmount(event.getRemaining());
 
         if (isPlayer)

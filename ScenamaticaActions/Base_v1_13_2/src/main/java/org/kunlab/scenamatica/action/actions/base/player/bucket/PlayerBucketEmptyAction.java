@@ -12,6 +12,7 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.annotations.action.ActionMeta;
+import org.kunlab.scenamatica.enums.MinecraftVersion;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
@@ -21,7 +22,7 @@ import org.kunlab.scenamatica.nms.enums.NMSHand;
 import java.util.Collections;
 import java.util.List;
 
-@ActionMeta("player_bucket_empty")
+@ActionMeta(value = "player_bucket_empty", supportsUntil = MinecraftVersion.V1_15_2)
 public class PlayerBucketEmptyAction extends AbstractPlayerBucketAction
         implements Watchable, Executable
 {
@@ -48,7 +49,7 @@ public class PlayerBucketEmptyAction extends AbstractPlayerBucketAction
         this.makeOutput(ctxt, who, itemInHand, block, blockFace, bucket, hand);
         EquipmentSlot handSlot = hand == null ? EquipmentSlot.HAND: hand.toEquipmentSlot();
 
-        PlayerBucketEmptyEvent event = new PlayerBucketEmptyEvent(who, block, blockClicked, blockFace, bucket, itemInHand, handSlot);
+        PlayerBucketEmptyEvent event = new PlayerBucketEmptyEvent(who, blockClicked, blockFace, bucket, itemInHand, handSlot);
         Bukkit.getServer().getPluginManager().callEvent(event);
 
         if (event.isCancelled())

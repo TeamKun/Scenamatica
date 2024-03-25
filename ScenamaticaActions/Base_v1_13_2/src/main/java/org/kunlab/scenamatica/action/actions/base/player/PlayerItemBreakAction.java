@@ -43,6 +43,34 @@ public class PlayerItemBreakAction extends AbstractPlayerAction
     public static final String KEY_OUT_ITEM = "item";
     public static final String KEY_OUT_SLOT = "slot";
 
+    private static boolean isDamageableOnFutureVersion(Material material)
+    {
+        String[] futureMaterials = {
+                "NETHERITE_AXE",
+                "NETHERITE_HOE",
+                "NETHERITE_PICKAXE",
+                "NETHERITE_SHOVEL",
+                "NETHERITE_SWORD",
+
+                "CROSSBOW",
+                "WARPED_FUNGUS_ON_A_STICK",
+
+                "NETHERITE_HELMET",
+                "NETHERITE_CHESTPLATE",
+                "NETHERITE_LEGGINGS",
+                "NETHERITE_BOOTS"
+        };
+
+        String materialName = material.name();
+        for (String futureMaterial : futureMaterials)
+        {
+            if (materialName.equals(futureMaterial))
+                return true;
+        }
+
+        return false;
+    }
+
     @Override
     public void execute(@NotNull ActionContext ctxt)
     {
@@ -108,19 +136,21 @@ public class PlayerItemBreakAction extends AbstractPlayerAction
             case DIAMOND_PICKAXE:
             case DIAMOND_SHOVEL:
             case DIAMOND_SWORD:
+            /* 1.13 以降
             case NETHERITE_AXE:
             case NETHERITE_HOE:
             case NETHERITE_PICKAXE:
             case NETHERITE_SHOVEL:
             case NETHERITE_SWORD:
+             */
             case SHEARS:
             case FISHING_ROD:
             case FLINT_AND_STEEL:
             case SHIELD:
             case BOW:
-            case CROSSBOW:
+                // case CROSSBOW:                  // 1.13以降
             case CARROT_ON_A_STICK:
-            case WARPED_FUNGUS_ON_A_STICK:
+                // case WARPED_FUNGUS_ON_A_STICK:  // 1.13以降
                 // </editor-fold>
                 // <editor-fold desc="Armors">
             case LEATHER_HELMET:
@@ -143,17 +173,19 @@ public class PlayerItemBreakAction extends AbstractPlayerAction
             case DIAMOND_CHESTPLATE:
             case DIAMOND_LEGGINGS:
             case DIAMOND_BOOTS:
+            /* 1.13以降
             case NETHERITE_HELMET:
             case NETHERITE_CHESTPLATE:
             case NETHERITE_LEGGINGS:
             case NETHERITE_BOOTS:
+            */
                 // </editor-fold>
             case ELYTRA:
             case TRIDENT:
             case TURTLE_HELMET:
                 return true;
             default:
-                return false;
+                return isDamageableOnFutureVersion(type);
         }
     }
 

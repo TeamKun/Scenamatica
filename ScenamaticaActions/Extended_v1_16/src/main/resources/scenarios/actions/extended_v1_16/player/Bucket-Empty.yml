@@ -1,0 +1,50 @@
+# noinspection YAMLSchemaValidation
+scenamatica: ${project.version}
+minecraft:
+  since: 1.16.0
+
+name: actions_player_bucket_empty
+description: Testing PlayerBucketEmptyAction works or not
+on:
+  - type: on_load
+  - type: manual_dispatch
+
+context:
+  actors:
+    - name: Actor001
+
+scenario:
+  - type: execute
+    action: player_bucket_empty
+    with:
+      target: Actor001
+      bucket: WATER_BUCKET
+      block:
+        location:
+          x: 0
+          y: 255
+          z: 0
+      clickedBlock:
+        location:
+          x: 0
+          y: 255
+          z: 0
+      hand: OFF_HAND
+      eventOnly: true
+  - type: expect
+    action: player_bucket_empty
+    with:
+      target: Actor001
+      bucket: WATER_BUCKET
+      block:
+        location:
+          x: 0
+          y: 255
+          z: 0
+      clickedBlock:
+        location:
+          x: 0
+          y: 255
+          z: 0
+      hand: OFF_HAND
+      eventOnly: true

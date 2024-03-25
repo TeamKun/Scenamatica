@@ -1,6 +1,5 @@
 package org.kunlab.scenamatica.action.actions.base.entity;
 
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.event.Event;
@@ -17,6 +16,10 @@ import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.scenariofile.entity.entities.EntityItemStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.EntitySpecifier;
+import org.kunlab.scenamatica.nms.NMSProvider;
+import org.kunlab.scenamatica.nms.types.entity.NMSEntity;
+import org.kunlab.scenamatica.nms.types.entity.NMSEntityItem;
+import org.kunlab.scenamatica.nms.types.item.NMSItemStack;
 
 import java.util.Collections;
 import java.util.List;
@@ -45,20 +48,13 @@ public class EntityDropItemAction extends AbstractGeneralEntityAction
         EntityItemStructure itemStructure = (EntityItemStructure) ctxt.input(IN_ITEM).getTargetStructure();
         ItemStack stack = itemStructure.getItemStack().create();
 
+        this.makeOutputs(ctxt, target);
 
-        target.getWorld().dropItemNaturally(
-                target.getLocation(),
-                stack,
-                (itemDropped) -> {
-                    this.makeOutputs(ctxt, target, itemDropped);
-                    EntityDropItemEvent event = new EntityDropItemEvent(target, itemDropped);
-                    Bukkit.getPluginManager().callEvent(event);
-                    if (event.isCancelled())
-                        itemDropped.remove();
-
-                    itemStructure.applyTo(itemDropped);
-                }
-        );
+        NMSItemStack nmsItemStack = NMSProvider.getProvider().wrap(stack);
+        NMSEntity nmsTarget = NMSProvider.getProvider().wrap(target);
+        NMSEntityItem dropped = nmsTarget.dropItem(nmsItemStack, 0.0F);
+        if (dropped != null)
+            itemStructure.applyTo(dropped.getBukkit());
     }
 
     @Override
@@ -75,6 +71,11 @@ public class EntityDropItemAction extends AbstractGeneralEntityAction
             this.makeOutputs(ctxt, ((EntityDropItemEvent) event).getEntity(), item);
 
         return result;
+    }
+
+    protected void makeOutputs(@NotNull ActionContext ctxt, @NotNull Entity entity)
+    {
+        super.makeOutputs(ctxt, entity);
     }
 
     protected void makeOutputs(@NotNull ActionContext ctxt, @NotNull Entity entity, @NotNull Item item)

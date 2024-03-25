@@ -1,8 +1,10 @@
 # noinspection YAMLSchemaValidation
 scenamatica: ${project.version}
+minecraft:
+  since: 1.16.0
 
-name: actions_player_bucket_empty_4
-description: Testing PlayerBucketEmptyAction without argument works or not
+name: actions_player_bucket_empty_2
+description: Testing PlayerBucketEmptyAction without target works or not
 on:
   - type: on_load
   - type: manual_dispatch
@@ -31,3 +33,17 @@ scenario:
       eventOnly: true
   - type: expect
     action: player_bucket_empty
+    with:
+      bucket: WATER_BUCKET
+      block:
+        location:
+          x: 0
+          y: 255
+          z: 0
+      clickedBlock:
+        location:
+          x: 0
+          y: 255
+          z: 0
+      hand: OFF_HAND
+      eventOnly: true

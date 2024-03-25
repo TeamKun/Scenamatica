@@ -11,7 +11,7 @@
     </parent>
 
     <groupId>org.kunlab.scenamatica.actions</groupId>
-    <artifactId>Extend_v1_16_5</artifactId>
+    <artifactId>Extended_v1_14</artifactId>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
@@ -19,19 +19,12 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
+
     <dependencies>
         <dependency>
             <groupId>org.kunlab.scenamatica.actions</groupId>
             <artifactId>Base_v1_13_2</artifactId>
             <version>1.0.0</version>
-            <scope>provided</scope>
-        </dependency>
-        <!--suppress MavenDuplicateDependenciesInspection due to dependency order injection -->
-        <dependency>
-            <groupId>com.destroystokyo.paper</groupId>
-            <artifactId>paper-api</artifactId>
-            <version>1.16.5-R0.1-SNAPSHOT</version>
-            <scope>provided</scope>
         </dependency>
     </dependencies>
 </project>

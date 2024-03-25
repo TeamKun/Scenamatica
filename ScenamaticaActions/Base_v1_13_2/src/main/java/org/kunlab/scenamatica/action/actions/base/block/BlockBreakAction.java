@@ -59,7 +59,7 @@ public class BlockBreakAction extends AbstractBlockAction
         World world = block.getWorld();
         World playerWorld = player.getWorld();
 
-        if (!world.getKey().equals(playerWorld.getKey()))
+        if (world != playerWorld)  // 同値比較でよい
             throw new IllegalArgumentException("The block and the player must be in the same world.");
     }
 

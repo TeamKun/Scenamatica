@@ -3,6 +3,7 @@ package org.kunlab.scenamatica.action.actions.base.block;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
@@ -49,6 +50,24 @@ public class BlockPlaceAction extends AbstractBlockAction
             )
             .defaultValue(BlockFace.EAST);
 
+    private static boolean canBuild(Player player, Location location)
+    {
+        World world = location.getWorld();
+        int spawnRadius = Bukkit.getServer().getSpawnRadius();
+        if (world.getEnvironment() != World.Environment.NORMAL)
+            return true;
+        else if (spawnRadius <= 0)
+            return true;
+        else if (Bukkit.getOperators().isEmpty())
+            return true;
+        else if (player.isOp())
+            return true;
+
+        Location spawn = world.getSpawnLocation();
+        int distance = Math.max(Math.abs(location.getBlockX() - spawn.getBlockX()), Math.abs(location.getBlockZ() - spawn.getBlockZ()));
+        return distance > spawnRadius;
+    }
+
     @Override
     public void execute(@NotNull ActionContext ctxt)
     {
@@ -93,7 +112,7 @@ public class BlockPlaceAction extends AbstractBlockAction
                 block.getRelative(against),
                 new ItemStack(block.getType()),
                 player,
-                block.isBuildable(),
+                canBuild(player, block.getLocation()),
                 hand.toEquipmentSlot()
         );
         Bukkit.getPluginManager().callEvent(event);

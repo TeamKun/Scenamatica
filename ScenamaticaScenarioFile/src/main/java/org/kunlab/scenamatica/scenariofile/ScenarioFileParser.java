@@ -4,7 +4,7 @@ import javax.annotation.Nullable;
 import lombok.AllArgsConstructor;
 import net.kunmc.lab.peyangpaperutils.versioning.Version;
 import org.apache.commons.lang.StringUtils;
-import org.bukkit.Bukkit;
+import org.kunlab.scenamatica.enums.MinecraftVersion;
 import org.kunlab.scenamatica.exceptions.scenariofile.InvalidScenarioFileException;
 import org.kunlab.scenamatica.exceptions.scenariofile.NotAScenarioFileException;
 import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileStructure;
@@ -128,9 +128,9 @@ public class ScenarioFileParser
     {
         VersionRange supportVersionRange = scenario.getMinecraftVersions();
         if (supportVersionRange == null)
-            return true;
+            return false;
 
-        Version runningVersion = Version.of(Bukkit.getServer().getMinecraftVersion());
+        Version runningVersion = Version.of(MinecraftVersion.current().getVersion());
 
         boolean shouldIgnore = !supportVersionRange.isInRange(runningVersion);
         if (shouldIgnore)

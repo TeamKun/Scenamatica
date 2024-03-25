@@ -21,7 +21,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-@ActionMeta(value = "player_quit", supportsUntil = MinecraftVersion.V1_16_5)
+@ActionMeta(value = "player_quit", supportsSince = MinecraftVersion.V1_16_5)
 public class PlayerQuitAction extends AbstractPlayerAction
         implements Executable, Watchable, Requireable
 {

@@ -32,4 +32,12 @@ public interface NMSEntityLiving extends NMSEntity
      */
     @Versioned(from = "1.16.5")
     void broadcastItemBreak(NMSItemSlot slot);
+
+    /**
+     * エンティティをを受け取ります。
+     *
+     * @param entity 受け取るエンティティ
+     * @param amount 受け取る量
+     */
+    void receive(NMSEntity entity, int amount);
 }

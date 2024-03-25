@@ -8,7 +8,6 @@ import org.bukkit.entity.DragonFireball;
 import org.bukkit.entity.Egg;
 import org.bukkit.entity.EnderPearl;
 import org.bukkit.entity.Fireball;
-import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.entity.ShulkerBullet;
@@ -23,6 +22,7 @@ import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.annotations.action.ActionMeta;
 import org.kunlab.scenamatica.commons.utils.Utils;
+import org.kunlab.scenamatica.enums.MinecraftVersion;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
@@ -34,7 +34,7 @@ import org.kunlab.scenamatica.interfaces.scenariofile.misc.LocationStructure;
 import java.util.Collections;
 import java.util.List;
 
-@ActionMeta("player_projectile_launch")
+@ActionMeta(value = "player_projectile_launch", supportsUntil = MinecraftVersion.V1_15_2)
 public class PlayerLaunchProjectileAction extends AbstractPlayerAction
         implements Executable, Watchable
 {
@@ -131,7 +131,6 @@ public class PlayerLaunchProjectileAction extends AbstractPlayerAction
         POTION(ThrownPotion.class),
         EXPERIENCE_BOTTLE(ThrownExpBottle.class),
         ITEM(ThrownPotion.class),
-        FIREWORK(Firework.class),
         TRIDENT(Trident.class);
 
         private final Class<? extends Projectile> clazz;

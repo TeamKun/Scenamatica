@@ -10,6 +10,7 @@ import org.bukkit.event.player.PlayerBucketFillEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.annotations.action.ActionMeta;
+import org.kunlab.scenamatica.enums.MinecraftVersion;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
@@ -19,7 +20,7 @@ import org.kunlab.scenamatica.nms.enums.NMSHand;
 import java.util.Collections;
 import java.util.List;
 
-@ActionMeta("player_bucket_fill")
+@ActionMeta(value = "player_bucket_fill", supportsUntil = MinecraftVersion.V1_15_2)
 public class PlayerBucketFillAction extends AbstractPlayerBucketAction
         implements Watchable, Executable
 {
@@ -43,7 +44,7 @@ public class PlayerBucketFillAction extends AbstractPlayerBucketAction
     protected void doEventOnlyMode(@NotNull ActionContext ctxt, Player who, Block block, Block blockClicked, BlockFace blockFace, Material bucket, ItemStack itemInHand, NMSHand hand)
     {
         super.makeOutput(ctxt, who, itemInHand, block, blockFace, bucket, hand);
-        PlayerBucketFillEvent event = new PlayerBucketFillEvent(who, block, blockClicked, blockFace, bucket, itemInHand, hand.toEquipmentSlot());
+        PlayerBucketFillEvent event = new PlayerBucketFillEvent(who, blockClicked, blockFace, bucket, itemInHand, hand.toEquipmentSlot());
         Bukkit.getServer().getPluginManager().callEvent(event);
 
         if (event.isCancelled())

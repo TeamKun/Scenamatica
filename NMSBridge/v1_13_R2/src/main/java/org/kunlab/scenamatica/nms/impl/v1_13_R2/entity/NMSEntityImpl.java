@@ -1,12 +1,17 @@
 package org.kunlab.scenamatica.nms.impl.v1_13_R2.entity;
 
 import net.minecraft.server.v1_13_R2.Entity;
+import net.minecraft.server.v1_13_R2.EntityItem;
 import net.minecraft.server.v1_13_R2.EnumMoveType;
+import net.minecraft.server.v1_13_R2.ItemStack;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_13_R2.entity.CraftEntity;
+import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.nms.enums.entity.NMSMoveType;
 import org.kunlab.scenamatica.nms.impl.v1_13_R2.TypeSupportImpl;
 import org.kunlab.scenamatica.nms.types.entity.NMSEntity;
+import org.kunlab.scenamatica.nms.types.entity.NMSEntityItem;
+import org.kunlab.scenamatica.nms.types.item.NMSItemStack;
 
 public class NMSEntityImpl implements NMSEntity
 {
@@ -42,5 +47,15 @@ public class NMSEntityImpl implements NMSEntity
                 location.getY(),
                 location.getZ()
         );
+    }
+
+    @Override
+    public NMSEntityItem dropItem(@NotNull NMSItemStack stack, float offsetY)
+    {
+        EntityItem dropped = this.nmsEntity.a((ItemStack) stack.getNMSRaw(), offsetY);
+        if (dropped == null)
+            return null;
+
+        return new NMSEntityItemImpl(dropped);
     }
 }

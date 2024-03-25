@@ -133,7 +133,19 @@
         </dependency>
         <dependency>
             <groupId>org.kunlab.scenamatica.actions</groupId>
+            <artifactId>Extended_v1_16_5</artifactId>
+            <version>1.0.0</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kunlab.scenamatica.actions</groupId>
             <artifactId>Extended_v1_16</artifactId>
+            <version>1.0.0</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kunlab.scenamatica.actions</groupId>
+            <artifactId>Extended_v1_14</artifactId>
             <version>1.0.0</version>
             <scope>runtime</scope>
         </dependency>

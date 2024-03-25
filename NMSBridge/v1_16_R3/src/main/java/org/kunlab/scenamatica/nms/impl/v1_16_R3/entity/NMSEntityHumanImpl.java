@@ -1,12 +1,16 @@
 package org.kunlab.scenamatica.nms.impl.v1_16_R3.entity;
 
 import net.minecraft.server.v1_16_R3.EntityHuman;
+import net.minecraft.server.v1_16_R3.EntityItem;
+import net.minecraft.server.v1_16_R3.ItemStack;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftHumanEntity;
 import org.bukkit.entity.HumanEntity;
+import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.nms.enums.entity.NMSItemSlot;
 import org.kunlab.scenamatica.nms.impl.v1_16_R3.TypeSupportImpl;
 import org.kunlab.scenamatica.nms.impl.v1_16_R3.item.NMSItemStackImpl;
 import org.kunlab.scenamatica.nms.types.entity.NMSEntityHuman;
+import org.kunlab.scenamatica.nms.types.entity.NMSEntityItem;
 import org.kunlab.scenamatica.nms.types.item.NMSItemStack;
 
 public class NMSEntityHumanImpl extends NMSEntityLivingImpl implements NMSEntityHuman
@@ -32,6 +36,21 @@ public class NMSEntityHumanImpl extends NMSEntityLivingImpl implements NMSEntity
     public NMSItemStack getEquipment(NMSItemSlot slot)
     {
         return new NMSItemStackImpl(this.nmsEntity.getEquipment(TypeSupportImpl.toNMS(slot)));
+    }
+
+    @Override
+    public NMSEntityItem drop(@NotNull NMSItemStack stack, boolean dropAll, boolean copyUniqueID)
+    {
+        EntityItem dropped = this.nmsEntity.a((ItemStack) stack.getNMSRaw(), dropAll, copyUniqueID);
+        if (dropped == null)
+            return null;
+        return new NMSEntityItemImpl(dropped);
+    }
+
+    @Override
+    public boolean drop(boolean dropAll)
+    {
+        return this.nmsEntity.dropItem(dropAll);
     }
 
     @Override

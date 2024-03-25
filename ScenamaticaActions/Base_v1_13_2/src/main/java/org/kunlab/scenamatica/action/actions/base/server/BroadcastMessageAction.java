@@ -10,6 +10,7 @@ import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.utils.InputTypeToken;
 import org.kunlab.scenamatica.action.utils.PlayerLikeCommandSenders;
 import org.kunlab.scenamatica.annotations.action.ActionMeta;
+import org.kunlab.scenamatica.enums.MinecraftVersion;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
@@ -27,7 +28,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-@ActionMeta("broadcast")
+@ActionMeta(value = "broadcast", supportsUntil = MinecraftVersion.V1_13_2)
 public class BroadcastMessageAction extends AbstractServerAction
         implements Executable, Watchable
 {
@@ -76,12 +77,10 @@ public class BroadcastMessageAction extends AbstractServerAction
 
         if (permission == null)
             if (recipients == null || recipients.isEmpty())
-                // noinspection deprecation  De-Adventure API
                 Bukkit.broadcastMessage(message);
             else
                 this.simulateBukkitBroadcast(ctxt, message, recipients);
         else
-            // noinspection deprecation  De-Adventure API
             Bukkit.broadcast(message, permission);
     }
 
@@ -93,15 +92,13 @@ public class BroadcastMessageAction extends AbstractServerAction
                 .map(ps -> PlayerLikeCommandSenders.getCommandSenderOrThrow(ps, ctxt.getContext()))
                 .collect(Collectors.toSet());
 
-        // noinspection deprecation  De-Adventure API
         BroadcastMessageEvent broadcastMessageEvent =
-                new BroadcastMessageEvent(!Bukkit.isPrimaryThread(), message, csRecipientsSet);
+                new BroadcastMessageEvent(message, csRecipientsSet);
         Bukkit.getPluginManager().callEvent(broadcastMessageEvent);
 
         if (broadcastMessageEvent.isCancelled())
             return;
 
-        // noinspection deprecation  De-Adventure API
         message = broadcastMessageEvent.getMessage();
 
         this.makeOutputs(ctxt, message, new ArrayList<>(csRecipientsSet));
@@ -117,7 +114,6 @@ public class BroadcastMessageAction extends AbstractServerAction
 
         BroadcastMessageEvent e = (BroadcastMessageEvent) event;
 
-        // noinspection deprecation  De-Adventure API
         String message = e.getMessage();
         if (ctxt.hasInput(IN_MESSAGE))
         {

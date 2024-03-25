@@ -14,6 +14,8 @@ import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.scenariofile.entity.entities.EntityItemStructure;
+import org.kunlab.scenamatica.nms.NMSProvider;
+import org.kunlab.scenamatica.nms.types.entity.NMSEntityPlayer;
 
 import java.util.Collections;
 import java.util.List;
@@ -40,7 +42,9 @@ public class PlayerDropItemAction extends AbstractPlayerAction
         }, target.getInventory().getItemInMainHand());
 
         this.makeOutputs(ctxt, target, stack);
-        target.dropItem(/* dropAll: */ false);
+
+        NMSEntityPlayer nmsPlayer = NMSProvider.getProvider().wrap(target);
+        nmsPlayer.drop(/* dropALl: */ false);
     }
 
     @Override

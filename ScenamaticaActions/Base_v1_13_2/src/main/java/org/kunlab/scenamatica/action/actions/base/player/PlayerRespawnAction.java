@@ -27,17 +27,12 @@ public class PlayerRespawnAction extends AbstractPlayerAction
             "isBed",
             Boolean.class
     );
-    public static final InputToken<Boolean> IN_IS_ANCHOR = ofInput(
-            "isAnchor",
-            Boolean.class
-    );
     public static final InputToken<LocationStructure> IN_LOCATION = ofInput(
             "location",
             LocationStructure.class,
             ofDeserializer(LocationStructure.class)
     );
     public static final String KEY_OUT_IS_BED = "isBed";
-    public static final String KEY_OUT_IS_ANCHOR = "isAnchor";
     public static final String KEY_OUT_LOCATION = "location";
 
     @Override
@@ -66,10 +61,9 @@ public class PlayerRespawnAction extends AbstractPlayerAction
             PlayerRespawnEvent e = (PlayerRespawnEvent) event;
 
             result = ctxt.ifHasInput(IN_IS_BED, isBed -> isBed == e.isBedSpawn())
-                    && ctxt.ifHasInput(IN_IS_ANCHOR, isAnchor -> isAnchor == e.isAnchorSpawn())
                     && ctxt.ifHasInput(IN_LOCATION, loc -> loc.isAdequate(e.getRespawnLocation()));
             if (result)
-                this.makeOutputs(ctxt, e.getPlayer(), e.isBedSpawn(), e.isAnchorSpawn(), e.getRespawnLocation());
+                this.makeOutputs(ctxt, e.getPlayer(), e.isBedSpawn(), e.getRespawnLocation());
         }
         else
         {
@@ -79,16 +73,15 @@ public class PlayerRespawnAction extends AbstractPlayerAction
             result = ctxt.ifHasInput(IN_IS_BED, isBed -> isBed == e.isBedSpawn())
                     && ctxt.ifHasInput(IN_LOCATION, loc -> loc.isAdequate(e.getRespawnedLocation()));
             if (result)
-                this.makeOutputs(ctxt, e.getPlayer(), e.isBedSpawn(), false, e.getRespawnedLocation());
+                this.makeOutputs(ctxt, e.getPlayer(), e.isBedSpawn(), e.getRespawnedLocation());
         }
 
         return result;
     }
 
-    private void makeOutputs(@NotNull ActionContext ctxt, @NotNull Player player, boolean isBed, boolean isAnchor, @NotNull Location location)
+    private void makeOutputs(@NotNull ActionContext ctxt, @NotNull Player player, boolean isBed, @NotNull Location location)
     {
         ctxt.output(KEY_OUT_IS_BED, isBed);
-        ctxt.output(KEY_OUT_IS_ANCHOR, isAnchor);
         ctxt.output(KEY_OUT_LOCATION, location);
         super.makeOutputs(ctxt, player);
     }
@@ -114,7 +107,7 @@ public class PlayerRespawnAction extends AbstractPlayerAction
         InputBoard board = super.getInputBoard(type)
                 .register(IN_LOCATION);
         if (type != ScenarioType.ACTION_EXECUTE)
-            board.registerAll(IN_IS_BED, IN_IS_ANCHOR);
+            board.registerAll(IN_IS_BED);
 
         return board;
     }

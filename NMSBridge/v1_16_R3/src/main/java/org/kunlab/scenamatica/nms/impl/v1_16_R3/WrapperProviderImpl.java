@@ -5,6 +5,7 @@ import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.HumanEntity;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -12,6 +13,7 @@ import org.kunlab.scenamatica.nms.WrapperProvider;
 import org.kunlab.scenamatica.nms.impl.v1_16_R3.block.NMSBlockPositionImpl;
 import org.kunlab.scenamatica.nms.impl.v1_16_R3.entity.NMSEntityHumanImpl;
 import org.kunlab.scenamatica.nms.impl.v1_16_R3.entity.NMSEntityImpl;
+import org.kunlab.scenamatica.nms.impl.v1_16_R3.entity.NMSEntityItemImpl;
 import org.kunlab.scenamatica.nms.impl.v1_16_R3.entity.NMSEntityLivingImpl;
 import org.kunlab.scenamatica.nms.impl.v1_16_R3.entity.NMSEntityPlayerImpl;
 import org.kunlab.scenamatica.nms.impl.v1_16_R3.item.NMSItemStackImpl;
@@ -20,6 +22,7 @@ import org.kunlab.scenamatica.nms.types.NMSWorldServer;
 import org.kunlab.scenamatica.nms.types.block.NMSBlockPosition;
 import org.kunlab.scenamatica.nms.types.entity.NMSEntity;
 import org.kunlab.scenamatica.nms.types.entity.NMSEntityHuman;
+import org.kunlab.scenamatica.nms.types.entity.NMSEntityItem;
 import org.kunlab.scenamatica.nms.types.entity.NMSEntityLiving;
 import org.kunlab.scenamatica.nms.types.entity.NMSEntityPlayer;
 import org.kunlab.scenamatica.nms.types.item.NMSItemStack;
@@ -44,6 +47,11 @@ public class WrapperProviderImpl implements WrapperProvider
     public static NMSEntityHuman wrap$(HumanEntity bukkitEntity)
     {
         return new NMSEntityHumanImpl(bukkitEntity);
+    }
+
+    public static NMSEntityItem wrap$(Item bukkitEntity)
+    {
+        return new NMSEntityItemImpl(bukkitEntity);
     }
 
     public static NMSEntityPlayer wrap$(Player bukkitEntity)
@@ -80,6 +88,12 @@ public class WrapperProviderImpl implements WrapperProvider
 
     @Override
     public NMSEntityHuman wrap(HumanEntity bukkitEntity)
+    {
+        return wrap$(bukkitEntity);
+    }
+
+    @Override
+    public NMSEntityItem wrap(Item bukkitEntity)
     {
         return wrap$(bukkitEntity);
     }

@@ -1,5 +1,7 @@
 # noinspection YAMLSchemaValidation
 scenamatica: ${project.version}
+minecraft:
+  until: 1.15.2
 
 name: actions_player_bucket_empty_2
 description: Testing PlayerBucketEmptyAction without target works or not
@@ -17,11 +19,6 @@ scenario:
     with:
       target: Actor001
       bucket: WATER_BUCKET
-      block:
-        location:
-          x: 0
-          y: 255
-          z: 0
       clickedBlock:
         location:
           x: 0
@@ -33,11 +30,6 @@ scenario:
     action: player_bucket_empty
     with:
       bucket: WATER_BUCKET
-      block:
-        location:
-          x: 0
-          y: 255
-          z: 0
       clickedBlock:
         location:
           x: 0

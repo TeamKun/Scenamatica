@@ -1,6 +1,7 @@
 package org.kunlab.scenamatica.action.actions.base.player;
 
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
@@ -72,9 +73,10 @@ public class PlayerInteractBlockAction extends AbstractPlayerAction
 
         // 引数の検証を行う( validateArgument() はランタイムではないのでこちら側でやるしかない。)
         Block clickBlock = getClickBlock(ctxt);
-        if ((action == Action.LEFT_CLICK_AIR || action == Action.RIGHT_CLICK_AIR) && !clickBlock.getType().isAir())
+        boolean isAir = clickBlock.getType() == Material.AIR;
+        if ((action == Action.LEFT_CLICK_AIR || action == Action.RIGHT_CLICK_AIR) && !isAir)
             throw new IllegalArgumentException("Argument action is not allowed to be LEFT_CLICK_AIR or RIGHT_CLICK_AIR when the target block is not air");
-        else if ((action == Action.LEFT_CLICK_BLOCK || action == Action.RIGHT_CLICK_BLOCK) && clickBlock.getType().isAir())
+        else if ((action == Action.LEFT_CLICK_BLOCK || action == Action.RIGHT_CLICK_BLOCK) && isAir)
             throw new IllegalArgumentException("Argument action is not allowed to be LEFT_CLICK_BLOCK or RIGHT_CLICK_BLOCK when the target block is air");
 
         this.makeOutputs(ctxt, player, clickBlock, null, EquipmentSlot.HAND);
