@@ -51,7 +51,8 @@
     "doExpDrop": {
       "type": "boolean",
       "description": "死亡するプレイヤの経験値ドロップをするかどうかです。",
-      "availableFor": ["execute", "watch"]
+      "availableFor": ["execute", "watch"],
+      "since": "1.16"
     }
   },
   "outputs": {
@@ -94,7 +95,8 @@
     "doExpDrop": {
       "type": "boolean",
       "description": "死亡したプレイヤの経験値ドロップをするかどうかです。",
-      "availableFor": ["watch"]
+      "availableFor": ["watch"],
+      "since": "1.16"
     }
   }
 }

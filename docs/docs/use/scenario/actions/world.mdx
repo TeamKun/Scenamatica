@@ -46,9 +46,8 @@ import {ObjectType} from "/src/components/Object";
         args={[
           {
             name: "world",
-            type_link: "/docs/use/scenario/types/misc#namespaced-key",
-            type: "NamespacedKey",
-            description: "ワールドの名前空間付きキーです。",
+            type: ObjectType.STRING,
+            description: "ワールドの名前です。",
           },
           {
             name: "type",
@@ -90,9 +89,8 @@ import {ObjectType} from "/src/components/Object";
         outputs={[
           {
             name: "world",
-            type_link: "/docs/use/scenario/types/misc#namespaced-key",
-            type: "NamespacedKey",
-            description: "ワールドの名前空間付きキーです。",
+            type: ObjectType.STRING,
+            description: "ワールドの名前です。",
           },
           {
             name: "type",
@@ -155,9 +153,8 @@ import {ObjectType} from "/src/components/Object";
         args={[
           {
             name: "world",
-            type_link: "/docs/use/scenario/types/misc#namespaced-key",
-            type: "NamespacedKey",
-            description: "ワールドの名前空間付きキーです。",
+            type: ObjectType.STRING,
+            description: "ワールドの名前です。",
           },
           {
             name: "size",
@@ -195,9 +192,8 @@ import {ObjectType} from "/src/components/Object";
         args={[
           {
             name: "world",
-            type_link: "/docs/use/scenario/types/misc#namespaced-key",
-            type: "NamespacedKey",
-            description: "ワールドの名前空間付きキーです。",
+            type: ObjectType.STRING,
+            description: "ワールドの名前です。",
           },
           {
             name: "rule",
@@ -232,9 +228,8 @@ import {ObjectType} from "/src/components/Object";
         outputs={[
           {
             name: "world",
-            type_link: "/docs/use/scenario/types/misc#namespaced-key",
-            type: "NamespacedKey",
-            description: "ワールドの名前空間付きキーです。",
+            type: ObjectType.STRING,
+            description: "ワールドの名前です。",
           },
         ]}
         id="world_init"
@@ -254,18 +249,16 @@ import {ObjectType} from "/src/components/Object";
         arguments={[
           {
             name: "world",
-            type_link: "/docs/use/scenario/types/misc#namespaced-key",
-            type: "NamespacedKey",
-            description: "ワールドの名前空間付きキーです。",
+            type: ObjectType.STRING,
+            description: "ワールドの名前です。",
           }
         ]}
         outputs={[
           {
             name: "world",
-            type_link: "/docs/use/scenario/types/misc#namespaced-key",
-            type: "NamespacedKey",
-            description: "ワールドの名前空間付きキーです。",
-          }
+            type: ObjectType.STRING,
+            description: "ワールドの名前です。",
+          },
         ]}
         id="world_load"
         executable requireable watchable
@@ -282,8 +275,16 @@ import {ObjectType} from "/src/components/Object";
         description="ワールドを保存します。"
         events={[
           {
-            name: "WorldSaveEvent",
-            package: "org.bukkit.event.world",
+            name: "world",
+            type: ObjectType.STRING,
+            description: "ワールドの名前です。",
+          },
+        ]}
+        outputs={[
+          {
+            name: "world",
+            type: ObjectType.STRING,
+            description: "ワールドの名前です。",
           },
         ]}
         id="world_save"
@@ -303,18 +304,16 @@ import {ObjectType} from "/src/components/Object";
         arguments={[
           {
             name: "world",
-            type_link: "/docs/use/scenario/types/misc#namespaced-key",
-            type: "NamespacedKey",
-            description: "ワールドの名前空間付きキーです。",
-          }
+            type: ObjectType.STRING,
+            description: "ワールドの名前です。",
+          },
         ]}
         outputs={[
           {
             name: "world",
-            type_link: "/docs/use/scenario/types/misc#namespaced-key",
-            type: "NamespacedKey",
-            description: "ワールドの名前空間付きキーです。",
-          }
+            type: ObjectType.STRING,
+            description: "ワールドの名前です。",
+          },
         ]}
         id="world_unload"
         executable requireable watchable

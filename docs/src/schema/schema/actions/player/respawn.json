@@ -8,6 +8,7 @@
 
   "executable": "プレイヤをリスポーンさせます。",
   "watchable": "プレイヤがリスポーンするか期待します。",
+  "requireable": false,
 
   "arguments": {
     "isBed": {
@@ -17,8 +18,9 @@
     },
     "isAnchor": {
       "type": "boolean",
-      "description": "プレイヤが錨でスポーンするかどうかです。",
-      "availableFor": ["watch"]
+      "description": "プレイヤがアンカでスポーンするかどうかです。",
+      "availableFor": ["watch"],
+      "since": "1.16"
     },
     "location": {
       "description": "プレイヤがスポーンする場所です。",
@@ -38,7 +40,8 @@
     "isAnchor": {
       "type": "boolean",
       "description": "プレイヤが錨でスポーンするかどうかです。",
-      "availableFor": ["watch"]
+      "availableFor": ["watch"],
+      "since": "1.16"
     }
   }
 }

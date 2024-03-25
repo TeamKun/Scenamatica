@@ -557,7 +557,7 @@ Bukkit の仕様により、現在は `ARM_SWING` のみが指定可能です。
 
 :::warning
 
-`bucket` に指定するアイテムは、エンティティを格納できるバケツである必要があります（参考：1.16.5 時点では `WATER_BUCKET` のいｍ）。
+`bucket` に指定するアイテムは、エンティティを格納できるバケツである必要があります（参考：1.16.5 時点では `WATER_BUCKET` のみ）。
 `entityBucket` は、エンティティを格納した後のバケツを指定する必要があります。
 
 :::
@@ -1882,22 +1882,22 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
 
 発射される投げ物の種類を指定します。以下の種類が指定できます。
 
-|         種類          | 説明         |
-|:-------------------:|:-----------|
-|       `ARROW`       | 矢          |
-|     `SNOWBALL`      | 雪玉         |
-|        `EGG`        | 卵          |
-|     `FIREBALL`      | ファイアーチャージ  |
-|  `SMALL_FIREBALL`   | 小型の火球      |
-|    `ENDER_PEARL`    | エンダーパール    |
-|   `WITHER_SKULL`    | ウィザーの頭     |
-|  `SHULKER_BULLET`   | シュルカーの弾丸   |
-|  `DRAGON_FIREBALL`  | エンドドラゴンの火球 |
-|      `POTION`       | ポーション      |
-| `EXPERIENCE_BOTTLE` | 経験値ボトル     |
-|       `ITEM`        | アイテム       |
-|     `FIREWORK`      | 花火         |
-|      `TRIDENT`      | トライデント     |
+|         種類          | 説明         | 備考                            |
+|:-------------------:|:-----------|:------------------------------|
+|       `ARROW`       | 矢          |                               |
+|     `SNOWBALL`      | 雪玉         |                               |
+|        `EGG`        | 卵          |                               |
+|     `FIREBALL`      | ファイアーチャージ  |                               |
+|  `SMALL_FIREBALL`   | 小型の火球      |                               |
+|    `ENDER_PEARL`    | エンダーパール    |                               |
+|   `WITHER_SKULL`    | ウィザーの頭     |                               | 
+|  `SHULKER_BULLET`   | シュルカーの弾丸   |                               |
+|  `DRAGON_FIREBALL`  | エンドドラゴンの火球 |                               |
+|      `POTION`       | ポーション      |                               |
+| `EXPERIENCE_BOTTLE` | 経験値ボトル     |                               |
+|       `ITEM`        | アイテム       |                               |
+|     `FIREWORK`      | 花火         | Minecraft `1.16` 以降でのみ使用できます。 |
+|      `TRIDENT`      | トライデント     |                               |
 
 
 #### `epsilon` {#launch-projectile-epsilon}
@@ -2055,7 +2055,10 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
             name: "isAnchor",
             description: "アンカでリスポーンするかどうかです。",
             type: ObjectType.BOOLEAN,
-            available: [ScenarioType.WATCH]
+            available: [ScenarioType.WATCH],
+            support: {
+              since: "1.16"
+            }
           }
         ]}
         outputs={[
@@ -2082,7 +2085,10 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
             anchor: "respawn-output-is-anchor",
             description: "アンカでリスポーンしたかどうかです。",
             type: ObjectType.BOOLEAN,
-            available: [ScenarioType.WATCH]
+            available: [ScenarioType.WATCH],
+            support: {
+              since: "1.16"
+            }
           }
         ]}
         executable watchable
