@@ -896,6 +896,15 @@ Bukkit の仕様により、現在は `ARM_SWING` のみが指定可能です。
             description: "ゲームモードです。",
             type: "列挙型{SURVIVAL, CREATIVE, ADVENTURE, SPECTATOR}",
             required: [ScenarioType.EXECUTE, ScenarioType.REQUIRE]
+          },
+          {
+            name: "cause",
+            description: "ゲームモード変更の原因です。",
+            type: "列挙型{PLUGIN, COMMAND, DEFAULT_GAMEMODE, HARDCORE_DEATH UNKNOWN}",
+            available: [ScenarioType.WATCH],
+            support: {
+              since: "1.16.5"
+            }
           }
         ]}
         outputs={[
@@ -918,6 +927,15 @@ Bukkit の仕様により、現在は `ARM_SWING` のみが指定可能です。
             description: "変更がキャンセルされた場合に表示するメッセージです（Paper)。",
             type: ObjectType.STRING,
             available: [ScenarioType.WATCH]
+          },
+          {
+            name: "cause",
+            description: "ゲームモード変更の原因です。",
+            type: "列挙型{PLUGIN, COMMAND, DEFAULT_GAMEMODE, HARDCORE_DEATH UNKNOWN}",
+            available: [ScenarioType.WATCH],
+            support: {
+              since: "1.16.5"
+            }
           }
         ]}
         executable requireable watchable
