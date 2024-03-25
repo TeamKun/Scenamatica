@@ -549,6 +549,9 @@ Bukkit の仕様により、現在は `ARM_SWING` のみが指定可能です。
             available: [ScenarioType.WATCH]
           },
         ]}
+        available={{
+          since: "1.16.5"
+        }}
         executable watchable
 />
 
@@ -1923,7 +1926,10 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
             anchor: "quit-reason",
             description: "退出の理由です。",
             type: "列挙型{DISCONNECTED, KICKED, TIMED_OUT, ERRONEOUS_STATE}",
-            default: "アクション実行シナリオの場合は KICKED, 他は N/A "
+            default: "アクション実行シナリオの場合は KICKED, 他は N/A ",
+            support: {
+              since: "1.16.5"
+            }
           }
         ]}
         outputs={[

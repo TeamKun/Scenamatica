@@ -12,6 +12,7 @@ export type ObjectElement = {
     type_link?: string
     description?: string
     default?: any
+    support?: VersionSupport
 }
 
 export enum ObjectType {
@@ -32,10 +33,27 @@ const isActionArgument = (element: ObjectElement): element is ActionArgument => 
     return "available" in element
 }
 
+export type VersionSupport = {
+    since?: string
+    until?: string
+}
+
+export const compatibleVersionTag = (version?: VersionSupport) => {
+    if (!version || (!version.since && !version.until)) {
+        return <span className={styles.label}>全バージョン</span>
+    }
+
+    const since = version.since ? <><span>Minecraft </span><code>{version.since}</code></> : ""
+    const until = version.until ? <><code>{version.until}</code></> : ""
+
+    return <span className={styles.version}>{since} ～ {until}</span>
+}
+
 export const Object: React.FC<ObjectsProps> = ({ objects }) => {
     const shouldShowRequiringState = objects.some((element) => element.required)
     const shouldShowDefaultValue = objects.some((element) => element.default)
     const shouldShowAvailableFor = objects.some((element) => isActionArgument(element) && element.available.length > 0)
+    const shouldShowAvailability = objects.some((element) => element.support)
 
     const elements = objects.map((element) =>{
         const name = element.anchor ? <a href={"#" + element.anchor}>{element.name}</a>: element.name
@@ -94,6 +112,7 @@ export const Object: React.FC<ObjectsProps> = ({ objects }) => {
                 <td className={styles.description}>{element.description}</td>
                 {shouldShowDefaultValue ? <td className={element.default ? null: styles.none}>{element.default ? <code>{element.default}</code> : "-"}</td> : null}
                 {shouldShowAvailableFor ? <td className={styles.scenarioType}>{availableFor ? availableFor : <code><span className={styles.allType}>すべて</span></code>}</td> : null}
+                {shouldShowAvailability ? <td>{compatibleVersionTag(element.support)}</td> : null}
             </tr>
         )
     })
@@ -109,6 +128,7 @@ export const Object: React.FC<ObjectsProps> = ({ objects }) => {
                     <th>説明</th>
                     {shouldShowDefaultValue ? <th>デフォルト</th> : null}
                     {shouldShowAvailableFor ? <th>利用可能</th> : null}
+                    {shouldShowAvailability ? <th>対応バージョン</th> : null}
                 </tr>
                 </thead>
                 <tbody>

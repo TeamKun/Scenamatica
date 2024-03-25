@@ -56,3 +56,13 @@ td.scenarioType{
 
     font-weight: bold;
 }
+
+
+.version {
+    font-weight: lighter;
+}
+
+.version code {
+    position: relative;
+    bottom: 2px;
+}

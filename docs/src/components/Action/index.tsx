@@ -1,6 +1,6 @@
 import React from "react"
 import styles from "./index.module.css"
-import {Object, ObjectElement} from "@site/src/components/Object";
+import {compatibleVersionTag, Object, ObjectElement, VersionSupport} from "@site/src/components/Object";
 import clsx from "clsx";
 import CopyableText from "@site/src/components/CopyableText";
 
@@ -46,6 +46,7 @@ type ActionProps = {
 
     args?: ActionArgument[]
     outputs?: ActionOutput[]
+    available?: VersionSupport
 }
 
 const EVENT_JAVADOC_LINK_BASE =  "https://jd.papermc.io/paper/1.16/"
@@ -59,7 +60,8 @@ const Action: React.FC<ActionProps> = ({
                                            watchable,
                                            requireable,
                                            args,
-                                           outputs
+                                           outputs,
+                                           available
                                        }) => {
     const able = (value: boolean | string) => {
         if (typeof value === "boolean" || value === undefined) {
@@ -105,6 +107,12 @@ const Action: React.FC<ActionProps> = ({
                 <tr>
                     <td>要求可能 (<kbd>require</kbd>)</td>
                     {able(requireable)}
+                </tr>
+                <tr>
+                    <td>対応バージョン</td>
+                    <td>
+                        <span className={styles.label}>{compatibleVersionTag(available)}</span>
+                    </td>
                 </tr>
             </tbody>
         </table>
