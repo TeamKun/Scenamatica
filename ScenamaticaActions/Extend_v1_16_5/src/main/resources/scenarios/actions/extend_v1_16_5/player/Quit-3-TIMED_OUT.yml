@@ -1,6 +1,7 @@
 # noinspection YAMLSchemaValidation
 scenamatica: ${project.version}
-minecraft: 1.16.5
+minecraft:
+  since: 1.16.5
 
 name: actions_player_quit_3
 description: Testing player_quit action with time out works or not

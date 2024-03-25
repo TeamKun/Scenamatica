@@ -1,10 +1,11 @@
-package org.kunlab.scenamatica.action.actions.base.world;
+package org.kunlab.scenamatica.action.actions.extend_v1_16_5.world;
 
 import io.papermc.paper.event.world.WorldGameRuleChangeEvent;
 import org.bukkit.GameRule;
 import org.bukkit.World;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
+import org.kunlab.scenamatica.action.actions.base.world.AbstractWorldAction;
 import org.kunlab.scenamatica.action.utils.InputTypeToken;
 import org.kunlab.scenamatica.annotations.action.ActionMeta;
 import org.kunlab.scenamatica.enums.ScenarioType;

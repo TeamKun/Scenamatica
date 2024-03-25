@@ -1,5 +1,7 @@
 # noinspection YAMLSchemaValidation
 scenamatica: ${project.version}
+minecraft:
+  until: 1.16.4
 
 name: actions_player_gamemode
 description: Testing PlayerGameModeAction works or not

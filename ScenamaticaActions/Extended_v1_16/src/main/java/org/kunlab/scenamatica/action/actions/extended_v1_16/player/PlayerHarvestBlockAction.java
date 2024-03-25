@@ -1,4 +1,4 @@
-package org.kunlab.scenamatica.action.actions.base.player;
+package org.kunlab.scenamatica.action.actions.extended_v1_16.player;
 
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -7,6 +7,7 @@ import org.bukkit.event.player.PlayerHarvestBlockEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.action.actions.base.block.BlockBreakAction;
+import org.kunlab.scenamatica.action.actions.base.player.AbstractPlayerAction;
 import org.kunlab.scenamatica.action.utils.InputTypeToken;
 import org.kunlab.scenamatica.annotations.action.ActionMeta;
 import org.kunlab.scenamatica.commons.utils.MapUtils;

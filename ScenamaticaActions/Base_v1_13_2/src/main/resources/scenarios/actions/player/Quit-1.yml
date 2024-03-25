@@ -1,6 +1,7 @@
 # noinspection YAMLSchemaValidation
 scenamatica: ${project.version}
-minecraft: 1.13.2
+minecraft:
+  until: 1.16.4
 
 name: actions_player_quit_3
 description: Testing player_quit action without reason works or not
