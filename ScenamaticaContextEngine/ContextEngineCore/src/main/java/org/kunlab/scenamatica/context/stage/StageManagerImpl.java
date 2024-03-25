@@ -1,7 +1,6 @@
 package org.kunlab.scenamatica.context.stage;
 
 import org.bukkit.Bukkit;
-import org.bukkit.NamespacedKey;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
 import org.jetbrains.annotations.NotNull;
@@ -44,19 +43,9 @@ public class StageManagerImpl implements StageManager
         this.stages = new ArrayList<>();
     }
 
-    @NotNull
-    private static NamespacedKey generateStageKey()
-    {
-        String stageName = "stage_" + UUID.randomUUID().toString().substring(0, 8);
-        NamespacedKey key = NamespacedKey.fromString("scenamatica:" + stageName);
-        assert key != null;
-        return key;
-    }
-
     private static WorldCreator cretateWorldCreator(StageStructure structure)
     {
-        NamespacedKey key = generateStageKey();
-        WorldCreator creator = new WorldCreator(key);
+        WorldCreator creator = new WorldCreator("stage_" + UUID.randomUUID().toString().substring(0, 8));
         if (structure.getEnvironment() != null)
             creator.environment(structure.getEnvironment());
         else
@@ -101,7 +90,7 @@ public class StageManagerImpl implements StageManager
         World copied;
         try
         {
-            copied = WorldUtils.copyWorld(originalName, generateStageKey());
+            copied = WorldUtils.copyWorld(originalName, "stage_" + UUID.randomUUID().toString().substring(0, 8));
         }
         catch (IllegalArgumentException e)
         {

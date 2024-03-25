@@ -1,7 +1,6 @@
 package org.kunlab.scenamatica.action.actions.base.world;
 
 import org.bukkit.Bukkit;
-import org.bukkit.NamespacedKey;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
 import org.bukkit.event.Event;
@@ -27,20 +26,19 @@ public class WorldLoadAction extends AbstractWorldAction
     @Override
     public void execute(@NotNull ActionContext ctxt)
     {
-        NamespacedKey key = ctxt.input(IN_WORLD);
-        assert key != null;
+        String worldName = ctxt.input(IN_WORLD);
+        assert worldName != null;
 
         Path worldDir = Bukkit.getWorldContainer().toPath();
-        if (!Files.exists(worldDir.resolve(key.getKey())))
-            if (Files.exists(worldDir.resolve("world_" + key.getKey())))
-                key = NamespacedKey.fromString(key.getNamespace() + ":world_" + key.getKey());
+        if (!Files.exists(worldDir.resolve(worldName)))
+            if (Files.exists(worldDir.resolve("world_" + worldName)))
+                worldName = "world_" + worldName;
             else
-                throw new IllegalArgumentException("World '" + key.getKey() + "' does not exist.");
-        assert key != null;
+                throw new IllegalArgumentException("World '" + worldName + "' does not exist.");
 
         // createWorld は, ワールドが存在する場合は読み込むだけ。
-        this.makeOutputs(ctxt, key);
-        Bukkit.createWorld(new WorldCreator(key.getKey()));
+        this.makeOutputs(ctxt, worldName);
+        Bukkit.createWorld(new WorldCreator(worldName));
     }
 
     @Override

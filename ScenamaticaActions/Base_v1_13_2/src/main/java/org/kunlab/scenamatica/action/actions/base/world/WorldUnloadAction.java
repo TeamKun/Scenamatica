@@ -1,7 +1,6 @@
 package org.kunlab.scenamatica.action.actions.base.world;
 
 import org.bukkit.Bukkit;
-import org.bukkit.NamespacedKey;
 import org.bukkit.World;
 import org.bukkit.event.Event;
 import org.bukkit.event.world.WorldUnloadEvent;
@@ -48,12 +47,11 @@ public class WorldUnloadAction extends AbstractWorldAction
     @Override
     public boolean checkConditionFulfilled(@NotNull ActionContext ctxt)
     {
-        NamespacedKey key = ctxt.input(IN_WORLD);
-        assert key != null;
+        String worldName = ctxt.input(IN_WORLD);
 
-        boolean result = Bukkit.getWorld(key) == null;
+        boolean result = Bukkit.getWorld(worldName) == null;
         if (result)
-            this.makeOutputs(ctxt, key);
+            this.makeOutputs(ctxt, worldName);
         return result;
     }
 

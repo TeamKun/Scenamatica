@@ -1,7 +1,6 @@
 package org.kunlab.scenamatica.context.utils;
 
 import org.bukkit.Bukkit;
-import org.bukkit.NamespacedKey;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
 import org.jetbrains.annotations.NotNull;
@@ -15,16 +14,16 @@ import java.util.stream.Stream;
 public class WorldUtils
 {
     @NotNull
-    public static World copyWorld(@NotNull String originalName, @NotNull NamespacedKey key)
+    public static World copyWorld(@NotNull String originalName, @NotNull String copyName)
     {
         World original = Bukkit.getWorld(originalName);
         if (original == null)
             throw new IllegalArgumentException("World " + originalName + " does not exist.");
 
-        Path dest = Bukkit.getWorldContainer().toPath().resolve(key.getKey());
+        Path dest = Bukkit.getWorldContainer().toPath().resolve(copyName);
         copyWorldFiles(original.getWorldFolder().toPath(), dest);
 
-        WorldCreator creator = new WorldCreator(key);
+        WorldCreator creator = new WorldCreator(copyName);
         creator.copy(original);
 
         return Objects.requireNonNull(creator.createWorld());

@@ -1,11 +1,9 @@
 package org.kunlab.scenamatica.selector.predicates;
 
 import org.bukkit.Location;
-import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
-import org.kunlab.scenamatica.commons.utils.NamespaceUtils;
 import org.kunlab.scenamatica.selector.compiler.NegateSupport;
 import org.kunlab.scenamatica.selector.compiler.RangedNumber;
 
@@ -39,9 +37,9 @@ public class LocationPredicate extends AbstractGeneralEntitySelectorPredicate
     {
         if (properties.containsKey(KEY_WORLD))
         {
-            NamespacedKey worldNS = NamespaceUtils.fromString(NegateSupport.getRawCast(KEY_WORLD, properties));
+            String worldName = NegateSupport.getRawCast(KEY_WORLD, properties);
 
-            boolean isInWorld = NamespaceUtils.equalsIgnoreCase(entity.getWorld().getKey(), worldNS);
+            boolean isInWorld = entity.getWorld().getName().equals(worldName);
             boolean doNegate = NegateSupport.shouldNegate(KEY_WORLD, properties);
             if (isInWorld == doNegate)
                 return false;

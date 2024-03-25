@@ -2,13 +2,11 @@ package org.kunlab.scenamatica.action.actions.base.world;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.bukkit.Bukkit;
-import org.bukkit.NamespacedKey;
 import org.bukkit.World;
 import org.bukkit.event.Event;
 import org.bukkit.event.world.WorldEvent;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.action.AbstractAction;
-import org.kunlab.scenamatica.commons.utils.NamespaceUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
@@ -19,10 +17,9 @@ public abstract class AbstractWorldAction extends AbstractAction
         implements Watchable
 {
     public static final String KEY_WORLD = "world";
-    public static final InputToken<NamespacedKey> IN_WORLD = ofInput(
+    public static final InputToken<String> IN_WORLD = ofInput(
             KEY_WORLD,
-            NamespacedKey.class,
-            ofTraverser(String.class, (ser, str) -> NamespaceUtils.fromString(str))
+            String.class
     );
     public static final String KEY_OUT_WORLD = "world";
     private static final String[] PADDING_TARGET = {"the_end", "nether"};
@@ -35,8 +32,8 @@ public abstract class AbstractWorldAction extends AbstractAction
 
         WorldEvent e = (WorldEvent) event;
 
-        boolean result = ctxt.ifHasInput(IN_WORLD, world -> world.equals(e.getWorld().getKey()));
-        this.makeOutputs(ctxt, e.getWorld().getKey());
+        boolean result = ctxt.ifHasInput(IN_WORLD, world -> world.equals(e.getWorld().getName()));
+        this.makeOutputs(ctxt, e.getWorld().getName());
         return result;
     }
 
@@ -48,13 +45,13 @@ public abstract class AbstractWorldAction extends AbstractAction
 
     protected World getWorld(ActionContext ctxt)
     {
-        NamespacedKey key = ctxt.input(IN_WORLD);
+        String name = ctxt.input(IN_WORLD);
         World world = null;
-        if (key == null || (world = Bukkit.getWorld(key)) != null)
+        if (name == null || (world = Bukkit.getWorld(name)) != null)
             return world;
 
-        if (ArrayUtils.contains(PADDING_TARGET, key.getKey()))
-            return Bukkit.getWorld(NamespaceUtils.fromString(key.getNamespace() + ":" + "world_" + key.getKey()));
+        if (ArrayUtils.contains(PADDING_TARGET, name))
+            return Bukkit.getWorld("world_" + name);
 
         return null;
     }
@@ -67,14 +64,14 @@ public abstract class AbstractWorldAction extends AbstractAction
         return this.getWorld(ctxt);
     }
 
-    protected void makeOutputs(@NotNull ActionContext ctxt, @NotNull NamespacedKey world)
+    protected void makeOutputs(@NotNull ActionContext ctxt, @NotNull String worldName)
     {
-        ctxt.output(KEY_OUT_WORLD, world.getKey());
+        ctxt.output(KEY_OUT_WORLD, worldName);
         ctxt.commitOutput();
     }
 
     protected void makeOutputs(@NotNull ActionContext ctxt, @NotNull World world)
     {
-        this.makeOutputs(ctxt, world.getKey());
+        this.makeOutputs(ctxt, world.getName());
     }
 }
