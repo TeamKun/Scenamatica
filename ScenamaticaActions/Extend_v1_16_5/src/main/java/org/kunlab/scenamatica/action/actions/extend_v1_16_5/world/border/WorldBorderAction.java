@@ -1,4 +1,4 @@
-package org.kunlab.scenamatica.action.actions.base.world.border;
+package org.kunlab.scenamatica.action.actions.extend_v1_16_5.world.border;
 
 import io.papermc.paper.event.world.border.WorldBorderBoundsChangeEvent;
 import io.papermc.paper.event.world.border.WorldBorderCenterChangeEvent;

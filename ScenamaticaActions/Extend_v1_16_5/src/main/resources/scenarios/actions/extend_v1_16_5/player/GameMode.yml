@@ -1,8 +1,9 @@
 # noinspection YAMLSchemaValidation
 scenamatica: ${project.version}
+minecraft: 1.16.5
 
-name: actions_player_quit
-description: Testing player_quit action with disconnect works or not
+name: actions_player_gamemode
+description: Testing PlayerGameModeAction works or not
 on:
   - type: on_load
   - type: manual_dispatch
@@ -13,18 +14,18 @@ context:
 
 scenario:
   - type: execute
-    action: player_quit
+    action: player_gamemode
     with:
       target: Actor001
-      reason: DISCONNECTED
+      gamemode: CREATIVE
   - type: expect
-    action: player_quit
+    action: player_gamemode
     with:
       target: Actor001
-      reason: DISCONNECTED
+      gamemode: CREATIVE
+      cause: PLUGIN
   - type: require
-    action: player_quit
+    action: player_gamemode
     with:
       target: Actor001
-      reason: DISCONNECTED
-
+      gamemode: CREATIVE

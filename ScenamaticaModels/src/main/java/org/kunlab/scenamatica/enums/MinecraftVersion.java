@@ -43,6 +43,20 @@ public enum MinecraftVersion
     V1_20_3("1.20.3"),
     V1_20_4("1.20.4");
 
+    private static final MinecraftVersion CURRENT;
+
+    static
+    {
+        String serverVersion = Bukkit.getServer().getBukkitVersion();
+
+        CURRENT = Arrays.stream(values())
+                // 逆順にする
+                .sorted((v1, v2) -> -v1.getVersion().compareTo(v2.getVersion()))
+                .filter(v -> serverVersion.contains(v.getVersion()))
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException("Unsupported Minecraft version: " + serverVersion));
+    }
+
     private final String version;
 
     public static MinecraftVersion fromString(String version)
@@ -57,14 +71,7 @@ public enum MinecraftVersion
 
     public static MinecraftVersion current()
     {
-        String serverVersion = Bukkit.getServer().getBukkitVersion();
-
-        return Arrays.stream(values())
-                // 逆順にする
-                .sorted((v1, v2) -> -v1.getVersion().compareTo(v2.getVersion()))
-                .filter(v -> serverVersion.contains(v.getVersion()))
-                .findFirst()
-                .orElseThrow(() -> new IllegalStateException("Unsupported Minecraft version: " + serverVersion));
+        return CURRENT;
     }
 
     public boolean isInRange(MinecraftVersion min, MinecraftVersion max)

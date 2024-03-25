@@ -1,8 +1,9 @@
 # noinspection YAMLSchemaValidation
 scenamatica: ${project.version}
+minecraft: 1.16.5
 
-name: actions_player_quit_7
-description: Testing player_quit action without argument works or not
+name: actions_player_quit_5
+description: Testing player_quit action without reason works or not
 on:
   - type: on_load
   - type: manual_dispatch
@@ -19,3 +20,5 @@ scenario:
       reason: DISCONNECTED
   - type: expect
     action: player_quit
+    with:
+      target: Actor001

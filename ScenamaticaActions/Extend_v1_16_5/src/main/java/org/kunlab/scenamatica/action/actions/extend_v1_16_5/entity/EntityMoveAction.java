@@ -1,4 +1,4 @@
-package org.kunlab.scenamatica.action.actions.base.entity;
+package org.kunlab.scenamatica.action.actions.extend_v1_16_5.entity;
 
 import io.papermc.paper.event.entity.EntityMoveEvent;
 import org.bukkit.Location;
@@ -6,8 +6,10 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Mob;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
+import org.kunlab.scenamatica.action.actions.base.entity.AbstractGeneralEntityAction;
 import org.kunlab.scenamatica.annotations.action.ActionMeta;
 import org.kunlab.scenamatica.commons.utils.Utils;
+import org.kunlab.scenamatica.enums.MinecraftVersion;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
@@ -19,7 +21,7 @@ import org.kunlab.scenamatica.interfaces.scenariofile.misc.LocationStructure;
 import java.util.Collections;
 import java.util.List;
 
-@ActionMeta("entity_move")
+@ActionMeta(value = "entity_move", supportsSince = MinecraftVersion.V1_16_5)
 public class EntityMoveAction extends AbstractGeneralEntityAction
         implements Executable, Watchable
 {

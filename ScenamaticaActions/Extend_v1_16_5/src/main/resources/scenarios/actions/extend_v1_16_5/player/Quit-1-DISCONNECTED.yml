@@ -1,8 +1,9 @@
 # noinspection YAMLSchemaValidation
 scenamatica: ${project.version}
+minecraft: 1.16.5
 
-name: actions_player_quit_4
-description: Testing player_quit action with erroneous state works or not
+name: actions_player_quit
+description: Testing player_quit action with disconnect works or not
 on:
   - type: on_load
   - type: manual_dispatch
@@ -16,15 +17,15 @@ scenario:
     action: player_quit
     with:
       target: Actor001
-      reason: ERRONEOUS_STATE
+      reason: DISCONNECTED
   - type: expect
     action: player_quit
     with:
       target: Actor001
-      reason: ERRONEOUS_STATE
+      reason: DISCONNECTED
   - type: require
     action: player_quit
     with:
       target: Actor001
-      reason: ERRONEOUS_STATE
+      reason: DISCONNECTED
 

@@ -10,7 +10,9 @@
         <module name="ContextEngineCore" />
         <module name="ScenamaticaCommons" />
         <module name="ScenamaticaActionEngine" />
+        <module name="Extended_v1_16" />
         <module name="ScenamaticaSelectorEngine" />
+        <module name="Extend_v1_16_5" />
         <module name="NMSCore" />
         <module name="ScenamaticaDaemon" />
         <module name="ScenamaticaScenarioEngine" />

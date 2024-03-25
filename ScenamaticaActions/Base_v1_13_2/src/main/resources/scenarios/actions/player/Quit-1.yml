@@ -1,8 +1,9 @@
 # noinspection YAMLSchemaValidation
 scenamatica: ${project.version}
+minecraft: 1.13.2
 
 name: actions_player_quit_3
-description: Testing player_quit action with time out works or not
+description: Testing player_quit action without reason works or not
 on:
   - type: on_load
   - type: manual_dispatch
@@ -16,15 +17,7 @@ scenario:
     action: player_quit
     with:
       target: Actor001
-      reason: TIMED_OUT
   - type: expect
     action: player_quit
     with:
       target: Actor001
-      reason: TIMED_OUT
-  - type: require
-    action: player_quit
-    with:
-      target: Actor001
-      reason: TIMED_OUT
-

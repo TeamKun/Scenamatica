@@ -1,10 +1,11 @@
-package org.kunlab.scenamatica.action.actions.base.world.border;
+package org.kunlab.scenamatica.action.actions.extend_v1_16_5.world.border;
 
 import io.papermc.paper.event.world.border.WorldBorderBoundsChangeFinishEvent;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.action.actions.base.world.AbstractWorldAction;
 import org.kunlab.scenamatica.annotations.action.ActionMeta;
+import org.kunlab.scenamatica.enums.MinecraftVersion;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
@@ -14,7 +15,7 @@ import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import java.util.Collections;
 import java.util.List;
 
-@ActionMeta("world_border_changed")
+@ActionMeta(value = "world_border_changed", supportsSince = MinecraftVersion.V1_16_5)
 public class WorldBorderChangedAction extends AbstractWorldAction
         implements Watchable
 {

@@ -1,10 +1,11 @@
-package org.kunlab.scenamatica.action.actions.base.player;
+package org.kunlab.scenamatica.action.actions.extend_v1_16_5.player;
 
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.jetbrains.annotations.NotNull;
+import org.kunlab.scenamatica.action.actions.base.player.AbstractPlayerAction;
 import org.kunlab.scenamatica.annotations.action.ActionMeta;
 import org.kunlab.scenamatica.enums.MinecraftVersion;
 import org.kunlab.scenamatica.enums.ScenarioType;
@@ -18,13 +19,17 @@ import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import java.util.Collections;
 import java.util.List;
 
-@ActionMeta(value = "player_gamemode", supportsUntil = MinecraftVersion.V1_16_4)
+@ActionMeta(value = "player_gamemode", supportsSince = MinecraftVersion.V1_16_5)
 public class PlayerGameModeAction extends AbstractPlayerAction
         implements Executable, Watchable, Requireable
 {
     public static final InputToken<GameMode> IN_GAME_MODE = ofEnumInput(
             "gamemode",
             GameMode.class
+    );
+    public static final InputToken<PlayerGameModeChangeEvent.Cause> IN_CAUSE = ofEnumInput(
+            "cause",
+            PlayerGameModeChangeEvent.Cause.class
     );
     public static final String KEY_OUT_GAME_MODE = "gamemode";
 
@@ -47,7 +52,8 @@ public class PlayerGameModeAction extends AbstractPlayerAction
         assert event instanceof PlayerGameModeChangeEvent;
         PlayerGameModeChangeEvent e = (PlayerGameModeChangeEvent) event;
 
-        boolean result = ctxt.ifHasInput(IN_GAME_MODE, gameMode -> gameMode == e.getNewGameMode());
+        boolean result = ctxt.ifHasInput(IN_GAME_MODE, gameMode -> gameMode == e.getNewGameMode())
+                && ctxt.ifHasInput(IN_CAUSE, cause -> cause == e.getCause());
         if (result)
             this.makeOutputs(ctxt, e.getPlayer(), e.getNewGameMode());
 
@@ -55,6 +61,12 @@ public class PlayerGameModeAction extends AbstractPlayerAction
     }
 
     private void makeOutputs(@NotNull ActionContext ctxt, @NotNull Player player, @NotNull GameMode gameMode)
+    {
+        super.makeOutputs(ctxt, player);
+        ctxt.output(KEY_OUT_GAME_MODE, gameMode);
+    }
+
+    private void makeOutputs(@NotNull ActionContext ctxt, @NotNull Player player, @NotNull GameMode gameMode, @NotNull PlayerGameModeChangeEvent.Cause cause)
     {
         super.makeOutputs(ctxt, player);
         ctxt.output(KEY_OUT_GAME_MODE, gameMode);
@@ -86,8 +98,15 @@ public class PlayerGameModeAction extends AbstractPlayerAction
         InputBoard board = super.getInputBoard(type)
                 .register(IN_GAME_MODE);
 
-        if (type == ScenarioType.ACTION_EXECUTE)
-            board.requirePresent(IN_GAME_MODE);
+        switch (type)
+        {
+            case ACTION_EXECUTE:
+                board.requirePresent(IN_GAME_MODE);
+                break;
+            case ACTION_EXPECT:
+                board.register(IN_CAUSE);
+                break;
+        }
 
         return board;
     }

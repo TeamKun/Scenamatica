@@ -1,8 +1,9 @@
 # noinspection YAMLSchemaValidation
 scenamatica: ${project.version}
+minecraft: 1.13.2
 
-name: actions_player_quit_2
-description: Testing player_quit action with kick works or not
+name: actions_player_quit_1
+description: Testing player_quit action without argument works or not
 on:
   - type: on_load
   - type: manual_dispatch
@@ -16,15 +17,5 @@ scenario:
     action: player_quit
     with:
       target: Actor001
-      reason: KICKED
   - type: expect
     action: player_quit
-    with:
-      target: Actor001
-      reason: KICKED
-  - type: require
-    action: player_quit
-    with:
-      target: Actor001
-      reason: KICKED
-

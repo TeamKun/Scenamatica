@@ -5,6 +5,8 @@
       <module fileurl="file://$PROJECT_DIR$/Base_v1_13_2.iml" filepath="$PROJECT_DIR$/Base_v1_13_2.iml" />
       <module fileurl="file://$PROJECT_DIR$/ContextEngineCore.iml" filepath="$PROJECT_DIR$/ContextEngineCore.iml" />
       <module fileurl="file://$PROJECT_DIR$/ContextEngineNMSBase.iml" filepath="$PROJECT_DIR$/ContextEngineNMSBase.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Extend_v1_16_5.iml" filepath="$PROJECT_DIR$/Extend_v1_16_5.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Extended_v1_16.iml" filepath="$PROJECT_DIR$/Extended_v1_16.iml" />
       <module fileurl="file://$PROJECT_DIR$/NMSBridge.iml" filepath="$PROJECT_DIR$/NMSBridge.iml" />
       <module fileurl="file://$PROJECT_DIR$/NMSCore.iml" filepath="$PROJECT_DIR$/NMSCore.iml" />
       <module fileurl="file://$PROJECT_DIR$/NMSTypes.iml" filepath="$PROJECT_DIR$/NMSTypes.iml" />

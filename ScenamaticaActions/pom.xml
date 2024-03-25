@@ -12,6 +12,7 @@
 
     <modules>
         <module>Base_v1_13_2</module>
+        <module>Extend_v1_16_5</module>
     </modules>
 
     <artifactId>ScenamaticaActions</artifactId>

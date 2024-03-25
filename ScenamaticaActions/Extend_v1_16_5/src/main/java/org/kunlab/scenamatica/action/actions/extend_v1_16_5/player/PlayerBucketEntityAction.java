@@ -1,4 +1,4 @@
-package org.kunlab.scenamatica.action.actions.base.player;
+package org.kunlab.scenamatica.action.actions.extend_v1_16_5.player;
 
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
@@ -8,7 +8,9 @@ import org.bukkit.event.player.PlayerBucketEntityEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.kunlab.scenamatica.action.actions.base.player.AbstractPlayerAction;
 import org.kunlab.scenamatica.annotations.action.ActionMeta;
+import org.kunlab.scenamatica.enums.MinecraftVersion;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
@@ -25,7 +27,7 @@ import java.util.Collections;
 import java.util.List;
 
 // 注： AbstractPlayerBucketAction を継承していない。
-@ActionMeta("player_bucket_entity")
+@ActionMeta(value = "player_bucket_entity", supportsSince = MinecraftVersion.V1_16_5)
 public class PlayerBucketEntityAction extends AbstractPlayerAction
         implements Executable, Watchable
 {

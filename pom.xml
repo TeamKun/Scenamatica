@@ -23,6 +23,7 @@
         <module>NMSBridge</module>
         <module>ScenamaticaSelectorEngine</module>
         <module>ScenamaticaActions</module>
+        <module>ScenamaticaActions/Extended_v1_16</module>
     </modules>
 
     <name>Scenamatica</name>
@@ -98,6 +99,19 @@
             <version>3.0.1</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
+            <version>24.1.0</version>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.jetbrains</groupId>
+                    <artifactId>annotations</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
