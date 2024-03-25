@@ -6,6 +6,20 @@
       "type": "version",
       "description": "対応する Scenamatica のバージョンです。動作している Scenamatica のバージョンよりも新しいバージョンのシナリオファイルは読み込めません。"
     },
+    "minecraft": {
+      "type": "object",
+      "description": "対応する Minecraft のバージョンです。指定された範囲にないバージョンの Minecraft では実行できません。",
+      "properties": {
+        "since": {
+          "type": "version",
+          "description": "対応する Minecraft のバージョンの下限です。"
+        },
+        "until": {
+          "type": "version",
+          "description": "対応する Minecraft のバージョンの上限です。"
+        }
+      }
+    },
     "name": {
       "type": "string",
       "description": "シナリオにつける一意の識別子です。キャメルケースが推奨されていますが、特に技術的制約はありません。",
