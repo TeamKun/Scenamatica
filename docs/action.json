@@ -101,6 +101,14 @@
                   ]
                 }
               ]
+            },
+            "since": {
+              "type": "string",
+              "description": "The version of Minecraft that the argument was added in"
+            },
+            "until": {
+              "type": "string",
+              "description": "The version of Minecraft that the argument was removed in"
             }
           },
           "additionalProperties": true
@@ -127,11 +135,27 @@
                   ]
                 }
               ]
+            },
+            "since": {
+              "type": "string",
+              "description": "The version of Minecraft that the output was added in"
+            },
+            "until": {
+              "type": "string",
+              "description": "The version of Minecraft that the output was removed in"
             }
           },
           "additionalProperties": true
         }
       }
+    },
+    "since": {
+      "type": "string",
+      "description": "The version of Minecraft that the action was added in"
+    },
+    "until": {
+      "type": "string",
+      "description": "The version of Minecraft that the action was removed in"
     }
   },
   "required": [

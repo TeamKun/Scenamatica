@@ -24,7 +24,8 @@
         "KICKED",
         "TIMED_OUT",
         "ERRONEOUS_STATE"
-      ]
+      ],
+      "since": "1.16.5"
     }
   },
   "outputs": {
@@ -40,7 +41,8 @@
         "KICKED",
         "TIMED_OUT",
         "ERRONEOUS_STATE"
-      ]
+      ],
+      "since": "1.16.5"
     }
   }
 }

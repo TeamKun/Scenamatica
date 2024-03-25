@@ -10,6 +10,8 @@
   "watchable": "ワールドボーダの変更の完了を期待します。",
   "requireable": false,
 
+  "since": "1.16.5",
+
   "arguments": {
     "size": {
       "type": "number",
