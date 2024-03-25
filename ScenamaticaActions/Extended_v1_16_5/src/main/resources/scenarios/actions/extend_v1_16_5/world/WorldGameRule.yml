@@ -1,5 +1,7 @@
 # noinspection YAMLSchemaValidation
 scenamatica: ${project.version}
+minecraft:
+  since: "1.16.5"
 
 name: actions_world_game_rule
 description: Testing WorldGameRuleAction with integer value works or not

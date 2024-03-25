@@ -1,5 +1,7 @@
 # noinspection YAMLSchemaValidation
 scenamatica: ${project.version}
+minecraft:
+  since: "1.16.5"
 
 name: actions_world_game_rule_2
 description: Testing WorldGameRuleAction with boolean value works or not

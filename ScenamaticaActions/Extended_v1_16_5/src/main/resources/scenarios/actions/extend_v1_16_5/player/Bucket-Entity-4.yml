@@ -1,8 +1,10 @@
 # noinspection YAMLSchemaValidation
 scenamatica: ${project.version}
+minecraft:
+  since: "1.16.5"
 
-name: actions_player_bucket_entity
-description: Testing PlayerBucketEntityAction works or not
+name: actions_player_bucket_entity_4
+description: Testing PlayerBucketEntityAction without bucket works or not
 on:
   - type: on_load
     before:
@@ -37,8 +39,6 @@ scenario:
     action: player_bucket_entity
     with:
       target: Actor001
-      bucket:
-        type: WATER_BUCKET
       entity:
         type: SALMON
       entityBucket:

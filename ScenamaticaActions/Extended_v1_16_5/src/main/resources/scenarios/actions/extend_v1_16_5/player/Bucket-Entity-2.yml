@@ -1,5 +1,7 @@
 # noinspection YAMLSchemaValidation
 scenamatica: ${project.version}
+minecraft:
+  since: "1.16.5"
 
 name: actions_player_bucket_entity_2
 description: Testing PlayerBucketEntityAction without entityBucket works or not

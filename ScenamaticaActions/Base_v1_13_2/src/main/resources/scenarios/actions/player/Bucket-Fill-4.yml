@@ -1,5 +1,7 @@
 # noinspection YAMLSchemaValidation
 scenamatica: ${project.version}
+minecraft:
+  until: "1.15.2"
 
 name: actions_player_bucket_fill_4
 description: Testing PlayerBucketFillAction without argument works or not
