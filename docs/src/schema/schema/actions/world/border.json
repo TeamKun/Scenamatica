@@ -11,6 +11,8 @@
   "watchable": "ワールドボーダが変更されるか期待します。",
   "requireable": "ワールドボーダが指定されたものであることを要求します。",
 
+  "since": "1.16.5",
+
   "arguments": {
     "type": {
       "type": "string",
