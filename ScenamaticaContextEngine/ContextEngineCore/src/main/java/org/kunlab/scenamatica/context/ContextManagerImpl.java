@@ -183,8 +183,13 @@ public class ContextManagerImpl implements ContextManager
     private List<Entity> prepareEntities(Stage stage, ContextStructure context) throws EntityCreationException
     {
         List<Entity> entities = new ArrayList<>();
-        for (EntityStructure entity : context.getEntities())
-            entities.add(this.spawnEntity(stage.getWorld(), entity));
+        // Asynchronous chunk load! を避けるために同期処理
+        ThreadingUtil.waitForOrThrow(this.registry, () -> {
+            for (EntityStructure entity : context.getEntities())
+                entities.add(this.spawnEntity(stage.getWorld(), entity));
+
+            return null;
+        });
 
         return entities;
     }
