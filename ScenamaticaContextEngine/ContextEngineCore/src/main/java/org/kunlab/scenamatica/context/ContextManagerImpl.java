@@ -9,7 +9,6 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
-import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.commons.utils.LogUtils;
@@ -168,20 +167,15 @@ public class ContextManagerImpl implements ContextManager
             spawnLoc = entity.getLocation().create();
 
 
-        return ThreadingUtil.waitForOrThrow(this.registry, () -> {
+        return (T) ThreadingUtil.waitForOrThrow(this.registry, () -> {
                     UUID entityTag = UUID.randomUUID();
                     String tagName = "scenamatica-" + entityTag;
-                    @SuppressWarnings("unchecked")  // 一見 unchecked に見えるが、spawnEntity は T を返す。
-                    T e = (T) stage.spawnEntity(spawnLoc, type, CreatureSpawnEvent.SpawnReason.CUSTOM,
-                            generatedEntity -> {
-                                ((Mapped<T>) entity).applyTo((T) generatedEntity);
-                                generatedEntity.addScoreboardTag(tagName);
-                            }
-                    );
+                    Entity generatedEntity = stage.spawnEntity(spawnLoc, type);
+                    ((Mapped<T>) entity).applyTo((T) generatedEntity);
+                    generatedEntity.addScoreboardTag(tagName);
+                    this.chunkLoader.addEntity(generatedEntity);
 
-                    this.chunkLoader.addEntity(e);
-
-                    return e;
+                    return generatedEntity;
                 }
         );
     }

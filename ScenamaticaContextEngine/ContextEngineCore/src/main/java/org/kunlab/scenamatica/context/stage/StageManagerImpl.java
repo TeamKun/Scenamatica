@@ -13,6 +13,8 @@ import org.kunlab.scenamatica.interfaces.ScenamaticaRegistry;
 import org.kunlab.scenamatica.interfaces.context.Stage;
 import org.kunlab.scenamatica.interfaces.context.StageManager;
 import org.kunlab.scenamatica.interfaces.scenariofile.context.StageStructure;
+import org.kunlab.scenamatica.nms.NMSProvider;
+import org.kunlab.scenamatica.nms.types.NMSWorldServer;
 
 import java.io.File;
 import java.io.IOException;
@@ -54,7 +56,6 @@ public class StageManagerImpl implements StageManager
             creator.seed(structure.getSeed());
         creator.type(structure.getType());
         creator.generateStructures(structure.isGenerateStructures());
-        creator.hardcore(structure.isHardcore());
 
         return creator;
     }
@@ -116,8 +117,15 @@ public class StageManagerImpl implements StageManager
                 break;
         }
 
+        // hardCore だけはここで設定する必要がある。
+        if (structure.isHardcore())
+        {
+            NMSWorldServer nmsWorldServer = NMSProvider.getProvider().wrap(world);
+            nmsWorldServer.getWorldData().setHardcore(true);
+        }
+
         if (world == null)
-            throw new StageCreateFailedException(creator.key().toString());
+            throw new StageCreateFailedException(creator.name());
 
         world.setAutoSave(false);
 
