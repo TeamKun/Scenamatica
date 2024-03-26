@@ -13,18 +13,12 @@ context:
 
 scenario:
   - type: execute
-    action: player_advancement
+    action: player_level_change
     with:
       target: Actor001
-      advancement: minecraft:nether/distract_piglin
+      level: 10
   - type: expect
-    action: player_advancement
+    action: player_level_change
     with:
       target: Actor001
-      advancement: minecraft:nether/distract_piglin
-    timeout: 20
-  - type: require
-    action: player_advancement
-    with:
-      target: Actor001
-      advancement: minecraft:nether/distract_piglin
+      level: 10
