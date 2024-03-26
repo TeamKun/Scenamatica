@@ -280,7 +280,10 @@ LivingEntity 型は以下の親構造を持ちます。
   {
     name: "arrowCooldown",
     type: ObjectType.INTEGER,
-    description: "矢のクールダウンです。"
+    description: "矢のクールダウンです。",
+    support: {
+      since: "1.16.5"
+    }
   },
   {
     name: "arrowsInBody",
@@ -400,22 +403,6 @@ LivingEntity 型は以下の親構造を持ちます。
     name: "isHandRaised",
     type: ObjectType.BOOLEAN,
     description: "手を上げているかどうかです。"
-  },
-  {
-    name: "handRaised",
-    type: "Hand",
-    type_link: "/docs/use/scenario/types/entities#hand",
-    description: "上げている手です。"
-  },
-  {
-    name: "jumping",
-    type: ObjectType.BOOLEAN,
-    description: "ジャンプしているかどうかです。"
-  },
-  {
-    name: "hurtDirection",
-    type: ObjectType.FLOAT,
-    description: "受けたダメージの方向です。"
   }
 ]} />
 
