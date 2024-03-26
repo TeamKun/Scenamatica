@@ -2,10 +2,14 @@ package org.kunlab.scenamatica.nms;
 
 import lombok.Getter;
 import org.bukkit.Bukkit;
+import org.kunlab.scenamatica.nms.exceptions.UnsupportedNMSOperationException;
 import org.kunlab.scenamatica.nms.types.NMSRegistry;
+import org.slf4j.Logger;
 
 public class NMSProvider
 {
+    private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(NMSProvider.class);
+
     @Getter
     private static String version;
     private static WrapperProvider provider;
@@ -56,8 +60,47 @@ public class NMSProvider
         NMSProvider.typeSupport = typeSupport;
     }
 
+    public static <T> T doNMSSafe(NMSAction<T> action)
+    {
+        try
+        {
+            return action.run();
+        }
+        catch (UnsupportedNMSOperationException e)
+        {
+            LOGGER.debug("Unsupported NMS operation has been skipped. This is normal behavior and expected in the case.", e);
+            return null;
+        }
+    }
+
+    public static boolean tryDoNMS(NMSVoidAction action)
+    {
+        try
+        {
+            action.run();
+            return true;
+        }
+        catch (UnsupportedNMSOperationException e)
+        {
+            LOGGER.debug("Unsupported NMS operation has been skipped. This is normal behavior and expected in the case.", e);
+            return false;
+        }
+    }
+
     private static String getServerVersion()
     {
         return Bukkit.getServer().getClass().getPackage().getName().substring(23);
+    }
+
+    @FunctionalInterface
+    public static interface NMSAction<T>
+    {
+        T run() throws UnsupportedNMSOperationException;
+    }
+
+    @FunctionalInterface
+    public static interface NMSVoidAction
+    {
+        void run() throws UnsupportedNMSOperationException;
     }
 }

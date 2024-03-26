@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -42,7 +41,6 @@ public class ItemStackStructureImpl implements ItemStackStructure
     String localizedName;
     @NotNull
     List<String> lore;
-    Integer customModelData;
     @NotNull
     Map<Enchantment, Integer> enchantments;
     @NotNull
@@ -64,7 +62,6 @@ public class ItemStackStructureImpl implements ItemStackStructure
                 null,
                 null,
                 Collections.emptyList(),
-                null,
                 Collections.emptyMap(),
                 Collections.emptyList(),
                 null,
@@ -132,9 +129,6 @@ public class ItemStackStructureImpl implements ItemStackStructure
         for (Map.Entry<String, List<Map<String, Object>>> entry :
                 MapUtils.getOrDefault(map, KEY_ATTRIBUTE_MODIFIERS, Collections.<String, List<Map<String, Object>>>emptyMap()).entrySet())
         {
-            String attrName = entry.getKey().toUpperCase(Locale.ROOT)
-                    .replace(".", "_");
-
             List<AttributeModifier> modifiers = new ArrayList<>();
             for (Map<String, Object> attrs : entry.getValue())
             {
@@ -157,7 +151,7 @@ public class ItemStackStructureImpl implements ItemStackStructure
                 ));
             }
 
-            result.put(getAttributeFromString(attrName), modifiers);
+            result.put(getAttributeFromString(entry.getKey()), modifiers);
         }
 
         return result;
@@ -183,15 +177,94 @@ public class ItemStackStructureImpl implements ItemStackStructure
                     list.add(attrs);
                 }
 
-                String key = NamespaceUtils.toString(entry.getKey().getKey())
-                        .replace("generic.", "")
-                        .toLowerCase(Locale.ROOT);
-
-                result.put(key, list);
+                result.put(getAttributeString(entry.getKey()), list);
             }
         }
 
         return result;
+    }
+
+    private static String getAttributeString(Attribute attribute)
+    {
+        String attributeName;
+        switch (attribute)
+        {
+            case GENERIC_MAX_HEALTH:
+                attributeName = "generic.max_health";
+                break;
+            case GENERIC_FOLLOW_RANGE:
+                attributeName = "generic.follow_range";
+                break;
+            case GENERIC_KNOCKBACK_RESISTANCE:
+                attributeName = "generic.knockback_resistance";
+                break;
+            case GENERIC_MOVEMENT_SPEED:
+                attributeName = "generic.movement_speed";
+                break;
+            case GENERIC_FLYING_SPEED:
+                attributeName = "generic.flying_speed";
+                break;
+            case GENERIC_ATTACK_DAMAGE:
+                attributeName = "generic.attack_damage";
+                break;
+            case GENERIC_ATTACK_SPEED:
+                attributeName = "generic.attack_speed";
+                break;
+            case GENERIC_ARMOR:
+                attributeName = "generic.armor";
+                break;
+            case GENERIC_ARMOR_TOUGHNESS:
+                attributeName = "generic.armor_toughness";
+                break;
+            case GENERIC_LUCK:
+                attributeName = "generic.luck";
+                break;
+            case HORSE_JUMP_STRENGTH:
+                attributeName = "horse.jump_strength";
+                break;
+            case ZOMBIE_SPAWN_REINFORCEMENTS:
+                attributeName = "zombie.spawn_reinforcements";
+                break;
+            default:
+                return null;
+        }
+        return attributeName.startsWith("generic.") ? attributeName.substring("generic.".length()): attributeName;
+    }
+
+    private static Attribute getAttributeFromString(String name)
+    {
+        if (name.startsWith("generic."))
+            name = name.substring("generic.".length());
+        
+        switch (name)
+        {
+            case "max_health":
+                return Attribute.GENERIC_MAX_HEALTH;
+            case "follow_range":
+                return Attribute.GENERIC_FOLLOW_RANGE;
+            case "knockback_resistance":
+                return Attribute.GENERIC_KNOCKBACK_RESISTANCE;
+            case "movement_speed":
+                return Attribute.GENERIC_MOVEMENT_SPEED;
+            case "flying_speed":
+                return Attribute.GENERIC_FLYING_SPEED;
+            case "attack_damage":
+                return Attribute.GENERIC_ATTACK_DAMAGE;
+            case "attack_speed":
+                return Attribute.GENERIC_ATTACK_SPEED;
+            case "armor":
+                return Attribute.GENERIC_ARMOR;
+            case "armor_toughness":
+                return Attribute.GENERIC_ARMOR_TOUGHNESS;
+            case "luck":
+                return Attribute.GENERIC_LUCK;
+            case "horse.jump_strength":
+                return Attribute.HORSE_JUMP_STRENGTH;
+            case "zombie.spawn_reinforcements":
+                return Attribute.ZOMBIE_SPAWN_REINFORCEMENTS;
+            default:
+                return null;
+        }
     }
 
     @SuppressWarnings("rawtypes")
@@ -233,7 +306,6 @@ public class ItemStackStructureImpl implements ItemStackStructure
 
         MapUtils.putPrimitiveOrStrIfNotNull(map, KEY_DISPLAY_NAME, structure.getDisplayName());
         MapUtils.putPrimitiveOrStrIfNotNull(map, KEY_LOCALIZED_NAME, structure.getLocalizedName());
-        MapUtils.putPrimitiveOrStrIfNotNull(map, KEY_CUSTOM_MODEL_DATA, structure.getCustomModelData());
         MapUtils.putPrimitiveOrStrIfNotNull(map, KEY_DAMAGE, structure.getDamage());
 
         MapUtils.putListIfNotEmpty(map, KEY_LORE, structure.getLore());
@@ -266,20 +338,6 @@ public class ItemStackStructureImpl implements ItemStackStructure
         validateAttributeModifiersMap(map);
     }
 
-    private static Attribute getAttributeFromString(String name)
-    {
-        String maybeGeneric = name.toUpperCase(Locale.ROOT);
-
-        try
-        {
-            return Attribute.valueOf(maybeGeneric);
-        }
-        catch (IllegalArgumentException e)
-        {
-            return Attribute.valueOf("GENERIC_" + maybeGeneric);  // GENERIC_ は省略できる
-        }
-    }
-
     @NotNull
     public static ItemStackStructure deserialize(@NotNull Map<String, Object> map)
     {
@@ -290,7 +348,6 @@ public class ItemStackStructureImpl implements ItemStackStructure
         String name = MapUtils.getOrNull(map, KEY_DISPLAY_NAME);
         String localizedName = MapUtils.getOrNull(map, KEY_LOCALIZED_NAME);
         List<String> lore = MapUtils.getOrDefault(map, KEY_LORE, Collections.emptyList());
-        Integer customModelData = MapUtils.getOrNull(map, KEY_CUSTOM_MODEL_DATA);
         List<ItemFlag> flags = MapUtils.getAsEnumOrEmptyList(map, KEY_ITEM_FLAGS, ItemFlag.class);
         Boolean unbreakable = MapUtils.getOrNull(map, KEY_UNBREAKABLE);
         Integer damage = MapUtils.getOrNull(map, KEY_DAMAGE);
@@ -312,7 +369,6 @@ public class ItemStackStructureImpl implements ItemStackStructure
                 name,
                 localizedName,
                 lore,
-                customModelData,
                 enchantments,
                 flags,
                 unbreakable,
@@ -368,7 +424,6 @@ public class ItemStackStructureImpl implements ItemStackStructure
         String displayName = null;
         String localizedName = null;
         List<String> lore = Collections.emptyList();
-        Integer customModelData = null;
         List<ItemFlag> flags = Collections.emptyList();
         Boolean unbreakable = null;
         Map<Enchantment, Integer> enchantments = Collections.emptyMap();
@@ -384,7 +439,6 @@ public class ItemStackStructureImpl implements ItemStackStructure
                 lore = meta.getLore();
                 assert lore != null;
             }
-            customModelData = meta.hasCustomModelData() ? meta.getCustomModelData(): null;
             flags = new ArrayList<>(meta.getItemFlags());
             unbreakable = meta.isUnbreakable();
             enchantments = new HashMap<>(stack.getEnchantments());
@@ -407,7 +461,6 @@ public class ItemStackStructureImpl implements ItemStackStructure
                 displayName,
                 localizedName,
                 lore,
-                customModelData,
                 enchantments,
                 flags,
                 unbreakable,
@@ -432,7 +485,6 @@ public class ItemStackStructureImpl implements ItemStackStructure
                 ", displayName='" + this.displayName + '\'' +
                 ", localizedName='" + this.localizedName + '\'' +
                 ", lore=" + this.lore +
-                ", customModelData=" + this.customModelData +
                 ", enchantments=" + this.enchantments +
                 ", itemFlags=" + this.itemFlags +
                 ", unbreakable=" + this.unbreakable +
@@ -451,7 +503,6 @@ public class ItemStackStructureImpl implements ItemStackStructure
         result = 31 * result + (this.displayName != null ? this.displayName.hashCode(): 0);
         result = 31 * result + (this.localizedName != null ? this.localizedName.hashCode(): 0);
         result = 31 * result + this.lore.hashCode();
-        result = 31 * result + (this.customModelData != null ? this.customModelData.hashCode(): 0);
         result = 31 * result + this.enchantments.hashCode();
         result = 31 * result + this.itemFlags.hashCode();
         result = 31 * result + (this.unbreakable != null ? this.unbreakable.hashCode(): 0);
@@ -476,8 +527,6 @@ public class ItemStackStructureImpl implements ItemStackStructure
         if (!Objects.equals(this.displayName, that.getDisplayName())) return false;
         if (!Objects.equals(this.localizedName, that.getLocalizedName())) return false;
         if (!Objects.equals(this.lore, that.getLore())) return false;
-        if (!Objects.equals(this.customModelData, that.getCustomModelData()))
-            return false;
         if (!this.enchantments.equals(that.getEnchantments())) return false;
         if (!this.itemFlags.equals(that.getItemFlags())) return false;
         if (!this.placeableKeys.equals(that.getPlaceableKeys())) return false;
@@ -513,8 +562,6 @@ public class ItemStackStructureImpl implements ItemStackStructure
             meta.setLocalizedName(this.localizedName);
         if (!this.lore.isEmpty())
             meta.setLore(this.lore);
-        if (this.customModelData != null)
-            meta.setCustomModelData(this.customModelData);
         if (!this.enchantments.isEmpty())
             stack.addUnsafeEnchantments(this.enchantments);
         if (!this.itemFlags.isEmpty())
@@ -582,10 +629,6 @@ public class ItemStackStructureImpl implements ItemStackStructure
             if (expected.stream().anyMatch(s -> actual.stream().noneMatch(predicate)))
                 return false;
         }
-
-        if (this.customModelData != null)
-            if (meta == null || !this.customModelData.equals(meta.getCustomModelData()))
-                return false;
 
         if (!this.enchantments.isEmpty())
         {

@@ -6,6 +6,7 @@ import org.bukkit.craftbukkit.v1_13_R2.entity.CraftLivingEntity;
 import org.bukkit.entity.LivingEntity;
 import org.kunlab.scenamatica.nms.enums.NMSHand;
 import org.kunlab.scenamatica.nms.enums.entity.NMSItemSlot;
+import org.kunlab.scenamatica.nms.exceptions.UnsupportedNMSOperationException;
 import org.kunlab.scenamatica.nms.impl.v1_13_R2.TypeSupportImpl;
 import org.kunlab.scenamatica.nms.types.entity.NMSEntity;
 import org.kunlab.scenamatica.nms.types.entity.NMSEntityLiving;
@@ -69,6 +70,44 @@ public class NMSEntityLivingImpl extends NMSEntityImpl implements NMSEntityLivin
     public void receive(NMSEntity entity, int amount)
     {
         this.nmsEntity.receive((Entity) entity.getNMSRaw(), amount);
+    }
+
+    @Override
+    public boolean isSleeping()
+    {
+        return this.nmsEntity.isSleeping();
+    }
+
+    @Override
+    public int getArrowCount()
+    {
+        return this.nmsEntity.getArrowCount();
+    }
+
+    @Override
+    public void setArrowCount(int count)
+    {
+        this.nmsEntity.setArrowCount(count);
+    }
+
+    @Override
+    public int getArrowCooldown()
+    {
+        throw UnsupportedNMSOperationException.of(
+                this.getClass(),
+                "getArrowCooldown",
+                int.class
+        );
+    }
+
+    @Override
+    public void setArrowCooldown(int cooldown)
+    {
+        throw UnsupportedNMSOperationException.ofVoid(
+                this.getClass(),
+                "setArrowCooldown",
+                int.class
+        );
     }
 
     @Override

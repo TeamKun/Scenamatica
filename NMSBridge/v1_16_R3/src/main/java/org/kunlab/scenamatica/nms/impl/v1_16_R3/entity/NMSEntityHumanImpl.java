@@ -54,6 +54,18 @@ public class NMSEntityHumanImpl extends NMSEntityLivingImpl implements NMSEntity
     }
 
     @Override
+    public int getFoodLevel()
+    {
+        return this.nmsEntity.getFoodData().getFoodLevel();
+    }
+
+    @Override
+    public void setFoodLevel(int foodLevel)
+    {
+        this.nmsEntity.getFoodData().foodLevel = foodLevel;
+    }
+
+    @Override
     public EntityHuman getNMSRaw()
     {
         return this.nmsEntity;

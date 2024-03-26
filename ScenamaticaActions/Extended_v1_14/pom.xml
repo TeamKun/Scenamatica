@@ -26,5 +26,10 @@
             <artifactId>Base_v1_13_2</artifactId>
             <version>1.0.0</version>
         </dependency>
+        <dependency>
+            <groupId>com.destroystokyo.paper</groupId>
+            <artifactId>paper-api</artifactId>
+            <version>1.14-R0.1-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 </project>

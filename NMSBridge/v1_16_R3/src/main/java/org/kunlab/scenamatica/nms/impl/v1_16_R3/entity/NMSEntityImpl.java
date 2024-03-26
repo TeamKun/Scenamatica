@@ -56,4 +56,17 @@ public class NMSEntityImpl implements NMSEntity
 
         return new NMSEntityItemImpl(dropped);
     }
+
+    @Override
+    public boolean isInvisible()
+    {
+        return this.nmsEntity.isInvisible();
+    }
+
+    @Override
+    public void setInvisible(boolean invisible)
+    {
+        this.nmsEntity.persistentInvisibility = invisible;  // CraftBukkit の変更
+        this.nmsEntity.setFlag(5, invisible);
+    }
 }

@@ -123,8 +123,18 @@ public class EntityItemStructureImpl extends EntityStructureImpl implements Enti
                 entity.getOwner(),
                 entity.getThrower(),
                 entity.canMobPickup(),
-                entity.willAge()
+                willAge(entity)
         );
+    }
+
+    private static boolean willAge(Item entity)
+    {
+        return entity.getTicksLived() != Short.MIN_VALUE;
+    }
+
+    private static void setWillAge(Item entity, boolean willAge)
+    {
+        entity.setTicksLived(willAge ? 0: Short.MIN_VALUE);
     }
 
     @Override
@@ -141,7 +151,7 @@ public class EntityItemStructureImpl extends EntityStructureImpl implements Enti
         if (this.canMobPickup != null)
             entity.setCanMobPickup(this.canMobPickup);
         if (this.willAge != null)
-            entity.setWillAge(this.willAge);
+            setWillAge(entity, this.willAge);
     }
 
     @Override
@@ -158,7 +168,7 @@ public class EntityItemStructureImpl extends EntityStructureImpl implements Enti
                 && (this.owner == null || this.owner.equals(object.getOwner()))
                 && (this.thrower == null || this.thrower.equals(object.getThrower()))
                 && (this.canMobPickup == null || this.canMobPickup.equals(object.canMobPickup()))
-                && (this.willAge == null || this.willAge.equals(object.willAge()))
+                && (this.willAge == null || this.willAge.equals(willAge(object)))
                 && this.itemStack.isAdequate(object.getItemStack(), strict);
     }
 }

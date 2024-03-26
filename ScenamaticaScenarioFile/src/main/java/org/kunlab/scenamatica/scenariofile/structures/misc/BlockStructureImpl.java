@@ -220,7 +220,7 @@ public class BlockStructureImpl implements BlockStructure
         if (this.type != null)
             block.setType(this.type, true);
         if (this.biome != null)
-            block.getWorld().setBiome(location.getBlockX(), location.getBlockY(), location.getBlockZ(), this.biome);
+            block.getWorld().setBiome(location.getBlockX(), location.getBlockZ(), this.biome);
         if (!this.metadata.isEmpty())
         {
             ClassLoader classLoader = BlockStructure.class.getClassLoader();

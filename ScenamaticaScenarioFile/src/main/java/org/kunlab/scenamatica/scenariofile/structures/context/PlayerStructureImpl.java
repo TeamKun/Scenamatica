@@ -408,10 +408,7 @@ public class PlayerStructureImpl extends HumanEntityStructureImpl implements Pla
             player.setFlySpeed(this.flySpeed);
 
         if (this.opLevel != null)
-        {
             player.setOp(this.opLevel > 0);
-            player.sendOpLevel(this.opLevel.byteValue());
-        }
     }
 
     @Override

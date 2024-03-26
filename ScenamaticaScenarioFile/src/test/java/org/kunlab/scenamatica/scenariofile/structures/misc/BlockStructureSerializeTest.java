@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class BlockStructureSerializeTest
 {
     public static final BlockStructure FULFILLED = new BlockStructureImpl(
-            Material.ACACIA_SIGN,
+            Material.MAGENTA_WALL_BANNER,
             LocationStructureImpl.of(new Location(null, 114, 514, 19)),
             new HashMap<String, Object>()
             {{
@@ -34,7 +34,7 @@ public class BlockStructureSerializeTest
 
     public static final Map<String, Object> FULFILLED_MAP = new HashMap<String, Object>()
     {{
-        this.put("type", "ACACIA_SIGN");
+        this.put("type", "MAGENTA_WALL_BANNER");
         this.put("location", new HashMap<String, Object>()
         {{
             this.put("x", 114.0);

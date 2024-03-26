@@ -4,7 +4,6 @@ import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.nms.NMSWrapped;
-import org.kunlab.scenamatica.nms.Versioned;
 import org.kunlab.scenamatica.nms.enums.entity.NMSMoveType;
 import org.kunlab.scenamatica.nms.types.item.NMSItemStack;
 
@@ -26,7 +25,6 @@ public interface NMSEntity extends NMSWrapped
      * @param moveType 動かす方法
      * @param location 動かす先の座標
      */
-    @Versioned(from = "1.16.5")
     void move(NMSMoveType moveType, Location location);
 
     /**
@@ -37,4 +35,18 @@ public interface NMSEntity extends NMSWrapped
      * @return ドロップされたアイテム
      */
     NMSEntityItem dropItem(@NotNull NMSItemStack stack, float offsetY);
+
+    /**
+     * エンティティが非表示かどうかを取得します。
+     *
+     * @return 非表示かどうか
+     */
+    boolean isInvisible();
+
+    /**
+     * エンティティを非表示にします。
+     *
+     * @param invisible 非表示にするかどうか
+     */
+    void setInvisible(boolean invisible);
 }

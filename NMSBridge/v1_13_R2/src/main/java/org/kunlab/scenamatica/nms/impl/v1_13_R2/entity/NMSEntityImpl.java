@@ -58,4 +58,16 @@ public class NMSEntityImpl implements NMSEntity
 
         return new NMSEntityItemImpl(dropped);
     }
+
+    @Override
+    public boolean isInvisible()
+    {
+        return this.nmsEntity.isInvisible();
+    }
+
+    @Override
+    public void setInvisible(boolean invisible)
+    {
+        this.nmsEntity.setInvisible(invisible);
+    }
 }

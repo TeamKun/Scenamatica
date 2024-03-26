@@ -13,6 +13,8 @@ import org.kunlab.scenamatica.interfaces.scenariofile.entity.LivingEntityStructu
 import org.kunlab.scenamatica.interfaces.scenariofile.entity.entities.HumanEntityStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.InventoryStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.PlayerInventoryStructure;
+import org.kunlab.scenamatica.nms.NMSProvider;
+import org.kunlab.scenamatica.nms.types.entity.NMSEntityHuman;
 import org.kunlab.scenamatica.scenariofile.structures.entity.LivingEntityStructureImpl;
 import org.kunlab.scenamatica.scenariofile.structures.inventory.InventoryStructureImpl;
 import org.kunlab.scenamatica.scenariofile.structures.inventory.PlayerInventoryStructureImpl;
@@ -158,13 +160,15 @@ public class HumanEntityStructureImpl extends LivingEntityStructureImpl implemen
     @NotNull
     public static HumanEntityStructure ofHuman(@NotNull HumanEntity entity)
     {
+        NMSEntityHuman nmsHuman = NMSProvider.getProvider().wrap(entity);
+
         return new HumanEntityStructureImpl(
                 LivingEntityStructureImpl.ofLivingEntity(entity),
                 PlayerInventoryStructureImpl.of(entity.getInventory()),
                 InventoryStructureImpl.of(entity.getEnderChest()),
                 entity.getMainHand(),
                 entity.getGameMode(),
-                entity.getFoodLevel()
+                nmsHuman.getFoodLevel()
         );
     }
 
@@ -193,6 +197,7 @@ public class HumanEntityStructureImpl extends LivingEntityStructureImpl implemen
     protected void applyToHumanEntity(@NotNull HumanEntity object)
     {
         super.applyToLivingEntity(object);
+        NMSEntityHuman nmsHuman = NMSProvider.getProvider().wrap(object);
 
         if (this.inventory != null)
             this.inventory.applyTo(object.getInventory());
@@ -202,15 +207,17 @@ public class HumanEntityStructureImpl extends LivingEntityStructureImpl implemen
         if (this.gamemode != null)
             object.setGameMode(this.gamemode);
         if (this.foodLevel != null)
-            object.setFoodLevel(this.foodLevel);
+            nmsHuman.setFoodLevel(this.foodLevel);
     }
 
     protected boolean isAdequateHumanEntity(HumanEntity object, boolean strict)
     {
+        NMSEntityHuman nmsHuman = NMSProvider.getProvider().wrap(object);
+
         return super.isAdequateLivingEntity(object, strict)
                 && (this.inventory == null || this.inventory.isAdequate(object.getInventory(), strict))
                 && (this.enderChest == null || this.enderChest.isAdequate(object.getEnderChest(), strict))
                 && (this.gamemode == null || this.gamemode == object.getGameMode())
-                && (this.foodLevel == null || this.foodLevel == object.getFoodLevel());
+                && (this.foodLevel == null || this.foodLevel == nmsHuman.getFoodLevel());
     }
 }

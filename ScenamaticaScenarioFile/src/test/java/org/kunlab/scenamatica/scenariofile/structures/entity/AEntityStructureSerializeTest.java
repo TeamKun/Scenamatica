@@ -1,11 +1,8 @@
 package org.kunlab.scenamatica.scenariofile.structures.entity;
 
-import lombok.SneakyThrows;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
-import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.kunlab.scenamatica.interfaces.scenariofile.entity.EntityStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.entity.entities.AEntityStructure;
@@ -14,7 +11,6 @@ import org.kunlab.scenamatica.scenariofile.structures.entity.entities.AEntityStr
 import org.kunlab.scenamatica.scenariofile.structures.misc.LocationStructureImpl;
 import org.kunlab.scenamatica.scenariofile.structures.utils.MapTestUtil;
 
-import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -109,26 +105,6 @@ public class AEntityStructureSerializeTest
     public static final AEntityStructure EMPTY = new AEntityStructureImpl();
 
     public static final Map<String, Object> EMPTY_MAP = new HashMap<>();
-
-    @BeforeAll
-    @SuppressWarnings("unchecked")
-    @SneakyThrows({NoSuchFieldException.class, IllegalAccessException.class})
-    static void initPotionType()
-    {
-        Map<String, PotionEffectType> byName;
-        PotionEffectType[] byID;
-
-        Field fByName = PotionEffectType.class.getDeclaredField("byName");
-        Field fByID = PotionEffectType.class.getDeclaredField("byId");
-        fByName.setAccessible(true);
-        fByID.setAccessible(true);
-
-        byName = (Map<String, PotionEffectType>) fByName.get(null);
-        byID = (PotionEffectType[]) fByID.get(null);
-
-        byName.put("bad_omen", PotionEffectType.BAD_OMEN);
-        byID[31] = PotionEffectType.BAD_OMEN;
-    }
 
     @Test
     void 正常にシリアライズできるか()

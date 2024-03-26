@@ -31,6 +31,5 @@ public interface NMSItemStack extends NMSWrapped
      *
      * @return {@link NMSItem}
      */
-    @Versioned(from = "1.13.2")
     NMSItem getItem();
 }

@@ -49,4 +49,18 @@ public interface NMSEntityHuman extends NMSEntityLiving
     {
         return this.drop(stack, dropAll, true);
     }
+
+    /**
+     * 食料レベルを取得します。
+     *
+     * @return 食料レベル
+     */
+    int getFoodLevel();
+
+    /**
+     * 食料レベルを設定します。
+     *
+     * @param foodLevel 食料レベル
+     */
+    void setFoodLevel(int foodLevel);
 }

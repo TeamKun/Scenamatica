@@ -48,6 +48,36 @@ public class NMSEntityLivingImpl extends NMSEntityImpl implements NMSEntityLivin
     }
 
     @Override
+    public boolean isSleeping()
+    {
+        return this.nmsEntity.isSleeping();
+    }
+
+    @Override
+    public int getArrowCount()
+    {
+        return this.nmsEntity.getArrowCount();
+    }
+
+    @Override
+    public void setArrowCount(int count)
+    {
+        this.nmsEntity.setArrowCount(count);
+    }
+
+    @Override
+    public int getArrowCooldown()
+    {
+        return this.nmsEntity.arrowCooldown;
+    }
+
+    @Override
+    public void setArrowCooldown(int cooldown)
+    {
+        this.nmsEntity.arrowCooldown = cooldown;
+    }
+
+    @Override
     public EntityLiving getNMSRaw()
     {
         return this.nmsEntity;
