@@ -77,7 +77,7 @@ public class BlockPlaceAction extends AbstractBlockAction
         Block block = location.getBlock();
         if (ctxt.hasInput(IN_ACTOR))
         {
-            BlockFace direction = ctxt.orElseInput(IN_DIRECTION, () -> BlockFace.EAST);
+            BlockFace direction = ctxt.orElseInput(IN_DIRECTION, () -> BlockFace.UP);
             NMSHand hand = ctxt.orElseInput(IN_HAND, () -> NMSHand.MAIN_HAND);
 
             Player player = ctxt.input(IN_ACTOR).selectTarget(ctxt.getContext())

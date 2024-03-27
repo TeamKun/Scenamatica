@@ -2,6 +2,7 @@ package org.kunlab.scenamatica.nms.impl.v1_16_R3.entity;
 
 import net.minecraft.server.v1_16_R3.Entity;
 import net.minecraft.server.v1_16_R3.EntityItem;
+import net.minecraft.server.v1_16_R3.EntityLiving;
 import net.minecraft.server.v1_16_R3.EnumMoveType;
 import net.minecraft.server.v1_16_R3.ItemStack;
 import net.minecraft.server.v1_16_R3.Vec3D;
@@ -50,7 +51,22 @@ public class NMSEntityImpl implements NMSEntity
     @Override
     public NMSEntityItem dropItem(@NotNull NMSItemStack stack, float offsetY)
     {
+        boolean forceDrops = false;
+        if (this.nmsEntity instanceof EntityLiving)
+        {
+            EntityLiving entityLiving = (EntityLiving) this.nmsEntity;
+            forceDrops = entityLiving.forceDrops;
+            if (!forceDrops)
+                entityLiving.forceDrops = true;
+        }
+        
         EntityItem dropped = this.nmsEntity.a((ItemStack) stack.getNMSRaw(), offsetY);
+        if (this.nmsEntity instanceof EntityLiving)
+        {
+            EntityLiving entityLiving = (EntityLiving) this.nmsEntity;
+            entityLiving.forceDrops = forceDrops;
+        }
+
         if (dropped == null)
             return null;
 

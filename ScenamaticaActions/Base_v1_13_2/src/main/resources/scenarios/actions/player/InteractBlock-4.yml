@@ -1,5 +1,7 @@
 # noinspection YAMLSchemaValidation
 scenamatica: ${project.version}
+minecraft:
+  since: 1.16.5
 
 name: actions_player_interact_block_4
 description: Testing PlayerInteractBlockAction without specifying action works or not

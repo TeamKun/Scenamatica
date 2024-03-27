@@ -46,6 +46,9 @@ public class NMSItemStackImpl implements NMSItemStack
 
     private static ItemStack getHandle(org.bukkit.inventory.ItemStack bukkitItemStack)
     {
+        if (!(bukkitItemStack instanceof CraftItemStack))
+            return getHandle(CraftItemStack.asCraftCopy(bukkitItemStack));
+
         try
         {
             return (ItemStack) fHANDLE.get(bukkitItemStack);

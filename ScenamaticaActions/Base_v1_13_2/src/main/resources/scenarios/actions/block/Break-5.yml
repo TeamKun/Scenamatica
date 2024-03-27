@@ -10,6 +10,8 @@ on:
 context:
   actors:
     - name: Actor001
+  stage:
+    type: flat
 
 
 scenario:
@@ -20,7 +22,7 @@ scenario:
       block:
         location:
           x: 0
-          y: 0
+          y: 3
           z: 0
   - type: expect
     action: block_break

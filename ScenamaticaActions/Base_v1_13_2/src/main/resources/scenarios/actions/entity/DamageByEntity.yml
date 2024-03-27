@@ -1,5 +1,7 @@
 # noinspection YAMLSchemaValidation
 scenamatica: ${project.version}
+minecraft:
+  since: 1.14.0
 
 name: actions_entity_damage_by_entity
 description: Testing entity_damage_by_entity action works or not

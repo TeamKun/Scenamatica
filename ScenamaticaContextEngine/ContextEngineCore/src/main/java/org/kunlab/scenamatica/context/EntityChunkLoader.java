@@ -7,6 +7,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.kunlab.scenamatica.interfaces.ScenamaticaRegistry;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -71,7 +72,17 @@ public class EntityChunkLoader extends BukkitRunnable implements Listener
         {
             this.loadedChunks.remove(chunk);
             chunk.setForceLoaded(false);
-            chunk.unload();
+            try
+            {
+                chunk.unload();
+                // noinspection ConstantConditions
+                if (false)
+                    throw new IOException();
+            }
+            catch (IOException e)
+            {
+                // 1.13.2 等では net.minecraft.server.v1_13_R2.ExceptionWorldConflict: が発生するが, どーせ削除するので無視する。
+            }
         }
     }
 

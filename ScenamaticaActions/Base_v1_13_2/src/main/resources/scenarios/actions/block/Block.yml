@@ -10,6 +10,8 @@ on:
 context:
   actors:
     - name: Actor001
+  stage:
+    type: flat
 
 
 scenario:

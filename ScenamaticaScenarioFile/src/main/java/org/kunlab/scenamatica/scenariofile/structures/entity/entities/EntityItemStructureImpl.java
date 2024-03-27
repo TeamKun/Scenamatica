@@ -15,6 +15,7 @@ import org.kunlab.scenamatica.interfaces.scenariofile.inventory.ItemStackStructu
 import org.kunlab.scenamatica.scenariofile.structures.entity.EntityStructureImpl;
 import org.kunlab.scenamatica.scenariofile.structures.inventory.ItemStackStructureImpl;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -98,18 +99,20 @@ public class EntityItemStructureImpl extends EntityStructureImpl implements Enti
 
         ItemStackStructure itemStack = serializer.deserialize(map, ItemStackStructure.class);
 
+        Map<String, Object> copiedMap = new HashMap<>();
         // Entity と EntityItem で `type` がかぶる。
-        if (map.containsKey(KEY_TYPE))
-            map.put(KEY_TYPE, EntityType.DROPPED_ITEM.name());
+        copiedMap.putAll(map);
+        if (copiedMap.containsKey(KEY_TYPE))
+            copiedMap.put(KEY_TYPE, EntityType.DROPPED_ITEM.name());
 
         return new EntityItemStructureImpl(
-                EntityStructureImpl.deserialize(map, serializer),
+                EntityStructureImpl.deserialize(copiedMap, serializer),
                 itemStack,
                 pickupDelay,
                 ownerUUID,
                 throwerUUID,
-                MapUtils.getOrNull(map, KEY_CAN_MOB_PICKUP),
-                MapUtils.getOrNull(map, KEY_WILL_AGE)
+                MapUtils.getOrNull(copiedMap, KEY_CAN_MOB_PICKUP),
+                MapUtils.getOrNull(copiedMap, KEY_WILL_AGE)
         );
     }
 

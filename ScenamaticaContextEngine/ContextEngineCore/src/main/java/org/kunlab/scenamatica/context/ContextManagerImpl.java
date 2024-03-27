@@ -167,17 +167,14 @@ public class ContextManagerImpl implements ContextManager
             spawnLoc = entity.getLocation().create();
 
 
-        return (T) ThreadingUtil.waitForOrThrow(this.registry, () -> {
-                    UUID entityTag = UUID.randomUUID();
-                    String tagName = "scenamatica-" + entityTag;
-                    Entity generatedEntity = stage.spawnEntity(spawnLoc, type);
-                    ((Mapped<T>) entity).applyTo((T) generatedEntity);
-                    generatedEntity.addScoreboardTag(tagName);
-                    this.chunkLoader.addEntity(generatedEntity);
+        UUID entityTag = UUID.randomUUID();
+        String tagName = "scenamatica-" + entityTag;
+        Entity generatedEntity = stage.spawnEntity(spawnLoc, type);
+        ((Mapped<T>) entity).applyTo((T) generatedEntity);
+        generatedEntity.addScoreboardTag(tagName);
+        this.chunkLoader.addEntity(generatedEntity);
 
-                    return generatedEntity;
-                }
-        );
+        return (T) generatedEntity;
     }
 
     private List<Entity> prepareEntities(Stage stage, ContextStructure context) throws EntityCreationException
@@ -263,9 +260,6 @@ public class ContextManagerImpl implements ContextManager
     @SneakyThrows(StageAlreadyDestroyedException.class)
     public void destroyContext(Context context)
     {
-        if (context.hasStage())
-            this.stageManager.destroyStage(context.getStage());  // StageNotCreatedException はチェック済み。
-
         if (context.hasActors())
         {
             List<Actor> actors = new ArrayList<>(context.getActors());  // ConcurrentModificationException 対策
@@ -282,6 +276,10 @@ public class ContextManagerImpl implements ContextManager
                     entity.remove();
                 }
         }
+
+        if (context.hasStage())
+            this.stageManager.destroyStage(context.getStage());  // StageNotCreatedException はチェック済み。
+
     }
 
     @Override

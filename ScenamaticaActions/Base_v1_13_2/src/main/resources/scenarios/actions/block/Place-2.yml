@@ -11,7 +11,7 @@ context:
   actors:
     - name: Actor001
   stage:
-    type: normal
+    type: flat
 
 
 scenario:
@@ -20,10 +20,10 @@ scenario:
     with:
       actor: Actor001
       block:
-        type: SAND
+        type: DIRT
         location:
           x: 0
-          y: 255
+          y: 2
           z: 0
     timeout: 20
   - type: expect

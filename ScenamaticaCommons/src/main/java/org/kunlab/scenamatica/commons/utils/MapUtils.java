@@ -5,10 +5,15 @@ import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.reflect.Array;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -19,6 +24,21 @@ import java.util.function.Function;
 @UtilityClass
 public class MapUtils
 {
+    private static final Method mClone; // Ljava/lang/Object;.clone()Ljava/lang/Object;
+
+    static
+    {
+        try
+        {
+            mClone = Object.class.getDeclaredMethod("clone");
+            mClone.setAccessible(true);
+        }
+        catch (NoSuchMethodException e)
+        {
+            throw new RuntimeException(e);
+        }
+    }
+
     public static boolean equals(Map<?, ?> expected, Map<?, ?> actual)
     {
         if (expected == null || actual == null)
@@ -460,5 +480,88 @@ public class MapUtils
             parent = checkAndCastMap(parentRaw);
 
         return parent;
+    }
+
+    public static HashMap<String, Object> deepCopy(Map<String, Object> original)
+    {
+        Map<Object, Object> copiedObjects = new IdentityHashMap<>();
+        return (HashMap<String, Object>) deepCopy$(original, copiedObjects);
+    }
+
+    private static Object deepCopy$(Object obj, Map<Object, Object> copiedObjects)
+    {
+        if (obj == null)
+            return null;
+
+        // 既にコピーされたオブジェクトの場合は、コピーを返す
+        if (copiedObjects.containsKey(obj))
+            return copiedObjects.get(obj);
+
+        Object copy;
+        if (obj instanceof HashMap)
+        {
+            copy = new HashMap<>();
+            copiedObjects.put(obj, copy);
+            @SuppressWarnings("unchecked")
+            HashMap<String, Object> originalMap = (HashMap<String, Object>) obj;
+            for (Map.Entry<String, Object> entry : originalMap.entrySet())
+            {
+                Object value = deepCopy$(entry.getValue(), copiedObjects);
+                ((HashMap<String, Object>) copy).put(entry.getKey(), value);
+            }
+        }
+        else if (obj.getClass().isArray())
+        {
+            int length = Array.getLength(obj);
+            copy = Array.newInstance(obj.getClass().getComponentType(), length);
+            copiedObjects.put(obj, copy);
+            for (int i = 0; i < length; i++)
+                Array.set(copy, i, deepCopy$(Array.get(obj, i), copiedObjects));
+        }
+        else if (obj instanceof List)
+        {
+            copy = new ArrayList<>();
+            copiedObjects.put(obj, copy);
+            @SuppressWarnings("unchecked")
+            List<Object> originalList = (List<Object>) obj;
+            for (Object element : originalList)
+            {
+                Object value = deepCopy$(element, copiedObjects);
+                ((List<Object>) copy).add(value);
+            }
+        }
+        else if (obj instanceof Cloneable)
+        {
+            try
+            {
+                copy = mClone.invoke(obj);
+                copiedObjects.put(obj, copy);
+                copyFinalFields(obj, copy);
+            }
+            catch (Exception e)
+            {
+                throw new RuntimeException(e);
+            }
+        }
+        else
+            throw new UnsupportedOperationException("Cannot deep copy " + obj.getClass());
+
+        return copy;
+    }
+
+    private static void copyFinalFields(Object src, Object dest) throws IllegalAccessException, NoSuchFieldException
+    {
+        Field[] fields = src.getClass().getDeclaredFields();
+        for (Field field : fields)
+        {
+            if (Modifier.isFinal(field.getModifiers()))
+            {
+                field.setAccessible(true);
+                Object value = field.get(src);
+                Field destField = dest.getClass().getDeclaredField(field.getName());
+                destField.setAccessible(true);
+                destField.set(dest, value);
+            }
+        }
     }
 }
