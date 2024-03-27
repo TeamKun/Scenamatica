@@ -1,0 +1,20 @@
+{
+  "name": "player_flight",
+  "description": "プレイヤを飛行させます。",
+  "base": "player_$base",
+  "events": [
+    "org.bukkit.event.player.PlayerToggleFlightEvent"
+  ],
+
+  "executable": "プレイヤの飛行状態を変更します。",
+  "watchable": "プレイヤが飛行することを期待します。",
+  "requireable": "プレイヤが飛行していることを要求します。",
+
+  "arguments": {
+    "flying": {
+      "type": "boolean",
+      "description": "プレイヤが飛行中かどうかです。",
+      "requiredOn": ["execute", "require"]
+    }
+  }
+}

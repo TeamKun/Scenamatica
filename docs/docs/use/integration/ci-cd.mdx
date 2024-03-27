@@ -1,0 +1,126 @@
+---
+sidebar_position: 3
+---
+
+import BelowDocument from "/src/components/BelowDocument";
+
+# CI/CD と Scenamatica の連携
+
+このページﾞでは、 CI/CD と Scenamatica との連携の概要について説明しています。
+
+---
+
+## 概要  {#overview}
+
+Scenamatica は、CI/CD パイプラインを使用して、シナリオテストの実行及びテストレポートの作成を自動化できます。  
+
+あなたのプロジェクトに Scenamatica を連携することは、以下のようなメリットがあります。
+
++ プラグインのテストを自動化する  
+  Scenamatica を使用することで、プッシュ時などにプラグインのテストを自動で実行でき、時間の節約になります。
++ プラグインの品質を監視する  
+  プラグインの機能の正常性を継続して監視することで、プラグインの品質低下を即座に検出できます。
++ プルリクエストを自動的にテストする  
+  プルリクエストを自動的にテストすることで、プルリクエストのマージによる品質低下を防げます。
+
+現在は **GitHub Actions のみ**に対応しています。
+
+## GitHub Actions によるテストの自動化 {#github-actions}
+
+[Github Actions](https://github.co.jp/features/actions) は、GitHub が提供する CI/CD パイプラインです。  
+これを使用することで、 GitHub のクラウド上でテストを自動化できます。
+
+Scenamatica は、 GitHub Actions でのテストをサポートしています。
+
+:::warning
+
+テストは、 [PaperMC](https://papermc.io/) の指定された Minecraft バージョンの最新ビルドで実行されます。  
+Spigot や CraftBukkit などの他のサーバ実装には対応していません。
+
+:::
+
+:::danger
+
+このアクションを使用することで、 Minecraft の [EULA](https://account.mojang.com/documents/minecraft_eula) に同意したものとみなされます。  
+EULA に同意しない場合は、このアクションを使用しないでください。
+ 
+また、このアクション及び Scenamatica は、 Minecraft および Mojang AB が公式に認めたものではなく、また、Minecraft および Mojang AB とは関係ありません。
+
+:::
+
+<BelowDocument docId="getting-started/tutorials/integration/automation-with-github-actions"
+               label="チュートリアル： GitHub Actions でテストを自動化する" 
+               tutorial
+/>
+
+## Scenamatica Action {#scenamatica-action}
+
+[Scenamatica Action](https://github.com/TeamKun/scenamatica-action) は、 GitHub Actions で Scenamatica を使用するためのアクションです。  
+このアクションは、 PaperMC と Scenamatica をダウンロードし、サーバをビルド、テストを実行するまでの流れを自動で行います。  
+また、ビルドしたサーバはキャッシュされるため、次回以降のテストではより高速にテストを実行できます。
+
+<BelowDocument docId="getting-started/tutorials/integration/automation-with-github-actions"
+               label="チュートリアル： GitHub Actions でテストを自動化する"
+               tutorial
+/>
+
+### 入力 {#input}
+
+| 名前            | 説明                             | 必須  | デフォルト値            | 摘要                                                         |
+|:--------------|:-------------------------------|:----|:------------------|:-----------------------------------------------------------|
+| `plugin`      | テスト対象のプラグインの jar ファイルを指定します。   | はい  | `N/A`             | テスト対象のプラグインの jar ファイルを指定します。                               |
+| `scenamatica` | Scenamatica のバージョンを指定します。      | いいえ | \<ワークフローバージョンに依存> | Scenamatica のバージョンを指定します。新しいバージョンがリリースされた場合は、この値を更新してください。 |
+| `minecraft`   | テスト対象の Minecraft のバージョンを指定します。 | いいえ | `1.16.5`          |                                                            |
+| `server-dir`  | テスト対象のサーバーのディレクトリを指定します。       | いいえ | `server`          |                                                            |
+
+### 出力 {#output}
+
+#### 全般 {#output-general}
+
+| 名前        | 説明                    | 例      |
+|:----------|:----------------------|:-------|
+| `success` | テストが成功したかどうかを示す真偽値です。 | `true` |
+
+#### エラー時のみ {#output-error}
+
+エラーは Scenamatica 内部で発生したエラーを指します。またこのほかに、シナリオの記法が間違っている場合にも発生します。
+`success` が `false` の場合のみ、以下の出力が行われます。
+
+| 名前                     | 説明                 | 例                                                              |
+|:-----------------------|:-------------------|:---------------------------------------------------------------|
+| `runner-error-type`    | エラー（例外）の種類の文字列値です。 | `java.lang.NullPointerException`                               |
+| `runner-error-message` | エラーメッセージの文字列値です。   | `Cannot invoke "java.io.File.toPath()" because "file" is null` |
+
+#### 実行成功時のみ {#output-success}
+
+テストの実行にエラーなしで成功した場合は、以下が出力されます。
+
+| 名前              | 説明                       | 例    |
+|:----------------|:-------------------------|:-----|
+| `tests`         | 実行されたテストの総数です。           | `10` |
+| `test-passes`   | テストのうち、成功したテストの総数です。     | `2`  |
+| `test-failures` | テストのうち、失敗したテストの総数です。     | `3`  |
+| `test-skip`     | テストのうち、スキップされたテストの総数です。  | `0`  |
+| `test-cancels`  | テストのうち、エラーが発生したテストの総数です。 | `5`  |
+
+
+## トラブルシューティング {#troubleshooting}
+
+### Q. 今まで動いていたのに動かなくなった {#nothing-made-test-fail}
+
+#### A. キャッシュが壊れている可能性があります。
+
+Scenamatica Action は、２回目以降のテストではビルドしたサーバをキャッシュして、より高速にテストを実行します。
+そのため、何らかの要因によって、キャシュが破壊されてしまうと、テストが失敗する可能性があります。
+
+問題の解決には、`server-` から始まるキャッシュを削除する必要があります。詳しくは[こちら](https://docs.github.com/ja/actions/using-workflows/caching-dependencies-to-speed-up-workflows#deleting-cache-entries)を参照してください。
+
+### Q. PaperMC サーバが起動しない {#papermc-server-not-start}
+
+#### A. 使用している Java のバージョンが古い可能性があります。
+
+Scenamatica は、Java 8 以上で動作します。また、 PaperMC(1.16.5) は、Java 16 以上で動作します。
+
+問題の解決には、 Actions で使用している Java のバージョンを確認し、必要に応じて更新する必要があります。  
+ワークフローファイルの `java-version` を確認および変更してください。
+

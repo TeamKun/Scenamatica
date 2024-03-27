@@ -1,0 +1,285 @@
+import Action, {ScenarioType} from "/src/components/Action";
+import BelowDocument from "/src/components/BelowDocument";
+import {ObjectType} from "/src/components/Object";
+
+
+# プレイヤによるインベントリの操作
+
+プレイヤによるインベントリの操作に関連するイベント列挙しています。
+
+---
+
+## 記述する際の注意 {#notes}
+
+:::tip
+
+**シナリオやシナリオファイルの概念が初めての方は、先に[こちら](/docs/use/scenario)を参照して理解しておくことを推奨します。**
+
+:::
+
+<BelowDocument docId="use/scenario/scenario-file"
+               label="シナリオファイルを記述する際の注意"
+               anchor="notes"
+/>
+
+## 全般 - 出力 `target` {#general-output-target}
+
+対象となった人間エンティティの [`HumanEntity`](/docs/use/scenario/types/entities/#player) です。
+
+## クリック {#click}
+
+
+<Action name="インベントリのクリック"
+        description="インベントリをクリックします。"
+        id="inventory_click"
+        events={[
+          {
+            "name": "InventoryClickEvent",
+            "package": "org.bukkit.event.inventory",
+          }
+        ]}
+        args={[
+          {
+            name: "target",
+            type: "PlayerSpecifier",
+            type_link: "/docs/use/scenario/types/entities#player-specifier",
+            anchor: "click-target",
+            description: "インベントリをクリックするプレイヤの ID です。",
+            required: [ScenarioType.EXECUTE]
+          },
+          {
+            name: "type",
+            type: "ClickType",
+            type_link: "/docs/use/scenario/types/inventory-items#inventory-click-type",
+            description: "クリックの種類です。",
+            required: [ScenarioType.EXECUTE]
+          },
+          {
+            name: "inventory",
+            type: "Inventory",
+            type_link: "/docs/use/scenario/types#inventory",
+            anchor: "click-inventory",
+            description: "クリックするインベントリです。",
+          },
+          {
+            name: "slot",
+            type: ObjectType.INTEGER,
+            anchor: "click-slots",
+            description: "クリックするスロットの番号です。",
+            available: [ScenarioType.WATCH]
+          },
+          {
+            name: "rawSlot",
+            type: ObjectType.INTEGER,
+            anchor: "click-slots",
+            description: "クリックするスロットの生の番号です。",
+          },
+          {
+            name: "slotType",
+            type: "SlotType",
+            type_link: "/docs/use/scenario/types#type-slot-type",
+            anchor: "click-slot-type",
+            description: "クリックするスロットの種類です。",
+            available: [ScenarioType.WATCH, ScenarioType.REQUIRE]
+          },
+          {
+            name: "clickedItem",
+            type: "ItemStack",
+            type_link: "/docs/use/scenario/types#item-stack",
+            description: "クリックされたスロットのアイテムです。",
+          },
+          {
+            name: "button",
+            type: ObjectType.INTEGER,
+            anchor: "click-button",
+            description: "クリックされたボタンの番号です。",
+          },
+          {
+            name: "cursorItem",
+            type: "ItemStack",
+            type_link: "/docs/use/scenario/types#item-stack",
+            description: "カーソルにあるアイテムです。"
+          }
+        ]}
+        outputs={[
+          {
+            name: "target",
+            type: "Player",
+            type_link: "/docs/use/scenario/types/entities/#player",
+            description: "インベントリをクリックしたプレイヤです。"
+          },
+          {
+            name: "inventory",
+            type: "Inventory",
+            type_link: "/docs/use/scenario/types/inventory-items#inventory",
+            description: "クリックしたインベントリです。"
+          },
+          {
+            name: "type",
+            type: "ClickType",
+            type_link: "/docs/use/scenario/types/inventory-items#inventory-click-type",
+            description: "クリックの種類です。",
+            available: [ScenarioType.WATCH]
+          },
+          {
+            name: "slot",
+            type: ObjectType.INTEGER,
+            anchor: "click-slots",
+            description: "クリックしたスロットの番号です。",
+          },
+          {
+            name: "rawSlot",
+            type: ObjectType.INTEGER,
+            anchor: "click-slots",
+            description: "クリックしたスロットの生の番号です。",
+            available: [ScenarioType.WATCH]
+          },
+          {
+            name: "slotType",
+            type: "SlotType",
+            type_link: "/docs/use/scenario/types#type-slot-type",
+            anchor: "click-slot-type",
+            description: "クリックしたスロットの種類です。",
+            available: [ScenarioType.WATCH]
+          },
+          {
+            name: "clickedItem",
+            type: "ItemStack",
+            type_link: "/docs/use/scenario/types#item-stack",
+            description: "クリックされたスロットのアイテムです。",
+          },
+          {
+            name: "button",
+            type: ObjectType.INTEGER,
+            anchor: "click-button",
+            description: "クリックされたボタンの番号です。",
+          },
+          {
+            name: "cursorItem",
+            type: "ItemStack",
+            type_link: "/docs/use/scenario/types#item-stack",
+            description: "カーソルにあるアイテムです。",
+            available: [ScenarioType.WATCH]
+          }
+        ]}
+        executable watchable
+/>
+
+#### アクション実行シナリオでの使用 {#click-usage-in-execution}
+
+:::warning
+
+出力 `inventory` は入力 `inventory` が指定された場合のみ出力されます。  
+出力 `slot` は入力 `slot` または `rawSlot` が指定された場合のみ出力されます。
+
+:::
+
+#### `inventory` {#click-inventory}
+
+`inventory` はクリックするインベントリを指定します。  
+省略した場合は、現在プレイヤが開いているインベントリが対象になります。
+
+:::tip
+
+この項目を省略し、かつ、プレイヤがインベントリを開いていない場合は、何も起きずエラーにもなりません。  
+これは、 Bukkit の開いているインベントリをトラッキングしないためです。
+
+:::
+
+#### `slot` および `rawSlot` {#click-slots}
+
+`slot` は開いているインベントリの相対的なスロット番号を指定します。  
+`rawSlot` は開いているインベントリの絶対的なスロット番号を指定します。
+
+:::danger
+
+`slot` と `rawSlot` を両方指定した場合は、一致の有無に関わらずエラーになります。
+
+:::
+
+#### `slotType` {#click-slot-type}
+
+スロットの種類を指定します。
+
+#### `button` {#click-button}
+
+クリックされたボタンの番号を指定します。
+`0` が左クリック、`1` が右クリック、`2` が中クリック（マウスホイールのクリック）です。
+
+その他のキーおよびマウス入力は、 [GLFW](https://glfw.org)の仕様に従ってください。
+マウスの入力は[こちら](https://www.glfw.org/docs/3.3/group__keys.html)を、
+キーボードの入力は[こちら](https://www.glfw.org/docs/3.3/group__keys.html)を
+参照してください。
+
+## クリエイティブインベントリのアイテムの配置 {#creative}
+
+このアクションは以下の親アクションを継承しています。
+
+- [インベントリのクリック](#click)
+
+:::danger
+
+このアクションでは、入力は**継承されません**。  
+また、アクション実行シナリオでは、出力は**継承されません**。
+
+:::
+
+<Action name="クリエイティブインベントリのクリック"
+        description="クリエイティブインベントリをクリックします。"
+        id="creative_inventory_click"
+        events={[
+          {
+            "name": "InventoryClickEvent",
+            "package": "org.bukkit.event.inventory",
+          }
+        ]}
+        args={[
+          {
+            name: "item",
+            anchor: "creative-item",
+            type: "ItemStack",
+            type_link: "/docs/use/scenario/types#item-stack",
+            description: "配置するアイテムです。",
+          },
+          {
+            name: "slot",
+            type: ObjectType.INTEGER,
+            anchor: "click-slots",
+            description: "クリックするスロットの番号です。",
+            required: [ScenarioType.EXECUTE]
+          },
+        ]}
+        outputs={[
+          {
+            name: "target",
+            type: "Player",
+            type_link: "/docs/use/scenario/types/entities/#player",
+            description: "インベントリをクリックしたプレイヤです。"
+          },
+          {
+            name: "item",
+            anchor: "creative-item",
+            type: "ItemStack",
+            type_link: "/docs/use/scenario/types#item-stack",
+            description: "配置するアイテムです。",
+          },
+          {
+            name: "slot",
+            type: ObjectType.INTEGER,
+            anchor: "click-slots",
+            description: "クリックしたスロットの番号です。",
+          },
+          {
+            name: "inventory",
+            type: "Inventory",
+            type_link: "/docs/use/scenario/types/inventory-items#inventory",
+            description: "クリックしたインベントリです。"
+          }
+        ]}
+        executable={"任意のスロットに任意のアイテムを配置します。"}
+        watchable
+/>
+
+#### `item` {#creative-item}
+
+[親アクション](#creative)の `clickedItem` と同じで、内部的に値を共有しています。

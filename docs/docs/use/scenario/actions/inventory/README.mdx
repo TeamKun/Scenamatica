@@ -1,0 +1,149 @@
+import Action, {ScenarioType} from "/src/components/Action";
+import BelowDocument from "/src/components/BelowDocument";
+import {ObjectType} from "/src/components/Object";
+
+# インベントリに関連するアクション
+
+インベントリに関連するアクションを列挙しています。
+
+---
+
+## 記述する際の注意 {#notes}
+
+:::tip
+
+**シナリオやシナリオファイルの概念が初めての方は、先に[こちら](/docs/use/scenario)を参照して理解しておくことを推奨します。**
+
+:::
+
+<BelowDocument docId="use/scenario/scenario-file"
+               label="シナリオファイルを記述する際の注意"
+               anchor="notes"
+/>
+
+## 全般 - 出力 `inventory` {#general-output-inventory}
+
+対象となったインベントリの[`Inventory`](/docs/use/scenario/types/inventory-items/#inventory)が出力されます。
+
+## インベントリ操作系 {#inventory-interaction}
+
+プレイヤによるインベントリの操作に関するアクションです。
+
+<BelowDocument docId={"use/scenario/actions/inventory/interaction"}
+                label={"インベントリ操作系のシナリオ"}
+/>
+
+## インベントリを閉じる {#close}
+
+<Action name="インベントリを閉じる"
+        description="プレイヤのインベントリを閉じます。"
+        id="inventory_close"
+        events={[
+          {
+            name: "InventoryCloseEvent",
+            package: "org.bukkit.event.inventory",
+          }
+        ]}
+        args={[
+          {
+            name: "target",
+            description: "インベントリを閉じる対象のプレイヤの名前または UUID です。",
+            type: ObjectType.STRING,
+            required: [ScenarioType.EXECUTE]
+          },
+          {
+            name: "inventory",
+            anchor: "inventory-close-inventory",
+            type: "Inventory",
+            type_link: "/docs/use/scenario/types#inventory",
+            description: "閉じるインベントリです。",
+            available: [ScenarioType.WATCH, ScenarioType.REQUIRE]
+          },
+          {
+            name: "reason",
+            type: "InventoryCloseReason",
+            type_link: "/docs/use/scenario/types/inventory-items#inventory-close-reason",
+            description: "インベントリを閉じる理由です。",
+          }
+        ]}
+        outputs={[
+          {
+            name: "inventory",
+            type: "Inventory",
+            type_link: "/docs/use/scenario/types#inventory",
+            description: "閉じたインベントリです。",
+          },
+          {
+            name: "Player",
+            type: "Player",
+            type_link: "/docs/use/scenario/types/entities/#player",
+            description: "インベントリを閉じたプレイヤです。",
+          },
+          {
+            name: "reason",
+            type: "InventoryCloseReason",
+            type_link: "/docs/use/scenario/types/inventory-items#inventory-close-reason",
+            description: "インベントリを閉じた理由です。",
+          },
+          
+        ]}
+        executable watchable
+/>
+
+#### アクション実行シナリオでの使用 {#close-usage-in-execution}
+
+:::warning
+
+出力 `reason` は入力 `reason` が指定されている場合のみ出力されます。
+
+:::
+
+## インベントリを開く {#open}
+
+<Action name="インベントリを開く"
+        description="プレイヤのインベントリを開きます。"
+        id="inventory_open"
+        events={[
+          {
+            name: "InventoryOpenEvent",
+            package: "org.bukkit.event.inventory",
+          }
+        ]}
+        args={[
+          {
+            name: "target",
+            description: "インベントリを開く対象のプレイヤの名前または UUID です。",
+            type: ObjectType.STRING,
+            required: [ScenarioType.EXECUTE]
+          },
+          {
+            name: "inventory",
+            type: "Inventory",
+            type_link: "/docs/use/scenario/types#inventory",
+            description: "開くインベントリです。",
+            required: [ScenarioType.EXECUTE]
+          },
+        ]}
+        outputs={[
+          {
+            name: "inventory",
+            type: "Inventory",
+            type_link: "/docs/use/scenario/types#inventory",
+            description: "開いたインベントリです。",
+          },
+          {
+            name: "Player",
+            type: "Player",
+            type_link: "/docs/use/scenario/types/entities/#player",
+            description: "インベントリを開いたプレイヤです。",
+          },
+        ]}
+        executable watchable
+/>
+
+:::danger
+
+プレイヤがインベントリを（既に・今まさに）開いているか確認するアクションはありません。  
+これは、 Bukkit がプレイヤのインベントリの状態を追跡していないためです。
+
+:::

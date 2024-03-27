@@ -1,0 +1,50 @@
+{
+  "name": "player_hotbar",
+  "description": "プレイヤのホットバーの選択中スロットを変更します。",
+  "base": "player_$base",
+  "events": [
+    "org.bukkit.event.player.PlayerItemHeldEvent"
+  ],
+
+  "executable": "プレイヤのホットバーの選択中スロットを変更します。",
+  "watchable": "プレイヤのホットバーの選択中スロットが変更されるか期待します。",
+  "requireable": "プレイヤのホットバーのアイテムや番号が指定されたものであることを要求します。",
+
+  "arguments": {
+    "slot": {
+      "type": "integer",
+      "description": "選択中のスロットのインデックスです。",
+      "minimum": 0,
+      "maximum": 8
+    },
+    "previous": {
+      "type": "integer",
+      "description": "変更される前のスロットのインデックスです。",
+      "minimum": 0,
+      "maximum": 8,
+      "availableFor": ["watch"]
+    },
+    "item": {
+      "type": "itemStack",
+      "description": "選択中のホットバースロットに入っているアイテムです。"
+    }
+  },
+  "outputs": {
+    "slot": {
+      "type": "integer",
+      "description": "ホットバーのスロットです。",
+      "minimum": 0,
+      "maximum": 8
+    },
+    "previous": {
+      "type": "integer",
+      "description": "ホットバーのスロットが変更される前のスロットです。",
+      "minimum": 0,
+      "maximum": 8
+    },
+    "item": {
+      "description": "ホットバーのスロットに入っているアイテムです。",
+      "type": "itemStack"
+    }
+  }
+}

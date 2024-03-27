@@ -1,0 +1,87 @@
+{
+  "name": "player_kick",
+  "description": "プレイヤをサーバから強制退出させます。",
+  "base": "player_$base",
+  "events": [
+    "org.bukkit.event.player.PlayerKickEvent"
+  ],
+
+  "executable": "プレイヤをサーバから強制退出させます。",
+  "watchable": "プレイヤがサーバから強制退出させらるか期待します。",
+  "requireable": false,
+
+  "arguments": {
+    "leaveMessage": {
+      "type": "string",
+      "description": "プレイヤがサーバーから退出したときに表示するメッセージです。",
+      "availableFor": ["watch"]
+    },
+    "message": {
+      "type": "string",
+      "description": "プレイヤがサーバーからキックされたときに表示するメッセージです。"
+    },
+    "cause": {
+      "type": "string",
+      "description": "プレイヤがサーバーからキックされた原因です。",
+      "enum": [
+        "PLUGIN",
+        "WHITELIST",
+        "BANNED",
+        "IP_BANNED",
+        "KICK_COMMAND",
+        "FLYING_PLAYER",
+        "FLYING_VEHICLE",
+        "TIMEOUT",
+        "IDLING",
+        "INVALID_VEHICLE_MOVEMENT",
+        "INVALID_PLAYER_MOVEMENT",
+        "INVALID_ENTITY_ATTACKED",
+        "INVALID_PAYLOAD",
+        "SPAM",
+        "ILLEGAL_ACTION",
+        "ILLEGAL_CHARACTERS",
+        "SELF_INTERACTION",
+        "DUPLICATE_LOGIN",
+        "RESTART_COMMAND",
+        "UNKNOWN"
+      ]
+    }
+  },
+  "outputs": {
+    "leaveMessage": {
+      "type": "string",
+      "description": "プレイヤがサーバーから退出したときに表示するメッセージです。",
+      "availableFor": ["watch"]
+    },
+    "message": {
+      "type": "string",
+      "description": "プレイヤがサーバーからキックされたときに表示するメッセージです。"
+    },
+    "cause": {
+      "type": "string",
+      "description": "プレイヤがサーバーからキックされた原因です。",
+      "enum": [
+        "PLUGIN",
+        "WHITELIST",
+        "BANNED",
+        "IP_BANNED",
+        "KICK_COMMAND",
+        "FLYING_PLAYER",
+        "FLYING_VEHICLE",
+        "TIMEOUT",
+        "IDLING",
+        "INVALID_VEHICLE_MOVEMENT",
+        "INVALID_PLAYER_MOVEMENT",
+        "INVALID_ENTITY_ATTACKED",
+        "INVALID_PAYLOAD",
+        "SPAM",
+        "ILLEGAL_ACTION",
+        "ILLEGAL_CHARACTERS",
+        "SELF_INTERACTION",
+        "DUPLICATE_LOGIN",
+        "RESTART_COMMAND",
+        "UNKNOWN"
+      ]
+    }
+  }
+}

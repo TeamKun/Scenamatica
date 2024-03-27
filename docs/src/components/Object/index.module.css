@@ -1,0 +1,58 @@
+.objects {
+    border-collapse: collapse;
+    margin: 0 0 1em 0;
+    width: 100%;
+}
+
+.objects.header {
+    text-align: center;
+    font-weight: bold;
+    border: 1px solid #ccc;
+    padding: 0.5em;
+}
+
+.objects.body {
+    border: 1px solid #ccc;
+    padding: 0.5em;
+}
+
+.header th {
+    white-space: nowrap;
+}
+
+.required {
+    font-weight: bold;
+}
+
+td {
+    width: fit-content;
+}
+
+td.description {
+    width: max-content;
+}
+
+td.requiredStatus {
+    text-align: center;
+}
+
+td.none {
+    text-align: center;
+}
+
+td.scenarioType{
+    text-align: center;
+}
+
+.allType {
+    background: linear-gradient(90deg,
+        var(--scenario-type-color-execution),
+        var(--scenario-type-color-requirement),
+        var(--scenario-type-color-expectation)
+    );
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+
+    font-weight: bold;
+}

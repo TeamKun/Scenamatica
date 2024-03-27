@@ -1,0 +1,15 @@
+{
+  "name": "inventory_$base",
+  "arguments": {
+    "inventory": {
+      "description": "対象のインベントリです。",
+      "type": "inventory"
+    }
+  },
+  "outputs": {
+    "inventory": {
+      "description": "対象になったプレイヤのインベントリです。",
+      "type": "inventory"
+    }
+  }
+}

@@ -1,0 +1,78 @@
+import BelowDocument from "/src/components/BelowDocument";
+
+# シナリオ
+
+シナリオの概念とその概要について説明しています。
+
+---
+
+## 概要 {#overview}
+
+シナリオは、プラグインのふるまいを定義した概念です。  
+プラグインの機能とそれの発火方法を定義したフローと、それを実行する環境設定を含みます。
+Scenamatica はシナリオを読み込み、その内容に沿ってプラグインの機能を発火し、その結果を検証します。
+シナリオはプラグインの機能ごとに複数定義でき、複数のシナリオをまとめて管理できます。
+
+## シナリオの具体的な構成要素 {#elements}
+
+シナリオは以下の要素で構成されています。
+
++ 名前  
+  シナリオについての一意な名前です。
++ 説明  
+  シナリオについての、人間が読める説明です。
++ [トリガ](/docs/use/scenario/trigger)
++ [実行順](/docs/use/scenario/elements#order)
++ [コンテキスト](/docs/use/scenario/elements#context)
++ メイン[シナリオ](/docs/use/scenario/elements#scenario)  
+  プラグインの機能を検証する主要な[シナリオ](/docs/use/scenario/elements#scenario)のことです。
++ [実行条件](/docs/use/scenario/elements#conditional-execution)
+
+
+<BelowDocument docId="use/scenario/elements"
+               label="シナリオの具体的な構成要素"
+/>
+
+
+
+## シナリオファイルの構文 {#scenario-file}
+
+Scenamatica のシナリオは シナリオファイルと呼ばれる YAML ファイルで記述します。  
+
+<BelowDocument docId="use/scenario/scenario-file"
+               label="シナリオファイル"
+               message="シナリオファイルの構文については、以下のページを参照してください。" />
+
+
+## シナリオの実行の状態 {#scenario-status}
+
+Scenamatica のシナリオの実行状況は以下の状態に分類されます。  
+シナリオの実行が異常終了した場合は、以下の状態一覧を参考にするとエラー原因の特定に役立つでしょう。
+
++ `STAND_BY`  
+  シナリオがコンパイルされ、実行を待機している状態です。
++ `CONTEXT_PREPARING`  
+  シナリオの実行に必要なコンテキストを準備している状態です。
++ `STARTING`  
+  シナリオエンジンを初期化し、起動を待機している状態です。
++ `RUNNING_BEFORE`（オプション）  
+  [メインシナリオの実行前に実行されるシナリオ](/docs/use/scenario/elements#scenario)を実行している状態です。  
+  トリガによっては実行されることがあります。
++ `RUNNING_MAIN`  
+  シナリオの実行を行っている状態です。
++ `RUNNING_AFTER`（オプション）
+  シナリオの実行後に実行されるシナリオを実行している状態です。  
+  トリガによっては実行されることがあります。
++ `CLEANING_UP`  
+  シナリオの実行後の後処理を行っている状態です。
++ `FINISHED`  
+  シナリオの実行が終了した状態です。
+
+
+## Scenamaticaの実行フロー {#scenario-flow}
+
+![Flow#550x](images/scenamatica-flow.svg)
+
+### シナリオの実行フロー
+
+![Scenario#550x](images/scenario.svg)

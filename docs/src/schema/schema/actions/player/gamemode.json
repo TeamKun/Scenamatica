@@ -1,0 +1,59 @@
+{
+  "name": "player_gamemode",
+  "description": "プレイヤのゲームモードを変更します。",
+  "base": "player_$base",
+  "events": [
+    "org.bukkit.event.player.PlayerGameModeChangeEvent"
+  ],
+
+  "executable": "プレイヤのゲームモードを変更します",
+  "watchable": "プレイヤのゲームモードが変更されることを期待します。",
+  "requireable": "プレイヤのゲームモードが指定されたものであることを要求します。",
+
+  "arguments": {
+    "gamemode": {
+      "type": "string",
+      "description": "ゲームモードです。",
+      "enum": [
+        "SURVIVAL",
+        "CREATIVE",
+        "ADVENTURE",
+        "SPECTATOR"
+      ],
+      "requiredOn": ["execute", "require"]
+    },
+    "cause": {
+      "type": "string",
+      "description": "ゲームモードを変更した原因です。",
+      "enum": [
+        "COMMAND",
+        "PLUGIN",
+        "DEFAULT_GAMEMODE",
+        "HARDCORE_DEATH",
+        "UNKNOWN"
+      ],
+      "availableFor": ["execute", "watch"]
+    },
+    "cancelMessage": {
+      "type": "string",
+      "description": "ゲームモード変更をキャンセルされたときに表示するメッセージです。",
+      "availableFor": ["watch"]
+    }
+  },
+  "outputs": {
+    "target": {
+      "gamemode": {
+        "type": "string",
+        "description": "変更後のゲームモードです。"
+      },
+      "cause": {
+        "type": "string",
+        "description": "ゲームモードを変更した原因です。"
+      },
+      "cancelMessage": {
+        "type": "string",
+        "description": "ゲームモード変更をキャンセルされたときに表示するメッセージです。"
+      }
+    }
+  }
+}

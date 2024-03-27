@@ -1,0 +1,51 @@
+.action {
+    border-collapse: collapse;
+    margin: 0 0 1em 0;
+}
+
+td.name {
+    text-align: center;
+    font-weight: bold;
+    font-size: 1.2em;
+}
+
+.label {
+    font-weight: bold;
+}
+
+[data-theme="dark"] .able .label {
+    color: #5fc05f;
+}
+
+[data-theme="light"] .able .label {
+    color: #008000;
+}
+
+[data-theme="dark"] .unable .label {
+    color: #be4646;
+}
+
+[data-theme="light"] .unable .label {
+    color: #a93535;
+}
+
+ .bigger {
+    font-size: 1.25em;
+    font-weight: bold;
+}
+
+ .scenarioType {
+     font-weight: bold;
+ }
+
+.scenarioType.execution{
+    color: var(--scenario-type-color-execution);
+}
+
+.scenarioType.requirement {
+    color: var(--scenario-type-color-requirement);
+}
+
+.scenarioType.expectation {
+    color: var(--scenario-type-color-expectation);
+}

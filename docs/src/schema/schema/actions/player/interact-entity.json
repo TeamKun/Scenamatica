@@ -1,0 +1,42 @@
+{
+  "name": "player_interact_entity",
+  "description": "プレイヤにエンティティをクリックさせます。",
+  "base": "player_$base",
+  "events": [
+    "org.bukkit.event.player.PlayerInteractEntityEvent"
+  ],
+
+  "executable": "プレイヤにエンティティをクリックさせます。",
+  "watchable": "プレイヤがエンティティをクリックするか期待します。",
+  "requireable": false,
+
+  "arguments": {
+    "entity": {
+      "type": "entitySpecifier",
+      "description": "クリックするエンティティです。",
+      "requiredOn": ["execute"]
+    },
+    "hand": {
+      "type": "string",
+      "description": "クリックする手です。",
+      "enum": [
+        "HAND",
+        "OFF_HAND"
+      ]
+    }
+  },
+  "outputs": {
+    "entity": {
+      "description": "クリックしたエンティティです。",
+      "type": "entity"
+    },
+    "hand": {
+      "description": "クリックした手です。",
+      "type": "string",
+      "enum": [
+        "HAND",
+        "OFF_HAND"
+      ]
+    }
+  }
+}

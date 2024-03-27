@@ -1,0 +1,458 @@
+import {ObjectType, Object} from "/src/components/Object";
+
+# ターゲットセレクタ
+
+Scenamatica ターゲットセレクタについて説明しています。
+
+---
+
+## 概要 {#overview}
+
+Scenamatica ターゲットセレクタは、簡単な記法を持った文字列です。  
+通常の Minecraft の[ターゲットセレクタ](https://minecraft.fandom.com/ja/wiki/Target_selectors) と同じように、エンティティを選択するために使用します。
+
+### Minecraft ターゲットセレクタとは？ {#minecraft-selector}
+
+Minecraft ターゲットセレクタは、コマンドの実行者が、その対象となるエンティティ・プレイヤを選択する際に
+より複雑な条件を指定するために使用されます。
+
+`@` のあとに母集団を指定し、その後に細かな条件を指定します。
+
+例：
+```
+
+/tp @e[type=minecraft:cow,distance=..10] ~ ~ ~
+/tell @a[tag=foo] Hello, world!
+```
+
+### これが必要な理由 {#why-do-we-need-this}
+
+通常のセレクタを用いたエンティティ選択は、 Bukkit の API を使用します。このAPI は、ワールドのすべての生きている（=消去されていない）
+エンティティを対象に取得します。
+しかし、一部のエンティティを消去するイベントでのマッチング処理では、消去されたエンティティを対象にする必要があります。
+
+このように、 通常の Bukkit API は使用できないため、自作する必要がありました。
+さらに不足した機能の実装や、より簡単に記述できるようにするために、Scenamatica ターゲットセレクタを実装しました。
+
+## 基本的な構文 {#basic-syntax}
+
+通常の Minecraft ターゲットセレクタと同様に、 `@母集団の種類[引数]` で指定します。  
+また、`@母集団の種類` および `[引数]` は省略可能です。
+
+引数は `キー=値` の形式で指定します。
+詳しくは[次章：セレクタの引数](#arguments)を参照してください。
+
+:::tip
+
+各メタ文字間は任意の空白文字を含められます。
+空白文字に該当する文字は、 ` ` （半角スペース）、`\t` （タブ）です。
+
+:::
+
+### 母集団の種類 {#selector-type}
+
+母集団には以下のいづれかを指定します。
++ `@e` : すべてのエンティティ
++ `@a` : すべてのプレイヤ
++ `@p` : （主役から）最も近いプレイヤ
++ `@r` : ランダムなプレイヤ
++ `@s` : 主役
+
+
+:::info
+
+主役とは、アクションの主役であるプレイヤを指します。  
+存在しない場合もあるので、各アクションのドキュメントを参照してください。
+
+:::
+
+## 引数の構文 {#arguments-syntax}
+
+セレクタの引数は、 `[キー1=値1, キー2=値2...]` の形式で指定し、それぞれを `,` で区切ります。  
+それぞれ[メタ文字](#meta-characters)以外の任意の文字列を指定できます。
+
+[母集団の種類](#selector-type)を省略した場合は、 `[` および `]` を省略できます。
+
+:::warning 重複したキーを持つ値
+重複したキーを持つ値は、暗黙的に[リスト](#value-list)として扱われます。
+::::tip
+これにより、 `@e[tag=foo,tag=bar]` というセレクタは、 `@e[tag={foo,bar}]` と同じ意味になります。
+これは AND 検索として解釈されます。
+::::
+
+### 文字列値 {#value-string}
+
+文字列は、任意の文字の並びです。基本的には `"` で囲んで表現できます。  
+省略した場合は、メタ文字以外の任意の文字列を指定できます。
+`"` 自体を含めたい場合は、 `\"` とエスケープします。
+
+:::tip
+
+以下のように、同名のキーを持つ[マップ](#value-map)でも指定できます。
+
+```
+[foo={foo="bar"}]
+```
+
+:::
+
+**暗黙的に、すべての文字列は[あいまい文字列](#value-ambiguous-string)として解釈されます。**
+
+#### あいまい文字列 {#value-ambiguous-string}
+
+あいまい検索を行うために、対象の文字列を 正規表現で指定できます。
+
+正規表現で指定する場合は[マップ](#value-map)で指定し、 `regex` というキーを指定します。
+
+例：
+```
+[foo={regex="bar.*"}]
+```
+
+### 数値 {#value-number}
+
+数値は任意の整数、少数、指数で表現できます。
+
+**暗黙的に、すべての数値は[範囲値](#value-ranged-number)として解釈されます。**
+
+#### 範囲値 {#value-ranged-number}
+
+あいまい検索を行うために、対象の数値を範囲で指定できます。
+
+範囲で指定する場合は、最小値と最大値を `..` で区切って指定します。  
+
+また `主キー_min` および `主キー_max` という形式でも指定できますし、  
+さらに `主キー={min=最小値,max=最大値}` という形式も有効です。  
+これらも最小値および最大値どちらかの省略が可能です。
+
+例：
++ `最小値..` : 最小値以上の数値
++ `..最大値` : 最大値以下の数値
++ `最小値..最大値` : 最小値以上、最大値以下の数値
++ `[主キー_min=最小値,主キー_max=最大値]` : 最小値以上、最大値以下の数値
++ `[主キー={min=最小値,max=最大値}]` : 最小値以上、最大値以下の数値
+
+### 真偽値 {#value-boolean}
+
+真偽値は、 `true` または `false` で表現します。  
+さらに、 YAML のように `on` または `off`、 `yes` または `no` でも表現できます。
+
+### リスト {#value-list}
+
+リストは、要素全体を `{` および `}` で囲んで表現します。
+各要素は `,` で区切ります。  
+要素には任意の値を指定できます。
+
+:::info 重複したキーを持つ値
+親に重複したキーを持つ値は、暗黙的にリストとして扱われます。
+::::tip
+これにより、 `@e[tag=foo,tag=bar]` というセレクタは、 `@e[tag={foo,bar}]` と同じ意味になります。
+これは AND 検索として解釈されます。
+::::
+
+### マップ {#value-map}
+
+マップは、リストと同様に要素全体を `{` および `}` で囲んで表現します。
+キーと値は `=` で区切り、各要素は `,` で区切ります。  
+値には上記の任意の値を指定できます。
+
+## 値の否定 {#value-negation}
+
+値の否定は、以下のように `!` を値の先頭に付けることで行えます。  
+
+```
+[foo=!bar]
+[foo=!1..5]
+[foo={!bar}]
+```
+
+## メタ文字 {#meta-characters}
+
+メタ文字は、セレクタの構文を構成する文字です。以下の文字はメタ文字として予約されているため使用できません。  
+使用する必要がある場合は文字列全体を `"` で囲うか、さらに `\` でエスケープしてください。
+
++ `"` : 文字列の開始・終了
++ `[` : [引数](#arguments)の開始
++ `]` : [引数](#arguments)の終了
++ `=` : [引数](#arguments)のキーと値の区切り
++ `!` : [引数](#arguments)の値の否定
++ `,` : [引数](#arguments)の要素、リストの要素、マップの要素の区切り
++ `{` : [リスト](#value-list)および[マップ](#マップ)の開始
++ `}` : [リスト](#value-list)および[マップ](#マップ)の終了
++ `\` : エスケープ文字
+
+## 有効な引数一覧 {#arguments}
+
+### `advancements` {#arguments-advancements}
+
+- 特別：この引数は、 母集団にプレイヤを指定した場合のみ有効です。
+
+<Object 
+   objects={[
+     {
+       name: "advancements",
+       type: "Map<String, Boolean | Map<String, Boolean>>",
+       description: "エンティティの進捗です。"
+     }
+   ]}
+/>
+
+進捗は次の２つの形式で指定できます。
+
++ `advancements={<名前空間付きキー>=<進捗達成の真偽値>}`  
+  プレイヤが指定した進捗を達成しているかどうかを指定します。
++ `advancements={<名前空間付きキー>={<達成条件>=<真偽値>}}`
+  プレイヤが、指定した進捗の、指定した達成条件を満たしているかどうかを指定します。
+
+### `distance`(`r`) {#arguments-distance}
+
+エンティティとの距離を指定します。
+
+- 特別：この引数は、 `distance` と `r` の両方で指定できます。
+- 特別：この引数の子は、マップに囲まれている必要はありません。  
+  例として、 `@e[distance={dx=0,y=10,z=0}]` と `@e[dx=0,dy=0,dz=10]` は同じ意味になります。
+- 特別：この引数は、 [RangedNumber](#value-ranged-number) を直接指定できます。  
+  例として、 `@e[distance=..10]` と `@e[distance={max=10}]` は同じ意味になります。
+
+<Object
+    objects={[
+      {
+        name: "distance",
+        type: ObjectType.DOUBLE,
+        description: "エンティティとの距離です。"
+      },
+      {
+        name: "dx",
+        type: ObjectType.DOUBLE,
+        description: "X 軸方向の距離です。"
+      },
+      {
+        name: "dy",
+        type: ObjectType.DOUBLE,
+        description: "Y 軸方向の距離です。"
+      },
+      {
+        name: "dz",
+        type: ObjectType.DOUBLE,
+        description: "Z 軸方向の距離です。"
+      }
+    ]}
+/>
+
+### `gamemode` (`m`) {#arguments-gamemode}
+
+プレイヤのゲームモードを指定します。
+
+- 特別：この引数は、 `gamemode` と `m` の両方で指定できます。
+- 特別：この引数は、 母集団にプレイヤを指定した場合のみ有効です。
+
+<Object 
+   objects={[
+     {
+       name: "gamemode",
+       type: "GameMode |" + ObjectType.INTEGER,
+       description: "プレイヤのゲームモードです。"
+     }
+   ]}
+/>
+
+### `level`(`l`) {#arguments-level}
+
+エンティティのレベルを指定します。
+
+- 特別：この引数は、 `level` と `l` の両方で指定できます。
+- 特別：この引数は、 母集団にプレイヤを指定した場合のみ有効です。
+
+<Object 
+   objects={[
+     {
+       name: "level",
+       type: ObjectType.INTEGER,
+       description: "エンティティのレベルです。"
+     }
+   ]}
+/>
+
+### `location`(`loc`) {#arguments-location}
+
+エンティティの位置を指定します。
+
+- 特別：この引数は、 `location` と `loc` の両方で指定できます。
+- 特別：この引数の子は、マップに囲まれている必要はありません。  
+  例として、 `@e[loc={x=0,y=0,z=0}]` と `@e[x=0,y=0,z=0]` は同じ意味になります。
+
+<Object 
+   objects={[
+     {
+       name: "x",
+       type: ObjectType.DOUBLE,
+       description: "X 座標です。"
+     },
+     {
+       name: "y",
+       type: ObjectType.DOUBLE,
+       description: "Y 座標です。"
+     },
+     {
+       name: "z",
+       type: ObjectType.DOUBLE,
+       description: "Z 座標です。"
+     },
+     {
+       name: ["yaw", "y_rotation", "ry"],
+       type: ObjectType.FLOAT,
+       description: "Y 軸回転です。"
+     },
+      {
+        name: ["pitch", "x_rotation", "rx"],
+        type: ObjectType.FLOAT,
+        description: "X 軸回転です。"
+      },
+      {
+        name: "world",
+        type: "NamespacedKey",
+        type_link: "/docs/use/scenario/types/misc#namespaced-key",
+        description: "ワールドです。"
+      }
+   ]}
+/>
+
+#### 指定例 {#arguments-location-examples}
+
+```
+[location={x=0,y=0,z=0,yaw=0,pitch=0,world=minecraft:overworld}]
+[loc={x=0,y=0,z=0,yaw=0,pitch=0,world=minecraft:overworld}]
+
+[x=1..5,y=1..5,z=1..5,yaw=0..,pitch=..0,world=minecraft:overworld]
+
+[x={min=1,max=5},y={min=1,max=5},z={min=1,max=5},yaw={min=0},pitch={max=0},world=minecraft:overworld]
+```
+
+
+### `name` {#arguments-name}
+
+エンティティの名前を指定します。
+
+<Object 
+   objects={[
+     {
+       name: "name",
+       type: ObjectType.STRING,
+       description: "エンティティの名前です。"
+     }
+   ]}
+/>
+
+#### 指定例 {#arguments-name-examples}
+
+```
+[name=foo]
+[name={name=foo}]
+[name={regex="foo.*"}]
+```
+
+### `scores` {#arguments-scores}
+
+エンティティのスコアを指定します。
+
+<Object 
+   objects={[
+     {
+       name: "scores",
+       type: "Map<String, RangedNumber>",
+       type_link: "/docs/use/scenario/types/misc#map",
+       description: "エンティティのスコアです。"
+     }
+   ]}
+/>
+
+### `tag`(`tags`) {#arguments-tag}
+
+エンティティのタグを指定します。
+
+- 特別：この引数は、 `tag` と `tags` の両方で指定できます。
+
+<Object 
+   objects={[
+     {
+       name: "tag",
+       type: ObjectType.STRING + " | " + ObjectType.STRING + "[]",
+       type_link: "/docs/use/scenario/types/misc#list",
+       description: "エンティティのタグです。"
+     }
+   ]}
+/>
+
+### `team` {#arguments-team}
+
+エンティティのチームを指定します。
+
+<Object 
+   objects={[
+     {
+       name: "team",
+       type: ObjectType.STRING,
+       description: "エンティティのチームです。"
+     }
+   ]}
+/>
+
+:::tip
+
+空文字列を指定すると、チームに所属していないエンティティのみを選択します。  
+これも反転して使用できます。
+
+例：
+```
+[team=]
+[team=!]
+```
+
+:::
+
+### `type` {#arguments-type}
+
+エンティティの種類を指定します。
+
+<Object 
+   objects={[
+     {
+       name: "type",
+       type: "EntityType",
+       type_link: "/docs/use/scenario/types/entities#entity-type",
+       description: "エンティティの種類です。"
+     }
+   ]}
+/>
+
+## セレクタのバッカス・ナウア記法 {#baccus-naur}
+
+この構文をより機械的に理解するために、[拡張バッカス・ナウア記法](https://ja.wikipedia.org/wiki/バッカス・ナウア記法)で示します。
+
+```ebnf
+<selector> ::= <selector-type> | <selector-type> "[" <selector-arguments> "]"
+               | <selector-arguments> | "[" <selector-arguments> "]"
+<selector-type> ::='@e' | '@a' | '@p' | '@r' | '@s'
+```
+
+```ebnf
+<selector-arguments> ::= [<selector-argument> ("," <selector-argument>)*]
+<selector-argument> ::= <argument-key> "=" "!"? <argument-value>
+
+<argument-key> ::= <string>
+<argument-value> ::= <string> | <number> | <ranged-number> | <boolean> | <list> | <map> | <null>
+
+<ranged-number> ::= <number> | <number> ".." | <number> ".." <number> | ".." <number>
+<boolean> ::= "true" | "false" | "on" | "off" | "yes" | "no"
+<list> ::= "{" [<argument-value> ("," <argument-value>)*] "}"
+<map> ::= "[" [<selector-argument> ("," <selector-argument>)*] "]"
+```
+
+```ebnf
+<char> ::= any non metacharacter | "\" metacharacter
+<string> ::= '"' <char>* '"' | <char>+
+<number> ::= ('+' | '-')? ((<any-digit>)+ | (<any-digit>)+ '.' (<any-digit>)+)
+<null> ::= null
+
+<meta-char> ::= '"' | "[" | "]" | "=" | "!" | "," | "{" | "}"
+```

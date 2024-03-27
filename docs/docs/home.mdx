@@ -1,0 +1,97 @@
+---
+sidebar_position: 1
+---
+
+import BelowDocument from "/src/components/BelowDocument";
+import Requirements from "/src/components/Requirements";
+
+# Scenamatica {#scenamatica}
+
+---
+
+:::danger このプロジェクトは現在開発中です
+
+このソフトウェアはまだ開発中であり、機能は API や頻繁に変更される可能性があります。  
+また、このドキュメントは古くなっている可能性もあります。
+
+:::
+
+## 概要 {#overview}
+
+Scenamaticaは、PaperMC プラグインに特化したエンドツーエンドのテスト自動化フレームワークです。
+YAML で予め定義されたマルチシナリオのテストにより、プラグイン機能の正常性と異常性を自動的に検証します。
+Scenamaticaの活用により、リグレッションテストをスピーディに実施でき、PaperMCプラグインの開発にエンジニアが集中できるようになります。  
+このプロセスにより、プラグインの品質が向上し、ユーザーと開発者、両者にとってより優れたエクスペリエンスが提供されます。
+また、既存の CI/CD パイプラインと統合することで、プラグインの品質を継続的に監視できます。
+
+## 特徴 {#features}
+
++ 世界初の PaperMC プラグインに特化したシナリオテスト  
+  シナリオテストとは、プラグインの操作や出力をシナリオ化し、問題なく動作するかを確認するテストです。  
+  Scenamatica は、 PaperMC プラグインでシナリオテストの自動化を世界初で実現しました。
++ YAML で定義されたシナリオ  
+  YAML でシナリオを定義することで、シナリオの可読性を高め追加・変更を容易にします。
+  面倒なテストコードを書く必要はないため、プログラマでなくてもテストを追加できます。
++ CI/CD との統合  
+  GitHub Actions などの CI/CD に統合することで、プラグインの品質を継続的に監視できます。
+  プルリクエストをマージする前にテストの成功を要求できます。
+
+## 対応環境 {#supported-environments}
+
+
+<Requirements requirements={[
+  {
+    name: "OS",
+    version: "Windows, Linux, macOS"
+  },
+  {
+    name: "Java",
+    version: "8 以上",
+    link: "https://www.java.com/ja/download/",
+    description: "Java 11 以上が推奨されていますが、最低要件は Java 8 です。"
+  },
+  {
+    name: "PaperMC",
+    version: "1.16.5",
+    link: "https://papermc.io/downloads",
+    description: "現時点では v1.16.5 にのみ対応しています。"
+  }
+]} />
+
+## 入門 {#getting-started}
+
+<BelowDocument docId={"getting-started/README"}
+               label={"Scenamatica を使い始める"}
+/>
+
+## 使用方法 {#usage}
+
+<BelowDocument docId={"use/README"}
+               label={"Scenamatica を使う"}
+/>
+
+## 姉妹プロジェクト
+
++ [TeamKUNPluginManager](https://kpm.kunlab.org/)
+  TeamKUNPluginManager は、わずかなアクションで安全で簡単にインストールを行うフルマネージド統合プラグインマネージャです。 
+  KPM を既存のサーバ管理フローに統合すれば、 GitHub 等のリモートリポジトリや HTTP サーバに登録された依存関係を自動で解決し、 
+  単一のフローとしてプラグインをインストールできます。 また、 KPM はオートメーションされた依存関係ツリーをビルドし
+  不必要なプラグインをわかりやすくリコメンデーションします。  
+  そのため、本番環境でのサーバアプリケーションパフォーマンスを継続的に監視したり、
+  依存関係を最適化するための推奨事項と視覚的な手がかりを提供したりして、サーバの管理をより簡単で安全にします。
+
+
+## スクリーンショット {#screenshots}
+
+![Run1#350x](/img/runs/1.png)
+![Run2#350x](/img/runs/2.png)  
+![Run3#700x](/img/runs/3.png)
+![CI1#350x](/img/ci/1.png)
+![CI2#350x](/img/ci/2.png)
+![CI2#350x](/img/pr/1.png)
+
+## オープンソース {#open-source}
+
+<BelowDocument docId={"opensources"}
+               label={"オープンソース"}
+/>

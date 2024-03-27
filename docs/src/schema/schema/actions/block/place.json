@@ -1,0 +1,41 @@
+{
+  "name": "block_place",
+  "description": "ブロックの設置を期待します。",
+  "base": "block_$base",
+  "events": [
+    "org.bukkit.event.block.BlockPlaceEvent"
+  ],
+
+  "executable": "指定されたブロックを設置します。",
+  "watchable": "指定されたブロックの設置を期待します。",
+  "requireable": "指定されたブロックが空気ではないかどうかを判定します。",
+
+  "arguments": {
+    "actor": {
+      "type": "playerSpecifier",
+      "description": "ブロックを破壊したアクタです。",
+      "availableFor": ["execute", "watch"]
+    },
+    "hand": {
+      "type": "string",
+      "description": "ブロックを設置した手です。",
+      "enum": [
+        "HAND",
+        "OFF_HAND"
+      ],
+      "availableFor": ["execute"]
+    },
+    "direction": {
+      "description": "ブロックを設置する方向です。",
+      "type": "blockFace",
+      "availableFor": ["execute"]
+    }
+  },
+
+  "outputs": {
+    "player": {
+      "type": "player",
+      "description": "ブロックを設置したプレイヤです。"
+    }
+  }
+}

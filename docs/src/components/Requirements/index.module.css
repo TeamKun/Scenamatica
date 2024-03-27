@@ -1,0 +1,21 @@
+.requirements {
+    border-collapse: collapse;
+    margin: 0 0 1em 0;
+}
+
+.requirements.header {
+    text-align: center;
+    font-weight: bold;
+    border: 1px solid #ccc;
+    padding: 0.5em;
+}
+
+.requirements.body {
+    border: 1px solid #ccc;
+    padding: 0.5em;
+}
+
+.header th {
+    padding-left: 50px;
+    padding-right: 50px;
+}

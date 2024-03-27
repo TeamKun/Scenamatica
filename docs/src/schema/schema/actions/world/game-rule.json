@@ -1,0 +1,72 @@
+{
+  "name": "world_game_rule",
+  "description": "ワールドのゲームルールを設定します",
+  "base": "world_$base",
+  "events": [
+    "io.papermc.paper.event.world.GameRuleChangeEvent"
+  ],
+
+  "executable": "ゲームルールを変更します。",
+  "watchable": "ゲームルールが変更されるか期待します。",
+  "requireable": "ゲームルールが指定された値であることを要求します。",
+
+  "arguments": {
+    "rule": {
+      "type": "string",
+      "description": "ゲームルールの名前です。",
+      "enum": [
+        "announceAdvancements",
+        "commandBlockOutput",
+        "disableElytraMovementCheck",
+        "doDaylightCycle",
+        "doEntityDrops",
+        "doFireTick",
+        "doInsomnia",
+        "doLimitedCrafting",
+        "doMobLoot",
+        "doMobSpawning",
+        "doTileDrops",
+        "doWeatherCycle",
+        "drowningDamage",
+        "fallDamage",
+        "fireDamage",
+        "universalAnger",
+        "disableRaids",
+        "doImmediateRespawn",
+        "doPatrolSpawning",
+        "doTraderSpawning",
+        "forgiveDeadPlayers",
+        "keepInventory",
+        "logAdminCommands",
+        "maxCommandChainLength",
+        "maxEntityCramming",
+        "mobGriefing",
+        "naturalRegeneration",
+        "playersSleepingPercentage",
+        "randomTickSpeed",
+        "reducedDebugInfo",
+        "sendCommandFeedback",
+        "showDeathMessages",
+        "spawnRadius",
+        "spectatorsGenerateChunks"
+      ]
+    },
+    "value": {
+      "type": [
+        "boolean",
+        "number"
+      ],
+      "description": "ゲームルールの値です。"
+    }
+  },
+  "outputs": {
+    "rule": {
+      "type": "string",
+      "description": "設定されたゲームルールの名前です。"
+    },
+    "value": {
+      "type": "string",
+      "description": "設定されたゲームルールの値です。"
+    }
+  }
+}

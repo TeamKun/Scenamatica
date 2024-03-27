@@ -1,0 +1,64 @@
+{
+  "name": "player_bucket_$base",
+  "base": "player_$base",
+  "arguments": {
+    "item": {
+      "type": "itemStack",
+      "description": "操作後にプレイヤが持っているアイテムです。"
+    },
+    "block": {
+      "type": "block",
+      "description": "設置する液体のブロックです。"
+    },
+    "clickedBlock": {
+      "type": "block",
+      "description": "プレイヤがクリックしたブロックです。"
+    },
+    "blockFace": {
+      "description": "プレイヤがクリックしたブロックの面です。",
+      "type": "blockFace"
+    },
+    "bucket": {
+      "type": "itemStack",
+      "description": "設置する液体のバケツです。"
+    },
+    "hand": {
+      "description": "バケツを使用する手です。",
+      "enum": [
+        "MAIN_HAND",
+        "OFF_HAND"
+      ],
+      "availableFor": ["watch"]
+    },
+    "eventOnly": {
+      "type": "boolean",
+      "description": "イベントのみ発火させるかどうかです。",
+      "availableFor": ["execute"]
+    }
+  },
+  "outputs": {
+    "item": {
+      "type": "itemStack",
+      "description": "操作後にプレイヤが持っているアイテムです。"
+    },
+    "block": {
+      "type": "block",
+      "description": "設置する液体のブロックです。"
+    },
+    "blockFace": {
+      "description": "プレイヤがクリックしたブロックの面です。",
+      "type": "blockFace"
+    },
+    "bucket": {
+      "type": "itemStack",
+      "description": "設置する液体のバケツです。"
+    },
+    "hand": {
+      "description": "バケツを使用する手です。",
+      "enum": [
+        "MAIN_HAND",
+        "OFF_HAND"
+      ]
+    }
+  }
+}

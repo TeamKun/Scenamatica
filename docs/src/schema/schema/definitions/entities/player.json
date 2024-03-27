@@ -1,0 +1,151 @@
+{
+  "player": {
+    "type": "entity",
+    "properties": {
+      "name": {
+        "type": "string",
+        "description": "プレイヤの名前です。",
+        "maxLength": 16
+      },
+      "online": {
+        "type": "boolean",
+        "description": "プレイヤがオンラインかどうかです。",
+        "default": true
+      },
+      "connection": {
+        "type": "object",
+        "description": "プレイヤの接続に関する情報です。",
+        "properties": {
+          "ip": {
+            "type": "string",
+            "regex": "^(((25[0-5]|(2[0-4]|1\\d|[1-9]|)\\d)\\.?\\b){4}|([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))$",
+            "description": "プレイヤの IP アドレスです。"
+          },
+          "port": {
+            "type": "integer",
+            "description": "プレイヤのポート番号です。",
+            "minimum": 0,
+            "maximum": 65535
+          },
+          "hostname": {
+            "type": "string",
+            "description": "プレイヤのホスト名です。"
+          }
+        }
+      },
+      "displayName": {
+        "type": "string",
+        "description": "プレイヤの表示名です。"
+      },
+      "playerList": {
+        "type": "playerList",
+        "description": "プレイヤのプレイヤリストにおける扱いです。"
+      },
+      "compass": {
+        "type": "location",
+        "description": "プレイヤのコンパスのターゲットです。"
+      },
+      "bedLocation": {
+        "type": "location",
+        "description": "プレイヤのベッドスポーンの位置です。"
+      },
+      "exp": {
+        "type": "integer",
+        "description": "プレイヤの経験値です。"
+      },
+      "level": {
+        "type": "integer",
+        "description": "プレイヤのレベルです。"
+      },
+      "totalExp": {
+        "type": "integer",
+        "description": "プレイヤの総経験値です。"
+      },
+      "flyable": {
+        "type": "boolean",
+        "description": "プレイヤが飛行できるかどうかです。ゲームモードがクリエイティブおよびスペクテイタの場合は、暗黙的に true になります。"
+      },
+      "flying": {
+        "type": "boolean",
+        "description": "プレイヤが飛行中かどうかです。"
+      },
+      "walkSpeed": {
+        "type": "number",
+        "description": "プレイヤの歩行速度です。"
+      },
+      "flySpeed": {
+        "type": "number",
+        "description": "プレイヤの飛行速度です。"
+      },
+      "inventory": {
+        "type": "playerInventory",
+        "description": "プレイヤのインベントリです。"
+      },
+      "enderChest": {
+        "type": "inventory",
+        "description": "プレイヤのエンダーチェストです。"
+      },
+      "mainHand": {
+        "type": "string",
+        "description": "プレイヤの利き手です。",
+        "enum": [
+          "LEFT",
+          "RIGHT"
+        ],
+        "default": "right"
+      },
+      "gamemode": {
+        "type": "string",
+        "description": "プレイヤのゲームモードです。",
+        "enum": [
+          "SURVIVAL",
+          "CREATIVE",
+          "ADVENTURE",
+          "SPECTATOR"
+        ],
+        "default": "survival"
+      },
+      "foodLevel": {
+        "type": "integer",
+        "description": "プレイヤの食料レベルです。",
+        "minimum": 0,
+        "maximum": 20,
+        "default": 20
+      },
+      "op": {
+        "description": "プレイヤの OP レベルです。 0 は OP ではないことを意味します。",
+        "anyOf": [
+          {
+            "type": "boolean"
+          },
+          {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 4
+          }
+        ]
+      },
+      "permissions": {
+        "type": "array",
+        "description": "プレイヤに与える権限です。",
+        "items": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "playerList": {
+    "type": "object",
+    "description": "プレイヤリストに関する情報です。",
+    "properties": {
+      "header": {
+        "type": "string",
+        "description": "プレイヤリストに表示されるヘッダーです。"
+      },
+      "footer": {
+        "type": "string",
+        "description": "プレイヤリストに表示されるフッターです。"
+      }
+    }
+  }
+}

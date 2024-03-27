@@ -1,0 +1,36 @@
+{
+  "name": "tab_complete",
+  "description": "コマンドをタブ補完します。",
+  "events": [
+    "org.bukkit.event.server.TabCompleteEvent"
+  ],
+
+  "executable": "コマンドをタブ補完します。",
+  "watchable": "コマンドがタブ補完されることを期待します。",
+  "requireable": false,
+
+  "arguments": {
+    "sender": {
+      "description": "実行するプレイヤです。",
+      "anyOf": [
+        {
+          "type": "playerSpecifier"
+        },
+        {
+          "type": "string",
+          "const": "<CONSOLE>",
+          "description": "コンソールを表します。"
+        }
+      ]
+    },
+    "buffer": {
+      "type": "string",
+      "description": "入力された不完全なコマンドです。補完を期待する場合は正規表現を使用できます。",
+      "requiredOn": ["execute"]
+    },
+    "completions": {
+      "type": "array",
+      "description": "補完候補の配列です。補完を期待する場合は正規表現を使用できます。"
+    }
+  }
+}

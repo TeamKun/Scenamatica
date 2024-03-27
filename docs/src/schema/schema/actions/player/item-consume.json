@@ -1,0 +1,34 @@
+{
+  "name": "player_item_consume",
+  "description": "プレイヤにアイテムを消費させます。",
+  "base": "player_$base",
+  "events": [
+    "org.bukkit.event.player.PlayerItemConsumeEvent"
+  ],
+
+  "executable": "プレイヤにアイテムを消費させます。",
+  "watchable": "プレイヤがアイテムを消費するか期待します。",
+  "requireable": false,
+
+  "arguments": {
+    "item": {
+      "type": "itemStack",
+      "description": "消費するアイテムです。"
+    },
+    "replacement": {
+      "type": "itemStack",
+      "description": "消費後にプレイヤに与えるアイテムです。",
+      "availableFor": ["watch"]
+    }
+  },
+  "outputs": {
+    "item": {
+      "type": "itemStack",
+      "description": "消費したアイテムです。"
+    },
+    "replacement": {
+      "type": "itemStack",
+      "description": "消費後にプレイヤに与えたアイテムです。"
+    }
+  }
+}

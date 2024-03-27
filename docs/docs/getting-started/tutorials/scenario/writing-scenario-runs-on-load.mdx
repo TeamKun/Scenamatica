@@ -1,0 +1,104 @@
+---
+sidebar_position: 1
+---
+
+import BelowDocument from "/src/components/BelowDocument";
+
+# 読み込み時に自動で実行 されるシナリオを書いてみる
+
+プラグインの読み込み時に自動で実行されるシナリオを書いてみましょう。
+
+---
+
+## 概要 {#overview}
+
+このチュートリアルでは、[トリガ `on_load`][trigger-on-load]の使い方を学びます。
+
+これを完了すると、サーバの起動時やリロード時に自動で実行されるシナリオを作成できるようになります。  
+さらに、これを応用すると、CI/CD などで自動テストを行えます。
+
+<BelowDocument docId="getting-started/tutorials/integration/automation-with-github-actions"
+               label="チュートリアル： GitHub Actions でテストを自動化する"
+               tutorial
+/>
+
+
+## ステップ１. 基本的なシナリオを作成する {#step1-create-basic-scenario}
+
+まずは、以下のような簡単なシナリオを作成します。
+
+:::tip
+
+このシナリオは、[チュートリアル：最初のシナリオを書いてみる](/docs/getting-started/tutorials/writing-my-first-scenario#step6-write-scenario)で作成したシナリオと同じものです。
+
+<BelowDocument docId="getting-started/tutorials/writing-my-first-scenario"
+               label="チュートリアル：最初のシナリオを書いてみる"
+               tutorial
+/>
+
+:::
+
+```yaml title="test-hoge-success.yml" showLineNumbers
+scenamatica: "0.0.1"
+name: "test-hoge-success"
+description: "hoge 機能の正常系テスト"
+
+context:
+  actors:
+  - name: Actor1
+  stage:
+    env: NETHER
+
+on:
+- type: manual_dispatch
+
+scenario:
+  # Actor1 が /hoge を実行する。
+- type: execute
+  action: command_dispatch
+  command: "/hoge"
+  sender: Actor1
+  # fuga というメッセージが（Actor1 に）表示される。
+- type: expect
+  action: message
+  content: "fuga"
+  recipient: Actor1
+  # Actor1 が死ぬ。
+- type: expect
+  action: player_death
+  target: Actor1
+```
+
+## ステップ２. トリガに `on_load` を追加する {#step2-add-on-load-to-trigger}
+
+[トリガ `on_load`][trigger-on-load] は、そのプラグインが読み込まれたときに自動で発火するトリガです。  
+これには、プラグインのリロードも含まれます。
+また、このトリガは引数を取りません。
+
+以下のようにして、`on_load` を追加します。
+
+```yaml title="test-hoge-success.yml" showLineNumbers
+
+on:
+- type: manual_dispatch
+# highlight-next-line
+- type: on_load
+```
+
+## ステップ３. 動作を確認する {#step3-check-if-it-works}
+
+シナリオを作成したら、サーバを再起動するか、プラグインを再読込します。  
+シナリオが実行されたらこのチュートリアルは完了です。お疲れ様でした。
+
+```bash
+# サーバを再起動する場合
+$ java -jar <サーバのjarファイル名>.jar
+
+# 再読込する場合
+$ reload confirm 
+```
+
+他の応用的なチュートリアルを読むには[こちら](/docs/getting-started/tutorials)を参照してください。  
+シナリオファイルの完全な構文については[こちら](/docs/use/scenario/scenario-file)を参照してください。  
+
+[trigger-on-load]: /docs/use/scenario/trigger#triggers-on-load

@@ -1,0 +1,214 @@
+---
+sidebar_position: 1
+---
+
+import Action, {ScenarioType} from "/src/components/Action";
+import BelowDocument from "/src/components/BelowDocument";
+import {ObjectType} from "/src/components/Object";
+import SearchBar from '@theme/SearchBar';
+
+
+# アクション
+
+このページではアクションの概念について説明しています。
+
+---
+
+:::tip
+
+**シナリオやシナリオファイルの概念が初めての方は[こちら](/docs/use/scenario)を参照して先に理解しておくことを推奨します。**
+
+:::
+
+↓↓↓アクションの検索はこちら↓↓↓
+
+<SearchBar
+  style={{marginBottom: "1rem"}}
+/>
+
+## 概要 {#overview}
+
+アクションとは、「プレイヤが死亡する」や「プレイヤがメッセージを送信する」などの、具体的な動作のことです。  
+これは大きな動作を最小まで分解したもので、プラグインの機能を検証するために必要な最小単位です。
+
+シナリオではこれを複数個組み合わせて使用することで、プラグインの大きな機能を表現します。
+これを[シナリオ](/docs/use/scenario/elements#scenario)と呼びます。
+
+すべてのアクションは、次の３つの[シナリオタイプ](/docs/use/scenario/elements#scenario-type)の一つ以上で使用できます。  
++ [アクション実行(`execute`)](/docs/use/scenario/elements#scenario-type-action-execution) - アクションを実行します。  
+  例：プレイヤをキルする、プレイヤにメッセージを送信する
++ [アクション実行期待(`expect`)](/docs/use/scenario/elements#scenario-type-expect) - アクションが**実行されるか**を検知または実行されるまで待機します。  
+  例：プレイヤが死亡する、プレイヤにメッセージが送信される
++ [条件要求(`require`)](/docs/use/scenario/elements#scenario-type-condition-require) - アクション（状態）が**すでに**満たされているかを検知します。  
+  例：プレイヤが死亡している、プレイヤがメッセージを送信している
+
+そのため、アクション一つにつき最大で３つのふるまいを持ちます。  
+例えばアクション [PlayerDeathAction](player#death) は以下の３つのふるまいを持ちます。
+
+| シナリオタイプ                                                                          | ふるまい        |
+|:---------------------------------------------------------------------------------|:------------|
+| [アクション実行(`execute`)](/docs/use/scenario/elements#scenario-type-action-execution) | プレイヤをキルする   |
+| [アクション実行期待(`expect`)](/docs/use/scenario/elements#scenario-type-expect)          | プレイヤが死亡する   |
+| [条件要求(`require`)](/docs/use/scenario/elements#scenario-type-condition-require)   | プレイヤが死亡している |
+
+## アクションの種類 {#actions}
+
+アクションは膨大な数の種類があるので、各カテゴリ別に分けられています。  
+以下のアンカをクリックすると、そのカテゴリのアクション一覧に遷移します。
+
++ [ブロック関連](/docs/use/scenario/actions/block)  
+  ブロックの破壊など
++ [プレイヤ関連](/docs/use/scenario/actions/player)  
+  プレイヤの死亡、ゲームモードの変更など
++ [サーバ関連](/docs/use/scenario/actions/server)  
+  コマンドの送信など
++ [ワールド関連](/docs/use/scenario/actions/world)  
+  ワールドボーダの変更など
++ [エンティティ関連](/docs/use/scenario/actions/entity)  
+  エンティティのダメージなど
+
+## アクションの引数 {#action-arguments}
+
+各アクションは、実行に必要な引数を持ちます。
+引数の指定には `with` キー を使用します。
+
+:::tip
+必要な引数の一覧は各アクションの項目を参照してください。
+:::
+
+## アクションの出力 {#action-outputs}
+
+各アクションは、実行後に出力する値を持ちます。  
+出力は[変数機能](/docs/use/scenario/variables-and-definitions#variables)の利用時に使用します。
+
+:::tip
+出力の一覧は各アクションの項目を参照してください。
+:::
+
+## 特にページを分ける程でもないアクション {#general-actions}
+
+### 特別：チャットメッセージの送信 {#message}
+
+<Action name="メッセージの送信"
+        description="エンティティにメッセージを送信します。"
+        id="message"
+        args={[
+          {
+            name: "message",
+            anchor: "message-message",
+            type: ObjectType.STRING,
+            description: "メッセージの内容です。",
+            required: [ScenarioType.EXECUTE]
+          },
+          {
+            name: "recipient",
+            type: "PlayerSpecifier",
+            type_link: "/docs/use/scenario/types/entities#player-specifier",
+            description: "メッセージの受信者です。",
+            required: [ScenarioType.EXECUTE]
+          }
+        ]}
+        outputs={[
+          {
+            name: "message",
+            type: ObjectType.STRING,
+            description: "送信されたメッセージです。"
+          },
+          {
+            name: "recipient",
+            type: "Player",
+            type_link: "/docs/use/scenario/types/entities#player",
+          description: "メッセージの受信者です。"
+          }
+        ]}
+        executable watchable
+/>
+
+#### `message` {#message-message}
+
+メッセージの色及び書式は 接頭辞 `§` に続けて[特定の文字](https://minecraft.fandom.com/ja/wiki/Formatting_codes)を指定します。
+
+### 特別：マイルストーンの達成 {#milestone}
+
+:::tip
+
+マイルストーンシステムの概要と詳しい使い方は以下のページを参照してください。
+
+<BelowDocument docId="use/scenario/milestone"
+               label="マイルストーンシステムの概要"
+/>
+
+:::
+
+<Action name="マイルストーンの達成"
+        description="Scenamatica マイルストーンを達成したことを検知/設定します。"
+        id="milestone"
+        args={[
+          {
+            name: "name",
+            description: "マイルストーンの名前です。",
+            type: ObjectType.STRING,
+            required: [ScenarioType.EXECUTE, ScenarioType.REQUIRE]
+          },
+          {
+            name: "reached",
+            description: "マイルストーンを達成したかどうかを設定します。",
+            type: ObjectType.BOOLEAN,
+            required: [ScenarioType.EXECUTE, ScenarioType.REQUIRE]
+          }
+        ]}
+        outputs={[
+          {
+            name: "name",
+            description: "マイルストーンの名前です。",
+            type: ObjectType.STRING,
+          },
+          {
+            name: "reached",
+            description: "マイルストーンを達成したかどうかを設定します。",
+            type: ObjectType.BOOLEAN,
+          }
+        ]}
+        executable requireable watchable
+/>
+
+### 特別：反転
+
+<Action name="反転"
+        description="条件の評価結果を反転します。"
+        id="negate"
+        args={[
+          {
+            name: "action",
+            type: "Action",
+            type_link: "/docs/use/scenario/actions",
+            description: "反転するアクション",
+            required: true
+          },
+          {
+            name: "with",
+            type: "Object",
+            description: "反転するアクションの引数",
+          required: true
+          }
+        ]}
+        requireable
+/>
+
+#### 例
+
+```yaml showLineNumbers
+
+# プレイヤが死亡していない場合に, そのプレイヤをキルします。
+- type: execute
+  action: player_death
+  with:
+    target: Actor001
+  runif:
+    action: negate
+    with:
+      action: player_death
+      with:
+        target: Actor001
+
+```
