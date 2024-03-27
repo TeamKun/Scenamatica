@@ -1,4 +1,3 @@
-
 import Action, {ScenarioType} from "/src/components/Action";
 import BelowDocument from "/src/components/BelowDocument";
 import {ObjectType} from "/src/components/Object";
@@ -274,6 +273,12 @@ import {ObjectType} from "/src/components/Object";
 <Action name="ワールドの保存"
         description="ワールドを保存します。"
         events={[
+          {
+            name: "WorldSaveEvent",
+            package: "org.bukkit.event.world",
+          },
+        ]}
+        arguments={[
           {
             name: "world",
             type: ObjectType.STRING,
