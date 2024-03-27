@@ -1,0 +1,320 @@
+
+import Action, {ScenarioType} from "/src/components/Action";
+import BelowDocument from "/src/components/BelowDocument";
+import {ObjectType} from "/src/components/Object";
+
+# ワールドに関連するアクション
+
+ワールドに関連するアクションを列挙しています。
+
+---
+
+## 記述する際の注意 {#notes}
+
+:::tip
+
+**シナリオやシナリオファイルの概念が初めての方は、先に[こちら](/docs/use/scenario)を参照して理解しておくことを推奨します。**
+
+:::
+
+<BelowDocument docId="use/scenario/scenario-file"
+               label="シナリオファイルを記述する際の注意"
+               anchor="notes"
+/>
+
+## 全般 - 引数 `world` {#apex-world}
+
+これらのアクションは、[NamespacedKey](/docs/use/scenario/types/misc#namespaced-key) 型のオプション引数 `world` を受け取ります。
+
+省略した場合はシナリオに割り当てられたステージが対象になります。
+
+## ワールドボーダの変更 {#world-border}
+
+<Action name="ワールドボーダの変更"
+        description="ワールドボーダを変更します。"
+        id="world_border"
+        events={[
+          {
+            name: "WorldBorderBoundsChangeEvent",
+            package: "org.bukkit.event.world",
+          },
+          {
+            name: "WorldBorderCenterChangeEvent",
+            package: "org.bukkit.event.world",
+          }
+        ]}
+        args={[
+          {
+            name: "world",
+            type: ObjectType.STRING,
+            description: "ワールドの名前です。",
+          },
+          {
+            name: "type",
+            anchor: "world-border-type",
+            type: "Enum{STARTED_MOVE, INSTANT_MOVE}",
+            description: "ワールドボーダの移動方法です。",
+            available: [ScenarioType.REQUIRE]
+          },
+          {
+            name: "size",
+            type: ObjectType.DOUBLE,
+            description: "ワールドボーダの半径です。",
+          },
+          {
+            name: "sizeOld",
+            type: ObjectType.DOUBLE,
+            description: "ワールドボーダの変更前の半径です。",
+          },
+          {
+            name: "duration",
+            type: ObjectType.LONG,
+            description: "ワールドボーダの移動にかかる時間です。",
+          },
+          {
+            name: "center",
+            anchor: "world-border-center",
+            type_link: "/docs/use/scenario/types/misc#location",
+            type: "Location",
+            description: "ワールドボーダの中心座標です。",
+          },
+          {
+            name: "centerOld",
+            anchor: "world-border-center-old",
+            type_link: "/docs/use/scenario/types/misc#location",
+            type: "Location",
+            description: "ワールドボーダの変更前の中心座標です。",
+          }
+        ]}
+        outputs={[
+          {
+            name: "world",
+            type: ObjectType.STRING,
+            description: "ワールドの名前です。",
+          },
+          {
+            name: "type",
+            type: "Enum{STARTED_MOVE, INSTANT_MOVE}",
+            description: "ワールドボーダの移動方法です。",
+          },
+          {
+            name: "size",
+            type: ObjectType.DOUBLE,
+            description: "ワールドボーダの半径です。",
+          },
+          {
+            name: "sizeOld",
+            type: ObjectType.DOUBLE,
+            description: "ワールドボーダの変更前の半径です。",
+          },
+          {
+            name: "duration",
+            type: ObjectType.LONG,
+            description: "ワールドボーダの移動にかかる時間です。",
+          },
+          {
+            name: "center",
+            type_link: "/docs/use/scenario/types/misc#location",
+            type: "Location",
+            description: "ワールドボーダの中心座標です。",
+          },
+          {
+            name: "centerOld",
+            type_link: "/docs/use/scenario/types/misc#location",
+            type: "Location",
+            description: "ワールドボーダの変更前の中心座標です。",
+          }
+        ]}
+        available={{
+          since: "1.16.5"
+        }}
+        executable watchable requireable
+/>
+
+#### アクション実行シナリオでの使用 {#world-border-usage-in-execution}
+
+:::warning
+
+出力 `size`、 `duration`、 `center` は、引数で指定した場合にのみ出力されます。
+
+:::
+
+### ワールドボーダの変更の完了 {#world-border-changed}
+
+<Action name="ワールドボーダの変更の完了"
+        description="ワールドボーダを変更の完了を検知します。"
+        id="world_border_changed"
+        events={[
+          {
+            name: "WorldBorderBoundsChangeFinishEvent",
+            package: "org.bukkit.event.world",
+          },
+        ]}
+        args={[
+          {
+            name: "world",
+            type: ObjectType.STRING,
+            description: "ワールドの名前です。",
+          },
+          {
+            name: "size",
+            type: ObjectType.DOUBLE,
+            description: "ワールドボーダの半径です。",
+          },
+          {
+            name: "sizeOld",
+            type: ObjectType.DOUBLE,
+            description: "ワールドボーダの変更前の半径です。",
+          },
+          {
+            name: "duration",
+            type: ObjectType.LONG,
+            description: "ワールドボーダの移動にかかる時間です。",
+          }
+        ]}
+        available={{
+          since: "1.16.5"
+        }}
+        watchable
+/>
+
+## ゲームルールの変更 {#world-game-rule}
+
+<Action name="ゲームルールの変更"
+        description="ゲームルールを変更します。"
+        id="game_rule"
+        events={[
+          {
+            name: "WorldGameRuleChangeEvent",
+            package: "io.papermc.paper.event.world",
+          },
+        ]}
+        args={[
+          {
+            name: "world",
+            type: ObjectType.STRING,
+            description: "ワールドの名前です。",
+          },
+          {
+            name: "rule",
+            anchor: "world-game-rule-rule",
+            type: "Enum{doDaylightCycle, ...}",
+            description: "変更するゲームルールの名前です。",
+          },
+          {
+            name: "value",
+            type: "String",
+            description: "変更後のゲームルールの値です。",
+          }
+        ]}
+        executable watchable requireable
+/>
+
+#### `rule` {#world-game-rule-rule}
+
+ゲームルールを、ゲーム内の `/gamerule` コマンドで指定する際の名前で記述します。  
+設定できる値は [こちら](https://minecraft.fandom.com/ja/wiki/Commands/gamerule) を参照してください。
+
+## 初期化 {#world-init}
+
+<Action name="ワールドの初期化"
+        description="ワールドを初期化します。"
+        events={[
+          {
+            name: "WorldInitEvent",
+            package: "org.bukkit.event.world",
+          },
+        ]}
+        outputs={[
+          {
+            name: "world",
+            type: ObjectType.STRING,
+            description: "ワールドの名前です。",
+          },
+        ]}
+        id="world_init"
+        watchable
+/>
+
+## ロード {#world-load}
+
+<Action name="ワールドのロード"
+        description="ワールドをロードします。"
+        events={[
+          {
+            name: "WorldLoadEvent",
+            package: "org.bukkit.event.world",
+          },
+        ]}
+        arguments={[
+          {
+            name: "world",
+            type: ObjectType.STRING,
+            description: "ワールドの名前です。",
+          }
+        ]}
+        outputs={[
+          {
+            name: "world",
+            type: ObjectType.STRING,
+            description: "ワールドの名前です。",
+          },
+        ]}
+        id="world_load"
+        executable requireable watchable
+/>
+
+:::danger
+ワールドを読み込む際には、ワールドのディレクトリが存在している必要があります。  
+存在していない場合は、 `java.lang.IllegalArgumentException` が発生します。
+:::
+
+## 保存 {#world-save}
+
+<Action name="ワールドの保存"
+        description="ワールドを保存します。"
+        events={[
+          {
+            name: "world",
+            type: ObjectType.STRING,
+            description: "ワールドの名前です。",
+          },
+        ]}
+        outputs={[
+          {
+            name: "world",
+            type: ObjectType.STRING,
+            description: "ワールドの名前です。",
+          },
+        ]}
+        id="world_save"
+        executable watchable
+/>
+
+## アンロード {#world-unload}
+
+<Action name="ワールドのアンロード"
+        description="ワールドをアンロードします。"
+        events={[
+          {
+            name: "WorldUnloadEvent",
+            package: "org.bukkit.event.world",
+          },
+        ]}
+        arguments={[
+          {
+            name: "world",
+            type: ObjectType.STRING,
+            description: "ワールドの名前です。",
+          },
+        ]}
+        outputs={[
+          {
+            name: "world",
+            type: ObjectType.STRING,
+            description: "ワールドの名前です。",
+          },
+        ]}
+        id="world_unload"
+        executable requireable watchable
+/>

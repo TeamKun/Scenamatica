@@ -1,0 +1,34 @@
+# noinspection YAMLSchemaValidation
+scenamatica: ${project.version}
+minecraft:
+  since: 1.16.5
+
+name: actions_world_save
+description: Testing WorldSaveAction works or not
+on:
+  - type: on_load
+  - type: manual_dispatch
+
+runif:
+  action: world_unload
+  with:
+    world: the_end
+
+scenario:
+  # Implicitly load the world
+  - type: execute
+    action: world_load
+    with:
+      world: the_end
+    runif:
+      action: world_unload
+      with:
+        world: the_end
+  - type: execute
+    action: world_save
+    with:
+      world: the_end
+  - type: expect
+    action: world_save
+    with:
+      world: the_end

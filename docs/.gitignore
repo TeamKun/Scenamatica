@@ -1,0 +1,18 @@
+# Dependencies
+/node_modules
+
+# Production
+/build
+
+# Generated files
+.docusaurus
+.cache-loader
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+.idea
+
+/static/schema/**
+/static/scenamatica-file.json

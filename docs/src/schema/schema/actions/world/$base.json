@@ -1,0 +1,15 @@
+{
+  "name": "world_$base",
+  "arguments": {
+    "world": {
+      "type": "string",
+      "description": "ワールドの名前です。"
+    }
+  },
+  "outputs": {
+    "world": {
+      "type": "string",
+      "description": "ワールドの名前です。"
+    }
+  }
+}

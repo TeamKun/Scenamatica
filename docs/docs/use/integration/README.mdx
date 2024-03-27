@@ -1,0 +1,39 @@
+import BelowDocument from "/src/components/BelowDocument";
+
+# 外部ツールとの統合
+
+Scenamatica と外部ツールとの統合について説明しています。
+
+---
+
+## 概要 {#overview}
+
+Scenamatica は、外部の開発ツールと連携することで、より効果的に利用できます。
+
+## CI-CD との連携 {#ci-cd}
+
+GitHub Actions のワークフローを利用することで、Scenamatica を CI-CD に組み込み、
+シナリオテストの実行及びテストレポートの作成を自動化できます。
+
+<BelowDocument docId={"use/integration/ci-cd"}
+               label={"GitHub Actions との連携"}
+/>
+
+## Scenamaticer を利用した IntelliJ IDEA との連携
+
+Scenamatica 公式の IntelliJ IDEA Platform Plugin である [Scenamaticer](https://plugins.jetbrains.com/plugin/23760-scenamaticer)
+を利用すると、[IntelliJ IDEA](https://jetbrains.com/idea/) でのシナリオの作成で高度な支援を受けられます。
+
+<BelowDocument docId={"use/integration/scenamaticer"}
+               label={"Scenamaticer を利用した IntelliJ IDEA との連携"}
+/>
+
+## IDE 等の JUnit XML 形式のレポートを利用できるツールとの連携 {#junit-xml}
+
+[IntelliJ IDEA](https://jetbrains.com/idea/) などの IDE や, [Jenkins](https://jenkins.io/), [VSCode](https://code.visualstudio.com/) 
+などのツールは、JUnit XML 形式のレポートを視覚的に表示する機能があります。  
+Scenamatica のレポート出力機能を利用して、これらのツールと連携できます。
+
+<BelowDocument docId={"use/integration/junit-xml"}
+               label={"JUnit XML 形式のレポートを利用できるツールとの連携"}
+/>

@@ -1,0 +1,90 @@
+{
+  "title": "Scenamatica Scenario File",
+  "type": "object",
+  "properties": {
+    "scenamatica": {
+      "type": "version",
+      "description": "対応する Scenamatica のバージョンです。動作している Scenamatica のバージョンよりも新しいバージョンのシナリオファイルは読み込めません。"
+    },
+    "minecraft": {
+      "type": "object",
+      "description": "対応する Minecraft のバージョンです。指定された範囲にないバージョンの Minecraft では実行できません。",
+      "properties": {
+        "since": {
+          "type": "version",
+          "description": "対応する Minecraft のバージョンの下限です。"
+        },
+        "until": {
+          "type": "version",
+          "description": "対応する Minecraft のバージョンの上限です。"
+        }
+      }
+    },
+    "name": {
+      "type": "string",
+      "description": "シナリオにつける一意の識別子です。キャメルケースが推奨されていますが、特に技術的制約はありません。",
+      "examples": [
+        "myScenario"
+      ]
+    },
+    "description": {
+      "type": "string",
+      "description": "人間が読みやすいシナリオの説明です。シナリオの概要を記述してください。",
+      "examples": [
+        "あのイーハトーヴォのすきとおった風、夏でも底に冷たさをもつ青いそら、うつくしい森で飾られたモーリオ市、郊外のぎらぎらひかる草の波。"
+      ]
+    },
+    "definitions": {
+      "type": "object",
+      "description": "シナリオ内で再利用できる定義を作成します。",
+      "additionalProperties": true
+    },
+    "timeout": {
+      "type": "integer",
+      "description": "全体のタイムアウト時間を**チック**で指定します。-1 で無効化します。",
+      "minimum": -1,
+      "default": 6000
+    },
+    "order": {
+      "description": "シナリオの実行順序を指定します。小さいほど先に実行されます。",
+      "default": 2147483647,
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "order"
+        }
+      ]
+    },
+    "on": {
+      "type": "array",
+      "description": "シナリオの実行条件を定義します。シナリオは、この配列の要素のいずれかに一致するときに実行されます。何も指定しない場合は、そのシナリオは一生実行されません。",
+      "items": {
+        "type": "trigger"
+      },
+      "minItems": 1
+    },
+    "context": {
+      "type": "context",
+      "description": "シナリオの実行に必要な情報や準備を定義します。シナリオの実行に必要な情報や準備がない場合は、このプロパティは省略できます。",
+      "additionalProperties": false
+    },
+    "runif": {
+      "type": "action",
+      "description": "シナリオの実行条件を定義します。アクションで定義します。満たしていない場合はスキップされます。"
+    },
+    "scenario": {
+      "type": "scenarios",
+      "description": "このシナリオファイルのメインシナリオを定義します。",
+      "minItems": 1
+    }
+  },
+  "required": [
+    "scenamatica",
+    "name",
+    "on",
+    "scenario"
+  ],
+  "additionalProperties": true
+}

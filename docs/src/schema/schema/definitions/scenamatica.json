@@ -1,0 +1,188 @@
+{
+  "context": {
+    "type": "object",
+    "properties": {
+      "actors": {
+        "type": "array",
+        "description": "シナリオの実行に必要なアクタを定義します。必要なアクタは、適宜自動生成されます。",
+        "items": {
+          "type": "player"
+        }
+      },
+      "entities": {
+        "type": "array",
+        "description": "シナリオの実行に必要なエンティティを定義します。エンティティが指定されている場合, シナリオ開始時に自動的に生成されます。",
+        "items": {
+          "type": "entity"
+        }
+      },
+      "stage": {
+        "type": "stage",
+        "description": "シナリオの実行に必要なステージを定義します。ステージが指定されている場合, シナリオ開始時に自動的に生成されます。"
+      }
+    }
+  },
+  "scenario": {
+    "type": "action",
+    "properties": {
+      "type": {
+        "type": "string",
+        "description": "シナリオの種類です。",
+        "anyOf": [
+          {
+            "const": "expect",
+            "description": "アクションがプラグインによって実行されるか監視します。"
+          },
+          {
+            "const": "execute",
+            "description": "アクションを実行します。"
+          },
+          {
+            "const": "require",
+            "description": "条件が満たされているかチェックします。"
+          }
+        ]
+      },
+      "timeout": {
+        "type": "integer",
+        "description": "シナリオのタイムアウト時間を**チック**で指定します。-1 で無効化します。",
+        "minimum": -1,
+        "default": 100
+      },
+      "runif": {
+        "type": "action",
+        "description": "シナリオの実行条件を定義します。アクションで定義します。満たしていない場合はスキップされます。",
+        "$scenarioKindOf": "require"
+      }
+    },
+    "required": [
+      "type",
+      "action"
+    ]
+  },
+  "action": {
+    "type": "object",
+    "properties": {
+      "action": {
+        "type": "actionKinds",
+        "description": "アクションの種類です。 "
+      },
+      "with": {
+        "type": "actionArgument",
+        "description": "アクションの種類によっては、このプロパティにアクションの引数を指定します。"
+      }
+    },
+    "required": [
+      "action"
+    ]
+  },
+  "actionKinds": {
+    "type": "string",
+    "description": "アクションの種類です。 ",
+    "enum": []
+  },
+  "actionArgument": {
+    "type": "object",
+    "description": "アクションの引数です。"
+  },
+  "stage": {
+    "type": "object",
+    "description": "シナリオを実行するステージです。",
+    "properties": {
+      "copyOf": {
+        "type": "string",
+        "description": "オリジナルのワールドの名前です。サーバ上に存在するワールドをもとに, 新しくステージを作成します。"
+      },
+      "type": {
+        "type": "string",
+        "description": "ステージとして使用するワールドの種類です。",
+        "enum": [
+          "NORMAL",
+          "FLAT",
+          "LARGE_BIOMES",
+          "AMPLIFIED"
+        ],
+        "default": "normal"
+      },
+      "seed": {
+        "type": "number",
+        "description": "ステージとして使用するワールドのシードです。"
+      },
+      "structures": {
+        "type": "boolean",
+        "description": "ステージとして使用するワールドに構造物を生成するかどうかです。",
+        "default": true
+      },
+      "env": {
+        "type": "string",
+        "description": "ステージとして使用するワールドの環境です。",
+        "enum": [
+          "NORMAL",
+          "NETHER",
+          "END",
+          "CUSTOM"
+        ],
+        "default": "normal"
+      },
+      "hardcore": {
+        "type": "boolean",
+        "description": "ステージとして使用するワールドがハードコアかどうかです。",
+        "default": false
+      }
+    }
+  },
+  "trigger": {
+    "type": "object",
+    "description": "トリガとよばれる, シナリオの実行条件のオブジェクトです。",
+    "properties": {
+      "type": {
+        "type": "string",
+        "description": "トリガの種類です。",
+        "enum": [
+          "manual_dispatch",
+          "schedule",
+          "on_action",
+          "on_load"
+        ]
+      },
+      "before": {
+        "type": "scenarios",
+        "description": "シナリオがこのトリガによって実行される場合, メインシナリオの実行前に実行するシナリオを定義します。"
+      },
+      "after": {
+        "type": "scenarios",
+        "description": "シナリオがこのトリガによって実行される場合, メインシナリオの実行後に実行するシナリオを定義します。"
+      },
+      "runif": {
+        "type": "action",
+        "$scenarioKindOf": "require",
+        "description": "シナリオの実行条件を定義します。アクションで定義します。満たしていない場合はスキップされます。"
+      }
+    },
+    "required": [
+      "type"
+    ],
+    "allOf": [
+      {
+        "if": {
+          "properties": {
+            "type": {
+              "const": "on_action"
+            }
+          }
+        },
+        "then": {
+          "type": "action",
+          "$scenarioKindOf": "expect"
+        }
+      }
+    ]
+  },
+  "scenarios": {
+    "type": "array",
+    "items": {
+      "type": "scenario"
+    },
+    "maxProperties": 1
+  }
+}

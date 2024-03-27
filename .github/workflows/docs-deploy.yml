@@ -1,0 +1,72 @@
+name: Deploy Docusaurus to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+    path: 
+      - docs/
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.number || github.sha }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+  deployments: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - run: cd docs
+      - uses: chrnorm/deployment-action@v2
+        name: Create GitHub Deployment
+        id: deploy-status
+        with:
+          token: ${{ github.token }}
+          environment-url: https://teamkun.github.io/ScenamaticaDocs
+          environment: production
+          initial-status: in_progress
+      - name: pnpm-setup
+        uses: pnpm/action-setup@v2
+      - name: Install dependencies
+        run: pnpm install
+      - name: Build
+        run: pnpm run build
+      - name: Setup Pages
+        uses: actions/configure-pages@v2
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v1
+        with:
+          path: "./build/"
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v1
+      - name: Update GitHub Deployment
+        if: success()
+        uses: chrnorm/deployment-status@v2
+        with:
+          token: ${{ github.token }}
+          deployment-id: ${{ steps.deploy-status.outputs.deployment_id }}
+          state: success
+          environment-url: https://teamkun.github.io/ScenamaticaDocs
+          environment: production
+      - name: Update GitHub Deployment
+        if: failure()
+        uses: chrnorm/deployment-status@v2
+        with:
+          token: ${{ github.token }}
+          deployment-id: ${{ steps.deploy-status.outputs.deployment_id }}
+          state: failure
+          environment-url: https://teamkun.github.io/ScenamaticaDocs
+      - name: Update GitHub Deployment
+        if: cancelled()
+        uses: chrnorm/deployment-status@v2
+        with:
+          token: ${{ github.token }}
+          deployment-id: ${{ steps.deploy-status.outputs.deployment_id }}
+          state: cancelled
+          environment-url: https://teamkun.github.io/ScenamaticaDocs

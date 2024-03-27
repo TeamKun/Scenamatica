@@ -1,0 +1,160 @@
+---
+sidebar_position: 5
+---
+
+
+import BelowDocument from "/src/components/BelowDocument";
+import { Object, ObjectType } from '/src/components/Object'
+
+# トリガ
+
+シナリオの有効なトリガの種類及びその引数について説明しています。
+
+---
+
+:::tip
+
+**シナリオやシナリオファイルの概念が初めての方は、先に[こちら](.)を参照して理解しておくことを推奨します。**
+
+:::
+
+## 概要 {#overview}
+
+トリガは、[シナリオ](/docs/use/scenario/elements#scenario) の実行を開始するための発火条件です。  
+手動実行や特定のアクションの発火など、様々なトリガがあります。
+
+:::tip
+
+トリガは、[シナリオ](/docs/use/scenario/elements) に対して複数設定できます。  
+この場合は、そのうちどれか一つが発火した時にシナリオが実行されます。
+
+:::
+
+:::info
+
+手動実行を含む、いかなるシナリオにも一つ以上のトリガが必要です。
+
+:::
+
+### 事前・事後[シナリオ](/docs/use/scenario/elements#scenario)機能 {#before-after-scenarios}
+
+メイン[シナリオ](/docs/use/scenario/elements#scenario)の実行前後に実行されるシナリオを、トリガごとに設定できます。  
+両方設定した場合は、`事前シナリオ -> メインシナリオ -> 事後シナリオ` の順番で同期的に実行されます。
+
+:::info 例
+
+例えば、プレイヤのキル時のアクションを検証するシナリオを考えます。  
+このとき、トリガは「[手動実行](#triggers-manual-dispatch)」および「[アクション：プレイヤの死亡](#triggers-on-action)」を設定します。  
+シナリオが手動実行されるとき、実際にはプレイヤが死亡していないため、事前トリガ機能を用いてプレイヤを死亡させます。
+
+```yaml showLineNumbers
+# ...
+on:
+  - type: on_action
+    action: player_death
+    with:
+      target: Actor001
+  - type: manual_dispatch
+    before:
+      - type: execute # 手動実行のときはプレイヤが死亡した事実は無いため、事前にプレイヤを死亡させる。
+        action: player_death
+        with:
+          target: Actor001
+#...
+```
+
+:::
+
+### 条件付きトリガ機能 {#conditional-triggers}
+
+トリガの発火条件に、追加で条件を指定できます。  
+これは、シナリオの[実行条件](/docs/use/scenario/elements#conditional-execution)機能と同じですが、トリガごとに設定できるという点で異なります。  
+
+これを用いることで、例えば「プレイヤが死亡したときかつ マイルストーン Hoge が達成されているときにシナリオを実行する」といったことが可能になります。
+
+:::info 例
+
+上記の例を実装すると、以下のようになります。
+
+```yaml showLineNumbers
+# ...
+on:
+  - type: on_action
+    action: player_death
+    with:
+      target: Actor001
+    runif:
+      - action: milestone
+        with:
+          name: Hoge
+#...
+```
+
+:::
+
+
+## トリガの種類 {#triggers}
+
+トリガは、以下の種類があります。
+
+  * [アクション実行 (`on_action`)](#triggers-on-action)
+  * [プラグインのロード (`on_load`)](#triggers-on-load)
+  * [手動実行 (`manual_dispatch`)](#triggers-manual-dispatch)
+
+
+### アクション実行 (`on_action`) トリガ {#triggers-on-action}
+
+引数に指定された[アクション実行期待シナリオ](/docs/use/scenario/elements#scenario-type-action-execution-expect)が、実行されたときにシナリオを実行します。  
+
+引数はそのアクションに必要なものを指定します。構文に関しては[こちら](/docs/use/scenario/types#action)を参照してください。
+
+:::tip
+
+アクションに必要なパラメータについては、各アクションのドキュメントを参照してください。
+
+:::
+
+#### 例 {#triggers-on-action-example}
+
+```yaml showLineNumbers
+# ...
+on:
+- type: on_action
+  action: "player_death"
+  with:
+    target: "Actor1"
+```
+
+### プラグインのロード (`on_load`) トリガ {#triggers-on-load}
+
+プラグインがロードされたときにシナリオを実行します。  
+これには、サーバのリロードや再起動も含みます。
+
+引数はありません。
+
+#### 例 {#triggers-on-load-example}
+
+```yaml showLineNumbers
+# ...
+on:
+- type: on_load
+```
+
+### 手動実行 (`manual_dispatch`) トリガ {#triggers-manual-dispatch}
+
+Scenamatica のコマンドを用いて、手動でシナリオを実行します。
+
+引数は有りません。
+
+<BelowDocument docId={"use/commands/scenario"}
+               anchor="start"
+               label={<>コマンド | <kbd>/scenamatica scenario start</kbd></>}
+/>
+
+#### 例 {#triggers-manual-dispatch-example}
+
+```yaml showLineNumbers
+# ...
+on:
+- type: manual_dispatch
+```

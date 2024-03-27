@@ -1,0 +1,11 @@
+{
+  "name": "world_load",
+  "description": "ワールドを読み込みます。",
+  "base": "world_$base",
+  "events": [
+    "org.bukkit.event.world.WorldLoadEvent"
+  ],
+  "executable": "ワールドを読み込みます。",
+  "watchable": "ワールドが初期化されるか期待します。",
+  "requireable": "指定されたワールドが読み込まれていることを要求します。"
+}

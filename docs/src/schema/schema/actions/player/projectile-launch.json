@@ -1,0 +1,52 @@
+{
+  "name": "player_projectile_launch",
+  "description": "プレイヤに投げ物を射出させます。",
+  "base": "player_$base",
+  "events": [
+    "org.bukkit.event.entity.ProjectileLaunchEvent"
+  ],
+
+  "executable": "プレイヤに投げ物を射出させます。",
+  "watchable": "プレイヤが投げ物を射出するか期待します。",
+  "requireable": false,
+
+  "arguments": {
+    "type": {
+      "type": "string",
+      "description": "投げ物の種類です。",
+      "enum": [
+        "ARROW",
+        "SNOWBALL",
+        "EGG",
+        "FIREBALL",
+        "SMALL_FIREBALL",
+        "ENDER_PEARL",
+        "WITHER_SKULL",
+        "SHULKER_BULLET",
+        "DRAGON_FIREBALL",
+        "POTION",
+        "EXPERIENCE_BOTTLE",
+        "ITEM",
+        "FIREWORK",
+        "TRIDENT"
+      ],
+      "requiredOn": ["execute", "watch"]
+    },
+    "velocity": {
+      "description": "投げ物の速度や向きです。",
+      "type": "vector"
+    },
+    "epsilon": {
+      "description": "投げ物の速度や向きを比較する際に許容する誤差です。",
+      "type": "vector",
+      "availableFor": ["watch"]
+    }
+  },
+  "outputs": {
+    "projectile": {
+      "lazy": true,
+      "description": "射出された投げ物です。",
+      "type": "projectile"
+    }
+  }
+}

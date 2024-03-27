@@ -1,0 +1,117 @@
+import BelowDocument from "/src/components/BelowDocument";
+
+# コマンド一覧
+
+Scenamatica で使えるコマンドを説明しています。
+
+---
+
+## コマンドの書き表し方 {#document-format}
+
+このドキュメントでは、コマンドを特定の記法に従って書き表します。このセクションではこの記法について軽く説明しています。
+
+:::info
+
+Scenamatica を含む多くのプラグインでは、ほぼ同じ記法でドキュメントが書かれています。
+
+:::
+
+### 一般的な構文記述 {#general-syntax}
+
+このドキュメントでは、コマンドを以下のように記述しています：
+
+```
+/command <required argument> [optional argument]
+```
+カッコで囲われた部分は引数と呼ばれる、コマンドに与える値のことです。一般に、コマンド名の後に空白を入れて実行します。
+
+`<required argument>` のような、 `<` と `>` で囲われた引数は必須の引数を表します。  
+また、`[optional argument]` のような、 `[` と `]` で囲われた引数はオプションの引数を表します。
+
+### 可変長引数における構文記述 {#variable-arguments-syntax}
+
+また、以下のような記述も見られるでしょう：
+
+```
+/command <required argument> [optional argument...]
+```
+
+`...` がある引数は、オプションの引数を複数指定できることを表します（可変長引数）。  
+この場合は、 `[optional argument...]` は、０個以上、無限個未満のオプションの引数を表します。
+
+
+## コマンド一覧 {#commands}
+
+### <kbd>/scenamatica</kbd> {#scenamatica}
+
+Scenamatica のメインコマンドです。
+Scenamatica の\*\* **すべての** \*\* コマンドはこのコマンドのサブコマンドです。
+
+第一引数を省略した場合[ヘルプ](#help)を表示します。
+
+#### エイリアス {#scenamatica-aliases}
+
+- [<kbd>/sc</kbd>](#scenamatica)
+- [<kbd>/scen</kbd>](#scenamatica)
+- [<kbd>/scena</kbd>](#scenamatice)
+- [<kbd>/scenario</kbd>](#scenamatica)
+
+
+#### コマンド構文 {#kpm-syntax}
+
+- `/scenamatica [<サブコマンド> [引数...]]`
+
+#### 権限 {#kpm-permission}
+
+- `scenamatica.use`
+- `scenamatica.*`
+- `<OP>`
+
+:::tip
+
+これ以下のコマンドは、すべて [<kbd>/scenamatica</kbd>](#kpm) のサブコマンドです。  
+適宜、脳内補完してください。
+
+例：** <kbd>example</kbd> ** => <kbd>/scenamatica example</kbd>
+
+:::
+
+---
+
+### <kbd>enable</kbd> {#enable}
+
+Scenamatica のシナリオ実行を含む全ての機能を有効にします。  
+この設定が `false` の場合は、自動シナリオ実行はスケジュールされず、手動実行はエラーで失敗します。
+
+第一引数を省略した場合は、現在の設定を表示します。
+
+#### エイリアス {#enable-aliases}
+
+*(なし)*
+
+#### コマンド構文 {#enable-syntax}
+
+- `enable [true|false]`
+
+#### 権限 {#enable-permission}
+
+- `scenamatica.use.enable`
+- `scenamatica.*`
+
+#### スクリーンショット {#enable-screenshot}
+
++ `enable`  
+![enabled#500x](./images/enable.png)
++ `enable true`  
+![enabled#500x](./images/enable-true.png)
++ `enable false`  
+![disabled#500x](./images/enable-false.png)
+
+---
+
+### <kbd>scenario</kbd> {#scenario}
+
+<BelowDocument docId="use/commands/scenario"
+               label="シナリオコマンド"
+/>
+

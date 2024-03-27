@@ -1,0 +1,44 @@
+{
+  "name": "player_bucket_entity",
+  "description": "プレイヤがバケツにエンティティを入れます。",
+  "base": "player_$base",
+  "events": [
+    "org.bukkit.event.player.PlayerBucketEntityEvent"
+  ],
+
+  "executable": "プレイヤにエンティティをバケツに入れさせます。",
+  "watchable": "プレイヤがエンティティをバケツに入れるか期待します。",
+  "requireable": false,
+
+  "since": "1.16.5",
+
+  "arguments": {
+    "bucket": {
+      "type": "itemStack",
+      "description": "エンティティをいれるバケツです。"
+    },
+    "entityBucket": {
+      "type": "itemStack",
+      "description": "エンティティが入ったバケツです。"
+    },
+    "entity": {
+      "type": "entitySpecifier",
+      "description": "入れるエンティティです。",
+      "requiredOn": ["execute"]
+    }
+  },
+  "outputs": {
+    "bucket": {
+      "description": "エンティティをいれたバケツです。",
+      "type": "itemStack"
+    },
+    "entityBucket": {
+      "description": "エンティティが入ったバケツです。",
+      "type": "itemStack"
+    },
+    "entity": {
+      "description": "入れたエンティティです。",
+      "type": "entity"
+    }
+  }
+}

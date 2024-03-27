@@ -1,0 +1,190 @@
+import BelowDocument from "/src/components/BelowDocument";
+
+# Scenamatica を設定する
+
+Scenamatica を設定してあなたに最適化します。
+
+---
+
+## 概要 {#overview}
+
+Scenamatica では、設定ファイルによる細かいカスタマイズができます。
+
+## Scenamatica の設定ファイル {#configuration-file}
+
+Scenamatica の設定ファイルは、`plugins/Scenamatica/config.yml` の１つのみです。シンプル！✨
+
+---
+
+## 設定一覧 {#config-list}
+
+### \[インタフェース] インタフェースの設定 {#interface}
+
+プラグインのインタフェースをカスタマイズします。
+
+#### `interfacce`.`lang` {#interface-lang}
+
+Scenamatica の全ての出力の言語を設定します。 対応している言語は以下の通りです：
+
+* `ja_JP` - 日本語（日本）
+* `ja_KS` - 関西弁（大阪らへん）
+* `en_US` - English（United States）
+
++ デフォルト値： `ja_JP`
++ 型： `Enum{ja_JP, en_US, ja_KS}`
+
+### \[アクタ] アクタの設定 {#actor}
+
+シナリオのアクタ \(NPC) に関する設定を行います。
+
+#### `actor`.`maxActors` {#actor-maxActors}
+
+同時に実行できるアクタの最大数を設定します。
+この設定はサーバ全体に適用されます。
+サーバ全体でアクタの数がこの値を超えると、新しいアクタは実行されず、シナリオはエラーで終了します。
+
++ デフォルト値： `100`
++ 型： `Integer`
++ 最小値： `1`
+
+#### `actor`.`defaultOP` {#actor-defaultOP}
+
+アクタのデフォルトの OP 権限を設定します。
+この値は数値で、大きくなるほどできることが増えます。
+
+- `0` - OP 権限なし
+- `1` - OP 権限あり。スポーン範囲制限を無視できる。
+- `2` -    〃      ちょと多くのコマンドを使える。コマンドブロックを使える。
+- `3` -    〃      もっといっぱいコマンドを使える。
+- `4` -    〃      ほぼ全てのコマンドを使える。
+
++ デフォルト値： `4`
++ 型： `Integer`
++ 最小値： `0`
++ 最大値： `4`
+
+#### `actor`.`permissions` {#actor-permissions}
+
+アクタに与える権限を設定します。
+
++ デフォルト値： `[]`
++ 型： `String[]`
+
+#### `actor`.`scoreboardTags` {#actor-scoreboardTags}
+
+アクタに与えるスコアボードタグを設定します。
+
++ デフォルト値： `[]`
++ 型： `String[]`
+
+### \[実行] 実行の設定 {#execution}
+
+シナリオおよびテストの実行に関する設定を行います。
+
+#### `execution`.`enabled` {#execution-enabled}
+
+シナリオの実行を有効にするかどうかを設定します。
+
++ デフォルト値： `true`
++ 型： `Boolean`
+
+#### `execution`.`scenario`.`ignoreTriggers` {#execution-scenario-ignoreTriggers}
+
+シナリオの実行を無視するトリガの種類を設定します。
+また, この設定はシステム・プロパティの `org.kunlab.scenamatica.trigger.ignores` に "," 区切りで設定してオーバライドできます。
+
+#### `execution`.`retry` {#execution-retry}
+
+シナリオの実行に失敗した場合における再実行に関する設定を行います。
+
+##### `execution`.`retry`.`enabled` {#execution-retry-enabled}
+
+シナリオの実行に失敗した場合に、再実行を行うかどうかを設定します。
+
++ デフォルト値： `false`
++ 型： `Boolean`
+
+##### `execution`.`retry`.`maxAttempts` {#execution-retry-maxAttempts}
+
+シナリオの実行に失敗した場合に、再実行を行う最大回数を設定します。
+
++ デフォルト値： `3`
++ 型： `Integer`
+
+### \[レポート] レポートの設定 {#reporting}
+
+プラグインのテスト結果のレポートに関する設定を行います。
+
+#### `reporting`.`raw` {#reporting-raw}
+
+テストの実行結果を JSON 形式で出力するかどうかを設定します。  
+外部のツールでテスト結果を解析する場合に有効にしてください。  
+\(JSON は標準出力に出力されます)
+
+:::warning
+
+この機能は、[CI/CD 連携機能](/docs/use/integration/ci-cd)用に作成されており、これによって出力される JSON のフォーマットは
+明文化されていません。  
+そのため、フォーマットは予告なく変更される可能性があります。
+
+:::
+
++ デフォルト値： `false`
++ 型： `Boolean`
+
+#### `reporting`.`verbose` {#reporting-verbose}
+
+冗長なコンソールログ出力を行うかどうかを設定します。  
+この設定を有効にすると、主に以下のような情報が追加で出力されます：
++ コンテキストの準備情報
++ シナリオ実行時の詳細情報
+  この設定が無効の場合は、検証に失敗した場合にのみ詳細情報が出力されます。
++ 単一シナリオのテストサマリ
+
++ デフォルト値： `true`
++ 型： `Boolean`
+
+#### `reporting`.`junit` {#reporting-junit}
+
+[JUnit XML](https://www.ibm.com/docs/ja/developer-for-zos/9.1.1?topic=formats-junit-xml-format) 形式による結果出力に関する設定です。
+
+この機能の使い方は[こちら](/docs/use/integration/junit-xml)を参照してください。
+
+##### `reporting`.`junit`.`enabled` {#reporting-junit-enabled}
+
+JUnit XML 形式による結果出力を有効にするかどうかを設定します。
+
++ デフォルト値： `false`
++ 型： `Boolean`
+
+##### `reporting`.`junit`.`directory` {#reporting-junit-directory}
+
+JUnit XML ファイルを出力するディレクトリを設定します。  
+Scenamatica のデータフォルダ（ e.g. `plugins/Scenamatica` ） からの相対パスで指定します。
+
++ デフォルト値： `reports/`
++ 型： `Path-like String`
+
+##### `reporting`.`junit`.`filePattern` {#reporting-junit-filePattern}
+
+出力される JUnit XML ファイルのファイル名のパターンを設定します。
+
+以下のプレースホルダを使用できます：
++ `{dateTime}` - テストの実行日時\(`yyyy-MM-dd-hh-mm-ss`)
+
++ デフォルト値： `scenamatica-test-report-{dateTime}.xml`
++ 型： `String`
+
+## 終わりに
+
+お疲れ様でした。  
+これで Scenamatica の基本的なセットアップは終わりです。
+
+次のチュートリアルでは、Scenamatica のシナリオの書き方を学びます。
+
+次のページでは、 Scenamatica の基本的な使い方を紹介します。
+
+<BelowDocument docId={"getting-started/tutorials/writing-my-first-scenario"}
+               label={"最初のシナリオを書いてみる"} />
+
+<br />

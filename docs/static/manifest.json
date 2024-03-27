@@ -1,0 +1,23 @@
+{
+  "name": "Scenamatica Documents",
+  "short_name": "Scenamatica",
+  "start_url": "/",
+  "theme_color": "#53bbff",
+  "background_color": "#0c1017",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "landscape",
+  "related_applications": [
+    {
+      "platform": "webapp",
+      "url": "https://scenamatica.kunlab.org/manifest.json"
+    }
+  ],
+  "icons": [
+    {
+      "src": "img/logo.png",
+      "sizes": "525x525",
+      "type": "image/png"
+    }
+  ]
+}

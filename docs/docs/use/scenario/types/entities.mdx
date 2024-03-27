@@ -1,0 +1,710 @@
+import BelowDocument from "/src/components/BelowDocument";
+import { Object, ObjectType } from "/src/components/Object";
+
+# エンティティに関連する型
+
+プレイヤ以外のエンティティに関連する型の一覧です。
+
+---
+
+## 特別： EntitySpecifier 型（エンティティ指定子） {#entity-specifier}
+
+エンティティ指定子は、文字列型と[Entity 型](#entity)としてふるまう特別な型です。  
+主にエンティティを指定するときに使用し、以下のような値をとります。
+
+1. プレイヤの名前 （例：`"Player1"` ）  
+  プレイヤを指定する場合にのみ有効です。
+2. プレイヤまたはエンティティの UUID （例：`"00000000-0000-0000-0000-000000000000"` ）
+3. プレイヤまたはエンティティの[セレクタ](/docs/use/scenario/selector)およびその省略書式 （例：`"@e[team=Red,tag=MyTag]"` ）
+   + 省略： `@e` は省略できます （例：`"[team=Red,tags=MyTag]"` ）。
+   + 省略： `@e[...]` はできます （例：`"team=Red,tags=MyTag"` ）。
+4. [Entity 型](/docs/use/scenario/types#entity) のオブジェクト  
+  特に記述がない限り使用できます。これを使用すれば、[セレクタ](/docs/use/scenario/selector)を使用せずに高度な条件を指定できます。
+
+:::danger
+
+項目３および４で説明されている[セレクタ](/docs/use/scenario/selector) は、通常の
+[Minecraft セレクタ](https://minecraft.fandom.com/ja/wiki/Target_selectors) とは異なります。
+
+Scenamatica では、いくつかの理由で独自のセレクタを使用しています。
+基本的な構文や機能は同じですが、一部の機能が削除されているか、独自の機能が追加されています。
+
+<BelowDocument docId={"use/scenario/selector"}
+               label="Scenamatica ターゲットセレクタ"
+/> 
+
+:::
+
+例：
+（この例では、 `*.with.target` の値にエンティティ指定子を使用しています。）
+
+```yaml showLineNumbers
+
+# 1. プレイヤの名前
+- with:
+    target: "Player1"
+
+# 2. プレイヤまたはエンティティの UUID
+- with:
+    target: "00000000-0000-0000-0000-000000000000"
+
+# 3. プレイヤまたはエンティティのセレクタおよびその省略書式
+- with:
+    target: "@e[team=Red,tags=MyTag]"
+
+# 4. Entity 型のオブジェクト
+- with:
+    target:
+      type: "minecraft:player"
+      name: "Player1"
+      team: "Red"
+      tags:
+        - "MyTag"
+```
+
+---
+
+## 特別： PlayerSpecifier 型（プレイヤ指定子） {#player-specifier}
+
+プレイヤ指定子は、文字列型と[Player 型](/docs/use/scenario/types/entities#player)としてふるまう特別な型です。
+
+基本的には上記の[エンティティ指定子](#entity-specifier)と同じですが、プレイヤを指定する場合にのみ有効です。
+
+---
+
+## 特別： EntityType 列挙型 {#entity-type}
+
+EntityType は, Bukkit の [EntityType](https://jd.papermc.io/paper/1.16/org/bukkit/entity/EntityType.html) 
+の拡張で、エンティティの種類を表す列挙型です。  
+以下の書式が有効です。
+
++ 列挙型の名前（例：`"PIG"`, `"pig"`）
++ 名前空間付きキー（例：`"minecraft:pig"`）
++ 数値 ID （例：`"90"`）
++ 名前 (例：`"pig"`)
+
+## Entity 型 {#entity}
+
+<Object objects={[
+  {
+    name: "type",
+    type: "EntityType",
+    type_link: "/docs/use/scenario/types/entities#entity-type",
+    description: "エンティティの種類です。"
+  },
+  {
+    name: ["loc", "location"],
+    type: "Location",
+    type_link: "/docs/use/scenario/types/misc#location",
+    description: "エンティティの座標です。"
+  },
+  {
+    name: "velocity",
+    type: "Vector",
+    type_link: "/docs/use/scenario/types/misc#vector",
+    description: "エンティティの速度です。"
+  },
+  {
+    name: "customName",
+    type: ObjectType.STRING,
+    description: "エンティティのカスタム名です。"
+  },
+  {
+    name: "uuid",
+    type: ObjectType.STRING,
+    description: "エンティティの UUID です。"
+  },
+  {
+    name: "glowing",
+    type: ObjectType.BOOLEAN,
+    description: "エンティティが発光しているかどうかです。"
+  },
+  {
+    name: "gravity",
+    type: ObjectType.BOOLEAN,
+    description: "エンティティが重力に従うかどうかです。"
+  },
+  {
+    name: "silent",
+    type: ObjectType.BOOLEAN,
+    description: "エンティティが音を発するかどうかです。"
+  },
+  {
+    name: "customNameVisible",
+    type: ObjectType.BOOLEAN,
+    description: "エンティティのカスタム名が表示されるかどうかです。"
+  },
+  {
+    name: "invulnerable",
+    type: ObjectType.BOOLEAN,
+    description: "エンティティが無敵かどうかです。"
+  },
+  {
+    name: "tags",
+    type: ObjectType.STRING + "[]",
+    description: "エンティティのタグです。"
+  },
+  {
+    name: "lastDamage",
+    type: "Damage",
+    type_anchor: "damage",
+    description: "エンティティに与えられた最後のダメージです。"
+  },
+  {
+    name: "maxHealth",
+    type: ObjectType.INTEGER,
+    description: "エンティティの最大体力です。"
+  },
+  {
+    name: "health",
+    type: ObjectType.INTEGER,
+    description: "エンティティの体力です。"
+  },
+  {
+    name: "potions",
+    type: "PotionEffect[]",
+    type_anchor: "potion-effect",
+    description: "エンティティに付与されているポーション効果です。"
+  },
+  {
+    name: "fireTicks",
+    type: ObjectType.INTEGER,
+    description: "エンティティが燃える残り時間です。"
+  },
+  {
+    name: "ticksLived",
+    type: ObjectType.INTEGER,
+    description: "エンティティが生きている時間です。"
+  },
+  {
+    name: "portalCooldown",
+    type: ObjectType.INTEGER,
+    description: "エンティティがポータルに入れるまでのクールダウン時間です。"
+  },
+  {
+    name: "persistent",
+    type: ObjectType.BOOLEAN,
+    description: "エンティティが永続的かどうかです。"
+  },
+  {
+    name: "fallDistance",
+    type: ObjectType.FLOAT,
+    description: "エンティティが落下した距離です。"
+  }
+]} />
+
+---
+
+## Damage 型 {#damage}
+
+<Object objects={[
+  {
+    name: "modifier",
+    type: "Map<DamageModifier, Double>",
+    type_anchor: "damage-modifier",
+    description: "ダメージの変更子です。"
+  },
+  {
+    name: "damage",
+    type: ObjectType.FLOAT,
+    description: "ダメージの量です。"
+  },
+  {
+    name: "cause",
+    type: "DamageCause",
+    type_anchor: "damage-cause",
+    description: "ダメージの種類です。"
+  }
+]} />
+
+## DamageModifier 列挙型 {#damage-modifier}
+
++ `BASE` 基本のダメージ。 `amount` で指定した値が使用されます。
++ `HARD_HAT` ヘルメットなどによる防御
++ `BLOCKING` シールドによる防御
++ `ARMOR` 防具による防御
++ `RESISTANCE` エンチャント「耐性」による防御
++ `MAGIC` ウィッチのポーション効果や防具のエンチャントによる防御
++ `ABSORPTION` エンチャント「ダメージ軽減」による防御
+
+## DamageCause 列挙型 {#damage-cause}
+
++ `CONTACT` エンティティ同士の接触
++ `ENTITY_ATTACK` エンティティによる攻撃
++ `ENTITY_SWEEP_ATTACK` エンティティによる攻撃（範囲攻撃）
++ `PROJECTILE` 射撃
++ `SUFFOCATION` ブロックへのめり込み
++ `FALL` 落下
++ `FIRE` 炎
++ `FIRE_TICK` 炎の延焼
++ `MELTING` スノーゴーレムの溶解
++ `LAVA` 溶岩
++ `DROWNING` 溺れ
++ `BLOCK_EXPLOSION` 爆発
++ `ENTITY_EXPLOSION` エンティティの爆発
++ `VOID` 奈落への落下
++ `LIGHTNING` 雷
++ `SUICIDE` `/kill` コマンドによる自殺
++ `STARVATION` 飢餓
++ `POTION` ポーション効果
++ `MAGIC` 魔法
++ `WITHER` ウィザーの効果
++ `FALLING_BLOCK` 金床などの落下するブロック
++ `THORNS` エンチャント「棘」によるカウンター
++ `DRAGON_BREATH` エンダードラゴンのドラゴンブレス
++ `CUSTOM` カスタムダメージ
++ `FLY_INTO_WALL` エリトラなどによる壁への衝突
++ `HOT_FLOOR` マグマブロックなどの熱いブロック
++ `CRAMMING` エンティティの密集
++ `DRYOUT` 乾燥
+
+---
+
+## LivingEntity 型 {#living-entity}
+
+LivingEntity 型は以下の親構造を持ちます。
+
++ [Entity 型](#entity)
+
+<Object objects={[
+  {
+    name: "remainAir",
+    type: ObjectType.INTEGER,
+    description: "空気残量です。"
+  },
+  {
+    name: "maxAir",
+    type: ObjectType.INTEGER,
+    description: "最大空気です。"
+  },
+  {
+    name: "arrowCooldown",
+    type: ObjectType.INTEGER,
+    description: "矢のクールダウンです。",
+    support: {
+      since: "1.16.5"
+    }
+  },
+  {
+    name: "arrowsInBody",
+    type: ObjectType.INTEGER,
+    description: "体に刺さっている矢の数です。"
+  },
+  {
+    name: "maxNoDamageTicks",
+    type: ObjectType.INTEGER,
+    description: "最大無敵時間です。"
+  },
+  {
+    name: "lastDamage",
+    type: ObjectType.FLOAT,
+    description: "最後に受けたダメージです。"
+  },
+  {
+    name: "noDamageTicks",
+    type: ObjectType.INTEGER,
+    description: "無敵時間です。"
+  },
+  {
+    name: "killer",
+    type: "PlayerSpecifier",
+    type_anchor: "player-specifier",
+    description: "エンティティを殺したプレイヤです。"
+  },
+  {
+    name: "potions",
+    type: "PotionEffect[]",
+    type_anchor: "potion-effect",
+    description: "エンティティに付与されているポーション効果です。"
+  },
+  {
+    name: "removeWhenFarAway",
+    type: ObjectType.BOOLEAN,
+    description: "遠く離れたときに削除されるかどうかです。"
+  },
+  {
+    name: "canPickupItems",
+    type: ObjectType.BOOLEAN,
+    description: "アイテムを拾えるかどうかです。"
+  },
+  {
+    name: "leashed",
+    type: ObjectType.BOOLEAN,
+    description: "リードされているかどうかです。"
+  },
+  {
+    name: "leashHolder",
+    type: "EntitySpecifier",
+    type_anchor: "entity-specifier",
+    description: "エンティティをリードしているエンティティです。"
+  },
+  {
+    name: "gliding",
+    type: ObjectType.BOOLEAN,
+    description: "滑空しているかどうかです。"
+  },
+  {
+    name: "swimming",
+    type: ObjectType.BOOLEAN,
+    description: "泳いでいるかどうかです。"
+  },
+  {
+    name: "riptiding",
+    type: ObjectType.BOOLEAN,
+    description: "トライデントを投げているかどうかです。"
+  },
+  {
+    name: "sleeping",
+    type: ObjectType.BOOLEAN,
+    description: "寝ているかどうかです。"
+  },
+  {
+    name: "ai",
+    type: ObjectType.BOOLEAN,
+    description: " AI を持つかどうかです。"
+  },
+  {
+    name: "collidable",
+    type: ObjectType.BOOLEAN,
+    description: "干渉するかどうかです。"
+  },
+  {
+    name: "invisible",
+    type: ObjectType.BOOLEAN,
+    description: "透明かどうかです。"
+  },
+  {
+    name: "arrowsStuck",
+    type: ObjectType.INTEGER,
+    description: "持っている矢の数です。"
+  },
+  {
+    name: "shieldBlockingDelay",
+    type: ObjectType.INTEGER,
+    description: "盾をブロックしている遅延時間です。"
+  },
+  {
+    name: "activeItem",
+    type: "ItemStack",
+    type_link: "/docs/use/scenario/types/inventory-items#item-stack",
+    description: "有効なアイテムです。"
+  },
+  {
+    name: "itemUseRemainTime",
+    type: ObjectType.INTEGER,
+    description: "アイテム使用の残り時間です。"
+  },
+  {
+    name: "handRaisedTime",
+    type: ObjectType.INTEGER,
+    description: "手を上げている時間です。"
+  },
+  {
+    name: "isHandRaised",
+    type: ObjectType.BOOLEAN,
+    description: "手を上げているかどうかです。"
+  }
+]} />
+
+--
+
+## PotionEffect 型 {#potion-effect}
+
+<Object objects={[
+  {
+    name: "type",
+    type: "PotionEffectType",
+    type_link: "https://jd.papermc.io/paper/1.16/org/bukkit/potion/PotionEffectType.html",
+    description: "ポーション効果の種類です。"
+  },
+  {
+    name: "duration",
+    type: ObjectType.INTEGER,
+    description: "ポーション効果の持続時間です。"
+  },
+  {
+    name: "amplifier",
+    type: ObjectType.INTEGER,
+    description: "ポーション効果の強さです。"
+  },
+  {
+    name: "ambient",
+    type: ObjectType.BOOLEAN,
+    description: "ポーション効果がエンティティに表示されるかどうかです。"
+  },
+  {
+    name: "particle",
+    type: ObjectType.BOOLEAN,
+    description: "ポーション効果がエンティティからパーティクルとして表示されるかどうかです。"
+  },
+  {
+    name: "icon",
+    type: ObjectType.BOOLEAN,
+    description: "ポーション効果のアイコンが表示されるかどうかです。"
+  }
+]} />
+
+---
+
+## Player 型 {#player}
+
+Player 型は以下の親構造を持ちます。
+
++ [LivingEntity 型](#living-entity)
+
+
+<Object objects={[
+  {
+    name: "name",
+    type : ObjectType.STRING,
+    description: "アクタの名前です。"
+  },
+  {
+    name: "displayName",
+    anchor: "actor-display-name",
+    type : ObjectType.STRING,
+    description: "アクタの表示名です。",
+  },
+  {
+    name: "online",
+    anchor: "actor-online",
+    type : ObjectType.BOOLEAN,
+    description: "アクタがオンラインかどうかを設定します。",
+    default: true
+  },
+  {
+    name: "playerList",
+    type: "PlayerList",
+    type_anchor: "player-list",
+    description: "アクタのプレイヤリストの設定です。",
+  },
+  {
+    name: "compass",
+    type: "Location",
+    type_link: "/docs/use/scenario/types/misc#location",
+    description: "アクタのコンパスの指す位置を設定します。"
+  },
+  {
+    name: "bedLocation",
+    type: "Location",
+    type_link: "/docs/use/scenario/types/misc#location",
+    description: "アクタのベッドの位置を設定します。"
+  },
+  {
+    name: "exp",
+    type: ObjectType.INTEGER,
+    description: "アクタの経験値を設定します。"
+  },
+  {
+    name: "level",
+    type: ObjectType.INTEGER,
+    description: "アクタのレベルを設定します。"
+  },
+  {
+    name: "totalExp",
+    type: ObjectType.INTEGER,
+    description: "アクタの総経験値を設定します。"
+  },
+  {
+    name: "flyable",
+    type: ObjectType.BOOLEAN,
+    description: "アクタが飛行可能かどうかを設定します。",
+    default: "gamemode が CREATIVE/SPECTATOR の場合は true、それ以外の場合は false"
+  },
+  {
+    name: "flying",
+    type: ObjectType.BOOLEAN,
+    description: "アクタが飛行中かどうかを設定します。",
+    default: "false"
+  },
+  {
+    name: "flySpeed",
+    type: ObjectType.FLOAT,
+    description: "アクタの飛行速度を設定します。",
+    default: 0.2
+  },
+  {
+    name: "walkSpeed",
+    type: ObjectType.FLOAT,
+    description: "アクタの歩行速度を設定します。",
+    default: 0.2
+  },
+  {
+    name: "inventory",
+    type: "PlayerInventory",
+    type_link: "/docs/use/scenario/types/inventory-items#player-inventory",
+    description: "アクタのインベントリを設定します。"
+  },
+  {
+    name: "enderChest",
+    type: "Inventory",
+    type_link: "/docs/use/scenario/types/inventory-items#inventory",
+    description: "アクタのエンダーチェストを設定します。"
+  },
+  {
+    name: "mainHand",
+    type: "Enum{RIGHT, LEFT}",
+    description: "アクタの利き手を設定します。",
+    default: "RIGHT"
+  },
+  {
+    name: "gamemode",
+    type: "Enum{SURVIVAL, CREATIVE, ADVENTURE, SPECTATOR}",
+    description: "アクタのゲームモードを設定します。",
+    default: "SURVIVAL"
+  },
+  {
+    name: "foodLevel",
+    type: ObjectType.INTEGER,
+    description: "アクタの食料レベルを設定します。",
+    default: 20
+  },
+  {
+    name: "op",
+    anchor: "actor-op",
+    type: ObjectType.BOOLEAN + " | " + ObjectType.INTEGER,
+    description: "アクタの OP 権限レベルを設定します。",
+    default: "false"
+  },
+  {
+    name: "permissions",
+    anchor: "actor-permissions",
+    type: "String[]",
+    description: "アクタに与える権限を設定します。"
+  }
+]} />
+
+#### `displayName` {#actor-display-name}
+
+:::warning
+
+この項目は Bukkit との互換性を保つために存在します。  
+必ずしも表示名として使用されるわけではありません。
+
+:::
+
+#### `online` {#actor-online}
+
+アクタがオンラインかどうかを真偽値で設定します。  
+`false` の場合は、アクタは準備されますがログイン処理は行われません。
+
+[`PlayerJoinEvent`](/docs/use/scenario/actions/player#join) をテストする場合は、この値を `false` に設定することで
+余計な発火を防止できます。
+
+#### `op` {#actor-op}
+
+アクタの OP 権限レベルを真偽値か 4 までの整数で設定します。  
+真偽値を指定した場合は、 [こちら](/docs/getting-started/configuration#actor-defaultOP) で設定したデフォルトの OP 権限レベルが参照されます。
+
+整数と権限の強度は以下の通りです：
+
+- `0` - OP 権限なし
+- `1` - OP 権限あり。スポーン範囲制限を無視できる。
+- `2` -    〃      ちょと多くのコマンドを使える。コマンドブロックを使える。
+- `3` -    〃      もっといっぱいコマンドを使える。
+- `4` -    〃      ほぼ全てのコマンドを使える。
+
+#### `permissions` {#actor-permissions}
+
+:::tip
+
+[こちら](/docs/getting-started/configuration#actor-defaultPermissions) で設定したデフォルトの権限が予め適用されています。  
+上記の設定を取り消すことはできません。
+
+:::
+
+--
+
+## Hand 列挙型 {#hand}
+
++ `MAIN_HAND` - 利き手
++ `OFF_HAND` - じゃないほう
+
+---
+
+## ActorPlayerList 型 {#player-list}
+
+<Object objects={[
+  {
+    name: "name",
+    type : ObjectType.STRING,
+    description: "プレイヤリストの名前です。",
+  },
+  {
+    name: "header",
+    type : ObjectType.STRING,
+    description: "プレイヤリストのヘッダーです。",
+  },
+  {
+    name: "footer",
+    type : ObjectType.STRING,
+    description: "プレイヤリストのフッターです。",
+  }
+]} />
+
+---
+
+## EntityItem 型 {#entity-item}
+
+EntityItem 型は以下の親構造を持ちます。
+
++ [Entity 型](#entity)
++ [ItemStack 型](/docs/use/scenario/types/inventory-items#item-stack)
+
+<Object objects={[
+  {
+    name: "canMobPickup",
+    type: ObjectType.BOOLEAN,
+    description: "モブがアイテムを拾えるかどうかです。"
+  },
+  {
+    name: "pickupDelay",
+    type: ObjectType.INTEGER,
+    description: "アイテムを拾えるまでの遅延時間です。"
+  },
+  {
+    name: "willAge",
+    type: ObjectType.BOOLEAN,
+    description: "アイテムが時間経過で消滅するかどうかです。"
+  },
+  {
+    name: "owner",
+    type: ObjectType.STRING,
+    description: "アイテムの所有者の UUID です。"
+  },
+  {
+    name: "thrower",
+    type: ObjectType.STRING,
+    description: "アイテムを投げたプレイヤの UUID です。"
+  }
+]} />
+
+---
+
+## ProjectileStructure 型 {#projectile}
+
+ProjectileStructure 型は以下の親構造を持ちます。
+
++ [Entity 型](#entity)
+
+
+<Object objects={[
+  {
+    name: "shooter",
+    type: "EntitySpecifier | Block",
+    type_anchor: "entity-specifier",
+    anchor: "projectile-shooter",
+    description: "投射物を投げたエンティティの指定子です。"
+  },
+  {
+    name: "bounce",
+    type: ObjectType.BOOLEAN,
+    description: "投射物が跳ね返るかどうかです。"
+  }
+]} />
+
+#### `shooter` {#projectile-shooter}
+
+エンティティ情報またはブロック情報を指定します。  
+エンティティとブロックどちらの情報が格納されているかは、自動で推論されます。
+特別パラメタとして、 `shooter.kind`: `Enum{ENTITY, BLOCK}` を指定することで、明示的に指定できます。

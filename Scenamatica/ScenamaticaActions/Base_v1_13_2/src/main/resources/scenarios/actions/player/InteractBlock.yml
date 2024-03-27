@@ -1,0 +1,42 @@
+# noinspection YAMLSchemaValidation
+scenamatica: ${project.version}
+minecraft:
+  since: 1.16.5
+
+name: actions_player_interact_block
+description: Testing PlayerInteractBlockAction works or not
+on:
+  - type: on_load
+  - type: manual_dispatch
+
+context:
+  actors:
+    - name: Actor001
+  stage:
+    type: NORMAL
+    seed: 114514
+
+scenario:
+  - type: execute
+    action: player_interact_block
+    with:
+      target: Actor001
+      block:
+        type: STONE
+        location:
+          x: 0
+          y: 20
+          z: 0
+      action: RIGHT_CLICK_BLOCK
+  - type: expect
+    action: player_interact_block
+    with:
+      target: Actor001
+      block:
+        type: STONE
+        location:
+          x: 0
+          y: 20
+          z: 0
+      action: RIGHT_CLICK_BLOCK
+    timeout: 20
