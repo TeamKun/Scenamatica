@@ -4,6 +4,7 @@ on:
     paths:
       - "NMSBridge/**"
       - "ScenamaticaActionEngine/**"
+      - "ScenamaticaActions/**"
       - "ScenamaticaAPI/**"
       - "ScenamaticaCommons/**"
       - "ScenamaticaContextEngine/**"
@@ -16,6 +17,7 @@ on:
     paths:
       - "NMSBridge/**"
       - "ScenamaticaActionEngine/**"
+      - "ScenamaticaActions/**"
       - "ScenamaticaAPI/**"
       - "ScenamaticaCommons/**"
       - "ScenamaticaContextEngine/**"
