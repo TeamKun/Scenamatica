@@ -34,17 +34,22 @@ jobs:
         uses: pnpm/action-setup@v2
         with: 
           package_json_file: docs/package.json
-      - run: cd docs
       - name: Install dependencies
-        run: pnpm install
+        run:  |
+          cd docs 
+          pnpm install
+          cd ..
       - name: Build
-        run: pnpm run build
+        run: |
+          cd docs
+          pnpm run build
+          cd ..
       - name: Setup Pages
         uses: actions/configure-pages@v2
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
         with:
-          path: "./build/"
+          path: "docs/build/"
       - name: Deploy to GitHub Pages
         uses: actions/deploy-pages@v1
       - name: Update GitHub Deployment
