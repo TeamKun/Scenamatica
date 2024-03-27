@@ -16,7 +16,6 @@ import org.kunlab.scenamatica.interfaces.scenariofile.context.StageStructure;
 import org.kunlab.scenamatica.nms.NMSProvider;
 import org.kunlab.scenamatica.nms.types.NMSWorldServer;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -201,7 +200,16 @@ public class StageManagerImpl implements StageManager
             walker
                     .map(Path::toFile)
                     .sorted(Comparator.reverseOrder())
-                    .forEach(File::delete);
+                    .forEach(f -> {
+                        try
+                        {
+                            Files.delete(f.toPath());
+                        }
+                        catch (IOException e)
+                        {
+                            this.registry.getExceptionHandler().report(e);
+                        }
+                    });
         }
         catch (IOException e)
         {
