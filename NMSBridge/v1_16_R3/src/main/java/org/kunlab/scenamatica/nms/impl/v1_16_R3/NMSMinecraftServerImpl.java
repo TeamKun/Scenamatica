@@ -3,8 +3,6 @@ package org.kunlab.scenamatica.nms.impl.v1_16_R3;
 import net.minecraft.server.v1_16_R3.MinecraftServer;
 import org.bukkit.Server;
 import org.bukkit.craftbukkit.v1_16_R3.CraftServer;
-import org.kunlab.scenamatica.nms.impl.v1_16_R3.support.WorldMapImpl;
-import org.kunlab.scenamatica.nms.supports.WorldMap;
 import org.kunlab.scenamatica.nms.types.NMSMinecraftServer;
 import org.kunlab.scenamatica.nms.types.NMSPlayerList;
 
@@ -31,12 +29,6 @@ public class NMSMinecraftServerImpl implements NMSMinecraftServer
     public Server getBukkit()
     {
         return this.bukkitServer;
-    }
-
-    @Override
-    public WorldMap getWorlds()
-    {
-        return new WorldMapImpl(this.nmsServer.worldServer);
     }
 
     @Override

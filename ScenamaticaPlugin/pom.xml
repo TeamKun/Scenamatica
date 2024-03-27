@@ -58,7 +58,6 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
-                            <minimizeJar>true</minimizeJar>
                             <createDependencyReducedPom>false</createDependencyReducedPom>
                             <relocations>
                                 <relocation>
@@ -69,7 +68,6 @@
                             <artifactSet>
                                 <excludes>
                                     <exclude>org.slf4j:*</exclude>
-                                    <exclude>com.zaxxer.hikari:*</exclude>
                                 </excludes>
                             </artifactSet>
                             <filters>
@@ -78,6 +76,13 @@
                                     <excludes>
                                         <exclude>META-INF/*.txt</exclude>
                                     </excludes>
+                                </filter>
+                                <filter>
+                                    <artifact>org.kunlab.scenamatica.actions:*</artifact>
+                                    <includes>
+                                        <include>org/kunlab/scenamatica/action/actions/**</include>
+                                        <include>scenarios/**</include>
+                                    </includes>
                                 </filter>
                             </filters>
                             <transformers>
@@ -111,6 +116,38 @@
             <artifactId>ScenamaticaDaemon</artifactId>
             <version>1.0.0</version>
             <scope>compile</scope>
+            <!-- Actions Registration -->
+        </dependency>
+        <dependency>
+            <groupId>com.github.TeamKUN</groupId>
+            <artifactId>PeyangPaperUtils</artifactId>
+            <version>3.0.1</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.kunlab.scenamatica.actions</groupId>
+            <artifactId>Base_v1_13_2</artifactId>
+            <version>1.0.0</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kunlab.scenamatica.actions</groupId>
+            <artifactId>Extended_v1_16_5</artifactId>
+            <version>1.0.0</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kunlab.scenamatica.actions</groupId>
+            <artifactId>Extended_v1_16</artifactId>
+            <version>1.0.0</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kunlab.scenamatica.actions</groupId>
+            <artifactId>Extended_v1_14</artifactId>
+            <version>1.0.0</version>
+            <scope>runtime</scope>
         </dependency>
     </dependencies>
 </project>

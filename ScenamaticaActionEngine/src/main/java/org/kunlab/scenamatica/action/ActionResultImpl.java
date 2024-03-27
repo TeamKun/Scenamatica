@@ -2,6 +2,7 @@ package org.kunlab.scenamatica.action;
 
 import lombok.Value;
 import org.jetbrains.annotations.Nullable;
+import org.kunlab.scenamatica.commons.utils.ActionMetaUtils;
 import org.kunlab.scenamatica.enums.ActionResultCause;
 import org.kunlab.scenamatica.interfaces.action.Action;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
@@ -29,7 +30,7 @@ public class ActionResultImpl implements ActionResult
     public static ActionResult fromContext(Action action, ActionContext context)
     {
         String scenarioName = context.getScenarioName() == null ?
-                action.getName():
+                ActionMetaUtils.getActionName(action):
                 context.getScenarioName();
 
         return new ActionResultImpl(

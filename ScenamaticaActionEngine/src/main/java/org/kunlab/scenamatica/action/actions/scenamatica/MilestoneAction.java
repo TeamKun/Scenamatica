@@ -2,6 +2,7 @@ package org.kunlab.scenamatica.action.actions.scenamatica;
 
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
+import org.kunlab.scenamatica.annotations.action.ActionMeta;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.events.MilestoneReachedEvent;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
@@ -16,10 +17,10 @@ import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import java.util.Collections;
 import java.util.List;
 
+@ActionMeta("milestone")
 public class MilestoneAction extends AbstractScenamaticaAction
         implements Executable, Watchable, Requireable
 {
-    public static final String KEY_ACTION_NAME = "milestone";
     public static final InputToken<String> IN_NAME = ofInput(
             "name",
             String.class
@@ -28,15 +29,8 @@ public class MilestoneAction extends AbstractScenamaticaAction
             "reached",
             Boolean.class
     );
-
     public static final String KEY_OUT_NAME = "name";
     public static final String KEY_OUT_REACHED = "reached";
-
-    @Override
-    public String getName()
-    {
-        return KEY_ACTION_NAME;
-    }
 
     @Override
     public void execute(@NotNull ActionContext ctxt)

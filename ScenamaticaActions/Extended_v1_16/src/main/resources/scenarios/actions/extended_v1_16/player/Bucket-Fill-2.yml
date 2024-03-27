@@ -1,0 +1,69 @@
+# noinspection YAMLSchemaValidation
+scenamatica: ${project.version}
+minecraft:
+  since: "1.16"
+
+name: actions_player_bucket_fill_2
+description: Testing PlayerBucketFillAction without target works or not
+on:
+  - type: on_load
+    before:
+      - action: block_place
+        type: execute
+        with:
+          block:
+            type: WATER
+            location:
+              x: 0
+              y: 255
+              z: 0
+  - type: manual_dispatch
+    before:
+      - action: block_place
+        type: execute
+        with:
+          block:
+            type: WATER
+            location:
+              x: 0
+              y: 255
+              z: 0
+
+context:
+  actors:
+    - name: Actor001
+
+scenario:
+  - type: execute
+    action: player_bucket_fill
+    with:
+      target: Actor001
+      bucket: BUCKET
+      block:
+        location:
+          x: 0
+          y: 255
+          z: 0
+      clickedBlock:
+        location:
+          x: 0
+          y: 255
+          z: 0
+      hand: OFF_HAND
+      eventOnly: true
+  - type: expect
+    action: player_bucket_fill
+    with:
+      bucket: BUCKET
+      block:
+        location:
+          x: 0
+          y: 255
+          z: 0
+      clickedBlock:
+        location:
+          x: 0
+          y: 255
+          z: 0
+      hand: OFF_HAND
+      eventOnly: true

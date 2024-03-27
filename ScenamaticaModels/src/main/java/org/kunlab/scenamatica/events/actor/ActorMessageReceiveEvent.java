@@ -1,7 +1,7 @@
 package org.kunlab.scenamatica.events.actor;
 
 import lombok.Getter;
-import net.md_5.bungee.api.chat.TextComponent;
+import net.kunmc.lab.peyangpaperutils.lib.components.Text;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerEvent;
@@ -19,7 +19,7 @@ public class ActorMessageReceiveEvent extends PlayerEvent
      * メッセージの内容です。
      */
     @Getter
-    private final TextComponent message;
+    private final Text message;
     /**
      * メッセージの種類です。
      * とりあえずプロトコル準拠です。
@@ -27,7 +27,7 @@ public class ActorMessageReceiveEvent extends PlayerEvent
     @Getter
     private final Type type;
 
-    public ActorMessageReceiveEvent(@NotNull Player who, @NotNull TextComponent message, @NotNull Type type)
+    public ActorMessageReceiveEvent(@NotNull Player who, @NotNull Text message, @NotNull Type type)
     {
         super(who);
         this.message = message;

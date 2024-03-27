@@ -1,7 +1,6 @@
 package org.kunlab.scenamatica.interfaces.scenariofile.entity;
 
 import org.bukkit.entity.Entity;
-import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.potion.PotionEffect;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.ItemStackStructure;
@@ -233,25 +232,4 @@ public interface LivingEntityStructure extends EntityStructure
      * @return 手を上げているかどうか
      */
     Boolean getIsHandRaised();
-
-    /**
-     * このエンティティの上げている手を取得します。
-     *
-     * @return 上げている手
-     */
-    EquipmentSlot getHandRaised();
-
-    /**
-     * このエンティティがジャンプしているかどうかを取得します。
-     *
-     * @return ジャンプしているかどうか
-     */
-    Boolean getJumping();
-
-    /**
-     * このエンティティが受けたダメージの方向を取得します。
-     *
-     * @return 受けたダメージの方向
-     */
-    Float getHurtDirection();
 }

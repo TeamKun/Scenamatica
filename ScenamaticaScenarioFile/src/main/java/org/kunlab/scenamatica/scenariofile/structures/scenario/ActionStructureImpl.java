@@ -32,7 +32,7 @@ public class ActionStructureImpl implements ActionStructure
     {
         MapUtils.checkContainsKey(map, KEY_TYPE);
 
-        if (map.containsKey(KEY_ARGUMENTS))
+        if (map.containsKey(KEY_ARGUMENTS) && map.get(KEY_ARGUMENTS) != null)
             MapUtils.checkAndCastMap(map.get(KEY_ARGUMENTS));
 
     }
@@ -44,7 +44,7 @@ public class ActionStructureImpl implements ActionStructure
         String actionType = String.valueOf(map.get(KEY_TYPE));
 
         Map<String, Object> argumentsMap;
-        if (map.containsKey(KEY_ARGUMENTS))
+        if (map.containsKey(KEY_ARGUMENTS) && map.get(KEY_ARGUMENTS) != null)
             argumentsMap = MapUtils.checkAndCastMap(map.get(KEY_ARGUMENTS));
         else
             argumentsMap = null;

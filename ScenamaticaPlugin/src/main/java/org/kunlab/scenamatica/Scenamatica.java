@@ -3,7 +3,6 @@ package org.kunlab.scenamatica;
 import lombok.NoArgsConstructor;
 import net.kunmc.lab.peyangpaperutils.lang.LangProvider;
 import net.kunmc.lab.peyangpaperutils.lib.command.CommandManager;
-import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -150,7 +149,8 @@ public final class Scenamatica extends JavaPlugin
 
         Bukkit.getOnlinePlayers().forEach(player ->
         {
-            PlayerJoinEvent event = new PlayerJoinEvent(player, Component.empty());
+            // noinspection deprecation  De-Adventure API
+            PlayerJoinEvent event = new PlayerJoinEvent(player, (String) null);
             listener.onPlayerJoin(event);
         });
     }

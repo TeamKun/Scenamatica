@@ -2,10 +2,15 @@ package org.kunlab.scenamatica.scenariofile;
 
 import javax.annotation.Nullable;
 import lombok.AllArgsConstructor;
+import net.kunmc.lab.peyangpaperutils.versioning.Version;
 import org.apache.commons.lang.StringUtils;
+import org.kunlab.scenamatica.enums.MinecraftVersion;
 import org.kunlab.scenamatica.exceptions.scenariofile.InvalidScenarioFileException;
 import org.kunlab.scenamatica.exceptions.scenariofile.NotAScenarioFileException;
 import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileStructure;
+import org.kunlab.scenamatica.interfaces.scenariofile.VersionRange;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.FileNotFoundException;
@@ -22,6 +27,8 @@ import java.util.zip.ZipFile;
 @AllArgsConstructor
 public class ScenarioFileParser
 {
+    public static final Logger LOGGER = LoggerFactory.getLogger(ScenarioFileParser.class);
+
     private static final String[] SCENARIO_FILE_EXTENSIONS = {
             ".yml",
             ".yaml"
@@ -92,6 +99,8 @@ public class ScenarioFileParser
                 try (InputStream zis = zip.getInputStream(entry))
                 {
                     ScenarioFileStructure scenario = fromInputStream(zis, inZipPath);
+                    if (shouldIgnore(scenario))
+                        continue;
                     if (map.containsKey(scenario.getName()))
                     {
                         String descA = map.get(scenario.getName()).getDescription();
@@ -113,6 +122,21 @@ public class ScenarioFileParser
         }
 
         return map;
+    }
+
+    private static boolean shouldIgnore(ScenarioFileStructure scenario)
+    {
+        VersionRange supportVersionRange = scenario.getMinecraftVersions();
+        if (supportVersionRange == null)
+            return false;
+
+        Version runningVersion = Version.of(MinecraftVersion.current().getVersion());
+
+        boolean shouldIgnore = !supportVersionRange.isInRange(runningVersion);
+        if (shouldIgnore)
+            LOGGER.debug("Ignoring scenario file {} due to unsupported Minecraft version: {}", scenario.getName(), runningVersion);
+
+        return shouldIgnore;
     }
 
     private static boolean isScenarioFile(String inZipPath)

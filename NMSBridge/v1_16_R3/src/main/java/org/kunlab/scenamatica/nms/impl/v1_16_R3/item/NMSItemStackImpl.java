@@ -3,13 +3,13 @@ package org.kunlab.scenamatica.nms.impl.v1_16_R3.item;
 import net.minecraft.server.v1_16_R3.EntityLiving;
 import net.minecraft.server.v1_16_R3.ItemStack;
 import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftItemStack;
+import org.kunlab.scenamatica.nms.Versioned;
 import org.kunlab.scenamatica.nms.impl.v1_16_R3.NMSRegistryImpl;
 import org.kunlab.scenamatica.nms.types.entity.NMSEntityLiving;
 import org.kunlab.scenamatica.nms.types.item.NMSItem;
 import org.kunlab.scenamatica.nms.types.item.NMSItemStack;
 
 import java.lang.reflect.Field;
-import java.util.function.Consumer;
 
 public class NMSItemStackImpl implements NMSItemStack
 {
@@ -46,6 +46,9 @@ public class NMSItemStackImpl implements NMSItemStack
 
     private static ItemStack getHandle(org.bukkit.inventory.ItemStack bukkitItemStack)
     {
+        if (!(bukkitItemStack instanceof CraftItemStack))
+            return getHandle(CraftItemStack.asCraftCopy(bukkitItemStack));
+
         try
         {
             return (ItemStack) fHANDLE.get(bukkitItemStack);
@@ -69,12 +72,13 @@ public class NMSItemStackImpl implements NMSItemStack
     }
 
     @Override
-    public <T extends NMSEntityLiving> void damage(int damage, T owner, Consumer<T> onBreak)
+    public <T extends NMSEntityLiving> @Versioned void damage(int damage, T owner)
     {
         this.nmsItemStack.damage(
                 damage,
                 (EntityLiving) owner.getNMSRaw(),
-                (entity) -> onBreak.accept(owner)
+                ignored -> {
+                }
         );
     }
 

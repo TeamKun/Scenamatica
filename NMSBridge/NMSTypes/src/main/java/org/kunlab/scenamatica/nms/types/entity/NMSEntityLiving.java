@@ -22,7 +22,6 @@ public interface NMSEntityLiving extends NMSEntity
      *
      * @param hand 手
      */
-    @Versioned(from = "1.16.5")
     void consume(NMSHand hand);
 
     /**
@@ -30,6 +29,50 @@ public interface NMSEntityLiving extends NMSEntity
      *
      * @param slot スロット
      */
-    @Versioned(from = "1.16.5")
     void broadcastItemBreak(NMSItemSlot slot);
+
+    /**
+     * エンティティをを受け取ります。
+     *
+     * @param entity 受け取るエンティティ
+     * @param amount 受け取る量
+     */
+    void receive(NMSEntity entity, int amount);
+
+    /**
+     * エンティティが寝ているかどうかを取得します。
+     *
+     * @return
+     */
+    boolean isSleeping();
+
+    /**
+     * 体にぶっ刺さっている矢の数を取得します。
+     *
+     * @return 矢の数
+     */
+    int getArrowCount();
+
+    /**
+     * 体にぶっ刺さっている矢の数を設定します。
+     *
+     * @param count 矢の数
+     */
+    void setArrowCount(int count);
+
+    /**
+     * 矢のクールダウンを取得します。
+     *
+     * @return クールダウン
+     */
+    @Versioned(from = "1.13.2")
+    int getArrowCooldown();
+
+    /**
+     * 矢のクールダウンを設定します。
+     *
+     * @param cooldown クールダウン
+     */
+    @Versioned(from = "1.13.2")
+    void setArrowCooldown(int cooldown);
 }

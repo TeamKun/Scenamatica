@@ -2,7 +2,6 @@
 <module version="4">
   <component name="AdditionalModuleElements">
     <content url="file://$MODULE_DIR$" dumb="true">
-      <excludeFolder url="file://$MODULE_DIR$/scripts/.venv" />
       <excludeFolder url="file://$MODULE_DIR$/scripts/build" />
       <excludeFolder url="file://$MODULE_DIR$/scripts/dist" />
       <excludeFolder url="file://$MODULE_DIR$/scripts/installer" />
@@ -15,6 +14,7 @@
           <platformType>PAPER</platformType>
           <platformType>ADVENTURE</platformType>
         </autoDetectTypes>
+        <projectReimportVersion>1</projectReimportVersion>
       </configuration>
     </facet>
   </component>

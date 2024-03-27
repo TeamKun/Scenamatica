@@ -11,6 +11,7 @@ import org.kunlab.scenamatica.interfaces.scenariofile.Mapped;
 import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.Structure;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
+import org.kunlab.scenamatica.interfaces.scenariofile.VersionRange;
 import org.kunlab.scenamatica.interfaces.scenariofile.action.ActionStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.context.ContextStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.context.StageStructure;
@@ -31,6 +32,7 @@ import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerStructure;
 import org.kunlab.scenamatica.scenariofile.specifiers.EntitySpecifierImpl;
 import org.kunlab.scenamatica.scenariofile.specifiers.PlayerSpecifierImpl;
 import org.kunlab.scenamatica.scenariofile.structures.ScenarioFileStructureImpl;
+import org.kunlab.scenamatica.scenariofile.structures.VersionRangeImpl;
 import org.kunlab.scenamatica.scenariofile.structures.context.ContextStructureImpl;
 import org.kunlab.scenamatica.scenariofile.structures.context.StageStructureImpl;
 import org.kunlab.scenamatica.scenariofile.structures.entity.DamageStructureImpl;
@@ -360,6 +362,15 @@ public class StructureSerializerImpl implements StructureSerializer
                 ScenarioFileStructureImpl::deserialize,
                 ScenarioFileStructureImpl::validate
         );
+
+
+        this.registerStructure(
+                VersionRange.class,
+                VersionRangeImpl::serialize,
+                VersionRangeImpl::deserialize,
+                VersionRangeImpl::validate
+        );
+
 
     }
 

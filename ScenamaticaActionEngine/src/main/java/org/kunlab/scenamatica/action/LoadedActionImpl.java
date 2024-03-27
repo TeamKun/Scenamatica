@@ -2,6 +2,9 @@ package org.kunlab.scenamatica.action;
 
 import lombok.Value;
 import org.bukkit.plugin.Plugin;
+import org.kunlab.scenamatica.annotations.action.ActionMeta;
+import org.kunlab.scenamatica.commons.utils.ActionMetaUtils;
+import org.kunlab.scenamatica.enums.MinecraftVersion;
 import org.kunlab.scenamatica.interfaces.action.Action;
 import org.kunlab.scenamatica.interfaces.action.LoadedAction;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
@@ -18,13 +21,21 @@ public class LoadedActionImpl<T extends Action> implements LoadedAction<T>
     boolean watchable;
     boolean requireable;
 
+    MinecraftVersion availableSince;
+    MinecraftVersion availableUntil;
+
     T instance;
     Class<? extends T> actionClass;
 
-    private LoadedActionImpl(Plugin owner, String name, T instance, Class<? extends T> actionClass)
+    private LoadedActionImpl(Plugin owner, T instance, Class<? extends T> actionClass)
     {
+        ActionMeta meta = ActionMetaUtils.getActionMetaData(actionClass);
+
         this.owner = owner;
-        this.name = name;
+        this.name = meta.value();
+        this.availableSince = meta.supportsSince();
+        this.availableUntil = meta.supportsUntil();
+
         this.executable = instance instanceof Executable;
         this.watchable = instance instanceof Watchable;
         this.requireable = instance instanceof Requireable;
@@ -32,14 +43,13 @@ public class LoadedActionImpl<T extends Action> implements LoadedAction<T>
         this.actionClass = actionClass;
 
         if (!(this.executable || this.watchable || this.requireable))
-            throw new IllegalArgumentException("Action " + name + " is not executable, watchable, or requireable, cannot be used.");
+            throw new IllegalArgumentException("Action " + this.name + " is not executable, watchable, or requireable, cannot be used.");
     }
 
     public static LoadedAction<?> of(Plugin owner, Action action)
     {
         return new LoadedActionImpl<>(
                 owner,
-                action.getName(),
                 action,
                 action.getClass()
         );

@@ -1,10 +1,10 @@
 package org.kunlab.scenamatica.action.actions.scenamatica;
 
-import net.md_5.bungee.api.chat.TextComponent;
+import net.kunmc.lab.peyangpaperutils.lib.components.Text;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
-import org.kunlab.scenamatica.commons.utils.TextUtils;
+import org.kunlab.scenamatica.annotations.action.ActionMeta;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.events.actor.ActorMessageReceiveEvent;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
@@ -20,10 +20,10 @@ import java.util.List;
 /**
  * プレイヤにメッセージを送信する/送信されることを監視するアクション。
  */
+@ActionMeta("message")
 public class MessageAction extends AbstractScenamaticaAction
         implements Executable, Watchable
 {
-    public static final String KEY_ACTION_NAME = "message";
     public static final InputToken<String> IN_MESSAGE = ofInput(
             "message",
             String.class
@@ -36,12 +36,6 @@ public class MessageAction extends AbstractScenamaticaAction
 
     public static final String KEY_OUT_MESSAGE = "message";
     public static final String KEY_OUT_RECIPIENT = "recipient";
-
-    @Override
-    public String getName()
-    {
-        return KEY_ACTION_NAME;
-    }
 
     @Override
     public void execute(@NotNull ActionContext ctxt)
@@ -60,11 +54,11 @@ public class MessageAction extends AbstractScenamaticaAction
         assert event instanceof ActorMessageReceiveEvent;
         ActorMessageReceiveEvent e = (ActorMessageReceiveEvent) event;
 
-        TextComponent message = e.getMessage();
-        boolean result = ctxt.ifHasInput(IN_MESSAGE, content -> TextUtils.isSameContent(message, content))
+        Text message = e.getMessage();
+        boolean result = ctxt.ifHasInput(IN_MESSAGE, message::isSameContent)
                 && ctxt.ifHasInput(IN_RECIPIENT, player -> player.checkMatchedPlayer(e.getPlayer()));
         if (result)
-            this.makeOutputs(ctxt, e.getPlayer(), TextUtils.toString(message));
+            this.makeOutputs(ctxt, e.getPlayer(), message.toPlainText());
 
         return result;
     }

@@ -1,0 +1,35 @@
+# noinspection YAMLSchemaValidation
+scenamatica: ${project.version}
+minecraft:
+  since: 1.14.0
+
+name: actions_entity_damage_by_entity
+description: Testing entity_damage_by_entity action works or not
+on:
+  - type: on_load
+  - type: manual_dispatch
+
+context:
+  actors:
+    - name: Actor01
+  entities:
+    - type: minecraft:parrot
+      tags:
+        - 810snpi
+
+scenario:
+  - type: execute
+    action: entity_damage_by_entity
+    with:
+      amount: 3
+      target: "@e[type=minecraft:parrot,tag=810snpi]"
+      damager:
+        name: Actor01
+  - type: expect
+    action: entity_damage
+    with:
+      target: "@e[type=minecraft:parrot,tag=810snpi]"
+      damager:
+        name: Actor01
+    timeout: 20
+

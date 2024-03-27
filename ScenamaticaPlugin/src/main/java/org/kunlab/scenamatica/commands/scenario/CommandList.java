@@ -4,11 +4,8 @@ import lombok.AllArgsConstructor;
 import net.kunmc.lab.peyangpaperutils.lang.LangProvider;
 import net.kunmc.lab.peyangpaperutils.lang.MsgArgs;
 import net.kunmc.lab.peyangpaperutils.lib.command.CommandBase;
+import net.kunmc.lab.peyangpaperutils.lib.components.Text;
 import net.kunmc.lab.peyangpaperutils.lib.terminal.Terminal;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextComponent;
-import net.kyori.adventure.text.event.ClickEvent;
-import net.kyori.adventure.text.event.HoverEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
@@ -67,21 +64,19 @@ public class CommandList extends CommandBase
                 .anyMatch(trigger -> trigger.getType() == TriggerType.MANUAL_DISPATCH);
         String manualDispatch = LangProvider.get(canManualDispatch ? "command.enable.enable": "command.enable.disable");
 
-        TextComponent entry = Component.text(LangProvider.get(
+        Text entry = Text.ofTranslatable(
                 "command.scenario.list.entry",
                 MsgArgs.of("scenario", scenario.getName())
                         .add("description", scenario.getDescription() == null ? "N/A": scenario.getDescription())
                         .add("manually", manualDispatch)
-        ));
+        );
 
         if (canManualDispatch)
-            entry = entry.hoverEvent(HoverEvent.showText(LangProvider.getComponent(
+            entry.hoverText(Text.ofTranslatable(
                             "command.scenario.list.suggest",
                             MsgArgs.of("scenario", scenario.getName())
-                    )))
-                    .clickEvent(ClickEvent.suggestCommand(
-                            "/scenamatica scenario start " + plugin.getName() + " " + scenario.getName()
-                    ));
+                    ))
+                    .suggestCommandOnClick("/scenamatica scenario start " + plugin.getName() + " " + scenario.getName());
 
         terminal.write(entry);
     }
@@ -99,9 +94,9 @@ public class CommandList extends CommandBase
     }
 
     @Override
-    public TextComponent getHelpOneLine()
+    public Text getHelpOneLine()
     {
-        return of(LangProvider.get("command.scenario.list.help"));
+        return Text.ofTranslatable("command.scenario.list.help");
     }
 
     @Override

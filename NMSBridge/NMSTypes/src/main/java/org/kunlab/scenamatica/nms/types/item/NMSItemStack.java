@@ -5,8 +5,6 @@ import org.kunlab.scenamatica.nms.NMSWrapped;
 import org.kunlab.scenamatica.nms.Versioned;
 import org.kunlab.scenamatica.nms.types.entity.NMSEntityLiving;
 
-import java.util.function.Consumer;
-
 /**
  * ItemStack の NMS インターフェースです。
  */
@@ -22,17 +20,16 @@ public interface NMSItemStack extends NMSWrapped
     /**
      * アイテムをダメージを与えます。
      *
-     * @param damage  ダメージ
-     * @param owner   アイテムの所有者
-     * @param onBreak アイテムが壊れたときの処理
-     * @param <T>     所有者の型
+     * @param <T>    所有者の型
+     * @param damage ダメージ
+     * @param owner  アイテムの所有者
      */
-    @Versioned(from = "1.16.5") <T extends NMSEntityLiving> void damage(int damage, T owner, Consumer<T> onBreak);
+    <T extends NMSEntityLiving> @Versioned void damage(int damage, T owner);
 
     /**
      * ラップしている {@link NMSItem} を取得します。
      *
      * @return {@link NMSItem}
      */
-    @Versioned(from = "1.16.5") NMSItem getItem();
+    NMSItem getItem();
 }

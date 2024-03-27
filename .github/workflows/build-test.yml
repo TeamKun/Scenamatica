@@ -24,6 +24,8 @@ on:
       - "ScenamaticaScenarioEngine/**"
       - "ScenamaticaScenarioSelectorEngine/**"
       - "ScenamaticaScenarioTriggerEngine/**"
+  workflow_dispatch:
+
 
 permissions:
   pull-requests: write
@@ -49,10 +51,10 @@ jobs:
         uses: stCarolas/setup-maven@v5
         with:
           maven-version: 3.8.2
-      - uses: PeyaPeyaPeyang/nmsaction@v3
+      - uses: PeyaPeyaPeyang/nmsaction@v5
         if: "steps.sj.outputs.cache-hit != 'true'"
         with:
-          rev: 1.16.5
+          rev: 1.16.5, 1.13.2
       - name: Install nms into m2
         if: "steps.sj.outputs.cache-hit != 'true'"
         run: |
@@ -73,6 +75,11 @@ jobs:
     name: Self-test with Scenamatica
     runs-on: self-hosted
     needs: build
+    strategy:
+      matrix:
+        minecraft:
+          - 1.16.5
+          - 1.13.2
     steps:
       - uses: actions/download-artifact@v3
         with:
@@ -87,9 +94,17 @@ jobs:
         uses: teamkun/scenamatica-action@main
         with:
           plugin: Scenamatica.jar
+          minecraft: ${{ matrix.minecraft }}
+          server-dir: server-${{ matrix.minecraft }}
         env:
           NO_SCENAMATICA: true
         timeout-minutes: 20
+  clean:
+    name: Clean up
+    runs-on: self-hosted
+    if: always()
+    needs: test
+    steps:
       - name: Clean artifacts
         if: always()
         uses: geekyeggo/delete-artifact@v2

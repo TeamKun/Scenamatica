@@ -22,7 +22,7 @@ public class ScenarioFileStructureSerializeTest
 {
     public static final ScenarioFileStructure FULFILLED = new ScenarioFileStructureImpl(
             Version.of("0.1.0"),
-            Collections.singletonList(Version.of("1.16.5")),
+            VersionRangeSerializeTest.FULLFILLED,
             "eveything",
             "A scenario that does everything",
             114514L,
@@ -43,7 +43,7 @@ public class ScenarioFileStructureSerializeTest
     public static final Map<String, Object> FULFILLED_MAP = new HashMap<String, Object>()
     {{
         this.put("scenamatica", "0.1.0");
-        this.put("minecraft", Collections.singletonList("1.16.5"));
+        this.put("minecraft", VersionRangeSerializeTest.FULLFILLED_MAP);
         this.put("name", "eveything");
         this.put("description", "A scenario that does everything");
         this.put("timeout", 114514L);
@@ -62,7 +62,7 @@ public class ScenarioFileStructureSerializeTest
 
     public static final ScenarioFileStructureImpl EMPTY = new ScenarioFileStructureImpl(
             Version.of("0.1.0"),
-            Collections.emptyList(),
+            null,
             "nothing",
             "A scenario that does nothing",
             ScenarioFileStructureImpl.DEFAULT_TIMEOUT_TICK,

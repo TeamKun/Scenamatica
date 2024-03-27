@@ -1,6 +1,5 @@
 package org.kunlab.scenamatica.scenariofile.structures.entity;
 
-import org.bukkit.inventory.EquipmentSlot;
 import org.junit.jupiter.api.Test;
 import org.kunlab.scenamatica.interfaces.scenariofile.entity.EntityStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.entity.LivingEntityStructure;
@@ -43,47 +42,8 @@ public class LivingEntitySerializeTest
             ItemStackStructureSerializeTest.FULFILLED,
             114,
             514,
-            true,
-            EquipmentSlot.HAND,
-            true,
-            0.3f
-    );/*
-    String KEY_REMAINING_AIR = "remainAir";
-    String KEY_MAX_AIR = "maxAir";
-    String KEY_ARROW_COOLDOWN = "arrowCooldown";
-    String KEY_ARROWS_IN_BODY = "arrowsInBody";
-    String KEY_MAX_NO_DAMAGE_TICKS = "maxNoDamageTicks";
-    String KEY_LAST_DAMAGE = "lastDamage";
-    String KEY_NO_DAMAGE_TICKS = "noDamageTicks";
-    String KEY_KILLER = "killer";
-    String KEY_POTION_EFFECTS = "potions";
-    String KEY_POTION_EFFECTS_AMBIENT = "ambient";
-    String KEY_POTION_EFFECTS_AMPLIFIER = "amplifier";
-    String KEY_POTION_EFFECTS_DURATION = "duration";
-    String KEY_POTION_EFFECTS_TYPE = "type";
-    String KEY_POTION_EFFECTS_SHOW_PARTICLES = "particle";
-    String KEY_POTION_EFFECTS_SHOW_ICON = "icon";
-    String KEY_REMOVE_WHEN_FAR_AWAY = "removeWhenFarAway";
-    String KEY_CAN_PICKUP_ITEMS = "canPickupItems";
-    String KEY_LEASHED = "leashed";
-    String KEY_LEASH_HOLDER = "leashHolder";
-    String KEY_GLIDING = "gliding";
-    String KEY_SWIMMING = "swimming";
-    String KEY_RIPTIDING = "riptiding";
-    String KEY_SLEEPING = "sleeping";
-    String KEY_AI = "ai";
-    String KEY_COLLIDABLE = "collidable";
-    String KEY_INVISIBLE = "invisible";
-    // Paper
-    String KEY_ARROWS_STUCK = "arrowsStuck";
-    String KEY_SHIELD_BLOCKING_DELAY = "shieldBlockingDelay";
-    String KEY_ACTIVE_ITEM = "activeItem";
-    String KEY_ITEM_USE_REMAIN_TIME = "itemUseRemainTime";
-    String KEY_HAND_RAISED_TIME = "handRaisedTime";
-    String KEY_IS_HAND_RAISED = "isHandRaised";
-    String KEY_HAND_RAISED = "handRaised";
-    String KEY_JUMPING = "jumping";
-    String KEY_HURT_DIRECTION = "hurtDirection";*/
+            true
+    );
 
     public static final Map<String, Object> FULFILLED_MAP = new HashMap<String, Object>(AEntityStructureSerializeTest.FULFILLED_MAP)
     {{
@@ -124,9 +84,6 @@ public class LivingEntitySerializeTest
         this.put("itemUseRemainTime", 114);
         this.put("handRaisedTime", 514);
         this.put("isHandRaised", true);
-        this.put("handRaised", EquipmentSlot.HAND.name());
-        this.put("jumping", true);
-        this.put("hurtDirection", 0.3f);
     }};
 
     public static final LivingEntityStructure EMPTY = new LivingEntityStructureImpl();

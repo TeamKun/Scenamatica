@@ -37,7 +37,6 @@ public class ItemStackStructureSerializeTest
                     "This is also a test lore.",
                     "This is literally a test lore."
             ),
-            114514,
             new HashMap<Enchantment, Integer>()
             {{/*
                 this.put(Enchantment.ARROW_DAMAGE, 1);
@@ -53,8 +52,7 @@ public class ItemStackStructureSerializeTest
                     ItemFlag.HIDE_DESTROYS,
                     ItemFlag.HIDE_PLACED_ON,
                     ItemFlag.HIDE_POTION_EFFECTS,
-                    ItemFlag.HIDE_UNBREAKABLE,
-                    ItemFlag.HIDE_DYE
+                    ItemFlag.HIDE_UNBREAKABLE
             ),
             true,
             new HashMap<Attribute, List<AttributeModifier>>()
@@ -85,7 +83,6 @@ public class ItemStackStructureSerializeTest
                 "This is also a test lore.",
                 "This is literally a test lore."
         ));
-        this.put("customModel", 114514);
         /*this.put("enchants", new HashMap<String, Integer>()
         {{
             this.put("power", 1);
@@ -102,8 +99,7 @@ public class ItemStackStructureSerializeTest
                 "HIDE_DESTROYS",
                 "HIDE_PLACED_ON",
                 "HIDE_POTION_EFFECTS",
-                "HIDE_UNBREAKABLE",
-                "HIDE_DYE"
+                "HIDE_UNBREAKABLE"
         ));
         this.put("unbreakable", true);
         this.put("attributes", new HashMap<String, List<Map<String, Object>>>()
@@ -128,7 +124,6 @@ public class ItemStackStructureSerializeTest
             null,
             null,
             Collections.emptyList(),
-            null,
             Collections.emptyMap(),
             Collections.emptyList(),
             null,
@@ -146,7 +141,6 @@ public class ItemStackStructureSerializeTest
             null,
             null,
             Collections.emptyList(),
-            null,
             Collections.emptyMap(),
             Collections.emptyList(),
             null,
@@ -251,7 +245,6 @@ public class ItemStackStructureSerializeTest
                 null,
                 null,
                 Collections.emptyList(),
-                null,
                 Collections.emptyMap(),
                 Collections.emptyList(),
                 null,

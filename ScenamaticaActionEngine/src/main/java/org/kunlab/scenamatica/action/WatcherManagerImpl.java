@@ -12,6 +12,7 @@ import org.bukkit.plugin.RegisteredListener;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.utils.EventListenerUtils;
+import org.kunlab.scenamatica.commons.utils.ActionMetaUtils;
 import org.kunlab.scenamatica.enums.TriggerType;
 import org.kunlab.scenamatica.enums.WatchType;
 import org.kunlab.scenamatica.exceptions.scenario.BrokenReferenceException;
@@ -115,7 +116,7 @@ public class WatcherManagerImpl implements WatcherManager
     {
         Action actionExecutor = action.getExecutor();
         if (!(actionExecutor instanceof Watchable))
-            throw new IllegalStateException("The action " + actionExecutor.getName() + " is not watchable.");
+            throw new IllegalStateException("The action " + ActionMetaUtils.getActionName(actionExecutor) + " is not watchable.");
 
         List<Pair<Class<? extends Event>, RegisteredListener>> listeners = new ArrayList<>();
         WatchEntry watchEntry = new WatchEntry(
@@ -220,7 +221,7 @@ public class WatcherManagerImpl implements WatcherManager
     {
         Action actionExecutor = entry.getAction().getExecutor();
         if (!(actionExecutor instanceof Watchable))
-            throw new IllegalStateException("The action " + actionExecutor.getName() + " is not watchable.");
+            throw new IllegalStateException("The action " + ActionMetaUtils.getActionName(actionExecutor) + " is not watchable.");
 
         EventExecutor executor = (listener1, event) -> this.onEventFired(entry, event);
         RegisteredListener registeredListener = new RegisteredListener(

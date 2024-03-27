@@ -30,8 +30,8 @@ public interface ScenarioFileStructure extends Structure
      *
      * @return Minecraft のバージョン
      */
-    @NotNull
-    List<Version> getMinecraftVersions();
+    @Nullable
+    VersionRange getMinecraftVersions();
 
     /**
      * このシナリオの名前を取得します。

@@ -3,8 +3,8 @@
 
 # IntelliJ
 out/
+**.iml
 !Scenamatica.iml
-/*.iml
 
 # Compiled class file
 *.class

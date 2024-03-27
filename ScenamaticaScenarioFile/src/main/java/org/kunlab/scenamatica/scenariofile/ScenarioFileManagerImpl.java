@@ -2,23 +2,39 @@ package org.kunlab.scenamatica.scenariofile;
 
 import net.kunmc.lab.peyangpaperutils.versioning.Version;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.kunlab.kpm.utils.PluginUtil;
 import org.kunlab.scenamatica.exceptions.scenariofile.InvalidScenarioFileException;
 import org.kunlab.scenamatica.interfaces.ScenamaticaRegistry;
 import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileManager;
 import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 
+import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.nio.file.Path;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class ScenarioFileManagerImpl implements ScenarioFileManager
 {
+    private static final Method pluginGetFile;
+
+    static
+    {
+        try
+        {
+            pluginGetFile = JavaPlugin.class.getDeclaredMethod("getFile");
+            pluginGetFile.setAccessible(true);
+        }
+        catch (NoSuchMethodException var1)
+        {
+            throw new IllegalStateException(var1);
+        }
+    }
+
     @NotNull
     private final ScenamaticaRegistry registry;
     @NotNull
@@ -28,6 +44,18 @@ public class ScenarioFileManagerImpl implements ScenarioFileManager
     {
         this.registry = registry;
         this.scenarios = new HashMap<>();
+    }
+
+    private static Path getPluginFilePath(Plugin plugin)
+    {
+        try
+        {
+            return ((File) pluginGetFile.invoke(plugin)).toPath();
+        }
+        catch (ReflectiveOperationException var2)
+        {
+            throw new IllegalStateException(var2);
+        }
     }
 
     @Override
@@ -41,7 +69,7 @@ public class ScenarioFileManagerImpl implements ScenarioFileManager
     {
         try
         {
-            Path pluginJarPath = PluginUtil.getFile(plugin).toPath();
+            Path pluginJarPath = getPluginFilePath(plugin);
             Map<String, ScenarioFileStructure> pluginScenarios = ScenarioFileParser.loadAllFromJar(pluginJarPath);
 
             pluginScenarios.values().removeIf(scenario -> !this.canLoadScenario(scenario));
@@ -75,23 +103,7 @@ public class ScenarioFileManagerImpl implements ScenarioFileManager
             return false;
         }
 
-        List<Version> minecraftVersions = scenario.getMinecraftVersions();
-        if (minecraftVersions.isEmpty())
-            return true;
-
-        Version runningVersion = Version.of(this.registry.getPlugin().getServer().getMinecraftVersion());
-        for (Version version : minecraftVersions)
-        {
-            if (runningVersion.isEqualTo(version))
-                return true;
-        }
-
-        this.registry.getLogger().warning(
-                "The scenario file " + scenario.getName() + " is not compatible with running Minecraft version." +
-                        " (Compatible versions: " + String.join(", ", minecraftVersions.stream().map(Version::toString).toArray(String[]::new)) + ", Running version: " + runningVersion + ")"
-        );
-
-        return false;
+        return true;
     }
 
     @Override

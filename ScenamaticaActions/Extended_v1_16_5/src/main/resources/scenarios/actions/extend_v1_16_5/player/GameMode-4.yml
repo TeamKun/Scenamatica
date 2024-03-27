@@ -1,0 +1,23 @@
+# noinspection YAMLSchemaValidation
+scenamatica: ${project.version}
+minecraft:
+  since: 1.16.5
+
+name: actions_player_gamemode_4
+description: Testing PlayerGameModeAction without arguments works or not
+on:
+  - type: on_load
+  - type: manual_dispatch
+
+context:
+  actors:
+    - name: Actor001
+
+scenario:
+  - type: execute
+    action: player_gamemode
+    with:
+      target: Actor001
+      gamemode: CREATIVE
+  - type: expect
+    action: player_gamemode

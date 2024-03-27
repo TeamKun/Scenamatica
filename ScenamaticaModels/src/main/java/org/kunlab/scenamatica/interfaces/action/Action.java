@@ -9,13 +9,6 @@ import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 public interface Action
 {
     /**
-     * 動作のシリアライズ名を返します。
-     *
-     * @return 動作のシリアライズ名
-     */
-    String getName();
-
-    /**
      * 入力値の構造を返します。
      *
      * @param type シナリオの種類

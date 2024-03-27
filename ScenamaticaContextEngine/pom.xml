@@ -11,6 +11,13 @@
     </parent>
 
     <artifactId>ScenamaticaContextEngine</artifactId>
+    <packaging>pom</packaging>
+    <modules>
+        <module>ContextEngineCore</module>
+        <module>ContextEngineNMSBase</module>
+        <module>nms_v1_16_R3</module>
+        <module>nms_v1_13_R2</module>
+    </modules>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
@@ -29,25 +36,6 @@
             <groupId>org.kunlab.scenamatica</groupId>
             <artifactId>ScenamaticaModels</artifactId>
             <version>1.0.0</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.github.TeamKun.TeamKUNPluginManager</groupId>
-            <artifactId>KPMCommon</artifactId>
-            <version>v3.0.3</version>
-            <scope>compile</scope>
-        </dependency>
-        <!--suppress MavenDuplicateDependenciesInspection -->
-        <dependency><!-- これがないと, Paper でインジェクションされたオブジェクトが使えないので, 親と重複しているが許容する。 -->
-            <groupId>com.destroystokyo.paper</groupId>
-            <artifactId>paper-api</artifactId>
-            <version>1.16.5-R0.1-SNAPSHOT</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.spigotmc</groupId>
-            <artifactId>spigot</artifactId>
-            <version>1.16.5-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

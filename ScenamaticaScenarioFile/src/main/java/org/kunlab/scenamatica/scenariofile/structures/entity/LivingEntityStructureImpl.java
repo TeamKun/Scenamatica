@@ -5,7 +5,6 @@ import lombok.Getter;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
@@ -16,6 +15,8 @@ import org.kunlab.scenamatica.interfaces.scenariofile.entity.LivingEntityStructu
 import org.kunlab.scenamatica.interfaces.scenariofile.inventory.ItemStackStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.EntitySpecifier;
 import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.PlayerSpecifier;
+import org.kunlab.scenamatica.nms.NMSProvider;
+import org.kunlab.scenamatica.nms.types.entity.NMSEntityLiving;
 import org.kunlab.scenamatica.scenariofile.specifiers.EntitySpecifierImpl;
 import org.kunlab.scenamatica.scenariofile.specifiers.PlayerSpecifierImpl;
 import org.kunlab.scenamatica.scenariofile.structures.inventory.ItemStackStructureImpl;
@@ -64,9 +65,6 @@ public class LivingEntityStructureImpl extends EntityStructureImpl implements Li
     protected final Integer itemUseRemainTime;
     protected final Integer handRaisedTime;
     protected final Boolean isHandRaised;
-    protected final EquipmentSlot handRaised;
-    protected final Boolean jumping;
-    protected final Float hurtDirection;
 
 
     // <editor-fold desc="Constructors">
@@ -98,10 +96,7 @@ public class LivingEntityStructureImpl extends EntityStructureImpl implements Li
             ItemStackStructure activeItem,
             Integer itemUseRemainTime,
             Integer handRaisedTime,
-            Boolean isHandRaised,
-            EquipmentSlot handRaised,
-            Boolean jumping,
-            Float hurtDirection)
+            Boolean isHandRaised)
     {
         super(original);
         this.remainAir = remainAir;
@@ -130,9 +125,6 @@ public class LivingEntityStructureImpl extends EntityStructureImpl implements Li
         this.itemUseRemainTime = itemUseRemainTime;
         this.handRaisedTime = handRaisedTime;
         this.isHandRaised = isHandRaised;
-        this.handRaised = handRaised;
-        this.jumping = jumping;
-        this.hurtDirection = hurtDirection;
     }
 
     protected LivingEntityStructureImpl()
@@ -151,9 +143,6 @@ public class LivingEntityStructureImpl extends EntityStructureImpl implements Li
                 null,
                 null,
                 EntitySpecifierImpl.EMPTY,
-                null,
-                null,
-                null,
                 null,
                 null,
                 null,
@@ -205,9 +194,6 @@ public class LivingEntityStructureImpl extends EntityStructureImpl implements Li
         this.itemUseRemainTime = original.getItemUseRemainTime();
         this.handRaisedTime = original.getHandRaisedTime();
         this.isHandRaised = original.getIsHandRaised();
-        this.handRaised = original.getHandRaised();
-        this.jumping = original.getJumping();
-        this.hurtDirection = original.getHurtDirection();
     }
 
 
@@ -256,10 +242,6 @@ public class LivingEntityStructureImpl extends EntityStructureImpl implements Li
         MapUtils.putIfNotNull(map, KEY_ITEM_USE_REMAIN_TIME, entity.getItemUseRemainTime());
         MapUtils.putIfNotNull(map, KEY_HAND_RAISED_TIME, entity.getHandRaisedTime());
         MapUtils.putIfNotNull(map, KEY_IS_HAND_RAISED, entity.getIsHandRaised());
-        if (entity.getHandRaised() != null)
-            map.put(KEY_HAND_RAISED, entity.getHandRaised().name());
-        MapUtils.putIfNotNull(map, KEY_JUMPING, entity.getJumping());
-        MapUtils.putIfNotNull(map, KEY_HURT_DIRECTION, entity.getHurtDirection());
 
         return map;
     }
@@ -363,9 +345,6 @@ public class LivingEntityStructureImpl extends EntityStructureImpl implements Li
         Integer itemUseRemainTime = MapUtils.getOrNull(map, KEY_ITEM_USE_REMAIN_TIME);
         Integer handRaisedTime = MapUtils.getOrNull(map, KEY_HAND_RAISED_TIME);
         Boolean isHandRaised = MapUtils.getOrNull(map, KEY_IS_HAND_RAISED);
-        EquipmentSlot handRaised = MapUtils.getAsEnumOrNull(map, KEY_HAND_RAISED, EquipmentSlot.class);
-        Boolean jumping = MapUtils.getOrNull(map, KEY_JUMPING);
-        Float hurtDirection = MapUtils.getOrNull(map, KEY_HURT_DIRECTION);
 
         return new LivingEntityStructureImpl(
                 base,
@@ -394,21 +373,20 @@ public class LivingEntityStructureImpl extends EntityStructureImpl implements Li
                 activeItem,
                 itemUseRemainTime,
                 handRaisedTime,
-                isHandRaised,
-                handRaised,
-                jumping,
-                hurtDirection
+                isHandRaised
         );
     }
 
     public static LivingEntityStructure ofLivingEntity(@NotNull LivingEntity entity)
     {
+        NMSEntityLiving nmsEntity = NMSProvider.getProvider().wrap(entity);
+
         return new LivingEntityStructureImpl(
                 EntityStructureImpl.of(entity),
                 entity.getRemainingAir(),
                 entity.getMaximumAir(),
-                entity.getArrowCooldown(),
-                entity.getArrowsInBody(),
+                NMSProvider.doNMSSafe(nmsEntity::getArrowCooldown),
+                nmsEntity.getArrowCount(),
                 entity.getMaximumNoDamageTicks(),
                 entity.getLastDamage(),
                 entity.getNoDamageTicks(),
@@ -421,20 +399,17 @@ public class LivingEntityStructureImpl extends EntityStructureImpl implements Li
                 entity.isGliding(),
                 entity.isSwimming(),
                 entity.isRiptiding(),
-                entity.isSleeping(),
+                nmsEntity.isSleeping(),
                 entity.hasAI(),
                 entity.isCollidable(),
-                entity.isInvisible(),
+                nmsEntity.isInvisible(),
                 // Paper
                 entity.getArrowsStuck(),
                 entity.getShieldBlockingDelay(),
                 ItemStackStructureImpl.of(Objects.requireNonNull(entity.getEquipment()).getItemInMainHand()),
                 entity.getItemUseRemainingTime(),
                 entity.getHandRaisedTime(),
-                entity.isHandRaised(),
-                entity.getHandRaised(),
-                entity.isJumping(),
-                entity.getHurtDirection()
+                entity.isHandRaised()
         );
     }
 
@@ -540,10 +515,7 @@ public class LivingEntityStructureImpl extends EntityStructureImpl implements Li
                 && Objects.equals(this.activeItem, that.activeItem)
                 && Objects.equals(this.itemUseRemainTime, that.itemUseRemainTime)
                 && Objects.equals(this.handRaisedTime, that.handRaisedTime)
-                && Objects.equals(this.isHandRaised, that.isHandRaised)
-                && this.handRaised == that.handRaised
-                && Objects.equals(this.jumping, that.jumping)
-                && Objects.equals(this.hurtDirection, that.hurtDirection);
+                && Objects.equals(this.isHandRaised, that.isHandRaised);
     }
 
     @Override
@@ -555,7 +527,7 @@ public class LivingEntityStructureImpl extends EntityStructureImpl implements Li
                 this.removeWhenFarAway, this.canPickupItems, this.leashed, this.leashHolder, this.gliding,
                 this.swimming, this.riptiding, this.sleeping, this.ai, this.collidable, this.invisible,
                 this.arrowsStuck, this.shieldBlockingDelay, this.activeItem, this.itemUseRemainTime,
-                this.handRaisedTime, this.isHandRaised, this.handRaised, this.jumping, this.hurtDirection
+                this.handRaisedTime, this.isHandRaised
         );
     }
 
@@ -563,14 +535,16 @@ public class LivingEntityStructureImpl extends EntityStructureImpl implements Li
     {
         super.applyToEntity(entity);
 
+        NMSEntityLiving nmsEntity = NMSProvider.getProvider().wrap(entity);
+
         if (this.remainAir != null)
             entity.setRemainingAir(this.remainAir);
         if (this.maxAir != null)
             entity.setMaximumAir(this.maxAir);
         if (this.arrowCooldown != null)
-            entity.setArrowCooldown(this.arrowCooldown);
+            NMSProvider.tryDoNMS(() -> nmsEntity.setArrowCooldown(this.arrowCooldown));
         if (this.arrowsInBody != null)
-            entity.setArrowsInBody(this.arrowsInBody);
+            nmsEntity.setArrowCount(this.arrowsInBody);
         if (this.maxNoDamageTicks != null)
             entity.setMaximumNoDamageTicks(this.maxNoDamageTicks);
         if (this.lastDamage != null)
@@ -612,17 +586,13 @@ public class LivingEntityStructureImpl extends EntityStructureImpl implements Li
         if (this.collidable != null)
             entity.setCollidable(this.collidable);
         if (this.invisible != null)
-            entity.setInvisible(this.invisible);
+            nmsEntity.setInvisible(this.invisible);
         // Paper
 
         if (this.arrowsStuck != null)
             entity.setArrowsStuck(this.arrowsStuck);
         if (this.shieldBlockingDelay != null)
             entity.setShieldBlockingDelay(this.shieldBlockingDelay);
-        if (this.jumping != null)
-            entity.setJumping(this.jumping);
-        if (this.hurtDirection != null)
-            entity.setHurtDirection(this.hurtDirection);
     }
 
     protected boolean isAdequateLivingEntity(LivingEntity entity, boolean strict)
@@ -638,29 +608,36 @@ public class LivingEntityStructureImpl extends EntityStructureImpl implements Li
                     return false;
         }
 
+        NMSEntityLiving nmsEntity = NMSProvider.getProvider().wrap(entity);
+
+        boolean arrowCooldownMatches = true;
+        if (this.arrowCooldown != null)
+        {
+            Integer nmsArrowCooldown = NMSProvider.doNMSSafe(nmsEntity::getArrowCooldown);
+            if (nmsArrowCooldown != null)
+                arrowCooldownMatches = Objects.equals(this.arrowCooldown, nmsArrowCooldown);
+        }
         return super.isAdequateEntity(entity, strict)
-                && (this.remainAir == null || Objects.equals(this.remainAir, entity.getRemainingAir()))
-                && (this.maxAir == null || Objects.equals(this.maxAir, entity.getMaximumAir()))
-                && (this.arrowCooldown == null || Objects.equals(this.arrowCooldown, entity.getArrowCooldown()))
-                && (this.arrowsInBody == null || Objects.equals(this.arrowsInBody, entity.getArrowsInBody()))
-                && (this.maxNoDamageTicks == null || Objects.equals(this.maxNoDamageTicks, entity.getMaximumNoDamageTicks()))
-                && (this.lastDamage == null || Objects.equals(this.lastDamage, entity.getLastDamage()))
-                && (this.noDamageTicks == null || Objects.equals(this.noDamageTicks, entity.getNoDamageTicks()))
+                && (this.remainAir == null || this.remainAir == entity.getRemainingAir())
+                && (this.maxAir == null || this.maxAir == entity.getMaximumAir())
+                && arrowCooldownMatches
+                && (this.arrowsInBody == null || this.arrowsInBody == nmsEntity.getArrowCount())
+                && (this.maxNoDamageTicks == null || this.maxNoDamageTicks == entity.getMaximumNoDamageTicks())
+                && (this.lastDamage == null || this.lastDamage == entity.getLastDamage())
+                && (this.noDamageTicks == null || this.noDamageTicks == entity.getNoDamageTicks())
                 && (!this.killer.canProvideTarget() || this.killer.checkMatchedPlayer(entity.getKiller()))
-                && (this.removeWhenFarAway == null || Objects.equals(this.removeWhenFarAway, entity.getRemoveWhenFarAway()))
-                && (this.canPickupItems == null || Objects.equals(this.canPickupItems, entity.getCanPickupItems()))
-                && (this.leashed == null || Objects.equals(this.leashed, entity.isLeashed()))
+                && (this.removeWhenFarAway == null || this.removeWhenFarAway == entity.getRemoveWhenFarAway())
+                && (this.canPickupItems == null || this.canPickupItems == entity.getCanPickupItems())
+                && (this.leashed == null || this.leashed == entity.isLeashed())
                 && (!this.leashHolder.canProvideTarget() || this.leashHolder.checkMatchedEntity(entity.getLeashHolder()))
-                && (this.gliding == null || Objects.equals(this.gliding, entity.isGliding()))
-                && (this.swimming == null || Objects.equals(this.swimming, entity.isSwimming()))
-                && (this.ai == null || Objects.equals(this.ai, entity.hasAI()))
-                && (this.collidable == null || Objects.equals(this.collidable, entity.isCollidable()))
-                && (this.invisible == null || Objects.equals(this.invisible, entity.isInvisible()))
+                && (this.gliding == null || this.gliding == entity.isGliding())
+                && (this.swimming == null || this.swimming == entity.isSwimming())
+                && (this.ai == null || this.ai == entity.hasAI())
+                && (this.collidable == null || this.collidable == entity.isCollidable())
+                && (this.invisible == null || this.invisible == nmsEntity.isInvisible())
                 // Paper
-                && (this.arrowsStuck == null || Objects.equals(this.arrowsStuck, entity.getArrowsStuck()))
-                && (this.shieldBlockingDelay == null || Objects.equals(this.shieldBlockingDelay, entity.getShieldBlockingDelay()))
-                && (this.jumping == null || Objects.equals(this.jumping, entity.isJumping()))
-                && (this.hurtDirection == null || Objects.equals(this.hurtDirection, entity.getHurtDirection()));
+                && (this.arrowsStuck == null || this.arrowsStuck == entity.getArrowsStuck())
+                && (this.shieldBlockingDelay == null || this.shieldBlockingDelay == entity.getShieldBlockingDelay());
     }
 
 

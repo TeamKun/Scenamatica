@@ -78,13 +78,6 @@ public interface ItemStackStructure extends Structure, Mapped<ItemStack>, Creata
     List<String> getLore();
 
     /**
-     * このアイテムのカスタムモデルデータを取得します。
-     *
-     * @return アイテムのカスタムモデルデータ
-     */
-    Integer getCustomModelData();
-
-    /**
      * このアイテムに付与されているエンチャントを取得します。
      *
      * @return アイテムに付与されているエンチャント

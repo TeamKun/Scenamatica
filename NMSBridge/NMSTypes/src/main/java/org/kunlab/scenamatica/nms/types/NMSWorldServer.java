@@ -1,6 +1,7 @@
 package org.kunlab.scenamatica.nms.types;
 
 import org.bukkit.World;
+import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.nms.NMSWrapped;
 
 /**
@@ -10,4 +11,12 @@ public interface NMSWorldServer extends NMSWrapped
 {
     @Override
     World getBukkit();
+
+    /**
+     * ワールドデータを取得します。
+     *
+     * @return ワールドデータ
+     */
+    @NotNull
+    NMSWorldData getWorldData();
 }

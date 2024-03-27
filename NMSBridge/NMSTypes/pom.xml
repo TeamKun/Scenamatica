@@ -7,6 +7,7 @@
         <groupId>org.kunlab.scenamatica</groupId>
         <artifactId>NMSBridge</artifactId>
         <version>1.0.0</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
     <groupId>org.kunlab.scenamatica.nms</groupId>

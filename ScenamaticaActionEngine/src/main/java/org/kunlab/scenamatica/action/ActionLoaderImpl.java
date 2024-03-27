@@ -7,8 +7,11 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.event.server.PluginEnableEvent;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
-import org.kunlab.kpm.utils.PluginUtil;
+import org.kunlab.scenamatica.annotations.action.ActionMeta;
+import org.kunlab.scenamatica.commons.utils.ActionMetaUtils;
+import org.kunlab.scenamatica.enums.MinecraftVersion;
 import org.kunlab.scenamatica.interfaces.ExceptionHandler;
 import org.kunlab.scenamatica.interfaces.ScenamaticaRegistry;
 import org.kunlab.scenamatica.interfaces.action.Action;
@@ -21,6 +24,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -39,11 +43,25 @@ import java.util.stream.Collectors;
 
 public class ActionLoaderImpl implements ActionLoader, Listener
 {
+    private static final Method pluginGetFile;
+
+    static
+    {
+        try
+        {
+            pluginGetFile = JavaPlugin.class.getDeclaredMethod("getFile");
+            pluginGetFile.setAccessible(true);
+        }
+        catch (NoSuchMethodException var1)
+        {
+            throw new IllegalStateException(var1);
+        }
+    }
+
     private final ScenamaticaRegistry registry;
     private final ExceptionHandler exceptionHandler;
     private final Logger logger;
     private final List<LoadedAction<?>> actions;
-
     private boolean isAlive;
 
     public ActionLoaderImpl(@NotNull ScenamaticaRegistry registry)
@@ -55,6 +73,18 @@ public class ActionLoaderImpl implements ActionLoader, Listener
         this.actions = new LinkedList<>();
 
         this.isAlive = true;
+    }
+
+    private static File getPluginFile(Plugin plugin)
+    {
+        try
+        {
+            return (File) pluginGetFile.invoke(plugin);
+        }
+        catch (ReflectiveOperationException var2)
+        {
+            throw new IllegalStateException(var2);
+        }
     }
 
     private static boolean isConstructableActionClass(Class<?> clazz, Class<?> actionClazz)
@@ -71,7 +101,7 @@ public class ActionLoaderImpl implements ActionLoader, Listener
 
     private static URL getJARURL(Plugin plugin)
     {
-        File jarFile = PluginUtil.getFile(plugin);
+        File jarFile = getPluginFile(plugin);
         String jarFullPath = jarFile.getAbsolutePath();
 
         try
@@ -82,6 +112,12 @@ public class ActionLoaderImpl implements ActionLoader, Listener
         {
             throw new RuntimeException("Failed to create URL for JAR file " + jarFullPath, e);
         }
+    }
+
+    private static boolean isCompatibleWithServer(Class<? extends Action> actionClass)
+    {
+        ActionMeta meta = ActionMetaUtils.getActionMetaData(actionClass);
+        return MinecraftVersion.current().isInRange(meta.supportsSince(), meta.supportsUntil());
     }
 
     @Override
@@ -203,9 +239,15 @@ public class ActionLoaderImpl implements ActionLoader, Listener
         {
             try
             {
-                Class<?> actionClass = cl.loadClass(actionClassName);
                 //noinspection unchecked
-                actionClasses.add((Class<? extends Action>) actionClass);
+                Class<? extends Action> actionClass = (Class<? extends Action>) cl.loadClass(actionClassName);
+                if (!isCompatibleWithServer(actionClass))
+                {
+                    this.logger.log(Level.FINE, "Action " + actionClass.getName() + " is not compatible with the server version.");
+                    continue;
+                }
+
+                actionClasses.add(actionClass);
             }
             catch (ClassNotFoundException e)
             {
@@ -228,37 +270,53 @@ public class ActionLoaderImpl implements ActionLoader, Listener
 
         for (Class<? extends Action> actionClass : actionClasses)
         {
-            Action constructedAction = this.constructAction(actionClass);
-            if (constructedAction == null)
+            Action constructedAction;
+            try  // try を constructAction 内に移動させると, ネイティブクラスローダからの java.lang.NoClassDefFoundError の餌食になる。
+            {
+                constructedAction = this.constructAction(actionClass);
+            }
+            catch (ClassNotFoundException | NoClassDefFoundError e)
+            {
+                String eventPackage = "org.bukkit.event";
+                String paperEventPackage = "io.papermc.paper.event";
+                if (e.getMessage().contains(eventPackage.replace(".", "/"))
+                        || e.getMessage().contains(paperEventPackage.replace(".", "/")))
+                {
+                    // 鯖のバージョンが低い
+                    this.logger.info("Unable to load action " + actionClass.getName() + ", the server is not compatible with " + e.getMessage() + ".");
+                    continue;
+                }
+
+                this.logger.warning("Failed to construct action " + actionClass.getName());
+                this.exceptionHandler.report(e);
                 continue;
+            }
+            catch (Throwable e)
+            {
+                this.logger.warning("Failed to construct action " + actionClass.getName());
+                this.exceptionHandler.report(e);
+                continue;
+            }
 
             LoadedAction<?> loadedAction = LoadedActionImpl.of(plugin, constructedAction);
             this.actions.add(loadedAction);
         }
     }
 
-    private Action constructAction(Class<? extends Action> actionClass)
+    private Action constructAction(Class<? extends Action> actionClass) throws InvocationTargetException, InstantiationException, IllegalAccessException, ClassNotFoundException
     {
-        try
+        Constructor<?>[] constructor = actionClass.getConstructors();
+        for (Constructor<?> c : constructor)
         {
-            Constructor<?>[] constructor = actionClass.getConstructors();
-            for (Constructor<?> c : constructor)
-            {
-                if (c.getParameterCount() == 0)
-                    return (Action) c.newInstance();
-                else if (c.getParameterCount() == 1 && c.getParameterTypes()[0].equals(ScenamaticaRegistry.class))
-                    return (Action) c.newInstance(this.registry);
-            }
+            if (c.getParameterCount() == 0)
+                return (Action) c.newInstance();
+            else if (c.getParameterCount() == 1 && c.getParameterTypes()[0].equals(ScenamaticaRegistry.class))
+                return (Action) c.newInstance(this.registry);
+        }
 
-            this.logger.warning("Failed to construct action " + actionClass.getName() + ", no suitable constructor found.");
-            return null;
-        }
-        catch (InstantiationException | IllegalAccessException | InvocationTargetException e)
-        {
-            this.logger.warning("Failed to construct action " + actionClass.getName());
-            this.exceptionHandler.report(e);
-            return null;
-        }
+        this.logger.warning("Failed to construct action " + actionClass.getName() + ", no suitable constructor found.");
+
+        return null;
     }
 
     private void unloadActionsInternal()
@@ -287,7 +345,7 @@ public class ActionLoaderImpl implements ActionLoader, Listener
         {
             List<CompiledScenarioAction> actions = engine.getActions();
             boolean isActionToBeRemoveUsed = actions.stream()
-                    .anyMatch(compiledAction -> compiledAction.getAction().getExecutor().getName().equals(action.getName()));
+                    .anyMatch(compiledAction -> ActionMetaUtils.getActionMetaData(compiledAction.getAction().getExecutor().getClass()).value().equals(action.getName()));
             if (isActionToBeRemoveUsed)
             {
                 this.logger.warning("Action " + action.getName() + " is used in scenario " + engine.getScenario().getName() + ", the engine will be stopped and unloaded.");
