@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/ScenamaticaActions/Base_v1_13_2/Base_v1_13_2.iml" filepath="$PROJECT_DIR$/ScenamaticaActions/Base_v1_13_2/Base_v1_13_2.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ScenamaticaContextEngine/ContextEngineCore/ContextEngineCore.iml" filepath="$PROJECT_DIR$/ScenamaticaContextEngine/ContextEngineCore/ContextEngineCore.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ScenamaticaContextEngine/ContextEngineNMSBase/ContextEngineNMSBase.iml" filepath="$PROJECT_DIR$/ScenamaticaContextEngine/ContextEngineNMSBase/ContextEngineNMSBase.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ScenamaticaActions/Extended_v1_14/Extended_v1_14.iml" filepath="$PROJECT_DIR$/ScenamaticaActions/Extended_v1_14/Extended_v1_14.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ScenamaticaActions/Extended_v1_16/Extended_v1_16.iml" filepath="$PROJECT_DIR$/ScenamaticaActions/Extended_v1_16/Extended_v1_16.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ScenamaticaActions/Extended_v1_16_5/Extended_v1_16_5.iml" filepath="$PROJECT_DIR$/ScenamaticaActions/Extended_v1_16_5/Extended_v1_16_5.iml" />
+      <module fileurl="file://$PROJECT_DIR$/NMSBridge/NMSBridge.iml" filepath="$PROJECT_DIR$/NMSBridge/NMSBridge.iml" />
+      <module fileurl="file://$PROJECT_DIR$/NMSBridge/NMSCore/NMSCore.iml" filepath="$PROJECT_DIR$/NMSBridge/NMSCore/NMSCore.iml" />
+      <module fileurl="file://$PROJECT_DIR$/NMSBridge/NMSTypes/NMSTypes.iml" filepath="$PROJECT_DIR$/NMSBridge/NMSTypes/NMSTypes.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Scenamatica.iml" filepath="$PROJECT_DIR$/Scenamatica.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ScenamaticaAPI/ScenamaticaAPI.iml" filepath="$PROJECT_DIR$/ScenamaticaAPI/ScenamaticaAPI.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ScenamaticaActionEngine/ScenamaticaActionEngine.iml" filepath="$PROJECT_DIR$/ScenamaticaActionEngine/ScenamaticaActionEngine.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ScenamaticaActions/ScenamaticaActions.iml" filepath="$PROJECT_DIR$/ScenamaticaActions/ScenamaticaActions.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ScenamaticaCommons/ScenamaticaCommons.iml" filepath="$PROJECT_DIR$/ScenamaticaCommons/ScenamaticaCommons.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ScenamaticaContextEngine/ScenamaticaContextEngine.iml" filepath="$PROJECT_DIR$/ScenamaticaContextEngine/ScenamaticaContextEngine.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ScenamaticaDaemon/ScenamaticaDaemon.iml" filepath="$PROJECT_DIR$/ScenamaticaDaemon/ScenamaticaDaemon.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ScenamaticaModels/ScenamaticaModels.iml" filepath="$PROJECT_DIR$/ScenamaticaModels/ScenamaticaModels.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ScenamaticaPlugin/ScenamaticaPlugin.iml" filepath="$PROJECT_DIR$/ScenamaticaPlugin/ScenamaticaPlugin.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ScenamaticaScenarioEngine/ScenamaticaScenarioEngine.iml" filepath="$PROJECT_DIR$/ScenamaticaScenarioEngine/ScenamaticaScenarioEngine.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ScenamaticaScenarioFile/ScenamaticaScenarioFile.iml" filepath="$PROJECT_DIR$/ScenamaticaScenarioFile/ScenamaticaScenarioFile.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ScenamaticaSelectorEngine/ScenamaticaSelectorEngine.iml" filepath="$PROJECT_DIR$/ScenamaticaSelectorEngine/ScenamaticaSelectorEngine.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ScenamaticaTriggerEngine/ScenamaticaTriggerEngine.iml" filepath="$PROJECT_DIR$/ScenamaticaTriggerEngine/ScenamaticaTriggerEngine.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ScenamaticaContextEngine/nms_v1_13_R2/nms_v1_13_R2.iml" filepath="$PROJECT_DIR$/ScenamaticaContextEngine/nms_v1_13_R2/nms_v1_13_R2.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ScenamaticaContextEngine/nms_v1_16_R3/nms_v1_16_R3.iml" filepath="$PROJECT_DIR$/ScenamaticaContextEngine/nms_v1_16_R3/nms_v1_16_R3.iml" />
+      <module fileurl="file://$PROJECT_DIR$/NMSBridge/v1_13_R2/v1_13_R2.iml" filepath="$PROJECT_DIR$/NMSBridge/v1_13_R2/v1_13_R2.iml" />
+      <module fileurl="file://$PROJECT_DIR$/NMSBridge/v1_16_R3/v1_16_R3.iml" filepath="$PROJECT_DIR$/NMSBridge/v1_16_R3/v1_16_R3.iml" />
+    </modules>
+  </component>
+</project>
