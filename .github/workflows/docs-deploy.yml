@@ -22,7 +22,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - run: cd docs
       - uses: chrnorm/deployment-action@v2
         name: Create GitHub Deployment
         id: deploy-status
@@ -33,6 +32,9 @@ jobs:
           initial-status: in_progress
       - name: pnpm-setup
         uses: pnpm/action-setup@v2
+        with: 
+          package_json_file: docs/package.json
+      - run: cd docs
       - name: Install dependencies
         run: pnpm install
       - name: Build
