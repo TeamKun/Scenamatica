@@ -3,7 +3,9 @@ name: Deploy Docusaurus to GitHub Pages
 on:
   push:
     branches:
-      - production
+      - main
+    path: 
+      - docs/
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.number || github.sha }}
@@ -20,6 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - run: cd docs
       - uses: chrnorm/deployment-action@v2
         name: Create GitHub Deployment
         id: deploy-status
@@ -28,7 +31,6 @@ jobs:
           environment-url: https://teamkun.github.io/ScenamaticaDocs
           environment: production
           initial-status: in_progress
-
       - name: pnpm-setup
         uses: pnpm/action-setup@v2
       - name: Install dependencies
