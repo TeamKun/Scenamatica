@@ -2,10 +2,10 @@ name: Build and test with Scenamatica
 on:
   push:
     paths:
-      - "Scenamatica/"
+      - "Scenamatica/**"
   pull_request:
     paths:
-      - "Scenamatica/"
+      - "Scenamatica/**"
   workflow_dispatch:
 
 
