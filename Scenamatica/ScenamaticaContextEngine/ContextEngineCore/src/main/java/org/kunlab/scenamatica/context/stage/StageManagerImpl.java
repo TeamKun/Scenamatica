@@ -3,6 +3,7 @@ package org.kunlab.scenamatica.context.stage;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.commons.utils.ThreadingUtil;
 import org.kunlab.scenamatica.context.utils.WorldUtils;
@@ -16,6 +17,7 @@ import org.kunlab.scenamatica.interfaces.scenariofile.context.StageStructure;
 import org.kunlab.scenamatica.nms.NMSProvider;
 import org.kunlab.scenamatica.nms.types.NMSWorldServer;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -35,6 +37,7 @@ public class StageManagerImpl implements StageManager
 {
     private final ScenamaticaRegistry registry;
     private final List<Stage> stages;
+    private List<Path> garbageDirectories;
 
     private boolean destroyed;
 
@@ -42,6 +45,13 @@ public class StageManagerImpl implements StageManager
     {
         this.registry = registry;
         this.stages = new ArrayList<>();
+        this.garbageDirectories = new ArrayList<>();
+
+        new GarbageCleaner3000TM().runTaskTimer(
+                registry.getPlugin(),
+                0,
+                20 * 5
+        );
     }
 
     private static WorldCreator cretateWorldCreator(StageStructure structure)
@@ -166,7 +176,7 @@ public class StageManagerImpl implements StageManager
         Bukkit.unloadWorld(stageWorld, false);
 
         Path worldPath = stageWorld.getWorldFolder().toPath();
-        this.deleteDirectory(worldPath);
+        this.garbageDirectories.add(worldPath);
 
         this.stages.remove(stage);
     }
@@ -176,6 +186,8 @@ public class StageManagerImpl implements StageManager
     {
         if (this.destroyed)
             return;
+
+        new GarbageCleaner3000TM().run();
 
         this.destroyed = true;
 
@@ -193,27 +205,40 @@ public class StageManagerImpl implements StageManager
                 });
     }
 
-    private void deleteDirectory(@NotNull Path path)
+    private class GarbageCleaner3000TM extends BukkitRunnable
     {
-        try (Stream<Path> walker = Files.walk(path))
+        @Override
+        public void run()
         {
-            walker
-                    .map(Path::toFile)
-                    .sorted(Comparator.reverseOrder())
-                    .forEach(f -> {
-                        try
-                        {
-                            Files.delete(f.toPath());
-                        }
-                        catch (IOException e)
-                        {
-                            this.registry.getExceptionHandler().report(e);
-                        }
-                    });
+            if (StageManagerImpl.this.destroyed)
+            {
+                this.cancel();
+                return;
+            }
+            else if (StageManagerImpl.this.garbageDirectories.isEmpty())
+                return;
+
+            List<Path> garbageDirectories = new ArrayList<>(StageManagerImpl.this.garbageDirectories);
+            for (Path path : garbageDirectories)
+            {
+                tryDeleteOneWorld(path);
+                if (!Files.exists(path))
+                    StageManagerImpl.this.garbageDirectories.remove(path);
+            }
         }
-        catch (IOException e)
+
+        private void tryDeleteOneWorld(Path path)
         {
-            this.registry.getExceptionHandler().report(e);
+            try(Stream<Path> paths = Files.walk(path))
+            {
+                paths.sorted(Comparator.reverseOrder())
+                        .map(Path::toFile)
+                        .forEach(File::delete);
+            }
+            catch (IOException e)
+            {
+                StageManagerImpl.this.registry.getExceptionHandler().report(e);
+            }
         }
     }
 }
