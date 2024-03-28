@@ -7,7 +7,7 @@
     <parent>
         <groupId>org.kunlab.scenamatica</groupId>
         <artifactId>Scenamatica</artifactId>
-        <version>1.0.0</version>
+        <version>1.1.0-pre1</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -28,7 +28,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>templating-maven-plugin</artifactId>
-                <version>1.0.0</version>
+                <version>1.1.0-pre1</version>
                 <executions>
                     <execution>
                         <id>filter</id>
@@ -114,7 +114,7 @@
         <dependency>
             <groupId>org.kunlab.scenamatica</groupId>
             <artifactId>ScenamaticaDaemon</artifactId>
-            <version>1.0.0</version>
+            <version>1.1.0-pre1</version>
             <scope>compile</scope>
             <!-- Actions Registration -->
         </dependency>
@@ -128,25 +128,25 @@
         <dependency>
             <groupId>org.kunlab.scenamatica.actions</groupId>
             <artifactId>Base_v1_13_2</artifactId>
-            <version>1.0.0</version>
+            <version>1.1.0-pre1</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.kunlab.scenamatica.actions</groupId>
             <artifactId>Extended_v1_16_5</artifactId>
-            <version>1.0.0</version>
+            <version>1.1.0-pre1</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.kunlab.scenamatica.actions</groupId>
             <artifactId>Extended_v1_16</artifactId>
-            <version>1.0.0</version>
+            <version>1.1.0-pre1</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.kunlab.scenamatica.actions</groupId>
             <artifactId>Extended_v1_14</artifactId>
-            <version>1.0.0</version>
+            <version>1.1.0-pre1</version>
             <scope>runtime</scope>
         </dependency>
     </dependencies>
