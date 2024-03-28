@@ -14,9 +14,13 @@ name: "CodeQL"
 on:
   push:
     branches: [main, develop]
+    path:
+      - "Scenamatica/"
   pull_request:
     # The branches below must be a subset of the branches above
     branches: [develop]
+    path:
+      - "Scenamatica/"
   schedule:
     - cron: '31 8 * * 4'
 
@@ -55,6 +59,6 @@ jobs:
           maven-version: 3.8.2
       - name: Build with Maven
         run: |
-          mvn -B package --file pom.xml -D"jar.finalName=Scenamatica" -P release
+          mvn -B package --file Scenamatica/pom.xml -D"jar.finalName=Scenamatica" -P release
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3
