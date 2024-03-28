@@ -19,7 +19,7 @@ const config = {
   // GitHub pages deployment config.
   // If you aren"t using GitHub pages, you don"t need these.
   organizationName: "TeamKUN", // Usually your GitHub org/user name.
-  projectName: "ScenamaticaDocs", // Usually your repo name.
+  projectName: "Scenamatica", // Usually your repo name.
 
   onBrokenLinks: "throw",
   onBrokenMarkdownLinks: "warn",
