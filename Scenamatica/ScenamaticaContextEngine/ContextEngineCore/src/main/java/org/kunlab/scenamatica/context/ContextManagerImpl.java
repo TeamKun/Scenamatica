@@ -118,7 +118,7 @@ public class ContextManagerImpl implements ContextManager
             );
         }
 
-        long timeoutMillis = 15 * 1000;
+        long timeoutMillis = 1 * 60 * 1000;
         int maxAttemptCounts = 3;
 
         return this.stageManager.createStage(context.getWorld(), timeoutMillis, maxAttemptCounts);
