@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.kunlab.scenamatica</groupId>
         <artifactId>Scenamatica</artifactId>
-        <version>1.1.0-pre1</version>
+        <version>1.1.0</version>
     </parent>
 
     <artifactId>ScenamaticaSelectorEngine</artifactId>
@@ -21,13 +21,13 @@
         <dependency>
             <groupId>org.kunlab.scenamatica</groupId>
             <artifactId>ScenamaticaCommons</artifactId>
-            <version>1.1.0-pre1</version>
+            <version>1.1.0</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.kunlab.scenamatica</groupId>
             <artifactId>ScenamaticaModels</artifactId>
-            <version>1.1.0-pre1</version>
+            <version>1.1.0</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
