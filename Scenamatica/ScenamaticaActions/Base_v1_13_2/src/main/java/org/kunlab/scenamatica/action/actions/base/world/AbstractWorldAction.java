@@ -32,7 +32,9 @@ public abstract class AbstractWorldAction extends AbstractAction
 
         WorldEvent e = (WorldEvent) event;
 
-        boolean result = ctxt.ifHasInput(IN_WORLD, world -> world.equals(e.getWorld().getName()));
+        boolean result = ctxt.ifHasInput(IN_WORLD, world ->
+                world.equals(e.getWorld().getName())
+                || world.equals("world_" + e.getWorld().getName()));
         this.makeOutputs(ctxt, e.getWorld().getName());
         return result;
     }
