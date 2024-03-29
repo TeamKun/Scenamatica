@@ -60,6 +60,7 @@ jobs:
     runs-on: self-hosted
     needs: build
     strategy:
+      max-parallel: 1
       matrix:
         minecraft:
           - 1.16.5
