@@ -7,6 +7,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.commons.utils.ThreadingUtil;
 import org.kunlab.scenamatica.context.utils.WorldUtils;
+import org.kunlab.scenamatica.enums.MinecraftVersion;
 import org.kunlab.scenamatica.enums.StageType;
 import org.kunlab.scenamatica.exceptions.context.stage.StageAlreadyDestroyedException;
 import org.kunlab.scenamatica.exceptions.context.stage.StageCreateFailedException;
@@ -72,7 +73,11 @@ public class StageManagerImpl implements StageManager
     private World generateWorld(WorldCreator creator, long timeoutMillis)
     {
         ExecutorService executor = Executors.newSingleThreadExecutor();
-        Future<? extends World> future = executor.submit(() -> ThreadingUtil.waitFor(this.registry, creator::createWorld));
+        Future<? extends World> future;
+        if (MinecraftVersion.current().compareTo(MinecraftVersion.V1_16) >= 0)
+            future = executor.submit(() -> creator.createWorld());
+        else
+            future = executor.submit(() -> ThreadingUtil.waitFor(this.registry, creator::createWorld));
 
         try
         {
