@@ -7,7 +7,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -24,21 +23,6 @@ import java.util.function.Function;
 @UtilityClass
 public class MapUtils
 {
-    private static final Method mClone; // Ljava/lang/Object;.clone()Ljava/lang/Object;
-
-    static
-    {
-        try
-        {
-            mClone = Object.class.getDeclaredMethod("clone");
-            mClone.setAccessible(true);
-        }
-        catch (NoSuchMethodException e)
-        {
-            throw new RuntimeException(e);
-        }
-    }
-
     public static boolean equals(Map<?, ?> expected, Map<?, ?> actual)
     {
         if (expected == null || actual == null)
@@ -530,38 +514,9 @@ public class MapUtils
                 ((List<Object>) copy).add(value);
             }
         }
-        else if (obj instanceof Cloneable)
-        {
-            try
-            {
-                copy = mClone.invoke(obj);
-                copiedObjects.put(obj, copy);
-                copyFinalFields(obj, copy);
-            }
-            catch (Exception e)
-            {
-                throw new RuntimeException(e);
-            }
-        }
         else
-            throw new UnsupportedOperationException("Cannot deep copy " + obj.getClass());
+            copy = obj;
 
         return copy;
-    }
-
-    private static void copyFinalFields(Object src, Object dest) throws IllegalAccessException, NoSuchFieldException
-    {
-        Field[] fields = src.getClass().getDeclaredFields();
-        for (Field field : fields)
-        {
-            if (Modifier.isFinal(field.getModifiers()))
-            {
-                field.setAccessible(true);
-                Object value = field.get(src);
-                Field destField = dest.getClass().getDeclaredField(field.getName());
-                destField.setAccessible(true);
-                destField.set(dest, value);
-            }
-        }
     }
 }
