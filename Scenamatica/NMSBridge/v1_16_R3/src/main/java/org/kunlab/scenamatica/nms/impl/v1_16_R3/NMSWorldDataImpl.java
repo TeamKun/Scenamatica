@@ -16,7 +16,7 @@ public class NMSWorldDataImpl implements NMSWorldData
     {
         try
         {
-            fA = WorldData.class.getDeclaredField("a");
+            fA = SecondaryWorldData.class.getDeclaredField("a");
             fA.setAccessible(true);
         }
         catch (NoSuchFieldException e)
