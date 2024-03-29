@@ -81,6 +81,7 @@ jobs:
           minecraft: ${{ matrix.minecraft }}
           server-dir: server-${{ matrix.minecraft }}
           scenamatica: 1.1.0-pre1
+          report-artifact-name: scenamatica-reports-${{ matrix.minecraft }}
         env:
           NO_SCENAMATICA: true
         timeout-minutes: 20
