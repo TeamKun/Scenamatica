@@ -163,7 +163,7 @@ public class BlockPlaceAction extends AbstractBlockAction
                                 b -> !b.isPresent(IN_ACTOR),
                                 "Cannot specify the actor in the condition requiring mode."
                         );
-                /* fall through */
+                break;
             case ACTION_EXECUTE:
                 board.validator(
                         b -> b.ifPresent(IN_BLOCK, block -> block.getType() != null),
