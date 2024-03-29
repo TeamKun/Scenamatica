@@ -34,7 +34,7 @@ public abstract class AbstractWorldAction extends AbstractAction
 
         boolean result = ctxt.ifHasInput(IN_WORLD, world ->
                 world.equals(e.getWorld().getName())
-                || world.equals("world_" + e.getWorld().getName()));
+                || ("world_" + world).equals(e.getWorld().getName()));
         this.makeOutputs(ctxt, e.getWorld().getName());
         return result;
     }
