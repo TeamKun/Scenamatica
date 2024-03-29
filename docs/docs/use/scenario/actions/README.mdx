@@ -2,6 +2,7 @@
 sidebar_position: 1
 ---
 
+
 import Action, {ScenarioType} from "/src/components/Action";
 import BelowDocument from "/src/components/BelowDocument";
 import {ObjectType} from "/src/components/Object";
@@ -34,13 +35,13 @@ import SearchBar from '@theme/SearchBar';
 シナリオではこれを複数個組み合わせて使用することで、プラグインの大きな機能を表現します。
 これを[シナリオ](/docs/use/scenario/elements#scenario)と呼びます。
 
-すべてのアクションは、次の３つの[シナリオタイプ](/docs/use/scenario/elements#scenario-type)の一つ以上で使用できます。  
+すべてのアクションは、次の３つの[シナリオタイプ](/docs/use/scenario/elements#scenario-type)の一つ以上で使用できます。
 + [アクション実行(`execute`)](/docs/use/scenario/elements#scenario-type-action-execution) - アクションを実行します。  
-  例：プレイヤをキルする、プレイヤにメッセージを送信する
+例：プレイヤをキルする、プレイヤにメッセージを送信する
 + [アクション実行期待(`expect`)](/docs/use/scenario/elements#scenario-type-expect) - アクションが**実行されるか**を検知または実行されるまで待機します。  
-  例：プレイヤが死亡する、プレイヤにメッセージが送信される
+例：プレイヤが死亡する、プレイヤにメッセージが送信される
 + [条件要求(`require`)](/docs/use/scenario/elements#scenario-type-condition-require) - アクション（状態）が**すでに**満たされているかを検知します。  
-  例：プレイヤが死亡している、プレイヤがメッセージを送信している
+例：プレイヤが死亡している、プレイヤがメッセージを送信している
 
 そのため、アクション一つにつき最大で３つのふるまいを持ちます。  
 例えばアクション [PlayerDeathAction](player#death) は以下の３つのふるまいを持ちます。
@@ -57,15 +58,15 @@ import SearchBar from '@theme/SearchBar';
 以下のアンカをクリックすると、そのカテゴリのアクション一覧に遷移します。
 
 + [ブロック関連](/docs/use/scenario/actions/block)  
-  ブロックの破壊など
+ブロックの破壊など
 + [プレイヤ関連](/docs/use/scenario/actions/player)  
-  プレイヤの死亡、ゲームモードの変更など
+プレイヤの死亡、ゲームモードの変更など
 + [サーバ関連](/docs/use/scenario/actions/server)  
-  コマンドの送信など
+コマンドの送信など
 + [ワールド関連](/docs/use/scenario/actions/world)  
-  ワールドボーダの変更など
+ワールドボーダの変更など
 + [エンティティ関連](/docs/use/scenario/actions/entity)  
-  エンティティのダメージなど
+エンティティのダメージなど
 
 ## アクションの引数 {#action-arguments}
 
@@ -118,7 +119,7 @@ import SearchBar from '@theme/SearchBar';
             name: "recipient",
             type: "Player",
             type_link: "/docs/use/scenario/types/entities#player",
-          description: "メッセージの受信者です。"
+            description: "メッセージの受信者です。"
           }
         ]}
         executable watchable
@@ -172,7 +173,7 @@ import SearchBar from '@theme/SearchBar';
         executable requireable watchable
 />
 
-### 特別：反転
+### 特別：反転 {#negate}
 
 <Action name="反転"
         description="条件の評価結果を反転します。"
@@ -189,7 +190,7 @@ import SearchBar from '@theme/SearchBar';
             name: "with",
             type: "Object",
             description: "反転するアクションの引数",
-          required: true
+            required: true
           }
         ]}
         requireable
