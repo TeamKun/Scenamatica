@@ -60,10 +60,11 @@ jobs:
     runs-on: self-hosted
     needs: build
     strategy:
+      fail-fast: false
       matrix:
         include:
           - minecraft: 1.13.2
-            java: 8
+            java: 11
           - minecraft: 1.14.4
             java: 11
           - minecraft: 1.16.5
