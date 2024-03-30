@@ -119,13 +119,13 @@ public class StageManagerImpl implements StageManager
             return ThreadingUtil.waitForOrThrow(this.registry, () -> this.createStage(structure.getOriginalWorldName()));
 
         WorldCreator creator = cretateWorldCreator(structure);
-        World world = null;
-        for (int i = 0; i < maxAttemptCounts; i++)
+        World world = ThreadingUtil.waitFor(this.registry, creator::createWorld);
+       /* for (int i = 0; i < maxAttemptCounts; i++)
         {
             world = this.generateWorld(creator, timeoutMillis);
             if (world != null)
                 break;
-        }
+        }*/
 
         // hardCore だけはここで設定する必要がある。
         if (structure.isHardcore())
