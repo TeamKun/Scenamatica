@@ -19,6 +19,7 @@
         <module name="NMSTypes" />
         <module name="v1_16_R3" />
         <module name="ScenamaticaScenarioEngine" />
+        <module name="v1_14_R1" />
         <module name="ContextEngineNMSBase" />
         <module name="v1_13_R2" />
         <module name="ScenamaticaModels" />
@@ -27,8 +28,9 @@
         <module name="ScenamaticaScenarioFile" />
         <module name="ScenamaticaPlugin" />
         <module name="ScenamaticaTriggerEngine" />
-        <module name="nms_v1_13_R2" />
+        <module name="nms_v1_14_R1" />
         <module name="nms_v1_16_R3" />
+        <module name="nms_v1_13_R2" />
       </profile>
     </annotationProcessing>
   </component>
