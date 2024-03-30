@@ -38,7 +38,7 @@ jobs:
       - uses: PeyaPeyaPeyang/nmsaction@v5
         if: "steps.sj.outputs.cache-hit != 'true'"
         with:
-          rev: 1.16.5, 1.13.2
+          rev: 1.16.5, 1.13.2, 1.14.4
       - name: Install nms into m2
         if: "steps.sj.outputs.cache-hit != 'true'"
         run: |
@@ -65,6 +65,7 @@ jobs:
         minecraft:
           - 1.16.5
           - 1.13.2
+          - 1.14.4
     steps:
       - uses: actions/download-artifact@v3
         with:
