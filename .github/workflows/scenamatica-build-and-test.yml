@@ -60,12 +60,14 @@ jobs:
     runs-on: self-hosted
     needs: build
     strategy:
-      max-parallel: 1
       matrix:
-        minecraft:
-          - 1.16.5
-          - 1.13.2
-          - 1.14.4
+        include:
+          - minecraft: 1.13.2
+            java: 8
+          - minecraft: 1.14.4
+            java: 11
+          - minecraft: 1.16.5
+            java: 16
     steps:
       - uses: actions/download-artifact@v3
         with:
@@ -74,6 +76,7 @@ jobs:
         uses: teamkun/scenamatica-action@main
         with:
           plugin: Scenamatica.jar
+          java: ${{ matrix.java }}
           minecraft: ${{ matrix.minecraft }}
           server-dir: server-${{ matrix.minecraft }}
           scenamatica: 1.1.0-pre1
