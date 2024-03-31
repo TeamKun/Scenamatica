@@ -234,17 +234,6 @@ class MockedPlayer extends EntityPlayer implements Actor
                 /* inside: */ false
         );
 
-        PlayerInteractEvent event = CraftEventFactory.callPlayerInteractEvent(this, Action.RIGHT_CLICK_BLOCK,
-                position.getBlockPosition(),
-                position.getDirection(),
-                nmsTack,
-                true,
-                hand
-        );
-        boolean cancelled = event.useItemInHand() == Event.Result.DENY;
-        if (cancelled)
-            return;
-
         this.playerInteractManager.a(
                 /* entityPlayer: */ this,
                 /* world: */ this.world,
