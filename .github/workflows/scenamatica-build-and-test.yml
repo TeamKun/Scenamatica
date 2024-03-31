@@ -35,7 +35,7 @@ jobs:
         uses: stCarolas/setup-maven@v5
         with:
           maven-version: 3.8.2
-      - uses: PeyaPeyaPeyang/nmsaction@v5
+      - uses: PeyaPeyaPeyang/nmsaction@v6
         if: "steps.sj.outputs.cache-hit != 'true'"
         with:
           rev: 1.16.5, 1.13.2, 1.14.4
