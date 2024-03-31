@@ -61,15 +61,15 @@ jobs:
     needs: build
     strategy:
       fail-fast: false
-      max-parallel: 2
+      max-parallel: 1
       matrix:
         include:
+          - minecraft: 1.16.5
+            java: 16
           - minecraft: 1.13.2
-            java: 11
+            java: 12
           - minecraft: 1.14.4
             java: 12
-          - minecraft: 1.16.5
-            java: 17
     steps:
       - uses: actions/download-artifact@v3
         with:
