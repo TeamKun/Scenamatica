@@ -38,7 +38,7 @@ jobs:
       - uses: PeyaPeyaPeyang/nmsaction@v5
         if: "steps.sj.outputs.cache-hit != 'true'"
         with:
-          rev: 1.16.5, 1.13.2
+          rev: 1.16.5, 1.13.2, 1.14.4
       - name: Install nms into m2
         if: "steps.sj.outputs.cache-hit != 'true'"
         run: |
@@ -60,32 +60,33 @@ jobs:
     runs-on: self-hosted
     needs: build
     strategy:
+      fail-fast: false
       max-parallel: 1
       matrix:
-        minecraft:
-          - 1.16.5
-          - 1.13.2
+        include:
+          - minecraft: 1.16.5
+            java: 16
+          - minecraft: 1.13.2
+            java: 12
+          - minecraft: 1.14.4
+            java: 12
     steps:
       - uses: actions/download-artifact@v3
         with:
           name: scenamatica
-      - name: Set up JDK 8
-        uses: actions/setup-java@v3
-        id: sj
-        with:
-          java-version: 8
-          distribution: zulu
       - name: Run Scenamatica tests
         uses: teamkun/scenamatica-action@main
         with:
           plugin: Scenamatica.jar
+          java: ${{ matrix.java }}
           minecraft: ${{ matrix.minecraft }}
           server-dir: server-${{ matrix.minecraft }}
           scenamatica: 1.1.0-pre1
           report-artifact-name: scenamatica-reports-${{ matrix.minecraft }}
+          java-arguments: "-Xms128M -Xmx2G -XX:+UseG1GC -XX:+ParallelRefProcEnabled -XX:MaxGCPauseMillis=200 -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:+AlwaysPreTouch -XX:G1NewSizePercent=30 -XX:G1MaxNewSizePercent=40 -XX:G1HeapRegionSize=8M -XX:G1ReservePercent=20 -XX:G1HeapWastePercent=5 -XX:G1MixedGCCountTarget=4 -XX:InitiatingHeapOccupancyPercent=15 -XX:G1MixedGCLiveThresholdPercent=90 -XX:G1RSetUpdatingPauseTimePercent=5 -XX:SurvivorRatio=32 -XX:+PerfDisableSharedMem -XX:MaxTenuringThreshold=1 -Dusing.aikars.flags=https://mcflags.emc.gs/ -Daikars.new.flags=true"
         env:
           NO_SCENAMATICA: true
-        timeout-minutes: 20
+        timeout-minutes: 60
   clean:
     name: Clean up
     runs-on: self-hosted

@@ -12,6 +12,7 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.annotations.action.ActionMeta;
+import org.kunlab.scenamatica.enums.MinecraftVersion;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
@@ -84,6 +85,10 @@ public class BlockPlaceAction extends AbstractBlockAction
                     .orElseThrow(() -> new IllegalStateException("Cannot find player"));
             Actor scenarioActor = ctxt.getActorOrThrow(player);
             this.makeOutputs(ctxt, location.getBlock(), player);
+            if (MinecraftVersion.current().isInRange(MinecraftVersion.V1_14, MinecraftVersion.V1_14_4) &&
+                    player.getInventory().getItemInMainHand().getType() != blockDef.getType())// 1.14.4でのエラー回避
+                player.getInventory().setItemInMainHand(new ItemStack(blockDef.getType()));
+
             scenarioActor.placeBlock(
                     location,
                     new ItemStack(blockDef.getType()),  // assert blockDef.getType() != null
