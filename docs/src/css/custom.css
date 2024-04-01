@@ -55,6 +55,7 @@
 
 .footer {
   --ifm-footer-background-color: #0c1017;
+  border-top: #b2b2b2 1px solid;
 }
 
 nav.navbar, nav.navbar a > i {

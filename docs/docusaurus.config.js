@@ -129,202 +129,210 @@ const config = {
 
   themeConfig:
   /** @type {import("@docusaurus/preset-classic").ThemeConfig} */
-      ({
-        announcementBar: {
-          id: "announcementBar-1",
-          content: `✨ もし Scenamatica が気に入ったなら、 GitHub で <a href="https://github.com/TeamKUN/Scenamatica">Star</a> をしてください！`,
+    ({
+      announcementBar: {
+        id: "announcementBar-1",
+        content: `✨ もし Scenamatica が気に入ったなら、 GitHub で <a href="https://github.com/TeamKUN/Scenamatica">Star</a> をしてください！`,
+      },
+      navbar: {
+        title: "Scenamatica",
+        logo: {
+          alt: "Scenamatica Logo",
+          src: "img/logo2.png",
         },
-        navbar: {
-          title: "Scenamatica",
-          logo: {
-            alt: "Scenamatica Logo",
-            src: "img/logo2.png",
-          },
-          items: [
-            {
-              to: "/docs/home",
-              position: "left",
-              label: "ホーム",
-            },
-            {
-              to: "/docs/getting-started",
-              position: "left",
-              label: "使い始める",
-            },
-            {
-              to: "/docs/use/scenario",
-              position: "left",
-              label: "シナリオ",
-            },
-            {
-              label: "コマンド",
-              position: "left",
-              to: "/docs/use/commands",
-            },
-            {
-              type: "docsVersionDropdown",
-              position: "right",
-              dropdownActiveClassDisabled: true,
-            },
-            {
-              href: "https://github.com/TeamKUN/Scenamatica/releases",
-              position: "right",
-              label: "ダウンロード",
-            },
-            {
-              href: "https://github.com/TeamKUN/Scenamatica",
-              position: "right",
-              className: "icon-link i-github",
-            },
-          ],
-        },
-        footer: {
-          style: "dark",
-          links: [
-            {
-              title: "ドキュメント",
-              items: [
-                {
-                  label: "ホーム",
-                  to: "/docs/home",
-                },
-                {
-                  label: "使い始める",
-                  to: "/docs/getting-started",
-                },
-                {
-                  label: "チュートリアル",
-                  to: "/docs/getting-started/tutorials",
-                },
-                {
-                  label: "コマンド",
-                  to: "/docs/use/commands",
-                },
-                {
-                  label: "シナリオ",
-                  to: "/docs/use/scenario",
-                }
-              ],
-            },
-            {
-              title: "開発者 - Peyang",
-              items: [
-                {
-                  label: "GitHub",
-                  href: "https://github.com/PeyaPeyaPeyang",
-                },
-                {
-                  label: "Twitter",
-                  href: "https://twitter.com/peyang9799",
-                },
-                {
-                  label: "Email",
-                  href: "mailto:peyang@peya.tokyo",
-                },
-              ],
-            },
-            {
-              title: "Scenamatica",
-              items: [
-                {
-                  label: "GitHub",
-                  href: "https://github.com/TeamKUN/Scenamatica",
-                },
-                {
-                  label: "バグを報告",
-                  href: `https://github.com/TeamKUN/Scenamatica/issues/new`,
-                },
-                {
-                  label: "機能をリクエスト",
-                  href: `https://github.com/TeamKUN/Scenamatica/issues/new`,
-                },
-              ],
-            },
-          ],
-          copyright: `Copyright &copy; ${new Date().getFullYear()} Scenamatica HQ in <a href="https://github.com/TeamKUN">KUN Development Team</a>., <a href="https://peya.tokyo/">Peyang</a>`,
-        },
-        prism: {
-          theme: themes.github,
-          darkTheme: themes.vsDark,
-          additionalLanguages: ["java", "yaml", "ebnf"],
-        },
-        zoom: {
-          background: {
-            light: "rgba(0, 0, 0, 0.6)",
-            dark: "rgba(0, 0, 0, 0.6)",
-          },
-        },
-        colorMode: {
-          defaultMode: "dark",
-          respectPrefersColorScheme: false,
-        },
-        docs: {
-          sidebar: {
-            autoCollapseCategories: true,
-            hideable: true,
-          },
-        },
-        algolia: {
-          appId: "QWWI0CDV6V",
-          apiKey: "cc1542c44da9a2e9d96d7d681ea7ee04",
-          indexName: "scenamatica-kunlab",
-          contextualSearch: true,
-          searchPagePath: "search",
-        },
-        metadata: [
+        items: [
           {
-            name: "twitter:card",
-            content: "summary_large_image"
+            to: "/docs/home",
+            position: "left",
+            label: "ホーム",
           },
           {
-            name: "keywords",
-            content: "Scenamatica, Minecraft, PaperMC, Plugin, Scenario, CI/CD, Automatic Testing, Spigot, Bukkit, Plugin, Plugin Development"
-          }
+            to: "/docs/getting-started",
+            position: "left",
+            label: "使い始める",
+          },
+          {
+            to: "/docs/use/scenario",
+            position: "left",
+            label: "シナリオ",
+          },
+          {
+            label: "コマンド",
+            position: "left",
+            to: "/docs/use/commands",
+          },
+          {
+            type: "docsVersionDropdown",
+            position: "right",
+            dropdownActiveClassDisabled: true,
+          },
+          {
+            href: "https://github.com/TeamKUN/Scenamatica/releases",
+            position: "right",
+            label: "ダウンロード",
+          },
+          {
+            href: "https://github.com/TeamKUN/Scenamatica",
+            position: "right",
+            className: "icon-link i-github",
+          },
         ],
-        headTags: [
+      },
+      footer: {
+        style: "dark",
+        links: [
           {
-            tagName: "meta",
-            name: "twitter:title",
-            content: "Scenamatica"
+            title: "ドキュメント",
+            items: [
+              {
+                label: "ホーム",
+                to: "/docs/home",
+              },
+              {
+                label: "使い始める",
+                to: "/docs/getting-started",
+              },
+              {
+                label: "チュートリアル",
+                to: "/docs/getting-started/tutorials",
+              },
+              {
+                label: "コマンド",
+                to: "/docs/use/commands",
+              },
+              {
+                label: "シナリオ",
+                to: "/docs/use/scenario",
+              }
+            ],
           },
           {
-            tagName: "meta",
-            name: "twitter:description",
-            content: "Let's enhance your PaperMC plugin quality with Scenamatica: YAML-defined scenarios, CI/CD integration."
+            title: "開発者 - Peyang",
+            items: [
+              {
+                label: "GitHub",
+                href: "https://github.com/PeyaPeyaPeyang",
+              },
+              {
+                label: "Twitter",
+                href: "https://twitter.com/peyang9799",
+              },
+              {
+                label: "Email",
+                href: "mailto:peyang@peya.tokyo",
+              },
+            ],
           },
           {
-            tagName: "meta",
-            name: "twitter:image",
-            content: "https://scenamatica.kunlab.org/img/landing.png"
+            title: "Scenamatica",
+            items: [
+              {
+                label: "GitHub",
+                href: "https://github.com/TeamKUN/Scenamatica",
+              },
+              {
+                label: "バグを報告",
+                href: `https://github.com/TeamKUN/Scenamatica/issues/new`,
+              },
+              {
+                label: "機能をリクエスト",
+                href: `https://github.com/TeamKUN/Scenamatica/issues/new`,
+              },
+            ],
           },
-          {
-            tagName: "meta",
-            name: "twitter:card",
-            content: "summary_large_image"
-          },
-          {
-            tagName: "meta",
-            name: "og:title",
-            content: "Scenamatica"
-          },
-          {
-            tagName: "meta",
-            name: "og:description",
-            content: "Let's enhance your PaperMC plugin quality with Scenamatica: YAML-defined scenarios, CI/CD integration."
-          },
-          {
-            tagName: "meta",
-            name: "og:url",
-            content: "https://scenamatica.kunlab.org/"
-          },
-          {
-            tagName: "meta",
-            name: "og:site_name",
-            content: "Scenamatica"
-          }
         ],
-        image: "img/landing.png",
-      }),
+        copyright: `
+          Copyright &copy; ${new Date().getFullYear()} Scenamatica HQ
+          in <a href="https://github.com/TeamKUN">KUN Development Team</a>.,
+          <a href="https://peya.tokyo/">Peyang</a>
+          <br /><br />
+          Minecraft is a registered trademark of Mojang AB.<br />
+          Scenamatica HQ and Scenamatica are not officially endorsed by Minecraft or Mojang AB,
+          nor are they affiliated with Minecraft or Mojang AB.
+        `,
+      },
+      prism: {
+        theme: themes.github,
+        darkTheme: themes.vsDark,
+        additionalLanguages: ["java", "yaml", "ebnf"],
+      },
+      zoom: {
+        background: {
+          light: "rgba(0, 0, 0, 0.6)",
+          dark: "rgba(0, 0, 0, 0.6)",
+        },
+      },
+      colorMode: {
+        defaultMode: "dark",
+        respectPrefersColorScheme: false,
+      },
+      docs: {
+        sidebar: {
+          autoCollapseCategories: true,
+          hideable: true,
+        },
+      },
+      algolia: {
+        appId: "QWWI0CDV6V",
+        apiKey: "cc1542c44da9a2e9d96d7d681ea7ee04",
+        indexName: "scenamatica-kunlab",
+        contextualSearch: true,
+        searchPagePath: "search",
+      },
+      metadata: [
+        {
+          name: "twitter:card",
+          content: "summary_large_image"
+        },
+        {
+          name: "keywords",
+          content: "Scenamatica, Minecraft, PaperMC, Plugin, Scenario, CI/CD, Automatic Testing, Spigot, Bukkit, Plugin, Plugin Development"
+        }
+      ],
+      headTags: [
+        {
+          tagName: "meta",
+          name: "twitter:title",
+          content: "Scenamatica"
+        },
+        {
+          tagName: "meta",
+          name: "twitter:description",
+          content: "Let's enhance your PaperMC plugin quality with Scenamatica: YAML-defined scenarios, CI/CD integration."
+        },
+        {
+          tagName: "meta",
+          name: "twitter:image",
+          content: "https://scenamatica.kunlab.org/img/landing.png"
+        },
+        {
+          tagName: "meta",
+          name: "twitter:card",
+          content: "summary_large_image"
+        },
+        {
+          tagName: "meta",
+          name: "og:title",
+          content: "Scenamatica"
+        },
+        {
+          tagName: "meta",
+          name: "og:description",
+          content: "Let's enhance your PaperMC plugin quality with Scenamatica: YAML-defined scenarios, CI/CD integration."
+        },
+        {
+          tagName: "meta",
+          name: "og:url",
+          content: "https://scenamatica.kunlab.org/"
+        },
+        {
+          tagName: "meta",
+          name: "og:site_name",
+          content: "Scenamatica"
+        }
+      ],
+      image: "img/landing.png",
+    }),
 };
 
 module.exports = config;
