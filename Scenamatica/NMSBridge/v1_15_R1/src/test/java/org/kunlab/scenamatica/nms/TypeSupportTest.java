@@ -1,8 +1,8 @@
 package org.kunlab.scenamatica.nms;
 
-import net.minecraft.server.v1_16_R3.EnumHand;
-import net.minecraft.server.v1_16_R3.EnumMoveType;
-import net.minecraft.server.v1_16_R3.PacketPlayInUseEntity;
+import net.minecraft.server.v1_15_R1.EnumHand;
+import net.minecraft.server.v1_15_R1.EnumMoveType;
+import net.minecraft.server.v1_15_R1.PacketPlayInUseEntity;
 import org.junit.jupiter.api.Test;
 import org.kunlab.scenamatica.nms.enums.NMSHand;
 import org.kunlab.scenamatica.nms.enums.entity.NMSEntityUseAction;
