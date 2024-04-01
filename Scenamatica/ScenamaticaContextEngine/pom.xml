@@ -17,6 +17,7 @@
         <module>ContextEngineNMSBase</module>
         <module>nms_v1_13_R2</module>
         <module>nms_v1_14_R1</module>
+        <module>nms_v1_15_R1</module>
         <module>nms_v1_16_R3</module>
     </modules>
 
