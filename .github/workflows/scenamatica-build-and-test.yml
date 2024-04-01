@@ -21,6 +21,7 @@ jobs:
       matrix:
         nms-version:
           - 1.16.5
+          - 1.15.2
           - 1.13.2
           - 1.14.4
     runs-on: self-hosted
@@ -36,7 +37,7 @@ jobs:
           lookup-only: true
       - name: Build NMS if cache miss
         if: steps.restore-cache.outputs.cache-hit != 'true'
-        uses: PeyaPeyaPeyang/nmsaction@v6
+        uses: PeyaPeyaPeyang/nmsaction@v7
         with:
           rev: ${{ matrix.nms-version }}
       - name: Save caches
@@ -64,12 +65,12 @@ jobs:
         uses: stCarolas/setup-maven@v5
         with:
           maven-version: 3.8.2
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
           node-version: '20.x'
       - run: npm install @actions/cache
       - name: Restore NMS cache
-        uses: actions/github-script@v4
+        uses: actions/github-script@v7
         if: steps.maven-cache.outputs.cache-hit != 'true'
         with:
           script: |
@@ -77,6 +78,7 @@ jobs:
             const path = require('path');
             const nmsVersions = [
               '1.16.5',
+              '1.15.2',
               '1.13.2',
               '1.14.4'
             ];
@@ -142,6 +144,8 @@ jobs:
             java: 12
           - minecraft: 1.14.4
             java: 12
+          - minecraft: 1.15.2
+            java: 12
     steps:
       - uses: actions/download-artifact@v4
         with:
@@ -159,14 +163,3 @@ jobs:
         env:
           NO_SCENAMATICA: true
         timeout-minutes: 60
-  clean:
-    name: Clean up
-    runs-on: self-hosted
-    if: always()
-    needs: test-other-versions
-    steps:
-      - name: Clean artifacts
-        if: always()
-        uses: geekyeggo/delete-artifact@v2
-        with:
-          name: scenamatica

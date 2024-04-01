@@ -26,9 +26,11 @@
       <module fileurl="file://$PROJECT_DIR$/ScenamaticaTriggerEngine/ScenamaticaTriggerEngine.iml" filepath="$PROJECT_DIR$/ScenamaticaTriggerEngine/ScenamaticaTriggerEngine.iml" />
       <module fileurl="file://$PROJECT_DIR$/ScenamaticaContextEngine/nms_v1_13_R2/nms_v1_13_R2.iml" filepath="$PROJECT_DIR$/ScenamaticaContextEngine/nms_v1_13_R2/nms_v1_13_R2.iml" />
       <module fileurl="file://$PROJECT_DIR$/ScenamaticaContextEngine/nms_v1_14_R1/nms_v1_14_R1.iml" filepath="$PROJECT_DIR$/ScenamaticaContextEngine/nms_v1_14_R1/nms_v1_14_R1.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ScenamaticaContextEngine/nms_v1_15_R1/nms_v1_15_R1.iml" filepath="$PROJECT_DIR$/ScenamaticaContextEngine/nms_v1_15_R1/nms_v1_15_R1.iml" />
       <module fileurl="file://$PROJECT_DIR$/ScenamaticaContextEngine/nms_v1_16_R3/nms_v1_16_R3.iml" filepath="$PROJECT_DIR$/ScenamaticaContextEngine/nms_v1_16_R3/nms_v1_16_R3.iml" />
       <module fileurl="file://$PROJECT_DIR$/NMSBridge/v1_13_R2/v1_13_R2.iml" filepath="$PROJECT_DIR$/NMSBridge/v1_13_R2/v1_13_R2.iml" />
       <module fileurl="file://$PROJECT_DIR$/v1_14_R1.iml" filepath="$PROJECT_DIR$/v1_14_R1.iml" />
+      <module fileurl="file://$PROJECT_DIR$/NMSBridge/v1_15_R1/v1_15_R1.iml" filepath="$PROJECT_DIR$/NMSBridge/v1_15_R1/v1_15_R1.iml" />
       <module fileurl="file://$PROJECT_DIR$/NMSBridge/v1_16_R3/v1_16_R3.iml" filepath="$PROJECT_DIR$/NMSBridge/v1_16_R3/v1_16_R3.iml" />
     </modules>
   </component>
