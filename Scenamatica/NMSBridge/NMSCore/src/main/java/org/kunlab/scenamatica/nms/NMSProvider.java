@@ -55,6 +55,7 @@ public class NMSProvider
                 registry = new org.kunlab.scenamatica.nms.impl.v1_15_R1.NMSRegistryImpl();
                 typeSupport = new org.kunlab.scenamatica.nms.impl.v1_15_R1.TypeSupportImpl();
                 provider = new org.kunlab.scenamatica.nms.impl.v1_15_R1.WrapperProviderImpl();
+                break;
             case "v1_16_R3":
                 registry = new org.kunlab.scenamatica.nms.impl.v1_16_R3.NMSRegistryImpl();
                 typeSupport = new org.kunlab.scenamatica.nms.impl.v1_16_R3.TypeSupportImpl();

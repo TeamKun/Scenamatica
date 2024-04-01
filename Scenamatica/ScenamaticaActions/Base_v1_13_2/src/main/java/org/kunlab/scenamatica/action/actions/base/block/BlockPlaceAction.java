@@ -85,7 +85,7 @@ public class BlockPlaceAction extends AbstractBlockAction
                     .orElseThrow(() -> new IllegalStateException("Cannot find player"));
             Actor scenarioActor = ctxt.getActorOrThrow(player);
             this.makeOutputs(ctxt, location.getBlock(), player);
-            if (MinecraftVersion.current().isInRange(MinecraftVersion.V1_14, MinecraftVersion.V1_14_4) &&
+            if (MinecraftVersion.current().isInRange(MinecraftVersion.V1_14, MinecraftVersion.V1_15_2) &&
                     player.getInventory().getItemInMainHand().getType() != blockDef.getType())// 1.14.4でのエラー回避
                 player.getInventory().setItemInMainHand(new ItemStack(blockDef.getType()));
 
