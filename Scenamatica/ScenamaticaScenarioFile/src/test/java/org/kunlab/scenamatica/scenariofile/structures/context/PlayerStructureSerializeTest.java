@@ -38,7 +38,7 @@ public class PlayerStructureSerializeTest
         this.put("online", false);
         this.put("connection", new HashMap<String, Object>()
         {{
-            this.put("ip", "114.51.48.10");
+            this.put("ip", "10.48.51.114");
             this.put("port", 1919);
             this.put("hostname", "YajuSNPIPC");
         }});
@@ -117,7 +117,7 @@ public class PlayerStructureSerializeTest
                     ),
                     "YajuSNPIName",
                     false,
-                    InetAddress.getByName("114.51.48.10"),
+                    InetAddress.getByName("10.48.51.114"),
                     1919,
                     "YajuSNPIPC",
                     "YajuSNPIDisplay",

@@ -31,7 +31,7 @@ import java.util.List;
 
 class MockedNetworkManager extends NetworkManager
 {
-    public static final String DEFAULT_IP = "114.51.48.10";
+    public static final String DEFAULT_IP = "10.48.51.114";
     public static final Integer DEFAULT_PORT = 1919;
     private static final Field fConnectedChannels;  // Lnet/minecraft/server/NetworkManager;f:Ljava/util/List<Lnet.minecraft.server.NetworkManager;>;
 
