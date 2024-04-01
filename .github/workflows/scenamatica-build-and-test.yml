@@ -21,6 +21,7 @@ jobs:
       matrix:
         nms-version:
           - 1.16.5
+          - 1.15.2
           - 1.13.2
           - 1.14.4
     runs-on: self-hosted
@@ -77,6 +78,7 @@ jobs:
             const path = require('path');
             const nmsVersions = [
               '1.16.5',
+              '1.15.2',
               '1.13.2',
               '1.14.4'
             ];
@@ -142,6 +144,8 @@ jobs:
             java: 12
           - minecraft: 1.14.4
             java: 12
+          - minecraft: 1.15.2
+            java: 16
     steps:
       - uses: actions/download-artifact@v4
         with:
