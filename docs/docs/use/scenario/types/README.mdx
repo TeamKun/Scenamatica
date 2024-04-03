@@ -18,8 +18,8 @@ Scenamatica では、YAML の型として以下の型が定義されています
 + [エンティティに関連する型](/docs/use/scenario/types/entities)
 + [インベントリとアイテムに関連する型](/docs/use/scenario/types/inventory-items)
 + [その他の型](/docs/use/scenario/types/misc)  
-  [`Location`](/docs/use/scenario/types/misc#location) や 
-  [`Block`](/docs/use/scenario/types/misc#block), 
+  [`Location`](/docs/use/scenario/types/misc#location) や
+  [`Block`](/docs/use/scenario/types/misc#block),
   [`NamespacedKey`](/docs/use/scenario/types/misc#namespaced-key) など
 
 ## シナリオファイルの構造 {#scenario-file}
@@ -29,6 +29,14 @@ Scenamatica では、YAML の型として以下の型が定義されています
     name: "scenamatica",
     anchor: "apex-scenamatica",
     type: ObjectType.STRING,
+    description: "Scenamatica のバージョンです。",
+    required: true
+  },
+  {
+    name: "minecraft",
+    anchor: "apex-minecraft",
+    type: "MinecraftVersion",
+    type_anchor: "minecraft-version",
     description: "Scenamatica のバージョンです。",
     required: true
   },
@@ -115,9 +123,14 @@ Scenamatica のバージョンは、`x.y.z` の形式で指定します。
 
 :::
 
+#### `minecraft` {#apex-minecraft}
+
+シナリオテスト時に使用できる 使用できる Minecraft バージョンの範囲を指定します。
+
 #### `name` {#apex-name}
 
-シナリオのプラグイン内での一意の名前です、主に、 Scenamatica がシナリオを識別するために使用したり、**手動実行のコマンドの引数**に使用されます。
+シナリオのプラグイン内での一意の名前です、主に、 Scenamatica がシナリオを識別するために使用したり、**手動実行のコマンドの引数
+**に使用されます。
 
 #### `definitions` {#apex-definitions}
 
@@ -152,7 +165,8 @@ Scenamatica のバージョンは、`x.y.z` の形式で指定します。
 #### `context` {#apex-context}
 
 シナリオの実行に必要な環境を定義します。  
-コンテキストの概念についての説明は[こちら](/docs/use/scenario/elements#context)を、ファイルに記述する際の構文にについては[こちら](#context)を参照してください。
+コンテキストの概念についての説明は[こちら](/docs/use/scenario/elements#context)
+を、ファイルに記述する際の構文にについては[こちら](#context)を参照してください。
 
 :::tip
 
@@ -169,7 +183,8 @@ Scenamatica のバージョンは、`x.y.z` の形式で指定します。
 
 #### `runif` {#apex-runif}
 
-シナリオを実行する条件をアクションで定義します。詳しくは[こちら](/docs/use/scenario/elements#conditional-execution)を参照してください。
+シナリオを実行する条件をアクションで定義します。詳しくは[こちら](/docs/use/scenario/elements#conditional-execution)
+を参照してください。
 
 :::info
 
@@ -180,6 +195,27 @@ Scenamatica のバージョンは、`x.y.z` の形式で指定します。
 #### `scenario` {#apex-scenario}
 
 シナリオファイルのメインシナリオです。シナリオを定義するのに使用します。
+
+---
+
+## Minecraft バージョン 型 {#minecraft-version}
+
+<Object
+  objects={[
+    {
+      name: "since",
+      description: "サポートされる Minecraft バージョンの範囲の開始です。",
+      type: ObjectType.STRING,
+      default: "any"
+    },
+    {
+      name: "until",
+      description: "サポートされる Minecraft バージョンの範囲の終了です。",
+      type: ObjectType.STRING,
+      default: "any"
+    }
+  ]}
+/>
 
 ---
 
@@ -239,7 +275,8 @@ Scenamatica のバージョンは、`x.y.z` の形式で指定します。
 これを設定すると、シナリオの実行前に[ステージ](/docs/use/scenario/elements#stage)内にエンティティが生成され、終了時に削除されます。
 
 :::warning
-これを指定する場合は、[Entity 型](/docs/use/scenario/types/entities#entity) の [`type`](/docs/use/scenario/types/entities#entity-type) を
+これを指定する場合は、[Entity 型](/docs/use/scenario/types/entities#entity)
+の [`type`](/docs/use/scenario/types/entities#entity-type) を
 必ず指定する必要があります。  
 これは、エンティティの種類を指定して拡張パラメタを設定するためです。
 :::
@@ -248,7 +285,7 @@ Scenamatica のバージョンは、`x.y.z` の形式で指定します。
 
 #### `stage` {#context-stage}
 
-シナリオの実行に必要なステージを定義します。  
+シナリオの実行に必要なステージを定義します。
 
 ステージの概念についての説明は[こちら](/docs/use/scenario/elements#stage)を参照してください。
 
@@ -506,7 +543,7 @@ Bukkit でロード済みの既存のワールドの構造、建築物、アイ�
 
   このシナリオは、条件を**既に**満たしているかどうかのみ確認します。  
   条件が満たされなかた場合に待機等は行われず、即刻失敗します。
-  
+
   このシナリオにおけるタイムアウト指定は無視されます。
 
   :::
