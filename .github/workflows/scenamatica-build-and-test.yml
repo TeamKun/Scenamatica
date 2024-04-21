@@ -22,8 +22,8 @@ jobs:
         nms-version:
           - 1.16.5
           - 1.15.2
-          - 1.13.2
           - 1.14.4
+          - 1.13
     runs-on: self-hosted
     steps:
       - name: Try to restore caches
@@ -79,8 +79,9 @@ jobs:
             const nmsVersions = [
               '1.16.5',
               '1.15.2',
+              '1.14.4',
               '1.13.2',
-              '1.14.4'
+              '1.13'
             ];
             for (const nmsVersion of nmsVersions) {
               const key = `nms-maven-${nmsVersion}`;
@@ -140,6 +141,8 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          - minecraft: 1.13
+            java: 12
           - minecraft: 1.13.2
             java: 12
           - minecraft: 1.14.4
