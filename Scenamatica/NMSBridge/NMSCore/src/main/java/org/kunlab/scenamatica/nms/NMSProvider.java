@@ -41,6 +41,11 @@ public class NMSProvider
         String version = getServerVersion();
         switch (version)
         {
+            case "v1_13_R1":
+                registry = new org.kunlab.scenamatica.nms.impl.v1_13_R1.NMSRegistryImpl();
+                typeSupport = new org.kunlab.scenamatica.nms.impl.v1_13_R1.TypeSupportImpl();
+                provider = new org.kunlab.scenamatica.nms.impl.v1_13_R1.WrapperProviderImpl();
+                break;
             case "v1_13_R2":
                 registry = new org.kunlab.scenamatica.nms.impl.v1_13_R2.NMSRegistryImpl();
                 typeSupport = new org.kunlab.scenamatica.nms.impl.v1_13_R2.TypeSupportImpl();
