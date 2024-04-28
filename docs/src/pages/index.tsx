@@ -148,7 +148,7 @@ function Appeals(): JSX.Element {
   return (
     <>
       <Appeal right>
-        <div>
+        <div style={{paddingRight: "30px"}}>
           <h2 id={"topics-scenario-yaml"}>YAML でシナリオをかんたん定義</h2>
           <p>
             Scenamatica のシナリオは、右のようなかんたんな YAML で定義されます。
@@ -172,7 +172,7 @@ function Appeals(): JSX.Element {
         </div>
       </Appeal>
       <Appeal>
-        <div style={{marginLeft: "10px"}}>
+        <div style={{marginLeft: "30px"}}>
           <h2 id={"topics-localize"}>ローカライズされたインタフェース</h2>
           Scenamatica は、日本語をはじめとする数種類の言語に対応しています。
           <p>特に、プラグインの出力は完全にローカライズされています！</p>
@@ -201,7 +201,7 @@ function Appeals(): JSX.Element {
         </Tabs>
       </Appeal>
       <Appeal right>
-        <div>
+        <div style={{paddingRight: "30px"}}>
           <h2 id={"topics-ci-cd-integration"}>CI-CD との統合</h2>
           <p>
             CI-CD との統合により、プラグインの品質を継続的に監視できます。
@@ -233,7 +233,7 @@ function Appeals(): JSX.Element {
         </Tabs>
       </Appeal>
       <Appeal>
-        <div className={styles.appealDesc}>
+        <div className={styles.appealDesc} style={{marginLeft: "30px"}}>
           <h2 id={"topics-build-test-environment"}>テスト環境をかんたん構築</h2>
           <p>
             Scenamatica を利用すると、テストに必要なプレイヤ（アクタ）とワールド（ステージ）、
@@ -314,7 +314,7 @@ export default function Home(): JSX.Element {
         </div>
       </main>
       <footer className={styles.landingFooter}>
-        <h2>ぜひ Scenamatica を使ってみてください！</h2>
+        <h2>ぜひ Scenamatica 試してみましょう。</h2>
         <Buttons/>
       </footer>
     </Layout>
