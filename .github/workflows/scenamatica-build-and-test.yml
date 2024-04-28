@@ -23,6 +23,7 @@ jobs:
           - 1.16.5
           - 1.15.2
           - 1.14.4
+          - 1.13.2
           - 1.13
     runs-on: self-hosted
     steps:
@@ -70,7 +71,7 @@ jobs:
           node-version: '20.x'
       - run: npm install @actions/cache
       - name: Restore NMS cache
-        uses: actions/github-script@v8
+        uses: actions/github-script@v7
         if: steps.maven-cache.outputs.cache-hit != 'true'
         with:
           script: |
@@ -141,13 +142,13 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - minecraft: 1.13
-            java: 12
-          - minecraft: 1.13.2
+          - minecraft: 1.15.2
             java: 12
           - minecraft: 1.14.4
             java: 12
-          - minecraft: 1.15.2
+          - minecraft: 1.13.2
+            java: 12
+          - minecraft: 1.13
             java: 12
     steps:
       - uses: actions/download-artifact@v4
