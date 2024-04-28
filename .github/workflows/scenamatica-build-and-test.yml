@@ -149,7 +149,7 @@ jobs:
           - minecraft: 1.13.2
             java: 12
           - minecraft: 1.13
-            java: 12
+            java: 11
     steps:
       - uses: actions/download-artifact@v4
         with:
