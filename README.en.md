@@ -1,5 +1,5 @@
 <div align="center">
-  <h1>Scenamatica</h1>
+  <img alt="Scenamatica" width="400" src="images/logo_vtuber.svg">
 
 <a href="https://scenamatica.kunlab.org"><img alt="badge" src="https://img.shields.io/badge/Docs-here-09f?style=flat-square"></a>
 <a href="LICENSE"><img alt="badge" src="https://img.shields.io/github/license/TeamKun/Scenamatica?style=flat-square"></a>
