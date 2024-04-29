@@ -17,6 +17,7 @@
         <module name="Base_v1_13_2" />
         <module name="v1_13_R1" />
         <module name="ScenamaticaAPI" />
+        <module name="nms_v1_16_R2" />
         <module name="ScenamaticaTriggerEngine" />
         <module name="nms_v1_14_R1" />
         <module name="nms_v1_16_R3" />
@@ -26,6 +27,7 @@
         <module name="ScenamaticaSelectorEngine" />
         <module name="Extended_v1_14" />
         <module name="ScenamaticaDaemon" />
+        <module name="v1_16_R2" />
         <module name="NMSTypes" />
         <module name="v1_16_R3" />
         <module name="v1_14_R1" />
