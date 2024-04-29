@@ -32,6 +32,7 @@ jobs:
       matrix:
         nms-version:
           - 1.16.5
+          - 1.16.3
           - 1.15.2
           - 1.14.4
           - 1.13.2
@@ -90,6 +91,7 @@ jobs:
             const path = require('path');
             const nmsVersions = [
               '1.16.5',
+              '1.16.3',
               '1.15.2',
               '1.14.4',
               '1.13.2',
