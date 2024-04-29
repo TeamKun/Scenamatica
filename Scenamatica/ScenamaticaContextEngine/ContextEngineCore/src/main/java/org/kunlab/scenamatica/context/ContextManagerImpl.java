@@ -36,8 +36,12 @@ import org.spigotmc.SpigotConfig;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -56,6 +60,8 @@ public class ContextManagerImpl implements ContextManager
     private final EntityChunkLoader chunkLoader;
     private final Logger logger;
 
+    private final Map<UUID, CompletableFuture<Context>> creatingContext;
+
     public ContextManagerImpl(@NotNull ScenamaticaRegistry registry) throws VersionNotSupportedException
     {
         this.registry = registry;
@@ -64,6 +70,7 @@ public class ContextManagerImpl implements ContextManager
         this.stageManager = new StageManagerImpl(registry);
         this.logger = registry.getLogger();
         this.chunkLoader = new EntityChunkLoader(registry);
+        this.creatingContext = new HashMap<>();
 
         // ゴミを残さないように
         disableSpigotFeatures();
@@ -195,6 +202,53 @@ public class ContextManagerImpl implements ContextManager
     public Context prepareContext(@NotNull ScenarioFileStructure scenario, @NotNull UUID testID)
             throws StageAlreadyDestroyedException, StageCreateFailedException, ActorCreationException, EntityCreationException
     {
+        if (this.creatingContext.containsKey(testID))
+            throw new IllegalStateException("Context is already being created.");
+
+        CompletableFuture<Context> future =CompletableFuture.supplyAsync(() -> {
+            try
+            {
+                return this.prepareContext0(scenario, testID);
+            }
+            catch (StageCreateFailedException | StageAlreadyDestroyedException | ActorCreationException |
+                   EntityCreationException e)
+            {
+                throw new CompletionException(e);
+            }
+        }).whenComplete((context, throwable) -> {
+            if (throwable != null)
+            {
+                this.registry.getExceptionHandler().report(throwable);
+                if (context != null)
+                    this.destroyContext(context);
+            }
+        });
+
+        this.creatingContext.put(testID, future);
+
+        try
+        {
+            return future.join();
+        }
+        catch (CompletionException e)
+        {
+            Throwable cause = e.getCause();
+            if (cause instanceof StageCreateFailedException)
+                throw (StageCreateFailedException) cause;
+            if (cause instanceof StageAlreadyDestroyedException)
+                throw (StageAlreadyDestroyedException) cause;
+            if (cause instanceof ActorCreationException)
+                throw (ActorCreationException) cause;
+            if (cause instanceof EntityCreationException)
+                throw (EntityCreationException) cause;
+
+            throw new IllegalStateException("Unknown exception", e);
+        }
+    }
+
+    private Context prepareContext0(ScenarioFileStructure scenario,  UUID testID) throws StageAlreadyDestroyedException, StageCreateFailedException, ActorCreationException, EntityCreationException
+    {
+
         ContextStructure context = scenario.getContext();
 
         this.logIfVerbose(scenario, "context.creating", testID);
@@ -235,6 +289,14 @@ public class ContextManagerImpl implements ContextManager
                 Collections.unmodifiableList(actors),
                 Collections.unmodifiableList(generatedEntities)
         );
+    }
+
+    @Override
+    public void cancelCreation(@NotNull UUID testID)
+    {
+        CompletableFuture<Context> future = this.creatingContext.remove(testID);
+        if (future != null)
+            future.cancel(true);
     }
 
     private void logIfVerbose(ScenarioFileStructure scenario, String message, MsgArgs args, UUID testID)
@@ -278,8 +340,9 @@ public class ContextManagerImpl implements ContextManager
         }
 
         if (context.hasStage())
+        {
             this.stageManager.destroyStage(context.getStage());  // StageNotCreatedException はチェック済み。
-
+        }
     }
 
     @Override

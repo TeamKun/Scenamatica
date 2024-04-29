@@ -24,6 +24,12 @@ public interface ContextManager
             throws StageCreateFailedException, StageAlreadyDestroyedException, ActorCreationException, EntityCreationException;
 
     /**
+     * 環境の作成をキャンセルします。
+     * @param testID テストID
+     */
+    void cancelCreation(@NotNull UUID testID);
+
+    /**
      * 環境を破棄します。
      *
      * @param context 環境

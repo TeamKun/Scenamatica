@@ -228,6 +228,13 @@ public class ScenarioEngineImpl implements ScenarioEngine
     @Override
     public void cancel()
     {
+        if (this.state == ScenarioState.CONTEXT_PREPARING && this.context == null)
+        {
+            // 作成中だが帰ってきてない -> 生成をキャンセル
+            this.registry.getContextManager().cancelCreation(this.executor.getTestID());
+        }
+
+
         this.executor.cancel();
         this.cleanUp();  // これの位置を変えると, 排他の問題でバグる
         this.isRunning = false;

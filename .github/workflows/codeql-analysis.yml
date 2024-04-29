@@ -50,7 +50,7 @@ jobs:
           lookup-only: true
       - name: Build NMS if cache miss
         if: steps.restore-cache.outputs.cache-hit != 'true'
-        uses: PeyaPeyaPeyang/nmsaction@v6
+        uses: PeyaPeyaPeyang/nmsaction@v9
         with:
           rev: ${{ matrix.nms-version }}
       - name: Save caches
