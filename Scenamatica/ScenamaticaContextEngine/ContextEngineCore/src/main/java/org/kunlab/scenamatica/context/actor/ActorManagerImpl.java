@@ -103,26 +103,33 @@ public class ActorManagerImpl implements ActorManager, Listener
         Object lockToken = new Object();
         this.prepareWaitingForJoin(lockToken, actor);  // ログイン待機の準備をしない場合, 排他制御に失敗する。
 
+        // 排他怪しいゾーン
+
         ThreadingUtil.waitFor(
                 this.registry, () -> actor.joinServer()
         );
         if (structure.getOnline() == null || structure.getOnline())  // オンラインモードはログインするの待つ。
-            this.waitForJoin(lockToken, actor);
+            this.waitForJoin(actor);
 
         return actor;
     }
 
 
     @SneakyThrows(InterruptedException.class)
-    private void waitForJoin(Object lockToken, Actor actor)
+    private void waitForJoin(Actor actor)
     {
         // ログイン処理は Bukkit がメインスレッドで行う必要があるため, ここでは帰ってこない。
         // イベントをリッスンして, ログインしたら待機しているスレッドを起こす必要がある。
-        this.waitingForLogin.put(actor.getUUID(), lockToken);
-        //noinspection SynchronizationOnLocalVariableOrMethodParameter
-        synchronized (lockToken)
+        synchronized (this.waitingForLogin)
         {
-            lockToken.wait();
+            Object locker = this.waitingForLogin.get(actor.getUUID());
+            if (locker == null)
+                return;
+            //noinspection SynchronizationOnLocalVariableOrMethodParameter
+            synchronized (locker)
+            {
+                locker.wait();
+            }
         }
     }
 
@@ -189,15 +196,16 @@ public class ActorManagerImpl implements ActorManager, Listener
 
         this.actorGenerator.postActorLogin(actor);
 
-        Object locker = this.waitingForLogin.remove(player.getUniqueId());
-        if (locker == null)
-            return;
-
-        synchronized (locker)
+        synchronized (this.waitingForLogin)
         {
-            locker.notify();
+            Object locker = this.waitingForLogin.get(player.getUniqueId());
+            if (locker == null)
+                return;
+            //noinspection SynchronizationOnLocalVariableOrMethodParameter
+            synchronized (locker)
+            {
+                locker.notifyAll();
+            }
         }
-
     }
-
 }
