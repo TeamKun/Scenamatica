@@ -86,7 +86,12 @@ public class ScenarioEngineImpl implements ScenarioEngine
         this.executor = null;
 
         // 以下、 アクションをコンパイルしてキャッシュしておく。
-        ScenarioCompiler compiler = this.compiler = new ScenarioCompiler(this, registry.getLogger(), actionManager);
+        ScenarioCompiler compiler = this.compiler = new ScenarioCompiler(
+                this,
+                registry.getLogger(),
+                this.registry.getEnvironment().isVerbose(),
+                actionManager
+        );
         compiler.notifyCompileStart();
 
         this.actions = compiler.compileMain(RunOn.SCENARIOS, RunAs.NORMAL, scenario.getScenario());

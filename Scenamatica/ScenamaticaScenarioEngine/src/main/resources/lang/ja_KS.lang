@@ -1,6 +1,7 @@
 # シナリオ
 
 scenario.compile.start=シナリオ %%scenarioName%% のコンパイルを始めるで。
+scenario.compile.prepare=合計 %%total%% 個のシナリオをコンパイルしたで。
 scenario.compile.child=[%%compiled%%/%%total%%] シナリオ %%scenarioName%% の %%triggerType%%:%%type%% をコンパイルしとるで …
 scenario.compile.main=[%%compiled%%/%%total%%] シナリオ %%scenarioName%% のメインシナリオをコンパイルしとるで …
 

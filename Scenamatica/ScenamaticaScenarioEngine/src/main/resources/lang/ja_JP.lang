@@ -1,6 +1,7 @@
 # シナリオ
 
 scenario.compile.start=シナリオ %%scenarioName%% のコンパイルを開始します。
+scenario.compile.end=合計 %%total%% 個のシナリオのコンパイルが完了しました。
 scenario.compile.child=[%%compiled%%/%%total%%] シナリオ %%scenarioName%% の %%triggerType%%:%%type%% をコンパイル中 …
 scenario.compile.main=[%%compiled%%/%%total%%] シナリオ %%scenarioName%% のメインシナリオをコンパイル中 …
 

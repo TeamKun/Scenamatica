@@ -30,8 +30,9 @@ import java.util.logging.Logger;
 
 public class ScenarioCompiler
 {
-    private final Logger logger;
     private final ScenarioEngine engine;
+    private final Logger logger;
+    private final boolean isVerbose;
 
     private final ScenarioFileStructure scenario;
     private final ActionCompiler actionCompiler;
@@ -41,10 +42,11 @@ public class ScenarioCompiler
 
     private int compiled;
 
-    public ScenarioCompiler(ScenarioEngine engine, Logger logger, ActionManager actionManager)
+    public ScenarioCompiler(ScenarioEngine engine, Logger logger, boolean isVerbose, ActionManager actionManager)
     {
         this.engine = engine;
         this.logger = logger;
+        this.isVerbose = isVerbose;
         this.scenario = engine.getScenario();
         this.actionCompiler = actionManager.getCompiler();
         this.listener = engine.getListener();
@@ -79,6 +81,18 @@ public class ScenarioCompiler
                 LangProvider.get(
                         "scenario.compile.start",
                         MsgArgs.of("scenarioName", this.scenario.getName())
+                )
+        );
+    }
+
+    public void notifyCompileEnd()
+    {
+        this.logWithPrefix(
+                Level.INFO,
+                LangProvider.get(
+                        "scenario.compile.end",
+                        MsgArgs.of("scenarioName", this.scenario.getName())
+                                .add("compiled", this.compiled)
                 )
         );
     }
@@ -255,6 +269,9 @@ public class ScenarioCompiler
 
     private void logCompiling(int compiled, int total, String type, TriggerType triggerType)
     {
+        if (!this.isVerbose)
+            return;
+
         MsgArgs newArgs = MsgArgs.of("compiled", compiled)
                 .add("total", total)
                 .add("type", type)
@@ -265,6 +282,9 @@ public class ScenarioCompiler
 
     private void logCompiling(int compiled, int total, String type)
     {
+        if (!this.isVerbose)
+            return;
+
         MsgArgs newArgs = MsgArgs.of("compiled", compiled)
                 .add("total", total)
                 .add("type", type)
@@ -275,6 +295,9 @@ public class ScenarioCompiler
 
     private void logCompilingMain(int compiled, int total)
     {
+        if (!this.isVerbose)
+            return;
+
         MsgArgs newArgs = MsgArgs.of("compiled", compiled)
                 .add("total", total)
                 .add("type", "main")

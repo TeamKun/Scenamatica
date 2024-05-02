@@ -1,6 +1,7 @@
 # Scenario
 
 scenario.compile.start=Starting scenario compilation for scenario %%scenarioName%%
+scenario.compile.end=Scenario compilations of %%total%% scenarios have been completed.
 scenario.compile.child=[%%compiled%%/%%total%%] Compiling %%triggerType%%:%%type%% scenario %%scenarioName%%
 scenario.compile.main=[%%compiled%%/%%total%%] Compiling main scenario %%scenarioName%%
 
