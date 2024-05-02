@@ -109,6 +109,7 @@ public class ActorManagerImpl implements ActorManager, Listener
     @SneakyThrows(InterruptedException.class)
     private void waitForJoin(Actor actor)
     {
+        System.out.println("Waiting for join: " + actor.getName());
         // ログイン処理は Bukkit がメインスレッドで行う必要があるため, ここでは帰ってこない。
         // イベントをリッスンして, ログインしたら待機しているスレッドを起こす必要がある。
         Object locker = new Object();
@@ -172,6 +173,7 @@ public class ActorManagerImpl implements ActorManager, Listener
     @EventHandler(priority = EventPriority.LOWEST)
     public void onActorJoin(ActorPostJoinEvent e)
     {
+        System.out.println("ActorManagerImpl.onActorJoin");
         Actor actor = e.getActor();
         Player player = actor.getPlayer();
         this.actorGenerator.postActorLogin(actor);

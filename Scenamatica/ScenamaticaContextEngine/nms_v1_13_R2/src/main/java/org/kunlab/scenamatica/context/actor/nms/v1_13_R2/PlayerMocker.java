@@ -91,12 +91,10 @@ public class PlayerMocker extends PlayerMockerBase
         if (!this.dispatchLoginEvent(player, (InetSocketAddress) networkManager.getSocketAddress()))
             throw new IllegalStateException("Login for " + player.getName() + " was denied.");
 
-        System.out.println("Login...");
         PlayerList playerList = ((CraftServer) Bukkit.getServer()).getHandle();
         playerList.a(networkManager, mockedPlayer);
 
         this.sendSettings(mockedPlayer.getBukkitEntity());
-        System.out.println("Sending settings...");
     }
 
     @Override
