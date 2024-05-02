@@ -79,9 +79,11 @@ jobs:
         with:
           maven-version: 3.8.2
       - uses: actions/setup-node@v4
+        if: steps.maven-cache.outputs.cache-hit != 'true'
         with:
           node-version: '20.x'
       - run: npm install @actions/cache
+        if: steps.maven-cache.outputs.cache-hit != 'true'
       - name: Restore NMS cache
         uses: actions/github-script@v7
         if: steps.maven-cache.outputs.cache-hit != 'true'
