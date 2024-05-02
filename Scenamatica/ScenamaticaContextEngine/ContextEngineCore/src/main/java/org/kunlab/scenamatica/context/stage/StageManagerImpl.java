@@ -3,6 +3,7 @@ package org.kunlab.scenamatica.context.stage;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
+import org.bukkit.entity.Entity;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.commons.utils.ThreadingUtil;
@@ -16,10 +17,12 @@ import org.kunlab.scenamatica.interfaces.context.Stage;
 import org.kunlab.scenamatica.interfaces.context.StageManager;
 import org.kunlab.scenamatica.interfaces.scenariofile.context.StageStructure;
 import org.kunlab.scenamatica.nms.NMSProvider;
+import org.kunlab.scenamatica.nms.types.NMSChunkProvider;
 import org.kunlab.scenamatica.nms.types.NMSWorldServer;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -174,12 +177,32 @@ public class StageManagerImpl implements StageManager
                 .filter(p -> p.getLocation().getWorld().equals(stageWorld))
                 .forEach(p -> p.teleport(Bukkit.getWorlds().get(0).getSpawnLocation()));
 
-        Bukkit.unloadWorld(stageWorld, false);
+        forceUnloadWorld(stageWorld);
 
         Path worldPath = stageWorld.getWorldFolder().toPath();
         this.garbageDirectories.add(worldPath);
 
         this.stages.remove(stage);
+    }
+
+    private static void forceUnloadWorld(@NotNull World world)
+    {
+        NMSWorldServer nmsWorldServer = NMSProvider.getProvider().wrap(world);
+        NMSChunkProvider chunkProvider = nmsWorldServer.getChunkProvider();
+
+        /*
+        // リファレンスをすべて削除する => エンティティがボトルネック
+        NMSProvider.tryDoNMS(() -> {
+            List<Entity> entities = new ArrayList<>(world.getEntities());
+            for (Entity entity : entities)
+                chunkProvider.removeEntity(NMSProvider.getProvider().wrap(entity));
+        });*/
+
+        chunkProvider.purgeUnload();
+        Bukkit.unloadWorld(world, false);
+
+        System.gc();
+
     }
 
     @Override

@@ -25,4 +25,9 @@ public interface SessionStorage
      * @param value 値
      */
     void set(@NotNull String key, @Nullable Object value);
+
+    /**
+     * すべての値を削除します。
+     */
+    void clear();
 }

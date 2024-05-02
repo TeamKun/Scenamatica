@@ -180,6 +180,8 @@ public class ScenarioSessionImpl implements ScenarioSession
         this.finishedAt = System.currentTimeMillis();
         for (QueuedScenario scenario : this.scenarios)
             scenario.getEngine().releaseScenarioInputs();
+
+        this.variables.clear();
     }
 
     public boolean hasNext()

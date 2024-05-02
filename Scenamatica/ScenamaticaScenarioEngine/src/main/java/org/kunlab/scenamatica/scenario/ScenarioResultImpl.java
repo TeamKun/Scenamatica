@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.UUID;
 
 @Value
-@AllArgsConstructor
 public class ScenarioResultImpl implements ScenarioResult
 {
     @NotNull
@@ -27,7 +26,6 @@ public class ScenarioResultImpl implements ScenarioResult
     ScenarioState state;
     @NotNull
     ScenarioResultCause cause;
-    List<ActionResult> actionResults;
     long startedAt;
     long finishedAt;
     int attemptOf;
@@ -47,10 +45,27 @@ public class ScenarioResultImpl implements ScenarioResult
         this.testID = testID;
         this.state = state;
         this.cause = resultType;
-        this.actionResults = Collections.unmodifiableList(actionResults);
         this.startedAt = startedAt;
         this.finishedAt = System.currentTimeMillis();
         this.attemptOf = attemptOf;
         this.failedAction = null;
+    }
+    public ScenarioResultImpl(@NotNull ScenarioFileStructure scenario,
+                              @NotNull UUID testID,
+                              @NotNull ScenarioState state,
+                              @NotNull ScenarioResultCause resultType,
+                              @NotNull List<ActionResult> actionResults,
+                              long startedAt,
+                              int attemptOf,
+                                @Nullable Action failedAction)
+    {
+        this.scenario = scenario;
+        this.testID = testID;
+        this.state = state;
+        this.cause = resultType;
+        this.startedAt = startedAt;
+        this.finishedAt = System.currentTimeMillis();
+        this.attemptOf = attemptOf;
+        this.failedAction = failedAction;
     }
 }

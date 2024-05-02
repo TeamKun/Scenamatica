@@ -228,7 +228,6 @@ public class BukkitTestReporter extends AbstractTestReporter
             this.printSeparator(null, t, null, 50);
             t.info(ChatColor.AQUA + " T E S T S");
             this.printSeparator(null, t, null, 50);
-
         });
     }
 

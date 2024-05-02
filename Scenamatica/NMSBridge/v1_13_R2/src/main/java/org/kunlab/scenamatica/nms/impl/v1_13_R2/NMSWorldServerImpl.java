@@ -3,6 +3,7 @@ package org.kunlab.scenamatica.nms.impl.v1_13_R2;
 import net.minecraft.server.v1_13_R2.WorldServer;
 import org.bukkit.World;
 import org.jetbrains.annotations.NotNull;
+import org.kunlab.scenamatica.nms.types.NMSChunkProvider;
 import org.kunlab.scenamatica.nms.types.NMSWorldData;
 import org.kunlab.scenamatica.nms.types.NMSWorldServer;
 
@@ -11,12 +12,14 @@ public class NMSWorldServerImpl implements NMSWorldServer
     private final World bukkitWorld;
     private final WorldServer nmsWorld;
     private final NMSWorldData worldData;
+    private final NMSChunkProvider chunkProvider;
 
     public NMSWorldServerImpl(World bukkitWorld)
     {
         this.bukkitWorld = bukkitWorld;
         this.nmsWorld = ((org.bukkit.craftbukkit.v1_13_R2.CraftWorld) bukkitWorld).getHandle();
         this.worldData = new NMSWorldDataImpl(this.nmsWorld.getWorldData());
+        this.chunkProvider = new NMSChunkProviderImpl(this.nmsWorld.getChunkProvider());
     }
 
     @Override
@@ -35,5 +38,12 @@ public class NMSWorldServerImpl implements NMSWorldServer
     public @NotNull NMSWorldData getWorldData()
     {
         return this.worldData;
+    }
+
+    @NotNull
+    @Override
+    public NMSChunkProvider getChunkProvider()
+    {
+        return chunkProvider;
     }
 }

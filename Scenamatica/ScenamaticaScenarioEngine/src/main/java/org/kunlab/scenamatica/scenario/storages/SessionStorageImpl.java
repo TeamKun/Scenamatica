@@ -46,7 +46,7 @@ public class SessionStorageImpl extends AbstractVariableProvider implements Sess
         storages.add(scenarioStorage);
         // </editor-fold>
 
-        return Collections.unmodifiableList(storages);
+        return storages;
     }
 
     @Override
@@ -84,5 +84,15 @@ public class SessionStorageImpl extends AbstractVariableProvider implements Sess
         }
 
         throw new BrokenReferenceException("Storage not found: " + ns, ns);
+    }
+
+    @Override
+    public void clear()
+    {
+        for (ChildStorage storage : this.storages)
+            storage.clear();
+
+        this.storages.clear();
+        super.clear();
     }
 }

@@ -227,7 +227,6 @@ public class ScenarioManagerImpl implements ScenarioManager
                     ScenarioResultCause.INTERNAL_ERROR,
                     Collections.emptyList(),
                     engine.getStartedAt(),
-                    System.currentTimeMillis(),
                     attempted,
                     null
             );

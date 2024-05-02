@@ -40,6 +40,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import java.util.logging.Level;
@@ -296,7 +297,13 @@ public class ContextManagerImpl implements ContextManager
     {
         CompletableFuture<Context> future = this.creatingContext.remove(testID);
         if (future != null)
-            future.cancel(true);
+            try
+            {
+                future.cancel(true);
+            }
+            catch (CancellationException ignored)
+            {
+            }
     }
 
     private void logIfVerbose(ScenarioFileStructure scenario, String message, MsgArgs args, UUID testID)

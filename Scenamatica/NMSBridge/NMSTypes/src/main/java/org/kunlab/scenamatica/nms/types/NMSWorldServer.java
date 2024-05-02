@@ -19,4 +19,11 @@ public interface NMSWorldServer extends NMSWrapped
      */
     @NotNull
     NMSWorldData getWorldData();
+
+    /**
+     * チャンクプロバイダを取得します。
+     * @return チャンクプロバイダ
+     */
+    @NotNull
+    NMSChunkProvider getChunkProvider();
 }

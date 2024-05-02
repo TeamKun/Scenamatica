@@ -202,4 +202,11 @@ public abstract class AbstractVariableProvider
 
         map.put(keys[keys.length - 1], value);
     }
+
+    public void clear()
+    {
+        if (this.map == null)
+            return;
+        this.map.clear();
+    }
 }
