@@ -73,11 +73,11 @@ public abstract class PlayerMockerBase
         return initialLocation;
     }
 
-    public Actor mock(@NotNull World world, @NotNull PlayerStructure structure)
+    public Actor mock(@NotNull World world, @NotNull PlayerStructure structure, boolean doLogin)
     {
         Actor actor = this.createActorInstance(world, structure);
-        boolean doLogin = structure.getOnline() == null || structure.getOnline();
-        if (doLogin)
+        boolean actualDoLogin = doLogin && (structure.getOnline() == null || structure.getOnline());
+        if (actualDoLogin)
             this.doLogin(actor);
 
         return actor;

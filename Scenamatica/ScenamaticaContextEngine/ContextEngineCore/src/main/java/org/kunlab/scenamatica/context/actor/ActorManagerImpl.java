@@ -93,32 +93,43 @@ public class ActorManagerImpl implements ActorManager, Listener
         else if (this.actors.size() + 1 > this.settings.getMaxActors())
             throw new ContextPreparationException("Too many actors on this server (max: " + this.settings.getMaxActors() + ")");
 
-        Actor actor = ThreadingUtil.waitFor(
-                this.registry,
-                () -> this.actorGenerator.mock(defaultWorld, structure)
-        );
+        Actor actor = this.actorGenerator.mock(defaultWorld, structure, false);
+
+        boolean doLogin = structure.getOnline() == null || structure.getOnline();
+        if (!doLogin)
+            return actor;
+
+        Object lockToken = new Object();
+        this.prepareWaitingForJoin(lockToken, actor);  // ログイン待機の準備をしない場合, 排他制御に失敗する。
 
         this.actors.add(actor);
 
+        ThreadingUtil.waitFor(
+                this.registry, () -> actor.joinServer()
+        );
         if (structure.getOnline() == null || structure.getOnline())  // オンラインモードはログインするの待つ。
-            this.waitForJoin(actor);
+            this.waitForJoin(lockToken, actor);
 
         return actor;
     }
 
+
     @SneakyThrows(InterruptedException.class)
-    private void waitForJoin(Actor actor)
+    private void waitForJoin(Object lockToken, Actor actor)
     {
-        System.out.println("Waiting for join: " + actor.getName());
         // ログイン処理は Bukkit がメインスレッドで行う必要があるため, ここでは帰ってこない。
         // イベントをリッスンして, ログインしたら待機しているスレッドを起こす必要がある。
-        Object locker = new Object();
-        this.waitingForLogin.put(actor.getUUID(), locker);
+        this.waitingForLogin.put(actor.getUUID(), lockToken);
         //noinspection SynchronizationOnLocalVariableOrMethodParameter
-        synchronized (locker)
+        synchronized (lockToken)
         {
-            locker.wait();
+            lockToken.wait();
         }
+    }
+
+    private void prepareWaitingForJoin(Object lockToken, Actor actor)
+    {
+        this.waitingForLogin.put(actor.getUUID(), lockToken);
     }
 
     @Override
@@ -127,6 +138,7 @@ public class ActorManagerImpl implements ActorManager, Listener
         this.actorGenerator.unmock(player);
         this.actors.remove(player);
     }
+
 
     @Override
     public void onDestroyActor(Actor player)
@@ -173,14 +185,15 @@ public class ActorManagerImpl implements ActorManager, Listener
     @EventHandler(priority = EventPriority.LOWEST)
     public void onActorJoin(ActorPostJoinEvent e)
     {
-        System.out.println("ActorManagerImpl.onActorJoin");
         Actor actor = e.getActor();
         Player player = actor.getPlayer();
-        this.actorGenerator.postActorLogin(actor);
-        Object locker = this.waitingForLogin.remove(player.getUniqueId());
 
-        if (!Objects.nonNull(locker))
+        this.actorGenerator.postActorLogin(actor);
+
+        Object locker = this.waitingForLogin.remove(player.getUniqueId());
+        if (locker == null)
             return;
+
         synchronized (locker)
         {
             locker.notify();
