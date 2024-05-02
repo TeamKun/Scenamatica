@@ -259,8 +259,24 @@ public class WatcherManagerImpl implements WatcherManager
             return;
         }
 
+        // けしからん Bukkit が, 対応していないイベントを読んでくるので, 本当に会っているかチェックする。
+        boolean isMatched = false;
+        Class<? extends Event> evtType = evt.getClass();
+        for (Class<? extends Event> eventType : watchable.getAttachingEvents())
+        {
+            if (eventType.isAssignableFrom(evtType))
+            {
+                isMatched = true;
+                break;
+            }
+        }
+
+        if (!isMatched)
+            return;
+
         try
         {
+
             // 引数にマッチしているかどうかをチェックする。
             if (watchable.checkFired(action.getContext(), evt))
                 this.onActionFired(entry, isJumped);
