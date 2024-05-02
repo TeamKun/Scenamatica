@@ -92,9 +92,11 @@ public abstract class PlayerMockerBase
         NMSMinecraftServer nmsServer = NMSProvider.getProvider().wrap(Bukkit.getServer());
         NMSPlayerList nmsPlayerList = nmsServer.getPlayerList();
         NMSEntityPlayer nmsPlayer = NMSProvider.getProvider().wrap(player);
-        NMSPlayerConnection nmsConnection = nmsPlayer.getConnection();
-
         removePersistentPlayerData(nmsPlayerList, nmsPlayer, player);
+
+        NMSPlayerConnection nmsConnection = nmsPlayer.getConnection();
+        if (nmsConnection == null)
+            return;
 
         nmsConnection.disconnect("Disconnected");
     }

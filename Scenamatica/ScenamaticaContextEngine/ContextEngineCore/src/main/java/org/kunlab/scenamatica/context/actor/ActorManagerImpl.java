@@ -94,6 +94,7 @@ public class ActorManagerImpl implements ActorManager, Listener
             throw new ContextPreparationException("Too many actors on this server (max: " + this.settings.getMaxActors() + ")");
 
         Actor actor = this.actorGenerator.mock(defaultWorld, structure, false);
+        this.actors.add(actor);
 
         boolean doLogin = structure.getOnline() == null || structure.getOnline();
         if (!doLogin)
@@ -101,8 +102,6 @@ public class ActorManagerImpl implements ActorManager, Listener
 
         Object lockToken = new Object();
         this.prepareWaitingForJoin(lockToken, actor);  // ログイン待機の準備をしない場合, 排他制御に失敗する。
-
-        this.actors.add(actor);
 
         ThreadingUtil.waitFor(
                 this.registry, () -> actor.joinServer()
