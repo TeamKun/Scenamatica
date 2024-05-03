@@ -10,6 +10,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.kunlab.scenamatica.commons.utils.SmartE2EBarrier;
 import org.kunlab.scenamatica.commons.utils.ThreadingUtil;
 import org.kunlab.scenamatica.events.actor.ActorPostJoinEvent;
 import org.kunlab.scenamatica.exceptions.context.ContextPreparationException;
@@ -35,7 +36,7 @@ public class ActorManagerImpl implements ActorManager, Listener
     private final PlayerMockerBase actorGenerator;
     private final ActorSettings settings;
 
-    private final ConcurrentHashMap<UUID, Object> waitingForLogin;
+    private final ConcurrentHashMap<UUID, SmartE2EBarrier> waitingForLogin;
 
     private boolean destroyed;
 
@@ -120,22 +121,21 @@ public class ActorManagerImpl implements ActorManager, Listener
     {
         // ログイン処理は Bukkit がメインスレッドで行う必要があるため, ここでは帰ってこない。
         // イベントをリッスンして, ログインしたら待機しているスレッドを起こす必要がある。
+
+        SmartE2EBarrier locker;
         synchronized (this.waitingForLogin)
         {
-            Object locker = this.waitingForLogin.get(actor.getUUID());
+            locker = this.waitingForLogin.get(actor.getUUID());
             if (locker == null)
                 return;
-            //noinspection SynchronizationOnLocalVariableOrMethodParameter
-            synchronized (locker)
-            {
-                locker.wait();
-            }
         }
+
+        locker.await();
     }
 
     private void prepareWaitingForJoin(Object lockToken, Actor actor)
     {
-        this.waitingForLogin.put(actor.getUUID(), lockToken);
+        this.waitingForLogin.put(actor.getUUID(), new SmartE2EBarrier());
     }
 
     @Override
@@ -196,16 +196,14 @@ public class ActorManagerImpl implements ActorManager, Listener
 
         this.actorGenerator.postActorLogin(actor);
 
+        SmartE2EBarrier locker;
         synchronized (this.waitingForLogin)
         {
-            Object locker = this.waitingForLogin.get(player.getUniqueId());
+            locker = this.waitingForLogin.get(player.getUniqueId());
             if (locker == null)
                 return;
-            //noinspection SynchronizationOnLocalVariableOrMethodParameter
-            synchronized (locker)
-            {
-                locker.notifyAll();
-            }
         }
+
+        locker.release();
     }
 }
