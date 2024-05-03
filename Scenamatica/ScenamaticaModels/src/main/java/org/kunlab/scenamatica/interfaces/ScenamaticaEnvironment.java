@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.enums.TriggerType;
 import org.kunlab.scenamatica.interfaces.scenario.TestReporter;
 import org.kunlab.scenamatica.settings.ActorSettings;
+import org.kunlab.scenamatica.settings.StageSettings;
 
 import java.util.List;
 import java.util.logging.Logger;
@@ -42,6 +43,14 @@ public interface ScenamaticaEnvironment
      */
     @NotNull
     TestReporter getTestReporter();
+
+    /**
+     * ステージの設定を取得します。
+     *
+     * @return ステージの設定
+     */
+    @NotNull
+    StageSettings getStageSettings();
 
     /**
      * アクターの設定を取得します。

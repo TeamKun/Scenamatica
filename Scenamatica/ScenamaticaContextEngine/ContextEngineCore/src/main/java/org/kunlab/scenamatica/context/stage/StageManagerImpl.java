@@ -41,6 +41,7 @@ public class StageManagerImpl implements StageManager
 {
     private final ScenamaticaRegistry registry;
     private final List<Stage> stages;
+    private final StageWorldCreator worldCreator;
     private List<Path> garbageDirectories;
 
     private boolean destroyed;
@@ -50,6 +51,7 @@ public class StageManagerImpl implements StageManager
         this.registry = registry;
         this.stages = new ArrayList<>();
         this.garbageDirectories = new ArrayList<>();
+        this.worldCreator = this.getWorldCreator();
 
         new GarbageCleaner3000TM().runTaskTimer(
                 registry.getPlugin(),
@@ -57,6 +59,29 @@ public class StageManagerImpl implements StageManager
                 20 * 5
         );
     }
+
+    private StageWorldCreator getWorldCreator()
+    {
+        if (!this.registry.getEnvironment().getStageSettings().usePatchedWorldGeneration())
+            return new DefaultStageWorldCreator();
+
+        String version = getServerNMSVersion();
+        switch (version)
+        {
+            case "v1_16_R2":
+                return new org.kunlab.scenamatica.context.stage.nms.v1_16_R2.PatchedStageWorldCreator(this.registry);
+            case "v1_16_R3":
+                return new org.kunlab.scenamatica.context.stage.nms.v1_16_R3.PatchedStageWorldCreator(this.registry);
+            default:
+                return new DefaultStageWorldCreator();
+        }
+    }
+
+    private static String getServerNMSVersion()
+    {
+        return Bukkit.getServer().getClass().getPackage().getName().substring(23);
+    }
+
 
     private static WorldCreator cretateWorldCreator(StageStructure structure)
     {
@@ -122,7 +147,7 @@ public class StageManagerImpl implements StageManager
             return ThreadingUtil.waitForOrThrow(this.registry, () -> this.createStage(structure.getOriginalWorldName()));
 
         WorldCreator creator = cretateWorldCreator(structure);
-        World world = ThreadingUtil.waitFor(this.registry, creator::createWorld);
+        World world = ThreadingUtil.waitForOrThrow(this.registry, () -> this.worldCreator.createWorld(creator));
        /* for (int i = 0; i < maxAttemptCounts; i++)
         {
             world = this.generateWorld(creator, timeoutMillis);

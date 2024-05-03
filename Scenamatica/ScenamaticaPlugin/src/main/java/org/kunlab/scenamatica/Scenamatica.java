@@ -22,6 +22,7 @@ import org.kunlab.scenamatica.reporter.RawTestReporter;
 import org.kunlab.scenamatica.reporter.ReportersBridge;
 import org.kunlab.scenamatica.results.ScenarioResultWriter;
 import org.kunlab.scenamatica.settings.ActorSettingsImpl;
+import org.kunlab.scenamatica.settings.StageSettingsImpl;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -70,6 +71,7 @@ public final class Scenamatica extends JavaPlugin
         return new ScenamaticaDaemon(Environment.builder(this)
                 .exceptionHandler(exceptionHandler)
                 .testReporter(this.getTestReporter(this.getConfig()))
+                .stageSettings(StageSettingsImpl.fromConfig(this.getConfig()))
                 .actorSettings(ActorSettingsImpl.fromConfig(this.getConfig()))
                 .verbose(isVerbose)
                 .ignoreTriggerTypes(this.getIgnoreTriggerTypes())
