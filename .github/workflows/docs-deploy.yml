@@ -21,7 +21,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: chrnorm/deployment-action@v2
         name: Create GitHub Deployment
         id: deploy-status
@@ -31,7 +31,7 @@ jobs:
           environment: production
           initial-status: in_progress
       - name: pnpm-setup
-        uses: pnpm/action-setup@v2
+        uses: pnpm/action-setup@v3
         with: 
           package_json_file: docs/package.json
       - name: Install dependencies
@@ -45,13 +45,13 @@ jobs:
           pnpm run build
           cd ..
       - name: Setup Pages
-        uses: actions/configure-pages@v2
+        uses: actions/configure-pages@v5
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v1
+        uses: actions/upload-pages-artifact@v3
         with:
           path: "docs/build/"
       - name: Deploy to GitHub Pages
-        uses: actions/deploy-pages@v1
+        uses: actions/deploy-pages@v4
       - name: Update GitHub Deployment
         if: success()
         uses: chrnorm/deployment-status@v2
