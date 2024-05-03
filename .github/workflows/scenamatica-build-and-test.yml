@@ -116,36 +116,16 @@ jobs:
           path: Scenamatica/ScenamaticaPlugin/target/Scenamatica.jar
           retention-days: 1
           if-no-files-found: error
-
-  test-v1-16-15:
-    name: Self-test with Scenamatica(1.16.5, 16)
-    runs-on: self-hosted
-    needs: build
-    steps:
-      - uses: actions/download-artifact@v4
-        with:
-          name: scenamatica
-      - name: Run Scenamatica tests
-        uses: teamkun/scenamatica-action@main
-        with:
-          plugin: Scenamatica.jar
-          java: 16
-          minecraft: 1.16.5
-          server-dir: server-1.16.5
-          scenamatica: 1.1.0-pre1
-          report-artifact-name: scenamatica-reports-1.16.5
-          java-arguments: "-Xms8G -Xmx8G -XX:+UseG1GC -XX:+AlwaysPreTouch -XX:MaxGCPauseMillis=1000 -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:G1NewSizePercent=50 -XX:G1MaxNewSizePercent=60 -XX:G1HeapRegionSize=8M -XX:G1ReservePercent=20 -XX:G1HeapWastePercent=5 -XX:G1MixedGCCountTarget=4 -XX:InitiatingHeapOccupancyPercent=15 -XX:G1MixedGCLiveThresholdPercent=90 -XX:G1RSetUpdatingPauseTimePercent=5 -XX:SurvivorRatio=32 -XX:-ParallelRefProcEnabled -XX:MaxTenuringThreshold=10"
-        env:
-          NO_SCENAMATICA: true
-        timeout-minutes: 60
   test-other-versions:
     name: Self-test with Scenamatica
-    runs-on: self-hosted
-    needs: test-v1-16-15
+    runs-on: ubuntu-latest
+    needs: build
     strategy:
       fail-fast: false
       matrix:
         include:
+          - minecraft: 1.16.5
+            java: 16
           - minecraft: 1.15.2
             java: 12
           - minecraft: 1.14.4
