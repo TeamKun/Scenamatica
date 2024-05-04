@@ -20,7 +20,7 @@ import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import org.kunlab.scenamatica.interfaces.scenariofile.Creatable;
-import org.kunlab.scenamatica.interfaces.scenariofile.misc.LocationStructure;
+import org.kunlab.scenamatica.interfaces.structures.minecraft.misc.LocationStructure;
 
 import java.util.Arrays;
 import java.util.List;

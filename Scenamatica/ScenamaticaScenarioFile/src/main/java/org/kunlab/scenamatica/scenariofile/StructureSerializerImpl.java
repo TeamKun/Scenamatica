@@ -12,38 +12,37 @@ import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.Structure;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.VersionRange;
-import org.kunlab.scenamatica.interfaces.scenariofile.action.ActionStructure;
-import org.kunlab.scenamatica.interfaces.scenariofile.context.ContextStructure;
-import org.kunlab.scenamatica.interfaces.scenariofile.context.StageStructure;
-import org.kunlab.scenamatica.interfaces.scenariofile.entity.DamageStructure;
-import org.kunlab.scenamatica.interfaces.scenariofile.entity.EntityStructure;
-import org.kunlab.scenamatica.interfaces.scenariofile.entity.entities.AEntityStructure;
-import org.kunlab.scenamatica.interfaces.scenariofile.inventory.GenericInventoryStructure;
-import org.kunlab.scenamatica.interfaces.scenariofile.inventory.InventoryStructure;
-import org.kunlab.scenamatica.interfaces.scenariofile.inventory.ItemStackStructure;
-import org.kunlab.scenamatica.interfaces.scenariofile.inventory.PlayerInventoryStructure;
-import org.kunlab.scenamatica.interfaces.scenariofile.misc.BlockStructure;
-import org.kunlab.scenamatica.interfaces.scenariofile.misc.LocationStructure;
-import org.kunlab.scenamatica.interfaces.scenariofile.misc.ProjectileSourceStructure;
-import org.kunlab.scenamatica.interfaces.scenariofile.scenario.ScenarioStructure;
-import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.EntitySpecifier;
-import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.PlayerSpecifier;
-import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerStructure;
-import org.kunlab.scenamatica.scenariofile.specifiers.EntitySpecifierImpl;
-import org.kunlab.scenamatica.scenariofile.specifiers.PlayerSpecifierImpl;
+import org.kunlab.scenamatica.interfaces.structures.scenario.ActionStructure;
+import org.kunlab.scenamatica.interfaces.structures.context.ContextStructure;
+import org.kunlab.scenamatica.interfaces.structures.context.StageStructure;
+import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.DamageStructure;
+import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.EntityStructure;
+import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.entities.AEntityStructure;
+import org.kunlab.scenamatica.interfaces.structures.minecraft.inventory.GenericInventoryStructure;
+import org.kunlab.scenamatica.interfaces.structures.minecraft.inventory.InventoryStructure;
+import org.kunlab.scenamatica.interfaces.structures.minecraft.inventory.ItemStackStructure;
+import org.kunlab.scenamatica.interfaces.structures.minecraft.inventory.PlayerInventoryStructure;
+import org.kunlab.scenamatica.interfaces.structures.minecraft.misc.BlockStructure;
+import org.kunlab.scenamatica.interfaces.structures.minecraft.misc.LocationStructure;
+import org.kunlab.scenamatica.interfaces.structures.minecraft.misc.ProjectileSourceStructure;
+import org.kunlab.scenamatica.interfaces.structures.scenario.ScenarioStructure;
+import org.kunlab.scenamatica.interfaces.structures.specifiers.EntitySpecifier;
+import org.kunlab.scenamatica.interfaces.structures.specifiers.PlayerSpecifier;
+import org.kunlab.scenamatica.interfaces.structures.trigger.TriggerStructure;
+import org.kunlab.scenamatica.structures.specifiers.EntitySpecifierImpl;
+import org.kunlab.scenamatica.structures.specifiers.PlayerSpecifierImpl;
 import org.kunlab.scenamatica.scenariofile.structures.ScenarioFileStructureImpl;
 import org.kunlab.scenamatica.scenariofile.structures.VersionRangeImpl;
 import org.kunlab.scenamatica.scenariofile.structures.context.ContextStructureImpl;
 import org.kunlab.scenamatica.scenariofile.structures.context.StageStructureImpl;
-import org.kunlab.scenamatica.scenariofile.structures.entity.DamageStructureImpl;
-import org.kunlab.scenamatica.scenariofile.structures.entity.SelectiveEntityStructureSerializer;
-import org.kunlab.scenamatica.scenariofile.structures.entity.entities.AEntityStructureImpl;
-import org.kunlab.scenamatica.scenariofile.structures.inventory.GenericInventoryStructureImpl;
-import org.kunlab.scenamatica.scenariofile.structures.inventory.InventoryStructureImpl;
-import org.kunlab.scenamatica.scenariofile.structures.inventory.ItemStackStructureImpl;
-import org.kunlab.scenamatica.scenariofile.structures.inventory.PlayerInventoryStructureImpl;
-import org.kunlab.scenamatica.scenariofile.structures.misc.BlockStructureImpl;
-import org.kunlab.scenamatica.scenariofile.structures.misc.LocationStructureImpl;
+import org.kunlab.scenamatica.structures.minecraft.entity.DamageStructureImpl;
+import org.kunlab.scenamatica.structures.minecraft.entity.entities.AEntityStructureImpl;
+import org.kunlab.scenamatica.structures.minecraft.inventory.GenericInventoryStructureImpl;
+import org.kunlab.scenamatica.structures.minecraft.inventory.InventoryStructureImpl;
+import org.kunlab.scenamatica.structures.minecraft.inventory.ItemStackStructureImpl;
+import org.kunlab.scenamatica.structures.minecraft.inventory.PlayerInventoryStructureImpl;
+import org.kunlab.scenamatica.structures.minecraft.misc.BlockStructureImpl;
+import org.kunlab.scenamatica.structures.minecraft.misc.LocationStructureImpl;
 import org.kunlab.scenamatica.scenariofile.structures.scenario.ActionStructureImpl;
 import org.kunlab.scenamatica.scenariofile.structures.scenario.ScenarioStructureImpl;
 import org.kunlab.scenamatica.scenariofile.structures.trigger.TriggerStructureImpl;
@@ -524,7 +523,7 @@ public class StructureSerializerImpl implements StructureSerializer
     @Value
     @NotNull
     @EqualsAndHashCode(callSuper = true)
-    public static class MappedStructureEntry<V, T extends Mapped<V> & Structure> extends StructureEntry<T>
+    private static class MappedStructureEntry<V, T extends Mapped<V> & Structure> extends StructureEntry<T>
     {
         Function<V, T> constructor;
         Predicate<?> applicator;

@@ -6,10 +6,10 @@ import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.enums.TriggerType;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
-import org.kunlab.scenamatica.interfaces.scenariofile.action.ActionStructure;
-import org.kunlab.scenamatica.interfaces.scenariofile.scenario.ScenarioStructure;
-import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
-import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerStructure;
+import org.kunlab.scenamatica.interfaces.structures.scenario.ActionStructure;
+import org.kunlab.scenamatica.interfaces.structures.scenario.ScenarioStructure;
+import org.kunlab.scenamatica.interfaces.structures.trigger.TriggerArgument;
+import org.kunlab.scenamatica.interfaces.structures.trigger.TriggerStructure;
 
 import java.util.HashMap;
 import java.util.LinkedList;

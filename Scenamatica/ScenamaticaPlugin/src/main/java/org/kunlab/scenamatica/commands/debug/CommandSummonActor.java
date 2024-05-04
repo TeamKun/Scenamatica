@@ -10,7 +10,7 @@ import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.interfaces.ScenamaticaRegistry;
-import org.kunlab.scenamatica.scenariofile.structures.context.PlayerStructureImpl;
+import org.kunlab.scenamatica.structures.minecraft.entity.PlayerStructureImpl;
 
 import java.util.ArrayList;
 import java.util.List;

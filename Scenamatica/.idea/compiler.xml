@@ -12,6 +12,7 @@
         <module name="NMSCore" />
         <module name="v1_15_R1" />
         <module name="ScenamaticaScenarioEngine" />
+        <module name="StructureBase" />
         <module name="ContextEngineNMSBase" />
         <module name="v1_13_R2" />
         <module name="Base_v1_13_2" />

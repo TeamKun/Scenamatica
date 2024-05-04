@@ -1,7 +1,7 @@
 package org.kunlab.scenamatica.interfaces.action;
 
 import org.kunlab.scenamatica.enums.ScenarioType;
-import org.kunlab.scenamatica.interfaces.scenariofile.action.ActionStructure;
+import org.kunlab.scenamatica.interfaces.structures.scenario.ActionStructure;
 
 import java.util.function.BiConsumer;
 

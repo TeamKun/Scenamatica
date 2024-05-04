@@ -2,8 +2,8 @@ package org.kunlab.scenamatica.trigger.arguments;
 
 import lombok.Value;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
-import org.kunlab.scenamatica.interfaces.scenariofile.action.ActionStructure;
-import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
+import org.kunlab.scenamatica.interfaces.structures.scenario.ActionStructure;
+import org.kunlab.scenamatica.interfaces.structures.trigger.TriggerArgument;
 
 import java.util.HashMap;
 import java.util.Locale;

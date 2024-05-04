@@ -51,6 +51,13 @@
             <scope>provided</scope>
         </dependency>
 
+        <!-- ストラクチャを追加していく -->
+        <dependency>
+            <groupId>org.kunlab.scenamatica.structure</groupId>
+            <artifactId>StructureBase</artifactId>
+            <version>1.4.0</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 
 </project>

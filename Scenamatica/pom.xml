@@ -23,6 +23,7 @@
         <module>NMSBridge</module>
         <module>ScenamaticaSelectorEngine</module>
         <module>ScenamaticaActions</module>
+        <module>ScenamaticaStructures</module>
     </modules>
 
     <name>Scenamatica</name>

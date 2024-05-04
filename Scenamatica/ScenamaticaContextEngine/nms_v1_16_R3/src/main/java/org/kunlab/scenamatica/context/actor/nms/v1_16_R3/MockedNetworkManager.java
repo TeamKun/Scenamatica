@@ -20,7 +20,7 @@ import net.minecraft.server.v1_16_R3.PacketSplitter;
 import net.minecraft.server.v1_16_R3.ServerConnection;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_16_R3.CraftServer;
-import org.kunlab.scenamatica.interfaces.scenariofile.context.PlayerStructure;
+import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.PlayerStructure;
 
 import java.lang.reflect.Field;
 import java.net.InetAddress;

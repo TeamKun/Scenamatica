@@ -5,7 +5,6 @@ import io.netty.handler.timeout.ReadTimeoutHandler;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
 import javax.annotation.Nullable;
-import javax.crypto.Cipher;
 import lombok.SneakyThrows;
 import net.minecraft.server.v1_16_R2.EnumProtocol;
 import net.minecraft.server.v1_16_R2.EnumProtocolDirection;
@@ -20,7 +19,7 @@ import net.minecraft.server.v1_16_R2.PacketSplitter;
 import net.minecraft.server.v1_16_R2.ServerConnection;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_16_R2.CraftServer;
-import org.kunlab.scenamatica.interfaces.scenariofile.context.PlayerStructure;
+import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.PlayerStructure;
 
 import java.lang.reflect.Field;
 import java.net.InetAddress;
