@@ -1,5 +1,7 @@
 package org.kunlab.scenamatica.structures.minecraft.entity;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.Value;
 import org.kunlab.scenamatica.structures.minecraft.entity.entities.HumanEntityStructureImpl;
 import org.kunlab.scenamatica.structures.minecraft.misc.LocationStructureImpl;
@@ -22,32 +24,33 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-@Value
+@Getter
+@AllArgsConstructor
 public class PlayerStructureImpl extends HumanEntityStructureImpl implements PlayerStructure
 {
     private static final float SPEED_DEFAULT = 0.2f;
 
-    String name;
-    Boolean online;
-    InetAddress remoteAddress;
-    Integer port;
-    String hostName;
-    String displayName;
-    String playerListName;
-    String playerListHeader;
-    String playerListFooter;
-    LocationStructure compassTarget;
-    LocationStructure bedSpawnLocation;
-    Integer exp;
-    Integer level;
-    Integer totalExperience;
-    Boolean allowFlight;
-    Boolean flying;
-    Float walkSpeed;
-    Float flySpeed;
+    protected final String name;
+    protected final Boolean online;
+    protected final InetAddress remoteAddress;
+    protected final Integer port;
+    protected final String hostName;
+    protected final String displayName;
+    protected final String playerListName;
+    protected final String playerListHeader;
+    protected final String playerListFooter;
+    protected final LocationStructure compassTarget;
+    protected final LocationStructure bedSpawnLocation;
+    protected final Integer exp;
+    protected final Integer level;
+    protected final Integer totalExperience;
+    protected final Boolean allowFlight;
+    protected final Boolean flying;
+    protected final Float walkSpeed;
+    protected final Float flySpeed;
 
-    Integer opLevel;
-    List<String> activePermissions;
+    protected final Integer opLevel;
+    protected final List<String> activePermissions;
 
     public PlayerStructureImpl(@NotNull HumanEntityStructure human, @Nullable String name, Boolean online,
                                InetAddress remoteAddress, Integer port, String hostName, String displayName,
