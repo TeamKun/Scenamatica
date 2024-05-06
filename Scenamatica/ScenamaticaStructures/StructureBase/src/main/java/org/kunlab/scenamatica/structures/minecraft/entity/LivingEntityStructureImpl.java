@@ -390,7 +390,7 @@ public class LivingEntityStructureImpl extends EntityStructureImpl implements Li
                 entity.getMaximumNoDamageTicks(),
                 entity.getLastDamage(),
                 entity.getNoDamageTicks(),
-                entity.getKiller() == null ? PlayerSpecifierImpl.EMPTY: PlayerSpecifierImpl.of(entity.getKiller()),
+                entity.getKiller() == null ? PlayerSpecifierImpl.EMPTY: PlayerSpecifierImpl.ofPlayer(entity.getKiller()),
                 new ArrayList<>(entity.getActivePotionEffects()),
                 entity.getRemoveWhenFarAway(),
                 entity.getCanPickupItems(),

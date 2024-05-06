@@ -7,6 +7,8 @@ import org.kunlab.scenamatica.structures.minecraft.StructureSerializerMock;
 import org.kunlab.scenamatica.structures.minecraft.inventory.ItemStackStructureSerializeTest;
 import org.kunlab.scenamatica.structures.minecraft.entity.entities.EntityItemStructureImpl;
 import org.kunlab.scenamatica.structures.minecraft.utils.MapTestUtil;
+import org.kunlab.scenamatica.structures.specifiers.EntitySpecifierImpl;
+import org.kunlab.scenamatica.structures.specifiers.PlayerSpecifierImpl;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -36,8 +38,8 @@ public class EntityItemStructureSerializeTest
             AEntityStructureSerializeTest.FULFILLED,
             ItemStackStructureSerializeTest.FULFILLED,
             1,
-            FULLFILLED_OWNER_UUID,
-            FULLFILLED_THROWER_UUID,
+            EntitySpecifierImpl.of(FULLFILLED_OWNER_UUID),
+            EntitySpecifierImpl.of(FULLFILLED_THROWER_UUID),
             false,
             false
     );

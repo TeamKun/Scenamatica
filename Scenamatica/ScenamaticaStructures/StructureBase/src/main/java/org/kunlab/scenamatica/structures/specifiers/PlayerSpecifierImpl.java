@@ -16,6 +16,7 @@ import org.kunlab.scenamatica.selector.Selector;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -96,9 +97,20 @@ public class PlayerSpecifierImpl extends EntitySpecifierImpl<Player> implements 
         throw new IllegalArgumentException("Cannot deserialize PlayerSpecifier from " + obj);
     }
 
-    public static PlayerSpecifier of(@NotNull Player player)
+    public static PlayerSpecifier ofPlayer(@Nullable Player player)
     {
-        return new PlayerSpecifierImpl(player.getUniqueId());
+        if (player == null)
+            return EMPTY;
+        else
+            return new PlayerSpecifierImpl(player.getUniqueId());
+    }
+
+    public static PlayerSpecifier ofPlayer(@Nullable UUID uuid)
+    {
+        if (uuid == null)
+            return EMPTY;
+        else
+            return new PlayerSpecifierImpl(uuid);
     }
 
     @Override

@@ -10,6 +10,7 @@ import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.EntityStruc
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * エンティティの指定子を提供します。
@@ -105,6 +106,18 @@ public interface EntitySpecifier<E extends Entity> extends Structure
      * @return エンティティ構造を持っているかどうか
      */
     boolean hasStructure();
+
+    /**
+     * UUID を持っているかどうか取得します。
+     * @return UUID を持っているかどうか
+     */
+    boolean hasUUID();
+
+    /**
+     * UUID を取得します。
+     * @return UUID
+     */
+    UUID getSelectingUUID();
 
     /**
      * ターゲットの構造を取得します。

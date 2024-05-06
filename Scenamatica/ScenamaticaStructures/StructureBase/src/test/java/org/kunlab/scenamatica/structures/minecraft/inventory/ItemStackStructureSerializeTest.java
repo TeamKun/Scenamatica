@@ -38,15 +38,7 @@ public class ItemStackStructureSerializeTest
                     "This is also a test lore.",
                     "This is literally a test lore."
             ),
-            new HashMap<Enchantment, Integer>()
-            {{/*
-                this.put(Enchantment.ARROW_DAMAGE, 1);
-                this.put(Enchantment.ARROW_FIRE, 1);
-                this.put(Enchantment.ARROW_INFINITE, 4);
-                this.put(Enchantment.ARROW_KNOCKBACK, 5);
-                this.put(Enchantment.LOOT_BONUS_BLOCKS, 1);
-                this.put(Enchantment.KNOCKBACK, 4);*/
-            }},
+            new HashMap<Enchantment, Integer>(),
             Arrays.asList(
                     ItemFlag.HIDE_ATTRIBUTES,
                     ItemFlag.HIDE_ENCHANTS,

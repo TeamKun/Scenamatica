@@ -2,8 +2,10 @@ package org.kunlab.scenamatica.structures.minecraft.entity.entities;
 
 import lombok.EqualsAndHashCode;
 import lombok.Value;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Item;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
@@ -12,12 +14,16 @@ import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.EntityStructure;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.entities.EntityItemStructure;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.inventory.ItemStackStructure;
+import org.kunlab.scenamatica.interfaces.structures.specifiers.EntitySpecifier;
+import org.kunlab.scenamatica.interfaces.structures.specifiers.PlayerSpecifier;
 import org.kunlab.scenamatica.structures.minecraft.entity.EntityStructureImpl;
 import org.kunlab.scenamatica.structures.minecraft.inventory.ItemStackStructureImpl;
+import org.kunlab.scenamatica.structures.specifiers.PlayerSpecifierImpl;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 @Value
 @EqualsAndHashCode(callSuper = true)
@@ -26,20 +32,18 @@ public class EntityItemStructureImpl extends EntityStructureImpl implements Enti
     @NotNull
     ItemStackStructure itemStack;
 
-    @Nullable
     Integer pickupDelay;
-    @Nullable
-    UUID owner;
 
-    @Nullable
-    UUID thrower;
+    @NotNull
+    EntitySpecifier<?> owner;
+    @NotNull
+    EntitySpecifier<?> thrower;
 
     Boolean canMobPickup;
-
     Boolean willAge;
 
     public EntityItemStructureImpl(@NotNull EntityStructure original, @NotNull ItemStackStructure itemStack, @Nullable Integer pickupDelay,
-                                   @Nullable UUID owner, @Nullable UUID thrower, Boolean canMobPickup, Boolean willAge)
+                                   @NotNull EntitySpecifier<?> owner, @NotNull EntitySpecifier<?> thrower, Boolean canMobPickup, Boolean willAge)
     {
         super(EntityType.DROPPED_ITEM, original);
         this.itemStack = itemStack;
@@ -59,10 +63,10 @@ public class EntityItemStructureImpl extends EntityStructureImpl implements Enti
 
         if (structure.getPickupDelay() != null)
             map.put(KEY_PICKUP_DELAY, structure.getPickupDelay());
-        if (structure.getOwner() != null)
-            map.put(KEY_OWNER, structure.getOwner().toString());
-        if (structure.getThrower() != null)
-            map.put(KEY_THROWER, structure.getThrower().toString());
+        if (structure.getOwner().canProvideTarget())
+            map.put(KEY_OWNER, structure.getOwner().getTargetRaw());
+        if (structure.getThrower().canProvideTarget())
+            map.put(KEY_THROWER, structure.getThrower().getTargetRaw());
         if (structure.getCanMobPickup() != null)
             map.put(KEY_CAN_MOB_PICKUP, structure.getCanMobPickup());
         if (structure.getWillAge() != null)
@@ -89,13 +93,13 @@ public class EntityItemStructureImpl extends EntityStructureImpl implements Enti
         Number pickupDelayNum = MapUtils.getAsNumberOrNull(map, KEY_PICKUP_DELAY);
         Integer pickupDelay = pickupDelayNum != null ? pickupDelayNum.intValue(): null;
 
-        UUID ownerUUID = null;
+        EntitySpecifier<?> owner = null;
         if (map.containsKey(KEY_OWNER))
-            ownerUUID = UUIDUtil.toUUIDOrThrow((String) map.get(KEY_OWNER));
+            owner = serializer.tryDeserializeEntitySpecifier(map.get(KEY_OWNER));
 
-        UUID throwerUUID = null;
+        EntitySpecifier<?> thrower = null;
         if (map.containsKey(KEY_THROWER))
-            throwerUUID = UUIDUtil.toUUIDOrThrow((String) map.get(KEY_THROWER));
+            thrower = serializer.tryDeserializeEntitySpecifier(map.get(KEY_THROWER));
 
         ItemStackStructure itemStack = serializer.deserialize(map, ItemStackStructure.class);
 
@@ -109,8 +113,8 @@ public class EntityItemStructureImpl extends EntityStructureImpl implements Enti
                 EntityStructureImpl.deserialize(copiedMap, serializer),
                 itemStack,
                 pickupDelay,
-                ownerUUID,
-                throwerUUID,
+                owner,
+                thrower,
                 MapUtils.getOrNull(copiedMap, KEY_CAN_MOB_PICKUP),
                 MapUtils.getOrNull(copiedMap, KEY_WILL_AGE)
         );
@@ -123,8 +127,8 @@ public class EntityItemStructureImpl extends EntityStructureImpl implements Enti
                 EntityStructureImpl.of(entity),
                 ItemStackStructureImpl.of(entity.getItemStack()),
                 entity.getPickupDelay(),
-                entity.getOwner(),
-                entity.getThrower(),
+                PlayerSpecifierImpl.ofPlayer(entity.getOwner()),
+                PlayerSpecifierImpl.ofPlayer(entity.getThrower()),
                 entity.canMobPickup(),
                 willAge(entity)
         );
@@ -147,14 +151,24 @@ public class EntityItemStructureImpl extends EntityStructureImpl implements Enti
 
         if (this.pickupDelay != null)
             entity.setPickupDelay(this.pickupDelay);
-        if (this.owner != null)
-            entity.setOwner(this.owner);
-        if (this.thrower != null)
-            entity.setThrower(this.thrower);
+        if (this.owner.canProvideTarget())
+            setUUIDByEntitySpecifier(this.owner, entity::setOwner);
+        if (this.thrower.canProvideTarget())
+            setUUIDByEntitySpecifier(this.thrower, entity::setThrower);
         if (this.canMobPickup != null)
             entity.setCanMobPickup(this.canMobPickup);
         if (this.willAge != null)
             setWillAge(entity, this.willAge);
+    }
+
+    private static void setUUIDByEntitySpecifier(@NotNull EntitySpecifier<?> specifier, @NotNull Consumer<UUID> setter)
+    {
+        if (specifier.hasUUID())
+            setter.accept(specifier.getSelectingUUID());
+        else
+            specifier.selectTarget(null)
+                    .map(Entity::getUniqueId)
+                    .ifPresent(setter);
     }
 
     @Override

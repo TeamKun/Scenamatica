@@ -3,3 +3,7 @@ events.json
 build
 dist
 installer
+Lib
+Scripts
+
+pyvenv.cfg

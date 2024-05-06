@@ -4,6 +4,7 @@ import org.bukkit.entity.Item;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.EntityStructure;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.inventory.ItemStackStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.Mapped;
+import org.kunlab.scenamatica.interfaces.structures.specifiers.PlayerSpecifier;
 
 import java.util.UUID;
 
@@ -29,12 +30,12 @@ public interface EntityItemStructure extends EntityStructure, Mapped<Item>
     /**
      * アイテムを拾ったプレイヤの UUID です。
      */
-    UUID getOwner();
+    PlayerSpecifier getOwner();
 
     /**
      * アイテムを投げたプレイヤの UUID です。
      */
-    UUID getThrower();
+    PlayerSpecifier getThrower();
 
     /**
      * アイテムをモブが拾えるかどうかです。

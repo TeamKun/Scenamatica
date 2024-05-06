@@ -98,6 +98,11 @@ public class EntitySpecifierImpl<E extends Entity> implements EntitySpecifier<E>
         return new EntitySpecifierImpl<>(entity.getUniqueId());
     }
 
+    public static <E extends Entity> EntitySpecifierImpl<E> of(@NotNull UUID entityUUID)
+    {
+        return new EntitySpecifierImpl<>(entityUUID);
+    }
+
     protected static UUID tryConvertToUUID(String mayUUID)
     {
         try
@@ -178,13 +183,24 @@ public class EntitySpecifierImpl<E extends Entity> implements EntitySpecifier<E>
     {
         if (this.selector != null)
             return this.selector.getOriginal();
-        else
+        else if (this.mayUUID != null)
+            return this.mayUUID;
+        else if (this.targetStructure != null)
             return this.targetStructure;
+        else
+            return null;
     }
 
+    @Override
     public boolean hasUUID()
     {
         return this.mayUUID != null;
+    }
+
+    @Override
+    public UUID getSelectingUUID()
+    {
+        return this.mayUUID;
     }
 
     @Override
