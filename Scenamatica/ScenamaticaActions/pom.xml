@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.kunlab.scenamatica</groupId>
         <artifactId>Scenamatica</artifactId>
-        <version>1.4.0</version>
+        <version>1.4.1</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -61,44 +61,44 @@
         <dependency>
             <groupId>org.kunlab.scenamatica</groupId>
             <artifactId>ScenamaticaActionEngine</artifactId>
-            <version>1.4.0</version>
+            <version>1.4.1</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.kunlab.scenamatica</groupId>
             <artifactId>ScenamaticaModels</artifactId>
-            <version>1.4.0</version>
+            <version>1.4.1</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.kunlab.scenamatica</groupId>
             <artifactId>ScenamaticaCommons</artifactId>
-            <version>1.4.0</version>
+            <version>1.4.1</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.kunlab.scenamatica</groupId>
             <artifactId>ScenamaticaScenarioFile</artifactId>
-            <version>1.4.0</version>
+            <version>1.4.1</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.kunlab.scenamatica</groupId>
             <artifactId>ScenamaticaSelectorEngine</artifactId>
-            <version>1.4.0</version>
+            <version>1.4.1</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.kunlab.scenamatica.nms</groupId>
             <artifactId>NMSCore</artifactId>
-            <version>1.4.0</version>
+            <version>1.4.1</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.kunlab.scenamatica.nms</groupId>
             <artifactId>NMSTypes</artifactId>
-            <version>1.4.0</version>
+            <version>1.4.1</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
