@@ -1,6 +1,7 @@
 import Action, {ScenarioType} from "/src/components/Action";
 import BelowDocument from "/src/components/BelowDocument";
-import {ObjectType} from "/src/components/Object";
+
+import {PrimitiveTypes} from "/src/components/Object/Types";
 
 # ブロックに関連するアクション
 
@@ -109,7 +110,7 @@ import {ObjectType} from "/src/components/Object";
           },
           {
             name: "dropItems",
-            type: ObjectType.BOOLEAN,
+            type: PrimitiveTypes.BOOLEAN,
             description: "ブロックを破壊した際にアイテムをドロップするかどうかです。",
             available: [ScenarioType.WATCH]
           }

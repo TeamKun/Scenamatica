@@ -1,6 +1,7 @@
 import Action, {ScenarioType} from "/src/components/Action";
 import BelowDocument from "/src/components/BelowDocument";
-import {ObjectType} from "/src/components/Object";
+
+import {PrimitiveTypes} from "/src/components/Object/Types";
 
 # プレイヤに関連するアクション
 
@@ -145,7 +146,7 @@ import {ObjectType} from "/src/components/Object";
             name: "eventOnly",
             anchor: "bucket-empty-event-only",
             description: "イベントのみ発火させるかどうかです。",
-            type: ObjectType.BOOLEAN,
+            type: PrimitiveTypes.BOOLEAN,
             default: "false",
             available: [ScenarioType.EXECUTE]
           }
@@ -270,7 +271,7 @@ NMS の仕様上の都合により、 `block` を用いた液体の場所は `ev
             name: "eventOnly",
             anchor: "bucket-empty-event-only",
             description: "イベントのみ発火させるかどうかです。",
-            type: ObjectType.BOOLEAN,
+            type: PrimitiveTypes.BOOLEAN,
             default: "false",
             available: [ScenarioType.EXECUTE]
           }
@@ -371,7 +372,7 @@ NMS の仕様上の都合により、 `block` を用いた液体の場所は `ev
             name: "criterion",
             anchor: "advancement-criterion",
             description: "進捗の達成条件です。",
-            type: ObjectType.STRING,
+            type: PrimitiveTypes.STRING,
           }
         ]}
         outputs={[
@@ -392,7 +393,7 @@ NMS の仕様上の都合により、 `block` を用いた液体の場所は `ev
             name: "criterion",
             anchor: "advancement-criterion",
             description: "進捗の達成条件です。",
-            type: ObjectType.STRING,
+            type: PrimitiveTypes.STRING,
           }
         ]}
         executable requireable watchable
@@ -600,13 +601,13 @@ Bukkit の仕様により、現在は `ARM_SWING` のみが指定可能です。
           {
             name: "message",
             description: "送信するメッセージまたは検出用の正規表現です。",
-            type: ObjectType.STRING,
+            type: PrimitiveTypes.STRING,
             required: [ScenarioType.EXECUTE],
           },
           {
             name: "format",
             description: "チャットのフォーマットです。",
-            type: ObjectType.STRING
+            type: PrimitiveTypes.STRING
           }
         ]}
         outputs={[
@@ -620,12 +621,12 @@ Bukkit の仕様により、現在は `ARM_SWING` のみが指定可能です。
           {
             name: "message",
             description: "送信したメッセージです。",
-            type: ObjectType.STRING,
+            type: PrimitiveTypes.STRING,
           },
           {
             name: "format",
             description: "チャットのフォーマットです。",
-            type: ObjectType.STRING,
+            type: PrimitiveTypes.STRING,
             available: [ScenarioType.WATCH],
           }
         ]}
@@ -667,48 +668,48 @@ Bukkit の仕様により、現在は `ARM_SWING` のみが指定可能です。
           {
             name: "deathMessage",
             description: "死亡メッセージです。",
-            type: ObjectType.STRING,
+            type: PrimitiveTypes.STRING,
             available: [ScenarioType.EXECUTE, ScenarioType.WATCH],
           },
           {
             name: "exp",
             description: "死亡したプレイヤの新しい経験値です。",
-            type: ObjectType.INTEGER,
+            type: PrimitiveTypes.INTEGER,
             default: "(ゲームルールによる)",
             available: [ScenarioType.EXECUTE, ScenarioType.WATCH],
           },
           {
             name: "totalExp",
             description: "死亡したプレイヤの新しい総経験値です。",
-            type: ObjectType.INTEGER,
+            type: PrimitiveTypes.INTEGER,
             default: "(ゲームルールによる)",
             available: [ScenarioType.EXECUTE, ScenarioType.WATCH],
           },
           {
             name: "keepLevel",
             description: "死亡したプレイヤのレベルを保持するかどうかです。",
-            type: ObjectType.BOOLEAN,
+            type: PrimitiveTypes.BOOLEAN,
             default: "(ゲームルールによる)",
             available: [ScenarioType.EXECUTE, ScenarioType.WATCH],
           },
           {
             name: "keepInventory",
             description: "死亡したプレイヤのインベントリ内容を保持するかどうかです。",
-            type: ObjectType.BOOLEAN,
+            type: PrimitiveTypes.BOOLEAN,
             default: "(ゲームルールによる)",
             available: [ScenarioType.EXECUTE, ScenarioType.WATCH],
           },
           {
             name: "keepExperience",
             description: "死亡したプレイヤの経験値を保持するかどうかです。",
-            type: ObjectType.BOOLEAN,
+            type: PrimitiveTypes.BOOLEAN,
             default: "(ゲームルールによる)",
             available: [ScenarioType.EXECUTE, ScenarioType.WATCH],
           },
           {
             name: "doExpDrop",
             description: "死亡したプレイヤの経験値ドロップを行うかどうかです。",
-            type: ObjectType.BOOLEAN,
+            type: PrimitiveTypes.BOOLEAN,
             default: "(ゲームルールによる)",
             available: [ScenarioType.EXECUTE, ScenarioType.WATCH],
           }
@@ -730,43 +731,43 @@ Bukkit の仕様により、現在は `ARM_SWING` のみが指定可能です。
           {
             name: "deathMessage",
             description: "死亡メッセージです。",
-            type: ObjectType.STRING,
+            type: PrimitiveTypes.STRING,
             available: [ScenarioType.WATCH],
           },
           {
             name: "exp",
             description: "死亡したプレイヤの新しい経験値です。",
-            type: ObjectType.INTEGER,
+            type: PrimitiveTypes.INTEGER,
             available: [ScenarioType.WATCH],
           },
           {
             name: "totalExp",
             description: "死亡したプレイヤの新しい総経験値です。",
-            type: ObjectType.INTEGER,
+            type: PrimitiveTypes.INTEGER,
             available: [ScenarioType.WATCH],
           },
           {
             name: "keepLevel",
             description: "死亡したプレイヤのレベルを保持するかどうかです。",
-            type: ObjectType.BOOLEAN,
+            type: PrimitiveTypes.BOOLEAN,
             available: [ScenarioType.WATCH],
           },
           {
             name: "keepInventory",
             description: "死亡したプレイヤのインベントリ内容を保持するかどうかです。",
-            type: ObjectType.BOOLEAN,
+            type: PrimitiveTypes.BOOLEAN,
             available: [ScenarioType.WATCH],
           },
           {
             name: "keepExperience",
             description: "死亡したプレイヤの経験値を保持するかどうかです。",
-            type: ObjectType.BOOLEAN,
+            type: PrimitiveTypes.BOOLEAN,
             available: [ScenarioType.WATCH],
           },
           {
             name: "doExpDrop",
             description: "死亡したプレイヤの経験値ドロップを行うかどうかです。",
-            type: ObjectType.BOOLEAN,
+            type: PrimitiveTypes.BOOLEAN,
             available: [ScenarioType.WATCH],
           }
         ]}
@@ -854,7 +855,7 @@ Bukkit の仕様により、現在は `ARM_SWING` のみが指定可能です。
           {
             name: "flying",
             description: "飛行中かどうかです。",
-            type: ObjectType.BOOLEAN,
+            type: PrimitiveTypes.BOOLEAN,
             required: [ScenarioType.EXECUTE, ScenarioType.REQUIRE]
           }
         ]}
@@ -925,7 +926,7 @@ Bukkit の仕様により、現在は `ARM_SWING` のみが指定可能です。
             name: "cancelMessage",
             anchor: "gamemode-cancel-message",
             description: "変更がキャンセルされた場合に表示するメッセージです（Paper)。",
-            type: ObjectType.STRING,
+            type: PrimitiveTypes.STRING,
             available: [ScenarioType.WATCH]
           },
           {
@@ -1044,14 +1045,14 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
             name: "slot",
             anchor: "hotbar-slot",
             description: "ホットバーのスロットです。",
-            type: ObjectType.INTEGER,
+            type: PrimitiveTypes.INTEGER,
             required: [ScenarioType.EXECUTE]
           },
           {
             name: "previous",
             anchor: "hotbar-slot",
             description: "変更前のホットバーのスロットです。",
-            type: ObjectType.INTEGER,
+            type: PrimitiveTypes.INTEGER,
             available: [ScenarioType.EXECUTE, ScenarioType.WATCH]
           },
           {
@@ -1073,12 +1074,12 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
           {
             name: "slot",
             description: "ホットバーのスロットです。",
-            type: ObjectType.INTEGER,
+            type: PrimitiveTypes.INTEGER,
           },
           {
             name: "previous",
             description: "変更前のホットバーのスロットです。",
-            type: ObjectType.INTEGER,
+            type: PrimitiveTypes.INTEGER,
             available: [ScenarioType.WATCH]
           },
           {
@@ -1517,7 +1518,7 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
           {
             name: "damage",
             description: "与えるダメージです。",
-            type: ObjectType.INTEGER,
+            type: PrimitiveTypes.INTEGER,
             required : [ScenarioType.EXECUTE]
           },
           {
@@ -1544,7 +1545,7 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
           {
             name: "damage",
             description: "与えたダメージです。",
-            type: ObjectType.INTEGER,
+            type: PrimitiveTypes.INTEGER,
           },
           {
             name: "slot",
@@ -1570,7 +1571,7 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
           {
             name: "damage",
             description: "与えたダメージです。",
-            type: ObjectType.INTEGER,
+            type: PrimitiveTypes.INTEGER,
           }
         ]}
         executable watchable requireable={"装備スロットにあるアイテムのダメージが一致するか判定します。"}
@@ -1627,7 +1628,7 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
           {
             name: "message",
             description: "参加メッセージです。",
-            type: ObjectType.STRING,
+            type: PrimitiveTypes.STRING,
             available: [ScenarioType.WATCH]
           }
         ]}
@@ -1660,13 +1661,13 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
             name: "leaveMessage",
             anchor: "kick-leave-message",
             description: "コンソールとサーバ上のプレイヤ全員に表示されるメッセージです。",
-            type: ObjectType.STRING,
+            type: PrimitiveTypes.STRING,
             available: [ScenarioType.WATCH]
           },
           {
             name: "message",
             description: "キックされたプレイヤに表示されるメッセージです。",
-            type: ObjectType.STRING
+            type: PrimitiveTypes.STRING
           }
         ]}
         outputs={[
@@ -1681,13 +1682,13 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
             name: "leaveMessage",
             anchor: "kick-leave-message",
             description: "コンソールとサーバ上のプレイヤ全員に表示されるメッセージです。",
-            type: ObjectType.STRING,
+            type: PrimitiveTypes.STRING,
             available: [ScenarioType.WATCH]
           },
           {
             name: "message",
             description: "キックされたプレイヤに表示されるメッセージです。",
-            type: ObjectType.STRING
+            type: PrimitiveTypes.STRING
           }
         ]}
         executable watchable
@@ -1723,14 +1724,14 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
             name: "level",
             anchor: "level",
             description: "新しい経験レベルです。",
-            type: ObjectType.INTEGER,
+            type: PrimitiveTypes.INTEGER,
             required: [ScenarioType.EXECUTE, ScenarioType.REQUIRE]
           },
           {
             name: "oldLevel",
             anchor: "old-level",
             description: "変更前の経験レベルです。",
-            type: ObjectType.INTEGER,
+            type: PrimitiveTypes.INTEGER,
             available: [ScenarioType.WATCH]
           }
         ]}
@@ -1744,12 +1745,12 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
           {
             name: "level",
             description: "新しい経験レベルです。",
-            type: ObjectType.INTEGER,
+            type: PrimitiveTypes.INTEGER,
           },
           {
             name: "oldLevel",
             description: "変更前の経験レベルです。",
-            type: ObjectType.INTEGER,
+            type: PrimitiveTypes.INTEGER,
             available: [ScenarioType.EXECUTE, ScenarioType.WATCH]
           }
         ]}
@@ -1854,7 +1855,7 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
             name: "epsilon",
             anchor: "launch-projectile-epsilon",
             description: "投げ物の発射ベクトルの有効数字です。",
-            type: ObjectType.DOUBLE,
+            type: PrimitiveTypes.DOUBLE,
             default: "0.001",
             available: [ScenarioType.WATCH]
           }
@@ -1937,7 +1938,7 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
             name: "message",
             anchor: "quit-message",
             description: "退出時のメッセージです。",
-            type: ObjectType.STRING
+            type: PrimitiveTypes.STRING
           },
           {
             name: "reason",
@@ -1960,7 +1961,7 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
           {
             name: "message",
             description: "退出時のメッセージです。",
-            type: ObjectType.STRING,
+            type: PrimitiveTypes.STRING,
           },
           {
             name: "reason",
@@ -2041,7 +2042,7 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
           {
             name: "isBed",
             description: "ベッドでリスポーンするかどうかです。",
-            type: ObjectType.BOOLEAN,
+            type: PrimitiveTypes.BOOLEAN,
             available: [ScenarioType.WATCH]
           },
           {
@@ -2054,7 +2055,7 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
           {
             name: "isAnchor",
             description: "アンカでリスポーンするかどうかです。",
-            type: ObjectType.BOOLEAN,
+            type: PrimitiveTypes.BOOLEAN,
             available: [ScenarioType.WATCH],
             support: {
               since: "1.16"
@@ -2077,14 +2078,14 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
           {
             name: "isBed",
             description: "ベッドでリスポーンしたかどうかです。",
-            type: ObjectType.BOOLEAN,
+            type: PrimitiveTypes.BOOLEAN,
             available: [ScenarioType.WATCH]
           },
           {
             name: "isAnchor",
             anchor: "respawn-output-is-anchor",
             description: "アンカでリスポーンしたかどうかです。",
-            type: ObjectType.BOOLEAN,
+            type: PrimitiveTypes.BOOLEAN,
             available: [ScenarioType.WATCH],
             support: {
               since: "1.16"
@@ -2136,7 +2137,7 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
           {
             name: "sneaking",
             description: "スニークするかどうかです。",
-            type: ObjectType.BOOLEAN
+            type: PrimitiveTypes.BOOLEAN
           }
         ]}
         outputs={[
@@ -2175,7 +2176,7 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
           {
             name: "sprinting",
             description: "走っているかどうかです。",
-            type: ObjectType.BOOLEAN
+            type: PrimitiveTypes.BOOLEAN
           }
         ]}
         outputs={[

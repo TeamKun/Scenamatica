@@ -1,6 +1,7 @@
 import Action, {ScenarioType} from "/src/components/Action";
 import BelowDocument from "/src/components/BelowDocument";
-import {ObjectType} from "/src/components/Object";
+
+import {PrimitiveTypes} from "/src/components/Object/Types";
 
 # サーバに関連するアクション
 
@@ -35,27 +36,27 @@ import {ObjectType} from "/src/components/Object";
         args={[
           {
             name: "message",
-            type: ObjectType.STRING,
+            type: PrimitiveTypes.STRING,
             anchor: "broadcast-message",
             description: "送信するメッセージまたは判定用の正規表現を指定します。",
             required: [ScenarioType.EXECUTE]
           },
           {
             name: "permission",
-            type: ObjectType.STRING,
+            type: PrimitiveTypes.STRING,
             anchor: "broadcast-permission",
             description: "メッセージの受信者に必要な権限を指定します。"
           },
           {
             name: "recipients",
-            type: "{" + ObjectType.STRING + " | PlayerSpecifier}[]",
+            type: "{" + PrimitiveTypes.STRING + " | PlayerSpecifier}[]",
             type_link: "/docs/use/scenario/types/entities#player-specifier",
             anchor: "broadcast-recipients",
             description: "メッセージの受信者を指定します。"
           },
           {
             name: "strictRecipients",
-            type: ObjectType.BOOLEAN,
+            type: PrimitiveTypes.BOOLEAN,
             anchor: "broadcast-strict-recipients",
             description: "メッセージの受信者を厳密に判定するかを指定します。",
             available: [ScenarioType.WATCH]
@@ -64,7 +65,7 @@ import {ObjectType} from "/src/components/Object";
         outputs={[
           {
             name: "message",
-            type: ObjectType.STRING,
+            type: PrimitiveTypes.STRING,
             anchor: "broadcast-message",
             description: "送信されたメッセージを出力します。"
           },
@@ -125,7 +126,7 @@ import {ObjectType} from "/src/components/Object";
           {
             name: "command",
             anchor: "command-dispatch-command",
-            type: "{" + ObjectType.STRING + " | PlayerSpecifier}[]",
+            type: "{" + PrimitiveTypes.STRING + " | PlayerSpecifier}[]",
             type_link: "/docs/use/scenario/types/entities#player-specifier",
             description: "実行するコマンドを指定します。",
             required: [ScenarioType.EXECUTE]
@@ -140,7 +141,7 @@ import {ObjectType} from "/src/components/Object";
         outputs={[
           {
             name: "command",
-            type: ObjectType.STRING,
+            type: PrimitiveTypes.STRING,
             description: "実行されたコマンドを出力します。"
           },
           {
@@ -182,21 +183,21 @@ import {ObjectType} from "/src/components/Object";
           {
             name: "level",
             anchor: "server-log-level",
-            type: ObjectType.STRING,
+            type: PrimitiveTypes.STRING,
             description: "ログのレベルを指定します。",
             default: "null | INFO"
           },
           {
             name: "message",
             anchor: "server-log-message",
-            type: ObjectType.STRING,
+            type: PrimitiveTypes.STRING,
             description: "ログの内容を**正規表現で**指定します。",
             required: [ScenarioType.EXECUTE]
           },
           {
             name: "sender",
             anchor: "server-log-sender",
-            type: ObjectType.STRING,
+            type: PrimitiveTypes.STRING,
             description: "ログの送信者を指定します。",
             available: [ScenarioType.WATCH]
           }
@@ -252,7 +253,7 @@ Java の標準的なレベルを指定できます。詳しくは以下のリス
         args={[
           {
             name: "plugin",
-            type: ObjectType.STRING,
+            type: PrimitiveTypes.STRING,
             description: "無効化するプラグインを指定します。",
             required: [ScenarioType.EXECUTE, ScenarioType.REQUIRE]
           }
@@ -260,7 +261,7 @@ Java の標準的なレベルを指定できます。詳しくは以下のリス
         outputs={[
           {
             name: "plugin",
-            type: ObjectType.STRING,
+            type: PrimitiveTypes.STRING,
             description: "無効化されたプラグインを出力します。"
           }
         ]}
@@ -281,7 +282,7 @@ Java の標準的なレベルを指定できます。詳しくは以下のリス
         args={[
           {
             name: "plugin",
-            type: ObjectType.STRING,
+            type: PrimitiveTypes.STRING,
             description: "有効化するプラグインを指定します。",
           required: [ScenarioType.EXECUTE, ScenarioType.REQUIRE]
           }
@@ -289,7 +290,7 @@ Java の標準的なレベルを指定できます。詳しくは以下のリス
         outputs={[
             {
                 name: "plugin",
-                type: ObjectType.STRING,
+                type: PrimitiveTypes.STRING,
                 description: "有効化されたプラグインを出力します。"
             }
         ]}
@@ -310,20 +311,20 @@ Java の標準的なレベルを指定できます。詳しくは以下のリス
         args={[
           {
             name: "sender",
-            type: "{" + ObjectType.STRING + " | PlayerSpecifier}[]",
+            type: "{" + PrimitiveTypes.STRING + " | PlayerSpecifier}[]",
             type_link: "/docs/use/scenario/types/entities#player-specifier",
             anchor: "tab-complete-sender",
             description: "タブ補完を実行したプレイヤを指定します。"
           },
           {
             name: "buffer",
-            type: ObjectType.STRING,
+            type: PrimitiveTypes.STRING,
             description: "途中まで入力された, 不完全なコマンドを指定します。",
             required: [ScenarioType.EXECUTE]
           },
           {
             name: "completions",
-            type: ObjectType.STRING + "[]",
+            type: PrimitiveTypes.STRING + "[]",
             description: "タブ補完の候補を指定します。",
           }
         ]}
@@ -361,7 +362,7 @@ Java の標準的なレベルを指定できます。詳しくは以下のリス
         args={[
           {
             name: "enabled",
-            type: ObjectType.BOOLEAN,
+            type: PrimitiveTypes.BOOLEAN,
             description: "ホワイトリストを有効化するかどうかを指定します。"
           }
         ]}

@@ -1,5 +1,6 @@
 import BelowDocument from "/src/components/BelowDocument";
-import { Object, ObjectType } from "/src/components/Object";
+import { Object } from "/src/components/Object"; 
+import {PrimitiveTypes} from "/src/components/Object/Types";
 
 # エンティティに関連する型
 
@@ -106,42 +107,42 @@ EntityType は, Bukkit の [EntityType](https://jd.papermc.io/paper/1.16/org/buk
   },
   {
     name: "customName",
-    type: ObjectType.STRING,
+    type: PrimitiveTypes.STRING,
     description: "エンティティのカスタム名です。"
   },
   {
     name: "uuid",
-    type: ObjectType.STRING,
+    type: PrimitiveTypes.STRING,
     description: "エンティティの UUID です。"
   },
   {
     name: "glowing",
-    type: ObjectType.BOOLEAN,
+    type: PrimitiveTypes.BOOLEAN,
     description: "エンティティが発光しているかどうかです。"
   },
   {
     name: "gravity",
-    type: ObjectType.BOOLEAN,
+    type: PrimitiveTypes.BOOLEAN,
     description: "エンティティが重力に従うかどうかです。"
   },
   {
     name: "silent",
-    type: ObjectType.BOOLEAN,
+    type: PrimitiveTypes.BOOLEAN,
     description: "エンティティが音を発するかどうかです。"
   },
   {
     name: "customNameVisible",
-    type: ObjectType.BOOLEAN,
+    type: PrimitiveTypes.BOOLEAN,
     description: "エンティティのカスタム名が表示されるかどうかです。"
   },
   {
     name: "invulnerable",
-    type: ObjectType.BOOLEAN,
+    type: PrimitiveTypes.BOOLEAN,
     description: "エンティティが無敵かどうかです。"
   },
   {
     name: "tags",
-    type: ObjectType.STRING + "[]",
+    type: PrimitiveTypes.STRING + "[]",
     description: "エンティティのタグです。"
   },
   {
@@ -152,12 +153,12 @@ EntityType は, Bukkit の [EntityType](https://jd.papermc.io/paper/1.16/org/buk
   },
   {
     name: "maxHealth",
-    type: ObjectType.INTEGER,
+    type: PrimitiveTypes.INTEGER,
     description: "エンティティの最大体力です。"
   },
   {
     name: "health",
-    type: ObjectType.INTEGER,
+    type: PrimitiveTypes.INTEGER,
     description: "エンティティの体力です。"
   },
   {
@@ -168,27 +169,27 @@ EntityType は, Bukkit の [EntityType](https://jd.papermc.io/paper/1.16/org/buk
   },
   {
     name: "fireTicks",
-    type: ObjectType.INTEGER,
+    type: PrimitiveTypes.INTEGER,
     description: "エンティティが燃える残り時間です。"
   },
   {
     name: "ticksLived",
-    type: ObjectType.INTEGER,
+    type: PrimitiveTypes.INTEGER,
     description: "エンティティが生きている時間です。"
   },
   {
     name: "portalCooldown",
-    type: ObjectType.INTEGER,
+    type: PrimitiveTypes.INTEGER,
     description: "エンティティがポータルに入れるまでのクールダウン時間です。"
   },
   {
     name: "persistent",
-    type: ObjectType.BOOLEAN,
+    type: PrimitiveTypes.BOOLEAN,
     description: "エンティティが永続的かどうかです。"
   },
   {
     name: "fallDistance",
-    type: ObjectType.FLOAT,
+    type: PrimitiveTypes.FLOAT,
     description: "エンティティが落下した距離です。"
   }
 ]} />
@@ -206,7 +207,7 @@ EntityType は, Bukkit の [EntityType](https://jd.papermc.io/paper/1.16/org/buk
   },
   {
     name: "damage",
-    type: ObjectType.FLOAT,
+    type: PrimitiveTypes.FLOAT,
     description: "ダメージの量です。"
   },
   {
@@ -269,17 +270,17 @@ LivingEntity 型は以下の親構造を持ちます。
 <Object objects={[
   {
     name: "remainAir",
-    type: ObjectType.INTEGER,
+    type: PrimitiveTypes.INTEGER,
     description: "空気残量です。"
   },
   {
     name: "maxAir",
-    type: ObjectType.INTEGER,
+    type: PrimitiveTypes.INTEGER,
     description: "最大空気です。"
   },
   {
     name: "arrowCooldown",
-    type: ObjectType.INTEGER,
+    type: PrimitiveTypes.INTEGER,
     description: "矢のクールダウンです。",
     support: {
       since: "1.16.5"
@@ -287,22 +288,22 @@ LivingEntity 型は以下の親構造を持ちます。
   },
   {
     name: "arrowsInBody",
-    type: ObjectType.INTEGER,
+    type: PrimitiveTypes.INTEGER,
     description: "体に刺さっている矢の数です。"
   },
   {
     name: "maxNoDamageTicks",
-    type: ObjectType.INTEGER,
+    type: PrimitiveTypes.INTEGER,
     description: "最大無敵時間です。"
   },
   {
     name: "lastDamage",
-    type: ObjectType.FLOAT,
+    type: PrimitiveTypes.FLOAT,
     description: "最後に受けたダメージです。"
   },
   {
     name: "noDamageTicks",
-    type: ObjectType.INTEGER,
+    type: PrimitiveTypes.INTEGER,
     description: "無敵時間です。"
   },
   {
@@ -319,17 +320,17 @@ LivingEntity 型は以下の親構造を持ちます。
   },
   {
     name: "removeWhenFarAway",
-    type: ObjectType.BOOLEAN,
+    type: PrimitiveTypes.BOOLEAN,
     description: "遠く離れたときに削除されるかどうかです。"
   },
   {
     name: "canPickupItems",
-    type: ObjectType.BOOLEAN,
+    type: PrimitiveTypes.BOOLEAN,
     description: "アイテムを拾えるかどうかです。"
   },
   {
     name: "leashed",
-    type: ObjectType.BOOLEAN,
+    type: PrimitiveTypes.BOOLEAN,
     description: "リードされているかどうかです。"
   },
   {
@@ -340,47 +341,47 @@ LivingEntity 型は以下の親構造を持ちます。
   },
   {
     name: "gliding",
-    type: ObjectType.BOOLEAN,
+    type: PrimitiveTypes.BOOLEAN,
     description: "滑空しているかどうかです。"
   },
   {
     name: "swimming",
-    type: ObjectType.BOOLEAN,
+    type: PrimitiveTypes.BOOLEAN,
     description: "泳いでいるかどうかです。"
   },
   {
     name: "riptiding",
-    type: ObjectType.BOOLEAN,
+    type: PrimitiveTypes.BOOLEAN,
     description: "トライデントを投げているかどうかです。"
   },
   {
     name: "sleeping",
-    type: ObjectType.BOOLEAN,
+    type: PrimitiveTypes.BOOLEAN,
     description: "寝ているかどうかです。"
   },
   {
     name: "ai",
-    type: ObjectType.BOOLEAN,
+    type: PrimitiveTypes.BOOLEAN,
     description: " AI を持つかどうかです。"
   },
   {
     name: "collidable",
-    type: ObjectType.BOOLEAN,
+    type: PrimitiveTypes.BOOLEAN,
     description: "干渉するかどうかです。"
   },
   {
     name: "invisible",
-    type: ObjectType.BOOLEAN,
+    type: PrimitiveTypes.BOOLEAN,
     description: "透明かどうかです。"
   },
   {
     name: "arrowsStuck",
-    type: ObjectType.INTEGER,
+    type: PrimitiveTypes.INTEGER,
     description: "持っている矢の数です。"
   },
   {
     name: "shieldBlockingDelay",
-    type: ObjectType.INTEGER,
+    type: PrimitiveTypes.INTEGER,
     description: "盾をブロックしている遅延時間です。"
   },
   {
@@ -391,17 +392,17 @@ LivingEntity 型は以下の親構造を持ちます。
   },
   {
     name: "itemUseRemainTime",
-    type: ObjectType.INTEGER,
+    type: PrimitiveTypes.INTEGER,
     description: "アイテム使用の残り時間です。"
   },
   {
     name: "handRaisedTime",
-    type: ObjectType.INTEGER,
+    type: PrimitiveTypes.INTEGER,
     description: "手を上げている時間です。"
   },
   {
     name: "isHandRaised",
-    type: ObjectType.BOOLEAN,
+    type: PrimitiveTypes.BOOLEAN,
     description: "手を上げているかどうかです。"
   }
 ]} />
@@ -419,27 +420,27 @@ LivingEntity 型は以下の親構造を持ちます。
   },
   {
     name: "duration",
-    type: ObjectType.INTEGER,
+    type: PrimitiveTypes.INTEGER,
     description: "ポーション効果の持続時間です。"
   },
   {
     name: "amplifier",
-    type: ObjectType.INTEGER,
+    type: PrimitiveTypes.INTEGER,
     description: "ポーション効果の強さです。"
   },
   {
     name: "ambient",
-    type: ObjectType.BOOLEAN,
+    type: PrimitiveTypes.BOOLEAN,
     description: "ポーション効果がエンティティに表示されるかどうかです。"
   },
   {
     name: "particle",
-    type: ObjectType.BOOLEAN,
+    type: PrimitiveTypes.BOOLEAN,
     description: "ポーション効果がエンティティからパーティクルとして表示されるかどうかです。"
   },
   {
     name: "icon",
-    type: ObjectType.BOOLEAN,
+    type: PrimitiveTypes.BOOLEAN,
     description: "ポーション効果のアイコンが表示されるかどうかです。"
   }
 ]} />
@@ -456,19 +457,19 @@ Player 型は以下の親構造を持ちます。
 <Object objects={[
   {
     name: "name",
-    type : ObjectType.STRING,
+    type : PrimitiveTypes.STRING,
     description: "アクタの名前です。"
   },
   {
     name: "displayName",
     anchor: "actor-display-name",
-    type : ObjectType.STRING,
+    type : PrimitiveTypes.STRING,
     description: "アクタの表示名です。",
   },
   {
     name: "online",
     anchor: "actor-online",
-    type : ObjectType.BOOLEAN,
+    type : PrimitiveTypes.BOOLEAN,
     description: "アクタがオンラインかどうかを設定します。",
     default: true
   },
@@ -492,40 +493,40 @@ Player 型は以下の親構造を持ちます。
   },
   {
     name: "exp",
-    type: ObjectType.INTEGER,
+    type: PrimitiveTypes.INTEGER,
     description: "アクタの経験値を設定します。"
   },
   {
     name: "level",
-    type: ObjectType.INTEGER,
+    type: PrimitiveTypes.INTEGER,
     description: "アクタのレベルを設定します。"
   },
   {
     name: "totalExp",
-    type: ObjectType.INTEGER,
+    type: PrimitiveTypes.INTEGER,
     description: "アクタの総経験値を設定します。"
   },
   {
     name: "flyable",
-    type: ObjectType.BOOLEAN,
+    type: PrimitiveTypes.BOOLEAN,
     description: "アクタが飛行可能かどうかを設定します。",
     default: "gamemode が CREATIVE/SPECTATOR の場合は true、それ以外の場合は false"
   },
   {
     name: "flying",
-    type: ObjectType.BOOLEAN,
+    type: PrimitiveTypes.BOOLEAN,
     description: "アクタが飛行中かどうかを設定します。",
     default: "false"
   },
   {
     name: "flySpeed",
-    type: ObjectType.FLOAT,
+    type: PrimitiveTypes.FLOAT,
     description: "アクタの飛行速度を設定します。",
     default: 0.2
   },
   {
     name: "walkSpeed",
-    type: ObjectType.FLOAT,
+    type: PrimitiveTypes.FLOAT,
     description: "アクタの歩行速度を設定します。",
     default: 0.2
   },
@@ -555,14 +556,14 @@ Player 型は以下の親構造を持ちます。
   },
   {
     name: "foodLevel",
-    type: ObjectType.INTEGER,
+    type: PrimitiveTypes.INTEGER,
     description: "アクタの食料レベルを設定します。",
     default: 20
   },
   {
     name: "op",
     anchor: "actor-op",
-    type: ObjectType.BOOLEAN + " | " + ObjectType.INTEGER,
+    type: PrimitiveTypes.BOOLEAN + " | " + PrimitiveTypes.INTEGER,
     description: "アクタの OP 権限レベルを設定します。",
     default: "false"
   },
@@ -627,17 +628,17 @@ Player 型は以下の親構造を持ちます。
 <Object objects={[
   {
     name: "name",
-    type : ObjectType.STRING,
+    type : PrimitiveTypes.STRING,
     description: "プレイヤリストの名前です。",
   },
   {
     name: "header",
-    type : ObjectType.STRING,
+    type : PrimitiveTypes.STRING,
     description: "プレイヤリストのヘッダーです。",
   },
   {
     name: "footer",
-    type : ObjectType.STRING,
+    type : PrimitiveTypes.STRING,
     description: "プレイヤリストのフッターです。",
   }
 ]} />
@@ -654,27 +655,27 @@ EntityItem 型は以下の親構造を持ちます。
 <Object objects={[
   {
     name: "canMobPickup",
-    type: ObjectType.BOOLEAN,
+    type: PrimitiveTypes.BOOLEAN,
     description: "モブがアイテムを拾えるかどうかです。"
   },
   {
     name: "pickupDelay",
-    type: ObjectType.INTEGER,
+    type: PrimitiveTypes.INTEGER,
     description: "アイテムを拾えるまでの遅延時間です。"
   },
   {
     name: "willAge",
-    type: ObjectType.BOOLEAN,
+    type: PrimitiveTypes.BOOLEAN,
     description: "アイテムが時間経過で消滅するかどうかです。"
   },
   {
     name: "owner",
-    type: ObjectType.STRING,
+    type: PrimitiveTypes.STRING,
     description: "アイテムの所有者の UUID です。"
   },
   {
     name: "thrower",
-    type: ObjectType.STRING,
+    type: PrimitiveTypes.STRING,
     description: "アイテムを投げたプレイヤの UUID です。"
   }
 ]} />
@@ -698,7 +699,7 @@ ProjectileStructure 型は以下の親構造を持ちます。
   },
   {
     name: "bounce",
-    type: ObjectType.BOOLEAN,
+    type: PrimitiveTypes.BOOLEAN,
     description: "投射物が跳ね返るかどうかです。"
   }
 ]} />

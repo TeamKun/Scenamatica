@@ -1,5 +1,6 @@
 import BelowDocument from "/src/components/BelowDocument";
-import { Object, ObjectType } from "/src/components/Object";
+import { Object } from "/src/components/Object"; 
+import {PrimitiveTypes} from "/src/components/Object/Types";
 
 # インベントリ・アイテムに関連する型
 
@@ -17,7 +18,7 @@ Inventory 型は、以下の子を持ちます。
   {
     name: "size",
     anchor: "inventory-size",
-    type: ObjectType.INTEGER,
+    type: PrimitiveTypes.INTEGER,
     description: "インベントリのサイズです。 9 の倍数でなければなりません。",
     default: 36
   },
@@ -117,23 +118,23 @@ PlayerInventory 型は以下の親を継承しています。
 <Object objects={[
   {
     name: "type",
-    type: ObjectType.STRING,
+    type: PrimitiveTypes.STRING,
     description: "アイテムの種類です。",
   },
   {
     name: "amount",
-    type: ObjectType.INTEGER,
+    type: PrimitiveTypes.INTEGER,
     description: "アイテムの個数です。",
     default: 1
   },
   {
     name: "name",
-    type: ObjectType.STRING,
+    type: PrimitiveTypes.STRING,
     description: "アイテムの表示名です。"
   },
   {
     name: "localizedName",
-    type: ObjectType.STRING,
+    type: PrimitiveTypes.STRING,
     description: "アイテムのローカライズされた表示名です。"
   },
   {
@@ -168,7 +169,7 @@ PlayerInventory 型は以下の親を継承しています。
   },
   {
     name: "unbreakable",
-    type: ObjectType.BOOLEAN,
+    type: PrimitiveTypes.BOOLEAN,
     description: "アイテムの耐久が無限かどうかです。",
     default: "false"
   },
@@ -180,7 +181,7 @@ PlayerInventory 型は以下の親を継承しています。
   },
   {
     name: "damage",
-    type: ObjectType.INTEGER,
+    type: PrimitiveTypes.INTEGER,
     description: "アイテムの耐久値です。"
   }
 ]} />
@@ -210,17 +211,17 @@ PlayerInventory 型は以下の親を継承しています。
 <Object objects={[
   {
     name: "uuid",
-    type: ObjectType.STRING,
+    type: PrimitiveTypes.STRING,
     description: "属性の UUID です。",
   },
   {
     name: "name",
-    type: ObjectType.STRING,
+    type: PrimitiveTypes.STRING,
     description: "属性の名前です。",
   },
   {
     name: "amount",
-    type: ObjectType.DOUBLE,
+    type: PrimitiveTypes.DOUBLE,
     description: "属性の値です。",
   },
   {

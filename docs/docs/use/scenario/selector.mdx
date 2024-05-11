@@ -1,4 +1,5 @@
-import {ObjectType, Object} from "/src/components/Object";
+import {Object} from "/src/components/Object"; 
+import {PrimitiveTypes} from "/src/components/Object/Types";
 
 # ターゲットセレクタ
 
@@ -218,22 +219,22 @@ Minecraft ターゲットセレクタは、コマンドの実行者が、その�
     objects={[
       {
         name: "distance",
-        type: ObjectType.DOUBLE,
+        type: PrimitiveTypes.DOUBLE,
         description: "エンティティとの距離です。"
       },
       {
         name: "dx",
-        type: ObjectType.DOUBLE,
+        type: PrimitiveTypes.DOUBLE,
         description: "X 軸方向の距離です。"
       },
       {
         name: "dy",
-        type: ObjectType.DOUBLE,
+        type: PrimitiveTypes.DOUBLE,
         description: "Y 軸方向の距離です。"
       },
       {
         name: "dz",
-        type: ObjectType.DOUBLE,
+        type: PrimitiveTypes.DOUBLE,
         description: "Z 軸方向の距離です。"
       }
     ]}
@@ -250,7 +251,7 @@ Minecraft ターゲットセレクタは、コマンドの実行者が、その�
    objects={[
      {
        name: "gamemode",
-       type: "GameMode |" + ObjectType.INTEGER,
+       type: "GameMode |" + PrimitiveTypes.INTEGER,
        description: "プレイヤのゲームモードです。"
      }
    ]}
@@ -267,7 +268,7 @@ Minecraft ターゲットセレクタは、コマンドの実行者が、その�
    objects={[
      {
        name: "level",
-       type: ObjectType.INTEGER,
+       type: PrimitiveTypes.INTEGER,
        description: "エンティティのレベルです。"
      }
    ]}
@@ -285,27 +286,27 @@ Minecraft ターゲットセレクタは、コマンドの実行者が、その�
    objects={[
      {
        name: "x",
-       type: ObjectType.DOUBLE,
+       type: PrimitiveTypes.DOUBLE,
        description: "X 座標です。"
      },
      {
        name: "y",
-       type: ObjectType.DOUBLE,
+       type: PrimitiveTypes.DOUBLE,
        description: "Y 座標です。"
      },
      {
        name: "z",
-       type: ObjectType.DOUBLE,
+       type: PrimitiveTypes.DOUBLE,
        description: "Z 座標です。"
      },
      {
        name: ["yaw", "y_rotation", "ry"],
-       type: ObjectType.FLOAT,
+       type: PrimitiveTypes.FLOAT,
        description: "Y 軸回転です。"
      },
       {
         name: ["pitch", "x_rotation", "rx"],
-        type: ObjectType.FLOAT,
+        type: PrimitiveTypes.FLOAT,
         description: "X 軸回転です。"
       },
       {
@@ -337,7 +338,7 @@ Minecraft ターゲットセレクタは、コマンドの実行者が、その�
    objects={[
      {
        name: "name",
-       type: ObjectType.STRING,
+       type: PrimitiveTypes.STRING,
        description: "エンティティの名前です。"
      }
    ]}
@@ -376,7 +377,7 @@ Minecraft ターゲットセレクタは、コマンドの実行者が、その�
    objects={[
      {
        name: "tag",
-       type: ObjectType.STRING + " | " + ObjectType.STRING + "[]",
+       type: PrimitiveTypes.STRING + " | " + PrimitiveTypes.STRING + "[]",
        type_link: "/docs/use/scenario/types/misc#list",
        description: "エンティティのタグです。"
      }
@@ -391,7 +392,7 @@ Minecraft ターゲットセレクタは、コマンドの実行者が、その�
    objects={[
      {
        name: "team",
-       type: ObjectType.STRING,
+       type: PrimitiveTypes.STRING,
        description: "エンティティのチームです。"
      }
    ]}

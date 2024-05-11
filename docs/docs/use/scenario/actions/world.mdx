@@ -1,6 +1,7 @@
 import Action, {ScenarioType} from "/src/components/Action";
 import BelowDocument from "/src/components/BelowDocument";
-import {ObjectType} from "/src/components/Object";
+
+import {PrimitiveTypes} from "/src/components/Object/Types";
 
 # ワールドに関連するアクション
 
@@ -45,7 +46,7 @@ import {ObjectType} from "/src/components/Object";
         args={[
           {
             name: "world",
-            type: ObjectType.STRING,
+            type: PrimitiveTypes.STRING,
             description: "ワールドの名前です。",
           },
           {
@@ -57,17 +58,17 @@ import {ObjectType} from "/src/components/Object";
           },
           {
             name: "size",
-            type: ObjectType.DOUBLE,
+            type: PrimitiveTypes.DOUBLE,
             description: "ワールドボーダの半径です。",
           },
           {
             name: "sizeOld",
-            type: ObjectType.DOUBLE,
+            type: PrimitiveTypes.DOUBLE,
             description: "ワールドボーダの変更前の半径です。",
           },
           {
             name: "duration",
-            type: ObjectType.LONG,
+            type: PrimitiveTypes.LONG,
             description: "ワールドボーダの移動にかかる時間です。",
           },
           {
@@ -88,7 +89,7 @@ import {ObjectType} from "/src/components/Object";
         outputs={[
           {
             name: "world",
-            type: ObjectType.STRING,
+            type: PrimitiveTypes.STRING,
             description: "ワールドの名前です。",
           },
           {
@@ -98,17 +99,17 @@ import {ObjectType} from "/src/components/Object";
           },
           {
             name: "size",
-            type: ObjectType.DOUBLE,
+            type: PrimitiveTypes.DOUBLE,
             description: "ワールドボーダの半径です。",
           },
           {
             name: "sizeOld",
-            type: ObjectType.DOUBLE,
+            type: PrimitiveTypes.DOUBLE,
             description: "ワールドボーダの変更前の半径です。",
           },
           {
             name: "duration",
-            type: ObjectType.LONG,
+            type: PrimitiveTypes.LONG,
             description: "ワールドボーダの移動にかかる時間です。",
           },
           {
@@ -152,22 +153,22 @@ import {ObjectType} from "/src/components/Object";
         args={[
           {
             name: "world",
-            type: ObjectType.STRING,
+            type: PrimitiveTypes.STRING,
             description: "ワールドの名前です。",
           },
           {
             name: "size",
-            type: ObjectType.DOUBLE,
+            type: PrimitiveTypes.DOUBLE,
             description: "ワールドボーダの半径です。",
           },
           {
             name: "sizeOld",
-            type: ObjectType.DOUBLE,
+            type: PrimitiveTypes.DOUBLE,
             description: "ワールドボーダの変更前の半径です。",
           },
           {
             name: "duration",
-            type: ObjectType.LONG,
+            type: PrimitiveTypes.LONG,
             description: "ワールドボーダの移動にかかる時間です。",
           }
         ]}
@@ -191,7 +192,7 @@ import {ObjectType} from "/src/components/Object";
         args={[
           {
             name: "world",
-            type: ObjectType.STRING,
+            type: PrimitiveTypes.STRING,
             description: "ワールドの名前です。",
           },
           {
@@ -227,7 +228,7 @@ import {ObjectType} from "/src/components/Object";
         outputs={[
           {
             name: "world",
-            type: ObjectType.STRING,
+            type: PrimitiveTypes.STRING,
             description: "ワールドの名前です。",
           },
         ]}
@@ -248,14 +249,14 @@ import {ObjectType} from "/src/components/Object";
         arguments={[
           {
             name: "world",
-            type: ObjectType.STRING,
+            type: PrimitiveTypes.STRING,
             description: "ワールドの名前です。",
           }
         ]}
         outputs={[
           {
             name: "world",
-            type: ObjectType.STRING,
+            type: PrimitiveTypes.STRING,
             description: "ワールドの名前です。",
           },
         ]}
@@ -281,14 +282,14 @@ import {ObjectType} from "/src/components/Object";
         arguments={[
           {
             name: "world",
-            type: ObjectType.STRING,
+            type: PrimitiveTypes.STRING,
             description: "ワールドの名前です。",
           },
         ]}
         outputs={[
           {
             name: "world",
-            type: ObjectType.STRING,
+            type: PrimitiveTypes.STRING,
             description: "ワールドの名前です。",
           },
         ]}
@@ -309,14 +310,14 @@ import {ObjectType} from "/src/components/Object";
         arguments={[
           {
             name: "world",
-            type: ObjectType.STRING,
+            type: PrimitiveTypes.STRING,
             description: "ワールドの名前です。",
           },
         ]}
         outputs={[
           {
             name: "world",
-            type: ObjectType.STRING,
+            type: PrimitiveTypes.STRING,
             description: "ワールドの名前です。",
           },
         ]}

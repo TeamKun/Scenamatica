@@ -1,3 +1,4 @@
+import {PrimitiveTypes} from "/src/components/Object/Types"; 
 ---
 sidebar_position: 1
 ---
@@ -5,7 +6,6 @@ sidebar_position: 1
 
 import Action, {ScenarioType} from "/src/components/Action";
 import BelowDocument from "/src/components/BelowDocument";
-import {ObjectType} from "/src/components/Object";
 import SearchBar from '@theme/SearchBar';
 
 
@@ -97,7 +97,7 @@ import SearchBar from '@theme/SearchBar';
           {
             name: "message",
             anchor: "message-message",
-            type: ObjectType.STRING,
+            type: PrimitiveTypes.STRING,
             description: "メッセージの内容です。",
             required: [ScenarioType.EXECUTE]
           },
@@ -112,7 +112,7 @@ import SearchBar from '@theme/SearchBar';
         outputs={[
           {
             name: "message",
-            type: ObjectType.STRING,
+            type: PrimitiveTypes.STRING,
             description: "送信されたメッセージです。"
           },
           {
@@ -148,13 +148,13 @@ import SearchBar from '@theme/SearchBar';
           {
             name: "name",
             description: "マイルストーンの名前です。",
-            type: ObjectType.STRING,
+            type: PrimitiveTypes.STRING,
             required: [ScenarioType.EXECUTE, ScenarioType.REQUIRE]
           },
           {
             name: "reached",
             description: "マイルストーンを達成したかどうかを設定します。",
-            type: ObjectType.BOOLEAN,
+            type: PrimitiveTypes.BOOLEAN,
             required: [ScenarioType.EXECUTE, ScenarioType.REQUIRE]
           }
         ]}
@@ -162,12 +162,12 @@ import SearchBar from '@theme/SearchBar';
           {
             name: "name",
             description: "マイルストーンの名前です。",
-            type: ObjectType.STRING,
+            type: PrimitiveTypes.STRING,
           },
           {
             name: "reached",
             description: "マイルストーンを達成したかどうかを設定します。",
-            type: ObjectType.BOOLEAN,
+            type: PrimitiveTypes.BOOLEAN,
           }
         ]}
         executable requireable watchable

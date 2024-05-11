@@ -1,6 +1,7 @@
 import Action, {ScenarioType} from "/src/components/Action";
 import BelowDocument from "/src/components/BelowDocument";
-import {ObjectType} from "/src/components/Object";
+
+import {PrimitiveTypes} from "/src/components/Object/Types";
 
 # インベントリに関連するアクション
 
@@ -48,7 +49,7 @@ import {ObjectType} from "/src/components/Object";
           {
             name: "target",
             description: "インベントリを閉じる対象のプレイヤの名前または UUID です。",
-            type: ObjectType.STRING,
+            type: PrimitiveTypes.STRING,
             required: [ScenarioType.EXECUTE]
           },
           {
@@ -113,7 +114,7 @@ import {ObjectType} from "/src/components/Object";
           {
             name: "target",
             description: "インベントリを開く対象のプレイヤの名前または UUID です。",
-            type: ObjectType.STRING,
+            type: PrimitiveTypes.STRING,
             required: [ScenarioType.EXECUTE]
           },
           {

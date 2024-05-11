@@ -1,9 +1,10 @@
+import {PrimitiveTypes} from "/src/components/Object/Types"; 
 ---
 sidebar_position: 4
 ---
 
 import BelowDocument from "/src/components/BelowDocument";
-import { Object, ObjectType } from "/src/components/Object";
+import { Object } from "/src/components/Object";
 
 # 定義された型
 
@@ -28,7 +29,7 @@ Scenamatica では、YAML の型として以下の型が定義されています
   {
     name: "scenamatica",
     anchor: "apex-scenamatica",
-    type: ObjectType.STRING,
+    type: PrimitiveTypes.STRING,
     description: "Scenamatica のバージョンです。",
     required: true
   },
@@ -43,13 +44,13 @@ Scenamatica では、YAML の型として以下の型が定義されています
   {
     name: "name",
     anchor: "apex-name",
-    type: ObjectType.STRING,
+    type: PrimitiveTypes.STRING,
     description: "シナリオの一意の名前です。",
     required: true
   },
   {
     name: "description",
-    type: ObjectType.STRING,
+    type: PrimitiveTypes.STRING,
     description: "シナリオの人間が読みやすい説明です。",
     required: true
   },
@@ -62,14 +63,14 @@ Scenamatica では、YAML の型として以下の型が定義されています
   {
     name: "timeout",
     anchor: "apex-timeout",
-    type: ObjectType.LONG,
+    type: PrimitiveTypes.LONG,
     description: "シナリオのタイムアウト時間（チック）です。",
     default: 20 * 60 * 5 // チック指定
   },
   {
     name: "order",
     anchor: "apex-order",
-    type: [ObjectType.INTEGER, "Order"],
+    type: [PrimitiveTypes.INTEGER, "Order"],
     type_anchor: "order",
     description: "シナリオの実行順序です。小さいほど先に実行されます。",
     default: `NORMAL`
@@ -205,13 +206,13 @@ Scenamatica のバージョンは、`x.y.z` の形式で指定します。
     {
       name: "since",
       description: "サポートされる Minecraft バージョンの範囲の開始です。",
-      type: ObjectType.STRING,
+      type: PrimitiveTypes.STRING,
       default: "any"
     },
     {
       name: "until",
       description: "サポートされる Minecraft バージョンの範囲の終了です。",
-      type: ObjectType.STRING,
+      type: PrimitiveTypes.STRING,
       default: "any"
     }
   ]}
@@ -297,7 +298,7 @@ Scenamatica のバージョンは、`x.y.z` の形式で指定します。
   {
     name: "type",
     anchor: "trigger-type",
-    type : ObjectType.STRING,
+    type : PrimitiveTypes.STRING,
     description: "トリガの種類です。",
     required: true
   },
@@ -389,40 +390,40 @@ Scenamatica のバージョンは、`x.y.z` の形式で指定します。
   {
     name: "copyOf",
     anchor: "stage-copyOf",
-    type : ObjectType.STRING,
+    type : PrimitiveTypes.STRING,
     description: "オリジナルのワールドの名前です。"
   },
   {
     name: "type",
     anchor: "stage-type",
-    type : ObjectType.STRING,
+    type : PrimitiveTypes.STRING,
     description: "ステージとして使用するワールドの種類です。",
     default: "normal"
   },
   {
     name: "seed",
     anchor: "stage-seed",
-    type: ObjectType.LONG,
+    type: PrimitiveTypes.LONG,
     description: "ステージとして使用するワールドのシードです。"
   },
   {
     name: "structures",
     anchor: "stages",
-    type : ObjectType.BOOLEAN,
+    type : PrimitiveTypes.BOOLEAN,
     description: "ステージとして使用するワールドに構造物を生成するかどうかです。",
     default: "true"
   },
   {
     name: "env",
     anchor: "stage-env",
-    type : ObjectType.STRING,
+    type : PrimitiveTypes.STRING,
     description: "ステージとして使用するワールドの環境です。",
     default: "normal"
   },
   {
     name: "hardcore",
     anchor: "stage-hardcore",
-    type : ObjectType.BOOLEAN,
+    type : PrimitiveTypes.BOOLEAN,
     description: "ステージとして使用するワールドがハードコアかどうかです。",
     default: "false"
   },
@@ -504,13 +505,13 @@ Bukkit でロード済みの既存のワールドの構造、建築物、アイ�
   {
     name: "name",
     anchor: "scenario-name",
-    type: ObjectType.STRING,
+    type: PrimitiveTypes.STRING,
     description: "シナリオの名前です。"
   },
   {
     name: "timeout",
     anchor: "scenario-timeout",
-    type: ObjectType.LONG,
+    type: PrimitiveTypes.LONG,
     description: "シナリオのタイムアウト時間のチック数です。",
     default: 20 * 5
   },
@@ -597,7 +598,7 @@ Bukkit でロード済みの既存のワールドの構造、建築物、アイ�
   {
     name: "with",
     anchor: "action-with",
-    type: ObjectType.OBJECT,
+    type: PrimitiveTypes.OBJECT,
     description: "アクションのパラメータです。"
   },
 ]} />

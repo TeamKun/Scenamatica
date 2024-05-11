@@ -1,9 +1,10 @@
+import {PrimitiveTypes} from "/src/components/Object/Types"; 
 ---
 sidebar_position: 6
 toc_max_heading_level: 4
 ---
 
-import { Object, ObjectType } from "/src/components/Object";
+import { Object } from "/src/components/Object";
 
 # 変数・定数の定義と参照
 
@@ -195,17 +196,17 @@ Java の `System#getProperties()Ljava/lang/String;` で取得できるシステ�
 <Object objects={[
   {
     name: "total",
-    type: ObjectType.LONG,
+    type: PrimitiveTypes.LONG,
     description: "マシンのメモリの合計値です。",
   },
   {
     name: "free",
-    type: ObjectType.LONG,
+    type: PrimitiveTypes.LONG,
     description: "マシンのメモリの空き値です。",
   },
   {
     name: "max",
-    type: ObjectType.LONG,
+    type: PrimitiveTypes.LONG,
     description: "マシンのメモリの最大値です。",
   }
 ]} />
@@ -216,12 +217,12 @@ Java の `System#getProperties()Ljava/lang/String;` で取得できるシステ�
 <Object objects={[
   {
     name: "started_at",
-    type: ObjectType.LONG,
+    type: PrimitiveTypes.LONG,
     description: "セッションの開始時刻です。"
   },
   {
     name: "scenarios.*",
-    type: [ObjectType.INTEGER, "Scenario"],
+    type: [PrimitiveTypes.INTEGER, "Scenario"],
     type_anchor: "variables-type-scenario",
     anchor: "variables-type-session-scenarios",
     description: "セッションに属するシナリオの一覧またはその数です。",
@@ -241,18 +242,18 @@ Java の `System#getProperties()Ljava/lang/String;` で取得できるシステ�
 <Object objects={[
   {
     name: "result",
-    type: [ObjectType.BOOLEAN, "ScenarioResult"],
+    type: [PrimitiveTypes.BOOLEAN, "ScenarioResult"],
     description: "シナリオの実行結果または成功したかどうかです。",
     anchor: "variables-type-session-scenarios-result"
   },
   {
     name: "started_at",
-    type: ObjectType.LONG,
+    type: PrimitiveTypes.LONG,
     description: "シナリオの開始時刻です。",
   },
   {
     name: "finished_at",
-    type: ObjectType.LONG,
+    type: PrimitiveTypes.LONG,
     description: "シナリオの終了時刻です。",
   },
   {
@@ -317,7 +318,7 @@ Java の `System#getProperties()Ljava/lang/String;` で取得できるシステ�
   },
   {
     name: "attempt_of",
-    type: ObjectType.INTEGER,
+    type: PrimitiveTypes.INTEGER,
     description: "シナリオの試行回数です。"
   }
 ]} />

@@ -1,5 +1,6 @@
 import BelowDocument from "/src/components/BelowDocument";
-import { Object, ObjectType } from "/src/components/Object";
+import { Object } from "/src/components/Object"; 
+import {PrimitiveTypes} from "/src/components/Object/Types";
 
 # その他の型
 
@@ -14,32 +15,32 @@ import { Object, ObjectType } from "/src/components/Object";
 <Object objects={[
   {
     name: "x",
-    type: ObjectType.DOUBLE,
+    type: PrimitiveTypes.DOUBLE,
     description: "X 座標です。"
   },
   {
     name: "y",
-    type: ObjectType.DOUBLE,
+    type: PrimitiveTypes.DOUBLE,
     description: "Y 座標です。"
   },
   {
     name: "z",
-    type: ObjectType.DOUBLE,
+    type: PrimitiveTypes.DOUBLE,
     description: "Z 座標です。"
   },
   {
     name: "yaw",
-    type: ObjectType.FLOAT,
+    type: PrimitiveTypes.FLOAT,
     description: "YAW 値です。"
   },
   {
     name: "pitch",
-    type: ObjectType.DOUBLE,
+    type: PrimitiveTypes.DOUBLE,
     description: "PITCH 値です。"
   },
   {
     name: "world",
-    type: ObjectType.STRING, 
+    type: PrimitiveTypes.STRING, 
     description: "ワールド名です。"
   },
 ]} />
@@ -53,17 +54,17 @@ import { Object, ObjectType } from "/src/components/Object";
 <Object objects={[
   {
     name: "x",
-    type: ObjectType.DOUBLE,
+    type: PrimitiveTypes.DOUBLE,
     description: "X 方向の大きさです。"
   },
   {
     name: "y",
-    type: ObjectType.DOUBLE,
+    type: PrimitiveTypes.DOUBLE,
     description: "Y 方向の大きさです。"
   },
   {
     name: "z",
-    type: ObjectType.DOUBLE,
+    type: PrimitiveTypes.DOUBLE,
     description: "Z 方向の大きさです。"
   }
 ]} />
@@ -86,12 +87,12 @@ import { Object, ObjectType } from "/src/components/Object";
   },
   {
     name: "metadata",
-    type: ObjectType.OBJECT,
+    type: PrimitiveTypes.OBJECT,
     description: "ブロックのメタデータです。",
   },
   {
     name: "light",
-    type: ObjectType.INTEGER,
+    type: PrimitiveTypes.INTEGER,
     description: "ブロックの明るさです（0-15）。",
   },
   {

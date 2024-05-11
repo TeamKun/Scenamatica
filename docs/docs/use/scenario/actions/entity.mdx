@@ -1,6 +1,7 @@
 import Action, {ScenarioType} from "/src/components/Action";
 import BelowDocument from "/src/components/BelowDocument";
-import {ObjectType} from "/src/components/Object";
+
+import {PrimitiveTypes} from "/src/components/Object/Types";
 
 # エンティティに関連するアクション
 
@@ -126,7 +127,7 @@ import {ObjectType} from "/src/components/Object";
           {
             name: "amount",
             anchor: "damage-amount",
-            type: ObjectType.FLOAT,
+            type: PrimitiveTypes.FLOAT,
             description: "ダメージの量です。",
             required: [ScenarioType.EXECUTE]
           },
@@ -154,7 +155,7 @@ import {ObjectType} from "/src/components/Object";
           {
             name: "amount",
             anchor: "damage-amount",
-            type: ObjectType.FLOAT,
+            type: PrimitiveTypes.FLOAT,
             description: "ダメージの量です。",
           },
           {
@@ -214,14 +215,14 @@ import {ObjectType} from "/src/components/Object";
           {
             name: "amount",
             anchor: "damage-amount",
-            type: ObjectType.FLOAT,
+            type: PrimitiveTypes.FLOAT,
             description: "ダメージの量です。",
             required: [ScenarioType.EXECUTE, ScenarioType.WATCH]
           },
           {
             name: "modifiers",
             anchor: "damage-modifiers",
-            type: ObjectType.OBJECT,
+            type: PrimitiveTypes.OBJECT,
             description: "ダメージの Modifier です。",
             available: [ScenarioType.WATCH]
           }
@@ -242,7 +243,7 @@ import {ObjectType} from "/src/components/Object";
           {
             name: "amount",
             anchor: "damage-amount",
-            type: ObjectType.FLOAT,
+            type: PrimitiveTypes.FLOAT,
             description: "ダメージの量です。",
           },
           {
@@ -295,19 +296,19 @@ import {ObjectType} from "/src/components/Object";
           },
           {
             name: "dropExp",
-            type: ObjectType.INTEGER,
+            type: PrimitiveTypes.INTEGER,
             description: "ドロップする経験値です。",
             available: [ScenarioType.WATCH]
           },
           {
             name: "reviveHealth",
-            type: ObjectType.INTEGER,
+            type: PrimitiveTypes.INTEGER,
             description: "復活時の体力です。",
             available: [ScenarioType.WATCH]
           },
           {
             name: "playDeathSound",
-            type: ObjectType.BOOLEAN,
+            type: PrimitiveTypes.BOOLEAN,
             description: "死亡時のサウンドを再生するかどうかです。",
             available: [ScenarioType.WATCH]
           },
@@ -325,13 +326,13 @@ import {ObjectType} from "/src/components/Object";
           },
           {
             name: "soundVolume",
-            type: ObjectType.FLOAT,
+            type: PrimitiveTypes.FLOAT,
             description: "サウンドの音量です。",
             available: [ScenarioType.WATCH]
           },
           {
             name: "soundPitch",
-            type: ObjectType.FLOAT,
+            type: PrimitiveTypes.FLOAT,
             description: "サウンドのピッチです。",
             available: [ScenarioType.WATCH]
           }
@@ -435,7 +436,7 @@ import {ObjectType} from "/src/components/Object";
           },
           {
             name: "ai",
-            type: ObjectType.BOOLEAN,
+            type: PrimitiveTypes.BOOLEAN,
             description: "AI を有効にするかどうかです。",
             available: [ScenarioType.EXECUTE],
             anchor: "move-ai"
@@ -507,7 +508,7 @@ AI を有効にした場合, エンティティは経路を探索し自発的に
           },
           {
             name: "remaining",
-            type: ObjectType.INTEGER,
+            type: PrimitiveTypes.INTEGER,
             description: "残りのアイテムの数です。",
             available: [ScenarioType.WATCH]
           }
@@ -527,7 +528,7 @@ AI を有効にした場合, エンティティは経路を探索し自発的に
           },
           {
             name: "remaining",
-            type: ObjectType.INTEGER,
+            type: PrimitiveTypes.INTEGER,
             description: "残りのアイテムの数です。",
           }
         ]}
@@ -546,7 +547,7 @@ AI を有効にした場合, エンティティは経路を探索し自発的に
           },
           {
             name: "remaining",
-            type: ObjectType.INTEGER,
+            type: PrimitiveTypes.INTEGER,
             description: "残りのアイテムの数です。",
           }
         ]}
@@ -597,7 +598,7 @@ AI を有効にした場合, エンティティは経路を探索し自発的に
           },
           {
             name: "player",
-            type: ObjectType.STRING,
+            type: PrimitiveTypes.STRING,
             description: "エンティティを設置するプレイヤです。",
             required: [ScenarioType.EXECUTE]
           },
@@ -733,7 +734,7 @@ AI を有効にした場合, エンティティは経路を探索し自発的に
           },
           {
             name: "eventOnly",
-            type: ObjectType.BOOLEAN,
+            type: PrimitiveTypes.BOOLEAN,
             description: "イベントのみを発生させるかどうかです。",
             anchor: "projectile-hit-event-only",
             default: false,
