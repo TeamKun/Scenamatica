@@ -4,7 +4,7 @@ import net.kunmc.lab.peyangpaperutils.lib.components.Text;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
-import org.kunlab.scenamatica.annotations.action.ActionMeta;
+import org.kunlab.scenamatica.annotations.action.Action;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.events.actor.ActorMessageReceiveEvent;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
@@ -20,7 +20,7 @@ import java.util.List;
 /**
  * プレイヤにメッセージを送信する/送信されることを監視するアクション。
  */
-@ActionMeta("message")
+@Action("message")
 public class MessageAction extends AbstractScenamaticaAction
         implements Executable, Watchable
 {

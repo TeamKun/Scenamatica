@@ -5,7 +5,7 @@ import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.kunlab.scenamatica.annotations.action.ActionMeta;
+import org.kunlab.scenamatica.annotations.action.Action;
 import org.kunlab.scenamatica.enums.MinecraftVersion;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
@@ -19,7 +19,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-@ActionMeta(value = "player_quit", supportsUntil = MinecraftVersion.V1_16_4)
+@Action(value = "player_quit", supportsUntil = MinecraftVersion.V1_16_4)
 public class PlayerQuitAction extends AbstractPlayerAction
         implements Executable, Watchable, Requireable
 {

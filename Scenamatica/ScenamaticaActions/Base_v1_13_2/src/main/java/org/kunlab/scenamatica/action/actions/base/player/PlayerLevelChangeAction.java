@@ -5,7 +5,7 @@ import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerLevelChangeEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.kunlab.scenamatica.annotations.action.ActionMeta;
+import org.kunlab.scenamatica.annotations.action.Action;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
@@ -17,7 +17,7 @@ import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import java.util.Collections;
 import java.util.List;
 
-@ActionMeta("player_level_change")
+@Action("player_level_change")
 public class PlayerLevelChangeAction extends AbstractPlayerAction
         implements Watchable, Executable,
         Requireable

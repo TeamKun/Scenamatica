@@ -2,7 +2,7 @@ package org.kunlab.scenamatica.action.actions.scenamatica;
 
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
-import org.kunlab.scenamatica.annotations.action.ActionMeta;
+import org.kunlab.scenamatica.annotations.action.Action;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.events.MilestoneReachedEvent;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
@@ -17,7 +17,7 @@ import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import java.util.Collections;
 import java.util.List;
 
-@ActionMeta("milestone")
+@Action("milestone")
 public class MilestoneAction extends AbstractScenamaticaAction
         implements Executable, Watchable, Requireable
 {

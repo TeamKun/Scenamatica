@@ -2,7 +2,7 @@ package org.kunlab.scenamatica.action.actions.base.player;
 
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-import org.kunlab.scenamatica.annotations.action.ActionMeta;
+import org.kunlab.scenamatica.annotations.action.Action;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
@@ -11,7 +11,7 @@ import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.PlayerStructure;
 
-@ActionMeta("player")
+@Action("player")
 public class PlayerAction extends AbstractPlayerAction
         implements Executable, Requireable
 {

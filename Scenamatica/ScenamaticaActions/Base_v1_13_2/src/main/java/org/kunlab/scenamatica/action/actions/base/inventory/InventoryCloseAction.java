@@ -7,7 +7,7 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.kunlab.scenamatica.annotations.action.ActionMeta;
+import org.kunlab.scenamatica.annotations.action.Action;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
@@ -19,7 +19,7 @@ import org.kunlab.scenamatica.interfaces.structures.specifiers.PlayerSpecifier;
 import java.util.Collections;
 import java.util.List;
 
-@ActionMeta("inventory_close")
+@Action("inventory_close")
 public class InventoryCloseAction extends AbstractInventoryAction
         implements Executable, Watchable
 {

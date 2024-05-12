@@ -6,7 +6,7 @@ import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.action.actions.base.player.AbstractPlayerAction;
-import org.kunlab.scenamatica.annotations.action.ActionMeta;
+import org.kunlab.scenamatica.annotations.action.Action;
 import org.kunlab.scenamatica.enums.MinecraftVersion;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
@@ -19,7 +19,7 @@ import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import java.util.Collections;
 import java.util.List;
 
-@ActionMeta(value = "player_gamemode", supportsSince = MinecraftVersion.V1_16_5)
+@Action(value = "player_gamemode", supportsSince = MinecraftVersion.V1_16_5)
 public class PlayerGameModeAction extends AbstractPlayerAction
         implements Executable, Watchable, Requireable
 {

@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.action.actions.base.block.BlockBreakAction;
 import org.kunlab.scenamatica.action.actions.base.player.AbstractPlayerAction;
 import org.kunlab.scenamatica.action.utils.InputTypeToken;
-import org.kunlab.scenamatica.annotations.action.ActionMeta;
+import org.kunlab.scenamatica.annotations.action.Action;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
@@ -25,7 +25,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-@ActionMeta("player_harvest_block")
+@Action("player_harvest_block")
 public class PlayerHarvestBlockAction extends AbstractPlayerAction
         implements Executable, Watchable
 {

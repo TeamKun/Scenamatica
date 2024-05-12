@@ -9,12 +9,11 @@ import org.bukkit.event.server.PluginEnableEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
-import org.kunlab.scenamatica.annotations.action.ActionMeta;
+import org.kunlab.scenamatica.annotations.action.Action;
 import org.kunlab.scenamatica.commons.utils.ActionMetaUtils;
 import org.kunlab.scenamatica.enums.MinecraftVersion;
 import org.kunlab.scenamatica.interfaces.ExceptionHandler;
 import org.kunlab.scenamatica.interfaces.ScenamaticaRegistry;
-import org.kunlab.scenamatica.interfaces.action.Action;
 import org.kunlab.scenamatica.interfaces.action.ActionLoader;
 import org.kunlab.scenamatica.interfaces.action.LoadedAction;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
@@ -114,9 +113,9 @@ public class ActionLoaderImpl implements ActionLoader, Listener
         }
     }
 
-    private static boolean isCompatibleWithServer(Class<? extends Action> actionClass)
+    private static boolean isCompatibleWithServer(Class<? extends org.kunlab.scenamatica.interfaces.action.Action> actionClass)
     {
-        ActionMeta meta = ActionMetaUtils.getActionMetaData(actionClass);
+        Action meta = ActionMetaUtils.getActionMetaData(actionClass);
         return MinecraftVersion.current().isInRange(meta.supportsSince(), meta.supportsUntil());
     }
 
@@ -186,7 +185,7 @@ public class ActionLoaderImpl implements ActionLoader, Listener
     }
 
     @Override
-    public <T extends Action> LoadedAction<T> getActionByName(@NotNull String name)
+    public <T extends org.kunlab.scenamatica.interfaces.action.Action> LoadedAction<T> getActionByName(@NotNull String name)
     {
         //noinspection unchecked
         return (LoadedAction<T>) this.actions.stream()
@@ -196,7 +195,7 @@ public class ActionLoaderImpl implements ActionLoader, Listener
     }
 
     @Override
-    public <T extends Action> LoadedAction<T> getActionByClass(@NotNull Class<T> clazz)
+    public <T extends org.kunlab.scenamatica.interfaces.action.Action> LoadedAction<T> getActionByClass(@NotNull Class<T> clazz)
     {
         //noinspection unchecked
         return (LoadedAction<T>) this.actions.stream()
@@ -205,7 +204,7 @@ public class ActionLoaderImpl implements ActionLoader, Listener
                 .orElse(null);
     }
 
-    private List<Class<? extends Action>> getActionClasses(Plugin plugin)
+    private List<Class<? extends org.kunlab.scenamatica.interfaces.action.Action>> getActionClasses(Plugin plugin)
     {
         List<String> actionClassNames;
         try (ScenamaticaActionClassLoader cl = new ScenamaticaActionClassLoader(getJARURL(plugin)))
@@ -215,13 +214,13 @@ public class ActionLoaderImpl implements ActionLoader, Listener
             if (cl.isScenamatica())
                 actionClass = cl.getActionClass();
             else
-                actionClass = Action.class;
+                actionClass = org.kunlab.scenamatica.interfaces.action.Action.class;
 
             //noinspection unchecked
             actionClassNames = classes
                     .stream()
                     .filter(clazz -> isConstructableActionClass(clazz, actionClass))
-                    .map(clazz -> (Class<? extends Action>) clazz)
+                    .map(clazz -> (Class<? extends org.kunlab.scenamatica.interfaces.action.Action>) clazz)
                     .map(Class::getName)
                     .collect(Collectors.toList());
 
@@ -234,13 +233,13 @@ public class ActionLoaderImpl implements ActionLoader, Listener
         // System.gc();
 
         ClassLoader cl = plugin.getClass().getClassLoader();
-        List<Class<? extends Action>> actionClasses = new ArrayList<>();
+        List<Class<? extends org.kunlab.scenamatica.interfaces.action.Action>> actionClasses = new ArrayList<>();
         for (String actionClassName : actionClassNames)
         {
             try
             {
                 //noinspection unchecked
-                Class<? extends Action> actionClass = (Class<? extends Action>) cl.loadClass(actionClassName);
+                Class<? extends org.kunlab.scenamatica.interfaces.action.Action> actionClass = (Class<? extends org.kunlab.scenamatica.interfaces.action.Action>) cl.loadClass(actionClassName);
                 if (!isCompatibleWithServer(actionClass))
                 {
                     this.logger.log(Level.FINE, "Action " + actionClass.getName() + " is not compatible with the server version.");
@@ -261,16 +260,16 @@ public class ActionLoaderImpl implements ActionLoader, Listener
 
     private void loadActionsInternal(Plugin plugin)
     {
-        List<Class<? extends Action>> actionClasses = this.getActionClasses(plugin);
+        List<Class<? extends org.kunlab.scenamatica.interfaces.action.Action>> actionClasses = this.getActionClasses(plugin);
 
         if (actionClasses.isEmpty())
             return;
 
         this.logger.info("Loading actions from " + plugin.getName() + "...");
 
-        for (Class<? extends Action> actionClass : actionClasses)
+        for (Class<? extends org.kunlab.scenamatica.interfaces.action.Action> actionClass : actionClasses)
         {
-            Action constructedAction;
+            org.kunlab.scenamatica.interfaces.action.Action constructedAction;
             try  // try を constructAction 内に移動させると, ネイティブクラスローダからの java.lang.NoClassDefFoundError の餌食になる。
             {
                 constructedAction = this.constructAction(actionClass);
@@ -303,15 +302,15 @@ public class ActionLoaderImpl implements ActionLoader, Listener
         }
     }
 
-    private Action constructAction(Class<? extends Action> actionClass) throws InvocationTargetException, InstantiationException, IllegalAccessException, ClassNotFoundException
+    private org.kunlab.scenamatica.interfaces.action.Action constructAction(Class<? extends org.kunlab.scenamatica.interfaces.action.Action> actionClass) throws InvocationTargetException, InstantiationException, IllegalAccessException, ClassNotFoundException
     {
         Constructor<?>[] constructor = actionClass.getConstructors();
         for (Constructor<?> c : constructor)
         {
             if (c.getParameterCount() == 0)
-                return (Action) c.newInstance();
+                return (org.kunlab.scenamatica.interfaces.action.Action) c.newInstance();
             else if (c.getParameterCount() == 1 && c.getParameterTypes()[0].equals(ScenamaticaRegistry.class))
-                return (Action) c.newInstance(this.registry);
+                return (org.kunlab.scenamatica.interfaces.action.Action) c.newInstance(this.registry);
         }
 
         this.logger.warning("Failed to construct action " + actionClass.getName() + ", no suitable constructor found.");
@@ -411,7 +410,7 @@ public class ActionLoaderImpl implements ActionLoader, Listener
                         continue;
                     }
 
-                    if (clazz.getName().equals(Action.class.getName()))
+                    if (clazz.getName().equals(org.kunlab.scenamatica.interfaces.action.Action.class.getName()))
                     {
                         this.isScenamatica = true;
                         this.actionClass = clazz;

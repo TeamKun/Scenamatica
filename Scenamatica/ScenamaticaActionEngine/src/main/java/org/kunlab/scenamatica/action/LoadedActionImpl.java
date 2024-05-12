@@ -2,17 +2,16 @@ package org.kunlab.scenamatica.action;
 
 import lombok.Value;
 import org.bukkit.plugin.Plugin;
-import org.kunlab.scenamatica.annotations.action.ActionMeta;
+import org.kunlab.scenamatica.annotations.action.Action;
 import org.kunlab.scenamatica.commons.utils.ActionMetaUtils;
 import org.kunlab.scenamatica.enums.MinecraftVersion;
-import org.kunlab.scenamatica.interfaces.action.Action;
 import org.kunlab.scenamatica.interfaces.action.LoadedAction;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 
 @Value
-public class LoadedActionImpl<T extends Action> implements LoadedAction<T>
+public class LoadedActionImpl<T extends org.kunlab.scenamatica.interfaces.action.Action> implements LoadedAction<T>
 {
     Plugin owner;
     String name;
@@ -29,7 +28,7 @@ public class LoadedActionImpl<T extends Action> implements LoadedAction<T>
 
     private LoadedActionImpl(Plugin owner, T instance, Class<? extends T> actionClass)
     {
-        ActionMeta meta = ActionMetaUtils.getActionMetaData(actionClass);
+        Action meta = ActionMetaUtils.getActionMetaData(actionClass);
 
         this.owner = owner;
         this.name = meta.value();
@@ -46,7 +45,7 @@ public class LoadedActionImpl<T extends Action> implements LoadedAction<T>
             throw new IllegalArgumentException("Action " + this.name + " is not executable, watchable, or requireable, cannot be used.");
     }
 
-    public static LoadedAction<?> of(Plugin owner, Action action)
+    public static LoadedAction<?> of(Plugin owner, org.kunlab.scenamatica.interfaces.action.Action action)
     {
         return new LoadedActionImpl<>(
                 owner,

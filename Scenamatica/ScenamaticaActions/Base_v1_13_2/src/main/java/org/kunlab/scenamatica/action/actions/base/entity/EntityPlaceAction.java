@@ -12,7 +12,7 @@ import org.bukkit.event.entity.EntityPlaceEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.kunlab.scenamatica.annotations.action.ActionMeta;
+import org.kunlab.scenamatica.annotations.action.Action;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.Map;
 
 @SuppressWarnings("deprecation")
-@ActionMeta("entity_place")
+@Action("entity_place")
 public class EntityPlaceAction extends AbstractGeneralEntityAction
         implements Executable, Watchable
 {

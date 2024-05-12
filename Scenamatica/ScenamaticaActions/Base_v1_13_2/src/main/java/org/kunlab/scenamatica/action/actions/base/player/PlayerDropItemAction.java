@@ -6,7 +6,7 @@ import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import org.kunlab.scenamatica.annotations.action.ActionMeta;
+import org.kunlab.scenamatica.annotations.action.Action;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
@@ -20,7 +20,7 @@ import org.kunlab.scenamatica.nms.types.entity.NMSEntityPlayer;
 import java.util.Collections;
 import java.util.List;
 
-@ActionMeta("player_drop_item")
+@Action("player_drop_item")
 public class PlayerDropItemAction extends AbstractPlayerAction
         implements Executable, Watchable
 {

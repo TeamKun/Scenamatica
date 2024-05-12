@@ -10,7 +10,7 @@ import org.bukkit.event.world.WorldEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.actions.base.world.AbstractWorldAction;
-import org.kunlab.scenamatica.annotations.action.ActionMeta;
+import org.kunlab.scenamatica.annotations.action.Action;
 import org.kunlab.scenamatica.enums.MinecraftVersion;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
@@ -25,7 +25,7 @@ import org.kunlab.scenamatica.interfaces.structures.minecraft.misc.LocationStruc
 import java.util.Arrays;
 import java.util.List;
 
-@ActionMeta(value = "world_border", supportsSince = MinecraftVersion.V1_16_5)
+@Action(value = "world_border", supportsSince = MinecraftVersion.V1_16_5)
 public class WorldBorderAction extends AbstractWorldAction
         implements Executable, Watchable, Requireable
 {

@@ -20,7 +20,7 @@ import org.bukkit.entity.WitherSkull;
 import org.bukkit.event.Event;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
-import org.kunlab.scenamatica.annotations.action.ActionMeta;
+import org.kunlab.scenamatica.annotations.action.Action;
 import org.kunlab.scenamatica.commons.utils.Utils;
 import org.kunlab.scenamatica.enums.MinecraftVersion;
 import org.kunlab.scenamatica.enums.ScenarioType;
@@ -34,7 +34,7 @@ import org.kunlab.scenamatica.interfaces.structures.minecraft.misc.LocationStruc
 import java.util.Collections;
 import java.util.List;
 
-@ActionMeta(value = "player_projectile_launch", supportsUntil = MinecraftVersion.V1_15_2)
+@Action(value = "player_projectile_launch", supportsUntil = MinecraftVersion.V1_15_2)
 public class PlayerLaunchProjectileAction extends AbstractPlayerAction
         implements Executable, Watchable
 {

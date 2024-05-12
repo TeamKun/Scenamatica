@@ -22,7 +22,7 @@ import org.bukkit.event.Event;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.action.actions.base.player.AbstractPlayerAction;
-import org.kunlab.scenamatica.annotations.action.ActionMeta;
+import org.kunlab.scenamatica.annotations.action.Action;
 import org.kunlab.scenamatica.commons.utils.Utils;
 import org.kunlab.scenamatica.enums.MinecraftVersion;
 import org.kunlab.scenamatica.enums.ScenarioType;
@@ -36,7 +36,7 @@ import org.kunlab.scenamatica.interfaces.structures.minecraft.misc.LocationStruc
 import java.util.Collections;
 import java.util.List;
 
-@ActionMeta(value = "player_projectile_launch", supportsSince = MinecraftVersion.V1_16)
+@Action(value = "player_projectile_launch", supportsSince = MinecraftVersion.V1_16)
 public class PlayerLaunchProjectileAction extends AbstractPlayerAction
         implements Executable, Watchable
 {

@@ -10,7 +10,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.kunlab.scenamatica.annotations.action.ActionMeta;
+import org.kunlab.scenamatica.annotations.action.Action;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
@@ -23,7 +23,7 @@ import org.kunlab.scenamatica.interfaces.structures.minecraft.inventory.ItemStac
 import java.util.Collections;
 import java.util.List;
 
-@ActionMeta("inventory_click")
+@Action("inventory_click")
 public class InventoryClickAction extends AbstractInventoryInteractAction
         implements Executable, Watchable
 {

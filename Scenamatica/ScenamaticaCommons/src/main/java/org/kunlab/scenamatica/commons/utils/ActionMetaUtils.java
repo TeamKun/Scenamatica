@@ -1,15 +1,14 @@
 package org.kunlab.scenamatica.commons.utils;
 
 import org.jetbrains.annotations.NotNull;
-import org.kunlab.scenamatica.annotations.action.ActionMeta;
-import org.kunlab.scenamatica.interfaces.action.Action;
+import org.kunlab.scenamatica.annotations.action.Action;
 
 public class ActionMetaUtils
 {
     @NotNull
-    public static ActionMeta getActionMetaData(Class<? extends Action> actionClass)
+    public static Action getActionMetaData(Class<? extends org.kunlab.scenamatica.interfaces.action.Action> actionClass)
     {
-        ActionMeta meta = actionClass.getAnnotation(ActionMeta.class);
+        Action meta = actionClass.getAnnotation(Action.class);
         if (meta == null)
             throw new IllegalArgumentException("Action class " + actionClass.getName() + " has no @ActionMeta annotation.");
 
@@ -17,13 +16,13 @@ public class ActionMetaUtils
     }
 
     @NotNull
-    public static String getActionName(Class<? extends Action> actionClass)
+    public static String getActionName(Class<? extends org.kunlab.scenamatica.interfaces.action.Action> actionClass)
     {
         return getActionMetaData(actionClass).value();
     }
 
     @NotNull
-    public static String getActionName(Action action)
+    public static String getActionName(org.kunlab.scenamatica.interfaces.action.Action action)
     {
         return getActionName(action.getClass());
     }

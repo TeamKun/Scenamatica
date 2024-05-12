@@ -10,7 +10,7 @@ import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.kunlab.scenamatica.annotations.action.ActionMeta;
+import org.kunlab.scenamatica.annotations.action.Action;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
@@ -27,7 +27,7 @@ import org.kunlab.scenamatica.nms.types.item.NMSItemStack;
 import java.util.Collections;
 import java.util.List;
 
-@ActionMeta("player_item_break")
+@Action("player_item_break")
 public class PlayerItemBreakAction extends AbstractPlayerAction
         implements Executable, Watchable
 {

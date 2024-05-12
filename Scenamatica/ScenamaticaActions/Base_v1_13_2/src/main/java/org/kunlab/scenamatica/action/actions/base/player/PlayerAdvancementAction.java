@@ -11,7 +11,7 @@ import org.bukkit.event.player.PlayerAdvancementDoneEvent;
 import org.bukkit.event.player.PlayerEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.kunlab.scenamatica.annotations.action.ActionMeta;
+import org.kunlab.scenamatica.annotations.action.Action;
 import org.kunlab.scenamatica.commons.utils.NamespaceUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
@@ -24,7 +24,7 @@ import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 import java.util.Arrays;
 import java.util.List;
 
-@ActionMeta("player_advancement")
+@Action("player_advancement")
 public class PlayerAdvancementAction
         extends AbstractPlayerAction
         implements Executable, Watchable, Requireable

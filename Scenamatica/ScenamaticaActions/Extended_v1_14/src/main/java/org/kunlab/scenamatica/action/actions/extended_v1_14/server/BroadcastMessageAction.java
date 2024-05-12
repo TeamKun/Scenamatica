@@ -10,7 +10,7 @@ import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.actions.base.server.AbstractServerAction;
 import org.kunlab.scenamatica.action.utils.InputTypeToken;
 import org.kunlab.scenamatica.action.utils.PlayerLikeCommandSenders;
-import org.kunlab.scenamatica.annotations.action.ActionMeta;
+import org.kunlab.scenamatica.annotations.action.Action;
 import org.kunlab.scenamatica.enums.MinecraftVersion;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
@@ -29,7 +29,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-@ActionMeta(value = "broadcast", supportsSince = MinecraftVersion.V1_14)
+@Action(value = "broadcast", supportsSince = MinecraftVersion.V1_14)
 public class BroadcastMessageAction extends AbstractServerAction
         implements Executable, Watchable
 {

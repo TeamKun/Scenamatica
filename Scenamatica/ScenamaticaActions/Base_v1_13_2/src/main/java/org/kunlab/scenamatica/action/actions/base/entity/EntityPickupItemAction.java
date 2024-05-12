@@ -9,7 +9,7 @@ import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
-import org.kunlab.scenamatica.annotations.action.ActionMeta;
+import org.kunlab.scenamatica.annotations.action.Action;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
@@ -25,7 +25,7 @@ import org.kunlab.scenamatica.nms.types.entity.NMSEntityLiving;
 import java.util.Collections;
 import java.util.List;
 
-@ActionMeta("entity_pickup_item")
+@Action("entity_pickup_item")
 public class EntityPickupItemAction extends AbstractGeneralEntityAction
         implements Executable, Watchable
 {

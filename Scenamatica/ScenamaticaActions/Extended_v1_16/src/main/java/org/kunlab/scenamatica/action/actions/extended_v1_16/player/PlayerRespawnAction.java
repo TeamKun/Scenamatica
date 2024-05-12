@@ -7,7 +7,7 @@ import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.action.actions.base.player.AbstractPlayerAction;
-import org.kunlab.scenamatica.annotations.action.ActionMeta;
+import org.kunlab.scenamatica.annotations.action.Action;
 import org.kunlab.scenamatica.commons.utils.Utils;
 import org.kunlab.scenamatica.enums.MinecraftVersion;
 import org.kunlab.scenamatica.enums.ScenarioType;
@@ -21,7 +21,7 @@ import org.kunlab.scenamatica.interfaces.structures.minecraft.misc.LocationStruc
 import java.util.Arrays;
 import java.util.List;
 
-@ActionMeta(value = "player_respawn", supportsSince = MinecraftVersion.V1_16)
+@Action(value = "player_respawn", supportsSince = MinecraftVersion.V1_16)
 public class PlayerRespawnAction extends AbstractPlayerAction
         implements Executable, Watchable
 {

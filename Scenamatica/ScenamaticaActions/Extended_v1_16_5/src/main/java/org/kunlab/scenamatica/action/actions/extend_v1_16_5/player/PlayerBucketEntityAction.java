@@ -9,7 +9,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.actions.base.player.AbstractPlayerAction;
-import org.kunlab.scenamatica.annotations.action.ActionMeta;
+import org.kunlab.scenamatica.annotations.action.Action;
 import org.kunlab.scenamatica.enums.MinecraftVersion;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
@@ -27,7 +27,7 @@ import java.util.Collections;
 import java.util.List;
 
 // 注： AbstractPlayerBucketAction を継承していない。
-@ActionMeta(value = "player_bucket_entity", supportsSince = MinecraftVersion.V1_16_5)
+@Action(value = "player_bucket_entity", supportsSince = MinecraftVersion.V1_16_5)
 public class PlayerBucketEntityAction extends AbstractPlayerAction
         implements Executable, Watchable
 {

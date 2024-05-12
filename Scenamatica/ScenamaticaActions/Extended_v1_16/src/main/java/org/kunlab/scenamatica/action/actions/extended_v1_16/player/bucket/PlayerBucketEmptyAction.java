@@ -12,7 +12,7 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.action.actions.base.player.bucket.AbstractPlayerBucketAction;
-import org.kunlab.scenamatica.annotations.action.ActionMeta;
+import org.kunlab.scenamatica.annotations.action.Action;
 import org.kunlab.scenamatica.enums.MinecraftVersion;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
@@ -23,7 +23,7 @@ import org.kunlab.scenamatica.nms.enums.NMSHand;
 import java.util.Collections;
 import java.util.List;
 
-@ActionMeta(value = "player_bucket_empty", supportsSince = MinecraftVersion.V1_16)
+@Action(value = "player_bucket_empty", supportsSince = MinecraftVersion.V1_16)
 public class PlayerBucketEmptyAction extends AbstractPlayerBucketAction
         implements Watchable, Executable
 {

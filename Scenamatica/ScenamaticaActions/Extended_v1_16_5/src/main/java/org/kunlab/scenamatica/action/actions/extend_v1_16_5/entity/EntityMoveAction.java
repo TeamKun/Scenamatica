@@ -7,7 +7,7 @@ import org.bukkit.entity.Mob;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.action.actions.base.entity.AbstractGeneralEntityAction;
-import org.kunlab.scenamatica.annotations.action.ActionMeta;
+import org.kunlab.scenamatica.annotations.action.Action;
 import org.kunlab.scenamatica.commons.utils.Utils;
 import org.kunlab.scenamatica.enums.MinecraftVersion;
 import org.kunlab.scenamatica.enums.ScenarioType;
@@ -21,7 +21,7 @@ import org.kunlab.scenamatica.interfaces.structures.minecraft.misc.LocationStruc
 import java.util.Collections;
 import java.util.List;
 
-@ActionMeta(value = "entity_move", supportsSince = MinecraftVersion.V1_16_5)
+@Action(value = "entity_move", supportsSince = MinecraftVersion.V1_16_5)
 public class EntityMoveAction extends AbstractGeneralEntityAction
         implements Executable, Watchable
 {

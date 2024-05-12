@@ -7,7 +7,7 @@ import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.kunlab.scenamatica.annotations.action.ActionMeta;
+import org.kunlab.scenamatica.annotations.action.Action;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
@@ -22,7 +22,7 @@ import org.kunlab.scenamatica.nms.enums.entity.NMSEntityUseAction;
 import java.util.Collections;
 import java.util.List;
 
-@ActionMeta("player_interact_entity")
+@Action("player_interact_entity")
 public class PlayerInteractEntityAction extends AbstractPlayerAction
         implements Executable, Watchable
 {

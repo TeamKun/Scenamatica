@@ -11,7 +11,7 @@ import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.kunlab.scenamatica.annotations.action.ActionMeta;
+import org.kunlab.scenamatica.annotations.action.Action;
 import org.kunlab.scenamatica.commons.utils.VoxelUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
@@ -26,7 +26,7 @@ import org.kunlab.scenamatica.interfaces.structures.specifiers.EntitySpecifier;
 import java.util.Collections;
 import java.util.List;
 
-@ActionMeta("projectile_hit")
+@Action("projectile_hit")
 public class ProjectileHitAction extends AbstractEntityAction<Projectile, ProjectileStructure>
         implements Executable, Watchable
 {

@@ -7,7 +7,7 @@ import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.kunlab.scenamatica.annotations.action.ActionMeta;
+import org.kunlab.scenamatica.annotations.action.Action;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
@@ -21,7 +21,7 @@ import org.kunlab.scenamatica.nms.enums.NMSHand;
 import java.util.Collections;
 import java.util.List;
 
-@ActionMeta("player_item_consume")
+@Action("player_item_consume")
 public class PlayerItemConsumeAction extends AbstractPlayerAction
         implements Executable, Watchable
 {

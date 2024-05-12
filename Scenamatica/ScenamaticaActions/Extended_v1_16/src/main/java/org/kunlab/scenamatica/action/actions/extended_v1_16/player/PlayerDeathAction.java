@@ -6,7 +6,7 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.actions.base.player.AbstractPlayerAction;
-import org.kunlab.scenamatica.annotations.action.ActionMeta;
+import org.kunlab.scenamatica.annotations.action.Action;
 import org.kunlab.scenamatica.enums.MinecraftVersion;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
@@ -20,7 +20,7 @@ import org.kunlab.scenamatica.interfaces.structures.specifiers.PlayerSpecifier;
 import java.util.Collections;
 import java.util.List;
 
-@ActionMeta(value = "player_death", supportsSince = MinecraftVersion.V1_16)
+@Action(value = "player_death", supportsSince = MinecraftVersion.V1_16)
 public class PlayerDeathAction extends AbstractPlayerAction
         implements Executable, Requireable, Watchable
 {
