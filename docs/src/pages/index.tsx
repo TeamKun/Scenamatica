@@ -72,7 +72,7 @@ function Characters(): JSX.Element {
 function Buttons(): JSX.Element {
   return (
     <div className={styles.buttons}>
-      <Link className={clsx(styles.button, " button button--secondary button--lg")} to="/docs/home">
+      <Link className={clsx(styles.button, " button button--secondary button--lg")} to="/">
         詳しくみる &gt;
       </Link>
       <Link className={clsx(styles.button, styles.buttonGitHub, " button button--secondary button--lg")}

@@ -19,9 +19,9 @@ export default function NotFoundContent({className}) {
           <ul>
             <li><Link to="/docs">ドキュメントホーム</Link></li>
             <li><Link to="/docs/getting-started/installation">Scenamatica インストールガイド</Link></li>
-            <li><Link to="/docs/use/scenario/actions">アクション一覧</Link></li>
+            <li><Link to="/references/actions">アクション一覧</Link></li>
             <li><Link to="/docs/getting-started/tutorials">各種チュートリアル</Link></li>
-            <li><Link to="/docs/use/scenario/types#scenario-file">シナリオファイルの構造</Link></li>
+            <li><Link to="/references/types/#scenario-file">シナリオファイルの構造</Link></li>
           </ul>
         </div>
       </div>

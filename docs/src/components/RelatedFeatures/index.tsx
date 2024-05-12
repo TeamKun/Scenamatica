@@ -1,20 +1,19 @@
 import React from "react"
 import DocCard from "@theme/DocCard"
 // @ts-ignore
-import { useDocById, useLocalPathname } from "@docusaurus/theme-common/internal"
+import {useDocById, useLocalPathname} from "@docusaurus/theme-common/internal"
 
 type RelatedFeatureProps = {
   docNames: string[]
   headerLevel?: number
 }
 
-const RelatedFeatures: React.FC<RelatedFeatureProps> = ({ docNames, headerLevel = 3 }) => {
+const RelatedFeatures: React.FC<RelatedFeatureProps> = ({docNames, headerLevel = 3}) => {
   const docs = docNames.map((docName) => {
     let doc;
     try {
-      doc = useDocById("use-kpm/features/" + docName)
-    }
-    catch (e) {
+      doc = useDocById("use-scenamatica/features/" + docName)
+    } catch (e) {
       doc = useDocById(docName)
     }
 
@@ -27,7 +26,7 @@ const RelatedFeatures: React.FC<RelatedFeatureProps> = ({ docNames, headerLevel 
     let path = useLocalPathname().split("/").slice(0, 2).join("/") + "/" + doc.id
 
     return (
-      <span style={{ display: "inline-block", width: "250px", marginRight: "1rem" }} key={"related-" + doc.id}>
+      <span style={{display: "inline-block", width: "250px", marginRight: "1rem"}} key={"related-" + doc.id}>
         <DocCard
           item={{
             type: "link",

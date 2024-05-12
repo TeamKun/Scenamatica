@@ -2,11 +2,10 @@
 sidebar_position: 4
 ---
 
-import BelowDocument from "/src/components/BelowDocument";
 import { Object } from "/src/components/Object";
 import {PrimitiveTypes} from "/src/components/Object/Types"; 
 
-# 定義された型
+# 型 - Types
 
 Scenamatica で定義されている型について説明しています。
 
@@ -16,12 +15,12 @@ Scenamatica で定義されている型について説明しています。
 
 Scenamatica では、YAML の型として以下の型が定義されています。
 
-+ [エンティティに関連する型](/docs/use/scenario/types/entities)
-+ [インベントリとアイテムに関連する型](/docs/use/scenario/types/inventory-items)
-+ [その他の型](/docs/use/scenario/types/misc)  
-  [`Location`](/docs/use/scenario/types/misc#location) や
-  [`Block`](/docs/use/scenario/types/misc#block),
-  [`NamespacedKey`](/docs/use/scenario/types/misc#namespaced-key) など
++ [エンティティに関連する型](/references/types/entities)
++ [インベントリとアイテムに関連する型](/references/types/inventory-items)
++ [その他の型](/references/types/misc)  
+  [`Location`](/references/types/misc#location) や
+  [`Block`](/references/types/misc#block),
+  [`NamespacedKey`](/references/types/misc#namespaced-key) など
 
 ## シナリオファイルの構造 {#scenario-file}
 
@@ -157,13 +156,7 @@ Scenamatica のバージョンは、`x.y.z` の形式で指定します。
 シナリオの**同一セッション**内での実行順序を制御します。   
 [セッション](.#scenario-session)とは、同じトリガの種類を持つシナリオが同時に発火した場合に、それらを一つのグループとみなしてシナリオを効率的に実行するためのものです。
 
-実行順序は、数値が低いものから順に実行されます。未設定の場合は自動的に名前順でソートされ、セッションの末尾に追加されます。
-
-<BelowDocument docId="use/scenario/README"
-               anchor={"scenario-ordering"}
-               label={"シナリオ - シナリオの実行順序の制御"}
-               message={""}
-/>
+[実行順序](/docs/use/scenario/#scenari-ordering)は、数値が低いものから順に実行されます。未設定の場合は自動的に名前順でソートされ、セッションの末尾に追加されます。
 
 #### `context` {#apex-context}
 
@@ -247,7 +240,7 @@ Scenamatica のバージョンは、`x.y.z` の形式で指定します。
     name: "actors",
     anchor: "context-actors",
     type: "Player[]",
-    type_link: "/docs/use/scenario/types/entities#player",
+    type_link: "/references/types/entities#player",
     description: "シナリオの実行に必要なアクタを定義します。"
   },
   {
@@ -278,8 +271,8 @@ Scenamatica のバージョンは、`x.y.z` の形式で指定します。
 これを設定すると、シナリオの実行前に[ステージ](/docs/use/scenario/elements#stage)内にエンティティが生成され、終了時に削除されます。
 
 :::warning
-これを指定する場合は、[Entity 型](/docs/use/scenario/types/entities#entity)
-の [`type`](/docs/use/scenario/types/entities#entity-type) を
+これを指定する場合は、[Entity 型](/references/types/entities#entity)
+の [`type`](/references/types/entities#entity-type) を
 必ず指定する必要があります。  
 これは、エンティティの種類を指定して拡張パラメタを設定するためです。
 :::
@@ -336,23 +329,15 @@ Scenamatica のバージョンは、`x.y.z` の形式で指定します。
 :::warning
 
 トリガの種類によっては必要になるものがあります。  
-それぞれのトリガーの説明を参照してください。
+それぞれの[トリガ](/docs/use/scenario/trigger)の説明を参照してください。
 
-<BelowDocument
-  docId="use/scenario/trigger"
-  label="トリガ"
-/>
 :::
 
 #### `type` {#trigger-type}
 
 トリガーの種類です。
 
-<BelowDocument docId="use/scenario/trigger"
-               anchor="triggers"
-               label="有効なトリガの種類"
-               message="有効なトリガの種類の一覧はこちらを参照してください。"
-/>
+有効なトリガの種類の一覧は[こちら](/docs/use/scenario/trigger#triggers)を参照してください
 
 #### `before` {#trigger-before}
 
@@ -607,13 +592,7 @@ Bukkit でロード済みの既存のワールドの構造、建築物、アイ�
 
 #### `type` {#action-type}
 
-アクションの種類です。
-
-<BelowDocument docId={"use/scenario/actions/README"}
-               anchor={"actions"}
-               label={"アクションの種類"}
-               message={"アクションの種類については、以下を参照してください。"} 
-/>
+[アクションの種類](/references/actions/#actions)を指定します。
 
 #### `with` {#action-with}
 

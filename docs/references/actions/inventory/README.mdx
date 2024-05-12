@@ -11,26 +11,16 @@ import {PrimitiveTypes} from "/src/components/Object/Types";
 
 ## 記述する際の注意 {#notes}
 
-:::tip
-
-**シナリオやシナリオファイルの概念が初めての方は、先に[こちら](/docs/use/scenario)を参照して理解しておくことを推奨します。**
-
-:::
-
-<BelowDocument docId="use/scenario/scenario-file"
-               label="シナリオファイルを記述する際の注意"
-               anchor="notes"
-/>
 
 ## 全般 - 出力 `inventory` {#general-output-inventory}
 
-対象となったインベントリの[`Inventory`](/docs/use/scenario/types/inventory-items/#inventory)が出力されます。
+対象となったインベントリの[`Inventory`](/references/types/inventory-items/#inventory)が出力されます。
 
 ## インベントリ操作系 {#inventory-interaction}
 
 プレイヤによるインベントリの操作に関するアクションです。
 
-<BelowDocument docId={"use/scenario/actions/inventory/interaction"}
+<BelowDocument docId={"actions/inventory/interaction"}
                 label={"インベントリ操作系のシナリオ"}
 />
 
@@ -56,14 +46,14 @@ import {PrimitiveTypes} from "/src/components/Object/Types";
             name: "inventory",
             anchor: "inventory-close-inventory",
             type: "Inventory",
-            type_link: "/docs/use/scenario/types#inventory",
+            type_link: "/references/types#inventory",
             description: "閉じるインベントリです。",
             available: [ScenarioType.WATCH, ScenarioType.REQUIRE]
           },
           {
             name: "reason",
             type: "InventoryCloseReason",
-            type_link: "/docs/use/scenario/types/inventory-items#inventory-close-reason",
+            type_link: "/references/types/inventory-items#inventory-close-reason",
             description: "インベントリを閉じる理由です。",
           }
         ]}
@@ -71,19 +61,19 @@ import {PrimitiveTypes} from "/src/components/Object/Types";
           {
             name: "inventory",
             type: "Inventory",
-            type_link: "/docs/use/scenario/types#inventory",
+            type_link: "/references/types#inventory",
             description: "閉じたインベントリです。",
           },
           {
             name: "Player",
             type: "Player",
-            type_link: "/docs/use/scenario/types/entities/#player",
+            type_link: "/references/types/entities/#player",
             description: "インベントリを閉じたプレイヤです。",
           },
           {
             name: "reason",
             type: "InventoryCloseReason",
-            type_link: "/docs/use/scenario/types/inventory-items#inventory-close-reason",
+            type_link: "/references/types/inventory-items#inventory-close-reason",
             description: "インベントリを閉じた理由です。",
           },
           
@@ -120,7 +110,7 @@ import {PrimitiveTypes} from "/src/components/Object/Types";
           {
             name: "inventory",
             type: "Inventory",
-            type_link: "/docs/use/scenario/types#inventory",
+            type_link: "/references/types#inventory",
             description: "開くインベントリです。",
             required: [ScenarioType.EXECUTE]
           },
@@ -129,13 +119,13 @@ import {PrimitiveTypes} from "/src/components/Object/Types";
           {
             name: "inventory",
             type: "Inventory",
-            type_link: "/docs/use/scenario/types#inventory",
+            type_link: "/references/types#inventory",
             description: "開いたインベントリです。",
           },
           {
             name: "Player",
             type: "Player",
-            type_link: "/docs/use/scenario/types/entities/#player",
+            type_link: "/references/types/entities/#player",
             description: "インベントリを開いたプレイヤです。",
           },
         ]}

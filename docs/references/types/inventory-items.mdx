@@ -33,7 +33,7 @@ Inventory 型は、以下の子を持ちます。
     name: "items",
     anchor: "inventory-items",
     type: "ItemStack[]",
-    type_link: "/docs/use/scenario/types/inventory-items#item-stack",
+    type_link: "/references/types/inventory-items#item-stack",
     description: "インベントリのアイテムです。"
   }
 ]} />
@@ -67,27 +67,27 @@ PlayerInventory 型は以下の親を継承しています。
   {
     name: "main",
     type: "Inventory",
-    type_link: "/docs/use/scenario/types/inventory-items#inventory",
+    type_link: "/references/types/inventory-items#inventory",
     description: "インベントリのメインの中身です。",
     default: "Inventory { size: 36 }"
   },
   {
     name: "mainHandItem",
     type: "ItemStack",
-    type_link: "/docs/use/scenario/types/inventory-items#item-stack",
+    type_link: "/references/types/inventory-items#item-stack",
     description: "インベントリの利き手にあるアイテムです。"
   },
   {
     name: "offHandItem",
     type: "ItemStack",
-    type_link: "/docs/use/scenario/types/inventory-items#item-stack",
+    type_link: "/references/types/inventory-items#item-stack",
     description: "インベントリの補助の手にあるアイテムです。"
   },
   {
     name: "armors",
     anchor: "player-inventory-armors",
     type: "ItemStack[]",
-    type_link: "/docs/use/scenario/types/inventory-items#item-stack",
+    type_link: "/references/types/inventory-items#item-stack",
     description: "インベントリの防具の中身です。"
   }
 ]} />
@@ -145,20 +145,20 @@ PlayerInventory 型は以下の親を継承しています。
   {
     name: "placeables",
     type: "NamespacedKey[]",
-    type_link: "/docs/use/scenario/types/misc#namespaced-key",
+    type_link: "/references/types/misc#namespaced-key",
     description: "アイテムの設置可能なブロックです。",
   },
   {
     name: "destroyables",
     type: "NamespacedKey[]",
-    type_link: "/docs/use/scenario/types/misc#namespaced-key",
+    type_link: "/references/types/misc#namespaced-key",
     description: "アイテムの破壊可能なブロックです。",
   },
   {
     name: "enchants",
     anchor: "item-stack-enchants",
     type: "Map<NamespacedKey, Integer>",
-    type_link: "/docs/use/scenario/types/misc#namespaced-key",
+    type_link: "/references/types/misc#namespaced-key",
     description: "アイテムに付与されたエンチャントです。"
   },
   {

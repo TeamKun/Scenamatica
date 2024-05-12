@@ -32,7 +32,7 @@ Scenamatica は、シナリオと呼ばれるファイルを使用して、プ�
 
 ## ステップ２. Scenamatica のバージョンを記述する {#step2-write-scenamatica-version}
 
-シナリオファイルの先頭には、対応している Scenamatica のバージョン\([`scenamatica`](/docs/use/scenario/types#apex-scenamatica)) を記述します。  
+シナリオファイルの先頭には、対応している Scenamatica のバージョン\([`scenamatica`](/references/types/#apex-scenamatica)) を記述します。  
 これは、プラグインが対応している Scenamatica がサーバのものよりも古い場合に、存在しない機能を参照しないようにするためです。
 
 プラグインのデバッグ用のサーバに配置されている Scenamatica と同じバージョンを記述してください。
@@ -46,8 +46,8 @@ scenamatica: "0.0.1"
 
 シナリオファイルの次に、シナリオの名前と説明を記述します。
 
-名前\([`name`](/docs/use/scenario/types#apex-name)) は、シナリオの識別子として使用されます。プラグインの中で一意な命名をしてください。  
-説明\([`description`](/docs/use/scenario/types#scenario-file)) は、人間が読みやすいような説明文を記述します。
+名前\([`name`](/references/types/#apex-name)) は、シナリオの識別子として使用されます。プラグインの中で一意な命名をしてください。  
+説明\([`description`](/references/types/#scenario-file)) は、人間が読みやすいような説明文を記述します。
 
 ```yaml title="test-hoge-success.yml" showLineNumbers
 scenamatica: "0.0.1"
@@ -79,8 +79,8 @@ context:
 
 ## ステップ５. トリガを記述する {#step5-write-triggers}
 
-シナリオが実行されるためには、発火のための[トリガ](/docs/use/scenario/elements#trigger)が必要です。  
-トリガは、 [`on`](/docs/use/scenario/types#apex-on) というキーでオブジェクトのリストで記述します。
+シナリオが実行されるためには、発火のための[トリガ](/docs/use/scenario/trigger)が必要です。  
+トリガは、 [`on`](/references/types/#apex-on) というキーでオブジェクトのリストで記述します。
 
 今回は手動実行のみを想定しているので、 手動実行(`manual_dispatch`) というトリガを記述します。
 
@@ -165,7 +165,7 @@ scenario:
 
 :::warning
 
-シナリオを手動実行に対応させるためには、 [`triggers`](/docs/use/scenario/types#apex-triggers)
+シナリオを手動実行に対応させるためには、 [`on`](/references/types/#apex-on)
 に [`manual_dispatch`](/docs/use/scenario/trigger#triggers-manual-dispatch) が含まれている必要があります。
 
 その他のトリガに関しては、[こちら](/docs/use/scenario/trigger)を参照してください。

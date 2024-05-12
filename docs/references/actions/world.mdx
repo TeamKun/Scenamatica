@@ -11,20 +11,10 @@ import {PrimitiveTypes} from "/src/components/Object/Types";
 
 ## 記述する際の注意 {#notes}
 
-:::tip
-
-**シナリオやシナリオファイルの概念が初めての方は、先に[こちら](/docs/use/scenario)を参照して理解しておくことを推奨します。**
-
-:::
-
-<BelowDocument docId="use/scenario/scenario-file"
-               label="シナリオファイルを記述する際の注意"
-               anchor="notes"
-/>
 
 ## 全般 - 引数 `world` {#apex-world}
 
-これらのアクションは、[NamespacedKey](/docs/use/scenario/types/misc#namespaced-key) 型のオプション引数 `world` を受け取ります。
+これらのアクションは、[NamespacedKey](/references/types/misc#namespaced-key) 型のオプション引数 `world` を受け取ります。
 
 省略した場合はシナリオに割り当てられたステージが対象になります。
 
@@ -74,14 +64,14 @@ import {PrimitiveTypes} from "/src/components/Object/Types";
           {
             name: "center",
             anchor: "world-border-center",
-            type_link: "/docs/use/scenario/types/misc#location",
+            type_link: "/references/types/misc#location",
             type: "Location",
             description: "ワールドボーダの中心座標です。",
           },
           {
             name: "centerOld",
             anchor: "world-border-center-old",
-            type_link: "/docs/use/scenario/types/misc#location",
+            type_link: "/references/types/misc#location",
             type: "Location",
             description: "ワールドボーダの変更前の中心座標です。",
           }
@@ -114,13 +104,13 @@ import {PrimitiveTypes} from "/src/components/Object/Types";
           },
           {
             name: "center",
-            type_link: "/docs/use/scenario/types/misc#location",
+            type_link: "/references/types/misc#location",
             type: "Location",
             description: "ワールドボーダの中心座標です。",
           },
           {
             name: "centerOld",
-            type_link: "/docs/use/scenario/types/misc#location",
+            type_link: "/references/types/misc#location",
             type: "Location",
             description: "ワールドボーダの変更前の中心座標です。",
           }

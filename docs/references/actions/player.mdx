@@ -11,21 +11,11 @@ import {PrimitiveTypes} from "/src/components/Object/Types";
 
 ## 記述する際の注意 {#notes}
 
-:::tip
-
-**シナリオやシナリオファイルの概念が初めての方は、先に[こちら](/docs/use/scenario)を参照して理解しておくことを推奨します。**
-
-:::
-
-<BelowDocument docId="use/scenario/scenario-file"
-               label="シナリオファイルを記述する際の注意"
-               anchor="notes"
-/>
 
 
 ## 全般 - 引数 `target` {#general-target}
 
-対象のエンティティを[PlayerSpecifier 型（プレイヤ指定子）](/docs/use/scenario/types/entities#player-specifier)で指定します。
+対象のエンティティを[PlayerSpecifier 型（プレイヤ指定子）](/references/types/entities#player-specifier)で指定します。
 
 :::info シナリオの種類での振る舞いの違い
 
@@ -56,7 +46,7 @@ import {PrimitiveTypes} from "/src/components/Object/Types";
 
 ## 全般 - 出力 `target` {#general-output-target}
 
-対象となったプレイヤの [`Player`](/docs/use/scenario/types/entities/#player) オブジェクトを出力します。
+対象となったプレイヤの [`Player`](/references/types/entities/#player) オブジェクトを出力します。
 
 ## 特別：プレイヤ {#player}
 
@@ -68,14 +58,14 @@ import {PrimitiveTypes} from "/src/components/Object/Types";
             name: "target",
             type: "PlayerSpecifier",
             anchor: "general-target",
-            type_link: "/docs/use/scenario/types/entities#player-specifier",
+            type_link: "/references/types/entities#player-specifier",
             description: "状態を書き換える対象のプレイヤです。",
             required: true
           },
           {
             name: "data",
             type: "Player",
-            type_link: "/docs/use/scenario/types#player",
+            type_link: "/references/types#player",
             description: "書き換えるプレイヤの状態です。",
             required: [ScenarioType.EXECUTE]
           },
@@ -84,7 +74,7 @@ import {PrimitiveTypes} from "/src/components/Object/Types";
           {
             name: "target",
             type: "Player",
-            type_link: "/docs/use/scenario/types#player",
+            type_link: "/references/types#player",
             description: "書き換えたプレイヤです。",
           }
         ]}
@@ -121,13 +111,13 @@ import {PrimitiveTypes} from "/src/components/Object/Types";
             name: "block",
             description: "バケツを使用するブロックです。",
             type: "Block",
-            type_link: "/docs/use/scenario/types/misc#block",
+            type_link: "/references/types/misc#block",
           },
           {
             name: "clickedBlock",
             description: "バケツを使用するブロックです。",
             type: "Block",
-            type_link: "/docs/use/scenario/types/misc#block",
+            type_link: "/references/types/misc#block",
           },
           {
             name: "blockFace",
@@ -138,7 +128,7 @@ import {PrimitiveTypes} from "/src/components/Object/Types";
             name: "hand",
             description: "使用する手です。",
             type: "Hand",
-            type_link: "/docs/use/scenario/types/entities#hand",
+            type_link: "/references/types/entities#hand",
             default: "MAIN_HAND",
             available: [ScenarioType.WATCH]
           },
@@ -156,13 +146,13 @@ import {PrimitiveTypes} from "/src/components/Object/Types";
             name: "target",
             description: "バケツを使用したプレイヤです。",
             type: "Player",
-            type_link: "/docs/use/scenario/types/entities/#player",
+            type_link: "/references/types/entities/#player",
           },
           {
             name: "item",
             description: "使用したあとのバケツのアイテムです。",
             type: "ItemStack",
-            type_link: "/docs/use/scenario/types#item-stack",
+            type_link: "/references/types#item-stack",
           },
           {
             name: "bucket",
@@ -173,7 +163,7 @@ import {PrimitiveTypes} from "/src/components/Object/Types";
             name: "block",
             description: "バケツを使用したブロックです。",
             type: "Block",
-            type_link: "/docs/use/scenario/types/misc#block",
+            type_link: "/references/types/misc#block",
           },
           {
             name: "blockFace",
@@ -184,7 +174,7 @@ import {PrimitiveTypes} from "/src/components/Object/Types";
             name: "hand",
             description: "使用した手です。",
             type: "Hand",
-            type_link: "/docs/use/scenario/types/entities#hand"
+            type_link: "/references/types/entities#hand"
           },
         ]}
         executable={"バケツ内の液体をブロックに撒きます。"}
@@ -234,7 +224,7 @@ NMS の仕様上の都合により、 `block` を用いた液体の場所は `ev
             name: "target",
             description: "バケツを使用するプレイヤです。",
             type: "Player",
-            type_link: "/docs/use/scenario/types/entities/#player",
+            type_link: "/references/types/entities/#player",
             required: [ScenarioType.EXECUTE]
           },
           {
@@ -246,13 +236,13 @@ NMS の仕様上の都合により、 `block` を用いた液体の場所は `ev
             name: "block",
             description: "バケツを使用するブロックです。",
             type: "Block",
-            type_link: "/docs/use/scenario/types/misc#block",
+            type_link: "/references/types/misc#block",
           },
           {
             name: "clickedBlock",
             description: "バケツを使用するブロックです。",
             type: "Block",
-            type_link: "/docs/use/scenario/types/misc#block",
+            type_link: "/references/types/misc#block",
           },
           {
             name: "blockFace",
@@ -263,7 +253,7 @@ NMS の仕様上の都合により、 `block` を用いた液体の場所は `ev
             name: "hand",
             description: "使用する手です。",
             type: "Hand",
-            type_link: "/docs/use/scenario/types/entities#hand",
+            type_link: "/references/types/entities#hand",
             default: "MAIN_HAND",
             available: [ScenarioType.WATCH]
           },
@@ -281,13 +271,13 @@ NMS の仕様上の都合により、 `block` を用いた液体の場所は `ev
             name: "target",
             description: "バケツを使用したプレイヤです。",
             type: "Player",
-            type_link: "/docs/use/scenario/types/entities/#player",
+            type_link: "/references/types/entities/#player",
           },
           {
             name: "item",
             description: "使用したあとのバケツのアイテムです。",
             type: "ItemStack",
-            type_link: "/docs/use/scenario/types#item-stack",
+            type_link: "/references/types#item-stack",
           },
           {
             name: "bucket",
@@ -298,7 +288,7 @@ NMS の仕様上の都合により、 `block` を用いた液体の場所は `ev
             name: "block",
             description: "バケツを使用したブロックです。",
             type: "Block",
-            type_link: "/docs/use/scenario/types/misc#block",
+            type_link: "/references/types/misc#block",
           },
           {
             name: "blockFace",
@@ -309,7 +299,7 @@ NMS の仕様上の都合により、 `block` を用いた液体の場所は `ev
             name: "hand",
             description: "使用した手です。",
             type: "Hand",
-            type_link: "/docs/use/scenario/types/entities#hand",
+            type_link: "/references/types/entities#hand",
             default: "MAIN_HAND",
           },
         ]}
@@ -365,7 +355,7 @@ NMS の仕様上の都合により、 `block` を用いた液体の場所は `ev
             anchor: "advancement-advancement",
             description: "進捗です。",
             type: "NamespacedKey",
-            type_link: "/docs/use/scenario/types/misc#namespaced-key",
+            type_link: "/references/types/misc#namespaced-key",
             required: [ScenarioType.EXECUTE, ScenarioType.REQUIRE]
           },
           {
@@ -380,13 +370,13 @@ NMS の仕様上の都合により、 `block` を用いた液体の場所は `ev
             name: "target",
             description: "進捗を達成したプレイヤです。",
             type: "Player",
-            type_link: "/docs/use/scenario/types/entities/#player",
+            type_link: "/references/types/entities/#player",
           },
           {
             name: "advancement",
             anchor: "advancement-advancement",
             description: "進捗です。",
-            type_link: "/docs/use/scenario/types/misc#namespaced-key",
+            type_link: "/references/types/misc#namespaced-key",
             type: "NamespacedKey",
           },
           {
@@ -419,7 +409,7 @@ NMS の仕様上の都合により、 `block` を用いた液体の場所は `ev
 
 #### `advancement` {#advancement-advancement}
 
-進捗を [`NamespacedKey`](/docs/use/scenario/types/misc#namespaced-key) で指定します。
+進捗を [`NamespacedKey`](/references/types/misc#namespaced-key) で指定します。
 
 #### `criterion` {#advancement-criterion}
 
@@ -461,7 +451,7 @@ NMS の仕様上の都合により、 `block` を用いた液体の場所は `ev
             anchor: "target",
             description: "アニメーションを実行したプレイヤです。",
             type: "Player",
-            type_link: "/docs/use/scenario/types/entities/#player",
+            type_link: "/references/types/entities/#player",
           },
           {
             name: "type",
@@ -507,20 +497,20 @@ Bukkit の仕様により、現在は `ARM_SWING` のみが指定可能です。
             name: "entity",
             description: "格納するエンティティです。",
             type: "EntitySpecifier",
-            type_link: "/docs/use/scenario/types/entities#entity-specifier",
+            type_link: "/references/types/entities#entity-specifier",
             required: [ScenarioType.EXECUTE]
           },
           {
             name: "bucket",
             description: "エンティティを入れるバケツです。",
             type: "ItemStack",
-            type_link: "/docs/use/scenario/types#item-stack",
+            type_link: "/references/types#item-stack",
           },
           {
             name: "entityBucket",
             description: "エンティティが入ったバケツです。",
             type: "ItemStack",
-            type_link: "/docs/use/scenario/types#item-stack",
+            type_link: "/references/types#item-stack",
           },
         ]}
         outputs={[
@@ -528,25 +518,25 @@ Bukkit の仕様により、現在は `ARM_SWING` のみが指定可能です。
             name: "target",
             description: "バケツに格納したプレイヤです。",
             type: "Player",
-            type_link: "/docs/use/scenario/types/entities/#player",
+            type_link: "/references/types/entities/#player",
           },
           {
             name: "entity",
             description: "格納したエンティティです。",
             type: "Entity",
-            type_link: "/docs/use/scenario/types#entity",
+            type_link: "/references/types#entity",
           },
           {
             name: "bucket",
             description: "エンティティを入れるバケツです。",
             type: "ItemStack",
-            type_link: "/docs/use/scenario/types#item-stack",
+            type_link: "/references/types#item-stack",
           },
           {
             name: "entityBucket",
             description: "エンティティが入ったバケツです。",
             type: "ItemStack",
-            type_link: "/docs/use/scenario/types#item-stack",
+            type_link: "/references/types#item-stack",
             available: [ScenarioType.WATCH]
           },
         ]}
@@ -616,7 +606,7 @@ Bukkit の仕様により、現在は `ARM_SWING` のみが指定可能です。
             anchor: "target",
             description: "チャットを送信したプレイヤです。",
             type: "Player",
-            type_link: "/docs/use/scenario/types/entities/#player",
+            type_link: "/references/types/entities/#player",
           },
           {
             name: "message",
@@ -720,13 +710,13 @@ Bukkit の仕様により、現在は `ARM_SWING` のみが指定可能です。
             anchor: "target",
             description: "死亡したプレイヤです。",
             type: "Player",
-            type_link: "/docs/use/scenario/types/entities/#player",
+            type_link: "/references/types/entities/#player",
           },
           {
             name: "killer",
             description: "殺したプレイヤです。",
             type: "Player",
-            type_link: "/docs/use/scenario/types/entities/#player",
+            type_link: "/references/types/entities/#player",
           },
           {
             name: "deathMessage",
@@ -801,7 +791,7 @@ Bukkit の仕様により、現在は `ARM_SWING` のみが指定可能です。
             name: "item",
             description: "ドロップするアイテムです。",
             type: "EntityItem",
-            type_link: "/docs/use/scenario/types#entity-item",
+            type_link: "/references/types#entity-item",
           }
         ]}
         outputs={[
@@ -810,7 +800,7 @@ Bukkit の仕様により、現在は `ARM_SWING` のみが指定可能です。
             anchor: "target",
             description: "アイテムをドロップしたプレイヤです。",
             type: "Player",
-            type_link: "/docs/use/scenario/types/entities/#player",
+            type_link: "/references/types/entities/#player",
           },
           {
             name: "item",
@@ -828,8 +818,8 @@ Bukkit の仕様により、現在は `ARM_SWING` のみが指定可能です。
 
 この出力の型はシナリオの種類によって異なります。
 
-+ アクション実行シナリオでは、ドロップしたアイテムの [`ItemStack`](/docs/use/scenario/types/inventory-items/#item-stack) が出力されます。
-+ 実行期待シナリオでは、ドロップしたアイテムの [`EntityItem`](/docs/use/scenario/types/entities#entity-item) が出力されます。
++ アクション実行シナリオでは、ドロップしたアイテムの [`ItemStack`](/references/types/inventory-items/#item-stack) が出力されます。
++ 実行期待シナリオでは、ドロップしたアイテムの [`EntityItem`](/references/types/entities#entity-item) が出力されます。
 :::
 
 ## 飛行 {#flight}
@@ -865,7 +855,7 @@ Bukkit の仕様により、現在は `ARM_SWING` のみが指定可能です。
             anchor: "target",
             description: "飛行したプレイヤです。",
             type: "Player",
-            type_link: "/docs/use/scenario/types/entities/#player",
+            type_link: "/references/types/entities/#player",
           }
         ]}
         executable requireable watchable
@@ -914,7 +904,7 @@ Bukkit の仕様により、現在は `ARM_SWING` のみが指定可能です。
             anchor: "target",
             description: "ゲームモードを変更したプレイヤです。",
             type: "Player",
-            type_link: "/docs/use/scenario/types/entities/#player",
+            type_link: "/references/types/entities/#player",
           },
           {
             name: "gamemode",
@@ -978,14 +968,14 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
             name: "block",
             description: "収穫するブロックです。",
             type: "Block",
-            type_link: "/docs/use/scenario/types/misc#block",
+            type_link: "/references/types/misc#block",
             required: [ScenarioType.EXECUTE]
           },
           {
             name: "items",
             description: "収穫したアイテムです。",
             type: "ItemStack[]",
-            type_link: "/docs/use/scenario/types#item-stack",
+            type_link: "/references/types#item-stack",
             available: [ScenarioType.WATCH]
           }
         ]}
@@ -995,19 +985,19 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
             anchor: "target",
             description: "収穫したプレイヤです。",
             type: "Player",
-            type_link: "/docs/use/scenario/types/entities/#player",
+            type_link: "/references/types/entities/#player",
           },
           {
             name: "block",
             description: "収穫したブロックです。",
             type: "Block",
-            type_link: "/docs/use/scenario/types/misc#block",
+            type_link: "/references/types/misc#block",
           },
           {
             name: "items",
             description: "収穫したアイテムです。",
             type: "ItemStack[]",
-            type_link: "/docs/use/scenario/types#item-stack",
+            type_link: "/references/types#item-stack",
             available: [ScenarioType.WATCH]
           }
         ]}
@@ -1060,7 +1050,7 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
             anchor: "hotbar-item",
             description: "ホットバーのスロットにあるアイテムです。",
             type: "ItemStack",
-            type_link: "/docs/use/scenario/types/inventory-items#item-stack",
+            type_link: "/references/types/inventory-items#item-stack",
           },
         ]}
         outputs={[
@@ -1086,7 +1076,7 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
             name: "item",
             description: "ホットバーのスロットにあるアイテムです。",
             type: "ItemStack",
-            type_link: "/docs/use/scenario/types/inventory-items#item-stack",
+            type_link: "/references/types/inventory-items#item-stack",
           },
         ]}
         executable requireable watchable
@@ -1108,7 +1098,7 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
 
 #### `item` {#hotbar-item}
 
-この型は[こちら](/docs/use/scenario/types#item-stack)を参照してください。
+この型は[こちら](/references/types#item-stack)を参照してください。
 
 ## エンティティのクリック（作用） {#interact-at-entity}
 
@@ -1141,20 +1131,20 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
           {
             name: "entity",
             type: "EntitySpecifier",
-            type_anchor: "/docs/use/scenario/types/entities#entity-specifier",
+            type_anchor: "/references/types/entities#entity-specifier",
             description: "クリックした対象のエンティティです。",
             required: [ScenarioType.EXECUTE]
           },
           {
             name: "hand",
             type: "Hand",
-            type_link: "/docs/use/scenario/types/entities#hand",
+            type_link: "/references/types/entities#hand",
             description: "クリックする手です。",
           },
           {
             name: "position",
             type: "Vector(Location)",
-            type_link: "/docs/use/scenario/types/misc#location",
+            type_link: "/references/types/misc#location",
             description: "クリックするエンティティの位置です。",
             required: [ScenarioType.EXECUTE]
           }
@@ -1163,25 +1153,25 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
           {
             name: "target",
             type: "Player",
-            type_link: "/docs/use/scenario/types/entities/#player",
+            type_link: "/references/types/entities/#player",
             description: "クリックした対象のエンティティです。",
           },
           {
             name: "entity",
             type: "Entity",
-            type_link: "/docs/use/scenario/types/entities#entity",
+            type_link: "/references/types/entities#entity",
             description: "クリックした対象のエンティティです。",
           },
           {
             name: "hand",
             type: "Hand",
-            type_link: "/docs/use/scenario/types/entities#hand",
+            type_link: "/references/types/entities#hand",
             description: "クリックする手です。",
           },
           {
             name: "position",
             type: "Vector(Location)",
-            type_link: "/docs/use/scenario/types/misc#location",
+            type_link: "/references/types/misc#location",
             description: "クリックするエンティティの位置です。",
           }
         ]}
@@ -1227,7 +1217,7 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
             anchor: "hand",
             description: "クリックされた手です。",
             type: "Hand",
-            type_link: "/docs/use/scenario/types/entities#hand",
+            type_link: "/references/types/entities#hand",
           },
           {
             name: "action",
@@ -1242,14 +1232,14 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
             anchor: "target",
             description: "ブロックをクリックしたプレイヤです。",
             type: "Player",
-            type_link: "/docs/use/scenario/types/entities/#player",
+            type_link: "/references/types/entities/#player",
           },
           {
             name: "block",
             anchor: "block",
             description: "クリックされたブロックです。",
             type: "Block",
-            type_link: "/docs/use/scenario/types/misc#block"
+            type_link: "/references/types/misc#block"
           },
           {
             name: "blockFace",
@@ -1263,7 +1253,7 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
             anchor: "hand",
             description: "クリックされた手です。",
             type: "Hand",
-            type_link: "/docs/use/scenario/types/entities#hand",
+            type_link: "/references/types/entities#hand",
           },
           {
             name: "action",
@@ -1277,7 +1267,7 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
 
 #### `block` {#interact-block-block}
 
-<BelowDocument docId="use/scenario/types/misc"
+<BelowDocument docId="types/misc"
                anchor="block"
                label="Block 型"
 />
@@ -1304,14 +1294,14 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
           {
             name: "entity",
             type: "EntitySpecifier",
-            type_anchor: "/docs/use/scenario/types/entities#entity-specifier",
+            type_anchor: "/references/types/entities#entity-specifier",
             description: "クリックした対象のエンティティです。",
             required: [ScenarioType.EXECUTE]
           },
           {
             name: "hand",
             type: "Hand",
-            type_link: "/docs/use/scenario/types/entities#hand",
+            type_link: "/references/types/entities#hand",
             description: "クリックする手です。",
             default: "MAIN_HAND(on execute action)"
           }
@@ -1320,19 +1310,19 @@ Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `
           {
             name: "target",
             type: "Player",
-            type_link: "/docs/use/scenario/types/entities/#player",
+            type_link: "/references/types/entities/#player",
             description: "クリックした対象のエンティティです。",
           },
           {
             name: "entity",
             type: "Entity",
-            type_link: "/docs/use/scenario/types/entities#entity",
+            type_link: "/references/types/entities#entity",
             description: "クリックした対象のエンティティです。",
           },
           {
             name: "hand",
             type: "Hand",
-            type_link: "/docs/use/scenario/types/entities#hand",
+            type_link: "/references/types/entities#hand",
             description: "クリックした手です。",
           }
         ]}
@@ -1376,7 +1366,7 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
             name: "item",
             description: "破壊されるアイテムです。",
             type: "ItemStack",
-            type_link: "/docs/use/scenario/types#item-stack",
+            type_link: "/references/types#item-stack",
           },
           {
             name: "slot",
@@ -1391,13 +1381,13 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
             anchor: "target",
             description: "破壊されたアイテムを持っているプレイヤです。",
             type: "Player",
-            type_link: "/docs/use/scenario/types/entities/#player",
+            type_link: "/references/types/entities/#player",
           },
           {
             name: "item",
             description: "破壊されたアイテムです。",
             type: "ItemStack",
-            type_link: "/docs/use/scenario/types#item-stack",
+            type_link: "/references/types#item-stack",
           },
           {
             name: "slot",
@@ -1438,13 +1428,13 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
             name: "item",
             description: "消費されるアイテムです。",
             type: "ItemStack",
-            type_link: "/docs/use/scenario/types#item-stack",
+            type_link: "/references/types#item-stack",
           },
           {
             name: "replacement",
             description: "消費されるアイテムの代わりに与えられるアイテムです。",
             type: "ItemStack",
-            type_link: "/docs/use/scenario/types#item-stack",
+            type_link: "/references/types#item-stack",
             available: [ScenarioType.WATCH]
           }
         ]}
@@ -1454,19 +1444,19 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
             anchor: "target",
             description: "アイテムを消費したプレイヤです。",
             type: "Player",
-            type_link: "/docs/use/scenario/types/entities/#player",
+            type_link: "/references/types/entities/#player",
           },
           {
             name: "item",
             description: "消費されたアイテムです。",
             type: "ItemStack",
-            type_link: "/docs/use/scenario/types#item-stack",
+            type_link: "/references/types#item-stack",
           },
           {
             name: "replacement",
             description: "消費されたアイテムの代わりに与えられるアイテムです。",
             type: "ItemStack",
-            type_link: "/docs/use/scenario/types#item-stack",
+            type_link: "/references/types#item-stack",
           }
         ]}
         executable watchable 
@@ -1512,7 +1502,7 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
             anchor: "item-damage-item",
             description: "ダメージを与えられるアイテムです。",
             type: "ItemStack",
-            type_link: "/docs/use/scenario/types#item-stack",
+            type_link: "/references/types#item-stack",
             required: [ScenarioType.EXECUTE, ScenarioType.REQUIRE]
           },
           {
@@ -1533,14 +1523,14 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
             name: "target",
             description: "ダメージを与えたプレイヤです。",
             type: "Player",
-            type_link: "/docs/use/scenario/types/entities/#player",
+            type_link: "/references/types/entities/#player",
           },
           {
             name: "item",
             anchor: "item-damage-item",
             description: "ダメージを与えられたアイテムです。",
             type: "ItemStack",
-            type_link: "/docs/use/scenario/types#item-stack",
+            type_link: "/references/types#item-stack",
           },
           {
             name: "damage",
@@ -1559,14 +1549,14 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
             name: "target",
             description: "ダメージを与えたプレイヤです。",
             type: "Player",
-            type_link: "/docs/use/scenario/types/entities/#player",
+            type_link: "/references/types/entities/#player",
           },
           {
             name: "item",
             anchor: "item-damage-item",
             description: "ダメージを与えられたアイテムです。",
             type: "ItemStack",
-            type_link: "/docs/use/scenario/types#item-stack",
+            type_link: "/references/types#item-stack",
           },
           {
             name: "damage",
@@ -1623,7 +1613,7 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
             anchor: "target",
             description: "参加したプレイヤです。",
             type: "Player",
-            type_link: "/docs/use/scenario/types/entities/#player",
+            type_link: "/references/types/entities/#player",
           },
           {
             name: "message",
@@ -1676,7 +1666,7 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
             anchor: "target",
             description: "キックされたプレイヤです。",
             type: "Player",
-            type_link: "/docs/use/scenario/types/entities/#player",
+            type_link: "/references/types/entities/#player",
           },
           {
             name: "leaveMessage",
@@ -1739,7 +1729,7 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
           {
             name: "target",
             type: "Player",
-            type_link: "/docs/use/scenario/types/entities#player",
+            type_link: "/references/types/entities#player",
             description: "経験レベルを変更したプレイヤです。",
           },
           {
@@ -1783,14 +1773,14 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
             name: "from",
             description: "移動前の座標です。",
             type: "Location",
-            type_link: "/docs/use/scenario/types/misc#location",
+            type_link: "/references/types/misc#location",
             available: [ScenarioType.EXECUTE]
           },
           {
             name: "to",
             description: "移動後の座標です。",
             type: "Location",
-            type_link: "/docs/use/scenario/types/misc#location",
+            type_link: "/references/types/misc#location",
             available: [ScenarioType.EXECUTE]
           }
         ]}
@@ -1798,20 +1788,20 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
           {
             name: "target",
             type: "Player",
-            type_link: "/docs/use/scenario/types/entities#player",
+            type_link: "/references/types/entities#player",
             description: "移動したプレイヤです。",
           },
           {
             name: "from",
             description: "移動前の座標です。",
             type: "Location",
-            type_link: "/docs/use/scenario/types/misc#location",
+            type_link: "/references/types/misc#location",
           },
           {
             name: "to",
             description: "移動後の座標です。",
             type: "Location",
-            type_link: "/docs/use/scenario/types/misc#location",
+            type_link: "/references/types/misc#location",
           },
         ]}
         executable={"プレイヤを指定された座標にテレポートさせます。"}
@@ -1866,14 +1856,14 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
             anchor: "target",
             description: "投げ物を発射したプレイヤです。",
             type: "Player",
-            type_link: "/docs/use/scenario/types/entities/#player",
+            type_link: "/references/types/entities/#player",
           },
           {
             name: "projectile",
             anchor: "launch-projectile-out-projectile",
             description: "発射された投げ物です。",
             type: "Projectile",
-            type_link: "/docs/use/scenario/types/entities#projectile",
+            type_link: "/references/types/entities#projectile",
           }
         ]}
         executable watchable
@@ -1955,7 +1945,7 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
           {
             name: "target",
             type: "Player",
-            type_link: "/docs/use/scenario/types/entities#player",
+            type_link: "/references/types/entities#player",
             description: "退出したプレイヤです。",
           },
           {
@@ -2050,7 +2040,7 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
             anchor: "respawn-location",
             description: "リスポーンする場所です。",
             type: "Location",
-            type_link: "/docs/use/scenario/types/misc#location",
+            type_link: "/references/types/misc#location",
           },
           {
             name: "isAnchor",
@@ -2066,14 +2056,14 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
           {
             name: "target",
             type: "Player",
-            type_link: "/docs/use/scenario/types/entities#player",
+            type_link: "/references/types/entities#player",
             description: "リスポーンしたプレイヤです。",
           },
           {
             name: "location",
             description: "リスポーンした場所です。",
             type: "Location",
-            type_link: "/docs/use/scenario/types/misc#location",
+            type_link: "/references/types/misc#location",
           },
           {
             name: "isBed",
@@ -2144,7 +2134,7 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
           {
             name: "target",
             type: "Player",
-            type_link: "/docs/use/scenario/types/entities#player",
+            type_link: "/references/types/entities#player",
             description: "スニークしたプレイヤです。",
           }
         ]}
@@ -2183,7 +2173,7 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
           {
             name: "target",
             type: "Player",
-            type_link: "/docs/use/scenario/types/entities#player",
+            type_link: "/references/types/entities#player",
             description: "走ったプレイヤです。",
           }
         ]}
@@ -2216,14 +2206,14 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
             name: "from",
             description: "テレポート前の座標です。",
             type: "Location",
-            type_link: "/docs/use/scenario/types/misc#location",
+            type_link: "/references/types/misc#location",
             available: [ScenarioType.WATCH]
           },
           {
             name: "to",
             description: "テレポート後の座標です。",
             type: "Location",
-            type_link: "/docs/use/scenario/types/misc#location",
+            type_link: "/references/types/misc#location",
             required: [ScenarioType.EXECUTE]
           },
           {
@@ -2237,20 +2227,20 @@ Minecraft による仕様のために、距離が離れすぎている場合は�
           {
             name: "target",
             type: "Player",
-            type_link: "/docs/use/scenario/types/entities#player",
+            type_link: "/references/types/entities#player",
             description: "テレポートしたプレイヤです。",
           },
           {
             name: "from",
             description: "テレポート前の座標です。",
             type: "Location",
-            type_link: "/docs/use/scenario/types/misc#location",
+            type_link: "/references/types/misc#location",
           },
           {
             name: "to",
             description: "テレポート後の座標です。",
             type: "Location",
-            type_link: "/docs/use/scenario/types/misc#location",
+            type_link: "/references/types/misc#location",
           },
           {
             name: "cause",

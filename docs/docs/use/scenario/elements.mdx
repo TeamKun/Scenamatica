@@ -48,7 +48,7 @@ Scenamatica のシナリオを構成する要素について説明していま�
 各シナリオは、次の３つの要素で構成されています。
 
 + [シナリオタイプ](#scenario-type)
-+ [アクション](/docs/use/scenario/actions)
++ [アクション](/references/actions)
 + タイムアウト（ms）
 + [実行条件](#conditional-execution)
 
@@ -165,24 +165,24 @@ Scenamatica がテスト対象のプラグイン機能の実行を発火させ�
 
 ### シナリオの例
 
-#### 使用例：[アクション実行(`execute`)](#scenario-type-action-execution) タイプの [プレイヤの死亡およびキル](/docs/use/scenario/actions/player#death) アクション
+#### 使用例：[アクション実行(`execute`)](#scenario-type-action-execution) タイプの [プレイヤの死亡およびキル](/references/actions/player#death) アクション
 
 この場合は、 Scenamatica は対象のプレイヤを殺害します。殺害に成功した場合は、シナリオは成功となります。
 
-#### 使用例：[アクション実行期待(`expect`)](#scenario-type-action-execution-expect) タイプの [プレイヤの死亡およびキル](/docs/use/scenario/actions/player#death) アクション
+#### 使用例：[アクション実行期待(`expect`)](#scenario-type-action-execution-expect) タイプの [プレイヤの死亡およびキル](/references/actions/player#death) アクション
 
 この場合は、 Scenamatica はテスト対象のプラグインにより対象のプレイヤが殺害されるまで待機します。
 殺害された場合は、シナリオは成功となります。  
 一定時間が経過しても殺害されなかったり、**ファイルに後述されている他のシナリオが先に実行された場合**、シナリオは**失敗**となります。
 
-#### 使用例：[条件要求(`require`)](#scenario-type-condition-require) タイプの [プレイヤの死亡およびキル](/docs/use/scenario/actions/player#death) アクション
+#### 使用例：[条件要求(`require`)](#scenario-type-condition-require) タイプの [プレイヤの死亡およびキル](/references/actions/player#death) アクション
 
 この場合は、 Scenamatica はプレイヤが既に死亡しているかどうかを確認します。
 
 :::warning
 
 全てのアクションが全てのシナリオタイプで使用できるわけではありません。  
-例えば、[メッセージ送信アクション](/docs/use/scenario/actions#message_) は、[条件要求(`require`)](#scenario-type-condition-require) タイプでは使用できません。  
+例えば、[メッセージ送信アクション](/references/actions#message_) は、[条件要求(`require`)](#scenario-type-condition-require) タイプでは使用できません。  
 これは、Scenamatica が既に送信されたメッセージを確認できないためです。
 
 詳しくは各アクションのドキュメントを参照してください。
@@ -216,10 +216,8 @@ Scenamatica がテスト対象のプラグイン機能の実行を発火させ�
 セッションはキューに追加された順に実行されますから、最終的なシナリオの実行順は `{D -> A -> C}` `->` `{D -> B}` となります。
 :::
 
-<BelowDocument docId={"use/scenario/types/README"}
-               anchor="apex-order"
-               label={"シナリオファイルの構文 | 実行順"}
-/>
+これは、シナリオファイルの[`order`](/references/types/#apex-order)プロパティによって指定されます。
+
 
 ## コンテキスト {#context}
 
@@ -246,7 +244,7 @@ Scenamatica がテスト対象のプラグイン機能の実行を発火させ�
 2. シード値/環境等を指定して新規に生成する。  
   この方式はシナリオの実行時に毎回ワールドを生成するので、毎回違う環境で実行できます。ただし、ワールドの生成はパフォーマンスに影響するため注意してください。
 
-ステージの指定は、[シナリオファイルの `context`.`stage`](/docs/use/scenario/types#context-stage) プロパティによって行います。
+ステージの指定は、[シナリオファイルの `context`.`stage`](/references/types#context-stage) プロパティによって行います。
 
 ### アクタ {#actor}
 
@@ -265,7 +263,7 @@ Scenamatica がテスト対象のプラグイン機能の実行を発火させ�
 ただし、同イベントのフィールドである `previousSlot` は技術的制約により `currentSlot` と同じ値になります。
 :::
 
-アクタの指定は、[シナリオファイルの `context`.`actors`](/docs/use/scenario/types#context-actors) プロパティによって行います。
+アクタの指定は、[シナリオファイルの `context`.`actors`](/references/types#context-actors) プロパティによって行います。
 
 ### エンティティ {#entity}
 
@@ -274,14 +272,14 @@ Scenamatica がテスト対象のプラグイン機能の実行を発火させ�
 
 Scenamatica はエンティティを削除されるまで継続して追跡し、そのエンティティを含むチャンクを強制的に読み込みます。
 
-エンティティの指定は、[シナリオファイルの `context`.`entities`](/docs/use/scenario/types#context-entities) プロパティによって行います。
+エンティティの指定は、[シナリオファイルの `context`.`entities`](/references/types#context-entities) プロパティによって行います。
 
 ## 条件実行 {#conditional-execution}
 
 指定の条件を満たした場合にのみ、シナリオまたはアクションを実行します。実行条件が満たされていない場合そのシナリオはスキップされますが、失敗とはみなされません。
 
-条件の指定には、[条件要求(`require`)](#scenario-type-condition-require) タイプのシナリオに対応した[アクション](/docs/use/scenario/actions)を使用します。
-詳しくは[条件要求タイプ(`require`)](#scenario-type-condition-require)および[アクション](/docs/use/scenario/actions)の項目を参照してください。
+条件の指定には、[条件要求(`require`)](#scenario-type-condition-require) タイプのシナリオに対応した[アクション](/references/actions)を使用します。
+詳しくは[条件要求タイプ(`require`)](#scenario-type-condition-require)および[アクション](/references/actions)の項目を参照してください。
 
 :::tip
 

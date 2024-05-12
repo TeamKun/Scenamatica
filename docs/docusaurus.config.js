@@ -50,17 +50,6 @@ const config = {
   plugins: [
     require.resolve("docusaurus-plugin-image-zoom"),
     [
-      "@docusaurus/plugin-client-redirects",
-      {
-        redirects: [
-          {
-            to: "/docs/",
-            from: ["/docs/home"],
-          },
-        ],
-      },
-    ],
-    [
       "@docusaurus/plugin-pwa",
       {
         debug: false,
@@ -175,6 +164,11 @@ const config = {
             to: "/docs/use/commands",
           },
           {
+            label: "リファレンス",
+            position: "left",
+            to: "/references",
+          },
+          {
             type: "docsVersionDropdown",
             position: "right",
             dropdownActiveClassDisabled: true,
@@ -195,7 +189,7 @@ const config = {
         style: "dark",
         links: [
           {
-            title: "ドキュメント",
+            title: "ドキュメント - Documents",
             items: [
               {
                 label: "ホーム",
@@ -216,8 +210,21 @@ const config = {
               {
                 label: "シナリオ",
                 to: "/docs/use/scenario",
-              }
+              },
             ],
+          },
+          {
+            title: "リファレンス - References",
+            items: [
+              {
+                label: "アクション - Actions",
+                to: "/references/actions",
+              },
+              {
+                label: "型 - Types",
+                to: "/references/types",
+              }
+            ]
           },
           {
             title: "開発者 - Peyang",
