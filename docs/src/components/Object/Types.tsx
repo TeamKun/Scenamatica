@@ -6,7 +6,7 @@ export interface Type {
 }
 
 export const isType = (value: any): value is Type => {
-  return value.displayString !== undefined && value.referenceString !== undefined
+  return value.displayString !== undefined
 }
 
 export const PrimitiveTypes: { [key: string]: Type } = {

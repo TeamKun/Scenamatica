@@ -8,7 +8,7 @@ export type ObjectElement = {
   name: string | string[]
   anchor?: string
   required?: boolean | ScenarioType[] | string
-  type: string | Type
+  type: (string | Type)[] | string | Type
   type_anchor?: string
   type_link?: string
   description?: string
@@ -40,19 +40,46 @@ export const compatibleVersionTag = (version?: VersionSupport) => {
   return <span className={styles.version}>{since} ～ {until}</span>
 }
 
-const getTypeReferenceComponent = (element: ObjectElement): { typeNameStr: string, typeLink: string | null } => {
+const getTypeReferenceComponent = (element: ObjectElement): JSX.Element => {
+  const type = element.type
+  if (Array.isArray(type)) {
+    return (
+      <span>
+        {type.map((type, index) => {
+          const {typeNameStr, typeLink} = getOneTypeReferenceComponent(type)
+          const component = typeLink ? <Link to={typeLink} key={index}>{typeNameStr}</Link> : <>{typeNameStr}</>
+          if (index > 0)
+            return <>{" | "}{component}</>
+          else
+            return component
+        })}
+      </span>
+    )
+  } else {
+    const {typeNameStr, typeLink} = getOneTypeReferenceComponent(type, element)
+    return typeLink ? <Link to={typeLink}>{typeNameStr}</Link> : <>{typeNameStr}</>
+  }
+}
+
+const getOneTypeReferenceComponent = (type: string | Type, element?: ObjectElement): {
+  typeNameStr: string,
+  typeLink: string | null
+} => {
   let typeNameStr: string
   let typeLink: string
-  if (isType(element.type)) {
-    typeNameStr = element.type.displayString
-    typeLink = element.type.referenceString
+  if (isType(type)) {
+    typeNameStr = type.displayString
+    typeLink = type.referenceString
   } else {
-    typeNameStr = element.type
-    if (element.type_anchor)
-      typeLink = "#" + element.type_anchor
-    else if (element.type_link)
-      typeLink = element.type_link
+    typeNameStr = type
+    if (element) {
+      if (element.type_anchor)
+        typeLink = "#" + element.type_anchor
+      else if (element.type_link)
+        typeLink = element.type_link
+    }
   }
+
 
   return {typeNameStr, typeLink}
 }
@@ -82,8 +109,8 @@ export const Object: React.FC<ObjectsProps> = ({objects}: { objects: ObjectEleme
     } else
       required = <span className={styles.required}>必須</span>
 
-    const {typeNameStr, typeLink} = getTypeReferenceComponent(element)
-    const typeComponent = typeLink ? <Link to={typeLink}>{typeNameStr}</Link> : <>{typeNameStr}</>
+    const typeComponent = getTypeReferenceComponent(element)
+
 
     let availableFor: JSX.Element | null = null
     if (isActionArgument(element) && element.available.length > 0) {

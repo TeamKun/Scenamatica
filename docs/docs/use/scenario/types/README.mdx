@@ -1,10 +1,10 @@
-import {PrimitiveTypes} from "/src/components/Object/Types"; 
 ---
 sidebar_position: 4
 ---
 
 import BelowDocument from "/src/components/BelowDocument";
 import { Object } from "/src/components/Object";
+import {PrimitiveTypes} from "/src/components/Object/Types"; 
 
 # 定義された型
 
@@ -70,8 +70,10 @@ Scenamatica では、YAML の型として以下の型が定義されています
   {
     name: "order",
     anchor: "apex-order",
-    type: [PrimitiveTypes.INTEGER, "Order"],
-    type_anchor: "order",
+    type: [PrimitiveTypes.INTEGER, {
+        displayString: "Order",
+        referenceString: "#order"
+    }],
     description: "シナリオの実行順序です。小さいほど先に実行されます。",
     default: `NORMAL`
   },

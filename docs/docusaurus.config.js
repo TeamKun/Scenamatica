@@ -2,6 +2,21 @@
 
 const {themes} = require("prism-react-renderer");
 
+const docCommons = {
+  sidebarPath: require.resolve("./sidebars.js"),
+  // Please change this to your repo.
+  // Remove this to remove the "edit this page" links.
+  editUrl: "https://github.com/TeamKUN/Scenamatica/edit/develop/docs/",
+  showLastUpdateAuthor: true,
+  showLastUpdateTime: true,
+  lastVersion: "current",
+  versions: {
+    current: {
+      label: "Scenamatica v1",
+    },
+  },
+}
+
 /** @type {import("@docusaurus/types").Config} */
 const config = {
   title: "Scenamatica",
@@ -39,8 +54,8 @@ const config = {
       {
         redirects: [
           {
-            to: "/docs/home",
-            from: ["/docs/"],
+            to: "/docs/",
+            from: ["/docs/home"],
           },
         ],
       },
@@ -98,6 +113,15 @@ const config = {
           },
         ],
       }
+    ],
+    [
+      "@docusaurus/plugin-content-docs",
+      {
+        id: "references",
+        path: "references",
+        routeBasePath: "references",
+        ...docCommons,
+      }
     ]
   ],
 
@@ -107,18 +131,7 @@ const config = {
       /** @type {import("@docusaurus/preset-classic").Options} */
       ({
         docs: {
-          sidebarPath: require.resolve("./sidebars.js"),
-          // Please change this to your repo.
-          // Remove this to remove the "edit this page" links.
-          editUrl: "https://github.com/TeamKUN/Scenamatica/edit/develop/docs/",
-          showLastUpdateAuthor: true,
-          showLastUpdateTime: true,
-          lastVersion: "current",
-          versions: {
-            current: {
-              label: "Scenamatica v1",
-            },
-          },
+          ...docCommons,
         },
         theme: {
           customCss: require.resolve("./src/css/custom.css"),
@@ -142,7 +155,7 @@ const config = {
         },
         items: [
           {
-            to: "/docs/home",
+            to: "/docs",
             position: "left",
             label: "ホーム",
           },
@@ -186,7 +199,7 @@ const config = {
             items: [
               {
                 label: "ホーム",
-                to: "/docs/home",
+                to: "/docs",
               },
               {
                 label: "使い始める",
