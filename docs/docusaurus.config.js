@@ -20,7 +20,7 @@ const docCommons = {
 /** @type {import("@docusaurus/types").Config} */
 const config = {
   title: "Scenamatica",
-  staticDirectories: ["static", "src/schema"],
+  staticDirectories: ["static"],
   tagline: "Let's enhance your PaperMC plugin quality with Scenamatica: YAML-defined scenarios, CI/CD integration.",
   favicon: "img/favicon.ico",
   url: "https://scenamatica.kunlab.org/",
