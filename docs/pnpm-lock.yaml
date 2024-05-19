@@ -10,7 +10,7 @@ dependencies:
     version: 3.1.1(@docusaurus/types@3.1.1)(react-dom@18.2.0)(react@18.2.0)(typescript@5.2.2)
   '@docusaurus/plugin-client-redirects':
     specifier: ^3.1.1
-    version: 3.1.1(react-dom@18.2.0)(react@18.2.0)(typescript@5.2.2)
+    version: 3.1.1(@docusaurus/types@3.1.1)(react-dom@18.2.0)(react@18.2.0)(typescript@5.2.2)
   '@docusaurus/plugin-pwa':
     specifier: ^3.1.1
     version: 3.1.1(react-dom@18.2.0)(react@18.2.0)(typescript@5.2.2)
@@ -67,6 +67,9 @@ devDependencies:
   '@docusaurus/tsconfig':
     specifier: ^3.1.1
     version: 3.1.1
+  '@docusaurus/types':
+    specifier: ^3.1.1
+    version: 3.1.1(react-dom@18.2.0)(react@18.2.0)
   ts-loader:
     specifier: ^9.5.1
     version: 9.5.1(typescript@5.2.2)(webpack@5.90.1)
@@ -1779,7 +1782,7 @@ packages:
       - uglify-js
       - webpack-cli
 
-  /@docusaurus/plugin-client-redirects@3.1.1(react-dom@18.2.0)(react@18.2.0)(typescript@5.2.2):
+  /@docusaurus/plugin-client-redirects@3.1.1(@docusaurus/types@3.1.1)(react-dom@18.2.0)(react@18.2.0)(typescript@5.2.2):
     resolution: {integrity: sha512-J/1Z75XkO+BmUXHW17FrCIYZQ3b0IKaJECH6yCxW5RQ8NMMJ+SZCtPtx5oYoAd0VHersNiUu+ZAxfOqbsn1jKQ==}
     engines: {node: '>=18.0'}
     peerDependencies:
