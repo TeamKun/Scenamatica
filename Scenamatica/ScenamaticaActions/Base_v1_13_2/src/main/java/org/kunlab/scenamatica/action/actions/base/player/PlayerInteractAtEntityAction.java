@@ -8,6 +8,9 @@ import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.annotations.action.Action;
+import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.OutputDoc;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
@@ -21,9 +24,34 @@ import java.util.Collections;
 import java.util.List;
 
 @Action("player_interact_at_entity")
+@ActionDoc(
+        name = "プレイヤのエンティティでのインタラクト",
+        description = "プレイヤがエンティティでインタラクトします。",
+        events = {
+                PlayerInteractAtEntityEvent.class
+        },
+
+        executable = "プレイヤがエンティティをクリックします。",
+        watchable = "プレイヤがエンティティをクリックすることを期待します。",
+        requireable = ActionDoc.UNALLOWED,
+
+        outputs = {
+                @OutputDoc(
+                        name = PlayerInteractAtEntityAction.OUT_POSITION,
+                        description = "クリックされた位置です。",
+                        type = Location.class
+                )
+        }
+)
 public class PlayerInteractAtEntityAction extends PlayerInteractEntityAction
 {
     public static final String OUT_POSITION = "position";
+
+    @InputDoc(
+            name = "position",
+            description = "クリックする位置を指定します。",
+            type = Location.class
+    )
     public static InputToken<LocationStructure> IN_POSITION = ofInput(
             "position",
             LocationStructure.class,

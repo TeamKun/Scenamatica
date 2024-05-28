@@ -10,6 +10,10 @@ import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.annotations.action.Action;
+import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.OutputDoc;
+import org.kunlab.scenamatica.bookkeeper.enums.ActionMethod;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
@@ -26,18 +30,56 @@ import java.util.Collections;
 import java.util.List;
 
 @Action("entity_pickup_item")
+@ActionDoc(
+        name = "エンティティによるアイテムの拾い上げ",
+        description = "エンティティがアイテムを拾い上げます。",
+        events = {
+                EntityPickupItemEvent.class
+        },
+
+        executable = "エンティティがアイテムを拾い上げます。",
+        watchable = "エンティティがアイテムを拾い上げることを期待します。",
+        requireable = ActionDoc.UNALLOWED,
+
+        outputs = {
+                @OutputDoc(
+                        name = EntityPickupItemAction.OUT_KEY_ITEM,
+                        description = "拾い上げられたアイテムです。",
+                        type = Item.class
+                ),
+                @OutputDoc(
+                        name = EntityPickupItemAction.OUT_KEY_REMAINING,
+                        description = "残りのアイテムの量です。",
+                        type = int.class
+                )
+        }
+)
 public class EntityPickupItemAction extends AbstractGeneralEntityAction
         implements Executable, Watchable
 {
+    @InputDoc(
+            name = "remaining",
+            description = "残りのアイテムの量です。",
+            type = int.class,
+            availableFor = ActionMethod.WATCH
+    )
     public static final InputToken<Integer> IN_REMAINING = ofInput(
             "remaining",
             Integer.class
     );
+
+    @InputDoc(
+            name = "item",
+            description = "拾い上げられるアイテムです。",
+            type = Item.class,
+            requiredOn = {ActionMethod.EXECUTE}
+    )
     public static final InputToken<EntitySpecifier<Item>> IN_ITEM = ofInput(
             "item",
             Item.class,
             EntityItemStructure.class
     );
+
     public static final String OUT_KEY_ITEM = "item";
     public static final String OUT_KEY_REMAINING = "remaining";
 

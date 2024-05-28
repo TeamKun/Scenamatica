@@ -18,6 +18,7 @@ import java.lang.annotation.Target;
 public @interface ActionDoc
 {
     static final String ALLOWED = "$alloawed$";
+    static final String UNALLOWED = "$unallowed$";
 
     /**
      * アクションの一意な名前を取得します。
@@ -42,7 +43,7 @@ public @interface ActionDoc
      * @return アクションの説明
      */
     @NotNull
-    String description();
+    String description() default "";
 
     /**
      * アクションが対応するイベントのクラスを取得します。
@@ -57,7 +58,7 @@ public @interface ActionDoc
      * @return 実行可能である場合は, {@link #ALLOWED} または, その説明
      */
     @Nullable
-    String executable() default "";
+    String executable() default ALLOWED;
 
     /**
      * アクションが監視可能であることを示します。
@@ -65,7 +66,7 @@ public @interface ActionDoc
      * @return 監視可能である場合は, {@link #ALLOWED} または, その説明
      */
     @Nullable
-    String watchable() default "";
+    String watchable() default ALLOWED;
 
     /**
      * アクションが要求可能であることを示します。
@@ -73,7 +74,7 @@ public @interface ActionDoc
      * @return 要求可能である場合は, {@link #ALLOWED} または, その説明
      */
     @Nullable
-    String requireable() default "";
+    String requireable() default ALLOWED;
 
     /**
      * サポートする Minecraft バージョンの開始バージョンを返します。

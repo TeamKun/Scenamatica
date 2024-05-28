@@ -90,6 +90,13 @@
         </dependency>
 
         <dependency>
+            <groupId>org.kunlab.scenamatica.bookkeeper</groupId>
+            <artifactId>annotations</artifactId>
+            <version>1.0.0</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
             <groupId>org.kunlab.scenamatica.nms</groupId>
             <artifactId>NMSCore</artifactId>
             <version>1.4.1</version>

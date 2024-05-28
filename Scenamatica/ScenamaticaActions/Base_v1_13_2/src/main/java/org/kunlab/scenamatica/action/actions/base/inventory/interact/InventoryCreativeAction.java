@@ -6,6 +6,9 @@ import org.bukkit.event.inventory.InventoryCreativeEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.annotations.action.Action;
+import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.OutputDoc;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
@@ -19,9 +22,33 @@ import java.util.Collections;
 import java.util.List;
 
 @Action("inventory_creative")
+@ActionDoc(
+        name = "クリエイティブ・インベントリの操作",
+        description = "クリエイティブ・インベントリを操作します。",
+        events = {
+                InventoryCreativeEvent.class
+        },
+
+        executable = "クリエイティブ・インベントリを操作します。",
+        watchable = "クリエイティブ・インベントリを操作することを期待します。",
+        requireable = ActionDoc.UNALLOWED,
+
+        outputs = {
+                @OutputDoc(
+                        name = InventoryCreativeAction.KEY_OUT_ITEM,
+                        description = "アイテムです。",
+                        type = ItemStack.class
+                )
+        }
+)
 public class InventoryCreativeAction extends InventoryClickAction
         implements Executable, Watchable
 {
+    @InputDoc(
+            name = "item",
+            description = "アイテムです。",
+            type = ItemStack.class
+    )
     public static final InputToken<ItemStackStructure> IN_ITEM = ofInput(
             "item",
             ItemStackStructure.class,

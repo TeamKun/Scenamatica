@@ -59,4 +59,20 @@ public @interface OutputDoc
      * @return サポートする Minecraft バージョンの終了バージョン
      */
     MCVersion supportsUntil() default MCVersion.UNSET;
+
+    /**
+     * 文字列における最大文字数または, 数値における最大値を取得します。
+     *
+     *
+     * @return 最大値
+     */
+    double max() default Integer.MAX_VALUE;
+
+    /**
+     * 文字列における最小文字数または, 数値における最小値を取得します。
+     *
+     * @return 最小値
+     */
+    double min() default Integer.MIN_VALUE;
+
 }

@@ -10,6 +10,11 @@ import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.utils.InputTypeToken;
 import org.kunlab.scenamatica.action.utils.PlayerLikeCommandSenders;
 import org.kunlab.scenamatica.annotations.action.Action;
+import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.OutputDoc;
+import org.kunlab.scenamatica.bookkeeper.enums.ActionMethod;
+import org.kunlab.scenamatica.bookkeeper.enums.MCVersion;
 import org.kunlab.scenamatica.enums.MinecraftVersion;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
@@ -29,13 +34,49 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Action(value = "broadcast", supportsUntil = MinecraftVersion.V1_13_2)
+@ActionDoc(
+        name = "メッセージのブロードキャスト",
+        description = "メッセージをブロードキャストします。",
+        events = {
+                BroadcastMessageEvent.class
+        },
+
+        // supportsUntil = MCVersion.V1_13_2,  // <- 内部の変更なのでバージョン取らない。
+
+        executable = "メッセージをブロードキャストします。",
+        watchable = "メッセージがブロードキャストされることを期待します。",
+        requireable = ActionDoc.UNALLOWED,
+
+        outputs = {
+                @OutputDoc(
+                        name = BroadcastMessageAction.KEY_OUT_MESSAGE,
+                        description = "メッセージです。",
+                        type = String.class
+                ),
+                @OutputDoc(
+                        name = BroadcastMessageAction.KEY_OUT_RECIPIENTS,
+                        description = "受信者です。",
+                        type = PlayerSpecifier.class
+                )
+        }
+)
 public class BroadcastMessageAction extends AbstractServerAction
         implements Executable, Watchable
 {
+    @InputDoc(
+            name = "message",
+            description = "送信するメッセージですまたは受信メッセージの判定用正規表現です。",
+            type = String.class
+    )
     public static final InputToken<String> IN_MESSAGE = ofInput(
             "message",
             String.class
     );
+    @InputDoc(
+            name = "recipients",
+            description = "受信者です。",
+            type = PlayerSpecifier.class
+    )
     public static final InputToken<List<PlayerSpecifier>> IN_RECIPIENTS = ofInput(
             "recipients",
             InputTypeToken.ofList(PlayerSpecifier.class),
@@ -56,10 +97,21 @@ public class BroadcastMessageAction extends AbstractServerAction
                 return recipients;
             })
     );
+    @InputDoc(
+            name = "permission",
+            description = "ブロードキャストされたメッセージを受け取る権限です。",
+            type = String.class
+    )
     public static final InputToken<String> IN_PERMISSION = ofInput(
             "permission",
             String.class
     );
+    @InputDoc(
+            name = "strictRecipients",
+            description = "受信者が厳密に一致させる必要があるかどうかです。",
+            type = boolean.class,
+            availableFor = ActionMethod.WATCH
+    )
     public static final InputToken<Boolean> IN_STRICT_RECIPIENTS = ofInput(
             "strictRecipients",
             Boolean.class

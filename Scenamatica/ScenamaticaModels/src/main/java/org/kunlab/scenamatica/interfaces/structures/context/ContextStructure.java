@@ -13,9 +13,9 @@ import java.util.List;
 public interface ContextStructure extends Structure
 {
     /**
-     * 仮想プレイヤーを定義します。
+     * 仮想プレイヤを定義します。
      *
-     * @return 仮想プレイヤー
+     * @return 仮想プレイヤ
      */
     @NotNull
     List<PlayerStructure> getActors();

@@ -7,6 +7,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.actions.base.player.AbstractPlayerAction;
 import org.kunlab.scenamatica.annotations.action.Action;
+import org.kunlab.scenamatica.bookkeeper.annotations.OutputDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.OutputDocs;
 import org.kunlab.scenamatica.enums.MinecraftVersion;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
@@ -21,6 +23,13 @@ import java.util.Collections;
 import java.util.List;
 
 @Action(value = "player_death", supportsSince = MinecraftVersion.V1_16)
+@OutputDocs({
+        @OutputDoc(
+                name = PlayerDeathAction.KEY_OUT_DO_EXP_DROP,
+                description = "プレイヤが経験値をドロップするかどうかを示します。",
+                type = boolean.class
+        )
+})
 public class PlayerDeathAction extends AbstractPlayerAction
         implements Executable, Requireable, Watchable
 {

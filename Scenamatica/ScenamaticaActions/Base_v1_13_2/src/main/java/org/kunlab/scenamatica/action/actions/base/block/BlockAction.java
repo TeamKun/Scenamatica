@@ -4,6 +4,8 @@ import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.annotations.action.Action;
+import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
@@ -13,9 +15,21 @@ import org.kunlab.scenamatica.interfaces.action.types.Requireable;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.misc.BlockStructure;
 
 @Action("block")
+@ActionDoc(
+        name = "ブロックの情報の変更",
+        description = "指定されたブロックの情報を変更します。",
+
+        executable = "指定されたブロックの状態・属性を変更します。",
+        requireable = "指定されたブロックの状態・属性を確認します。"
+)
 public class BlockAction extends AbstractBlockAction
         implements Executable, Requireable
 {
+    @InputDoc(
+            name = "data",
+            description = "変更するブロックのデータを指定します。",
+            type = BlockStructure.class
+    )
     public static final InputToken<BlockStructure> IN_DATA = ofInput(
             "data",
             BlockStructure.class,

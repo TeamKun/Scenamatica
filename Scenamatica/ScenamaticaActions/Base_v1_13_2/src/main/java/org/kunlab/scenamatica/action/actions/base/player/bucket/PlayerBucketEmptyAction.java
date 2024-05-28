@@ -12,6 +12,8 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.annotations.action.Action;
+import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
+import org.kunlab.scenamatica.bookkeeper.enums.MCVersion;
 import org.kunlab.scenamatica.enums.MinecraftVersion;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
@@ -23,6 +25,19 @@ import java.util.Collections;
 import java.util.List;
 
 @Action(value = "player_bucket_empty", supportsUntil = MinecraftVersion.V1_15_2)
+@ActionDoc(
+        name = "プレイヤによるバケツの空化",
+        description = "プレイヤがバケツを空にするアクションです。",
+        events = {
+                PlayerBucketEmptyEvent.class
+        },
+
+        supportsUntil = MCVersion.V1_15_2,
+
+        executable = "プレイヤがバケツを空にします。",
+        watchable = "プレイヤがバケツを空にすることを期待します。",
+        requireable = ActionDoc.UNALLOWED
+)
 public class PlayerBucketEmptyAction extends AbstractPlayerBucketAction
         implements Watchable, Executable
 {

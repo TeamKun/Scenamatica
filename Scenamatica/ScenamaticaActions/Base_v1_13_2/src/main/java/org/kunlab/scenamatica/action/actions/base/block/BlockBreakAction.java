@@ -9,6 +9,9 @@ import org.bukkit.event.Event;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.annotations.action.Action;
+import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
+import org.kunlab.scenamatica.bookkeeper.enums.ActionMethod;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
@@ -26,11 +29,32 @@ import java.util.Collections;
 import java.util.List;
 
 @Action("block_break")
+@ActionDoc(
+        name = "ブロックの破壊",
+        description = "指定されたブロックを破壊します。",
+        events = BlockBreakEvent.class,
+
+        executable = "指定されたブロックを破壊します。",
+        watchable = "指定されたブロックが破壊されることを期待します。",
+        requireable = "指定されたブロックが空気ブロックであるかどうか判定します。"
+)
 public class BlockBreakAction extends AbstractBlockAction
         implements Executable, Requireable, Watchable
 {
+    @InputDoc(
+            name = "actor",
+            description = "ブロックを破壊するアクタです。",
+            type = PlayerSpecifier.class,
+            availableFor = {ActionMethod.EXECUTE, ActionMethod.WATCH}
+    )
     public static final InputToken<PlayerSpecifier> IN_ACTOR = ofInput("actor", PlayerSpecifier.class, ofPlayer());
-    public static final InputToken<Boolean> IN_DROP_ITEMS = ofInput("drop_items", Boolean.class);
+    @InputDoc(
+            name = "dropItems",
+            description = "アイテムをドロップするかどうかを指定します。",
+            type = boolean.class,
+            availableFor = {ActionMethod.WATCH}
+    )
+    public static final InputToken<Boolean> IN_DROP_ITEMS = ofInput("dropItems", Boolean.class);
 
     @Override
     public void execute(@NotNull ActionContext ctxt)

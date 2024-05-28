@@ -1,13 +1,52 @@
 package org.kunlab.scenamatica.interfaces.structures.minecraft.misc;
 
 import org.bukkit.Location;
+import org.kunlab.scenamatica.bookkeeper.annotations.TypeDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.TypeProperty;
 import org.kunlab.scenamatica.interfaces.scenariofile.Creatable;
 import org.kunlab.scenamatica.interfaces.scenariofile.Mapped;
 import org.kunlab.scenamatica.interfaces.scenariofile.Structure;
 
 /**
  * Location のための Structure です。
- */
+ */@TypeDoc(
+        name = "Location",
+        description = "オブジェクトの位置情報を格納します。",
+        mappingOf = Location.class,
+        properties = {
+                @TypeProperty(
+                        name = LocationStructure.KEY_X,
+                        description = "X 座標です。",
+                        type = double.class
+                ),
+                @TypeProperty(
+                        name = LocationStructure.KEY_Y,
+                        description = "Y 座標です。",
+                        type = double.class
+                ),
+                @TypeProperty(
+                        name = LocationStructure.kEY_Z,
+                        description = "Z 座標です。",
+                        type = double.class
+                ),
+                @TypeProperty(
+                        name = LocationStructure.KEY_YAW,
+                        description = "水平方向の向きです。",
+                        type = float.class
+                ),
+                @TypeProperty(
+                        name = LocationStructure.KEY_PITCH,
+                        description = "垂直方向の向きです。",
+                        type = float.class
+                ),
+                @TypeProperty(
+                        name = LocationStructure.KEY_WORLD,
+                        description = "ワールド名です。",
+                        type = String.class,
+                        pattern = "[a-zA-Z0-9_]+"
+                )
+        }
+)
 public interface LocationStructure extends Structure, Mapped<Location>, Creatable<Location>
 {
     String KEY_X = "x";

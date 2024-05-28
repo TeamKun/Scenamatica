@@ -18,6 +18,7 @@ import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.action.utils.EventListenerUtils;
 import org.kunlab.scenamatica.annotations.action.Action;
+import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
 import org.kunlab.scenamatica.commons.utils.EntityUtils;
 import org.kunlab.scenamatica.commons.utils.Utils;
 import org.kunlab.scenamatica.enums.ScenarioType;
@@ -37,6 +38,17 @@ import java.util.Collections;
 import java.util.List;
 
 @Action("projectile_launch")
+@ActionDoc(
+        name = "投射物の発射",
+        description = "投射物を発射します。",
+        events = {
+                ProjectileLaunchEvent.class
+        },
+
+        executable = "投射物を発射します。",
+        watchable = "投射物が発射されることを期待します。",
+        requireable = ActionDoc.UNALLOWED
+)
 public class ProjectileLaunchAction extends EntitySpawnAction<Projectile>
         implements Executable, Watchable, Listener
 {

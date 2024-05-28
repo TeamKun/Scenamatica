@@ -7,6 +7,7 @@ import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.action.actions.base.player.AbstractPlayerAction;
 import org.kunlab.scenamatica.annotations.action.Action;
+import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
 import org.kunlab.scenamatica.enums.MinecraftVersion;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
@@ -27,6 +28,11 @@ public class PlayerGameModeAction extends AbstractPlayerAction
             "gamemode",
             GameMode.class
     );
+    @InputDoc(
+            name = "cause",
+            description = "ゲームモードが変更された原因を指定します。",
+            type = PlayerGameModeChangeEvent.Cause.class
+    )
     public static final InputToken<PlayerGameModeChangeEvent.Cause> IN_CAUSE = ofEnumInput(
             "cause",
             PlayerGameModeChangeEvent.Cause.class

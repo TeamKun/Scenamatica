@@ -6,6 +6,9 @@ import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerToggleFlightEvent;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.annotations.action.Action;
+import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
+import org.kunlab.scenamatica.bookkeeper.enums.ActionMethod;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
@@ -18,9 +21,26 @@ import java.util.Collections;
 import java.util.List;
 
 @Action("player_flight")
+@ActionDoc(
+        name = "プレイヤの飛行",
+        description = "プレイヤを飛行状態にします。",
+        events = {
+                PlayerToggleFlightEvent.class
+        },
+
+        executable = "プレイヤを飛行状態にします。",
+        watchable = "プレイヤが飛行状態になることを期待します。",
+        requireable = "プレイヤが飛行状態になっていることを要求します。"
+)
 public class PlayerFlightAction extends AbstractPlayerAction
         implements Executable, Requireable, Watchable
 {
+    @InputDoc(
+            name = "flying",
+            description = "飛行状態かどうかを指定します。",
+            type = boolean.class,
+            requiredOn = {ActionMethod.EXECUTE, ActionMethod.WATCH}
+    )
     public static final InputToken<Boolean> IN_FLYING = ofInput(
             "flying",
             Boolean.class

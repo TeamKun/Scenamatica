@@ -9,6 +9,9 @@ import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.annotations.action.Action;
+import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.OutputDoc;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
@@ -26,18 +29,59 @@ import java.util.Collections;
 import java.util.List;
 
 @Action("player_item_damage")
+@ActionDoc(
+        name = "プレイヤによるアイテムのダメージ",
+        description = "プレイヤのアイテムにダメージを与えます。",
+        events = {
+                PlayerItemDamageEvent.class
+        },
+
+        executable = "プレイヤが所持しているアイテムにダメージを与えます。",
+        watchable = "プレイヤが所持しているアイテムにダメージが与えることを期待します。",
+        requireable = "プレイヤが所持しているアイテムのダメージが一致することを要求します。",
+
+        outputs = {
+                @OutputDoc(
+                        name = PlayerItemDamageAction.KEY_OUT_ITEM,
+                        description = "ダメージを与えられたアイテムです。",
+                        type = ItemStack.class
+                ),
+                @OutputDoc(
+                        name = PlayerItemDamageAction.KEY_OUT_DAMAGE,
+                        description = "与えられたダメージです。",
+                        type = int.class,
+                        min = 0
+                )
+        }
+)
 public class PlayerItemDamageAction extends AbstractPlayerAction
         implements Executable, Watchable, Requireable
 {
+    @InputDoc(
+            name = "item",
+            description = "ダメージを与えるアイテムを指定します。",
+            type = ItemStack.class
+    )
     public static final InputToken<ItemStackStructure> IN_ITEM = ofInput(
             "item",
             ItemStackStructure.class,
             ofDeserializer(ItemStackStructure.class)
     );
+    @InputDoc(
+            name = "damage",
+            description = "与えるダメージを指定します。",
+            type = int.class,
+            min = 0
+    )
     public static final InputToken<Integer> IN_DAMAGE = ofInput(
             "damage",
             Integer.class
     );
+    @InputDoc(
+            name = "slot",
+            description = "ダメージを与えるアイテムのスロットを指定します。",
+            type = EquipmentSlot.class
+    )
     public static final InputToken<EquipmentSlot> IN_SLOT = ofEnumInput(
             "slot",
             EquipmentSlot.class

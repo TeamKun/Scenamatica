@@ -7,6 +7,10 @@ import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.annotations.action.Action;
+import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.OutputDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.OutputDocs;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
@@ -21,9 +25,33 @@ import java.util.Collections;
 import java.util.List;
 
 @Action("player_drop_item")
+@ActionDoc(
+        name = "プレイヤのアイテムドロップ",
+        description = "プレイヤがアイテムをドロップします。",
+        events = {
+                PlayerDropItemEvent.class
+        },
+
+        executable = "プレイヤにアイテムをドロップさせます。",
+        watchable = "プレイヤがアイテムをドロップすることを期待します。",
+        requireable = ActionDoc.UNALLOWED,
+
+        outputs = {
+                @OutputDoc(
+                        name = PlayerDropItemAction.KEY_OUT_ITEM,
+                        description = "ドロップされたアイテムです。",
+                        type = Item.class
+                )
+        }
+)
 public class PlayerDropItemAction extends AbstractPlayerAction
         implements Executable, Watchable
 {
+    @InputDoc(
+            name = "item",
+            description = "ドロップするアイテムを指定します。",
+            type = Item.class
+    )
     public static final InputToken<EntityItemStructure> IN_ITEM = ofInput(
             "item",
             EntityItemStructure.class,

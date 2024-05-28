@@ -8,6 +8,10 @@ import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.annotations.action.Action;
+import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.OutputDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.OutputDocs;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
@@ -20,14 +24,49 @@ import java.util.Collections;
 import java.util.List;
 
 @Action("inventory_close")
+@ActionDoc(
+        name = "インベントリを閉じる",
+        description = "プレイヤのインベントリを閉じます。",
+        events = {
+                InventoryCloseEvent.class
+        },
+
+        executable = "プレイヤのインベントリを閉じます。",
+        watchable = "プレイヤのインベントリが閉じられることを期待します。",
+        requireable = ActionDoc.UNALLOWED,
+
+        outputs = {
+                @OutputDoc(
+                        name = InventoryCloseAction.KEY_OUT_TARGET,
+                        description = "対象のアクタです。",
+                        type = Player.class
+                ),
+                @OutputDoc(
+                        name = InventoryCloseAction.KEY_OUT_REASON,
+                        description = "閉じる理由です。",
+                        type = InventoryCloseEvent.Reason.class
+                )
+        }
+)
 public class InventoryCloseAction extends AbstractInventoryAction
         implements Executable, Watchable
 {
+    @InputDoc(
+            name = "target",
+            description = "対象のアクタです。",
+            type = PlayerSpecifier.class
+    )
     public static final InputToken<PlayerSpecifier> IN_PLAYER = ofInput(
             "target",
             PlayerSpecifier.class,
             ofPlayer()
     );
+
+    @InputDoc(
+            name = "reason",
+            description = "閉じる理由です。",
+            type = InventoryCloseEvent.Reason.class
+    )
     public static final InputToken<InventoryCloseEvent.Reason> IN_REASON = ofInput(
             "reason",
             InventoryCloseEvent.Reason.class,

@@ -8,6 +8,9 @@ import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.utils.InputTypeToken;
 import org.kunlab.scenamatica.action.utils.PlayerLikeCommandSenders;
 import org.kunlab.scenamatica.annotations.action.Action;
+import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
+import org.kunlab.scenamatica.bookkeeper.enums.ActionMethod;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
@@ -23,23 +26,55 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Action("tab_complete")
+@ActionDoc(
+        name = "タブ補完",
+        description = "タブ補完を実行します。",
+        events = {
+                TabCompleteEvent.class
+        },
+
+        executable = "タブ補完を実行します。",
+        watchable = "タブ補完が実行されることを期待します。",
+        requireable = ActionDoc.UNALLOWED
+)
 public class TabCompleteAction extends AbstractServerAction
         implements Executable, Watchable
 {
-
+    @InputDoc(
+            name = "sender",
+            description = "送信者です。",
+            type = PlayerSpecifier.class
+    )
     public static final InputToken<PlayerSpecifier> IN_SENDER = ofInput(
             "sender",
             PlayerSpecifier.class,
             ofPlayer()
     );
+    @InputDoc(
+            name = "buffer",
+            description = "入力途中の不完全なコマンドです。判定時には正規表現を使えます。",
+            type = String.class
+    )
     public static final InputToken<String> IN_BUFFER = ofInput(
             "buffer",
             String.class
     );
+    @InputDoc(
+            name = "completions",
+            description = "補完候補です。",
+            type = String[].class
+    )
     public static final InputToken<List<String>> IN_COMPLETIONS = ofInput(
             "completions",
             InputTypeToken.ofList(String.class)
     );
+    @InputDoc(
+            name = "strict",
+            description = "厳密な判定を行うかどうかです。",
+            type = boolean.class,
+            
+            availableFor = ActionMethod.WATCH
+    )
     public static final InputToken<Boolean> IN_STRICT = ofInput(
             "strict",
             Boolean.class,

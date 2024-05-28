@@ -10,6 +10,10 @@ import org.kunlab.scenamatica.action.actions.base.block.BlockBreakAction;
 import org.kunlab.scenamatica.action.actions.base.player.AbstractPlayerAction;
 import org.kunlab.scenamatica.action.utils.InputTypeToken;
 import org.kunlab.scenamatica.annotations.action.Action;
+import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.OutputDoc;
+import org.kunlab.scenamatica.bookkeeper.enums.ActionMethod;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
@@ -26,9 +30,38 @@ import java.util.List;
 import java.util.Map;
 
 @Action("player_harvest_block")
+@ActionDoc(
+        name = "ブロックの収穫",
+        description = "プレイヤがブロックを収穫するイベントです。",
+        events = {
+                PlayerHarvestBlockEvent.class
+        },
+        executable = "ブロックを収穫します。",
+        watchable = "ブロックが収穫されることを期待します。",
+        requireable = ActionDoc.UNALLOWED,
+
+        outputs = {
+                @OutputDoc(
+                        name = PlayerHarvestBlockAction.KEY_BLOCK_HARVESTED,
+                        description = "収穫されたブロックです。",
+                        type = Block.class
+                ),
+                @OutputDoc(
+                        name = PlayerHarvestBlockAction.KEY_ITEMS_HARVESTED,
+                        description = "収穫されたアイテムです。",
+                        type = ItemStack[].class,
+                        target = ActionMethod.WATCH
+                )
+        }
+)
 public class PlayerHarvestBlockAction extends AbstractPlayerAction
         implements Executable, Watchable
 {
+    @InputDoc(
+            name = "block",
+            description = "収穫されたブロックです。",
+            type = Block.class
+    )
     public static final InputToken<BlockStructure> IN_HARVESTED_BLOCK = ofInput(
             "block",
             BlockStructure.class,
@@ -36,6 +69,12 @@ public class PlayerHarvestBlockAction extends AbstractPlayerAction
     ).validator(ScenarioType.ACTION_EXECUTE, block -> block.getLocation() != null,
             "block must have location in action execute mode"
     );
+    @InputDoc(
+            name = "items",
+            description = "収穫したアイテムです。",
+            type = ItemStack[].class,
+            availableFor = ActionMethod.WATCH
+    )
     public static final InputToken<List<ItemStackStructure>> IN_ITEMS_HARVESTED = ofInput(
             "items",
             InputTypeToken.ofList(ItemStackStructure.class),

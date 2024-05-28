@@ -18,6 +18,7 @@ import org.kunlab.scenamatica.interfaces.structures.specifiers.EntitySpecifier;
 import org.kunlab.scenamatica.interfaces.structures.specifiers.PlayerSpecifier;
 import org.kunlab.scenamatica.structures.minecraft.entity.EntityStructureImpl;
 import org.kunlab.scenamatica.structures.minecraft.inventory.ItemStackStructureImpl;
+import org.kunlab.scenamatica.structures.specifiers.EntitySpecifierImpl;
 import org.kunlab.scenamatica.structures.specifiers.PlayerSpecifierImpl;
 
 import java.util.HashMap;
@@ -78,11 +79,6 @@ public class EntityItemStructureImpl extends EntityStructureImpl implements Enti
     public static void validate(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
     {
         EntityStructureImpl.validate(map);
-
-        if (map.containsKey(KEY_OWNER) && UUIDUtil.toUUIDOrNull((String) map.get(KEY_OWNER)) == null)
-            throw new IllegalArgumentException("owner must be UUID");
-        if (map.containsKey(KEY_THROWER) && UUIDUtil.toUUIDOrNull((String) map.get(KEY_THROWER)) == null)
-            throw new IllegalArgumentException("thrower must be UUID");
     }
 
     @NotNull
@@ -93,13 +89,17 @@ public class EntityItemStructureImpl extends EntityStructureImpl implements Enti
         Number pickupDelayNum = MapUtils.getAsNumberOrNull(map, KEY_PICKUP_DELAY);
         Integer pickupDelay = pickupDelayNum != null ? pickupDelayNum.intValue(): null;
 
-        EntitySpecifier<?> owner = null;
+        EntitySpecifier<?> owner;
         if (map.containsKey(KEY_OWNER))
             owner = serializer.tryDeserializeEntitySpecifier(map.get(KEY_OWNER));
+        else
+            owner = EntitySpecifierImpl.EMPTY;
 
-        EntitySpecifier<?> thrower = null;
+        EntitySpecifier<?> thrower;
         if (map.containsKey(KEY_THROWER))
             thrower = serializer.tryDeserializeEntitySpecifier(map.get(KEY_THROWER));
+        else
+            thrower = EntitySpecifierImpl.EMPTY;
 
         ItemStackStructure itemStack = serializer.deserialize(map, ItemStackStructure.class);
 

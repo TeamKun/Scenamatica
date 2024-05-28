@@ -8,6 +8,9 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.annotations.action.Action;
+import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.OutputDoc;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
@@ -22,14 +25,48 @@ import java.util.Collections;
 import java.util.List;
 
 @Action("player_item_consume")
+@ActionDoc(
+        name = "プレイヤによるアイテムの消費",
+        description = "プレイヤの食料などを消費させます。",
+        events = {
+                PlayerItemConsumeEvent.class
+        },
+
+        executable = "プレイヤがアイテムを消費します。",
+        watchable = "プレイヤがアイテムを消費することを期待します。",
+        requireable = ActionDoc.UNALLOWED,
+
+        outputs = {
+                @OutputDoc(
+                        name = PlayerItemConsumeAction.KEY_OUT_ITEM,
+                        description = "消費されたアイテムです。",
+                        type = ItemStack.class
+                ),
+                @OutputDoc(
+                        name = PlayerItemConsumeAction.KEY_OUT_REPLACEMENT,
+                        description = "消費されたアイテムの代替品です。",
+                        type = ItemStack.class
+                )
+        }
+)
 public class PlayerItemConsumeAction extends AbstractPlayerAction
         implements Executable, Watchable
 {
+    @InputDoc(
+            name = "item",
+            description = "消費するアイテムを指定します。",
+            type = ItemStack.class
+    )
     public static final InputToken<ItemStackStructure> IN_ITEM = ofInput(
             "item",
             ItemStackStructure.class,
             ofDeserializer(ItemStackStructure.class)
     );
+    @InputDoc(
+            name = "replacement",
+            description = "アイテムの消費後にプレイヤに残るアイテムを指定します。",
+            type = ItemStack.class
+    )
     public static final InputToken<ItemStackStructure> IN_REPLACEMENT = ofInput(
             "replacement",
             ItemStackStructure.class,

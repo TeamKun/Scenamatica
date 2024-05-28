@@ -12,6 +12,9 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.annotations.action.Action;
+import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
+import org.kunlab.scenamatica.bookkeeper.enums.ActionMethod;
 import org.kunlab.scenamatica.enums.MinecraftVersion;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
@@ -30,10 +33,34 @@ import java.util.Collections;
 import java.util.List;
 
 @Action("block_place")
+@ActionDoc(
+        name = "ブロックの設置",
+        description = "指定されたブロックを設置します。",
+        events = BlockPlaceEvent.class,
+
+        executable = "指定されたブロックを設置します。",
+        watchable = "指定されたブロックが設置されることを期待します。",
+        requireable = "指定されたブロックが空気ではないかどうかを判定します。"
+
+)
 public class BlockPlaceAction extends AbstractBlockAction
         implements Executable, Requireable, Watchable
 {
+    @InputDoc(
+            name = "actor",
+            description = "ブロックを設置するアクタです。",
+            type = PlayerSpecifier.class,
+
+            availableFor = {ActionMethod.EXECUTE, ActionMethod.WATCH}
+    )
     public static final InputToken<PlayerSpecifier> IN_ACTOR = ofInput("actor", PlayerSpecifier.class, ofPlayer());
+
+    @InputDoc(
+            name = "hand",
+            description = "設置するブロックのアイテムを持っている手です。",
+            type = NMSHand.class,
+            availableFor = {ActionMethod.EXECUTE}
+    )
     public static final InputToken<NMSHand> IN_HAND = ofEnumInput("hand", NMSHand.class);
 
     private static final BlockFace[] ALLOWED_FACES = {
@@ -44,6 +71,13 @@ public class BlockPlaceAction extends AbstractBlockAction
             BlockFace.SOUTH,
             BlockFace.WEST
     };
+
+    @InputDoc(
+            name = "direction",
+            description = "設置するブロックの向きです。",
+            type = BlockFace.class,
+            availableFor = {ActionMethod.EXECUTE}
+    )
     public static final InputToken<BlockFace> IN_DIRECTION = ofEnumInput("direction", BlockFace.class)
             .validator(
                     face -> Arrays.stream(ALLOWED_FACES).anyMatch(f -> f == face),

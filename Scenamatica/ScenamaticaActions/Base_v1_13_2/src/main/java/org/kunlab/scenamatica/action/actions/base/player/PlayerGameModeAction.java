@@ -6,6 +6,10 @@ import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.annotations.action.Action;
+import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.OutputDoc;
+import org.kunlab.scenamatica.bookkeeper.enums.MCVersion;
 import org.kunlab.scenamatica.enums.MinecraftVersion;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
@@ -19,9 +23,35 @@ import java.util.Collections;
 import java.util.List;
 
 @Action(value = "player_gamemode", supportsUntil = MinecraftVersion.V1_16_4)
+@ActionDoc(
+        name = "プレイヤのゲームモード",
+        description = "プレイヤのゲームモードを変更します。",
+        events = {
+                PlayerGameModeChangeEvent.class
+        },
+
+        supportsUntil = MCVersion.V1_16_4,
+
+        executable = "プレイヤのゲームモードを変更します。",
+        watchable = "プレイヤのゲームモードが変更されることを期待します。",
+        requireable = "プレイヤのゲームモードが指定されたものであることを要求します。",
+
+        outputs = {
+                @OutputDoc(
+                        name = PlayerGameModeAction.KEY_OUT_GAME_MODE,
+                        description = "変更されたゲームモードです。",
+                        type = GameMode.class
+                )
+        }
+)
 public class PlayerGameModeAction extends AbstractPlayerAction
         implements Executable, Watchable, Requireable
 {
+    @InputDoc(
+            name = "gamemode",
+            description = "プレイヤのゲームモードを指定します。",
+            type = GameMode.class
+    )
     public static final InputToken<GameMode> IN_GAME_MODE = ofEnumInput(
             "gamemode",
             GameMode.class

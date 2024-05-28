@@ -8,6 +8,9 @@ import org.bukkit.event.server.ServerCommandEvent;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.action.utils.PlayerLikeCommandSenders;
 import org.kunlab.scenamatica.annotations.action.Action;
+import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.OutputDoc;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
@@ -21,13 +24,48 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 @Action("command_dispatch")
+@ActionDoc(
+        name = "コマンドの実行",
+        description = "コマンドを実行します。",
+        events = {
+                ServerCommandEvent.class,
+                PlayerCommandPreprocessEvent.class
+        },
+
+        executable = "コマンドを実行します。",
+        watchable = "コマンドが実行されることを期待します。",
+        requireable = ActionDoc.UNALLOWED,
+
+        outputs = {
+                @OutputDoc(
+                        name = CommandDispatchAction.KEY_OUT_COMMAND,
+                        description = "コマンドです。",
+                        type = String.class
+                ),
+                @OutputDoc(
+                        name = CommandDispatchAction.KEY_OUT_SENDER,
+                        description = "送信者です。",
+                        type = PlayerSpecifier.class
+                )
+        }
+)
 public class CommandDispatchAction extends AbstractServerAction
         implements Executable, Watchable
 {
+    @InputDoc(
+            name = "command",
+            description = "実行するコマンドです。",
+            type = String.class
+    )
     public static final InputToken<String> IN_COMMAND = ofInput(
             "command",
             String.class
     );
+    @InputDoc(
+            name = "sender",
+            description = "送信者です。",
+            type = PlayerSpecifier.class
+    )
     public static final InputToken<PlayerSpecifier> IN_SENDER = ofInput(
             "sender",
             PlayerSpecifier.class,

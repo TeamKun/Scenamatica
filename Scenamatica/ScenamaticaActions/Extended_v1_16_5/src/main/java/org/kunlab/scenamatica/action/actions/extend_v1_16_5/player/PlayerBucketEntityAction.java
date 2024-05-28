@@ -10,6 +10,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.actions.base.player.AbstractPlayerAction;
 import org.kunlab.scenamatica.annotations.action.Action;
+import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.OutputDoc;
+import org.kunlab.scenamatica.bookkeeper.enums.ActionMethod;
 import org.kunlab.scenamatica.enums.MinecraftVersion;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
@@ -28,15 +32,59 @@ import java.util.List;
 
 // 注： AbstractPlayerBucketAction を継承していない。
 @Action(value = "player_bucket_entity", supportsSince = MinecraftVersion.V1_16_5)
+@ActionDoc(
+        name = "プレイヤーのバケツでエンティティを操作",
+        description = "プレイヤーがバケツでエンティティを操作するイベントです。",
+        events = {
+                PlayerBucketEntityEvent.class
+        },
+        executable = "エンティティを操作します。",
+        watchable = "エンティティが操作されることを期待します。",
+        requireable = ActionDoc.UNALLOWED,
+
+        outputs = {
+                @OutputDoc(
+                        name = PlayerBucketEntityAction.KEY_OUT_ENTITY,
+                        description = "操作されたエンティティです。",
+                        type = Entity.class
+                ),
+                @OutputDoc(
+                        name = PlayerBucketEntityAction.KEY_OUT_BUCKET,
+                        description = "プレイヤーが持っているバケツです。",
+                        type = ItemStack.class
+                ),
+                @OutputDoc(
+                        name = PlayerBucketEntityAction.KEY_OUT_ENTITY_BUCKET,
+                        description = "エンティティが持っているバケツです。",
+                        type = ItemStack.class
+                )
+        }
+)
 public class PlayerBucketEntityAction extends AbstractPlayerAction
         implements Executable, Watchable
 {
+    @InputDoc(
+            name = "entity",
+            description = "操作されるエンティティです。",
+            type = EntitySpecifier.class,
+            requiredOn = ActionMethod.EXECUTE
+    )
     public static final InputToken<EntitySpecifier<Entity>> IN_ENTITY = ofSpecifier("entity");
+    @InputDoc(
+            name = "bucket",
+            description = "プレイヤーが持っているバケツです。",
+            type = ItemStack.class
+    )
     public static final InputToken<ItemStackStructure> IN_ORIGINAL_BUCKET = ofInput(
             "bucket",
             ItemStackStructure.class,
             ofDeserializer(ItemStackStructure.class)
     );
+    @InputDoc(
+            name = "entityBucket",
+            description = "エンティティが持っているバケツです。",
+            type = ItemStack.class
+    )
     public static final InputToken<ItemStackStructure> IN_ENTITY_BUCKET = ofInput(
             "entityBucket",
             ItemStackStructure.class,

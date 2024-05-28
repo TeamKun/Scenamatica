@@ -7,6 +7,10 @@ import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.annotations.action.Action;
+import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.OutputDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.OutputDocs;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
@@ -20,9 +24,34 @@ import java.util.Collections;
 import java.util.List;
 
 @Action("inventory_open")
+@ActionDoc(
+        name = "インベントリを開く",
+        description = "プレイヤのインベントリを開きます。",
+        events = {
+                InventoryOpenEvent.class
+        },
+
+        executable = "プレイヤのインベントリを開きます。",
+        watchable = "プレイヤのインベントリが開かれることを期待します。",
+        requireable = ActionDoc.UNALLOWED,
+
+        outputs = {
+                @OutputDoc(
+                        name = InventoryOpenAction.KEY_OUT_TARGET,
+                        description = "対象のアクタです。",
+                        type = Player.class
+                )
+        }
+
+)
 public class InventoryOpenAction extends AbstractInventoryAction
         implements Executable, Watchable
 {
+    @InputDoc(
+            name = "target",
+            description = "対象のアクタです。",
+            type = PlayerSpecifier.class
+    )
     public static final InputToken<PlayerSpecifier> IN_PLAYER = ofInput(
             "target",
             PlayerSpecifier.class,

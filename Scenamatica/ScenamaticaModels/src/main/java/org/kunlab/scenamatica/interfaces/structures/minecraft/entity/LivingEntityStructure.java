@@ -98,9 +98,9 @@ public interface LivingEntityStructure extends EntityStructure
     Integer getNoDamageTicks();
 
     /**
-     * このエンティティを殺したプレイヤーを取得します。
+     * このエンティティを殺したプレイヤを取得します。
      *
-     * @return 殺したプレイヤー
+     * @return 殺したプレイヤ
      */
     @NotNull
     PlayerSpecifier getKiller();

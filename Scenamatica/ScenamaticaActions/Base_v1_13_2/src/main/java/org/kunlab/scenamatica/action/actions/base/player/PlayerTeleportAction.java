@@ -6,6 +6,9 @@ import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.annotations.action.Action;
+import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.OutputDoc;
 import org.kunlab.scenamatica.commons.utils.Utils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
@@ -18,9 +21,33 @@ import java.util.Collections;
 import java.util.List;
 
 @Action("player_teleport")
+@ActionDoc(
+        name = "プレイヤのテレポート",
+        description = "プレイヤを指定した場所にテレポートさせます。",
+        events = {
+                PlayerTeleportEvent.class
+        },
+
+        executable = "プレイヤを指定した場所にテレポートさせます。",
+        watchable = "プレイヤがテレポートすることを期待します。",
+        requireable = ActionDoc.UNALLOWED,
+
+        outputs = {
+                @OutputDoc(
+                        name = PlayerTeleportAction.KEY_OUT_CAUSE,
+                        description = "テレポートの原因です。",
+                        type = PlayerTeleportEvent.TeleportCause.class
+                )
+        }
+)
 public class PlayerTeleportAction extends PlayerMoveAction
         implements Executable, Watchable
 {
+    @InputDoc(
+            name = "cacuse",
+            description = "テレポートの原因を指定します。",
+            type = PlayerTeleportEvent.TeleportCause.class
+    )
     public static final InputToken<PlayerTeleportEvent.TeleportCause> IN_CAUSE = ofEnumInput(
             "cause",
             PlayerTeleportEvent.TeleportCause.class

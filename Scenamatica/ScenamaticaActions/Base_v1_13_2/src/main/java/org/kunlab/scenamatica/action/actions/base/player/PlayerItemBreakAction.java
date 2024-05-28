@@ -11,6 +11,9 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.annotations.action.Action;
+import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.OutputDoc;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
@@ -28,14 +31,48 @@ import java.util.Collections;
 import java.util.List;
 
 @Action("player_item_break")
+@ActionDoc(
+        name = "プレイヤによるアイテムの破壊",
+        description = "プレイヤのアイテムを破壊します。",
+        events = {
+                PlayerItemBreakEvent.class
+        },
+
+        executable = "プレイヤのアイテムを破壊します。",
+        watchable = "プレイヤのアイテムが破壊されることを期待します。",
+        requireable = ActionDoc.UNALLOWED,
+
+        outputs = {
+                @OutputDoc(
+                        name = PlayerItemBreakAction.KEY_OUT_ITEM,
+                        description = "破壊されたアイテムです。",
+                        type = ItemStack.class
+                ),
+                @OutputDoc(
+                        name = PlayerItemBreakAction.KEY_OUT_SLOT,
+                        description = "破壊されたアイテムのスロットです。",
+                        type = EquipmentSlot.class
+                )
+        }
+)
 public class PlayerItemBreakAction extends AbstractPlayerAction
         implements Executable, Watchable
 {
+    @InputDoc(
+            name = "item",
+            description = "破壊するアイテムを指定します。",
+            type = ItemStack.class
+    )
     public static final InputToken<ItemStackStructure> IN_ITEM = ofInput(
             "item",
             ItemStackStructure.class,
             ofDeserializer(ItemStackStructure.class)
     );
+    @InputDoc(
+            name = "slot",
+            description = "破壊するアイテムのスロットを指定します。",
+            type = EquipmentSlot.class
+    )
     public static final InputToken<EquipmentSlot> IN_SLOT = ofEnumInput(
             "slot",
             EquipmentSlot.class

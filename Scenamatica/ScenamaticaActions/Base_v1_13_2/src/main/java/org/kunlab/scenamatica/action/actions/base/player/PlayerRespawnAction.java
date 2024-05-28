@@ -7,6 +7,10 @@ import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.annotations.action.Action;
+import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.OutputDoc;
+import org.kunlab.scenamatica.bookkeeper.enums.ActionMethod;
 import org.kunlab.scenamatica.commons.utils.Utils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
@@ -20,13 +24,50 @@ import java.util.Arrays;
 import java.util.List;
 
 @Action("player_respawn")
+@ActionDoc(
+        name = "プレイヤのリスポーン",
+        description = "プレイヤをリスポーンさせます。",
+        events = {
+                PlayerRespawnEvent.class,
+                PlayerPostRespawnEvent.class
+        },
+
+        executable = "プレイヤをリスポーンさせます。",
+        watchable = "プレイヤがリスポーンすることを期待します。",
+        requireable = ActionDoc.UNALLOWED,
+
+        outputs = {
+                @OutputDoc(
+                        name = PlayerRespawnAction.KEY_OUT_IS_BED,
+                        description = "プレイヤがベッドでリスポーンしたかどうかです。",
+                        type = boolean.class
+                ),
+                @OutputDoc(
+                        name = PlayerRespawnAction.KEY_OUT_LOCATION,
+                        description = "プレイヤがリスポーンする場所です。",
+                        type = Location.class
+                )
+        }
+
+)
 public class PlayerRespawnAction extends AbstractPlayerAction
         implements Executable, Watchable
 {
+    @InputDoc(
+            name = "isBed",
+            description = "プレイヤがベッドでリスポーンするかどうかを指定します。",
+            type = boolean.class,
+            availableFor = ActionMethod.WATCH
+    )
     public static final InputToken<Boolean> IN_IS_BED = ofInput(
             "isBed",
             Boolean.class
     );
+    @InputDoc(
+            name = "location",
+            description = "プレイヤがリスポーンする場所を指定します。",
+            type = Location.class
+    )
     public static final InputToken<LocationStructure> IN_LOCATION = ofInput(
             "location",
             LocationStructure.class,

@@ -9,7 +9,7 @@ import java.net.InetAddress;
 import java.util.List;
 
 /**
- * プレイヤーを表すインターフェースです。
+ * プレイヤを表すインターフェースです。
  */
 public interface PlayerStructure extends HumanEntityStructure, Mapped<Player>
 {
@@ -38,65 +38,65 @@ public interface PlayerStructure extends HumanEntityStructure, Mapped<Player>
     String KEY_ACTIVE_PERMISSIONS = "permissions";
 
     /**
-     * プレイヤーの名前を取得します。
+     * プレイヤの名前を取得します。
      *
-     * @return プレイヤーの名前
+     * @return プレイヤの名前
      */
     String getName();
 
     /**
-     * プレイヤーがオンラインかどうかを取得します。
+     * プレイヤがオンラインかどうかを取得します。
      *
-     * @return プレイヤーがオンラインかどうか
+     * @return プレイヤがオンラインかどうか
      */
     Boolean getOnline();
 
     /**
-     * プレイヤーのIPアドレスを取得します。
+     * プレイヤのIPアドレスを取得します。
      *
-     * @return プレイヤーのIPアドレス
+     * @return プレイヤのIPアドレス
      */
     InetAddress getRemoteAddress();
 
     /**
-     * プレイヤーのポート番号を取得します。
+     * プレイヤのポート番号を取得します。
      *
-     * @return プレイヤーのポート番号
+     * @return プレイヤのポート番号
      */
     Integer getPort();
 
     /**
-     * プレイヤーのホスト名を取得します。
+     * プレイヤのホスト名を取得します。
      *
-     * @return プレイヤーのホスト名
+     * @return プレイヤのホスト名
      */
     String getHostName();
 
     /**
-     * プレイヤーの表示名を取得します。
+     * プレイヤの表示名を取得します。
      *
-     * @return プレイヤーの表示名
+     * @return プレイヤの表示名
      */
     String getDisplayName();
 
     /**
-     * プレイヤーリストに表示される名前を取得します。
+     * プレイヤリストに表示される名前を取得します。
      *
-     * @return プレイヤーリストに表示される名前
+     * @return プレイヤリストに表示される名前
      */
     String getPlayerListName();
 
     /**
-     * プレイヤーリストのヘッダーを取得します。
+     * プレイヤリストのヘッダーを取得します。
      *
-     * @return プレイヤーリストのヘッダー
+     * @return プレイヤリストのヘッダー
      */
     String getPlayerListHeader();
 
     /**
-     * プレイヤーリストのフッターを取得します。
+     * プレイヤリストのフッターを取得します。
      *
-     * @return プレイヤーリストのフッター
+     * @return プレイヤリストのフッター
      */
     String getPlayerListFooter();
 
@@ -171,7 +171,7 @@ public interface PlayerStructure extends HumanEntityStructure, Mapped<Player>
     Integer getOpLevel();
 
     /**
-     * プレイヤーが持っている権限を取得します。
+     * プレイヤが持っている権限を取得します。
      *
      * @return 権限のリスト
      */

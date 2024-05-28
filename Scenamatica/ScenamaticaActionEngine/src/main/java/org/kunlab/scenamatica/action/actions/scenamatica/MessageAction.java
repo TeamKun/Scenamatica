@@ -5,6 +5,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.annotations.action.Action;
+import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.OutputDoc;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.events.actor.ActorMessageReceiveEvent;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
@@ -17,17 +20,48 @@ import org.kunlab.scenamatica.interfaces.structures.specifiers.PlayerSpecifier;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * プレイヤにメッセージを送信する/送信されることを監視するアクション。
- */
 @Action("message")
+@ActionDoc(
+        name = "プレイヤのメッセージの受信",
+        description = "プレイヤのメッセージの受信に関するアクションです。",
+        events = {
+                ActorMessageReceiveEvent.class
+        },
+
+        executable = "プレイヤにメッセージを送信します。",
+        watchable = "プレイヤがメッセージを受信することを期待します。",
+        requireable = ActionDoc.UNALLOWED,
+
+        outputs = {
+                @OutputDoc(
+                        name = MessageAction.KEY_OUT_MESSAGE,
+                        description = "メッセージです。",
+                        type = String.class
+                ),
+                @OutputDoc(
+                        name = MessageAction.KEY_OUT_RECIPIENT,
+                        description = "メッセージの受信者です。",
+                        type = Player.class
+                )
+        }
+)
 public class MessageAction extends AbstractScenamaticaAction
         implements Executable, Watchable
 {
+    @InputDoc(
+            name = "message",
+            description = "送信するメッセージです。",
+            type = String.class
+    )
     public static final InputToken<String> IN_MESSAGE = ofInput(
             "message",
             String.class
     );
+    @InputDoc(
+            name = "recipient",
+            description = "メッセージの受信者です。",
+            type = PlayerSpecifier.class
+    )
     public static final InputToken<PlayerSpecifier> IN_RECIPIENT = ofInput(
             "recipient",
             PlayerSpecifier.class,

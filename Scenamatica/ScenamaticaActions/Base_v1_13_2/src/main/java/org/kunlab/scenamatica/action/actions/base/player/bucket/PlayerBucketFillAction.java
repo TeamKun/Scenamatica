@@ -10,6 +10,8 @@ import org.bukkit.event.player.PlayerBucketFillEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.annotations.action.Action;
+import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
+import org.kunlab.scenamatica.bookkeeper.enums.MCVersion;
 import org.kunlab.scenamatica.enums.MinecraftVersion;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
@@ -21,6 +23,19 @@ import java.util.Collections;
 import java.util.List;
 
 @Action(value = "player_bucket_fill", supportsUntil = MinecraftVersion.V1_15_2)
+@ActionDoc(
+        name = "プレイヤによるバケツの満杯化",
+        description = "プレイヤがバケツを満杯にするアクションです。",
+        events = {
+                PlayerBucketFillEvent.class
+        },
+
+        supportsUntil = MCVersion.V1_15_2,
+
+        executable = "プレイヤがバケツを満杯にします。",
+        watchable = "プレイヤがバケツを満杯にすることを期待します。",
+        requireable = ActionDoc.UNALLOWED
+)
 public class PlayerBucketFillAction extends AbstractPlayerBucketAction
         implements Watchable, Executable
 {

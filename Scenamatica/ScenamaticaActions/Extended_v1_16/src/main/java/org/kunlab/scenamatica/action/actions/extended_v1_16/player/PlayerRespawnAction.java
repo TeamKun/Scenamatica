@@ -8,6 +8,7 @@ import org.bukkit.event.player.PlayerRespawnEvent;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.action.actions.base.player.AbstractPlayerAction;
 import org.kunlab.scenamatica.annotations.action.Action;
+import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
 import org.kunlab.scenamatica.commons.utils.Utils;
 import org.kunlab.scenamatica.enums.MinecraftVersion;
 import org.kunlab.scenamatica.enums.ScenarioType;
@@ -29,6 +30,11 @@ public class PlayerRespawnAction extends AbstractPlayerAction
             "isBed",
             Boolean.class
     );
+    @InputDoc(
+            name = "isAnchor",
+            description = "アンカーでスポーンするかどうかです。",
+            type = boolean.class
+    )
     public static final InputToken<Boolean> IN_IS_ANCHOR = ofInput(
             "isAnchor",
             Boolean.class

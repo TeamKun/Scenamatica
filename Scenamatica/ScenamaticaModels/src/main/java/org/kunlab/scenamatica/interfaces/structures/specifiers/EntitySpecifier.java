@@ -4,6 +4,9 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.kunlab.scenamatica.bookkeeper.annotations.DynamicTypeDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.TypeDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.TypeProperty;
 import org.kunlab.scenamatica.interfaces.context.Context;
 import org.kunlab.scenamatica.interfaces.scenariofile.Structure;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.EntityStructure;
@@ -17,6 +20,26 @@ import java.util.UUID;
  *
  * @param <E> エンティティの型
  */
+@DynamicTypeDoc(
+        name = "EntitySpecifier",
+        description = "エンティティの指定子を提供します。",
+        anyOf = {
+                @TypeDoc(
+                        name = "Selector",
+                        description = "セレクタを使用してエンティティを指定します。"
+                ),
+                @TypeDoc(
+                        name = "Entity",
+                        description = "エンティティを直接指定します。",
+                        extending = EntityStructure.class
+                ),
+                @TypeDoc(
+                        name = "UUID",
+                        description = "UUID を使用してエンティティを指定します。",
+                        extending = UUID.class
+                )
+        }
+)
 public interface EntitySpecifier<E extends Entity> extends Structure
 {
     /**

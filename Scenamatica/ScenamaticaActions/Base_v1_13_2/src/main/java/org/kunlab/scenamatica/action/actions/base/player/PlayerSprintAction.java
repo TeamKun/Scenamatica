@@ -6,6 +6,8 @@ import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerToggleSprintEvent;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.annotations.action.Action;
+import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
@@ -18,9 +20,25 @@ import java.util.Collections;
 import java.util.List;
 
 @Action("player_sprint")
+@ActionDoc(
+        name = "プレイヤの走り",
+        description = "プレイヤを走らせます。",
+        events = {
+                PlayerToggleSprintEvent.class
+        },
+
+        executable = "プレイヤの走り状態を変更します。",
+        watchable = "プレイヤの走り状態が変更されることを期待します。",
+        requireable = "プレイヤの走り状態が指定された値になることを要求します。"
+)
 public class PlayerSprintAction extends AbstractPlayerAction
         implements Executable, Watchable, Requireable
 {
+    @InputDoc(
+            name = "sprinting",
+            description = "走り状態を指定します。",
+            type = boolean.class
+    )
     public static final InputToken<Boolean> IN_SPRINTING = ofInput(
             "sprinting",
             Boolean.class

@@ -25,7 +25,6 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Getter
-@AllArgsConstructor
 public class PlayerStructureImpl extends HumanEntityStructureImpl implements PlayerStructure
 {
     private static final float SPEED_DEFAULT = 0.2f;

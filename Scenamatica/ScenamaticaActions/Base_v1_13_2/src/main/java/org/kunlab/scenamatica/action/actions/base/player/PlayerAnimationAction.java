@@ -6,6 +6,8 @@ import org.bukkit.event.player.PlayerAnimationEvent;
 import org.bukkit.event.player.PlayerAnimationType;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.annotations.action.Action;
+import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
@@ -17,9 +19,25 @@ import java.util.Collections;
 import java.util.List;
 
 @Action("player_animation")
+@ActionDoc(
+        name = "プレイヤのアニメーション",
+        description = "プレイヤにアニメーションを再生させます。",
+        events = {
+                PlayerAnimationEvent.class
+        },
+
+        executable = "プレイヤにアニメーションを再生させます。",
+        watchable = "プレイヤがアニメーションを再生させることを期待します。",
+        requireable = ActionDoc.UNALLOWED
+)
 public class PlayerAnimationAction extends AbstractPlayerAction
         implements Executable, Watchable
 {
+    @InputDoc(
+            name = "type",
+            description = "再生するアニメーションの種類を指定します。",
+            type = PlayerAnimationType.class
+    )
     public static final InputToken<PlayerAnimationType> IN_ANIMATION_TYPE = ofEnumInput(
             "type",
             PlayerAnimationType.class

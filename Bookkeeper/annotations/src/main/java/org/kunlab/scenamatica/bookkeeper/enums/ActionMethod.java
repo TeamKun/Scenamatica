@@ -16,5 +16,7 @@ public enum ActionMethod
     /**
      * アクションに係るコンディションを確認します。
      */
-    REQUIRE
+    REQUIRE;
+
+    public static final ActionMethod[] ALL = values();
 }

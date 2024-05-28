@@ -63,12 +63,12 @@ public @interface TypeProperty
      *
      * @return 最大値
      */
-    long max() default Integer.MAX_VALUE;
+    double max() default Integer.MAX_VALUE;
 
     /**
      * 文字列における最小文字数または, 数値における最小値を取得します。
      *
      * @return 最小値
      */
-    long min() default Integer.MIN_VALUE;
+    double min() default Integer.MIN_VALUE;
 }

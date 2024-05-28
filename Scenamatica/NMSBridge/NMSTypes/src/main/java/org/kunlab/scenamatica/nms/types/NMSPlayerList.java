@@ -19,14 +19,14 @@ public interface NMSPlayerList extends NMSWrapped
     Server getBukkit();
 
     /**
-     * プレイヤーを指定したワールドに移動します。
+     * プレイヤを指定したワールドに移動します。
      *
-     * @param player           移動させるプレイヤー
+     * @param player           移動させるプレイヤ
      * @param world            移動先のワールド
      * @param shouldCopyState  状態をコピーするかどうか
      * @param locationToSpawn  スポーンする場所
      * @param avoidSuffocation 窒息を避けるかどうか
-     * @return 移動後のプレイヤー
+     * @return 移動後のプレイヤ
      */
     @NotNull
     @Contract("_, _, _, _, _ -> param1")

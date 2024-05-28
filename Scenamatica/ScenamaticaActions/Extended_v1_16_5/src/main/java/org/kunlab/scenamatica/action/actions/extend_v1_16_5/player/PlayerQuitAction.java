@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.actions.base.player.AbstractPlayerAction;
 import org.kunlab.scenamatica.annotations.action.Action;
+import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
 import org.kunlab.scenamatica.enums.MinecraftVersion;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
@@ -29,6 +30,11 @@ public class PlayerQuitAction extends AbstractPlayerAction
             "message",
             String.class
     );
+    @InputDoc(
+            name = "reason",
+            description = "プレイヤがサーバから退出した理由を指定します。",
+            type = PlayerQuitEvent.QuitReason.class
+    )
     public static final InputToken<PlayerQuitEvent.QuitReason> IN_QUIT_REASON = ofEnumInput(
             "reason",
             PlayerQuitEvent.QuitReason.class

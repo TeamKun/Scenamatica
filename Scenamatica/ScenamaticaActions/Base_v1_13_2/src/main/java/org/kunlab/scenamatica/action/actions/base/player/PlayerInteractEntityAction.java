@@ -8,6 +8,9 @@ import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.annotations.action.Action;
+import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.OutputDoc;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
@@ -23,10 +26,44 @@ import java.util.Collections;
 import java.util.List;
 
 @Action("player_interact_entity")
+@ActionDoc(
+        name = "プレイヤによるエンティティのインタラクト",
+        description = "プレイヤによるエンティティをクリックさせます。",
+        events = {
+                PlayerInteractEntityEvent.class
+        },
+
+        executable = "プレイヤがエンティティをクリックします。",
+        watchable = "プレイヤがエンティティをクリックすることを期待します。",
+        requireable = ActionDoc.UNALLOWED,
+
+        outputs = {
+                @OutputDoc(
+                        name = PlayerInteractEntityAction.KEY_OUT_ENTITY,
+                        description = "クリックされたエンティティです。",
+                        type = Entity.class
+                ),
+                @OutputDoc(
+                        name = PlayerInteractEntityAction.KEY_OUT_HAND,
+                        description = "クリックをした手です。",
+                        type = NMSHand.class
+                )
+        }
+)
 public class PlayerInteractEntityAction extends AbstractPlayerAction
         implements Executable, Watchable
 {
+    @InputDoc(
+            name = "entity",
+            description = "クリックするエンティティを指定します。",
+            type = EntitySpecifier.class
+    )
     public static final InputToken<EntitySpecifier<Entity>> IN_ENTITY = ofSpecifier("entity");
+    @InputDoc(
+            name = "hand",
+            description = "クリックをする手を指定します。",
+            type = NMSHand.class
+    )
     public static final InputToken<NMSHand> IN_HAND = ofEnumInput("hand", NMSHand.class);
     public static final String KEY_OUT_ENTITY = "entity";
     public static final String KEY_OUT_HAND = "hand";

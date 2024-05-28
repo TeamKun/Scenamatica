@@ -6,6 +6,9 @@ import org.bukkit.event.player.PlayerChatEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.annotations.action.Action;
+import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.OutputDoc;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
@@ -18,13 +21,48 @@ import java.util.List;
 
 @SuppressWarnings("deprecation")  // そもそも PlayerChatEvent が deprecated なので。
 @Action("player_chat")
+@ActionDoc(
+        name = "プレイヤのチャット",
+        description = "プレイヤがチャットを送信します。",
+        events = {
+                PlayerChatEvent.class
+        },
+
+        executable = "プレイヤがチャットを送信します。",
+        watchable = "プレイヤがチャットを送信することを期待します。",
+        requireable = ActionDoc.UNALLOWED,
+
+        outputs = {
+                @OutputDoc(
+                        name = PlayerChatAction.KEY_OUT_MESSAGE,
+                        description = "送信されたメッセージです。",
+                        type = String.class
+                ),
+                @OutputDoc(
+                        name = PlayerChatAction.KEY_OUT_FORMAT,
+                        description = "送信されたメッセージのフォーマットです。",
+                        type = String.class
+                )
+        }
+
+)
 public class PlayerChatAction extends AbstractPlayerAction
         implements Executable, Watchable
 {
+    @InputDoc(
+            name = "message",
+            description = "送信するメッセージまたは判定用に使用する正規表現を指定します。",
+            type = String.class
+    )
     public static final InputToken<String> IN_MESSAGE = ofInput(
             "message",
             String.class
     );
+    @InputDoc(
+            name = "format",
+            description = "送信するメッセージのフォーマットです。",
+            type = String.class
+    )
     public static final InputToken<String> IN_FORMAT = ofInput(
             "format",
             String.class

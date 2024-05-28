@@ -8,6 +8,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.utils.InputTypeToken;
 import org.kunlab.scenamatica.annotations.action.Action;
+import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.OutputDoc;
+import org.kunlab.scenamatica.bookkeeper.enums.ActionMethod;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
@@ -23,17 +27,66 @@ import java.util.Map;
 
 @SuppressWarnings("deprecation")  // DamageModifier <- very soon で消えるらしい。 1.8 の頃から言ってる。 <- 石油かよ！！？
 @Action("entity_damage")
+@ActionDoc(
+        name = "エンティティの負傷",
+        description = "エンティティにダメージを与えます。",
+        events = {
+                EntityDamageEvent.class
+        },
+
+        executable = "エンティティにダメージを与えます。",
+        watchable = "エンティティがダメージを受けることを期待します。",
+        requireable = ActionDoc.UNALLOWED,
+
+        outputs = {
+                @OutputDoc(
+                        name = EntityDamageAction.KEY_OUT_CAUSE,
+                        description = "ダメージの原因です。",
+                        type = EntityDamageEvent.DamageCause.class
+                ),
+                @OutputDoc(
+                        name = EntityDamageAction.KEY_OUT_AMOUNT,
+                        description = "ダメージの量です。",
+                        type = double.class
+                ),
+                @OutputDoc(
+                        name = EntityDamageAction.KEY_OUT_MODIFIERS,
+                        description = "ダメージの修飾子です。",
+                        type = Map.class
+                )
+        }
+
+)
 public class EntityDamageAction extends AbstractGeneralEntityAction
         implements Executable, Watchable
 {
+    @InputDoc(
+            name = "cause",
+            description = "ダメージの原因を指定します。",
+            type = EntityDamageEvent.DamageCause.class
+    )
     public static final InputToken<EntityDamageEvent.DamageCause> IN_CAUSE = ofEnumInput(
             "cause",
             EntityDamageEvent.DamageCause.class
     );
+
+    @InputDoc(
+            name = "amount",
+            description = "ダメージの量を指定します。",
+            type = double.class,
+            min = 0.0d,
+            requiredOn = ActionMethod.EXECUTE
+    )
     public static final InputToken<Double> IN_AMOUNT = ofInput(
             "amount",
             Double.class
     );
+
+    @InputDoc(
+            name = "modifiers",
+            description = "ダメージの修飾子を指定します。",
+            type = Map.class
+    )
     public static final InputToken<Map<EntityDamageEvent.DamageModifier, Double>> IN_MODIFIERS = ofInput(
             "modifiers",
             InputTypeToken.ofMap(EntityDamageEvent.DamageModifier.class, Double.class),

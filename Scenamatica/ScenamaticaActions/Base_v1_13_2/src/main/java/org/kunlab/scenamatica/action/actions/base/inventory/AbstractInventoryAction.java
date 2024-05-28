@@ -6,12 +6,23 @@ import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.AbstractAction;
+import org.kunlab.scenamatica.bookkeeper.annotations.OutputDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.OutputDocs;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.inventory.InventoryStructure;
 
+
+@OutputDocs({
+        @OutputDoc(
+                name = AbstractInventoryAction.OUT_KEY_INVENTORY,
+                description = "対象のインベントリです。",
+                type = Inventory.class
+        )
+
+})
 public abstract class AbstractInventoryAction extends AbstractAction
 {
     public static final InputToken<InventoryStructure> IN_INVENTORY = ofInput(

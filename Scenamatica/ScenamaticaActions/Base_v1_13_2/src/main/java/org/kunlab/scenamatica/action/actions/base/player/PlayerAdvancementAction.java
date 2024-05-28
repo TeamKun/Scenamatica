@@ -12,6 +12,9 @@ import org.bukkit.event.player.PlayerEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.annotations.action.Action;
+import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.OutputDoc;
 import org.kunlab.scenamatica.commons.utils.NamespaceUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
@@ -25,17 +28,49 @@ import java.util.Arrays;
 import java.util.List;
 
 @Action("player_advancement")
+@ActionDoc(
+        name = "プレイヤの進捗",
+        description = "プレイヤの進捗を設定します。",
+
+        executable = "プレイヤの進捗を達成するか、達成度を設定します。",
+        watchable = "プレイヤの進捗が達成、または達成度が設定されすることを期待します。",
+        requireable = "プレイヤが指定された進捗を達成しているか、または達成度が設定されていることを要求します。",
+
+        outputs = {
+                @OutputDoc(
+                        name = PlayerAdvancementAction.KEY_OUT_ADVANCEMENT,
+                        description = "達成した進捗のキーです。",
+                        type = NamespacedKey.class
+                ),
+                @OutputDoc(
+                        name = PlayerAdvancementAction.KEY_OUT_CRITERION,
+                        description = "達成した進捗の条件です。",
+                        type = String.class
+                )
+        }
+)
 public class PlayerAdvancementAction
         extends AbstractPlayerAction
         implements Executable, Watchable, Requireable
 {
     // 進捗の Criterion を付与するアクションと, 進捗を完了させるアクションを統合した。
     // 脚注： Criterion => 単数, Criteria => 複数 -- ギリシャ語による。
+
+    @InputDoc(
+            name = "advancement",
+            description = "進捗を指定します。",
+            type = NamespacedKey.class
+    )
     public static final InputToken<NamespacedKey> IN_ADVANCEMENT = ofInput(
             "advancement",
             NamespacedKey.class,
             ofTraverser(String.class, (ser, str) -> NamespaceUtils.fromString(str))
     );
+    @InputDoc(
+            name = "criterion",
+            description = "進捗の条件を指定します。",
+            type = String.class
+    )
     public static final InputToken<String> IN_CRITERION = ofInput(
             "criterion",
             String.class
