@@ -1,16 +1,107 @@
 package org.kunlab.scenamatica.interfaces.structures.minecraft.entity;
 
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.kunlab.scenamatica.bookkeeper.annotations.TypeDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.TypeProperty;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.entities.HumanEntityStructure;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.misc.LocationStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.Mapped;
 
 import java.net.InetAddress;
 import java.util.List;
+import java.util.Map;
 
 /**
  * プレイヤを表すインターフェースです。
  */
+@TypeDoc(
+name = "Player",
+        description = "プレイヤの情報を格納します。",
+        mappingOf = Player.class,
+        properties = {
+                @TypeProperty(
+                        name = PlayerStructure.KEY_NAME,
+                        description = "プレイヤの名前です。",
+                        type = String.class
+                ),
+                @TypeProperty(
+                        name = PlayerStructure.KEY_ONLINE,
+                        description = "プレイヤがオンラインかどうかです。",
+                        type = boolean.class
+                ),
+                @TypeProperty(
+                        name = PlayerStructure.KEY_CONNECTION,
+                        description = "プレイヤの接続情報です。",
+                        type = Map.class
+                ),
+                @TypeProperty(
+                        name = PlayerStructure.KEY_DISPLAY_NAME,
+                        description = "プレイヤの表示名です。",
+                        type = String.class
+                ),
+                @TypeProperty(
+                        name = PlayerStructure.KEY_PLAYER_LIST,
+                        description = "プレイヤのプレイヤリストに表示される情報です。",
+                        type = Map.class
+                ),
+                @TypeProperty(
+                        name = PlayerStructure.KEY_COMPASS_TARGET,
+                        description = "プレイヤのコンパスが指す位置です。",
+                        type = Location.class
+                ),
+                @TypeProperty(
+                        name = PlayerStructure.KEY_BED_SPAWN_LOCATION,
+                        description = "プレイヤのベッドのスポーン地点です。",
+                        type = Location.class
+                ),
+                @TypeProperty(
+                        name = PlayerStructure.KEY_EXP,
+                        description = "プレイヤの経験値です。",
+                        type = int.class
+                ),
+                @TypeProperty(
+                        name = PlayerStructure.KEY_LEVEL,
+                        description = "プレイヤのレベルです。",
+                        type = int.class
+                ),
+                @TypeProperty(
+                        name = PlayerStructure.KEY_TOTAL_EXPERIENCE,
+                        description = "プレイヤの総経験値です。",
+                        type = int.class
+                ),
+                @TypeProperty(
+                        name = PlayerStructure.KEY_ALLOW_FLIGHT,
+                        description = "プレイヤが飛べるかどうかです。",
+                        type = boolean.class
+                ),
+                @TypeProperty(
+                        name = PlayerStructure.KEY_FLYING,
+                        description = "プレイヤが飛んでいるかどうかです。",
+                        type = boolean.class
+                ),
+                @TypeProperty(
+                        name = PlayerStructure.KEY_FLY_SPEED,
+                        description = "プレイヤの飛行速度です。",
+                        type = float.class
+                ),
+                @TypeProperty(
+                        name = PlayerStructure.KEY_WALK_SPEED,
+                        description = "プレイヤの歩行速度です。",
+                        type = float.class
+                ),
+                @TypeProperty(
+                        name = PlayerStructure.KEY_OP_LEVEL,
+                        description = "プレイヤの OP レベルです。",
+                        type = int.class
+                ),
+                @TypeProperty(
+                        name = PlayerStructure.KEY_ACTIVE_PERMISSIONS,
+                        description = "プレイヤが持っている権限です。",
+                        type = String[].class
+                )
+        }
+)
 public interface PlayerStructure extends HumanEntityStructure, Mapped<Player>
 {
     String KEY_NAME = "name";

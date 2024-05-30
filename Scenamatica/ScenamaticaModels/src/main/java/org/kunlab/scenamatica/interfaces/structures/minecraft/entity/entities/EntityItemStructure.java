@@ -1,6 +1,9 @@
 package org.kunlab.scenamatica.interfaces.structures.minecraft.entity.entities;
 
 import org.bukkit.entity.Item;
+import org.bukkit.inventory.ItemStack;
+import org.kunlab.scenamatica.bookkeeper.annotations.TypeDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.TypeProperty;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.EntityStructure;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.inventory.ItemStackStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.Mapped;
@@ -9,6 +12,39 @@ import org.kunlab.scenamatica.interfaces.structures.specifiers.PlayerSpecifier;
 
 import java.util.UUID;
 
+@TypeDoc(
+        name = "EntityItem",
+        description = "アイテムエンティティの情報を格納します。",
+        mappingOf = Item.class,
+        properties = {
+                @TypeProperty(
+                        name = EntityItemStructure.KEY_PICKUP_DELAY,
+                        description = "アイテムの拾い取りにかかる時間です。",
+                        type = int.class
+                ),
+                @TypeProperty(
+                        name = EntityItemStructure.KEY_OWNER,
+                        description = "アイテムを拾ったエンティティです。",
+                        type = EntitySpecifier.class
+                ),
+                @TypeProperty(
+                        name = EntityItemStructure.KEY_THROWER,
+                        description = "アイテムを投げたエンティティです。",
+                        type = EntitySpecifier.class
+                ),
+                @TypeProperty(
+                        name = EntityItemStructure.KEY_CAN_MOB_PICKUP,
+                        description = "アイテムをモブが拾えるかどうかです。",
+                        type = boolean.class
+                ),
+                @TypeProperty(
+                        name = EntityItemStructure.KEY_WILL_AGE,
+                        description = "アイテムが時間経過で消滅するかどうかです。",
+                        type = boolean.class
+                )
+        }
+
+)
 public interface EntityItemStructure extends EntityStructure, Mapped<Item>
 {
     // public static final String KEY_ITEM_STACK = "itemStack";    // トップレベルに ItemStackStructure のキーを置くのでいらない。
