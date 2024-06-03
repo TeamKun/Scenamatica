@@ -13,6 +13,7 @@ public @interface TypeProperty
 {
     /**
      * プロパティの名前を取得します。
+     *
      * @return プロパティの名前
      */
     @NotNull
@@ -20,6 +21,7 @@ public @interface TypeProperty
 
     /**
      * プロパティの説明を取得します。
+     *
      * @return プロパティの説明
      */
     @NotNull
@@ -27,39 +29,43 @@ public @interface TypeProperty
 
     /**
      * プロパティの型を取得します。
+     *
      * @return プロパティの型
      */
     Class<?> type();
 
     /**
      * プロパティのデフォルト値を取得します。
+     *
      * @return プロパティのデフォルト値
      */
     String defaultValue() default "";
 
     /**
      * プロパティが必須であるかどうかを取得します。
+     *
      * @return プロパティが必須であるかどうか
      */
     boolean required() default false;
 
     /**
      * プロパティのパターンを取得します。
-     *
+     * <p>
      * パターンは, 正規表現で指定し, 型が String の場合にのみ有効です。
+     *
      * @return プロパティのパターン
      */
     String pattern() default "";
 
     /**
      * 値の初期値を取得します。
+     *
      * @return 値の初期値
      */
     String constValue() default "";
 
     /**
      * 文字列における最大文字数または, 数値における最大値を取得します。
-     *
      *
      * @return 最大値
      */

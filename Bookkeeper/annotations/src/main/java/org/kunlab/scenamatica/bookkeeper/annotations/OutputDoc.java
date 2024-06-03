@@ -19,6 +19,7 @@ public @interface OutputDoc
 {
     /**
      * 出力の名前を取得します。
+     *
      * @return 出力の名前
      */
     @NotNull
@@ -26,6 +27,7 @@ public @interface OutputDoc
 
     /**
      * 出力の説明を取得します。
+     *
      * @return 出力の説明
      */
     @NotNull
@@ -33,6 +35,7 @@ public @interface OutputDoc
 
     /**
      * 出力の対象メソッドを取得します。
+     *
      * @return 出力の対象メソッド
      */
     @NotNull
@@ -40,6 +43,7 @@ public @interface OutputDoc
 
     /**
      * 出力の型を取得します。
+     *
      * @return 出力の型
      */
     @NotNull
@@ -62,7 +66,6 @@ public @interface OutputDoc
 
     /**
      * 文字列における最大文字数または, 数値における最大値を取得します。
-     *
      *
      * @return 最大値
      */

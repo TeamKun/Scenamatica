@@ -6,6 +6,7 @@ import org.bukkit.event.entity.EntityEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.AbstractAction;
+import org.kunlab.scenamatica.bookkeeper.annotations.ActionCategory;
 import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
 import org.kunlab.scenamatica.bookkeeper.annotations.OutputDoc;
 import org.kunlab.scenamatica.bookkeeper.annotations.OutputDocs;
@@ -18,6 +19,11 @@ import org.kunlab.scenamatica.interfaces.scenariofile.Mapped;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.EntityStructure;
 import org.kunlab.scenamatica.interfaces.structures.specifiers.EntitySpecifier;
 
+@ActionCategory(
+        id = "entity",
+        name = "エンティティ",
+        description = "エンティティに関するアクションを提供します。"
+)
 @OutputDocs({
         @OutputDoc(
                 name = AbstractEntityAction.OUT_KEY_TARGET,

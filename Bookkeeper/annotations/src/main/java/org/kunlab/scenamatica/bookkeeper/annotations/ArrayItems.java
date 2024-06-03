@@ -13,6 +13,7 @@ public @interface ArrayItems
 {
     /**
      * 配列の要素を取得します。
+     *
      * @return 配列の要素
      */
     @NotNull

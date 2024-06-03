@@ -14,6 +14,7 @@ public @interface DynamicTypeDoc
 
     /**
      * タイプの名前を取得します。
+     *
      * @return タイプの名前
      */
     @NotNull
@@ -21,6 +22,7 @@ public @interface DynamicTypeDoc
 
     /**
      * タイプの説明を取得します。
+     *
      * @return タイプの説明
      */
     @NotNull
@@ -28,6 +30,7 @@ public @interface DynamicTypeDoc
 
     /**
      * 振る舞いを取得します。
+     *
      * @return 振る舞い
      */
     TypeDoc[] anyOf();

@@ -7,6 +7,7 @@ import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.action.AbstractAction;
 import org.kunlab.scenamatica.annotations.action.Action;
+import org.kunlab.scenamatica.bookkeeper.annotations.ActionCategory;
 import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
 import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
 import org.kunlab.scenamatica.enums.ScenarioType;
@@ -22,6 +23,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Action("server_log")
+@ActionCategory(id = "server", inherit = true)
 @ActionDoc(
         name = "サーバーログ",
         description = "サーバーログにメッセージを出力します。",

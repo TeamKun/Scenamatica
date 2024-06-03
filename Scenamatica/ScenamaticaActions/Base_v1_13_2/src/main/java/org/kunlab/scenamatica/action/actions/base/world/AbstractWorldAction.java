@@ -7,6 +7,7 @@ import org.bukkit.event.Event;
 import org.bukkit.event.world.WorldEvent;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.action.AbstractAction;
+import org.kunlab.scenamatica.bookkeeper.annotations.ActionCategory;
 import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
 import org.kunlab.scenamatica.bookkeeper.annotations.OutputDoc;
 import org.kunlab.scenamatica.bookkeeper.annotations.OutputDocs;
@@ -16,7 +17,11 @@ import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 
-
+@ActionCategory(
+        id = "world",
+        name = "ワールド",
+        description = "ワールドに関するアクションを提供します。"
+)
 @OutputDocs({
         @OutputDoc(
                 name = AbstractWorldAction.KEY_OUT_WORLD,

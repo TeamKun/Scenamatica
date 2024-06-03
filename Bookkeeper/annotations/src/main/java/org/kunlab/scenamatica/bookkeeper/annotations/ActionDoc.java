@@ -22,16 +22,16 @@ public @interface ActionDoc
 
     /**
      * アクションの一意な名前を取得します。
-     *
+     * <p>
      * アクションの名前は次の文字で構成される必要があります：
      *
-     *  <ul>
-     *      <li>英小文字(a-z)</li>
-     *      <li>数字(0-9)</li>
-     *      <li>アンダースコア(_)</li>
-     *  </ul>
-     *
-     *  単語間にはアンダースコアを使用してください。
+     * <ul>
+     *     <li>英小文字(a-z)</li>
+     *     <li>数字(0-9)</li>
+     *     <li>アンダースコア(_)</li>
+     * </ul>
+     * <p>
+     * 単語間にはアンダースコアを使用してください。
      *
      * @return アクションの名前
      */
@@ -40,6 +40,7 @@ public @interface ActionDoc
 
     /**
      * アクションの説明を取得します。
+     *
      * @return アクションの説明
      */
     @NotNull
@@ -47,6 +48,7 @@ public @interface ActionDoc
 
     /**
      * アクションが対応するイベントのクラスを取得します。
+     *
      * @return アクションが対応するイベントのクラス
      */
     @NotNull
@@ -55,6 +57,7 @@ public @interface ActionDoc
     /**
      * アクションが実行可能であることを示します。
      * 実行可能である場合は, {@link #ALLOWED} または, その説明を指定します。
+     *
      * @return 実行可能である場合は, {@link #ALLOWED} または, その説明
      */
     @Nullable
@@ -63,6 +66,7 @@ public @interface ActionDoc
     /**
      * アクションが監視可能であることを示します。
      * 監視可能である場合は, {@link #ALLOWED} または, その説明を指定します。
+     *
      * @return 監視可能である場合は, {@link #ALLOWED} または, その説明
      */
     @Nullable
@@ -71,6 +75,7 @@ public @interface ActionDoc
     /**
      * アクションが要求可能であることを示します。
      * 要求可能である場合は, {@link #ALLOWED} または, その説明を指定します。
+     *
      * @return 要求可能である場合は, {@link #ALLOWED} または, その説明
      */
     @Nullable
@@ -94,6 +99,7 @@ public @interface ActionDoc
 
     /**
      * アクションの出力情報を取得します。
+     *
      * @return アクションの出力情報
      */
     @NotNull

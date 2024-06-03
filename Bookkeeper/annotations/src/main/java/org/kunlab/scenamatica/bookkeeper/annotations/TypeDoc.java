@@ -18,6 +18,7 @@ public @interface TypeDoc
 {
     /**
      * タイプの名前を取得します。
+     *
      * @return タイプの名前
      */
     @NotNull
@@ -25,6 +26,7 @@ public @interface TypeDoc
 
     /**
      * タイプの説明を取得します。
+     *
      * @return タイプの説明
      */
     @NotNull
@@ -32,6 +34,7 @@ public @interface TypeDoc
 
     /**
      * タイプのプロパティを取得します。
+     *
      * @return タイプのプロパティ
      */
     @NotNull
@@ -54,12 +57,14 @@ public @interface TypeDoc
 
     /**
      * マッピングしているクラスを取得します。
+     *
      * @return マッピングしているクラス
      */
     Class<?> mappingOf() default Object.class;
 
     /**
      * エイリアスとして使用するクラスを取得します。
+     *
      * @return エイリアスとして使用するクラス
      */
     Class<?> extending() default Object.class;

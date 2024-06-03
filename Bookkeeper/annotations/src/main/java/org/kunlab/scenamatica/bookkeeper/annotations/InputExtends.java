@@ -14,6 +14,7 @@ public @interface InputExtends
 {
     /**
      * 拡張する入力フィールドを取得します。
+     *
      * @return 拡張する入力フィールド
      */
     InputDoc[] value();

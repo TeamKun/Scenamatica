@@ -19,6 +19,7 @@ public @interface InputDoc
 {
     /**
      * 入力フィールドの名前を取得します。
+     *
      * @return 入力フィールドの名前
      */
     @NotNull
@@ -26,6 +27,7 @@ public @interface InputDoc
 
     /**
      * 入力フィールドの説明を取得します。
+     *
      * @return 入力フィールドの説明
      */
     @NotNull
@@ -33,6 +35,7 @@ public @interface InputDoc
 
     /**
      * 入力フィールドが必須であるメソッドを取得します。
+     *
      * @return 入力フィールドが必須であるメソッド
      */
     @NotNull
@@ -40,6 +43,7 @@ public @interface InputDoc
 
     /**
      * 入力フィールドが利用可能であるメソッドを取得します。
+     *
      * @return 入力フィールドが利用可能であるメソッド
      */
     @NotNull
@@ -48,8 +52,9 @@ public @interface InputDoc
     /**
      * 入力フィールドの型を取得します。
      * 指定しない場合は string として扱われます。
-     *
+     * <p>
      * Array を指定する場合は, 別途 {@link ArrayItems} を付与してください。
+     *
      * @return 入力フィールドの型
      * @see ArrayItems
      */
@@ -72,13 +77,13 @@ public @interface InputDoc
 
     /**
      * 値の初期値を取得します。
+     *
      * @return 値の初期値
      */
     String constValue() default "";
 
     /**
      * 文字列における最大文字数または, 数値における最大値を取得します。
-     *
      *
      * @return 最大値
      */
@@ -93,6 +98,7 @@ public @interface InputDoc
 
     /**
      * プレイヤがアクタである必要があることを示します。
+     *
      * @return プレイヤがアクタである必要があるかどうか
      */
     boolean requiresActor() default false;
