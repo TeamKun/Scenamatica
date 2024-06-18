@@ -26,6 +26,7 @@ public class ActionCategoryDefinitionReader implements IAnnotationReader<ActionC
     public ActionCategoryDefinition buildAnnotation(@Nullable ClassNode clazz, @NotNull AnnotationValues values)
     {
         return new ActionCategoryDefinition(
+                clazz,
                 values.getAsString(KEY_ID),
                 values.getAsString(KEY_NAME),
                 values.getAsString(KEY_DESCRIPTION),

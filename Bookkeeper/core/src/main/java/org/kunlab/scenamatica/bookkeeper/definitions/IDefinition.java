@@ -5,7 +5,9 @@ import org.objectweb.asm.tree.ClassNode;
 
 public interface IDefinition
 {
+    ClassNode getAnnotatedClass();
+
     Class<?> getAnnotationType();
 
-    boolean isRelatedTo(@NotNull ClassNode classNode);
+    boolean isDependsOn(@NotNull IDefinition others);
 }

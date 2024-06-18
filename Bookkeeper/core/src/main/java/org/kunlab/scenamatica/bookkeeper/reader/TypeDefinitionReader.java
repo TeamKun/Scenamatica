@@ -47,7 +47,7 @@ public class TypeDefinitionReader implements IAnnotationReader<TypeDefinition>
                     assert obj instanceof AnnotationNode;
                     AnnotationValues insideValues = AnnotationValues.of((AnnotationNode) obj);
 
-                    return this.propertyReader.buildAnnotation(null, insideValues);
+                    return this.propertyReader.buildAnnotation(clazz, insideValues);
                 }),
                 values.get(KEY_MAPPING_OF, Type.class),
                 values.get(KEY_EXTENDING, Type.class)

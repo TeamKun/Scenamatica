@@ -1,23 +1,21 @@
 package org.kunlab.scenamatica.bookkeeper.definitions;
 
-import lombok.Value;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.bookkeeper.annotations.OutputDoc;
 import org.kunlab.scenamatica.bookkeeper.enums.ActionMethod;
+import org.kunlab.scenamatica.bookkeeper.enums.MCVersion;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.ClassNode;
 
-import java.util.Objects;
-
-@Value
-public class OutputDefinition implements IDefinition
+public record OutputDefinition(ClassNode annotatedClass, String name, String description, ActionMethod[] targets,
+                               Type type, MCVersion supportsSince,
+                               MCVersion supportsUntil, double min, double max) implements IDefinition
 {
-    String name;
-    String description;
-    ActionMethod[] targets;
-    Type type;
-    String supportsSince;
-    String supportsUntil;
+    @Override
+    public ClassNode getAnnotatedClass()
+    {
+        return this.annotatedClass;
+    }
 
     @Override
     public Class<?> getAnnotationType()
@@ -26,8 +24,8 @@ public class OutputDefinition implements IDefinition
     }
 
     @Override
-    public boolean isRelatedTo(@NotNull ClassNode classNode)
+    public boolean isDependsOn(@NotNull IDefinition def)
     {
-        return (this.type != null && Objects.equals(this.type.getClassName(), classNode.name));
+        return (this.type != null && this.type.getInternalName().equals(def.getAnnotatedClass().name));
     }
 }

@@ -6,6 +6,7 @@ import org.bukkit.potion.PotionEffect;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.bookkeeper.annotations.TypeDoc;
 import org.kunlab.scenamatica.bookkeeper.annotations.TypeProperty;
+import org.kunlab.scenamatica.interfaces.structures.docs.entity.PotionEffectDoc;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.inventory.ItemStackStructure;
 import org.kunlab.scenamatica.interfaces.structures.specifiers.EntitySpecifier;
 import org.kunlab.scenamatica.interfaces.structures.specifiers.PlayerSpecifier;
@@ -61,7 +62,7 @@ import java.util.List;
                 @TypeProperty(
                         name = LivingEntityStructure.KEY_POTION_EFFECTS,
                         description = "付与されているポーションエフェクトです。",
-                        type = PotionEffect.class
+                        type = PotionEffectDoc.class
                 ),
                 @TypeProperty(
                         name = LivingEntityStructure.KEY_REMOVE_WHEN_FAR_AWAY,

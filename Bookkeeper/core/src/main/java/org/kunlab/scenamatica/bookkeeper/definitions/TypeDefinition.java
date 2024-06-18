@@ -1,6 +1,5 @@
 package org.kunlab.scenamatica.bookkeeper.definitions;
 
-import lombok.Value;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.bookkeeper.annotations.TypeDoc;
 import org.objectweb.asm.Type;
@@ -8,15 +7,15 @@ import org.objectweb.asm.tree.ClassNode;
 
 import java.util.Arrays;
 
-@Value
-public class TypeDefinition implements IDefinition
+public record TypeDefinition(@NotNull ClassNode clazz, String name, String description,
+                             TypePropertyDefinition[] properties,
+                             Type mappingOf, Type extending) implements IDefinition
 {
-    ClassNode clazz;
-    String name;
-    String description;
-    TypePropertyDefinition[] properties;
-    Type mappingOf;
-    Type extending;
+    @Override
+    public ClassNode getAnnotatedClass()
+    {
+        return this.clazz;
+    }
 
     @Override
     public Class<?> getAnnotationType()
@@ -25,11 +24,30 @@ public class TypeDefinition implements IDefinition
     }
 
     @Override
-    public boolean isRelatedTo(@NotNull ClassNode classNode)
+    public boolean isDependsOn(@NotNull IDefinition def)
     {
-        return (this.properties != null && Arrays.stream(this.properties).parallel()
-                .anyMatch(property -> property.isRelatedTo(classNode)))
-                || (this.mappingOf != null && classNode.name.equals(this.mappingOf.getInternalName()))
-                || (this.extending != null && classNode.name.equals(this.extending.getInternalName()));
+        if (!(def instanceof TypeDefinition typeDef))
+            return false;
+
+        if (this.properties != null)
+            for (TypePropertyDefinition property : this.properties)
+                if (property.isDependsOn(typeDef))
+                    return true;
+
+        return (this.mappingOf != null && typeDef.name.equals(this.mappingOf.getInternalName()))
+                || (this.extending != null && typeDef.name.equals(this.extending.getInternalName()));
+    }
+
+    @Override
+    public String toString()
+    {
+        return "TypeDefinition{" +
+                "clazz=" + this.clazz.name.substring(this.clazz.name.lastIndexOf('/') + 1) +
+                ", name='" + this.name + '\'' +
+                ", description='" + this.description + '\'' +
+                ", properties=" + Arrays.toString(this.properties) +
+                ", mappingOf=" + this.mappingOf +
+                ", extending=" + this.extending +
+                '}';
     }
 }

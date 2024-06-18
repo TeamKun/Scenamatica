@@ -27,12 +27,16 @@ public class AnnotationClassifier
         this.classified = new HashMap<>();
     }
 
-    public void classify(List<? extends ClassNode> nodes)
+    public List<ClassifiedAnnotation> classify(List<? extends ClassNode> nodes)
     {
         Timekeeper timekeeper = new Timekeeper(log, "CLASSIFY");
         timekeeper.start();
-        nodes.forEach(this::classify);
+        List<ClassifiedAnnotation> classified = nodes.stream()
+                .map(this::classify)
+                .toList();
         timekeeper.end();
+
+        return classified;
     }
 
     public ClassifiedAnnotation classify(ClassNode node)
@@ -75,7 +79,7 @@ public class AnnotationClassifier
     }
 
     @Value
-    static class ClassifiedAnnotation
+    public static class ClassifiedAnnotation
     {
         ClassNode node;
         List<IDefinition> annotations;
@@ -89,6 +93,11 @@ public class AnnotationClassifier
         public void addAnnotation(IDefinition annotation)
         {
             this.annotations.add(annotation);
+        }
+
+        public void removeDefinition(IDefinition definition)
+        {
+            this.annotations.remove(definition);
         }
     }
 }

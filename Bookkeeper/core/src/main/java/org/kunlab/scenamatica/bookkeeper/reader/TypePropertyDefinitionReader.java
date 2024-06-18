@@ -18,7 +18,6 @@ public class TypePropertyDefinitionReader implements IAnnotationReader<TypePrope
     public static final String KEY_REQUIRED = "required";
     public static final String KEY_DEFAULT = "defaultValue";
     public static final String KEY_VALUES = "values";
-    public static final String KEY_MAPPING = "mappingOf";
 
     private static final String DESC = Descriptors.getDescriptor(TypeProperty.class);
 
@@ -32,13 +31,13 @@ public class TypePropertyDefinitionReader implements IAnnotationReader<TypePrope
     public TypePropertyDefinition buildAnnotation(@Nullable ClassNode clazz, @NotNull AnnotationValues values)
     {
         return new TypePropertyDefinition(
+                clazz,
                 values.getAsString(KEY_NAME),
                 values.getAsString(KEY_DESC),
                 values.get(KEY_TYPE, Type.class),
                 values.getAsBoolean(KEY_REQUIRED),
                 values.getAsString(KEY_DEFAULT),
-                values.getAsArray(KEY_VALUES, String.class),
-                values.get(KEY_MAPPING, Type.class)
+                values.getAsArray(KEY_VALUES, String.class)
         );
     }
 

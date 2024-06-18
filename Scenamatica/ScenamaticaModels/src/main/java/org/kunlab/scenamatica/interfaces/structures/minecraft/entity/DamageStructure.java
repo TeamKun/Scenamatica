@@ -2,6 +2,7 @@ package org.kunlab.scenamatica.interfaces.structures.minecraft.entity;
 
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.jetbrains.annotations.NotNull;
+import org.kunlab.scenamatica.bookkeeper.annotations.Category;
 import org.kunlab.scenamatica.bookkeeper.annotations.DynamicTypeDoc;
 import org.kunlab.scenamatica.bookkeeper.annotations.TypeDoc;
 import org.kunlab.scenamatica.bookkeeper.annotations.TypeProperty;
@@ -35,6 +36,7 @@ import java.util.Map;
                 )
         }
 )
+@Category("entity")
 public interface DamageStructure extends Structure, Mapped<EntityDamageEvent>
 {
     String KEY_MODIFIER = "modifiers";

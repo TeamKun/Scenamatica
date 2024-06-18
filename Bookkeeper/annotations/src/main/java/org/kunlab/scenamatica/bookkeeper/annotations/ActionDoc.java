@@ -17,8 +17,8 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.CLASS)
 public @interface ActionDoc
 {
-    static final String ALLOWED = "$alloawed$";
-    static final String UNALLOWED = "$unallowed$";
+    String ALLOWED = "$alloawed$";
+    String UNALLOWED = "$unallowed$";
 
     /**
      * アクションの一意な名前を取得します。

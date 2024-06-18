@@ -2,15 +2,22 @@ package org.kunlab.scenamatica.bookkeeper.reader;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.kunlab.scenamatica.annotations.action.Action;
 import org.kunlab.scenamatica.bookkeeper.AnnotationValues;
 import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
 import org.kunlab.scenamatica.bookkeeper.definitions.ActionDefinition;
+import org.kunlab.scenamatica.bookkeeper.definitions.InputDefinition;
 import org.kunlab.scenamatica.bookkeeper.definitions.OutputDefinition;
 import org.kunlab.scenamatica.bookkeeper.enums.MCVersion;
 import org.kunlab.scenamatica.bookkeeper.utils.Descriptors;
+import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.AnnotationNode;
 import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.asm.tree.FieldNode;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ActionDefinitionReader implements IAnnotationReader<ActionDefinition>
 {
@@ -25,12 +32,15 @@ public class ActionDefinitionReader implements IAnnotationReader<ActionDefinitio
     public static final String KEY_OUTPUTS = "outputs";
 
     private static final String DESC = Descriptors.getDescriptor(ActionDoc.class);
+    private static final String ACTION_DESC = Descriptors.getDescriptor(Action.class);
 
-    private final OutputDefinitionReader processor;
+    private final InputDefinitionReader inputReader;
+    private final OutputDefinitionReader outputReader;
 
-    public ActionDefinitionReader(OutputDefinitionReader reader)
+    public ActionDefinitionReader(InputDefinitionReader inputReader, OutputDefinitionReader outputReader)
     {
-        this.processor = reader;
+        this.inputReader = inputReader;
+        this.outputReader = outputReader;
     }
 
     @Override
@@ -42,8 +52,12 @@ public class ActionDefinitionReader implements IAnnotationReader<ActionDefinitio
     @Override
     public ActionDefinition buildAnnotation(@Nullable ClassNode clazz, @NotNull AnnotationValues values)
     {
+        assert clazz != null;
+
+        InputDefinition[] inputs = this.getInputs(clazz);
         return new ActionDefinition(
                 clazz,
+                scrapeActionID(clazz),
                 values.getAsString(KEY_NAME),
                 values.getAsString(KEY_DESC),
                 values.getAsArray(KEY_EVENTS, Type.class),
@@ -52,14 +66,57 @@ public class ActionDefinitionReader implements IAnnotationReader<ActionDefinitio
                 values.getAsString(KEY_REQUIREABLE),
                 values.getAsEnum(KEY_SUPPORTS_SINCE, MCVersion.class),
                 values.getAsEnum(KEY_SUPPORTS_UNTIL, MCVersion.class),
+                inputs,
                 values.getAsArray(KEY_OUTPUTS, OutputDefinition.class, (obj) -> {
                     assert obj instanceof AnnotationNode;
                     AnnotationValues insideValues = AnnotationValues.of((AnnotationNode) obj);
 
-                    return this.processor.buildAnnotation(null, insideValues);
-                }),
-                null
+                    return this.outputReader.buildAnnotation(null, insideValues);
+                })
         );
     }
 
+    private InputDefinition[] getInputs(ClassNode clazz)
+    {
+        List<InputDefinition> inputs = new ArrayList<>();
+        for (FieldNode field : clazz.fields)
+        {
+            if (field.access != (Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC | Opcodes.ACC_FINAL))
+                continue;
+
+            List<AnnotationNode> annos = field.visibleAnnotations;
+            if (annos == null)
+                continue;
+
+            for (AnnotationNode anno : annos)
+            {
+                if (!this.inputReader.canRead(anno))
+                    continue;
+
+                AnnotationValues values = AnnotationValues.of(anno);
+                InputDefinition input = this.inputReader.buildAnnotation(clazz, values);
+                inputs.add(input);
+            }
+        }
+
+        return inputs.toArray(new InputDefinition[0]);
+    }
+
+    private static String scrapeActionID(ClassNode clazz)
+    {
+        List<AnnotationNode> annos = clazz.visibleAnnotations;
+        if (annos == null)
+            throw new IllegalStateException("Action annotation not found in " + clazz.name);
+
+        for (AnnotationNode anno : annos)
+        {
+            if (!anno.desc.equals(ACTION_DESC))
+                continue;
+
+            AnnotationValues values = AnnotationValues.of(anno);
+            return values.getAsString("value");
+        }
+
+        throw new IllegalStateException("Action annotation not found in " + clazz.name);
+    }
 }

@@ -6,15 +6,15 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * アクションのカテゴリを示すアノテーションです。
- * アクションのカテゴリは, アクションのグループ化に使用されます。
+ * カテゴリを示すアノテーションです。
+ * カテゴリは, グループ化に使用されます。
  * 単一のクラスまたはその親クラスに適用して使用します。<br>
  * 複数の同名のカテゴリが存在する場合, そのカテゴリは一つのカテゴリとして扱われます。
  * その時のプロパティは inherit が true のものが優先されます。
  */
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.CLASS)
-public @interface ActionCategory
+public @interface Category
 {
     /**
      * カテゴリの識別名です。

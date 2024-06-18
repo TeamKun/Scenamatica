@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema",
+  "title": "Bookkeeper Type Schema",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "The unique identifier for the bookkeeper type."
+    },
+    "name": {
+      "type": "string",
+      "description": "The name of the bookkeeper type."
+    },
+    "properties": {
+      "type": "array",
+      "description": "The properties that are required for the bookkeeper type.",
+      "patternProperties": {
+        "^[a-zA-Z0-9_]+$": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "description": "The reference of the type of the property."
+            },
+            "description": {
+              "type": "string",
+              "description": "The description of the property."
+            },
+            "required": {
+              "type": "boolean",
+              "description": "Whether the property is required."
+            },
+            "defaultValue": {
+              "type": "string",
+              "description": "The default value of the property."
+            },
+            "values": {
+              "type": "array",
+              "description": "The possible values of the property."
+            }
+          },
+          "required": [
+            "type",
+            "description",
+            "required"
+          ]
+        }
+      }
+    }
+  }
+}

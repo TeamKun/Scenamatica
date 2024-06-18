@@ -12,7 +12,6 @@ import java.io.BufferedInputStream;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -140,20 +139,33 @@ public class ScenamaticaClassLoader
 
     public List<ClassNode> getScenamaticaClasses()
     {
-        return Collections.unmodifiableList(new ArrayList<>(this.scenamaticaClasses.values()));
+        return List.copyOf(this.scenamaticaClasses.values());
     }
 
     public List<ClassNode> getOtherClasses()
     {
-        return Collections.unmodifiableList(new ArrayList<>(this.otherClasses.values()));
+        return List.copyOf(this.otherClasses.values());
     }
 
     public ClassNode getClassByName(String name)
     {
+        // Replace '.' with '/' for internal name
+        name = name.replace('.', '/');
+
         ClassNode node = this.scenamaticaClasses.get(name);
         if (node == null)
             node = this.otherClasses.get(name);
         return node;
+    }
+
+    public void notifyChange(ClassNode cn)
+    {
+        if (this.scenamaticaClasses.containsKey(cn.name))
+            this.scenamaticaClasses.put(cn.name, cn);
+        else if (this.otherClasses.containsKey(cn.name))
+            this.otherClasses.put(cn.name, cn);
+        else
+            throw new IllegalStateException("Class not found: " + cn.name);
     }
 
     private boolean isScenamaticaRelatedClass(ClassNode node)

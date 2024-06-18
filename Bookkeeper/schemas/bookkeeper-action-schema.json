@@ -1,0 +1,193 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema",
+  "title": "Bookkeeper Action Schema",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "The name of the action",
+      "minLength": 1,
+      "pattern": "^(\\w\\d_)+$"
+    },
+    "description": {
+      "type": "string",
+      "description": "A description of the action",
+      "minLength": 1
+    },
+    "category": {
+      "type": "string",
+      "description": "The category of the action"
+    },
+    "events": {
+      "type": "array",
+      "description": "The class name of the event that triggers the action",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "pattern": "^((\\w\\d_-)\\.)?(\\w\\d_-)+$"
+      },
+      "minItems": 0
+    },
+    "contracts": {
+      "type": "object",
+      "description": "The contracts that the action must satisfy",
+      "properties": {
+        "executable": {
+          "anyOf": [
+            {
+              "type": "string",
+              "description": "Mark the action as executable, the value is the description of the contract"
+            },
+            {
+              "type": "boolean",
+              "const": false,
+              "description": "Mark the action as non-executable"
+            }
+          ]
+        },
+        "watchable": {
+          "anyOf": [
+            {
+              "type": "string",
+              "description": "Mark the action as watchable, the value is the description of the contract"
+            },
+            {
+              "type": "boolean",
+              "const": false,
+              "description": "Mark the action as non-watchable"
+            }
+          ]
+        },
+        "requireable": {
+          "anyOf": [
+            {
+              "type": "string",
+              "description": "Mark the action as requireable, the value is the description of the contract"
+            },
+            {
+              "type": "boolean",
+              "const": false,
+              "description": "Mark the action as non-requireable"
+            }
+          ]
+
+        }
+      }
+    },
+    "supportsSince": {
+      "type": "string",
+      "description": "The min version of Minecraft that the action supports"
+    },
+    "supportsUntil": {
+      "type": "string",
+      "description": "The max version of Minecraft that the action supports"
+    },
+    "inputs": {
+      "type": "object",
+      "description": "The inputs of the action",
+      "patternProperties": {
+        ".*": {
+          "type": "object",
+          "properties": {
+            "description": {
+              "type": "string",
+              "description": "The description of the input"
+            },
+            "type": {
+              "type": "string",
+              "description": "The resolved reference of the type of the input"
+            },
+            "requiredOn": {
+              "type": "array",
+              "description": "The targets that the input is required on",
+              "enum": [
+                "executable",
+                "watchable",
+                "requireable"
+              ],
+              "minItems": 0
+            },
+            "availableFor": {
+              "type": "array",
+              "description": "The targets that the input is available for",
+              "enum": [
+                "executable",
+                "watchable",
+                "requireable"
+              ],
+              "minItems": 0
+            },
+            "supportsSince": {
+              "type": "string",
+              "description": "The min version of Minecraft that the input supports"
+            },
+            "supportsUntil": {
+              "type": "string",
+              "description": "The max version of Minecraft that the input supports"
+            },
+            "min": {
+              "type": "number",
+              "description": "The min value of the input"
+            },
+            "max": {
+              "type": "number",
+              "description": "The max value of the input"
+            },
+            "constValue": {
+              "description": "The constant value of the input"
+            },
+            "requiresActor": {
+              "type": "boolean",
+              "description": "Mark this input as requiring an actor"
+            }
+          }
+        }
+      }
+    },
+    "outputs": {
+      "type": "object",
+      "description": "The outputs of the action",
+      "patternProperties": {
+        ".*": {
+          "type": "object",
+          "properties": {
+            "description": {
+              "type": "string",
+              "description": "The description of the output"
+            },
+            "targets": {
+              "type": "array",
+              "description": "The targets of the output",
+              "enum": [
+                "executable",
+                "watchable",
+                "requireable"
+              ]
+            },
+            "type": {
+              "type": "string",
+              "description": "The resolved reference of the type of the output"
+            },
+            "supportsSince": {
+              "type": "string",
+              "description": "The min version of Minecraft that the output supports"
+            },
+            "supportsUntil": {
+              "type": "string",
+              "description": "The max version of Minecraft that the output supports"
+            },
+            "min": {
+              "type": "number",
+              "description": "The min value of the output"
+            },
+            "max": {
+              "type": "number",
+              "description": "The max value of the output"
+            }
+          }
+        }
+      }
+    }
+  },
+  "additionalItems": false
+}
