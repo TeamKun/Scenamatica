@@ -40,33 +40,33 @@ public class CategoryCompiler extends AbstractCompiler<ActionCategoryDefinition,
         if (definition == null)
             return null;
 
-        String id = definition.id();
+        String id = definition.getId();
         return this.compiledItemReferences.get(id);
     }
 
     @Override
     protected String toId(CompiledCategory compiledItem)
     {
-        return compiledItem.id();
+        return compiledItem.getId();
     }
 
     @Override
     protected CategoryReference doCompile(ActionCategoryDefinition definition)
     {
-        String id = definition.id();
+        String id = definition.getId();
         if (this.compiledItemReferences.containsKey(id)
-                && !definition.inherit())
+                && !definition.isInherit())
             throw new IllegalStateException("Duplicate apex of category: " + id + ", consider using inherit = true in the annotation.");
 
-        ClassNode cn = definition.annotatedClass();
+        ClassNode cn = definition.getAnnotatedClass();
         List<ClassNode> nodes = this.traverseHierarchy(cn);
         List<ActionCategoryDefinition> definitions = this.traverseAnnotationHierarchy(nodes);
 
         ActionCategoryDefinition inherited = this.inheritAll(definitions);
         return new CategoryReference(new CompiledCategory(
                 id,
-                inherited.name(),
-                inherited.description()
+                inherited.getName(),
+                inherited.getDescription()
         ));
     }
 
@@ -77,26 +77,26 @@ public class CategoryCompiler extends AbstractCompiler<ActionCategoryDefinition,
 
         ActionCategoryDefinition definition = definitions.remove(0);
 
-        if (!definition.inherit())
+        if (!definition.isInherit())
             return definition;
 
-        String id = definition.id();
-        String name = definition.name();
-        String description = definition.description();
+        String id = definition.getId();
+        String name = definition.getName();
+        String description = definition.getDescription();
         ActionCategoryDefinition inherited = null;
         for (ActionCategoryDefinition def : definitions)
         {
-            if (!def.id().equals(id) || !def.inherit())
+            if (!def.id().equals(id) || !def.isInherit())
                 break;
 
-            if (!Objects.equals(def.name(), name))
-                name = def.name();
-            if (!Objects.equals(def.description(), description))
-                description = def.description();
+            if (!Objects.equals(def.getName(), name))
+                name = def.getName();
+            if (!Objects.equals(def.getDescription(), description))
+                description = def.getDescription();
 
-            AnnotationClassifier.ClassifiedAnnotation cl = this.classifier.getClassfieidAnnotations(def.annotatedClass());
+            AnnotationClassifier.ClassifiedAnnotation cl = this.classifier.getClassfieidAnnotations(def.getAnnotatedClass());
             cl.removeDefinition(def);
-            cl.addAnnotation(inherited = new ActionCategoryDefinition(def.annotatedClass(), id, name, description, false));
+            cl.addAnnotation(inherited = new ActionCategoryDefinition(def.getAnnotatedClass(), id, name, description, false));
         }
 
         return inherited == null ? definition: inherited;

@@ -185,15 +185,27 @@ public class Compiler
         // ActionDefinition: 4
         for (int i = 0; i < 5; i++)
         {
-            Class<? extends IDefinition> type = switch (i)
+            Class<? extends IDefinition> type;
+            switch (i)
             {
-                case 0 -> TypeDefinition.class;
-                case 1 -> OutputDefinition.class;
-                case 2 -> OutputsDefinition.class;
-                case 3 -> ActionCategoryDefinition.class;
-                case 4 -> ActionDefinition.class;
-                default -> throw new IllegalStateException("Unexpected value: " + i);
-            };
+                case 0:
+                    type = TypeDefinition.class;
+                    break;
+                case 1:
+                    type = OutputDefinition.class;
+                    break;
+                case 2:
+                    type = OutputsDefinition.class;
+                    break;
+                case 3:
+                    type = ActionCategoryDefinition.class;
+                    break;
+                case 4:
+                    type = ActionDefinition.class;
+                    break;
+                default:
+                    throw new IllegalStateException("Unexpected value: " + i);
+            }
 
             List<IDefinition> definitions = classified.get(type);
             if (definitions == null)

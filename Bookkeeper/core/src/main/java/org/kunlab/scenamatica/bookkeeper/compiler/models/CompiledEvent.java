@@ -2,19 +2,27 @@ package org.kunlab.scenamatica.bookkeeper.compiler.models;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Value;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public record CompiledEvent(String id, String name, String javadoc, String javadocLink,
-                            CompiledEvent.Source source,
-                            String description) implements ICompiled
+@Value
+public class CompiledEvent implements ICompiled
 {
     private static final String KEY_ID = "id";
     private static final String KEY_NAME = "name";
+    private static final String KEY_DESCRIPTION = "description";
     private static final String KEY_JAVADOC = "javadoc";
     private static final String KEY_JAVADOC_LINK = "javadoc_link";
     private static final String KEY_SOURCE = "source";
+
+    String id;
+    String name;
+    String javadoc;
+    String javadocLink;
+    Source source;
+    String description;
 
     @Override
     public Map<String, Object> serialize()
@@ -22,6 +30,7 @@ public record CompiledEvent(String id, String name, String javadoc, String javad
         Map<String, Object> map = new HashMap<>();
         map.put(KEY_ID, this.id);
         map.put(KEY_NAME, this.name);
+        map.put(KEY_DESCRIPTION, this.description);
         map.put(KEY_JAVADOC, this.javadoc);
         map.put(KEY_JAVADOC_LINK, this.javadocLink);
         map.put(KEY_SOURCE, this.source.id);

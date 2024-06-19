@@ -70,10 +70,10 @@ public class TypeCompiler extends AbstractCompiler<TypeDefinition, CompiledType,
                 id,
                 new CompiledType(
                         id,
-                        definition.name(),
-                        definition.clazz().name,
-                        definition.mappingOf() != null ? definition.mappingOf().getClassName(): null,
-                        compileProperties(definition.properties())
+                        definition.getName(),
+                        definition.getClazz().name,
+                        definition.getmappingOf() != null ? definition.getmappingOf().getClassName(): null,
+                        compileProperties(definition.getProperties())
                 )
         );
     }
@@ -81,7 +81,7 @@ public class TypeCompiler extends AbstractCompiler<TypeDefinition, CompiledType,
     @Override
     protected String toId(TypeDefinition definition)
     {
-        return classNameToId(definition.clazz().name);
+        return classNameToId(definition.getClazz().name);
     }
 
     private Map<String, CompiledType.Property> compileProperties(TypePropertyDefinition[] properties)
@@ -93,14 +93,14 @@ public class TypeCompiler extends AbstractCompiler<TypeDefinition, CompiledType,
         for (TypePropertyDefinition property : properties)
         {
             compiledProperties.put(
-                    property.name(),
+                    property.getName(),
                     new CompiledType.Property(
-                            property.name(),
-                            resolvePropertyType(property.type()),
-                            property.description(),
-                            property.required(),
-                            property.type().getDescriptor().endsWith("["),
-                            property.defaultValue()
+                            property.getName(),
+                            resolvePropertyType(property.getType()),
+                            property.getDescription(),
+                            property.isRequired(),
+                            property.getType().getDescriptor().endsWith("["),
+                            property.getDefaultValue()
                     )
             );
         }
@@ -234,18 +234,27 @@ public class TypeCompiler extends AbstractCompiler<TypeDefinition, CompiledType,
 
     private static TypeReference getPrimitiveReference(char desc)
     {
-        return switch (desc)
+        switch (desc)
         {
-            case 'Z' -> PRIMITIVE_BOOLEAN;
-            case 'B' -> PRIMITIVE_BYTE;
-            case 'C' -> PRIMITIVE_CHAR;
-            case 'S' -> PRIMITIVE_SHORT;
-            case 'I' -> PRIMITIVE_INT;
-            case 'J' -> PRIMITIVE_LONG;
-            case 'F' -> PRIMITIVE_FLOAT;
-            case 'D' -> PRIMITIVE_DOUBLE;
-            default -> throw new IllegalArgumentException("Unknown primitive type descriptor: " + desc);
-        };
+            case 'Z':
+                return PRIMITIVE_BOOLEAN;
+            case 'B':
+                return PRIMITIVE_BYTE;
+            case 'C':
+                return PRIMITIVE_CHAR;
+            case 'S':
+                return PRIMITIVE_SHORT;
+            case 'I':
+                return PRIMITIVE_INT;
+            case 'J':
+                return PRIMITIVE_LONG;
+            case 'F':
+                return PRIMITIVE_FLOAT;
+            case 'D':
+                return PRIMITIVE_DOUBLE;
+            default:
+                throw new IllegalArgumentException("Unknown primitive type descriptor: " + desc);
+        }
     }
 
     private static class PrimitiveType extends CompiledType implements IPrimitiveType

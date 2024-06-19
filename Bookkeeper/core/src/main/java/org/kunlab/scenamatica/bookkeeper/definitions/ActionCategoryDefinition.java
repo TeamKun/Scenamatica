@@ -1,12 +1,19 @@
 package org.kunlab.scenamatica.bookkeeper.definitions;
 
+import lombok.Value;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.bookkeeper.annotations.Category;
 import org.objectweb.asm.tree.ClassNode;
 
-public record ActionCategoryDefinition(ClassNode annotatedClass, String id, String name, String description,
-                                       boolean inherit) implements IDefinition
+@Value
+public class ActionCategoryDefinition implements IDefinition
 {
+    ClassNode annotatedClass;
+    String id;
+    String name;
+    String description;
+    boolean inherit;
+
     @Override
     public ClassNode getAnnotatedClass()
     {

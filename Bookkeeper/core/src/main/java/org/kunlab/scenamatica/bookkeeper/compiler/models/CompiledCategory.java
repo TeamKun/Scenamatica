@@ -1,13 +1,27 @@
 package org.kunlab.scenamatica.bookkeeper.compiler.models;
 
+import lombok.Value;
+
 import java.util.HashMap;
 import java.util.Map;
 
-public record CompiledCategory(String id, String name, String description) implements ICompiled
+@Value
+public class CompiledCategory implements ICompiled
 {
     private static final String KEY_ID = "id";
     private static final String KEY_NAME = "name";
     private static final String KEY_DESCRIPTION = "description";
+
+    String id;
+    String name;
+    String description;
+
+    public CompiledCategory(String id, String name, String description)
+    {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+    }
 
     @Override
     public Map<String, Object> serialize()

@@ -12,16 +12,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-public record CompiledAction(String id, String name, String description, CategoryReference category,
-                             EventReference[] events,
-
-                             CompiledAction.Contract executable,
-                             CompiledAction.Contract watchable,
-                             CompiledAction.Contract requireable,
-
-                             MCVersion supportsSince, MCVersion supportsUntil,
-                             Map<String, ActionInput> inputs,
-                             Map<String, ActionOutput> outputs) implements ICompiled
+@Value
+public class CompiledAction implements ICompiled
 {
     private static final String KEY_ID = "id";
     private static final String KEY_NAME = "name";
@@ -35,6 +27,44 @@ public record CompiledAction(String id, String name, String description, Categor
     private static final String KEY_SUPPORTS_UNTIL = "supports_until";
     private static final String KEY_INPUTS = "inputs";
     private static final String KEY_OUTPUTS = "outputs";
+
+    String id;
+    String name;
+    String description;
+    CategoryReference category;
+    EventReference[] events;
+    Contract executable;
+    Contract watchable;
+    Contract requireable;
+    MCVersion supportsSince;
+    MCVersion supportsUntil;
+    Map<String, ActionInput> inputs;
+    Map<String, ActionOutput> outputs;
+
+    public CompiledAction(String id, String name, String description, CategoryReference category,
+                          EventReference[] events,
+
+                          Contract executable,
+                          Contract watchable,
+                          Contract requireable,
+
+                          MCVersion supportsSince, MCVersion supportsUntil,
+                          Map<String, ActionInput> inputs,
+                          Map<String, ActionOutput> outputs)
+    {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.category = category;
+        this.events = events;
+        this.executable = executable;
+        this.watchable = watchable;
+        this.requireable = requireable;
+        this.supportsSince = supportsSince;
+        this.supportsUntil = supportsUntil;
+        this.inputs = inputs;
+        this.outputs = outputs;
+    }
 
     @Override
     public Map<String, Object> serialize()
@@ -73,8 +103,8 @@ public record CompiledAction(String id, String name, String description, Categor
         return map;
     }
 
-    public record ActionOutput(String name, String description, ActionMethod[] targets, TypeReference type,
-                               MCVersion supportsSince, MCVersion supportsUntil, double min, double max)
+    @Value
+    public static class ActionOutput
     {
         private static final String KEY_NAME = "name";
         private static final String KEY_DESCRIPTION = "description";
@@ -84,6 +114,28 @@ public record CompiledAction(String id, String name, String description, Categor
         private static final String KEY_SUPPORTS_UNTIL = "supportsUntil";
         private static final String KEY_MIN = "min";
         private static final String KEY_MAX = "max";
+
+        String name;
+        String description;
+        ActionMethod[] targets;
+        TypeReference type;
+        MCVersion supportsSince;
+        MCVersion supportsUntil;
+        double min;
+        double max;
+
+        public ActionOutput(String name, String description, ActionMethod[] targets, TypeReference type,
+                            MCVersion supportsSince, MCVersion supportsUntil, double min, double max)
+        {
+            this.name = name;
+            this.description = description;
+            this.targets = targets;
+            this.type = type;
+            this.supportsSince = supportsSince;
+            this.supportsUntil = supportsUntil;
+            this.min = min;
+            this.max = max;
+        }
 
         public Map<String, Object> serialize()
         {
@@ -100,9 +152,8 @@ public record CompiledAction(String id, String name, String description, Categor
         }
     }
 
-    public record ActionInput(String name, String description, ActionMethod[] requiredOn, ActionMethod[] availableFor,
-                              MCVersion supportsSince, MCVersion supportsUntil, double min, double max,
-                              Object constValue, boolean requiresActor)
+    @Value
+    public static class ActionInput
     {
         private static final String KEY_NAME = "name";
         private static final String KEY_DESCRIPTION = "description";
@@ -114,6 +165,33 @@ public record CompiledAction(String id, String name, String description, Categor
         private static final String KEY_MAX = "max";
         private static final String KEY_CONST_VALUE = "const";
         private static final String KEY_REQUIRES_ACTOR = "requiresActor";
+
+        String name;
+        String description;
+        ActionMethod[] requiredOn;
+        ActionMethod[] availableFor;
+        MCVersion supportsSince;
+        MCVersion supportsUntil;
+        double min;
+        double max;
+        Object constValue;
+        boolean requiresActor;
+
+        public ActionInput(String name, String description, ActionMethod[] requiredOn, ActionMethod[] availableFor,
+                           MCVersion supportsSince, MCVersion supportsUntil, double min, double max,
+                           Object constValue, boolean requiresActor)
+        {
+            this.name = name;
+            this.description = description;
+            this.requiredOn = requiredOn;
+            this.availableFor = availableFor;
+            this.supportsSince = supportsSince;
+            this.supportsUntil = supportsUntil;
+            this.min = min;
+            this.max = max;
+            this.constValue = constValue;
+            this.requiresActor = requiresActor;
+        }
 
         public Map<String, Object> serialize()
         {
@@ -130,6 +208,8 @@ public record CompiledAction(String id, String name, String description, Categor
             map.put(KEY_REQUIRES_ACTOR, this.requiresActor);
             return map;
         }
+
+
     }
 
     @Value

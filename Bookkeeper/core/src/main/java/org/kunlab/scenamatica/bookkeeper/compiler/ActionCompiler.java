@@ -40,37 +40,37 @@ public class ActionCompiler extends AbstractCompiler<ActionDefinition, CompiledA
     @Override
     protected String toId(CompiledAction compiledItem)
     {
-        return compiledItem.id();
+        return compiledItem.getId();
     }
 
     @Override
     protected ActionReference doCompile(ActionDefinition definition)
     {
         List<EventReference> events = new ArrayList<>();
-        if (!(this.eventCompiler == null || definition.events() == null))
-            for (Type event : definition.events())
+        if (!(this.eventCompiler == null || definition.getEvents() == null))
+            for (Type event : definition.getEvents())
                 events.add(this.eventCompiler.resolve(event.getClassName()));
 
-        CompiledAction.Contract executable = compileContract(definition.executable());
-        CompiledAction.Contract watchable = compileContract(definition.watchable());
-        CompiledAction.Contract requireable = compileContract(definition.requireable());
+        CompiledAction.Contract executable = compileContract(definition.getExecutable());
+        CompiledAction.Contract watchable = compileContract(definition.getWatchable());
+        CompiledAction.Contract requireable = compileContract(definition.getRequireable());
 
-        ClassNode clazz = definition.clazz();
+        ClassNode clazz = definition.getClazz();
 
         CategoryReference categoryReference = this.categoryCompiler.lookupCategory(clazz);
 
         return new ActionReference(
                 new CompiledAction(
-                        definition.id(),
-                        definition.name(),
-                        definition.description(),
+                        definition.getId(),
+                        definition.getName(),
+                        definition.getDescription(),
                         categoryReference,
                         events.toArray(new EventReference[0]),
                         executable,
                         watchable,
                         requireable,
-                        definition.supportsSince(),
-                        definition.supportsUntil(),
+                        definition.getSupportsSince(),
+                        definition.getSupportsUntil(),
                         compileInputs(definition),
                         compileOutputs(definition)
                 )
@@ -79,26 +79,26 @@ public class ActionCompiler extends AbstractCompiler<ActionDefinition, CompiledA
 
     private Map<String, CompiledAction.ActionInput> compileInputs(ActionDefinition definition)
     {
-        if (definition.inputs() == null)
+        if (definition.getInputs() == null)
             return new HashMap<>();
 
         Map<String, CompiledAction.ActionInput> inputs = new HashMap<>();
 
-        for (InputDefinition input : definition.inputs())
+        for (InputDefinition input : definition.getInputs())
         {
             CompiledAction.ActionInput compiled = new CompiledAction.ActionInput(
-                    input.name(),
-                    input.description(),
-                    input.requiredOn(),
-                    input.availableFor(),
-                    input.supportsSince(),
-                    input.supportsUntil(),
-                    input.min(),
-                    input.max(),
-                    input.constValue(),
-                    input.requiresActor()
+                    input.geName(),
+                    input.getDescription(),
+                    input.getRequiredOn(),
+                    input.getAvailableFor(),
+                    input.getSupportsSince(),
+                    input.getSupportsUntil(),
+                    input.getMin(),
+                    input.getMax(),
+                    input.getConstValue(),
+                    input.isRequiresActor()
             );
-            inputs.put(input.name(), compiled);
+            inputs.put(input.geName(), compiled);
         }
 
         return inputs;
@@ -106,29 +106,29 @@ public class ActionCompiler extends AbstractCompiler<ActionDefinition, CompiledA
 
     private Map<String, CompiledAction.ActionOutput> compileOutputs(ActionDefinition definition)
     {
-        if (definition.outputs() == null)
+        if (definition.getOutputs() == null)
             return new HashMap<>();
 
         Map<String, CompiledAction.ActionOutput> outputs = new HashMap<>();
 
-        for (OutputDefinition output : definition.outputs())
+        for (OutputDefinition output : definition.getOutputs())
         {
-            Type outputType = output.type();
+            Type outputType = output.getType();
             TypeReference typeReference = this.typeCompiler.resolve(TypeCompiler.classNameToId(outputType.getClassName()));
             if (typeReference == null)
                 throw new IllegalStateException("Type not found: " + outputType.getClassName());
 
             CompiledAction.ActionOutput compiled = new CompiledAction.ActionOutput(
-                    output.name(),
-                    output.description(),
-                    output.targets(),
+                    output.getName(),
+                    output.getDescription(),
+                    output.getTargets(),
                     typeReference,
-                    output.supportsSince(),
-                    output.supportsUntil(),
-                    output.min(),
-                    output.max()
+                    output.getSupportsSince(),
+                    output.getSupportsUntil(),
+                    output.getMin(),
+                    output.getMax()
             );
-            outputs.put(output.name(), compiled);
+            outputs.put(output.getName(), compiled);
         }
 
         return outputs;
@@ -137,7 +137,7 @@ public class ActionCompiler extends AbstractCompiler<ActionDefinition, CompiledA
     @Override
     protected String toId(ActionDefinition definition)
     {
-        return definition.id();
+        return definition.getId();
     }
 
     private static CompiledAction.Contract compileContract(String string)

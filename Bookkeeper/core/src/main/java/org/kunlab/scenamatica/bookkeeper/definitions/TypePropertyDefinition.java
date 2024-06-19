@@ -1,15 +1,25 @@
 package org.kunlab.scenamatica.bookkeeper.definitions;
 
+import lombok.Value;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.bookkeeper.annotations.TypeProperty;
 import org.kunlab.scenamatica.bookkeeper.utils.Descriptors;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.ClassNode;
 
-public record TypePropertyDefinition(ClassNode annotatedClass, String name, String description, Type type,
-                                     boolean required, String pattern, String defaultValue, double min,
-                                     double max) implements IDefinition
+@Value
+public class TypePropertyDefinition implements IDefinition
 {
+    ClassNode annotatedClass;
+    String name;
+    String description;
+    Type type;
+    boolean required;
+    String pattern;
+    String defaultValue;
+    double min;
+    double max;
+
     @Override
     public ClassNode getAnnotatedClass()
     {
@@ -25,12 +35,13 @@ public record TypePropertyDefinition(ClassNode annotatedClass, String name, Stri
     @Override
     public boolean isDependsOn(@NotNull IDefinition classNode)
     {
-        if (classNode instanceof TypeDefinition typeDef)
+        if (classNode instanceof TypeDefinition)
         {
+            TypeDefinition typeDef = (TypeDefinition) classNode;
             Type thisType = Descriptors.getElementTypeSafe(this.type);
             ClassNode thatClassNode = typeDef.getAnnotatedClass();
-            Type thatExtending = Descriptors.getElementTypeSafe(typeDef.extending());
-            Type thatMappingOf = Descriptors.getElementTypeSafe(typeDef.mappingOf());
+            Type thatExtending = Descriptors.getElementTypeSafe(typeDef.getExtending());
+            Type thatMappingOf = Descriptors.getElementTypeSafe(typeDef.getMappingOf());
 
 
             return (thisType.getInternalName().equals(thatClassNode.name))

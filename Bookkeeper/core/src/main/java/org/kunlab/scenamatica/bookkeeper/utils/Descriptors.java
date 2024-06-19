@@ -93,18 +93,35 @@ public class Descriptors
 
     public static char primitiveToDescriptor(String className)
     {
-        return switch (className.replace('.', '/'))
+        switch (className.replace('.', '/'))
         {
-            case "boolean", "java/lang/Boolean" -> 'Z';
-            case "byte", "java/lang/Byte" -> 'B';
-            case "char", "java/lang/Character" -> 'C';
-            case "short", "java/lang/Short" -> 'S';
-            case "int", "java/lang/Integer" -> 'I';
-            case "long", "java/lang/Long" -> 'J';
-            case "float", "java/lang/Float" -> 'F';
-            case "double", "java/lang/Double" -> 'D';
-            default -> throw new IllegalArgumentException("Unknown primitive type: " + className);
-        };
+            case "boolean":
+            case "java/lang/Boolean":
+                return 'Z';
+            case "byte":
+            case "java/lang/Byte":
+                return 'B';
+            case "char":
+            case "java/lang/Character":
+                return 'C';
+            case "short":
+            case "java/lang/Short":
+                return 'S';
+            case "int":
+            case "java/lang/Integer":
+                return 'I';
+            case "long":
+            case "java/lang/Long":
+                return 'J';
+            case "float":
+            case "java/lang/Float":
+                return 'F';
+            case "double":
+            case "java/lang/Double":
+                return 'D';
+            default:
+                throw new IllegalArgumentException("Unknown primitive type: " + className);
+        }
     }
 
     @Contract("null -> null; !null -> !null")

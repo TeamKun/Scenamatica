@@ -17,7 +17,9 @@ public class TypePropertyDefinitionReader implements IAnnotationReader<TypePrope
     public static final String KEY_TYPE = "type";
     public static final String KEY_REQUIRED = "required";
     public static final String KEY_DEFAULT = "defaultValue";
-    public static final String KEY_VALUES = "values";
+    public static final String KEY_PATTERN = "pattern";
+    public static final String KEY_MIN = "min";
+    public static final String KEY_MAX = "max";
 
     private static final String DESC = Descriptors.getDescriptor(TypeProperty.class);
 
@@ -36,8 +38,10 @@ public class TypePropertyDefinitionReader implements IAnnotationReader<TypePrope
                 values.getAsString(KEY_DESC),
                 values.get(KEY_TYPE, Type.class),
                 values.getAsBoolean(KEY_REQUIRED),
+                values.getAsString(KEY_PATTERN),
                 values.getAsString(KEY_DEFAULT),
-                values.getAsArray(KEY_VALUES, String.class)
+                values.get(KEY_MIN, Double.class),
+                values.get(KEY_MAX, Double.class)
         );
     }
 
