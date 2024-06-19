@@ -2,7 +2,6 @@ package org.kunlab.scenamatica.bookkeeper.reader;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.kunlab.scenamatica.annotations.action.Action;
 import org.kunlab.scenamatica.bookkeeper.AnnotationValues;
 import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
 import org.kunlab.scenamatica.bookkeeper.definitions.ActionDefinition;
@@ -32,7 +31,7 @@ public class ActionDefinitionReader implements IAnnotationReader<ActionDefinitio
     public static final String KEY_OUTPUTS = "outputs";
 
     private static final String DESC = Descriptors.getDescriptor(ActionDoc.class);
-    private static final String ACTION_DESC = Descriptors.getDescriptor(Action.class);
+    private static final String ACTION_DESC = "Lorg/kunlab/scenamatica/annotations/action/Action;";
 
     private final InputDefinitionReader inputReader;
     private final OutputDefinitionReader outputReader;

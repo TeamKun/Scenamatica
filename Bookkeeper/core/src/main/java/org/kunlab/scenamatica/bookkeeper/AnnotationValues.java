@@ -76,8 +76,9 @@ public class AnnotationValues
         if (value == null)
             return null;
 
-        if (value instanceof List<?> list)
+        if (value instanceof List<?>)
         {
+            List<?> list = (List<?>) value;
             T[] array = (T[]) Array.newInstance(clazz, list.size());
             for (int i = 0; i < list.size(); i++)
                 array[i] = mapper.apply(list.get(i));
@@ -139,9 +140,10 @@ public class AnnotationValues
         {
             Object keyRaw = values.get(i);
             Object value = values.get(i + 1);
-            if (!(keyRaw instanceof String key))
+            if (!(keyRaw instanceof String))
                 throw new IllegalArgumentException("The key must be a string.");
 
+            String key = (String) keyRaw;
             map.put(key, value);
         }
 

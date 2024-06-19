@@ -15,12 +15,18 @@ import org.kunlab.scenamatica.bookkeeper.compiler.models.refs.EventReference;
 import org.kunlab.scenamatica.bookkeeper.definitions.IDefinition;
 import org.objectweb.asm.tree.ClassNode;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -30,7 +36,7 @@ import java.util.Objects;
 @Slf4j(topic = "Compiler/Events")
 public class EventCompiler implements ICompiler<EventCompiler.DummyEventDefinition, CompiledEvent, EventReference>
 {
-    private static final Path eventsDir = Path.of("events");
+    private static final Path eventsDir = Paths.get("events");
     private static final ObjectMapper MAPPER = new ObjectMapper()
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     private static final Locale FALLBACK_LANG = Locale.JAPANESE;
@@ -80,10 +86,27 @@ public class EventCompiler implements ICompiler<EventCompiler.DummyEventDefiniti
         return DummyEventDefinition.class;
     }
 
+    @Override
+    public void flush(Path directory)
+    {
+        for (EventReference reference : this.references.values())
+        {
+            Path file = directory.resolve(Paths.get("events", reference.getID() + ".json"));
+            try
+            {
+                MAPPER.writeValue(file.toFile(), reference.getResolved().serialize());
+            }
+            catch (IOException e)
+            {
+                throw new IllegalStateException("Failed to write event reference to file: " + file, e);
+            }
+        }
+    }
+
     private void parseJson(Path eventsFile)
     {
         log.info("Parsing events file...");
-        try (var reader = Files.newBufferedReader(eventsFile))
+        try (BufferedReader reader = Files.newBufferedReader(eventsFile))
         {
             ObjectNode root = (ObjectNode) MAPPER.readTree(reader);
             if (!root.has("events"))
@@ -152,7 +175,7 @@ public class EventCompiler implements ICompiler<EventCompiler.DummyEventDefiniti
     @Override
     public List<EventReference> getResolvedReferences()
     {
-        return List.copyOf(this.references.values());
+        return Collections.unmodifiableList(new ArrayList<>(this.references.values()));
     }
 
     private static void createDir(Path outDir)
@@ -195,8 +218,8 @@ public class EventCompiler implements ICompiler<EventCompiler.DummyEventDefiniti
             if (conn.getResponseCode() != HttpURLConnection.HTTP_OK)
                 throw new IllegalStateException("Failed to download file from " + url + ". Response code: " + conn.getResponseCode());
 
-            try (var in = conn.getInputStream();
-                 var out = Files.newOutputStream(dist))
+            try (InputStream in = conn.getInputStream();
+                 OutputStream out = Files.newOutputStream(dist))
             {
                 byte[] buffer = new byte[1024];
                 int len;

@@ -228,11 +228,4 @@ public class Compiler
 
         return classified;
     }
-
-    private enum NodeState
-    {
-        UNVISITED,
-        VISITING,
-        VISITED
-    }
 }

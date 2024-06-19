@@ -1,9 +1,11 @@
 package org.kunlab.scenamatica.bookkeeper.compiler.models.refs;
 
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import org.kunlab.scenamatica.bookkeeper.compiler.models.ICompiled;
 
-import java.util.Objects;
-
+@ToString
+@EqualsAndHashCode
 public abstract class AbstractReference<T extends ICompiled> implements IReference<T>
 {
     private final String id;
@@ -27,17 +29,4 @@ public abstract class AbstractReference<T extends ICompiled> implements IReferen
         return this.id;
     }
 
-    @Override
-    public boolean equals(Object o)
-    {
-        if (this == o) return true;
-        if (!(o instanceof AbstractReference<?> that)) return false;
-        return Objects.equals(this.id, that.id);
-    }
-
-    @Override
-    public int hashCode()
-    {
-        return Objects.hashCode(this.id);
-    }
 }

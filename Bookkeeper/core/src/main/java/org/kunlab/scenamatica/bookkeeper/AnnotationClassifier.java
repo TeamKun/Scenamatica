@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Slf4j(topic = "Bookkeeper/AnnotationClassifier")
@@ -33,7 +34,7 @@ public class AnnotationClassifier
         timekeeper.start();
         List<ClassifiedAnnotation> classified = nodes.stream()
                 .map(this::classify)
-                .toList();
+                .collect(Collectors.toList());
         timekeeper.end();
 
         return classified;
@@ -59,13 +60,13 @@ public class AnnotationClassifier
 
     private void classify(ClassNode node, AnnotationNode annotation)
     {
-        for (var processor : this.processors)
+        for (IAnnotationReader<?> processor : this.processors)
         {
             if (!processor.canRead(annotation))
                 continue;
 
-            var values = AnnotationValues.of(annotation);
-            var definition = processor.buildAnnotation(node, values);
+            AnnotationValues values = AnnotationValues.of(annotation);
+            IDefinition definition = processor.buildAnnotation(node, values);
             log.debug("Found annotation: {} for class {}", definition.getAnnotationType().getCanonicalName(), node.name);
             this.addAnnotation(node, definition);
         }
@@ -73,7 +74,7 @@ public class AnnotationClassifier
 
     private void addAnnotation(ClassNode node, IDefinition definition)
     {
-        var classified = this.classified.computeIfAbsent(node.name, k -> new ClassifiedAnnotation(node));
+        ClassifiedAnnotation classified = this.classified.computeIfAbsent(node.name, k -> new ClassifiedAnnotation(node));
 
         classified.addAnnotation(definition);
     }

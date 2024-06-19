@@ -87,7 +87,7 @@ public class ActionCompiler extends AbstractCompiler<ActionDefinition, CompiledA
         for (InputDefinition input : definition.getInputs())
         {
             CompiledAction.ActionInput compiled = new CompiledAction.ActionInput(
-                    input.geName(),
+                    input.getName(),
                     input.getDescription(),
                     input.getRequiredOn(),
                     input.getAvailableFor(),
@@ -98,7 +98,7 @@ public class ActionCompiler extends AbstractCompiler<ActionDefinition, CompiledA
                     input.getConstValue(),
                     input.isRequiresActor()
             );
-            inputs.put(input.geName(), compiled);
+            inputs.put(input.getName(), compiled);
         }
 
         return inputs;

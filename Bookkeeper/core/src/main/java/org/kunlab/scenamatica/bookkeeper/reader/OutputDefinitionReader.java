@@ -41,8 +41,8 @@ public class OutputDefinitionReader implements IAnnotationReader<OutputDefinitio
                 values.get(KEY_TYPE, Type.class),
                 values.getAsEnum(KEY_SUPPORTS_SINCE, MCVersion.class),
                 values.getAsEnum(KEY_SUPPORTS_UNTIL, MCVersion.class),
-                values.get(KEY_MAX, double.class),
-                values.get(KEY_MIN, double.class)
+                values.get(KEY_MAX, Double.class),
+                values.get(KEY_MIN, Double.class)
         );
     }
 

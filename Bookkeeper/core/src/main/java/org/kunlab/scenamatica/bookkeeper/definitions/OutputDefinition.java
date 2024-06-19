@@ -18,8 +18,8 @@ public class OutputDefinition implements IDefinition
     Type type;
     MCVersion supportsSince;
     MCVersion supportsUntil;
-    double min;
-    double max;
+    Double min;
+    Double max;
 
     @Override
     public ClassNode getAnnotatedClass()

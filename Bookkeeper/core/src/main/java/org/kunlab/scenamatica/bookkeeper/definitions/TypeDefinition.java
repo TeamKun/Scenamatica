@@ -38,8 +38,10 @@ public class TypeDefinition implements IDefinition
     @Override
     public boolean isDependsOn(@NotNull IDefinition def)
     {
-        if (!(def instanceof TypeDefinition typeDef))
+        if (!(def instanceof TypeDefinition))
             return false;
+
+        TypeDefinition typeDef = (TypeDefinition) def;
 
         if (this.properties != null)
             for (TypePropertyDefinition property : this.properties)

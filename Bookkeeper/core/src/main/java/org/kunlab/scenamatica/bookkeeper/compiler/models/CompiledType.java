@@ -2,6 +2,7 @@ package org.kunlab.scenamatica.bookkeeper.compiler.models;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Value;
 import org.kunlab.scenamatica.bookkeeper.compiler.models.refs.TypeReference;
 
 import java.util.HashMap;
@@ -67,8 +68,8 @@ public class CompiledType implements ICompiled
         return map;
     }
 
-    public record Property(String name, TypeReference type, String description, boolean required, boolean array,
-                           Object defaultValue)
+    @Value
+    public static class Property
     {
         private static final String KEY_NAME = "name";
         private static final String KEY_TYPE = "type";
@@ -76,6 +77,24 @@ public class CompiledType implements ICompiled
         private static final String KEY_ARRAY = "array";
         private static final String KEY_REQUIRED = "required";
         private static final String KEY_DEFAULT_VALUE = "default";
+
+        String name;
+        TypeReference type;
+        String description;
+        boolean required;
+        boolean array;
+        Object defaultValue;
+
+        public Property(String name, TypeReference type, String description, boolean required, boolean array,
+                        Object defaultValue)
+        {
+            this.name = name;
+            this.type = type;
+            this.description = description;
+            this.required = required;
+            this.array = array;
+            this.defaultValue = defaultValue;
+        }
 
         public Map<String, Object> serialize()
         {

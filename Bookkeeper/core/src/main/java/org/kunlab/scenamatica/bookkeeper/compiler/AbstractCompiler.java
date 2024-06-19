@@ -7,6 +7,8 @@ import org.kunlab.scenamatica.bookkeeper.definitions.IDefinition;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -89,6 +91,6 @@ public abstract class AbstractCompiler<T extends IDefinition, U extends ICompile
     @Override
     public List<V> getResolvedReferences()
     {
-        return List.copyOf(this.compiledItemReferences.values());
+        return Collections.unmodifiableList(new ArrayList<>(this.compiledItemReferences.values()));
     }
 }

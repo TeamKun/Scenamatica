@@ -42,12 +42,18 @@ public class InputDefinition implements IDefinition
         if (this.type == null)
             return false;
 
-        if (def instanceof TypeDefinition typeDef)
+        if (def instanceof TypeDefinition)
+        {
+            TypeDefinition typeDef = (TypeDefinition) def;
             return (typeDef.getName().equals(this.type.getInternalName()))
-                    || (typeDef.getmappingOf() != null && typeDef.getmappingOf().getInternalName().equals(this.type.getInternalName()))
+                    || (typeDef.getMappingOf() != null && typeDef.getMappingOf().getInternalName().equals(this.type.getInternalName()))
                     || (typeDef.getExtending() != null && typeDef.getExtending().getInternalName().equals(this.type.getInternalName()));
-        else if (def instanceof InputDefinition inputDef)
+        }
+        else if (def instanceof InputDefinition)
+        {
+            InputDefinition inputDef = (InputDefinition) def;
             return this.type.getInternalName().equals(inputDef.getType().getInternalName());
+        }
 
         return false;
     }

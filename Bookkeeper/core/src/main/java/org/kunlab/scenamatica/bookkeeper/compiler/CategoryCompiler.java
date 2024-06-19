@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class CategoryCompiler extends AbstractCompiler<ActionCategoryDefinition, CompiledCategory, CategoryReference>
 {
@@ -86,7 +87,7 @@ public class CategoryCompiler extends AbstractCompiler<ActionCategoryDefinition,
         ActionCategoryDefinition inherited = null;
         for (ActionCategoryDefinition def : definitions)
         {
-            if (!def.id().equals(id) || !def.isInherit())
+            if (!def.getId().equals(id) || !def.isInherit())
                 break;
 
             if (!Objects.equals(def.getName(), name))
@@ -113,7 +114,7 @@ public class CategoryCompiler extends AbstractCompiler<ActionCategoryDefinition,
             List<ActionCategoryDefinition> categoryDefs = definition.getAnnotations().stream()
                     .filter(a -> a.getAnnotationType().equals(Category.class))
                     .map(a -> (ActionCategoryDefinition) a)
-                    .toList();
+                    .collect(Collectors.toList());
 
             definitions.addAll(categoryDefs);
         }
@@ -143,7 +144,7 @@ public class CategoryCompiler extends AbstractCompiler<ActionCategoryDefinition,
     @Override
     protected String toId(ActionCategoryDefinition definition)
     {
-        return definition.id();
+        return definition.getId();
     }
 
     @Override

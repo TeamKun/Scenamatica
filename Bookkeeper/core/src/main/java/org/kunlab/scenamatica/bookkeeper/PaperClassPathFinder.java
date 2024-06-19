@@ -5,6 +5,7 @@ import lombok.SneakyThrows;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class PaperClassPathFinder
 {
@@ -15,7 +16,7 @@ public class PaperClassPathFinder
 
     public static Path findLocalRepositoryJar(String versionPrefix)
     {
-        Path repoPath = Path.of(REPO_PAPER);
+        Path repoPath = Paths.get(REPO_PAPER);
         if (!repoPath.toFile().exists())
             throw new IllegalStateException("Repository not found: " + REPO_PAPER);
 

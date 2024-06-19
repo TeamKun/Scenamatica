@@ -17,8 +17,8 @@ public class TypePropertyDefinition implements IDefinition
     boolean required;
     String pattern;
     String defaultValue;
-    double min;
-    double max;
+    Double min;
+    Double max;
 
     @Override
     public ClassNode getAnnotatedClass()

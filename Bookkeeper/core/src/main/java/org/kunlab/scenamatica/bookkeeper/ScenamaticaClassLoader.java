@@ -9,9 +9,12 @@ import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.tree.ClassNode;
 
 import java.io.BufferedInputStream;
+import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -19,6 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
@@ -48,7 +52,7 @@ public class ScenamaticaClassLoader
 
     public void addClasspaths(Collection<? extends Path> classPaths)
     {
-        for (var path : classPaths)
+        for (Path path : classPaths)
             if (!this.classPaths.contains(path))
                 this.classPaths.add(path);
     }
@@ -61,12 +65,12 @@ public class ScenamaticaClassLoader
         timekeeper.start();
 
         long count = 0;
-        try (var jarFile = new JarFile(path.toFile()))
+        try (JarFile jarFile = new JarFile(path.toFile()))
         {
-            var entries = jarFile.entries();
+            Enumeration<JarEntry> entries = jarFile.entries();
             while (entries.hasMoreElements())
             {
-                var entry = entries.nextElement();
+                JarEntry entry = entries.nextElement();
                 String entryName = entry.getName();
                 if (!entryName.endsWith(".class")
                         || entryName.startsWith("META-INF")
@@ -120,7 +124,7 @@ public class ScenamaticaClassLoader
 
         ExecutorService executor = Executors.newFixedThreadPool(threads);
         CountDownLatch latch = new CountDownLatch(paths.size());
-        for (var path : paths)
+        for (Path path : paths)
             executor.submit(() -> {
                 Thread.currentThread().setName("CL/" + path.getFileName());
                 this.scanFile(path);
@@ -139,12 +143,12 @@ public class ScenamaticaClassLoader
 
     public List<ClassNode> getScenamaticaClasses()
     {
-        return List.copyOf(this.scenamaticaClasses.values());
+        return Collections.unmodifiableList(new ArrayList<>(this.scenamaticaClasses.values()));
     }
 
     public List<ClassNode> getOtherClasses()
     {
-        return List.copyOf(this.otherClasses.values());
+        return Collections.unmodifiableList(new ArrayList<>(this.otherClasses.values()));
     }
 
     public ClassNode getClassByName(String name)
@@ -181,10 +185,10 @@ public class ScenamaticaClassLoader
 
     private byte[] readClassData(ZipFile file, ZipEntry entry)
     {
-        try (var inputStream = file.getInputStream(entry);
-             var bufferedInputStream = new BufferedInputStream(inputStream))
+        try (InputStream inputStream = file.getInputStream(entry);
+             BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream))
         {
-            var data = new byte[(int) entry.getSize()];
+            byte[] data = new byte[(int) entry.getSize()];
             bufferedInputStream.read(data);
             return data;
         }
@@ -196,7 +200,7 @@ public class ScenamaticaClassLoader
         }
     }
 
-    public static ScenamaticaClassLoader create(Path jarPath, List<IAnnotationReader<? extends IDefinition>> processors)
+    public static ScenamaticaClassLoader create(Path jarPath, List<? extends IAnnotationReader<? extends IDefinition>> processors)
     {
         return new ScenamaticaClassLoader(jarPath, processors);
     }

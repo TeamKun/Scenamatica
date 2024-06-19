@@ -18,6 +18,7 @@ import org.objectweb.asm.tree.ClassNode;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class TypeCompiler extends AbstractCompiler<TypeDefinition, CompiledType, TypeReference>
 {
@@ -72,7 +73,7 @@ public class TypeCompiler extends AbstractCompiler<TypeDefinition, CompiledType,
                         id,
                         definition.getName(),
                         definition.getClazz().name,
-                        definition.getmappingOf() != null ? definition.getmappingOf().getClassName(): null,
+                        definition.getMappingOf() != null ? definition.getMappingOf().getClassName(): null,
                         compileProperties(definition.getProperties())
                 )
         );
@@ -190,7 +191,7 @@ public class TypeCompiler extends AbstractCompiler<TypeDefinition, CompiledType,
         List<String> enumValues = classNode.fields.stream()
                 .map(f -> f.name)
                 .filter(f -> !(f.equals("$VALUES") || f.equals("lookup") || f.equals("id")))
-                .toList();
+                .collect(Collectors.toList());
 
         String className = type.getClassName();
         String classNameSimple = className.substring(className.lastIndexOf('/') + 1);

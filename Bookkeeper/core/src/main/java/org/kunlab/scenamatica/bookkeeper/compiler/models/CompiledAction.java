@@ -177,22 +177,6 @@ public class CompiledAction implements ICompiled
         Object constValue;
         boolean requiresActor;
 
-        public ActionInput(String name, String description, ActionMethod[] requiredOn, ActionMethod[] availableFor,
-                           MCVersion supportsSince, MCVersion supportsUntil, double min, double max,
-                           Object constValue, boolean requiresActor)
-        {
-            this.name = name;
-            this.description = description;
-            this.requiredOn = requiredOn;
-            this.availableFor = availableFor;
-            this.supportsSince = supportsSince;
-            this.supportsUntil = supportsUntil;
-            this.min = min;
-            this.max = max;
-            this.constValue = constValue;
-            this.requiresActor = requiresActor;
-        }
-
         public Map<String, Object> serialize()
         {
             Map<String, Object> map = new HashMap<>();

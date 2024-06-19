@@ -6,6 +6,6 @@ public class CategoryReference extends AbstractReference<CompiledCategory>
 {
     public CategoryReference(CompiledCategory resolved)
     {
-        super(resolved.id(), resolved);
+        super(resolved.getId(), resolved);
     }
 }

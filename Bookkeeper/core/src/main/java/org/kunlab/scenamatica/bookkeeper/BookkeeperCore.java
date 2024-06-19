@@ -21,6 +21,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @Slf4j(topic = "Bookkeeper/Core")
@@ -69,7 +70,7 @@ public class BookkeeperCore
         List<IDefinition> definitions = classifiedAnnotations.stream().parallel()
                 .map(AnnotationClassifier.ClassifiedAnnotation::getAnnotations)
                 .flatMap(List::stream)
-                .toList();
+                .collect(Collectors.toList());
         this.compiler.compile(definitions);
 
         log.info("Bookkeeping finished.");
