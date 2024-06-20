@@ -6,6 +6,6 @@ public class EventReference extends AbstractReference<CompiledEvent>
 {
     public EventReference(String id, CompiledEvent event)
     {
-        super(id, event);
+        super("event", id, event);
     }
 }

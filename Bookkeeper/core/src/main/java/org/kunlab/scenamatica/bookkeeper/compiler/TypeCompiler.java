@@ -15,6 +15,8 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.ClassNode;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,20 +28,48 @@ public class TypeCompiler extends AbstractCompiler<TypeDefinition, CompiledType,
     private static final TypeReference PRIMITIVE_BYTE = PrimitiveType.ofRef("byte", byte.class);
     private static final TypeReference PRIMITIVE_CHAR = PrimitiveType.ofRef("char", char.class);
     private static final TypeReference PRIMITIVE_SHORT = PrimitiveType.ofRef("short", short.class);
-    private static final TypeReference PRIMITIVE_INT = PrimitiveType.ofRef("int", int.class);
+    private static final TypeReference PRIMITIVE_INT = PrimitiveType.ofRef("integer", int.class);
     private static final TypeReference PRIMITIVE_LONG = PrimitiveType.ofRef("long", long.class);
     private static final TypeReference PRIMITIVE_FLOAT = PrimitiveType.ofRef("float", float.class);
     private static final TypeReference PRIMITIVE_DOUBLE = PrimitiveType.ofRef("double", double.class);
 
     private static final TypeReference CO_PRIMITIVE_STRING = PrimitiveType.ofRef("string", String.class);
-    private static final TypeReference CO_PRIMITIVE_MAP = PrimitiveType.ofRef("map", Map.class);
+    private static final TypeReference CO_PRIMITIVE_MAP = PrimitiveType.ofRef("object", Map.class);
+
+    private static final MessageDigest SHA1_DIGEST;
 
     private final BookkeeperCore core;
 
+    static
+    {
+        try
+        {
+            SHA1_DIGEST = MessageDigest.getInstance("SHA-1");
+        }
+        catch (NoSuchAlgorithmException e)
+        {
+            throw new IllegalArgumentException(e);
+        }
+    }
+
     public TypeCompiler(BookkeeperCore core)
     {
-        super("primitive");
+        super("types");
         this.core = core;
+
+        this.initWellKnownTypes();
+    }
+
+    private void initWellKnownTypes()
+    {
+       /* this.compiledItemReferences.put(
+                CompiledStringType.NAME_UUID,
+                CompiledStringType.REF_UUID
+        ); */
+        this.compiledItemReferences.put(
+                CompiledStringType.NAME_NAMESPACED,
+                CompiledStringType.REF_NAMESPACED
+        );
     }
 
     public TypeReference lookup(Type type)
@@ -57,7 +87,7 @@ public class TypeCompiler extends AbstractCompiler<TypeDefinition, CompiledType,
     @Override
     protected String toId(CompiledType compiledItem)
     {
-        return "";
+        return compiledItem.getId();
     }
 
     @Override
@@ -73,7 +103,7 @@ public class TypeCompiler extends AbstractCompiler<TypeDefinition, CompiledType,
                         id,
                         definition.getName(),
                         definition.getClazz().name,
-                        definition.getMappingOf() != null ? definition.getMappingOf().getClassName(): null,
+                        definition.getMappingOf() != null ? definition.getMappingOf().getClassName().replace('.', '/'): null,
                         compileProperties(definition.getProperties())
                 )
         );
@@ -82,7 +112,7 @@ public class TypeCompiler extends AbstractCompiler<TypeDefinition, CompiledType,
     @Override
     protected String toId(TypeDefinition definition)
     {
-        return classNameToId(definition.getClazz().name);
+        return createClassNameStringReference(definition.getClazz().name);
     }
 
     private Map<String, CompiledType.Property> compileProperties(TypePropertyDefinition[] properties)
@@ -100,7 +130,7 @@ public class TypeCompiler extends AbstractCompiler<TypeDefinition, CompiledType,
                             resolvePropertyType(property.getType()),
                             property.getDescription(),
                             property.isRequired(),
-                            property.getType().getDescriptor().endsWith("["),
+                            property.getType().getDescriptor().startsWith("["),
                             property.getDefaultValue()
                     )
             );
@@ -116,7 +146,7 @@ public class TypeCompiler extends AbstractCompiler<TypeDefinition, CompiledType,
         {
             CompiledType compiledType = reference.getResolved();
             if (compiledType.getClassName().equals(asmType.getClassName().replace('.', '/'))
-                    || (compiledType.getMappingOf() != null && compiledType.getMappingOf().equals(asmType.getClassName())))
+                    || (compiledType.getMappingOf() != null && compiledType.getMappingOf().equals(asmType.getInternalName())))
                 return reference;
         }
 
@@ -189,13 +219,13 @@ public class TypeCompiler extends AbstractCompiler<TypeDefinition, CompiledType,
         // コンパイルされていない場合は新たにコンパイル
 
         List<String> enumValues = classNode.fields.stream()
+                .filter(f -> (f.access & Opcodes.ACC_ENUM) != 0)
                 .map(f -> f.name)
-                .filter(f -> !(f.equals("$VALUES") || f.equals("lookup") || f.equals("id")))
                 .collect(Collectors.toList());
 
         String className = type.getClassName();
-        String classNameSimple = className.substring(className.lastIndexOf('/') + 1);
-        String id = classNameToId(className);
+        String classNameSimple = Descriptors.convertSimpleClassName(className);
+        String id = createClassNameStringReference(className);
 
         CompiledStringType cType = new CompiledStringType(
                 new CompiledType(
@@ -212,25 +242,41 @@ public class TypeCompiler extends AbstractCompiler<TypeDefinition, CompiledType,
         return reference;
     }
 
-    public static String classNameToId(String className)
+    private static String getSHA1Hash(String input, int fLen)
     {
-        className = className.replace('.', '/');
-
-        // java.lang.String => j.l.String のように変換する。
-        String[] parts = className.split("/");
-        StringBuilder id = new StringBuilder();
-        for (int i = 0; i < parts.length; i++)
+        byte[] hash = SHA1_DIGEST.digest(input.getBytes());
+        StringBuilder sb = new StringBuilder(fLen);
+        for (int i = 0; i < fLen; i++)
         {
-            String part = parts[i];
-            if (i == 0)
-                id.append(part.charAt(0));
-            else if (i == parts.length - 1)
-                id.append('.').append(part);
-            else
-                id.append('.').append(part.charAt(0));
+            int b = hash[i] & 0xFF;
+            if (b < 0x10)
+                sb.append('0');
+            sb.append(Integer.toHexString(b));
         }
 
-        return id.toString();
+        return sb.toString();
+    }
+
+    public static String createClassNameStringReference(String classNameFull)
+    {
+        classNameFull = classNameFull.replace('.', '/');  // 表記揺れがたまにある
+
+        String packageName;
+        String className;
+
+        int lastSlash = classNameFull.lastIndexOf('/');
+        if (lastSlash == -1)
+        {
+            packageName = "";
+            className = classNameFull;
+        }
+        else
+        {
+            packageName = classNameFull.substring(0, lastSlash);
+            className = classNameFull.substring(lastSlash + 1);
+        }
+
+        return className + "-" + getSHA1Hash(packageName, 8);
     }
 
     private static TypeReference getPrimitiveReference(char desc)
@@ -258,7 +304,7 @@ public class TypeCompiler extends AbstractCompiler<TypeDefinition, CompiledType,
         }
     }
 
-    private static class PrimitiveType extends CompiledType implements IPrimitiveType
+    public static class PrimitiveType extends CompiledType implements IPrimitiveType
     {
         private PrimitiveType(String primitiveName, Class<?> clazz)
         {

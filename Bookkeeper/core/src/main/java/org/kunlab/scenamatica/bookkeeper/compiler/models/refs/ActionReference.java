@@ -6,6 +6,6 @@ public class ActionReference extends AbstractReference<CompiledAction>
 {
     public ActionReference(CompiledAction resolved)
     {
-        super(resolved.getName(), resolved);
+        super("action", resolved.getName(), resolved);
     }
 }

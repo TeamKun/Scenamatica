@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Value;
 import org.kunlab.scenamatica.bookkeeper.compiler.models.refs.TypeReference;
+import org.kunlab.scenamatica.bookkeeper.utils.MapUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,15 +26,6 @@ public class CompiledType implements ICompiled
     private final String mappingOf;
     private final Map<String, Property> properties;
 
-    public CompiledType(String id, String name, String className, String mappingOf)
-    {
-        this.id = id;
-        this.name = name;
-        this.className = className;
-        this.mappingOf = mappingOf;
-        this.properties = null;
-    }
-
     public CompiledType(String id, String name, String className)
     {
         this.id = id;
@@ -50,9 +42,10 @@ public class CompiledType implements ICompiled
         map.put(KEY_TYPE, "object");
         map.put(KEY_ID, this.id);
         map.put(KEY_NAME, this.name);
-        map.put(KEY_CLASS_NAME, this.className);
-        map.put(KEY_MAPPING_OF, this.mappingOf);
-        map.put(KEY_PROPERTIES, serializeProperties());
+        MapUtils.putIfNotNull(map, KEY_CLASS_NAME, this.className);
+        MapUtils.putIfNotNull(map, KEY_MAPPING_OF, this.mappingOf);
+        if (!(this.properties == null || this.properties.isEmpty()))
+            map.put(KEY_PROPERTIES, serializeProperties());
 
         return map;
     }
@@ -102,9 +95,9 @@ public class CompiledType implements ICompiled
             map.put(KEY_NAME, this.name);
             map.put(KEY_TYPE, this.type.getID());
             map.put(KEY_DESCRIPTION, this.description);
-            map.put(KEY_ARRAY, this.array);
-            map.put(KEY_REQUIRED, this.required);
-            map.put(KEY_DEFAULT_VALUE, this.defaultValue);
+            MapUtils.putIfTrue(map, KEY_ARRAY, this.array);
+            MapUtils.putIfTrue(map, KEY_REQUIRED, this.required);
+            MapUtils.putIfNotNull(map, KEY_DEFAULT_VALUE, this.defaultValue);
             return map;
         }
     }

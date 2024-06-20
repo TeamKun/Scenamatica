@@ -1,12 +1,14 @@
 package org.kunlab.scenamatica.bookkeeper.compiler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import org.kunlab.scenamatica.bookkeeper.compiler.models.ICompiled;
 import org.kunlab.scenamatica.bookkeeper.compiler.models.refs.IReference;
 import org.kunlab.scenamatica.bookkeeper.definitions.IDefinition;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -16,14 +18,19 @@ import java.util.Map;
 public abstract class AbstractCompiler<T extends IDefinition, U extends ICompiled, V extends IReference<U>>
         implements ICompiler<T, U, V>
 {
-    private static final ObjectMapper MAPPER = new ObjectMapper();
+    private static final ObjectWriter MAPPER = new ObjectMapper()
+            /* 整形する */
+            .writerWithDefaultPrettyPrinter();
     protected final Map<String, V> compiledItemReferences;
     private final String name;
+    private final Logger log;
 
     public AbstractCompiler(String name)
     {
         this.name = name;
         this.compiledItemReferences = new HashMap<>();
+
+        this.log = LoggerFactory.getLogger("Compiler/" + name);
     }
 
     @Override
@@ -45,13 +52,30 @@ public abstract class AbstractCompiler<T extends IDefinition, U extends ICompile
         if (this.name.equals("primitive"))
             return;  // 特別：プリミティブ型はファイル出力しない
 
+        this.log.info("Finishing {} compiler...", this.name);
+
+        Path baseDir = directory.resolve(this.name);
+        if (!baseDir.toFile().exists())
+        {
+            try
+            {
+                this.log.debug("Creating directory: {}", baseDir);
+                baseDir.toFile().mkdirs();
+            }
+            catch (Exception e)
+            {
+                throw new IllegalStateException("Failed to create directory: " + baseDir, e);
+            }
+        }
+
         for (V reference : this.compiledItemReferences.values())
         {
             Map<String, Object> serialized = reference.getResolved().serialize();
-            Path file = directory.resolve(Paths.get(this.name, this.toId(reference.getResolved()) + ".json"));
+            Path file = baseDir.resolve(this.toId(reference.getResolved()) + ".json");
 
             try
             {
+                this.log.debug("Writing compiled item to file: {}", file);
                 MAPPER.writeValue(file.toFile(), serialized);
             }
             catch (Exception e)

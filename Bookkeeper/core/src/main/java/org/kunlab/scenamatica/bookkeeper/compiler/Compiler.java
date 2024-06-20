@@ -12,6 +12,7 @@ import org.kunlab.scenamatica.bookkeeper.definitions.OutputsDefinition;
 import org.kunlab.scenamatica.bookkeeper.definitions.TypeDefinition;
 import org.kunlab.scenamatica.bookkeeper.utils.Timekeeper;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -37,7 +38,9 @@ public class Compiler
 
     private void addCompilers(BookkeeperCore core, BookkeeperConfig config)
     {
-        this.compilers.add(new TypeCompiler(core));
+        TypeCompiler type = new TypeCompiler(core);
+        this.compilers.add(type);
+        
 
         if (this.core.getConfig().isResolveEvents())
             this.compilers.add(new EventCompiler(
@@ -86,6 +89,20 @@ public class Compiler
         timekeeper.end();
 
         return compiled;
+    }
+
+    public void flush()
+    {
+        Path baseDir = this.core.getConfig().getOutputDir();
+
+        log.info("Finishing compilation...");
+        Timekeeper timekeeper = new Timekeeper(log, "FLUSH");
+        timekeeper.start();
+        for (ICompiler<?, ?, ?> compiler : this.compilers)
+            compiler.flush(baseDir);
+
+        log.info("Compilation finished.");
+        timekeeper.end();
     }
 
     private <T extends IDefinition> IReference<?> compile(ICompiler<T, ?, ?> compiler, T definition)

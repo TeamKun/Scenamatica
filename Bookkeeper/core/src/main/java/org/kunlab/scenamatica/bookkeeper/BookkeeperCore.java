@@ -73,6 +73,9 @@ public class BookkeeperCore
                 .collect(Collectors.toList());
         this.compiler.compile(definitions);
 
+        log.info("Flushing compilers...");
+        this.compiler.flush();
+
         log.info("Bookkeeping finished.");
     }
 

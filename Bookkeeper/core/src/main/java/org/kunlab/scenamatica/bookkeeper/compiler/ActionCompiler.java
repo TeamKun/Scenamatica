@@ -114,7 +114,7 @@ public class ActionCompiler extends AbstractCompiler<ActionDefinition, CompiledA
         for (OutputDefinition output : definition.getOutputs())
         {
             Type outputType = output.getType();
-            TypeReference typeReference = this.typeCompiler.resolve(TypeCompiler.classNameToId(outputType.getClassName()));
+            TypeReference typeReference = this.typeCompiler.resolve(TypeCompiler.createClassNameStringReference(outputType.getClassName()));
             if (typeReference == null)
                 throw new IllegalStateException("Type not found: " + outputType.getClassName());
 

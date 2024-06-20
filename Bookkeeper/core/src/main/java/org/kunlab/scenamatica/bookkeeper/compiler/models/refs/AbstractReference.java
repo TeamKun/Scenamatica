@@ -8,11 +8,13 @@ import org.kunlab.scenamatica.bookkeeper.compiler.models.ICompiled;
 @EqualsAndHashCode
 public abstract class AbstractReference<T extends ICompiled> implements IReference<T>
 {
-    private final String id;
-    private final T resolved;
+    protected final String referenceType;
+    protected final String id;
+    protected final T resolved;
 
-    public AbstractReference(String id, T resolved)
+    public AbstractReference(String referenceType, String id, T resolved)
     {
+        this.referenceType = referenceType;
         this.id = id;
         this.resolved = resolved;
     }
@@ -26,7 +28,7 @@ public abstract class AbstractReference<T extends ICompiled> implements IReferen
     @Override
     public String getID()
     {
-        return this.id;
+        return "$ref:" + this.referenceType + ":" + this.id;
     }
 
 }

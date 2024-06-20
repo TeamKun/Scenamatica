@@ -132,4 +132,14 @@ public class Descriptors
 
         return type.getDescriptor().startsWith("[") ? type.getElementType(): type;
     }
+
+    public static String convertSimpleClassName(String className)
+    {
+        String normalizedClassName = className.replace('/', '.');
+        if (normalizedClassName.startsWith("L") && normalizedClassName.endsWith(";"))
+            normalizedClassName = normalizedClassName.substring(1, normalizedClassName.length() - 1);
+
+        int index = normalizedClassName.lastIndexOf('.');
+        return index == -1 ? normalizedClassName: normalizedClassName.substring(index + 1);
+    }
 }

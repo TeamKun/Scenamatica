@@ -11,16 +11,43 @@
       "type": "string",
       "description": "The name of the bookkeeper type."
     },
-    "properties": {
+    "type": {
+      "type": "string",
+      "description": "The type of the bookkeeper type."
+    },
+    "class": {
+      "type": "string",
+      "description": "The class of the bookkeeper type",
+      "pattern": "^(([\\w\\d]+)/)*[\\w\\d$]+$"
+    },
+    "mapping_of": {
+      "type": "string",
+      "description": "The reference of the type that this type is a mapping of.",
+      "pattern": "^(([\\w\\d]+)/)*[\\w\\d$]+$"
+    },
+    "enums": {
       "type": "array",
+      "description": "The enums that are required for the bookkeeper type.",
+      "items": {
+        "type": "string",
+        "description": "Enumeration of the value which is allowed in this context."
+      }
+    },
+    "properties": {
+      "type": "object",
       "description": "The properties that are required for the bookkeeper type.",
       "patternProperties": {
         "^[a-zA-Z0-9_]+$": {
           "type": "object",
           "properties": {
+            "name": {
+              "type": "string",
+              "description": "The name of the property."
+            },
             "type": {
               "type": "string",
-              "description": "The reference of the type of the property."
+              "description": "The reference of the type of the property.",
+              "pattern": "^(string|integer|float|double|boolean|object|array|(\\$ref:\\w+:[$\\-a-zA-Z0-9]+))$"
             },
             "description": {
               "type": "string",
@@ -40,9 +67,9 @@
             }
           },
           "required": [
+            "name",
             "type",
-            "description",
-            "required"
+            "description"
           ]
         }
       }

@@ -5,16 +5,19 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import org.kunlab.scenamatica.bookkeeper.compiler.models.refs.TypeReference;
 import org.kunlab.scenamatica.bookkeeper.utils.Descriptors;
+import org.kunlab.scenamatica.bookkeeper.utils.MapUtils;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 @Getter
 @EqualsAndHashCode(callSuper = true)
 public class CompiledStringType extends CompiledType implements IPrimitiveType
 {
+    public static final String NAME_UUID = "uuid";
     public static final String DESC_UUID = Descriptors.getDescriptor(UUID.class);
     public static final TypeReference REF_UUID = new TypeReference(
             "uuid",
@@ -22,6 +25,7 @@ public class CompiledStringType extends CompiledType implements IPrimitiveType
                     new CompiledType("uuid", "UUID", UUID.class.getName()), Format.UUID)
     );
 
+    public static final String NAME_NAMESPACED = "namespaced";
     public static final String DESC_NAMESPACED = "Lcom/destroystokyo/paper/Namespaced;"; // これだけのためにクラスパスに入れたくない。
     public static final TypeReference REF_NAMESPACED = new TypeReference(
             "namespaced",
@@ -72,11 +76,19 @@ public class CompiledStringType extends CompiledType implements IPrimitiveType
     {
         Map<String, Object> map = super.serialize();
         map.put(KEY_TYPE, "string");
-        map.put(KEY_CLASS_NAME, String.class.getName());
+        map.put(KEY_CLASS_NAME, String.class.getName().replace('.', '/'));
 
-        map.put(KEY_FORMAT, this.format == null ? null: this.format.getValue());
-        map.put(KEY_PATTERN, this.pattern);
-        map.put(KEY_ENUMS, this.enums);
+        MapUtils.putIfNotNull(map, KEY_FORMAT, this.format == null ? null: this.format.getValue());
+        MapUtils.putIfNotNull(map, KEY_PATTERN, this.pattern);
+
+        if (this.enums != null)
+        {
+            boolean isAllValueNull = this.enums.values().stream().allMatch(Objects::isNull);
+            if (isAllValueNull)
+                map.put(KEY_ENUMS, this.enums.keySet());
+            else
+                map.put(KEY_ENUMS, this.enums);
+        }
 
         return map;
     }
