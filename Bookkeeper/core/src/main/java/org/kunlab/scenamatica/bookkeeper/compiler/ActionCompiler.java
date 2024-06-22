@@ -3,7 +3,6 @@ package org.kunlab.scenamatica.bookkeeper.compiler;
 import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
 import org.kunlab.scenamatica.bookkeeper.compiler.models.CompiledAction;
 import org.kunlab.scenamatica.bookkeeper.compiler.models.refs.ActionReference;
-import org.kunlab.scenamatica.bookkeeper.compiler.models.refs.CategoryReference;
 import org.kunlab.scenamatica.bookkeeper.compiler.models.refs.EventReference;
 import org.kunlab.scenamatica.bookkeeper.compiler.models.refs.TypeReference;
 import org.kunlab.scenamatica.bookkeeper.definitions.ActionDefinition;
@@ -21,14 +20,14 @@ public class ActionCompiler extends AbstractCompiler<ActionDefinition, CompiledA
 {
     private final TypeCompiler typeCompiler;
     private final EventCompiler eventCompiler;
-    private final CategoryCompiler categoryCompiler;
+    private final CategoryManager categoryManager;
 
-    public ActionCompiler(TypeCompiler typeCompiler, EventCompiler eventCompiler, CategoryCompiler categoryCompiler)
+    public ActionCompiler(TypeCompiler typeCompiler, EventCompiler eventCompiler, CategoryManager categoryManager)
     {
-        super("action");
+        super("actions");
         this.typeCompiler = typeCompiler;
         this.eventCompiler = eventCompiler;
-        this.categoryCompiler = categoryCompiler;
+        this.categoryManager = categoryManager;
     }
 
     @Override
@@ -47,9 +46,15 @@ public class ActionCompiler extends AbstractCompiler<ActionDefinition, CompiledA
     protected ActionReference doCompile(ActionDefinition definition)
     {
         List<EventReference> events = new ArrayList<>();
-        if (!(this.eventCompiler == null || definition.getEvents() == null))
-            for (Type event : definition.getEvents())
-                events.add(this.eventCompiler.resolve(event.getClassName()));
+        if (definition.getEvents() != null)
+        {
+            if (this.eventCompiler == null)
+                for (Type eventType : definition.getEvents())
+                    events.add(new NameOnlyEventReference(eventType.getInternalName()));
+            else
+                for (Type event : definition.getEvents())
+                    events.add(this.eventCompiler.resolve(event.getClassName()));
+        }
 
         CompiledAction.Contract executable = compileContract(definition.getExecutable());
         CompiledAction.Contract watchable = compileContract(definition.getWatchable());
@@ -57,7 +62,11 @@ public class ActionCompiler extends AbstractCompiler<ActionDefinition, CompiledA
 
         ClassNode clazz = definition.getClazz();
 
-        CategoryReference categoryReference = this.categoryCompiler.lookupCategory(clazz);
+        CategoryManager.CategoryEntry categoryReference;
+        if (definition.getId().equals("server_log")) // サーバ・ログは特別に扱う。
+            categoryReference = this.categoryManager.getCategoryByID("server");
+        else
+            categoryReference = this.categoryManager.recogniseCategory(clazz);
 
         return new ActionReference(
                 new CompiledAction(
@@ -114,7 +123,7 @@ public class ActionCompiler extends AbstractCompiler<ActionDefinition, CompiledA
         for (OutputDefinition output : definition.getOutputs())
         {
             Type outputType = output.getType();
-            TypeReference typeReference = this.typeCompiler.resolve(TypeCompiler.createClassNameStringReference(outputType.getClassName()));
+            TypeReference typeReference = this.typeCompiler.lookup(outputType);
             if (typeReference == null)
                 throw new IllegalStateException("Type not found: " + outputType.getClassName());
 
@@ -140,12 +149,37 @@ public class ActionCompiler extends AbstractCompiler<ActionDefinition, CompiledA
         return definition.getId();
     }
 
+    @Override
+    protected String getFileLocation(ActionReference reference)
+    {
+        String sup = super.getFileLocation(reference);
+        CategoryManager.CategoryEntry categoryReference = reference.getResolved().getCategory();
+        if (categoryReference == null)
+            return sup;
+
+        return categoryReference.getChildrenPath().resolve(sup).toString();
+    }
+
     private static CompiledAction.Contract compileContract(String string)
     {
-        if (string.equals(ActionDoc.UNALLOWED))
+        if (string == null || string.equals(ActionDoc.UNALLOWED))
             return CompiledAction.Contract.ofUnavailable();
         else
             return CompiledAction.Contract.ofAvailable(string);
 
+    }
+
+    private static class NameOnlyEventReference extends EventReference
+    {
+        public NameOnlyEventReference(String name)
+        {
+            super(name, null);
+        }
+
+        @Override
+        public String getReference()
+        {
+            return "$ref:event:?" + this.id;
+        }
     }
 }

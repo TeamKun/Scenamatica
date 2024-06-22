@@ -58,7 +58,7 @@ public class EntityDropItemAction extends AbstractGeneralEntityAction
             description = "ドロップされるアイテムです。",
             type = Item.class
     )
-    public static InputToken<EntitySpecifier<Item>> IN_ITEM =
+    public static final InputToken<EntitySpecifier<Item>> IN_ITEM =
             ofInput("item", Item.class, EntityItemStructure.class)
                     .validator(ScenarioType.ACTION_EXECUTE, EntitySpecifier::hasStructure, "Item structure is not specified.")
                     .validator(

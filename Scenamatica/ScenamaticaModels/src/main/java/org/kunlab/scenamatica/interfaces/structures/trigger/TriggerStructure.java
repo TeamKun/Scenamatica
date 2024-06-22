@@ -14,6 +14,11 @@ import java.util.List;
  */
 public interface TriggerStructure extends Structure
 {
+    public static final String KEY_TYPE = "type";
+    public static final String KEY_BEFORE_THAT = "before";
+    public static final String KEY_AFTER_THAT = "after";
+    public static final String KEY_RUN_IF = "runif";
+
     /**
      * このトリガーのタイプを取得します。
      *

@@ -3,10 +3,11 @@ package org.kunlab.scenamatica.bookkeeper.compiler.models;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Value;
+import org.kunlab.scenamatica.bookkeeper.compiler.CategoryManager;
 import org.kunlab.scenamatica.bookkeeper.compiler.models.refs.TypeReference;
 import org.kunlab.scenamatica.bookkeeper.utils.MapUtils;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 @Data
@@ -15,6 +16,7 @@ public class CompiledType implements ICompiled
 {
     protected static final String KEY_TYPE = "type";
     protected static final String KEY_ID = "id";
+    protected static final String KEY_CATEGORY = "category";
     protected static final String KEY_NAME = "name";
     protected static final String KEY_CLASS_NAME = "class";
     protected static final String KEY_MAPPING_OF = "mapping_of";
@@ -22,26 +24,40 @@ public class CompiledType implements ICompiled
 
     private final String id;
     private final String name;
+    private final CategoryManager.CategoryEntry category;
     private final String className;
     private final String mappingOf;
     private final Map<String, Property> properties;
 
-    public CompiledType(String id, String name, String className)
+    public CompiledType(String id, String name, CategoryManager.CategoryEntry category, String className)
     {
         this.id = id;
         this.name = name;
+        this.category = category;
         this.className = className;
         this.mappingOf = null;
+        this.properties = null;
+    }
+
+    public CompiledType(String id, String name, CategoryManager.CategoryEntry category, String className, String mappingOf)
+    {
+        this.id = id;
+        this.name = name;
+        this.category = category;
+        this.className = className;
+        this.mappingOf = mappingOf;
         this.properties = null;
     }
 
     @Override
     public Map<String, Object> serialize()
     {
-        Map<String, Object> map = new HashMap<>();
+        Map<String, Object> map = new LinkedHashMap<>();
         map.put(KEY_TYPE, "object");
         map.put(KEY_ID, this.id);
         map.put(KEY_NAME, this.name);
+        if (this.category != null)
+            map.put(KEY_CATEGORY, this.category.getReference());
         MapUtils.putIfNotNull(map, KEY_CLASS_NAME, this.className);
         MapUtils.putIfNotNull(map, KEY_MAPPING_OF, this.mappingOf);
         if (!(this.properties == null || this.properties.isEmpty()))
@@ -52,7 +68,7 @@ public class CompiledType implements ICompiled
 
     private Map<String, Object> serializeProperties()
     {
-        Map<String, Object> map = new HashMap<>();
+        Map<String, Object> map = new LinkedHashMap<>();
         if (this.properties == null)
             return map;
 
@@ -91,9 +107,9 @@ public class CompiledType implements ICompiled
 
         public Map<String, Object> serialize()
         {
-            Map<String, Object> map = new HashMap<>();
+            Map<String, Object> map = new LinkedHashMap<>();
             map.put(KEY_NAME, this.name);
-            map.put(KEY_TYPE, this.type.getID());
+            map.put(KEY_TYPE, this.type.getReference());
             map.put(KEY_DESCRIPTION, this.description);
             MapUtils.putIfTrue(map, KEY_ARRAY, this.array);
             MapUtils.putIfTrue(map, KEY_REQUIRED, this.required);

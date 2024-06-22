@@ -52,7 +52,7 @@ public class PlayerInteractAtEntityAction extends PlayerInteractEntityAction
             description = "クリックする位置を指定します。",
             type = Location.class
     )
-    public static InputToken<LocationStructure> IN_POSITION = ofInput(
+    public static final InputToken<LocationStructure> IN_POSITION = ofInput(
             "position",
             LocationStructure.class,
             ofDeserializer(LocationStructure.class)

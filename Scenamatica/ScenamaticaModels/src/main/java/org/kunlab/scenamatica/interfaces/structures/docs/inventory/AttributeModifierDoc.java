@@ -2,8 +2,11 @@ package org.kunlab.scenamatica.interfaces.structures.docs.inventory;
 
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.inventory.EquipmentSlot;
+import org.kunlab.scenamatica.bookkeeper.annotations.Category;
 import org.kunlab.scenamatica.bookkeeper.annotations.TypeDoc;
 import org.kunlab.scenamatica.bookkeeper.annotations.TypeProperty;
+import org.kunlab.scenamatica.interfaces.structures.minecraft.inventory.GenericInventoryStructure;
+import org.kunlab.scenamatica.interfaces.structures.minecraft.inventory.InventoryStructure;
 
 import java.util.UUID;
 
@@ -39,6 +42,7 @@ import java.util.UUID;
                 )
         }
 )
+@Category(inherit = GenericInventoryStructure.class)
 public interface AttributeModifierDoc
 {
 }

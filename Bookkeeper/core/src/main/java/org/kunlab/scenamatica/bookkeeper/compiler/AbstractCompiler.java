@@ -2,6 +2,7 @@ package org.kunlab.scenamatica.bookkeeper.compiler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import lombok.Getter;
 import org.kunlab.scenamatica.bookkeeper.compiler.models.ICompiled;
 import org.kunlab.scenamatica.bookkeeper.compiler.models.refs.IReference;
 import org.kunlab.scenamatica.bookkeeper.definitions.IDefinition;
@@ -22,6 +23,7 @@ public abstract class AbstractCompiler<T extends IDefinition, U extends ICompile
             /* 整形する */
             .writerWithDefaultPrettyPrinter();
     protected final Map<String, V> compiledItemReferences;
+    @Getter
     private final String name;
     private final Logger log;
 
@@ -55,26 +57,17 @@ public abstract class AbstractCompiler<T extends IDefinition, U extends ICompile
         this.log.info("Finishing {} compiler...", this.name);
 
         Path baseDir = directory.resolve(this.name);
-        if (!baseDir.toFile().exists())
-        {
-            try
-            {
-                this.log.debug("Creating directory: {}", baseDir);
-                baseDir.toFile().mkdirs();
-            }
-            catch (Exception e)
-            {
-                throw new IllegalStateException("Failed to create directory: " + baseDir, e);
-            }
-        }
-
         for (V reference : this.compiledItemReferences.values())
         {
             Map<String, Object> serialized = reference.getResolved().serialize();
-            Path file = baseDir.resolve(this.toId(reference.getResolved()) + ".json");
+            Path file = baseDir.resolve(this.getFileLocation(reference));
 
             try
             {
+                Path fileDir = file.getParent();
+                if (fileDir != null)
+                    fileDir.toFile().mkdirs();
+
                 this.log.debug("Writing compiled item to file: {}", file);
                 MAPPER.writeValue(file.toFile(), serialized);
             }
@@ -83,6 +76,11 @@ public abstract class AbstractCompiler<T extends IDefinition, U extends ICompile
                 throw new IllegalStateException("Failed to write compiled item to file", e);
             }
         }
+    }
+
+    protected String getFileLocation(V reference)
+    {
+        return this.toId(reference.getResolved()) + ".json";
     }
 
     protected abstract String toId(U compiledItem);

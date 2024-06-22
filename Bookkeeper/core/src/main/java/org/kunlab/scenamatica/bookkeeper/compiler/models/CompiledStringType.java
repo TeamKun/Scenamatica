@@ -17,24 +17,38 @@ import java.util.UUID;
 @EqualsAndHashCode(callSuper = true)
 public class CompiledStringType extends CompiledType implements IPrimitiveType
 {
+    public static final int FORMAT_TYPE = 0;
+    public static final int PATTERN_TYPE = 1;
+    public static final int ENUMS_TYPE = 2;
+    public static final int DEFAULT_TYPE = 3;
+
     public static final String NAME_UUID = "uuid";
     public static final String DESC_UUID = Descriptors.getDescriptor(UUID.class);
     public static final TypeReference REF_UUID = new TypeReference(
-            "uuid",
+            NAME_UUID,
             new CompiledStringType(
-                    new CompiledType("uuid", "UUID", UUID.class.getName()), Format.UUID)
+                    new CompiledType(NAME_UUID, "UUID", null, UUID.class.getName()), Format.UUID)
     );
 
     public static final String NAME_NAMESPACED = "namespaced";
     public static final String DESC_NAMESPACED = "Lcom/destroystokyo/paper/Namespaced;"; // これだけのためにクラスパスに入れたくない。
     public static final TypeReference REF_NAMESPACED = new TypeReference(
-            "namespaced",
+            NAME_NAMESPACED,
             new CompiledStringType(
-                    new CompiledType("namespaced", "Namespaced", "com.destroystokyo.paper.Namespaced"), null,
+                    new CompiledType(NAME_NAMESPACED, "Namespaced", null, "com.destroystokyo.paper.Namespaced"), null,
                     "^([a-z0-9_/]+:)?[a-z0-9_/]+$", null
             )
     );
 
+    public static final String NAME_NAMESPACED_KEY = "namespacedKey";
+    public static final String DESC_NAMESPACED_KEY = "Lorg/bukkit/NamespacedKey;"; // これだけのためにクラスパスに入れたくない。
+    public static final TypeReference REF_NAMESPACED_KEY = new TypeReference(
+            NAME_NAMESPACED_KEY,
+            new CompiledStringType(
+                    new CompiledType(NAME_NAMESPACED_KEY, "NamespacedKey", null, "org.bukkit.NamespacedKey"), null,
+                    "^([a-z0-9_/]+:)?[a-z0-9_/]+$", null
+            )
+    );
     private static final String KEY_FORMAT = "format";
     private static final String KEY_PATTERN = "pattern";
     private static final String KEY_ENUMS = "enums";
@@ -45,7 +59,7 @@ public class CompiledStringType extends CompiledType implements IPrimitiveType
 
     public CompiledStringType(CompiledType original, Format format, String pattern, Map<String, String> enums)
     {
-        super(original.getId(), original.getName(), String.class.getName(), original.getMappingOf(), null);
+        super(original.getId(), original.getName(), null, String.class.getName(), original.getMappingOf(), null);
         this.format = format;
         this.pattern = pattern;
         this.enums = enums;
@@ -69,6 +83,18 @@ public class CompiledStringType extends CompiledType implements IPrimitiveType
     public CompiledStringType(CompiledType original, List<String> enums)
     {
         this(original, null, null, toMap(enums));
+    }
+
+    public int type()
+    {
+        if (this.format != null)
+            return FORMAT_TYPE;
+        else if (this.pattern != null)
+            return PATTERN_TYPE;
+        else if (this.enums != null)
+            return ENUMS_TYPE;
+        else
+            return DEFAULT_TYPE;
     }
 
     @Override

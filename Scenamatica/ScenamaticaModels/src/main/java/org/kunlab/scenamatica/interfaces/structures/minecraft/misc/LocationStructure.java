@@ -1,6 +1,7 @@
 package org.kunlab.scenamatica.interfaces.structures.minecraft.misc;
 
 import org.bukkit.Location;
+import org.kunlab.scenamatica.bookkeeper.annotations.Category;
 import org.kunlab.scenamatica.bookkeeper.annotations.TypeDoc;
 import org.kunlab.scenamatica.bookkeeper.annotations.TypeProperty;
 import org.kunlab.scenamatica.interfaces.scenariofile.Creatable;
@@ -47,6 +48,7 @@ import org.kunlab.scenamatica.interfaces.scenariofile.Structure;
                 )
         }
 )
+@Category(inherit = MiscCategoryInfo.class)
 public interface LocationStructure extends Structure, Mapped<Location>, Creatable<Location>
 {
     String KEY_X = "x";

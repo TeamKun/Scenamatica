@@ -4,7 +4,7 @@ import org.kunlab.scenamatica.bookkeeper.compiler.models.ICompiled;
 
 public interface IReference<T extends ICompiled>
 {
-    String getID();
+    String getReference();
 
     T getResolved();
 }

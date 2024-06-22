@@ -26,11 +26,13 @@ public class Compiler
 {
     private final BookkeeperCore core;
     private final List<ICompiler<?, ?, ?>> compilers;
+    private final CategoryManager categoryManager;
 
     public Compiler(BookkeeperCore core)
     {
         this.core = core;
         this.compilers = new ArrayList<>();
+        this.categoryManager = core.getCategoryManager();
 
         BookkeeperConfig config = core.getConfig();
         this.addCompilers(core, config);
@@ -40,16 +42,23 @@ public class Compiler
     {
         TypeCompiler type = new TypeCompiler(core);
         this.compilers.add(type);
-        
 
+        EventCompiler event = null;
         if (this.core.getConfig().isResolveEvents())
-            this.compilers.add(new EventCompiler(
+            this.compilers.add(event = new EventCompiler(
                     config.getOutputDir(),
                     core.getTempDir(),
                     config.getLanguage(),
                     config.getEventsURL(),
                     config.getEventsLicenseURL()
             ));
+
+        ActionCompiler action = new ActionCompiler(
+                type,
+                event,
+                this.categoryManager
+        );
+        this.compilers.add(action);
     }
 
     public void init()
@@ -71,6 +80,8 @@ public class Compiler
         {
             Timekeeper tCompile = new Timekeeper(log, "COMPILE-" + compiler.getClass().getSimpleName());
             tCompile.start();
+            this.categoryManager.changePhase(compiler.getName());
+
             Class<? extends IDefinition> definitionType = compiler.getDefinitionType();
             for (IDefinition definition : sortedList)
             {
@@ -86,6 +97,7 @@ public class Compiler
             tCompile.end();
         }
 
+        this.categoryManager.flush();
         timekeeper.end();
 
         return compiled;

@@ -11,9 +11,9 @@ public class TypeReference extends AbstractReference<CompiledType>
     }
 
     @Override
-    public String getID()
+    public String getReference()
     {
         // $ref:type:ID となるが, プリミティブの場合は ID
-        return this.resolved instanceof TypeCompiler.PrimitiveType ? this.id: super.getID();
+        return this.resolved instanceof TypeCompiler.PrimitiveType ? this.id: super.getReference();
     }
 }

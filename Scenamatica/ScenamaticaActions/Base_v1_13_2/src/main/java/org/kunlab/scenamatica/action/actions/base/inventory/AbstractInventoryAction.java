@@ -6,6 +6,7 @@ import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.AbstractAction;
+import org.kunlab.scenamatica.bookkeeper.annotations.Category;
 import org.kunlab.scenamatica.bookkeeper.annotations.OutputDoc;
 import org.kunlab.scenamatica.bookkeeper.annotations.OutputDocs;
 import org.kunlab.scenamatica.enums.ScenarioType;
@@ -23,6 +24,11 @@ import org.kunlab.scenamatica.interfaces.structures.minecraft.inventory.Inventor
         )
 
 })
+@Category(
+        id = "inventory",
+        name = "インベントリ",
+        description = "インベントリに関するアクションを提供します。"
+)
 public abstract class AbstractInventoryAction extends AbstractAction
 {
     public static final InputToken<InventoryStructure> IN_INVENTORY = ofInput(

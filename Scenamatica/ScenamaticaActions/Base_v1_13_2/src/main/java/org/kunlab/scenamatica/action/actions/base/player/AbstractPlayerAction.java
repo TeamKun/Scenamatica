@@ -5,7 +5,7 @@ import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerEvent;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.action.AbstractAction;
-import org.kunlab.scenamatica.bookkeeper.annotations.ActionCategory;
+import org.kunlab.scenamatica.bookkeeper.annotations.Category;
 import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
 import org.kunlab.scenamatica.bookkeeper.annotations.OutputDoc;
 import org.kunlab.scenamatica.bookkeeper.annotations.OutputDocs;
@@ -15,7 +15,7 @@ import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.structures.specifiers.PlayerSpecifier;
 
-@ActionCategory(
+@Category(
         id = "player",
         name = "プレイヤ",
         description = "プレイヤに関するアクションを提供します。"

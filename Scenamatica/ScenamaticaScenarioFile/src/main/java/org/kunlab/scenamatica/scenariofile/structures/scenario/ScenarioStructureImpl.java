@@ -15,11 +15,6 @@ import java.util.Map;
 @Value
 public class ScenarioStructureImpl implements ScenarioStructure
 {
-    public static final String KEY_SCENARIO_TYPE = "type";
-    public static final String KEY_SCENARIO_NAME = "name";
-    public static final String KEY_RUN_IF = "runif";
-    public static final String KEY_TIMEOUT = "timeout";
-
     private static final long DEFAULT_TIMEOUT_TICK = 20L * 5L;
 
     @NotNull

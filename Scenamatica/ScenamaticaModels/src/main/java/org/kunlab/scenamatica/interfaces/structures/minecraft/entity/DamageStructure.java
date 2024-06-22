@@ -36,7 +36,7 @@ import java.util.Map;
                 )
         }
 )
-@Category("entity")
+@Category(inherit = EntityStructure.class)
 public interface DamageStructure extends Structure, Mapped<EntityDamageEvent>
 {
     String KEY_MODIFIER = "modifiers";

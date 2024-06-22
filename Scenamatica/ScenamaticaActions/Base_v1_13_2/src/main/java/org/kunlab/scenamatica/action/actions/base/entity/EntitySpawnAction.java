@@ -10,6 +10,7 @@ import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.AbstractAction;
 import org.kunlab.scenamatica.annotations.action.Action;
 import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.Category;
 import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
 import org.kunlab.scenamatica.bookkeeper.annotations.OutputDoc;
 import org.kunlab.scenamatica.bookkeeper.enums.ActionMethod;
@@ -48,6 +49,7 @@ import java.util.List;
                 )
         }
 )
+@Category(inherit= AbstractEntityAction.class)
 public class EntitySpawnAction<E extends Entity> extends AbstractAction
         implements Executable, Watchable
 {

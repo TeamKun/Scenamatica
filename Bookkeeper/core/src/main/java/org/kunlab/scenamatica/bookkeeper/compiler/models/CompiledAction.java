@@ -2,14 +2,16 @@ package org.kunlab.scenamatica.bookkeeper.compiler.models;
 
 import lombok.Value;
 import org.jetbrains.annotations.NotNull;
-import org.kunlab.scenamatica.bookkeeper.compiler.models.refs.CategoryReference;
+import org.kunlab.scenamatica.bookkeeper.compiler.CategoryManager;
 import org.kunlab.scenamatica.bookkeeper.compiler.models.refs.EventReference;
 import org.kunlab.scenamatica.bookkeeper.compiler.models.refs.TypeReference;
 import org.kunlab.scenamatica.bookkeeper.enums.ActionMethod;
 import org.kunlab.scenamatica.bookkeeper.enums.MCVersion;
+import org.kunlab.scenamatica.bookkeeper.utils.MapUtils;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 @Value
@@ -31,7 +33,7 @@ public class CompiledAction implements ICompiled
     String id;
     String name;
     String description;
-    CategoryReference category;
+    CategoryManager.CategoryEntry category;
     EventReference[] events;
     Contract executable;
     Contract watchable;
@@ -41,7 +43,7 @@ public class CompiledAction implements ICompiled
     Map<String, ActionInput> inputs;
     Map<String, ActionOutput> outputs;
 
-    public CompiledAction(String id, String name, String description, CategoryReference category,
+    public CompiledAction(String id, String name, String description, CategoryManager.CategoryEntry category,
                           EventReference[] events,
 
                           Contract executable,
@@ -69,25 +71,26 @@ public class CompiledAction implements ICompiled
     @Override
     public Map<String, Object> serialize()
     {
-        Map<String, Object> map = new HashMap<>();
+        Map<String, Object> map = new LinkedHashMap<>();
         map.put(KEY_ID, this.id);
         map.put(KEY_NAME, this.name);
         map.put(KEY_DESCRIPTION, this.description);
-        map.put(KEY_CATEGORY, this.category == null ? null: this.category.getID());
-        map.put(KEY_EVENTS, this.events == null ? null: Arrays.stream(this.events).map(EventReference::getID).toArray());
+        if (this.category != null)
+            map.put(KEY_CATEGORY, this.category.getReference());
+        map.put(KEY_EVENTS, this.events == null ? null: Arrays.stream(this.events).map(EventReference::getReference).toArray());
         map.put(KEY_EXECUTABLE, this.executable.serialize());
         map.put(KEY_WATCHABLE, this.watchable.serialize());
         map.put(KEY_REQUIREABLE, this.requireable.serialize());
-        map.put(KEY_SUPPORTS_SINCE, this.supportsSince);
-        map.put(KEY_SUPPORTS_UNTIL, this.supportsUntil);
-        map.put(KEY_INPUTS, serializeInputs());
-        map.put(KEY_OUTPUTS, serializeOutputs());
+        MapUtils.putIfNotNull(map, KEY_SUPPORTS_SINCE, this.supportsSince);
+        MapUtils.putIfNotNull(map, KEY_SUPPORTS_UNTIL, this.supportsUntil);
+        MapUtils.putIfNotNull(map, KEY_INPUTS, serializeInputs());
+        MapUtils.putIfNotNull(map, KEY_OUTPUTS, serializeOutputs());
         return map;
     }
 
     private Map<String, Object> serializeOutputs()
     {
-        Map<String, Object> map = new HashMap<>();
+        Map<String, Object> map = new LinkedHashMap<>();
         for (Map.Entry<String, ActionOutput> entry : this.outputs.entrySet())
             map.put(entry.getKey(), entry.getValue().serialize());
 
@@ -96,7 +99,7 @@ public class CompiledAction implements ICompiled
 
     private Map<String, Object> serializeInputs()
     {
-        Map<String, Object> map = new HashMap<>();
+        Map<String, Object> map = new LinkedHashMap<>();
         for (Map.Entry<String, ActionInput> entry : this.inputs.entrySet())
             map.put(entry.getKey(), entry.getValue().serialize());
 
@@ -121,11 +124,11 @@ public class CompiledAction implements ICompiled
         TypeReference type;
         MCVersion supportsSince;
         MCVersion supportsUntil;
-        double min;
-        double max;
+        Double min;
+        Double max;
 
         public ActionOutput(String name, String description, ActionMethod[] targets, TypeReference type,
-                            MCVersion supportsSince, MCVersion supportsUntil, double min, double max)
+                            MCVersion supportsSince, MCVersion supportsUntil, Double min, Double max)
         {
             this.name = name;
             this.description = description;
@@ -142,12 +145,12 @@ public class CompiledAction implements ICompiled
             Map<String, Object> map = new HashMap<>();
             map.put(KEY_NAME, this.name);
             map.put(KEY_DESCRIPTION, this.description);
-            map.put(KEY_TARGETS, this.targets);
-            map.put(KEY_TYPE, this.type.getID());
-            map.put(KEY_SUPPORTS_SINCE, this.supportsSince);
-            map.put(KEY_SUPPORTS_UNTIL, this.supportsUntil);
-            map.put(KEY_MIN, this.min);
-            map.put(KEY_MAX, this.max);
+            map.put(KEY_TYPE, this.type.getReference());
+            MapUtils.putIfNotNull(map, KEY_TARGETS, this.targets);
+            MapUtils.putIfNotNull(map, KEY_SUPPORTS_SINCE, this.supportsSince);
+            MapUtils.putIfNotNull(map, KEY_SUPPORTS_UNTIL, this.supportsUntil);
+            MapUtils.putIfNotNull(map, KEY_MIN, this.min);
+            MapUtils.putIfNotNull(map, KEY_MAX, this.max);
             return map;
         }
     }
@@ -172,8 +175,8 @@ public class CompiledAction implements ICompiled
         ActionMethod[] availableFor;
         MCVersion supportsSince;
         MCVersion supportsUntil;
-        double min;
-        double max;
+        Double min;
+        Double max;
         Object constValue;
         boolean requiresActor;
 
@@ -182,14 +185,14 @@ public class CompiledAction implements ICompiled
             Map<String, Object> map = new HashMap<>();
             map.put(KEY_NAME, this.name);
             map.put(KEY_DESCRIPTION, this.description);
-            map.put(KEY_REQUIRED_ON, this.requiredOn);
-            map.put(KEY_AVAILABLE_FOR, this.availableFor);
-            map.put(KEY_SUPPORTS_SINCE, this.supportsSince);
-            map.put(KEY_SUPPORTS_UNTIL, this.supportsUntil);
-            map.put(KEY_MIN, this.min);
-            map.put(KEY_MAX, this.max);
-            map.put(KEY_CONST_VALUE, this.constValue);
-            map.put(KEY_REQUIRES_ACTOR, this.requiresActor);
+            MapUtils.putIfNotNull(map, KEY_REQUIRED_ON, this.requiredOn);
+            MapUtils.putIfNotNull(map, KEY_AVAILABLE_FOR, this.availableFor);
+            MapUtils.putIfNotNull(map, KEY_SUPPORTS_SINCE, this.supportsSince);
+            MapUtils.putIfNotNull(map, KEY_SUPPORTS_UNTIL, this.supportsUntil);
+            MapUtils.putIfNotNull(map, KEY_MIN, this.min);
+            MapUtils.putIfNotNull(map, KEY_MAX, this.max);
+            MapUtils.putIfNotNull(map, KEY_CONST_VALUE, this.constValue);
+            MapUtils.putIfTrue(map, KEY_REQUIRES_ACTOR, this.requiresActor);
             return map;
         }
 

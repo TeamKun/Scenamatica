@@ -47,7 +47,7 @@
             "type": {
               "type": "string",
               "description": "The reference of the type of the property.",
-              "pattern": "^(string|integer|float|double|boolean|object|array|(\\$ref:\\w+:[$\\-a-zA-Z0-9]+))$"
+              "pattern": "^(string|integer|long|byte|float|double|boolean|object|array|(\\$ref:\\w+:[$\\-a-zA-Z0-9]+))$"
             },
             "description": {
               "type": "string",

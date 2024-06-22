@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Value;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 @Value
@@ -27,7 +27,7 @@ public class CompiledEvent implements ICompiled
     @Override
     public Map<String, Object> serialize()
     {
-        Map<String, Object> map = new HashMap<>();
+        Map<String, Object> map = new LinkedHashMap<>();
         map.put(KEY_ID, this.id);
         map.put(KEY_NAME, this.name);
         map.put(KEY_DESCRIPTION, this.description);

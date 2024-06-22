@@ -83,7 +83,7 @@ public class ActionDefinitionReader implements IAnnotationReader<ActionDefinitio
             if (field.access != (Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC | Opcodes.ACC_FINAL))
                 continue;
 
-            List<AnnotationNode> annos = field.visibleAnnotations;
+            List<AnnotationNode> annos = field.invisibleAnnotations;
             if (annos == null)
                 continue;
 

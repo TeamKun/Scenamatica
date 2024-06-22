@@ -6,6 +6,7 @@ import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.kunlab.scenamatica.bookkeeper.annotations.Category;
 import org.kunlab.scenamatica.bookkeeper.annotations.TypeDoc;
 import org.kunlab.scenamatica.bookkeeper.annotations.TypeProperty;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
@@ -62,6 +63,7 @@ import java.util.Map;
                 )
         }
 )
+@Category(inherit = MiscCategoryInfo.class)
 public interface BlockStructure extends Structure, Mapped<Block>, Creatable<Block>, ProjectileSourceStructure
 {
     String KEY_BLOCK_TYPE = "type";

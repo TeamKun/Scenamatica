@@ -39,6 +39,7 @@ public class TypeCompiler extends AbstractCompiler<TypeDefinition, CompiledType,
     private static final MessageDigest SHA1_DIGEST;
 
     private final BookkeeperCore core;
+    private final CategoryManager categoryManager;
 
     static
     {
@@ -56,6 +57,7 @@ public class TypeCompiler extends AbstractCompiler<TypeDefinition, CompiledType,
     {
         super("types");
         this.core = core;
+        this.categoryManager = core.getCategoryManager();
 
         this.initWellKnownTypes();
     }
@@ -70,16 +72,19 @@ public class TypeCompiler extends AbstractCompiler<TypeDefinition, CompiledType,
                 CompiledStringType.NAME_NAMESPACED,
                 CompiledStringType.REF_NAMESPACED
         );
+        this.compiledItemReferences.put(
+                CompiledStringType.NAME_NAMESPACED_KEY,
+                CompiledStringType.REF_NAMESPACED_KEY
+        );
     }
 
     public TypeReference lookup(Type type)
     {
-        for (TypeReference reference : this.compiledItemReferences.values())
-        {
-            CompiledType compiledType = reference.getResolved();
-            if (compiledType.getClassName().equals(type.getClassName().replace('.', '/')))
-                return reference;
-        }
+        TypeReference reference;
+        if ((reference = this.resolveCompiledType(type)) != null)
+            return reference;
+        else if ((reference = this.resolveOtherType(type)) != null)
+            return reference;
 
         throw new IllegalArgumentException("Unable to resolve type reference for type '" + type.getClassName() + "'");
     }
@@ -97,11 +102,13 @@ public class TypeCompiler extends AbstractCompiler<TypeDefinition, CompiledType,
         if (this.resolve(id) != null)
             throw new IllegalArgumentException("Type with ID '" + id + "' already exists, consider changing the name of the type.");
 
+        CategoryManager.CategoryEntry category = this.categoryManager.recogniseCategory(definition.getAnnotatedClass());
         return new TypeReference(
                 id,
                 new CompiledType(
                         id,
                         definition.getName(),
+                        category,
                         definition.getClazz().name,
                         definition.getMappingOf() != null ? definition.getMappingOf().getClassName().replace('.', '/'): null,
                         compileProperties(definition.getProperties())
@@ -127,7 +134,7 @@ public class TypeCompiler extends AbstractCompiler<TypeDefinition, CompiledType,
                     property.getName(),
                     new CompiledType.Property(
                             property.getName(),
-                            resolvePropertyType(property.getType()),
+                            resolveOtherType(property.getType()),
                             property.getDescription(),
                             property.isRequired(),
                             property.getType().getDescriptor().startsWith("["),
@@ -145,8 +152,8 @@ public class TypeCompiler extends AbstractCompiler<TypeDefinition, CompiledType,
         for (TypeReference reference : this.compiledItemReferences.values())
         {
             CompiledType compiledType = reference.getResolved();
-            if (compiledType.getClassName().equals(asmType.getClassName().replace('.', '/'))
-                    || (compiledType.getMappingOf() != null && compiledType.getMappingOf().equals(asmType.getInternalName())))
+            if (Descriptors.isClassNameEqual(asmType.getClassName(), compiledType.getClassName())
+                    || Descriptors.isClassNameEqual(asmType.getClassName(), compiledType.getMappingOf()))
                 return reference;
         }
 
@@ -159,7 +166,28 @@ public class TypeCompiler extends AbstractCompiler<TypeDefinition, CompiledType,
         return TypeDefinition.class;
     }
 
-    private TypeReference resolvePropertyType(Type type)
+    @Override
+    protected String getFileLocation(TypeReference reference)
+    {
+        String superLocation = super.getFileLocation(reference);
+        if (reference.getResolved() instanceof CompiledStringType)
+        {
+            CompiledStringType stringType = (CompiledStringType) reference.getResolved();
+            switch (stringType.type())
+            {
+                case CompiledStringType.FORMAT_TYPE:
+                    return "formats/" + superLocation;
+                case CompiledStringType.PATTERN_TYPE:
+                    return "patterns/" + superLocation;
+                case CompiledStringType.ENUMS_TYPE:
+                    return "enums/" + superLocation;
+            }
+        }
+
+        return superLocation;
+    }
+
+    private TypeReference resolveOtherType(Type type)
     {
         if (type.getDescriptor().startsWith("["))
             type = type.getElementType(); // 配列は要素型に変換
@@ -173,6 +201,8 @@ public class TypeCompiler extends AbstractCompiler<TypeDefinition, CompiledType,
             return CompiledStringType.REF_UUID;
         else if (desc.equals(CompiledStringType.DESC_NAMESPACED))
             return CompiledStringType.REF_NAMESPACED;
+        else if (desc.equals(CompiledStringType.DESC_NAMESPACED_KEY))
+            return CompiledStringType.REF_NAMESPACED_KEY;
         else if (CompiledSpecifierType.isEntitySpecifier(type))
             return CompiledSpecifierType.REF_ENTITY;
         else if (CompiledSpecifierType.isPlayerSpecifier(type))
@@ -200,7 +230,6 @@ public class TypeCompiler extends AbstractCompiler<TypeDefinition, CompiledType,
         if ((refTo.access & Opcodes.ACC_ENUM) != 0)
             return this.getEnumReference(type, refTo);
 
-
         // それ以外のクラスは通常処理
         TypeReference reference = this.resolveCompiledType(type);
         if (reference == null)
@@ -227,10 +256,12 @@ public class TypeCompiler extends AbstractCompiler<TypeDefinition, CompiledType,
         String classNameSimple = Descriptors.convertSimpleClassName(className);
         String id = createClassNameStringReference(className);
 
+        CategoryManager.CategoryEntry category = this.categoryManager.recogniseCategory(classNode);
         CompiledStringType cType = new CompiledStringType(
                 new CompiledType(
                         id,
                         classNameSimple,
+                        category,
                         className
                 ),
                 enumValues
@@ -308,7 +339,7 @@ public class TypeCompiler extends AbstractCompiler<TypeDefinition, CompiledType,
     {
         private PrimitiveType(String primitiveName, Class<?> clazz)
         {
-            super(primitiveName, primitiveName, clazz.getName());
+            super(primitiveName, primitiveName, null, clazz.getName());
         }
 
         public static TypeReference ofRef(String primitiveName, Class<?> clazz)

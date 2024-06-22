@@ -28,4 +28,6 @@ public interface ICompiler<T extends IDefinition, U extends ICompiled, V extends
     }
 
     List<V> getResolvedReferences();
+
+    String getName();
 }

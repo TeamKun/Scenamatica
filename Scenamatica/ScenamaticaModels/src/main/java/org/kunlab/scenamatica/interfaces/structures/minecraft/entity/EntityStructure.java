@@ -4,6 +4,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
+import org.kunlab.scenamatica.bookkeeper.annotations.Category;
 import org.kunlab.scenamatica.bookkeeper.annotations.TypeDoc;
 import org.kunlab.scenamatica.bookkeeper.annotations.TypeProperty;
 import org.kunlab.scenamatica.interfaces.scenariofile.Structure;
@@ -118,6 +119,11 @@ import java.util.UUID;
                         type = float.class
                 )
         }
+)
+@Category(
+        id = "entity",
+        name = "エンティティ関連",
+        description = "エンティティに関連する情報を格納します。"
 )
 public interface EntityStructure extends Structure, ProjectileSourceStructure
 {

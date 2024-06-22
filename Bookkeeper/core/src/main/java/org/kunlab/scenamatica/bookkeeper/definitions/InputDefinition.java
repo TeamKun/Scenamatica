@@ -20,8 +20,8 @@ public class InputDefinition implements IDefinition
     MCVersion supportsSince;
     MCVersion supportsUntil;
     Object constValue;
-    double max;
-    double min;
+    Double max;
+    Double min;
     boolean requiresActor;
 
     @Override

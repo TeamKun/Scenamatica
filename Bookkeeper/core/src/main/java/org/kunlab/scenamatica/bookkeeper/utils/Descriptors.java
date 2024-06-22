@@ -124,6 +124,15 @@ public class Descriptors
         }
     }
 
+    public static boolean isClassNameEqual(String className1, String className2)
+    {
+        if (className1 == null || className2 == null)
+            //noinspection StringEquality
+            return className1 == className2 /* null == null */;
+
+        return className1.replace('/', '.').equals(className2.replace('/', '.'));
+    }
+
     @Contract("null -> null; !null -> !null")
     public static Type getElementTypeSafe(@Nullable Type type)
     {

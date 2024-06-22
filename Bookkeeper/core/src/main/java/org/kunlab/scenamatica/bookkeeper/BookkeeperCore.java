@@ -2,6 +2,7 @@ package org.kunlab.scenamatica.bookkeeper;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.kunlab.scenamatica.bookkeeper.compiler.CategoryManager;
 import org.kunlab.scenamatica.bookkeeper.compiler.Compiler;
 import org.kunlab.scenamatica.bookkeeper.definitions.IDefinition;
 import org.kunlab.scenamatica.bookkeeper.reader.ActionCategoryDefinitionReader;
@@ -32,6 +33,7 @@ public class BookkeeperCore
     private final AnnotationClassifier classifier;
     private final List<IAnnotationReader<? extends IDefinition>> processors;
     private final Compiler compiler;
+    private final CategoryManager categoryManager;
 
     private final Path tempDir;
 
@@ -45,6 +47,7 @@ public class BookkeeperCore
         this.processors = new ArrayList<>();
         this.classLoader = ScenamaticaClassLoader.create(config.getTargetJar(), this.processors);
         this.classifier = new AnnotationClassifier(this.processors);
+        this.categoryManager = new CategoryManager(this.classLoader, this.config.getOutputDir().resolve("categories"));
         this.compiler = new Compiler(this);
 
         this.classLoader.addClasspaths(this.config.getClassPaths());

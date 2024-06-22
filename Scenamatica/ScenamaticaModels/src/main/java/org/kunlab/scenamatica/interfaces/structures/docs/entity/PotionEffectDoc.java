@@ -2,8 +2,10 @@ package org.kunlab.scenamatica.interfaces.structures.docs.entity;
 
 import org.bukkit.Material;
 import org.bukkit.potion.PotionEffectType;
+import org.kunlab.scenamatica.bookkeeper.annotations.Category;
 import org.kunlab.scenamatica.bookkeeper.annotations.TypeDoc;
 import org.kunlab.scenamatica.bookkeeper.annotations.TypeProperty;
+import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.EntityStructure;
 
 @TypeDoc(
         name = "PotionEffect",
@@ -42,6 +44,7 @@ import org.kunlab.scenamatica.bookkeeper.annotations.TypeProperty;
                 )
         }
 )
+@Category(inherit = EntityStructure.class)
 public interface PotionEffectDoc
 {
     enum EnumPotionEffect

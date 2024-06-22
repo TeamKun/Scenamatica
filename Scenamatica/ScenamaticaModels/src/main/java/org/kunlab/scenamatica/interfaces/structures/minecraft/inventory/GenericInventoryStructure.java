@@ -1,6 +1,7 @@
 package org.kunlab.scenamatica.interfaces.structures.minecraft.inventory;
 
 import org.jetbrains.annotations.NotNull;
+import org.kunlab.scenamatica.bookkeeper.annotations.Category;
 import org.kunlab.scenamatica.bookkeeper.annotations.TypeDoc;
 import org.kunlab.scenamatica.bookkeeper.annotations.TypeProperty;
 import org.kunlab.scenamatica.interfaces.scenariofile.Structure;
@@ -11,7 +12,7 @@ import java.util.Map;
  * インベントリの構造体の基底のインターフェースです。
  */
 @TypeDoc(
-        name = "GenericInventory",
+        name = "Inventory",
         description = "インベントリの情報を格納します。",
         properties = {
                 @TypeProperty(
@@ -32,6 +33,11 @@ import java.util.Map;
                 )
         }
 
+)
+@Category(
+        id = "inventory_items",
+        name = "インベントリ・アイテム関連",
+        description = "インベントリ・アイテムに関する情報を格納します。"
 )
 public interface GenericInventoryStructure extends Structure
 {

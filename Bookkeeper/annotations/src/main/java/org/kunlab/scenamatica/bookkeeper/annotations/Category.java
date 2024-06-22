@@ -8,9 +8,7 @@ import java.lang.annotation.Target;
 /**
  * カテゴリを示すアノテーションです。
  * カテゴリは, グループ化に使用されます。
- * 単一のクラスまたはその親クラスに適用して使用します。<br>
- * 複数の同名のカテゴリが存在する場合, そのカテゴリは一つのカテゴリとして扱われます。
- * その時のプロパティは inherit が true のものが優先されます。
+ * 単一のクラスまたはその親クラスに適用して使用します。
  */
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.CLASS)
@@ -21,7 +19,7 @@ public @interface Category
      *
      * @return カテゴリの識別名
      */
-    String id();
+    String id() default "";
 
     /**
      * カテゴリの名前です。
@@ -38,17 +36,7 @@ public @interface Category
     String description() default "";
 
     /**
-     * このカテゴリが継承するカテゴリの識別名です。
-     *
-     * @return 継承するカテゴリの識別名
+     * 継承するカテゴリが付与されたクラス・インタフェースです。
      */
-    String extendsOf() default "";
-
-    /**
-     * このカテゴリが継承するカテゴリのプロパティを継承するかどうかです。
-     * 同一インスタンス内に２つ以上の同名のカテゴリが存在する場合, このプロパティが true ではない場合はエラーとなります。
-     *
-     * @return 継承する場合は true, それ以外は false
-     */
-    boolean inherit() default false;
+    Class<?> inherit() default Object.class;
 }

@@ -47,8 +47,8 @@ public class InputDefinitionReader implements IAnnotationReader<InputDefinition>
                 values.getAsEnum(KEY_SUPPORTS_SINCE, MCVersion.class),
                 values.getAsEnum(KEY_SUPPORTS_UNTIL, MCVersion.class),
                 values.get(KEY_CONST_VALUE),
-                values.get(KEY_MAX, double.class),
-                values.get(KEY_MIN, double.class),
+                values.get(KEY_MAX, Double.class),
+                values.get(KEY_MIN, Double.class),
                 values.getAsBoolean(KEY_REQUIRES_ACTOR)
         );
     }

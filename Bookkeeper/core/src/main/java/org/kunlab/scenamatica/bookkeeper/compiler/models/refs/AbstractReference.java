@@ -26,7 +26,7 @@ public abstract class AbstractReference<T extends ICompiled> implements IReferen
     }
 
     @Override
-    public String getID()
+    public String getReference()
     {
         return "$ref:" + this.referenceType + ":" + this.id;
     }

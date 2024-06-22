@@ -9,6 +9,11 @@ import org.kunlab.scenamatica.interfaces.scenariofile.Structure;
  */
 public interface ScenarioStructure extends Structure
 {
+    public static final String KEY_SCENARIO_TYPE = "type";
+    public static final String KEY_SCENARIO_NAME = "name";
+    public static final String KEY_RUN_IF = "runif";
+    public static final String KEY_TIMEOUT = "timeout";
+
 
     /**
      * このシナリオのタイプを取得します。

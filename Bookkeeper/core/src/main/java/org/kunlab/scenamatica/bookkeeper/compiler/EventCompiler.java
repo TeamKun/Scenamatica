@@ -91,7 +91,7 @@ public class EventCompiler implements ICompiler<EventCompiler.DummyEventDefiniti
     {
         for (EventReference reference : this.references.values())
         {
-            Path file = directory.resolve(Paths.get("events", reference.getID() + ".json"));
+            Path file = directory.resolve(Paths.get("events", reference.getReference() + ".json"));
             try
             {
                 MAPPER.writeValue(file.toFile(), reference.getResolved().serialize());
@@ -176,6 +176,12 @@ public class EventCompiler implements ICompiler<EventCompiler.DummyEventDefiniti
     public List<EventReference> getResolvedReferences()
     {
         return Collections.unmodifiableList(new ArrayList<>(this.references.values()));
+    }
+
+    @Override
+    public String getName()
+    {
+        return "events";
     }
 
     private static void createDir(Path outDir)

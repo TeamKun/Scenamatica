@@ -8,6 +8,7 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.kunlab.scenamatica.bookkeeper.annotations.Category;
 import org.kunlab.scenamatica.bookkeeper.annotations.TypeDoc;
 import org.kunlab.scenamatica.bookkeeper.annotations.TypeProperty;
 import org.kunlab.scenamatica.interfaces.scenariofile.Creatable;
@@ -93,6 +94,7 @@ import java.util.Map;
                 ),
         }
 )
+@Category(inherit = GenericInventoryStructure.class)
 public interface ItemStackStructure extends Structure, Mapped<ItemStack>, Creatable<ItemStack>
 {
     String KEY_TYPE = "type";
