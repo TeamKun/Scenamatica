@@ -312,7 +312,7 @@ public class TypeCompiler extends AbstractCompiler<TypeDefinition, CompiledType,
             className = classNameFull.substring(lastSlash + 1);
         }
 
-        return className + "-" + getSHA1Hash(packageName, 8);
+        return className /*+ "-" + getSHA1Hash(packageName, 8)*/;
     }
 
     private static TypeReference getPrimitiveReference(char desc)

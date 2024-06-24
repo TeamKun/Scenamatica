@@ -80,7 +80,7 @@ public class ActionDefinitionReader implements IAnnotationReader<ActionDefinitio
         List<InputDefinition> inputs = new ArrayList<>();
         for (FieldNode field : clazz.fields)
         {
-            if (field.access != (Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC | Opcodes.ACC_FINAL))
+            if (field.access != (Opcodes.ACC_PUBLIC /* | Opcodes.ACC_STATIC */ | Opcodes.ACC_FINAL))
                 continue;
 
             List<AnnotationNode> annos = field.invisibleAnnotations;

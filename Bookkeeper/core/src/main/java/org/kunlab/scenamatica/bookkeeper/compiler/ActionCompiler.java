@@ -1,5 +1,9 @@
 package org.kunlab.scenamatica.bookkeeper.compiler;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.kunlab.scenamatica.bookkeeper.AnnotationClassifier;
+import org.kunlab.scenamatica.bookkeeper.ScenamaticaClassLoader;
 import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
 import org.kunlab.scenamatica.bookkeeper.compiler.models.CompiledAction;
 import org.kunlab.scenamatica.bookkeeper.compiler.models.refs.ActionReference;
@@ -12,19 +16,25 @@ import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.ClassNode;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class ActionCompiler extends AbstractCompiler<ActionDefinition, CompiledAction, ActionReference>
 {
+    private final ScenamaticaClassLoader classLoader;
+    private final AnnotationClassifier classifier;
     private final TypeCompiler typeCompiler;
     private final EventCompiler eventCompiler;
     private final CategoryManager categoryManager;
 
-    public ActionCompiler(TypeCompiler typeCompiler, EventCompiler eventCompiler, CategoryManager categoryManager)
+    public ActionCompiler(ScenamaticaClassLoader classLoader, AnnotationClassifier classifier, TypeCompiler typeCompiler,
+                          EventCompiler eventCompiler, CategoryManager categoryManager)
     {
         super("actions");
+        this.classLoader = classLoader;
+        this.classifier = classifier;
         this.typeCompiler = typeCompiler;
         this.eventCompiler = eventCompiler;
         this.categoryManager = categoryManager;
@@ -70,6 +80,7 @@ public class ActionCompiler extends AbstractCompiler<ActionDefinition, CompiledA
 
         return new ActionReference(
                 new CompiledAction(
+                        definition.getClazz(),
                         definition.getId(),
                         definition.getName(),
                         definition.getDescription(),
@@ -86,29 +97,62 @@ public class ActionCompiler extends AbstractCompiler<ActionDefinition, CompiledA
         );
     }
 
+    @NotNull
+    private List<CompiledAction.ActionInput> getSuperActions(ClassNode node)
+    {
+        List<CompiledAction.ActionInput> superActions = new ArrayList<>();
+        if (!canTraceSuper(node))
+            return Collections.emptyList();
+
+        ClassNode superClass = this.classLoader.getClassByName(node.superName);
+        while (superClass != null)
+        {
+            AnnotationClassifier.ClassifiedAnnotation annotation = this.classifier.getClassfieidAnnotations(superClass);
+            if (annotation == null)
+            {
+                if (!canTraceSuper(superClass))
+                    break;
+
+                superClass = this.classLoader.getClassByName(superClass.superName);
+                continue;
+            }
+
+            ActionDefinition actionDefinition = annotation.getAnnotations().stream()
+                    .filter(a -> a instanceof ActionDefinition)
+                    .map(a -> (ActionDefinition) a)
+                    .findFirst()
+                    .orElse(null);
+            if (actionDefinition == null)
+            {
+                if (!canTraceSuper(superClass))
+                    break;
+
+                superClass = this.classLoader.getClassByName(superClass.superName);
+                continue;
+            }
+
+            ActionReference inheritedReference = this.compiledItemReferences.get(actionDefinition.getId());
+            for (InputDefinition input : actionDefinition.getInputs())
+                superActions.add(constructInput(input, inheritedReference));
+
+            if (canTraceSuper(superClass))
+                superClass = this.classLoader.getClassByName(superClass.superName);
+            else
+                break;
+        }
+
+        return superActions;
+    }
+
     private Map<String, CompiledAction.ActionInput> compileInputs(ActionDefinition definition)
     {
-        if (definition.getInputs() == null)
-            return new HashMap<>();
-
         Map<String, CompiledAction.ActionInput> inputs = new HashMap<>();
+        List<CompiledAction.ActionInput> superActions = getSuperActions(definition.getClazz());
+        for (CompiledAction.ActionInput superAction : superActions)
+            inputs.put(superAction.getName(), superAction);
 
         for (InputDefinition input : definition.getInputs())
-        {
-            CompiledAction.ActionInput compiled = new CompiledAction.ActionInput(
-                    input.getName(),
-                    input.getDescription(),
-                    input.getRequiredOn(),
-                    input.getAvailableFor(),
-                    input.getSupportsSince(),
-                    input.getSupportsUntil(),
-                    input.getMin(),
-                    input.getMax(),
-                    input.getConstValue(),
-                    input.isRequiresActor()
-            );
-            inputs.put(input.getName(), compiled);
-        }
+            inputs.put(input.getName(), constructInput(input, null));
 
         return inputs;
     }
@@ -158,6 +202,37 @@ public class ActionCompiler extends AbstractCompiler<ActionDefinition, CompiledA
             return sup;
 
         return categoryReference.getChildrenPath().resolve(sup).toString();
+    }
+
+    private ActionReference getActionByClass(ClassNode clazz)
+    {
+        return this.compiledItemReferences.values()
+                .stream()
+                .filter(actionReference -> actionReference.getResolved().getClazz().equals(clazz))
+                .findFirst()
+                .orElse(null);
+    }
+
+    private static boolean canTraceSuper(ClassNode node)
+    {
+        return !(node.superName == null || node.superName.equals("java/lang/Object") || node.superName.equals("java/lang/Enum"));
+    }
+
+    private static CompiledAction.ActionInput constructInput(InputDefinition input, @Nullable ActionReference inherits)
+    {
+        return new CompiledAction.ActionInput(
+                input.getName(),
+                input.getDescription(),
+                input.getRequiredOn(),
+                input.getAvailableFor(),
+                input.getSupportsSince(),
+                input.getSupportsUntil(),
+                input.getMin(),
+                input.getMax(),
+                input.getConstValue(),
+                input.isRequiresActor(),
+                inherits
+        );
     }
 
     private static CompiledAction.Contract compileContract(String string)

@@ -57,6 +57,20 @@ public class ActionDefinition implements IDefinition
             return Arrays.stream(this.inputs).parallel()
                     .anyMatch(input -> input.isDependsOn(definition));
 
+        if (definition instanceof ActionDefinition)
+        {
+            ActionDefinition action = (ActionDefinition) definition;
+            ClassNode actionClass = action.getAnnotatedClass();
+            ClassNode current = this.getAnnotatedClass();
+            while (current != null)
+            {
+                if (current.name.equals(actionClass.name))
+                    return true;
+
+                current = current.superName != null ? this.clazz: null;
+            }
+        }
+
         return false;
     }
 }

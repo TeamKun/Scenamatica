@@ -139,6 +139,10 @@
             "requiresActor": {
               "type": "boolean",
               "description": "Mark this input as requiring an actor"
+            },
+            "inheritedFrom": {
+              "type": "string",
+              "description": "The reference of the input that this input is inherited from"
             }
           }
         }

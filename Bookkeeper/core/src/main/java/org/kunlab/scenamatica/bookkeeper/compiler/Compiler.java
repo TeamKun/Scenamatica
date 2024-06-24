@@ -54,6 +54,8 @@ public class Compiler
             ));
 
         ActionCompiler action = new ActionCompiler(
+                core.getClassLoader(),
+                core.getClassifier(),
                 type,
                 event,
                 this.categoryManager

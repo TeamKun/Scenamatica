@@ -3,11 +3,13 @@ package org.kunlab.scenamatica.bookkeeper.compiler.models;
 import lombok.Value;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.bookkeeper.compiler.CategoryManager;
+import org.kunlab.scenamatica.bookkeeper.compiler.models.refs.ActionReference;
 import org.kunlab.scenamatica.bookkeeper.compiler.models.refs.EventReference;
 import org.kunlab.scenamatica.bookkeeper.compiler.models.refs.TypeReference;
 import org.kunlab.scenamatica.bookkeeper.enums.ActionMethod;
 import org.kunlab.scenamatica.bookkeeper.enums.MCVersion;
 import org.kunlab.scenamatica.bookkeeper.utils.MapUtils;
+import org.objectweb.asm.tree.ClassNode;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -30,6 +32,7 @@ public class CompiledAction implements ICompiled
     private static final String KEY_INPUTS = "inputs";
     private static final String KEY_OUTPUTS = "outputs";
 
+    ClassNode clazz;
     String id;
     String name;
     String description;
@@ -43,7 +46,7 @@ public class CompiledAction implements ICompiled
     Map<String, ActionInput> inputs;
     Map<String, ActionOutput> outputs;
 
-    public CompiledAction(String id, String name, String description, CategoryManager.CategoryEntry category,
+    public CompiledAction(ClassNode clazz, String id, String name, String description, CategoryManager.CategoryEntry category,
                           EventReference[] events,
 
                           Contract executable,
@@ -54,6 +57,7 @@ public class CompiledAction implements ICompiled
                           Map<String, ActionInput> inputs,
                           Map<String, ActionOutput> outputs)
     {
+        this.clazz = clazz;
         this.id = id;
         this.name = name;
         this.description = description;
@@ -168,6 +172,7 @@ public class CompiledAction implements ICompiled
         private static final String KEY_MAX = "max";
         private static final String KEY_CONST_VALUE = "const";
         private static final String KEY_REQUIRES_ACTOR = "requiresActor";
+        private static final String KEY_INHERITED_FROM = "inheritedFrom";
 
         String name;
         String description;
@@ -179,6 +184,7 @@ public class CompiledAction implements ICompiled
         Double max;
         Object constValue;
         boolean requiresActor;
+        ActionReference inheritedFrom;
 
         public Map<String, Object> serialize()
         {
@@ -193,6 +199,8 @@ public class CompiledAction implements ICompiled
             MapUtils.putIfNotNull(map, KEY_MAX, this.max);
             MapUtils.putIfNotNull(map, KEY_CONST_VALUE, this.constValue);
             MapUtils.putIfTrue(map, KEY_REQUIRES_ACTOR, this.requiresActor);
+            if (this.inheritedFrom != null)
+                map.put(KEY_INHERITED_FROM, this.inheritedFrom.getReference());
             return map;
         }
 
