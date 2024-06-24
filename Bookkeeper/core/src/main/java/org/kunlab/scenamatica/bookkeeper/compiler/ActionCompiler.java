@@ -78,6 +78,7 @@ public class ActionCompiler extends AbstractCompiler<ActionDefinition, CompiledA
         else
             categoryReference = this.categoryManager.recogniseCategory(clazz);
 
+        List<ActionReference> superActions = getSuperActions(clazz);
         return new ActionReference(
                 new CompiledAction(
                         definition.getClazz(),
@@ -91,16 +92,16 @@ public class ActionCompiler extends AbstractCompiler<ActionDefinition, CompiledA
                         requireable,
                         definition.getSupportsSince(),
                         definition.getSupportsUntil(),
-                        compileInputs(definition),
-                        compileOutputs(definition)
+                        compileInputs(definition, superActions),
+                        compileOutputs(definition, superActions)
                 )
         );
     }
 
     @NotNull
-    private List<CompiledAction.ActionInput> getSuperActions(ClassNode node)
+    private List<ActionReference> getSuperActions(ClassNode node)
     {
-        List<CompiledAction.ActionInput> superActions = new ArrayList<>();
+        List<ActionReference> superActions = new ArrayList<>();
         if (!canTraceSuper(node))
             return Collections.emptyList();
 
@@ -132,8 +133,7 @@ public class ActionCompiler extends AbstractCompiler<ActionDefinition, CompiledA
             }
 
             ActionReference inheritedReference = this.compiledItemReferences.get(actionDefinition.getId());
-            for (InputDefinition input : actionDefinition.getInputs())
-                superActions.add(constructInput(input, inheritedReference));
+            superActions.add(inheritedReference);
 
             if (canTraceSuper(superClass))
                 superClass = this.classLoader.getClassByName(superClass.superName);
@@ -144,12 +144,16 @@ public class ActionCompiler extends AbstractCompiler<ActionDefinition, CompiledA
         return superActions;
     }
 
-    private Map<String, CompiledAction.ActionInput> compileInputs(ActionDefinition definition)
+    private Map<String, CompiledAction.ActionInput> compileInputs(ActionDefinition definition, List<? extends ActionReference> supers)
     {
         Map<String, CompiledAction.ActionInput> inputs = new HashMap<>();
-        List<CompiledAction.ActionInput> superActions = getSuperActions(definition.getClazz());
-        for (CompiledAction.ActionInput superAction : superActions)
-            inputs.put(superAction.getName(), superAction);
+        // merge supers
+        for (ActionReference superAction : supers)
+        {
+            CompiledAction superCompiled = superAction.getResolved();
+            for (Map.Entry<String, CompiledAction.ActionInput> entry : superCompiled.getInputs().entrySet())
+                inputs.put(entry.getKey(), CompiledAction.ActionInput.inherit(entry.getValue(), superAction));
+        }
 
         for (InputDefinition input : definition.getInputs())
             inputs.put(input.getName(), constructInput(input, null));
@@ -157,12 +161,16 @@ public class ActionCompiler extends AbstractCompiler<ActionDefinition, CompiledA
         return inputs;
     }
 
-    private Map<String, CompiledAction.ActionOutput> compileOutputs(ActionDefinition definition)
+    private Map<String, CompiledAction.ActionOutput> compileOutputs(ActionDefinition definition, List<? extends ActionReference> supers)
     {
-        if (definition.getOutputs() == null)
-            return new HashMap<>();
-
         Map<String, CompiledAction.ActionOutput> outputs = new HashMap<>();
+        // merge supers
+        for (ActionReference superAction : supers)
+        {
+            CompiledAction superCompiled = superAction.getResolved();
+            for (Map.Entry<String, CompiledAction.ActionOutput> entry : superCompiled.getOutputs().entrySet())
+                outputs.put(entry.getKey(), CompiledAction.ActionOutput.inherit(entry.getValue(), superAction));
+        }
 
         for (OutputDefinition output : definition.getOutputs())
         {
@@ -171,18 +179,10 @@ public class ActionCompiler extends AbstractCompiler<ActionDefinition, CompiledA
             if (typeReference == null)
                 throw new IllegalStateException("Type not found: " + outputType.getClassName());
 
-            CompiledAction.ActionOutput compiled = new CompiledAction.ActionOutput(
-                    output.getName(),
-                    output.getDescription(),
-                    output.getTargets(),
-                    typeReference,
-                    output.getSupportsSince(),
-                    output.getSupportsUntil(),
-                    output.getMin(),
-                    output.getMax()
-            );
+            CompiledAction.ActionOutput compiled = constructOutput(output, typeReference, null);
             outputs.put(output.getName(), compiled);
         }
+
 
         return outputs;
     }
@@ -211,6 +211,21 @@ public class ActionCompiler extends AbstractCompiler<ActionDefinition, CompiledA
                 .filter(actionReference -> actionReference.getResolved().getClazz().equals(clazz))
                 .findFirst()
                 .orElse(null);
+    }
+
+    private static CompiledAction.ActionOutput constructOutput(OutputDefinition output, TypeReference typeReference, @Nullable ActionReference inherits)
+    {
+        return new CompiledAction.ActionOutput(
+                output.getName(),
+                output.getDescription(),
+                output.getTargets(),
+                typeReference,
+                output.getSupportsSince(),
+                output.getSupportsUntil(),
+                output.getMin(),
+                output.getMax(),
+                inherits
+        );
     }
 
     private static boolean canTraceSuper(ClassNode node)

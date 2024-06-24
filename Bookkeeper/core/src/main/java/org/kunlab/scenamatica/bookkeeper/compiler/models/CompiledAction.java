@@ -121,6 +121,7 @@ public class CompiledAction implements ICompiled
         private static final String KEY_SUPPORTS_UNTIL = "supportsUntil";
         private static final String KEY_MIN = "min";
         private static final String KEY_MAX = "max";
+        private static final String KEY_INHERITEd_FROM = "inheritedFrom";
 
         String name;
         String description;
@@ -130,9 +131,10 @@ public class CompiledAction implements ICompiled
         MCVersion supportsUntil;
         Double min;
         Double max;
+        ActionReference inheritedFrom;
 
         public ActionOutput(String name, String description, ActionMethod[] targets, TypeReference type,
-                            MCVersion supportsSince, MCVersion supportsUntil, Double min, Double max)
+                            MCVersion supportsSince, MCVersion supportsUntil, Double min, Double max, ActionReference inheritedFrom)
         {
             this.name = name;
             this.description = description;
@@ -142,6 +144,7 @@ public class CompiledAction implements ICompiled
             this.supportsUntil = supportsUntil;
             this.min = min;
             this.max = max;
+            this.inheritedFrom = inheritedFrom;
         }
 
         public Map<String, Object> serialize()
@@ -155,7 +158,24 @@ public class CompiledAction implements ICompiled
             MapUtils.putIfNotNull(map, KEY_SUPPORTS_UNTIL, this.supportsUntil);
             MapUtils.putIfNotNull(map, KEY_MIN, this.min);
             MapUtils.putIfNotNull(map, KEY_MAX, this.max);
+            if (this.inheritedFrom != null)
+                map.put(KEY_INHERITEd_FROM, this.inheritedFrom.getReference());
             return map;
+        }
+
+        public static ActionOutput inherit(ActionOutput value, ActionReference superAction)
+        {
+            return new ActionOutput(
+                    value.name,
+                    value.description,
+                    value.targets,
+                    value.type,
+                    value.supportsSince,
+                    value.supportsUntil,
+                    value.min,
+                    value.max,
+                    superAction
+            );
         }
     }
 
@@ -202,6 +222,23 @@ public class CompiledAction implements ICompiled
             if (this.inheritedFrom != null)
                 map.put(KEY_INHERITED_FROM, this.inheritedFrom.getReference());
             return map;
+        }
+
+        public static ActionInput inherit(@NotNull ActionInput parent, @NotNull ActionReference ref)
+        {
+            return new ActionInput(
+                    parent.name,
+                    parent.description,
+                    parent.requiredOn,
+                    parent.availableFor,
+                    parent.supportsSince,
+                    parent.supportsUntil,
+                    parent.min,
+                    parent.max,
+                    parent.constValue,
+                    parent.requiresActor,
+                    ref
+            );
         }
 
 
