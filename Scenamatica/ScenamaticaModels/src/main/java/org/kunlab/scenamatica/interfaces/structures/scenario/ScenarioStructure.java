@@ -1,12 +1,41 @@
 package org.kunlab.scenamatica.interfaces.structures.scenario;
 
 import org.jetbrains.annotations.NotNull;
+import org.kunlab.scenamatica.bookkeeper.annotations.TypeDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.TypeProperty;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.scenariofile.Structure;
 
 /**
  * シナリオの流れを定義します。
  */
+@TypeDoc(
+        name = "シナリオ",
+        description = "シナリオの流れを定義します。",
+        properties = {
+                @TypeProperty(
+                        name = ScenarioStructure.KEY_SCENARIO_TYPE,
+                        type = ScenarioType.class,
+                        description = "シナリオのタイプを指定します。"
+                ),
+                @TypeProperty(
+                        name = ScenarioStructure.KEY_SCENARIO_NAME,
+                        type = String.class,
+                        description = "シナリオの名前を指定します。"
+                ),
+                @TypeProperty(
+                        name = ScenarioStructure.KEY_RUN_IF,
+                        type = ActionStructure.class,
+                        description = "シナリオの実行条件を指定します。"
+                ),
+                @TypeProperty(
+                        name = ScenarioStructure.KEY_TIMEOUT,
+                        type = long.class,
+                        description = "シナリオがタイムアウトするまでの時間をチックで指定します。"
+                )
+        }
+
+)
 public interface ScenarioStructure extends Structure
 {
     public static final String KEY_SCENARIO_TYPE = "type";

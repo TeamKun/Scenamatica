@@ -184,7 +184,12 @@ public class TypeCompiler extends AbstractCompiler<TypeDefinition, CompiledType,
             }
         }
 
-        return superLocation;
+        String sup = super.getFileLocation(reference);
+        CategoryManager.CategoryEntry categoryReference = reference.getResolved().getCategory();
+        if (categoryReference == null)
+            return sup;
+
+        return categoryReference.getChildrenPath().resolve(sup).toString();
     }
 
     private TypeReference resolveOtherType(Type type)

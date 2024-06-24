@@ -7,6 +7,7 @@ import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.bookkeeper.annotations.TypeDoc;
 import org.kunlab.scenamatica.bookkeeper.annotations.TypeProperty;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.LivingEntityStructure;
+import org.kunlab.scenamatica.interfaces.structures.minecraft.inventory.GenericInventoryStructure;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.inventory.InventoryStructure;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.inventory.PlayerInventoryStructure;
 
@@ -26,7 +27,7 @@ import org.kunlab.scenamatica.interfaces.structures.minecraft.inventory.PlayerIn
                 @TypeProperty(
                         name = HumanEntityStructure.KEY_ENDER_CHEST,
                         description = "人型エンティティのエンダーチェストです。",
-                        type = InventoryStructure.class
+                        type = GenericInventoryStructure.class
                 ),
                 @TypeProperty(
                         name = HumanEntityStructure.KEY_MAIN_HAND,

@@ -15,6 +15,17 @@ import java.util.List;
  */
 public interface ScenarioFileStructure extends Structure
 {
+    public static final String KEY_SCENAMATICA_VERSION = "scenamatica";
+    public static final String KEY_MINECRAFT_VERSIONS = "minecraft";
+    public static final String KEY_NAME = "name";
+    public static final String KEY_DESCRIPTION = "description";
+    public static final String KEY_TIMEOUT = "timeout";
+    public static final String KEY_ORDER = "order";
+    public static final String KEY_TRIGGERS = "on";
+    public static final String KEY_RUN_IF = "runif";
+    public static final String KEY_CONTEXT = "context";
+    public static final String KEY_SCENARIO = "scenario";
+
     long DEFAULT_TIMEOUT_TICK = 20L * 60L * 5L;
 
     /**

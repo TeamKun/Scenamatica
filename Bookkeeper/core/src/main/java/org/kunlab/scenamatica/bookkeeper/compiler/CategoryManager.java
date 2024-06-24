@@ -52,11 +52,6 @@ public class CategoryManager
         this.currentPhase = phase;
     }
 
-    public CategoryEntry getCategoryByID(@NotNull String id)
-    {
-        return this.categories.get(id);
-    }
-
     public @Nullable CategoryEntry recogniseCategory(@NotNull ClassNode cn)
     {
         ClassNode current = cn;
@@ -97,7 +92,25 @@ public class CategoryManager
             // 見つからなかったので親クラスを探す
             String superName = current.superName;
             if (superName == null || superName.startsWith("java/lang/Object") || superName.startsWith("java/lang/Enum"))
+            {
+                // 親クラスが見つからなかった => インタフェースを探す。
+                for (String iface : current.interfaces)
+                {
+                    ClassNode ifaceNode = this.cl.getClassByName(iface);
+                    if (ifaceNode == null)
+                        continue;
+
+                    try
+                    {
+                        return this.recogniseCategory(ifaceNode);
+                    }
+                    catch (IllegalStateException ignored)
+                    {
+                    }
+                }
+
                 return null;
+            }
 
             current = this.cl.getClassByName(superName);
             if (current == null)
@@ -128,6 +141,11 @@ public class CategoryManager
         {
             throw new IllegalStateException("Failed to flush categories", e);
         }
+    }
+
+    public CategoryEntry getCategoryByID(String server)
+    {
+        return this.categories.get(server);
     }
 
     @Value

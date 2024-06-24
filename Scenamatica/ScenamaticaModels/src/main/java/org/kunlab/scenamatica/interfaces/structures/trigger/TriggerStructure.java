@@ -2,6 +2,8 @@ package org.kunlab.scenamatica.interfaces.structures.trigger;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.kunlab.scenamatica.bookkeeper.annotations.TypeDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.TypeProperty;
 import org.kunlab.scenamatica.enums.TriggerType;
 import org.kunlab.scenamatica.interfaces.scenariofile.Structure;
 import org.kunlab.scenamatica.interfaces.structures.scenario.ActionStructure;
@@ -12,6 +14,33 @@ import java.util.List;
 /**
  * シナリオが実行されるタイミングを表すインターフェースです。
  */
+@TypeDoc(
+        name = "トリガ",
+        description = "シナリオが実行されるタイミングを表します。",
+        properties = {
+                @TypeProperty(
+                        name = TriggerStructure.KEY_TYPE,
+                        type = TriggerType.class,
+                        description = "トリガの種類を指定します。"
+                ),
+                @TypeProperty(
+                        name = TriggerStructure.KEY_BEFORE_THAT,
+                        type = ScenarioStructure[].class,
+                        description = "トリガが実行される前に実行されるシナリオを指定します。"
+                ),
+                @TypeProperty(
+                        name = TriggerStructure.KEY_AFTER_THAT,
+                        type = ScenarioStructure[].class,
+                        description = "トリガが実行された後に実行されるシナリオを指定します。"
+                ),
+                @TypeProperty(
+                        name = TriggerStructure.KEY_RUN_IF,
+                        type = ActionStructure.class,
+                        description = "トリガの実行条件を指定します。"
+                )
+        }
+
+)
 public interface TriggerStructure extends Structure
 {
     public static final String KEY_TYPE = "type";
@@ -20,7 +49,7 @@ public interface TriggerStructure extends Structure
     public static final String KEY_RUN_IF = "runif";
 
     /**
-     * このトリガーのタイプを取得します。
+     * このトリガのタイプを取得します。
      *
      * @return タイプ
      */
@@ -28,7 +57,7 @@ public interface TriggerStructure extends Structure
     TriggerType getType();
 
     /**
-     * このトリガーの引数を取得します。
+     * このトリガの引数を取得します。
      *
      * @return 引数
      */
@@ -36,7 +65,7 @@ public interface TriggerStructure extends Structure
     TriggerArgument getArgument();
 
     /**
-     * このトリガーが実行される前に実行されるシナリオを取得します。
+     * このトリガが実行される前に実行されるシナリオを取得します。
      *
      * @return シナリオ
      */
@@ -44,7 +73,7 @@ public interface TriggerStructure extends Structure
     List<ScenarioStructure> getBeforeThat();
 
     /**
-     * このトリガーが実行された後に実行されるシナリオを取得します。
+     * このトリガが実行された後に実行されるシナリオを取得します。
      *
      * @return シナリオ
      */

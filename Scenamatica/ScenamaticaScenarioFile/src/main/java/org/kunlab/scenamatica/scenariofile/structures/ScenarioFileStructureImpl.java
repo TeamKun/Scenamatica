@@ -4,6 +4,8 @@ import lombok.Value;
 import net.kunmc.lab.peyangpaperutils.versioning.Version;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.kunlab.scenamatica.bookkeeper.annotations.TypeDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.TypeProperty;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.enums.ScenarioOrder;
 import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileStructure;
@@ -19,20 +21,66 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@TypeDoc(
+        name = "シナリオファイル",
+        description = "シナリオファイルの構造を表します。",
+        properties ={
+                @TypeProperty(
+                        name = ScenarioFileStructure.KEY_SCENAMATICA_VERSION,
+                        type = String.class,
+                        pattern = "^v?(?<major>0|[1-9]\\d*)\\.(?<minor>0|[1-9]\\d*)(?:\\.(?<patch>0|[1-9]\\d*))?(?:-(?<preRelease>(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+(?<buildMetadata>[0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$",
+                        description = "シナリオテスト時に使用できる**最も低い** Scenamatica のバージョンを指定します。"
+                ),
+                @TypeProperty(
+                        name = ScenarioFileStructure.KEY_MINECRAFT_VERSIONS,
+                        type = VersionRange.class,
+                        description = "このシナリオが対応する Minecraft のバージョンを指定します。"
+                ),
+                @TypeProperty(
+                        name = ScenarioFileStructure.KEY_NAME,
+                        type = String.class,
+                        description = "シナリオの名前を指定します。"
+                ),
+                @TypeProperty(
+                        name = ScenarioFileStructure.KEY_DESCRIPTION,
+                        type = String.class,
+                        description = "シナリオの説明を指定します。"
+                ),
+                @TypeProperty(
+                        name = ScenarioFileStructure.KEY_TIMEOUT,
+                        type = long.class,
+                        description = "シナリオがタイムアウトするまでの時間をチックで指定します。"
+                ),
+                @TypeProperty(
+                        name = ScenarioFileStructure.KEY_ORDER,
+                        type = int.class,
+                        description = "シナリオの実行順序を指定します。"
+                ),
+                @TypeProperty(
+                        name = ScenarioFileStructure.KEY_TRIGGERS,
+                        type = TriggerStructure[].class,
+                        description = "シナリオが実行されるトリガーを指定します。"
+                ),
+                @TypeProperty(
+                        name = ScenarioFileStructure.KEY_RUN_IF,
+                        type = ActionStructure.class,
+                        description = "シナリオが実行される条件を指定します。"
+                ),
+                @TypeProperty(
+                        name = ScenarioFileStructure.KEY_CONTEXT,
+                        type = ContextStructure.class,
+                        description = "シナリオが実行される際のコンテキストを指定します。"
+                ),
+                @TypeProperty(
+                        name = ScenarioFileStructure.KEY_SCENARIO,
+                        type = ScenarioStructure[].class,
+                        description = "シナリオの構造を指定します。"
+                )
+       }
+)
 @Value
 public class ScenarioFileStructureImpl implements ScenarioFileStructure
 {
-    public static final String KEY_SCENAMATICA_VERSION = "scenamatica";
-    public static final String KEY_MINECRAFT_VERSIONS = "minecraft";
-    public static final String KEY_NAME = "name";
-    public static final String KEY_DESCRIPTION = "description";
-    public static final String KEY_TIMEOUT = "timeout";
-    public static final String KEY_ORDER = "order";
-    public static final String KEY_TRIGGERS = "on";
-    public static final String KEY_RUN_IF = "runif";
-    public static final String KEY_CONTEXT = "context";
-    public static final String KEY_SCENARIO = "scenario";
-
     @NotNull
     Version scenamaticaVersion;
     @Nullable

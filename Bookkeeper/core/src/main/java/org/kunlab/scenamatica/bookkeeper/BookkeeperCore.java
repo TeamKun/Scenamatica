@@ -158,7 +158,7 @@ public class BookkeeperCore
     public static void main(String[] args)
     {
         BookkeeperConfig config = BookkeeperConfig.builder()
-                .targetJar(Paths.get("D:\\projects\\kun\\scenamatica\\Scenamatica\\ScenamaticaPlugin\\target\\Scenamatica-1.4.1.jar"))
+                .targetJar(Paths.get("Z:\\projects\\kun\\scenamatica\\Scenamatica\\ScenamaticaPlugin\\target\\Scenamatica-1.4.1.jar"))
                 .outputDir(Paths.get("dist"))
                 .classPath(PaperClassPathFinder.findLocalRepositoryJar("1.16.5"))
                 .resolveEvents(false)
