@@ -4,6 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.bookkeeper.AnnotationValues;
 import org.kunlab.scenamatica.bookkeeper.annotations.TypeProperty;
+import org.kunlab.scenamatica.bookkeeper.compiler.models.GenericAdmonition;
 import org.kunlab.scenamatica.bookkeeper.definitions.TypePropertyDefinition;
 import org.kunlab.scenamatica.bookkeeper.utils.Descriptors;
 import org.objectweb.asm.Type;
@@ -20,6 +21,7 @@ public class TypePropertyDefinitionReader implements IAnnotationReader<TypePrope
     public static final String KEY_PATTERN = "pattern";
     public static final String KEY_MIN = "min";
     public static final String KEY_MAX = "max";
+    public static final String KEY_ADMONITIONS = "admonitions";
 
     private static final String DESC = Descriptors.getDescriptor(TypeProperty.class);
 
@@ -41,7 +43,8 @@ public class TypePropertyDefinitionReader implements IAnnotationReader<TypePrope
                 values.getAsString(KEY_PATTERN),
                 values.getAsString(KEY_DEFAULT),
                 values.get(KEY_MIN, Double.class),
-                values.get(KEY_MAX, Double.class)
+                values.get(KEY_MAX, Double.class),
+                GenericAdmonition.byAnnotationValues(values.getAsArray(KEY_ADMONITIONS, AnnotationNode.class))
         );
     }
 

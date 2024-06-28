@@ -4,6 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.bookkeeper.AnnotationValues;
 import org.kunlab.scenamatica.bookkeeper.annotations.OutputDoc;
+import org.kunlab.scenamatica.bookkeeper.compiler.models.GenericAdmonition;
 import org.kunlab.scenamatica.bookkeeper.definitions.OutputDefinition;
 import org.kunlab.scenamatica.bookkeeper.enums.ActionMethod;
 import org.kunlab.scenamatica.bookkeeper.enums.MCVersion;
@@ -22,6 +23,8 @@ public class OutputDefinitionReader implements IAnnotationReader<OutputDefinitio
     public static final String KEY_SUPPORTS_UNTIL = "supportsUntil";
     public static final String KEY_MIN = "min";
     public static final String KEY_MAX = "max";
+    public static final String KEY_ADMONITIONS = "admonitions";
+
     private static final String DESC = Descriptors.getDescriptor(OutputDoc.class);
 
     @Override
@@ -42,7 +45,8 @@ public class OutputDefinitionReader implements IAnnotationReader<OutputDefinitio
                 values.getAsEnum(KEY_SUPPORTS_SINCE, MCVersion.class),
                 values.getAsEnum(KEY_SUPPORTS_UNTIL, MCVersion.class),
                 values.get(KEY_MAX, Double.class),
-                values.get(KEY_MIN, Double.class)
+                values.get(KEY_MIN, Double.class),
+                GenericAdmonition.byAnnotationValues(values.getAsArray(KEY_ADMONITIONS, AnnotationNode.class))
         );
     }
 

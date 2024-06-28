@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.bookkeeper.ScenamaticaClassLoader;
 import org.kunlab.scenamatica.bookkeeper.annotations.OutputDoc;
+import org.kunlab.scenamatica.bookkeeper.compiler.models.GenericAdmonition;
 import org.kunlab.scenamatica.bookkeeper.enums.ActionMethod;
 import org.kunlab.scenamatica.bookkeeper.enums.MCVersion;
 import org.objectweb.asm.Type;
@@ -22,6 +23,7 @@ public class OutputDefinition implements IDefinition
     MCVersion supportsUntil;
     Double min;
     Double max;
+    GenericAdmonition[] admonitions;
 
     @Override
     public ClassNode getAnnotatedClass()

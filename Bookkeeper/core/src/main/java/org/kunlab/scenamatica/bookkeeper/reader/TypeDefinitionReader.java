@@ -4,6 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.bookkeeper.AnnotationValues;
 import org.kunlab.scenamatica.bookkeeper.annotations.TypeDoc;
+import org.kunlab.scenamatica.bookkeeper.compiler.models.GenericAdmonition;
 import org.kunlab.scenamatica.bookkeeper.definitions.TypeDefinition;
 import org.kunlab.scenamatica.bookkeeper.definitions.TypePropertyDefinition;
 import org.kunlab.scenamatica.bookkeeper.utils.Descriptors;
@@ -18,6 +19,7 @@ public class TypeDefinitionReader implements IAnnotationReader<TypeDefinition>
     private static final String KEY_PROPS = "properties";
     private static final String KEY_MAPPING_OF = "mappingOf";
     private static final String KEY_EXTENDING = "extending";
+    private static final String KEY_ADMONITIONS = "admonitions";
 
     private static final String DESC = Descriptors.getDescriptor(TypeDoc.class);
 
@@ -50,7 +52,8 @@ public class TypeDefinitionReader implements IAnnotationReader<TypeDefinition>
                     return this.propertyReader.buildAnnotation(clazz, insideValues);
                 }),
                 values.get(KEY_MAPPING_OF, Type.class),
-                values.get(KEY_EXTENDING, Type.class)
+                values.get(KEY_EXTENDING, Type.class),
+                GenericAdmonition.byAnnotationValues(values.getAsArray(KEY_ADMONITIONS, AnnotationNode.class))
         );
     }
 

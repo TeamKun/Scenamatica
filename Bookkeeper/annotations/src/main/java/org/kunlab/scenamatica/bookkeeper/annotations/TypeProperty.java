@@ -77,4 +77,12 @@ public @interface TypeProperty
      * @return 最小値
      */
     double min() default Integer.MIN_VALUE;
+
+    /**
+     * 型プロパティのアドモ二ションを取得します。
+     *
+     * @return 型プロパティのアドモ二ション
+     */
+    @NotNull
+    Admonition[] admonitions() default {};
 }

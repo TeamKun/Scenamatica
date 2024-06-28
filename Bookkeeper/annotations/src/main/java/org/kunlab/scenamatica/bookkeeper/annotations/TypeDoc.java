@@ -68,4 +68,12 @@ public @interface TypeDoc
      * @return エイリアスとして使用するクラス
      */
     Class<?> extending() default Object.class;
+
+    /**
+     * 型のアドモ二ションを取得します。
+     *
+     * @return 型のアドモ二ション
+     */
+    @NotNull
+    Admonition[] admonitions() default {};
 }

@@ -32,6 +32,7 @@ public class CompiledAction implements ICompiled
     private static final String KEY_SUPPORTS_UNTIL = "supports_until";
     private static final String KEY_INPUTS = "inputs";
     private static final String KEY_OUTPUTS = "outputs";
+    private static final String KEY_ADMONITIONS = "admonitions";
 
     ClassNode clazz;
     String id;
@@ -47,6 +48,7 @@ public class CompiledAction implements ICompiled
     MCVersion supportsUntil;
     Map<String, ActionInput> inputs;
     Map<String, ActionOutput> outputs;
+    GenericAdmonition[] admonitions;
 
     public CompiledAction(ClassNode clazz, String id, String name, ActionReference superAction, String description, CategoryManager.CategoryEntry category,
                           EventReference[] events,
@@ -57,7 +59,8 @@ public class CompiledAction implements ICompiled
 
                           MCVersion supportsSince, MCVersion supportsUntil,
                           Map<String, ActionInput> inputs,
-                          Map<String, ActionOutput> outputs)
+                          Map<String, ActionOutput> outputs,
+                          GenericAdmonition[] admonitions)
     {
         this.clazz = clazz;
         this.id = id;
@@ -73,6 +76,7 @@ public class CompiledAction implements ICompiled
         this.supportsUntil = supportsUntil;
         this.inputs = inputs;
         this.outputs = outputs;
+        this.admonitions = admonitions;
     }
 
     @Override
@@ -94,6 +98,10 @@ public class CompiledAction implements ICompiled
         MapUtils.putIfNotNull(map, KEY_SUPPORTS_UNTIL, this.supportsUntil);
         MapUtils.putIfNotNull(map, KEY_INPUTS, serializeInputs());
         MapUtils.putIfNotNull(map, KEY_OUTPUTS, serializeOutputs());
+
+
+        if (!(this.admonitions == null || this.admonitions.length == 0))
+            map.put(KEY_ADMONITIONS, Arrays.stream(this.admonitions).map(GenericAdmonition::serialize).toArray());
         return map;
     }
 
@@ -127,6 +135,7 @@ public class CompiledAction implements ICompiled
         private static final String KEY_MIN = "min";
         private static final String KEY_MAX = "max";
         private static final String KEY_INHERITEd_FROM = "inheritedFrom";
+        private static final String KEY_ADMONITIONS = "admonitions";
 
         String name;
         String description;
@@ -137,20 +146,7 @@ public class CompiledAction implements ICompiled
         Double min;
         Double max;
         ActionReference inheritedFrom;
-
-        public ActionOutput(String name, String description, ActionMethod[] targets, TypeReference type,
-                            MCVersion supportsSince, MCVersion supportsUntil, Double min, Double max, ActionReference inheritedFrom)
-        {
-            this.name = name;
-            this.description = description;
-            this.targets = targets;
-            this.type = type;
-            this.supportsSince = supportsSince;
-            this.supportsUntil = supportsUntil;
-            this.min = min;
-            this.max = max;
-            this.inheritedFrom = inheritedFrom;
-        }
+        GenericAdmonition[] admonitions;
 
         public Map<String, Object> serialize()
         {
@@ -165,6 +161,8 @@ public class CompiledAction implements ICompiled
             MapUtils.putIfNotNull(map, KEY_MAX, this.max);
             if (this.inheritedFrom != null)
                 map.put(KEY_INHERITEd_FROM, this.inheritedFrom.getReference());
+            if (!(this.admonitions == null || this.admonitions.length == 0))
+                map.put(KEY_ADMONITIONS, Arrays.stream(this.admonitions).map(GenericAdmonition::serialize).toArray());
             return map;
         }
 
@@ -179,7 +177,8 @@ public class CompiledAction implements ICompiled
                     value.supportsUntil,
                     value.min,
                     value.max,
-                    superAction
+                    superAction,
+                    value.admonitions
             );
         }
     }
@@ -198,6 +197,7 @@ public class CompiledAction implements ICompiled
         private static final String KEY_CONST_VALUE = "const";
         private static final String KEY_REQUIRES_ACTOR = "requiresActor";
         private static final String KEY_INHERITED_FROM = "inheritedFrom";
+        private static final String KEY_ADMONITIONS = "admonitions";
 
         String name;
         String description;
@@ -210,6 +210,7 @@ public class CompiledAction implements ICompiled
         Object constValue;
         boolean requiresActor;
         ActionReference inheritedFrom;
+        GenericAdmonition[] admonitions;
 
         public Map<String, Object> serialize()
         {
@@ -226,6 +227,8 @@ public class CompiledAction implements ICompiled
             MapUtils.putIfTrue(map, KEY_REQUIRES_ACTOR, this.requiresActor);
             if (this.inheritedFrom != null)
                 map.put(KEY_INHERITED_FROM, this.inheritedFrom.getReference());
+            if (!(this.admonitions == null || this.admonitions.length == 0))
+                map.put(KEY_ADMONITIONS, Arrays.stream(this.admonitions).map(GenericAdmonition::serialize).toArray());
             return map;
         }
 
@@ -242,7 +245,8 @@ public class CompiledAction implements ICompiled
                     parent.max,
                     parent.constValue,
                     parent.requiresActor,
-                    ref
+                    ref,
+                    parent.admonitions
             );
         }
 

@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.bookkeeper.ScenamaticaClassLoader;
 import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
+import org.kunlab.scenamatica.bookkeeper.compiler.models.GenericAdmonition;
 import org.kunlab.scenamatica.bookkeeper.enums.MCVersion;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.ClassNode;
@@ -27,6 +28,7 @@ public class ActionDefinition implements IDefinition
     MCVersion supportsUntil;
     InputDefinition[] inputs;
     OutputDefinition[] outputs;
+    GenericAdmonition[] admonitions;
 
     @Override
     public ClassNode getAnnotatedClass()

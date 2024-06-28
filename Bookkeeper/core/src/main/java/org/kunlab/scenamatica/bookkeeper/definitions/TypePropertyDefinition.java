@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.bookkeeper.ScenamaticaClassLoader;
 import org.kunlab.scenamatica.bookkeeper.annotations.TypeProperty;
+import org.kunlab.scenamatica.bookkeeper.compiler.models.GenericAdmonition;
 import org.kunlab.scenamatica.bookkeeper.utils.Descriptors;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.ClassNode;
@@ -21,6 +22,7 @@ public class TypePropertyDefinition implements IDefinition
     String defaultValue;
     Double min;
     Double max;
+    GenericAdmonition[] admonitions;
 
     @Override
     public ClassNode getAnnotatedClass()

@@ -102,4 +102,12 @@ public @interface InputDoc
      * @return プレイヤがアクタである必要があるかどうか
      */
     boolean requiresActor() default false;
+
+    /**
+     * 入力のアドモ二ションを取得します。
+     *
+     * @return 入力のアドモ二ション
+     */
+    @NotNull
+    Admonition[] admonitions() default {};
 }

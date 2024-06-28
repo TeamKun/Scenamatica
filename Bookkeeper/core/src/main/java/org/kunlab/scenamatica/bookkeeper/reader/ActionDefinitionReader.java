@@ -5,6 +5,7 @@ import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.bookkeeper.AnnotationValues;
 import org.kunlab.scenamatica.bookkeeper.ScenamaticaClassLoader;
 import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
+import org.kunlab.scenamatica.bookkeeper.compiler.models.GenericAdmonition;
 import org.kunlab.scenamatica.bookkeeper.definitions.ActionDefinition;
 import org.kunlab.scenamatica.bookkeeper.definitions.InputDefinition;
 import org.kunlab.scenamatica.bookkeeper.definitions.OutputDefinition;
@@ -31,6 +32,7 @@ public class ActionDefinitionReader implements IAnnotationReader<ActionDefinitio
     public static final String KEY_SUPPORTS_SINCE = "supportsSince";
     public static final String KEY_SUPPORTS_UNTIL = "supportsUntil";
     public static final String KEY_OUTPUTS = "outputs";
+    public static final String KEY_ADMONITIONS = "admonitions";
 
     private static final String DESC = Descriptors.getDescriptor(ActionDoc.class);
     private static final String ACTION_DESC = "Lorg/kunlab/scenamatica/annotations/action/Action;";
@@ -75,7 +77,8 @@ public class ActionDefinitionReader implements IAnnotationReader<ActionDefinitio
                     AnnotationValues insideValues = AnnotationValues.of((AnnotationNode) obj);
 
                     return this.outputReader.buildAnnotation(null, insideValues);
-                })
+                }),
+                GenericAdmonition.byAnnotationValues(values.getAsArray(KEY_ADMONITIONS, AnnotationNode.class))
         );
     }
 

@@ -101,4 +101,12 @@ public @interface ActionDoc
      */
     @NotNull
     OutputDoc[] outputs() default {};
+
+    /**
+     * アクションのアドモ二ションを指定します。
+     *
+     * @return アクションのアドモ二ション
+     */
+    @NotNull
+    Admonition[] admonitions() default {};
 }

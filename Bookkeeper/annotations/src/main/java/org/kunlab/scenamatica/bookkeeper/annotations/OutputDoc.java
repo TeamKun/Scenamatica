@@ -78,4 +78,11 @@ public @interface OutputDoc
      */
     double min() default Integer.MIN_VALUE;
 
+    /**
+     * 出力のアドモニションを取得します。
+     *
+     * @return 出力のアドモニション
+     */
+    @NotNull
+    Admonition[] admonitions() default {};
 }

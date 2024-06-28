@@ -111,7 +111,8 @@ public class TypeCompiler extends AbstractCompiler<TypeDefinition, CompiledType,
                         category,
                         definition.getClazz().name,
                         definition.getMappingOf() != null ? definition.getMappingOf().getClassName().replace('.', '/'): null,
-                        compileProperties(definition.getProperties())
+                        compileProperties(definition.getProperties()),
+                        definition.getAdmonitions()
                 )
         );
     }
@@ -138,7 +139,8 @@ public class TypeCompiler extends AbstractCompiler<TypeDefinition, CompiledType,
                             property.getDescription(),
                             property.isRequired(),
                             property.getType().getDescriptor().startsWith("["),
-                            property.getDefaultValue()
+                            property.getDefaultValue(),
+                            property.getAdmonitions()
                     )
             );
         }

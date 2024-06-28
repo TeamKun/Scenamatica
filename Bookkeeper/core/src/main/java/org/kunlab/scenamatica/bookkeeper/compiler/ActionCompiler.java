@@ -168,7 +168,8 @@ public class ActionCompiler extends AbstractCompiler<ActionDefinition, CompiledA
                         supportsSince,
                         supportsUntil,
                         compileInputs(definition, superClasses, superActions),
-                        compileOutputs(definition, superClasses, superActions)
+                        compileOutputs(definition, superClasses, superActions),
+                        definition.getAdmonitions()
                 )
         );
     }
@@ -391,7 +392,8 @@ public class ActionCompiler extends AbstractCompiler<ActionDefinition, CompiledA
                 output.getSupportsUntil(),
                 output.getMin(),
                 output.getMax(),
-                inherits
+                inherits,
+                output.getAdmonitions()
         );
     }
 
@@ -408,7 +410,8 @@ public class ActionCompiler extends AbstractCompiler<ActionDefinition, CompiledA
                 input.getMax(),
                 input.getConstValue(),
                 input.isRequiresActor(),
-                inherits
+                inherits,
+                input.getAdmonitions()
         );
     }
 

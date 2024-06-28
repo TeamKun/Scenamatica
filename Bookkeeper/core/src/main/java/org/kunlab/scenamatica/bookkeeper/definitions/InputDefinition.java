@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.bookkeeper.ScenamaticaClassLoader;
 import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
+import org.kunlab.scenamatica.bookkeeper.compiler.models.GenericAdmonition;
 import org.kunlab.scenamatica.bookkeeper.enums.ActionMethod;
 import org.kunlab.scenamatica.bookkeeper.enums.MCVersion;
 import org.objectweb.asm.Type;
@@ -25,6 +26,7 @@ public class InputDefinition implements IDefinition
     Double max;
     Double min;
     boolean requiresActor;
+    GenericAdmonition[] admonitions;
 
     @Override
     public ClassNode getAnnotatedClass()
