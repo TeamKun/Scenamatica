@@ -3,6 +3,7 @@ package org.kunlab.scenamatica.bookkeeper.compiler;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.AllArgsConstructor;
@@ -40,6 +41,7 @@ public class EventCompiler implements ICompiler<EventCompiler.DummyEventDefiniti
     private static final Path eventsDir = Paths.get("events");
     private static final ObjectMapper MAPPER = new ObjectMapper()
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+    private static final ObjectWriter WRITER = MAPPER.writerWithDefaultPrettyPrinter();
     private static final Locale FALLBACK_LANG = Locale.JAPANESE;
 
     @Getter
@@ -92,10 +94,10 @@ public class EventCompiler implements ICompiler<EventCompiler.DummyEventDefiniti
     {
         for (EventReference reference : this.references.values())
         {
-            Path file = directory.resolve(Paths.get("events", reference.getReference() + ".json"));
+            Path file = directory.resolve(Paths.get("events", reference.getResolved().getId()) + ".json");
             try
             {
-                MAPPER.writeValue(file.toFile(), reference.getResolved().serialize());
+                WRITER.writeValue(file.toFile(), reference.getResolved().serialize());
             }
             catch (IOException e)
             {
@@ -129,11 +131,20 @@ public class EventCompiler implements ICompiler<EventCompiler.DummyEventDefiniti
         throw new UnsupportedOperationException();
     }
 
+    public boolean hasEvent(String eventName)
+    {
+        String normalizedEventName = eventName.substring(eventName.lastIndexOf('.') + 1);
+        return this.events.stream().anyMatch(event -> event.name.equalsIgnoreCase(normalizedEventName));
+    }
+
     @Override
     public EventReference resolve(String eventName)
     {
         if (this.references.containsKey(eventName))
             return this.references.get(eventName);
+
+        // クラス名 => イベント名に正規化
+        eventName = eventName.substring(eventName.lastIndexOf('.') + 1);
 
         JsonEventNode node = null;
         for (JsonEventNode event : this.events)
@@ -158,9 +169,9 @@ public class EventCompiler implements ICompiler<EventCompiler.DummyEventDefiniti
             );
 
         EventReference reference = new EventReference(
-                node.name,
+                toSnakeCase(node.name),
                 new CompiledEvent(
-                        node.name,
+                        toSnakeCase(node.name),
                         node.name,
                         node.javadoc,
                         node.link,
@@ -242,6 +253,11 @@ public class EventCompiler implements ICompiler<EventCompiler.DummyEventDefiniti
         {
             throw new IllegalStateException("Failed to download file from " + url, e);
         }
+    }
+
+    private static String toSnakeCase(String name)
+    {
+        return name.replaceAll("([a-z])([A-Z]+)", "$1_$2").toLowerCase();
     }
 
     /* non-public */ static class DummyEventDefinition implements IDefinition

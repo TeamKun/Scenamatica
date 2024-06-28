@@ -33,7 +33,8 @@ public class CompiledEvent implements ICompiled
         map.put(KEY_DESCRIPTION, this.description);
         map.put(KEY_JAVADOC, this.javadoc);
         map.put(KEY_JAVADOC_LINK, this.javadocLink);
-        map.put(KEY_SOURCE, this.source.id);
+        if (this.source != null)
+            map.put(KEY_SOURCE, this.source.getId());
 
         return map;
     }

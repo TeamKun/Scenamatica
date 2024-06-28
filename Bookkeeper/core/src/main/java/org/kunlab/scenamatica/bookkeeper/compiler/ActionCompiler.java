@@ -81,14 +81,16 @@ public class ActionCompiler extends AbstractCompiler<ActionDefinition, CompiledA
         ActionReference superAction = superActions.stream().findFirst().orElse(null);
 
         List<EventReference> events = new ArrayList<>();
-        if (definition.getEvents() != null)
+        if (!(definition.getEvents() == null || definition.getEvents().length == 0))
         {
-            if (this.eventCompiler == null)
-                for (Type eventType : definition.getEvents())
-                    events.add(new NameOnlyEventReference(eventType.getInternalName()));
-            else
-                for (Type event : definition.getEvents())
-                    events.add(this.eventCompiler.resolve(event.getClassName()));
+            for (Type event : definition.getEvents())
+            {
+                String className = event.getClassName();
+                if (this.eventCompiler != null && this.eventCompiler.hasEvent(className))
+                    events.add(this.eventCompiler.resolve(className));
+                else
+                    events.add(new NameOnlyEventReference(className));
+            }
         }
 
         /* イベントは継承しないこととする。
