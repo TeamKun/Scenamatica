@@ -23,6 +23,8 @@ public class BookkeeperConfig
     @NotNull
     @Builder.Default
     String artifactFileName = "ledger.zip";
+    @Builder.Default
+    int artifactCompressionLevel = 9;
 
     @Builder.Default
     Locale language = Locale.JAPANESE;
@@ -36,4 +38,7 @@ public class BookkeeperConfig
 
     @Builder.Default
     int threads = 4;
+
+    @Builder.Default
+    boolean debug = false;
 }

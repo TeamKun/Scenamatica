@@ -16,6 +16,7 @@ import org.kunlab.scenamatica.bookkeeper.reader.TypePropertyDefinitionReader;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -28,12 +29,16 @@ import java.util.stream.Collectors;
 @Slf4j(topic = "Bookkeeper/Core")
 public class BookkeeperCore
 {
+    private static final Path LICENSE_FILE = Paths.get("LICENSE");
+    private static final Path README_FILE = Paths.get("README.md");
+
     private final BookkeeperConfig config;
     private final ScenamaticaClassLoader classLoader;
     private final AnnotationClassifier classifier;
     private final List<IAnnotationReader<? extends IDefinition>> processors;
     private final Compiler compiler;
     private final CategoryManager categoryManager;
+    private final ArtifactPacker packer;
 
     private final Path tempDir;
 
@@ -41,7 +46,7 @@ public class BookkeeperCore
     {
         log.info("Initializing Bookkeeper Core...");
         createOutputDir(config.getOutputDir());
-        this.tempDir = createTempDir(config.getOutputDir());
+        this.tempDir = createTempDir(config.isDebug(), config.getOutputDir());
 
         this.config = config;
         this.processors = new ArrayList<>();
@@ -49,6 +54,11 @@ public class BookkeeperCore
         this.classifier = new AnnotationClassifier(this.processors);
         this.categoryManager = new CategoryManager(this.classLoader, this.config.getOutputDir().resolve("categories"));
         this.compiler = new Compiler(this);
+        this.packer = new ArtifactPacker(
+                new Path[]{this.tempDir},
+                !config.isDebug(),
+                config.getArtifactCompressionLevel()
+        );
 
         this.classLoader.addClasspaths(this.config.getClassPaths());
         this.addProcessors(this.processors);
@@ -61,6 +71,7 @@ public class BookkeeperCore
     public void start()
     {
         log.info("Starting Bookkeeping...");
+        copyLicenseAndReadme(this.config.getOutputDir());
 
         log.info("Scanning classes...");
         this.classLoader.scanAll(this.config.getThreads());
@@ -79,7 +90,29 @@ public class BookkeeperCore
         log.info("Flushing compilers...");
         this.compiler.flush();
 
+        log.info("Packing artifact...");
+        this.packer.pack(this.config.getOutputDir(), this.config.getOutputDir().resolve(this.config.getArtifactFileName()));
+
+        this.cleanTempDir();
         log.info("Bookkeeping finished.");
+    }
+
+    private void cleanTempDir()
+    {
+        log.info("Cleaning temporary directory...");
+        try
+        {
+            Files.walk(this.tempDir)
+                    .sorted(Comparator.reverseOrder())
+                    .map(Path::toFile)
+                    .forEach(File::delete);
+
+            Files.deleteIfExists(this.tempDir);
+        }
+        catch (IOException e)
+        {
+            log.error("Failed to clean temporary directory: {}", this.tempDir, e);
+        }
     }
 
     private void addProcessors(List<? super IAnnotationReader<? extends IDefinition>> registry)
@@ -101,24 +134,33 @@ public class BookkeeperCore
         registry.add(outputsDefinitionReader);
     }
 
-    @SuppressWarnings({"UnreachableCode", "ConstantValue"})
-    private static Path createTempDir(Path baseDir)
+    private static void copyLicenseAndReadme(Path outputDir)
     {
-        boolean debug = true;
+        try (InputStream licenseStream = BookkeeperCore.class.getClassLoader().getResourceAsStream(LICENSE_FILE.toString());
+             InputStream readmeStream = BookkeeperCore.class.getClassLoader().getResourceAsStream(README_FILE.toString()))
+        {
+            if (licenseStream == null || readmeStream == null)
+                throw new IllegalStateException("Failed to load license and(or) readme files");
 
+            Files.copy(licenseStream, outputDir.resolve(LICENSE_FILE));
+            Files.copy(readmeStream, outputDir.resolve(README_FILE));
+        }
+        catch (NullPointerException e)
+        {
+        }
+        catch (IOException e)
+        {
+            throw new IllegalStateException("Failed to copy license and readme files", e);
+        }
+    }
+
+    private static Path createTempDir(boolean debug, Path baseDir)
+    {
         try
         {
             Path tempDir;
-            if (debug)
-            {
-                tempDir = baseDir.resolve("temp");
-                Files.createDirectories(tempDir);
-            }
-            else
-            {
-                tempDir = Files.createTempDirectory(baseDir, "temp");
-                tempDir.toFile().deleteOnExit();
-            }
+            tempDir = baseDir.resolve("temp");
+            Files.createDirectories(tempDir);
 
             return tempDir;
         }
@@ -148,7 +190,10 @@ public class BookkeeperCore
         Files.walk(outputDir)
                 .sorted(Comparator.reverseOrder()) // reverse order to delete children first
                 .map(Path::toFile)
-                .forEach(File::delete);
+                .forEach(f -> {
+                    if (!f.delete())
+                        throw new IllegalStateException("Failed to delete file: " + f);
+                });
 
         Files.deleteIfExists(outputDir);
         if (Files.exists(outputDir))
