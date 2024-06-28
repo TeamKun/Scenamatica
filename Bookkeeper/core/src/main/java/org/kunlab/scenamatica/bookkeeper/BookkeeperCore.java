@@ -199,16 +199,4 @@ public class BookkeeperCore
         if (Files.exists(outputDir))
             throw new IOException("Failed to delete output directory: " + outputDir);
     }
-
-    public static void main(String[] args)
-    {
-        BookkeeperConfig config = BookkeeperConfig.builder()
-                .targetJar(Paths.get("Z:\\projects\\kun\\scenamatica\\Scenamatica\\ScenamaticaPlugin\\target\\Scenamatica-1.4.1.jar"))
-                .outputDir(Paths.get("dist"))
-                .classPath(PaperClassPathFinder.findLocalRepositoryJar("1.16.5"))
-                .resolveEvents(true)
-                .build();
-        BookkeeperCore core = new BookkeeperCore(config);
-        core.start();
-    }
 }

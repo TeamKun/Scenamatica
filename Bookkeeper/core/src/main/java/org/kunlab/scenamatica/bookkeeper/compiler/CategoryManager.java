@@ -18,6 +18,7 @@ import org.objectweb.asm.tree.ClassNode;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -168,7 +169,7 @@ public class CategoryManager
         @JsonIgnore
         public Path getChildrenPath()
         {
-            return Path.of(this.id);
+            return Paths.get(this.id);
         }
 
         @Override
