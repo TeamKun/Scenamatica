@@ -1,6 +1,8 @@
 package org.kunlab.scenamatica.bookkeeper.definitions;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.kunlab.scenamatica.bookkeeper.ScenamaticaClassLoader;
 import org.objectweb.asm.tree.ClassNode;
 
 public interface IDefinition
@@ -9,5 +11,5 @@ public interface IDefinition
 
     Class<?> getAnnotationType();
 
-    boolean isDependsOn(@NotNull IDefinition others);
+    boolean isDependsOn(@Nullable ScenamaticaClassLoader classLoader, @NotNull IDefinition others);
 }

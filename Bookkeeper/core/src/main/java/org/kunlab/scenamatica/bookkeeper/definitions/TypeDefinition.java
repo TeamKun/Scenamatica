@@ -2,6 +2,8 @@ package org.kunlab.scenamatica.bookkeeper.definitions;
 
 import lombok.Value;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.kunlab.scenamatica.bookkeeper.ScenamaticaClassLoader;
 import org.kunlab.scenamatica.bookkeeper.annotations.TypeDoc;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.ClassNode;
@@ -36,7 +38,7 @@ public class TypeDefinition implements IDefinition
     }
 
     @Override
-    public boolean isDependsOn(@NotNull IDefinition def)
+    public boolean isDependsOn(@Nullable ScenamaticaClassLoader classLoader, @NotNull IDefinition def)
     {
         if (!(def instanceof TypeDefinition))
             return false;
@@ -45,7 +47,7 @@ public class TypeDefinition implements IDefinition
 
         if (this.properties != null)
             for (TypePropertyDefinition property : this.properties)
-                if (property.isDependsOn(typeDef))
+                if (property.isDependsOn(null, typeDef))
                     return true;
 
         return (this.mappingOf != null && typeDef.name.equals(this.mappingOf.getInternalName()))

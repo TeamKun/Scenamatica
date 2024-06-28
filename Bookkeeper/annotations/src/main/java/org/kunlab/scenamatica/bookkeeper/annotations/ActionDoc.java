@@ -17,7 +17,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.CLASS)
 public @interface ActionDoc
 {
-    String ALLOWED = "$alloawed$";
+    String UNSET = "unset$";
     String UNALLOWED = "$unallowed$";
 
     /**
@@ -56,30 +56,27 @@ public @interface ActionDoc
 
     /**
      * アクションが実行可能であることを示します。
-     * 実行可能である場合は, {@link #ALLOWED} または, その説明を指定します。
      *
-     * @return 実行可能である場合は, {@link #ALLOWED} または, その説明
+     * @return その説明
      */
     @Nullable
-    String executable() default ALLOWED;
+    String executable() default UNSET;
 
     /**
      * アクションが監視可能であることを示します。
-     * 監視可能である場合は, {@link #ALLOWED} または, その説明を指定します。
      *
-     * @return 監視可能である場合は, {@link #ALLOWED} または, その説明
+     * @return その説明
      */
     @Nullable
-    String watchable() default ALLOWED;
+    String watchable() default UNSET;
 
     /**
      * アクションが要求可能であることを示します。
-     * 要求可能である場合は, {@link #ALLOWED} または, その説明を指定します。
      *
-     * @return 要求可能である場合は, {@link #ALLOWED} または, その説明
+     * @return その説明
      */
     @Nullable
-    String requireable() default ALLOWED;
+    String requireable() default UNSET;
 
     /**
      * サポートする Minecraft バージョンの開始バージョンを返します。

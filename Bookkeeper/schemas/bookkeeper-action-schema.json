@@ -3,6 +3,10 @@
   "title": "Bookkeeper Action Schema",
   "type": "object",
   "properties": {
+    "super": {
+      "type": "string",
+      "description": "The reference of the action that this action extends"
+    },
     "name": {
       "type": "string",
       "description": "The name of the action",

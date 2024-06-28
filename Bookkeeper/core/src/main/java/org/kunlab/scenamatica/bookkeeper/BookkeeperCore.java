@@ -51,7 +51,7 @@ public class BookkeeperCore
         this.compiler = new Compiler(this);
 
         this.classLoader.addClasspaths(this.config.getClassPaths());
-        addProcessors(this.processors);
+        this.addProcessors(this.processors);
 
         this.compiler.init();
 
@@ -80,6 +80,25 @@ public class BookkeeperCore
         this.compiler.flush();
 
         log.info("Bookkeeping finished.");
+    }
+
+    private void addProcessors(List<? super IAnnotationReader<? extends IDefinition>> registry)
+    {
+        OutputDefinitionReader outputDefinitionReader = new OutputDefinitionReader();
+        InputDefinitionReader inputDefinitionReader = new InputDefinitionReader();
+        ActionDefinitionReader actionDefinitionReader = new ActionDefinitionReader(this.classLoader, inputDefinitionReader, outputDefinitionReader);
+        TypePropertyDefinitionReader propertyDefinitionReader = new TypePropertyDefinitionReader();
+        TypeDefinitionReader typeDefinitionReader = new TypeDefinitionReader(propertyDefinitionReader);
+        ActionCategoryDefinitionReader actionCategoryDefinitionReader = new ActionCategoryDefinitionReader();
+        OutputsDefinitionReader outputsDefinitionReader = new OutputsDefinitionReader(outputDefinitionReader);
+
+        registry.add(outputDefinitionReader);
+        registry.add(inputDefinitionReader);
+        registry.add(actionDefinitionReader);
+        registry.add(propertyDefinitionReader);
+        registry.add(typeDefinitionReader);
+        registry.add(actionCategoryDefinitionReader);
+        registry.add(outputsDefinitionReader);
     }
 
     @SuppressWarnings({"UnreachableCode", "ConstantValue"})
@@ -134,25 +153,6 @@ public class BookkeeperCore
         Files.deleteIfExists(outputDir);
         if (Files.exists(outputDir))
             throw new IOException("Failed to delete output directory: " + outputDir);
-    }
-
-    private static void addProcessors(List<? super IAnnotationReader<? extends IDefinition>> registry)
-    {
-        OutputDefinitionReader outputDefinitionReader = new OutputDefinitionReader();
-        InputDefinitionReader inputDefinitionReader = new InputDefinitionReader();
-        ActionDefinitionReader actionDefinitionReader = new ActionDefinitionReader(inputDefinitionReader, outputDefinitionReader);
-        TypePropertyDefinitionReader propertyDefinitionReader = new TypePropertyDefinitionReader();
-        TypeDefinitionReader typeDefinitionReader = new TypeDefinitionReader(propertyDefinitionReader);
-        ActionCategoryDefinitionReader actionCategoryDefinitionReader = new ActionCategoryDefinitionReader();
-        OutputsDefinitionReader outputsDefinitionReader = new OutputsDefinitionReader(outputDefinitionReader);
-
-        registry.add(outputDefinitionReader);
-        registry.add(inputDefinitionReader);
-        registry.add(actionDefinitionReader);
-        registry.add(propertyDefinitionReader);
-        registry.add(typeDefinitionReader);
-        registry.add(actionCategoryDefinitionReader);
-        registry.add(outputsDefinitionReader);
     }
 
     public static void main(String[] args)

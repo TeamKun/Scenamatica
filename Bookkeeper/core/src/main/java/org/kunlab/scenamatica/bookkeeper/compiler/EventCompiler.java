@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
+import org.kunlab.scenamatica.bookkeeper.ScenamaticaClassLoader;
 import org.kunlab.scenamatica.bookkeeper.compiler.models.CompiledEvent;
 import org.kunlab.scenamatica.bookkeeper.compiler.models.refs.EventReference;
 import org.kunlab.scenamatica.bookkeeper.definitions.IDefinition;
@@ -259,7 +260,7 @@ public class EventCompiler implements ICompiler<EventCompiler.DummyEventDefiniti
         }
 
         @Override
-        public boolean isDependsOn(@NotNull IDefinition classNode)
+        public boolean isDependsOn(@NotNull ScenamaticaClassLoader classLoader, @NotNull IDefinition classNode)
         {
             return false;
         }

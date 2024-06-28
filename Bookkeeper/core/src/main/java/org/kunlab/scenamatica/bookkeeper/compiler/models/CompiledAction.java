@@ -21,6 +21,7 @@ public class CompiledAction implements ICompiled
 {
     private static final String KEY_ID = "id";
     private static final String KEY_NAME = "name";
+    private static final String KEY_SUPER_ACTION = "super";
     private static final String KEY_DESCRIPTION = "description";
     private static final String KEY_CATEGORY = "category";
     private static final String KEY_EVENTS = "events";
@@ -35,6 +36,7 @@ public class CompiledAction implements ICompiled
     ClassNode clazz;
     String id;
     String name;
+    ActionReference superAction;
     String description;
     CategoryManager.CategoryEntry category;
     EventReference[] events;
@@ -46,7 +48,7 @@ public class CompiledAction implements ICompiled
     Map<String, ActionInput> inputs;
     Map<String, ActionOutput> outputs;
 
-    public CompiledAction(ClassNode clazz, String id, String name, String description, CategoryManager.CategoryEntry category,
+    public CompiledAction(ClassNode clazz, String id, String name, ActionReference superAction, String description, CategoryManager.CategoryEntry category,
                           EventReference[] events,
 
                           Contract executable,
@@ -60,6 +62,7 @@ public class CompiledAction implements ICompiled
         this.clazz = clazz;
         this.id = id;
         this.name = name;
+        this.superAction = superAction;
         this.description = description;
         this.category = category;
         this.events = events;
@@ -78,6 +81,8 @@ public class CompiledAction implements ICompiled
         Map<String, Object> map = new LinkedHashMap<>();
         map.put(KEY_ID, this.id);
         map.put(KEY_NAME, this.name);
+        if (this.superAction != null)
+            map.put(KEY_SUPER_ACTION, this.superAction.getReference());
         map.put(KEY_DESCRIPTION, this.description);
         if (this.category != null)
             map.put(KEY_CATEGORY, this.category.getReference());

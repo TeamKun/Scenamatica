@@ -10,6 +10,7 @@ import org.kunlab.scenamatica.bookkeeper.definitions.IDefinition;
 import org.kunlab.scenamatica.bookkeeper.definitions.OutputDefinition;
 import org.kunlab.scenamatica.bookkeeper.definitions.OutputsDefinition;
 import org.kunlab.scenamatica.bookkeeper.definitions.TypeDefinition;
+import org.kunlab.scenamatica.bookkeeper.reader.InputDefinitionReader;
 import org.kunlab.scenamatica.bookkeeper.utils.Timekeeper;
 
 import java.nio.file.Path;
@@ -54,6 +55,7 @@ public class Compiler
             ));
 
         ActionCompiler action = new ActionCompiler(
+                new InputDefinitionReader(),
                 core.getClassLoader(),
                 core.getClassifier(),
                 type,
@@ -151,7 +153,7 @@ public class Compiler
                 if (target.equals(other))
                     continue;
 
-                if (target.isDependsOn(other))
+                if (target.isDependsOn(this.core.getClassLoader(), other))
                     dependencyGraph.computeIfAbsent(target, k -> new ArrayList<>())
                             .add(other);
             }

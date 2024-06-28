@@ -2,6 +2,7 @@ package org.kunlab.scenamatica.bookkeeper.definitions;
 
 import lombok.Value;
 import org.jetbrains.annotations.NotNull;
+import org.kunlab.scenamatica.bookkeeper.ScenamaticaClassLoader;
 import org.kunlab.scenamatica.bookkeeper.annotations.Category;
 import org.objectweb.asm.tree.ClassNode;
 
@@ -27,7 +28,7 @@ public class ActionCategoryDefinition implements IDefinition
     }
 
     @Override
-    public boolean isDependsOn(@NotNull IDefinition classNode)
+    public boolean isDependsOn(@NotNull ScenamaticaClassLoader classLoader, @NotNull IDefinition classNode)
     {
         return false;
     }

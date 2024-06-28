@@ -2,6 +2,8 @@ package org.kunlab.scenamatica.bookkeeper.definitions;
 
 import lombok.Value;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.kunlab.scenamatica.bookkeeper.ScenamaticaClassLoader;
 import org.kunlab.scenamatica.bookkeeper.annotations.OutputDoc;
 import org.kunlab.scenamatica.bookkeeper.enums.ActionMethod;
 import org.kunlab.scenamatica.bookkeeper.enums.MCVersion;
@@ -34,7 +36,7 @@ public class OutputDefinition implements IDefinition
     }
 
     @Override
-    public boolean isDependsOn(@NotNull IDefinition def)
+    public boolean isDependsOn(@Nullable ScenamaticaClassLoader classLoader, @NotNull IDefinition def)
     {
         return (this.type != null && this.type.getInternalName().equals(def.getAnnotatedClass().name));
     }

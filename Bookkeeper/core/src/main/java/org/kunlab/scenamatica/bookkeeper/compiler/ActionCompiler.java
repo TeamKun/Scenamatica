@@ -3,8 +3,10 @@ package org.kunlab.scenamatica.bookkeeper.compiler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.bookkeeper.AnnotationClassifier;
+import org.kunlab.scenamatica.bookkeeper.AnnotationValues;
 import org.kunlab.scenamatica.bookkeeper.ScenamaticaClassLoader;
 import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
 import org.kunlab.scenamatica.bookkeeper.compiler.models.CompiledAction;
 import org.kunlab.scenamatica.bookkeeper.compiler.models.refs.ActionReference;
 import org.kunlab.scenamatica.bookkeeper.compiler.models.refs.EventReference;
@@ -12,32 +14,50 @@ import org.kunlab.scenamatica.bookkeeper.compiler.models.refs.TypeReference;
 import org.kunlab.scenamatica.bookkeeper.definitions.ActionDefinition;
 import org.kunlab.scenamatica.bookkeeper.definitions.InputDefinition;
 import org.kunlab.scenamatica.bookkeeper.definitions.OutputDefinition;
+import org.kunlab.scenamatica.bookkeeper.definitions.OutputsDefinition;
+import org.kunlab.scenamatica.bookkeeper.enums.MCVersion;
+import org.kunlab.scenamatica.bookkeeper.reader.IAnnotationReader;
+import org.kunlab.scenamatica.bookkeeper.reader.InputDefinitionReader;
+import org.kunlab.scenamatica.bookkeeper.utils.ClassAnalyser;
+import org.kunlab.scenamatica.bookkeeper.utils.Descriptors;
+import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
+import org.objectweb.asm.tree.AnnotationNode;
 import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.asm.tree.FieldNode;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 public class ActionCompiler extends AbstractCompiler<ActionDefinition, CompiledAction, ActionReference>
 {
+    private static final String DESC_INPUTS = Descriptors.getDescriptor(InputDoc.class);
+
+    private final InputDefinitionReader inputReader;
     private final ScenamaticaClassLoader classLoader;
     private final AnnotationClassifier classifier;
     private final TypeCompiler typeCompiler;
     private final EventCompiler eventCompiler;
     private final CategoryManager categoryManager;
 
-    public ActionCompiler(ScenamaticaClassLoader classLoader, AnnotationClassifier classifier, TypeCompiler typeCompiler,
-                          EventCompiler eventCompiler, CategoryManager categoryManager)
+    private final Map<ClassNode, List<CompiledAction.ActionInput>> nonActionInputCaches;
+
+    public ActionCompiler(InputDefinitionReader inputReader, ScenamaticaClassLoader classLoader, AnnotationClassifier classifier, TypeCompiler typeCompiler, EventCompiler eventCompiler, CategoryManager categoryManager)
     {
         super("actions");
+        this.inputReader = inputReader;
         this.classLoader = classLoader;
         this.classifier = classifier;
         this.typeCompiler = typeCompiler;
         this.eventCompiler = eventCompiler;
         this.categoryManager = categoryManager;
+
+        this.nonActionInputCaches = new HashMap<>();
     }
 
     @Override
@@ -55,6 +75,11 @@ public class ActionCompiler extends AbstractCompiler<ActionDefinition, CompiledA
     @Override
     protected ActionReference doCompile(ActionDefinition definition)
     {
+        ClassNode clazz = definition.getClazz();
+        List<ClassNode> superClasses = ClassAnalyser.getSuperClasses(this.classLoader, clazz);
+        List<ActionReference> superActions = getActionsFromClasses(superClasses);
+        ActionReference superAction = superActions.stream().findFirst().orElse(null);
+
         List<EventReference> events = new ArrayList<>();
         if (definition.getEvents() != null)
         {
@@ -66,11 +91,61 @@ public class ActionCompiler extends AbstractCompiler<ActionDefinition, CompiledA
                     events.add(this.eventCompiler.resolve(event.getClassName()));
         }
 
-        CompiledAction.Contract executable = compileContract(definition.getExecutable());
-        CompiledAction.Contract watchable = compileContract(definition.getWatchable());
-        CompiledAction.Contract requireable = compileContract(definition.getRequireable());
+        /* イベントは継承しないこととする。
+        for (ActionReference superActionReference: superActions)
+        {
+            CompiledAction superCompiled = superActionReference.getResolved();
+            if (superCompiled.getEvents() != null)
+                events.addAll(Arrays.asList(superCompiled.getEvents()));
+        }*/
 
-        ClassNode clazz = definition.getClazz();
+        CompiledAction.Contract executable = CompiledAction.Contract.ofUnavailable();
+        CompiledAction.Contract watchable = CompiledAction.Contract.ofUnavailable();
+        CompiledAction.Contract requireable = CompiledAction.Contract.ofUnavailable();
+        String executableQuery;
+        if (hasValidContract(executableQuery = definition.getExecutable()))
+            executable = compileContract(executableQuery);
+        else
+        {
+            CompiledAction.Contract superExecutable = findSuperDeclaration(superActions, CompiledAction::getExecutable, CompiledAction.Contract::isAvailable);
+            if (superExecutable != null)
+                executable = superExecutable;
+        }
+
+        String watchableQuery;
+        if (hasValidContract(watchableQuery = definition.getWatchable()))
+            watchable = compileContract(watchableQuery);
+        else
+        {
+            CompiledAction.Contract superWatchable = findSuperDeclaration(superActions, CompiledAction::getWatchable, CompiledAction.Contract::isAvailable);
+            if (superWatchable != null)
+                watchable = superWatchable;
+        }
+
+        String requireableQuery;
+        if (hasValidContract(requireableQuery = definition.getRequireable()))
+            requireable = compileContract(requireableQuery);
+        else
+        {
+            CompiledAction.Contract superRequireable = findSuperDeclaration(superActions, CompiledAction::getRequireable, CompiledAction.Contract::isAvailable);
+            if (superRequireable != null)
+                requireable = superRequireable;
+        }
+
+        MCVersion supportsSince = definition.getSupportsSince();
+        MCVersion supportsUntil = definition.getSupportsUntil();
+        if (supportsSince == MCVersion.UNSET)
+        {
+            MCVersion superSince = findSuperDeclaration(superActions, CompiledAction::getSupportsSince, v -> v != MCVersion.UNSET);
+            if (superSince != null)
+                supportsSince = superSince;
+        }
+        if (supportsUntil == MCVersion.UNSET)
+        {
+            MCVersion superUntil = findSuperDeclaration(superActions, CompiledAction::getSupportsUntil, v -> v != MCVersion.UNSET);
+            if (superUntil != null)
+                supportsUntil = superUntil;
+        }
 
         CategoryManager.CategoryEntry categoryReference;
         if (definition.getId().equals("server_log")) // サーバ・ログは特別に扱う。
@@ -78,45 +153,49 @@ public class ActionCompiler extends AbstractCompiler<ActionDefinition, CompiledA
         else
             categoryReference = this.categoryManager.recogniseCategory(clazz);
 
-        List<ActionReference> superActions = getSuperActions(clazz);
         return new ActionReference(
                 new CompiledAction(
                         definition.getClazz(),
                         definition.getId(),
                         definition.getName(),
+                        superAction,
                         definition.getDescription(),
                         categoryReference,
                         events.toArray(new EventReference[0]),
                         executable,
                         watchable,
                         requireable,
-                        definition.getSupportsSince(),
-                        definition.getSupportsUntil(),
-                        compileInputs(definition, superActions),
-                        compileOutputs(definition, superActions)
+                        supportsSince,
+                        supportsUntil,
+                        compileInputs(definition, superClasses, superActions),
+                        compileOutputs(definition, superClasses, superActions)
                 )
         );
     }
 
+    private <T> T findSuperDeclaration(List<? extends ActionReference> supers, Function<? super CompiledAction, ? extends T> getter, Predicate<? super T> check)
+    {
+        for (ActionReference superAction : supers)
+        {
+            CompiledAction superCompiled = superAction.getResolved();
+            T value = getter.apply(superCompiled);
+            if (check.test(value))
+                return value;
+        }
+
+        return null;
+    }
+
     @NotNull
-    private List<ActionReference> getSuperActions(ClassNode node)
+    private List<ActionReference> getActionsFromClasses(List<? extends ClassNode> superClasses)
     {
         List<ActionReference> superActions = new ArrayList<>();
-        if (!canTraceSuper(node))
-            return Collections.emptyList();
 
-        ClassNode superClass = this.classLoader.getClassByName(node.superName);
-        while (superClass != null)
+        for (ClassNode superClass : superClasses)
         {
             AnnotationClassifier.ClassifiedAnnotation annotation = this.classifier.getClassfieidAnnotations(superClass);
             if (annotation == null)
-            {
-                if (!canTraceSuper(superClass))
-                    break;
-
-                superClass = this.classLoader.getClassByName(superClass.superName);
                 continue;
-            }
 
             ActionDefinition actionDefinition = annotation.getAnnotations().stream()
                     .filter(a -> a instanceof ActionDefinition)
@@ -124,29 +203,83 @@ public class ActionCompiler extends AbstractCompiler<ActionDefinition, CompiledA
                     .findFirst()
                     .orElse(null);
             if (actionDefinition == null)
-            {
-                if (!canTraceSuper(superClass))
-                    break;
-
-                superClass = this.classLoader.getClassByName(superClass.superName);
                 continue;
-            }
 
             ActionReference inheritedReference = this.compiledItemReferences.get(actionDefinition.getId());
-            superActions.add(inheritedReference);
+            if (inheritedReference == null)
+                throw new IllegalStateException("Super action not found: " + actionDefinition.getId());
 
-            if (canTraceSuper(superClass))
-                superClass = this.classLoader.getClassByName(superClass.superName);
-            else
-                break;
+            superActions.add(inheritedReference);
         }
 
         return superActions;
     }
 
-    private Map<String, CompiledAction.ActionInput> compileInputs(ActionDefinition definition, List<? extends ActionReference> supers)
+    public Map<String, CompiledAction.ActionInput> processNonActionInputs(List<? extends ClassNode> superClasses, List<? extends ActionReference> supers)
     {
         Map<String, CompiledAction.ActionInput> inputs = new HashMap<>();
+        List<CompiledAction.ActionInput> newInputs = new ArrayList<>();
+        for (ClassNode superClass : superClasses)
+        {
+            if (isDuplicatedActionReference(superClass, supers))
+                continue;
+            else if (this.nonActionInputCaches.containsKey(superClass))
+            {
+                for (CompiledAction.ActionInput input : this.nonActionInputCaches.get(superClass))
+                    inputs.put(input.getName(), input);
+                continue;
+            }
+
+            superClass.fields.stream()
+                    .filter(getAnnotatedFieldsPredicate(DESC_INPUTS, this.inputReader))
+                    .map(f -> processInputField(superClass, f))
+                    .forEach(i -> {
+                        inputs.putAll(i);
+                        newInputs.addAll(i.values());
+                    });
+        }
+
+        for (ClassNode superClass : superClasses)
+            this.nonActionInputCaches.put(superClass, newInputs);
+
+        return inputs;
+    }
+
+    private boolean isDuplicatedActionReference(ClassNode superClass, List<? extends ActionReference> supers)
+    {
+        return supers.stream().anyMatch(a -> a.getResolved().getClazz().equals(superClass));
+    }
+
+    private Predicate<FieldNode> getAnnotatedFieldsPredicate(String desc, IAnnotationReader<?> reader)
+    {
+        Predicate<FieldNode> isPublic = f -> (f.access & Opcodes.ACC_PUBLIC) != 0;
+        Predicate<FieldNode> isFinal = f -> (f.access & Opcodes.ACC_FINAL) != 0;
+        Predicate<FieldNode> isValidAccess = isPublic.and(isFinal);
+
+        Predicate<FieldNode> hasAnnotation = f -> f.invisibleAnnotations != null;
+        Predicate<FieldNode> hasInputAnnotation = f -> f.invisibleAnnotations.stream().anyMatch(a -> a.desc.equals(desc) && reader.canRead(a));
+
+        return isValidAccess.and(hasAnnotation).and(hasInputAnnotation);
+    }
+
+    private Map<String, CompiledAction.ActionInput> processInputField(ClassNode superClass, FieldNode field)
+    {
+        Map<String, CompiledAction.ActionInput> inputs = new HashMap<>();
+        for (AnnotationNode anno : field.invisibleAnnotations)
+        {
+            AnnotationValues values = AnnotationValues.of(anno);
+            InputDefinition input = this.inputReader.buildAnnotation(superClass, values);
+            inputs.put(input.getName(), constructInput(input, getActionByClass(superClass)));
+        }
+
+        return inputs;
+    }
+
+    private Map<String, CompiledAction.ActionInput> compileInputs(ActionDefinition definition, List<? extends ClassNode> superClasses, List<? extends ActionReference> supers)
+    {
+        // merge super classes
+        Map<String, CompiledAction.ActionInput> inputs = new HashMap<>(this.processNonActionInputs(superClasses, supers));
+
         // merge supers
         for (ActionReference superAction : supers)
         {
@@ -161,7 +294,7 @@ public class ActionCompiler extends AbstractCompiler<ActionDefinition, CompiledA
         return inputs;
     }
 
-    private Map<String, CompiledAction.ActionOutput> compileOutputs(ActionDefinition definition, List<? extends ActionReference> supers)
+    private Map<String, CompiledAction.ActionOutput> compileOutputs(ActionDefinition definition, List<? extends ClassNode> superClasses, List<? extends ActionReference> supers)
     {
         Map<String, CompiledAction.ActionOutput> outputs = new HashMap<>();
         // merge supers
@@ -172,7 +305,13 @@ public class ActionCompiler extends AbstractCompiler<ActionDefinition, CompiledA
                 outputs.put(entry.getKey(), CompiledAction.ActionOutput.inherit(entry.getValue(), superAction));
         }
 
-        for (OutputDefinition output : definition.getOutputs())
+        List<OutputDefinition> outputDefs = new ArrayList<>();
+        if (definition.getOutputs() != null)
+            outputDefs.addAll(Arrays.asList(definition.getOutputs()));
+
+        outputDefs.addAll(getExternalOutputs(superClasses));
+
+        for (OutputDefinition output : outputDefs)
         {
             Type outputType = output.getType();
             TypeReference typeReference = this.typeCompiler.lookup(outputType);
@@ -183,6 +322,29 @@ public class ActionCompiler extends AbstractCompiler<ActionDefinition, CompiledA
             outputs.put(output.getName(), compiled);
         }
 
+
+        return outputs;
+    }
+
+    private List<OutputDefinition> getExternalOutputs(List<? extends ClassNode> supers)
+    {
+        List<OutputDefinition> outputs = new ArrayList<>();
+        Predicate<OutputDefinition> checkOutputNotContains = o -> outputs.stream().noneMatch(out -> out.getName().equals(o.getName()));
+
+        for (ClassNode superClass : supers)
+        {
+            AnnotationClassifier.ClassifiedAnnotation clano = this.classifier.getClassfieidAnnotations(superClass);
+            if (clano == null)
+                continue;
+
+            clano.getAnnotations().stream()
+                    .filter(a -> a instanceof OutputsDefinition)
+                    .map(a -> (OutputsDefinition) a)
+                    .findFirst()
+                    .ifPresent(a -> Arrays.stream(a.getOutputs())
+                            .filter(checkOutputNotContains)
+                            .forEach(outputs::add));
+        }
 
         return outputs;
     }
@@ -213,6 +375,11 @@ public class ActionCompiler extends AbstractCompiler<ActionDefinition, CompiledA
                 .orElse(null);
     }
 
+    private static boolean hasValidContract(String contractQuery)
+    {
+        return !(contractQuery == null || ActionDoc.UNSET.equals(contractQuery));
+    }
+
     private static CompiledAction.ActionOutput constructOutput(OutputDefinition output, TypeReference typeReference, @Nullable ActionReference inherits)
     {
         return new CompiledAction.ActionOutput(
@@ -226,11 +393,6 @@ public class ActionCompiler extends AbstractCompiler<ActionDefinition, CompiledA
                 output.getMax(),
                 inherits
         );
-    }
-
-    private static boolean canTraceSuper(ClassNode node)
-    {
-        return !(node.superName == null || node.superName.equals("java/lang/Object") || node.superName.equals("java/lang/Enum"));
     }
 
     private static CompiledAction.ActionInput constructInput(InputDefinition input, @Nullable ActionReference inherits)

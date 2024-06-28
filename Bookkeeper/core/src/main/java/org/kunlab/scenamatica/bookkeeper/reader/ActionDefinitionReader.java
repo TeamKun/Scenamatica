@@ -3,11 +3,13 @@ package org.kunlab.scenamatica.bookkeeper.reader;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.bookkeeper.AnnotationValues;
+import org.kunlab.scenamatica.bookkeeper.ScenamaticaClassLoader;
 import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
 import org.kunlab.scenamatica.bookkeeper.definitions.ActionDefinition;
 import org.kunlab.scenamatica.bookkeeper.definitions.InputDefinition;
 import org.kunlab.scenamatica.bookkeeper.definitions.OutputDefinition;
 import org.kunlab.scenamatica.bookkeeper.enums.MCVersion;
+import org.kunlab.scenamatica.bookkeeper.utils.ClassAnalyser;
 import org.kunlab.scenamatica.bookkeeper.utils.Descriptors;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
@@ -33,11 +35,13 @@ public class ActionDefinitionReader implements IAnnotationReader<ActionDefinitio
     private static final String DESC = Descriptors.getDescriptor(ActionDoc.class);
     private static final String ACTION_DESC = "Lorg/kunlab/scenamatica/annotations/action/Action;";
 
+    private final ScenamaticaClassLoader classLoader;
     private final InputDefinitionReader inputReader;
     private final OutputDefinitionReader outputReader;
 
-    public ActionDefinitionReader(InputDefinitionReader inputReader, OutputDefinitionReader outputReader)
+    public ActionDefinitionReader(ScenamaticaClassLoader classLoader, InputDefinitionReader inputReader, OutputDefinitionReader outputReader)
     {
+        this.classLoader = classLoader;
         this.inputReader = inputReader;
         this.outputReader = outputReader;
     }
@@ -78,9 +82,16 @@ public class ActionDefinitionReader implements IAnnotationReader<ActionDefinitio
     private InputDefinition[] getInputs(ClassNode clazz)
     {
         List<InputDefinition> inputs = new ArrayList<>();
-        for (FieldNode field : clazz.fields)
+        List<ClassNode> supers = ClassAnalyser.getSuperClasses(this.classLoader, clazz);
+        List<FieldNode> fields = new ArrayList<>(clazz.fields);
+        supers.stream()
+                .map((superClass) -> superClass.fields)
+                .forEach(fields::addAll);
+
+
+        for (FieldNode field : fields)
         {
-            if (field.access != (Opcodes.ACC_PUBLIC /* | Opcodes.ACC_STATIC */ | Opcodes.ACC_FINAL))
+            if ((field.access & (Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC)) != 0 && (field.access & Opcodes.ACC_FINAL) == 0)
                 continue;
 
             List<AnnotationNode> annos = field.invisibleAnnotations;

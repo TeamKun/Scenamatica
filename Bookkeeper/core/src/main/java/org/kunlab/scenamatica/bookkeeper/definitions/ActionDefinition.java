@@ -2,6 +2,8 @@ package org.kunlab.scenamatica.bookkeeper.definitions;
 
 import lombok.Value;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.kunlab.scenamatica.bookkeeper.ScenamaticaClassLoader;
 import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
 import org.kunlab.scenamatica.bookkeeper.enums.MCVersion;
 import org.objectweb.asm.Type;
@@ -39,8 +41,10 @@ public class ActionDefinition implements IDefinition
     }
 
     @Override
-    public boolean isDependsOn(@NotNull IDefinition definition)
+    public boolean isDependsOn(@Nullable ScenamaticaClassLoader classLoader, @NotNull IDefinition definition)
     {
+        assert classLoader != null;
+
         if (this.events != null)
         {
             boolean isEventsRelated = Arrays.stream(this.events).parallel()
@@ -51,11 +55,19 @@ public class ActionDefinition implements IDefinition
         }
 
         if (this.outputs != null)
-            return Arrays.stream(this.outputs).parallel()
-                    .anyMatch(output -> output.isDependsOn(definition));
+        {
+            boolean isOutputsRelated = Arrays.stream(this.outputs).parallel()
+                    .anyMatch(output -> output.isDependsOn(null, definition));
+            if (isOutputsRelated)
+                return true;
+        }
         if (this.inputs != null)
-            return Arrays.stream(this.inputs).parallel()
-                    .anyMatch(input -> input.isDependsOn(definition));
+        {
+            boolean isInputsRelated = Arrays.stream(this.inputs).parallel()
+                    .anyMatch(input -> input.isDependsOn(null, definition));
+            if (isInputsRelated)
+                return true;
+        }
 
         if (definition instanceof ActionDefinition)
         {
@@ -67,7 +79,10 @@ public class ActionDefinition implements IDefinition
                 if (current.name.equals(actionClass.name))
                     return true;
 
-                current = current.superName != null ? this.clazz: null;
+                if (current.superName == null || current.superName.equals("java/lang/Object") || current.superName.equals("java/lang/Enum"))
+                    break;
+
+                current = classLoader.getClassByName(current.superName);
             }
         }
 

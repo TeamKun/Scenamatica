@@ -2,6 +2,8 @@ package org.kunlab.scenamatica.bookkeeper.definitions;
 
 import lombok.Value;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.kunlab.scenamatica.bookkeeper.ScenamaticaClassLoader;
 import org.kunlab.scenamatica.bookkeeper.annotations.OutputDocs;
 import org.objectweb.asm.tree.ClassNode;
 
@@ -24,7 +26,7 @@ public class OutputsDefinition implements IDefinition
     }
 
     @Override
-    public boolean isDependsOn(@NotNull IDefinition classNode)
+    public boolean isDependsOn(@Nullable ScenamaticaClassLoader classLoader, @NotNull IDefinition classNode)
     {
         return false;
     }

@@ -1,5 +1,6 @@
 package org.kunlab.scenamatica.interfaces.structures.minecraft.inventory;
 
+import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.bookkeeper.annotations.Category;
 import org.kunlab.scenamatica.bookkeeper.annotations.TypeDoc;
@@ -14,6 +15,7 @@ import java.util.Map;
 @TypeDoc(
         name = "Inventory",
         description = "インベントリの情報を格納します。",
+        mappingOf = Inventory.class,
         properties = {
                 @TypeProperty(
                         name = GenericInventoryStructure.KEY_SIZE,

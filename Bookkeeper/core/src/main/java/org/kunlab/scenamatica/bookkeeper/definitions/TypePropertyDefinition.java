@@ -2,6 +2,8 @@ package org.kunlab.scenamatica.bookkeeper.definitions;
 
 import lombok.Value;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.kunlab.scenamatica.bookkeeper.ScenamaticaClassLoader;
 import org.kunlab.scenamatica.bookkeeper.annotations.TypeProperty;
 import org.kunlab.scenamatica.bookkeeper.utils.Descriptors;
 import org.objectweb.asm.Type;
@@ -33,7 +35,7 @@ public class TypePropertyDefinition implements IDefinition
     }
 
     @Override
-    public boolean isDependsOn(@NotNull IDefinition classNode)
+    public boolean isDependsOn(@Nullable ScenamaticaClassLoader classLoader, @NotNull IDefinition classNode)
     {
         if (classNode instanceof TypeDefinition)
         {
