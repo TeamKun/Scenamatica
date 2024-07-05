@@ -84,8 +84,24 @@ public class AnnotationValues
                 array[i] = mapper.apply(list.get(i));
             return array;
         }
+        else if (clazz.isEnum() && value.getClass().isArray())
+        {
+            Object[] array = (Object[]) value;
+            if (array.length != 2)
+                throw new IllegalArgumentException("Broken reference array for enum type " + clazz.getName());
+
+            T[] result = (T[]) Array.newInstance(clazz, 1);
+            result[0] = mapper.apply(array);
+            return result;
+        }
         else if (value.getClass().isArray())
-            return (T[]) value;
+        {
+            Object[] array = (Object[]) value;
+            T[] result = (T[]) Array.newInstance(clazz, array.length);
+            for (int i = 0; i < array.length; i++)
+                result[i] = mapper.apply(array[i]);
+            return result;
+        }
         else
             throw new IllegalArgumentException("The value of the key " + key + " is not a valid array or list.");
     }

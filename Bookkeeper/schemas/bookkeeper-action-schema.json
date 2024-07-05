@@ -2,6 +2,46 @@
   "$schema": "https://json-schema.org/draft-07/schema",
   "title": "Bookkeeper Action Schema",
   "type": "object",
+  "definitions": {
+    "admonition": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "The type of the admonition",
+          "enum": [
+            "note",
+            "tip",
+            "info",
+            "warning",
+            "danger"
+          ]
+        },
+        "title": {
+          "type": "string",
+          "description": "The title of the admonition"
+        },
+        "content": {
+          "type": "string",
+          "description": "The message of the admonition, can be markdown."
+        },
+        "on": {
+          "type": "array",
+          "description": "The targets that the admonition is on. Empty is all",
+          "enum": [
+            "execute",
+            "watch",
+            "require"
+          ],
+          "minItems": 0
+        }
+      },
+      "required": [
+        "type",
+        "content"
+      ]
+    }
+  },
   "properties": {
     "super": {
       "type": "string",
@@ -147,6 +187,13 @@
             "inheritedFrom": {
               "type": "string",
               "description": "The reference of the input that this input is inherited from"
+            },
+            "admonitions": {
+              "type": "array",
+              "description": "The admonitions of the input",
+              "items": {
+                "$ref": "#/definitions/admonition"
+              }
             }
           }
         }
@@ -192,8 +239,22 @@
               "type": "number",
               "description": "The max value of the output"
             }
+          },
+          "admonitions": {
+            "type": "array",
+            "description": "The admonitions of the input",
+            "items": {
+              "$ref": "#/definitions/admonition"
+            }
           }
         }
+      }
+    },
+    "admonitions": {
+      "type": "array",
+      "description": "The admonitions of the input",
+      "items": {
+        "$ref": "#/definitions/admonition"
       }
     }
   },

@@ -46,8 +46,9 @@ public class GenericAdmonition
         map.put(KEY_TYPE, this.type.getName());
         MapUtils.putIfNotNull(map, KEY_TITLE, this.title);
         MapUtils.putIfNotNull(map, KEY_CONTENT, this.content);
-        for (ActionMethod method : this.on)
-            map.put(KEY_ON, method.name());
+        if (this.on != null)
+            for (ActionMethod method : this.on)
+                map.put(KEY_ON, method.name());
 
         return map;
     }
@@ -60,7 +61,7 @@ public class GenericAdmonition
         AnnotationValues annotationValues = AnnotationValues.of(serializedAnnotationValue);
 
         return new GenericAdmonition(
-                AdmonitionType.valueOf(annotationValues.getAsString(KEY_SERIALIZED_TYPE)),
+                annotationValues.getAsEnum(KEY_SERIALIZED_TYPE, AdmonitionType.class),
                 annotationValues.getAsString(KEY_SERIALIZED_TITLE),
                 annotationValues.getAsString(KEY_SERIALIZED_CONTENT),
                 annotationValues.getAsEnumArray(KEY_SERIALIZED_ON, ActionMethod.class)
