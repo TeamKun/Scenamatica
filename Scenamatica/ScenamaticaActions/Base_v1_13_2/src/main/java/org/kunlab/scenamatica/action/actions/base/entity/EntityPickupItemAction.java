@@ -70,7 +70,8 @@ public class EntityPickupItemAction extends AbstractGeneralEntityAction
 
     @InputDoc(
             name = "item",
-            description = "拾い上げられるアイテムです。",
+            description = "拾い上げられるアイテムです。\n" +
+                    "構造体を指定した場合は, 事前にそのアイテムをワールドに出現させます。",
             type = Item.class,
             requiredOn = {ActionMethod.EXECUTE}
     )

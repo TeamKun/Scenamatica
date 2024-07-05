@@ -7,8 +7,10 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerBucketFillEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.annotations.action.Action;
 import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
 import org.kunlab.scenamatica.bookkeeper.enums.MCVersion;
@@ -39,7 +41,6 @@ import java.util.List;
 public class PlayerBucketFillAction extends AbstractPlayerBucketAction
         implements Watchable, Executable
 {
-
     @Override
     public void execute(@NotNull ActionContext ctxt)
     {
@@ -59,7 +60,7 @@ public class PlayerBucketFillAction extends AbstractPlayerBucketAction
     protected void doEventOnlyMode(@NotNull ActionContext ctxt, Player who, Block block, Block blockClicked, BlockFace blockFace, Material bucket, ItemStack itemInHand, NMSHand hand)
     {
         super.makeOutput(ctxt, who, itemInHand, block, blockFace, bucket, hand);
-        PlayerBucketFillEvent event = new PlayerBucketFillEvent(who, blockClicked, blockFace, bucket, itemInHand, hand.toEquipmentSlot());
+        PlayerBucketFillEvent event = this.createEvent(who, blockClicked, block, blockFace, bucket, itemInHand, hand.toEquipmentSlot());
         Bukkit.getServer().getPluginManager().callEvent(event);
 
         if (event.isCancelled())
@@ -86,6 +87,11 @@ public class PlayerBucketFillAction extends AbstractPlayerBucketAction
         block.setType(Material.AIR);
     }
 
+    protected PlayerBucketFillEvent createEvent(@NotNull Player who, @Nullable Block block, @NotNull Block blockClicked, @NotNull BlockFace blockFace, @NotNull Material bucket, @NotNull ItemStack itemInHand, @Nullable EquipmentSlot hand)
+    {
+        return new PlayerBucketFillEvent(who, blockClicked, blockFace, bucket, itemInHand, hand);
+    }
+    
     @Override
     public List<Class<? extends Event>> getAttachingEvents()
     {

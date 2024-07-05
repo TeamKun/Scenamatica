@@ -16,7 +16,7 @@ import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.PlayerStruc
 @Action("player")
 @ActionDoc(
         name = "プレイヤ",
-        description = "プレイヤの情報を変更します。",
+        description = "プレイヤの状態や振る舞い、属性を変更します。",
 
         executable = "プレイヤの状態や属性を変更します。",
         requireable = ActionDoc.UNALLOWED,

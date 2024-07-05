@@ -6,8 +6,10 @@ import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.annotations.action.Action;
 import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.Admonition;
 import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
 import org.kunlab.scenamatica.bookkeeper.annotations.OutputDoc;
+import org.kunlab.scenamatica.bookkeeper.enums.AdmonitionType;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.events.actor.ActorMessageReceiveEvent;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
@@ -51,7 +53,13 @@ public class MessageAction extends AbstractScenamaticaAction
     @InputDoc(
             name = "message",
             description = "送信するメッセージです。",
-            type = String.class
+            type = String.class,
+            admonitions = {
+                    @Admonition(
+                            type = AdmonitionType.INFORMATION,
+                            content = "メッセージの色及び書式は 接頭辞 `§` に続けて[特定の文字](https://minecraft.fandom.com/ja/wiki/Formatting_codes)を指定します。"
+                    )
+            }
     )
     public static final InputToken<String> IN_MESSAGE = ofInput(
             "message",

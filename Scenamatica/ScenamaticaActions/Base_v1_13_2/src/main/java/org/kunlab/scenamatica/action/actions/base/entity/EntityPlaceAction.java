@@ -14,9 +14,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.annotations.action.Action;
 import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.Admonition;
 import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
 import org.kunlab.scenamatica.bookkeeper.annotations.OutputDoc;
 import org.kunlab.scenamatica.bookkeeper.enums.ActionMethod;
+import org.kunlab.scenamatica.bookkeeper.enums.AdmonitionType;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
@@ -90,7 +92,14 @@ public class EntityPlaceAction extends AbstractGeneralEntityAction
             name = "block",
             description = "エンティティを設置するブロックです。",
             type = Block.class,
-            requiredOn = ActionMethod.EXECUTE
+            requiredOn = ActionMethod.EXECUTE,
+            admonitions = {
+                    @Admonition(
+                            type = AdmonitionType.WARNING,
+                            on = ActionMethod.EXECUTE,
+                            content = "アクション実行シナリオの場合は, この項目内の `location` が必須です。"
+                    )
+            }
     )
     public static final InputToken<BlockStructure> IN_BLOCK = ofInput(
             "block",
@@ -104,7 +113,14 @@ public class EntityPlaceAction extends AbstractGeneralEntityAction
     @InputDoc(
             name = "direction",
             description = "エンティティを設置する方向です。",
-            type = BlockFace.class
+            type = BlockFace.class,
+            admonitions = {
+                    @Admonition(
+                            type = AdmonitionType.WARNING,
+                            on = ActionMethod.EXECUTE,
+                            content = "アクション実行シナリオでこの項目を省略した場合は, プレイヤと対象の位置から推論されます。"
+                    )
+            }
     )
     public static final InputToken<BlockFace> IN_BLOCK_FACE = ofInput(
             "direction",

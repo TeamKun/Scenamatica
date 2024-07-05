@@ -9,6 +9,7 @@ import org.kunlab.scenamatica.annotations.action.Action;
 import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
 import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
 import org.kunlab.scenamatica.bookkeeper.annotations.OutputDoc;
+import org.kunlab.scenamatica.bookkeeper.enums.ActionMethod;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
@@ -41,7 +42,8 @@ import java.util.List;
                 @OutputDoc(
                         name = PlayerChatAction.KEY_OUT_FORMAT,
                         description = "送信されたメッセージのフォーマットです。",
-                        type = String.class
+                        type = String.class,
+                        target = {ActionMethod.WATCH}
                 )
         }
 

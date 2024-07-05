@@ -13,8 +13,10 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.annotations.action.Action;
 import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.Admonition;
 import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
 import org.kunlab.scenamatica.bookkeeper.enums.ActionMethod;
+import org.kunlab.scenamatica.bookkeeper.enums.AdmonitionType;
 import org.kunlab.scenamatica.enums.MinecraftVersion;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
@@ -40,8 +42,16 @@ import java.util.List;
 
         executable = "指定されたブロックを設置します。",
         watchable = "指定されたブロックが設置されることを期待します。",
-        requireable = "指定されたブロックが空気ではないかどうかを判定します。"
+        requireable = "指定されたブロックが指定されたものであることを検証します。",
 
+        admonitions = {
+                @Admonition(
+                        type = AdmonitionType.WARNING,
+                        content = "指定するブロックの種類は空にできません。\n" +
+                                "また, Minecraft 1.14.4.x においては, 手に持っているブロックの種類と上記の値が異なる場合は自動的に手に持っているアイテムを置換します。",
+                        on = ActionMethod.EXECUTE
+                )
+        }
 )
 public class BlockPlaceAction extends AbstractBlockAction
         implements Executable, Requireable, Watchable

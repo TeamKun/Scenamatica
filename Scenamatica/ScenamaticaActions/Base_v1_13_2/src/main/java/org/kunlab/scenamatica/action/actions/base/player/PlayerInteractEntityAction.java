@@ -9,8 +9,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.annotations.action.Action;
 import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.Admonition;
 import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
 import org.kunlab.scenamatica.bookkeeper.annotations.OutputDoc;
+import org.kunlab.scenamatica.bookkeeper.enums.AdmonitionType;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
@@ -47,6 +49,15 @@ import java.util.List;
                         name = PlayerInteractEntityAction.KEY_OUT_HAND,
                         description = "クリックをした手です。",
                         type = NMSHand.class
+                )
+        },
+
+        admonitions = {
+                @Admonition(
+                        type = AdmonitionType.DANGER,
+                        content = "プレイヤとエンティティの距離が `36.0` ブロックより離れている場合は、 Scenamatica はイベントのみを発行します。\n" +
+                                "通常はアクタから `PacketPlayInUseEntity` パケットが送信され、エンティティのクリックが再現されますが、\n" +
+                                "距離が離れすぎている場合はパケットが自動的に破棄されるため、実際のアクションは実行されません。"
                 )
         }
 )

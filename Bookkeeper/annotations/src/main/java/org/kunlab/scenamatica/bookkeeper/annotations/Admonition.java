@@ -21,7 +21,7 @@ public @interface Admonition
      *
      * @return アドモニションの種類
      */
-    AdmonitionType value();
+    AdmonitionType type();
 
     /**
      * アドモニションのタイトルを指定します。

@@ -10,7 +10,6 @@ import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.annotations.action.Action;
 import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
 import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
-import org.kunlab.scenamatica.bookkeeper.annotations.InputExtends;
 import org.kunlab.scenamatica.bookkeeper.annotations.OutputDoc;
 import org.kunlab.scenamatica.bookkeeper.enums.ActionMethod;
 import org.kunlab.scenamatica.enums.ScenarioType;
@@ -44,14 +43,6 @@ import java.util.Map;
                 )
         }
 )
-@InputExtends({
-        @InputDoc(
-                name = "cause",
-                type = EntityDamageEvent.DamageCause.class,
-
-                requiredOn = {}
-        )
-})
 public class EntityDamageByEntityAction extends EntityDamageAction
         implements Executable
 {

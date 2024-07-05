@@ -73,7 +73,13 @@ import java.util.List;
                 ),
                 @OutputDoc(
                         name = InventoryClickAction.OUT_KEY_BUTTON,
-                        description = "ボタンのインデックスです。",
+                        description = "ボタンのインデックスです。\n" +
+                                "`0` が左クリック、`1` が右クリック、`2` が中クリック（マウスホイールのクリック）です。\n" +
+                                "\n" +
+                                "その他のキーおよびマウス入力は、 [GLFW](https://glfw.org)の仕様に従ってください。\n" +
+                                "マウスの入力は[こちら](https://www.glfw.org/docs/3.3/group__keys.html)を、\n" +
+                                "キーボードの入力は[こちら](https://www.glfw.org/docs/3.3/group__keys.html)を\n" +
+                                "参照してください。",
                         type = int.class,
                         min = 0
                 ),

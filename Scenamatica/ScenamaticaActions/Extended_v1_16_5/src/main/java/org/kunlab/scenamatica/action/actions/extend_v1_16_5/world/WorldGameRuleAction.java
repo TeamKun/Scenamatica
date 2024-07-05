@@ -8,6 +8,8 @@ import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.action.actions.base.world.AbstractWorldAction;
 import org.kunlab.scenamatica.action.utils.InputTypeToken;
 import org.kunlab.scenamatica.annotations.action.Action;
+import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
+import org.kunlab.scenamatica.bookkeeper.enums.MCVersion;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
@@ -19,6 +21,19 @@ import java.util.Collections;
 import java.util.List;
 
 @Action("world_game_rule")
+@ActionDoc(
+        name = "ゲームルールの設定",
+        description = "ワールドのゲームルールを設定します。",
+        events = {
+                WorldGameRuleChangeEvent.class
+        },
+
+        executable = "ゲームルールを設定します。",
+        watchable = "ゲームルールが設定されることを期待します。",
+        requireable = "ゲームルールが設定されていることを要求します。",
+
+        supportsSince = MCVersion.V1_16_5
+)
 public class WorldGameRuleAction extends AbstractWorldAction
         implements Executable, Requireable
 {

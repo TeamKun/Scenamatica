@@ -22,7 +22,7 @@ public class GenericAdmonition
     private static final String KEY_CONTENT = "content";
     private static final String KEY_ON = "on";
 
-    private static final String KEY_SERIALIZED_TYPE = "value";
+    private static final String KEY_SERIALIZED_TYPE = "type";
     private static final String KEY_SERIALIZED_TITLE = "title";
     private static final String KEY_SERIALIZED_CONTENT = "content";
     private static final String KEY_SERIALIZED_ON = "on";

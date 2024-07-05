@@ -72,7 +72,8 @@ public class EntityDamageAction extends AbstractGeneralEntityAction
 
     @InputDoc(
             name = "amount",
-            description = "ダメージの量を指定します。",
+            description = "ダメージの量を指定します。\n"
+            + "いわゆる `EntityDamageEvent#getFinalDamage()` に相当します。",
             type = double.class,
             min = 0.0d,
             requiredOn = ActionMethod.EXECUTE

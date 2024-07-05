@@ -13,8 +13,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.annotations.action.Action;
 import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.Admonition;
 import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
 import org.kunlab.scenamatica.bookkeeper.annotations.OutputDoc;
+import org.kunlab.scenamatica.bookkeeper.enums.ActionMethod;
+import org.kunlab.scenamatica.bookkeeper.enums.AdmonitionType;
 import org.kunlab.scenamatica.commons.utils.NamespaceUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
@@ -46,6 +49,17 @@ import java.util.List;
                         name = PlayerAdvancementAction.KEY_OUT_CRITERION,
                         description = "達成した進捗の条件です。",
                         type = String.class
+                )
+        },
+
+        admonitions = {
+                @Admonition(
+                        type = AdmonitionType.INFORMATION,
+                        content = "このアクションは進捗自体を達成する機能と、進捗の達成度を変更する機能を包含しています。  \n" +
+                                "`criterion` を指定せずに実行すると、**残っている達成条件を全て達成**します。一方で指定した場合は、指定した達成条件のみを達成します。\n" +
+                                "\n" +
+                                "実行期待機能においても、 `criterion` を指定せずに実行すると、進捗自体を達成しているか判定します。  \n" +
+                                "一方で指定した場合は、指定した進捗の指定した達成条件を達成しているか判定します。"
                 )
         }
 )

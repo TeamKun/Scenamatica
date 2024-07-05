@@ -11,9 +11,12 @@ import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.actions.base.player.AbstractPlayerAction;
 import org.kunlab.scenamatica.annotations.action.Action;
 import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.Admonition;
 import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
 import org.kunlab.scenamatica.bookkeeper.annotations.OutputDoc;
 import org.kunlab.scenamatica.bookkeeper.enums.ActionMethod;
+import org.kunlab.scenamatica.bookkeeper.enums.AdmonitionType;
+import org.kunlab.scenamatica.bookkeeper.enums.MCVersion;
 import org.kunlab.scenamatica.enums.MinecraftVersion;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
@@ -58,7 +61,9 @@ import java.util.List;
                         description = "エンティティが持っているバケツです。",
                         type = ItemStack.class
                 )
-        }
+        },
+
+        supportsSince = MCVersion.V1_16_5
 )
 public class PlayerBucketEntityAction extends AbstractPlayerAction
         implements Executable, Watchable
@@ -73,7 +78,13 @@ public class PlayerBucketEntityAction extends AbstractPlayerAction
     @InputDoc(
             name = "bucket",
             description = "プレイヤーが持っているバケツです。",
-            type = ItemStack.class
+            type = ItemStack.class,
+            admonitions = {
+                    @Admonition(
+                            type = AdmonitionType.WARNING,
+                            content = "エンティティを格納できるバケツである必要があります（参考：1.16.5 時点では `WATER_BUCKET` のみ）。"
+                    )
+            }
     )
     public static final InputToken<ItemStackStructure> IN_ORIGINAL_BUCKET = ofInput(
             "bucket",
@@ -83,7 +94,13 @@ public class PlayerBucketEntityAction extends AbstractPlayerAction
     @InputDoc(
             name = "entityBucket",
             description = "エンティティが持っているバケツです。",
-            type = ItemStack.class
+            type = ItemStack.class,
+            admonitions = {
+                    @Admonition(
+                            type = AdmonitionType.WARNING,
+                            content = "エンティティを格納した後のバケツを指定する必要があります。"
+                    )
+            }
     )
     public static final InputToken<ItemStackStructure> IN_ENTITY_BUCKET = ofInput(
             "entityBucket",

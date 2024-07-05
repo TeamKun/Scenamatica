@@ -7,8 +7,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.annotations.action.Action;
 import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.Admonition;
 import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
 import org.kunlab.scenamatica.bookkeeper.annotations.OutputDoc;
+import org.kunlab.scenamatica.bookkeeper.enums.ActionMethod;
+import org.kunlab.scenamatica.bookkeeper.enums.AdmonitionType;
 import org.kunlab.scenamatica.enums.MinecraftVersion;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
@@ -48,7 +51,16 @@ public class PlayerQuitAction extends AbstractPlayerAction
     @InputDoc(
             name = "message",
             description = "プレイヤがサーバから退出したときに表示されるメッセージを指定します。",
-            type = String.class
+            type = String.class,
+            availableFor = {ActionMethod.EXECUTE, ActionMethod.WATCH},
+
+            admonitions = {
+                    @Admonition(
+                            type = AdmonitionType.INFORMATION,
+                            content = "理由がキックの場合, 翻訳可能コンポーネント`multiplayer.player.left`が格納されます。 \n" +
+                                    "そのために, キックの理由をこのアクションで取得することはできません。"
+                    )
+            }
     )
     public static final InputToken<String> IN_QUIT_MESSAGE = ofInput(
             "message",

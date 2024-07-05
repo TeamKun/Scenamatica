@@ -7,8 +7,10 @@ import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.annotations.action.Action;
 import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.Admonition;
 import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
 import org.kunlab.scenamatica.bookkeeper.annotations.OutputDoc;
+import org.kunlab.scenamatica.bookkeeper.enums.AdmonitionType;
 import org.kunlab.scenamatica.bookkeeper.enums.MCVersion;
 import org.kunlab.scenamatica.enums.MinecraftVersion;
 import org.kunlab.scenamatica.enums.ScenarioType;
@@ -50,7 +52,14 @@ public class PlayerGameModeAction extends AbstractPlayerAction
     @InputDoc(
             name = "gamemode",
             description = "プレイヤのゲームモードを指定します。",
-            type = GameMode.class
+            type = GameMode.class,
+            admonitions = {
+                    @Admonition(
+                            type = AdmonitionType.DANGER,
+                            content = "`gamemode` は上記に示す列挙型のみ指定できます。\n" +
+                                    "Minecraft 旧バージョンで使用できるゲームモード ID(`integer`: `0` 〜 `3`)は指定できません。"
+                    )
+            }
     )
     public static final InputToken<GameMode> IN_GAME_MODE = ofEnumInput(
             "gamemode",
@@ -84,7 +93,7 @@ public class PlayerGameModeAction extends AbstractPlayerAction
         return result;
     }
 
-    private void makeOutputs(@NotNull ActionContext ctxt, @NotNull Player player, @NotNull GameMode gameMode)
+    protected void makeOutputs(@NotNull ActionContext ctxt, @NotNull Player player, @NotNull GameMode gameMode)
     {
         super.makeOutputs(ctxt, player);
         ctxt.output(KEY_OUT_GAME_MODE, gameMode);

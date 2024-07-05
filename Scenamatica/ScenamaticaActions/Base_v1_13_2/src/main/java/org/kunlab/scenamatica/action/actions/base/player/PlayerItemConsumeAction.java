@@ -9,8 +9,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.annotations.action.Action;
 import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.Admonition;
 import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
 import org.kunlab.scenamatica.bookkeeper.annotations.OutputDoc;
+import org.kunlab.scenamatica.bookkeeper.enums.AdmonitionType;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
@@ -46,6 +48,14 @@ import java.util.List;
                         name = PlayerItemConsumeAction.KEY_OUT_REPLACEMENT,
                         description = "消費されたアイテムの代替品です。",
                         type = ItemStack.class
+                )
+        },
+
+        admonitions = {
+                @Admonition(
+                        type = AdmonitionType.DANGER,
+                        content = "このアクションは、実行の完了までに、アイテムの消費にかかる時間分だけ掛かります。\n" +
+                                "そのため、適切なタイムアウト（約 `20ticks * 2sec = 40ticks`）を設定する必要があります。"
                 )
         }
 )

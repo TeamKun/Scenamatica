@@ -9,8 +9,10 @@ import org.kunlab.scenamatica.action.utils.InputTypeToken;
 import org.kunlab.scenamatica.action.utils.PlayerLikeCommandSenders;
 import org.kunlab.scenamatica.annotations.action.Action;
 import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.Admonition;
 import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
 import org.kunlab.scenamatica.bookkeeper.enums.ActionMethod;
+import org.kunlab.scenamatica.bookkeeper.enums.AdmonitionType;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
@@ -43,7 +45,14 @@ public class TabCompleteAction extends AbstractServerAction
     @InputDoc(
             name = "sender",
             description = "送信者です。",
-            type = PlayerSpecifier.class
+            type = PlayerSpecifier.class,
+            admonitions = {
+                @Admonition(
+                        type = AdmonitionType.INFORMATION,
+                        title = "コンソールを指定しますか？",
+                        content = "コンソールを送信者として指定する場合は, プレイヤ指定子の代わりに `<CONSOLE>` を指定します。"
+                )
+            }
     )
     public static final InputToken<PlayerSpecifier> IN_SENDER = ofInput(
             "sender",
@@ -52,7 +61,8 @@ public class TabCompleteAction extends AbstractServerAction
     );
     @InputDoc(
             name = "buffer",
-            description = "入力途中の不完全なコマンドです。判定時には正規表現を使えます。",
+            description = "入力途中の不完全なコマンドです。\n" +
+                    "判定時には正規表現を使えます。",
             type = String.class
     )
     public static final InputToken<String> IN_BUFFER = ofInput(

@@ -11,9 +11,11 @@ import org.kunlab.scenamatica.action.utils.InputTypeToken;
 import org.kunlab.scenamatica.action.utils.PlayerLikeCommandSenders;
 import org.kunlab.scenamatica.annotations.action.Action;
 import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.Admonition;
 import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
 import org.kunlab.scenamatica.bookkeeper.annotations.OutputDoc;
 import org.kunlab.scenamatica.bookkeeper.enums.ActionMethod;
+import org.kunlab.scenamatica.bookkeeper.enums.AdmonitionType;
 import org.kunlab.scenamatica.bookkeeper.enums.MCVersion;
 import org.kunlab.scenamatica.enums.MinecraftVersion;
 import org.kunlab.scenamatica.enums.ScenarioType;
@@ -65,7 +67,9 @@ public class BroadcastMessageAction extends AbstractServerAction
 {
     @InputDoc(
             name = "message",
-            description = "送信するメッセージですまたは受信メッセージの判定用正規表現です。",
+            description = "送信するメッセージ, または受信メッセージの判定用正規表現です。\n" +
+                    "+ シナリオの種類が `execute` の場合は、この引数の値がそのまま送信されます。\n" +
+                    "+ シナリオの種類が `except`  の場合は、この引数の値が正規表現として扱われ、マッチしているか検証されます。",
             type = String.class
     )
     public static final InputToken<String> IN_MESSAGE = ofInput(
@@ -75,7 +79,14 @@ public class BroadcastMessageAction extends AbstractServerAction
     @InputDoc(
             name = "recipients",
             description = "受信者です。",
-            type = PlayerSpecifier.class
+            type = PlayerSpecifier.class,
+            admonitions = {
+                    @Admonition(
+                            type = AdmonitionType.INFORMATION,
+                            title = "コンソールを指定しますか？",
+                            content = "コンソールを受信者として指定する場合は, プレイヤ指定子の代わりに `<CONSOLE>` を指定します。"
+                    )
+            }
     )
     public static final InputToken<List<PlayerSpecifier>> IN_RECIPIENTS = ofInput(
             "recipients",
@@ -100,7 +111,8 @@ public class BroadcastMessageAction extends AbstractServerAction
     @InputDoc(
             name = "permission",
             description = "ブロードキャストされたメッセージを受け取る権限です。",
-            type = String.class
+            type = String.class,
+            availableFor = ActionMethod.EXECUTE
     )
     public static final InputToken<String> IN_PERMISSION = ofInput(
             "permission",
@@ -108,7 +120,8 @@ public class BroadcastMessageAction extends AbstractServerAction
     );
     @InputDoc(
             name = "strictRecipients",
-            description = "受信者が厳密に一致させる必要があるかどうかです。",
+            description = "受信者が厳密に一致させる必要があるかどうかです。\n" +
+                    "これを有効にすると, 余分な受信者がいないことを確認します。",
             type = boolean.class,
             availableFor = ActionMethod.WATCH
     )
@@ -144,8 +157,7 @@ public class BroadcastMessageAction extends AbstractServerAction
                 .map(ps -> PlayerLikeCommandSenders.getCommandSenderOrThrow(ps, ctxt.getContext()))
                 .collect(Collectors.toSet());
 
-        BroadcastMessageEvent broadcastMessageEvent =
-                new BroadcastMessageEvent(message, csRecipientsSet);
+        BroadcastMessageEvent broadcastMessageEvent = this.createEvent(message, csRecipientsSet);
         Bukkit.getPluginManager().callEvent(broadcastMessageEvent);
 
         if (broadcastMessageEvent.isCancelled())
@@ -156,6 +168,11 @@ public class BroadcastMessageAction extends AbstractServerAction
         this.makeOutputs(ctxt, message, new ArrayList<>(csRecipientsSet));
         for (CommandSender recipient : broadcastMessageEvent.getRecipients())
             recipient.sendMessage(message);
+    }
+
+    protected BroadcastMessageEvent createEvent(@NotNull String message, @NotNull Set<CommandSender> recipients)
+    {
+        return new BroadcastMessageEvent(message, recipients);
     }
 
     @Override

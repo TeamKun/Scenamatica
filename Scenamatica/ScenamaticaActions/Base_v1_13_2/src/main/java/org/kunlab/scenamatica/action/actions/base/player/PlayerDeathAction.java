@@ -32,8 +32,6 @@ import java.util.List;
                 PlayerDeathEvent.class
         },
 
-        supportsUntil = MCVersion.V1_15_2,
-
         executable = "プレイヤを死亡させます。",
         watchable = "プレイヤが死亡することを期待します。",
         requireable = "プレイヤが死亡していることを要求します。",

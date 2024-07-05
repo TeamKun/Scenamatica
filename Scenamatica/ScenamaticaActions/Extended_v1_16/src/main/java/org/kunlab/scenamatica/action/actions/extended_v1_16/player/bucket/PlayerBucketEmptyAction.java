@@ -24,59 +24,12 @@ import java.util.Collections;
 import java.util.List;
 
 @Action(value = "player_bucket_empty", supportsSince = MinecraftVersion.V1_16)
-public class PlayerBucketEmptyAction extends AbstractPlayerBucketAction
+public class PlayerBucketEmptyAction extends org.kunlab.scenamatica.action.actions.base.player.bucket.PlayerBucketEmptyAction
         implements Watchable, Executable
 {
-
     @Override
-    public void execute(@NotNull ActionContext ctxt)
+    protected PlayerBucketEmptyEvent createEvent(Player who, Block block, Block blockClicked, BlockFace blockFace, Material bucket, ItemStack itemInHand, EquipmentSlot handSlot)
     {
-        Player player = selectTarget(ctxt);
-        ItemStack stack = getBucket(player, ctxt);
-        Block block = getPlaceAt(player, ctxt);
-        BlockFace direction = getDirection(player, block, ctxt);
-        Actor actor = ctxt.getActorOrThrow(player);
-
-        if (isEmptyBucket(stack.getType()))
-            throw new IllegalArgumentException("The bucket is empty: " + stack.getType() + " held by " + player.getName());
-
-        this.enumerateItemUse(ctxt, player, block, direction, stack, actor);
-    }
-
-    @Override
-    protected void doEventOnlyMode(@NotNull ActionContext ctxt, Player who, Block block, Block blockClicked,
-                                   BlockFace blockFace, Material bucket, ItemStack itemInHand, NMSHand hand)
-    {
-        this.makeOutput(ctxt, who, itemInHand, block, blockFace, bucket, hand);
-        EquipmentSlot handSlot = hand == null ? EquipmentSlot.HAND: hand.toEquipmentSlot();
-
-        PlayerBucketEmptyEvent event = new PlayerBucketEmptyEvent(who, block, blockClicked, blockFace, bucket, itemInHand, handSlot);
-        Bukkit.getServer().getPluginManager().callEvent(event);
-
-        if (event.isCancelled())
-            return;
-
-        itemInHand = event.getItemStack();
-
-        Material liquid = convertBucketToLiquid(bucket);
-        if (liquid == null)
-            throw new IllegalArgumentException("Unknown bucket type: " + bucket + ", this action needs a bucket filled with water or lava.");
-        EntityType entityToSpawn = convertBucketToEntity(bucket);
-
-        block.setType(liquid);
-        if (entityToSpawn != null)
-            block.getWorld().spawnEntity(block.getLocation(), entityToSpawn);
-
-        if (itemInHand != null)
-            who.getInventory().setItem(handSlot, itemInHand);
-
-    }
-
-    @Override
-    public List<Class<? extends Event>> getAttachingEvents()
-    {
-        return Collections.singletonList(
-                PlayerBucketEmptyEvent.class
-        );
+        return new PlayerBucketEmptyEvent(who, block, blockClicked, blockFace, bucket, itemInHand, handSlot);
     }
 }

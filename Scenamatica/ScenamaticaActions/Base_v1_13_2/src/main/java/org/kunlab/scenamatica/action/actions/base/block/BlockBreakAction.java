@@ -43,7 +43,8 @@ public class BlockBreakAction extends AbstractBlockAction
 {
     @InputDoc(
             name = "actor",
-            description = "ブロックを破壊するアクタです。",
+            description = "ブロックを破壊するアクタです。\n" +
+                    "省略した場合は、ブロックは自然に壊れます。",
             type = PlayerSpecifier.class,
             availableFor = {ActionMethod.EXECUTE, ActionMethod.WATCH}
     )
