@@ -62,6 +62,9 @@ public abstract class AbstractCompiler<T extends IDefinition, U extends ICompile
             Map<String, Object> serialized = reference.getResolved().serialize();
             Path file = baseDir.resolve(this.getFileLocation(reference));
 
+            // 自身のリファレンスを含めされる
+            serialized.put(KEY_REFERENCE, reference.getReference());
+
             try
             {
                 Path fileDir = file.getParent();

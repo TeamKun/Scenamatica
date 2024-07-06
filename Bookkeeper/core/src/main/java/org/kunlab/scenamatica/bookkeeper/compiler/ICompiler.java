@@ -9,6 +9,8 @@ import java.util.List;
 
 public interface ICompiler<T extends IDefinition, U extends ICompiled, V extends IReference<U>>
 {
+    String KEY_REFERENCE = "$reference";
+
     default void init()
     {
 

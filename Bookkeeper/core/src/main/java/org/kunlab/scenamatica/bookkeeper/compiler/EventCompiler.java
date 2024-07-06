@@ -97,7 +97,9 @@ public class EventCompiler implements ICompiler<EventCompiler.DummyEventDefiniti
             Path file = directory.resolve(Paths.get("events", reference.getResolved().getId()) + ".json");
             try
             {
-                WRITER.writeValue(file.toFile(), reference.getResolved().serialize());
+                Map<String, Object> serialized = reference.getResolved().serialize();
+                serialized.put(KEY_REFERENCE, reference.getReference());
+                WRITER.writeValue(file.toFile(), serialized);
             }
             catch (IOException e)
             {

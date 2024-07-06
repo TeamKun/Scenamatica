@@ -135,7 +135,7 @@ public class CategoryManager
 
                 // Write the category to the file
                 Path categoryFile = phaseDir.resolve(id + ".json");
-                MAPPER.writeValue(categoryFile.toFile(), category);
+                MAPPER.writeValue(categoryFile.toFile(), category.serialize());
             }
         }
         catch (IOException e)
@@ -152,12 +152,27 @@ public class CategoryManager
     @Value
     public static class CategoryEntry implements IReference<ICompiled>
     {
+        private static final String KEY_ID = "id";
+        private static final String KEY_NAME = "name";
+        private static final String KEY_DESC = "description";
+        private static final String KEY_PHASE = "phase";
+
         String id;
         String name;
         String description;
 
-        @JsonIgnore
         String phase;
+
+        public Map<String, Object> serialize()
+        {
+            Map<String, Object> map = new LinkedHashMap<>();
+            map.put(KEY_ID, this.id);
+            map.put(KEY_NAME, this.name);
+            map.put(KEY_DESC, this.description);
+            map.put(KEY_PHASE, this.phase);
+            map.put(ICompiler.KEY_REFERENCE, this.getReference());
+            return map;
+        }
 
         @Override
         @JsonIgnore

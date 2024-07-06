@@ -1,0 +1,32 @@
+{
+  "name": "bookkeeper-templating-tools",
+  "version": "1.0.0",
+  "description": "A set of tools for working with Bookkeeper templates",
+  "main": "index.ts",
+  "scripts": {
+    "start": "ts-node src/index.ts"
+  },
+  "bin": {
+    "bookkeeper-templating-tools": "src/index.ts"
+  },
+  "dependencies": {
+    "adm-zip": "^0.5.14",
+    "commander": "^12.1.0",
+    "handlebars": "^4.7.8"
+  },
+  "devDependencies": {
+    "@types/adm-zip": "^0.5.5",
+    "@types/node": "^20.14.9",
+    "ts-loader": "^9.5.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/TeamKun/Scenamatica.git"
+  },
+  "engines": {
+    "node": ">=18.0"
+  },
+  "packageManager": "pnpm@9.4.0"
+}
