@@ -16,7 +16,7 @@ import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.structures.specifiers.PlayerSpecifier;
 
 @Category(
-        id = "player",
+        id = "players",
         name = "プレイヤ",
         description = "プレイヤに関するアクションを提供します。"
 )

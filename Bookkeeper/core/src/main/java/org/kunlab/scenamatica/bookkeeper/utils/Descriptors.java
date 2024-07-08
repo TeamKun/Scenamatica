@@ -88,7 +88,8 @@ public class Descriptors
         return className.equals("java/lang/Boolean") || className.equals("java/lang/Byte")
                 || className.equals("java/lang/Character") || className.equals("java/lang/Short")
                 || className.equals("java/lang/Integer") || className.equals("java/lang/Long")
-                || className.equals("java/lang/Float") || className.equals("java/lang/Double");
+                || className.equals("java/lang/Float") || className.equals("java/lang/Double")
+                || className.equals("java/lang/Object");
     }
 
     public static char primitiveToDescriptor(String className)
@@ -119,6 +120,8 @@ public class Descriptors
             case "double":
             case "java/lang/Double":
                 return 'D';
+            case "java/lang/Object":
+                return 'L';
             default:
                 throw new IllegalArgumentException("Unknown primitive type: " + className);
         }

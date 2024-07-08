@@ -121,7 +121,7 @@ import java.util.UUID;
         }
 )
 @Category(
-        id = "entity",
+        id = "entities",
         name = "エンティティ関連",
         description = "エンティティに関連する情報を格納します。"
 )

@@ -38,7 +38,7 @@ public class NegateAction extends AbstractScenamaticaAction
     @InputDoc(
             name = "with",
             description = "アクションの引数です。",
-            type = Mapped.class
+            type = Object.class
     )
     public static final InputToken<ActionContext> IN_ARGUMENTS = ofInput(KEY_IN_ARGUMENTS, ActionContext.class);
 

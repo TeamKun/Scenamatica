@@ -20,7 +20,7 @@ import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.EntityStruc
 import org.kunlab.scenamatica.interfaces.structures.specifiers.EntitySpecifier;
 
 @Category(
-        id = "entity",
+        id = "entities",
         name = "エンティティ",
         description = "エンティティに関するアクションを提供します。"
 )

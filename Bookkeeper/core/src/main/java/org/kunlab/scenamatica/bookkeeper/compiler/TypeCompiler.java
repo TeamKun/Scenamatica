@@ -32,6 +32,7 @@ public class TypeCompiler extends AbstractCompiler<TypeDefinition, CompiledType,
     private static final TypeReference PRIMITIVE_LONG = PrimitiveType.ofRef("long", long.class);
     private static final TypeReference PRIMITIVE_FLOAT = PrimitiveType.ofRef("float", float.class);
     private static final TypeReference PRIMITIVE_DOUBLE = PrimitiveType.ofRef("double", double.class);
+    private static final TypeReference PRIMITIVE_OBJECT = PrimitiveType.ofRef("object", Object.class);
 
     private static final TypeReference CO_PRIMITIVE_STRING = PrimitiveType.ofRef("string", String.class);
     private static final TypeReference CO_PRIMITIVE_MAP = PrimitiveType.ofRef("object", Map.class);
@@ -337,6 +338,8 @@ public class TypeCompiler extends AbstractCompiler<TypeDefinition, CompiledType,
                 return PRIMITIVE_FLOAT;
             case 'D':
                 return PRIMITIVE_DOUBLE;
+            case 'L':
+                return PRIMITIVE_OBJECT;
             default:
                 throw new IllegalArgumentException("Unknown primitive type descriptor: " + desc);
         }

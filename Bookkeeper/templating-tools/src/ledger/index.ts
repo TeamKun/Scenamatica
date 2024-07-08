@@ -6,12 +6,11 @@ import {TemplateRetriever} from "../template/retriever"
 import * as Handlebars from "handlebars";
 
 interface LedgerObject {
-
+    $reference: string
+    id: string
 }
 
 interface Category extends LedgerObject {
-    $reference: string
-    id: string
     name: string
     description: string
     phase: string
@@ -65,8 +64,6 @@ interface Property {
 }
 
 interface Type extends LedgerObject {
-    $reference: string
-    id: string
     category: string
     name: string
     type: string
@@ -78,9 +75,7 @@ interface Type extends LedgerObject {
 }
 
 interface Action extends LedgerObject {
-    $reference: string
     super?: string
-    id: string
     name: string
     description: string
     category?: string
@@ -103,7 +98,6 @@ interface Descriptions {
 }
 
 interface Event extends LedgerObject {
-    id: string
     name: string
     javadoc?: string
     javadocLink?: string
@@ -123,14 +117,16 @@ class LedgerSession {
     private readonly tempDir: string
     private readonly outputExt: string
     private readonly outputDir: string
+    private readonly basePath: string
     private readonly linker: ReferenceLinker
     private readonly templates: TemplateRetriever
 
-    constructor(ledgerFile: string, outputDir: string, templates: TemplateRetriever, outputExt: string) {
+    constructor(ledgerFile: string, outputDir: string, templates: TemplateRetriever, outputExt: string, basePath: string) {
         this.ledgerFile = ledgerFile
         this.outputDir = outputDir
         this.templates = templates
         this.outputExt = outputExt.startsWith(".") ? outputExt.slice(1) : outputExt
+        this.basePath = basePath.endsWith("/") ? basePath.slice(0, -1) : basePath
 
         this.tempDir = path.join(outputDir, "temp")
         this.linker = new ReferenceLinker()
@@ -152,8 +148,8 @@ class LedgerSession {
 
     private static getElementsByCategory(categoryRef: string, targets: ({
         type: string,
-        data: Category | Action | Type
-    })[]) {
+        data: LedgerObject
+    })[]): ({ type: string, data: LedgerObject })[] {
         return targets.filter(target => {
             if (target.type === "categories") {
                 return false
@@ -177,14 +173,7 @@ class LedgerSession {
             console.error("Error creating temp directory:", error)
         }
 
-        Handlebars.registerHelper("resolve", (reference: string, property: string) => {
-            const linkedReference = this.resolveReference(reference)
-            if (linkedReference) {
-                return new Handlebars.SafeString(linkedReference.obj[property])
-            } else {
-                throw new Error(`Reference not found: ${reference}`)
-            }
-        })
+        this.initHandlebars()
     }
 
     public extract() {
@@ -200,13 +189,8 @@ class LedgerSession {
     public processLedger() {
         console.log("Processing ledger file...")
 
-        const targets = []
+        const targets: { type: string, data: Category | Action | Type }[] = []
         LedgerSession.TYPES.forEach(type => {
-            if (type === "events") {
-                // イベントは処理しない
-                return
-            }
-
             const directory = path.join(this.tempDir, type)
             if (!fs.existsSync(directory)) {
                 console.error(`Unable to find ${type} directory.`)
@@ -218,19 +202,31 @@ class LedgerSession {
             for (const file of files) {
                 if (!file.endsWith(".json")) {
                     console.debug("Skipping non-JSON file:", file)
-                    return
+                    continue
                 }
 
+                console.log("Processing file:", file)
                 try {
                     const content = fs.readFileSync(file).toString()
                     const data: Category | Action | Type = JSON.parse(content)
-                    targets.push({type, data})
+
+                    const reference = data.$reference
+                    const displayName = data.name
+                    // Write the output to the output directory
+                    this.linker.addReference(reference, displayName, type, data)
+
+                    if (type !== "events") {
+                        // イベントは処理しない
+                        targets.push({type, data})
+                    }
                 } catch (error) {
-                    console.error(`Error reading file ${file}:`, error)
+                    console.error("Error processing file:", file, error)
                 }
             }
         })
 
+        this.linker.reorderReferences()
+        console.log("Processing targets...")
         for (const target of targets) {
             const {type, data} = target
             // カテゴリには自身の子を追加しておく
@@ -238,6 +234,7 @@ class LedgerSession {
                 const category = data as Category
                 const categoryReference = category.$reference
                 category.children = LedgerSession.getElementsByCategory(categoryReference, targets)
+                    .map(target => target.data)
             }
 
             this.processOneFile(type, data)
@@ -253,12 +250,167 @@ class LedgerSession {
         this.deleteTempFiles()
     }
 
+    private initHandlebars() {
+        const primitives = [
+            "boolean",
+            "byte",
+            "char",
+            "short",
+            "integer",
+            "long",
+            "float",
+            "double",
+            "object",
+            "string",
+            "map"
+        ]
+        const coPrimitives = {
+            "$ref:type:playerSpecifier": {
+                name: "プレイヤ指定子",
+                $reference: "$ref:type:playerSpecifier",
+                path: "/"
+            },
+            "$ref:type:entitySpecifier": {
+                name: "エンティティ指定子",
+                $reference: "$ref:type:playerSpecifier",
+                path: "/"
+            }
+        }
+
+        Handlebars.registerHelper("safe", (content: string) => {
+            return new Handlebars.SafeString(content)
+        })
+
+        const resolve = (reference: string) => {
+            if (!reference.startsWith("$")) {
+                throw new Error(`Invalid reference: ${reference}`)
+            } else if (reference.match(/^\$ref:event:\?/)) {  // イベントは参照切れが想定される
+                return {
+                    name: reference.substring("$ref:event:?".length)
+                }
+            }
+
+            const linkedReference = this.resolveReference(reference)
+            if (linkedReference) {
+                return linkedReference.obj
+            } else {
+                throw new Error(`Reference not found: ${reference}`)
+            }
+        }
+
+        Handlebars.registerHelper("$", (obj: any, key: string) => {
+            return obj[key]
+        })
+
+        Handlebars.registerHelper("resolve", resolve)
+        Handlebars.registerHelper("resolveType", (type: string) => {
+            if (primitives.includes(type)) {
+                return {
+                    name: type,
+                    $reference: type
+                }
+            } else if (coPrimitives[type]) {
+                return coPrimitives[type]
+            } else {
+                return resolve(type)
+            }
+        })
+
+        Handlebars.registerHelper("path", (reference: string) => {
+            if (coPrimitives[reference]) {
+                return coPrimitives[reference].path
+            }
+
+            const linkedReference = this.resolveReference(reference)
+            if (!linkedReference) {
+                return undefined
+            }
+            const type = linkedReference.referenceType
+            const obj = linkedReference.obj
+            if (type === "types" || type === "actions") {
+                const data = obj as Action | Type
+                const category = this.getCategory(data.category)
+
+                if (category) {
+                    return `${this.basePath}/${type}/${category.id}/${obj.id}`
+                }
+            }
+            return `${this.basePath}/${type}/${obj.id}`
+        })
+        Handlebars.registerHelper("markdown", (content: string, indent: number = 0) => {
+            return new Handlebars.SafeString(content.replace(/\n/g, "<br />\n" + " ".repeat(indent)))
+        })
+        Handlebars.registerHelper("lineOf", (content: string, sliceQuery: string) => {
+            if (!sliceQuery.includes(":")) {
+                const line = parseInt(sliceQuery)
+                const lines = content.split("\n")
+                if (line < 0 || line >= lines.length) {
+                    throw new Error(`Invalid line number: ${line}`)
+                }
+
+                return new Handlebars.SafeString(lines[line])
+            }
+
+            const range = sliceQuery.split(":")
+            if (range.length !== 2) {
+                throw new Error(`Invalid slice query: ${sliceQuery}`)
+            }
+
+            const start = range[0] === "" ? 0 : parseInt(range[0])
+            const end = range[1] === "" ? content.length : parseInt(range[1])
+
+            return new Handlebars.SafeString(content.slice(start, end))
+        })
+
+        Handlebars.registerHelper("expr", (a, operator, b) => {
+            const boolA = !!a
+            const boolB = !!b
+
+            let result = false
+            switch (operator) {
+                case "==":
+                    result = boolA === boolB
+                    break
+                case "!=":
+                    result = boolA !== boolB
+                    break
+                case "&&":
+                    result = boolA && boolB
+                    break
+                case "||":
+                    result = boolA || boolB
+                    break
+                default:
+                    throw new Error(`Unknown operator: ${operator}`)
+            }
+
+            return result
+        })
+
+        Handlebars.registerHelper("contains", (array: string[], value: string) => {
+            return array && array.map(v => v.toLowerCase()).includes(value.toLowerCase())
+        })
+
+        Handlebars.registerHelper("not", (value: boolean) => {
+            return !value
+        })
+
+        Handlebars.registerHelper("join", (array: string[], separator: string) => {
+            return array.join(separator)
+        })
+
+
+        Handlebars.registerHelper("orderOf", (reference: string) => {
+            return this.linker.getOrderOfReference(reference)
+        })
+    }
+
     private getCategory(categoryReference: string): Category {
         const reference = this.resolveReference(categoryReference)
         if (reference) {
             return reference.obj as Category
         } else {
-            throw new Error(`Category not found: ${categoryReference}`)
+            return undefined
         }
     }
 
@@ -272,15 +424,10 @@ class LedgerSession {
     }
 
     private processOneFile(type: string, data: Action | Type | Category) {
-        const reference = data.$reference
-        const displayName = data.name
 
         const template = this.templates.getCompiledTemplate(type)
         // noinspection TypeScriptValidateTypes
         const output = template(data)
-
-        // Write the output to the output directory
-        this.linker.addReference(reference, displayName, type, data)
 
         let outputFile
         if (type === "types" || type === "actions") {

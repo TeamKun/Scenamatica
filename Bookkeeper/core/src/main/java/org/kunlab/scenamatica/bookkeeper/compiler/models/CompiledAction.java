@@ -187,6 +187,7 @@ public class CompiledAction implements ICompiled
     public static class ActionInput
     {
         private static final String KEY_NAME = "name";
+        private static final String KEY_TYPE = "type";
         private static final String KEY_DESCRIPTION = "description";
         private static final String KEY_REQUIRED_ON = "requiredOn";
         private static final String KEY_AVAILABLE_FOR = "availableFor";
@@ -200,6 +201,7 @@ public class CompiledAction implements ICompiled
         private static final String KEY_ADMONITIONS = "admonitions";
 
         String name;
+        TypeReference type;
         String description;
         ActionMethod[] requiredOn;
         ActionMethod[] availableFor;
@@ -216,6 +218,7 @@ public class CompiledAction implements ICompiled
         {
             Map<String, Object> map = new HashMap<>();
             map.put(KEY_NAME, this.name);
+            map.put(KEY_TYPE, this.type.getReference());
             map.put(KEY_DESCRIPTION, this.description);
             MapUtils.putIfNotNull(map, KEY_REQUIRED_ON, this.requiredOn);
             MapUtils.putIfNotNull(map, KEY_AVAILABLE_FOR, this.availableFor);
@@ -236,6 +239,7 @@ public class CompiledAction implements ICompiled
         {
             return new ActionInput(
                     parent.name,
+                    parent.type,
                     parent.description,
                     parent.requiredOn,
                     parent.availableFor,

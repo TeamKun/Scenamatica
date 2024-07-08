@@ -24,7 +24,7 @@ import org.kunlab.scenamatica.interfaces.structures.minecraft.misc.BlockStructur
 import java.util.Map;
 
 @Category(
-        id = "block",
+        id = "blocks",
         name = "ブロック",
         description = "ブロックに関するアクションを提供します。"
 )

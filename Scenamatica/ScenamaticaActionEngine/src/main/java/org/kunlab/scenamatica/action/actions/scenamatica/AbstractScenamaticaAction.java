@@ -4,7 +4,7 @@ import org.kunlab.scenamatica.action.AbstractAction;
 import org.kunlab.scenamatica.bookkeeper.annotations.Category;
 
 @Category(
-        id = "scenamatica",
+        id = "scenamaticas",
         name = "Scenamatica",
         description = "Scenamatica に関するアクションを提供します。"
 )

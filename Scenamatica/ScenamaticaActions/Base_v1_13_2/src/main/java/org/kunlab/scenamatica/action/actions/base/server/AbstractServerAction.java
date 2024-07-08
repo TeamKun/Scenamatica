@@ -4,7 +4,7 @@ import org.kunlab.scenamatica.action.AbstractAction;
 import org.kunlab.scenamatica.bookkeeper.annotations.Category;
 
 @Category(
-    id = "server",
+    id = "servers",
     name = "サーバ",
     description = "サーバに関するアクションを提供します。"
 )

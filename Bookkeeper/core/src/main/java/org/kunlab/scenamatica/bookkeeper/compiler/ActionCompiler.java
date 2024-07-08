@@ -272,7 +272,8 @@ public class ActionCompiler extends AbstractCompiler<ActionDefinition, CompiledA
         {
             AnnotationValues values = AnnotationValues.of(anno);
             InputDefinition input = this.inputReader.buildAnnotation(superClass, values);
-            inputs.put(input.getName(), constructInput(input, getActionByClass(superClass)));
+            TypeReference type = this.typeCompiler.lookup(input.getType());
+            inputs.put(input.getName(), constructInput(input, type, getActionByClass(superClass)));
         }
 
         return inputs;
@@ -292,7 +293,10 @@ public class ActionCompiler extends AbstractCompiler<ActionDefinition, CompiledA
         }
 
         for (InputDefinition input : definition.getInputs())
-            inputs.put(input.getName(), constructInput(input, null));
+        {
+            TypeReference typeReference = this.typeCompiler.lookup(input.getType());
+            inputs.put(input.getName(), constructInput(input, typeReference, null));
+        }
 
         return inputs;
     }
@@ -399,10 +403,11 @@ public class ActionCompiler extends AbstractCompiler<ActionDefinition, CompiledA
         );
     }
 
-    private static CompiledAction.ActionInput constructInput(InputDefinition input, @Nullable ActionReference inherits)
+    private static CompiledAction.ActionInput constructInput(InputDefinition input, TypeReference type, @Nullable ActionReference inherits)
     {
         return new CompiledAction.ActionInput(
                 input.getName(),
+                type,
                 input.getDescription(),
                 input.getRequiredOn(),
                 input.getAvailableFor(),

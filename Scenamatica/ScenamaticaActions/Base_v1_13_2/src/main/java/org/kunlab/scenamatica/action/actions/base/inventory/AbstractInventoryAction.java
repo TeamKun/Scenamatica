@@ -25,7 +25,7 @@ import org.kunlab.scenamatica.interfaces.structures.minecraft.inventory.Inventor
 
 })
 @Category(
-        id = "inventory",
+        id = "inventories",
         name = "インベントリ",
         description = "インベントリに関するアクションを提供します。"
 )

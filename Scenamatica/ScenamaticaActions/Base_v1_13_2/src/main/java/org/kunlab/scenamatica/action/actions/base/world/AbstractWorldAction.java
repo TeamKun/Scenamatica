@@ -18,7 +18,7 @@ import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Watchable;
 
 @Category(
-        id = "world",
+        id = "worlds",
         name = "ワールド",
         description = "ワールドに関するアクションを提供します。"
 )
