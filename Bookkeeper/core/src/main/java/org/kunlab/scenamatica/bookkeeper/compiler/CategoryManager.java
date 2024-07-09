@@ -120,6 +120,16 @@ public class CategoryManager
         }
     }
 
+    public CategoryEntry registerCategoryManually(String id, String name, String desc)
+    {
+        if (this.categories.containsKey(id))
+            throw new IllegalStateException("The category " + id + " is already registered");
+
+        CategoryEntry entry;
+        this.categories.put(id, entry = new CategoryEntry(id, name, desc, this.currentPhase));
+        return entry;
+    }
+
     public void flush()
     {
         try

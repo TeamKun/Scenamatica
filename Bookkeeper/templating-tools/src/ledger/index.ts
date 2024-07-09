@@ -277,6 +277,16 @@ class LedgerSession {
             }
         }
 
+        Handlebars.registerPartial("admonitions", `
+{{#if admonitions}}
+{{#each admonitions}}
+<Admonition type="{{type}}" {{#if title}}title="{{title}}"{{/if}}>
+  {{{content}}}
+</Admonition>
+{{/each}}
+{{/if}}
+`);
+
         Handlebars.registerHelper("safe", (content: string) => {
             return new Handlebars.SafeString(content)
         })
@@ -402,6 +412,15 @@ class LedgerSession {
 
         Handlebars.registerHelper("orderOf", (reference: string) => {
             return this.linker.getOrderOfReference(reference)
+        })
+
+        Handlebars.registerHelper("isMultiLine", (content: string) => {
+            return content.includes("\n")
+        })
+
+
+        Handlebars.registerHelper("isEmpty", (contents: any[]) => {
+            return contents == undefined || contents.length === 0
         })
     }
 

@@ -9,6 +9,7 @@ import org.kunlab.scenamatica.bookkeeper.annotations.Category;
 import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
 import org.kunlab.scenamatica.bookkeeper.annotations.OutputDoc;
 import org.kunlab.scenamatica.bookkeeper.annotations.OutputDocs;
+import org.kunlab.scenamatica.bookkeeper.enums.ActionMethod;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
@@ -32,7 +33,8 @@ public abstract class AbstractPlayerAction extends AbstractAction
     @InputDoc(
             name = "target",
             description = "対象のプレイヤです。",
-            type = PlayerSpecifier.class
+            type = PlayerSpecifier.class,
+            requiredOn = ActionMethod.EXECUTE
     )
     public static final InputToken<PlayerSpecifier> IN_TARGET = ofInput(
             "target",

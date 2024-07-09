@@ -9,6 +9,9 @@ sidebar_position: {{orderOf $reference}}
 import AbleState from "/src/components/AbleState";
 import ActionIcon from "/src/components/ActionIcon";
 import CopyableText from "/src/components/CopyableText";
+import RequiredMark from "/src/components/RequiredMark";
+
+import Admonition from '@theme/Admonition';
 import Heading from "@theme/Heading";
 import Link from "@docusaurus/Link";
 import Tabs from '@theme/Tabs';
@@ -28,13 +31,7 @@ import TabItem from '@theme/TabItem';
 
 {{markdown description}}
 
-{{#if admonitions}}
-{{#each admonitions}}
-:::{{type}} {{#if title}}{{title}}{{/if}}
-{{markdown content}}
-:::
-{{/each}}
-{{/if}}
+{{>admonitions admonitions=admonitions}}
 
 ### 基本情報 {#overview}
 
@@ -51,15 +48,15 @@ import TabItem from '@theme/TabItem';
     </tr>
     {{/if}}
     <tr>
-      <td>実行可能 (<kbd><a href="?scenario-type=execute#inputs">execute</a></kbd>)</td>
+      <td>実行可能 (<kbd>{{#if executable}}<a href="?scenario-type=execute#inputs">execute</a>{{else}}execute{{/if}}</kbd>)</td>
       <td><AbleState {{#if executable}}able description="{{executable}}" {{/if}}/></td>
     </tr>
     <tr>
-      <td>監視可能 (<kbd><a href="?scenario-type=expect#inputs">expect</a></kbd>)</td>
+      <td>監視可能 (<kbd>{{#if watchable}}<a href="?scenario-type=watch#inputs">expect</a>{{else}}expect{{/if}}</kbd>)</td>
       <td><AbleState {{#if watchable}}able description="{{watchable}}" {{/if}}/></td>
     </tr>
     <tr>
-      <td>要求可能 (<kbd><a href="?scenario-type=require#inputs">require</a></kbd>)</td>
+      <td>要求可能 (<kbd>{{#if requireable}}<a href="?scenario-type=require#inputs">require</a>{{else}}require{{/if}}</kbd>)</td>
       <td><AbleState {{#if requireable}}able description="{{requireable}}" {{/if}}/></td>
     </tr>
     {{#if events}}
@@ -70,7 +67,11 @@ import TabItem from '@theme/TabItem';
         {{#each events}}
         {{#with (resolve this)}}
           <li>
+            {{#if javadoc_link}}
             <a href="{{javadoc_link}}">{{name}}</a><br />
+            {{else}}
+            {{name}}<br />
+            {{/if}}
             {{#if description}}
             {{markdown description "12"}}
             {{/if}}
@@ -91,16 +92,20 @@ import TabItem from '@theme/TabItem';
 </table>
 
 ### 入力パラメータ {#inputs}
+
 {{#*inline "input"}}
 <TabItem value="{{mode}}" label="{{mode_jp}}">
-  **入力パラメータ一覧**
+  **入力パラメータ一覧(<RequiredMark /> = 必須, クリックでコピー可)**
+  {{#if (isEmpty inputs)}}
+  <p>入力パラメータはありません。</p>
+  {{else}}
   <table>
     <tbody>
       {{#each inputs}}
       {{#if (expr (not availableFor) "||" (contains availableFor ../mode))}}
       <tr>
       {{!-- ↑ availableFor が存在しないものまたは, アクションが指定されているもののみレンダリング。 --}}
-      <td><CopyableText domID="{{name}}">{{name}}</CopyableText></td>
+      <td><CopyableText domID="{{name}}">{{name}}</CopyableText>{{#if (contains requiredOn ../mode)}}<RequiredMark }/>{{/if}</td>
       <td>{{#with (resolveType type)}}{{#if (path $reference)}}<Link to="{{path $reference}}">{{name}}</Link>{{else}}{{name}}{{/if}}{{/with}}</td>
       <td>{{lineOf description "0"}}</td>
       </tr>
@@ -108,12 +113,17 @@ import TabItem from '@theme/TabItem';
       {{/each}}
     </tbody>
   </table>
+  {{/if}}
   {{!--インデントを変えるとパラメタが壊れる。--}}
   {{#each inputs}}
   {{#if (expr (not availableFor) "||" (contains availableFor ../mode))}}
-  <Heading id="input-{{../mode}}-{{name}}" as="h3">{{name}}</Heading>
+  {{#if (expr (isMultiLine description) "||" admonitions)}}
+  <Heading id="input-{{../mode}}-{{name}}" as="h3">{{name}}{{#if (contains requiredOn ../mode)}}<RequiredMark />{{/if}}</Heading>
   {{#if description}}
   {{markdown description}}
+  {{/if}}
+  {{>admonitions admonitions=admonitions}}
+  <br />
   {{/if}}
   {{/if}}
   {{/each}}
@@ -128,5 +138,47 @@ import TabItem from '@theme/TabItem';
   {{/if}}
   {{#if requireable}}
   {{> input mode="require" mode_jp="要求"}}
+  {{/if}}
+</Tabs>
+
+### 出力 {#outputs}
+
+{{#*inline "output"}}
+<TabItem value="{{mode}}" label="{{mode_jp}}">
+  **出力一覧**
+  {{#if (isEmpty outputs)}}
+  <p>出力はありません。</p>
+  {{else}}
+  <table>
+    <tbody>
+      {{#each outputs}}
+      <tr>
+      <td>{{name}}</td>
+      <td>{{#with (resolveType type)}}{{#if (path $reference)}}<Link to="{{path $reference}}">{{name}}</Link>{{else}}{{name}}{{/if}}{{/with}}</td>
+      <td>{{lineOf description "0"}}</td>
+      </tr>
+      {{/each}}
+    </tbody>
+  </table>
+  {{/if}}
+  {{#each outputs}}
+  {{#if (isMultiLine description)}}
+  <Heading id="output-{{mode}}-{{name}}" as="h3">{{name}}</Heading>
+  {{markdown description}}
+  {{>admonitions admonitions=admonitions}}
+  {{/if}}
+  <br />
+  {{/each}}
+</TabItem>
+{{/inline}}
+<Tabs groupId="scenario-type" queryString>
+  {{#if executable}}
+  {{> output mode="execute" mode_jp="実行"}}
+  {{/if}}
+  {{#if watchable}}
+  {{> output mode="watch" mode_jp="監視"}}
+  {{/if}}
+  {{#if requireable}}
+  {{> output mode="require" mode_jp="要求"}}
   {{/if}}
 </Tabs>

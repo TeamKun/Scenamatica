@@ -59,10 +59,10 @@ public class CompiledStringType extends CompiledType implements IPrimitiveType
 
     public CompiledStringType(CompiledType original, Format format, String pattern, Map<String, String> enums)
     {
-        super(original.getId(), original.getName(), null, original.getClassName(), original.getMappingOf());
+        super(original.getId(), original.getName(), original.getCategory(), original.getClassName(), original.getMappingOf());
         this.format = format;
-        this.pattern = pattern;
         this.enums = enums;
+        this.pattern = pattern;
     }
 
     public CompiledStringType(CompiledType original, Format format)

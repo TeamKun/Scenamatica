@@ -1,0 +1,8 @@
+span.requiredMark {
+  color: #c22;
+
+  font-size: 1.2em;
+  margin-left: 0.1em;
+
+  user-select: none;
+}

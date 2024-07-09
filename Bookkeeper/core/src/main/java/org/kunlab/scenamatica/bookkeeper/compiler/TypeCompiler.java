@@ -41,6 +41,7 @@ public class TypeCompiler extends AbstractCompiler<TypeDefinition, CompiledType,
 
     private final BookkeeperCore core;
     private final CategoryManager categoryManager;
+    private CategoryManager.CategoryEntry enumCategory;
 
     static
     {
@@ -94,6 +95,12 @@ public class TypeCompiler extends AbstractCompiler<TypeDefinition, CompiledType,
     protected String toId(CompiledType compiledItem)
     {
         return compiledItem.getId();
+    }
+
+    @Override
+    public void prepare()
+    {
+        this.enumCategory = this.categoryManager.registerCategoryManually("enums", "列挙型", "自動生成された列挙型");
     }
 
     @Override
@@ -265,6 +272,9 @@ public class TypeCompiler extends AbstractCompiler<TypeDefinition, CompiledType,
         String id = createClassNameStringReference(className);
 
         CategoryManager.CategoryEntry category = this.categoryManager.recogniseCategory(classNode);
+        if (category == null)
+            category = this.enumCategory;
+
         CompiledStringType cType = new CompiledStringType(
                 new CompiledType(
                         id,

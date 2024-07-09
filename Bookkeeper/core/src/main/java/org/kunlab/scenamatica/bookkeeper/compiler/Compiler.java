@@ -85,6 +85,7 @@ public class Compiler
             Timekeeper tCompile = new Timekeeper(log, "COMPILE-" + compiler.getClass().getSimpleName());
             tCompile.start();
             this.categoryManager.changePhase(compiler.getName());
+            compiler.prepare();
 
             Class<? extends IDefinition> definitionType = compiler.getDefinitionType();
             for (IDefinition definition : sortedList)
