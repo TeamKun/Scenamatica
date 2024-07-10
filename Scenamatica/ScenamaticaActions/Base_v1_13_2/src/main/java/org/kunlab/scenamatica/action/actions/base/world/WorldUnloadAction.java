@@ -26,7 +26,7 @@ import java.util.List;
         },
 
         executable = "ワールドをアンロードします。",
-        watchable = "ワールドがアンロードされることを期待します。",
+        expectable = "ワールドがアンロードされることを期待します。",
         requireable = "ワールドがアンロードされていることを要求します。"
 
 )

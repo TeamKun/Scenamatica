@@ -14,7 +14,7 @@ import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
-import org.kunlab.scenamatica.interfaces.action.types.Watchable;
+import org.kunlab.scenamatica.interfaces.action.types.Expectable;
 
 import java.util.Collections;
 import java.util.List;
@@ -28,7 +28,7 @@ import java.util.List;
         },
 
         executable = "プレイヤをサーバから強制退出させます。",
-        watchable = "プレイヤがサーバから強制退出されることを期待します。",
+        expectable = "プレイヤがサーバから強制退出されることを期待します。",
         requireable = ActionDoc.UNALLOWED,
 
         outputs = {
@@ -45,7 +45,7 @@ import java.util.List;
         }
 )
 public class PlayerKickAction extends AbstractPlayerAction
-        implements Executable, Watchable
+        implements Executable, Expectable
 {
     @InputDoc(
             name = "leaveMessage",

@@ -23,7 +23,7 @@ import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
-import org.kunlab.scenamatica.interfaces.action.types.Watchable;
+import org.kunlab.scenamatica.interfaces.action.types.Expectable;
 import org.kunlab.scenamatica.interfaces.context.Actor;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.inventory.ItemStackStructure;
 import org.kunlab.scenamatica.interfaces.structures.specifiers.EntitySpecifier;
@@ -42,7 +42,7 @@ import java.util.List;
                 PlayerBucketEntityEvent.class
         },
         executable = "エンティティを操作します。",
-        watchable = "エンティティが操作されることを期待します。",
+        expectable = "エンティティが操作されることを期待します。",
         requireable = ActionDoc.UNALLOWED,
 
         outputs = {
@@ -66,7 +66,7 @@ import java.util.List;
         supportsSince = MCVersion.V1_16_5
 )
 public class PlayerBucketEntityAction extends AbstractPlayerAction
-        implements Executable, Watchable
+        implements Executable, Expectable
 {
     @InputDoc(
             name = "entity",

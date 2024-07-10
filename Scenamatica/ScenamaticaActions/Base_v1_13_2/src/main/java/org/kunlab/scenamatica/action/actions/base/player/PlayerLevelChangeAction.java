@@ -15,7 +15,7 @@ import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
-import org.kunlab.scenamatica.interfaces.action.types.Watchable;
+import org.kunlab.scenamatica.interfaces.action.types.Expectable;
 
 import java.util.Collections;
 import java.util.List;
@@ -29,7 +29,7 @@ import java.util.List;
         },
 
         executable = "プレイヤのレベルを変更します。",
-        watchable = "プレイヤのレベルが変更されることを期待します。",
+        expectable = "プレイヤのレベルが変更されることを期待します。",
         requireable = "プレイヤのレベルが指定された値になることを要求します。",
 
         outputs = {
@@ -46,7 +46,7 @@ import java.util.List;
         }
 )
 public class PlayerLevelChangeAction extends AbstractPlayerAction
-        implements Watchable, Executable,
+        implements Expectable, Executable,
         Requireable
 {
     @InputDoc(

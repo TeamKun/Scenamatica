@@ -16,7 +16,7 @@ import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
-import org.kunlab.scenamatica.interfaces.action.types.Watchable;
+import org.kunlab.scenamatica.interfaces.action.types.Expectable;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.inventory.ItemStackStructure;
 
 import java.util.Collections;
@@ -31,7 +31,7 @@ import java.util.List;
         },
 
         executable = "プレイヤのホットバースロットを変更します。",
-        watchable = "プレイヤのホットバースロットが変更されることを期待します。",
+        expectable = "プレイヤのホットバースロットが変更されることを期待します。",
         requireable = "プレイヤのホットバースロットが指定されたものであることを要求します。",
 
         outputs = {
@@ -53,7 +53,7 @@ import java.util.List;
         }
 )
 public class PlayerHotbarSlotAction extends AbstractPlayerAction
-        implements Executable, Watchable, Requireable
+        implements Executable, Expectable, Requireable
 {
     @InputDoc(
             name = "slot",

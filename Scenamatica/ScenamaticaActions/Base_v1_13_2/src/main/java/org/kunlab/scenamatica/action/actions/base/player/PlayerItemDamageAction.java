@@ -18,7 +18,7 @@ import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
-import org.kunlab.scenamatica.interfaces.action.types.Watchable;
+import org.kunlab.scenamatica.interfaces.action.types.Expectable;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.inventory.ItemStackStructure;
 import org.kunlab.scenamatica.nms.NMSProvider;
 import org.kunlab.scenamatica.nms.types.entity.NMSEntityPlayer;
@@ -37,7 +37,7 @@ import java.util.List;
         },
 
         executable = "プレイヤが所持しているアイテムにダメージを与えます。",
-        watchable = "プレイヤが所持しているアイテムにダメージが与えることを期待します。",
+        expectable = "プレイヤが所持しているアイテムにダメージが与えることを期待します。",
         requireable = "プレイヤが所持しているアイテムのダメージが一致することを要求します。",
 
         outputs = {
@@ -55,7 +55,7 @@ import java.util.List;
         }
 )
 public class PlayerItemDamageAction extends AbstractPlayerAction
-        implements Executable, Watchable, Requireable
+        implements Executable, Expectable, Requireable
 {
     @InputDoc(
             name = "item",

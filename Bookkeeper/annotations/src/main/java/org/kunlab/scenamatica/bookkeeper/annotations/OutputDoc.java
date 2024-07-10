@@ -39,7 +39,7 @@ public @interface OutputDoc
      * @return 出力の対象メソッド
      */
     @NotNull
-    ActionMethod[] target() default {ActionMethod.EXECUTE, ActionMethod.REQUIRE, ActionMethod.WATCH};
+    ActionMethod[] target() default {ActionMethod.EXECUTE, ActionMethod.REQUIRE, ActionMethod.EXPECT};
 
     /**
      * 出力の型を取得します。

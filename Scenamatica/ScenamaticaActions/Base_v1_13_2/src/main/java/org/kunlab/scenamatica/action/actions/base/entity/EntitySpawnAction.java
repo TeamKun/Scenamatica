@@ -21,7 +21,7 @@ import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
-import org.kunlab.scenamatica.interfaces.action.types.Watchable;
+import org.kunlab.scenamatica.interfaces.action.types.Expectable;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.EntityStructure;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.misc.LocationStructure;
 import org.kunlab.scenamatica.interfaces.structures.specifiers.EntitySpecifier;
@@ -38,7 +38,7 @@ import java.util.List;
         },
 
         executable = "エンティティを召喚させます。",
-        watchable = "エンティティが召喚されることを期待します。",
+        expectable = "エンティティが召喚されることを期待します。",
         requireable = ActionDoc.UNALLOWED,
 
         outputs = {
@@ -51,7 +51,7 @@ import java.util.List;
 )
 @Category(inherit= AbstractEntityAction.class)
 public class EntitySpawnAction<E extends Entity> extends AbstractAction
-        implements Executable, Watchable
+        implements Executable, Expectable
 {
     public static final String KEY_OUT_ENTITY = "entity";
 

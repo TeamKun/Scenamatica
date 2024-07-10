@@ -5,9 +5,7 @@
   "scripts": {
     "docusaurus": "docusaurus",
     "start": "docusaurus start",
-    "build": "pnpm run build:site && pnpm run build:schema && pnpm run build:minifySchema",
-    "build:schema": "ts-node script/schema/build.ts schema build",
-    "build:minifySchema": "ts-node script/schema/minifier.ts build/schema",
+    "build": "./build-references && pnpm run build:site",
     "build:site": "docusaurus build",
     "swizzle": "docusaurus swizzle",
     "deploy": "docusaurus deploy",

@@ -24,7 +24,7 @@ import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
-import org.kunlab.scenamatica.interfaces.action.types.Watchable;
+import org.kunlab.scenamatica.interfaces.action.types.Expectable;
 import org.kunlab.scenamatica.interfaces.context.Actor;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.misc.BlockStructure;
 import org.kunlab.scenamatica.interfaces.structures.specifiers.PlayerSpecifier;
@@ -44,7 +44,7 @@ import java.util.Map;
         },
 
         executable = "指定されたエンティティを設置します。",
-        watchable = "指定されたエンティティが設置されることを期待します。",
+        expectable = "指定されたエンティティが設置されることを期待します。",
         requireable = ActionDoc.UNALLOWED,
 
         outputs = {
@@ -71,7 +71,7 @@ import java.util.Map;
         }
 )
 public class EntityPlaceAction extends AbstractGeneralEntityAction
-        implements Executable, Watchable
+        implements Executable, Expectable
 {
     // armor stands, boats, minecarts, and end crystals. しか呼ばれないらしい
     public static final Map<Material, EntityType> PLACEABLE_ENTITIES_MAP;

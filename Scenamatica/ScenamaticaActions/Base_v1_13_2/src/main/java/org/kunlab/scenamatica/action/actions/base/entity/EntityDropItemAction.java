@@ -16,7 +16,7 @@ import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
-import org.kunlab.scenamatica.interfaces.action.types.Watchable;
+import org.kunlab.scenamatica.interfaces.action.types.Expectable;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.entities.EntityItemStructure;
 import org.kunlab.scenamatica.interfaces.structures.specifiers.EntitySpecifier;
 import org.kunlab.scenamatica.nms.NMSProvider;
@@ -36,7 +36,7 @@ import java.util.List;
         },
 
         executable = "エンティティがアイテムをドロップします。",
-        watchable = "エンティティがアイテムをドロップすることを期待します。",
+        expectable = "エンティティがアイテムをドロップすることを期待します。",
         requireable = ActionDoc.UNALLOWED,
 
         outputs = {
@@ -49,7 +49,7 @@ import java.util.List;
 
 )
 public class EntityDropItemAction extends AbstractGeneralEntityAction
-        implements Executable, Watchable
+        implements Executable, Expectable
 {
     public static final String OUT_KEY_ITEM = "item";
 

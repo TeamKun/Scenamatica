@@ -18,7 +18,7 @@ import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
-import org.kunlab.scenamatica.interfaces.action.types.Watchable;
+import org.kunlab.scenamatica.interfaces.action.types.Expectable;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -35,7 +35,7 @@ import java.util.Map;
         },
 
         executable = "エンティティにダメージを与えます。",
-        watchable = "エンティティがダメージを受けることを期待します。",
+        expectable = "エンティティがダメージを受けることを期待します。",
         requireable = ActionDoc.UNALLOWED,
 
         outputs = {
@@ -58,7 +58,7 @@ import java.util.Map;
 
 )
 public class EntityDamageAction extends AbstractGeneralEntityAction
-        implements Executable, Watchable
+        implements Executable, Expectable
 {
     @InputDoc(
             name = "cause",

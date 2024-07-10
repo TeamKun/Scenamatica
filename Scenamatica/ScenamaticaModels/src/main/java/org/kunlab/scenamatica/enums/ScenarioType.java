@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.interfaces.action.Action;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
-import org.kunlab.scenamatica.interfaces.action.types.Watchable;
+import org.kunlab.scenamatica.interfaces.action.types.Expectable;
 
 /**
  * シナリオの種類です。
@@ -22,7 +22,7 @@ public enum ScenarioType
     /**
      * アクションが起きることを期待し, 起きなかった場合は失敗とします。
      */
-    ACTION_EXPECT("expect", Watchable.class),
+    ACTION_EXPECT("expect", Expectable.class),
     /**
      * 条件を**既に**満たしていることを期待します。
      */

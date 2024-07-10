@@ -12,7 +12,7 @@ public enum ActionMethod
     /**
      * アクションが実行されるかを監視します。
      */
-    WATCH,
+    EXPECT,
     /**
      * アクションに係るコンディションを確認します。
      */

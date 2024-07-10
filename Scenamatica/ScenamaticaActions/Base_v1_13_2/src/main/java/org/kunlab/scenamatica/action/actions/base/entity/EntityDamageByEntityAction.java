@@ -32,7 +32,7 @@ import java.util.Map;
         },
 
         executable = "エンティティにエンティティによるダメージを与えます。",
-        watchable = "エンティティがエンティティによるダメージを受けることを期待します。",
+        expectable = "エンティティがエンティティによるダメージを受けることを期待します。",
         requireable = ActionDoc.UNALLOWED,
 
         outputs = {

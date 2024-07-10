@@ -19,7 +19,7 @@ import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
-import org.kunlab.scenamatica.interfaces.action.types.Watchable;
+import org.kunlab.scenamatica.interfaces.action.types.Expectable;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.entities.EntityItemStructure;
 import org.kunlab.scenamatica.interfaces.structures.specifiers.EntitySpecifier;
 import org.kunlab.scenamatica.nms.NMSProvider;
@@ -48,7 +48,7 @@ import java.util.List;
         },
 
         executable = "エンティティがアイテムを拾い上げます。",
-        watchable = "エンティティがアイテムを拾い上げることを期待します。",
+        expectable = "エンティティがアイテムを拾い上げることを期待します。",
         requireable = ActionDoc.UNALLOWED,
 
         outputs = {
@@ -65,13 +65,13 @@ import java.util.List;
         }
 )
 public class EntityPickupItemAction extends AbstractGeneralEntityAction
-        implements Executable, Watchable
+        implements Executable, Expectable
 {
     @InputDoc(
             name = "remaining",
             description = "残りのアイテムの量です。",
             type = int.class,
-            availableFor = ActionMethod.WATCH
+            availableFor = ActionMethod.EXPECT
     )
     public static final InputToken<Integer> IN_REMAINING = ofInput(
             "remaining",

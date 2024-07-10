@@ -64,7 +64,7 @@ jobs:
         timeout-minutes: 60
   cleanup:
     name: Clean up
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     needs: self-tests
     steps:
       - name: Clean artifacts

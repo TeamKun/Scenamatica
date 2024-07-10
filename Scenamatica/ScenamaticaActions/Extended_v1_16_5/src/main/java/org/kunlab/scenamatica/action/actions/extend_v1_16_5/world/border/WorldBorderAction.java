@@ -18,7 +18,7 @@ import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
-import org.kunlab.scenamatica.interfaces.action.types.Watchable;
+import org.kunlab.scenamatica.interfaces.action.types.Expectable;
 import org.kunlab.scenamatica.interfaces.scenariofile.Creatable;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.misc.LocationStructure;
 
@@ -27,7 +27,7 @@ import java.util.List;
 
 @Action(value = "world_border", supportsSince = MinecraftVersion.V1_16_5)
 public class WorldBorderAction extends AbstractWorldAction
-        implements Executable, Watchable, Requireable
+        implements Executable, Expectable, Requireable
 {
     // WorldBorderBoundsChangeEvent と WorldBorderCenterChangeEvent を処理する
 

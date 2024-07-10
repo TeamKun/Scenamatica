@@ -28,16 +28,16 @@
         }
       ]
     },
-    "watchable": {
+    "expectable": {
       "anyOf": [
         {
           "type": "string",
-          "description": "What will happen when the action is watched"
+          "description": "What will happen when the action is expected"
         },
         {
           "type": "boolean",
           "const": false,
-          "description": "Whether the action is watchable"
+          "description": "Whether the action is expectable"
         }
       ]
     },
@@ -81,7 +81,7 @@
                       "type": "string",
                       "enum": [
                         "execute",
-                        "watch",
+                        "expect",
                         "require"
                       ]
                     }
@@ -96,7 +96,7 @@
                   "type": "string",
                   "enum": [
                     "execute",
-                    "watch",
+                    "expect",
                     "require"
                   ]
                 }
@@ -130,7 +130,7 @@
                   "type": "string",
                   "enum": [
                     "execute",
-                    "watch",
+                    "expect",
                     "require"
                   ]
                 }
@@ -162,7 +162,7 @@
     "name",
     "description",
     "executable",
-    "watchable",
+    "expectable",
     "requireable"
   ],
   "additionalProperties": false

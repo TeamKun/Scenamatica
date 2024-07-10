@@ -8,7 +8,7 @@ import org.kunlab.scenamatica.annotations.action.Action;
 import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
-import org.kunlab.scenamatica.interfaces.action.types.Watchable;
+import org.kunlab.scenamatica.interfaces.action.types.Expectable;
 
 import java.util.Collections;
 import java.util.List;
@@ -22,12 +22,12 @@ import java.util.List;
         },
 
         executable = "ワールドを保存します。",
-        watchable = "ワールドが保存されることを期待します。",
+        expectable = "ワールドが保存されることを期待します。",
         requireable = ActionDoc.UNALLOWED
 
 )
 public class WorldSaveAction extends AbstractWorldAction
-        implements Executable, Watchable
+        implements Executable, Expectable
 {
 
     @Override

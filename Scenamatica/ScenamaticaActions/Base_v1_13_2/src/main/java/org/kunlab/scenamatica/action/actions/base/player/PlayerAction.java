@@ -20,7 +20,7 @@ import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.PlayerStruc
 
         executable = "プレイヤの状態や属性を変更します。",
         requireable = ActionDoc.UNALLOWED,
-        watchable = "プレイヤの状態や属性が指定されたものと一致するかどうかを確認します。"
+        expectable = "プレイヤの状態や属性が指定されたものと一致するかどうかを確認します。"
 )
 public class PlayerAction extends AbstractPlayerAction
         implements Executable, Requireable

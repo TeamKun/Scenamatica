@@ -102,7 +102,7 @@ public class ActionCompiler extends AbstractCompiler<ActionDefinition, CompiledA
         }*/
 
         CompiledAction.Contract executable = CompiledAction.Contract.ofUnavailable();
-        CompiledAction.Contract watchable = CompiledAction.Contract.ofUnavailable();
+        CompiledAction.Contract expectable = CompiledAction.Contract.ofUnavailable();
         CompiledAction.Contract requireable = CompiledAction.Contract.ofUnavailable();
         String executableQuery;
         if (hasValidContract(executableQuery = definition.getExecutable()))
@@ -114,14 +114,14 @@ public class ActionCompiler extends AbstractCompiler<ActionDefinition, CompiledA
                 executable = superExecutable;
         }
 
-        String watchableQuery;
-        if (hasValidContract(watchableQuery = definition.getWatchable()))
-            watchable = compileContract(watchableQuery);
+        String expectableQuery;
+        if (hasValidContract(expectableQuery = definition.getExpectable()))
+            expectable = compileContract(expectableQuery);
         else
         {
-            CompiledAction.Contract superWatchable = findSuperDeclaration(superActions, CompiledAction::getWatchable, CompiledAction.Contract::isAvailable);
-            if (superWatchable != null)
-                watchable = superWatchable;
+            CompiledAction.Contract superExpectable = findSuperDeclaration(superActions, CompiledAction::getExpectable, CompiledAction.Contract::isAvailable);
+            if (superExpectable != null)
+                expectable = superExpectable;
         }
 
         String requireableQuery;
@@ -165,7 +165,7 @@ public class ActionCompiler extends AbstractCompiler<ActionDefinition, CompiledA
                         categoryReference,
                         events.toArray(new EventReference[0]),
                         executable,
-                        watchable,
+                        expectable,
                         requireable,
                         supportsSince,
                         supportsUntil,

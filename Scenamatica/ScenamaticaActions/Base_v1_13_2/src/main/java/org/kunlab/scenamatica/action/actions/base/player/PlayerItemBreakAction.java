@@ -19,7 +19,7 @@ import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
-import org.kunlab.scenamatica.interfaces.action.types.Watchable;
+import org.kunlab.scenamatica.interfaces.action.types.Expectable;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.inventory.ItemStackStructure;
 import org.kunlab.scenamatica.nms.NMSProvider;
 import org.kunlab.scenamatica.nms.enums.entity.NMSItemSlot;
@@ -39,7 +39,7 @@ import java.util.List;
         },
 
         executable = "プレイヤのアイテムを破壊します。",
-        watchable = "プレイヤのアイテムが破壊されることを期待します。",
+        expectable = "プレイヤのアイテムが破壊されることを期待します。",
         requireable = ActionDoc.UNALLOWED,
 
         outputs = {
@@ -56,7 +56,7 @@ import java.util.List;
         }
 )
 public class PlayerItemBreakAction extends AbstractPlayerAction
-        implements Executable, Watchable
+        implements Executable, Expectable
 {
     @InputDoc(
             name = "item",

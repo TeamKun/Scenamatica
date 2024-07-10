@@ -6,27 +6,21 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.jetbrains.annotations.NotNull;
-import org.kunlab.scenamatica.action.actions.base.player.AbstractPlayerAction;
 import org.kunlab.scenamatica.annotations.action.Action;
 import org.kunlab.scenamatica.bookkeeper.annotations.Admonition;
 import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
 import org.kunlab.scenamatica.bookkeeper.enums.AdmonitionType;
-import org.kunlab.scenamatica.commons.utils.Utils;
 import org.kunlab.scenamatica.enums.MinecraftVersion;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
-import org.kunlab.scenamatica.interfaces.action.types.Watchable;
-import org.kunlab.scenamatica.interfaces.structures.minecraft.misc.LocationStructure;
-
-import java.util.Arrays;
-import java.util.List;
+import org.kunlab.scenamatica.interfaces.action.types.Expectable;
 
 @Action(value = "player_respawn", supportsSince = MinecraftVersion.V1_16)
 public class PlayerRespawnAction extends org.kunlab.scenamatica.action.actions.base.player.PlayerRespawnAction
-        implements Executable, Watchable
+        implements Executable, Expectable
 {
     @InputDoc(
             name = "isAnchor",

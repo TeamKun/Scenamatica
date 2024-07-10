@@ -25,7 +25,7 @@ import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
-import org.kunlab.scenamatica.interfaces.action.types.Watchable;
+import org.kunlab.scenamatica.interfaces.action.types.Expectable;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.EntityStructure;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.entities.ProjectileStructure;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.misc.BlockStructure;
@@ -46,11 +46,11 @@ import java.util.List;
         },
 
         executable = "投射物を発射します。",
-        watchable = "投射物が発射されることを期待します。",
+        expectable = "投射物が発射されることを期待します。",
         requireable = ActionDoc.UNALLOWED
 )
 public class ProjectileLaunchAction extends EntitySpawnAction<Projectile>
-        implements Executable, Watchable, Listener
+        implements Executable, Expectable, Listener
 {
     private final Plugin plugin;
 

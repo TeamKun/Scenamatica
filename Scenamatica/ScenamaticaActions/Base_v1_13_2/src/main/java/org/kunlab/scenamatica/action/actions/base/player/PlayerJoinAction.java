@@ -15,7 +15,7 @@ import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
-import org.kunlab.scenamatica.interfaces.action.types.Watchable;
+import org.kunlab.scenamatica.interfaces.action.types.Expectable;
 import org.kunlab.scenamatica.interfaces.context.Actor;
 
 import java.util.Collections;
@@ -31,7 +31,7 @@ import java.util.Optional;
         },
 
         executable = "プレイヤがサーバに参加します。",
-        watchable = "プレイヤがサーバに参加することを期待します。",
+        expectable = "プレイヤがサーバに参加することを期待します。",
         requireable = "プレイヤがオンラインであることを要求します。",
 
         outputs = {
@@ -43,7 +43,7 @@ import java.util.Optional;
         }
 )
 public class PlayerJoinAction extends AbstractPlayerAction
-        implements Executable, Watchable, Requireable
+        implements Executable, Expectable, Requireable
 {
     // OfflinePlayer を扱うため, 通常の PlayerAction とは違う実装をする。
 

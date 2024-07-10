@@ -15,7 +15,7 @@ import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
-import org.kunlab.scenamatica.interfaces.action.types.Watchable;
+import org.kunlab.scenamatica.interfaces.action.types.Expectable;
 
 @Category(
         id = "worlds",
@@ -30,7 +30,7 @@ import org.kunlab.scenamatica.interfaces.action.types.Watchable;
         )
 })
 public abstract class AbstractWorldAction extends AbstractAction
-        implements Watchable
+        implements Expectable
 {
     @InputDoc(
             name = "world",

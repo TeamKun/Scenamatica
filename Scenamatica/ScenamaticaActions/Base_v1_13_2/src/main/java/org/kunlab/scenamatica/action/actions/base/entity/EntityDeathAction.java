@@ -6,13 +6,11 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDeathEvent;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.action.utils.InputTypeToken;
 import org.kunlab.scenamatica.annotations.action.Action;
 import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
 import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
-import org.kunlab.scenamatica.bookkeeper.annotations.OutputDoc;
 import org.kunlab.scenamatica.bookkeeper.enums.ActionMethod;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
@@ -20,7 +18,7 @@ import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
-import org.kunlab.scenamatica.interfaces.action.types.Watchable;
+import org.kunlab.scenamatica.interfaces.action.types.Expectable;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.inventory.ItemStackStructure;
 
 import java.util.ArrayList;
@@ -37,17 +35,17 @@ import java.util.Map;
         },
 
         executable = "エンティティを死亡させます。",
-        watchable = "エンティティが死亡することを期待します。",
+        expectable = "エンティティが死亡することを期待します。",
         requireable = ActionDoc.UNALLOWED
 )
 public class EntityDeathAction extends AbstractGeneralEntityAction
-        implements Executable, Watchable
+        implements Executable, Expectable
 {
     @InputDoc(
             name = "drops",
             description = "死亡時にドロップするアイテムです。",
             type = ItemStackStructure.class,
-            availableFor = {ActionMethod.WATCH}
+            availableFor = {ActionMethod.EXPECT}
     )
     public static final InputToken<List<ItemStackStructure>> IN_DROPS = ofInput(
             "drops",
@@ -66,7 +64,7 @@ public class EntityDeathAction extends AbstractGeneralEntityAction
             description = "死亡時にドロップする経験値です。",
             type = int.class,
             min = 0,
-            availableFor = {ActionMethod.WATCH}
+            availableFor = {ActionMethod.EXPECT}
     )
     public static final InputToken<Integer> IN_DROP_EXP = ofInput(
             "dropExp",
@@ -78,7 +76,7 @@ public class EntityDeathAction extends AbstractGeneralEntityAction
             description = "復活時の体力です。",
             type = double.class,
             min = 0,
-            availableFor = {ActionMethod.WATCH}
+            availableFor = {ActionMethod.EXPECT}
     )
     public static final InputToken<Double> IN_REVIVE_HEALTH = ofInput(
             "reviveHealth",
@@ -89,7 +87,7 @@ public class EntityDeathAction extends AbstractGeneralEntityAction
             name = "playDeathSound",
             description = "死亡時にサウンドを再生するかどうかです。",
             type = boolean.class,
-            availableFor = {ActionMethod.WATCH}
+            availableFor = {ActionMethod.EXPECT}
     )
     public static final InputToken<Boolean> IN_SHOULD_PLAY_DEATH_SOUND = ofInput(
             "playDeathSound",
@@ -100,7 +98,7 @@ public class EntityDeathAction extends AbstractGeneralEntityAction
             name = "sound",
             description = "死亡時に再生するサウンドです。",
             type = Sound.class,
-            availableFor = {ActionMethod.WATCH}
+            availableFor = {ActionMethod.EXPECT}
     )
     public static final InputToken<Sound> IN_DEATH_SOUND = ofInput(
             "sound",
@@ -111,7 +109,7 @@ public class EntityDeathAction extends AbstractGeneralEntityAction
             name = "soundCategory",
             description = "死亡時に再生するサウンドのカテゴリです。",
             type = SoundCategory.class,
-            availableFor = {ActionMethod.WATCH}
+            availableFor = {ActionMethod.EXPECT}
     )
     public static final InputToken<SoundCategory> IN_DEATH_SOUND_CATEGORY = ofInput(
             "soundCategory",
@@ -123,7 +121,7 @@ public class EntityDeathAction extends AbstractGeneralEntityAction
             description = "死亡時に再生するサウンドの音量です。",
             type = float.class,
             min = 0,
-            availableFor = {ActionMethod.WATCH}
+            availableFor = {ActionMethod.EXPECT}
     )
     public static final InputToken<Float> IN_DEATH_SOUND_VOLUME = ofInput(
             "soundVolume",
@@ -135,7 +133,7 @@ public class EntityDeathAction extends AbstractGeneralEntityAction
             description = "死亡時に再生するサウンドのピッチです。",
             type = float.class,
             min = 0,
-            availableFor = {ActionMethod.WATCH}
+            availableFor = {ActionMethod.EXPECT}
     )
     public static final InputToken<Float> IN_DEATH_SOUND_PITCH = ofInput(
             "soundPitch",

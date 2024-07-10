@@ -17,7 +17,7 @@ import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
-import org.kunlab.scenamatica.interfaces.action.types.Watchable;
+import org.kunlab.scenamatica.interfaces.action.types.Expectable;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.misc.LocationStructure;
 
 import java.util.Arrays;
@@ -33,7 +33,7 @@ import java.util.List;
         },
 
         executable = "プレイヤをリスポーンさせます。",
-        watchable = "プレイヤがリスポーンすることを期待します。",
+        expectable = "プレイヤがリスポーンすることを期待します。",
         requireable = ActionDoc.UNALLOWED,
 
         outputs = {
@@ -51,13 +51,13 @@ import java.util.List;
 
 )
 public class PlayerRespawnAction extends AbstractPlayerAction
-        implements Executable, Watchable
+        implements Executable, Expectable
 {
     @InputDoc(
             name = "isBed",
             description = "プレイヤがベッドでリスポーンするかどうかを指定します。",
             type = boolean.class,
-            availableFor = ActionMethod.WATCH
+            availableFor = ActionMethod.EXPECT
     )
     public static final InputToken<Boolean> IN_IS_BED = ofInput(
             "isBed",

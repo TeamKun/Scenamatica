@@ -15,7 +15,7 @@ import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
-import org.kunlab.scenamatica.interfaces.action.types.Watchable;
+import org.kunlab.scenamatica.interfaces.action.types.Expectable;
 
 import java.util.Collections;
 import java.util.List;
@@ -30,7 +30,7 @@ import java.util.List;
         },
 
         executable = "プレイヤがチャットを送信します。",
-        watchable = "プレイヤがチャットを送信することを期待します。",
+        expectable = "プレイヤがチャットを送信することを期待します。",
         requireable = ActionDoc.UNALLOWED,
 
         outputs = {
@@ -43,13 +43,13 @@ import java.util.List;
                         name = PlayerChatAction.KEY_OUT_FORMAT,
                         description = "送信されたメッセージのフォーマットです。",
                         type = String.class,
-                        target = {ActionMethod.WATCH}
+                        target = {ActionMethod.EXPECT}
                 )
         }
 
 )
 public class PlayerChatAction extends AbstractPlayerAction
-        implements Executable, Watchable
+        implements Executable, Expectable
 {
     @InputDoc(
             name = "message",

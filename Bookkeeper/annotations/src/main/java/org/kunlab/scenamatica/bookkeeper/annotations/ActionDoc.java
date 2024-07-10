@@ -68,7 +68,7 @@ public @interface ActionDoc
      * @return その説明
      */
     @Nullable
-    String watchable() default UNSET;
+    String expectable() default UNSET;
 
     /**
      * アクションが要求可能であることを示します。

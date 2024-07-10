@@ -29,14 +29,14 @@ import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
-import org.kunlab.scenamatica.interfaces.action.types.Watchable;
+import org.kunlab.scenamatica.interfaces.action.types.Expectable;
 
 import java.util.Collections;
 import java.util.List;
 
 @Action(value = "player_projectile_launch", supportsSince = MinecraftVersion.V1_16)
 public class PlayerLaunchProjectileAction extends org.kunlab.scenamatica.action.actions.base.player.PlayerLaunchProjectileAction
-        implements Executable, Watchable
+        implements Executable, Expectable
 {
     public static final InputToken<ProjectileType_v1_16> IN_PROJECTILE_TYPE = ofEnumInput(
             "projectileType",

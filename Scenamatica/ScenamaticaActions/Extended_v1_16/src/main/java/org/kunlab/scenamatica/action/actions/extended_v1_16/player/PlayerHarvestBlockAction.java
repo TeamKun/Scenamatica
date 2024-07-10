@@ -20,7 +20,7 @@ import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
-import org.kunlab.scenamatica.interfaces.action.types.Watchable;
+import org.kunlab.scenamatica.interfaces.action.types.Expectable;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.inventory.ItemStackStructure;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.misc.BlockStructure;
 
@@ -37,7 +37,7 @@ import java.util.Map;
                 PlayerHarvestBlockEvent.class
         },
         executable = "ブロックを収穫します。",
-        watchable = "ブロックが収穫されることを期待します。",
+        expectable = "ブロックが収穫されることを期待します。",
         requireable = ActionDoc.UNALLOWED,
 
         outputs = {
@@ -50,12 +50,12 @@ import java.util.Map;
                         name = PlayerHarvestBlockAction.KEY_ITEMS_HARVESTED,
                         description = "収穫されたアイテムです。",
                         type = ItemStack[].class,
-                        target = ActionMethod.WATCH
+                        target = ActionMethod.EXPECT
                 )
         }
 )
 public class PlayerHarvestBlockAction extends AbstractPlayerAction
-        implements Executable, Watchable
+        implements Executable, Expectable
 {
     @InputDoc(
             name = "block",
@@ -73,7 +73,7 @@ public class PlayerHarvestBlockAction extends AbstractPlayerAction
             name = "items",
             description = "収穫したアイテムです。",
             type = ItemStack[].class,
-            availableFor = ActionMethod.WATCH
+            availableFor = ActionMethod.EXPECT
     )
     public static final InputToken<List<ItemStackStructure>> IN_ITEMS_HARVESTED = ofInput(
             "items",

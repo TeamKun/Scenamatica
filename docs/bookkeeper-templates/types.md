@@ -85,7 +85,7 @@ import TabItem from '@theme/TabItem';
 {{markdown description}}
 {{#if pattern}}
 
-パターン：`{{pattern}}`
+パターン：<code>{{pattern}}</code>
 {{/if}}
 
 {{>admonitions admonitions=admonitions}}

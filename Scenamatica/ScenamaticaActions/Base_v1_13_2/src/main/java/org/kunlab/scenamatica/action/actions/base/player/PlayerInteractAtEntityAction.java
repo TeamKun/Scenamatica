@@ -34,7 +34,7 @@ import java.util.List;
         },
 
         executable = "プレイヤがエンティティをクリックします。",
-        watchable = "プレイヤがエンティティをクリックすることを期待します。",
+        expectable = "プレイヤがエンティティをクリックすることを期待します。",
         requireable = ActionDoc.UNALLOWED,
 
         outputs = {

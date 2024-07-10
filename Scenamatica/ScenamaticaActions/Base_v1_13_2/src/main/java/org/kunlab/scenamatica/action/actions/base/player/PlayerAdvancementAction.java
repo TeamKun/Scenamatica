@@ -16,7 +16,6 @@ import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
 import org.kunlab.scenamatica.bookkeeper.annotations.Admonition;
 import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
 import org.kunlab.scenamatica.bookkeeper.annotations.OutputDoc;
-import org.kunlab.scenamatica.bookkeeper.enums.ActionMethod;
 import org.kunlab.scenamatica.bookkeeper.enums.AdmonitionType;
 import org.kunlab.scenamatica.commons.utils.NamespaceUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
@@ -25,7 +24,7 @@ import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
-import org.kunlab.scenamatica.interfaces.action.types.Watchable;
+import org.kunlab.scenamatica.interfaces.action.types.Expectable;
 
 import java.util.Arrays;
 import java.util.List;
@@ -36,7 +35,7 @@ import java.util.List;
         description = "プレイヤの進捗を設定します。",
 
         executable = "プレイヤの進捗を達成するか、達成度を設定します。",
-        watchable = "プレイヤの進捗が達成、または達成度が設定されすることを期待します。",
+        expectable = "プレイヤの進捗が達成、または達成度が設定されすることを期待します。",
         requireable = "プレイヤが指定された進捗を達成しているか、または達成度が設定されていることを要求します。",
 
         outputs = {
@@ -65,7 +64,7 @@ import java.util.List;
 )
 public class PlayerAdvancementAction
         extends AbstractPlayerAction
-        implements Executable, Watchable, Requireable
+        implements Executable, Expectable, Requireable
 {
     // 進捗の Criterion を付与するアクションと, 進捗を完了させるアクションを統合した。
     // 脚注： Criterion => 単数, Criteria => 複数 -- ギリシャ語による。

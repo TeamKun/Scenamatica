@@ -15,7 +15,7 @@ import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
-import org.kunlab.scenamatica.interfaces.action.types.Watchable;
+import org.kunlab.scenamatica.interfaces.action.types.Expectable;
 
 import java.util.Collections;
 import java.util.List;
@@ -29,7 +29,7 @@ import java.util.List;
         },
 
         executable = "プレイヤを指定した場所にテレポートさせます。",
-        watchable = "プレイヤがテレポートすることを期待します。",
+        expectable = "プレイヤがテレポートすることを期待します。",
         requireable = ActionDoc.UNALLOWED,
 
         outputs = {
@@ -41,7 +41,7 @@ import java.util.List;
         }
 )
 public class PlayerTeleportAction extends PlayerMoveAction
-        implements Executable, Watchable
+        implements Executable, Expectable
 {
     @InputDoc(
             name = "cacuse",

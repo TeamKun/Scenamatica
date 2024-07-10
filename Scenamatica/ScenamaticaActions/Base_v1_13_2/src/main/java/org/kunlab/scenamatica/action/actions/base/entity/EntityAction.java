@@ -22,7 +22,7 @@ import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.EntityStruc
         description = "エンティティの情報を設定します。",
 
         executable = "エンティティの状態や属性を変更します。",
-        watchable = ActionDoc.UNALLOWED,
+        expectable = ActionDoc.UNALLOWED,
         requireable = "エンティティの状態や属性が指定されたものと一致するかどうかを確認します。"
 )
 public class EntityAction extends AbstractGeneralEntityAction

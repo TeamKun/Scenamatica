@@ -19,7 +19,7 @@ import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
-import org.kunlab.scenamatica.interfaces.action.types.Watchable;
+import org.kunlab.scenamatica.interfaces.action.types.Expectable;
 import org.kunlab.scenamatica.interfaces.context.Actor;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.inventory.ItemStackStructure;
 
@@ -35,7 +35,7 @@ import java.util.List;
         },
 
         executable = "インベントリをクリックします。",
-        watchable = "インベントリがクリックされることを期待します。",
+        expectable = "インベントリがクリックされることを期待します。",
         requireable = ActionDoc.UNALLOWED,
 
         outputs = {
@@ -91,7 +91,7 @@ import java.util.List;
         }
 )
 public class InventoryClickAction extends AbstractInventoryInteractAction
-        implements Executable, Watchable
+        implements Executable, Expectable
 {
     @InputDoc(
             name = "type",

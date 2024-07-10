@@ -15,7 +15,7 @@ import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
-import org.kunlab.scenamatica.interfaces.action.types.Watchable;
+import org.kunlab.scenamatica.interfaces.action.types.Expectable;
 
 import java.util.Collections;
 import java.util.List;
@@ -29,17 +29,17 @@ import java.util.List;
         },
 
         executable = "プレイヤを飛行状態にします。",
-        watchable = "プレイヤが飛行状態になることを期待します。",
+        expectable = "プレイヤが飛行状態になることを期待します。",
         requireable = "プレイヤが飛行状態になっていることを要求します。"
 )
 public class PlayerFlightAction extends AbstractPlayerAction
-        implements Executable, Requireable, Watchable
+        implements Executable, Requireable, Expectable
 {
     @InputDoc(
             name = "flying",
             description = "飛行状態かどうかを指定します。",
             type = boolean.class,
-            requiredOn = {ActionMethod.EXECUTE, ActionMethod.WATCH}
+            requiredOn = {ActionMethod.EXECUTE, ActionMethod.EXPECT}
     )
     public static final InputToken<Boolean> IN_FLYING = ofInput(
             "flying",

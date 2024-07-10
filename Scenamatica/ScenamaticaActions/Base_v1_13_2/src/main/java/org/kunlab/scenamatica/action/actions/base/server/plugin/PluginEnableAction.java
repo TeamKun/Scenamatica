@@ -10,7 +10,7 @@ import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
-import org.kunlab.scenamatica.interfaces.action.types.Watchable;
+import org.kunlab.scenamatica.interfaces.action.types.Expectable;
 
 import java.util.Collections;
 import java.util.List;
@@ -24,12 +24,12 @@ import java.util.List;
         },
 
         executable = "プラグインを有効化します。",
-        watchable = "プラグインが有効化されることを期待します。",
+        expectable = "プラグインが有効化されることを期待します。",
         requireable = "プラグインが有効化されていることを要求します。"
 
 )
 public class PluginEnableAction extends AbstractPluginAction
-        implements Executable, Watchable, Requireable
+        implements Executable, Expectable, Requireable
 {
     @Override
     public void execute(@NotNull ActionContext ctxt)

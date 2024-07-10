@@ -18,7 +18,7 @@ import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
-import org.kunlab.scenamatica.interfaces.action.types.Watchable;
+import org.kunlab.scenamatica.interfaces.action.types.Expectable;
 import org.kunlab.scenamatica.interfaces.structures.specifiers.PlayerSpecifier;
 
 import java.util.Arrays;
@@ -35,7 +35,7 @@ import java.util.regex.Pattern;
         },
 
         executable = "コマンドを実行します。",
-        watchable = "コマンドが実行されることを期待します。",
+        expectable = "コマンドが実行されることを期待します。",
         requireable = ActionDoc.UNALLOWED,
 
         outputs = {
@@ -52,7 +52,7 @@ import java.util.regex.Pattern;
         }
 )
 public class CommandDispatchAction extends AbstractServerAction
-        implements Executable, Watchable
+        implements Executable, Expectable
 {
     @InputDoc(
             name = "command",

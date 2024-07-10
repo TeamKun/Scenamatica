@@ -19,7 +19,7 @@ import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
-import org.kunlab.scenamatica.interfaces.action.types.Watchable;
+import org.kunlab.scenamatica.interfaces.action.types.Expectable;
 
 import java.util.Collections;
 import java.util.List;
@@ -34,7 +34,7 @@ import java.util.Optional;
         },
 
         executable = "プレイヤをサーバから退出させます。",
-        watchable = "プレイヤがサーバから退出することを期待します。",
+        expectable = "プレイヤがサーバから退出することを期待します。",
         requireable = "プレイヤがオフラインであることを要求します。",
 
         outputs = {
@@ -46,13 +46,13 @@ import java.util.Optional;
         }
 )
 public class PlayerQuitAction extends AbstractPlayerAction
-        implements Executable, Watchable, Requireable
+        implements Executable, Expectable, Requireable
 {
     @InputDoc(
             name = "message",
             description = "プレイヤがサーバから退出したときに表示されるメッセージを指定します。",
             type = String.class,
-            availableFor = {ActionMethod.EXECUTE, ActionMethod.WATCH},
+            availableFor = {ActionMethod.EXECUTE, ActionMethod.EXPECT},
 
             admonitions = {
                     @Admonition(

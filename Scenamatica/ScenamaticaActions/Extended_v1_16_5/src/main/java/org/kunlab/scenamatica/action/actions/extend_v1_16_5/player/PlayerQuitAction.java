@@ -15,7 +15,7 @@ import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
-import org.kunlab.scenamatica.interfaces.action.types.Watchable;
+import org.kunlab.scenamatica.interfaces.action.types.Expectable;
 import org.kunlab.scenamatica.interfaces.context.Actor;
 
 import java.util.Collections;
@@ -24,7 +24,7 @@ import java.util.Optional;
 
 @Action(value = "player_quit", supportsSince = MinecraftVersion.V1_16_5)
 public class PlayerQuitAction extends AbstractPlayerAction
-        implements Executable, Watchable, Requireable
+        implements Executable, Expectable, Requireable
 {
     public static final InputToken<String> IN_QUIT_MESSAGE = ofInput(
             "message",

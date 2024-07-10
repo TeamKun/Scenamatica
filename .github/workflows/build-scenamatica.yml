@@ -15,7 +15,7 @@ on:
 jobs:
   build:
     name: Build with Maven
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - name: Change directory to scenamatica
@@ -43,7 +43,7 @@ jobs:
           mv -f nms-build/.m2/repository/repository $HOME/.m2/ -v
       - name: Build with Maven
         run: |
-          mvn -B package --file Scenamatica/pom.xml -D"jar.finalName=Scenamatica" -P debug
+          ./Scenamatica/build -D"jar.finalName=Scenamatica" -P debug
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:

@@ -5,7 +5,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.jetbrains.annotations.NotNull;
-import org.kunlab.scenamatica.action.actions.base.player.AbstractPlayerAction;
 import org.kunlab.scenamatica.annotations.action.Action;
 import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
 import org.kunlab.scenamatica.bookkeeper.annotations.OutputDoc;
@@ -18,10 +17,7 @@ import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
-import org.kunlab.scenamatica.interfaces.action.types.Watchable;
-
-import java.util.Collections;
-import java.util.List;
+import org.kunlab.scenamatica.interfaces.action.types.Expectable;
 
 @Action(value = "player_gamemode", supportsSince = MinecraftVersion.V1_16_5)
 @OutputDocs({
@@ -29,17 +25,17 @@ import java.util.List;
                 name = PlayerGameModeAction.KEY_CAUSE,
                 description = "ゲームモードが変更された原因です。",
                 type = PlayerGameModeChangeEvent.Cause.class,
-                target = ActionMethod.WATCH
+                target = ActionMethod.EXPECT
         )
 })
 public class PlayerGameModeAction extends org.kunlab.scenamatica.action.actions.base.player.PlayerGameModeAction
-        implements Executable, Watchable, Requireable
+        implements Executable, Expectable, Requireable
 {
     @InputDoc(
             name = "cause",
             description = "ゲームモードが変更された原因を指定します。",
             type = PlayerGameModeChangeEvent.Cause.class,
-            availableFor = ActionMethod.WATCH
+            availableFor = ActionMethod.EXPECT
     )
     public static final InputToken<PlayerGameModeChangeEvent.Cause> IN_CAUSE = ofEnumInput(
             "cause",

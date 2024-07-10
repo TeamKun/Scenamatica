@@ -13,7 +13,7 @@ import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
-import org.kunlab.scenamatica.interfaces.action.types.Watchable;
+import org.kunlab.scenamatica.interfaces.action.types.Expectable;
 
 import java.util.Collections;
 import java.util.List;
@@ -27,11 +27,11 @@ import java.util.List;
         },
 
         executable = "プレイヤにアニメーションを再生させます。",
-        watchable = "プレイヤがアニメーションを再生させることを期待します。",
+        expectable = "プレイヤがアニメーションを再生させることを期待します。",
         requireable = ActionDoc.UNALLOWED
 )
 public class PlayerAnimationAction extends AbstractPlayerAction
-        implements Executable, Watchable
+        implements Executable, Expectable
 {
     @InputDoc(
             name = "type",

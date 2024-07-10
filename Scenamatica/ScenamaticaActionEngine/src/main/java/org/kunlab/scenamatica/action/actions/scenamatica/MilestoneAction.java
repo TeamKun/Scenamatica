@@ -13,7 +13,7 @@ import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
-import org.kunlab.scenamatica.interfaces.action.types.Watchable;
+import org.kunlab.scenamatica.interfaces.action.types.Expectable;
 import org.kunlab.scenamatica.interfaces.scenario.MilestoneEntry;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 
@@ -29,7 +29,7 @@ import java.util.List;
         },
 
         executable = "マイルストーンを達成します。",
-        watchable = "マイルストーンの達成を期待します。",
+        expectable = "マイルストーンの達成を期待します。",
         requireable = "マイルストーンを達成していることを要求します。",
 
         outputs = {
@@ -47,7 +47,7 @@ import java.util.List;
 
 )
 public class MilestoneAction extends AbstractScenamaticaAction
-        implements Executable, Watchable, Requireable
+        implements Executable, Expectable, Requireable
 {
     @InputDoc(
             name = "name",

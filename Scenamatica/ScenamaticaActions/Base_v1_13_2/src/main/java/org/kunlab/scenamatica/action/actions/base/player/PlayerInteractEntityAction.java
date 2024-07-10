@@ -18,7 +18,7 @@ import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
-import org.kunlab.scenamatica.interfaces.action.types.Watchable;
+import org.kunlab.scenamatica.interfaces.action.types.Expectable;
 import org.kunlab.scenamatica.interfaces.context.Actor;
 import org.kunlab.scenamatica.interfaces.structures.specifiers.EntitySpecifier;
 import org.kunlab.scenamatica.nms.enums.NMSHand;
@@ -36,7 +36,7 @@ import java.util.List;
         },
 
         executable = "プレイヤがエンティティをクリックします。",
-        watchable = "プレイヤがエンティティをクリックすることを期待します。",
+        expectable = "プレイヤがエンティティをクリックすることを期待します。",
         requireable = ActionDoc.UNALLOWED,
 
         outputs = {
@@ -62,7 +62,7 @@ import java.util.List;
         }
 )
 public class PlayerInteractEntityAction extends AbstractPlayerAction
-        implements Executable, Watchable
+        implements Executable, Expectable
 {
     @InputDoc(
             name = "entity",

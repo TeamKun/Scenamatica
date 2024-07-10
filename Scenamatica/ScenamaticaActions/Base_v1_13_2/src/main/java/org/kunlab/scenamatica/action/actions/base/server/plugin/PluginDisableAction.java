@@ -10,7 +10,7 @@ import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
-import org.kunlab.scenamatica.interfaces.action.types.Watchable;
+import org.kunlab.scenamatica.interfaces.action.types.Expectable;
 
 import java.util.Collections;
 import java.util.List;
@@ -24,11 +24,11 @@ import java.util.List;
         },
 
         executable = "プラグインを無効化します。",
-        watchable = "プラグインが無効化されることを期待します。",
+        expectable = "プラグインが無効化されることを期待します。",
         requireable = "プラグインが無効化されていることを要求します。"
 )
 public class PluginDisableAction extends AbstractPluginAction
-        implements Executable, Watchable, Requireable
+        implements Executable, Expectable, Requireable
 {
 
     @Override

@@ -8,14 +8,13 @@ import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.annotations.action.Action;
 import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
 import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
-import org.kunlab.scenamatica.bookkeeper.annotations.OutputDoc;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
-import org.kunlab.scenamatica.interfaces.action.types.Watchable;
+import org.kunlab.scenamatica.interfaces.action.types.Expectable;
 
 import java.util.Collections;
 import java.util.List;
@@ -29,11 +28,11 @@ import java.util.List;
         },
 
         executable = "プレイヤのスニーク状態を変更します。",
-        watchable = "プレイヤのスニーク状態が変更されることを期待します。",
+        expectable = "プレイヤのスニーク状態が変更されることを期待します。",
         requireable = "プレイヤのスニーク状態が指定された値になることを要求します。"
 )
 public class PlayerSneakAction extends AbstractPlayerAction
-        implements Executable, Watchable, Requireable
+        implements Executable, Expectable, Requireable
 {
     @InputDoc(
             name = "sneaking",

@@ -29,7 +29,7 @@ import java.util.List;
         },
 
         executable = "ゲームルールを設定します。",
-        watchable = "ゲームルールが設定されることを期待します。",
+        expectable = "ゲームルールが設定されることを期待します。",
         requireable = "ゲームルールが設定されていることを要求します。",
 
         supportsSince = MCVersion.V1_16_5

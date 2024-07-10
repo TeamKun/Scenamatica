@@ -28,7 +28,7 @@ import java.util.List;
         },
 
         executable = "ワールドを読み込みます。",
-        watchable = "ワールドが読み込まれることを期待します。",
+        expectable = "ワールドが読み込まれることを期待します。",
         requireable = "ワールドが読み込まれていることを要求します。"
 )
 public class WorldLoadAction extends AbstractWorldAction

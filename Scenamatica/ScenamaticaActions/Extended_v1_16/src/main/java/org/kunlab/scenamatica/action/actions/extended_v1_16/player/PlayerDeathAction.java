@@ -1,26 +1,16 @@
 package org.kunlab.scenamatica.action.actions.extended_v1_16.player;
 
-import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.kunlab.scenamatica.action.actions.base.player.AbstractPlayerAction;
 import org.kunlab.scenamatica.annotations.action.Action;
 import org.kunlab.scenamatica.bookkeeper.annotations.OutputDoc;
 import org.kunlab.scenamatica.bookkeeper.annotations.OutputDocs;
 import org.kunlab.scenamatica.enums.MinecraftVersion;
-import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
-import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
-import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
-import org.kunlab.scenamatica.interfaces.action.types.Watchable;
-import org.kunlab.scenamatica.interfaces.structures.specifiers.PlayerSpecifier;
-
-import java.util.Collections;
-import java.util.List;
+import org.kunlab.scenamatica.interfaces.action.types.Expectable;
 
 @Action(value = "player_death", supportsSince = MinecraftVersion.V1_16)
 @OutputDocs({
@@ -31,7 +21,7 @@ import java.util.List;
         )
 })
 public class PlayerDeathAction extends org.kunlab.scenamatica.action.actions.base.player.PlayerDeathAction
-        implements Executable, Requireable, Watchable
+        implements Executable, Requireable, Expectable
 {
     @Override
     public boolean checkFired(@NotNull ActionContext ctxt, @NotNull Event event)

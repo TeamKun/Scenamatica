@@ -19,7 +19,7 @@ import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
-import org.kunlab.scenamatica.interfaces.action.types.Watchable;
+import org.kunlab.scenamatica.interfaces.action.types.Expectable;
 
 import java.util.Collections;
 import java.util.List;
@@ -35,7 +35,7 @@ import java.util.List;
         supportsUntil = MCVersion.V1_16_4,
 
         executable = "プレイヤのゲームモードを変更します。",
-        watchable = "プレイヤのゲームモードが変更されることを期待します。",
+        expectable = "プレイヤのゲームモードが変更されることを期待します。",
         requireable = "プレイヤのゲームモードが指定されたものであることを要求します。",
 
         outputs = {
@@ -47,7 +47,7 @@ import java.util.List;
         }
 )
 public class PlayerGameModeAction extends AbstractPlayerAction
-        implements Executable, Watchable, Requireable
+        implements Executable, Expectable, Requireable
 {
     @InputDoc(
             name = "gamemode",

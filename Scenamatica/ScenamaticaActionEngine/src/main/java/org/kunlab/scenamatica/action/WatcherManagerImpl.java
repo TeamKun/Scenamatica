@@ -21,7 +21,7 @@ import org.kunlab.scenamatica.interfaces.ExceptionHandler;
 import org.kunlab.scenamatica.interfaces.action.Action;
 import org.kunlab.scenamatica.interfaces.action.CompiledAction;
 import org.kunlab.scenamatica.interfaces.action.WatcherManager;
-import org.kunlab.scenamatica.interfaces.action.types.Watchable;
+import org.kunlab.scenamatica.interfaces.action.types.Expectable;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileStructure;
 import org.kunlab.scenamatica.interfaces.trigger.TriggerManager;
@@ -115,7 +115,7 @@ public class WatcherManagerImpl implements WatcherManager
                                            @NotNull WatchType type)
     {
         Action actionExecutor = action.getExecutor();
-        if (!(actionExecutor instanceof Watchable))
+        if (!(actionExecutor instanceof Expectable))
             throw new IllegalStateException("The action " + ActionMetaUtils.getActionName(actionExecutor) + " is not watchable.");
 
         List<Pair<Class<? extends Event>, RegisteredListener>> listeners = new ArrayList<>();
@@ -129,9 +129,9 @@ public class WatcherManagerImpl implements WatcherManager
                 listeners
         );
 
-        Watchable watchable = (Watchable) actionExecutor;
+        Expectable expectable = (Expectable) actionExecutor;
 
-        for (Class<? extends Event> eventType : watchable.getAttachingEvents())
+        for (Class<? extends Event> eventType : expectable.getAttachingEvents())
             listeners.add(Pair.of(eventType, this.registerListener(watchEntry, eventType)));
 
         return watchEntry;
@@ -220,7 +220,7 @@ public class WatcherManagerImpl implements WatcherManager
     private RegisteredListener registerListener(WatchEntry entry, Class<? extends Event> eventType)
     {
         Action actionExecutor = entry.getAction().getExecutor();
-        if (!(actionExecutor instanceof Watchable))
+        if (!(actionExecutor instanceof Expectable))
             throw new IllegalStateException("The action " + ActionMetaUtils.getActionName(actionExecutor) + " is not watchable.");
 
         EventExecutor executor = (listener1, event) -> this.onEventFired(entry, event);
@@ -241,8 +241,8 @@ public class WatcherManagerImpl implements WatcherManager
     {
         CompiledAction action = entry.getAction();
         Action actionExecutor = action.getExecutor();
-        assert actionExecutor instanceof Watchable;
-        Watchable watchable = (Watchable) actionExecutor;
+        assert actionExecutor instanceof Expectable;
+        Expectable expectable = (Expectable) actionExecutor;
 
         boolean isJumped = this.checkJumped(entry);
 
@@ -262,7 +262,7 @@ public class WatcherManagerImpl implements WatcherManager
         // けしからん Bukkit が, 対応していないイベントを読んでくるので, 本当に会っているかチェックする。
         boolean isMatched = false;
         Class<? extends Event> evtType = evt.getClass();
-        for (Class<? extends Event> eventType : watchable.getAttachingEvents())
+        for (Class<? extends Event> eventType : expectable.getAttachingEvents())
         {
             if (eventType.isAssignableFrom(evtType))
             {
@@ -278,7 +278,7 @@ public class WatcherManagerImpl implements WatcherManager
         {
 
             // 引数にマッチしているかどうかをチェックする。
-            if (watchable.checkFired(action.getContext(), evt))
+            if (expectable.checkFired(action.getContext(), evt))
                 this.onActionFired(entry, isJumped);
         }
         catch (Throwable e)

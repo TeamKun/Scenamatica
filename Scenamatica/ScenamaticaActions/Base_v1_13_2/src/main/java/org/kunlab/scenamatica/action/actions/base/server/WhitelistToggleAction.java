@@ -13,7 +13,7 @@ import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
-import org.kunlab.scenamatica.interfaces.action.types.Watchable;
+import org.kunlab.scenamatica.interfaces.action.types.Expectable;
 
 import java.util.Collections;
 import java.util.List;
@@ -27,13 +27,13 @@ import java.util.List;
         },
 
         executable = "ホワイトリストの切り替えを実行します。",
-        watchable = "ホワイトリストの切り替えが実行されることを期待します。",
+        expectable = "ホワイトリストの切り替えが実行されることを期待します。",
         requireable = "ホワイトリストの状態を要求します。"
 
         // TODO: Impl outputs
 )
 public class WhitelistToggleAction extends AbstractServerAction
-        implements Executable, Watchable, Requireable
+        implements Executable, Expectable, Requireable
 {
     @InputDoc(
             name = "enabled",

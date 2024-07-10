@@ -20,7 +20,7 @@ import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
-import org.kunlab.scenamatica.interfaces.action.types.Watchable;
+import org.kunlab.scenamatica.interfaces.action.types.Expectable;
 import org.kunlab.scenamatica.interfaces.context.Actor;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.inventory.ItemStackStructure;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.misc.BlockStructure;
@@ -54,7 +54,7 @@ import org.kunlab.scenamatica.nms.enums.NMSHand;
         )
 })
 public abstract class AbstractPlayerBucketAction extends AbstractPlayerAction
-        implements Watchable
+        implements Expectable
 {
     @InputDoc(
             name = "item",

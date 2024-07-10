@@ -24,7 +24,7 @@ import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
-import org.kunlab.scenamatica.interfaces.action.types.Watchable;
+import org.kunlab.scenamatica.interfaces.action.types.Expectable;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.entities.ProjectileStructure;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.misc.BlockStructure;
 import org.kunlab.scenamatica.interfaces.structures.specifiers.EntitySpecifier;
@@ -41,7 +41,7 @@ import java.util.List;
         },
 
         executable = "投射物を着弾させます。",
-        watchable = "投射物が着弾することを期待します。",
+        expectable = "投射物が着弾することを期待します。",
         requireable = ActionDoc.UNALLOWED,
 
         outputs = {
@@ -63,7 +63,7 @@ import java.util.List;
         }
 )
 public class ProjectileHitAction extends AbstractEntityAction<Projectile, ProjectileStructure>
-        implements Executable, Watchable
+        implements Executable, Expectable
 {
     @InputDoc(
             name = "hitEntity",

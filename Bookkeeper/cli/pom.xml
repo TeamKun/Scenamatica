@@ -19,7 +19,7 @@
     </properties>
 
     <build>
-        <finalName>Bookkeeper-${project.version}</finalName>
+        <finalName>Bookkeeper</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

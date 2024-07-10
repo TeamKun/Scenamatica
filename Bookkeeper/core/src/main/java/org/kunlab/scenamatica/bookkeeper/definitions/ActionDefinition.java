@@ -22,7 +22,7 @@ public class ActionDefinition implements IDefinition
     String description;
     Type[] events;
     String executable;
-    String watchable;
+    String expectable;
     String requireable;
     MCVersion supportsSince;
     MCVersion supportsUntil;

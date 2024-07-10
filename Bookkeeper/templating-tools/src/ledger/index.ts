@@ -20,7 +20,7 @@ interface Category extends LedgerObject {
 }
 
 type AdmonitionType = "note" | "tip" | "info" | "warning" | "danger"
-type AdmonitionTarget = "execute" | "watch" | "require"
+type AdmonitionTarget = "execute" | "expect" | "require"
 
 interface Admonition {
     type: AdmonitionType
@@ -31,7 +31,7 @@ interface Admonition {
 
 interface Contracts {
     executable?: string | false
-    watchable?: string | false
+    expectable?: string | false
     requireable?: string | false
 }
 

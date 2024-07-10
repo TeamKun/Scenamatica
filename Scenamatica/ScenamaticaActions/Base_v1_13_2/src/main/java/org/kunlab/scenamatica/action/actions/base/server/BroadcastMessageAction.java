@@ -16,14 +16,13 @@ import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
 import org.kunlab.scenamatica.bookkeeper.annotations.OutputDoc;
 import org.kunlab.scenamatica.bookkeeper.enums.ActionMethod;
 import org.kunlab.scenamatica.bookkeeper.enums.AdmonitionType;
-import org.kunlab.scenamatica.bookkeeper.enums.MCVersion;
 import org.kunlab.scenamatica.enums.MinecraftVersion;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
-import org.kunlab.scenamatica.interfaces.action.types.Watchable;
+import org.kunlab.scenamatica.interfaces.action.types.Expectable;
 import org.kunlab.scenamatica.interfaces.structures.specifiers.PlayerSpecifier;
 
 import java.util.ArrayList;
@@ -46,7 +45,7 @@ import java.util.stream.Collectors;
         // supportsUntil = MCVersion.V1_13_2,  // <- 内部の変更なのでバージョン取らない。
 
         executable = "メッセージをブロードキャストします。",
-        watchable = "メッセージがブロードキャストされることを期待します。",
+        expectable = "メッセージがブロードキャストされることを期待します。",
         requireable = ActionDoc.UNALLOWED,
 
         outputs = {
@@ -63,7 +62,7 @@ import java.util.stream.Collectors;
         }
 )
 public class BroadcastMessageAction extends AbstractServerAction
-        implements Executable, Watchable
+        implements Executable, Expectable
 {
     @InputDoc(
             name = "message",
@@ -123,7 +122,7 @@ public class BroadcastMessageAction extends AbstractServerAction
             description = "受信者が厳密に一致させる必要があるかどうかです。\n" +
                     "これを有効にすると, 余分な受信者がいないことを確認します。",
             type = boolean.class,
-            availableFor = ActionMethod.WATCH
+            availableFor = ActionMethod.EXPECT
     )
     public static final InputToken<Boolean> IN_STRICT_RECIPIENTS = ofInput(
             "strictRecipients",

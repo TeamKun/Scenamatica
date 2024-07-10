@@ -14,7 +14,7 @@ import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
-import org.kunlab.scenamatica.interfaces.action.types.Watchable;
+import org.kunlab.scenamatica.interfaces.action.types.Expectable;
 
 import java.util.Collections;
 import java.util.List;
@@ -28,11 +28,11 @@ import java.util.List;
         },
 
         executable = "プレイヤの走り状態を変更します。",
-        watchable = "プレイヤの走り状態が変更されることを期待します。",
+        expectable = "プレイヤの走り状態が変更されることを期待します。",
         requireable = "プレイヤの走り状態が指定された値になることを要求します。"
 )
 public class PlayerSprintAction extends AbstractPlayerAction
-        implements Executable, Watchable, Requireable
+        implements Executable, Expectable, Requireable
 {
     @InputDoc(
             name = "sprinting",

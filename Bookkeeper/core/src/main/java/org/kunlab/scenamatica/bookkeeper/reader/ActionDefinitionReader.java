@@ -27,7 +27,7 @@ public class ActionDefinitionReader implements IAnnotationReader<ActionDefinitio
     public static final String KEY_DESC = "description";
     public static final String KEY_EVENTS = "events";
     public static final String KEY_EXECUTABLE = "executable";
-    public static final String KEY_WATCHABLE = "watchable";
+    public static final String KEY_EXPECTABLE = "expectable";
     public static final String KEY_REQUIREABLE = "requireable";
     public static final String KEY_SUPPORTS_SINCE = "supportsSince";
     public static final String KEY_SUPPORTS_UNTIL = "supportsUntil";
@@ -67,7 +67,7 @@ public class ActionDefinitionReader implements IAnnotationReader<ActionDefinitio
                 values.getAsString(KEY_DESC),
                 values.getAsArray(KEY_EVENTS, Type.class),
                 values.getAsString(KEY_EXECUTABLE),
-                values.getAsString(KEY_WATCHABLE),
+                values.getAsString(KEY_EXPECTABLE),
                 values.getAsString(KEY_REQUIREABLE),
                 values.getAsEnum(KEY_SUPPORTS_SINCE, MCVersion.class),
                 values.getAsEnum(KEY_SUPPORTS_UNTIL, MCVersion.class),

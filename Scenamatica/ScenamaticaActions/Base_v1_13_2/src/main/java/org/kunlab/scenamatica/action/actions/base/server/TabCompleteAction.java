@@ -18,7 +18,7 @@ import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
-import org.kunlab.scenamatica.interfaces.action.types.Watchable;
+import org.kunlab.scenamatica.interfaces.action.types.Expectable;
 import org.kunlab.scenamatica.interfaces.structures.specifiers.PlayerSpecifier;
 
 import java.util.ArrayList;
@@ -36,11 +36,11 @@ import java.util.regex.Pattern;
         },
 
         executable = "タブ補完を実行します。",
-        watchable = "タブ補完が実行されることを期待します。",
+        expectable = "タブ補完が実行されることを期待します。",
         requireable = ActionDoc.UNALLOWED
 )
 public class TabCompleteAction extends AbstractServerAction
-        implements Executable, Watchable
+        implements Executable, Expectable
 {
     @InputDoc(
             name = "sender",
@@ -83,7 +83,7 @@ public class TabCompleteAction extends AbstractServerAction
             description = "厳密な判定を行うかどうかです。",
             type = boolean.class,
             
-            availableFor = ActionMethod.WATCH
+            availableFor = ActionMethod.EXPECT
     )
     public static final InputToken<Boolean> IN_STRICT = ofInput(
             "strict",

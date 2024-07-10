@@ -26,7 +26,7 @@ public class CompiledAction implements ICompiled
     private static final String KEY_CATEGORY = "category";
     private static final String KEY_EVENTS = "events";
     private static final String KEY_EXECUTABLE = "executable";
-    private static final String KEY_WATCHABLE = "watchable";
+    private static final String KEY_EXPECTABLE = "expectable";
     private static final String KEY_REQUIREABLE = "requireable";
     private static final String KEY_SUPPORTS_SINCE = "supports_since";
     private static final String KEY_SUPPORTS_UNTIL = "supports_until";
@@ -42,7 +42,7 @@ public class CompiledAction implements ICompiled
     CategoryManager.CategoryEntry category;
     EventReference[] events;
     Contract executable;
-    Contract watchable;
+    Contract expectable;
     Contract requireable;
     MCVersion supportsSince;
     MCVersion supportsUntil;
@@ -54,7 +54,7 @@ public class CompiledAction implements ICompiled
                           EventReference[] events,
 
                           Contract executable,
-                          Contract watchable,
+                          Contract expectable,
                           Contract requireable,
 
                           MCVersion supportsSince, MCVersion supportsUntil,
@@ -70,7 +70,7 @@ public class CompiledAction implements ICompiled
         this.category = category;
         this.events = events;
         this.executable = executable;
-        this.watchable = watchable;
+        this.expectable = expectable;
         this.requireable = requireable;
         this.supportsSince = supportsSince;
         this.supportsUntil = supportsUntil;
@@ -92,7 +92,7 @@ public class CompiledAction implements ICompiled
             map.put(KEY_CATEGORY, this.category.getReference());
         map.put(KEY_EVENTS, this.events == null ? null: Arrays.stream(this.events).map(EventReference::getReference).toArray());
         map.put(KEY_EXECUTABLE, this.executable.serialize());
-        map.put(KEY_WATCHABLE, this.watchable.serialize());
+        map.put(KEY_EXPECTABLE, this.expectable.serialize());
         map.put(KEY_REQUIREABLE, this.requireable.serialize());
         MapUtils.putIfNotNull(map, KEY_SUPPORTS_SINCE, this.supportsSince);
         MapUtils.putIfNotNull(map, KEY_SUPPORTS_UNTIL, this.supportsUntil);

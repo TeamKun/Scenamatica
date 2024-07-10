@@ -21,7 +21,7 @@ import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
-import org.kunlab.scenamatica.interfaces.action.types.Watchable;
+import org.kunlab.scenamatica.interfaces.action.types.Expectable;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.misc.LocationStructure;
 
 import java.util.Collections;
@@ -35,7 +35,7 @@ import java.util.List;
                 EntityMoveEvent.class
         },
         executable = "エンティティを移動させます。",
-        watchable = "エンティティが移動されることを期待します。",
+        expectable = "エンティティが移動されることを期待します。",
         requireable = ActionDoc.UNALLOWED,
 
         outputs = {
@@ -52,13 +52,13 @@ import java.util.List;
         }
 )
 public class EntityMoveAction extends AbstractGeneralEntityAction
-        implements Executable, Watchable
+        implements Executable, Expectable
 {
     @InputDoc(
             name = "from",
             description = "移動前の位置です。",
             type = Location.class,
-            availableFor = ActionMethod.WATCH,
+            availableFor = ActionMethod.EXPECT,
             admonitions = {
                     @Admonition(
                             type = AdmonitionType.TIP,

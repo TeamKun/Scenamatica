@@ -20,7 +20,7 @@ import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
-import org.kunlab.scenamatica.interfaces.action.types.Watchable;
+import org.kunlab.scenamatica.interfaces.action.types.Expectable;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.misc.BlockStructure;
 
 import java.util.Collections;
@@ -35,7 +35,7 @@ import java.util.List;
         },
 
         executable = "プレイヤがブロックをクリックします。",
-        watchable = "プレイヤがブロックをクリックすることを期待します。",
+        expectable = "プレイヤがブロックをクリックすることを期待します。",
         requireable = ActionDoc.UNALLOWED,
 
         outputs = {
@@ -63,7 +63,7 @@ import java.util.List;
 
 )
 public class PlayerInteractBlockAction extends AbstractPlayerAction
-        implements Executable, Watchable
+        implements Executable, Expectable
 {
     @InputDoc(
             name = "action",

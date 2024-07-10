@@ -9,8 +9,6 @@ import org.kunlab.scenamatica.annotations.action.Action;
 import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
 import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
 import org.kunlab.scenamatica.bookkeeper.annotations.OutputDoc;
-import org.kunlab.scenamatica.bookkeeper.enums.ActionMethod;
-import org.kunlab.scenamatica.bookkeeper.enums.MCVersion;
 import org.kunlab.scenamatica.enums.MinecraftVersion;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
@@ -18,7 +16,7 @@ import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
-import org.kunlab.scenamatica.interfaces.action.types.Watchable;
+import org.kunlab.scenamatica.interfaces.action.types.Expectable;
 import org.kunlab.scenamatica.interfaces.structures.specifiers.PlayerSpecifier;
 
 import java.util.Collections;
@@ -33,7 +31,7 @@ import java.util.List;
         },
 
         executable = "プレイヤを死亡させます。",
-        watchable = "プレイヤが死亡することを期待します。",
+        expectable = "プレイヤが死亡することを期待します。",
         requireable = "プレイヤが死亡していることを要求します。",
 
         outputs = {
@@ -45,7 +43,7 @@ import java.util.List;
         }
 )
 public class PlayerDeathAction extends AbstractPlayerAction
-        implements Executable, Requireable, Watchable
+        implements Executable, Requireable, Expectable
 {
     @InputDoc(
             name = "killer",

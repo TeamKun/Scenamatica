@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * 監視可能な動作を表すインターフェースです。
  */
-public interface Watchable
+public interface Expectable
 {
     /**
      * 動作が実行されたかチェックするバスに登録されたときに呼び出されます。

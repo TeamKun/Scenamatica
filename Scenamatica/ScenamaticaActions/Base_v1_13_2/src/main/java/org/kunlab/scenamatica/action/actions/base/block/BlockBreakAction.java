@@ -18,7 +18,7 @@ import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
-import org.kunlab.scenamatica.interfaces.action.types.Watchable;
+import org.kunlab.scenamatica.interfaces.action.types.Expectable;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.misc.BlockStructure;
 import org.kunlab.scenamatica.interfaces.structures.specifiers.PlayerSpecifier;
 import org.kunlab.scenamatica.nms.NMSProvider;
@@ -35,25 +35,25 @@ import java.util.List;
         events = BlockBreakEvent.class,
 
         executable = "指定されたブロックを破壊します。",
-        watchable = "指定されたブロックが破壊されることを期待します。",
+        expectable = "指定されたブロックが破壊されることを期待します。",
         requireable = "指定されたブロックが空気ブロックであるかどうか判定します。"
 )
 public class BlockBreakAction extends AbstractBlockAction
-        implements Executable, Requireable, Watchable
+        implements Executable, Requireable, Expectable
 {
     @InputDoc(
             name = "actor",
             description = "ブロックを破壊するアクタです。\n" +
                     "省略した場合は、ブロックは自然に壊れます。",
             type = PlayerSpecifier.class,
-            availableFor = {ActionMethod.EXECUTE, ActionMethod.WATCH}
+            availableFor = {ActionMethod.EXECUTE, ActionMethod.EXPECT}
     )
     public static final InputToken<PlayerSpecifier> IN_ACTOR = ofInput("actor", PlayerSpecifier.class, ofPlayer());
     @InputDoc(
             name = "dropItems",
             description = "アイテムをドロップするかどうかを指定します。",
             type = boolean.class,
-            availableFor = {ActionMethod.WATCH}
+            availableFor = {ActionMethod.EXPECT}
     )
     public static final InputToken<Boolean> IN_DROP_ITEMS = ofInput("dropItems", Boolean.class);
 

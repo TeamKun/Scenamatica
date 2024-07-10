@@ -4,7 +4,7 @@ import org.bukkit.event.Event;
 import org.bukkit.event.world.WorldInitEvent;
 import org.kunlab.scenamatica.annotations.action.Action;
 import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
-import org.kunlab.scenamatica.interfaces.action.types.Watchable;
+import org.kunlab.scenamatica.interfaces.action.types.Expectable;
 
 import java.util.Collections;
 import java.util.List;
@@ -18,11 +18,11 @@ import java.util.List;
         },
 
         executable = ActionDoc.UNALLOWED,
-        watchable = "ワールドの初期化が実行されることを期待します。",
+        expectable = "ワールドの初期化が実行されることを期待します。",
         requireable = ActionDoc.UNALLOWED
 )
 public class WorldInitAction extends AbstractWorldAction
-        implements Watchable
+        implements Expectable
 {
 
     @Override

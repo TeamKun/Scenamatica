@@ -24,7 +24,7 @@ import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
-import org.kunlab.scenamatica.interfaces.action.types.Watchable;
+import org.kunlab.scenamatica.interfaces.action.types.Expectable;
 import org.kunlab.scenamatica.interfaces.context.Actor;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.misc.BlockStructure;
 import org.kunlab.scenamatica.interfaces.structures.specifiers.PlayerSpecifier;
@@ -41,7 +41,7 @@ import java.util.List;
         events = BlockPlaceEvent.class,
 
         executable = "指定されたブロックを設置します。",
-        watchable = "指定されたブロックが設置されることを期待します。",
+        expectable = "指定されたブロックが設置されることを期待します。",
         requireable = "指定されたブロックが指定されたものであることを検証します。",
 
         admonitions = {
@@ -54,14 +54,14 @@ import java.util.List;
         }
 )
 public class BlockPlaceAction extends AbstractBlockAction
-        implements Executable, Requireable, Watchable
+        implements Executable, Requireable, Expectable
 {
     @InputDoc(
             name = "actor",
             description = "ブロックを設置するアクタです。",
             type = PlayerSpecifier.class,
 
-            availableFor = {ActionMethod.EXECUTE, ActionMethod.WATCH}
+            availableFor = {ActionMethod.EXECUTE, ActionMethod.EXPECT}
     )
     public static final InputToken<PlayerSpecifier> IN_ACTOR = ofInput("actor", PlayerSpecifier.class, ofPlayer());
 

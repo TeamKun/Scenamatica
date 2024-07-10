@@ -19,7 +19,7 @@ import org.kunlab.scenamatica.bookkeeper.enums.MCVersion;
 import org.kunlab.scenamatica.enums.MinecraftVersion;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
-import org.kunlab.scenamatica.interfaces.action.types.Watchable;
+import org.kunlab.scenamatica.interfaces.action.types.Expectable;
 import org.kunlab.scenamatica.interfaces.context.Actor;
 import org.kunlab.scenamatica.nms.enums.NMSHand;
 
@@ -37,7 +37,7 @@ import java.util.List;
         supportsUntil = MCVersion.V1_15_2,
 
         executable = "プレイヤがバケツを空にします。",
-        watchable = "プレイヤがバケツを空にすることを期待します。",
+        expectable = "プレイヤがバケツを空にすることを期待します。",
         requireable = ActionDoc.UNALLOWED,
 
         admonitions = {
@@ -48,7 +48,7 @@ import java.util.List;
         }
 )
 public class PlayerBucketEmptyAction extends AbstractPlayerBucketAction
-        implements Watchable, Executable
+        implements Expectable, Executable
 {
 
     @Override

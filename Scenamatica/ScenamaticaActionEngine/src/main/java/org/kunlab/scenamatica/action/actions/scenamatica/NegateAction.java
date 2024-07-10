@@ -19,7 +19,7 @@ import org.kunlab.scenamatica.interfaces.scenariofile.Mapped;
         description = "コンディション要求アクションの結果を否定します。",
 
         executable = ActionDoc.UNALLOWED,
-        watchable = ActionDoc.UNALLOWED,
+        expectable = ActionDoc.UNALLOWED,
         requireable = "条件が否定されていることを要求します。"
 )
 public class NegateAction extends AbstractScenamaticaAction

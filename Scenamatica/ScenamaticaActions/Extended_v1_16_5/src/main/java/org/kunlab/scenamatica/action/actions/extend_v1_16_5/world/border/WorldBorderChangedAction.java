@@ -10,14 +10,14 @@ import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
-import org.kunlab.scenamatica.interfaces.action.types.Watchable;
+import org.kunlab.scenamatica.interfaces.action.types.Expectable;
 
 import java.util.Collections;
 import java.util.List;
 
 @Action(value = "world_border_changed", supportsSince = MinecraftVersion.V1_16_5)
 public class WorldBorderChangedAction extends AbstractWorldAction
-        implements Watchable
+        implements Expectable
 {
     public static final InputToken<Double> IN_SIZE = ofInput(
             "size",
