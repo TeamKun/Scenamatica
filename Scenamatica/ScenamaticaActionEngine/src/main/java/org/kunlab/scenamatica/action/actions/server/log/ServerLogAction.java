@@ -8,8 +8,10 @@ import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.action.AbstractAction;
 import org.kunlab.scenamatica.annotations.action.Action;
 import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.Admonition;
 import org.kunlab.scenamatica.bookkeeper.annotations.Category;
 import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
+import org.kunlab.scenamatica.bookkeeper.enums.AdmonitionType;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.events.actions.server.ServerLogEvent;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
@@ -51,7 +53,13 @@ public class ServerLogAction extends AbstractAction
     @InputDoc(
             name = "level",
             description = "ログレベルです。",
-            type = EnumLogLevel.class
+            type = EnumLogLevel.class,
+            admonitions = {
+                    @Admonition(
+                            type = AdmonitionType.DANGER,
+                            content = "`OFF` および `ALL` は指定できません。"
+                    )
+            }
     )
     public static final InputToken<Level> IN_LEVEL = ofInput(
             "level",

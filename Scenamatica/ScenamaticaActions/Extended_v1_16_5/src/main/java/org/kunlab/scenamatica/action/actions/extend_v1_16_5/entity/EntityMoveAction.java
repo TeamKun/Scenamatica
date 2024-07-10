@@ -9,9 +9,11 @@ import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.action.actions.base.entity.AbstractGeneralEntityAction;
 import org.kunlab.scenamatica.annotations.action.Action;
 import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.Admonition;
 import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
 import org.kunlab.scenamatica.bookkeeper.annotations.OutputDoc;
 import org.kunlab.scenamatica.bookkeeper.enums.ActionMethod;
+import org.kunlab.scenamatica.bookkeeper.enums.AdmonitionType;
 import org.kunlab.scenamatica.commons.utils.Utils;
 import org.kunlab.scenamatica.enums.MinecraftVersion;
 import org.kunlab.scenamatica.enums.ScenarioType;
@@ -56,7 +58,13 @@ public class EntityMoveAction extends AbstractGeneralEntityAction
             name = "from",
             description = "移動前の位置です。",
             type = Location.class,
-            availableFor = ActionMethod.WATCH
+            availableFor = ActionMethod.WATCH,
+            admonitions = {
+                    @Admonition(
+                            type = AdmonitionType.TIP,
+                            content = "座標の比較は, 誤差 `0.01` まで許容されます。"
+                    )
+            }
     )
     public static final InputToken<LocationStructure> IN_FROM = ofInput(
             "from",

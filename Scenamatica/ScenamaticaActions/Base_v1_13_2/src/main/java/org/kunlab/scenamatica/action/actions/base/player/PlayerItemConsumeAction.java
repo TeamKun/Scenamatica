@@ -29,7 +29,15 @@ import java.util.List;
 @Action("player_item_consume")
 @ActionDoc(
         name = "プレイヤによるアイテムの消費",
-        description = "プレイヤの食料などを消費させます。",
+        description = "プレイヤの食料などを消費させます。\n" +
+                "\n" +
+                "**アクション実行シナリオでの使用**\n" +
+                "プレイヤの利き手にあるアイテムを消費します。\n" +
+                "\n" +
+                "item に消費するアイテムを指定した場合は, 消費の開始前にアイテムが利き手に設定されます。 その場合は, `item` には有効な食料アイテムか, " +
+                "ミルクバケツ, またはポーションである必要があります。\n" +
+                "\n" +
+                "また, `replacement` は使用できません。",
         events = {
                 PlayerItemConsumeEvent.class
         },
@@ -54,7 +62,7 @@ import java.util.List;
         admonitions = {
                 @Admonition(
                         type = AdmonitionType.DANGER,
-                        content = "このアクションは、実行の完了までに、アイテムの消費にかかる時間分だけ掛かります。\n" +
+                        content = "このアクションは, 実行の完了までに, アイテムの消費にかかる時間分だけ掛かります。\n" +
                                 "そのため、適切なタイムアウト（約 `20ticks * 2sec = 40ticks`）を設定する必要があります。"
                 )
         }

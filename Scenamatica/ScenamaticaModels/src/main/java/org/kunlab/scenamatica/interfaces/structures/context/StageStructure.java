@@ -39,7 +39,7 @@ import org.kunlab.scenamatica.interfaces.scenariofile.Structure;
                 @TypeProperty(
                         name = "env",
                         type = World.Environment.class,
-                        description = "ワールドの環境です（e.g. ネザー、エンド）。"
+                        description = "ワールドの環境です（e.g. ネザー, エンド）。"
                 ),
                 @TypeProperty(
                         name = "hardcore",

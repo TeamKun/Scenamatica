@@ -31,7 +31,22 @@ import TabItem from '@theme/TabItem';
 
 {{markdown description}}
 
+{{#if (hasAdmonitionsContracts admonitions)}}
+{{#if (hasAdmonitions admonitions "execute")}}
+**アクション実行シナリオでの使用**
+{{>admonitions admonitions=admonitions mode="execute"}}
+{{/if}}
+{{#if (hasAdmonitions admonitions "watch")}}
+**アクション実行期待シナリオでの使用**
+{{>admonitions admonitions=admonitions mode="watch"}}
+{{/if}}
+{{#if (hasAdmonitions admonitions "require")}}
+**コンディション要求シナリオでの使用**
+{{>admonitions admonitions=admonitions mode="require"}}
+{{/if}}
+{{else}}
 {{>admonitions admonitions=admonitions}}
+{{/if}}
 {{#if super}}
 <Admonition type="tip">
   {{#with (resolve super)}}
@@ -111,7 +126,7 @@ import TabItem from '@theme/TabItem';
   {{else}}
   <table>
     <tbody>
-      {{#each inputs}}
+      {{#each (sort inputs "name")}}
       {{#if (expr (not availableFor) "||" (contains availableFor ../mode))}}
       <tr>
       {{!-- ↑ availableFor が存在しないものまたは, アクションが指定されているもののみレンダリング。 --}}
@@ -125,14 +140,14 @@ import TabItem from '@theme/TabItem';
   </table>
   {{/if}}
   {{!--インデントを変えるとパラメタが壊れる。--}}
-  {{#each inputs}}
+  {{#each (sort inputs)}}
   {{#if (expr (not availableFor) "||" (contains availableFor ../mode))}}
   {{#if (expr (isMultiLine description) "||" admonitions)}}
   <Heading id="input-{{../mode}}-{{name}}" as="h3">{{name}}{{#if (contains requiredOn ../mode)}}<RequiredMark />{{/if}}</Heading>
   {{#if description}}
   {{markdown description}}
   {{/if}}
-  {{>admonitions admonitions=admonitions}}
+  {{>admonitions admonitions=admonitions mode=../mode}}
   <br />
   {{/if}}
   {{/if}}
@@ -161,7 +176,7 @@ import TabItem from '@theme/TabItem';
   {{else}}
   <table>
     <tbody>
-      {{#each outputs}}
+      {{#each (sort outputs "name")}}
       <tr>
       <td><code>{{#if (expr (isMultiLine description) "||" admonitions)}}<a href="#output-{{../mode}}-{{name}}">{{name}}</a>{{else}}{{name}}{{/if}}</code></td>
       <td>{{#with (resolveType type)}}{{#if (path $reference)}}<Link to="{{path $reference}}">{{id}}</Link>{{else}}{{id}}{{/if}}{{/with}}</td>
@@ -171,11 +186,11 @@ import TabItem from '@theme/TabItem';
     </tbody>
   </table>
   {{/if}}
-  {{#each outputs}}
+  {{#each (sort outputs "name")}}
   {{#if (expr (isMultiLine description) "||" admonitions)}}
-  <Heading id="output-{{mode}}-{{name}}" as="h3">{{name}}</Heading>
+  <Heading id="output-{{../mode}}-{{name}}" as="h3">{{name}}</Heading>
   {{markdown description}}
-  {{>admonitions admonitions=admonitions}}
+  {{>admonitions admonitions=admonitions mode=../mode}}
   {{/if}}
   <br />
   {{/each}}

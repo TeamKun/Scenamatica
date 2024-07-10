@@ -13,6 +13,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.annotations.action.Action;
 import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.Admonition;
+import org.kunlab.scenamatica.bookkeeper.enums.ActionMethod;
+import org.kunlab.scenamatica.bookkeeper.enums.AdmonitionType;
 import org.kunlab.scenamatica.bookkeeper.enums.MCVersion;
 import org.kunlab.scenamatica.enums.MinecraftVersion;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
@@ -36,7 +39,20 @@ import java.util.List;
 
         executable = "プレイヤがバケツを満杯にします。",
         watchable = "プレイヤがバケツを満杯にすることを期待します。",
-        requireable = ActionDoc.UNALLOWED
+        requireable = ActionDoc.UNALLOWED,
+
+        admonitions = {
+                @Admonition(
+                        type = AdmonitionType.WARNING,
+                        on = ActionMethod.EXECUTE,
+                        content = "`block` または `clickedBlock` のどちらか一方は必須です。"
+                ),
+                @Admonition(
+                        type = AdmonitionType.DANGER,
+                        on = ActionMethod.EXECUTE,
+                        content = "NMS の仕様上の都合により、 `block` を用いた液体の場所は `eventOnly` が `true` の場合にのみ有効です。"
+                )
+        }
 )
 public class PlayerBucketFillAction extends AbstractPlayerBucketAction
         implements Watchable, Executable

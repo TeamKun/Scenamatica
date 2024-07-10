@@ -13,9 +13,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.annotations.action.Action;
 import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.Admonition;
 import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
 import org.kunlab.scenamatica.bookkeeper.annotations.OutputDoc;
 import org.kunlab.scenamatica.bookkeeper.enums.ActionMethod;
+import org.kunlab.scenamatica.bookkeeper.enums.AdmonitionType;
 import org.kunlab.scenamatica.commons.utils.VoxelUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
@@ -89,7 +91,17 @@ public class ProjectileHitAction extends AbstractEntityAction<Projectile, Projec
             name = "eventOnly",
             description = "イベントのみを実行するかどうかを指定します。",
             type = boolean.class,
-            availableFor = ActionMethod.EXECUTE
+            availableFor = ActionMethod.EXECUTE,
+            admonitions = {
+                    @Admonition(
+                            type = AdmonitionType.INFORMATION,
+                            title = "通常時(`eventOnly` = false)の動作",
+                            content = "通常は、以下の動作を行います。\n" +
+                                    "\n" +
+                                    "+ `hitEntity` が指定されている場合は, そのエンティティの位置に投射物をテレポートさせ, 速度を `0` にします。\n" +
+                                    "+ `hitBlock` が指定されている場合は, そのブロックの `blockFace` の正面 `0.2` の位置に投射物をテレポートさせ、ブロックの面に対して垂直な速度を `10` にします。"
+                    )
+            }
     )
     public static final InputToken<Boolean> IN_EVENT_ONLY = ofInput("eventOnly", Boolean.class, false);
     public static final String KEY_OUT_HIT_ENTITY = "hitEntity";

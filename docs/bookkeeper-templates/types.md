@@ -64,12 +64,11 @@ import TabItem from '@theme/TabItem';
 </table>
 
 {{else}}
-### 基本情報 {#overview}
+### プロパティの一覧 {#properties}
 
-{{#if properties}}
 <table>
   <tbody>
-  {{#each properties}}
+  {{#each (sort properties "name")}}
   <tr>
       <td><code>{{#if (expr (expr (isMultiLine description) "||" admonitions) "||" pattern)}}<a href="#property-{{name}}">{{name}}</a>{{else}}{{name}}{{/if}}</code></td>
       <td>{{#with (resolveType type)}}{{#if (path $reference)}}<Link to="{{path $reference}}">{{/if}}{{id}}{{#if (path $reference)}}</Link>{{/if}}{{#if ../array}}[]{{/if}}{{/with}}</td>
@@ -79,7 +78,7 @@ import TabItem from '@theme/TabItem';
   </tbody>
 </table>
 
-{{#each properties}}
+{{#each (sort properties "name")}}
 {{#if (expr (expr (isMultiLine description) "||" admonitions) "||" pattern)}}
 ### `{{name}}` {#property-{{name}} }
 
@@ -93,5 +92,4 @@ import TabItem from '@theme/TabItem';
 {{/if}}
 {{/each}}
 
-{{/if}}
 {{/if}}

@@ -32,7 +32,17 @@ import java.util.List;
 @Action("entity_pickup_item")
 @ActionDoc(
         name = "エンティティによるアイテムの拾い上げ",
-        description = "エンティティがアイテムを拾い上げます。",
+        description = "エンティティがアイテムを拾い上げます。\n" +
+                "\n" +
+                "**アクション実行シナリオでの使用**\n" +
+                "アイテムを拾うエンティティは、[LivingEntity](https://jd.papermc.io/paper/1.16/org/bukkit/entity/LivingEntity.html) かつ, \n" +
+                "アイテムを拾える状態（[LivingEntity#canPickupItems()](https://jd.papermc.io/paper/1.16/org/bukkit/entity/LivingEntity.html#canPickupItems()) が `true`）である必要があります。\n" +
+                "\n" +
+                "さらに, アイテムは以下の状態である必要があります。\n" +
+                "+ 拾うエンティティがモブの場合は, [Item#canMobPickup()](https://jd.papermc.io/paper/1.16/org/bukkit/entity/Item.html#canMobPickup()) が `true` であること。\n" +
+                "+ 拾うエンティティがプレイヤの場合は, [Item#canPlayerPickup()](https://jd.papermc.io/paper/1.16/org/bukkit/entity/Item.html#canPlayerPickup()) が `true` であること。\n" +
+                "\n" +
+                "プレイヤがアイテムを拾った場合, そのアイテムはプレイヤのインベントリに移動されます。",
         events = {
                 EntityPickupItemEvent.class
         },

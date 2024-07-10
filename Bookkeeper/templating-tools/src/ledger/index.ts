@@ -285,12 +285,31 @@ class LedgerSession {
         Handlebars.registerPartial("admonitions", `
 {{#if admonitions}}
 {{#each admonitions}}
+{{#if (expr (not on) "||" (expr mode "&&" (contains on mode)))}}
 <Admonition type="{{type}}" {{#if title}}title="{{title}}"{{/if}}>
   {{{content}}}
 </Admonition>
+{{/if}}
 {{/each}}
 {{/if}}
 `);
+        Handlebars.registerHelper("hasAdmonitions", (admonitions: Admonition[], mode?: string) => {
+            if (!admonitions) {
+                return false
+            } else if (!mode) {
+                return true
+            }
+
+            for (const admonition of admonitions) {
+                if (!admonition.on || admonition.on.includes(mode as AdmonitionTarget)) {
+                    return true
+                }
+            }
+        })
+
+        Handlebars.registerHelper("hasAdmonitionsContracts", (admonitions: Admonition[]) => {
+            return admonitions && admonitions.some(admonition => admonition.on)
+        })
 
         Handlebars.registerHelper("safe", (content: string) => {
             return new Handlebars.SafeString(content)
@@ -399,8 +418,12 @@ class LedgerSession {
             return result
         })
 
-        Handlebars.registerHelper("contains", (array: string[], value: string) => {
-            return array && array.map(v => v.toLowerCase()).includes(value.toLowerCase())
+        Handlebars.registerHelper("contains", (array: string | string[], value: string) => {
+            if (typeof array === "string") {
+                return array === value
+            } else {
+                return array && array.map(v => v.toLowerCase()).includes(value.toLowerCase())
+            }
         })
 
         Handlebars.registerHelper("not", (value: boolean) => {
@@ -425,8 +448,31 @@ class LedgerSession {
             return contents == undefined || contents.length === 0
         })
 
-        Handlebars.registerHelper("sort", (array: any[]) => {
-            return array.sort()
+        Handlebars.registerHelper("sort", (array: any[] | { [key: string]: any }, sortByProperty?: string) => {
+            if (!array) {
+                return undefined
+            }
+
+            if (sortByProperty) {
+                if (Array.isArray(array)) {
+                    return array.sort((a, b) => {
+                        if (a[sortByProperty] < b[sortByProperty]) {
+                            return -1
+                        } else if (a[sortByProperty] > b[sortByProperty]) {
+                            return 1
+                        } else {
+                            return 0
+                        }
+                    })
+                } else {
+                    return Object.keys(array).sort().reduce((obj, key) => {
+                        obj[key] = array[key]
+                        return obj
+                    }, {})
+                }
+            } else {
+                return array.sort()
+            }
         })
 
         handlebars.registerHelper("groupingWith", (array: any[], size: number) => {

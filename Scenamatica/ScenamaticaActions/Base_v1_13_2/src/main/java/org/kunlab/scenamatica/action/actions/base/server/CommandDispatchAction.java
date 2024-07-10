@@ -57,7 +57,13 @@ public class CommandDispatchAction extends AbstractServerAction
     @InputDoc(
             name = "command",
             description = "実行するコマンドです。",
-            type = String.class
+            type = String.class,
+            admonitions = {
+                    @Admonition(
+                           type = AdmonitionType.TIP,
+                            content = "`/` 接頭辞の有無はどちらでもよく, それほど重要ではありません。"
+                    )
+            }
     )
     public static final InputToken<String> IN_COMMAND = ofInput(
             "command",
