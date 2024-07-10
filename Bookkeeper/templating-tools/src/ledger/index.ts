@@ -264,11 +264,11 @@ class LedgerSession {
 
     private initHandlebars() {
         const coPrimitives = {
-            "$ref:type:playerSpecifier": createPrimitive("$ref:type:playerSpecifier", "プレイヤ指定子", "/"),
-            "$ref:type:entitySpecifier": createPrimitive("$ref:type:entitySpecifier", "エンティティ指定子", "/"),
-            "$ref:type:namespacedKey": createPrimitive("$ref:type:namespacedKey", "名前空間付きキー", "/"),
-            "$ref:type:namespaced": createPrimitive("$ref:type:namespaced", "名前空間付きキー", "/"),
-            "$ref:type:uuid": createPrimitive("$ref:type:uuid", "UUID", "/"),
+            "$ref:type:playerSpecifier": createPrimitive("$ref:type:playerSpecifier", "プレイヤ指定子", "/docs/use/scenario/specifier#player-specifier"),
+            "$ref:type:entitySpecifier": createPrimitive("$ref:type:entitySpecifier", "エンティティ指定子", "/docs/use/scenario/specifier#entity-specifier"),
+            "$ref:type:namespacedKey": createPrimitive("$ref:type:namespacedKey", "名前空間付きキー"),
+            "$ref:type:namespaced": createPrimitive("$ref:type:namespaced", "名前空間付きキー"),
+            "$ref:type:uuid": createPrimitive("$ref:type:uuid", "UUID"),
             "string": createPrimitive("string", "文字列"),
             "integer": createPrimitive("integer", "整数値"),
             "boolean": createPrimitive("boolean", "真偽値"),
