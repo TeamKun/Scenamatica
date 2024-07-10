@@ -4,23 +4,23 @@ import clsx from "clsx";
 
 
 type ActionProps = {
-  executable: boolean
-  watchable: boolean
-  requireable: boolean
+  execute: boolean
+  watch: boolean
+  require: boolean
 }
 
 const ActionIcon: React.FC<ActionProps> = ({
-                                             executable,
-                                             watchable,
-                                             requireable,
+                                             execute,
+                                             watch,
+                                             require,
                                            }) => {
   const icons = []
-  if (executable)
-    icons.push(<span className={clsx(styles.scenarioType, styles.execution)}>E</span>)
-  if (watchable)
-    icons.push(<span className={clsx(styles.scenarioType, styles.expectation)}>W</span>)
-  if (requireable)
-    icons.push(<span className={clsx(styles.scenarioType, styles.requirement)}>R</span>)
+  if (execute)
+    icons.push(<span className={clsx(styles.scenarioType, styles.execution)}>実行</span>)
+  if (watch)
+    icons.push(<span className={clsx(styles.scenarioType, styles.expectation)}>期待</span>)
+  if (require)
+    icons.push(<span className={clsx(styles.scenarioType, styles.requirement)}>要求</span>)
 
   return <>
     {icons}

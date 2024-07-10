@@ -151,7 +151,7 @@ public class ActionCompiler extends AbstractCompiler<ActionDefinition, CompiledA
 
         CategoryManager.CategoryEntry categoryReference;
         if (definition.getId().equals("server_log")) // サーバ・ログは特別に扱う。
-            categoryReference = this.categoryManager.getCategoryByID("server");
+            categoryReference = this.categoryManager.getCategoryByID("servers");
         else
             categoryReference = this.categoryManager.recogniseCategory(clazz);
 

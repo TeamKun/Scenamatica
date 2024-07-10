@@ -18,6 +18,7 @@ public class CompiledType implements ICompiled
 {
     protected static final String KEY_TYPE = "type";
     protected static final String KEY_ID = "id";
+    protected static final String KEY_DESCRIPTION = "description";
     protected static final String KEY_CATEGORY = "category";
     protected static final String KEY_NAME = "name";
     protected static final String KEY_CLASS_NAME = "class";
@@ -27,16 +28,18 @@ public class CompiledType implements ICompiled
 
     private final String id;
     private final String name;
+    private final String description;
     private final CategoryManager.CategoryEntry category;
     private final String className;
     private final String mappingOf;
     private final Map<String, Property> properties;
     private final GenericAdmonition[] admonitions;
 
-    public CompiledType(String id, String name, CategoryManager.CategoryEntry category, String className, GenericAdmonition[] admonitions)
+    public CompiledType(String id, String name, String description, CategoryManager.CategoryEntry category, String className, GenericAdmonition[] admonitions)
     {
         this.id = id;
         this.name = name;
+        this.description = description;
         this.category = category;
         this.className = className;
         this.mappingOf = null;
@@ -44,10 +47,11 @@ public class CompiledType implements ICompiled
         this.admonitions = admonitions;
     }
 
-    public CompiledType(String id, String name, CategoryManager.CategoryEntry category, String className, String mappingOf)
+    public CompiledType(String id, String name, String description, CategoryManager.CategoryEntry category, String className, String mappingOf)
     {
         this.id = id;
         this.name = name;
+        this.description = description;
         this.category = category;
         this.className = className;
         this.mappingOf = mappingOf;
@@ -55,10 +59,11 @@ public class CompiledType implements ICompiled
         this.admonitions = null;
     }
 
-    public CompiledType(String id, String name, CategoryManager.CategoryEntry category, String className)
+    public CompiledType(String id, String name, String description, CategoryManager.CategoryEntry category, String className)
     {
         this.id = id;
         this.name = name;
+        this.description = description;
         this.category = category;
         this.className = className;
         this.mappingOf = null;
@@ -73,6 +78,7 @@ public class CompiledType implements ICompiled
         map.put(KEY_TYPE, "object");
         map.put(KEY_ID, this.id);
         map.put(KEY_NAME, this.name);
+        map.put(KEY_DESCRIPTION, this.description);
         if (this.category != null)
             map.put(KEY_CATEGORY, this.category.getReference());
         MapUtils.putIfNotNull(map, KEY_CLASS_NAME, this.className);
@@ -99,6 +105,9 @@ public class CompiledType implements ICompiled
     @Value
     public static class Property
     {
+        public static final String KEY_PATTERN = "pattern";
+        public static final String KEY_MIN = "min";
+        public static final String KEY_MAX = "max";
         private static final String KEY_NAME = "name";
         private static final String KEY_TYPE = "type";
         private static final String KEY_DESCRIPTION = "description";
@@ -112,20 +121,11 @@ public class CompiledType implements ICompiled
         String description;
         boolean required;
         boolean array;
+        String pattern;
+        Double min;
+        Double max;
         Object defaultValue;
         GenericAdmonition[] admonitions;
-
-        public Property(String name, TypeReference type, String description, boolean required, boolean array,
-                        Object defaultValue, GenericAdmonition[] admonitions)
-        {
-            this.name = name;
-            this.type = type;
-            this.description = description;
-            this.required = required;
-            this.array = array;
-            this.defaultValue = defaultValue;
-            this.admonitions = admonitions;
-        }
 
         public Map<String, Object> serialize()
         {
@@ -135,6 +135,9 @@ public class CompiledType implements ICompiled
             map.put(KEY_DESCRIPTION, this.description);
             MapUtils.putIfTrue(map, KEY_ARRAY, this.array);
             MapUtils.putIfTrue(map, KEY_REQUIRED, this.required);
+            MapUtils.putIfNotNull(map, KEY_PATTERN, this.pattern);
+            MapUtils.putIfNotNull(map, KEY_MIN, this.min);
+            MapUtils.putIfNotNull(map, KEY_MAX, this.max);
             MapUtils.putIfNotNull(map, KEY_DEFAULT_VALUE, this.defaultValue);
             if (!(this.admonitions == null || this.admonitions.length == 0))
                 map.put(KEY_ADMONITIONS, Arrays.stream(this.admonitions).map(GenericAdmonition::serialize).collect(Collectors.toList()));

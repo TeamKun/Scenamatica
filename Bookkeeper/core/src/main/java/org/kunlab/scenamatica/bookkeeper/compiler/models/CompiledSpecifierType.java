@@ -31,6 +31,7 @@ public class CompiledSpecifierType extends CompiledType implements IPrimitiveTyp
                 type + "Specifier",
                 type.substring(0, 1).toUpperCase() + type.substring(1) + "Specifier",
                 null,
+                null,
                 className
         );
     }

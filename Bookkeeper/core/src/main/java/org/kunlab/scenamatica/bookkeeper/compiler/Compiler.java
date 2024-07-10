@@ -162,6 +162,7 @@ public class Compiler
             dependencyGraph.putIfAbsent(target, new ArrayList<>());
         }
 
+        injectServerLogAction(dependencyGraph);
         timekeeper.end();
         return dependencyGraph;
     }
@@ -205,6 +206,37 @@ public class Compiler
         Collections.reverse(sortedList);
 
         return sortedList;
+    }
+
+    private static void injectServerLogAction(Map<IDefinition, List<IDefinition>> deps)
+    {
+        ActionDefinition broadcastActionDef = null;
+        List<IDefinition> serverLogActionDeps = null;
+        for (Map.Entry<IDefinition, List<IDefinition>> depEntry : deps.entrySet())
+        {
+            if (!(depEntry.getKey() instanceof ActionDefinition))
+                continue;
+
+            ActionDefinition actionDef = (ActionDefinition) depEntry.getKey();
+            if (actionDef.getId().equals("broadcast"))
+            {
+                broadcastActionDef = actionDef;
+                if (serverLogActionDeps != null)
+                {
+                    serverLogActionDeps.add(broadcastActionDef);
+                    break;
+                }
+            }
+            else if (actionDef.getId().equals("server_log"))
+            {
+                serverLogActionDeps = depEntry.getValue();
+                if (broadcastActionDef != null)
+                {
+                    serverLogActionDeps.add(broadcastActionDef);
+                    break;
+                }
+            }
+        }
     }
 
     private static List<IDefinition> reorderByType(List<? extends IDefinition> sortedList)

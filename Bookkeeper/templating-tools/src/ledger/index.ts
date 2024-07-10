@@ -4,6 +4,7 @@ import * as AdmZip from "adm-zip"
 import {LinkedReference, ReferenceLinker} from "./linker"
 import {TemplateRetriever} from "../template/retriever"
 import * as Handlebars from "handlebars";
+import * as handlebars from "handlebars";
 
 interface LedgerObject {
     $reference: string
@@ -41,6 +42,7 @@ interface InputOutputProperties {
     availableFor?: AdmonitionTarget[]
     supportsSince?: string
     supportsUntil?: string
+    pattern?: string
     min?: number
     max?: number
     constValue?: any
@@ -103,6 +105,15 @@ interface Event extends LedgerObject {
     javadocLink?: string
     source: EventSource
     descriptions?: Descriptions
+}
+
+const createPrimitive = (reference: string, displayName: string, path?: string) => {
+    return {
+        name: displayName,
+        id: displayName,
+        $reference: reference,
+        path: path
+    }
 }
 
 class LedgerSession {
@@ -250,31 +261,25 @@ class LedgerSession {
         this.deleteTempFiles()
     }
 
+
     private initHandlebars() {
-        const primitives = [
-            "boolean",
-            "byte",
-            "char",
-            "short",
-            "integer",
-            "long",
-            "float",
-            "double",
-            "object",
-            "string",
-            "map"
-        ]
         const coPrimitives = {
-            "$ref:type:playerSpecifier": {
-                name: "プレイヤ指定子",
-                $reference: "$ref:type:playerSpecifier",
-                path: "/"
-            },
-            "$ref:type:entitySpecifier": {
-                name: "エンティティ指定子",
-                $reference: "$ref:type:playerSpecifier",
-                path: "/"
-            }
+            "$ref:type:playerSpecifier": createPrimitive("$ref:type:playerSpecifier", "プレイヤ指定子", "/"),
+            "$ref:type:entitySpecifier": createPrimitive("$ref:type:entitySpecifier", "エンティティ指定子", "/"),
+            "$ref:type:namespacedKey": createPrimitive("$ref:type:namespacedKey", "名前空間付きキー", "/"),
+            "$ref:type:namespaced": createPrimitive("$ref:type:namespaced", "名前空間付きキー", "/"),
+            "$ref:type:uuid": createPrimitive("$ref:type:uuid", "UUID", "/"),
+            "string": createPrimitive("string", "文字列"),
+            "integer": createPrimitive("integer", "整数値"),
+            "boolean": createPrimitive("boolean", "真偽値"),
+            "float": createPrimitive("float", "浮動小数点数"),
+            "double": createPrimitive("double", "倍精度浮動小数点数"),
+            "long": createPrimitive("long", "長整数値"),
+            "short": createPrimitive("short", "短整数値"),
+            "byte": createPrimitive("byte", "バイト値"),
+            "char": createPrimitive("char", "文字"),
+            "object": createPrimitive("object", "オブジェクト"),
+            "map": createPrimitive("map", "マップ")
         }
 
         Handlebars.registerPartial("admonitions", `
@@ -314,12 +319,7 @@ class LedgerSession {
 
         Handlebars.registerHelper("resolve", resolve)
         Handlebars.registerHelper("resolveType", (type: string) => {
-            if (primitives.includes(type)) {
-                return {
-                    name: type,
-                    $reference: type
-                }
-            } else if (coPrimitives[type]) {
+            if (coPrimitives[type]) {
                 return coPrimitives[type]
             } else {
                 return resolve(type)
@@ -347,7 +347,9 @@ class LedgerSession {
             }
             return `${this.basePath}/${type}/${obj.id}`
         })
-        Handlebars.registerHelper("markdown", (content: string, indent: number = 0) => {
+        Handlebars.registerHelper("markdown", (content: string | Handlebars.SafeString, indent: number = 0) => {
+            if (content instanceof Handlebars.SafeString)
+                content = content.toString()
             return new Handlebars.SafeString(content.replace(/\n/g, "<br />\n" + " ".repeat(indent)))
         })
         Handlebars.registerHelper("lineOf", (content: string, sliceQuery: string) => {
@@ -421,6 +423,23 @@ class LedgerSession {
 
         Handlebars.registerHelper("isEmpty", (contents: any[]) => {
             return contents == undefined || contents.length === 0
+        })
+
+        Handlebars.registerHelper("sort", (array: any[]) => {
+            return array.sort()
+        })
+
+        handlebars.registerHelper("groupingWith", (array: any[], size: number) => {
+            const result = []
+            while (true) {
+                const group = array.splice(0, size)
+                if (group.length === 0) {
+                    break
+                }
+                result.push(group)
+            }
+
+            return result
         })
     }
 

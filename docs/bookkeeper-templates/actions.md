@@ -21,7 +21,7 @@ import TabItem from '@theme/TabItem';
 
 ## {{name}} - `{{id}}`
 
-{{lineOf description "0"}}
+{{markdown (lineOf description "0")}}
 
 {{#if category}}
 <Link to="."><small>カテゴリ：{{$ (resolve category) "name"}}</small></Link>
@@ -32,11 +32,21 @@ import TabItem from '@theme/TabItem';
 {{markdown description}}
 
 {{>admonitions admonitions=admonitions}}
+{{#if super}}
+<Admonition type="tip">
+  {{#with (resolve super)}}
+    このアクションは, アクション <Link to="{{path $reference}}">{{name}}(<kbd><code>{{id}}</code></kbd>)</Link>, およびその一部又はすべての入力・出力を継承しています。
+  {{/with}}
+</Admonition>
+{{/if}}
 
 ### 基本情報 {#overview}
 
 <table>
   <tbody>
+    <tr>
+      <td colspan="2"><center>**{{name}}**</center></td>
+    </tr>
     <tr>
       <td>ID(指定用名)</td>
       <td><CopyableText domID="{{id}}">{{id}}</CopyableText></td>
@@ -105,7 +115,7 @@ import TabItem from '@theme/TabItem';
       {{#if (expr (not availableFor) "||" (contains availableFor ../mode))}}
       <tr>
       {{!-- ↑ availableFor が存在しないものまたは, アクションが指定されているもののみレンダリング。 --}}
-      <td><CopyableText domID="{{name}}">{{name}}</CopyableText>{{#if (contains requiredOn ../mode)}}<RequiredMark }/>{{/if}</td>
+      <td><code>{{#if (expr (isMultiLine description) "||" admonitions)}}<a href="#input-{{../mode}}-{{name}}">{{name}}</a>{{else}}{{name}}{{/if}}</code>{{#if (contains requiredOn ../mode)}}<RequiredMark />{{/if}}</td>
       <td>{{#with (resolveType type)}}{{#if (path $reference)}}<Link to="{{path $reference}}">{{name}}</Link>{{else}}{{name}}{{/if}}{{/with}}</td>
       <td>{{lineOf description "0"}}</td>
       </tr>
@@ -145,7 +155,7 @@ import TabItem from '@theme/TabItem';
 
 {{#*inline "output"}}
 <TabItem value="{{mode}}" label="{{mode_jp}}">
-  **出力一覧**
+  **出力一覧(クリックでコピー可)**
   {{#if (isEmpty outputs)}}
   <p>出力はありません。</p>
   {{else}}
@@ -153,8 +163,8 @@ import TabItem from '@theme/TabItem';
     <tbody>
       {{#each outputs}}
       <tr>
-      <td>{{name}}</td>
-      <td>{{#with (resolveType type)}}{{#if (path $reference)}}<Link to="{{path $reference}}">{{name}}</Link>{{else}}{{name}}{{/if}}{{/with}}</td>
+      <td><code>{{#if (expr (isMultiLine description) "||" admonitions)}}<a href="#output-{{../mode}}-{{name}}">{{name}}</a>{{else}}{{name}}{{/if}}</code></td>
+      <td>{{#with (resolveType type)}}{{#if (path $reference)}}<Link to="{{path $reference}}">{{id}}</Link>{{else}}{{id}}{{/if}}{{/with}}</td>
       <td>{{lineOf description "0"}}</td>
       </tr>
       {{/each}}
@@ -162,7 +172,7 @@ import TabItem from '@theme/TabItem';
   </table>
   {{/if}}
   {{#each outputs}}
-  {{#if (isMultiLine description)}}
+  {{#if (expr (isMultiLine description) "||" admonitions)}}
   <Heading id="output-{{mode}}-{{name}}" as="h3">{{name}}</Heading>
   {{markdown description}}
   {{>admonitions admonitions=admonitions}}

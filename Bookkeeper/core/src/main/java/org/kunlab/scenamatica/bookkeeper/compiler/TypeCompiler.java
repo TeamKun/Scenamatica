@@ -60,24 +60,6 @@ public class TypeCompiler extends AbstractCompiler<TypeDefinition, CompiledType,
         super("types");
         this.core = core;
         this.categoryManager = core.getCategoryManager();
-
-        this.initWellKnownTypes();
-    }
-
-    private void initWellKnownTypes()
-    {
-       /* this.compiledItemReferences.put(
-                CompiledStringType.NAME_UUID,
-                CompiledStringType.REF_UUID
-        ); */
-        this.compiledItemReferences.put(
-                CompiledStringType.NAME_NAMESPACED,
-                CompiledStringType.REF_NAMESPACED
-        );
-        this.compiledItemReferences.put(
-                CompiledStringType.NAME_NAMESPACED_KEY,
-                CompiledStringType.REF_NAMESPACED_KEY
-        );
     }
 
     public TypeReference lookup(Type type)
@@ -116,6 +98,7 @@ public class TypeCompiler extends AbstractCompiler<TypeDefinition, CompiledType,
                 new CompiledType(
                         id,
                         definition.getName(),
+                        definition.getDescription(),
                         category,
                         definition.getClazz().name,
                         definition.getMappingOf() != null ? definition.getMappingOf().getClassName().replace('.', '/'): null,
@@ -147,6 +130,9 @@ public class TypeCompiler extends AbstractCompiler<TypeDefinition, CompiledType,
                             property.getDescription(),
                             property.isRequired(),
                             property.getType().getDescriptor().startsWith("["),
+                            property.getPattern(),
+                            property.getMin(),
+                            property.getMax(),
                             property.getDefaultValue(),
                             property.getAdmonitions()
                     )
@@ -279,6 +265,7 @@ public class TypeCompiler extends AbstractCompiler<TypeDefinition, CompiledType,
                 new CompiledType(
                         id,
                         classNameSimple,
+                        null,
                         category,
                         className
                 ),
@@ -359,7 +346,7 @@ public class TypeCompiler extends AbstractCompiler<TypeDefinition, CompiledType,
     {
         private PrimitiveType(String primitiveName, Class<?> clazz)
         {
-            super(primitiveName, primitiveName, null, clazz.getName());
+            super(primitiveName, primitiveName, null, null, clazz.getName());
         }
 
         public static TypeReference ofRef(String primitiveName, Class<?> clazz)
