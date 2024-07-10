@@ -4,7 +4,7 @@
     "properties": {
       "actors": {
         "type": "array",
-        "description": "シナリオの実行に必要なアクタを定義します。必要なアクタは、適宜自動生成されます。",
+        "description": "シナリオの実行に必要なアクタを定義します。必要なアクタは, 適宜自動生成されます。",
         "items": {
           "type": "player"
         }
@@ -69,7 +69,7 @@
       },
       "with": {
         "type": "actionArgument",
-        "description": "アクションの種類によっては、このプロパティにアクションの引数を指定します。"
+        "description": "アクションの種類によっては, このプロパティにアクションの引数を指定します。"
       }
     },
     "required": [

@@ -124,7 +124,7 @@ export default {
   themeConfig: {
     announcementBar: {
       id: "announcementBar-1",
-      content: `✨ もし Scenamatica が気に入ったなら、 GitHub で <a href="https://github.com/TeamKUN/Scenamatica">Star</a> をしてください！`,
+      content: `✨ もし Scenamatica が気に入ったなら,  GitHub で <a href="https://github.com/TeamKUN/Scenamatica">Star</a> をしてください！`,
     },
     navbar: {
       title: "Scenamatica",

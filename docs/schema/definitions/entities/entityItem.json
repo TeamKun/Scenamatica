@@ -2,7 +2,7 @@
   "entityItem": {
     "type": "entity",
     "description": "アイテムのエンティティを表します。",
-    "$comment": "多重継承はできないので、 itemStack のプロパティをそっくりそのままコピーします。",
+    "$comment": "多重継承はできないので,  itemStack のプロパティをそっくりそのままコピーします。",
     "properties": {
       "pickupDelay": {
         "type": "number",

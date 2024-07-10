@@ -375,7 +375,7 @@ const convertTypeToDefinitions = (obj: { [key: string]: any }): void => {
     "null"
   ]
 
-  // すべてのプロパティを深さ優先探索, キーtype のみを処理。 type が knownTypes 以外であれば、その値を $ref に変換する。
+  // すべてのプロパティを深さ優先探索, キーtype のみを処理。 type が knownTypes 以外であれば, その値を $ref に変換する。
   for (const key in obj) {
     const value = obj[key]
     if (key === "type" && typeof value === "string" && !knownTypes.includes(value)) {
