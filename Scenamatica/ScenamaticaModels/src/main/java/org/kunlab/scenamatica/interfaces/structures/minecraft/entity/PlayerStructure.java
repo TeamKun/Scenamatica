@@ -2,8 +2,10 @@ package org.kunlab.scenamatica.interfaces.structures.minecraft.entity;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.kunlab.scenamatica.bookkeeper.annotations.Admonition;
 import org.kunlab.scenamatica.bookkeeper.annotations.TypeDoc;
 import org.kunlab.scenamatica.bookkeeper.annotations.TypeProperty;
+import org.kunlab.scenamatica.bookkeeper.enums.AdmonitionType;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.entities.HumanEntityStructure;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.misc.LocationStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.Mapped;
@@ -27,7 +29,10 @@ name = "Player",
                 ),
                 @TypeProperty(
                         name = PlayerStructure.KEY_ONLINE,
-                        description = "プレイヤがオンラインかどうかです。",
+                        description = "プレイヤがオンラインかどうかです。\n" +
+                                "アクタの定義でかつこの値が `false` の場合は, アクタは準備されますがログイン処理はスキップされます。\n" +
+                                "\n" +
+                                "`PlayerJoinEvent` のテスト時などに, `false` にすることで余計な発火を防止してテストできます。",
                         type = boolean.class
                 ),
                 @TypeProperty(
@@ -38,7 +43,14 @@ name = "Player",
                 @TypeProperty(
                         name = PlayerStructure.KEY_DISPLAY_NAME,
                         description = "プレイヤの表示名です。",
-                        type = String.class
+                        type = String.class,
+                        admonitions = {
+                                @Admonition(
+                                        type = AdmonitionType.WARNING,
+                                        content = "この項目は Bukkit との互換性を保つために存在しています。\n" +
+                                                "必ずしも表示名として使用されるわけではありません。"
+                                )
+                        }
                 ),
                 @TypeProperty(
                         name = PlayerStructure.KEY_PLAYER_LIST,
@@ -92,12 +104,22 @@ name = "Player",
                 ),
                 @TypeProperty(
                         name = PlayerStructure.KEY_OP_LEVEL,
-                        description = "プレイヤの OP レベルです。",
+                        description = "プレイヤの OP レベルです。\n" +
+                                "真偽値も指定でき, その場合は Scenamatica の設定ファイルで設定したデフォルトの OP 権限レベルが適用されます。\n" +
+                                "\n" +
+                                "レベルの整数値と権限の強さは以下の通りです：\n" +
+                                "\n" +
+                                "+ `0` - OP 権限なし\n" +
+                                "+ `1` - OP 権限あり。スポーン範囲内制限等をバイパスできる。\n" +
+                                "+ `2` - 上記に加え, ちょと多くのコマンドを使える。コマンドブロックを使える。\n" +
+                                "+ `3` - 上記に加え, もっといっぱいコマンドを使える。\n" +
+                                "+ `4` - 上記に加え, ほぼ全てのコマンドを使える。",
                         type = int.class
                 ),
                 @TypeProperty(
                         name = PlayerStructure.KEY_ACTIVE_PERMISSIONS,
-                        description = "プレイヤが持っている権限です。",
+                        description = "プレイヤが持っている権限です。\n" +
+                                "Scenamatica の設定ファイルで設定したデフォルトの権限があらかじめ適用されます。",
                         type = String[].class
                 )
         }

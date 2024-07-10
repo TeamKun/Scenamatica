@@ -122,7 +122,7 @@ import java.util.UUID;
 )
 @Category(
         id = "entities",
-        name = "エンティティ関連",
+        name = "エンティティ",
         description = "エンティティに関連する情報を格納します。"
 )
 public interface EntityStructure extends Structure, ProjectileSourceStructure

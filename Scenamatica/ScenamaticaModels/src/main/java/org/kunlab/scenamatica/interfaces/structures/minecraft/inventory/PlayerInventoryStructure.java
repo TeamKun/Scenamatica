@@ -2,8 +2,10 @@ package org.kunlab.scenamatica.interfaces.structures.minecraft.inventory;
 
 import org.bukkit.inventory.PlayerInventory;
 import org.jetbrains.annotations.Nullable;
+import org.kunlab.scenamatica.bookkeeper.annotations.Admonition;
 import org.kunlab.scenamatica.bookkeeper.annotations.TypeDoc;
 import org.kunlab.scenamatica.bookkeeper.annotations.TypeProperty;
+import org.kunlab.scenamatica.bookkeeper.enums.AdmonitionType;
 import org.kunlab.scenamatica.interfaces.scenariofile.Creatable;
 import org.kunlab.scenamatica.interfaces.scenariofile.Mapped;
 
@@ -32,8 +34,23 @@ import org.kunlab.scenamatica.interfaces.scenariofile.Mapped;
                 ),
                 @TypeProperty(
                         name = PlayerInventoryStructure.KEY_ARMOR_CONTENTS,
-                        description = "防具です。",
-                        type = ItemStackStructure[].class
+                        description = "プレイヤが着用している防具です。\n" +
+                                "プレイヤの防具を昇順で以下のように割り当てます：\n" +
+                                "\n" +
+                                "1. ヘルメット\n" +
+                                "2. チェストプレート\n" +
+                                "3. レギンス\n" +
+                                "4. ブーツ",
+                        type = ItemStackStructure[].class,
+                        admonitions = {
+                                @Admonition(
+                                        type= AdmonitionType.DANGER,
+                                        content = "このプロパティの要素は, 必ず 4 つでなければいけません。\n" +
+                                                "空を指定する場合は `null` で補完してください。\n" +
+                                                "\n" +
+                                                "例： armors: [null, DIAMOND_CHESTPLATE, GOLDEN_LEGGINGS, null]`"
+                                )
+                        }
                 )
         }
 )

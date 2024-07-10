@@ -2,9 +2,11 @@ package org.kunlab.scenamatica.interfaces.structures.minecraft.inventory;
 
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
+import org.kunlab.scenamatica.bookkeeper.annotations.Admonition;
 import org.kunlab.scenamatica.bookkeeper.annotations.Category;
 import org.kunlab.scenamatica.bookkeeper.annotations.TypeDoc;
 import org.kunlab.scenamatica.bookkeeper.annotations.TypeProperty;
+import org.kunlab.scenamatica.bookkeeper.enums.AdmonitionType;
 import org.kunlab.scenamatica.interfaces.scenariofile.Structure;
 
 import java.util.Map;
@@ -21,16 +23,30 @@ import java.util.Map;
                         name = GenericInventoryStructure.KEY_SIZE,
                         description = "インベントリの大きさです。",
                         type = Integer.class,
-                        min = 0
+                        min = 0,
+                        admonitions = {
+                                @Admonition(
+                                        type = AdmonitionType.DANGER,
+                                        content = "必ず 9 の倍数である必要があります。"
+                                )
+                        }
                 ),
                 @TypeProperty(
                         name = GenericInventoryStructure.KEY_TITLE,
                         description = "インベントリのタイトルです。",
-                        type = String.class
+                        type = String.class,
+                        admonitions = {
+                                @Admonition(
+                                        type = AdmonitionType.DANGER,
+                                        content = "32 文字以内である必要があります。\n" +
+                                                "これは, Minecraft の仕様によるものです。"
+                                )
+                        }
                 ),
                 @TypeProperty(
                         name = GenericInventoryStructure.KEY_MAIN_CONTENTS,
-                        description = "インベントリのメインコンテンツです。",
+                        description = "インベントリのメインコンテンツです。\n" +
+                                "キーにはスロット番号を表す整数を, 値には ItemStackStructure を指定します。",
                         type = Map.class
                 )
         }
@@ -38,7 +54,7 @@ import java.util.Map;
 )
 @Category(
         id = "inventory_items",
-        name = "インベントリ・アイテム関連",
+        name = "インベントリ・アイテム",
         description = "インベントリ・アイテムに関する情報を格納します。"
 )
 public interface GenericInventoryStructure extends Structure
