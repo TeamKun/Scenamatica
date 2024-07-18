@@ -19,6 +19,7 @@ public class InputDefinition implements IDefinition
     String description;
     ActionMethod[] requiredOn;
     ActionMethod[] availableFor;
+    boolean array;
     Type type;
     MCVersion supportsSince;
     MCVersion supportsUntil;

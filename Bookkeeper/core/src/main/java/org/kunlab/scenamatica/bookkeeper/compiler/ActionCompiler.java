@@ -171,7 +171,8 @@ public class ActionCompiler extends AbstractCompiler<ActionDefinition, CompiledA
                         supportsUntil,
                         compileInputs(definition, superClasses, superActions),
                         compileOutputs(definition, superClasses, superActions),
-                        definition.getAdmonitions()
+                        definition.getAdmonitions(),
+                        definition.getActionKindOf()
                 )
         );
     }
@@ -270,8 +271,9 @@ public class ActionCompiler extends AbstractCompiler<ActionDefinition, CompiledA
         Map<String, CompiledAction.ActionInput> inputs = new HashMap<>();
         for (AnnotationNode anno : field.invisibleAnnotations)
         {
+            boolean isFieldTypeArray = field.desc.endsWith("[]");
             AnnotationValues values = AnnotationValues.of(anno);
-            InputDefinition input = this.inputReader.buildAnnotation(superClass, values);
+            InputDefinition input = this.inputReader.buildAnnotation(superClass, values, isFieldTypeArray);
             TypeReference type = this.typeCompiler.lookup(input.getType());
             inputs.put(input.getName(), constructInput(input, type, getActionByClass(superClass)));
         }
@@ -413,6 +415,7 @@ public class ActionCompiler extends AbstractCompiler<ActionDefinition, CompiledA
                 input.getAvailableFor(),
                 input.getSupportsSince(),
                 input.getSupportsUntil(),
+                input.isArray(),
                 input.getMin(),
                 input.getMax(),
                 input.getConstValue(),

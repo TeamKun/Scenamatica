@@ -110,4 +110,11 @@ public @interface InputDoc
      */
     @NotNull
     Admonition[] admonitions() default {};
+
+    /**
+     * 「アクション」を引数として取る場合に, そのアクションの種類を取得します。
+     *
+     * @return アクションの種類
+     */
+    ActionMethod actionKindOf() default ActionMethod.UNSET;
 }

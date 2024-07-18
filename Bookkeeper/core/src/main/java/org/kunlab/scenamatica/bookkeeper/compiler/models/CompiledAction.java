@@ -33,6 +33,7 @@ public class CompiledAction implements ICompiled
     private static final String KEY_INPUTS = "inputs";
     private static final String KEY_OUTPUTS = "outputs";
     private static final String KEY_ADMONITIONS = "admonitions";
+    private static final String KEY_ACTION_KIND_OF = "actionKindOf";
 
     ClassNode clazz;
     String id;
@@ -49,6 +50,7 @@ public class CompiledAction implements ICompiled
     Map<String, ActionInput> inputs;
     Map<String, ActionOutput> outputs;
     GenericAdmonition[] admonitions;
+    ActionMethod actionKindOf;
 
     public CompiledAction(ClassNode clazz, String id, String name, ActionReference superAction, String description, CategoryManager.CategoryEntry category,
                           EventReference[] events,
@@ -60,7 +62,8 @@ public class CompiledAction implements ICompiled
                           MCVersion supportsSince, MCVersion supportsUntil,
                           Map<String, ActionInput> inputs,
                           Map<String, ActionOutput> outputs,
-                          GenericAdmonition[] admonitions)
+                          GenericAdmonition[] admonitions,
+                          ActionMethod actionKindOf)
     {
         this.clazz = clazz;
         this.id = id;
@@ -77,6 +80,7 @@ public class CompiledAction implements ICompiled
         this.inputs = inputs;
         this.outputs = outputs;
         this.admonitions = admonitions;
+        this.actionKindOf = actionKindOf;
     }
 
     @Override
@@ -98,7 +102,7 @@ public class CompiledAction implements ICompiled
         MapUtils.putIfNotNull(map, KEY_SUPPORTS_UNTIL, this.supportsUntil);
         MapUtils.putIfNotNull(map, KEY_INPUTS, serializeInputs());
         MapUtils.putIfNotNull(map, KEY_OUTPUTS, serializeOutputs());
-
+        MapUtils.putIfNotNull(map, KEY_ACTION_KIND_OF, this.actionKindOf);
 
         if (!(this.admonitions == null || this.admonitions.length == 0))
             map.put(KEY_ADMONITIONS, Arrays.stream(this.admonitions).map(GenericAdmonition::serialize).toArray());
@@ -193,6 +197,7 @@ public class CompiledAction implements ICompiled
         private static final String KEY_AVAILABLE_FOR = "availableFor";
         private static final String KEY_SUPPORTS_SINCE = "supportsSince";
         private static final String KEY_SUPPORTS_UNTIL = "supportsUntil";
+        private static final String KEY_ARRAY = "array";
         private static final String KEY_MIN = "min";
         private static final String KEY_MAX = "max";
         private static final String KEY_CONST_VALUE = "const";
@@ -207,6 +212,7 @@ public class CompiledAction implements ICompiled
         ActionMethod[] availableFor;
         MCVersion supportsSince;
         MCVersion supportsUntil;
+        boolean array;
         Double min;
         Double max;
         Object constValue;
@@ -228,6 +234,8 @@ public class CompiledAction implements ICompiled
             MapUtils.putIfNotNull(map, KEY_MAX, this.max);
             MapUtils.putIfNotNull(map, KEY_CONST_VALUE, this.constValue);
             MapUtils.putIfTrue(map, KEY_REQUIRES_ACTOR, this.requiresActor);
+            if (this.array)
+                map.put(KEY_ARRAY, true);
             if (this.inheritedFrom != null)
                 map.put(KEY_INHERITED_FROM, this.inheritedFrom.getReference());
             if (!(this.admonitions == null || this.admonitions.length == 0))
@@ -245,6 +253,7 @@ public class CompiledAction implements ICompiled
                     parent.availableFor,
                     parent.supportsSince,
                     parent.supportsUntil,
+                    parent.array,
                     parent.min,
                     parent.max,
                     parent.constValue,

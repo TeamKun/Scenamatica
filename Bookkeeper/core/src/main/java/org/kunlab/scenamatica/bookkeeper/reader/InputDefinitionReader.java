@@ -39,12 +39,18 @@ public class InputDefinitionReader implements IAnnotationReader<InputDefinition>
     @Override
     public InputDefinition buildAnnotation(@Nullable ClassNode clazz, @NotNull AnnotationValues values)
     {
+        throw new UnsupportedOperationException();
+    }
+
+    public InputDefinition buildAnnotation(@Nullable ClassNode clazz, @NotNull AnnotationValues values, boolean isArray)
+    {
         return new InputDefinition(
                 clazz,
                 values.getAsString(KEY_NAME),
                 values.getAsString(KEY_DESC),
                 values.getAsEnumArray(KEY_REQUIRED_ON, ActionMethod.class),
                 values.getAsEnumArray(KEY_AVAILABLE_FOR, ActionMethod.class),
+                isArray,
                 values.get(KEY_TYPE, Type.class),
                 values.getAsEnum(KEY_SUPPORTS_SINCE, MCVersion.class),
                 values.getAsEnum(KEY_SUPPORTS_UNTIL, MCVersion.class),
