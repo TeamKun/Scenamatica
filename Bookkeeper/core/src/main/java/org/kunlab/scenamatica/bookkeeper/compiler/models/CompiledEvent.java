@@ -3,6 +3,8 @@ package org.kunlab.scenamatica.bookkeeper.compiler.models;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Value;
+import org.jetbrains.annotations.NotNull;
+import org.kunlab.scenamatica.bookkeeper.compiler.SerializingContext;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -25,7 +27,7 @@ public class CompiledEvent implements ICompiled
     String description;
 
     @Override
-    public Map<String, Object> serialize()
+    public Map<String, Object> serialize(@NotNull SerializingContext ctxt)
     {
         Map<String, Object> map = new LinkedHashMap<>();
         map.put(KEY_ID, this.id);

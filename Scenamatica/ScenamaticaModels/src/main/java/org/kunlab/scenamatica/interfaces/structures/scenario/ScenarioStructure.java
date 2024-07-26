@@ -15,7 +15,7 @@ import org.kunlab.scenamatica.interfaces.scenariofile.Structure;
         properties = {
                 @TypeProperty(
                         name = ScenarioStructure.KEY_SCENARIO_TYPE,
-                        type = ScenarioType.class,
+                        type = ScenarioType.$Doc.class,
                         description = "シナリオのタイプを指定します。"
                 ),
                 @TypeProperty(
@@ -33,8 +33,8 @@ import org.kunlab.scenamatica.interfaces.scenariofile.Structure;
                         type = long.class,
                         description = "シナリオがタイムアウトするまでの時間をチックで指定します。"
                 )
-        }
-
+        },
+        extending = ActionStructure.class
 )
 public interface ScenarioStructure extends Structure
 {

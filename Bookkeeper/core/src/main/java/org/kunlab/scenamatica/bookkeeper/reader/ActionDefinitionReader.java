@@ -103,13 +103,15 @@ public class ActionDefinitionReader implements IAnnotationReader<ActionDefinitio
             if (annos == null)
                 continue;
 
+            boolean isArray = field.signature.endsWith("[>;")
+                    || field.signature.contains("Ljava/util/List<");
             for (AnnotationNode anno : annos)
             {
                 if (!this.inputReader.canRead(anno))
                     continue;
 
                 AnnotationValues values = AnnotationValues.of(anno);
-                InputDefinition input = this.inputReader.buildAnnotation(clazz, values);
+                InputDefinition input = this.inputReader.buildAnnotation(clazz, values, isArray);
                 inputs.add(input);
             }
         }

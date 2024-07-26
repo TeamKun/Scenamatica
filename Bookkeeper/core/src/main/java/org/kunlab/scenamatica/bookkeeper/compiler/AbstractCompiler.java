@@ -3,6 +3,7 @@ package org.kunlab.scenamatica.bookkeeper.compiler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import lombok.Getter;
+import org.kunlab.scenamatica.bookkeeper.BookkeeperCore;
 import org.kunlab.scenamatica.bookkeeper.compiler.models.ICompiled;
 import org.kunlab.scenamatica.bookkeeper.compiler.models.refs.IReference;
 import org.kunlab.scenamatica.bookkeeper.definitions.IDefinition;
@@ -23,12 +24,14 @@ public abstract class AbstractCompiler<T extends IDefinition, U extends ICompile
             /* 整形する */
             .writerWithDefaultPrettyPrinter();
     protected final Map<String, V> compiledItemReferences;
+    private final BookkeeperCore core;
     @Getter
     private final String name;
     private final Logger log;
 
-    public AbstractCompiler(String name)
+    public AbstractCompiler(BookkeeperCore core, String name)
     {
+        this.core = core;
         this.name = name;
         this.compiledItemReferences = new HashMap<>();
 
@@ -59,7 +62,7 @@ public abstract class AbstractCompiler<T extends IDefinition, U extends ICompile
         Path baseDir = directory.resolve(this.name);
         for (V reference : this.compiledItemReferences.values())
         {
-            Map<String, Object> serialized = reference.getResolved().serialize();
+            Map<String, Object> serialized = reference.getResolved().serialize(new SerializingContext(this.core));
             Path file = baseDir.resolve(this.getFileLocation(reference));
 
             // 自身のリファレンスを含めされる

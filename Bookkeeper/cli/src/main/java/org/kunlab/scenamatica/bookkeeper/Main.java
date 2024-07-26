@@ -61,6 +61,12 @@ public class Main
         parser.acceptsAll(Arrays.asList("threads", "t"))
                 .withOptionalArg()
                 .ofType(Integer.class).defaultsTo(4).describedAs("Number of threads to use");
+        parser.acceptsAll(Arrays.asList("generateJsonSchema", "js"))
+                .withOptionalArg()
+                .ofType(Boolean.class).defaultsTo(false).describedAs("Whether to generate json schema");
+        parser.acceptsAll(Arrays.asList("jsonSchemaFileName", "jsf"))
+                .withOptionalArg()
+                .defaultsTo("json-schema.json").describedAs("Name of the json schema file");
         parser.acceptsAll(Collections.singletonList("debug"))
                 .withOptionalArg()
                 .ofType(Boolean.class).defaultsTo(false).describedAs("Enable debug mode");
@@ -94,6 +100,8 @@ public class Main
                 .eventsURL((String) options.valueOf("eventsURL"))
                 .eventsLicenseURL((String) options.valueOf("eventsLicenseURL"))
                 .threads((Integer) options.valueOf("threads"))
+                .generateJsonSchema((Boolean) options.valueOf("generateJsonSchema"))
+                .jsonSchemaFileName((String) options.valueOf("jsonSchemaFileName"))
                 .debug((Boolean) options.valueOf("debug"))
                 .build();
     }

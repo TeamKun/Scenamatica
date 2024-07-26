@@ -1,8 +1,12 @@
 package org.kunlab.scenamatica.bookkeeper.compiler.models;
 
+import org.jetbrains.annotations.NotNull;
+import org.kunlab.scenamatica.bookkeeper.compiler.SerializingContext;
 import org.kunlab.scenamatica.bookkeeper.compiler.models.refs.TypeReference;
 import org.objectweb.asm.Type;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 public class CompiledSpecifierType extends CompiledType implements IPrimitiveType
@@ -37,10 +41,27 @@ public class CompiledSpecifierType extends CompiledType implements IPrimitiveTyp
     }
 
     @Override
-    public Map<String, Object> serialize()
+    public Map<String, Object> serialize(@NotNull SerializingContext ctxt)
     {
-        Map<String, Object> map = super.serialize();
-        map.put(KEY_TYPE, "specifier");
+        Map<String, Object> map = super.serialize(ctxt);
+        if (ctxt.isJSONSchema())
+        {
+            map.remove(KEY_TYPE);
+            map.put("anyOf", new ArrayList<Map<String, Object>>()
+            {{
+                this.add(new HashMap<String, Object>()
+                {{
+                    this.put(KEY_TYPE, "string");
+                }});
+                this.add(new HashMap<String, Object>()
+                {{
+                    this.put(KEY_TYPE, "object");
+                    this.put("additionalProperties", true);
+                }});
+            }});
+        }
+        else
+            map.put(KEY_TYPE, "specifier");
 
         return map;
     }

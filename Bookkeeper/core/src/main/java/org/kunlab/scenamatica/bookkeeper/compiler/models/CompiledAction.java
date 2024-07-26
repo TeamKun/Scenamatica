@@ -3,6 +3,7 @@ package org.kunlab.scenamatica.bookkeeper.compiler.models;
 import lombok.Value;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.bookkeeper.compiler.CategoryManager;
+import org.kunlab.scenamatica.bookkeeper.compiler.SerializingContext;
 import org.kunlab.scenamatica.bookkeeper.compiler.models.refs.ActionReference;
 import org.kunlab.scenamatica.bookkeeper.compiler.models.refs.EventReference;
 import org.kunlab.scenamatica.bookkeeper.compiler.models.refs.TypeReference;
@@ -12,7 +13,6 @@ import org.kunlab.scenamatica.bookkeeper.utils.MapUtils;
 import org.objectweb.asm.tree.ClassNode;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -84,7 +84,7 @@ public class CompiledAction implements ICompiled
     }
 
     @Override
-    public Map<String, Object> serialize()
+    public Map<String, Object> serialize(@NotNull SerializingContext ctxt)
     {
         Map<String, Object> map = new LinkedHashMap<>();
         map.put(KEY_ID, this.id);
@@ -100,7 +100,7 @@ public class CompiledAction implements ICompiled
         map.put(KEY_REQUIREABLE, this.requireable.serialize());
         MapUtils.putIfNotNull(map, KEY_SUPPORTS_SINCE, this.supportsSince);
         MapUtils.putIfNotNull(map, KEY_SUPPORTS_UNTIL, this.supportsUntil);
-        MapUtils.putIfNotNull(map, KEY_INPUTS, serializeInputs());
+        MapUtils.putIfNotNull(map, KEY_INPUTS, serializeInputs(ctxt));
         MapUtils.putIfNotNull(map, KEY_OUTPUTS, serializeOutputs());
         MapUtils.putIfNotNull(map, KEY_ACTION_KIND_OF, this.actionKindOf);
 
@@ -118,11 +118,11 @@ public class CompiledAction implements ICompiled
         return map;
     }
 
-    private Map<String, Object> serializeInputs()
+    private Map<String, Object> serializeInputs(@NotNull SerializingContext ctxt)
     {
         Map<String, Object> map = new LinkedHashMap<>();
         for (Map.Entry<String, ActionInput> entry : this.inputs.entrySet())
-            map.put(entry.getKey(), entry.getValue().serialize());
+            map.put(entry.getKey(), entry.getValue().serialize(ctxt));
 
         return map;
     }
@@ -154,7 +154,7 @@ public class CompiledAction implements ICompiled
 
         public Map<String, Object> serialize()
         {
-            Map<String, Object> map = new HashMap<>();
+            Map<String, Object> map = new LinkedHashMap<>();
             map.put(KEY_NAME, this.name);
             map.put(KEY_DESCRIPTION, this.description);
             map.put(KEY_TYPE, this.type.getReference());
@@ -220,26 +220,34 @@ public class CompiledAction implements ICompiled
         ActionReference inheritedFrom;
         GenericAdmonition[] admonitions;
 
-        public Map<String, Object> serialize()
+        public Map<String, Object> serialize(@NotNull SerializingContext ctxt)
         {
-            Map<String, Object> map = new HashMap<>();
+            Map<String, Object> map = new LinkedHashMap<>();
             map.put(KEY_NAME, this.name);
-            map.put(KEY_TYPE, this.type.getReference());
             map.put(KEY_DESCRIPTION, this.description);
-            MapUtils.putIfNotNull(map, KEY_REQUIRED_ON, this.requiredOn);
-            MapUtils.putIfNotNull(map, KEY_AVAILABLE_FOR, this.availableFor);
-            MapUtils.putIfNotNull(map, KEY_SUPPORTS_SINCE, this.supportsSince);
-            MapUtils.putIfNotNull(map, KEY_SUPPORTS_UNTIL, this.supportsUntil);
+
+            if (ctxt.isJSONSchema())
+                ctxt.createReference(map, this.type);
+            else
+            {
+                MapUtils.putIfNotNull(map, KEY_REQUIRED_ON, this.requiredOn);
+                MapUtils.putIfNotNull(map, KEY_AVAILABLE_FOR, this.availableFor);
+                MapUtils.putIfNotNull(map, KEY_SUPPORTS_SINCE, this.supportsSince);
+                MapUtils.putIfNotNull(map, KEY_SUPPORTS_UNTIL, this.supportsUntil);
+                map.put(KEY_TYPE, this.type.getReference());
+                if (this.array)
+                    map.put(KEY_ARRAY, true);
+                if (this.inheritedFrom != null)
+                    map.put(KEY_INHERITED_FROM, this.inheritedFrom.getReference());
+                if (!(this.admonitions == null || this.admonitions.length == 0))
+                    map.put(KEY_ADMONITIONS, Arrays.stream(this.admonitions).map(GenericAdmonition::serialize).toArray());
+                MapUtils.putIfTrue(map, KEY_REQUIRES_ACTOR, this.requiresActor);
+
+            }
+
             MapUtils.putIfNotNull(map, KEY_MIN, this.min);
             MapUtils.putIfNotNull(map, KEY_MAX, this.max);
             MapUtils.putIfNotNull(map, KEY_CONST_VALUE, this.constValue);
-            MapUtils.putIfTrue(map, KEY_REQUIRES_ACTOR, this.requiresActor);
-            if (this.array)
-                map.put(KEY_ARRAY, true);
-            if (this.inheritedFrom != null)
-                map.put(KEY_INHERITED_FROM, this.inheritedFrom.getReference());
-            if (!(this.admonitions == null || this.admonitions.length == 0))
-                map.put(KEY_ADMONITIONS, Arrays.stream(this.admonitions).map(GenericAdmonition::serialize).toArray());
             return map;
         }
 

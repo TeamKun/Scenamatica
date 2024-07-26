@@ -11,6 +11,8 @@ import lombok.Getter;
 import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.kunlab.scenamatica.bookkeeper.BookkeeperCore;
 import org.kunlab.scenamatica.bookkeeper.ScenamaticaClassLoader;
 import org.kunlab.scenamatica.bookkeeper.compiler.models.CompiledEvent;
 import org.kunlab.scenamatica.bookkeeper.compiler.models.refs.EventReference;
@@ -44,6 +46,7 @@ public class EventCompiler implements ICompiler<EventCompiler.DummyEventDefiniti
     private static final ObjectWriter WRITER = MAPPER.writerWithDefaultPrettyPrinter();
     private static final Locale FALLBACK_LANG = Locale.JAPANESE;
 
+    private final BookkeeperCore core;
     @Getter
     private final Locale language;
     private final Map<String, EventReference> references;
@@ -57,8 +60,9 @@ public class EventCompiler implements ICompiler<EventCompiler.DummyEventDefiniti
     private Path eventsFile;
     private List<JsonEventNode> events;
 
-    public EventCompiler(Path outDir, Path tempDir, Locale language, String eventsURL, String licenseURL)
+    public EventCompiler(@NotNull BookkeeperCore core, Path outDir, Path tempDir, Locale language, String eventsURL, String licenseURL)
     {
+        this.core = core;
         this.language = language;
         this.references = new HashMap<>();
         this.outDir = outDir.resolve(eventsDir);
@@ -97,7 +101,7 @@ public class EventCompiler implements ICompiler<EventCompiler.DummyEventDefiniti
             Path file = directory.resolve(Paths.get("events", reference.getResolved().getId()) + ".json");
             try
             {
-                Map<String, Object> serialized = reference.getResolved().serialize();
+                Map<String, Object> serialized = reference.getResolved().serialize(new SerializingContext(this.core));
                 serialized.put(KEY_REFERENCE, reference.getReference());
                 WRITER.writeValue(file.toFile(), serialized);
             }
@@ -278,7 +282,7 @@ public class EventCompiler implements ICompiler<EventCompiler.DummyEventDefiniti
         }
 
         @Override
-        public boolean isDependsOn(@NotNull ScenamaticaClassLoader classLoader, @NotNull IDefinition classNode)
+        public boolean isDependsOn(@Nullable ScenamaticaClassLoader classLoader, @NotNull IDefinition classNode)
         {
             return false;
         }

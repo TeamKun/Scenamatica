@@ -3,12 +3,18 @@ package org.kunlab.scenamatica.bookkeeper.compiler.models;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Value;
+import org.jetbrains.annotations.NotNull;
+import org.kunlab.scenamatica.bookkeeper.compiler.ActionCompiler;
 import org.kunlab.scenamatica.bookkeeper.compiler.CategoryManager;
+import org.kunlab.scenamatica.bookkeeper.compiler.SerializingContext;
+import org.kunlab.scenamatica.bookkeeper.compiler.models.refs.ActionReference;
 import org.kunlab.scenamatica.bookkeeper.compiler.models.refs.TypeReference;
 import org.kunlab.scenamatica.bookkeeper.utils.MapUtils;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -72,34 +78,100 @@ public class CompiledType implements ICompiled
     }
 
     @Override
-    public Map<String, Object> serialize()
+    public Map<String, Object> serialize(@NotNull SerializingContext ctxt)
     {
         Map<String, Object> map = new LinkedHashMap<>();
         map.put(KEY_TYPE, "object");
-        map.put(KEY_ID, this.id);
-        map.put(KEY_NAME, this.name);
-        map.put(KEY_DESCRIPTION, this.description);
-        if (this.category != null)
-            map.put(KEY_CATEGORY, this.category.getReference());
-        MapUtils.putIfNotNull(map, KEY_CLASS_NAME, this.className);
-        MapUtils.putIfNotNull(map, KEY_MAPPING_OF, this.mappingOf);
-        if (!(this.properties == null || this.properties.isEmpty()))
-            map.put(KEY_PROPERTIES, serializeProperties());
-        if (!(this.admonitions == null || this.admonitions.length == 0))
-            map.put(KEY_ADMONITIONS, Arrays.stream(this.admonitions).map(GenericAdmonition::serialize).collect(Collectors.toList()));
+        if (!ctxt.isJSONSchema())
+        {
+            map.put(KEY_ID, this.id);
+            map.put(KEY_NAME, this.name);
+            if (this.category != null)
+                map.put(KEY_CATEGORY, this.category.getReference());
 
+            MapUtils.putIfNotNull(map, KEY_CLASS_NAME, this.className);
+            MapUtils.putIfNotNull(map, KEY_MAPPING_OF, this.mappingOf);
+            if (!(this.admonitions == null || this.admonitions.length == 0))
+                map.put(KEY_ADMONITIONS, Arrays.stream(this.admonitions).map(GenericAdmonition::serialize).collect(Collectors.toList()));
+        }
+
+        MapUtils.putIfNotNull(map, KEY_DESCRIPTION, this.description);
+        if (!(this.properties == null || this.properties.isEmpty()))
+            map.put(KEY_PROPERTIES, serializeProperties(ctxt));
+
+        if (ctxt.isJSONSchema() && this.shouldEmbedActionMeta())
+            this.embedActionMeta(ctxt, map);
         return map;
     }
 
-    private Map<String, Object> serializeProperties()
+    private boolean shouldEmbedActionMeta()
+    {
+        // ActionStructure はアクション一覧の埋込などする。
+        return this.className.equals("org/kunlab/scenamatica/interfaces/structures/scenario/ActionStructure");
+    }
+
+    private Map<String, Object> serializeProperties(@NotNull SerializingContext ctxt)
     {
         Map<String, Object> map = new LinkedHashMap<>();
         if (this.properties == null)
             return map;
 
         for (Map.Entry<String, Property> entry : this.properties.entrySet())
-            map.put(entry.getKey(), entry.getValue().serialize());
+            map.put(entry.getKey(), entry.getValue().serialize(ctxt));
+
         return map;
+    }
+
+    private void embedActionMeta(@NotNull SerializingContext ctxt, @NotNull Map<? super String, Object> serializedActionMap)
+    {
+        final String ACTION_META_SESSION_DATA_KEY = "CompiledType.ActionMeta";
+
+        if (ctxt.hasSessionData(ACTION_META_SESSION_DATA_KEY))
+        {
+            String actionMeta = (String) ctxt.getSessionData(ACTION_META_SESSION_DATA_KEY);
+            serializedActionMap.put("$ref", actionMeta);
+            return;
+        }
+
+        List<ActionReference> actions = ctxt.getCore().getCompiler().getCompiler(ActionCompiler.class).getResolvedReferences();
+
+        Map<String, Object> actionsDefinitionMap = new LinkedHashMap<>();
+        List<Map<String, Object>> oneOf = new ArrayList<>();
+        actionsDefinitionMap.put("oneOf", oneOf);
+
+        for (ActionReference action : actions)
+        {
+            Map<String, Object> actionMap = new LinkedHashMap<>();
+            oneOf.add(actionMap);
+
+            CompiledAction compiledAction = action.getResolved();
+            Map<String, CompiledAction.ActionInput> inputs = compiledAction.getInputs();
+            actionMap.put("description", compiledAction.getDescription());
+
+            Map<String, Object> properties = new LinkedHashMap<>();
+            actionMap.put("properties", properties);
+
+            Map<String, Object> actionSpecifier = new LinkedHashMap<>();
+            properties.put("action", actionSpecifier);
+
+            actionSpecifier.put("type", "string");
+            actionSpecifier.put("description", "アクションの種類を指定します。");
+            actionSpecifier.put("const", compiledAction.getId());
+
+            Map<String, Object> withSpecifier = new LinkedHashMap<>();
+            properties.put("with", withSpecifier);
+
+            withSpecifier.put("type", "object");
+            withSpecifier.put("description", "アクションに使用する引数を定義します。");
+            withSpecifier.put(
+                    "properties",
+                    inputs.entrySet().stream()
+                            .collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().serialize(ctxt)))
+            );
+        }
+
+        String referenceName = ctxt.createReference(serializedActionMap, actionsDefinitionMap);
+        ctxt.putSessionData(ACTION_META_SESSION_DATA_KEY, referenceName);
     }
 
     @Value
@@ -127,20 +199,47 @@ public class CompiledType implements ICompiled
         Object defaultValue;
         GenericAdmonition[] admonitions;
 
-        public Map<String, Object> serialize()
+        public Map<String, Object> serialize(@NotNull SerializingContext ctxt)
         {
             Map<String, Object> map = new LinkedHashMap<>();
-            map.put(KEY_NAME, this.name);
-            map.put(KEY_TYPE, this.type.getReference());
+            if (ctxt.isJSONSchema())
+            {
+                CompiledType resolvedType = this.type.getResolved();
+                Map<String, Object> putMap = map;
+                if (this.array)
+                {
+                    putMap.put("type", "array");
+                    putMap.put("items", putMap = new LinkedHashMap<>());
+                }
+                else if (resolvedType.getClass() == CompiledType.class) // プリミティブを弾く
+                {
+                    putMap.put("type", "object");
+                    Map<String, Object> properties = this.type.getResolved().serializeProperties(ctxt);
+                    putMap.put("properties", properties);
+                    if (resolvedType.shouldEmbedActionMeta())
+                        resolvedType.embedActionMeta(ctxt, map);
+                }
+
+                ctxt.createReference(putMap, this.type);
+
+                if (this.array && putMap.get("description") == null)
+                    putMap.put("description", this.description);
+            }
+            else
+            {
+                map.put(KEY_NAME, this.name);
+                map.put(KEY_TYPE, this.type.getReference());
+                MapUtils.putIfTrue(map, KEY_ARRAY, this.array);
+                if (!(this.admonitions == null || this.admonitions.length == 0))
+                    map.put(KEY_ADMONITIONS, Arrays.stream(this.admonitions).map(GenericAdmonition::serialize).collect(Collectors.toList()));
+            }
+
             map.put(KEY_DESCRIPTION, this.description);
-            MapUtils.putIfTrue(map, KEY_ARRAY, this.array);
             MapUtils.putIfTrue(map, KEY_REQUIRED, this.required);
             MapUtils.putIfNotNull(map, KEY_PATTERN, this.pattern);
             MapUtils.putIfNotNull(map, KEY_MIN, this.min);
             MapUtils.putIfNotNull(map, KEY_MAX, this.max);
             MapUtils.putIfNotNull(map, KEY_DEFAULT_VALUE, this.defaultValue);
-            if (!(this.admonitions == null || this.admonitions.length == 0))
-                map.put(KEY_ADMONITIONS, Arrays.stream(this.admonitions).map(GenericAdmonition::serialize).collect(Collectors.toList()));
             return map;
         }
     }

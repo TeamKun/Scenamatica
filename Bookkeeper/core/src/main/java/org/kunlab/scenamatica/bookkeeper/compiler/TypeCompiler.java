@@ -6,6 +6,7 @@ import org.kunlab.scenamatica.bookkeeper.BookkeeperCore;
 import org.kunlab.scenamatica.bookkeeper.compiler.models.CompiledSpecifierType;
 import org.kunlab.scenamatica.bookkeeper.compiler.models.CompiledStringType;
 import org.kunlab.scenamatica.bookkeeper.compiler.models.CompiledType;
+import org.kunlab.scenamatica.bookkeeper.compiler.models.GenericAdmonition;
 import org.kunlab.scenamatica.bookkeeper.compiler.models.IPrimitiveType;
 import org.kunlab.scenamatica.bookkeeper.compiler.models.refs.TypeReference;
 import org.kunlab.scenamatica.bookkeeper.definitions.TypeDefinition;
@@ -17,6 +18,8 @@ import org.objectweb.asm.tree.ClassNode;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -57,7 +60,7 @@ public class TypeCompiler extends AbstractCompiler<TypeDefinition, CompiledType,
 
     public TypeCompiler(BookkeeperCore core)
     {
-        super("types");
+        super(core, "types");
         this.core = core;
         this.categoryManager = core.getCategoryManager();
     }
@@ -92,7 +95,22 @@ public class TypeCompiler extends AbstractCompiler<TypeDefinition, CompiledType,
         if (this.resolve(id) != null)
             throw new IllegalArgumentException("Type with ID '" + id + "' already exists, consider changing the name of the type.");
 
+        Type parentType = definition.getExtending();
+        CompiledType parentCompiled = null;
+        if (parentType != null)
+        {
+            TypeReference parentRef = this.lookup(parentType);
+            parentCompiled = parentRef.getResolved();
+        }
+
         CategoryManager.CategoryEntry category = this.categoryManager.recogniseCategory(definition.getAnnotatedClass());
+        if (category == null && parentCompiled != null)
+            category = parentCompiled.getCategory();
+
+        List<GenericAdmonition> admonitions = new ArrayList<>(Arrays.asList(definition.getAdmonitions()));
+        if (parentCompiled != null && parentCompiled.getAdmonitions() != null)
+            admonitions.addAll(Arrays.asList(parentCompiled.getAdmonitions()));
+
         return new TypeReference(
                 id,
                 new CompiledType(
@@ -102,8 +120,8 @@ public class TypeCompiler extends AbstractCompiler<TypeDefinition, CompiledType,
                         category,
                         definition.getClazz().name,
                         definition.getMappingOf() != null ? definition.getMappingOf().getClassName().replace('.', '/'): null,
-                        compileProperties(definition.getProperties()),
-                        definition.getAdmonitions()
+                        compileProperties(definition.getProperties(), parentCompiled),
+                        admonitions.toArray(new GenericAdmonition[0])
                 )
         );
     }
@@ -114,12 +132,19 @@ public class TypeCompiler extends AbstractCompiler<TypeDefinition, CompiledType,
         return createClassNameStringReference(definition.getClazz().name);
     }
 
-    private Map<String, CompiledType.Property> compileProperties(TypePropertyDefinition[] properties)
+    private Map<String, CompiledType.Property> compileProperties(TypePropertyDefinition[] properties, @Nullable CompiledType parent)
     {
-        if (properties == null)
-            return null;
-
         Map<String, CompiledType.Property> compiledProperties = new HashMap<>();
+        if (parent != null)
+        {
+            Map<String, CompiledType.Property> parentProperties = parent.getProperties();
+            if (parentProperties != null)
+                compiledProperties.putAll(parentProperties);
+        }
+
+        if (properties == null)
+            return compiledProperties;
+
         for (TypePropertyDefinition property : properties)
         {
             compiledProperties.put(
@@ -349,9 +374,65 @@ public class TypeCompiler extends AbstractCompiler<TypeDefinition, CompiledType,
             super(primitiveName, primitiveName, null, null, clazz.getName());
         }
 
+        @Override
+        public Map<String, Object> serialize(@NotNull SerializingContext ctxt)
+        {
+            Map<String, Object> map = super.serialize(ctxt);
+            if (ctxt.isJSONSchema())
+                map.putAll(toJSONPrimitive(this.getId()));
+            return map;
+        }
+
         public static TypeReference ofRef(String primitiveName, Class<?> clazz)
         {
             return new TypeReference(primitiveName, new PrimitiveType(primitiveName, clazz));
+        }
+
+        private static Map<String, Object> toJSONPrimitive(String javaPrimitive)
+        {
+            Map<String, Object> properties = new HashMap<>();
+            switch (javaPrimitive)
+            {
+                case "boolean":
+                    properties.put("type", "boolean");
+                    break;
+                case "byte":
+                    properties.put("type", "number");
+                    properties.put("format", "int8");
+                    break;
+                case "char":
+                    properties.put("type", "string");
+                    properties.put("maxLength", 1);
+                    break;
+                case "short":
+                    properties.put("type", "number");
+                    properties.put("format", "int16");
+                    break;
+                case "integer":
+                    properties.put("type", "number");
+                    properties.put("format", "int32");
+                    break;
+                case "long":
+                    properties.put("type", "integer");
+                    properties.put("format", "int64");
+                    break;
+                case "float":
+                    properties.put("type", "number");
+                    properties.put("format", "float");
+                    break;
+                case "double":
+                    properties.put("type", "number");
+                    properties.put("format", "double");
+                    break;
+                case "object":
+                    properties.put("type", "object");
+                    break;
+                case "string":
+                    properties.put("type", "string");
+                    break;
+            }
+
+            return properties;
         }
     }
 

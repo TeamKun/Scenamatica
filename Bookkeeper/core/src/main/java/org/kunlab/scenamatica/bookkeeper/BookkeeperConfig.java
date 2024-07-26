@@ -40,5 +40,10 @@ public class BookkeeperConfig
     int threads = 4;
 
     @Builder.Default
+    boolean generateJsonSchema = false;
+    @Builder.Default
+    String jsonSchemaFileName = "json-schema.json";
+
+    @Builder.Default
     boolean debug = false;
 }

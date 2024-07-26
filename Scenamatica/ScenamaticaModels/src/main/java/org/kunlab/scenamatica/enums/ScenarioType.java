@@ -53,4 +53,11 @@ public enum ScenarioType
         if (!this.canPerformActionInType(clazz))
             throw new IllegalArgumentException("Action type " + clazz.getName() + " cannot be performed in scenario type " + this.name());
     }
+
+    public static enum $Doc
+    {
+        execute,
+        expect,
+        require,
+    }
 }

@@ -3,6 +3,8 @@ package org.kunlab.scenamatica.bookkeeper.compiler.models;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import org.jetbrains.annotations.NotNull;
+import org.kunlab.scenamatica.bookkeeper.compiler.SerializingContext;
 import org.kunlab.scenamatica.bookkeeper.compiler.models.refs.TypeReference;
 import org.kunlab.scenamatica.bookkeeper.utils.Descriptors;
 import org.kunlab.scenamatica.bookkeeper.utils.MapUtils;
@@ -70,16 +72,6 @@ public class CompiledStringType extends CompiledType implements IPrimitiveType
         this(original, format, null, null);
     }
 
-    public CompiledStringType(CompiledType original)
-    {
-        this(original, null, null, null);
-    }
-
-    public CompiledStringType(CompiledType original, Map<String, String> enums)
-    {
-        this(original, null, null, enums);
-    }
-
     public CompiledStringType(CompiledType original, List<String> enums)
     {
         this(original, null, null, toMap(enums));
@@ -98,11 +90,12 @@ public class CompiledStringType extends CompiledType implements IPrimitiveType
     }
 
     @Override
-    public Map<String, Object> serialize()
+    public Map<String, Object> serialize(@NotNull SerializingContext ctxt)
     {
-        Map<String, Object> map = super.serialize();
+        Map<String, Object> map = super.serialize(ctxt);
         map.put(KEY_TYPE, "string");
-        map.put(KEY_CLASS_NAME, String.class.getName().replace('.', '/'));
+        if (!ctxt.isJSONSchema())
+            map.put(KEY_CLASS_NAME, String.class.getName().replace('.', '/'));
 
         MapUtils.putIfNotNull(map, KEY_FORMAT, this.format == null ? null: this.format.getValue());
         MapUtils.putIfNotNull(map, KEY_PATTERN, this.pattern);

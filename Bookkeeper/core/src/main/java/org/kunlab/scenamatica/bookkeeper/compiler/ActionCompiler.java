@@ -4,6 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.bookkeeper.AnnotationClassifier;
 import org.kunlab.scenamatica.bookkeeper.AnnotationValues;
+import org.kunlab.scenamatica.bookkeeper.BookkeeperCore;
 import org.kunlab.scenamatica.bookkeeper.ScenamaticaClassLoader;
 import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
 import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
@@ -47,9 +48,9 @@ public class ActionCompiler extends AbstractCompiler<ActionDefinition, CompiledA
 
     private final Map<ClassNode, List<CompiledAction.ActionInput>> nonActionInputCaches;
 
-    public ActionCompiler(InputDefinitionReader inputReader, ScenamaticaClassLoader classLoader, AnnotationClassifier classifier, TypeCompiler typeCompiler, EventCompiler eventCompiler, CategoryManager categoryManager)
+    public ActionCompiler(@NotNull BookkeeperCore core, InputDefinitionReader inputReader, ScenamaticaClassLoader classLoader, AnnotationClassifier classifier, TypeCompiler typeCompiler, EventCompiler eventCompiler, CategoryManager categoryManager)
     {
-        super("actions");
+        super(core, "actions");
         this.inputReader = inputReader;
         this.classLoader = classLoader;
         this.classifier = classifier;

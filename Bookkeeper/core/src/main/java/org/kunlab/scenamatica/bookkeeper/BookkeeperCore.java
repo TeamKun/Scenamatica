@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.kunlab.scenamatica.bookkeeper.compiler.CategoryManager;
 import org.kunlab.scenamatica.bookkeeper.compiler.Compiler;
+import org.kunlab.scenamatica.bookkeeper.compiler.TypeCompiler;
 import org.kunlab.scenamatica.bookkeeper.definitions.IDefinition;
 import org.kunlab.scenamatica.bookkeeper.reader.ActionCategoryDefinitionReader;
 import org.kunlab.scenamatica.bookkeeper.reader.ActionDefinitionReader;
@@ -89,6 +90,17 @@ public class BookkeeperCore
 
         log.info("Flushing compilers...");
         this.compiler.flush();
+
+        if (this.config.isGenerateJsonSchema())
+        {
+            log.info("Generating JSON schema...");
+            JsonSchemaGenerator generator = new JsonSchemaGenerator(
+                    this,
+                    this.config.getOutputDir().resolve(this.config.getJsonSchemaFileName()),
+                    this.compiler.getCompiler(TypeCompiler.class)
+            );
+            generator.generate();
+        }
 
         log.info("Packing artifact...");
         this.packer.pack(this.config.getOutputDir(), this.config.getOutputDir().resolve(this.config.getArtifactFileName()));

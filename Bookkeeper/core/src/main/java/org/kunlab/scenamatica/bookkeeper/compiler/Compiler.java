@@ -47,6 +47,7 @@ public class Compiler
         EventCompiler event = null;
         if (this.core.getConfig().isResolveEvents())
             this.compilers.add(event = new EventCompiler(
+                    core,
                     config.getOutputDir(),
                     core.getTempDir(),
                     config.getLanguage(),
@@ -55,6 +56,7 @@ public class Compiler
             ));
 
         ActionCompiler action = new ActionCompiler(
+                core,
                 new InputDefinitionReader(),
                 core.getClassLoader(),
                 core.getClassifier(),
@@ -69,6 +71,17 @@ public class Compiler
     {
         log.info("Initializing compilers...");
         this.compilers.forEach(ICompiler::init);
+    }
+
+    public <T extends ICompiler<?, ?, ?>> T getCompiler(Class<T> compilerClass)
+    {
+        for (ICompiler<?, ?, ?> compiler : this.compilers)
+        {
+            if (compilerClass.isInstance(compiler))
+                return compilerClass.cast(compiler);
+        }
+
+        return null;
     }
 
     public List<IReference<?>> compile(List<? extends IDefinition> targets)
