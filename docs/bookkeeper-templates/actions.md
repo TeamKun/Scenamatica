@@ -19,7 +19,7 @@ import TabItem from '@theme/TabItem';
 
 #
 
-## {{name}} - `{{id}}`
+## {{name}} - `{{id}}` {#action}
 
 {{markdown (lineOf description "0")}}
 
