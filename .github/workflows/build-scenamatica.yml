@@ -33,10 +33,12 @@ jobs:
       - name: Deploy NMS cache
         if: steps.maven-cache.outputs.cache-hit != 'true'
         run: |
-          mv -f nms-build/.m2/repository/repository $HOME/.m2/ -v
+          mv -f nms-build/.m2/repository $HOME/.m2/ -v
       - name: Build with Maven
         run: |
-          ./Scenamatica/build.sh -D"jar.finalName=Scenamatica" -P debug
+          cd Scenamatica
+          chmod +x build.sh
+          ./build.sh -D"jar.finalName=Scenamatica" -P debug
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
