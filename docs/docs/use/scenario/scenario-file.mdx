@@ -35,26 +35,22 @@ Scenamatica のソースコードを GitHub にプッシュすると,  CI によ
 
 :::
 
-## JSON スキーマ {#json-schema}
+## シナリオファイルの構造 {#scenario-file-structure}
 
-シナリオファイルの完全な構文は, [JSON スキーマ](https://json-schema.org/)で定義されています。  
-JSON スキーマは[こちら](https://scenamatica.kunlab.org/scenamatica-file.json) からダウンロードできます。
-
-## シナリオファイルの構造
-
+Scenamatica のすべてのオブジェクトは自動生成されたリファレンスが提供されています。  
 詳しくは[こちら](/references/types/ScenarioFileStructure#type)を参照してください。
 
 ## シナリオファイルを記述する際の注意 {#notes}
 
 ### ファイルの命名 {#scenario-name}
 
-ファイル名に関しては技術的な制約等はありませんが,  Scenamatica では, 以下のフォーマットを推奨します。
+ファイル名に関して, 技術的な制約等はありませんが,  Scenamatica では, 以下のフォーマットを推奨しています。
 
 + 拡張子は `.yml`
 + ASCII の小文字のみ
 + ケバブケース（単語をハイフンでつなぐ）
 + 推奨フォーマット： `test-<機能名>-<success|failure-with-[失敗内容]>.yml`  
-  先頭を `test-機能名` にすることで, 機能のテストということが分かりやすくなります。  
+  先頭を `test-機能名` にすることで, 特定の機能のテストということが分かりやすくなります。  
   また, 正常に成功することを確認するテストの場合は `success-<機能名>`,   
   異常入力等で失敗することを確認するテストの場合は `failure-<機能名>-with-<失敗理由>` というようにするとわかりやすいでしょう。
 
@@ -62,7 +58,7 @@ JSON スキーマは[こちら](https://scenamatica.kunlab.org/scenamatica-file.
 
 :::tip
 
-名前等の識別子のフォーマットは統一することが重要なので,  Scenamatica が推奨するフォーマットに従わなくても問題はありません。
+名前等の識別子のフォーマットは統一することが重要でありますので,  Scenamatica が推奨するフォーマットに従わなくても問題はありません。
 
 :::
 
@@ -77,7 +73,7 @@ Scenamatica のシナリオファイルにおける YAML のキーは, 原則と
 
 :::info
 
-例外として, アクションの名前が挙げられます。これらは, `snake_case` で定義されるため, 利用する際も `snake_case` で記述する必要があります。
+例外として, アクションの名前が挙げられます。これらは, `snake_case` で定義されます。
 
 - ❌ `action: setBlock`
 - ✅ `action: set_block`

@@ -26,64 +26,83 @@ Scenamatica のシナリオを構成する要素について説明していま�
 
 シナリオは以下の要素で構成されています。
 
-+ 名前  
-  シナリオについての一意な名前です。
-+ 説明  
-  シナリオについての, 人間が読める説明です。
-+ [定数の定義](/docs/use/scenario/variables-and-definitions)
-+ [トリガ](/docs/use/scenario/trigger)
-+ [実行順](#order)
-+ [コンテキスト](#context)
-+ メイン[シナリオ](#scenario)  
-  プラグインの機能を検証する主要な[シナリオ](#scenario)のことです。
-+ [実行条件](#conditional-execution)
++ **メタデータ**  
+  Scenamatica がシナリオ（ファイル）を識別する情報について記述します。
++ **[トリガ](/docs/use/scenario/trigger)**  
+  シナリオテストが発火する条件について記述します。
++ **[実行順](#order)**  
+  シナリオテストを実行する順番について記述します。  
+  プラグインの[スタートアップ時に実行](/docs/use/scenario/trigger#triggers-on-load)されるシナリオなど, 
+  同時に他のシナリオが複数発火する場合などに, その中での実行順を制御します。
++ **[コンテキスト](#context)**  
+  シナリオテストを実行するために, 必要な前提環境（e.g. ワールド, プレイヤ, モブ・エンティティ）について記述します。
++ **[メインシナリオ](#scenario)**  
+  プラグイン機能を発火させたり, 発火した機能を検証するためのフローを記述します。
++ **[実行条件](#conditional-execution)**  
+  シナリオの実行に必要な条件（e.g. [マイルストーン](/docs/use/scenario/milestone)）について記述します。
++ **[定数の定義](/docs/use/scenario/variables-and-definitions)**  
+  使いまわしする値や構造体について記述します。
 
+
+### シナリオ YAML ファイルと要素の対応 {#yaml-element-pair}
+
+```yaml showLineNumbers
+# メタデータ
+scenamatica: "0.8.0"
+name: "test-hoge-success"
+description: "hoge 機能の正常系テスト"
+
+# highlight-start
+runif:  # 実行条件：hoge-milestone を達成している場合に実行する
+  action: milestone
+  with:
+    name: hoge-milestone
+# highlight-end
+
+# highlight-start
+context:  # コンテキスト
+  actors:  # コンテキスト：アクタ
+  - name: Actor1
+    permissions:
+    - "hogeplugin.commands.hoge"
+  stage:  # コンテキスト：ステージ
+    env: NETHER
+    seed: 114514
+# highlight-end
+
+# highlight-start
+on:  # トリガ
+- type: on_load  # トリガ：プラグインのスタートアップ時に実行
+- type: manual_dispatch  # トリガ：Scenamatica のコマンドで実行
+#highlight-end
+
+# highlight-start
+scenario:  # シナリオ
+  # Actor1 が /hoge を実行する。
+- type: execute
+  action: command_dispatch
+  with:
+    command: "/hoge"
+    sender: Actor1
+  # fuga というメッセージが（Actor1 に）表示される。
+- type: expect
+  action: message
+  with:
+    content: "fuga"
+    recipient: "${scenario.scenario.0.sender}"  # 変数：前のアクションの実行者を指定
+  # Actor1 が死亡する。
+- type: expect
+  action: player_death
+  with:
+    target: "${scenario.scenario.0.sender}"  # 変数：前のアクションの実行者を指定
+#highlight-end
+ ```
 
 ## シナリオ {#scenario}
 
 プラグイン開発者は, プラグインの大まかな入出力をシナリオとして記述します。
 そして Scenamatica はこれらを一つ一つ実行・検証し, プラグインの振る舞いをテストします。
 実行・検証に失敗した場合は,  Scenamatica はプラグインが正しく動作していないと判断し, シナリオ実行の失敗を報告します。
-
-各シナリオは, 次の３つの要素で構成されています。
-
-+ [シナリオタイプ](#scenario-type)
-+ [アクション](/references/actions)
-+ タイムアウト（ms）
-+ [実行条件](#conditional-execution)
-
-シナリオタイプは, そのアクション振る舞いを決めて検証事項を定義するものです。  
-アクションは文字通り, プラグインに対して行われる/検証される動作（e.g. プレイヤのゲームモードの変更）を指定します。
-
-:::warning
-
-Scenamatica で使用される「シナリオ」という語は, 以下の２つの意味を持ちます。
-
-1. [コンテキスト](#context) や [トリガー](#trigger), メイン[シナリオ](#scenario) などを含む, 包括的な意味でのシナリオ。  
-シナリオファイルに記述されるもの全体を包含した表現。
-2. プラグインの振る舞いを検証するためのアクションとその振る舞いの組。
-
-この項目では, 後者の意味での「シナリオ」について説明しています。
-
-```yaml showLineNumbers
-
-# このファイル自体を, シナリオファイルで記述された「シナリオ」と呼ぶ。
-
-#...
-
-scenario:
-# ↓の一つ一つを「シナリオ」と呼ぶ。
-- type: execute
-  action: player_death
-  with:
-    target: Actor001 
-- type: expect
-  action: player_death
-  with:
-    target: Actor001 
-```
-
-:::
 
 ### シナリオの種類 {#scenario-type}
 
