@@ -22,6 +22,7 @@ public class Main
 
         BookkeeperCore core = new BookkeeperCore(config);
         core.start();
+        System.exit(0);
     }
 
     private static OptionParser createParser()

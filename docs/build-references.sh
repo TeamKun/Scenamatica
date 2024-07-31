@@ -26,6 +26,7 @@ cd ../docs
 # 3. Build templating-tools
 CWD=$(pwd)
 cd ../Bookkeeper/templating-tools
+pnpm install
 pnpm start -t $CWD/bookkeeper-templates -e .mdx  $CWD/references $CWD/dist/ledger.zip
 
 if [ $? -ne 0 ]; then
