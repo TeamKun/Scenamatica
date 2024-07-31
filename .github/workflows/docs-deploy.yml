@@ -20,18 +20,15 @@ permissions:
 jobs:
   setup-nms:
     name: Setup NMS
-    uses: "/.github/workflows/build-nms.yml"
-    secrets: inherit
-    with:
-      cache-name: scenamatica-nms
+    uses: "./.github/workflows/build-nms.yml"
+    secrets:
+      token: ${{ secrets.GITHUB_TOKEN }}
   build:
     name: Build with Maven
     needs: setup-nms
-    uses: "/.github/workflows/build-scenamatica.yml"
-    secrets: inherit
-    with:
-      nms-cache-name: scenamatica-nms
-      artifact-name: scenamatica
+    uses: "./.github/workflows/build-scenamatica.yml"
+    secrets:
+      token: ${{ secrets.GITHUB_TOKEN }}
   deploy:
     runs-on: ubuntu-latest
     steps:

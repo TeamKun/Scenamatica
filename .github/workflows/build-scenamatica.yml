@@ -4,13 +4,6 @@ on:
     secrets:
       token:
         required: true
-    inputs:
-      nms-cache-name:
-        required: true
-        type: string
-      artifact-name:
-        required: true
-        type: string
 
 jobs:
   build:
@@ -35,8 +28,8 @@ jobs:
         uses: actions/cache@v4
         with:
           path: nms-build/.m2
-          key: ${{ github.event.inputs.nms-cache-name }}
-          restore-keys: ${{ github.event.inputs.nms-cache-name }}
+          key: scenamatica-nms
+          restore-keys: scenamatica-nms
       - name: Deploy NMS cache
         if: steps.maven-cache.outputs.cache-hit != 'true'
         run: |
@@ -47,7 +40,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ github.event.inputs.artifact-name }}
+          name: scenamatica
           path: Scenamatica/ScenamaticaPlugin/target/Scenamatica.jar
           retention-days: 1
           if-no-files-found: error
