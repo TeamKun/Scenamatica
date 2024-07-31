@@ -4,7 +4,7 @@ import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.exceptions.scenario.TriggerNotFoundException;
-import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerStructure;
+import org.kunlab.scenamatica.interfaces.structures.trigger.TriggerStructure;
 
 import java.util.List;
 import java.util.function.Consumer;

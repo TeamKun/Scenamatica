@@ -6,32 +6,80 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
-import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.kunlab.scenamatica.annotations.action.ActionMeta;
+import org.kunlab.scenamatica.annotations.action.Action;
+import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.OutputDoc;
 import org.kunlab.scenamatica.commons.utils.Utils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
-import org.kunlab.scenamatica.interfaces.action.types.Watchable;
-import org.kunlab.scenamatica.interfaces.scenariofile.misc.BlockStructure;
+import org.kunlab.scenamatica.interfaces.action.types.Expectable;
+import org.kunlab.scenamatica.interfaces.structures.minecraft.misc.BlockStructure;
 
 import java.util.Collections;
 import java.util.List;
 
-@ActionMeta("player_interact_block")
+@Action("player_interact_block")
+@ActionDoc(
+        name = "プレイヤによるブロックの操作",
+        description = "プレイヤがブロックをクリックします。",
+        events = {
+                PlayerInteractEvent.class
+        },
+
+        executable = "プレイヤがブロックをクリックします。",
+        expectable = "プレイヤがブロックをクリックすることを期待します。",
+        requireable = ActionDoc.UNALLOWED,
+
+        outputs = {
+                @OutputDoc(
+                        name = PlayerInteractBlockAction.KEY_OUT_ACTION,
+                        description = "クリックされたブロックです。",
+                        type = Block.class
+                ),
+                @OutputDoc(
+                        name = PlayerInteractBlockAction.KEY_OUT_BLOCK,
+                        description = "クリックされたブロックです。",
+                        type = Block.class
+                ),
+                @OutputDoc(
+                        name = PlayerInteractBlockAction.KEY_OUT_BLOCK_FACE,
+                        description = "クリックされたブロックの面です。",
+                        type = BlockFace.class
+                ),
+                @OutputDoc(
+                        name = PlayerInteractBlockAction.KEY_OUT_HAND,
+                        description = "クリックをした手です。",
+                        type = EquipmentSlot.class
+                )
+        }
+
+)
 public class PlayerInteractBlockAction extends AbstractPlayerAction
-        implements Executable, Watchable
+        implements Executable, Expectable
 {
-    public static final InputToken<Action> IN_ACTION = ofEnumInput(
+    @InputDoc(
+            name = "action",
+            description = "プレイヤの行動を指定します。",
+            type = org.bukkit.event.block.Action.class
+    )
+    public static final InputToken<org.bukkit.event.block.Action> IN_ACTION = ofEnumInput(
             "action",
-            Action.class
+            org.bukkit.event.block.Action.class
     );
+
+    @InputDoc(
+            name = "hand",
+            description = "クリックをする手を指定します。",
+            type = EquipmentSlot.class
+    )
     public static final InputToken<EquipmentSlot> IN_HAND = ofEnumInput(
             "hand",
             EquipmentSlot.class
@@ -39,11 +87,23 @@ public class PlayerInteractBlockAction extends AbstractPlayerAction
             (slot) -> slot == EquipmentSlot.HAND || slot == EquipmentSlot.OFF_HAND,
             "The hand must be either hand or off hand"
     );
+
+    @InputDoc(
+            name = "block",
+            description = "クリックするブロックを指定します。",
+            type = BlockStructure.class
+    )
     public static final InputToken<BlockStructure> IN_BLOCK = ofInput(
             "block",
             BlockStructure.class,
             ofDeserializer(BlockStructure.class)
     );
+
+    @InputDoc(
+            name = "blockFace",
+            description = "クリックするブロックの面を指定します。",
+            type = BlockFace.class
+    )
     public static final InputToken<BlockFace> IN_BLOCK_FACE = ofEnumInput(
             "blockFace",
             BlockFace.class
@@ -68,15 +128,15 @@ public class PlayerInteractBlockAction extends AbstractPlayerAction
     @Override
     public void execute(@NotNull ActionContext ctxt)
     {
-        Action action = ctxt.input(IN_ACTION);
+        org.bukkit.event.block.Action action = ctxt.input(IN_ACTION);
         Player player = selectTarget(ctxt);
 
         // 引数の検証を行う( validateArgument() はランタイムではないのでこちら側でやるしかない。)
         Block clickBlock = getClickBlock(ctxt);
         boolean isAir = clickBlock.getType() == Material.AIR;
-        if ((action == Action.LEFT_CLICK_AIR || action == Action.RIGHT_CLICK_AIR) && !isAir)
+        if ((action == org.bukkit.event.block.Action.LEFT_CLICK_AIR || action == org.bukkit.event.block.Action.RIGHT_CLICK_AIR) && !isAir)
             throw new IllegalArgumentException("Argument action is not allowed to be LEFT_CLICK_AIR or RIGHT_CLICK_AIR when the target block is not air");
-        else if ((action == Action.LEFT_CLICK_BLOCK || action == Action.RIGHT_CLICK_BLOCK) && isAir)
+        else if ((action == org.bukkit.event.block.Action.LEFT_CLICK_BLOCK || action == org.bukkit.event.block.Action.RIGHT_CLICK_BLOCK) && isAir)
             throw new IllegalArgumentException("Argument action is not allowed to be LEFT_CLICK_BLOCK or RIGHT_CLICK_BLOCK when the target block is air");
 
         this.makeOutputs(ctxt, player, clickBlock, null, EquipmentSlot.HAND);

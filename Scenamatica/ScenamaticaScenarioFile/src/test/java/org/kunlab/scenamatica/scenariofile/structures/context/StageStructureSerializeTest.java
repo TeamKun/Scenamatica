@@ -3,7 +3,7 @@ package org.kunlab.scenamatica.scenariofile.structures.context;
 import org.bukkit.World;
 import org.bukkit.WorldType;
 import org.junit.jupiter.api.Test;
-import org.kunlab.scenamatica.interfaces.scenariofile.context.StageStructure;
+import org.kunlab.scenamatica.interfaces.structures.context.StageStructure;
 import org.kunlab.scenamatica.scenariofile.structures.utils.MapTestUtil;
 
 import java.util.HashMap;

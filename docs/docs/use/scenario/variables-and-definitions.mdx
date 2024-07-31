@@ -3,39 +3,40 @@ sidebar_position: 6
 toc_max_heading_level: 4
 ---
 
-import { Object, ObjectType } from "/src/components/Object";
+import { Object } from "/src/components/Object";
+import {PrimitiveTypes} from "/src/components/Object/Types"; 
 
 # 変数・定数の定義と参照
 
-このページでは、シナリオの変数や定数の定義、およびその参照方法について説明します。
+このページでは, シナリオの変数や定数の定義, およびその参照方法について説明します。
 
 ---
 
 ## 概要
 
-[シナリオファイル](/docs/use/scenario/scenario-file#overview)では、定数を定義し、同じファイル内の任意の場所から参照できます。
-さらに、シナリオ内で使用できる予約された変数も使用できます。
+[シナリオファイル](/docs/use/scenario/scenario-file#overview)では, 定数を定義し, 同じファイル内の任意の場所から参照できます。
+さらに, シナリオ内で使用できる予約された変数も使用できます。
 
 ## 定数 {#constant-definition}
 
 ### 概要 {#constant-definition-overview}
 
-定義機能は、シナリオファイルで任意の値の定数を定義し、同じファイルの任意の場所から参照できるようにする機能です。
+定義機能は, シナリオファイルで任意の値の定数を定義し, 同じファイルの任意の場所から参照できるようにする機能です。
 
-主に、アクタのインベントリや検証用のメッセージなど、同じ値を複数回使用する場合に使用します。  
-これにより、シナリオファイルの冗長な記述を減らし、**可読性と保守性を向上**させます。
+主に, アクタのインベントリや検証用のメッセージなど, 同じ値を複数回使用する場合に使用します。  
+これにより, シナリオファイルの冗長な記述を減らし, **可読性と保守性を向上**させます。
 
-定義を作成するには `definitions` という名前のオブジェクトをシナリオファイルのルートに作成し、その中で自由に定義します。
-キーには割り当てる名前を記述し、値には任意の型の値を記述します。
+定義を作成するには `definitions` という名前のオブジェクトをシナリオファイルのルートに作成し, その中で自由に定義します。
+キーには割り当てる名前を記述し, 値には任意の型の値を記述します。
 
 定義機能には以下のの２つの種類があります。
 1. **オブジェクトの定義**  
-  オブジェクトとは、 YAML では `キー: 値` と表現される構造体です。
-  参照用のプロパティを使用したいところで記述することで、オブジェクトの値を参照できます。
+  オブジェクトとは,  YAML では `キー: 値` と表現される構造体です。
+  参照用のプロパティを使用したいところで記述することで, オブジェクトの値を参照できます。
 2. **埋め込み文字列の定義**  
-  任意な文字列の一部または全部を、定義を使用して置換します。
+  任意な文字列の一部または全部を, 定義を使用して置換します。
   :::warning
-  文字列の埋め込み機能は、 YAML の**キーでは使用できません**。
+  文字列の埋め込み機能は,  YAML の**キーでは使用できません**。
   :::
 
 ### 定義の作成 {#create-constant}
@@ -61,13 +62,13 @@ definitions:
 
 ### 定義されたオブジェクトを参照する {#reference-object-definition}
 
-定義されたオブジェクトは、シナリオファイル内の任意の場所で参照できます。  
-`$ref` というキーを任意の場所で定義すると、 `$ref` のある階層に定義が展開されます。
+定義されたオブジェクトは, シナリオファイル内の任意の場所で参照できます。  
+`$ref` というキーを任意の場所で定義すると,  `$ref` のある階層に定義が展開されます。
 
-参照元に同じキーのプロパティがある場合は、参照元の値がそのまま使用されます。  
-また、 参照時に使用した `$ref` プロパティは実行時に削除されます。
+参照元に同じキーのプロパティがある場合は, 参照元の値がそのまま使用されます。  
+また,  参照時に使用した `$ref` プロパティは実行時に削除されます。
 
-以下は、定義されたオブジェクトを参照する例です。定義は [定義の作成](#create-definition) で作成したものを使用しています。
+以下は, 定義されたオブジェクトを参照する例です。定義は [定義の作成](#create-constant) で作成したものを使用しています。
 
 ```yaml showLineNumbers
 # （中略）
@@ -88,17 +89,17 @@ context:
 
 ### 埋め込み文字列を参照する {#reference-embedded-string-definition}
 
-埋め込み文字列は、シナリオファイル内の任意の文字列内で使用できます。
+埋め込み文字列は, シナリオファイル内の任意の文字列内で使用できます。
 任意の文字列内で `${` と `}` で定義の名前を囲んで使用します。
 
 :::tip
 
-`{` と `}` をエスケープする場合は、 `${{}` や `${}}` のように記述します。  
-（`{` と `}` という名前の定義が暗黙的に作成されており、参照する形でアクセスします。）
+`{` と `}` をエスケープする場合は,  `${{}` や `${}}` のように記述します。  
+（`{` と `}` という名前の定義が暗黙的に作成されており, 参照する形でアクセスします。）
 
 :::
 
-以下は、埋め込み文字列を参照する例です。定義は [定義の作成](#create-definition) で作成したものを使用しています。
+以下は, 埋め込み文字列を参照する例です。定義は [定義の作成](#create-constant) で作成したものを使用しています。
 
 ```yaml showLineNumbers
 
@@ -117,26 +118,26 @@ actions:
 
 ### 概要 {#reserved-variables-overview}
 
-これは、予め定義された任意の値です。
-予約されたキーを用いてシナリオ内で参照することで、シナリオの実行時に値が設定されます。
+これは, 予め定義された任意の値です。
+予約されたキーを用いてシナリオ内で参照することで, シナリオの実行時に値が設定されます。
 
 変数はセッションごともしくは実行ごとにリセットされます。
 
 ### 変数の参照 {#reserved-variables-reference}
 
-変数を使用するには、リテラルのかわりに使用する変数名を `${` および `}` で囲みます。  
+変数を使用するには, リテラルのかわりに使用する変数名を `${` および `}` で囲みます。  
 各要素は `.` で区切ってアクセスします。
 
 :::info
 
-値の参照は、それが使われているシナリオないしはそのエンジンの開始前に行われます。
+値の参照は, それが使われているシナリオないしはそのエンジンの開始前に行われます。
 
 :::
 
 :::tip
 
-型は自動で推論されるため、使用できない型を参照するとエラーになります。   
-また、文字列との相互変換や、数値のキャストも自動で行われます。
+型は自動で推論されるため, 使用できない型を参照するとエラーになります。   
+また, 文字列との相互変換や, 数値のキャストも自動で行われます。
 
 :::
 
@@ -195,17 +196,17 @@ Java の `System#getProperties()Ljava/lang/String;` で取得できるシステ�
 <Object objects={[
   {
     name: "total",
-    type: ObjectType.LONG,
+    type: PrimitiveTypes.LONG,
     description: "マシンのメモリの合計値です。",
   },
   {
     name: "free",
-    type: ObjectType.LONG,
+    type: PrimitiveTypes.LONG,
     description: "マシンのメモリの空き値です。",
   },
   {
     name: "max",
-    type: ObjectType.LONG,
+    type: PrimitiveTypes.LONG,
     description: "マシンのメモリの最大値です。",
   }
 ]} />
@@ -216,12 +217,12 @@ Java の `System#getProperties()Ljava/lang/String;` で取得できるシステ�
 <Object objects={[
   {
     name: "started_at",
-    type: ObjectType.LONG,
+    type: PrimitiveTypes.LONG,
     description: "セッションの開始時刻です。"
   },
   {
     name: "scenarios.*",
-    type: [ObjectType.INTEGER, "Scenario"],
+    type: [PrimitiveTypes.INTEGER, "Scenario"],
     type_anchor: "variables-type-scenario",
     anchor: "variables-type-session-scenarios",
     description: "セッションに属するシナリオの一覧またはその数です。",
@@ -230,29 +231,29 @@ Java の `System#getProperties()Ljava/lang/String;` で取得できるシステ�
 
 ##### `session`.`scenarios`.`*` {#variables-type-session-scenarios}
 
-`*` には、シナリオ（ファイル）の名前を指定します。
+`*` には, シナリオ（ファイル）の名前を指定します。
 
 #### Scenario 型 {#variables-type-scenario}
 
-この変数を使用してシナリオを取得するには、子に[シナリオの名前](/docs/use/scenario/types/#apex-name)を指定します(MUST)。
+この変数を使用してシナリオを取得するには, 子に[シナリオの名前](/references/types/#apex-name)を指定します(MUST)。
 
-また、以下の変数に加えて追加で[シナリオファイル](/docs/use/scenario/scenario-file)におけるすべての値を参照できます。
+また, 以下の変数に加えて追加で[シナリオファイル](/docs/use/scenario/scenario-file)におけるすべての値を参照できます。
 
 <Object objects={[
   {
     name: "result",
-    type: [ObjectType.BOOLEAN, "ScenarioResult"],
+    type: [PrimitiveTypes.BOOLEAN, "ScenarioResult"],
     description: "シナリオの実行結果または成功したかどうかです。",
     anchor: "variables-type-session-scenarios-result"
   },
   {
     name: "started_at",
-    type: ObjectType.LONG,
+    type: PrimitiveTypes.LONG,
     description: "シナリオの開始時刻です。",
   },
   {
     name: "finished_at",
-    type: ObjectType.LONG,
+    type: PrimitiveTypes.LONG,
     description: "シナリオの終了時刻です。",
   },
   {
@@ -280,24 +281,24 @@ Java の `System#getProperties()Ljava/lang/String;` で取得できるシステ�
   }
 ]} />
 
-##### `session`.`scenario`.`*`.`output` {#variables-type-session-scenario-result}
+##### `session`.`scenario`.`*`.`output` {#variables-type-session-scenario-output}
 
-`*` には、シナリオのインデックスまたは[名前](/docs/use/scenario/types/#scenario-name)を指定します。
+`*` には, シナリオのインデックスまたは[名前](/references/types/#scenario-name)を指定します。
 
 :::tip
 
-これを参照する場合、中間の `scenario` は省略できます。
+これを参照する場合, 中間の `scenario` は省略できます。
 例： `session.scenario.foo.output` → `session.foo.output`
 
 :::
 
 ##### `session`.`scenario`.`*`.`runif`.`output` {#variables-type-session-scenario-runif-output}
 
-`*` には、シナリオのインデックスまたは[名前](/docs/use/scenario/types/#scenario-name)を指定します。
+`*` には, シナリオのインデックスまたは[名前](/references/types/#scenario-name)を指定します。
 
 :::tip
 
-これを参照する場合、中間の `scenario` は省略できます。
+これを参照する場合, 中間の `scenario` は省略できます。
 例： `session.scenario.foo.runif.output` → `session.foo.runif.output`
 
 :::
@@ -317,14 +318,14 @@ Java の `System#getProperties()Ljava/lang/String;` で取得できるシステ�
   },
   {
     name: "attempt_of",
-    type: ObjectType.INTEGER,
+    type: PrimitiveTypes.INTEGER,
     description: "シナリオの試行回数です。"
   }
 ]} />
 
 #### Trigger 型 {#variables-type-trigger}
 
-以下の変数に加えて追加で[トリガ](/docs/use/scenario/types#trigger)におけるすべての値を参照できます。
+以下の変数に加えて追加で[トリガ](/references/types#trigger)におけるすべての値を参照できます。
 
 <Object objects={[
   {
@@ -349,4 +350,4 @@ Java の `System#getProperties()Ljava/lang/String;` で取得できるシステ�
   }
 ]} />
 
-`*` には、シナリオのインデックスまたは[名前](/docs/use/scenario/types/#scenario-name)を指定します。
+`*` には, シナリオのインデックスまたは[名前](/references/types/#scenario-name)を指定します。

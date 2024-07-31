@@ -5,7 +5,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.exceptions.context.ContextPreparationException;
-import org.kunlab.scenamatica.interfaces.scenariofile.context.PlayerStructure;
+import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.PlayerStructure;
 
 import java.util.List;
 import java.util.UUID;
@@ -20,7 +20,7 @@ public interface ActorManager
      * このメソッドは非同期で実行する必要があります。
      *
      * @param defaultWOrld
-     * @param structure    プレイヤー情報
+     * @param structure    プレイヤ情報
      * @return 生成した役者
      */
     Actor createActor(@NotNull World defaultWOrld, @NotNull PlayerStructure structure) throws ContextPreparationException;
@@ -52,9 +52,9 @@ public interface ActorManager
     void shutdown();
 
     /**
-     * 指定したプレイヤーが役者かどうかを返します。
+     * 指定したプレイヤが役者かどうかを返します。
      *
-     * @param player プレイヤー
+     * @param player プレイヤ
      * @return 役者かどうか
      */
     boolean isActor(@NotNull Player player);
@@ -62,7 +62,7 @@ public interface ActorManager
     /**
      * {@link java.util.UUID} から アクターを取得します。
      *
-     * @param uuid プレイヤーのUUID
+     * @param uuid プレイヤのUUID
      */
     @Nullable
     Actor getByUUID(@NotNull UUID uuid);
@@ -70,7 +70,7 @@ public interface ActorManager
     /**
      * 名前からアクターを取得します。
      *
-     * @param name プレイヤーの名前
+     * @param name プレイヤの名前
      */
     @Nullable
     Actor getByName(@NotNull String name);

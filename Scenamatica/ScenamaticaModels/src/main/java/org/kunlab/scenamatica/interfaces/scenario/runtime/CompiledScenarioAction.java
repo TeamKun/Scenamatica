@@ -4,7 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.CompiledAction;
-import org.kunlab.scenamatica.interfaces.scenariofile.scenario.ScenarioStructure;
+import org.kunlab.scenamatica.interfaces.structures.scenario.ScenarioStructure;
 
 /**
  * コンパイルされたシナリオアクションを表すインターフェースです。

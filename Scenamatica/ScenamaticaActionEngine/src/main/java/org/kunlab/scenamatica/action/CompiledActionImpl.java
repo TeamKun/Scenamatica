@@ -6,7 +6,7 @@ import org.kunlab.scenamatica.interfaces.action.Action;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.ActionResult;
 import org.kunlab.scenamatica.interfaces.action.CompiledAction;
-import org.kunlab.scenamatica.interfaces.scenariofile.action.ActionStructure;
+import org.kunlab.scenamatica.interfaces.structures.scenario.ActionStructure;
 
 import java.util.function.BiConsumer;
 

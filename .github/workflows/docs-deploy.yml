@@ -18,10 +18,26 @@ permissions:
   deployments: write
 
 jobs:
+  setup-nms:
+    name: Setup NMS
+    uses: "./.github/workflows/build-nms.yml"
+    secrets:
+      token: ${{ secrets.GITHUB_TOKEN }}
   deploy:
+    needs: setup-nms
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - name: Restore NMS cache
+        uses: actions/cache@v4
+        with:
+          path: nms-build/.m2
+          key: nms-maven
+          restore-keys: nms-maven
+      - name: Deploy NMS cache
+        run: |
+          mv -f nms-build/.m2/repository/repository $HOME/.m2/ -v
+      - uses: actions/checkout@v4
+      - run: chmod -R +x docs/
       - uses: chrnorm/deployment-action@v2
         name: Create GitHub Deployment
         id: deploy-status
@@ -31,9 +47,20 @@ jobs:
           environment: production
           initial-status: in_progress
       - name: pnpm-setup
-        uses: pnpm/action-setup@v2
+        uses: pnpm/action-setup@v3
         with: 
           package_json_file: docs/package.json
+      - name: Set up JDK 11
+        uses: actions/setup-java@v4
+        id: maven-cache
+        with:
+          java-version: 11
+          distribution: zulu
+          cache: maven
+      - name: Set up Maven
+        uses: stCarolas/setup-maven@v5
+        with:
+          maven-version: 3.8.2
       - name: Install dependencies
         run:  |
           cd docs 
@@ -45,13 +72,13 @@ jobs:
           pnpm run build
           cd ..
       - name: Setup Pages
-        uses: actions/configure-pages@v2
+        uses: actions/configure-pages@v5
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v1
+        uses: actions/upload-pages-artifact@v3
         with:
           path: "docs/build/"
       - name: Deploy to GitHub Pages
-        uses: actions/deploy-pages@v1
+        uses: actions/deploy-pages@v4
       - name: Update GitHub Deployment
         if: success()
         uses: chrnorm/deployment-status@v2

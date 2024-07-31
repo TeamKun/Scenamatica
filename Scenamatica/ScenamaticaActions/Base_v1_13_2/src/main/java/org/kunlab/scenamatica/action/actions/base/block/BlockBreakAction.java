@@ -8,16 +8,19 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.jetbrains.annotations.NotNull;
-import org.kunlab.scenamatica.annotations.action.ActionMeta;
+import org.kunlab.scenamatica.annotations.action.Action;
+import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
+import org.kunlab.scenamatica.bookkeeper.enums.ActionMethod;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
-import org.kunlab.scenamatica.interfaces.action.types.Watchable;
-import org.kunlab.scenamatica.interfaces.scenariofile.misc.BlockStructure;
-import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.PlayerSpecifier;
+import org.kunlab.scenamatica.interfaces.action.types.Expectable;
+import org.kunlab.scenamatica.interfaces.structures.minecraft.misc.BlockStructure;
+import org.kunlab.scenamatica.interfaces.structures.specifiers.PlayerSpecifier;
 import org.kunlab.scenamatica.nms.NMSProvider;
 import org.kunlab.scenamatica.nms.types.block.NMSBlockPosition;
 import org.kunlab.scenamatica.nms.types.entity.NMSEntityPlayer;
@@ -25,12 +28,34 @@ import org.kunlab.scenamatica.nms.types.entity.NMSEntityPlayer;
 import java.util.Collections;
 import java.util.List;
 
-@ActionMeta("block_break")
+@Action("block_break")
+@ActionDoc(
+        name = "ブロックの破壊",
+        description = "指定されたブロックを破壊します。",
+        events = BlockBreakEvent.class,
+
+        executable = "指定されたブロックを破壊します。",
+        expectable = "指定されたブロックが破壊されることを期待します。",
+        requireable = "指定されたブロックが空気ブロックであるかどうか判定します。"
+)
 public class BlockBreakAction extends AbstractBlockAction
-        implements Executable, Requireable, Watchable
+        implements Executable, Requireable, Expectable
 {
+    @InputDoc(
+            name = "actor",
+            description = "ブロックを破壊するアクタです。\n" +
+                    "省略した場合は、ブロックは自然に壊れます。",
+            type = PlayerSpecifier.class,
+            availableFor = {ActionMethod.EXECUTE, ActionMethod.EXPECT}
+    )
     public static final InputToken<PlayerSpecifier> IN_ACTOR = ofInput("actor", PlayerSpecifier.class, ofPlayer());
-    public static final InputToken<Boolean> IN_DROP_ITEMS = ofInput("drop_items", Boolean.class);
+    @InputDoc(
+            name = "dropItems",
+            description = "アイテムをドロップするかどうかを指定します。",
+            type = boolean.class,
+            availableFor = {ActionMethod.EXPECT}
+    )
+    public static final InputToken<Boolean> IN_DROP_ITEMS = ofInput("dropItems", Boolean.class);
 
     @Override
     public void execute(@NotNull ActionContext ctxt)

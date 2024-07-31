@@ -11,7 +11,12 @@ import org.bukkit.event.player.PlayerAdvancementDoneEvent;
 import org.bukkit.event.player.PlayerEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.kunlab.scenamatica.annotations.action.ActionMeta;
+import org.kunlab.scenamatica.annotations.action.Action;
+import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.Admonition;
+import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.OutputDoc;
+import org.kunlab.scenamatica.bookkeeper.enums.AdmonitionType;
 import org.kunlab.scenamatica.commons.utils.NamespaceUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
@@ -19,23 +24,66 @@ import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
-import org.kunlab.scenamatica.interfaces.action.types.Watchable;
+import org.kunlab.scenamatica.interfaces.action.types.Expectable;
 
 import java.util.Arrays;
 import java.util.List;
 
-@ActionMeta("player_advancement")
+@Action("player_advancement")
+@ActionDoc(
+        name = "プレイヤの進捗",
+        description = "プレイヤの進捗を設定します。",
+
+        executable = "プレイヤの進捗を達成するか、達成度を設定します。",
+        expectable = "プレイヤの進捗が達成、または達成度が設定されすることを期待します。",
+        requireable = "プレイヤが指定された進捗を達成しているか、または達成度が設定されていることを要求します。",
+
+        outputs = {
+                @OutputDoc(
+                        name = PlayerAdvancementAction.KEY_OUT_ADVANCEMENT,
+                        description = "達成した進捗のキーです。",
+                        type = NamespacedKey.class
+                ),
+                @OutputDoc(
+                        name = PlayerAdvancementAction.KEY_OUT_CRITERION,
+                        description = "達成した進捗の条件です。",
+                        type = String.class
+                )
+        },
+
+        admonitions = {
+                @Admonition(
+                        type = AdmonitionType.INFORMATION,
+                        content = "このアクションは進捗自体を達成する機能と、進捗の達成度を変更する機能を包含しています。  \n" +
+                                "`criterion` を指定せずに実行すると、**残っている達成条件を全て達成**します。一方で指定した場合は、指定した達成条件のみを達成します。\n" +
+                                "\n" +
+                                "実行期待機能においても、 `criterion` を指定せずに実行すると、進捗自体を達成しているか判定します。  \n" +
+                                "一方で指定した場合は、指定した進捗の指定した達成条件を達成しているか判定します。"
+                )
+        }
+)
 public class PlayerAdvancementAction
         extends AbstractPlayerAction
-        implements Executable, Watchable, Requireable
+        implements Executable, Expectable, Requireable
 {
     // 進捗の Criterion を付与するアクションと, 進捗を完了させるアクションを統合した。
     // 脚注： Criterion => 単数, Criteria => 複数 -- ギリシャ語による。
+
+    @InputDoc(
+            name = "advancement",
+            description = "進捗を指定します。",
+            type = NamespacedKey.class
+    )
     public static final InputToken<NamespacedKey> IN_ADVANCEMENT = ofInput(
             "advancement",
             NamespacedKey.class,
             ofTraverser(String.class, (ser, str) -> NamespaceUtils.fromString(str))
     );
+    @InputDoc(
+            name = "criterion",
+            description = "進捗の条件を指定します。",
+            type = String.class
+    )
     public static final InputToken<String> IN_CRITERION = ofInput(
             "criterion",
             String.class

@@ -15,7 +15,7 @@ import org.kunlab.scenamatica.interfaces.action.LoadedAction;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
-import org.kunlab.scenamatica.interfaces.scenariofile.action.ActionStructure;
+import org.kunlab.scenamatica.interfaces.structures.scenario.ActionStructure;
 
 import java.util.HashMap;
 import java.util.Map;

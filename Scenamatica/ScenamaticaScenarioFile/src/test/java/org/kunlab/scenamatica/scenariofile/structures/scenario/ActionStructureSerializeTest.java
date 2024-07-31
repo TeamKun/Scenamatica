@@ -1,7 +1,7 @@
 package org.kunlab.scenamatica.scenariofile.structures.scenario;
 
 import org.junit.jupiter.api.Test;
-import org.kunlab.scenamatica.interfaces.scenariofile.action.ActionStructure;
+import org.kunlab.scenamatica.interfaces.structures.scenario.ActionStructure;
 import org.kunlab.scenamatica.scenariofile.structures.utils.MapTestUtil;
 
 import java.util.HashMap;

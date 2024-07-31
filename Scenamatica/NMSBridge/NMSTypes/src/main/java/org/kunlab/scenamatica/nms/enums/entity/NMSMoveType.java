@@ -12,11 +12,11 @@ public enum NMSMoveType implements NMSElement
      */
     SELF,
     /**
-     * プレイヤーによる移動です。
+     * プレイヤによる移動です。
      */
     PLAYER,
     /**
-     * プレイヤーによる移動です。
+     * プレイヤによる移動です。
      */
     PISTON,
     /**

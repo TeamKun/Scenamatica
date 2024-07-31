@@ -11,20 +11,44 @@ import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import org.kunlab.scenamatica.annotations.action.ActionMeta;
+import org.kunlab.scenamatica.annotations.action.Action;
+import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.Admonition;
+import org.kunlab.scenamatica.bookkeeper.enums.AdmonitionType;
+import org.kunlab.scenamatica.bookkeeper.enums.MCVersion;
 import org.kunlab.scenamatica.enums.MinecraftVersion;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
-import org.kunlab.scenamatica.interfaces.action.types.Watchable;
+import org.kunlab.scenamatica.interfaces.action.types.Expectable;
 import org.kunlab.scenamatica.interfaces.context.Actor;
 import org.kunlab.scenamatica.nms.enums.NMSHand;
 
 import java.util.Collections;
 import java.util.List;
 
-@ActionMeta(value = "player_bucket_empty", supportsUntil = MinecraftVersion.V1_15_2)
+@Action(value = "player_bucket_empty", supportsUntil = MinecraftVersion.V1_15_2)
+@ActionDoc(
+        name = "プレイヤによるバケツの空化",
+        description = "プレイヤがバケツを空にするアクションです。",
+        events = {
+                PlayerBucketEmptyEvent.class
+        },
+
+        supportsUntil = MCVersion.V1_15_2,
+
+        executable = "プレイヤがバケツを空にします。",
+        expectable = "プレイヤがバケツを空にすることを期待します。",
+        requireable = ActionDoc.UNALLOWED,
+
+        admonitions = {
+                @Admonition(
+                        type = AdmonitionType.DANGER,
+                        content = "NMS の仕様上の都合により、 `block` を用いた液体の場所は `eventOnly` が `true` の場合にのみ有効です。"
+                )
+        }
+)
 public class PlayerBucketEmptyAction extends AbstractPlayerBucketAction
-        implements Watchable, Executable
+        implements Expectable, Executable
 {
 
     @Override
@@ -49,7 +73,7 @@ public class PlayerBucketEmptyAction extends AbstractPlayerBucketAction
         this.makeOutput(ctxt, who, itemInHand, block, blockFace, bucket, hand);
         EquipmentSlot handSlot = hand == null ? EquipmentSlot.HAND: hand.toEquipmentSlot();
 
-        PlayerBucketEmptyEvent event = new PlayerBucketEmptyEvent(who, blockClicked, blockFace, bucket, itemInHand, handSlot);
+        PlayerBucketEmptyEvent event = this.createEvent(who, block, blockClicked, blockFace, bucket, itemInHand, handSlot);
         Bukkit.getServer().getPluginManager().callEvent(event);
 
         if (event.isCancelled())
@@ -69,6 +93,11 @@ public class PlayerBucketEmptyAction extends AbstractPlayerBucketAction
         if (itemInHand != null)
             who.getInventory().setItem(handSlot, itemInHand);
 
+    }
+
+    protected PlayerBucketEmptyEvent createEvent(Player who, Block block, Block blockClicked, BlockFace blockFace, Material bucket, ItemStack itemInHand, EquipmentSlot handSlot)
+    {
+        return new PlayerBucketEmptyEvent(who, /* block, */ blockClicked, blockFace, bucket, itemInHand, handSlot);
     }
 
     @Override

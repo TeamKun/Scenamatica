@@ -6,7 +6,7 @@ import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.enums.TriggerType;
 import org.kunlab.scenamatica.exceptions.scenario.ScenarioException;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
+import org.kunlab.scenamatica.interfaces.structures.trigger.TriggerArgument;
 
 import java.util.List;
 

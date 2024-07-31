@@ -2,37 +2,37 @@ import BelowDocument from "/src/components/BelowDocument";
 
 # 変数と定数を使ってみる
 
-変数と定数を使って、冗長な記述を減らしたり、臨機応変なシナリオを作成しましょう。
+変数と定数を使って, 冗長な記述を減らしたり, 臨機応変なシナリオを作成しましょう。
 
 ---
 
 ## 概要
 
-このチュートリアルでは、[定数機能](/docs/use/scenario/variables-and-definitions#constant-definition)
+このチュートリアルでは, [定数機能](/docs/use/scenario/variables-and-definitions#constant-definition)
 と[変数機能](/docs/use/scenario/variables-and-definitions#reserved-variables)の使い方にを学びます。
 
-これを完了すると、シナリオの作成において冗長な記述を減らして、より効率的に記述できるようになります。  
-さらに、シナリオの実行時に、変数の値を変更することで、シナリオの対象を変更したり、挙動を変更できるようになります。
+これを完了すると, シナリオの作成において冗長な記述を減らして, より効率的に記述できるようになります。  
+さらに, シナリオの実行時に, 変数の値を変更することで, シナリオの対象を変更したり, 挙動を変更できるようになります。
 
 ### 定数機能を使ってみる {#use-constant}
 
-[定数機能](/docs/use/scenario/variables-and-definitions#constant-definition) を使うと、
+[定数機能](/docs/use/scenario/variables-and-definitions#constant-definition) を使うと, 
 自分で自由に定義した定数をシナリオ内の任意の場所で参照でできます。
-同じ記述を複数回書く必要がある場合に、効果的に使えます。
+同じ記述を複数回書く必要がある場合に, 効果的に使えます。
 
 #### シチュエーションの例 {#constant-example-situation}
 
 私のプラグイン「More Rewards」 を考えます。  
-このプラグインは、プレイヤが敵を倒したときに、特別な木の棒「One Punch Stick」がドロップします。
-この棒で敵をヒットすると、敵が即死します。
+このプラグインは, プレイヤが敵を倒したときに, 特別な木の棒「One Punch Stick」がドロップします。
+この棒で敵をヒットすると, 敵が即死します。
 
-この機能テストのために、後述の[前提となるシナリオ](#constant-step1-write-basic-scenario)を作成しました。
-このシナリオ内では、木の棒に関する**同じような記述**が複数回登場します。  
-このような冗長なコードを減らすために、定数機能を使ってみましょう。
+この機能テストのために, 後述の[前提となるシナリオ](#constant-step1-write-basic-scenario)を作成しました。
+このシナリオ内では, 木の棒に関する**同じような記述**が複数回登場します。  
+このような冗長なコードを減らすために, 定数機能を使ってみましょう。
 
 ### ステップ１. 前提となるシナリオを作成する {#constant-step1-write-basic-scenario}
 
-まずは、前提となるかんたんなシナリオを作成しましょう。
+まずは, 前提となるかんたんなシナリオを作成しましょう。
 
 <BelowDocument docId={"getting-started/tutorials/writing-my-first-scenario"}
                label={"最初のシナリオを書いてみる"}
@@ -42,7 +42,7 @@ import BelowDocument from "/src/components/BelowDocument";
 今回はあらかじめ用意しておいたシナリオを使います。
 
 ```yaml title="giving-more-reward-on-kill-test.yml" showLineNumbers
-# このシナリオでは、プレイヤが敵を倒したときに、特別な木の棒「One Punch Stick」を与えられるかどうかをテストします。
+# このシナリオでは, プレイヤが敵を倒したときに, 特別な木の棒「One Punch Stick」を与えられるかどうかをテストします。
 scenamatica: "0.0.1"
 name: "give-more-reward-on-kill-test"
 
@@ -105,7 +105,7 @@ scenario:
 
 ### ステップ２. 定数にする項目を考える {#constant-step2-think-about-what-has-to-be-constant}
 
-このシナリオでは、以下のような**同じような記述**が複数回登場します。
+このシナリオでは, 以下のような**同じような記述**が複数回登場します。
 ```yaml showLineNumbers
 item:
   type: stick
@@ -114,17 +114,17 @@ item:
   - "You can kill everyone with one punch!"
 ```
 
-これはどのようなアイテムであるかを説明するものであり、つまりは同一のアイテムを指しています。  
+これはどのようなアイテムであるかを説明するものであり, つまりは同一のアイテムを指しています。  
 このような冗長な記述は極力減らされるべきです。定数機能の出番です！
 
 ### ステップ３. 定数を定義する {#constant-step3-define-constants}
 
-定数を定義するには、まず `definitions` セクションをシナリオのルートに追加します。
+定数を定義するには, まず `definitions` セクションをシナリオのルートに追加します。
 
-以下の例では、 `one_punch_stick` という名前の定数を定義しています。
+以下の例では,  `one_punch_stick` という名前の定数を定義しています。
 
 ```yaml title="giving-more-reward-on-kill-test.yml" showLineNumbers
-# このシナリオでは、プレイヤが敵を倒したときに、特別な木の棒「One Punch Stick」を与えられるかどうかをテストします。
+# このシナリオでは, プレイヤが敵を倒したときに, 特別な木の棒「One Punch Stick」を与えられるかどうかをテストします。
 scenamatica: "0.0.1"
 name: "give-more-reward-on-kill-test"
 
@@ -154,12 +154,12 @@ scenario:
 
 ### ステップ４. 定数を参照する {#constant-step4-reference-constants}
 
-変数を定義しただけでは、まだ何も変わりません。変数を参照して、冗長な記述を減らしましょう。
+変数を定義しただけでは, まだ何も変わりません。変数を参照して, 冗長な記述を減らしましょう。
 
-変数を参照するには、参照したいオブジェクトの場所に `$ref` キーを追加します。
+変数を参照するには, 参照したいオブジェクトの場所に `$ref` キーを追加します。
 値には定義名（今回の場合は `one_punch_stick`）を指定します。
 
-これを行うと、以下のように定数が参照されます。
+これを行うと, 以下のように定数が参照されます。
 
 ```yaml title="giving-more-reward-on-kill-test.yml" showLineNumbers
 # ...
@@ -209,7 +209,7 @@ scenario:
 ### ステップ５. 動作を確認する {#constant-step6-check-if-it-works}
 
 実際にシナリオを実行してみましょう。  
-プラグインをビルドし、サーバを再起動します。
+プラグインをビルドし, サーバを再起動します。
 
 ```bash
 # サーバを再起動する場合
@@ -219,14 +219,14 @@ $ java -jar <サーバのjarファイル名>.jar
 $ reload confirm 
 ```
 
-シナリオが実行され正常に終了したことを確認したら、定数機能に関するチュートリアルは終了です。お疲れ様でした。
+シナリオが実行され正常に終了したことを確認したら, 定数機能に関するチュートリアルは終了です。お疲れ様でした。
 
 他の応用的なチュートリアルを読むには[こちら](/docs/getting-started/tutorials)を参照してください。  
 シナリオファイルの完全な構文については[こちら](/docs/use/scenario/scenario-file)を参照してください。
 
 ## 変数を使ってみる {#use-variable}
 
-[変数機能](/docs/use/scenario/variables-and-definitions#reserved-variables) を使うと、
+[変数機能](/docs/use/scenario/variables-and-definitions#reserved-variables) を使うと, 
 シナリオの実行結果や状態に応じた臨機応変なシナリオを作成できます。
 
 #### シチュエーションの例 {#variable-example-situation}
@@ -234,22 +234,22 @@ $ reload confirm
 [前章で例示したシチュエーション](#constant-example-situation)をさらに複雑にしてみましょう。
 
 上長からの仕様変更の依頼が発生しました。  
-プレイヤが敵を倒したときに、追加でプレイヤの位置のブロックを溶岩ブロックに置換するように変更してほしいとのことです。
-また、ブロックの設置には[BlockPlaceEvent](https://jd.papermc.io/paper/1.16/org/bukkit/event/block/BlockPlaceEvent.html)
+プレイヤが敵を倒したときに, 追加でプレイヤの位置のブロックを溶岩ブロックに置換するように変更してほしいとのことです。
+また, ブロックの設置には[BlockPlaceEvent](https://jd.papermc.io/paper/1.16/org/bukkit/event/block/BlockPlaceEvent.html)
 を発火させる必要があるそうです。
 
-さて、この仕様変更事項をひとまず実装してみました。  
-この変更のテストのために、追加のシナリオを作成しましょう。
+さて, この仕様変更事項をひとまず実装してみました。  
+この変更のテストのために, 追加のシナリオを作成しましょう。
 
-この機能テストのために、後述の[前提となるシナリオ](#variable-step1-write-basic-scenario)を作成しました。
-このシナリオ内では、プレイヤの位置とブロックの位置を固定化して指定しています。
-しかし、このままでは、プレイヤの位置とブロックの位置が常に同じになってしまい、柔軟性がありません。
+この機能テストのために, 後述の[前提となるシナリオ](#variable-step1-write-basic-scenario)を作成しました。
+このシナリオ内では, プレイヤの位置とブロックの位置を固定化して指定しています。
+しかし, このままでは, プレイヤの位置とブロックの位置が常に同じになってしまい, 柔軟性がありません。
 
-これを解決するために、変数機能を使ってブロックの位置を動的に指定してみましょう。
+これを解決するために, 変数機能を使ってブロックの位置を動的に指定してみましょう。
 
 ### ステップ１. 前提となるシナリオを作成する {#variable-step1-write-basic-scenario}
 
-まずは、前提となるかんたんなシナリオを作成しましょう。
+まずは, 前提となるかんたんなシナリオを作成しましょう。
 
 <BelowDocument docId={"getting-started/tutorials/writing-my-first-scenario"}
                label={"最初のシナリオを書いてみる"}
@@ -259,7 +259,7 @@ $ reload confirm
 今回はあらかじめ用意しておいたシナリオを使います。
 
 ```yaml title="placing-diamond-block-on-kill-test.yml" showLineNumbers
-# このシナリオでは、プレイヤが敵を倒したときに、プレイヤの真下のブロックを溶岩ブロックに置換されるかどうかをテストします。
+# このシナリオでは, プレイヤが敵を倒したときに, プレイヤの真下のブロックを溶岩ブロックに置換されるかどうかをテストします。
 scenamatica: "0.0.1"
 name: "placing-lava-block-on-kill-test"
 
@@ -296,38 +296,38 @@ scenario:
 
 ### ステップ２. 変数を使う項目を考える {#variable-step2-think-about-what-has-to-be-variable}
 
-このシナリオでは、溶岩の場所を `{x: 0, y: 3, z: 0}` と固定して指定しています。  
-しかしこのままでは、プレイヤの位置が変わったときに、ブロックの位置を手動で変更する必要があります。
+このシナリオでは, 溶岩の場所を `{x: 0, y: 3, z: 0}` と固定して指定しています。  
+しかしこのままでは, プレイヤの位置が変わったときに, ブロックの位置を手動で変更する必要があります。
 
-これでは柔軟性がありません。ここで、変数機能の出番です！  
-変数機能を使用して、プレイヤの位置を動的に指定してみましょう。
+これでは柔軟性がありません。ここで, 変数機能の出番です！  
+変数機能を使用して, プレイヤの位置を動的に指定してみましょう。
 
 ### ステップ３. 使う変数を探す {#variable-step3-find-variables}
 
-[このドキュメント](/docs/use/scenario/variables-and-definitions#reserved-variables)には、使用できるすべての変数が記載されています。  
-これを参考に、仕様すべき変数を探しましょう。
+[このドキュメント](/docs/use/scenario/variables-and-definitions#reserved-variables)には, 使用できるすべての変数が記載されています。  
+これを参考に, 仕様すべき変数を探しましょう。
 
-今回は、**前のシナリオから**キルされたプレイヤを取得する必要があります。  
+今回は, **前のシナリオから**キルされたプレイヤを取得する必要があります。  
 そのため。 `scenario.scenario.0.output.target.location` という変数を使うことにします。
 
 | 変数の階層                               | 説明                                     |
 |-------------------------------------|----------------------------------------|
 | `scenario`                          | 自分自身を含むシナリオ（ファイル）を表す変数                 |
 | `scenario.scenario`                 | シナリオファイル内のシナリオを表す変数                    |
-| `scenario.scenario.0`               | シナリオファイル内のシナリオのうち、 インデックス 0 のシナリオを表す変数 |
+| `scenario.scenario.0`               | シナリオファイル内のシナリオのうち,  インデックス 0 のシナリオを表す変数 |
 | `scenario.scenario.0.output`        | シナリオの出力を表す変数                           |
-| `scenario.scenario.0.output.target` | シナリオの出力のうち、 `target` を表す変数             |
+| `scenario.scenario.0.output.target` | シナリオの出力のうち,  `target` を表す変数             |
 
 :::tip
 
-各シナリオの出力は、その[アクションの出力](/docs/use/scenario/actions#action-outputs)と同じです。
+各シナリオの出力は, その[アクションの出力](/docs/use/scenario/actions/#action-outputs)と同じです。
 
 :::
 
 ### ステップ４. 変数を参照する {#variable-step4-reference-variables}
 
-変数を参照するには、参照したいオブジェクトの値として `${`変数名`}` を指定します。
-今回の場合では、`scenario.scenario.0.output.target.location` を参照するために、
+変数を参照するには, 参照したいオブジェクトの値として `${`変数名`}` を指定します。
+今回の場合では, `scenario.scenario.0.output.target.location` を参照するために, 
 `with.location` の値として `${scenario.scenario.0.output.target.location}` を指定します。
 
 ```yaml title="placing-lava-block-on-kill-test.yml" showLineNumbers
@@ -352,10 +352,10 @@ scenario:
 
 :::tip インデックスを使用せずに出力を参照する
 
-シナリオの指定にインデックスを使いたくないですか？
-Scenamatica では、シナリオに命名できます！  
+シナリオの指定にインデックスを使いたいですか？
+Scenamatica では, シナリオに命名できます！  
 
-以下のようにして、シナリオに名前をつけましょう。参照するときは、インデックスの代わりに名前を使います。
+以下のようにして, シナリオに名前をつけましょう。参照するときは, インデックスの代わりに名前を使います。
 
 ```yaml title="placing-lava-block-on-kill-test.yml" showLineNumbers
 # ...
@@ -392,7 +392,7 @@ $ java -jar <サーバのjarファイル名>.jar
 $ reload confirm 
 ```
 
-シナリオが実行され正常に終了したことを確認したら、変数機能に関するチュートリアルは終了です。お疲れ様でした。
+シナリオが実行され正常に終了したことを確認したら, 変数機能に関するチュートリアルは終了です。お疲れ様でした。
 
 他の応用的なチュートリアルを読むには[こちら](/docs/getting-started/tutorials)を参照してください。
 シナリオファイルの完全な構文については[こちら](/docs/use/scenario/scenario-file)を参照してください。

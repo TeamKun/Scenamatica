@@ -2,23 +2,22 @@ package org.kunlab.scenamatica.action;
 
 import lombok.Value;
 import org.bukkit.plugin.Plugin;
-import org.kunlab.scenamatica.annotations.action.ActionMeta;
+import org.kunlab.scenamatica.annotations.action.Action;
 import org.kunlab.scenamatica.commons.utils.ActionMetaUtils;
 import org.kunlab.scenamatica.enums.MinecraftVersion;
-import org.kunlab.scenamatica.interfaces.action.Action;
 import org.kunlab.scenamatica.interfaces.action.LoadedAction;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
-import org.kunlab.scenamatica.interfaces.action.types.Watchable;
+import org.kunlab.scenamatica.interfaces.action.types.Expectable;
 
 @Value
-public class LoadedActionImpl<T extends Action> implements LoadedAction<T>
+public class LoadedActionImpl<T extends org.kunlab.scenamatica.interfaces.action.Action> implements LoadedAction<T>
 {
     Plugin owner;
     String name;
 
     boolean executable;
-    boolean watchable;
+    boolean expectable;
     boolean requireable;
 
     MinecraftVersion availableSince;
@@ -29,7 +28,7 @@ public class LoadedActionImpl<T extends Action> implements LoadedAction<T>
 
     private LoadedActionImpl(Plugin owner, T instance, Class<? extends T> actionClass)
     {
-        ActionMeta meta = ActionMetaUtils.getActionMetaData(actionClass);
+        Action meta = ActionMetaUtils.getActionMetaData(actionClass);
 
         this.owner = owner;
         this.name = meta.value();
@@ -37,16 +36,16 @@ public class LoadedActionImpl<T extends Action> implements LoadedAction<T>
         this.availableUntil = meta.supportsUntil();
 
         this.executable = instance instanceof Executable;
-        this.watchable = instance instanceof Watchable;
+        this.expectable = instance instanceof Expectable;
         this.requireable = instance instanceof Requireable;
         this.instance = instance;
         this.actionClass = actionClass;
 
-        if (!(this.executable || this.watchable || this.requireable))
-            throw new IllegalArgumentException("Action " + this.name + " is not executable, watchable, or requireable, cannot be used.");
+        if (!(this.executable || this.expectable || this.requireable))
+            throw new IllegalArgumentException("Action " + this.name + " is not executable, expectable, or requireable, cannot be used.");
     }
 
-    public static LoadedAction<?> of(Plugin owner, Action action)
+    public static LoadedAction<?> of(Plugin owner, org.kunlab.scenamatica.interfaces.action.Action action)
     {
         return new LoadedActionImpl<>(
                 owner,
@@ -64,11 +63,11 @@ public class LoadedActionImpl<T extends Action> implements LoadedAction<T>
     }
 
     @Override
-    public Watchable asWatchable()
+    public Expectable asExpectable()
     {
-        if (!this.watchable)
+        if (!this.expectable)
             throw new IllegalStateException("Action " + this.name + " is not watchable.");
-        return (Watchable) this.instance;
+        return (Expectable) this.instance;
     }
 
     @Override

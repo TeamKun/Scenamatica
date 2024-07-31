@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.interfaces.scenario.runtime.CompiledScenarioAction;
 import org.kunlab.scenamatica.interfaces.scenario.runtime.CompiledTriggerAction;
-import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerStructure;
+import org.kunlab.scenamatica.interfaces.structures.trigger.TriggerStructure;
 
 import java.util.List;
 

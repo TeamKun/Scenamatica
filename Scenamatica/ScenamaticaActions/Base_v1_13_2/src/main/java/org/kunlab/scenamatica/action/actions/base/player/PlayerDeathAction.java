@@ -5,7 +5,10 @@ import org.bukkit.event.Event;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.kunlab.scenamatica.annotations.action.ActionMeta;
+import org.kunlab.scenamatica.annotations.action.Action;
+import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.OutputDoc;
 import org.kunlab.scenamatica.enums.MinecraftVersion;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
@@ -13,45 +16,105 @@ import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
-import org.kunlab.scenamatica.interfaces.action.types.Watchable;
-import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.PlayerSpecifier;
+import org.kunlab.scenamatica.interfaces.action.types.Expectable;
+import org.kunlab.scenamatica.interfaces.structures.specifiers.PlayerSpecifier;
 
 import java.util.Collections;
 import java.util.List;
 
-@ActionMeta(value = "player_death", supportsUntil = MinecraftVersion.V1_15_2)
+@Action(value = "player_death", supportsUntil = MinecraftVersion.V1_15_2)
+@ActionDoc(
+        name = "プレイヤの死亡",
+        description = "プレイヤが死亡します。",
+        events = {
+                PlayerDeathEvent.class
+        },
+
+        executable = "プレイヤを死亡させます。",
+        expectable = "プレイヤが死亡することを期待します。",
+        requireable = "プレイヤが死亡していることを要求します。",
+
+        outputs = {
+                @OutputDoc(
+                        name = PlayerDeathAction.KEY_OUT_KILLER,
+                        description = "プレイヤを殺したプレイヤです。",
+                        type = Player.class
+                )
+        }
+)
 public class PlayerDeathAction extends AbstractPlayerAction
-        implements Executable, Requireable, Watchable
+        implements Executable, Requireable, Expectable
 {
+    @InputDoc(
+            name = "killer",
+            description = "ターゲットを殺すプレイヤを指定します。",
+            type = PlayerSpecifier.class
+    )
     public static final InputToken<PlayerSpecifier> IN_KILLER = ofInput(
             "killer",
             PlayerSpecifier.class,
             ofPlayer()
     );
+    @InputDoc(
+            name = "deathMessage",
+            description = "死亡メッセージを指定します。",
+            type = String.class
+    )
     public static final InputToken<String> IN_DEATH_MESSAGE = ofInput(
             "deathMessage",
             String.class
     );
+    @InputDoc(
+            name = "exp",
+            description = "新しい経験値を指定します。",
+            type = int.class
+    )
     public static final InputToken<Integer> IN_NEW_EXP = ofInput(
             "exp",
             Integer.class
     );
+
+    @InputDoc(
+            name = "level",
+            description = "新しいレベルを指定します。",
+            type = int.class
+    )
     public static final InputToken<Integer> IN_NEW_LEVEL = ofInput(
             "level",
             Integer.class
     );
+    @InputDoc(
+            name = "totalExp",
+            description = "新しい経験値の合計を指定します。",
+            type = Integer.class
+    )
     public static final InputToken<Integer> IN_NEW_TOTAL_EXP = ofInput(
             "totalExp",
             Integer.class
     );
+    @InputDoc(
+            name = "keepLevel",
+            description = "レベルを保持するかどうかを指定します。",
+            type = boolean.class
+    )
     public static final InputToken<Boolean> IN_KEEP_LEVEL = ofInput(
             "keepLevel",
             Boolean.class
     );
+    @InputDoc(
+            name = "keepInventory",
+            description = "インベントリを保持するかどうかを指定します。",
+            type = boolean.class
+    )
     public static final InputToken<Boolean> IN_KEEP_INVENTORY = ofInput(
             "keepInventory",
             Boolean.class
     );
+    @InputDoc(
+            name = "doExpDrop",
+            description = "経験値をドロップするかどうかを指定します。",
+            type = boolean.class
+    )
     public static final InputToken<Boolean> IN_DO_EXP_DROP = ofInput(
             "doExpDrop",
             Boolean.class

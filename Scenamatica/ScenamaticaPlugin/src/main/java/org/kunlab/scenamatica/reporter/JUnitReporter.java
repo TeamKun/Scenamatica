@@ -4,7 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioResult;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioSession;
-import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerStructure;
+import org.kunlab.scenamatica.interfaces.structures.trigger.TriggerStructure;
 import org.kunlab.scenamatica.results.ScenarioResultWriter;
 
 public class JUnitReporter extends AbstractTestReporter

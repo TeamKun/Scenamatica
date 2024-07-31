@@ -7,7 +7,13 @@ import org.bukkit.entity.Mob;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.action.actions.base.entity.AbstractGeneralEntityAction;
-import org.kunlab.scenamatica.annotations.action.ActionMeta;
+import org.kunlab.scenamatica.annotations.action.Action;
+import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.Admonition;
+import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.OutputDoc;
+import org.kunlab.scenamatica.bookkeeper.enums.ActionMethod;
+import org.kunlab.scenamatica.bookkeeper.enums.AdmonitionType;
 import org.kunlab.scenamatica.commons.utils.Utils;
 import org.kunlab.scenamatica.enums.MinecraftVersion;
 import org.kunlab.scenamatica.enums.ScenarioType;
@@ -15,26 +21,72 @@ import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
-import org.kunlab.scenamatica.interfaces.action.types.Watchable;
-import org.kunlab.scenamatica.interfaces.scenariofile.misc.LocationStructure;
+import org.kunlab.scenamatica.interfaces.action.types.Expectable;
+import org.kunlab.scenamatica.interfaces.structures.minecraft.misc.LocationStructure;
 
 import java.util.Collections;
 import java.util.List;
 
-@ActionMeta(value = "entity_move", supportsSince = MinecraftVersion.V1_16_5)
+@Action(value = "entity_move", supportsSince = MinecraftVersion.V1_16_5)
+@ActionDoc(
+        name = "エンティティの移動",
+        description = "エンティティを移動させます。",
+        events = {
+                EntityMoveEvent.class
+        },
+        executable = "エンティティを移動させます。",
+        expectable = "エンティティが移動されることを期待します。",
+        requireable = ActionDoc.UNALLOWED,
+
+        outputs = {
+                @OutputDoc(
+                        name = EntityMoveAction.OUT_KEY_FROM,
+                        description = "移動前の位置です。",
+                        type = Location.class
+                ),
+                @OutputDoc(
+                        name = EntityMoveAction.OUT_KEY_TO,
+                        description = "移動後の位置です。",
+                        type = Location.class
+                )
+        }
+)
 public class EntityMoveAction extends AbstractGeneralEntityAction
-        implements Executable, Watchable
+        implements Executable, Expectable
 {
+    @InputDoc(
+            name = "from",
+            description = "移動前の位置です。",
+            type = Location.class,
+            availableFor = ActionMethod.EXPECT,
+            admonitions = {
+                    @Admonition(
+                            type = AdmonitionType.TIP,
+                            content = "座標の比較は, 誤差 `0.01` まで許容されます。"
+                    )
+            }
+    )
     public static final InputToken<LocationStructure> IN_FROM = ofInput(
             "from",
             LocationStructure.class,
             ofDeserializer(LocationStructure.class)
     );
+    @InputDoc(
+            name = "to",
+            description = "移動後の位置です。",
+            type = Location.class,
+            requiredOn = ActionMethod.EXECUTE
+    )
     public static final InputToken<LocationStructure> IN_TO = ofInput(
             "to",
             LocationStructure.class,
             ofDeserializer(LocationStructure.class)
     );
+    @InputDoc(
+            name = "ai",
+            description = "AIを使用するかどうかです。",
+            type = boolean.class
+    )
     public static final InputToken<Boolean> IN_USE_AI = ofInput(
             "ai",
             Boolean.class,

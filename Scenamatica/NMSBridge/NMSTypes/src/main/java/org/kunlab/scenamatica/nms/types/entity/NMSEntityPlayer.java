@@ -26,9 +26,9 @@ public interface NMSEntityPlayer extends NMSEntityHuman
     NMSPlayerInteractManager getInteractManager();
 
     /**
-     * プレイヤーコネクションを取得します。
+     * プレイヤコネクションを取得します。
      *
-     * @return プレイヤーコネクション
+     * @return プレイヤコネクション
      */
     NMSPlayerConnection getConnection();
 

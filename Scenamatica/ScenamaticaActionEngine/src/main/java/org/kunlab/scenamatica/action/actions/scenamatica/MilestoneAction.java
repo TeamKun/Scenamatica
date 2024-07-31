@@ -2,7 +2,10 @@ package org.kunlab.scenamatica.action.actions.scenamatica;
 
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
-import org.kunlab.scenamatica.annotations.action.ActionMeta;
+import org.kunlab.scenamatica.annotations.action.Action;
+import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.OutputDoc;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.events.MilestoneReachedEvent;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
@@ -10,21 +13,56 @@ import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
-import org.kunlab.scenamatica.interfaces.action.types.Watchable;
+import org.kunlab.scenamatica.interfaces.action.types.Expectable;
 import org.kunlab.scenamatica.interfaces.scenario.MilestoneEntry;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 
 import java.util.Collections;
 import java.util.List;
 
-@ActionMeta("milestone")
+@Action("milestone")
+@ActionDoc(
+        name = "マイルストーン",
+        description = "マイルストーンを操作します。",
+        events = {
+                MilestoneReachedEvent.class
+        },
+
+        executable = "マイルストーンを達成します。",
+        expectable = "マイルストーンの達成を期待します。",
+        requireable = "マイルストーンを達成していることを要求します。",
+
+        outputs = {
+                @OutputDoc(
+                        name = MilestoneAction.KEY_OUT_NAME,
+                        description = "マイルストーンの名前です。",
+                        type = String.class
+                ),
+                @OutputDoc(
+                        name = MilestoneAction.KEY_OUT_REACHED,
+                        description = "マイルストーンが達成されたかどうかです。",
+                        type = boolean.class
+                )
+        }
+
+)
 public class MilestoneAction extends AbstractScenamaticaAction
-        implements Executable, Watchable, Requireable
+        implements Executable, Expectable, Requireable
 {
+    @InputDoc(
+            name = "name",
+            description = "マイルストーンの名前です。",
+            type = String.class
+    )
     public static final InputToken<String> IN_NAME = ofInput(
             "name",
             String.class
     );
+    @InputDoc(
+            name = "reached",
+            description = "マイルストーンが達成されたかどうかです。",
+            type = boolean.class
+    )
     public static final InputToken<Boolean> IN_REACHED = ofInput(
             "reached",
             Boolean.class

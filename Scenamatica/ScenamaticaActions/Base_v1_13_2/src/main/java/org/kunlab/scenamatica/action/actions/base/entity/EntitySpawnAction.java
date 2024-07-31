@@ -8,7 +8,12 @@ import org.bukkit.event.entity.EntitySpawnEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.AbstractAction;
-import org.kunlab.scenamatica.annotations.action.ActionMeta;
+import org.kunlab.scenamatica.annotations.action.Action;
+import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.Category;
+import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.OutputDoc;
+import org.kunlab.scenamatica.bookkeeper.enums.ActionMethod;
 import org.kunlab.scenamatica.commons.utils.EntityUtils;
 import org.kunlab.scenamatica.commons.utils.Utils;
 import org.kunlab.scenamatica.enums.ScenarioType;
@@ -16,19 +21,46 @@ import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
-import org.kunlab.scenamatica.interfaces.action.types.Watchable;
-import org.kunlab.scenamatica.interfaces.scenariofile.entity.EntityStructure;
-import org.kunlab.scenamatica.interfaces.scenariofile.misc.LocationStructure;
-import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.EntitySpecifier;
+import org.kunlab.scenamatica.interfaces.action.types.Expectable;
+import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.EntityStructure;
+import org.kunlab.scenamatica.interfaces.structures.minecraft.misc.LocationStructure;
+import org.kunlab.scenamatica.interfaces.structures.specifiers.EntitySpecifier;
 
 import java.util.Collections;
 import java.util.List;
 
-@ActionMeta("entity_spawn")
+@Action("entity_spawn")
+@ActionDoc(
+        name = "エンティティの召喚",
+        description = "エンティティを召喚させます。",
+        events = {
+                EntitySpawnEvent.class
+        },
+
+        executable = "エンティティを召喚させます。",
+        expectable = "エンティティが召喚されることを期待します。",
+        requireable = ActionDoc.UNALLOWED,
+
+        outputs = {
+                @OutputDoc(
+                        name = EntitySpawnAction.KEY_OUT_ENTITY,
+                        description = "召喚されたエンティティです。",
+                        type = Entity.class
+                )
+        }
+)
+@Category(inherit= AbstractEntityAction.class)
 public class EntitySpawnAction<E extends Entity> extends AbstractAction
-        implements Executable, Watchable
+        implements Executable, Expectable
 {
     public static final String KEY_OUT_ENTITY = "entity";
+
+    @InputDoc(
+            name = "entity",
+            description = "召喚されるエンティティです。",
+            type = Entity.class,
+            requiredOn = ActionMethod.EXECUTE
+    )
     public final InputToken<EntitySpecifier<E>> IN_ENTITY;
 
     public EntitySpawnAction(Class<E> entityclass, Class<? extends EntityStructure> structureClass)

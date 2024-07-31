@@ -5,7 +5,8 @@ import org.bukkit.World;
 import org.bukkit.event.Event;
 import org.bukkit.event.world.WorldUnloadEvent;
 import org.jetbrains.annotations.NotNull;
-import org.kunlab.scenamatica.annotations.action.ActionMeta;
+import org.kunlab.scenamatica.annotations.action.Action;
+import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
@@ -16,7 +17,19 @@ import org.kunlab.scenamatica.interfaces.action.types.Requireable;
 import java.util.Collections;
 import java.util.List;
 
-@ActionMeta("world_unload")
+@Action("world_unload")
+@ActionDoc(
+        name = "ワールドアンロード",
+        description = "ワールドをアンロードします。",
+        events = {
+                WorldUnloadEvent.class
+        },
+
+        executable = "ワールドをアンロードします。",
+        expectable = "ワールドがアンロードされることを期待します。",
+        requireable = "ワールドがアンロードされていることを要求します。"
+
+)
 public class WorldUnloadAction extends AbstractWorldAction
         implements Executable, Requireable
 {

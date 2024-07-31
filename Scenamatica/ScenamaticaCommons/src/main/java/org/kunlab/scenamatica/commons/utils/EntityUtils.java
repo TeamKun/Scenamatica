@@ -7,7 +7,7 @@ import org.bukkit.entity.Entity;
 import org.kunlab.scenamatica.interfaces.context.Context;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.Mapped;
-import org.kunlab.scenamatica.interfaces.scenariofile.entity.EntityStructure;
+import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.EntityStructure;
 
 import java.util.List;
 import java.util.function.Predicate;

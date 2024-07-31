@@ -4,15 +4,17 @@ import lombok.Value;
 import net.kunmc.lab.peyangpaperutils.versioning.Version;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.kunlab.scenamatica.bookkeeper.annotations.TypeDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.TypeProperty;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.enums.ScenarioOrder;
 import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.VersionRange;
-import org.kunlab.scenamatica.interfaces.scenariofile.action.ActionStructure;
-import org.kunlab.scenamatica.interfaces.scenariofile.context.ContextStructure;
-import org.kunlab.scenamatica.interfaces.scenariofile.scenario.ScenarioStructure;
-import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerStructure;
+import org.kunlab.scenamatica.interfaces.structures.scenario.ActionStructure;
+import org.kunlab.scenamatica.interfaces.structures.context.ContextStructure;
+import org.kunlab.scenamatica.interfaces.structures.scenario.ScenarioStructure;
+import org.kunlab.scenamatica.interfaces.structures.trigger.TriggerStructure;
 
 import java.util.HashMap;
 import java.util.List;
@@ -22,17 +24,6 @@ import java.util.stream.Collectors;
 @Value
 public class ScenarioFileStructureImpl implements ScenarioFileStructure
 {
-    public static final String KEY_SCENAMATICA_VERSION = "scenamatica";
-    public static final String KEY_MINECRAFT_VERSIONS = "minecraft";
-    public static final String KEY_NAME = "name";
-    public static final String KEY_DESCRIPTION = "description";
-    public static final String KEY_TIMEOUT = "timeout";
-    public static final String KEY_ORDER = "order";
-    public static final String KEY_TRIGGERS = "on";
-    public static final String KEY_RUN_IF = "runif";
-    public static final String KEY_CONTEXT = "context";
-    public static final String KEY_SCENARIO = "scenario";
-
     @NotNull
     Version scenamaticaVersion;
     @Nullable

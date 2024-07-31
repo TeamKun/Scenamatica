@@ -14,7 +14,7 @@ public interface NMSPlayerConnection extends NMSWrapped
     }
 
     /**
-     * プレイヤーとの接続を切断します。
+     * プレイヤとの接続を切断します。
      *
      * @param reason 切断理由
      */

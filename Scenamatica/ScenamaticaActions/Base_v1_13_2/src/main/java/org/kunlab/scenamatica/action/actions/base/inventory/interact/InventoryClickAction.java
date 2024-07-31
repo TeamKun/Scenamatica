@@ -10,55 +10,164 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.kunlab.scenamatica.annotations.action.ActionMeta;
+import org.kunlab.scenamatica.annotations.action.Action;
+import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.OutputDoc;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
-import org.kunlab.scenamatica.interfaces.action.types.Watchable;
+import org.kunlab.scenamatica.interfaces.action.types.Expectable;
 import org.kunlab.scenamatica.interfaces.context.Actor;
-import org.kunlab.scenamatica.interfaces.scenariofile.inventory.ItemStackStructure;
+import org.kunlab.scenamatica.interfaces.structures.minecraft.inventory.ItemStackStructure;
 
 import java.util.Collections;
 import java.util.List;
 
-@ActionMeta("inventory_click")
+@Action("inventory_click")
+@ActionDoc(
+        name = "インベントリのクリック",
+        description = "インベントリをクリックします。",
+        events = {
+                InventoryClickEvent.class
+        },
+
+        executable = "インベントリをクリックします。",
+        expectable = "インベントリがクリックされることを期待します。",
+        requireable = ActionDoc.UNALLOWED,
+
+        outputs = {
+                @OutputDoc(
+                        name = InventoryClickAction.OUT_KEY_CLICK_TYPE,
+                        description = "クリックの種類です。",
+                        type = ClickType.class
+                ),
+                @OutputDoc(
+                        name = InventoryClickAction.OUT_KEY_INVENTORY_ACTION,
+                        description = "インベントリのアクションです。",
+                        type = InventoryAction.class
+                ),
+                @OutputDoc(
+                        name = InventoryClickAction.OUT_KEY_SLOT_TYPE,
+                        description = "スロットの種類です。",
+                        type = InventoryType.SlotType.class
+                ),
+                @OutputDoc(
+                        name = InventoryClickAction.OUT_KEY_SLOT,
+                        description = "スロットのインデックスです。",
+                        type = int.class,
+                        min = 0
+                ),
+                @OutputDoc(
+                        name = InventoryClickAction.OUT_KEY_RAW_SLOT,
+                        description = "生のスロットのインデックスです。",
+                        type = int.class,
+                        min = 0
+                ),
+                @OutputDoc(
+                        name = InventoryClickAction.OUT_KEY_CLICKED_ITEM,
+                        description = "クリックされたアイテムです。",
+                        type = ItemStack.class
+                ),
+                @OutputDoc(
+                        name = InventoryClickAction.OUT_KEY_BUTTON,
+                        description = "ボタンのインデックスです。\n" +
+                                "`0` が左クリック、`1` が右クリック、`2` が中クリック（マウスホイールのクリック）です。\n" +
+                                "\n" +
+                                "その他のキーおよびマウス入力は、 [GLFW](https://glfw.org)の仕様に従ってください。\n" +
+                                "マウスの入力は[こちら](https://www.glfw.org/docs/3.3/group__keys.html)を、\n" +
+                                "キーボードの入力は[こちら](https://www.glfw.org/docs/3.3/group__keys.html)を\n" +
+                                "参照してください。",
+                        type = int.class,
+                        min = 0
+                ),
+                @OutputDoc(
+                        name = InventoryClickAction.OUT_KEY_CURSOR_ITEM,
+                        description = "カーソルが保持しているアイテムです。",
+                        type = ItemStack.class
+                )
+        }
+)
 public class InventoryClickAction extends AbstractInventoryInteractAction
-        implements Executable, Watchable
+        implements Executable, Expectable
 {
+    @InputDoc(
+            name = "type",
+            description = "クリックの種類を指定します。",
+            type = ClickType.class
+    )
     public static final InputToken<ClickType> IN_CLICK_TYPE = ofInput(
             "type",
             ClickType.class,
             ofEnum(ClickType.class)
     );
+    @InputDoc(
+            name = "action",
+            description = "動作を指定します。",
+            type = InventoryAction.class
+    )
     public static final InputToken<InventoryAction> IN_INVENTORY_ACTION = ofInput(
             "action",
             InventoryAction.class,
             ofEnum(InventoryAction.class)
     );
+    @InputDoc(
+            name = "slotType",
+            description = "スロットの種類を指定します。",
+            type = InventoryType.SlotType.class
+    )
     public static final InputToken<InventoryType.SlotType> IN_SLOT_TYPE = ofInput(
             "slotType",
             InventoryType.SlotType.class,
             ofEnum(InventoryType.SlotType.class)
     );
+    @InputDoc(
+            name = "slot",
+            description = "スロットのインデックスを指定します。",
+            type = int.class,
+            min = 0
+    )
     public static final InputToken<Integer> IN_SLOT = ofInput(
             "slot",
             Integer.class
     );
+    @InputDoc(
+            name = "rawSlot",
+            description = "生のスロットのインデックスを指定します。",
+            type = int.class,
+            min = 0
+    )
     public static final InputToken<Integer> IN_RAW_SLOT = ofInput(
             "rawSlot",
             Integer.class
     );
+    @InputDoc(
+            name = "clickedItem",
+            description = "クリックされたアイテムを指定します。",
+            type = ItemStack.class
+    )
     public static final InputToken<ItemStackStructure> IN_CLICKED_ITEM = ofInput(
             "clickedItem",
             ItemStackStructure.class,
             ofDeserializer(ItemStackStructure.class)
     );
+    @InputDoc(
+            name = "button",
+            description = "ボタンのインデックスを指定します。",
+            type = int.class,
+            min = 0
+    )
     public static final InputToken<Integer> IN_BUTTON = ofInput(
             "button",
             Integer.class
     );
+    @InputDoc(
+            name = "cursorItem",
+            description = "カーソルが保持しているアイテムを指定します。",
+            type = ItemStack.class
+    )
     public static final InputToken<ItemStackStructure> IN_CURSOR_ITEM = ofInput(
             "cursorItem",
             ItemStackStructure.class,

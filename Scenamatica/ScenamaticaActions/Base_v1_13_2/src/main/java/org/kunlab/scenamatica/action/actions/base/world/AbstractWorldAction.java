@@ -7,18 +7,38 @@ import org.bukkit.event.Event;
 import org.bukkit.event.world.WorldEvent;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.action.AbstractAction;
+import org.kunlab.scenamatica.bookkeeper.annotations.Category;
+import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.OutputDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.OutputDocs;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
-import org.kunlab.scenamatica.interfaces.action.types.Watchable;
+import org.kunlab.scenamatica.interfaces.action.types.Expectable;
 
+@Category(
+        id = "worlds",
+        name = "ワールド",
+        description = "ワールドに関するアクションを提供します。"
+)
+@OutputDocs({
+        @OutputDoc(
+                name = AbstractWorldAction.KEY_OUT_WORLD,
+                description = "ワールドの名前です。",
+                type = String.class
+        )
+})
 public abstract class AbstractWorldAction extends AbstractAction
-        implements Watchable
+        implements Expectable
 {
-    public static final String KEY_WORLD = "world";
+    @InputDoc(
+            name = "world",
+            description = "ワールドの名前です。",
+            type = String.class
+    )
     public static final InputToken<String> IN_WORLD = ofInput(
-            KEY_WORLD,
+            "world",
             String.class
     );
     public static final String KEY_OUT_WORLD = "world";

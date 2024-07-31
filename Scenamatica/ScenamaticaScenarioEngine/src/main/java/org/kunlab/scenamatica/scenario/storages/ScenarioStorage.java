@@ -10,7 +10,7 @@ import org.kunlab.scenamatica.interfaces.scenario.ScenarioResult;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioSession;
 import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
-import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerStructure;
+import org.kunlab.scenamatica.interfaces.structures.trigger.TriggerStructure;
 
 import java.util.Map;
 import java.util.UUID;

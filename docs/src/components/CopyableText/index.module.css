@@ -1,12 +1,16 @@
 .pointer {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 .defaultPointer {
-    cursor: default;
+  cursor: default;
 }
 
 .id:hover {
-    text-decoration: underline;
-    text-decoration-color: var(--ifm-color-primary);
+  text-decoration: underline;
+  text-decoration-color: var(--ifm-color-primary);
+}
+
+code.code {
+  background: none;
 }

@@ -1,0 +1,17 @@
+<configuration debug="false">
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>[%d{HH:mm:ss} %level]: [%logger{36}@%thread] %msg%n</pattern>
+        </encoder>
+    </appender>
+    <appender name="ASYNC" class="ch.qos.logback.classic.AsyncAppender">
+        <appender-ref ref="CONSOLE"/>
+        <queueSize>1000</queueSize>
+    </appender>
+    <logger name="org.kunlab.scenamatica.bookkeeper" level="DEBUG"/>
+
+    <root level="DEBUG">
+        <appender-ref ref="ASYNC"/>
+    </root>
+
+</configuration>

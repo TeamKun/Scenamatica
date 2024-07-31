@@ -8,7 +8,7 @@ import org.kunlab.scenamatica.interfaces.context.Context;
 import org.kunlab.scenamatica.interfaces.scenario.runtime.CompiledScenarioAction;
 import org.kunlab.scenamatica.interfaces.scenario.runtime.CompiledTriggerAction;
 import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileStructure;
-import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerStructure;
+import org.kunlab.scenamatica.interfaces.structures.trigger.TriggerStructure;
 
 import java.util.List;
 import java.util.UUID;

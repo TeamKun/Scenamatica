@@ -13,67 +13,59 @@ import BelowDocument from "/src/components/BelowDocument";
 
 :::tip
 
-**シナリオやシナリオファイルの概念が初めての方は、先に[こちら](/docs/use/scenario/)を参照して理解しておくことを推奨します。**  
+**シナリオやシナリオファイルの概念が初めての方は, 先に[こちら](/docs/use/scenario/)を参照して理解しておくことを推奨します。**  
 また, 慣れている方でも以下の[シナリオファイルを記述する際の注意](#notes)を読んでおことをおすすめします。
 
 :::
 
 ## 概要 {#overview}
 
-シナリオファイルは、 `.yml` もしくは `.yaml` の拡張子を持つ YAML ファイルです。プラグインの .jar 内であれば任意の場所に配置できます。  
+シナリオファイルは,  `.yml` もしくは `.yaml` の拡張子を持つ YAML ファイルです。プラグインの .jar 内であれば任意の場所に配置できます。  
 １つのシナリオ・テストにつき１つのシナリオファイルが必要です。  
-そのため、各テスト対象機能用のシナリオを格納するディレクトリを作成し、その中に個別のシナリオファイルを配置するのが一般的です。
+そのため, 各テスト対象機能用のシナリオを格納するディレクトリを作成し, その中に個別のシナリオファイルを配置するのが一般的です。
 
 ## シナリオファイルの例 {#example}
 
-シナリオファイルの記述例は[こちら](https://github.com/TeamKun/Scenamatica/tree/main/ScenamaticaActionEngine/src/main/resources/scenarios/actions)
+シナリオファイルの記述例は[こちら](https://github.com/TeamKun/Scenamatica/tree/main/Scenamatica/ScenamaticaActions/Base_v1_13_2/src/main/resources/scenarios/actions)
 を参照してください。
 
 :::tip ✨ Scenamatica では自己テストをしています！✨
-上記の例は、 Scenamatica 自体のデバッグとデグレードの監視に使用されます。   
-Scenamatica のソースコードを GitHub にプッシュすると、 CI によって自動的に Scenamatica のテストが実行されます。
+上記の例は,  Scenamatica 自体のデバッグとデグレードの監視に使用されます。   
+Scenamatica のソースコードを GitHub にプッシュすると,  CI によって自動的に Scenamatica のテストが実行されます。
 
 :::
 
-## JSON スキーマ {#json-schema}
+## シナリオファイルの構造 {#scenario-file-structure}
 
-シナリオファイルの完全な構文は、[JSON スキーマ](https://json-schema.org/)で定義されています。  
-JSON スキーマは[こちら](https://scenamatica.kunlab.org/scenamatica-file.json) からダウンロードできます。
-
-## シナリオファイルの構造
-
-
-<BelowDocument docId={"use/scenario/types/README"}
-               anchor={"scenario-file"}
-               label="シナリオファイルの構造"
-/> 
+Scenamatica のすべてのオブジェクトは自動生成されたリファレンスが提供されています。  
+詳しくは[こちら](/references/types/ScenarioFileStructure#type)を参照してください。
 
 ## シナリオファイルを記述する際の注意 {#notes}
 
 ### ファイルの命名 {#scenario-name}
 
-ファイル名に関しては技術的な制約等はありませんが、 Scenamatica では、以下のフォーマットを推奨します。
+ファイル名に関して, 技術的な制約等はありませんが,  Scenamatica では, 以下のフォーマットを推奨しています。
 
 + 拡張子は `.yml`
 + ASCII の小文字のみ
 + ケバブケース（単語をハイフンでつなぐ）
 + 推奨フォーマット： `test-<機能名>-<success|failure-with-[失敗内容]>.yml`  
-  先頭を `test-機能名` にすることで、機能のテストということが分かりやすくなります。  
-  また、正常に成功することを確認するテストの場合は `success-<機能名>`、  
+  先頭を `test-機能名` にすることで, 特定の機能のテストということが分かりやすくなります。  
+  また, 正常に成功することを確認するテストの場合は `success-<機能名>`,   
   異常入力等で失敗することを確認するテストの場合は `failure-<機能名>-with-<失敗理由>` というようにするとわかりやすいでしょう。
 
-例： `test-hoge-success.yml` 、 `test-hoge-failure-with-no-argument.yml`
+例： `test-hoge-success.yml` ,  `test-hoge-failure-with-no-argument.yml`
 
 :::tip
 
-名前等の識別子のフォーマットは統一することが重要なので、 Scenamatica が推奨するフォーマットに従わなくても問題はありません。
+名前等の識別子のフォーマットは統一することが重要でありますので,  Scenamatica が推奨するフォーマットに従わなくても問題はありません。
 
 :::
 
 
 ### Scenamatica が採用している YAML のキーの命名規則 {#yaml-key-naming-rules}
 
-Scenamatica のシナリオファイルにおける YAML のキーは、原則として以下の命名規則に従います。
+Scenamatica のシナリオファイルにおける YAML のキーは, 原則として以下の命名規則に従います。
 
 + `camelCase` で記述します。
 + Minecraft 固有の単語は区切らずに記述します。  
@@ -81,7 +73,7 @@ Scenamatica のシナリオファイルにおける YAML のキーは、原則�
 
 :::info
 
-例外として、アクションの名前が挙げられます。これらは、`snake_case` で定義されるため、利用する際も `snake_case` で記述する必要があります。
+例外として, アクションの名前が挙げられます。これらは, `snake_case` で定義されます。
 
 - ❌ `action: setBlock`
 - ✅ `action: set_block`
@@ -90,8 +82,8 @@ Scenamatica のシナリオファイルにおける YAML のキーは、原則�
 
 ### 列挙値におけるシンタックスシュガー {#syntax-sugar-on-enum-values}
 
-一部のアクションの引数には、 Minecraft/Bukkit 固有の列挙値（例： `GameMode`, `Material` など）が指定できます。  
-Scenamatica では、これらの記述のシンタックスシュガーとして、列挙値の名前の大小文字を無視します。
+一部のアクションの引数には,  Minecraft/Bukkit 固有の列挙値（例： `GameMode`, `Material` など）が指定できます。  
+Scenamatica では, これらの記述のシンタックスシュガーとして, 列挙値の名前の大小文字を無視します。
 
 例：
 + `gamemode: survival` は `gamemode: SURVIVAL` と同じ意味です。
@@ -99,9 +91,9 @@ Scenamatica では、これらの記述のシンタックスシュガーとし�
 
 ### プレイヤの指定におけるシンタックスシュガー {#syntax-sugar-on-player}
 
-一部のアクションの引数には、プレイヤ（の名前）を引数として指定できます。  
-こちらも上記と同じく、プレイヤの名前の大小文字を無視します。
-これに加えて、プレイヤは **UUID** でも指定できます。
+一部のアクションの引数には, プレイヤ（の名前）を引数として指定できます。  
+こちらも上記と同じく, プレイヤの名前の大小文字を無視します。
+これに加えて, プレイヤは **UUID** でも指定できます。
 
 例（サーバに Player1(00000000-1111-2222-3333-444444444444) というプレイヤが参加している場合）：
 + `player: player1` は `player: Player1` と同じ意味です。
@@ -109,8 +101,8 @@ Scenamatica では、これらの記述のシンタックスシュガーとし�
 
 ### 定義と参照の利用 {#definition-and-reference}
 
-同じ YAML 内で任意の値を、「定義」として記述し、任意の場所から参照できます。
-複数回使用する値を定義しておき、参照することで、シナリオファイルの冗長性を減らして可読性と保守性を向上させます。
+同じ YAML 内で任意の値を, 「定義」として記述し, 任意の場所から参照できます。
+複数回使用する値を定義しておき, 参照することで, シナリオファイルの冗長性を減らして可読性と保守性を向上させます。
 
 <BelowDocument docId={"use/scenario/variables-and-definitions"}
                anchor={"definition"}

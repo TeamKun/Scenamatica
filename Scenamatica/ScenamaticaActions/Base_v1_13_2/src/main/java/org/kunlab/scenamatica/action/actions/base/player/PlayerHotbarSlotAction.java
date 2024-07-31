@@ -6,31 +6,82 @@ import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.kunlab.scenamatica.annotations.action.ActionMeta;
+import org.kunlab.scenamatica.annotations.action.Action;
+import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.OutputDoc;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
-import org.kunlab.scenamatica.interfaces.action.types.Watchable;
-import org.kunlab.scenamatica.interfaces.scenariofile.inventory.ItemStackStructure;
+import org.kunlab.scenamatica.interfaces.action.types.Expectable;
+import org.kunlab.scenamatica.interfaces.structures.minecraft.inventory.ItemStackStructure;
 
 import java.util.Collections;
 import java.util.List;
 
-@ActionMeta("player_hotbar")
+@Action("player_hotbar")
+@ActionDoc(
+        name = "プレイヤのホットバースロット",
+        description = "プレイヤのホットバースロットを変更します。",
+        events = {
+                PlayerItemHeldEvent.class
+        },
+
+        executable = "プレイヤのホットバースロットを変更します。",
+        expectable = "プレイヤのホットバースロットが変更されることを期待します。",
+        requireable = "プレイヤのホットバースロットが指定されたものであることを要求します。",
+
+        outputs = {
+                @OutputDoc(
+                        name = PlayerHotbarSlotAction.KEY_OUTPUT_SLOT,
+                        description = "変更されたスロットです。",
+                        type = Integer.class
+                ),
+                @OutputDoc(
+                        name = PlayerHotbarSlotAction.KEY_OUTPUT_PREVIOUS_SLOT,
+                        description = "変更前のスロットです。",
+                        type = Integer.class
+                ),
+                @OutputDoc(
+                        name = PlayerHotbarSlotAction.KEY_OUTPUT_ITEM,
+                        description = "変更されたアイテムです。",
+                        type = ItemStackStructure.class
+                )
+        }
+)
 public class PlayerHotbarSlotAction extends AbstractPlayerAction
-        implements Executable, Watchable, Requireable
+        implements Executable, Expectable, Requireable
 {
+    @InputDoc(
+            name = "slot",
+            description = "変更するスロットのインデックスを指定します。",
+            type = int.class,
+            min = 0,
+            max = 8
+    )
     public static final InputToken<Integer> IN_CURRENT_SLOT = ofInput(
             "slot",
             Integer.class
     ).validator(value -> value >= 0 && value <= 8, "Slot must be between 0 and 8");
+    @InputDoc(
+            name = "previous",
+            description = "変更前のスロットのインデックスを指定します。",
+            type = int.class,
+            min = 0,
+            max = 8
+    )
     public static final InputToken<Integer> IN_PREVIOUS_SLOT = ofInput(
             "previous",
             Integer.class
     ).validator(value -> value >= 0 && value <= 8, "Previous slot must be between 0 and 8");
+    @InputDoc(
+            name = "item",
+            description = "変更するアイテムを指定します。",
+            type = ItemStack.class
+    )
     public static final InputToken<ItemStackStructure> IN_CURRENT_ITEM = ofInput(
             "item",
             ItemStackStructure.class,

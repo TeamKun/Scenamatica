@@ -7,48 +7,49 @@ import lombok.Value;
 import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.kunlab.scenamatica.enums.MinecraftVersion;
 import org.kunlab.scenamatica.interfaces.scenariofile.Mapped;
 import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.Structure;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.VersionRange;
-import org.kunlab.scenamatica.interfaces.scenariofile.action.ActionStructure;
-import org.kunlab.scenamatica.interfaces.scenariofile.context.ContextStructure;
-import org.kunlab.scenamatica.interfaces.scenariofile.context.StageStructure;
-import org.kunlab.scenamatica.interfaces.scenariofile.entity.DamageStructure;
-import org.kunlab.scenamatica.interfaces.scenariofile.entity.EntityStructure;
-import org.kunlab.scenamatica.interfaces.scenariofile.entity.entities.AEntityStructure;
-import org.kunlab.scenamatica.interfaces.scenariofile.inventory.GenericInventoryStructure;
-import org.kunlab.scenamatica.interfaces.scenariofile.inventory.InventoryStructure;
-import org.kunlab.scenamatica.interfaces.scenariofile.inventory.ItemStackStructure;
-import org.kunlab.scenamatica.interfaces.scenariofile.inventory.PlayerInventoryStructure;
-import org.kunlab.scenamatica.interfaces.scenariofile.misc.BlockStructure;
-import org.kunlab.scenamatica.interfaces.scenariofile.misc.LocationStructure;
-import org.kunlab.scenamatica.interfaces.scenariofile.misc.ProjectileSourceStructure;
-import org.kunlab.scenamatica.interfaces.scenariofile.scenario.ScenarioStructure;
-import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.EntitySpecifier;
-import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.PlayerSpecifier;
-import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerStructure;
-import org.kunlab.scenamatica.scenariofile.specifiers.EntitySpecifierImpl;
-import org.kunlab.scenamatica.scenariofile.specifiers.PlayerSpecifierImpl;
+import org.kunlab.scenamatica.interfaces.structures.scenario.ActionStructure;
+import org.kunlab.scenamatica.interfaces.structures.context.ContextStructure;
+import org.kunlab.scenamatica.interfaces.structures.context.StageStructure;
+import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.DamageStructure;
+import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.EntityStructure;
+import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.entities.AEntityStructure;
+import org.kunlab.scenamatica.interfaces.structures.minecraft.inventory.GenericInventoryStructure;
+import org.kunlab.scenamatica.interfaces.structures.minecraft.inventory.InventoryStructure;
+import org.kunlab.scenamatica.interfaces.structures.minecraft.inventory.ItemStackStructure;
+import org.kunlab.scenamatica.interfaces.structures.minecraft.inventory.PlayerInventoryStructure;
+import org.kunlab.scenamatica.interfaces.structures.minecraft.misc.BlockStructure;
+import org.kunlab.scenamatica.interfaces.structures.minecraft.misc.LocationStructure;
+import org.kunlab.scenamatica.interfaces.structures.minecraft.misc.ProjectileSourceStructure;
+import org.kunlab.scenamatica.interfaces.structures.scenario.ScenarioStructure;
+import org.kunlab.scenamatica.interfaces.structures.specifiers.EntitySpecifier;
+import org.kunlab.scenamatica.interfaces.structures.specifiers.PlayerSpecifier;
+import org.kunlab.scenamatica.interfaces.structures.trigger.TriggerStructure;
+import org.kunlab.scenamatica.structures.specifiers.EntitySpecifierImpl;
+import org.kunlab.scenamatica.structures.specifiers.PlayerSpecifierImpl;
 import org.kunlab.scenamatica.scenariofile.structures.ScenarioFileStructureImpl;
 import org.kunlab.scenamatica.scenariofile.structures.VersionRangeImpl;
 import org.kunlab.scenamatica.scenariofile.structures.context.ContextStructureImpl;
 import org.kunlab.scenamatica.scenariofile.structures.context.StageStructureImpl;
-import org.kunlab.scenamatica.scenariofile.structures.entity.DamageStructureImpl;
-import org.kunlab.scenamatica.scenariofile.structures.entity.SelectiveEntityStructureSerializer;
-import org.kunlab.scenamatica.scenariofile.structures.entity.entities.AEntityStructureImpl;
-import org.kunlab.scenamatica.scenariofile.structures.inventory.GenericInventoryStructureImpl;
-import org.kunlab.scenamatica.scenariofile.structures.inventory.InventoryStructureImpl;
-import org.kunlab.scenamatica.scenariofile.structures.inventory.ItemStackStructureImpl;
-import org.kunlab.scenamatica.scenariofile.structures.inventory.PlayerInventoryStructureImpl;
-import org.kunlab.scenamatica.scenariofile.structures.misc.BlockStructureImpl;
-import org.kunlab.scenamatica.scenariofile.structures.misc.LocationStructureImpl;
+import org.kunlab.scenamatica.structures.minecraft.entity.DamageStructureImpl;
+import org.kunlab.scenamatica.structures.minecraft.entity.entities.AEntityStructureImpl;
+import org.kunlab.scenamatica.structures.minecraft.inventory.GenericInventoryStructureImpl;
+import org.kunlab.scenamatica.structures.minecraft.inventory.InventoryStructureImpl;
+import org.kunlab.scenamatica.structures.minecraft.inventory.ItemStackStructureImpl;
+import org.kunlab.scenamatica.structures.minecraft.inventory.PlayerInventoryStructureImpl;
+import org.kunlab.scenamatica.structures.minecraft.misc.BlockStructureImpl;
+import org.kunlab.scenamatica.structures.minecraft.misc.LocationStructureImpl;
 import org.kunlab.scenamatica.scenariofile.structures.scenario.ActionStructureImpl;
 import org.kunlab.scenamatica.scenariofile.structures.scenario.ScenarioStructureImpl;
 import org.kunlab.scenamatica.scenariofile.structures.trigger.TriggerStructureImpl;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
@@ -167,140 +168,6 @@ public class StructureSerializerImpl implements StructureSerializer
     {
         return PlayerSpecifierImpl.tryDeserializePlayer(obj, this);
     }
-
-    // <editor-fold desc="Structure 登録用のメソッド"
-
-    private <T extends Structure> void registerStructure(@NotNull Class<T> clazz,
-                                                         @NotNull BiFunction<T, StructureSerializer, Map<String, Object>> serializer,
-                                                         @NotNull BiFunction<Map<String, Object>, StructureSerializer, T> deserializer,
-                                                         @NotNull BiConsumer<Map<String, Object>, StructureSerializer> validator)
-    {
-        this.structureEntries.add(new StructureEntry<>(clazz, serializer, deserializer, validator));
-    }
-
-    @SuppressWarnings("SameParameterValue")
-    private <T extends Structure> void registerStructure(@NotNull Class<T> clazz,
-                                                         @NotNull BiFunction<T, StructureSerializer, Map<String, Object>> serializer,
-                                                         @NotNull BiFunction<Map<String, Object>, StructureSerializer, T> deserializer,
-                                                         @NotNull Consumer<? super Map<String, Object>> validator)
-    {
-        this.structureEntries.add(new StructureEntry<>(clazz, serializer, deserializer, (v, t) -> validator.accept(v)));
-    }
-
-    private <T extends Structure> void registerStructure(@NotNull Class<T> clazz,
-                                                         @NotNull Function<? super T, ? extends Map<String, Object>> serializer,
-                                                         @NotNull BiFunction<Map<String, Object>, StructureSerializer, T> deserializer,
-                                                         @NotNull BiConsumer<Map<String, Object>, StructureSerializer> validator)
-    {
-        this.structureEntries.add(new StructureEntry<>(clazz, (v, t) -> serializer.apply(v), deserializer, validator));
-    }
-
-    private <T extends Structure> void registerStructure(@NotNull Class<T> clazz,
-                                                         @NotNull Function<? super T, ? extends Map<String, Object>> serializer,
-                                                         @NotNull BiFunction<Map<String, Object>, StructureSerializer, T> deserializer,
-                                                         @NotNull Consumer<? super Map<String, Object>> validator)
-    {
-        this.structureEntries.add(new StructureEntry<>(clazz, (v, t) -> serializer.apply(v), deserializer, (v, t) -> validator.accept(v)));
-    }
-
-    private <T extends Structure> void registerStructure(@NotNull Class<T> clazz,
-                                                         @NotNull Function<? super T, ? extends Map<String, Object>> serializer,
-                                                         @NotNull Function<? super Map<String, Object>, ? extends T> deserializer,
-                                                         @NotNull BiConsumer<Map<String, Object>, StructureSerializer> validator)
-    {
-        this.structureEntries.add(new StructureEntry<>(clazz, (v, t) -> serializer.apply(v), (v, t) -> deserializer.apply(v), validator));
-    }
-
-    private <T extends Structure> void registerStructure(@NotNull Class<T> clazz,
-                                                         @NotNull Function<? super T, ? extends Map<String, Object>> serializer,
-                                                         @NotNull Function<? super Map<String, Object>, ? extends T> deserializer,
-                                                         @NotNull Consumer<? super Map<String, Object>> validator)
-    {
-        this.structureEntries.add(new StructureEntry<>(clazz, (v, t) -> serializer.apply(v), (v, t) -> deserializer.apply(v), (v, t) -> validator.accept(v)));
-    }
-
-    @SuppressWarnings("SameParameterValue")
-    private <T extends Structure> void registerStructure(@NotNull Class<T> clazz,
-                                                         @NotNull BiFunction<T, StructureSerializer, Map<String, Object>> serializer,
-                                                         @NotNull Function<? super Map<String, Object>, ? extends T> deserializer,
-                                                         @NotNull Consumer<? super Map<String, Object>> validator)
-    {
-        this.structureEntries.add(new StructureEntry<>(clazz, serializer, (v, t) -> deserializer.apply(v), (v, t) -> validator.accept(v)));
-    }
-
-    /* ------------------------------------ */
-
-    private <V, T extends Mapped<V> & Structure> void registerStructure(@NotNull Class<T> clazz,
-                                                                        @NotNull BiFunction<T, StructureSerializer, Map<String, Object>> serializer,
-                                                                        @NotNull BiFunction<Map<String, Object>, StructureSerializer, T> deserializer,
-                                                                        @NotNull BiConsumer<Map<String, Object>, StructureSerializer> validator,
-                                                                        @NotNull Function<V, T> constructor,
-                                                                        @NotNull Predicate<?> applicator)
-    {
-        this.structureEntries.add(new MappedStructureEntry<>(clazz, serializer, deserializer, validator, constructor, applicator));
-    }
-
-    private <V, T extends Mapped<V> & Structure> void registerStructure(@NotNull Class<T> clazz,
-                                                                        @NotNull BiFunction<T, StructureSerializer, Map<String, Object>> serializer,
-                                                                        @NotNull BiFunction<Map<String, Object>, StructureSerializer, T> deserializer,
-                                                                        @NotNull Consumer<? super Map<String, Object>> validator,
-                                                                        @NotNull Function<V, T> constructor,
-                                                                        @NotNull Predicate<?> applicator)
-    {
-        this.structureEntries.add(new MappedStructureEntry<>(clazz, serializer, deserializer, (v, t) -> validator.accept(v), constructor, applicator));
-    }
-
-    private <V, T extends Mapped<V> & Structure> void registerStructure(@NotNull Class<T> clazz,
-                                                                        @NotNull Function<? super T, ? extends Map<String, Object>> serializer,
-                                                                        @NotNull BiFunction<Map<String, Object>, StructureSerializer, T> deserializer,
-                                                                        @NotNull BiConsumer<Map<String, Object>, StructureSerializer> validator,
-                                                                        @NotNull Function<V, T> constructor,
-                                                                        @NotNull Predicate<?> applicator)
-    {
-        this.structureEntries.add(new MappedStructureEntry<>(clazz, (v, t) -> serializer.apply(v), deserializer, validator, constructor, applicator));
-    }
-
-    private <V, T extends Mapped<V> & Structure> void registerStructure(@NotNull Class<T> clazz,
-                                                                        @NotNull Function<? super T, ? extends Map<String, Object>> serializer,
-                                                                        @NotNull BiFunction<Map<String, Object>, StructureSerializer, T> deserializer,
-                                                                        @NotNull Consumer<? super Map<String, Object>> validator,
-                                                                        @NotNull Function<V, T> constructor,
-                                                                        @NotNull Predicate<?> applicator)
-    {
-        this.structureEntries.add(new MappedStructureEntry<>(clazz, (v, t) -> serializer.apply(v), deserializer, (v, t) -> validator.accept(v), constructor, applicator));
-    }
-
-    private <V, T extends Mapped<V> & Structure> void registerStructure(@NotNull Class<T> clazz,
-                                                                        @NotNull Function<? super T, ? extends Map<String, Object>> serializer,
-                                                                        @NotNull Function<? super Map<String, Object>, ? extends T> deserializer,
-                                                                        @NotNull BiConsumer<Map<String, Object>, StructureSerializer> validator,
-                                                                        @NotNull Function<V, T> constructor,
-                                                                        @NotNull Predicate<?> applicator)
-    {
-        this.structureEntries.add(new MappedStructureEntry<>(clazz, (v, t) -> serializer.apply(v), (v, t) -> deserializer.apply(v), validator, constructor, applicator));
-    }
-
-    private <V, T extends Mapped<V> & Structure> void registerStructure(@NotNull Class<T> clazz,
-                                                                        @NotNull Function<? super T, ? extends Map<String, Object>> serializer,
-                                                                        @NotNull Function<? super Map<String, Object>, ? extends T> deserializer,
-                                                                        @NotNull Consumer<? super Map<String, Object>> validator,
-                                                                        @NotNull Function<V, T> constructor,
-                                                                        @NotNull Predicate<?> applicator)
-    {
-        this.structureEntries.add(new MappedStructureEntry<>(clazz, (v, t) -> serializer.apply(v), (v, t) -> deserializer.apply(v), (v, t) -> validator.accept(v), constructor, applicator));
-    }
-
-    private <V, T extends Mapped<V> & Structure> void registerStructure(@NotNull Class<T> clazz,
-                                                                        @NotNull BiFunction<T, StructureSerializer, Map<String, Object>> serializer,
-                                                                        @NotNull Function<? super Map<String, Object>, ? extends T> deserializer,
-                                                                        @NotNull Consumer<? super Map<String, Object>> validator,
-                                                                        @NotNull Function<V, T> constructor,
-                                                                        @NotNull Predicate<?> applicator)
-    {
-        this.structureEntries.add(new MappedStructureEntry<>(clazz, serializer, (v, t) -> deserializer.apply(v), (v, t) -> validator.accept(v), constructor, applicator));
-    }
-
-    // </editor-fold>
 
     private <T extends Structure> StructureEntry<T> selectEntry(@NotNull T value, @Nullable Class<T> clazz)
     {
@@ -510,6 +377,509 @@ public class StructureSerializerImpl implements StructureSerializer
 
     // </editor-fold>
 
+
+    // <editor-fold desc="Structure 登録用のメソッド"
+
+    private <T extends Structure> void registerStructure(@NotNull Class<T> clazz,
+                                                         @NotNull BiFunction<T, StructureSerializer, Map<String, Object>> serializer,
+                                                         @NotNull BiFunction<Map<String, Object>, StructureSerializer, T> deserializer,
+                                                         @NotNull BiConsumer<Map<String, Object>, StructureSerializer> validator)
+    {
+        this.structureEntries.add(new StructureEntry<>(clazz, serializer, deserializer, validator));
+    }
+
+    @SuppressWarnings("SameParameterValue")
+    private <T extends Structure> void registerStructure(@NotNull Class<T> clazz,
+                                                         @NotNull BiFunction<T, StructureSerializer, Map<String, Object>> serializer,
+                                                         @NotNull BiFunction<Map<String, Object>, StructureSerializer, T> deserializer,
+                                                         @NotNull Consumer<? super Map<String, Object>> validator)
+    {
+        this.structureEntries.add(new StructureEntry<>(clazz, serializer, deserializer, (v, t) -> validator.accept(v)));
+    }
+
+    private <T extends Structure> void registerStructure(@NotNull Class<T> clazz,
+                                                         @NotNull Function<? super T, ? extends Map<String, Object>> serializer,
+                                                         @NotNull BiFunction<Map<String, Object>, StructureSerializer, T> deserializer,
+                                                         @NotNull BiConsumer<Map<String, Object>, StructureSerializer> validator)
+    {
+        this.structureEntries.add(new StructureEntry<>(clazz, (v, t) -> serializer.apply(v), deserializer, validator));
+    }
+
+    private <T extends Structure> void registerStructure(@NotNull Class<T> clazz,
+                                                         @NotNull Function<? super T, ? extends Map<String, Object>> serializer,
+                                                         @NotNull BiFunction<Map<String, Object>, StructureSerializer, T> deserializer,
+                                                         @NotNull Consumer<? super Map<String, Object>> validator)
+    {
+        this.structureEntries.add(new StructureEntry<>(clazz, (v, t) -> serializer.apply(v), deserializer, (v, t) -> validator.accept(v)));
+    }
+
+    private <T extends Structure> void registerStructure(@NotNull Class<T> clazz,
+                                                         @NotNull Function<? super T, ? extends Map<String, Object>> serializer,
+                                                         @NotNull Function<? super Map<String, Object>, ? extends T> deserializer,
+                                                         @NotNull BiConsumer<Map<String, Object>, StructureSerializer> validator)
+    {
+        this.structureEntries.add(new StructureEntry<>(clazz, (v, t) -> serializer.apply(v), (v, t) -> deserializer.apply(v), validator));
+    }
+
+    private <T extends Structure> void registerStructure(@NotNull Class<T> clazz,
+                                                         @NotNull Function<? super T, ? extends Map<String, Object>> serializer,
+                                                         @NotNull Function<? super Map<String, Object>, ? extends T> deserializer,
+                                                         @NotNull Consumer<? super Map<String, Object>> validator)
+    {
+        this.structureEntries.add(new StructureEntry<>(clazz, (v, t) -> serializer.apply(v), (v, t) -> deserializer.apply(v), (v, t) -> validator.accept(v)));
+    }
+
+    @SuppressWarnings("SameParameterValue")
+    private <T extends Structure> void registerStructure(@NotNull Class<T> clazz,
+                                                         @NotNull BiFunction<T, StructureSerializer, Map<String, Object>> serializer,
+                                                         @NotNull Function<? super Map<String, Object>, ? extends T> deserializer,
+                                                         @NotNull Consumer<? super Map<String, Object>> validator)
+    {
+        this.structureEntries.add(new StructureEntry<>(clazz, serializer, (v, t) -> deserializer.apply(v), (v, t) -> validator.accept(v)));
+    }
+
+    /* ------------------------------------ */
+
+    private <V, T extends Mapped<V> & Structure> void registerStructure(@NotNull Class<T> clazz,
+                                                                        @NotNull BiFunction<T, StructureSerializer, Map<String, Object>> serializer,
+                                                                        @NotNull BiFunction<Map<String, Object>, StructureSerializer, T> deserializer,
+                                                                        @NotNull BiConsumer<Map<String, Object>, StructureSerializer> validator,
+                                                                        @NotNull Function<V, T> constructor,
+                                                                        @NotNull Predicate<?> applicator)
+    {
+        this.structureEntries.add(new MappedStructureEntry<>(clazz, serializer, deserializer, validator, constructor, applicator));
+    }
+
+    private <V, T extends Mapped<V> & Structure> void registerStructure(@NotNull Class<T> clazz,
+                                                                        @NotNull BiFunction<T, StructureSerializer, Map<String, Object>> serializer,
+                                                                        @NotNull BiFunction<Map<String, Object>, StructureSerializer, T> deserializer,
+                                                                        @NotNull Consumer<? super Map<String, Object>> validator,
+                                                                        @NotNull Function<V, T> constructor,
+                                                                        @NotNull Predicate<?> applicator)
+    {
+        this.structureEntries.add(new MappedStructureEntry<>(clazz, serializer, deserializer, (v, t) -> validator.accept(v), constructor, applicator));
+    }
+
+    private <V, T extends Mapped<V> & Structure> void registerStructure(@NotNull Class<T> clazz,
+                                                                        @NotNull Function<? super T, ? extends Map<String, Object>> serializer,
+                                                                        @NotNull BiFunction<Map<String, Object>, StructureSerializer, T> deserializer,
+                                                                        @NotNull BiConsumer<Map<String, Object>, StructureSerializer> validator,
+                                                                        @NotNull Function<V, T> constructor,
+                                                                        @NotNull Predicate<?> applicator)
+    {
+        this.structureEntries.add(new MappedStructureEntry<>(clazz, (v, t) -> serializer.apply(v), deserializer, validator, constructor, applicator));
+    }
+
+    private <V, T extends Mapped<V> & Structure> void registerStructure(@NotNull Class<T> clazz,
+                                                                        @NotNull Function<? super T, ? extends Map<String, Object>> serializer,
+                                                                        @NotNull BiFunction<Map<String, Object>, StructureSerializer, T> deserializer,
+                                                                        @NotNull Consumer<? super Map<String, Object>> validator,
+                                                                        @NotNull Function<V, T> constructor,
+                                                                        @NotNull Predicate<?> applicator)
+    {
+        this.structureEntries.add(new MappedStructureEntry<>(clazz, (v, t) -> serializer.apply(v), deserializer, (v, t) -> validator.accept(v), constructor, applicator));
+    }
+
+    private <V, T extends Mapped<V> & Structure> void registerStructure(@NotNull Class<T> clazz,
+                                                                        @NotNull Function<? super T, ? extends Map<String, Object>> serializer,
+                                                                        @NotNull Function<? super Map<String, Object>, ? extends T> deserializer,
+                                                                        @NotNull BiConsumer<Map<String, Object>, StructureSerializer> validator,
+                                                                        @NotNull Function<V, T> constructor,
+                                                                        @NotNull Predicate<?> applicator)
+    {
+        this.structureEntries.add(new MappedStructureEntry<>(clazz, (v, t) -> serializer.apply(v), (v, t) -> deserializer.apply(v), validator, constructor, applicator));
+    }
+
+    private <V, T extends Mapped<V> & Structure> void registerStructure(@NotNull Class<T> clazz,
+                                                                        @NotNull Function<? super T, ? extends Map<String, Object>> serializer,
+                                                                        @NotNull Function<? super Map<String, Object>, ? extends T> deserializer,
+                                                                        @NotNull Consumer<? super Map<String, Object>> validator,
+                                                                        @NotNull Function<V, T> constructor,
+                                                                        @NotNull Predicate<?> applicator)
+    {
+        this.structureEntries.add(new MappedStructureEntry<>(clazz, (v, t) -> serializer.apply(v), (v, t) -> deserializer.apply(v), (v, t) -> validator.accept(v), constructor, applicator));
+    }
+
+    private <V, T extends Mapped<V> & Structure> void registerStructure(@NotNull Class<T> clazz,
+                                                                        @NotNull BiFunction<T, StructureSerializer, Map<String, Object>> serializer,
+                                                                        @NotNull Function<? super Map<String, Object>, ? extends T> deserializer,
+                                                                        @NotNull Consumer<? super Map<String, Object>> validator,
+                                                                        @NotNull Function<V, T> constructor,
+                                                                        @NotNull Predicate<?> applicator)
+    {
+        this.structureEntries.add(new MappedStructureEntry<>(clazz, serializer, (v, t) -> deserializer.apply(v), (v, t) -> validator.accept(v), constructor, applicator));
+    }
+
+    /* ------------------------------------ */
+
+    private static boolean canExtend(@Nullable MinecraftVersion targetVersionSince, @Nullable MinecraftVersion targetVersionUntil)
+    {
+        return MinecraftVersion.current().isInRange(targetVersionSince, targetVersionUntil);
+    }
+
+    private static boolean canExtend(@Nullable MinecraftVersion targetVersionSince)
+    {
+        return canExtend(targetVersionSince, null);
+    }
+
+    private void removeStructureFor(@NotNull Class<?> structureClazz)
+    {
+        Iterator<StructureEntry<?>> iterator = this.structureEntries.iterator();
+        while (iterator.hasNext())
+        {
+            StructureEntry<?> entry = iterator.next();
+            if (entry.getClazz() == structureClazz) // Class は VM で一意なので == で比較する
+            {
+                iterator.remove();
+                return;
+            }
+        }
+    }
+
+    private <T extends Structure> void extendStructure(@NotNull Class<T> clazz,
+                                                       @NotNull MinecraftVersion mcVersionSince,
+                                                       @NotNull MinecraftVersion mcVersionUntil,
+                                                       @NotNull BiFunction<T, StructureSerializer, Map<String, Object>> serializer,
+                                                       @NotNull BiFunction<Map<String, Object>, StructureSerializer, T> deserializer,
+                                                       @NotNull BiConsumer<Map<String, Object>, StructureSerializer> validator)
+    {
+        if (!canExtend(mcVersionSince, mcVersionUntil))
+            return;
+
+        this.removeStructureFor(clazz);
+        this.registerStructure(clazz, serializer, deserializer, validator);
+    }
+
+    @SuppressWarnings("SameParameterValue")
+    private <T extends Structure> void extendStructure(@NotNull Class<T> clazz,
+                                                       @NotNull MinecraftVersion mcVersionSince,
+                                                       @NotNull MinecraftVersion mcVersionUntil,
+                                                       @NotNull BiFunction<T, StructureSerializer, Map<String, Object>> serializer,
+                                                       @NotNull BiFunction<Map<String, Object>, StructureSerializer, T> deserializer,
+                                                       @NotNull Consumer<? super Map<String, Object>> validator)
+    {
+        if (!canExtend(mcVersionSince, mcVersionUntil))
+            return;
+
+        this.removeStructureFor(clazz);
+        this.registerStructure(clazz, serializer, deserializer, validator);
+    }
+
+    private <T extends Structure> void extendStructure(@NotNull Class<T> clazz,
+                                                       @NotNull MinecraftVersion mcVersionSince,
+                                                       @NotNull MinecraftVersion mcVersionUntil,
+                                                       @NotNull Function<? super T, ? extends Map<String, Object>> serializer,
+                                                       @NotNull BiFunction<Map<String, Object>, StructureSerializer, T> deserializer,
+                                                       @NotNull BiConsumer<Map<String, Object>, StructureSerializer> validator)
+    {
+        if (!canExtend(mcVersionSince, mcVersionUntil))
+            return;
+
+        this.removeStructureFor(clazz);
+        this.registerStructure(clazz, serializer, deserializer, validator);
+    }
+
+    private <T extends Structure> void extendStructure(@NotNull Class<T> clazz,
+                                                       @NotNull MinecraftVersion mcVersionSince,
+                                                       @NotNull MinecraftVersion mcVersionUntil,
+                                                       @NotNull Function<? super T, ? extends Map<String, Object>> serializer,
+                                                       @NotNull BiFunction<Map<String, Object>, StructureSerializer, T> deserializer,
+                                                       @NotNull Consumer<? super Map<String, Object>> validator)
+    {
+        if (!canExtend(mcVersionSince, mcVersionUntil))
+            return;
+
+        this.removeStructureFor(clazz);
+        this.registerStructure(clazz, serializer, deserializer, validator);
+    }
+
+    private <T extends Structure> void extendStructure(@NotNull Class<T> clazz,
+                                                       @NotNull MinecraftVersion mcVersionSince,
+                                                       @NotNull MinecraftVersion mcVersionUntil,
+                                                       @NotNull Function<? super T, ? extends Map<String, Object>> serializer,
+                                                       @NotNull Function<? super Map<String, Object>, ? extends T> deserializer,
+                                                       @NotNull BiConsumer<Map<String, Object>, StructureSerializer> validator)
+    {
+        if (!canExtend(mcVersionSince, mcVersionUntil))
+            return;
+
+        this.removeStructureFor(clazz);
+        this.registerStructure(clazz, serializer, deserializer, validator);
+    }
+
+    private <T extends Structure> void extendStructure(@NotNull Class<T> clazz,
+                                                       @NotNull MinecraftVersion mcVersionSince,
+                                                       @NotNull MinecraftVersion mcVersionUntil,
+                                                       @NotNull Function<? super T, ? extends Map<String, Object>> serializer,
+                                                       @NotNull Function<? super Map<String, Object>, ? extends T> deserializer,
+                                                       @NotNull Consumer<? super Map<String, Object>> validator)
+    {
+        if (!canExtend(mcVersionSince, mcVersionUntil))
+            return;
+
+        this.removeStructureFor(clazz);
+        this.registerStructure(clazz, serializer, deserializer, validator);
+    }
+
+    private <T extends Structure> void extendStructure(@NotNull Class<T> clazz,
+                                                       @NotNull MinecraftVersion mcVersionSince,
+                                                       @NotNull MinecraftVersion mcVersionUntil,
+                                                       @NotNull BiFunction<T, StructureSerializer, Map<String, Object>> serializer,
+                                                       @NotNull Function<? super Map<String, Object>, ? extends T> deserializer,
+                                                       @NotNull Consumer<? super Map<String, Object>> validator)
+    {
+        if (!canExtend(mcVersionSince, mcVersionUntil))
+            return;
+
+        this.removeStructureFor(clazz);
+        this.registerStructure(clazz, serializer, deserializer, validator);
+    }
+
+
+    private <V, T extends Mapped<V> & Structure> void extendStructure(@NotNull Class<T> clazz,
+                                                                      @NotNull MinecraftVersion mcVersionSince,
+                                                                      @NotNull MinecraftVersion mcVersionUntil,
+                                                                      @NotNull BiFunction<T, StructureSerializer, Map<String, Object>> serializer,
+                                                                      @NotNull BiFunction<Map<String, Object>, StructureSerializer, T> deserializer,
+                                                                      @NotNull BiConsumer<Map<String, Object>, StructureSerializer> validator,
+                                                                      @NotNull Function<V, T> constructor,
+                                                                      @NotNull Predicate<?> applicator)
+    {
+        if (!canExtend(mcVersionSince, mcVersionUntil))
+            return;
+
+        this.removeStructureFor(clazz);
+        this.registerStructure(clazz, serializer, deserializer, validator, constructor, applicator);
+    }
+
+    private <V, T extends Mapped<V> & Structure> void extendStructure(@NotNull Class<T> clazz,
+                                                                      @NotNull MinecraftVersion mcVersionSince,
+                                                                      @NotNull MinecraftVersion mcVersionUntil,
+                                                                      @NotNull BiFunction<T, StructureSerializer, Map<String, Object>> serializer,
+                                                                      @NotNull BiFunction<Map<String, Object>, StructureSerializer, T> deserializer,
+                                                                      @NotNull Consumer<? super Map<String, Object>> validator,
+                                                                      @NotNull Function<V, T> constructor,
+                                                                      @NotNull Predicate<?> applicator)
+    {
+        if (!canExtend(mcVersionSince, mcVersionUntil))
+            return;
+
+        this.removeStructureFor(clazz);
+        this.registerStructure(clazz, serializer, deserializer, validator, constructor, applicator);
+    }
+
+    private <V, T extends Mapped<V> & Structure> void extendStructure(@NotNull Class<T> clazz,
+                                                                      @NotNull MinecraftVersion mcVersionSince,
+                                                                      @NotNull MinecraftVersion mcVersionUntil,
+                                                                      @NotNull Function<? super T, ? extends Map<String, Object>> serializer,
+                                                                      @NotNull BiFunction<Map<String, Object>, StructureSerializer, T> deserializer,
+                                                                      @NotNull BiConsumer<Map<String, Object>, StructureSerializer> validator,
+                                                                      @NotNull Function<V, T> constructor,
+                                                                      @NotNull Predicate<?> applicator)
+    {
+        if (!canExtend(mcVersionSince, mcVersionUntil))
+            return;
+
+        this.removeStructureFor(clazz);
+        this.registerStructure(clazz, serializer, deserializer, validator, constructor, applicator);
+    }
+
+    private <V, T extends Mapped<V> & Structure> void extendStructure(@NotNull Class<T> clazz,
+                                                                      @NotNull MinecraftVersion mcVersionSince,
+                                                                      @NotNull MinecraftVersion mcVersionUntil,
+                                                                      @NotNull Function<? super T, ? extends Map<String, Object>> serializer,
+                                                                      @NotNull BiFunction<Map<String, Object>, StructureSerializer, T> deserializer,
+                                                                      @NotNull Consumer<? super Map<String, Object>> validator,
+                                                                      @NotNull Function<V, T> constructor,
+                                                                      @NotNull Predicate<?> applicator)
+    {
+        if (!canExtend(mcVersionSince, mcVersionUntil))
+            return;
+
+        this.removeStructureFor(clazz);
+        this.registerStructure(clazz, serializer, deserializer, validator, constructor, applicator);
+    }
+
+    private <V, T extends Mapped<V> & Structure> void extendStructure(@NotNull Class<T> clazz,
+                                                                      @NotNull MinecraftVersion mcVersionSince,
+                                                                      @NotNull MinecraftVersion mcVersionUntil,
+                                                                      @NotNull Function<? super T, ? extends Map<String, Object>> serializer,
+                                                                      @NotNull Function<? super Map<String, Object>, ? extends T> deserializer,
+                                                                      @NotNull BiConsumer<Map<String, Object>, StructureSerializer> validator,
+                                                                      @NotNull Function<V, T> constructor,
+                                                                      @NotNull Predicate<?> applicator)
+    {
+        if (!canExtend(mcVersionSince, mcVersionUntil))
+            return;
+
+        this.removeStructureFor(clazz);
+        this.registerStructure(clazz, serializer, deserializer, validator, constructor, applicator);
+    }
+
+    private <V, T extends Mapped<V> & Structure> void extendStructure(@NotNull Class<T> clazz,
+                                                                      @NotNull MinecraftVersion mcVersionSince,
+                                                                      @NotNull MinecraftVersion mcVersionUntil,
+                                                                      @NotNull Function<? super T, ? extends Map<String, Object>> serializer,
+                                                                      @NotNull Function<? super Map<String, Object>, ? extends T> deserializer,
+                                                                      @NotNull Consumer<? super Map<String, Object>> validator,
+                                                                      @NotNull Function<V, T> constructor,
+                                                                      @NotNull Predicate<?> applicator)
+    {
+        if (!canExtend(mcVersionSince, mcVersionUntil))
+            return;
+
+        this.removeStructureFor(clazz);
+        this.registerStructure(clazz, serializer, deserializer, validator, constructor, applicator);
+    }
+
+    private <V, T extends Mapped<V> & Structure> void extendStructure(@NotNull Class<T> clazz,
+                                                                      @NotNull MinecraftVersion mcVersionSince,
+                                                                      @NotNull MinecraftVersion mcVersionUntil,
+                                                                      @NotNull BiFunction<T, StructureSerializer, Map<String, Object>> serializer,
+                                                                      @NotNull Function<? super Map<String, Object>, ? extends T> deserializer,
+                                                                      @NotNull Consumer<? super Map<String, Object>> validator,
+                                                                      @NotNull Function<V, T> constructor,
+                                                                      @NotNull Predicate<?> applicator)
+    {
+        if (!canExtend(mcVersionSince, mcVersionUntil))
+            return;
+
+        this.removeStructureFor(clazz);
+        this.registerStructure(clazz, serializer, deserializer, validator, constructor, applicator);
+    }
+
+
+    private <T extends Structure> void extendStructure(@NotNull Class<T> clazz,
+                                                       @NotNull MinecraftVersion mcVersionSince,
+                                                       @NotNull BiFunction<T, StructureSerializer, Map<String, Object>> serializer,
+                                                       @NotNull BiFunction<Map<String, Object>, StructureSerializer, T> deserializer,
+                                                       @NotNull BiConsumer<Map<String, Object>, StructureSerializer> validator)
+    {
+        this.extendStructure(clazz, mcVersionSince, null, serializer, deserializer, validator);
+    }
+
+    private <T extends Structure> void extendStructure(@NotNull Class<T> clazz,
+                                                       @NotNull MinecraftVersion mcVersionSince,
+                                                       @NotNull BiFunction<T, StructureSerializer, Map<String, Object>> serializer,
+                                                       @NotNull BiFunction<Map<String, Object>, StructureSerializer, T> deserializer,
+                                                       @NotNull Consumer<? super Map<String, Object>> validator)
+    {
+        this.extendStructure(clazz, mcVersionSince, null, serializer, deserializer, validator);
+    }
+
+    private <T extends Structure> void extendStructure(@NotNull Class<T> clazz,
+                                                       @NotNull MinecraftVersion mcVersionSince,
+                                                       @NotNull Function<? super T, ? extends Map<String, Object>> serializer,
+                                                       @NotNull BiFunction<Map<String, Object>, StructureSerializer, T> deserializer,
+                                                       @NotNull BiConsumer<Map<String, Object>, StructureSerializer> validator)
+    {
+        this.extendStructure(clazz, mcVersionSince, null, serializer, deserializer, validator);
+    }
+
+    private <T extends Structure> void extendStructure(@NotNull Class<T> clazz,
+                                                       @NotNull MinecraftVersion mcVersionSince,
+                                                       @NotNull Function<? super T, ? extends Map<String, Object>> serializer,
+                                                       @NotNull BiFunction<Map<String, Object>, StructureSerializer, T> deserializer,
+                                                       @NotNull Consumer<? super Map<String, Object>> validator)
+    {
+        this.extendStructure(clazz, mcVersionSince, null, serializer, deserializer, validator);
+    }
+
+    private <T extends Structure> void extendStructure(@NotNull Class<T> clazz,
+                                                       @NotNull MinecraftVersion mcVersionSince,
+                                                       @NotNull Function<? super T, ? extends Map<String, Object>> serializer,
+                                                       @NotNull Function<? super Map<String, Object>, ? extends T> deserializer,
+                                                       @NotNull BiConsumer<Map<String, Object>, StructureSerializer> validator)
+    {
+        this.extendStructure(clazz, mcVersionSince, null, serializer, deserializer, validator);
+    }
+
+    private <T extends Structure> void extendStructure(@NotNull Class<T> clazz,
+                                                       @NotNull MinecraftVersion mcVersionSince,
+                                                       @NotNull Function<? super T, ? extends Map<String, Object>> serializer,
+                                                       @NotNull Function<? super Map<String, Object>, ? extends T> deserializer,
+                                                       @NotNull Consumer<? super Map<String, Object>> validator)
+    {
+        this.extendStructure(clazz, mcVersionSince, null, serializer, deserializer, validator);
+    }
+
+    private <T extends Structure> void extendStructure(@NotNull Class<T> clazz,
+                                                       @NotNull MinecraftVersion mcVersionSince,
+                                                       @NotNull BiFunction<T, StructureSerializer, Map<String, Object>> serializer,
+                                                       @NotNull Function<? super Map<String, Object>, ? extends T> deserializer,
+                                                       @NotNull Consumer<? super Map<String, Object>> validator)
+    {
+        this.extendStructure(clazz, mcVersionSince, null, serializer, deserializer, validator);
+    }
+
+    private <V, T extends Mapped<V> & Structure> void extendStructure(@NotNull Class<T> clazz,
+                                                                      @NotNull MinecraftVersion mcVersionSince,
+                                                                      @NotNull BiFunction<T, StructureSerializer, Map<String, Object>> serializer,
+                                                                      @NotNull BiFunction<Map<String, Object>, StructureSerializer, T> deserializer,
+                                                                      @NotNull BiConsumer<Map<String, Object>, StructureSerializer> validator,
+                                                                      @NotNull Function<V, T> constructor,
+                                                                      @NotNull Predicate<?> applicator)
+    {
+        this.extendStructure(clazz, mcVersionSince, null, serializer, deserializer, validator, constructor, applicator);
+    }
+
+    private <V, T extends Mapped<V> & Structure> void extendStructure(@NotNull Class<T> clazz,
+                                                                      @NotNull MinecraftVersion mcVersionSince,
+                                                                      @NotNull BiFunction<T, StructureSerializer, Map<String, Object>> serializer,
+                                                                      @NotNull BiFunction<Map<String, Object>, StructureSerializer, T> deserializer,
+                                                                      @NotNull Consumer<? super Map<String, Object>> validator,
+                                                                      @NotNull Function<V, T> constructor,
+                                                                      @NotNull Predicate<?> applicator)
+    {
+        this.extendStructure(clazz, mcVersionSince, null, serializer, deserializer, validator, constructor, applicator);
+    }
+
+    private <V, T extends Mapped<V> & Structure> void extendStructure(@NotNull Class<T> clazz,
+                                                                      @NotNull MinecraftVersion mcVersionSince,
+                                                                      @NotNull Function<? super T, ? extends Map<String, Object>> serializer,
+                                                                      @NotNull BiFunction<Map<String, Object>, StructureSerializer, T> deserializer,
+                                                                      @NotNull BiConsumer<Map<String, Object>, StructureSerializer> validator,
+                                                                      @NotNull Function<V, T> constructor,
+                                                                      @NotNull Predicate<?> applicator)
+    {
+        this.extendStructure(clazz, mcVersionSince, null, serializer, deserializer, validator, constructor, applicator);
+    }
+
+    private <V, T extends Mapped<V> & Structure> void extendStructure(@NotNull Class<T> clazz,
+                                                                      @NotNull MinecraftVersion mcVersionSince,
+                                                                      @NotNull Function<? super T, ? extends Map<String, Object>> serializer,
+                                                                      @NotNull BiFunction<Map<String, Object>, StructureSerializer, T> deserializer,
+                                                                      @NotNull Consumer<? super Map<String, Object>> validator,
+                                                                      @NotNull Function<V, T> constructor,
+                                                                      @NotNull Predicate<?> applicator)
+    {
+        this.extendStructure(clazz, mcVersionSince, null, serializer, deserializer, validator, constructor, applicator);
+    }
+
+    private <V, T extends Mapped<V> & Structure> void extendStructure(@NotNull Class<T> clazz,
+                                                                      @NotNull MinecraftVersion mcVersionSince,
+                                                                      @NotNull Function<? super T, ? extends Map<String, Object>> serializer,
+                                                                      @NotNull Function<? super Map<String, Object>, ? extends T> deserializer,
+                                                                      @NotNull BiConsumer<Map<String, Object>, StructureSerializer> validator,
+                                                                      @NotNull Function<V, T> constructor,
+                                                                      @NotNull Predicate<?> applicator)
+    {
+        this.extendStructure(clazz, mcVersionSince, null, serializer, deserializer, validator, constructor, applicator);
+    }
+
+    private <V, T extends Mapped<V> & Structure> void extendStructure(@NotNull Class<T> clazz,
+                                                                      @NotNull MinecraftVersion mcVersionSince,
+                                                                      @NotNull Function<? super T, ? extends Map<String, Object>> serializer,
+                                                                      @NotNull Function<? super Map<String, Object>, ? extends T> deserializer,
+                                                                      @NotNull Consumer<? super Map<String, Object>> validator,
+                                                                      @NotNull Function<V, T> constructor,
+                                                                      @NotNull Predicate<?> applicator)
+    {
+        this.extendStructure(clazz, mcVersionSince, null, serializer, deserializer, validator, constructor, applicator);
+    }
+
+    // </editor-fold>
+
     @Data
     @NotNull
     @AllArgsConstructor
@@ -524,7 +894,7 @@ public class StructureSerializerImpl implements StructureSerializer
     @Value
     @NotNull
     @EqualsAndHashCode(callSuper = true)
-    public static class MappedStructureEntry<V, T extends Mapped<V> & Structure> extends StructureEntry<T>
+    private static class MappedStructureEntry<V, T extends Mapped<V> & Structure> extends StructureEntry<T>
     {
         Function<V, T> constructor;
         Predicate<?> applicator;

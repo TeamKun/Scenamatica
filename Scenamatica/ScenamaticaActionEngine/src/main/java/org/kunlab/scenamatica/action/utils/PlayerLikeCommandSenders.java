@@ -7,7 +7,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.interfaces.context.Context;
-import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.PlayerSpecifier;
+import org.kunlab.scenamatica.interfaces.structures.specifiers.PlayerSpecifier;
 
 public class PlayerLikeCommandSenders
 {

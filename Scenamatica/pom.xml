@@ -6,7 +6,7 @@
 
     <groupId>org.kunlab.scenamatica</groupId>
     <artifactId>Scenamatica</artifactId>
-    <version>1.4.0</version>
+    <version>1.4.1</version>
     <packaging>pom</packaging>
 
     <modules>
@@ -23,6 +23,7 @@
         <module>NMSBridge</module>
         <module>ScenamaticaSelectorEngine</module>
         <module>ScenamaticaActions</module>
+        <module>ScenamaticaStructures</module>
     </modules>
 
     <name>Scenamatica</name>
@@ -89,7 +90,7 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.26</version>
+            <version>1.18.32</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -114,19 +115,19 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
-            <version>5.9.2</version>
+            <version>5.10.2</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
-            <version>5.9.2</version>
+            <version>5.10.2</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
-            <version>5.2.0</version>
+            <version>5.11.0</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

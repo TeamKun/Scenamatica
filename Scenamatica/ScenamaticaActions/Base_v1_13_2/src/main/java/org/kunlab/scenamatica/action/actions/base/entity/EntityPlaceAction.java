@@ -12,16 +12,22 @@ import org.bukkit.event.entity.EntityPlaceEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.kunlab.scenamatica.annotations.action.ActionMeta;
+import org.kunlab.scenamatica.annotations.action.Action;
+import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.Admonition;
+import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.OutputDoc;
+import org.kunlab.scenamatica.bookkeeper.enums.ActionMethod;
+import org.kunlab.scenamatica.bookkeeper.enums.AdmonitionType;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
-import org.kunlab.scenamatica.interfaces.action.types.Watchable;
+import org.kunlab.scenamatica.interfaces.action.types.Expectable;
 import org.kunlab.scenamatica.interfaces.context.Actor;
-import org.kunlab.scenamatica.interfaces.scenariofile.misc.BlockStructure;
-import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.PlayerSpecifier;
+import org.kunlab.scenamatica.interfaces.structures.minecraft.misc.BlockStructure;
+import org.kunlab.scenamatica.interfaces.structures.specifiers.PlayerSpecifier;
 
 import java.util.Collections;
 import java.util.EnumMap;
@@ -29,32 +35,105 @@ import java.util.List;
 import java.util.Map;
 
 @SuppressWarnings("deprecation")
-@ActionMeta("entity_place")
+@Action("entity_place")
+@ActionDoc(
+        name = "エンティティの設置",
+        description = "指定されたエンティティを設置します。",
+        events = {
+                EntityPlaceEvent.class
+        },
+
+        executable = "指定されたエンティティを設置します。",
+        expectable = "指定されたエンティティが設置されることを期待します。",
+        requireable = ActionDoc.UNALLOWED,
+
+        outputs = {
+                @OutputDoc(
+                        name = EntityPlaceAction.OUT_KEY_PLAYER,
+                        description = "エンティティを設置したアクタです。",
+                        type = Player.class
+                ),
+                @OutputDoc(
+                        name = EntityPlaceAction.OUT_KEY_BLOCK,
+                        description = "エンティティを設置したブロックです。",
+                        type = Block.class
+                ),
+                @OutputDoc(
+                        name = EntityPlaceAction.OUT_KEY_BLOCK_FACE,
+                        description = "エンティティを設置した方向です。",
+                        type = BlockFace.class
+                ),
+                @OutputDoc(
+                        name = EntityPlaceAction.OUT_KEY_MATERIAL,
+                        description = "エンティティを設置した素材です。",
+                        type = Material.class
+                )
+        }
+)
 public class EntityPlaceAction extends AbstractGeneralEntityAction
-        implements Executable, Watchable
+        implements Executable, Expectable
 {
     // armor stands, boats, minecarts, and end crystals. しか呼ばれないらしい
     public static final Map<Material, EntityType> PLACEABLE_ENTITIES_MAP;
 
+    @InputDoc(
+            name = "player",
+            description = "エンティティを設置するアクタです。",
+            type = PlayerSpecifier.class,
+            requiredOn = ActionMethod.EXECUTE
+    )
     public static final InputToken<PlayerSpecifier> IN_PLAYER = ofInput(
             "player",
             PlayerSpecifier.class,
             ofPlayer()
     );
+
+    @InputDoc(
+            name = "block",
+            description = "エンティティを設置するブロックです。",
+            type = Block.class,
+            requiredOn = ActionMethod.EXECUTE,
+            admonitions = {
+                    @Admonition(
+                            type = AdmonitionType.WARNING,
+                            on = ActionMethod.EXECUTE,
+                            content = "アクション実行シナリオの場合は, この項目内の `location` が必須です。"
+                    )
+            }
+    )
     public static final InputToken<BlockStructure> IN_BLOCK = ofInput(
             "block",
             BlockStructure.class,
             ofDeserializer(BlockStructure.class)
+    ).validator(
+            ScenarioType.ACTION_EXECUTE,
+            block -> block.getLocation() != null, "Block location is not specified."
+    );
+
+    @InputDoc(
+            name = "direction",
+            description = "エンティティを設置する方向です。",
+            type = BlockFace.class,
+            admonitions = {
+                    @Admonition(
+                            type = AdmonitionType.WARNING,
+                            on = ActionMethod.EXECUTE,
+                            content = "アクション実行シナリオでこの項目を省略した場合は, プレイヤと対象の位置から推論されます。"
+                    )
+            }
     )
-            .validator(
-                    ScenarioType.ACTION_EXECUTE,
-                    block -> block.getLocation() != null, "Block location is not specified."
-            );
     public static final InputToken<BlockFace> IN_BLOCK_FACE = ofInput(
             "direction",
             BlockFace.class,
             ofEnum(BlockFace.class)
     );
+
+    @InputDoc(
+            name = "material",
+            description = "設置するエンティティの素材です。",
+            type = Material.class,
+            requiredOn = ActionMethod.EXECUTE
+    )
     public static final InputToken<Material> IN_MATERIAL = ofInput(
             "material",
             Material.class,

@@ -4,7 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.exceptions.context.stage.StageAlreadyDestroyedException;
 import org.kunlab.scenamatica.exceptions.context.stage.StageCreateFailedException;
-import org.kunlab.scenamatica.interfaces.scenariofile.context.StageStructure;
+import org.kunlab.scenamatica.interfaces.structures.context.StageStructure;
 
 /**
  * シナリオを実行するステージを管理するインターフェースです。

@@ -44,7 +44,7 @@ import org.kunlab.scenamatica.context.actor.nms.v1_16_R2.packets.MockedPacketPla
 import org.kunlab.scenamatica.events.actor.ActorPostJoinEvent;
 import org.kunlab.scenamatica.interfaces.context.Actor;
 import org.kunlab.scenamatica.interfaces.context.ActorManager;
-import org.kunlab.scenamatica.interfaces.scenariofile.context.PlayerStructure;
+import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.PlayerStructure;
 import org.kunlab.scenamatica.nms.NMSProvider;
 import org.kunlab.scenamatica.nms.enums.NMSHand;
 import org.kunlab.scenamatica.nms.enums.entity.NMSEntityUseAction;

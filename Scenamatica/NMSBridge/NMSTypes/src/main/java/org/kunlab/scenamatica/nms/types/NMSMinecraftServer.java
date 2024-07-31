@@ -6,9 +6,9 @@ import org.kunlab.scenamatica.nms.NMSWrapped;
 public interface NMSMinecraftServer extends NMSWrapped
 {
     /**
-     * プレイヤーリストを取得します。
+     * プレイヤリストを取得します。
      *
-     * @return プレイヤーリスト
+     * @return プレイヤリスト
      */
     NMSPlayerList getPlayerList();
 

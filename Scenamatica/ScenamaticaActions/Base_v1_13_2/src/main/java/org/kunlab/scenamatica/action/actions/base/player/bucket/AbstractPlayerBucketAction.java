@@ -11,47 +11,114 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.actions.base.player.AbstractPlayerAction;
+import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.OutputDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.OutputDocs;
+import org.kunlab.scenamatica.bookkeeper.enums.ActionMethod;
 import org.kunlab.scenamatica.commons.utils.VoxelUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
-import org.kunlab.scenamatica.interfaces.action.types.Watchable;
+import org.kunlab.scenamatica.interfaces.action.types.Expectable;
 import org.kunlab.scenamatica.interfaces.context.Actor;
-import org.kunlab.scenamatica.interfaces.scenariofile.inventory.ItemStackStructure;
-import org.kunlab.scenamatica.interfaces.scenariofile.misc.BlockStructure;
+import org.kunlab.scenamatica.interfaces.structures.minecraft.inventory.ItemStackStructure;
+import org.kunlab.scenamatica.interfaces.structures.minecraft.misc.BlockStructure;
 import org.kunlab.scenamatica.nms.enums.NMSHand;
 
+@OutputDocs({
+        @OutputDoc(
+                name = AbstractPlayerBucketAction.KEY_OUT_ITEM,
+                description = "操作後に手に持っているアイテムです。",
+                type = ItemStack.class
+        ),
+        @OutputDoc(
+                name = AbstractPlayerBucketAction.KEY_OUT_BLOCK,
+                description = "液体のブロックです。",
+                type = Block.class
+        ),
+        @OutputDoc(
+                name = AbstractPlayerBucketAction.KEY_OUT_BLOCK_FACE,
+                description = "ブロックの面です。",
+                type = BlockFace.class
+        ),
+        @OutputDoc(
+                name = AbstractPlayerBucketAction.KEY_OUT_BUCKET,
+                description = "バケツの種類です。",
+                type = Material.class
+        ),
+        @OutputDoc(
+                name = AbstractPlayerBucketAction.KEY_OUT_HAND,
+                description = "手です。",
+                type = NMSHand.class
+        )
+})
 public abstract class AbstractPlayerBucketAction extends AbstractPlayerAction
-        implements Watchable
+        implements Expectable
 {
+    @InputDoc(
+            name = "item",
+            description = "バケツのアイテムです。",
+            type = ItemStack.class
+    )
     public static final InputToken<ItemStackStructure> IN_ITEM = ofInput(
             "item",
             ItemStackStructure.class,
             ofDeserializer(ItemStackStructure.class)
     );
+    @InputDoc(
+            name = "block",
+            description = "液体のブロックです。",
+            type = Block.class
+    )
     public static final InputToken<BlockStructure> IN_BLOCK = ofInput(
             "block",
             BlockStructure.class,
             ofDeserializer(BlockStructure.class)
     );
+    @InputDoc(
+            name = "clickedBlock",
+            description = "プレイヤがクリックするブロックです。",
+            type = BlockStructure.class
+    )
     public static final InputToken<BlockStructure> IN_BLOCK_CLICKED = ofInput(
             "clickedBlock",
             BlockStructure.class,
             ofDeserializer(BlockStructure.class)
     );
+    @InputDoc(
+            name = "blockFace",
+            description = "ブロックの面です。",
+            type = BlockFace.class
+    )
     public static final InputToken<BlockFace> IN_BLOCK_FACE = ofEnumInput(
             "blockFace",
             BlockFace.class
     );
+    @InputDoc(
+            name = "bucket",
+            description = "バケツの種類です。",
+            type = Material.class
+    )
     public static final InputToken<Material> IN_BUCKET = ofEnumInput(
             "bucket",
             Material.class
     );
+    @InputDoc(
+            name = "hand",
+            description = "手です。",
+            type = NMSHand.class
+    )
     public static final InputToken<NMSHand> IN_HAND = ofEnumInput(
             "hand",
             NMSHand.class
     );
+    @InputDoc(
+            name = "eventOnly",
+            description = "イベントのみを実行します。",
+            type = boolean.class,
+            availableFor = ActionMethod.EXECUTE
+    )
     public static final InputToken<Boolean> IN_EVENT_ONLY = ofInput(
             "eventOnly",
             Boolean.class,

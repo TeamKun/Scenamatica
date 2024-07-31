@@ -1,0 +1,76 @@
+import BelowDocument from "/src/components/BelowDocument";
+
+# エンティティとプレイヤの指定子
+
+エンティティ指定子とプレイヤ指定子について説明しています。
+
+---
+
+## 概要 {#overview}
+
+エンティティ指定子・プレイヤ指定子はそれぞれ, アクションにおいてターゲットを指定するために使います。
+
+### エンティティ指定子 {#entity-specifier}
+
+エンティティ指定子は, 文字列型と[Entity 型](/references/types/entities/EntityStructure)としてふるまう特別な型です。  
+主にエンティティを指定するときに使用し, 以下のような値をとります。
+
+1. プレイヤの名前 （例：`"Player1"` ）  
+  プレイヤを指定する場合にのみ有効です。
+2. プレイヤまたはエンティティの UUID （例：`"00000000-0000-0000-0000-000000000000"` ）
+3. プレイヤまたはエンティティの[セレクタ](/docs/use/scenario/selector)およびその省略書式 （例：`"@e[team=Red,tag=MyTag]"` ）
+   + 省略： `@e` は省略できます （例：`"[team=Red,tags=MyTag]"` ）。
+   + 省略： `@e[...]` はできます （例：`"team=Red,tags=MyTag"` ）。
+4. [Entity 型](http://localhost:3008/references/types/entities/EntityStructure) のオブジェクト  
+  特に記述がない限り使用できます。これを使用すれば, [セレクタ](/docs/use/scenario/selector)を使用せずに高度な条件を指定できます。
+
+:::danger
+
+項目３および４で説明されている[セレクタ](/docs/use/scenario/selector) は, 通常の
+[Minecraft セレクタ](https://minecraft.fandom.com/ja/wiki/Target_selectors) とは異なります。
+
+Scenamatica では, いくつかの理由で独自のセレクタを使用しています。
+基本的な構文や機能は同じですが, 一部の機能が削除されているか, 独自の機能が追加されています。
+
+<BelowDocument docId={"use/scenario/selector"}
+               label="Scenamatica ターゲットセレクタ"
+/> 
+
+:::
+
+:::tip
+
+[エンティティ（コンテキスト）](/docs/use/scenario/elements#entities#entity)を使用すれば, シナリオ専用の常に読み込まれるエンティティを作成できます。
+
+:::
+
+### シナリオの種類での振る舞いの違い {#behavior-in-scenario-types}
+
++ アクション実行シナリオでは, 単一のエンティティを指します。  
+  `@e` 等で複数のエンティティを指定した場合は, 最初に見つかったエンティティが使用されます。
++ アクション実行期待シナリオでは, 該当する**複数のエンティティのどれか**を指します。  
+  複数のエンティティを指定した（が見つかった）場合は, そのうちのどれか一体が条件を満たしていたらパスされます。  
+  単一のエンティティを指定した場合はそのエンティティが条件を満たしているかどうかが判定されます。
+
+例：
+``` yaml
+
+- type: execute
+  action: entity_...
+  with:
+    targe: "@e[team=Red]"  # チームが Red のエンティティのうち, 最初に見つかったものが使用される
+
+---
+
+- type: expect
+  action: entity_...
+  with:
+    target: "@e[team=Red]"  # チームが Red のエンティティのうち, どれか一体が条件を満たしていればパスされる
+
+```
+
+### プレイヤ指定子 {#player-specifier}
+
+プレイヤ指定子は, 文字列型と[Entity 型](/references/types/entities/PlayerStructure)としてふるまう特別な型です。  
+
+これは基本的には上記の[エンティティ指定子](#entity-specfiier)と同じですが, プレイヤを指定する場合にのみ有効です。
