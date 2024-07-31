@@ -9,14 +9,18 @@ import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.action.actions.base.block.BlockBreakAction;
 import org.kunlab.scenamatica.action.actions.base.player.AbstractPlayerAction;
 import org.kunlab.scenamatica.action.utils.InputTypeToken;
-import org.kunlab.scenamatica.annotations.action.ActionMeta;
+import org.kunlab.scenamatica.annotations.action.Action;
+import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.OutputDoc;
+import org.kunlab.scenamatica.bookkeeper.enums.ActionMethod;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
-import org.kunlab.scenamatica.interfaces.action.types.Watchable;
+import org.kunlab.scenamatica.interfaces.action.types.Expectable;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.inventory.ItemStackStructure;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.misc.BlockStructure;
 
@@ -25,10 +29,39 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-@ActionMeta("player_harvest_block")
+@Action("player_harvest_block")
+@ActionDoc(
+        name = "ブロックの収穫",
+        description = "プレイヤがブロックを収穫するイベントです。",
+        events = {
+                PlayerHarvestBlockEvent.class
+        },
+        executable = "ブロックを収穫します。",
+        expectable = "ブロックが収穫されることを期待します。",
+        requireable = ActionDoc.UNALLOWED,
+
+        outputs = {
+                @OutputDoc(
+                        name = PlayerHarvestBlockAction.KEY_BLOCK_HARVESTED,
+                        description = "収穫されたブロックです。",
+                        type = Block.class
+                ),
+                @OutputDoc(
+                        name = PlayerHarvestBlockAction.KEY_ITEMS_HARVESTED,
+                        description = "収穫されたアイテムです。",
+                        type = ItemStack[].class,
+                        target = ActionMethod.EXPECT
+                )
+        }
+)
 public class PlayerHarvestBlockAction extends AbstractPlayerAction
-        implements Executable, Watchable
+        implements Executable, Expectable
 {
+    @InputDoc(
+            name = "block",
+            description = "収穫されたブロックです。",
+            type = Block.class
+    )
     public static final InputToken<BlockStructure> IN_HARVESTED_BLOCK = ofInput(
             "block",
             BlockStructure.class,
@@ -36,6 +69,12 @@ public class PlayerHarvestBlockAction extends AbstractPlayerAction
     ).validator(ScenarioType.ACTION_EXECUTE, block -> block.getLocation() != null,
             "block must have location in action execute mode"
     );
+    @InputDoc(
+            name = "items",
+            description = "収穫したアイテムです。",
+            type = ItemStack[].class,
+            availableFor = ActionMethod.EXPECT
+    )
     public static final InputToken<List<ItemStackStructure>> IN_ITEMS_HARVESTED = ofInput(
             "items",
             InputTypeToken.ofList(ItemStackStructure.class),

@@ -22,8 +22,8 @@ public class EntityItemStructureSerializeTest
             AEntityStructureSerializeTest.EMPTY,
             ItemStackStructureSerializeTest.EMPTY,
             null,
-            null,
-            null,
+            EntitySpecifierImpl.EMPTY,
+            EntitySpecifierImpl.EMPTY,
             null,
             null
     );
@@ -49,8 +49,8 @@ public class EntityItemStructureSerializeTest
         this.putAll(ItemStackStructureSerializeTest.FULFILLED_MAP);
 
         this.put(EntityItemStructure.KEY_PICKUP_DELAY, 1);
-        this.put(EntityItemStructure.KEY_OWNER, FULLFILLED_OWNER_UUID.toString());
-        this.put(EntityItemStructure.KEY_THROWER, FULLFILLED_THROWER_UUID.toString());
+        this.put(EntityItemStructure.KEY_OWNER, FULLFILLED_OWNER_UUID);
+        this.put(EntityItemStructure.KEY_THROWER, FULLFILLED_THROWER_UUID);
         this.put(EntityItemStructure.KEY_CAN_MOB_PICKUP, false);
         this.put(EntityItemStructure.KEY_WILL_AGE, false);
     }};

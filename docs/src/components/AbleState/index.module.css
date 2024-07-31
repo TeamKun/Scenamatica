@@ -1,0 +1,20 @@
+
+.ableLabel {
+  font-weight: bold;
+}
+
+[data-theme="dark"] .able.ableLabel {
+  color: #5fc05f;
+}
+
+[data-theme="light"] .able.ableLabel {
+  color: #008000;
+}
+
+[data-theme="dark"] .unable.ableLabel {
+  color: #be4646;
+}
+
+[data-theme="light"] .unable.ableLabel {
+  color: #a93535;
+}

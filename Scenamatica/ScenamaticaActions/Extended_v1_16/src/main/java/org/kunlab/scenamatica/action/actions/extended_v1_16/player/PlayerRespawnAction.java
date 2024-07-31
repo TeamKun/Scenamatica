@@ -6,55 +6,38 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.jetbrains.annotations.NotNull;
-import org.kunlab.scenamatica.action.actions.base.player.AbstractPlayerAction;
-import org.kunlab.scenamatica.annotations.action.ActionMeta;
-import org.kunlab.scenamatica.commons.utils.Utils;
+import org.kunlab.scenamatica.annotations.action.Action;
+import org.kunlab.scenamatica.bookkeeper.annotations.Admonition;
+import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
+import org.kunlab.scenamatica.bookkeeper.enums.AdmonitionType;
 import org.kunlab.scenamatica.enums.MinecraftVersion;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
-import org.kunlab.scenamatica.interfaces.action.types.Watchable;
-import org.kunlab.scenamatica.interfaces.structures.minecraft.misc.LocationStructure;
+import org.kunlab.scenamatica.interfaces.action.types.Expectable;
 
-import java.util.Arrays;
-import java.util.List;
-
-@ActionMeta(value = "player_respawn", supportsSince = MinecraftVersion.V1_16)
-public class PlayerRespawnAction extends AbstractPlayerAction
-        implements Executable, Watchable
+@Action(value = "player_respawn", supportsSince = MinecraftVersion.V1_16)
+public class PlayerRespawnAction extends org.kunlab.scenamatica.action.actions.base.player.PlayerRespawnAction
+        implements Executable, Expectable
 {
-    public static final InputToken<Boolean> IN_IS_BED = ofInput(
-            "isBed",
-            Boolean.class
-    );
+    @InputDoc(
+            name = "isAnchor",
+            description = "アンカーでスポーンするかどうかです。",
+            type = boolean.class,
+            admonitions = {
+                    @Admonition(
+                            type = AdmonitionType.DANGER,
+                            content = "`PlayerPostRespawnEvent` では常に `false` になります。"
+                    )
+            }
+    )
     public static final InputToken<Boolean> IN_IS_ANCHOR = ofInput(
             "isAnchor",
             Boolean.class
     );
-    public static final InputToken<LocationStructure> IN_LOCATION = ofInput(
-            "location",
-            LocationStructure.class,
-            ofDeserializer(LocationStructure.class)
-    );
-    public static final String KEY_OUT_IS_BED = "isBed";
     public static final String KEY_OUT_IS_ANCHOR = "isAnchor";
-    public static final String KEY_OUT_LOCATION = "location";
-
-    @Override
-    public void execute(@NotNull ActionContext ctxt)
-    {
-        Player player = selectTarget(ctxt);
-        if (!player.isDead())
-            throw new IllegalStateException("Player is not dead");
-
-        if (ctxt.hasInput(IN_LOCATION))
-            player.setBedSpawnLocation(Utils.assignWorldToLocation(ctxt.input(IN_LOCATION), ctxt.getEngine()), true);
-
-        super.makeOutputs(ctxt, player);
-        player.spigot().respawn();
-    }
 
     @Override
     public boolean checkFired(@NotNull ActionContext ctxt, @NotNull Event event)
@@ -89,35 +72,14 @@ public class PlayerRespawnAction extends AbstractPlayerAction
 
     private void makeOutputs(@NotNull ActionContext ctxt, @NotNull Player player, boolean isBed, boolean isAnchor, @NotNull Location location)
     {
-        ctxt.output(KEY_OUT_IS_BED, isBed);
         ctxt.output(KEY_OUT_IS_ANCHOR, isAnchor);
-        ctxt.output(KEY_OUT_LOCATION, location);
         super.makeOutputs(ctxt, player);
-    }
-
-    private void makeOutputs(@NotNull ActionContext ctxt, @NotNull Player player, @NotNull Location location)
-    {
-        ctxt.output(KEY_OUT_LOCATION, location);
-        super.makeOutputs(ctxt, player);
-    }
-
-    @Override
-    public List<Class<? extends Event>> getAttachingEvents()
-    {
-        return Arrays.asList(
-                PlayerRespawnEvent.class,
-                PlayerPostRespawnEvent.class
-        );
     }
 
     @Override
     public InputBoard getInputBoard(ScenarioType type)
     {
-        InputBoard board = super.getInputBoard(type)
-                .register(IN_LOCATION);
-        if (type != ScenarioType.ACTION_EXECUTE)
-            board.registerAll(IN_IS_BED, IN_IS_ANCHOR);
-
-        return board;
+        return super.getInputBoard(type)
+                .register(IN_IS_ANCHOR);
     }
 }

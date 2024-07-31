@@ -8,9 +8,13 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.kunlab.scenamatica.bookkeeper.annotations.Category;
+import org.kunlab.scenamatica.bookkeeper.annotations.TypeDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.TypeProperty;
 import org.kunlab.scenamatica.interfaces.scenariofile.Creatable;
 import org.kunlab.scenamatica.interfaces.scenariofile.Mapped;
 import org.kunlab.scenamatica.interfaces.scenariofile.Structure;
+import org.kunlab.scenamatica.interfaces.structures.docs.inventory.AttributeModifierDoc;
 
 import java.util.List;
 import java.util.Map;
@@ -18,6 +22,79 @@ import java.util.Map;
 /**
  * インベントリのアイテムを表すインタフェースです。
  */
+@TypeDoc(
+        name = "ItemStack",
+        description = "アイテムの情報を格納します。",
+        mappingOf = ItemStack.class,
+        properties = {
+                @TypeProperty(
+                        name = ItemStackStructure.KEY_TYPE,
+                        description = "アイテムの種類です。",
+                        type = Material.class
+                ),
+                @TypeProperty(
+                        name = ItemStackStructure.KEY_AMOUNT,
+                        description = "アイテムの個数です。",
+                        type = int.class
+                ),
+                @TypeProperty(
+                        name = ItemStackStructure.KEY_DISPLAY_NAME,
+                        description = "アイテムの表示名です。",
+                        type = String.class
+                ),
+                @TypeProperty(
+                        name = ItemStackStructure.KEY_LOCALIZED_NAME,
+                        description = "アイテムのローカライズされた名前です。",
+                        type = String.class
+                ),
+                @TypeProperty(
+                        name = ItemStackStructure.KEY_LORE,
+                        description = "アイテムの説明文です。",
+                        type = String[].class
+                ),
+                @TypeProperty(
+                        name = ItemStackStructure.KEY_CUSTOM_MODEL_DATA,
+                        description = "アイテムのカスタムモデルデータです。",
+                        type = int.class
+                ),
+                @TypeProperty(
+                        name = ItemStackStructure.KEY_ENCHANTMENTS,
+                        description = "アイテムに付与されているエンチャントです。",
+                        type = Map.class
+                ),
+                @TypeProperty(
+                        name = ItemStackStructure.KEY_ITEM_FLAGS,
+                        description = "アイテムに付与されているアイテムフラグです。",
+                        type = ItemFlag[].class
+                ),
+                @TypeProperty(
+                        name = ItemStackStructure.KEY_UNBREAKABLE,
+                        description = "アイテムが耐久無限かどうかです。",
+                        type = boolean.class
+                ),
+                @TypeProperty(
+                        name = ItemStackStructure.KEY_PLACEABLES,
+                        description = "アイテムが設置可能なブロックです。",
+                        type = Namespaced[].class
+                ),
+                @TypeProperty(
+                        name = ItemStackStructure.KEY_DESTROYABLES,
+                        description = "アイテムが破壊可能なブロックです。",
+                        type = Namespaced[].class
+                ),
+                @TypeProperty(
+                        name = ItemStackStructure.KEY_DAMAGE,
+                        description = "アイテムのダメージ値です。",
+                        type = int.class
+                ),
+                @TypeProperty(
+                        name = ItemStackStructure.KEY_ATTRIBUTE_MODIFIERS,
+                        description = "アイテムに付与されている属性修飾です。",
+                        type = AttributeModifierDoc[].class
+                ),
+        }
+)
+@Category(inherit = GenericInventoryStructure.class)
 public interface ItemStackStructure extends Structure, Mapped<ItemStack>, Creatable<ItemStack>
 {
     String KEY_TYPE = "type";

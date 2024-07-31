@@ -5,14 +5,37 @@ import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerEvent;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.action.AbstractAction;
+import org.kunlab.scenamatica.bookkeeper.annotations.Category;
+import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.OutputDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.OutputDocs;
+import org.kunlab.scenamatica.bookkeeper.enums.ActionMethod;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.structures.specifiers.PlayerSpecifier;
 
+@Category(
+        id = "players",
+        name = "プレイヤ",
+        description = "プレイヤに関するアクションを提供します。"
+)
+@OutputDocs({
+        @OutputDoc(
+                name = AbstractPlayerAction.KEY_OUT_TARGET,
+                description = "対象のプレイヤです。",
+                type = Player.class
+        )
+})
 public abstract class AbstractPlayerAction extends AbstractAction
 {
+    @InputDoc(
+            name = "target",
+            description = "対象のプレイヤです。",
+            type = PlayerSpecifier.class,
+            requiredOn = ActionMethod.EXECUTE
+    )
     public static final InputToken<PlayerSpecifier> IN_TARGET = ofInput(
             "target",
             PlayerSpecifier.class,

@@ -22,7 +22,7 @@ import org.kunlab.scenamatica.interfaces.action.ActionRunManager;
 import org.kunlab.scenamatica.interfaces.action.CompiledAction;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
-import org.kunlab.scenamatica.interfaces.action.types.Watchable;
+import org.kunlab.scenamatica.interfaces.action.types.Expectable;
 import org.kunlab.scenamatica.interfaces.scenario.ActionResultDeliverer;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioActionListener;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioExecutor;
@@ -466,8 +466,8 @@ public class ScenarioExecutorImpl implements ScenarioExecutor
         if (this.watchedActions.contains(scenario))
             return;
 
-        assert scenario.getAction().getExecutor() instanceof Watchable;
-        Watchable requireable = (Watchable) scenario.getAction().getExecutor();
+        assert scenario.getAction().getExecutor() instanceof Expectable;
+        Expectable requireable = (Expectable) scenario.getAction().getExecutor();
 
         this.watchedActions.add(scenario);
 

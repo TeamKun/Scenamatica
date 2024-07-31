@@ -153,7 +153,7 @@ public interface Actor
     /**
      * Bukkit の {@link Player} を取得します。
      *
-     * @return プレイヤー
+     * @return プレイヤ
      */
     @NotNull
     Player getPlayer();
@@ -161,7 +161,7 @@ public interface Actor
     /**
      * {@link UUID} を取得します。
      *
-     * @return プレイヤーのUUID
+     * @return プレイヤのUUID
      */
     @NotNull
     UUID getUUID();

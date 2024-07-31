@@ -51,9 +51,9 @@ public class PlayerInventoryStructureImpl extends GenericInventoryStructureImpl 
     }
 
     /**
-     * プレイヤーインベントリの情報をMapにシリアライズします。
+     * プレイヤインベントリの情報をMapにシリアライズします。
      *
-     * @param structure  プレイヤーインベントリの情報
+     * @param structure  プレイヤインベントリの情報
      * @param serializer ItemStack のシリアライザ
      * @return シリアライズされたMap
      */

@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * アクターにメッセージが送信されたときに呼び出されるイベントです。
- * システムのメッセージや, 他プレイヤーのメッセージなどが, クライアントが見るメッセージと同じように取得できます。
+ * システムのメッセージや, 他プレイヤのメッセージなどが, クライアントが見るメッセージと同じように取得できます。
  */
 public class ActorMessageReceiveEvent extends PlayerEvent
 {
@@ -56,7 +56,7 @@ public class ActorMessageReceiveEvent extends PlayerEvent
          */
         SYSTEM,
         /**
-         * プレイヤーからのメッセージです。
+         * プレイヤからのメッセージです。
          */
         PLAYER,
         /**

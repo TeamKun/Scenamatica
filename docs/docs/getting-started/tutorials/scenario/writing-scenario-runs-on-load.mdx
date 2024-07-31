@@ -12,10 +12,10 @@ import BelowDocument from "/src/components/BelowDocument";
 
 ## 概要 {#overview}
 
-このチュートリアルでは、[トリガ `on_load`][trigger-on-load]の使い方を学びます。
+このチュートリアルでは, [トリガ `on_load`][trigger-on-load]の使い方を学びます。
 
-これを完了すると、サーバの起動時やリロード時に自動で実行されるシナリオを作成できるようになります。  
-さらに、これを応用すると、CI/CD などで自動テストを行えます。
+これを完了すると, サーバの起動時やリロード時に自動で実行されるシナリオを作成できるようになります。  
+さらに, これを応用すると, CI/CD などで自動テストを行えます。
 
 <BelowDocument docId="getting-started/tutorials/integration/automation-with-github-actions"
                label="チュートリアル： GitHub Actions でテストを自動化する"
@@ -25,11 +25,11 @@ import BelowDocument from "/src/components/BelowDocument";
 
 ## ステップ１. 基本的なシナリオを作成する {#step1-create-basic-scenario}
 
-まずは、以下のような簡単なシナリオを作成します。
+まずは, 以下のような簡単なシナリオを作成します。
 
 :::tip
 
-このシナリオは、[チュートリアル：最初のシナリオを書いてみる](/docs/getting-started/tutorials/writing-my-first-scenario#step6-write-scenario)で作成したシナリオと同じものです。
+このシナリオは, [チュートリアル：最初のシナリオを書いてみる](/docs/getting-started/tutorials/writing-my-first-scenario#step6-write-scenario)で作成したシナリオと同じものです。
 
 <BelowDocument docId="getting-started/tutorials/writing-my-first-scenario"
                label="チュートリアル：最初のシナリオを書いてみる"
@@ -71,11 +71,11 @@ scenario:
 
 ## ステップ２. トリガに `on_load` を追加する {#step2-add-on-load-to-trigger}
 
-[トリガ `on_load`][trigger-on-load] は、そのプラグインが読み込まれたときに自動で発火するトリガです。  
-これには、プラグインのリロードも含まれます。
-また、このトリガは引数を取りません。
+[トリガ `on_load`][trigger-on-load] は, そのプラグインが読み込まれたときに自動で発火するトリガです。  
+これには, プラグインのリロードも含まれます。
+また, このトリガは引数を取りません。
 
-以下のようにして、`on_load` を追加します。
+以下のようにして, `on_load` を追加します。
 
 ```yaml title="test-hoge-success.yml" showLineNumbers
 
@@ -87,7 +87,7 @@ on:
 
 ## ステップ３. 動作を確認する {#step3-check-if-it-works}
 
-シナリオを作成したら、サーバを再起動するか、プラグインを再読込します。  
+シナリオを作成したら, サーバを再起動するか, プラグインを再読込します。  
 シナリオが実行されたらこのチュートリアルは完了です。お疲れ様でした。
 
 ```bash

@@ -7,27 +7,65 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.kunlab.scenamatica.annotations.action.ActionMeta;
+import org.kunlab.scenamatica.annotations.action.Action;
+import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.OutputDoc;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
-import org.kunlab.scenamatica.interfaces.action.types.Watchable;
+import org.kunlab.scenamatica.interfaces.action.types.Expectable;
 import org.kunlab.scenamatica.interfaces.structures.specifiers.PlayerSpecifier;
 
 import java.util.Collections;
 import java.util.List;
 
-@ActionMeta("inventory_close")
+@Action("inventory_close")
+@ActionDoc(
+        name = "インベントリを閉じる",
+        description = "プレイヤのインベントリを閉じます。",
+        events = {
+                InventoryCloseEvent.class
+        },
+
+        executable = "プレイヤのインベントリを閉じます。",
+        expectable = "プレイヤのインベントリが閉じられることを期待します。",
+        requireable = ActionDoc.UNALLOWED,
+
+        outputs = {
+                @OutputDoc(
+                        name = InventoryCloseAction.KEY_OUT_TARGET,
+                        description = "対象のアクタです。",
+                        type = Player.class
+                ),
+                @OutputDoc(
+                        name = InventoryCloseAction.KEY_OUT_REASON,
+                        description = "閉じる理由です。",
+                        type = InventoryCloseEvent.Reason.class
+                )
+        }
+)
 public class InventoryCloseAction extends AbstractInventoryAction
-        implements Executable, Watchable
+        implements Executable, Expectable
 {
+    @InputDoc(
+            name = "target",
+            description = "対象のアクタです。",
+            type = PlayerSpecifier.class
+    )
     public static final InputToken<PlayerSpecifier> IN_PLAYER = ofInput(
             "target",
             PlayerSpecifier.class,
             ofPlayer()
     );
+
+    @InputDoc(
+            name = "reason",
+            description = "閉じる理由です。",
+            type = InventoryCloseEvent.Reason.class
+    )
     public static final InputToken<InventoryCloseEvent.Reason> IN_REASON = ofInput(
             "reason",
             InventoryCloseEvent.Reason.class,

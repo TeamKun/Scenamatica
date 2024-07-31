@@ -17,10 +17,6 @@ import java.util.Map;
 @Value
 public class ContextStructureImpl implements ContextStructure
 {
-    public static final String KEY_ACTORS = "actors";
-    public static final String KEY_ENTITIES = "entities";
-    public static final String KEY_STAGE = "stage";
-
     @NotNull
     List<PlayerStructure> actors;
     @NotNull

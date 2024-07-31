@@ -86,12 +86,20 @@ public class InputBoardImpl implements InputBoard
     public InputBoard register(InputToken<?> token)
     {
         if (this.contains(token))
-            throw new IllegalArgumentException("Token already registered: " + token.getName());
+        {
+            this.unregister(token);
+            this.validated = false;
+        }
 
         this.values.add(new InputValueHolderImpl<>(token));
         this.hasUnresolved = true;
         this.validated = false;
         return this;
+    }
+
+    private void unregister(InputToken<?> token)
+    {
+        this.values.removeIf(value -> value.isEquals(token));
     }
 
     @Override

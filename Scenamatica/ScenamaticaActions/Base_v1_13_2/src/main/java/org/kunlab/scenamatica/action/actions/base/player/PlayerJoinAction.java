@@ -5,26 +5,53 @@ import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.kunlab.scenamatica.annotations.action.ActionMeta;
+import org.kunlab.scenamatica.annotations.action.Action;
+import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.OutputDoc;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
-import org.kunlab.scenamatica.interfaces.action.types.Watchable;
+import org.kunlab.scenamatica.interfaces.action.types.Expectable;
 import org.kunlab.scenamatica.interfaces.context.Actor;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-@ActionMeta("player_join")
+@Action("player_join")
+@ActionDoc(
+        name = "プレイヤの参加",
+        description = "プレイヤがサーバに参加します。",
+        events = {
+                PlayerJoinEvent.class
+        },
+
+        executable = "プレイヤがサーバに参加します。",
+        expectable = "プレイヤがサーバに参加することを期待します。",
+        requireable = "プレイヤがオンラインであることを要求します。",
+
+        outputs = {
+                @OutputDoc(
+                        name = PlayerJoinAction.KEY_OUT_MESSAGE,
+                        description = "プレイヤがサーバに参加したときに表示するメッセージです。",
+                        type = String.class
+                )
+        }
+)
 public class PlayerJoinAction extends AbstractPlayerAction
-        implements Executable, Watchable, Requireable
+        implements Executable, Expectable, Requireable
 {
     // OfflinePlayer を扱うため, 通常の PlayerAction とは違う実装をする。
 
+    @InputDoc(
+            name = "message",
+            description = "プレイヤがサーバに参加したときに表示するメッセージを指定します。",
+            type = String.class
+    )
     public static final InputToken<String> IN_MESSAGE = ofInput(
             "message",
             String.class

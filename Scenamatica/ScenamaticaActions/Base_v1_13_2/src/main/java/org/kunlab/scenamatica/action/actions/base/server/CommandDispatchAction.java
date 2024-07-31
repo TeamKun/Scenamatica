@@ -7,27 +7,80 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.server.ServerCommandEvent;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.action.utils.PlayerLikeCommandSenders;
-import org.kunlab.scenamatica.annotations.action.ActionMeta;
+import org.kunlab.scenamatica.annotations.action.Action;
+import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.Admonition;
+import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.OutputDoc;
+import org.kunlab.scenamatica.bookkeeper.enums.AdmonitionType;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
-import org.kunlab.scenamatica.interfaces.action.types.Watchable;
+import org.kunlab.scenamatica.interfaces.action.types.Expectable;
 import org.kunlab.scenamatica.interfaces.structures.specifiers.PlayerSpecifier;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
 
-@ActionMeta("command_dispatch")
+@Action("command_dispatch")
+@ActionDoc(
+        name = "コマンドの実行",
+        description = "コマンドを実行します。",
+        events = {
+                ServerCommandEvent.class,
+                PlayerCommandPreprocessEvent.class
+        },
+
+        executable = "コマンドを実行します。",
+        expectable = "コマンドが実行されることを期待します。",
+        requireable = ActionDoc.UNALLOWED,
+
+        outputs = {
+                @OutputDoc(
+                        name = CommandDispatchAction.KEY_OUT_COMMAND,
+                        description = "コマンドです。",
+                        type = String.class
+                ),
+                @OutputDoc(
+                        name = CommandDispatchAction.KEY_OUT_SENDER,
+                        description = "送信者です。",
+                        type = PlayerSpecifier.class
+                )
+        }
+)
 public class CommandDispatchAction extends AbstractServerAction
-        implements Executable, Watchable
+        implements Executable, Expectable
 {
+    @InputDoc(
+            name = "command",
+            description = "実行するコマンドです。",
+            type = String.class,
+            admonitions = {
+                    @Admonition(
+                           type = AdmonitionType.TIP,
+                            content = "`/` 接頭辞の有無はどちらでもよく, それほど重要ではありません。"
+                    )
+            }
+    )
     public static final InputToken<String> IN_COMMAND = ofInput(
             "command",
             String.class
     );
+    @InputDoc(
+            name = "sender",
+            description = "送信者です。",
+            type = PlayerSpecifier.class,
+            admonitions = {
+                @Admonition(
+                        type = AdmonitionType.INFORMATION,
+                        title = "コンソールを指定しますか？",
+                        content = "コンソールを実行者として指定する場合は, プレイヤ指定子の代わりに `<CONSOLE>` を指定します。"
+                )
+        }
+    )
     public static final InputToken<PlayerSpecifier> IN_SENDER = ofInput(
             "sender",
             PlayerSpecifier.class,

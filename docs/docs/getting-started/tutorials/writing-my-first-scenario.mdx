@@ -12,11 +12,11 @@ import BelowDocument from "/src/components/BelowDocument";
 
 ## 注意事項 {#writing-scenario}
 
-この項目では、**基本的な**シナリオファイルを書く方法について説明します。  
-ここにない高度な機能や、その他の完全な構文については[こちら](/docs/use/scenario/scenario-file)を参照してください。
+この項目では, **基本的な**シナリオファイルを書く方法について説明します。  
+ここにない高度な機能や, その他の完全な構文については[こちら](/docs/use/scenario/scenario-file)を参照してください。
 
 ## ステップ０. シナリオの概念について理解する {#step0-understanding-scenario-concept}
-Scenamatica は、シナリオと呼ばれるファイルを使用して、プラグインの動作をテストします。
+Scenamatica は, シナリオと呼ばれるファイルを使用して, プラグインの動作をテストします。
 
 <BelowDocument docId={"use/scenario/README"}
                label={"シナリオ"}
@@ -25,15 +25,15 @@ Scenamatica は、シナリオと呼ばれるファイルを使用して、プ�
 
 ## ステップ１. ファイルを作成する {#step1-create-file}
 
-まずは、[シナリオファイル](/docs/use/scenario/scenario-file)を作成します。ファイルの拡張子は `.yml` もしくは `.yaml` です。  
-場所に関しては、プラグインの最終的な `.jar` ファイルに配置されるのであればどこでも構いません。
+まずは, [シナリオファイル](/docs/use/scenario/scenario-file)を作成します。ファイルの拡張子は `.yml` もしくは `.yaml` です。  
+場所に関しては, プラグインの最終的な `.jar` ファイルに配置されるのであればどこでも構いません。
 
-この例では、 `test-hoge-success.yml` というファイル名を使用します。
+この例では,  `test-hoge-success.yml` というファイル名を使用します。
 
 ## ステップ２. Scenamatica のバージョンを記述する {#step2-write-scenamatica-version}
 
-シナリオファイルの先頭には、対応している Scenamatica のバージョン\([`scenamatica`](/docs/use/scenario/types#apex-scenamatica)) を記述します。  
-これは、プラグインが対応している Scenamatica がサーバのものよりも古い場合に、存在しない機能を参照しないようにするためです。
+シナリオファイルの先頭には, 対応している Scenamatica のバージョン\([`scenamatica`](/references/types/#apex-scenamatica)) を記述します。  
+これは, プラグインが対応している Scenamatica がサーバのものよりも古い場合に, 存在しない機能を参照しないようにするためです。
 
 プラグインのデバッグ用のサーバに配置されている Scenamatica と同じバージョンを記述してください。
 
@@ -44,10 +44,10 @@ scenamatica: "0.0.1"
 
 ## ステップ３. 名前ち説明を記述する {#step3-write-name-and-description}
 
-シナリオファイルの次に、シナリオの名前と説明を記述します。
+シナリオファイルの次に, シナリオの名前と説明を記述します。
 
-名前\([`name`](/docs/use/scenario/types#apex-name)) は、シナリオの識別子として使用されます。プラグインの中で一意な命名をしてください。  
-説明\([`description`](/docs/use/scenario/types#scenario-file)) は、人間が読みやすいような説明文を記述します。
+名前\([`name`](/references/types/#apex-name)) は, シナリオの識別子として使用されます。プラグインの中で一意な命名をしてください。  
+説明\([`description`](/references/types/#scenario-file)) は, 人間が読みやすいような説明文を記述します。
 
 ```yaml title="test-hoge-success.yml" showLineNumbers
 scenamatica: "0.0.1"
@@ -59,9 +59,9 @@ description: "hoge 機能の正常系テスト"
 
 ## ステップ４. コンテキストを記述する {#step4-write-context}
 
-[コンテキスト](/docs/use/scenario/elements#context)には、シナリオの実行に必要な環境を記述します。  
-今回のテストでは、`/hoge` コマンドの実行者として[アクタ](/docs/use/scenario/elements#actor) `Actor1` がいることを想定しているので、以下のように記述します。  
-また、ネザーで実行するようにしてみましょう。
+[コンテキスト](/docs/use/scenario/elements#context)には, シナリオの実行に必要な環境を記述します。  
+今回のテストでは, `/hoge` コマンドの実行者として[アクタ](/docs/use/scenario/elements#actor) `Actor1` がいることを想定しているので, 以下のように記述します。  
+また, ネザーで実行するようにしてみましょう。
 
 ```yaml title="test-hoge-success.yml" showLineNumbers
 scenamatica: "0.0.1"
@@ -79,10 +79,10 @@ context:
 
 ## ステップ５. トリガを記述する {#step5-write-triggers}
 
-シナリオが実行されるためには、発火のための[トリガ](/docs/use/scenario/elements#trigger)が必要です。  
-トリガは、 [`on`](/docs/use/scenario/types#apex-on) というキーでオブジェクトのリストで記述します。
+シナリオが実行されるためには, 発火のための[トリガ](/docs/use/scenario/trigger)が必要です。  
+トリガは,  [`on`](/references/types/#apex-on) というキーでオブジェクトのリストで記述します。
 
-今回は手動実行のみを想定しているので、 手動実行(`manual_dispatch`) というトリガを記述します。
+今回は手動実行のみを想定しているので,  手動実行(`manual_dispatch`) というトリガを記述します。
 
 ```yaml title="test-hoge-success.yml" showLineNumbers
 scenamatica: "0.0.1"
@@ -103,7 +103,7 @@ on:
 
 :::tip
 
-今回は上記のトリガのみ実装しましたが、ほかにもいろいろなトリガがあります。
+今回は上記のトリガのみ実装しましたが, ほかにもいろいろなトリガがあります。
 
 詳しくは[こちら](/docs/use/scenario/trigger)を参照してください。
 
@@ -111,15 +111,15 @@ on:
 
 ## ステップ６. シナリオを記述する {#step6-write-scenario}
 
-プラグインの入力と出力をおおまかに抽出し、シナリオ化して記述します。
+プラグインの入力と出力をおおまかに抽出し, シナリオ化して記述します。
 
-例として、今回のプラグインの機能を箇条書きにすると、以下のようになります。
+例として, 今回のプラグインの機能を箇条書きにすると, 以下のようになります。
 
 + コマンド `/hoge` で機能が開始する。
 + `fuga` というメッセージが実行者に表示される。
 + 実行者 が死ぬ。
 
-これらをシナリオ化すると、以下のようになります。
+これらをシナリオ化すると, 以下のようになります。
 
 ```yaml title="test-hoge-success.yml" showLineNumbers
 scenamatica: "0.0.1"
@@ -159,16 +159,16 @@ scenario:
 
 ## ステップ７. シナリオを実行する {#step7-run-scenario}
 
-シナリオが記述できたら、実行してみましょう。
+シナリオが記述できたら, 実行してみましょう。
 
-今回の例では、手動実行のトリガを使用するので、 <kbd>[/scenamatica run \<プラグイン名> test-hoge-success](/docs/use/commands/scenario#start)</kbd> を実行します。
+今回の例では, 手動実行のトリガを使用するので,  <kbd>[/scenamatica run \<プラグイン名> test-hoge-success](/docs/use/commands/scenario#start)</kbd> を実行します。
 
 :::warning
 
-シナリオを手動実行に対応させるためには、 [`triggers`](/docs/use/scenario/types#apex-triggers)
+シナリオを手動実行に対応させるためには,  [`on`](/references/types/#apex-on)
 に [`manual_dispatch`](/docs/use/scenario/trigger#triggers-manual-dispatch) が含まれている必要があります。
 
-その他のトリガに関しては、[こちら](/docs/use/scenario/trigger)を参照してください。
+その他のトリガに関しては, [こちら](/docs/use/scenario/trigger)を参照してください。
 :::
 
 ## ステップ８. 糸冬 了 {#step8-congratulations}

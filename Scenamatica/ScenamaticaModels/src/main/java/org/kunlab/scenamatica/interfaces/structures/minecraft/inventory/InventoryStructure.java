@@ -1,6 +1,7 @@
 package org.kunlab.scenamatica.interfaces.structures.minecraft.inventory;
 
 import org.bukkit.inventory.Inventory;
+import org.kunlab.scenamatica.bookkeeper.annotations.TypeDoc;
 import org.kunlab.scenamatica.interfaces.scenariofile.Creatable;
 import org.kunlab.scenamatica.interfaces.scenariofile.Mapped;
 

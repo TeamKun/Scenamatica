@@ -9,13 +9,17 @@ import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
-import org.kunlab.scenamatica.annotations.action.ActionMeta;
+import org.kunlab.scenamatica.annotations.action.Action;
+import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.OutputDoc;
+import org.kunlab.scenamatica.bookkeeper.enums.ActionMethod;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
-import org.kunlab.scenamatica.interfaces.action.types.Watchable;
+import org.kunlab.scenamatica.interfaces.action.types.Expectable;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.entities.EntityItemStructure;
 import org.kunlab.scenamatica.interfaces.structures.specifiers.EntitySpecifier;
 import org.kunlab.scenamatica.nms.NMSProvider;
@@ -25,19 +29,68 @@ import org.kunlab.scenamatica.nms.types.entity.NMSEntityLiving;
 import java.util.Collections;
 import java.util.List;
 
-@ActionMeta("entity_pickup_item")
+@Action("entity_pickup_item")
+@ActionDoc(
+        name = "エンティティによるアイテムの拾い上げ",
+        description = "エンティティがアイテムを拾い上げます。\n" +
+                "\n" +
+                "**アクション実行シナリオでの使用**\n" +
+                "アイテムを拾うエンティティは、[LivingEntity](https://jd.papermc.io/paper/1.16/org/bukkit/entity/LivingEntity.html) かつ, \n" +
+                "アイテムを拾える状態（[LivingEntity#canPickupItems()](https://jd.papermc.io/paper/1.16/org/bukkit/entity/LivingEntity.html#canPickupItems()) が `true`）である必要があります。\n" +
+                "\n" +
+                "さらに, アイテムは以下の状態である必要があります。\n" +
+                "+ 拾うエンティティがモブの場合は, [Item#canMobPickup()](https://jd.papermc.io/paper/1.16/org/bukkit/entity/Item.html#canMobPickup()) が `true` であること。\n" +
+                "+ 拾うエンティティがプレイヤの場合は, [Item#canPlayerPickup()](https://jd.papermc.io/paper/1.16/org/bukkit/entity/Item.html#canPlayerPickup()) が `true` であること。\n" +
+                "\n" +
+                "プレイヤがアイテムを拾った場合, そのアイテムはプレイヤのインベントリに移動されます。",
+        events = {
+                EntityPickupItemEvent.class
+        },
+
+        executable = "エンティティがアイテムを拾い上げます。",
+        expectable = "エンティティがアイテムを拾い上げることを期待します。",
+        requireable = ActionDoc.UNALLOWED,
+
+        outputs = {
+                @OutputDoc(
+                        name = EntityPickupItemAction.OUT_KEY_ITEM,
+                        description = "拾い上げられたアイテムです。",
+                        type = Item.class
+                ),
+                @OutputDoc(
+                        name = EntityPickupItemAction.OUT_KEY_REMAINING,
+                        description = "残りのアイテムの量です。",
+                        type = int.class
+                )
+        }
+)
 public class EntityPickupItemAction extends AbstractGeneralEntityAction
-        implements Executable, Watchable
+        implements Executable, Expectable
 {
+    @InputDoc(
+            name = "remaining",
+            description = "残りのアイテムの量です。",
+            type = int.class,
+            availableFor = ActionMethod.EXPECT
+    )
     public static final InputToken<Integer> IN_REMAINING = ofInput(
             "remaining",
             Integer.class
     );
+
+    @InputDoc(
+            name = "item",
+            description = "拾い上げられるアイテムです。\n" +
+                    "構造体を指定した場合は, 事前にそのアイテムをワールドに出現させます。",
+            type = Item.class,
+            requiredOn = {ActionMethod.EXECUTE}
+    )
     public static final InputToken<EntitySpecifier<Item>> IN_ITEM = ofInput(
             "item",
             Item.class,
             EntityItemStructure.class
     );
+
     public static final String OUT_KEY_ITEM = "item";
     public static final String OUT_KEY_REMAINING = "remaining";
 

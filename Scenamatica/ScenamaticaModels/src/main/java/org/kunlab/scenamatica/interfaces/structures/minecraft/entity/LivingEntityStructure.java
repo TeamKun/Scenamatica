@@ -1,14 +1,126 @@
 package org.kunlab.scenamatica.interfaces.structures.minecraft.entity;
 
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.potion.PotionEffect;
 import org.jetbrains.annotations.NotNull;
+import org.kunlab.scenamatica.bookkeeper.annotations.TypeDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.TypeProperty;
+import org.kunlab.scenamatica.interfaces.structures.docs.entity.PotionEffectDoc;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.inventory.ItemStackStructure;
 import org.kunlab.scenamatica.interfaces.structures.specifiers.EntitySpecifier;
 import org.kunlab.scenamatica.interfaces.structures.specifiers.PlayerSpecifier;
 
 import java.util.List;
 
+@TypeDoc(
+        name = "LivingEntity",
+        description = "生物エンティティの情報を格納します。",
+        mappingOf = LivingEntity.class,
+
+        properties ={
+                @TypeProperty(
+                        name = LivingEntityStructure.KEY_REMAINING_AIR,
+                        description = "残りの空気です。",
+                        type = int.class
+                ),
+                @TypeProperty(
+                        name = LivingEntityStructure.KEY_MAX_AIR,
+                        description = "最大空気です。",
+                        type = int.class
+                ),
+                @TypeProperty(
+                        name = LivingEntityStructure.KEY_ARROW_COOLDOWN,
+                        description = "矢のクールダウンです。",
+                        type = int.class
+                ),
+                @TypeProperty(
+                        name = LivingEntityStructure.KEY_ARROWS_IN_BODY,
+                        description = "体に刺さっている矢の数です。",
+                        type = int.class
+                ),
+                @TypeProperty(
+                        name = LivingEntityStructure.KEY_MAX_NO_DAMAGE_TICKS,
+                        description = "最大無敵時間です。",
+                        type = int.class
+                ),
+                @TypeProperty(
+                        name = LivingEntityStructure.KEY_LAST_DAMAGE,
+                        description = "最後に受けたダメージです。",
+                        type = double.class
+                ),
+                @TypeProperty(
+                        name = LivingEntityStructure.KEY_NO_DAMAGE_TICKS,
+                        description = "無敵時間です。",
+                        type = int.class
+                ),
+                @TypeProperty(
+                        name = LivingEntityStructure.KEY_KILLER,
+                        description = "プレイヤを殺害したプレイヤです。",
+                        type = PlayerSpecifier.class
+                ),
+                @TypeProperty(
+                        name = LivingEntityStructure.KEY_POTION_EFFECTS,
+                        description = "付与されているポーションエフェクトです。",
+                        type = PotionEffectDoc.class
+                ),
+                @TypeProperty(
+                        name = LivingEntityStructure.KEY_REMOVE_WHEN_FAR_AWAY,
+                        description = "遠く離れたときに削除するかどうかです。",
+                        type = boolean.class
+                ),
+                @TypeProperty(
+                        name = LivingEntityStructure.KEY_CAN_PICKUP_ITEMS,
+                        description = "アイテムを拾えるかどうかです。",
+                        type = boolean.class
+                ),
+                @TypeProperty(
+                        name = LivingEntityStructure.KEY_LEASHED,
+                        description = "リードで繋がれているかどうかです。",
+                        type = boolean.class
+                ),
+                @TypeProperty(
+                        name = LivingEntityStructure.KEY_LEASH_HOLDER,
+                        description = "リードを持っているエンティティです。",
+                        type = EntitySpecifier.class
+                ),
+                @TypeProperty(
+                        name = LivingEntityStructure.KEY_GLIDING,
+                        description = "滑空しているかどうかです。",
+                        type = boolean.class
+                ),
+                @TypeProperty(
+                        name = LivingEntityStructure.KEY_SWIMMING,
+                        description = "泳いでいるかどうかです。",
+                        type = boolean.class
+                ),
+                @TypeProperty(
+                        name = LivingEntityStructure.KEY_RIPTIDING,
+                        description = "トライデントを投げているかどうかです。",
+                        type = boolean.class
+                ),
+                @TypeProperty(
+                        name = LivingEntityStructure.KEY_SLEEPING,
+                        description = "寝ているかどうかです。",
+                        type = boolean.class
+                ),
+                @TypeProperty(
+                        name = LivingEntityStructure.KEY_AI,
+                        description = "AI を持っているかどうかです。",
+                        type = boolean.class
+                ),
+                @TypeProperty(
+                        name = LivingEntityStructure.KEY_COLLIDABLE,
+                        description = "他のエンティティと干渉するかどうかです。",
+                        type = boolean.class
+                ),
+                @TypeProperty(
+                        name = LivingEntityStructure.KEY_INVISIBLE,
+                        description = "透明かどうかです。",
+                        type = boolean.class
+                )
+        }
+)
 public interface LivingEntityStructure extends EntityStructure
 {
     String KEY_REMAINING_AIR = "remainAir";
@@ -98,9 +210,9 @@ public interface LivingEntityStructure extends EntityStructure
     Integer getNoDamageTicks();
 
     /**
-     * このエンティティを殺したプレイヤーを取得します。
+     * このエンティティを殺したプレイヤを取得します。
      *
-     * @return 殺したプレイヤー
+     * @return 殺したプレイヤ
      */
     @NotNull
     PlayerSpecifier getKiller();

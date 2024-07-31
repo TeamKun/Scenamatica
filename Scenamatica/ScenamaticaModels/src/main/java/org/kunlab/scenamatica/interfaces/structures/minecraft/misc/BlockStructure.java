@@ -6,6 +6,9 @@ import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.kunlab.scenamatica.bookkeeper.annotations.Category;
+import org.kunlab.scenamatica.bookkeeper.annotations.TypeDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.TypeProperty;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.Creatable;
 import org.kunlab.scenamatica.interfaces.scenariofile.Mapped;
@@ -16,6 +19,51 @@ import java.util.Map;
 /**
  * ブロックの情報を格納するクラスです。
  */
+@TypeDoc(
+        name = "Block",
+        description = "ブロックの情報を格納します。",
+        mappingOf = Block.class,
+        properties = {
+                @TypeProperty(
+                        name = BlockStructure.KEY_BLOCK_TYPE,
+                        description = "ブロックの種類です。",
+                        type = Material.class
+                ),
+                @TypeProperty(
+                        name = BlockStructure.KEY_BLOCK_LOCATION,
+                        description = "ブロックの場所です。",
+                        type = LocationStructure.class
+                ),
+                @TypeProperty(
+                        name = BlockStructure.KEY_METADATA,
+                        description = "ブロックのメタデータです。",
+                        type = Map.class
+                ),
+                @TypeProperty(
+                        name = BlockStructure.KEY_LIGHT_LEVEL,
+                        description = "ブロックの明るさです。",
+                        type = Integer.class,
+                        min = 0,
+                        max = 15
+                ),
+                @TypeProperty(
+                        name = BlockStructure.KEY_BIOME,
+                        description = "ブロックのバイオームです。",
+                        type = Biome.class
+                ),
+                @TypeProperty(
+                        name = BlockStructure.KEY_BLOCK_DATA,
+                        description = "ブロックデータです。",
+                        type = Map.class
+                ),
+                @TypeProperty(
+                        name = BlockStructure.KEY_BLOCK_STATE,
+                        description = "ブロックの状態です。",
+                        type = Byte.class
+                )
+        }
+)
+@Category(inherit = MiscCategoryInfo.class)
 public interface BlockStructure extends Structure, Mapped<Block>, Creatable<Block>, ProjectileSourceStructure
 {
     String KEY_BLOCK_TYPE = "type";

@@ -1,12 +1,12 @@
 # チュートリアル
 
-Scenamatica を使用するための、実践的なチュートリアルを紹介しています。
+Scenamatica を使用するための, 実践的なチュートリアルを紹介しています。
 
 ---
 
 ## 概要 {#overview}
 
-各機能の詳細的なドキュメントに加えて、
+各機能の詳細的なドキュメントに加えて,
 このページではその機能を使用するためのチュートリアルを紹介しています。
 
 ## チュートリアル一覧 {#tutorials}
@@ -14,7 +14,9 @@ Scenamatica を使用するための、実践的なチュートリアルを紹�
 ### シナリオ系 {#scenario}
 
 #### [チュートリアル：最初のシナリオを書いてみる](/docs/getting-started/tutorials/writing-my-first-scenario) {#writing-first-scenario}
+
 #### [チュートリアル：読み込み時に実行されるシナリオを書いてみる](/docs/getting-started/tutorials/scenario/writing-scenario-runs-on-load) {#writing-scenario-for-load}
+
 #### [チュートリアル：アクションの発火時に実行されるシナリオを書いてみる](/docs/getting-started/tutorials/scenario/writing-scenario-runs-on-action-fires) {#writing-scenario-for-action}
 
 ### 連携・CI/CD系 {#integration}

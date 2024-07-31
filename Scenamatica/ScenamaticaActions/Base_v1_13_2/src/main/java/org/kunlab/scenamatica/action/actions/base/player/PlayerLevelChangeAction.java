@@ -5,27 +5,66 @@ import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerLevelChangeEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.kunlab.scenamatica.annotations.action.ActionMeta;
+import org.kunlab.scenamatica.annotations.action.Action;
+import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.OutputDoc;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
-import org.kunlab.scenamatica.interfaces.action.types.Watchable;
+import org.kunlab.scenamatica.interfaces.action.types.Expectable;
 
 import java.util.Collections;
 import java.util.List;
 
-@ActionMeta("player_level_change")
+@Action("player_level_change")
+@ActionDoc(
+        name = "プレイヤのレベル変更",
+        description = "プレイヤのレベルを変更します。",
+        events = {
+                PlayerLevelChangeEvent.class
+        },
+
+        executable = "プレイヤのレベルを変更します。",
+        expectable = "プレイヤのレベルが変更されることを期待します。",
+        requireable = "プレイヤのレベルが指定された値になることを要求します。",
+
+        outputs = {
+                @OutputDoc(
+                        name = PlayerLevelChangeAction.KEY_OUT_OLD_LEVEL,
+                        description = "変更前のレベルです。",
+                        type = int.class
+                ),
+                @OutputDoc(
+                        name = PlayerLevelChangeAction.KEY_OUT_NEW_LEVEL,
+                        description = "変更後のレベルです。",
+                        type = int.class
+                )
+        }
+)
 public class PlayerLevelChangeAction extends AbstractPlayerAction
-        implements Watchable, Executable,
+        implements Expectable, Executable,
         Requireable
 {
+    @InputDoc(
+            name = "oldLevel",
+            description = "変更前のレベルを指定します。",
+            type = int.class,
+            min = 0
+    )
     public static final InputToken<Integer> IN_OLD_LEVEL = ofInput(
             "oldLevel",
             Integer.class
     );
+    @InputDoc(
+            name = "level",
+            description = "変更後のレベルを指定します。",
+            type = int.class,
+            min = 0
+    )
     public static final InputToken<Integer> IN_NEW_LEVEL = ofInput(
             "level",
             Integer.class

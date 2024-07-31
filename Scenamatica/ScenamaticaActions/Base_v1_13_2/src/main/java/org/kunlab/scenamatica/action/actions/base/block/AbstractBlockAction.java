@@ -8,6 +8,11 @@ import org.bukkit.event.block.BlockEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.AbstractAction;
+import org.kunlab.scenamatica.bookkeeper.annotations.Category;
+import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.OutputDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.OutputDocs;
+import org.kunlab.scenamatica.bookkeeper.enums.ActionMethod;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.commons.utils.Utils;
 import org.kunlab.scenamatica.enums.ScenarioType;
@@ -18,9 +23,32 @@ import org.kunlab.scenamatica.interfaces.structures.minecraft.misc.BlockStructur
 
 import java.util.Map;
 
+@Category(
+        id = "blocks",
+        name = "ブロック",
+        description = "ブロックに関するアクションを提供します。"
+)
+@OutputDocs({
+        @OutputDoc(
+                name = AbstractBlockAction.OUT_KEY_BLOCK,
+                description = "対象となったブロックです。",
+                type = Block.class
+        ),
+        @OutputDoc(
+                name = AbstractBlockAction.OUT_KEY_ACTOR,
+                description = "結果をもたらしたアクタです。",
+                type = Player.class
+        )
+})
 public abstract class AbstractBlockAction
         extends AbstractAction
 {
+    @InputDoc(
+            name = "block",
+            description = "対象のブロックのデータを指定します。",
+            type = BlockStructure.class,
+            requiredOn = ActionMethod.EXECUTE
+    )
     public static final InputToken<BlockStructure> IN_BLOCK = ofInput("block", BlockStructure.class,
             ofTraverser(Map.class, (ser, map) -> ser.deserialize(
                     MapUtils.checkAndCastMap(map),

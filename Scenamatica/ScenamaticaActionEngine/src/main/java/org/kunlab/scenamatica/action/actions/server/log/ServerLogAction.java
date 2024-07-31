@@ -6,27 +6,60 @@ import org.apache.logging.log4j.Logger;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.action.AbstractAction;
-import org.kunlab.scenamatica.annotations.action.ActionMeta;
+import org.kunlab.scenamatica.annotations.action.Action;
+import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.Admonition;
+import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
+import org.kunlab.scenamatica.bookkeeper.enums.AdmonitionType;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.events.actions.server.ServerLogEvent;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
-import org.kunlab.scenamatica.interfaces.action.types.Watchable;
+import org.kunlab.scenamatica.interfaces.action.types.Expectable;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-@ActionMeta("server_log")
+@Action("server_log")
+@ActionDoc(
+        name = "サーバーログ",
+        description = "サーバーログにメッセージを出力します。",
+        events = {
+                ServerLogEvent.class
+        },
+
+        executable = "サーバーログにメッセージを出力します。",
+        expectable = "サーバーログにメッセージが出力されることを期待します。",
+        requireable = ActionDoc.UNALLOWED
+
+        // TODO: Impl outputs
+)
 public class ServerLogAction extends AbstractAction
-        implements Executable, Watchable
+        implements Executable, Expectable
 {
+    @InputDoc(
+            name = "source",
+            description = "出力先のロガー名です。",
+            type = String.class
+    )
     public static final InputToken<String> IN_SOURCE = ofInput(
             "source",
             String.class
     );
+    @InputDoc(
+            name = "level",
+            description = "ログレベルです。",
+            type = EnumLogLevel.class,
+            admonitions = {
+                    @Admonition(
+                            type = AdmonitionType.DANGER,
+                            content = "`OFF` および `ALL` は指定できません。"
+                    )
+            }
+    )
     public static final InputToken<Level> IN_LEVEL = ofInput(
             "level",
             Level.class,
@@ -35,6 +68,12 @@ public class ServerLogAction extends AbstractAction
                 return Level.getLevel(levelName);
             }))
     ).validator(Objects::nonNull, "Level is not found.");
+
+    @InputDoc(
+            name = "message",
+            description = "出力するメッセージです。",
+            type = String.class
+    )
     public static final InputToken<String> IN_MESSAGE = ofInput(
             "message",
             String.class

@@ -5,18 +5,30 @@ import org.bukkit.event.Event;
 import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
-import org.kunlab.scenamatica.annotations.action.ActionMeta;
+import org.kunlab.scenamatica.annotations.action.Action;
+import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
-import org.kunlab.scenamatica.interfaces.action.types.Watchable;
+import org.kunlab.scenamatica.interfaces.action.types.Expectable;
 
 import java.util.Collections;
 import java.util.List;
 
-@ActionMeta("server_plugin_disable")
+@Action("server_plugin_disable")
+@ActionDoc(
+        name = "プラグインの無効化",
+        description = "プラグインを無効化します。",
+        events = {
+                PluginDisableEvent.class
+        },
+
+        executable = "プラグインを無効化します。",
+        expectable = "プラグインが無効化されることを期待します。",
+        requireable = "プラグインが無効化されていることを要求します。"
+)
 public class PluginDisableAction extends AbstractPluginAction
-        implements Executable, Watchable, Requireable
+        implements Executable, Expectable, Requireable
 {
 
     @Override

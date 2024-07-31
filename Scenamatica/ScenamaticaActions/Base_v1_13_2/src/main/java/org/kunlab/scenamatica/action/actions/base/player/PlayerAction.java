@@ -2,7 +2,9 @@ package org.kunlab.scenamatica.action.actions.base.player;
 
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-import org.kunlab.scenamatica.annotations.action.ActionMeta;
+import org.kunlab.scenamatica.annotations.action.Action;
+import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
@@ -11,10 +13,23 @@ import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.PlayerStructure;
 
-@ActionMeta("player")
+@Action("player")
+@ActionDoc(
+        name = "プレイヤ",
+        description = "プレイヤの状態や振る舞い、属性を変更します。",
+
+        executable = "プレイヤの状態や属性を変更します。",
+        requireable = ActionDoc.UNALLOWED,
+        expectable = "プレイヤの状態や属性が指定されたものと一致するかどうかを確認します。"
+)
 public class PlayerAction extends AbstractPlayerAction
         implements Executable, Requireable
 {
+    @InputDoc(
+            name = "data",
+            description = "変更するプレイヤのデータを指定します。",
+            type = PlayerStructure.class
+    )
     public static final InputToken<PlayerStructure> IN_PLAYER = ofInput(
             "data",
             PlayerStructure.class,

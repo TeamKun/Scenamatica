@@ -9,13 +9,13 @@ type DeprecationProps = {
   removeMode?: boolean
 }
 
-const Deprecation: React.FC<DeprecationProps> = ({ message, link, version, removeMode }) => {
+const Deprecation: React.FC<DeprecationProps> = ({message, link, version, removeMode}) => {
   const versionString = version ?? "次のリリース"
   const messageBody = message
     ? message
     : removeMode
-    ? `この機能は KPM ${versionString} で**<strong>削除</strong>**されます。`
-    : `この機能は KPM ${versionString} から非推奨になります。`
+      ? `この機能は Scenamatica ${versionString} で**<strong>削除</strong>**されます。`
+      : `この機能は Scenamatica ${versionString} から非推奨になります。`
   const linkString = link ? `詳細は <a href="${link}">${link}</a> を参照してください。` : ""
 
   const admonitionType = removeMode ? "caution" : "note"
@@ -31,8 +31,8 @@ const Deprecation: React.FC<DeprecationProps> = ({ message, link, version, remov
         </span>
       }
     >
-      <p dangerouslySetInnerHTML={{ __html: messageBody }}></p>
-      {linkString && <p dangerouslySetInnerHTML={{ __html: linkString }} />}
+      <p dangerouslySetInnerHTML={{__html: messageBody}}></p>
+      {linkString && <p dangerouslySetInnerHTML={{__html: linkString}}/>}
     </Admonition>
   )
 }
