@@ -33,7 +33,7 @@ jobs:
       nms-cache-name: scenamatica-nms
       artifact-name: scenamatica
   deploy:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - run: chmod -R +x docs/
