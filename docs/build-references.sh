@@ -43,7 +43,7 @@ mkdir -p static/schemas
 
 ## 4.1 Copy schemas
 
-cp -r dist/* static/schemas
+cp -r ../Bookkeeper/dist/* static/schemas
 
 ## 4.2 Remove LICENSE and README.md files
 
