@@ -184,17 +184,17 @@ Scenamatica がテスト対象のプラグイン機能の実行を発火させ�
 
 ### シナリオの例
 
-#### 使用例：[アクション実行(`execute`)](#scenario-type-action-execution) タイプの [プレイヤの死亡およびキル](/references/actions/player#death) アクション
+#### 使用例：[アクション実行(`execute`)](#scenario-type-action-execution) タイプの [プレイヤの死亡およびキル](/references/actions/players/player_death) アクション
 
 この場合は,  Scenamatica は対象のプレイヤを殺害します。殺害に成功した場合は, シナリオは成功となります。
 
-#### 使用例：[アクション実行期待(`expect`)](#scenario-type-action-execution-expect) タイプの [プレイヤの死亡およびキル](/references/actions/player#death) アクション
+#### 使用例：[アクション実行期待(`expect`)](#scenario-type-action-execution-expect) タイプの [プレイヤの死亡およびキル](/references/actions/players/player_death) アクション
 
 この場合は,  Scenamatica はテスト対象のプラグインにより対象のプレイヤが殺害されるまで待機します。
 殺害された場合は, シナリオは成功となります。  
 一定時間が経過しても殺害されなかったり, **ファイルに後述されている他のシナリオが先に実行された場合**, シナリオは**失敗**となります。
 
-#### 使用例：[条件要求(`require`)](#scenario-type-condition-require) タイプの [プレイヤの死亡およびキル](/references/actions/player#death) アクション
+#### 使用例：[条件要求(`require`)](#scenario-type-condition-require) タイプの [プレイヤの死亡およびキル](/references/actions/players/player_death) アクション
 
 この場合は,  Scenamatica はプレイヤが既に死亡しているかどうかを確認します。
 

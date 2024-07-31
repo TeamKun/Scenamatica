@@ -36,9 +36,9 @@ import TabItem from '@theme/TabItem';
 **アクション実行シナリオでの使用**
 {{>admonitions admonitions=admonitions mode="execute"}}
 {{/if}}
-{{#if (hasAdmonitions admonitions "watch")}}
+{{#if (hasAdmonitions admonitions "expect")}}
 **アクション実行期待シナリオでの使用**
-{{>admonitions admonitions=admonitions mode="watch"}}
+{{>admonitions admonitions=admonitions mode="expect"}}
 {{/if}}
 {{#if (hasAdmonitions admonitions "require")}}
 **コンディション要求シナリオでの使用**
@@ -77,8 +77,8 @@ import TabItem from '@theme/TabItem';
       <td><AbleState {{#if executable}}able description="{{executable}}" {{/if}}/></td>
     </tr>
     <tr>
-      <td>監視可能 (<kbd>{{#if watchable}}<a href="?scenario-type=watch#inputs">expect</a>{{else}}expect{{/if}}</kbd>)</td>
-      <td><AbleState {{#if watchable}}able description="{{watchable}}" {{/if}}/></td>
+      <td>監視可能 (<kbd>{{#if expectable}}<a href="?scenario-type=expect#inputs">expect</a>{{else}}expect{{/if}}</kbd>)</td>
+      <td><AbleState {{#if expectable}}able description="{{expectable}}" {{/if}}/></td>
     </tr>
     <tr>
       <td>要求可能 (<kbd>{{#if requireable}}<a href="?scenario-type=require#inputs">require</a>{{else}}require{{/if}}</kbd>)</td>
@@ -158,8 +158,8 @@ import TabItem from '@theme/TabItem';
   {{#if executable}}
   {{> input mode="execute" mode_jp="実行"}}
   {{/if}}
-  {{#if watchable}}
-  {{> input mode="watch" mode_jp="監視"}}
+  {{#if expectable}}
+  {{> input mode="expect" mode_jp="監視"}}
   {{/if}}
   {{#if requireable}}
   {{> input mode="require" mode_jp="要求"}}
@@ -200,8 +200,8 @@ import TabItem from '@theme/TabItem';
   {{#if executable}}
   {{> output mode="execute" mode_jp="実行"}}
   {{/if}}
-  {{#if watchable}}
-  {{> output mode="watch" mode_jp="監視"}}
+  {{#if expectable}}
+  {{> output mode="expect" mode_jp="監視"}}
   {{/if}}
   {{#if requireable}}
   {{> output mode="require" mode_jp="要求"}}

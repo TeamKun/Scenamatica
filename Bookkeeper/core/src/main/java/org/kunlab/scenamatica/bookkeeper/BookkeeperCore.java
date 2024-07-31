@@ -106,6 +106,7 @@ public class BookkeeperCore
         this.packer.pack(this.config.getOutputDir(), this.config.getOutputDir().resolve(this.config.getArtifactFileName()));
 
         this.cleanTempDir();
+        log.info("Ledger has been saved to " + this.config.getOutputDir() + "/ledger.zip");
         log.info("Bookkeeping finished.");
     }
 
