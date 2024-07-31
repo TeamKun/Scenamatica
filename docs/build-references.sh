@@ -39,13 +39,13 @@ cd $CWD
 
 # 4. Copy schemas to static directory
 
-mkdir -p static/schemas
+mkdir -p static/schema
 
 ## 4.1 Copy schemas
 
-cp -r ../Bookkeeper/dist/* static/schemas
+cp -r ../Bookkeeper/dist/* static/schema
 
 ## 4.2 Remove LICENSE and README.md files
 
-rm -f static/schemas/LICENSE
-rm -f static/schemas/README.md
+rm -f static/schema/LICENSE
+rm -f static/schema/README.md
