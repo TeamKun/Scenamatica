@@ -1,7 +1,10 @@
-#!/bin/bash
+#!/bin/sh
 
 # 1. Build Scenamatica.jar
-../Scenamatica/build -D"jar.finalName=Scenamatica" -P release
+cd ../Scenamatica
+chmod +x build.sh
+
+./build.sh -D"jar.finalName=Scenamatica" -P release
 
 if [ $? -ne 0 ]; then
     echo "Build failed."
@@ -9,12 +12,16 @@ if [ $? -ne 0 ]; then
 fi
 
 # 2. Build ledger
-../Bookkeeper/run -o dist -cp "\$paper:1.16.5" -i ../Scenamatica/ScenamaticaPlugin/target/Scenamatica.jar
+cd ../Bookkeeper
+chmod +x run.sh
+./run.sh -o dist -cp "\$paper:1.16.5" -i ../Scenamatica/ScenamaticaPlugin/target/Scenamatica.jar
 
 if [ $? -ne 0 ]; then
     echo "Build failed."
     exit 1
 fi
+
+cd ../docs
 
 # 3. Build templating-tools
 CWD=$(pwd)

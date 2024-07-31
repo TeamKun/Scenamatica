@@ -18,8 +18,10 @@ jobs:
         with:
           lookup-only: true
           path: nms-build/.m2
-          key: scenamatica-nms
-          restore-keys: scenamatica-nms
+          key: nms-maven
+          restore-keys: nms-maven
+      - name: Debug Cache Hit
+        run: "echo Cache hit: ${{ steps.check.outputs.cache-hit }}, ${{ steps.check.outputs.cache-hit == 'true'}}"
   build-nms:
     name: Build NMS with NMSAction
     needs: check-whether-has-to-build
