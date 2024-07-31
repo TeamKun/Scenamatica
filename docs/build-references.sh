@@ -19,7 +19,7 @@ fi
 # 3. Build templating-tools
 CWD=$(pwd)
 cd ../Bookkeeper/templating-tools
-pnpm start -t $CWD/bookkeeper-templates -e .mdx -o $CWD/references $CWD/dist/ledger.zip
+pnpm start -t $CWD/bookkeeper-templates -e .mdx  $CWD/references $CWD/dist/ledger.zip
 
 if [ $? -ne 0 ]; then
     echo "Build failed."

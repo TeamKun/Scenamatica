@@ -85,14 +85,10 @@ jobs:
                 process.exit(1);
               }
             }
-
-            // Create cache
-            const cacheKey = await cache.saveCache(
-                ['nms-build/.m2'],
-                process.env.CACHE_NAME,
-                nmsVersions
-            );
-            
-              console.log(`Cache saved with key: ${cacheKey}`);
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Save caches
+        uses: actions/cache/save@v4
+        with:
+          path: nms-build/.m2
+          key: nms-maven

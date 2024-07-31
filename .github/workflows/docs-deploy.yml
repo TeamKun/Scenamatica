@@ -23,15 +23,19 @@ jobs:
     uses: "./.github/workflows/build-nms.yml"
     secrets:
       token: ${{ secrets.GITHUB_TOKEN }}
-  build:
-    name: Build with Maven
-    needs: setup-nms
-    uses: "./.github/workflows/build-scenamatica.yml"
-    secrets:
-      token: ${{ secrets.GITHUB_TOKEN }}
   deploy:
+    needs: setup-nms
     runs-on: ubuntu-latest
     steps:
+      - name: Restore NMS cache
+        uses: actions/cache@v4
+        with:
+          path: nms-build/.m2
+          key: nms-maven
+          restore-keys: nms-maven
+      - name: Deploy NMS cache
+        run: |
+          mv -f nms-build/.m2/repository/repository $HOME/.m2/ -v
       - uses: actions/checkout@v4
       - run: chmod -R +x docs/
       - uses: chrnorm/deployment-action@v2
