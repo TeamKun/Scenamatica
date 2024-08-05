@@ -114,34 +114,33 @@ actions:
 
 ```
 
-## 予約された変数 {#reserved-variables}
+## 定義された変数 {#reserved-variables}
 
 ### 概要 {#reserved-variables-overview}
 
-これは, 予め定義された任意の値です。
-予約されたキーを用いてシナリオ内で参照することで, シナリオの実行時に値が設定されます。
+Scenamatica は, 高度なシナリオの作成用に, あらかじめ定義された変数を提供しています。  
+これらの変数は, シナリオファイル内の任意の場所で参照できます。
 
-変数はセッションごともしくは実行ごとにリセットされます。
+これらの変数はセッションごともしくは実行ごとにリセットされます。
 
 ### 変数の参照 {#reserved-variables-reference}
 
 変数を使用するには, リテラルのかわりに使用する変数名を `${` および `}` で囲みます。  
 各要素は `.` で区切ってアクセスします。
 
+変数の型と, シナリオが受け入れる型のすり合わせは自動で行われますが, 明らかに変換できない型を参照するとエラーになります。  
+特に文字列と数値との相互変換や, 数値型のキャストは自動で行われます。
+例えば, `Integer` を受け入れる変数に `Object` を代入しようとするとエラーになります。
+
 :::info
 
-値の参照は, それが使われているシナリオないしはそのエンジンの開始前に行われます。
-
-:::
-
-:::tip
-
-型は自動で推論されるため, 使用できない型を参照するとエラーになります。   
-また, 文字列との相互変換や, 数値のキャストも自動で行われます。
+値の参照はそれが使われているシナリオ, ないしはそのエンジンの開始前に行われます。
 
 :::
 
 ### 変数の一覧 {#reserved-variables-list}
+
+これらの一覧は最上位の変数です。これらの値はすべてオブジェクトでありますので, それぞれのプロパティにアクセスして使用します。
 
 <Object objects={[
   {
@@ -164,7 +163,7 @@ actions:
   },
   {
     name: "scenario",
-    type: ["Scenario"],
+    type: "Scenario",
     type_anchor: "variables-type-scenario",
     description: "自身のシナリオを取得します。",
   }
@@ -172,7 +171,7 @@ actions:
 
 #### `system` {#variables-system}
 
-Java の `System#getProperties()Ljava/lang/String;` で取得できるシステムプロパティを取得します。
+Java の `Ljava.lang.System#getProperties()Ljava/lang/String;` で取得できるシステムプロパティを取得します。
 
 :::warning
 
@@ -190,27 +189,6 @@ Java の `System#getProperties()Ljava/lang/String;` で取得できるシステ�
     description: "マシンのメモリ情報を取得します。",
   }
 ]} />
-
-##### `runtime`.`memory` {#variables-type-runtime-memory}
-
-<Object objects={[
-  {
-    name: "total",
-    type: PrimitiveTypes.LONG,
-    description: "マシンのメモリの合計値です。",
-  },
-  {
-    name: "free",
-    type: PrimitiveTypes.LONG,
-    description: "マシンのメモリの空き値です。",
-  },
-  {
-    name: "max",
-    type: PrimitiveTypes.LONG,
-    description: "マシンのメモリの最大値です。",
-  }
-]} />
-
 
 #### `session` {#variables-type-session}
 
@@ -232,6 +210,26 @@ Java の `System#getProperties()Ljava/lang/String;` で取得できるシステ�
 ##### `session`.`scenarios`.`*` {#variables-type-session-scenarios}
 
 `*` には, シナリオ（ファイル）の名前を指定します。
+
+#### Memory 型 {#variables-type-memory}
+
+<Object objects={[
+  {
+    name: "total",
+    type: PrimitiveTypes.LONG,
+    description: "マシンのメモリの合計値です。",
+  },
+  {
+    name: "free",
+    type: PrimitiveTypes.LONG,
+    description: "マシンのメモリの空き値です。",
+  },
+  {
+    name: "max",
+    type: PrimitiveTypes.LONG,
+    description: "マシンのメモリの最大値です。",
+  }
+]} />
 
 #### Scenario 型 {#variables-type-scenario}
 
@@ -259,19 +257,19 @@ Java の `System#getProperties()Ljava/lang/String;` で取得できるシステ�
   {
     name: "scenario.*.output",
     type: "Object",
-    description: "シナリオの出力です。",
+    description: "メインシナリオの出力です。",
     anchor: "variables-type-session-scenario-output"
   },
   {
     name: "scenario.*.runif.output",
     type: "Object",
-    description: "各シナリオの条件の出力です。",
+    description: "各メインシナリオの条件の出力です。",
     anchor: "variables-type-session-scenario-runif-output"
   },
   {
     name: "runif.output",
     type: "Object",
-    description: "シナリオの条件の出力です。",
+    description: "条件付き実行のシナリオに指定されたシナリオの出力です。",
   },
   {
     name: "trigger",
@@ -325,7 +323,8 @@ Java の `System#getProperties()Ljava/lang/String;` で取得できるシステ�
 
 #### Trigger 型 {#variables-type-trigger}
 
-以下の変数に加えて追加で[トリガ](/references/types#trigger)におけるすべての値を参照できます。
+以下の変数に加えて追加で[トリガ](/references/types/TriggerStructure)におけるすべての値を参照できます。  
+例えば, そのシナリオを発火したトリガの種類を取得するには, 次のようにします： `${scenario.trigger.type}`
 
 <Object objects={[
   {

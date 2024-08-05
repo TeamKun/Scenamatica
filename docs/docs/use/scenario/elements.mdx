@@ -42,62 +42,7 @@ Scenamatica のシナリオを構成する要素について説明していま�
 + **[定数の定義](/docs/use/scenario/variables-and-definitions)**  
   使いまわしする値や構造体について記述します。
 
-
-### シナリオ YAML ファイルと要素の対応（早見） {#yaml-element-pair}
-
-以下のファイルは**完全な**シナリオファイルの例です。  
-シナリオファイルの要素と Scenamatica の機能の対応を理解するために参考にしてください。
-```yaml showLineNumbers
-# メタデータ
-scenamatica: "0.8.0"
-name: "test-hoge-success"
-description: "hoge 機能の正常系テスト"
-
-# highlight-start
-runif:  # 実行条件：hoge-milestone を達成している場合に実行する
-  action: milestone
-  with:
-    name: hoge-milestone
-# highlight-end
-
-# highlight-start
-context:  # コンテキスト
-  actors:  # コンテキスト：アクタ
-  - name: Actor1
-    permissions:
-    - "hogeplugin.commands.hoge"
-  stage:  # コンテキスト：ステージ
-    env: NETHER
-    seed: 114514
-# highlight-end
-
-# highlight-start
-on:  # トリガ
-- type: on_load  # トリガ：プラグインのスタートアップ時に実行
-- type: manual_dispatch  # トリガ：Scenamatica のコマンドで実行
-#highlight-end
-
-# highlight-start
-scenario:  # シナリオ
-  # Actor1 が /hoge を実行する。
-- type: execute
-  action: command_dispatch
-  with:
-    command: "/hoge"
-    sender: Actor1
-  # fuga というメッセージが（Actor1 に）表示される。
-- type: expect
-  action: message
-  with:
-    content: "fuga"
-    recipient: "${scenario.scenario.0.sender}"  # 変数：前のアクションの実行者を指定
-  # Actor1 が死亡する。
-- type: expect
-  action: player_death
-  with:
-    target: "${scenario.scenario.0.sender}"  # 変数：前のアクションの実行者を指定
-#highlight-end
- ```
+---
 
 ## シナリオ {#scenario}
 
@@ -105,65 +50,49 @@ scenario:  # シナリオ
 Scenamatica はこれらを一つ一つ実行・検証し, プラグインの振る舞いをテストします。
 実行・検証に失敗した場合は,  Scenamatica はプラグインが正しく動作していないと判断し, シナリオ実行の失敗を報告します。
 
-:::info
+各シナリオは、[アクション](#action)と[シナリオタイプ](#scenario-type)の対で構成されます。
 
-このドキュメント内で使用される「シナリオ」という語は, 以下の２つの意味を持ちます。
 
-1. [コンテキスト](/docs/use/scenario/elements#context) や [トリガー](/docs/use/scenario/elements#trigger), 
-[アクションのフローとしてのシナリオ](/docs/use/scenario/elements#scenario) など, シナリオファイルの内容すべてを一般に指す語。
-2. プラグインの振る舞いを検証するためのアクションとその振る舞いの組。
+### アクション {#action}
 
-この項では, 主に後者の意味での「シナリオ」について説明しています。
+アクションとは, 「プレイヤが死亡する」や「プレイヤがメッセージを送信する」などの, サーバにおける具体的な動作のことです。  
+これらは Scenamatica によってあらかじめ定義されたもので, プラグインの機能を最小単位に分解したものです。
+アクションを組み合わせてシナリオを記述します。
+
+アクションは膨大な数の種類があるので, 各カテゴリ別に分けられています。  
+すべてのアクションについては[Scenamatica References | アクションの一覧](/references/actions/)を参照してください。
+
+アクションはそれぞれ異なった入力を受け取り, またそれぞれ異なった出力を返します。  
+入力は `with` キーを使用して指定します。
+
+例：
 
 ```yaml showLineNumbers
-# このファイル自体をシナリオファイルで記述された「シナリオ」と呼ぶ。
-
-#...
-
 scenario:
-# 以下のの一つ一つもまた「シナリオ」と呼ぶ。
+  # Actor1 に /hoge を実行させる。
 - type: execute
-  action: player_death
+  action: command_dispatch
+# highlight-start
   with:
-    target: Actor001 
-- type: expect
-  action: player_death
-  with:
-    target: Actor001 
+    command: "/hoge"
+    sender: Actor1
+# highlight-end
 ```
-:::
+
 
 ---
 
-### シナリオの種類 {#scenario-type}
+### シナリオタイプ {#scenario-type}
 
 全てのシナリオは, 以下の３つのタイプのいずれかに分類されます。  
 
-> 1. [アクション実行(`execute`)](#scenario-type-action-execution)
-> 2. [アクション実行期待(`expect`)](#scenario-type-action-execution-expect)
-> 3. [条件要求(`require`)](#scenario-type-condition-require)
+| シナリオタイプ                                               | 役割                                               |
+|:------------------------------------------------------|:-------------------------------------------------|
+| [アクション実行(`execute`)](#scenario-type-action-execution) | アクションを実行し, プラグインの**機能を発火**させる。                   |
+| [アクション実行期待(`expect`)](#scenario-type-action-expect)   | アクションが実行されるまで待機し, プラグインの機能が**正常に動作するかどうかを検証**する。 |
+| [条件要求(`require`)](#scenario-type-condition-require)   | アクションが既に実行され, **状態が満たされているかどうかを検証**する。           |
 
-上記のシナリオタイプは, 対応する[アクション](/docs/use/scenario/actions)の振る舞いを決定するために使用されます。  
-アクションとは, 「プレイヤが死亡する」や「プレイヤがメッセージを送信する」などの具体的な動作のことで, Scenamatica が事前に定義したものです。
-
-:::tip
-
-それぞれのアクションは, 最大で３つの異なる振る舞いを持ちます。
-これらは, 同時に記述される[シナリオタイプ](/docs/use/scenario/elements/#scenario-type)によって制御されます。
-たとえば [アクション：プレイヤの死亡](/references/actions/players/player_death)は以下のように振る舞います：
-
-| シナリオタイプ                                                                           | ふるまい                         |
-|:----------------------------------------------------------------------------------|:-----------------------------|
-| [アクション実行(`execute`)](/docs/use/scenario/elements/#scenario-type-action-execution) | プレイヤを**キルする**                |
-| [アクション実行期待(`expect`)](/docs/use/scenario/elements/#scenario-type-expect)          | プレイヤが**キルされるまで待機**する         |
-| [条件要求(`require`)](/docs/use/scenario/elements/#scenario-type-condition-require)   | プレイヤが（もう既に）**死亡していることを要求**する |
-
-<small>（すべてのアクションが上記のシナリオタイプをすべて持つわけではありません）</small>
-<br /><br />
-
-これらのシナリオタイプと, 使用するアクションとを組み合わせてシナリオを記述します。
-
-:::
+シナリオタイプは, そのシナリオの役割（機能の発火・機能のテストなど）を指定するとともに、そのシナリオに使用されるアクションの振る舞いを制御します。
 
 例：
  
@@ -190,7 +119,20 @@ scenario:
 ```
 
 上記のシナリオの例ではすべて「Actor1 がキルされる」という同じアクションを使用しています。
-しかし, 対応するシナリオ・タイプが異なるために, それぞれ異なって振る舞います。  
+しかし, 対応するシナリオタイプが異なるために, 以下のようにそれぞれ異なって振る舞います。  
+
+|   | シナリオタイプ                                                                           | ふるまい                         |
+|:-:|:----------------------------------------------------------------------------------|:-----------------------------|
+| 1 | [アクション実行(`execute`)](/docs/use/scenario/elements/#scenario-type-action-execution) | プレイヤを**キルする**                |
+| 2 | [アクション実行期待(`expect`)](/docs/use/scenario/elements/#scenario-type-action-expect)   | プレイヤが**キルされるまで待機**する         |
+| 3 | [条件要求(`require`)](/docs/use/scenario/elements/#scenario-type-condition-require)   | プレイヤが（もう既に）**死亡していることを要求**する |
+
+:::warning
+
+すべてのアクションが３のシナリオタイプすべてを持つわけではありません。  
+例えば[アクション：ワールドの初期化](/references/actions/worlds/world_init)は, **実行期待**シナリオタイプにのみ対応しています。
+
+:::
 
 ---
 
@@ -221,9 +163,9 @@ scenario:
 
 ---
 
-### アクション実行期待(`expect`) タイプ {#scenario-type-action-execution-expect}
+### アクション実行期待(`expect`) タイプ {#scenario-type-action-expect}
 
-アクション実行期待(`expect`) タイプは, アクションが**プラグインによって実行されるかどうか**を検証します。  
+アクション実行期待(`expect`) タイプは, アクションが**プラグインによって実行されるかどうか**を監視します。  
 指定されたアクションが実行されるまで, もしくはタイムアウトするまで次のシナリオの実行を待機します。
 
 > + シナリオが成功する条件
@@ -290,12 +232,12 @@ Scenamatica はシナリオを上から順に実行しますから, このタイ
 > 3. アクション B を実行する
 
 このシナリオでは, シナリオ 2 の到達時に Scenamatica はプレイヤ P がアイテム X を持っているかどうかを確認します。  
-シナリオ 1 の実行完了と同じタイミング（同チック）で条件を満たしていない場合は, このシナリオは失敗します。
+シナリオ 1 の実行完了と同じタイミング（同チック）時点で, 指定された条件が満たされていない場合は, このシナリオは失敗します。
 
 :::warning
 このタイプはそのシナリオに到達する前に条件を満たしていることを確認するためのものです。  
 そのために, 満たされるまで待機したり, タイムアウトまで待機する機能はありません。
-このような機能を使用したい場合は, 代わりに[アクション実行期待(`expect`)](#scenario-type-action-execution-expect) タイプを使用してください。
+このような機能を使用したい場合は, 代わりに[アクション実行期待(`expect`)](#scenario-type-action-expect) タイプを使用してください。
 :::
 
 ```yaml showLineNumbers
@@ -458,8 +400,10 @@ context:
 実行条件が満たされていない場合そのシナリオはスキップされますが, **失敗とはみなされません**。
 また, 条件はシナリオファイルごと, またはその中のトリガやシナリオごとに指定できます。
 
-条件の指定には, [条件要求(`require`)](#scenario-type-condition-require) タイプのシナリオに対応した[アクション](/docs/use/scenario/actions)を使用します。  
+条件の指定には, [条件要求(`require`)](#scenario-type-condition-require) タイプのシナリオに対応した[アクション](#action)を使用します。  
 詳しくは[条件要求タイプ(`require`)](#scenario-type-condition-require)および[アクション](/references/actions)の項目を参照してください。
+
+さらにこの中でも特に, トリガにおける条件付け機能は[条件付きトリガ機能](/docs/use/scenario/trigger#conditional-triggers)と呼ばれます。
 
 :::tip
 

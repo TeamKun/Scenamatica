@@ -20,18 +20,86 @@ import BelowDocument from "/src/components/BelowDocument";
 
 ## 概要 {#overview}
 
-シナリオファイルは,  `.yml` もしくは `.yaml` の拡張子を持つ YAML ファイルです。プラグインの .jar 内であれば任意の場所に配置できます。  
+シナリオファイルは,  `.yml` もしくは `.yaml` の拡張子を持つ YAML ファイルで, [シナリオ](/docs/use/scenario)を記述します。プラグインの .jar 内であれば任意の場所に配置できます。  
 １つのシナリオ・テストにつき１つのシナリオファイルが必要です。  
-そのため, 各テスト対象機能用のシナリオを格納するディレクトリを作成し, その中に個別のシナリオファイルを配置するのが一般的です。
+そのため, シナリオファイルを配置するディレクトリは構造的に管理すると良いでしょう。
 
 ## シナリオファイルの例 {#example}
 
-シナリオファイルの記述例は[こちら](https://github.com/TeamKun/Scenamatica/tree/main/Scenamatica/ScenamaticaActions/Base_v1_13_2/src/main/resources/scenarios/actions)
-を参照してください。
+
+以下のファイルは**完全な**シナリオファイルの例です。  
+シナリオファイルの要素と [Scenamatica の機能](/docs/use/scenario/elements)の対応を理解するために参考にしてください。
+```yaml showLineNumbers
+# メタデータ
+scenamatica: "0.8.0"
+name: "test-hoge-success"
+description: "hoge 機能の正常系テスト"
+
+# highlight-start
+runif:  # 実行条件：hoge-milestone を達成している場合に実行する
+  action: milestone
+  with:
+    name: hoge-milestone
+# highlight-end
+
+# highlight-start
+context:  # コンテキスト
+  actors:  # コンテキスト：アクタ
+  - name: Actor1
+    permissions:
+    - "hogeplugin.commands.hoge"
+  stage:  # コンテキスト：ステージ
+    env: NETHER
+    seed: 114514
+# highlight-end
+
+# highlight-start
+on:  # トリガ
+- type: on_load  # トリガ：プラグインのスタートアップ時に実行
+- type: manual_dispatch  # トリガ：Scenamatica のコマンドで実行
+  # このトリガが発火した時, メイン・シナリオの実行前に実行されるシナリオを指定する
+  before:
+  - type: execute
+    action: milestone
+    with:
+      name: hoge-milestone
+  #          〃        , メイン・シナリオの実行後に実行されるシナリオを指定する
+  after:
+  - type: execute
+    action: milestone
+    with:
+      name: fuga-milestone
+  
+#highlight-end
+
+# highlight-start
+scenario:  # シナリオ
+  # Actor1 が /hoge を実行する。
+- type: execute
+  action: command_dispatch
+  with:
+    command: "/hoge"
+    sender: Actor1
+  timeout: 20 # タイムアウト：20 tick
+  # fuga というメッセージが（Actor1 に）表示される。
+- type: expect
+  action: message
+  with:
+    content: "fuga"
+    recipient: "${scenario.scenario.0.sender}"  # 変数：前のアクションの実行者を指定
+  # Actor1 が死亡する。
+- type: expect
+  action: player_death
+  with:
+    target: "${scenario.scenario.0.sender}"  # 変数：前のアクションの実行者を指定
+#highlight-end
+ ```
+
+その他のシナリオファイルの例については, [こちら](https://github.com/TeamKun/Scenamatica/tree/main/Scenamatica/ScenamaticaActions/Base_v1_13_2/src/main/resources/scenarios/actions)を参照してください。
 
 :::tip ✨ Scenamatica では自己テストをしています！✨
-上記の例は,  Scenamatica 自体のデバッグとデグレードの監視に使用されます。   
-Scenamatica のソースコードを GitHub にプッシュすると,  CI によって自動的に Scenamatica のテストが実行されます。
+Scenamatica は, Scenamatica 自体のデバッグとデグレードの監視に使用されます。   
+ソースコードを GitHub にプッシュすると,  CI によって自動的に Scenamatica のテストが実行されます。
 
 :::
 
@@ -46,13 +114,13 @@ Scenamatica のすべてのオブジェクトは自動生成されたリファ�
 
 ファイル名に関して, 技術的な制約等はありませんが,  Scenamatica では, 以下のフォーマットを推奨しています。
 
-+ 拡張子は `.yml`
-+ ASCII の小文字のみ
-+ ケバブケース（単語をハイフンでつなぐ）
-+ 推奨フォーマット： `test-<機能名>-<success|failure-with-[失敗内容]>.yml`  
-  先頭を `test-機能名` にすることで, 特定の機能のテストということが分かりやすくなります。  
-  また, 正常に成功することを確認するテストの場合は `success-<機能名>`,   
-  異常入力等で失敗することを確認するテストの場合は `failure-<機能名>-with-<失敗理由>` というようにするとわかりやすいでしょう。
+> + 拡張子は `.yml`
+> + ASCII の小文字のみ
+> + ケバブケース（単語同士をハイフンで結合する）
+> + 推奨フォーマット： `test-<機能名>-<success|failure-with-[失敗内容]>.yml`  
+>   先頭を `test-機能名` にすることで, 特定の機能のテストということが分かりやすくなります。  
+>   また, 正常に成功することを確認するテストの場合は `success-<機能名>`,   
+>   異常入力等で失敗することを確認するテストの場合は `failure-<機能名>-with-<失敗理由>` というようにするとわかりやすいでしょう。
 
 例： `test-hoge-success.yml` ,  `test-hoge-failure-with-no-argument.yml`
 
@@ -65,39 +133,49 @@ Scenamatica のすべてのオブジェクトは自動生成されたリファ�
 
 ### Scenamatica が採用している YAML のキーの命名規則 {#yaml-key-naming-rules}
 
-Scenamatica のシナリオファイルにおける YAML のキーは, 原則として以下の命名規則に従います。
+Scenamatica のシナリオファイルにおける YAML のキーは, 原則として以下の命名規則に従い定義されます。
 
-+ `camelCase` で記述します。
-+ Minecraft 固有の単語は区切らずに記述します。  
-例： `game mode` => `gamemode`, `mine craft` => `minecraft` など
+> + `camelCase` で記述します。
+> + Minecraft 固有の単語は区切らずに記述します。  
+例： `gameMode` => `gamemode`, `mineCraft` => `minecraft` など
 
-:::info
+:::warning
 
-例外として, アクションの名前が挙げられます。これらは, `snake_case` で定義されます。
+アクションの ID は, 例外的に `snake_case` で定義されます。
 
-- ❌ `action: setBlock`
-- ✅ `action: set_block`
+> - ❌ `action: setBlock`
+> - ✅ `action: set_block`
 
 :::
 
+
 ### 列挙値におけるシンタックスシュガー {#syntax-sugar-on-enum-values}
 
-一部のアクションの引数には,  Minecraft/Bukkit 固有の列挙値（例： `GameMode`, `Material` など）が指定できます。  
-Scenamatica では, これらの記述のシンタックスシュガーとして, 列挙値の名前の大小文字を無視します。
+一部のアクションの引数には,  Minecraft/Bukkit 固有の列挙値（例： `GameMode`, `Material` など）を取るものがあります。  
+Scenamatica では, これらのシンタックスシュガーのために, 列挙値の名前の大小文字を無視します。
 
 例：
-+ `gamemode: survival` は `gamemode: SURVIVAL` と同じ意味です。
-+ `material: sToNe` は `material: STONE` と同じ意味です。
+> + `gamemode: survival` は `gamemode: SURVIVAL` と同じ意味です。
+> + `material: sToNe` は `material: STONE` と同じ意味です。
 
 ### プレイヤの指定におけるシンタックスシュガー {#syntax-sugar-on-player}
 
 一部のアクションの引数には, プレイヤ（の名前）を引数として指定できます。  
 こちらも上記と同じく, プレイヤの名前の大小文字を無視します。
-これに加えて, プレイヤは **UUID** でも指定できます。
 
 例（サーバに Player1(00000000-1111-2222-3333-444444444444) というプレイヤが参加している場合）：
-+ `player: player1` は `player: Player1` と同じ意味です。
-+ `player: 00000000-1111-2222-3333-444444444444` は内部的に `player: Player1` と同じ意味です。
+> + `player: player1` は `player: Player1` と同じ意味です。
+> + `player: 00000000-1111-2222-3333-444444444444` は内部的に `player: Player1` と同じ意味です。
+
+:::tip
+
+これは[プレイヤ・エンティティ指定子](/docs/use/scenario/specifier)機能によるものです。
+
+<BelowDocument docId={"use/scenario/specifier"}
+                label="エンティティとプレイヤの指定子"
+/>
+
+:::
 
 ### 定義と参照の利用 {#definition-and-reference}
 
