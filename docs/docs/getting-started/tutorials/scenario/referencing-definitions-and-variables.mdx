@@ -22,13 +22,13 @@ import BelowDocument from "/src/components/BelowDocument";
 
 #### シチュエーションの例 {#constant-example-situation}
 
-私のプラグイン「More Rewards」 を考えます。  
+私のプラグイン「More Rewards」 について考えます。  
 このプラグインは, プレイヤが敵を倒したときに, 特別な木の棒「One Punch Stick」がドロップします。
-この棒で敵をヒットすると, 敵が即死します。
+この棒で敵をヒットすると, 敵を一撃で倒せます。
 
 この機能テストのために, 後述の[前提となるシナリオ](#constant-step1-write-basic-scenario)を作成しました。
 このシナリオ内では, 木の棒に関する**同じような記述**が複数回登場します。  
-このような冗長なコードを減らすために, 定数機能を使ってみましょう。
+これらのような冗長なコードを減らすために, 定数機能を使ってみましょう。
 
 ### ステップ１. 前提となるシナリオを作成する {#constant-step1-write-basic-scenario}
 
@@ -68,10 +68,12 @@ scenario:
   with:
     target: Actor001
     item:
+# highlight-start
       type: stick
       name: One Punch Stick
       lores:
       - "You can kill everyone with one punch!"
+# highlight-end
   timeout: 100
 # プレイヤに One Punch Stick を持たせる。
 - type: execute
@@ -79,10 +81,12 @@ scenario:
   with:
     target: Actor001
     item:
+# highlight-start
       type: stick
       name: One Punch Stick
       lores:
       - "You can kill everyone with one punch!"
+# highlight-end
 # プレイヤが敵を殴る。
 - type: execute
   action: entity_damage_by_entity
@@ -92,10 +96,12 @@ scenario:
       name: Actor001
       inventory:
         mainHandItem:
+# highlight-start
           type: stick
           name: One Punch Stick
           lores:
           - "You can kill everyone with one punch!"
+# highlight-end
 # プレイヤが敵を倒す。
 - type: expect
   action: entity_death
@@ -105,21 +111,21 @@ scenario:
 
 ### ステップ２. 定数にする項目を考える {#constant-step2-think-about-what-has-to-be-constant}
 
-このシナリオでは, 以下のような**同じような記述**が複数回登場します。
+このシナリオでは, 以下のような**全く同じ記述**が複数回登場します。
 ```yaml showLineNumbers
-item:
-  type: stick
-  name: One Punch Stick
-  lores:
-  - "You can kill everyone with one punch!"
+type: stick
+name: One Punch Stick
+lores:
+- "You can kill everyone with one punch!"
 ```
 
-これはどのようなアイテムであるかを説明するものであり, つまりは同一のアイテムを指しています。  
-このような冗長な記述は極力減らされるべきです。定数機能の出番です！
+これはどのようなアイテムであるかを説明するものであり, つまるところ同一のアイテムを指しています。  
+このような冗長な記述は極力減らされるべきでありますので, これを定数にしましょう。
 
 ### ステップ３. 定数を定義する {#constant-step3-define-constants}
 
-定数を定義するには, まず `definitions` セクションをシナリオのルートに追加します。
+定数を定義するには, まず `definitions` というキーをシナリオのルートに追加します。   
+その中に, 任意の名前の定数キーを追加し, その値として任意の型の値（今回はオブジェクト型のアイテム）を指定します。
 
 以下の例では,  `one_punch_stick` という名前の定数を定義しています。
 
@@ -156,7 +162,7 @@ scenario:
 
 変数を定義しただけでは, まだ何も変わりません。変数を参照して, 冗長な記述を減らしましょう。
 
-変数を参照するには, 参照したいオブジェクトの場所に `$ref` キーを追加します。
+変数を参照するには, 参照したいオブジェクトの同じ階層に `$ref` キーを追加します。
 値には定義名（今回の場合は `one_punch_stick`）を指定します。
 
 これを行うと, 以下のように定数が参照されます。
@@ -204,7 +210,6 @@ scenario:
   with:
     target: Actor002
 ```
-
 
 ### ステップ５. 動作を確認する {#constant-step6-check-if-it-works}
 
@@ -296,11 +301,11 @@ scenario:
 
 ### ステップ２. 変数を使う項目を考える {#variable-step2-think-about-what-has-to-be-variable}
 
-このシナリオでは, 溶岩の場所を `{x: 0, y: 3, z: 0}` と固定して指定しています。  
+このシナリオでは, 溶岩の場所である `{x: 0, y: 3, z: 0}` をハードコーディングしています。
 しかしこのままでは, プレイヤの位置が変わったときに, ブロックの位置を手動で変更する必要があります。
 
 これでは柔軟性がありません。ここで, 変数機能の出番です！  
-変数機能を使用して, プレイヤの位置を動的に指定してみましょう。
+変数機能を利用して, プレイヤの位置を動的に指定してみましょう。
 
 ### ステップ３. 使う変数を探す {#variable-step3-find-variables}
 
@@ -310,12 +315,12 @@ scenario:
 今回は, **前のシナリオから**キルされたプレイヤを取得する必要があります。  
 そのため。 `scenario.scenario.0.output.target.location` という変数を使うことにします。
 
-| 変数の階層                               | 説明                                     |
-|-------------------------------------|----------------------------------------|
-| `scenario`                          | 自分自身を含むシナリオ（ファイル）を表す変数                 |
-| `scenario.scenario`                 | シナリオファイル内のシナリオを表す変数                    |
+| 変数の階層                               | 説明                                      |
+|-------------------------------------|-----------------------------------------|
+| `scenario`                          | 自分自身を含むシナリオ（ファイル）を表す変数                  |
+| `scenario.scenario`                 | シナリオファイル内のシナリオを表す変数                     |
 | `scenario.scenario.0`               | シナリオファイル内のシナリオのうち,  インデックス 0 のシナリオを表す変数 |
-| `scenario.scenario.0.output`        | シナリオの出力を表す変数                           |
+| `scenario.scenario.0.output`        | シナリオの出力を表す変数                            |
 | `scenario.scenario.0.output.target` | シナリオの出力のうち,  `target` を表す変数             |
 
 :::tip
@@ -352,10 +357,8 @@ scenario:
 
 :::tip インデックスを使用せずに出力を参照する
 
-シナリオの指定にインデックスを使いたいですか？
-Scenamatica では, シナリオに命名できます！  
-
-以下のようにして, シナリオに名前をつけましょう。参照するときは, インデックスの代わりに名前を使います。
+シナリオの指定にインデックスを使用する代わりに, シナリオに一意な名前をつけられます。  
+以下のようにしてシナリオに名前をつけましょう。参照するときはインデックスの代わりに名前を使います。
 
 ```yaml title="placing-lava-block-on-kill-test.yml" showLineNumbers
 # ...
