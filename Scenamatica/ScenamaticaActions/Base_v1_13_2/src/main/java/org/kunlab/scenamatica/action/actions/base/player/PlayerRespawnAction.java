@@ -6,27 +6,68 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.jetbrains.annotations.NotNull;
-import org.kunlab.scenamatica.annotations.action.ActionMeta;
+import org.kunlab.scenamatica.annotations.action.Action;
+import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.OutputDoc;
+import org.kunlab.scenamatica.bookkeeper.enums.ActionMethod;
 import org.kunlab.scenamatica.commons.utils.Utils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
-import org.kunlab.scenamatica.interfaces.action.types.Watchable;
-import org.kunlab.scenamatica.interfaces.scenariofile.misc.LocationStructure;
+import org.kunlab.scenamatica.interfaces.action.types.Expectable;
+import org.kunlab.scenamatica.interfaces.structures.minecraft.misc.LocationStructure;
 
 import java.util.Arrays;
 import java.util.List;
 
-@ActionMeta("player_respawn")
+@Action("player_respawn")
+@ActionDoc(
+        name = "プレイヤのリスポーン",
+        description = "プレイヤをリスポーンさせます。",
+        events = {
+                PlayerRespawnEvent.class,
+                PlayerPostRespawnEvent.class
+        },
+
+        executable = "プレイヤをリスポーンさせます。",
+        expectable = "プレイヤがリスポーンすることを期待します。",
+        requireable = ActionDoc.UNALLOWED,
+
+        outputs = {
+                @OutputDoc(
+                        name = PlayerRespawnAction.KEY_OUT_IS_BED,
+                        description = "プレイヤがベッドでリスポーンしたかどうかです。",
+                        type = boolean.class
+                ),
+                @OutputDoc(
+                        name = PlayerRespawnAction.KEY_OUT_LOCATION,
+                        description = "プレイヤがリスポーンする場所です。",
+                        type = Location.class
+                )
+        }
+
+)
 public class PlayerRespawnAction extends AbstractPlayerAction
-        implements Executable, Watchable
+        implements Executable, Expectable
 {
+    @InputDoc(
+            name = "isBed",
+            description = "プレイヤがベッドでリスポーンするかどうかを指定します。",
+            type = boolean.class,
+            availableFor = ActionMethod.EXPECT
+    )
     public static final InputToken<Boolean> IN_IS_BED = ofInput(
             "isBed",
             Boolean.class
     );
+    @InputDoc(
+            name = "location",
+            description = "プレイヤがリスポーンする場所を指定します。",
+            type = Location.class
+    )
     public static final InputToken<LocationStructure> IN_LOCATION = ofInput(
             "location",
             LocationStructure.class,

@@ -5,23 +5,50 @@ import org.bukkit.event.Event;
 import org.bukkit.event.inventory.InventoryCreativeEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import org.kunlab.scenamatica.annotations.action.ActionMeta;
+import org.kunlab.scenamatica.annotations.action.Action;
+import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.OutputDoc;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
-import org.kunlab.scenamatica.interfaces.action.types.Watchable;
+import org.kunlab.scenamatica.interfaces.action.types.Expectable;
 import org.kunlab.scenamatica.interfaces.context.Actor;
-import org.kunlab.scenamatica.interfaces.scenariofile.inventory.ItemStackStructure;
+import org.kunlab.scenamatica.interfaces.structures.minecraft.inventory.ItemStackStructure;
 
 import java.util.Collections;
 import java.util.List;
 
-@ActionMeta("inventory_creative")
+@Action("inventory_creative")
+@ActionDoc(
+        name = "クリエイティブ・インベントリの操作",
+        description = "クリエイティブ・インベントリを操作します。",
+        events = {
+                InventoryCreativeEvent.class
+        },
+
+        executable = "クリエイティブ・インベントリを操作します。",
+        expectable = "クリエイティブ・インベントリを操作することを期待します。",
+        requireable = ActionDoc.UNALLOWED,
+
+        outputs = {
+                @OutputDoc(
+                        name = InventoryCreativeAction.KEY_OUT_ITEM,
+                        description = "アイテムです。",
+                        type = ItemStack.class
+                )
+        }
+)
 public class InventoryCreativeAction extends InventoryClickAction
-        implements Executable, Watchable
+        implements Executable, Expectable
 {
+    @InputDoc(
+            name = "item",
+            description = "アイテムです。",
+            type = ItemStack.class
+    )
     public static final InputToken<ItemStackStructure> IN_ITEM = ofInput(
             "item",
             ItemStackStructure.class,

@@ -6,7 +6,7 @@ import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.CompiledAction;
 import org.kunlab.scenamatica.interfaces.scenario.runtime.CompiledScenarioAction;
-import org.kunlab.scenamatica.interfaces.scenariofile.scenario.ScenarioStructure;
+import org.kunlab.scenamatica.interfaces.structures.scenario.ScenarioStructure;
 
 @Value
 public class CompiledScenarioActionImpl implements CompiledScenarioAction

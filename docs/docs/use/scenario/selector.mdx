@@ -1,4 +1,5 @@
-import {ObjectType, Object} from "/src/components/Object";
+import {Object} from "/src/components/Object"; 
+import {PrimitiveTypes} from "/src/components/Object/Types";
 
 # ターゲットセレクタ
 
@@ -8,44 +9,50 @@ Scenamatica ターゲットセレクタについて説明しています。
 
 ## 概要 {#overview}
 
-Scenamatica ターゲットセレクタは、簡単な記法を持った文字列です。  
-通常の Minecraft の[ターゲットセレクタ](https://minecraft.fandom.com/ja/wiki/Target_selectors) と同じように、エンティティを選択するために使用します。
+Scenamatica ターゲットセレクタは, エンティティやプレイヤを指定するための簡単な構文の記法です。
+Minecraft の[ターゲットセレクタ](https://minecraft.fandom.com/ja/wiki/Target_selectors) を拡張したもので, Scenamatica による独自エンジンで解釈されます。
 
 ### Minecraft ターゲットセレクタとは？ {#minecraft-selector}
 
-Minecraft ターゲットセレクタは、コマンドの実行者が、その対象となるエンティティ・プレイヤを選択する際に
+Minecraft ターゲットセレクタは, コマンドの実行者が, その対象となるエンティティ・プレイヤを選択する際に,
 より複雑な条件を指定するために使用されます。
 
-`@` のあとに母集団を指定し、その後に細かな条件を指定します。
+アットマーク（`@`）のあとに母集団を指定し, その後に細かな条件を 角括弧（`[]`） で括って指定します。
 
 例：
 ```
-
-/tp @e[type=minecraft:cow,distance=..10] ~ ~ ~
-/tell @a[tag=foo] Hello, world!
+@e[type=minecraft:cow,distance=..10] ~ ~ ~
+@a[tag=foo] Hello, world!
 ```
 
 ### これが必要な理由 {#why-do-we-need-this}
 
-通常のセレクタを用いたエンティティ選択は、 Bukkit の API を使用します。このAPI は、ワールドのすべての生きている（=消去されていない）
-エンティティを対象に取得します。
-しかし、一部のエンティティを消去するイベントでのマッチング処理では、消去されたエンティティを対象にする必要があります。
+通常の Minecraft ターゲットセレクタを用いたエンティティの参照は, 通常 Bukkit API を用いてアクセスします。
+しかし, Bukkit API は削除されたエンティティや, ワールドでロードされていないエンティティへのアクセスを提供しておらず,
+Scenamatica の一部のアクションや[コンテキスト](/docs/use/scenario/elements/#context)の[エンティティ](/docs/use/scenario/elements/#entity)
+での使用時に不都合が生じます。
 
-このように、 通常の Bukkit API は使用できないため、自作する必要がありました。
-さらに不足した機能の実装や、より簡単に記述できるようにするために、Scenamatica ターゲットセレクタを実装しました。
+そのために, Scenamatica は独自のエンティティ参照システムを導入してこれを解決するとともに, 一部の機能を拡張することによって
+より柔軟なエンティティの指定を可能にしています。
+
+:::note
+
+参考：  [Lorg/bukkit/Bukkit#selectEntities(Lorg/bukkit/command/CommandSender;Ljava/lang/String)Ljava/lang/List\<Lorg/bukkit/entity/Entity>](https://jd.papermc.io/paper/1.16/org/bukkit/Bukkit.html#selectEntities(org.bukkit.command.CommandSender,java.lang.String))
+
+:::
 
 ## 基本的な構文 {#basic-syntax}
 
-通常の Minecraft ターゲットセレクタと同様に、 `@母集団の種類[引数]` で指定します。  
-また、`@母集団の種類` および `[引数]` は省略可能です。
+通常の Minecraft ターゲットセレクタと同様に,  `@母集団の種類[引数]` で指定します。  
+また, `@母集団の種類` および `[引数]` は省略可能です。
 
-引数は `キー=値` の形式で指定します。
+引数は `キー=値` の KV 形式で指定します。
 詳しくは[次章：セレクタの引数](#arguments)を参照してください。
 
 :::tip
 
 各メタ文字間は任意の空白文字を含められます。
-空白文字に該当する文字は、 ` ` （半角スペース）、`\t` （タブ）です。
+空白文字に該当する文字は, 半角スペースまたは `\t` （タブ文字）です。
 
 :::
 
@@ -56,109 +63,128 @@ Minecraft ターゲットセレクタは、コマンドの実行者が、その�
 + `@a` : すべてのプレイヤ
 + `@p` : （主役から）最も近いプレイヤ
 + `@r` : ランダムなプレイヤ
-+ `@s` : 主役
-
++ `@s` : アクションの主役となるプレイヤ
 
 :::info
 
-主役とは、アクションの主役であるプレイヤを指します。  
-存在しない場合もあるので、各アクションのドキュメントを参照してください。
+アクションの主役では, [プレイヤに関するアクション](/references/actions/players/)においては, そのプレイヤを指します。  
+ほかのアクションにおいても, その主役を指す場合があります。
+それらにおける主役については, 各アクションのドキュメントを参照してください。
 
 :::
 
 ## 引数の構文 {#arguments-syntax}
 
-セレクタの引数は、 `[キー1=値1, キー2=値2...]` の形式で指定し、それぞれを `,` で区切ります。  
+セレクタの引数は,  `[キー1=値1, キー2=値2...]` の形式で指定し, それぞれを `,` で区切ります。  
 それぞれ[メタ文字](#meta-characters)以外の任意の文字列を指定できます。
 
-[母集団の種類](#selector-type)を省略した場合は、 `[` および `]` を省略できます。
+[母集団の種類](#selector-type)を省略した場合は,  `[` および `]` を省略できます。
 
-:::warning 重複したキーを持つ値
-重複したキーを持つ値は、暗黙的に[リスト](#value-list)として扱われます。
-::::tip
-これにより、 `@e[tag=foo,tag=bar]` というセレクタは、 `@e[tag={foo,bar}]` と同じ意味になります。
-これは AND 検索として解釈されます。
-::::
+:::tip 重複したキーを持つ値について
+同じ階層に重複したキーを持つ引数の値は, 暗黙的にそのキーの[リスト](#value-list)値の要素として扱われます。
+
+これにより,  `@e[tag=foo,tag=bar]` というセレクタは,  `@e[tag={foo,bar}]` と同じ意味になります。
+これは AND 検索（すべての条件を満たすこと）として解釈されます。
+:::
 
 ### 文字列値 {#value-string}
 
-文字列は、任意の文字の並びです。基本的には `"` で囲んで表現できます。  
-省略した場合は、メタ文字以外の任意の文字列を指定できます。
-`"` 自体を含めたい場合は、 `\"` とエスケープします。
-
-:::tip
-
-以下のように、同名のキーを持つ[マップ](#value-map)でも指定できます。
-
-```
-[foo={foo="bar"}]
-```
-
-:::
-
-**暗黙的に、すべての文字列は[あいまい文字列](#value-ambiguous-string)として解釈されます。**
+文字列は, 任意の文字の並びです。基本的には `"` で囲んで表現できます。  
+省略した場合は, メタ文字以外の任意の文字列を指定できます。
+`"` 自体を含めたい場合は,  `\"` とエスケープします。
 
 #### あいまい文字列 {#value-ambiguous-string}
 
-あいまい検索を行うために、対象の文字列を 正規表現で指定できます。
+あいまい検索を行うために, 対象の文字列を正規表現で指定でき, これらの文字列を「あいまい文字列」と呼びます。
 
-正規表現で指定する場合は[マップ](#value-map)で指定し、 `regex` というキーを指定します。
+正規表現で指定する場合は[マップ](#value-map)で指定し,  `regex` というキーを指定します。
 
 例：
 ```
 [foo={regex="bar.*"}]
 ```
+上記の例は, `foo` の値が `bar` で始まる文字列を指定します。
 
 ### 数値 {#value-number}
 
-数値は任意の整数、少数、指数で表現できます。
+数値は任意の整数, 小数, 指数で表現できます。
 
-**暗黙的に、すべての数値は[範囲値](#value-ranged-number)として解釈されます。**
+例：
+```
+[foo=1]
+[foo=1.0]
+[foo=1e3]
+```
 
 #### 範囲値 {#value-ranged-number}
 
-あいまい検索を行うために、対象の数値を範囲で指定できます。
+あいまい検索を行うために, 対象の数値を範囲で指定できます。
 
-範囲で指定する場合は、最小値と最大値を `..` で区切って指定します。  
+範囲で指定する場合は, 最小値と最大値を `..` で連結して指定します。  
 
-また `主キー_min` および `主キー_max` という形式でも指定できますし、  
+また `主キー_min` および `主キー_max` という形式でも指定できますし,   
 さらに `主キー={min=最小値,max=最大値}` という形式も有効です。  
 これらも最小値および最大値どちらかの省略が可能です。
 
-例：
-+ `最小値..` : 最小値以上の数値
-+ `..最大値` : 最大値以下の数値
-+ `最小値..最大値` : 最小値以上、最大値以下の数値
-+ `[主キー_min=最小値,主キー_max=最大値]` : 最小値以上、最大値以下の数値
-+ `[主キー={min=最小値,max=最大値}]` : 最小値以上、最大値以下の数値
+例（fooの値について）：
++ `[foo=最小値..]` : 最小値以上の数値
++ `[foo=..最大値]` : 最大値以下の数値
++ `[foo=最小値..最大値]` : 最小値以上, 最大値以下の数値
++ `[foo_min=最小値,foo_max=最大値]` : 最小値以上, 最大値以下の数値
++ `[foo={min=最小値,max=最大値}]` : 最小値以上, 最大値以下の数値
 
 ### 真偽値 {#value-boolean}
 
-真偽値は、 `true` または `false` で表現します。  
-さらに、 YAML のように `on` または `off`、 `yes` または `no` でも表現できます。
+真偽値は,  `true` または `false` で表現します。  
+さらに,  YAML のように `on` または `off`,  `yes` または `no` でも表現できます。
+
+例：
+```
+[foo=true]
+[foo=on]
+[foo=yes]
+
+[foo=false]
+[foo=off]
+[foo=no]
+
+```
 
 ### リスト {#value-list}
 
-リストは、要素全体を `{` および `}` で囲んで表現します。
-各要素は `,` で区切ります。  
+リストは, 各要素は `,` で区切り, 要素全体を `{` および `}` で囲んで表現します。  
 要素には任意の値を指定できます。
 
-:::info 重複したキーを持つ値
-親に重複したキーを持つ値は、暗黙的にリストとして扱われます。
-::::tip
-これにより、 `@e[tag=foo,tag=bar]` というセレクタは、 `@e[tag={foo,bar}]` と同じ意味になります。
-これは AND 検索として解釈されます。
-::::
+:::tip 重複したキーを持つ値について
+同じ階層に重複したキーを持つ引数の値は, 暗黙的にそのキーの[リスト](#value-list)値の要素として扱われます。
+
+これにより,  `@e[tag=foo,tag=bar]` というセレクタは,  `@e[tag={foo,bar}]` と同じ意味になります。
+これは AND 検索（すべての条件を満たすこと）として解釈されます。
+:::
+
+例：
+```
+[foo={bar,baz}]
+[foo={1,2,3}]
+[foo=1, foo=2, foo=3]
+```
+
 
 ### マップ {#value-map}
 
-マップは、リストと同様に要素全体を `{` および `}` で囲んで表現します。
-キーと値は `=` で区切り、各要素は `,` で区切ります。  
+マップは, リストと同様に要素全体を `{` および `}` で囲んで表現します。
+キーと値は `=` で区切り, 各要素は `,` で区切ります。  
 値には上記の任意の値を指定できます。
+
+例：
+```
+[foo={bar=baz}]
+[foo={1=2,3=4}]
+```
 
 ## 値の否定 {#value-negation}
 
-値の否定は、以下のように `!` を値の先頭に付けることで行えます。  
+以下のように `!` を値の先頭に付けると, その値を否定します。
 
 ```
 [foo=!bar]
@@ -166,26 +192,26 @@ Minecraft ターゲットセレクタは、コマンドの実行者が、その�
 [foo={!bar}]
 ```
 
-## メタ文字 {#meta-characters}
+## メタ文字の一覧 {#meta-characters}
 
-メタ文字は、セレクタの構文を構成する文字です。以下の文字はメタ文字として予約されているため使用できません。  
-使用する必要がある場合は文字列全体を `"` で囲うか、さらに `\` でエスケープしてください。
+メタ文字は, セレクタの構文を構成する文字です。以下の文字はメタ文字として予約されているため使用できません。  
+使用する必要がある場合は文字列全体を `"` で囲うか, `"` についてはさらに `\` でエスケープしてください。
 
 + `"` : 文字列の開始・終了
 + `[` : [引数](#arguments)の開始
 + `]` : [引数](#arguments)の終了
 + `=` : [引数](#arguments)のキーと値の区切り
 + `!` : [引数](#arguments)の値の否定
-+ `,` : [引数](#arguments)の要素、リストの要素、マップの要素の区切り
++ `,` : [引数](#arguments)の要素, リストの要素, マップの要素の区切り
 + `{` : [リスト](#value-list)および[マップ](#マップ)の開始
 + `}` : [リスト](#value-list)および[マップ](#マップ)の終了
 + `\` : エスケープ文字
 
-## 有効な引数一覧 {#arguments}
+## 有効な引数の一覧 {#arguments}
 
 ### `advancements` {#arguments-advancements}
 
-- 特別：この引数は、 母集団にプレイヤを指定した場合のみ有効です。
+- 特別：この引数は,  母集団にプレイヤを指定した場合のみ有効です。
 
 <Object 
    objects={[
@@ -202,38 +228,38 @@ Minecraft ターゲットセレクタは、コマンドの実行者が、その�
 + `advancements={<名前空間付きキー>=<進捗達成の真偽値>}`  
   プレイヤが指定した進捗を達成しているかどうかを指定します。
 + `advancements={<名前空間付きキー>={<達成条件>=<真偽値>}}`
-  プレイヤが、指定した進捗の、指定した達成条件を満たしているかどうかを指定します。
+  プレイヤが, 指定した進捗の, 指定した達成条件を満たしているかどうかを指定します。
 
 ### `distance`(`r`) {#arguments-distance}
 
 エンティティとの距離を指定します。
 
-- 特別：この引数は、 `distance` と `r` の両方で指定できます。
-- 特別：この引数の子は、マップに囲まれている必要はありません。  
-  例として、 `@e[distance={dx=0,y=10,z=0}]` と `@e[dx=0,dy=0,dz=10]` は同じ意味になります。
-- 特別：この引数は、 [RangedNumber](#value-ranged-number) を直接指定できます。  
-  例として、 `@e[distance=..10]` と `@e[distance={max=10}]` は同じ意味になります。
+- 特別：この引数は,  `distance` と `r` の両方で指定できます。
+- 特別：この引数の子は, マップに囲まれている必要はありません。  
+  例として,  `@e[distance={dx=0,y=10,z=0}]` と `@e[dx=0,dy=0,dz=10]` は同じ意味になります。
+- 特別：この引数は,  [範囲値](#value-ranged-number) を直接指定できます。  
+  例として,  `@e[distance=..10]` と `@e[distance={max=10}]` は同じ意味になります。
 
 <Object
     objects={[
       {
         name: "distance",
-        type: ObjectType.DOUBLE,
+        type: PrimitiveTypes.DOUBLE,
         description: "エンティティとの距離です。"
       },
       {
         name: "dx",
-        type: ObjectType.DOUBLE,
+        type: PrimitiveTypes.DOUBLE,
         description: "X 軸方向の距離です。"
       },
       {
         name: "dy",
-        type: ObjectType.DOUBLE,
+        type: PrimitiveTypes.DOUBLE,
         description: "Y 軸方向の距離です。"
       },
       {
         name: "dz",
-        type: ObjectType.DOUBLE,
+        type: PrimitiveTypes.DOUBLE,
         description: "Z 軸方向の距離です。"
       }
     ]}
@@ -243,14 +269,14 @@ Minecraft ターゲットセレクタは、コマンドの実行者が、その�
 
 プレイヤのゲームモードを指定します。
 
-- 特別：この引数は、 `gamemode` と `m` の両方で指定できます。
-- 特別：この引数は、 母集団にプレイヤを指定した場合のみ有効です。
+- 特別：この引数は,  `gamemode` と `m` の両方で指定できます。
+- 特別：この引数は,  母集団にプレイヤを指定した場合のみ有効です。
 
 <Object 
    objects={[
      {
        name: "gamemode",
-       type: "GameMode |" + ObjectType.INTEGER,
+       type: "GameMode |" + PrimitiveTypes.INTEGER,
        description: "プレイヤのゲームモードです。"
      }
    ]}
@@ -260,14 +286,14 @@ Minecraft ターゲットセレクタは、コマンドの実行者が、その�
 
 エンティティのレベルを指定します。
 
-- 特別：この引数は、 `level` と `l` の両方で指定できます。
-- 特別：この引数は、 母集団にプレイヤを指定した場合のみ有効です。
+- 特別：この引数は,  `level` と `l` の両方で指定できます。
+- 特別：この引数は,  母集団にプレイヤを指定した場合のみ有効です。
 
 <Object 
    objects={[
      {
        name: "level",
-       type: ObjectType.INTEGER,
+       type: PrimitiveTypes.INTEGER,
        description: "エンティティのレベルです。"
      }
    ]}
@@ -277,41 +303,40 @@ Minecraft ターゲットセレクタは、コマンドの実行者が、その�
 
 エンティティの位置を指定します。
 
-- 特別：この引数は、 `location` と `loc` の両方で指定できます。
-- 特別：この引数の子は、マップに囲まれている必要はありません。  
-  例として、 `@e[loc={x=0,y=0,z=0}]` と `@e[x=0,y=0,z=0]` は同じ意味になります。
+- 特別：この引数は,  `location` と `loc` の両方で指定できます。
+- 特別：この引数の子は, マップに囲まれている必要はありません。  
+  例として,  `@e[loc={x=0,y=0,z=0}]` と `@e[x=0,y=0,z=0]` は同じ意味になります。
 
 <Object 
    objects={[
      {
        name: "x",
-       type: ObjectType.DOUBLE,
+       type: PrimitiveTypes.DOUBLE,
        description: "X 座標です。"
      },
      {
        name: "y",
-       type: ObjectType.DOUBLE,
+       type: PrimitiveTypes.DOUBLE,
        description: "Y 座標です。"
      },
      {
        name: "z",
-       type: ObjectType.DOUBLE,
+       type: PrimitiveTypes.DOUBLE,
        description: "Z 座標です。"
      },
      {
        name: ["yaw", "y_rotation", "ry"],
-       type: ObjectType.FLOAT,
+       type: PrimitiveTypes.FLOAT,
        description: "Y 軸回転です。"
      },
       {
         name: ["pitch", "x_rotation", "rx"],
-        type: ObjectType.FLOAT,
+        type: PrimitiveTypes.FLOAT,
         description: "X 軸回転です。"
       },
       {
         name: "world",
         type: "NamespacedKey",
-        type_link: "/docs/use/scenario/types/misc#namespaced-key",
         description: "ワールドです。"
       }
    ]}
@@ -337,7 +362,7 @@ Minecraft ターゲットセレクタは、コマンドの実行者が、その�
    objects={[
      {
        name: "name",
-       type: ObjectType.STRING,
+       type: PrimitiveTypes.STRING,
        description: "エンティティの名前です。"
      }
    ]}
@@ -360,7 +385,6 @@ Minecraft ターゲットセレクタは、コマンドの実行者が、その�
      {
        name: "scores",
        type: "Map<String, RangedNumber>",
-       type_link: "/docs/use/scenario/types/misc#map",
        description: "エンティティのスコアです。"
      }
    ]}
@@ -370,14 +394,13 @@ Minecraft ターゲットセレクタは、コマンドの実行者が、その�
 
 エンティティのタグを指定します。
 
-- 特別：この引数は、 `tag` と `tags` の両方で指定できます。
+- 特別：この引数は,  `tag` と `tags` の両方で指定できます。
 
 <Object 
    objects={[
      {
        name: "tag",
-       type: ObjectType.STRING + " | " + ObjectType.STRING + "[]",
-       type_link: "/docs/use/scenario/types/misc#list",
+       type: PrimitiveTypes.STRING + " | " + PrimitiveTypes.STRING + "[]",
        description: "エンティティのタグです。"
      }
    ]}
@@ -391,7 +414,7 @@ Minecraft ターゲットセレクタは、コマンドの実行者が、その�
    objects={[
      {
        name: "team",
-       type: ObjectType.STRING,
+       type: PrimitiveTypes.STRING,
        description: "エンティティのチームです。"
      }
    ]}
@@ -399,7 +422,7 @@ Minecraft ターゲットセレクタは、コマンドの実行者が、その�
 
 :::tip
 
-空文字列を指定すると、チームに所属していないエンティティのみを選択します。  
+空文字列を指定すると, チームに所属していないエンティティのみを選択します。  
 これも反転して使用できます。
 
 例：
@@ -419,7 +442,7 @@ Minecraft ターゲットセレクタは、コマンドの実行者が、その�
      {
        name: "type",
        type: "EntityType",
-       type_link: "/docs/use/scenario/types/entities#entity-type",
+       type_link: "/references/types/entities#entity-type",
        description: "エンティティの種類です。"
      }
    ]}
@@ -427,15 +450,16 @@ Minecraft ターゲットセレクタは、コマンドの実行者が、その�
 
 ## セレクタのバッカス・ナウア記法 {#baccus-naur}
 
-この構文をより機械的に理解するために、[拡張バッカス・ナウア記法](https://ja.wikipedia.org/wiki/バッカス・ナウア記法)で示します。
+この構文をより機械的に理解するために, [拡張バッカス・ナウア記法](https://ja.wikipedia.org/wiki/バッカス・ナウア記法)で示します。
 
 ```ebnf
 <selector> ::= <selector-type> | <selector-type> "[" <selector-arguments> "]"
                | <selector-arguments> | "[" <selector-arguments> "]"
-<selector-type> ::='@e' | '@a' | '@p' | '@r' | '@s'
 ```
 
 ```ebnf
+<selector-type> ::='@e' | '@a' | '@p' | '@r' | '@s'
+
 <selector-arguments> ::= [<selector-argument> ("," <selector-argument>)*]
 <selector-argument> ::= <argument-key> "=" "!"? <argument-value>
 

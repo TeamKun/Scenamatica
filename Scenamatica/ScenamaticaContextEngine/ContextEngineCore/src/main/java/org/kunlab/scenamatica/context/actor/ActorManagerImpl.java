@@ -19,7 +19,7 @@ import org.kunlab.scenamatica.exceptions.context.actor.VersionNotSupportedExcept
 import org.kunlab.scenamatica.interfaces.ScenamaticaRegistry;
 import org.kunlab.scenamatica.interfaces.context.Actor;
 import org.kunlab.scenamatica.interfaces.context.ActorManager;
-import org.kunlab.scenamatica.interfaces.scenariofile.context.PlayerStructure;
+import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.PlayerStructure;
 import org.kunlab.scenamatica.settings.ActorSettings;
 
 import java.util.ArrayList;

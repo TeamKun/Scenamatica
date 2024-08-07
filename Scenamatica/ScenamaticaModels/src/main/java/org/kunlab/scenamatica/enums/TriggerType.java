@@ -3,7 +3,7 @@ package org.kunlab.scenamatica.enums;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.Nullable;
-import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
+import org.kunlab.scenamatica.interfaces.structures.trigger.TriggerArgument;
 
 import java.util.Map;
 

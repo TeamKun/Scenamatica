@@ -1,0 +1,96 @@
+name: Build NMS with NMSAction
+on:
+  workflow_call:
+    secrets:
+      token:
+        required: true
+
+jobs:
+  check-whether-has-to-build:
+    name: Check whether has to build
+    runs-on: ubuntu-latest
+    outputs:
+      cache-hit: ${{ steps.check.outputs.cache-hit }}
+    steps:
+      - name: Check whether has to build
+        id: check
+        uses: actions/cache@v4
+        with:
+          lookup-only: true
+          path: nms-build/.m2
+          key: nms-maven
+          restore-keys: nms-maven
+      - name: Debug Cache Hit
+        run: "echo Cache hit: ${{ steps.check.outputs.cache-hit }}, ${{ steps.check.outputs.cache-hit == 'true'}}"
+  build-nms:
+    name: Build NMS with NMSAction
+    needs: check-whether-has-to-build
+    if: needs.check-whether-has-to-build.outputs.cache-hit != 'true'
+    strategy:
+      matrix:
+        nms-version:
+          - 1.16.5
+          - 1.16.3
+          - 1.15.2
+          - 1.14.4
+          - 1.13.2
+          - "1.13"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Build NMS if cache miss
+        uses: PeyaPeyaPeyang/nmsaction@v9
+        with:
+          rev: ${{ matrix.nms-version }}
+      - name: Cache NMS
+        uses: actions/cache@v4
+        with:
+          path: nms-build/.m2
+          key: nms-maven-${{ matrix.nms-version }}
+  collect-to-one-artifact:
+    name: Collect to one artifact
+    runs-on: ubuntu-latest
+    needs: build-nms
+    if: needs.check-whether-has-to-build.outputs.cache-hit != 'true'
+    steps:
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+      - run: npm install @actions/cache @actions/github
+      - uses: actions/github-script@v7
+        with:
+          script: |
+            const cache = require('@actions/cache');
+            const gh = require('@actions/github');
+            const path = require('path');
+            const nmsVersions = [
+              '1.16.5',
+              '1.16.3',
+              '1.15.2',
+              '1.14.4',
+              '1.13.2',
+              '1.13'
+            ];
+            
+            const octokit = gh.getOctokit(process.env.GITHUB_TOKEN);
+            
+            for (const nmsVersion of nmsVersions) {
+              const key = `nms-maven-${nmsVersion}`;
+              const cacheKey = await cache.restoreCache(
+                  ['nms-build/.m2'],
+                  key,
+                  nmsVersions
+              );
+              if (cacheKey) {
+                console.log(`Cache restored from key: ${cacheKey}`);
+              } else {
+                console.error(`Cache not found for key: ${key}`);
+                process.exit(1);
+              }
+            }
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Save caches
+        uses: actions/cache/save@v4
+        with:
+          path: nms-build/.m2
+          key: nms-maven

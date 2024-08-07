@@ -7,15 +7,18 @@ import org.bukkit.event.entity.EntityDropItemEvent;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import org.kunlab.scenamatica.annotations.action.ActionMeta;
+import org.kunlab.scenamatica.annotations.action.Action;
+import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.OutputDoc;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
-import org.kunlab.scenamatica.interfaces.action.types.Watchable;
-import org.kunlab.scenamatica.interfaces.scenariofile.entity.entities.EntityItemStructure;
-import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.EntitySpecifier;
+import org.kunlab.scenamatica.interfaces.action.types.Expectable;
+import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.entities.EntityItemStructure;
+import org.kunlab.scenamatica.interfaces.structures.specifiers.EntitySpecifier;
 import org.kunlab.scenamatica.nms.NMSProvider;
 import org.kunlab.scenamatica.nms.types.entity.NMSEntity;
 import org.kunlab.scenamatica.nms.types.entity.NMSEntityItem;
@@ -24,12 +27,38 @@ import org.kunlab.scenamatica.nms.types.item.NMSItemStack;
 import java.util.Collections;
 import java.util.List;
 
-@ActionMeta("entity_drop_item")
+@Action("entity_drop_item")
+@ActionDoc(
+        name = "エンティティによるアイテムのドロップ",
+        description = "エンティティがアイテムをドロップします。",
+        events = {
+                EntityDropItemEvent.class
+        },
+
+        executable = "エンティティがアイテムをドロップします。",
+        expectable = "エンティティがアイテムをドロップすることを期待します。",
+        requireable = ActionDoc.UNALLOWED,
+
+        outputs = {
+                @OutputDoc(
+                        name = EntityDropItemAction.OUT_KEY_ITEM,
+                        description = "ドロップされたアイテムです。",
+                        type = Item.class
+                )
+        }
+
+)
 public class EntityDropItemAction extends AbstractGeneralEntityAction
-        implements Executable, Watchable
+        implements Executable, Expectable
 {
     public static final String OUT_KEY_ITEM = "item";
-    public static InputToken<EntitySpecifier<Item>> IN_ITEM =
+
+    @InputDoc(
+            name = "item",
+            description = "ドロップされるアイテムです。",
+            type = Item.class
+    )
+    public static final InputToken<EntitySpecifier<Item>> IN_ITEM =
             ofInput("item", Item.class, EntityItemStructure.class)
                     .validator(ScenarioType.ACTION_EXECUTE, EntitySpecifier::hasStructure, "Item structure is not specified.")
                     .validator(

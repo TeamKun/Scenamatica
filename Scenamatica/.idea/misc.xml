@@ -21,6 +21,7 @@
     <option name="ignoredFiles">
       <set>
         <option value="$PROJECT_DIR$/ScenamaticaActions/v1_14_R1/pom.xml" />
+        <option value="$PROJECT_DIR$/ScenamaticaBookKeeper/pom.xml" />
       </set>
     </option>
   </component>

@@ -6,7 +6,8 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.actions.base.player.AbstractPlayerAction;
-import org.kunlab.scenamatica.annotations.action.ActionMeta;
+import org.kunlab.scenamatica.annotations.action.Action;
+import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
 import org.kunlab.scenamatica.enums.MinecraftVersion;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
@@ -14,21 +15,26 @@ import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
-import org.kunlab.scenamatica.interfaces.action.types.Watchable;
+import org.kunlab.scenamatica.interfaces.action.types.Expectable;
 import org.kunlab.scenamatica.interfaces.context.Actor;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-@ActionMeta(value = "player_quit", supportsSince = MinecraftVersion.V1_16_5)
+@Action(value = "player_quit", supportsSince = MinecraftVersion.V1_16_5)
 public class PlayerQuitAction extends AbstractPlayerAction
-        implements Executable, Watchable, Requireable
+        implements Executable, Expectable, Requireable
 {
     public static final InputToken<String> IN_QUIT_MESSAGE = ofInput(
             "message",
             String.class
     );
+    @InputDoc(
+            name = "reason",
+            description = "プレイヤがサーバから退出した理由を指定します。",
+            type = PlayerQuitEvent.QuitReason.class
+    )
     public static final InputToken<PlayerQuitEvent.QuitReason> IN_QUIT_REASON = ofEnumInput(
             "reason",
             PlayerQuitEvent.QuitReason.class

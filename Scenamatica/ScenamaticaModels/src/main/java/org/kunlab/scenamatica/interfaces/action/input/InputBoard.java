@@ -4,7 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.interfaces.scenario.SessionStorage;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
-import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
+import org.kunlab.scenamatica.interfaces.structures.trigger.TriggerArgument;
 
 import java.util.Map;
 import java.util.function.Consumer;

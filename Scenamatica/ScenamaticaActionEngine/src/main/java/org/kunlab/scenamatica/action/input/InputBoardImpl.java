@@ -9,7 +9,7 @@ import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.input.InputValueHolder;
 import org.kunlab.scenamatica.interfaces.scenario.SessionStorage;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
-import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerArgument;
+import org.kunlab.scenamatica.interfaces.structures.trigger.TriggerArgument;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -86,12 +86,20 @@ public class InputBoardImpl implements InputBoard
     public InputBoard register(InputToken<?> token)
     {
         if (this.contains(token))
-            throw new IllegalArgumentException("Token already registered: " + token.getName());
+        {
+            this.unregister(token);
+            this.validated = false;
+        }
 
         this.values.add(new InputValueHolderImpl<>(token));
         this.hasUnresolved = true;
         this.validated = false;
         return this;
+    }
+
+    private void unregister(InputToken<?> token)
+    {
+        this.values.removeIf(value -> value.isEquals(token));
     }
 
     @Override

@@ -5,22 +5,49 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.jetbrains.annotations.NotNull;
-import org.kunlab.scenamatica.annotations.action.ActionMeta;
+import org.kunlab.scenamatica.annotations.action.Action;
+import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.OutputDoc;
 import org.kunlab.scenamatica.commons.utils.Utils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
-import org.kunlab.scenamatica.interfaces.action.types.Watchable;
+import org.kunlab.scenamatica.interfaces.action.types.Expectable;
 
 import java.util.Collections;
 import java.util.List;
 
-@ActionMeta("player_teleport")
+@Action("player_teleport")
+@ActionDoc(
+        name = "プレイヤのテレポート",
+        description = "プレイヤを指定した場所にテレポートさせます。",
+        events = {
+                PlayerTeleportEvent.class
+        },
+
+        executable = "プレイヤを指定した場所にテレポートさせます。",
+        expectable = "プレイヤがテレポートすることを期待します。",
+        requireable = ActionDoc.UNALLOWED,
+
+        outputs = {
+                @OutputDoc(
+                        name = PlayerTeleportAction.KEY_OUT_CAUSE,
+                        description = "テレポートの原因です。",
+                        type = PlayerTeleportEvent.TeleportCause.class
+                )
+        }
+)
 public class PlayerTeleportAction extends PlayerMoveAction
-        implements Executable, Watchable
+        implements Executable, Expectable
 {
+    @InputDoc(
+            name = "cacuse",
+            description = "テレポートの原因を指定します。",
+            type = PlayerTeleportEvent.TeleportCause.class
+    )
     public static final InputToken<PlayerTeleportEvent.TeleportCause> IN_CAUSE = ofEnumInput(
             "cause",
             PlayerTeleportEvent.TeleportCause.class

@@ -5,25 +5,62 @@ import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.kunlab.scenamatica.annotations.action.ActionMeta;
+import org.kunlab.scenamatica.annotations.action.Action;
+import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.OutputDoc;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
-import org.kunlab.scenamatica.interfaces.action.types.Watchable;
+import org.kunlab.scenamatica.interfaces.action.types.Expectable;
 
 import java.util.Collections;
 import java.util.List;
 
-@ActionMeta("player_kick")
+@Action("player_kick")
+@ActionDoc(
+        name = "プレイヤのキック",
+        description = "プレイヤをサーバから強制退出させます。",
+        events = {
+                PlayerKickEvent.class
+        },
+
+        executable = "プレイヤをサーバから強制退出させます。",
+        expectable = "プレイヤがサーバから強制退出されることを期待します。",
+        requireable = ActionDoc.UNALLOWED,
+
+        outputs = {
+                @OutputDoc(
+                        name = PlayerKickAction.KEY_OUT_LEAVE_MESSAGE,
+                        description = "プレイヤがサーバからキックされたときに表示されるメッセージです。",
+                        type = String.class
+                ),
+                @OutputDoc(
+                        name = PlayerKickAction.KEY_OUT_KICK_MESSAGE,
+                        description = "プレイヤがサーバからキックされたときの理由です。",
+                        type = String.class
+                )
+        }
+)
 public class PlayerKickAction extends AbstractPlayerAction
-        implements Executable, Watchable
+        implements Executable, Expectable
 {
+    @InputDoc(
+            name = "leaveMessage",
+            description = "プレイヤがサーバからキックされたときに表示されるメッセージを指定します。",
+            type = String.class
+    )
     public static final InputToken<String> IN_LEAVE_MESSAGE = ofInput(
             "leaveMessage",
             String.class
     );
+    @InputDoc(
+            name = "message",
+            description = "プレイヤがサーバからキックされたときにプレイヤに表示されるメッセージを指定します。",
+            type = String.class
+    )
     public static final InputToken<String> IN_KICK_MESSAGE = ofInput(
             "message",
             String.class

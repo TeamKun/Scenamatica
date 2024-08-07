@@ -6,7 +6,7 @@ import org.kunlab.scenamatica.enums.RunAs;
 import org.kunlab.scenamatica.enums.RunOn;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
-import org.kunlab.scenamatica.interfaces.scenariofile.action.ActionStructure;
+import org.kunlab.scenamatica.interfaces.structures.scenario.ActionStructure;
 
 import java.util.function.BiConsumer;
 

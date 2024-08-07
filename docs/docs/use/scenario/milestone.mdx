@@ -6,44 +6,116 @@
 
 ## 概要 {#overview}
 
-マイルストーンは、シナリオの進行に関わるフラグを文字列で設定する機能です。これにより、特定の条件が満たされた場合にのみシナリオが実行されるようになります。
-また、テスト中にも利用できるため、シナリオの進行を制御することができます。
+マイルストーンは, シナリオの進行状況や, サーバの状態をフラグで管理するためのシステムです。  
+進行状況に応じてマイルストーンを設定することで, それに応じたシナリオの場合分けを行えます。
 
-さらに、マイルストーンはプラグインの Java コードからも操作できます。 
-これにより、テストにおいて、コードの特定のポイントに到達したことを確認できます。
+マイルストーンは文字列型のフラグであり, 任意の一意な名前を持ちます。
+
+例：
+```yaml showLineNumbers
+scenarios:
+  # マイルストーン "villager_killed" を設定
+  - type: execute
+    action: milestone
+    with:
+      name: "villager_killed"
+ # マイルストーン "villager_killed" が設定されていることを要求する。
+  - type: require
+    action: milestone
+    with:
+      name: "villager_killed"
+```
 
 ## マイルストーンのスコープ {#scope}
 
-スコープは、設定されたマイルストーンがどのような範囲で有効かを管理するものです。
-すべてのマイルストーンは、シナリオシステムの汚染を避けるため、スコープを持っています。
+スコープは, 設定されたマイルストーンがどのような範囲で有効かを管理するものです。
+すべてのマイルストーンは, シナリオシステムの汚染を避けるため, スコープを持っています。
+そのスコープから外れると, その中で設定されたマイルストーンは破棄されます。
 
-通常は自動でスコープが設定されますが、マイルストーンシステムを使用する際には、スコープを意識する必要があります。
+通常は自動でスコープが設定されますが, 明示的に指定することもできます。
 
-### シナリオグローバル(`SCENARIO_GLOBAL`) スコープ {#scenario-global}
++ シナリオグローバル(`SCENARIO_GLOBAL`) スコープ  
+  プラグインの特定のシナリオファイル内で有効なマイルストーンです。  
+  シナリオのアンロードやプラグインのアンロード時に破棄されます。
 
-プラグインの特定のシナリオファイル内で有効なマイルストーンです。  
-シナリオのアンロードやプラグインのアンロード時に破棄されます。
++ トリガ・事前(`TRIGGER_BEFORE`) スコープ  
+  トリガの事前シナリオ内で有効なマイルストーンです。  
+  事前シナリオの終了時に破棄されます。
 
-### トリガ・事前(`TRIGGER_BEFORE`) スコープ {#trigger-before}
++ トリガ・事後(`TRIGGER_AFTER`) スコープ  
+  トリガの事後シナリオ内で有効なマイルストーンです。  
+  事後シナリオの終了時に破棄されます。
 
-トリガの事前シナリオ内で有効なマイルストーンです。  
-事前シナリオの終了時に破棄されます。
-
-### トリガ・事後(`TRIGGER_AFTER`) スコープ {#trigger-after}
-
-トリガの事後シナリオ内で有効なマイルストーンです。  
-事後シナリオの終了時に破棄されます。
-
-### メインシナリオ(`MAIN_SCENARIO`) スコープ {#main-scenario}
-
-メインシナリオ内で有効なマイルストーンです。  
-メインシナリオの終了時に破棄されます。
++ メインシナリオ(`MAIN_SCENARIO`) スコープ  
+  メインシナリオ内で有効なマイルストーンです。  
+  メインシナリオの終了時に破棄されます。
 
 ## マイルストーンの使い方 {#usage}
 
-マイルストーンは２つの方法で到達できます。  
+マイルストーンへは２つの方法でアクセスできます。 
 
-1. シナリオのアクションから使用する。
-  アクションからマイルストーンを設定するには、[<kbd>milestone</kbd>](/docs/use/scenario/actions#milestone) アクションを使用します。
-2. [プラグインのコードから使用する](#use-with-code)
-  TODO: プラグインのコードからマイルストーンを設定する方法を記述する。
+1. シナリオのアクションから使用する。  
+  [<kbd>milestone</kbd>](/references/actions/scenamaticas/milestone) アクションを使用します。
+2. プラグインの Java コードから使用する。  
+   プラグインの Java コードからマイルストーンを設定するには, MileStoneManager を使用します（ドキュメント未作成）。
+
+### アクションによるマイルストーンの設定 {#setting}
+
+マイルストーンを設定するには, [<kbd>milestone</kbd>](/references/actions/scenamaticas/milestone) アクションを
+[アクション実行(`execute`)](/docs/use/scenario/elements#scenario-type-action-execution) タイプで使用します。
+
+```yaml showLineNumbers
+# マイルストーン "villager_killed" を設定
+- type: execute
+  action: milestone
+  with:
+    name: "villager_killed"
+```
+
+## マイルストーンの活用 {#utilisation}
+
+マイルストーンは, シナリオの進行状況を管理するという特性上, 様々な活用法が想定されます。以下に, その一例を示します。
+
+### マイルストーンによるシナリオの分岐 {#utilisation-branching-scenario}
+
+マイルストーンを使用することで, シナリオの進行状況に応じて追加のアクションを実行したり, 逆に特定のアクションをスキップさせられます。  
+これを実現するためには, シナリオの[条件付き実行](/docs/use/scenario/elements#conditional-execution)機能を使用します。
+
+マイルストーン `villager_killed` が設定されている場合のみ, 村人をキルするアクションを実行する例を示します。  
+また, 以下の例ではトリガの[事前シナリオ](/docs/use/scenario/trigger#before-after-scenarios)機能を使用しています。
+
+```yaml showLineNumbers
+on:
+# 手動実行時に発火
+- type: manual_dispatch
+  # 以下, 「事前シナリオ」機能を使用し, 手動実行時のみに実行されるシナリオを設定する。
+  before:
+  # マイルストーン "villager_killed" を設定
+# highlight-start
+  - type: execute
+    action: milestone
+    with:
+      name: "villager_killed"
+# highlight-end
+# プラグインのロード時に発火
+- type: on_load
+
+scenario:
+# 手動実行時にのみ村人をキルする。
+- type: execute
+  action: entity_death
+  with:
+    target: "@e[type=villager,tag=hoge]"
+  # マイルストーン "villager_killed" が設定されている場合のみ実行
+# highlight-start
+  runif:
+    type: milestone
+    with:
+      name: "villager_killed"
+# highlight-end
+# 村人がキルされていることを確認
+- type: require
+  action: entity_death
+  with:
+    target: "@e[type=villager,tag=hoge]"
+```

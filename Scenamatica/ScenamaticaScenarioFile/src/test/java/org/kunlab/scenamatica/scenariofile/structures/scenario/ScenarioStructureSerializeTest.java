@@ -2,7 +2,7 @@ package org.kunlab.scenamatica.scenariofile.structures.scenario;
 
 import org.junit.jupiter.api.Test;
 import org.kunlab.scenamatica.enums.ScenarioType;
-import org.kunlab.scenamatica.interfaces.scenariofile.scenario.ScenarioStructure;
+import org.kunlab.scenamatica.interfaces.structures.scenario.ScenarioStructure;
 import org.kunlab.scenamatica.scenariofile.StructureSerializerImpl;
 import org.kunlab.scenamatica.scenariofile.structures.utils.MapTestUtil;
 

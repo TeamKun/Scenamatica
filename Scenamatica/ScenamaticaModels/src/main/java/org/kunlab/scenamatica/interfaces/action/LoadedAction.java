@@ -3,7 +3,7 @@ package org.kunlab.scenamatica.interfaces.action;
 import org.bukkit.plugin.Plugin;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
-import org.kunlab.scenamatica.interfaces.action.types.Watchable;
+import org.kunlab.scenamatica.interfaces.action.types.Expectable;
 
 /**
  * このインターフェースは、アクションのロードされたインスタンスを管理します。
@@ -23,7 +23,7 @@ public interface LoadedAction<T extends Action>
      *
      * @return 監視可能なアクション。
      */
-    Watchable asWatchable();
+    Expectable asExpectable();
 
     /**
      * アクションを要求可能な形式で取得します。
@@ -58,7 +58,7 @@ public interface LoadedAction<T extends Action>
      *
      * @return アクションが監視可能な場合はtrue、そうでない場合はfalse。
      */
-    boolean isWatchable();
+    boolean isExpectable();
 
     /**
      * アクションが要求可能かどうかを確認します。

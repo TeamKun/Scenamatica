@@ -42,15 +42,21 @@
 }
 
 [data-theme="dark"] {
-  --scenario-type-color-execution: #7fbfff;
-  --scenario-type-color-requirement: #7fffff;
-  --scenario-type-color-expectation: #bfff7f;
+  --scenario-type-color-execution: #137317;
+  --scenario-type-border-color-execution: #89b98b;
+  --scenario-type-color-requirement: #13736d;
+  --scenario-type-border-color-requirement: #89b9b8;
+  --scenario-type-color-expectation: #731335;
+  --scenario-type-border-color-expectation: #b98b89;
 }
 
 [data-theme="light"] {
-  --scenario-type-color-execution: #5d8bb9;
-  --scenario-type-color-requirement: #60bbbb;
-  --scenario-type-color-expectation: #75c22c;
+  --scenario-type-color-execution: #409941;
+  --scenario-type-border-color-execution: #b8d9b8;
+  --scenario-type-color-requirement: #408699;
+  --scenario-type-border-color-requirement: #b8d9d9;
+  --scenario-type-color-expectation: #964e68;
+  --scenario-type-border-color-expectation: #d9b8b8;
 }
 
 .footer {

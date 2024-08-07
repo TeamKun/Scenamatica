@@ -27,7 +27,7 @@ import org.kunlab.scenamatica.interfaces.scenario.SessionStorage;
 import org.kunlab.scenamatica.interfaces.scenario.TestReporter;
 import org.kunlab.scenamatica.interfaces.scenario.runtime.CompiledTriggerAction;
 import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileStructure;
-import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerStructure;
+import org.kunlab.scenamatica.interfaces.structures.trigger.TriggerStructure;
 import org.kunlab.scenamatica.scenario.engine.ScenarioEngineImpl;
 import org.kunlab.scenamatica.scenario.milestone.MilestoneManagerImpl;
 

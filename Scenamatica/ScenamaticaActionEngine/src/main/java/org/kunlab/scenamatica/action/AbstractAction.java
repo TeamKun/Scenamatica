@@ -18,10 +18,10 @@ import org.kunlab.scenamatica.interfaces.action.input.InputTraverser;
 import org.kunlab.scenamatica.interfaces.action.input.Traverser;
 import org.kunlab.scenamatica.interfaces.scenariofile.Structure;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
-import org.kunlab.scenamatica.interfaces.scenariofile.context.PlayerStructure;
-import org.kunlab.scenamatica.interfaces.scenariofile.entity.EntityStructure;
-import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.EntitySpecifier;
-import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.PlayerSpecifier;
+import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.PlayerStructure;
+import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.EntityStructure;
+import org.kunlab.scenamatica.interfaces.structures.specifiers.EntitySpecifier;
+import org.kunlab.scenamatica.interfaces.structures.specifiers.PlayerSpecifier;
 
 import java.util.Arrays;
 import java.util.Map;

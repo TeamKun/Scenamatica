@@ -9,12 +9,12 @@ type SinceProps = {
   link?: string
 }
 
-const Since: React.FC<SinceProps> = ({ version, newMode, message, link }) => {
+const Since: React.FC<SinceProps> = ({version, newMode, message, link}) => {
   const messageBody = message
     ? message
     : newMode
-    ? `✨KPM ${version} の新機能です！✨`
-    : `この機能は KPM ${version} で強化されました！`
+      ? `✨Scenamatica ${version} の新機能です！✨`
+      : `この機能は Scenamatica ${version} で強化されました！`
   const linkString = link ? `詳細は <a href="${link}">${link}</a> を参照してください。` : ""
 
   return (
@@ -28,8 +28,8 @@ const Since: React.FC<SinceProps> = ({ version, newMode, message, link }) => {
         </span>
       }
     >
-      <p dangerouslySetInnerHTML={{ __html: messageBody }}></p>
-      {linkString && <p dangerouslySetInnerHTML={{ __html: linkString }} />}
+      <p dangerouslySetInnerHTML={{__html: messageBody}}></p>
+      {linkString && <p dangerouslySetInnerHTML={{__html: linkString}}/>}
     </Admonition>
   )
 }

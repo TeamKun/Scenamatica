@@ -7,24 +7,56 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerBucketFillEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import org.kunlab.scenamatica.annotations.action.ActionMeta;
+import org.jetbrains.annotations.Nullable;
+import org.kunlab.scenamatica.annotations.action.Action;
+import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.Admonition;
+import org.kunlab.scenamatica.bookkeeper.enums.ActionMethod;
+import org.kunlab.scenamatica.bookkeeper.enums.AdmonitionType;
+import org.kunlab.scenamatica.bookkeeper.enums.MCVersion;
 import org.kunlab.scenamatica.enums.MinecraftVersion;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
-import org.kunlab.scenamatica.interfaces.action.types.Watchable;
+import org.kunlab.scenamatica.interfaces.action.types.Expectable;
 import org.kunlab.scenamatica.interfaces.context.Actor;
 import org.kunlab.scenamatica.nms.enums.NMSHand;
 
 import java.util.Collections;
 import java.util.List;
 
-@ActionMeta(value = "player_bucket_fill", supportsUntil = MinecraftVersion.V1_15_2)
-public class PlayerBucketFillAction extends AbstractPlayerBucketAction
-        implements Watchable, Executable
-{
+@Action(value = "player_bucket_fill", supportsUntil = MinecraftVersion.V1_15_2)
+@ActionDoc(
+        name = "プレイヤによるバケツの満杯化",
+        description = "プレイヤがバケツを満杯にするアクションです。",
+        events = {
+                PlayerBucketFillEvent.class
+        },
 
+        supportsUntil = MCVersion.V1_15_2,
+
+        executable = "プレイヤがバケツを満杯にします。",
+        expectable = "プレイヤがバケツを満杯にすることを期待します。",
+        requireable = ActionDoc.UNALLOWED,
+
+        admonitions = {
+                @Admonition(
+                        type = AdmonitionType.WARNING,
+                        on = ActionMethod.EXECUTE,
+                        content = "`block` または `clickedBlock` のどちらか一方は必須です。"
+                ),
+                @Admonition(
+                        type = AdmonitionType.DANGER,
+                        on = ActionMethod.EXECUTE,
+                        content = "NMS の仕様上の都合により、 `block` を用いた液体の場所は `eventOnly` が `true` の場合にのみ有効です。"
+                )
+        }
+)
+public class PlayerBucketFillAction extends AbstractPlayerBucketAction
+        implements Expectable, Executable
+{
     @Override
     public void execute(@NotNull ActionContext ctxt)
     {
@@ -44,7 +76,7 @@ public class PlayerBucketFillAction extends AbstractPlayerBucketAction
     protected void doEventOnlyMode(@NotNull ActionContext ctxt, Player who, Block block, Block blockClicked, BlockFace blockFace, Material bucket, ItemStack itemInHand, NMSHand hand)
     {
         super.makeOutput(ctxt, who, itemInHand, block, blockFace, bucket, hand);
-        PlayerBucketFillEvent event = new PlayerBucketFillEvent(who, blockClicked, blockFace, bucket, itemInHand, hand.toEquipmentSlot());
+        PlayerBucketFillEvent event = this.createEvent(who, blockClicked, block, blockFace, bucket, itemInHand, hand.toEquipmentSlot());
         Bukkit.getServer().getPluginManager().callEvent(event);
 
         if (event.isCancelled())
@@ -71,6 +103,11 @@ public class PlayerBucketFillAction extends AbstractPlayerBucketAction
         block.setType(Material.AIR);
     }
 
+    protected PlayerBucketFillEvent createEvent(@NotNull Player who, @Nullable Block block, @NotNull Block blockClicked, @NotNull BlockFace blockFace, @NotNull Material bucket, @NotNull ItemStack itemInHand, @Nullable EquipmentSlot hand)
+    {
+        return new PlayerBucketFillEvent(who, blockClicked, blockFace, bucket, itemInHand, hand);
+    }
+    
     @Override
     public List<Class<? extends Event>> getAttachingEvents()
     {

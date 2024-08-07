@@ -8,7 +8,7 @@ import org.kunlab.scenamatica.nms.types.entity.NMSEntity;
 public interface NMSChunkProvider extends NMSElement
 {
     /**
-     * プレイヤーチャンクマップを取得します。
+     * プレイヤチャンクマップを取得します。
      */
     void purgeUnload();
 

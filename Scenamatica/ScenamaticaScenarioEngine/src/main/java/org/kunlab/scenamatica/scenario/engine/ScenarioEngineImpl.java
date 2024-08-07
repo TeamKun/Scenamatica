@@ -30,7 +30,7 @@ import org.kunlab.scenamatica.interfaces.scenario.TestReporter;
 import org.kunlab.scenamatica.interfaces.scenario.runtime.CompiledScenarioAction;
 import org.kunlab.scenamatica.interfaces.scenario.runtime.CompiledTriggerAction;
 import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileStructure;
-import org.kunlab.scenamatica.interfaces.scenariofile.trigger.TriggerStructure;
+import org.kunlab.scenamatica.interfaces.structures.trigger.TriggerStructure;
 import org.kunlab.scenamatica.scenario.ScenarioActionExecutionListener;
 import org.kunlab.scenamatica.scenario.ScenarioCompiler;
 import org.kunlab.scenamatica.scenario.ScenarioResultImpl;

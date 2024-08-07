@@ -6,13 +6,28 @@ import org.bukkit.event.server.PluginEvent;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.action.actions.base.server.AbstractServerAction;
+import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.OutputDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.OutputDocs;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 
+@OutputDocs({
+        @OutputDoc(
+                name = AbstractPluginAction.KEY_OUT_PLUGIN,
+                description = "プラグイン名です。",
+                type = String.class
+        )
+})
 public abstract class AbstractPluginAction extends AbstractServerAction
 {
+    @InputDoc(
+            name = AbstractPluginAction.KEY_OUT_PLUGIN,
+            description = "プラグイン名です。",
+            type = String.class
+    )
     public static final InputToken<String> IN_PLUGIN = ofInput(
             "plugin",
             String.class

@@ -12,20 +12,20 @@ import BelowDocument from "/src/components/BelowDocument";
 
 ## 概要 {#overview}
 
-このチュートリアルでは、[トリガ `on_action`][trigger-on-action]の使い方を学びます。
+このチュートリアルでは, [トリガ `on_action`][trigger-on-action]の使い方を学びます。
 
-これを完了すると、[アクション](/docs/use/scenario/actions)が発火したときに自動で実行されるシナリオを作成できるようになります。
-また、応用として受動的ななシナリオの作成についても学びます。
+これを完了すると, [アクション](/references/actions)が発火したときに自動で実行されるシナリオを作成できるようになります。
+また, 応用として受動的ななシナリオの作成についても学びます。
 
 ## 基本：アクション発火時に実行されるシナリオを書いてみる {#basic-usage}
 
 ### ステップ１. 前提となるシナリオを作成する {#basic-usage-step1-create-basic-scenario}
 
-まずは、以下のような簡単なシナリオを作成します。
+まずは, 以下のような簡単なシナリオを作成します。
 
 :::tip
 
-このシナリオは、[チュートリアル：最初のシナリオを書いてみる](/docs/getting-started/tutorials/writing-my-first-scenario#step6-write-scenario)
+このシナリオは, [チュートリアル：最初のシナリオを書いてみる](/docs/getting-started/tutorials/writing-my-first-scenario#step6-write-scenario)
 で作成したシナリオと同じものです。
 
 <BelowDocument docId="getting-started/tutorials/writing-my-first-scenario"
@@ -68,15 +68,15 @@ scenario:
 
 ### ステップ２. トリガに `on_action` を追加する {#basic-usage-step2-add-on-action-to-trigger}
 
-[トリガ `on_action`][trigger-on-action] は、そのプラグインが読み込まれたときに自動で発火するトリガです。  
-これには、プラグインのリロードも含まれます。
+[トリガ `on_action`][trigger-on-action] は, そのプラグインが読み込まれたときに自動で発火するトリガです。  
+これには, プラグインのリロードも含まれます。
 
 引数には[アクション実行期待 (`expect`) ](/docs/use/scenario/elements#scenario-type-action-execution-expect)タイプ
-に対応した対象の[アクション](/docs/use/scenario/actions)を指定します。
-例として、プレイヤがメッセージ `"Hello, World!"` を受信したときにシナリオを実行するようにします。
+に対応した対象の[アクション](/references/actions)を指定します。
+例として, プレイヤがメッセージ `"Hello, World!"` を受信したときにシナリオを実行するようにします。
 
-以下のようにして、`on_action` を追加します。
-引数には [アクション `message`](/docs/use/scenario/actions#message) を指定します。
+以下のようにして, `on_action` を追加します。
+引数には [アクション `message`](/references/actions#message) を指定します。
 
 ```yaml title="test-hoge-success.yml" showLineNumbers
 scenamatica: "0.0.1"
@@ -119,8 +119,8 @@ scenario:
 
 実際にシナリオを実行してみましょう。
 
-Minecraft サーバーにログインし、コンソールから以下のコマンドを実行します。  
-シナリオが実行され正常に終了したことを確認したら、このチュートリアルの基本は完了です。お疲れ様でした。
+Minecraft サーバーにログインし, コンソールから以下のコマンドを実行します。  
+シナリオが実行され正常に終了したことを確認したら, このチュートリアルの基本は完了です。お疲れ様でした。
 
 ```bash
 tellraw @a {"text":"Hello, World!"}
@@ -131,18 +131,18 @@ tellraw @a {"text":"Hello, World!"}
 前章ではアクション発火時に自動で実行されるシナリオを書く方法について学びました。
 
 では応用として受動的なシナリオを書いてみましょう。
-前章のシナリオでは、プラグインの機能の発火をシナリオの一部として記述しました。
-しかし、プラグインの機能が発火した際に自動でシナリオを実行したい場合があるかもしれません。
+前章のシナリオでは, プラグインの機能の発火をシナリオの一部として記述しました。
+しかし, プラグインの機能が発火した際に自動でシナリオを実行したい場合があるかもしれません。
 
-このチュートリアルでは、[トリガ `on_action`][trigger-on-action]を使って、プラグインの機能が発火した際に自動でシナリオを実行する方法を学びます。
+このチュートリアルでは, [トリガ `on_action`][trigger-on-action]を使って, プラグインの機能が発火した際に自動でシナリオを実行する方法を学びます。
 
 ### ステップ１. 基本的なシナリオを作成する {#passive-scenario-step1-create-scenario}
 
-まずは、以下のような簡単なシナリオを作成します。
+まずは, 以下のような簡単なシナリオを作成します。
 
 :::tip
 
-このシナリオは、[チュートリアル：最初のシナリオを書いてみる](/docs/getting-started/tutorials/writing-my-first-scenario#step6-write-scenario)で作成したシナリオと同じものです。
+このシナリオは, [チュートリアル：最初のシナリオを書いてみる](/docs/getting-started/tutorials/writing-my-first-scenario#step6-write-scenario)で作成したシナリオと同じものです。
 
 <BelowDocument docId="getting-started/tutorials/writing-my-first-scenario"
                label="チュートリアル：最初のシナリオを書いてみる"
@@ -184,10 +184,10 @@ scenario:
 
 ### ステップ２. プラグインの発火条件を確認する {#passive-scenario-step2-check-plugin-trigger}
 
-プラグインの機能の発火でシナリオを開始するために、まずはその発火条件を確認します。
+プラグインの機能の発火でシナリオを開始するために, まずはその発火条件を確認します。
 
-今回の例を見ると、プラグインの機能は `/hoge` というコマンドで発火することがわかります。
-前節で確認したシナリオを見てみると、以下の部分が該当します。
+今回の例を見ると, プラグインの機能は `/hoge` というコマンドで発火することがわかります。
+前節で確認したシナリオを見てみると, 以下の部分が該当します。
 
 ```yaml title="test-hoge-success.yml" showLineNumbers
 #...
@@ -204,19 +204,19 @@ scenario:
 
 ### ステップ３. トリガにプラグインの機能の発火条件を追加する {#passive-scenario-step3-add-trigger}
 
-[トリガ `on_action`][trigger-on-action] を使って、プラグインの機能が発火した際に自動でシナリオを実行するようにします。
+[トリガ `on_action`][trigger-on-action] を使って, プラグインの機能が発火した際に自動でシナリオを実行するようにします。
 
 :::tip
 
-今回はトリガとして アクション `command_dispatch` を使用するため、そのシナリオのコンテキストである `Actor1` は使用できません。
-そのため、この定義を一般化するために、 `sender` の指定を削除するか、アクタではない他のプレイヤを指定する必要があります。
+今回はトリガとして アクション `command_dispatch` を使用するため, そのシナリオのコンテキストである `Actor1` は使用できません。
+そのため, この定義を一般化するために,  `sender` の指定を削除するか, アクタではない他のプレイヤを指定する必要があります。
 
 今回は後者の方法を採用します。
 
 :::
 
-以下のようにして、トリガに `on_action` を追加します。  
-また、メインシナリオに記述されている、プラグインの機能を発火させるシナリオを削除します。
+以下のようにして, トリガに `on_action` を追加します。  
+また, メインシナリオに記述されている, プラグインの機能を発火させるシナリオを削除します。
 
 ```yaml title="test-hoge-success.yml" showLineNumbers
 scenamatica: "0.0.1"
@@ -252,14 +252,14 @@ scenario:
 
 実際にシナリオを実行してみましょう。
 
-Minecraft サーバーにログインし、以下のコマンドを実行します。
+Minecraft サーバーにログインし, 以下のコマンドを実行します。
 
 ```yaml
 # 注：実際にはあなたのプラグインのコマンドを実行してください。
 /hoge
 ```
 
-シナリオが実行され正常に終了したことを確認したら、このチュートリアルは完了です。お疲れ様でした。
+シナリオが実行され正常に終了したことを確認したら, このチュートリアルは完了です。お疲れ様でした。
 
 他の応用的なチュートリアルを読むには[こちら](/docs/getting-started/tutorials)を参照してください。  
 シナリオファイルの完全な構文については[こちら](/docs/use/scenario/scenario-file)を参照してください。

@@ -5,9 +5,7 @@
   "scripts": {
     "docusaurus": "docusaurus",
     "start": "docusaurus start",
-    "build": "pnpm run build:schema && pnpm run build:site && pnpm run build:minifySchema",
-    "build:schema": "ts-node script/schema/build.ts src/schema/schema static",
-    "build:minifySchema": "ts-node script/schema/minifier.ts build/schema",
+    "build": "./build-references.sh && pnpm run build:site",
     "build:site": "docusaurus build",
     "swizzle": "docusaurus swizzle",
     "deploy": "docusaurus deploy",
@@ -19,11 +17,11 @@
   },
   "homepage": "https://github.com/TeamKUN/ScenamaticaDocs",
   "dependencies": {
-    "@docusaurus/core": "^3.1.1",
-    "@docusaurus/plugin-client-redirects": "^3.1.1",
-    "@docusaurus/plugin-pwa": "^3.1.1",
-    "@docusaurus/preset-classic": "^3.1.1",
-    "@docusaurus/theme-common": "^3.1.1",
+    "@docusaurus/core": "^3.3.0",
+    "@docusaurus/plugin-client-redirects": "^3.3.0",
+    "@docusaurus/plugin-pwa": "^3.3.0",
+    "@docusaurus/preset-classic": "^3.3.0",
+    "@docusaurus/theme-common": "^3.3.0",
     "@fontsource/jetbrains-mono": "^4.5.12",
     "@fontsource/murecho": "^5.0.17",
     "@fortawesome/fontawesome-svg-core": "^6.5.1",
@@ -35,12 +33,13 @@
     "clsx": "^1.2.1",
     "docusaurus-plugin-image-zoom": "^0.1.4",
     "prism-react-renderer": "^2.3.1",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react": "^18.3.0",
+    "react-dom": "^18.3.0"
   },
   "devDependencies": {
-    "@docusaurus/module-type-aliases": "^3.1.1",
-    "@docusaurus/tsconfig": "^3.1.1",
+    "@docusaurus/types": "^3.3.0",
+    "@docusaurus/module-type-aliases": "^3.3.0",
+    "@docusaurus/tsconfig": "^3.3.0",
     "ts-loader": "^9.5.1",
     "ts-node": "^10.9.2",
     "typescript": "~5.2.2"

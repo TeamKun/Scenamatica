@@ -2,7 +2,7 @@ package org.kunlab.scenamatica.action.utils;
 
 import com.google.common.reflect.TypeToken;
 import org.bukkit.entity.Entity;
-import org.kunlab.scenamatica.interfaces.scenariofile.specifiers.EntitySpecifier;
+import org.kunlab.scenamatica.interfaces.structures.specifiers.EntitySpecifier;
 
 import java.util.List;
 import java.util.Map;

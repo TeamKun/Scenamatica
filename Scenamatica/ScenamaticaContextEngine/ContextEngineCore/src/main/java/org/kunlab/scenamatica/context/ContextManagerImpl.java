@@ -29,9 +29,9 @@ import org.kunlab.scenamatica.interfaces.context.Stage;
 import org.kunlab.scenamatica.interfaces.context.StageManager;
 import org.kunlab.scenamatica.interfaces.scenariofile.Mapped;
 import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileStructure;
-import org.kunlab.scenamatica.interfaces.scenariofile.context.ContextStructure;
-import org.kunlab.scenamatica.interfaces.scenariofile.context.PlayerStructure;
-import org.kunlab.scenamatica.interfaces.scenariofile.entity.EntityStructure;
+import org.kunlab.scenamatica.interfaces.structures.context.ContextStructure;
+import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.PlayerStructure;
+import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.EntityStructure;
 import org.spigotmc.SpigotConfig;
 
 import java.util.ArrayList;

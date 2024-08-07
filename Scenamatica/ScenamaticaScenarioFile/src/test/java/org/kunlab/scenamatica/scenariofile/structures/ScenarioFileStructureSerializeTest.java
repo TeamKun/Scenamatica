@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 import org.kunlab.scenamatica.enums.ScenarioOrder;
 import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileStructure;
 import org.kunlab.scenamatica.scenariofile.StructureSerializerImpl;
-import org.kunlab.scenamatica.scenariofile.structures.context.ContextStructureSerializeTest;
 import org.kunlab.scenamatica.scenariofile.structures.scenario.ScenarioStructureSerializeTest;
 import org.kunlab.scenamatica.scenariofile.structures.trigger.TriggerStructureSerializeTest;
 import org.kunlab.scenamatica.scenariofile.structures.utils.MapTestUtil;
@@ -33,7 +32,7 @@ public class ScenarioFileStructureSerializeTest
                     TriggerStructureSerializeTest.FULFILLED
             ),
             null,
-            ContextStructureSerializeTest.FULFILLED,
+            null,
             Arrays.asList(
                     ScenarioStructureSerializeTest.FULFILLED,
                     ScenarioStructureSerializeTest.FULFILLED
@@ -53,7 +52,6 @@ public class ScenarioFileStructureSerializeTest
                 TriggerStructureSerializeTest.FULFILLED_MAP,
                 TriggerStructureSerializeTest.FULFILLED_MAP
         ));
-        this.put("context", ContextStructureSerializeTest.FULFILLED_MAP);
         this.put("scenario", Arrays.asList(
                 ScenarioStructureSerializeTest.FULFILLED_MAP,
                 ScenarioStructureSerializeTest.FULFILLED_MAP

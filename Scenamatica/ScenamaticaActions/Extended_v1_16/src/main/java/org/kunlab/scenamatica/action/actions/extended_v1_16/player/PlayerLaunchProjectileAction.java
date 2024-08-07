@@ -21,8 +21,7 @@ import org.bukkit.entity.WitherSkull;
 import org.bukkit.event.Event;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
-import org.kunlab.scenamatica.action.actions.base.player.AbstractPlayerAction;
-import org.kunlab.scenamatica.annotations.action.ActionMeta;
+import org.kunlab.scenamatica.annotations.action.Action;
 import org.kunlab.scenamatica.commons.utils.Utils;
 import org.kunlab.scenamatica.enums.MinecraftVersion;
 import org.kunlab.scenamatica.enums.ScenarioType;
@@ -30,37 +29,25 @@ import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
-import org.kunlab.scenamatica.interfaces.action.types.Watchable;
-import org.kunlab.scenamatica.interfaces.scenariofile.misc.LocationStructure;
+import org.kunlab.scenamatica.interfaces.action.types.Expectable;
 
 import java.util.Collections;
 import java.util.List;
 
-@ActionMeta(value = "player_projectile_launch", supportsSince = MinecraftVersion.V1_16)
-public class PlayerLaunchProjectileAction extends AbstractPlayerAction
-        implements Executable, Watchable
+@Action(value = "player_projectile_launch", supportsSince = MinecraftVersion.V1_16)
+public class PlayerLaunchProjectileAction extends org.kunlab.scenamatica.action.actions.base.player.PlayerLaunchProjectileAction
+        implements Executable, Expectable
 {
-    public static final InputToken<ProjectileType> IN_PROJECTILE_TYPE = ofEnumInput(
+    public static final InputToken<ProjectileType_v1_16> IN_PROJECTILE_TYPE = ofEnumInput(
             "projectileType",
-            ProjectileType.class
+            ProjectileType_v1_16.class
     );
-    public static final InputToken<LocationStructure> IN_VELOCITY = ofInput(
-            "velocity",
-            LocationStructure.class,
-            ofDeserializer(LocationStructure.class)
-    );
-    public static final InputToken<Double> IN_EPSILON = ofInput(
-            "epsilon",
-            Double.class,
-            0.01
-    );
-    public static final String KEY_OUT_PROJECTILE = "projectile";
 
     @Override
     public void execute(@NotNull ActionContext ctxt)
     {
         Player player = selectTarget(ctxt);
-        ProjectileType type = ctxt.input(IN_PROJECTILE_TYPE);
+        ProjectileType_v1_16 type = ctxt.input(IN_PROJECTILE_TYPE);
         Vector velocity = ctxt.input(IN_VELOCITY).create().toVector();
 
         this.makeOutputs(ctxt, player);
@@ -77,7 +64,7 @@ public class PlayerLaunchProjectileAction extends AbstractPlayerAction
         assert event instanceof PlayerLaunchProjectileEvent;
         PlayerLaunchProjectileEvent e = (PlayerLaunchProjectileEvent) event;
 
-        ProjectileType projectileType = ProjectileType.fromProjectile(e.getProjectile());
+        ProjectileType_v1_16 projectileType = ProjectileType_v1_16.fromProjectile(e.getProjectile());
         Vector velocity = e.getProjectile().getVelocity().clone();
 
         boolean result = ctxt.ifHasInput(IN_PROJECTILE_TYPE, type -> type == projectileType)
@@ -109,17 +96,13 @@ public class PlayerLaunchProjectileAction extends AbstractPlayerAction
     @Override
     public InputBoard getInputBoard(ScenarioType type)
     {
-        InputBoard board = super.getInputBoard(type)
-                .registerAll(IN_PROJECTILE_TYPE, IN_VELOCITY, IN_EPSILON);
-        if (type == ScenarioType.CONDITION_REQUIRE)
-            board.requirePresent(IN_PROJECTILE_TYPE, IN_VELOCITY);
-
-        return board;
+        return super.getInputBoard(type)
+                .register(IN_PROJECTILE_TYPE);
     }
 
     @AllArgsConstructor
     @Getter
-    public enum ProjectileType
+    public enum ProjectileType_v1_16
     {
         ARROW(Arrow.class),
         SNOWBALL(Snowball.class),
@@ -138,14 +121,14 @@ public class PlayerLaunchProjectileAction extends AbstractPlayerAction
 
         private final Class<? extends Projectile> clazz;
 
-        public static <T extends Projectile> ProjectileType fromProjectile(T proj)
+        public static <T extends Projectile> ProjectileType_v1_16 fromProjectile(T proj)
         {
             return fromClass(proj.getClass());
         }
 
-        public static <T extends Projectile> ProjectileType fromClass(Class<T> clazz)
+        public static <T extends Projectile> ProjectileType_v1_16 fromClass(Class<T> clazz)
         {
-            for (ProjectileType type : values())
+            for (ProjectileType_v1_16 type : values())
             {
                 if (type.getClazz().isAssignableFrom(clazz))
                     return type;

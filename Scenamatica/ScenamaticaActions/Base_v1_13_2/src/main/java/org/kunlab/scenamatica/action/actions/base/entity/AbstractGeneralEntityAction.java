@@ -1,7 +1,7 @@
 package org.kunlab.scenamatica.action.actions.base.entity;
 
 import org.bukkit.entity.Entity;
-import org.kunlab.scenamatica.interfaces.scenariofile.entity.entities.AEntityStructure;
+import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.entities.AEntityStructure;
 
 public abstract class AbstractGeneralEntityAction extends AbstractEntityAction<Entity, AEntityStructure>
 {

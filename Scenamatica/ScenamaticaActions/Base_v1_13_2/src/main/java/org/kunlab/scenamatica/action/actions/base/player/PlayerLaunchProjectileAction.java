@@ -3,6 +3,7 @@ package org.kunlab.scenamatica.action.actions.base.player;
 import com.destroystokyo.paper.event.player.PlayerLaunchProjectileEvent;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.bukkit.Location;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.DragonFireball;
 import org.bukkit.entity.Egg;
@@ -20,7 +21,10 @@ import org.bukkit.entity.WitherSkull;
 import org.bukkit.event.Event;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
-import org.kunlab.scenamatica.annotations.action.ActionMeta;
+import org.kunlab.scenamatica.annotations.action.Action;
+import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
+import org.kunlab.scenamatica.bookkeeper.annotations.OutputDoc;
 import org.kunlab.scenamatica.commons.utils.Utils;
 import org.kunlab.scenamatica.enums.MinecraftVersion;
 import org.kunlab.scenamatica.enums.ScenarioType;
@@ -28,25 +32,62 @@ import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
-import org.kunlab.scenamatica.interfaces.action.types.Watchable;
-import org.kunlab.scenamatica.interfaces.scenariofile.misc.LocationStructure;
+import org.kunlab.scenamatica.interfaces.action.types.Expectable;
+import org.kunlab.scenamatica.interfaces.structures.minecraft.misc.LocationStructure;
 
 import java.util.Collections;
 import java.util.List;
 
-@ActionMeta(value = "player_projectile_launch", supportsUntil = MinecraftVersion.V1_15_2)
+@Action(value = "player_projectile_launch", supportsUntil = MinecraftVersion.V1_15_2)
+@ActionDoc(
+        name = "プレイヤの投射物の発射",
+        description = "プレイヤが投射物を発射します。",
+        events = {
+                PlayerLaunchProjectileEvent.class
+        },
+
+        executable = "プレイヤに投射物を発射させます。",
+        expectable = "プレイヤが投射物を発射することを期待します。",
+        requireable = ActionDoc.UNALLOWED,
+
+        outputs = {
+                @OutputDoc(
+                        name = PlayerLaunchProjectileAction.KEY_OUT_PROJECTILE,
+                        description = "発射された投射物です。",
+                        type = Projectile.class
+                )
+        }
+
+)
 public class PlayerLaunchProjectileAction extends AbstractPlayerAction
-        implements Executable, Watchable
+        implements Executable, Expectable
 {
+    @InputDoc(
+            name = "projectileType",
+            description = "発射する投射物の種類を指定します。",
+            type = ProjectileType.class
+    )
     public static final InputToken<ProjectileType> IN_PROJECTILE_TYPE = ofEnumInput(
             "projectileType",
             ProjectileType.class
     );
+    @InputDoc(
+            name = "velocity",
+            description = "投射物の速度を指定します。",
+            type = Location.class
+    )
     public static final InputToken<LocationStructure> IN_VELOCITY = ofInput(
             "velocity",
             LocationStructure.class,
             ofDeserializer(LocationStructure.class)
     );
+    @InputDoc(
+            name = "epsilon",
+            description = "速度の判定時の誤差を指定します。",
+            type = double.class,
+            min = 0.0,
+            constValue = "0.01"
+    )
     public static final InputToken<Double> IN_EPSILON = ofInput(
             "epsilon",
             Double.class,
