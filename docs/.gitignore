@@ -16,3 +16,4 @@ yarn-error.log*
 
 /static/schema/**
 /static/scenamatica-file.json
+/references/**
