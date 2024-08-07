@@ -182,10 +182,24 @@ public class EntityItemStructureImpl extends EntityStructureImpl implements Enti
     {
         return super.isAdequateEntity(object, strict)
                 && (this.pickupDelay == null || this.pickupDelay.equals(object.getPickupDelay()))
-                && (this.owner == null || this.owner.equals(object.getOwner()))
-                && (this.thrower == null || this.thrower.equals(object.getThrower()))
+                && checkMatchedEntityByUUID(this.owner, object.getOwner())
+                && checkMatchedEntityByUUID(this.thrower, object.getThrower())
                 && (this.canMobPickup == null || this.canMobPickup.equals(object.canMobPickup()))
                 && (this.willAge == null || this.willAge.equals(willAge(object)))
                 && this.itemStack.isAdequate(object.getItemStack(), strict);
+    }
+
+    private static boolean checkMatchedEntityByUUID(@NotNull EntitySpecifier<?> entity, UUID uuid)
+    {
+        if (!entity.isSelectable())
+            return true;
+
+        if (entity.hasUUID())
+            return entity.getSelectingUUID().equals(uuid);
+
+        return entity.selectTarget(null)
+                .map(Entity::getUniqueId)
+                .map(uuid::equals)
+                .orElse(false);
     }
 }
