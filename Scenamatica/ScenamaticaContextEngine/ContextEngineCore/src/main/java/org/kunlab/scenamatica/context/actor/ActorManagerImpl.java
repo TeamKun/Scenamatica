@@ -63,10 +63,12 @@ public class ActorManagerImpl implements ActorManager, Listener
                 return new org.kunlab.scenamatica.context.actor.nms.v1_14_R1.PlayerMocker(registry, manager);
             case "v1_15_R1":
                 return new org.kunlab.scenamatica.context.actor.nms.v1_15_R1.PlayerMocker(registry, manager);
-            case "v1_16_R3":
-                return new org.kunlab.scenamatica.context.actor.nms.v1_16_R3.PlayerMocker(registry, manager);
+            case "v1_16_R1":
+                return new org.kunlab.scenamatica.context.actor.nms.v1_16_R1.PlayerMocker(registry, manager);
             case "v1_16_R2":
                 return new org.kunlab.scenamatica.context.actor.nms.v1_16_R2.PlayerMocker(registry, manager);
+            case "v1_16_R3":
+                return new org.kunlab.scenamatica.context.actor.nms.v1_16_R3.PlayerMocker(registry, manager);
             default:
                 throw new VersionNotSupportedException(version);
         }

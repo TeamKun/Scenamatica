@@ -53,13 +53,19 @@
         </dependency>
         <dependency>
             <groupId>org.kunlab.scenamatica.nms</groupId>
-            <artifactId>v1_16_R3</artifactId>
+            <artifactId>v1_16_R1</artifactId>
             <version>1.4.1</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.kunlab.scenamatica.nms</groupId>
             <artifactId>v1_16_R2</artifactId>
+            <version>1.4.1</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kunlab.scenamatica.nms</groupId>
+            <artifactId>v1_16_R3</artifactId>
             <version>1.4.1</version>
             <scope>compile</scope>
         </dependency>
