@@ -26,6 +26,11 @@ on:
   workflow_dispatch:
 
 jobs:
+  setup-nms:
+    name: Setup NMS
+    uses: "./.github/workflows/build-nms.yml"
+    secrets:
+      token: ${{ secrets.GITHUB_TOKEN }}
   build-and-analyze:
     name: Build with Maven
     runs-on: ubuntu-latest
@@ -55,11 +60,6 @@ jobs:
         if: steps.maven-cache.outputs.cache-hit != 'true'
         run: |
           mv -f nms-build/.m2/repository $HOME/.m2/ -v
-        setup-nms:
-          name: Setup NMS
-          uses: "./.github/workflows/build-nms.yml"
-          secrets:
-            token: ${{ secrets.GITHUB_TOKEN }}
       # Initializes the CodeQL tools for scanning.
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3

@@ -38,15 +38,18 @@ jobs:
           - "1.13"  # v1_13_R1
     runs-on: ubuntu-latest
     steps:
-      - name: Build NMS if cache miss
-        uses: PeyaPeyaPeyang/nmsaction@v9
-        with:
-          rev: ${{ matrix.nms-version }}
       - name: Cache NMS
+        id: cache-nms-per-version
         uses: actions/cache@v4
         with:
           path: nms-build/.m2
           key: nms-maven-${{ matrix.nms-version }}
+          lookup-only: true
+      - name: Build NMS if cache miss
+        if: steps.cache-nms-per-version.outputs.cache-hit != 'true'
+        uses: PeyaPeyaPeyang/nmsaction@v9
+        with:
+          rev: ${{ matrix.nms-version }}
   collect-to-one-artifact:
     name: Collect to one artifact
     runs-on: ubuntu-latest
