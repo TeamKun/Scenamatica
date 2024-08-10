@@ -98,7 +98,7 @@ public class StageManagerImpl implements StageManager
     private World generateWorld(WorldCreator creator, long timeoutMillis)
     {
         ExecutorService executor = Executors.newSingleThreadExecutor();
-        Future<? extends World> future = executor.submit(() -> ThreadingUtil.waitForOrThrow(this.registry, creator::createWorld));
+        Future<? extends World> future = executor.submit(() -> ThreadingUtil.waitForOrThrow(creator::createWorld));
 
         try
         {
@@ -141,10 +141,10 @@ public class StageManagerImpl implements StageManager
     public Stage createStage(@NotNull StageStructure structure, long timeoutMillis, int maxAttemptCounts) throws StageCreateFailedException
     {
         if (structure.getOriginalWorldName() != null)
-            return ThreadingUtil.waitForOrThrow(this.registry, () -> this.createStage(structure.getOriginalWorldName()));
+            return ThreadingUtil.waitForOrThrow(() -> this.createStage(structure.getOriginalWorldName()));
 
         WorldCreator creator = cretateWorldCreator(structure);
-        World world = ThreadingUtil.waitForOrThrow(this.registry, () -> this.worldCreator.createWorld(creator));
+        World world = ThreadingUtil.waitForOrThrow(() -> this.worldCreator.createWorld(creator));
        /* for (int i = 0; i < maxAttemptCounts; i++)
         {
             world = this.generateWorld(creator, timeoutMillis);

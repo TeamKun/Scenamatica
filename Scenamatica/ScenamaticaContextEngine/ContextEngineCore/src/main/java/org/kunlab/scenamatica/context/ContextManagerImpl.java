@@ -189,7 +189,7 @@ public class ContextManagerImpl implements ContextManager
     {
         List<Entity> entities = new ArrayList<>();
         // Asynchronous chunk load! を避けるために同期処理
-        ThreadingUtil.waitForOrThrow(this.registry, () -> {
+        ThreadingUtil.waitForOrThrow(() -> {
             for (EntityStructure entity : context.getEntities())
                 entities.add(this.spawnEntity(stage.getWorld(), entity));
 

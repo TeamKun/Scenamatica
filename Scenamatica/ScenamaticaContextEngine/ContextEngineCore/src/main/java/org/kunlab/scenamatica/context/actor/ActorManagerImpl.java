@@ -110,7 +110,7 @@ public class ActorManagerImpl implements ActorManager, Listener
 
         // 排他怪しいゾーン
 
-        ThreadingUtil.waitFor(this.registry, actor::joinServer);
+        ThreadingUtil.waitFor(actor::joinServer);
         if (structure.getOnline() == null || structure.getOnline())  // オンラインモードはログインするの待つ。
             this.waitForJoin(actor);
 

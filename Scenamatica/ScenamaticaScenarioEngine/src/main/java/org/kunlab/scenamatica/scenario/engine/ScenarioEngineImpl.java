@@ -150,7 +150,7 @@ public class ScenarioEngineImpl implements ScenarioEngine
         this.isRunning = true;
         ScenarioResult result = this.start$1(trigger, attemptedCount);
         this.isRunning = false;  // これの位置を変えると, 排他の問題でバグる
-        ThreadingUtil.waitFor(this.registry, this::cleanUp);
+        ThreadingUtil.waitFor(this::cleanUp);
 
         return result;
     }

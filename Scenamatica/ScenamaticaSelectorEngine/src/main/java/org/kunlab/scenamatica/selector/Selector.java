@@ -1,16 +1,19 @@
 package org.kunlab.scenamatica.selector;
 
 import lombok.Value;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.kunlab.scenamatica.commons.utils.ThreadingUtil;
 import org.kunlab.scenamatica.selector.compiler.SelectorCompilationErrorException;
 import org.kunlab.scenamatica.selector.compiler.SelectorCompiler;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.function.BiPredicate;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @Value
@@ -65,7 +68,7 @@ public class Selector
 
     public List<Entity> select(@Nullable Player basis)
     {
-        return this.type.enumerate(basis, this.predicate);
+        return this.enumerateSynced(basis);
     }
 
     public List<Entity> select()
@@ -75,7 +78,15 @@ public class Selector
 
     public Optional<Entity> selectOne(@Nullable Player basis)
     {
-        return this.type.enumerate(basis, this.predicate).stream().findFirst();
+        return this.enumerateSynced(basis).stream().findFirst();
+    }
+
+    private List<Entity> enumerateSynced(@Nullable Player basis)
+    {
+        if(Bukkit.isPrimaryThread())
+            return this.type.enumerate(basis, this.predicate);
+        else
+            return ThreadingUtil.waitFor(() -> this.type.enumerate(basis, this.predicate));
     }
 
     public <T extends Entity> Optional<T> selectOne(@Nullable Player basis, Class<? extends T> clazz)
@@ -89,7 +100,7 @@ public class Selector
 
     public List<Entity> select(@NotNull List<? extends Entity> entities)
     {
-        return this.type.enumerate(null, this.predicate).stream()
+        return this.enumerateSynced(null).stream()
                 .filter(entities::contains)
                 .collect(Collectors.toList());
     }

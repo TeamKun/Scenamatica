@@ -4,6 +4,7 @@ import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.kunlab.scenamatica.action.ActionManagerImpl;
+import org.kunlab.scenamatica.commons.utils.ThreadingUtil;
 import org.kunlab.scenamatica.context.ContextManagerImpl;
 import org.kunlab.scenamatica.events.PluginEventListener;
 import org.kunlab.scenamatica.exceptions.context.actor.VersionNotSupportedException;
@@ -63,6 +64,7 @@ public class ScenamaticaDaemon implements ScenamaticaRegistry
     @Override
     public void init()
     {
+        ThreadingUtil.init(this);
         this.actionManager.init();
         this.scenarioManager.init();
 
