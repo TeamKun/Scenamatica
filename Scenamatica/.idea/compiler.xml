@@ -8,8 +8,10 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="ContextEngineCore" />
+        <module name="nms_v1_17_R1" />
         <module name="ScenamaticaCommons" />
         <module name="NMSCore" />
+        <module name="v1_17_R1" />
         <module name="v1_15_R1" />
         <module name="ScenamaticaScenarioEngine" />
         <module name="StructureBase" />

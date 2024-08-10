@@ -69,6 +69,8 @@ public class ActorManagerImpl implements ActorManager, Listener
                 return new org.kunlab.scenamatica.context.actor.nms.v1_16_R2.PlayerMocker(registry, manager);
             case "v1_16_R3":
                 return new org.kunlab.scenamatica.context.actor.nms.v1_16_R3.PlayerMocker(registry, manager);
+            case "v1_17_R1":
+                return new org.kunlab.scenamatica.context.actor.nms.v1_17_R1.PlayerMocker(registry, manager);
             default:
                 throw new VersionNotSupportedException(version);
         }
@@ -108,9 +110,7 @@ public class ActorManagerImpl implements ActorManager, Listener
 
         // 排他怪しいゾーン
 
-        ThreadingUtil.waitFor(
-                this.registry, () -> actor.joinServer()
-        );
+        ThreadingUtil.waitFor(this.registry, actor::joinServer);
         if (structure.getOnline() == null || structure.getOnline())  // オンラインモードはログインするの待つ。
             this.waitForJoin(actor);
 

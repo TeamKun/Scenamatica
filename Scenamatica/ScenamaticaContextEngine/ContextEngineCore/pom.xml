@@ -63,6 +63,12 @@
             <version>1.4.1</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>org.kunlab.scenamatica.context</groupId>
+            <artifactId>nms_v1_17_R1</artifactId>
+            <version>1.4.1</version>
+            <scope>compile</scope>
+        </dependency>
 
         <!--suppress MavenDuplicateDependenciesInspection -->
         <dependency><!-- これがないと, Paper でインジェクションされたオブジェクトが使えないので, 親と重複しているが許容する。 -->

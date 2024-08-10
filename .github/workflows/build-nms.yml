@@ -29,6 +29,7 @@ jobs:
     strategy:
       matrix:
         nms-version:
+          - 1.17.1  # v1_17_R1
           - 1.16.5  # v1_16_R3
           - 1.16.3  # v1_16_R2
           - 1.16.1  # v1_16_R1
@@ -67,6 +68,7 @@ jobs:
             const gh = require('@actions/github');
             const path = require('path');
             const nmsVersions = [
+              '1.17.1',
               '1.16.5',
               '1.16.3',
               '1.16.1',
