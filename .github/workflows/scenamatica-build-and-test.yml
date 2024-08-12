@@ -34,6 +34,8 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          - minecraft: 1.17.1
+            java: 16
           - minecraft: 1.16.5
             java: 16
           - minecraft: 1.15.2
