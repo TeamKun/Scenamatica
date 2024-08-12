@@ -142,17 +142,17 @@ public class TypeSupportImpl implements TypeSupport
         switch (direction)
         {
             case NORTH:
-                return EnumDirection.a;
-            case SOUTH:
-                return EnumDirection.b;
-            case WEST:
                 return EnumDirection.c;
-            case EAST:
+            case SOUTH:
                 return EnumDirection.d;
-            case UP:
+            case WEST:
                 return EnumDirection.e;
-            case DOWN:
+            case EAST:
                 return EnumDirection.f;
+            case UP:
+                return EnumDirection.b;
+            case DOWN:
+                return EnumDirection.a;
             default:
                 throw new IllegalArgumentException("Unknown NMSDirection: " + direction.name());
         }
@@ -163,17 +163,17 @@ public class TypeSupportImpl implements TypeSupport
         switch (direction)
         {
             case a:
-                return NMSDirection.NORTH;
-            case b:
-                return NMSDirection.SOUTH;
-            case c:
-                return NMSDirection.WEST;
-            case d:
-                return NMSDirection.EAST;
-            case e:
-                return NMSDirection.UP;
-            case f:
                 return NMSDirection.DOWN;
+            case b:
+                return NMSDirection.UP;
+            case c:
+                return NMSDirection.NORTH;
+            case d:
+                return NMSDirection.SOUTH;
+            case e:
+                return NMSDirection.WEST;
+            case f:
+                return NMSDirection.EAST;
             default:
                 throw new IllegalArgumentException("Unknown EnumDirection: " + direction.name());
         }

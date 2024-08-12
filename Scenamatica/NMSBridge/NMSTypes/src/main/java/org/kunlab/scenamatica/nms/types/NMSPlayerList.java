@@ -9,6 +9,7 @@ import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.nms.NMSWrapped;
 import org.kunlab.scenamatica.nms.types.entity.NMSEntityPlayer;
 import org.kunlab.scenamatica.nms.types.player.NMSNetworkManager;
+import org.kunlab.scenamatica.nms.types.world.NMSWorldServer;
 
 /**
  * PlayerList の NMS 版です。

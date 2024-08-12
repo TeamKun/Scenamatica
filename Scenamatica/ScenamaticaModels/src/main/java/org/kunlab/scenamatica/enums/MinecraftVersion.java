@@ -78,4 +78,14 @@ public enum MinecraftVersion
     {
         return this.compareTo(min) >= 0 && this.compareTo(max) <= 0;
     }
+
+    public boolean isAtLeast(MinecraftVersion minecraftVersion)
+    {
+        return this.compareTo(minecraftVersion) >= 0;
+    }
+
+    public boolean isAtMost(MinecraftVersion minecraftVersion)
+    {
+        return this.compareTo(minecraftVersion) <= 0;
+    }
 }

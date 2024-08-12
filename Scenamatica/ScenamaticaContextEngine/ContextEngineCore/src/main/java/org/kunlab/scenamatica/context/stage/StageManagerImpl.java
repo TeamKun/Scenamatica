@@ -15,8 +15,8 @@ import org.kunlab.scenamatica.interfaces.context.Stage;
 import org.kunlab.scenamatica.interfaces.context.StageManager;
 import org.kunlab.scenamatica.interfaces.structures.context.StageStructure;
 import org.kunlab.scenamatica.nms.NMSProvider;
-import org.kunlab.scenamatica.nms.types.NMSChunkProvider;
-import org.kunlab.scenamatica.nms.types.NMSWorldServer;
+import org.kunlab.scenamatica.nms.types.world.NMSChunkProvider;
+import org.kunlab.scenamatica.nms.types.world.NMSWorldServer;
 
 import java.io.File;
 import java.io.IOException;

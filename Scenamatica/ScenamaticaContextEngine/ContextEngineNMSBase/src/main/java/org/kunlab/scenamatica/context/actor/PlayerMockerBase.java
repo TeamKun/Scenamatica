@@ -16,7 +16,7 @@ import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.PlayerStruc
 import org.kunlab.scenamatica.nms.NMSProvider;
 import org.kunlab.scenamatica.nms.types.NMSMinecraftServer;
 import org.kunlab.scenamatica.nms.types.NMSPlayerList;
-import org.kunlab.scenamatica.nms.types.NMSWorldServer;
+import org.kunlab.scenamatica.nms.types.world.NMSWorldServer;
 import org.kunlab.scenamatica.nms.types.entity.NMSEntityPlayer;
 import org.kunlab.scenamatica.nms.types.player.NMSPlayerConnection;
 import org.kunlab.scenamatica.settings.ActorSettings;

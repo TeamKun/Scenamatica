@@ -15,6 +15,7 @@ import org.kunlab.scenamatica.commons.utils.LogUtils;
 import org.kunlab.scenamatica.commons.utils.ThreadingUtil;
 import org.kunlab.scenamatica.context.actor.ActorManagerImpl;
 import org.kunlab.scenamatica.context.stage.StageManagerImpl;
+import org.kunlab.scenamatica.enums.MinecraftVersion;
 import org.kunlab.scenamatica.exceptions.context.EntityCreationException;
 import org.kunlab.scenamatica.exceptions.context.actor.ActorCreationException;
 import org.kunlab.scenamatica.exceptions.context.actor.VersionNotSupportedException;
@@ -32,6 +33,9 @@ import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileStructure;
 import org.kunlab.scenamatica.interfaces.structures.context.ContextStructure;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.PlayerStructure;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.EntityStructure;
+import org.kunlab.scenamatica.nms.NMSProvider;
+import org.kunlab.scenamatica.nms.types.world.NMSPersistentEntitySectionManager;
+import org.kunlab.scenamatica.nms.types.world.NMSWorldServer;
 import org.spigotmc.SpigotConfig;
 
 import java.util.ArrayList;
@@ -155,6 +159,7 @@ public class ContextManagerImpl implements ContextManager
 
     }
 
+    @SuppressWarnings("unchecked")
     private <T extends Entity> T spawnEntity(World stage, EntityStructure entity) throws EntityCreationException
     {
         EntityType type = entity.getType();
@@ -162,6 +167,7 @@ public class ContextManagerImpl implements ContextManager
             throw new EntityCreationException("Unable to spawn entity: type is null");
 
         Location spawnLoc;
+        World spawnWorld;
         if (entity.getLocation() == null)
         {
             final int DEFAULT_LOC_X = 0;
@@ -170,33 +176,36 @@ public class ContextManagerImpl implements ContextManager
             int y = stage.getHighestBlockYAt(DEFAULT_LOC_X, DEFAULT_LOC_Z);
 
             spawnLoc = new Location(stage, DEFAULT_LOC_X, y, DEFAULT_LOC_Z);
+            spawnWorld = stage;  // 指定がない場合は, ステージにスポーン
         }
         else
+        {
             spawnLoc = entity.getLocation().create();
+            // {指定がない ? ステージ : 指定されたワールド} にスポーン
+            spawnWorld = spawnLoc.getWorld() == null ? stage: spawnLoc.getWorld();
+        }
 
 
         UUID entityTag = UUID.randomUUID();
         String tagName = "scenamatica-" + entityTag;
-        Entity generatedEntity = stage.spawnEntity(spawnLoc, type);
+        Entity generatedEntity = spawnWorld.spawnEntity(spawnLoc, type);
         ((Mapped<T>) entity).applyTo((T) generatedEntity);
         generatedEntity.addScoreboardTag(tagName);
         this.chunkLoader.addEntity(generatedEntity);
 
+        // 1.17 以上なら, エンティティのトラッキングとチック経過を開始する
+        if (MinecraftVersion.current().isAtLeast(MinecraftVersion.V1_17))
+        {
+            NMSProvider.tryDoNMS(() -> {
+                NMSWorldServer nmsWorld = NMSProvider.getProvider().wrap(spawnWorld);
+                NMSPersistentEntitySectionManager<Entity> nmsEntityManager = nmsWorld.getEntityManager();
+
+                nmsEntityManager.startTracking(generatedEntity);
+                nmsEntityManager.startTicking(generatedEntity);
+            });
+        }
+
         return (T) generatedEntity;
-    }
-
-    private List<Entity> prepareEntities(Stage stage, ContextStructure context) throws EntityCreationException
-    {
-        List<Entity> entities = new ArrayList<>();
-        // Asynchronous chunk load! を避けるために同期処理
-        ThreadingUtil.waitForOrThrow(() -> {
-            for (EntityStructure entity : context.getEntities())
-                entities.add(this.spawnEntity(stage.getWorld(), entity));
-
-            return null;
-        });
-
-        return entities;
     }
 
     @Override
@@ -247,12 +256,11 @@ public class ContextManagerImpl implements ContextManager
         }
     }
 
-    private Context prepareContext0(ScenarioFileStructure scenario,  UUID testID) throws StageAlreadyDestroyedException, StageCreateFailedException, ActorCreationException, EntityCreationException
+    private Context prepareContext0(ScenarioFileStructure scenario,  UUID testID) throws StageAlreadyDestroyedException,
+            StageCreateFailedException, ActorCreationException, EntityCreationException
     {
-
-        ContextStructure context = scenario.getContext();
-
         this.logIfVerbose(scenario, "context.creating", testID);
+        ContextStructure context = scenario.getContext();
 
         this.logIfVerbose(scenario, "context.stage.generating", testID);
         Stage stage = this.prepareStage(context, scenario, testID);
@@ -277,7 +285,14 @@ public class ContextManagerImpl implements ContextManager
         if (!(context == null || context.getEntities().isEmpty()))
         {
             this.logIfVerbose(scenario, "context.entity.generating", testID);
-            generatedEntities = this.prepareEntities(stage, context);
+            generatedEntities = this.tryPrepareEntities(stage, context);
+            if (generatedEntities == null) // エラー発生
+            {
+                // 失敗したのでロールバック
+                stage.destroy();
+                actors.forEach(this.actorManager::destroyActor);
+                throw new EntityCreationException();
+            }
         }
         else
             generatedEntities = Collections.emptyList();
@@ -290,6 +305,29 @@ public class ContextManagerImpl implements ContextManager
                 Collections.unmodifiableList(actors),
                 Collections.unmodifiableList(generatedEntities)
         );
+    }
+
+    private List<Entity> tryPrepareEntities(Stage stage, ContextStructure context)
+    {
+        List<Entity> entities = new ArrayList<>();
+        try
+        {
+            // Asynchronous chunk load! を避けるために同期処理
+            ThreadingUtil.waitForOrThrow(() -> {
+                for (EntityStructure entity : context.getEntities())
+                    entities.add(this.spawnEntity(stage.getWorld(), entity));
+
+                return null;
+            });
+
+            return entities;
+        }
+        catch (Exception e)
+        {
+            this.registry.getExceptionHandler().report(e);
+
+            return null;
+        }
     }
 
     @Override
