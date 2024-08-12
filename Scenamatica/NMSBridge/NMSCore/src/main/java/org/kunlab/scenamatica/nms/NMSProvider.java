@@ -81,6 +81,11 @@ public class NMSProvider
                 typeSupport = new org.kunlab.scenamatica.nms.impl.v1_17_R1.TypeSupportImpl();
                 provider = new org.kunlab.scenamatica.nms.impl.v1_17_R1.WrapperProviderImpl();
                 break;
+            case "v1_18_R1":
+                registry = new org.kunlab.scenamatica.nms.impl.v1_18_R1.NMSRegistryImpl();
+                typeSupport = new org.kunlab.scenamatica.nms.impl.v1_18_R1.TypeSupportImpl();
+                provider = new org.kunlab.scenamatica.nms.impl.v1_18_R1.WrapperProviderImpl();
+                break;
             default:
                 throw new IllegalStateException("Unsupported server version: " + version);
         }

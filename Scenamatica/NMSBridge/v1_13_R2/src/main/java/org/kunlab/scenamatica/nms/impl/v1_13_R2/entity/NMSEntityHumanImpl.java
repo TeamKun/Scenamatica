@@ -39,9 +39,9 @@ public class NMSEntityHumanImpl extends NMSEntityLivingImpl implements NMSEntity
     }
 
     @Override
-    public NMSEntityItem drop(@NotNull NMSItemStack stack, boolean dropAll, boolean copyUniqueID)
+    public NMSEntityItem drop(@NotNull NMSItemStack stack, boolean throwRandomly, boolean retainOwnership)
     {
-        EntityItem dropped = this.nmsEntity.a((ItemStack) stack.getNMSRaw(), dropAll, copyUniqueID);
+        EntityItem dropped = this.nmsEntity.a((ItemStack) stack.getNMSRaw(), throwRandomly, retainOwnership);
         if (dropped == null)
             return null;
         return new NMSEntityItemImpl(dropped);

@@ -30,12 +30,12 @@ public interface NMSEntityHuman extends NMSEntityLiving
      * アイテムをドロップします。
      *
      * @param stack        ドロップするアイテム
-     * @param dropAll      すべてドロップするかどうか
-     * @param copyUniqueID ユニークIDをコピーするかどうか
+     * @param throwRandomly      すべてドロップするかどうか
+     * @param retainOwnership ユニークIDをコピーするかどうか
      * @return ドロップしたアイテム
      */
     @Nullable
-    NMSEntityItem drop(@NotNull NMSItemStack stack, boolean dropAll, boolean copyUniqueID);
+    NMSEntityItem drop(@NotNull NMSItemStack stack, boolean throwRandomly, boolean retainOwnership);
 
     /**
      * アイテムをドロップします。
@@ -45,9 +45,9 @@ public interface NMSEntityHuman extends NMSEntityLiving
      */
     boolean drop(boolean dropAll);
 
-    default NMSEntityItem drop(NMSItemStack stack, boolean dropAll)
+    default NMSEntityItem drop(NMSItemStack stack, boolean throwRandomly)
     {
-        return this.drop(stack, dropAll, true);
+        return this.drop(stack, throwRandomly, true);
     }
 
     /**
