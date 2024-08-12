@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.kunlab.scenamatica</groupId>
         <artifactId>NMSBridge</artifactId>
-        <version>1.4.1</version>
+        <version>1.5.0</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -23,56 +23,56 @@
         <dependency>
             <groupId>org.kunlab.scenamatica.nms</groupId>
             <artifactId>NMSTypes</artifactId>
-            <version>1.4.1</version>
+            <version>1.5.0</version>
         </dependency>
 
         <!-- NMS Implementions -->
         <dependency>
             <groupId>org.kunlab.scenamatica.nms</groupId>
             <artifactId>v1_13_R1</artifactId>
-            <version>1.4.1</version>
+            <version>1.5.0</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.kunlab.scenamatica.nms</groupId>
             <artifactId>v1_13_R2</artifactId>
-            <version>1.4.1</version>
+            <version>1.5.0</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.kunlab.scenamatica.nms</groupId>
             <artifactId>v1_14_R1</artifactId>
-            <version>1.4.1</version>
+            <version>1.5.0</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.kunlab.scenamatica.nms</groupId>
             <artifactId>v1_15_R1</artifactId>
-            <version>1.4.1</version>
+            <version>1.5.0</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.kunlab.scenamatica.nms</groupId>
             <artifactId>v1_16_R1</artifactId>
-            <version>1.4.1</version>
+            <version>1.5.0</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.kunlab.scenamatica.nms</groupId>
             <artifactId>v1_16_R2</artifactId>
-            <version>1.4.1</version>
+            <version>1.5.0</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.kunlab.scenamatica.nms</groupId>
             <artifactId>v1_16_R3</artifactId>
-            <version>1.4.1</version>
+            <version>1.5.0</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.kunlab.scenamatica.nms</groupId>
             <artifactId>v1_17_R1</artifactId>
-            <version>1.4.1</version>
+            <version>1.5.0</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>

@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.kunlab.scenamatica</groupId>
         <artifactId>ScenamaticaStructures</artifactId>
-        <version>1.4.1</version>
+        <version>1.5.0</version>
     </parent>
 
     <groupId>org.kunlab.scenamatica.structure</groupId>
