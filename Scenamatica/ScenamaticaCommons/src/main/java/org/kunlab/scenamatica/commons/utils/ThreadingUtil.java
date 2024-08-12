@@ -13,9 +13,26 @@ import java.util.function.Supplier;
 @UtilityClass
 public class ThreadingUtil
 {
-    @SneakyThrows({BrokenBarrierException.class, InterruptedException.class})
-    public static void waitFor(ScenamaticaRegistry registry, Runnable runnable)
+    private static ScenamaticaRegistry registry;
+
+    public static void init(ScenamaticaRegistry registry)
     {
+        if (ThreadingUtil.registry != null)
+            throw new IllegalStateException("ThreadingUtil has already been initialized.");
+        ThreadingUtil.registry = registry;
+    }
+
+    private static void ensureInitialized()
+    {
+        if (registry == null)
+            throw new IllegalStateException("ThreadingUtil has not been initialized.");
+    }
+
+
+    @SneakyThrows({BrokenBarrierException.class, InterruptedException.class})
+    public static void waitFor(Runnable runnable)
+    {
+        ensureInitialized();
         CyclicBarrier barrier = new CyclicBarrier(2);
         Runner.run(registry.getPlugin(), () ->
         {
@@ -38,8 +55,9 @@ public class ThreadingUtil
     }
 
     @SneakyThrows({BrokenBarrierException.class, InterruptedException.class})
-    public <T> T waitFor(ScenamaticaRegistry registry, Supplier<T> supplier)
+    public <T> T waitFor(Supplier<T> supplier)
     {
+        ensureInitialized();
         CyclicBarrier barrier = new CyclicBarrier(2);
         AtomicReference<T> result = new AtomicReference<>();
         Runner.run(registry.getPlugin(), () ->
@@ -64,8 +82,9 @@ public class ThreadingUtil
     }
 
     @SneakyThrows({BrokenBarrierException.class, InterruptedException.class})
-    public <T, E extends Exception> T waitForOrThrow(ScenamaticaRegistry registry, ThrowableSupplier<T, E> supplier) throws E
+    public <T, E extends Exception> T waitForOrThrow(ThrowableSupplier<T, E> supplier) throws E
     {
+        ensureInitialized();
         CyclicBarrier barrier = new CyclicBarrier(2);
         AtomicReference<T> result = new AtomicReference<>();
         AtomicReference<E> exception = new AtomicReference<>();

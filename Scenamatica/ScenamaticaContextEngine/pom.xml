@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.kunlab.scenamatica</groupId>
         <artifactId>Scenamatica</artifactId>
-        <version>1.4.1</version>
+        <version>1.5.0</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -19,8 +19,10 @@
         <module>nms_v1_13_R2</module>
         <module>nms_v1_14_R1</module>
         <module>nms_v1_15_R1</module>
+        <module>nms_v1_16_R1</module>
         <module>nms_v1_16_R3</module>
         <module>nms_v1_16_R2</module>
+        <module>nms_v1_17_R1</module>
     </modules>
 
     <properties>
@@ -63,25 +65,25 @@
         <dependency>
             <groupId>org.kunlab.scenamatica</groupId>
             <artifactId>ScenamaticaCommons</artifactId>
-            <version>1.4.1</version>
+            <version>1.5.0</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.kunlab.scenamatica</groupId>
             <artifactId>ScenamaticaModels</artifactId>
-            <version>1.4.1</version>
+            <version>1.5.0</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.kunlab.scenamatica.nms</groupId>
             <artifactId>NMSTypes</artifactId>
-            <version>1.4.1</version>
+            <version>1.5.0</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.kunlab.scenamatica.nms</groupId>
             <artifactId>NMSCore</artifactId>
-            <version>1.4.1</version>
+            <version>1.5.0</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

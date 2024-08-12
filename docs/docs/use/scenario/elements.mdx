@@ -369,19 +369,14 @@ context:
 
 ### エンティティ {#entity}
 
-エンティティは, シナリオに登場するモブのことです。ステージの準備後に生成され, 終了時に破棄されます。
+エンティティは, シナリオに登場するモブのことです。ステージの準備後に生成され, 終了時に破棄されます。  
 ステージに実際に生成されるため, 通常の Minecraft エンティティと同様に, 他のエンティティやプレイヤとの相互作用が可能です。
+また, これらはシナリオ内で利用するために最適化されており, ワールドの他のエンティティよりもより早く, かつ優先的に解決されます。
 
 Scenamatica はエンティティが削除されるまでこれを継続して追跡し, そのエンティティを含むチャンクを強制的に読み込みし続けます。
 
 エンティティ指定は, [シナリオファイル](/references/types/ScenarioFileStructure) の 
 [`context`](/references/types/ContextStructure).[`entities`](/references/types/entities/EntityStructure)\[] で指定します。  
-
-:::tip
-指定するエンティティの型は, エンティティの種類によって異なります。  
-例えば, [LivingEntity](/references/types/entities/LivingEntityStructure) を実装するエンティティを指定した場合は,
-そのプロパティも指定できます。
-:::
 
 ```yaml showLineNumbers
 context:
@@ -393,6 +388,21 @@ context:
       y: 64
       z: 0
 ```
+
+:::tip
+指定するエンティティの型は, エンティティの種類によって異なります。  
+例えば, [LivingEntity](/references/types/entities/LivingEntityStructure) を実装するエンティティを指定した場合は,
+そのプロパティも指定できます。
+:::
+
+:::danger Minecraft 1.17 以降の仕様について
+
+Minecraft 1.17 以降は, Bukkit の制約により, ワールドのエンティティはメインスレッドからしか取得できません。  
+ゆえに, この機能を利用せずして作成されたエンティティの解決は, 1.17 以降のバージョンでは**非推奨**となります。
+
+この機能を利用して作成されたエンティティは, 非同期処理によって解決されるため, シナリオに登場するエンティティはこの機能を使用して作成することを推奨します。
+
+:::
 
 ## 条件付き実行 {#conditional-execution}
 

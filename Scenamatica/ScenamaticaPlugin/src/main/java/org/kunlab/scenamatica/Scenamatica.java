@@ -151,8 +151,7 @@ public final class Scenamatica extends JavaPlugin
 
         Bukkit.getOnlinePlayers().forEach(player ->
         {
-            // noinspection deprecation  De-Adventure API
-            PlayerJoinEvent event = new PlayerJoinEvent(player, (String) null);
+            PlayerJoinEvent event = new PlayerJoinEvent(player, "");
             listener.onPlayerJoin(event);
         });
     }

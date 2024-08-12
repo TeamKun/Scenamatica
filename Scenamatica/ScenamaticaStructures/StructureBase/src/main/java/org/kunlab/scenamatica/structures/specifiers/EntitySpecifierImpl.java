@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.commons.utils.EntityUtils;
+import org.kunlab.scenamatica.commons.utils.ThreadingUtil;
 import org.kunlab.scenamatica.interfaces.context.Context;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.EntityStructure;
@@ -163,13 +164,50 @@ public class EntitySpecifierImpl<E extends Entity> implements EntitySpecifier<E>
     protected Entity selectTargetRaw(@Nullable Player basis, @Nullable Context context)
     {
         if (this.mayUUID != null)
-            return Bukkit.getEntity(this.mayUUID);
+            return this.getEntityByUUIDSynced(context, this.mayUUID);
         else if (this.selector != null)
-            return this.selector.selectOne(basis).orElse(null);
+            return this.getEntityBySelectorSynced(basis, context);
         else if (this.targetStructure != null)
-            return EntityUtils.getEntity(this.targetStructure, context, null);
+            return this.getEntityWideSynced(context);
         else
             return null;
+    }
+
+    private Entity getEntityBySelectorSynced(@Nullable Player basis, @Nullable Context context)
+    {
+        Optional<Entity> entityInSelector = this.selector.selectOne(basis);  // sync は中で行っている
+        if (entityInSelector.isPresent())
+            return entityInSelector.get();
+
+        // 存在しない場合は, context の entities を変えながらテストする
+        if (context == null)
+            return null;
+        return context.getEntities().stream()
+                .filter(e -> this.selector.test(basis, e))
+                .findFirst().orElse(null);
+    }
+
+    private Entity getEntityByUUIDSynced(@Nullable Context ctxt, @NotNull UUID uuid)
+    {
+        // Context に Entity が含まれている場合はそれを優先
+        Optional<? extends Entity> entityInContext;
+        if (!(ctxt == null || ctxt.getEntities().isEmpty())
+                && (entityInContext = ctxt.getEntities().stream()
+                .filter(e -> e.getUniqueId().equals(uuid)).findFirst()).isPresent())
+            return entityInContext.get();
+
+        if (Bukkit.isPrimaryThread())
+            return Bukkit.getEntity(uuid);
+        else
+            return ThreadingUtil.waitFor(() -> Bukkit.getEntity(uuid));
+    }
+
+    private Entity getEntityWideSynced(@Nullable Context ctxt)
+    {
+        if (Bukkit.isPrimaryThread())
+            return EntityUtils.getEntity(this.targetStructure, ctxt, null);
+        else
+            return ThreadingUtil.waitFor(() -> EntityUtils.getEntity(this.targetStructure, ctxt, null));
     }
 
     @Override

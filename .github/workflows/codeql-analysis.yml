@@ -27,38 +27,10 @@ on:
 
 jobs:
   setup-nms:
-    name: Build NMS with NMSAction
-    strategy:
-      matrix:
-        nms-version:
-          - 1.16.5
-          - 1.16.3
-          - 1.15.2
-          - 1.14.4
-          - 1.13.2
-          - "1.13"
-    runs-on: ubuntu-latest
-    steps:
-      - name: Try to restore caches
-        uses: actions/cache@v4
-        id: restore-cache
-        with:
-          path: nms-build/.m2
-          key: nms-maven-${{ matrix.nms-version }}
-          restore-keys: |
-            nms-maven-${{ matrix.nms-version }}
-          lookup-only: true
-      - name: Build NMS if cache miss
-        if: steps.restore-cache.outputs.cache-hit != 'true'
-        uses: PeyaPeyaPeyang/nmsaction@v9
-        with:
-          rev: ${{ matrix.nms-version }}
-      - name: Save caches
-        if: steps.restore-cache.outputs.cache-hit != 'true'
-        uses: actions/cache@v4
-        with:
-          path: nms-build/.m2
-          key: nms-maven-${{ matrix.nms-version }}
+    name: Setup NMS
+    uses: "./.github/workflows/build-nms.yml"
+    secrets:
+      token: ${{ secrets.GITHUB_TOKEN }}
   build-and-analyze:
     name: Build with Maven
     runs-on: ubuntu-latest
@@ -78,45 +50,16 @@ jobs:
         uses: stCarolas/setup-maven@v5
         with:
           maven-version: 3.8.2
-      - uses: actions/setup-node@v4
-        if: steps.maven-cache.outputs.cache-hit != 'true'
-        with:
-          node-version: '20.x'
-      - run: npm install @actions/cache
-        if: steps.maven-cache.outputs.cache-hit != 'true'
       - name: Restore NMS cache
-        uses: actions/github-script@v7
-        if: steps.maven-cache.outputs.cache-hit != 'true'
+        uses: actions/cache@v4
         with:
-          script: |
-            const cache = require('@actions/cache');
-            const path = require('path');
-            const nmsVersions = [
-              '1.16.5',
-              '1.16.3',
-              '1.15.2',
-              '1.14.4',
-              '1.13.2',
-              '1.13'
-            ];
-            for (const nmsVersion of nmsVersions) {
-              const key = `nms-maven-${nmsVersion}`;
-              const cacheKey = await cache.restoreCache(
-                  ['nms-build/.m2'],
-                  key,
-                  nmsVersions
-              );
-              if (cacheKey) {
-                console.log(`Cache restored from key: ${cacheKey}`);
-              } else {
-                console.error(`Cache not found for key: ${key}`);
-                process.exit(1);
-              }
-            }
+          path: nms-build/.m2
+          key: nms-maven
+          restore-keys: nms-maven
       - name: Deploy NMS cache
         if: steps.maven-cache.outputs.cache-hit != 'true'
         run: |
-          mv -f nms-build/.m2/repository/repository $HOME/.m2/ -v
+          mv -f nms-build/.m2/repository $HOME/.m2/ -v
       # Initializes the CodeQL tools for scanning.
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
@@ -124,6 +67,8 @@ jobs:
           languages: java
       - name: Build with Maven
         run: |
-          mvn -B package --file Scenamatica/pom.xml -D"jar.finalName=Scenamatica" -P debug
+          cd Scenamatica
+          chmod +x build.sh
+          ./build.sh -D"jar.finalName=Scenamatica" -P debug
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3

@@ -8,8 +8,10 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="ContextEngineCore" />
+        <module name="nms_v1_17_R1" />
         <module name="ScenamaticaCommons" />
         <module name="NMSCore" />
+        <module name="v1_17_R1" />
         <module name="v1_15_R1" />
         <module name="ScenamaticaScenarioEngine" />
         <module name="StructureBase" />
@@ -20,6 +22,7 @@
         <module name="ScenamaticaAPI" />
         <module name="nms_v1_16_R2" />
         <module name="ScenamaticaTriggerEngine" />
+        <module name="nms_v1_16_R1" />
         <module name="nms_v1_14_R1" />
         <module name="nms_v1_16_R3" />
         <module name="Extended_v1_16_5" />
@@ -28,6 +31,7 @@
         <module name="ScenamaticaSelectorEngine" />
         <module name="Extended_v1_14" />
         <module name="ScenamaticaDaemon" />
+        <module name="v1_16_R1" />
         <module name="v1_16_R2" />
         <module name="NMSTypes" />
         <module name="v1_16_R3" />

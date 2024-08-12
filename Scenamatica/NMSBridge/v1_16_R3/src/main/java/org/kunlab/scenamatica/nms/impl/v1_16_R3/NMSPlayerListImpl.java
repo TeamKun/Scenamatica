@@ -11,7 +11,7 @@ import org.bukkit.Server;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.nms.types.NMSPlayerList;
-import org.kunlab.scenamatica.nms.types.NMSWorldServer;
+import org.kunlab.scenamatica.nms.types.world.NMSWorldServer;
 import org.kunlab.scenamatica.nms.types.entity.NMSEntityPlayer;
 import org.kunlab.scenamatica.nms.types.player.NMSNetworkManager;
 

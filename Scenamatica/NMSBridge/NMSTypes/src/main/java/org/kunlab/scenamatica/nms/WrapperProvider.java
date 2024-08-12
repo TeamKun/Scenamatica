@@ -10,7 +10,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.kunlab.scenamatica.nms.types.NMSMinecraftServer;
-import org.kunlab.scenamatica.nms.types.NMSWorldServer;
+import org.kunlab.scenamatica.nms.types.world.NMSWorldServer;
 import org.kunlab.scenamatica.nms.types.block.NMSBlockPosition;
 import org.kunlab.scenamatica.nms.types.entity.NMSEntity;
 import org.kunlab.scenamatica.nms.types.entity.NMSEntityHuman;
