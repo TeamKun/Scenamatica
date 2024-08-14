@@ -15,6 +15,7 @@
         <module>Extended_v1_16_5</module>
         <module>Extended_v1_16</module>
         <module>Extended_v1_14</module>
+        <module>Extended_v1_18</module>
     </modules>
 
     <artifactId>ScenamaticaActions</artifactId>

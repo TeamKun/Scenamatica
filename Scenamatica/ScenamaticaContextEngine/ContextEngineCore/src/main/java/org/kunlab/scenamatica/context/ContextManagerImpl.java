@@ -33,6 +33,7 @@ import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileStructure;
 import org.kunlab.scenamatica.interfaces.structures.context.ContextStructure;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.PlayerStructure;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.EntityStructure;
+import org.kunlab.scenamatica.interfaces.structures.minecraft.misc.LocationStructure;
 import org.kunlab.scenamatica.nms.NMSProvider;
 import org.kunlab.scenamatica.nms.types.world.NMSPersistentEntitySectionManager;
 import org.kunlab.scenamatica.nms.types.world.NMSWorldServer;
@@ -160,7 +161,7 @@ public class ContextManagerImpl implements ContextManager
     }
 
     @SuppressWarnings("unchecked")
-    private <T extends Entity> T spawnEntity(World stage, EntityStructure entity) throws EntityCreationException
+    private <T extends Entity> T spawnEntity(@NotNull World stage, @NotNull EntityStructure entity) throws EntityCreationException
     {
         EntityType type = entity.getType();
         if (type == null)
@@ -175,16 +176,22 @@ public class ContextManagerImpl implements ContextManager
 
             int y = stage.getHighestBlockYAt(DEFAULT_LOC_X, DEFAULT_LOC_Z);
 
-            spawnLoc = new Location(stage, DEFAULT_LOC_X, y, DEFAULT_LOC_Z);
             spawnWorld = stage;  // 指定がない場合は, ステージにスポーン
+            spawnLoc = new Location(stage, DEFAULT_LOC_X, y, DEFAULT_LOC_Z);
         }
         else
         {
-            spawnLoc = entity.getLocation().create();
             // {指定がない ? ステージ : 指定されたワールド} にスポーン
-            spawnWorld = spawnLoc.getWorld() == null ? stage: spawnLoc.getWorld();
-        }
+            LocationStructure entityLoc = entity.getLocation();
+            World world;
+            if (entityLoc.getWorld() == null)
+                world = stage;  // ステージに作成する
+            else
+                world = null;  // create() メソッド内部で自動的に指定される。
 
+            spawnLoc = entity.getLocation().create(world);
+            spawnWorld = spawnLoc.getWorld();
+        }
 
         UUID entityTag = UUID.randomUUID();
         String tagName = "scenamatica-" + entityTag;
@@ -194,7 +201,7 @@ public class ContextManagerImpl implements ContextManager
         this.chunkLoader.addEntity(generatedEntity);
 
         // 1.17 以上なら, エンティティのトラッキングとチック経過を開始する
-        if (MinecraftVersion.current().isAtLeast(MinecraftVersion.V1_17))
+        if (MinecraftVersion.current().isInRange(MinecraftVersion.V1_17, MinecraftVersion.V1_17_1))
         {
             NMSProvider.tryDoNMS(() -> {
                 NMSWorldServer nmsWorld = NMSProvider.getProvider().wrap(spawnWorld);
@@ -385,9 +392,7 @@ public class ContextManagerImpl implements ContextManager
         }
 
         if (context.hasStage())
-        {
             this.stageManager.destroyStage(context.getStage());  // StageNotCreatedException はチェック済み。
-        }
     }
 
     @Override

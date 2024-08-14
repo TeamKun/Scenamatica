@@ -1,6 +1,8 @@
 package org.kunlab.scenamatica.interfaces.structures.minecraft.misc;
 
 import org.bukkit.Location;
+import org.bukkit.World;
+import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.bookkeeper.annotations.Category;
 import org.kunlab.scenamatica.bookkeeper.annotations.TypeDoc;
 import org.kunlab.scenamatica.bookkeeper.annotations.TypeProperty;
@@ -109,4 +111,11 @@ public interface LocationStructure extends Structure, Mapped<Location>, Creatabl
      * @return 新しい LocationStructure
      */
     LocationStructure changeWorld(String world);
+
+    /**
+     * ワールドを動的に指定して Location を作成します。
+     * @param world ワールド
+     * @return Location
+     */
+    Location create(@Nullable World world);
 }

@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Value;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.World;
+import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.misc.LocationStructure;
 
@@ -131,20 +133,30 @@ public class LocationStructureImpl implements LocationStructure
     @Override
     public Location create()
     {
-        return new Location(
-                this.world == null ? null: Bukkit.getWorld(this.world),
-                this.x == null ? 0: this.x,
-                this.y == null ? 0: this.y,
-                this.z == null ? 0: this.z,
-                this.yaw == null ? 0: this.yaw,
-                this.pitch == null ? 0: this.pitch
-        );
+        return this.create(null);
     }
 
     @Override
     public LocationStructure changeWorld(String world)
     {
         return new LocationStructureImpl(this.x, this.y, this.z, this.yaw, this.pitch, world);
+    }
+
+    @Override
+    public Location create(@Nullable World world)
+    {
+        World actualWorld = world;
+        if (actualWorld == null)
+            actualWorld = this.world == null ? null: Bukkit.getWorld(this.world);
+
+        return new Location(
+                actualWorld,
+                this.x == null ? 0: this.x,
+                this.y == null ? 0: this.y,
+                this.z == null ? 0: this.z,
+                this.yaw == null ? 0: this.yaw,
+                this.pitch == null ? 0: this.pitch
+        );
     }
 
     @Override

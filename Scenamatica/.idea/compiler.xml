@@ -27,6 +27,7 @@
         <module name="nms_v1_16_R3" />
         <module name="Extended_v1_16_5" />
         <module name="nms_v1_18_R1" />
+        <module name="Extended_v1_18" />
         <module name="ScenamaticaActionEngine" />
         <module name="Extended_v1_16" />
         <module name="ScenamaticaSelectorEngine" />

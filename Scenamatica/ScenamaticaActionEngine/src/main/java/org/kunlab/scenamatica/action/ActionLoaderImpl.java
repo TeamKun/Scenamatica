@@ -207,7 +207,7 @@ public class ActionLoaderImpl implements ActionLoader, Listener
     private List<Class<? extends org.kunlab.scenamatica.interfaces.action.Action>> getActionClasses(Plugin plugin)
     {
         List<String> actionClassNames;
-        try (ScenamaticaActionClassLoader cl = new ScenamaticaActionClassLoader(getJARURL(plugin)))
+        try (ScenamaticaActionClassLoader cl = new ScenamaticaActionClassLoader(this.getClass().getClassLoader(), getJARURL(plugin)))
         {
             Collection<Class<?>> classes = cl.getAllClasses();
             Class<?> actionClass;
@@ -360,9 +360,9 @@ public class ActionLoaderImpl implements ActionLoader, Listener
         private boolean isScenamatica;
         private Class<?> actionClass;
 
-        public ScenamaticaActionClassLoader(URL url)
+        public ScenamaticaActionClassLoader(ClassLoader parent, URL url)
         {
-            super(new URL[]{url});
+            super(new URL[]{url}, parent);
         }
 
         private File jarURLToFile(URL url)

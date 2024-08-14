@@ -312,9 +312,16 @@ public class EntityStructureImpl implements EntityStructure
         );
     }
 
+
+
     protected void applyToEntity(Entity entity)
     {
-        if (this.location != null)
+        this.applyToEntity(entity, true);
+    }
+
+    protected void applyToEntity(Entity entity, boolean applyLocation)
+    {
+        if (applyLocation && this.location != null)
         {
             if (this.location.getWorld() == null)
                 entity.teleport(this.location.changeWorld(entity.getWorld().getName()).create());
