@@ -5,6 +5,8 @@ import com.google.common.collect.Multimap;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.SneakyThrows;
+import net.kunmc.lab.peyangpaperutils.lang.LangProvider;
+import net.kunmc.lab.peyangpaperutils.lang.MsgArgs;
 import net.kunmc.lab.peyangpaperutils.lib.utils.Pair;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
@@ -30,8 +32,11 @@ import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileStructure;
 import org.kunlab.scenamatica.interfaces.structures.trigger.TriggerStructure;
 import org.kunlab.scenamatica.scenario.engine.ScenarioEngineImpl;
 import org.kunlab.scenamatica.scenario.milestone.MilestoneManagerImpl;
+import org.kunlab.scenamatica.scenario.runtime.ScenarioCompilationErrorException;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -39,6 +44,7 @@ import java.util.Map;
 import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
+import java.util.logging.Logger;
 
 @Getter
 public class ScenarioManagerImpl implements ScenarioManager
@@ -270,28 +276,86 @@ public class ScenarioManagerImpl implements ScenarioManager
     @Override
     public void loadPluginScenarios(@NotNull Plugin plugin)
     {
+        // 内部でリロードを呼び出す（やることは同じなので）
         if (!this.registry.getScenarioFileManager().reloadPluginScenarios(plugin))
             throw new IllegalStateException("Failed to reload plugin scenarios.");
 
+        // エンジンのコンパイルも行う。
         Map<String, ScenarioFileStructure> scenarios = this.registry.getScenarioFileManager().getPluginScenarios(plugin);
         assert scenarios != null;
 
-        List<ScenarioEngine> engines = new ArrayList<>(scenarios.size());
-        scenarios.values().stream()
+        List<ScenarioEngine> engines = this.createEnginesByFile(plugin, scenarios.values());
+
+        this.registry.getTriggerManager().performTriggerFire(engines, TriggerType.ON_LOAD);
+    }
+
+    private List<ScenarioEngine> createEnginesByFile(@NotNull Plugin owningPlugin, @NotNull Collection<ScenarioFileStructure> files)
+    {
+        Logger logger = this.registry.getLogger();
+
+        List<ScenarioEngine> engines = new ArrayList<>(files.size());
+        logger.info(LangProvider.get(
+                "scenario.load.start",
+                MsgArgs.of("plugin", owningPlugin.getName())
+        ));
+
+        boolean isSuccessful = true;
+        try
+        {
+            files.stream()
                 .map(scenario -> new ScenarioEngineImpl(
                                 this.registry,
                                 this,
                                 this.actionManager,
                                 this.testReporter,
-                                plugin,
+                                owningPlugin,
                                 scenario
-                        )
+                            )
                 )
                 .forEach(engines::add);
+        }
+        catch (ScenarioCompilationErrorException e)
+        {
+            isSuccessful = false;
 
-        this.engines.putAll(plugin, engines);
+            String message;
+            if (e.getCause() == null)
+                message = e.getMessage();
+            else
+                message = e.getCause().getMessage();
 
-        this.registry.getTriggerManager().performTriggerFire(engines, TriggerType.ON_LOAD);
+            logger.warning(LangProvider.get(
+                    "scenario.compile.error",
+                    MsgArgs.of("pluginName", owningPlugin.getName())
+                            .add("message", message)
+            ));
+
+            // 想定されている例外（e.g. アクションが見つからない 等）なので, レポートは不要
+        }
+        catch (RuntimeException e)
+        {
+            isSuccessful = false;
+
+            logger.warning(LangProvider.get(
+                    "scenario.compile.error",
+                    MsgArgs.of("pluginName", owningPlugin.getName())
+                            .add("message", e.getMessage())
+            ));
+
+            this.registry.getExceptionHandler().report(e);
+        }
+
+        String finishedMessageKey = isSuccessful ? "scenario.load.success" : "scenario.load.cancel";
+        logger.info(LangProvider.get(
+                finishedMessageKey,
+                MsgArgs.of("pluginName", owningPlugin.getName())
+        ));
+
+        if (isSuccessful)
+            this.engines.putAll(owningPlugin, engines);
+        else
+            engines.clear();  // エラーが発生したときに, 一部のエンジンが追加されている可能性があるため
+        return engines;
     }
 
     @Override
