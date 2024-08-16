@@ -172,5 +172,5 @@ public interface Actor
      * @return アクターの名前
      */
     @NotNull
-    String getName();
+    String getActorName();
 }

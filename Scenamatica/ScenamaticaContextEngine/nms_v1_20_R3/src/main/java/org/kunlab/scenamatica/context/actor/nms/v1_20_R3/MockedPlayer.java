@@ -1,38 +1,32 @@
-package org.kunlab.scenamatica.context.actor.nms.v1_18_R1;
+package org.kunlab.scenamatica.context.actor.nms.v1_20_R3;
 
 import com.mojang.authlib.GameProfile;
-import io.netty.buffer.Unpooled;
 import io.netty.handler.timeout.TimeoutException;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMaps;
 import lombok.Getter;
 import lombok.SneakyThrows;
-import net.kunmc.lab.peyangpaperutils.lib.utils.Runner;
-import net.minecraft.core.BlockPosition;
-import net.minecraft.core.EnumDirection;
-import net.minecraft.network.NetworkManager;
-import net.minecraft.network.PacketDataSerializer;
-import net.minecraft.network.chat.ChatComponentText;
-import net.minecraft.network.protocol.game.PacketPlayInArmAnimation;
-import net.minecraft.network.protocol.game.PacketPlayInSetCreativeSlot;
-import net.minecraft.network.protocol.game.PacketPlayInUseEntity;
-import net.minecraft.network.protocol.game.PacketPlayInWindowClick;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.network.protocol.game.ServerboundContainerClickPacket;
+import net.minecraft.network.protocol.game.ServerboundInteractPacket;
+import net.minecraft.network.protocol.game.ServerboundSetCreativeModeSlotPacket;
+import net.minecraft.network.protocol.game.ServerboundSwingPacket;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.level.EntityPlayer;
-import net.minecraft.server.level.WorldServer;
-import net.minecraft.world.EnumHand;
-import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.server.level.ClientInformation;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.inventory.InventoryClickType;
-import net.minecraft.world.item.context.ItemActionContext;
-import net.minecraft.world.phys.MovingObjectPositionBlock;
-import net.minecraft.world.phys.Vec3D;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.craftbukkit.v1_18_R1.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory;
-import org.bukkit.craftbukkit.v1_18_R1.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_20_R4.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_20_R4.event.CraftEventFactory;
+import org.bukkit.craftbukkit.v1_20_R4.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.block.Action;
@@ -55,36 +49,36 @@ import org.kunlab.scenamatica.nms.enums.voxel.NMSDirection;
 import java.lang.reflect.Constructor;
 import java.util.UUID;
 
-class MockedPlayer extends EntityPlayer implements Actor
+class MockedPlayer extends ServerPlayer implements Actor
 {
     private final ActorManager manager;
     private final PlayerMocker mocker;
     @Getter
     private final Location initialLocation;
     @Getter
-    private final NetworkManager networkManager;
-    @Getter
     private final PlayerStructure initialStructure;
+    @Getter
+    private final MockedConnection mockedConnection;
 
     public MockedPlayer(
             ActorManager manager,
             PlayerMocker mocker,
-            NetworkManager networkManager,
             MinecraftServer minecraftserver,
-            WorldServer worldserver,
+            ClientInformation clinfo,
+            ServerLevel serverLevel,
             GameProfile gameprofile,
             Location initialLocation,
             PlayerStructure initialStructure)
     {
-        super(minecraftserver, worldserver, gameprofile);
+        super(minecraftserver, serverLevel, gameprofile, clinfo);
         this.manager = manager;
         this.mocker = mocker;
-        this.networkManager = networkManager;
         this.initialLocation = initialLocation;
         this.initialStructure = initialStructure;
+        this.mockedConnection = new MockedConnection(this, server);
 
-        this.e(false);
-        this.P = 0.5f; // ブロックをのぼれるたかさ
+        this.setNoGravity(false);
+        this.animStep = 0.5f; // ブロックをのぼれるたかさ
     }
 
     private static TimeoutException createNIOTimeoutException()
@@ -110,11 +104,22 @@ class MockedPlayer extends EntityPlayer implements Actor
     @Override
     public void playAnimation(@NotNull PlayerAnimationType animation)
     {
-        assert animation == PlayerAnimationType.ARM_SWING;  // Bukkit はこれしかない。
+        InteractionHand armToSwing;
+        switch (animation)
+        {
+            case ARM_SWING:
+                armToSwing = InteractionHand.MAIN_HAND;
+                break;
+            case OFF_ARM_SWING:
+                armToSwing = InteractionHand.OFF_HAND;
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown PlayerAnimationType: " + animation.name());
+        }
 
-        PacketPlayInArmAnimation packet = new PacketPlayInArmAnimation(EnumHand.b);
+        ServerboundSwingPacket packet = new ServerboundSwingPacket(armToSwing);
 
-        this.b.a(packet);
+        this.connection.handleAnimate(packet);
     }
 
     @Override
@@ -127,8 +132,8 @@ class MockedPlayer extends EntityPlayer implements Actor
                 CraftEventFactory.callPlayerInteractEvent(
                         this,
                         action,
-                        this.er(),
-                        EnumHand.a
+                        this.getMainHandItem(),
+                        InteractionHand.MAIN_HAND
                 );
                 break;
             case LEFT_CLICK_BLOCK:
@@ -136,10 +141,10 @@ class MockedPlayer extends EntityPlayer implements Actor
                 CraftEventFactory.callPlayerInteractEvent(
                         this,
                         action,
-                        new BlockPosition(block.getX(), block.getY(), block.getZ()),
-                        EnumDirection.c,
-                        this.er(),
-                        EnumHand.a
+                        new BlockPos(block.getX(), block.getY(), block.getZ()),
+                        Direction.NORTH,
+                        this.getMainHandItem(),
+                        InteractionHand.MAIN_HAND
                 );
                 break;
         }
@@ -150,27 +155,32 @@ class MockedPlayer extends EntityPlayer implements Actor
                                @Nullable NMSHand hand, @Nullable Location location)
     {
         Entity nmsEntity = ((CraftEntity) entity).getHandle();
-        EnumHand enumHand = NMSProvider.getTypeSupport().toNMS(hand, EnumHand.class);
+        InteractionHand enumHand = NMSProvider.getTypeSupport().toNMS(hand, InteractionHand.class);
 
-        PacketPlayInUseEntity packet;
+        ServerboundInteractPacket packet;
         switch (type)
         {
             case ATTACK:
-                packet = PacketPlayInUseEntity.a(nmsEntity, this.bI());
+                packet = ServerboundInteractPacket.createAttackPacket(nmsEntity, this.isShiftKeyDown());
                 break;
             case INTERACT:
-                packet = PacketPlayInUseEntity.a(nmsEntity, this.bI(), enumHand);
+                packet = ServerboundInteractPacket.createInteractionPacket(nmsEntity, this.isShiftKeyDown(), enumHand);
                 break;
             case INTERACT_AT:
                 if (location == null)
                     throw new IllegalArgumentException("location must not be null when type is INTERACT_AT");
-                packet = PacketPlayInUseEntity.a(nmsEntity, this.bI(), enumHand, new Vec3D(location.getX(), location.getY(), location.getZ()));
+                packet = ServerboundInteractPacket.createInteractionPacket(
+                        nmsEntity,
+                        this.isShiftKeyDown(),
+                        enumHand,
+                        new Vec3(location.getX(), location.getY(), location.getZ())
+                );
                 break;
             default:
                 throw new IllegalArgumentException("Unknown NMSEntityUseAction: " + type.name());
         }
         
-        this.b.a(packet);
+        this.connection.handleInteract(packet);
     }
 
     @Override
@@ -182,23 +192,23 @@ class MockedPlayer extends EntityPlayer implements Actor
     @Override
     public void placeItem(@NotNull Location location, @NotNull ItemStack item, @Nullable BlockFace face)
     {
-        final EnumHand HAND = EnumHand.a;
+        final InteractionHand HAND = InteractionHand.MAIN_HAND;
 
         net.minecraft.world.item.ItemStack nmsItem = CraftItemStack.asNMSCopy(item);
 
         if (face == null)
             face = VoxelUtils.traceDirection(this.getPlayer().getLocation(), location);
-        EnumDirection direction = NMSProvider.getTypeSupport().toNMS(NMSDirection.fromBlockFace(face), EnumDirection.class);
+        Direction direction = NMSProvider.getTypeSupport().toNMS(NMSDirection.fromBlockFace(face), Direction.class);
 
-        MovingObjectPositionBlock position = new MovingObjectPositionBlock(
-                /* vec3D: */ new Vec3D(location.getX(), location.getY(), location.getZ()),
+        BlockHitResult position = new BlockHitResult(
+                /* vec3D: */ new Vec3(location.getX(), location.getY(), location.getZ()),
                 /* enumDirection: */ direction,
-                /* blockPosition: */ new BlockPosition(location.getBlockX(), location.getBlockY(), location.getBlockZ()),
+                /* blockPosition: */ new BlockPos(location.getBlockX(), location.getBlockY(), location.getBlockZ()),
                 /* flag: */ false
         );
 
-        ItemActionContext ctx = new ItemActionContext(
-                /* world: */ this.t,
+        UseOnContext ctx = new UseOnContext(
+                /* world: */ this.level(),
                 /* player: */ this,
                 /* enumHand: */ HAND,
                 /* itemStack: */ nmsItem,
@@ -206,41 +216,45 @@ class MockedPlayer extends EntityPlayer implements Actor
         );
 
 
-        nmsItem.useOn(ctx, HAND);
+        nmsItem.useOn(ctx);
     }
 
     @Override
     public void breakBlock(Block block)
     {
-        this.d.a(new BlockPosition(block.getX(), block.getY(), block.getZ()));
+        this.gameMode.destroyBlock(new BlockPos(block.getX(), block.getY(), block.getZ()));
     }
 
     @Override
     public void placeBlock(@NotNull Location location, @NotNull ItemStack stack, @NotNull NMSHand nmsHand, @NotNull BlockFace direction)
     {
         net.minecraft.world.item.ItemStack nmsTack = CraftItemStack.asNMSCopy(stack);
-        EnumHand hand = NMSProvider.getTypeSupport().toNMS(nmsHand, EnumHand.class);
-        MovingObjectPositionBlock position = new MovingObjectPositionBlock(
-                /* vec3D: */ new Vec3D(location.getX(), location.getY(), location.getZ()),
-                /* enumDirection: */ EnumDirection.valueOf(direction.name()),  // 互換性あり
-                /* blockPosition: */ new BlockPosition(location.getBlockX(), location.getBlockY(), location.getBlockZ()),
+        InteractionHand hand = NMSProvider.getTypeSupport().toNMS(nmsHand, InteractionHand.class);
+        Vec3 vec3 = new Vec3(location.getX(), location.getY(), location.getZ());
+        BlockHitResult position = new BlockHitResult(
+                /* vec3D: */ vec3,
+                /* enumDirection: */ Direction.byName(direction.name()),  // 互換性あり
+                /* blockPosition: */ new BlockPos(location.getBlockX(), location.getBlockY(), location.getBlockZ()),
                 /* inside: */ false
         );
 
-        PlayerInteractEvent event = CraftEventFactory.callPlayerInteractEvent(this, Action.RIGHT_CLICK_BLOCK,
-                position.a(),
-                position.b(),
+        PlayerInteractEvent event = CraftEventFactory.callPlayerInteractEvent(
+                this,
+                Action.RIGHT_CLICK_BLOCK,
+                position.getBlockPos(),
+                position.getDirection(),
                 nmsTack,
                 true,
-                hand
+                hand,
+                vec3
         );
         boolean cancelled = event.useItemInHand() == Event.Result.DENY;
         if (cancelled)
             return;
 
-        this.d.a(
+        this.gameMode.useItemOn(
                 /* entityPlayer: */ this,
-                /* world: */ this.t,
+                /* world: */ this.level(),
                 /* itemStack: */ CraftItemStack.asNMSCopy(stack),
                 /* enumHand: */ hand,
                 /* movingObjectPositionBlock: */ position
@@ -258,7 +272,7 @@ class MockedPlayer extends EntityPlayer implements Actor
         // this.server.getPlayerList().disconnect(this);
         // ↑は, PaperMC の改悪により使用できない（定義の変更： String disconnectMessage -> advanture.Component disconnectMessage）
 
-        this.b.a(new ChatComponentText(message));
+        this.connection.disconnect(message);
     }
 
     @Override
@@ -271,28 +285,19 @@ class MockedPlayer extends EntityPlayer implements Actor
     @Override
     public void kickTimeout()
     {
-
-        this.networkManager.exceptionCaught(
-                /* channelhandlercontext: */ null,  // なんでもいい。
-                /* throwable: */ createNIOTimeoutException()
-        );
         this.actualLeave("Timed out");
     }
 
     @Override
     public void kickErroneous()
     {
-        this.networkManager.exceptionCaught(
-                /* channelhandlercontext: */ null,  // なんでもいい。
-                /* throwable: */ new IllegalStateException("Erroneous packet for " + this.getActorName() + " [E]!")
-        );
         this.actualLeave("Internal server error");
     }
 
     @Override
     public void giveCreativeItem(int slot, @NotNull ItemStack item)
     {
-        this.b.a(new PacketPlayInSetCreativeSlot(slot, CraftItemStack.asNMSCopy(item)));
+        this.connection.handleSetCreativeModeSlot(new ServerboundSetCreativeModeSlotPacket(slot, CraftItemStack.asNMSCopy(item)));
     }
 
     @Override
@@ -304,14 +309,14 @@ class MockedPlayer extends EntityPlayer implements Actor
     @Override
     public @NotNull UUID getUUID()
     {
-        return this.fp().getId();
+        return this.uuid;
     }
 
     @Override
     @NotNull
     public String getActorName()
     {
-        return this.fp().getName();
+        return this.getGameProfile().getName();
     }
 
     @Override
@@ -320,45 +325,38 @@ class MockedPlayer extends EntityPlayer implements Actor
                                int button,
                                @Nullable ItemStack itemStack)
     {
-        InventoryClickType nmsType;
+        net.minecraft.world.inventory.ClickType nmsType;
         switch (type)
         {
             case LEFT:
             case RIGHT:
-                nmsType = InventoryClickType.a;
+                nmsType = net.minecraft.world.inventory.ClickType.PICKUP;
                 break;
             case SHIFT_LEFT:
             case SHIFT_RIGHT:
-                nmsType = InventoryClickType.b;
+                nmsType = net.minecraft.world.inventory.ClickType.QUICK_MOVE;
                 break;
             case NUMBER_KEY:
-                nmsType = InventoryClickType.c;
+                nmsType = net.minecraft.world.inventory.ClickType.SWAP;
                 break;
             case MIDDLE:
-                nmsType = InventoryClickType.d;
+                nmsType = net.minecraft.world.inventory.ClickType.CLONE;
                 break;
             case DROP:
             case CONTROL_DROP:
-                nmsType = InventoryClickType.e;
+                nmsType = net.minecraft.world.inventory.ClickType.THROW;
                 break;
             case DOUBLE_CLICK:
-                nmsType = InventoryClickType.g;
+                nmsType = net.minecraft.world.inventory.ClickType.QUICK_CRAFT;
                 break;
             default:
                 throw new IllegalArgumentException("Unknown ClickType: " + type.name());
         }
 
-        PacketDataSerializer serializer = new PacketDataSerializer(Unpooled.buffer());
+        int stateId = this.mockedConnection.getWindowStateId();
 
-        int stateId = 0;
-        if (this.b instanceof MockedPlayerConnection)
-        {
-            MockedPlayerConnection connection = (MockedPlayerConnection) this.b;
-            stateId = connection.getWindowStateId();
-        }
-
-        PacketPlayInWindowClick windowClick = new PacketPlayInWindowClick(
-                /* windowId: */ this.bV.j,
+        ServerboundContainerClickPacket windowClick = new ServerboundContainerClickPacket(
+                /* windowId: */ this.containerMenu.containerId,
                 /* stateId: */ stateId,
                 /* slot: */ slot,
                 /* button: */ button,
@@ -366,45 +364,17 @@ class MockedPlayer extends EntityPlayer implements Actor
                 /* itemStack: */ CraftItemStack.asNMSCopy(itemStack),
                 /* arrayof slots */ Int2ObjectMaps.emptyMap()
         );
-        windowClick.a(serializer);
 
-        this.b.a(windowClick);
+        this.connection.handleContainerClick(windowClick);
     }
 
     @Override
-    public boolean dS()
-    {
-        return true;  // ノックバック用
-    }
-
-    @Override
-    public void l()
-    {
-        super.ag();
-        super.l();
-        this.Q = this.B_();
-    }
-
-    @Override
-    public void k()
+    public void tick()
     {
         if (this.joining)  // 以下の tick によって false になるので, 1 回のみ実行される。
             Bukkit.getPluginManager().callEvent(new ActorPostJoinEvent(this));
 
-        super.k();
+        super.tick();
         // this.processGravity();
-    }
-
-    @Override
-    public boolean a(DamageSource damageSource, float f)
-    {
-        boolean damaged = super.a(damageSource, f);
-        if (damaged && this.C)
-        {
-            this.C = false;
-            Runner.run(() -> this.C = true);
-        }
-        return damaged;
-
     }
 }

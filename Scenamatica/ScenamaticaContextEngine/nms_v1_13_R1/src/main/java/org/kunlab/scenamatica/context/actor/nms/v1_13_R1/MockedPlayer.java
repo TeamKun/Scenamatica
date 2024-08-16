@@ -287,7 +287,7 @@ class MockedPlayer extends EntityPlayer implements Actor
     {
         this.networkManager.exceptionCaught(
                 /* channelhandlercontext: */ null,  // なんでもいい。
-                /* throwable: */ new IllegalStateException("Erroneous packet for " + this.getName() + " [E]!")
+                /* throwable: */ new IllegalStateException("Erroneous packet for " + this.getActorName() + " [E]!")
         );
         this.actualLeave("Internal server error");
     }
@@ -311,7 +311,7 @@ class MockedPlayer extends EntityPlayer implements Actor
 
     @Override
     @NotNull
-    public String getName()
+    public String getActorName()
     {
         return super.getName();
     }

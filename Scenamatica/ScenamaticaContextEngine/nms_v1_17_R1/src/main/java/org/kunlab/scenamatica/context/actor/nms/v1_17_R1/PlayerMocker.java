@@ -1,10 +1,7 @@
 package org.kunlab.scenamatica.context.actor.nms.v1_17_R1;
 
 import com.mojang.authlib.GameProfile;
-import io.netty.buffer.ByteBufAllocator;
-import lombok.SneakyThrows;
 import net.minecraft.network.NetworkManager;
-import net.minecraft.network.PacketDataSerializer;
 import net.minecraft.network.protocol.game.PacketPlayInSettings;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.EntityPlayer;
@@ -27,7 +24,6 @@ import org.kunlab.scenamatica.interfaces.context.Actor;
 import org.kunlab.scenamatica.interfaces.context.ActorManager;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.PlayerStructure;
 
-import java.io.IOException;
 import java.net.InetSocketAddress;
 
 public class PlayerMocker extends PlayerMockerBase
@@ -90,7 +86,7 @@ public class PlayerMocker extends PlayerMockerBase
 
         NetworkManager networkManager = mockedPlayer.getNetworkManager();
         if (!this.dispatchLoginEvent(player, (InetSocketAddress) networkManager.getSocketAddress()))
-            throw new IllegalStateException("Login for " + player.getName() + " was denied.");
+            throw new IllegalStateException("Login for " + player.getActorName() + " was denied.");
 
         PlayerList playerList = ((CraftServer) Bukkit.getServer()).getHandle();
         playerList.a(networkManager, mockedPlayer);
