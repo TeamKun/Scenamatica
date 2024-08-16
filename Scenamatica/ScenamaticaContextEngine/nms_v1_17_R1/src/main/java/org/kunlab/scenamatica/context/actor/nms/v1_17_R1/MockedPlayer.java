@@ -52,7 +52,6 @@ import org.kunlab.scenamatica.nms.enums.NMSHand;
 import org.kunlab.scenamatica.nms.enums.entity.NMSEntityUseAction;
 import org.kunlab.scenamatica.nms.enums.voxel.NMSDirection;
 
-import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.util.UUID;
 
@@ -285,7 +284,7 @@ class MockedPlayer extends EntityPlayer implements Actor
     {
         this.networkManager.exceptionCaught(
                 /* channelhandlercontext: */ null,  // なんでもいい。
-                /* throwable: */ new IllegalStateException("Erroneous packet for " + this.getName() + " [E]!")
+                /* throwable: */ new IllegalStateException("Erroneous packet for " + this.getActorName() + " [E]!")
         );
         this.actualLeave("Internal server error");
     }
@@ -310,7 +309,7 @@ class MockedPlayer extends EntityPlayer implements Actor
 
     @Override
     @NotNull
-    public String getName()
+    public String getActorName()
     {
         return super.getName();
     }

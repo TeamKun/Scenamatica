@@ -95,7 +95,7 @@ public class ActorManagerImpl implements ActorManager, Listener
 
         if (Bukkit.getServer().isPrimaryThread())
             throw new ContextPreparationException("This method must be called from another thread.");
-        else if (this.actors.stream().anyMatch(p -> p.getName().equalsIgnoreCase(structure.getName())))
+        else if (this.actors.stream().anyMatch(p -> p.getActorName().equalsIgnoreCase(structure.getName())))
             throw new ActorAlreadyExistsException(structure.getName());
         else if (this.actors.size() + 1 > this.settings.getMaxActors())
             throw new ContextPreparationException("Too many actors on this server (max: " + this.settings.getMaxActors() + ")");
@@ -187,7 +187,7 @@ public class ActorManagerImpl implements ActorManager, Listener
     public @Nullable Actor getByName(@NotNull String name)
     {
         return this.actors.stream()
-                .filter(p -> p.getName().equalsIgnoreCase(name))
+                .filter(p -> p.getActorName().equalsIgnoreCase(name))
                 .findFirst()
                 .orElse(null);
     }
