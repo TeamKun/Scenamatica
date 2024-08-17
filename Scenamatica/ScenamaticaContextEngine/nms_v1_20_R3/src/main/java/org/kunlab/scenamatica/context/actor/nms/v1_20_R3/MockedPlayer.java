@@ -17,6 +17,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
@@ -47,6 +48,7 @@ import org.kunlab.scenamatica.nms.enums.entity.NMSEntityUseAction;
 import org.kunlab.scenamatica.nms.enums.voxel.NMSDirection;
 
 import java.lang.reflect.Constructor;
+import java.util.Objects;
 import java.util.UUID;
 
 class MockedPlayer extends ServerPlayer implements Actor
@@ -78,7 +80,7 @@ class MockedPlayer extends ServerPlayer implements Actor
         this.mockedConnection = new MockedConnection(this, server);
 
         this.setNoGravity(false);
-        this.animStep = 0.5f; // ブロックをのぼれるたかさ
+        Objects.requireNonNull(this.getAttribute(Attributes.STEP_HEIGHT)).setBaseValue(0.5d);
     }
 
     private static TimeoutException createNIOTimeoutException()

@@ -1,15 +1,15 @@
 package org.kunlab.scenamatica.context.actor.nms.v1_18_R1;
 
 import com.mojang.authlib.GameProfile;
-import net.minecraft.network.NetworkManager;
-import net.minecraft.network.protocol.game.PacketPlayInSettings;
+import net.minecraft.network.Connection;
+import net.minecraft.network.protocol.game.ServerboundClientInformationPacket;
+import net.minecraft.network.protocol.login.ClientLoginPacketListener;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.level.EntityPlayer;
-import net.minecraft.server.level.WorldServer;
-import net.minecraft.server.network.LoginListener;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.players.PlayerList;
-import net.minecraft.world.entity.EnumMainHand;
-import net.minecraft.world.entity.player.EnumChatVisibility;
+import net.minecraft.world.entity.HumanoidArm;
+import net.minecraft.world.entity.player.ChatVisiblity;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -40,19 +40,19 @@ public class PlayerMocker extends PlayerMockerBase
     @Override
     protected void sendSettings(@NotNull Player player)
     {
-        EntityPlayer entityPlayer = ((CraftPlayer) player).getHandle();
+        ServerPlayer entityPlayer = ((CraftPlayer) player).getHandle();
 
         String locale = player.getLocale();
         int viewDistance = 0x02;
-        EnumChatVisibility chatMode = EnumChatVisibility.a;
+        ChatVisiblity chatMode = ChatVisiblity.FULL;
         boolean chatColors = true;
         int displayedSkinParts = 0x01 | 0x02 | 0x04 | 0x08 | 0x10 | 0x20 | 0x40;
         // 0x01: cape, 0x02: jacket, 0x04: left sleeve, 0x08: right sleeve,
         // 0x10: left pants leg, 0x20: right pants leg, 0x40: hat
-        EnumMainHand mainHand = entityPlayer.eK();
+        HumanoidArm mainHand = entityPlayer.getMainArm();
         boolean disableTextFiltering = true;
 
-        PacketPlayInSettings packet = new PacketPlayInSettings(
+        ServerboundClientInformationPacket packet = new ServerboundClientInformationPacket(
                 locale,
                 viewDistance,
                 chatMode,
@@ -62,21 +62,25 @@ public class PlayerMocker extends PlayerMockerBase
                 disableTextFiltering,
                 true
         );
-        entityPlayer.a(packet);
+        entityPlayer.updateOptions(packet);
     }
 
     @Override
     protected Actor createActorInstance(@NotNull World world, @NotNull PlayerStructure structure)
     {
         MinecraftServer server = ((CraftServer) Bukkit.getServer()).getServer();
-        NetworkManager mockedNetworkManager = new MockedNetworkManager(server, structure);
-        WorldServer worldServer = ((CraftWorld) world).getHandle();
+        ServerLevel worldServer = ((CraftWorld) world).getHandle();
         GameProfile profile = createGameProfile(structure);
 
         Location initialLocation = createInitialLocation(world, structure);
         return new MockedPlayer(
-                this.manager, this, mockedNetworkManager, server, worldServer,
-                profile, initialLocation, structure
+                this.manager,
+                this,
+                server,
+                worldServer,
+                profile,
+                initialLocation,
+                structure
         );
     }
 
@@ -85,12 +89,12 @@ public class PlayerMocker extends PlayerMockerBase
     {
         MockedPlayer mockedPlayer = (MockedPlayer) player;
 
-        NetworkManager networkManager = mockedPlayer.getNetworkManager();
-        if (!this.dispatchLoginEvent(player, (InetSocketAddress) networkManager.l))
+        Connection conn = mockedPlayer.getMockedConnection();
+        if (!this.dispatchLoginEvent(player, (InetSocketAddress) conn.address))
             throw new IllegalStateException("Login for " + player.getActorName() + " was denied.");
 
         PlayerList playerList = ((CraftServer) Bukkit.getServer()).getHandle();
-        playerList.a(networkManager, mockedPlayer);
+        playerList.placeNewPlayer(conn, mockedPlayer);
 
         this.sendSettings(mockedPlayer.getBukkitEntity());
     }
@@ -98,20 +102,12 @@ public class PlayerMocker extends PlayerMockerBase
     @Override
     protected Class<?> getLoginListenerClass()
     {
-        return LoginListener.class;
+        return ClientLoginPacketListener.class;
     }
 
     @Override
     protected void injectPlayerConnection(@NotNull Player player)
     {
-        EntityPlayer entityPlayer = ((CraftPlayer) player).getHandle();
-        assert entityPlayer instanceof MockedPlayer;
-        MockedPlayer mockedPlayer = (MockedPlayer) entityPlayer;
-
-        mockedPlayer.b = new MockedPlayerConnection(
-                mockedPlayer.c,
-                mockedPlayer.b.a,
-                mockedPlayer
-        );
+        // Pass
     }
 }

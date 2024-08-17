@@ -11,7 +11,6 @@ import net.minecraft.network.protocol.common.ServerboundKeepAlivePacket;
 import net.minecraft.network.protocol.game.ClientboundContainerSetContentPacket;
 import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket;
 import net.minecraft.network.protocol.game.ClientboundPlayerChatPacket;
-import net.minecraft.network.protocol.game.ServerGamePacketListener;
 import net.minecraft.server.MinecraftServer;
 import org.bukkit.Bukkit;
 import org.kunlab.scenamatica.events.actor.ActorMessageReceiveEvent;
