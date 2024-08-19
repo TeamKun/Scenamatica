@@ -12,10 +12,6 @@
 name: "CodeQL"
 
 on:
-  push:
-    branches: [main, develop]
-    paths:
-      - "Scenamatica/**"
   pull_request:
     # The branches below must be a subset of the branches above
     branches: [develop]
@@ -39,7 +35,6 @@ jobs:
         with:
           java-version: 22
           distribution: zulu
-          cache: maven
       - name: Set up Maven
         uses: stCarolas/setup-maven@v5
         with:
@@ -49,19 +44,44 @@ jobs:
         uses: github/codeql-action/init@v3
         with:
           languages: java
+##### NMS 以外のキャッシュを利かせる #####
+      - name: Try to restore cache
+        uses: actions/cache/restore@v4
+        id: restore-cache
+        with:
+          key: maven-cache-${{ hashFiles('**/pom.xml') }}
+          path: ~/.m2/repository
+          enableCrossOsArchive: true
+      - name: Collect dependencies without NMS
+        if: steps.restore-cache.outputs.cache-hit != 'true'
+        run: |
+          mvn dependency:go-offline -f Scenamatica/pom.xml
+          mvn dependency:go-offline -f Bookkeeper/pom.xml
+        # 失敗することが前提なので↓
+        continue-on-error: true
+      - name: Cache dependencies without NMS
+        if: steps.restore-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        id: cache-dependencies
+        with:
+          key: maven-cache-${{ hashFiles('**/pom.xml') }}
+          path: ~/.m2/repository
+          enableCrossOsArchive: true
+##### おわり of NMS 以外のキャッシュを利かせる #####
       - name: Deploy NMS
         uses: TeamKun/NMSAccess@v2
         with:
-          github-token: ${{ secrets.GH_PAT }}
+          access-token: ${{ secrets.token }}
           versions: |
-            1.17.1
-            1.16.5
-            1.16.3
-            1.16.1
-            1.15.2
-            1.14.4
-            1.13.2
-            1.13
+            1.18.1  # v1_18_R1
+            1.17.1  # v1_17_R1
+            1.16.5  # v1_16_R3
+            1.16.3  # v1_16_R2
+            1.16.1  # v1_16_R1
+            1.15.2  # v1_15_R1
+            1.14.4  # v1_14_R1
+            1.13.2  # v1_13_R2
+            1.13    # v1_13_R1
       - name: Build with Maven
         run: |
           cd Scenamatica
