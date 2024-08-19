@@ -50,7 +50,7 @@ jobs:
         with:
           languages: java
       - name: Deploy NMS
-        uses: TeamKun/NMSAccess@v1
+        uses: TeamKun/NMSAccess@v2
         with:
           github-token: ${{ secrets.GH_PAT }}
           versions: |

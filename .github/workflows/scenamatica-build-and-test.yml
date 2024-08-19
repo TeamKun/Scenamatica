@@ -19,7 +19,7 @@ jobs:
     name: Build with Maven
     uses: "./.github/workflows/build-scenamatica.yml"
     secrets:
-      token: ${{ secrets.GITHUB_TOKEN }}
+      token: ${{ secrets.GH_PAT }}
   self-tests:
     name: Self-test with Scenamatica
     runs-on: ubuntu-latest
