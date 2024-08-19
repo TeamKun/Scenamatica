@@ -24,10 +24,12 @@ jobs:
         uses: stCarolas/setup-maven@v5
         with:
           maven-version: 3.8.2
+      - name: Echo token[:5] for checking type
+        run: echo ${{ secrets.token }} | cut -c 1-5
       - name: Deploy NMS
-        uses: TeamKun/NMSAccess@v1
+        uses: TeamKun/NMSAccess@v2
         with:
-          github-token: ${{ secrets.GH_PAT }}
+          access-token: ${{ secrets.token }}
           versions: |
             1.17.1
             1.16.5
