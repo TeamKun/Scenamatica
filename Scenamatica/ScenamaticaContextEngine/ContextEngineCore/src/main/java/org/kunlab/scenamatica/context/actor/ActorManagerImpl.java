@@ -129,7 +129,7 @@ public class ActorManagerImpl implements ActorManager, Listener
         SmartE2EBarrier locker;
         synchronized (this.waitingForLogin)
         {
-            locker = this.waitingForLogin.get(actor.getUUID());
+            locker = this.waitingForLogin.get(actor.getUniqueID());
             if (locker == null)
                 return;
         }
@@ -139,7 +139,7 @@ public class ActorManagerImpl implements ActorManager, Listener
 
     private void prepareWaitingForJoin(Object lockToken, Actor actor)
     {
-        this.waitingForLogin.put(actor.getUUID(), new SmartE2EBarrier());
+        this.waitingForLogin.put(actor.getUniqueID(), new SmartE2EBarrier());
     }
 
     @Override
@@ -171,14 +171,14 @@ public class ActorManagerImpl implements ActorManager, Listener
     @Override
     public boolean isActor(@NotNull Player player)
     {
-        return this.actors.stream().anyMatch(p -> p.getUUID().equals(player.getUniqueId()));
+        return this.actors.stream().anyMatch(p -> p.getUniqueID().equals(player.getUniqueId()));
     }
 
     @Override
     public Actor getByUUID(@NotNull UUID uuid)
     {
         return this.actors.stream()
-                .filter(p -> p.getUUID().equals(uuid))
+                .filter(p -> p.getUniqueID().equals(uuid))
                 .findFirst()
                 .orElse(null);
     }

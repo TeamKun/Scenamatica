@@ -299,7 +299,7 @@ class MockedPlayer extends ServerPlayer implements Actor
     }
 
     @Override
-    public @NotNull UUID getUUID()
+    public @NotNull UUID getUniqueID()
     {
         return this.getGameProfile().getId();
     }

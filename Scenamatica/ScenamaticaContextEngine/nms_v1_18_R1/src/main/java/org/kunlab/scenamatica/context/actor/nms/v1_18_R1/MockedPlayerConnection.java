@@ -28,7 +28,7 @@ class MockedPlayerConnection extends Connection
 
     public MockedPlayerConnection(MinecraftServer server, MockedPlayer player)
     {
-        super(PacketFlow.CLIENTBOUND);
+        super(PacketFlow.SERVERBOUND);
         this.server = server;
         this.player = player;
     }
