@@ -1,12 +1,22 @@
 package org.kunlab.scenamatica.context.actor.nms.v1_18_R1;
 
 import com.mojang.authlib.GameProfile;
+import io.netty.channel.embedded.EmbeddedChannel;
+import io.netty.handler.timeout.ReadTimeoutHandler;
 import net.minecraft.network.Connection;
+import net.minecraft.network.PacketDecoder;
+import net.minecraft.network.PacketEncoder;
+import net.minecraft.network.Varint21FrameDecoder;
+import net.minecraft.network.Varint21LengthFieldPrepender;
+import net.minecraft.network.protocol.PacketFlow;
 import net.minecraft.network.protocol.game.ServerboundClientInformationPacket;
 import net.minecraft.network.protocol.login.ClientLoginPacketListener;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.network.ServerConnectionListener;
+import net.minecraft.server.network.ServerGamePacketListenerImpl;
+import net.minecraft.server.network.ServerPlayerConnection;
 import net.minecraft.server.players.PlayerList;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.player.ChatVisiblity;
@@ -24,6 +34,7 @@ import org.kunlab.scenamatica.interfaces.context.Actor;
 import org.kunlab.scenamatica.interfaces.context.ActorManager;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.PlayerStructure;
 
+import java.lang.reflect.Field;
 import java.net.InetSocketAddress;
 
 public class PlayerMocker extends PlayerMockerBase
@@ -84,19 +95,58 @@ public class PlayerMocker extends PlayerMockerBase
         );
     }
 
+    private static void activateChannel(Connection conn)
+    {
+        conn.channel = new MockedChannel();
+        conn.address = new InetSocketAddress("10.48.51.114", 1919);
+        conn.preparing = false;
+    }
+
+    private static class MockedChannel extends EmbeddedChannel
+    {
+        public MockedChannel()
+        {
+            try
+            {
+                this.doRegister();
+            }
+            catch (Exception e)
+            {
+                throw new RuntimeException(e);
+            }
+
+            this.pipeline().addLast("timeout", new ReadTimeoutHandler(30))
+                    .addLast("splitter", new Varint21FrameDecoder())
+                    .addLast("decoder", new PacketDecoder(PacketFlow.SERVERBOUND))
+                    .addLast("prepender", new Varint21LengthFieldPrepender())
+                    .addLast("encoder", new PacketEncoder(PacketFlow.CLIENTBOUND));
+        }
+    }
+
     @Override
     public void doLogin(Actor player)
     {
         MockedPlayer mockedPlayer = (MockedPlayer) player;
 
         Connection conn = mockedPlayer.getMockedConnection();
+        activateChannel(conn);
         if (!this.dispatchLoginEvent(player, (InetSocketAddress) conn.address))
             throw new IllegalStateException("Login for " + player.getActorName() + " was denied.");
 
         PlayerList playerList = ((CraftServer) Bukkit.getServer()).getHandle();
         playerList.placeNewPlayer(conn, mockedPlayer);
+        injectServerConnection(conn);
 
         this.sendSettings(mockedPlayer.getBukkitEntity());
+    }
+
+    private static void  injectServerConnection(Connection conn)
+    {
+        MinecraftServer server = ((CraftServer) Bukkit.getServer()).getServer();
+        ServerConnectionListener serverConn = server.getConnection();
+        assert serverConn != null;
+
+        serverConn.getConnections().add(conn);
     }
 
     @Override

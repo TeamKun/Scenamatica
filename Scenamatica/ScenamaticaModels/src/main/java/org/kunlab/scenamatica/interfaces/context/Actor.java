@@ -164,7 +164,7 @@ public interface Actor
      * @return プレイヤのUUID
      */
     @NotNull
-    UUID getUUID();
+    UUID getUniqueID();
 
     /**
      * 名前を取得します。
