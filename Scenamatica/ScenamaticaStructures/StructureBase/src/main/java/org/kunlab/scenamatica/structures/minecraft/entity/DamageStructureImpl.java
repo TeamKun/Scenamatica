@@ -92,12 +92,6 @@ public class DamageStructureImpl implements DamageStructure
     }
 
     @Override
-    public boolean canApplyTo(Object target)
-    {
-        return target instanceof EntityDamageEvent;
-    }
-
-    @Override
     public boolean isAdequate(EntityDamageEvent object, boolean ignored)
     {
         for (Map.Entry<EntityDamageEvent.DamageModifier, Double> entry : this.modifiers.entrySet())

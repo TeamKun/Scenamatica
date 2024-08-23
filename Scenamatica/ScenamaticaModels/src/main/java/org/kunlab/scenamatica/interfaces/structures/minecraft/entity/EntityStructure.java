@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.bookkeeper.annotations.Category;
 import org.kunlab.scenamatica.bookkeeper.annotations.TypeDoc;
 import org.kunlab.scenamatica.bookkeeper.annotations.TypeProperty;
+import org.kunlab.scenamatica.interfaces.scenariofile.Mapped;
 import org.kunlab.scenamatica.interfaces.scenariofile.Structure;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.misc.LocationStructure;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.misc.ProjectileSourceStructure;
@@ -125,7 +126,7 @@ import java.util.UUID;
         name = "エンティティ",
         description = "エンティティに関連する情報を格納します。"
 )
-public interface EntityStructure extends Structure, ProjectileSourceStructure
+public interface EntityStructure extends Structure, ProjectileSourceStructure, Mapped
 {
     String KEY_TYPE = "type";
     String KEY_LOCATION = "loc";
@@ -281,4 +282,15 @@ public interface EntityStructure extends Structure, ProjectileSourceStructure
      * @return 落下距離
      */
     Float getFallDistance();
+
+    /* @Overload */
+    void applyTo(Entity entity, boolean applyLocation);
+    /* @Overload */
+    boolean isAdequate(Entity entity, boolean isStrict);
+
+    @Override
+    default boolean canApplyTo(Object target)
+    {
+        return target instanceof Entity;
+    }
 }

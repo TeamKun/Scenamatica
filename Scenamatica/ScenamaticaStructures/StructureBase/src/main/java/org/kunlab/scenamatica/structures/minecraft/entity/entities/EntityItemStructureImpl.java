@@ -56,7 +56,7 @@ public class EntityItemStructureImpl extends EntityStructureImpl implements Enti
     }
 
     @NotNull
-    public static Map<String, Object> serialize(@NotNull EntityItemStructure structure, @NotNull StructureSerializer serializer)
+    public static Map<String, Object> serializeItem(@NotNull EntityItemStructure structure, @NotNull StructureSerializer serializer)
     {
         Map<String, Object> map = EntityStructureImpl.serialize(structure, serializer);
         map.remove(KEY_TYPE);
@@ -76,15 +76,15 @@ public class EntityItemStructureImpl extends EntityStructureImpl implements Enti
         return map;
     }
 
-    public static void validate(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
+    public static void validateItem(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
     {
         EntityStructureImpl.validate(map);
     }
 
     @NotNull
-    public static EntityItemStructure deserialize(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
+    public static EntityItemStructure deserializeItem(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
     {
-        validate(map, serializer);
+        validateItem(map, serializer);
 
         Number pickupDelayNum = MapUtils.getAsNumberOrNull(map, KEY_PICKUP_DELAY);
         Integer pickupDelay = pickupDelayNum != null ? pickupDelayNum.intValue(): null;
@@ -121,7 +121,7 @@ public class EntityItemStructureImpl extends EntityStructureImpl implements Enti
     }
 
     @NotNull
-    public static EntityItemStructure of(@NotNull Item entity)
+    public static EntityItemStructure ofItem(@NotNull Item entity)
     {
         return new EntityItemStructureImpl(
                 EntityStructureImpl.of(entity),
@@ -147,7 +147,7 @@ public class EntityItemStructureImpl extends EntityStructureImpl implements Enti
     @Override
     public void applyTo(Item entity)
     {
-        super.applyToEntity(entity);
+        super.applyTo(entity, true);
 
         if (this.pickupDelay != null)
             entity.setPickupDelay(this.pickupDelay);
@@ -172,15 +172,9 @@ public class EntityItemStructureImpl extends EntityStructureImpl implements Enti
     }
 
     @Override
-    public boolean canApplyTo(Object target)
-    {
-        return target instanceof Item;
-    }
-
-    @Override
     public boolean isAdequate(Item object, boolean strict)
     {
-        return super.isAdequateEntity(object, strict)
+        return super.isAdequate(object, strict)
                 && (this.pickupDelay == null || this.pickupDelay.equals(object.getPickupDelay()))
                 && checkMatchedEntityByUUID(this.owner, object.getOwner())
                 && checkMatchedEntityByUUID(this.thrower, object.getThrower())

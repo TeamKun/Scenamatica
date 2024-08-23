@@ -1,9 +1,26 @@
 package org.kunlab.scenamatica.structures.minecraft;
 
 import lombok.Value;
+import org.bukkit.entity.Arrow;
+import org.bukkit.entity.DragonFireball;
+import org.bukkit.entity.Egg;
+import org.bukkit.entity.EnderPearl;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Fireball;
+import org.bukkit.entity.FishHook;
+import org.bukkit.entity.Item;
+import org.bukkit.entity.LlamaSpit;
+import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
+import org.bukkit.entity.ShulkerBullet;
+import org.bukkit.entity.SmallFireball;
+import org.bukkit.entity.Snowball;
+import org.bukkit.entity.SpectralArrow;
+import org.bukkit.entity.SplashPotion;
+import org.bukkit.entity.ThrownExpBottle;
+import org.bukkit.entity.Trident;
+import org.bukkit.entity.WitherSkull;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.commons.utils.Utils;
@@ -11,15 +28,15 @@ import org.kunlab.scenamatica.interfaces.scenariofile.Mapped;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.EntityStructure;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.PlayerStructure;
-import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.entities.AEntityStructure;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.entities.EntityItemStructure;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.entities.ProjectileStructure;
+import org.kunlab.scenamatica.structures.minecraft.entity.EntityStructureImpl;
 import org.kunlab.scenamatica.structures.minecraft.entity.PlayerStructureImpl;
-import org.kunlab.scenamatica.structures.minecraft.entity.entities.AEntityStructureImpl;
 import org.kunlab.scenamatica.structures.minecraft.entity.entities.EntityItemStructureImpl;
 import org.kunlab.scenamatica.structures.minecraft.entity.entities.ProjectileStructureImpl;
 
 import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
@@ -41,10 +58,11 @@ class SelectiveEntityStructureSerializerMock
         registerStructure(
                 EntityType.DROPPED_ITEM,
                 EntityItemStructure.class,
-                EntityItemStructureImpl::serialize,
-                EntityItemStructureImpl::deserialize,
-                EntityItemStructureImpl::validate,
-                (entity, ignored) -> EntityItemStructureImpl.of(entity)
+                Item.class,
+                EntityItemStructureImpl::serializeItem,
+                EntityItemStructureImpl::deserializeItem,
+                EntityItemStructureImpl::validateItem,
+                (entity, ignored) -> EntityItemStructureImpl.ofItem(entity)
         );/*
         registerStructure(
                 EntityType.PLAYER,
@@ -57,19 +75,21 @@ class SelectiveEntityStructureSerializerMock
         registerStructure(
                 EntityType.PLAYER,
                 PlayerStructure.class,
-                PlayerStructureImpl::serialize,
-                PlayerStructureImpl::deserialize,
-                PlayerStructureImpl::validate,
-                (player, ignored) -> PlayerStructureImpl.of(player)
+                Player.class,
+                PlayerStructureImpl::serializePlayer,
+                PlayerStructureImpl::deserializePlayer,
+                PlayerStructureImpl::validatePlayer,
+                (player, ignored) -> PlayerStructureImpl.ofPlayer(player)
         );
 
         registerStructure(
                 EntityType.UNKNOWN,
-                AEntityStructure.class,
-                AEntityStructureImpl::serialize,
-                AEntityStructureImpl::deserialize,
-                (stringObjectMap, structureSerializer) -> AEntityStructureImpl.validate(stringObjectMap),
-                (entity, ignored) -> AEntityStructureImpl.of(entity)
+                EntityStructure.class,
+                Entity.class,
+                EntityStructureImpl::serialize,
+                EntityStructureImpl::deserialize,
+                (stringObjectMap, structureSerializer) -> EntityStructureImpl.validate(stringObjectMap),
+                (entity, ignored) -> EntityStructureImpl.of(entity)
         );
 
         registerProjectiles();
@@ -82,31 +102,31 @@ class SelectiveEntityStructureSerializerMock
         BiConsumer<Map<String, Object>, StructureSerializer> validator = ProjectileStructureImpl::validate;
         BiFunction<Projectile, StructureSerializer, ProjectileStructure> constructor = ProjectileStructureImpl::ofSource;
 
-        EntityType[] projectileTypes = {
-                EntityType.ARROW,
-                EntityType.DRAGON_FIREBALL,
-                EntityType.EGG,
-                EntityType.ENDER_PEARL,
-                EntityType.SMALL_FIREBALL, // CraftBukkit: Fireball
-                EntityType.FIREWORK,
-                EntityType.FISHING_HOOK,
-                EntityType.FIREBALL, // CraftBukkit: LargeFireball
-                EntityType.LLAMA_SPIT,
-                EntityType.SHULKER_BULLET,
-                EntityType.SNOWBALL,
-                EntityType.SPECTRAL_ARROW,
-                EntityType.THROWN_EXP_BOTTLE,
-                EntityType.THROWN_EXP_BOTTLE,
-                EntityType.SPLASH_POTION,
-                EntityType.TRIDENT,
-                EntityType.WITHER_SKULL,
-        };
+        Map<EntityType, Class<? extends Projectile>> projectileTypes = new HashMap<EntityType, Class<? extends Projectile>>()
+        {{
+            this.put(EntityType.ARROW, Arrow.class);
+            this.put(EntityType.DRAGON_FIREBALL, DragonFireball.class);
+            this.put(EntityType.EGG, Egg.class);
+            this.put(EntityType.ENDER_PEARL, EnderPearl.class);
+            this.put(EntityType.SMALL_FIREBALL, SmallFireball.class);
+            this.put(EntityType.FISHING_HOOK, FishHook.class);
+            this.put(EntityType.FIREBALL, Fireball.class);
+            this.put(EntityType.LLAMA_SPIT, LlamaSpit.class);
+            this.put(EntityType.SHULKER_BULLET, ShulkerBullet.class);
+            this.put(EntityType.SNOWBALL, Snowball.class);
+            this.put(EntityType.SPECTRAL_ARROW, SpectralArrow.class);
+            this.put(EntityType.THROWN_EXP_BOTTLE, ThrownExpBottle.class);
+            this.put(EntityType.SPLASH_POTION, SplashPotion.class);
+            this.put(EntityType.TRIDENT, Trident.class);
+            this.put(EntityType.WITHER_SKULL, WitherSkull.class);
+        }};
 
-        for (EntityType projectileType : projectileTypes)
+        for (Map.Entry<EntityType, Class<? extends Projectile>> projectileEntry : projectileTypes.entrySet())
         {
             registerStructure(
-                    projectileType,
+                    projectileEntry.getKey(),
                     ProjectileStructure.class,
+                    Projectile.class,
                     serializer,
                     deserializer,
                     validator,
@@ -115,13 +135,17 @@ class SelectiveEntityStructureSerializerMock
         }
     }
 
-    private static <E extends Entity, S extends EntityStructure & Mapped<E>> void registerStructure(@NotNull EntityType entityType,
-                                                                                                    @NotNull Class<S> clazz,
-                                                                                                    @NotNull BiFunction<S, StructureSerializer, Map<String, Object>> serializer,
-                                                                                                    @NotNull BiFunction<Map<String, Object>, StructureSerializer, S> deserializer,
-                                                                                                    @NotNull BiConsumer<Map<String, Object>, StructureSerializer> validator,
-                                                                                                    @NotNull BiFunction<E, StructureSerializer, S> constructor)
+    private static <E extends Entity, S extends EntityStructure & Mapped> void registerStructure(@NotNull EntityType entityType,
+                                                                                                 @NotNull Class<S> clazz,
+                                                                                                 @NotNull Class<? extends E> entityClazz,
+                                                                                                 @NotNull BiFunction<S, StructureSerializer, Map<String, Object>> serializer,
+                                                                                                 @NotNull BiFunction<Map<String, Object>, StructureSerializer, S> deserializer,
+                                                                                                 @NotNull BiConsumer<Map<String, Object>, StructureSerializer> validator,
+                                                                                                 @NotNull BiFunction<E, StructureSerializer, S> constructor)
     {
+        if (entityType.getEntityClass() != entityClazz)
+            throw new IllegalArgumentException("Entity class mismatch: " + entityType + " -?-> " + entityClazz);
+
         ENTITY_STRUCTURES.put(
                 entityType,
                 new EntityStructureEntry<>(
@@ -134,9 +158,9 @@ class SelectiveEntityStructureSerializerMock
         );
     }
 
-    public static <T extends EntityStructure & Mapped<?>> T deserialize(@NotNull EntityType entityType,
-                                                                        @NotNull Map<String, Object> data,
-                                                                        @NotNull StructureSerializer serializer)
+    public static <T extends EntityStructure & Mapped> T deserialize(@NotNull EntityType entityType,
+                                                                     @NotNull Map<String, Object> data,
+                                                                     @NotNull StructureSerializer serializer)
     {
         // noinspection unchecked
         EntityStructureEntry<?, T> entry = (EntityStructureEntry<?, T>) ENTITY_STRUCTURES.get(entityType);
@@ -153,12 +177,12 @@ class SelectiveEntityStructureSerializerMock
         if (type == EntityType.UNKNOWN)
             type = guessByMapValue(data, type);
 
-        boolean canGeneralize = clazz == EntityStructure.class || clazz == AEntityStructure.class;
+        boolean canGeneralize = clazz == EntityStructure.class;
         EntityStructureEntry<?, ?> entry = ENTITY_STRUCTURES.get(type);
         if (entry == null)
             if (canGeneralize)
                 // noinspection unchecked  canGeneralize が true なら, clazz は EntityStructure.class である。
-                return (T) AEntityStructureImpl.deserialize(data, serializer);
+                return (T) EntityStructureImpl.deserialize(data, serializer);
             else
                 throw new IllegalArgumentException("Unknown entity type: " + type);
 
@@ -184,7 +208,7 @@ class SelectiveEntityStructureSerializerMock
 
         EntityStructureEntry entry = ENTITY_STRUCTURES.get(type);
         if (entry == null || !entry.getClazz().equals(clazz))
-            return AEntityStructureImpl.serialize(entityStructure, serializer);
+            return EntityStructureImpl.serialize(entityStructure, serializer);
 
         return (Map<String, Object>) entry.getSerializer().apply(entityStructure, serializer);
     }
@@ -201,7 +225,7 @@ class SelectiveEntityStructureSerializerMock
         EntityStructureEntry entry = ENTITY_STRUCTURES.get(type);
         if (entry == null)
         {
-            AEntityStructureImpl.validate(map);
+            EntityStructureImpl.validate(map);
             return;
         }
 
@@ -221,7 +245,7 @@ class SelectiveEntityStructureSerializerMock
     @NotNull
     private static EntityType getEntityTypeSafe(@NotNull Class<? extends EntityStructure> clazz)
     {
-        if (clazz.equals(EntityStructure.class) || clazz.equals(AEntityStructure.class))
+        if (clazz.equals(EntityStructure.class))
             return EntityType.UNKNOWN;  // フォールバックモード
 
         for (Map.Entry<EntityType, EntityStructureEntry<?, ?>> entry : ENTITY_STRUCTURES.entrySet())
@@ -233,13 +257,13 @@ class SelectiveEntityStructureSerializerMock
         throw new IllegalArgumentException("Unknown entity structure class: " + clazz);
     }
 
-    private static <E extends Entity, S extends EntityStructure & Mapped<E>> EntityStructureEntry<E, S> getEntry(@NotNull EntityType entityType)
+    private static <E extends Entity, S extends EntityStructure & Mapped> EntityStructureEntry<E, S> getEntry(@NotNull EntityType entityType)
     {
         // noinspection unchecked
         return (EntityStructureEntry<E, S>) ENTITY_STRUCTURES.get(entityType);
     }
 
-    public static <V extends Entity, T extends Mapped<V> & EntityStructure> T toStructure(V value, StructureSerializer structureSerializer)
+    public static <V extends Entity, T extends Mapped & EntityStructure> T toStructure(V value, StructureSerializer structureSerializer)
     {
         if (value == null)
             return null;
@@ -248,7 +272,7 @@ class SelectiveEntityStructureSerializerMock
         if (entry == null)
         {
             // noinspection unchecked: Fallback mode
-            return (T) AEntityStructureImpl.of(value);
+            return (T) EntityStructureImpl.of(value);
         }
 
         return entry.getConstructor().apply(value, structureSerializer);
@@ -256,7 +280,7 @@ class SelectiveEntityStructureSerializerMock
 
     @Value
     @NotNull
-    public static class EntityStructureEntry<E extends Entity, S extends EntityStructure & Mapped<E>>
+    public static class EntityStructureEntry<E extends Entity, S extends EntityStructure & Mapped>
     {
         Class<S> clazz;
         BiFunction<S, StructureSerializer, Map<String, Object>> serializer;

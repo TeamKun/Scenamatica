@@ -1,13 +1,14 @@
 package org.kunlab.scenamatica.interfaces.structures.minecraft.entity.entities;
 
 import org.bukkit.GameMode;
+import org.bukkit.entity.HumanEntity;
+import org.bukkit.entity.Item;
 import org.bukkit.inventory.MainHand;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.bookkeeper.annotations.TypeDoc;
 import org.kunlab.scenamatica.bookkeeper.annotations.TypeProperty;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.LivingEntityStructure;
-import org.kunlab.scenamatica.interfaces.structures.minecraft.inventory.GenericInventoryStructure;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.inventory.InventoryStructure;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.inventory.PlayerInventoryStructure;
 
@@ -27,7 +28,7 @@ import org.kunlab.scenamatica.interfaces.structures.minecraft.inventory.PlayerIn
                 @TypeProperty(
                         name = HumanEntityStructure.KEY_ENDER_CHEST,
                         description = "人型エンティティのエンダーチェストです。",
-                        type = GenericInventoryStructure.class
+                        type = InventoryStructure.class
                 ),
                 @TypeProperty(
                         name = HumanEntityStructure.KEY_MAIN_HAND,
@@ -96,4 +97,9 @@ public interface HumanEntityStructure extends LivingEntityStructure
      */
     @Nullable
     Integer getFoodLevel();
+
+    /* @Overload */
+    void applyTo(HumanEntity entity, boolean applyLocation);
+    /* @Overload */
+    boolean isAdequate(HumanEntity entity, boolean isStrict);
 }

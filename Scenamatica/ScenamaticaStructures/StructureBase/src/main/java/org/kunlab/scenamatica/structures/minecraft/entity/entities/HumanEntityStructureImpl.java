@@ -164,7 +164,7 @@ public class HumanEntityStructureImpl extends LivingEntityStructureImpl implemen
 
         return new HumanEntityStructureImpl(
                 LivingEntityStructureImpl.ofLivingEntity(entity),
-                PlayerInventoryStructureImpl.of(entity.getInventory()),
+                PlayerInventoryStructureImpl.ofPlayerInventory(entity.getInventory()),
                 InventoryStructureImpl.of(entity.getEnderChest()),
                 entity.getMainHand(),
                 entity.getGameMode(),
@@ -194,9 +194,10 @@ public class HumanEntityStructureImpl extends LivingEntityStructureImpl implemen
         );
     }
 
-    protected void applyToHumanEntity(@NotNull HumanEntity object)
+    @Override
+    public void applyTo(@NotNull HumanEntity object, boolean applyLocation)
     {
-        super.applyToLivingEntity(object);
+        super.applyTo(object, applyLocation);
         NMSEntityHuman nmsHuman = NMSProvider.getProvider().wrap(object);
 
         if (this.inventory != null)
@@ -210,11 +211,12 @@ public class HumanEntityStructureImpl extends LivingEntityStructureImpl implemen
             nmsHuman.setFoodLevel(this.foodLevel);
     }
 
-    protected boolean isAdequateHumanEntity(HumanEntity object, boolean strict)
+    @Override
+    public boolean isAdequate(HumanEntity object, boolean strict)
     {
         NMSEntityHuman nmsHuman = NMSProvider.getProvider().wrap(object);
 
-        return super.isAdequateLivingEntity(object, strict)
+        return super.isAdequate(object, strict)
                 && (this.inventory == null || this.inventory.isAdequate(object.getInventory(), strict))
                 && (this.enderChest == null || this.enderChest.isAdequate(object.getEnderChest(), strict))
                 && (this.gamemode == null || this.gamemode == object.getGameMode())

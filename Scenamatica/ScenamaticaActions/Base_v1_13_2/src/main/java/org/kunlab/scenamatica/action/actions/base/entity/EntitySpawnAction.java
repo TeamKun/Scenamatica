@@ -94,7 +94,7 @@ public class EntitySpawnAction<E extends Entity> extends AbstractAction
                 spawnLoc,
                 entityClass,
                 entity -> {
-                    EntityUtils.tryCastMapped(structure, entity).applyTo(entity);
+                    EntityUtils.invokeApplyTo(structure, entity);
                     this.makeOutputs(ctxt, entity);
                 }
         );

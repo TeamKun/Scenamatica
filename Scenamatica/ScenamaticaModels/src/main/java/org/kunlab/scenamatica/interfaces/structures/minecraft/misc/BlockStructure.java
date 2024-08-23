@@ -64,7 +64,7 @@ import java.util.Map;
         }
 )
 @Category(inherit = MiscCategoryInfo.class)
-public interface BlockStructure extends Structure, Mapped<Block>, Creatable<Block>, ProjectileSourceStructure
+public interface BlockStructure extends Structure, Mapped, Creatable, ProjectileSourceStructure
 {
     String KEY_BLOCK_TYPE = "type";
     String KEY_BLOCK_LOCATION = "location";
@@ -155,4 +155,20 @@ public interface BlockStructure extends Structure, Mapped<Block>, Creatable<Bloc
      * @return 適用後の Location
      */
     Block apply(@NotNull ScenarioEngine engine, @Nullable Location location);
+
+    /* @Overload */
+    void applyTo(Block block);
+    /* @Overload */
+    boolean isAdequate(Block block, boolean isStrict);
+    default boolean isAdequate(Block block)
+    {
+        return this.isAdequate(block,  false);
+    }
+
+
+    @Override
+    default boolean canApplyTo(Object target)
+    {
+        return target instanceof Block;
+    }
 }

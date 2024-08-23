@@ -344,4 +344,15 @@ public interface LivingEntityStructure extends EntityStructure
      * @return 手を上げているかどうか
      */
     Boolean getIsHandRaised();
+
+    /* @Overload */
+    void applyTo(LivingEntity entity, boolean applyLocation);
+    /* @Overload */
+    boolean isAdequate(LivingEntity entity, boolean isStrict);
+
+    @Override
+    default boolean canApplyTo(Object target)
+    {
+        return target instanceof LivingEntity;
+    }
 }

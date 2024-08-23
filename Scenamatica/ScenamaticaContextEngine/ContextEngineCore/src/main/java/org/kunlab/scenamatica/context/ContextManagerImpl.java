@@ -11,6 +11,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.kunlab.scenamatica.commons.utils.EntityUtils;
 import org.kunlab.scenamatica.commons.utils.LogUtils;
 import org.kunlab.scenamatica.commons.utils.ThreadingUtil;
 import org.kunlab.scenamatica.context.actor.ActorManagerImpl;
@@ -196,7 +197,7 @@ public class ContextManagerImpl implements ContextManager
         UUID entityTag = UUID.randomUUID();
         String tagName = "scenamatica-" + entityTag;
         Entity generatedEntity = spawnWorld.spawnEntity(spawnLoc, type);
-        ((Mapped<T>) entity).applyTo((T) generatedEntity);
+        EntityUtils.invokeApplyTo(entity, generatedEntity);
         generatedEntity.addScoreboardTag(tagName);
         this.chunkLoader.addEntity(generatedEntity);
 

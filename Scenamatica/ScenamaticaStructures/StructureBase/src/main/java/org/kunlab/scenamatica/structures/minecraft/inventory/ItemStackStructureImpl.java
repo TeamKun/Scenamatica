@@ -412,7 +412,6 @@ public class ItemStackStructureImpl implements ItemStackStructure
         return false;
     }
 
-    @SuppressWarnings("deprecation")
     public static ItemStackStructure of(@NotNull ItemStack stack)
     {
         ItemMeta meta = stack.getItemMeta();
@@ -550,7 +549,6 @@ public class ItemStackStructureImpl implements ItemStackStructure
         return stack;
     }
 
-    @SuppressWarnings("deprecation")
     @Override
     public void applyTo(ItemStack stack)
     {
@@ -603,7 +601,6 @@ public class ItemStackStructureImpl implements ItemStackStructure
         ItemMeta meta = stack.getItemMeta();
 
         if (this.displayName != null)
-            // noinspection deprecation  De-Adventure API
             if (meta == null || !this.displayName.equalsIgnoreCase(meta.getDisplayName()))
                 return false;
 
@@ -614,7 +611,6 @@ public class ItemStackStructureImpl implements ItemStackStructure
         if (!this.lore.isEmpty())
         {
             List<String> expected = this.lore;
-            // noinspection deprecation  De-Adventure API
             List<String> actual = meta == null ? null: meta.getLore();
 
             if (actual == null || (strict && actual.size() != expected.size()))

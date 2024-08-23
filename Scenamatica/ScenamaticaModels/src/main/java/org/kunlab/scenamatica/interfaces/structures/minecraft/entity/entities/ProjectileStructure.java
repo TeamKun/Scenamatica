@@ -1,5 +1,6 @@
 package org.kunlab.scenamatica.interfaces.structures.minecraft.entity.entities;
 
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Projectile;
 import org.kunlab.scenamatica.bookkeeper.annotations.TypeDoc;
 import org.kunlab.scenamatica.bookkeeper.annotations.TypeProperty;
@@ -28,7 +29,7 @@ import org.kunlab.scenamatica.interfaces.scenariofile.Mapped;
         }
 
 )
-public interface ProjectileStructure extends EntityStructure, Mapped<Projectile>
+public interface ProjectileStructure extends EntityStructure, Mapped
 {
     String KEY_SHOOTER = "shooter";
     String KEY_DOES_BOUNCE = "bounce";
@@ -46,4 +47,15 @@ public interface ProjectileStructure extends EntityStructure, Mapped<Projectile>
      * @return 跳ね返るかどうか
      */
     Boolean getDoesBounce();
+
+    @Override
+    default boolean canApplyTo(Object target)
+    {
+        return target instanceof Projectile;
+    }
+
+    /* @Overload */
+    void applyTo(Projectile projectile);
+    /* @Overload */
+    boolean isAdequate(Projectile projectile, boolean isStrict);
 }

@@ -103,12 +103,6 @@ public class LocationStructureImpl implements LocationStructure
     }
 
     @Override
-    public boolean canApplyTo(Object target)
-    {
-        return target instanceof Location;
-    }
-
-    @Override
     public boolean isAdequate(Location object, boolean strict)
     {
         double x = object.getX();

@@ -1,16 +1,13 @@
 package org.kunlab.scenamatica.interfaces.structures.minecraft.entity.entities;
 
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
-import org.bukkit.inventory.ItemStack;
 import org.kunlab.scenamatica.bookkeeper.annotations.TypeDoc;
 import org.kunlab.scenamatica.bookkeeper.annotations.TypeProperty;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.EntityStructure;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.inventory.ItemStackStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.Mapped;
 import org.kunlab.scenamatica.interfaces.structures.specifiers.EntitySpecifier;
-import org.kunlab.scenamatica.interfaces.structures.specifiers.PlayerSpecifier;
-
-import java.util.UUID;
 
 @TypeDoc(
         name = "EntityItem",
@@ -45,7 +42,7 @@ import java.util.UUID;
         }
 
 )
-public interface EntityItemStructure extends EntityStructure, Mapped<Item>
+public interface EntityItemStructure extends EntityStructure, Mapped
 {
     // public static final String KEY_ITEM_STACK = "itemStack";    // トップレベルに ItemStackStructure のキーを置くのでいらない。
     String KEY_PICKUP_DELAY = "pickupDelay";
@@ -83,4 +80,20 @@ public interface EntityItemStructure extends EntityStructure, Mapped<Item>
      * アイテムが時間経過で消滅するかどうかです。
      */
     Boolean getWillAge();
+
+    /* @Overload */
+    void applyTo(Item entity);
+    /* @Overload */
+    boolean isAdequate(Item entity, boolean isStrict);
+    /* @Overload */
+    default boolean isAdequate(Item entity)
+    {
+        return this.isAdequate(entity, false);
+    }
+
+    @Override
+    default boolean canApplyTo(Object target)
+    {
+        return target instanceof Item;
+    }
 }

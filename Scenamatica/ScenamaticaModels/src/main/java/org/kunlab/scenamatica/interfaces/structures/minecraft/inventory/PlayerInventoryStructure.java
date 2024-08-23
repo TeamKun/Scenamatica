@@ -1,5 +1,6 @@
 package org.kunlab.scenamatica.interfaces.structures.minecraft.inventory;
 
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.PlayerInventory;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.bookkeeper.annotations.Admonition;
@@ -54,7 +55,7 @@ import org.kunlab.scenamatica.interfaces.scenariofile.Mapped;
                 )
         }
 )
-public interface PlayerInventoryStructure extends GenericInventoryStructure, Mapped<PlayerInventory>, Creatable<PlayerInventory>
+public interface PlayerInventoryStructure extends InventoryStructure, Mapped, Creatable
 {
     String KEY_MAIN_INVENTORY = "main";
     String KEY_MAIN_HAND = "mainHandItem";
@@ -91,4 +92,12 @@ public interface PlayerInventoryStructure extends GenericInventoryStructure, Map
      */
     @Nullable
     ItemStackStructure[] getArmorContents();
+
+    /* @Overload */
+    void applyTo(PlayerInventory inventory);
+    /* @Overload */
+    boolean isAdequate(PlayerInventory inventory, boolean isStrict);
+
+    @Override
+    PlayerInventory create();
 }

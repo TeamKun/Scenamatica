@@ -124,7 +124,7 @@ name = "Player",
                 )
         }
 )
-public interface PlayerStructure extends HumanEntityStructure, Mapped<Player>
+public interface PlayerStructure extends HumanEntityStructure, Mapped
 {
     String KEY_NAME = "name";
     String KEY_ONLINE = "online";
@@ -289,4 +289,25 @@ public interface PlayerStructure extends HumanEntityStructure, Mapped<Player>
      * @return 権限のリスト
      */
     List<String> getActivePermissions();
+
+    /* @Overload */
+    void applyTo(Player player, boolean applyLocation);
+    /* @Overload */
+    default void  applyTo(Player player)
+    {
+        this.applyTo(player, true);
+    }
+    /* @Overload */
+    boolean isAdequate(Player player, boolean isStrict);
+    /* @Overload */
+    default boolean isAdequate(Player player)
+    {
+        return this.isAdequate(player, false);
+    }
+
+    @Override
+    default boolean canApplyTo(Object target)
+    {
+        return target instanceof Player;
+    }
 }

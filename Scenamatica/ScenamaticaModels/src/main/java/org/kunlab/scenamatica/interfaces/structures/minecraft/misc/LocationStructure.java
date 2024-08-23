@@ -51,7 +51,7 @@ import org.kunlab.scenamatica.interfaces.scenariofile.Structure;
         }
 )
 @Category(inherit = MiscCategoryInfo.class)
-public interface LocationStructure extends Structure, Mapped<Location>, Creatable<Location>
+public interface LocationStructure extends Structure, Mapped, Creatable
 {
     String KEY_X = "x";
     String KEY_Y = "y";
@@ -118,4 +118,23 @@ public interface LocationStructure extends Structure, Mapped<Location>, Creatabl
      * @return Location
      */
     Location create(@Nullable World world);
+
+    @Override
+    Location create();
+
+    /* @Overload */
+    void applyTo(Location location);
+    /* @Overload */
+    boolean isAdequate(Location location, boolean isStrict);
+    /* @Overload */
+    default boolean isAdequate(Location location)
+    {
+        return this.isAdequate(location, false);
+    }
+
+    @Override
+    default boolean canApplyTo(Object target)
+    {
+        return target instanceof Location;
+    }
 }
