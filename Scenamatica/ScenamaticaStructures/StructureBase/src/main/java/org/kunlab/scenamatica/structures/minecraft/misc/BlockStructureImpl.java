@@ -251,12 +251,6 @@ public class BlockStructureImpl implements BlockStructure
     }
 
     @Override
-    public boolean canApplyTo(Object target)
-    {
-        return target instanceof Block;
-    }
-
-    @Override
     public boolean isAdequate(Block block, boolean strict)
     {
         if (!(this.type == null || this.type == block.getType()))

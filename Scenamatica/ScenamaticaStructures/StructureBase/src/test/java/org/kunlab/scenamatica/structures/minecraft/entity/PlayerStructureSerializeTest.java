@@ -4,12 +4,12 @@ import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.inventory.MainHand;
 import org.junit.jupiter.api.Test;
+import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.EntityStructure;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.PlayerStructure;
-import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.entities.AEntityStructure;
 import org.kunlab.scenamatica.structures.minecraft.StructureSerializerMock;
+import org.kunlab.scenamatica.structures.minecraft.entity.entities.HumanEntityStructureImpl;
 import org.kunlab.scenamatica.structures.minecraft.inventory.InventoryStructureSerializeTest;
 import org.kunlab.scenamatica.structures.minecraft.inventory.PlayerInventoryStructureSerializeTest;
-import org.kunlab.scenamatica.structures.minecraft.entity.entities.AHumanEntityStructureImpl;
 import org.kunlab.scenamatica.structures.minecraft.misc.LocationStructureImpl;
 import org.kunlab.scenamatica.structures.minecraft.utils.MapTestUtil;
 
@@ -26,7 +26,7 @@ public class PlayerStructureSerializeTest
     public static final PlayerStructure FULFILLED;
     public static final Map<String, Object> FULFILLED_MAP = new HashMap<String, Object>(LivingEntitySerializeTest.FULFILLED_MAP)
     {{
-        this.remove(AEntityStructure.KEY_TYPE);
+        this.remove(EntityStructure.KEY_TYPE);
         this.put("inventory", PlayerInventoryStructureSerializeTest.FULFILLED_MAP);
         this.put("enderChest", InventoryStructureSerializeTest.FULFILLED_MAP);
         this.put("mainHand", "LEFT");
@@ -70,7 +70,7 @@ public class PlayerStructureSerializeTest
         this.put("op", 4);
     }};
     public static final PlayerStructure EMPTY = new PlayerStructureImpl(
-            new AHumanEntityStructureImpl(
+            new HumanEntityStructureImpl(
                     LivingEntitySerializeTest.EMPTY,
                     null,
                     null,
@@ -106,7 +106,7 @@ public class PlayerStructureSerializeTest
         try
         {
             FULFILLED = new PlayerStructureImpl(
-                    new AHumanEntityStructureImpl(
+                    new HumanEntityStructureImpl(
                             LivingEntitySerializeTest.FULFILLED,
                             PlayerInventoryStructureSerializeTest.FULFILLED,
                             InventoryStructureSerializeTest.FULFILLED,
@@ -145,7 +145,7 @@ public class PlayerStructureSerializeTest
     @Test
     void 正常にシリアライズできるか()
     {
-        Map<String, Object> map = PlayerStructureImpl.serialize(FULFILLED, StructureSerializerMock.getInstance());
+        Map<String, Object> map = PlayerStructureImpl.serializePlayer(FULFILLED, StructureSerializerMock.getInstance());
 
         MapTestUtil.assertEqual(FULFILLED_MAP, map);
     }
@@ -153,7 +153,7 @@ public class PlayerStructureSerializeTest
     @Test
     void 正常にデシリアライズできるか()
     {
-        PlayerStructure structure = PlayerStructureImpl.deserialize(FULFILLED_MAP, StructureSerializerMock.getInstance());
+        PlayerStructure structure = PlayerStructureImpl.deserializePlayer(FULFILLED_MAP, StructureSerializerMock.getInstance());
 
         assertEquals(FULFILLED, structure);
     }
@@ -161,7 +161,7 @@ public class PlayerStructureSerializeTest
     @Test
     void 必須項目のみでシリアライズできるか()
     {
-        Map<String, Object> map = PlayerStructureImpl.serialize(EMPTY, StructureSerializerMock.getInstance());
+        Map<String, Object> map = PlayerStructureImpl.serializePlayer(EMPTY, StructureSerializerMock.getInstance());
 
         MapTestUtil.assertEqual(EMPTY_MAP, map);
     }
@@ -169,7 +169,7 @@ public class PlayerStructureSerializeTest
     @Test
     void 必須項目のみでデシリアライズできるか()
     {
-        PlayerStructure structure = PlayerStructureImpl.deserialize(EMPTY_MAP, StructureSerializerMock.getInstance());
+        PlayerStructure structure = PlayerStructureImpl.deserializePlayer(EMPTY_MAP, StructureSerializerMock.getInstance());
 
         assertEquals(EMPTY, structure);
     }

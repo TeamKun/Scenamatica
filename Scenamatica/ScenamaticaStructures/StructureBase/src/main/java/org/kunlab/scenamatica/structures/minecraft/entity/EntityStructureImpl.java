@@ -159,7 +159,6 @@ public class EntityStructureImpl implements EntityStructure
         if (map.containsKey(KEY_UUID))
             try
             {
-                //noinspection ResultOfMethodCallIgnored
                 UUID.fromString((String) map.get(KEY_UUID));
             }
             catch (IllegalArgumentException e)
@@ -286,6 +285,11 @@ public class EntityStructureImpl implements EntityStructure
         );
     }
 
+    public static boolean isApplicable(Object o)
+    {
+        return o instanceof EntityStructure;
+    }
+
     @Override
     public boolean equals(Object o)
     {
@@ -312,14 +316,8 @@ public class EntityStructureImpl implements EntityStructure
         );
     }
 
-
-
-    protected void applyToEntity(Entity entity)
-    {
-        this.applyToEntity(entity, true);
-    }
-
-    protected void applyToEntity(Entity entity, boolean applyLocation)
+    @Override
+    public void applyTo(Entity entity, boolean applyLocation)
     {
         if (applyLocation && this.location != null)
         {
@@ -379,7 +377,8 @@ public class EntityStructureImpl implements EntityStructure
             entity.setFallDistance(this.fallDistance);
     }
 
-    protected boolean isAdequateEntity(Entity entity, boolean strict)
+    @Override
+    public boolean isAdequate(Entity entity, boolean strict)
     {
         if (!this.tags.isEmpty())
         {

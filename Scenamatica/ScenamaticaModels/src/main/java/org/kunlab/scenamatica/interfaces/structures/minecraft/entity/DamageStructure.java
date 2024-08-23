@@ -3,7 +3,6 @@ package org.kunlab.scenamatica.interfaces.structures.minecraft.entity;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.bookkeeper.annotations.Category;
-import org.kunlab.scenamatica.bookkeeper.annotations.DynamicTypeDoc;
 import org.kunlab.scenamatica.bookkeeper.annotations.TypeDoc;
 import org.kunlab.scenamatica.bookkeeper.annotations.TypeProperty;
 import org.kunlab.scenamatica.interfaces.scenariofile.Mapped;
@@ -37,7 +36,7 @@ import java.util.Map;
         }
 )
 @Category(inherit = EntityStructure.class)
-public interface DamageStructure extends Structure, Mapped<EntityDamageEvent>
+public interface DamageStructure extends Structure, Mapped
 {
     String KEY_MODIFIER = "modifiers";
     String KEY_CAUSE = "cause";
@@ -66,4 +65,15 @@ public interface DamageStructure extends Structure, Mapped<EntityDamageEvent>
      * @return ダメージの量
      */
     double getDamage();
+
+    /* @Overload */
+    void applyTo(EntityDamageEvent event);
+    /* @Overload */
+    boolean isAdequate(EntityDamageEvent object, boolean ignored);
+
+    @Override
+    default boolean canApplyTo(Object target)
+    {
+        return target instanceof EntityDamageEvent;
+    }
 }

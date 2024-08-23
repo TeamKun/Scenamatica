@@ -113,7 +113,7 @@ public class PlayerStructureImpl extends HumanEntityStructureImpl implements Pla
     }
 
     @NotNull
-    public static Map<String, Object> serialize(@NotNull PlayerStructure structure, @NotNull StructureSerializer serializer)
+    public static Map<String, Object> serializePlayer(@NotNull PlayerStructure structure, @NotNull StructureSerializer serializer)
     {
         Map<String, Object> map = serializeHuman(structure, serializer);
         MapUtils.putIfNotNull(map, KEY_NAME, structure.getName());
@@ -161,7 +161,7 @@ public class PlayerStructureImpl extends HumanEntityStructureImpl implements Pla
         return map;
     }
 
-    public static void validate(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
+    public static void validatePlayer(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
     {
         validateHuman(map, serializer);
         MapUtils.checkTypeIfContains(map, KEY_NAME, String.class);
@@ -189,7 +189,7 @@ public class PlayerStructureImpl extends HumanEntityStructureImpl implements Pla
     }
 
     @NotNull
-    public static PlayerStructure deserialize(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
+    public static PlayerStructure deserializePlayer(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
     {
         validateLivingEntity(map);
 
@@ -282,7 +282,7 @@ public class PlayerStructureImpl extends HumanEntityStructureImpl implements Pla
         );
     }
 
-    public static PlayerStructure of(@NotNull Player player)
+    public static PlayerStructure ofPlayer(@NotNull Player player)
     {
         return new PlayerStructureImpl(
                 HumanEntityStructureImpl.ofHuman(player),
@@ -377,10 +377,9 @@ public class PlayerStructureImpl extends HumanEntityStructureImpl implements Pla
     }
 
     @Override
-    @SuppressWarnings("deprecation")
-    public void applyTo(Player player)
+    public void applyTo(Player player, boolean applyLocation)
     {
-        super.applyToHumanEntity(player);
+        super.applyTo(player, applyLocation);
 
         if (this.displayName != null)
             player.setDisplayName(this.displayName);
@@ -414,16 +413,9 @@ public class PlayerStructureImpl extends HumanEntityStructureImpl implements Pla
     }
 
     @Override
-    public boolean canApplyTo(Object target)
-    {
-        return target instanceof Player;
-    }
-
-    @Override
-    @SuppressWarnings("deprecation")
     public boolean isAdequate(Player player, boolean strict)
     {
-        return super.isAdequateHumanEntity(player, strict)
+        return super.isAdequate(player, strict)
                 && (this.name == null || this.name.equals(player.getName()))
                 && (this.displayName == null || this.displayName.equals(player.getDisplayName()))
                 && (this.online == null || this.online.equals(player.isOnline()))

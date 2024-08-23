@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class LivingEntitySerializeTest
 {
     public static final LivingEntityStructure FULFILLED = new LivingEntityStructureImpl(
-            AEntityStructureSerializeTest.FULFILLED,
+            EntityStructureSerializeTest.FULFILLED,
             114,
             514,
             1919,
@@ -45,7 +45,7 @@ public class LivingEntitySerializeTest
             true
     );
 
-    public static final Map<String, Object> FULFILLED_MAP = new HashMap<String, Object>(AEntityStructureSerializeTest.FULFILLED_MAP)
+    public static final Map<String, Object> FULFILLED_MAP = new HashMap<String, Object>(EntityStructureSerializeTest.FULFILLED_MAP)
     {{
         this.put("remainAir", 114);
         this.put("maxAir", 514);
@@ -88,7 +88,7 @@ public class LivingEntitySerializeTest
 
     public static final LivingEntityStructure EMPTY = new LivingEntityStructureImpl();
 
-    public static final Map<String, Object> EMPTY_MAP = new HashMap<>(AEntityStructureSerializeTest.EMPTY_MAP);
+    public static final Map<String, Object> EMPTY_MAP = new HashMap<>(EntityStructureSerializeTest.EMPTY_MAP);
 
     @Test
     void 正常にシリアライズできるか()

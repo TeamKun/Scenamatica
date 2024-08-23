@@ -77,7 +77,7 @@ public class WorldBorderAction extends AbstractWorldAction
                 ctxt.orElseInput(IN_SIZE, () -> null),
                 border.getSize(),
                 ctxt.orElseInput(IN_DURATION, () -> null),
-                ctxt.ifHasInput(IN_CENTER, Creatable::create, null),
+                ctxt.ifHasInput(IN_CENTER, LocationStructure::create, null),
                 border.getCenter()
         );
 

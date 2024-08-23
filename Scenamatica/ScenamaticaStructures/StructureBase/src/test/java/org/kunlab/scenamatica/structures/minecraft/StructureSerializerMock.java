@@ -8,30 +8,19 @@ import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.interfaces.scenariofile.Mapped;
-import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.Structure;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
-import org.kunlab.scenamatica.interfaces.scenariofile.VersionRange;
-import org.kunlab.scenamatica.interfaces.structures.context.ContextStructure;
-import org.kunlab.scenamatica.interfaces.structures.context.StageStructure;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.DamageStructure;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.EntityStructure;
-import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.entities.AEntityStructure;
-import org.kunlab.scenamatica.interfaces.structures.minecraft.inventory.GenericInventoryStructure;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.inventory.InventoryStructure;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.inventory.ItemStackStructure;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.inventory.PlayerInventoryStructure;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.misc.BlockStructure;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.misc.LocationStructure;
-import org.kunlab.scenamatica.interfaces.structures.minecraft.misc.ProjectileSourceStructure;
-import org.kunlab.scenamatica.interfaces.structures.scenario.ActionStructure;
-import org.kunlab.scenamatica.interfaces.structures.scenario.ScenarioStructure;
 import org.kunlab.scenamatica.interfaces.structures.specifiers.EntitySpecifier;
 import org.kunlab.scenamatica.interfaces.structures.specifiers.PlayerSpecifier;
-import org.kunlab.scenamatica.interfaces.structures.trigger.TriggerStructure;
 import org.kunlab.scenamatica.structures.minecraft.entity.DamageStructureImpl;
-import org.kunlab.scenamatica.structures.minecraft.entity.entities.AEntityStructureImpl;
-import org.kunlab.scenamatica.structures.minecraft.inventory.GenericInventoryStructureImpl;
+import org.kunlab.scenamatica.structures.minecraft.entity.EntityStructureImpl;
 import org.kunlab.scenamatica.structures.minecraft.inventory.InventoryStructureImpl;
 import org.kunlab.scenamatica.structures.minecraft.inventory.ItemStackStructureImpl;
 import org.kunlab.scenamatica.structures.minecraft.inventory.PlayerInventoryStructureImpl;
@@ -120,7 +109,7 @@ public class StructureSerializerMock implements StructureSerializer
     }
 
     @Override
-    public <V, T extends Mapped<V> & Structure> T toStructure(@NotNull V value, @Nullable Class<T> clazz)
+    public <V, T extends Mapped & Structure> T toStructure(@NotNull V value, @Nullable Class<T> clazz)
     {
         // エンティティの場合は, さらに EntityType で分岐する
         if (isEntityRelatedValue(value, clazz))
@@ -143,7 +132,7 @@ public class StructureSerializerMock implements StructureSerializer
     }
 
     @Override
-    public <V, T extends Mapped<V> & Structure> T toStructure(@NotNull V value)
+    public <V, T extends Mapped & Structure> T toStructure(@NotNull V value)
     {
         return this.toStructure(value, null);  // 自動推論
     }
@@ -222,72 +211,72 @@ public class StructureSerializerMock implements StructureSerializer
 
     /* ------------------------------------ */
 
-    private <V, T extends Mapped<V> & Structure> void registerStructure(@NotNull Class<T> clazz,
-                                                                        @NotNull BiFunction<T, StructureSerializer, Map<String, Object>> serializer,
-                                                                        @NotNull BiFunction<Map<String, Object>, StructureSerializer, T> deserializer,
-                                                                        @NotNull BiConsumer<Map<String, Object>, StructureSerializer> validator,
-                                                                        @NotNull Function<V, T> constructor,
-                                                                        @NotNull Predicate<?> applicator)
+    private <V, T extends Mapped & Structure> void registerStructure(@NotNull Class<T> clazz,
+                                                                     @NotNull BiFunction<T, StructureSerializer, Map<String, Object>> serializer,
+                                                                     @NotNull BiFunction<Map<String, Object>, StructureSerializer, T> deserializer,
+                                                                     @NotNull BiConsumer<Map<String, Object>, StructureSerializer> validator,
+                                                                     @NotNull Function<V, T> constructor,
+                                                                     @NotNull Predicate<?> applicator)
     {
         this.structureEntries.add(new MappedStructureEntry<>(clazz, serializer, deserializer, validator, constructor, applicator));
     }
 
-    private <V, T extends Mapped<V> & Structure> void registerStructure(@NotNull Class<T> clazz,
-                                                                        @NotNull BiFunction<T, StructureSerializer, Map<String, Object>> serializer,
-                                                                        @NotNull BiFunction<Map<String, Object>, StructureSerializer, T> deserializer,
-                                                                        @NotNull Consumer<? super Map<String, Object>> validator,
-                                                                        @NotNull Function<V, T> constructor,
-                                                                        @NotNull Predicate<?> applicator)
+    private <V, T extends Mapped & Structure> void registerStructure(@NotNull Class<T> clazz,
+                                                                     @NotNull BiFunction<T, StructureSerializer, Map<String, Object>> serializer,
+                                                                     @NotNull BiFunction<Map<String, Object>, StructureSerializer, T> deserializer,
+                                                                     @NotNull Consumer<? super Map<String, Object>> validator,
+                                                                     @NotNull Function<V, T> constructor,
+                                                                     @NotNull Predicate<?> applicator)
     {
         this.structureEntries.add(new MappedStructureEntry<>(clazz, serializer, deserializer, (v, t) -> validator.accept(v), constructor, applicator));
     }
 
-    private <V, T extends Mapped<V> & Structure> void registerStructure(@NotNull Class<T> clazz,
-                                                                        @NotNull Function<? super T, ? extends Map<String, Object>> serializer,
-                                                                        @NotNull BiFunction<Map<String, Object>, StructureSerializer, T> deserializer,
-                                                                        @NotNull BiConsumer<Map<String, Object>, StructureSerializer> validator,
-                                                                        @NotNull Function<V, T> constructor,
-                                                                        @NotNull Predicate<?> applicator)
+    private <V, T extends Mapped & Structure> void registerStructure(@NotNull Class<T> clazz,
+                                                                     @NotNull Function<? super T, ? extends Map<String, Object>> serializer,
+                                                                     @NotNull BiFunction<Map<String, Object>, StructureSerializer, T> deserializer,
+                                                                     @NotNull BiConsumer<Map<String, Object>, StructureSerializer> validator,
+                                                                     @NotNull Function<V, T> constructor,
+                                                                     @NotNull Predicate<?> applicator)
     {
         this.structureEntries.add(new MappedStructureEntry<>(clazz, (v, t) -> serializer.apply(v), deserializer, validator, constructor, applicator));
     }
 
-    private <V, T extends Mapped<V> & Structure> void registerStructure(@NotNull Class<T> clazz,
-                                                                        @NotNull Function<? super T, ? extends Map<String, Object>> serializer,
-                                                                        @NotNull BiFunction<Map<String, Object>, StructureSerializer, T> deserializer,
-                                                                        @NotNull Consumer<? super Map<String, Object>> validator,
-                                                                        @NotNull Function<V, T> constructor,
-                                                                        @NotNull Predicate<?> applicator)
+    private <V, T extends Mapped & Structure> void registerStructure(@NotNull Class<T> clazz,
+                                                                     @NotNull Function<? super T, ? extends Map<String, Object>> serializer,
+                                                                     @NotNull BiFunction<Map<String, Object>, StructureSerializer, T> deserializer,
+                                                                     @NotNull Consumer<? super Map<String, Object>> validator,
+                                                                     @NotNull Function<V, T> constructor,
+                                                                     @NotNull Predicate<?> applicator)
     {
         this.structureEntries.add(new MappedStructureEntry<>(clazz, (v, t) -> serializer.apply(v), deserializer, (v, t) -> validator.accept(v), constructor, applicator));
     }
 
-    private <V, T extends Mapped<V> & Structure> void registerStructure(@NotNull Class<T> clazz,
-                                                                        @NotNull Function<? super T, ? extends Map<String, Object>> serializer,
-                                                                        @NotNull Function<? super Map<String, Object>, ? extends T> deserializer,
-                                                                        @NotNull BiConsumer<Map<String, Object>, StructureSerializer> validator,
-                                                                        @NotNull Function<V, T> constructor,
-                                                                        @NotNull Predicate<?> applicator)
+    private <V, T extends Mapped & Structure> void registerStructure(@NotNull Class<T> clazz,
+                                                                     @NotNull Function<? super T, ? extends Map<String, Object>> serializer,
+                                                                     @NotNull Function<? super Map<String, Object>, ? extends T> deserializer,
+                                                                     @NotNull BiConsumer<Map<String, Object>, StructureSerializer> validator,
+                                                                     @NotNull Function<V, T> constructor,
+                                                                     @NotNull Predicate<?> applicator)
     {
         this.structureEntries.add(new MappedStructureEntry<>(clazz, (v, t) -> serializer.apply(v), (v, t) -> deserializer.apply(v), validator, constructor, applicator));
     }
 
-    private <V, T extends Mapped<V> & Structure> void registerStructure(@NotNull Class<T> clazz,
-                                                                        @NotNull Function<? super T, ? extends Map<String, Object>> serializer,
-                                                                        @NotNull Function<? super Map<String, Object>, ? extends T> deserializer,
-                                                                        @NotNull Consumer<? super Map<String, Object>> validator,
-                                                                        @NotNull Function<V, T> constructor,
-                                                                        @NotNull Predicate<?> applicator)
+    private <V, T extends Mapped & Structure> void registerStructure(@NotNull Class<T> clazz,
+                                                                     @NotNull Function<? super T, ? extends Map<String, Object>> serializer,
+                                                                     @NotNull Function<? super Map<String, Object>, ? extends T> deserializer,
+                                                                     @NotNull Consumer<? super Map<String, Object>> validator,
+                                                                     @NotNull Function<V, T> constructor,
+                                                                     @NotNull Predicate<?> applicator)
     {
         this.structureEntries.add(new MappedStructureEntry<>(clazz, (v, t) -> serializer.apply(v), (v, t) -> deserializer.apply(v), (v, t) -> validator.accept(v), constructor, applicator));
     }
 
-    private <V, T extends Mapped<V> & Structure> void registerStructure(@NotNull Class<T> clazz,
-                                                                        @NotNull BiFunction<T, StructureSerializer, Map<String, Object>> serializer,
-                                                                        @NotNull Function<? super Map<String, Object>, ? extends T> deserializer,
-                                                                        @NotNull Consumer<? super Map<String, Object>> validator,
-                                                                        @NotNull Function<V, T> constructor,
-                                                                        @NotNull Predicate<?> applicator)
+    private <V, T extends Mapped & Structure> void registerStructure(@NotNull Class<T> clazz,
+                                                                     @NotNull BiFunction<T, StructureSerializer, Map<String, Object>> serializer,
+                                                                     @NotNull Function<? super Map<String, Object>, ? extends T> deserializer,
+                                                                     @NotNull Consumer<? super Map<String, Object>> validator,
+                                                                     @NotNull Function<V, T> constructor,
+                                                                     @NotNull Predicate<?> applicator)
     {
         this.structureEntries.add(new MappedStructureEntry<>(clazz, serializer, (v, t) -> deserializer.apply(v), (v, t) -> validator.accept(v), constructor, applicator));
     }
@@ -321,7 +310,7 @@ public class StructureSerializerMock implements StructureSerializer
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
-    private <V, T extends Mapped<V> & Structure> MappedStructureEntry<V, T> selectMappedEntry(@NotNull V value, @Nullable Class<T> clazz)
+    private <V, T extends Mapped & Structure> MappedStructureEntry<V, T> selectMappedEntry(@NotNull V value, @Nullable Class<T> clazz)
     {
         Predicate<MappedStructureEntry> applicator;
         if (clazz == null)
@@ -356,22 +345,22 @@ public class StructureSerializerMock implements StructureSerializer
                 DamageStructureImpl::isApplicable
         );
         this.registerStructure(
-                AEntityStructure.class,
-                AEntityStructureImpl::serialize,
-                AEntityStructureImpl::deserialize,
-                AEntityStructureImpl::validate,
-                AEntityStructureImpl::of,
-                AEntityStructureImpl::isApplicable
+                EntityStructure.class,
+                EntityStructureImpl::serialize,
+                EntityStructureImpl::deserialize,
+                EntityStructureImpl::validate,
+                EntityStructureImpl::of,
+                EntityStructureImpl::isApplicable
         );
     }
 
     private void registerInventoryStructures()
     {
         this.registerStructure(
-                GenericInventoryStructure.class,
-                GenericInventoryStructureImpl::serialize,
-                GenericInventoryStructureImpl::deserialize,
-                GenericInventoryStructureImpl::validate
+                InventoryStructure.class,
+                InventoryStructureImpl::serialize,
+                InventoryStructureImpl::deserialize,
+                InventoryStructureImpl::validate
         );
         this.registerStructure(
                 InventoryStructure.class,
@@ -379,7 +368,7 @@ public class StructureSerializerMock implements StructureSerializer
                 InventoryStructureImpl::deserialize,
                 InventoryStructureImpl::validate,
                 InventoryStructureImpl::of,
-                InventoryStructureImpl::isApplicable
+                InventoryStructureImpl::isApplicableInventory
         );
         this.registerStructure(
                 ItemStackStructure.class,
@@ -393,9 +382,9 @@ public class StructureSerializerMock implements StructureSerializer
                 PlayerInventoryStructure.class,
                 PlayerInventoryStructureImpl::serializePlayerInventory,
                 PlayerInventoryStructureImpl::deserializePlayerInventory,
-                PlayerInventoryStructureImpl::validate,
-                PlayerInventoryStructureImpl::of,
-                PlayerInventoryStructureImpl::isApplicable
+                PlayerInventoryStructureImpl::validatePlayerInventory,
+                PlayerInventoryStructureImpl::ofPlayerInventory,
+                PlayerInventoryStructureImpl::isApplicablePlayerInventory
         );
     }
 
@@ -436,7 +425,7 @@ public class StructureSerializerMock implements StructureSerializer
     @Value
     @NotNull
     @EqualsAndHashCode(callSuper = true)
-    private static class MappedStructureEntry<V, T extends Mapped<V> & Structure> extends StructureEntry<T>
+    private static class MappedStructureEntry<V, T extends Mapped & Structure> extends StructureEntry<T>
     {
         Function<V, T> constructor;
         Predicate<?> applicator;

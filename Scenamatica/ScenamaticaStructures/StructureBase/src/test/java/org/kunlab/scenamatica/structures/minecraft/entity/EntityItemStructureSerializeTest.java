@@ -8,7 +8,6 @@ import org.kunlab.scenamatica.structures.minecraft.inventory.ItemStackStructureS
 import org.kunlab.scenamatica.structures.minecraft.entity.entities.EntityItemStructureImpl;
 import org.kunlab.scenamatica.structures.minecraft.utils.MapTestUtil;
 import org.kunlab.scenamatica.structures.specifiers.EntitySpecifierImpl;
-import org.kunlab.scenamatica.structures.specifiers.PlayerSpecifierImpl;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class EntityItemStructureSerializeTest
 {
     public static final EntityItemStructure EMPTY = new EntityItemStructureImpl(
-            AEntityStructureSerializeTest.EMPTY,
+            EntityStructureSerializeTest.EMPTY,
             ItemStackStructureSerializeTest.EMPTY,
             null,
             EntitySpecifierImpl.EMPTY,
@@ -29,13 +28,13 @@ public class EntityItemStructureSerializeTest
     );
     public static final Map<String, Object> EMPTY_MAP = new HashMap<String, Object>()
     {{
-        this.putAll(AEntityStructureSerializeTest.EMPTY_MAP);
+        this.putAll(EntityStructureSerializeTest.EMPTY_MAP);
         this.putAll(ItemStackStructureSerializeTest.EMPTY_MAP);
     }};
     private static final UUID FULLFILLED_OWNER_UUID = UUID.fromString("20b161fb-9956-407d-a52a-bb981c11f5c0");
     private static final UUID FULLFILLED_THROWER_UUID = UUID.fromString("4e11d4a6-4624-475f-8be0-d9e984b047f4");
     public static final EntityItemStructure FULFILLED = new EntityItemStructureImpl(
-            AEntityStructureSerializeTest.FULFILLED,
+            EntityStructureSerializeTest.FULFILLED,
             ItemStackStructureSerializeTest.FULFILLED,
             1,
             EntitySpecifierImpl.of(FULLFILLED_OWNER_UUID),
@@ -45,7 +44,7 @@ public class EntityItemStructureSerializeTest
     );
     public static final Map<String, Object> FULFILLED_MAP = new HashMap<String, Object>()
     {{
-        this.putAll(AEntityStructureSerializeTest.FULFILLED_MAP);
+        this.putAll(EntityStructureSerializeTest.FULFILLED_MAP);
         this.putAll(ItemStackStructureSerializeTest.FULFILLED_MAP);
 
         this.put(EntityItemStructure.KEY_PICKUP_DELAY, 1);
@@ -58,7 +57,7 @@ public class EntityItemStructureSerializeTest
     @Test
     void 正常にシリアライズできるか()
     {
-        Map<String, Object> map = EntityItemStructureImpl.serialize(FULFILLED, StructureSerializerMock.getInstance());
+        Map<String, Object> map = EntityItemStructureImpl.serializeItem(FULFILLED, StructureSerializerMock.getInstance());
 
         MapTestUtil.assertEqual(FULFILLED_MAP, map);
     }
@@ -66,7 +65,7 @@ public class EntityItemStructureSerializeTest
     @Test
     void 正常にデシリアライズできるか()
     {
-        EntityStructure entity = EntityItemStructureImpl.deserialize(FULFILLED_MAP, StructureSerializerMock.getInstance());
+        EntityStructure entity = EntityItemStructureImpl.deserializeItem(FULFILLED_MAP, StructureSerializerMock.getInstance());
 
         assertEquals(FULFILLED, entity);
     }
@@ -74,7 +73,7 @@ public class EntityItemStructureSerializeTest
     @Test
     void 必須項目のみでシリアライズできるか()
     {
-        Map<String, Object> map = EntityItemStructureImpl.serialize(EMPTY, StructureSerializerMock.getInstance());
+        Map<String, Object> map = EntityItemStructureImpl.serializeItem(EMPTY, StructureSerializerMock.getInstance());
 
         MapTestUtil.assertEqual(EMPTY_MAP, map);
     }
@@ -82,7 +81,7 @@ public class EntityItemStructureSerializeTest
     @Test
     void 必須項目のみでデシリアライズできるか()
     {
-        EntityStructure entity = EntityItemStructureImpl.deserialize(EMPTY_MAP, StructureSerializerMock.getInstance());
+        EntityStructure entity = EntityItemStructureImpl.deserializeItem(EMPTY_MAP, StructureSerializerMock.getInstance());
 
         assertEquals(EMPTY, entity);
     }

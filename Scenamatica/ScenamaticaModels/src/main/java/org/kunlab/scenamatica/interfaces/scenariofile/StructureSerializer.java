@@ -55,7 +55,7 @@ public interface StructureSerializer
      * @param <T>   Mapped のインスタンスの型
      * @return Mapped のインスタンス
      */
-    <V, T extends Mapped<V> & Structure> T toStructure(@NotNull V value, @Nullable Class<T> clazz);
+    <V, T extends Mapped & Structure> T toStructure(@NotNull V value, @Nullable Class<T> clazz);
 
     /**
      * 指定された値を Structure に変換できるかどうかを返します。
@@ -73,7 +73,7 @@ public interface StructureSerializer
      * @param <T>   Mapped のインスタンスの型
      * @return Mapped のインスタンス
      */
-    <V, T extends Mapped<V> & Structure> T toStructure(@NotNull V value);
+    <V, T extends Mapped & Structure> T toStructure(@NotNull V value);
 
     /**
      * エンティティ指定子をデシリアライズします。

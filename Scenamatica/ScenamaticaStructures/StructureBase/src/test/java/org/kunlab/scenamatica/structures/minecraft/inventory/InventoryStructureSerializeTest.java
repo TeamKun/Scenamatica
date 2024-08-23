@@ -6,8 +6,6 @@ import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.inventory.InventoryStructure;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.inventory.ItemStackStructure;
 import org.kunlab.scenamatica.structures.minecraft.StructureSerializerMock;
-import org.kunlab.scenamatica.structures.minecraft.inventory.InventoryStructureImpl;
-import org.kunlab.scenamatica.structures.minecraft.inventory.ItemStackStructureImpl;
 import org.kunlab.scenamatica.structures.minecraft.utils.MapTestUtil;
 
 import java.util.Collections;

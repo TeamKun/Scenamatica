@@ -45,7 +45,7 @@ public class EntityAction extends AbstractGeneralEntityAction
         Entity target = this.selectTarget(ctxt);
         EntityStructure entityInfo = ctxt.input(IN_ENTITY);
 
-        EntityUtils.tryCastMapped(entityInfo, target).applyTo(target);
+        EntityUtils.invokeApplyTo(entityInfo, target);
         this.makeOutputs(ctxt, target);
     }
 
@@ -54,7 +54,7 @@ public class EntityAction extends AbstractGeneralEntityAction
     {
         Entity target = this.selectTarget(ctxt);
 
-        boolean result = ctxt.ifHasInput(IN_ENTITY, entity -> EntityUtils.tryCastMapped(entity, target).isAdequate(target));
+        boolean result = ctxt.ifHasInput(IN_ENTITY, structure -> EntityUtils.checkIsAdequate(structure, target));
         if (result)
             this.makeOutputs(ctxt, target);
 

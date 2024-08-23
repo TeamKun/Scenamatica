@@ -2,6 +2,8 @@ package org.kunlab.scenamatica.structures.minecraft.entity.entities;
 
 import lombok.EqualsAndHashCode;
 import lombok.Value;
+import org.bukkit.entity.LivingEntity;
+import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.LivingEntityStructure;
 import org.kunlab.scenamatica.structures.minecraft.misc.BlockStructureImpl;
 import org.kunlab.scenamatica.structures.minecraft.misc.SelectorProjectileSourceStructureImpl;
 import org.bukkit.block.Block;
@@ -111,7 +113,7 @@ public class ProjectileStructureImpl extends EntityStructureImpl implements Proj
     @Override
     public void applyTo(Projectile projectile)
     {
-        super.applyToEntity(projectile);
+        super.applyTo(projectile, true);
 
         if (this.doesBounce != null)
             projectile.setBounce(this.doesBounce);
@@ -126,7 +128,7 @@ public class ProjectileStructureImpl extends EntityStructureImpl implements Proj
     @Override
     public boolean isAdequate(Projectile entity, boolean strict)
     {
-        if (!super.isAdequateEntity(entity, strict))
+        if (!super.isAdequate(entity, strict))
             return false;
 
         if (!(this.doesBounce == null || this.doesBounce == entity.doesBounce()))
@@ -139,10 +141,13 @@ public class ProjectileStructureImpl extends EntityStructureImpl implements Proj
         if (projectileSource == null)
             return false;
 
-        if (this.shooter instanceof EntityStructure && this.shooter instanceof Mapped<?>)
+        if (this.shooter instanceof EntityStructure)
         {
-            // noinspection unchecked
-            return ((Mapped<Entity>) this.shooter).isAdequate((Entity) projectileSource);
+            if (!(projectileSource instanceof LivingEntity))
+                return false;
+
+            LivingEntity ent = (LivingEntity) projectileSource;
+            return ((LivingEntityStructure) this.shooter).isAdequate(ent, strict);
         }
         else if (this.shooter instanceof BlockStructure)
         {

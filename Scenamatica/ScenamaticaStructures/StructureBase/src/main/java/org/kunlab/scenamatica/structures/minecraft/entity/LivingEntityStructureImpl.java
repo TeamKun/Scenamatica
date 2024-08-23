@@ -395,7 +395,7 @@ public class LivingEntityStructureImpl extends EntityStructureImpl implements Li
                 entity.getRemoveWhenFarAway(),
                 entity.getCanPickupItems(),
                 entity.isLeashed(),
-                entity.isLeashed() ? EntitySpecifierImpl.of(entity.getLeashHolder()): null,
+                entity.isLeashed() ? EntitySpecifierImpl.of(entity.getLeashHolder()): EntitySpecifierImpl.EMPTY,
                 entity.isGliding(),
                 entity.isSwimming(),
                 entity.isRiptiding(),
@@ -531,9 +531,10 @@ public class LivingEntityStructureImpl extends EntityStructureImpl implements Li
         );
     }
 
-    protected void applyToLivingEntity(LivingEntity entity)
+    @Override
+    public void applyTo(LivingEntity entity, boolean applyLocation)
     {
-        super.applyToEntity(entity);
+        super.applyTo(entity, true);
 
         NMSEntityLiving nmsEntity = NMSProvider.getProvider().wrap(entity);
 
@@ -595,7 +596,8 @@ public class LivingEntityStructureImpl extends EntityStructureImpl implements Li
             entity.setShieldBlockingDelay(this.shieldBlockingDelay);
     }
 
-    protected boolean isAdequateLivingEntity(LivingEntity entity, boolean strict)
+    @Override
+    public boolean isAdequate(LivingEntity entity, boolean strict)
     {
         if (!this.potionEffects.isEmpty())
         {
@@ -617,7 +619,7 @@ public class LivingEntityStructureImpl extends EntityStructureImpl implements Li
             if (nmsArrowCooldown != null)
                 arrowCooldownMatches = Objects.equals(this.arrowCooldown, nmsArrowCooldown);
         }
-        return super.isAdequateEntity(entity, strict)
+        return super.isAdequate(entity, strict)
                 && (this.remainAir == null || this.remainAir == entity.getRemainingAir())
                 && (this.maxAir == null || this.maxAir == entity.getMaximumAir())
                 && arrowCooldownMatches
