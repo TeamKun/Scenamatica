@@ -11,7 +11,7 @@ import org.kunlab.scenamatica.bookkeeper.annotations.TypeProperty;
 @TypeDoc(
         name = "バージョン範囲",
         description = "バージョンの範囲を表します。",
-        properties ={
+        properties = {
                 @TypeProperty(
                         name = VersionRange.KEY_SINCE,
                         type = String.class,

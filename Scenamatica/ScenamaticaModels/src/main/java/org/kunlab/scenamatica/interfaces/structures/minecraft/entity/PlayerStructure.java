@@ -17,7 +17,7 @@ import java.util.Map;
  * プレイヤを表すインターフェースです。
  */
 @TypeDoc(
-name = "Player",
+        name = "Player",
         description = "プレイヤの情報を格納します。",
         mappingOf = Player.class,
         properties = {

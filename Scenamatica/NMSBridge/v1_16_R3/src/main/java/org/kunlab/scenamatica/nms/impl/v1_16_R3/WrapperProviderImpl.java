@@ -19,7 +19,6 @@ import org.kunlab.scenamatica.nms.impl.v1_16_R3.entity.NMSEntityPlayerImpl;
 import org.kunlab.scenamatica.nms.impl.v1_16_R3.item.NMSItemStackImpl;
 import org.kunlab.scenamatica.nms.impl.v1_16_R3.world.NMSWorldServerImpl;
 import org.kunlab.scenamatica.nms.types.NMSMinecraftServer;
-import org.kunlab.scenamatica.nms.types.world.NMSWorldServer;
 import org.kunlab.scenamatica.nms.types.block.NMSBlockPosition;
 import org.kunlab.scenamatica.nms.types.entity.NMSEntity;
 import org.kunlab.scenamatica.nms.types.entity.NMSEntityHuman;
@@ -27,6 +26,7 @@ import org.kunlab.scenamatica.nms.types.entity.NMSEntityItem;
 import org.kunlab.scenamatica.nms.types.entity.NMSEntityLiving;
 import org.kunlab.scenamatica.nms.types.entity.NMSEntityPlayer;
 import org.kunlab.scenamatica.nms.types.item.NMSItemStack;
+import org.kunlab.scenamatica.nms.types.world.NMSWorldServer;
 
 public class WrapperProviderImpl implements WrapperProvider
 {

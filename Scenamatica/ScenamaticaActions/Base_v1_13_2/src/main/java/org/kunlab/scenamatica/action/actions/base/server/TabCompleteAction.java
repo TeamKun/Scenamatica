@@ -47,11 +47,11 @@ public class TabCompleteAction extends AbstractServerAction
             description = "送信者です。",
             type = PlayerSpecifier.class,
             admonitions = {
-                @Admonition(
-                        type = AdmonitionType.INFORMATION,
-                        title = "コンソールを指定しますか？",
-                        content = "コンソールを送信者として指定する場合は, プレイヤ指定子の代わりに `<CONSOLE>` を指定します。"
-                )
+                    @Admonition(
+                            type = AdmonitionType.INFORMATION,
+                            title = "コンソールを指定しますか？",
+                            content = "コンソールを送信者として指定する場合は, プレイヤ指定子の代わりに `<CONSOLE>` を指定します。"
+                    )
             }
     )
     public static final InputToken<PlayerSpecifier> IN_SENDER = ofInput(
@@ -82,7 +82,7 @@ public class TabCompleteAction extends AbstractServerAction
             name = "strict",
             description = "厳密な判定を行うかどうかです。",
             type = boolean.class,
-            
+
             availableFor = ActionMethod.EXPECT
     )
     public static final InputToken<Boolean> IN_STRICT = ofInput(
@@ -90,6 +90,7 @@ public class TabCompleteAction extends AbstractServerAction
             Boolean.class,
             false
     );
+
     private static boolean checkCompletions(@Nullable List<String> expected, List<String> actual, boolean strict)
     {
         if (expected == null)

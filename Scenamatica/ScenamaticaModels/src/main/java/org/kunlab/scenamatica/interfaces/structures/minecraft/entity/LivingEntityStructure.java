@@ -19,7 +19,7 @@ import java.util.List;
         description = "生物エンティティの情報を格納します。",
         mappingOf = LivingEntity.class,
 
-        properties ={
+        properties = {
                 @TypeProperty(
                         name = LivingEntityStructure.KEY_REMAINING_AIR,
                         description = "残りの空気です。",

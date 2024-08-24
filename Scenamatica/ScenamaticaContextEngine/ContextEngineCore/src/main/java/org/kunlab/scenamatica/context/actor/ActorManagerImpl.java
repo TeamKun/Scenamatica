@@ -119,7 +119,6 @@ public class ActorManagerImpl implements ActorManager, Listener
         return actor;
     }
 
-
     @SneakyThrows(InterruptedException.class)
     private void waitForJoin(Actor actor)
     {
@@ -148,7 +147,6 @@ public class ActorManagerImpl implements ActorManager, Listener
         this.actorGenerator.unmock(player);
         this.actors.remove(player);
     }
-
 
     @Override
     public void onDestroyActor(Actor player)

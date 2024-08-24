@@ -59,7 +59,7 @@ public class NMSEntityImpl implements NMSEntity
             if (!forceDrops)
                 entityLiving.forceDrops = true;
         }
-        
+
         EntityItem dropped = this.nmsEntity.a((ItemStack) stack.getNMSRaw(), offsetY);
         if (this.nmsEntity instanceof EntityLiving)
         {

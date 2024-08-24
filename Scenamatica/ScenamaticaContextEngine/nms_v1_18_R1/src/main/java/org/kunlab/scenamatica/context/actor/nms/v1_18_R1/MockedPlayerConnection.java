@@ -15,7 +15,6 @@ import net.minecraft.network.protocol.game.ClientboundSetCarriedItemPacket;
 import net.minecraft.network.protocol.game.ServerboundKeepAlivePacket;
 import net.minecraft.server.MinecraftServer;
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_18_R1.CraftServer;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.kunlab.scenamatica.events.actor.ActorMessageReceiveEvent;
 

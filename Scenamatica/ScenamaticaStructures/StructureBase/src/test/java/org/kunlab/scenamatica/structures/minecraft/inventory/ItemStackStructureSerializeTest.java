@@ -11,7 +11,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.inventory.ItemStackStructure;
 import org.kunlab.scenamatica.structures.minecraft.StructureSerializerMock;
-import org.kunlab.scenamatica.structures.minecraft.inventory.ItemStackStructureImpl;
 import org.kunlab.scenamatica.structures.minecraft.utils.MapTestUtil;
 
 import java.lang.reflect.Field;

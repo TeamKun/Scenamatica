@@ -3,8 +3,8 @@ package org.kunlab.scenamatica.nms.impl.v1_17_R1.world;
 import net.minecraft.server.level.ChunkProviderServer;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.nms.impl.v1_17_R1.entity.NMSEntityImpl;
-import org.kunlab.scenamatica.nms.types.world.NMSChunkProvider;
 import org.kunlab.scenamatica.nms.types.entity.NMSEntity;
+import org.kunlab.scenamatica.nms.types.world.NMSChunkProvider;
 
 public class NMSChunkProviderImpl implements NMSChunkProvider
 {

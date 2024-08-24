@@ -60,7 +60,7 @@ public class CommandDispatchAction extends AbstractServerAction
             type = String.class,
             admonitions = {
                     @Admonition(
-                           type = AdmonitionType.TIP,
+                            type = AdmonitionType.TIP,
                             content = "`/` 接頭辞の有無はどちらでもよく, それほど重要ではありません。"
                     )
             }
@@ -74,12 +74,12 @@ public class CommandDispatchAction extends AbstractServerAction
             description = "送信者です。",
             type = PlayerSpecifier.class,
             admonitions = {
-                @Admonition(
-                        type = AdmonitionType.INFORMATION,
-                        title = "コンソールを指定しますか？",
-                        content = "コンソールを実行者として指定する場合は, プレイヤ指定子の代わりに `<CONSOLE>` を指定します。"
-                )
-        }
+                    @Admonition(
+                            type = AdmonitionType.INFORMATION,
+                            title = "コンソールを指定しますか？",
+                            content = "コンソールを実行者として指定する場合は, プレイヤ指定子の代わりに `<CONSOLE>` を指定します。"
+                    )
+            }
     )
     public static final InputToken<PlayerSpecifier> IN_SENDER = ofInput(
             "sender",

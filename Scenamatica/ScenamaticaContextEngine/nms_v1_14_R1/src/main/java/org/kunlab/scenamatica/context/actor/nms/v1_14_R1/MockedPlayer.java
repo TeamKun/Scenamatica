@@ -210,7 +210,6 @@ class MockedPlayer extends EntityPlayer implements Actor
         );
 
 
-
         nmsItem.placeItem(ctx, HAND);
     }
 

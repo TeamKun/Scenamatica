@@ -39,7 +39,6 @@ public interface ContextStructure extends Structure
     public static final String KEY_ENTITIES = "entities";
     public static final String KEY_STAGE = "stage";
 
-
     /**
      * 仮想プレイヤを定義します。
      *

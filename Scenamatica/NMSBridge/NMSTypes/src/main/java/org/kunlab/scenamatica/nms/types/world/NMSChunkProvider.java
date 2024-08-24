@@ -14,6 +14,7 @@ public interface NMSChunkProvider extends NMSElement
 
     /**
      * ワールドからエンティティを削除します。
+     *
      * @param entity 削除するエンティティ
      */
     @Versioned(from = "1.14")

@@ -141,6 +141,30 @@ public class EntityItemStructureImpl extends EntityStructureImpl implements Enti
         entity.setTicksLived(willAge ? 0: Short.MIN_VALUE);
     }
 
+    private static void setUUIDByEntitySpecifier(@NotNull EntitySpecifier<?> specifier, @NotNull Consumer<UUID> setter)
+    {
+        if (specifier.hasUUID())
+            setter.accept(specifier.getSelectingUUID());
+        else
+            specifier.selectTarget(null)
+                    .map(Entity::getUniqueId)
+                    .ifPresent(setter);
+    }
+
+    private static boolean checkMatchedEntityByUUID(@NotNull EntitySpecifier<?> entity, UUID uuid)
+    {
+        if (!entity.isSelectable())
+            return true;
+
+        if (entity.hasUUID())
+            return entity.getSelectingUUID().equals(uuid);
+
+        return entity.selectTarget(null)
+                .map(Entity::getUniqueId)
+                .map(uuid::equals)
+                .orElse(false);
+    }
+
     @Override
     public void applyTo(@NotNull Entity entity)
     {
@@ -161,16 +185,6 @@ public class EntityItemStructureImpl extends EntityStructureImpl implements Enti
             setWillAge(itemEntity, this.willAge);
     }
 
-    private static void setUUIDByEntitySpecifier(@NotNull EntitySpecifier<?> specifier, @NotNull Consumer<UUID> setter)
-    {
-        if (specifier.hasUUID())
-            setter.accept(specifier.getSelectingUUID());
-        else
-            specifier.selectTarget(null)
-                    .map(Entity::getUniqueId)
-                    .ifPresent(setter);
-    }
-
     @Override
     public boolean isAdequate(@Nullable Entity entity, boolean strict)
     {
@@ -184,19 +198,5 @@ public class EntityItemStructureImpl extends EntityStructureImpl implements Enti
                 && (this.canMobPickup == null || this.canMobPickup.equals(itemEntity.canMobPickup()))
                 && (this.willAge == null || this.willAge.equals(willAge(itemEntity)))
                 && this.itemStack.isAdequate(itemEntity.getItemStack(), strict);
-    }
-
-    private static boolean checkMatchedEntityByUUID(@NotNull EntitySpecifier<?> entity, UUID uuid)
-    {
-        if (!entity.isSelectable())
-            return true;
-
-        if (entity.hasUUID())
-            return entity.getSelectingUUID().equals(uuid);
-
-        return entity.selectTarget(null)
-                .map(Entity::getUniqueId)
-                .map(uuid::equals)
-                .orElse(false);
     }
 }

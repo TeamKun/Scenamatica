@@ -3,8 +3,6 @@ package org.kunlab.scenamatica.structures.minecraft.entity;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.junit.jupiter.api.Test;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.DamageStructure;
-import org.kunlab.scenamatica.structures.minecraft.entity.DamageStructureImpl;
-import org.kunlab.scenamatica.structures.minecraft.utils.MapTestUtil;
 import org.kunlab.scenamatica.structures.minecraft.utils.MapTestUtil;
 
 import java.util.EnumMap;

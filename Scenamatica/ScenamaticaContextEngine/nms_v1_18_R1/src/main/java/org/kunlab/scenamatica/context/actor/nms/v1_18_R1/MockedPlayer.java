@@ -7,7 +7,6 @@ import lombok.Getter;
 import lombok.SneakyThrows;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.game.ServerboundContainerClickPacket;
 import net.minecraft.network.protocol.game.ServerboundInteractPacket;
 import net.minecraft.network.protocol.game.ServerboundSetCreativeModeSlotPacket;
@@ -167,7 +166,7 @@ class MockedPlayer extends ServerPlayer implements Actor
             default:
                 throw new IllegalArgumentException("Unknown NMSEntityUseAction: " + type.name());
         }
-        
+
         this.connection.handleInteract(packet);
     }
 

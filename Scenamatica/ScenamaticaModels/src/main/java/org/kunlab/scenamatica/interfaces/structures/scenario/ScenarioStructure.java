@@ -43,7 +43,6 @@ public interface ScenarioStructure extends Structure
     public static final String KEY_RUN_IF = "runif";
     public static final String KEY_TIMEOUT = "timeout";
 
-
     /**
      * このシナリオのタイプを取得します。
      *

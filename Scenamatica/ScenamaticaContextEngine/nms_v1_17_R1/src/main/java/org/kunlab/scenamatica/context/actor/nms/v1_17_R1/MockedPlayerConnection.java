@@ -1,18 +1,14 @@
 package org.kunlab.scenamatica.context.actor.nms.v1_17_R1;
 
-import io.netty.buffer.ByteBufAllocator;
 import lombok.Getter;
-import lombok.SneakyThrows;
 import net.kunmc.lab.peyangpaperutils.lib.components.Text;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.minecraft.network.NetworkManager;
-import net.minecraft.network.PacketDataSerializer;
 import net.minecraft.network.chat.ChatMessageType;
 import net.minecraft.network.chat.IChatBaseComponent;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.PacketPlayInKeepAlive;
-import net.minecraft.network.protocol.game.PacketPlayInWindowClick;
 import net.minecraft.network.protocol.game.PacketPlayOutChat;
 import net.minecraft.network.protocol.game.PacketPlayOutHeldItemSlot;
 import net.minecraft.network.protocol.game.PacketPlayOutKeepAlive;
@@ -26,16 +22,12 @@ import org.bukkit.craftbukkit.v1_17_R1.util.CraftChatMessage;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.kunlab.scenamatica.events.actor.ActorMessageReceiveEvent;
 
-import java.io.IOException;
 import java.lang.reflect.Field;
 
 class MockedPlayerConnection extends PlayerConnection
 {
     private static final Field fChatComponent; // Lnet/minecraft/server/v1_16_R3/PacketPlayOutChat;a:Lnet/minecraft/network/chat/IChatBaseComponent;
 
-    @Getter
-    private int windowStateId;
-    
     static
     {
         try
@@ -48,6 +40,9 @@ class MockedPlayerConnection extends PlayerConnection
             throw new RuntimeException(e);
         }
     }
+
+    @Getter
+    private int windowStateId;
 
     public MockedPlayerConnection(MinecraftServer minecraftserver, NetworkManager networkmanager, EntityPlayer entityplayer)
     {
@@ -101,7 +96,6 @@ class MockedPlayerConnection extends PlayerConnection
     {
         this.windowStateId = packet.e();
     }
-
 
     private void handleHeldItemSlot()
     {

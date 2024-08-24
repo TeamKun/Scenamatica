@@ -40,6 +40,7 @@ public interface Mapped<T>
 
     /**
      * この構造が, ターゲットに適応可能かどうかを返します。
+     *
      * @param target ターゲット
      * @return 適応可能な場合は true
      */

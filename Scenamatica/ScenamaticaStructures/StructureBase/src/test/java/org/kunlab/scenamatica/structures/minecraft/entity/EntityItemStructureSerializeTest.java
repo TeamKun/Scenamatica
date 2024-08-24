@@ -4,8 +4,8 @@ import org.junit.jupiter.api.Test;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.EntityStructure;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.entities.EntityItemStructure;
 import org.kunlab.scenamatica.structures.minecraft.StructureSerializerMock;
-import org.kunlab.scenamatica.structures.minecraft.inventory.ItemStackStructureSerializeTest;
 import org.kunlab.scenamatica.structures.minecraft.entity.entities.EntityItemStructureImpl;
+import org.kunlab.scenamatica.structures.minecraft.inventory.ItemStackStructureSerializeTest;
 import org.kunlab.scenamatica.structures.minecraft.utils.MapTestUtil;
 import org.kunlab.scenamatica.structures.specifiers.EntitySpecifierImpl;
 

@@ -34,7 +34,6 @@ import org.kunlab.scenamatica.scenario.engine.ScenarioEngineImpl;
 import org.kunlab.scenamatica.scenario.milestone.MilestoneManagerImpl;
 import org.kunlab.scenamatica.scenario.runtime.ScenarioCompilationErrorException;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -303,16 +302,16 @@ public class ScenarioManagerImpl implements ScenarioManager
         try
         {
             files.stream()
-                .map(scenario -> new ScenarioEngineImpl(
-                                this.registry,
-                                this,
-                                this.actionManager,
-                                this.testReporter,
-                                owningPlugin,
-                                scenario
+                    .map(scenario -> new ScenarioEngineImpl(
+                                    this.registry,
+                                    this,
+                                    this.actionManager,
+                                    this.testReporter,
+                                    owningPlugin,
+                                    scenario
                             )
-                )
-                .forEach(engines::add);
+                    )
+                    .forEach(engines::add);
         }
         catch (ScenarioCompilationErrorException e)
         {
@@ -345,7 +344,7 @@ public class ScenarioManagerImpl implements ScenarioManager
             this.registry.getExceptionHandler().report(e);
         }
 
-        String finishedMessageKey = isSuccessful ? "scenario.load.success" : "scenario.load.cancel";
+        String finishedMessageKey = isSuccessful ? "scenario.load.success": "scenario.load.cancel";
         logger.info(LangProvider.get(
                 finishedMessageKey,
                 MsgArgs.of("pluginName", owningPlugin.getName())

@@ -1,4 +1,5 @@
 package org.kunlab.scenamatica.nms.impl.v1_18_R1.entity;
+
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityLiving;
 import net.minecraft.world.entity.EnumMoveType;
@@ -58,7 +59,7 @@ public class NMSEntityImpl implements NMSEntity
             if (!forceDrops)
                 entityLiving.forceDrops = true;
         }
-        
+
         EntityItem dropped = this.nmsEntity.a((ItemStack) stack.getNMSRaw(), offsetY);
         if (this.nmsEntity instanceof EntityLiving)
         {

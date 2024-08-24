@@ -53,6 +53,7 @@ class MockedConnection extends Connection
     {
         this.windowStateId = packet.getStateId();
     }
+
     private void handleKeepAlive(ClientboundKeepAlivePacket packet)
     {
         long validationNumber = packet.getId();

@@ -1,6 +1,5 @@
 package org.kunlab.scenamatica.scenario;
 
-import lombok.AllArgsConstructor;
 import lombok.Value;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -11,7 +10,6 @@ import org.kunlab.scenamatica.interfaces.action.ActionResult;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioResult;
 import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileStructure;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -50,6 +48,7 @@ public class ScenarioResultImpl implements ScenarioResult
         this.attemptOf = attemptOf;
         this.failedAction = null;
     }
+
     public ScenarioResultImpl(@NotNull ScenarioFileStructure scenario,
                               @NotNull UUID testID,
                               @NotNull ScenarioState state,
@@ -57,7 +56,7 @@ public class ScenarioResultImpl implements ScenarioResult
                               @NotNull List<ActionResult> actionResults,
                               long startedAt,
                               int attemptOf,
-                                @Nullable Action failedAction)
+                              @Nullable Action failedAction)
     {
         this.scenario = scenario;
         this.testID = testID;

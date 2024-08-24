@@ -47,7 +47,6 @@ public interface ProjectileStructure extends EntityStructure
      */
     Boolean getDoesBounce();
 
-
     @Override
     default boolean canApplyTo(@Nullable Object target)
     {

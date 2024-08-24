@@ -82,7 +82,7 @@ public class Selector
 
     private List<Entity> enumerateSynced(@Nullable Player basis)
     {
-        if(Bukkit.isPrimaryThread())
+        if (Bukkit.isPrimaryThread())
             return this.type.enumerate(basis, this.predicate);
         else
             return ThreadingUtil.waitFor(() -> this.type.enumerate(basis, this.predicate));

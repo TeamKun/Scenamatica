@@ -1,14 +1,11 @@
 package org.kunlab.scenamatica.scenariofile;
 
-import org.bukkit.entity.Entity;
-import org.bukkit.projectiles.BlockProjectileSource;
 import org.bukkit.projectiles.ProjectileSource;
 import org.kunlab.scenamatica.interfaces.scenariofile.Structure;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.EntityStructure;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.misc.BlockStructure;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.misc.ProjectileSourceStructure;
-import org.kunlab.scenamatica.structures.minecraft.misc.BlockStructureImpl;
 
 import java.util.Map;
 

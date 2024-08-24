@@ -5,8 +5,8 @@ import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.interfaces.action.Action;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
-import org.kunlab.scenamatica.interfaces.action.types.Requireable;
 import org.kunlab.scenamatica.interfaces.action.types.Expectable;
+import org.kunlab.scenamatica.interfaces.action.types.Requireable;
 
 /**
  * シナリオの種類です。
