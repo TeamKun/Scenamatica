@@ -32,7 +32,6 @@ import org.bukkit.GameMode;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
 import org.bukkit.craftbukkit.v1_16_R3.CraftServer;
-import org.bukkit.event.world.WorldInitEvent;
 import org.bukkit.event.world.WorldLoadEvent;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.commons.utils.ThreadingUtil;
@@ -63,66 +62,6 @@ public class PatchedStageWorldCreator implements StageWorldCreator
     {
         this.registry = registry;
     }
-
-    @Override
-    public World createWorld(WorldCreator creator) throws StageCreateFailedException
-    {
-        CraftServer craftServer = (CraftServer) Bukkit.getServer();
-        WorldServer worldServer = createWorldServer(creator);
-        WorldDataServer worldDataServer = worldServer.worldDataServer;
-
-        craftServer.getServer().initWorld(
-                worldServer,
-                worldDataServer,
-                worldDataServer,
-                worldDataServer.getGeneratorSettings()
-        );
-        worldServer.setSpawnFlags(
-                /* allowMonsters: */ worldServer.getGameRules().getBoolean(GameRules.DO_MOB_SPAWNING),
-                /* allowAnimals: */ worldServer.getGameRules().getBoolean(GameRules.DO_MOB_SPAWNING)
-        );
-
-        craftServer.getServer().worldServer.put(worldServer.getDimensionKey(), worldServer);
-
-        // キャンセル可能ロードを実施する。
-       // loadSpawn(worldServer, TIMEOUT);
-
-        craftServer.getPluginManager().callEvent(new WorldLoadEvent(worldServer.getWorld()));
-
-        return worldServer.getWorld();
-    }
-
-    private void loadSpawn(WorldServer worldServer, long timeoutMillis)
-    {
-        ThreadingUtil.ThrowableSupplier<Void, Exception> supplier = () -> {
-            ((CraftServer) Bukkit.getServer()).getServer().loadSpawn(
-                    worldServer.getChunkProvider().playerChunkMap.worldLoadListener,
-                    worldServer
-            );
-            return null;
-        };
-
-        try
-        {
-            CompletableFuture<Void> future = CompletableFuture.supplyAsync(() -> {
-                try
-                {
-                    supplier.get();
-                }
-                catch (Exception e)
-                {
-                    throw new RuntimeException(e);
-                }
-                return null;
-            });
-            future.get(timeoutMillis, TimeUnit.MILLISECONDS);
-        }
-        catch (InterruptedException | ExecutionException | TimeoutException e)
-        {
-            throw new RuntimeException(e);
-        }
-    }
-
 
     private static WorldServer createWorldServer(WorldCreator creator) throws StageCreateFailedException
     {
@@ -183,7 +122,7 @@ public class PatchedStageWorldCreator implements StageWorldCreator
                 nmsChunkGenerator,
                 /* isDebug: */ false,
                 normalizedSeed,
-                /* spawners: */ environment == World.Environment.NORMAL ? spawners : Collections.emptyList(),
+                /* spawners: */ environment == World.Environment.NORMAL ? spawners: Collections.emptyList(),
                 /* doDaylightCycle: */ true,
                 environment,
                 bukkitChunkGenerator
@@ -257,7 +196,6 @@ public class PatchedStageWorldCreator implements StageWorldCreator
         return new WorldDataServer(settings, generatorSettings, Lifecycle.stable());
     }
 
-
     private static EnumGamemode getDefaultGameMode()
     {
         CraftServer craftServer = (CraftServer) Bukkit.getServer();
@@ -299,6 +237,65 @@ public class PatchedStageWorldCreator implements StageWorldCreator
                 return WorldDimension.THE_END;
             default:
                 throw new IllegalArgumentException("Unknown environment: " + environment);
+        }
+    }
+
+    @Override
+    public World createWorld(WorldCreator creator) throws StageCreateFailedException
+    {
+        CraftServer craftServer = (CraftServer) Bukkit.getServer();
+        WorldServer worldServer = createWorldServer(creator);
+        WorldDataServer worldDataServer = worldServer.worldDataServer;
+
+        craftServer.getServer().initWorld(
+                worldServer,
+                worldDataServer,
+                worldDataServer,
+                worldDataServer.getGeneratorSettings()
+        );
+        worldServer.setSpawnFlags(
+                /* allowMonsters: */ worldServer.getGameRules().getBoolean(GameRules.DO_MOB_SPAWNING),
+                /* allowAnimals: */ worldServer.getGameRules().getBoolean(GameRules.DO_MOB_SPAWNING)
+        );
+
+        craftServer.getServer().worldServer.put(worldServer.getDimensionKey(), worldServer);
+
+        // キャンセル可能ロードを実施する。
+        // loadSpawn(worldServer, TIMEOUT);
+
+        craftServer.getPluginManager().callEvent(new WorldLoadEvent(worldServer.getWorld()));
+
+        return worldServer.getWorld();
+    }
+
+    private void loadSpawn(WorldServer worldServer, long timeoutMillis)
+    {
+        ThreadingUtil.ThrowableSupplier<Void, Exception> supplier = () -> {
+            ((CraftServer) Bukkit.getServer()).getServer().loadSpawn(
+                    worldServer.getChunkProvider().playerChunkMap.worldLoadListener,
+                    worldServer
+            );
+            return null;
+        };
+
+        try
+        {
+            CompletableFuture<Void> future = CompletableFuture.supplyAsync(() -> {
+                try
+                {
+                    supplier.get();
+                }
+                catch (Exception e)
+                {
+                    throw new RuntimeException(e);
+                }
+                return null;
+            });
+            future.get(timeoutMillis, TimeUnit.MILLISECONDS);
+        }
+        catch (InterruptedException | ExecutionException | TimeoutException e)
+        {
+            throw new RuntimeException(e);
         }
     }
 

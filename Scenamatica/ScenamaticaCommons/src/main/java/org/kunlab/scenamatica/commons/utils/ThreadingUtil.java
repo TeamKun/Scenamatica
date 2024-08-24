@@ -28,7 +28,6 @@ public class ThreadingUtil
             throw new IllegalStateException("ThreadingUtil has not been initialized.");
     }
 
-
     @SneakyThrows({BrokenBarrierException.class, InterruptedException.class})
     public static void waitFor(Runnable runnable)
     {

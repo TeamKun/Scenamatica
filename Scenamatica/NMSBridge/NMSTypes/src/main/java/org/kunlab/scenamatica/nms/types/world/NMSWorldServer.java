@@ -24,6 +24,7 @@ public interface NMSWorldServer extends NMSWrapped
 
     /**
      * チャンクプロバイダを取得します。
+     *
      * @return チャンクプロバイダ
      */
     @NotNull
@@ -31,6 +32,7 @@ public interface NMSWorldServer extends NMSWrapped
 
     /**
      * エンティティマネージャを取得します。
+     *
      * @return エンティティマネージャ
      */
     @NotNull

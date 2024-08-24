@@ -42,7 +42,7 @@ import org.kunlab.scenamatica.bookkeeper.enums.AdmonitionType;
                         type = ItemStackStructure[].class,
                         admonitions = {
                                 @Admonition(
-                                        type= AdmonitionType.DANGER,
+                                        type = AdmonitionType.DANGER,
                                         content = "このプロパティの要素は, 必ず 4 つでなければいけません。\n" +
                                                 "空を指定する場合は `null` で補完してください。\n" +
                                                 "\n" +

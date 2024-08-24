@@ -10,7 +10,6 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.kunlab.scenamatica.nms.types.NMSMinecraftServer;
-import org.kunlab.scenamatica.nms.types.world.NMSWorldServer;
 import org.kunlab.scenamatica.nms.types.block.NMSBlockPosition;
 import org.kunlab.scenamatica.nms.types.entity.NMSEntity;
 import org.kunlab.scenamatica.nms.types.entity.NMSEntityHuman;
@@ -18,6 +17,7 @@ import org.kunlab.scenamatica.nms.types.entity.NMSEntityItem;
 import org.kunlab.scenamatica.nms.types.entity.NMSEntityLiving;
 import org.kunlab.scenamatica.nms.types.entity.NMSEntityPlayer;
 import org.kunlab.scenamatica.nms.types.item.NMSItemStack;
+import org.kunlab.scenamatica.nms.types.world.NMSWorldServer;
 
 /**
  * NMS にアクセスするためのラッパーを提供します。

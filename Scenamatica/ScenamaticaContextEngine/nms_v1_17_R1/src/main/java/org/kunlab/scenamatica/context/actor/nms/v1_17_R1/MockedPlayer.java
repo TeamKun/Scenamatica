@@ -169,7 +169,7 @@ class MockedPlayer extends EntityPlayer implements Actor
             default:
                 throw new IllegalArgumentException("Unknown NMSEntityUseAction: " + type.name());
         }
-        
+
         this.b.a(packet);
     }
 

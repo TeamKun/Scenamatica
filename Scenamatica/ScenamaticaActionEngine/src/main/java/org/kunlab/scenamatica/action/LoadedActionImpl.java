@@ -7,8 +7,8 @@ import org.kunlab.scenamatica.commons.utils.ActionMetaUtils;
 import org.kunlab.scenamatica.enums.MinecraftVersion;
 import org.kunlab.scenamatica.interfaces.action.LoadedAction;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
-import org.kunlab.scenamatica.interfaces.action.types.Requireable;
 import org.kunlab.scenamatica.interfaces.action.types.Expectable;
+import org.kunlab.scenamatica.interfaces.action.types.Requireable;
 
 @Value
 public class LoadedActionImpl<T extends org.kunlab.scenamatica.interfaces.action.Action> implements LoadedAction<T>

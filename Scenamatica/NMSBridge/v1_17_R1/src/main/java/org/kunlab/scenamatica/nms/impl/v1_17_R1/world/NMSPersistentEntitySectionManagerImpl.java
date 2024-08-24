@@ -4,7 +4,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.entity.EntityAccess;
 import net.minecraft.world.level.entity.PersistentEntitySectionManager;
 import org.bukkit.craftbukkit.v1_17_R1.entity.CraftEntity;
-import org.kunlab.scenamatica.nms.exceptions.UnsupportedNMSOperationException;
 import org.kunlab.scenamatica.nms.types.world.NMSPersistentEntitySectionManager;
 
 import java.lang.reflect.Method;
@@ -30,7 +29,6 @@ public class NMSPersistentEntitySectionManagerImpl<E extends org.bukkit.entity.E
             throw new IllegalStateException(e);
         }
     }
-
 
     private final PersistentEntitySectionManager<Entity> nmsMgr;
 

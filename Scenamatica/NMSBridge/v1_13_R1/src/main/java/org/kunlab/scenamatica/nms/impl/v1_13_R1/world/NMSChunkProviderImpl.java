@@ -4,8 +4,8 @@ import net.minecraft.server.v1_13_R1.ChunkProviderServer;
 import net.minecraft.server.v1_13_R1.IChunkProvider;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.nms.exceptions.UnsupportedNMSOperationException;
-import org.kunlab.scenamatica.nms.types.world.NMSChunkProvider;
 import org.kunlab.scenamatica.nms.types.entity.NMSEntity;
+import org.kunlab.scenamatica.nms.types.world.NMSChunkProvider;
 
 public class NMSChunkProviderImpl implements NMSChunkProvider
 {

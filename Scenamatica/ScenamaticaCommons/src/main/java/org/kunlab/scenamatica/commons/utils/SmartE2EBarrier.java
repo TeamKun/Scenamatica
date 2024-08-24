@@ -25,7 +25,8 @@ public class SmartE2EBarrier
     public void await(long timeoutMillis) throws InterruptedException
     {
         this.lock.lock();
-        try {
+        try
+        {
             if (this.isReleased)
                 return;
 

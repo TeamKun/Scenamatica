@@ -4,15 +4,13 @@ import lombok.Value;
 import net.kunmc.lab.peyangpaperutils.versioning.Version;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.kunlab.scenamatica.bookkeeper.annotations.TypeDoc;
-import org.kunlab.scenamatica.bookkeeper.annotations.TypeProperty;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.enums.ScenarioOrder;
 import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.VersionRange;
-import org.kunlab.scenamatica.interfaces.structures.scenario.ActionStructure;
 import org.kunlab.scenamatica.interfaces.structures.context.ContextStructure;
+import org.kunlab.scenamatica.interfaces.structures.scenario.ActionStructure;
 import org.kunlab.scenamatica.interfaces.structures.scenario.ScenarioStructure;
 import org.kunlab.scenamatica.interfaces.structures.trigger.TriggerStructure;
 

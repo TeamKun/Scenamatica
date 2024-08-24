@@ -181,7 +181,7 @@ class MockedPlayer extends ServerPlayer implements Actor
             default:
                 throw new IllegalArgumentException("Unknown NMSEntityUseAction: " + type.name());
         }
-        
+
         this.connection.handleInteract(packet);
     }
 

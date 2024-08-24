@@ -107,7 +107,7 @@ public class PlayerBucketFillAction extends AbstractPlayerBucketAction
     {
         return new PlayerBucketFillEvent(who, blockClicked, blockFace, bucket, itemInHand, hand);
     }
-    
+
     @Override
     public List<Class<? extends Event>> getAttachingEvents()
     {

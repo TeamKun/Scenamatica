@@ -6,8 +6,6 @@ import org.bukkit.block.Biome;
 import org.junit.jupiter.api.Test;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.misc.BlockStructure;
 import org.kunlab.scenamatica.structures.minecraft.StructureSerializerMock;
-import org.kunlab.scenamatica.structures.minecraft.misc.BlockStructureImpl;
-import org.kunlab.scenamatica.structures.minecraft.misc.LocationStructureImpl;
 import org.kunlab.scenamatica.structures.minecraft.utils.MapTestUtil;
 
 import java.util.Collections;

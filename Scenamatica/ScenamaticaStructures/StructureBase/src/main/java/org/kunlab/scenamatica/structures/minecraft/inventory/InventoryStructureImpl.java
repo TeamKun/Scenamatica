@@ -139,6 +139,7 @@ public class InventoryStructureImpl implements InventoryStructure
 
         return true;
     }
+
     @Override
     public void applyTo(@NotNull Inventory inventory)
     {

@@ -12,7 +12,8 @@ import org.kunlab.scenamatica.interfaces.scenariofile.Structure;
 
 /**
  * Location のための Structure です。
- */@TypeDoc(
+ */
+@TypeDoc(
         name = "Location",
         description = "オブジェクトの位置情報を格納します。",
         mappingOf = Location.class,
@@ -114,6 +115,7 @@ public interface LocationStructure extends Structure, Mapped<Location>, Creatabl
 
     /**
      * ワールドを動的に指定して Location を作成します。
+     *
      * @param world ワールド
      * @return Location
      */

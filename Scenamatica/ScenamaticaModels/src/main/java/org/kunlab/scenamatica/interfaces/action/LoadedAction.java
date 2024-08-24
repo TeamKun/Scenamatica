@@ -2,8 +2,8 @@ package org.kunlab.scenamatica.interfaces.action;
 
 import org.bukkit.plugin.Plugin;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
-import org.kunlab.scenamatica.interfaces.action.types.Requireable;
 import org.kunlab.scenamatica.interfaces.action.types.Expectable;
+import org.kunlab.scenamatica.interfaces.action.types.Requireable;
 
 /**
  * このインターフェースは、アクションのロードされたインスタンスを管理します。

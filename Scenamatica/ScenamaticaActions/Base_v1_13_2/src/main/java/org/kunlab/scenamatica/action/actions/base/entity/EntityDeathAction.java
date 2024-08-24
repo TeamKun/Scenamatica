@@ -58,7 +58,7 @@ public class EntityDeathAction extends AbstractGeneralEntityAction
                 return drops;
             })
     );
-    
+
     @InputDoc(
             name = "dropExp",
             description = "死亡時にドロップする経験値です。",
@@ -70,7 +70,7 @@ public class EntityDeathAction extends AbstractGeneralEntityAction
             "dropExp",
             Integer.class
     );
-    
+
     @InputDoc(
             name = "reviveHealth",
             description = "復活時の体力です。",
@@ -82,7 +82,7 @@ public class EntityDeathAction extends AbstractGeneralEntityAction
             "reviveHealth",
             Double.class
     );
-    
+
     @InputDoc(
             name = "playDeathSound",
             description = "死亡時にサウンドを再生するかどうかです。",
@@ -93,7 +93,7 @@ public class EntityDeathAction extends AbstractGeneralEntityAction
             "playDeathSound",
             Boolean.class
     );
-    
+
     @InputDoc(
             name = "sound",
             description = "死亡時に再生するサウンドです。",
@@ -104,7 +104,7 @@ public class EntityDeathAction extends AbstractGeneralEntityAction
             "sound",
             Sound.class
     );
-    
+
     @InputDoc(
             name = "soundCategory",
             description = "死亡時に再生するサウンドのカテゴリです。",
@@ -189,7 +189,7 @@ public class EntityDeathAction extends AbstractGeneralEntityAction
     }
 
     // TODO: require() 実装
-    
+
     @Override
     public List<Class<? extends Event>> getAttachingEvents()
     {

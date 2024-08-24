@@ -29,8 +29,8 @@ public interface NMSEntityHuman extends NMSEntityLiving
     /**
      * アイテムをドロップします。
      *
-     * @param stack        ドロップするアイテム
-     * @param throwRandomly      すべてドロップするかどうか
+     * @param stack           ドロップするアイテム
+     * @param throwRandomly   すべてドロップするかどうか
      * @param retainOwnership ユニークIDをコピーするかどうか
      * @return ドロップしたアイテム
      */

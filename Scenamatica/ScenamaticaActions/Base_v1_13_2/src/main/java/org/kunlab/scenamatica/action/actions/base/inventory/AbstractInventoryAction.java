@@ -15,7 +15,6 @@ import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.inventory.InventoryStructure;
 
-
 @OutputDocs({
         @OutputDoc(
                 name = AbstractInventoryAction.OUT_KEY_INVENTORY,

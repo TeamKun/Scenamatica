@@ -30,7 +30,6 @@ public class NMSPersistentEntitySectionManagerImpl<E extends org.bukkit.entity.E
         }
     }
 
-
     private final PersistentEntitySectionManager<Entity> nmsMgr;
 
     public NMSPersistentEntitySectionManagerImpl(PersistentEntitySectionManager<Entity> mgr)

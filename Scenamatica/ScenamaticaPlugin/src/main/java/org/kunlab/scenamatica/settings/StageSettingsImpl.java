@@ -1,11 +1,8 @@
 package org.kunlab.scenamatica.settings;
 
 import lombok.Builder;
-import lombok.Singular;
 import lombok.Value;
 import org.bukkit.configuration.file.FileConfiguration;
-
-import java.util.List;
 
 @Value
 @Builder

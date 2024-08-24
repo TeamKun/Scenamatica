@@ -123,7 +123,6 @@ class MockedNetworkManager extends NetworkManager
         return this.alive;
     }
 
-
     @Override
     public void stopReading()
     {

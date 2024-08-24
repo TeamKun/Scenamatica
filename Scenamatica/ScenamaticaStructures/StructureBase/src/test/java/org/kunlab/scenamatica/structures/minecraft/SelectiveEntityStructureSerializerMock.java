@@ -135,12 +135,12 @@ class SelectiveEntityStructureSerializerMock
     }
 
     private static <E extends Entity, S extends EntityStructure> void registerStructure(@NotNull EntityType entityType,
-                                                                                                 @NotNull Class<S> clazz,
-                                                                                                 @NotNull Class<? extends E> entityClazz,
-                                                                                                 @NotNull BiFunction<S, StructureSerializer, Map<String, Object>> serializer,
-                                                                                                 @NotNull BiFunction<Map<String, Object>, StructureSerializer, S> deserializer,
-                                                                                                 @NotNull BiConsumer<Map<String, Object>, StructureSerializer> validator,
-                                                                                                 @NotNull BiFunction<E, StructureSerializer, S> constructor)
+                                                                                        @NotNull Class<S> clazz,
+                                                                                        @NotNull Class<? extends E> entityClazz,
+                                                                                        @NotNull BiFunction<S, StructureSerializer, Map<String, Object>> serializer,
+                                                                                        @NotNull BiFunction<Map<String, Object>, StructureSerializer, S> deserializer,
+                                                                                        @NotNull BiConsumer<Map<String, Object>, StructureSerializer> validator,
+                                                                                        @NotNull BiFunction<E, StructureSerializer, S> constructor)
     {
         if (entityType.getEntityClass() != entityClazz)
             throw new IllegalArgumentException("Entity class mismatch: " + entityType + " -?-> " + entityClazz);
@@ -158,8 +158,8 @@ class SelectiveEntityStructureSerializerMock
     }
 
     public static <T extends EntityStructure> T deserialize(@NotNull EntityType entityType,
-                                                                     @NotNull Map<String, Object> data,
-                                                                     @NotNull StructureSerializer serializer)
+                                                            @NotNull Map<String, Object> data,
+                                                            @NotNull StructureSerializer serializer)
     {
         // noinspection unchecked
         EntityStructureEntry<?, T> entry = (EntityStructureEntry<?, T>) ENTITY_STRUCTURES.get(entityType);

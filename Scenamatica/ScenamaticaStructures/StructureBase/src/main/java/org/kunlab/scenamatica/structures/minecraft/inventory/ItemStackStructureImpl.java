@@ -236,7 +236,7 @@ public class ItemStackStructureImpl implements ItemStackStructure
     {
         if (name.startsWith("generic."))
             name = name.substring("generic.".length());
-        
+
         switch (name)
         {
             case "max_health":

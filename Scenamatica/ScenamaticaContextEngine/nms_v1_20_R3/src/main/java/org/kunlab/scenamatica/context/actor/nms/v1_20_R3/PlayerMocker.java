@@ -9,7 +9,6 @@ import net.minecraft.server.level.ClientInformation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.CommonListenerCookie;
-import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.server.players.PlayerList;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.player.ChatVisiblity;
@@ -74,7 +73,6 @@ public class PlayerMocker extends PlayerMockerBase
         ServerGamePacketListener playerConnection = entityPlayer.connection;
         playerConnection.handleClientInformation(new ServerboundClientInformationPacket(createClientInformation()));
     }
-
 
     @Override
     protected Actor createActorInstance(@NotNull World world, @NotNull PlayerStructure structure)

@@ -57,6 +57,46 @@ public class StageManagerImpl implements StageManager
         );
     }
 
+    private static String getServerNMSVersion()
+    {
+        return Bukkit.getServer().getClass().getPackage().getName().substring(23);
+    }
+
+    private static WorldCreator cretateWorldCreator(StageStructure structure)
+    {
+        WorldCreator creator = new WorldCreator("stage_" + UUID.randomUUID().toString().substring(0, 8));
+        if (structure.getEnvironment() != null)
+            creator.environment(structure.getEnvironment());
+        else
+            creator.environment(World.Environment.NORMAL);
+        if (structure.getSeed() != null)
+            creator.seed(structure.getSeed());
+        creator.type(structure.getType());
+        creator.generateStructures(structure.isGenerateStructures());
+
+        return creator;
+    }
+
+    private static void forceUnloadWorld(@NotNull World world)
+    {
+        NMSWorldServer nmsWorldServer = NMSProvider.getProvider().wrap(world);
+        NMSChunkProvider chunkProvider = nmsWorldServer.getChunkProvider();
+
+        /*
+        // リファレンスをすべて削除する => エンティティがボトルネック
+        NMSProvider.tryDoNMS(() -> {
+            List<Entity> entities = new ArrayList<>(world.getEntities());
+            for (Entity entity : entities)
+                chunkProvider.removeEntity(NMSProvider.getProvider().wrap(entity));
+        });*/
+
+        chunkProvider.purgeUnload();
+        Bukkit.unloadWorld(world, false);
+
+        System.gc();
+
+    }
+
     private StageWorldCreator getWorldCreator()
     {
         if (!this.registry.getEnvironment().getStageSettings().usePatchedWorldGeneration())
@@ -72,27 +112,6 @@ public class StageManagerImpl implements StageManager
             default:
                 return new DefaultStageWorldCreator();
         }
-    }
-
-    private static String getServerNMSVersion()
-    {
-        return Bukkit.getServer().getClass().getPackage().getName().substring(23);
-    }
-
-
-    private static WorldCreator cretateWorldCreator(StageStructure structure)
-    {
-        WorldCreator creator = new WorldCreator("stage_" + UUID.randomUUID().toString().substring(0, 8));
-        if (structure.getEnvironment() != null)
-            creator.environment(structure.getEnvironment());
-        else
-            creator.environment(World.Environment.NORMAL);
-        if (structure.getSeed() != null)
-            creator.seed(structure.getSeed());
-        creator.type(structure.getType());
-        creator.generateStructures(structure.isGenerateStructures());
-
-        return creator;
     }
 
     private World generateWorld(WorldCreator creator, long timeoutMillis)
@@ -207,26 +226,6 @@ public class StageManagerImpl implements StageManager
         this.stages.remove(stage);
     }
 
-    private static void forceUnloadWorld(@NotNull World world)
-    {
-        NMSWorldServer nmsWorldServer = NMSProvider.getProvider().wrap(world);
-        NMSChunkProvider chunkProvider = nmsWorldServer.getChunkProvider();
-
-        /*
-        // リファレンスをすべて削除する => エンティティがボトルネック
-        NMSProvider.tryDoNMS(() -> {
-            List<Entity> entities = new ArrayList<>(world.getEntities());
-            for (Entity entity : entities)
-                chunkProvider.removeEntity(NMSProvider.getProvider().wrap(entity));
-        });*/
-
-        chunkProvider.purgeUnload();
-        Bukkit.unloadWorld(world, false);
-
-        System.gc();
-
-    }
-
     @Override
     public void shutdown()
     {
@@ -275,7 +274,7 @@ public class StageManagerImpl implements StageManager
 
         private void tryDeleteOneWorld(Path path)
         {
-            try(Stream<Path> paths = Files.walk(path))
+            try (Stream<Path> paths = Files.walk(path))
             {
                 paths.sorted(Comparator.reverseOrder())
                         .map(Path::toFile)

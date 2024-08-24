@@ -48,7 +48,7 @@ import java.util.List;
                 )
         }
 )
-@Category(inherit= AbstractEntityAction.class)
+@Category(inherit = AbstractEntityAction.class)
 public class EntitySpawnAction<E extends Entity> extends AbstractAction
         implements Executable, Expectable
 {

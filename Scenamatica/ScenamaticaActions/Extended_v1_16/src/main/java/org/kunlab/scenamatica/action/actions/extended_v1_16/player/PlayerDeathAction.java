@@ -9,8 +9,8 @@ import org.kunlab.scenamatica.bookkeeper.annotations.OutputDocs;
 import org.kunlab.scenamatica.enums.MinecraftVersion;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
-import org.kunlab.scenamatica.interfaces.action.types.Requireable;
 import org.kunlab.scenamatica.interfaces.action.types.Expectable;
+import org.kunlab.scenamatica.interfaces.action.types.Requireable;
 
 @Action(value = "player_death", supportsSince = MinecraftVersion.V1_16)
 @OutputDocs({

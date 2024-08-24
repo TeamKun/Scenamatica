@@ -4,7 +4,6 @@ import net.minecraft.world.EnumHand;
 import net.minecraft.world.entity.EnumMoveType;
 import org.junit.jupiter.api.Test;
 import org.kunlab.scenamatica.nms.enums.NMSHand;
-import org.kunlab.scenamatica.nms.enums.entity.NMSEntityUseAction;
 import org.kunlab.scenamatica.nms.enums.entity.NMSMoveType;
 import org.kunlab.scenamatica.nms.impl.v1_17_R1.TypeSupportImpl;
 

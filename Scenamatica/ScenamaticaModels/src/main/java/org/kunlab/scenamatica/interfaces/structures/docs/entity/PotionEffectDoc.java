@@ -1,7 +1,6 @@
 package org.kunlab.scenamatica.interfaces.structures.docs.entity;
 
 import org.bukkit.Material;
-import org.bukkit.potion.PotionEffectType;
 import org.kunlab.scenamatica.bookkeeper.annotations.Category;
 import org.kunlab.scenamatica.bookkeeper.annotations.TypeDoc;
 import org.kunlab.scenamatica.bookkeeper.annotations.TypeProperty;

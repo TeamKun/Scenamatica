@@ -90,6 +90,16 @@ public class StructureSerializerImpl implements StructureSerializer
                 || isEntityRelatedStructure(value, clazz);
     }
 
+    private static boolean canExtend(@Nullable MinecraftVersion targetVersionSince, @Nullable MinecraftVersion targetVersionUntil)
+    {
+        return MinecraftVersion.current().isInRange(targetVersionSince, targetVersionUntil);
+    }
+
+    private static boolean canExtend(@Nullable MinecraftVersion targetVersionSince)
+    {
+        return canExtend(targetVersionSince, null);
+    }
+
     @Override
     public @NotNull <T extends Structure> Map<String, Object> serialize(@NotNull T structure, @Nullable Class<T> clazz)
     {
@@ -183,6 +193,8 @@ public class StructureSerializerImpl implements StructureSerializer
                 .orElseThrow(() -> new IllegalArgumentException("Unknown structure class: " + clazz));
     }
 
+    // <editor-fold desc="すべての Structure を登録するメソッド">
+
     private <T extends Structure> StructureEntry<T> guessEntry(@NotNull T value)
     {
         // noinspection unchecked
@@ -207,8 +219,6 @@ public class StructureSerializerImpl implements StructureSerializer
                 .filter(applicator)
                 .findFirst().orElseThrow(() -> new IllegalArgumentException("Unknown structure class: " + value.getClass()));
     }
-
-    // <editor-fold desc="すべての Structure を登録するメソッド">
 
     private void registerStructures()
     {
@@ -346,6 +356,11 @@ public class StructureSerializerImpl implements StructureSerializer
         );
     }
 
+    // </editor-fold>
+
+
+    // <editor-fold desc="Structure 登録用のメソッド"
+
     private void registerTriggerStructures()
     {
         this.registerStructure(
@@ -365,11 +380,6 @@ public class StructureSerializerImpl implements StructureSerializer
                 ProjectileSourceSerializeHelper::validate
         );
     }
-
-    // </editor-fold>
-
-
-    // <editor-fold desc="Structure 登録用のメソッド"
 
     private <T extends Structure> void registerStructure(@NotNull Class<T> clazz,
                                                          @NotNull BiFunction<T, StructureSerializer, Map<String, Object>> serializer,
@@ -412,6 +422,8 @@ public class StructureSerializerImpl implements StructureSerializer
         this.structureEntries.add(new StructureEntry<>(clazz, (v, t) -> serializer.apply(v), (v, t) -> deserializer.apply(v), validator));
     }
 
+    /* ------------------------------------ */
+
     private <T extends Structure> void registerStructure(@NotNull Class<T> clazz,
                                                          @NotNull Function<? super T, ? extends Map<String, Object>> serializer,
                                                          @NotNull Function<? super Map<String, Object>, ? extends T> deserializer,
@@ -428,8 +440,6 @@ public class StructureSerializerImpl implements StructureSerializer
     {
         this.structureEntries.add(new StructureEntry<>(clazz, serializer, (v, t) -> deserializer.apply(v), (v, t) -> validator.accept(v)));
     }
-
-    /* ------------------------------------ */
 
     private <V, T extends Mapped & Structure> void registerStructure(@NotNull Class<T> clazz,
                                                                      @NotNull BiFunction<T, StructureSerializer, Map<String, Object>> serializer,
@@ -481,6 +491,8 @@ public class StructureSerializerImpl implements StructureSerializer
         this.structureEntries.add(new MappedStructureEntry<>(clazz, (v, t) -> serializer.apply(v), (v, t) -> deserializer.apply(v), validator, constructor, applicator));
     }
 
+    /* ------------------------------------ */
+
     private <V, T extends Mapped & Structure> void registerStructure(@NotNull Class<T> clazz,
                                                                      @NotNull Function<? super T, ? extends Map<String, Object>> serializer,
                                                                      @NotNull Function<? super Map<String, Object>, ? extends T> deserializer,
@@ -499,18 +511,6 @@ public class StructureSerializerImpl implements StructureSerializer
                                                                      @NotNull Predicate<?> applicator)
     {
         this.structureEntries.add(new MappedStructureEntry<>(clazz, serializer, (v, t) -> deserializer.apply(v), (v, t) -> validator.accept(v), constructor, applicator));
-    }
-
-    /* ------------------------------------ */
-
-    private static boolean canExtend(@Nullable MinecraftVersion targetVersionSince, @Nullable MinecraftVersion targetVersionUntil)
-    {
-        return MinecraftVersion.current().isInRange(targetVersionSince, targetVersionUntil);
-    }
-
-    private static boolean canExtend(@Nullable MinecraftVersion targetVersionSince)
-    {
-        return canExtend(targetVersionSince, null);
     }
 
     private void removeStructureFor(@NotNull Class<?> structureClazz)
@@ -626,7 +626,6 @@ public class StructureSerializerImpl implements StructureSerializer
         this.registerStructure(clazz, serializer, deserializer, validator);
     }
 
-
     private <V, T extends Mapped & Structure> void extendStructure(@NotNull Class<T> clazz,
                                                                    @NotNull MinecraftVersion mcVersionSince,
                                                                    @NotNull MinecraftVersion mcVersionUntil,
@@ -738,7 +737,6 @@ public class StructureSerializerImpl implements StructureSerializer
         this.removeStructureFor(clazz);
         this.registerStructure(clazz, serializer, deserializer, validator, constructor, applicator);
     }
-
 
     private <T extends Structure> void extendStructure(@NotNull Class<T> clazz,
                                                        @NotNull MinecraftVersion mcVersionSince,

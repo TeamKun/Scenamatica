@@ -77,7 +77,8 @@ public class NMSItemStackImpl implements NMSItemStack
         this.nmsItemStack.damage(
                 damage,
                 (EntityLiving) owner.getNMSRaw(),
-                ignored -> {}
+                ignored -> {
+                }
         );
     }
 

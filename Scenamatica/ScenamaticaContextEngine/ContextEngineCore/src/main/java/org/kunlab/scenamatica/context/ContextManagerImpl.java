@@ -221,7 +221,7 @@ public class ContextManagerImpl implements ContextManager
         if (this.creatingContext.containsKey(testID))
             throw new IllegalStateException("Context is already being created.");
 
-        CompletableFuture<Context> future =CompletableFuture.supplyAsync(() -> {
+        CompletableFuture<Context> future = CompletableFuture.supplyAsync(() -> {
             try
             {
                 return this.prepareContext0(scenario, testID);
@@ -262,7 +262,7 @@ public class ContextManagerImpl implements ContextManager
         }
     }
 
-    private Context prepareContext0(ScenarioFileStructure scenario,  UUID testID) throws StageAlreadyDestroyedException,
+    private Context prepareContext0(ScenarioFileStructure scenario, UUID testID) throws StageAlreadyDestroyedException,
             StageCreateFailedException, ActorCreationException, EntityCreationException
     {
         this.logIfVerbose(scenario, "context.creating", testID);

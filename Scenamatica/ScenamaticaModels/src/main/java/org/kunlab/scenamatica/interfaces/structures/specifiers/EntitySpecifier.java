@@ -4,9 +4,6 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.kunlab.scenamatica.bookkeeper.annotations.DynamicTypeDoc;
-import org.kunlab.scenamatica.bookkeeper.annotations.TypeDoc;
-import org.kunlab.scenamatica.bookkeeper.annotations.TypeProperty;
 import org.kunlab.scenamatica.interfaces.context.Context;
 import org.kunlab.scenamatica.interfaces.scenariofile.Structure;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.EntityStructure;
@@ -112,12 +109,14 @@ public interface EntitySpecifier<E extends Entity> extends Structure
 
     /**
      * UUID を持っているかどうか取得します。
+     *
      * @return UUID を持っているかどうか
      */
     boolean hasUUID();
 
     /**
      * UUID を取得します。
+     *
      * @return UUID
      */
     UUID getSelectingUUID();
