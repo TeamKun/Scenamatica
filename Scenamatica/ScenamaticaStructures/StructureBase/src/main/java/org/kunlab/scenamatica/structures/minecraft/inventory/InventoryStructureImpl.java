@@ -7,6 +7,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.inventory.InventoryStructure;
@@ -119,11 +120,13 @@ public class InventoryStructureImpl implements InventoryStructure
         return target instanceof Inventory;
     }
 
-    public boolean isAdequate(Inventory inventory, boolean strict)
+    public boolean isAdequate(@Nullable Inventory inventory, boolean strict)
     {
-        if (strict && !(this.size == null || this.size == inventory.getSize()))
+        if (inventory == null)
             return false;
 
+        if (strict && !(this.size == null || this.size == inventory.getSize()))
+            return false;
 
         for (int i = 0; i < inventory.getSize(); i++)
         {
@@ -137,7 +140,7 @@ public class InventoryStructureImpl implements InventoryStructure
         return true;
     }
     @Override
-    public void applyTo(Inventory inventory)
+    public void applyTo(@NotNull Inventory inventory)
     {
         for (Map.Entry<Integer, ItemStackStructure> entry : this.mainContents.entrySet())
         {
@@ -172,7 +175,7 @@ public class InventoryStructureImpl implements InventoryStructure
     }
 
     @Override
-    public boolean canApplyTo(Object target)
+    public boolean canApplyTo(@Nullable Object target)
     {
         return target instanceof Inventory;
     }

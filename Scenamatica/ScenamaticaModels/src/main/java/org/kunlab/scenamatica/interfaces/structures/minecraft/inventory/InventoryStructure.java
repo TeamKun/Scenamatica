@@ -59,7 +59,7 @@ import java.util.Map;
         name = "インベントリ・アイテム",
         description = "インベントリ・アイテムに関する情報を格納します。"
 )
-public interface InventoryStructure extends Structure, Mapped, Creatable
+public interface InventoryStructure extends Structure, Mapped<Inventory>, Creatable<Inventory>
 {
     String KEY_SIZE = "size";
     String KEY_TITLE = "title";
@@ -89,14 +89,4 @@ public interface InventoryStructure extends Structure, Mapped, Creatable
 
     @Override
     Inventory create();
-
-    /* @Overload */
-    void applyTo(Inventory inventory);
-    /* @Overload */
-    boolean isAdequate(Inventory inventory, boolean strict);
-    /* @Overload */
-    default boolean isAdequate(Inventory inventory)
-    {
-        return this.isAdequate(inventory, false);
-    }
 }

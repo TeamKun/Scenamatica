@@ -3,6 +3,7 @@ package org.kunlab.scenamatica.structures.minecraft.entity;
 import lombok.Value;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.DamageStructure;
 
@@ -84,21 +85,24 @@ public class DamageStructureImpl implements DamageStructure
     }
 
     @Override
-    public void applyTo(EntityDamageEvent object)
+    public void applyTo(@NotNull EntityDamageEvent event)
     {
         for (Map.Entry<EntityDamageEvent.DamageModifier, Double> entry : this.modifiers.entrySet())
-            object.setDamage(entry.getKey(), entry.getValue());
-        object.setDamage(this.damage);
+            event.setDamage(entry.getKey(), entry.getValue());
+        event.setDamage(this.damage);
     }
 
     @Override
-    public boolean isAdequate(EntityDamageEvent object, boolean ignored)
+    public boolean isAdequate(@Nullable EntityDamageEvent event, boolean ignored)
     {
+        if (event == null)
+            return false;
+
         for (Map.Entry<EntityDamageEvent.DamageModifier, Double> entry : this.modifiers.entrySet())
-            if (object.getDamage(entry.getKey()) != entry.getValue())
+            if (event.getDamage(entry.getKey()) != entry.getValue())
                 return false;
 
-        return object.getDamage() == this.damage
-                && object.getCause() == this.cause;
+        return event.getDamage() == this.damage
+                && event.getCause() == this.cause;
     }
 }

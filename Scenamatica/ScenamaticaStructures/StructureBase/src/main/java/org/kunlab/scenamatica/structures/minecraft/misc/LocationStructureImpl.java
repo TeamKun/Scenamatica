@@ -5,6 +5,7 @@ import lombok.Value;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.misc.LocationStructure;
@@ -84,7 +85,7 @@ public class LocationStructureImpl implements LocationStructure
     }
 
     @Override
-    public void applyTo(Location object)
+    public void applyTo(@NotNull Location object)
     {
         if (this.x != null)
             object.setX(this.x);
@@ -103,7 +104,7 @@ public class LocationStructureImpl implements LocationStructure
     }
 
     @Override
-    public boolean isAdequate(Location object, boolean strict)
+    public boolean isAdequate(@Nullable Location object, boolean strict)
     {
         double x = object.getX();
         double y = object.getY();

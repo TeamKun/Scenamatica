@@ -15,7 +15,6 @@ import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
-import org.kunlab.scenamatica.interfaces.scenariofile.Mapped;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.EntityStructure;
 import org.kunlab.scenamatica.interfaces.structures.specifiers.EntitySpecifier;
 
@@ -31,7 +30,7 @@ import org.kunlab.scenamatica.interfaces.structures.specifiers.EntitySpecifier;
                 type = Entity.class
         )
 })
-public abstract class AbstractEntityAction<E extends Entity, V extends EntityStructure & Mapped> extends AbstractAction
+public abstract class AbstractEntityAction<E extends Entity, V extends EntityStructure> extends AbstractAction
 {
     public static final String OUT_KEY_TARGET = "target";
     @InputDoc(

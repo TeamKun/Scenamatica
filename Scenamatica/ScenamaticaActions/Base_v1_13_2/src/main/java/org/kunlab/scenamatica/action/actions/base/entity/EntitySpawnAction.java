@@ -14,7 +14,6 @@ import org.kunlab.scenamatica.bookkeeper.annotations.Category;
 import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
 import org.kunlab.scenamatica.bookkeeper.annotations.OutputDoc;
 import org.kunlab.scenamatica.bookkeeper.enums.ActionMethod;
-import org.kunlab.scenamatica.commons.utils.EntityUtils;
 import org.kunlab.scenamatica.commons.utils.Utils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
@@ -94,7 +93,7 @@ public class EntitySpawnAction<E extends Entity> extends AbstractAction
                 spawnLoc,
                 entityClass,
                 entity -> {
-                    EntityUtils.invokeApplyTo(structure, entity);
+                    structure.applyTo(entity);
                     this.makeOutputs(ctxt, entity);
                 }
         );

@@ -8,7 +8,6 @@ import org.kunlab.scenamatica.bookkeeper.annotations.TypeProperty;
 import org.kunlab.scenamatica.bookkeeper.enums.AdmonitionType;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.entities.HumanEntityStructure;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.misc.LocationStructure;
-import org.kunlab.scenamatica.interfaces.scenariofile.Mapped;
 
 import java.net.InetAddress;
 import java.util.List;
@@ -124,7 +123,7 @@ name = "Player",
                 )
         }
 )
-public interface PlayerStructure extends HumanEntityStructure, Mapped
+public interface PlayerStructure extends HumanEntityStructure
 {
     String KEY_NAME = "name";
     String KEY_ONLINE = "online";
@@ -290,24 +289,4 @@ public interface PlayerStructure extends HumanEntityStructure, Mapped
      */
     List<String> getActivePermissions();
 
-    /* @Overload */
-    void applyTo(Player player, boolean applyLocation);
-    /* @Overload */
-    default void  applyTo(Player player)
-    {
-        this.applyTo(player, true);
-    }
-    /* @Overload */
-    boolean isAdequate(Player player, boolean isStrict);
-    /* @Overload */
-    default boolean isAdequate(Player player)
-    {
-        return this.isAdequate(player, false);
-    }
-
-    @Override
-    default boolean canApplyTo(Object target)
-    {
-        return target instanceof Player;
-    }
 }

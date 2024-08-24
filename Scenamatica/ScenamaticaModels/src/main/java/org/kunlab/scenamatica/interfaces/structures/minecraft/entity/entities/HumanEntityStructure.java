@@ -1,8 +1,6 @@
 package org.kunlab.scenamatica.interfaces.structures.minecraft.entity.entities;
 
 import org.bukkit.GameMode;
-import org.bukkit.entity.HumanEntity;
-import org.bukkit.entity.Item;
 import org.bukkit.inventory.MainHand;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -97,9 +95,4 @@ public interface HumanEntityStructure extends LivingEntityStructure
      */
     @Nullable
     Integer getFoodLevel();
-
-    /* @Overload */
-    void applyTo(HumanEntity entity, boolean applyLocation);
-    /* @Overload */
-    boolean isAdequate(HumanEntity entity, boolean isStrict);
 }

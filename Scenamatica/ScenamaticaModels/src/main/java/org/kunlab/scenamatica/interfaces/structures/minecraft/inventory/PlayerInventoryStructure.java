@@ -1,14 +1,11 @@
 package org.kunlab.scenamatica.interfaces.structures.minecraft.inventory;
 
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.PlayerInventory;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.bookkeeper.annotations.Admonition;
 import org.kunlab.scenamatica.bookkeeper.annotations.TypeDoc;
 import org.kunlab.scenamatica.bookkeeper.annotations.TypeProperty;
 import org.kunlab.scenamatica.bookkeeper.enums.AdmonitionType;
-import org.kunlab.scenamatica.interfaces.scenariofile.Creatable;
-import org.kunlab.scenamatica.interfaces.scenariofile.Mapped;
 
 /**
  * プレイヤのインベントリの定義を表すインターフェースです。
@@ -55,7 +52,7 @@ import org.kunlab.scenamatica.interfaces.scenariofile.Mapped;
                 )
         }
 )
-public interface PlayerInventoryStructure extends InventoryStructure, Mapped, Creatable
+public interface PlayerInventoryStructure extends InventoryStructure
 {
     String KEY_MAIN_INVENTORY = "main";
     String KEY_MAIN_HAND = "mainHandItem";
@@ -92,11 +89,6 @@ public interface PlayerInventoryStructure extends InventoryStructure, Mapped, Cr
      */
     @Nullable
     ItemStackStructure[] getArmorContents();
-
-    /* @Overload */
-    void applyTo(PlayerInventory inventory);
-    /* @Overload */
-    boolean isAdequate(PlayerInventory inventory, boolean isStrict);
 
     @Override
     PlayerInventory create();

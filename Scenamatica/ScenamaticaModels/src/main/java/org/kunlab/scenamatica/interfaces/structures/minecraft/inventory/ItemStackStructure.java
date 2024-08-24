@@ -95,7 +95,7 @@ import java.util.Map;
         }
 )
 @Category(inherit = InventoryStructure.class)
-public interface ItemStackStructure extends Structure, Mapped, Creatable
+public interface ItemStackStructure extends Structure, Mapped<ItemStack>, Creatable<ItemStack>
 {
     String KEY_TYPE = "type";
     String KEY_AMOUNT = "amount";
@@ -207,15 +207,6 @@ public interface ItemStackStructure extends Structure, Mapped, Creatable
      * @return ダメージ値
      */
     Integer getDamage();
-
-    /* @Overload */
-    void applyTo(ItemStack itemStack);
-    /* @Overload */
-    boolean isAdequate(ItemStack itemStack, boolean strict);
-    default boolean isAdequate(ItemStack itemStack)
-    {
-        return this.isAdequate(itemStack, false);
-    }
 
     @Override
     ItemStack create();

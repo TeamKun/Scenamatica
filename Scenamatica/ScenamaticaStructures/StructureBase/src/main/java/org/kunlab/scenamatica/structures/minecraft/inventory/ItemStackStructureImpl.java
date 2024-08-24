@@ -14,6 +14,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.commons.utils.NamespaceUtils;
 import org.kunlab.scenamatica.commons.utils.Utils;
@@ -550,7 +551,7 @@ public class ItemStackStructureImpl implements ItemStackStructure
     }
 
     @Override
-    public void applyTo(ItemStack stack)
+    public void applyTo(@NotNull ItemStack stack)
     {
         ItemMeta meta = stack.getItemMeta();
 
@@ -582,13 +583,13 @@ public class ItemStackStructureImpl implements ItemStackStructure
     }
 
     @Override
-    public boolean canApplyTo(Object target)
+    public boolean canApplyTo(@Nullable Object target)
     {
         return target instanceof ItemStack;
     }
 
     @Override
-    public boolean isAdequate(ItemStack stack, boolean strict)
+    public boolean isAdequate(@Nullable ItemStack stack, boolean strict)
     {
         if (this.type != null)
             if (stack.getType() != this.type)

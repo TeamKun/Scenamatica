@@ -5,17 +5,14 @@ import lombok.Value;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Item;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
-import org.kunlab.scenamatica.commons.utils.UUIDUtil;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.EntityStructure;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.entities.EntityItemStructure;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.inventory.ItemStackStructure;
 import org.kunlab.scenamatica.interfaces.structures.specifiers.EntitySpecifier;
-import org.kunlab.scenamatica.interfaces.structures.specifiers.PlayerSpecifier;
 import org.kunlab.scenamatica.structures.minecraft.entity.EntityStructureImpl;
 import org.kunlab.scenamatica.structures.minecraft.inventory.ItemStackStructureImpl;
 import org.kunlab.scenamatica.structures.specifiers.EntitySpecifierImpl;
@@ -145,20 +142,23 @@ public class EntityItemStructureImpl extends EntityStructureImpl implements Enti
     }
 
     @Override
-    public void applyTo(Item entity)
+    public void applyTo(@NotNull Entity entity)
     {
-        super.applyTo(entity, true);
+        super.applyTo(entity);
+        if (!(entity instanceof Item))
+            return;
+        Item itemEntity = (Item) entity;
 
         if (this.pickupDelay != null)
-            entity.setPickupDelay(this.pickupDelay);
+            itemEntity.setPickupDelay(this.pickupDelay);
         if (this.owner.canProvideTarget())
-            setUUIDByEntitySpecifier(this.owner, entity::setOwner);
+            setUUIDByEntitySpecifier(this.owner, itemEntity::setOwner);
         if (this.thrower.canProvideTarget())
-            setUUIDByEntitySpecifier(this.thrower, entity::setThrower);
+            setUUIDByEntitySpecifier(this.thrower, itemEntity::setThrower);
         if (this.canMobPickup != null)
-            entity.setCanMobPickup(this.canMobPickup);
+            itemEntity.setCanMobPickup(this.canMobPickup);
         if (this.willAge != null)
-            setWillAge(entity, this.willAge);
+            setWillAge(itemEntity, this.willAge);
     }
 
     private static void setUUIDByEntitySpecifier(@NotNull EntitySpecifier<?> specifier, @NotNull Consumer<UUID> setter)
@@ -172,15 +172,18 @@ public class EntityItemStructureImpl extends EntityStructureImpl implements Enti
     }
 
     @Override
-    public boolean isAdequate(Item object, boolean strict)
+    public boolean isAdequate(@Nullable Entity entity, boolean strict)
     {
-        return super.isAdequate(object, strict)
-                && (this.pickupDelay == null || this.pickupDelay.equals(object.getPickupDelay()))
-                && checkMatchedEntityByUUID(this.owner, object.getOwner())
-                && checkMatchedEntityByUUID(this.thrower, object.getThrower())
-                && (this.canMobPickup == null || this.canMobPickup.equals(object.canMobPickup()))
-                && (this.willAge == null || this.willAge.equals(willAge(object)))
-                && this.itemStack.isAdequate(object.getItemStack(), strict);
+        if (!(super.isAdequate(entity, strict) && entity instanceof Item))
+            return false;
+        Item itemEntity = (Item) entity;
+
+        return (this.pickupDelay == null || this.pickupDelay.equals(itemEntity.getPickupDelay()))
+                && checkMatchedEntityByUUID(this.owner, itemEntity.getOwner())
+                && checkMatchedEntityByUUID(this.thrower, itemEntity.getThrower())
+                && (this.canMobPickup == null || this.canMobPickup.equals(itemEntity.canMobPickup()))
+                && (this.willAge == null || this.willAge.equals(willAge(itemEntity)))
+                && this.itemStack.isAdequate(itemEntity.getItemStack(), strict);
     }
 
     private static boolean checkMatchedEntityByUUID(@NotNull EntitySpecifier<?> entity, UUID uuid)

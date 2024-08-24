@@ -1,11 +1,11 @@
 package org.kunlab.scenamatica.interfaces.scenariofile;
 
-public interface Creatable extends Mapped
+public interface Creatable<T>
 {
     /**
      * この構造をもとに新しいオブジェクトを生成します。
      *
      * @return 新しいオブジェクト
      */
-    Object create();
+    T create();
 }
