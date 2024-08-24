@@ -8,7 +8,6 @@ import org.bukkit.entity.EnderPearl;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Fireball;
-import org.bukkit.entity.Firework;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.LlamaSpit;
@@ -25,7 +24,6 @@ import org.bukkit.entity.WitherSkull;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.commons.utils.Utils;
-import org.kunlab.scenamatica.interfaces.scenariofile.Mapped;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.EntityStructure;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.PlayerStructure;
@@ -136,7 +134,7 @@ public class SelectiveEntityStructureSerializer
         }
     }
 
-    private static <E extends Entity, S extends EntityStructure & Mapped> void registerStructure(@NotNull EntityType entityType,
+    private static <E extends Entity, S extends EntityStructure> void registerStructure(@NotNull EntityType entityType,
                                                                                                  @NotNull Class<S> clazz,
                                                                                                  @NotNull Class<? extends E> entityClazz,
                                                                                                  @NotNull BiFunction<S, StructureSerializer, Map<String, Object>> serializer,
@@ -159,7 +157,7 @@ public class SelectiveEntityStructureSerializer
         );
     }
 
-    public static <T extends EntityStructure & Mapped> T deserialize(@NotNull EntityType entityType,
+    public static <T extends EntityStructure> T deserialize(@NotNull EntityType entityType,
                                                                      @NotNull Map<String, Object> data,
                                                                      @NotNull StructureSerializer serializer)
     {
@@ -187,6 +185,7 @@ public class SelectiveEntityStructureSerializer
             else
                 throw new IllegalArgumentException("Unknown entity type: " + type);
 
+        // noinspection unchecked
         return (T) entry.getDeserializer().apply(data, serializer);
     }
 
@@ -257,13 +256,13 @@ public class SelectiveEntityStructureSerializer
         throw new IllegalArgumentException("Unknown entity structure class: " + clazz);
     }
 
-    private static <E extends Entity, S extends EntityStructure & Mapped> EntityStructureEntry<E, S> getEntry(@NotNull EntityType entityType)
+    private static <E extends Entity, S extends EntityStructure> EntityStructureEntry<E, S> getEntry(@NotNull EntityType entityType)
     {
         // noinspection unchecked
         return (EntityStructureEntry<E, S>) ENTITY_STRUCTURES.get(entityType);
     }
 
-    public static <V extends Entity, T extends Mapped & EntityStructure> T toStructure(V value, StructureSerializerImpl structureSerializer)
+    public static <V extends Entity, T extends EntityStructure> T toStructure(V value, StructureSerializerImpl structureSerializer)
     {
         if (value == null)
             return null;
@@ -280,7 +279,7 @@ public class SelectiveEntityStructureSerializer
 
     @Value
     @NotNull
-    public static class EntityStructureEntry<E extends Entity, S extends EntityStructure & Mapped>
+    public static class EntityStructureEntry<E extends Entity, S extends EntityStructure>
     {
         Class<S> clazz;
         BiFunction<S, StructureSerializer, Map<String, Object>> serializer;

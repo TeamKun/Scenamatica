@@ -1,12 +1,11 @@
 package org.kunlab.scenamatica.interfaces.structures.minecraft.entity.entities;
 
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
+import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.bookkeeper.annotations.TypeDoc;
 import org.kunlab.scenamatica.bookkeeper.annotations.TypeProperty;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.EntityStructure;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.inventory.ItemStackStructure;
-import org.kunlab.scenamatica.interfaces.scenariofile.Mapped;
 import org.kunlab.scenamatica.interfaces.structures.specifiers.EntitySpecifier;
 
 @TypeDoc(
@@ -42,7 +41,7 @@ import org.kunlab.scenamatica.interfaces.structures.specifiers.EntitySpecifier;
         }
 
 )
-public interface EntityItemStructure extends EntityStructure, Mapped
+public interface EntityItemStructure extends EntityStructure
 {
     // public static final String KEY_ITEM_STACK = "itemStack";    // トップレベルに ItemStackStructure のキーを置くのでいらない。
     String KEY_PICKUP_DELAY = "pickupDelay";
@@ -81,18 +80,8 @@ public interface EntityItemStructure extends EntityStructure, Mapped
      */
     Boolean getWillAge();
 
-    /* @Overload */
-    void applyTo(Item entity);
-    /* @Overload */
-    boolean isAdequate(Item entity, boolean isStrict);
-    /* @Overload */
-    default boolean isAdequate(Item entity)
-    {
-        return this.isAdequate(entity, false);
-    }
-
     @Override
-    default boolean canApplyTo(Object target)
+    default boolean canApplyTo(@Nullable Object target)
     {
         return target instanceof Item;
     }

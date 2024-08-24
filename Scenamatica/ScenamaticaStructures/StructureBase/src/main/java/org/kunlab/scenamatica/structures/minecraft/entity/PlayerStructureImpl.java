@@ -1,10 +1,7 @@
 package org.kunlab.scenamatica.structures.minecraft.entity;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Value;
-import org.kunlab.scenamatica.structures.minecraft.entity.entities.HumanEntityStructureImpl;
-import org.kunlab.scenamatica.structures.minecraft.misc.LocationStructureImpl;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.jetbrains.annotations.NotNull;
@@ -14,6 +11,8 @@ import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.PlayerStructure;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.entities.HumanEntityStructure;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.misc.LocationStructure;
+import org.kunlab.scenamatica.structures.minecraft.entity.entities.HumanEntityStructureImpl;
+import org.kunlab.scenamatica.structures.minecraft.misc.LocationStructureImpl;
 
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -377,9 +376,12 @@ public class PlayerStructureImpl extends HumanEntityStructureImpl implements Pla
     }
 
     @Override
-    public void applyTo(Player player, boolean applyLocation)
+    public void applyTo(@NotNull Entity entity, boolean applyLocation)
     {
-        super.applyTo(player, applyLocation);
+        super.applyTo(entity, applyLocation);
+        if (!(entity instanceof Player))
+            return;
+        Player player = (Player) entity;
 
         if (this.displayName != null)
             player.setDisplayName(this.displayName);
@@ -413,10 +415,13 @@ public class PlayerStructureImpl extends HumanEntityStructureImpl implements Pla
     }
 
     @Override
-    public boolean isAdequate(Player player, boolean strict)
+    public boolean isAdequate(@Nullable Entity entity, boolean strict)
     {
-        return super.isAdequate(player, strict)
-                && (this.name == null || this.name.equals(player.getName()))
+        if (!(super.isAdequate(entity, strict) && entity instanceof Player))
+            return false;
+        Player player = (Player) entity;
+
+        return (this.name == null || this.name.equals(player.getName()))
                 && (this.displayName == null || this.displayName.equals(player.getDisplayName()))
                 && (this.online == null || this.online.equals(player.isOnline()))
                 && (this.remoteAddress == null || this.isIPAdequate(player))

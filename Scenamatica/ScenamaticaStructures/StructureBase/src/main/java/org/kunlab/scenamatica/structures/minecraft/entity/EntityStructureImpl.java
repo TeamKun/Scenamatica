@@ -2,7 +2,6 @@ package org.kunlab.scenamatica.structures.minecraft.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import org.kunlab.scenamatica.structures.minecraft.misc.LocationStructureImpl;
 import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -16,6 +15,7 @@ import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.DamageStructure;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.EntityStructure;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.misc.LocationStructure;
+import org.kunlab.scenamatica.structures.minecraft.misc.LocationStructureImpl;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -317,7 +317,7 @@ public class EntityStructureImpl implements EntityStructure
     }
 
     @Override
-    public void applyTo(Entity entity, boolean applyLocation)
+    public void applyTo(@NotNull Entity entity, boolean applyLocation)
     {
         if (applyLocation && this.location != null)
         {
@@ -378,8 +378,11 @@ public class EntityStructureImpl implements EntityStructure
     }
 
     @Override
-    public boolean isAdequate(Entity entity, boolean strict)
+    public boolean isAdequate(@Nullable Entity entity, boolean strict)
     {
+        if (entity == null)
+            return false;
+
         if (!this.tags.isEmpty())
         {
             ArrayList<String> tags = new ArrayList<>(entity.getScoreboardTags());

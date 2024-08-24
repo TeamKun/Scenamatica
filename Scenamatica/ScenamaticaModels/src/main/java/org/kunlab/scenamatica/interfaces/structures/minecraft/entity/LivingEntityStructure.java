@@ -4,6 +4,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.potion.PotionEffect;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.bookkeeper.annotations.TypeDoc;
 import org.kunlab.scenamatica.bookkeeper.annotations.TypeProperty;
 import org.kunlab.scenamatica.interfaces.structures.docs.entity.PotionEffectDoc;
@@ -345,13 +346,8 @@ public interface LivingEntityStructure extends EntityStructure
      */
     Boolean getIsHandRaised();
 
-    /* @Overload */
-    void applyTo(LivingEntity entity, boolean applyLocation);
-    /* @Overload */
-    boolean isAdequate(LivingEntity entity, boolean isStrict);
-
     @Override
-    default boolean canApplyTo(Object target)
+    default boolean canApplyTo(@Nullable Object target)
     {
         return target instanceof LivingEntity;
     }

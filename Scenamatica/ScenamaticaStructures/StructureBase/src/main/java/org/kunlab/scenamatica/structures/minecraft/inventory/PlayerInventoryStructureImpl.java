@@ -220,21 +220,25 @@ public class PlayerInventoryStructureImpl extends InventoryStructureImpl impleme
     }
 
     @Override
-    public boolean canApplyTo(Object target)
+    public boolean canApplyTo(@Nullable Object target)
     {
         return target instanceof PlayerInventory;
     }
 
     @Override
-    public void applyTo(PlayerInventory object)
+    public void applyTo(@NotNull Inventory inventory)
     {
-        super.applyTo(object);
+        super.applyTo(inventory);
+        if (!(inventory instanceof PlayerInventory))
+            return;
+
+        PlayerInventory playerInventory = (PlayerInventory) inventory;
 
         if (this.mainHand != null)
-            object.setItemInMainHand(this.mainHand.create());
+            playerInventory.setItemInMainHand(this.mainHand.create());
 
         if (this.offHand != null)
-            object.setItemInOffHand(this.offHand.create());
+            playerInventory.setItemInOffHand(this.offHand.create());
 
         if (this.armorContents != null)
         {
@@ -244,15 +248,17 @@ public class PlayerInventoryStructureImpl extends InventoryStructureImpl impleme
                     armorContents[3 - i] =  // 逆順にする => 0: ヘルメット ～ 3: ブーツ で統一するため(Bukkitは逆)
                             this.armorContents[i].create();
 
-            object.setArmorContents(armorContents);
+            playerInventory.setArmorContents(armorContents);
         }
     }
 
     @Override
-    public boolean isAdequate(PlayerInventory playerInventory, boolean strict)
+    public boolean isAdequate(@Nullable Inventory inventory, boolean strict)
     {
-        if (!super.isAdequate(playerInventory, strict))
+        if (!(super.isAdequate(inventory, strict) && inventory instanceof PlayerInventory))
             return false;
+
+        PlayerInventory playerInventory = (PlayerInventory) inventory;
 
         ItemStackStructure[] expectedArmors = this.armorContents;
         ItemStack[] actualArmors = playerInventory.getArmorContents();

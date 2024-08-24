@@ -2,12 +2,13 @@ package org.kunlab.scenamatica.structures.minecraft.entity.entities;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import org.kunlab.scenamatica.structures.minecraft.entity.LivingEntityStructureImpl;
 import org.bukkit.GameMode;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.inventory.MainHand;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.LivingEntityStructure;
@@ -16,6 +17,7 @@ import org.kunlab.scenamatica.interfaces.structures.minecraft.inventory.Inventor
 import org.kunlab.scenamatica.interfaces.structures.minecraft.inventory.PlayerInventoryStructure;
 import org.kunlab.scenamatica.nms.NMSProvider;
 import org.kunlab.scenamatica.nms.types.entity.NMSEntityHuman;
+import org.kunlab.scenamatica.structures.minecraft.entity.LivingEntityStructureImpl;
 import org.kunlab.scenamatica.structures.minecraft.inventory.InventoryStructureImpl;
 import org.kunlab.scenamatica.structures.minecraft.inventory.PlayerInventoryStructureImpl;
 
@@ -195,31 +197,37 @@ public class HumanEntityStructureImpl extends LivingEntityStructureImpl implemen
     }
 
     @Override
-    public void applyTo(@NotNull HumanEntity object, boolean applyLocation)
+    public void applyTo(@NotNull Entity entity, boolean applyLocation)
     {
-        super.applyTo(object, applyLocation);
-        NMSEntityHuman nmsHuman = NMSProvider.getProvider().wrap(object);
+        if (!(entity instanceof HumanEntity))
+            return;
+        HumanEntity humanEntity = (HumanEntity) entity;
+
+        super.applyTo(humanEntity, applyLocation);
+        NMSEntityHuman nmsHuman = NMSProvider.getProvider().wrap(humanEntity);
 
         if (this.inventory != null)
-            this.inventory.applyTo(object.getInventory());
+            this.inventory.applyTo(humanEntity.getInventory());
         if (this.enderChest != null)
-            this.enderChest.applyTo(object.getEnderChest());
+            this.enderChest.applyTo(humanEntity.getEnderChest());
 
         if (this.gamemode != null)
-            object.setGameMode(this.gamemode);
+            humanEntity.setGameMode(this.gamemode);
         if (this.foodLevel != null)
             nmsHuman.setFoodLevel(this.foodLevel);
     }
 
     @Override
-    public boolean isAdequate(HumanEntity object, boolean strict)
+    public boolean isAdequate(@Nullable Entity entity, boolean strict)
     {
-        NMSEntityHuman nmsHuman = NMSProvider.getProvider().wrap(object);
+        if (!(super.isAdequate(entity, strict) && entity instanceof HumanEntity))
+            return false;
+        HumanEntity humanEntity = (HumanEntity) entity;
+        NMSEntityHuman nmsHuman = NMSProvider.getProvider().wrap(humanEntity);
 
-        return super.isAdequate(object, strict)
-                && (this.inventory == null || this.inventory.isAdequate(object.getInventory(), strict))
-                && (this.enderChest == null || this.enderChest.isAdequate(object.getEnderChest(), strict))
-                && (this.gamemode == null || this.gamemode == object.getGameMode())
+        return (this.inventory == null || this.inventory.isAdequate(humanEntity.getInventory(), strict))
+                && (this.enderChest == null || this.enderChest.isAdequate(humanEntity.getEnderChest(), strict))
+                && (this.gamemode == null || this.gamemode == humanEntity.getGameMode())
                 && (this.foodLevel == null || this.foodLevel == nmsHuman.getFoodLevel());
     }
 }

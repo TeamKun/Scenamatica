@@ -4,6 +4,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.bookkeeper.annotations.Category;
 import org.kunlab.scenamatica.bookkeeper.annotations.TypeDoc;
 import org.kunlab.scenamatica.bookkeeper.annotations.TypeProperty;
@@ -126,7 +127,7 @@ import java.util.UUID;
         name = "エンティティ",
         description = "エンティティに関連する情報を格納します。"
 )
-public interface EntityStructure extends Structure, ProjectileSourceStructure, Mapped
+public interface EntityStructure extends Structure, ProjectileSourceStructure, Mapped<Entity>
 {
     String KEY_TYPE = "type";
     String KEY_LOCATION = "loc";
@@ -283,14 +284,23 @@ public interface EntityStructure extends Structure, ProjectileSourceStructure, M
      */
     Float getFallDistance();
 
-    /* @Overload */
-    void applyTo(Entity entity, boolean applyLocation);
-    /* @Overload */
-    boolean isAdequate(Entity entity, boolean isStrict);
-
     @Override
-    default boolean canApplyTo(Object target)
+    default boolean canApplyTo(@Nullable Object target)
     {
         return target instanceof Entity;
+    }
+
+    /**
+     * このエンティティを指定されたエンティティに適用します。
+     *
+     * @param entity        適用するエンティティ
+     * @param applyLocation 位置情報を適用するかどうか
+     */
+    void applyTo(@NotNull Entity entity, boolean applyLocation);
+
+    @Override
+    default void applyTo(@NotNull Entity object)
+    {
+        this.applyTo(object, true);
     }
 }

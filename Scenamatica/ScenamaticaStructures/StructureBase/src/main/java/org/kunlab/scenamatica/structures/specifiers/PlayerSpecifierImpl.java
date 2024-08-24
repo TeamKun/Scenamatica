@@ -9,14 +9,13 @@ import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.interfaces.context.Actor;
 import org.kunlab.scenamatica.interfaces.context.Context;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
-import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.PlayerStructure;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.EntityStructure;
+import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.PlayerStructure;
 import org.kunlab.scenamatica.interfaces.structures.specifiers.PlayerSpecifier;
 import org.kunlab.scenamatica.selector.Selector;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -158,15 +157,6 @@ public class PlayerSpecifierImpl extends EntitySpecifierImpl<Player> implements 
             return Optional.empty();
 
         return Optional.of(player);
-    }
-
-    @Override
-    protected boolean isAdequate(EntityStructure structure, @NotNull Entity actualEntity)
-    {
-        if (!(structure instanceof PlayerStructure))
-            return false;
-
-        return ((PlayerStructure) structure).isAdequate((Player) actualEntity);
     }
 
     @Override

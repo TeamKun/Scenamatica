@@ -8,6 +8,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.EntityStructure;
@@ -532,33 +533,36 @@ public class LivingEntityStructureImpl extends EntityStructureImpl implements Li
     }
 
     @Override
-    public void applyTo(LivingEntity entity, boolean applyLocation)
+    public void applyTo(@NotNull Entity entity, boolean applyLocation)
     {
         super.applyTo(entity, true);
+        if (!(entity instanceof LivingEntity))
+            return;
 
-        NMSEntityLiving nmsEntity = NMSProvider.getProvider().wrap(entity);
+        LivingEntity livingEntity = (LivingEntity) entity;
+        NMSEntityLiving nmsEntity = NMSProvider.getProvider().wrap(livingEntity);
 
         if (this.remainAir != null)
-            entity.setRemainingAir(this.remainAir);
+            livingEntity.setRemainingAir(this.remainAir);
         if (this.maxAir != null)
-            entity.setMaximumAir(this.maxAir);
+            livingEntity.setMaximumAir(this.maxAir);
         if (this.arrowCooldown != null)
             NMSProvider.tryDoNMS(() -> nmsEntity.setArrowCooldown(this.arrowCooldown));
         if (this.arrowsInBody != null)
             nmsEntity.setArrowCount(this.arrowsInBody);
         if (this.maxNoDamageTicks != null)
-            entity.setMaximumNoDamageTicks(this.maxNoDamageTicks);
+            livingEntity.setMaximumNoDamageTicks(this.maxNoDamageTicks);
         if (this.lastDamage != null)
-            entity.setLastDamage(this.lastDamage);
+            livingEntity.setLastDamage(this.lastDamage);
         if (this.noDamageTicks != null)
-            entity.setNoDamageTicks(this.noDamageTicks);
+            livingEntity.setNoDamageTicks(this.noDamageTicks);
         if (this.killer.canProvideTarget())
-            entity.setKiller(this.killer.selectTarget(null).orElse(null));
+            livingEntity.setKiller(this.killer.selectTarget(null).orElse(null));
         if (!this.potionEffects.isEmpty())
         {
-            new ArrayList<>(entity.getActivePotionEffects()).stream()
+            new ArrayList<>(livingEntity.getActivePotionEffects()).stream()
                     .map(PotionEffect::getType)
-                    .forEach(((LivingEntity) entity)::removePotionEffect);
+                    .forEach(((LivingEntity) livingEntity)::removePotionEffect);
 
             this.potionEffects.stream()
                     .map(b -> new PotionEffect(
@@ -570,38 +574,43 @@ public class LivingEntityStructureImpl extends EntityStructureImpl implements Li
                                     b.hasIcon()
                             )
                     )
-                    .forEach(((LivingEntity) entity)::addPotionEffect);
+                    .forEach(((LivingEntity) livingEntity)::addPotionEffect);
         }
         if (this.removeWhenFarAway != null)
-            entity.setRemoveWhenFarAway(this.removeWhenFarAway);
+            livingEntity.setRemoveWhenFarAway(this.removeWhenFarAway);
         if (this.canPickupItems != null)
-            entity.setCanPickupItems(this.canPickupItems);
+            livingEntity.setCanPickupItems(this.canPickupItems);
         if (this.leashHolder.canProvideTarget())
-            entity.setLeashHolder(this.leashHolder.selectTarget(null).orElse(null));
+            livingEntity.setLeashHolder(this.leashHolder.selectTarget(null).orElse(null));
         if (this.gliding != null)
-            entity.setGliding(this.gliding);
+            livingEntity.setGliding(this.gliding);
         if (this.swimming != null)
-            entity.setSwimming(this.swimming);
+            livingEntity.setSwimming(this.swimming);
         if (this.ai != null)
-            entity.setAI(this.ai);
+            livingEntity.setAI(this.ai);
         if (this.collidable != null)
-            entity.setCollidable(this.collidable);
+            livingEntity.setCollidable(this.collidable);
         if (this.invisible != null)
             nmsEntity.setInvisible(this.invisible);
         // Paper
 
         if (this.arrowsStuck != null)
-            entity.setArrowsStuck(this.arrowsStuck);
+            livingEntity.setArrowsStuck(this.arrowsStuck);
         if (this.shieldBlockingDelay != null)
-            entity.setShieldBlockingDelay(this.shieldBlockingDelay);
+            livingEntity.setShieldBlockingDelay(this.shieldBlockingDelay);
     }
 
     @Override
-    public boolean isAdequate(LivingEntity entity, boolean strict)
+    public boolean isAdequate(@Nullable Entity entity, boolean strict)
     {
+        if (!(super.isAdequate(entity, strict) && entity instanceof LivingEntity))
+            return false;
+
+        LivingEntity livingEntity = (LivingEntity) entity;
+
         if (!this.potionEffects.isEmpty())
         {
-            List<PotionEffect> potionEffects = new ArrayList<>(entity.getActivePotionEffects());
+            List<PotionEffect> potionEffects = new ArrayList<>(livingEntity.getActivePotionEffects());
             if (strict && potionEffects.size() != this.potionEffects.size())
                 return false;
 
@@ -610,7 +619,7 @@ public class LivingEntityStructureImpl extends EntityStructureImpl implements Li
                     return false;
         }
 
-        NMSEntityLiving nmsEntity = NMSProvider.getProvider().wrap(entity);
+        NMSEntityLiving nmsEntity = NMSProvider.getProvider().wrap(livingEntity);
 
         boolean arrowCooldownMatches = true;
         if (this.arrowCooldown != null)
@@ -619,27 +628,26 @@ public class LivingEntityStructureImpl extends EntityStructureImpl implements Li
             if (nmsArrowCooldown != null)
                 arrowCooldownMatches = Objects.equals(this.arrowCooldown, nmsArrowCooldown);
         }
-        return super.isAdequate(entity, strict)
-                && (this.remainAir == null || this.remainAir == entity.getRemainingAir())
-                && (this.maxAir == null || this.maxAir == entity.getMaximumAir())
+        return (this.remainAir == null || this.remainAir == livingEntity.getRemainingAir())
+                && (this.maxAir == null || this.maxAir == livingEntity.getMaximumAir())
                 && arrowCooldownMatches
                 && (this.arrowsInBody == null || this.arrowsInBody == nmsEntity.getArrowCount())
-                && (this.maxNoDamageTicks == null || this.maxNoDamageTicks == entity.getMaximumNoDamageTicks())
-                && (this.lastDamage == null || this.lastDamage == entity.getLastDamage())
-                && (this.noDamageTicks == null || this.noDamageTicks == entity.getNoDamageTicks())
-                && (!this.killer.canProvideTarget() || this.killer.checkMatchedPlayer(entity.getKiller()))
-                && (this.removeWhenFarAway == null || this.removeWhenFarAway == entity.getRemoveWhenFarAway())
-                && (this.canPickupItems == null || this.canPickupItems == entity.getCanPickupItems())
-                && (this.leashed == null || this.leashed == entity.isLeashed())
-                && (!this.leashHolder.canProvideTarget() || this.leashHolder.checkMatchedEntity(entity.getLeashHolder()))
-                && (this.gliding == null || this.gliding == entity.isGliding())
-                && (this.swimming == null || this.swimming == entity.isSwimming())
-                && (this.ai == null || this.ai == entity.hasAI())
-                && (this.collidable == null || this.collidable == entity.isCollidable())
+                && (this.maxNoDamageTicks == null || this.maxNoDamageTicks == livingEntity.getMaximumNoDamageTicks())
+                && (this.lastDamage == null || this.lastDamage == livingEntity.getLastDamage())
+                && (this.noDamageTicks == null || this.noDamageTicks == livingEntity.getNoDamageTicks())
+                && (!this.killer.canProvideTarget() || this.killer.checkMatchedPlayer(livingEntity.getKiller()))
+                && (this.removeWhenFarAway == null || this.removeWhenFarAway == livingEntity.getRemoveWhenFarAway())
+                && (this.canPickupItems == null || this.canPickupItems == livingEntity.getCanPickupItems())
+                && (this.leashed == null || this.leashed == livingEntity.isLeashed())
+                && (!this.leashHolder.canProvideTarget() || this.leashHolder.checkMatchedEntity(livingEntity.getLeashHolder()))
+                && (this.gliding == null || this.gliding == livingEntity.isGliding())
+                && (this.swimming == null || this.swimming == livingEntity.isSwimming())
+                && (this.ai == null || this.ai == livingEntity.hasAI())
+                && (this.collidable == null || this.collidable == livingEntity.isCollidable())
                 && (this.invisible == null || this.invisible == nmsEntity.isInvisible())
                 // Paper
-                && (this.arrowsStuck == null || this.arrowsStuck == entity.getArrowsStuck())
-                && (this.shieldBlockingDelay == null || this.shieldBlockingDelay == entity.getShieldBlockingDelay());
+                && (this.arrowsStuck == null || this.arrowsStuck == livingEntity.getArrowsStuck())
+                && (this.shieldBlockingDelay == null || this.shieldBlockingDelay == livingEntity.getShieldBlockingDelay());
     }
 
 

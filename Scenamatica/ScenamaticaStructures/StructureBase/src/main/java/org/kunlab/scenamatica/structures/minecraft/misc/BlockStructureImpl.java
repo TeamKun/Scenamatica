@@ -251,8 +251,11 @@ public class BlockStructureImpl implements BlockStructure
     }
 
     @Override
-    public boolean isAdequate(Block block, boolean strict)
+    public boolean isAdequate(@Nullable Block block, boolean strict)
     {
+        if (block == null)
+            return false;
+
         if (!(this.type == null || this.type == block.getType()))
             return false;
 

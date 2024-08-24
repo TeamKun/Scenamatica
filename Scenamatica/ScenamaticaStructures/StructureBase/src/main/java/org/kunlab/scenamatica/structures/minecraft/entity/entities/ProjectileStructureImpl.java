@@ -2,27 +2,26 @@ package org.kunlab.scenamatica.structures.minecraft.entity.entities;
 
 import lombok.EqualsAndHashCode;
 import lombok.Value;
-import org.bukkit.entity.LivingEntity;
-import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.LivingEntityStructure;
-import org.kunlab.scenamatica.structures.minecraft.misc.BlockStructureImpl;
-import org.kunlab.scenamatica.structures.minecraft.misc.SelectorProjectileSourceStructureImpl;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Projectile;
 import org.bukkit.projectiles.BlockProjectileSource;
 import org.bukkit.projectiles.ProjectileSource;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
-import org.kunlab.scenamatica.interfaces.scenariofile.Mapped;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.EntityStructure;
+import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.LivingEntityStructure;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.entities.ProjectileStructure;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.misc.BlockStructure;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.misc.ProjectileSourceStructure;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.misc.SelectorProjectileSourceStructure;
-import org.kunlab.scenamatica.structures.minecraft.entity.EntityStructureImpl;
 import org.kunlab.scenamatica.selector.Selector;
+import org.kunlab.scenamatica.structures.minecraft.entity.EntityStructureImpl;
+import org.kunlab.scenamatica.structures.minecraft.misc.BlockStructureImpl;
+import org.kunlab.scenamatica.structures.minecraft.misc.SelectorProjectileSourceStructureImpl;
 
 import java.util.Map;
 
@@ -111,33 +110,39 @@ public class ProjectileStructureImpl extends EntityStructureImpl implements Proj
     }
 
     @Override
-    public void applyTo(Projectile projectile)
+    public void applyTo(@NotNull Entity entity)
     {
-        super.applyTo(projectile, true);
+        super.applyTo(entity, true);
+        if (!(entity instanceof Projectile))
+            return;
+
+        Projectile projectile = (Projectile) entity;
 
         if (this.doesBounce != null)
             projectile.setBounce(this.doesBounce);
     }
 
     @Override
-    public boolean canApplyTo(Object target)
+    public boolean canApplyTo(@Nullable Object target)
     {
         return target instanceof Projectile;
     }
 
     @Override
-    public boolean isAdequate(Projectile entity, boolean strict)
+    public boolean isAdequate(@Nullable Entity entity, boolean strict)
     {
-        if (!super.isAdequate(entity, strict))
+        if (!(super.isAdequate(entity, strict) && entity instanceof Projectile))
             return false;
 
-        if (!(this.doesBounce == null || this.doesBounce == entity.doesBounce()))
+        Projectile projectile = (Projectile) entity;
+
+        if (!(this.doesBounce == null || this.doesBounce == projectile.doesBounce()))
             return false;
 
         if (this.shooter == null)
             return true;
 
-        ProjectileSource projectileSource = entity.getShooter();
+        ProjectileSource projectileSource = projectile.getShooter();
         if (projectileSource == null)
             return false;
 

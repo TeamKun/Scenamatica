@@ -24,7 +24,6 @@ import org.bukkit.entity.WitherSkull;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.commons.utils.Utils;
-import org.kunlab.scenamatica.interfaces.scenariofile.Mapped;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.EntityStructure;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.PlayerStructure;
@@ -135,7 +134,7 @@ class SelectiveEntityStructureSerializerMock
         }
     }
 
-    private static <E extends Entity, S extends EntityStructure & Mapped> void registerStructure(@NotNull EntityType entityType,
+    private static <E extends Entity, S extends EntityStructure> void registerStructure(@NotNull EntityType entityType,
                                                                                                  @NotNull Class<S> clazz,
                                                                                                  @NotNull Class<? extends E> entityClazz,
                                                                                                  @NotNull BiFunction<S, StructureSerializer, Map<String, Object>> serializer,
@@ -158,7 +157,7 @@ class SelectiveEntityStructureSerializerMock
         );
     }
 
-    public static <T extends EntityStructure & Mapped> T deserialize(@NotNull EntityType entityType,
+    public static <T extends EntityStructure> T deserialize(@NotNull EntityType entityType,
                                                                      @NotNull Map<String, Object> data,
                                                                      @NotNull StructureSerializer serializer)
     {
@@ -193,7 +192,6 @@ class SelectiveEntityStructureSerializerMock
                                                             @NotNull Map<String, Object> data,
                                                             @NotNull StructureSerializer serializer)
     {
-        // noinspection unchecked
         return deserialize(getEntityTypeSafe(clazz), data, serializer);
     }
 
@@ -257,13 +255,13 @@ class SelectiveEntityStructureSerializerMock
         throw new IllegalArgumentException("Unknown entity structure class: " + clazz);
     }
 
-    private static <E extends Entity, S extends EntityStructure & Mapped> EntityStructureEntry<E, S> getEntry(@NotNull EntityType entityType)
+    private static <E extends Entity, S extends EntityStructure> EntityStructureEntry<E, S> getEntry(@NotNull EntityType entityType)
     {
         // noinspection unchecked
         return (EntityStructureEntry<E, S>) ENTITY_STRUCTURES.get(entityType);
     }
 
-    public static <V extends Entity, T extends Mapped & EntityStructure> T toStructure(V value, StructureSerializer structureSerializer)
+    public static <V extends Entity, T extends EntityStructure> T toStructure(V value, StructureSerializer structureSerializer)
     {
         if (value == null)
             return null;
@@ -280,7 +278,7 @@ class SelectiveEntityStructureSerializerMock
 
     @Value
     @NotNull
-    public static class EntityStructureEntry<E extends Entity, S extends EntityStructure & Mapped>
+    public static class EntityStructureEntry<E extends Entity, S extends EntityStructure>
     {
         Class<S> clazz;
         BiFunction<S, StructureSerializer, Map<String, Object>> serializer;

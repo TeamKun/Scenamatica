@@ -223,10 +223,7 @@ public class EntitySpecifierImpl<E extends Entity> implements EntitySpecifier<E>
             return this.selector.getOriginal();
         else if (this.mayUUID != null)
             return this.mayUUID;
-        else if (this.targetStructure != null)
-            return this.targetStructure;
-        else
-            return null;
+        else return this.targetStructure;
     }
 
     @Override
@@ -270,14 +267,10 @@ public class EntitySpecifierImpl<E extends Entity> implements EntitySpecifier<E>
             return this.getSelector().test(null, entity);
         else /* if (this.getTargetStructure() != null) */
         {
-            assert this.getTargetStructure() != null;
-            return this.isAdequate(this.getTargetStructure(), entity);
+            EntityStructure structure = this.getTargetStructure();
+            assert structure != null;
+            return structure.canApplyTo(entity) && structure.isAdequate(entity);
         }
-    }
-
-    protected boolean isAdequate(EntityStructure structure, @NotNull Entity actualEntity)
-    {
-        return EntityUtils.checkIsAdequate(structure, actualEntity);
     }
 
     @Override
