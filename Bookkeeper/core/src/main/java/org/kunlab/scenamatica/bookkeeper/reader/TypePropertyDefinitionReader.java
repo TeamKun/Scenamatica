@@ -6,6 +6,7 @@ import org.kunlab.scenamatica.bookkeeper.AnnotationValues;
 import org.kunlab.scenamatica.bookkeeper.annotations.TypeProperty;
 import org.kunlab.scenamatica.bookkeeper.compiler.models.GenericAdmonition;
 import org.kunlab.scenamatica.bookkeeper.definitions.TypePropertyDefinition;
+import org.kunlab.scenamatica.bookkeeper.enums.MCVersion;
 import org.kunlab.scenamatica.bookkeeper.utils.Descriptors;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.AnnotationNode;
@@ -22,6 +23,8 @@ public class TypePropertyDefinitionReader implements IAnnotationReader<TypePrope
     public static final String KEY_MIN = "min";
     public static final String KEY_MAX = "max";
     public static final String KEY_ADMONITIONS = "admonitions";
+    public static final String KEY_SUPPORTS_SINCE = "supportsSince";
+    public static final String KEY_SUPPORTS_UNTIL = "supportsUntil";
 
     private static final String DESC = Descriptors.getDescriptor(TypeProperty.class);
 
@@ -44,7 +47,9 @@ public class TypePropertyDefinitionReader implements IAnnotationReader<TypePrope
                 values.getAsString(KEY_DEFAULT),
                 values.get(KEY_MIN, Double.class),
                 values.get(KEY_MAX, Double.class),
-                GenericAdmonition.byAnnotationValues(values.getAsArray(KEY_ADMONITIONS, AnnotationNode.class))
+                GenericAdmonition.byAnnotationValues(values.getAsArray(KEY_ADMONITIONS, AnnotationNode.class)),
+                values.getAsEnum(KEY_SUPPORTS_SINCE, MCVersion.class),
+                values.getAsEnum(KEY_SUPPORTS_UNTIL, MCVersion.class)
         );
     }
 

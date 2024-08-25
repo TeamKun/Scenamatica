@@ -121,7 +121,9 @@ public class TypeCompiler extends AbstractCompiler<TypeDefinition, CompiledType,
                         definition.getClazz().name,
                         definition.getMappingOf() != null ? definition.getMappingOf().getClassName().replace('.', '/'): null,
                         compileProperties(definition.getProperties(), parentCompiled),
-                        admonitions.toArray(new GenericAdmonition[0])
+                        admonitions.toArray(new GenericAdmonition[0]),
+                        definition.getSupportsSince(),
+                        definition.getSupportsUntil()
                 )
         );
     }
@@ -159,7 +161,9 @@ public class TypeCompiler extends AbstractCompiler<TypeDefinition, CompiledType,
                             property.getMin(),
                             property.getMax(),
                             property.getDefaultValue(),
-                            property.getAdmonitions()
+                            property.getAdmonitions(),
+                            property.getSupportsSince(),
+                            property.getSupportsUntil()
                     )
             );
         }
@@ -292,7 +296,9 @@ public class TypeCompiler extends AbstractCompiler<TypeDefinition, CompiledType,
                         classNameSimple,
                         null,
                         category,
-                        className
+                        className,
+                        null,
+                        null
                 ),
                 enumValues
         );
@@ -371,7 +377,7 @@ public class TypeCompiler extends AbstractCompiler<TypeDefinition, CompiledType,
     {
         private PrimitiveType(String primitiveName, Class<?> clazz)
         {
-            super(primitiveName, primitiveName, null, null, clazz.getName());
+            super(primitiveName, primitiveName, null, null, clazz.getName(), null, null);
         }
 
         @Override

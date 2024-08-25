@@ -6,6 +6,7 @@ import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.bookkeeper.ScenamaticaClassLoader;
 import org.kunlab.scenamatica.bookkeeper.annotations.TypeProperty;
 import org.kunlab.scenamatica.bookkeeper.compiler.models.GenericAdmonition;
+import org.kunlab.scenamatica.bookkeeper.enums.MCVersion;
 import org.kunlab.scenamatica.bookkeeper.utils.Descriptors;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.ClassNode;
@@ -23,6 +24,9 @@ public class TypePropertyDefinition implements IDefinition
     Double min;
     Double max;
     GenericAdmonition[] admonitions;
+
+    MCVersion supportsSince;
+    MCVersion supportsUntil;
 
     @Override
     public ClassNode getAnnotatedClass()
