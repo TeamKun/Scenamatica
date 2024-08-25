@@ -9,6 +9,7 @@ import org.kunlab.scenamatica.bookkeeper.compiler.CategoryManager;
 import org.kunlab.scenamatica.bookkeeper.compiler.SerializingContext;
 import org.kunlab.scenamatica.bookkeeper.compiler.models.refs.ActionReference;
 import org.kunlab.scenamatica.bookkeeper.compiler.models.refs.TypeReference;
+import org.kunlab.scenamatica.bookkeeper.enums.MCVersion;
 import org.kunlab.scenamatica.bookkeeper.utils.MapUtils;
 
 import java.util.ArrayList;
@@ -31,6 +32,8 @@ public class CompiledType implements ICompiled
     protected static final String KEY_MAPPING_OF = "mapping_of";
     protected static final String KEY_PROPERTIES = "properties";
     protected static final String KEY_ADMONITIONS = "admonitions";
+    protected static final String KEY_SUPPORTS_SINCE = "supportsSince";
+    protected static final String KEY_SUPPORTS_UNTIL = "supportsUntil";
 
     private final String id;
     private final String name;
@@ -40,8 +43,11 @@ public class CompiledType implements ICompiled
     private final String mappingOf;
     private final Map<String, Property> properties;
     private final GenericAdmonition[] admonitions;
+    private final MCVersion supportsSince;
+    private final MCVersion supportsUntil;
 
-    public CompiledType(String id, String name, String description, CategoryManager.CategoryEntry category, String className, GenericAdmonition[] admonitions)
+    public CompiledType(String id, String name, String description, CategoryManager.CategoryEntry category,
+                        String className, GenericAdmonition[] admonitions, MCVersion supportsSince, MCVersion supportsUntil)
     {
         this.id = id;
         this.name = name;
@@ -51,9 +57,12 @@ public class CompiledType implements ICompiled
         this.mappingOf = null;
         this.properties = null;
         this.admonitions = admonitions;
+        this.supportsSince = supportsSince;
+        this.supportsUntil = supportsUntil;
     }
 
-    public CompiledType(String id, String name, String description, CategoryManager.CategoryEntry category, String className, String mappingOf)
+    public CompiledType(String id, String name, String description, CategoryManager.CategoryEntry category, String className, String mappingOf,
+                        MCVersion supportsSince, MCVersion supportsUntil)
     {
         this.id = id;
         this.name = name;
@@ -63,9 +72,12 @@ public class CompiledType implements ICompiled
         this.mappingOf = mappingOf;
         this.properties = null;
         this.admonitions = null;
+        this.supportsSince = supportsSince;
+        this.supportsUntil = supportsUntil;
     }
 
-    public CompiledType(String id, String name, String description, CategoryManager.CategoryEntry category, String className)
+    public CompiledType(String id, String name, String description, CategoryManager.CategoryEntry category,
+                        String className, MCVersion supportsSince, MCVersion supportsUntil)
     {
         this.id = id;
         this.name = name;
@@ -75,6 +87,8 @@ public class CompiledType implements ICompiled
         this.mappingOf = null;
         this.properties = null;
         this.admonitions = null;
+        this.supportsSince = supportsSince;
+        this.supportsUntil = supportsUntil;
     }
 
     @Override
@@ -98,6 +112,11 @@ public class CompiledType implements ICompiled
         MapUtils.putIfNotNull(map, KEY_DESCRIPTION, this.description);
         if (!(this.properties == null || this.properties.isEmpty()))
             map.put(KEY_PROPERTIES, serializeProperties(ctxt));
+
+        if (this.supportsSince != MCVersion.UNSET)
+            map.put(KEY_SUPPORTS_SINCE, this.supportsSince);
+        if (this.supportsUntil != MCVersion.UNSET)
+            map.put(KEY_SUPPORTS_UNTIL, this.supportsUntil);
 
         if (ctxt.isJSONSchema() && this.shouldEmbedActionMeta())
             this.embedActionMeta(ctxt, map);
@@ -187,6 +206,8 @@ public class CompiledType implements ICompiled
         private static final String KEY_REQUIRED = "required";
         private static final String KEY_DEFAULT_VALUE = "default";
         private static final String KEY_ADMONITIONS = "admonitions";
+        private static final String KEY_SUPPORTS_SINCE = "supportsSince";
+        private static final String KEY_SUPPORTS_UNTIL = "supportsUntil";
 
         String name;
         TypeReference type;
@@ -198,6 +219,8 @@ public class CompiledType implements ICompiled
         Double max;
         Object defaultValue;
         GenericAdmonition[] admonitions;
+        MCVersion supportsSince;
+        MCVersion supportsUntil;
 
         public Map<String, Object> serialize(@NotNull SerializingContext ctxt)
         {
@@ -240,6 +263,12 @@ public class CompiledType implements ICompiled
             MapUtils.putIfNotNull(map, KEY_MIN, this.min);
             MapUtils.putIfNotNull(map, KEY_MAX, this.max);
             MapUtils.putIfNotNull(map, KEY_DEFAULT_VALUE, this.defaultValue);
+
+            if (this.supportsSince != MCVersion.UNSET)
+                map.put(KEY_SUPPORTS_SINCE, this.supportsSince);
+            if (this.supportsUntil != MCVersion.UNSET)
+                map.put(KEY_SUPPORTS_UNTIL, this.supportsUntil);
+
             return map;
         }
     }

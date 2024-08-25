@@ -7,6 +7,7 @@ import org.kunlab.scenamatica.bookkeeper.annotations.TypeDoc;
 import org.kunlab.scenamatica.bookkeeper.compiler.models.GenericAdmonition;
 import org.kunlab.scenamatica.bookkeeper.definitions.TypeDefinition;
 import org.kunlab.scenamatica.bookkeeper.definitions.TypePropertyDefinition;
+import org.kunlab.scenamatica.bookkeeper.enums.MCVersion;
 import org.kunlab.scenamatica.bookkeeper.utils.Descriptors;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.AnnotationNode;
@@ -20,6 +21,8 @@ public class TypeDefinitionReader implements IAnnotationReader<TypeDefinition>
     private static final String KEY_MAPPING_OF = "mappingOf";
     private static final String KEY_EXTENDING = "extending";
     private static final String KEY_ADMONITIONS = "admonitions";
+    private static final String KEY_SUPPORTS_SINCE = "supportsSince";
+    private static final String KEY_SUPPORTS_UNTIL = "supportsUntil";
 
     private static final String DESC = Descriptors.getDescriptor(TypeDoc.class);
 
@@ -53,7 +56,9 @@ public class TypeDefinitionReader implements IAnnotationReader<TypeDefinition>
                 }),
                 values.get(KEY_MAPPING_OF, Type.class),
                 values.get(KEY_EXTENDING, Type.class),
-                GenericAdmonition.byAnnotationValues(values.getAsArray(KEY_ADMONITIONS, AnnotationNode.class))
+                GenericAdmonition.byAnnotationValues(values.getAsArray(KEY_ADMONITIONS, AnnotationNode.class)),
+                values.getAsEnum(KEY_SUPPORTS_SINCE, MCVersion.class),
+                values.getAsEnum(KEY_SUPPORTS_UNTIL, MCVersion.class)
         );
     }
 

@@ -53,6 +53,7 @@ public @interface TypeDoc
      *
      * @return サポートする Minecraft バージョンの終了バージョン
      */
+    @Nullable
     MCVersion supportsUntil() default MCVersion.UNSET;
 
     /**

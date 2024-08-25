@@ -29,7 +29,7 @@ public class CompiledStringType extends CompiledType implements IPrimitiveType
     public static final TypeReference REF_UUID = new TypeReference(
             NAME_UUID,
             new CompiledStringType(
-                    new CompiledType(NAME_UUID, "UUID", null, null, UUID.class.getName()), Format.UUID)
+                    new CompiledType(NAME_UUID, "UUID", null, null, UUID.class.getName(), null, null), Format.UUID)
     );
 
     public static final String NAME_NAMESPACED = "namespaced";
@@ -37,7 +37,7 @@ public class CompiledStringType extends CompiledType implements IPrimitiveType
     public static final TypeReference REF_NAMESPACED = new TypeReference(
             NAME_NAMESPACED,
             new CompiledStringType(
-                    new CompiledType(NAME_NAMESPACED, "Namespaced", null, null, "com.destroystokyo.paper.Namespaced"), null,
+                    new CompiledType(NAME_NAMESPACED, "Namespaced", null, null, "com.destroystokyo.paper.Namespaced", null, null), null,
                     "^([a-z0-9_/]+:)?[a-z0-9_/]+$", null
             )
     );
@@ -47,7 +47,7 @@ public class CompiledStringType extends CompiledType implements IPrimitiveType
     public static final TypeReference REF_NAMESPACED_KEY = new TypeReference(
             NAME_NAMESPACED_KEY,
             new CompiledStringType(
-                    new CompiledType(NAME_NAMESPACED_KEY, "NamespacedKey", null, null, "org.bukkit.NamespacedKey"), null,
+                    new CompiledType(NAME_NAMESPACED_KEY, "NamespacedKey", null, null, "org.bukkit.NamespacedKey", null, null), null,
                     "^([a-z0-9_/]+:)?[a-z0-9_/]+$", null
             )
     );
@@ -61,7 +61,9 @@ public class CompiledStringType extends CompiledType implements IPrimitiveType
 
     public CompiledStringType(CompiledType original, Format format, String pattern, Map<String, String> enums)
     {
-        super(original.getId(), original.getName(), original.getDescription(), original.getCategory(), original.getClassName(), original.getMappingOf());
+        super(original.getId(), original.getName(), original.getDescription(), original.getCategory(),
+                original.getClassName(), original.getMappingOf(), original.getSupportsSince(), original.getSupportsUntil()
+        );
         this.format = format;
         this.enums = enums;
         this.pattern = pattern;

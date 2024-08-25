@@ -1,6 +1,8 @@
 package org.kunlab.scenamatica.bookkeeper.annotations;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.kunlab.scenamatica.bookkeeper.enums.MCVersion;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -77,6 +79,22 @@ public @interface TypeProperty
      * @return 最小値
      */
     double min() default Integer.MIN_VALUE;
+
+    /**
+     * サポートする Minecraft バージョンの開始バージョンを返します。
+     *
+     * @return サポートする Minecraft バージョンの開始バージョン
+     */
+    @Nullable
+    MCVersion supportsSince() default MCVersion.UNSET;
+
+    /**
+     * サポートする Minecraft バージョンの終了バージョンを返します。
+     *
+     * @return サポートする Minecraft バージョンの終了バージョン
+     */
+    @Nullable
+    MCVersion supportsUntil() default MCVersion.UNSET;
 
     /**
      * 型プロパティのアドモ二ションを取得します。
