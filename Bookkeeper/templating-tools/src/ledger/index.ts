@@ -4,7 +4,6 @@ import * as AdmZip from "adm-zip"
 import {LinkedReference, ReferenceLinker} from "./linker"
 import {TemplateRetriever} from "../template/retriever"
 import * as Handlebars from "handlebars";
-import * as handlebars from "handlebars";
 
 interface LedgerObject {
     $reference: string
@@ -63,6 +62,8 @@ interface Property {
     defaultValue?: string
     values?: string[]
     admonitions?: Admonition[]
+    supportsSince?: string
+    supportsUntil?: string
 }
 
 interface Type extends LedgerObject {
@@ -74,6 +75,8 @@ interface Type extends LedgerObject {
     enums?: string[]
     properties?: { [key: string]: Property }
     admonitions?: Admonition[]
+    supportsSince?: string
+    supportsUntil?: string
 }
 
 interface Action extends LedgerObject {
@@ -123,7 +126,6 @@ class LedgerSession {
         "events",
         "actions",
     ]
-    private
     private readonly ledgerFile: string
     private readonly tempDir: string
     private readonly outputExt: string
@@ -475,7 +477,7 @@ class LedgerSession {
             }
         })
 
-        handlebars.registerHelper("groupingWith", (array: any[], size: number) => {
+        Handlebars.registerHelper("groupingWith", (array: any[], size: number) => {
             const result = []
             while (true) {
                 const group = array.splice(0, size)
@@ -486,6 +488,15 @@ class LedgerSession {
             }
 
             return result
+        })
+
+        Handlebars.registerHelper("normalizeMCVersion", (version?: string) => {
+            if (!version)
+                return undefined
+            if (version.startsWith("V"))
+                version = version.substring(1)
+
+            return version.replace(/_/g, ".")
         })
     }
 

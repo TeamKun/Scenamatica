@@ -66,11 +66,13 @@ import TabItem from '@theme/TabItem';
 {{else}}
 ### プロパティの一覧 {#properties}
 
+{{#if (expr supportsSince "||" supportsUntil)}}対応 Minecraft バージョン：{{#if supportsSince}}v{{normalizeMCVersion supportsSince}}{{/if}}～{{#if supportsUntil}}v{{normalizeMCVersion supportsUntil}}{{/if}}{{/if}}
+
 <table>
   <tbody>
   {{#each (sort properties "name")}}
   <tr>
-      <td><code>{{#if (expr (expr (isMultiLine description) "||" admonitions) "||" pattern)}}<a href="#property-{{name}}">{{name}}</a>{{else}}{{name}}{{/if}}</code></td>
+      <td><code>{{#if (expr supportsSince "||" supportsUntil)}}<i>{{/if}}{{#if (expr (expr (isMultiLine description) "||" admonitions) "||" pattern)}}<a href="#property-{{name}}">{{name}}</a>{{else}}{{name}}{{/if}}{{#if (expr supportsSince "||" supportsUntil)}}</i></code> - {{else}}</code>{{/if}}{{#if (expr supportsSince "||" supportsUntil)}}({{#if supportsSince}}v{{normalizeMCVersion supportsSince}}{{/if}}～{{#if supportsUntil}}v{{normalizeMCVersion supportsUntil}}{{/if}}){{/if}}</td>
       <td>{{#with (resolveType type)}}{{#if (path $reference)}}<Link to="{{path $reference}}">{{/if}}{{id}}{{#if (path $reference)}}</Link>{{/if}}{{#if ../array}}[]{{/if}}{{/with}}</td>
       <td>{{#if description}}{{markdown (lineOf description "0")}}{{/if}}</td>
   </tr>
@@ -93,3 +95,4 @@ import TabItem from '@theme/TabItem';
 {{/each}}
 
 {{/if}}
+ 

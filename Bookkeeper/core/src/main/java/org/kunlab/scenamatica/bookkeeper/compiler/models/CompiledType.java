@@ -113,10 +113,8 @@ public class CompiledType implements ICompiled
         if (!(this.properties == null || this.properties.isEmpty()))
             map.put(KEY_PROPERTIES, serializeProperties(ctxt));
 
-        if (this.supportsSince != MCVersion.UNSET)
-            map.put(KEY_SUPPORTS_SINCE, this.supportsSince);
-        if (this.supportsUntil != MCVersion.UNSET)
-            map.put(KEY_SUPPORTS_UNTIL, this.supportsUntil);
+        MapUtils.putIfNotNull(map, KEY_SUPPORTS_SINCE, this.supportsSince);
+        MapUtils.putIfNotNull(map, KEY_SUPPORTS_UNTIL, this.supportsUntil);
 
         if (ctxt.isJSONSchema() && this.shouldEmbedActionMeta())
             this.embedActionMeta(ctxt, map);
@@ -264,10 +262,8 @@ public class CompiledType implements ICompiled
             MapUtils.putIfNotNull(map, KEY_MAX, this.max);
             MapUtils.putIfNotNull(map, KEY_DEFAULT_VALUE, this.defaultValue);
 
-            if (this.supportsSince != MCVersion.UNSET)
-                map.put(KEY_SUPPORTS_SINCE, this.supportsSince);
-            if (this.supportsUntil != MCVersion.UNSET)
-                map.put(KEY_SUPPORTS_UNTIL, this.supportsUntil);
+            MapUtils.putIfNotNull(map, KEY_SUPPORTS_SINCE, this.supportsSince);
+            MapUtils.putIfNotNull(map, KEY_SUPPORTS_UNTIL, this.supportsUntil);
 
             return map;
         }
