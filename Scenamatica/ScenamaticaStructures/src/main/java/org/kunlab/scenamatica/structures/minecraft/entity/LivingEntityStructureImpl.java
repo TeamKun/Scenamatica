@@ -33,7 +33,7 @@ import java.util.Objects;
 @AllArgsConstructor
 public class LivingEntityStructureImpl extends EntityStructureImpl implements LivingEntityStructure
 {
-
+    protected final Double eyeHeight;
     protected final Integer remainAir;
     protected final Integer maxAir;
     protected final Integer arrowCooldown;
@@ -72,6 +72,7 @@ public class LivingEntityStructureImpl extends EntityStructureImpl implements Li
 
     protected LivingEntityStructureImpl(
             EntityStructure original,
+            Double eyeHeight,
             Integer remainAir,
             Integer maxAir,
             Integer arrowCooldown,
@@ -100,6 +101,7 @@ public class LivingEntityStructureImpl extends EntityStructureImpl implements Li
             Boolean isHandRaised)
     {
         super(original);
+        this.eyeHeight = eyeHeight;
         this.remainAir = remainAir;
         this.maxAir = maxAir;
         this.arrowCooldown = arrowCooldown;
@@ -138,6 +140,7 @@ public class LivingEntityStructureImpl extends EntityStructureImpl implements Li
                 null,
                 null,
                 null,
+                null,
                 PlayerSpecifierImpl.EMPTY,
                 Collections.emptyList(),
                 null,
@@ -169,6 +172,7 @@ public class LivingEntityStructureImpl extends EntityStructureImpl implements Li
     {
         super(type, original);
 
+        this.eyeHeight = original.getEyeHeight();
         this.remainAir = original.getRemainAir();
         this.maxAir = original.getMaxAir();
         this.arrowCooldown = original.getArrowCooldown();
@@ -210,6 +214,7 @@ public class LivingEntityStructureImpl extends EntityStructureImpl implements Li
     public static Map<String, Object> serializeLivingEntity(LivingEntityStructure entity, @NotNull StructureSerializer serializer)
     {
         Map<String, Object> map = EntityStructureImpl.serialize(entity, serializer);
+        MapUtils.putIfNotNull(map, KEY_EYE_HEIGHT, entity.getEyeHeight());
         MapUtils.putIfNotNull(map, KEY_REMAINING_AIR, entity.getRemainAir());
         MapUtils.putIfNotNull(map, KEY_MAX_AIR, entity.getMaxAir());
         MapUtils.putIfNotNull(map, KEY_ARROW_COOLDOWN, entity.getArrowCooldown());
@@ -311,6 +316,7 @@ public class LivingEntityStructureImpl extends EntityStructureImpl implements Li
 
         EntityStructure base = EntityStructureImpl.deserialize(map, serializer);
 
+        Double eyeHeight = MapUtils.getOrNull(map, KEY_EYE_HEIGHT);
         Integer remainAir = MapUtils.getOrNull(map, KEY_REMAINING_AIR);
         Integer maxAir = MapUtils.getOrNull(map, KEY_MAX_AIR);
         Integer arrowCooldown = MapUtils.getOrNull(map, KEY_ARROW_COOLDOWN);
@@ -349,6 +355,7 @@ public class LivingEntityStructureImpl extends EntityStructureImpl implements Li
 
         return new LivingEntityStructureImpl(
                 base,
+                eyeHeight,
                 remainAir,
                 maxAir,
                 arrowCooldown,
@@ -384,6 +391,7 @@ public class LivingEntityStructureImpl extends EntityStructureImpl implements Li
 
         return new LivingEntityStructureImpl(
                 EntityStructureImpl.of(entity),
+                entity.getEyeHeight(),
                 entity.getRemainingAir(),
                 entity.getMaximumAir(),
                 NMSProvider.doNMSSafe(nmsEntity::getArrowCooldown),
@@ -491,7 +499,8 @@ public class LivingEntityStructureImpl extends EntityStructureImpl implements Li
         if (!super.equals(o)) return false;
         LivingEntityStructureImpl that = (LivingEntityStructureImpl) o;
 
-        return Objects.equals(this.remainAir, that.remainAir)
+        return Objects.equals(this.eyeHeight, that.eyeHeight)
+                && Objects.equals(this.remainAir, that.remainAir)
                 && Objects.equals(this.maxAir, that.maxAir)
                 && Objects.equals(this.arrowCooldown, that.arrowCooldown)
                 && Objects.equals(this.arrowsInBody, that.arrowsInBody)
@@ -523,10 +532,10 @@ public class LivingEntityStructureImpl extends EntityStructureImpl implements Li
     public int hashCode()
     {
         return Objects.hash(
-                super.hashCode(), this.remainAir, this.maxAir, this.arrowCooldown, this.arrowsInBody,
-                this.maxNoDamageTicks, this.lastDamage, this.noDamageTicks, this.killer, this.potionEffects,
-                this.removeWhenFarAway, this.canPickupItems, this.leashed, this.leashHolder, this.gliding,
-                this.swimming, this.riptiding, this.sleeping, this.ai, this.collidable, this.invisible,
+                super.hashCode(), this.eyeHeight, this.remainAir, this.maxAir, this.arrowCooldown,
+                this.arrowsInBody, this.maxNoDamageTicks, this.lastDamage, this.noDamageTicks, this.killer,
+                this.potionEffects, this.removeWhenFarAway, this.canPickupItems, this.leashed, this.leashHolder,
+                this.gliding, this.swimming, this.riptiding, this.sleeping, this.ai, this.collidable, this.invisible,
                 this.arrowsStuck, this.shieldBlockingDelay, this.activeItem, this.itemUseRemainTime,
                 this.handRaisedTime, this.isHandRaised
         );
@@ -628,7 +637,8 @@ public class LivingEntityStructureImpl extends EntityStructureImpl implements Li
             if (nmsArrowCooldown != null)
                 arrowCooldownMatches = Objects.equals(this.arrowCooldown, nmsArrowCooldown);
         }
-        return (this.remainAir == null || this.remainAir == livingEntity.getRemainingAir())
+        return (this.eyeHeight == null || this.eyeHeight.equals(livingEntity.getEyeHeight()))
+                && (this.remainAir == null || this.remainAir == livingEntity.getRemainingAir())
                 && (this.maxAir == null || this.maxAir == livingEntity.getMaximumAir())
                 && arrowCooldownMatches
                 && (this.arrowsInBody == null || this.arrowsInBody == nmsEntity.getArrowCount())

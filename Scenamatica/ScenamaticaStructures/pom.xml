@@ -10,10 +10,6 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <packaging>pom</packaging>
-    <modules>
-        <module>StructureBase</module>
-    </modules>
     <artifactId>ScenamaticaStructures</artifactId>
 
     <properties>
@@ -23,6 +19,13 @@
     </properties>
 
     <dependencies>
+        <!--suppress MavenDuplicateDependenciesInspection due to dependency order injection, VulnerableLibrariesLocal -->
+        <dependency>
+            <groupId>com.destroystokyo.paper</groupId>
+            <artifactId>paper-api</artifactId>
+            <version>1.13.2-R0.1-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>org.kunlab.scenamatica</groupId>
             <artifactId>ScenamaticaModels</artifactId>

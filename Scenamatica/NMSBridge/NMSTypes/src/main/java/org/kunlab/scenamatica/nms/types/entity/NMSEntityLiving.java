@@ -42,7 +42,7 @@ public interface NMSEntityLiving extends NMSEntity
     /**
      * エンティティが寝ているかどうかを取得します。
      *
-     * @return
+     * @return 寝ているかどうか
      */
     boolean isSleeping();
 

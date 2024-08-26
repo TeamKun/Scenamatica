@@ -17,6 +17,7 @@ public class LivingEntitySerializeTest
 {
     public static final LivingEntityStructure FULFILLED = new LivingEntityStructureImpl(
             EntityStructureSerializeTest.FULFILLED,
+            0.5,
             114,
             514,
             1919,
@@ -47,6 +48,7 @@ public class LivingEntitySerializeTest
 
     public static final Map<String, Object> FULFILLED_MAP = new HashMap<String, Object>(EntityStructureSerializeTest.FULFILLED_MAP)
     {{
+        this.put("eyeHeight", 0.5d);
         this.put("remainAir", 114);
         this.put("maxAir", 514);
         this.put("arrowCooldown", 1919);
