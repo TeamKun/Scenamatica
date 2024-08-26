@@ -13,7 +13,6 @@ import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.EntityStructure;
-import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.LivingEntityStructure;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.entities.ProjectileStructure;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.misc.BlockStructure;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.misc.ProjectileSourceStructure;
@@ -152,7 +151,7 @@ public class ProjectileStructureImpl extends EntityStructureImpl implements Proj
                 return false;
 
             LivingEntity ent = (LivingEntity) projectileSource;
-            return ((LivingEntityStructure) this.shooter).isAdequate(ent, strict);
+            return ((EntityStructure) this.shooter).isAdequate(ent, strict);
         }
         else if (this.shooter instanceof BlockStructure)
         {

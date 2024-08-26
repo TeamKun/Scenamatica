@@ -265,12 +265,14 @@ public class EntitySpecifierImpl<E extends Entity> implements EntitySpecifier<E>
             return entity.getUniqueId().equals(this.mayUUID);
         if (this.isSelectable())
             return this.getSelector().test(null, entity);
-        else /* if (this.getTargetStructure() != null) */
+        else if (this.targetStructure != null)
         {
             EntityStructure structure = this.getTargetStructure();
             assert structure != null;
             return structure.canApplyTo(entity) && structure.isAdequate(entity);
         }
+        else
+            return false;
     }
 
     @Override

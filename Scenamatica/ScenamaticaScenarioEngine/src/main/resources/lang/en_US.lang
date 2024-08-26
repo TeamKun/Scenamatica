@@ -1,6 +1,6 @@
 # Scenario
 
-scenario.load.start=Starting to load scenario %%scenarioName%%
+scenario.load.start=Starting to load plugin %%pluginName%%
 scenario.compile.start=Starting scenario compilation for scenario %%scenarioName%%
 scenario.compile.end=Scenario compilations of %%total%% scenarios have been completed.
 scenario.compile.child=[%%compiled%%/%%total%%] Compiling %%triggerType%%:%%type%% scenario %%scenarioName%%

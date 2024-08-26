@@ -295,7 +295,7 @@ public class ScenarioManagerImpl implements ScenarioManager
         List<ScenarioEngine> engines = new ArrayList<>(files.size());
         logger.info(LangProvider.get(
                 "scenario.load.start",
-                MsgArgs.of("plugin", owningPlugin.getName())
+                MsgArgs.of("pluginName", owningPlugin.getName())
         ));
 
         boolean isSuccessful = true;

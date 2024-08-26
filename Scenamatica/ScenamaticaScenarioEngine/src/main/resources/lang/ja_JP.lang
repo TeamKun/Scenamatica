@@ -1,6 +1,6 @@
 # シナリオ
 
-scenario.load.start=シナリオ %%scenarioName%% の読み込みを開始します。
+scenario.load.start=プラグイン %%pluginName%% の読み込みを開始します。
 scenario.compile.start=シナリオ %%scenarioName%% のコンパイルを開始します。
 scenario.compile.end=合計 %%total%% 個のシナリオのコンパイルが完了しました。
 scenario.compile.child=[%%compiled%%/%%total%%] シナリオ %%scenarioName%% の %%triggerType%%:%%type%% をコンパイル中 …
