@@ -142,7 +142,7 @@ public class SelectiveEntityStructureSerializer
                                                                                         @NotNull BiConsumer<Map<String, Object>, StructureSerializer> validator,
                                                                                         @NotNull BiFunction<E, StructureSerializer, S> constructor)
     {
-        if (entityType.getEntityClass() != entityClazz)
+        if (!(entityType == EntityType.UNKNOWN || entityClazz.isAssignableFrom(entityType.getEntityClass())))
             throw new IllegalArgumentException("Entity class mismatch: " + entityType + " -?-> " + entityClazz);
 
         ENTITY_STRUCTURES.put(

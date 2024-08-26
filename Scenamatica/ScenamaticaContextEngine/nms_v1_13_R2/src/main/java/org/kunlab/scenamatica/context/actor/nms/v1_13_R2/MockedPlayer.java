@@ -306,7 +306,7 @@ class MockedPlayer extends EntityPlayer implements Actor
     @Override
     public @NotNull UUID getUniqueID()
     {
-        return this.getUniqueID();
+        return this.uniqueID;
     }
 
     @Override
