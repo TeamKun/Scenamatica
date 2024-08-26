@@ -80,7 +80,7 @@
     </repositories>
 
     <dependencies>
-        <!--suppress MavenDuplicateDependenciesInspection due to dependency order injection -->
+        <!--suppress MavenDuplicateDependenciesInspection due to dependency order injection, VulnerableLibrariesLocal -->
         <dependency>
             <groupId>com.destroystokyo.paper</groupId>
             <artifactId>paper-api</artifactId>

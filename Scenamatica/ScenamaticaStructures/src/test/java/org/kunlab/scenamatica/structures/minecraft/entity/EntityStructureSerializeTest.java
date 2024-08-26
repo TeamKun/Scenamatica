@@ -107,7 +107,7 @@ public class EntityStructureSerializeTest
     @Test
     void 正常にシリアライズできるか()
     {
-        Map<String, Object> map = EntityStructureImpl.serialize((EntityStructure) FULFILLED, StructureSerializerMock.getInstance());
+        Map<String, Object> map = EntityStructureImpl.serialize(FULFILLED, StructureSerializerMock.getInstance());
 
         MapTestUtil.assertEqual(FULFILLED_MAP, map);
     }
@@ -123,7 +123,7 @@ public class EntityStructureSerializeTest
     @Test
     void 必須項目のみでシリアライズできるか()
     {
-        Map<String, Object> map = EntityStructureImpl.serialize((EntityStructure) EMPTY, StructureSerializerMock.getInstance());
+        Map<String, Object> map = EntityStructureImpl.serialize(EMPTY, StructureSerializerMock.getInstance());
 
         MapTestUtil.assertEqual(EMPTY_MAP, map);
     }

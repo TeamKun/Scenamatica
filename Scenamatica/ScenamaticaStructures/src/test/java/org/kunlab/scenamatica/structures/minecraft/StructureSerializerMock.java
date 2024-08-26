@@ -113,7 +113,7 @@ public class StructureSerializerMock implements StructureSerializer
     {
         // エンティティの場合は, さらに EntityType で分岐する
         if (isEntityRelatedValue(value, clazz))
-            return (T) SelectiveEntityStructureSerializerMock.toStructure((Entity) value, this);
+            return SelectiveEntityStructureSerializerMock.toStructure((Entity) value, this);
 
         return this.selectMappedEntry(value, clazz).getConstructor().apply(value);
     }

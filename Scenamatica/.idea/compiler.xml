@@ -14,7 +14,6 @@
         <module name="v1_17_R1" />
         <module name="v1_15_R1" />
         <module name="ScenamaticaScenarioEngine" />
-        <module name="StructureBase" />
         <module name="ContextEngineNMSBase" />
         <module name="v1_13_R2" />
         <module name="Base_v1_13_2" />
@@ -30,6 +29,7 @@
         <module name="nms_v1_18_R1" />
         <module name="Extended_v1_18" />
         <module name="ScenamaticaActionEngine" />
+        <module name="ScenamaticaStructures" />
         <module name="Extended_v1_16" />
         <module name="ScenamaticaSelectorEngine" />
         <module name="Extended_v1_14" />
@@ -48,5 +48,8 @@
         <module name="nms_v1_13_R2" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="StructureBase" target="1.8" />
+    </bytecodeTargetLevel>
   </component>
 </project>

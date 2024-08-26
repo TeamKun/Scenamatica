@@ -21,6 +21,11 @@ import java.util.List;
 
         properties = {
                 @TypeProperty(
+                        name = LivingEntityStructure.KEY_EYE_HEIGHT,
+                        description = "目の高さです。",
+                        type = double.class
+                ),
+                @TypeProperty(
                         name = LivingEntityStructure.KEY_REMAINING_AIR,
                         description = "残りの空気です。",
                         type = int.class
@@ -124,6 +129,7 @@ import java.util.List;
 )
 public interface LivingEntityStructure extends EntityStructure
 {
+    String KEY_EYE_HEIGHT = "eyeHeight";
     String KEY_REMAINING_AIR = "remainAir";
     String KEY_MAX_AIR = "maxAir";
     String KEY_ARROW_COOLDOWN = "arrowCooldown";
@@ -161,6 +167,12 @@ public interface LivingEntityStructure extends EntityStructure
     String KEY_JUMPING = "jumping";
     String KEY_HURT_DIRECTION = "hurtDirection";
 
+    /**
+     * このエンティティの目の高さを取得します。
+     *
+     * @return 目の高さ
+     */
+    Double getEyeHeight();
     /**
      * このエンティティの残りの空気を取得します。
      *
