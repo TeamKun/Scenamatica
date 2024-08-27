@@ -2,6 +2,7 @@ package org.kunlab.scenamatica.structures.minecraft.entity;
 
 import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.inventory.MainHand;
 import org.junit.jupiter.api.Test;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.EntityStructure;
@@ -30,6 +31,18 @@ public class PlayerStructureSerializeTest
         this.put("inventory", PlayerInventoryStructureSerializeTest.FULFILLED_MAP);
         this.put("enderChest", InventoryStructureSerializeTest.FULFILLED_MAP);
         this.put("mainHand", "LEFT");
+        this.put("cooldown", new HashMap<String, Integer>()
+        {{
+            this.put("DIAMOND", 1);
+        }});
+        this.put("bedSpawnLocation", new HashMap<String, Object>()
+        {{
+            this.put("x", 11.0);
+            this.put("y", 45.0);
+            this.put("z", 14.0);
+        }});
+        this.put("blocking", true);
+        this.put("sleepTicks", 114514);
         this.put("gamemode", "ADVENTURE");
         this.put("food", 20);
 
@@ -54,12 +67,6 @@ public class PlayerStructureSerializeTest
             this.put("y", 45.0);
             this.put("z", 14.0);
         }});
-        this.put("bedLocation", new HashMap<String, Object>()
-        {{
-            this.put("x", 11.0);
-            this.put("y", 45.0);
-            this.put("z", 14.0);
-        }});
         this.put("exp", 20);
         this.put("level", 2000);
         this.put("totalExp", 20000);
@@ -72,6 +79,10 @@ public class PlayerStructureSerializeTest
     public static final PlayerStructure EMPTY = new PlayerStructureImpl(
             new HumanEntityStructureImpl(
                     LivingEntitySerializeTest.EMPTY,
+                    null,
+                    null,
+                    null,
+                    null,
                     null,
                     null,
                     null,
@@ -111,6 +122,13 @@ public class PlayerStructureSerializeTest
                             PlayerInventoryStructureSerializeTest.FULFILLED,
                             InventoryStructureSerializeTest.FULFILLED,
                             MainHand.LEFT,
+                            new HashMap<Material, Integer>()
+                            {{
+                                this.put(Material.DIAMOND, 1);
+                            }},
+                            114514,
+                            LocationStructureImpl.of(new Location(null, 11, 45, 14)),
+                            true,
                             GameMode.ADVENTURE,
                             20
                     ),

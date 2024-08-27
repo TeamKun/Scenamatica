@@ -22,10 +22,21 @@ public class MapTestUtil
         assertEqual(expected, acutual, 0);
     }
 
+    private static String[] getMissingMapKeys(Map<?, ?> mapA, Map<?, ?> mapB)
+    {
+        Map<?, ?> smallerMap = mapA.size() < mapB.size() ? mapA: mapB;
+        Map<?, ?> largerMap = mapA.size() < mapB.size() ? mapB: mapA;
+
+        return smallerMap.keySet().stream()
+                .filter(key -> !largerMap.containsKey(key))
+                .map(Object::toString)
+                .toArray(String[]::new);
+    }
+
     public static void assertEqual(Map<?, ?> expected, Map<?, ?> actual, int depth)
     {
         assertEquals(expected.size(), actual.size(), () -> {
-            String builder = "Map size is not equal.\n" +
+            String builder = "Map size is not equal, possibly missing keys:" + String.join(", ", getMissingMapKeys(expected, actual)) + "\n" +
                     "Expected: " + expected + "\n" +
                     "Actual: " + actual + "\n-----\n";
             dumpMap("Expected", expected, depth);
