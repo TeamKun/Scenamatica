@@ -62,11 +62,6 @@ import java.util.Map;
                         type = Location.class
                 ),
                 @TypeProperty(
-                        name = PlayerStructure.KEY_BED_SPAWN_LOCATION,
-                        description = "プレイヤのベッドのスポーン地点です。",
-                        type = Location.class
-                ),
-                @TypeProperty(
                         name = PlayerStructure.KEY_EXP,
                         description = "プレイヤの経験値です。",
                         type = int.class
@@ -137,7 +132,6 @@ public interface PlayerStructure extends HumanEntityStructure
     String KEY_PLAYER_LIST_HEADER = "header";
     String KEY_PLAYER_LIST_FOOTER = "footer";
     String KEY_COMPASS_TARGET = "compass";
-    String KEY_BED_SPAWN_LOCATION = "bedLocation";
     String KEY_EXP = "exp";
     String KEY_LEVEL = "level";
     String KEY_TOTAL_EXPERIENCE = "totalExp";
@@ -218,14 +212,6 @@ public interface PlayerStructure extends HumanEntityStructure
      * @return コンパスのターゲット
      */
     LocationStructure getCompassTarget();
-
-    /**
-     * ベッドのスポーン地点を取得します。
-     *
-     * @return ベッドのスポーン地点
-     */
-    LocationStructure getBedSpawnLocation();
-
     /**
      * 経験値を取得します。
      *

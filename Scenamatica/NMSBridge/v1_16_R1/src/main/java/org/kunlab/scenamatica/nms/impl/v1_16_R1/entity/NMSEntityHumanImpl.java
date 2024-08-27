@@ -2,9 +2,11 @@ package org.kunlab.scenamatica.nms.impl.v1_16_R1.entity;
 
 import net.minecraft.server.v1_16_R1.EntityHuman;
 import net.minecraft.server.v1_16_R1.EntityItem;
+import net.minecraft.server.v1_16_R1.EnumMainHand;
 import net.minecraft.server.v1_16_R1.ItemStack;
 import org.bukkit.craftbukkit.v1_16_R1.entity.CraftHumanEntity;
 import org.bukkit.entity.HumanEntity;
+import org.bukkit.inventory.MainHand;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.nms.enums.entity.NMSItemSlot;
 import org.kunlab.scenamatica.nms.impl.v1_16_R1.TypeSupportImpl;
@@ -63,6 +65,12 @@ public class NMSEntityHumanImpl extends NMSEntityLivingImpl implements NMSEntity
     public void setFoodLevel(int foodLevel)
     {
         this.nmsEntity.getFoodData().foodLevel = foodLevel;
+    }
+
+    @Override
+    public void setMainHand(MainHand hand)
+    {
+        this.nmsEntity.a(hand == MainHand.RIGHT ? EnumMainHand.LEFT: EnumMainHand.RIGHT);
     }
 
     @Override

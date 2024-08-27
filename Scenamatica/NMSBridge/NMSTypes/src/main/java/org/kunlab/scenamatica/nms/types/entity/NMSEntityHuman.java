@@ -1,6 +1,7 @@
 package org.kunlab.scenamatica.nms.types.entity;
 
 import org.bukkit.entity.HumanEntity;
+import org.bukkit.inventory.MainHand;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.nms.enums.entity.NMSItemSlot;
@@ -63,4 +64,11 @@ public interface NMSEntityHuman extends NMSEntityLiving
      * @param foodLevel 食料レベル
      */
     void setFoodLevel(int foodLevel);
+
+    /**
+     * 利き手を設定します。
+     *
+     * @param hand 利き手
+     */
+    void setMainHand(MainHand hand);
 }
