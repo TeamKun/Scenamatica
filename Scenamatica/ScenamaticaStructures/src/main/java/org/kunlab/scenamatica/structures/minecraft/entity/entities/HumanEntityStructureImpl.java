@@ -3,6 +3,7 @@ package org.kunlab.scenamatica.structures.minecraft.entity.entities;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.bukkit.GameMode;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -11,6 +12,7 @@ import org.bukkit.inventory.MainHand;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
+import org.kunlab.scenamatica.enums.MinecraftVersion;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.LivingEntityStructure;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.entities.HumanEntityStructure;
@@ -24,6 +26,8 @@ import org.kunlab.scenamatica.structures.minecraft.inventory.InventoryStructureI
 import org.kunlab.scenamatica.structures.minecraft.inventory.PlayerInventoryStructureImpl;
 import org.kunlab.scenamatica.structures.minecraft.misc.LocationStructureImpl;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -229,12 +233,38 @@ public class HumanEntityStructureImpl extends LivingEntityStructureImpl implemen
                 entity.getMainHand(),
                 cooldown,
                 entity.getSleepTicks(),
-                entity.getBedSpawnLocation() == null ? null: LocationStructureImpl.of(entity.getBedSpawnLocation()),
+                retrievePlayerBedLocation(entity),
                 entity.isBlocking(),
                 entity.getGameMode(),
                 nmsHuman.getFoodLevel()
         );
     }
+
+    private static LocationStructure retrievePlayerBedLocation(HumanEntity human)
+    {
+        Location bedLoc;
+        // 1.16 からは, メソッド名が #getBedLocation に変更されている。
+        if (MinecraftVersion.current().isAtLeast(MinecraftVersion.V1_16))
+        {
+            if (!human.isSleeping())
+                return null;
+
+            try
+            {
+                Method method = HumanEntity.class.getMethod("getBedLocation");
+                bedLoc = (Location) method.invoke(human);
+            }
+            catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e)
+            {
+                throw new IllegalStateException(e);
+            }
+        }
+        else
+            bedLoc = human.getBedSpawnLocation();
+
+        return bedLoc == null ? null: LocationStructureImpl.of(bedLoc);
+    }
+
 
     @Override
     public boolean equals(Object o)
