@@ -44,6 +44,8 @@ public class PlayerStructureImpl extends HumanEntityStructureImpl implements Pla
     protected final Integer totalExperience;
     protected final Boolean allowFlight;
     protected final Boolean flying;
+    protected final Boolean sneaking;
+    protected final Boolean sprinting;
     protected final Float walkSpeed;
     protected final Float flySpeed;
 
@@ -56,7 +58,7 @@ public class PlayerStructureImpl extends HumanEntityStructureImpl implements Pla
                                String playerListFooter, LocationStructure compassTarget,
                                LocationStructure bedSpawnLocation, Integer exp,
                                Integer level, Integer totalExperience,
-                               Boolean allowFlight, Boolean flying,
+                               Boolean allowFlight, Boolean flying, Boolean sneaking, Boolean sprinting,
                                Float walkSpeed, Float flySpeed, Integer opLevel, List<String> activePermissions)
     {
         super(human);
@@ -76,6 +78,8 @@ public class PlayerStructureImpl extends HumanEntityStructureImpl implements Pla
         this.totalExperience = totalExperience;
         this.allowFlight = allowFlight;
         this.flying = flying;
+        this.sneaking = sneaking;
+        this.sprinting = sprinting;
         this.walkSpeed = walkSpeed;
         this.flySpeed = flySpeed;
         this.opLevel = opLevel;
@@ -86,7 +90,8 @@ public class PlayerStructureImpl extends HumanEntityStructureImpl implements Pla
                                String displayName, String playerListName, String playerListHeader,
                                String playerListFooter, LocationStructure compassTarget,
                                LocationStructure bedSpawnLocation, Integer exp, Integer level, Integer totalExperience,
-                               Boolean allowFlight, Boolean flying, Float walkSpeed, Float flySpeed, Integer opLevel,
+                               Boolean allowFlight, Boolean flying, Boolean sneaking, Boolean sprinting,
+                               Float walkSpeed, Float flySpeed, Integer opLevel,
                                List<String> activePermissions)
     {
         this.name = name;
@@ -105,6 +110,8 @@ public class PlayerStructureImpl extends HumanEntityStructureImpl implements Pla
         this.totalExperience = totalExperience;
         this.allowFlight = allowFlight;
         this.flying = flying;
+        this.sneaking = sneaking;
+        this.sprinting = sprinting;
         this.walkSpeed = walkSpeed;
         this.flySpeed = flySpeed;
         this.opLevel = opLevel;
@@ -129,6 +136,8 @@ public class PlayerStructureImpl extends HumanEntityStructureImpl implements Pla
         MapUtils.putIfNotNull(map, KEY_OP_LEVEL, structure.getOpLevel());
         MapUtils.putIfNotNull(map, KEY_FLYING, structure.getFlying());
         MapUtils.putIfNotNull(map, KEY_ALLOW_FLIGHT, structure.getAllowFlight());
+        MapUtils.putIfNotNull(map, KEY_SNEAKING, structure.getSneaking());
+        MapUtils.putIfNotNull(map, KEY_SPRINTING, structure.getSprinting());
 
 
         if (structure.getFlySpeed() != null && structure.getFlySpeed() != SPEED_DEFAULT)
@@ -175,6 +184,8 @@ public class PlayerStructureImpl extends HumanEntityStructureImpl implements Pla
         MapUtils.checkTypeIfContains(map, KEY_TOTAL_EXPERIENCE, Integer.class);
         MapUtils.checkTypeIfContains(map, KEY_ALLOW_FLIGHT, Boolean.class);
         MapUtils.checkTypeIfContains(map, KEY_FLYING, Boolean.class);
+        MapUtils.checkTypeIfContains(map, KEY_SNEAKING, Boolean.class);
+        MapUtils.checkTypeIfContains(map, KEY_SPRINTING, Boolean.class);
         MapUtils.checkTypeIfContains(map, KEY_WALK_SPEED, Number.class);
         MapUtils.checkTypeIfContains(map, KEY_FLY_SPEED, Number.class);
         MapUtils.checkTypeIfContains(map, KEY_ACTIVE_PERMISSIONS, List.class);
@@ -209,6 +220,8 @@ public class PlayerStructureImpl extends HumanEntityStructureImpl implements Pla
         Integer totalExperience = MapUtils.getOrNull(map, KEY_TOTAL_EXPERIENCE);
         Boolean allowFlight = MapUtils.getOrNull(map, KEY_ALLOW_FLIGHT);
         Boolean flying = MapUtils.getOrNull(map, KEY_FLYING);
+        Boolean sneaking = MapUtils.getOrNull(map, KEY_SNEAKING);
+        Boolean sprinting = MapUtils.getOrNull(map, KEY_SPRINTING);
         Float walkSpeed = MapUtils.getOrNull(map, KEY_WALK_SPEED);
         Float flySpeed = MapUtils.getOrNull(map, KEY_FLY_SPEED);
 
@@ -274,6 +287,8 @@ public class PlayerStructureImpl extends HumanEntityStructureImpl implements Pla
                 totalExperience,
                 allowFlight,
                 flying,
+                sneaking,
+                sprinting,
                 walkSpeed,
                 flySpeed,
                 opLevel,
@@ -301,6 +316,8 @@ public class PlayerStructureImpl extends HumanEntityStructureImpl implements Pla
                 player.getTotalExperience(),
                 player.getAllowFlight(),
                 player.isFlying(),
+                player.isSneaking(),
+                player.isSprinting(),
                 player.getWalkSpeed(),
                 player.getFlySpeed(),
                 guessOpLevel(player),
@@ -347,6 +364,8 @@ public class PlayerStructureImpl extends HumanEntityStructureImpl implements Pla
         return Objects.equals(this.opLevel, that.opLevel)
                 && Objects.equals(this.allowFlight, that.allowFlight)
                 && Objects.equals(this.flying, that.flying)
+                && Objects.equals(this.sneaking, that.sneaking)
+                && Objects.equals(this.sprinting, that.sprinting)
                 && Objects.equals(this.name, that.name)
                 && Objects.equals(this.displayName, that.displayName)
                 && Objects.equals(this.online, that.online)
@@ -370,8 +389,8 @@ public class PlayerStructureImpl extends HumanEntityStructureImpl implements Pla
     {
         return Objects.hash(super.hashCode(), this.name, this.displayName, this.playerListName,
                 this.playerListHeader, this.playerListFooter, this.compassTarget, this.bedSpawnLocation,
-                this.exp, this.level, this.totalExperience, this.allowFlight, this.flying, this.walkSpeed,
-                this.flySpeed
+                this.exp, this.level, this.totalExperience, this.allowFlight, this.flying, this.sneaking, this.sprinting,
+                this.walkSpeed, this.flySpeed
         );
     }
 
@@ -405,6 +424,10 @@ public class PlayerStructureImpl extends HumanEntityStructureImpl implements Pla
             player.setAllowFlight(this.allowFlight);
         if (this.flying != null)
             player.setFlying(this.flying);
+        if (this.sneaking != null)
+            player.setSneaking(this.sneaking);
+        if (this.sprinting != null)
+            player.setSprinting(this.sprinting);
         if (this.walkSpeed != null)
             player.setWalkSpeed(this.walkSpeed);
         if (this.flySpeed != null)
@@ -435,6 +458,8 @@ public class PlayerStructureImpl extends HumanEntityStructureImpl implements Pla
                 && (this.totalExperience == null || this.totalExperience.equals(player.getTotalExperience()))
                 && (this.allowFlight == null || this.allowFlight.equals(player.getAllowFlight()))
                 && (this.flying == null || this.flying.equals(player.isFlying()))
+                && (this.sneaking == null || this.sneaking.equals(player.isSneaking()))
+                && (this.sprinting == null || this.sprinting.equals(player.isSprinting()))
                 && (this.walkSpeed == null || this.walkSpeed.equals(player.getWalkSpeed()))
                 && (this.flySpeed == null || this.flySpeed.equals(player.getFlySpeed()))
                 && (this.activePermissions == null || this.activePermissions.stream().allMatch(player::hasPermission));

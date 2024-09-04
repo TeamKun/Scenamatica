@@ -72,6 +72,8 @@ public class PlayerStructureSerializeTest
         this.put("totalExp", 20000);
         this.put("flyable", true);
         this.put("flying", true);
+        this.put("sneaking", true);
+        this.put("sprinting", true);
         this.put("walkSpeed", 114f);
         this.put("flySpeed", 514f);
         this.put("op", 4);
@@ -89,6 +91,8 @@ public class PlayerStructureSerializeTest
                     null,
                     null
             ),
+            null,
+            null,
             null,
             null,
             null,
@@ -146,6 +150,8 @@ public class PlayerStructureSerializeTest
                     20,
                     2000,
                     20000,
+                    true,
+                    true,
                     true,
                     true,
                     114f,
