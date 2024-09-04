@@ -87,6 +87,16 @@ import java.util.Map;
                         type = boolean.class
                 ),
                 @TypeProperty(
+                        name = PlayerStructure.KEY_SNEAKING,
+                        description = "プレイヤがしゃがんでいるかどうかです。",
+                        type = boolean.class
+                ),
+                @TypeProperty(
+                        name = PlayerStructure.KEY_SPRINTING,
+                        description = "プレイヤが走っているかどうかです。",
+                        type = boolean.class
+                ),
+                @TypeProperty(
                         name = PlayerStructure.KEY_FLY_SPEED,
                         description = "プレイヤの飛行速度です。",
                         type = float.class
@@ -137,6 +147,8 @@ public interface PlayerStructure extends HumanEntityStructure
     String KEY_TOTAL_EXPERIENCE = "totalExp";
     String KEY_ALLOW_FLIGHT = "flyable";
     String KEY_FLYING = "flying";
+    String KEY_SNEAKING = "sneaking";
+    String KEY_SPRINTING = "sprinting";
     String KEY_FLY_SPEED = "flySpeed";
     String KEY_WALK_SPEED = "walkSpeed";
 
@@ -246,6 +258,20 @@ public interface PlayerStructure extends HumanEntityStructure
      * @return 飛んでいるかどうか
      */
     Boolean getFlying();
+
+    /**
+     * しゃがんでいるかどうかを取得します。
+     *
+     * @return しゃがんでいるかどうか
+     */
+    Boolean getSneaking();
+
+    /**
+     * 走っているかどうかを取得します。
+     *
+     * @return 走っているかどうか
+     */
+    Boolean getSprinting();
 
     /**
      * 歩行速度を取得します。
