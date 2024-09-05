@@ -221,6 +221,8 @@ public class HumanEntityStructureImpl extends LivingEntityStructureImpl implemen
         Map<Material, Integer> cooldown = new HashMap<>();
         for (Material material : Material.values())
         {
+            if (!entity.hasCooldown(material))
+                break;
             int ticks = entity.getCooldown(material);
             if (ticks > 0)
                 cooldown.put(material, ticks);
