@@ -12,9 +12,4 @@ public class NMSItemImpl implements NMSItem
         this.nmsItem = nmsItem;
     }
 
-    @Override
-    public int getMaxDurability()
-    {
-        return this.nmsItem.m();
-    }
 }

@@ -7,5 +7,4 @@ import org.kunlab.scenamatica.nms.NMSElement;
  */
 public interface NMSItem extends NMSElement
 {
-    int getMaxDurability();
 }

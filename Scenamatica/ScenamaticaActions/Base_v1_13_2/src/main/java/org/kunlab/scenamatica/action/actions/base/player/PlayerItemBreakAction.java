@@ -24,7 +24,6 @@ import org.kunlab.scenamatica.interfaces.structures.minecraft.inventory.ItemStac
 import org.kunlab.scenamatica.nms.NMSProvider;
 import org.kunlab.scenamatica.nms.enums.entity.NMSItemSlot;
 import org.kunlab.scenamatica.nms.types.entity.NMSEntityLiving;
-import org.kunlab.scenamatica.nms.types.item.NMSItem;
 import org.kunlab.scenamatica.nms.types.item.NMSItemStack;
 
 import java.util.Collections;
@@ -127,14 +126,13 @@ public class PlayerItemBreakAction extends AbstractPlayerAction
         NMSItemSlot nmsSlot = NMSItemSlot.fromBukkit(slot);
         NMSEntityLiving nmsPlayer = NMSProvider.getProvider().wrap(player);
         NMSItemStack nmsStack = NMSProvider.getProvider().wrap(item);
-        NMSItem nmsItem = nmsStack.getItem();
 
         int damageToApply = 9999;
         ItemMeta meta = item.getItemMeta();
         if (meta instanceof Damageable)
         {
             Damageable damageable = (Damageable) meta;
-            int maxDurability = nmsItem.getMaxDurability();
+            int maxDurability = item.getMaxItemUseDuration();
             damageToApply = /* int currentDurability = */ maxDurability - damageable.getDamage();
         }
 

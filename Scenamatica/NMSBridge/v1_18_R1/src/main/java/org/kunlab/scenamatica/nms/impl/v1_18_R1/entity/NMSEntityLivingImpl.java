@@ -68,13 +68,13 @@ public class NMSEntityLivingImpl extends NMSEntityImpl implements NMSEntityLivin
     @Override
     public int getArrowCooldown()
     {
-        return this.nmsEntity.aI;
+        return this.nmsEntity.aJ;
     }
 
     @Override
     public void setArrowCooldown(int cooldown)
     {
-        this.nmsEntity.aI = cooldown;
+        this.nmsEntity.aJ = cooldown;
     }
 
     @Override
