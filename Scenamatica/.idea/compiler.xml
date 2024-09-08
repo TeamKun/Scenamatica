@@ -25,7 +25,7 @@
         <module name="nms_v1_14_R1" />
         <module name="nms_v1_16_R3" />
         <module name="Extended_v1_16_5" />
-        <module name="nms_v1_20_R3" />
+        <module name="nms_v1_20_R4" />
         <module name="nms_v1_18_R1" />
         <module name="Extended_v1_18" />
         <module name="ScenamaticaActionEngine" />
@@ -33,6 +33,7 @@
         <module name="Extended_v1_16" />
         <module name="ScenamaticaSelectorEngine" />
         <module name="Extended_v1_14" />
+        <module name="v1_20_R4" />
         <module name="ScenamaticaDaemon" />
         <module name="v1_16_R1" />
         <module name="v1_16_R2" />

@@ -25,6 +25,8 @@
     <file url="file://$PROJECT_DIR$/NMSBridge/v1_17_R1/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/NMSBridge/v1_18_R1/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/NMSBridge/v1_18_R1/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/NMSBridge/v1_20_R4/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/NMSBridge/v1_20_R4/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/ScenamaticaAPI/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/ScenamaticaAPI/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/ScenamaticaActionEngine/Base_v1_13_2/src/main/java" charset="UTF-8" />
@@ -69,8 +71,8 @@
     <file url="file://$PROJECT_DIR$/ScenamaticaContextEngine/nms_v1_17_R1/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/ScenamaticaContextEngine/nms_v1_18_R1/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/ScenamaticaContextEngine/nms_v1_18_R1/src/main/resources" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/ScenamaticaContextEngine/nms_v1_20_R3/src/main/java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/ScenamaticaContextEngine/nms_v1_20_R3/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ScenamaticaContextEngine/nms_v1_20_R4/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ScenamaticaContextEngine/nms_v1_20_R4/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/ScenamaticaContextEngine/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/ScenamaticaContextEngine/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/ScenamaticaDaemon/src/main/java" charset="UTF-8" />
