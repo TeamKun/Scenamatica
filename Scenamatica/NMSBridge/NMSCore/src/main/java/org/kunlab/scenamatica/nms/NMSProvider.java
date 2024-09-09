@@ -86,6 +86,11 @@ public class NMSProvider
                 typeSupport = new org.kunlab.scenamatica.nms.impl.v1_18_R1.TypeSupportImpl();
                 provider = new org.kunlab.scenamatica.nms.impl.v1_18_R1.WrapperProviderImpl();
                 break;
+            case "v1_20_R4":
+                registry = new org.kunlab.scenamatica.nms.impl.v1_20_R4.NMSRegistryImpl();
+                typeSupport = new org.kunlab.scenamatica.nms.impl.v1_20_R4.TypeSupportImpl();
+                provider = new org.kunlab.scenamatica.nms.impl.v1_20_R4.WrapperProviderImpl();
+                break;
             default:
                 throw new IllegalStateException("Unsupported server version: " + version);
         }
@@ -128,13 +133,13 @@ public class NMSProvider
     }
 
     @FunctionalInterface
-    public static interface NMSAction<T>
+    public interface NMSAction<T>
     {
         T run() throws UnsupportedNMSOperationException;
     }
 
     @FunctionalInterface
-    public static interface NMSVoidAction
+    public interface NMSVoidAction
     {
         void run() throws UnsupportedNMSOperationException;
     }

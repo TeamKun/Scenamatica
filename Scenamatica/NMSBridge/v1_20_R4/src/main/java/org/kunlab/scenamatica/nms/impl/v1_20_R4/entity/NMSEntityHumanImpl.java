@@ -1,5 +1,6 @@
 package org.kunlab.scenamatica.nms.impl.v1_20_R4.entity;
 
+import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -36,7 +37,7 @@ public class NMSEntityHumanImpl extends NMSEntityLivingImpl implements NMSEntity
     @Override
     public NMSItemStack getEquipment(NMSItemSlot slot)
     {
-        return new NMSItemStackImpl(this.nmsEntity.b(TypeSupportImpl.toNMS(slot)));
+        return new NMSItemStackImpl(this.nmsEntity.getItemBySlot(TypeSupportImpl.toNMS(slot)));
     }
 
     @Override
@@ -51,10 +52,10 @@ public class NMSEntityHumanImpl extends NMSEntityLivingImpl implements NMSEntity
     @Override
     public boolean drop(boolean dropAll)
     {
-        EntityItem dropped = this.nmsEntity.a(
-                this.nmsEntity.fq().a(
-                        this.nmsEntity.fq().k,
-                        (dropAll && !this.nmsEntity.fq().f().b()) ? this.nmsEntity.fq().f().I(): 1
+        ItemEntity dropped = this.nmsEntity.drop(
+                this.nmsEntity.getInventory().removeItem(
+                        this.nmsEntity.getInventory().selected,
+                        (dropAll && !this.nmsEntity.getInventory().getSelected().isEmpty()) ? this.nmsEntity.getInventory().getSelected().getCount(): 1
                 ),
                 false,
                 true
@@ -66,19 +67,19 @@ public class NMSEntityHumanImpl extends NMSEntityLivingImpl implements NMSEntity
     @Override
     public int getFoodLevel()
     {
-        return this.nmsEntity.fz().a();
+        return this.nmsEntity.getFoodData().getFoodLevel();
     }
 
     @Override
     public void setFoodLevel(int foodLevel)
     {
-        this.nmsEntity.fz().a(foodLevel);
+        this.nmsEntity.getFoodData().setFoodLevel(foodLevel);
     }
 
     @Override
     public void setMainHand(MainHand hand)
     {
-        this.nmsEntity.a(hand == MainHand.RIGHT ? EnumMainHand.a: EnumMainHand.b);
+        this.nmsEntity.setMainArm(hand == MainHand.RIGHT ? HumanoidArm.RIGHT: HumanoidArm.LEFT);
     }
 
     @Override
