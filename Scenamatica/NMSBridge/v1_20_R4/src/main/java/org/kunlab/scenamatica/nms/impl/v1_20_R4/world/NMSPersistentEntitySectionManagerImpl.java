@@ -17,8 +17,8 @@ public class NMSPersistentEntitySectionManagerImpl<E extends org.bukkit.entity.E
     {
         try
         {
-            mStartTracking = PersistentEntitySectionManager.class.getDeclaredMethod("startTracking", EntityAccess.class);
-            mStartTicking = PersistentEntitySectionManager.class.getDeclaredMethod("stopTracking", EntityAccess.class);
+            mStartTracking = PersistentEntitySectionManager.class.getDeclaredMethod("e", EntityAccess.class);
+            mStartTicking = PersistentEntitySectionManager.class.getDeclaredMethod("f", EntityAccess.class);
 
 
             mStartTracking.setAccessible(true);
