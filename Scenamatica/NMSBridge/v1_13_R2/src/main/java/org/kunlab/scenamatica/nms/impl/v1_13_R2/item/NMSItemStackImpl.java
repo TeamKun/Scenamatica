@@ -4,6 +4,7 @@ import net.minecraft.server.v1_13_R2.EntityLiving;
 import net.minecraft.server.v1_13_R2.ItemStack;
 import org.bukkit.craftbukkit.v1_13_R2.inventory.CraftItemStack;
 import org.kunlab.scenamatica.nms.Versioned;
+import org.kunlab.scenamatica.nms.enums.entity.NMSItemSlot;
 import org.kunlab.scenamatica.nms.impl.v1_13_R2.NMSRegistryImpl;
 import org.kunlab.scenamatica.nms.types.entity.NMSEntityLiving;
 import org.kunlab.scenamatica.nms.types.item.NMSItem;
@@ -72,7 +73,7 @@ public class NMSItemStackImpl implements NMSItemStack
     }
 
     @Override
-    public <T extends NMSEntityLiving> @Versioned void damage(int damage, T owner)
+    public <T extends NMSEntityLiving> @Versioned void damage(int damage, T owner, NMSItemSlot slot)
     {
         this.nmsItemStack.damage(
                 damage,

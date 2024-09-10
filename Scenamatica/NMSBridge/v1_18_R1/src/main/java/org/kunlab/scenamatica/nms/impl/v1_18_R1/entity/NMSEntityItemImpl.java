@@ -1,16 +1,16 @@
 package org.kunlab.scenamatica.nms.impl.v1_18_R1.entity;
 
-import net.minecraft.world.entity.item.EntityItem;
+import net.minecraft.world.entity.item.ItemEntity;
 import org.bukkit.craftbukkit.v1_18_R1.entity.CraftEntity;
 import org.bukkit.entity.Item;
 import org.kunlab.scenamatica.nms.types.entity.NMSEntityItem;
 
 public class NMSEntityItemImpl extends NMSEntityImpl implements NMSEntityItem
 {
-    EntityItem nmsItem;
+    ItemEntity nmsItem;
     Item bukkitItem;
 
-    public NMSEntityItemImpl(EntityItem nmsItem)
+    public NMSEntityItemImpl(ItemEntity nmsItem)
     {
         super(nmsItem.getBukkitEntity());
         this.nmsItem = nmsItem;
@@ -20,12 +20,12 @@ public class NMSEntityItemImpl extends NMSEntityImpl implements NMSEntityItem
     public NMSEntityItemImpl(Item bukkitItem)
     {
         super(bukkitItem);
-        this.nmsItem = (EntityItem) ((CraftEntity) bukkitItem).getHandle();
+        this.nmsItem = (ItemEntity) ((CraftEntity) bukkitItem).getHandle();
         this.bukkitItem = bukkitItem;
     }
 
     @Override
-    public EntityItem getNMSRaw()
+    public ItemEntity getNMSRaw()
     {
         return this.nmsItem;
     }

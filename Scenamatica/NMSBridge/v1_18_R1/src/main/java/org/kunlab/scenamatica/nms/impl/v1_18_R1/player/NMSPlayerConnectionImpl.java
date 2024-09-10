@@ -1,13 +1,13 @@
 package org.kunlab.scenamatica.nms.impl.v1_18_R1.player;
 
-import net.minecraft.server.network.PlayerConnection;
+import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import org.kunlab.scenamatica.nms.types.player.NMSPlayerConnection;
 
 public class NMSPlayerConnectionImpl implements NMSPlayerConnection
 {
-    private final PlayerConnection playerConnection;
+    private final ServerGamePacketListenerImpl playerConnection;
 
-    public NMSPlayerConnectionImpl(PlayerConnection playerConnection)
+    public NMSPlayerConnectionImpl(ServerGamePacketListenerImpl playerConnection)
     {
         this.playerConnection = playerConnection;
     }

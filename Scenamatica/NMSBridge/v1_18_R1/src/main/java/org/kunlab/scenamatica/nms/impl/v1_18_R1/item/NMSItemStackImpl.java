@@ -1,9 +1,10 @@
 package org.kunlab.scenamatica.nms.impl.v1_18_R1.item;
 
-import net.minecraft.world.entity.EntityLiving;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import org.bukkit.craftbukkit.v1_18_R1.inventory.CraftItemStack;
 import org.kunlab.scenamatica.nms.Versioned;
+import org.kunlab.scenamatica.nms.enums.entity.NMSItemSlot;
 import org.kunlab.scenamatica.nms.impl.v1_18_R1.NMSRegistryImpl;
 import org.kunlab.scenamatica.nms.types.entity.NMSEntityLiving;
 import org.kunlab.scenamatica.nms.types.item.NMSItem;
@@ -72,11 +73,11 @@ public class NMSItemStackImpl implements NMSItemStack
     }
 
     @Override
-    public <T extends NMSEntityLiving> @Versioned void damage(int damage, T owner)
+    public <T extends NMSEntityLiving> @Versioned void damage(int damage, T owner, NMSItemSlot slot)
     {
-        this.nmsItemStack.a(
+        this.nmsItemStack.hurtAndBreak(
                 damage,
-                (EntityLiving) owner.getNMSRaw(),
+                (LivingEntity) owner.getNMSRaw(),
                 ignored -> {
                 }
         );
@@ -85,6 +86,6 @@ public class NMSItemStackImpl implements NMSItemStack
     @Override
     public NMSItem getItem()
     {
-        return NMSRegistryImpl.getItemByNMS$(this.nmsItemStack.c());
+        return NMSRegistryImpl.getItemByNMS$(this.nmsItemStack.getItem());
     }
 }

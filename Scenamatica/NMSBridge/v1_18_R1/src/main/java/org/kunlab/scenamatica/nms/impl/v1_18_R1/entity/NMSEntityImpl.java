@@ -1,11 +1,11 @@
 package org.kunlab.scenamatica.nms.impl.v1_18_R1.entity;
 
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityLiving;
-import net.minecraft.world.entity.EnumMoveType;
-import net.minecraft.world.entity.item.EntityItem;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.MoverType;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.phys.Vec3D;
+import net.minecraft.world.phys.Vec3;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_18_R1.entity.CraftEntity;
 import org.jetbrains.annotations.NotNull;
@@ -42,28 +42,28 @@ public class NMSEntityImpl implements NMSEntity
     @Override
     public void move(NMSMoveType moveType, Location location)
     {
-        EnumMoveType convertedMoveType = TypeSupportImpl.toNMS(moveType);
-        Vec3D convertedLocation = NMSSupport.convertLocToVec3D(location);
+        MoverType convertedMoveType = TypeSupportImpl.toNMS(moveType);
+        Vec3 convertedLocation = NMSSupport.convertLocToVec3D(location);
 
-        this.nmsEntity.a(convertedMoveType, convertedLocation);
+        this.nmsEntity.move(convertedMoveType, convertedLocation);
     }
 
     @Override
     public NMSEntityItem dropItem(@NotNull NMSItemStack stack, float offsetY)
     {
         boolean forceDrops = false;
-        if (this.nmsEntity instanceof EntityLiving)
+        if (this.nmsEntity instanceof LivingEntity)
         {
-            EntityLiving entityLiving = (EntityLiving) this.nmsEntity;
+            LivingEntity entityLiving = (LivingEntity) this.nmsEntity;
             forceDrops = entityLiving.forceDrops;
             if (!forceDrops)
                 entityLiving.forceDrops = true;
         }
 
-        EntityItem dropped = this.nmsEntity.a((ItemStack) stack.getNMSRaw(), offsetY);
-        if (this.nmsEntity instanceof EntityLiving)
+        ItemEntity dropped = this.nmsEntity.spawnAtLocation((ItemStack) stack.getNMSRaw(), offsetY);
+        if (this.nmsEntity instanceof LivingEntity)
         {
-            EntityLiving entityLiving = (EntityLiving) this.nmsEntity;
+            LivingEntity entityLiving = (LivingEntity) this.nmsEntity;
             entityLiving.forceDrops = forceDrops;
         }
 
@@ -76,13 +76,12 @@ public class NMSEntityImpl implements NMSEntity
     @Override
     public boolean isInvisible()
     {
-        return this.nmsEntity.bU();
+        return this.nmsEntity.isInvisible();
     }
 
     @Override
     public void setInvisible(boolean invisible)
     {
-        this.nmsEntity.persistentInvisibility = invisible;  // CraftBukkit の変更
-        this.nmsEntity.b(5, invisible);
+        this.nmsEntity.setInvisible(invisible);
     }
 }

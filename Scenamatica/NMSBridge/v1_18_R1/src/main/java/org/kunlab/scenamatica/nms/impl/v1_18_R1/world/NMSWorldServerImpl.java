@@ -1,7 +1,8 @@
 package org.kunlab.scenamatica.nms.impl.v1_18_R1.world;
 
-import net.minecraft.server.level.WorldServer;
+import net.minecraft.server.level.ServerLevel;
 import org.bukkit.World;
+import org.bukkit.craftbukkit.v1_18_R1.CraftWorld;
 import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.nms.types.world.NMSChunkProvider;
@@ -12,7 +13,7 @@ import org.kunlab.scenamatica.nms.types.world.NMSWorldServer;
 public class NMSWorldServerImpl implements NMSWorldServer
 {
     private final World bukkitWorld;
-    private final WorldServer nmsWorld;
+    private final ServerLevel nmsWorld;
     private final NMSWorldData worldData;
     private final NMSChunkProvider chunkProvider;
     private final NMSPersistentEntitySectionManager<Entity> entityManager;
@@ -20,14 +21,14 @@ public class NMSWorldServerImpl implements NMSWorldServer
     public NMSWorldServerImpl(@NotNull World bukkitWorld)
     {
         this.bukkitWorld = bukkitWorld;
-        this.nmsWorld = ((org.bukkit.craftbukkit.v1_18_R1.CraftWorld) bukkitWorld).getHandle();
+        this.nmsWorld = ((CraftWorld) bukkitWorld).getHandle();
         this.worldData = new NMSWorldDataImpl(this.nmsWorld.N);
-        this.chunkProvider = new NMSChunkProviderImpl(this.nmsWorld.k());
-        this.entityManager = new NMSPersistentEntitySectionManagerImpl<>(this.nmsWorld.P);
+        this.chunkProvider = new NMSChunkProviderImpl(this.nmsWorld.getChunkSource());
+        this.entityManager = new NMSPersistentEntitySectionManagerImpl<>(this.nmsWorld.entityManager);
     }
 
     @Override
-    public WorldServer getNMSRaw()
+    public ServerLevel getNMSRaw()
     {
         return this.nmsWorld;
     }

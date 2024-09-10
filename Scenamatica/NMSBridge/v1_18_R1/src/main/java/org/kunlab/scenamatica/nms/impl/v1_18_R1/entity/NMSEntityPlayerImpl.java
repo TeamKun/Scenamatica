@@ -1,9 +1,9 @@
 package org.kunlab.scenamatica.nms.impl.v1_18_R1.entity;
 
 import com.mojang.authlib.GameProfile;
-import net.minecraft.network.NetworkManager;
-import net.minecraft.server.level.EntityPlayer;
-import net.minecraft.server.network.PlayerConnection;
+import net.minecraft.network.Connection;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import org.bukkit.craftbukkit.v1_18_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.kunlab.scenamatica.nms.impl.v1_18_R1.player.NMSNetworkManagerImpl;
@@ -17,13 +17,11 @@ import org.kunlab.scenamatica.nms.types.player.NMSPlayerInteractManager;
 public class NMSEntityPlayerImpl extends NMSEntityHumanImpl implements NMSEntityPlayer
 {
     private final Player bukkitEntity;
-    private final EntityPlayer nmsEntity;
-
+    private final ServerPlayer nmsEntity;
     private final NMSPlayerInteractManager interactManager;
-
-    private NetworkManager lastNetworkManager;
+    private Connection lastNetworkManager;
     private NMSNetworkManager networkManager;
-    private PlayerConnection lastConnection;
+    private ServerGamePacketListenerImpl lastConnection;
     private NMSPlayerConnection connection;
 
     public NMSEntityPlayerImpl(Player bukkitEntity)
@@ -33,15 +31,15 @@ public class NMSEntityPlayerImpl extends NMSEntityHumanImpl implements NMSEntity
         this.bukkitEntity = bukkitEntity;
         this.nmsEntity = ((CraftPlayer) bukkitEntity).getHandle();
 
-        this.interactManager = new NMSPlayerInteractManagerImpl(this.nmsEntity.d);
+        this.interactManager = new NMSPlayerInteractManagerImpl(this.nmsEntity.gameMode);
     }
 
     @Override
     public NMSPlayerConnection getConnection()
     {
-        if (this.lastConnection != this.nmsEntity.b)
+        if (this.lastConnection != this.nmsEntity.connection)
         {
-            this.lastConnection = this.nmsEntity.b;
+            this.lastConnection = this.nmsEntity.connection;
             this.connection = new NMSPlayerConnectionImpl(this.lastConnection);
         }
 
@@ -51,13 +49,13 @@ public class NMSEntityPlayerImpl extends NMSEntityHumanImpl implements NMSEntity
     @Override
     public NMSNetworkManager getNetworkManager()
     {
-        PlayerConnection connection = this.nmsEntity.b;
+        ServerGamePacketListenerImpl connection = this.nmsEntity.connection;
         if (connection == null)
             return null;
 
-        if (this.lastNetworkManager != connection.a)
+        if (this.lastNetworkManager != connection.connection)
         {
-            this.lastNetworkManager = connection.a;
+            this.lastNetworkManager = connection.connection;
             this.networkManager = new NMSNetworkManagerImpl(this.lastNetworkManager);
         }
 
@@ -83,7 +81,7 @@ public class NMSEntityPlayerImpl extends NMSEntityHumanImpl implements NMSEntity
     }
 
     @Override
-    public EntityPlayer getNMSRaw()
+    public ServerPlayer getNMSRaw()
     {
         return this.nmsEntity;
     }

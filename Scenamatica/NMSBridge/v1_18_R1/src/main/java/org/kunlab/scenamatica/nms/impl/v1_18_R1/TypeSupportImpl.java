@@ -1,9 +1,9 @@
 package org.kunlab.scenamatica.nms.impl.v1_18_R1;
 
-import net.minecraft.core.EnumDirection;
-import net.minecraft.world.EnumHand;
-import net.minecraft.world.entity.EnumItemSlot;
-import net.minecraft.world.entity.EnumMoveType;
+import net.minecraft.core.Direction;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.MoverType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.nms.NMSElement;
@@ -23,156 +23,156 @@ public class TypeSupportImpl implements TypeSupport
 
     static
     {
-        CONVERSION_PAIRS.add(new ConversionPair<>(NMSHand.class, EnumHand.class, TypeSupportImpl::toNMS, TypeSupportImpl::fromNMS));
-        CONVERSION_PAIRS.add(new ConversionPair<>(NMSItemSlot.class, EnumItemSlot.class, TypeSupportImpl::toNMS, TypeSupportImpl::fromNMS));
-        CONVERSION_PAIRS.add(new ConversionPair<>(NMSMoveType.class, EnumMoveType.class, TypeSupportImpl::toNMS, TypeSupportImpl::fromNMS));
-        CONVERSION_PAIRS.add(new ConversionPair<>(NMSDirection.class, EnumDirection.class, TypeSupportImpl::toNMS, TypeSupportImpl::fromNMS));
+        CONVERSION_PAIRS.add(new ConversionPair<>(NMSHand.class, InteractionHand.class, TypeSupportImpl::toNMS, TypeSupportImpl::fromNMS));
+        CONVERSION_PAIRS.add(new ConversionPair<>(NMSItemSlot.class, EquipmentSlot.class, TypeSupportImpl::toNMS, TypeSupportImpl::fromNMS));
+        CONVERSION_PAIRS.add(new ConversionPair<>(NMSMoveType.class, MoverType.class, TypeSupportImpl::toNMS, TypeSupportImpl::fromNMS));
+        CONVERSION_PAIRS.add(new ConversionPair<>(NMSDirection.class, Direction.class, TypeSupportImpl::toNMS, TypeSupportImpl::fromNMS));
     }
 
     // <editor-fold desc="Conversion Methods">
 
-    public static NMSHand fromNMS(EnumHand hand)
+    public static NMSHand fromNMS(InteractionHand hand)
     {
         switch (hand)
         {
-            case a:
+            case MAIN_HAND:
                 return NMSHand.MAIN_HAND;
-            case b:
+            case OFF_HAND:
                 return NMSHand.OFF_HAND;
             default:
                 throw new IllegalArgumentException("Unknown EnumHand: " + hand.name());
         }
     }
 
-    public static EnumHand toNMS(NMSHand hand)
+    public static InteractionHand toNMS(NMSHand hand)
     {
         switch (hand)
         {
             case MAIN_HAND:
-                return EnumHand.a;
+                return InteractionHand.MAIN_HAND;
             case OFF_HAND:
-                return EnumHand.b;
+                return InteractionHand.OFF_HAND;
             default:
                 throw new IllegalArgumentException("Unknown NMSHand: " + hand.name());
         }
     }
 
-    public static EnumItemSlot toNMS(NMSItemSlot slot)
+    public static EquipmentSlot toNMS(NMSItemSlot slot)
     {
         switch (slot)
         {
             case MAINHAND:
-                return EnumItemSlot.a;
+                return EquipmentSlot.MAINHAND;
             case OFFHAND:
-                return EnumItemSlot.b;
+                return EquipmentSlot.OFFHAND;
             case FEET:
-                return EnumItemSlot.c;
+                return EquipmentSlot.FEET;
             case LEGS:
-                return EnumItemSlot.d;
+                return EquipmentSlot.LEGS;
             case CHEST:
-                return EnumItemSlot.e;
+                return EquipmentSlot.CHEST;
             case HEAD:
-                return EnumItemSlot.f;
+                return EquipmentSlot.HEAD;
             default:
                 throw new IllegalArgumentException("Unknown NMSItemSlot: " + slot.name());
         }
     }
 
-    public static NMSItemSlot fromNMS(EnumItemSlot slot)
+    public static NMSItemSlot fromNMS(EquipmentSlot slot)
     {
         switch (slot)
         {
-            case a:
+            case MAINHAND:
                 return NMSItemSlot.MAINHAND;
-            case b:
+            case OFFHAND:
                 return NMSItemSlot.OFFHAND;
-            case c:
+            case FEET:
                 return NMSItemSlot.FEET;
-            case d:
+            case LEGS:
                 return NMSItemSlot.LEGS;
-            case e:
+            case CHEST:
                 return NMSItemSlot.CHEST;
-            case f:
+            case HEAD:
                 return NMSItemSlot.HEAD;
             default:
                 throw new IllegalArgumentException("Unknown EnumItemSlot: " + slot.name());
         }
     }
 
-    public static EnumMoveType toNMS(NMSMoveType moveType)
+    public static MoverType toNMS(NMSMoveType moveType)
     {
         switch (moveType)
         {
             case SELF:
-                return EnumMoveType.a;
+                return MoverType.SELF;
             case PLAYER:
-                return EnumMoveType.b;
+                return MoverType.PLAYER;
             case PISTON:
-                return EnumMoveType.c;
+                return MoverType.PISTON;
             case SHULKER_BOX:
-                return EnumMoveType.d;
+                return MoverType.SHULKER_BOX;
             case SHULKER:
-                return EnumMoveType.e;
+                return MoverType.SHULKER;
             default:
                 throw new IllegalArgumentException("Unknown NMSMoveType: " + moveType.name());
         }
     }
 
-    public static NMSMoveType fromNMS(EnumMoveType moveType)
+    public static NMSMoveType fromNMS(MoverType moveType)
     {
         switch (moveType)
         {
-            case a:
+            case SELF:
                 return NMSMoveType.SELF;
-            case b:
+            case PLAYER:
                 return NMSMoveType.PLAYER;
-            case c:
+            case PISTON:
                 return NMSMoveType.PISTON;
-            case d:
+            case SHULKER_BOX:
                 return NMSMoveType.SHULKER_BOX;
-            case e:
+            case SHULKER:
                 return NMSMoveType.SHULKER;
             default:
                 throw new IllegalArgumentException("Unknown EnumMoveType: " + moveType.name());
         }
     }
 
-    public static EnumDirection toNMS(NMSDirection direction)
+    public static Direction toNMS(NMSDirection direction)
     {
         switch (direction)
         {
             case NORTH:
-                return EnumDirection.c;
+                return Direction.NORTH;
             case SOUTH:
-                return EnumDirection.d;
+                return Direction.SOUTH;
             case WEST:
-                return EnumDirection.e;
+                return Direction.WEST;
             case EAST:
-                return EnumDirection.f;
+                return Direction.EAST;
             case UP:
-                return EnumDirection.b;
+                return Direction.UP;
             case DOWN:
-                return EnumDirection.a;
+                return Direction.DOWN;
             default:
                 throw new IllegalArgumentException("Unknown NMSDirection: " + direction.name());
         }
     }
 
-    public static NMSDirection fromNMS(EnumDirection direction)
+    public static NMSDirection fromNMS(Direction direction)
     {
         switch (direction)
         {
-            case a:
+            case DOWN:
                 return NMSDirection.DOWN;
-            case b:
+            case UP:
                 return NMSDirection.UP;
-            case c:
+            case NORTH:
                 return NMSDirection.NORTH;
-            case d:
+            case SOUTH:
                 return NMSDirection.SOUTH;
-            case e:
+            case WEST:
                 return NMSDirection.WEST;
-            case f:
+            case EAST:
                 return NMSDirection.EAST;
             default:
                 throw new IllegalArgumentException("Unknown EnumDirection: " + direction.name());
