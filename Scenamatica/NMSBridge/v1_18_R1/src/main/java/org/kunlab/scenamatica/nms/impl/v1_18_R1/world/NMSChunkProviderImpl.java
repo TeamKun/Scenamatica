@@ -1,6 +1,6 @@
 package org.kunlab.scenamatica.nms.impl.v1_18_R1.world;
 
-import net.minecraft.server.level.ChunkProviderServer;
+import net.minecraft.server.level.ServerChunkCache;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.nms.impl.v1_18_R1.entity.NMSEntityImpl;
 import org.kunlab.scenamatica.nms.types.entity.NMSEntity;
@@ -8,9 +8,9 @@ import org.kunlab.scenamatica.nms.types.world.NMSChunkProvider;
 
 public class NMSChunkProviderImpl implements NMSChunkProvider
 {
-    private final ChunkProviderServer chunkProvider;
+    private final ServerChunkCache chunkProvider;
 
-    public NMSChunkProviderImpl(ChunkProviderServer chunkProvider)
+    public NMSChunkProviderImpl(ServerChunkCache chunkProvider)
     {
         this.chunkProvider = chunkProvider;
     }
@@ -24,6 +24,6 @@ public class NMSChunkProviderImpl implements NMSChunkProvider
     @Override
     public void removeEntity(@NotNull NMSEntity entity)
     {
-        this.chunkProvider.a(((NMSEntityImpl) entity).getNMSRaw());
+        this.chunkProvider.removeEntity(((NMSEntityImpl) entity).getNMSRaw());
     }
 }

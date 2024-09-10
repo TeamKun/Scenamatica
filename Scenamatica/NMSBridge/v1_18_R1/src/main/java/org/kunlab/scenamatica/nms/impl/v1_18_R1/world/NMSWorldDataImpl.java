@@ -1,23 +1,22 @@
 package org.kunlab.scenamatica.nms.impl.v1_18_R1.world;
 
-import net.minecraft.world.level.storage.SaveData;
-import net.minecraft.world.level.storage.SecondaryWorldData;
+import net.minecraft.world.level.storage.DerivedLevelData;
+import net.minecraft.world.level.storage.PrimaryLevelData;
 import net.minecraft.world.level.storage.WorldData;
-import net.minecraft.world.level.storage.WorldDataServer;
 import org.kunlab.scenamatica.nms.types.world.NMSWorldData;
 
 import java.lang.reflect.Field;
 
 public class NMSWorldDataImpl implements NMSWorldData
 {
-    private static final Field fA;  // Lnet/minecraft/server/v1_18_R1/SecondaryWorldData; -> a#Lnet/minecraft/server/SaveData;
+    private static final Field fWorldData;  // Lnet/minecraft/world/level/storage/DerivedLevelData; -> worldData#Lnet/minecraft/world/leve/storage/WorldData
 
     static
     {
         try
         {
-            fA = SecondaryWorldData.class.getDeclaredField("a");
-            fA.setAccessible(true);
+            fWorldData = DerivedLevelData.class.getDeclaredField("worldData");
+            fWorldData.setAccessible(true);
         }
         catch (NoSuchFieldException e)
         {
@@ -35,33 +34,32 @@ public class NMSWorldDataImpl implements NMSWorldData
     @Override
     public boolean isHardcore()
     {
-        return this.worldData.n();
+        return this.worldData.isHardcore();
     }
 
     @Override
     public void setHardcore(boolean hardcore)
     {
-        if (this.worldData instanceof WorldDataServer)
+        if (this.worldData instanceof PrimaryLevelData)
         {
-            WorldDataServer worldDataServer = (WorldDataServer) this.worldData;
-            worldDataServer.e.c = hardcore;
+            PrimaryLevelData worldDataServer = (PrimaryLevelData) this.worldData;
+            worldDataServer.settings.hardcore = hardcore;
         }
-        else /* assert this.worldData instanceof SecondaryWorldData */
+        else /* assert this.worldData instanceof DerivedLevelData */
         {
-            SecondaryWorldData secondaryWorldData = (SecondaryWorldData) this.worldData;
-            SaveData saveData;
+            DerivedLevelData secondaryWorldData = (DerivedLevelData) this.worldData;
+            WorldData data;
             try
             {
-                saveData = (SaveData) fA.get(secondaryWorldData);
+                data = (WorldData) fWorldData.get(secondaryWorldData);
             }
             catch (IllegalAccessException e)
             {
                 throw new RuntimeException(e);
             }
 
-            assert saveData instanceof WorldDataServer;
-            WorldDataServer worldDataServer = (WorldDataServer) saveData;
-            worldDataServer.e.c = hardcore;
+            PrimaryLevelData worldDataServer = (PrimaryLevelData) data;
+            worldDataServer.settings.hardcore = true;
         }
     }
 }

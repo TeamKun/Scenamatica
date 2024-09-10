@@ -24,7 +24,7 @@ public class NMSWorldServerImpl implements NMSWorldServer
         this.nmsWorld = ((CraftWorld) bukkitWorld).getHandle();
         this.worldData = new NMSWorldDataImpl(this.nmsWorld.K);
         this.chunkProvider = new NMSChunkProviderImpl(this.nmsWorld.getChunkSource());
-        this.entityManager = new NMSPersistentEntitySectionManagerImpl<>(this.nmsWorld.P);
+        this.entityManager = new NMSPersistentEntitySectionManagerImpl<>(this.nmsWorld.entityManager);
     }
 
     @Override

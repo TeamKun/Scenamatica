@@ -1,7 +1,6 @@
 package org.kunlab.scenamatica.nms.impl.v1_18_R1.entity;
 
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityLiving;
 import org.bukkit.craftbukkit.v1_18_R1.entity.CraftLivingEntity;
 import org.bukkit.entity.LivingEntity;
 import org.kunlab.scenamatica.nms.enums.NMSHand;
@@ -13,7 +12,7 @@ import org.kunlab.scenamatica.nms.types.entity.NMSEntityLiving;
 public class NMSEntityLivingImpl extends NMSEntityImpl implements NMSEntityLiving
 {
     private final LivingEntity bukkitEntity;
-    private final EntityLiving nmsEntity;
+    private final net.minecraft.world.entity.LivingEntity nmsEntity;
 
     public NMSEntityLivingImpl(LivingEntity bukkitEntity)
     {
@@ -32,53 +31,53 @@ public class NMSEntityLivingImpl extends NMSEntityImpl implements NMSEntityLivin
     @Override
     public void consume(NMSHand hand)
     {
-        this.nmsEntity.c(TypeSupportImpl.toNMS(hand));
+        this.nmsEntity.startUsingItem(TypeSupportImpl.toNMS(hand));
     }
 
     @Override
     public void broadcastItemBreak(NMSItemSlot slot)
     {
-        this.nmsEntity.c(TypeSupportImpl.toNMS(slot));
+        this.nmsEntity.broadcastBreakEvent(TypeSupportImpl.toNMS(slot));
     }
 
     @Override
     public void receive(NMSEntity entity, int amount)
     {
-        this.nmsEntity.a((Entity) entity.getNMSRaw(), amount);
+        this.nmsEntity.take((Entity) entity.getNMSRaw(), amount);
     }
 
     @Override
     public boolean isSleeping()
     {
-        return this.nmsEntity.fb();
+        return this.nmsEntity.isSleeping();
     }
 
     @Override
     public int getArrowCount()
     {
-        return this.nmsEntity.em();
+        return this.nmsEntity.getArrowCount();
     }
 
     @Override
     public void setArrowCount(int count)
     {
-        this.nmsEntity.p(count);
+        this.nmsEntity.setArrowCount(count);
     }
 
     @Override
     public int getArrowCooldown()
     {
-        return this.nmsEntity.aJ;
+        return this.nmsEntity.removeStingerTime;
     }
 
     @Override
     public void setArrowCooldown(int cooldown)
     {
-        this.nmsEntity.aJ = cooldown;
+        this.nmsEntity.removeStingerTime = cooldown;
     }
 
     @Override
-    public EntityLiving getNMSRaw()
+    public net.minecraft.world.entity.LivingEntity getNMSRaw()
     {
         return this.nmsEntity;
     }

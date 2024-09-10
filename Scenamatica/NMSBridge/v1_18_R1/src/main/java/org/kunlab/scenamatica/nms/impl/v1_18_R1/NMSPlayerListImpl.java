@@ -1,8 +1,8 @@
 package org.kunlab.scenamatica.nms.impl.v1_18_R1;
 
 import com.mojang.authlib.GameProfile;
-import net.minecraft.server.level.EntityPlayer;
-import net.minecraft.server.level.WorldServer;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.players.PlayerList;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -41,8 +41,8 @@ public class NMSPlayerListImpl implements NMSPlayerList
                                                 @Nullable Location locationToSpawn,
                                                 boolean avoidSuffocation)
     {
-        EntityPlayer nmsPlayer = (EntityPlayer) player.getNMSRaw();
-        WorldServer nmsWorld = (WorldServer) world.getNMSRaw();
+        ServerPlayer nmsPlayer = (ServerPlayer) player.getNMSRaw();
+        ServerLevel nmsWorld = (ServerLevel) world.getNMSRaw();
 
         this.nmsPlayerList.respawn(
                 nmsPlayer,
@@ -58,18 +58,18 @@ public class NMSPlayerListImpl implements NMSPlayerList
     @Override
     public boolean isOp(@NotNull GameProfile profile)
     {
-        return this.nmsPlayerList.f(profile);
+        return this.nmsPlayerList.isOp(profile);
     }
 
     @Override
     public void addOp(@NotNull GameProfile profile)
     {
-        this.nmsPlayerList.a(profile);
+        this.nmsPlayerList.op(profile);
     }
 
     @Override
     public void removeOp(@NotNull GameProfile profile)
     {
-        this.nmsPlayerList.b(profile);
+        this.nmsPlayerList.deop(profile);
     }
 }

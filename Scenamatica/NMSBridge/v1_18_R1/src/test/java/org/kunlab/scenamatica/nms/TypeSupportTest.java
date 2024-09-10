@@ -1,7 +1,7 @@
 package org.kunlab.scenamatica.nms;
 
-import net.minecraft.world.EnumHand;
-import net.minecraft.world.entity.EnumMoveType;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.MoverType;
 import org.junit.jupiter.api.Test;
 import org.kunlab.scenamatica.nms.enums.NMSHand;
 import org.kunlab.scenamatica.nms.enums.entity.NMSMoveType;
@@ -25,23 +25,23 @@ public class TypeSupportTest
     @Test
     public void testConvertingNMSMoveType()
     {
-        EnumMap<NMSMoveType, EnumMoveType> map = new EnumMap<>(NMSMoveType.class);
-        map.put(NMSMoveType.SELF, EnumMoveType.a);
-        map.put(NMSMoveType.PLAYER, EnumMoveType.b);
-        map.put(NMSMoveType.PISTON, EnumMoveType.c);
-        map.put(NMSMoveType.SHULKER_BOX, EnumMoveType.d);
-        map.put(NMSMoveType.SHULKER, EnumMoveType.e);
+        EnumMap<NMSMoveType, MoverType> map = new EnumMap<>(NMSMoveType.class);
+        map.put(NMSMoveType.SELF, MoverType.SELF);
+        map.put(NMSMoveType.PLAYER, MoverType.PLAYER);
+        map.put(NMSMoveType.PISTON, MoverType.PISTON);
+        map.put(NMSMoveType.SHULKER_BOX, MoverType.SHULKER_BOX);
+        map.put(NMSMoveType.SHULKER, MoverType.SHULKER);
 
-        for (Map.Entry<NMSMoveType, EnumMoveType> entry : map.entrySet())
+        for (Map.Entry<NMSMoveType, MoverType> entry : map.entrySet())
             testConvertingNMSTypes(entry.getKey(), entry.getValue(),
-                    NMSMoveType.class, EnumMoveType.class
+                    NMSMoveType.class, MoverType.class
             );
     }
 
     @Test
     public void testConvertingNMSHand()
     {
-        testConvertingNMSTypes(NMSHand.MAIN_HAND, EnumHand.a, NMSHand.class, EnumHand.class);
-        testConvertingNMSTypes(NMSHand.OFF_HAND, EnumHand.b, NMSHand.class, EnumHand.class);
+        testConvertingNMSTypes(NMSHand.MAIN_HAND, InteractionHand.MAIN_HAND, NMSHand.class, InteractionHand.class);
+        testConvertingNMSTypes(NMSHand.OFF_HAND, InteractionHand.OFF_HAND, NMSHand.class, InteractionHand.class);
     }
 }

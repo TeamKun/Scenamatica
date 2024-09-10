@@ -1,14 +1,14 @@
 package org.kunlab.scenamatica.nms.impl.v1_18_R1.block;
 
 import lombok.Getter;
-import net.minecraft.core.BlockPosition;
+import net.minecraft.core.BlockPos;
 import org.bukkit.Location;
 import org.kunlab.scenamatica.nms.types.block.NMSBlockPosition;
 
 @Getter
 public class NMSBlockPositionImpl implements NMSBlockPosition
 {
-    private final BlockPosition blockPosition;
+    private final BlockPos blockPosition;
     private final Location normalizedLocation;
 
     public NMSBlockPositionImpl(Location location)
@@ -19,7 +19,7 @@ public class NMSBlockPositionImpl implements NMSBlockPosition
                 location.getBlockY(),
                 location.getBlockZ()
         );
-        this.blockPosition = new BlockPosition(
+        this.blockPosition = new BlockPos(
                 this.normalizedLocation.getBlockX(),
                 this.normalizedLocation.getBlockY(),
                 this.normalizedLocation.getBlockZ()
@@ -29,7 +29,7 @@ public class NMSBlockPositionImpl implements NMSBlockPosition
     public NMSBlockPositionImpl(int x, int y, int z)
     {
         this.normalizedLocation = new Location(null, x, y, z);
-        this.blockPosition = new BlockPosition(x, y, z);
+        this.blockPosition = new BlockPos(x, y, z);
     }
 
     @Override
@@ -39,7 +39,7 @@ public class NMSBlockPositionImpl implements NMSBlockPosition
     }
 
     @Override
-    public BlockPosition getNMSRaw()
+    public BlockPos getNMSRaw()
     {
         return this.blockPosition;
     }
@@ -47,18 +47,18 @@ public class NMSBlockPositionImpl implements NMSBlockPosition
     @Override
     public int getX()
     {
-        return this.blockPosition.u();
+        return this.blockPosition.getX();
     }
 
     @Override
     public int getY()
     {
-        return this.blockPosition.v();
+        return this.blockPosition.getY();
     }
 
     @Override
     public int getZ()
     {
-        return this.blockPosition.w();
+        return this.blockPosition.getZ();
     }
 }

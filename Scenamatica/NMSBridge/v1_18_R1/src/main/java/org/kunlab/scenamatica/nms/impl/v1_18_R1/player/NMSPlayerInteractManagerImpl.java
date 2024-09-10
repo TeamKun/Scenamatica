@@ -1,7 +1,7 @@
 package org.kunlab.scenamatica.nms.impl.v1_18_R1.player;
 
-import net.minecraft.core.BlockPosition;
-import net.minecraft.server.level.PlayerInteractManager;
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerPlayerGameMode;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.nms.impl.v1_18_R1.block.NMSBlockPositionImpl;
 import org.kunlab.scenamatica.nms.types.block.NMSBlockPosition;
@@ -9,15 +9,15 @@ import org.kunlab.scenamatica.nms.types.player.NMSPlayerInteractManager;
 
 public class NMSPlayerInteractManagerImpl implements NMSPlayerInteractManager
 {
-    private final PlayerInteractManager playerInteractManager;
+    private final ServerPlayerGameMode playerInteractManager;
 
-    public NMSPlayerInteractManagerImpl(PlayerInteractManager playerInteractManager)
+    public NMSPlayerInteractManagerImpl(ServerPlayerGameMode playerInteractManager)
     {
         this.playerInteractManager = playerInteractManager;
     }
 
     @Override
-    public PlayerInteractManager getNMSRaw()
+    public ServerPlayerGameMode getNMSRaw()
     {
         return this.playerInteractManager;
     }
@@ -25,7 +25,7 @@ public class NMSPlayerInteractManagerImpl implements NMSPlayerInteractManager
     @Override
     public void breakBlock(@NotNull NMSBlockPosition position)
     {
-        BlockPosition nmsPosition = ((NMSBlockPositionImpl) position).getNMSRaw();
-        this.playerInteractManager.a(nmsPosition);
+        BlockPos nmsPosition = ((NMSBlockPositionImpl) position).getNMSRaw();
+        this.playerInteractManager.destroyBlock(nmsPosition);
     }
 }

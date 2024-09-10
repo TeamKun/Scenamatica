@@ -1,8 +1,8 @@
 package org.kunlab.scenamatica.nms.impl.v1_18_R1.entity;
 
-import net.minecraft.world.entity.EnumMainHand;
-import net.minecraft.world.entity.item.EntityItem;
-import net.minecraft.world.entity.player.EntityHuman;
+import net.minecraft.world.entity.HumanoidArm;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import org.bukkit.craftbukkit.v1_18_R1.entity.CraftHumanEntity;
 import org.bukkit.entity.HumanEntity;
@@ -18,7 +18,7 @@ import org.kunlab.scenamatica.nms.types.item.NMSItemStack;
 public class NMSEntityHumanImpl extends NMSEntityLivingImpl implements NMSEntityHuman
 {
     private final HumanEntity bukkitEntity;
-    private final EntityHuman nmsEntity;
+    private final Player nmsEntity;
 
     public NMSEntityHumanImpl(HumanEntity bukkitEntity)
     {
@@ -37,13 +37,13 @@ public class NMSEntityHumanImpl extends NMSEntityLivingImpl implements NMSEntity
     @Override
     public NMSItemStack getEquipment(NMSItemSlot slot)
     {
-        return new NMSItemStackImpl(this.nmsEntity.b(TypeSupportImpl.toNMS(slot)));
+        return new NMSItemStackImpl(this.nmsEntity.getItemBySlot(TypeSupportImpl.toNMS(slot)));
     }
 
     @Override
     public NMSEntityItem drop(@NotNull NMSItemStack stack, boolean throwRandomly, boolean retainOwnership)
     {
-        EntityItem dropped = this.nmsEntity.a((ItemStack) stack.getNMSRaw(), throwRandomly, retainOwnership);
+        ItemEntity dropped = this.nmsEntity.drop((ItemStack) stack.getNMSRaw(), throwRandomly, retainOwnership);
         if (dropped == null)
             return null;
         return new NMSEntityItemImpl(dropped);
@@ -52,10 +52,10 @@ public class NMSEntityHumanImpl extends NMSEntityLivingImpl implements NMSEntity
     @Override
     public boolean drop(boolean dropAll)
     {
-        EntityItem dropped = this.nmsEntity.a(
-                this.nmsEntity.fq().a(
-                        this.nmsEntity.fq().k,
-                        (dropAll && !this.nmsEntity.fq().f().b()) ? this.nmsEntity.fq().f().I(): 1
+        ItemEntity dropped = this.nmsEntity.drop(
+                this.nmsEntity.getInventory().removeItem(
+                        this.nmsEntity.getInventory().selected,
+                        (dropAll && !this.nmsEntity.getInventory().getSelected().isEmpty()) ? this.nmsEntity.getInventory().getSelected().getCount(): 1
                 ),
                 false,
                 true
@@ -67,23 +67,23 @@ public class NMSEntityHumanImpl extends NMSEntityLivingImpl implements NMSEntity
     @Override
     public int getFoodLevel()
     {
-        return this.nmsEntity.fz().a();
+        return this.nmsEntity.getFoodData().getFoodLevel();
     }
 
     @Override
     public void setFoodLevel(int foodLevel)
     {
-        this.nmsEntity.fz().a(foodLevel);
+        this.nmsEntity.getFoodData().setFoodLevel(foodLevel);
     }
 
     @Override
     public void setMainHand(MainHand hand)
     {
-        this.nmsEntity.a(hand == MainHand.RIGHT ? EnumMainHand.a: EnumMainHand.b);
+        this.nmsEntity.setMainArm(hand == MainHand.RIGHT ? HumanoidArm.RIGHT: HumanoidArm.LEFT);
     }
 
     @Override
-    public EntityHuman getNMSRaw()
+    public Player getNMSRaw()
     {
         return this.nmsEntity;
     }

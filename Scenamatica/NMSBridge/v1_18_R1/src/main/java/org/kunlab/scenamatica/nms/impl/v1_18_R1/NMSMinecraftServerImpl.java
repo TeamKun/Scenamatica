@@ -16,7 +16,7 @@ public class NMSMinecraftServerImpl implements NMSMinecraftServer
     {
         this.bukkitServer = bukkitServer;
         this.nmsServer = ((CraftServer) bukkitServer).getServer();
-        this.playerList = new NMSPlayerListImpl(this.nmsServer.ac());
+        this.playerList = new NMSPlayerListImpl(this.nmsServer.getPlayerList());
     }
 
     @Override
