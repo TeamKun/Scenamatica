@@ -56,9 +56,22 @@ public class ScenarioFileParser
     public static ScenarioFileStructure fromInputStream(InputStream inputStream, @Nullable String fileName)
             throws InvalidScenarioFileException
     {
-        Yaml sYaml = new Yaml(new SimpleYamlConstructor());
-        Map<String, Object> map = sYaml.load(inputStream);
-        return fromMap(map, fileName);
+        Yaml sYaml = new Yaml();
+        Map<Object, Object> map = sYaml.load(inputStream);
+
+        return fromMap(injectTriggers(map), fileName);
+    }
+
+    @SuppressWarnings("unchecked")
+    private static Map<String, Object> injectTriggers(Map<Object, Object> map)
+    {
+        if (map.containsKey(true)) // "on" は true に変換される。
+        {
+            map.put(true, map.get("on"));
+            map.remove("on");
+        }
+
+        return (Map<String, Object>) (Object) map;
     }
 
     public static ScenarioFileStructure fromJar(Path jarPath, Path inJarPath)
