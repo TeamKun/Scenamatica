@@ -67,8 +67,8 @@ public class ScenarioFileParser
     {
         if (map.containsKey(true)) // "on" は true に変換される。
         {
-            map.put(true, map.get("on"));
-            map.remove("on");
+            map.put("on", map.get(true));
+            map.remove(true);
         }
 
         return (Map<String, Object>) (Object) map;
