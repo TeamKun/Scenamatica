@@ -18,6 +18,10 @@
     </option>
     <option name="ignoredFiles">
       <set>
+        <option value="$PROJECT_DIR$/NMSBridge/v1_20_R3/pom.xml" />
+        <option value="$PROJECT_DIR$/NMSBridge/v1_20_R4/pom.xml" />
+        <option value="$PROJECT_DIR$/ScenamaticaContextEngine/nms_v1_20_R3/pom.xml" />
+        <option value="$PROJECT_DIR$/ScenamaticaContextEngine/nms_v1_20_R4/pom.xml" />
         <option value="$PROJECT_DIR$/ScenamaticaStructures/StructureBase/pom.xml" />
       </set>
     </option>
