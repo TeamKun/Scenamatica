@@ -52,10 +52,39 @@ Scenamatica はこれらを一つ一つ実行・検証し, プラグインの振
 
 各シナリオは、[アクション](#action)と[シナリオタイプ](#scenario-type)の対で構成されます。
 
+:::info
+
+このドキュメント内で使用される「シナリオ」という語は, 以下の２つの意味を持ちます。
+
+1. [コンテキスト](/docs/use/scenario/elements#context) や [トリガー](/docs/use/scenario/elements#trigger), 
+[アクションのフローとしてのシナリオ](/docs/use/scenario/elements#scenario) など, シナリオファイルの内容すべてを一般に指す語。
+2. プラグインの振る舞いを検証するためのアクションとその振る舞いの組。
+
+この章では, 2. の意味での「シナリオ」という語を使用しています。
+
+```yaml showLineNumbers
+
+# このファイル自体をシナリオファイルで記述された「シナリオ」と呼ぶ。
+
+#...
+
+scenario:
+# ↓の一つ一つまた「シナリオ」と呼ぶ。
+- type: execute
+  action: player_death
+  with:
+    target: Actor001 
+- type: expect
+  action: player_death
+  with:
+    target: Actor001 
+```
+:::
+
 
 ### アクション {#action}
 
-アクションとは, 「プレイヤが死亡する」や「プレイヤがメッセージを送信する」などの, サーバにおける具体的な動作のことです。  
+アクションとは, 「プレイヤが死亡する」や「プレイヤがメッセージを送信する」などの, ゲームにおける具体的な動作のことです。  
 これらは Scenamatica によってあらかじめ定義されたもので, プラグインの機能を最小単位に分解したものです。
 アクションを組み合わせてシナリオを記述します。
 
