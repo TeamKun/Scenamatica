@@ -23,54 +23,28 @@ import BelowDocument from "/src/components/BelowDocument";
 シナリオファイルは,  `.yml` もしくは `.yaml` の拡張子を持つ YAML ファイルで, [シナリオ](/docs/use/scenario)を記述します。プラグインの .jar 内であれば任意の場所に配置できます。  
 １つのシナリオ・テストにつき１つのシナリオファイルが必要です。  
 そのため, シナリオファイルを配置するディレクトリは構造的に管理すると良いでしょう。
+例えば, 
+
+## シナリオファイルの構造 {#scenario-file-structure}
+
+Scenamatica のすべてのオブジェクトは自動生成されたリファレンスが提供されています。  
+詳しくは[こちら](/references/types/ScenarioFileStructure#type)を参照してください。
+
 
 ## シナリオファイルの例 {#example}
 
-
-以下のファイルは**完全な**シナリオファイルの例です。  
-シナリオファイルの要素と [Scenamatica の機能](/docs/use/scenario/elements)の対応を理解するために参考にしてください。
+以下のファイルは**最小構成の**シナリオファイルの例です。  
+これらの値は必須です。
 ```yaml showLineNumbers
-# メタデータ
-scenamatica: "0.8.0"
-name: "test-hoge-success"
-description: "hoge 機能の正常系テスト"
+# メタデータ  
+scenamatica: "0.8.0"  # Scenamatica のバージョン
+name: "test-hoge-success"  # シナリオの名前
+description: "hoge 機能の正常系テスト"  # シナリオの説明
 
 # highlight-start
-runif:  # 実行条件：hoge-milestone を達成している場合に実行する
-  action: milestone
-  with:
-    name: hoge-milestone
-# highlight-end
-
-# highlight-start
-context:  # コンテキスト
-  actors:  # コンテキスト：アクタ
-  - name: Actor1
-    permissions:
-    - "hogeplugin.commands.hoge"
-  stage:  # コンテキスト：ステージ
-    env: NETHER
-    seed: 114514
-# highlight-end
-
-# highlight-start
-on:  # トリガ
+on:  # トリガ（１つ以上のアイテムが必要）
 - type: on_load  # トリガ：プラグインのスタートアップ時に実行
-- type: manual_dispatch  # トリガ：Scenamatica のコマンドで実行
-  # このトリガが発火した時, メイン・シナリオの実行前に実行されるシナリオを指定する
-  before:
-  - type: execute
-    action: milestone
-    with:
-      name: hoge-milestone
-  #          〃        , メイン・シナリオの実行後に実行されるシナリオを指定する
-  after:
-  - type: execute
-    action: milestone
-    with:
-      name: fuga-milestone
-  
-#highlight-end
+# highlight-end
 
 # highlight-start
 scenario:  # シナリオ
@@ -80,20 +54,79 @@ scenario:  # シナリオ
   with:
     command: "/hoge"
     sender: Actor1
-  timeout: 20 # タイムアウト：20 tick
-  # fuga というメッセージが（Actor1 に）表示される。
-- type: expect
-  action: message
-  with:
-    content: "fuga"
-    recipient: "${scenario.scenario.0.sender}"  # 変数：前のアクションの実行者を指定
-  # Actor1 が死亡する。
-- type: expect
-  action: player_death
-  with:
-    target: "${scenario.scenario.0.sender}"  # 変数：前のアクションの実行者を指定
-#highlight-end
- ```
+# highlight-end
+```
+
+また, 以下のファイルは**完全な**シナリオファイルの例です。  
+シナリオファイルの要素と [Scenamatica の機能](/docs/use/scenario/elements)の対応を理解するために参考にしてください。
+<details>
+  <summary>完全なシナリオファイルの例</summary>
+    ```yaml showLineNumbers
+    # メタデータ
+    scenamatica: "0.8.0"
+    name: "test-hoge-success"
+    description: "hoge 機能の正常系テスト"
+    
+    # highlight-start
+    runif:  # 実行条件：hoge-milestone を達成している場合に実行する
+      action: milestone
+      with:
+        name: hoge-milestone
+    # highlight-end
+    
+    # highlight-start
+    context:  # コンテキスト
+      actors:  # コンテキスト：アクタ
+      - name: Actor1
+        permissions:
+        - "hogeplugin.commands.hoge"
+      stage:  # コンテキスト：ステージ
+        env: NETHER
+        seed: 114514
+    # highlight-end
+    
+    # highlight-start
+    on:  # トリガ
+    - type: on_load  # トリガ：プラグインのスタートアップ時に実行
+    - type: manual_dispatch  # トリガ：Scenamatica のコマンドで実行
+      # このトリガが発火した時, メイン・シナリオの実行前に実行されるシナリオを指定する
+      before:
+      - type: execute
+        action: milestone
+        with:
+          name: hoge-milestone
+      #          〃        , メイン・シナリオの実行後に実行されるシナリオを指定する
+      after:
+      - type: execute
+        action: milestone
+        with:
+          name: fuga-milestone
+      
+    #highlight-end
+    
+    # highlight-start
+    scenario:  # シナリオ
+      # Actor1 が /hoge を実行する。
+    - type: execute
+      action: command_dispatch
+      with:
+        command: "/hoge"
+        sender: Actor1
+      timeout: 20 # タイムアウト：20 tick
+      # fuga というメッセージが（Actor1 に）表示される。
+    - type: expect
+      action: message
+      with:
+        content: "fuga"
+        recipient: "${scenario.scenario.0.sender}"  # 変数：前のアクションの実行者を指定
+      # Actor1 が死亡する。
+    - type: expect
+      action: player_death
+      with:
+        target: "${scenario.scenario.0.sender}"  # 変数：前のアクションの実行者を指定
+    #highlight-end
+    ```
+</details>
 
 その他のシナリオファイルの例については, [こちら](https://github.com/TeamKun/Scenamatica/tree/main/Scenamatica/ScenamaticaActions/Base_v1_13_2/src/main/resources/scenarios/actions)を参照してください。
 
@@ -103,10 +136,7 @@ Scenamatica は, Scenamatica 自体のデバッグとデグレードの監視に
 
 :::
 
-## シナリオファイルの構造 {#scenario-file-structure}
-
-Scenamatica のすべてのオブジェクトは自動生成されたリファレンスが提供されています。  
-詳しくは[こちら](/references/types/ScenarioFileStructure#type)を参照してください。
+---
 
 ## シナリオファイルを記述する際の注意 {#notes}
 
@@ -129,7 +159,6 @@ Scenamatica のすべてのオブジェクトは自動生成されたリファ�
 名前等の識別子のフォーマットは統一することが重要でありますので,  Scenamatica が推奨するフォーマットに従わなくても問題はありません。
 
 :::
-
 
 ### Scenamatica が採用している YAML のキーの命名規則 {#yaml-key-naming-rules}
 
