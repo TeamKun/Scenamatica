@@ -132,7 +132,7 @@ public class PlayerItemBreakAction extends AbstractPlayerAction
         if (meta instanceof Damageable)
         {
             Damageable damageable = (Damageable) meta;
-            int maxDurability = item.getMaxItemUseDuration();
+            int maxDurability = item.getType().getMaxDurability();
             damageToApply = /* int currentDurability = */ maxDurability - damageable.getDamage();
         }
 
