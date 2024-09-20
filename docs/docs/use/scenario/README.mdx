@@ -14,24 +14,49 @@ Scenamatica は, プラグインに同梱されたシナリオファイルを読
 
 テストを実行するための前提環境とは, テストに登場する[エンティティ](/docs/use/scenario/elements#entity)
 やプレイヤ（=[アクタ](/docs/use/scenario/elements#actor)）, テストのためのワールド（=[ステージ](/docs/use/scenario/elements#stage)）の３つを指します。
-これらは, 同ファイルに定義された[コンテキスト](/docs/use/scenario/elements#context)によって提供されます。  
+これらは, 同ファイルに定義する[コンテキスト](/docs/use/scenario/elements#context)機能によって提供されます。  
+
+## シチュエーション例を用いた説明 {#example}
 
 例えば, とある小さなプラグインについて考えます。  
-このプラグインは, 「プレイヤが村人をキルすると」（**発火条件**） 
--> 「ダイアモンドがドロップする」（**目標動作**）機能を実現しており, 今回はこの機能をテストしたいとします。
-このテストは, Scenamatica の以下の機能を用いて達成されます。
+このプラグインは, 「プレイヤが村人をキルしたときに」（**発火条件**という） 
+-> 「ダイアモンドがドロップする機能」（**目標動作**という）を実現しており, 今回はこの機能をテストしたいとします。
+このテストは, Scenamatica の以下の機能を用いて達成できます。
 
 > * [コンテキスト](/docs/use/scenario/elements#context) - [エンティティ](/docs/use/scenario/elements#entity) 機能  
 >   この機能は, テストに必要なエンティティ（e.g. 村人, ガーディアン, 牛 等）をテストの**開始前に生成**, および**終了後に破棄**します。  
->   発火条件にある村人をスポーンするのに使います。
+>   発火条件で指定される, シナリオの遂行に必要な村人をスポーンさせるために使います。
+>   ```yaml
+>   context:
+>     entities:
+>     - type: villager
+>   ```
 > * [コンテキスト](/docs/use/scenario/elements#context) - [アクタ](/docs/use/scenario/elements#actor) 機能  
 >   この機能は, テストに必要な専用のプレイヤ（アクタという）を生成します。  
 >   外部との通信を必要とせず, サーバ内で完結する, 特別なプレイヤのモックです。  
 >   発火条件にある村人をキルさせるのに使います。
+>   ```yaml
+>   context:
+>     actors:
+>     - name: Actor001
+>   ```
 > * [アクションの実行](/docs/use/scenario/elements#scenario-type-action-execution) 機能  
 >   この機能は, テストに必要な一般的な動作（e.g. プレイヤのキル, 食料の消費, プレイヤの退室）を実行します。  
 >   数あるアクションを組み合わせて利用し, プラグイン機能の発火・目標動作の検証を行います。  
 >   動作の検証には, [アクションの実行期待](/docs/use/scenario/elements#scenario-type-action-execution-expect) 機能を使用します。
+>   ```yaml
+>   scenario:
+>   - type: execute
+>     action: player_death
+>     with:
+>       target: Actor001
+>   - type: expect
+>     action: entity_pickup_item
+>     with:
+>       target: Actor001
+>       item: diamond
+>   ```
+
 
 発火条件となる[アクションを実行](/docs/use/scenario/elements#scenario-type-action-execution)し, それによってもたらされたプラグインの[動作を検証](/docs/use/scenario/elements#scenario-type-action-execution-expect)を繰り返すことで, シナリオテストが成立します。  
 Scenamatica はこのようなテストの需要に最適化されています。
@@ -45,7 +70,6 @@ Scenamatica はこのようなテストの需要に最適化されています�
 2. プラグインの振る舞いを検証するためのアクションとその振る舞いの組。
 
 ```yaml showLineNumbers
-
 # このファイル自体をシナリオファイルで記述された「シナリオ」と呼ぶ。
 
 #...

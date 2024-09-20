@@ -20,12 +20,15 @@ import BelowDocument from "/src/components/BelowDocument";
 
 ## 概要 {#overview}
 
-シナリオファイルは,  `.yml` もしくは `.yaml` の拡張子を持つ YAML ファイルで, [シナリオ](/docs/use/scenario)を記述します。プラグインの .jar 内であれば任意の場所に配置できます。  
-１つのシナリオ・テストにつき１つのシナリオファイルが必要です。  
+シナリオファイルは,  `.yml` もしくは `.yaml` の拡張子を持つ YAML ファイルで, [シナリオ](/docs/use/scenario)を記述します。
+プラグインの .jar に同梱されるのであれば, プロジェクトの任意の場所に配置できます。  
+１つのシナリオまたはテストにつき１つのシナリオファイルが必要です。  
 そのため, シナリオファイルを配置するディレクトリは構造的に管理すると良いでしょう。
-例えば, 
 
 ## シナリオファイルの構造 {#scenario-file-structure}
+
+シナリオファイルは, 最上位に [ScenarioFile](/references/types/ScenarioFileStructure#type) 型のオブジェクトを持ちます。  
+このオブジェクトは, シナリオファイルのメタデータやトリガ, シナリオなど, テストに関するすべての情報を保持します。
 
 Scenamatica のすべてのオブジェクトは自動生成されたリファレンスが提供されています。  
 詳しくは[こちら](/references/types/ScenarioFileStructure#type)を参照してください。
