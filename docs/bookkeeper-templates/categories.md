@@ -14,7 +14,7 @@ import Link from "@docusaurus/Link";
 ## 一覧 {#list}
 
 {{#each children}}
-- <ActionIcon {{#if executable}}execute{{/if}} {{#if watchable}}watch{{/if}} {{#if requireable}}require{{/if}} /> <Link to="{{path $reference}}">{{name}} - `{{id}}`</Link>  
+- <ActionIcon {{#if executable}}execute{{/if}} {{#if expectable}}expect{{/if}} {{#if requireable}}require{{/if}} /> <Link to="{{path $reference}}">{{name}} - `{{id}}`</Link>  
   {{description}}
 
 {{/each}}
