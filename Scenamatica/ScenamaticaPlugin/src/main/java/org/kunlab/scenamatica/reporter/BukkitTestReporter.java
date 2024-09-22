@@ -26,7 +26,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class BukkitTestReporter extends AbstractTestReporter
 {
@@ -310,6 +309,28 @@ public class BukkitTestReporter extends AbstractTestReporter
         this.printSeparator(null, terminal, null, 50);
     }
 
+    private static String createFailureEntryMessage(ScenarioResult result)
+    {
+        String scenario = result.getScenario().getName();
+        String cause = result.getCause().name();
+        String action = (result.getFailedAction() == null) ? "???": ActionMetaUtils.getActionName(result.getFailedAction());
+        return LangProvider.get(
+                "test.session.result.failures.entry",
+                MsgArgs.of("scenario", scenario)
+                        .add("action", action)
+                        .add("cause", cause)
+        );
+
+    }
+
+    private static String createMultipleFailureEntryMessage(String baseMessage, long count)
+    {
+        if (count == 1)
+            return baseMessage;
+
+        return baseMessage + " (" + count + ")";
+    }
+
     private void printFailure(Terminal terminal, ScenarioResultSet resultSet)
     {
         terminal.info(LangProvider.get(
@@ -318,26 +339,12 @@ public class BukkitTestReporter extends AbstractTestReporter
         ));
         List<String> distinctMessages = new HashMap<>(resultSet.getFailures().stream()
                 // 失敗メッセージの基礎を作成
-                .map(r -> {
-                    String scenario = r.getScenario().getName();
-                    String cause = r.getCause().name();
-                    String action = (r.getFailedAction() == null) ? "???": ActionMetaUtils.getActionName(r.getFailedAction());
-                    return LangProvider.get(
-                            "test.session.result.failures.entry",
-                            MsgArgs.of("scenario", scenario)
-                                    .add("action", action)
-                                    .add("cause", cause)
-                    );
-                })
+                .map(BukkitTestReporter::createFailureEntryMessage)
                 // 重複をカウントして保持
                 .collect(Collectors.groupingByConcurrent(msg -> msg, Collectors.counting())))
                 .entrySet().stream()
                 // メッセージを構築
-                .flatMap(entry -> {
-                    long count = entry.getValue();
-                    String baseMessage = entry.getKey();
-                    return Stream.of(baseMessage + " (" + count + ")");
-                })
+                .map(e -> createMultipleFailureEntryMessage(e.getKey(), e.getValue()))
                 .collect(Collectors.toList());
 
         distinctMessages.forEach(terminal::writeLine);
