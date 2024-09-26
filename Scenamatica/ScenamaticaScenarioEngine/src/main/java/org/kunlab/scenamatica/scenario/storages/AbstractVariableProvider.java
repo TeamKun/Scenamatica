@@ -70,10 +70,26 @@ public abstract class AbstractVariableProvider
 
     protected static String[] sliceKey(String[] keys, int startIdx)
     {
+        return sliceKey(keys, startIdx, keys.length);
+    }
+
+    protected static String[] sliceKeyLast(String key, int endIdx)
+    {
+        String[] keys = splitKey(key);
+        return sliceKey(keys, 0, endIdx);
+    }
+
+    protected static String[] sliceKeyLast(String[] keys, int endIdx)
+    {
+        return sliceKey(keys, 0, endIdx);
+    }
+
+    protected static String[] sliceKey(String[] keys, int startIdx, int endIdx)
+    {
         if (keys.length <= startIdx)
             return new String[0];
 
-        String[] result = new String[keys.length - startIdx];
+        String[] result = new String[endIdx - startIdx];
         System.arraycopy(keys, startIdx, result, 0, result.length);
         return result;
     }
@@ -110,7 +126,13 @@ public abstract class AbstractVariableProvider
 
         String key = keys[lastIndex];
         if (!map.containsKey(key))
-            throw new BrokenReferenceException(String.join(".", keys));
+        {
+            String[] partiallyResolvedReference = new String[lastIndex];
+            System.arraycopy(keys, 0, partiallyResolvedReference, 0, lastIndex);
+            String partiallyResolvedReferenceStr = String.join(".", partiallyResolvedReference);
+
+            throw new BrokenReferenceException(String.join(".", keys), partiallyResolvedReferenceStr, map);
+        }
 
         Object value = map.get(keys[lastIndex]);
         if (value instanceof Function)
@@ -138,7 +160,7 @@ public abstract class AbstractVariableProvider
             return requireSerializer(ser).serialize(structure, null);
         }
         else
-            throw new BrokenReferenceException(String.join(".", keys));
+            throw new BrokenReferenceException(String.join(".", keys), "Expected a map-like object, but got " + value);
     }
 
     private static boolean shouldConvertToStructure(@Nullable StructureSerializer ser, @Nullable Object value)

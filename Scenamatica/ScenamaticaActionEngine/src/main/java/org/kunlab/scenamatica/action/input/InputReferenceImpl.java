@@ -381,13 +381,13 @@ public class InputReferenceImpl<T> implements InputReference<T>
             return;
         }
         if (this.referenceParts == null)
-            throw new BrokenReferenceException("This reference doesn't contain any references: " + this.referencing, this.referencing);
+            throw new BrokenReferenceException(null, "This reference doesn't contain any references: " + this.referencing);
         assert this.referencing != null;
 
         Object resolved = resolveReferences(this.referencing, this.referenceParts, variables);
 
         if (containsReference(resolved))
-            throw new BrokenReferenceException("Failed to resolve reference: " + this.referencing + " -> " + resolved, this.referencing);
+            throw new BrokenReferenceException(null, "Failed to resolve reference: " + this.referencing + " -> " + resolved);
 
         this.resolve(this.smartCast(serializer, resolved));
     }

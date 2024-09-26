@@ -48,9 +48,9 @@ public interface ActionResultDeliverer
     /**
      * このインスタンスで発生した例外を取得します。
      *
-     * @param exceptionCaught 例外
+     * @param caughtException 例外
      */
-    void setExceptionCaught(Throwable exceptionCaught);
+    void setCaughtException(Throwable caughtException);
 
     /**
      * このインスタンスを破棄します。

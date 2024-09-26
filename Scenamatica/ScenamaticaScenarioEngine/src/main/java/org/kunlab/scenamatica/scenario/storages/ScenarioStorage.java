@@ -12,6 +12,7 @@ import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.structures.trigger.TriggerStructure;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -50,23 +51,23 @@ public class ScenarioStorage extends AbstractVariableProvider implements ChildSt
             throw new IllegalArgumentException("scenario is not finished");
     }
 
-    private static boolean isOutputKey(String key)
+    private static boolean containsOutputKey(String key)
     {
         return key.contains(OUTPUT_MARKER) || key.equals(KEY_OUTPUT);
     }
 
-    private static boolean isOutputKey(String[] keys)
+    private static boolean containsOutputKey(String[] keys)
     {
         for (String key : keys)
-            if (isOutputKey(key))
+            if (containsOutputKey(key))
                 return true;
 
         return false;
     }
 
-    private static String getOutputkey(QueuedScenario scenario, String key)
+    private static String getFullQualifiedOutputKey(QueuedScenario scenario, String key)
     {
-        return KEY_OUTPUT + "." + scenario.getEngine().getScenario().getName() + "." + key;
+        return KEY_OUTPUT + KEY_SEPARATOR + scenario.getEngine().getScenario().getName() + KEY_SEPARATOR + key;
     }
 
     @Override
@@ -81,7 +82,7 @@ public class ScenarioStorage extends AbstractVariableProvider implements ChildSt
     @Override
     public void set(@NotNull String key, @Nullable Object value)
     {
-        if (!isOutputKey(key))
+        if (!containsOutputKey(key))
             throw new IllegalStateException("This storage is read-only: " + key);
 
         /*
@@ -109,20 +110,20 @@ public class ScenarioStorage extends AbstractVariableProvider implements ChildSt
          */
         String[] keys = splitKey(key);
         if (keys.length < 2)
-            throw new BrokenReferenceException(key);
+            throw new BrokenReferenceException(key, KEY, this.map);
 
         // 末尾の .output を, OUTPUT_IDENTIFIER に置換する
         String generalKey = key.substring(0, key.length() - OUTPUT_MARKER.length() + 1) + OUTPUT_IDENTIFIER;
 
         QueuedScenario current = this.session.getCurrent();
-        super.set(getOutputkey(current, generalKey), value);
+        super.set(getFullQualifiedOutputKey(current, generalKey), value);
     }
 
     /* non-public */ Object getScenarioDetail(ScenarioSession session, String[] keys)
     {
         String scenarioName = keys[0];
         if (keys.length == 1)
-            throw new BrokenReferenceException(scenarioName);
+            throw new BrokenReferenceException("Broken reference: imperfect reference string.", scenarioName);
 
         QueuedScenario scenario = session.getScenarios().stream()
                 .filter(s -> s.getEngine().getScenario().getName().equalsIgnoreCase(scenarioName))
@@ -138,7 +139,7 @@ public class ScenarioStorage extends AbstractVariableProvider implements ChildSt
 
         if (keys.length == 0)
             return this.ser.serialize(scenario.getEngine().getScenario(), ScenarioFileStructure.class);
-        else if (isOutputKey(keys))
+        else if (containsOutputKey(keys))
             return this.getScenarioOutputsDetail(scenario, keys);
 
         ScenarioResult result = scenario.getResult();
@@ -147,7 +148,11 @@ public class ScenarioStorage extends AbstractVariableProvider implements ChildSt
         {
             case KEY_SCENARIO_RESULT:
                 ensureHasResult(result);
-                return this.getScenarioResultDetail(result, sliceKey(keys, 2));
+                String resultType = keys[2];
+                if (keys.length == 3)
+                    return this.getScenarioResultDetail(result, resultType, sliceKey(keys, 3));
+                else
+                    return result.getCause() == ScenarioResultCause.PASSED;
             case KEY_SCENARIO_STARTED_AT:
                 if (result == null && !scenario.isRunning())
                     throw new IllegalStateException("scenario is not started: " + scenario.getEngine().getScenario().getName());
@@ -171,7 +176,7 @@ public class ScenarioStorage extends AbstractVariableProvider implements ChildSt
         }
     }
 
-    private Pair<Object, Integer> lookupOutput(QueuedScenario scenario, String[] keys)
+    private Pair<Object, Integer> lookupOutputWithFullKey(QueuedScenario scenario, String[] keys)
     {
         final String separator = KEY_SEPARATOR;
         StringBuilder builder = new StringBuilder();
@@ -180,31 +185,32 @@ public class ScenarioStorage extends AbstractVariableProvider implements ChildSt
             String key = keys[i];
             if (builder.length() > 0)
                 builder.append(separator);
-            if (isOutputKey(key))
+            if (containsOutputKey(key))
             {
-                String generalKey = getOutputkey(scenario, builder + OUTPUT_IDENTIFIER);
+                String generalKey = getFullQualifiedOutputKey(scenario, builder + OUTPUT_IDENTIFIER);
                 Object lookupResult;
                 try
                 {
                     lookupResult = super.get(generalKey);
                     return new Pair<>(lookupResult, i);
                 }
-                catch (BrokenReferenceException ignored)
+                catch (BrokenReferenceException e)
                 {
-                    builder.append(key);
+                    // builder.append(key);
+                    throw e;
                 }
             }
             else
                 builder.append(key);
         }
 
-        throw new BrokenReferenceException(builder.toString());
+        throw new BrokenReferenceException(builder.toString(), null, null);
     }
 
     private Object getScenarioOutputsDetail(QueuedScenario scenario, String[] keys)
     {
-        Pair<Object, Integer> pair = this.lookupOutput(scenario, keys);
         // キーが, scenario.scenarios.<シナリオ名："output">.output.<キー："output"> の可能性を考慮する。
+        Pair<Object, Integer> pair = this.lookupOutputWithFullKey(scenario, keys);
         Object output = pair.getLeft();
         int index = pair.getRight();
 
@@ -217,13 +223,11 @@ public class ScenarioStorage extends AbstractVariableProvider implements ChildSt
         return get(map, sliceKey(keys, index + 1), this.ser);
     }
 
-    private Object getScenarioResultDetail(ScenarioResult result, String[] keys)
+    private Object getScenarioResultDetail(ScenarioResult result, String resultType, String[] referencePrefix)
     {
-        if (keys.length == 0)
-            return result.getCause() == ScenarioResultCause.PASSED;
+        String fullReference = String.join(KEY_SEPARATOR, referencePrefix) + KEY_SEPARATOR + resultType;
 
-        String key = keys[0];
-        switch (key)
+        switch (resultType)
         {
             case KEY_SCENARIO_RESULT_CAUSE:
                 return result.getCause().toString();
@@ -232,7 +236,12 @@ public class ScenarioStorage extends AbstractVariableProvider implements ChildSt
             case KEY_SCENARIO_RESULT_ATTEMPT_OF:
                 return result.getAttemptOf();
             default:
-                throw new BrokenReferenceException(key);
+                throw new BrokenReferenceException(fullReference, resultType, new HashMap<String, Object>()
+                {{
+                    this.put(KEY_SCENARIO_RESULT_CAUSE, result.getCause().toString());
+                    this.put(KEY_SCENARIO_RESULT_STATE, result.getState().toString());
+                    this.put(KEY_SCENARIO_RESULT_ATTEMPT_OF, result.getAttemptOf());
+                }});
         }
     }
 
