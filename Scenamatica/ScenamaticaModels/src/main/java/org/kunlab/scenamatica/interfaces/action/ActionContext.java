@@ -90,7 +90,7 @@ public interface ActionContext
      *
      * @param cause 失敗の原因
      */
-    void fail(ActionResultCause cause);
+    void fail(@NotNull ActionResultCause cause);
 
     /**
      * アクションを失敗として終了し、これ以降のアクションの実行をスキップします。
@@ -99,6 +99,14 @@ public interface ActionContext
      * @param err 失敗の原因
      */
     void fail(@NotNull Throwable err);
+
+    /**
+     * アクションを失敗として終了し、これ以降のアクションの実行をスキップします。
+     *
+     * @param cause 失敗の原因
+     * @param err   失敗の原因
+     */
+    void fail(@NotNull ActionResultCause cause, @Nullable Throwable err);
 
     /**
      * アクションを失敗として終了し、これ以降のアクションの実行をスキップします。

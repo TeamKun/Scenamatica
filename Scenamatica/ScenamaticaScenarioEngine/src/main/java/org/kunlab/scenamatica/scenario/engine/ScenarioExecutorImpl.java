@@ -376,8 +376,7 @@ public class ScenarioExecutorImpl implements ScenarioExecutor
         }
         catch (BrokenReferenceException e)
         {
-            this.registry.getExceptionHandler().report(e);
-            context.fail(ActionResultCause.UNRESOLVED_REFERENCES);
+            context.fail(ActionResultCause.UNRESOLVED_REFERENCES, e);
             return context.createResult(scenario.getAction());
         }
 
@@ -407,8 +406,7 @@ public class ScenarioExecutorImpl implements ScenarioExecutor
         }
         catch (BrokenReferenceException e)
         {
-            this.registry.getExceptionHandler().report(e);
-            context.fail(ActionResultCause.UNRESOLVED_REFERENCES);
+            context.fail(ActionResultCause.UNRESOLVED_REFERENCES, e);
             return context.createResult(scenario.getAction());
         }
         catch (Exception e)
@@ -447,10 +445,14 @@ public class ScenarioExecutorImpl implements ScenarioExecutor
             else
                 context.fail(ActionResultCause.UNEXPECTED_CONDITION);
         }
+        catch (BrokenReferenceException e)
+        {
+            context.fail(ActionResultCause.UNRESOLVED_REFERENCES, e);
+        }
         catch (Throwable e)
         {
-            this.registry.getExceptionHandler().report(e);
             context.fail(e);
+            this.registry.getExceptionHandler().report(e);
         }
 
         if (context.isSuccess())

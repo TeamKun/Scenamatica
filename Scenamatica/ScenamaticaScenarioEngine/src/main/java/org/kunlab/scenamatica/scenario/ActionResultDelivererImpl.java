@@ -15,7 +15,7 @@ public class ActionResultDelivererImpl implements ActionResultDeliverer
 
     @Getter
     private boolean waiting;  // wait されているかどうか。タイムアウト制御用。
-    private RuntimeException exceptionCaught;
+    private RuntimeException caughtException;
     private long waitTimeout;
     private long elapsedTick;
 
@@ -63,8 +63,8 @@ public class ActionResultDelivererImpl implements ActionResultDeliverer
             }
 
             this.waiting = false;
-            if (this.exceptionCaught != null)
-                throw this.exceptionCaught;
+            if (this.caughtException != null)
+                throw this.caughtException;
 
             return this.results.pop();
         }
@@ -88,21 +88,20 @@ public class ActionResultDelivererImpl implements ActionResultDeliverer
     @Override
     public void timedout()
     {
-        this.setExceptionCaught(new ScenarioWaitTimedOutException());
+        this.setCaughtException(new ScenarioWaitTimedOutException());
     }
 
-    @Override
-    public void setExceptionCaught(Throwable exceptionCaught)
+    public void setCaughtException(Throwable caughtException)
     {
         synchronized (this.lock)
         {
             if (!this.waiting)
                 return;
 
-            if (exceptionCaught instanceof RuntimeException)
-                this.exceptionCaught = (RuntimeException) exceptionCaught;
+            if (caughtException instanceof RuntimeException)
+                this.caughtException = (RuntimeException) caughtException;
             else
-                this.exceptionCaught = new RuntimeException(exceptionCaught);
+                this.caughtException = new RuntimeException(caughtException);
 
             this.lock.notifyAll();
         }

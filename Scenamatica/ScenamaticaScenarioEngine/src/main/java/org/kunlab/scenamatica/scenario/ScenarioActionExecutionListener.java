@@ -59,6 +59,6 @@ public class ScenarioActionExecutionListener implements ScenarioActionListener
     public void onActionError(CompiledAction action, Throwable throwable)
     {
         if (this.waitingFor != null)
-            this.engine.getDeliverer().setExceptionCaught(throwable);
+            this.engine.getDeliverer().setCaughtException(throwable);
     }
 }

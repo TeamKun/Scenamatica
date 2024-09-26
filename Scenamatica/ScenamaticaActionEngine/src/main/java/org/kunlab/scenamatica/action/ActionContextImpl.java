@@ -53,7 +53,7 @@ public class ActionContextImpl implements ActionContext
     private ActionResultCause cause;
     private boolean halt;
     private boolean skipped;
-    private Throwable err;
+    private Throwable error;
 
     public ActionContextImpl(@NotNull ScenarioEngine engine, @NotNull RunOn runOn, @NotNull RunAs runAs, @NotNull InputBoard inputBoard, @NotNull Logger logger)
     {
@@ -114,23 +114,29 @@ public class ActionContextImpl implements ActionContext
     }
 
     @Override
-    public void fail(ActionResultCause cause)
+    public void fail(@NotNull ActionResultCause cause)
     {
         this.fail();
-        this.cause = cause;
     }
 
     @Override
     public void fail(@NotNull Throwable err)
     {
         this.fail();
-        this.err = err;
+    }
+
+    @Override
+    public void fail(@NotNull ActionResultCause cause, @Nullable Throwable err)
+    {
+        this.fail();
+        this.cause = cause;
+        this.error = err;
     }
 
     @Override
     public @Nullable Throwable getError()
     {
-        return this.err;
+        return this.error;
     }
 
     @Override
@@ -296,7 +302,7 @@ public class ActionContextImpl implements ActionContext
         this.cause = null;
         this.halt = false;
         this.skipped = false;
-        this.err = null;
+        this.error = null;
         this.output.clear();
     }
 }
