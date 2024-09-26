@@ -16,7 +16,7 @@ public class RuntimeStorage extends AbstractVariableProvider implements ChildSto
         super(null);
     }
 
-    private static Object processMemory(String[] keys)
+    private Object processMemory(String[] keys)
     {
         if (keys.length == 0)
             throw new BrokenReferenceException("Empty memory key", null);
@@ -29,7 +29,7 @@ public class RuntimeStorage extends AbstractVariableProvider implements ChildSto
         else if (key.equalsIgnoreCase(KEY_MEMORY_MAX))
             return Runtime.getRuntime().maxMemory();
         else
-            throw new BrokenReferenceException(key);
+            throw new BrokenReferenceException(key, KEY_MEMORY, this.map);
     }
 
     @Override
@@ -37,12 +37,12 @@ public class RuntimeStorage extends AbstractVariableProvider implements ChildSto
     {
         String[] keys = splitKey(key);
         if (keys.length <= 2)
-            throw new BrokenReferenceException(key);
+            throw new BrokenReferenceException(key, "", null);
         String ns = keys[0];
         String[] subKeys = sliceKey(key, 1);
 
         if (ns.equalsIgnoreCase(KEY_MEMORY))
-            return processMemory(subKeys);
+            return this.processMemory(subKeys);
         else
             throw new BrokenReferenceException("Unknown namespace: " + ns, ns);
     }

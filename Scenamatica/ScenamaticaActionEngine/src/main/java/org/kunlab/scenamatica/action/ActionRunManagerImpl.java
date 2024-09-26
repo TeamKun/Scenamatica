@@ -79,17 +79,18 @@ public class ActionRunManagerImpl implements ActionRunManager
             return;
 
         CompiledAction entry = this.actionQueue.pop();
+        ActionContext ctxt = entry.getContext();
         try
         {
             assert entry.getExecutor() instanceof Executable;
 
             Executable executable = (Executable) entry.getExecutor();
-            ActionContext ctxt = entry.getContext();
             executable.execute(ctxt);
             entry.getOnExecute().accept(ctxt.createResult(entry), ScenarioType.ACTION_EXECUTE);
         }
         catch (Throwable e)
         {
+            ctxt.fail();
             entry.getErrorHandler().accept(entry, e);
         }
     }
