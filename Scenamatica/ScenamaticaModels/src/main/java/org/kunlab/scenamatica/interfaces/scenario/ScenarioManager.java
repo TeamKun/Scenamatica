@@ -208,7 +208,7 @@ public interface ScenarioManager
      *
      * @param plugin ロードするプラグイン
      */
-    void loadPluginScenarios(@NotNull Plugin plugin);
+    boolean loadPluginScenarios(@NotNull Plugin plugin);
 
     /**
      * プラグインのシナリオをリロードします。
@@ -218,7 +218,7 @@ public interface ScenarioManager
      * @see #unloadPluginScenarios(Plugin)
      * @see #loadPluginScenarios(Plugin)
      */
-    void reloadPluginScenarios(@NotNull Plugin plugin);
+    boolean reloadPluginScenarios(@NotNull Plugin plugin);
 
     /**
      * 現在実行中のシナリオを返します。

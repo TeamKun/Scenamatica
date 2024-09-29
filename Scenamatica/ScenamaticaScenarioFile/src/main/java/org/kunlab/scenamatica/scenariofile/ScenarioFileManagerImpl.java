@@ -1,5 +1,7 @@
 package org.kunlab.scenamatica.scenariofile;
 
+import net.kunmc.lab.peyangpaperutils.lang.LangProvider;
+import net.kunmc.lab.peyangpaperutils.lang.MsgArgs;
 import net.kunmc.lab.peyangpaperutils.versioning.Version;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -17,6 +19,7 @@ import java.lang.reflect.Method;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class ScenarioFileManagerImpl implements ScenarioFileManager
 {
@@ -67,6 +70,7 @@ public class ScenarioFileManagerImpl implements ScenarioFileManager
     @Override
     public boolean loadPluginScenarios(@NotNull Plugin plugin)
     {
+        boolean result;
         try
         {
             Path pluginJarPath = getPluginFilePath(plugin);
@@ -76,18 +80,37 @@ public class ScenarioFileManagerImpl implements ScenarioFileManager
 
             this.scenarios.put(plugin.getName(), pluginScenarios);
 
-            return true;
+            result = true;
         }
         catch (InvalidScenarioFileException e)
         {
-            this.registry.getLogger().warning("The plugin " + plugin.getName() + " has invalid scenario files: " + e.getMessage());
-            return false;
+            String message = e.getMessage();
+            if (!(e.getCause() == null || Objects.equals(e.getMessage(), e.getCause().getMessage())))
+                message += "(caused by " + e.getCause().getMessage() + ")";
+
+            this.registry.getLogger().warning(LangProvider.get(
+                    "scenario.file.parser.invalidScenarioFile",
+                    MsgArgs.of("pluginName", plugin.getName())
+                            .add("fileName", e.getFileName())
+                            .add("message", message)
+            ));
+            result = false;
         }
         catch (IOException e)
         {
             this.registry.getExceptionHandler().report(e);
-            return false;
+            result = false;
         }
+
+        if (!result)
+        {
+            this.registry.getLogger().warning(LangProvider.get(
+                    "scenario.file.manager.pluginLoadingFailed",
+                    MsgArgs.of("pluginName", plugin.getName())
+            ));
+        }
+
+        return result;
     }
 
     private boolean canLoadScenario(@NotNull ScenarioFileStructure scenario)
@@ -96,10 +119,12 @@ public class ScenarioFileManagerImpl implements ScenarioFileManager
         Version fileVersion = scenario.getScenamaticaVersion();
         if (scenario.getScenamaticaVersion().isNewerThan(baseVersion))
         {
-            this.registry.getLogger().warning(
-                    "The scenario file " + scenario.getName() + " is newer than running Scenamatica daemon version." +
-                            " (File version: " + fileVersion + ", Scenamatica version: " + baseVersion + ")"
-            );
+            this.registry.getLogger().warning(LangProvider.get(
+                    "scenario.file.parser.versionMismatch",
+                    MsgArgs.of("scenarioName", scenario.getName())
+                            .add("currentScenamaticaVersion", fileVersion)
+                            .add("fileScenamaticaVersion", baseVersion)
+            ));
             return false;
         }
 

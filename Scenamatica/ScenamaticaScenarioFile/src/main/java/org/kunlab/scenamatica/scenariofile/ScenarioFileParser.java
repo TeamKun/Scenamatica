@@ -2,6 +2,8 @@ package org.kunlab.scenamatica.scenariofile;
 
 import javax.annotation.Nullable;
 import lombok.AllArgsConstructor;
+import net.kunmc.lab.peyangpaperutils.lang.LangProvider;
+import net.kunmc.lab.peyangpaperutils.lang.MsgArgs;
 import net.kunmc.lab.peyangpaperutils.versioning.Version;
 import org.apache.commons.lang.StringUtils;
 import org.kunlab.scenamatica.enums.MinecraftVersion;
@@ -12,6 +14,7 @@ import org.kunlab.scenamatica.interfaces.scenariofile.VersionRange;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.error.YAMLException;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -47,9 +50,7 @@ public class ScenarioFileParser
         }
         catch (IllegalArgumentException e)
         {
-            String fileNameStr = fileName == null ? "": " in file " + fileName;
-
-            throw new InvalidScenarioFileException(e.getMessage() + fileNameStr, e);
+            throw new InvalidScenarioFileException(e.getMessage(), fileName, e);
         }
     }
 
@@ -57,7 +58,15 @@ public class ScenarioFileParser
             throws InvalidScenarioFileException
     {
         Yaml sYaml = new Yaml();
-        Map<Object, Object> map = sYaml.load(inputStream);
+        Map<Object, Object> map;
+        try
+        {
+            map = sYaml.load(inputStream);
+        }
+        catch (YAMLException e)
+        {
+            throw new InvalidScenarioFileException(e.getMessage(), fileName, e);
+        }
 
         return fromMap(injectTriggers(map), fileName);
     }
@@ -118,11 +127,11 @@ public class ScenarioFileParser
                     {
                         String descA = map.get(scenario.getName()).getDescription();
                         String descB = scenario.getDescription();
-                        throw new IllegalStateException(String.format(
-                                "Duplicated scenario name: %s(%s, %s)",
-                                scenario.getName(),
-                                descA == null ? "N/A": descA,
-                                descB == null ? "N/A": descB
+                        throw new IllegalStateException(LangProvider.get(
+                                "scenario.file.manager.duplicated",
+                                MsgArgs.of("scenarioName", scenario.getName())
+                                        .add("descriptionA", descA)
+                                        .add("descriptionB", descB)
                         ));
                     }
 

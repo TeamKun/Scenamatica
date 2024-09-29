@@ -1,0 +1,7 @@
+scenario.file.parser.invalidScenarioFile=Plugin %%pluginName%% has an broken scenario file(%%fileName%%): %%message%%
+scenario.file.parser.versionMismatch=Scenario %%scenarioName%% requires a newer version of Scenamatica(%%currentScenamaticaVersion%%) than the one currently running Scenamatica(%%fileScenamaticaVersion%%).
+scenario.file.parser.notAScenarioFIle=File %%scenarioName%% is not a scenario file (missing 'scenamatica' key?).
+scenario.file.parser.invalidScenarioFileException=Invalid scenario file: %%message%%
+scenario.file.parser.invalidYamlSyntax=Scenario file %%scenarioName%% contains invalid YAML syntax: %%message%%
+scenario.file.manager.duplicated=Duplicated scenario files found: %%scenarioName%%(A: %%descriptionA%%, B: %%descriptionB%%)
+scenario.file.manager.pluginLoadingFailed=Failed to load scenarios of plugin %%pluginName%%.

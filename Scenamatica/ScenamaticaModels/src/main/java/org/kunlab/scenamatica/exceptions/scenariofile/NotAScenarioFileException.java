@@ -7,6 +7,6 @@ public class NotAScenarioFileException extends InvalidScenarioFileException
 {
     public NotAScenarioFileException(String fileName)
     {
-        super("The file is not a scenario file(missing 'scenamatica' property?): " + fileName);
+        super("The file is not a scenario file(missing 'scenamatica' property?)", fileName);
     }
 }
