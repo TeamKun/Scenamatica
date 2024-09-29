@@ -5,7 +5,7 @@ scenario.compile.start=Starting scenario compilation for scenario %%scenarioName
 scenario.compile.end=Scenario compilations of %%total%% scenarios have been completed.
 scenario.compile.child=[%%compiled%%/%%total%%] Compiling %%triggerType%%:%%type%% scenario %%scenarioName%%
 scenario.compile.main=[%%compiled%%/%%total%%] Compiling main scenario %%scenarioName%%
-scenario.compile.error=!!!ERROR!!! Failed to compile scenario: %%message%%
+scenario.compile.error=[!!!ERROR!!!] Failed to compile scenario %%scenarioName%% of plugin %%pluginName%%: %%message%%
 scenario.load.success=Successfully loaded scenarios for plugin %%pluginName%%
 scenario.load.cancel=Canceled loading scenarios for plugin %%pluginName%%
 

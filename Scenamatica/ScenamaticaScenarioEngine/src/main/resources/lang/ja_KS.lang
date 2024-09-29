@@ -5,7 +5,7 @@ scenario.compile.start=シナリオ %%scenarioName%% のコンパイルを始め
 scenario.compile.prepare=合計 %%total%% 個のシナリオをコンパイルしたで。
 scenario.compile.child=[%%compiled%%/%%total%%] シナリオ %%scenarioName%% の %%triggerType%%:%%type%% をコンパイルしとるで …
 scenario.compile.main=[%%compiled%%/%%total%%] シナリオ %%scenarioName%% のメインシナリオをコンパイルしとるで …
-scenario.compile.error=!!!ERROR!!! シナリオのコンパイルに失敗したで：%%message%%
+scenario.compile.error=[!!!ERROR!!!] プラグイン %%pluginName%% のシナリオ %%scenarioName%% のコンパイルに失敗したで: %%message%%
 scenario.load.success=プラグイン %%pluginName%% のシナリオを正常に読み込んだで。
 scenario.load.cancel=プラグイン %%pluginName%% のシナリオの読み込みをキャンセルしたで。
 
