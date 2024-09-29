@@ -9,6 +9,7 @@ import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.structures.scenario.ActionStructure;
 import org.kunlab.scenamatica.interfaces.structures.scenario.ScenarioStructure;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -61,7 +62,13 @@ public class ScenarioStructureImpl implements ScenarioStructure
     {
         MapUtils.checkType(map, KEY_SCENARIO_TYPE, String.class);
         if (ScenarioType.fromKey((String) map.get(KEY_SCENARIO_TYPE)) == null)
-            throw new IllegalArgumentException("Invalid scenario type");
+            throw new IllegalArgumentException("Invalid scenario type found, expected one of " +
+                    Arrays.stream(ScenarioType.values())
+                            .map(ScenarioType::getKey)
+                            .map(String::toLowerCase)
+                            .reduce((a, b) -> a + ", " + b)
+                            .orElse("")
+                    + " but found " + map.get(KEY_SCENARIO_TYPE));
 
         MapUtils.checkNumberIfContains(map, KEY_TIMEOUT);
 

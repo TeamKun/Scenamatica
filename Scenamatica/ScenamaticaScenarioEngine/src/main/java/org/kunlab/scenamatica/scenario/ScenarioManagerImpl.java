@@ -273,11 +273,11 @@ public class ScenarioManagerImpl implements ScenarioManager
     }
 
     @Override
-    public void loadPluginScenarios(@NotNull Plugin plugin)
+    public boolean loadPluginScenarios(@NotNull Plugin plugin)
     {
         // 内部でリロードを呼び出す（やることは同じなので）
         if (!this.registry.getScenarioFileManager().reloadPluginScenarios(plugin))
-            throw new IllegalStateException("Failed to reload plugin scenarios.");
+            return false;
 
         // エンジンのコンパイルも行う。
         Map<String, ScenarioFileStructure> scenarios = this.registry.getScenarioFileManager().getPluginScenarios(plugin);
@@ -286,6 +286,8 @@ public class ScenarioManagerImpl implements ScenarioManager
         List<ScenarioEngine> engines = this.createEnginesByFile(plugin, scenarios.values());
 
         this.registry.getTriggerManager().performTriggerFire(engines, TriggerType.ON_LOAD);
+
+        return true;
     }
 
     private List<ScenarioEngine> createEnginesByFile(@NotNull Plugin owningPlugin, @NotNull Collection<ScenarioFileStructure> files)
@@ -326,6 +328,7 @@ public class ScenarioManagerImpl implements ScenarioManager
             logger.warning(LangProvider.get(
                     "scenario.compile.error",
                     MsgArgs.of("pluginName", owningPlugin.getName())
+                            .add("scenarioName", e.getScenarioName())
                             .add("message", message)
             ));
 
@@ -358,10 +361,10 @@ public class ScenarioManagerImpl implements ScenarioManager
     }
 
     @Override
-    public void reloadPluginScenarios(@NotNull Plugin plugin)
+    public boolean reloadPluginScenarios(@NotNull Plugin plugin)
     {
         this.unloadPluginScenarios(plugin);
-        this.loadPluginScenarios(plugin);
+        return this.loadPluginScenarios(plugin);
     }
 
     @Override

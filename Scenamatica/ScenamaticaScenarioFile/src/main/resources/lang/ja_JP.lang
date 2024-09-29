@@ -1,0 +1,7 @@
+scenario.file.parser.invalidScenarioFile=プラグイン %%pluginName%% は壊れているシナリオファイルを持っています(%%fileName%%)：%%message%%
+scenario.file.parser.versionMismatch=シナリオ %%scenarioName%% には, 現在実行している Scenamatica(%%currentScenamaticaVersion%%)よりも新しいバージョンの Scenamatica(%%fileScenamaticaVersion%%) が必要です。
+scenario.file.parser.invalidScenarioFileException=間違ったシナリオファイル：%%message%%
+scenario.file.parser.notAScenarioFIle=ファイル %%scenarioName%% はシナリオファイルではありません（'scenamatica' キーが無い可能性があります）。
+scenario.file.parser.invalidYamlSyntax=シナリオファイル %%scenarioName%% には無効なYAML構文が含まれています：%%message%%
+scenario.file.manager.duplicated=重複したシナリオファイルが見つかりました: %%scenarioName%%(A: %%descriptionA%%, B: %%descriptionB%%)
+scenario.file.manager.pluginLoadingFailed=プラグイン %%pluginName%% のシナリオの読み込みに失敗しました。
