@@ -1,0 +1,8 @@
+scenario.compile.error.undefinedAction=知らんアクション %%actionName%% が指定されたで（もしかして：%%actionSuggestion%%）。
+
+scenario.compile.error.scenarioTypeViolation.execute=アクション %%actionName%% はアクション実行シナリオで使えへんで。
+scenario.compile.error.scenarioTypeViolation.expect=アクション %%actionName%% はアクション期待シナリオで使えへんで。
+scenario.compile.error.scenarioTypeViolation.require=アクション %%actionName%% は条件要求シナリオで使えへんで。
+
+scenario.compile.error.negate.argumentsNeeded=アクション %%negateActionName%% は引数が必要やで。
+scenario.compile.error.negate.targetActionNameNeeded=アクション %%negateActionName%% は反転対象のアクション名が必要やで。

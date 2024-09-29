@@ -1,5 +1,7 @@
 package org.kunlab.scenamatica.action;
 
+import net.kunmc.lab.peyangpaperutils.lang.LangProvider;
+import net.kunmc.lab.peyangpaperutils.lang.MsgArgs;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.actions.scenamatica.NegateAction;
@@ -7,6 +9,7 @@ import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.enums.RunAs;
 import org.kunlab.scenamatica.enums.RunOn;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.exceptions.scenario.ScenarioCompilationErrorException;
 import org.kunlab.scenamatica.interfaces.action.ActionCompiler;
 import org.kunlab.scenamatica.interfaces.action.ActionLoader;
 import org.kunlab.scenamatica.interfaces.action.ActionResult;
@@ -39,22 +42,46 @@ public class ActionCompilerImpl implements ActionCompiler
             ActionStructure structure,
             BiConsumer<CompiledAction, Throwable> reportErrorTo,
             BiConsumer<ActionResult, ScenarioType> onSuccess)
+            throws ScenarioCompilationErrorException
     {
         Map<String, Object> arguments = structure.getArguments();
         if (arguments == null)
-            throw new IllegalArgumentException("NegateAction requires an argument.");
+            throw new ScenarioCompilationErrorException(
+                    engine,
+                    LangProvider.get(
+                            "scenario.compiler.action.error.negate.argumentsNeeded",
+                            MsgArgs.of("negateActionName", NegateAction.ACTION_NAME)
+                    )
+            );
 
         String actionName = MapUtils.getOrNull(arguments, NegateAction.KEY_IN_ACTION);
         if (actionName == null)
-            throw new IllegalArgumentException("NegateAction requires an action name.");
+            throw new ScenarioCompilationErrorException(
+                    engine,
+                    LangProvider.get(
+                            "scenario.compiler.action.error.negate.targetActionNameNeeded",
+                            MsgArgs.of("negateActionName", NegateAction.ACTION_NAME)
+                    )
+            );
 
         LoadedAction<?> actionToBeNegated = this.loader.getActionByName(actionName);
         if (actionToBeNegated == null)
-            throw new IllegalArgumentException("Action " + actionName + " is not found.");
+            throw new ScenarioCompilationErrorException(
+                    engine,
+                    LangProvider.get(
+                            "scenario.compiler.action.error.undefinedAction",
+                            MsgArgs.of("actionName", actionName)
+                                    .add("actionSuggestion", this.loader.getMostSimilarActionByName(structure.getType()))
+                    )
+            );
         else if (!actionToBeNegated.isRequireable())
-            throw new IllegalArgumentException("Action " + actionName + " is not requireable.");
-        else if (NegateAction.class.isAssignableFrom(actionToBeNegated.getActionClass()))
-            throw new IllegalArgumentException("NegateAction cannot negate another NegateAction.");
+            throw new ScenarioCompilationErrorException(
+                    engine,
+                    LangProvider.get(
+                            "scenario.compiler.action.error.scenarioTypeViolation.require",
+                            MsgArgs.of("actionName", actionName)
+                    )
+            );
 
         InputBoard argument = actionToBeNegated.getInstance().getInputBoard(ScenarioType.CONDITION_REQUIRE);
         if (arguments.containsKey(NegateAction.KEY_IN_ARGUMENTS))
@@ -84,11 +111,19 @@ public class ActionCompilerImpl implements ActionCompiler
                                   @NotNull ActionStructure structure,
                                   @Nullable BiConsumer<CompiledAction, Throwable> reportErrorTo,
                                   @Nullable BiConsumer<ActionResult, ScenarioType> onSuccess)
+            throws ScenarioCompilationErrorException
     {
         StructureSerializer serializer = engine.getManager().getRegistry().getScenarioFileManager().getSerializer();
         LoadedAction<?> action = this.loader.getActionByName(structure.getType());
         if (action == null)
-            throw new IllegalArgumentException("Action " + structure.getType() + " is not found.");
+            throw new ScenarioCompilationErrorException(
+                    engine,
+                    LangProvider.get(
+                            "scenario.compiler.action.error.undefinedAction",
+                            MsgArgs.of("actionName", structure.getType())
+                                    .add("actionSuggestion", this.loader.getMostSimilarActionByName(structure.getType()))
+                    )
+            );
         else if (action.isRequireable() && NegateAction.class.isAssignableFrom(action.getActionClass())) // negate 用の特別処理
             return this.processNegateAction(engine, runOn, runAs, serializer, (NegateAction) action.getInstance(), structure, reportErrorTo, onSuccess);
 
