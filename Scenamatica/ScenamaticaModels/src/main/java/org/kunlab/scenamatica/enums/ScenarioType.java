@@ -48,13 +48,7 @@ public enum ScenarioType
         return this.markerInterface.isAssignableFrom(clazz);
     }
 
-    public void validatePerformableActionType(@NotNull Class<? extends Action> clazz)
-    {
-        if (!this.canPerformActionInType(clazz))
-            throw new IllegalArgumentException("Action type " + clazz.getName() + " cannot be performed in scenario type " + this.name());
-    }
-
-    public static enum $Doc
+    public enum $Doc
     {
         execute,
         expect,

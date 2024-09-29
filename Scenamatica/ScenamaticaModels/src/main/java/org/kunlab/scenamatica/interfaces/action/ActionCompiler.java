@@ -5,6 +5,7 @@ import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.enums.RunAs;
 import org.kunlab.scenamatica.enums.RunOn;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.exceptions.scenario.ScenarioCompilationErrorException;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.structures.scenario.ActionStructure;
 
@@ -34,5 +35,6 @@ public interface ActionCompiler
             @NotNull RunAs runAs,
             @NotNull ActionStructure structure,
             @Nullable BiConsumer<CompiledAction, Throwable> reportErrorTo,
-            @Nullable BiConsumer<ActionResult, ScenarioType> onSuccess);
+            @Nullable BiConsumer<ActionResult, ScenarioType> onSuccess)
+            throws ScenarioCompilationErrorException;
 }

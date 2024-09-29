@@ -11,6 +11,7 @@ import org.kunlab.scenamatica.enums.RunOn;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.enums.TriggerType;
 import org.kunlab.scenamatica.enums.WatchType;
+import org.kunlab.scenamatica.exceptions.scenario.ScenarioCompilationErrorException;
 import org.kunlab.scenamatica.exceptions.scenario.ScenarioException;
 import org.kunlab.scenamatica.interfaces.ScenamaticaRegistry;
 import org.kunlab.scenamatica.interfaces.action.ActionManager;
@@ -52,6 +53,7 @@ public class TriggerManagerImpl implements TriggerManager
 
     @Override
     public void bakeTriggers(@NotNull ScenarioEngine engine)
+            throws ScenarioCompilationErrorException
     {
         ScenarioFileStructure scenario = engine.getScenario();
 
@@ -62,11 +64,12 @@ public class TriggerManagerImpl implements TriggerManager
         this.triggers.putAll(engine, scenario.getTriggers());
 
         // ON_ACTION なトリガを監視対象に。
-        scenario.getTriggers().forEach(t -> {
+        for (TriggerStructure t : scenario.getTriggers())
+        {
             TriggerType type = t.getType();
             if (type == TriggerType.ON_ACTION)
                 this.registerActionTrigger(engine, t);
-        });
+        }
     }
 
     @Override
@@ -131,6 +134,7 @@ public class TriggerManagerImpl implements TriggerManager
     }
 
     private void registerActionTrigger(ScenarioEngine engine, TriggerStructure actionTrigger)
+            throws ScenarioCompilationErrorException
     {
         ScenarioFileStructure scenario = engine.getScenario();
 

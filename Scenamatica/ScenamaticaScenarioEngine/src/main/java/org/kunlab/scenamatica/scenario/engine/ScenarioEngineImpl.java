@@ -14,6 +14,7 @@ import org.kunlab.scenamatica.enums.RunOn;
 import org.kunlab.scenamatica.enums.ScenarioResultCause;
 import org.kunlab.scenamatica.enums.ScenarioState;
 import org.kunlab.scenamatica.enums.TriggerType;
+import org.kunlab.scenamatica.exceptions.scenario.ScenarioCompilationErrorException;
 import org.kunlab.scenamatica.exceptions.scenario.TriggerNotFoundException;
 import org.kunlab.scenamatica.interfaces.ScenamaticaRegistry;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
@@ -71,6 +72,7 @@ public class ScenarioEngineImpl implements ScenarioEngine
                               @NotNull TestReporter testReporter,
                               @NotNull Plugin plugin,
                               @NotNull ScenarioFileStructure scenario)
+            throws ScenarioCompilationErrorException
     {
         this.registry = registry;
         this.manager = manager;

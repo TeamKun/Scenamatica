@@ -31,6 +31,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
@@ -201,6 +202,37 @@ public class ActionLoaderImpl implements ActionLoader, Listener
         return (LoadedAction<T>) this.actions.stream()
                 .filter(action -> action.getActionClass() == clazz)
                 .findFirst()
+                .orElse(null);
+    }
+
+    private static int calculateLevenshteinDistance(String base, String target)
+    {
+        int baseLength = base.length();
+        int targetLength = target.length();
+        int[][] delta = new int[baseLength + 1][targetLength + 1];
+
+        for (int i = 0; i <= baseLength; i++)
+            delta[i][0] = i;
+        for (int j = 0; j <= targetLength; j++)
+            delta[0][j] = j;
+
+        for (int i = 1; i <= baseLength; i++)
+        {
+            for (int j = 1; j <= targetLength; j++)
+            {
+                int cost = (base.charAt(i - 1) == target.charAt(j - 1)) ? 0: 1;
+                delta[i][j] = Math.min(delta[i - 1][j] + 1, Math.min(delta[i][j - 1] + 1, delta[i - 1][j - 1] + cost));
+            }
+        }
+
+        return delta[baseLength][targetLength];
+    }
+
+    @Override
+    public LoadedAction<?> getMostSimilarActionByName(@NotNull String name)
+    {
+        return this.actions.stream()
+                .min(Comparator.comparingInt(a -> calculateLevenshteinDistance(a.getName(), name)))
                 .orElse(null);
     }
 

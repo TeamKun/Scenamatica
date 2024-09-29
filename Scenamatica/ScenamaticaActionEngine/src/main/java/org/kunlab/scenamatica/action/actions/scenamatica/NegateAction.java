@@ -11,7 +11,7 @@ import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
 
 // 特別：NegateActionは、 Scenamatica ネイティブなため, ほとんどの処理は Engine や CompilerSupportSupport で行われる。（密結合）
-@Action("negate")
+@Action(NegateAction.ACTION_NAME)
 @ActionDoc(
         name = "アクションの否定",
         description = "コンディション要求アクションの結果を否定します。",
@@ -23,6 +23,8 @@ import org.kunlab.scenamatica.interfaces.action.types.Requireable;
 public class NegateAction extends AbstractScenamaticaAction
         implements Requireable
 {
+    public static final String ACTION_NAME = "negate";
+
     public static final String KEY_IN_ACTION = "action";
     public static final String KEY_IN_ARGUMENTS = "with";
 

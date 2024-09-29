@@ -8,6 +8,8 @@ import org.kunlab.scenamatica.enums.RunAs;
 import org.kunlab.scenamatica.enums.RunOn;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.enums.TriggerType;
+import org.kunlab.scenamatica.exceptions.scenario.ScenarioCompilationErrorException;
+import org.kunlab.scenamatica.interfaces.action.Action;
 import org.kunlab.scenamatica.interfaces.action.ActionCompiler;
 import org.kunlab.scenamatica.interfaces.action.ActionManager;
 import org.kunlab.scenamatica.interfaces.action.CompiledAction;
@@ -21,7 +23,6 @@ import org.kunlab.scenamatica.interfaces.structures.scenario.ScenarioStructure;
 import org.kunlab.scenamatica.interfaces.structures.trigger.TriggerStructure;
 import org.kunlab.scenamatica.scenario.runtime.CompiledScenarioActionImpl;
 import org.kunlab.scenamatica.scenario.runtime.CompiledTriggerActionImpl;
-import org.kunlab.scenamatica.scenario.runtime.ScenarioCompilationErrorException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -98,6 +99,7 @@ public class ScenarioCompiler
     }
 
     public CompiledScenarioAction compileRunIf(ActionStructure runIf)
+            throws ScenarioCompilationErrorException
     {
         this.logCompiling(++this.compiled, this.compileNeeded, "RUN_IF");
 
@@ -105,6 +107,7 @@ public class ScenarioCompiler
     }
 
     public List<CompiledScenarioAction> compileMain(RunOn runOn, RunAs runAs, List<? extends ScenarioStructure> scenarios)
+            throws ScenarioCompilationErrorException
     {
         this.logCompilingMain(++this.compiled, this.compileNeeded);
         return this.compileActions(
@@ -116,6 +119,7 @@ public class ScenarioCompiler
     }
 
     public List<CompiledTriggerAction> compileTriggerActions(List<? extends TriggerStructure> triggers)
+            throws ScenarioCompilationErrorException
     {
         int compiled = 1; // 本シナリオの分。
 
@@ -163,12 +167,9 @@ public class ScenarioCompiler
     public CompiledScenarioAction compileConditionAction(
             @NotNull RunOn runOn, @NotNull RunAs runAs, @NotNull ScenarioActionListener listener,
             @NotNull ActionStructure structure)
+            throws ScenarioCompilationErrorException
     {  // RunIF 用に偽装する。
-        CompiledAction action;
-        try
-        {
-
-            action = this.actionCompiler.compile(
+        CompiledAction action = this.actionCompiler.compile(
                     this.engine,
                     ScenarioType.CONDITION_REQUIRE,
                     runOn,
@@ -177,12 +178,6 @@ public class ScenarioCompiler
                     listener::onActionError,
                     (result, type) -> listener.onActionExecutionFinished(result)
             );
-        }
-
-        catch (Throwable e)
-        {
-            throw new ScenarioCompilationErrorException(e, this.engine.getScenario().getName(), structure.getType());
-        }
 
         return new CompiledScenarioActionImpl(
                 new ScenarioStructure()
@@ -226,6 +221,7 @@ public class ScenarioCompiler
     public List<CompiledScenarioAction> compileActions(@NotNull RunOn runOn, @NotNull RunAs runAs,
                                                        @NotNull ScenarioActionListener listener,
                                                        @NotNull List<? extends ScenarioStructure> scenarios)
+            throws ScenarioCompilationErrorException
     {
         List<CompiledScenarioAction> compiled = new ArrayList<>();
         for (ScenarioStructure scenario : scenarios)
@@ -237,34 +233,42 @@ public class ScenarioCompiler
     public CompiledScenarioAction compileAction(
             @NotNull RunOn runOn, @NotNull RunAs runAs, @NotNull ScenarioActionListener listener,
             @NotNull ScenarioStructure scenario)
+            throws ScenarioCompilationErrorException
     {
-        try
-        {
-            CompiledAction action = this.actionCompiler.compile(
-                    this.engine,
-                    scenario.getType(),
-                    runOn,
-                    runAs,
-                    scenario.getAction(),
-                    listener::onActionError,
-                    (result, type) -> listener.onActionExecutionFinished(result)
-            );
+        CompiledAction action = this.actionCompiler.compile(
+                this.engine,
+                scenario.getType(),
+                runOn,
+                runAs,
+                scenario.getAction(),
+                listener::onActionError,
+                (result, type) -> listener.onActionExecutionFinished(result)
+        );
 
-            action.getContext().setScenarioName(scenario.getName());
-            scenario.getType().validatePerformableActionType(action.getExecutor().getClass());
+        action.getContext().setScenarioName(scenario.getName());
+        this.validatePerformableActionType(scenario.getType(), action.getExecutor().getClass());
 
-            return new CompiledScenarioActionImpl(
-                    scenario,
-                    scenario.getType(),
-                    action,
-                    scenario.getRunIf() == null ? null:
-                            this.compileConditionAction(runOn, RunAs.RUNIF, listener, scenario.getRunIf())
-            );
-        }
-        catch (Throwable e)
-        {
-            throw new ScenarioCompilationErrorException(e, this.engine.getScenario().getName(), scenario.getAction().getType());
-        }
+        return new CompiledScenarioActionImpl(
+                scenario,
+                scenario.getType(),
+                action,
+                scenario.getRunIf() == null ? null:
+                        this.compileConditionAction(runOn, RunAs.RUNIF, listener, scenario.getRunIf())
+        );
+    }
+
+    private void validatePerformableActionType(ScenarioType type, Class<? extends Action> executor)
+            throws ScenarioCompilationErrorException
+    {
+        if (type.canPerformActionInType(executor))
+            return;
+
+        String violationMessageKey = "scenario.compiler.action.error.scenarioTypeViolation." + type.name();
+
+        throw new ScenarioCompilationErrorException(
+                this.engine,
+                LangProvider.get(violationMessageKey, MsgArgs.of("actionType", executor.getName()))
+        );
     }
 
     private void logCompiling(int compiled, int total, String type, TriggerType triggerType)

@@ -4,6 +4,7 @@ import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.enums.TriggerType;
+import org.kunlab.scenamatica.exceptions.scenario.ScenarioCompilationErrorException;
 import org.kunlab.scenamatica.exceptions.scenario.ScenarioException;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.structures.trigger.TriggerArgument;
@@ -20,7 +21,8 @@ public interface TriggerManager
      *
      * @param engine エンジン
      */
-    void bakeTriggers(@NotNull ScenarioEngine engine);
+    void bakeTriggers(@NotNull ScenarioEngine engine)
+            throws ScenarioCompilationErrorException;
 
     /**
      * トリガを実行します。

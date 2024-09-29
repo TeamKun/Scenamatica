@@ -1,0 +1,8 @@
+scenario.compiler.action.error.undefinedAction=Found an undefined action %%actionName%% (Did you mean?: %%actionSuggestion%%).
+
+scenario.compiler.action.error.scenarioTypeViolation.execute=The action %%actionName%% cannot be used in an action execution scenario.
+scenario.compiler.action.error.scenarioTypeViolation.expect=The action %%actionName%% cannot be used in an action expectation scenario.
+scenario.compiler.action.error.scenarioTypeViolation.require=The action %%actionName%% cannot be used in a condition requirement scenario.
+
+scenario.compiler.action.error.negate.argumentsNeeded=The action %%negateActionName%% requires arguments.
+scenario.compiler.action.error.negate.targetActionNameNeeded=The action %%negateActionName%% requires the name of the action to negate.

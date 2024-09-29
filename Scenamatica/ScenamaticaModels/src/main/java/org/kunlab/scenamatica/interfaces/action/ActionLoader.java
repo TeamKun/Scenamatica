@@ -53,6 +53,15 @@ public interface ActionLoader
     <T extends Action> LoadedAction<T> getActionByClass(@NotNull Class<T> clazz);
 
     /**
+     * 名前により最も類似したアクションを取得します。
+     * このメソッドは、指定した名前に一致するアクションが見つからない場合に、最も類似したアクションを取得します。
+     *
+     * @param name 取得するアクションの名前。
+     * @return 指定した名前に一致するアクション、または最も類似したアクション。
+     */
+    LoadedAction<?> getMostSimilarActionByName(@NotNull String name);
+
+    /**
      * アプリケーションをシャットダウンします。
      */
     void shutdown();
