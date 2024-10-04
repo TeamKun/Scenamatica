@@ -72,8 +72,8 @@ public class BlockBreakAction extends AbstractBlockAction
         }
 
         this.validateBreakable(block, player);
-
         this.makeOutputs(ctxt, block, player);
+
         NMSEntityPlayer nmsPlayer = NMSProvider.getProvider().wrap(player);
         NMSBlockPosition nmsBlockPosition = NMSProvider.getProvider().wrap(location);
         nmsPlayer.getInteractManager().breakBlock(nmsBlockPosition);
