@@ -1,12 +1,11 @@
 package org.kunlab.scenamatica.scenariofile;
 
-import org.kunlab.scenamatica.commons.utils.MapUtils;
+import net.kunmc.lab.peyangpaperutils.lib.utils.Pair;
+import org.kunlab.scenamatica.enums.YAMLNodeType;
+import org.kunlab.scenamatica.exceptions.scenariofile.InvalidScenarioFileException;
+import org.kunlab.scenamatica.exceptions.scenariofile.YamlParsingException;
+import org.kunlab.scenamatica.interfaces.scenariofile.StructuredYamlNode;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -15,139 +14,125 @@ public class DefinitionsMapper
     public static final String KEY_DEFINITIONS = "definitions";
     public static final String KEY_REFERENCE = "$ref";
     private static final Pattern PATTERN_REFERENCE_EMBED = Pattern.compile("\\$\\{([\\w|{}]+)}");
-    private static final Map<String, Object> BASE_EMBED_DEFINITIONS;
 
-    static
+    public static void resolveReferences(StructuredYamlNode node) throws InvalidScenarioFileException
     {
-        Map<String, Object> baseEmbedDefinitions = new HashMap<>();
-
-        baseEmbedDefinitions.put("{", "{");  // ${{} で, { をエスケ－プできるように。
-        baseEmbedDefinitions.put("}", "}");
-
-        BASE_EMBED_DEFINITIONS = Collections.unmodifiableMap(baseEmbedDefinitions);
-    }
-
-    public static void resolveReferences(Map<String, Object> map)
-    {
-        if (!map.containsKey(KEY_DEFINITIONS))
+        if (!node.containsKey(KEY_DEFINITIONS))
             return;
 
-        Map<String, Object> schema = MapUtils.checkAndCastMap(map.get(KEY_DEFINITIONS));
+        StructuredYamlNode definitions = node.get(KEY_DEFINITIONS);
 
-        processDefSet(map, schema);
+        processDefinitions(node, definitions);
     }
 
-    public static Object resolveReferences(Map<String, Object> map, Map<String, Object> schema)
+    public static StructuredYamlNode resolveReferences(StructuredYamlNode target, StructuredYamlNode schema) throws InvalidScenarioFileException
     {
-        return processDefSet(map, schema);
+        return processDefinitions(target, schema);
     }
 
-    private static Object processDefSet(Object obj, Map<String, Object> defs)
+    private static StructuredYamlNode processDefinitions(StructuredYamlNode targetNode, StructuredYamlNode schema) throws InvalidScenarioFileException
     {
-        if (obj instanceof Map)
-        {
-            Map<String, Object> value = MapUtils.checkAndCastMap(obj, String.class, Object.class);
-            return processDefsSetOfMap(value, defs);  // なかで再帰
-        }
-        else if (obj instanceof List)
-        {
-            // noinspection unchecked
-            return processDefsSetOfList((List<Object>) obj, defs);  // なかで再帰
-        }
+        if (targetNode.isType(YAMLNodeType.MAPPING))
+            return processDefsSetOfMapping(targetNode, schema);  // なかで再帰
+        else if (targetNode.isType(YAMLNodeType.LIST))
+            return processDefsSetOfList(targetNode, schema);  // なかで再帰
 
-        if (!(obj instanceof String))
-            return obj;
+        if (!targetNode.isType(YAMLNodeType.STRING))
+            return targetNode;
 
-        String value = (String) obj;
-        return processEmbeddedRef(value, createEmbedDef(defs));   // ${ref} とかの処理
+        return processEmbeddedRef(targetNode, schema);   // ${ref} とかの処理
     }
 
-    private static Object processDefsSetOfMap(Map<String, Object> map, Map<String, Object> defs)
+    private static StructuredYamlNode processDefsSetOfMapping(StructuredYamlNode mappingNode, StructuredYamlNode definitions)
+            throws InvalidScenarioFileException
     {
-        if (map.containsKey(KEY_REFERENCE))
+        // Mapping に $reference: がある場合は, それを解決する。
+        if (mappingNode.containsKey(KEY_REFERENCE))
         {
-            String ref = (String) map.get(KEY_REFERENCE);
-            map.remove(KEY_REFERENCE);
-            Object schemaRef = defs.get(ref);
+            String referenceString = mappingNode.get(KEY_REFERENCE).asString();
+            mappingNode.remove(KEY_REFERENCE);
+            StructuredYamlNode resolvedValue = definitions.get(referenceString);
 
-            if (schemaRef instanceof Map)
-            {
-                // noinspection unchecked
-                map.putAll((Map<String, ?>) schemaRef);  // スキーム的に, 型がStringであることは保証されている。はず。
-                return map;
-            }
+            if (resolvedValue.isType(YAMLNodeType.MAPPING))
+                mappingNode.mergeMapping(resolvedValue);  // スキーム的に, 型がStringであることは保証されている。はず。
             else
-                return schemaRef;  // スキーマ取得用に Object にしたが, 実際は String 等の場合。
+                return resolvedValue;  // スキーマ取得用に Object にしたが, 実際は String 等の場合。
         }
-        else
+
+        for (Pair<? extends StructuredYamlNode, ? extends StructuredYamlNode> entry : mappingNode.getMappingEntries())
         {
-            for (Map.Entry<String, Object> entry : map.entrySet())
-                entry.setValue(processDefSet(entry.getValue(), defs));
-            return map;
+            StructuredYamlNode key = entry.getLeft();
+            StructuredYamlNode value = entry.getRight();
+
+            mappingNode.remove(key);
+            mappingNode.add(key, processDefinitions(value, definitions));
         }
+
+        return mappingNode;
     }
 
-    private static Object processDefsSetOfList(List<Object> list, Map<String, Object> defs)
+    private static StructuredYamlNode processDefsSetOfList(StructuredYamlNode listNode, StructuredYamlNode definitions) throws InvalidScenarioFileException
     {
-        List<Object> result = new ArrayList<>();
-        for (Object o : list)
-            result.add(processDefSet(o, defs));
-        return result;
+        for (StructuredYamlNode o : listNode.asList())
+        {
+            listNode.removeSequenceItem(o);
+            listNode.addSequenceItem(processDefinitions(o, definitions));
+        }
+
+        return listNode;
     }
 
-    private static Object processEmbeddedRef(String value, Map<String, Object> defs)
+    private static StructuredYamlNode processEmbeddedRef(StructuredYamlNode scalarValue, StructuredYamlNode defintions) throws YamlParsingException
     {
-        Matcher matcher = PATTERN_REFERENCE_EMBED.matcher(value);
+        String stringValue = scalarValue.asString();
+        Matcher matcher = PATTERN_REFERENCE_EMBED.matcher(stringValue);
 
         // SnakeYAML が勝手に型推論してしまうので, 文字列として参照を置換した後に, キャストし直す必要があるため。
         boolean isIntOrLong = true;
         boolean isDouble = true;
-        boolean isFloat = true;
         boolean isBoolean = true;
         boolean replaced = false;
         for (int i = 0; matcher.find(i); i = matcher.end(), replaced = true)
         {
             String ref = matcher.group(1);
             String refFull = matcher.group(0);
-            Object schemaRef = defs.get(ref);
-            if (schemaRef == null)
-                throw new IllegalArgumentException("Definitions reference not found: " + ref);
+            StructuredYamlNode resolvedValue = defintions.get(ref);
+            if (resolvedValue == null)
+            {
+                if (ref.startsWith("{"))
+                    stringValue = stringValue.replace("${{}", "{");
+                else if (ref.endsWith("}"))
+                    stringValue = stringValue.replace("}", "");
+                else
+                    throw new IllegalArgumentException("Definitions reference not found: " + ref);
 
-            if (!(schemaRef instanceof Integer || schemaRef instanceof Long))
+                continue;
+            }
+
+            if (!resolvedValue.isType(YAMLNodeType.INTEGER))
                 isIntOrLong = false;
-            if (!(schemaRef instanceof Double))
+            if (!resolvedValue.isType(YAMLNodeType.FLOAT))
                 isDouble = false;
-            if (!(schemaRef instanceof Float))
-                isFloat = false;
-            if (!(schemaRef instanceof Boolean))
+            if (!resolvedValue.isType(YAMLNodeType.BOOLEAN))
                 isBoolean = false;
 
-            value = value.replace(refFull, schemaRef.toString());
+            stringValue = stringValue.replace(refFull, resolvedValue.toString());
         }
 
         // 置換されていない場合は、深い置換/型の復元（再変換）は必要ない。
         if (!replaced)
-            return value;
+            return scalarValue;
 
         if (isIntOrLong)
-            return Long.parseLong(value);
+            return scalarValue.changeScalarValue(YAMLNodeType.INTEGER, Long.parseLong(stringValue));
         if (isDouble)
-            return Double.parseDouble(value);
-        if (isFloat)
-            return Float.parseFloat(value);
+            return scalarValue.changeScalarValue(YAMLNodeType.FLOAT, Double.parseDouble(stringValue));
         if (isBoolean)
-            return Boolean.parseBoolean(value);
+            return scalarValue.changeScalarValue(YAMLNodeType.BOOLEAN, Boolean.parseBoolean(stringValue));
 
         // 全部の方を網羅しているので, 順に脱落していく。 ここに来るのは String だけ。
         // assert value instanceof String;
 
-        return processEmbeddedRef(value, defs);  // Chu!❤ 再帰関数でごめん
-    }
-
-    private static Map<String, Object> createEmbedDef(Map<String, Object> defs)
-    {
-        Map<String, Object> embedDefs = new HashMap<>(BASE_EMBED_DEFINITIONS);
-        embedDefs.putAll(defs);
-        return embedDefs;
+        return processEmbeddedRef(scalarValue.changeScalarValue(YAMLNodeType.STRING, stringValue), defintions);  // Chu!❤ 再帰関数でごめん
     }
 }

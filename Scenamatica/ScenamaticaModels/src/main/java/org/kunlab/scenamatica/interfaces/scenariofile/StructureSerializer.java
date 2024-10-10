@@ -28,23 +28,23 @@ public interface StructureSerializer
     /**
      * Structure をデシリアライズします。
      *
-     * @param map   デシリアライズする Structure の Map
+     * @param node   デシリアライズする Structure の Node
      * @param clazz デシリアライズする Structure のクラス
      * @param <T>   デシリアライズする Structure の型
      * @return デシリアライズされた Structure
      * @throws IllegalArgumentException デシリアライズに失敗した場合
      */
-    @NotNull <T extends Structure> T deserialize(@NotNull Map<String, Object> map, @NotNull Class<T> clazz);
+    @NotNull <T extends Structure> T deserialize(@NotNull StructuredYamlNode node, @NotNull Class<T> clazz);
 
     /**
      * Structure を検証します。
      *
-     * @param map   検証する Structure の Map
+     * @param node   検証する Structure の Node
      * @param clazz 検証する Structure のクラス
      * @param <T>   検証する Structure の型
      * @throws IllegalArgumentException 検証に失敗した場合
      */
-    <T extends Structure> void validate(@NotNull Map<String, Object> map, @NotNull Class<T> clazz);
+    <T extends Structure> void validate(@NotNull StructuredYamlNode node, @NotNull Class<T> clazz);
 
     /**
      * 実体を Mapped のインスタンスに変換します。

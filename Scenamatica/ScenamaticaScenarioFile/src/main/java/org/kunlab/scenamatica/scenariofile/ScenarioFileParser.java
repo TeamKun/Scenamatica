@@ -6,15 +6,15 @@ import net.kunmc.lab.peyangpaperutils.lang.LangProvider;
 import net.kunmc.lab.peyangpaperutils.lang.MsgArgs;
 import net.kunmc.lab.peyangpaperutils.versioning.Version;
 import org.apache.commons.lang.StringUtils;
+import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.enums.MinecraftVersion;
 import org.kunlab.scenamatica.exceptions.scenariofile.InvalidScenarioFileException;
 import org.kunlab.scenamatica.exceptions.scenariofile.NotAScenarioFileException;
 import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileStructure;
+import org.kunlab.scenamatica.interfaces.scenariofile.StructuredYamlNode;
 import org.kunlab.scenamatica.interfaces.scenariofile.VersionRange;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.yaml.snakeyaml.Yaml;
-import org.yaml.snakeyaml.error.YAMLException;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -37,16 +37,16 @@ public class ScenarioFileParser
             ".yaml"
     };
 
-    public static ScenarioFileStructure fromMap(Map<String, Object> map, @Nullable String fileName)
+    public static ScenarioFileStructure fromNode(StructuredYamlNode node, @Nullable String fileName)
             throws InvalidScenarioFileException
     {
         try
         {
-            DefinitionsMapper.resolveReferences(map);  // Map 内の参照を書き換える。
-            if (!map.containsKey("scenamatica"))  // シナリオファイルには scenamatica キーが最上位に必須。
+            DefinitionsMapper.resolveReferences(node);  // Node 内の参照を書き換える。
+            if (!node.containsKey("scenamatica"))  // シナリオファイルには scenamatica キーが最上位に必須。
                 throw new NotAScenarioFileException(fileName);
 
-            return StructureSerializerImpl.getInstance().deserialize(map, ScenarioFileStructure.class);
+            return StructureSerializerImpl.getInstance().deserialize(node, ScenarioFileStructure.class);
         }
         catch (IllegalArgumentException e)
         {
@@ -54,33 +54,12 @@ public class ScenarioFileParser
         }
     }
 
-    public static ScenarioFileStructure fromInputStream(InputStream inputStream, @Nullable String fileName)
+    public static ScenarioFileStructure fromInputStream(InputStream inputStream, @NotNull String fileName)
             throws InvalidScenarioFileException
     {
-        Yaml sYaml = new Yaml();
-        Map<Object, Object> map;
-        try
-        {
-            map = sYaml.load(inputStream);
-        }
-        catch (YAMLException e)
-        {
-            throw new InvalidScenarioFileException(e.getMessage(), fileName, e);
-        }
+        StructuredYamlNode node = StructuredYamlNodeImpl.fromInputStream(fileName, inputStream);
 
-        return fromMap(injectTriggers(map), fileName);
-    }
-
-    @SuppressWarnings("unchecked")
-    private static Map<String, Object> injectTriggers(Map<Object, Object> map)
-    {
-        if (map.containsKey(true)) // "on" は true に変換される。
-        {
-            map.put("on", map.get(true));
-            map.remove(true);
-        }
-
-        return (Map<String, Object>) (Object) map;
+        return fromNode(node, fileName);
     }
 
     public static ScenarioFileStructure fromJar(Path jarPath, Path inJarPath)

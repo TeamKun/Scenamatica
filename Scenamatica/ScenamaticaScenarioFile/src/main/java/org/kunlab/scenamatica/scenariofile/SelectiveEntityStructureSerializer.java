@@ -24,7 +24,9 @@ import org.bukkit.entity.WitherSkull;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.commons.utils.Utils;
+import org.kunlab.scenamatica.exceptions.scenariofile.YamlParsingException;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
+import org.kunlab.scenamatica.interfaces.scenariofile.StructuredYamlNode;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.EntityStructure;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.PlayerStructure;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.entities.EntityItemStructure;
@@ -97,8 +99,8 @@ public class SelectiveEntityStructureSerializer
     private static void registerProjectiles()
     {
         BiFunction<ProjectileStructure, StructureSerializer, Map<String, Object>> serializer = ProjectileStructureImpl::serialize;
-        BiFunction<Map<String, Object>, StructureSerializer, ProjectileStructure> deserializer = ProjectileStructureImpl::deserialize;
-        BiConsumer<Map<String, Object>, StructureSerializer> validator = ProjectileStructureImpl::validate;
+        BiFunction<StructuredYamlNode, StructureSerializer, ProjectileStructure> deserializer = ProjectileStructureImpl::deserialize;
+        BiConsumer<StructuredYamlNode, StructureSerializer> validator = ProjectileStructureImpl::validate;
         BiFunction<Projectile, StructureSerializer, ProjectileStructure> constructor = ProjectileStructureImpl::ofSource;
 
         Map<EntityType, Class<? extends Projectile>> projectileTypes = new HashMap<EntityType, Class<? extends Projectile>>()
@@ -138,8 +140,8 @@ public class SelectiveEntityStructureSerializer
                                                                                         @NotNull Class<S> clazz,
                                                                                         @NotNull Class<? extends E> entityClazz,
                                                                                         @NotNull BiFunction<S, StructureSerializer, Map<String, Object>> serializer,
-                                                                                        @NotNull BiFunction<Map<String, Object>, StructureSerializer, S> deserializer,
-                                                                                        @NotNull BiConsumer<Map<String, Object>, StructureSerializer> validator,
+                                                                                        @NotNull BiFunction<StructuredYamlNode, StructureSerializer, S> deserializer,
+                                                                                        @NotNull BiConsumer<StructuredYamlNode, StructureSerializer> validator,
                                                                                         @NotNull BiFunction<E, StructureSerializer, S> constructor)
     {
         if (!(entityType == EntityType.UNKNOWN || entityClazz.isAssignableFrom(entityType.getEntityClass())))
@@ -158,42 +160,42 @@ public class SelectiveEntityStructureSerializer
     }
 
     public static <T extends EntityStructure> T deserialize(@NotNull EntityType entityType,
-                                                            @NotNull Map<String, Object> data,
+                                                            @NotNull StructuredYamlNode node,
                                                             @NotNull StructureSerializer serializer)
     {
         // noinspection unchecked
         EntityStructureEntry<?, T> entry = (EntityStructureEntry<?, T>) ENTITY_STRUCTURES.get(entityType);
         if (entry == null)
             throw new IllegalArgumentException("Unknown entity type: " + entityType);
-        return entry.getDeserializer().apply(data, serializer);
+        return entry.getDeserializer().apply(node, serializer);
     }
 
-    public static <T extends EntityStructure> T deserialize(@NotNull Map<String, Object> data,
+    public static <T extends EntityStructure> T deserialize(@NotNull StructuredYamlNode node,
                                                             @NotNull StructureSerializer serializer,
-                                                            @NotNull Class<T> clazz)
+                                                            @NotNull Class<T> clazz) throws YamlParsingException
     {
         EntityType type = getEntityTypeSafe(clazz);
         if (type == EntityType.UNKNOWN)
-            type = guessByMapValue(data, type);
+            type = guessByMappingNode(node);
 
         boolean canGeneralize = clazz == EntityStructure.class;
         EntityStructureEntry<?, ?> entry = ENTITY_STRUCTURES.get(type);
         if (entry == null)
             if (canGeneralize)
                 // noinspection unchecked  canGeneralize が true なら, clazz は EntityStructure.class である。
-                return (T) EntityStructureImpl.deserialize(data, serializer);
+                return (T) EntityStructureImpl.deserialize(node, serializer);
             else
                 throw new IllegalArgumentException("Unknown entity type: " + type);
 
         // noinspection unchecked
-        return (T) entry.getDeserializer().apply(data, serializer);
+        return (T) entry.getDeserializer().apply(node, serializer);
     }
 
     public static <T extends EntityStructure> T deserialize(@NotNull Class<T> clazz,
-                                                            @NotNull Map<String, Object> data,
+                                                            @NotNull StructuredYamlNode node,
                                                             @NotNull StructureSerializer serializer)
     {
-        return deserialize(getEntityTypeSafe(clazz), data, serializer);
+        return deserialize(getEntityTypeSafe(clazz), node, serializer);
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
@@ -213,13 +215,13 @@ public class SelectiveEntityStructureSerializer
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
-    public static <T extends EntityStructure> void validate(@NotNull Map<String, Object> map,
+    public static <T extends EntityStructure> void validate(@NotNull StructuredYamlNode map,
                                                             @NotNull StructureSerializer serializer,
-                                                            @NotNull Class<T> clazz)
+                                                            @NotNull Class<T> clazz) throws YamlParsingException
     {
         EntityType type = getEntityTypeSafe(clazz);
         if (type == EntityType.UNKNOWN)
-            type = guessByMapValue(map, type);
+            type = guessByMappingNode(map);
 
         EntityStructureEntry entry = ENTITY_STRUCTURES.get(type);
         if (entry == null)
@@ -231,9 +233,12 @@ public class SelectiveEntityStructureSerializer
         entry.getValidator().accept(map, serializer);
     }
 
-    private static EntityType guessByMapValue(@NotNull Map<String, Object> map, EntityType type)
+    private static EntityType guessByMappingNode(@NotNull StructuredYamlNode node) throws YamlParsingException
     {
-        EntityType typeGuess = Utils.searchEntityType((String) map.get("type"));
+        if (!node.containsKey("type"))
+            return EntityType.UNKNOWN;
+
+        EntityType typeGuess = Utils.searchEntityType(node.get("type").asString());
         if (typeGuess == null)
             return EntityType.UNKNOWN;
         else
@@ -283,8 +288,8 @@ public class SelectiveEntityStructureSerializer
     {
         Class<S> clazz;
         BiFunction<S, StructureSerializer, Map<String, Object>> serializer;
-        BiFunction<Map<String, Object>, StructureSerializer, S> deserializer;
-        BiConsumer<Map<String, Object>, StructureSerializer> validator;
+        BiFunction<StructuredYamlNode, StructureSerializer, S> deserializer;
+        BiConsumer<StructuredYamlNode, StructureSerializer> validator;
         BiFunction<E, StructureSerializer, S> constructor;
     }
 }
