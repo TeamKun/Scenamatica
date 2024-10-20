@@ -6,7 +6,12 @@ import org.bukkit.WorldType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
+import org.kunlab.scenamatica.enums.YAMLNodeType;
+import org.kunlab.scenamatica.exceptions.scenariofile.YamlParsingException;
+import org.kunlab.scenamatica.interfaces.scenariofile.StructuredYamlNode;
 import org.kunlab.scenamatica.interfaces.structures.context.StageStructure;
+import org.kunlab.scenamatica.structures.StructureMappers;
+import org.kunlab.scenamatica.structures.StructureValidators;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -45,28 +50,28 @@ public class StageStructureImpl implements StageStructure
         return result;
     }
 
-    public static void validate(@NotNull Map<String, Object> map)
+    public static void validate(@NotNull StructuredYamlNode node) throws YamlParsingException
     {
-        MapUtils.checkTypeIfContains(map, KEY_ORIGINAL_WORLD_NAME, String.class);
-        MapUtils.checkEnumNameIfContains(map, KEY_TYPE, WorldType.class);
-        MapUtils.checkTypeIfContains(map, KEY_SEED, Number.class);
-        MapUtils.checkTypeIfContains(map, KEY_GENERATE_STRUCTURES, Boolean.class);
-        MapUtils.checkTypeIfContains(map, KEY_ENVIRONMENT, String.class);
-        MapUtils.checkTypeIfContains(map, KEY_HARDCORE, Boolean.class);
+        node.get(KEY_ORIGINAL_WORLD_NAME).ensureTypeOfIfExists(YAMLNodeType.STRING);
+        node.get(KEY_TYPE).validateIfExists(StructureValidators.enumName(WorldType.class));
+        node.get(KEY_SEED).ensureTypeOfIfExists(YAMLNodeType.NUMBER);
+        node.get(KEY_GENERATE_STRUCTURES).ensureTypeOfIfExists(YAMLNodeType.BOOLEAN);
+        node.get(KEY_ENVIRONMENT).ensureTypeOfIfExists(YAMLNodeType.STRING);
+        node.get(KEY_HARDCORE).ensureTypeOfIfExists(YAMLNodeType.BOOLEAN);
     }
 
     @NotNull
-    public static StageStructure deserialize(@NotNull Map<String, Object> map)
+    public static StageStructure deserialize(@NotNull StructuredYamlNode node) throws YamlParsingException
     {
-        validate(map);
+        validate(node);
 
         return new StageStructureImpl(
-                MapUtils.getOrNull(map, KEY_ORIGINAL_WORLD_NAME),
-                MapUtils.getAsEnumOrDefault(map, KEY_TYPE, WorldType.class, WorldType.NORMAL),
-                MapUtils.getAsLongOrNull(map, KEY_SEED),
-                MapUtils.getOrDefault(map, KEY_GENERATE_STRUCTURES, true),
-                MapUtils.getAsEnumOrNull(map, KEY_ENVIRONMENT, World.Environment.class),
-                MapUtils.getOrDefault(map, KEY_HARDCORE, false)
+                node.get(KEY_ORIGINAL_WORLD_NAME).asString(null),
+                node.get(KEY_TYPE).getAs(StructureMappers.enumName(WorldType.class), null),
+                node.get(KEY_SEED).asLong(null),
+                node.get(KEY_GENERATE_STRUCTURES).asBoolean(false),
+                node.get(KEY_ENVIRONMENT).getAs(StructureMappers.enumName(World.Environment.class), null),
+                node.get(KEY_HARDCORE).asBoolean(null)
         );
     }
 }

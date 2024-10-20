@@ -35,6 +35,14 @@ public interface StructuredYamlNode
     String asString();
 
     /**
+     * このノードが文字列型である場合、その値を返します。
+     *
+     * @param defaultValue デフォルト値
+     * @return このノードが文字列型である場合の値]
+     */
+    String asString(String defaultValue);
+
+    /**
      * このノードが整数型である場合、その値を返します。
      *
      * @return このノードが整数型である場合の値
@@ -43,12 +51,38 @@ public interface StructuredYamlNode
     Integer asInt() throws YAMLTypeMismatchException;
 
     /**
+     * このノードが整数型である場合、その値を返します。
+     *
+     * @return このノードが整数型である場合の値
+     * @throws YAMLTypeMismatchException このノードが整数型でない場合
+     */
+    Long asLong() throws YAMLTypeMismatchException;
+
+    /**
+     * このノードが整数型である場合、その値を返します。
+     *
+     * @return このノードが整数型である場合の値
+     * @throws YAMLTypeMismatchException このノードが整数型でない場合
+     */
+    Long asLong(Long defaultValue) throws YAMLTypeMismatchException;
+
+
+    /**
      * このノードが真偽値型である場合、その値を返します。
      *
      * @return このノードが真偽値型である場合の値
      * @throws YAMLTypeMismatchException このノードが真偽値型でない場合
      */
     Boolean asBoolean() throws YAMLTypeMismatchException;
+
+    /**
+     * このノードが真偽値型である場合、その値を返します。
+     *
+     * @param defaultValue デフォルト値
+     * @return このノードが真偽値型である場合の値
+     * @throws YAMLTypeMismatchException このノードが真偽値型でない場合
+     */
+    Boolean asBoolean(Boolean defaultValue) throws YAMLTypeMismatchException;
 
     /**
      * このノードが浮動小数点数型である場合、その値を返します。
@@ -117,6 +151,7 @@ public interface StructuredYamlNode
      * @return このノードが Map 型である場合の値
      * @throws YamlParsingException このノードが Map 型でない場合や, マッピング関数が失敗した場合
      */
+    @NotNull
     <K, V> Map<K, V> asMap(ValueMapper<K> keyMapper, ValueMapper<V> valueMapper) throws YamlParsingException;
 
     /**
@@ -258,11 +293,10 @@ public interface StructuredYamlNode
     /**
      * このノードが Map 型である場合、指定されたキーの値が指定された型であるかどうかを検証します。
      *
-     * @param key  キー
      * @param type 型
      * @throws YamlParsingException このノードが Map 型でない場合。
      */
-    void ensureTypeOfIfExists(Object key, YAMLNodeType type) throws YamlParsingException;
+    void ensureTypeOfIfExists(YAMLNodeType type) throws YamlParsingException;
 
     /**
      * このノードが Map 型である場合、要素数を返します。
@@ -326,16 +360,6 @@ public interface StructuredYamlNode
      * @throws YamlParsingException このノードが Map 型でない場合
      */
     <T> T getAs(ValueMapper<T> mapper, T defaultValue) throws YamlParsingException;
-
-    /**
-     * この値をマッピングして返します。存在しない場合は null を返します。
-     *
-     * @param mapper 値を変換する関数
-     * @param <T>    値の型
-     * @return 指定されたキーに対応する値
-     * @throws YamlParsingException このノードが Map 型でない場合
-     */
-    <T> T getAsOrNull(ValueMapper<T> mapper) throws YamlParsingException;
 
     /**
      * このノードがマッピング型である場合、指定された値を実際に変形して, 正しい値であるかどうかを検証します。

@@ -117,13 +117,13 @@ public class BlockStructureImpl implements BlockStructure
                         StructuredYamlNode::asString,
                         StructuredYamlNode::asObject
                 ),
-                node.get(KEY_LIGHT_LEVEL).getAsOrNull(StructuredYamlNode::asInt),
-                node.get(KEY_LIGHT_LEVEL).getAsOrNull(StructureMappers.enumName(Biome.class)),
+                node.get(KEY_LIGHT_LEVEL).getAs(StructuredYamlNode::asInt, null),
+                node.get(KEY_LIGHT_LEVEL).getAs(StructureMappers.enumName(Biome.class), null),
                 node.get(KEY_METADATA).asMap(
                         StructuredYamlNode::asString,
                         StructuredYamlNode::asObject
                 ),
-                node.get(KEY_BLOCK_STATE).getAsOrNull(StructuredYamlNode::asByte)
+                node.get(KEY_BLOCK_STATE).getAs(StructuredYamlNode::asByte, null)
         );
     }
 
