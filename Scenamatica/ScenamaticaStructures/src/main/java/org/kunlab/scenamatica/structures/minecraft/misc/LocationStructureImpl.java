@@ -57,14 +57,14 @@ public class LocationStructureImpl implements LocationStructure
 
     public static void validate(StructuredYamlNode node) throws YamlParsingException
     {
-        node.ensureTypeOfIfExists(KEY_X, YAMLNodeType.NUMBER);
-        node.ensureTypeOfIfExists(KEY_Y, YAMLNodeType.NUMBER);
-        node.ensureTypeOfIfExists(kEY_Z, YAMLNodeType.NUMBER);
+        node.get(KEY_X).ensureTypeOfIfExists(YAMLNodeType.NUMBER);
+        node.get(KEY_Y).ensureTypeOfIfExists(YAMLNodeType.NUMBER);
+        node.get(kEY_Z).ensureTypeOfIfExists(YAMLNodeType.NUMBER);
 
-        node.ensureTypeOfIfExists(KEY_YAW, YAMLNodeType.NUMBER);
-        node.ensureTypeOfIfExists(KEY_PITCH, YAMLNodeType.NUMBER);
+        node.get(KEY_YAW).ensureTypeOfIfExists(YAMLNodeType.NUMBER);
+        node.get(KEY_PITCH).ensureTypeOfIfExists(YAMLNodeType.NUMBER);
 
-        node.ensureTypeOfIfExists(KEY_WORLD, YAMLNodeType.STRING);
+        node.get(KEY_WORLD).ensureTypeOfIfExists(YAMLNodeType.STRING);
     }
 
     public static LocationStructure deserialize(StructuredYamlNode node) throws YamlParsingException

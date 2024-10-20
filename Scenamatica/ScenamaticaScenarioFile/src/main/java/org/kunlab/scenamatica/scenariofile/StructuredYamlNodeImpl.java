@@ -140,6 +140,12 @@ public class StructuredYamlNodeImpl implements StructuredYamlNode
     }
 
     @Override
+    public String asString(String defaultValue)
+    {
+        return this.thisNode == null ? defaultValue: this.asString();
+    }
+
+    @Override
     public Integer asInt() throws YAMLTypeMismatchException
     {
         if (this.thisNode == null)
@@ -152,6 +158,24 @@ public class StructuredYamlNodeImpl implements StructuredYamlNode
     }
 
     @Override
+    public Long asLong() throws YAMLTypeMismatchException
+    {
+        if (this.thisNode == null)
+            return null;
+        else if (!this.isType(YAMLNodeType.INTEGER))
+            throw this.createTypeMismatchException(YAMLNodeType.INTEGER);
+
+        ScalarNode scalarNode = (ScalarNode) this.thisNode;
+        return Long.parseLong(scalarNode.getValue());
+    }
+
+    @Override
+    public Long asLong(Long defaultValue) throws YAMLTypeMismatchException
+    {
+        return this.thisNode == null ? defaultValue: this.asLong();
+    }
+
+    @Override
     public Boolean asBoolean() throws YAMLTypeMismatchException
     {
         if (this.thisNode == null)
@@ -161,6 +185,12 @@ public class StructuredYamlNodeImpl implements StructuredYamlNode
 
         ScalarNode scalarNode = (ScalarNode) this.thisNode;
         return Boolean.parseBoolean(scalarNode.getValue());
+    }
+
+    @Override
+    public Boolean asBoolean(Boolean defaultValue) throws YAMLTypeMismatchException
+    {
+        return this.thisNode == null ? defaultValue: this.asBoolean();
     }
 
     @Override
@@ -255,9 +285,11 @@ public class StructuredYamlNodeImpl implements StructuredYamlNode
     }
 
     @Override
-    public <K, V> Map<K, V> asMap(ValueMapper<K> keyMapper, ValueMapper<V> valueMapper) throws YamlParsingException
+    public <K, V> @NotNull Map<K, V> asMap(ValueMapper<K> keyMapper, ValueMapper<V> valueMapper) throws YamlParsingException
     {
-        if (!this.isType(YAMLNodeType.MAPPING))
+        if (this.thisNode == null)
+            return Collections.emptyMap();
+        else if (!this.isType(YAMLNodeType.MAPPING))
             throw this.createTypeMismatchException(YAMLNodeType.MAPPING);
 
         MappingNode mappingNode = (MappingNode) this.thisNode;
@@ -673,9 +705,9 @@ public class StructuredYamlNodeImpl implements StructuredYamlNode
     }
 
     @Override
-    public void ensureTypeOfIfExists(Object key, YAMLNodeType type) throws YamlParsingException
+    public void ensureTypeOfIfExists(YAMLNodeType type) throws YamlParsingException
     {
-        if (this.containsKey(key))
+        if (this.thisNode != null)
             this.ensureTypeOf(type);
     }
 
