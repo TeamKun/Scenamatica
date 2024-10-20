@@ -17,10 +17,15 @@ import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.commons.utils.BlockDataParser;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.commons.utils.Utils;
+import org.kunlab.scenamatica.enums.YAMLNodeType;
+import org.kunlab.scenamatica.exceptions.scenariofile.YamlParsingException;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
+import org.kunlab.scenamatica.interfaces.scenariofile.StructuredYamlNode;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.misc.BlockStructure;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.misc.LocationStructure;
+import org.kunlab.scenamatica.structures.StructureMappers;
+import org.kunlab.scenamatica.structures.StructureValidators;
 
 import java.util.HashMap;
 import java.util.List;
@@ -81,49 +86,44 @@ public class BlockStructureImpl implements BlockStructure
         return map;
     }
 
-    public static void validate(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
+    public static void validate(@NotNull StructuredYamlNode node, @NotNull StructureSerializer serializer) throws YamlParsingException
     {
-        MapUtils.checkMaterialNameIfContains(map, KEY_BLOCK_TYPE);
-        if (map.containsKey(KEY_BLOCK_LOCATION))
-            serializer.validate(MapUtils.checkAndCastMap(map.get(KEY_BLOCK_LOCATION)), LocationStructure.class);
+        node.validateIfExists(StructureValidators.MATERIAL_NAME);
+        if (node.containsKey(KEY_BLOCK_LOCATION))
+            serializer.validate(node.get(KEY_BLOCK_LOCATION), LocationStructure.class);
 
-        if (map.containsKey(KEY_LIGHT_LEVEL))
-        {
-            MapUtils.checkType(map, KEY_LIGHT_LEVEL, Integer.class);
-            int lightLevel = (int) map.get(KEY_LIGHT_LEVEL);
-            if (lightLevel < 0 || lightLevel > 15)
-                throw new IllegalArgumentException("lightLevel must be between 0 and 15");
-        }
+        node.get(KEY_LIGHT_LEVEL).validateIfExists(StructureValidators.ranged(0, 15));
+        node.get(KEY_BIOME).validateIfExists(StructureValidators.enumName(Biome.class));
 
-        MapUtils.checkEnumNameIfContains(map, KEY_BIOME, Biome.class);
-
-        if (map.containsKey(KEY_METADATA))
-            MapUtils.checkAndCastMap(map.get(KEY_METADATA));
-
-        if (map.containsKey(KEY_BLOCK_DATA))
-            MapUtils.checkAndCastMap(map.get(KEY_BLOCK_DATA));
-
-        MapUtils.checkTypeIfContains(map, KEY_BLOCK_STATE, Byte.class);
+        node.get(KEY_METADATA).ensureTypeOf(YAMLNodeType.MAPPING);
+        node.get(KEY_BLOCK_DATA).ensureTypeOf(YAMLNodeType.MAPPING);
+        node.get(KEY_BLOCK_STATE).ensureTypeOf(YAMLNodeType.NUMBER, YAMLNodeType.BINARY);
     }
 
     @NotNull
-    public static BlockStructure deserialize(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
+    public static BlockStructure deserialize(@NotNull StructuredYamlNode node, @NotNull StructureSerializer serializer) throws YamlParsingException
     {
-        validate(map, serializer);
+        validate(node, serializer);
 
         LocationStructure location = null;
-        if (map.containsKey(KEY_BLOCK_LOCATION))
-            location = serializer.deserialize(MapUtils.checkAndCastMap(map.get(KEY_BLOCK_LOCATION)), LocationStructure.class);
+        if (node.containsKey(KEY_BLOCK_LOCATION))
+            location = serializer.deserialize(node.get(KEY_BLOCK_LOCATION), LocationStructure.class);
 
-        Material material = Utils.searchMaterial(MapUtils.getOrNull(map, KEY_BLOCK_TYPE));
+        Material material = node.get(StructureValidators.MATERIAL_NAME).getAs(n -> Utils.searchMaterial(n.asString()));
         return new BlockStructureImpl(
                 material,
                 location,
-                MapUtils.getAndCastOrEmptyMap(map, KEY_METADATA),
-                MapUtils.getOrNull(map, KEY_LIGHT_LEVEL),
-                MapUtils.getAsEnumOrNull(map, KEY_BIOME, Biome.class),
-                MapUtils.getAndCastOrEmptyMap(map, KEY_METADATA),
-                MapUtils.getOrNull(map, KEY_BLOCK_STATE)
+                node.get(KEY_METADATA).asMap(
+                        StructuredYamlNode::asString,
+                        StructuredYamlNode::asObject
+                ),
+                node.get(KEY_LIGHT_LEVEL).getAsOrNull(StructuredYamlNode::asInt),
+                node.get(KEY_LIGHT_LEVEL).getAsOrNull(StructureMappers.enumName(Biome.class)),
+                node.get(KEY_METADATA).asMap(
+                        StructuredYamlNode::asString,
+                        StructuredYamlNode::asObject
+                ),
+                node.get(KEY_BLOCK_STATE).getAsOrNull(StructuredYamlNode::asByte)
         );
     }
 
@@ -156,7 +156,6 @@ public class BlockStructureImpl implements BlockStructure
 
         BlockStructureImpl blockStructure = (BlockStructureImpl) o;
         return this.getType() == blockStructure.getType()
-
                 && Objects.equals(this.getLocation(), blockStructure.getLocation())
                 && Objects.equals(this.getMetadata(), blockStructure.getMetadata())
                 && Objects.equals(this.getLightLevel(), blockStructure.getLightLevel())

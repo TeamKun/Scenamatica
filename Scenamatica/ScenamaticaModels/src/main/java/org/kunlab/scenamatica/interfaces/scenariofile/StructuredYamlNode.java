@@ -10,6 +10,7 @@ import org.kunlab.scenamatica.exceptions.scenariofile.YamlParsingException;
 import org.yaml.snakeyaml.nodes.Node;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 
 /**
@@ -19,6 +20,7 @@ public interface StructuredYamlNode
 {
     /**
      * このノードが指定された型であるかどうかを返します。
+     * また, {@link YAMLNodeType#STRING} を指定し, かつ自値が ScalarNode である場合は, 中身のいかんに関係なく {@code true} を返します。
      *
      * @param type 型
      * @return このノードが指定された型である場合は true, それ以外の場合は false
@@ -38,7 +40,7 @@ public interface StructuredYamlNode
      * @return このノードが整数型である場合の値
      * @throws YAMLTypeMismatchException このノードが整数型でない場合
      */
-    int asInt() throws YAMLTypeMismatchException;
+    Integer asInt() throws YAMLTypeMismatchException;
 
     /**
      * このノードが真偽値型である場合、その値を返します。
@@ -46,7 +48,7 @@ public interface StructuredYamlNode
      * @return このノードが真偽値型である場合の値
      * @throws YAMLTypeMismatchException このノードが真偽値型でない場合
      */
-    boolean asBoolean() throws YAMLTypeMismatchException;
+    Boolean asBoolean() throws YAMLTypeMismatchException;
 
     /**
      * このノードが浮動小数点数型である場合、その値を返します。
@@ -54,7 +56,23 @@ public interface StructuredYamlNode
      * @return このノードが浮動小数点数型である場合の値
      * @throws YAMLTypeMismatchException このノードが浮動小数点数型でない場合
      */
-    float asFloat() throws YAMLTypeMismatchException;
+    Float asFloat() throws YAMLTypeMismatchException;
+
+    /**
+     * このノードが浮動小数点数型である場合、その値を返します。
+     *
+     * @return このノードが浮動小数点数型である場合の値
+     * @throws YAMLTypeMismatchException このノードが浮動小数点数型でない場合
+     */
+    Double asDouble() throws YAMLTypeMismatchException;
+
+    /**
+     * このノードがバイト型である場合、その値を返します。
+     *
+     * @return このノードがバイト型である場合の値
+     * @throws YAMLTypeMismatchException このノードがバイト型でない場合
+     */
+    Byte asByte() throws YAMLTypeMismatchException;
 
     /**
      * このノードがバイナリ型である場合、その値を返します。
@@ -62,7 +80,7 @@ public interface StructuredYamlNode
      * @return このノードがバイナリ型である場合の値
      * @throws YAMLTypeMismatchException このノードがバイナリ型でない場合
      */
-    byte[] asBinary() throws YAMLTypeMismatchException;
+    Byte[] asBinary() throws YAMLTypeMismatchException;
 
     /**
      * このノードが null 型である場合、true を返します。
@@ -79,6 +97,34 @@ public interface StructuredYamlNode
      * @throws YAMLTypeMismatchException このノードがリスト型でない場合
      */
     List<StructuredYamlNode> asList() throws YAMLTypeMismatchException;
+
+    /**
+     * このノードがリスト型である場合、その値を返します。
+     *
+     * @param mapper マッピング関数
+     * @return このノードがリスト型である場合の値
+     * @throws YamlParsingException このノードがリスト型でない場合や, マッピング関数が失敗した場合
+     */
+    <T> List<T> asList(ValueMapper<T> mapper) throws YamlParsingException;
+
+    /**
+     * このノードが Map 型である場合、その値を返します。
+     *
+     * @param keyMapper   キーのマッピング関数
+     * @param valueMapper 値のマッピング関数
+     * @param <K>         キーの型
+     * @param <V>         値の型
+     * @return このノードが Map 型である場合の値
+     * @throws YamlParsingException このノードが Map 型でない場合や, マッピング関数が失敗した場合
+     */
+    <K, V> Map<K, V> asMap(ValueMapper<K> keyMapper, ValueMapper<V> valueMapper) throws YamlParsingException;
+
+    /**
+     * このノードを、その型に応じたオブジェクトとして返します。
+     *
+     * @return このノードを表すオブジェクト
+     */
+    Object asObject() throws YamlParsingException;
 
     /**
      * このノードがリスト型である場合、その値を Stream として返します。
@@ -193,21 +239,30 @@ public interface StructuredYamlNode
 
     /**
      * このノードが Map 型である場合、指定されたキーに対応する値を返します。
+     * キーに対応する値が存在しない場合は null を示すノードを返します。
      *
      * @param key キー
      * @return 指定されたキーに対応する値
-     * @throws YamlParsingException このノードが Map 型でない場合や, 指定されたキーが存在しない場合
+     * @throws YamlParsingException このノードが Map 型でない場合
      */
     StructuredYamlNode get(Object key) throws YamlParsingException;
 
     /**
-     * このノードが Map 型である場合、指定されたキーに対応する値を返します。
+     * このノードが Map 型である場合、指定されたキーの値が指定された型であるかどうかを検証します。
      *
-     * @param key  キー
      * @param type 型
      * @throws YamlParsingException このノードが Map 型でない場合や, 指定されたキーが存在しない場合
      */
-    void ensureTypeOf(Object key, YAMLNodeType type) throws YamlParsingException;
+    void ensureTypeOf(YAMLNodeType... type) throws YamlParsingException;
+
+    /**
+     * このノードが Map 型である場合、指定されたキーの値が指定された型であるかどうかを検証します。
+     *
+     * @param key  キー
+     * @param type 型
+     * @throws YamlParsingException このノードが Map 型でない場合。
+     */
+    void ensureTypeOfIfExists(Object key, YAMLNodeType type) throws YamlParsingException;
 
     /**
      * このノードが Map 型である場合、要素数を返します。
@@ -252,15 +307,35 @@ public interface StructuredYamlNode
     Node getThisNode();
 
     /**
-     * このノードがマッピング型である場合、指定されたキーに対応する値を返します。
+     * この値をマッピングして返します。
      *
-     * @param key    キー
      * @param mapper 値を変換する関数
      * @param <T>    値の型
      * @return 指定されたキーに対応する値
      * @throws YamlParsingException このノードが Map 型でない場合や, 指定されたキーが存在しない場合
      */
-    <T> T getAs(Object key, ValueMapper<T> mapper) throws YamlParsingException;
+    <T> T getAs(ValueMapper<T> mapper) throws YamlParsingException;
+
+    /**
+     * この値をマッピングして返します。
+     *
+     * @param mapper       値を変換する関数
+     * @param defaultValue デフォルト値
+     * @param <T>          値の型
+     * @return 指定されたキーに対応する値
+     * @throws YamlParsingException このノードが Map 型でない場合
+     */
+    <T> T getAs(ValueMapper<T> mapper, T defaultValue) throws YamlParsingException;
+
+    /**
+     * この値をマッピングして返します。存在しない場合は null を返します。
+     *
+     * @param mapper 値を変換する関数
+     * @param <T>    値の型
+     * @return 指定されたキーに対応する値
+     * @throws YamlParsingException このノードが Map 型でない場合
+     */
+    <T> T getAsOrNull(ValueMapper<T> mapper) throws YamlParsingException;
 
     /**
      * このノードがマッピング型である場合、指定された値を実際に変形して, 正しい値であるかどうかを検証します。
@@ -270,28 +345,26 @@ public interface StructuredYamlNode
      * @param message   検証に失敗した場合にスローされる例外のメッセージ
      * @throws YamlParsingException このノードが Map 型でない場合や, 検証に失敗した場合
      */
-    void validate(Object key, Validator validator, String message) throws YamlParsingException;
+    void validate(Validator validator, String message) throws YamlParsingException;
 
     /**
      * このノードがマッピング型である場合、指定された値を実際に変形して, 正しい値であるかどうかを検証します。
      * 値が存在しない場合はスルーします。
      *
-     * @param key       キー
      * @param validator 検証関数
      * @throws YamlParsingException このノードが Map 型でない場合や, 検証に失敗した場合
      */
-    void validateIfContainsKey(Object key, Validator validator) throws YamlParsingException;
+    void validateIfExists(Validator validator) throws YamlParsingException;
 
     /**
      * このノードがマッピング型である場合、指定された値を実際に変形して, 正しい値であるかどうかを検証します。
      * 値が存在しない場合はスルーします。
      *
-     * @param key       キー
      * @param validator 検証関数
      * @param message   検証に失敗した場合にスローされる例外のメッセージ
      * @throws YamlParsingException このノードが Map 型でない場合や, 検証に失敗した場合
      */
-    void validateIfContainsKey(Object key, Validator validator, @Nullable String message) throws YamlParsingException;
+    void validateIfExists(Validator validator, @Nullable String message) throws YamlParsingException;
 
     interface ValueMapper<T>
     {
@@ -301,5 +374,15 @@ public interface StructuredYamlNode
     interface Validator
     {
         Object validate(StructuredYamlNode node) throws Exception;
+
+        /**
+         * Validate 関数にメッセージを指定しなかったときに使用されるメッセージを返します。
+         *
+         * @return メッセージ
+         */
+        default String getMessage()
+        {
+            return null;
+        }
     }
 }

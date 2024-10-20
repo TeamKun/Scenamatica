@@ -6,8 +6,10 @@ import org.yaml.snakeyaml.nodes.Tag;
 @Getter
 public enum YAMLNodeType
 {
+    NUMBER(Tag.INT), // 特別：整数と浮動小数点数は区別しない
     INTEGER(Tag.INT),
     FLOAT(Tag.FLOAT),
+    DOUBLE(Tag.FLOAT),
     STRING(Tag.STR),
     BOOLEAN(Tag.BOOL),
     NULL(Tag.NULL),
@@ -47,6 +49,7 @@ public enum YAMLNodeType
 
     public boolean isTypeOf(Tag tag)
     {
-        return this.tag.equals(tag);
+        return this.tag.equals(tag)
+                || (this == NUMBER && (tag.equals(Tag.INT) || tag.equals(Tag.FLOAT)));
     }
 }
