@@ -11,7 +11,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.commons.utils.Utils;
+import org.kunlab.scenamatica.enums.YAMLNodeType;
+import org.kunlab.scenamatica.exceptions.scenariofile.YamlParsingException;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
+import org.kunlab.scenamatica.interfaces.scenariofile.StructuredYamlNode;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.DamageStructure;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.EntityStructure;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.misc.LocationStructure;
@@ -106,13 +109,6 @@ public class EntityStructureImpl implements EntityStructure
         );
     }
 
-    /**
-     * エンティティ情報をMapにシリアライズします。
-     *
-     * @param entity     エンティティ情報
-     * @param serializer シリアライザ
-     * @return エンティティ情報をシリアライズしたMap
-     */
     @NotNull
     public static Map<String, Object> serialize(@NotNull EntityStructure entity, @NotNull StructureSerializer serializer)
     {
@@ -148,90 +144,67 @@ public class EntityStructureImpl implements EntityStructure
         return map;
     }
 
-    /**
-     * Mapが正しいエンティティ情報かどうかを検証します。
-     *
-     * @param map 検証するMap
-     * @throws IllegalArgumentException Mapが正しいエンティティ情報ではない場合
-     */
-    public static void validate(@NotNull Map<String, Object> map)
+    public static void validate(@NotNull StructuredYamlNode node) throws YamlParsingException
     {
-        if (map.containsKey(KEY_UUID))
-            try
-            {
-                UUID.fromString((String) map.get(KEY_UUID));
-            }
-            catch (IllegalArgumentException e)
-            {
-                throw new IllegalArgumentException("Invalid UUID.", e);
-            }
-
-        MapUtils.checkTypeIfContains(map, KEY_CUSTOM_NAME, String.class);
-        MapUtils.checkTypeIfContains(map, KEY_GLOWING, Boolean.class);
-        MapUtils.checkTypeIfContains(map, KEY_GRAVITY, Boolean.class);
-        MapUtils.checkTypeIfContains(map, KEY_TAGS, List.class);
-        MapUtils.checkTypeIfContains(map, KEY_LAST_DAMAGE_CAUSE, Map.class);
-        MapUtils.checkTypeIfContains(map, KEY_MAX_HEALTH, Integer.class);
-        MapUtils.checkTypeIfContains(map, KEY_HEALTH, Integer.class);
-
+        node.validateIfExists(value -> UUID.fromString(value.asString()));
+        node.ensureTypeOfIfExists(KEY_CUSTOM_NAME, YAMLNodeType.STRING);
+        node.ensureTypeOfIfExists(KEY_GLOWING, YAMLNodeType.BOOLEAN);
+        node.ensureTypeOfIfExists(KEY_GRAVITY, YAMLNodeType.BOOLEAN);
+        node.ensureTypeOfIfExists(KEY_TAGS, YAMLNodeType.LIST);
+        node.ensureTypeOfIfExists(KEY_LAST_DAMAGE_CAUSE, YAMLNodeType.MAPPING);
+        node.ensureTypeOfIfExists(KEY_MAX_HEALTH, YAMLNodeType.INTEGER);
+        node.ensureTypeOfIfExists(KEY_HEALTH, YAMLNodeType.INTEGER);
     }
 
-    /**
-     * Mapからエンティティ情報をデシリアライズします。
-     *
-     * @param map デシリアライズするMap
-     * @return デシリアライズしたエンティティ情報
-     */
     @NotNull
-    public static EntityStructure deserialize(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
+    public static EntityStructure deserialize(@NotNull StructuredYamlNode node, @NotNull StructureSerializer serializer) throws YamlParsingException
     {
-        validate(map);
+        validate(node);
 
         EntityType type = null;
-        if (map.containsKey(KEY_TYPE))
-            type = Utils.searchEntityType((String) map.get(KEY_TYPE));
+        if (node.containsKey(KEY_TYPE))
+            type = node.get(KEY_TYPE).getAs(value -> Utils.searchEntityType(value.asString()));
         LocationStructure loc;
-        if (map.containsKey(KEY_LOCATION))
-            loc = serializer.deserialize(
-                    MapUtils.checkAndCastMap(map.get(KEY_LOCATION)), LocationStructure.class);
-        else if (map.containsKey(KEY_LOCATION_2))
+        if (node.containsKey(KEY_LOCATION))
+            loc = serializer.deserialize(node.get(KEY_LOCATION), LocationStructure.class);
+        else if (node.containsKey(KEY_LOCATION_2))
             loc = LocationStructureImpl.deserialize(
-                    MapUtils.checkAndCastMap(map.get(KEY_LOCATION_2)));
+                    MapUtils.checkAndCastMap(node.get(KEY_LOCATION_2)));
         else
             loc = null;
 
         Vector velocity = null;
-        if (map.containsKey(KEY_VELOCITY))
+        if (node.containsKey(KEY_VELOCITY))
             velocity = Vector.deserialize(
-                    MapUtils.checkAndCastMap(map.get(KEY_VELOCITY)));
+                    MapUtils.checkAndCastMap(node.get(KEY_VELOCITY)));
 
-        String customName = MapUtils.getOrNull(map, KEY_CUSTOM_NAME);
+        String customName = MapUtils.getOrNull(node, KEY_CUSTOM_NAME);
         UUID uuid;
-        if (map.containsKey(KEY_UUID))
-            uuid = UUID.fromString((String) map.get(KEY_UUID));
+        if (node.containsKey(KEY_UUID))
+            uuid = UUID.fromString((String) node.get(KEY_UUID));
         else
             uuid = null;
 
-        Boolean glowing = MapUtils.getOrNull(map, KEY_GLOWING);
-        Boolean gravity = MapUtils.getOrNull(map, KEY_GRAVITY);
-        Boolean silent = MapUtils.getOrNull(map, KEY_SILENT);
-        Boolean customNameVisible = MapUtils.getOrNull(map, KEY_CUSTOM_NAME_VISIBLE);
-        Boolean invulnerable = MapUtils.getOrNull(map, KEY_INVULNERABLE);
+        Boolean glowing = MapUtils.getOrNull(node, KEY_GLOWING);
+        Boolean gravity = MapUtils.getOrNull(node, KEY_GRAVITY);
+        Boolean silent = MapUtils.getOrNull(node, KEY_SILENT);
+        Boolean customNameVisible = MapUtils.getOrNull(node, KEY_CUSTOM_NAME_VISIBLE);
+        Boolean invulnerable = MapUtils.getOrNull(node, KEY_INVULNERABLE);
 
-        List<String> tags = MapUtils.getAsListOrEmpty(map, KEY_TAGS);
+        List<String> tags = MapUtils.getAsListOrEmpty(node, KEY_TAGS);
         DamageStructure lastDamageCause = null;
-        if (map.containsKey(KEY_LAST_DAMAGE_CAUSE))
+        if (node.containsKey(KEY_LAST_DAMAGE_CAUSE))
             lastDamageCause = serializer.deserialize(
-                    MapUtils.checkAndCastMap(map.get(KEY_LAST_DAMAGE_CAUSE)), DamageStructure.class);
+                    MapUtils.checkAndCastMap(node.get(KEY_LAST_DAMAGE_CAUSE)), DamageStructure.class);
 
-        Integer maxHealth = MapUtils.getOrNull(map, KEY_MAX_HEALTH);
-        Integer health = MapUtils.getOrNull(map, KEY_HEALTH);
+        Integer maxHealth = MapUtils.getOrNull(node, KEY_MAX_HEALTH);
+        Integer health = MapUtils.getOrNull(node, KEY_HEALTH);
 
-        Integer fireTicks = MapUtils.getOrNull(map, KEY_FIRE_TICKS);
-        Integer ticksLived = MapUtils.getOrNull(map, KEY_TICKS_LIVED);
-        Integer portalCooldown = MapUtils.getOrNull(map, KEY_PORTAL_COOLDOWN);
-        Boolean persistent = MapUtils.getOrNull(map, KEY_PERSISTENT);
-        Number fallDistanceNumber = MapUtils.getAsNumberOrNull(map, KEY_FALL_DISTANCE);
+        Integer fireTicks = MapUtils.getOrNull(node, KEY_FIRE_TICKS);
+        Integer ticksLived = MapUtils.getOrNull(node, KEY_TICKS_LIVED);
+        Integer portalCooldown = MapUtils.getOrNull(node, KEY_PORTAL_COOLDOWN);
+        Boolean persistent = MapUtils.getOrNull(node, KEY_PERSISTENT);
+        Number fallDistanceNumber = MapUtils.getAsNumberOrNull(node, KEY_FALL_DISTANCE);
         Float fallDistance = null;
         if (fallDistanceNumber != null)
             fallDistance = fallDistanceNumber.floatValue();

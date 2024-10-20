@@ -8,6 +8,9 @@ import org.bukkit.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
+import org.kunlab.scenamatica.enums.YAMLNodeType;
+import org.kunlab.scenamatica.exceptions.scenariofile.YamlParsingException;
+import org.kunlab.scenamatica.interfaces.scenariofile.StructuredYamlNode;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.misc.LocationStructure;
 
 import java.util.HashMap;
@@ -17,7 +20,6 @@ import java.util.Map;
 @AllArgsConstructor
 public class LocationStructureImpl implements LocationStructure
 {
-
     Double x;
     Double y;
     Double z;
@@ -53,29 +55,29 @@ public class LocationStructureImpl implements LocationStructure
         return map;
     }
 
-    public static void validate(Map<String, Object> map)
+    public static void validate(StructuredYamlNode node) throws YamlParsingException
     {
-        MapUtils.checkNumberIfContains(map, KEY_X);
-        MapUtils.checkNumberIfContains(map, KEY_Y);
-        MapUtils.checkNumberIfContains(map, kEY_Z);
+        node.ensureTypeOfIfExists(KEY_X, YAMLNodeType.NUMBER);
+        node.ensureTypeOfIfExists(KEY_Y, YAMLNodeType.NUMBER);
+        node.ensureTypeOfIfExists(kEY_Z, YAMLNodeType.NUMBER);
 
-        MapUtils.checkNumberIfContains(map, KEY_YAW);
-        MapUtils.checkNumberIfContains(map, KEY_PITCH);
+        node.ensureTypeOfIfExists(KEY_YAW, YAMLNodeType.NUMBER);
+        node.ensureTypeOfIfExists(KEY_PITCH, YAMLNodeType.NUMBER);
 
-        MapUtils.checkTypeIfContains(map, KEY_WORLD, String.class);
+        node.ensureTypeOfIfExists(KEY_WORLD, YAMLNodeType.STRING);
     }
 
-    public static LocationStructure deserialize(Map<String, Object> map)
+    public static LocationStructure deserialize(StructuredYamlNode node) throws YamlParsingException
     {
-        validate(map);
+        validate(node);
 
         return new LocationStructureImpl(
-                MapUtils.getAsNumberOrNull(map, KEY_X, Number::doubleValue),
-                MapUtils.getAsNumberOrNull(map, KEY_Y, Number::doubleValue),
-                MapUtils.getAsNumberOrNull(map, kEY_Z, Number::doubleValue),
-                MapUtils.getAsNumberOrNull(map, KEY_YAW, Number::floatValue),
-                MapUtils.getAsNumberOrNull(map, KEY_PITCH, Number::floatValue),
-                MapUtils.getOrNull(map, KEY_WORLD)
+                node.get(KEY_X).getAs(StructuredYamlNode::asDouble, null),
+                node.get(KEY_Y).getAs(StructuredYamlNode::asDouble, null),
+                node.get(kEY_Z).getAs(StructuredYamlNode::asDouble, null),
+                node.get(KEY_YAW).getAs(StructuredYamlNode::asFloat, null),
+                node.get(KEY_PITCH).getAs(StructuredYamlNode::asFloat, null),
+                node.get(KEY_WORLD).getAs(StructuredYamlNode::asString, null)
         );
     }
 
