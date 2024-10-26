@@ -48,7 +48,16 @@ public interface StructuredYamlNode
      * @return このノードが整数型である場合の値
      * @throws YAMLTypeMismatchException このノードが整数型でない場合
      */
-    Integer asInt() throws YAMLTypeMismatchException;
+    Integer asInteger() throws YAMLTypeMismatchException;
+
+    /**
+     * このノードが整数型である場合、その値を返します。
+     *
+     * @param defaultValue デフォルト値
+     * @return このノードが整数型である場合の値
+     * @throws YAMLTypeMismatchException このノードが整数型でない場合
+     */
+    Integer asInteger(Integer defaultValue) throws YAMLTypeMismatchException;
 
     /**
      * このノードが整数型である場合、その値を返します。
@@ -61,6 +70,7 @@ public interface StructuredYamlNode
     /**
      * このノードが整数型である場合、その値を返します。
      *
+     * @param defaultValue デフォルト値
      * @return このノードが整数型である場合の値
      * @throws YAMLTypeMismatchException このノードが整数型でない場合
      */
@@ -91,6 +101,15 @@ public interface StructuredYamlNode
      * @throws YAMLTypeMismatchException このノードが浮動小数点数型でない場合
      */
     Float asFloat() throws YAMLTypeMismatchException;
+
+    /**
+     * このノードが浮動小数点数型である場合、その値を返します。
+     *
+     * @param defaultValue デフォルト値
+     * @return このノードが浮動小数点数型である場合の値
+     * @throws YAMLTypeMismatchException このノードが浮動小数点数型でない場合
+     */
+    Float asFloat(Float defaultValue) throws YAMLTypeMismatchException;
 
     /**
      * このノードが浮動小数点数型である場合、その値を返します。
@@ -153,6 +172,27 @@ public interface StructuredYamlNode
      */
     @NotNull
     <K, V> Map<K, V> asMap(ValueMapper<K> keyMapper, ValueMapper<V> valueMapper) throws YamlParsingException;
+
+    /**
+     * このノードが Map 型である場合、その値を返します。
+     * 値は Map&lt;String, Object&gt; として返されます。
+     *
+     * @return このノードが Map 型である場合の値
+     * @throws YamlParsingException このノードが Map 型でない場合や, マッピング関数が失敗した場合
+     */
+    @NotNull
+    Map<String, Object> asMap() throws YamlParsingException;
+
+    /**
+     * このノードが Map 型である場合、その値を返します。
+     * 値は Map&lt;StructuredYamlNode, StructuredYamlNode&gt; として返されます。
+     *
+     * @return このノードが Map 型である場合の値
+     * @throws YamlParsingException このノードが Map 型でない場合や, マッピング関数が失敗した場合
+     */
+    @NotNull
+    Map<StructuredYamlNode, StructuredYamlNode> asNodeMap() throws YamlParsingException;
+
 
     /**
      * このノードを、その型に応じたオブジェクトとして返します。

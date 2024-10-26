@@ -146,7 +146,7 @@ public class StructuredYamlNodeImpl implements StructuredYamlNode
     }
 
     @Override
-    public Integer asInt() throws YAMLTypeMismatchException
+    public Integer asInteger() throws YAMLTypeMismatchException
     {
         if (this.thisNode == null)
             return null;
@@ -155,6 +155,12 @@ public class StructuredYamlNodeImpl implements StructuredYamlNode
 
         ScalarNode scalarNode = (ScalarNode) this.thisNode;
         return Integer.parseInt(scalarNode.getValue());
+    }
+
+    @Override
+    public Integer asInteger(Integer defaultValue) throws YAMLTypeMismatchException
+    {
+        return this.thisNode == null ? defaultValue: this.asInteger();
     }
 
     @Override
@@ -203,6 +209,12 @@ public class StructuredYamlNodeImpl implements StructuredYamlNode
 
         ScalarNode scalarNode = (ScalarNode) this.thisNode;
         return Float.parseFloat(scalarNode.getValue());
+    }
+
+    @Override
+    public Float asFloat(Float defaultValue) throws YAMLTypeMismatchException
+    {
+        return this.thisNode == null ? defaultValue: this.asFloat();
     }
 
     @Override
@@ -287,34 +299,24 @@ public class StructuredYamlNodeImpl implements StructuredYamlNode
     @Override
     public <K, V> @NotNull Map<K, V> asMap(ValueMapper<K> keyMapper, ValueMapper<V> valueMapper) throws YamlParsingException
     {
-        if (this.thisNode == null)
-            return Collections.emptyMap();
-        else if (!this.isType(YAMLNodeType.MAPPING))
-            throw this.createTypeMismatchException(YAMLNodeType.MAPPING);
-
-        MappingNode mappingNode = (MappingNode) this.thisNode;
-        assert mappingNode != null;
-
         try
         {
-            return mappingNode.getValue().stream()
-                    .filter(nodeTuple -> nodeTuple.getKeyNode() instanceof ScalarNode)
+            return this.asMapStream()
                     .collect(Collectors.toMap(
-                            nodeTuple -> {
-                                ScalarNode keyNode = (ScalarNode) nodeTuple.getKeyNode();
+                            nodePair -> {
                                 try
                                 {
-                                    return keyMapper.map(new StructuredYamlNodeImpl(this.root, keyNode.getValue(), this.thisNode, nodeTuple.getKeyNode()));
+                                    return keyMapper.map(nodePair.getLeft());
                                 }
                                 catch (Exception e)
                                 {
                                     throw new RuntimeException(e);
                                 }
                             },
-                            nodeTuple -> {
+                            nodePair -> {
                                 try
                                 {
-                                    return valueMapper.map(new StructuredYamlNodeImpl(this.root, null, this.thisNode, nodeTuple.getValueNode()));
+                                    return valueMapper.map(nodePair.getRight());
                                 }
                                 catch (Exception e)
                                 {
@@ -333,6 +335,37 @@ public class StructuredYamlNodeImpl implements StructuredYamlNode
         }
     }
 
+    private Stream<Pair<StructuredYamlNode, StructuredYamlNode>> asMapStream() throws YamlParsingException
+    {
+        if (this.thisNode == null)
+            return Stream.empty();
+        else if (!this.isType(YAMLNodeType.MAPPING))
+            throw this.createTypeMismatchException(YAMLNodeType.MAPPING);
+
+        MappingNode mappingNode = (MappingNode) this.thisNode;
+        assert mappingNode != null;
+
+        return mappingNode.getValue().stream()
+                .filter(nodeTuple -> nodeTuple.getKeyNode() instanceof ScalarNode)
+                .map(nodeTuple -> new Pair<>(
+                        new StructuredYamlNodeImpl(this.root, null, this.thisNode, nodeTuple.getKeyNode()),
+                        new StructuredYamlNodeImpl(this.root, null, this.thisNode, nodeTuple.getValueNode())
+                ));
+    }
+
+    @Override
+    public @NotNull Map<String, Object> asMap() throws YamlParsingException
+    {
+        return this.asMap(StructuredYamlNode::asString, StructuredYamlNode::asObject);
+    }
+
+    @Override
+    public @NotNull Map<StructuredYamlNode, StructuredYamlNode> asNodeMap() throws YamlParsingException
+    {
+        return this.asMapStream()
+                .collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
+    }
+
     @Override
     public Object asObject() throws YamlParsingException
     {
@@ -344,7 +377,7 @@ public class StructuredYamlNodeImpl implements StructuredYamlNode
             case STRING:
                 return this.asString();
             case INTEGER:
-                return this.asInt();
+                return this.asInteger();
             case FLOAT:
                 return this.asDouble();
             case BOOLEAN:
@@ -818,15 +851,6 @@ public class StructuredYamlNodeImpl implements StructuredYamlNode
             return this.getAs(mapper);
     }
 
-    @Override
-    public <T> T getAsOrNull(ValueMapper<T> mapper) throws YamlParsingException
-    {
-        if (this.thisNode == null)
-            return null;
-        else
-            return this.getAs(mapper);
-    }
-
     public void validate(Validator validator, @Nullable String message) throws YamlParsingException
     {
         if (this.thisNode == null)
@@ -842,8 +866,13 @@ public class StructuredYamlNodeImpl implements StructuredYamlNode
         {
             validator.validate(this);
         }
+        catch (YamlParsingException e)
+        {
+            throw e;
+        }
         catch (Throwable e)
         {
+
             String fullMessage;
             if (message == null)
                 fullMessage = validator.getMessage();
