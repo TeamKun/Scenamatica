@@ -17,9 +17,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.commons.utils.NamespaceUtils;
-import org.kunlab.scenamatica.commons.utils.Utils;
+import org.kunlab.scenamatica.enums.YAMLNodeType;
+import org.kunlab.scenamatica.exceptions.scenariofile.YamlParsingException;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
+import org.kunlab.scenamatica.interfaces.scenariofile.StructuredYamlNode;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.inventory.ItemStackStructure;
+import org.kunlab.scenamatica.structures.StructureMappers;
+import org.kunlab.scenamatica.structures.StructureValidators;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -74,35 +78,36 @@ public class ItemStackStructureImpl implements ItemStackStructure
     }
 
     @SuppressWarnings("deprecation")
-    private static void validateEnchantments(Map<String, Object> map)
+    private static void validateEnchantments(StructuredYamlNode node) throws YamlParsingException
     {
-        if (map.containsKey(KEY_ENCHANTMENTS))
+        if (!node.containsKey(KEY_ENCHANTMENTS))
+            return;
+
+        Map<StructuredYamlNode, StructuredYamlNode> enchtansMap = node.get(KEY_ENCHANTMENTS).asNodeMap();
+        for (Map.Entry<StructuredYamlNode, StructuredYamlNode> entry : enchtansMap.entrySet())
         {
-            Map<String, Object> enchtansMap = MapUtils.checkAndCastMap(map.get(KEY_ENCHANTMENTS));
-            for (Map.Entry<String, Object> entry : enchtansMap.entrySet())
-            {
-                if (Enchantment.getByKey(NamespaceUtils.fromString(entry.getKey())) == null
-                        && Enchantment.getByName(entry.getKey()) == null)
-                    throw new IllegalArgumentException("Invalid enchantment key: " + entry.getKey());
-                if (!(entry.getValue() instanceof Integer))
-                    throw new IllegalArgumentException("Invalid enchantment value: " + entry.getValue());
-            }
+            entry.getKey().validate(keyNode -> {
+                if (Enchantment.getByKey(NamespaceUtils.fromString(keyNode.asString())) == null
+                        && Enchantment.getByName(keyNode.asString()) == null)
+                    throw new IllegalArgumentException();
+                return null;
+            }, "Invalid enchantment key: " + entry.getKey());
+            entry.getValue().isType(YAMLNodeType.NUMBER);
         }
     }
 
     @SuppressWarnings("deprecation")
-    private static Map<Enchantment, Integer> deserializeEnchantments(Map<String, Object> map)
+    private static Map<Enchantment, Integer> deserializeEnchantments(StructuredYamlNode node) throws YamlParsingException
     {
         Map<Enchantment, Integer> result = new HashMap<>();
-        for (Map.Entry<String, Object> entry : MapUtils.getOrDefault(map, KEY_ENCHANTMENTS,
-                Collections.<String, Object>emptyMap()
-        ).entrySet())
+        for (Map.Entry<StructuredYamlNode, StructuredYamlNode> entry : node.get(KEY_ENCHANTMENTS).asNodeMap().entrySet())
         {
-            Enchantment enchantment = Enchantment.getByKey(NamespaceUtils.fromString(entry.getKey()));
+            String key = entry.getKey().asString();
+            Enchantment enchantment = Enchantment.getByKey(NamespaceUtils.fromString(key));
             if (enchantment == null)
-                enchantment = Enchantment.getByName(entry.getKey());
+                enchantment = Enchantment.getByName(key);
 
-            int level = (int) entry.getValue();
+            int level = entry.getValue().asInteger();
             result.put(enchantment, level);
         }
 
@@ -123,36 +128,35 @@ public class ItemStackStructureImpl implements ItemStackStructure
         return result;
     }
 
-    private static Map<Attribute, List<AttributeModifier>> deserializeAttributeModifiers(Map<String, Object> map)
+    private static Map<Attribute, List<AttributeModifier>> deserializeAttributeModifiers(StructuredYamlNode node) throws YamlParsingException
     {
         Map<Attribute, List<AttributeModifier>> result = new HashMap<>();
 
-        for (Map.Entry<String, List<Map<String, Object>>> entry :
-                MapUtils.getOrDefault(map, KEY_ATTRIBUTE_MODIFIERS, Collections.<String, List<Map<String, Object>>>emptyMap()).entrySet())
+        for (Map.Entry<StructuredYamlNode, StructuredYamlNode> entry : node.get(KEY_ATTRIBUTE_MODIFIERS).asNodeMap().entrySet())
         {
             List<AttributeModifier> modifiers = new ArrayList<>();
-            for (Map<String, Object> attrs : entry.getValue())
+            for (StructuredYamlNode attrs : entry.getValue().asList())
             {
                 UUID uuid;
                 if (attrs.containsKey(KEY_ATTRIBUTE_MODIFIER_UUID))
-                    uuid = UUID.fromString(attrs.get(KEY_ATTRIBUTE_MODIFIER_UUID).toString());
+                    uuid = attrs.get(KEY_ATTRIBUTE_MODIFIER_UUID).getAs(StructureMappers.UU1D);
                 else
                     uuid = UUID.randomUUID();
-                double attrAmount = MapUtils.getOrDefault(attrs, KEY_ATTRIBUTE_MODIFIER_AMOUNT, 0.0);
+                double attrAmount = attrs.get(KEY_ATTRIBUTE_MODIFIER_AMOUNT).asDouble();
                 AttributeModifier.Operation attrOperation =
-                        MapUtils.getAsEnum(attrs, KEY_ATTRIBUTE_MODIFIER_OPERATION, AttributeModifier.Operation.class);
-                EquipmentSlot slot = MapUtils.getAsEnumOrNull(attrs, KEY_ATTRIBUTE_MODIFIER_SLOT, EquipmentSlot.class);
+                        attrs.get(KEY_ATTRIBUTE_MODIFIER_OPERATION).getAs(StructureMappers.enumName(AttributeModifier.Operation.class));
+                EquipmentSlot slot = attrs.get(KEY_ATTRIBUTE_MODIFIER_SLOT).getAs(StructureMappers.enumName(EquipmentSlot.class), null);
 
                 modifiers.add(new AttributeModifier(
                         uuid,
-                        attrs.get(KEY_ATTRIBUTE_MODIFIER_NAME).toString(),
+                        attrs.get(KEY_ATTRIBUTE_MODIFIER_NAME).asString(),
                         attrAmount,
                         attrOperation,
                         slot
                 ));
             }
 
-            result.put(getAttributeFromString(entry.getKey()), modifiers);
+            result.put(getAttributeFromString(entry.getKey().asString()), modifiers);
         }
 
         return result;
@@ -268,30 +272,28 @@ public class ItemStackStructureImpl implements ItemStackStructure
         }
     }
 
-    @SuppressWarnings("rawtypes")
-    private static void validateAttributeModifiersMap(Map<String, Object> map)
+    private static void validateAttributeModifiersNode(StructuredYamlNode node) throws YamlParsingException
     {
-        if (!map.containsKey(KEY_ATTRIBUTE_MODIFIERS))
+        if (!node.containsKey(KEY_ATTRIBUTE_MODIFIERS))
             return;
 
-        Map<String, List> attributesMap = MapUtils.checkAndCastMap(
-                map.get(KEY_ATTRIBUTE_MODIFIERS),
-                String.class, List.class
-        );
+        Map<StructuredYamlNode, StructuredYamlNode> attributesMap = node.get(KEY_ATTRIBUTE_MODIFIERS).asNodeMap();
 
-        for (Map.Entry<String, List> entry : attributesMap.entrySet())
+        for (Map.Entry<StructuredYamlNode, StructuredYamlNode> entry : attributesMap.entrySet())
         {
-            String name = entry.getKey();
-            for (Object obj : entry.getValue())
+            StructuredYamlNode name = entry.getKey();
+            for (StructuredYamlNode attributeModifier : entry.getValue().asList())
             {
-                Map<String, Object> valuesMap = MapUtils.checkAndCastMap(obj);
-
-                MapUtils.checkTypeIfContains(valuesMap, KEY_ATTRIBUTE_MODIFIER_AMOUNT, Number.class);   // double
-                MapUtils.checkTypeIfContains(valuesMap, KEY_ATTRIBUTE_MODIFIER_OPERATION, String.class);
-                MapUtils.checkTypeIfContains(valuesMap, KEY_ATTRIBUTE_MODIFIER_SLOT, String.class);
-
-                getAttributeFromString(name);
+                attributeModifier.get(KEY_ATTRIBUTE_MODIFIER_AMOUNT).ensureTypeOf(YAMLNodeType.NUMBER);
+                attributeModifier.get(KEY_ATTRIBUTE_MODIFIER_OPERATION).ensureTypeOf(YAMLNodeType.STRING);
+                attributeModifier.get(KEY_ATTRIBUTE_MODIFIER_SLOT).ensureTypeOf(YAMLNodeType.STRING);
             }
+
+            name.validate((nameNode) -> {
+                if (getAttributeFromString(nameNode.asString()) == null)
+                    throw new IllegalArgumentException();
+                return null;
+            }, "Not a valid attribute name: " + name.asString());
         }
 
     }
@@ -321,48 +323,43 @@ public class ItemStackStructureImpl implements ItemStackStructure
         return map;
     }
 
-    public static void validate(@NotNull Map<String, Object> map)
+    public static void validate(@NotNull StructuredYamlNode node) throws YamlParsingException
     {
-        MapUtils.checkMaterialNameIfContains(map, KEY_TYPE);
-        MapUtils.checkTypeIfContains(map, KEY_AMOUNT, Integer.class);
-        MapUtils.checkTypeIfContains(map, KEY_DISPLAY_NAME, String.class);
-        MapUtils.checkTypeIfContains(map, KEY_LOCALIZED_NAME, String.class);
-        MapUtils.checkTypeIfContains(map, KEY_LORE, List.class);
-        MapUtils.checkTypeIfContains(map, KEY_CUSTOM_MODEL_DATA, Integer.class);
-        MapUtils.checkTypeIfContains(map, KEY_ITEM_FLAGS, List.class);
-        MapUtils.checkTypeIfContains(map, KEY_UNBREAKABLE, Boolean.class);
-        MapUtils.checkTypeIfContains(map, KEY_DAMAGE, Integer.class);
-        MapUtils.checkTypeIfContains(map, KEY_PLACEABLES, List.class);
-        MapUtils.checkTypeIfContains(map, KEY_DESTROYABLES, List.class);
+        node.get(KEY_TYPE).validateIfExists(StructureValidators.MATERIAL_NAME);
+        node.get(KEY_AMOUNT).ensureTypeOf(YAMLNodeType.NUMBER);
+        node.get(KEY_DISPLAY_NAME).ensureTypeOf(YAMLNodeType.STRING);
+        node.get(KEY_LOCALIZED_NAME).ensureTypeOf(YAMLNodeType.STRING);
+        node.get(KEY_LORE).ensureTypeOf(YAMLNodeType.LIST);
+        node.get(KEY_CUSTOM_MODEL_DATA).ensureTypeOf(YAMLNodeType.NUMBER);
+        node.get(KEY_ITEM_FLAGS).ensureTypeOf(YAMLNodeType.LIST);
+        node.get(KEY_UNBREAKABLE).ensureTypeOf(YAMLNodeType.BOOLEAN);
+        node.get(KEY_DAMAGE).ensureTypeOf(YAMLNodeType.NUMBER);
+        node.get(KEY_PLACEABLES).ensureTypeOf(YAMLNodeType.LIST);
+        node.get(KEY_DESTROYABLES).ensureTypeOf(YAMLNodeType.LIST);
 
-        validateEnchantments(map);
-        validateAttributeModifiersMap(map);
+        validateEnchantments(node);
+        validateAttributeModifiersNode(node);
     }
 
     @NotNull
-    public static ItemStackStructure deserialize(@NotNull Map<String, Object> map)
+    public static ItemStackStructure deserialize(@NotNull StructuredYamlNode node) throws YamlParsingException
     {
-        validate(map);
+        validate(node);
 
-        Material type = Utils.searchMaterial(MapUtils.getOrNull(map, KEY_TYPE));
-        Integer amount = MapUtils.getOrNull(map, KEY_AMOUNT);
-        String name = MapUtils.getOrNull(map, KEY_DISPLAY_NAME);
-        String localizedName = MapUtils.getOrNull(map, KEY_LOCALIZED_NAME);
-        List<String> lore = MapUtils.getOrDefault(map, KEY_LORE, Collections.emptyList());
-        List<ItemFlag> flags = MapUtils.getAsEnumOrEmptyList(map, KEY_ITEM_FLAGS, ItemFlag.class);
-        Boolean unbreakable = MapUtils.getOrNull(map, KEY_UNBREAKABLE);
-        Integer damage = MapUtils.getOrNull(map, KEY_DAMAGE);
+        Material type = node.get(KEY_TYPE).getAs(StructureMappers.MATERIAL_NAME);
+        Integer amount = node.get(KEY_AMOUNT).asInteger(null);
+        String name = node.get(KEY_DISPLAY_NAME).asString(null);
+        String localizedName = node.get(KEY_LOCALIZED_NAME).asString(null);
+        List<String> lore = node.get(KEY_LORE).asList(StructuredYamlNode::asString);
+        List<ItemFlag> flags = node.get(KEY_ITEM_FLAGS).asList(StructureMappers.enumName(ItemFlag.class));
+        Boolean unbreakable = node.get(KEY_UNBREAKABLE).asBoolean(null);
+        Integer damage = node.get(KEY_DAMAGE).asInteger(null);
 
-        List<Namespaced> placeableKeys = new ArrayList<>();
-        for (String key : MapUtils.getOrDefault(map, KEY_PLACEABLES, Collections.<String>emptyList()))
-            placeableKeys.add(NamespaceUtils.fromString(key));
+        List<Namespaced> placeableKeys = node.get(KEY_PLACEABLES).asList(StructureMappers.NAMESPACED);
+        List<Namespaced> destroyableKeys = node.get(KEY_DESTROYABLES).asList(StructureMappers.NAMESPACED);
 
-        List<Namespaced> destroyableKeys = new ArrayList<>();
-        for (String key : MapUtils.getOrDefault(map, KEY_DESTROYABLES, Collections.<String>emptyList()))
-            destroyableKeys.add(NamespaceUtils.fromString(key));
-
-        Map<Enchantment, Integer> enchantments = deserializeEnchantments(map);
-        Map<Attribute, List<AttributeModifier>> attributeModifiers = deserializeAttributeModifiers(map);
+        Map<Enchantment, Integer> enchantments = deserializeEnchantments(node);
+        Map<Attribute, List<AttributeModifier>> attributeModifiers = deserializeAttributeModifiers(node);
 
         return new ItemStackStructureImpl(
                 type,
