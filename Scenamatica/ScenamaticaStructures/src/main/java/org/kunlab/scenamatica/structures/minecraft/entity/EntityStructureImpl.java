@@ -18,6 +18,7 @@ import org.kunlab.scenamatica.interfaces.scenariofile.StructuredYamlNode;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.DamageStructure;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.EntityStructure;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.misc.LocationStructure;
+import org.kunlab.scenamatica.structures.StructureMappers;
 import org.kunlab.scenamatica.structures.minecraft.misc.LocationStructureImpl;
 
 import java.util.ArrayList;
@@ -168,46 +169,36 @@ public class EntityStructureImpl implements EntityStructure
         if (node.containsKey(KEY_LOCATION))
             loc = serializer.deserialize(node.get(KEY_LOCATION), LocationStructure.class);
         else if (node.containsKey(KEY_LOCATION_2))
-            loc = LocationStructureImpl.deserialize(
-                    MapUtils.checkAndCastMap(node.get(KEY_LOCATION_2)));
+            loc = serializer.deserialize(node.get(KEY_LOCATION_2), LocationStructure.class);
         else
             loc = null;
 
         Vector velocity = null;
         if (node.containsKey(KEY_VELOCITY))
-            velocity = Vector.deserialize(
-                    MapUtils.checkAndCastMap(node.get(KEY_VELOCITY)));
+            velocity = Vector.deserialize(node.get(KEY_VELOCITY).asMap());
 
-        String customName = MapUtils.getOrNull(node, KEY_CUSTOM_NAME);
-        UUID uuid;
-        if (node.containsKey(KEY_UUID))
-            uuid = UUID.fromString((String) node.get(KEY_UUID));
-        else
-            uuid = null;
+        String customName = node.get(KEY_CUSTOM_NAME).asString(null);
+        UUID uuid = node.get(KEY_UUID).getAs(StructureMappers.UU1D, null);
 
-        Boolean glowing = MapUtils.getOrNull(node, KEY_GLOWING);
-        Boolean gravity = MapUtils.getOrNull(node, KEY_GRAVITY);
-        Boolean silent = MapUtils.getOrNull(node, KEY_SILENT);
-        Boolean customNameVisible = MapUtils.getOrNull(node, KEY_CUSTOM_NAME_VISIBLE);
-        Boolean invulnerable = MapUtils.getOrNull(node, KEY_INVULNERABLE);
+        Boolean glowing = node.get(KEY_GLOWING).asBoolean(null);
+        Boolean gravity = node.get(KEY_GRAVITY).asBoolean(null);
+        Boolean silent = node.get(KEY_SILENT).asBoolean(null);
+        Boolean customNameVisible = node.get(KEY_CUSTOM_NAME_VISIBLE).asBoolean(null);
+        Boolean invulnerable = node.get(KEY_INVULNERABLE).asBoolean(null);
 
-        List<String> tags = MapUtils.getAsListOrEmpty(node, KEY_TAGS);
+        List<String> tags = node.get(KEY_TAGS).asList(StructuredYamlNode::asString);
         DamageStructure lastDamageCause = null;
         if (node.containsKey(KEY_LAST_DAMAGE_CAUSE))
-            lastDamageCause = serializer.deserialize(
-                    MapUtils.checkAndCastMap(node.get(KEY_LAST_DAMAGE_CAUSE)), DamageStructure.class);
+            lastDamageCause = serializer.deserialize(node.get(KEY_LAST_DAMAGE_CAUSE), DamageStructure.class);
 
-        Integer maxHealth = MapUtils.getOrNull(node, KEY_MAX_HEALTH);
-        Integer health = MapUtils.getOrNull(node, KEY_HEALTH);
+        Integer maxHealth = node.get(KEY_MAX_HEALTH).asInteger(null);
+        Integer health = node.get(KEY_HEALTH).asInteger(null);
 
-        Integer fireTicks = MapUtils.getOrNull(node, KEY_FIRE_TICKS);
-        Integer ticksLived = MapUtils.getOrNull(node, KEY_TICKS_LIVED);
-        Integer portalCooldown = MapUtils.getOrNull(node, KEY_PORTAL_COOLDOWN);
-        Boolean persistent = MapUtils.getOrNull(node, KEY_PERSISTENT);
-        Number fallDistanceNumber = MapUtils.getAsNumberOrNull(node, KEY_FALL_DISTANCE);
-        Float fallDistance = null;
-        if (fallDistanceNumber != null)
-            fallDistance = fallDistanceNumber.floatValue();
+        Integer fireTicks = node.get(KEY_FIRE_TICKS).asInteger(null);
+        Integer ticksLived = node.get(KEY_TICKS_LIVED).asInteger(null);
+        Integer portalCooldown = node.get(KEY_PORTAL_COOLDOWN).asInteger(null);
+        Boolean persistent = node.get(KEY_PERSISTENT).asBoolean(null);
+        Float fallDistance = node.get(KEY_FALL_DISTANCE).asFloat(null);
 
         return new EntityStructureImpl(
                 type,

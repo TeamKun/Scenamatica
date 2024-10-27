@@ -10,7 +10,10 @@ import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
+import org.kunlab.scenamatica.enums.YAMLNodeType;
+import org.kunlab.scenamatica.exceptions.scenariofile.YamlParsingException;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
+import org.kunlab.scenamatica.interfaces.scenariofile.StructuredYamlNode;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.EntityStructure;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.LivingEntityStructure;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.inventory.ItemStackStructure;
@@ -252,106 +255,101 @@ public class LivingEntityStructureImpl extends EntityStructureImpl implements Li
         return map;
     }
 
-    /**
-     * Mapが正しいエンティティ情報かどうかを検証します。
-     *
-     * @param map 検証するMap
-     * @throws IllegalArgumentException Mapが正しいエンティティ情報ではない場合
-     */
-    public static void validateLivingEntity(@NotNull Map<String, Object> map)
+    public static void validateLivingEntity(@NotNull StructuredYamlNode node) throws YamlParsingException
     {
-        EntityStructureImpl.validate(map);
+        EntityStructureImpl.validate(node);
 
-        MapUtils.checkNumberIfContains(map, KEY_REMAINING_AIR);
-        MapUtils.checkNumberIfContains(map, KEY_MAX_AIR);
-        MapUtils.checkNumberIfContains(map, KEY_ARROW_COOLDOWN);
-        MapUtils.checkNumberIfContains(map, KEY_ARROWS_IN_BODY);
-        MapUtils.checkNumberIfContains(map, KEY_MAX_NO_DAMAGE_TICKS);
-        MapUtils.checkNumberIfContains(map, KEY_LAST_DAMAGE);
-        MapUtils.checkNumberIfContains(map, KEY_NO_DAMAGE_TICKS);
+        node.get(KEY_REMAINING_AIR).ensureTypeOf(YAMLNodeType.NUMBER);
+        node.get(KEY_MAX_AIR).ensureTypeOf(YAMLNodeType.NUMBER);
+        node.get(KEY_ARROW_COOLDOWN).ensureTypeOf(YAMLNodeType.NUMBER);
+        node.get(KEY_ARROWS_IN_BODY).ensureTypeOf(YAMLNodeType.NUMBER);
+        node.get(KEY_MAX_NO_DAMAGE_TICKS).ensureTypeOf(YAMLNodeType.NUMBER);
+        node.get(KEY_LAST_DAMAGE).ensureTypeOf(YAMLNodeType.NUMBER);
+        node.get(KEY_NO_DAMAGE_TICKS).ensureTypeOf(YAMLNodeType.NUMBER);
 
-        if (map.containsKey(KEY_POTION_EFFECTS))
+        if (node.containsKey(KEY_POTION_EFFECTS))
         {
-            MapUtils.checkType(map, KEY_POTION_EFFECTS, List.class);
-            validatePotionEffectMap(MapUtils.getAsList(map, KEY_POTION_EFFECTS));
+            StructuredYamlNode potionEffectsNode = node.get(KEY_POTION_EFFECTS);
+            potionEffectsNode.ensureTypeOf(YAMLNodeType.LIST);
+            validatePotionEffectNodes(potionEffectsNode.asList());
         }
 
-        MapUtils.checkTypeIfContains(map, KEY_REMOVE_WHEN_FAR_AWAY, Boolean.class);
-        MapUtils.checkTypeIfContains(map, KEY_CAN_PICKUP_ITEMS, Boolean.class);
-        MapUtils.checkTypeIfContains(map, KEY_LEASHED, Boolean.class);
-        MapUtils.checkTypeIfContains(map, KEY_GLIDING, Boolean.class);
-        MapUtils.checkTypeIfContains(map, KEY_SWIMMING, Boolean.class);
-        MapUtils.checkTypeIfContains(map, KEY_RIPTIDING, Boolean.class);
-        MapUtils.checkTypeIfContains(map, KEY_SLEEPING, Boolean.class);
-        MapUtils.checkTypeIfContains(map, KEY_AI, Boolean.class);
-        MapUtils.checkTypeIfContains(map, KEY_COLLIDABLE, Boolean.class);
-        MapUtils.checkTypeIfContains(map, KEY_INVISIBLE, Boolean.class);
+        node.get(KEY_REMOVE_WHEN_FAR_AWAY).ensureTypeOf(YAMLNodeType.BOOLEAN);
+        node.get(KEY_CAN_PICKUP_ITEMS).ensureTypeOf(YAMLNodeType.BOOLEAN);
+        node.get(KEY_LEASHED).ensureTypeOf(YAMLNodeType.BOOLEAN);
+        node.get(KEY_GLIDING).ensureTypeOf(YAMLNodeType.BOOLEAN);
+        node.get(KEY_SWIMMING).ensureTypeOf(YAMLNodeType.BOOLEAN);
+        node.get(KEY_RIPTIDING).ensureTypeOf(YAMLNodeType.BOOLEAN);
+        node.get(KEY_SLEEPING).ensureTypeOf(YAMLNodeType.BOOLEAN);
+        node.get(KEY_AI).ensureTypeOf(YAMLNodeType.BOOLEAN);
+        node.get(KEY_COLLIDABLE).ensureTypeOf(YAMLNodeType.BOOLEAN);
+        node.get(KEY_INVISIBLE).ensureTypeOf(YAMLNodeType.BOOLEAN);
         // Paper
 
-        MapUtils.checkNumberIfContains(map, KEY_ARROWS_STUCK);
-        MapUtils.checkNumberIfContains(map, KEY_SHIELD_BLOCKING_DELAY);
-        if (map.containsKey(KEY_ACTIVE_ITEM))
+        node.get(KEY_ARROWS_STUCK).ensureTypeOf(YAMLNodeType.NUMBER);
+        node.get(KEY_SHIELD_BLOCKING_DELAY).ensureTypeOf(YAMLNodeType.NUMBER);
+        if (node.containsKey(KEY_ACTIVE_ITEM))
         {
-            MapUtils.checkType(map, KEY_ACTIVE_ITEM, Map.class);
-            ItemStackStructureImpl.validate(MapUtils.checkAndCastMap(map.get(KEY_ACTIVE_ITEM)));
+            StructuredYamlNode activeItemNode = node.get(KEY_ACTIVE_ITEM);
+            activeItemNode.ensureTypeOf(YAMLNodeType.MAPPING);
+            ItemStackStructureImpl.validate(activeItemNode);
         }
-        MapUtils.checkNumberIfContains(map, KEY_ITEM_USE_REMAIN_TIME);
-        MapUtils.checkNumberIfContains(map, KEY_HAND_RAISED_TIME);
-        MapUtils.checkTypeIfContains(map, KEY_IS_HAND_RAISED, Boolean.class);
-        MapUtils.checkTypeIfContains(map, KEY_HAND_RAISED, String.class);
-        MapUtils.checkTypeIfContains(map, KEY_JUMPING, Boolean.class);
-        MapUtils.checkNumberIfContains(map, KEY_HURT_DIRECTION);
+        node.get(KEY_ITEM_USE_REMAIN_TIME).ensureTypeOf(YAMLNodeType.NUMBER);
+        node.get(KEY_HAND_RAISED_TIME).ensureTypeOf(YAMLNodeType.NUMBER);
+        node.get(KEY_IS_HAND_RAISED).ensureTypeOf(YAMLNodeType.BOOLEAN);
+        node.get(KEY_JUMPING).ensureTypeOf(YAMLNodeType.BOOLEAN);
+        node.get(KEY_HURT_DIRECTION).ensureTypeOf(YAMLNodeType.NUMBER);
     }
 
     /**
      * Mapからエンティティ情報をデシリアライズします。
      *
-     * @param map デシリアライズするMap
+     * @param node デシリアライズするMap
      * @return デシリアライズしたエンティティ情報
      */
     @NotNull
-    public static LivingEntityStructure deserializeLivingEntity(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
+    public static LivingEntityStructure deserializeLivingEntity(@NotNull StructuredYamlNode node, @NotNull StructureSerializer serializer) throws YamlParsingException
     {
-        validateLivingEntity(map);
+        validateLivingEntity(node);
 
-        EntityStructure base = EntityStructureImpl.deserialize(map, serializer);
+        EntityStructure base = EntityStructureImpl.deserialize(node, serializer);
 
-        Double eyeHeight = MapUtils.getOrNull(map, KEY_EYE_HEIGHT);
-        Integer remainAir = MapUtils.getOrNull(map, KEY_REMAINING_AIR);
-        Integer maxAir = MapUtils.getOrNull(map, KEY_MAX_AIR);
-        Integer arrowCooldown = MapUtils.getOrNull(map, KEY_ARROW_COOLDOWN);
-        Integer arrowsInBody = MapUtils.getOrNull(map, KEY_ARROWS_IN_BODY);
-        Integer maxNoDamageTicks = MapUtils.getOrNull(map, KEY_MAX_NO_DAMAGE_TICKS);
-        Double lastDamage = MapUtils.getOrNull(map, KEY_LAST_DAMAGE);
-        Integer noDamageTicks = MapUtils.getOrNull(map, KEY_NO_DAMAGE_TICKS);
-        PlayerSpecifier killer = serializer.tryDeserializePlayerSpecifier(map.get(KEY_KILLER));
+        Double eyeHeight = node.get(KEY_EYE_HEIGHT).asDouble(null);
+        Integer remainAir = node.get(KEY_REMAINING_AIR).asInteger(null);
+        Integer maxAir = node.get(KEY_MAX_AIR).asInteger(null);
+        Integer arrowCooldown = node.get(KEY_ARROW_COOLDOWN).asInteger(null);
+        Integer arrowsInBody = node.get(KEY_ARROWS_IN_BODY).asInteger(null);
+        Integer maxNoDamageTicks = node.get(KEY_MAX_NO_DAMAGE_TICKS).asInteger(null);
+        Double lastDamage = node.get(KEY_LAST_DAMAGE).asDouble(null);
+        Integer noDamageTicks = node.get(KEY_NO_DAMAGE_TICKS).asInteger(null);
+        PlayerSpecifier killer = serializer.tryDeserializePlayerSpecifier(node.get(KEY_KILLER));
 
         List<PotionEffect> potionEffects = new ArrayList<>();
-        if (map.containsKey(KEY_POTION_EFFECTS))
-            potionEffects = deserializePotionEffects(MapUtils.getAsList(map, KEY_POTION_EFFECTS));
+        if (node.containsKey(KEY_POTION_EFFECTS))
+            potionEffects = deserializePotionEffects(node.get(KEY_POTION_EFFECTS));
 
-        Boolean removeWhenFarAway = MapUtils.getOrNull(map, KEY_REMOVE_WHEN_FAR_AWAY);
-        Boolean canPickupItems = MapUtils.getOrNull(map, KEY_CAN_PICKUP_ITEMS);
-        Boolean leashed = MapUtils.getOrNull(map, KEY_LEASHED);
-        EntitySpecifier<Entity> leashHolder = serializer.tryDeserializeEntitySpecifier(map.get(KEY_LEASH_HOLDER));
-        Boolean gliding = MapUtils.getOrNull(map, KEY_GLIDING);
-        Boolean swimming = MapUtils.getOrNull(map, KEY_SWIMMING);
-        Boolean riptiding = MapUtils.getOrNull(map, KEY_RIPTIDING);
-        Boolean sleeping = MapUtils.getOrNull(map, KEY_SLEEPING);
-        Boolean ai = MapUtils.getOrNull(map, KEY_AI);
-        Boolean collidable = MapUtils.getOrNull(map, KEY_COLLIDABLE);
-        Boolean invisible = MapUtils.getOrNull(map, KEY_INVISIBLE);
+        Boolean removeWhenFarAway = node.get(KEY_REMOVE_WHEN_FAR_AWAY).asBoolean(null);
+        Boolean canPickupItems = node.get(KEY_CAN_PICKUP_ITEMS).asBoolean(null);
+        Boolean leashed = node.get(KEY_LEASHED).asBoolean(null);
+        EntitySpecifier<Entity> leashHolder = serializer.tryDeserializeEntitySpecifier(node.get(KEY_LEASH_HOLDER));
+        Boolean gliding = node.get(KEY_GLIDING).asBoolean(null);
+        Boolean swimming = node.get(KEY_SWIMMING).asBoolean(null);
+        Boolean riptiding = node.get(KEY_RIPTIDING).asBoolean(null);
+        Boolean sleeping = node.get(KEY_SLEEPING).asBoolean(null);
+        Boolean ai = node.get(KEY_AI).asBoolean(null);
+        Boolean collidable = node.get(KEY_COLLIDABLE).asBoolean(null);
+        Boolean invisible = node.get(KEY_INVISIBLE).asBoolean(null);
         // Paper
 
-        Integer arrowsStuck = MapUtils.getOrNull(map, KEY_ARROWS_STUCK);
-        Integer shieldBlockingDelay = MapUtils.getOrNull(map, KEY_SHIELD_BLOCKING_DELAY);
+        Integer arrowsStuck = node.get(KEY_ARROWS_STUCK).asInteger(null);
+        Integer shieldBlockingDelay = node.get(KEY_SHIELD_BLOCKING_DELAY).asInteger(null);
         ItemStackStructure activeItem = null;
-        if (map.containsKey(KEY_ACTIVE_ITEM))
-            activeItem = serializer.deserialize(MapUtils.checkAndCastMap(map.get(KEY_ACTIVE_ITEM)), ItemStackStructure.class);
+        if (node.containsKey(KEY_ACTIVE_ITEM))
+            activeItem = serializer.deserialize(node.get(KEY_ACTIVE_ITEM), ItemStackStructure.class);
 
-        Integer itemUseRemainTime = MapUtils.getOrNull(map, KEY_ITEM_USE_REMAIN_TIME);
-        Integer handRaisedTime = MapUtils.getOrNull(map, KEY_HAND_RAISED_TIME);
-        Boolean isHandRaised = MapUtils.getOrNull(map, KEY_IS_HAND_RAISED);
+        Integer itemUseRemainTime = node.get(KEY_ITEM_USE_REMAIN_TIME).asInteger(null);
+        Integer handRaisedTime = node.get(KEY_HAND_RAISED_TIME).asInteger(null);
+        Boolean isHandRaised = node.get(KEY_IS_HAND_RAISED).asBoolean(null);
 
         return new LivingEntityStructureImpl(
                 base,
@@ -447,42 +445,45 @@ public class LivingEntityStructureImpl extends EntityStructureImpl implements Li
         return list;
     }
 
-    private static void validatePotionEffectMap(@NotNull List<Map<String, Object>> map)
+    private static void validatePotionEffectNodes(@NotNull List<StructuredYamlNode> nodes) throws YamlParsingException
     {
-        if (map.isEmpty())
+        if (nodes.isEmpty())
             return;
 
-        for (Object o : map)
+        for (StructuredYamlNode node : nodes)
         {
-            Map<String, Object> effectMap =
-                    MapUtils.checkAndCastMap(o);
-            MapUtils.checkType(effectMap, KEY_POTION_EFFECTS_TYPE, String.class);
-            if (PotionEffectType.getByName((String) effectMap.get(KEY_POTION_EFFECTS_TYPE)) == null)
-                throw new IllegalArgumentException("Invalid potion effect type.");
+            node.ensureTypeOf(YAMLNodeType.MAPPING);
+            StructuredYamlNode typeNode = node.get(KEY_POTION_EFFECTS_TYPE);
+            typeNode.ensureTypeOf(YAMLNodeType.STRING);
+            typeNode.validate(n -> {
+                if (PotionEffectType.getByName(n.asString()) == null)
+                    throw new IllegalArgumentException("Invalid potion effect type.");
+                return null;
+            }, "Invalid potion effect type.");
 
-            MapUtils.checkTypeIfContains(effectMap, KEY_POTION_EFFECTS_AMBIENT, Boolean.class);
-            MapUtils.checkTypeIfContains(effectMap, KEY_POTION_EFFECTS_AMPLIFIER, Integer.class);
-            MapUtils.checkTypeIfContains(effectMap, KEY_POTION_EFFECTS_DURATION, Integer.class);
-            MapUtils.checkTypeIfContains(effectMap, KEY_POTION_EFFECTS_SHOW_ICON, Boolean.class);
-            MapUtils.checkTypeIfContains(effectMap, KEY_POTION_EFFECTS_SHOW_PARTICLES, Boolean.class);
+            node.get(KEY_POTION_EFFECTS_AMBIENT).ensureTypeOf(YAMLNodeType.BOOLEAN);
+            node.get(KEY_POTION_EFFECTS_AMPLIFIER).ensureTypeOf(YAMLNodeType.NUMBER);
+            node.get(KEY_POTION_EFFECTS_DURATION).ensureTypeOf(YAMLNodeType.NUMBER);
+            node.get(KEY_POTION_EFFECTS_SHOW_ICON).ensureTypeOf(YAMLNodeType.BOOLEAN);
+            node.get(KEY_POTION_EFFECTS_SHOW_PARTICLES).ensureTypeOf(YAMLNodeType.BOOLEAN);
         }
     }
 
-    private static List<PotionEffect> deserializePotionEffects(@NotNull List<? extends Map<String, Object>> map)
+    private static List<PotionEffect> deserializePotionEffects(@NotNull StructuredYamlNode potionEffects) throws YamlParsingException
     {
         List<PotionEffect> list = new ArrayList<>();
-        for (Map<String, Object> effectMap : map)
+        for (StructuredYamlNode effectMap : potionEffects.asList())
         {
             PotionEffectType type =
-                    PotionEffectType.getByName((String) effectMap.get(KEY_POTION_EFFECTS_TYPE));
+                    PotionEffectType.getByName(effectMap.get(KEY_POTION_EFFECTS_TYPE).asString());
 
             long duration = 0L;
             if (effectMap.containsKey(KEY_POTION_EFFECTS_DURATION))
                 duration = Long.parseLong(effectMap.get(KEY_POTION_EFFECTS_DURATION).toString());
-            int amplifier = MapUtils.getOrDefault(effectMap, KEY_POTION_EFFECTS_AMPLIFIER, 0);
-            boolean ambient = MapUtils.getOrDefault(effectMap, KEY_POTION_EFFECTS_AMBIENT, false);
-            boolean particles = MapUtils.getOrDefault(effectMap, KEY_POTION_EFFECTS_SHOW_PARTICLES, true);
-            boolean icon = MapUtils.getOrDefault(effectMap, KEY_POTION_EFFECTS_SHOW_ICON, true);
+            int amplifier = effectMap.get(KEY_POTION_EFFECTS_AMPLIFIER).asInteger(0);
+            boolean ambient = effectMap.get(KEY_POTION_EFFECTS_AMBIENT).asBoolean(true);
+            boolean particles = effectMap.get(KEY_POTION_EFFECTS_SHOW_PARTICLES).asBoolean(true);
+            boolean icon = effectMap.get(KEY_POTION_EFFECTS_SHOW_ICON).asBoolean(true);
 
             assert type != null;  // validatePotionEffectMapで検証済み
             list.add(new PotionEffect(type, (int) duration, amplifier, ambient, particles, icon));
