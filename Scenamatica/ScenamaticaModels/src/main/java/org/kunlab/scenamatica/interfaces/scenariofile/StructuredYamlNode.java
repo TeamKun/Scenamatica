@@ -120,6 +120,15 @@ public interface StructuredYamlNode
     Double asDouble() throws YAMLTypeMismatchException;
 
     /**
+     * このノードが浮動小数点数型である場合、その値を返します。
+     *
+     * @param defaultValue デフォルト値
+     * @return このノードが浮動小数点数型である場合の値
+     * @throws YAMLTypeMismatchException このノードが浮動小数点数型でない場合
+     */
+    Double asDouble(Double defaultValue) throws YAMLTypeMismatchException;
+
+    /**
      * このノードがバイト型である場合、その値を返します。
      *
      * @return このノードがバイト型である場合の値

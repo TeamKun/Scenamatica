@@ -230,6 +230,12 @@ public class StructuredYamlNodeImpl implements StructuredYamlNode
     }
 
     @Override
+    public Double asDouble(Double defaultValue) throws YAMLTypeMismatchException
+    {
+        return this.thisNode == null ? defaultValue: this.asDouble();
+    }
+
+    @Override
     public Byte asByte() throws YAMLTypeMismatchException
     {
         if (this.thisNode == null)
