@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.interfaces.scenariofile.Structure;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
+import org.kunlab.scenamatica.interfaces.scenariofile.StructuredYamlNode;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.DamageStructure;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.EntityStructure;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.inventory.InventoryStructure;
@@ -84,27 +85,27 @@ public class StructureSerializerMock implements StructureSerializer
     }
 
     @Override
-    public <T extends Structure> @NotNull T deserialize(@NotNull Map<String, Object> map, @NotNull Class<T> clazz)
+    public <T extends Structure> @NotNull T deserialize(@NotNull StructuredYamlNode node, @NotNull Class<T> clazz)
     {
         // エンティティの場合は, さらに EntityType で分岐する
         if (isEntityRelatedStructure(null, clazz))
             // noinspection unchecked
-            return (T) SelectiveEntityStructureSerializerMock.deserialize(map, this, (Class<? extends EntityStructure>) clazz);
+            return (T) SelectiveEntityStructureSerializerMock.deserialize(node, this, (Class<? extends EntityStructure>) clazz);
 
-        return this.selectEntry(clazz).getDeserializer().apply(map, this);
+        return this.selectEntry(clazz).getDeserializer().apply(node, this);
     }
 
     @Override
-    public <T extends Structure> void validate(@NotNull Map<String, Object> map, @NotNull Class<T> clazz)
+    public <T extends Structure> void validate(@NotNull StructuredYamlNode node, @NotNull Class<T> clazz)
     {
         // エンティティの場合は, さらに EntityType で分岐する
         if (isEntityRelatedStructure(null, clazz))
         {
             // noinspection unchecked
-            SelectiveEntityStructureSerializerMock.validate(map, this, (Class<? extends EntityStructure>) clazz);
+            SelectiveEntityStructureSerializerMock.validate(node, this, (Class<? extends EntityStructure>) clazz);
             return;
         }
-        this.selectEntry(clazz).getValidator().accept(map, this);
+        this.selectEntry(clazz).getValidator().accept(node, this);
     }
 
     @Override
@@ -152,8 +153,8 @@ public class StructureSerializerMock implements StructureSerializer
 
     private <T extends Structure> void registerStructure(@NotNull Class<T> clazz,
                                                          @NotNull BiFunction<T, StructureSerializer, Map<String, Object>> serializer,
-                                                         @NotNull BiFunction<Map<String, Object>, StructureSerializer, T> deserializer,
-                                                         @NotNull BiConsumer<Map<String, Object>, StructureSerializer> validator)
+                                                         @NotNull BiFunction<StructuredYamlNode, StructureSerializer, T> deserializer,
+                                                         @NotNull BiConsumer<StructuredYamlNode, StructureSerializer> validator)
     {
         this.structureEntries.add(new StructureEntry<>(clazz, serializer, deserializer, validator));
     }
@@ -161,40 +162,40 @@ public class StructureSerializerMock implements StructureSerializer
     @SuppressWarnings("SameParameterValue")
     private <T extends Structure> void registerStructure(@NotNull Class<T> clazz,
                                                          @NotNull BiFunction<T, StructureSerializer, Map<String, Object>> serializer,
-                                                         @NotNull BiFunction<Map<String, Object>, StructureSerializer, T> deserializer,
-                                                         @NotNull Consumer<? super Map<String, Object>> validator)
+                                                         @NotNull BiFunction<StructuredYamlNode, StructureSerializer, T> deserializer,
+                                                         @NotNull Consumer<StructuredYamlNode> validator)
     {
         this.structureEntries.add(new StructureEntry<>(clazz, serializer, deserializer, (v, t) -> validator.accept(v)));
     }
 
     private <T extends Structure> void registerStructure(@NotNull Class<T> clazz,
                                                          @NotNull Function<? super T, ? extends Map<String, Object>> serializer,
-                                                         @NotNull BiFunction<Map<String, Object>, StructureSerializer, T> deserializer,
-                                                         @NotNull BiConsumer<Map<String, Object>, StructureSerializer> validator)
+                                                         @NotNull BiFunction<StructuredYamlNode, StructureSerializer, T> deserializer,
+                                                         @NotNull BiConsumer<StructuredYamlNode, StructureSerializer> validator)
     {
         this.structureEntries.add(new StructureEntry<>(clazz, (v, t) -> serializer.apply(v), deserializer, validator));
     }
 
     private <T extends Structure> void registerStructure(@NotNull Class<T> clazz,
                                                          @NotNull Function<? super T, ? extends Map<String, Object>> serializer,
-                                                         @NotNull BiFunction<Map<String, Object>, StructureSerializer, T> deserializer,
-                                                         @NotNull Consumer<? super Map<String, Object>> validator)
+                                                         @NotNull BiFunction<StructuredYamlNode, StructureSerializer, T> deserializer,
+                                                         @NotNull Consumer<StructuredYamlNode> validator)
     {
         this.structureEntries.add(new StructureEntry<>(clazz, (v, t) -> serializer.apply(v), deserializer, (v, t) -> validator.accept(v)));
     }
 
     private <T extends Structure> void registerStructure(@NotNull Class<T> clazz,
                                                          @NotNull Function<? super T, ? extends Map<String, Object>> serializer,
-                                                         @NotNull Function<? super Map<String, Object>, ? extends T> deserializer,
-                                                         @NotNull BiConsumer<Map<String, Object>, StructureSerializer> validator)
+                                                         @NotNull Function<? super StructuredYamlNode, ? extends T> deserializer,
+                                                         @NotNull BiConsumer<StructuredYamlNode, StructureSerializer> validator)
     {
         this.structureEntries.add(new StructureEntry<>(clazz, (v, t) -> serializer.apply(v), (v, t) -> deserializer.apply(v), validator));
     }
 
     private <T extends Structure> void registerStructure(@NotNull Class<T> clazz,
                                                          @NotNull Function<? super T, ? extends Map<String, Object>> serializer,
-                                                         @NotNull Function<? super Map<String, Object>, ? extends T> deserializer,
-                                                         @NotNull Consumer<? super Map<String, Object>> validator)
+                                                         @NotNull Function<? super StructuredYamlNode, ? extends T> deserializer,
+                                                         @NotNull Consumer<StructuredYamlNode> validator)
     {
         this.structureEntries.add(new StructureEntry<>(clazz, (v, t) -> serializer.apply(v), (v, t) -> deserializer.apply(v), (v, t) -> validator.accept(v)));
     }
@@ -202,8 +203,8 @@ public class StructureSerializerMock implements StructureSerializer
     @SuppressWarnings("SameParameterValue")
     private <T extends Structure> void registerStructure(@NotNull Class<T> clazz,
                                                          @NotNull BiFunction<T, StructureSerializer, Map<String, Object>> serializer,
-                                                         @NotNull Function<? super Map<String, Object>, ? extends T> deserializer,
-                                                         @NotNull Consumer<? super Map<String, Object>> validator)
+                                                         @NotNull Function<? super StructuredYamlNode, ? extends T> deserializer,
+                                                         @NotNull Consumer<StructuredYamlNode> validator)
     {
         this.structureEntries.add(new StructureEntry<>(clazz, serializer, (v, t) -> deserializer.apply(v), (v, t) -> validator.accept(v)));
     }
@@ -212,8 +213,8 @@ public class StructureSerializerMock implements StructureSerializer
 
     private <V, T extends Structure> void registerStructure(@NotNull Class<T> clazz,
                                                                      @NotNull BiFunction<T, StructureSerializer, Map<String, Object>> serializer,
-                                                                     @NotNull BiFunction<Map<String, Object>, StructureSerializer, T> deserializer,
-                                                                     @NotNull BiConsumer<Map<String, Object>, StructureSerializer> validator,
+                                                            @NotNull BiFunction<StructuredYamlNode, StructureSerializer, T> deserializer,
+                                                            @NotNull BiConsumer<StructuredYamlNode, StructureSerializer> validator,
                                                                      @NotNull Function<V, T> constructor,
                                                                      @NotNull Predicate<?> applicator)
     {
@@ -222,8 +223,8 @@ public class StructureSerializerMock implements StructureSerializer
 
     private <V, T extends Structure> void registerStructure(@NotNull Class<T> clazz,
                                                                      @NotNull BiFunction<T, StructureSerializer, Map<String, Object>> serializer,
-                                                                     @NotNull BiFunction<Map<String, Object>, StructureSerializer, T> deserializer,
-                                                                     @NotNull Consumer<? super Map<String, Object>> validator,
+                                                            @NotNull BiFunction<StructuredYamlNode, StructureSerializer, T> deserializer,
+                                                            @NotNull Consumer<StructuredYamlNode> validator,
                                                                      @NotNull Function<V, T> constructor,
                                                                      @NotNull Predicate<?> applicator)
     {
@@ -232,8 +233,8 @@ public class StructureSerializerMock implements StructureSerializer
 
     private <V, T extends Structure> void registerStructure(@NotNull Class<T> clazz,
                                                                      @NotNull Function<? super T, ? extends Map<String, Object>> serializer,
-                                                                     @NotNull BiFunction<Map<String, Object>, StructureSerializer, T> deserializer,
-                                                                     @NotNull BiConsumer<Map<String, Object>, StructureSerializer> validator,
+                                                            @NotNull BiFunction<StructuredYamlNode, StructureSerializer, T> deserializer,
+                                                            @NotNull BiConsumer<StructuredYamlNode, StructureSerializer> validator,
                                                                      @NotNull Function<V, T> constructor,
                                                                      @NotNull Predicate<?> applicator)
     {
@@ -242,8 +243,8 @@ public class StructureSerializerMock implements StructureSerializer
 
     private <V, T extends Structure> void registerStructure(@NotNull Class<T> clazz,
                                                                      @NotNull Function<? super T, ? extends Map<String, Object>> serializer,
-                                                                     @NotNull BiFunction<Map<String, Object>, StructureSerializer, T> deserializer,
-                                                                     @NotNull Consumer<? super Map<String, Object>> validator,
+                                                            @NotNull BiFunction<StructuredYamlNode, StructureSerializer, T> deserializer,
+                                                            @NotNull Consumer<StructuredYamlNode> validator,
                                                                      @NotNull Function<V, T> constructor,
                                                                      @NotNull Predicate<?> applicator)
     {
@@ -252,8 +253,8 @@ public class StructureSerializerMock implements StructureSerializer
 
     private <V, T extends Structure> void registerStructure(@NotNull Class<T> clazz,
                                                                      @NotNull Function<? super T, ? extends Map<String, Object>> serializer,
-                                                                     @NotNull Function<? super Map<String, Object>, ? extends T> deserializer,
-                                                                     @NotNull BiConsumer<Map<String, Object>, StructureSerializer> validator,
+                                                            @NotNull Function<? super StructuredYamlNode, ? extends T> deserializer,
+                                                            @NotNull BiConsumer<StructuredYamlNode, StructureSerializer> validator,
                                                                      @NotNull Function<V, T> constructor,
                                                                      @NotNull Predicate<?> applicator)
     {
@@ -262,8 +263,8 @@ public class StructureSerializerMock implements StructureSerializer
 
     private <V, T extends Structure> void registerStructure(@NotNull Class<T> clazz,
                                                                      @NotNull Function<? super T, ? extends Map<String, Object>> serializer,
-                                                                     @NotNull Function<? super Map<String, Object>, ? extends T> deserializer,
-                                                                     @NotNull Consumer<? super Map<String, Object>> validator,
+                                                            @NotNull Function<? super StructuredYamlNode, ? extends T> deserializer,
+                                                            @NotNull Consumer<StructuredYamlNode> validator,
                                                                      @NotNull Function<V, T> constructor,
                                                                      @NotNull Predicate<?> applicator)
     {
@@ -272,8 +273,8 @@ public class StructureSerializerMock implements StructureSerializer
 
     private <V, T extends Structure> void registerStructure(@NotNull Class<T> clazz,
                                                                      @NotNull BiFunction<T, StructureSerializer, Map<String, Object>> serializer,
-                                                                     @NotNull Function<? super Map<String, Object>, ? extends T> deserializer,
-                                                                     @NotNull Consumer<? super Map<String, Object>> validator,
+                                                            @NotNull Function<? super StructuredYamlNode, ? extends T> deserializer,
+                                                            @NotNull Consumer<StructuredYamlNode> validator,
                                                                      @NotNull Function<V, T> constructor,
                                                                      @NotNull Predicate<?> applicator)
     {
@@ -417,8 +418,8 @@ public class StructureSerializerMock implements StructureSerializer
     {
         Class<T> clazz;
         BiFunction<T, StructureSerializer, Map<String, Object>> serializer;
-        BiFunction<Map<String, Object>, StructureSerializer, T> deserializer;
-        BiConsumer<Map<String, Object>, StructureSerializer> validator;
+        BiFunction<StructuredYamlNode, StructureSerializer, T> deserializer;
+        BiConsumer<StructuredYamlNode, StructureSerializer> validator;
     }
 
     @Value
@@ -430,8 +431,8 @@ public class StructureSerializerMock implements StructureSerializer
         Predicate<?> applicator;
 
         public MappedStructureEntry(Class<T> clazz, BiFunction<T, StructureSerializer, Map<String, Object>> serializer,
-                                    BiFunction<Map<String, Object>, StructureSerializer, T> deserializer,
-                                    BiConsumer<Map<String, Object>, StructureSerializer> validator,
+                                    BiFunction<StructuredYamlNode, StructureSerializer, T> deserializer,
+                                    BiConsumer<StructuredYamlNode, StructureSerializer> validator,
                                     Function<V, T> constructor, Predicate<?> applicator)
         {
             super(clazz, serializer, deserializer, validator);

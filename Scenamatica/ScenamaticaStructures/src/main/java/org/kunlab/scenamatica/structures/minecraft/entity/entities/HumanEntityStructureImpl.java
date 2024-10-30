@@ -13,7 +13,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.enums.MinecraftVersion;
+import org.kunlab.scenamatica.exceptions.scenariofile.YamlParsingException;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
+import org.kunlab.scenamatica.interfaces.scenariofile.StructuredYamlNode;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.LivingEntityStructure;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.entities.HumanEntityStructure;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.inventory.InventoryStructure;
@@ -21,6 +23,7 @@ import org.kunlab.scenamatica.interfaces.structures.minecraft.inventory.PlayerIn
 import org.kunlab.scenamatica.interfaces.structures.minecraft.misc.LocationStructure;
 import org.kunlab.scenamatica.nms.NMSProvider;
 import org.kunlab.scenamatica.nms.types.entity.NMSEntityHuman;
+import org.kunlab.scenamatica.structures.StructureMappers;
 import org.kunlab.scenamatica.structures.minecraft.entity.LivingEntityStructureImpl;
 import org.kunlab.scenamatica.structures.minecraft.inventory.InventoryStructureImpl;
 import org.kunlab.scenamatica.structures.minecraft.inventory.PlayerInventoryStructureImpl;
@@ -101,11 +104,6 @@ public class HumanEntityStructureImpl extends LivingEntityStructureImpl implemen
         this.foodLevel = null;
     }
 
-    /**
-     * 人形エンティティの情報をMapにシリアライズします。
-     *
-     * @return シリアライズされたMap
-     */
     @NotNull
     public static Map<String, Object> serializeHuman(@NotNull HumanEntityStructure structure, @NotNull StructureSerializer serializer)
     {
@@ -130,74 +128,49 @@ public class HumanEntityStructureImpl extends LivingEntityStructureImpl implemen
         return map;
     }
 
-
-    /**
-     * Mapがシリアライズされた人形エンティティの情報かどうかを判定します。
-     *
-     * @param map        判定するMap
-     * @param serializer シリアライザ
-     * @throws IllegalArgumentException Mapがシリアライズされた人形エンティティの情報でない場合
-     */
-    public static void validateHuman(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
+    public static void validateHuman(@NotNull StructuredYamlNode node, @NotNull StructureSerializer serializer) throws YamlParsingException
     {
-        validateLivingEntity(map);
+        validateLivingEntity(node);
 
-        if (map.containsKey(KEY_INVENTORY))
+        if (node.containsKey(KEY_INVENTORY))
             serializer.validate(
-                    MapUtils.checkAndCastMap(map.get(KEY_INVENTORY)), PlayerInventoryStructure.class);
-        if (map.containsKey(KEY_ENDER_CHEST))
+                    node.get(KEY_INVENTORY), PlayerInventoryStructure.class);
+        if (node.containsKey(KEY_ENDER_CHEST))
             serializer.validate(
-                    MapUtils.checkAndCastMap(map.get(KEY_ENDER_CHEST)), InventoryStructure.class);
+                    node.get(KEY_ENDER_CHEST), InventoryStructure.class);
     }
 
-    /**
-     * Mapから人形エンティティの情報をデシリアライズします。
-     *
-     * @param map デシリアライズするMap
-     * @return デシリアライズされた人形エンティティの情報
-     */
     @NotNull
-    public static HumanEntityStructure deserializeHuman(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
+    public static HumanEntityStructure deserializeHuman(@NotNull StructuredYamlNode node, @NotNull StructureSerializer serializer) throws YamlParsingException
     {
-        validateLivingEntity(map);
+        validateLivingEntity(node);
 
-        LivingEntityStructure livingEntityStructure = LivingEntityStructureImpl.deserializeLivingEntity(map, serializer);
+        LivingEntityStructure livingEntityStructure = LivingEntityStructureImpl.deserializeLivingEntity(node, serializer);
 
         PlayerInventoryStructure inventory = null;
-        if (map.containsKey(KEY_INVENTORY))
-            inventory = serializer.deserialize(
-                    MapUtils.checkAndCastMap(map.get(KEY_INVENTORY)), PlayerInventoryStructure.class);
+        if (node.containsKey(KEY_INVENTORY))
+            inventory = serializer.deserialize(node.get(KEY_INVENTORY), PlayerInventoryStructure.class);
 
         InventoryStructure enderChest = null;
-        if (map.containsKey(KEY_ENDER_CHEST))
-            enderChest = serializer.deserialize(MapUtils.checkAndCastMap(map.get(KEY_ENDER_CHEST)), InventoryStructure.class);
+        if (node.containsKey(KEY_ENDER_CHEST))
+            enderChest = serializer.deserialize(node.get(KEY_ENDER_CHEST), InventoryStructure.class);
 
-        MainHand mainHand = MapUtils.getAsEnumOrNull(
-                map,
-                KEY_MAIN_HAND,
-                MainHand.class
-        );
+        MainHand mainHand = node.get(KEY_MAIN_HAND).getAs(StructureMappers.enumName(MainHand.class), null);
 
         Map<Material, Integer> cooldown = null;
-        if (map.containsKey(KEY_COOLDOWN))
-            cooldown = MapUtils.checkAndCastMap(map.get(KEY_COOLDOWN), String.class, Integer.class)
-                    .entrySet().stream()
+        if (node.containsKey(KEY_COOLDOWN))
+            cooldown = node.get(KEY_COOLDOWN).asMapStream(StructuredYamlNode::asString, StructuredYamlNode::asInteger)
                     .map(e -> new HashMap.SimpleEntry<>(Material.getMaterial(e.getKey()), e.getValue()))
                     .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-        Integer sleepTicks = MapUtils.getOrNull(map, KEY_SLEEP_TICKS);
-        Boolean blocking = MapUtils.getOrNull(map, KEY_BLOCKING);
+        Integer sleepTicks = node.get(KEY_SLEEP_TICKS).asInteger(null);
+        Boolean blocking = node.get(KEY_BLOCKING).asBoolean(null);
         LocationStructure bedSpawnLocation = null;
-        if (map.containsKey(KEY_BED_SPAWN_LOCATION))
-            bedSpawnLocation = serializer.deserialize(
-                    MapUtils.checkAndCastMap(map.get(KEY_BED_SPAWN_LOCATION)), LocationStructure.class);
+        if (node.containsKey(KEY_BED_SPAWN_LOCATION))
+            bedSpawnLocation = serializer.deserialize(node.get(KEY_BED_SPAWN_LOCATION), LocationStructure.class);
 
-        GameMode gamemode = MapUtils.getAsEnumOrNull(
-                map,
-                KEY_GAMEMODE,
-                GameMode.class
-        );
+        GameMode gamemode = node.get(KEY_GAMEMODE).getAs(StructureMappers.enumName(GameMode.class), null);
 
-        Integer foodLevel = MapUtils.getOrNull(map, KEY_FOOD_LEVEL);
+        Integer foodLevel = node.get(KEY_FOOD_LEVEL).asInteger(null);
 
         return new HumanEntityStructureImpl(
                 livingEntityStructure,

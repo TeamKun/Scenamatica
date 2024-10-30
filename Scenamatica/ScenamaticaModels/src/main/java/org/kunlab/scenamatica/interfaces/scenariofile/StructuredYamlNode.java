@@ -184,6 +184,19 @@ public interface StructuredYamlNode
 
     /**
      * このノードが Map 型である場合、その値を返します。
+     *
+     * @param keyMapper   キーのマッピング関数
+     * @param valueMapper 値のマッピング関数
+     * @param <K>         キーの型
+     * @param <V>         値の型
+     * @return このノードが Map 型である場合の値
+     * @throws YamlParsingException このノードが Map 型でない場合や, マッピング関数が失敗した場合
+     */
+    @NotNull
+    <K, V> Stream<Map.Entry<K, V>> asMapStream(ValueMapper<K> keyMapper, ValueMapper<V> valueMapper) throws YamlParsingException;
+
+    /**
+     * このノードが Map 型である場合、その値を返します。
      * 値は Map&lt;String, Object&gt; として返されます。
      *
      * @return このノードが Map 型である場合の値

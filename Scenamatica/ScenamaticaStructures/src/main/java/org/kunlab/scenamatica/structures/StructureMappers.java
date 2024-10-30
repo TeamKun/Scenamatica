@@ -8,14 +8,13 @@ import org.kunlab.scenamatica.commons.utils.Utils;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructuredYamlNode;
 
 import java.util.Locale;
-import java.util.UUID;
 
 public class StructureMappers
 {
-    public static final StructuredYamlNode.ValueMapper<UUID> UU1D = node -> {
+    public static final StructuredYamlNode.ValueMapper<java.util.UUID> UUID = node -> {
         String uuidString = node.asString();
         if (uuidString.contains("-"))
-            return UUID.fromString(uuidString);
+            return java.util.UUID.fromString(uuidString);
 
         if (uuidString.length() != 32)
             throw new IllegalArgumentException("Value is not a valid UUID");
@@ -27,7 +26,7 @@ public class StructureMappers
                         uuidString.substring(16, 20) + "-" +
                         uuidString.substring(20);
 
-        return UUID.fromString(repairedUUIDString.toLowerCase(Locale.ENGLISH));
+        return java.util.UUID.fromString(repairedUUIDString.toLowerCase(Locale.ENGLISH));
     };
 
     public static final StructuredYamlNode.ValueMapper<Material> MATERIAL_NAME = node -> {

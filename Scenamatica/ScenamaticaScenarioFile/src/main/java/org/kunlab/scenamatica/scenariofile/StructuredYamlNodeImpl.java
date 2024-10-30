@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UncheckedIOException;
+import java.util.AbstractMap;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -330,6 +331,33 @@ public class StructuredYamlNodeImpl implements StructuredYamlNode
                                 }
                             }
                     ));
+        }
+        catch (RuntimeException e)
+        {
+            Throwable cause = e.getCause();
+            if (cause instanceof YamlParsingException)
+                throw (YamlParsingException) cause;
+            else
+                throw e;
+        }
+    }
+
+    @Override
+    public @NotNull <K, V> Stream<Map.Entry<K, V>> asMapStream(ValueMapper<K> keyMapper, ValueMapper<V> valueMapper) throws YamlParsingException
+    {
+        try
+        {
+            return this.asMapStream()
+                    .map(nodePair -> {
+                        try
+                        {
+                            return new AbstractMap.SimpleEntry<>(keyMapper.map(nodePair.getLeft()), valueMapper.map(nodePair.getRight()));
+                        }
+                        catch (Exception e)
+                        {
+                            throw new RuntimeException(e);
+                        }
+                    });
         }
         catch (RuntimeException e)
         {
