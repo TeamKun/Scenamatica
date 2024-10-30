@@ -11,7 +11,10 @@ import org.bukkit.projectiles.ProjectileSource;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
+import org.kunlab.scenamatica.enums.YAMLNodeType;
+import org.kunlab.scenamatica.exceptions.scenariofile.YamlParsingException;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
+import org.kunlab.scenamatica.interfaces.scenariofile.StructuredYamlNode;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.EntityStructure;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.entities.ProjectileStructure;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.misc.BlockStructure;
@@ -57,35 +60,35 @@ public class ProjectileStructureImpl extends EntityStructureImpl implements Proj
         return map;
     }
 
-    public static void validate(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
+    public static void validate(@NotNull StructuredYamlNode node, @NotNull StructureSerializer serializer) throws YamlParsingException
     {
-        EntityStructureImpl.validate(map);
+        EntityStructureImpl.validate(node);
 
-        MapUtils.checkTypeIfContains(map, KEY_DOES_BOUNCE, Boolean.class);
+        node.get(KEY_DOES_BOUNCE).ensureTypeOfIfExists(YAMLNodeType.BOOLEAN);
 
-        if (map.containsKey(KEY_SHOOTER) && map.get(KEY_SHOOTER) instanceof Map)
-            serializer.validate(MapUtils.checkAndCastMap(map.get(KEY_SHOOTER)), ProjectileSourceStructure.class);
-        else if (map.containsKey(KEY_SHOOTER) && !(map.get(KEY_SHOOTER) instanceof String))
-            throw new IllegalArgumentException("Invalid ProjectileSourceStructure: " + map.get(KEY_SHOOTER));
+        if (node.containsKey(KEY_SHOOTER) && node.get(KEY_SHOOTER).isType(YAMLNodeType.MAPPING))
+            serializer.validate(node.get(KEY_SHOOTER), ProjectileSourceStructure.class);
+        else if (node.containsKey(KEY_SHOOTER) && !node.get(KEY_SHOOTER).isType(YAMLNodeType.STRING))
+            throw new IllegalArgumentException("Invalid ProjectileSourceStructure: " + node.get(KEY_SHOOTER));
     }
 
     @NotNull
-    public static ProjectileStructure deserialize(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
+    public static ProjectileStructure deserialize(@NotNull StructuredYamlNode node, @NotNull StructureSerializer serializer) throws YamlParsingException
     {
-        validate(map, serializer);
+        validate(node, serializer);
 
-        EntityStructure entity = EntityStructureImpl.deserialize(map, serializer);
+        EntityStructure entity = EntityStructureImpl.deserialize(node, serializer);
 
         ProjectileSourceStructure shooter = null;
-        if (map.containsKey(KEY_SHOOTER) && map.get(KEY_SHOOTER) instanceof Map)
-            shooter = serializer.deserialize(MapUtils.checkAndCastMap(map.get(KEY_SHOOTER)), ProjectileSourceStructure.class);
-        else if (map.containsKey(KEY_SHOOTER) && map.get(KEY_SHOOTER) instanceof String)
-            shooter = new SelectorProjectileSourceStructureImpl((String) map.get(KEY_SHOOTER));
+        if (node.containsKey(KEY_SHOOTER) && node.get(KEY_SHOOTER).isType(YAMLNodeType.MAPPING))
+            shooter = serializer.deserialize(node.get(KEY_SHOOTER), ProjectileSourceStructure.class);
+        else if (node.containsKey(KEY_SHOOTER) && node.get(KEY_SHOOTER).isType(YAMLNodeType.STRING))
+            shooter = new SelectorProjectileSourceStructureImpl(node.get(KEY_SHOOTER).asString());
 
         return new ProjectileStructureImpl(
                 entity,
                 shooter,
-                MapUtils.getOrNull(map, KEY_DOES_BOUNCE)
+                node.get(KEY_DOES_BOUNCE).asBoolean()
         );
     }
 

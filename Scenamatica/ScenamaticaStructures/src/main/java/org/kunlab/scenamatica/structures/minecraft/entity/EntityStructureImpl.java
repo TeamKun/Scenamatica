@@ -158,11 +158,11 @@ public class EntityStructureImpl implements EntityStructure
     }
 
     @NotNull
-    public static EntityStructure deserialize(@NotNull StructuredYamlNode node, @NotNull StructureSerializer serializer) throws YamlParsingException
+    public static EntityStructure deserialize(@NotNull StructuredYamlNode node, @NotNull StructureSerializer serializer, @Nullable EntityType defaultType) throws YamlParsingException
     {
         validate(node);
 
-        EntityType type = null;
+        EntityType type = defaultType;
         if (node.containsKey(KEY_TYPE))
             type = node.get(KEY_TYPE).getAs(value -> Utils.searchEntityType(value.asString()));
         LocationStructure loc;
@@ -178,7 +178,7 @@ public class EntityStructureImpl implements EntityStructure
             velocity = Vector.deserialize(node.get(KEY_VELOCITY).asMap());
 
         String customName = node.get(KEY_CUSTOM_NAME).asString(null);
-        UUID uuid = node.get(KEY_UUID).getAs(StructureMappers.UU1D, null);
+        UUID uuid = node.get(KEY_UUID).getAs(StructureMappers.UUID, null);
 
         Boolean glowing = node.get(KEY_GLOWING).asBoolean(null);
         Boolean gravity = node.get(KEY_GRAVITY).asBoolean(null);
@@ -221,6 +221,13 @@ public class EntityStructureImpl implements EntityStructure
                 persistent,
                 fallDistance
         );
+
+    }
+
+    @NotNull
+    public static EntityStructure deserialize(@NotNull StructuredYamlNode node, @NotNull StructureSerializer serializer) throws YamlParsingException
+    {
+        return deserialize(node, serializer, null);
     }
 
     public static EntityStructure of(@NotNull Entity entity)

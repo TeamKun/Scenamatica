@@ -7,8 +7,9 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Item;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.kunlab.scenamatica.commons.utils.MapUtils;
+import org.kunlab.scenamatica.exceptions.scenariofile.YamlParsingException;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
+import org.kunlab.scenamatica.interfaces.scenariofile.StructuredYamlNode;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.EntityStructure;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.entities.EntityItemStructure;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.inventory.ItemStackStructure;
@@ -18,7 +19,6 @@ import org.kunlab.scenamatica.structures.minecraft.inventory.ItemStackStructureI
 import org.kunlab.scenamatica.structures.specifiers.EntitySpecifierImpl;
 import org.kunlab.scenamatica.structures.specifiers.PlayerSpecifierImpl;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.Consumer;
@@ -73,47 +73,43 @@ public class EntityItemStructureImpl extends EntityStructureImpl implements Enti
         return map;
     }
 
-    public static void validateItem(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
+    public static void validateItem(@NotNull StructuredYamlNode node, @NotNull StructureSerializer serializer) throws YamlParsingException
     {
-        EntityStructureImpl.validate(map);
+        EntityStructureImpl.validate(node);
     }
 
     @NotNull
-    public static EntityItemStructure deserializeItem(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
+    public static EntityItemStructure deserializeItem(@NotNull StructuredYamlNode node, @NotNull StructureSerializer serializer) throws YamlParsingException
     {
-        validateItem(map, serializer);
+        validateItem(node, serializer);
 
-        Number pickupDelayNum = MapUtils.getAsNumberOrNull(map, KEY_PICKUP_DELAY);
-        Integer pickupDelay = pickupDelayNum != null ? pickupDelayNum.intValue(): null;
+        Integer pickupDelay = node.get(KEY_PICKUP_DELAY).asInteger(null);
 
         EntitySpecifier<?> owner;
-        if (map.containsKey(KEY_OWNER))
-            owner = serializer.tryDeserializeEntitySpecifier(map.get(KEY_OWNER));
+        if (node.containsKey(KEY_OWNER))
+            owner = serializer.tryDeserializeEntitySpecifier(node.get(KEY_OWNER));
         else
             owner = EntitySpecifierImpl.EMPTY;
 
         EntitySpecifier<?> thrower;
-        if (map.containsKey(KEY_THROWER))
-            thrower = serializer.tryDeserializeEntitySpecifier(map.get(KEY_THROWER));
+        if (node.containsKey(KEY_THROWER))
+            thrower = serializer.tryDeserializeEntitySpecifier(node.get(KEY_THROWER));
         else
             thrower = EntitySpecifierImpl.EMPTY;
 
-        ItemStackStructure itemStack = serializer.deserialize(map, ItemStackStructure.class);
+        ItemStackStructure itemStack = serializer.deserialize(node, ItemStackStructure.class);
 
-        Map<String, Object> copiedMap = new HashMap<>();
-        // Entity と EntityItem で `type` がかぶる。
-        copiedMap.putAll(map);
-        if (copiedMap.containsKey(KEY_TYPE))
-            copiedMap.put(KEY_TYPE, EntityType.DROPPED_ITEM.name());
+        Boolean canMobPickup = node.get(KEY_CAN_MOB_PICKUP).asBoolean(null);
+        Boolean willAge = node.get(KEY_WILL_AGE).asBoolean(null);
 
         return new EntityItemStructureImpl(
-                EntityStructureImpl.deserialize(copiedMap, serializer),
+                EntityStructureImpl.deserialize(node, serializer, EntityType.DROPPED_ITEM),
                 itemStack,
                 pickupDelay,
                 owner,
                 thrower,
-                MapUtils.getOrNull(copiedMap, KEY_CAN_MOB_PICKUP),
-                MapUtils.getOrNull(copiedMap, KEY_WILL_AGE)
+                canMobPickup,
+                willAge
         );
     }
 

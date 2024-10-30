@@ -139,7 +139,7 @@ public class ItemStackStructureImpl implements ItemStackStructure
             {
                 UUID uuid;
                 if (attrs.containsKey(KEY_ATTRIBUTE_MODIFIER_UUID))
-                    uuid = attrs.get(KEY_ATTRIBUTE_MODIFIER_UUID).getAs(StructureMappers.UU1D);
+                    uuid = attrs.get(KEY_ATTRIBUTE_MODIFIER_UUID).getAs(StructureMappers.UUID);
                 else
                     uuid = UUID.randomUUID();
                 double attrAmount = attrs.get(KEY_ATTRIBUTE_MODIFIER_AMOUNT).asDouble();
