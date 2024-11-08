@@ -3,9 +3,11 @@ package org.kunlab.scenamatica.scenariofile.structures.trigger;
 import lombok.Value;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.enums.TriggerType;
+import org.kunlab.scenamatica.enums.YAMLNodeType;
+import org.kunlab.scenamatica.exceptions.scenariofile.YamlParsingException;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
+import org.kunlab.scenamatica.interfaces.scenariofile.StructuredYamlNode;
 import org.kunlab.scenamatica.interfaces.structures.scenario.ActionStructure;
 import org.kunlab.scenamatica.interfaces.structures.scenario.ScenarioStructure;
 import org.kunlab.scenamatica.interfaces.structures.trigger.TriggerArgument;
@@ -66,66 +68,61 @@ public class TriggerStructureImpl implements TriggerStructure
         return map;
     }
 
-    public static void validate(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
+    public static void validate(@NotNull StructuredYamlNode node, @NotNull StructureSerializer serializer) throws YamlParsingException
     {
-        MapUtils.checkType(map, KEY_TYPE, String.class);
-        if (TriggerType.fromKey((String) map.get(KEY_TYPE)) == null)
-            throw new IllegalArgumentException("Invalid trigger type: " + map.get(KEY_TYPE));
-
-        if (map.containsKey(KEY_BEFORE_THAT))
+        node.get(KEY_TYPE).ensureTypeOf(YAMLNodeType.STRING);
+        node.get(KEY_TYPE).validate(n -> {
+            if (TriggerType.fromKey(n.asString()) == null)
+                throw new IllegalArgumentException("Invalid trigger type: " + n.asString());
+            return null;
+        });
+        if (node.containsKey(KEY_BEFORE_THAT))
         {
-            MapUtils.checkType(map, KEY_BEFORE_THAT, List.class);
-            for (Object obj : (List<?>) map.get(KEY_BEFORE_THAT))
-                serializer.validate(
-                        MapUtils.checkAndCastMap(obj),
-                        ScenarioStructure.class
-                );
+            StructuredYamlNode beforeThatNode = node.get(KEY_BEFORE_THAT);
+            beforeThatNode.ensureTypeOf(YAMLNodeType.LIST);
+            for (StructuredYamlNode obj : beforeThatNode.asList())
+                serializer.validate(obj, ScenarioStructure.class);
         }
-        if (map.containsKey(KEY_AFTER_THAT))
+        if (node.containsKey(KEY_AFTER_THAT))
         {
-            MapUtils.checkType(map, KEY_AFTER_THAT, List.class);
-            for (Object obj : (List<?>) map.get(KEY_AFTER_THAT))
-                serializer.validate(
-                        MapUtils.checkAndCastMap(obj),
-                        ScenarioStructure.class
-                );
+            StructuredYamlNode afterThatNode = node.get(KEY_BEFORE_THAT);
+            afterThatNode.ensureTypeOf(YAMLNodeType.LIST);
+            for (StructuredYamlNode obj : afterThatNode.asList())
+                serializer.validate(obj, ScenarioStructure.class);
         }
 
-        TriggerType type = TriggerType.fromKey((String) map.get(KEY_TYPE));
+        TriggerType type = node.get(KEY_TYPE).getAs(n -> TriggerType.fromKey(n.asString()));
         if (type != null && type.getArgumentType() != null)
-            type.validateArguments(map);
+            type.validateArguments(node);
 
-        if (map.containsKey(KEY_RUN_IF))
-            MapUtils.checkType(map, KEY_RUN_IF, Map.class);
+        if (node.containsKey(KEY_RUN_IF))
+            serializer.validate(node.get(KEY_RUN_IF), ActionStructure.class);
     }
 
     @NotNull
-    public static TriggerStructure deserialize(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
+    public static TriggerStructure deserialize(@NotNull StructuredYamlNode node, @NotNull StructureSerializer serializer) throws YamlParsingException
     {
-        validate(map, serializer);
+        validate(node, serializer);
 
-        TriggerType type = TriggerType.fromKey((String) map.get(KEY_TYPE));
+        TriggerType type = TriggerType.fromKey(node.get(KEY_TYPE).asString());
 
         TriggerArgument argument = null;
         if (type != null)
-            argument = type.deserialize(map);
+            argument = type.deserialize(node);
 
         List<ScenarioStructure> beforeThat = new LinkedList<>();
-        if (map.containsKey(KEY_BEFORE_THAT))
-            for (Object obj : (List<?>) map.get(KEY_BEFORE_THAT))
-                beforeThat.add(serializer.deserialize(
-                        MapUtils.checkAndCastMap(obj), ScenarioStructure.class));
+        if (node.containsKey(KEY_BEFORE_THAT))
+            for (StructuredYamlNode obj : node.get(KEY_BEFORE_THAT).asList())
+                beforeThat.add(serializer.deserialize(obj, ScenarioStructure.class));
 
         List<ScenarioStructure> afterThat = new LinkedList<>();
-        if (map.containsKey(KEY_AFTER_THAT))
-            for (Object obj : (List<?>) map.get(KEY_AFTER_THAT))
-                afterThat.add(serializer.deserialize(
-                        MapUtils.checkAndCastMap(obj), ScenarioStructure.class));
+        if (node.containsKey(KEY_AFTER_THAT))
+            for (StructuredYamlNode obj : node.get(KEY_AFTER_THAT).asList())
+                afterThat.add(serializer.deserialize(obj, ScenarioStructure.class));
 
         ActionStructure runIf = null;
-        if (map.containsKey(KEY_RUN_IF))
-            runIf = serializer.deserialize(
-                    MapUtils.checkAndCastMap(map.get(KEY_RUN_IF)), ActionStructure.class);
+        if (node.containsKey(KEY_RUN_IF))
+            runIf = serializer.deserialize(node.get(KEY_RUN_IF), ActionStructure.class);
 
         assert type != null;  // validate() で検証済み
         return new TriggerStructureImpl(

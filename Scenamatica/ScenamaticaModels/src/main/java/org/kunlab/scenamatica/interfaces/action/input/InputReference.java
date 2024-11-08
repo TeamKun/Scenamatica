@@ -3,6 +3,7 @@ package org.kunlab.scenamatica.interfaces.action.input;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.exceptions.scenario.BrokenReferenceException;
+import org.kunlab.scenamatica.exceptions.scenariofile.InvalidScenarioFileException;
 import org.kunlab.scenamatica.interfaces.scenario.SessionStorage;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 
@@ -34,7 +35,7 @@ public interface InputReference<T>
      * @param variables セッション変数
      * @throws BrokenReferenceException 解決できない場合
      */
-    void resolve(@NotNull StructureSerializer serializer, @NotNull SessionStorage variables);
+    void resolve(@NotNull StructureSerializer serializer, @NotNull SessionStorage variables) throws InvalidScenarioFileException;
 
     /**
      * この参照のトークンを取得します。

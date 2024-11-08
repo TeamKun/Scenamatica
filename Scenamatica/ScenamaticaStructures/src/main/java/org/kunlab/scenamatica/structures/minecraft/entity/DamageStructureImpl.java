@@ -5,7 +5,12 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
+import org.kunlab.scenamatica.enums.YAMLNodeType;
+import org.kunlab.scenamatica.exceptions.scenariofile.YamlParsingException;
+import org.kunlab.scenamatica.interfaces.scenariofile.StructuredYamlNode;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.DamageStructure;
+import org.kunlab.scenamatica.structures.StructureMappers;
+import org.kunlab.scenamatica.structures.StructureValidators;
 
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -36,33 +41,47 @@ public class DamageStructureImpl implements DamageStructure
         return map;
     }
 
-    public static boolean validate(@NotNull Map<String, Object> map)
+    public static boolean validate(@NotNull StructuredYamlNode node) throws YamlParsingException
     {
-        MapUtils.checkEnumNameIfContains(map, KEY_CAUSE, EntityDamageEvent.DamageCause.class);
-        MapUtils.checkType(map, KEY_DAMAGE, Number.class);
-        if (map.containsKey(KEY_DAMAGE))
+        node.get(KEY_CAUSE).validateIfExists(StructureValidators.enumName(EntityDamageEvent.DamageCause.class));
+        node.get(KEY_DAMAGE).ensureTypeOf(YAMLNodeType.NUMBER);
+        if (node.containsKey(KEY_MODIFIER))
         {
-            Map<String, Object> modifiers = MapUtils.checkAndCastMap(map);
-            for (EntityDamageEvent.DamageModifier modifier : EntityDamageEvent.DamageModifier.values())
-                MapUtils.checkNumberIfContains(modifiers, modifier.name().toLowerCase());
+            StructuredYamlNode modifierNode = node.get(KEY_MODIFIER);
+            modifierNode.ensureTypeOf(YAMLNodeType.MAPPING);
+            modifierNode.validate(n -> {
+                StructuredYamlNode.Validator enumNameValidator =
+                        StructureValidators.enumName(EntityDamageEvent.DamageModifier.class);
+                for (StructuredYamlNode key : n.keys())
+                {
+                    key.ensureTypeOf(YAMLNodeType.STRING);
+                    key.validate(enumNameValidator);
+
+                    n.get(key).ensureTypeOf(YAMLNodeType.NUMBER);
+                }
+                return null;
+            });
         }
 
         return true;
     }
 
     @NotNull
-    public static DamageStructure deserialize(@NotNull Map<String, Object> map)
+    public static DamageStructure deserialize(@NotNull StructuredYamlNode node) throws YamlParsingException
     {
-        validate(map);
+        validate(node);
         Map<EntityDamageEvent.DamageModifier, Double> modifiers = new EnumMap<>(EntityDamageEvent.DamageModifier.class);
-        if (map.containsKey(KEY_MODIFIER))
-            for (Map.Entry<String, Object> entry : MapUtils.checkAndCastMap(map.get(KEY_MODIFIER)).entrySet())
+        if (node.containsKey(KEY_MODIFIER))
+            for (Map.Entry<String, Object> entry : MapUtils.checkAndCastMap(node.get(KEY_MODIFIER)).entrySet())
                 modifiers.put(EntityDamageEvent.DamageModifier.valueOf(entry.getKey().toUpperCase()), Double.parseDouble(entry.getValue().toString()));
 
         return new DamageStructureImpl(
                 modifiers,
-                MapUtils.getAsEnumOrDefault(map, KEY_CAUSE, EntityDamageEvent.DamageCause.class, EntityDamageEvent.DamageCause.CUSTOM),
-                Double.parseDouble(map.get(KEY_DAMAGE).toString())
+                node.get(KEY_CAUSE).getAs(
+                        StructureMappers.enumName(EntityDamageEvent.DamageCause.class),
+                        EntityDamageEvent.DamageCause.CUSTOM
+                ),
+                node.get(KEY_DAMAGE).asDouble()
         );
     }
 

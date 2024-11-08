@@ -5,6 +5,7 @@ import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.bookkeeper.annotations.TypeDoc;
 import org.kunlab.scenamatica.bookkeeper.annotations.TypeProperty;
 import org.kunlab.scenamatica.interfaces.scenariofile.Structure;
+import org.kunlab.scenamatica.interfaces.scenariofile.StructuredYamlNode;
 
 import java.util.Map;
 
@@ -46,5 +47,5 @@ public interface ActionStructure extends Structure
      * @return 動作に必要な引数
      */
     @Nullable
-    Map<String, Object> getArguments();
+    StructuredYamlNode getArguments();
 }

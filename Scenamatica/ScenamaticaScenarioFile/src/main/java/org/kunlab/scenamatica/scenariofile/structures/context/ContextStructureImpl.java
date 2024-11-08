@@ -2,8 +2,10 @@ package org.kunlab.scenamatica.scenariofile.structures.context;
 
 import lombok.Value;
 import org.jetbrains.annotations.NotNull;
-import org.kunlab.scenamatica.commons.utils.MapUtils;
+import org.kunlab.scenamatica.enums.YAMLNodeType;
+import org.kunlab.scenamatica.exceptions.scenariofile.YamlParsingException;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
+import org.kunlab.scenamatica.interfaces.scenariofile.StructuredYamlNode;
 import org.kunlab.scenamatica.interfaces.structures.context.ContextStructure;
 import org.kunlab.scenamatica.interfaces.structures.context.StageStructure;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.EntityStructure;
@@ -53,61 +55,52 @@ public class ContextStructureImpl implements ContextStructure
         return map;
     }
 
-    public static void validate(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
+    public static void validate(@NotNull StructuredYamlNode node, @NotNull StructureSerializer serializer) throws YamlParsingException
     {
-        if (map.containsKey(KEY_ACTORS))
+        if (node.containsKey(KEY_ACTORS))
         {
-            Object actors = map.get(KEY_ACTORS);
-            if (!(actors instanceof List))
-                throw new IllegalArgumentException("actors must be List");
+            StructuredYamlNode actors = node.get(KEY_ACTORS);
+            actors.ensureTypeOf(YAMLNodeType.LIST);
 
-            for (Object player : (List<?>) actors)
-                serializer.validate(
-                        MapUtils.checkAndCastMap(player),
-                        PlayerStructure.class
-                );
+            for (StructuredYamlNode player : actors.asList())
+                serializer.validate(player, PlayerStructure.class);
         }
 
-        if (map.containsKey(KEY_ENTITIES))
+        if (node.containsKey(KEY_ENTITIES))
         {
-            Object entities = map.get(KEY_ENTITIES);
-            if (!(entities instanceof List))
-                throw new IllegalArgumentException("entities must be List");
+            StructuredYamlNode entities = node.get(KEY_ENTITIES);
+            entities.ensureTypeOf(YAMLNodeType.LIST);
 
-            for (Object entity : (List<?>) entities)
-                serializer.validate(
-                        MapUtils.checkAndCastMap(entity),
-                        EntityStructure.class
-                );
+            for (StructuredYamlNode entity : entities.asList())
+                serializer.validate(entity, EntityStructure.class);
         }
 
-        if (map.containsKey(KEY_STAGE))
-            serializer.validate(
-                    MapUtils.checkAndCastMap(map.get(KEY_STAGE)),
-                    StageStructure.class
-            );
+        if (node.containsKey(KEY_STAGE))
+            serializer.validate(node.get(KEY_STAGE), StageStructure.class);
     }
 
     @NotNull
-    public static ContextStructure deserialize(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
+    public static ContextStructure deserialize(@NotNull StructuredYamlNode node, @NotNull StructureSerializer serializer) throws YamlParsingException
     {
         List<PlayerStructure> actorList = new ArrayList<>();
-        if (map.containsKey(KEY_ACTORS) && map.get(KEY_ACTORS) != null)
+        StructuredYamlNode actors = node.get(KEY_ACTORS);
+        if (node.containsKey(KEY_ACTORS) && actors != null)
         {
-            for (Object player : (List<?>) map.get(KEY_ACTORS))
-                actorList.add(serializer.deserialize(MapUtils.checkAndCastMap(player), PlayerStructure.class));
+            for (StructuredYamlNode player : actors.asList())
+                actorList.add(serializer.deserialize(player, PlayerStructure.class));
         }
 
         List<EntityStructure> entityList = new ArrayList<>();
-        if (map.containsKey(KEY_ENTITIES) && map.get(KEY_ENTITIES) != null)
+        StructuredYamlNode entities = node.get(KEY_ACTORS);
+        if (node.containsKey(KEY_ENTITIES) && node.get(KEY_ENTITIES) != null)
         {
-            for (Object entity : (List<?>) map.get(KEY_ENTITIES))
-                entityList.add(serializer.deserialize(MapUtils.checkAndCastMap(entity), EntityStructure.class));
+            for (StructuredYamlNode entity : node.get(KEY_ENTITIES).asList())
+                entityList.add(serializer.deserialize(entity, EntityStructure.class));
         }
 
         StageStructure world = null;
-        if (map.containsKey(KEY_STAGE))
-            world = serializer.deserialize(MapUtils.checkAndCastMap(map.get(KEY_STAGE)), StageStructure.class);
+        if (node.containsKey(KEY_STAGE))
+            world = serializer.deserialize(node.get(KEY_STAGE), StageStructure.class);
 
         return new ContextStructureImpl(
                 actorList,

@@ -3,6 +3,9 @@ package org.kunlab.scenamatica.scenariofile.structures;
 import lombok.Value;
 import net.kunmc.lab.peyangpaperutils.versioning.Version;
 import org.jetbrains.annotations.NotNull;
+import org.kunlab.scenamatica.enums.YAMLNodeType;
+import org.kunlab.scenamatica.exceptions.scenariofile.YamlParsingException;
+import org.kunlab.scenamatica.interfaces.scenariofile.StructuredYamlNode;
 import org.kunlab.scenamatica.interfaces.scenariofile.VersionRange;
 
 import java.util.HashMap;
@@ -27,36 +30,29 @@ public class VersionRangeImpl implements VersionRange
     }
 
     @NotNull
-    public static VersionRange deserialize(Map<String, Object> map)
+    public static VersionRange deserialize(StructuredYamlNode node) throws YamlParsingException
     {
-        Version since = null;
-        Version until = null;
-
-        if (map.containsKey(KEY_SINCE))
-            since = Version.of((String) map.get(KEY_SINCE));
-        if (map.containsKey(KEY_UNTIL))
-            until = Version.of((String) map.get(KEY_UNTIL));
+        Version since = node.get(KEY_SINCE).getAs(n -> Version.of(n.asString()), null);
+        Version until = node.get(KEY_UNTIL).getAs(n -> Version.of(n.asString()), null);
 
         return new VersionRangeImpl(since, until);
     }
 
-    public static void validate(Map<String, Object> map)
+    public static void validate(StructuredYamlNode node) throws YamlParsingException
     {
-        if (map.containsKey(KEY_SINCE))
-        {
-            if (!(map.get(KEY_SINCE) instanceof String))
-                throw new IllegalArgumentException("since must be a string");
-            if (!Version.isValidVersionString((String) map.get(KEY_SINCE)))
-                throw new IllegalArgumentException("since must be a valid version string");
-        }
+        node.get(KEY_UNTIL).ensureTypeOfIfExists(YAMLNodeType.STRING);
+        node.get(KEY_UNTIL).validateIfExists(n -> {
+            if (!Version.isValidVersionString(n.asString()))
+                throw new IllegalArgumentException("version string is invalid");
+            return null;
+        });
 
-        if (map.containsKey(KEY_UNTIL))
-        {
-            if (!(map.get(KEY_UNTIL) instanceof String))
-                throw new IllegalArgumentException("until must be a string");
-            if (!Version.isValidVersionString((String) map.get(KEY_UNTIL)))
-                throw new IllegalArgumentException("until must be a valid version string");
-        }
+        node.get(KEY_UNTIL).ensureTypeOfIfExists(YAMLNodeType.STRING);
+        node.get(KEY_UNTIL).validateIfExists(n -> {
+            if (!Version.isValidVersionString(n.asString()))
+                throw new IllegalArgumentException("version string is invalid");
+            return null;
+        });
     }
 
     @Override

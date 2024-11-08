@@ -1,6 +1,7 @@
 package org.kunlab.scenamatica.exceptions.scenariofile;
 
 import lombok.Getter;
+import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.Nullable;
 
 @Getter
@@ -31,5 +32,46 @@ public class YamlParsingException extends InvalidScenarioFileException
         this.aroundLines = aroundLines;
     }
 
+    public String getShortMessage()
+    {
+        return super.getMessage();
+    }
 
+    @Override
+    public String getMessage()
+    {
+        return super.getMessage() + "\n" + this.getAroundErrorLines();
+    }
+
+    private String getAroundErrorLines()
+    {
+        if (aroundLines == null)
+            return "";
+
+        StringBuilder sb = new StringBuilder();
+
+        // aroundLine: [startLine, fuga, targetLine, piyo, endLine]
+
+        int startLine = this.line;
+        int targetLine = startLine + (aroundLines.length - 1) / 2;
+        int endLine = startLine + aroundLines.length - 1;
+
+        String targetLineContent = aroundLines[(aroundLines.length - 1) / 2];
+        int cursor = this.targetKey == null ? 0: targetLineContent.indexOf(this.targetKey);
+
+        int numPadding = String.valueOf(endLine).length();
+        for (int i = 0; i < aroundLines.length; i++)
+        {
+            String line = aroundLines[i];
+            int lineNum = startLine + i - (aroundLines.length - 1) / 2;
+            String lineNumStr = String.format("%" + numPadding + "d", lineNum);
+
+            sb.append(lineNumStr).append(": ").append(line).append("\n");
+
+            if (lineNum == targetLine)
+                sb.append(StringUtils.repeat("-", numPadding + 2 + cursor)).append("^ HERE!!!\n");
+        }
+
+        return sb.toString();
+    }
 }

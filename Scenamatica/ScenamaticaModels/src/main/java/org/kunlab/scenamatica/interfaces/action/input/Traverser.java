@@ -1,6 +1,7 @@
 package org.kunlab.scenamatica.interfaces.action.input;
 
 import org.jetbrains.annotations.NotNull;
+import org.kunlab.scenamatica.exceptions.scenariofile.InvalidScenarioFileException;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 
 /**
@@ -18,7 +19,7 @@ public interface Traverser<I, O>
      * @param obj        入力値
      * @return トラバース後の値
      */
-    O traverse(@NotNull StructureSerializer serializer, I obj);
+    O traverse(@NotNull StructureSerializer serializer, I obj) throws InvalidScenarioFileException;
 
     /**
      * トラバースします。
@@ -27,7 +28,7 @@ public interface Traverser<I, O>
      * @param obj        入力値
      * @return トラバース後の値
      */
-    O tryTraverse(@NotNull StructureSerializer serializer, Object obj);
+    O tryTraverse(@NotNull StructureSerializer serializer, Object obj) throws InvalidScenarioFileException;
 
     /**
      * トラバースする入力値の型を返します。

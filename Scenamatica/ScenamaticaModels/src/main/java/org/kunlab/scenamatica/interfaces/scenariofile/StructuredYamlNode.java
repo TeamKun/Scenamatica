@@ -11,6 +11,7 @@ import org.yaml.snakeyaml.nodes.Node;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Stream;
 
 /**
@@ -355,10 +356,10 @@ public interface StructuredYamlNode
     /**
      * このノードが Map 型である場合、指定されたキーの値が指定された型であるかどうかを検証します。
      *
-     * @param type 型
+     * @param types 型
      * @throws YamlParsingException このノードが Map 型でない場合。
      */
-    void ensureTypeOfIfExists(YAMLNodeType type) throws YamlParsingException;
+    void ensureTypeOfIfExists(YAMLNodeType... types) throws YamlParsingException;
 
     /**
      * このノードが Map 型である場合、要素数を返します。
@@ -376,7 +377,7 @@ public interface StructuredYamlNode
      * @return キーの一覧
      * @throws YAMLTypeMismatchException このノードが Map 型でない場合
      */
-    List<StructuredYamlNode> keys() throws YAMLTypeMismatchException;
+    Set<StructuredYamlNode> keys() throws YAMLTypeMismatchException;
 
     /**
      * このノードがリスト型である場合、指定されたインデックスに対応する値を返します。
@@ -435,6 +436,15 @@ public interface StructuredYamlNode
 
     /**
      * このノードがマッピング型である場合、指定された値を実際に変形して, 正しい値であるかどうかを検証します。
+     * 値が存在しない場合は例外をスローします。
+     *
+     * @param validator 検証関数
+     * @throws YamlParsingException このノードが Map 型でない場合や, 検証に失敗した場合
+     */
+    void validate(Validator validator) throws YamlParsingException;
+
+    /**
+     * このノードがマッピング型である場合、指定された値を実際に変形して, 正しい値であるかどうかを検証します。
      * 値が存在しない場合はスルーします。
      *
      * @param validator 検証関数
@@ -451,6 +461,22 @@ public interface StructuredYamlNode
      * @throws YamlParsingException このノードが Map 型でない場合や, 検証に失敗した場合
      */
     void validateIfExists(Validator validator, @Nullable String message) throws YamlParsingException;
+
+    /**
+     * 指定された値を実際に変形して, 正しい値であるかどうかを検証します。
+     *
+     * @param validator 検証関数
+     * @return 検証に成功した場合は true, それ以外の場合は false
+     * @throws YamlParsingException このノードが Map 型でない場合や, 検証に失敗した場合
+     */
+    boolean test(Validator validator) throws YamlParsingException;
+
+    /**
+     * 与えられた map を元に, 新しいノードを生成します。
+     *
+     * @return 新しいノード
+     */
+    StructuredYamlNode renewByMap(Map<?, ?> map);
 
     interface ValueMapper<T>
     {

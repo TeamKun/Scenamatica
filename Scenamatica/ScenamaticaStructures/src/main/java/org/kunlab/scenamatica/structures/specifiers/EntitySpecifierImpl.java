@@ -2,6 +2,7 @@ package org.kunlab.scenamatica.structures.specifiers;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.SneakyThrows;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -9,14 +10,15 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.commons.utils.EntityUtils;
 import org.kunlab.scenamatica.commons.utils.ThreadingUtil;
+import org.kunlab.scenamatica.enums.YAMLNodeType;
 import org.kunlab.scenamatica.interfaces.context.Context;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
+import org.kunlab.scenamatica.interfaces.scenariofile.StructuredYamlNode;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.EntityStructure;
 import org.kunlab.scenamatica.interfaces.structures.specifiers.EntitySpecifier;
 import org.kunlab.scenamatica.selector.Selector;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -57,6 +59,7 @@ public class EntitySpecifierImpl<E extends Entity> implements EntitySpecifier<E>
         this.targetStructure = targetStructure;
     }
 
+    @SneakyThrows
     public static <E extends Entity> EntitySpecifier<E> tryDeserialize(
             Object obj,
             StructureSerializer serializer,
@@ -74,19 +77,19 @@ public class EntitySpecifierImpl<E extends Entity> implements EntitySpecifier<E>
         else if (obj instanceof UUID)
             return new EntitySpecifierImpl<>((UUID) obj);
 
-        if (obj instanceof Map)
-        {
-            // noinspection unchecked
-            Map<String, Object> map = (Map<String, Object>) obj;
+        if (!(obj instanceof StructuredYamlNode))
+            throw new IllegalArgumentException("Cannot deserialize EntityArgumentHolder from " + obj);
 
-            return new EntitySpecifierImpl<>(serializer.deserialize(map, structureClass));
-        }
-        else if (obj instanceof String)
+        StructuredYamlNode node = (StructuredYamlNode) obj;
+        if (node.isType(YAMLNodeType.MAPPING))
+            return new EntitySpecifierImpl<>(serializer.deserialize(node, structureClass));
+        else if (node.isType(YAMLNodeType.STRING))
         {
-            UUID mayUUID = tryConvertToUUID((String) obj);
+            String str = node.asString();
+            UUID mayUUID = tryConvertToUUID(str);
 
             if (mayUUID == null)
-                return new EntitySpecifierImpl<>(Selector.compile((String) obj));
+                return new EntitySpecifierImpl<>(Selector.compile(str));
             else
                 return new EntitySpecifierImpl<>(mayUUID);
         }

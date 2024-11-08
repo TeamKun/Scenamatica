@@ -6,6 +6,7 @@ import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.exceptions.scenariofile.InvalidScenarioFileException;
 import org.kunlab.scenamatica.interfaces.action.input.InputReference;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.input.InputValueHolder;
@@ -86,7 +87,7 @@ public class InputValueHolderImpl<T> implements InputValueHolder<T>
     }
 
     @Override
-    public void set(@NotNull StructureSerializer serializer, @Nullable Object obj)
+    public void set(@NotNull StructureSerializer serializer, @Nullable Object obj) throws InvalidScenarioFileException
     {
         if (obj == null)
             this.valueReference = InputReferenceImpl.valued(this.token, this.token.getDefaultValue());

@@ -13,15 +13,12 @@ import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
 import org.kunlab.scenamatica.bookkeeper.annotations.OutputDoc;
 import org.kunlab.scenamatica.bookkeeper.annotations.OutputDocs;
 import org.kunlab.scenamatica.bookkeeper.enums.ActionMethod;
-import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.commons.utils.Utils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.misc.BlockStructure;
-
-import java.util.Map;
 
 @Category(
         id = "blocks",
@@ -50,10 +47,7 @@ public abstract class AbstractBlockAction
             requiredOn = ActionMethod.EXECUTE
     )
     public static final InputToken<BlockStructure> IN_BLOCK = ofInput("block", BlockStructure.class,
-            ofTraverser(Map.class, (ser, map) -> ser.deserialize(
-                    MapUtils.checkAndCastMap(map),
-                    BlockStructure.class
-            ))
+            ofDeserializer(BlockStructure.class)
     );
     public static final String OUT_KEY_BLOCK = "block";
     public static final String OUT_KEY_ACTOR = "actor";

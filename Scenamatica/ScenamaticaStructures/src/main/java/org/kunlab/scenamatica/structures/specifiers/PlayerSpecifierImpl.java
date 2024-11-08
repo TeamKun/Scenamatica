@@ -6,16 +6,20 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.kunlab.scenamatica.enums.YAMLNodeType;
+import org.kunlab.scenamatica.exceptions.scenariofile.YamlParsingException;
 import org.kunlab.scenamatica.interfaces.context.Actor;
 import org.kunlab.scenamatica.interfaces.context.Context;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
+import org.kunlab.scenamatica.interfaces.scenariofile.StructuredYamlNode;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.EntityStructure;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.PlayerStructure;
 import org.kunlab.scenamatica.interfaces.structures.specifiers.PlayerSpecifier;
 import org.kunlab.scenamatica.selector.Selector;
+import org.kunlab.scenamatica.structures.StructureMappers;
+import org.kunlab.scenamatica.structures.StructureValidators;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -60,7 +64,7 @@ public class PlayerSpecifierImpl extends EntitySpecifierImpl<Player> implements 
     public static PlayerSpecifier tryDeserializePlayer(
             @Nullable Object obj,
             @NotNull StructureSerializer serializer
-    )
+    ) throws YamlParsingException
     {
         if (obj == null)
             return EMPTY;
@@ -71,25 +75,24 @@ public class PlayerSpecifierImpl extends EntitySpecifierImpl<Player> implements 
             return new PlayerSpecifierImpl((EntityStructure) obj);
         else if (obj instanceof UUID)
             return new PlayerSpecifierImpl((UUID) obj);
-        else if (obj instanceof Map)
-        {
-            // noinspection unchecked
-            Map<String, Object> map = (Map<String, Object>) obj;
 
-            return new PlayerSpecifierImpl(serializer.deserialize(map, PlayerStructure.class));
-        }
-        else if (obj instanceof String)
-        {
-            UUID mayUUID = tryConvertToUUID((String) obj);
+        if (!(obj instanceof StructuredYamlNode))
+            throw new IllegalArgumentException("Cannot deserialize PlayerSpecifier from " + obj);
 
-            if (mayUUID == null)
-                return new PlayerSpecifierImpl(
-                        Selector.tryCompile((String) obj)
-                                .orElse(null),
-                        (String) obj
-                );
+        StructuredYamlNode node = (StructuredYamlNode) obj;
+        if (node.isType(YAMLNodeType.MAPPING))
+            return new PlayerSpecifierImpl(serializer.deserialize(node, PlayerStructure.class));
+        else if (node.isType(YAMLNodeType.STRING))
+        {
+            String mayName = node.asString();
+            if (node.test(StructureValidators.UUID))
+                return new PlayerSpecifierImpl(node.getAs(StructureMappers.UUID));
             else
-                return new PlayerSpecifierImpl(mayUUID);
+                return new PlayerSpecifierImpl(
+                        Selector.tryCompile(mayName)
+                                .orElse(null),
+                        mayName
+                );
         }
 
 

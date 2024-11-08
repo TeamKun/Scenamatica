@@ -5,13 +5,17 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.enums.YAMLNodeType;
+import org.kunlab.scenamatica.exceptions.scenariofile.YamlParsingException;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
+import org.kunlab.scenamatica.interfaces.scenariofile.StructuredYamlNode;
 import org.kunlab.scenamatica.interfaces.structures.scenario.ActionStructure;
 import org.kunlab.scenamatica.interfaces.structures.scenario.ScenarioStructure;
+import org.kunlab.scenamatica.structures.StructureValidators;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 @Value
 public class ScenarioStructureImpl implements ScenarioStructure
@@ -28,11 +32,6 @@ public class ScenarioStructureImpl implements ScenarioStructure
     ActionStructure runIf;
     long timeout;  // Scenario は 他で使わないので NotNull(primitive).
 
-    /**
-     * シナリオをMapにシリアライズします。
-     *
-     * @return シナリオをMapにシリアライズしたもの
-     */
     @NotNull
     public static Map<String, Object> serialize(@NotNull ScenarioStructure structure, @NotNull StructureSerializer serializer)
     {
@@ -51,63 +50,39 @@ public class ScenarioStructureImpl implements ScenarioStructure
         return map;
     }
 
-    /**
-     * Mapがシリアライズされたシナリオであるかを検証します。
-     *
-     * @param map        検証する Map
-     * @param serializer シリアライザ
-     * @throws IllegalArgumentException Mapがシリアライズされたシナリオでない場合
-     */
-    public static void validate(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
+    public static void validate(@NotNull StructuredYamlNode node, @NotNull StructureSerializer serializer) throws YamlParsingException
     {
-        MapUtils.checkType(map, KEY_SCENARIO_TYPE, String.class);
-        if (ScenarioType.fromKey((String) map.get(KEY_SCENARIO_TYPE)) == null)
-            throw new IllegalArgumentException("Invalid scenario type found, expected one of " +
-                    Arrays.stream(ScenarioType.values())
-                            .map(ScenarioType::getKey)
-                            .map(String::toLowerCase)
-                            .reduce((a, b) -> a + ", " + b)
-                            .orElse("")
-                    + " but found " + map.get(KEY_SCENARIO_TYPE));
+        node.get(KEY_SCENARIO_TYPE).validateIfExists(StructureValidators.enumName(ScenarioType.class));
+        node.get(KEY_TIMEOUT).ensureTypeOfIfExists(YAMLNodeType.NUMBER);
+        node.get(KEY_SCENARIO_NAME).ensureTypeOfIfExists(YAMLNodeType.STRING);
 
-        MapUtils.checkNumberIfContains(map, KEY_TIMEOUT);
-
-        if (map.containsKey(KEY_SCENARIO_NAME))
-        {
-            MapUtils.checkType(map, KEY_SCENARIO_NAME, String.class);
-            if (((String) map.get(KEY_SCENARIO_NAME)).equalsIgnoreCase("scenario"))
+        // scenario の名前が "scenario" になっている場合は, 予約語としてエラーを出す
+        node.get(KEY_SCENARIO_NAME).validateIfExists(n -> {
+            if (Objects.equals(n.get(KEY_SCENARIO_NAME).asString(), "scenario"))
                 throw new IllegalArgumentException("scenario name \"scenario\" is reserved");
-        }
+            return null;
+        });
 
-        serializer.validate(map, ActionStructure.class);
+        serializer.validate(node, ActionStructure.class);
     }
 
-    /**
-     * シリアライズされたシナリオをデシリアライズします。
-     *
-     * @param map シリアライズされたシナリオ
-     * @return デシリアライズされたシナリオ
-     */
     @NotNull
-    public static ScenarioStructure deserialize(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
+    public static ScenarioStructure deserialize(@NotNull StructuredYamlNode node, @NotNull StructureSerializer serializer) throws YamlParsingException
     {
-        validate(map, serializer);
+        validate(node, serializer);
 
-        ScenarioType type = ScenarioType.fromKey((String) map.get(KEY_SCENARIO_TYPE));
-        long timeout = MapUtils.getAsLongOrDefault(map, KEY_TIMEOUT, DEFAULT_TIMEOUT_TICK);
-        String name = MapUtils.getOrNull(map, KEY_SCENARIO_NAME);
+        ScenarioType type = node.get(KEY_SCENARIO_TYPE).getAs(n -> ScenarioType.fromKey(n.asString()));
+        long timeout = node.get(KEY_TIMEOUT).asLong(DEFAULT_TIMEOUT_TICK);
+        String name = node.get(KEY_SCENARIO_NAME).asString(null);
 
         ActionStructure runIf = null;
-        if (map.containsKey(KEY_RUN_IF))
-            runIf = serializer.deserialize(
-                    MapUtils.checkAndCastMap(map.get(KEY_RUN_IF)),
-                    ActionStructure.class
-            );
+        if (node.containsKey(KEY_RUN_IF))
+            runIf = serializer.deserialize(node.get(KEY_RUN_IF), ActionStructure.class);
 
         assert type != null;
         return new ScenarioStructureImpl(
                 type,
-                serializer.deserialize(map, ActionStructure.class),
+                serializer.deserialize(node, ActionStructure.class),
                 name,
                 runIf,
                 timeout

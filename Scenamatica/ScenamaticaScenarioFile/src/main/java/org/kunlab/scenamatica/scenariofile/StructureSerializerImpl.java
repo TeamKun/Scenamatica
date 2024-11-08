@@ -51,9 +51,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -103,7 +101,7 @@ public class StructureSerializerImpl implements StructureSerializer
     }
 
     @Override
-    public @NotNull <T extends Structure> Map<String, Object> serialize(@NotNull T structure, @Nullable Class<T> clazz)
+    public @NotNull <T extends Structure> Map<String, Object> serialize(@NotNull T structure, @Nullable Class<T> clazz) throws YamlParsingException
     {
         // エンティティの場合は, さらに EntityType で分岐する
         if (isEntityRelatedStructure(structure, clazz))
@@ -114,7 +112,7 @@ public class StructureSerializerImpl implements StructureSerializer
     }
 
     @Override
-    public <T extends Structure> @NotNull T deserialize(@NotNull StructuredYamlNode node, @NotNull Class<T> clazz)
+    public <T extends Structure> @NotNull T deserialize(@NotNull StructuredYamlNode node, @NotNull Class<T> clazz) throws YamlParsingException
     {
         // エンティティの場合は, さらに EntityType で分岐する
         if (isEntityRelatedStructure(null, clazz))
@@ -125,7 +123,7 @@ public class StructureSerializerImpl implements StructureSerializer
     }
 
     @Override
-    public <T extends Structure> void validate(@NotNull StructuredYamlNode node, @NotNull Class<T> clazz)
+    public <T extends Structure> void validate(@NotNull StructuredYamlNode node, @NotNull Class<T> clazz) throws YamlParsingException
     {
         // エンティティの場合は, さらに EntityType で分岐する
         if (isEntityRelatedStructure(null, clazz))
@@ -173,7 +171,7 @@ public class StructureSerializerImpl implements StructureSerializer
     }
 
     @Override
-    public @NotNull PlayerSpecifier tryDeserializePlayerSpecifier(@Nullable Object obj)
+    public @NotNull PlayerSpecifier tryDeserializePlayerSpecifier(@Nullable Object obj) throws YamlParsingException
     {
         return PlayerSpecifierImpl.tryDeserializePlayer(obj, this);
     }
@@ -222,6 +220,7 @@ public class StructureSerializerImpl implements StructureSerializer
                 .findFirst().orElseThrow(() -> new IllegalArgumentException("Unknown structure class: " + value.getClass()));
     }
 
+    @SneakyThrows
     private void registerStructures()
     {
         this.registerContextStructures();
@@ -250,6 +249,7 @@ public class StructureSerializerImpl implements StructureSerializer
 
     }
 
+    @SneakyThrows
     private void registerContextStructures()
     {
         this.registerStructure(
@@ -273,7 +273,6 @@ public class StructureSerializerImpl implements StructureSerializer
         );
     }
 
-    @SneakyThrows(YamlParsingException.class)
     private void registerEntityStructures()
     {
         this.registerStructure(
@@ -294,6 +293,7 @@ public class StructureSerializerImpl implements StructureSerializer
         );
     }
 
+    @SneakyThrows
     private void registerInventoryStructures()
     {
         this.registerStructure(
@@ -322,7 +322,6 @@ public class StructureSerializerImpl implements StructureSerializer
         );
     }
 
-    @SneakyThrows(YamlParsingException.class)
     private void registerMiscStructures()
     {
         this.registerStructure(
@@ -344,6 +343,7 @@ public class StructureSerializerImpl implements StructureSerializer
         );
     }
 
+    @SneakyThrows
     private void registerScenarioStructures()
     {
         this.registerStructure(
@@ -365,6 +365,7 @@ public class StructureSerializerImpl implements StructureSerializer
 
     // <editor-fold desc="Structure 登録用のメソッド"
 
+    @SneakyThrows
     private void registerTriggerStructures()
     {
         this.registerStructure(
@@ -375,6 +376,7 @@ public class StructureSerializerImpl implements StructureSerializer
         );
     }
 
+    @SneakyThrows
     private void registerHelpers()
     {
         this.registerStructure(
@@ -387,8 +389,8 @@ public class StructureSerializerImpl implements StructureSerializer
 
     private <T extends Structure> void registerStructure(@NotNull Class<T> clazz,
                                                          @NotNull BiFunction<T, StructureSerializer, Map<String, Object>> serializer,
-                                                         @NotNull BiFunction<StructuredYamlNode, StructureSerializer, T> deserializer,
-                                                         @NotNull BiConsumer<StructuredYamlNode, StructureSerializer> validator)
+                                                         @NotNull ThrowableBiFunction<StructuredYamlNode, StructureSerializer, T> deserializer,
+                                                         @NotNull ThrowableBiConsumer<StructuredYamlNode, StructureSerializer> validator)
     {
         this.structureEntries.add(new StructureEntry<>(clazz, serializer, deserializer, validator));
     }
@@ -396,32 +398,32 @@ public class StructureSerializerImpl implements StructureSerializer
     @SuppressWarnings("SameParameterValue")
     private <T extends Structure> void registerStructure(@NotNull Class<T> clazz,
                                                          @NotNull BiFunction<T, StructureSerializer, Map<String, Object>> serializer,
-                                                         @NotNull BiFunction<StructuredYamlNode, StructureSerializer, T> deserializer,
-                                                         @NotNull Consumer<StructuredYamlNode> validator)
+                                                         @NotNull ThrowableBiFunction<StructuredYamlNode, StructureSerializer, T> deserializer,
+                                                         @NotNull ThrowableConsumer<StructuredYamlNode> validator)
     {
         this.structureEntries.add(new StructureEntry<>(clazz, serializer, deserializer, (v, t) -> validator.accept(v)));
     }
 
     private <T extends Structure> void registerStructure(@NotNull Class<T> clazz,
                                                          @NotNull Function<? super T, ? extends Map<String, Object>> serializer,
-                                                         @NotNull BiFunction<StructuredYamlNode, StructureSerializer, T> deserializer,
-                                                         @NotNull BiConsumer<StructuredYamlNode, StructureSerializer> validator)
+                                                         @NotNull ThrowableBiFunction<StructuredYamlNode, StructureSerializer, T> deserializer,
+                                                         @NotNull ThrowableBiConsumer<StructuredYamlNode, StructureSerializer> validator)
     {
         this.structureEntries.add(new StructureEntry<>(clazz, (v, t) -> serializer.apply(v), deserializer, validator));
     }
 
     private <T extends Structure> void registerStructure(@NotNull Class<T> clazz,
                                                          @NotNull Function<? super T, ? extends Map<String, Object>> serializer,
-                                                         @NotNull BiFunction<StructuredYamlNode, StructureSerializer, T> deserializer,
-                                                         @NotNull Consumer<StructuredYamlNode> validator)
+                                                         @NotNull ThrowableBiFunction<StructuredYamlNode, StructureSerializer, T> deserializer,
+                                                         @NotNull ThrowableConsumer<StructuredYamlNode> validator)
     {
         this.structureEntries.add(new StructureEntry<>(clazz, (v, t) -> serializer.apply(v), deserializer, (v, t) -> validator.accept(v)));
     }
 
     private <T extends Structure> void registerStructure(@NotNull Class<T> clazz,
                                                          @NotNull Function<? super T, ? extends Map<String, Object>> serializer,
-                                                         @NotNull Function<StructuredYamlNode, ? extends T> deserializer,
-                                                         @NotNull BiConsumer<StructuredYamlNode, StructureSerializer> validator)
+                                                         @NotNull ThrowableFunction<StructuredYamlNode, ? extends T> deserializer,
+                                                         @NotNull ThrowableBiConsumer<StructuredYamlNode, StructureSerializer> validator)
     {
         this.structureEntries.add(new StructureEntry<>(clazz, (v, t) -> serializer.apply(v), (v, t) -> deserializer.apply(v), validator));
     }
@@ -430,8 +432,8 @@ public class StructureSerializerImpl implements StructureSerializer
 
     private <T extends Structure> void registerStructure(@NotNull Class<T> clazz,
                                                          @NotNull Function<? super T, ? extends Map<String, Object>> serializer,
-                                                         @NotNull Function<StructuredYamlNode, ? extends T> deserializer,
-                                                         @NotNull Consumer<StructuredYamlNode> validator)
+                                                         @NotNull ThrowableFunction<StructuredYamlNode, ? extends T> deserializer,
+                                                         @NotNull ThrowableConsumer<StructuredYamlNode> validator)
     {
         this.structureEntries.add(new StructureEntry<>(clazz, (v, t) -> serializer.apply(v), (v, t) -> deserializer.apply(v), (v, t) -> validator.accept(v)));
     }
@@ -439,58 +441,58 @@ public class StructureSerializerImpl implements StructureSerializer
     @SuppressWarnings("SameParameterValue")
     private <T extends Structure> void registerStructure(@NotNull Class<T> clazz,
                                                          @NotNull BiFunction<T, StructureSerializer, Map<String, Object>> serializer,
-                                                         @NotNull Function<StructuredYamlNode, ? extends T> deserializer,
-                                                         @NotNull Consumer<StructuredYamlNode> validator)
+                                                         @NotNull ThrowableFunction<StructuredYamlNode, ? extends T> deserializer,
+                                                         @NotNull ThrowableConsumer<StructuredYamlNode> validator)
     {
         this.structureEntries.add(new StructureEntry<>(clazz, serializer, (v, t) -> deserializer.apply(v), (v, t) -> validator.accept(v)));
     }
 
     private <V, T extends Structure> void registerStructure(@NotNull Class<T> clazz,
-                                                                     @NotNull BiFunction<T, StructureSerializer, Map<String, Object>> serializer,
-                                                            @NotNull BiFunction<StructuredYamlNode, StructureSerializer, T> deserializer,
-                                                            @NotNull BiConsumer<StructuredYamlNode, StructureSerializer> validator,
-                                                                     @NotNull Function<V, T> constructor,
-                                                                     @NotNull Predicate<?> applicator)
+                                                            @NotNull BiFunction<T, StructureSerializer, Map<String, Object>> serializer,
+                                                            @NotNull ThrowableBiFunction<StructuredYamlNode, StructureSerializer, T> deserializer,
+                                                            @NotNull ThrowableBiConsumer<StructuredYamlNode, StructureSerializer> validator,
+                                                            @NotNull Function<V, T> constructor,
+                                                            @NotNull Predicate<?> applicator)
     {
         this.structureEntries.add(new MappedStructureEntry<>(clazz, serializer, deserializer, validator, constructor, applicator));
     }
 
     private <V, T extends Structure> void registerStructure(@NotNull Class<T> clazz,
-                                                                     @NotNull BiFunction<T, StructureSerializer, Map<String, Object>> serializer,
-                                                            @NotNull BiFunction<StructuredYamlNode, StructureSerializer, T> deserializer,
-                                                            @NotNull Consumer<StructuredYamlNode> validator,
-                                                                     @NotNull Function<V, T> constructor,
-                                                                     @NotNull Predicate<?> applicator)
+                                                            @NotNull BiFunction<T, StructureSerializer, Map<String, Object>> serializer,
+                                                            @NotNull ThrowableBiFunction<StructuredYamlNode, StructureSerializer, T> deserializer,
+                                                            @NotNull ThrowableConsumer<StructuredYamlNode> validator,
+                                                            @NotNull Function<V, T> constructor,
+                                                            @NotNull Predicate<?> applicator)
     {
         this.structureEntries.add(new MappedStructureEntry<>(clazz, serializer, deserializer, (v, t) -> validator.accept(v), constructor, applicator));
     }
 
     private <V, T extends Structure> void registerStructure(@NotNull Class<T> clazz,
-                                                                     @NotNull Function<? super T, ? extends Map<String, Object>> serializer,
-                                                            @NotNull BiFunction<StructuredYamlNode, StructureSerializer, T> deserializer,
-                                                            @NotNull BiConsumer<StructuredYamlNode, StructureSerializer> validator,
-                                                                     @NotNull Function<V, T> constructor,
-                                                                     @NotNull Predicate<?> applicator)
+                                                            @NotNull Function<? super T, ? extends Map<String, Object>> serializer,
+                                                            @NotNull ThrowableBiFunction<StructuredYamlNode, StructureSerializer, T> deserializer,
+                                                            @NotNull ThrowableBiConsumer<StructuredYamlNode, StructureSerializer> validator,
+                                                            @NotNull Function<V, T> constructor,
+                                                            @NotNull Predicate<?> applicator)
     {
         this.structureEntries.add(new MappedStructureEntry<>(clazz, (v, t) -> serializer.apply(v), deserializer, validator, constructor, applicator));
     }
 
     private <V, T extends Structure> void registerStructure(@NotNull Class<T> clazz,
-                                                                     @NotNull Function<? super T, ? extends Map<String, Object>> serializer,
-                                                            @NotNull BiFunction<StructuredYamlNode, StructureSerializer, T> deserializer,
-                                                            @NotNull Consumer<StructuredYamlNode> validator,
-                                                                     @NotNull Function<V, T> constructor,
-                                                                     @NotNull Predicate<?> applicator)
+                                                            @NotNull Function<? super T, ? extends Map<String, Object>> serializer,
+                                                            @NotNull ThrowableBiFunction<StructuredYamlNode, StructureSerializer, T> deserializer,
+                                                            @NotNull ThrowableConsumer<StructuredYamlNode> validator,
+                                                            @NotNull Function<V, T> constructor,
+                                                            @NotNull Predicate<?> applicator)
     {
         this.structureEntries.add(new MappedStructureEntry<>(clazz, (v, t) -> serializer.apply(v), deserializer, (v, t) -> validator.accept(v), constructor, applicator));
     }
 
     private <V, T extends Structure> void registerStructure(@NotNull Class<T> clazz,
-                                                                     @NotNull Function<? super T, ? extends Map<String, Object>> serializer,
-                                                            @NotNull Function<StructuredYamlNode, ? extends T> deserializer,
-                                                            @NotNull BiConsumer<StructuredYamlNode, StructureSerializer> validator,
-                                                                     @NotNull Function<V, T> constructor,
-                                                                     @NotNull Predicate<?> applicator)
+                                                            @NotNull Function<? super T, ? extends Map<String, Object>> serializer,
+                                                            @NotNull ThrowableFunction<StructuredYamlNode, ? extends T> deserializer,
+                                                            @NotNull ThrowableBiConsumer<StructuredYamlNode, StructureSerializer> validator,
+                                                            @NotNull Function<V, T> constructor,
+                                                            @NotNull Predicate<?> applicator)
     {
         this.structureEntries.add(new MappedStructureEntry<>(clazz, (v, t) -> serializer.apply(v), (v, t) -> deserializer.apply(v), validator, constructor, applicator));
     }
@@ -498,21 +500,21 @@ public class StructureSerializerImpl implements StructureSerializer
     /* ------------------------------------ */
 
     private <V, T extends Structure> void registerStructure(@NotNull Class<T> clazz,
-                                                                     @NotNull Function<? super T, ? extends Map<String, Object>> serializer,
-                                                            @NotNull Function<StructuredYamlNode, ? extends T> deserializer,
-                                                            @NotNull Consumer<StructuredYamlNode> validator,
-                                                                     @NotNull Function<V, T> constructor,
-                                                                     @NotNull Predicate<?> applicator)
+                                                            @NotNull Function<? super T, ? extends Map<String, Object>> serializer,
+                                                            @NotNull ThrowableFunction<StructuredYamlNode, ? extends T> deserializer,
+                                                            @NotNull ThrowableConsumer<StructuredYamlNode> validator,
+                                                            @NotNull Function<V, T> constructor,
+                                                            @NotNull Predicate<?> applicator)
     {
         this.structureEntries.add(new MappedStructureEntry<>(clazz, (v, t) -> serializer.apply(v), (v, t) -> deserializer.apply(v), (v, t) -> validator.accept(v), constructor, applicator));
     }
 
     private <V, T extends Structure> void registerStructure(@NotNull Class<T> clazz,
-                                                                     @NotNull BiFunction<T, StructureSerializer, Map<String, Object>> serializer,
-                                                            @NotNull Function<StructuredYamlNode, ? extends T> deserializer,
-                                                            @NotNull Consumer<StructuredYamlNode> validator,
-                                                                     @NotNull Function<V, T> constructor,
-                                                                     @NotNull Predicate<?> applicator)
+                                                            @NotNull BiFunction<T, StructureSerializer, Map<String, Object>> serializer,
+                                                            @NotNull ThrowableFunction<StructuredYamlNode, ? extends T> deserializer,
+                                                            @NotNull ThrowableConsumer<StructuredYamlNode> validator,
+                                                            @NotNull Function<V, T> constructor,
+                                                            @NotNull Predicate<?> applicator)
     {
         this.structureEntries.add(new MappedStructureEntry<>(clazz, serializer, (v, t) -> deserializer.apply(v), (v, t) -> validator.accept(v), constructor, applicator));
     }
@@ -535,8 +537,8 @@ public class StructureSerializerImpl implements StructureSerializer
                                                        @NotNull MinecraftVersion mcVersionSince,
                                                        @NotNull MinecraftVersion mcVersionUntil,
                                                        @NotNull BiFunction<T, StructureSerializer, Map<String, Object>> serializer,
-                                                       @NotNull BiFunction<StructuredYamlNode, StructureSerializer, T> deserializer,
-                                                       @NotNull BiConsumer<StructuredYamlNode, StructureSerializer> validator)
+                                                       @NotNull ThrowableBiFunction<StructuredYamlNode, StructureSerializer, T> deserializer,
+                                                       @NotNull ThrowableBiConsumer<StructuredYamlNode, StructureSerializer> validator)
     {
         if (!canExtend(mcVersionSince, mcVersionUntil))
             return;
@@ -550,8 +552,8 @@ public class StructureSerializerImpl implements StructureSerializer
                                                        @NotNull MinecraftVersion mcVersionSince,
                                                        @NotNull MinecraftVersion mcVersionUntil,
                                                        @NotNull BiFunction<T, StructureSerializer, Map<String, Object>> serializer,
-                                                       @NotNull BiFunction<StructuredYamlNode, StructureSerializer, T> deserializer,
-                                                       @NotNull Consumer<StructuredYamlNode> validator)
+                                                       @NotNull ThrowableBiFunction<StructuredYamlNode, StructureSerializer, T> deserializer,
+                                                       @NotNull ThrowableConsumer<StructuredYamlNode> validator)
     {
         if (!canExtend(mcVersionSince, mcVersionUntil))
             return;
@@ -564,8 +566,8 @@ public class StructureSerializerImpl implements StructureSerializer
                                                        @NotNull MinecraftVersion mcVersionSince,
                                                        @NotNull MinecraftVersion mcVersionUntil,
                                                        @NotNull Function<? super T, ? extends Map<String, Object>> serializer,
-                                                       @NotNull BiFunction<StructuredYamlNode, StructureSerializer, T> deserializer,
-                                                       @NotNull BiConsumer<StructuredYamlNode, StructureSerializer> validator)
+                                                       @NotNull ThrowableBiFunction<StructuredYamlNode, StructureSerializer, T> deserializer,
+                                                       @NotNull ThrowableBiConsumer<StructuredYamlNode, StructureSerializer> validator)
     {
         if (!canExtend(mcVersionSince, mcVersionUntil))
             return;
@@ -578,8 +580,8 @@ public class StructureSerializerImpl implements StructureSerializer
                                                        @NotNull MinecraftVersion mcVersionSince,
                                                        @NotNull MinecraftVersion mcVersionUntil,
                                                        @NotNull Function<? super T, ? extends Map<String, Object>> serializer,
-                                                       @NotNull BiFunction<StructuredYamlNode, StructureSerializer, T> deserializer,
-                                                       @NotNull Consumer<StructuredYamlNode> validator)
+                                                       @NotNull ThrowableBiFunction<StructuredYamlNode, StructureSerializer, T> deserializer,
+                                                       @NotNull ThrowableConsumer<StructuredYamlNode> validator)
     {
         if (!canExtend(mcVersionSince, mcVersionUntil))
             return;
@@ -592,8 +594,8 @@ public class StructureSerializerImpl implements StructureSerializer
                                                        @NotNull MinecraftVersion mcVersionSince,
                                                        @NotNull MinecraftVersion mcVersionUntil,
                                                        @NotNull Function<? super T, ? extends Map<String, Object>> serializer,
-                                                       @NotNull Function<StructuredYamlNode, ? extends T> deserializer,
-                                                       @NotNull BiConsumer<StructuredYamlNode, StructureSerializer> validator)
+                                                       @NotNull ThrowableFunction<StructuredYamlNode, ? extends T> deserializer,
+                                                       @NotNull ThrowableBiConsumer<StructuredYamlNode, StructureSerializer> validator)
     {
         if (!canExtend(mcVersionSince, mcVersionUntil))
             return;
@@ -606,8 +608,8 @@ public class StructureSerializerImpl implements StructureSerializer
                                                        @NotNull MinecraftVersion mcVersionSince,
                                                        @NotNull MinecraftVersion mcVersionUntil,
                                                        @NotNull Function<? super T, ? extends Map<String, Object>> serializer,
-                                                       @NotNull Function<StructuredYamlNode, ? extends T> deserializer,
-                                                       @NotNull Consumer<StructuredYamlNode> validator)
+                                                       @NotNull ThrowableFunction<StructuredYamlNode, ? extends T> deserializer,
+                                                       @NotNull ThrowableConsumer<StructuredYamlNode> validator)
     {
         if (!canExtend(mcVersionSince, mcVersionUntil))
             return;
@@ -620,8 +622,8 @@ public class StructureSerializerImpl implements StructureSerializer
                                                        @NotNull MinecraftVersion mcVersionSince,
                                                        @NotNull MinecraftVersion mcVersionUntil,
                                                        @NotNull BiFunction<T, StructureSerializer, Map<String, Object>> serializer,
-                                                       @NotNull Function<StructuredYamlNode, ? extends T> deserializer,
-                                                       @NotNull Consumer<StructuredYamlNode> validator)
+                                                       @NotNull ThrowableFunction<StructuredYamlNode, ? extends T> deserializer,
+                                                       @NotNull ThrowableConsumer<StructuredYamlNode> validator)
     {
         if (!canExtend(mcVersionSince, mcVersionUntil))
             return;
@@ -631,13 +633,13 @@ public class StructureSerializerImpl implements StructureSerializer
     }
 
     private <V, T extends Structure> void extendStructure(@NotNull Class<T> clazz,
-                                                                   @NotNull MinecraftVersion mcVersionSince,
-                                                                   @NotNull MinecraftVersion mcVersionUntil,
-                                                                   @NotNull BiFunction<T, StructureSerializer, Map<String, Object>> serializer,
-                                                          @NotNull BiFunction<StructuredYamlNode, StructureSerializer, T> deserializer,
-                                                          @NotNull BiConsumer<StructuredYamlNode, StructureSerializer> validator,
-                                                                   @NotNull Function<V, T> constructor,
-                                                                   @NotNull Predicate<?> applicator)
+                                                          @NotNull MinecraftVersion mcVersionSince,
+                                                          @NotNull MinecraftVersion mcVersionUntil,
+                                                          @NotNull BiFunction<T, StructureSerializer, Map<String, Object>> serializer,
+                                                          @NotNull ThrowableBiFunction<StructuredYamlNode, StructureSerializer, T> deserializer,
+                                                          @NotNull ThrowableBiConsumer<StructuredYamlNode, StructureSerializer> validator,
+                                                          @NotNull Function<V, T> constructor,
+                                                          @NotNull Predicate<?> applicator)
     {
         if (!canExtend(mcVersionSince, mcVersionUntil))
             return;
@@ -647,13 +649,13 @@ public class StructureSerializerImpl implements StructureSerializer
     }
 
     private <V, T extends Structure> void extendStructure(@NotNull Class<T> clazz,
-                                                                   @NotNull MinecraftVersion mcVersionSince,
-                                                                   @NotNull MinecraftVersion mcVersionUntil,
-                                                                   @NotNull BiFunction<T, StructureSerializer, Map<String, Object>> serializer,
-                                                          @NotNull BiFunction<StructuredYamlNode, StructureSerializer, T> deserializer,
-                                                          @NotNull Consumer<StructuredYamlNode> validator,
-                                                                   @NotNull Function<V, T> constructor,
-                                                                   @NotNull Predicate<?> applicator)
+                                                          @NotNull MinecraftVersion mcVersionSince,
+                                                          @NotNull MinecraftVersion mcVersionUntil,
+                                                          @NotNull BiFunction<T, StructureSerializer, Map<String, Object>> serializer,
+                                                          @NotNull ThrowableBiFunction<StructuredYamlNode, StructureSerializer, T> deserializer,
+                                                          @NotNull ThrowableConsumer<StructuredYamlNode> validator,
+                                                          @NotNull Function<V, T> constructor,
+                                                          @NotNull Predicate<?> applicator)
     {
         if (!canExtend(mcVersionSince, mcVersionUntil))
             return;
@@ -663,13 +665,13 @@ public class StructureSerializerImpl implements StructureSerializer
     }
 
     private <V, T extends Structure> void extendStructure(@NotNull Class<T> clazz,
-                                                                   @NotNull MinecraftVersion mcVersionSince,
-                                                                   @NotNull MinecraftVersion mcVersionUntil,
-                                                                   @NotNull Function<? super T, ? extends Map<String, Object>> serializer,
-                                                          @NotNull BiFunction<StructuredYamlNode, StructureSerializer, T> deserializer,
-                                                          @NotNull BiConsumer<StructuredYamlNode, StructureSerializer> validator,
-                                                                   @NotNull Function<V, T> constructor,
-                                                                   @NotNull Predicate<?> applicator)
+                                                          @NotNull MinecraftVersion mcVersionSince,
+                                                          @NotNull MinecraftVersion mcVersionUntil,
+                                                          @NotNull Function<? super T, ? extends Map<String, Object>> serializer,
+                                                          @NotNull ThrowableBiFunction<StructuredYamlNode, StructureSerializer, T> deserializer,
+                                                          @NotNull ThrowableBiConsumer<StructuredYamlNode, StructureSerializer> validator,
+                                                          @NotNull Function<V, T> constructor,
+                                                          @NotNull Predicate<?> applicator)
     {
         if (!canExtend(mcVersionSince, mcVersionUntil))
             return;
@@ -679,13 +681,13 @@ public class StructureSerializerImpl implements StructureSerializer
     }
 
     private <V, T extends Structure> void extendStructure(@NotNull Class<T> clazz,
-                                                                   @NotNull MinecraftVersion mcVersionSince,
-                                                                   @NotNull MinecraftVersion mcVersionUntil,
-                                                                   @NotNull Function<? super T, ? extends Map<String, Object>> serializer,
-                                                          @NotNull BiFunction<StructuredYamlNode, StructureSerializer, T> deserializer,
-                                                          @NotNull Consumer<StructuredYamlNode> validator,
-                                                                   @NotNull Function<V, T> constructor,
-                                                                   @NotNull Predicate<?> applicator)
+                                                          @NotNull MinecraftVersion mcVersionSince,
+                                                          @NotNull MinecraftVersion mcVersionUntil,
+                                                          @NotNull Function<? super T, ? extends Map<String, Object>> serializer,
+                                                          @NotNull ThrowableBiFunction<StructuredYamlNode, StructureSerializer, T> deserializer,
+                                                          @NotNull ThrowableConsumer<StructuredYamlNode> validator,
+                                                          @NotNull Function<V, T> constructor,
+                                                          @NotNull Predicate<?> applicator)
     {
         if (!canExtend(mcVersionSince, mcVersionUntil))
             return;
@@ -695,13 +697,13 @@ public class StructureSerializerImpl implements StructureSerializer
     }
 
     private <V, T extends Structure> void extendStructure(@NotNull Class<T> clazz,
-                                                                   @NotNull MinecraftVersion mcVersionSince,
-                                                                   @NotNull MinecraftVersion mcVersionUntil,
-                                                                   @NotNull Function<? super T, ? extends Map<String, Object>> serializer,
-                                                          @NotNull Function<StructuredYamlNode, ? extends T> deserializer,
-                                                          @NotNull BiConsumer<StructuredYamlNode, StructureSerializer> validator,
-                                                                   @NotNull Function<V, T> constructor,
-                                                                   @NotNull Predicate<?> applicator)
+                                                          @NotNull MinecraftVersion mcVersionSince,
+                                                          @NotNull MinecraftVersion mcVersionUntil,
+                                                          @NotNull Function<? super T, ? extends Map<String, Object>> serializer,
+                                                          @NotNull ThrowableFunction<StructuredYamlNode, ? extends T> deserializer,
+                                                          @NotNull ThrowableBiConsumer<StructuredYamlNode, StructureSerializer> validator,
+                                                          @NotNull Function<V, T> constructor,
+                                                          @NotNull Predicate<?> applicator)
     {
         if (!canExtend(mcVersionSince, mcVersionUntil))
             return;
@@ -711,13 +713,13 @@ public class StructureSerializerImpl implements StructureSerializer
     }
 
     private <V, T extends Structure> void extendStructure(@NotNull Class<T> clazz,
-                                                                   @NotNull MinecraftVersion mcVersionSince,
-                                                                   @NotNull MinecraftVersion mcVersionUntil,
-                                                                   @NotNull Function<? super T, ? extends Map<String, Object>> serializer,
-                                                          @NotNull Function<StructuredYamlNode, ? extends T> deserializer,
-                                                          @NotNull Consumer<StructuredYamlNode> validator,
-                                                                   @NotNull Function<V, T> constructor,
-                                                                   @NotNull Predicate<?> applicator)
+                                                          @NotNull MinecraftVersion mcVersionSince,
+                                                          @NotNull MinecraftVersion mcVersionUntil,
+                                                          @NotNull Function<? super T, ? extends Map<String, Object>> serializer,
+                                                          @NotNull ThrowableFunction<StructuredYamlNode, ? extends T> deserializer,
+                                                          @NotNull ThrowableConsumer<StructuredYamlNode> validator,
+                                                          @NotNull Function<V, T> constructor,
+                                                          @NotNull Predicate<?> applicator)
     {
         if (!canExtend(mcVersionSince, mcVersionUntil))
             return;
@@ -727,13 +729,13 @@ public class StructureSerializerImpl implements StructureSerializer
     }
 
     private <V, T extends Structure> void extendStructure(@NotNull Class<T> clazz,
-                                                                   @NotNull MinecraftVersion mcVersionSince,
-                                                                   @NotNull MinecraftVersion mcVersionUntil,
-                                                                   @NotNull BiFunction<T, StructureSerializer, Map<String, Object>> serializer,
-                                                          @NotNull Function<StructuredYamlNode, ? extends T> deserializer,
-                                                          @NotNull Consumer<StructuredYamlNode> validator,
-                                                                   @NotNull Function<V, T> constructor,
-                                                                   @NotNull Predicate<?> applicator)
+                                                          @NotNull MinecraftVersion mcVersionSince,
+                                                          @NotNull MinecraftVersion mcVersionUntil,
+                                                          @NotNull BiFunction<T, StructureSerializer, Map<String, Object>> serializer,
+                                                          @NotNull ThrowableFunction<StructuredYamlNode, ? extends T> deserializer,
+                                                          @NotNull ThrowableConsumer<StructuredYamlNode> validator,
+                                                          @NotNull Function<V, T> constructor,
+                                                          @NotNull Predicate<?> applicator)
     {
         if (!canExtend(mcVersionSince, mcVersionUntil))
             return;
@@ -745,8 +747,8 @@ public class StructureSerializerImpl implements StructureSerializer
     private <T extends Structure> void extendStructure(@NotNull Class<T> clazz,
                                                        @NotNull MinecraftVersion mcVersionSince,
                                                        @NotNull BiFunction<T, StructureSerializer, Map<String, Object>> serializer,
-                                                       @NotNull BiFunction<StructuredYamlNode, StructureSerializer, T> deserializer,
-                                                       @NotNull BiConsumer<StructuredYamlNode, StructureSerializer> validator)
+                                                       @NotNull ThrowableBiFunction<StructuredYamlNode, StructureSerializer, T> deserializer,
+                                                       @NotNull ThrowableBiConsumer<StructuredYamlNode, StructureSerializer> validator)
     {
         this.extendStructure(clazz, mcVersionSince, null, serializer, deserializer, validator);
     }
@@ -754,8 +756,8 @@ public class StructureSerializerImpl implements StructureSerializer
     private <T extends Structure> void extendStructure(@NotNull Class<T> clazz,
                                                        @NotNull MinecraftVersion mcVersionSince,
                                                        @NotNull BiFunction<T, StructureSerializer, Map<String, Object>> serializer,
-                                                       @NotNull BiFunction<StructuredYamlNode, StructureSerializer, T> deserializer,
-                                                       @NotNull Consumer<StructuredYamlNode> validator)
+                                                       @NotNull ThrowableBiFunction<StructuredYamlNode, StructureSerializer, T> deserializer,
+                                                       @NotNull ThrowableConsumer<StructuredYamlNode> validator)
     {
         this.extendStructure(clazz, mcVersionSince, null, serializer, deserializer, validator);
     }
@@ -763,8 +765,8 @@ public class StructureSerializerImpl implements StructureSerializer
     private <T extends Structure> void extendStructure(@NotNull Class<T> clazz,
                                                        @NotNull MinecraftVersion mcVersionSince,
                                                        @NotNull Function<? super T, ? extends Map<String, Object>> serializer,
-                                                       @NotNull BiFunction<StructuredYamlNode, StructureSerializer, T> deserializer,
-                                                       @NotNull BiConsumer<StructuredYamlNode, StructureSerializer> validator)
+                                                       @NotNull ThrowableBiFunction<StructuredYamlNode, StructureSerializer, T> deserializer,
+                                                       @NotNull ThrowableBiConsumer<StructuredYamlNode, StructureSerializer> validator)
     {
         this.extendStructure(clazz, mcVersionSince, null, serializer, deserializer, validator);
     }
@@ -772,8 +774,8 @@ public class StructureSerializerImpl implements StructureSerializer
     private <T extends Structure> void extendStructure(@NotNull Class<T> clazz,
                                                        @NotNull MinecraftVersion mcVersionSince,
                                                        @NotNull Function<? super T, ? extends Map<String, Object>> serializer,
-                                                       @NotNull BiFunction<StructuredYamlNode, StructureSerializer, T> deserializer,
-                                                       @NotNull Consumer<StructuredYamlNode> validator)
+                                                       @NotNull ThrowableBiFunction<StructuredYamlNode, StructureSerializer, T> deserializer,
+                                                       @NotNull ThrowableConsumer<StructuredYamlNode> validator)
     {
         this.extendStructure(clazz, mcVersionSince, null, serializer, deserializer, validator);
     }
@@ -781,8 +783,8 @@ public class StructureSerializerImpl implements StructureSerializer
     private <T extends Structure> void extendStructure(@NotNull Class<T> clazz,
                                                        @NotNull MinecraftVersion mcVersionSince,
                                                        @NotNull Function<? super T, ? extends Map<String, Object>> serializer,
-                                                       @NotNull Function<StructuredYamlNode, ? extends T> deserializer,
-                                                       @NotNull BiConsumer<StructuredYamlNode, StructureSerializer> validator)
+                                                       @NotNull ThrowableFunction<StructuredYamlNode, ? extends T> deserializer,
+                                                       @NotNull ThrowableBiConsumer<StructuredYamlNode, StructureSerializer> validator)
     {
         this.extendStructure(clazz, mcVersionSince, null, serializer, deserializer, validator);
     }
@@ -790,8 +792,8 @@ public class StructureSerializerImpl implements StructureSerializer
     private <T extends Structure> void extendStructure(@NotNull Class<T> clazz,
                                                        @NotNull MinecraftVersion mcVersionSince,
                                                        @NotNull Function<? super T, ? extends Map<String, Object>> serializer,
-                                                       @NotNull Function<StructuredYamlNode, ? extends T> deserializer,
-                                                       @NotNull Consumer<StructuredYamlNode> validator)
+                                                       @NotNull ThrowableFunction<StructuredYamlNode, ? extends T> deserializer,
+                                                       @NotNull ThrowableConsumer<StructuredYamlNode> validator)
     {
         this.extendStructure(clazz, mcVersionSince, null, serializer, deserializer, validator);
     }
@@ -799,79 +801,99 @@ public class StructureSerializerImpl implements StructureSerializer
     private <T extends Structure> void extendStructure(@NotNull Class<T> clazz,
                                                        @NotNull MinecraftVersion mcVersionSince,
                                                        @NotNull BiFunction<T, StructureSerializer, Map<String, Object>> serializer,
-                                                       @NotNull Function<StructuredYamlNode, ? extends T> deserializer,
-                                                       @NotNull Consumer<StructuredYamlNode> validator)
+                                                       @NotNull ThrowableFunction<StructuredYamlNode, ? extends T> deserializer,
+                                                       @NotNull ThrowableConsumer<StructuredYamlNode> validator)
     {
         this.extendStructure(clazz, mcVersionSince, null, serializer, deserializer, validator);
     }
 
     private <V, T extends Structure> void extendStructure(@NotNull Class<T> clazz,
-                                                                   @NotNull MinecraftVersion mcVersionSince,
-                                                                   @NotNull BiFunction<T, StructureSerializer, Map<String, Object>> serializer,
-                                                          @NotNull BiFunction<StructuredYamlNode, StructureSerializer, T> deserializer,
-                                                          @NotNull BiConsumer<StructuredYamlNode, StructureSerializer> validator,
-                                                                   @NotNull Function<V, T> constructor,
-                                                                   @NotNull Predicate<?> applicator)
+                                                          @NotNull MinecraftVersion mcVersionSince,
+                                                          @NotNull BiFunction<T, StructureSerializer, Map<String, Object>> serializer,
+                                                          @NotNull ThrowableBiFunction<StructuredYamlNode, StructureSerializer, T> deserializer,
+                                                          @NotNull ThrowableBiConsumer<StructuredYamlNode, StructureSerializer> validator,
+                                                          @NotNull Function<V, T> constructor,
+                                                          @NotNull Predicate<?> applicator)
     {
         this.extendStructure(clazz, mcVersionSince, null, serializer, deserializer, validator, constructor, applicator);
     }
 
     private <V, T extends Structure> void extendStructure(@NotNull Class<T> clazz,
-                                                                   @NotNull MinecraftVersion mcVersionSince,
-                                                                   @NotNull BiFunction<T, StructureSerializer, Map<String, Object>> serializer,
-                                                          @NotNull BiFunction<StructuredYamlNode, StructureSerializer, T> deserializer,
-                                                          @NotNull Consumer<StructuredYamlNode> validator,
-                                                                   @NotNull Function<V, T> constructor,
-                                                                   @NotNull Predicate<?> applicator)
+                                                          @NotNull MinecraftVersion mcVersionSince,
+                                                          @NotNull BiFunction<T, StructureSerializer, Map<String, Object>> serializer,
+                                                          @NotNull ThrowableBiFunction<StructuredYamlNode, StructureSerializer, T> deserializer,
+                                                          @NotNull ThrowableConsumer<StructuredYamlNode> validator,
+                                                          @NotNull Function<V, T> constructor,
+                                                          @NotNull Predicate<?> applicator)
     {
         this.extendStructure(clazz, mcVersionSince, null, serializer, deserializer, validator, constructor, applicator);
     }
 
     private <V, T extends Structure> void extendStructure(@NotNull Class<T> clazz,
-                                                                   @NotNull MinecraftVersion mcVersionSince,
-                                                                   @NotNull Function<? super T, ? extends Map<String, Object>> serializer,
-                                                          @NotNull BiFunction<StructuredYamlNode, StructureSerializer, T> deserializer,
-                                                          @NotNull BiConsumer<StructuredYamlNode, StructureSerializer> validator,
-                                                                   @NotNull Function<V, T> constructor,
-                                                                   @NotNull Predicate<?> applicator)
+                                                          @NotNull MinecraftVersion mcVersionSince,
+                                                          @NotNull Function<? super T, ? extends Map<String, Object>> serializer,
+                                                          @NotNull ThrowableBiFunction<StructuredYamlNode, StructureSerializer, T> deserializer,
+                                                          @NotNull ThrowableBiConsumer<StructuredYamlNode, StructureSerializer> validator,
+                                                          @NotNull Function<V, T> constructor,
+                                                          @NotNull Predicate<?> applicator)
     {
         this.extendStructure(clazz, mcVersionSince, null, serializer, deserializer, validator, constructor, applicator);
     }
 
     private <V, T extends Structure> void extendStructure(@NotNull Class<T> clazz,
-                                                                   @NotNull MinecraftVersion mcVersionSince,
-                                                                   @NotNull Function<? super T, ? extends Map<String, Object>> serializer,
-                                                          @NotNull BiFunction<StructuredYamlNode, StructureSerializer, T> deserializer,
-                                                          @NotNull Consumer<StructuredYamlNode> validator,
-                                                                   @NotNull Function<V, T> constructor,
-                                                                   @NotNull Predicate<?> applicator)
+                                                          @NotNull MinecraftVersion mcVersionSince,
+                                                          @NotNull Function<? super T, ? extends Map<String, Object>> serializer,
+                                                          @NotNull ThrowableBiFunction<StructuredYamlNode, StructureSerializer, T> deserializer,
+                                                          @NotNull ThrowableConsumer<StructuredYamlNode> validator,
+                                                          @NotNull Function<V, T> constructor,
+                                                          @NotNull Predicate<?> applicator)
     {
         this.extendStructure(clazz, mcVersionSince, null, serializer, deserializer, validator, constructor, applicator);
     }
 
     private <V, T extends Structure> void extendStructure(@NotNull Class<T> clazz,
-                                                                   @NotNull MinecraftVersion mcVersionSince,
-                                                                   @NotNull Function<? super T, ? extends Map<String, Object>> serializer,
-                                                          @NotNull Function<StructuredYamlNode, ? extends T> deserializer,
-                                                          @NotNull BiConsumer<StructuredYamlNode, StructureSerializer> validator,
-                                                                   @NotNull Function<V, T> constructor,
-                                                                   @NotNull Predicate<?> applicator)
+                                                          @NotNull MinecraftVersion mcVersionSince,
+                                                          @NotNull Function<? super T, ? extends Map<String, Object>> serializer,
+                                                          @NotNull ThrowableFunction<StructuredYamlNode, ? extends T> deserializer,
+                                                          @NotNull ThrowableBiConsumer<StructuredYamlNode, StructureSerializer> validator,
+                                                          @NotNull Function<V, T> constructor,
+                                                          @NotNull Predicate<?> applicator)
     {
         this.extendStructure(clazz, mcVersionSince, null, serializer, deserializer, validator, constructor, applicator);
     }
 
     private <V, T extends Structure> void extendStructure(@NotNull Class<T> clazz,
-                                                                   @NotNull MinecraftVersion mcVersionSince,
-                                                                   @NotNull Function<? super T, ? extends Map<String, Object>> serializer,
-                                                          @NotNull Function<StructuredYamlNode, ? extends T> deserializer,
-                                                          @NotNull Consumer<StructuredYamlNode> validator,
-                                                                   @NotNull Function<V, T> constructor,
-                                                                   @NotNull Predicate<?> applicator)
+                                                          @NotNull MinecraftVersion mcVersionSince,
+                                                          @NotNull Function<? super T, ? extends Map<String, Object>> serializer,
+                                                          @NotNull ThrowableFunction<StructuredYamlNode, ? extends T> deserializer,
+                                                          @NotNull ThrowableConsumer<StructuredYamlNode> validator,
+                                                          @NotNull Function<V, T> constructor,
+                                                          @NotNull Predicate<?> applicator)
     {
         this.extendStructure(clazz, mcVersionSince, null, serializer, deserializer, validator, constructor, applicator);
     }
 
     // </editor-fold>
+
+    /* non-public */ interface ThrowableBiFunction<T, U, R>
+    {
+        R apply(T t, U u) throws YamlParsingException;
+    }
+
+    /* non-public */ interface ThrowableBiConsumer<T, U>
+    {
+        void accept(T t, U u) throws YamlParsingException;
+    }
+
+    /* non-public */ interface ThrowableFunction<T, R>
+    {
+        R apply(T t) throws YamlParsingException;
+    }
+
+    /* non-public */ interface ThrowableConsumer<T>
+    {
+        void accept(T t) throws YamlParsingException;
+    }
 
     @Data
     @NotNull
@@ -880,8 +902,8 @@ public class StructureSerializerImpl implements StructureSerializer
     {
         Class<T> clazz;
         BiFunction<T, StructureSerializer, Map<String, Object>> serializer;
-        BiFunction<StructuredYamlNode, StructureSerializer, T> deserializer;
-        BiConsumer<StructuredYamlNode, StructureSerializer> validator;
+        ThrowableBiFunction<StructuredYamlNode, StructureSerializer, T> deserializer;
+        ThrowableBiConsumer<StructuredYamlNode, StructureSerializer> validator;
     }
 
     @Value
@@ -893,19 +915,13 @@ public class StructureSerializerImpl implements StructureSerializer
         Predicate<?> applicator;
 
         public MappedStructureEntry(Class<T> clazz, BiFunction<T, StructureSerializer, Map<String, Object>> serializer,
-                                    BiFunction<StructuredYamlNode, StructureSerializer, T> deserializer,
-                                    BiConsumer<StructuredYamlNode, StructureSerializer> validator,
+                                    ThrowableBiFunction<StructuredYamlNode, StructureSerializer, T> deserializer,
+                                    ThrowableBiConsumer<StructuredYamlNode, StructureSerializer> validator,
                                     Function<V, T> constructor, Predicate<?> applicator)
         {
             super(clazz, serializer, deserializer, validator);
             this.constructor = constructor;
             this.applicator = applicator;
         }
-    }
-
-    @FunctionalInterface
-    interface YamlFunction<T, R>
-    {
-
     }
 }

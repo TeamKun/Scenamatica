@@ -1,8 +1,10 @@
 package org.kunlab.scenamatica.scenariofile;
 
 import org.bukkit.projectiles.ProjectileSource;
+import org.kunlab.scenamatica.exceptions.scenariofile.YamlParsingException;
 import org.kunlab.scenamatica.interfaces.scenariofile.Structure;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
+import org.kunlab.scenamatica.interfaces.scenariofile.StructuredYamlNode;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.EntityStructure;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.misc.BlockStructure;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.misc.ProjectileSourceStructure;
@@ -26,39 +28,41 @@ public class ProjectileSourceSerializeHelper
             throw new IllegalArgumentException("Unrecognized ProjectileSourceStructure: " + structure);
     }
 
-    public static ProjectileSourceStructure deserialize(Map<String, Object> map, StructureSerializer serializer)
+    public static ProjectileSourceStructure deserialize(StructuredYamlNode node, StructureSerializer serializer) throws YamlParsingException
     {
-        if (KIND_ENTITY.equalsIgnoreCase((String) map.get(KEY_KIND)))
-            return tryDeserialize(map, serializer, EntityStructure.class);
-        else if (KIND_BLOCK.equalsIgnoreCase((String) map.get(KEY_KIND)))
-            return tryDeserialize(map, serializer, BlockStructure.class);
+        String kind = node.get(KEY_KIND).asString(null);
+        if (KIND_ENTITY.equalsIgnoreCase(kind))
+            return tryDeserialize(node, serializer, EntityStructure.class);
+        else if (KIND_BLOCK.equalsIgnoreCase(kind))
+            return tryDeserialize(node, serializer, BlockStructure.class);
 
         // 自動推論
 
-        ProjectileSourceStructure structure = tryDeserialize(map, serializer, EntityStructure.class);
+        ProjectileSourceStructure structure = tryDeserialize(node, serializer, EntityStructure.class);
         if (structure != null)
             return structure;
 
-        structure = tryDeserialize(map, serializer, BlockStructure.class);
+        structure = tryDeserialize(node, serializer, BlockStructure.class);
         if (structure != null)
             return structure;
 
-        throw new IllegalArgumentException("Unrecognized ProjectileSourceStructure: " + map);
+        throw new IllegalArgumentException("Unrecognized ProjectileSourceStructure: " + node);
     }
 
-    public static void validate(Map<String, Object> map, StructureSerializer serializer)
+    public static void validate(StructuredYamlNode node, StructureSerializer serializer) throws YamlParsingException
     {
-        if (KIND_ENTITY.equalsIgnoreCase((String) map.get(KEY_KIND)))
-            serializer.validate(map, EntityStructure.class);
-        else if (KIND_BLOCK.equalsIgnoreCase((String) map.get(KEY_KIND)))
-            serializer.validate(map, BlockStructure.class);
+        String kind = node.get(KEY_KIND).asString(null);
+        if (KIND_ENTITY.equalsIgnoreCase(kind))
+            serializer.validate(node, EntityStructure.class);
+        else if (KIND_BLOCK.equalsIgnoreCase(kind))
+            serializer.validate(node, BlockStructure.class);
     }
 
-    private static <T extends Structure> T tryDeserialize(Map<String, Object> map, StructureSerializer serializer, Class<T> clazz)
+    private static <T extends Structure> T tryDeserialize(StructuredYamlNode node, StructureSerializer serializer, Class<T> clazz)
     {
         try
         {
-            return serializer.deserialize(map, clazz);
+            return serializer.deserialize(node, clazz);
         }
         catch (Exception e)
         {

@@ -4,17 +4,18 @@ import lombok.Value;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.exceptions.scenariofile.InvalidScenarioFileException;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.input.InputValueHolder;
 import org.kunlab.scenamatica.interfaces.scenario.SessionStorage;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
+import org.kunlab.scenamatica.interfaces.scenariofile.StructuredYamlNode;
 import org.kunlab.scenamatica.interfaces.structures.trigger.TriggerArgument;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -269,19 +270,19 @@ public class InputBoardImpl implements InputBoard
     }
 
     @Override
-    public void compile(@NotNull StructureSerializer serializer, @NotNull Map<String, Object> map)
+    public void compile(@NotNull StructureSerializer serializer, @NotNull StructuredYamlNode node) throws InvalidScenarioFileException
     {
         this.validated = false;
         boolean allResolved = true;
         for (InputValueHolder<?> value : this.values)
         {
-            if (!map.containsKey(value.getToken().getName()))
+            if (!node.containsKey(value.getToken().getName()))
             {
                 value.setEmpty();
                 continue;
             }
 
-            Object obj = map.get(value.getToken().getName());
+            Object obj = node.get(value.getToken().getName());
             value.set(serializer, obj);
             if (value.isResolved())
                 value.validate(this.type);
@@ -295,7 +296,7 @@ public class InputBoardImpl implements InputBoard
     }
 
     @Override
-    public void resolveReferences(@NotNull StructureSerializer serializer, @NotNull SessionStorage variables)
+    public void resolveReferences(@NotNull StructureSerializer serializer, @NotNull SessionStorage variables) throws InvalidScenarioFileException
     {
         for (InputValueHolder<?> value : this.values)
         {

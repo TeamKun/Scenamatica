@@ -15,6 +15,7 @@ import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.enums.WatchType;
 import org.kunlab.scenamatica.exceptions.scenario.BrokenReferenceException;
 import org.kunlab.scenamatica.exceptions.scenario.TriggerNotFoundException;
+import org.kunlab.scenamatica.exceptions.scenariofile.InvalidScenarioFileException;
 import org.kunlab.scenamatica.interfaces.ScenamaticaRegistry;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.ActionResult;
@@ -348,11 +349,13 @@ public class ScenarioExecutorImpl implements ScenarioExecutor
     }
 
     @Override
-    public void resolveInputs(CompiledAction action)
+    public void resolveInputs(CompiledAction action) throws InvalidScenarioFileException
     {
         InputBoard input = action.getContext().getInput();
-        if (input.hasUnresolvedReferences())
-            input.resolveReferences(this.registry.getScenarioFileManager().getSerializer(), this.variable);
+        if (!input.hasUnresolvedReferences())
+            return;
+
+        input.resolveReferences(this.registry.getScenarioFileManager().getSerializer(), this.variable);
     }
 
     private ActionResult runScenario(CompiledScenarioAction scenario, CompiledScenarioAction next)
@@ -374,7 +377,7 @@ public class ScenarioExecutorImpl implements ScenarioExecutor
         {
             this.resolveInputs(scenario.getAction());
         }
-        catch (BrokenReferenceException e)
+        catch (Throwable e)
         {
             context.fail(ActionResultCause.UNRESOLVED_REFERENCES, e);
             return context.createResult(scenario.getAction());

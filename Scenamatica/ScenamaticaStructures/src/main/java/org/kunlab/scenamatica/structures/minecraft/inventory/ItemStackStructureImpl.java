@@ -588,6 +588,9 @@ public class ItemStackStructureImpl implements ItemStackStructure
     @Override
     public boolean isAdequate(@Nullable ItemStack stack, boolean strict)
     {
+        if (stack == null)
+            return false;
+
         if (this.type != null)
             if (stack.getType() != this.type)
                 return false;

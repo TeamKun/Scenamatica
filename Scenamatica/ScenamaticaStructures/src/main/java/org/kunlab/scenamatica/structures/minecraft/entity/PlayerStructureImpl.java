@@ -7,16 +7,19 @@ import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
+import org.kunlab.scenamatica.enums.YAMLNodeType;
+import org.kunlab.scenamatica.exceptions.scenariofile.YamlParsingException;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
+import org.kunlab.scenamatica.interfaces.scenariofile.StructuredYamlNode;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.PlayerStructure;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.entities.HumanEntityStructure;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.misc.LocationStructure;
+import org.kunlab.scenamatica.structures.StructureValidators;
 import org.kunlab.scenamatica.structures.minecraft.entity.entities.HumanEntityStructureImpl;
 import org.kunlab.scenamatica.structures.minecraft.misc.LocationStructureImpl;
 
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
-import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -169,105 +172,94 @@ public class PlayerStructureImpl extends HumanEntityStructureImpl implements Pla
         return map;
     }
 
-    public static void validatePlayer(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
+    public static void validatePlayer(@NotNull StructuredYamlNode node, @NotNull StructureSerializer serializer) throws YamlParsingException
     {
-        validateHuman(map, serializer);
-        MapUtils.checkTypeIfContains(map, KEY_NAME, String.class);
-        MapUtils.checkTypeIfContains(map, KEY_ONLINE, Boolean.class);
-        MapUtils.checkTypeIfContains(map, KEY_DISPLAY_NAME, String.class);
-        if (map.containsKey(KEY_COMPASS_TARGET))
-            MapUtils.checkTypeIfContains(map, KEY_COMPASS_TARGET, Map.class);
-        if (map.containsKey(KEY_BED_SPAWN_LOCATION))
-            MapUtils.checkTypeIfContains(map, KEY_BED_SPAWN_LOCATION, Map.class);
-        MapUtils.checkTypeIfContains(map, KEY_EXP, Number.class);
-        MapUtils.checkTypeIfContains(map, KEY_LEVEL, Integer.class);
-        MapUtils.checkTypeIfContains(map, KEY_TOTAL_EXPERIENCE, Integer.class);
-        MapUtils.checkTypeIfContains(map, KEY_ALLOW_FLIGHT, Boolean.class);
-        MapUtils.checkTypeIfContains(map, KEY_FLYING, Boolean.class);
-        MapUtils.checkTypeIfContains(map, KEY_SNEAKING, Boolean.class);
-        MapUtils.checkTypeIfContains(map, KEY_SPRINTING, Boolean.class);
-        MapUtils.checkTypeIfContains(map, KEY_WALK_SPEED, Number.class);
-        MapUtils.checkTypeIfContains(map, KEY_FLY_SPEED, Number.class);
-        MapUtils.checkTypeIfContains(map, KEY_ACTIVE_PERMISSIONS, List.class);
+        validateHuman(node, serializer);
+        node.get(KEY_NAME).ensureTypeOfIfExists(YAMLNodeType.STRING);
+        node.get(KEY_ONLINE).ensureTypeOfIfExists(YAMLNodeType.BOOLEAN);
+        node.get(KEY_DISPLAY_NAME).ensureTypeOfIfExists(YAMLNodeType.STRING);
+        node.get(KEY_COMPASS_TARGET).ensureTypeOfIfExists(YAMLNodeType.MAPPING);
+        node.get(KEY_BED_SPAWN_LOCATION).ensureTypeOfIfExists(YAMLNodeType.MAPPING);
+        node.get(KEY_EXP).ensureTypeOfIfExists(YAMLNodeType.NUMBER);
+        node.get(KEY_LEVEL).ensureTypeOfIfExists(YAMLNodeType.INTEGER);
+        node.get(KEY_TOTAL_EXPERIENCE).ensureTypeOfIfExists(YAMLNodeType.INTEGER);
+        node.get(KEY_ALLOW_FLIGHT).ensureTypeOfIfExists(YAMLNodeType.BOOLEAN);
+        node.get(KEY_FLYING).ensureTypeOfIfExists(YAMLNodeType.BOOLEAN);
+        node.get(KEY_SNEAKING).ensureTypeOfIfExists(YAMLNodeType.BOOLEAN);
+        node.get(KEY_SPRINTING).ensureTypeOfIfExists(YAMLNodeType.BOOLEAN);
+        node.get(KEY_WALK_SPEED).ensureTypeOfIfExists(YAMLNodeType.NUMBER);
+        node.get(KEY_FLY_SPEED).ensureTypeOfIfExists(YAMLNodeType.NUMBER);
+        node.get(KEY_ACTIVE_PERMISSIONS).ensureTypeOfIfExists(YAMLNodeType.LIST);
+        node.get(KEY_PLAYER_LIST).ensureTypeOfIfExists(YAMLNodeType.MAPPING);
+        node.get(KEY_CONNECTION).ensureTypeOfIfExists(YAMLNodeType.MAPPING);
 
-        Object opLevel = map.get(KEY_OP_LEVEL);
-        if (opLevel != null)
-            if (!(opLevel instanceof Integer || opLevel instanceof Boolean))
-                throw new IllegalArgumentException("opLevel must be an Integer or a Boolean");
-            else if (opLevel instanceof Integer && ((Integer) opLevel) > 4)
-                throw new IllegalArgumentException("opLevel must be between 0 and 4");
+        StructuredYamlNode opNode = node.get(KEY_OP_LEVEL);
+        opNode.ensureTypeOfIfExists(YAMLNodeType.INTEGER, YAMLNodeType.BOOLEAN);
+        if (opNode.isType(YAMLNodeType.INTEGER))
+            opNode.validate(StructureValidators.ranged(0, 4));
+
     }
 
     @NotNull
-    public static PlayerStructure deserializePlayer(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
+    public static PlayerStructure deserializePlayer(@NotNull StructuredYamlNode node, @NotNull StructureSerializer serializer) throws YamlParsingException
     {
-        validateLivingEntity(map);
+        validateLivingEntity(node);
 
-        HumanEntityStructure human = deserializeHuman(map, serializer);
+        HumanEntityStructure human = deserializeHuman(node, serializer);
 
-        String name = (String) map.get(KEY_NAME);
+        String name = node.get(KEY_NAME).asString();
 
-        Boolean online = MapUtils.getOrNull(map, KEY_ONLINE);
-        String displayName = MapUtils.getOrNull(map, KEY_DISPLAY_NAME);
+        Boolean online = node.get(KEY_ONLINE).asBoolean();
+        String displayName = node.get(KEY_DISPLAY_NAME).asString();
         LocationStructure compassTarget = null;
-        if (map.containsKey(KEY_COMPASS_TARGET))
-            compassTarget = serializer.deserialize(MapUtils.checkAndCastMap(map.get(KEY_COMPASS_TARGET)), LocationStructure.class);
+        if (node.containsKey(KEY_COMPASS_TARGET))
+            compassTarget = serializer.deserialize(node.get(KEY_COMPASS_TARGET), LocationStructure.class);
         LocationStructure bedSpawnLocation = null;
-        if (map.containsKey(KEY_BED_SPAWN_LOCATION))
-            bedSpawnLocation = serializer.deserialize(MapUtils.checkAndCastMap(map.get(KEY_BED_SPAWN_LOCATION)), LocationStructure.class);
-        Integer exp = MapUtils.getOrNull(map, KEY_EXP);
-        Integer level = MapUtils.getOrNull(map, KEY_LEVEL);
-        Integer totalExperience = MapUtils.getOrNull(map, KEY_TOTAL_EXPERIENCE);
-        Boolean allowFlight = MapUtils.getOrNull(map, KEY_ALLOW_FLIGHT);
-        Boolean flying = MapUtils.getOrNull(map, KEY_FLYING);
-        Boolean sneaking = MapUtils.getOrNull(map, KEY_SNEAKING);
-        Boolean sprinting = MapUtils.getOrNull(map, KEY_SPRINTING);
-        Float walkSpeed = MapUtils.getOrNull(map, KEY_WALK_SPEED);
-        Float flySpeed = MapUtils.getOrNull(map, KEY_FLY_SPEED);
+        if (node.containsKey(KEY_BED_SPAWN_LOCATION))
+            bedSpawnLocation = serializer.deserialize(node.get(KEY_BED_SPAWN_LOCATION), LocationStructure.class);
+        Integer exp = node.get(KEY_EXP).asInteger();
+        Integer level = node.get(KEY_LEVEL).asInteger();
+        Integer totalExperience = node.get(KEY_TOTAL_EXPERIENCE).asInteger();
+        Boolean allowFlight = node.get(KEY_ALLOW_FLIGHT).asBoolean();
+        Boolean flying = node.get(KEY_FLYING).asBoolean();
+        Boolean sneaking = node.get(KEY_SNEAKING).asBoolean();
+        Boolean sprinting = node.get(KEY_SPRINTING).asBoolean();
+        Float walkSpeed = node.get(KEY_WALK_SPEED).asFloat();
+        Float flySpeed = node.get(KEY_FLY_SPEED).asFloat();
 
         String playerListName = null;
         String playerListHeader = null;
         String playerListFooter = null;
-        if (map.containsKey(KEY_PLAYER_LIST))
+        if (node.containsKey(KEY_PLAYER_LIST))
         {
-            Map<String, Object> playerList = MapUtils.checkAndCastMap(map.get(KEY_PLAYER_LIST));
-            playerListName = MapUtils.getOrNull(playerList, KEY_PLAYER_LIST_NAME);
-            playerListHeader = MapUtils.getOrNull(playerList, KEY_PLAYER_LIST_HEADER);
-            playerListFooter = MapUtils.getOrNull(playerList, KEY_PLAYER_LIST_FOOTER);
+            StructuredYamlNode playerListNode = node.get(KEY_PLAYER_LIST);
+            playerListName = playerListNode.get(KEY_PLAYER_LIST_NAME).asString();
+            playerListHeader = playerListNode.get(KEY_PLAYER_LIST_HEADER).asString();
+            playerListFooter = playerListNode.get(KEY_PLAYER_LIST_FOOTER).asString();
         }
 
         InetAddress remoteAddress = null;
         Integer portNumber = null;
         String hostName = null;
-        if (map.containsKey(KEY_CONNECTION))
+        if (node.containsKey(KEY_CONNECTION))
         {
-            Map<String, Object> connection = MapUtils.checkAndCastMap(map.get(KEY_CONNECTION));
-            if (connection.containsKey(KEY_CONNECTION_IP))
-            {
-                try
-                {
-                    remoteAddress = InetAddress.getByName(MapUtils.getOrNull(connection, KEY_CONNECTION_IP));
-                }
-                catch (UnknownHostException e)
-                {
-                    throw new IllegalArgumentException("Failed to parse the player IP address", e);
-                }
-            }
-            portNumber = MapUtils.getAsNumber(connection, KEY_CONNECTION_PORT, Number::intValue);
-            hostName = MapUtils.getOrNull(connection, KEY_CONNECTION_HOSTNAME);
+            StructuredYamlNode connectionNode = node.get(KEY_CONNECTION);
+            remoteAddress = connectionNode.getAs(n -> InetAddress.getByName(n.asString()));
+            portNumber = connectionNode.get(KEY_CONNECTION_PORT).asInteger();
+            hostName = connectionNode.get(KEY_CONNECTION_HOSTNAME).asString();
         }
 
         Integer opLevel = null;
-        if (map.containsKey(KEY_OP_LEVEL))
+        if (node.containsKey(KEY_OP_LEVEL))
         {
-            Object opLevelObj = map.get(KEY_OP_LEVEL);
-            if (opLevelObj instanceof Boolean)
-                opLevel = (Boolean) opLevelObj ? 4: 0;
-            else if (opLevelObj instanceof Integer)
-                opLevel = (Integer) opLevelObj;
+            StructuredYamlNode opLevelObj = node.get(KEY_OP_LEVEL);
+            if (opLevelObj.isType(YAMLNodeType.BOOLEAN))
+                opLevel = opLevelObj.asBoolean() ? 4: 0;
+            else /* opLevel.isType(YAMLNodeType.INTEGER) */
+                opLevel = opLevelObj.asInteger();
         }
 
-        List<String> activePermissions = MapUtils.getAsListOrEmpty(map, KEY_ACTIVE_PERMISSIONS);
+        List<String> activePermissions = node.get(KEY_ACTIVE_PERMISSIONS).asList(StructuredYamlNode::asString);
 
         return new PlayerStructureImpl(
                 human,

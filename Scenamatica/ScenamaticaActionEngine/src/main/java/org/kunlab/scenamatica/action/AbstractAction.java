@@ -9,7 +9,6 @@ import org.kunlab.scenamatica.action.input.InputTokenImpl;
 import org.kunlab.scenamatica.action.input.TraverserImpl;
 import org.kunlab.scenamatica.action.utils.InputTypeToken;
 import org.kunlab.scenamatica.action.utils.PlayerLikeCommandSenders;
-import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.Action;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
@@ -18,6 +17,7 @@ import org.kunlab.scenamatica.interfaces.action.input.InputTraverser;
 import org.kunlab.scenamatica.interfaces.action.input.Traverser;
 import org.kunlab.scenamatica.interfaces.scenariofile.Structure;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
+import org.kunlab.scenamatica.interfaces.scenariofile.StructuredYamlNode;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.EntityStructure;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.PlayerStructure;
 import org.kunlab.scenamatica.interfaces.structures.specifiers.EntitySpecifier;
@@ -87,8 +87,8 @@ public abstract class AbstractAction implements Action
     protected static <I extends Map<String, Object>, O extends Structure> Traverser<I, O> ofDeserializer(@NotNull Class<? extends O> clazz)
     {
         // noinspection unchecked,rawtypes
-        return (Traverser) TraverserImpl.of(Map.class, (ser, map) -> ser.deserialize(
-                MapUtils.checkAndCastMap(map),
+        return (Traverser) TraverserImpl.of(StructuredYamlNode.class, (ser, node) -> ser.deserialize(
+                node,
                 clazz
         ));
     }

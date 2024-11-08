@@ -3,6 +3,7 @@ package org.kunlab.scenamatica.enums;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.Nullable;
+import org.kunlab.scenamatica.interfaces.scenariofile.StructuredYamlNode;
 import org.kunlab.scenamatica.interfaces.structures.trigger.TriggerArgument;
 
 import java.util.Map;
@@ -82,14 +83,14 @@ public enum TriggerType
      * @param argument 引数
      * @throws IllegalArgumentException 引数が不正な場合
      */
-    public void validateArguments(Map<String, Object> argument)
+    public void validateArguments(StructuredYamlNode argument)
     {
         if (this.argumentType == null)
             return;
 
         try
         {
-            this.argumentType.getMethod(STRUCTURE_VALIDATOR_METHOD, Map.class)
+            this.argumentType.getMethod(STRUCTURE_VALIDATOR_METHOD, StructuredYamlNode.class)
                     .invoke(null, argument);
         }
         catch (Exception e)
@@ -101,10 +102,10 @@ public enum TriggerType
     /**
      * トリガの引数をデシリアライズします。
      *
-     * @param map シリアライズされた引数
+     * @param node シリアライズされた引数
      * @return デシリアライズされた引数
      */
-    public TriggerArgument deserialize(Map<String, Object> map)
+    public TriggerArgument deserialize(StructuredYamlNode node)
     {
         if (this.argumentType == null)
             return null;
@@ -112,8 +113,8 @@ public enum TriggerType
         try
         {
             return (TriggerArgument) this.argumentType.getMethod(
-                            STRUCTURE_DESERIALIZER_METHOD, Map.class)
-                    .invoke(null, map);
+                            STRUCTURE_DESERIALIZER_METHOD, StructuredYamlNode.class)
+                    .invoke(null, node);
         }
         catch (Exception e)
         {

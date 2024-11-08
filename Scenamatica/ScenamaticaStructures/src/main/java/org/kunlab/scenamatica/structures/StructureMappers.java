@@ -5,8 +5,12 @@ import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.commons.utils.Utils;
+import org.kunlab.scenamatica.interfaces.scenariofile.Structure;
+import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructuredYamlNode;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 public class StructureMappers
@@ -59,6 +63,17 @@ public class StructureMappers
             }
 
             throw new IllegalArgumentException("Value is not a valid enum name of: " + enumClass.getSimpleName());
+        };
+    }
+
+    public static <T extends Structure> StructuredYamlNode.ValueMapper<List<T>> deserializedList(@NotNull StructureSerializer serializer, Class<T> elementClass)
+    {
+        return node -> {
+            List<T> list = new ArrayList<>();
+            for (StructuredYamlNode elementNode : node.asList())
+                list.add(serializer.deserialize(elementNode, elementClass));
+
+            return list;
         };
     }
 }

@@ -15,7 +15,6 @@ import org.kunlab.scenamatica.action.utils.EventListenerUtils;
 import org.kunlab.scenamatica.commons.utils.ActionMetaUtils;
 import org.kunlab.scenamatica.enums.TriggerType;
 import org.kunlab.scenamatica.enums.WatchType;
-import org.kunlab.scenamatica.exceptions.scenario.BrokenReferenceException;
 import org.kunlab.scenamatica.exceptions.scenario.ScenarioException;
 import org.kunlab.scenamatica.interfaces.ExceptionHandler;
 import org.kunlab.scenamatica.interfaces.action.Action;
@@ -247,7 +246,7 @@ public class WatcherManagerImpl implements WatcherManager
         boolean isJumped = this.checkJumped(entry);
 
         // 引数の解決を試みる。（この状態では、引数の解決が完了していない可能性がある。）
-        BrokenReferenceException resolveError = this.tryResolve(entry);
+        Throwable resolveError = this.tryResolve(entry);
         if (resolveError != null)
         {
             // 引数の解決に失敗した場合のケースとして：
@@ -288,14 +287,14 @@ public class WatcherManagerImpl implements WatcherManager
     }
 
     @Nullable
-    private BrokenReferenceException tryResolve(@NotNull WatchEntry entry)
+    private Throwable tryResolve(@NotNull WatchEntry entry)
     {
         try
         {
             entry.getEngine().getExecutor().resolveInputs(entry.getAction());
             return null;
         }
-        catch (BrokenReferenceException e)
+        catch (Throwable e)
         {
             return e;
         }

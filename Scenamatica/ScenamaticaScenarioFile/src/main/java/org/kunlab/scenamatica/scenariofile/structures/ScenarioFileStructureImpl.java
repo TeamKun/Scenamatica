@@ -6,14 +6,21 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.enums.ScenarioOrder;
+import org.kunlab.scenamatica.enums.YAMLNodeType;
+import org.kunlab.scenamatica.exceptions.scenariofile.YamlParsingException;
 import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileStructure;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
+import org.kunlab.scenamatica.interfaces.scenariofile.StructuredYamlNode;
 import org.kunlab.scenamatica.interfaces.scenariofile.VersionRange;
 import org.kunlab.scenamatica.interfaces.structures.context.ContextStructure;
 import org.kunlab.scenamatica.interfaces.structures.scenario.ActionStructure;
 import org.kunlab.scenamatica.interfaces.structures.scenario.ScenarioStructure;
 import org.kunlab.scenamatica.interfaces.structures.trigger.TriggerStructure;
+import org.kunlab.scenamatica.structures.StructureMappers;
+import org.kunlab.scenamatica.structures.StructureValidators;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -76,87 +83,71 @@ public class ScenarioFileStructureImpl implements ScenarioFileStructure
         return map;
     }
 
-    public static void validate(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
+    public static void validate(@NotNull StructuredYamlNode node, @NotNull StructureSerializer serializer) throws YamlParsingException
     {
-        MapUtils.checkType(map, KEY_SCENAMATICA_VERSION, String.class);
-        if (!Version.isValidVersionString((String) map.get(KEY_SCENAMATICA_VERSION)))
-            throw new IllegalArgumentException("Invalid version string: " + map.get(KEY_SCENAMATICA_VERSION));
+        StructuredYamlNode scenamaticaVersionNode = node.get(KEY_SCENAMATICA_VERSION);
+        if (!Version.isValidVersionString(scenamaticaVersionNode.asString()))
+            throw new IllegalArgumentException("Invalid version string: " + scenamaticaVersionNode);
 
-        if (map.containsKey(KEY_MINECRAFT_VERSIONS))
-            serializer.validate(
-                    MapUtils.checkAndCastMap(map.get(KEY_MINECRAFT_VERSIONS)),
-                    VersionRange.class
-            );
+        if (node.containsKey(KEY_MINECRAFT_VERSIONS))
+            serializer.validate(node.get(KEY_MINECRAFT_VERSIONS), VersionRange.class);
 
+        node.get(KEY_NAME).ensureTypeOf(YAMLNodeType.STRING);
+        node.get(KEY_DESCRIPTION).ensureTypeOfIfExists(YAMLNodeType.STRING);
+        node.get(KEY_TIMEOUT).ensureTypeOfIfExists(YAMLNodeType.NUMBER);
+        node.get(KEY_ORDER).ensureTypeOfIfExists(YAMLNodeType.NUMBER);
 
-        MapUtils.checkType(map, KEY_NAME, String.class);
-        MapUtils.checkTypeIfContains(map, KEY_DESCRIPTION, String.class);
-        MapUtils.checkNumberIfContains(map, KEY_TIMEOUT);
-        MapUtils.checkNumberIfContains(map, KEY_ORDER);
+        if (node.containsKey(KEY_CONTEXT))
+            serializer.validate(node.get(KEY_CONTEXT), ContextStructure.class);
 
-        if (map.containsKey(KEY_CONTEXT))
-            serializer.validate(
-                    MapUtils.checkAndCastMap(map.get(KEY_CONTEXT)),
-                    ContextStructure.class
-            );
-
-        MapUtils.checkType(map, KEY_TRIGGERS, List.class);
-        ((List<?>) map.get(KEY_TRIGGERS))
-                .forEach(o -> serializer.validate(MapUtils.checkAndCastMap(o), TriggerStructure.class));
-
-        MapUtils.checkType(map, KEY_SCENARIO, List.class);
-        ((List<?>) map.get(KEY_SCENARIO))
-                .forEach(o -> serializer.validate(MapUtils.checkAndCastMap(o), ScenarioStructure.class));
+        node.get(KEY_TRIGGERS).validateIfExists(StructureValidators.listType(serializer, TriggerStructure.class));
+        node.get(KEY_SCENARIO).validateIfExists(StructureValidators.listType(serializer, ScenarioStructure.class));
     }
 
     @NotNull
-    public static ScenarioFileStructure deserialize(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
+    public static ScenarioFileStructure deserialize(@NotNull StructuredYamlNode node, @NotNull StructureSerializer serializer) throws YamlParsingException
     {
-        validate(map, serializer);
+        validate(node, serializer);
 
-        Version scenamatica = Version.of((String) map.get(KEY_SCENAMATICA_VERSION));
-        VersionRange minecraftVersions = null;
-        if (map.containsKey(KEY_MINECRAFT_VERSIONS))
-            minecraftVersions = serializer.deserialize(MapUtils.checkAndCastMap(map.get(KEY_MINECRAFT_VERSIONS)), VersionRange.class);
-
-        String name = (String) map.get(KEY_NAME);
-        String description = (String) map.get(KEY_DESCRIPTION);
-        long timeout = MapUtils.getAsLongOrDefault(map, KEY_TIMEOUT, DEFAULT_TIMEOUT_TICK);
+        Version scenamatica = Version.of(node.get(KEY_SCENAMATICA_VERSION).asString());
+        VersionRange minecraftVersions = node.get(KEY_MINECRAFT_VERSIONS).getAs(
+                n -> serializer.deserialize(n, VersionRange.class),
+                null
+        );
+        String name = node.get(KEY_NAME).asString();
+        String description = node.get(KEY_DESCRIPTION).asString();
+        long timeout = node.get(KEY_TIMEOUT).asLong(DEFAULT_TIMEOUT_TICK);
 
         int order = ScenarioOrder.NORMAL.getOrder();
-        Object orderObject = map.get(KEY_ORDER);
+        StructuredYamlNode orderObject = node.get(KEY_ORDER);
         if (orderObject != null)
         {
             String orderString = String.valueOf(orderObject);
             ScenarioOrder enumOrder;
-            if ((enumOrder = ScenarioOrder.of(orderString)) != null)
-                order = enumOrder.getOrder();
+            if ((enumOrder = ScenarioOrder.of(orderString)) == null)
+                order = orderObject.asInteger();
             else
-                try
-                {
-                    order = Integer.parseInt(orderString);
-                }
-                catch (NumberFormatException e)
-                {
-                    throw new IllegalArgumentException("Invalid order: " + orderString, e);
-                }
+                order = enumOrder.getOrder();
         }
 
-        List<TriggerStructure> triggers = ((List<?>) map.get(KEY_TRIGGERS)).stream()
-                .map(o -> serializer.deserialize(MapUtils.checkAndCastMap(o), TriggerStructure.class))
-                .collect(Collectors.toList());
-        List<ScenarioStructure> scenario = ((List<?>) map.get(KEY_SCENARIO)).stream()
-                .map(o -> serializer.deserialize(MapUtils.checkAndCastMap(o), ScenarioStructure.class))
-                .collect(Collectors.toList());
+        List<TriggerStructure> triggers = node.get(KEY_TRIGGERS).getAs(
+                StructureMappers.deserializedList(serializer, TriggerStructure.class),
+                Collections.emptyList()
+        );
+
+        List<ScenarioStructure> scenario = node.get(KEY_SCENARIO).getAs(
+                StructureMappers.deserializedList(serializer, ScenarioStructure.class),
+                new ArrayList<>()
+        );
 
         ContextStructure context = null;
-        if (map.containsKey(KEY_CONTEXT))
-            context = serializer.deserialize(MapUtils.checkAndCastMap(map.get(KEY_CONTEXT)), ContextStructure.class);
+        if (node.containsKey(KEY_CONTEXT))
+            context = serializer.deserialize(node.get(KEY_CONTEXT), ContextStructure.class);
 
         ActionStructure runIf = null;
-        if (map.containsKey(KEY_RUN_IF))
-            runIf = serializer.deserialize(MapUtils.checkAndCastMap(map.get(KEY_RUN_IF)), ActionStructure.class);
 
+        if (node.containsKey(KEY_RUN_IF))
+            runIf = serializer.deserialize(node.get(KEY_RUN_IF), ActionStructure.class);
         return new ScenarioFileStructureImpl(
                 scenamatica,
                 minecraftVersions,
