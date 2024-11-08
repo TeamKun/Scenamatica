@@ -3,6 +3,7 @@ package org.kunlab.scenamatica.interfaces.action.input;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.exceptions.scenariofile.InvalidScenarioFileException;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 
 import java.util.function.Function;
@@ -78,7 +79,7 @@ public interface InputValueHolder<T>
      *
      * @param obj 値
      */
-    void set(@NotNull StructureSerializer serializer, @Nullable Object obj);
+    void set(@NotNull StructureSerializer serializer, @Nullable Object obj) throws InvalidScenarioFileException;
 
     /**
      * 値を設定します。

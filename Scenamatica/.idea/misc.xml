@@ -26,6 +26,10 @@
       </set>
     </option>
   </component>
+  <component name="PWA">
+    <option name="enabled" value="true" />
+    <option name="wasEnabledAtLeastOnce" value="true" />
+  </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" project-jdk-name="corretto-22" project-jdk-type="JavaSDK" />
   <component name="SaveActionSettings">
     <option name="actions">

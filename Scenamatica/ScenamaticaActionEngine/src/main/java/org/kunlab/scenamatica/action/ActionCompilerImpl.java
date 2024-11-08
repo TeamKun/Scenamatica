@@ -5,11 +5,13 @@ import net.kunmc.lab.peyangpaperutils.lang.MsgArgs;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.actions.scenamatica.NegateAction;
-import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.enums.RunAs;
 import org.kunlab.scenamatica.enums.RunOn;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.exceptions.scenario.ScenarioCompilationErrorException;
+import org.kunlab.scenamatica.exceptions.scenario.ScenarioDefinitionErrorException;
+import org.kunlab.scenamatica.exceptions.scenariofile.InvalidScenarioFileException;
+import org.kunlab.scenamatica.exceptions.scenariofile.YamlParsingException;
 import org.kunlab.scenamatica.interfaces.action.ActionCompiler;
 import org.kunlab.scenamatica.interfaces.action.ActionLoader;
 import org.kunlab.scenamatica.interfaces.action.ActionResult;
@@ -18,10 +20,10 @@ import org.kunlab.scenamatica.interfaces.action.LoadedAction;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
+import org.kunlab.scenamatica.interfaces.scenariofile.StructuredYamlNode;
 import org.kunlab.scenamatica.interfaces.structures.scenario.ActionStructure;
 
 import java.util.HashMap;
-import java.util.Map;
 import java.util.function.BiConsumer;
 
 public class ActionCompilerImpl implements ActionCompiler
@@ -42,9 +44,9 @@ public class ActionCompilerImpl implements ActionCompiler
             ActionStructure structure,
             BiConsumer<CompiledAction, Throwable> reportErrorTo,
             BiConsumer<ActionResult, ScenarioType> onSuccess)
-            throws ScenarioCompilationErrorException
+            throws ScenarioCompilationErrorException, YamlParsingException
     {
-        Map<String, Object> arguments = structure.getArguments();
+        StructuredYamlNode arguments = structure.getArguments();
         if (arguments == null)
             throw new ScenarioCompilationErrorException(
                     engine,
@@ -54,8 +56,8 @@ public class ActionCompilerImpl implements ActionCompiler
                     )
             );
 
-        String actionName = MapUtils.getOrNull(arguments, NegateAction.KEY_IN_ACTION);
-        if (actionName == null)
+        // NegateAction は, 引数をバラして上げる必要がある：引数にアクションが内包されているため。
+        if (arguments.containsKey(NegateAction.KEY_IN_ACTION))
             throw new ScenarioCompilationErrorException(
                     engine,
                     LangProvider.get(
@@ -63,6 +65,7 @@ public class ActionCompilerImpl implements ActionCompiler
                             MsgArgs.of("negateActionName", NegateAction.ACTION_NAME)
                     )
             );
+        String actionName = arguments.get(NegateAction.KEY_IN_ACTION).asString();
 
         LoadedAction<?> actionToBeNegated = this.loader.getActionByName(actionName);
         if (actionToBeNegated == null)
@@ -83,16 +86,25 @@ public class ActionCompilerImpl implements ActionCompiler
                     )
             );
 
+        InputBoard negateArgument;
         InputBoard argument = actionToBeNegated.getInstance().getInputBoard(ScenarioType.CONDITION_REQUIRE);
-        if (arguments.containsKey(NegateAction.KEY_IN_ARGUMENTS))
-            argument.compile(serializer, MapUtils.checkAndCastMap(arguments.get(NegateAction.KEY_IN_ARGUMENTS)));
+        try
+        {
+            if (arguments.containsKey(NegateAction.KEY_IN_ARGUMENTS))
+                argument.compile(serializer, arguments.get(NegateAction.KEY_IN_ARGUMENTS));
 
-        InputBoard negateArgument = action.getInputBoard(ScenarioType.CONDITION_REQUIRE);
-        negateArgument.compile(serializer, new HashMap<String, Object>()
-        {{
-            this.put(NegateAction.KEY_IN_ACTION, actionToBeNegated.getInstance());
-            this.put(NegateAction.KEY_IN_ARGUMENTS, new ActionContextImpl(engine, runOn, runAs, argument, engine.getPlugin().getLogger()));
-        }});
+            negateArgument = action.getInputBoard(ScenarioType.CONDITION_REQUIRE);
+            negateArgument.compile(serializer, arguments.renewByMap(new HashMap<String, Object>()
+            {{
+                this.put(NegateAction.KEY_IN_ACTION, actionToBeNegated.getInstance());
+                this.put(NegateAction.KEY_IN_ARGUMENTS, new ActionContextImpl(engine, runOn, runAs, argument, engine.getPlugin().getLogger()));
+            }}));
+        }
+        catch (InvalidScenarioFileException e)
+        {
+            assert e instanceof YamlParsingException;
+            throw new ScenarioDefinitionErrorException(engine, e.getMessage(), (YamlParsingException) e);
+        }
 
         return new CompiledActionImpl(
                 action,
@@ -125,12 +137,31 @@ public class ActionCompilerImpl implements ActionCompiler
                     )
             );
         else if (action.isRequireable() && NegateAction.class.isAssignableFrom(action.getActionClass())) // negate 用の特別処理
-            return this.processNegateAction(engine, runOn, runAs, serializer, (NegateAction) action.getInstance(), structure, reportErrorTo, onSuccess);
+        {
+            try
+            {
+                return this.processNegateAction(engine, runOn, runAs, serializer, (NegateAction) action.getInstance(), structure, reportErrorTo, onSuccess);
+            }
+            catch (YamlParsingException e)
+            {
+                throw new ScenarioDefinitionErrorException(engine, e.getMessage(), e);
+            }
+        }
 
 
         InputBoard argument = action.getInstance().getInputBoard(scenarioType);
         if (structure.getArguments() != null)
-            argument.compile(serializer, structure.getArguments());
+        {
+            try
+            {
+                argument.compile(serializer, structure.getArguments());
+            }
+            catch (InvalidScenarioFileException e)
+            {
+                assert e instanceof YamlParsingException;
+                throw new ScenarioDefinitionErrorException(engine, e.getMessage(), (YamlParsingException) e);
+            }
+        }
 
         if (!argument.hasUnresolvedReferences())
             argument.validate();

@@ -7,9 +7,9 @@ public class YAMLTypeMismatchException extends YamlParsingException
     private final YAMLNodeType expectedType;
     private final YAMLNodeType actualType;
 
-    public YAMLTypeMismatchException(String fileName, int line, String[] aroundLines, YAMLNodeType expectedType, YAMLNodeType actualType)
+    public YAMLTypeMismatchException(String fileName, String keyName, int line, String[] aroundLines, YAMLNodeType expectedType, YAMLNodeType actualType)
     {
-        super("Value type mismatch", fileName, line, aroundLines);
+        super("Value type mismatch", fileName, keyName, line, aroundLines);
 
         this.expectedType = expectedType;
         this.actualType = actualType;

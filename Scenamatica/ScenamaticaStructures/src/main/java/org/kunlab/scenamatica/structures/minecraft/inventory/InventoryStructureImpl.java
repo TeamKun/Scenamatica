@@ -9,9 +9,13 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
+import org.kunlab.scenamatica.enums.YAMLNodeType;
+import org.kunlab.scenamatica.exceptions.scenariofile.YamlParsingException;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
+import org.kunlab.scenamatica.interfaces.scenariofile.StructuredYamlNode;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.inventory.InventoryStructure;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.inventory.ItemStackStructure;
+import org.kunlab.scenamatica.structures.StructureValidators;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -49,49 +53,44 @@ public class InventoryStructureImpl implements InventoryStructure
         return map;
     }
 
-    public static void validate(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
+    public static void validate(@NotNull StructuredYamlNode node, @NotNull StructureSerializer serializer) throws YamlParsingException
     {
-        MapUtils.checkTypeIfContains(map, KEY_SIZE, Integer.class);
-        MapUtils.checkTypeIfContains(map, KEY_TITLE, String.class);
-
-        if (!map.containsKey(KEY_MAIN_CONTENTS))
+        node.get(KEY_SIZE).ensureTypeOfIfExists(YAMLNodeType.INTEGER);
+        node.get(KEY_TITLE).ensureTypeOfIfExists(YAMLNodeType.STRING);
+        if (!node.containsKey(KEY_MAIN_CONTENTS))
             return;
 
-        Map<Integer, Object> contents = MapUtils.checkAndCastMap(
-                map.get(KEY_MAIN_CONTENTS),
-                Integer.class,
-                Object.class
-        );
-
-        for (Map.Entry<Integer, Object> entry : contents.entrySet())
-            serializer.validate(MapUtils.checkAndCastMap(entry.getValue()), ItemStackStructure.class);
+        StructuredYamlNode contentsNode = node.get(KEY_MAIN_CONTENTS);
+        contentsNode.validateIfExists(StructureValidators.mapType(
+                n -> n.isType(YAMLNodeType.STRING),
+                n -> {
+                    serializer.validate(n, ItemStackStructure.class);
+                    return null;
+                }
+        ));
     }
 
     @NotNull
-    public static InventoryStructure deserialize(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
+    public static InventoryStructure deserialize(@NotNull StructuredYamlNode node, @NotNull StructureSerializer serializer) throws YamlParsingException
     {
-        validate(map, serializer);
+        validate(node, serializer);
+
+        Integer size = node.get(KEY_SIZE).asInteger();
+        String title = node.get(KEY_TITLE).asString();
 
         Map<Integer, ItemStackStructure> mainContents = new HashMap<>();
-        if (map.containsKey(KEY_MAIN_CONTENTS))
+        if (node.containsKey(KEY_MAIN_CONTENTS))
         {
-            Map<Integer, Object> contents = MapUtils.checkAndCastMap(
-                    map.get(KEY_MAIN_CONTENTS),
-                    Integer.class,
-                    Object.class
-
+            StructuredYamlNode contentsNode = node.get(KEY_MAIN_CONTENTS);
+            mainContents = contentsNode.asMap(
+                    StructuredYamlNode::asInteger,
+                    n -> serializer.deserialize(n, ItemStackStructure.class)
             );
-
-            for (Map.Entry<Integer, Object> entry : contents.entrySet())
-                mainContents.put(
-                        entry.getKey(),
-                        serializer.deserialize(MapUtils.checkAndCastMap(entry.getValue()), ItemStackStructure.class)
-                );
         }
 
         return new InventoryStructureImpl(
-                MapUtils.getOrNull(map, KEY_SIZE),
-                MapUtils.getOrNull(map, KEY_TITLE),
+                size,
+                title,
                 mainContents
         );
     }

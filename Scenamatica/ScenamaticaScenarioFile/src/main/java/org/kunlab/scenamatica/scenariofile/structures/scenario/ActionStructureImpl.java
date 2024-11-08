@@ -1,9 +1,12 @@
 package org.kunlab.scenamatica.scenariofile.structures.scenario;
 
+import lombok.SneakyThrows;
 import lombok.Value;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.kunlab.scenamatica.commons.utils.MapUtils;
+import org.kunlab.scenamatica.enums.YAMLNodeType;
+import org.kunlab.scenamatica.exceptions.scenariofile.YamlParsingException;
+import org.kunlab.scenamatica.interfaces.scenariofile.StructuredYamlNode;
 import org.kunlab.scenamatica.interfaces.structures.scenario.ActionStructure;
 
 import java.util.HashMap;
@@ -15,39 +18,36 @@ public class ActionStructureImpl implements ActionStructure
     @NotNull
     String type;
     @Nullable
-    Map<String, Object> arguments;
+    StructuredYamlNode arguments;
 
     @NotNull
+    @SneakyThrows(YamlParsingException.class)
     public static Map<String, Object> serialize(@NotNull ActionStructure structure)
     {
         Map<String, Object> map = new HashMap<>();
         map.put(KEY_TYPE, structure.getType());
 
-        MapUtils.putIfNotNull(map, KEY_ARGUMENTS, structure.getArguments());
+        if (structure.getArguments() == null)
+            return map;
+
+        assert structure.getArguments().isType(YAMLNodeType.MAPPING);
+        map.put(KEY_ARGUMENTS, structure.getArguments().asMap());
 
         return map;
     }
 
-    public static void validate(@NotNull Map<String, Object> map)
+    public static void validate(@NotNull StructuredYamlNode node) throws YamlParsingException
     {
-        MapUtils.checkContainsKey(map, KEY_TYPE);
-
-        if (map.containsKey(KEY_ARGUMENTS) && map.get(KEY_ARGUMENTS) != null)
-            MapUtils.checkAndCastMap(map.get(KEY_ARGUMENTS));
-
+        node.get(KEY_TYPE).ensureTypeOfIfExists(YAMLNodeType.STRING);
+        node.get(KEY_ARGUMENTS).ensureTypeOfIfExists(YAMLNodeType.MAPPING);
     }
 
-    public static ActionStructure deserialize(Map<String, Object> map)
+    public static ActionStructure deserialize(StructuredYamlNode node) throws YamlParsingException
     {
-        validate(map);
+        validate(node);
 
-        String actionType = String.valueOf(map.get(KEY_TYPE));
-
-        Map<String, Object> argumentsMap;
-        if (map.containsKey(KEY_ARGUMENTS) && map.get(KEY_ARGUMENTS) != null)
-            argumentsMap = MapUtils.checkAndCastMap(map.get(KEY_ARGUMENTS));
-        else
-            argumentsMap = null;
+        String actionType = node.get(KEY_TYPE).asString();
+        StructuredYamlNode argumentsMap = node.get(KEY_ARGUMENTS);
 
         return new ActionStructureImpl(
                 actionType,

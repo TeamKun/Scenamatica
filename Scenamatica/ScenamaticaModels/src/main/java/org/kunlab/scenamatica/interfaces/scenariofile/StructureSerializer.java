@@ -3,6 +3,7 @@ package org.kunlab.scenamatica.interfaces.scenariofile;
 import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.kunlab.scenamatica.exceptions.scenariofile.YamlParsingException;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.EntityStructure;
 import org.kunlab.scenamatica.interfaces.structures.specifiers.EntitySpecifier;
 import org.kunlab.scenamatica.interfaces.structures.specifiers.PlayerSpecifier;
@@ -23,7 +24,7 @@ public interface StructureSerializer
      * @return シリアライズされた Structure の Map
      * @throws IllegalArgumentException シリアライズに失敗した場合
      */
-    @NotNull <T extends Structure> Map<String, Object> serialize(@NotNull T structure, @Nullable Class<T> clazz);
+    @NotNull <T extends Structure> Map<String, Object> serialize(@NotNull T structure, @Nullable Class<T> clazz) throws YamlParsingException;
 
     /**
      * Structure をデシリアライズします。
@@ -34,7 +35,7 @@ public interface StructureSerializer
      * @return デシリアライズされた Structure
      * @throws IllegalArgumentException デシリアライズに失敗した場合
      */
-    @NotNull <T extends Structure> T deserialize(@NotNull StructuredYamlNode node, @NotNull Class<T> clazz);
+    @NotNull <T extends Structure> T deserialize(@NotNull StructuredYamlNode node, @NotNull Class<T> clazz) throws YamlParsingException;
 
     /**
      * Structure を検証します。
@@ -44,7 +45,7 @@ public interface StructureSerializer
      * @param <T>   検証する Structure の型
      * @throws IllegalArgumentException 検証に失敗した場合
      */
-    <T extends Structure> void validate(@NotNull StructuredYamlNode node, @NotNull Class<T> clazz);
+    <T extends Structure> void validate(@NotNull StructuredYamlNode node, @NotNull Class<T> clazz) throws YamlParsingException;
 
     /**
      * 実体を Mapped のインスタンスに変換します。
@@ -106,6 +107,6 @@ public interface StructureSerializer
      * @return デシリアライズされたプレイヤ指定子
      */
     @NotNull
-    PlayerSpecifier tryDeserializePlayerSpecifier(@Nullable Object obj);
+    PlayerSpecifier tryDeserializePlayerSpecifier(@Nullable Object obj) throws YamlParsingException;
 
 }

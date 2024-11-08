@@ -1,7 +1,9 @@
 package org.kunlab.scenamatica.trigger.arguments;
 
 import lombok.Value;
-import org.kunlab.scenamatica.commons.utils.MapUtils;
+import org.kunlab.scenamatica.enums.YAMLNodeType;
+import org.kunlab.scenamatica.exceptions.scenariofile.YamlParsingException;
+import org.kunlab.scenamatica.interfaces.scenariofile.StructuredYamlNode;
 import org.kunlab.scenamatica.interfaces.structures.scenario.ActionStructure;
 import org.kunlab.scenamatica.interfaces.structures.trigger.TriggerArgument;
 
@@ -20,34 +22,38 @@ public class ActionTriggerArgument implements TriggerArgument, ActionStructure
     public static final String KEY_ACTION_ARGS = "with";
 
     String type;
-    Map<String, Object> arguments;
+    StructuredYamlNode arguments;
 
     public static Map<String, Object> serialize(ActionTriggerArgument argument)
     {
         Map<String, Object> result = new HashMap<>();
         result.put(KEY_ACTION_TYPE, argument.type.toLowerCase(Locale.ROOT));
-        MapUtils.putIfNotNull(result, KEY_ACTION_ARGS, argument.arguments);
+        if (argument.arguments != null)
+        {
+            try
+            {
+                result.put(KEY_ACTION_ARGS, argument.arguments.asMap());
+            }
+            catch (YamlParsingException ignored)
+            {
+            }
+        }
 
         return result;
     }
 
-    public static void validate(Map<String, Object> map)
+    public static void validate(StructuredYamlNode node) throws YamlParsingException
     {
-        MapUtils.checkContainsKey(map, KEY_ACTION_TYPE);
-        if (map.containsKey(KEY_ACTION_ARGS))
-            MapUtils.checkAndCastMap(map.get(KEY_ACTION_ARGS), String.class, Object.class);
+        node.get(KEY_ACTION_TYPE).ensureTypeOf(YAMLNodeType.STRING);
+        node.get(KEY_ACTION_ARGS).ensureTypeOfIfExists(YAMLNodeType.MAPPING);
     }
 
-    public static ActionTriggerArgument deserialize(Map<String, Object> map)
+    public static ActionTriggerArgument deserialize(StructuredYamlNode node) throws YamlParsingException
     {
-        validate(map);
+        validate(node);
 
-        String type = map.get(KEY_ACTION_TYPE).toString().toLowerCase(Locale.ROOT);
-        Map<String, Object> actionArguments;
-        if (map.containsKey(KEY_ACTION_ARGS))
-            actionArguments = MapUtils.checkAndCastMap(map.get(KEY_ACTION_ARGS), String.class, Object.class);
-        else
-            actionArguments = new HashMap<>();
+        String type = node.get(KEY_ACTION_TYPE).toString().toLowerCase(Locale.ROOT);
+        StructuredYamlNode actionArguments = node.get(KEY_ACTION_ARGS);
 
         return new ActionTriggerArgument(
                 type,

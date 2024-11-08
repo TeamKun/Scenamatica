@@ -1,5 +1,6 @@
 package org.kunlab.scenamatica.interfaces.action.input;
 
+import org.kunlab.scenamatica.exceptions.scenariofile.InvalidScenarioFileException;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 
 /**
@@ -20,7 +21,8 @@ public interface InputTraverser<I, O>
     /**
      * トラバースします。
      *
+     * @throws InvalidScenarioFileException トラバース中に例外が発生した場合
      * @return トラバース後の値
      */
-    O traverse(StructureSerializer ser, I obj);
+    O traverse(StructureSerializer ser, I obj) throws InvalidScenarioFileException;
 }

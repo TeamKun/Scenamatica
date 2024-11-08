@@ -2,6 +2,7 @@ package org.kunlab.scenamatica.action.input;
 
 import lombok.Value;
 import org.jetbrains.annotations.NotNull;
+import org.kunlab.scenamatica.exceptions.scenariofile.InvalidScenarioFileException;
 import org.kunlab.scenamatica.interfaces.action.input.InputTraverser;
 import org.kunlab.scenamatica.interfaces.action.input.Traverser;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
@@ -24,13 +25,13 @@ public class TraverserImpl<I, O> implements Traverser<I, O>
     }
 
     @Override
-    public O traverse(@NotNull StructureSerializer serializer, I obj)
+    public O traverse(@NotNull StructureSerializer serializer, I obj) throws InvalidScenarioFileException
     {
         return this.traverser.traverse(serializer, obj);
     }
 
     @Override
-    public O tryTraverse(@NotNull StructureSerializer serializer, Object obj)
+    public O tryTraverse(@NotNull StructureSerializer serializer, Object obj) throws InvalidScenarioFileException
     {
         if (this.inputClazz.isInstance(obj))
             return this.traverse(serializer, this.inputClazz.cast(obj));

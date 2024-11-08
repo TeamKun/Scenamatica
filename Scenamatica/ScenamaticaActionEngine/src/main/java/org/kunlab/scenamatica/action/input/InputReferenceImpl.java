@@ -6,6 +6,7 @@ import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.exceptions.scenario.BrokenReferenceException;
+import org.kunlab.scenamatica.exceptions.scenariofile.InvalidScenarioFileException;
 import org.kunlab.scenamatica.interfaces.action.input.InputReference;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.input.Traverser;
@@ -108,6 +109,7 @@ public class InputReferenceImpl<T> implements InputReference<T>
     }
 
     public static <D> InputReference<D> valuedCast(InputToken<D> token, StructureSerializer serializer, Object value)
+            throws InvalidScenarioFileException
     {
         return new InputReferenceImpl<>(token, null, smartCast(token, serializer, value), value, true);
     }
@@ -316,6 +318,7 @@ public class InputReferenceImpl<T> implements InputReference<T>
     }
 
     private static <U> U smartCast(@NotNull InputToken<U> token, @NotNull StructureSerializer serializer, @Nullable Object resolved)
+            throws InvalidScenarioFileException
     {
         if (resolved == null)
             return null;
@@ -374,6 +377,7 @@ public class InputReferenceImpl<T> implements InputReference<T>
 
     @Override
     public void resolve(@NotNull StructureSerializer serializer, @NotNull SessionStorage variables)
+            throws InvalidScenarioFileException
     {
         if (this.rawValue != null)
         {
@@ -408,6 +412,7 @@ public class InputReferenceImpl<T> implements InputReference<T>
     }
 
     private T smartCast(@NotNull StructureSerializer serializer, @Nullable Object resolved)
+            throws InvalidScenarioFileException
     {
         return smartCast(this.token, serializer, resolved);
     }

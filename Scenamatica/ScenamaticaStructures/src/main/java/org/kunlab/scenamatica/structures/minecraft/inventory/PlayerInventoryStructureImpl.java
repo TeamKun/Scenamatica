@@ -9,7 +9,10 @@ import org.bukkit.inventory.PlayerInventory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.commons.utils.MapUtils;
+import org.kunlab.scenamatica.enums.YAMLNodeType;
+import org.kunlab.scenamatica.exceptions.scenariofile.YamlParsingException;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
+import org.kunlab.scenamatica.interfaces.scenariofile.StructuredYamlNode;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.inventory.InventoryStructure;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.inventory.ItemStackStructure;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.inventory.PlayerInventoryStructure;
@@ -96,60 +99,55 @@ public class PlayerInventoryStructureImpl extends InventoryStructureImpl impleme
         return map;
     }
 
-    public static void validatePlayerInventory(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
+    public static void validatePlayerInventory(@NotNull StructuredYamlNode node, @NotNull StructureSerializer serializer) throws YamlParsingException
     {
-        if (map.containsKey(KEY_MAIN_INVENTORY))
+        if (node.containsKey(KEY_MAIN_INVENTORY))
         {
-            Map<String, Object> mainInventory = new HashMap<>(MapUtils.checkAndCastMap(map.get(KEY_MAIN_INVENTORY)));
+            StructuredYamlNode mainInventoryNode = node.get(KEY_MAIN_INVENTORY);
 
-            if (!mainInventory.containsKey(KEY_SIZE))
-                mainInventory.put(KEY_SIZE, 9 * 4);
-            else if (!(mainInventory.get(KEY_SIZE) instanceof Integer
-                    || (Integer) mainInventory.get(KEY_SIZE) != 9 * 4))
+            StructuredYamlNode sizeNode = mainInventoryNode.get(KEY_SIZE);
+            if (sizeNode.containsKey(KEY_SIZE) && sizeNode.asInteger() != 36)
                 throw new IllegalArgumentException(KEY_SIZE + " must be 36 slots in player inventory.");
 
-            serializer.validate(mainInventory, InventoryStructure.class);
+            serializer.validate(mainInventoryNode, InventoryStructure.class);
         }
-        if (map.containsKey(KEY_MAIN_HAND))
-            serializer.validate(MapUtils.checkAndCastMap(map.get(KEY_MAIN_HAND)), ItemStackStructure.class);
-        if (map.containsKey(KEY_OFF_HAND))
-            serializer.validate(MapUtils.checkAndCastMap(map.get(KEY_OFF_HAND)), ItemStackStructure.class);
+        if (node.containsKey(KEY_MAIN_HAND))
+            serializer.validate(node.get(KEY_MAIN_HAND), ItemStackStructure.class);
+        if (node.containsKey(KEY_OFF_HAND))
+            serializer.validate(node.get(KEY_OFF_HAND), ItemStackStructure.class);
 
-        if (!map.containsKey(KEY_ARMOR_CONTENTS))
+        if (!node.containsKey(KEY_ARMOR_CONTENTS))
             return;
 
-        if (!(map.get(KEY_ARMOR_CONTENTS) instanceof List))
+        if (!node.get(KEY_ARMOR_CONTENTS).isType(YAMLNodeType.LIST))
             throw new IllegalArgumentException(KEY_ARMOR_CONTENTS + " must be List.");
-        if (((List<?>) map.get(KEY_ARMOR_CONTENTS)).size() != 4)
+        if (node.get(KEY_ARMOR_CONTENTS).size() != 4)
             throw new IllegalArgumentException(KEY_ARMOR_CONTENTS + " must be List of size 4.");
 
-        for (Object armorContent : (List<?>) map.get(KEY_ARMOR_CONTENTS))
+        for (StructuredYamlNode armorContent : node.get(KEY_ARMOR_CONTENTS).asList())
         {
             if (armorContent == null)
                 continue;
 
-            serializer.validate(
-                    MapUtils.checkAndCastMap(armorContent),
-                    ItemStackStructure.class
-            );
+            serializer.validate(armorContent, ItemStackStructure.class);
         }
     }
 
     @NotNull
-    public static PlayerInventoryStructure deserializePlayerInventory(@NotNull Map<String, Object> map, @NotNull StructureSerializer serializer)
+    public static PlayerInventoryStructure deserializePlayerInventory(@NotNull StructuredYamlNode node, @NotNull StructureSerializer serializer) throws YamlParsingException
     {
-        validatePlayerInventory(map, serializer);
+        validatePlayerInventory(node, serializer);
 
         ItemStackStructure[] armorContents;
-        if (map.containsKey(KEY_ARMOR_CONTENTS))
+        if (node.containsKey(KEY_ARMOR_CONTENTS))
         {
             List<ItemStackStructure> armorContentsList = new ArrayList<>();
-            for (Object armorContent : (List<?>) map.get(KEY_ARMOR_CONTENTS))
+            for (StructuredYamlNode armorContent : node.get(KEY_ARMOR_CONTENTS).asList())
             {
                 if (armorContent == null)
                     armorContentsList.add(null);
                 else
-                    armorContentsList.add(serializer.deserialize(MapUtils.checkAndCastMap(armorContent), ItemStackStructure.class));
+                    armorContentsList.add(serializer.deserialize(armorContent, ItemStackStructure.class));
             }
 
             armorContents = armorContentsList.toArray(new ItemStackStructure[0]);
@@ -158,29 +156,28 @@ public class PlayerInventoryStructureImpl extends InventoryStructureImpl impleme
             armorContents = new ItemStackStructureImpl[4];
 
         InventoryStructure mainInventoryStructure;
-        if (map.containsKey(KEY_MAIN_INVENTORY))
+        if (node.containsKey(KEY_MAIN_INVENTORY))
         {
-            Map<String, Object> mainInventory = new HashMap<>(MapUtils.checkAndCastMap(map.get(KEY_MAIN_INVENTORY)));
-
-            mainInventoryStructure = serializer.deserialize(mainInventory, InventoryStructure.class);
+            StructuredYamlNode mainInventoryNode = node.get(KEY_MAIN_INVENTORY);
+            mainInventoryStructure = serializer.deserialize(mainInventoryNode, InventoryStructure.class);
         }
         else
             mainInventoryStructure = new InventoryStructureImpl(null, null, Collections.emptyMap());
 
 
         ItemStackStructure mainHandItem;
-        if (map.containsKey(KEY_MAIN_HAND))
+        if (node.containsKey(KEY_MAIN_HAND))
             mainHandItem = serializer.deserialize(
-                    MapUtils.checkAndCastMap(map.get(KEY_MAIN_HAND)),
+                    node.get(KEY_MAIN_HAND),
                     ItemStackStructure.class
             );
         else
             mainHandItem = null;
 
         ItemStackStructure offHandItem;
-        if (map.containsKey(KEY_OFF_HAND))
+        if (node.containsKey(KEY_OFF_HAND))
             offHandItem = serializer.deserialize(
-                    MapUtils.checkAndCastMap(map.get(KEY_OFF_HAND)),
+                    node.get(KEY_OFF_HAND),
                     ItemStackStructure.class
             );
         else

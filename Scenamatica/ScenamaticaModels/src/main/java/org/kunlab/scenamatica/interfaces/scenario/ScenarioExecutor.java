@@ -2,6 +2,7 @@ package org.kunlab.scenamatica.interfaces.scenario;
 
 import org.bukkit.plugin.Plugin;
 import org.kunlab.scenamatica.enums.ScenarioState;
+import org.kunlab.scenamatica.exceptions.scenariofile.InvalidScenarioFileException;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.CompiledAction;
 import org.kunlab.scenamatica.interfaces.scenario.runtime.CompiledScenarioAction;
@@ -89,7 +90,7 @@ public interface ScenarioExecutor
      *
      * @param action 入力を解決するアクション
      */
-    void resolveInputs(CompiledAction action);
+    void resolveInputs(CompiledAction action) throws InvalidScenarioFileException;
 
     /**
      * 出力をアップロードします。

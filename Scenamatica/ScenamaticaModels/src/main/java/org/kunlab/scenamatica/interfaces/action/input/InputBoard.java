@@ -2,11 +2,12 @@ package org.kunlab.scenamatica.interfaces.action.input;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.kunlab.scenamatica.exceptions.scenariofile.InvalidScenarioFileException;
 import org.kunlab.scenamatica.interfaces.scenario.SessionStorage;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
+import org.kunlab.scenamatica.interfaces.scenariofile.StructuredYamlNode;
 import org.kunlab.scenamatica.interfaces.structures.trigger.TriggerArgument;
 
-import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -21,9 +22,9 @@ public interface InputBoard extends TriggerArgument
     /**
      * 入力をコンパイルします。
      *
-     * @param map 対象のマップ
+     * @param node 対象のマップ
      */
-    void compile(@NotNull StructureSerializer serializer, @NotNull Map<String, Object> map);
+    void compile(@NotNull StructureSerializer serializer, @NotNull StructuredYamlNode node) throws InvalidScenarioFileException;
 
     /**
      * 入力値にある参照を解決します。
@@ -31,7 +32,7 @@ public interface InputBoard extends TriggerArgument
      * @param serializer シリアライザー
      * @param variables  変数のホルダー
      */
-    void resolveReferences(@NotNull StructureSerializer serializer, @NotNull SessionStorage variables);
+    void resolveReferences(@NotNull StructureSerializer serializer, @NotNull SessionStorage variables) throws InvalidScenarioFileException;
 
     /**
      * 入力値にあるすべての参照を解放します。

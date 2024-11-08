@@ -156,7 +156,14 @@ public class InputTokenImpl<T> implements InputToken<T>
     {
         for (Traverser<?, T> traverser : this.traversers)
             if (traverser.getInputClazz().isInstance(obj))
-                return traverser.tryTraverse(serializer, obj);
+                try
+                {
+                    return traverser.tryTraverse(serializer, obj);
+                }
+                catch (Exception e)
+                {
+                    throw new RuntimeException(e);
+                }
 
         throw new IllegalArgumentException("Unknown traverser type");
     }

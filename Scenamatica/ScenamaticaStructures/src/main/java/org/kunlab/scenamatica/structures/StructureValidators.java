@@ -1,12 +1,17 @@
 package org.kunlab.scenamatica.structures;
 
+import net.kunmc.lab.peyangpaperutils.lib.utils.Pair;
 import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.commons.utils.Utils;
+import org.kunlab.scenamatica.enums.YAMLNodeType;
+import org.kunlab.scenamatica.interfaces.scenariofile.Structure;
+import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructuredYamlNode;
 
 import java.util.Locale;
+import java.util.regex.Pattern;
 
 public class StructureValidators
 {
@@ -18,6 +23,7 @@ public class StructureValidators
 
         return null;
     };
+    public static final StructuredYamlNode.Validator UUID = UUIDValidator::validate;
 
     @NotNull
     public static StructuredYamlNode.Validator enumName(@NotNull Class<? extends Enum<?>> enumClass)
@@ -59,5 +65,50 @@ public class StructureValidators
 
             return null;
         };
+    }
+
+    @NotNull
+    public static StructuredYamlNode.Validator mapType(@NotNull StructuredYamlNode.Validator keyValidator, @NotNull StructuredYamlNode.Validator valueValidator)
+    {
+        return node -> {
+            if (!node.isType(YAMLNodeType.MAPPING))
+                throw new IllegalArgumentException("Value must be a mapping");
+
+            for (Pair<? extends StructuredYamlNode, ? extends StructuredYamlNode> child : node.getMappingEntries())
+            {
+                keyValidator.validate(child.getLeft());
+                valueValidator.validate(child.getRight());
+            }
+
+            return null;
+        };
+    }
+
+    public static StructuredYamlNode.Validator listType(@NotNull StructureSerializer serializer, @NotNull Class<? extends Structure> clazz)
+    {
+        return node -> {
+            if (!node.isType(YAMLNodeType.LIST))
+                throw new IllegalArgumentException("Value must be a list");
+
+            for (StructuredYamlNode element : node.asList())
+                serializer.validate(element, clazz);
+
+            return null;
+        };
+    }
+
+    private static class UUIDValidator
+    {
+        private static final Pattern PATTERN_FULL_QUALIFIED_UUID = Pattern.compile("[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}");
+        private static final Pattern PATTERN_COMPACT_UUID = Pattern.compile("[0-9a-fA-F]{32}");
+
+        public static Object validate(StructuredYamlNode node)
+        {
+            String uuidString = node.asString();
+            if (PATTERN_FULL_QUALIFIED_UUID.matcher(uuidString).matches() || PATTERN_COMPACT_UUID.matcher(uuidString).matches())
+                return null;
+
+            throw new IllegalArgumentException("Value is not a valid UUID");
+        }
     }
 }
