@@ -12,7 +12,6 @@ import org.kunlab.scenamatica.annotations.action.Action;
 import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
 import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
 import org.kunlab.scenamatica.bookkeeper.enums.ActionMethod;
-import org.kunlab.scenamatica.commons.utils.MapUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
@@ -24,7 +23,6 @@ import org.kunlab.scenamatica.interfaces.structures.minecraft.inventory.ItemStac
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 @Action("entity_death")
 @ActionDoc(
@@ -50,13 +48,7 @@ public class EntityDeathAction extends AbstractGeneralEntityAction
     public static final InputToken<List<ItemStackStructure>> IN_DROPS = ofInput(
             "drops",
             InputTypeToken.ofList(ItemStackStructure.class),
-            ofTraverser(List.class, (ser, list) -> {
-                List<ItemStackStructure> drops = new ArrayList<>();
-                List<Map<String, Object>> dropMaps = MapUtils.checkAndCastList(list, InputTypeToken.ofMap(String.class, Object.class));
-                for (Map<String, Object> dropMap : dropMaps)
-                    drops.add(ser.deserialize(dropMap, ItemStackStructure.class));
-                return drops;
-            })
+            ofListDeserializer(ofDeserializer(ItemStackStructure.class))
     );
 
     @InputDoc(

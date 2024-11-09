@@ -109,7 +109,7 @@ public class SelectiveEntityStructureSerializer
     @SneakyThrows
     private static void registerProjectiles()
     {
-        StructureSerializerImpl.ThrowableBiFunction<ProjectileStructure, StructureSerializer, Map<String, Object>> serializer = ProjectileStructureImpl::serialize;
+        BiFunction<ProjectileStructure, StructureSerializer, Map<String, Object>> serializer = ProjectileStructureImpl::serialize;
         StructureSerializerImpl.ThrowableBiFunction<StructuredYamlNode, StructureSerializer, ProjectileStructure> deserializer = ProjectileStructureImpl::deserialize;
         StructureSerializerImpl.ThrowableBiConsumer<StructuredYamlNode, StructureSerializer> validator = ProjectileStructureImpl::validate;
         BiFunction<Projectile, StructureSerializer, ProjectileStructure> constructor = ProjectileStructureImpl::ofSource;
@@ -150,7 +150,7 @@ public class SelectiveEntityStructureSerializer
     private static <E extends Entity, S extends EntityStructure> void registerStructure(@NotNull EntityType entityType,
                                                                                         @NotNull Class<S> clazz,
                                                                                         @NotNull Class<? extends E> entityClazz,
-                                                                                        @NotNull StructureSerializerImpl.ThrowableBiFunction<S, StructureSerializer, Map<String, Object>> serializer,
+                                                                                        @NotNull BiFunction<S, StructureSerializer, Map<String, Object>> serializer,
                                                                                         @NotNull StructureSerializerImpl.ThrowableBiFunction<StructuredYamlNode, StructureSerializer, S> deserializer,
                                                                                         @NotNull StructureSerializerImpl.ThrowableBiConsumer<StructuredYamlNode, StructureSerializer> validator,
                                                                                         @NotNull BiFunction<E, StructureSerializer, S> constructor)
@@ -212,7 +212,7 @@ public class SelectiveEntityStructureSerializer
     @SuppressWarnings({"unchecked", "rawtypes"})
     public static <T extends EntityStructure> Map<String, Object> serialize(@NotNull T entityStructure,
                                                                             @NotNull StructureSerializer serializer,
-                                                                            @Nullable Class<? extends T> clazz) throws YamlParsingException
+                                                                            @Nullable Class<? extends T> clazz)
     {
         EntityType type = entityStructure.getType();
         if (type == null && clazz != null)
@@ -298,7 +298,7 @@ public class SelectiveEntityStructureSerializer
     public static class EntityStructureEntry<E extends Entity, S extends EntityStructure>
     {
         Class<S> clazz;
-        StructureSerializerImpl.ThrowableBiFunction<S, StructureSerializer, Map<String, Object>> serializer;
+        BiFunction<S, StructureSerializer, Map<String, Object>> serializer;
         StructureSerializerImpl.ThrowableBiFunction<StructuredYamlNode, StructureSerializer, S> deserializer;
         StructureSerializerImpl.ThrowableBiConsumer<StructuredYamlNode, StructureSerializer> validator;
         BiFunction<E, StructureSerializer, S> constructor;

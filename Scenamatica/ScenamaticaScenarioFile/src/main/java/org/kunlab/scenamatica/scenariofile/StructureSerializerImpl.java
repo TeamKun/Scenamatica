@@ -101,7 +101,7 @@ public class StructureSerializerImpl implements StructureSerializer
     }
 
     @Override
-    public @NotNull <T extends Structure> Map<String, Object> serialize(@NotNull T structure, @Nullable Class<T> clazz) throws YamlParsingException
+    public @NotNull <T extends Structure> Map<String, Object> serialize(@NotNull T structure, @Nullable Class<T> clazz)
     {
         // エンティティの場合は, さらに EntityType で分岐する
         if (isEntityRelatedStructure(structure, clazz))

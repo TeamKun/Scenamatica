@@ -23,7 +23,9 @@ import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.PlayerStruc
 import org.kunlab.scenamatica.interfaces.structures.specifiers.EntitySpecifier;
 import org.kunlab.scenamatica.interfaces.structures.specifiers.PlayerSpecifier;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
@@ -84,10 +86,19 @@ public abstract class AbstractAction implements Action
         return TraverserImpl.of(inputClazz, traverser);
     }
 
-    protected static <I extends Map<String, Object>, O extends Structure> Traverser<I, O> ofDeserializer(@NotNull Class<? extends O> clazz)
+    protected static <O> Traverser<StructuredYamlNode, List<O>> ofListDeserializer(@NotNull Traverser<StructuredYamlNode, O> elementTraverser)
     {
-        // noinspection unchecked,rawtypes
-        return (Traverser) TraverserImpl.of(StructuredYamlNode.class, (ser, node) -> ser.deserialize(
+        return TraverserImpl.of(StructuredYamlNode.class, (ser, node) -> {
+            List<O> list = new ArrayList<>();
+            for (StructuredYamlNode child : node.asList())
+                list.add(elementTraverser.traverse(ser, child));
+            return list;
+        });
+    }
+
+    protected static <O extends Structure> Traverser<StructuredYamlNode, O> ofDeserializer(@NotNull Class<? extends O> clazz)
+    {
+        return TraverserImpl.of(StructuredYamlNode.class, (ser, node) -> ser.deserialize(
                 node,
                 clazz
         ));
