@@ -94,6 +94,8 @@ public class PlayerSpecifierImpl extends EntitySpecifierImpl<Player> implements 
                         mayName
                 );
         }
+        else if (node.isNullNode())
+            return EMPTY;
 
 
         throw new IllegalArgumentException("Cannot deserialize PlayerSpecifier from " + obj);

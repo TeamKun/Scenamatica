@@ -33,7 +33,7 @@ public interface StructuredYamlNode
      *
      * @return このノードが文字列型である場合の値
      */
-    String asString();
+    String asString() throws YamlParsingException;
 
     /**
      * このノードが文字列型である場合、その値を返します。
@@ -41,7 +41,7 @@ public interface StructuredYamlNode
      * @param defaultValue デフォルト値
      * @return このノードが文字列型である場合の値]
      */
-    String asString(String defaultValue);
+    String asString(String defaultValue) throws YamlParsingException;
 
     /**
      * このノードが整数型である場合、その値を返します。
@@ -49,24 +49,7 @@ public interface StructuredYamlNode
      * @return このノードが整数型である場合の値
      * @throws YAMLTypeMismatchException このノードが整数型でない場合
      */
-    Integer asInteger() throws YAMLTypeMismatchException;
-
-    /**
-     * このノードが整数型である場合、その値を返します。
-     *
-     * @param defaultValue デフォルト値
-     * @return このノードが整数型である場合の値
-     * @throws YAMLTypeMismatchException このノードが整数型でない場合
-     */
-    Integer asInteger(Integer defaultValue) throws YAMLTypeMismatchException;
-
-    /**
-     * このノードが整数型である場合、その値を返します。
-     *
-     * @return このノードが整数型である場合の値
-     * @throws YAMLTypeMismatchException このノードが整数型でない場合
-     */
-    Long asLong() throws YAMLTypeMismatchException;
+    Integer asInteger() throws YamlParsingException;
 
     /**
      * このノードが整数型である場合、その値を返します。
@@ -75,7 +58,24 @@ public interface StructuredYamlNode
      * @return このノードが整数型である場合の値
      * @throws YAMLTypeMismatchException このノードが整数型でない場合
      */
-    Long asLong(Long defaultValue) throws YAMLTypeMismatchException;
+    Integer asInteger(Integer defaultValue) throws YamlParsingException;
+
+    /**
+     * このノードが整数型である場合、その値を返します。
+     *
+     * @return このノードが整数型である場合の値
+     * @throws YAMLTypeMismatchException このノードが整数型でない場合
+     */
+    Long asLong() throws YamlParsingException;
+
+    /**
+     * このノードが整数型である場合、その値を返します。
+     *
+     * @param defaultValue デフォルト値
+     * @return このノードが整数型である場合の値
+     * @throws YAMLTypeMismatchException このノードが整数型でない場合
+     */
+    Long asLong(Long defaultValue) throws YamlParsingException;
 
 
     /**
@@ -84,7 +84,7 @@ public interface StructuredYamlNode
      * @return このノードが真偽値型である場合の値
      * @throws YAMLTypeMismatchException このノードが真偽値型でない場合
      */
-    Boolean asBoolean() throws YAMLTypeMismatchException;
+    Boolean asBoolean() throws YamlParsingException;
 
     /**
      * このノードが真偽値型である場合、その値を返します。
@@ -93,7 +93,7 @@ public interface StructuredYamlNode
      * @return このノードが真偽値型である場合の値
      * @throws YAMLTypeMismatchException このノードが真偽値型でない場合
      */
-    Boolean asBoolean(Boolean defaultValue) throws YAMLTypeMismatchException;
+    Boolean asBoolean(Boolean defaultValue) throws YamlParsingException;
 
     /**
      * このノードが浮動小数点数型である場合、その値を返します。
@@ -101,24 +101,7 @@ public interface StructuredYamlNode
      * @return このノードが浮動小数点数型である場合の値
      * @throws YAMLTypeMismatchException このノードが浮動小数点数型でない場合
      */
-    Float asFloat() throws YAMLTypeMismatchException;
-
-    /**
-     * このノードが浮動小数点数型である場合、その値を返します。
-     *
-     * @param defaultValue デフォルト値
-     * @return このノードが浮動小数点数型である場合の値
-     * @throws YAMLTypeMismatchException このノードが浮動小数点数型でない場合
-     */
-    Float asFloat(Float defaultValue) throws YAMLTypeMismatchException;
-
-    /**
-     * このノードが浮動小数点数型である場合、その値を返します。
-     *
-     * @return このノードが浮動小数点数型である場合の値
-     * @throws YAMLTypeMismatchException このノードが浮動小数点数型でない場合
-     */
-    Double asDouble() throws YAMLTypeMismatchException;
+    Float asFloat() throws YamlParsingException;
 
     /**
      * このノードが浮動小数点数型である場合、その値を返します。
@@ -127,7 +110,24 @@ public interface StructuredYamlNode
      * @return このノードが浮動小数点数型である場合の値
      * @throws YAMLTypeMismatchException このノードが浮動小数点数型でない場合
      */
-    Double asDouble(Double defaultValue) throws YAMLTypeMismatchException;
+    Float asFloat(Float defaultValue) throws YamlParsingException;
+
+    /**
+     * このノードが浮動小数点数型である場合、その値を返します。
+     *
+     * @return このノードが浮動小数点数型である場合の値
+     * @throws YAMLTypeMismatchException このノードが浮動小数点数型でない場合
+     */
+    Double asDouble() throws YamlParsingException;
+
+    /**
+     * このノードが浮動小数点数型である場合、その値を返します。
+     *
+     * @param defaultValue デフォルト値
+     * @return このノードが浮動小数点数型である場合の値
+     * @throws YAMLTypeMismatchException このノードが浮動小数点数型でない場合
+     */
+    Double asDouble(Double defaultValue) throws YamlParsingException;
 
     /**
      * このノードがバイト型である場合、その値を返します。
@@ -135,7 +135,7 @@ public interface StructuredYamlNode
      * @return このノードがバイト型である場合の値
      * @throws YAMLTypeMismatchException このノードがバイト型でない場合
      */
-    Byte asByte() throws YAMLTypeMismatchException;
+    Byte asByte() throws YamlParsingException;
 
     /**
      * このノードがバイナリ型である場合、その値を返します。
@@ -143,15 +143,21 @@ public interface StructuredYamlNode
      * @return このノードがバイナリ型である場合の値
      * @throws YAMLTypeMismatchException このノードがバイナリ型でない場合
      */
-    Byte[] asBinary() throws YAMLTypeMismatchException;
+    Byte[] asBinary() throws YamlParsingException;
 
     /**
      * このノードが null 型である場合、true を返します。
      *
      * @return このノードが null 型である場合は true, それ以外の場合は false
-     * @throws YAMLTypeMismatchException このノードが null 型でない場合
      */
-    boolean isNull() throws YAMLTypeMismatchException;
+    boolean isNull();
+
+    /**
+     * このノードが null ノードである場合、true を返します。
+     *
+     * @return このノードが null ノードである場合は true, それ以外の場合は false
+     */
+    boolean isNullNode();
 
     /**
      * このノードがリスト型である場合、その値を返します。
@@ -159,7 +165,7 @@ public interface StructuredYamlNode
      * @return このノードがリスト型である場合の値
      * @throws YAMLTypeMismatchException このノードがリスト型でない場合
      */
-    List<StructuredYamlNode> asList() throws YAMLTypeMismatchException;
+    List<StructuredYamlNode> asList() throws YamlParsingException;
 
     /**
      * このノードがリスト型である場合、その値を返します。
@@ -230,7 +236,7 @@ public interface StructuredYamlNode
      * @return このノードがリスト型である場合の値
      * @throws YAMLTypeMismatchException このノードがリスト型でない場合
      */
-    Stream<StructuredYamlNode> asSequenceStream() throws YAMLTypeMismatchException;
+    Stream<StructuredYamlNode> asSequenceStream() throws YamlParsingException;
 
     /**
      * このノードがリスト型である場合、指定された値を追加します。
@@ -238,7 +244,7 @@ public interface StructuredYamlNode
      * @param item 追加する値
      * @throws YAMLTypeMismatchException このノードがリスト型でない場合
      */
-    void addSequenceItem(StructuredYamlNode item) throws YAMLTypeMismatchException;
+    void addSequenceItem(StructuredYamlNode item) throws YamlParsingException;
 
     /**
      * このノードがリスト型である場合、指定された値を削除します。
@@ -246,7 +252,7 @@ public interface StructuredYamlNode
      * @param item 削除する値
      * @throws YAMLTypeMismatchException このノードがリスト型でない場合
      */
-    void removeSequenceItem(StructuredYamlNode item) throws YAMLTypeMismatchException;
+    void removeSequenceItem(StructuredYamlNode item) throws YamlParsingException;
 
     /**
      * このノードが Map 型である場合、すべてのエントリを返します。
@@ -254,7 +260,7 @@ public interface StructuredYamlNode
      * @return このノードが Map 型である場合のエントリ
      * @throws YAMLTypeMismatchException このノードが Map 型でない場合
      */
-    List<? extends Pair<? extends StructuredYamlNode, ? extends StructuredYamlNode>> getMappingEntries() throws YAMLTypeMismatchException;
+    List<? extends Pair<? extends StructuredYamlNode, ? extends StructuredYamlNode>> getMappingEntries() throws YamlParsingException;
 
     /**
      * このノードがマップ型もしくはリスト型である場合、その値をすべて削除します。
@@ -306,7 +312,7 @@ public interface StructuredYamlNode
      * @return 指定されたキーが存在する場合は true, それ以外の場合は false
      * @throws YAMLTypeMismatchException このノードが Map 型でない場合
      */
-    boolean containsKey(Object key) throws YAMLTypeMismatchException;
+    boolean containsKey(Object key) throws YamlParsingException;
 
     /**
      * このノードが Map 型である場合、指定されたキーのペアを削除します。
@@ -315,7 +321,7 @@ public interface StructuredYamlNode
      * @param key キー
      * @throws YAMLTypeMismatchException このノードが Map 型でない場合
      */
-    void remove(Object key) throws YAMLTypeMismatchException;
+    void remove(Object key) throws YamlParsingException;
 
     /**
      * このノードが Map 型である場合、指定されたキーと値を追加します。
@@ -324,7 +330,7 @@ public interface StructuredYamlNode
      * @param value 値
      * @throws YAMLTypeMismatchException このノードが Map 型でない場合
      */
-    void add(StructuredYamlNode key, StructuredYamlNode value) throws YAMLTypeMismatchException;
+    void add(StructuredYamlNode key, StructuredYamlNode value) throws YamlParsingException;
 
     /**
      * このノードが Map 型である場合、２つのマッピングをマージします。
@@ -377,7 +383,7 @@ public interface StructuredYamlNode
      * @return キーの一覧
      * @throws YAMLTypeMismatchException このノードが Map 型でない場合
      */
-    Set<StructuredYamlNode> keys() throws YAMLTypeMismatchException;
+    Set<StructuredYamlNode> keys() throws YamlParsingException;
 
     /**
      * このノードがリスト型である場合、指定されたインデックスに対応する値を返します。

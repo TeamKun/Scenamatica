@@ -207,25 +207,25 @@ public class PlayerStructureImpl extends HumanEntityStructureImpl implements Pla
 
         HumanEntityStructure human = deserializeHuman(node, serializer);
 
-        String name = node.get(KEY_NAME).asString();
+        String name = node.get(KEY_NAME).asString(null);
 
-        Boolean online = node.get(KEY_ONLINE).asBoolean();
-        String displayName = node.get(KEY_DISPLAY_NAME).asString();
+        Boolean online = node.get(KEY_ONLINE).asBoolean(null);
+        String displayName = node.get(KEY_DISPLAY_NAME).asString(null);
         LocationStructure compassTarget = null;
         if (node.containsKey(KEY_COMPASS_TARGET))
             compassTarget = serializer.deserialize(node.get(KEY_COMPASS_TARGET), LocationStructure.class);
         LocationStructure bedSpawnLocation = null;
         if (node.containsKey(KEY_BED_SPAWN_LOCATION))
             bedSpawnLocation = serializer.deserialize(node.get(KEY_BED_SPAWN_LOCATION), LocationStructure.class);
-        Integer exp = node.get(KEY_EXP).asInteger();
-        Integer level = node.get(KEY_LEVEL).asInteger();
-        Integer totalExperience = node.get(KEY_TOTAL_EXPERIENCE).asInteger();
-        Boolean allowFlight = node.get(KEY_ALLOW_FLIGHT).asBoolean();
-        Boolean flying = node.get(KEY_FLYING).asBoolean();
-        Boolean sneaking = node.get(KEY_SNEAKING).asBoolean();
-        Boolean sprinting = node.get(KEY_SPRINTING).asBoolean();
-        Float walkSpeed = node.get(KEY_WALK_SPEED).asFloat();
-        Float flySpeed = node.get(KEY_FLY_SPEED).asFloat();
+        Integer exp = node.get(KEY_EXP).asInteger(null);
+        Integer level = node.get(KEY_LEVEL).asInteger(null);
+        Integer totalExperience = node.get(KEY_TOTAL_EXPERIENCE).asInteger(null);
+        Boolean allowFlight = node.get(KEY_ALLOW_FLIGHT).asBoolean(null);
+        Boolean flying = node.get(KEY_FLYING).asBoolean(null);
+        Boolean sneaking = node.get(KEY_SNEAKING).asBoolean(null);
+        Boolean sprinting = node.get(KEY_SPRINTING).asBoolean(null);
+        Float walkSpeed = node.get(KEY_WALK_SPEED).asFloat(null);
+        Float flySpeed = node.get(KEY_FLY_SPEED).asFloat(null);
 
         String playerListName = null;
         String playerListHeader = null;
@@ -233,9 +233,9 @@ public class PlayerStructureImpl extends HumanEntityStructureImpl implements Pla
         if (node.containsKey(KEY_PLAYER_LIST))
         {
             StructuredYamlNode playerListNode = node.get(KEY_PLAYER_LIST);
-            playerListName = playerListNode.get(KEY_PLAYER_LIST_NAME).asString();
-            playerListHeader = playerListNode.get(KEY_PLAYER_LIST_HEADER).asString();
-            playerListFooter = playerListNode.get(KEY_PLAYER_LIST_FOOTER).asString();
+            playerListName = playerListNode.get(KEY_PLAYER_LIST_NAME).asString(null);
+            playerListHeader = playerListNode.get(KEY_PLAYER_LIST_HEADER).asString(null);
+            playerListFooter = playerListNode.get(KEY_PLAYER_LIST_FOOTER).asString(null);
         }
 
         InetAddress remoteAddress = null;
@@ -244,7 +244,7 @@ public class PlayerStructureImpl extends HumanEntityStructureImpl implements Pla
         if (node.containsKey(KEY_CONNECTION))
         {
             StructuredYamlNode connectionNode = node.get(KEY_CONNECTION);
-            remoteAddress = connectionNode.getAs(n -> InetAddress.getByName(n.asString()));
+            remoteAddress = connectionNode.get(KEY_CONNECTION_HOSTNAME).getAs(n -> InetAddress.getByName(n.asString()));
             portNumber = connectionNode.get(KEY_CONNECTION_PORT).asInteger();
             hostName = connectionNode.get(KEY_CONNECTION_HOSTNAME).asString();
         }
@@ -254,9 +254,9 @@ public class PlayerStructureImpl extends HumanEntityStructureImpl implements Pla
         {
             StructuredYamlNode opLevelObj = node.get(KEY_OP_LEVEL);
             if (opLevelObj.isType(YAMLNodeType.BOOLEAN))
-                opLevel = opLevelObj.asBoolean() ? 4: 0;
+                opLevel = opLevelObj.asBoolean(null) ? 4: 0;
             else /* opLevel.isType(YAMLNodeType.INTEGER) */
-                opLevel = opLevelObj.asInteger();
+                opLevel = opLevelObj.asInteger(null);
         }
 
         List<String> activePermissions = node.get(KEY_ACTIVE_PERMISSIONS).asList(StructuredYamlNode::asString);

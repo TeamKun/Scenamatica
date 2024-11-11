@@ -147,7 +147,7 @@ public class EntityStructureImpl implements EntityStructure
 
     public static void validate(@NotNull StructuredYamlNode node) throws YamlParsingException
     {
-        node.validateIfExists(value -> UUID.fromString(value.asString()));
+        node.get(KEY_UUID).validateIfExists(value -> UUID.fromString(value.asString()));
         node.get(KEY_CUSTOM_NAME).ensureTypeOfIfExists(YAMLNodeType.STRING);
         node.get(KEY_GLOWING).ensureTypeOfIfExists(YAMLNodeType.BOOLEAN);
         node.get(KEY_GRAVITY).ensureTypeOfIfExists(YAMLNodeType.BOOLEAN);

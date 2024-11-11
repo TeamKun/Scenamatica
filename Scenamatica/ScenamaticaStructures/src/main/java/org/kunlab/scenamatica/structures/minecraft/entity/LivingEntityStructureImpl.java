@@ -259,46 +259,46 @@ public class LivingEntityStructureImpl extends EntityStructureImpl implements Li
     {
         EntityStructureImpl.validate(node);
 
-        node.get(KEY_REMAINING_AIR).ensureTypeOf(YAMLNodeType.NUMBER);
-        node.get(KEY_MAX_AIR).ensureTypeOf(YAMLNodeType.NUMBER);
-        node.get(KEY_ARROW_COOLDOWN).ensureTypeOf(YAMLNodeType.NUMBER);
-        node.get(KEY_ARROWS_IN_BODY).ensureTypeOf(YAMLNodeType.NUMBER);
-        node.get(KEY_MAX_NO_DAMAGE_TICKS).ensureTypeOf(YAMLNodeType.NUMBER);
-        node.get(KEY_LAST_DAMAGE).ensureTypeOf(YAMLNodeType.NUMBER);
-        node.get(KEY_NO_DAMAGE_TICKS).ensureTypeOf(YAMLNodeType.NUMBER);
+        node.get(KEY_REMAINING_AIR).ensureTypeOfIfExists(YAMLNodeType.NUMBER);
+        node.get(KEY_MAX_AIR).ensureTypeOfIfExists(YAMLNodeType.NUMBER);
+        node.get(KEY_ARROW_COOLDOWN).ensureTypeOfIfExists(YAMLNodeType.NUMBER);
+        node.get(KEY_ARROWS_IN_BODY).ensureTypeOfIfExists(YAMLNodeType.NUMBER);
+        node.get(KEY_MAX_NO_DAMAGE_TICKS).ensureTypeOfIfExists(YAMLNodeType.NUMBER);
+        node.get(KEY_LAST_DAMAGE).ensureTypeOfIfExists(YAMLNodeType.NUMBER);
+        node.get(KEY_NO_DAMAGE_TICKS).ensureTypeOfIfExists(YAMLNodeType.NUMBER);
 
         if (node.containsKey(KEY_POTION_EFFECTS))
         {
             StructuredYamlNode potionEffectsNode = node.get(KEY_POTION_EFFECTS);
-            potionEffectsNode.ensureTypeOf(YAMLNodeType.LIST);
+            potionEffectsNode.ensureTypeOfIfExists(YAMLNodeType.LIST);
             validatePotionEffectNodes(potionEffectsNode.asList());
         }
 
-        node.get(KEY_REMOVE_WHEN_FAR_AWAY).ensureTypeOf(YAMLNodeType.BOOLEAN);
-        node.get(KEY_CAN_PICKUP_ITEMS).ensureTypeOf(YAMLNodeType.BOOLEAN);
-        node.get(KEY_LEASHED).ensureTypeOf(YAMLNodeType.BOOLEAN);
-        node.get(KEY_GLIDING).ensureTypeOf(YAMLNodeType.BOOLEAN);
-        node.get(KEY_SWIMMING).ensureTypeOf(YAMLNodeType.BOOLEAN);
-        node.get(KEY_RIPTIDING).ensureTypeOf(YAMLNodeType.BOOLEAN);
-        node.get(KEY_SLEEPING).ensureTypeOf(YAMLNodeType.BOOLEAN);
-        node.get(KEY_AI).ensureTypeOf(YAMLNodeType.BOOLEAN);
-        node.get(KEY_COLLIDABLE).ensureTypeOf(YAMLNodeType.BOOLEAN);
-        node.get(KEY_INVISIBLE).ensureTypeOf(YAMLNodeType.BOOLEAN);
+        node.get(KEY_REMOVE_WHEN_FAR_AWAY).ensureTypeOfIfExists(YAMLNodeType.BOOLEAN);
+        node.get(KEY_CAN_PICKUP_ITEMS).ensureTypeOfIfExists(YAMLNodeType.BOOLEAN);
+        node.get(KEY_LEASHED).ensureTypeOfIfExists(YAMLNodeType.BOOLEAN);
+        node.get(KEY_GLIDING).ensureTypeOfIfExists(YAMLNodeType.BOOLEAN);
+        node.get(KEY_SWIMMING).ensureTypeOfIfExists(YAMLNodeType.BOOLEAN);
+        node.get(KEY_RIPTIDING).ensureTypeOfIfExists(YAMLNodeType.BOOLEAN);
+        node.get(KEY_SLEEPING).ensureTypeOfIfExists(YAMLNodeType.BOOLEAN);
+        node.get(KEY_AI).ensureTypeOfIfExists(YAMLNodeType.BOOLEAN);
+        node.get(KEY_COLLIDABLE).ensureTypeOfIfExists(YAMLNodeType.BOOLEAN);
+        node.get(KEY_INVISIBLE).ensureTypeOfIfExists(YAMLNodeType.BOOLEAN);
         // Paper
 
-        node.get(KEY_ARROWS_STUCK).ensureTypeOf(YAMLNodeType.NUMBER);
-        node.get(KEY_SHIELD_BLOCKING_DELAY).ensureTypeOf(YAMLNodeType.NUMBER);
+        node.get(KEY_ARROWS_STUCK).ensureTypeOfIfExists(YAMLNodeType.NUMBER);
+        node.get(KEY_SHIELD_BLOCKING_DELAY).ensureTypeOfIfExists(YAMLNodeType.NUMBER);
         if (node.containsKey(KEY_ACTIVE_ITEM))
         {
             StructuredYamlNode activeItemNode = node.get(KEY_ACTIVE_ITEM);
-            activeItemNode.ensureTypeOf(YAMLNodeType.MAPPING);
+            activeItemNode.ensureTypeOfIfExists(YAMLNodeType.MAPPING);
             ItemStackStructureImpl.validate(activeItemNode);
         }
-        node.get(KEY_ITEM_USE_REMAIN_TIME).ensureTypeOf(YAMLNodeType.NUMBER);
-        node.get(KEY_HAND_RAISED_TIME).ensureTypeOf(YAMLNodeType.NUMBER);
-        node.get(KEY_IS_HAND_RAISED).ensureTypeOf(YAMLNodeType.BOOLEAN);
-        node.get(KEY_JUMPING).ensureTypeOf(YAMLNodeType.BOOLEAN);
-        node.get(KEY_HURT_DIRECTION).ensureTypeOf(YAMLNodeType.NUMBER);
+        node.get(KEY_ITEM_USE_REMAIN_TIME).ensureTypeOfIfExists(YAMLNodeType.NUMBER);
+        node.get(KEY_HAND_RAISED_TIME).ensureTypeOfIfExists(YAMLNodeType.NUMBER);
+        node.get(KEY_IS_HAND_RAISED).ensureTypeOfIfExists(YAMLNodeType.BOOLEAN);
+        node.get(KEY_JUMPING).ensureTypeOfIfExists(YAMLNodeType.BOOLEAN);
+        node.get(KEY_HURT_DIRECTION).ensureTypeOfIfExists(YAMLNodeType.NUMBER);
     }
 
     /**
