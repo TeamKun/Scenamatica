@@ -19,7 +19,6 @@ import java.lang.reflect.Method;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 public class ScenarioFileManagerImpl implements ScenarioFileManager
 {
@@ -85,8 +84,6 @@ public class ScenarioFileManagerImpl implements ScenarioFileManager
         catch (InvalidScenarioFileException e)
         {
             String message = e.getMessage();
-            if (!(e.getCause() == null || Objects.equals(e.getMessage(), e.getCause().getMessage())))
-                message += "(caused by " + e.getCause().getMessage() + ")";
 
             e.printStackTrace();
 

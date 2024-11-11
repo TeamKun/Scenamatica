@@ -244,7 +244,7 @@ public class PlayerStructureImpl extends HumanEntityStructureImpl implements Pla
         if (node.containsKey(KEY_CONNECTION))
         {
             StructuredYamlNode connectionNode = node.get(KEY_CONNECTION);
-            remoteAddress = connectionNode.get(KEY_CONNECTION_HOSTNAME).getAs(n -> InetAddress.getByName(n.asString()));
+            remoteAddress = connectionNode.get(KEY_CONNECTION_IP).getAs(n -> InetAddress.getByName(n.asString()));
             portNumber = connectionNode.get(KEY_CONNECTION_PORT).asInteger();
             hostName = connectionNode.get(KEY_CONNECTION_HOSTNAME).asString();
         }
