@@ -882,7 +882,7 @@ public class StructuredYamlNodeImpl implements StructuredYamlNode
             throw new YamlValueParsingException(
                     "Failed to parse value",
                     this.getFileName(),
-                    null,
+                    this.keyName,
                     this.thisNode.getStartMark().getLine(),
                     this.getLines(this.thisNode.getStartMark().getLine(), DEFAULT_TOP_BOTTOM_OFFSET),
                     e

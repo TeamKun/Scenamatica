@@ -41,7 +41,7 @@ public class YamlParsingException extends InvalidScenarioFileException
     public String getMessage()
     {
         final String separator = "-";
-        final int separatorMax = "----------------------------------------".length();
+        final int separatorMax = "--------------------------------------------------".length();
 
         String messageHeaderFileName = "[" + this.getFileName() + "]";
         int headerSeparatorSize = (separatorMax - messageHeaderFileName.length()) / 2;
@@ -49,8 +49,12 @@ public class YamlParsingException extends InvalidScenarioFileException
                 + messageHeaderFileName
                 + StringUtils.repeat(separator, headerSeparatorSize);
 
-        return headerSeparator + "\n" +
-                super.getMessage() + "\n" +
+        String shortMessage = super.getMessage();
+        if (this.getCause() != this)
+            shortMessage += " (caused by " + this.getCause().getClass().getSimpleName() + ": " + this.getCause().getMessage() + ")";
+
+        return shortMessage + "\n" +
+                headerSeparator + "\n" +
                 this.getAroundErrorLines() + "\n" +
                 StringUtils.repeat(separator, separatorMax) + "\n";
     }
@@ -70,7 +74,7 @@ public class YamlParsingException extends InvalidScenarioFileException
         for (int i = 0; i < aroundLines.length; i++)
         {
             String line = aroundLines[i];
-            int lineNum = startLine + i + /* 1-origin */ 1;
+            int lineNum = startLine + i;
             String lineNumStr = String.format("%" + numPadding + "d", lineNum);
 
             sb.append(lineNumStr).append(": ").append(line).append("\n");
@@ -82,7 +86,7 @@ public class YamlParsingException extends InvalidScenarioFileException
                 int paddingSize = numPadding + 1 + cursor - "[HERE]".length();
                 sb.append("[HERE]")
                         .append(StringUtils.repeat("-", paddingSize))
-                        .append("^");
+                        .append("^").append("\n");
             }
         }
 

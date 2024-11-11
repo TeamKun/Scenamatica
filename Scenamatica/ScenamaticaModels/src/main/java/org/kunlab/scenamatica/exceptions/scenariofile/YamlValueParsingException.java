@@ -11,10 +11,10 @@ public class YamlValueParsingException extends YamlParsingException
     {
         super(message, fileName, targetKey, line, aroundLines, exception);
     }
-
+/*
     @Override
     public String getMessage()
     {
         return this.getCause() == null ? super.getMessage(): this.getCause().getMessage();
-    }
+    }*/
 }
