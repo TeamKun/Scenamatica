@@ -93,6 +93,9 @@ public class EntitySpecifierImpl<E extends Entity> implements EntitySpecifier<E>
             else
                 return new EntitySpecifierImpl<>(mayUUID);
         }
+        else if (node.isNullNode())
+            // noinspection unchecked
+            return (EntitySpecifierImpl<E>) EMPTY;
 
         throw new IllegalArgumentException("Cannot deserialize EntityArgumentHolder from " + obj);
     }

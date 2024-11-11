@@ -40,7 +40,19 @@ public class YamlParsingException extends InvalidScenarioFileException
     @Override
     public String getMessage()
     {
-        return super.getMessage() + "\n" + this.getAroundErrorLines();
+        final String separator = "-";
+        final int separatorMax = "----------------------------------------".length();
+
+        String messageHeaderFileName = "[" + this.getFileName() + "]";
+        int headerSeparatorSize = (separatorMax - messageHeaderFileName.length()) / 2;
+        String headerSeparator = StringUtils.repeat(separator, headerSeparatorSize)
+                + messageHeaderFileName
+                + StringUtils.repeat(separator, headerSeparatorSize);
+
+        return headerSeparator + "\n" +
+                super.getMessage() + "\n" +
+                this.getAroundErrorLines() + "\n" +
+                StringUtils.repeat(separator, separatorMax) + "\n";
     }
 
     private String getAroundErrorLines()
@@ -50,26 +62,28 @@ public class YamlParsingException extends InvalidScenarioFileException
 
         StringBuilder sb = new StringBuilder();
 
-        // aroundLine: [startLine, fuga, targetLine, piyo, endLine]
-
-        int startLine = this.line;
-        int targetLine = startLine + (aroundLines.length - 1) / 2;
-        int endLine = startLine + aroundLines.length - 1;
-
-        String targetLineContent = aroundLines[(aroundLines.length - 1) / 2];
-        int cursor = this.targetKey == null ? 0: targetLineContent.indexOf(this.targetKey);
+        int targetLine = this.line + 1;  // 中央行を基準に設定
+        int startLine = targetLine - (aroundLines.length - 1) / 2;
+        int endLine = targetLine + (aroundLines.length - 1) / 2;
 
         int numPadding = String.valueOf(endLine).length();
         for (int i = 0; i < aroundLines.length; i++)
         {
             String line = aroundLines[i];
-            int lineNum = startLine + i - (aroundLines.length - 1) / 2;
+            int lineNum = startLine + i + /* 1-origin */ 1;
             String lineNumStr = String.format("%" + numPadding + "d", lineNum);
 
             sb.append(lineNumStr).append(": ").append(line).append("\n");
 
+            // targetLine の行に HERE を表示
             if (lineNum == targetLine)
-                sb.append(StringUtils.repeat("-", numPadding + 2 + cursor)).append("^ HERE!!!\n");
+            {
+                int cursor = this.targetKey == null ? 0: line.indexOf(this.targetKey);
+                int paddingSize = numPadding + 1 + cursor - "[HERE]".length();
+                sb.append("[HERE]")
+                        .append(StringUtils.repeat("-", paddingSize))
+                        .append("^");
+            }
         }
 
         return sb.toString();

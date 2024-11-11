@@ -88,6 +88,8 @@ public class ScenarioFileManagerImpl implements ScenarioFileManager
             if (!(e.getCause() == null || Objects.equals(e.getMessage(), e.getCause().getMessage())))
                 message += "(caused by " + e.getCause().getMessage() + ")";
 
+            e.printStackTrace();
+
             this.registry.getLogger().warning(LangProvider.get(
                     "scenario.file.parser.invalidScenarioFile",
                     MsgArgs.of("pluginName", plugin.getName())

@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.commons.utils.Utils;
 import org.kunlab.scenamatica.enums.YAMLNodeType;
+import org.kunlab.scenamatica.exceptions.scenariofile.YamlParsingException;
 import org.kunlab.scenamatica.interfaces.scenariofile.Structure;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructuredYamlNode;
@@ -102,7 +103,7 @@ public class StructureValidators
         private static final Pattern PATTERN_FULL_QUALIFIED_UUID = Pattern.compile("[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}");
         private static final Pattern PATTERN_COMPACT_UUID = Pattern.compile("[0-9a-fA-F]{32}");
 
-        public static Object validate(StructuredYamlNode node)
+        public static Object validate(StructuredYamlNode node) throws YamlParsingException
         {
             String uuidString = node.asString();
             if (PATTERN_FULL_QUALIFIED_UUID.matcher(uuidString).matches() || PATTERN_COMPACT_UUID.matcher(uuidString).matches())

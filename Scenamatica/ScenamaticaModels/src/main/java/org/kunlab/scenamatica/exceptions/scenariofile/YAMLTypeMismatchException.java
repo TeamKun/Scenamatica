@@ -9,7 +9,7 @@ public class YAMLTypeMismatchException extends YamlParsingException
 
     public YAMLTypeMismatchException(String fileName, String keyName, int line, String[] aroundLines, YAMLNodeType expectedType, YAMLNodeType actualType)
     {
-        super("Value type mismatch", fileName, keyName, line, aroundLines);
+        super("Value type mismatch of key: " + keyName, fileName, keyName, line, aroundLines);
 
         this.expectedType = expectedType;
         this.actualType = actualType;
@@ -18,6 +18,8 @@ public class YAMLTypeMismatchException extends YamlParsingException
     @Override
     public String getMessage()
     {
-        return super.getMessage() + " Expected: " + expectedType + ", Actual: " + actualType;
+        return super.getMessage() + "\n" +
+                "[!] Type mismatch of key: " + this.getTargetKey() + "\n" +
+                "[!] Expected: " + this.expectedType + ", Actual: " + this.actualType + "\n";
     }
 }
