@@ -67,11 +67,11 @@ public class StageStructureImpl implements StageStructure
 
         return new StageStructureImpl(
                 node.get(KEY_ORIGINAL_WORLD_NAME).asString(null),
-                node.get(KEY_TYPE).getAs(StructureMappers.enumName(WorldType.class), null),
+                node.get(KEY_TYPE).getAs(StructureMappers.enumName(WorldType.class), WorldType.NORMAL),
                 node.get(KEY_SEED).asLong(null),
                 node.get(KEY_GENERATE_STRUCTURES).asBoolean(false),
                 node.get(KEY_ENVIRONMENT).getAs(StructureMappers.enumName(World.Environment.class), null),
-                node.get(KEY_HARDCORE).asBoolean(null)
+                node.get(KEY_HARDCORE).asBoolean(false)
         );
     }
 }
