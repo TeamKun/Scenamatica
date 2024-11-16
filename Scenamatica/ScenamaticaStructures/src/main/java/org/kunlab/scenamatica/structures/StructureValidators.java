@@ -6,12 +6,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.commons.utils.Utils;
 import org.kunlab.scenamatica.enums.YAMLNodeType;
+import org.kunlab.scenamatica.exceptions.scenariofile.UnknownEnumValueException;
 import org.kunlab.scenamatica.exceptions.scenariofile.YamlParsingException;
 import org.kunlab.scenamatica.interfaces.scenariofile.Structure;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructuredYamlNode;
 
-import java.util.Locale;
+import java.util.function.Function;
 import java.util.regex.Pattern;
 
 public class StructureValidators
@@ -25,27 +26,39 @@ public class StructureValidators
         return null;
     };
     public static final StructuredYamlNode.Validator UUID = UUIDValidator::validate;
+    public static final StructuredYamlNode.Validator NAMESPACED = NamespacedKeyValidator::validate;
+    public static final StructuredYamlNode.Validator NAMESPACED_KEY = NamespacedKeyValidator::validate;
 
     @NotNull
-    public static StructuredYamlNode.Validator enumName(@NotNull Class<? extends Enum<?>> enumClass)
+    public static <T extends Enum<T>> StructuredYamlNode.Validator enumName(@NotNull Class<T> enumClass)
+    {
+        return enumName(enumClass, Enum::name);
+    }
+
+    @NotNull
+    public static <T extends Enum<T>> StructuredYamlNode.Validator enumName(@NotNull Class<T> enumClass, @NotNull Function<T, String> identifier)
     {
         return node -> {
-            boolean found = false;
-            String mayEnumName = node.asString().toUpperCase(Locale.ENGLISH);
-            for (Enum<?> enumConstant : enumClass.getEnumConstants())
+            String enumName = node.asString();
+            for (T value : enumClass.getEnumConstants())
             {
-                if (enumConstant.name().equalsIgnoreCase(mayEnumName))
-                {
-                    found = true;
-                    break;
-                }
+                if (identifier.apply(value).equalsIgnoreCase(enumName))
+                    return null;
             }
 
-            if (!found)
-                throw new IllegalArgumentException("Value is not a valid enum name of: " + enumClass.getSimpleName());
-            return null;
+            throw new UnknownEnumValueException(
+                    "Value is not a valid enum value",
+                    node.getFileName(),
+                    node.getKeyName(),
+                    node.getStartLine(),
+                    node.getLinesOfFile(node.getStartLine()),
+                    enumName,
+                    enumClass,
+                    identifier
+            );
         };
     }
+
 
     @NotNull
     public static StructuredYamlNode.Validator ranged(@Nullable Number min, @Nullable Number max)
@@ -110,6 +123,20 @@ public class StructureValidators
                 return null;
 
             throw new IllegalArgumentException("Value is not a valid UUID");
+        }
+    }
+
+    private static class NamespacedKeyValidator
+    {
+        private static final Pattern PATTERN_FULL_QUALIFIED_KEY = Pattern.compile("([a-z0-9_\\-./]+:)?([a-z0-9_\\-./]+)");
+
+        public static Object validate(StructuredYamlNode node) throws YamlParsingException
+        {
+            String str = node.asString();
+            if (PATTERN_FULL_QUALIFIED_KEY.matcher(str).matches())
+                return null;
+
+            throw new IllegalArgumentException("Value is not a valid namespaced key");
         }
     }
 }

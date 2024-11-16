@@ -17,7 +17,6 @@ public class YamlMissingKeyValueException extends YamlParsingException
     public String getMessage()
     {
         return super.getMessage() + "\n" +
-                "----------------------------------------\n" +
                 "[!] The value of key '" + this.getTargetKey() + "' is missing.\n" +
                 "[!] You must set a value for this key.\n";
     }

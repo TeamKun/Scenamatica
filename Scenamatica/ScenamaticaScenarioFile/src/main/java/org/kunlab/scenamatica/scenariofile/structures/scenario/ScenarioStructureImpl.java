@@ -11,6 +11,7 @@ import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructuredYamlNode;
 import org.kunlab.scenamatica.interfaces.structures.scenario.ActionStructure;
 import org.kunlab.scenamatica.interfaces.structures.scenario.ScenarioStructure;
+import org.kunlab.scenamatica.structures.StructureMappers;
 import org.kunlab.scenamatica.structures.StructureValidators;
 
 import java.util.HashMap;
@@ -52,7 +53,7 @@ public class ScenarioStructureImpl implements ScenarioStructure
 
     public static void validate(@NotNull StructuredYamlNode node, @NotNull StructureSerializer serializer) throws YamlParsingException
     {
-        node.get(KEY_SCENARIO_TYPE).validateIfExists(StructureValidators.enumName(ScenarioType.class));
+        node.get(KEY_SCENARIO_TYPE).validateIfExists(StructureValidators.enumName(ScenarioType.class, ScenarioType::getKey));
         node.get(KEY_TIMEOUT).ensureTypeOfIfExists(YAMLNodeType.NUMBER);
         node.get(KEY_SCENARIO_NAME).ensureTypeOfIfExists(YAMLNodeType.STRING);
 
@@ -71,7 +72,7 @@ public class ScenarioStructureImpl implements ScenarioStructure
     {
         validate(node, serializer);
 
-        ScenarioType type = node.get(KEY_SCENARIO_TYPE).getAs(n -> ScenarioType.fromKey(n.asString()));
+        ScenarioType type = node.get(KEY_SCENARIO_TYPE).getAs(StructureMappers.enumName(ScenarioType.class, ScenarioType::getKey));
         long timeout = node.get(KEY_TIMEOUT).asLong(DEFAULT_TIMEOUT_TICK);
         String name = node.get(KEY_SCENARIO_NAME).asString(null);
 

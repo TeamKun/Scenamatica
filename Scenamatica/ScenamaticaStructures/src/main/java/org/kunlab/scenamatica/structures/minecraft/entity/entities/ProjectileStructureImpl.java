@@ -88,7 +88,7 @@ public class ProjectileStructureImpl extends EntityStructureImpl implements Proj
         return new ProjectileStructureImpl(
                 entity,
                 shooter,
-                node.get(KEY_DOES_BOUNCE).asBoolean()
+                node.get(KEY_DOES_BOUNCE).asBoolean(null)
         );
     }
 

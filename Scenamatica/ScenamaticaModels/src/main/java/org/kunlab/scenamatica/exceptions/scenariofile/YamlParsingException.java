@@ -49,14 +49,28 @@ public class YamlParsingException extends InvalidScenarioFileException
                 + messageHeaderFileName
                 + StringUtils.repeat(separator, headerSeparatorSize);
 
-        String shortMessage = super.getMessage();
-        if (this.getCause() != this)
-            shortMessage += " (caused by " + this.getCause().getClass().getSimpleName() + ": " + this.getCause().getMessage() + ")";
-
+        String shortMessage = createShortMessage();
         return shortMessage + "\n" +
                 headerSeparator + "\n" +
                 this.getAroundErrorLines() + "\n" +
                 StringUtils.repeat(separator, separatorMax) + "\n";
+    }
+
+    private String createShortMessage()
+    {
+        String shortMessage = super.getMessage();
+        if (this.getCause() == this || this.getCause() == null)
+            return shortMessage;
+
+        Throwable cause = this.getCause();
+        String message;
+        if (cause instanceof YamlParsingException)
+            message = ((YamlParsingException) cause).getShortMessage();
+        else
+            message = cause.getMessage();
+        shortMessage += " (caused by " + this.getCause().getClass().getSimpleName() + ": " + message + ")";
+
+        return shortMessage;
     }
 
     private String getAroundErrorLines()

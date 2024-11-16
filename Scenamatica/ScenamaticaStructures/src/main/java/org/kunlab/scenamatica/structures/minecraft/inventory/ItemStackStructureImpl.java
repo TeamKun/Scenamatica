@@ -284,9 +284,9 @@ public class ItemStackStructureImpl implements ItemStackStructure
             StructuredYamlNode name = entry.getKey();
             for (StructuredYamlNode attributeModifier : entry.getValue().asList())
             {
-                attributeModifier.get(KEY_ATTRIBUTE_MODIFIER_AMOUNT).ensureTypeOf(YAMLNodeType.NUMBER);
-                attributeModifier.get(KEY_ATTRIBUTE_MODIFIER_OPERATION).ensureTypeOf(YAMLNodeType.STRING);
-                attributeModifier.get(KEY_ATTRIBUTE_MODIFIER_SLOT).ensureTypeOf(YAMLNodeType.STRING);
+                attributeModifier.get(KEY_ATTRIBUTE_MODIFIER_AMOUNT).ensureTypeOfIfExists(YAMLNodeType.NUMBER);
+                attributeModifier.get(KEY_ATTRIBUTE_MODIFIER_OPERATION).ensureTypeOfIfExists(YAMLNodeType.STRING);
+                attributeModifier.get(KEY_ATTRIBUTE_MODIFIER_SLOT).ensureTypeOfIfExists(YAMLNodeType.STRING);
             }
 
             name.validate((nameNode) -> {
@@ -326,16 +326,16 @@ public class ItemStackStructureImpl implements ItemStackStructure
     public static void validate(@NotNull StructuredYamlNode node) throws YamlParsingException
     {
         node.get(KEY_TYPE).validateIfExists(StructureValidators.MATERIAL_NAME);
-        node.get(KEY_AMOUNT).ensureTypeOf(YAMLNodeType.NUMBER);
-        node.get(KEY_DISPLAY_NAME).ensureTypeOf(YAMLNodeType.STRING);
-        node.get(KEY_LOCALIZED_NAME).ensureTypeOf(YAMLNodeType.STRING);
-        node.get(KEY_LORE).ensureTypeOf(YAMLNodeType.LIST);
-        node.get(KEY_CUSTOM_MODEL_DATA).ensureTypeOf(YAMLNodeType.NUMBER);
-        node.get(KEY_ITEM_FLAGS).ensureTypeOf(YAMLNodeType.LIST);
-        node.get(KEY_UNBREAKABLE).ensureTypeOf(YAMLNodeType.BOOLEAN);
-        node.get(KEY_DAMAGE).ensureTypeOf(YAMLNodeType.NUMBER);
-        node.get(KEY_PLACEABLES).ensureTypeOf(YAMLNodeType.LIST);
-        node.get(KEY_DESTROYABLES).ensureTypeOf(YAMLNodeType.LIST);
+        node.get(KEY_AMOUNT).ensureTypeOfIfExists(YAMLNodeType.NUMBER);
+        node.get(KEY_DISPLAY_NAME).ensureTypeOfIfExists(YAMLNodeType.STRING);
+        node.get(KEY_LOCALIZED_NAME).ensureTypeOfIfExists(YAMLNodeType.STRING);
+        node.get(KEY_LORE).ensureTypeOfIfExists(YAMLNodeType.LIST);
+        node.get(KEY_CUSTOM_MODEL_DATA).ensureTypeOfIfExists(YAMLNodeType.NUMBER);
+        node.get(KEY_ITEM_FLAGS).ensureTypeOfIfExists(YAMLNodeType.LIST);
+        node.get(KEY_UNBREAKABLE).ensureTypeOfIfExists(YAMLNodeType.BOOLEAN);
+        node.get(KEY_DAMAGE).ensureTypeOfIfExists(YAMLNodeType.NUMBER);
+        node.get(KEY_PLACEABLES).ensureTypeOfIfExists(YAMLNodeType.LIST);
+        node.get(KEY_DESTROYABLES).ensureTypeOfIfExists(YAMLNodeType.LIST);
 
         validateEnchantments(node);
         validateAttributeModifiersNode(node);

@@ -119,9 +119,10 @@ public class ScenarioFileStructureImpl implements ScenarioFileStructure
         long timeout = node.get(KEY_TIMEOUT).asLong(DEFAULT_TIMEOUT_TICK);
 
         int order = ScenarioOrder.NORMAL.getOrder();
-        StructuredYamlNode orderObject = node.get(KEY_ORDER);
-        if (orderObject != null)
+        if (node.containsKey(KEY_ORDER))
         {
+            StructuredYamlNode orderObject = node.get(KEY_ORDER);
+
             String orderString = String.valueOf(orderObject);
             ScenarioOrder enumOrder;
             if ((enumOrder = ScenarioOrder.of(orderString)) == null)

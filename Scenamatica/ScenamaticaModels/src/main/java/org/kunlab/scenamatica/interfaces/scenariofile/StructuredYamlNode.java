@@ -7,6 +7,7 @@ import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.enums.YAMLNodeType;
 import org.kunlab.scenamatica.exceptions.scenariofile.YAMLTypeMismatchException;
 import org.kunlab.scenamatica.exceptions.scenariofile.YamlParsingException;
+import org.yaml.snakeyaml.error.Mark;
 import org.yaml.snakeyaml.nodes.Node;
 
 import java.util.List;
@@ -146,6 +147,22 @@ public interface StructuredYamlNode
     Byte[] asBinary() throws YamlParsingException;
 
     /**
+     * このノードが数値型である場合、その値を返します。
+     *
+     * @return このノードが数値型である場合の値
+     * @throws YamlParsingException このノードが数値型でない場合
+     */
+    Number asNumber() throws YamlParsingException;
+
+    /**
+     * このノードが数値型である場合、その値を返します。
+     *
+     * @param defaultValue デフォルト値
+     * @return このノードが数値型である場合の値
+     * @throws YamlParsingException このノードが数値型でない場合
+     */
+    Number asNumber(@NotNull Number defaultValue) throws YamlParsingException;
+    /**
      * このノードが null 型である場合、true を返します。
      *
      * @return このノードが null 型である場合は true, それ以外の場合は false
@@ -158,6 +175,13 @@ public interface StructuredYamlNode
      * @return このノードが null ノードである場合は true, それ以外の場合は false
      */
     boolean isNullNode();
+
+    /**
+     * このノードが null または null 型 である場合、true を返します。
+     *
+     * @return このノードが null または null 型 である場合は true, それ以外の場合は false
+     */
+    boolean isNullish();
 
     /**
      * このノードがリスト型である場合、その値を返します。
@@ -296,6 +320,14 @@ public interface StructuredYamlNode
     int getEndLine();
 
     /**
+     * ファイルの指定された行を返します。
+     *
+     * @param errorLine エラー行
+     * @return ファイルの指定された行
+     */
+    String[] getLinesOfFile(int errorLine);
+
+    /**
      * スカラ値を変更します。
      *
      * @param scalarType スカラ値の型
@@ -408,6 +440,27 @@ public interface StructuredYamlNode
      * @return このノードを表す SnakeYAML ノード
      */
     Node getThisNode();
+
+    /**
+     * このノードのキーを返します。
+     *
+     * @return このノードのキー
+     */
+    String getKeyName();
+
+    /**
+     * ノードの開始位置を返します。
+     *
+     * @return ノードの開始位置
+     */
+    Mark getStartMark();
+
+    /**
+     * ノードの終了位置を返します。
+     *
+     * @return ードの終了位置
+     */
+    Mark getEndMark();
 
     /**
      * この値をマッピングして返します。

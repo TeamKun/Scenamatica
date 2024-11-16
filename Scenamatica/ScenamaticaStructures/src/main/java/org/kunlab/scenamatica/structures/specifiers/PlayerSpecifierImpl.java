@@ -75,13 +75,30 @@ public class PlayerSpecifierImpl extends EntitySpecifierImpl<Player> implements 
             return new PlayerSpecifierImpl((EntityStructure) obj);
         else if (obj instanceof UUID)
             return new PlayerSpecifierImpl((UUID) obj);
+        else if (obj instanceof StructuredYamlNode)
+            return deserializeFromYamlNode((StructuredYamlNode) obj, serializer);
+        else if (obj instanceof String)
+        {
+            UUID mayUUIDOrName = tryConvertToUUID((String) obj);
 
-        if (!(obj instanceof StructuredYamlNode))
-            throw new IllegalArgumentException("Cannot deserialize PlayerSpecifier from " + obj);
+            if (mayUUIDOrName == null)
+                return new PlayerSpecifierImpl(
+                        Selector.tryCompile((String) obj)
+                                .orElse(null),
+                        (String) obj
+                );
+            else
+                return new PlayerSpecifierImpl(mayUUIDOrName);
+        }
 
-        StructuredYamlNode node = (StructuredYamlNode) obj;
+
+        throw new IllegalArgumentException("Cannot deserialize PlayerSpecifier from " + obj);
+    }
+
+    private static PlayerSpecifier deserializeFromYamlNode(@NotNull StructuredYamlNode node, StructureSerializer ser) throws YamlParsingException
+    {
         if (node.isType(YAMLNodeType.MAPPING))
-            return new PlayerSpecifierImpl(serializer.deserialize(node, PlayerStructure.class));
+            return new PlayerSpecifierImpl(ser.deserialize(node, PlayerStructure.class));
         else if (node.isType(YAMLNodeType.STRING))
         {
             String mayName = node.asString();
@@ -94,11 +111,10 @@ public class PlayerSpecifierImpl extends EntitySpecifierImpl<Player> implements 
                         mayName
                 );
         }
-        else if (node.isNullNode())
+        else if (node.isNullish())
             return EMPTY;
 
-
-        throw new IllegalArgumentException("Cannot deserialize PlayerSpecifier from " + obj);
+        throw new IllegalArgumentException("Cannot deserialize PlayerSpecifier from " + node);
     }
 
     public static PlayerSpecifier ofPlayer(@Nullable Player player)

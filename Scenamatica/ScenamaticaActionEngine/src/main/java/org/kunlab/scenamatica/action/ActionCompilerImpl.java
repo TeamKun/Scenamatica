@@ -47,7 +47,7 @@ public class ActionCompilerImpl implements ActionCompiler
             throws ScenarioCompilationErrorException, YamlParsingException
     {
         StructuredYamlNode arguments = structure.getArguments();
-        if (arguments == null)
+        if (arguments.isNullish())
             throw new ScenarioCompilationErrorException(
                     engine,
                     LangProvider.get(
@@ -57,7 +57,7 @@ public class ActionCompilerImpl implements ActionCompiler
             );
 
         // NegateAction は, 引数をバラして上げる必要がある：引数にアクションが内包されているため。
-        if (arguments.containsKey(NegateAction.KEY_IN_ACTION))
+        if (!arguments.containsKey(NegateAction.KEY_IN_ACTION))
             throw new ScenarioCompilationErrorException(
                     engine,
                     LangProvider.get(
@@ -150,7 +150,7 @@ public class ActionCompilerImpl implements ActionCompiler
 
 
         InputBoard argument = action.getInstance().getInputBoard(scenarioType);
-        if (structure.getArguments() != null)
+        if (!structure.getArguments().isNullish())
         {
             try
             {

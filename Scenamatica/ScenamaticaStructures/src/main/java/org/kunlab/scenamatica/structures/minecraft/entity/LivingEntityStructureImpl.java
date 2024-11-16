@@ -461,11 +461,11 @@ public class LivingEntityStructureImpl extends EntityStructureImpl implements Li
                 return null;
             }, "Invalid potion effect type.");
 
-            node.get(KEY_POTION_EFFECTS_AMBIENT).ensureTypeOf(YAMLNodeType.BOOLEAN);
-            node.get(KEY_POTION_EFFECTS_AMPLIFIER).ensureTypeOf(YAMLNodeType.NUMBER);
-            node.get(KEY_POTION_EFFECTS_DURATION).ensureTypeOf(YAMLNodeType.NUMBER);
-            node.get(KEY_POTION_EFFECTS_SHOW_ICON).ensureTypeOf(YAMLNodeType.BOOLEAN);
-            node.get(KEY_POTION_EFFECTS_SHOW_PARTICLES).ensureTypeOf(YAMLNodeType.BOOLEAN);
+            node.get(KEY_POTION_EFFECTS_AMBIENT).ensureTypeOfIfExists(YAMLNodeType.BOOLEAN);
+            node.get(KEY_POTION_EFFECTS_AMPLIFIER).ensureTypeOfIfExists(YAMLNodeType.NUMBER);
+            node.get(KEY_POTION_EFFECTS_DURATION).ensureTypeOfIfExists(YAMLNodeType.NUMBER);
+            node.get(KEY_POTION_EFFECTS_SHOW_ICON).ensureTypeOfIfExists(YAMLNodeType.BOOLEAN);
+            node.get(KEY_POTION_EFFECTS_SHOW_PARTICLES).ensureTypeOfIfExists(YAMLNodeType.BOOLEAN);
         }
     }
 

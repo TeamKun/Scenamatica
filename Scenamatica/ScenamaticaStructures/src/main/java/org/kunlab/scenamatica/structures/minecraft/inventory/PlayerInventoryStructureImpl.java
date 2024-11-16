@@ -106,7 +106,7 @@ public class PlayerInventoryStructureImpl extends InventoryStructureImpl impleme
             StructuredYamlNode mainInventoryNode = node.get(KEY_MAIN_INVENTORY);
 
             StructuredYamlNode sizeNode = mainInventoryNode.get(KEY_SIZE);
-            if (sizeNode.containsKey(KEY_SIZE) && sizeNode.asInteger() != 36)
+            if (!(sizeNode.isNullish() || sizeNode.asInteger() == 36))
                 throw new IllegalArgumentException(KEY_SIZE + " must be 36 slots in player inventory.");
 
             serializer.validate(mainInventoryNode, InventoryStructure.class);
@@ -126,7 +126,7 @@ public class PlayerInventoryStructureImpl extends InventoryStructureImpl impleme
 
         for (StructuredYamlNode armorContent : node.get(KEY_ARMOR_CONTENTS).asList())
         {
-            if (armorContent == null)
+            if (armorContent.isNullish())
                 continue;
 
             serializer.validate(armorContent, ItemStackStructure.class);
@@ -144,7 +144,7 @@ public class PlayerInventoryStructureImpl extends InventoryStructureImpl impleme
             List<ItemStackStructure> armorContentsList = new ArrayList<>();
             for (StructuredYamlNode armorContent : node.get(KEY_ARMOR_CONTENTS).asList())
             {
-                if (armorContent == null)
+                if (armorContent.isNullish())
                     armorContentsList.add(null);
                 else
                     armorContentsList.add(serializer.deserialize(armorContent, ItemStackStructure.class));

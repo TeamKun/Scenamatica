@@ -8,10 +8,12 @@ import org.kunlab.scenamatica.enums.YAMLNodeType;
 import org.kunlab.scenamatica.exceptions.scenariofile.YAMLTypeMismatchException;
 import org.kunlab.scenamatica.exceptions.scenariofile.YamlMissingKeyValueException;
 import org.kunlab.scenamatica.exceptions.scenariofile.YamlParsingException;
-import org.kunlab.scenamatica.exceptions.scenariofile.YamlValueParsingException;
+import org.kunlab.scenamatica.exceptions.scenariofile.YamlValueMappingException;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructuredYamlNode;
+import org.kunlab.scenamatica.structures.ObjectNode;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.composer.Composer;
+import org.yaml.snakeyaml.error.Mark;
 import org.yaml.snakeyaml.nodes.MappingNode;
 import org.yaml.snakeyaml.nodes.Node;
 import org.yaml.snakeyaml.nodes.NodeTuple;
@@ -121,14 +123,43 @@ public class StructuredYamlNodeImpl implements StructuredYamlNode
         return fromYamlString(fileName, fileContent);
     }
 
-    @Override
-    public boolean isType(YAMLNodeType type)
+    private static StructuredYamlNode createNodeByMap(Map<?, ?> map)
     {
-        if (this.thisNode == null)
-            return false;
+        List<NodeTuple> nodes = new ArrayList<>();
+        for (Map.Entry<?, ?> entry : map.entrySet())
+        {
+            Node keyNode = createNodeByObj(entry.getKey());
+            Node valueNode = createNodeByObj(entry.getValue());
+            nodes.add(new NodeTuple(keyNode, valueNode));
+        }
 
-        return type.isTypeOf(this.thisNode.getTag())
-                || (type == YAMLNodeType.STRING && this.thisNode instanceof ScalarNode);
+        return new StructuredYamlNodeImpl(new MappingNode(Tag.MAP, nodes, DumperOptions.FlowStyle.AUTO), null, null);
+    }
+
+    private static Node createNodeByObj(Object obj)
+    {
+        if (obj instanceof StructuredYamlNode)
+            return ((StructuredYamlNode) obj).getThisNode();
+
+        YAMLNodeType type = getTypeByObject(obj);
+        if (type == null)
+            // noinspection rawtypes, unchecked
+            return new ObjectNode(obj.getClass(), obj);
+
+        if (type == YAMLNodeType.MAPPING)
+            return createNodeByMap$0((Map<?, ?>) obj);
+        else if (type == YAMLNodeType.LIST)
+            return createNodeByList$0((List<?>) obj);
+        else
+            return new ScalarNode(type.getTag(), obj.toString(), null, null, DumperOptions.ScalarStyle.PLAIN);
+    }
+
+    private static Node createNodeByList$0(List<?> list)
+    {
+        List<Node> nodes = list.stream()
+                .map(StructuredYamlNodeImpl::createNodeByObj)
+                .collect(Collectors.toList());
+        return new SequenceNode(Tag.SEQ, nodes, DumperOptions.FlowStyle.AUTO);
     }
 
     @Override
@@ -147,16 +178,16 @@ public class StructuredYamlNodeImpl implements StructuredYamlNode
         return this.thisNode == null ? defaultValue: this.asString();
     }
 
-    @Override
-    public Integer asInteger() throws YamlParsingException
+    private static Node createNodeByMap$0(Map<?, ?> map)
     {
-        if (this.thisNode == null)
-            return null;
-        else if (!this.isType(YAMLNodeType.INTEGER))
-            this.throwTypeMismatchException(YAMLNodeType.INTEGER);
-
-        ScalarNode scalarNode = (ScalarNode) this.thisNode;
-        return Integer.parseInt(scalarNode.getValue());
+        List<NodeTuple> nodes = map.entrySet().stream()
+                .map(entry -> {
+                    Node keyNode = createNodeByObj(entry.getKey());
+                    Node valueNode = createNodeByObj(entry.getValue());
+                    return new NodeTuple(keyNode, valueNode);
+                })
+                .collect(Collectors.toList());
+        return new MappingNode(Tag.MAP, nodes, DumperOptions.FlowStyle.AUTO);
     }
 
     @Override
@@ -184,15 +215,11 @@ public class StructuredYamlNodeImpl implements StructuredYamlNode
     }
 
     @Override
-    public Boolean asBoolean() throws YamlParsingException
+    public Mark getEndMark()
     {
         if (this.thisNode == null)
-            return null;
-        else if (!this.isType(YAMLNodeType.BOOLEAN))
-            this.throwTypeMismatchException(YAMLNodeType.BOOLEAN);
-
-        ScalarNode scalarNode = (ScalarNode) this.thisNode;
-        return Boolean.parseBoolean(scalarNode.getValue());
+            return this.parentNode.getEndMark();
+        return this.thisNode.getEndMark();
     }
 
     @Override
@@ -202,15 +229,11 @@ public class StructuredYamlNodeImpl implements StructuredYamlNode
     }
 
     @Override
-    public Float asFloat() throws YamlParsingException
+    public Mark getStartMark()
     {
         if (this.thisNode == null)
-            return null;
-        else if (!this.isType(YAMLNodeType.FLOAT))
-            this.throwTypeMismatchException(YAMLNodeType.FLOAT);
-
-        ScalarNode scalarNode = (ScalarNode) this.thisNode;
-        return Float.parseFloat(scalarNode.getValue());
+            return this.parentNode.getStartMark();
+        return this.thisNode.getStartMark();
     }
 
     @Override
@@ -220,15 +243,13 @@ public class StructuredYamlNodeImpl implements StructuredYamlNode
     }
 
     @Override
-    public Double asDouble() throws YamlParsingException
+    public boolean isType(YAMLNodeType type)
     {
         if (this.thisNode == null)
-            return null;
-        else if (!this.isType(YAMLNodeType.FLOAT))
-            this.throwTypeMismatchException(YAMLNodeType.FLOAT);
+            return false;
 
-        ScalarNode scalarNode = (ScalarNode) this.thisNode;
-        return Double.parseDouble(scalarNode.getValue());
+        return type.isTypeOf(this.thisNode.getTag())
+                || (type == YAMLNodeType.STRING && this.thisNode instanceof ScalarNode);
     }
 
     @Override
@@ -238,36 +259,58 @@ public class StructuredYamlNodeImpl implements StructuredYamlNode
     }
 
     @Override
-    public Byte asByte() throws YamlParsingException
+    public Integer asInteger() throws YamlParsingException
     {
-        if (this.thisNode == null)
-            return null;
-        else if (!this.isType(YAMLNodeType.INTEGER))
+        if (!this.isType(YAMLNodeType.INTEGER))
             this.throwTypeMismatchException(YAMLNodeType.INTEGER);
 
         ScalarNode scalarNode = (ScalarNode) this.thisNode;
-        return Byte.parseByte(scalarNode.getValue());
+        return Integer.parseInt(scalarNode.getValue());
     }
 
     @Override
-    public Byte[] asBinary() throws YamlParsingException
+    public Boolean asBoolean() throws YamlParsingException
+    {
+        if (!this.isType(YAMLNodeType.BOOLEAN))
+            this.throwTypeMismatchException(YAMLNodeType.BOOLEAN);
+
+        ScalarNode scalarNode = (ScalarNode) this.thisNode;
+        assert scalarNode != null;
+        return Boolean.parseBoolean(scalarNode.getValue());
+    }
+
+    @Override
+    public Float asFloat() throws YamlParsingException
+    {
+        if (!this.isType(YAMLNodeType.NUMBER))
+            this.throwTypeMismatchException(YAMLNodeType.NUMBER);
+
+        ScalarNode scalarNode = (ScalarNode) this.thisNode;
+        assert scalarNode != null;
+        return Float.parseFloat(scalarNode.getValue());
+    }
+
+    @Override
+    public Double asDouble() throws YamlParsingException
     {
         if (this.thisNode == null)
             return null;
-        else if (!this.isType(YAMLNodeType.BINARY))
-            this.throwTypeMismatchException(YAMLNodeType.BINARY);
+        else if (!this.isType(YAMLNodeType.NUMBER))
+            this.throwTypeMismatchException(YAMLNodeType.NUMBER);
 
         ScalarNode scalarNode = (ScalarNode) this.thisNode;
-        return IntStream.range(0, scalarNode.getValue().length())
-                .mapToObj(scalarNode.getValue()::charAt)
-                .map(c -> (byte) c.charValue())
-                .toArray(Byte[]::new);
+        return Double.parseDouble(scalarNode.getValue());
     }
 
     @Override
-    public boolean isNull()
+    public Byte asByte() throws YamlParsingException
     {
-        return this.isType(YAMLNodeType.NULL);
+        if (!this.isType(YAMLNodeType.NUMBER))
+            this.throwTypeMismatchException(YAMLNodeType.NUMBER);
+
+        ScalarNode scalarNode = (ScalarNode) this.thisNode;
+        assert scalarNode != null;
+        return Byte.parseByte(scalarNode.getValue());
     }
 
     @Override
@@ -277,9 +320,28 @@ public class StructuredYamlNodeImpl implements StructuredYamlNode
     }
 
     @Override
-    public List<StructuredYamlNode> asList() throws YamlParsingException
+    public Byte[] asBinary() throws YamlParsingException
     {
-        return this.asSequenceStream().collect(Collectors.toList());
+        if (!this.isType(YAMLNodeType.BINARY))
+            this.throwTypeMismatchException(YAMLNodeType.BINARY);
+
+        ScalarNode scalarNode = (ScalarNode) this.thisNode;
+        assert scalarNode != null;
+        return IntStream.range(0, scalarNode.getValue().length())
+                .mapToObj(scalarNode.getValue()::charAt)
+                .map(c -> (byte) c.charValue())
+                .toArray(Byte[]::new);
+    }
+
+    @Override
+    public Number asNumber() throws YamlParsingException
+    {
+        if (!this.isType(YAMLNodeType.NUMBER))
+            this.throwTypeMismatchException(YAMLNodeType.NUMBER);
+
+        ScalarNode scalarNode = (ScalarNode) this.thisNode;
+        assert scalarNode != null;
+        return scalarNode.getValue().contains(".") ? this.asDouble(): this.asLong();
     }
 
     @Override
@@ -549,39 +611,45 @@ public class StructuredYamlNodeImpl implements StructuredYamlNode
         return this.thisNode.getEndMark().getLine();
     }
 
-    private String[] getLines(int errorLine, int topBottomOffset)
+    @Override
+    public Number asNumber(@NotNull Number defaultValue) throws YamlParsingException
+    {
+        return this.thisNode == null ? defaultValue: this.asNumber();
+    }
+
+    @Override
+    public boolean isNull()
+    {
+        return this.isType(YAMLNodeType.NULL);
+    }
+
+    @Override
+    public boolean isNullish()
+    {
+        return this.isNull() || this.isNullNode();
+    }
+
+    @Override
+    public List<StructuredYamlNode> asList() throws YamlParsingException
+    {
+        return this.asSequenceStream().collect(Collectors.toList());
+    }
+
+    @Override
+    public String[] getLinesOfFile(int errorLine)
     {
         if (errorLine < 0)
             return new String[0];
 
         String[] lines = this.getFileContent().split("\n");
 
-        int start = Math.max(0, errorLine - topBottomOffset);
-        int end = Math.min(lines.length, errorLine + topBottomOffset + 1);
+        int start = Math.max(0, errorLine - StructuredYamlNodeImpl.DEFAULT_TOP_BOTTOM_OFFSET);
+        int end = Math.min(lines.length, errorLine + StructuredYamlNodeImpl.DEFAULT_TOP_BOTTOM_OFFSET + 1);
 
         String[] result = new String[end - start];
         System.arraycopy(lines, start, result, 0, end - start);
 
         return result;
-    }
-
-    private static StructuredYamlNode createNodeByMap(Map<?, ?> map)
-    {
-        List<NodeTuple> nodes = new ArrayList<>();
-        for (Map.Entry<?, ?> entry : map.entrySet())
-        {
-            YAMLNodeType keyType = getTypeByObject(entry.getKey());
-            YAMLNodeType valueType = getTypeByObject(entry.getValue());
-
-            if (keyType == null || valueType == null)
-                throw new IllegalArgumentException("Unsupported type: " + entry.getKey().getClass() + ", " + entry.getValue().getClass());
-
-            ScalarNode keyNode = new ScalarNode(keyType.getTag(), entry.getKey().toString(), null, null, DumperOptions.ScalarStyle.PLAIN);
-            ScalarNode valueNode = new ScalarNode(valueType.getTag(), entry.getValue().toString(), null, null, DumperOptions.ScalarStyle.PLAIN);
-            nodes.add(new NodeTuple(keyNode, valueNode));
-        }
-
-        return new StructuredYamlNodeImpl(new MappingNode(Tag.MAP, nodes, DumperOptions.FlowStyle.AUTO), null, null);
     }
 
     @Override
@@ -762,7 +830,7 @@ public class StructuredYamlNodeImpl implements StructuredYamlNode
                 this.getFileName(),
                 this.keyName,
                 errorLine,
-                this.getLines(errorLine, DEFAULT_TOP_BOTTOM_OFFSET),
+                this.getLinesOfFile(errorLine),
                 expectedType,
                 YAMLNodeType.fromTag(this.thisNode.getTag())
         );
@@ -844,7 +912,7 @@ public class StructuredYamlNodeImpl implements StructuredYamlNode
                 this.getFileName(),
                 this.keyName,
                 this.thisNode.getStartMark().getLine(),
-                this.getLines(this.thisNode.getStartMark().getLine(), DEFAULT_TOP_BOTTOM_OFFSET),
+                this.getLinesOfFile(this.thisNode.getStartMark().getLine()),
                 types[0],
                 YAMLNodeType.fromTag(this.thisNode.getTag())
         );
@@ -865,7 +933,7 @@ public class StructuredYamlNodeImpl implements StructuredYamlNode
                     this.getFileName(),
                     this.keyName,
                     this.parentNode.getStartMark().getLine(),
-                    this.getLines(this.parentNode.getStartMark().getLine(), DEFAULT_TOP_BOTTOM_OFFSET)
+                    this.getLinesOfFile(this.parentNode.getStartMark().getLine())
             );
     }
 
@@ -879,12 +947,12 @@ public class StructuredYamlNodeImpl implements StructuredYamlNode
         }
         catch (Exception e)
         {
-            throw new YamlValueParsingException(
+            throw new YamlValueMappingException(
                     "Failed to parse value",
                     this.getFileName(),
                     this.keyName,
                     this.thisNode.getStartMark().getLine(),
-                    this.getLines(this.thisNode.getStartMark().getLine(), DEFAULT_TOP_BOTTOM_OFFSET),
+                    this.getLinesOfFile(this.thisNode.getStartMark().getLine()),
                     e
             );
         }
@@ -931,7 +999,7 @@ public class StructuredYamlNodeImpl implements StructuredYamlNode
                     this.getFileName(),
                     this.keyName,
                     this.thisNode.getStartMark().getLine(),
-                    this.getLines(this.thisNode.getStartMark().getLine(), DEFAULT_TOP_BOTTOM_OFFSET)
+                    this.getLinesOfFile(this.thisNode.getStartMark().getLine())
             );
 
         if (this.childrenCache.containsKey(index))
@@ -972,7 +1040,7 @@ public class StructuredYamlNodeImpl implements StructuredYamlNode
                     this.getFileName(),
                     this.keyName,
                     this.parentNode.getStartMark().getLine(),
-                    this.getLines(this.parentNode.getStartMark().getLine(), DEFAULT_TOP_BOTTOM_OFFSET)
+                    this.getLinesOfFile(this.parentNode.getStartMark().getLine())
             );
 
         try
@@ -999,12 +1067,12 @@ public class StructuredYamlNodeImpl implements StructuredYamlNode
 
             e.printStackTrace();
 
-            throw new YamlValueParsingException(
+            throw new YamlValueMappingException(
                     "Validation failed: " + fullMessage,
                     this.getFileName(),
                     this.keyName,
                     this.thisNode.getStartMark().getLine(),
-                    this.getLines(this.thisNode.getStartMark().getLine(), DEFAULT_TOP_BOTTOM_OFFSET),
+                    this.getLinesOfFile(this.thisNode.getStartMark().getLine()),
                     e
             );
         }

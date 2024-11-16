@@ -158,12 +158,12 @@ public class EntityStructureImpl implements EntityStructure
     }
 
     @NotNull
-    public static EntityStructure deserialize(@NotNull StructuredYamlNode node, @NotNull StructureSerializer serializer, @Nullable EntityType defaultType) throws YamlParsingException
+    public static EntityStructure deserialize(@NotNull StructuredYamlNode node, @NotNull StructureSerializer serializer, @Nullable EntityType overrideType) throws YamlParsingException
     {
         validate(node);
 
-        EntityType type = defaultType;
-        if (node.containsKey(KEY_TYPE))
+        EntityType type = overrideType;
+        if (overrideType == null && node.containsKey(KEY_TYPE))
             type = node.get(KEY_TYPE).getAs(value -> Utils.searchEntityType(value.asString()));
         LocationStructure loc;
         if (node.containsKey(KEY_LOCATION))

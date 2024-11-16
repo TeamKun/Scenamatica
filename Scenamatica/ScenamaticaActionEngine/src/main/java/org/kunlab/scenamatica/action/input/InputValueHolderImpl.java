@@ -3,6 +3,7 @@ package org.kunlab.scenamatica.action.input;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Setter;
+import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.enums.ScenarioType;
@@ -99,6 +100,7 @@ public class InputValueHolderImpl<T> implements InputValueHolder<T>
     }
 
     @Override
+    @SneakyThrows
     public void set(@Nullable T value)
     {
         this.valueReference = InputReferenceImpl.valued(this.token, value);

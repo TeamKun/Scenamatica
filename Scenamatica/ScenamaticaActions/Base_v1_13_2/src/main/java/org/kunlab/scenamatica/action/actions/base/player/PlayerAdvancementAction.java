@@ -25,6 +25,9 @@ import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Expectable;
 import org.kunlab.scenamatica.interfaces.action.types.Requireable;
+import org.kunlab.scenamatica.interfaces.scenariofile.StructuredYamlNode;
+import org.kunlab.scenamatica.structures.StructureMappers;
+import org.kunlab.scenamatica.structures.StructureValidators;
 
 import java.util.Arrays;
 import java.util.List;
@@ -77,6 +80,10 @@ public class PlayerAdvancementAction
     public static final InputToken<NamespacedKey> IN_ADVANCEMENT = ofInput(
             "advancement",
             NamespacedKey.class,
+            ofTraverser(StructuredYamlNode.class, (ser, node) -> {
+                node.validate(StructureValidators.NAMESPACED_KEY);
+                return node.getAs(StructureMappers.NAMESPACED_KEY);
+            }),
             ofTraverser(String.class, (ser, str) -> NamespaceUtils.fromString(str))
     );
     @InputDoc(
