@@ -93,7 +93,7 @@ public class EntitySpecifierImpl<E extends Entity> implements EntitySpecifier<E>
             else
                 return new EntitySpecifierImpl<>(mayUUID);
         }
-        else if (node.isNullNode())
+        else if (node.isNullish())
             // noinspection unchecked
             return (EntitySpecifierImpl<E>) EMPTY;
 

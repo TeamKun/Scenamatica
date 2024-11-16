@@ -88,16 +88,16 @@ public class BlockStructureImpl implements BlockStructure
 
     public static void validate(@NotNull StructuredYamlNode node, @NotNull StructureSerializer serializer) throws YamlParsingException
     {
-        node.validateIfExists(StructureValidators.MATERIAL_NAME);
+        node.get(KEY_BLOCK_TYPE).validateIfExists(StructureValidators.MATERIAL_NAME);
         if (node.containsKey(KEY_BLOCK_LOCATION))
             serializer.validate(node.get(KEY_BLOCK_LOCATION), LocationStructure.class);
 
         node.get(KEY_LIGHT_LEVEL).validateIfExists(StructureValidators.ranged(0, 15));
         node.get(KEY_BIOME).validateIfExists(StructureValidators.enumName(Biome.class));
 
-        node.get(KEY_METADATA).ensureTypeOf(YAMLNodeType.MAPPING);
-        node.get(KEY_BLOCK_DATA).ensureTypeOf(YAMLNodeType.MAPPING);
-        node.get(KEY_BLOCK_STATE).ensureTypeOf(YAMLNodeType.NUMBER, YAMLNodeType.BINARY);
+        node.get(KEY_METADATA).ensureTypeOfIfExists(YAMLNodeType.MAPPING);
+        node.get(KEY_BLOCK_DATA).ensureTypeOfIfExists(YAMLNodeType.MAPPING);
+        node.get(KEY_BLOCK_STATE).ensureTypeOfIfExists(YAMLNodeType.NUMBER, YAMLNodeType.BINARY);
     }
 
     @NotNull
@@ -109,7 +109,7 @@ public class BlockStructureImpl implements BlockStructure
         if (node.containsKey(KEY_BLOCK_LOCATION))
             location = serializer.deserialize(node.get(KEY_BLOCK_LOCATION), LocationStructure.class);
 
-        Material material = node.get(StructureValidators.MATERIAL_NAME).getAs(n -> Utils.searchMaterial(n.asString()));
+        Material material = node.get(KEY_BLOCK_TYPE).getAs(StructureMappers.MATERIAL_NAME, null);
         return new BlockStructureImpl(
                 material,
                 location,

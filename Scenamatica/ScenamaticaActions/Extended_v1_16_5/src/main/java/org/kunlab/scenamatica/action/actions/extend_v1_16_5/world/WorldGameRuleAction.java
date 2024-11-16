@@ -40,7 +40,12 @@ public class WorldGameRuleAction extends AbstractWorldAction
     public static final InputToken<GameRule<?>> IN_GAME_RULE = ofInput(
             "rule",
             InputTypeToken.ofBased(GameRule.class),
-            ofTraverser(String.class, (ser, str) -> GameRule.getByName(str))
+            ofTraverser(String.class, (ser, str) -> {
+                GameRule<?> rule = GameRule.getByName(str);
+                if (rule == null)
+                    throw new IllegalArgumentException("Unknown game rule: " + str);
+                return rule;
+            })
     );
     public static final InputToken<String> IN_VALUE = ofInput(
             "value",

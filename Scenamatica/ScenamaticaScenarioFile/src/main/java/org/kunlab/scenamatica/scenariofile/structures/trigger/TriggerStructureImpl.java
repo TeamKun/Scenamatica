@@ -85,7 +85,7 @@ public class TriggerStructureImpl implements TriggerStructure
         }
         if (node.containsKey(KEY_AFTER_THAT))
         {
-            StructuredYamlNode afterThatNode = node.get(KEY_BEFORE_THAT);
+            StructuredYamlNode afterThatNode = node.get(KEY_AFTER_THAT);
             afterThatNode.ensureTypeOf(YAMLNodeType.LIST);
             for (StructuredYamlNode obj : afterThatNode.asList())
                 serializer.validate(obj, ScenarioStructure.class);

@@ -75,8 +75,8 @@ public class InventoryStructureImpl implements InventoryStructure
     {
         validate(node, serializer);
 
-        Integer size = node.get(KEY_SIZE).asInteger();
-        String title = node.get(KEY_TITLE).asString();
+        Integer size = node.get(KEY_SIZE).asInteger(null);
+        String title = node.get(KEY_TITLE).asString(null);
 
         Map<Integer, ItemStackStructure> mainContents = new HashMap<>();
         if (node.containsKey(KEY_MAIN_CONTENTS))

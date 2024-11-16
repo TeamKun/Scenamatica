@@ -354,6 +354,7 @@ public class ScenarioManagerImpl implements ScenarioManager
             logger.warning(LangProvider.get(
                     "scenario.compile.error",
                     MsgArgs.of("pluginName", owningPlugin.getName())
+                            .add("scenarioName", scenarioFile.getName())
                             .add("message", e.getMessage())
             ));
 

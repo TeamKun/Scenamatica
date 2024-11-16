@@ -1,7 +1,6 @@
 package org.kunlab.scenamatica.interfaces.structures.scenario;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.bookkeeper.annotations.TypeDoc;
 import org.kunlab.scenamatica.bookkeeper.annotations.TypeProperty;
 import org.kunlab.scenamatica.interfaces.scenariofile.Structure;
@@ -46,6 +45,6 @@ public interface ActionStructure extends Structure
      *
      * @return 動作に必要な引数
      */
-    @Nullable
+    @NotNull
     StructuredYamlNode getArguments();
 }

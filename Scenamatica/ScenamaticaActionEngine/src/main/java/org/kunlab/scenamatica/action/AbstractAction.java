@@ -22,11 +22,11 @@ import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.EntityStruc
 import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.PlayerStructure;
 import org.kunlab.scenamatica.interfaces.structures.specifiers.EntitySpecifier;
 import org.kunlab.scenamatica.interfaces.structures.specifiers.PlayerSpecifier;
+import org.kunlab.scenamatica.structures.StructureMappers;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Predicate;
 
 public abstract class AbstractAction implements Action
@@ -34,7 +34,7 @@ public abstract class AbstractAction implements Action
     @SuppressWarnings("unchecked")
     private static final Traverser<?, PlayerSpecifier>[] PLAYER_SPECIFIER_TRAVERSERS = Arrays.asList(
             TraverserImpl.of(
-                    InputTypeToken.ofMap(String.class, Object.class),
+                    StructuredYamlNode.class,
                     StructureSerializer::tryDeserializePlayerSpecifier
             ),
             TraverserImpl.of(
@@ -117,9 +117,12 @@ public abstract class AbstractAction implements Action
         return PLAYER_SPECIFIER_TRAVERSERS;
     }
 
-    protected static <T extends Enum<T>> Traverser<String, T> ofEnum(@NotNull Class<T> clazz)
+    protected static <T extends Enum<T>> Traverser<StructuredYamlNode, T> ofEnum(@NotNull Class<T> clazz)
     {
-        return TraverserImpl.of(String.class, (ser, str) -> Enum.valueOf(clazz, str.toUpperCase()));
+        return TraverserImpl.of(
+                StructuredYamlNode.class,
+                (ser, str) -> str.getAs(StructureMappers.enumName(clazz))
+        );
     }
 
     protected static InputBoard ofInputs(@NotNull ScenarioType type, InputToken<?>... tokens)
@@ -138,7 +141,7 @@ public abstract class AbstractAction implements Action
                 name,
                 InputTypeToken.ofEntity(entityClass),
                 ofTraverser(
-                        Map.class,
+                        StructuredYamlNode.class,
                         (ser, map) -> ser.tryDeserializeEntitySpecifier(map, structureClass)
                 ),
                 ofTraverser(
