@@ -92,7 +92,7 @@ public class InputValueHolderImpl<T> implements InputValueHolder<T>
     {
         if (obj == null)
             this.valueReference = InputReferenceImpl.valued(this.token, this.token.getDefaultValue());
-        else if (InputReferenceImpl.containsReference(obj))
+        else if (ReferenceResolver.containsReference(obj))
             // assert obj instanceof String
             this.valueReference = InputReferenceImpl.references(this.token, obj);
         else
