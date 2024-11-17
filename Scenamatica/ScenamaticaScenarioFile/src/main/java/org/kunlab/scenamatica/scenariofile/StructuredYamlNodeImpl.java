@@ -30,7 +30,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UncheckedIOException;
 import java.util.AbstractMap;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -123,27 +122,19 @@ public class StructuredYamlNodeImpl implements StructuredYamlNode
         return fromYamlString(fileName, fileContent);
     }
 
-    private static StructuredYamlNode createNodeByMap(Map<?, ?> map)
+    public static StructuredYamlNode fromObject(Object obj)
     {
-        List<NodeTuple> nodes = new ArrayList<>();
-        for (Map.Entry<?, ?> entry : map.entrySet())
-        {
-            Node keyNode = createNodeByObj(entry.getKey());
-            Node valueNode = createNodeByObj(entry.getValue());
-            nodes.add(new NodeTuple(keyNode, valueNode));
-        }
-
-        return new StructuredYamlNodeImpl(new MappingNode(Tag.MAP, nodes, DumperOptions.FlowStyle.AUTO), null, null);
+        Node node = createNodeBy(obj);
+        return new StructuredYamlNodeImpl(node, null, null);
     }
 
-    private static Node createNodeByObj(Object obj)
+    private static Node createNodeBy(Object obj)
     {
         if (obj instanceof StructuredYamlNode)
             return ((StructuredYamlNode) obj).getThisNode();
 
         YAMLNodeType type = getTypeByObject(obj);
         if (type == null)
-            // noinspection rawtypes, unchecked
             return new ObjectNode(obj.getClass(), obj);
 
         if (type == YAMLNodeType.MAPPING)
@@ -157,7 +148,7 @@ public class StructuredYamlNodeImpl implements StructuredYamlNode
     private static Node createNodeByList$0(List<?> list)
     {
         List<Node> nodes = list.stream()
-                .map(StructuredYamlNodeImpl::createNodeByObj)
+                .map(StructuredYamlNodeImpl::createNodeBy)
                 .collect(Collectors.toList());
         return new SequenceNode(Tag.SEQ, nodes, DumperOptions.FlowStyle.AUTO);
     }
@@ -182,8 +173,8 @@ public class StructuredYamlNodeImpl implements StructuredYamlNode
     {
         List<NodeTuple> nodes = map.entrySet().stream()
                 .map(entry -> {
-                    Node keyNode = createNodeByObj(entry.getKey());
-                    Node valueNode = createNodeByObj(entry.getValue());
+                    Node keyNode = createNodeBy(entry.getKey());
+                    Node valueNode = createNodeBy(entry.getValue());
                     return new NodeTuple(keyNode, valueNode);
                 })
                 .collect(Collectors.toList());
@@ -474,6 +465,8 @@ public class StructuredYamlNodeImpl implements StructuredYamlNode
     {
         if (this.thisNode == null)
             return null;
+        else if (this.thisNode instanceof ObjectNode)
+            return ((ObjectNode) this.thisNode).getObject();
 
         switch (YAMLNodeType.fromTag(this.thisNode.getTag()))
         {
@@ -1098,6 +1091,6 @@ public class StructuredYamlNodeImpl implements StructuredYamlNode
     @Override
     public StructuredYamlNode renewByMap(Map<?, ?> map)
     {
-        return createNodeByMap(map);
+        return new StructuredYamlNodeImpl(createNodeByMap$0(map), this.fileName, this.fileContent);
     }
 }
