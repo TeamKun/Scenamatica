@@ -123,8 +123,9 @@ public class ScenarioExecutorImpl implements ScenarioExecutor
             case UNEXPECTED_CONDITION:
                 return ScenarioResultCause.ILLEGAL_CONDITION;
             case INTERNAL_ERROR:
-            case UNRESOLVED_REFERENCES:
                 return ScenarioResultCause.INTERNAL_ERROR;
+            case UNRESOLVED_REFERENCES:
+                return ScenarioResultCause.UNRESOLVED_REFERENCES;
             case TIMED_OUT:
                 return ScenarioResultCause.SCENARIO_TIMED_OUT;
             case SKIPPED:

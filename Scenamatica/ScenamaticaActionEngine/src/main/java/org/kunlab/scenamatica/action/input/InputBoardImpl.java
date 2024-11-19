@@ -387,6 +387,15 @@ public class InputBoardImpl implements InputBoard
         return true;
     }
 
+    @Override
+    public List<InputToken<?>> getUnresolvedTokens()
+    {
+        return this.values.stream()
+                .filter(value -> !value.isResolved())
+                .map(InputValueHolder::getToken)
+                .collect(Collectors.toList());
+    }
+
     @Value
     private static class ValidatorElement
     {

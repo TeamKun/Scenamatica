@@ -8,6 +8,7 @@ import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructuredYamlNode;
 import org.kunlab.scenamatica.interfaces.structures.trigger.TriggerArgument;
 
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -237,4 +238,11 @@ public interface InputBoard extends TriggerArgument
      * @return 値
      */
     String getValuesString();
+
+    /**
+     * 未解決のトークンを取得します。
+     *
+     * @return 未解決のトークン
+     */
+    List<InputToken<?>> getUnresolvedTokens();
 }

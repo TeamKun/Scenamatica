@@ -2,6 +2,7 @@ package org.kunlab.scenamatica.action.input;
 
 import lombok.AccessLevel;
 import lombok.Data;
+import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
@@ -26,7 +27,8 @@ public class InputReferenceImpl<T> implements InputReference<T>
     private final Object referencing;
     @Nullable
     private final Object rawValue;
-    private final String[] referenceParts;
+    @Getter
+    private final String[] containingReferences;
 
     @Setter(AccessLevel.NONE)
     private T value;
@@ -37,7 +39,7 @@ public class InputReferenceImpl<T> implements InputReference<T>
     {
         this.token = token;
         this.referencing = referencing;
-        this.referenceParts = referencing == null ? null: ReferenceResolver.selectReferences(referencing);
+        this.containingReferences = referencing == null ? null: ReferenceResolver.selectReferences(referencing);
         this.value = value;
         this.rawValue = rawValue;
         this.isResolved = isResolved;
@@ -105,11 +107,11 @@ public class InputReferenceImpl<T> implements InputReference<T>
             this.resolve(this.smartCast(serializer, this.rawValue));
             return;
         }
-        if (this.referenceParts == null)
+        if (this.containingReferences == null)
             throw new BrokenReferenceException(null, "This reference doesn't contain any references: " + this.referencing);
         assert this.referencing != null;
 
-        Object resolved = ReferenceResolver.resolveReferences(this.referencing, this.referenceParts, variables);
+        Object resolved = ReferenceResolver.resolveReferences(this.referencing, this.containingReferences, variables);
 
         if (ReferenceResolver.containsReference(resolved))
             throw new BrokenReferenceException(null, "Failed to resolve reference: " + this.referencing + " -> " + resolved);
