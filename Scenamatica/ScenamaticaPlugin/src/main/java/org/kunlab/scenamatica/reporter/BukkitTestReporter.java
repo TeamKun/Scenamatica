@@ -46,6 +46,37 @@ public class BukkitTestReporter extends AbstractTestReporter
         this(1);
     }
 
+    private void broadcastInfo(String messageKey, MsgArgs args)
+    {
+        this.terminals.forEach(t -> t.info(LangProvider.get(messageKey, args)));
+    }
+
+    private void broadcastScenarioInfo(String messageKey, ScenarioEngine engine, MsgArgs args)
+    {
+        this.terminals.forEach(t -> t.info(this.createScenarioMessage(engine, engine.getScenario(), messageKey, args)));
+    }
+
+    private void broadcastScenarioWarn(String messageKey, ScenarioEngine engine, MsgArgs args)
+    {
+        this.terminals.forEach(t -> t.warn(this.createScenarioMessage(engine, engine.getScenario(), messageKey, args)));
+    }
+
+    private void broadcastScenarioSuccess(String messageKey, ScenarioEngine engine, MsgArgs args)
+    {
+        this.terminals.forEach(t -> t.success(this.createScenarioMessage(engine, engine.getScenario(), messageKey, args)));
+    }
+
+    private void broadcastScenarioError(String messageKey, ScenarioEngine engine, MsgArgs args)
+    {
+        this.terminals.forEach(t -> t.error(this.createScenarioMessage(engine, engine.getScenario(), messageKey, args)));
+    }
+
+    private String createScenarioMessage(ScenarioEngine engine, ScenarioFileStructure scenario, String messageKey, MsgArgs args)
+    {
+        args.add("scenario", scenario.getName());
+        return this.withPrefix(engine.getTestID(), scenario, LangProvider.get(messageKey, args));
+    }
+
     private static String formatDateTime(long time)
     {
         return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(time));
@@ -87,122 +118,112 @@ public class BukkitTestReporter extends AbstractTestReporter
     @Override
     public void onTestStart(@NotNull ScenarioEngine engine, @NotNull TriggerStructure trigger)
     {
-        ScenarioFileStructure scenario = engine.getScenario();
-
-        this.terminals.forEach(t ->
-                t.info(this.withPrefix(engine.getTestID(), scenario, LangProvider.get(
-                        "test.start",
-                        MsgArgs.of("scenario", scenario.getName())
-                                .add("trigger", trigger.getType().name())
-                )))
+        this.broadcastScenarioInfo(
+                "test.start",
+                engine,
+                MsgArgs.of("trigger", trigger.getType().name())
         );
     }
 
     @Override
     public void onTestSkipped(@NotNull ScenarioEngine engine, @NotNull CompiledScenarioAction action)
     {
-        ScenarioFileStructure scenario = engine.getScenario();
-
-        this.terminals.forEach(t -> t.warn(this.withPrefix(engine.getTestID(), scenario, LangProvider.get(
+        this.broadcastScenarioWarn(
                 "test.skip",
-                MsgArgs.of("scenario", scenario.getName())
-                        .add("condition", getConditionString(action))
-        ))));
+                engine,
+                MsgArgs.of("condition", getConditionString(action))
+        );
     }
 
     @Override
     public void onActionStart(@NotNull ScenarioEngine engine, @NotNull CompiledScenarioAction action)
     {
-        ScenarioFileStructure scenario = engine.getScenario();
-
         switch (action.getType())
         {
             case ACTION_EXECUTE:
-                this.terminals.forEach(t -> t.info(this.withPrefix(engine.getTestID(), scenario, LangProvider.get(
+                this.broadcastScenarioInfo(
                         "test.action.run",
-                        MsgArgs.of("action", action.getAction().getExecutor().getClass().getSimpleName())
-                ))));
+                        engine,
+                        MsgArgs.of("action", ActionMetaUtils.getActionName(action.getAction().getExecutor()))
+                );
                 break;
             case ACTION_EXPECT:
-                this.terminals.forEach(t -> t.info(this.withPrefix(engine.getTestID(), scenario, LangProvider.get(
+                this.broadcastScenarioInfo(
                         "test.action.watch",
-                        MsgArgs.of("action", action.getAction().getExecutor().getClass().getSimpleName())
-                ))));
+                        engine,
+                        MsgArgs.of("action", ActionMetaUtils.getActionName(action.getAction().getExecutor()))
+                );
                 break;
             case CONDITION_REQUIRE:
-                this.terminals.forEach(t -> t.info(this.withPrefix(engine.getTestID(), scenario, LangProvider.get(
+                this.broadcastScenarioInfo(
                         "test.action.require.start",
+                        engine,
                         MsgArgs.of("condition", getConditionString(action))
-                ))));
+                );
+                break;
         }
     }
 
     @Override
     public void onActionSuccess(@NotNull ScenarioEngine engine, @NotNull ActionResult result)
     {
-        ScenarioFileStructure scenario = engine.getScenario();
-
-        this.terminals.forEach(t -> t.success(this.withPrefix(engine.getTestID(), scenario, LangProvider.get(
+        this.broadcastScenarioSuccess(
                 "test.action.run.success",
+                engine,
                 MsgArgs.of("action", result.getScenarioName())
-        ))));
+        );
     }
 
     @Override
     public void onWatchingActionExecuted(@NotNull ScenarioEngine engine, @NotNull ActionResult result)
     {
-        ScenarioFileStructure scenario = engine.getScenario();
-
-        this.terminals.forEach(t -> t.success(this.withPrefix(engine.getTestID(), scenario, LangProvider.get(
+        this.broadcastScenarioSuccess(
                 "test.action.watch.done",
+                engine,
                 MsgArgs.of("action", result.getScenarioName())
-        ))));
-
+        );
     }
 
     @Override
     public void onActionExecuteFailed(@NotNull ScenarioEngine engine, @NotNull CompiledAction action, @NotNull Throwable error)
     {
-        ScenarioFileStructure scenario = engine.getScenario();
-        this.terminals.forEach(t -> t.info(this.withPrefix(engine.getTestID(), scenario, LangProvider.get(
+        this.broadcastScenarioInfo(
                 "test.action.run.fail",
-                MsgArgs.of("action", action.getExecutor().getClass().getSimpleName())
+                engine,
+                MsgArgs.of("action", ActionMetaUtils.getActionName(action.getExecutor()))
                         .add("cause", error.getClass().getSimpleName() + ": " + error.getMessage())
-        ))));
+        );
     }
 
     @Override
     public void onActionJumped(@NotNull ScenarioEngine engine, @NotNull ActionResult result, @NotNull CompiledAction expected)
     {
-        ScenarioFileStructure scenario = engine.getScenario();
-
-        this.terminals.forEach(t -> t.warn(this.withPrefix(engine.getTestID(), scenario, LangProvider.get(
+        this.broadcastScenarioWarn(
                 "test.action.jumped",
+                engine,
                 MsgArgs.of("action", result.getScenarioName())
-                        .add("scenario", engine.getScenario().getName())
-        ))));
+        );
     }
 
     @Override
     public void onConditionCheckSuccess(@NotNull ScenarioEngine engine, @NotNull CompiledScenarioAction action)
     {
         ScenarioFileStructure scenario = engine.getScenario();
-
-        this.terminals.forEach(t -> t.success(this.withPrefix(engine.getTestID(), scenario, LangProvider.get(
+        this.broadcastScenarioSuccess(
                 "test.action.require.success",
+                engine,
                 MsgArgs.of("condition", getConditionString(action))
-        ))));
+        );
     }
 
     @Override
     public void onConditionCheckFailed(@NotNull ScenarioEngine engine, @NotNull CompiledScenarioAction action)
     {
-        ScenarioFileStructure scenario = engine.getScenario();
-
-        this.terminals.forEach(t -> t.error(this.withPrefix(engine.getTestID(), scenario, LangProvider.get(
+        this.broadcastScenarioError(
                 "test.action.require.fail",
+                engine,
                 MsgArgs.of("condition", getConditionString(action))
-        ))));
+        );
     }
 
     @Override
