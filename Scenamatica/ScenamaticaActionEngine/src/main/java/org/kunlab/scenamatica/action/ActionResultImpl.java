@@ -26,6 +26,8 @@ public class ActionResultImpl implements ActionResult
     @Nullable
     Throwable error;
     Map<String, Object> outputs;
+    @Nullable
+    String[] unresolvedReferences;
 
     public static ActionResult fromContext(Action action, ActionContext context)
     {
@@ -40,7 +42,8 @@ public class ActionResultImpl implements ActionResult
                 context.isHalt(),
                 context.getCause(),
                 context.getError(),
-                Collections.unmodifiableMap(context.getOutput())
+                Collections.unmodifiableMap(context.getOutput()),
+                context.getUnresolvedReferences()
         );
     }
 

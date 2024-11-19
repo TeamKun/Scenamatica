@@ -79,4 +79,11 @@ public interface InputReference<T>
      * @return 空の場合はtrue
      */
     boolean isEmpty();
+
+    /**
+     * 中に含まれる参照を取得します。
+     *
+     * @return 参照
+     */
+    String[] getContainingReferences();
 }

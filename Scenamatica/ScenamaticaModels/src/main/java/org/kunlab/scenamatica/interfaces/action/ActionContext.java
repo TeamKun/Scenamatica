@@ -362,4 +362,6 @@ public interface ActionContext
      * リセットします。
      */
     void reset();
+
+    String[] getUnresolvedReferences();
 }

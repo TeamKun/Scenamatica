@@ -14,6 +14,7 @@ import org.kunlab.scenamatica.interfaces.action.ActionResult;
 import org.kunlab.scenamatica.interfaces.action.CompiledAction;
 import org.kunlab.scenamatica.interfaces.action.LoadedAction;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
+import org.kunlab.scenamatica.interfaces.action.input.InputReference;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.input.InputValueHolder;
 import org.kunlab.scenamatica.interfaces.context.Actor;
@@ -22,7 +23,9 @@ import org.kunlab.scenamatica.interfaces.context.Context;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -304,5 +307,22 @@ public class ActionContextImpl implements ActionContext
         this.skipped = false;
         this.error = null;
         this.output.clear();
+    }
+
+    @Override
+    public String[] getUnresolvedReferences()
+    {
+        List<InputToken<?>> unresolvedTokens = this.input.getUnresolvedTokens();
+
+        return unresolvedTokens.stream()
+                // Token => InputReferences 化
+                .map(this::input)
+                .filter(reference -> reference instanceof InputReference)
+                .map(reference -> (InputReference<?>) reference)
+                // InputReferences => 参照文字列の取得
+                .map(InputReference::getContainingReferences)
+                .flatMap(Arrays::stream)
+                .distinct()
+                .toArray(String[]::new);
     }
 }
