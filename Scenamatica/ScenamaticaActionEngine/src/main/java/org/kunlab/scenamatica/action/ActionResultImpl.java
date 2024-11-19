@@ -33,7 +33,7 @@ public class ActionResultImpl implements ActionResult
     {
         String scenarioName = context.getScenarioName() == null ?
                 ActionMetaUtils.getActionName(action):
-                context.getScenarioName();
+                context.getScenarioName() + " of action " + ActionMetaUtils.getActionName(action);
 
         return new ActionResultImpl(
                 scenarioName,
