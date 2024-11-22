@@ -24,6 +24,8 @@ public class ScenarioResultImpl implements ScenarioResult
     ScenarioState state;
     @NotNull
     ScenarioResultCause cause;
+    @NotNull
+    List<ActionResult> actionResults;
     long startedAt;
     long finishedAt;
     int attemptOf;
@@ -43,6 +45,7 @@ public class ScenarioResultImpl implements ScenarioResult
         this.testID = testID;
         this.state = state;
         this.cause = resultType;
+        this.actionResults = actionResults;
         this.startedAt = startedAt;
         this.finishedAt = System.currentTimeMillis();
         this.attemptOf = attemptOf;
@@ -62,6 +65,7 @@ public class ScenarioResultImpl implements ScenarioResult
         this.testID = testID;
         this.state = state;
         this.cause = resultType;
+        this.actionResults = actionResults;
         this.startedAt = startedAt;
         this.finishedAt = System.currentTimeMillis();
         this.attemptOf = attemptOf;

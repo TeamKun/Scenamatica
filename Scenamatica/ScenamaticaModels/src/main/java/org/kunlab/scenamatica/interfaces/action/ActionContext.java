@@ -6,6 +6,7 @@ import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.enums.ActionResultCause;
 import org.kunlab.scenamatica.enums.RunAs;
 import org.kunlab.scenamatica.enums.RunOn;
+import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.input.InputValueHolder;
@@ -364,4 +365,11 @@ public interface ActionContext
     void reset();
 
     String[] getUnresolvedReferences();
+
+    /**
+     * シナリオの種類を取得します。
+     *
+     * @return 種類
+     */
+    ScenarioType getType();
 }

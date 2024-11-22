@@ -36,11 +36,11 @@ test.action.run=スケジュールされたアクション %%action%% を実行�
 test.action.run.fail=%%bold%%❌%%reset%%  スケジュールされたアクション %%action%% の実行は %%cause%% により失敗しました。
 test.action.run.success=%%bold%%✔%%reset%%  スケジュールされたアクション %%action%% の実行に成功しました。
 test.action.watch=予期されたアクション %%action%% が実行されるか監視します。
-test.action.watch.done=%%bold%%✔%%reset%% 監視されたアクション %%action%% がプラグインにより実行されました。
-test.action.jumped=%%bold%%⚠%%reset%% シナリオ %%scenario%% のアクション %%action%% が期待されるアクションよりも先に実行されました。
+test.action.watch.done=%%bold%%✔%%reset%%  監視されたアクション %%action%% がプラグインにより実行されました。
+test.action.jumped=%%bold%%⚠%%reset%%  シナリオ %%scenario%% のアクション %%action%% が期待されるアクションよりも先に実行されました。
 test.action.require.start=シナリオの続行に必要な条件 %%condition%% を満たしているか確認します。
-test.action.require.success=%%bold%%✔%%reset%% シナリオの続行に必要な条件 %%condition%% を満たしています。
-test.action.require.fail=%%bold%%❌%%reset%% シナリオの続行に必要な条件 %%condition%% を満たしていません。
+test.action.require.success=%%bold%%✔%%reset%%  シナリオの続行に必要な条件 %%condition%% を満たしています。
+test.action.require.fail=%%bold%%❌%%reset%%  シナリオの続行に必要な条件 %%condition%% を満たしていません。
 
 
 test.result=%%green%%テスト結果: %%result%% %%gray%%- %%message%%
@@ -56,6 +56,7 @@ test.result.message.action_execution_failed=%%red%%スケジュールされた�
 test.result.message.action_expectation_jumped=%%red%%期待されたアクションよりも先に他のアクションが実行されました。
 test.result.message.scenario_timed_out=%%red%%シナリオが指定された時間内に実行されませんでした。
 test.result.message.illegal_condition=%%red%%必要な条件が満たされていませんでした。
+test.result.message.unresolved_references=%%red%%参照の解決に失敗しました。
 test.result.message.internal_error=%%red%%予期しない内部エラーが発生しました。
 test.result.message.cancelled=%%yellow%%テストはキャンセルされました。
 test.result.message.skipped=%%gray%%テストはスキップされました。
@@ -65,6 +66,11 @@ test.result.detail.id=-   テストID： %%id%%
 test.result.detail.state=-   テスト状態： %%state%%
 test.result.detail.elapsed=-   開始時刻： %%startedAt%%、終了時刻： %%finishedAt%%、経過時間： %%elapsed%%
 test.result.detail.failed=-   失敗したアクション： %%action%%
+test.result.actions=-   アクション追跡情報（%%count%%）：
+test.result.actions.success=-   * %%bold%%%%green%%✔%%reset%%  %%scenarioType%% %%actionName%%
+test.result.actions.fail=-   * %%bold%%%%red%%❌%%reset%%  %%scenarioType%% %%actionName%% - %%cause%%(%%message%%)
+test.result.actions.skip=-   * %%bold%%%%yellow%%→%%reset%%  %%scenarioType%% %%actionName%%
+
 
 test.session.result.stats=%%green%%実行されたテスト： %%white%%%%totalRun%%、%%dark_green%%成功： %%white%%%%passed%%、 %%red%%失敗： %%white%%%%failed%%、 %%yellow%%キャンセル： %%white%%%%cancelled%%、 %%gray%%スキップ： %%white%%%%skipped%%、 %%green%% 経過時間： %%white%%%%elapsed%%
 test.session.result.stats.with_flakes=%%green%%実行されたテスト： %%white%%%%totalRun%%、%%dark_green%%成功： %%white%%%%passed%%、 %%red%%失敗： %%white%%%%failed%%、 %%yellow%%キャンセル： %%white%%%%cancelled%%、 %%gray%%スキップ： %%white%%%%skipped%%、 %%dark_gray%%不安定： %%white%%%%flakes%%%%gray%% (試行回数： %%white%%%%attempts%%%%gray%%)、 %%green%% 経過時間： %%white%%%%elapsed%%

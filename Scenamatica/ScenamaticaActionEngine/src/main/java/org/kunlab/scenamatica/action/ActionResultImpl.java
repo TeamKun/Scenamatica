@@ -1,9 +1,11 @@
 package org.kunlab.scenamatica.action;
 
 import lombok.Value;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.commons.utils.ActionMetaUtils;
 import org.kunlab.scenamatica.enums.ActionResultCause;
+import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.Action;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.ActionResult;
@@ -16,6 +18,8 @@ import java.util.UUID;
 @Value
 public class ActionResultImpl implements ActionResult
 {
+    @NotNull
+    ScenarioType scenarioType;
     @Nullable
     String scenarioName;
     UUID runID;
@@ -36,6 +40,7 @@ public class ActionResultImpl implements ActionResult
                 context.getScenarioName() + " of action " + ActionMetaUtils.getActionName(action);
 
         return new ActionResultImpl(
+                context.getType(),
                 scenarioName,
                 context.getContextID(),  // runID は contextID と同じ
                 context.isSuccess(),
@@ -50,5 +55,17 @@ public class ActionResultImpl implements ActionResult
     public static ActionResult fromAction(CompiledAction action)
     {
         return fromContext(action.getExecutor(), action.getContext());
+    }
+
+    @Override
+    public boolean isSkipped()
+    {
+        return this.cause == ActionResultCause.SKIPPED;
+    }
+
+    @Override
+    public boolean isFailed()
+    {
+        return !this.success;
     }
 }

@@ -3,6 +3,7 @@ package org.kunlab.scenamatica.interfaces.action;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.enums.ActionResultCause;
+import org.kunlab.scenamatica.enums.ScenarioType;
 
 import java.util.Map;
 import java.util.UUID;
@@ -41,6 +42,20 @@ public interface ActionResult
     boolean isHalt();
 
     /**
+     * アクションがスキップされたかどうかを取得します。
+     *
+     * @return アクションがスキップされたかどうか
+     */
+    boolean isFailed();
+
+    /**
+     * アクションがスキップされたかどうかを取得します。
+     *
+     * @return アクションがスキップされたかどうか
+     */
+    boolean isSkipped();
+
+    /**
      * アクションの実行結果の原因を取得します。
      *
      * @return アクションの実行結果の原因
@@ -62,4 +77,18 @@ public interface ActionResult
      */
     @NotNull
     Map<String, Object> getOutputs();
+
+    /**
+     * 未解決の参照を取得します。
+     *
+     * @return 未解決の参照
+     */
+    ScenarioType getScenarioType();
+
+    /**
+     * 未解決の参照を取得します。
+     *
+     * @return 未解決の参照
+     */
+    String[] getUnresolvedReferences();
 }

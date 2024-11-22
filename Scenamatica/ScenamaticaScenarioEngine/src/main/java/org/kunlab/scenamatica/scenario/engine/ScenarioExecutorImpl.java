@@ -283,6 +283,16 @@ public class ScenarioExecutorImpl implements ScenarioExecutor
         return result;
     }
 
+    private static void skipAllScenario(List<ActionResult> results, List<? extends CompiledScenarioAction> scenario)
+    {
+        for (CompiledScenarioAction action : scenario)
+        {
+            ActionContext context = action.getAction().getContext();
+            context.skip();
+            results.add(context.createResult(action.getAction()));
+        }
+    }
+
     @NotNull
     private ScenarioResult runScenario(List<? extends CompiledScenarioAction> scenario, RunAs as)
     {
@@ -300,46 +310,40 @@ public class ScenarioExecutorImpl implements ScenarioExecutor
 
         boolean allSuccess = true;
         ActionResultCause cause = null;
-        List<ActionResult> results;
-        try
+        List<ActionResult> results = new ArrayList<>();
+        int progress = 0;
+        for (; progress < scenario.size(); progress++)
         {
-            results = new ArrayList<>();
-            for (int i = 0; i < scenario.size(); i++)
+            // エンジンが停まった = 実行がキャンセルされている。
+            if (!this.engine.isRunning())
             {
-                if (!this.engine.isRunning())
-                    if (this.isTimedOut())
-                        return this.genResult(ScenarioResultCause.RUN_TIMED_OUT, results);
-                    else
-                        return this.genResult(ScenarioResultCause.CANCELLED, results);
-
-                CompiledScenarioAction scenarioStructure = scenario.get(i);
-                CompiledScenarioAction next = i + 1 < scenario.size() ? scenario.get(i + 1): null;
-
-                ActionResult result = this.runScenario(scenarioStructure, next);
-                if (result == null)
-                    continue; // スキップされた場合は次のアクションへ。
-
-                results.add(result);
-
-                if (!result.isSuccess())
-                {
-                    allSuccess = false;
-                    cause = result.getCause();
-                }
-
-                if (result.isHalt())
-                    break;  // Halt された場合は即座に終了。
+                skipAllScenario(results, scenario.subList(progress, scenario.size()));
+                if (this.isTimedOut())
+                    return this.genResult(ScenarioResultCause.RUN_TIMED_OUT, results);
+                else
+                    return this.genResult(ScenarioResultCause.CANCELLED, results);
             }
+
+            CompiledScenarioAction scenarioStructure = scenario.get(progress);
+            CompiledScenarioAction next = progress + 1 < scenario.size() ? scenario.get(progress + 1): null;
+
+            // シナリオを実際に実行する。
+            ActionResult result = this.runScenario(scenarioStructure, next);
+            results.add(result);
+
+            if (!result.isSuccess())
+            {
+                allSuccess = false;
+                cause = result.getCause();
+            }
+
+            if (result.isHalt())
+                break;  // Halt された場合は即座に終了。
         }
-        catch (ScenarioWaitTimedOutException ignored)
-        {
-            return this.genResult(ScenarioResultCause.SCENARIO_TIMED_OUT);
-        }
-        catch (Throwable e)
-        {
-            this.registry.getExceptionHandler().report(e);
-            return this.genResult(ScenarioResultCause.INTERNAL_ERROR);
-        }
+
+        // 途中で落ちた場合は, 残りのアクションをスキップする。
+        if (progress < scenario.size() - 1)
+            skipAllScenario(results, scenario.subList(progress, scenario.size()));
 
         if (allSuccess)
             return this.genResult(ScenarioResultCause.PASSED, results);
@@ -359,6 +363,7 @@ public class ScenarioExecutorImpl implements ScenarioExecutor
         input.resolveReferences(this.registry.getScenarioFileManager().getSerializer(), this.variable);
     }
 
+    @NotNull
     private ActionResult runScenario(CompiledScenarioAction scenario, CompiledScenarioAction next)
     {
         if (scenario.getRunIf() != null)
@@ -369,7 +374,7 @@ public class ScenarioExecutorImpl implements ScenarioExecutor
             {
                 ActionContext context = scenario.getAction().getContext();
                 context.skip(); // スキップとしてマークしておく。
-                return null;
+                return context.createResult(scenario.getAction());
             }
         }
 
@@ -385,22 +390,21 @@ public class ScenarioExecutorImpl implements ScenarioExecutor
         }
 
         this.currentScenario = scenario;
-        ScenarioType type = scenario.getType();
-
-        switch (type)
-        {
-            case ACTION_EXECUTE:
-                this.doAction(scenario, next);
-                break;
-            case ACTION_EXPECT:
-                this.addWatch(scenario);
-                break;
-            case CONDITION_REQUIRE:
-                return this.testCondition(scenario);
-        }
-
         try
         {
+            ScenarioType type = scenario.getType();
+            switch (type)  // 種類によって, 実行タイプを振り分ける。
+            {
+                case ACTION_EXECUTE:
+                    this.doAction(scenario, next);
+                    break;
+                case ACTION_EXPECT:
+                    this.addWatch(scenario);
+                    break;
+                case CONDITION_REQUIRE:
+                    return this.testCondition(scenario);
+            }
+
             return this.deliverer.waitForResult(scenario.getStructure().getTimeout(), this.state);
         }
         catch (ScenarioWaitTimedOutException e)
@@ -413,7 +417,7 @@ public class ScenarioExecutorImpl implements ScenarioExecutor
             context.fail(ActionResultCause.UNRESOLVED_REFERENCES, e);
             return context.createResult(scenario.getAction());
         }
-        catch (Exception e)
+        catch (Throwable e)
         {
             this.registry.getExceptionHandler().report(e);
             context.fail(ActionResultCause.INTERNAL_ERROR);
@@ -436,28 +440,17 @@ public class ScenarioExecutorImpl implements ScenarioExecutor
     {
         this.testReporter.onActionStart(this.engine, scenario);
 
+        // コンパイラによって, Requireable であることが保証されている。
         assert scenario.getAction().getExecutor() instanceof Requireable;
         Requireable requireable = (Requireable) scenario.getAction().getExecutor();
-
         ActionContext context = scenario.getAction().getContext();
-        try
-        {
-            boolean result = requireable.checkConditionFulfilled(context);
 
-            if (result && context.isSuccess())  // 正規化： 成功状態がない場合は, 暗黙的に成功とする。
-                context.success();
-            else
-                context.fail(ActionResultCause.UNEXPECTED_CONDITION);
-        }
-        catch (BrokenReferenceException e)
-        {
-            context.fail(ActionResultCause.UNRESOLVED_REFERENCES, e);
-        }
-        catch (Throwable e)
-        {
-            context.fail(e);
-            this.registry.getExceptionHandler().report(e);
-        }
+        // コンディションをテストする。
+        boolean result = requireable.checkConditionFulfilled(context);
+        if (result && context.isSuccess())  // 正規化： 成功状態がない場合は, 暗黙的に成功とする。
+            context.success();
+        else
+            context.fail(ActionResultCause.UNEXPECTED_CONDITION);
 
         if (context.isSuccess())
             this.testReporter.onConditionCheckSuccess(this.engine, scenario);
