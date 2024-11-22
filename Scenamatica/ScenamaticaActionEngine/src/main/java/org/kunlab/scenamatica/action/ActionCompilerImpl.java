@@ -97,7 +97,14 @@ public class ActionCompilerImpl implements ActionCompiler
             negateArgument.compile(serializer, arguments.renewByMap(new HashMap<String, Object>()
             {{
                 this.put(NegateAction.KEY_IN_ACTION, actionToBeNegated.getInstance());
-                this.put(NegateAction.KEY_IN_ARGUMENTS, new ActionContextImpl(engine, runOn, runAs, argument, engine.getPlugin().getLogger()));
+                this.put(NegateAction.KEY_IN_ARGUMENTS, new ActionContextImpl(
+                        ScenarioType.CONDITION_REQUIRE,
+                        engine,
+                        runOn,
+                        runAs,
+                        argument,
+                        engine.getPlugin().getLogger()
+                ));
             }}));
         }
         catch (InvalidScenarioFileException e)
@@ -108,7 +115,14 @@ public class ActionCompilerImpl implements ActionCompiler
 
         return new CompiledActionImpl(
                 action,
-                new ActionContextImpl(engine, runOn, runAs, negateArgument, engine.getPlugin().getLogger()),
+                new ActionContextImpl(
+                        ScenarioType.CONDITION_REQUIRE,
+                        engine,
+                        runOn,
+                        runAs,
+                        negateArgument,
+                        engine.getPlugin().getLogger()
+                ),
                 structure,
                 reportErrorTo,
                 onSuccess
@@ -168,7 +182,14 @@ public class ActionCompilerImpl implements ActionCompiler
 
         return new CompiledActionImpl(
                 action.getInstance(),
-                new ActionContextImpl(engine, runOn, runAs, argument, engine.getPlugin().getLogger()),
+                new ActionContextImpl(
+                        scenarioType,
+                        engine,
+                        runOn,
+                        runAs,
+                        argument,
+                        engine.getPlugin().getLogger()
+                ),
                 structure,
                 reportErrorTo,
                 onSuccess

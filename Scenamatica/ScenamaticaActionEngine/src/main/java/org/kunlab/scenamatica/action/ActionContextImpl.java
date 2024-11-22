@@ -2,12 +2,14 @@ package org.kunlab.scenamatica.action;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.enums.ActionResultCause;
 import org.kunlab.scenamatica.enums.RunAs;
 import org.kunlab.scenamatica.enums.RunOn;
+import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.Action;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.ActionResult;
@@ -27,6 +29,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
@@ -35,11 +38,13 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.logging.Logger;
 
+@Slf4j
 @Getter
 public class ActionContextImpl implements ActionContext
 {
     private static final String KEY_SEPARATOR = ".".replace(".", "\\.");
 
+    private final ScenarioType type;
     private final ScenarioEngine engine;
     private final InputBoard input;
     private final Map<String, Object> output;
@@ -58,8 +63,9 @@ public class ActionContextImpl implements ActionContext
     private boolean skipped;
     private Throwable error;
 
-    public ActionContextImpl(@NotNull ScenarioEngine engine, @NotNull RunOn runOn, @NotNull RunAs runAs, @NotNull InputBoard inputBoard, @NotNull Logger logger)
+    public ActionContextImpl(@NotNull ScenarioType type, @NotNull ScenarioEngine engine, @NotNull RunOn runOn, @NotNull RunAs runAs, @NotNull InputBoard inputBoard, @NotNull Logger logger)
     {
+        this.type = type;
         this.engine = engine;
         this.runOn = runOn;
         this.runAs = runAs;
@@ -106,6 +112,7 @@ public class ActionContextImpl implements ActionContext
 
     public void skip()
     {
+        this.cause = ActionResultCause.SKIPPED;
         this.skipped = true;
     }
 
@@ -119,6 +126,7 @@ public class ActionContextImpl implements ActionContext
     @Override
     public void fail(@NotNull ActionResultCause cause)
     {
+        this.cause = cause;
         this.fail();
     }
 
@@ -274,7 +282,7 @@ public class ActionContextImpl implements ActionContext
     @Override
     public ActionContext renew(InputBoard input)
     {
-        return new ActionContextImpl(this.engine, this.getRunOn(), this.getRunAs(), input, this.logger);
+        return new ActionContextImpl(this.type, this.engine, this.getRunOn(), this.getRunAs(), input, this.logger);
     }
 
     @Override
@@ -316,11 +324,11 @@ public class ActionContextImpl implements ActionContext
 
         return unresolvedTokens.stream()
                 // Token => InputReferences 化
-                .map(this::input)
-                .filter(reference -> reference instanceof InputReference)
-                .map(reference -> (InputReference<?>) reference)
+                .map(this.input::getHolder)
+                .map(InputValueHolder::getValueReference)
                 // InputReferences => 参照文字列の取得
                 .map(InputReference::getContainingReferences)
+                .filter(Objects::nonNull)
                 .flatMap(Arrays::stream)
                 .distinct()
                 .toArray(String[]::new);

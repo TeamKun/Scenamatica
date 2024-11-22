@@ -169,7 +169,7 @@ public class ReferenceResolver
         // [ "${hoge}", "${fuga}" ] -> [hoge, fuga]
 
         if (referencing instanceof StructuredYamlNode)
-            return selectReferences((StructuredYamlNode) referencing);
+            return selectReferences((StructuredYamlNode) referencing).toArray(new String[0]);
         if (referencing instanceof String)
             return selectReferences((String) referencing).toArray(new String[0]);
         else if (referencing instanceof Iterable)
@@ -199,34 +199,34 @@ public class ReferenceResolver
 
     }
 
-    private static String[] selectReferences(StructuredYamlNode node) throws YamlParsingException
+    private static List<String> selectReferences(StructuredYamlNode node) throws YamlParsingException
     {
         if (node.isType(YAMLNodeType.STRING))
-            return selectReferences(node.asString()).toArray(new String[0]);
+            return selectReferences(node.asString());
         else if (node.isType(YAMLNodeType.LIST))
         {
-            Set<String> references = new HashSet<>();
+            List<String> references = new ArrayList<>();
             for (String child : node.asList(StructuredYamlNode::asString))
                 references.addAll(selectReferences(child));
 
-            return references.toArray(new String[0]);
+            return references;
         }
         else if (node.isType(YAMLNodeType.MAPPING))
         {
-            Set<String> references = new HashSet<>();
-            for (String child : node.asMap(StructuredYamlNode::asString, StructuredYamlNode::asString).values())
+            List<String> references = new ArrayList<>();
+            for (StructuredYamlNode child : node.asNodeMap().values())
                 references.addAll(selectReferences(child));
 
-            return references.toArray(new String[0]);
+            return references;
         }
         else
             throw new IllegalArgumentException("Unsupported reference type: " + node);
     }
 
-    private static Collection<String> selectReferences(String referencedString)
+    private static List<String> selectReferences(String referencedString)
     {
         Matcher matcher = REFERENCE_PATTERN.matcher(referencedString);
-        Set<String> references = new HashSet<>();
+        List<String> references = new ArrayList<>();
 
         while (matcher.find())
             references.add(matcher.group(1));

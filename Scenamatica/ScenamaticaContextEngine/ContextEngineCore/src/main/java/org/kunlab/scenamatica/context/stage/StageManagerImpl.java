@@ -39,7 +39,7 @@ public class StageManagerImpl implements StageManager
     private final ScenamaticaRegistry registry;
     private final List<Stage> stages;
     private final StageWorldCreator worldCreator;
-    private List<Path> garbageDirectories;
+    private final List<Path> garbageDirectories;
 
     private boolean destroyed;
 
@@ -243,9 +243,8 @@ public class StageManagerImpl implements StageManager
                     {
                         this.destroyStage(stage);
                     }
-                    catch (StageAlreadyDestroyedException e)
+                    catch (StageAlreadyDestroyedException ignored)
                     {
-                        this.registry.getExceptionHandler().report(e);
                     }
                 });
     }

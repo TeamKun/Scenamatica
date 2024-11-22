@@ -5,8 +5,10 @@ import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.enums.ScenarioResultCause;
 import org.kunlab.scenamatica.enums.ScenarioState;
 import org.kunlab.scenamatica.interfaces.action.Action;
+import org.kunlab.scenamatica.interfaces.action.ActionResult;
 import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileStructure;
 
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -45,6 +47,13 @@ public interface ScenarioResult
      */
     @NotNull
     ScenarioResultCause getCause();
+
+    /**
+     * テストのアクションの結果を取得します。
+     *
+     * @return テストのアクションの結果
+     */
+    List<ActionResult> getActionResults();
 
     /**
      * テストが開始された時間を取得します。

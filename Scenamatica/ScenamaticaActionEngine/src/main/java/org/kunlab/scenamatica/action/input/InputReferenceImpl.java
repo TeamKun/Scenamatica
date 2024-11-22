@@ -28,6 +28,7 @@ public class InputReferenceImpl<T> implements InputReference<T>
     @Nullable
     private final Object rawValue;
     @Getter
+    @NotNull
     private final String[] containingReferences;
 
     @Setter(AccessLevel.NONE)
@@ -39,7 +40,7 @@ public class InputReferenceImpl<T> implements InputReference<T>
     {
         this.token = token;
         this.referencing = referencing;
-        this.containingReferences = referencing == null ? null: ReferenceResolver.selectReferences(referencing);
+        this.containingReferences = referencing == null ? new String[0]: ReferenceResolver.selectReferences(referencing);
         this.value = value;
         this.rawValue = rawValue;
         this.isResolved = isResolved;
@@ -107,7 +108,7 @@ public class InputReferenceImpl<T> implements InputReference<T>
             this.resolve(this.smartCast(serializer, this.rawValue));
             return;
         }
-        if (this.containingReferences == null)
+        if (this.containingReferences.length == 0)
             throw new BrokenReferenceException(null, "This reference doesn't contain any references: " + this.referencing);
         assert this.referencing != null;
 

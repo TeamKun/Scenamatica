@@ -9,6 +9,7 @@ import org.bukkit.ChatColor;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.commons.utils.ActionMetaUtils;
 import org.kunlab.scenamatica.commons.utils.LogUtils;
+import org.kunlab.scenamatica.enums.ActionResultCause;
 import org.kunlab.scenamatica.enums.ScenarioResultCause;
 import org.kunlab.scenamatica.interfaces.action.ActionResult;
 import org.kunlab.scenamatica.interfaces.action.CompiledAction;
@@ -48,27 +49,32 @@ public class BukkitTestReporter extends AbstractTestReporter
 
     private void broadcastInfo(String messageKey, MsgArgs args)
     {
-        this.terminals.forEach(t -> t.info(LangProvider.get(messageKey, args)));
+        String text = LangProvider.get(messageKey, args);
+        this.terminals.forEach(t -> t.info(text));
     }
 
     private void broadcastScenarioInfo(String messageKey, ScenarioEngine engine, MsgArgs args)
     {
-        this.terminals.forEach(t -> t.info(this.createScenarioMessage(engine, engine.getScenario(), messageKey, args)));
+        String text = this.createScenarioMessage(engine, engine.getScenario(), messageKey, args);
+        this.terminals.forEach(t -> t.info(text));
     }
 
     private void broadcastScenarioWarn(String messageKey, ScenarioEngine engine, MsgArgs args)
     {
-        this.terminals.forEach(t -> t.warn(this.createScenarioMessage(engine, engine.getScenario(), messageKey, args)));
+        String text = this.createScenarioMessage(engine, engine.getScenario(), messageKey, args);
+        this.terminals.forEach(t -> t.warn(text));
     }
 
     private void broadcastScenarioSuccess(String messageKey, ScenarioEngine engine, MsgArgs args)
     {
-        this.terminals.forEach(t -> t.success(this.createScenarioMessage(engine, engine.getScenario(), messageKey, args)));
+        String text = this.createScenarioMessage(engine, engine.getScenario(), messageKey, args);
+        this.terminals.forEach(t -> t.success(text));
     }
 
     private void broadcastScenarioError(String messageKey, ScenarioEngine engine, MsgArgs args)
     {
-        this.terminals.forEach(t -> t.error(this.createScenarioMessage(engine, engine.getScenario(), messageKey, args)));
+        String text = this.createScenarioMessage(engine, engine.getScenario(), messageKey, args);
+        this.terminals.forEach(t -> t.error(text));
     }
 
     private String createScenarioMessage(ScenarioEngine engine, ScenarioFileStructure scenario, String messageKey, MsgArgs args)
@@ -425,14 +431,54 @@ public class BukkitTestReporter extends AbstractTestReporter
                         .add("elapsed", elapsed)
         )));
 
-        if (cause == ScenarioResultCause.PASSED || cause == ScenarioResultCause.CANCELLED || cause == ScenarioResultCause.SKIPPED
-                || result.getFailedAction() == null)
+        // 失敗したときのみ表示するため
+        if (cause == ScenarioResultCause.PASSED || cause == ScenarioResultCause.CANCELLED || cause == ScenarioResultCause.SKIPPED)
             return;
 
+        this.printActionTrace(terminal, scenario, result);
+
+        if (result.getFailedAction() != null)
+            terminal.info(this.withPrefix(result.getTestID(), scenario, LangProvider.get(
+                    "test.result.detail.failed",
+                    MsgArgs.of("action", result.getFailedAction().getClass().getSimpleName())
+            )));
+    }
+
+    protected void printActionTrace(Terminal terminal, ScenarioFileStructure scenario, ScenarioResult result)
+    {
         terminal.info(this.withPrefix(result.getTestID(), scenario, LangProvider.get(
-                "test.result.detail.failed",
-                MsgArgs.of("action", result.getFailedAction().getClass().getSimpleName())
+                "test.result.actions",
+                MsgArgs.of("count", result.getActionResults().size())
         )));
+
+        result.getActionResults().forEach(actionResult -> {
+            String actionName = actionResult.getScenarioName();
+            String key;
+            if (actionResult.isSkipped())
+                key = "test.result.actions.skip";
+            else if (actionResult.isSuccess())
+                key = "test.result.actions.success";
+            else
+                key = "test.result.actions.fail";
+
+            MsgArgs args = MsgArgs.of("actionName", actionName)
+                    .add("scenarioType", actionResult.getScenarioType().getKey())
+                    .add("runID", actionResult.getRunID().toString().substring(0, 8));
+
+            if (actionResult.isFailed())
+            {
+                String causeMessage = "";
+                if (actionResult.getCause() == ActionResultCause.UNRESOLVED_REFERENCES)
+                    causeMessage = "Unresolved references: {"
+                            + String.join(", ", actionResult.getUnresolvedReferences()) + "} ";
+                else if (actionResult.getError() != null)
+                    causeMessage = "Caused by " + actionResult.getError().getClass().getSimpleName() + " - " + actionResult.getError().getMessage();
+                args.add("cause", actionResult.getCause().name())
+                        .add("message", causeMessage);
+            }
+
+            terminal.info(this.withPrefix(result.getTestID(), scenario, LangProvider.get(key, args)));
+        });
     }
 
     protected void printSeparator(UUID testID, Terminal terminal, ScenarioFileStructure scenario)
