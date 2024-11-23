@@ -10,9 +10,9 @@ type ActionProps = {
 }
 
 const ActionIcon: React.FC<ActionProps> = ({
-                                             execute,
-                                             expect,
-                                             require,
+                                             execute = false,
+                                             expect = false,
+                                             require = false,
                                            }) => {
   const icons = []
   if (execute)
