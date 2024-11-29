@@ -87,6 +87,6 @@ public abstract class AbstractBlockAction
         else if (block.getLocation().getX() == null || block.getLocation().getY() == null || block.getLocation().getZ() == null)
             throw new IllegalStateException("Unable to specify block location: " + block.getLocation());
 
-        return Utils.assignWorldToLocation(block.getLocation().create().clone(), ctxt.getEngine());
+        return Utils.assignWorldToLocation(block.getLocation().create(), ctxt.getEngine());
     }
 }
