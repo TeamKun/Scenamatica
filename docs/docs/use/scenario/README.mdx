@@ -8,19 +8,23 @@ import BelowDocument from "/src/components/BelowDocument";
 
 ## 概要 {#overview}
 
-シナリオは, プラグインのテスト方法をフローで定義したものです。 
-プラグインのテスト対象機能の発火・検証方法, およびそのテストを実行するための前提環境を, １つのファイル（シナリオファイルという）に記述します。  
-Scenamatica は, プラグインに同梱されたシナリオファイルを読み込み, その内容に沿ってプラグインの機能を発火させ, 状態の遷移およびそれによる結果を検証・報告します。
+シナリオは, プラグインのテスト方法を *step-by-step* で定義したものです。
 
-テストを実行するための前提環境とは, テストに登場する[エンティティ](/docs/use/scenario/elements#entity)
-やプレイヤ（=[アクタ](/docs/use/scenario/elements#actor)）, テストのためのワールド（=[ステージ](/docs/use/scenario/elements#stage)）の３つを指します。
-これらは, 同ファイルに定義する[コンテキスト](/docs/use/scenario/elements#context)機能によって提供されます。  
+プラグインのテストを実行するための前提環境や, テスト対象機能の発火, および機能の検証方法を１つのファイル（シナリオファイルという）に記述します。  
+Scenamatica は, プラグインに同梱されているシナリオファイルを読み込み, その内容に沿ってプラグインの機能を発火させ, 状態の遷移およびそれによる結果を検証・報告します。
 
-## シチュエーション例を用いた説明 {#example}
+ここでいう「テストを実行するための前提環境」とは, シナリオに登場する模擬的な[エンティティ](/docs/use/scenario/elements#entity)
+や模擬的なプレイヤ（=[アクタ](/docs/use/scenario/elements#actor)）, テストのためのワールド（=[ステージ](/docs/use/scenario/elements#stage)）の３つを指します。
+これらは, 同ファイルに定義される[コンテキスト](/docs/use/scenario/elements#context)によって提供されます。  
+
+つまり, 発火条件となる[アクションを実行](/docs/use/scenario/elements#scenario-type-action-execution)し, それによってもたらされたプラグインの[動作を検証](/docs/use/scenario/elements#scenario-type-action-execution-expect)を繰り返すことで, シナリオテストが成立します。  
+Scenamatica はこのようなテストの需要に最適化されているのです。
+
+## 例を用いた説明 {#example}
 
 例えば, とある小さなプラグインについて考えます。  
 このプラグインは, 「プレイヤが村人をキルしたときに」（**発火条件**という） 
--> 「ダイアモンドがドロップする機能」（**目標動作**という）を実現しており, 今回はこの機能をテストしたいとします。
+-> 「ダイアモンドがドロップする機能」（**目標動作**という）を実現しており, 今回はこの機能をテストしたいこと とします。
 このテストは, Scenamatica の以下の機能を用いて達成できます。
 
 > * [コンテキスト](/docs/use/scenario/elements#context) - [エンティティ](/docs/use/scenario/elements#entity) 機能  
@@ -33,7 +37,7 @@ Scenamatica は, プラグインに同梱されたシナリオファイルを読
 >   ```
 > * [コンテキスト](/docs/use/scenario/elements#context) - [アクタ](/docs/use/scenario/elements#actor) 機能  
 >   この機能は, テストに必要な専用のプレイヤ（アクタという）を生成します。  
->   外部との通信を必要とせず, サーバ内で完結する, 特別なプレイヤのモックです。  
+>   外部との通信を必要とせずに, サーバ内だけで完結する特別なプレイヤのモックです。  
 >   発火条件にある村人をキルさせるのに使います。
 >   ```yaml
 >   context:
@@ -56,10 +60,6 @@ Scenamatica は, プラグインに同梱されたシナリオファイルを読
 >       target: Actor001
 >       item: diamond
 >   ```
-
-
-発火条件となる[アクションを実行](/docs/use/scenario/elements#scenario-type-action-execution)し, それによってもたらされたプラグインの[動作を検証](/docs/use/scenario/elements#scenario-type-action-execution-expect)を繰り返すことで, シナリオテストが成立します。  
-Scenamatica はこのようなテストの需要に最適化されています。
 
 :::info
 

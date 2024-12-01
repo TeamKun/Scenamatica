@@ -27,13 +27,12 @@ Scenamatica では, [シナリオテスト](https://e-words.jp/w/%E3%82%B7%E3%83
 しかしながら, PaperMC プラグインのテストは, これらのツールやフレームワークのみでは十分なテストを行うことができません。  
 そこで Scenamatica によるシナリオテストを用いることで, 安心安全なプラグインを開発できます。
 
-## シナリオの記述について {#integrating-scenamatica-to-development-flow}
+## シナリオ {#integrating-scenamatica-to-development-flow}
 
-まずテストを始めるには, テストをしたいプラグインの機能ごとに [シナリオファイル](/docs/use/scenario#scenario-file) を記述する必要があります。
+テストを始めるには, まずテストをしたいプラグインの**機能ごとに** シナリオファイルを記述する必要があります。
 
-Scenamatica はあなたが作成した機能の発火条件や, それにどのような結果が期待されているかを知りせん。
-そのために, プラグインの開発者が, プラグインの正しい動作（期待される動作）を Scenamatica に教える必要があります。
-
+Scenamatica はあなたが作成した機能の発火条件や, それらにどのような結果が期待されているかを知りせん。
+ですから, プラグインの開発者が, プラグインの正しい動作（期待される動作）を Scenamatica に教える必要があります。  
 驚くことに, シナリオファイルの記述は JUnit のテストコードの記述と同じくらいかんたんです。  
 
 <BelowDocument docId="use/scenario/README"
@@ -55,7 +54,7 @@ Scenamatica はあなたが作成した機能の発火条件や, それにどの
 
 :::info 宣伝
 
-CI/CD パイプラインと連携すると, テストサーバの用意からテストの実行, 結果のレポートまで全て自動で行えます。
+CI/CD パイプラインと連携すると, テストサーバの用意からテストの実行, そして結果のレポートまで全て自動で行えます。
 
 <BelowDocument docId="use/integration/ci-cd"
                label="CI/CD パイプラインとの連携"
@@ -106,8 +105,12 @@ Scenamatica は, 以下の PaperMC サーバ・バージョン以外では**絶�
 
 ## テストの結果 {#test-status-result}
 
-Scenamatica のテストは, 以下の種類の結果を返します。  
-これらは列挙型で, テストに失敗した原因を特定するために使用します。
+Scenamatica によるテストを実行すると, 以下のような結果が得られます。  
+
+![テスト結果#600x](./images/test-result.png)
+
+これは, テストの実行結果の種別と, 詳細ないくつかの情報を含めたものです。
+種別は以下の列挙型の値を取ります。
 
 ### テストに成功する結果 {#test-status-result-success}
 
@@ -128,6 +131,8 @@ Scenamatica のテストは, 以下の種類の結果を返します。
 >   実行を期待するアクションやシナリオが, 所定の時間内に実行されなかったことを示します。
 > + `ILLEGAL_CONDITION`  
 >   [条件要求タイプ](/docs/use/scenario/elements#scenario-type-condition-require)のシナリオなどで指定された条件と実際の状態が異なることを示します。
+> + `UNRESOLVED_REFERENCE`
+>   [変数・定数の定義と参照](/docs/use/scenario/variables-and-definitions)機能によって参照された変数や定数が解決できなかったことを示します。
 > 
 > + `RUN_TIMED_OUT`  
 >   シナリオ（ファイル）全体の実行が（所定の時間内に）終了しなかったことを示します。
@@ -146,7 +151,7 @@ Scenamatica のテストは, 以下の種類の結果を返します。
 
 ---
 
-:::tip SCENARIO_TIMED_OUT と RUN_TIMED_OUT の違い
+:::tip SCENARIO_TIMED_OUT と RUN_TIMED_OUT の違いについて
 
 `RUN_TIMED_OUT` は, シナリオファイルを構成するアクション全ての実行が所定の時間内に終了しなかったことを示すのに対し,   
 `SCENARIO_TIMED_OUT` は, その中の個々のシナリオが, それぞれに指定された所定の時間内に終了しなかったことを示します。

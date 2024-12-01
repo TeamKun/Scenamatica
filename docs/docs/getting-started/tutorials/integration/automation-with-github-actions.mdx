@@ -29,19 +29,18 @@ GitHub Actions を使用して, テストを自動化しましょう。
 
 :::danger
 
-このチュートリアル内では,  [Scenamatica Action](https://github.com/TeamKun/scenamatica-action) を使用します。  
-このアクションを使用することで,  Minecraft の [EULA](https://account.mojang.com/documents/minecraft_eula) に同意したものとみなされます。  
-EULA に同意しない場合は, このアクションを使用しないでください。
+このチュートリアル内では [Scenamatica Action](https://github.com/TeamKun/scenamatica-action) を使用します。  
+このアクションを使用することで Minecraft の [エンドユーザーライセンス契約（EULA)](https://www.minecraft.net/ja-jp/eula) に同意したものとみなされます。  
+EULA に同意できない場合は, このアクションを使用できません。
 
-また, このアクション及び Scenamatica は,  Minecraft および Mojang AB が公式に認めたものではなく, また, Minecraft および Mojang AB とは一切関係ありません。
+また, このアクション及び Scenamatica は, Minecraft および Mojang AB が公式に認めたものではなく, また, Minecraft および Mojang AB とは一切関係ありません。
 
 :::
 
 ## 概要 {#overview}
 
-このチュートリアルでは, [GitHub Actions 連携機能](/docs/use/integration/ci-cd#github-actions)を使用して, テストを自動化する方法について学びます。
-
-これを完了すると, コミットのプッシュ時やプルリクエストのオープン時に, 自動でテストを実行して, リグレッションを防げます。
+このチュートリアルでは, [GitHub Actions 連携機能](/docs/use/integration/ci-cd#github-actions)を使用してテストを自動化する方法について学びます。  
+これを完了すると, コミットのプッシュ時や, プルリクエストのオープン時に自動でテストを実行し, リグレッションを防ぐ方法を習得できます。
 
 ## ステップ1. 読み込み時に自動で実行されるシナリオを記述する。
 
@@ -62,8 +61,8 @@ EULA に同意しない場合は, このアクションを使用しないでく�
 GitHub Actions でテストを自動化するためには, ワークフローのファイルを作成する必要があります。  
 ワークフローファイルの基本的な構文に関しては, [GitHub Actions の公式ドキュメント](https://docs.github.com/ja/actions/reference/workflow-syntax-for-github-actions)を参照してください。
 
-まずは, 空の YAML ファイルを `./github/workflows/<任意の名前>.yml` に作成してください。  
-このチュートリアルでは,  `./github/workflows/my-scenamatica-workflow.yml` という名前のファイルを作成します。
+まずは, 空の YAML ファイルを `.github/workflows/<任意の名前>.yml` に作成してください。  
+このチュートリアルでは,  `.github/workflows/my-scenamatica-workflow.yml` という名前のファイルを作成します。
 
 ## ステップ3. ワークフローの基本的な設定を記述する。
 

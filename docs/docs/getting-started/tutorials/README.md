@@ -19,6 +19,8 @@ Scenamatica を使用するための, 実践的なチュートリアルを紹介
 
 #### [チュートリアル：アクションの発火時に実行されるシナリオを書いてみる](/docs/getting-started/tutorials/scenario/writing-scenario-runs-on-action-fires) {#writing-scenario-for-action}
 
+#### [チュートリアル：定数と変数を使ってみる](/docs/getting-started/tutorials/scenario/referencing-definitions-and-variables) {#referencing-definitions-and-variables}
+
 ### 連携・CI/CD系 {#integration}
 
 #### [チュートリアル：GitHub Actions でテストを自動化する](/docs/getting-started/tutorials/integration/automation-with-github-actions) {#github-actions}

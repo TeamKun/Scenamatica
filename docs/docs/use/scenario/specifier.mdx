@@ -13,58 +13,72 @@ import BelowDocument from "/src/components/BelowDocument";
 ### エンティティ指定子 {#entity-specifier}
 
 エンティティ指定子は, 文字列型と[Entity 型](/references/types/entities/EntityStructure)としてふるまう特別な型です。  
-主にエンティティを指定するときに使用し, 以下のような値をとります。
 
-#### 1. プレイヤの名前
-
-例：`"Player1"`
-
-:::warning
-エンティティの名前は**指定できません**。
-:::
-
-#### 2. プレイヤまたはエンティティの UUID 
-
-UUID を用いて指定できます。ハイフンは自動的に補完されるため省略可能です。
-
-例：`"00000000-0000-0000-0000-000000000000"`, `"00000000000000000000000000000000"`
-
-#### 3. プレイヤまたはエンティティの[セレクタ](/docs/use/scenario/selector)
-
- + 省略可： `@e` は省略できます。（例：`"[team=Red,tags=MyTag]"` ）
- + 省略可： `@e[...]` は省略できます。（例：`"team=Red,tags=MyTag"` ）
- 
-例：`"@e[team=Red,tag=MyTag]"`
- 
-:::warning
-
-ここでの[セレクタ](/docs/use/scenario/selector)は, 通常の[Minecraft ターゲットセレクタ](https://minecraft.fandom.com/ja/wiki/Target_selectors) とは異なります。
-
-Scenamatica では, いくつかの理由で独自のセレクタを使用しています。
-基本的な構文や機能はMinecraft のセレクタと同じですが, 独自の機能が追加されています。
-
-<BelowDocument docId={"use/scenario/selector"}
-               label="Scenamatica ターゲットセレクタ"
-/> 
-
-:::
-#### 4. [Entity 型](/references/types/entities/EntityStructure) のオブジェクト  
-
-特に記述がない限り使用できます。これを使用すれば, [セレクタ](/docs/use/scenario/selector)を使用せずに, YAML のオブジェクトで高度な条件を指定できます。
-
-例：
-```yaml showLineNumbers
-# ↓ タグ MyTag を持つアーマースタンドエンティティを指定 
-target:
+```yaml
+target1: "Player1"
+target2: "00000000-0000-0000-0000-000000000000"
+target3: "@e[team=Red,tag=MyTag]"
+target4:
   type: ARMOR_STAND
   tags: ["MyTag"]
 ```
 
-:::tip せんでん
+主にエンティティを指定するときに使用し, 以下のような値をとります。
 
-[エンティティ（コンテキスト）](/docs/use/scenario/elements#entity)を使用すれば, 常に読み込まれるシナリオ専用のエンティティを作成できます。
+#### 1. プレイヤの名前
 
-:::
+> プレイヤの名前を文字列で指定します。（エンティティの名前ではありません）  
+> 例：`"Player1"`
+> 
+> :::warning
+> エンティティの名前は**指定できません**。
+> :::
+
+#### 2. プレイヤまたはエンティティの UUID 
+
+> UUID を用いて指定します。ハイフンは自動的に補完されるため省略可能です。
+> 
+> 例：`"00000000-0000-0000-0000-000000000000"`, `"00000000000000000000000000000000"`
+
+#### 3. プレイヤまたはエンティティの[セレクタ](/docs/use/scenario/selector)
+
+> セレクタを用いて指定します。
+> 
+>  + 省略可： `@e` は省略できます。（例：`"[team=Red,tags=MyTag]"` ）
+>  + 省略可： `@e[...]` は省略できます。（例：`"team=Red,tags=MyTag"` ）
+>  
+> 例：`"@e[team=Red,tag=MyTag]"`
+>  
+> :::warning
+> 
+> ここでの[セレクタ](/docs/use/scenario/selector)は, 通常の[Minecraft ターゲットセレクタ](https://minecraft.fandom.com/ja/wiki/Target_selectors) とは異なります。
+> 
+> Scenamatica では, いくつかの理由で独自のセレクタを使用しています。
+> 基本的な構文や機能はMinecraft のセレクタと同じですが, 独自の機能が追加されています。
+> 
+> <BelowDocument docId={"use/scenario/selector"}
+>                label="Scenamatica ターゲットセレクタ"
+> /> 
+> 
+> :::
+#### 4. [Entity 型](/references/types/entities/EntityStructure) のオブジェクト  
+
+> YAML のオブジェクトを用いてエンティティを指定します。  
+> これを使用すれば, [セレクタ](/docs/use/scenario/selector)を使用せずに, YAML のオブジェクトで高度な条件を指定できます。
+> 
+> 例：
+> ```yaml showLineNumbers
+> # ↓ タグ MyTag を持つアーマースタンドエンティティを指定 
+> target:
+>   type: ARMOR_STAND
+>   tags: ["MyTag"]
+> ```
+> 
+> :::tip せんでん
+> 
+> [エンティティ（コンテキスト）](/docs/use/scenario/elements#entity)を使用すれば, 常に読み込まれるシナリオ専用のエンティティを作成できます。
+> 
+> :::
 
 ### プレイヤ指定子 {#player-specifier}
 
