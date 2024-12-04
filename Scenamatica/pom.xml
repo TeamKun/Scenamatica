@@ -10,20 +10,20 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>ScenamaticaPlugin</module>
-        <module>ScenamaticaModels</module>
-        <module>ScenamaticaScenarioFile</module>
+        <module>NMSBridge</module>
+        <module>ScenamaticaActionEngine</module>
+        <module>ScenamaticaActions</module>
+        <module>ScenamaticaAPI</module>
         <module>ScenamaticaCommons</module>
         <module>ScenamaticaContextEngine</module>
-        <module>ScenamaticaActionEngine</module>
         <module>ScenamaticaDaemon</module>
-        <module>ScenamaticaTriggerEngine</module>
+        <module>ScenamaticaModels</module>
+        <module>ScenamaticaPlugin</module>
         <module>ScenamaticaScenarioEngine</module>
-        <module>ScenamaticaAPI</module>
-        <module>NMSBridge</module>
+        <module>ScenamaticaScenarioFile</module>
         <module>ScenamaticaSelectorEngine</module>
-        <module>ScenamaticaActions</module>
         <module>ScenamaticaStructures</module>
+        <module>ScenamaticaTriggerEngine</module>
     </modules>
 
     <name>Scenamatica</name>
