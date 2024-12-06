@@ -410,7 +410,7 @@ public class ScenarioExecutorImpl implements ScenarioExecutor
         {
             ActionResultCause cause = e.getCauseToFail().getActionCause();
             assert cause != null;
-            context.fail(cause, e.getCause() == null ? e: e.getCause());
+            context.fail(cause, e);
 
             return context.createResult(scenario.getAction());
         }
