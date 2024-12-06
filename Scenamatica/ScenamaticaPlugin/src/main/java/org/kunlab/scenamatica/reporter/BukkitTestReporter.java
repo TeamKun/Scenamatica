@@ -490,6 +490,8 @@ public class BukkitTestReporter extends AbstractTestReporter
 
         args.add("cause", actionResult.getCause().name())
                 .add("message", causeMessage);
+
+        terminal.info(this.withPrefix(scenarioResult.getTestID(), scenario, LangProvider.get(key, args)));
     }
 
     protected void printSeparator(UUID testID, Terminal terminal, ScenarioFileStructure scenario)
