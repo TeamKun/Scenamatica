@@ -15,6 +15,7 @@ import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
 import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
 import org.kunlab.scenamatica.bookkeeper.annotations.OutputDoc;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.exceptions.scenario.IllegalScenarioStateException;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
@@ -118,9 +119,9 @@ public class PlayerItemBreakAction extends AbstractPlayerAction
 
         ItemStack item = player.getInventory().getItem(slot);
         if (item == null)
-            throw new IllegalStateException("The player haven't any item in the slot " + slot);
+            throw new IllegalScenarioStateException("The player haven't any item in the slot " + slot);
         else if (!this.isDamageable(item))
-            throw new IllegalStateException("Item is not damageable");
+            throw new IllegalScenarioStateException("Item is not damageable");
         this.makeOutputs(ctxt, player, item, slot);
 
         NMSItemSlot nmsSlot = NMSItemSlot.fromBukkit(slot);

@@ -13,6 +13,7 @@ import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
 import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
 import org.kunlab.scenamatica.bookkeeper.annotations.OutputDoc;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.exceptions.scenario.IllegalActionInputException;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
@@ -94,7 +95,7 @@ public class PlayerItemDamageAction extends AbstractPlayerAction
         ItemStack newItem = item.clone();
         ItemMeta meta = newItem.getItemMeta();
         if (!(meta instanceof Damageable))
-            throw new IllegalStateException("Target item is not Damageable");
+            throw new IllegalActionInputException("Target item is not Damageable");
         Damageable damageable = (Damageable) meta;
         damageable.setDamage(damage);
         newItem.setItemMeta(meta);
@@ -111,9 +112,9 @@ public class PlayerItemDamageAction extends AbstractPlayerAction
 
         ItemStack itemStack = player.getInventory().getItem(slot);
         if (itemStack == null)
-            throw new IllegalStateException("Target does not have item in slot " + slot);
+            throw new IllegalActionInputException("Target does not have item in slot " + slot);
         else if (!(itemStack.getItemMeta() instanceof Damageable))
-            throw new IllegalStateException("Target item in slot " + slot + " is not Damageable");
+            throw new IllegalActionInputException("Target item in slot " + slot + " is not Damageable");
         int damage = ctxt.input(IN_DAMAGE);
 
         this.makeOutputs(ctxt, player, getDamagedItem(itemStack, damage), damage);

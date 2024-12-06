@@ -7,6 +7,8 @@ import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.annotations.action.Action;
 import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
+import org.kunlab.scenamatica.exceptions.scenario.IllegalActionInputException;
+import org.kunlab.scenamatica.exceptions.scenario.IllegalScenarioStateException;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Expectable;
@@ -36,9 +38,9 @@ public class PluginEnableAction extends AbstractPluginAction
     {
         Plugin plugin = super.getPlugin(ctxt);
         if (ctxt.getEngine().getPlugin() == plugin)
-            throw new IllegalArgumentException("Cannot disable the plugin itself.");
+            throw new IllegalActionInputException(IN_PLUGIN, "Cannot enable the plugin itself.");
         else if (plugin.isEnabled())
-            throw new IllegalArgumentException("Plugin is already enabled.");
+            throw new IllegalScenarioStateException("Plugin is already enabled.");
 
         this.makeOutputs(ctxt, plugin);
         Bukkit.getPluginManager().enablePlugin(plugin);

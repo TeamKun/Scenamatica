@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.annotations.action.Action;
 import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.exceptions.scenario.IllegalActionInputException;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
@@ -44,7 +45,7 @@ public class WorldUnloadAction extends AbstractWorldAction
         World world = super.getWorld(ctxt);
 
         if (world == null)
-            throw new IllegalStateException("Unable to find world: " + ctxt.input(IN_WORLD));
+            throw new IllegalActionInputException(IN_WORLD, "Unable to find world: " + ctxt.input(IN_WORLD));
         this.makeOutputs(ctxt, world);
         Bukkit.getServer().unloadWorld(world, ctxt.orElseInput(IN_SAVE, () -> true));
     }

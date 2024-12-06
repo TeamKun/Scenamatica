@@ -11,6 +11,8 @@ import org.kunlab.scenamatica.annotations.action.Action;
 import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
 import org.kunlab.scenamatica.bookkeeper.enums.MCVersion;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.exceptions.scenario.IllegalActionInputException;
+import org.kunlab.scenamatica.exceptions.scenario.IllegalScenarioStateException;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
@@ -43,7 +45,7 @@ public class WorldGameRuleAction extends AbstractWorldAction
             ofTraverser(String.class, (ser, str) -> {
                 GameRule<?> rule = GameRule.getByName(str);
                 if (rule == null)
-                    throw new IllegalArgumentException("Unknown game rule: " + str);
+                    throw new IllegalActionInputException("Unknown game rule: " + str);
                 return rule;
             })
     );
@@ -81,7 +83,7 @@ public class WorldGameRuleAction extends AbstractWorldAction
         if (success)
             this.makeOutputs(ctxt, world, rule, value);
         else
-            throw new IllegalArgumentException("Failed to set the game rule: Attempted to set " + rule.getName() + " to " + value);
+            throw new IllegalScenarioStateException("Unable to set the game rule: Attempted to set " + rule.getName() + " to " + value);
     }
 
     @Override

@@ -22,6 +22,8 @@ import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
 import org.kunlab.scenamatica.commons.utils.EntityUtils;
 import org.kunlab.scenamatica.commons.utils.Utils;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.exceptions.scenario.IllegalActionInputException;
+import org.kunlab.scenamatica.exceptions.scenario.IllegalScenarioStateException;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
@@ -65,12 +67,12 @@ public class ProjectileLaunchAction extends EntitySpawnAction<Projectile>
     {
         ClassLoader classLoader = MethodHandles.lookup().lookupClass().getClassLoader();
         if (!(classLoader instanceof PluginClassLoader))
-            throw new IllegalArgumentException("ClassLoader is not PluginClassLoader");
+            throw new IllegalScenarioStateException("ClassLoader is not PluginClassLoader");
 
         PluginClassLoader pluginClassLoader = (PluginClassLoader) classLoader;
         Plugin plugin = pluginClassLoader.getPlugin();
         if (plugin == null)
-            throw new IllegalStateException("Can't specify your plugin.");
+            throw new IllegalScenarioStateException("Can't specify your plugin.");
 
         return plugin;
     }
@@ -84,7 +86,7 @@ public class ProjectileLaunchAction extends EntitySpawnAction<Projectile>
             case LEGACY_DISPENSER:
                 return ((Dispenser) block.getState()).getBlockProjectileSource();
             default:
-                throw new IllegalArgumentException("Block must be ProjectileSource");
+                throw new IllegalScenarioStateException("Block must be ProjectileSource");
         }
     }
 
@@ -153,7 +155,7 @@ public class ProjectileLaunchAction extends EntitySpawnAction<Projectile>
                     .filter(e -> e instanceof ProjectileSource)
                     .map(e -> (ProjectileSource) e)
                     .findFirst()
-                    .orElseThrow(() -> new IllegalArgumentException("Selector must select ProjectileSource"));
+                    .orElseThrow(() -> new IllegalActionInputException("Selector must select ProjectileSource"));
         }
         else if (structure instanceof EntityStructure)
         {
@@ -164,12 +166,12 @@ public class ProjectileLaunchAction extends EntitySpawnAction<Projectile>
         {
             BlockStructure blockStructure = (BlockStructure) structure;
             if (blockStructure.getLocation() == null)
-                throw new IllegalArgumentException("BlockStructure must have location");
+                throw new IllegalScenarioStateException("BlockStructure must have location");
             Block block = Utils.assignWorldToBlockLocation(blockStructure, ctxt.getEngine()).getBlock();
             return getBlockProjectileSource(block);
         }
         else
-            throw new IllegalArgumentException("Invalid ProjectileSourceStructure: " + structure);
+            throw new IllegalActionInputException("Invalid ProjectileSourceStructure: " + structure);
     }
 
     @Override

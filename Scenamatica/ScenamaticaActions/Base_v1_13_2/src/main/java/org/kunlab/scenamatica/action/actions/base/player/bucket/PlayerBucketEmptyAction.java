@@ -17,6 +17,7 @@ import org.kunlab.scenamatica.bookkeeper.annotations.Admonition;
 import org.kunlab.scenamatica.bookkeeper.enums.AdmonitionType;
 import org.kunlab.scenamatica.bookkeeper.enums.MCVersion;
 import org.kunlab.scenamatica.enums.MinecraftVersion;
+import org.kunlab.scenamatica.exceptions.scenario.IllegalScenarioStateException;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Expectable;
@@ -61,7 +62,7 @@ public class PlayerBucketEmptyAction extends AbstractPlayerBucketAction
         Actor actor = ctxt.getActorOrThrow(player);
 
         if (isEmptyBucket(stack.getType()))
-            throw new IllegalArgumentException("The bucket is empty: " + stack.getType() + " held by " + player.getName());
+            throw new IllegalScenarioStateException("The bucket is empty: " + stack.getType() + " held by " + player.getName());
 
         this.enumerateItemUse(ctxt, player, block, direction, stack, actor);
     }
@@ -83,7 +84,7 @@ public class PlayerBucketEmptyAction extends AbstractPlayerBucketAction
 
         Material liquid = convertBucketToLiquid(bucket);
         if (liquid == null)
-            throw new IllegalArgumentException("Unknown bucket type: " + bucket + ", this action needs a bucket filled with water or lava.");
+            throw new IllegalScenarioStateException("Unknown bucket type: " + bucket + ", this action needs a bucket filled with water or lava.");
         EntityType entityToSpawn = convertBucketToEntity(bucket);
 
         block.setType(liquid);

@@ -12,6 +12,7 @@ import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
 import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
 import org.kunlab.scenamatica.bookkeeper.annotations.OutputDoc;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.exceptions.scenario.IllegalActionInputException;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
@@ -72,7 +73,7 @@ public class EntityDropItemAction extends AbstractGeneralEntityAction
     {
         Entity target = this.selectTarget(ctxt);
         if (!(target instanceof InventoryHolder))
-            throw new IllegalArgumentException("Target is not inventory holder.");
+            throw new IllegalActionInputException(IN_TARGET_ENTITY, "Target is not inventory holder.");
 
         EntityItemStructure itemStructure = (EntityItemStructure) ctxt.input(IN_ITEM).getTargetStructure();
         ItemStack stack = itemStructure.getItemStack().create();

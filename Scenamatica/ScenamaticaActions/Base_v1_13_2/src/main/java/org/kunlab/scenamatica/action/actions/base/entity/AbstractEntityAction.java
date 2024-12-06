@@ -12,6 +12,7 @@ import org.kunlab.scenamatica.bookkeeper.annotations.OutputDoc;
 import org.kunlab.scenamatica.bookkeeper.annotations.OutputDocs;
 import org.kunlab.scenamatica.bookkeeper.enums.ActionMethod;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.exceptions.scenario.IllegalActionInputException;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
@@ -78,6 +79,6 @@ public abstract class AbstractEntityAction<E extends Entity, V extends EntityStr
     public E selectTarget(@NotNull ActionContext ctxt)
     {
         return ctxt.input(this.IN_TARGET_ENTITY).selectTarget(ctxt.getContext())
-                .orElseThrow(() -> new IllegalStateException("Cannot select target for this action, please specify target with valid specifier."));
+                .orElseThrow(() -> new IllegalActionInputException(this.IN_TARGET_ENTITY, "Cannot select target for this action, please specify target with valid specifier."));
     }
 }

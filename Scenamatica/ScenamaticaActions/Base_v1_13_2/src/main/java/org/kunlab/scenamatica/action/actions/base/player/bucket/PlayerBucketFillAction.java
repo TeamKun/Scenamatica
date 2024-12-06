@@ -18,6 +18,7 @@ import org.kunlab.scenamatica.bookkeeper.enums.ActionMethod;
 import org.kunlab.scenamatica.bookkeeper.enums.AdmonitionType;
 import org.kunlab.scenamatica.bookkeeper.enums.MCVersion;
 import org.kunlab.scenamatica.enums.MinecraftVersion;
+import org.kunlab.scenamatica.exceptions.scenario.IllegalScenarioStateException;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Expectable;
@@ -67,7 +68,7 @@ public class PlayerBucketFillAction extends AbstractPlayerBucketAction
         Actor actor = ctxt.getActorOrThrow(player);
 
         if (isFilledBucket(stack.getType()))
-            throw new IllegalArgumentException("The bucket is filled with liquid: " + stack.getType() + " held by " + player.getName());
+            throw new IllegalScenarioStateException("The bucket is filled with liquid: " + stack.getType() + " held by " + player.getName());
 
         this.enumerateItemUse(ctxt, player, block, direction, stack, actor);
     }
@@ -84,7 +85,7 @@ public class PlayerBucketFillAction extends AbstractPlayerBucketAction
 
         Material bucketItem = convertLiquidToBucket(block.getType());
         if (bucketItem == null)
-            throw new IllegalArgumentException("Cannot convert liquid " + block.getType() + " to bucket.");
+            throw new IllegalScenarioStateException("Cannot convert liquid " + block.getType() + " to bucket.");
 
         int PLAYER_INVENTORY_MAX = 36;
         for (int i = 0; i < PLAYER_INVENTORY_MAX; i++)

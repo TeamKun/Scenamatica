@@ -11,6 +11,7 @@ import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
 import org.kunlab.scenamatica.bookkeeper.annotations.OutputDoc;
 import org.kunlab.scenamatica.enums.MinecraftVersion;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.exceptions.scenario.IllegalActionInputException;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
@@ -135,7 +136,7 @@ public class PlayerDeathAction extends AbstractPlayerAction
 
         ctxt.runIfHasInput(IN_KILLER, killerSpecifier -> {
             Player killer = killerSpecifier.selectTarget(ctxt.getContext())
-                    .orElseThrow(() -> new IllegalStateException("Cannot select target for this action, please specify target with valid specifier."));
+                    .orElseThrow(() -> new IllegalActionInputException(IN_KILLER, "Cannot select target for this action, please specify target with valid specifier."));
             target.setKiller(killer);
             this.makeOutputs(ctxt, target, killer);
         });

@@ -13,6 +13,7 @@ import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
 import org.kunlab.scenamatica.bookkeeper.enums.AdmonitionType;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.events.actions.server.ServerLogEvent;
+import org.kunlab.scenamatica.exceptions.scenario.IllegalActionInputException;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
@@ -88,7 +89,7 @@ public class ServerLogAction extends AbstractAction
         result = result.toUpperCase();
 
         if (result.equals("OFF") || result.equals("ALL"))
-            throw new IllegalArgumentException("Illegal log level: " + original + " is not allowed here.");
+            throw new IllegalActionInputException(IN_LEVEL, "Illegal log level: " + original + " is not allowed here.");
 
         return result;
     }

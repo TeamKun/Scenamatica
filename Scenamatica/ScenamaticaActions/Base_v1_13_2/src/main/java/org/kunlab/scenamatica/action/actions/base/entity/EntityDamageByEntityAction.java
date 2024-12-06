@@ -13,6 +13,7 @@ import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
 import org.kunlab.scenamatica.bookkeeper.annotations.OutputDoc;
 import org.kunlab.scenamatica.bookkeeper.enums.ActionMethod;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.exceptions.scenario.IllegalActionInputException;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
@@ -62,10 +63,10 @@ public class EntityDamageByEntityAction extends EntityDamageAction
         Entity target = this.selectTarget(ctxt);
 
         if (!(target instanceof Damageable))
-            throw new IllegalArgumentException("Target is not damageable");
+            throw new IllegalActionInputException("Target is not damageable");
 
         Entity damager = ctxt.input(IN_DAMAGER).selectTarget(ctxt.getContext())
-                .orElseThrow(() -> new IllegalStateException("Cannot select damager for this action, please specify damager with valid specifier."));
+                .orElseThrow(() -> new IllegalActionInputException(IN_DAMAGER, "Cannot select damager for this action, please specify damager with valid specifier."));
 
         this.makeOutputs(ctxt, target, damager, null, ctxt.input(IN_AMOUNT), null);
         ((Damageable) target).damage(ctxt.input(IN_AMOUNT), damager);

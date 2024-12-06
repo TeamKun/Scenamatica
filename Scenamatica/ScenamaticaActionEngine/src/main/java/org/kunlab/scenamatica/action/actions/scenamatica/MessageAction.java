@@ -12,6 +12,7 @@ import org.kunlab.scenamatica.bookkeeper.annotations.OutputDoc;
 import org.kunlab.scenamatica.bookkeeper.enums.AdmonitionType;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.events.actor.ActorMessageReceiveEvent;
+import org.kunlab.scenamatica.exceptions.scenario.IllegalActionInputException;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
@@ -83,7 +84,7 @@ public class MessageAction extends AbstractScenamaticaAction
     public void execute(@NotNull ActionContext ctxt)
     {
         Player recipient = ctxt.input(IN_RECIPIENT).selectTarget(ctxt.getContext())
-                .orElseThrow(() -> new IllegalStateException("Cannot select target for this action, please specify target with valid specifier."));
+                .orElseThrow(() -> new IllegalActionInputException(IN_RECIPIENT, "Cannot select target for this action, please specify target with valid specifier."));
         String message = ctxt.input(IN_MESSAGE);
 
         this.makeOutputs(ctxt, recipient, message);

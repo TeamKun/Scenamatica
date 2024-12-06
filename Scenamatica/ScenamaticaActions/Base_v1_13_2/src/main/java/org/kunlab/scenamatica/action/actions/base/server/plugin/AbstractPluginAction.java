@@ -10,6 +10,7 @@ import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
 import org.kunlab.scenamatica.bookkeeper.annotations.OutputDoc;
 import org.kunlab.scenamatica.bookkeeper.annotations.OutputDocs;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.exceptions.scenario.IllegalActionInputException;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
@@ -71,7 +72,7 @@ public abstract class AbstractPluginAction extends AbstractServerAction
 
         Plugin plugin;
         if ((plugin = Bukkit.getPluginManager().getPlugin(pluginName)) == null)
-            throw new IllegalArgumentException("Plugin not found: " + pluginName);
+            throw new IllegalActionInputException("Plugin not found: " + pluginName);
 
         return plugin;
     }

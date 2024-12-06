@@ -19,6 +19,7 @@ import org.kunlab.scenamatica.bookkeeper.enums.ActionMethod;
 import org.kunlab.scenamatica.bookkeeper.enums.AdmonitionType;
 import org.kunlab.scenamatica.enums.MinecraftVersion;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.exceptions.scenario.IllegalActionInputException;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
@@ -126,7 +127,7 @@ public class BlockPlaceAction extends AbstractBlockAction
             NMSHand hand = ctxt.orElseInput(IN_HAND, () -> NMSHand.MAIN_HAND);
 
             Player player = ctxt.input(IN_ACTOR).selectTarget(ctxt.getContext())
-                    .orElseThrow(() -> new IllegalStateException("Cannot find player"));
+                    .orElseThrow(() -> new IllegalActionInputException(IN_ACTOR, "Cannot find player"));
             Actor scenarioActor = ctxt.getActorOrThrow(player);
             this.makeOutputs(ctxt, location.getBlock(), player);
             if (MinecraftVersion.current().isInRange(MinecraftVersion.V1_14, MinecraftVersion.V1_15_2) &&

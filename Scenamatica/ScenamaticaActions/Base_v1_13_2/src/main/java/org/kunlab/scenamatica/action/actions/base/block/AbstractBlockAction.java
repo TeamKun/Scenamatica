@@ -15,6 +15,7 @@ import org.kunlab.scenamatica.bookkeeper.annotations.OutputDocs;
 import org.kunlab.scenamatica.bookkeeper.enums.ActionMethod;
 import org.kunlab.scenamatica.commons.utils.Utils;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.exceptions.scenario.IllegalActionInputException;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
@@ -83,9 +84,9 @@ public abstract class AbstractBlockAction
     protected Location getBlockLocationWithWorld(@NotNull BlockStructure block, @NotNull ActionContext ctxt)
     {
         if (block.getLocation() == null)
-            throw new IllegalStateException("Block location is not specified");
+            throw new IllegalActionInputException("Block location is not specified");
         else if (block.getLocation().getX() == null || block.getLocation().getY() == null || block.getLocation().getZ() == null)
-            throw new IllegalStateException("Unable to specify block location: " + block.getLocation());
+            throw new IllegalActionInputException("Unable to specify block location: " + block.getLocation());
 
         return Utils.assignWorldToLocation(block.getLocation().create(), ctxt.getEngine());
     }

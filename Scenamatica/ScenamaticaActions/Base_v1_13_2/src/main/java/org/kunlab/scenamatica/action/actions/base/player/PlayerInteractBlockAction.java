@@ -16,6 +16,7 @@ import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
 import org.kunlab.scenamatica.bookkeeper.annotations.OutputDoc;
 import org.kunlab.scenamatica.commons.utils.Utils;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.exceptions.scenario.IllegalActionInputException;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
@@ -135,9 +136,9 @@ public class PlayerInteractBlockAction extends AbstractPlayerAction
         Block clickBlock = getClickBlock(ctxt);
         boolean isAir = clickBlock.getType() == Material.AIR;
         if ((action == org.bukkit.event.block.Action.LEFT_CLICK_AIR || action == org.bukkit.event.block.Action.RIGHT_CLICK_AIR) && !isAir)
-            throw new IllegalArgumentException("Argument action is not allowed to be LEFT_CLICK_AIR or RIGHT_CLICK_AIR when the target block is not air");
+            throw new IllegalActionInputException(IN_ACTION, "Argument action is not allowed to be LEFT_CLICK_AIR or RIGHT_CLICK_AIR when the target block is not air");
         else if ((action == org.bukkit.event.block.Action.LEFT_CLICK_BLOCK || action == org.bukkit.event.block.Action.RIGHT_CLICK_BLOCK) && isAir)
-            throw new IllegalArgumentException("Argument action is not allowed to be LEFT_CLICK_BLOCK or RIGHT_CLICK_BLOCK when the target block is air");
+            throw new IllegalActionInputException(IN_ACTION, "Argument action is not allowed to be LEFT_CLICK_BLOCK or RIGHT_CLICK_BLOCK when the target block is air");
 
         this.makeOutputs(ctxt, player, clickBlock, null, EquipmentSlot.HAND);
         ctxt.getActorOrThrow(player)

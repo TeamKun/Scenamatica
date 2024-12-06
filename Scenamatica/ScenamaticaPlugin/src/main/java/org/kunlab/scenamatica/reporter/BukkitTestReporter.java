@@ -11,6 +11,7 @@ import org.kunlab.scenamatica.commons.utils.ActionMetaUtils;
 import org.kunlab.scenamatica.commons.utils.LogUtils;
 import org.kunlab.scenamatica.enums.ActionResultCause;
 import org.kunlab.scenamatica.enums.ScenarioResultCause;
+import org.kunlab.scenamatica.exceptions.scenario.IllegalActionInputException;
 import org.kunlab.scenamatica.interfaces.action.ActionResult;
 import org.kunlab.scenamatica.interfaces.action.CompiledAction;
 import org.kunlab.scenamatica.interfaces.scenario.ScenarioEngine;
@@ -451,34 +452,43 @@ public class BukkitTestReporter extends AbstractTestReporter
                 MsgArgs.of("count", result.getActionResults().size())
         )));
 
-        result.getActionResults().forEach(actionResult -> {
-            String actionName = actionResult.getScenarioName();
-            String key;
-            if (actionResult.isSkipped())
-                key = "test.result.actions.skip";
-            else if (actionResult.isSuccess())
-                key = "test.result.actions.success";
-            else
-                key = "test.result.actions.fail";
+        result.getActionResults().forEach(actionResult -> this.printActionDetail(terminal, scenario, result, actionResult));
+    }
 
-            MsgArgs args = MsgArgs.of("actionName", actionName)
-                    .add("scenarioType", actionResult.getScenarioType().getKey())
-                    .add("runID", actionResult.getRunID().toString().substring(0, 8));
+    protected void printActionDetail(Terminal terminal, ScenarioFileStructure scenario, ScenarioResult scenarioResult, ActionResult actionResult)
+    {
+        String actionName = actionResult.getScenarioName();
+        String key;
+        if (actionResult.isSkipped())
+            key = "test.result.actions.skip";
+        else if (actionResult.isSuccess())
+            key = "test.result.actions.success";
+        else
+            key = "test.result.actions.fail";
 
-            if (actionResult.isFailed())
+        MsgArgs args = MsgArgs.of("actionName", actionName)
+                .add("scenarioType", actionResult.getScenarioType().getKey())
+                .add("runID", actionResult.getRunID().toString().substring(0, 8));
+
+        if (!actionResult.isFailed())
+            terminal.info(this.withPrefix(scenarioResult.getTestID(), scenario, LangProvider.get(key, args)));
+
+        String causeMessage = "";
+        if (actionResult.getCause() == ActionResultCause.UNRESOLVED_REFERENCES)
+            causeMessage = "Unresolved references: {" + String.join(", ", actionResult.getUnresolvedReferences()) + "} ";
+        else if (actionResult.getError() != null)
+        {
+            Throwable error = actionResult.getError();
+            if (error instanceof IllegalActionInputException)
             {
-                String causeMessage = "";
-                if (actionResult.getCause() == ActionResultCause.UNRESOLVED_REFERENCES)
-                    causeMessage = "Unresolved references: {"
-                            + String.join(", ", actionResult.getUnresolvedReferences()) + "} ";
-                else if (actionResult.getError() != null)
-                    causeMessage = "Caused by " + actionResult.getError().getClass().getSimpleName() + " - " + actionResult.getError().getMessage();
-                args.add("cause", actionResult.getCause().name())
-                        .add("message", causeMessage);
+                IllegalActionInputException e = (IllegalActionInputException) error;
+                causeMessage = "Illegal action input '" + e.getToken().getName() + "': " + e.getMessage();
             }
+            causeMessage = "Caused by " + error.getClass().getSimpleName() + " - " + error.getMessage();
+        }
 
-            terminal.info(this.withPrefix(result.getTestID(), scenario, LangProvider.get(key, args)));
-        });
+        args.add("cause", actionResult.getCause().name())
+                .add("message", causeMessage);
     }
 
     protected void printSeparator(UUID testID, Terminal terminal, ScenarioFileStructure scenario)

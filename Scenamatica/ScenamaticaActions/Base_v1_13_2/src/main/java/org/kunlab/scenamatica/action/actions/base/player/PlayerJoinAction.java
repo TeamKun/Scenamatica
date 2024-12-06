@@ -10,6 +10,7 @@ import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
 import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
 import org.kunlab.scenamatica.bookkeeper.annotations.OutputDoc;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.exceptions.scenario.IllegalActionInputException;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
@@ -63,7 +64,7 @@ public class PlayerJoinAction extends AbstractPlayerAction
     {
         Player player = selectTarget(ctxt);
         if (player.isOnline())
-            throw new IllegalStateException("Player is already online.");
+            throw new IllegalActionInputException("Player is already online.");
 
         Actor actor = ctxt.getActorOrThrow(player);
 
@@ -80,9 +81,7 @@ public class PlayerJoinAction extends AbstractPlayerAction
         assert event instanceof PlayerJoinEvent;
         PlayerJoinEvent e = (PlayerJoinEvent) event;
 
-        // noinspection deprecation  De-Adventure API
         String message = e.getJoinMessage();
-
         boolean result = ctxt.ifHasInput(IN_MESSAGE, msg -> msg.equals(message));
         if (result)
             this.makeOutputs(ctxt, e.getPlayer(), message);

@@ -13,6 +13,8 @@ import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
 import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
 import org.kunlab.scenamatica.bookkeeper.enums.ActionMethod;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.exceptions.scenario.IllegalActionInputException;
+import org.kunlab.scenamatica.exceptions.scenario.IllegalScenarioStateException;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
@@ -137,10 +139,10 @@ public class EntityDeathAction extends AbstractGeneralEntityAction
     {
         Entity target = this.selectTarget(ctxt);
         if (target.isDead())
-            throw new IllegalStateException("The target entity " + target + " is already dead.");
+            throw new IllegalScenarioStateException("The target entity " + target + " is already dead.");
 
         if (!(target instanceof LivingEntity))
-            throw new IllegalStateException("The target entity " + target + " is not a living entity.");
+            throw new IllegalActionInputException(IN_TARGET_ENTITY, "The target entity " + target + " is not a living entity.");
 
         LivingEntity livingEntity = (LivingEntity) target;
         this.makeOutputs(ctxt, livingEntity);
