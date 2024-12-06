@@ -14,6 +14,7 @@ import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
 import org.kunlab.scenamatica.bookkeeper.annotations.OutputDoc;
 import org.kunlab.scenamatica.bookkeeper.enums.AdmonitionType;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.exceptions.scenario.IllegalActionInputException;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
@@ -84,7 +85,7 @@ public class PlayerInteractEntityAction extends AbstractPlayerAction
     {
         Player player = selectTarget(ctxt);
         Entity targetEntity = ctxt.input(IN_ENTITY).selectTarget(ctxt.getContext())
-                .orElseThrow(() -> new IllegalStateException("Target entity is not found."));
+                .orElseThrow(() -> new IllegalActionInputException(IN_ENTITY, "Target entity is not found."));
         NMSHand hand = ctxt.orElseInput(IN_HAND, () -> NMSHand.MAIN_HAND);
 
         int distanceFromEntity = (int) player.getLocation().distance(targetEntity.getLocation());

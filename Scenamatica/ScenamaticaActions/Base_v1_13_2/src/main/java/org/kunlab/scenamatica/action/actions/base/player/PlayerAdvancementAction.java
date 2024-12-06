@@ -19,6 +19,7 @@ import org.kunlab.scenamatica.bookkeeper.annotations.OutputDoc;
 import org.kunlab.scenamatica.bookkeeper.enums.AdmonitionType;
 import org.kunlab.scenamatica.commons.utils.NamespaceUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.exceptions.scenario.IllegalActionInputException;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
@@ -104,7 +105,7 @@ public class PlayerAdvancementAction
         NamespacedKey advKey = ctxt.input(IN_ADVANCEMENT);
         Advancement advancement = Bukkit.getAdvancement(advKey);
         if (advancement == null)
-            throw new IllegalArgumentException("Advancement not found: " + advKey);
+            throw new IllegalActionInputException(IN_ADVANCEMENT, "Advancement not found: " + advKey);
 
         return advancement;
     }

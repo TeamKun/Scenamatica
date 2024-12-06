@@ -10,6 +10,7 @@ import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
 import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
 import org.kunlab.scenamatica.bookkeeper.annotations.OutputDoc;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.exceptions.scenario.IllegalActionInputException;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
@@ -62,7 +63,7 @@ public class InventoryCreativeAction extends InventoryClickAction
         int slot = ctxt.input(IN_SLOT);
         Actor actor = ctxt.getActorOrThrow(ctxt.input(IN_PLAYER)
                 .selectTarget(ctxt.getContext())
-                .orElseThrow(() -> new IllegalStateException("Target is not found."))
+                .orElseThrow(() -> new IllegalActionInputException(IN_PLAYER, "Target is not found."))
         );
 
         ItemStack stack = ctxt.input(IN_ITEM).create();

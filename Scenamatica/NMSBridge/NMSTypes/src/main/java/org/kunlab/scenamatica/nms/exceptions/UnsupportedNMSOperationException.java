@@ -1,10 +1,12 @@
 package org.kunlab.scenamatica.nms.exceptions;
 
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * NMS に対応していない操作が行われた際にスローされる例外です。
  */
+@Getter
 public class UnsupportedNMSOperationException extends UnsupportedOperationException
 {
     @NotNull

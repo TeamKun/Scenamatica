@@ -13,6 +13,7 @@ import org.kunlab.scenamatica.bookkeeper.annotations.OutputDoc;
 import org.kunlab.scenamatica.bookkeeper.enums.ActionMethod;
 import org.kunlab.scenamatica.commons.utils.Utils;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.exceptions.scenario.IllegalScenarioStateException;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
@@ -81,7 +82,7 @@ public class PlayerRespawnAction extends AbstractPlayerAction
     {
         Player player = selectTarget(ctxt);
         if (!player.isDead())
-            throw new IllegalStateException("Player is not dead");
+            throw new IllegalScenarioStateException("Player is not dead");
 
         if (ctxt.hasInput(IN_LOCATION))
             player.setBedSpawnLocation(Utils.assignWorldToLocation(ctxt.input(IN_LOCATION), ctxt.getEngine()), true);

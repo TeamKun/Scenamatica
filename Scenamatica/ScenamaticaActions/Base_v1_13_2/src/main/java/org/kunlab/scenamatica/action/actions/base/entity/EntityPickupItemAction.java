@@ -15,6 +15,8 @@ import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
 import org.kunlab.scenamatica.bookkeeper.annotations.OutputDoc;
 import org.kunlab.scenamatica.bookkeeper.enums.ActionMethod;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.exceptions.scenario.IllegalActionInputException;
+import org.kunlab.scenamatica.exceptions.scenario.IllegalScenarioStateException;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
@@ -99,17 +101,17 @@ public class EntityPickupItemAction extends AbstractGeneralEntityAction
     {
         Entity target = this.selectTarget(ctxt);
         if (!(target instanceof LivingEntity))
-            throw new IllegalArgumentException("Target is not living entity.");
+            throw new IllegalActionInputException(IN_TARGET_ENTITY, "Target is not living entity.");
 
         LivingEntity leTarget = (LivingEntity) target;
         if (!leTarget.getCanPickupItems())
-            throw new IllegalStateException("The target cannot pickup items (LivingEntity#getCanPickupItems() is false).");
+            throw new IllegalActionInputException(IN_TARGET_ENTITY, "The target cannot pickup items (LivingEntity#getCanPickupItems() is false).");
 
         EntitySpecifier<Item> itemSpecifier = ctxt.input(IN_ITEM);
         Item item;  // TODO: 統一？
         if (itemSpecifier.isSelectable())
             item = itemSpecifier.selectTarget(ctxt.getContext())
-                    .orElseThrow(() -> new IllegalStateException("Item is not found."));
+                    .orElseThrow(() -> new IllegalActionInputException(IN_ITEM, "Unable to select item."));
         else
         {
             EntityItemStructure itemStructure = (EntityItemStructure) itemSpecifier;
@@ -126,9 +128,9 @@ public class EntityPickupItemAction extends AbstractGeneralEntityAction
         boolean canPlayerPickUp = item.getPickupDelay() != Short.MAX_VALUE;
 
         if (isPlayer && !item.canMobPickup())
-            throw new IllegalStateException("The item cannot be picked up by mobs (Item#canMobPickup() is false).");
+            throw new IllegalScenarioStateException("The item cannot be picked up by mobs (Item#canMobPickup() is false).");
         else if (!isPlayer && !canPlayerPickUp)
-            throw new IllegalStateException("The item cannot be picked up by players (Item#canPlayerPickup() is false).");
+            throw new IllegalScenarioStateException("The item cannot be picked up by players (Item#canPlayerPickup() is false).");
 
         int amount = ctxt.orElseInput(IN_REMAINING, () -> item.getItemStack().getAmount() - 1);
         // NMS にすら アイテムを拾ったことを検知する API がないので偽造する
@@ -136,7 +138,7 @@ public class EntityPickupItemAction extends AbstractGeneralEntityAction
         Bukkit.getPluginManager().callEvent(event);
 
         if (event.isCancelled())
-            throw new IllegalStateException("Item pickup event is cancelled.");
+            throw new IllegalScenarioStateException("Item pickup event is cancelled.");
 
         int quantity = item.getItemStack().getAmount() - amount;
         NMSEntityLiving nmsEntity = NMSProvider.getProvider().wrap(leTarget);

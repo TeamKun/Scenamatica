@@ -17,6 +17,7 @@ import org.kunlab.scenamatica.bookkeeper.enums.AdmonitionType;
 import org.kunlab.scenamatica.commons.utils.Utils;
 import org.kunlab.scenamatica.enums.MinecraftVersion;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.exceptions.scenario.IllegalScenarioStateException;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
@@ -107,7 +108,7 @@ public class EntityMoveAction extends AbstractGeneralEntityAction
             Mob mob = (Mob) entity;
             boolean success = mob.getPathfinder().moveTo(toLoc);
             if (!success)
-                throw new IllegalStateException("Failed to find path from " + entity.getLocation() + " to " + toLoc);
+                throw new IllegalScenarioStateException("Failed to find path from " + entity.getLocation() + " to " + toLoc);
         }
         else
             entity.teleport(toLoc);

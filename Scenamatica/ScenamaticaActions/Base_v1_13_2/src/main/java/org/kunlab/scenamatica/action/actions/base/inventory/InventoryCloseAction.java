@@ -12,6 +12,7 @@ import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
 import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
 import org.kunlab.scenamatica.bookkeeper.annotations.OutputDoc;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.exceptions.scenario.IllegalActionInputException;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
@@ -78,7 +79,7 @@ public class InventoryCloseAction extends AbstractInventoryAction
     public void execute(@NotNull ActionContext ctxt)
     {
         Player player = ctxt.input(IN_PLAYER).selectTarget(ctxt.getContext())
-                .orElseThrow(() -> new IllegalStateException("Cannot select target for this action, please specify target with valid specifier."));
+                .orElseThrow(() -> new IllegalActionInputException(IN_PLAYER, "Cannot select target for this action, please specify target with valid specifier."));
 
         InventoryCloseEvent.Reason reason = ctxt.orElseInput(IN_REASON, () -> null);
         if (reason == null)

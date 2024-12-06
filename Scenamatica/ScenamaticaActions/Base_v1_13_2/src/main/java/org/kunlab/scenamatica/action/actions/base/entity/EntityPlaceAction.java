@@ -20,6 +20,7 @@ import org.kunlab.scenamatica.bookkeeper.annotations.OutputDoc;
 import org.kunlab.scenamatica.bookkeeper.enums.ActionMethod;
 import org.kunlab.scenamatica.bookkeeper.enums.AdmonitionType;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.exceptions.scenario.IllegalActionInputException;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
@@ -179,7 +180,7 @@ public class EntityPlaceAction extends AbstractGeneralEntityAction
         PLACEABLE_ENTITIES_MAP = Collections.unmodifiableMap(map);
     }
 
-    public static boolean isPlaceable(Material material)
+    private static boolean isPlaceable(Material material)
     {
         for (Material m : PLACEABLE_ENTITIES_MAP.keySet())
             if (m == material)
@@ -192,12 +193,12 @@ public class EntityPlaceAction extends AbstractGeneralEntityAction
         return PLACEABLE_ENTITIES_MAP.get(material);
     }
 
-    public static Material toMaterial(EntityType entityType)
+    private static Material toMaterial(EntityType entityType)
     {
         for (Map.Entry<Material, EntityType> entry : PLACEABLE_ENTITIES_MAP.entrySet())
             if (entry.getValue() == entityType)
                 return entry.getKey();
-        throw new IllegalArgumentException("EntityType" + entityType + " is not placeable.");
+        throw new IllegalActionInputException(IN_MATERIAL, "EntityType" + entityType + " is not placeable.");
     }
 
     private static boolean isNotOnlyLocationAvailable(@Nullable BlockStructure structure)
@@ -216,7 +217,7 @@ public class EntityPlaceAction extends AbstractGeneralEntityAction
     {
         Location location = ctxt.input(IN_BLOCK).getLocation().create();
         Actor actor = ctxt.getActorOrThrow(ctxt.input(IN_PLAYER).selectTarget(ctxt.getContext())
-                .orElseThrow(() -> new IllegalArgumentException("Player is not specified."))
+                .orElseThrow(() -> new IllegalActionInputException(IN_PLAYER, "Player is not specified."))
         );
         if (location.getWorld() == null)
         {
@@ -230,7 +231,7 @@ public class EntityPlaceAction extends AbstractGeneralEntityAction
         Material material = ctxt.input(IN_MATERIAL);
 
         if (!isPlaceable(material))
-            throw new IllegalArgumentException("Material is not placable.");
+            throw new IllegalActionInputException(IN_MATERIAL, "Material is not placable.");
 
         this.makeOutputs(ctxt, null, actor.getPlayer(), location.getBlock(), ctxt.input(IN_BLOCK_FACE), material);
         actor.placeItem(location, new ItemStack(material), ctxt.input(IN_BLOCK_FACE));

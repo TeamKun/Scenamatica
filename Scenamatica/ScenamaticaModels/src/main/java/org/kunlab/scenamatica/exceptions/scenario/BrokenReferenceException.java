@@ -2,6 +2,7 @@ package org.kunlab.scenamatica.exceptions.scenario;
 
 import lombok.Getter;
 import org.jetbrains.annotations.Nullable;
+import org.kunlab.scenamatica.enums.ScenarioResultCause;
 
 import java.util.Map;
 
@@ -17,7 +18,7 @@ public class BrokenReferenceException extends RuntimeScenarioException
 
     public BrokenReferenceException(@Nullable String reference, @Nullable String partiallyResolvedReference, @Nullable Map<String, ?> partiallyResolvedValues)
     {
-        super("Unable to resolve a reference: " + reference);
+        super(ScenarioResultCause.UNRESOLVED_REFERENCES, "Unable to resolve a reference: " + reference);
         this.reference = reference;
         this.partiallyResolvedReference = partiallyResolvedReference;
         this.partiallyResolvedValues = partiallyResolvedValues;
@@ -25,7 +26,7 @@ public class BrokenReferenceException extends RuntimeScenarioException
 
     public BrokenReferenceException(@Nullable String message, @Nullable String reference)
     {
-        super(message);
+        super(ScenarioResultCause.UNRESOLVED_REFERENCES, message);
         this.reference = reference;
         this.partiallyResolvedReference = null;
         this.partiallyResolvedValues = null;
@@ -33,7 +34,7 @@ public class BrokenReferenceException extends RuntimeScenarioException
 
     public BrokenReferenceException(String message, @Nullable String reference, @Nullable String partiallyResolvedReference, @Nullable Map<String, ?> partiallyResolvedValues)
     {
-        super(message);
+        super(ScenarioResultCause.UNRESOLVED_REFERENCES, message);
         this.reference = reference;
         this.partiallyResolvedReference = partiallyResolvedReference;
         this.partiallyResolvedValues = partiallyResolvedValues;
@@ -41,7 +42,7 @@ public class BrokenReferenceException extends RuntimeScenarioException
 
     public BrokenReferenceException(String message, @Nullable Object reference, @Nullable String partiallyResolvedReference, @Nullable Map<String, ?> partiallyResolvedValues)
     {
-        super(message);
+        super(ScenarioResultCause.UNRESOLVED_REFERENCES, message);
         this.reference = reference == null ? null: String.valueOf(reference);
         this.partiallyResolvedReference = partiallyResolvedReference;
         this.partiallyResolvedValues = partiallyResolvedValues;

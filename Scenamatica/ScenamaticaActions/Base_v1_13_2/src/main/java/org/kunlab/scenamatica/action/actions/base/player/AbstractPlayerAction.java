@@ -11,6 +11,7 @@ import org.kunlab.scenamatica.bookkeeper.annotations.OutputDoc;
 import org.kunlab.scenamatica.bookkeeper.annotations.OutputDocs;
 import org.kunlab.scenamatica.bookkeeper.enums.ActionMethod;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.exceptions.scenario.IllegalActionInputException;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
@@ -47,7 +48,7 @@ public abstract class AbstractPlayerAction extends AbstractAction
     public static Player selectTarget(@NotNull ActionContext ctxt)
     {
         return ctxt.input(IN_TARGET).selectTarget(ctxt.getContext())
-                .orElseThrow(() -> new IllegalArgumentException("Cannot select target for this action, please specify the target with valid specifier."));
+                .orElseThrow(() -> new IllegalActionInputException(IN_TARGET, "Cannot select target for this action, please specify the target with valid specifier."));
     }
 
     public boolean checkMatchedPlayerEvent(@NotNull ActionContext ctxt, @NotNull Event event)

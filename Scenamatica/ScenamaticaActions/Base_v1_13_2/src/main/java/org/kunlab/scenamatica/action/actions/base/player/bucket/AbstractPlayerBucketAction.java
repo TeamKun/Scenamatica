@@ -17,6 +17,8 @@ import org.kunlab.scenamatica.bookkeeper.annotations.OutputDocs;
 import org.kunlab.scenamatica.bookkeeper.enums.ActionMethod;
 import org.kunlab.scenamatica.commons.utils.VoxelUtils;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.exceptions.scenario.IllegalActionInputException;
+import org.kunlab.scenamatica.exceptions.scenario.IllegalScenarioStateException;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
@@ -225,14 +227,14 @@ public abstract class AbstractPlayerBucketAction extends AbstractPlayerAction
             Material bucket = ctxt.input(IN_BUCKET);
             stack = new ItemStack(bucket);
             if (!isBucketMaterial(stack.getType()))
-                throw new IllegalArgumentException("Item " + bucket + " is not a bucket.");
+                throw new IllegalActionInputException(IN_BUCKET, "Item " + bucket + " is not a bucket.");
             player.getInventory().setItemInMainHand(stack);
         }
         else
         {
             stack = player.getInventory().getItemInMainHand();
             if (!isBucketMaterial(stack.getType()))
-                throw new IllegalArgumentException("No bucket in the main hand, " + "please specify the bucket item implicitly: " + player.getName());
+                throw new IllegalScenarioStateException("No bucket in the main hand, " + "please specify the bucket item implicitly: " + player.getName());
         }
 
         return stack;
@@ -251,7 +253,7 @@ public abstract class AbstractPlayerBucketAction extends AbstractPlayerAction
 
         Block block = player.getTargetBlockExact(4);
         if (block == null)
-            throw new IllegalArgumentException("No block clicked, please specify the block implicitly: " + player.getName());
+            throw new IllegalScenarioStateException("No block clicked, please specify the block implicitly: " + player.getName());
 
         return block;
     }

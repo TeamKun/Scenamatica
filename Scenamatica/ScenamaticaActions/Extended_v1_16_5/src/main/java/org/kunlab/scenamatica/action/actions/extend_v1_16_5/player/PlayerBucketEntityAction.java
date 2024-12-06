@@ -19,6 +19,8 @@ import org.kunlab.scenamatica.bookkeeper.enums.AdmonitionType;
 import org.kunlab.scenamatica.bookkeeper.enums.MCVersion;
 import org.kunlab.scenamatica.enums.MinecraftVersion;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.exceptions.scenario.IllegalActionInputException;
+import org.kunlab.scenamatica.exceptions.scenario.IllegalScenarioStateException;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
@@ -125,7 +127,7 @@ public class PlayerBucketEntityAction extends AbstractPlayerAction
         Actor actor = ctxt.getActorOrThrow(player);
 
         Entity targetEntity = ctxt.input(IN_ENTITY).selectTarget(ctxt.getContext())
-                .orElseThrow(() -> new IllegalStateException("Target entity is not found."));
+                .orElseThrow(() -> new IllegalActionInputException(IN_ENTITY, "Target entity is not found."));
         // Null ではない
         ItemStack originalBucket = player.getInventory().getItemInMainHand();
         if (ctxt.hasInput(IN_ORIGINAL_BUCKET))
@@ -138,7 +140,7 @@ public class PlayerBucketEntityAction extends AbstractPlayerAction
             }
         }
         else if (!canBucketPickupEntity(originalBucket.getType()))
-            throw new IllegalStateException("The item in main hand is not water bucket, but " + originalBucket.getType() +
+            throw new IllegalScenarioStateException("The item in main hand is not water bucket, but " + originalBucket.getType() +
                     ". Please ensure that the player is holding correct bucket or specify original bucket.");
 
         this.makeOutputs(ctxt, player, targetEntity, originalBucket, null);

@@ -13,7 +13,7 @@ import org.kunlab.scenamatica.enums.ScenarioResultCause;
 import org.kunlab.scenamatica.enums.ScenarioState;
 import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.enums.WatchType;
-import org.kunlab.scenamatica.exceptions.scenario.BrokenReferenceException;
+import org.kunlab.scenamatica.exceptions.scenario.RuntimeScenarioException;
 import org.kunlab.scenamatica.exceptions.scenario.TriggerNotFoundException;
 import org.kunlab.scenamatica.exceptions.scenariofile.InvalidScenarioFileException;
 import org.kunlab.scenamatica.interfaces.ScenamaticaRegistry;
@@ -36,7 +36,6 @@ import org.kunlab.scenamatica.interfaces.scenariofile.ScenarioFileStructure;
 import org.kunlab.scenamatica.interfaces.structures.trigger.TriggerStructure;
 import org.kunlab.scenamatica.scenario.ActionResultDelivererImpl;
 import org.kunlab.scenamatica.scenario.ScenarioResultImpl;
-import org.kunlab.scenamatica.scenario.ScenarioWaitTimedOutException;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -407,14 +406,12 @@ public class ScenarioExecutorImpl implements ScenarioExecutor
 
             return this.deliverer.waitForResult(scenario.getStructure().getTimeout(), this.state);
         }
-        catch (ScenarioWaitTimedOutException e)
+        catch (RuntimeScenarioException e)
         {
-            context.fail(ActionResultCause.TIMED_OUT);
-            return context.createResult(scenario.getAction());
-        }
-        catch (BrokenReferenceException e)
-        {
-            context.fail(ActionResultCause.UNRESOLVED_REFERENCES, e);
+            ActionResultCause cause = e.getCauseToFail().getActionCause();
+            assert cause != null;
+            context.fail(cause, e.getCause() == null ? e: e.getCause());
+
             return context.createResult(scenario.getAction());
         }
         catch (Throwable e)
