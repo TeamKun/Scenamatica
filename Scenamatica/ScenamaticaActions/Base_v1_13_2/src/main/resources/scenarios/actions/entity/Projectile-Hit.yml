@@ -18,6 +18,10 @@ on:
               x: 0
               y: 255
               z: 0
+            shooter:
+              type: minecraft:villager
+              tags:
+                - 810shooter
   - type: manual_dispatch
     before:
       - type: execute
@@ -31,8 +35,15 @@ on:
               x: 0
               y: 255
               z: 0
+            shooter:
+              type: minecraft:villager
+              tags:
+                - 810shooter
 context:
   entities:
+    - type: minecraft:villager
+      tags:
+        - 810shooter
     - type: minecraft:villager
       tags:
         - 810snpi
