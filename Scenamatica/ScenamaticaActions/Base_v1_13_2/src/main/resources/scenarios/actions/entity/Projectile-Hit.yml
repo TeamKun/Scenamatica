@@ -14,10 +14,6 @@ on:
             type: minecraft:arrow
             tags:
               - 810snpi
-            location:
-              x: 0
-              y: 255
-              z: 0
             shooter:
               type: minecraft:villager
               tags:
@@ -31,10 +27,6 @@ on:
             type: minecraft:arrow
             tags:
               - 810snpi
-            location:
-              x: 0
-              y: 255
-              z: 0
             shooter:
               type: minecraft:villager
               tags:
@@ -42,6 +34,10 @@ on:
 context:
   entities:
     - type: minecraft:villager
+      location:
+        x: 0
+        y: 100
+        z: 0
       tags:
         - 810shooter
     - type: minecraft:villager
