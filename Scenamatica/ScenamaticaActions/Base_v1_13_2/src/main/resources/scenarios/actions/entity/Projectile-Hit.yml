@@ -14,11 +14,10 @@ on:
             type: minecraft:arrow
             tags:
               - 810snpi
-            # noinspection YAMLSchemaValidation
-            shooter:
-              type: minecraft:villager
-              tags:
-                - 810snpi
+            location:
+              x: 0
+              y: 255
+              z: 0
   - type: manual_dispatch
     before:
       - type: execute
@@ -28,11 +27,10 @@ on:
             type: minecraft:arrow
             tags:
               - 810snpi
-            # noinspection YAMLSchemaValidation
-            shooter:
-              type: minecraft:villager
-              tags:
-                - 810snpi
+            location:
+              x: 0
+              y: 255
+              z: 0
 context:
   entities:
     - type: minecraft:villager
@@ -42,7 +40,10 @@ scenario:
   - type: execute
     action: projectile_hit
     with:
-      target: "@e[type=minecraft:arrow,tag=810snpi]"
+      target:
+        type: minecraft:arrow
+        tags:
+          - 810snpi
       hitEntity:
         type: minecraft:villager
         tags:
@@ -51,7 +52,10 @@ scenario:
   - type: expect
     action: projectile_hit
     with:
-      target: "@e[type=minecraft:arrow,tag=810snpi]"
+      target:
+        type: minecraft:arrow
+        tags:
+          - 810snpi
       hitEntity:
         type: minecraft:villager
         tags:
