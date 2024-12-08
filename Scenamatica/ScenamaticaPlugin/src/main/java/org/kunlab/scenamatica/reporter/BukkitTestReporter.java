@@ -471,7 +471,10 @@ public class BukkitTestReporter extends AbstractTestReporter
                 .add("runID", actionResult.getRunID().toString().substring(0, 8));
 
         if (!actionResult.isFailed())
+        {
             terminal.info(this.withPrefix(scenarioResult.getTestID(), scenario, LangProvider.get(key, args)));
+            return;
+        }
 
         String causeMessage = "";
         if (actionResult.getCause() == ActionResultCause.UNRESOLVED_REFERENCES)
