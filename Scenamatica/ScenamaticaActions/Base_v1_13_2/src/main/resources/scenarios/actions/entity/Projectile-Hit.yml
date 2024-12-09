@@ -6,40 +6,12 @@ name: actions_entity_projectile_hit
 description: Testing entity_projectile_hit action works or not
 on:
   - type: on_load
-    before:
-      - type: execute
-        action: projectile_launch
-        with:
-          entity:
-            type: minecraft:arrow
-            tags:
-              - 810snpi
-            shooter:
-              type: minecraft:villager
-              tags:
-                - 810shooter
   - type: manual_dispatch
-    before:
-      - type: execute
-        action: projectile_launch
-        with:
-          entity:
-            type: minecraft:arrow
-            tags:
-              - 810snpi
-            shooter:
-              type: minecraft:villager
-              tags:
-                - 810shooter
 context:
   entities:
-    - type: minecraft:villager
-      location:
-        x: 0
-        y: 100
-        z: 0
+    - type: minecraft:arrow
       tags:
-        - 810shooter
+        - 810snpi
     - type: minecraft:villager
       tags:
         - 810snpi
