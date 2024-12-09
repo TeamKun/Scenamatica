@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.kunlab.scenamatica</groupId>
         <artifactId>ScenamaticaContextEngine</artifactId>
-        <version>1.6.0</version>
+        <version>1.6.1</version>
     </parent>
 
     <groupId>org.kunlab.scenamatica.context</groupId>
@@ -28,7 +28,7 @@
         <dependency>
             <groupId>org.kunlab.scenamatica.context</groupId>
             <artifactId>ContextEngineNMSBase</artifactId>
-            <version>1.6.0</version>
+            <version>1.6.1</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
