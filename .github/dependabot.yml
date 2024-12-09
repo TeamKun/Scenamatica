@@ -10,7 +10,7 @@ updates:
     target-branch: develop
     labels:
       - "Type: Dependencies"
-  - package-ecosystem: maven
+  - package-ecosystem: npm
     directory: "docs/"
     schedule:
       interval: daily
