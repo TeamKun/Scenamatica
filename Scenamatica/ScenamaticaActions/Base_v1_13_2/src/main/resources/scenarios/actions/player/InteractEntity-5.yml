@@ -31,9 +31,15 @@ scenario:
     action: player_interact_entity
     with:
       target: Actor001
-      entity: "@e[type=minecraft:parrot,tag=810snpi]"
+      entity:
+        type: minecraft:parrot
+        tags:
+          - 810snpi
   - type: expect
     action: player_interact_entity
     with:
       target: Actor001
-      entity: "@e[type=minecraft:parrot,tag=810snpi]"
+      entity:
+        type: minecraft:parrot
+        tags:
+          - 810snpi

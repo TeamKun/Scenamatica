@@ -5,43 +5,7 @@ name: actions_player_interact_entity_2
 description: Testing PlayerInteractEntityAction without entity works or not
 on:
   - type: on_load
-    before:
-      - type: execute
-        action: entity_spawn
-        with:
-          entity:
-            type: minecraft:parrot
-            tags:
-              - 810snpi
-            location:
-              x: 0
-              y: 255
-              z: 0
-
-    after:
-      - action: command_dispatch
-        type: execute
-        with:
-          command: 'kill @e[type=minecraft:parrot,tag=810snpi]'
   - type: manual_dispatch
-    before:
-      - type: execute
-        action: entity_spawn
-        with:
-          entity:
-            type: minecraft:parrot
-            tags:
-              - 810snpi
-            location:
-              x: 0
-              y: 255
-              z: 0
-
-    after:
-      - action: command_dispatch
-        type: execute
-        with:
-          command: 'kill @e[type=minecraft:parrot,tag=810snpi]'
 
 context:
   actors:
@@ -52,13 +16,24 @@ context:
         z: 0
       flyable: true
       flying: true
+  entities:
+    - type: minecraft:parrot
+      tags:
+        - 810snpi
+      location:
+        x: 0
+        y: 255
+        z: 0
 
 scenario:
   - type: execute
     action: player_interact_entity
     with:
       target: Actor001
-      entity: "@e[type=minecraft:parrot,tag=810snpi]"
+      entity:
+        type: minecraft:parrot
+        tags:
+          - 810snpi
   - type: expect
     action: player_interact_entity
     with:
