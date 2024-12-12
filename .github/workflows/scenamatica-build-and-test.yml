@@ -20,6 +20,9 @@ jobs:
     uses: "./.github/workflows/build-scenamatica.yml"
     secrets:
       token: ${{ secrets.GH_PAT }}
+    with:
+      artifact: scenamatica
+      profile: debug
   self-tests:
     name: Self-test with Scenamatica
     runs-on: ubuntu-latest

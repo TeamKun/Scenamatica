@@ -4,7 +4,15 @@ on:
     secrets:
       token:
         required: true
-
+    inputs:
+      profile:
+        default: debug
+        type: string
+        required: true
+      artifact:
+        default: scenamatica
+        type: string
+        required: true
 jobs:
   build:
     name: Build with Maven
@@ -65,11 +73,11 @@ jobs:
         run: |
           cd Scenamatica
           chmod +x build.sh
-          ./build.sh -D"jar.finalName=Scenamatica" -P debug
+          ./build.sh -D"jar.finalName=Scenamatica" -P ${{ github.event.inputs.profile }}
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: scenamatica
+          name: ${{ github.event.inputs.artifact }}
           path: Scenamatica/ScenamaticaPlugin/target/Scenamatica.jar
           retention-days: 1
           if-no-files-found: error
