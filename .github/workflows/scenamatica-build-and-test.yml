@@ -3,6 +3,9 @@ on:
   push:
     paths:
       - "Scenamatica/**"
+    branches:
+      - main
+      - develop
   pull_request:
     paths:
       - "Scenamatica/**"
@@ -23,6 +26,7 @@ jobs:
     with:
       artifact: scenamatica
       profile: debug
+      pull-request: ${{ github.event_name == 'pull_request' }}
   self-tests:
     name: Self-test with Scenamatica
     runs-on: ubuntu-latest
