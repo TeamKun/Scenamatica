@@ -78,11 +78,11 @@ jobs:
         run: |
           cd Scenamatica
           chmod +x build.sh
-          ./build.sh -D"jar.finalName=Scenamatica" -P ${{ github.event.inputs.profile }}
+          ./build.sh -D"jar.finalName=Scenamatica" -P ${{ inputs.profile }}
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ github.event.inputs.artifact }}
+          name: ${{ inputs.artifact }}
           path: Scenamatica/ScenamaticaPlugin/target/Scenamatica.jar
           retention-days: 1
           if-no-files-found: error
