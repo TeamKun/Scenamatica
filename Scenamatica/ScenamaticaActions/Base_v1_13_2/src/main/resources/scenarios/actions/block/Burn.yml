@@ -1,0 +1,93 @@
+# noinspection YAMLSchemaValidation
+scenamatica: ${project.version}
+
+name: actions_block_burn
+description: Testing block_burn action works or not
+on:
+  - type: on_load
+    before:
+      - type: execute
+        action: block
+        with:
+          block:
+            location:
+              x: 0
+              y: 4
+              z: 0
+          data:
+            type: wood
+      - type: execute
+        action: block
+        with:
+          block:
+            location:
+              x: 0
+              y: 5
+              z: 0
+          data:
+            type: fire
+
+  - type: manual_dispatch
+    before:
+      - type: execute
+        action: block
+        with:
+          block:
+            location:
+              x: 0
+              y: 4
+              z: 0
+          data:
+            type: wood
+      - type: execute
+        action: block
+        with:
+          block:
+            location:
+              x: 0
+              y: 5
+              z: 0
+          data:
+            type: fire
+
+context:
+  stage:
+    type: flat
+
+scenario:
+  - type: execute
+    action: block_burn
+    with:
+      block:
+        location:
+          x: 0
+          y: 4
+          z: 0
+      ignitingBlock:
+        location:
+          x: 0
+          y: 5
+          z: 0
+  - type: expect
+    action: block_burn
+    with:
+      block:
+        location:
+          x: 0
+          y: 4
+          z: 0
+      ignitingBlock:
+        location:
+          x: 0
+          y: 5
+          z: 0
+  - type: require
+    action: block
+    with:
+      block:
+        location:
+          x: 0
+          y: 4
+          z: 0
+      data:
+        type: air
