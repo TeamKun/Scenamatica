@@ -16,7 +16,7 @@ scenario:
     action: weather_strike_lightning
     with:
       lightning:
-        weather:
+        location:
           x: 0
           y: 3
           z: 0
@@ -24,7 +24,7 @@ scenario:
     action: weather_strike_lightning
     with:
       lightning:
-        weather:
+        location:
           x: 0
           y: 3
           z: 0
