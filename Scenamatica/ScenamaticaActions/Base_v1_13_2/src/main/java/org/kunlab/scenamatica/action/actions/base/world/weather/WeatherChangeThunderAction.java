@@ -4,6 +4,7 @@ import org.bukkit.World;
 import org.bukkit.event.Event;
 import org.bukkit.event.weather.ThunderChangeEvent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.annotations.action.Action;
 import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
 import org.kunlab.scenamatica.bookkeeper.annotations.Admonition;
@@ -104,6 +105,7 @@ public class WeatherChangeThunderAction extends AbstractWeatherAction
         else
             changeToThundering = !world.hasStorm();
 
+        this.makeOutputs(ctxt, world, changeToThundering, duration);
         world.setThundering(changeToThundering);
         world.setThunderDuration(duration);
     }
@@ -118,7 +120,19 @@ public class WeatherChangeThunderAction extends AbstractWeatherAction
         if (!super.checkMatchedWorld(ctxt, e.getWorld()))
             return false;
 
-        return ctxt.ifHasInput(INPUT_THUNDERING, r -> e.toThunderState() == r);
+        boolean result = ctxt.ifHasInput(INPUT_THUNDERING, r -> e.toThunderState() == r);
+        if (result)
+            this.makeOutputs(ctxt, e.getWorld(), e.toThunderState(), null);
+
+        return result;
+    }
+
+    private void makeOutputs(@NotNull ActionContext ctxt, @NotNull World world, boolean thundering, @Nullable Integer duration)
+    {
+        ctxt.output(OUTPUT_THUNDERING, thundering);
+        if (duration != null)
+            ctxt.output(OUTPUT_DURATION, duration);
+        super.makeOutputs(ctxt, world);
     }
 
     @Override

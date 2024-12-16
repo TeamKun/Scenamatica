@@ -4,6 +4,7 @@ import org.bukkit.World;
 import org.bukkit.event.Event;
 import org.bukkit.event.weather.WeatherChangeEvent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.annotations.action.Action;
 import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
 import org.kunlab.scenamatica.bookkeeper.annotations.Admonition;
@@ -119,6 +120,7 @@ public class WeatherChangeAction extends AbstractWeatherAction
         else
             changeToRaining = !world.hasStorm();
 
+        this.makeOutputs(ctxt, world, changeToRaining, duration);
         world.setStorm(changeToRaining);
         world.setWeatherDuration(duration);
     }
@@ -133,7 +135,19 @@ public class WeatherChangeAction extends AbstractWeatherAction
         if (!super.checkMatchedWorld(ctxt, e.getWorld()))
             return false;
 
-        return ctxt.ifHasInput(IN_RAINING, r -> e.toWeatherState() == r);
+        boolean result = ctxt.ifHasInput(IN_RAINING, r -> e.toWeatherState() == r);
+        if (result)
+            this.makeOutputs(ctxt, e.getWorld(), e.toWeatherState(), null);
+
+        return result;
+    }
+
+    private void makeOutputs(@NotNull ActionContext ctxt, @NotNull World world, boolean raining, @Nullable Integer duration)
+    {
+        ctxt.output(OUTPUT_RAINING, raining);
+        if (duration != null)
+            ctxt.output(OUTPUT_DURATION, duration);
+        super.makeOutputs(ctxt, world);
     }
 
     @Override
