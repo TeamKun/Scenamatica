@@ -1,12 +1,17 @@
 package org.kunlab.scenamatica.nms.impl.v1_16_R1.world;
 
 import net.minecraft.server.v1_16_R1.BlockPosition;
+import net.minecraft.server.v1_16_R1.EntityLightning;
+import net.minecraft.server.v1_16_R1.EntityTypes;
 import net.minecraft.server.v1_16_R1.WorldServer;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_16_R1.util.CraftMagicNumbers;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LightningStrike;
 import org.jetbrains.annotations.NotNull;
+import org.kunlab.scenamatica.nms.enums.entity.NMSLightningStrikeCause;
 import org.kunlab.scenamatica.nms.exceptions.UnsupportedNMSOperationException;
 import org.kunlab.scenamatica.nms.types.world.NMSChunkProvider;
 import org.kunlab.scenamatica.nms.types.world.NMSPersistentEntitySectionManager;
@@ -60,6 +65,22 @@ public class NMSWorldServerImpl implements NMSWorldServer
                 "getEntityManager",
                 NMSPersistentEntitySectionManager.class
         );
+    }
+
+    @Override
+    public void strikeLightning(@NotNull Location location, boolean isEffect, @NotNull NMSLightningStrikeCause cause)
+    {
+        EntityLightning nmsEntity = new EntityLightning(EntityTypes.LIGHTNING_BOLT, this.nmsWorld);
+        nmsEntity.isEffect = isEffect;
+        nmsEntity.setPosition(location.getX(), location.getY(), location.getZ());
+        this.nmsWorld.strikeLightning(nmsEntity);
+    }
+
+    @Override
+    public void strikeLightning(@NotNull LightningStrike strike, @NotNull NMSLightningStrikeCause cause)
+    {
+        EntityLightning lightning = ((org.bukkit.craftbukkit.v1_16_R1.entity.CraftLightningStrike) strike).getHandle();
+        this.nmsWorld.strikeLightning(lightning, NMSLightningStrikeCause.toBukkit(cause));
     }
 
     @Override
