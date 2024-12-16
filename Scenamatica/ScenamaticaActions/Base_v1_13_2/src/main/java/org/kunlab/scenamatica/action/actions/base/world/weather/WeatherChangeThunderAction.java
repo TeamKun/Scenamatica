@@ -12,7 +12,9 @@ import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
 import org.kunlab.scenamatica.bookkeeper.annotations.OutputDoc;
 import org.kunlab.scenamatica.bookkeeper.enums.ActionMethod;
 import org.kunlab.scenamatica.bookkeeper.enums.AdmonitionType;
+import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
+import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Expectable;
@@ -32,12 +34,12 @@ import java.util.List;
 
         outputs = {
                 @OutputDoc(
-                        name = WeatherChangeThunderAction.OUTPUT_THUNDERING,
+                        name = WeatherChangeThunderAction.OUT_THUNDERING,
                         description = "雷が発生しているかを出力します。",
                         type = Boolean.class
                 ),
                 @OutputDoc(
-                        name = WeatherChangeThunderAction.OUTPUT_DURATION,
+                        name = WeatherChangeThunderAction.OUT_DURATION,
                         description = "その雷が続く期間（チック）を出力します。",
                         type = Integer.class
                 )
@@ -54,8 +56,8 @@ import java.util.List;
 public class WeatherChangeThunderAction extends AbstractWeatherAction
         implements Executable, Expectable
 {
-    public static final String OUTPUT_THUNDERING = "thundering";
-    public static final String OUTPUT_DURATION = "duration";
+    public static final String OUT_THUNDERING = "thundering";
+    public static final String OUT_DURATION = "duration";
 
     @InputDoc(
             name = "雷の発生状態",
@@ -71,7 +73,7 @@ public class WeatherChangeThunderAction extends AbstractWeatherAction
                     )
             }
     )
-    public static final InputToken<Boolean> INPUT_THUNDERING = ofInput("thundering", Boolean.class);
+    public static final InputToken<Boolean> IN_THUNDERING = ofInput("thundering", Boolean.class);
 
     @InputDoc(
             name = "雷の継続時間",
@@ -91,17 +93,17 @@ public class WeatherChangeThunderAction extends AbstractWeatherAction
                     )
             }
     )
-    public static final InputToken<Integer> INPUT_DURATION = ofInput("duration", Integer.class);
+    public static final InputToken<Integer> IN_DURATION = ofInput("duration", Integer.class);
 
     @Override
     public void execute(@NotNull ActionContext ctxt)
     {
         World world = this.getWorldNonNull(ctxt);
 
-        int duration = ctxt.orElseInput(INPUT_DURATION, () -> 0);
+        int duration = ctxt.orElseInput(IN_DURATION, () -> 0);
         boolean changeToThundering;
-        if (ctxt.hasInput(INPUT_THUNDERING))
-            changeToThundering = ctxt.input(INPUT_THUNDERING);
+        if (ctxt.hasInput(IN_THUNDERING))
+            changeToThundering = ctxt.input(IN_THUNDERING);
         else
             changeToThundering = !world.hasStorm();
 
@@ -120,7 +122,7 @@ public class WeatherChangeThunderAction extends AbstractWeatherAction
         if (!super.checkMatchedWorld(ctxt, e.getWorld()))
             return false;
 
-        boolean result = ctxt.ifHasInput(INPUT_THUNDERING, r -> e.toThunderState() == r);
+        boolean result = ctxt.ifHasInput(IN_THUNDERING, r -> e.toThunderState() == r);
         if (result)
             this.makeOutputs(ctxt, e.getWorld(), e.toThunderState(), null);
 
@@ -129,10 +131,17 @@ public class WeatherChangeThunderAction extends AbstractWeatherAction
 
     private void makeOutputs(@NotNull ActionContext ctxt, @NotNull World world, boolean thundering, @Nullable Integer duration)
     {
-        ctxt.output(OUTPUT_THUNDERING, thundering);
+        ctxt.output(OUT_THUNDERING, thundering);
         if (duration != null)
-            ctxt.output(OUTPUT_DURATION, duration);
+            ctxt.output(OUT_DURATION, duration);
         super.makeOutputs(ctxt, world);
+    }
+
+    @Override
+    public InputBoard getInputBoard(ScenarioType type)
+    {
+        return super.getInputBoard(type)
+                .registerAll(IN_THUNDERING, IN_DURATION);
     }
 
     @Override
