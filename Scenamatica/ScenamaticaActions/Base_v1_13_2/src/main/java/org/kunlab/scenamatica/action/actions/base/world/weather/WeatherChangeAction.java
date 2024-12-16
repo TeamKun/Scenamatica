@@ -49,6 +49,14 @@ import java.util.List;
                                 )
                         }
                 )
+        },
+
+        admonitions = {
+                @Admonition(
+                        type = AdmonitionType.NOTE,
+                        title = "雷について",
+                        content = "雷の発生状態を変更する場合は, `weather_change_thunder` アクションを使用してください。"
+                )
         }
 )
 public class WeatherChangeAction extends AbstractWeatherAction
