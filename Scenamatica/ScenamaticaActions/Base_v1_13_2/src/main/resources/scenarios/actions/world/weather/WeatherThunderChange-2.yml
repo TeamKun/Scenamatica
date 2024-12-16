@@ -1,7 +1,7 @@
 # noinspection YAMLSchemaValidation
 scenamatica: ${project.version}
 
-name: actions_thunder_change_2
+name: actions_weather_thunder_change_2
 description: Testing ThunderChangeAction without duration works or not
 on:
   - type: on_load
@@ -13,11 +13,11 @@ context:
 
 scenario:
   - type: execute
-    action: weather_thunder_change
+    action: weather_change_thunder
     with:
       raining: true
   - type: expect
-    action: weather_thunder_change
+    action: weather_change_thunder
     with:
       raining: true
       duration: 0  # Default duration is 0
