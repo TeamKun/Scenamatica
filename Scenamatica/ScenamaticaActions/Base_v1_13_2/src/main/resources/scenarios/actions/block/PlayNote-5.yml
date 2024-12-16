@@ -1,0 +1,69 @@
+# noinspection YAMLSchemaValidation
+scenamatica: ${project.version}
+
+name: actions_block_play_note_5
+description: Testing block_place action with pre-defined instrument works or not
+on:
+  - type: on_load
+    before:
+      - type: execute
+        action: block_place
+        with:
+          block:
+            type: NOTE_BLOCK
+            location:
+              x: 0
+              y: 4
+              z: 0
+      - type: execute
+        action: block_place
+        with:
+          block:
+            location:
+              x: 0
+              y: 3
+              z: 0
+            type: GOLD_BLOCK
+  - type: manual_dispatch
+    before:
+      - type: execute
+        action: block_place
+        with:
+          block:
+            type: NOTE_BLOCK
+            location:
+              x: 0
+              y: 4
+              z: 0
+      - type: execute
+        action: block_place
+        with:
+          block:
+            location:
+              x: 0
+              y: 3
+              z: 0
+            type: GOLD_BLOCK
+
+context:
+  stage:
+    type: flat
+
+scenario:
+  - type: execute
+    action: block_play_note
+    with:
+      block:
+        location:
+          x: 0
+          y: 4
+          z: 0
+  - type: expect
+    action: block_play_note
+    with:
+      block:
+        location:
+          x: 0
+          y: 4
+          z: 0
+      instrument: BELL

@@ -1,8 +1,11 @@
 package org.kunlab.scenamatica.nms.impl.v1_18_R1.world;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_18_R1.CraftWorld;
+import org.bukkit.craftbukkit.v1_18_R1.util.CraftMagicNumbers;
 import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.nms.types.world.NMSChunkProvider;
@@ -55,5 +58,13 @@ public class NMSWorldServerImpl implements NMSWorldServer
     public @NotNull NMSPersistentEntitySectionManager<Entity> getEntityManager()
     {
         return this.entityManager;
+    }
+
+    @Override
+    public void playBlockAction(Block block, int param1, int param2)
+    {
+        BlockPos blockPosition = new BlockPos(block.getX(), block.getY(), block.getZ());
+        net.minecraft.world.level.block.Block nmsBlock = CraftMagicNumbers.getBlock(block.getBlockData().getMaterial());
+        this.nmsWorld.blockEvent(blockPosition, nmsBlock, param1, param2);
     }
 }
