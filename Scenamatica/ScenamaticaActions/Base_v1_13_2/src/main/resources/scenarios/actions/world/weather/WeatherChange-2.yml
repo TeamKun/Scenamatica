@@ -1,0 +1,23 @@
+# noinspection YAMLSchemaValidation
+scenamatica: ${project.version}
+
+name: actions_weather_change_2
+description: Testing WeatherChangeAction without duration works or not
+on:
+  - type: on_load
+  - type: manual_dispatch
+
+context:
+  stage:
+    type: FLAT
+
+scenario:
+  - type: execute
+    action: weather_change
+    with:
+      raining: true
+  - type: expect
+    action: weather_change
+    with:
+      raining: true
+      duration: 0  # Default duration is 0
