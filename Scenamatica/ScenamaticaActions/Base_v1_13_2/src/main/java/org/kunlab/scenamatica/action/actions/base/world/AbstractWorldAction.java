@@ -6,12 +6,17 @@ import org.bukkit.World;
 import org.bukkit.event.Event;
 import org.bukkit.event.world.WorldEvent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.action.AbstractAction;
+import org.kunlab.scenamatica.bookkeeper.annotations.Admonition;
 import org.kunlab.scenamatica.bookkeeper.annotations.Category;
 import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
 import org.kunlab.scenamatica.bookkeeper.annotations.OutputDoc;
 import org.kunlab.scenamatica.bookkeeper.annotations.OutputDocs;
+import org.kunlab.scenamatica.bookkeeper.enums.ActionMethod;
+import org.kunlab.scenamatica.bookkeeper.enums.AdmonitionType;
 import org.kunlab.scenamatica.enums.ScenarioType;
+import org.kunlab.scenamatica.exceptions.scenario.IllegalActionInputException;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
@@ -35,7 +40,14 @@ public abstract class AbstractWorldAction extends AbstractAction
     @InputDoc(
             name = "world",
             description = "ワールドの名前です。",
-            type = String.class
+            type = String.class,
+            admonitions = {
+                    @Admonition(
+                            type = AdmonitionType.INFORMATION,
+                            on = ActionMethod.EXECUTE,
+                            content = "この項目を省略した場合は, 自動的にステージが選択されます。"
+                    )
+            }
     )
     public static final InputToken<String> IN_WORLD = ofInput(
             "world",
@@ -51,11 +63,20 @@ public abstract class AbstractWorldAction extends AbstractAction
             return false;
 
         WorldEvent e = (WorldEvent) event;
+        return this.checkMatchedWorld(ctxt, e.getWorld());
+    }
 
-        boolean result = ctxt.ifHasInput(IN_WORLD, world ->
-                world.equals(e.getWorld().getName())
-                        || ("world_" + world).equals(e.getWorld().getName()));
-        this.makeOutputs(ctxt, e.getWorld().getName());
+    protected boolean checkMatchedWorld(@NotNull ActionContext ctxt, @NotNull World world)
+    {
+        boolean result = ctxt.ifHasInput(
+                IN_WORLD, worldName ->
+                        worldName.equals(world.getName())
+                                || ("world_" + worldName).equals(world.getName())
+        );
+
+        if (result)
+            this.makeOutputs(ctxt, world);
+
         return result;
     }
 
@@ -65,7 +86,8 @@ public abstract class AbstractWorldAction extends AbstractAction
         return ofInputs(type, IN_WORLD);
     }
 
-    protected World getWorld(ActionContext ctxt)
+    @Nullable
+    protected World getWorld(@NotNull ActionContext ctxt)
     {
         String name = ctxt.input(IN_WORLD);
         World world = null;
@@ -78,12 +100,20 @@ public abstract class AbstractWorldAction extends AbstractAction
         return null;
     }
 
-    protected World getWorldNonNull(ActionContext ctxt)
+    @NotNull
+    protected World getWorldNonNull(@NotNull ActionContext ctxt)
     {
         if (!ctxt.hasInput(IN_WORLD))
             return ctxt.getContext().getStage().getWorld();
 
-        return this.getWorld(ctxt);
+        World world = this.getWorld(ctxt);
+        if (world == null)
+        {
+            String inputWorldName = ctxt.orElseInput(IN_WORLD, () -> "**unset**");
+            throw new IllegalActionInputException(IN_WORLD, "Unable to find world: " + inputWorldName);
+        }
+
+        return world;
     }
 
     protected void makeOutputs(@NotNull ActionContext ctxt, @NotNull String worldName)
