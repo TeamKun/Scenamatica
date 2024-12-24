@@ -317,6 +317,12 @@ class MockedPlayer extends EntityPlayer implements Actor
     }
 
     @Override
+    public void jump()
+    {
+
+    }
+
+    @Override
     @SneakyThrows(IOException.class)
     public void clickInventory(@NotNull ClickType type,
                                int slot,

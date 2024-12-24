@@ -173,4 +173,9 @@ public interface Actor
      */
     @NotNull
     String getActorName();
+
+    /**
+     * プレイヤにジャンプさせます。
+     */
+    void jump();
 }
