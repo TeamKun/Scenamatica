@@ -1,0 +1,33 @@
+# noinspection YAMLSchemaValidation
+scenamatica: ${project.version}
+
+name: actions_block_explode_2
+description: Testing block_explode action with breaking blocks works or not
+on:
+  - type: on_load
+  - type: manual_dispatch
+
+context:
+  actors:
+    - name: Actor001
+  stage:
+    type: flat
+
+scenario:
+  - type: execute
+    action: block_explode
+    with:
+      block:
+        location:
+          x: 0
+          y: 4
+          z: 0
+      breakBlocks: true
+  - type: expect
+    action: block_break
+    with:
+      block:
+        location:
+          x: 0
+          y: 3
+          z: 0
