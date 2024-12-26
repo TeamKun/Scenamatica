@@ -8,8 +8,6 @@ on:
   - type: manual_dispatch
 
 context:
-  actors:
-    - name: Actor001
   stage:
     type: flat
 
@@ -23,7 +21,6 @@ scenario:
           y: 4
           z: 0
       yield: 4
-      breakBlocks: false
   - type: expect
     action: block_explode
     with:
