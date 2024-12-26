@@ -1,7 +1,7 @@
 # noinspection YAMLSchemaValidation
 scenamatica: ${project.version}
 
-name: actions_block_explode_3
+name: actions_block_explode_4
 description: Testing block_explode action with breaking blocks works or not
 on:
   - type: on_load
