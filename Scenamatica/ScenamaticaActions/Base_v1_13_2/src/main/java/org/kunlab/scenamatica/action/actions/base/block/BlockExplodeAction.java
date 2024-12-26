@@ -62,7 +62,7 @@ public class BlockExplodeAction extends AbstractBlockAction
                     )
             }
     )
-    public static final InputToken<Float> IN_YIELD = ofInput("yield", float.class);
+    public static final InputToken<Float> IN_YIELD = ofInput("yield", Float.class);
 
     @InputDoc(
             name = "周囲の着火",
@@ -71,7 +71,7 @@ public class BlockExplodeAction extends AbstractBlockAction
 
             availableFor = ActionMethod.EXECUTE
     )
-    public static final InputToken<Boolean> IN_FIRE = ofInput("fire", boolean.class);
+    public static final InputToken<Boolean> IN_FIRE = ofInput("fire", Boolean.class);
 
     @InputDoc(
             name = "ブロックの破壊",
@@ -87,7 +87,7 @@ public class BlockExplodeAction extends AbstractBlockAction
                     )
             }
     )
-    public static final InputToken<Boolean> IN_BREAK_BLOCKS = ofInput("breakBlocks", boolean.class);
+    public static final InputToken<Boolean> IN_BREAK_BLOCKS = ofInput("breakBlocks", Boolean.class);
 
     @InputDoc(
             name = "影響を受けるブロック",
