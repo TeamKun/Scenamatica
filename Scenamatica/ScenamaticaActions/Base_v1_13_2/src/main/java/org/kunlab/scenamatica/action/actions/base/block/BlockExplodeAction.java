@@ -54,6 +54,7 @@ public class BlockExplodeAction extends AbstractBlockAction
             name = "爆発の大きさ",
             description = "爆発の大きさ（周囲のブロックに影響する範囲）を半径で指定します。",
             type = float.class,
+            requiredOn = ActionMethod.EXECUTE,
 
             admonitions = {
                     @Admonition(
