@@ -3,6 +3,7 @@ package org.kunlab.scenamatica.metrics;
 import lombok.SneakyThrows;
 import org.bstats.MetricsBase;
 import org.bstats.bukkit.Metrics;
+import org.bstats.charts.SimplePie;
 import org.bstats.charts.SingleLineChart;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.Scenamatica;
@@ -50,6 +51,13 @@ public class ScenamaticaMetrics extends Metrics
         this.totalTests = 0;
 
         this.addCustomChart(new SingleLineChart("tests_ran", () -> this.totalTests));
+        this.addCustomChart(new SimplePie("ci", ScenamaticaMetrics::getCIState));
+    }
+
+    private static String getCIState()
+    {
+        String ci = System.getenv("CI");
+        return ci == null ? "no" : "yes";
     }
 
     public static ScenamaticaMetrics init(Scenamatica scenamatica)
