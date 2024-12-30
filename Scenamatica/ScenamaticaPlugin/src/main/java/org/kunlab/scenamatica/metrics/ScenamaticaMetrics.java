@@ -93,9 +93,14 @@ public class ScenamaticaMetrics extends Metrics
         @Override
         public void onTestSessionEnd(@NotNull ScenarioSession session)
         {
+            boolean isFirstRun = ScenamaticaMetrics.this.totalTests == 0;
+
             ScenamaticaMetrics.this.totalTests += (int) session.getScenarios().stream()
                     .filter(scenario -> scenario.getResult() != null)
                     .count();
+
+            if (isFirstRun)
+                ScenamaticaMetrics.sendMetrics();
         }
     }
 }
