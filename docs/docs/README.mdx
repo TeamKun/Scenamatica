@@ -95,3 +95,48 @@ KPM を既存のサーバ管理フローに統合すれば,  GitHub 等のリモ
 <BelowDocument docId={"opensources"}
                label={"オープンソース"}
 />
+
+## 免責事項 {#disclaimer}
+
+#### Minecraft™ 及びその関連企業との関係について
+
+[Minecraft™](https://www.minecraft.net/) は [Mojang AB](https://mojang.com/) の登録商標です。
+Scenamatica HQ と Scenamatica は, これら関連企業・団体とは一切の関係はなく, また一切公認されていません。
+
+#### Scenamatica に関する免責事項
+
+我々は, このプロジェクトを通じて Minecraft コミュニティに貢献し, より良い Minecraft 体験を提供することを目指しています。
+そのために, このプロジェクトはオープンソースであり, 皆様の貢献を歓迎します。
+このプロジェクトは, [MIT ライセンス](https://github.com/Teamkun/Scenamatica/blob/main/LICENSE)の下で提供されており,
+我々は, このライセンスに従い, このプロジェクトを使用することによるいかなる損害に対しても責任を負いません。
+
+#### データ収集について
+
+我々はこのプロジェクトの改善のために, [bStats](https://bstats.org) によるデータ収集を行っています。
+このデータは**匿名で収集**され, その統計は [Scenamatica - bStats](https://bstats.org/plugin/bukkit/Scenamatica/24256) で確認できます。
+収集されたデータは, bStats の[プライバシーポリシー](https://bstats.org/privacy-policy)に従って保護されます。
+
+送信されるデータには, 以下の基本情報が含まれます。
+
++ サーバが Scenamatica を使用しているということ
++ サーバの Java バージョン
++ サーバの PaperMC バージョン
++ サーバの OS
++ サーバ・システムのアーキテクチャ
++ サーバのプレイヤ（アクター）数
++ サーバの地理的位置（国）
++ サーバのオンラインモード
++ サーバの IP アドレス（レート制限のためだけに使用されます）
+
+Scenamatica では, 追加で以下の情報を収集しています。
+
++ テストの実行数
+
+:::info
+テスト・シナリオの内容や, その実行結果に関する情報は収集されません。  
+また全てのデータは匿名で収集され, 個人を特定できる情報は含まれません。
+:::
+
+データ収集に同意しない場合は, `plugins/bStats/config.yml` にある `enabled` を `false` に設定することで,
+**収集を停止**できます（オプトアウト）。
+
