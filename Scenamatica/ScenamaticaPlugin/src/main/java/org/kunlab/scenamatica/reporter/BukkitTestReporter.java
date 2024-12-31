@@ -485,7 +485,10 @@ public class BukkitTestReporter extends AbstractTestReporter
             if (error instanceof IllegalActionInputException)
             {
                 IllegalActionInputException e = (IllegalActionInputException) error;
-                causeMessage = "Illegal action input '" + e.getToken().getName() + "': " + e.getMessage();
+                if (e.getToken() == null)
+                    causeMessage = "Illegal action input: " + e.getMessage();
+                else
+                    causeMessage = "Illegal action input '" + e.getToken().getName() + "': " + e.getMessage();
             }
             else
                 causeMessage = "Caused by " + error.getClass().getSimpleName() + " - " + error.getMessage();
