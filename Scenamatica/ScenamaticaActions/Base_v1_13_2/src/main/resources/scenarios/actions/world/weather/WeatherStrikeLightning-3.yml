@@ -1,0 +1,25 @@
+# noinspection YAMLSchemaValidation
+scenamatica: ${project.version}
+
+name: actions_weather_strike_lightning_3
+description: Testing WeatherStrikeLightningAction without lightning works or not
+on:
+  - type: on_load
+  - type: manual_dispatch
+
+context:
+  stage:
+    type: FLAT
+
+scenario:
+  - type: execute
+    action: weather_strike_lightning
+    with:
+      lightning:
+        location:
+          x: 0
+          y: 3
+          z: 0
+        effect: true
+  - type: expect
+    action: weather_strike_lightning

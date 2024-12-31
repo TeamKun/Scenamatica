@@ -11,6 +11,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Fireball;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Item;
+import org.bukkit.entity.LightningStrike;
 import org.bukkit.entity.LlamaSpit;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
@@ -31,10 +32,12 @@ import org.kunlab.scenamatica.interfaces.scenariofile.StructuredYamlNode;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.EntityStructure;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.PlayerStructure;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.entities.EntityItemStructure;
+import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.entities.LightningStrikeStructure;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.entities.ProjectileStructure;
 import org.kunlab.scenamatica.structures.minecraft.entity.EntityStructureImpl;
 import org.kunlab.scenamatica.structures.minecraft.entity.PlayerStructureImpl;
 import org.kunlab.scenamatica.structures.minecraft.entity.entities.EntityItemStructureImpl;
+import org.kunlab.scenamatica.structures.minecraft.entity.entities.LightningStrikeStructureImpl;
 import org.kunlab.scenamatica.structures.minecraft.entity.entities.ProjectileStructureImpl;
 
 import java.util.EnumMap;
@@ -83,7 +86,15 @@ public class SelectiveEntityStructureSerializer
                 PlayerStructureImpl::validatePlayer,
                 (player, ignored) -> PlayerStructureImpl.ofPlayer(player)
         );
-
+        registerStructure(
+                EntityType.LIGHTNING,
+                LightningStrikeStructure.class,
+                LightningStrike.class,
+                LightningStrikeStructureImpl::serialize,
+                LightningStrikeStructureImpl::deserialize,
+                LightningStrikeStructureImpl::validate,
+                (lightning, ignored) -> LightningStrikeStructureImpl.ofLightning(lightning)
+        );
         registerStructure(
                 EntityType.UNKNOWN,
                 EntityStructure.class,
