@@ -34,4 +34,18 @@ public interface ActorSettings
      * @return デフォルトのスコアボードタグ
      */
     List<String> getDefaultScoreboardTags();
+
+    /**
+     * デフォルトの IP アドレスを取得します。
+     *
+     * @return デフォルトの IP アドレス
+     */
+    String getDefaultSocketAddress();
+
+    /**
+     * デフォルトのポート番号を取得します。
+     *
+     * @return デフォルトのポート番号
+     */
+    int getDefaultSocketPort();
 }
