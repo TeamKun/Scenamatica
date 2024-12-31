@@ -12,40 +12,40 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: "Add denied label when closed if it has pending label"
-        if: "contains(github.event.issue.labels.*.name, 'Status: Pending') && github.event.action == 'closed'"
-        uses: andymckay/labeler@master
+        if: "github.event.action == 'closed' && contains(github.event.issue.labels.*.name, 'Status: Pending')"
+        uses: andymckay/labeler@1.0.4
         with:
           add-labels: "Status: Denied"
           remove-labels: "Status: Pending"
       - name: "Add resolved label when closed if it has accepted label"
-        if: "contains(github.event.issue.labels.*.name, 'Status: Accepted') && github.event.action == 'closed'"
-        uses: andymckay/labeler@master
+        if: "github.event.action == 'closed' && contains(github.event.issue.labels.*.name, 'Status: Accepted')"
+        uses: andymckay/labeler@1.0.4
         with:
           add-labels: "Status: Resolved"
           remove-labels: "Status: Accepted"
       - name: "Add default label when opened if it has no pending label"
         if: "github.event.action == 'opened' && !contains(github.event.issue.labels.*.name, 'Status: Pending')"
-        uses: andymckay/labeler@master
+        uses: andymckay/labeler@1.0.4
         with:
-          add-labels: "Status: Pending"
+          add-labels: "Status: Pending, Priority: Normal"
   change-label-by-triage:
     name: Change label by triage with label
     runs-on: ubuntu-latest
     if: "github.event.action == 'labeled'"
     steps:
       - name: "Remove pending and denied label when triaged"
-        if: "github.event.action == 'labeled'  && (contains(github.event.issue.labels.*.name, 'Status: Pending') || contains(github.event.issue.labels.*.name, 'Status: Pending'))"
-        uses: andymckay/labeler@master
+        if: "github.event.label.name == 'Status: Accepted'"
+        uses: andymckay/labeler@1.0.4
         with:
           remove-labels: "Status: Pending, Status: Denied"
       - name: "Change labels when Duplicated"
         if: "github.event.label.name == 'Status: Duplicated'"
-        uses: andymckay/labeler@master
+        uses: andymckay/labeler@1.0.4
         with:
           add-labels: "Status: Denied"
       - name: "Change labels when add Resolved label"
         if: "github.event.label.name == 'Status: Resolved'"
-        uses: andymckay/labeler@master
+        uses: andymckay/labeler@1.0.4
         with:
           remove-labels: "Status: Accepted"
   close-issue-by-label:
