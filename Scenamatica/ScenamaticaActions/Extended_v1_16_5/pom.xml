@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.kunlab.scenamatica</groupId>
         <artifactId>ScenamaticaActions</artifactId>
-        <version>1.6.1</version>
+        <version>1.6.2</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -23,7 +23,7 @@
         <dependency>
             <groupId>org.kunlab.scenamatica.actions</groupId>
             <artifactId>Base_v1_13_2</artifactId>
-            <version>1.6.1</version>
+            <version>1.6.2</version>
             <scope>provided</scope>
         </dependency>
         <!--suppress MavenDuplicateDependenciesInspection due to dependency order injection -->

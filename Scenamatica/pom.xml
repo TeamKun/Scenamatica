@@ -6,7 +6,7 @@
 
     <groupId>org.kunlab.scenamatica</groupId>
     <artifactId>Scenamatica</artifactId>
-    <version>1.6.1</version>
+    <version>1.6.2</version>
     <packaging>pom</packaging>
 
     <modules>
