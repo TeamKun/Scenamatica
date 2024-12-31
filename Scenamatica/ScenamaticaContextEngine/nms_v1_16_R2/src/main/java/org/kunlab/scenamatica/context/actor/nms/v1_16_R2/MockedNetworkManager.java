@@ -20,6 +20,7 @@ import net.minecraft.server.v1_16_R2.ServerConnection;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_16_R2.CraftServer;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.PlayerStructure;
+import org.kunlab.scenamatica.settings.ActorSettings;
 
 import java.lang.reflect.Field;
 import java.net.InetAddress;
@@ -30,8 +31,6 @@ import java.util.List;
 
 class MockedNetworkManager extends NetworkManager
 {
-    public static final String DEFAULT_IP = "10.48.51.114";
-    public static final Integer DEFAULT_PORT = 1919;
     private static final Field fConnectedChannels;  // Lnet/minecraft/server/NetworkManager;f:Ljava/util/List<Lnet.minecraft.server.NetworkManager;>;
 
     static
@@ -50,7 +49,7 @@ class MockedNetworkManager extends NetworkManager
     private boolean alive;
 
     @SneakyThrows(UnknownHostException.class)
-    public MockedNetworkManager(MinecraftServer server, PlayerStructure initialStructure)
+    public MockedNetworkManager(MinecraftServer server, ActorSettings settings, PlayerStructure initialStructure)
     {
         super(EnumProtocolDirection.SERVERBOUND);
 
@@ -59,11 +58,11 @@ class MockedNetworkManager extends NetworkManager
         InetAddress addr;
         InetSocketAddress socketAddr;
         if (initialStructure.getRemoteAddress() == null)
-            addr = InetAddress.getByName(DEFAULT_IP);
+            addr = InetAddress.getByName(settings.getDefaultSocketAddress());
         else
             addr = initialStructure.getRemoteAddress();
         if (initialStructure.getPort() == null)
-            socketAddr = new InetSocketAddress(addr, DEFAULT_PORT);
+            socketAddr = new InetSocketAddress(addr, settings.getDefaultSocketPort());
         else
             socketAddr = new InetSocketAddress(addr, initialStructure.getPort());
         this.socketAddress = socketAddr;

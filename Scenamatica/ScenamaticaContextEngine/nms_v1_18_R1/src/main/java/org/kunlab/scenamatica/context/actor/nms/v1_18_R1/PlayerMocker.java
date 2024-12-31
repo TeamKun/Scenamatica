@@ -3,6 +3,7 @@ package org.kunlab.scenamatica.context.actor.nms.v1_18_R1;
 import com.mojang.authlib.GameProfile;
 import io.netty.channel.embedded.EmbeddedChannel;
 import io.netty.handler.timeout.ReadTimeoutHandler;
+import lombok.SneakyThrows;
 import net.minecraft.network.Connection;
 import net.minecraft.network.PacketDecoder;
 import net.minecraft.network.PacketEncoder;
@@ -31,24 +32,47 @@ import org.kunlab.scenamatica.interfaces.ScenamaticaRegistry;
 import org.kunlab.scenamatica.interfaces.context.Actor;
 import org.kunlab.scenamatica.interfaces.context.ActorManager;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.PlayerStructure;
+import org.kunlab.scenamatica.settings.ActorSettings;
 
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.net.UnknownHostException;
 
 public class PlayerMocker extends PlayerMockerBase
 {
     private final ActorManager manager;
+    private final ActorSettings settings;
 
     public PlayerMocker(ScenamaticaRegistry registry, ActorManager manager)
     {
         super(registry, manager, registry.getEnvironment().getActorSettings());
 
         this.manager = manager;
+        this.settings = registry.getEnvironment().getActorSettings();
     }
 
-    private static void activateChannel(Connection conn)
+    @SneakyThrows(UnknownHostException.class)
+    private static InetSocketAddress createSocketAddress(ActorSettings settings, PlayerStructure initialStructure)
+    {
+
+        InetAddress addr;
+        InetSocketAddress socketAddr;
+        if (initialStructure.getRemoteAddress() == null)
+            addr = InetAddress.getByName(settings.getDefaultSocketAddress());
+        else
+            addr = initialStructure.getRemoteAddress();
+        if (initialStructure.getPort() == null)
+            socketAddr = new InetSocketAddress(addr, settings.getDefaultSocketPort());
+        else
+            socketAddr = new InetSocketAddress(addr, initialStructure.getPort());
+
+        return socketAddr;
+    }
+
+    private void activateChannel(Connection conn, PlayerStructure structure)
     {
         conn.channel = new MockedChannel();
-        conn.address = new InetSocketAddress("10.48.51.114", 1919);
+        conn.address = createSocketAddress(this.settings, structure);
         conn.preparing = false;
     }
 
@@ -114,7 +138,7 @@ public class PlayerMocker extends PlayerMockerBase
         MockedPlayer mockedPlayer = (MockedPlayer) player;
 
         Connection conn = mockedPlayer.getMockedConnection();
-        activateChannel(conn);
+        this.activateChannel(conn, player.getInitialStructure());
         if (!this.dispatchLoginEvent(player, (InetSocketAddress) conn.address))
             throw new IllegalStateException("Login for " + player.getActorName() + " was denied.");
 

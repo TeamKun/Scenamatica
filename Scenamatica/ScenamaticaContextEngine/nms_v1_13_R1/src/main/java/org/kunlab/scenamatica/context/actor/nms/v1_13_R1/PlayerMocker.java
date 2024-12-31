@@ -24,6 +24,7 @@ import org.kunlab.scenamatica.interfaces.ScenamaticaRegistry;
 import org.kunlab.scenamatica.interfaces.context.Actor;
 import org.kunlab.scenamatica.interfaces.context.ActorManager;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.PlayerStructure;
+import org.kunlab.scenamatica.settings.ActorSettings;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -31,12 +32,14 @@ import java.net.InetSocketAddress;
 public class PlayerMocker extends PlayerMockerBase
 {
     private final ActorManager manager;
+    private final ActorSettings settings;
 
     public PlayerMocker(ScenamaticaRegistry registry, ActorManager manager)
     {
         super(registry, manager, registry.getEnvironment().getActorSettings());
 
         this.manager = manager;
+        this.settings = registry.getEnvironment().getActorSettings();
     }
 
     @Override
@@ -71,7 +74,7 @@ public class PlayerMocker extends PlayerMockerBase
     protected Actor createActorInstance(@NotNull World world, @NotNull PlayerStructure structure)
     {
         MinecraftServer server = ((CraftServer) Bukkit.getServer()).getServer();
-        NetworkManager mockedNetworkManager = new MockedNetworkManager(server, structure);
+        NetworkManager mockedNetworkManager = new MockedNetworkManager(server, this.settings, structure);
         WorldServer worldServer = ((CraftWorld) world).getHandle();
         GameProfile profile = createGameProfile(structure);
 
