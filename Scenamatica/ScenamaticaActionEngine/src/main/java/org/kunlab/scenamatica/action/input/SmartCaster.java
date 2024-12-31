@@ -5,8 +5,11 @@ import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.enums.YAMLNodeType;
 import org.kunlab.scenamatica.exceptions.scenariofile.InvalidScenarioFileException;
 import org.kunlab.scenamatica.exceptions.scenariofile.YamlParsingException;
+import org.kunlab.scenamatica.interfaces.action.ActionContext;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.input.Traverser;
+import org.kunlab.scenamatica.interfaces.action.types.Requireable;
+import org.kunlab.scenamatica.interfaces.scenariofile.Structure;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructureSerializer;
 import org.kunlab.scenamatica.interfaces.scenariofile.StructuredYamlNode;
 import org.kunlab.scenamatica.scenariofile.StructuredYamlNodeImpl;
@@ -28,6 +31,12 @@ public class SmartCaster
             return clazz.cast(num.doubleValue());
         else if (clazz == Float.class || clazz == float.class)
             return clazz.cast(num.floatValue());
+        else if (clazz == Short.class || clazz == short.class)
+            return clazz.cast(num.shortValue());
+        else if (clazz == Byte.class || clazz == byte.class)
+            return clazz.cast(num.byteValue());
+        else if (clazz == Number.class)
+            return clazz.cast(num);
         else
             throw new IllegalArgumentException("Unknown number type: " + clazz);
     }
@@ -151,16 +160,23 @@ public class SmartCaster
 
     private static boolean canSmartCast(Class<?> clazz, Object obj)
     {
-        boolean isStrNodeClass = StructuredYamlNode.class.isAssignableFrom(clazz);
+        if (obj == null || clazz.isInstance(obj) || clazz == String.class
+                // Requireable のためのパッチ
+                || Requireable.class.isAssignableFrom(clazz) || ActionContext.class.isAssignableFrom(clazz))
+            return true;
 
-        return obj == null
-                || clazz.isInstance(obj)
-                || clazz == String.class
-                || (Number.class.isAssignableFrom(clazz) && obj instanceof Number)
-                || ((isStrNodeClass || List.class.isAssignableFrom(clazz)) && obj instanceof List)
-                || ((isStrNodeClass || Map.class.isAssignableFrom(clazz)) && obj instanceof Map)
-                || (Boolean.class.isAssignableFrom(clazz) && obj instanceof Boolean)
-                || (obj instanceof StructuredYamlNode);
+        return isMatchingType(Number.class, obj, YAMLNodeType.NUMBER)
+                || isMatchingType(Boolean.class, obj, YAMLNodeType.BOOLEAN)
+                || isMatchingType(List.class, obj, YAMLNodeType.LIST)
+                || ((Map.class.isAssignableFrom(clazz) || StructuredYamlNode.class.isAssignableFrom(clazz)) &&
+                (obj instanceof Map || obj instanceof StructuredYamlNode && ((StructuredYamlNode) obj).isType(YAMLNodeType.MAPPING)))
+                || (Structure.class.isAssignableFrom(clazz) && obj instanceof StructuredYamlNode && ((StructuredYamlNode) obj).isType(YAMLNodeType.MAPPING));
+    }
+
+    private static boolean isMatchingType(Class<?> clazz, Object obj, YAMLNodeType nodeType)
+    {
+        return clazz.isAssignableFrom(obj.getClass())
+                || (obj instanceof StructuredYamlNode && ((StructuredYamlNode) obj).isType(nodeType));
     }
 
     /* non-public */
