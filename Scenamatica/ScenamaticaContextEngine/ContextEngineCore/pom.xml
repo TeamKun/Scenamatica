@@ -6,13 +6,13 @@
     <parent>
         <groupId>org.kunlab.scenamatica</groupId>
         <artifactId>ScenamaticaContextEngine</artifactId>
-        <version>1.6.1</version>
+        <version>1.6.2</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <groupId>org.kunlab.scenamatica.context</groupId>
     <artifactId>ContextEngineCore</artifactId>
-    <version>1.6.1</version>
+    <version>1.6.2</version>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
@@ -24,55 +24,55 @@
         <dependency>
             <groupId>org.kunlab.scenamatica.context</groupId>
             <artifactId>ContextEngineNMSBase</artifactId>
-            <version>1.6.1</version>
+            <version>1.6.2</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.kunlab.scenamatica.context</groupId>
             <artifactId>nms_v1_13_R2</artifactId>
-            <version>1.6.1</version>
+            <version>1.6.2</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.kunlab.scenamatica.context</groupId>
             <artifactId>nms_v1_14_R1</artifactId>
-            <version>1.6.1</version>
+            <version>1.6.2</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.kunlab.scenamatica.context</groupId>
             <artifactId>nms_v1_15_R1</artifactId>
-            <version>1.6.1</version>
+            <version>1.6.2</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.kunlab.scenamatica.context</groupId>
             <artifactId>nms_v1_16_R1</artifactId>
-            <version>1.6.1</version>
+            <version>1.6.2</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.kunlab.scenamatica.context</groupId>
             <artifactId>nms_v1_16_R2</artifactId>
-            <version>1.6.1</version>
+            <version>1.6.2</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.kunlab.scenamatica.context</groupId>
             <artifactId>nms_v1_16_R3</artifactId>
-            <version>1.6.1</version>
+            <version>1.6.2</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.kunlab.scenamatica.context</groupId>
             <artifactId>nms_v1_17_R1</artifactId>
-            <version>1.6.1</version>
+            <version>1.6.2</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.kunlab.scenamatica.context</groupId>
             <artifactId>nms_v1_18_R1</artifactId>
-            <version>1.6.1</version>
+            <version>1.6.2</version>
             <scope>compile</scope>
         </dependency>
 

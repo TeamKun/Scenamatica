@@ -1,4 +1,5 @@
 events.json
+events.json.*
 .venv
 build
 dist

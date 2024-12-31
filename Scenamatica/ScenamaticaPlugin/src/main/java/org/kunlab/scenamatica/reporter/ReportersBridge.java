@@ -12,15 +12,19 @@ import org.kunlab.scenamatica.interfaces.structures.trigger.TriggerStructure;
 
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
 
 public class ReportersBridge extends AbstractTestReporter
 {
-    private final LinkedList<? extends TestReporter> reporters;
+    private final LinkedList<TestReporter> reporters;
 
-    public ReportersBridge(List<? extends TestReporter> reporters)
+    public ReportersBridge()
     {
-        this.reporters = new LinkedList<>(reporters);
+        this.reporters = new LinkedList<>();
+    }
+
+    public void addReporter(TestReporter reporter)
+    {
+        this.reporters.add(reporter);
     }
 
     @Override

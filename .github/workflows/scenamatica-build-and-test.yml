@@ -3,6 +3,9 @@ on:
   push:
     paths:
       - "Scenamatica/**"
+    branches:
+      - main
+      - develop
   pull_request:
     paths:
       - "Scenamatica/**"
@@ -20,6 +23,10 @@ jobs:
     uses: "./.github/workflows/build-scenamatica.yml"
     secrets:
       token: ${{ secrets.GH_PAT }}
+    with:
+      artifact: scenamatica
+      profile: debug
+      pull-request: ${{ github.event_name == 'pull_request' }}
   self-tests:
     name: Self-test with Scenamatica
     runs-on: ubuntu-latest

@@ -7,7 +7,7 @@
     <parent>
         <groupId>org.kunlab.scenamatica</groupId>
         <artifactId>Scenamatica</artifactId>
-        <version>1.6.1</version>
+        <version>1.6.2</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -64,6 +64,11 @@
                                     <pattern>net.kunmc.lab.peyangpaperutils</pattern>
                                     <shadedPattern>org.kunlab.scenamatica.pyglib</shadedPattern>
                                 </relocation>
+                                <relocation>
+                                    <pattern>org.bstats</pattern>
+                                    <!-- Replace this with your package! -->
+                                    <shadedPattern>org.kunlab.scenamatica.metrics</shadedPattern>
+                                </relocation>
                             </relocations>
                             <artifactSet>
                                 <excludes>
@@ -114,9 +119,8 @@
         <dependency>
             <groupId>org.kunlab.scenamatica</groupId>
             <artifactId>ScenamaticaDaemon</artifactId>
-            <version>1.6.1</version>
+            <version>1.6.2</version>
             <scope>compile</scope>
-            <!-- Actions Registration -->
         </dependency>
         <dependency>
             <groupId>com.github.TeamKUN</groupId>
@@ -124,29 +128,36 @@
             <version>3.0.1</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>org.bstats</groupId>
+            <artifactId>bstats-bukkit</artifactId>
+            <version>3.0.2</version>
+            <scope>compile</scope>
+        </dependency>
 
+        <!-- Actions Registration -->
         <dependency>
             <groupId>org.kunlab.scenamatica.actions</groupId>
             <artifactId>Base_v1_13_2</artifactId>
-            <version>1.6.1</version>
+            <version>1.6.2</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.kunlab.scenamatica.actions</groupId>
             <artifactId>Extended_v1_16_5</artifactId>
-            <version>1.6.1</version>
+            <version>1.6.2</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.kunlab.scenamatica.actions</groupId>
             <artifactId>Extended_v1_16</artifactId>
-            <version>1.6.1</version>
+            <version>1.6.2</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.kunlab.scenamatica.actions</groupId>
             <artifactId>Extended_v1_14</artifactId>
-            <version>1.6.1</version>
+            <version>1.6.2</version>
             <scope>runtime</scope>
         </dependency>
     </dependencies>

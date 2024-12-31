@@ -4,7 +4,19 @@ on:
     secrets:
       token:
         required: true
-
+    inputs:
+      profile:
+        default: debug
+        type: string
+        required: true
+      artifact:
+        default: scenamatica
+        type: string
+        required: true
+      pull-request:
+        default: false
+        type: boolean
+        required: true
 jobs:
   build:
     name: Build with Maven
@@ -26,19 +38,20 @@ jobs:
       - name: Try to restore cache
         uses: actions/cache/restore@v4
         id: restore-cache
+        if: "!inputs.pull-request"
         with:
           key: maven-cache-${{ hashFiles('**/pom.xml') }}
           path: ~/.m2/repository
           enableCrossOsArchive: true
       - name: Collect dependencies without NMS
-        if: steps.restore-cache.outputs.cache-hit != 'true'
+        if: "!(inputs.pull-request || steps.restore-cache.outputs.cache-hit == 'true')"
         run: |
           mvn dependency:go-offline -f Scenamatica/pom.xml
           mvn dependency:go-offline -f Bookkeeper/pom.xml
         # 失敗することが前提なので↓
         continue-on-error: true
       - name: Cache dependencies without NMS
-        if: steps.restore-cache.outputs.cache-hit != 'true'
+        if: "!(inputs.pull-request || steps.restore-cache.outputs.cache-hit == 'true')"
         uses: actions/cache/save@v4
         id: cache-dependencies
         with:
@@ -65,11 +78,11 @@ jobs:
         run: |
           cd Scenamatica
           chmod +x build.sh
-          ./build.sh -D"jar.finalName=Scenamatica" -P debug
+          ./build.sh -D"jar.finalName=Scenamatica" -P ${{ inputs.profile }}
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: scenamatica
+          name: ${{ inputs.artifact }}
           path: Scenamatica/ScenamaticaPlugin/target/Scenamatica.jar
           retention-days: 1
           if-no-files-found: error
