@@ -20,7 +20,7 @@ public class ScenamaticaMetrics extends Metrics
     private static final int SCENAMATICA_PLUGIN_ID = 24256;
     private static final Field fMetricsBase; // Lorg/bstats/bukkit/Metrics;
     // -> metricsBase:Lorg/bstats/bukkit/MetricsBase;
-    private static final Method mSendData;  // Lorg/bstats/MetricsBase; -> sendData()V
+    private static final Method mSubmitData;  // Lorg/bstats/MetricsBase; -> sendData()V
 
     private static ScenamaticaMetrics instance;
 
@@ -31,8 +31,8 @@ public class ScenamaticaMetrics extends Metrics
             fMetricsBase = Metrics.class.getDeclaredField("metricsBase");
             fMetricsBase.setAccessible(true);
 
-            mSendData = MetricsBase.class.getDeclaredMethod("startSubmitting");
-            mSendData.setAccessible(true);
+            mSubmitData = MetricsBase.class.getDeclaredMethod("submitData");
+            mSubmitData.setAccessible(true);
         }
         catch (NoSuchFieldException | NoSuchMethodException e)
         {
@@ -85,7 +85,7 @@ public class ScenamaticaMetrics extends Metrics
             return;  // 送信の必要がない。
 
         MetricsBase metricsBase = (MetricsBase) fMetricsBase.get(instance);
-        mSendData.invoke(metricsBase);
+        mSubmitData.invoke(metricsBase);
     }
 
     private final class MetricsTestReporter extends AbstractTestReporter
