@@ -15,6 +15,7 @@ import org.kunlab.scenamatica.events.PlayerJoinEventListener;
 import org.kunlab.scenamatica.interfaces.ExceptionHandler;
 import org.kunlab.scenamatica.interfaces.ScenamaticaRegistry;
 import org.kunlab.scenamatica.interfaces.scenario.TestReporter;
+import org.kunlab.scenamatica.metrics.ScenamaticaMetrics;
 import org.kunlab.scenamatica.reporter.BukkitTestReporter;
 import org.kunlab.scenamatica.reporter.CompactBukkitTestReporter;
 import org.kunlab.scenamatica.reporter.JUnitReporter;
@@ -28,7 +29,6 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 
 @NoArgsConstructor
@@ -42,6 +42,7 @@ public final class Scenamatica extends JavaPlugin
     @Override
     public void onEnable()
     {
+        ScenamaticaMetrics.init(this);
         this.saveDefaultConfig();
         this.getConfig();
 
@@ -123,22 +124,23 @@ public final class Scenamatica extends JavaPlugin
         boolean isVerbose = config.getBoolean("reporting.verbose", true);
         boolean isJunitReportingEnabled = config.getBoolean("reporting.junit.enabled", true);
 
-        List<TestReporter> reporters = new LinkedList<>();
+        ReportersBridge reporters = new ReportersBridge();
         // 開始時 ＝＞ 昇順で実行される。
         // 終了時 ＝＞ 降順で実行される。
 
         if (isRaw)
-            reporters.add(new RawTestReporter());
+            reporters.addReporter(new RawTestReporter());
 
         if (isJunitReportingEnabled)
-            reporters.add(new JUnitReporter(this.resultWriter));
+            reporters.addReporter(new JUnitReporter(this.resultWriter));
 
         if (isVerbose)
-            reporters.add(new BukkitTestReporter(config.getInt("execution.retry.maxAttempts", 3)));
+            reporters.addReporter(new BukkitTestReporter(config.getInt("execution.retry.maxAttempts", 3)));
         else
-            reporters.add(new CompactBukkitTestReporter());
+            reporters.addReporter(new CompactBukkitTestReporter());
 
-        return new ReportersBridge(reporters);
+        ScenamaticaMetrics.connect(reporters);
+        return reporters;
     }
 
     private void initTestRecipient()
@@ -192,6 +194,7 @@ public final class Scenamatica extends JavaPlugin
     @Override
     public void onDisable()
     {
+        ScenamaticaMetrics.sendMetrics();
         this.registry.shutdown();
     }
 }
