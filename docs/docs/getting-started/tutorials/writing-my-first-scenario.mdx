@@ -22,38 +22,42 @@ Scenamatica は, シナリオと呼ばれるファイルを使用して, プラ�
 
 参考：以下は, シナリオのかんたんな概要を示した図です。
 
-![シナリオの概要#500x](../../images/scenario/scenario.png)
+![シナリオの概要#700x](../../images/scenario/scenario.svg)
 
 <BelowDocument docId={"use/scenario/README"}
                label={"シナリオ"}
-               message={"シナリオについて詳しく知りたい方はこちらを参照してください。このチュートリアルでは, シナリオの基本的な構成要素についてのみ触れています。"}
+               message={"このチュートリアルでは, シナリオの基本的な構成要素についてのみ触れています。シナリオについて詳しく知りたい方はこちらを参照してください。"}
 />
 
 
 ## ステップ１. ファイルを作成する {#step1-create-file}
 
-まずは, [シナリオファイル](/docs/use/scenario/scenario-file)と呼ばれる YAML ファイルを作成します。  
-ファイルの拡張子は `.yml` もしくは `.yaml` です。これは, 一つの[シナリオ](/docs/use/scenario/#scenario)ごとに一つ作成する必要があります。  
-場所に関しては, プラグインの最終的な `.jar` ファイルに配置されるのであればどこでも構いません。
+まずは, [シナリオファイル](/docs/use/scenario/scenario-file)と呼ばれる YAML ファイルを作成する方法を学びましょう。  
+シナリオファイルとは, 前述のシナリオを記述したファイルのことです。
+[シナリオ](/docs/use/scenario/#scenario)一つごとに, 一つのシナリオファイルが必要です。
+  
+はじめに, 拡張子が `.yml` もしくは `.yaml` のファイルを作成します。
+プラグインの最終的な `.jar` ファイルに配置されるのであれば場所は, どこでも構いません。
 
-この例では,  `test-hoge-success.yml` というファイル名を使用します。
+この例では, `test-hoge-success.yml` というファイル名を使用します。
 
-### ファイル名のフォーマット {#filename-format}
+### ファイル名のフォーマットについて {#filename-format}
 
-ファイル名は, 特に技術的な制約等はありませんが,  Scenamatica では, 以下のフォーマットを推奨しています。
+ファイル名は, 特に技術的な制約等はありませんが,  Scenamatica では以下のフォーマットを推奨しています。
 
 + ASCII の小文字のみ
-+ ケバブケース（単語をハイフンでつなぐ）
++ ケバブケース（単語をハイフンで結合します）
 + 推奨フォーマット： `test-<機能名>-<success|failure-with-[失敗内容]>.yml`  
   先頭を `test-<機能名>` とすることで, 特定の機能のテストであるということが分かりやすくなります。  
   また, 正常に成功することを確認するテストの場合は `success-<機能名>`,   
-  異常入力等で失敗することを確認するテストの場合は `failure-<機能名>-with-<失敗理由>` というようにするとよいでしょう。
+  異常入力等で失敗することを確認するテストの場合は `failure-<機能名>-with-<失敗理由>` とすると良いでしょう。
 
 例： `test-hoge-success.yml` ,  `test-hoge-failure-with-no-argument.yml`
 
 ## ステップ２. Scenamatica のバージョンを記述する {#step2-write-scenamatica-version}
 
-シナリオファイルの先頭には, そのシナリオが対応している Scenamatica のバージョンを<kbd>scenamatica</kbd> キーを用いて記述します。  
+シナリオファイルの先頭には, バージョン <kbd>scenamatica</kbd> を**必ず**記述します。
+
 これは, シナリオが対応している Scenamatica のバージョンを明確に記述することで, 誤った（互換性のない） Scenamatica で実行することを防ぐことが目的です。
 
 プラグインのデバッグ用のサーバに配置されている Scenamatica と**同じバージョン**を記述してください。
@@ -64,12 +68,17 @@ Scenamatica は, シナリオと呼ばれるファイルを使用して, プラ�
 scenamatica: "1.0.0"
 ```
 
+:::warning
+ここで記述したバージョンよりも古いバージョンの Scenamatica では, このシナリオは実行できません。  
+つまり, このシナリオは Scenamatica v1.0.0 未満のバージョンでは実行できません。
+:::
+
 ## ステップ３. 名前と説明を記述する {#step3-write-name-and-description}
 
 シナリオファイルの次に, シナリオの名前と説明を記述します。
 
-名前<kbd>name</kbd> は, シナリオの識別子として使用されます。プラグインの中で一意な命名をしてください。  
-説明<kbd>description</kbd> は, 人間が読みやすいような説明文を記述します。
+名前（<kbd>name</kbd>）は, シナリオの識別子として使用されます。**プラグインの中で一意**な命名をしてください。  
+説明（<kbd>description</kbd>）は, 人間が読みやすいような説明文を記述します。
 
 記述例：
 ```yaml title="test-hoge-success.yml" showLineNumbers
@@ -80,12 +89,17 @@ description: "hoge 機能の正常系テスト"
 # highlight-end
 ```
 
+:::warning
+シナリオの名前は, 他のシナリオと重複しないようにしてください。  
+これは識別子として使用されるため, 一意である必要があります。
+:::
+
 ## ステップ４. コンテキストを記述する {#step4-write-context}
 
-[コンテキスト](/docs/use/scenario/elements#context)は, シナリオを実行するワールド（[ステージ](/docs/use/scenario/elements#stage)という）の環境や, 
+[コンテキスト](/docs/use/scenario/elements#context)（<kbd>context</kbd>）には, シナリオを実行するワールド（[ステージ](/docs/use/scenario/elements#stage)という）の環境や, 
 シナリオに登場する擬似的なプレイヤ（[アクタ](/docs/use/scenario/elements#actor)という）,
-モブ（[エンティティ](/docs/use/scenario/elements#entity)という）などのシナリオテストの実行に必要な前提環境を指定します。 
-これらはシナリオの実行前に生成され, 終了時に破棄されます。
+豚や牛などのモブ（[エンティティ](/docs/use/scenario/elements#entity)という）などの, シナリオテストの実行に必要な前提環境を指定します。 
+これらはシナリオの実行前に生成され, 終了時に自動的に破棄されます。
 
 今回のテストでは, `/hoge` コマンドの実行者として[アクタ](/docs/use/scenario/elements#actor) `Actor1` が存在することを想定しているので, 以下のように記述します。  
 また, ネザーで実行するようにもしてみましょう。
@@ -99,10 +113,20 @@ description: "hoge 機能の正常系テスト"
 context:
   actors:
   - name: Actor1
+  # ステージには, シナリオを実行するワールドの情報を指定します。
   stage:
     env: NETHER
 # highlight-end
 ```
+
+:::tip
+<BelowDocument
+  docId={"use/scenario/elements"}
+  label={"コンテキスト"}
+  message={"コンテキストについて詳しく知りたい方はこちらを参照してください。"}
+  anchor={"context"}
+/>
+:::
 
 ## ステップ５. トリガを記述する {#step5-write-triggers}
 
@@ -125,6 +149,7 @@ context:
     env: NETHER
 
 # highlight-start
+# トリガを設定する
 on:
 - type: manual_dispatch
 # highlight-end
@@ -132,7 +157,7 @@ on:
 
 :::tip
 
-今回は上記のトリガのみ実装しましたが, ほかにもいろいろなトリガがあります。
+今回は上記のトリガのみを実装しましたが, ほかにもいろいろなトリガがあります。
 
 詳しくは[こちら](/docs/use/scenario/trigger)を参照してください。
 
@@ -140,24 +165,46 @@ on:
 
 ## ステップ６. シナリオを記述する {#step6-write-scenario}
 
-プラグインの機能と, それらを発火させるために必要な条件とをおおまかに考えて, シナリオ化して記述します。  
-例として, 今回のプラグインの機能について考えてみましょう。箇条書きにすると以下のようになります：
+次に, 実際にシナリオを記述します。
 
-> * 機能の発火条件：コマンド `/hoge` が発行される。
-> + 機能１：`fuga` というメッセージが 実行者 に表示される。
-> + 機能２：実行者 がキルされる。
+プラグインの機能と, それらを発火させるために必要な条件とを**おおまかに**考えて, シナリオ化することが重要です。  
+例として, 今回のプラグインの機能について考えてみましょう。以下に例を示します：
+
+> * 機能ABの発火条件：コマンド `/hoge` が発行される。
+> + 機能A：`fuga` というメッセージが 実行者 に表示される。
+> + 機能B：実行者 がキルされる。
+
+### アクションの概念 {#action-concept}
 
 Scenamatica では, 上記のような振る舞いや動作を, 「[アクション](/docs/use/scenario/elements/#action)」と定義しています。  
+アクションとは, 「プレイヤが死亡する」や「プレイヤがメッセージを送信する」などの, ゲームにおける具体的な動作のことです。
+これらは Scenamatica によってあらかじめ定義されたもので, プラグインの機能を最小単位に分解したものです。
+
 たくさん用意されているこれらを, 積み木のように組み合わせてシナリオを記述します。  
 この例では, それぞれ以下のアクションを使用すると実現できそうです：
 
-> * 機能の発火条件：[コマンドの発行](/references/actions/servers/command_dispatch)
-> + 機能１：[プレイやのメッセージの受診](/references/actions/scenamaticas/message)
-> + 機能２：[プレイヤの死亡](/references/actions/players/player_death)
+| 項目名       | アクション                                                     | 引数                             |
+|:----------|:----------------------------------------------------------|:-------------------------------|
+| 機能ABの発火条件 | [コマンドの発行](/references/actions/servers/command_dispatch)   | 実行者: `Actor1`, コマンド: `/hoge`   |
+| 機能A       | [プレイヤのメッセージの受信](/references/actions/scenamaticas/message) | ターゲット: `Actor1`, メッセージ: `fuga` |
+| 機能B       | [プレイヤの死亡](/references/actions/players/player_death)       | ターゲット: `Actor1`                |
 
-また, それぞれのアクションは, 最大で３つの異なる振る舞いを持ちます。
+ところで, 上記の表にある「機能A」や「機能B」は, プラグインが実行すべき動作（＝実行されることを期待する動作）です。  
+一方で「機能ABの発火条件」は, Scenamatica が実行すべき動作（＝プラグイン機能の契機となる動作）です。  
+つまり,「機能A」と「機能B」については, Scenamatica は何も行わず, ただそれが発生することを検証するだけです。
+
+Scenamatica では, これらをそれぞれ「アクション実行タイプ」（[<kbd>expect</kbd>](/docs/use/scenario/elements#expect)）と「アクション実行期待タイプ」（[<kbd>execute</kbd>](/docs/use/scenario/elements#execute)）として分けて考えます。
+前者は, 動作を Scenamatica が発生させます。後者は, プラグインによる動作を（Scenamaticaが）検知するか, 検知するまで待機します。
+
+（参考：フローの図）
+
+![アクションのフロー#700x](images/flow.svg)
+
+### アクションの三様 {#scenario-behavior}
+
+前述の機能を達成するために, それぞれのアクションは, 最大で３つの異なる振る舞いを持ちます。
 これらは, 同時に記述される[シナリオタイプ](/docs/use/scenario/elements/#scenario-type)によって制御されます。
-たとえば [プレイヤの死亡](/references/actions/players/player_death)以下のような振る舞いを持ちます：
+例えば, アクション [プレイヤの死亡](/references/actions/players/player_death)は以下のように振る舞います：
 
 | シナリオタイプ                                                                           | アクション [プレイヤの死亡](/references/actions/players/player_death)のふるまい |
 |:----------------------------------------------------------------------------------|:---------------------------------------------------------------|
@@ -165,9 +212,10 @@ Scenamatica では, 上記のような振る舞いや動作を, 「[アクショ
 | [アクション実行期待(`expect`)](/docs/use/scenario/elements/#scenario-type-expect)          | プレイヤが**キルされるまで待機する**（検知する）                                     |
 | [条件要求(`require`)](/docs/use/scenario/elements/#scenario-type-condition-require)   | プレイヤが（もう既に）**死亡していることを要求**する                                   |
 
-これらのシナリオタイプと使用するアクションを組み合わせて, シナリオを記述します。
 
-これらをシナリオ化すると, 以下のようになります。
+### シナリオの記述例 {#scenario-example}
+
+以上を踏まえ, シナリオを記述すると以下のようになります。
 
 ```yaml title="test-hoge-success.yml" showLineNumbers
 scenamatica: "0.0.1"
@@ -204,7 +252,6 @@ scenario:
     target: Actor1
 # highlight-end
 ```
-
 
 ## ステップ７. シナリオを実行する {#step7-run-scenario}
 
