@@ -8,28 +8,32 @@ import BelowDocument from "/src/components/BelowDocument";
 
 ## 概要 {#overview}
 
-シナリオは, プラグインのテスト方法を *step-by-step* で定義したものです。
+シナリオとは, プラグインのテスト方法を *step-by-step* で定義したものです。
 
-プラグインのテストを実行するための前提環境や, テスト対象機能の発火, および機能の検証方法を１つのファイル（シナリオファイルという）に記述します。  
-Scenamatica は, プラグインに同梱されているシナリオファイルを読み込み, その内容に沿ってプラグインの機能を発火させ, 状態の遷移およびそれによる結果を検証・報告します。
+プラグインの開発者は, <ins>テストを実行するための前提環境</ins>や, テスト対象機能の発火, およびそれらの検証方法を１つのファイル（[シナリオファイル](/docs/use/scenario/scenario-file)という）に記述します。  
+Scenamatica は, プラグインに同梱されているシナリオファイルを読み込み, その内容に沿ってプラグインの機能を発火させ, テストの結果を検証・報告します。
 
-ここでいう「テストを実行するための前提環境」とは, シナリオに登場する模擬的な[エンティティ](/docs/use/scenario/elements#entity)
-や模擬的なプレイヤ（=[アクタ](/docs/use/scenario/elements#actor)）, テストのためのワールド（=[ステージ](/docs/use/scenario/elements#stage)）の３つを指します。
+「テストを実行するための前提環境」とは, シナリオに登場する[エンティティ](/docs/use/scenario/elements#entity)
+や模擬的なプレイヤ（[アクタ](/docs/use/scenario/elements#actor)）, そしてテストのためのワールド（[ステージ](/docs/use/scenario/elements#stage)）の３つを指します。
 これらは, 同ファイルに定義される[コンテキスト](/docs/use/scenario/elements#context)によって提供されます。  
 
-つまり, 発火条件となる[アクションを実行](/docs/use/scenario/elements#scenario-type-action-execution)し, それによってもたらされたプラグインの[動作を検証](/docs/use/scenario/elements#scenario-type-action-execution-expect)を繰り返すことで, シナリオテストが成立します。  
+つまり, 発火条件となる[アクションを実行](/docs/use/scenario/elements#scenario-type-action-execution)し, それによってもたらされたプラグインの[動作を検証](/docs/use/scenario/elements#scenario-type-action-execution-expect)し続けることで, シナリオテストが成立します。  
 Scenamatica はこのようなテストの需要に最適化されているのです。
+
+参考：以下は, シナリオの概要を示す図です（エンティティは省略されています）。
+
+![シナリオの概要#500x](../../images/scenario/scenario.png)
 
 ## 例を用いた説明 {#example}
 
-例えば, とある小さなプラグインについて考えます。  
+例えば, とある小さなプラグインについて考えてみましょう。   
 このプラグインは, 「プレイヤが村人をキルしたときに」（**発火条件**という） 
 -> 「ダイアモンドがドロップする機能」（**目標動作**という）を実現しており, 今回はこの機能をテストしたいこと とします。
 このテストは, Scenamatica の以下の機能を用いて達成できます。
 
 > * [コンテキスト](/docs/use/scenario/elements#context) - [エンティティ](/docs/use/scenario/elements#entity) 機能  
 >   この機能は, テストに必要なエンティティ（e.g. 村人, ガーディアン, 牛 等）をテストの**開始前に生成**, および**終了後に破棄**します。  
->   発火条件で指定される, シナリオの遂行に必要な村人をスポーンさせるために使います。
+>   発火条件で指定される, シナリオの遂行に必要な村人をスポーンさせるために使います。以下はその例です。
 >   ```yaml
 >   context:
 >     entities:
@@ -38,7 +42,7 @@ Scenamatica はこのようなテストの需要に最適化されているの�
 > * [コンテキスト](/docs/use/scenario/elements#context) - [アクタ](/docs/use/scenario/elements#actor) 機能  
 >   この機能は, テストに必要な専用のプレイヤ（アクタという）を生成します。  
 >   外部との通信を必要とせずに, サーバ内だけで完結する特別なプレイヤのモックです。  
->   発火条件にある村人をキルさせるのに使います。
+>   発火条件にある村人をキルさせるのに使います。以下はその例です。
 >   ```yaml
 >   context:
 >     actors:
@@ -47,7 +51,7 @@ Scenamatica はこのようなテストの需要に最適化されているの�
 > * [アクションの実行](/docs/use/scenario/elements#scenario-type-action-execution) 機能  
 >   この機能は, テストに必要な一般的な動作（e.g. プレイヤのキル, 食料の消費, プレイヤの退室）を実行します。  
 >   数あるアクションを組み合わせて利用し, プラグイン機能の発火・目標動作の検証を行います。  
->   動作の検証には, [アクションの実行期待](/docs/use/scenario/elements#scenario-type-action-execution-expect) 機能を使用します。
+>   動作の検証には, [アクションの実行期待](/docs/use/scenario/elements#scenario-type-action-execution-expect) 機能を使用します。以下はその例です。
 >   ```yaml
 >   scenario:
 >   - type: execute
@@ -75,7 +79,7 @@ Scenamatica はこのようなテストの需要に最適化されているの�
 #...
 
 scenario:
-# ↓の一つ一つまた「シナリオ」と呼ぶ。
+# ↓の一つ一つもまた「シナリオ」と呼ぶ。
 - type: execute
   action: player_death
   with:
@@ -89,7 +93,7 @@ scenario:
 
 ## シナリオの構成要素 {#elements}
 
-シナリオテストを作成するためには, シナリオがどのような要素で構成されているか知る必要があります。  
+シナリオテストを作成するためには, シナリオがどのような要素で構成されているかを知る必要があります。  
 シナリオを構成する要素については, 次のページで説明されています：
 
 <BelowDocument docId="use/scenario/elements"
