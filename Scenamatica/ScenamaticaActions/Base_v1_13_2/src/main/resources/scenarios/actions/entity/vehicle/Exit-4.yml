@@ -1,0 +1,43 @@
+# noinspection YAMLSchemaValidation
+scenamatica: ${project.version}
+
+name: actions_entity_vehicle_exit_4
+description: Testing entity_vehicle_exit action without arguments works or not
+on:
+  - type: on_load
+  - type: manual_dispatch
+
+context:
+  actors:
+    - name: Actor01
+  entities:
+    - type: boat
+      location:
+        x: 0
+        y: 5
+        z: 0
+  stage:
+    type: FLAT
+
+scenario:
+  - type: execute
+    action: entity_vehicle_exit
+    with:
+      passenger: Actor01
+      target:
+        type: boat
+        location:
+          x: 0
+          y: 5
+          z: 0
+  - type: expect
+    action: entity_vehicle_exit
+  - type: require
+    action: entity_vehicle_exit
+    with:
+      target:
+        type: boat
+        location:
+          x: 0
+          y: 5
+          z: 0
