@@ -7,6 +7,7 @@ import org.bukkit.event.Event;
 import org.bukkit.event.vehicle.VehicleExitEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.kunlab.scenamatica.annotations.action.Action;
 import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
 import org.kunlab.scenamatica.bookkeeper.annotations.OutputDoc;
 import org.kunlab.scenamatica.exceptions.scenario.IllegalActionInputException;
@@ -20,6 +21,7 @@ import org.kunlab.scenamatica.interfaces.structures.specifiers.EntitySpecifier;
 import java.util.Collections;
 import java.util.List;
 
+@Action("vehicle_exit")
 @ActionDoc(
         name = "乗り物からの後者",
         description = "エンティティを乗り物から降ろします。",

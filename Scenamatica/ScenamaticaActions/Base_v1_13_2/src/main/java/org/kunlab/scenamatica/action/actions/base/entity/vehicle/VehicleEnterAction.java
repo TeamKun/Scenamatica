@@ -6,6 +6,7 @@ import org.bukkit.event.Event;
 import org.bukkit.event.vehicle.VehicleEnterEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.kunlab.scenamatica.annotations.action.Action;
 import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
 import org.kunlab.scenamatica.bookkeeper.annotations.InputDoc;
 import org.kunlab.scenamatica.bookkeeper.annotations.OutputDoc;
@@ -22,6 +23,7 @@ import org.kunlab.scenamatica.interfaces.structures.specifiers.EntitySpecifier;
 import java.util.Collections;
 import java.util.List;
 
+@Action("vehicle_enter")
 @ActionDoc(
         name = "乗り物への搭乗",
         description = "エンティティを乗り物に搭乗させます。",
