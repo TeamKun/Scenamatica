@@ -10,8 +10,10 @@ import org.jetbrains.annotations.Nullable;
 import org.kunlab.scenamatica.annotations.action.Action;
 import org.kunlab.scenamatica.bookkeeper.annotations.ActionDoc;
 import org.kunlab.scenamatica.bookkeeper.annotations.OutputDoc;
+import org.kunlab.scenamatica.enums.ScenarioType;
 import org.kunlab.scenamatica.exceptions.scenario.IllegalActionInputException;
 import org.kunlab.scenamatica.interfaces.action.ActionContext;
+import org.kunlab.scenamatica.interfaces.action.input.InputBoard;
 import org.kunlab.scenamatica.interfaces.action.input.InputToken;
 import org.kunlab.scenamatica.interfaces.action.types.Executable;
 import org.kunlab.scenamatica.interfaces.action.types.Expectable;
@@ -108,5 +110,15 @@ public class VehicleExitAction extends AbstractVehicleAction
         return Collections.singletonList(
                 VehicleExitEvent.class
         );
+    }
+
+    @Override
+    public InputBoard getInputBoard(ScenarioType type)
+    {
+        InputBoard board = ofInputs(type, IN_ENTITY);
+        if (type == ScenarioType.ACTION_EXECUTE)
+            board.requirePresent(IN_ENTITY);
+
+        return board;
     }
 }
