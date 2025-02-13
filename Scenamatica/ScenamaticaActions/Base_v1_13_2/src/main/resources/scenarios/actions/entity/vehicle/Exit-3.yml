@@ -1,8 +1,8 @@
 # noinspection YAMLSchemaValidation
 scenamatica: ${project.version}
 
-name: actions_entity_vehicle_exit_3
-description: Testing entity_vehicle_exit action without passenger works or not
+name: actions_vehicle_exit_3
+description: Testing vehicle_exit action without passenger works or not
 on:
   - type: on_load
   - type: manual_dispatch
@@ -21,7 +21,7 @@ context:
 
 scenario:
   - type: execute
-    action: entity_vehicle_exit
+    action: vehicle_exit
     with:
       passenger: Actor01
       target:
@@ -31,7 +31,7 @@ scenario:
           y: 5
           z: 0
   - type: expect
-    action: entity_vehicle_exit
+    action: vehicle_exit
     with:
       target:
         type: boat
@@ -40,7 +40,7 @@ scenario:
           y: 5
           z: 0
   - type: require
-    action: entity_vehicle_exit
+    action: vehicle_exit
     with:
       target:
         type: boat
