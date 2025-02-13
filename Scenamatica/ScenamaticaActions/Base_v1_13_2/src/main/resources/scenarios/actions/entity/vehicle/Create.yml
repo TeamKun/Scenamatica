@@ -1,8 +1,8 @@
 # noinspection YAMLSchemaValidation
 scenamatica: ${project.version}
 
-name: actions_entity_vehicle_exit_2
-description: Testing entity_vehicle_exit action without entity works or not
+name: actions_entity_vehicle_create
+description: Testing entity_vehicle_create action works or not
 on:
   - type: on_load
   - type: manual_dispatch
@@ -21,9 +21,8 @@ context:
 
 scenario:
   - type: execute
-    action: entity_vehicle_exit
+    action: entity_vehicle_create
     with:
-      passenger: Actor01
       target:
         type: boat
         location:
@@ -31,10 +30,11 @@ scenario:
           y: 5
           z: 0
   - type: expect
-    action: entity_vehicle_exit
+    action: entity_vehicle_create
     with:
-      passenger: Actor01
-  - type: require
-    action: entity_vehicle_exit
-    with:
-      passenger: Actor01
+      target:
+        type: boat
+        location:
+          x: 0
+          y: 5
+          z: 0

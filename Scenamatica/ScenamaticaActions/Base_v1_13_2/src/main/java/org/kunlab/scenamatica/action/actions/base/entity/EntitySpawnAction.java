@@ -27,6 +27,7 @@ import org.kunlab.scenamatica.interfaces.structures.specifiers.EntitySpecifier;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Consumer;
 
 @Action("entity_spawn")
 @ActionDoc(
@@ -76,7 +77,7 @@ public class EntitySpawnAction<E extends Entity> extends AbstractAction
         this((Class<E>) Entity.class, EntityStructure.class);
     }
 
-    public <T extends Entity> T spawnEntity(ActionContext ctxt, EntityStructure structure, @Nullable LocationStructure locDef)
+    public static <T extends Entity> T spawnEntity(ActionContext ctxt, EntityStructure structure, @Nullable LocationStructure locDef, Consumer<? super T> consumer)
     {
         Location spawnLoc = locDef == null ? null: locDef.create();
         if (spawnLoc == null)
@@ -94,7 +95,7 @@ public class EntitySpawnAction<E extends Entity> extends AbstractAction
                 entityClass,
                 entity -> {
                     structure.applyTo(entity);
-                    this.makeOutputs(ctxt, entity);
+                    consumer.accept(entity);
                 }
         );
     }
@@ -106,7 +107,7 @@ public class EntitySpawnAction<E extends Entity> extends AbstractAction
         assert structure != null;
         LocationStructure spawnLoc = structure.getLocation();
 
-        this.spawnEntity(ctxt, structure, spawnLoc);
+        spawnEntity(ctxt, structure, spawnLoc, e -> this.makeOutputs(ctxt, e));
     }
 
     protected void makeOutputs(@NotNull ActionContext ctxt, @NotNull Entity entity)

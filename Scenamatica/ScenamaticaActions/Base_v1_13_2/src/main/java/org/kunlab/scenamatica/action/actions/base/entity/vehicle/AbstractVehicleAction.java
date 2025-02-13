@@ -1,5 +1,7 @@
 package org.kunlab.scenamatica.action.actions.base.entity.vehicle;
 
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Vehicle;
 import org.bukkit.event.Event;
 import org.bukkit.event.vehicle.VehicleEvent;
@@ -13,6 +15,20 @@ public abstract class AbstractVehicleAction extends AbstractEntityAction<Vehicle
     public AbstractVehicleAction()
     {
         super(Vehicle.class, VehicleStructure.class);
+    }
+
+    public static boolean isVehicleEntity(@NotNull Class<? extends Entity> entity)
+    {
+        return Vehicle.class.isAssignableFrom(entity);
+    }
+
+    public static boolean isVehicleEntity(@NotNull EntityType type)
+    {
+        if (type == EntityType.UNKNOWN)
+            return false;
+        assert type.getEntityClass() != null;  // EntityType.UNKNOWN のときのみ null なので。
+
+        return isVehicleEntity(type.getEntityClass());
     }
 
     protected boolean checkMatchedVehicleEvent(@NotNull ActionContext ctxt, @NotNull Event event)
