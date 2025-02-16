@@ -3,6 +3,7 @@ package org.kunlab.scenamatica.scenariofile;
 import lombok.SneakyThrows;
 import lombok.Value;
 import org.bukkit.entity.Arrow;
+import org.bukkit.entity.Boat;
 import org.bukkit.entity.DragonFireball;
 import org.bukkit.entity.Egg;
 import org.bukkit.entity.EnderPearl;
@@ -12,6 +13,7 @@ import org.bukkit.entity.Fireball;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.LlamaSpit;
+import org.bukkit.entity.Minecart;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.entity.ShulkerBullet;
@@ -21,6 +23,7 @@ import org.bukkit.entity.SpectralArrow;
 import org.bukkit.entity.SplashPotion;
 import org.bukkit.entity.ThrownExpBottle;
 import org.bukkit.entity.Trident;
+import org.bukkit.entity.Vehicle;
 import org.bukkit.entity.WitherSkull;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -32,10 +35,12 @@ import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.EntityStruc
 import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.PlayerStructure;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.entities.EntityItemStructure;
 import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.entities.ProjectileStructure;
+import org.kunlab.scenamatica.interfaces.structures.minecraft.entity.entities.VehicleStructure;
 import org.kunlab.scenamatica.structures.minecraft.entity.EntityStructureImpl;
 import org.kunlab.scenamatica.structures.minecraft.entity.PlayerStructureImpl;
 import org.kunlab.scenamatica.structures.minecraft.entity.entities.EntityItemStructureImpl;
 import org.kunlab.scenamatica.structures.minecraft.entity.entities.ProjectileStructureImpl;
+import org.kunlab.scenamatica.structures.minecraft.entity.entities.VehicleStructureImpl;
 
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -103,6 +108,7 @@ public class SelectiveEntityStructureSerializer
                 (entity, ignored) -> EntityStructureImpl.of(entity)
         );
 
+        registerVehicles();
         registerProjectiles();
     }
 
@@ -139,6 +145,34 @@ public class SelectiveEntityStructureSerializer
                     projectileEntry.getKey(),
                     ProjectileStructure.class,
                     Projectile.class,
+                    serializer,
+                    deserializer,
+                    validator,
+                    constructor
+            );
+        }
+    }
+
+    @SneakyThrows
+    private static void registerVehicles()
+    {
+        BiFunction<VehicleStructure, StructureSerializer, Map<String, Object>> serializer = VehicleStructureImpl::serialize;
+        StructureSerializerImpl.ThrowableBiFunction<StructuredYamlNode, StructureSerializer, VehicleStructure> deserializer = VehicleStructureImpl::deserialize;
+        StructureSerializerImpl.ThrowableBiConsumer<StructuredYamlNode, StructureSerializer> validator = VehicleStructureImpl::validate;
+        BiFunction<Vehicle, StructureSerializer, VehicleStructure> constructor = VehicleStructureImpl::of;
+
+        Map<EntityType, Class<? extends Vehicle>> vehicleTypes = new HashMap<EntityType, Class<? extends Vehicle>>()
+        {{
+            this.put(EntityType.BOAT, Boat.class);
+            this.put(EntityType.MINECART, Minecart.class);
+        }};
+
+        for (Map.Entry<EntityType, Class<? extends Vehicle>> vehicleEntry : vehicleTypes.entrySet())
+        {
+            registerStructure(
+                    vehicleEntry.getKey(),
+                    VehicleStructure.class,
+                    Vehicle.class,
                     serializer,
                     deserializer,
                     validator,
