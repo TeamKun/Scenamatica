@@ -52,7 +52,7 @@ public class VehicleEnterAction extends AbstractVehicleAction
             description = "乗り物に搭乗するエンティティです。",
             type = EntitySpecifier.class
     )
-    public static final InputToken<EntitySpecifier<Entity>> IN_ENTITY = ofSpecifier("entity");
+    public static final InputToken<EntitySpecifier<Entity>> IN_ENTITY = ofSpecifier("passenger");
 
     @Override
     public void execute(@NotNull ActionContext ctxt)

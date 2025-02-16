@@ -1,6 +1,7 @@
 package org.kunlab.scenamatica.structures.minecraft.entity.entities;
 
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Vehicle;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -35,19 +36,24 @@ public class VehicleStructureImpl extends EntityStructureImpl implements Vehicle
     }
 
     @NotNull
-    public static Map<String, Object> serializeVehicle(@NotNull VehicleStructure structure, @NotNull StructureSerializer serializer)
+    public static Map<String, Object> serialize(@NotNull VehicleStructure structure, @NotNull StructureSerializer serializer)
     {
         return EntityStructureImpl.serialize(structure, serializer);
     }
 
-    public static void validateVehicle(@NotNull StructuredYamlNode node, @NotNull StructureSerializer serializer) throws YamlParsingException
+    public static void validate(@NotNull StructuredYamlNode node, @NotNull StructureSerializer serializer) throws YamlParsingException
     {
         EntityStructureImpl.validate(node);
     }
 
     @NotNull
-    public static EntityStructureImpl deserializeVehicle(@NotNull StructuredYamlNode node, @NotNull StructureSerializer serializer) throws YamlParsingException
+    public static VehicleStructureImpl deserialize(@NotNull StructuredYamlNode node, @NotNull StructureSerializer serializer) throws YamlParsingException
     {
         return new VehicleStructureImpl(EntityStructureImpl.deserialize(node, serializer));
+    }
+
+    public static VehicleStructure of(@NotNull Vehicle vehicle, @NotNull StructureSerializer serializer)
+    {
+        return new VehicleStructureImpl(EntityStructureImpl.of(vehicle));
     }
 }

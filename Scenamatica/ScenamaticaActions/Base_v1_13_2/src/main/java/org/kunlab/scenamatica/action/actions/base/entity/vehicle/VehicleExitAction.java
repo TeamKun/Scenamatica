@@ -48,7 +48,7 @@ public class VehicleExitAction extends AbstractVehicleAction
 {
     public static final String OUT_ENTITY = "passenger";
 
-    public static final InputToken<EntitySpecifier<Entity>> IN_ENTITY = ofSpecifier("entity");
+    public static final InputToken<EntitySpecifier<Entity>> IN_ENTITY = ofSpecifier("passenger");
 
     @Override
     public void execute(@NotNull ActionContext ctxt)
