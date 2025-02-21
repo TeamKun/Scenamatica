@@ -115,7 +115,8 @@ public class VehicleExitAction extends AbstractVehicleAction
     @Override
     public InputBoard getInputBoard(ScenarioType type)
     {
-        InputBoard board = ofInputs(type, IN_ENTITY);
+        InputBoard board = super.getInputBoard(type)
+                .register(IN_ENTITY);
         if (type == ScenarioType.ACTION_EXECUTE)
             board.requirePresent(IN_ENTITY);
 

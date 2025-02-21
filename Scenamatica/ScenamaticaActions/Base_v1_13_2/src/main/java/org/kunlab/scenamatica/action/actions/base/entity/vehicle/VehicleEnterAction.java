@@ -87,12 +87,17 @@ public class VehicleEnterAction extends AbstractVehicleAction
     @Override
     public boolean checkConditionFulfilled(@NotNull ActionContext ctxt)
     {
-        Vehicle vehicle = this.selectTarget(ctxt);
-        Entity entity = ctxt.input(IN_ENTITY).selectTarget(ctxt.getContext()).orElse(null);
-        if (ctxt.hasInput(IN_ENTITY) && entity == null)
-            throw new IllegalActionInputException(IN_ENTITY, "Unable to find the entity to board the vehicle.");
+        Entity entity = ctxt.input(IN_ENTITY).selectTarget(ctxt.getContext())
+                .orElseThrow(() -> new IllegalActionInputException(IN_ENTITY, "Unable to find the entity to board the vehicle."));
 
-        boolean result = vehicle.getPassengers().contains(entity);
+        Vehicle vehicle = null;
+        boolean result = entity.isInsideVehicle();
+        if (ctxt.hasInput(IN_ENTITY))  // エンティティ（このアクションの場合は乗り物）が指定されている場合は：
+        {
+            vehicle = this.selectTarget(ctxt);
+            result = vehicle.getPassengers().contains(entity);
+        }
+
         if (result)
             this.makeOutputs(ctxt, vehicle, entity);
 
@@ -107,7 +112,7 @@ public class VehicleEnterAction extends AbstractVehicleAction
         );
     }
 
-    private void makeOutputs(@NotNull ActionContext ctxt, @NotNull Vehicle vehicle, @Nullable Entity entity)
+    private void makeOutputs(@NotNull ActionContext ctxt, @Nullable Vehicle vehicle, @Nullable Entity entity)
     {
         if (entity != null)
             ctxt.output(OUT_ENTITY, entity);
