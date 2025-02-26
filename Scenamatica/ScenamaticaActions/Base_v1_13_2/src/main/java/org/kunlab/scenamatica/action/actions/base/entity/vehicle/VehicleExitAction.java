@@ -84,17 +84,22 @@ public class VehicleExitAction extends AbstractVehicleAction
     @Override
     public boolean checkConditionFulfilled(@NotNull ActionContext ctxt)
     {
-        Vehicle vehicle = this.selectTarget(ctxt);
-        // entity を選択しないことも可能。
-        Entity entity = ctxt.input(IN_PASSENGER).selectTarget(ctxt.getContext()).orElse(null);
-        if (ctxt.hasInput(IN_PASSENGER) && entity == null)
-            throw new IllegalActionInputException(IN_PASSENGER, "Unable to find the entity to board the vehicle.");
+        // 乗り物が指定されていない場合は, IN_PASSENGER が any 乗り物に乗っていないかどうかのみ判定。
+        if (!ctxt.hasInput(this.IN_TARGET_ENTITY))
+        {
+            // IN_PASSENGER を必須とする。
+            if (!ctxt.hasInput(IN_PASSENGER))
+                throw new IllegalActionInputException(IN_PASSENGER, "You must specify the entity to board the vehicle if you do not specify the vehicle.");
 
-        boolean result = !vehicle.getPassengers().contains(entity);
-        if (result)
-            this.makeOutputs(ctxt, vehicle, entity);
+            Entity entity = ctxt.input(IN_PASSENGER).selectTarget(ctxt.getContext())
+                    .orElseThrow(() -> new IllegalActionInputException(IN_PASSENGER, "Unable to find the entity to board the vehicle."));
 
-        return result;
+            return !entity.isInsideVehicle();
+        }
+
+        Entity targetVehicle = super.selectTarget(ctxt);
+
+        return ctxt.ifHasInput(IN_PASSENGER, inputEntity -> targetVehicle.getPassengers().stream().noneMatch(inputEntity::checkMatchedEntity));
     }
 
     private void makeOutputs(@NotNull ActionContext ctxt, @NotNull Vehicle vehicle, @Nullable Entity entity)

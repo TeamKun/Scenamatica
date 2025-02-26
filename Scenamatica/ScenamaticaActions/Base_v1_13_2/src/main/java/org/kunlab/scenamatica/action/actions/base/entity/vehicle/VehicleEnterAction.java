@@ -94,9 +94,8 @@ public class VehicleEnterAction extends AbstractVehicleAction
             if (!ctxt.hasInput(IN_PASSENGER))
                 throw new IllegalActionInputException(IN_PASSENGER, "You must specify the entity to board the vehicle if you do not specify the vehicle.");
 
-            Entity entity = ctxt.input(IN_PASSENGER).selectTarget(ctxt.getContext()).orElse(null);
-            if (entity == null)
-                throw new IllegalActionInputException(IN_PASSENGER, "Unable to find the entity to board the vehicle.");
+            Entity entity = ctxt.input(IN_PASSENGER).selectTarget(ctxt.getContext())
+                    .orElseThrow(() -> new IllegalActionInputException(IN_PASSENGER, "Unable to find the entity to board the vehicle."));
 
             return entity.isInsideVehicle();
         }
