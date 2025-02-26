@@ -48,19 +48,19 @@ public class VehicleExitAction extends AbstractVehicleAction
 {
     public static final String OUT_ENTITY = "passenger";
 
-    public static final InputToken<EntitySpecifier<Entity>> IN_ENTITY = ofSpecifier("passenger");
+    public static final InputToken<EntitySpecifier<Entity>> IN_PASSENGER = ofSpecifier("passenger");
 
     @Override
     public void execute(@NotNull ActionContext ctxt)
     {
         Vehicle vehicle = this.selectTarget(ctxt);
         // エンティティを取得し, もし存在しない場合は例外をスローする。
-        Entity entity = ctxt.input(IN_ENTITY).selectTarget(ctxt.getContext())
+        Entity entity = ctxt.input(IN_PASSENGER).selectTarget(ctxt.getContext())
                 .orElseThrow(() -> new IllegalActionInputException("エンティティが見つかりません。"));
 
         ctxt.output(OUT_ENTITY, entity);
         // エンティティを乗り物から降ろす。
-        vehicle.eject();
+        vehicle.removePassenger(entity);
     }
 
     @Override
@@ -74,7 +74,7 @@ public class VehicleExitAction extends AbstractVehicleAction
         Entity entity = e.getExited();
 
         // ↓ 乗り物自体の比較は, #checkMatchedVehicleEvent で行っているので, ここではエンティティの比較のみ行う。
-        boolean result = ctxt.ifHasInput(IN_ENTITY, inputEntity -> inputEntity.checkMatchedEntity(entity));
+        boolean result = ctxt.ifHasInput(IN_PASSENGER, inputEntity -> inputEntity.checkMatchedEntity(entity));
         if (result)
             this.makeOutputs(ctxt, e.getVehicle(), entity);
 
@@ -86,9 +86,9 @@ public class VehicleExitAction extends AbstractVehicleAction
     {
         Vehicle vehicle = this.selectTarget(ctxt);
         // entity を選択しないことも可能。
-        Entity entity = ctxt.input(IN_ENTITY).selectTarget(ctxt.getContext()).orElse(null);
-        if (ctxt.hasInput(IN_ENTITY) && entity == null)
-            throw new IllegalActionInputException(IN_ENTITY, "Unable to find the entity to board the vehicle.");
+        Entity entity = ctxt.input(IN_PASSENGER).selectTarget(ctxt.getContext()).orElse(null);
+        if (ctxt.hasInput(IN_PASSENGER) && entity == null)
+            throw new IllegalActionInputException(IN_PASSENGER, "Unable to find the entity to board the vehicle.");
 
         boolean result = !vehicle.getPassengers().contains(entity);
         if (result)
@@ -116,9 +116,9 @@ public class VehicleExitAction extends AbstractVehicleAction
     public InputBoard getInputBoard(ScenarioType type)
     {
         InputBoard board = super.getInputBoard(type)
-                .register(IN_ENTITY);
+                .register(IN_PASSENGER);
         if (type == ScenarioType.ACTION_EXECUTE)
-            board.requirePresent(IN_ENTITY);
+            board.requirePresent(IN_PASSENGER);
 
         return board;
     }
