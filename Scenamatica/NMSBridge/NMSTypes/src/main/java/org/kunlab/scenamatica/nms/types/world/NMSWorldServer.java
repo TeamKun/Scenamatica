@@ -1,6 +1,7 @@
 package org.kunlab.scenamatica.nms.types.world;
 
 import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.nms.NMSWrapped;
@@ -38,4 +39,14 @@ public interface NMSWorldServer extends NMSWrapped
     @NotNull
     @Versioned(from = "1.17")
     NMSPersistentEntitySectionManager<Entity> getEntityManager();
+
+    /**
+     * ブロックのアクションを再生します。
+     * e.g. 音ブロックの再生
+     *
+     * @param block  ブロック
+     * @param param1 ブロック固有パラメータ１
+     * @param param2 ブロック固有パラメータ２
+     */
+    void playBlockAction(Block block, int param1, int param2);
 }
