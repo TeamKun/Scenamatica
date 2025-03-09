@@ -1,13 +1,15 @@
 # noinspection YAMLSchemaValidation
 scenamatica: ${project.version}
 
-name: actions_vehicle_create
-description: Testing vehicle_create action works or not
+name: actions_vehicle_destroy_2
+description: Testing vehicle_destroy action without attacker works or not
 on:
   - type: on_load
   - type: manual_dispatch
 
 context:
+  actors:
+    - name: Actor01
   entities:
     - type: boat
       location:
@@ -19,7 +21,7 @@ context:
 
 scenario:
   - type: execute
-    action: vehicle_create
+    action: vehicle_destroy
     with:
       target:
         type: boat
@@ -28,7 +30,16 @@ scenario:
           y: 5
           z: 0
   - type: expect
-    action: vehicle_create
+    action: vehicle_destroy
+    with:
+      target:
+        type: boat
+        location:
+          x: 0
+          y: 5
+          z: 0
+  - type: require
+    action: vehicle_destroy
     with:
       target:
         type: boat

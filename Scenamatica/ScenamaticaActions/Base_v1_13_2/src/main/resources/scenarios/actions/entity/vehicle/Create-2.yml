@@ -8,8 +8,6 @@ on:
   - type: manual_dispatch
 
 context:
-  actors:
-    - name: Actor01
   entities:
     - type: boat
       location:
