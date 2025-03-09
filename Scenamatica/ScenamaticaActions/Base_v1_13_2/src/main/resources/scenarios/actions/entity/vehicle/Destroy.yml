@@ -1,0 +1,51 @@
+# noinspection YAMLSchemaValidation
+scenamatica: ${project.version}
+
+name: actions_vehicle_destroy
+description: Testing vehicle_destroy action works or not
+on:
+  - type: on_load
+  - type: manual_dispatch
+
+context:
+  actors:
+    - name: Actor01
+  entities:
+    - type: boat
+      location:
+        x: 0
+        y: 5
+        z: 0
+  stage:
+    type: FLAT
+
+scenario:
+  - type: execute
+    action: vehicle_destroy
+    with:
+      target:
+        type: boat
+        location:
+          x: 0
+          y: 5
+          z: 0
+      attacker: Actor01
+  - type: expect
+    action: vehicle_destroy
+    with:
+      target:
+        type: boat
+        location:
+          x: 0
+          y: 5
+          z: 0
+      attacker: Actor01
+  - type: require
+    action: vehicle_destroy
+    with:
+      target:
+        type: boat
+        location:
+          x: 0
+          y: 5
+          z: 0

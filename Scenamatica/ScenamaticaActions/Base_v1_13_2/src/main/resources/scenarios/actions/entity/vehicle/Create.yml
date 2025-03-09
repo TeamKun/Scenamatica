@@ -1,0 +1,38 @@
+# noinspection YAMLSchemaValidation
+scenamatica: ${project.version}
+
+name: actions_vehicle_create
+description: Testing vehicle_create action works or not
+on:
+  - type: on_load
+  - type: manual_dispatch
+
+context:
+  entities:
+    - type: boat
+      location:
+        x: 0
+        y: 5
+        z: 0
+  stage:
+    type: FLAT
+
+scenario:
+  - type: execute
+    action: vehicle_create
+    with:
+      target:
+        type: boat
+        location:
+          x: 0
+          y: 5
+          z: 0
+  - type: expect
+    action: vehicle_create
+    with:
+      target:
+        type: boat
+        location:
+          x: 0
+          y: 5
+          z: 0

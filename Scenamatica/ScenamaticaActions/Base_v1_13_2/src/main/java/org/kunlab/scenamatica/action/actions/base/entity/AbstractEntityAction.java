@@ -78,6 +78,8 @@ public abstract class AbstractEntityAction<E extends Entity, V extends EntityStr
 
     public E selectTarget(@NotNull ActionContext ctxt)
     {
+        if (!ctxt.hasInput(this.IN_TARGET_ENTITY))
+            throw new IllegalActionInputException(this.IN_TARGET_ENTITY, "You must specify the target entity for this action.");
         return ctxt.input(this.IN_TARGET_ENTITY).selectTarget(ctxt.getContext())
                 .orElseThrow(() -> new IllegalActionInputException(this.IN_TARGET_ENTITY, "Cannot select target for this action, please specify target with valid specifier."));
     }

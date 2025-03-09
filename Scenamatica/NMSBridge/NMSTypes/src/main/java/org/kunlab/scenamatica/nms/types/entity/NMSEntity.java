@@ -37,6 +37,16 @@ public interface NMSEntity extends NMSWrapped
     NMSEntityItem dropItem(@NotNull NMSItemStack stack, float offsetY);
 
     /**
+     * エンティティにダメージを与えます。
+     * a.k.a. <code>Entity#hurt(DamageSource, float)</code>
+     *
+     * @param source ダメージのソース
+     * @param damage ダメージ量
+     * @return ダメージを受けたかどうか
+     */
+    boolean damageEntity(NMSDamageSource source, float damage);
+
+    /**
      * エンティティが非表示かどうかを取得します。
      *
      * @return 非表示かどうか
