@@ -48,11 +48,6 @@ import java.util.Optional;
 
         outputs = {
                 @OutputDoc(
-                        name = VehicleDestroyAction.OUT_VEHICLE,
-                        description = "破壊された乗り物です。",
-                        type = Vehicle.class
-                ),
-                @OutputDoc(
                         name = VehicleDestroyAction.OUT_ATTACKER,
                         description = "乗り物を破壊したエンティティです。",
                         type = Entity.class
@@ -69,7 +64,6 @@ public class VehicleDestroyAction extends AbstractVehicleAction
     )
     public static final InputToken<EntitySpecifier<Entity>> IN_ATTACKER = ofSpecifier("attacker");
 
-    public static final String OUT_VEHICLE = "vehicle";
     public static final String OUT_ATTACKER = "attacker";
 
     @Override
@@ -123,8 +117,6 @@ public class VehicleDestroyAction extends AbstractVehicleAction
 
     protected void makeOutputs(@NotNull ActionContext ctxt, @Nullable Vehicle vehicle, @Nullable Entity attacker)
     {
-        if (vehicle != null)
-            ctxt.output(OUT_VEHICLE, vehicle);
         if (attacker != null)
             ctxt.output(OUT_ATTACKER, attacker);
         super.makeOutputs(ctxt, vehicle);
