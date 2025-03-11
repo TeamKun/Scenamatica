@@ -58,7 +58,7 @@ public class WorldLoadAction extends AbstractWorldAction
     public boolean checkConditionFulfilled(@NotNull ActionContext ctxt)
     {
         World world;
-        boolean result = (world = super.getWorld(ctxt)) != null;
+        boolean result = (world = super.getWorldNonNull(ctxt)) != null;
         if (result)
             this.makeOutputs(ctxt, world);
         return result;

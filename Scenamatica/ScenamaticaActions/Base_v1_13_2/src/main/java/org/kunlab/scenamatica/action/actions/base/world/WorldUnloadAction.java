@@ -42,7 +42,7 @@ public class WorldUnloadAction extends AbstractWorldAction
     @Override
     public void execute(@NotNull ActionContext ctxt)
     {
-        World world = super.getWorld(ctxt);
+        World world = super.getWorldNonNull(ctxt);
 
         if (world == null)
             throw new IllegalActionInputException(IN_WORLD, "Unable to find world: " + ctxt.input(IN_WORLD));
