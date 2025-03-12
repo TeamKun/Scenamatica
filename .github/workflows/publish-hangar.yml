@@ -8,7 +8,9 @@ jobs:
     name: Publish to HangarMC
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - name: Get the url of the artifact url from release assets
         id: get_asset_url
         uses: actions/github-script@v7
@@ -40,7 +42,7 @@ jobs:
               {
                 "platform": "PAPER",
                 "url": true,
-                "externalUrl: ${{ steps.get_asset_url.outputs.result }}"
+                "externalUrl": "${{ steps.get_asset_url.outputs.result }}"
               }
             ]
           description: ${{ github.event.release.body }}
