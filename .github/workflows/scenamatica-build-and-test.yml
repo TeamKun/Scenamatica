@@ -68,6 +68,6 @@ jobs:
     needs: self-tests
     steps:
       - name: Clean artifacts
-        uses: geekyeggo/delete-artifact@v2
+        uses: geekyeggo/delete-artifact@v5
         with:
           name: scenamatica
