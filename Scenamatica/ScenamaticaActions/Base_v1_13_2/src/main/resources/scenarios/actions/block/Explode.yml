@@ -1,0 +1,31 @@
+# noinspection YAMLSchemaValidation
+scenamatica: ${project.version}
+
+name: actions_block_explode
+description: Testing block_explode action works or not
+on:
+  - type: on_load
+  - type: manual_dispatch
+
+context:
+  stage:
+    type: flat
+
+scenario:
+  - type: execute
+    action: block_explode
+    with:
+      block:
+        location:
+          x: 0
+          y: 4
+          z: 0
+      yield: 4
+  - type: expect
+    action: block_explode
+    with:
+      block:
+        location:
+          x: 0
+          y: 4
+          z: 0

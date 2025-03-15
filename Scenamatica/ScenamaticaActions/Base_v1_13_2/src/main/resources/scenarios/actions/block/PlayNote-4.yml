@@ -1,0 +1,52 @@
+# noinspection YAMLSchemaValidation
+scenamatica: ${project.version}
+
+name: actions_block_play_note_4
+description: Testing block_place action with different note works or not
+on:
+  - type: on_load
+    before:
+      - type: execute
+        action: block_place
+        with:
+          block:
+            type: NOTE_BLOCK
+            location:
+              x: 0
+              y: 4
+              z: 0
+  - type: manual_dispatch
+    before:
+      - type: execute
+        action: block_place
+        with:
+          block:
+            type: NOTE_BLOCK
+            location:
+              x: 0
+              y: 4
+              z: 0
+
+context:
+  stage:
+    type: flat
+
+scenario:
+  - type: execute
+    action: block_play_note
+    with:
+      block:
+        location:
+          x: 0
+          y: 4
+          z: 0
+      instrument: FLUTE
+  - type: expect
+    action: block_play_note
+    with:
+      block:
+        location:
+          x: 0
+          y: 4
+          z: 0
+      instrument: FLUTE

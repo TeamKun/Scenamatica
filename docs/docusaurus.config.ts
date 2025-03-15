@@ -339,7 +339,12 @@ export default {
         tagName: "meta",
         name: "og:site_name",
         content: "Scenamatica"
-      }
+      },
+      {
+        tagName: "meta",
+        name: "og:image",
+        content: "https://scenamatica.kunlab.org/img/favicon.ico"
+      },
     ],
     image: "img/landing.png",
   } satisfies ThemeConfig,

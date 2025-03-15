@@ -50,8 +50,15 @@ public class ScenamaticaMetrics extends Metrics
 
         this.totalTests = 0;
 
-        this.addCustomChart(new SingleLineChart("tests_ran", () -> this.totalTests));
+        this.addCustomChart(new SingleLineChart("tests_ran", this::getAndResetTotalTests));
         this.addCustomChart(new SimplePie("ci", ScenamaticaMetrics::getCIState));
+    }
+
+    private int getAndResetTotalTests()
+    {
+        int totalTests = this.totalTests;
+        this.totalTests = 0;
+        return totalTests;
     }
 
     private static String getCIState()

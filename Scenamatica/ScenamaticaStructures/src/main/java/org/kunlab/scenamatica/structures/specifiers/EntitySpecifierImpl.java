@@ -89,7 +89,14 @@ public class EntitySpecifierImpl<E extends Entity> implements EntitySpecifier<E>
             UUID mayUUID = tryConvertToUUID(str);
 
             if (mayUUID == null)
-                return new EntitySpecifierImpl<>(Selector.compile(str));
+            {
+                Optional<Selector> selector = Selector.tryCompile(str);
+                //noinspection OptionalIsPresent
+                if (selector.isPresent())
+                    return new EntitySpecifierImpl<>(selector.get());
+                else
+                    return new EntitySpecifierImpl<>(Selector.compile("[name=" + str + "]"));
+            }
             else
                 return new EntitySpecifierImpl<>(mayUUID);
         }

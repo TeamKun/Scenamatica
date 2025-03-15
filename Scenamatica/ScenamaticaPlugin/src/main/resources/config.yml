@@ -1,6 +1,6 @@
 # @project      Scenamatica ${project.version}
 # @author       Peyang <https://peya.tokyo>
-# @license      The MIT License (MIT) <https://opensource.org/licenses/MIT>
+# @license      The MIT Licence (MIT) <https://opensource.org/licenses/MIT>
 
 # ------------[ インターフェース設定 ]------------
 # Scenamatica のインターフェースの設定を定義します。
@@ -52,12 +52,22 @@ actor:
   # - 3 - もっといっぱいコマンド使えます。
   # - 4 - 全部のコマンド使えます。
   defaultOP: 4
+
   # アクターに与えるデフォルトの権限を設定します。
   # これはシナリオファイルによって上書きされることがあります。
   permissions:
   # アクターに与えるスコアボードのタグを設定します。
   # これはシナリオファイルによって上書きされることがあります。
   scoreboardTags:
+
+  # アクターのデフォルトの IP アドレスを設定します。
+  # これは, サーバの IP アドレスではなく, アクターの接続元の IP アドレスを指します。
+  # これはシナリオファイルによって上書きされることがあります。
+  defaultSocketAddress: "127.0.0.1"
+  # アクターのデフォルトのポート番号を設定します。
+  # これは, サーバのポート番号ではなく, アクターの接続元のポート番号を指します。
+  # これはシナリオファイルによって上書きされることがあります。
+  defaultSocketPort: 1919
 
 # ---------------[ ステージ設定 ]---------------
 stage:

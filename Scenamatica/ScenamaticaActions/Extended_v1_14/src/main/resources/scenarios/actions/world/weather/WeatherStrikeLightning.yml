@@ -1,0 +1,36 @@
+# noinspection YAMLSchemaValidation
+scenamatica: ${project.version}
+minecraft:
+  since: 1.14.0
+
+name: actions_weather_strike_lightning
+description: Testing WeatherStrikeLightningAction works or not
+on:
+  - type: on_load
+  - type: manual_dispatch
+
+context:
+  stage:
+    type: FLAT
+
+scenario:
+  - type: execute
+    action: weather_strike_lightning
+    with:
+      lightning:
+        location:
+          x: 0
+          y: 3
+          z: 0
+        effect: true
+        cause: COMMAND
+  - type: expect
+    action: weather_strike_lightning
+    with:
+      lightning:
+        location:
+          x: 0
+          y: 3
+          z: 0
+        effect: true
+        cause: COMMAND

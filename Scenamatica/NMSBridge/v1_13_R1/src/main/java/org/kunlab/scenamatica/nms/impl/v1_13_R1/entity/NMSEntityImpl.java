@@ -10,6 +10,8 @@ import org.bukkit.craftbukkit.v1_13_R1.entity.CraftEntity;
 import org.jetbrains.annotations.NotNull;
 import org.kunlab.scenamatica.nms.enums.entity.NMSMoveType;
 import org.kunlab.scenamatica.nms.impl.v1_13_R1.TypeSupportImpl;
+import org.kunlab.scenamatica.nms.impl.v1_13_R1.utils.DamageSourceSupport;
+import org.kunlab.scenamatica.nms.types.entity.NMSDamageSource;
 import org.kunlab.scenamatica.nms.types.entity.NMSEntity;
 import org.kunlab.scenamatica.nms.types.entity.NMSEntityItem;
 import org.kunlab.scenamatica.nms.types.item.NMSItemStack;
@@ -114,6 +116,15 @@ public class NMSEntityImpl implements NMSEntity
 
 
         return new NMSEntityItemImpl(dropped);
+    }
+
+    @Override
+    public boolean damageEntity(NMSDamageSource source, float damage)
+    {
+        return this.nmsEntity.damageEntity(
+                DamageSourceSupport.fromNMSDamageSource(source),
+                damage
+        );
     }
 
     @Override

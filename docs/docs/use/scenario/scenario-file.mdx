@@ -20,24 +20,31 @@ import BelowDocument from "/src/components/BelowDocument";
 
 ## 概要 {#overview}
 
-シナリオファイルは,  `.yml` もしくは `.yaml` の拡張子を持つ YAML ファイルで, [シナリオ](/docs/use/scenario)を記述します。
+シナリオファイルは,  `.yml` もしくは `.yaml` の拡張子を持つ YAML ファイルで, 一つの[シナリオ](/docs/use/scenario)を記述します。
 プラグインの .jar に同梱されるのであれば, プロジェクトの任意の場所に配置できます。  
 １つのシナリオまたはテストにつき１つのシナリオファイルが必要です。  
 そのため, シナリオファイルを配置するディレクトリは構造的に管理すると良いでしょう。
 
 ## シナリオファイルの構造 {#scenario-file-structure}
 
-シナリオファイルは, 最上位に [ScenarioFile](/references/types/ScenarioFileStructure#type) 型のオブジェクトを持ちます。  
-このオブジェクトは, シナリオファイルのメタデータやトリガ, シナリオなど, テストに関するすべての情報を保持します。
+シナリオファイルは, 全体として [ScenarioFile](/references/types/ScenarioFileStructure#type) 型のオブジェクトです。  
+このオブジェクトは, シナリオファイルのメタデータや[トリガ](/docs/use/scenario/trigger), シナリオなど, テストに関するすべての情報を含んでいます。
+
+:::tip リファレンスの紹介
 
 Scenamatica のすべてのオブジェクトは自動生成されたリファレンスが提供されています。  
-詳しくは[こちら](/references/types/ScenarioFileStructure#type)を参照してください。
+詳しくは[Scenamatica リファレンス](/references)を参照してください。
+
+（参考：[ScenarioFile - リファレンス](/references/types/ScenarioFileStructure#type)）
+
+:::
 
 
 ## シナリオファイルの例 {#example}
 
-以下のファイルは**最小構成の**シナリオファイルの例です。  
-これらの値は必須です。
+以下は, **最小構成の**シナリオファイルの例です。  
+この例では, プラグインのスタートアップ時に `/hoge` というコマンドを Actor1 が実行し, その後 Actor1 が死亡するかどうかを確認するシナリオを記述しています。
+
 ```yaml showLineNumbers
 # メタデータ
 scenamatica: "0.8.0"  # Scenamatica のバージョン
@@ -57,6 +64,10 @@ scenario:  # シナリオ
   with:
     command: "/hoge"
     sender: Actor1
+- type: expect
+  action: player_death
+  with:
+    target: Actor1
 # highlight-end
 ```
 

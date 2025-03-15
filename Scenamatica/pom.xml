@@ -6,7 +6,7 @@
 
     <groupId>org.kunlab.scenamatica</groupId>
     <artifactId>Scenamatica</artifactId>
-    <version>1.6.2</version>
+    <version>1.7.0</version>
     <packaging>pom</packaging>
 
     <modules>
@@ -102,7 +102,7 @@
         <dependency>
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
-            <version>26.0.1</version>
+            <version>26.0.2</version>
             <scope>provided</scope>
             <exclusions>
                 <exclusion>
@@ -115,19 +115,19 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
-            <version>5.11.3</version>
+            <version>5.12.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
-            <version>5.11.3</version>
+            <version>5.12.1</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
-            <version>5.14.2</version>
+            <version>5.16.0</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

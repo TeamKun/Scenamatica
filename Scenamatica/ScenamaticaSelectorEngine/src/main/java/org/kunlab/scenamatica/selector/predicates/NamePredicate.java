@@ -13,12 +13,10 @@ public class NamePredicate extends AbstractGeneralEntitySelectorPredicate
     @Override
     public boolean test(Player basis, Entity entity, Map<? super String, Object> properties)
     {
-        String nameDef = (String) properties.get(KEY_NAME);
-        if (nameDef == null)
-            return true;
-
         String name = entity.getName();
         AmbiguousString ambiguousString = (AmbiguousString) properties.get(KEY_NAME);
+        if (ambiguousString == null)
+            return true;
 
         return ambiguousString.test(name);
     }

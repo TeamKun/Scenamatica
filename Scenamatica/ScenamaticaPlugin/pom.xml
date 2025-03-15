@@ -7,7 +7,7 @@
     <parent>
         <groupId>org.kunlab.scenamatica</groupId>
         <artifactId>Scenamatica</artifactId>
-        <version>1.6.2</version>
+        <version>1.7.0</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -41,7 +41,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.13.0</version>
+                <version>3.14.0</version>
                 <configuration>
                     <source>${java.version}</source>
                     <target>${java.version}</target>
@@ -119,7 +119,7 @@
         <dependency>
             <groupId>org.kunlab.scenamatica</groupId>
             <artifactId>ScenamaticaDaemon</artifactId>
-            <version>1.6.2</version>
+            <version>1.7.0</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
@@ -131,7 +131,7 @@
         <dependency>
             <groupId>org.bstats</groupId>
             <artifactId>bstats-bukkit</artifactId>
-            <version>3.0.2</version>
+            <version>3.0.3</version>
             <scope>compile</scope>
         </dependency>
 
@@ -139,25 +139,25 @@
         <dependency>
             <groupId>org.kunlab.scenamatica.actions</groupId>
             <artifactId>Base_v1_13_2</artifactId>
-            <version>1.6.2</version>
+            <version>1.7.0</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.kunlab.scenamatica.actions</groupId>
             <artifactId>Extended_v1_16_5</artifactId>
-            <version>1.6.2</version>
+            <version>1.7.0</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.kunlab.scenamatica.actions</groupId>
             <artifactId>Extended_v1_16</artifactId>
-            <version>1.6.2</version>
+            <version>1.7.0</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.kunlab.scenamatica.actions</groupId>
             <artifactId>Extended_v1_14</artifactId>
-            <version>1.6.2</version>
+            <version>1.7.0</version>
             <scope>runtime</scope>
         </dependency>
     </dependencies>

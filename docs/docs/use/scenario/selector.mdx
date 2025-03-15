@@ -37,7 +37,7 @@ Scenamatica の一部のアクションや[コンテキスト](/docs/use/scenari
 
 :::note
 
-参考：  [Lorg/bukkit/Bukkit#selectEntities(Lorg/bukkit/command/CommandSender;Ljava/lang/String)Ljava/lang/List\<Lorg/bukkit/entity/Entity>](https://jd.papermc.io/paper/1.16/org/bukkit/Bukkit.html#selectEntities(org.bukkit.command.CommandSender,java.lang.String))
+参考：[Lorg/bukkit/Bukkit#selectEntities(Lorg/bukkit/command/CommandSender;Ljava/lang/String)Ljava/lang/List\<Lorg/bukkit/entity/Entity>](https://jd.papermc.io/paper/1.16/org/bukkit/Bukkit.html#selectEntities(org.bukkit.command.CommandSender,java.lang.String))
 
 :::
 
@@ -67,10 +67,8 @@ Scenamatica の一部のアクションや[コンテキスト](/docs/use/scenari
 
 :::info
 
-アクションの主役では, [プレイヤに関するアクション](/references/actions/players/)においては, そのプレイヤを指します。  
-ほかのアクションにおいても, その主役を指す場合があります。
-それらにおける主役については, 各アクションのドキュメントを参照してください。
-
+アクションの主役とは, [プレイヤに関するアクション](/references/actions/players/)においては, そのプレイヤを指します。  
+その他のアクションにも「主役」が定義されている場合があります。各アクションのドキュメントを参照してください。
 :::
 
 ## 引数の構文 {#arguments-syntax}
@@ -83,8 +81,8 @@ Scenamatica の一部のアクションや[コンテキスト](/docs/use/scenari
 :::tip 重複したキーを持つ値について
 同じ階層に重複したキーを持つ引数の値は, 暗黙的にそのキーの[リスト](#value-list)値の要素として扱われます。
 
-これにより,  `@e[tag=foo,tag=bar]` というセレクタは,  `@e[tag={foo,bar}]` と同じ意味になります。
-これは AND 検索（すべての条件を満たすこと）として解釈されます。
+例えば,  `@e[tag=foo,tag=bar]` というセレクタは,  `@e[tag={foo,bar}]` と同じ意味になります。
+つまりこれは AND 検索（すべての条件を満たすこと）となります。
 :::
 
 ### 文字列値 {#value-string}
@@ -95,7 +93,7 @@ Scenamatica の一部のアクションや[コンテキスト](/docs/use/scenari
 
 #### あいまい文字列 {#value-ambiguous-string}
 
-あいまい検索を行うために, 対象の文字列を正規表現で指定でき, これらの文字列を「あいまい文字列」と呼びます。
+あいまい指定を行うために, 対象の文字列を正規表現で指定でき, これらの文字列を「あいまい文字列」と呼びます。
 
 正規表現で指定する場合は[マップ](#value-map)で指定し,  `regex` というキーを指定します。
 
@@ -118,7 +116,7 @@ Scenamatica の一部のアクションや[コンテキスト](/docs/use/scenari
 
 #### 範囲値 {#value-ranged-number}
 
-あいまい検索を行うために, 対象の数値を範囲で指定できます。
+あいまい指定を行うために, 対象の数値を範囲で指定できます。
 
 範囲で指定する場合は, 最小値と最大値を `..` で連結して指定します。  
 

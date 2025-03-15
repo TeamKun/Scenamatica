@@ -2,7 +2,6 @@
 sidebar_position: 5
 ---
 
-
 import BelowDocument from "/src/components/BelowDocument";
 
 # トリガ
@@ -19,28 +18,104 @@ import BelowDocument from "/src/components/BelowDocument";
 
 ## 概要 {#overview}
 
-トリガは, [シナリオ](/docs/use/scenario/elements#scenario) の実行を開始するための発火条件です。  
-手動実行や特定のアクションの発火など, 様々なトリガがあります。
+トリガとは, [シナリオ](/docs/use/scenario/elements#scenario)テストを開始するための開始条件のことです。  
+例えば, 「プラグインがロードされたとき」や, 「コマンドが実行されたとき」などがトリガになります。
+
+いかなるシナリオも一つ以上のトリガが必要です。
 
 :::tip
 
-トリガは, [シナリオ](/docs/use/scenario/elements) に対して複数設定できます。  
-この場合は, そのうちどれか一つが発火した時にシナリオが実行されます。
+トリガは, 一つの[シナリオ](/docs/use/scenario/elements) に対して複数個設定できます。  
+この場合は, そのうちどれか一つが発火したときにシナリオが実行されます。
 
 :::
 
-:::info
+### 同じトリガの実行タイミングについて {#same-trigger-timing}
 
-手動実行を含む, いかなるシナリオにも一つ以上のトリガが必要です。
+２つ以上のシナリオが同じトリガを持つ場合, それらシナリオは[実行待ちのキュー](/docs/use/scenario/#scenario-session)に同時に追加されます。
+シナリオの実行自体は同時には行われず, キューが管理を行う順番で実行されます。  
+
+<BelowDocument
+  docId={"use/scenario/README"}
+  label={"シナリオの実行"}
+  anchor="scenario-session"
+  message={"実行順の詳細とその制御方法についてはこちらを参照してください。"}
+/>
+
+## トリガの種類 {#triggers}
+
+以下に, 有効なトリガの種類を示します。
+
+| トリガ                                                   | 説明                           |
+|-------------------------------------------------------|------------------------------|
+| [アクション実行 (`on_action`)](#triggers-on-action)          | 任意のアクションが実行されたときにシナリオを実行します。 |
+| [プラグインのロード (`on_load`)](#triggers-on-load)            | プラグインがロードされたときにシナリオを実行します。   |
+| [手動実行 (`manual_dispatch`)](#triggers-manual-dispatch) | 手動でシナリオを実行します。               |
+
+
+### アクション実行 (`on_action`) トリガ {#triggers-on-action}
+
+引数に指定された[アクション実行期待シナリオ](/docs/use/scenario/elements#scenario-type-action-execution-expect)が, 実行されたときにシナリオを実行します。  
+
+引数はそのアクションに必要なものを指定します。構文に関しては[こちら](/references/types#action)を参照してください。
+
+:::tip
+
+アクションに必要なパラメータについては, 各アクションのドキュメントを参照してください。
 
 :::
 
-### 事前・事後[シナリオ](/docs/use/scenario/elements#scenario)機能 {#before-after-scenarios}
+#### 例 {#triggers-on-action-example}
+
+```yaml showLineNumbers
+# ...
+on:
+- type: on_action
+  action: "player_death"
+  with:
+    target: "Actor1"
+```
+
+### プラグインのロード (`on_load`) トリガ {#triggers-on-load}
+
+プラグインがロードされたときに自動的にシナリオを実行します。  
+これには, サーバのリロードや再起動も含みます。
+
+引数はありません。
+
+#### 例 {#triggers-on-load-example}
+
+```yaml showLineNumbers
+# ...
+on:
+- type: on_load
+```
+
+### 手動実行 (`manual_dispatch`) トリガ {#triggers-manual-dispatch}
+
+Scenamatica のコマンドを用いて, 手動でシナリオを実行します。
+
+引数は有りません。
+
+<BelowDocument docId={"use/commands/scenario"}
+               anchor="start"
+               label={<>コマンド | <kbd>/scenamatica scenario start</kbd></>}
+/>
+
+#### 例 {#triggers-manual-dispatch-example}
+
+```yaml showLineNumbers
+# ...
+on:
+- type: manual_dispatch
+```
+
+## 事前・事後[シナリオ](/docs/use/scenario/elements#scenario)機能 {#before-after-scenarios}
 
 [メインシナリオ](/docs/use/scenario/elements#scenario)の実行前後に実行されるシナリオを, トリガごとに設定できます。  
 `事前シナリオ -> メインシナリオ -> 事後シナリオ` の順番で同期的に実行されます。
 
-#### 【使用例】
+### 【使用例】
 
 プレイヤが死亡したときに, プレイヤにメッセージを送信するシナリオについて考えます。  
 このシナリオは自動実行に加えて, 手動実行できる必要があり, その場合はプレイヤをメイン・シナリオの実行前にキルする必要があるとします。
@@ -77,7 +152,7 @@ scenario:
     message: "You died!"
 ```
 
-### 条件付きトリガ機能 {#conditional-triggers}
+## 条件付きトリガ機能 {#conditional-triggers}
 
 トリガの発火条件に, 追加で条件を指定できます。  
 これは, シナリオの[実行条件](/docs/use/scenario/elements#conditional-execution)機能と同じですが, トリガごとに設定できるという点で異なります。  
@@ -106,70 +181,3 @@ on:
 ```
 
 :::
-
-
-## トリガの種類 {#triggers}
-
-トリガは, 以下の種類があります。
-
-  * [アクション実行 (`on_action`)](#triggers-on-action)
-  * [プラグインのロード (`on_load`)](#triggers-on-load)
-  * [手動実行 (`manual_dispatch`)](#triggers-manual-dispatch)
-
-
-### アクション実行 (`on_action`) トリガ {#triggers-on-action}
-
-引数に指定された[アクション実行期待シナリオ](/docs/use/scenario/elements#scenario-type-action-execution-expect)が, 実行されたときにシナリオを実行します。  
-
-引数はそのアクションに必要なものを指定します。構文に関しては[こちら](/references/types#action)を参照してください。
-
-:::tip
-
-アクションに必要なパラメータについては, 各アクションのドキュメントを参照してください。
-
-:::
-
-#### 例 {#triggers-on-action-example}
-
-```yaml showLineNumbers
-# ...
-on:
-- type: on_action
-  action: "player_death"
-  with:
-    target: "Actor1"
-```
-
-### プラグインのロード (`on_load`) トリガ {#triggers-on-load}
-
-プラグインがロードされたときにシナリオを実行します。  
-これには, サーバのリロードや再起動も含みます。
-
-引数はありません。
-
-#### 例 {#triggers-on-load-example}
-
-```yaml showLineNumbers
-# ...
-on:
-- type: on_load
-```
-
-### 手動実行 (`manual_dispatch`) トリガ {#triggers-manual-dispatch}
-
-Scenamatica のコマンドを用いて, 手動でシナリオを実行します。
-
-引数は有りません。
-
-<BelowDocument docId={"use/commands/scenario"}
-               anchor="start"
-               label={<>コマンド | <kbd>/scenamatica scenario start</kbd></>}
-/>
-
-#### 例 {#triggers-manual-dispatch-example}
-
-```yaml showLineNumbers
-# ...
-on:
-- type: manual_dispatch
-```

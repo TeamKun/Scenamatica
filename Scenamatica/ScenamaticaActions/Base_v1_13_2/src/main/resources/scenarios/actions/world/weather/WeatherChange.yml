@@ -1,0 +1,24 @@
+# noinspection YAMLSchemaValidation
+scenamatica: ${project.version}
+
+name: actions_weather_change
+description: Testing WeatherChangeAction works or not
+on:
+  - type: on_load
+  - type: manual_dispatch
+
+context:
+  stage:
+    type: FLAT
+
+scenario:
+  - type: execute
+    action: weather_change
+    with:
+      raining: true
+      duration: 300
+  - type: expect
+    action: weather_change
+    with:
+      raining: true
+      duration: 300

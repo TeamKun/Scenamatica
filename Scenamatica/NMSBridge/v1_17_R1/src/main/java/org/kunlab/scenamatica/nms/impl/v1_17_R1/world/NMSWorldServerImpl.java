@@ -1,9 +1,17 @@
 package org.kunlab.scenamatica.nms.impl.v1_17_R1.world;
 
+import net.minecraft.core.BlockPosition;
 import net.minecraft.server.level.WorldServer;
+import net.minecraft.world.entity.EntityLightning;
+import net.minecraft.world.entity.EntityTypes;
+import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.block.Block;
+import org.bukkit.craftbukkit.v1_17_R1.util.CraftMagicNumbers;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LightningStrike;
 import org.jetbrains.annotations.NotNull;
+import org.kunlab.scenamatica.nms.enums.entity.NMSLightningStrikeCause;
 import org.kunlab.scenamatica.nms.types.world.NMSChunkProvider;
 import org.kunlab.scenamatica.nms.types.world.NMSPersistentEntitySectionManager;
 import org.kunlab.scenamatica.nms.types.world.NMSWorldData;
@@ -54,5 +62,29 @@ public class NMSWorldServerImpl implements NMSWorldServer
     public @NotNull NMSPersistentEntitySectionManager<Entity> getEntityManager()
     {
         return this.entityManager;
+    }
+
+    @Override
+    public void strikeLightning(@NotNull Location location, boolean isEffect, @NotNull NMSLightningStrikeCause cause)
+    {
+        EntityLightning nmsEntity = new EntityLightning(EntityTypes.U, this.nmsWorld);
+        nmsEntity.ap = isEffect;
+        nmsEntity.setPosition(location.getX(), location.getY(), location.getZ());
+        this.nmsWorld.strikeLightning(nmsEntity);
+    }
+
+    @Override
+    public void strikeLightning(@NotNull LightningStrike strike, @NotNull NMSLightningStrikeCause cause)
+    {
+        EntityLightning lightning = ((org.bukkit.craftbukkit.v1_17_R1.entity.CraftLightningStrike) strike).getHandle();
+        this.nmsWorld.strikeLightning(lightning, NMSLightningStrikeCause.toBukkit(cause));
+    }
+
+    @Override
+    public void playBlockAction(Block block, int param1, int param2)
+    {
+        BlockPosition blockPosition = new BlockPosition(block.getX(), block.getY(), block.getZ());
+        net.minecraft.world.level.block.Block nmsBlock = CraftMagicNumbers.getBlock(block.getBlockData().getMaterial());
+        this.nmsWorld.playBlockAction(blockPosition, nmsBlock, param1, param2);
     }
 }
