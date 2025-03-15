@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.kunlab.scenamatica</groupId>
         <artifactId>NMSBridge</artifactId>
-        <version>1.6.2</version>
+        <version>1.7.0</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -65,7 +65,7 @@
         <dependency>
             <groupId>org.kunlab.scenamatica.nms</groupId>
             <artifactId>NMSTypes</artifactId>
-            <version>1.6.2</version>
+            <version>1.7.0</version>
         </dependency>
         <dependency>
             <groupId>io.papermc.paper</groupId>
