@@ -17,7 +17,7 @@ jobs:
         with:
           result-encoding: string
           script: |
-            const assets = await github.repos.listReleaseAssets({
+            const assets = await github.rest.repos.listReleaseAssets({
               owner: context.repo.owner,
               repo: context.repo.repo,
               release_id: context.payload.release.id
