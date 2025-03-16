@@ -36,12 +36,12 @@ import java.util.function.Predicate;
 
         admonitions = {
                 @Admonition(
-                        type = AdmonitionType.INFORMATION,
-                        content = "このアクションは, TNT 等の起爆や, それの爆発についてのアクションではありません。\n  " +
-                                "これは, 何らかの理由で爆風が発生し, 周囲のブロックが破壊されることについてのアクションです。"
+                        type = AdmonitionType.NOTE,
+                        content = "このアクションは, TNT 自体の起爆や, TNT 自体の爆発ついてのアクションではありません。\n  " +
+                                "何らかの理由（TNT の爆発など）で爆風が発生し, **周囲のブロックが破壊されること（爆発されること）**についてのアクションです。"
                 ),
                 @Admonition(
-                        type = AdmonitionType.INFORMATION,
+                        type = AdmonitionType.TIP,
                         content = "このアクションでは, TNT の爆発を検知・作成できません。\n  " +
                                 "それを行うためには, 代わりに `entity_explode` アクションを使用してください。"
                 )
